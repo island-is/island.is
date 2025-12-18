@@ -13,24 +13,23 @@ import { mapInvoiceTypes } from '../../mappers/invoiceTypeMapper'
 import { mapSuppliers } from '../../mappers/supplierMapper'
 import { InvoiceGroups } from '../../models/invoiceGroups.model'
 import { mapInvoiceGroup } from '../../mappers/invoiceGroupMapper'
-import { Invoice } from '../../models/invoice.model'
 import { InvoiceGroupsInput } from '../../dtos/getInvoiceGroups.input'
-import { mapInvoices } from '../../mappers/invoiceMapper'
+import { InvoiceGroupWithInvoices } from '../../models/invoiceGroupWithInvoices.model'
+import { mapInvoiceGroupWithInvoices } from '../../mappers/invoiceGroupWithInvoices'
 
 @Injectable()
 export class InvoicesService implements IInvoicesService {
   constructor(private elfurService: ElfurClientService) {}
 
-  async getOpenInvoicesByGroup(
+  async getOpenInvoicesGroupWithInvoices(
     input: InvoicesInput,
-  ): Promise<Invoice[] | null> {
-    const data = await this.elfurService.getOpenInvoicesByGroup(input)
-
+  ): Promise<InvoiceGroupWithInvoices | null> {
+    const data = await this.elfurService.getOpenInvoicesGroupWithInvoices(input)
     if (!data) {
       return null
     }
 
-    return mapInvoices(data)
+    return mapInvoiceGroupWithInvoices(data)
   }
 
   async getOpenInvoiceGroups(
@@ -42,12 +41,11 @@ export class InvoicesService implements IInvoicesService {
       return null
     }
 
-    const groups = data.map((group) => mapInvoiceGroup(group))
-
     return {
-      data: groups,
-      //temp total count
-      totalCount: groups.length,
+      data: data.invoiceGroups.map((group) => mapInvoiceGroup(group)),
+      totalPaymentsCount: data.totalPaymentsCount,
+      totalPaymentsSum: data.totalPaymentsSum,
+      totalCount: data.totalCount,
       //temp page info
       pageInfo: {
         hasNextPage: false,

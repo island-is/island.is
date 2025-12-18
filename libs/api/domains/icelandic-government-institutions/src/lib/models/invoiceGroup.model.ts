@@ -4,8 +4,7 @@ import { Supplier } from './supplier.model'
 import { Customer } from './customer.model'
 
 @ObjectType('IcelandicGovernmentInstitutionsInvoiceGroup', {
-  description:
-    'Contains every invoice between a unique seller-buyer relationship',
+  description: 'Describes the relationship between a unique seller-buyer',
 })
 export class InvoiceGroup {
   @Field(() => ID)
@@ -22,7 +21,4 @@ export class InvoiceGroup {
 
   @Field(() => Int)
   totalPaymentsCount!: number
-
-  @Field(() => [Invoice], { nullable: true })
-  invoices?: Array<Invoice>
 }

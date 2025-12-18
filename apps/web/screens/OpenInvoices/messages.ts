@@ -187,6 +187,10 @@ export const m = {
       id: 'web.openinvoices:totals.featuredImageAlt',
       defaultMessage: 'Mynd af konu við tölvu',
     },
+    total: {
+      id: 'web.openinvoices:totals.total',
+      defaultMessage: 'Samtals',
+    },
   }),
   search: defineMessages({
     filterTitle: {
@@ -242,7 +246,7 @@ export const m = {
     resultsFound: {
       id: 'web.openinvoices:search.resultsFound#markdown',
       defaultMessage:
-        '**{records}** færslur fundust fyrir tímabilið **{dateRangeStart}-{dateRangeEnd}** samtals **{sum} kr.**',
+        '**{records}** færslur fundust fyrir tímabilið **{dateRangeStart}-{dateRangeEnd}** samtals **{sum}**',
     },
     noResultsFound: {
       id: 'web.openinvoices:search.noResultsFound',

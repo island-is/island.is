@@ -1,7 +1,7 @@
-import { InvoiceGroup } from './models/invoiceGroup.model'
 import { InvoiceGroups } from './models/invoiceGroups.model'
+import { InvoiceGroupWithInvoices } from './models/invoiceGroupWithInvoices.model'
 
-export type InvoiceGroupWithFilters = InvoiceGroup & {
+export type InvoiceGroupWithFilters = InvoiceGroupWithInvoices & {
   dateFrom?: Date
   dateTo?: Date
   types?: number[]

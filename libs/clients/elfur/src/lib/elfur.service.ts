@@ -3,9 +3,11 @@ import { OpenInvoicesApi, OrganizationEmployeeApi } from '../../gen/fetch'
 import { EmployeeDto } from './dtos/employee.dto'
 import { SearchRequestDto } from './dtos/searchRequest.dto'
 import { InvoiceRequestDto } from './dtos/invoiceRequest.dto'
-import { OpenInvoicesDto } from './dtos/openInvoices.dto'
+import {
+  InvoiceGroupWithInvoicesDto,
+  mapInvoiceGroupWithInvoicesDto,
+} from './dtos/openInvoices.dto'
 import { isDefined } from '@island.is/shared/utils'
-import { mapInvoiceDto } from './dtos/invoice.dto'
 import { SuppliersDto } from './dtos/suppliers.dto'
 import { mapSupplierDto } from './dtos/supplier.dto'
 import { CustomersDto } from './dtos/customers.dto'
@@ -15,6 +17,10 @@ import { mapInvoiceTypeDto } from './dtos/invoiceType.dto'
 import { mapPageInfo } from './utils/pageInfo.util'
 import { InvoiceGroupDto, mapInvoiceGroupDto } from './dtos/invoiceGroup.dto'
 import { InvoiceGroupRequestDto } from './dtos/invoiceGroupRequest.dto'
+import {
+  InvoiceGroupCollectionDto,
+  mapInvoiceGroupCollectionDto,
+} from './dtos/invoiceGroupCollection.dto'
 
 @Injectable()
 export class ElfurClientService {
@@ -47,38 +53,27 @@ export class ElfurClientService {
 
   public async getOpenInvoicesGroups(
     requestParams?: InvoiceGroupRequestDto,
-  ): Promise<InvoiceGroupDto[] | null> {
+  ): Promise<InvoiceGroupCollectionDto | null> {
     const data = await this.invoicesApi.v1OpeninvoicesInvoicegroupsGet(
       requestParams ?? {},
     )
 
-    return data.map((d) => mapInvoiceGroupDto(d)).filter(isDefined)
+    return mapInvoiceGroupCollectionDto(data)
   }
 
-  public async getOpenInvoicesByGroup(
+  public async getOpenInvoicesGroupWithInvoices(
     requestParams: InvoiceRequestDto,
-  ): Promise<OpenInvoicesDto | null> {
-    const {
-      invoices = [],
-      pageInfo,
-      totalCount,
-    } = await this.invoicesApi.v1OpeninvoicesInvoicesGet({
-      dateFrom: requestParams?.dateFrom,
-      dateTo: requestParams?.dateTo,
-      types: requestParams?.types,
-      suppliers: [requestParams.supplier],
-      customers: [requestParams.customer],
-    })
+  ): Promise<InvoiceGroupWithInvoicesDto | null> {
+    const data =
+      await this.invoicesApi.v1OpeninvoicesInvoicegroupwithinvoicesGet({
+        dateFrom: requestParams?.dateFrom,
+        dateTo: requestParams?.dateTo,
+        types: requestParams?.types,
+        supplierId: requestParams.supplier,
+        customerId: requestParams.customer,
+      })
 
-    if (!pageInfo || !pageInfo.hasNextPage === undefined || !totalCount) {
-      return null
-    }
-
-    return {
-      invoices: invoices?.map(mapInvoiceDto).filter(isDefined) ?? [],
-      pageInfo: mapPageInfo(pageInfo),
-      totalCount,
-    }
+    return mapInvoiceGroupWithInvoicesDto(data)
   }
 
   public async getSuppliers(

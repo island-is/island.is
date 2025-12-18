@@ -4,13 +4,15 @@ import { InvoicesInput } from '../../dtos/getInvoices.input'
 import { InvoiceTypesInput } from '../../dtos/getInvoiceTypes.input'
 import { SuppliersInput } from '../../dtos/getSuppliers.input'
 import { Customers } from '../../models/customers.model'
-import { Invoice } from '../../models/invoice.model'
 import { InvoiceGroups } from '../../models/invoiceGroups.model'
+import { InvoiceGroupWithInvoices } from '../../models/invoiceGroupWithInvoices.model'
 import { InvoiceTypes } from '../../models/invoiceTypes.model'
 import { Suppliers } from '../../models/suppliers.model'
 
 export interface IInvoicesService {
-  getOpenInvoicesByGroup(input?: InvoicesInput): Promise<Invoice[] | null>
+  getOpenInvoicesGroupWithInvoices(
+    input?: InvoicesInput,
+  ): Promise<InvoiceGroupWithInvoices | null>
   getOpenInvoiceGroups(
     input?: InvoiceGroupsInput,
   ): Promise<InvoiceGroups | null>

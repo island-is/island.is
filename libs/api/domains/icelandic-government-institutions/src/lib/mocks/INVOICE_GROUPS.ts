@@ -154,6 +154,8 @@ export const MOCK_INVOICE_GROUPS: InvoiceGroups = {
     },
   ],
   totalCount: 10,
+  totalPaymentsSum: 28715000,
+  totalPaymentsCount: 13,
   pageInfo: {
     hasNextPage: false,
     hasPreviousPage: false,

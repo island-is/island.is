@@ -1035,6 +1035,151 @@
         }
       }
     },
+    "/v1/openinvoices/invoicegroupwithinvoices": {
+      "get": {
+        "tags": ["OpenInvoices"],
+        "summary": "[GET] Returns an open invoice group with dimension data",
+        "parameters": [
+          {
+            "name": "supplierId",
+            "in": "query",
+            "description": "Required id of the supplier id in the customer-supplier relationship. Corresponds to the supplier id returned by the /suppliers endpoint.",
+            "required": true,
+            "schema": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "customerId",
+            "in": "query",
+            "description": "Required id of the customer id in the customer-supplier relationship. Corresponds to the customer id returned by the /customers endpoint.",
+            "required": true,
+            "schema": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "dateFrom",
+            "in": "query",
+            "description": "Optional start date for filtering invoices (inclusive).",
+            "schema": { "type": "string", "format": "date" }
+          },
+          {
+            "name": "dateTo",
+            "in": "query",
+            "description": "Optional end date for filtering invoices (inclusive).",
+            "schema": { "type": "string", "format": "date" }
+          },
+          {
+            "name": "types",
+            "in": "query",
+            "description": "Optional list of invoice type IDs to filter by. by. Corresponds to the supplier id returned by the /types endpoint.",
+            "schema": {
+              "type": "array",
+              "items": { "type": "integer", "format": "int32" }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpenInvoiceGroupWithInvoicesResponseDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpenInvoiceGroupWithInvoicesResponseDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpenInvoiceGroupWithInvoicesResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "408": {
+            "description": "Request Timeout",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/openinvoices/live": {
       "get": {
         "tags": ["OpenInvoices"],
@@ -3260,6 +3405,182 @@
         "type": "string",
         "description": "Enum for describing the status an import line can take"
       },
+      "InvoiceGLLineResponseDto": {
+        "type": "object",
+        "properties": {
+          "tegundCode": {
+            "type": "string",
+            "description": "Gets or sets the Tegund Code.",
+            "nullable": true
+          },
+          "tegundName": {
+            "type": "string",
+            "description": "Gets or sets the Tegund Name.",
+            "nullable": true
+          },
+          "lineTypePlaceholder": {
+            "type": "string",
+            "description": "Gets or sets the Line Type Placeholder.",
+            "nullable": true
+          },
+          "tegundIsConfidential": {
+            "type": "boolean",
+            "description": "Gets or sets whether the Tegund is Confidential.",
+            "nullable": true
+          },
+          "accountType": {
+            "type": "string",
+            "description": "Gets or sets the Account Type.",
+            "nullable": true
+          },
+          "glDate": {
+            "type": "string",
+            "description": "Gets or sets the GL Date.",
+            "format": "date",
+            "nullable": true
+          },
+          "govInternal": {
+            "type": "boolean",
+            "description": "Gets or sets whether this is Government Internal.",
+            "nullable": true
+          },
+          "enteredAmount": {
+            "type": "number",
+            "description": "Gets or sets the Entered Amount.",
+            "format": "double",
+            "nullable": true
+          },
+          "enteredCurrencyCode": {
+            "type": "string",
+            "description": "Gets or sets the Entered Currency Code.",
+            "nullable": true
+          },
+          "accountedAmount": {
+            "type": "number",
+            "description": "Gets or sets the Accounted Amount.",
+            "format": "double",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "InvoicePaymentDetailResponseDto": {
+        "type": "object",
+        "properties": {
+          "erpInvoiceId": {
+            "type": "number",
+            "description": "Gets or sets the ERP Invoice ID.",
+            "format": "double"
+          },
+          "sourceErpId": {
+            "type": "integer",
+            "description": "Gets or sets the Source ERP ID.",
+            "format": "int32"
+          },
+          "paymentAccountingDate": {
+            "type": "string",
+            "description": "Gets or sets the Payment Accounting Date.",
+            "format": "date"
+          },
+          "paymentAmount": {
+            "type": "number",
+            "description": "Gets or sets the Payment Amount.",
+            "format": "double",
+            "nullable": true
+          },
+          "paymentCurrencyCode": {
+            "type": "string",
+            "description": "Gets or sets the Payment Currency Code.",
+            "nullable": true
+          },
+          "paymentAmountISK": {
+            "type": "number",
+            "description": "Gets or sets the Payment Amount in ISK.",
+            "format": "double",
+            "nullable": true
+          },
+          "invoicePaymentNumber": {
+            "type": "integer",
+            "description": "Gets or sets the Invoice Payment Number.",
+            "format": "int32"
+          },
+          "periodName": {
+            "type": "string",
+            "description": "Gets or sets the Period Name.",
+            "nullable": true
+          },
+          "paymentPostedFlag": {
+            "type": "string",
+            "description": "Gets or sets the Payment Posted Flag.",
+            "nullable": true
+          },
+          "reversalFlag": {
+            "type": "string",
+            "description": "Gets or sets the Reversal Flag.",
+            "nullable": true
+          },
+          "supplierName": {
+            "type": "string",
+            "description": "Gets or sets the Supplier Name.",
+            "nullable": true
+          },
+          "supplierIsPrivatePersonProxy": {
+            "type": "boolean",
+            "description": "Gets or sets whether the supplier is a private person proxy."
+          },
+          "supplierIsConfidential": {
+            "type": "boolean",
+            "description": "Gets or sets whether the supplier is confidential."
+          },
+          "customerName": {
+            "type": "string",
+            "description": "Gets or sets the Customer Name.",
+            "nullable": true
+          },
+          "invoiceNum": {
+            "type": "string",
+            "description": "Gets or sets the Invoice Number.",
+            "nullable": true
+          },
+          "invoiceTotalBaseAmount": {
+            "type": "number",
+            "description": "Gets or sets the Invoice Total Base Amount.",
+            "format": "double",
+            "nullable": true
+          },
+          "invoiceTotalBaseAmountISK": {
+            "type": "number",
+            "description": "Gets or sets the Invoice Total Base Amount in ISK.",
+            "format": "double",
+            "nullable": true
+          },
+          "invoiceCurrencyCode": {
+            "type": "string",
+            "description": "Gets or sets the Invoice Currency Code.",
+            "nullable": true
+          },
+          "totalPaymentsMadeOnInvoice": {
+            "type": "integer",
+            "description": "Gets or sets the Total Payments Made on Invoice.",
+            "format": "int32",
+            "nullable": true
+          },
+          "invoiceIsConfidential": {
+            "type": "boolean",
+            "description": "Gets or sets whether the Invoice is Confidential."
+          },
+          "glLines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InvoiceGLLineResponseDto"
+            },
+            "description": "Gets or sets the collection of GL line items associated with this invoice.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Represents a comprehensive data transfer object for invoice payment details with associated invoice and GL line data.\r\nData is mapped from v_InvoicePayments with LEFT JOINs to v_Invoice and v_InvoiceGL tables.\r\nGL line items are grouped as a nested collection to avoid data duplication."
+      },
       "InvoiceTypeListPaginatedResponseDto": {
         "type": "object",
         "properties": {
@@ -3797,6 +4118,23 @@
             "type": "number",
             "description": "Gets or sets the total count invoice group invoices",
             "format": "double",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Represents all invoices between a specified supplier-customer relationship"
+      },
+      "OpenInvoiceGroupWithInvoicesResponseDto": {
+        "type": "object",
+        "properties": {
+          "supplier": { "$ref": "#/components/schemas/SupplierResponseDto" },
+          "customer": { "$ref": "#/components/schemas/CustomerResponseDto" },
+          "invoices": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InvoicePaymentDetailResponseDto"
+            },
+            "description": "Gets or sets a list of invoices belonging to the group",
             "nullable": true
           }
         },

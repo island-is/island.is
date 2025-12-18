@@ -1,10 +1,12 @@
 import { Audit } from '@island.is/nest/audit'
-import { Parent, ResolveField, Resolver } from '@nestjs/graphql'
+import { Args, Query, Resolver } from '@nestjs/graphql'
 import { type IInvoicesService } from '../services/invoices/invoices.service.interface'
 import { Inject } from '@nestjs/common'
 import { InvoiceGroup } from '../models/invoiceGroup.model'
-import { Invoice } from '../models/invoice.model'
 import { type InvoiceGroupWithFilters } from '../types'
+import { BypassAuth } from '@island.is/auth-nest-tools'
+import { InvoiceGroupInput } from '../dtos/getInvoiceGroup.input'
+import { InvoiceGroupWithInvoices } from '../models/invoiceGroupWithInvoices.model'
 
 @Resolver(() => InvoiceGroup)
 @Audit({ namespace: '@island.is/api/icelandic-government-institutions' })
@@ -14,16 +16,29 @@ export class InvoiceGroupResolver {
     private readonly invoiceService: IInvoicesService,
   ) {}
 
-  @ResolveField('invoices', () => [Invoice])
-  resolveInvoices(
-    @Parent() invoiceGroup: InvoiceGroupWithFilters,
-  ): Promise<Invoice[] | null> {
-    return this.invoiceService.getOpenInvoicesByGroup({
-      supplier: invoiceGroup.supplier.id,
-      customer: invoiceGroup.customer.id,
-      dateFrom: invoiceGroup.dateFrom,
-      dateTo: invoiceGroup.dateTo,
-      types: invoiceGroup.types,
-    })
+  @Query(() => InvoiceGroupWithInvoices, {
+    name: 'icelandicGovernmentInstitutionsInvoiceGroup',
+    nullable: true,
+  })
+  @BypassAuth()
+  async getInvoiceGroup(
+    @Args('input', { type: () => InvoiceGroupInput })
+    input: InvoiceGroupInput,
+  ): Promise<InvoiceGroupWithFilters | null> {
+    const group = await this.invoiceService.getOpenInvoicesGroupWithInvoices(
+      input,
+    )
+
+    if (!group) return null
+
+    return {
+      id: `${group.supplier.id}-${group.customer.id}`,
+      supplier: group.supplier,
+      customer: group.customer,
+      dateFrom: input.dateFrom,
+      dateTo: input.dateTo,
+      types: input.types,
+      invoices: group.invoices,
+    }
   }
 }

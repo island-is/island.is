@@ -5,6 +5,7 @@ import { MOCK_CUSTOMERS } from '../../mocks/CUSTOMERS'
 import { MOCK_INVOICE_TYPES } from '../../mocks/INVOICE_TYPES'
 import { MOCK_SUPPLIERS } from '../../mocks/SUPPLIERS'
 import { MOCK_INVOICE_GROUPS } from '../../mocks/INVOICE_GROUPS'
+import { MOCK_INVOICE_GROUP_WITH_INVOICES } from '../../mocks/INVOICE_GROUP_WITH_INVOICES'
 import { CustomersInput } from '../../dtos/getCustomers.input'
 import { InvoicesInput } from '../../dtos/getInvoices.input'
 import { InvoiceTypesInput } from '../../dtos/getInvoiceTypes.input'
@@ -13,25 +14,19 @@ import { Customers } from '../../models/customers.model'
 import { InvoiceTypes } from '../../models/invoiceTypes.model'
 import { Suppliers } from '../../models/suppliers.model'
 import { InvoiceGroupsInput } from '../../dtos/getInvoiceGroups.input'
-import { Invoice } from '../../models/invoice.model'
 import { InvoiceGroups } from '../../models/invoiceGroups.model'
+import { InvoiceGroupWithInvoices } from '../../models/invoiceGroupWithInvoices.model'
 
 @Injectable()
 export class MockInvoicesService implements IInvoicesService {
   constructor(@Inject(LOGGER_PROVIDER) private readonly logger: Logger) {
     this.logger.info('Using InvoicesServiceMock')
   }
-  async getOpenInvoicesByGroup(
+  async getOpenInvoicesGroupWithInvoices(
     _input?: InvoicesInput,
-  ): Promise<Invoice[] | null> {
-    // Extract all invoices from the mock data
-    const allInvoices: Invoice[] = []
-    MOCK_INVOICE_GROUPS.data.forEach((group) => {
-      if (group.invoices) {
-        allInvoices.push(...group.invoices)
-      }
-    })
-    return allInvoices
+  ): Promise<InvoiceGroupWithInvoices | null> {
+    // Return the mock invoice group with its invoices
+    return MOCK_INVOICE_GROUP_WITH_INVOICES
   }
   async getOpenInvoiceGroups(
     _input?: InvoiceGroupsInput,

@@ -20,9 +20,9 @@ import {
 } from '@island.is/island-ui/core'
 import { dateFormat, debounceTime } from '@island.is/shared/constants'
 import { CustomPageUniqueIdentifier, Locale } from '@island.is/shared/types'
+import { formatCurrency } from '@island.is/shared/utils'
 import { MarkdownText } from '@island.is/web/components'
 import {
-  IcelandicGovernmentInstitutionsInvoiceGroup,
   IcelandicGovernmentInstitutionsInvoiceGroups,
   Organization,
   Query,
@@ -46,7 +46,7 @@ import {
   GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_GROUPS,
   GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICES_FILTERS,
 } from './Overview.graphql'
-import { OverviewContent } from './OverviewContent'
+import { OverviewTable } from './OverviewTable'
 
 const PAGE_SIZE = 12
 
@@ -62,12 +62,13 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
   const { formatMessage } = useIntl()
   const { linkResolver } = useLinkResolver()
 
-  const [getInvoiceGroups] = useLazyQuery<
-    {
-      icelandicGovernmentInstitutionsInvoiceGroups: IcelandicGovernmentInstitutionsInvoiceGroups
-    },
-    QueryIcelandicGovernmentInstitutionsInvoiceGroupsArgs
-  >(GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_GROUPS)
+  const [getInvoiceGroups, { data: invoiceGroupsData, error, loading }] =
+    useLazyQuery<
+      {
+        icelandicGovernmentInstitutionsInvoiceGroups: IcelandicGovernmentInstitutionsInvoiceGroups
+      },
+      QueryIcelandicGovernmentInstitutionsInvoiceGroupsArgs
+    >(GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_GROUPS)
 
   const baseUrl = linkResolver('openinvoicesoverview', [], locale).href
 
@@ -117,18 +118,19 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
   )
   const [searchString, setSearchString] = useState<string | null>()
 
-  const [invoiceGroups, setInvoiceGroups] = useState<
-    Array<IcelandicGovernmentInstitutionsInvoiceGroup>
-  >(initialInvoiceGroups?.data ?? [])
-
-  const [totalHits, setTotalHits] = useState<number | undefined>(
-    initialInvoiceGroups?.totalCount ?? 0,
-  )
+  const totalHits = useMemo(() => {
+    if (
+      invoiceGroupsData?.icelandicGovernmentInstitutionsInvoiceGroups.totalCount
+    ) {
+      return invoiceGroupsData?.icelandicGovernmentInstitutionsInvoiceGroups
+        .totalCount
+    } else return initialInvoiceGroups?.totalCount ?? 0
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    invoiceGroupsData?.icelandicGovernmentInstitutionsInvoiceGroups.totalCount,
+  ])
 
   const totalPages = useMemo(() => {
-    if (!totalHits) {
-      return
-    }
     return totalHits > PAGE_SIZE ? Math.ceil(totalHits / PAGE_SIZE) : 1
   }, [totalHits])
 
@@ -152,24 +154,9 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
         },
       },
     })
-      .then((res) => {
-        if (res.data) {
-          setInvoiceGroups(
-            res.data.icelandicGovernmentInstitutionsInvoiceGroups.data,
-          )
-          setTotalHits(
-            res.data.icelandicGovernmentInstitutionsInvoiceGroups.totalCount,
-          )
-        } else if (res.error) {
-          setInvoiceGroups([])
-        }
-      })
-      .catch(() => {
-        setInvoiceGroups([])
-      })
   }, [
-    initialRender,
     getInvoiceGroups,
+    initialRender,
     customers,
     suppliers,
     invoiceTypes,
@@ -223,8 +210,10 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
     }
     const dateRangeStartArg = format(dateRangeStart, dateFormat.is)
     const dateRangeEndArg = format(dateRangeEnd, dateFormat.is)
-    //const sumArg = formatCurrency(67418961)
-    const sumArg = 'PLACEHOLDER'
+    const sumArg = formatCurrency(
+      invoiceGroupsData?.icelandicGovernmentInstitutionsInvoiceGroups
+        ?.totalPaymentsSum ?? 0,
+    )
 
     if (totalHits === 1) {
       return formatMessage(m.search.resultFound, {
@@ -239,7 +228,14 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
       dateRangeEnd: dateRangeEndArg,
       sum: sumArg,
     })
-  }, [dateRangeEnd, dateRangeStart, formatMessage, totalHits])
+  }, [
+    dateRangeEnd,
+    dateRangeStart,
+    formatMessage,
+    invoiceGroupsData?.icelandicGovernmentInstitutionsInvoiceGroups
+      ?.totalPaymentsSum,
+    totalHits,
+  ])
 
   const onSearchFilterUpdate = (categoryId: string, values?: Array<string>) => {
     const filteredValues = values?.length ? [...values] : null
@@ -334,7 +330,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
                   {
                     type: 'multi',
                     sections: [
-                      {
+                      /*{
                         id: 'invoiceTypes',
                         label: formatMessage(m.search.type),
                         items:
@@ -342,7 +338,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
                             value: filter.value,
                             label: filter.name,
                           })) ?? [],
-                      },
+                          },*/
                       {
                         id: 'suppliers',
                         label: formatMessage(m.search.suppliers),
@@ -370,7 +366,14 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
         >
           <MarkdownText>{hitsMessage ?? ''}</MarkdownText>
           <Box marginLeft={2} background="white">
-            <OverviewContent invoiceGroups={invoiceGroups} />
+            <OverviewTable
+              invoiceGroups={
+                invoiceGroupsData?.icelandicGovernmentInstitutionsInvoiceGroups
+                  ?.data ?? []
+              }
+              dateFrom={dateRangeStart}
+              dateTo={dateRangeEnd}
+            />
           </Box>
 
           <Box marginTop={2} marginBottom={0} hidden={(totalPages ?? 0) <= 1}>

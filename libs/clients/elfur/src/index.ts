@@ -5,7 +5,10 @@ export { ElfurClientConfig } from './lib/elfur.config'
 export { ElfurClientService } from './lib/elfur.service'
 export { ElfurClientModule } from './lib/elfur.module'
 export { InvoiceGroupDto } from './lib/dtos/invoiceGroup.dto'
-export { OpenInvoicesDto } from './lib/dtos/openInvoices.dto'
+export {
+  OpenInvoicesDto,
+  InvoiceGroupWithInvoicesDto,
+} from './lib/dtos/openInvoices.dto'
 export { CustomerDto } from './lib/dtos/customer.dto'
 export { CustomersDto } from './lib/dtos/customers.dto'
 export { InvoiceTypeDto } from './lib/dtos/invoiceType.dto'

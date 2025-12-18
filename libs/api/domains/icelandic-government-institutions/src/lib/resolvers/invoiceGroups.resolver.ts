@@ -1,16 +1,13 @@
 import { Audit } from '@island.is/nest/audit'
-import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
+import { Args, Query, Resolver } from '@nestjs/graphql'
 import { BypassAuth } from '@island.is/auth-nest-tools'
 import { type IInvoicesService } from '../services/invoices/invoices.service.interface'
 import { Inject } from '@nestjs/common'
 import { InvoicesFilters } from '../models/invoicesFilters'
 import { InvoiceGroups } from '../models/invoiceGroups.model'
 import { InvoiceGroupsInput } from '../dtos/getInvoiceGroups.input'
-import type {
-  InvoiceGroupsWithFilters,
-  InvoiceGroupWithFilters,
-} from '../types'
-import { InvoiceGroup } from '../models/invoiceGroup.model'
+import type { InvoiceGroupsWithFilters } from '../types'
+import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 @Resolver(() => InvoiceGroups)
 @Audit({ namespace: '@island.is/api/icelandic-government-institutions' })
@@ -18,6 +15,8 @@ export class InvoiceGroupsResolver {
   constructor(
     @Inject('IInvoicesService')
     private readonly invoiceService: IInvoicesService,
+    @Inject(LOGGER_PROVIDER)
+    private readonly logger: Logger,
   ) {}
 
   @Query(() => InvoiceGroups, {
@@ -38,20 +37,6 @@ export class InvoiceGroupsResolver {
       dateTo: input.dateTo,
       types: input.types,
     }
-  }
-
-  @ResolveField('data', () => [InvoiceGroup])
-  resolveInvoiceGroup(
-    @Parent() invoiceGroup: InvoiceGroupsWithFilters,
-  ): Promise<InvoiceGroupWithFilters[]> {
-    return Promise.resolve(
-      invoiceGroup.data.map((group) => ({
-        ...group,
-        dateFrom: invoiceGroup.dateFrom,
-        dateTo: invoiceGroup.dateTo,
-        types: invoiceGroup.types,
-      })),
-    )
   }
 
   @Query(() => InvoicesFilters, {
