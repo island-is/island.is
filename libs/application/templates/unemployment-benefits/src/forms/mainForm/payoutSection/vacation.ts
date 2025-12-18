@@ -84,6 +84,7 @@ export const vacationSubSection = buildSubSection({
         buildCustomField({
           id: 'vacation.validation',
           component: 'VacationValidation',
+          doesNotRequireAnswer: true,
         }),
       ],
     }),
