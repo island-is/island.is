@@ -5,7 +5,10 @@ import {
   NO,
   YES,
 } from '@island.is/application/core'
-import { newPrimarySchoolMessages } from '../../../../lib/messages'
+import {
+  differentNeedsMessages,
+  sharedMessages,
+} from '../../../../lib/messages'
 import { shouldShowServicesFromMunicipality } from '../../../../utils/conditionUtils'
 import { OptionsType } from '../../../../utils/constants'
 
@@ -13,22 +16,22 @@ export const servicesFromMunicipality = [
   buildRadioField({
     id: 'specialEducationSupport.hasReceivedServicesFromMunicipality',
     title:
-      newPrimarySchoolMessages.differentNeeds
+      differentNeedsMessages.specialEducationSupport
         .hasReceivedServicesFromMunicipality,
     description:
-      newPrimarySchoolMessages.differentNeeds
+      differentNeedsMessages.specialEducationSupport
         .hasReceivedServicesFromMunicipalityDescription,
     width: 'half',
     required: true,
     space: 4,
     options: [
       {
-        label: newPrimarySchoolMessages.shared.yes,
+        label: sharedMessages.yes,
         dataTestId: 'has-received-services-from-municipality',
         value: YES,
       },
       {
-        label: newPrimarySchoolMessages.shared.no,
+        label: sharedMessages.no,
         dataTestId: 'no-has-received-services-from-municipality',
         value: NO,
       },
@@ -36,7 +39,7 @@ export const servicesFromMunicipality = [
   }),
   buildDescriptionField({
     id: 'specialEducationSupport.servicesFromMunicipality.description',
-    title: newPrimarySchoolMessages.differentNeeds.whichService,
+    title: differentNeedsMessages.specialEducationSupport.whichService,
     titleVariant: 'h4',
     space: 4,
     condition: shouldShowServicesFromMunicipality,
@@ -44,14 +47,15 @@ export const servicesFromMunicipality = [
   buildCustomField(
     {
       id: 'specialEducationSupport.servicesFromMunicipality',
-      title: newPrimarySchoolMessages.differentNeeds.service,
+      title: differentNeedsMessages.specialEducationSupport.service,
       component: 'FriggOptionsAsyncSelectField',
       condition: shouldShowServicesFromMunicipality,
     },
     {
       optionsType: OptionsType.SERVICE_CENTER,
       placeholder:
-        newPrimarySchoolMessages.differentNeeds.selectAllThatAppliesPlaceholder,
+        differentNeedsMessages.specialEducationSupport
+          .selectAllThatAppliesPlaceholder,
       isMulti: true,
     },
   ),

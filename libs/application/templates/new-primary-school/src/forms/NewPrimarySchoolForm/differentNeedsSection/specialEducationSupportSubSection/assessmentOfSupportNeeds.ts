@@ -5,7 +5,10 @@ import {
   NO,
   YES,
 } from '@island.is/application/core'
-import { newPrimarySchoolMessages } from '../../../../lib/messages'
+import {
+  differentNeedsMessages,
+  sharedMessages,
+} from '../../../../lib/messages'
 import { shouldShowSupportNeedsAssessmentBy } from '../../../../utils/conditionUtils'
 import { OptionsType } from '../../../../utils/constants'
 import { getApplicationAnswers } from '../../../../utils/newPrimarySchoolUtils'
@@ -13,21 +16,23 @@ import { getApplicationAnswers } from '../../../../utils/newPrimarySchoolUtils'
 export const assessmentOfSupportNeeds = [
   buildRadioField({
     id: 'specialEducationSupport.hasAssessmentOfSupportNeeds',
-    title: newPrimarySchoolMessages.differentNeeds.hasAssessmentOfSupportNeeds,
+    title:
+      differentNeedsMessages.specialEducationSupport
+        .hasAssessmentOfSupportNeeds,
     description:
-      newPrimarySchoolMessages.differentNeeds
+      differentNeedsMessages.specialEducationSupport
         .hasAssessmentOfSupportNeedsDescription,
     width: 'half',
     required: true,
     space: 4,
     options: [
       {
-        label: newPrimarySchoolMessages.shared.yes,
+        label: sharedMessages.yes,
         dataTestId: 'has-assessment-of-support-needs',
         value: YES,
       },
       {
-        label: newPrimarySchoolMessages.shared.no,
+        label: sharedMessages.no,
         dataTestId: 'no-has-assessment-of-support-needs',
         value: NO,
       },
@@ -36,19 +41,19 @@ export const assessmentOfSupportNeeds = [
   buildRadioField({
     id: 'specialEducationSupport.isAssessmentOfSupportNeedsInProgress',
     title:
-      newPrimarySchoolMessages.differentNeeds
+      differentNeedsMessages.specialEducationSupport
         .isAssessmentOfSupportNeedsInProgress,
     width: 'half',
     required: true,
     space: 4,
     options: [
       {
-        label: newPrimarySchoolMessages.shared.yes,
+        label: sharedMessages.yes,
         dataTestId: 'is-assessment-of-support-needs-in-progress',
         value: YES,
       },
       {
-        label: newPrimarySchoolMessages.shared.no,
+        label: sharedMessages.no,
         dataTestId: 'no-is-assessment-of-support-needs-in-progress',
         value: NO,
       },
@@ -61,7 +66,8 @@ export const assessmentOfSupportNeeds = [
   }),
   buildDescriptionField({
     id: 'specialEducationSupport.supportNeedsAssessmentBy.description',
-    title: newPrimarySchoolMessages.differentNeeds.supportNeedsAssessmentBy,
+    title:
+      differentNeedsMessages.specialEducationSupport.supportNeedsAssessmentBy,
     titleVariant: 'h4',
     space: 4,
     condition: shouldShowSupportNeedsAssessmentBy,
@@ -69,14 +75,14 @@ export const assessmentOfSupportNeeds = [
   buildCustomField(
     {
       id: 'specialEducationSupport.supportNeedsAssessmentBy',
-      title: newPrimarySchoolMessages.differentNeeds.evaluationProvider,
+      title: differentNeedsMessages.specialEducationSupport.evaluationProvider,
       component: 'FriggOptionsAsyncSelectField',
       condition: shouldShowSupportNeedsAssessmentBy,
     },
     {
       optionsType: OptionsType.ASSESSOR,
       placeholder:
-        newPrimarySchoolMessages.differentNeeds
+        differentNeedsMessages.specialEducationSupport
           .selectWhatIsAppropriatePlaceholder,
     },
   ),

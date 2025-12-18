@@ -5,7 +5,10 @@ import {
   YES,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import { newPrimarySchoolMessages } from '../../../../lib/messages'
+import {
+  differentNeedsMessages,
+  sharedMessages,
+} from '../../../../lib/messages'
 import { hasSpecialEducationCaseManager } from '../../../../utils/conditionUtils'
 import { CaseWorkerInputTypeEnum } from '../../../../utils/constants'
 import {
@@ -16,21 +19,19 @@ import {
 export const caseManager = [
   buildRadioField({
     id: 'specialEducationSupport.hasCaseManager',
-    title:
-      newPrimarySchoolMessages.differentNeeds.specialEducationHasCaseManager,
-    description:
-      newPrimarySchoolMessages.differentNeeds.hasCaseManagerDescription,
+    title: differentNeedsMessages.specialEducationSupport.hasCaseManager,
+    description: differentNeedsMessages.support.hasCaseManagerDescription,
     width: 'half',
     required: true,
     space: 4,
     options: [
       {
-        label: newPrimarySchoolMessages.shared.yes,
+        label: sharedMessages.yes,
         dataTestId: 'has-case-manager',
         value: YES,
       },
       {
-        label: newPrimarySchoolMessages.shared.no,
+        label: sharedMessages.no,
         dataTestId: 'no-has-case-manager',
         value: NO,
       },
@@ -43,7 +44,7 @@ export const caseManager = [
   }),
   buildTextField({
     id: 'specialEducationSupport.caseManager.name',
-    title: newPrimarySchoolMessages.differentNeeds.caseManagerName,
+    title: differentNeedsMessages.support.caseManagerName,
     width: 'half',
     required: true,
     condition: hasSpecialEducationCaseManager,
@@ -55,7 +56,7 @@ export const caseManager = [
   }),
   buildTextField({
     id: 'specialEducationSupport.caseManager.email',
-    title: newPrimarySchoolMessages.differentNeeds.caseManagerEmail,
+    title: differentNeedsMessages.support.caseManagerEmail,
     width: 'half',
     required: true,
     condition: hasSpecialEducationCaseManager,

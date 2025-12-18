@@ -5,7 +5,10 @@ import {
   NO,
   YES,
 } from '@island.is/application/core'
-import { newPrimarySchoolMessages } from '../../../../lib/messages'
+import {
+  differentNeedsMessages,
+  sharedMessages,
+} from '../../../../lib/messages'
 import {
   hasBehaviorSchoolOrDepartmentSubType,
   shouldShowChildAndAdolescentPsychiatryDepartment,
@@ -18,19 +21,19 @@ export const childAndAdolescentPsychiatryServices = [
   buildRadioField({
     id: 'specialEducationSupport.hasReceivedChildAndAdolescentPsychiatryServices',
     title:
-      newPrimarySchoolMessages.differentNeeds
+      differentNeedsMessages.specialEducationSupport
         .hasReceivedChildAndAdolescentPsychiatryServices,
     width: 'half',
     required: true,
     space: 4,
     options: [
       {
-        label: newPrimarySchoolMessages.shared.yes,
+        label: sharedMessages.yes,
         dataTestId: 'has-received-child-and-adolescent-psychiatry-services',
         value: YES,
       },
       {
-        label: newPrimarySchoolMessages.shared.no,
+        label: sharedMessages.no,
         dataTestId: 'no-has-received-child-and-adolescent-psychiatry-services',
         value: NO,
       },
@@ -39,18 +42,19 @@ export const childAndAdolescentPsychiatryServices = [
   }),
   buildRadioField({
     id: 'specialEducationSupport.isOnWaitlistForServices',
-    title: newPrimarySchoolMessages.differentNeeds.isOnWaitlistForServices,
+    title:
+      differentNeedsMessages.specialEducationSupport.isOnWaitlistForServices,
     width: 'half',
     required: true,
     space: 4,
     options: [
       {
-        label: newPrimarySchoolMessages.shared.yes,
+        label: sharedMessages.yes,
         dataTestId: 'is-on-waitlist-for-services',
         value: YES,
       },
       {
-        label: newPrimarySchoolMessages.shared.no,
+        label: sharedMessages.no,
         dataTestId: 'no-is-on-waitlist-for-services',
         value: NO,
       },
@@ -68,7 +72,7 @@ export const childAndAdolescentPsychiatryServices = [
   buildDescriptionField({
     id: 'specialEducationSupport.childAndAdolescentPsychiatryDepartment.description',
     title:
-      newPrimarySchoolMessages.differentNeeds
+      differentNeedsMessages.specialEducationSupport
         .whichChildAndAdolescentPsychiatryDepartment,
     titleVariant: 'h4',
     space: 4,
@@ -78,7 +82,7 @@ export const childAndAdolescentPsychiatryServices = [
     {
       id: 'specialEducationSupport.childAndAdolescentPsychiatryDepartment',
       title:
-        newPrimarySchoolMessages.differentNeeds
+        differentNeedsMessages.specialEducationSupport
           .childAndAdolescentPsychiatryDepartment,
       component: 'FriggOptionsAsyncSelectField',
       condition: shouldShowChildAndAdolescentPsychiatryDepartment,
@@ -86,14 +90,14 @@ export const childAndAdolescentPsychiatryServices = [
     {
       optionsType: OptionsType.CHILD_AND_ADOLESCENT_MENTAL_HEALTH_DEPARTMENT,
       placeholder:
-        newPrimarySchoolMessages.differentNeeds
+        differentNeedsMessages.specialEducationSupport
           .selectWhatIsAppropriatePlaceholder,
     },
   ),
   buildDescriptionField({
     id: 'specialEducationSupport.childAndAdolescentPsychiatryServicesReceived.description',
     title:
-      newPrimarySchoolMessages.differentNeeds
+      differentNeedsMessages.specialEducationSupport
         .childAndAdolescentPsychiatryServicesReceived,
     titleVariant: 'h4',
     space: 4,
@@ -102,14 +106,15 @@ export const childAndAdolescentPsychiatryServices = [
   buildCustomField(
     {
       id: 'specialEducationSupport.childAndAdolescentPsychiatryServicesReceived',
-      title: newPrimarySchoolMessages.differentNeeds.service,
+      title: differentNeedsMessages.specialEducationSupport.service,
       component: 'FriggOptionsAsyncSelectField',
       condition: shouldShowChildAndAdolescentPsychiatryServicesReceived,
     },
     {
       optionsType: OptionsType.CHILD_AND_ADOLESCENT_MENTAL_HEALTH_SERVICE,
       placeholder:
-        newPrimarySchoolMessages.differentNeeds.selectAllThatAppliesPlaceholder,
+        differentNeedsMessages.specialEducationSupport
+          .selectAllThatAppliesPlaceholder,
       isMulti: true,
     },
   ),
