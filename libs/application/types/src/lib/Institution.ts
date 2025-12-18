@@ -85,9 +85,9 @@ export enum InstitutionTypes {
   HUSNAEDIS_OG_MANNVIRKJASTOFNUN = 'husnaedis-og-mannvirkjastofnun',
 }
 
-export interface  Institution {
-  nationalId: string,
-  slug: string,
-  contentfulId: string,
-  applicationTypes: string[],
+export interface Institution {
+  nationalId: string
+  slug: string
+  contentfulId: string
+  applicationTypes: string[]
 }

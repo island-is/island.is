@@ -9,8 +9,15 @@ import {
   FormValue,
   Institution,
 } from '@island.is/application/types'
-import {Application, ApplicationPaginatedResponse, ApplicationsStatistics,} from './application.model'
-import {getInstitutionsWithApplicationTypes, getTypeIdsForInstitution} from '@island.is/application/utils'
+import {
+  Application,
+  ApplicationPaginatedResponse,
+  ApplicationsStatistics,
+} from './application.model'
+import {
+  getInstitutionsWithApplicationTypes,
+  getTypeIdsForInstitution,
+} from '@island.is/application/utils'
 
 const applicationIsNotSetToBePruned = () => ({
   [Op.or]: [
@@ -304,18 +311,19 @@ export class ApplicationService {
   }
 
   async getAllInstitutionsSuperAdmin(): Promise<Institution[]> {
-
     const allInstitutions = getInstitutionsWithApplicationTypes()
 
     if (!allInstitutions) return []
 
-    const  allTypesIds = Array.from(
-      new Set(allInstitutions.flatMap((institution) => institution.applicationTypes)),
-    );
+    const allTypesIds = Array.from(
+      new Set(
+        allInstitutions.flatMap((institution) => institution.applicationTypes),
+      ),
+    )
 
     if (!allTypesIds.length) return []
 
-    const existingTypes =  await this.applicationModel.findAll({
+    const existingTypes = await this.applicationModel.findAll({
       where: {
         typeId: {
           [Op.in]: allTypesIds,
@@ -324,11 +332,11 @@ export class ApplicationService {
       attributes: ['typeId'],
       group: ['typeId'],
       raw: true,
-    });
+    })
 
     const existingTypeSet = new Set<string>(
       existingTypes.map((row: Application) => row.typeId),
-    );
+    )
 
     return allInstitutions.filter((inst) =>
       inst.applicationTypes.some((t) => existingTypeSet.has(t)),

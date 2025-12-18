@@ -1,5 +1,5 @@
 import invertBy from 'lodash/invertBy'
-import {Institution, institutionMapper} from "@island.is/application/types";
+import { Institution, institutionMapper } from '@island.is/application/types'
 
 export const getTypeIdsForInstitution = (nationalId: string): string[] => {
   const institutions = invertBy(
@@ -9,16 +9,18 @@ export const getTypeIdsForInstitution = (nationalId: string): string[] => {
   return institutions[nationalId]
 }
 
-export const getInstitutionsWithApplicationTypes = () : Institution[] => {
+export const getInstitutionsWithApplicationTypes = (): Institution[] => {
   const result = new Map<string, Institution>()
 
-  for (const [applicationType, institution] of Object.entries(institutionMapper)) {
+  for (const [applicationType, institution] of Object.entries(
+    institutionMapper,
+  )) {
     const key = institution.slug // group by slug (or nationalId if preferred)
 
     if (!result.has(key)) {
       result.set(key, {
         ...institution,
-        applicationTypes: []
+        applicationTypes: [],
       })
     }
 
@@ -27,4 +29,3 @@ export const getInstitutionsWithApplicationTypes = () : Institution[] => {
 
   return Array.from(result.values())
 }
-

@@ -13,7 +13,8 @@ import {
   ApplicationsAdminFilters,
   ApplicationsSuperAdminFilters,
   ApplicationsAdminStatisticsInput,
-  ApplicationTypesInstitutionAdminInput, ApplicationInstitutionsAdminInput,
+  ApplicationTypesInstitutionAdminInput,
+  ApplicationInstitutionsAdminInput,
 } from './dto/applications-admin-inputs'
 import {
   ApplicationAdmin,
@@ -104,9 +105,6 @@ export class ApplicationAdminResolver {
     @Args('input')
     input: ApplicationInstitutionsAdminInput,
   ) {
-    return this.applicationService.getApplicationInstitutions(
-      user,
-      input,
-    )
+    return this.applicationService.getApplicationInstitutions(user, input)
   }
 }
