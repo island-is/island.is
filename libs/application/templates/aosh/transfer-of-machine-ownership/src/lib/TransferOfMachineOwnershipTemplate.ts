@@ -239,7 +239,7 @@ const template: ApplicationTemplate<
                 logMessage: coreHistoryMessages.applicationApproved,
               },
             ],
-            pendingAction: (application, role, nationalId) => {
+            pendingAction: (application, _role, nationalId) => {
               return getReviewStatePendingAction(
                 nationalId,
                 getReviewers(application.answers),
