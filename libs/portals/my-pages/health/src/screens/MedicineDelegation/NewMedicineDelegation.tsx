@@ -59,7 +59,7 @@ const NewMedicineDelegation = () => {
           }
         })
         .catch(() => {
-          toast.error(formatMessage(messages.permitCreatedError))
+          toast.error(formatMessage(messages.permitCreatedError, { arg: '' }))
         })
     }
   }
