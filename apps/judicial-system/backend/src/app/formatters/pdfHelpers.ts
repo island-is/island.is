@@ -111,110 +111,6 @@ export const addPoliceStar = (doc: PDFKit.PDFDocument) => {
   doc.scale(25).translate(-270, -70)
 }
 
-export const addConfirmation = (
-  doc: PDFKit.PDFDocument,
-  confirmation: Confirmation,
-) => {
-  const pageMargin = calculatePt(18)
-  const shaddowHeight = calculatePt(70)
-  const coatOfArmsWidth = calculatePt(105)
-  const coatOfArmsX = pageMargin + calculatePt(8)
-  const titleHeight = calculatePt(24)
-  const titleX = coatOfArmsX + coatOfArmsWidth + calculatePt(8)
-  const institutionWidth = calculatePt(297)
-  const confirmedByWidth = institutionWidth + calculatePt(48)
-  const shaddowWidth = institutionWidth + confirmedByWidth + coatOfArmsWidth
-  const titleWidth = institutionWidth + confirmedByWidth
-
-  // Draw the shadow
-  doc
-    .rect(pageMargin, pageMargin + calculatePt(8), shaddowWidth, shaddowHeight)
-    .fill(lightGray)
-    .stroke()
-
-  // Draw the coat of arms
-  doc
-    .rect(coatOfArmsX, pageMargin, coatOfArmsWidth, shaddowHeight)
-    .fillAndStroke('white', darkGray)
-
-  addCoatOfArms(doc, calculatePt(49), calculatePt(24))
-
-  // Draw the title
-  doc
-    .rect(coatOfArmsX + coatOfArmsWidth, pageMargin, titleWidth, titleHeight)
-    .fillAndStroke(lightGray, darkGray)
-  doc.fill('black')
-  doc.font('Times-Bold')
-  doc
-    .fontSize(calculatePt(smallFontSize))
-    .text('Réttarvörslugátt', titleX, pageMargin + calculatePt(9))
-  doc.font('Times-Roman')
-  // The X value here is approx. 8px after the title
-  doc.text(
-    'Rafræn staðfesting!!!',
-    calculatePt(210),
-    pageMargin + calculatePt(9),
-  )
-  doc.text(
-    formatDate(confirmation.date) ?? '',
-    0,
-    pageMargin + calculatePt(9),
-    {
-      align: 'right',
-      width: 575,
-    },
-  )
-  doc.moveDown(0)
-
-  // Draw the institution
-  doc
-    .rect(
-      coatOfArmsX + coatOfArmsWidth,
-      pageMargin + titleHeight,
-      institutionWidth,
-      shaddowHeight - titleHeight,
-    )
-    .fillAndStroke('white', darkGray)
-  doc.fill('black')
-  doc.font('Times-Bold')
-  doc.text('Dómstóll', titleX, pageMargin + titleHeight + calculatePt(10))
-  doc.font('Times-Roman')
-  drawTextWithEllipsis(
-    doc,
-    confirmation.institution,
-    titleX,
-    pageMargin + titleHeight + calculatePt(22),
-    institutionWidth - calculatePt(16),
-  )
-
-  // Draw the actor
-  doc
-    .rect(
-      coatOfArmsX + coatOfArmsWidth + institutionWidth,
-      pageMargin + titleHeight,
-      confirmedByWidth,
-      shaddowHeight - titleHeight,
-    )
-    .fillAndStroke('white', darkGray)
-  doc.fill('black')
-  doc.font('Times-Bold')
-  doc.text(
-    'Samþykktaraðili',
-    titleX + institutionWidth,
-    pageMargin + titleHeight + calculatePt(10),
-  )
-  doc.font('Times-Roman')
-  doc.text(
-    `${confirmation.actor}${
-      confirmation.title ? `, ${lowercase(confirmation.title)}` : ''
-    }`,
-    titleX + institutionWidth,
-    pageMargin + titleHeight + calculatePt(22),
-  )
-
-  doc.fillColor('black')
-}
-
 interface InfoBox {
   title: string
   content: string
@@ -223,37 +119,20 @@ interface InfoBox {
 
 interface ConfirmationConfig {
   boxes: InfoBox[]
+  confirmationText: string
   showLockIcon?: boolean
+  date?: Date
 }
 
-// const infoBoxes = [
-//     {
-//       x: coatOfArmsX + coatOfArmsWidth,
-//       width: confirmedByWidth,
-//       title: 'Samþykktaraðili',
-//       content: `${confirmation.actor}${
-//         confirmation.title ? `, ${lowercase(confirmation.title)}` : ''
-//       }`,
-//     },
-//     {
-//       x: coatOfArmsX + coatOfArmsWidth + confirmedByWidth,
-//       width: institutionWidth,
-//       title: 'Embætti',
-//       content: confirmation.institution,
-//     },
-//     {
-//       x: coatOfArmsX + coatOfArmsWidth + confirmedByWidth + institutionWidth,
-//       width: totalWidth - coatOfArmsWidth - confirmedByWidth - institutionWidth,
-//       title: 'Útgáfa ákæru',
-//       content: formatDate(confirmation.date) ?? '',
-//     },
-//   ]
+export const formatActor = (name: string, title?: string) => {
+  return `${name}${title ? `, ${lowercase(title)}` : ''}`
+}
 
 export const drawConfirmation = (
   doc: PDFKit.PDFDocument,
   config: ConfirmationConfig,
 ) => {
-  const { boxes, showLockIcon = false } = config
+  const { boxes, confirmationText, showLockIcon = false, date } = config
 
   const pageMargin = calculatePt(18)
   const shaddowHeight = calculatePt(48)
@@ -293,6 +172,7 @@ export const drawConfirmation = (
 
   // Draw the title box
   const titleBoxY = doc.y - calculatePt(8)
+  const titleTextY = titleBoxY + titleHeight / 2 - fontSize / 2
 
   doc
     .rect(
@@ -308,17 +188,15 @@ export const drawConfirmation = (
   doc.font('Times-Bold')
   doc
     .fontSize(calculatePt(smallFontSize))
-    .text(
-      'Réttarvörslugátt',
-      titleX,
-      doc.y - calculatePt(8) + titleHeight / 2 - fontSize / 2,
-      { continued: true, lineBreak: false },
-    )
+    .text('Réttarvörslugátt', titleX, titleTextY, {
+      continued: true,
+      lineBreak: false,
+    })
 
   doc.text('  ', { continued: true })
 
   doc.font('Times-Roman')
-  doc.text('Skjal samþykkt rafrænt', { lineBreak: false })
+  doc.text(confirmationText, { lineBreak: false })
 
   // Draw lock icon if needed
   if (showLockIcon) {
@@ -332,6 +210,25 @@ export const drawConfirmation = (
       .fillAndStroke(gold, gold)
 
     doc.restore()
+  } else if (date) {
+    const dateString = formatDate(date) ?? ''
+    const dateWidth = doc.widthOfString(dateString)
+
+    doc
+      .fontSize(calculatePt(smallFontSize))
+      .text(
+        formatDate(date) ?? '',
+        coatOfArmsX +
+          coatOfArmsWidth +
+          (totalWidth - coatOfArmsWidth) -
+          dateWidth -
+          calculatePt(8),
+        titleTextY,
+        {
+          align: 'right',
+          width: dateWidth,
+        },
+      )
   }
 
   const boxY = titleBoxY + titleHeight
@@ -358,112 +255,6 @@ export const drawConfirmation = (
   })
 
   doc.fillColor('black')
-}
-
-export const addIndictmentConfirmation = (
-  doc: PDFKit.PDFDocument,
-  confirmation: Confirmation,
-) => {
-  drawConfirmation(doc, {
-    showLockIcon: true,
-    boxes: [
-      {
-        title: 'Samþykktaraðili',
-        content: `${confirmation.actor}${
-          confirmation.title ? `, ${lowercase(confirmation.title)}` : ''
-        }`,
-        widthPercent: 40,
-      },
-      {
-        title: 'Embætti',
-        content: confirmation.institution,
-        widthPercent: 40,
-      },
-      {
-        title: 'Útgáfa ákæru',
-        content: formatDate(confirmation.date) ?? '',
-        widthPercent: 20,
-      },
-    ],
-  })
-}
-
-export const addIndictmentCourtRecordConfirmation = (
-  doc: PDFKit.PDFDocument,
-  confirmation: Confirmation,
-) => {
-  const pageMargin = calculatePt(18)
-  const shaddowHeight = calculatePt(90)
-  const coatOfArmsWidth = calculatePt(105)
-  const coatOfArmsHeight = calculatePt(90)
-  const coatOfArmsX = pageMargin + calculatePt(8)
-  const titleWidth = calculatePt(642)
-  const titleHeight = calculatePt(32)
-  const titleX = coatOfArmsX + coatOfArmsWidth + calculatePt(8)
-
-  // Draw the shaddow
-  doc
-    .rect(
-      pageMargin,
-      pageMargin + calculatePt(8),
-      coatOfArmsWidth + titleWidth,
-      shaddowHeight,
-    )
-    .fill(lightGray)
-    .stroke()
-
-  // Draw the Coat of Arms
-  doc
-    .rect(coatOfArmsX, pageMargin, coatOfArmsWidth, coatOfArmsHeight)
-    .fillAndStroke('white', darkGray)
-
-  addCoatOfArms(doc, calculatePt(49), calculatePt(33))
-
-  // Draw the confirmation title
-  doc
-    .rect(coatOfArmsX + coatOfArmsWidth, pageMargin, titleWidth, titleHeight)
-    .fillAndStroke(lightGray, darkGray)
-  doc.fill('black')
-  doc.font('Times-Bold')
-  doc
-    .fontSize(calculatePt(smallFontSize))
-    .text('Réttarvörslugátt', titleX, pageMargin + calculatePt(12))
-  doc.font('Times-Roman')
-  doc.text(
-    'Rafræn staðfesting',
-    calculatePt(210),
-    pageMargin + calculatePt(12),
-    { lineBreak: false },
-  )
-
-  const date = formatDate(confirmation.date) ?? ''
-  const dateWidth = doc.widthOfString(date)
-
-  doc.text(
-    date,
-    coatOfArmsX + coatOfArmsWidth + titleWidth - dateWidth - calculatePt(8),
-  )
-
-  doc.lineWidth(1)
-
-  // Draw the "Institution" box
-  doc
-    .rect(
-      coatOfArmsX + coatOfArmsWidth,
-      pageMargin + titleHeight,
-      titleWidth,
-      shaddowHeight - titleHeight,
-    )
-    .fillAndStroke('white', darkGray)
-  doc.fill('black')
-  doc.font('Times-Bold')
-  doc.text('Dómstóll', titleX, pageMargin + titleHeight + calculatePt(16))
-  doc.font('Times-Roman')
-  doc.text(
-    confirmation.institution,
-    titleX,
-    pageMargin + titleHeight + calculatePt(32),
-  )
 }
 
 export const setLineGap = (doc: PDFKit.PDFDocument, lineGap: number) => {

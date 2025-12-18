@@ -18,13 +18,13 @@ import {
   addCoatOfArms,
   addEmptyLines,
   addFooter,
-  addIndictmentCourtRecordConfirmation,
   addLargeHeading,
   addMediumHeading,
   addNormalCenteredText,
   addNormalText,
   addNumberedList,
   Confirmation,
+  drawConfirmation,
   setLineGap,
   setTitle,
 } from './pdfHelpers'
@@ -92,12 +92,24 @@ export const createIndictmentCourtRecordPdf = (
 
   setTitle(doc, `Þingbók ${theCase.courtCaseNumber}`)
 
-  addCoatOfArms(doc, undefined, 90)
-
   if (confirmation) {
-    addIndictmentCourtRecordConfirmation(doc, confirmation)
+    drawConfirmation(doc, {
+      showLockIcon: false,
+      confirmationText: 'Rafræn staðfesting',
+      date: confirmation.date,
+      boxes: [
+        {
+          title: 'Dómstóll',
+          content: confirmation.institution,
+          widthPercent: 100,
+        },
+      ],
+    })
+
+    doc.y = doc.page.margins.top + 10
   }
 
+  addCoatOfArms(doc)
   addEmptyLines(doc, confirmation ? 11 : 6, doc.page.margins.left)
   setLineGap(doc, 2)
   addLargeHeading(doc, theCase.court?.name ?? 'Héraðsdómur', 'Times-Roman')
