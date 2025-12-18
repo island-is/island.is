@@ -192,6 +192,7 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
           {connectedCases.map((connectedCase, i) => (
             <Box component="span" key={i}>
               {connectedCase}
+              {/**TODO: Refactor this. */}
               {i < connectedCases.length - 1 && (
                 <Text as="span" whiteSpace="pre">{`, `}</Text>
               )}
