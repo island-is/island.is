@@ -19,6 +19,7 @@ import { ScreensModule } from './modules/screens/screens.module'
 import { SectionsModule } from './modules/sections/sections.module'
 import { ServicesModule } from './modules/services/services.module'
 import { SequelizeConfigService } from './sequelizeConfig.service'
+import { PruneModule } from './modules/services/prune/prune.module'
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
     OrganizationUrlsModule,
     ServicesModule,
     FileModule,
+    PruneModule,
   ],
 })
 export class AppModule {}

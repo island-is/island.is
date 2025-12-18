@@ -8,9 +8,13 @@ import { AuditModule } from '@island.is/nest/audit'
 import { environment } from '../../../../environments'
 import { SequelizeConfigService } from '../../../sequelizeConfig.service'
 import { PruneService } from './prune.service'
+import { Value } from '../../applications/models/value.model'
+import { Application } from '../../applications/models/application.model'
+import { ApplicationEvent } from '../../applications/models/applicationEvent.model'
 
 @Module({
   imports: [
+    SequelizeModule.forFeature([Value, Application, ApplicationEvent]),
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
     }),
