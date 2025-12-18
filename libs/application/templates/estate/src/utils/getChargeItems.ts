@@ -1,11 +1,19 @@
+import { getValueViaPath } from '@island.is/application/core'
 import { Application, BasicChargeItem } from '@island.is/application/types'
-import { CHARGE_ITEM_CODES } from '../lib/constants'
+import { CHARGE_ITEM_CODES, EstateTypes } from '../lib/constants'
 
 export const getChargeItems = (
-  _application: Application,
+  application: Application,
 ): Array<BasicChargeItem> => {
-  // Currently returns a single charge code for undivided estate
-  // The _application parameter is included for future flexibility
-  // (e.g., different estate types may have different fees)
+  const selectedEstate = getValueViaPath<string>(
+    application.answers,
+    'selectedEstate',
+  )
+
+  if (selectedEstate === EstateTypes.divisionOfEstateByHeirs) {
+    return [{ code: CHARGE_ITEM_CODES.DIVISION_OF_ESTATE_BY_HEIRS }]
+  }
+
+  // Default: undivided estate
   return [{ code: CHARGE_ITEM_CODES.UNDIVIDED_ESTATE }]
 }

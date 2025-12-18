@@ -72,6 +72,7 @@ export enum ApplicantRelation {
 // Charge item codes for estate payments
 export const CHARGE_ITEM_CODES = {
   UNDIVIDED_ESTATE: 'AY147', // Leyfi til setu í óskiptu búi
+  DIVISION_OF_ESTATE_BY_HEIRS: 'AY146', // Leyfi til einkaskipta á dánarbúi - skiptagjald
 }
 
 export const heirAgeValidation = 'heirAgeValidation'

@@ -24,7 +24,7 @@ export const getForm = ({
   allowEstateWithoutAssets = false,
   allowPermitToPostponeEstateDivision = false,
   allowDivisionOfEstateByHeirs = false,
-  allowUndividedEstatePayment = false,
+  allowEstatePayment = false,
 }): Form =>
   buildForm({
     id: 'PrerequisitesDraft',
@@ -47,7 +47,7 @@ export const getForm = ({
                 id: 'syslumennOnEntry',
                 provider: EstateOnEntryApi,
               }),
-              ...(allowUndividedEstatePayment
+              ...(allowEstatePayment
                 ? [
                     buildDataProviderItem({
                       provider: SyslumadurPaymentCatalogApi,

@@ -96,10 +96,8 @@ const EstateTemplate: ApplicationTemplate<
                     featureFlags[
                       EstateFeatureFlags.ALLOW_DIVISION_OF_ESTATE_BY_HEIRS
                     ],
-                  allowUndividedEstatePayment:
-                    featureFlags[
-                      EstateFeatureFlags.ALLOW_UNDIVIDED_ESTATE_PAYMENT
-                    ],
+                  allowEstatePayment:
+                    featureFlags[EstateFeatureFlags.ALLOW_ESTATE_PAYMENT],
                 })
               },
               actions: [{ event: 'SUBMIT', name: '', type: 'primary' }],
@@ -182,10 +180,19 @@ const EstateTemplate: ApplicationTemplate<
                 import('../forms/Forms').then((module) =>
                   Promise.resolve(module.privateDivisionForm),
                 ),
-              actions: [{ event: 'SUBMIT', name: '', type: 'primary' }],
+              actions: [
+                { event: 'SUBMIT', name: '', type: 'primary' },
+                { event: 'PAYMENT', name: '', type: 'primary' },
+              ],
               write: 'all',
               delete: true,
-              api: [NationalRegistryUserApi, UserProfileApi, EstateApi],
+              api: [
+                NationalRegistryUserApi,
+                UserProfileApi,
+                EstateApi,
+                SyslumadurPaymentCatalogApi,
+                MockableSyslumadurPaymentCatalogApi,
+              ],
             },
           ],
           actionCard: {

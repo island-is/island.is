@@ -27,14 +27,51 @@ export const overview = buildSection({
   id: 'overviewEstateDivision',
   title: m.overviewTitle,
   children: [
-    /* Einkaskipti */
+    /* Einkaskipti WITH payment enabled */
     buildMultiField({
-      id: 'overviewPrivateDivision',
+      id: 'overviewPrivateDivisionWithPayment',
       title: m.overviewTitle,
       description: m.overviewSubtitleDivisionOfEstateByHeirs,
-      condition: (answers) =>
+      condition: (answers, externalData) =>
         getValueViaPath(answers, 'selectedEstate') ===
-        EstateTypes.divisionOfEstateByHeirs,
+          EstateTypes.divisionOfEstateByHeirs && isPaymentEnabled(externalData),
+      children: [
+        ...commonOverviewFields,
+        ...overviewAssetsAndDebts,
+        ...overviewAttachments,
+        ...representativeOverview,
+        buildPaymentChargeOverviewField({
+          id: 'paymentChargeOverview',
+          forPaymentLabel: m.forPayment,
+          totalLabel: m.total,
+          getSelectedChargeItems: (application) =>
+            getChargeItems(application).map((item) => ({
+              chargeItemCode: item.code,
+            })),
+        }),
+        buildSubmitField({
+          id: 'estateDivisionSubmit.payment',
+          refetchApplicationAfterSubmit: true,
+          actions: [
+            {
+              event: DefaultEvents.PAYMENT,
+              name: m.proceedToPayment,
+              type: 'primary',
+            },
+          ],
+        }),
+      ],
+    }),
+
+    /* Einkaskipti WITHOUT payment (feature flag off) */
+    buildMultiField({
+      id: 'overviewPrivateDivisionNoPayment',
+      title: m.overviewTitle,
+      description: m.overviewSubtitleDivisionOfEstateByHeirs,
+      condition: (answers, externalData) =>
+        getValueViaPath(answers, 'selectedEstate') ===
+          EstateTypes.divisionOfEstateByHeirs &&
+        !isPaymentEnabled(externalData),
       children: [
         ...commonOverviewFields,
         ...overviewAssetsAndDebts,

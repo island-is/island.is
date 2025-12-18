@@ -5,7 +5,7 @@ export enum EstateFeatureFlags {
   ALLOW_ESTATE_WITHOUT_ASSETS = 'isEstateWithoutAssetsEnabled',
   ALLOW_PERMIT_TO_POSTPONE_ESTATE_DIVISION = 'isPermitToPostponeEstateDivisionEnabled',
   ALLOW_DIVISION_OF_ESTATE_BY_HEIRS = 'isDivisionOfEstateByHeirsEnabled',
-  ALLOW_UNDIVIDED_ESTATE_PAYMENT = 'isUndividedEstatePaymentEnabled',
+  ALLOW_ESTATE_PAYMENT = 'isEstatePaymentEnabled',
 }
 
 export const getApplicationFeatureFlags = async (
@@ -16,7 +16,7 @@ export const getApplicationFeatureFlags = async (
     EstateFeatureFlags.ALLOW_ESTATE_WITHOUT_ASSETS,
     EstateFeatureFlags.ALLOW_PERMIT_TO_POSTPONE_ESTATE_DIVISION,
     EstateFeatureFlags.ALLOW_DIVISION_OF_ESTATE_BY_HEIRS,
-    EstateFeatureFlags.ALLOW_UNDIVIDED_ESTATE_PAYMENT,
+    EstateFeatureFlags.ALLOW_ESTATE_PAYMENT,
   ]
 
   return (
