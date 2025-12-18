@@ -368,7 +368,7 @@ const Completed: FC = () => {
       )}
       {modalVisible === 'DELIVER_VERDICTS' && (
         <Modal
-          title="Viltu senda dóm aftur í birtingu?"
+          title="Viltu senda dóm í birtingu?"
           text="Hægt er að senda nýtt eintak af dómi í birtingu ef þörf krefur."
           primaryButton={{
             text: 'Já, senda',
