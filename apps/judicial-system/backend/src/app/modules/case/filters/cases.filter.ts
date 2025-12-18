@@ -142,6 +142,7 @@ const getDefenceUserCasesQueryFilter = (user: User): WhereOptions => {
                 CaseState.WAITING_FOR_CANCELLATION,
                 CaseState.RECEIVED,
                 CaseState.COMPLETED,
+                CaseState.CORRECTING,
               ],
             },
             {

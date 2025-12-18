@@ -129,6 +129,14 @@ const PatientDataNewPermit = lazy(() =>
   import('./screens/PatientDataPermits/NewPermit'),
 )
 
+const Appointments = lazy(() =>
+  import('./screens/Appointments/AppointmentsOverview'),
+)
+
+const AppointmentDetail = lazy(() =>
+  import('./screens/Appointments/AppointmentDetail'),
+)
+
 const MEDICINE_LANDLAEKNIR_FLAG = 'HealthMedicineLandlaeknir'
 
 const MEDICINE_DELEGATION_FLAG = 'HealthMedicineDelegation'
@@ -468,6 +476,24 @@ export const healthModule: PortalModule = {
         userInfo.scopes.includes(ApiScope.internal) ||
         userInfo.scopes.includes(ApiScope.health),
       element: <PatientDataNewPermit />,
+    },
+    {
+      name: hm.appointments,
+      path: HealthPaths.HealthAppointments,
+      key: 'HealthAppointments',
+      enabled:
+        userInfo.scopes.includes(ApiScope.internal) ||
+        userInfo.scopes.includes(ApiScope.health),
+      element: <Appointments />,
+    },
+    {
+      name: hm.appointmentDetail,
+      path: HealthPaths.HealthAppointmentDetail,
+      key: 'HealthAppointments',
+      enabled:
+        userInfo.scopes.includes(ApiScope.internal) ||
+        userInfo.scopes.includes(ApiScope.health),
+      element: <AppointmentDetail />,
     },
   ],
 }

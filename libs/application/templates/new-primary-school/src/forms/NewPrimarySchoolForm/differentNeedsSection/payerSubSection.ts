@@ -53,8 +53,6 @@ export const payerSubSection = buildSubSection({
           required: true,
           searchPersons: true,
           searchCompanies: true,
-          showEmailField: true,
-          emailRequired: true,
           condition: (answers) => hasOtherPayer(answers),
         }),
       ],

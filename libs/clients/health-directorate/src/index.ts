@@ -38,4 +38,9 @@ export {
   EuPatientConsentStatus,
   PrescriptionCommissionStatus,
   SubmitQuestionnaireDto,
+  CreateEuPatientConsentDto,
 } from './lib/clients'
+export {
+  DispensationHistoryItemDto,
+  AppointmentStatus,
+} from './lib/clients/health'

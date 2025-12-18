@@ -1,5 +1,8 @@
-import { DiseaseVaccinationDtoVaccinationStatusEnum } from '@island.is/clients/health-directorate'
-import { VaccinationStatusEnum } from '../models/enums'
+import {
+  AppointmentStatus,
+  DiseaseVaccinationDtoVaccinationStatusEnum,
+} from '@island.is/clients/health-directorate'
+import { AppointmentStatusEnum, VaccinationStatusEnum } from '../models/enums'
 
 export const mapVaccinationStatus = (
   status?: DiseaseVaccinationDtoVaccinationStatusEnum,
@@ -23,5 +26,34 @@ export const mapVaccinationStatus = (
       return VaccinationStatusEnum.unvaccinated
     default:
       return VaccinationStatusEnum.undetermined
+  }
+}
+
+export const mapAppointmentStatus = (
+  status: AppointmentStatusEnum,
+): AppointmentStatus | null => {
+  switch (status) {
+    case AppointmentStatusEnum.BOOKED:
+      return AppointmentStatus.BOOKED
+    case AppointmentStatusEnum.PENDING:
+      return AppointmentStatus.PENDING
+    case AppointmentStatusEnum.PROPOSED:
+      return AppointmentStatus.PROPOSED
+    case AppointmentStatusEnum.CANCELLED:
+      return AppointmentStatus.CANCELLED
+    case AppointmentStatusEnum.FULFILLED:
+      return AppointmentStatus.FULFILLED
+    case AppointmentStatusEnum.ARRIVED:
+      return AppointmentStatus.ARRIVED
+    case AppointmentStatusEnum.NOSHOW:
+      return AppointmentStatus.NOSHOW
+    case AppointmentStatusEnum.ENTERED_IN_ERROR:
+      return AppointmentStatus.ENTERED_IN_ERROR
+    case AppointmentStatusEnum.WAITLIST:
+      return AppointmentStatus.WAITLIST
+    case AppointmentStatusEnum.DELETED:
+      return AppointmentStatus.DELETED
+    default:
+      return null
   }
 }

@@ -6,16 +6,16 @@ import {
   getDefendantVerdictAppealDecisionLabel,
   getServiceRequirementText,
 } from '@island.is/judicial-system/formatters'
-import {
-  CaseFileCategory,
-  informationForDefendantMap,
-  ServiceRequirement,
-} from '@island.is/judicial-system/types'
+import { informationForDefendantMap } from '@island.is/judicial-system/types'
 import {
   BlueBox,
   FormContext,
 } from '@island.is/judicial-system-web/src/components'
-import { CaseIndictmentRulingDecision } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseFileCategory,
+  CaseIndictmentRulingDecision,
+  ServiceRequirement,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import { TUploadFile } from '@island.is/judicial-system-web/src/utils/hooks'
 
