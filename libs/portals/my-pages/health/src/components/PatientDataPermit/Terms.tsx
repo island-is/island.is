@@ -76,6 +76,7 @@ const Terms: React.FC<TermsProps> = ({ onClick, goBack, loading }) => {
             onClick={() => {
               onClick && onClick()
             }}
+            loading={loading}
           >
             {formatMessage(messages.forward)}
           </Button>

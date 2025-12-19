@@ -16,7 +16,7 @@ import {
 } from './access'
 import {
   buildAlternativeServiceExistsCondition,
-  buildEventLogExistsCondition,
+  buildEventLogOrderCondition,
   buildSubpoenaExistsCondition,
 } from './conditions'
 
@@ -117,7 +117,8 @@ export const districtCourtIndictmentsFinalizingWhereOptions = (user: User) => ({
         CaseIndictmentRulingDecision.FINE,
       ],
       [Op.and]: [
-        buildEventLogExistsCondition(
+        buildEventLogOrderCondition(
+          EventType.INDICTMENT_COMPLETED,
           EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
           false,
         ),
@@ -137,7 +138,8 @@ export const districtCourtIndictmentsCompletedWhereOptions = (user: User) => ({
           CaseIndictmentRulingDecision.FINE,
         ],
         [Op.and]: [
-          buildEventLogExistsCondition(
+          buildEventLogOrderCondition(
+            EventType.INDICTMENT_COMPLETED,
             EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
             false,
           ),

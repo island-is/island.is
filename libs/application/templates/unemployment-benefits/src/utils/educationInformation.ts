@@ -138,6 +138,7 @@ export const getCourseOfStudy = (
   application: Application,
   levelOfStudy: string,
   degreeAnswer: string,
+  locale: Locale,
 ) => {
   const education = getValueViaPath<GaldurDomainModelsEducationProgramDTO[]>(
     application.externalData,
@@ -154,7 +155,9 @@ export const getCourseOfStudy = (
   return (
     chosenDegreeSubjects?.map((subject) => ({
       value: subject.id ?? '',
-      label: subject.name ?? '',
+      label:
+        (locale === 'is' ? subject.name : subject.english ?? subject.name) ||
+        '',
     })) ?? []
   )
 }

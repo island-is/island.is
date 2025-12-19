@@ -493,11 +493,14 @@ export interface IBloodDonationRestrictionFields {
   /** Lykilorð */
   keywords?: string | undefined
 
-  /** Nánar um áhrif á blóðgjöf */
+  /** Undantekningar og athugasemdir */
   detailedText?: Document | undefined
 
   /** Flokkur */
   filterTags?: IGenericTag[] | undefined
+
+  /** Gildir frá */
+  effectiveDate?: string | undefined
 }
 
 export interface IBloodDonationRestriction
@@ -834,17 +837,26 @@ export interface ICourseInstanceFields {
   /** Internal Title */
   internalTitle?: string | undefined
 
+  /** Displayed Title */
+  displayedTitle?: string | undefined
+
+  /** Description */
+  description?: string | undefined
+
   /** Start Date */
   startDate: string
+
+  /** Start Date Time Duration */
+  startDateTimeDuration?: Record<string, any> | undefined
+
+  /** Location */
+  location?: string | undefined
 
   /** Price */
   price?: IPrice | undefined
 
   /** Max Registrations */
   maxRegistrations?: number | undefined
-
-  /** Description */
-  description?: string | undefined
 }
 
 export interface ICourseInstance extends Entry<ICourseInstanceFields> {
@@ -4391,7 +4403,19 @@ export interface ISliceConnectedComponentFields {
     | 'Starfsrettindi/ProfessionRights'
     | 'VMST/ParentalLeaveCalculator'
     | 'DigitalIceland/BenefitsOfDigitalProcesses'
+    | 'WHODAS/Calculator'
+    | 'Brennuleyfi/BurningPermitList'
+    | 'DigitalIcelandMailingListThumbnailCard'
+    | 'DigitalIcelandStatistics'
+    | 'Trufelog/Lifsskodunarfelog'
+    | 'Landspitali/MemorialCard'
+    | 'Landspitali/DirectGrants'
+    | 'Police/FineAndSpeedMeasurementCalculator'
     | 'Personuvernd/SearchInput'
+    | 'Syslumenn/DrivingInstructorList'
+    | 'FSRE/EmployeeList'
+    | 'NewKilometerFee'
+    | 'LatestVerdicts'
     | undefined
 
   /** Localized JSON */

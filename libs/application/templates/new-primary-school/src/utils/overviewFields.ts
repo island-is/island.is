@@ -1,5 +1,10 @@
 import { buildOverviewField, YES } from '@island.is/application/core'
-import { newPrimarySchoolMessages } from '../lib/messages'
+import {
+  childrenNGuardiansMessages,
+  differentNeedsMessages,
+  overviewMessages,
+  primarySchoolMessages,
+} from '../lib/messages'
 import {
   hasSpecialEducationSubType,
   shouldShowPage,
@@ -15,11 +20,11 @@ import {
   getApplicationExternalData,
 } from './newPrimarySchoolUtils'
 import {
+  attachmentItems,
   childItems,
   counsellingRegardingApplicationItems,
   currentNurseryItems,
   currentSchoolItems,
-  attachmentItems,
   guardiansItems,
   healthProtectionItems,
   languagesItems,
@@ -39,7 +44,7 @@ const buildGuardianOverviewFields = (editable?: boolean) =>
     return buildOverviewField({
       id: `overview.guardians.${index}`,
       title: {
-        ...newPrimarySchoolMessages.overview.guardians,
+        ...overviewMessages.guardians,
         values: { index: index + 1 },
       },
       backId: editable ? 'guardians' : undefined,
@@ -56,22 +61,20 @@ export const overviewFields = (editable?: boolean) => {
   return [
     buildOverviewField({
       id: 'overview.childInfo',
-      title: newPrimarySchoolMessages.overview.child,
+      title: overviewMessages.child,
       backId: editable ? 'childInfo' : undefined,
       loadItems: childItems,
     }),
     ...buildGuardianOverviewFields(editable),
     buildOverviewField({
       id: 'overview.relatives',
-      title:
-        newPrimarySchoolMessages.childrenNGuardians.relativesSubSectionTitle,
+      title: childrenNGuardiansMessages.relatives.subSectionTitle,
       backId: editable ? 'relatives' : undefined,
       loadTableData: relativesTable,
     }),
     buildOverviewField({
       id: 'overview.currentSchool',
-      title:
-        newPrimarySchoolMessages.primarySchool.currentSchoolSubSectionTitle,
+      title: primarySchoolMessages.currentSchool.subSectionTitle,
       backId: (_, externalData) => {
         const { primaryOrgId } = getApplicationExternalData(externalData)
 
@@ -91,8 +94,7 @@ export const overviewFields = (editable?: boolean) => {
     }),
     buildOverviewField({
       id: 'overview.currentNursery',
-      title:
-        newPrimarySchoolMessages.primarySchool.currentNurserySubSectionTitle,
+      title: primarySchoolMessages.currentNursery.subSectionTitle,
       backId: editable ? 'currentNursery' : undefined,
       loadItems: currentNurseryItems,
       condition: (answers) => {
@@ -103,7 +105,7 @@ export const overviewFields = (editable?: boolean) => {
     }),
     buildOverviewField({
       id: 'overview.school',
-      title: newPrimarySchoolMessages.overview.schoolTitle,
+      title: overviewMessages.schoolTitle,
       backId: (answers) => {
         const { applyForPreferredSchool } = getApplicationAnswers(answers)
 
@@ -141,7 +143,7 @@ export const overviewFields = (editable?: boolean) => {
     }),
     buildOverviewField({
       id: 'overview.siblings',
-      title: newPrimarySchoolMessages.primarySchool.siblingsTitle,
+      title: primarySchoolMessages.siblings.title,
       backId: editable ? 'siblings' : undefined,
       tableData: siblingsTable,
       condition: (answers) => {
@@ -179,7 +181,7 @@ export const overviewFields = (editable?: boolean) => {
     }),
     buildOverviewField({
       id: 'overview.payer',
-      title: newPrimarySchoolMessages.differentNeeds.payerSubSectionTitle,
+      title: differentNeedsMessages.payer.subSectionTitle,
       backId: editable ? 'payer' : undefined,
       items: payerItems,
       condition: (answers, externalData) =>
@@ -191,7 +193,7 @@ export const overviewFields = (editable?: boolean) => {
     }),
     buildOverviewField({
       id: 'overview.attachments',
-      title: newPrimarySchoolMessages.differentNeeds.attachmentsSubSectionTitle,
+      title: differentNeedsMessages.attachments.subSectionTitle,
       attachments: attachmentItems,
       hideIfEmpty: true,
     }),

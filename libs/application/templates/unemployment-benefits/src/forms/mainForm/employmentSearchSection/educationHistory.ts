@@ -76,7 +76,7 @@ export const educationHistorySubSection = buildSubSection({
           id: 'educationHistory.currentStudies.courseOfStudy',
           title: educationMessages.labels.courseOfStudyLabel,
           required: true,
-          options: (application) => {
+          options: (application, _, locale) => {
             const levelOfStudy =
               getValueViaPath<string>(
                 application.answers,
@@ -89,7 +89,12 @@ export const educationHistorySubSection = buildSubSection({
                 'educationHistory.currentStudies.degree',
                 '',
               ) ?? ''
-            return getCourseOfStudy(application, levelOfStudy, degreeAnswer)
+            return getCourseOfStudy(
+              application,
+              levelOfStudy,
+              degreeAnswer,
+              locale,
+            )
           },
           condition: isCurrentlyStudying,
         }),
@@ -169,7 +174,7 @@ export const educationHistorySubSection = buildSubSection({
           id: 'educationHistory.lastSemester.courseOfStudy',
           title: educationMessages.labels.courseOfStudyLabel,
           required: true,
-          options: (application) => {
+          options: (application, _, locale) => {
             const levelOfStudy =
               getValueViaPath<string>(
                 application.answers,
@@ -182,7 +187,12 @@ export const educationHistorySubSection = buildSubSection({
                 'educationHistory.lastSemester.degree',
                 '',
               ) ?? ''
-            return getCourseOfStudy(application, levelOfStudy, degreeAnswer)
+            return getCourseOfStudy(
+              application,
+              levelOfStudy,
+              degreeAnswer,
+              locale,
+            )
           },
           condition: lastSemesterGeneralCondition,
         }),
@@ -290,7 +300,7 @@ export const educationHistorySubSection = buildSubSection({
           id: 'educationHistory.finishedEducation.courseOfStudy',
           title: educationMessages.labels.courseOfStudyLabel,
           required: true,
-          options: (application) => {
+          options: (application, _, locale) => {
             const levelOfStudy =
               getValueViaPath<string>(
                 application.answers,
@@ -303,7 +313,12 @@ export const educationHistorySubSection = buildSubSection({
                 'educationHistory.finishedEducation.degree',
                 '',
               ) ?? ''
-            return getCourseOfStudy(application, levelOfStudy, degreeAnswer)
+            return getCourseOfStudy(
+              application,
+              levelOfStudy,
+              degreeAnswer,
+              locale,
+            )
           },
           condition: showFinishedEducationField,
         }),

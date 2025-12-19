@@ -1,5 +1,5 @@
 import cn from 'classnames'
-import React, { FC, forwardRef, useLayoutEffect, useRef, useState } from 'react'
+import React, { FC, forwardRef, useRef, useState } from 'react'
 import { VisuallyHidden } from '@ariakit/react'
 import { resolveResponsiveProp } from '../../utils/responsiveProp'
 import { Box } from '../Box/Box'
@@ -64,7 +64,6 @@ export const Input = forwardRef(
       step,
       size = 'md',
       fixedFocusState,
-      autoExpand,
       loading,
       buttons,
       oneDigit,
@@ -90,29 +89,6 @@ export const Input = forwardRef(
     const containerBackground = Array.isArray(backgroundColor)
       ? backgroundColor.map(mapBlue)
       : mapBlue(backgroundColor as InputBackgroundColor)
-
-    useLayoutEffect(() => {
-      const input = inputRef.current
-
-      if (autoExpand?.on && input) {
-        const handler = () => {
-          input.style.height = 'auto'
-          // The +1 here prevents a scrollbar from appearing in the textarea
-          input.style.height = `${input.scrollHeight + 1}px`
-          input.style.maxHeight = autoExpand.maxHeight
-            ? `${autoExpand.maxHeight}px`
-            : `${window.innerHeight - 50}px`
-        }
-
-        handler()
-
-        input.addEventListener('input', handler, false)
-
-        return function cleanup() {
-          input.removeEventListener('input', handler)
-        }
-      }
-    }, [autoExpand?.maxHeight, autoExpand?.on, inputRef])
 
     return (
       <div>
