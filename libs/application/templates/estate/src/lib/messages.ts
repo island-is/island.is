@@ -1044,6 +1044,18 @@ export const m = defineMessages({
     description: '',
   },
 
+  // Payment
+  forPayment: {
+    id: 'es.application:forPayment',
+    defaultMessage: 'Til greiðslu',
+    description: 'Label for payment amount',
+  },
+  proceedToPayment: {
+    id: 'es.application:proceedToPayment',
+    defaultMessage: 'Halda áfram í greiðslu',
+    description: 'Button label to proceed to payment',
+  },
+
   // Done
   doneTitle: {
     id: 'es.application:doneTitle',
