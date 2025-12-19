@@ -89,5 +89,5 @@ export interface Institution {
   nationalId: string
   slug: string
   contentfulId: string
-  applicationTypes: string[]
+  applicationTypesIds: string[]
 }

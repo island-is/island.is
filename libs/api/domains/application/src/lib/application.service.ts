@@ -158,12 +158,11 @@ export class ApplicationService {
   }
 
   async getApplicationInstitutions(
-    user: User,
-    input: ApplicationInstitutionsAdminInput,
+    user: User
   ) {
     return this.applicationApiWithAuth(
       user,
-    ).adminControllerGetInstitutionsSuperAdminRaw(input)
+    ).adminControllerGetInstitutionsSuperAdminRaw({})
   }
 
   async update(input: UpdateApplicationInput, auth: Auth, locale: Locale) {

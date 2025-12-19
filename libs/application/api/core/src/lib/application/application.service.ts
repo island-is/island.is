@@ -15,7 +15,7 @@ import {
   ApplicationsStatistics,
 } from './application.model'
 import {
-  getInstitutionsWithApplicationTypes,
+  getInstitutionsWithApplicationTypesIds,
   getTypeIdsForInstitution,
 } from '@island.is/application/utils'
 
@@ -311,22 +311,22 @@ export class ApplicationService {
   }
 
   async getAllInstitutionsSuperAdmin(): Promise<Institution[]> {
-    const allInstitutions = getInstitutionsWithApplicationTypes()
+    const allInstitutions = getInstitutionsWithApplicationTypesIds()
 
     if (!allInstitutions) return []
 
-    const allTypesIds = Array.from(
+    const allTypeIds = Array.from(
       new Set(
-        allInstitutions.flatMap((institution) => institution.applicationTypes),
+        allInstitutions.flatMap((institution) => institution.applicationTypesIds),
       ),
     )
 
-    if (!allTypesIds.length) return []
+    if (!allTypeIds.length) return []
 
-    const existingTypes = await this.applicationModel.findAll({
+    const existingTypeIds = await this.applicationModel.findAll({
       where: {
         typeId: {
-          [Op.in]: allTypesIds,
+          [Op.in]: allTypeIds,
         },
       },
       attributes: ['typeId'],
@@ -334,12 +334,12 @@ export class ApplicationService {
       raw: true,
     })
 
-    const existingTypeSet = new Set<string>(
-      existingTypes.map((row: Application) => row.typeId),
+    const existingTypeIdSet = new Set<string>(
+      existingTypeIds.map((row: Application) => row.typeId),
     )
 
     return allInstitutions.filter((inst) =>
-      inst.applicationTypes.some((t) => existingTypeSet.has(t)),
+      inst.applicationTypesIds.some((t) => existingTypeIdSet.has(t)),
     )
   }
 

@@ -102,9 +102,7 @@ export class ApplicationAdminResolver {
   @Scopes(AdminPortalScope.applicationSystemAdmin)
   async applicationApplicationsAdminInstitutions(
     @CurrentUser() user: User,
-    @Args('input')
-    input: ApplicationInstitutionsAdminInput,
   ) {
-    return this.applicationService.getApplicationInstitutions(user, input)
+    return this.applicationService.getApplicationInstitutions(user)
   }
 }
