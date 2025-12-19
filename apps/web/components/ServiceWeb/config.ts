@@ -87,6 +87,10 @@ export const zendeskConfig: Record<
       snippetUrl:
         'https://static.zdassets.com/ekr/snippet.js?key=34869229-7aad-4b2f-90b2-f2984fdd14dc',
     },
+    [Organization.DISTRICT_COMMISSIONER]: {
+      snippetUrl:
+        'https://static.zdassets.com/ekr/snippet.js?key=dc0c86b4-a02a-45e9-85d5-0aa570708ad9',
+    },
   },
   en: {
     [Organization.TRANSPORT_AUTHORITY]: {
@@ -101,6 +105,10 @@ export const zendeskConfig: Record<
       snippetUrl:
         'https://static.zdassets.com/ekr/snippet.js?key=34869229-7aad-4b2f-90b2-f2984fdd14dc',
     },
+    [Organization.DISTRICT_COMMISSIONER]: {
+      snippetUrl:
+        'https://static.zdassets.com/ekr/snippet.js?key=dc0c86b4-a02a-45e9-85d5-0aa570708ad9',
+    },
   },
 }
 
@@ -111,14 +119,6 @@ export const watsonConfig: Record<
   is: {
     [Organization.DIGITAL_ICELAND]: {
       integrationID: 'b1a80e76-da12-4333-8872-936b08246eaa',
-      region: 'eu-gb',
-      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
-      showLauncher: false,
-      carbonTheme: 'g10',
-      namespaceKey: 'default',
-    },
-    [Organization.DISTRICT_COMMISSIONER]: {
-      integrationID: '0c96e8fb-d4dc-420e-97db-18b0f8bb4e3f',
       region: 'eu-gb',
       serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
       showLauncher: false,

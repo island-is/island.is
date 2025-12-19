@@ -59,6 +59,11 @@ export const zendeskConfig: Record<
       snippetUrl:
         'https://static.zdassets.com/ekr/snippet.js?key=34869229-7aad-4b2f-90b2-f2984fdd14dc',
     },
+    // Sýslumenn - Organization
+    kENblMMMvZ3DlyXw1dwxQ: {
+      snippetUrl:
+        'https://static.zdassets.com/ekr/snippet.js?key=dc0c86b4-a02a-45e9-85d5-0aa570708ad9',
+    },
   },
   en: {
     // Samgöngustofa - Organization
@@ -75,6 +80,11 @@ export const zendeskConfig: Record<
     '77rXck3sISbMsUv7BO1PG2': {
       snippetUrl:
         'https://static.zdassets.com/ekr/snippet.js?key=34869229-7aad-4b2f-90b2-f2984fdd14dc',
+    },
+    // Sýslumenn - Organization
+    kENblMMMvZ3DlyXw1dwxQ: {
+      snippetUrl:
+        'https://static.zdassets.com/ekr/snippet.js?key=dc0c86b4-a02a-45e9-85d5-0aa570708ad9',
     },
   },
 }
@@ -862,17 +872,6 @@ export const watsonConfig: Record<
       },
     },
 
-    // Sýslumenn - Organization
-    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/kENblMMMvZ3DlyXw1dwxQ
-    kENblMMMvZ3DlyXw1dwxQ: {
-      integrationID: '0c96e8fb-d4dc-420e-97db-18b0f8bb4e3f',
-      region: 'eu-gb',
-      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
-      showLauncher: false,
-      carbonTheme: 'g10',
-      namespaceKey: 'default',
-    },
-
     // Sýslumaðurinn á Austurlandi
     // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/Xnes7x1ccvBvuZxInRXDm
     Xnes7x1ccvBvuZxInRXDm: {
@@ -1063,10 +1062,6 @@ export const excludedOrganizationWatsonConfig: string[] = [
   // HMS
   // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/53jrbgxPKpbNtordSfEZUK
   '53jrbgxPKpbNtordSfEZUK',
-
-  // Sýslumenn - Organization
-  // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/kENblMMMvZ3DlyXw1dwxQ
-  'kENblMMMvZ3DlyXw1dwxQ',
 
   // Sýslumaðurinn á Austurlandi
   // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/Xnes7x1ccvBvuZxInRXDm
