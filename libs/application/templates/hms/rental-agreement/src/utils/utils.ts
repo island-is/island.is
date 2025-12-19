@@ -125,7 +125,7 @@ export const applicantTableFields: Record<string, RepeaterItem> = {
     component: 'phone',
     required: true,
     label: m.misc.phoneNumber,
-    enableCountrySelector: false,
+    enableCountrySelector: true,
     width: 'half',
   },
   email: {
@@ -153,7 +153,7 @@ export const landLordInfoTableFields: Record<string, RepeaterItem> = {
     component: 'phone',
     required: true,
     label: m.misc.phoneNumber,
-    enableCountrySelector: false,
+    enableCountrySelector: true,
     width: 'half',
   },
   email: {
