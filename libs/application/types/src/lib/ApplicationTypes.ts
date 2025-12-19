@@ -499,6 +499,6 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.HH_COURSES]: {
     slug: 'hh-namskeid',
-    translation: ['hh.courses.application', 'uiForms.application'], // TODO: Create a hh.courses.application translation namespace
+    translation: ['hh.courses.application', 'uiForms.application'],
   },
 }
