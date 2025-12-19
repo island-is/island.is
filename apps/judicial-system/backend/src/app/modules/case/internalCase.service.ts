@@ -651,8 +651,7 @@ export class InternalCaseService {
         filterMap((defendant) => {
           // Only the latest verdict is relevant
           const latestVerdict = defendant.verdicts?.sort(
-            (a, b) =>
-              new Date(b.created).getTime() - new Date(a.created).getTime(),
+            (a, b) => b.created.getTime() - a.created.getTime(),
           )[0]
 
           if (latestVerdict?.serviceDate) {
