@@ -1,8 +1,8 @@
-# Seminars application for The Administration of Occupational Safety and Health
+# Course registrations for Heilsugæsla höfuðborgarsvæðisins
 
 ### Description
 
-The seminars application allows users to register both individuals and groups of individuals to specific seminars. Each application is based on an ID for the seminar which is sent in via link from the Administration of Occupational Safety and Health webpage
+The course registration application allows users to register both individuals and groups of individuals to specific courses.
 
 ### URLs
 
@@ -12,29 +12,31 @@ The seminars application allows users to register both individuals and groups of
 
 ### Clients, template-api-modules and Domain
 
-- [Client]('https://github.com/island-is/island.is/tree/main/libs/clients/seminars-ver/src/lib/seminars.service.ts')
-- [Template-api-module]('https://github.com/island-is/island.is/blob/main/libs/application/template-api-modules/src/lib/modules/templates/aosh/serminars/seminars.service.ts')
-- [Domain]('https://github.com/island-is/island.is/blob/main/libs/api/domains/seminars-ver/src/lib/seminars.service.ts')
+- [Template-api-module](https://github.com/island-is/island.is/blob/946aae49282209400527a0d648ebd623a8570006/libs/application/template-api-modules/src/lib/modules/templates/hh/courses)
 
 ### States
 
 #### Prerequisite
 
-Data fetching from National Registry, User profile and The Administration of Occupational Safety and Health
+Data fetching from National Registry, User profile and course information is fetched from the CMS.
 
 #### Draft
 
-In the draft state, the user inputs all names of individuals who want to attend the seminar. If there are any prerequisites for the seminar, then some individuals might be denied access. This is done via the domain layer for each registered individuals where we check if the individual is eligable for the seminar.
+In the draft state, the user inputs all names of individuals who want to attend the course.
+
+#### Payment
+
+If a course has a price then the payment step asks the user to pay for the course, and if that succeeds then we move on to the next step.
 
 #### Completed
 
-User receives confirmation that the list of individuals have been registered for the seminar.
+User receives confirmation that the list of individuals have been registered for the course and information about the course registration gets sent to Zendesk.
 
 ### Localisation
 
 All localisation can be found on Contentful.
 
-- [HH courses translation](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/aosh.sr.application)
+- [HH courses translation](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/hh.courses.application)
 - [Application system translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/application.system)
 
 ### Test users
@@ -45,5 +47,3 @@ All localisation can be found on Contentful.
 
 - [Stefna](https://github.com/orgs/island-is/teams/Stefna)
   - [Rúnar Vestmann](https://github.com/runarvestmann)
-
-# TODO: Go over this README and
