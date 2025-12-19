@@ -135,6 +135,57 @@ export const listOfLastMonths = (numberOfMonths: number) => {
   return months
 }
 
+// Maximum number of months to fetch to prevent excessive API requests
+const MAX_MONTHS_TO_FETCH = 120
+
+/**
+ * Generates a list of months from a start date to the next month (inclusive)
+ * in the format required by Hagstofan PX API (YYYYMmm)
+ *
+ * @param fromYear - Start year (e.g., 2023)
+ * @param fromMonth - Start month (1-12)
+ * @returns Array of month strings in format "YYYYMmm" (e.g., ["2023M01", "2023M02", ...])
+ */
+export const listMonthsFromDate = (
+  fromYear: number,
+  fromMonth: number,
+): string[] => {
+  const months: string[] = []
+  const now = new Date()
+
+  // End at next month
+  let endYear = now.getFullYear()
+  let endMonth = now.getMonth() + 2 // JS months are 0-based, so +1 for current, +1 for next
+
+  if (endMonth > 12) {
+    endMonth = 1
+    endYear += 1
+  }
+
+  let currentYear = fromYear
+  let currentMonth = fromMonth
+
+  while (
+    currentYear < endYear ||
+    (currentYear === endYear && currentMonth <= endMonth)
+  ) {
+    if (months.length >= MAX_MONTHS_TO_FETCH) {
+      break
+    }
+
+    const mm = currentMonth < 10 ? `0${currentMonth}` : `${currentMonth}`
+    months.push(`${currentYear}M${mm}`)
+
+    currentMonth++
+    if (currentMonth > 12) {
+      currentMonth = 1
+      currentYear++
+    }
+  }
+
+  return months
+}
+
 const parsePXMonth = (monthStr: string): Date => {
   // Expects format: "YYYYMmm" (e.g. "2025M06")
   const match = /^(\d{4})M(\d{2})$/.exec(monthStr)
