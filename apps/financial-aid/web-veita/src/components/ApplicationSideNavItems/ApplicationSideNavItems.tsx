@@ -1,7 +1,6 @@
 import React from 'react'
-import { Text, Box } from '@island.is/island-ui/core'
+import { Text, Box, LinkV2 } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
-import LinkV2 from 'next/link'
 
 import * as styles from './ApplicationSideNavItems.css'
 import cn from 'classnames'

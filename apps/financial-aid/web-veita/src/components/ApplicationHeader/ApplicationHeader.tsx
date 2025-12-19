@@ -6,7 +6,7 @@ import {
   getState,
   Routes,
 } from '@island.is/financial-aid/shared/lib'
-import { Box, Button, Icon, Text } from '@island.is/island-ui/core'
+import { Box, Button, Icon, Text, LinkV2 } from '@island.is/island-ui/core'
 import React from 'react'
 
 import * as styles from './ApplicationHeader.css'
@@ -19,7 +19,6 @@ import {
   GenerateName,
 } from '@island.is/financial-aid-web/veita/src/components'
 import { useApplicationState } from '@island.is/financial-aid-web/veita/src/utils/useApplicationState'
-import LinkV2 from 'next/link'
 
 interface ApplicantProps {
   application: Application
