@@ -54,7 +54,8 @@ export const isValidMeterStatus = (value: string) => {
 }
 
 export const isValidPhoneNumber = (phoneNumber: string) => {
-  const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
+  // Try to parse without default country to support international numbers
+  const phone = parsePhoneNumberFromString(phoneNumber)
   if (isRunningOnEnvironment('local') || isRunningOnEnvironment('dev')) {
     return !!phone
   } else {
@@ -63,19 +64,26 @@ export const isValidPhoneNumber = (phoneNumber: string) => {
 }
 
 export const isValidMobileNumber = (phoneNumber: string) => {
-  const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
+  // Try to parse without default country to support international numbers
+  const phone = parsePhoneNumberFromString(phoneNumber)
   if (isRunningOnEnvironment('local') || isRunningOnEnvironment('dev')) {
-    return !!phone && /^[06-8]/.test(String(phone?.nationalNumber))
+    return !!phone
   } else {
-    return (
-      phone && phone.isValid() && /^[6-8]/.test(String(phone?.nationalNumber))
-    )
+    // For Icelandic mobile numbers, check if they start with 6-8
+    // For international numbers, accept any valid mobile type
+    if (phone?.country === 'IS') {
+      return (
+        phone && phone.isValid() && /^[6-8]/.test(String(phone?.nationalNumber))
+      )
+    }
+    return phone && phone.isValid()
   }
 }
 
 export const formatPhoneNumber = (phoneNumber: string): string => {
-  const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
-  return phone?.formatNational() || phoneNumber
+  // Try to parse without default country to support international numbers
+  const phone = parsePhoneNumberFromString(phoneNumber)
+  return phone?.formatInternational() || phoneNumber
 }
 
 export const formatBankInfo = (bankInfo: BankAccount) => {
