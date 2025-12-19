@@ -879,7 +879,10 @@ const Conclusion: FC = () => {
               state: CaseState.RECEIVED,
               type: CaseType.INDICTMENT,
             }}
-            onCreateCourtCase={() => createCourtCase(splitCaseId)}
+            onCreateCourtCase={async () => {
+              const courtCaseNumber = await createCourtCase(splitCaseId)
+              return courtCaseNumber ?? ''
+            }}
             onChange={(courtCaseNumber) => {
               setSplitCaseCourtCaseNumber(courtCaseNumber)
             }}
