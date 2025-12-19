@@ -175,8 +175,8 @@ describe('AuditTrailService generic', () => {
         user: userId,
         action,
         entities: undefined,
-        error: 'Rejected',
         details,
+        error: 'Rejected',
       }),
     )
   })
@@ -198,8 +198,8 @@ describe('AuditTrailService generic', () => {
         user: userId,
         action,
         entities: id,
-        error: 'Rejected',
         details,
+        error: 'Rejected',
       }),
     )
   })
