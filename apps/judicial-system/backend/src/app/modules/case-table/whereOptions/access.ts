@@ -29,10 +29,7 @@ export const courtOfAppealsRequestCasesAccessWhereOptions = {
   state: completedRequestCaseStates,
   [Op.or]: [
     {
-      appeal_state: [
-        CaseAppealState.RECEIVED,
-        ...completedIndictmentCaseStates,
-      ],
+      appeal_state: [CaseAppealState.RECEIVED, CaseAppealState.COMPLETED],
     },
     {
       [Op.and]: [
