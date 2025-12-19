@@ -325,22 +325,11 @@ export class ApplicationsService {
             model: Value,
             as: 'files',
             where: { fieldType: FieldTypesEnum.FILE },
-            include: [
-              {
-                model: ApplicationEvent,
-                as: 'events',
-              },
-            ],
           },
         ],
         order: [
           [{ model: ApplicationEvent, as: 'events' }, 'created', 'ASC'],
-          [
-            { model: Value, as: 'files' },
-            { model: ApplicationEvent, as: 'events' },
-            'created',
-            'ASC',
-          ],
+          [{ model: Value, as: 'files' }, 'created', 'ASC'],
         ],
       })
 
@@ -477,7 +466,10 @@ export class ApplicationsService {
         pruned: false,
         isTest: false,
       },
-      include: [{ model: Value, as: 'values' }],
+      include: [
+        { model: Value, as: 'values' },
+        { model: ApplicationEvent, as: 'events' },
+      ],
     })
 
     const loginTypes = await this.getLoginTypes(user)
@@ -502,8 +494,6 @@ export class ApplicationsService {
       if (app.status === ApplicationStatus.COMPLETED) {
         app.tagLabel = locale === 'is' ? 'Innsend' : 'Completed'
         app.tagVariant = 'mint'
-        app.completedMessage =
-          locale === 'is' ? 'Umsókn móttekin' : 'Application received'
       }
 
       const organizationInfo = getOrganizationInfoByNationalId(
