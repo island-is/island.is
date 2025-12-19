@@ -73,10 +73,6 @@ export const selectedIndicatorInner = style({
   transform: 'translate(-50%, -50%)',
 })
 
-export const container = style({
-  width: '100%',
-})
-
 export const progressContainer = style({
   position: 'relative',
 })

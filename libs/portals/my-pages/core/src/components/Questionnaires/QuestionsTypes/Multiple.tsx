@@ -12,7 +12,6 @@ export interface MultipleOption {
 
 export interface MultipleProps {
   id: string
-  label?: string
   options: MultipleOption[]
   value?: string[]
   onChange: (value: string[]) => void
@@ -25,7 +24,6 @@ export interface MultipleProps {
 
 export const Multiple: React.FC<MultipleProps> = ({
   id,
-  label,
   options,
   value = [],
   onChange,
@@ -75,15 +73,14 @@ export const Multiple: React.FC<MultipleProps> = ({
 
   return (
     <Box>
-      {label && (
+      {maxSelections && (
         <Box marginBottom={2}>
-          <Text variant="h5">
-            {label}
-            {required && <span style={{ color: 'red' }}> *</span>}
+          <Text variant="small" color="dark300">
+            ({formatMessage(m.maxSelections, { count: maxSelections })})
           </Text>
-          {maxSelections && (
-            <Text variant="small" color="dark300">
-              ({formatMessage(m.maxSelections, { count: maxSelections })})
+          {required && (
+            <Text variant="small" color="red400">
+              {'* ' + formatMessage(m.requiredQuestion)}
             </Text>
           )}
         </Box>

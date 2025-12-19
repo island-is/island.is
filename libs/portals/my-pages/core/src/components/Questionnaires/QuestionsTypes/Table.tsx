@@ -20,7 +20,6 @@ import { m } from '../../../lib/messages'
 
 interface TableProps {
   id: string
-  label: string
   columns: QuestionnaireTableColumn[]
   value?: QuestionAnswer
   onChange: (answer: QuestionAnswer) => void
@@ -36,7 +35,6 @@ interface TableRowData {
 
 export const Table: React.FC<TableProps> = ({
   id,
-  label,
   columns,
   value,
   onChange,
@@ -173,7 +171,6 @@ export const Table: React.FC<TableProps> = ({
             disabled={disabled || rows.length >= maxRows}
             multiline={column.multiline ?? false}
             maxLength={column.maxLength?.toString()}
-            inputLabel
           />
         )
 
@@ -187,7 +184,6 @@ export const Table: React.FC<TableProps> = ({
             disabled={disabled || rows.length >= maxRows}
             type="number"
             backgroundColor="white"
-            inputLabel
           />
         )
 
@@ -220,7 +216,6 @@ export const Table: React.FC<TableProps> = ({
             onChange={(value) => handleCurrentRowChange(column.id, value)}
             disabled={disabled || rows.length >= maxRows}
             backgroundColor="white"
-            inputLabel
           />
         )
     }
@@ -243,10 +238,6 @@ export const Table: React.FC<TableProps> = ({
 
   return (
     <Box>
-      <Text variant="h5" marginBottom={3}>
-        {HtmlParser(label)}
-      </Text>
-
       {error && (
         <Text
           variant="small"

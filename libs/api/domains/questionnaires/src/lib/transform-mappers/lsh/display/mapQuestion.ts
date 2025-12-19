@@ -17,7 +17,7 @@ export const mapQuestion = (q: QuestionType): Question => {
   // Build the answer configuration used by the questionnaire UI
   const answerOption: AnswerOption = {
     type: answerType,
-    placeholder: (q.instructions as string)?.trim() || undefined,
+    placeholder: undefined,
     options: q.options?.map((opt) => ({
       // Use value + label to get a stable, unique id for each option
       id: ((opt.value ?? '') + (opt.label ?? '')) as string,
@@ -53,7 +53,10 @@ export const mapQuestion = (q: QuestionType): Question => {
   return {
     id: (q.entryID as string) || 'undefined-id',
     label: (q.question as string) || '',
-    sublabel: (q.description as string)?.trim() || undefined,
+    sublabel:
+      [(q.description as string)?.trim(), (q.instructions as string)?.trim()]
+        .filter(Boolean)
+        .join('<br/> ') || undefined,
     answerOptions: answerOption,
     visibilityConditions,
     // Only include dependsOn when there are actual dependencies

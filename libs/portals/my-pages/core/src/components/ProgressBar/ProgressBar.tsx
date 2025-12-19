@@ -128,7 +128,7 @@ export const ProgressBar: FC<Props> = ({
   }
 
   return (
-    <Box className={styles.container}>
+    <Box width={vertical ? undefined : 'full'}>
       {label && (
         <Text variant="h5" marginBottom={2} id={labelId}>
           {HtmlParser(label)}

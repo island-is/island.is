@@ -90,7 +90,6 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
         return (
           <TextInput
             id={question.id}
-            label={question.label}
             placeholder={question.answerOptions.placeholder ?? undefined}
             value={answer?.answers?.[0]?.value ?? undefined}
             onChange={(value: string) => handleValueChange(value)}
@@ -105,7 +104,6 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
         return (
           <TextInput
             id={question.id}
-            label={question.label}
             placeholder={question.answerOptions.placeholder ?? undefined}
             value={answer?.answers?.[0]?.value ?? undefined}
             onChange={(value: string) => handleValueChange(value)}
@@ -123,7 +121,6 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
         return (
           <TextInput
             id={question.id}
-            label={question.label}
             placeholder={question.answerOptions.placeholder || ''}
             value={firstValue ?? ''}
             onChange={(value: string) => handleValueChange(value)}
@@ -142,7 +139,6 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
         return (
           <Radio
             id={question.id}
-            label={question.label}
             options={options.map((option) => ({
               value: option.value || '',
               label: option.label || '',
@@ -165,7 +161,6 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
         return (
           <Multiple
             id={question.id}
-            label={question.label}
             options={options.map((option) => ({
               value: option.value || '',
               label: option.label || '',
@@ -185,7 +180,6 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
         return (
           <Scale
             id={question.id}
-            label={question.label}
             min={answerOptions.min ?? '0'}
             max={answerOptions.max ?? '10'}
             value={answer?.answers?.[0]?.value ?? undefined}
@@ -204,7 +198,6 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
         return (
           <Thermometer
             id={question.id}
-            label={question.label}
             min={answerOptions.min || '0'}
             max={answerOptions.max || '10'}
             value={answer?.answers?.[0]?.value ?? null}
@@ -242,7 +235,6 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
             <ProgressBar
               id={question.id}
               progress={progress}
-              label={question.label}
               options={options?.map((option) => ({
                 label: option.label || '',
                 value: option.value || '',
@@ -259,9 +251,6 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
         const dateValue = answer?.answers?.[0]?.value
         return (
           <Box width={isMobile ? 'full' : 'half'}>
-            <Text variant="h5" marginBottom={2}>
-              {question.label}
-            </Text>
             <DatePicker
               label=""
               locale="is"
@@ -302,7 +291,6 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
         return (
           <Table
             id={question.id}
-            label={question.label}
             columns={columns}
             value={answer}
             onChange={onAnswerChange}
@@ -343,12 +331,23 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
 
   return (
     <Box marginBottom={4}>
-      {renderQuestionByType()}
+      <Text variant="h5" marginBottom={question.sublabel ? 1 : 3}>
+        {HtmlParser(question.label)}
+        {question.answerOptions.type === 'number' &&
+          question.answerOptions.min &&
+          question.answerOptions.max &&
+          ' ' +
+            question.answerOptions.min +
+            ' - ' +
+            question.answerOptions.max +
+            ' '}
+      </Text>
       {question.sublabel && (
-        <Text variant="small" color="dark300" marginY={2}>
+        <Text variant="medium" color="dark400" marginBottom={3}>
           {HtmlParser(question.sublabel)}
         </Text>
       )}
+      {renderQuestionByType()}
     </Box>
   )
 }

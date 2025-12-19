@@ -407,13 +407,13 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
                     ))}
                   </Stack>
                 ) : (
-                  <Stack space={6}>
+                  <Stack space={4}>
                     {processedSections.map((section, sectionIndex) => (
                       <Box key={`section-${sectionIndex}`}>
                         {section.title && (
                           <Box marginBottom={3}>
                             <Text
-                              variant="h4"
+                              variant="h3"
                               as="h2"
                               aria-describedby={
                                 section.description

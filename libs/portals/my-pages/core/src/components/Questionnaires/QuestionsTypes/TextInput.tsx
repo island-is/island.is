@@ -4,7 +4,7 @@ import { useIsMobile } from '../../..'
 
 export interface TextInputProps {
   id: string
-  label: string
+  label?: string
   placeholder?: string
   value?: string
   onChange: (value: string) => void
@@ -19,7 +19,6 @@ export interface TextInputProps {
   max?: string
   step?: number
   backgroundColor?: 'white' | 'blue'
-  inputLabel?: boolean
 }
 
 export const TextInput: React.FC<TextInputProps> = ({
@@ -38,7 +37,6 @@ export const TextInput: React.FC<TextInputProps> = ({
   min,
   max,
   backgroundColor = 'blue',
-  inputLabel = false,
   step: _step,
 }) => {
   const isMobile = useIsMobile()
@@ -70,50 +68,42 @@ export const TextInput: React.FC<TextInputProps> = ({
     onChange(newValue)
   }
   return (
-    <>
-      {!inputLabel && (
-        <Text variant="h5" marginBottom={2}>
-          {label}
-          {type === 'number' && min && max && ' ' + min + ' - ' + max + ' '}
-        </Text>
-      )}
-      <Box
-        width={
-          isMobile
-            ? 'full'
-            : type === 'number' || type === 'decimal'
-            ? 'half'
-            : 'full'
+    <Box
+      width={
+        isMobile
+          ? 'full'
+          : type === 'number' || type === 'decimal'
+          ? 'half'
+          : 'full'
+      }
+    >
+      <Input
+        label={label}
+        size="xs"
+        backgroundColor={backgroundColor}
+        id={id}
+        name={id}
+        placeholder={placeholder}
+        value={value}
+        onChange={handleChange}
+        hasError={!!error}
+        errorMessage={error}
+        disabled={disabled}
+        required={required}
+        maxLength={maxLength ? +maxLength : undefined}
+        min={min}
+        max={max}
+        textarea={multiline}
+        rows={multiline ? rows : undefined}
+        type={type === 'decimal' ? 'number' : type}
+        inputMode={
+          type === 'decimal'
+            ? 'decimal'
+            : type === 'number'
+            ? 'numeric'
+            : 'text'
         }
-      >
-        <Input
-          label={inputLabel ? label : undefined}
-          size="xs"
-          backgroundColor={backgroundColor}
-          id={id}
-          name={id}
-          placeholder={placeholder}
-          value={value}
-          onChange={handleChange}
-          hasError={!!error}
-          errorMessage={error}
-          disabled={disabled}
-          required={required}
-          maxLength={maxLength ? +maxLength : undefined}
-          min={min}
-          max={max}
-          textarea={multiline}
-          rows={multiline ? rows : undefined}
-          type={type === 'decimal' ? 'number' : type}
-          inputMode={
-            type === 'decimal'
-              ? 'decimal'
-              : type === 'number'
-              ? 'numeric'
-              : 'text'
-          }
-        />
-      </Box>
-    </>
+      />
+    </Box>
   )
 }
