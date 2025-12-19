@@ -11,13 +11,11 @@ import pick from 'lodash/pick'
 import zipObject from 'lodash/zipObject'
 
 import { User } from '@island.is/auth-nest-tools'
-import { UrlTypes } from '@island.is/form-system/enums'
 import {
   FormStatus,
   SectionTypes,
   UpdateFormError,
   UpdateFormResponse,
-  UrlMethods,
   UpdateFormStatusDto,
 } from '@island.is/form-system/shared'
 import { randomUUID } from 'crypto'

@@ -33,7 +33,6 @@ export const FormFragment = gql`
     derivedFrom
     allowProceedOnValidationFail
     hasSummaryScreen
-    isZendeskEnabled
     completedSectionInfo {
       ...CompletedSectionInfo
     }
