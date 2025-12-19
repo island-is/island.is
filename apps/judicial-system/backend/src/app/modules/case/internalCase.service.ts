@@ -624,14 +624,6 @@ export class InternalCaseService {
                 serviceDate: {
                   [Op.lte]: minDate,
                 },
-                // Only use the latest verdict per defendant
-                [Op.and]: Sequelize.literal(`
-                  "verdicts"."created" = (
-                    SELECT MAX("v2"."created")
-                    FROM "Verdicts" AS "v2"
-                    WHERE "v2"."defendant_id" = "defendants"."id"
-                  )
-                `),
               },
             },
           ],
@@ -658,11 +650,13 @@ export class InternalCaseService {
         theCase.defendants ?? [],
         filterMap((defendant) => {
           // Only the latest verdict is relevant
-          const verdict = defendant.verdicts?.[0]
+          const latestVerdict = defendant.verdicts?.sort(
+            (a, b) => b.created.getTime() - a.created.getTime(),
+          )[0]
 
-          if (verdict?.serviceDate) {
+          if (latestVerdict?.serviceDate) {
             const { isDeadlineExpired } = getIndictmentAppealDeadline({
-              baseDate: verdict?.serviceDate,
+              baseDate: latestVerdict?.serviceDate,
               isFine: false,
             })
 
