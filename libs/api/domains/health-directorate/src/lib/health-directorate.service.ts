@@ -7,8 +7,6 @@ import {
   PrescriptionRenewalRequestDto,
   VaccinationDto,
   organLocale,
-  HealthDirectorateHealthService,
-  HealthDirectorateOrganDonationService,
 } from '@island.is/clients/health-directorate'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import type { Locale } from '@island.is/shared/types'

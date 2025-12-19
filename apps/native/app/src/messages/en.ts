@@ -744,6 +744,7 @@ export const en: TranslatedMessages = {
   'health.overview.paymentDebt': 'Debt',
   'health.overview.therapy': 'Therapy',
   'health.overview.vaccinations': 'Vaccinations',
+  'health.overview.questionnaires': 'Questionnaires',
   'health.overview.aidsAndNutrition': 'Aids and nutrition',
   'health.overview.medicinePurchase': 'Medicine purchase',
   'health.overview.period': 'Period',
@@ -757,6 +758,25 @@ export const en: TranslatedMessages = {
   'health.overview.noBloodTypeRegistered': 'No blood type registered',
   'health.overview.dentist': 'Dentist',
   'health.overview.noDentistRegistered': 'No dentist registered',
+
+  // health - questionnaires
+  'health.questionnaires.screenTitle': 'Questionnaires',
+  'health.questionnaires.title': 'Questionnaires',
+  'health.questionnaires.description':
+    'Here you can view questionnaires that have been sent to you.',
+  'health.questionnaires.status.answered': 'Answered',
+  'health.questionnaires.status.unanswered': 'Unanswered',
+  'health.questionnaires.action.answer': 'Answer questionnaire',
+  'health.questionnaires.action.view-answer': 'View answers',
+  'health.questionnaires.action.hide': 'Hide questionnaire',
+  'health.questionnaires.detail.description':
+    'Here you can find your answers to questionnaires. You can compare your answers.',
+  'health.questionnaires.detail.status': 'Status',
+  'health.questionnaires.detail.treatment': 'Treatment',
+  'health.questionnaires.detail.institution': 'Institution',
+  'health.questionnaires.detail.sentBy': 'Sent by',
+  'health.questionnaires.detail.validTo': 'Valid to',
+  'health.questionnaires.detail.notFound': 'Questionnaire not found',
 
   // health - vaccinations
   'health.vaccinations.screenTitle': 'Vaccinations',
