@@ -9,7 +9,8 @@ import {
   FormModes,
   UserProfileApi,
   ApplicationConfigurations,
-  institutionMapper,
+  CurrentVehiclesApi,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import { Events, Roles, States } from '../utils/constants'
 import { CodeOwners } from '@island.is/shared/constants'
@@ -19,6 +20,7 @@ import {
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
 import { application as applicationMessages } from '../lib/messages/application'
+import { ApiActions } from '../shared'
 
 const mileCarTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -52,11 +54,12 @@ const mileCarTemplate: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
-              api: [UserProfileApi],
+              api: [UserProfileApi, CurrentVehiclesApi],
               delete: true,
             },
           ],
         },
+
         on: {
           [DefaultEvents.SUBMIT]: {
             target: States.DRAFT,
@@ -69,6 +72,9 @@ const mileCarTemplate: ApplicationTemplate<
           progress: 0.4,
           status: FormModes.DRAFT,
           lifecycle: DefaultStateLifeCycle,
+          onExit: defineTemplateApi({
+            action: ApiActions.submitApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -85,6 +91,7 @@ const mileCarTemplate: ApplicationTemplate<
             },
           ],
         },
+
         on: {
           [DefaultEvents.SUBMIT]: {
             target: States.COMPLETED,

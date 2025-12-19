@@ -1,12 +1,31 @@
-import { buildForm } from '@island.is/application/core'
+import {
+  buildForm,
+  buildSection,
+  buildTextField,
+} from '@island.is/application/core'
 import { FormModes } from '@island.is/application/types'
-import { firstSection } from '../mainForm/firstSection'
-import { secondSection } from '../mainForm/secondSection'
-import { overviewSection } from './overview'
+import {
+  confirmation as confirmationMessages,
+  externalData as externalDataMessages,
+} from '../../lib/messages'
+import { InformationSection } from './InformationSection'
 
 export const MainForm = buildForm({
   id: 'MainForm',
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
-  children: [firstSection, secondSection, overviewSection],
+  renderLastScreenBackButton: true,
+  children: [
+    buildSection({
+      id: 'externalData',
+      title: externalDataMessages.dataProvider.sectionTitle,
+      children: [],
+    }),
+    InformationSection,
+    buildSection({
+      id: 'confirmation',
+      title: confirmationMessages.sectionTitle,
+      children: [],
+    }),
+  ],
 })

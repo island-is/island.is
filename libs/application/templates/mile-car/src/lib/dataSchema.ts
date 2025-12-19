@@ -8,4 +8,4 @@ export const dataSchema = z.object({
   dummy: dummySchema,
 })
 
-export type ApplicationAnswers = z.TypeOf<typeof dataSchema>
+export type MileCar = z.TypeOf<typeof dataSchema>

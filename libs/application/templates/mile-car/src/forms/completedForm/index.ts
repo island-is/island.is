@@ -1,5 +1,6 @@
 import { buildForm } from '@island.is/application/core'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
+import { confirmation as confirmationMessages } from '../../lib/messages'
 import { FormModes } from '@island.is/application/types'
 
 export const completedForm = buildForm({
@@ -7,8 +8,9 @@ export const completedForm = buildForm({
   mode: FormModes.COMPLETED,
   children: [
     buildFormConclusionSection({
-      alertTitle: 'Congratulations',
-      alertMessage: 'You have completed this boilerplate application',
+      alertTitle: confirmationMessages.alertTitle,
+      expandableHeader: confirmationMessages.accordionTitle,
+      expandableDescription: confirmationMessages.accordionText,
     }),
   ],
 })
