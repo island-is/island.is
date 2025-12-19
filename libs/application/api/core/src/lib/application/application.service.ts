@@ -3,17 +3,21 @@ import { InjectModel } from '@nestjs/sequelize'
 import { Op, QueryTypes, WhereOptions } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 import {
+  ApplicationLifecycle,
+  ApplicationStatus,
   ExternalData,
   FormValue,
-  ApplicationStatus,
-  ApplicationLifecycle,
+  Institution,
 } from '@island.is/application/types'
 import {
   Application,
   ApplicationPaginatedResponse,
   ApplicationsStatistics,
 } from './application.model'
-import { getTypeIdsForInstitution } from '@island.is/application/utils'
+import {
+  getInstitutionsWithApplicationTypes,
+  getTypeIdsForInstitution,
+} from '@island.is/application/utils'
 
 const applicationIsNotSetToBePruned = () => ({
   [Op.or]: [
@@ -304,6 +308,39 @@ export class ApplicationService {
       },
       order: [['modified', 'DESC']],
     })
+  }
+
+  async getAllInstitutionsSuperAdmin(): Promise<Institution[]> {
+    const allInstitutions = getInstitutionsWithApplicationTypes()
+
+    if (!allInstitutions) return []
+
+    const allTypesIds = Array.from(
+      new Set(
+        allInstitutions.flatMap((institution) => institution.applicationTypes),
+      ),
+    )
+
+    if (!allTypesIds.length) return []
+
+    const existingTypes = await this.applicationModel.findAll({
+      where: {
+        typeId: {
+          [Op.in]: allTypesIds,
+        },
+      },
+      attributes: ['typeId'],
+      group: ['typeId'],
+      raw: true,
+    })
+
+    const existingTypeSet = new Set<string>(
+      existingTypes.map((row: Application) => row.typeId),
+    )
+
+    return allInstitutions.filter((inst) =>
+      inst.applicationTypes.some((t) => existingTypeSet.has(t)),
+    )
   }
 
   async findAllDueToBePruned(): Promise<Application[]> {

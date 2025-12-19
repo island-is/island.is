@@ -10,13 +10,15 @@ import {
   YES,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import { newPrimarySchoolMessages } from '../../../lib/messages'
+import { differentNeedsMessages, sharedMessages } from '../../../lib/messages'
 import {
   hasSpecialEducationSubType,
   isWelfareContactSelected,
+  shouldShowPage,
   showCaseManagerFields,
 } from '../../../utils/conditionUtils'
 import {
+  ApplicationFeatureKey,
   ApplicationType,
   CaseWorkerInputTypeEnum,
   OrganizationSubType,
@@ -33,19 +35,20 @@ import {
 
 export const supportSubSection = buildSubSection({
   id: 'supportSubSection',
-  title: newPrimarySchoolMessages.differentNeeds.supportSubSectionTitle,
+  title: differentNeedsMessages.support.subSectionTitle,
   condition: (answers, externalData) =>
+    shouldShowPage(answers, externalData, ApplicationFeatureKey.SOCIAL_INFO) &&
     !hasSpecialEducationSubType(answers, externalData),
   children: [
     buildMultiField({
       id: 'support',
-      title: newPrimarySchoolMessages.differentNeeds.supportSubSectionTitle,
+      title: differentNeedsMessages.support.subSectionTitle,
       description: (application) => {
         const { applicationType } = getApplicationAnswers(application.answers)
 
         return applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
-          ? newPrimarySchoolMessages.differentNeeds.enrollmentSupportDescription
-          : newPrimarySchoolMessages.differentNeeds.supportDescription
+          ? differentNeedsMessages.support.enrollmentDescription
+          : differentNeedsMessages.support.description
       },
       children: [
         buildRadioField({
@@ -57,19 +60,19 @@ export const supportSubSection = buildSubSection({
 
             return applicationType ===
               ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
-              ? newPrimarySchoolMessages.differentNeeds.enrollmentHasDiagnoses
-              : newPrimarySchoolMessages.differentNeeds.hasDiagnoses
+              ? differentNeedsMessages.support.enrollmentHasDiagnoses
+              : differentNeedsMessages.support.hasDiagnoses
           },
           width: 'half',
           required: true,
           options: [
             {
-              label: newPrimarySchoolMessages.shared.yes,
+              label: sharedMessages.yes,
               dataTestId: 'has-diagnoses',
               value: YES,
             },
             {
-              label: newPrimarySchoolMessages.shared.no,
+              label: sharedMessages.no,
               dataTestId: 'no-has-diagnoses',
               value: NO,
             },
@@ -91,20 +94,20 @@ export const supportSubSection = buildSubSection({
 
             return applicationType ===
               ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
-              ? newPrimarySchoolMessages.differentNeeds.enrollmentHasHadSupport
-              : newPrimarySchoolMessages.differentNeeds.hasHadSupport
+              ? differentNeedsMessages.support.enrollmentHasHadSupport
+              : differentNeedsMessages.support.hasHadSupport
           },
           width: 'half',
           required: true,
           space: 4,
           options: [
             {
-              label: newPrimarySchoolMessages.shared.yes,
+              label: sharedMessages.yes,
               dataTestId: 'has-had-support',
               value: YES,
             },
             {
-              label: newPrimarySchoolMessages.shared.no,
+              label: sharedMessages.no,
               dataTestId: 'no-has-had-support',
               value: NO,
             },
@@ -119,19 +122,19 @@ export const supportSubSection = buildSubSection({
         }),
         buildRadioField({
           id: 'support.hasWelfareContact',
-          title: newPrimarySchoolMessages.differentNeeds.hasWelfareContact,
+          title: differentNeedsMessages.support.hasWelfareContact,
           description: getWelfareContactDescription,
           width: 'half',
           required: true,
           space: 4,
           options: [
             {
-              label: newPrimarySchoolMessages.shared.yes,
+              label: sharedMessages.yes,
               dataTestId: 'has-welfare-contact',
               value: YES,
             },
             {
-              label: newPrimarySchoolMessages.shared.no,
+              label: sharedMessages.no,
               dataTestId: 'no-has-welfare-contact',
               value: NO,
             },
@@ -150,7 +153,7 @@ export const supportSubSection = buildSubSection({
         }),
         buildTextField({
           id: 'support.welfareContact.name',
-          title: newPrimarySchoolMessages.differentNeeds.welfareContactName,
+          title: differentNeedsMessages.support.welfareContactName,
           width: 'half',
           required: true,
           condition: isWelfareContactSelected,
@@ -162,7 +165,7 @@ export const supportSubSection = buildSubSection({
         }),
         buildTextField({
           id: 'support.welfareContact.email',
-          title: newPrimarySchoolMessages.differentNeeds.welfareContactEmail,
+          title: differentNeedsMessages.support.welfareContactEmail,
           width: 'half',
           required: true,
           condition: isWelfareContactSelected,
@@ -174,20 +177,19 @@ export const supportSubSection = buildSubSection({
         }),
         buildRadioField({
           id: 'support.hasCaseManager',
-          title: newPrimarySchoolMessages.differentNeeds.hasCaseManager,
-          description:
-            newPrimarySchoolMessages.differentNeeds.hasCaseManagerDescription,
+          title: differentNeedsMessages.support.hasCaseManager,
+          description: differentNeedsMessages.support.hasCaseManagerDescription,
           width: 'half',
           required: true,
           space: 4,
           options: [
             {
-              label: newPrimarySchoolMessages.shared.yes,
+              label: sharedMessages.yes,
               dataTestId: 'has-case-manager',
               value: YES,
             },
             {
-              label: newPrimarySchoolMessages.shared.no,
+              label: sharedMessages.no,
               dataTestId: 'no-has-case-manager',
               value: NO,
             },
@@ -201,7 +203,7 @@ export const supportSubSection = buildSubSection({
         }),
         buildTextField({
           id: 'support.caseManager.name',
-          title: newPrimarySchoolMessages.differentNeeds.caseManagerName,
+          title: differentNeedsMessages.support.caseManagerName,
           width: 'half',
           required: true,
           condition: showCaseManagerFields,
@@ -213,7 +215,7 @@ export const supportSubSection = buildSubSection({
         }),
         buildTextField({
           id: 'support.caseManager.email',
-          title: newPrimarySchoolMessages.differentNeeds.caseManagerEmail,
+          title: differentNeedsMessages.support.caseManagerEmail,
           width: 'half',
           required: true,
           condition: showCaseManagerFields,
@@ -225,21 +227,20 @@ export const supportSubSection = buildSubSection({
         }),
         buildRadioField({
           id: 'support.hasIntegratedServices',
-          title: newPrimarySchoolMessages.differentNeeds.hasIntegratedServices,
+          title: differentNeedsMessages.support.hasIntegratedServices,
           description:
-            newPrimarySchoolMessages.differentNeeds
-              .hasIntegratedServicesDescription,
+            differentNeedsMessages.support.hasIntegratedServicesDescription,
           width: 'half',
           required: true,
           space: 4,
           options: [
             {
-              label: newPrimarySchoolMessages.shared.yes,
+              label: sharedMessages.yes,
               dataTestId: 'has-integrated-services',
               value: YES,
             },
             {
-              label: newPrimarySchoolMessages.shared.no,
+              label: sharedMessages.no,
               dataTestId: 'no-has-integrated-services',
               value: NO,
             },
@@ -265,8 +266,8 @@ export const supportSubSection = buildSubSection({
                 application.answers,
                 application.externalData,
               ) === OrganizationSubType.INTERNATIONAL_SCHOOL
-              ? newPrimarySchoolMessages.shared.alertTitle.description
-              : newPrimarySchoolMessages.shared.alertTitle
+              ? sharedMessages.alertTitle.description
+              : sharedMessages.alertTitle
           },
           message: (application) => {
             const { applicationType } = getApplicationAnswers(
@@ -278,9 +279,8 @@ export const supportSubSection = buildSubSection({
                 application.answers,
                 application.externalData,
               ) === OrganizationSubType.INTERNATIONAL_SCHOOL
-              ? newPrimarySchoolMessages.differentNeeds
-                  .internationalSchoolSupportAlertMessage
-              : newPrimarySchoolMessages.differentNeeds.supportAlertMessage
+              ? differentNeedsMessages.support.internationalSchoolAlertMessage
+              : differentNeedsMessages.support.alertMessage
           },
           doesNotRequireAnswer: true,
           alertType: 'warning',
@@ -288,14 +288,12 @@ export const supportSubSection = buildSubSection({
         }),
         buildCheckboxField({
           id: 'support.requestingMeeting',
-          description:
-            newPrimarySchoolMessages.differentNeeds.requestingMeeting,
+          description: differentNeedsMessages.support.requestingMeeting,
           options: [
             {
               value: YES,
               label:
-                newPrimarySchoolMessages.differentNeeds
-                  .requestingMeetingDescription,
+                differentNeedsMessages.support.requestingMeetingDescription,
             },
           ],
         }),

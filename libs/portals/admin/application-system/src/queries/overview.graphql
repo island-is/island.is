@@ -134,3 +134,12 @@ query getApplicationStatistics($input: ApplicationsAdminStatisticsInput!) {
     name
   }
 }
+
+query getApplicationInstitutions($input: ApplicationInstitutionsAdminInput!) {
+  applicationApplicationsAdminInstitutions(input: $input) {
+    nationalId
+    slug
+    contentfulId
+    applicationTypes
+  }
+}

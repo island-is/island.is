@@ -1,4 +1,4 @@
-import { Box, Button, toast } from '@island.is/island-ui/core'
+import { ActionCard, Box, Button, toast } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   HEALTH_DIRECTORATE_SLUG,
@@ -7,6 +7,7 @@ import {
 } from '@island.is/portals/my-pages/core'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { ConfirmModal } from '../../components/PatientDataPermit/ConfirmModal'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import { DelegationState } from '../../utils/types'
@@ -17,15 +18,17 @@ import { usePostMedicineDelegationMutation } from './MedicineDelegation.generate
 const NewMedicineDelegation = () => {
   const { formatMessage } = useLocale()
   const [step, setStep] = useState<number>(1)
+  const [openModal, setOpenModal] = useState<boolean>(false)
   const [formState, setFormState] = useState<DelegationState>()
   const navigate = useNavigate()
 
   const [postMedicineDelegation, { loading }] =
     usePostMedicineDelegationMutation({
       refetchQueries: ['GetMedicineDelegations'],
+      awaitRefetchQueries: true,
     })
 
-  const submit = () => {
+  const handleSubmit = () => {
     if (formState?.nationalId && formState?.dateFrom && formState?.dateTo) {
       postMedicineDelegation({
         variables: {
@@ -46,11 +49,17 @@ const NewMedicineDelegation = () => {
               replace: true,
             })
           } else {
-            toast.error(formatMessage(messages.permitCreatedError))
+            toast.error(
+              formatMessage(messages.permitCreatedError, {
+                arg:
+                  response.data?.healthDirectorateMedicineDelegationCreate
+                    .message || '',
+              }),
+            )
           }
         })
         .catch(() => {
-          toast.error(formatMessage(messages.permitCreatedError))
+          toast.error(formatMessage(messages.permitCreatedError, { arg: '' }))
         })
     }
   }
@@ -58,7 +67,7 @@ const NewMedicineDelegation = () => {
   return (
     <IntroWrapper
       title={formatMessage(messages.medicineDelegation)}
-      intro={formatMessage(messages.medicineDelegationIntroText)}
+      intro={formatMessage(messages.newMedicineDelegationIntroText)}
       serviceProviderSlug={HEALTH_DIRECTORATE_SLUG}
       serviceProviderTooltip={formatMessage(
         messages.landlaeknirMedicineDelegationTooltip,
@@ -96,16 +105,41 @@ const NewMedicineDelegation = () => {
             type="submit"
             loading={loading}
             disabled={
-              step === 1
-                ? !formState?.nationalId
-                : !formState?.dateFrom || !formState?.dateTo
+              (step === 1
+                ? formState?.nationalId?.length !== 10 ||
+                  formState?.name === undefined
+                : !formState?.dateFrom || !formState?.dateTo) || loading
             }
-            onClick={step === 1 ? () => setStep(2) : () => submit()}
+            onClick={step === 1 ? () => setStep(2) : () => setOpenModal(true)}
           >
             {formatMessage(m.forward)}
           </Button>
         </Box>
       </Box>
+      {openModal && (
+        <ConfirmModal
+          title={formatMessage(messages.newPermit)}
+          description={formatMessage(messages.addNewPermitTitle)}
+          onSubmit={handleSubmit}
+          open={openModal}
+          onClose={() => setOpenModal(false)}
+          loading={loading}
+          content={
+            <ActionCard
+              date={formatMessage(messages.validToFrom, {
+                fromDate: formState?.dateFrom?.toLocaleDateString(),
+                toDate: formState?.dateTo?.toLocaleDateString(),
+              })}
+              heading={formState?.name}
+              text={
+                formState?.lookup
+                  ? formatMessage(messages.pickupMedicineAndLookup)
+                  : formatMessage(messages.pickupMedicine)
+              }
+            />
+          }
+        />
+      )}
     </IntroWrapper>
   )
 }

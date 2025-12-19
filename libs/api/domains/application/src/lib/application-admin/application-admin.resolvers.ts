@@ -14,12 +14,14 @@ import {
   ApplicationsSuperAdminFilters,
   ApplicationsAdminStatisticsInput,
   ApplicationTypesInstitutionAdminInput,
+  ApplicationInstitutionsAdminInput,
 } from './dto/applications-admin-inputs'
 import {
   ApplicationAdmin,
   ApplicationAdminPaginatedResponse,
   ApplicationStatistics,
   ApplicationTypeAdminInstitution,
+  ApplicationInstitution,
 } from '../application.model'
 import { ApplicationService } from '../application.service'
 
@@ -94,5 +96,15 @@ export class ApplicationAdminResolver {
       locale,
       input,
     )
+  }
+
+  @Query(() => [ApplicationInstitution], { nullable: true })
+  @Scopes(AdminPortalScope.applicationSystemAdmin)
+  async applicationApplicationsAdminInstitutions(
+    @CurrentUser() user: User,
+    @Args('input')
+    input: ApplicationInstitutionsAdminInput,
+  ) {
+    return this.applicationService.getApplicationInstitutions(user, input)
   }
 }

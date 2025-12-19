@@ -127,3 +127,25 @@ export class ApplicationTypeAdmin {
   @IsString()
   name?: string
 }
+
+export class ApplicationInstitution {
+  @ApiProperty()
+  @Expose()
+  @IsString()
+  nationalId!: string
+
+  @ApiProperty()
+  @Expose()
+  @IsString()
+  slug!: string
+
+  @ApiProperty()
+  @Expose()
+  @IsString()
+  contentfulId!: string
+
+  @ApiProperty()
+  @Expose()
+  @IsArray()
+  applicationTypes!: string[]
+}

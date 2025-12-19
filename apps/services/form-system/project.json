@@ -63,6 +63,13 @@
         "lintFilePatterns": ["apps/services/form-system/**/*.ts"]
       }
     },
+    "worker": {
+      "executor": "@nx/js:node",
+      "options": {
+        "buildTarget": "services-form-system-api:build",
+        "args": ["--job", "worker"]
+      }
+    },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],

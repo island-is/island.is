@@ -27,6 +27,9 @@ export class BloodDonationRestrictionListItem {
 
   @Field(() => String)
   keywordsText!: string
+
+  @Field(() => String, { nullable: true })
+  effectiveDate?: string
 }
 
 @ObjectType()
@@ -59,6 +62,7 @@ export const mapBloodDonationRestrictionListItem = ({
       ? documentToPlainTextString(fields.detailedText).trim().length > 0
       : false,
     keywordsText: (fields.keywords ?? '').trim(),
+    effectiveDate: fields.effectiveDate,
   }
 }
 
@@ -87,6 +91,9 @@ export class BloodDonationRestrictionDetails {
 
   @Field(() => String)
   keywordsText!: string
+
+  @Field(() => String, { nullable: true })
+  effectiveDate?: string
 }
 
 export const mapBloodDonationRestrictionDetails = ({
@@ -110,6 +117,7 @@ export const mapBloodDonationRestrictionDetails = ({
       ? mapDocument(fields.detailedText, sys.id + ':detailedText')
       : [],
     keywordsText: (fields.keywords ?? '').trim(),
+    effectiveDate: fields.effectiveDate,
   }
 }
 

@@ -31,8 +31,15 @@ export const getEstateDataFromApplication = (
 ): { inheritanceReportInfo?: InheritanceReportInfo } => {
   const selectedEstate = application.answers.estateInfoSelection
 
+  // For prepaid inheritance applications, syslumennOnEntry doesn't exist
+  if (!application.externalData.syslumennOnEntry?.data) {
+    return {
+      inheritanceReportInfo: undefined,
+    }
+  }
+
   const estateData = (
-    application.externalData.syslumennOnEntry?.data as {
+    application.externalData.syslumennOnEntry.data as {
       inheritanceReportInfos?: Array<InheritanceReportInfo>
     }
   ).inheritanceReportInfos?.find(

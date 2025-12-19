@@ -13,7 +13,6 @@ import {
 } from '@island.is/clients/charge-fjs-v2'
 import { XRoadConfig } from '@island.is/nest/config'
 import { ClientsPaymentsModule } from '@island.is/clients/payments'
-import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 
 @Module({
   imports: [
@@ -21,7 +20,6 @@ import { FeatureFlagModule } from '@island.is/nest/feature-flags'
     ApplicationApiCoreModule,
     LoggingModule,
     ChargeFjsV2ClientModule,
-    FeatureFlagModule,
     ClientsPaymentsModule,
     ConfigModule.forRoot({
       isGlobal: true,
