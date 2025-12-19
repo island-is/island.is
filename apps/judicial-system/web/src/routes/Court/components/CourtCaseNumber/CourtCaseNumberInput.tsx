@@ -109,7 +109,10 @@ const CourtCaseNumberInput: FC<Props> = (props) => {
             if (onCreateCourtCase) {
               const courtCaseNumber = await onCreateCourtCase()
 
-              setValue(courtCaseNumber)
+              if (courtCaseNumber !== '') {
+                setCreateCourtCaseSuccess(true)
+                setValue(courtCaseNumber)
+              }
             } else {
               handleCreateCourtCase(workingCase.id)
             }
