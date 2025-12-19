@@ -38,7 +38,6 @@ export const payerSection = buildSection({
           required: true,
           searchCompanies: true,
           searchPersons: false,
-          // TODO: Do we need to ask for phone and email of someone in the company?
           condition: (answers) =>
             getValueViaPath<YesOrNoEnum>(
               answers,
