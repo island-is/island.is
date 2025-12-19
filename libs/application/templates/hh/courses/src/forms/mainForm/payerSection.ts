@@ -42,7 +42,7 @@ export const payerSection = buildSection({
             getValueViaPath<YesOrNoEnum>(
               answers,
               'userIsPayingAsIndividual',
-              YesOrNoEnum.NO,
+              YesOrNoEnum.YES,
             ) === YesOrNoEnum.NO,
         }),
         buildCustomField({

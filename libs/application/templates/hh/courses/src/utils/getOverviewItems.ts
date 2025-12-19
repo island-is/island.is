@@ -69,7 +69,7 @@ export const getPayerOverviewItems = (
 ): Array<KeyValueItem> => {
   const userIsPayingAsIndividual = getValueViaPath<YesOrNoEnum>(
     answers,
-    'companyPayment.userIsPayingAsIndividual',
+    'userIsPayingAsIndividual',
     YesOrNoEnum.YES,
   )
 
