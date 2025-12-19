@@ -742,6 +742,7 @@ export const is = {
   'health.overview.paymentDebt': 'Skuld',
   'health.overview.therapy': 'Þjálfun',
   'health.overview.vaccinations': 'Bólusetningar',
+  'health.overview.questionnaires': 'Spurningalistar',
   'health.overview.aidsAndNutrition': 'Hjálpartæki og næring',
   'health.overview.medicinePurchase': 'Lyfjakaup',
   'health.overview.period': 'Tímabil',
@@ -756,6 +757,25 @@ export const is = {
   'health.overview.noBloodTypeRegistered': 'Ekki verið flokkaður',
   'health.overview.dentist': 'Tannlæknir',
   'health.overview.noDentistRegistered': 'Enginn tannlæknir skráður',
+
+  // health - questionnaires
+  'health.questionnaires.screenTitle': 'Spurningalistar',
+  'health.questionnaires.title': 'Spurningalistar',
+  'health.questionnaires.description':
+    'Hér getur þú skoðað spurningalista sem hafa verið sendir til þín.',
+  'health.questionnaires.status.answered': 'Svarað',
+  'health.questionnaires.status.unanswered': 'Ósvarað',
+  'health.questionnaires.action.answer': 'Svara lista',
+  'health.questionnaires.action.view-answer': 'Skoða svör',
+  'health.questionnaires.action.hide': 'Fela lista',
+  'health.questionnaires.detail.description':
+    'Hér má finna svör þín við spurningalistunum. Þú getur borið saman svörin.',
+  'health.questionnaires.detail.status': 'Staða',
+  'health.questionnaires.detail.treatment': 'Meðferð',
+  'health.questionnaires.detail.institution': 'Stofnun',
+  'health.questionnaires.detail.sentBy': 'Sent af',
+  'health.questionnaires.detail.validTo': 'Gildir til',
+  'health.questionnaires.detail.notFound': 'Spurningalisti fannst ekki',
 
   // health - vaccinations
   'health.vaccinations.screenTitle': 'Bólusetningar',
