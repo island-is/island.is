@@ -59,6 +59,7 @@ export const publicProsecutionOfficeIndictmentsReviewedWhereOptions = () => ({
                     SELECT MAX(v2.created)
                     FROM verdict v2
                     WHERE v2.defendant_id = defendant.id
+                )
             )`),
             where(
               literal(`"ruling_date"::date + INTERVAL '29 days'`),
@@ -80,6 +81,7 @@ export const publicProsecutionOfficeIndictmentsReviewedWhereOptions = () => ({
                 AND (
                   verdict.service_date IS NULL
                   OR verdict.service_date + INTERVAL '29 days' > NOW()
+                )
                 AND verdict.created = (
                     SELECT MAX(v2.created)
                     FROM verdict v2
@@ -116,6 +118,7 @@ export const publicProsecutionOfficeIndictmentsAppealPeriodExpiredWhereOptions =
                         SELECT MAX(v2.created)
                         FROM verdict v2
                         WHERE v2.defendant_id = defendant.id
+                    )
                 )`),
                 where(
                   literal(`"ruling_date"::date + INTERVAL '29 days'`),
@@ -143,6 +146,7 @@ export const publicProsecutionOfficeIndictmentsAppealPeriodExpiredWhereOptions =
                         SELECT MAX(v2.created)
                         FROM verdict v2
                         WHERE v2.defendant_id = defendant.id
+                    )
                 )`),
               ],
             },
@@ -159,6 +163,7 @@ export const publicProsecutionOfficeIndictmentsAppealPeriodExpiredWhereOptions =
                       SELECT MAX(v2.created)
                       FROM verdict v2
                       WHERE v2.defendant_id = defendant.id
+                  )
               )`),
             ],
           },
@@ -189,14 +194,17 @@ export const publicProsecutionOfficeIndictmentsAppealedWhereOptions = () => ({
         {
           [Op.and]: [
             literal(`EXISTS (
-              SELECT 1 FROM verdict
+              SELECT 1 
+              FROM defendant
+              JOIN verdict ON defendant.id = verdict.defendant_id
               WHERE verdict.case_id = "Case".id
                 AND verdict.appeal_date IS NOT NULL
                 AND verdict.created = (
                     SELECT MAX(v2.created)
                     FROM verdict v2
                     WHERE v2.defendant_id = defendant.id
-            )`),
+                )
+          )`),
           ],
         },
       ],
