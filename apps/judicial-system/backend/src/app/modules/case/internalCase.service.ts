@@ -1604,6 +1604,7 @@ export class InternalCaseService {
       where: {
         indictmentReviewerId: indictmentReviewerId,
         indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
+        indictmentReviewDecision: null,
         rulingDate: { [Op.gte]: start, [Op.lte]: end },
       },
     })
