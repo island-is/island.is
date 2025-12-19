@@ -1,0 +1,19 @@
+{
+  "name": "api-domains-mile-car",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/api/domains/mile-car/src",
+  "projectType": "library",
+  "tags": ["lib:api", "scope:api"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/api/domains/mile-car"],
+      "options": {
+        "jestConfig": "libs/api/domains/mile-car/jest.config.ts"
+      }
+    }
+  }
+}
