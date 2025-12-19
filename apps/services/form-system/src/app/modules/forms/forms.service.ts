@@ -49,12 +49,9 @@ import { FieldDto } from '../fields/models/dto/field.dto'
 import { Field } from '../fields/models/field.model'
 import { FormCertificationTypeDto } from '../formCertificationTypes/models/dto/formCertificationType.dto'
 import { FormCertificationType } from '../formCertificationTypes/models/formCertificationType.model'
-import { FormUrl } from '../formUrls/models/formUrl.model'
 import { ListItem } from '../listItems/models/listItem.model'
 import { OrganizationPermission } from '../organizationPermissions/models/organizationPermission.model'
 import { Organization } from '../organizations/models/organization.model'
-import { OrganizationUrlDto } from '../organizationUrls/models/dto/organizationUrl.dto'
-import { OrganizationUrl } from '../organizationUrls/models/organizationUrl.model'
 import { ScreenDto } from '../screens/models/dto/screen.dto'
 import { Screen } from '../screens/models/screen.model'
 import { SectionDto } from '../sections/models/dto/section.dto'
@@ -81,12 +78,8 @@ export class FormsService {
     private readonly listItemModel: typeof ListItem,
     @InjectModel(Organization)
     private readonly organizationModel: typeof Organization,
-    @InjectModel(OrganizationUrl)
-    private readonly organizationUrlModel: typeof OrganizationUrl,
     @InjectModel(FormCertificationType)
     private readonly formCertificationTypeModel: typeof FormCertificationType,
-    @InjectModel(FormUrl)
-    private readonly formUrlModel: typeof FormUrl,
     private readonly sequelize: Sequelize,
   ) {}
 
@@ -513,10 +506,6 @@ export class FormsService {
           model: FormCertificationType,
           as: 'formCertificationTypes',
         },
-        {
-          model: FormUrl,
-          as: 'formUrls',
-        },
       ],
       order: [
         [{ model: Section, as: 'sections' }, 'displayOrder', 'ASC'],
@@ -559,11 +548,6 @@ export class FormsService {
       applicantTypes: await this.getApplicantTypes(),
       listTypes: await this.getListTypes(form.organizationId),
       submissionUrls: await this.getSubmissionUrls(form.organizationId),
-      submitUrls: await this.getUrls(form.organizationId, UrlTypes.SUBMIT),
-      validationUrls: await this.getUrls(
-        form.organizationId,
-        UrlTypes.VALIDATION,
-      ),
     }
 
     if (form.completedSectionInfo) {
@@ -590,30 +574,6 @@ export class FormsService {
 
     // Return unique values preserving insertion order
     return Array.from(new Set(urls))
-  }
-
-  private async getUrls(
-    organizationId: string,
-    type: string,
-  ): Promise<OrganizationUrlDto[]> {
-    const organizationUrls = await this.organizationUrlModel.findAll({
-      where: { organizationId: organizationId, type: type },
-    })
-
-    const keys = ['id', 'url', 'isXroad', 'isTest', 'type', 'method']
-
-    const organizationUrlsDto: OrganizationUrlDto[] = []
-
-    organizationUrls.map((organizationUrl) => {
-      organizationUrlsDto.push(
-        defaults(
-          pick(organizationUrl, keys),
-          zipObject(keys, Array(keys.length).fill(null)) as OrganizationUrlDto,
-        ),
-      )
-    })
-
-    return organizationUrlsDto
   }
 
   private async getApplicantTypes(): Promise<ApplicantType[]> {
@@ -700,29 +660,7 @@ export class FormsService {
     return organizationListTypes
   }
 
-  private async isZendeskEnabled(
-    organizationId: string,
-    formUrls: FormUrl[],
-  ): Promise<boolean> {
-    const organizationUrls = await this.organizationUrlModel.findAll({
-      where: { organizationId: organizationId },
-    })
-
-    return formUrls.some((formUrl) =>
-      organizationUrls.some(
-        (orgUrl) =>
-          orgUrl.id === formUrl.organizationUrlId &&
-          orgUrl.method === UrlMethods.SEND_TO_ZENDESK,
-      ),
-    )
-  }
-
   private async setArrays(form: Form): Promise<FormDto> {
-    const isZendesk = await this.isZendeskEnabled(
-      form.organizationId,
-      form.formUrls ?? [],
-    )
-
     const formKeys = [
       'id',
       'organizationId',
@@ -756,7 +694,6 @@ export class FormsService {
         sections: [],
         screens: [],
         fields: [],
-        isZendeskEnabled: isZendesk,
       },
     ) as FormDto
 
@@ -771,10 +708,6 @@ export class FormsService {
           ),
         ) as FormCertificationTypeDto,
       )
-    })
-
-    form.formUrls?.map((formUrl) => {
-      formDto.urls?.push(formUrl.organizationUrlId)
     })
 
     const sectionKeys = [

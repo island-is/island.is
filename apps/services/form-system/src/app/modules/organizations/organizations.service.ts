@@ -22,7 +22,6 @@ import {
   FieldTypesEnum,
 } from '@island.is/form-system/shared'
 import { UrlTypes } from '@island.is/form-system/enums'
-import { OrganizationUrl } from '../organizationUrls/models/organizationUrl.model'
 
 @Injectable()
 export class OrganizationsService {
@@ -100,29 +99,6 @@ export class OrganizationsService {
           organizationAdminDto.selectedFieldTypes.push(permission.permission)
         }
       })
-    }
-
-    const mapUrls = (urls: OrganizationUrl[], urlType: string) =>
-      urls
-        .filter((url) => url.type === urlType)
-        .map((url) => ({
-          id: url.id,
-          url: url.url,
-          type: url.type,
-          method: url.method,
-          isTest: url.isTest,
-          isXroad: url.isXroad,
-        }))
-
-    if (organization.organizationUrls) {
-      organizationAdminDto.submitUrls = mapUrls(
-        organization.organizationUrls,
-        UrlTypes.SUBMIT,
-      )
-      organizationAdminDto.validationUrls = mapUrls(
-        organization.organizationUrls,
-        UrlTypes.VALIDATION,
-      )
     }
 
     organizationAdminDto.certificationTypes = CertificationTypes
