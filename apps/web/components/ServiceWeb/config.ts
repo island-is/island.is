@@ -79,11 +79,35 @@ export const zendeskConfig: Record<
       snippetUrl:
         'https://static.zdassets.com/ekr/snippet.js?key=6b9864d4-1892-4ea0-8d29-b609d7c53542',
     },
+    [Organization.ICELANDIC_HEALTH_INSURANCE]: {
+      snippetUrl:
+        'https://static.zdassets.com/ekr/snippet.js?key=9989d2fe-0b2e-40a8-bc4e-33e5e4c07359',
+    },
+    [Organization.DIRECTORATE_OF_IMMIGRATION]: {
+      snippetUrl:
+        'https://static.zdassets.com/ekr/snippet.js?key=34869229-7aad-4b2f-90b2-f2984fdd14dc',
+    },
+    [Organization.DISTRICT_COMMISSIONER]: {
+      snippetUrl:
+        'https://static.zdassets.com/ekr/snippet.js?key=dc0c86b4-a02a-45e9-85d5-0aa570708ad9',
+    },
   },
   en: {
     [Organization.TRANSPORT_AUTHORITY]: {
       snippetUrl:
         'https://static.zdassets.com/ekr/snippet.js?key=6b9864d4-1892-4ea0-8d29-b609d7c53542',
+    },
+    [Organization.ICELANDIC_HEALTH_INSURANCE]: {
+      snippetUrl:
+        'https://static.zdassets.com/ekr/snippet.js?key=9989d2fe-0b2e-40a8-bc4e-33e5e4c07359',
+    },
+    [Organization.DIRECTORATE_OF_IMMIGRATION]: {
+      snippetUrl:
+        'https://static.zdassets.com/ekr/snippet.js?key=34869229-7aad-4b2f-90b2-f2984fdd14dc',
+    },
+    [Organization.DISTRICT_COMMISSIONER]: {
+      snippetUrl:
+        'https://static.zdassets.com/ekr/snippet.js?key=dc0c86b4-a02a-45e9-85d5-0aa570708ad9',
     },
   },
 }
@@ -101,52 +125,12 @@ export const watsonConfig: Record<
       carbonTheme: 'g10',
       namespaceKey: 'default',
     },
-    [Organization.DISTRICT_COMMISSIONER]: {
-      integrationID: '0c96e8fb-d4dc-420e-97db-18b0f8bb4e3f',
-      region: 'eu-gb',
-      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
-      showLauncher: false,
-      carbonTheme: 'g10',
-      namespaceKey: 'default',
-    },
-    [Organization.ICELANDIC_HEALTH_INSURANCE]: {
-      integrationID: 'e625e707-c9ce-4048-802c-c12b905c28be',
-      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
-      region: 'eu-gb',
-      showLauncher: false,
-      carbonTheme: 'g10',
-      namespaceKey: 'default',
-    },
-    [Organization.DIRECTORATE_OF_IMMIGRATION]: {
-      integrationID: '89a03e83-5c73-4642-b5ba-cd3771ceca54',
-      region: 'eu-gb',
-      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
-      showLauncher: false,
-      carbonTheme: 'g10',
-      namespaceKey: 'default',
-    },
   },
   en: {
     [Organization.DIGITAL_ICELAND]: {
       integrationID: '2e32cba8-7379-44e9-b03e-af1ccdbe5982',
       region: 'eu-gb',
       serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
-      showLauncher: false,
-      carbonTheme: 'g10',
-      namespaceKey: 'default',
-    },
-    [Organization.ICELANDIC_HEALTH_INSURANCE]: {
-      integrationID: 'cba41fa0-12fb-4cb5-bd98-66a57cee42e0',
-      region: 'eu-gb',
-      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
-      showLauncher: false,
-      carbonTheme: 'g10',
-      namespaceKey: 'default',
-    },
-    [Organization.DIRECTORATE_OF_IMMIGRATION]: {
-      integrationID: '9e320784-ad44-4da9-9eb3-f305057a196a',
-      region: 'eu-gb',
-      serviceInstanceID: '2529638b-503c-4374-955c-0310139ec177',
       showLauncher: false,
       carbonTheme: 'g10',
       namespaceKey: 'default',
