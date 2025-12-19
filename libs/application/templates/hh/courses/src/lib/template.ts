@@ -12,13 +12,15 @@ import {
   defineTemplateApi,
   IdentityApi,
 } from '@island.is/application/types'
-import { ApiActions, Events, Roles, States } from '../utils/constants'
+import { Features } from '@island.is/feature-flags'
 import { CodeOwners } from '@island.is/shared/constants'
-import { dataSchema } from './dataSchema'
 import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
+import { ApiActions, Events, Roles, States } from '../utils/constants'
+import { dataSchema } from './dataSchema'
+
 import { m } from './messages'
 
 const template: ApplicationTemplate<
@@ -35,6 +37,7 @@ const template: ApplicationTemplate<
   dataSchema,
   allowMultipleApplicationsInDraft: true,
   initialQueryParameter: 'selection',
+  featureFlag: Features.isHHCourseApplicationEnabled,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
