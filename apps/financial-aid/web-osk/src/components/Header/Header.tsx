@@ -7,7 +7,6 @@ import {
   DropdownMenu,
   LinkV2,
 } from '@island.is/island-ui/core'
-import Link from 'next/link'
 
 import * as styles from './Header.css'
 
