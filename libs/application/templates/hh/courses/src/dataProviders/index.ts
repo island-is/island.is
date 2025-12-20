@@ -1,1 +1,7 @@
-// Populate this file with the data providers you need
+import { IdentityApi as IdentityApiProvider } from '@island.is/application/types'
+
+export const IdentityApi = IdentityApiProvider.configure({
+  params: {
+    includeActorInfo: true,
+  },
+})

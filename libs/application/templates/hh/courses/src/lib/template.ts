@@ -10,7 +10,6 @@ import {
   UserProfileApi,
   ApplicationConfigurations,
   defineTemplateApi,
-  IdentityApi,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 import { CodeOwners } from '@island.is/shared/constants'
@@ -22,6 +21,7 @@ import { ApiActions, Events, Roles, States } from '../utils/constants'
 import { dataSchema } from './dataSchema'
 
 import { m } from './messages'
+import { IdentityApi } from '../dataProviders'
 
 const template: ApplicationTemplate<
   ApplicationContext,
