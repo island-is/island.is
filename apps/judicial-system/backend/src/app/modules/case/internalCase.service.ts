@@ -1130,7 +1130,9 @@ export class InternalCaseService {
       user,
       originalAncestor.id,
       theCase.type,
-      theCase.state,
+      theCase.state === CaseState.CORRECTING
+        ? CaseState.COMPLETED
+        : theCase.state,
       theCase.policeCaseNumbers.length > 0 ? theCase.policeCaseNumbers[0] : '',
       theCase.courtCaseNumber ?? '',
       defendantNationalIds && defendantNationalIds[0]
