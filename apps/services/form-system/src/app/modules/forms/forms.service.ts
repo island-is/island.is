@@ -410,17 +410,32 @@ export class FormsService {
       throw new NotFoundException(`Form with id '${derivedFromId}' not found`)
     }
 
-    const slugToBeArchived = formToBeArchived.slug
-    formToBeArchived.status = FormStatus.ARCHIVED
-    formToBeArchived.slug = `${formToBeArchived.slug}-archived-${Date.now()}`
-    await formToBeArchived.save()
+    await this.sequelize.transaction(async (transaction) => {
+      try {
+        await this.applicationModel.destroy({
+          where: { formId: id },
+          transaction,
+        })
 
-    formToBePublished.slug =
-      formToBePublished.slug === `${slugToBeArchived}-i-breytingu`
-        ? slugToBeArchived
-        : formToBePublished.slug
-    formToBePublished.status = FormStatus.PUBLISHED
-    await formToBePublished.save()
+        const slugToBeArchived = formToBeArchived.slug
+        formToBeArchived.status = FormStatus.ARCHIVED
+        formToBeArchived.slug = `${
+          formToBeArchived.slug
+        }-archived-${Date.now()}`
+        await formToBeArchived.save()
+
+        formToBePublished.slug =
+          formToBePublished.slug === `${slugToBeArchived}-i-breytingu`
+            ? slugToBeArchived
+            : formToBePublished.slug
+        formToBePublished.status = FormStatus.PUBLISHED
+        await formToBePublished.save()
+      } catch (error) {
+        throw new InternalServerErrorException(
+          `Unexpected error publishing form '${id}'.`,
+        )
+      }
+    })
 
     const formResponse = await this.buildFormResponse(formToBeArchived)
 
@@ -925,7 +940,6 @@ export class FormsService {
     const fields: Field[] = []
     const listItems: ListItem[] = []
     const formCertificationTypes: FormCertificationType[] = []
-    const formUrls: FormUrl[] = []
 
     for (const section of existingForm.sections) {
       const newSection = section.toJSON()
@@ -963,25 +977,6 @@ export class FormsService {
       }
     }
 
-    const hasCompleted = sections.some(
-      (s) => s.sectionType === SectionTypes.COMPLETED,
-    )
-    if (!hasCompleted) {
-      const maxOrder =
-        sections.length > 0
-          ? Math.max(...sections.map((s) => s.displayOrder ?? 0))
-          : 0
-      sections.push({
-        id: uuidV4(),
-        formId: newForm.id,
-        sectionType: SectionTypes.COMPLETED,
-        displayOrder: maxOrder + 1,
-        name: { is: 'Staðfesting', en: 'Confirmation' },
-        created: new Date(),
-        modified: new Date(),
-      } as Section)
-    }
-
     if (existingForm.formCertificationTypes) {
       for (const certificationType of existingForm.formCertificationTypes) {
         const newFormCertificationType = certificationType.toJSON()
@@ -990,17 +985,6 @@ export class FormsService {
         newFormCertificationType.created = new Date()
         newFormCertificationType.modified = new Date()
         formCertificationTypes.push(newFormCertificationType)
-      }
-    }
-
-    if (existingForm.formUrls) {
-      for (const formUrl of existingForm.formUrls) {
-        const newFormUrl = formUrl.toJSON()
-        newFormUrl.id = uuidV4()
-        newFormUrl.formId = newForm.id
-        newFormUrl.created = new Date()
-        newFormUrl.modified = new Date()
-        formUrls.push(newFormUrl)
       }
     }
 
@@ -1017,11 +1001,10 @@ export class FormsService {
             transaction,
           },
         )
-        await this.formUrlModel.bulkCreate(formUrls, { transaction })
       })
     } catch (error) {
       throw new InternalServerErrorException(
-        `Unexpected error copying form '${id}'.`,
+        `Unexpected error copying form '${id}'. ${error}`,
       )
     }
 
