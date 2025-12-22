@@ -20,7 +20,6 @@ import {
   ApplicationsAdminStatisticsInput,
   ApplicationsAdminFilters,
   ApplicationTypesInstitutionAdminInput,
-  ApplicationInstitutionsAdminInput,
 } from './application-admin/dto/applications-admin-inputs'
 
 @Injectable()
