@@ -1,7 +1,7 @@
 import { ConfigModule } from '@nestjs/config'
 import { Module } from '@nestjs/common'
 import { MainResolver } from './graphql/main.resolver'
-import { TransportAuthorityApi } from './mileCar.service'
+import { MileCarApi } from './mileCar.service'
 import {
   VehiclesClientModule,
   VehiclesClientConfig,
@@ -16,7 +16,7 @@ import {
       load: [VehiclesClientConfig],
     }),
   ],
-  providers: [MainResolver, TransportAuthorityApi],
-  exports: [TransportAuthorityApi],
+  providers: [MainResolver, MileCarApi],
+  exports: [MileCarApi],
 })
-export class TransportAuthorityApiModule {}
+export class MileCarApiModule {}

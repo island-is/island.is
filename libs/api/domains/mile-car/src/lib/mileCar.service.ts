@@ -5,7 +5,7 @@ import { VehicleSearchApi } from '@island.is/clients/vehicles'
 import { BasicVehicleInformation } from './graphql/models'
 
 @Injectable()
-export class TransportAuthorityApi {
+export class MileCarApi {
   constructor(private readonly vehiclesApi: VehicleSearchApi) {}
 
   private vehiclesApiWithAuth(auth: Auth) {
