@@ -4,7 +4,7 @@ import { Problem } from '@island.is/react-spa/shared'
 import { FC } from 'react'
 import { m } from '../../lib/messages'
 import { QuestionAnswer } from '../../types/questionnaire'
-import AnsweredQuestionnaire from './AnsweredQuestionnaire'
+import AnsweredQuestionnaire from './Answered'
 
 interface ReviewProps {
   answers: {

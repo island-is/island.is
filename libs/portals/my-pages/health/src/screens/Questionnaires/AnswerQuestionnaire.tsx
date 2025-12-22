@@ -19,7 +19,7 @@ import {
   useSubmitQuestionnaireMutation,
 } from './questionnaires.generated'
 
-const QuestionnaireAnswer: FC = () => {
+const AnswerQuestionnaire: FC = () => {
   const { id, org } = useParams<{ id?: string; org?: string }>()
   const navigate = useNavigate()
   const { formatMessage, lang } = useLocale()
@@ -223,4 +223,4 @@ const QuestionnaireAnswer: FC = () => {
   )
 }
 
-export default QuestionnaireAnswer
+export default AnswerQuestionnaire

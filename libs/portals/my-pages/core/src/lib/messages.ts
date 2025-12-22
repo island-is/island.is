@@ -2057,6 +2057,14 @@ export const m = defineMessages({
     id: 'service.portal:forward',
     defaultMessage: 'Áfram',
   },
+  answersSubmitted: {
+    id: 'service.portal:answers-submitted',
+    defaultMessage: 'Svör móttekin',
+  },
+  answersSubmittedFor: {
+    id: 'service.portal:answers-submitted-for',
+    defaultMessage: 'Svör þín við {arg} hafa verið send.',
+  },
   rowOf: {
     id: 'service.portal:row-of',
     defaultMessage: '{count} af {total} röðum',

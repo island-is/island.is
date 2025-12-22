@@ -6,7 +6,7 @@ import { QuestionAnswer } from '../../types/questionnaire'
 import { formatDateWithTime } from '../../utils/dateUtils'
 import { NestedLines } from '../NestedLines/NestedLines'
 
-interface AnsweredQuestionnaireProps {
+interface AnsweredProps {
   answers?: QuestionAnswer[]
 }
 
@@ -37,9 +37,7 @@ const formatValue = (value: string): string => {
   return value
 }
 
-export const AnsweredQuestionnaire: FC<AnsweredQuestionnaireProps> = ({
-  answers,
-}) => {
+export const Answered: FC<AnsweredProps> = ({ answers }) => {
   const { formatMessage } = useLocale()
   return (
     <Box>
@@ -70,4 +68,4 @@ export const AnsweredQuestionnaire: FC<AnsweredQuestionnaireProps> = ({
   )
 }
 
-export default AnsweredQuestionnaire
+export default Answered

@@ -108,11 +108,11 @@ const QuestionnairesDetail = lazy(() =>
 )
 
 const QuestionnairesAnswer = lazy(() =>
-  import('./screens/Questionnaires/QuestionnaireAnswer'),
+  import('./screens/Questionnaires/AnswerQuestionnaire'),
 )
 
 const QuestionnairesAnswered = lazy(() =>
-  import('./screens/Questionnaires/QuestionnaireAnswered'),
+  import('./screens/Questionnaires/AnsweredQuestionnaire'),
 )
 
 const PatientData = lazy(() => import('./screens/PatientData/PatientData'))

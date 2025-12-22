@@ -11,7 +11,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
-  AnsweredQuestionnaire,
+  Answered,
   formatDate,
   IntroWrapper,
   m,
@@ -23,7 +23,7 @@ import { HealthPaths, messages } from '../..'
 import * as styles from './Questionnaires.css'
 import { useGetAnsweredQuestionnaireQuery } from './questionnaires.generated'
 
-const QuestionnaireAnswered: FC = () => {
+const AnsweredQuestionnaire: FC = () => {
   const { id, org } = useParams<{
     id?: string
     org?: string
@@ -162,7 +162,7 @@ const QuestionnaireAnswered: FC = () => {
       )}
       {data?.getAnsweredQuestionnaire && !loading && !error && (
         <Box marginTop={4}>
-          <AnsweredQuestionnaire
+          <Answered
             answers={currentSubmission?.answers?.map((answer) => ({
               questionId: answer.id,
               question: answer.label || '',
@@ -188,4 +188,4 @@ const QuestionnaireAnswered: FC = () => {
   )
 }
 
-export default QuestionnaireAnswered
+export default AnsweredQuestionnaire
