@@ -42,6 +42,15 @@ query getApplicationsSuperAdmin($input: ApplicationsSuperAdminFilters!) {
   }
 }
 
+query getApplicationInstitutions {
+  applicationApplicationsAdminInstitutions {
+    nationalId
+    slug
+    contentfulId
+    applicationTypes
+  }
+}
+
 query getApplicationsInstitutionAdmin($input: ApplicationsAdminFilters!) {
   applicationApplicationsInstitutionAdmin(input: $input) {
     rows {
