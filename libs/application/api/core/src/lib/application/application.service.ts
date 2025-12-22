@@ -337,7 +337,7 @@ export class ApplicationService {
     })
 
     const existingTypeIdSet = new Set<string>(
-      existingTypeIds.map((row: Application) => row.typeId),
+      existingTypeIds.map((row) => row.typeId),
     )
 
     return allInstitutions.filter((inst) =>

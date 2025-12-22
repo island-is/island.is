@@ -6,7 +6,7 @@ export const getTypeIdsForInstitution = (nationalId: string): string[] => {
     institutionMapper,
     (application) => application.nationalId,
   )
-  return institutions[nationalId]
+  return institutions[nationalId] ?? []
 }
 
 export const getInstitutionsWithApplicationTypesIds = (): Institution[] => {
