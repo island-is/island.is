@@ -33,6 +33,10 @@ export class SubArticleSyncService implements CmsSyncProvider<ISubArticle> {
     const entriesToDelete: string[] = []
 
     for (const entry of entries) {
+      if (entry.sys.contentType.sys.id !== 'subArticle') {
+        continue
+      }
+
       if (!this.validateSubArticle(entry)) {
         entriesToDelete.push(entry.sys.id)
         continue
