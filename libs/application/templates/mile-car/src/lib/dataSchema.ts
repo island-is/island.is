@@ -1,11 +1,10 @@
 import { z } from 'zod'
 
-const dummySchema = z.object({
-  dummyTextField: z.string(),
-})
-
 export const dataSchema = z.object({
-  dummy: dummySchema,
+  pickVehicle: z.object({
+    vehicle: z.string().optional(),
+    plate: z.string().min(1),
+  }),
 })
 
 export type MileCar = z.TypeOf<typeof dataSchema>

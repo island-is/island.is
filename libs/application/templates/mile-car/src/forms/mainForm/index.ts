@@ -1,8 +1,4 @@
-import {
-  buildForm,
-  buildSection,
-  buildTextField,
-} from '@island.is/application/core'
+import { buildForm, buildSection } from '@island.is/application/core'
 import { FormModes } from '@island.is/application/types'
 import {
   confirmation as confirmationMessages,
