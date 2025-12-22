@@ -413,14 +413,14 @@ export class FormsService {
         formToBeArchived.slug = `${
           formToBeArchived.slug
         }-archived-${Date.now()}`
-        await formToBeArchived.save()
+        await formToBeArchived.save({ transaction })
 
         formToBePublished.slug =
           formToBePublished.slug === `${slugToBeArchived}-i-breytingu`
             ? slugToBeArchived
             : formToBePublished.slug
         formToBePublished.status = FormStatus.PUBLISHED
-        await formToBePublished.save()
+        await formToBePublished.save({ transaction })
       } catch (error) {
         throw new InternalServerErrorException(
           `Unexpected error publishing form '${id}'.`,
