@@ -21,13 +21,15 @@ import {
 } from '@island.is/application/core'
 import { application as applicationMessages } from '../lib/messages/application'
 import { ApiActions } from '../shared'
+import { Features } from '@island.is/feature-flags'
 
 const mileCarTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
   Events
 > = {
-  type: ApplicationTypes.MILE_CAR, // TODO: Change to the correct type
+  type: ApplicationTypes.MILE_CAR,
+  featureFlag: Features.isMileCarEnabled,
   name: applicationMessages.name,
   codeOwner: CodeOwners.Origo,
   institution: applicationMessages.institutionName,
