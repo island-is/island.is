@@ -14,7 +14,6 @@ import {
   ApplicationsSuperAdminFilters,
   ApplicationsAdminStatisticsInput,
   ApplicationTypesInstitutionAdminInput,
-  ApplicationInstitutionsAdminInput,
 } from './dto/applications-admin-inputs'
 import {
   ApplicationAdmin,
