@@ -451,7 +451,6 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
         />
       )}
       <ChatBubble
-        variant={namespaceKey === 'samgongustofa' ? 'circle' : 'default'}
         text={n('chatBubbleText', 'Hæ, get ég aðstoðað?')}
         isVisible={true}
         onClick={() => {
