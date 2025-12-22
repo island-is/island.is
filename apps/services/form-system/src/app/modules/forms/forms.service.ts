@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   ConflictException,
+  Inject,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -58,6 +59,7 @@ import { FormDto } from './models/dto/form.dto'
 import { FormResponseDto } from './models/dto/form.response.dto'
 import { UpdateFormDto } from './models/dto/updateForm.dto'
 import { Form } from './models/form.model'
+import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 
 @Injectable()
 export class FormsService {
@@ -79,6 +81,8 @@ export class FormsService {
     @InjectModel(FormCertificationType)
     private readonly formCertificationTypeModel: typeof FormCertificationType,
     private readonly sequelize: Sequelize,
+    @Inject(LOGGER_PROVIDER)
+    private readonly logger: Logger,
   ) {}
 
   async findAll(user: User, nationalId: string): Promise<FormResponseDto> {
@@ -934,8 +938,9 @@ export class FormsService {
         )
       })
     } catch (error) {
+      this.logger.error(`Failed to copy form '${id}'`, error)
       throw new InternalServerErrorException(
-        `Unexpected error copying form '${id}'. ${error}`,
+        `Unexpected error copying form '${id}'`,
       )
     }
 
