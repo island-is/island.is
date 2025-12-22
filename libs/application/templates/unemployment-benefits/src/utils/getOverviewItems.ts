@@ -324,6 +324,12 @@ export const useEducationHistoryOverviewItems = (
 ): Array<KeyValueItem> => {
   const { formatMessage, locale } = useLocale()
   const overviewItems: Array<KeyValueItem> = []
+  const typeOfEducationAnswers =
+    getValueViaPath<Array<EducationType>>(
+      answers,
+      'education.typeOfEducation',
+    ) ?? []
+
   const currentEducation =
     getValueViaPath<RepeatableRequiredEducationInAnswers>(
       answers,
@@ -341,7 +347,10 @@ export const useEducationHistoryOverviewItems = (
       answers,
       'educationHistory.finishedEducation',
     )
-  if (currentEducation) {
+  if (
+    currentEducation &&
+    typeOfEducationAnswers.includes(EducationType.CURRENT)
+  ) {
     const educationStrings = getEducationStrings(
       currentEducation,
       externalData,
@@ -362,7 +371,10 @@ export const useEducationHistoryOverviewItems = (
     })
   }
 
-  if (lastSemesterEducation) {
+  if (
+    lastSemesterEducation &&
+    typeOfEducationAnswers.includes(EducationType.LAST_SEMESTER)
+  ) {
     let thisEducationItem = lastSemesterEducation
     if (
       lastSemesterEducation.sameAsAboveEducation?.includes(YES) &&
@@ -404,7 +416,10 @@ export const useEducationHistoryOverviewItems = (
     })
   }
 
-  if (graduationLastTwelveMonthsEducation) {
+  if (
+    graduationLastTwelveMonthsEducation &&
+    typeOfEducationAnswers.includes(EducationType.LAST_YEAR)
+  ) {
     let thisEducationItem = graduationLastTwelveMonthsEducation
     if (
       graduationLastTwelveMonthsEducation.sameAsAboveEducation?.includes(YES) &&
@@ -482,6 +497,7 @@ export const useLicenseOverviewItems = (
   answers: FormValue,
   externalData: ExternalData,
 ): Array<KeyValueItem> => {
+  const { locale } = useLocale()
   const drivingLicenseTypes =
     getValueViaPath<
       Array<GaldurDomainModelsSettingsDrivingLicensesDrivingLicensesDTO>
@@ -528,8 +544,15 @@ export const useLicenseOverviewItems = (
       'licenses.heavyMachineryLicensesTypes',
     )
     const name = ids
-      ?.map((id) => heavyMachineryLicenses.find((x) => x.id === id)?.name)
+      ?.map((id) => {
+        const item = heavyMachineryLicenses.find((x) => x.id === id)
+
+        return (
+          (locale === 'is' ? item?.name : item?.english ?? item?.name) || ''
+        )
+      })
       .filter(Boolean)
+
     overviewItems.push({
       width: 'half',
       keyText: overviewMessages.labels.license.workMachineLicense,
@@ -543,6 +566,7 @@ export const useLanguageOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
+  const { locale } = useLocale()
   const allLanguages =
     getValueViaPath<Array<LanguagesInAnswers>>(answers, 'languageSkills', []) ??
     []
@@ -551,7 +575,15 @@ export const useLanguageOverviewItems = (
       if (index < 2) {
         //first two are default languages with no id's
         const languageName =
-          index === 0 ? 'Íslenska' : index === 1 ? 'Enska' : language.language
+          index === 0
+            ? locale === 'is'
+              ? 'Íslenska'
+              : 'Icelandic'
+            : index === 1
+            ? locale === 'is'
+              ? 'Enska'
+              : 'English'
+            : language.language
         return `${languageName}: ${language.skill}`
       }
       const languages =
@@ -564,9 +596,11 @@ export const useLanguageOverviewItems = (
           _externalData,
           'unemploymentApplication.data.supportData.languageValues',
         ) || []
-      const languageName = languages.find(
-        (x) => x.id === language.language,
-      )?.name
+      const languageItem = languages.find((x) => x.id === language.language)
+      const languageName =
+        (locale === 'is'
+          ? languageItem?.name
+          : languageItem?.english ?? languageItem?.name) || ''
       const languageSkill = languageSkills.find(
         (x) => x.id === language.skill,
       )?.name

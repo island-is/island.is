@@ -122,7 +122,10 @@ export const getEducationInformation = (answers: FormValue) => {
       lastSemesterEducationInAnswers.sameAsAboveEducation?.includes(YES) &&
       currentEducation
     ) {
-      lastSemesterEducation = currentEducation
+      lastSemesterEducation = {
+        ...currentEducation,
+        credits: parseInt(lastSemesterEducationInAnswers?.units || ''),
+      }
     } else {
       lastSemesterEducation = {
         educationId: lastSemesterEducationInAnswers?.levelOfStudy,
@@ -143,7 +146,17 @@ export const getEducationInformation = (answers: FormValue) => {
       ) &&
       lastSemesterEducation
     ) {
-      graduationLastTwelveMonthsEducation = lastSemesterEducation
+      graduationLastTwelveMonthsEducation = {
+        ...lastSemesterEducation,
+        yearFinished: lastSemesterEducationInAnswers?.endDate
+          ? parseInt(lastSemesterEducationInAnswers?.endDate || '')
+          : parseInt(
+              graduationLastTwelveMonthsEducationInAnswers?.endDate || '',
+            ),
+        credits: parseInt(
+          graduationLastTwelveMonthsEducationInAnswers?.units || '',
+        ),
+      }
     } else {
       graduationLastTwelveMonthsEducation = {
         educationId: graduationLastTwelveMonthsEducationInAnswers?.levelOfStudy,
@@ -434,13 +447,16 @@ export const getEmployerSettlement = (answers: FormValue) => {
   )
   return {
     hasUnpaidVacationTime: vacationInformation?.doYouHaveVacationDays === YES,
-    unpaidVacations: vacationInformation?.vacationDays?.map((vacation) => {
-      return {
-        unpaidVacationDays: parseInt(vacation.amount || ''),
-        unpaidVacationStart: vacation.startDate,
-        unpaidVacationEnd: vacation.endDate,
-      }
-    }),
+    unpaidVacations:
+      vacationInformation?.doYouHaveVacationDays === YES
+        ? vacationInformation?.vacationDays?.map((vacation) => {
+            return {
+              unpaidVacationDays: parseInt(vacation.amount || ''),
+              unpaidVacationStart: vacation.startDate,
+              unpaidVacationEnd: vacation.endDate,
+            }
+          })
+        : [],
     //This is definitely in the wrong place but to hard to fix in Galdur at this moment so it remains here
     resignationEnds:
       currentSituation?.status === EmploymentStatus.EMPLOYED &&
@@ -665,7 +681,6 @@ export const getPreviousOccupationInformation = (
         )?.name,
     unemploymentReasonQuestionResponse:
       unemploymentReasons?.reasonQuestion === YES,
-    additionalDetails: unemploymentReasons?.additionalReasonText,
     agreementConfirmation:
       unemploymentReasons?.agreementConfirmation?.includes(YES),
     bankruptcyConfirmation:

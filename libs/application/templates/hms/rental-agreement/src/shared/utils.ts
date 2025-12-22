@@ -22,6 +22,7 @@ import {
   DraftPropertyUnit,
 } from './types'
 import { ApplicantsRole, NextStepInReviewOptions } from '../utils/enums'
+import { isCompany } from 'kennitala'
 
 const mapParticipantInfo = (participant: ApplicantsInfo): ApplicantsInfo => {
   return {
@@ -94,10 +95,23 @@ const extractParticipants = (
       break
   }
 
+  const signingParties = []
+
+  if (isCompany(applicant.nationalId ?? '')) {
+    const signatory = mapParticipantInfo(
+      getValueViaPath<ApplicantsInfo>(answers, 'parties.signatory') ??
+        ({} as ApplicantsInfo),
+    )
+    signingParties.push(...tenants, signatory)
+  } else {
+    signingParties.push(...tenants, ...landlords)
+  }
+
   return {
     landlords,
     landlordRepresentatives,
     tenants,
+    signingParties,
   }
 }
 
@@ -327,6 +341,7 @@ export const draftAnswers = (
     landlords: answers.landlords,
     landlordRepresentatives: answers.landlordRepresentatives,
     tenants: answers.tenants,
+    signingParties: answers.signingParties,
     units: answers.units as DraftPropertyUnit[],
     startDate: answers.startDate ?? '',
     endDate: answers.endDate ?? '',

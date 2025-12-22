@@ -55,6 +55,7 @@ const canProsecutionUserAccessCase = (
       CaseState.REJECTED,
       CaseState.DISMISSED,
       CaseState.COMPLETED,
+      CaseState.CORRECTING,
     ].includes(theCase.state)
   ) {
     return false
@@ -89,7 +90,10 @@ export const canPublicProsecutionUserAccessCase = (theCase: Case): boolean => {
   }
 
   // Check case state access
-  if (theCase.state !== CaseState.COMPLETED) {
+  if (
+    theCase.state !== CaseState.COMPLETED &&
+    theCase.state !== CaseState.CORRECTING
+  ) {
     return false
   }
 
@@ -134,6 +138,7 @@ const canDistrictCourtUserAccessCase = (theCase: Case, user: User): boolean => {
       CaseState.WAITING_FOR_CANCELLATION,
       CaseState.RECEIVED,
       CaseState.COMPLETED,
+      CaseState.CORRECTING,
     ].includes(theCase.state)
   ) {
     return false
@@ -263,7 +268,10 @@ const canPrisonAdminUserAccessCase = (
 
   if (isIndictmentCase(theCase.type)) {
     // Check case state access
-    if (theCase.state !== CaseState.COMPLETED) {
+    if (
+      theCase.state !== CaseState.COMPLETED &&
+      theCase.state !== CaseState.CORRECTING
+    ) {
       return false
     }
 
@@ -395,6 +403,7 @@ const canDefenceUserAccessIndictmentCase = (
       CaseState.WAITING_FOR_CANCELLATION,
       CaseState.RECEIVED,
       CaseState.COMPLETED,
+      CaseState.CORRECTING,
     ].includes(theCase.state)
   ) {
     return false

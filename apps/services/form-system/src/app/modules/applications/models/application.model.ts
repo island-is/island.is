@@ -83,6 +83,13 @@ export class Application extends Model<Application> {
   pruneAt?: Date
 
   @Column({
+    type: DataType.DATE,
+    allowNull: true,
+    defaultValue: null,
+  })
+  prunedAt?: Date
+
+  @Column({
     type: DataType.INTEGER,
     allowNull: false,
     defaultValue: 0,
@@ -139,5 +146,4 @@ export class Application extends Model<Application> {
   orgContentfulId?: string
   tagLabel?: string
   tagVariant?: string
-  completedMessage?: string
 }

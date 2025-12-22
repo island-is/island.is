@@ -64,6 +64,14 @@ export const messages = defineMessages({
     id: 'sp.health:date',
     defaultMessage: 'Dagsetning',
   },
+  dateAndTime: {
+    id: 'sp.health:date-and-time',
+    defaultMessage: 'Dagsetning og tími',
+  },
+  clockShortArg: {
+    id: 'sp.health:clock-short',
+    defaultMessage: 'kl. {arg}',
+  },
   chooseDoctorLabel: {
     id: 'sp.health:choose-doctor-label',
     defaultMessage: 'Viltu velja heimilislækni?',
@@ -427,7 +435,6 @@ export const messages = defineMessages({
     defaultMessage: 'Inneign',
     id: 'sp.health:credit',
   },
-
   debit: {
     defaultMessage: 'Skuld',
     id: 'sp.health:debit',
@@ -778,6 +785,14 @@ export const messages = defineMessages({
     defaultMessage: 'Landlæknir hefur umsjón með gögnum um þínar heimildir.',
     id: 'sp.health:landlaeknir-patient-permits-tooltip',
   },
+  landlaeknirWaitlistTooltip: {
+    defaultMessage: 'Landlæknir hefur umsjón með stöðu þinni á biðlistum.',
+    id: 'sp.health:landlaeknir-waitlist-tooltip',
+  },
+  landlaeknirReferralTooltip: {
+    defaultMessage: 'Landlæknir hefur umsjón með gögnum um þínar tilvísanir.',
+    id: 'sp.health:landlaeknir-referral-tooltip',
+  },
   lastDispensed: {
     defaultMessage: 'Síðast afgreitt',
     id: 'sp.health:last-dispensed',
@@ -846,10 +861,20 @@ export const messages = defineMessages({
     defaultMessage: 'Veldu aðila sem má sækja lyfin þín í apóteki',
     id: 'sp.health:choose-person-to-give-permit',
   },
+  medicineDelegationNotForYoungerThan16: {
+    defaultMessage:
+      'Athugið að það er ekki hægt að skrá umboð á einstakling sem er yngri en 16 ára.',
+    id: 'sp.health:medicine-delegation-not-for-younger-than-16',
+  },
   medicineDelegationIntroText: {
     defaultMessage:
-      'Einungis þú getur sótt þín lyf í apótek, nema þú veitir öðrum sérstaka heimild fyrir þig. Hér getur þú skráð þá aðila sem þú veitir heimild til að sækja lyf í apótek fyrir þig.',
+      'Einungis þú getur sótt þín lyf í apótek, nema þú veitir öðrum sérstaka heimild fyrir þig. Hér getur þú séð yfirlit yfir þá aðila sem þú hefur veitt heimild til að sækja lyf í apótek fyrir þig.',
     id: 'sp.health:medicine-delegation-intro-text',
+  },
+  newMedicineDelegationIntroText: {
+    defaultMessage:
+      'Einungis þú getur sótt þín lyf í apótek, nema þú veitir öðrum sérstaka heimild fyrir þig. Hér getur þú skráð nýja heimild til að sækja lyf í apótek fyrir þig. Athugið að það er ekki hægt að skrá umboð á einstakling sem er yngri en 16 ára. ',
+    id: 'sp.health:new-medicine-delegation-intro-text',
   },
   medicineDelegationReadAboutLink: {
     defaultMessage: 'https://island.is/s/landlaeknir/frett',
@@ -863,6 +888,10 @@ export const messages = defineMessages({
     id: 'sp.health:referrals-intro',
     defaultMessage: 'Hér finnur þú tilvísanir ...',
   },
+  referralsDetailIntro: {
+    id: 'sp.health:referrals-detail-intro',
+    defaultMessage: 'Hér finnur þú nánari upplýsingar um tilvísunina.',
+  },
   referralFor: {
     id: 'sp.health:referral-for',
     defaultMessage: 'Tilvísun fyrir',
@@ -870,6 +899,14 @@ export const messages = defineMessages({
   referralFrom: {
     id: 'sp.health:referral-from',
     defaultMessage: 'Útgefandi',
+  },
+  referralTo: {
+    id: 'sp.health:referral-to',
+    defaultMessage: 'Viðtakandi',
+  },
+  openReferral: {
+    id: 'sp.health:open-referral',
+    defaultMessage: 'Opin tilvísun',
   },
   noReferrals: {
     id: 'sp.health:no-referrals',
@@ -1033,6 +1070,14 @@ export const messages = defineMessages({
   notValidForRenewal: {
     defaultMessage: 'Ekki hægt',
     id: 'sp.health:not-valid-for-renewal',
+  },
+  notAvailable: {
+    defaultMessage: 'Ekki í boði',
+    id: 'sp.health:not-available',
+  },
+  notValidForRenewalForMobile: {
+    defaultMessage: 'Endurnýjun ekki í boði: ',
+    id: 'sp.health:not-valid-for-renewal-mobile',
   },
   notValidForRenewalDetail: {
     defaultMessage:
@@ -1622,7 +1667,7 @@ export const messages = defineMessages({
     id: 'sp.health:invalid',
   },
   withdrawn: {
-    defaultMessage: 'Afturkölluð',
+    defaultMessage: 'Eydd',
     id: 'sp.health:withdrawn',
   },
   validForRenewal: {
@@ -1730,9 +1775,25 @@ export const messages = defineMessages({
     defaultMessage: 'Mitt heilsuyfirlit',
     id: 'sp.health:my-health-overview',
   },
+  appointments: {
+    defaultMessage: 'Tímabókanir',
+    id: 'sp.health:appointments',
+  },
+  appointmentDetail: {
+    defaultMessage: 'Upplýsingar um tímabókun',
+    id: 'sp.health:appointment-detail',
+  },
   myAppointments: {
     defaultMessage: 'Mínar tímabókanir',
     id: 'sp.health:my-appointments',
+  },
+  appointmentsIntro: {
+    defaultMessage: 'Hér getur þú séð tímabókanir framundan.',
+    id: 'sp.health:appointments-intro',
+  },
+  appointmentsDetailIntro: {
+    defaultMessage: 'Hér sérðu nánari upplýsingar um tímabókunina þína.',
+    id: 'sp.health:appointments-detail-intro',
   },
   myPregnancy: {
     defaultMessage: 'Meðgangan mín',
@@ -1927,20 +1988,24 @@ export const messages = defineMessages({
     id: 'sp.health:health-directorate',
   },
   invalidatePermit: {
-    defaultMessage: 'Afturkalla',
+    defaultMessage: 'Eyða',
     id: 'sp.health:invalidate-permit',
   },
   areYouSureAboutInvalidatingPermit: {
-    defaultMessage: 'Ertu viss um að þú viljir afturkalla heimild?',
+    defaultMessage: 'Ertu viss um að þú viljir eyða heimild?',
     id: 'sp.health:are-you-sure-about-invalidating-permit',
   },
   youAreAboutToInvalidateThisPermit: {
-    defaultMessage: 'Þú ert að fara afturkalla eftirfarandi heimild:',
+    defaultMessage: 'Þú ert að fara eyða eftirfarandi heimild:',
     id: 'sp.health:you-are-about-to-invalidate-this-permit',
   },
   youAreAboutToDeleteThisPermit: {
     defaultMessage: 'Þú ert að fara eyða eftirfarandi heimild:',
     id: 'sp.health:you-are-about-to-delete-this-permit',
+  },
+  newPermit: {
+    defaultMessage: 'Ný heimild',
+    id: 'sp.health:new-permit',
   },
   addNewPermitTitle: {
     defaultMessage: 'Þú ert að fara bæta við eftirfarandi heimild:',
@@ -1973,16 +2038,16 @@ export const messages = defineMessages({
   },
   permitCreatedError: {
     defaultMessage:
-      'Ekki tókst að bæta heimild við. Vinsamlegast reyndu aftur síðar.',
+      'Ekki tókst að bæta heimild við. {arg} Vinsamlegast reyndu aftur síðar.',
     id: 'sp.health:permit-created-error',
   },
   permitInvalidated: {
-    defaultMessage: 'Heimild hefur verið afturkölluð',
+    defaultMessage: 'Heimild hefur verið eytt',
     id: 'sp.health:permit-invalidated',
   },
   permitInvalidatedError: {
     defaultMessage:
-      'Ekki tókst að afturkalla heimild. Vinsamlegast reyndu aftur síðar.',
+      'Ekki tókst að eyða heimild. Vinsamlegast reyndu aftur síðar.',
     id: 'sp.health:permit-invalidated-error',
   },
   countriesError: {
@@ -2056,24 +2121,104 @@ export const messages = defineMessages({
     id: 'sp.health:dispensation-places',
     defaultMessage: 'Afgreiðslustaðir',
   },
+  allAppointments: {
+    id: 'sp.health:all-appointments',
+    defaultMessage: 'Allar tímabókanir',
+  },
+  noAppointmentsTitle: {
+    id: 'sp.health:no-appointments-title',
+    defaultMessage: 'Engir tímar',
+  },
+  noAppointmentsText: {
+    id: 'sp.health:no-appointments',
+    defaultMessage: 'Engar tímabókanir framundan',
+  },
+  appointmentAt: {
+    id: 'sp.health:appointment-at',
+    defaultMessage: 'Tími hjá: {arg} ',
+  },
+  appointmentAtSimple: {
+    id: 'sp.health:appointment-at-simple',
+    defaultMessage: 'Tími hjá',
+  },
+  locationAddress: {
+    id: 'sp.health:location-address',
+    defaultMessage: 'Staðsetning',
+  },
+  instructions: {
+    id: 'sp.health:instructions',
+    defaultMessage: 'Leiðbeiningar',
+  },
+  appointmentSearchPlaceholder: {
+    id: 'sp.health:appointment-search-placeholder',
+    defaultMessage: 'Leita að tíma eða stað',
+  },
+  appointmentStatusArrived: {
+    id: 'sp.health:appointment-status-arrived',
+    defaultMessage: 'Mætt/ur',
+  },
+  appointmentStatusBooked: {
+    id: 'sp.health:appointment-status-booked',
+    defaultMessage: 'Bókaður',
+  },
+  appointmentStatusCancelled: {
+    id: 'sp.health:appointment-status-cancelled',
+    defaultMessage: 'Afbókaður',
+  },
+  appointmentStatusCheckedIn: {
+    id: 'sp.health:appointment-status-checked-in',
+    defaultMessage: 'Skráður inn',
+  },
+  appointmentStatusDeleted: {
+    id: 'sp.health:appointment-status-deleted',
+    defaultMessage: 'Eytt',
+  },
+  appointmentStatusEnteredInError: {
+    id: 'sp.health:appointment-status-entered-in-error',
+    defaultMessage: 'Skráður fyrir mistök',
+  },
+  appointmentStatusFulfilled: {
+    id: 'sp.health:appointment-status-fulfilled',
+    defaultMessage: 'Uppfylltur',
+  },
+  appointmentStatusNoShow: {
+    id: 'sp.health:appointment-status-no-show',
+    defaultMessage: 'Mætti ekki',
+  },
+  appointmentStatusPending: {
+    id: 'sp.health:appointment-status-pending',
+    defaultMessage: 'Í bið',
+  },
+  appointmentStatusProposed: {
+    id: 'sp.health:appointment-status-proposed',
+    defaultMessage: 'Fyrirhugaður',
+  },
+  appointmentStatusWaitlist: {
+    id: 'sp.health:appointment-status-waitlist',
+    defaultMessage: 'Á biðlista',
+  },
   prescriptionBlockedIsRegiment: {
     defaultMessage: 'Ekki er hægt að endurnýja lyfjakúr',
     id: 'sp.health:prescription-blocked-is-regiment',
   },
   prescriptionBlockedNoMedCard: {
-    defaultMessage: 'Ekkert lyfjakort skráð',
+    defaultMessage:
+      'Endurnýjun ekki í boði vegna þess að lyfið er ekki á lyfjakorti',
     id: 'sp.health:prescription-blocked-no-med-card',
   },
   prescriptionBlockedNoHealthClinic: {
-    defaultMessage: 'Engin heilsugæslustöð skráð',
+    defaultMessage:
+      'Endurnýjun ekki í boði vegna þess að engin heilsugæslustöð er skráð',
     id: 'sp.health:prescription-blocked-no-health-clinic',
   },
   prescriptionBlockedNotFullyDispensed: {
-    defaultMessage: 'Ekki öll lyf sótt',
+    defaultMessage:
+      'Endurnýjun ekki í boði vegna þess að ekki öll lyf hafa verið sótt',
     id: 'sp.health:prescription-blocked-not-fully-dispensed',
   },
   prescriptionBlockedPendingRequest: {
-    defaultMessage: 'Beiðni um endurnýjun í vinnslu',
+    defaultMessage:
+      'Endurnýjun ekki í boði vegna þess að beiðni um endurnýjun er nú þegar í vinnslu',
     id: 'sp.health:prescription-blocked-pending-request',
   },
   prescriptionBlockedRejectedRequest: {
@@ -2085,11 +2230,76 @@ export const messages = defineMessages({
     id: 'sp.health:prescription-blocked-dismissed-request',
   },
   prescriptionBlockedAlreadyRequested: {
-    defaultMessage: 'Endurnýjun þegar í vinnslu',
+    defaultMessage: 'Endurnýjun er nú þegar í vinnslu',
     id: 'sp.health:prescription-blocked-already-requested',
   },
+  prescriptionBlockedMoreRecentExists: {
+    defaultMessage:
+      'Endurnýjun ekki í boði vegna þess að nýrri lyfseðill er til staðar',
+    id: 'sp.health:prescription-blocked-more-recent-exists',
+  },
   prescriptionBlockedOther: {
-    defaultMessage: 'Óþekkt ástæða',
+    defaultMessage: 'Endurnýjun ekki í boði vegna óþekktrar ástæðu',
     id: 'sp.health:prescription-blocked-other',
+  },
+  weekdayMondayAcc: {
+    defaultMessage: 'Mánudaginn',
+    id: 'sp.health:weekday-monday-acc',
+  },
+  weekdayTuesdayAcc: {
+    defaultMessage: 'Þriðjudaginn',
+    id: 'sp.health:weekday-tuesday-acc',
+  },
+  weekdayWednesdayAcc: {
+    defaultMessage: 'Miðvikudaginn',
+    id: 'sp.health:weekday-wednesday-acc',
+  },
+  weekdayThursdayAcc: {
+    defaultMessage: 'Fimmtudaginn',
+    id: 'sp.health:weekday-thursday-acc',
+  },
+  weekdayFridayAcc: {
+    defaultMessage: 'Föstudaginn',
+    id: 'sp.health:weekday-friday-acc',
+  },
+  weekdaySaturdayAcc: {
+    defaultMessage: 'Laugardaginn',
+    id: 'sp.health:weekday-saturday-acc',
+  },
+  weekdaySundayAcc: {
+    defaultMessage: 'Sunnudaginn',
+    id: 'sp.health:weekday-sunday-acc',
+  },
+  profession: {
+    defaultMessage: 'Starfsheiti',
+    id: 'sp.health:profession',
+  },
+  department: {
+    defaultMessage: 'Deild',
+    id: 'sp.health:department',
+  },
+  diagnoses: {
+    defaultMessage: 'Sjúkdómsgreining',
+    id: 'sp.health:diagnoses',
+  },
+  information: {
+    defaultMessage: 'Upplýsingar',
+    id: 'sp.health:information',
+  },
+  publicationPlace: {
+    defaultMessage: 'Útgáfustaður',
+    id: 'sp.health:publication-place',
+  },
+  openMap: {
+    defaultMessage: 'Opna kort',
+    id: 'sp.health:see-on-maps',
+  },
+  duration: {
+    defaultMessage: 'Tímalengd',
+    id: 'sp.health:duration',
+  },
+  argWithMinutes: {
+    defaultMessage: '{arg} mínútur',
+    id: 'sp.health:arg-with-minutes',
   },
 })

@@ -36,10 +36,37 @@ const determineMessageFromApplicationAnswers = (application: Application) => {
     application.answers,
     'exemptionPeriod.type',
   )
-  if (exemptionType === ExemptionType.SHORT_TERM)
-    return applicationMessage.nameShortTerm
-  else if (exemptionType === ExemptionType.LONG_TERM)
-    return applicationMessage.nameLongTerm
+  if (!exemptionType) {
+    return applicationMessage.name
+  }
+
+  const convoyItems =
+    getValueViaPath<
+      { vehicle?: { permno?: string }; trailer?: { permno?: string } }[]
+    >(application.answers, 'convoy.items') || []
+
+  const convoyItemNames = convoyItems
+    .map((x) => {
+      const vehicle = x.vehicle?.permno
+      const trailer = x.trailer?.permno
+      if (!vehicle) return ''
+      return trailer ? `${vehicle} / ${trailer}` : vehicle
+    })
+    .filter(Boolean)
+    .join(', ')
+
+  if (exemptionType === ExemptionType.SHORT_TERM) {
+    return {
+      name: applicationMessage.nameShortTermWithConvoy,
+      value: convoyItemNames,
+    }
+  } else if (exemptionType === ExemptionType.LONG_TERM) {
+    return {
+      name: applicationMessage.nameLongTermWithConvoy,
+      value: convoyItemNames,
+    }
+  }
+
   return applicationMessage.name
 }
 

@@ -27,6 +27,9 @@ export class CreateApplicationInput {
 export class GetApplicationInput {
   @Field(() => String, { nullable: true })
   id?: string
+
+  @Field(() => String, { nullable: true })
+  slug?: string
 }
 
 @InputType('FormSystemApplicationsInput')
@@ -57,9 +60,6 @@ export class ApplicationEventDtoInput {
 
   @Field(() => String, { nullable: true })
   eventType?: string
-
-  @Field(() => Boolean, { nullable: true })
-  isFileEvent?: boolean
 }
 
 @InputType('FormSystemApplicationDtoInput')

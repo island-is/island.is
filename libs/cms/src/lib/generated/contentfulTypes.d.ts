@@ -493,11 +493,14 @@ export interface IBloodDonationRestrictionFields {
   /** Lykilorð */
   keywords?: string | undefined
 
-  /** Nánar um áhrif á blóðgjöf */
+  /** Undantekningar og athugasemdir */
   detailedText?: Document | undefined
 
   /** Flokkur */
   filterTags?: IGenericTag[] | undefined
+
+  /** Gildir frá */
+  effectiveDate?: string | undefined
 }
 
 export interface IBloodDonationRestriction
@@ -786,6 +789,86 @@ export interface IContactUs extends Entry<IContactUsFields> {
     contentType: {
       sys: {
         id: 'contactUs'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface ICourseFields {
+  /** Organization */
+  organization: IOrganization
+
+  /** Title */
+  title: string
+
+  /** Card Intro */
+  cardIntro?: Document | undefined
+
+  /** Description */
+  description?: Document | undefined
+
+  /** Categories */
+  categories?: IGenericTag[] | undefined
+
+  /** Instances */
+  instances?: ICourseInstance[] | undefined
+}
+
+export interface ICourse extends Entry<ICourseFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'course'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface ICourseInstanceFields {
+  /** Internal Title */
+  internalTitle?: string | undefined
+
+  /** Displayed Title */
+  displayedTitle?: string | undefined
+
+  /** Description */
+  description?: string | undefined
+
+  /** Start Date */
+  startDate: string
+
+  /** Start Date Time Duration */
+  startDateTimeDuration?: Record<string, any> | undefined
+
+  /** Location */
+  location?: string | undefined
+
+  /** Price */
+  price?: IPrice | undefined
+
+  /** Max Registrations */
+  maxRegistrations?: number | undefined
+}
+
+export interface ICourseInstance extends Entry<ICourseInstanceFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'courseInstance'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -4320,7 +4403,19 @@ export interface ISliceConnectedComponentFields {
     | 'Starfsrettindi/ProfessionRights'
     | 'VMST/ParentalLeaveCalculator'
     | 'DigitalIceland/BenefitsOfDigitalProcesses'
+    | 'WHODAS/Calculator'
+    | 'Brennuleyfi/BurningPermitList'
+    | 'DigitalIcelandMailingListThumbnailCard'
+    | 'DigitalIcelandStatistics'
+    | 'Trufelog/Lifsskodunarfelog'
+    | 'Landspitali/MemorialCard'
+    | 'Landspitali/DirectGrants'
+    | 'Police/FineAndSpeedMeasurementCalculator'
     | 'Personuvernd/SearchInput'
+    | 'Syslumenn/DrivingInstructorList'
+    | 'FSRE/EmployeeList'
+    | 'NewKilometerFee'
+    | 'LatestVerdicts'
     | undefined
 
   /** Localized JSON */
@@ -5379,6 +5474,8 @@ export type CONTENT_TYPE =
   | 'chartComponent'
   | 'chartNumberBox'
   | 'contactUs'
+  | 'course'
+  | 'courseInstance'
   | 'customPage'
   | 'districts'
   | 'emailSignup'

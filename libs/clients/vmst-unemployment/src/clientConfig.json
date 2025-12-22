@@ -4274,6 +4274,10 @@
             "type": "string",
             "nullable": true
           },
+          "english": {
+            "type": "string",
+            "nullable": true
+          },
           "selectableInWorkList": {
             "type": "boolean"
           }
@@ -6720,6 +6724,12 @@
             "description": "Viðmiðunardags ef sein heimkoma í U2",
             "format": "",
             "nullable": true
+          },
+          "acknowledgementsId": {
+            "type": "string",
+            "description": "Auðkenni fyrir skilmála staðfestingar umsækjanda",
+            "format": "guid",
+            "nullable": true
           }
         }
       },
@@ -7613,6 +7623,13 @@
               "format": "int32"
             }
           },
+          "genders": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_Genders_GenderDTO"
+            }
+          },
           "maxCanStartDate": {
             "type": "integer",
             "format": "int32"
@@ -7930,6 +7947,15 @@
                 "type": "string",
                 "format": "guid",
                 "nullable": true
+              },
+              "contentfulId": {
+                "type": "string",
+                "nullable": true
+              },
+              "attachmentTypeId": {
+                "type": "string",
+                "format": "guid",
+                "nullable": true
               }
             }
           }
@@ -7952,6 +7978,17 @@
                 }
               }
             }
+          }
+        ]
+      },
+      "Galdur_Domain_Models_Settings_Genders_GenderDTO": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_SettingsBase"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false
           }
         ]
       },
@@ -8376,11 +8413,6 @@
           "monthlyJobSearchAcknowledgement": {
             "type": "string",
             "description": "Staðfesting á atvinnuleit í hverjum mánuði",
-            "nullable": true
-          },
-          "introductoryMeetingAcknowledgement": {
-            "type": "string",
-            "description": "Kynningarfundur – skyldumæting",
             "nullable": true
           }
         }

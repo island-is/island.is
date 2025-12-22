@@ -24,7 +24,7 @@ export const socialInsuranceMaintenanceModule: PortalModule = {
     {
       name: m.maintenance,
       path: SocialInsuranceMaintenancePaths.SocialInsuranceMaintenanceRoot,
-      enabled: userInfo.scopes.includes(ApiScope.internal),
+      enabled: userInfo.scopes.includes(ApiScope.socialInsuranceAdministration),
       key: 'SocialInsurance',
       element: (
         <Navigate
@@ -38,21 +38,21 @@ export const socialInsuranceMaintenanceModule: PortalModule = {
     {
       name: m.paymentPlan,
       path: SocialInsuranceMaintenancePaths.SocialInsuranceMaintenancePaymentPlan,
-      enabled: userInfo.scopes.includes(ApiScope.internal),
+      enabled: userInfo.scopes.includes(ApiScope.socialInsuranceAdministration),
       key: 'SocialInsurance',
       element: <SocialInsuranceMaintenancePaymentPlan />,
     },
     {
       name: m.incomePlan,
       path: SocialInsuranceMaintenancePaths.SocialInsuranceMaintenanceIncomePlan,
-      enabled: userInfo.scopes.includes(ApiScope.internal),
+      enabled: userInfo.scopes.includes(ApiScope.socialInsuranceAdministration),
       key: 'SocialInsuranceIncomePlan',
       element: <SocialInsuranceMaintenanceIncomePlan />,
     },
     {
       name: m.incomePlanDetail,
       path: SocialInsuranceMaintenancePaths.SocialInsuranceMaintenanceIncomePlanDetail,
-      enabled: userInfo.scopes.includes(ApiScope.internal),
+      enabled: userInfo.scopes.includes(ApiScope.socialInsuranceAdministration),
       key: 'SocialInsuranceIncomePlan',
       element: <SocialInsuranceMaintenanceIncomePlanDetail />,
     },

@@ -39,38 +39,6 @@ const errorEmojis = [
   ':x:',
 ]
 
-const caseEvent: Record<CaseEvent, string> = {
-  [CaseTransition.ACCEPT]: ':white_check_mark: Samþykkt',
-  [CaseTransition.APPEAL]: ':judge: Kæra',
-  ARCHIVE: ':file_cabinet: Sett í geymslu',
-  [CaseTransition.ASK_FOR_CANCELLATION]: ':interrobang: Beðið um afturköllun',
-  [CaseTransition.ASK_FOR_CONFIRMATION]: ':question: Beðið um staðfestingu',
-  [CaseTransition.COMPLETE]: ':white_check_mark: Lokið',
-  [CaseTransition.COMPLETE_APPEAL]: ':white_check_mark: Kæru lokið',
-  [CaseTransition.DELETE]: ':fire: Afturkallað',
-  [CaseTransition.DENY_INDICTMENT]: ':no_entry_sign: Ákæru hafnað',
-  [CaseTransition.DISMISS]: ':woman-shrugging: Vísað frá',
-  CREATE: ':new: Mál stofnað',
-  CREATE_XRD: ':new: Mál stofnað í gegnum Strauminn',
-  EXTEND: ':recycle: Mál framlengt',
-  [CaseTransition.OPEN]: ':unlock: Opnað fyrir dómstól',
-  [CaseTransition.RECEIVE]: ':eyes: Móttekið',
-  [CaseTransition.RECEIVE_APPEAL]: ':eyes: Kæra móttekin',
-  [CaseTransition.REJECT]: ':negative_squared_cross_mark: Hafnað',
-  [CaseTransition.REOPEN]: ':construction: Opnað aftur',
-  [CaseTransition.REOPEN_APPEAL]: ':building_construction: Kæra opnuð aftur',
-  RESUBMIT: ':mailbox_with_mail: Sent aftur',
-  [CaseTransition.RETURN_INDICTMENT]: ':woman-gesturing-no: Ákæra afturkölluð',
-  SCHEDULE_COURT_DATE: ':timer_clock: Fyrirtökutíma úthlutað',
-  SUBPOENA_SERVICE_STATUS: ':page_with_curl: Staða fyrirkalls uppfærð',
-  [CaseTransition.SUBMIT]: ':mailbox_with_mail: Sent',
-  [CaseTransition.WITHDRAW_APPEAL]:
-    ':leftwards_arrow_with_hook: Kæra afturkölluð',
-  [CaseTransition.MOVE]: ':flying_disc: Máli úthlutað á nýjan dómstól',
-  VERDICT_SERVICE_STATUS:
-    ':mailbox_with_no_mail: Birtingarstaða á dómi uppfærð',
-}
-
 export type CaseEvent =
   | CaseTransition
   | 'ARCHIVE'
@@ -79,19 +47,53 @@ export type CaseEvent =
   | 'EXTEND'
   | 'RESUBMIT'
   | 'SCHEDULE_COURT_DATE'
+  | 'SPLIT'
   | 'SUBPOENA_SERVICE_STATUS'
   | 'VERDICT_SERVICE_STATUS'
 
+const caseEvent: Record<CaseEvent, string> = {
+  [CaseTransition.ACCEPT]: ':white_check_mark: Samþykkt',
+  [CaseTransition.APPEAL]: ':judge: Kæra',
+  ARCHIVE: ':file_cabinet: Sett í geymslu',
+  [CaseTransition.ASK_FOR_CANCELLATION]: ':interrobang: Beðið um afturköllun',
+  [CaseTransition.ASK_FOR_CONFIRMATION]: ':question: Beðið um staðfestingu',
+  [CaseTransition.COMPLETE]: ':white_check_mark: Lokið',
+  [CaseTransition.COMPLETE_APPEAL]: ':white_check_mark: Kæru lokið',
+  CREATE: ':new: Mál stofnað',
+  CREATE_XRD: ':new: Mál stofnað í gegnum Strauminn',
+  [CaseTransition.DELETE]: ':fire: Afturkallað',
+  [CaseTransition.DENY_INDICTMENT]: ':no_entry_sign: Ákæru hafnað',
+  [CaseTransition.DISMISS]: ':woman-shrugging: Vísað frá',
+  EXTEND: ':recycle: Mál framlengt',
+  [CaseTransition.MOVE]: ':flying_disc: Máli úthlutað á nýjan dómstól',
+  [CaseTransition.OPEN]: ':unlock: Opnað fyrir dómstól',
+  [CaseTransition.RECEIVE]: ':eyes: Móttekið',
+  [CaseTransition.RECEIVE_APPEAL]: ':eyes: Kæra móttekin',
+  [CaseTransition.REJECT]: ':negative_squared_cross_mark: Hafnað',
+  [CaseTransition.REOPEN]: ':construction: Opnað til leiðréttingar',
+  [CaseTransition.REOPEN_APPEAL]: ':building_construction: Kæra opnuð aftur',
+  RESUBMIT: ':mailbox_with_mail: Sent aftur',
+  [CaseTransition.RETURN_INDICTMENT]: ':woman-gesturing-no: Ákæra afturkölluð',
+  SCHEDULE_COURT_DATE: ':timer_clock: Fyrirtökutíma úthlutað',
+  SPLIT: ':scissors: Mál klofið',
+  [CaseTransition.SUBMIT]: ':mailbox_with_mail: Sent',
+  SUBPOENA_SERVICE_STATUS: ':page_with_curl: Staða fyrirkalls uppfærð',
+  VERDICT_SERVICE_STATUS:
+    ':mailbox_with_no_mail: Birtingarstaða á dómi uppfærð',
+  [CaseTransition.WITHDRAW_APPEAL]:
+    ':leftwards_arrow_with_hook: Kæra afturkölluð',
+}
+
 const caseEventsToLog = [
+  'ACCEPT',
   'CREATE',
   'CREATE_XRD',
+  'COMPLETE',
+  'DISMISS',
+  'REJECT',
   'SCHEDULE_COURT_DATE',
   'SUBPOENA_SERVICE_STATUS',
   'VERDICT_SERVICE_STATUS',
-  'COMPLETE',
-  'ACCEPT',
-  'REJECT',
-  'DISMISS',
 ]
 
 @Injectable()
