@@ -18,3 +18,8 @@ export enum Roles {
 export enum ApiActions {
   submitApplication = 'submitApplication',
 }
+
+export enum IndividualOrCompany {
+  individual = 'individual',
+  company = 'company',
+}

@@ -7,7 +7,6 @@ import {
   Application,
   DefaultEvents,
   FormModes,
-  UserProfileApi,
   ApplicationConfigurations,
   defineTemplateApi,
 } from '@island.is/application/types'
@@ -21,7 +20,7 @@ import { ApiActions, Events, Roles, States } from '../utils/constants'
 import { dataSchema } from './dataSchema'
 
 import { m } from './messages'
-import { IdentityApi } from '../dataProviders'
+import { IdentityApi, UserProfileApi } from '../dataProviders'
 
 const template: ApplicationTemplate<
   ApplicationContext,
