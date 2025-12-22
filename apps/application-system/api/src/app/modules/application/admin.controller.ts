@@ -27,6 +27,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { BypassDelegation } from './guards/bypass-delegation.decorator'
 import {
   ApplicationAdminPaginatedResponse,
+  ApplicationInstitution,
   ApplicationStatistics,
   ApplicationTypeAdmin,
 } from './dto/applicationAdmin.response.dto'
@@ -152,7 +153,6 @@ export class AdminController {
     },
   })
   async findAllSuperAdmin(
-    @CurrentUser() user: User,
     @Param('page') page: number,
     @Param('count') count: number,
     @Query('status') status?: string,
@@ -302,5 +302,19 @@ export class AdminController {
   })
   async getApplicationTypesSuperAdmin() {
     return this.applicationService.getAllApplicationTypesSuperAdmin()
+  }
+
+  @Scopes(AdminPortalScope.applicationSystemAdmin)
+  @BypassDelegation()
+  @Get('admin/applications/institutions')
+  @Documentation({
+    description: 'Get a list of all institutions with active application types',
+    response: {
+      status: 200,
+      type: [ApplicationInstitution],
+    },
+  })
+  async getInstitutionsSuperAdmin() {
+    return this.applicationService.getAllInstitutionsSuperAdmin()
   }
 }
