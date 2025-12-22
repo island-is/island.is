@@ -1,4 +1,3 @@
-
 import { MileCarModule } from './mile-car/mile-car.module'
 import { MileCarService } from './mile-car/mile-car.service'
 import { RegistrationOfNewPropertyNumbersModule } from './hms/registration-of-new-property-numbers/registration-of-new-property-numbers.module'
@@ -271,7 +270,7 @@ export const modules = [
   ExemptionForTransportationModule,
   RegistrationOfNewPropertyNumbersModule,
   MileCarModule,
-            ]
+]
 
 export const services = [
   ExampleCommonActionsService,
@@ -363,4 +362,4 @@ export const services = [
   ExemptionForTransportationService,
   RegistrationOfNewPropertyNumbersService,
   MileCarService,
-            ]
+]
