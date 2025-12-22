@@ -8,13 +8,13 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
-import { TransportAuthorityApi } from '../mileCar.service'
+import { MileCarApi } from '../mileCar.service'
 import { BasicVehicleInformation } from './models'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
 export class MainResolver {
-  constructor(private readonly transportAuthorityApi: TransportAuthorityApi) {}
+  constructor(private readonly mileCarApi: MileCarApi) {}
 
   @Scopes(ApiScope.samgongustofaVehicles)
   @Query(() => BasicVehicleInformation, {
@@ -25,9 +25,6 @@ export class MainResolver {
     @Args('permno', { type: () => String }) permno: string,
     @CurrentUser() user: User,
   ) {
-    return await this.transportAuthorityApi.getBasicVehicleInfoByPermno(
-      user,
-      permno,
-    )
+    return await this.mileCarApi.getBasicVehicleInfoByPermno(user, permno)
   }
 }
