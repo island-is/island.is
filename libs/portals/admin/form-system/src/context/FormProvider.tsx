@@ -48,15 +48,8 @@ export const FormProvider: React.FC<{
     screens: [],
   })
 
-  const {
-    fieldTypes,
-    listTypes,
-    certificationTypes,
-    applicantTypes,
-    submitUrls,
-    validationUrls,
-    form,
-  } = formBuilder
+  const { fieldTypes, listTypes, certificationTypes, applicantTypes, form } =
+    formBuilder
   const initialControl: ControlState = {
     activeItem: {
       type: 'Section',
@@ -154,8 +147,6 @@ export const FormProvider: React.FC<{
       setSubmissionUrls,
       submissionUrlInput,
       setSubmissionUrlInput,
-      submitUrls,
-      validationUrls,
       setInSettings,
       inSettings,
       updateActiveItem,
