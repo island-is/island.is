@@ -261,3 +261,18 @@ export class ApplicationTypeAdminInstitution {
   @Field(() => String, { nullable: true })
   name?: string
 }
+
+@ObjectType()
+export class ApplicationInstitution {
+  @Field(() => String)
+  nationalId!: string
+
+  @Field(() => String)
+  slug!: string
+
+  @Field(() => String)
+  contentfulId!: string
+
+  @Field(() => [String])
+  applicationTypes!: string[]
+}
