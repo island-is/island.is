@@ -9,7 +9,12 @@ interface Props {
   disabled: boolean
 }
 
-export const NationalIdField = ({ nationalId, name, disabled, legalEntity }: Props) => {
+export const NationalIdField = ({
+  nationalId,
+  name,
+  disabled,
+  legalEntity,
+}: Props) => {
   const { formatMessage } = useLocale()
   return (
     <GridRow>
