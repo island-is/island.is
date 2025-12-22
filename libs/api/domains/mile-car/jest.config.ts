@@ -1,7 +1,7 @@
 /* eslint-disable */
 export default {
   displayName: 'api-domains-mile-car',
-  preset: './jest.preset.js',
+  preset: '../../../../jest.preset.js',
   rootDir: '../../../..',
   roots: [__dirname],
   globals: {},
