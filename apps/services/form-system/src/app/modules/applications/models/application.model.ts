@@ -146,5 +146,4 @@ export class Application extends Model<Application> {
   orgContentfulId?: string
   tagLabel?: string
   tagVariant?: string
-  completedMessage?: string
 }
