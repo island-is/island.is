@@ -156,9 +156,7 @@ export class ApplicationService {
     ).adminControllerGetCountByTypeIdAndStatus(input)
   }
 
-  async getApplicationInstitutions(
-    user: User
-  ) {
+  async getApplicationInstitutions(user: User) {
     return this.applicationApiWithAuth(
       user,
     ).adminControllerGetInstitutionsSuperAdminRaw({})
