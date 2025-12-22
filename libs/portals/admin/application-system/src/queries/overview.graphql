@@ -135,8 +135,8 @@ query getApplicationStatistics($input: ApplicationsAdminStatisticsInput!) {
   }
 }
 
-query getApplicationInstitutions($input: ApplicationInstitutionsAdminInput!) {
-  applicationApplicationsAdminInstitutions(input: $input) {
+query getApplicationInstitutions {
+  applicationApplicationsAdminInstitutions {
     nationalId
     slug
     contentfulId
