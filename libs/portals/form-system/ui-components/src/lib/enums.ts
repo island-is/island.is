@@ -68,17 +68,6 @@ export const SectionTypes = {
   COMPLETED: 'COMPLETED',
 } as const
 
-export const UrlMethods = {
-  SEND_TO_ZENDESK: 'SEND_TO_ZENDESK',
-  SEND_NUDGE: 'SEND_NUDGE',
-  SEND_DATA: 'SEND_DATA',
-} as const
-
-export const UrlTypes = {
-  DATA: '11251c06-b514-4fdd-b485-c7ce1c71e6c1',
-  VALIDATION: '4ff8aaeb-e2db-46de-93bc-73572aba588a',
-} as const
-
 export const ApplicationStatus = {
   IN_PROGRESS: 'ee2545cc-b27f-4d75-bc82-b57f9d10c1b3',
   DONE: '385bbb3d-8dd6-4725-9f9c-90effc070de2',
@@ -94,7 +83,5 @@ export type ApplicantTypesEnum =
   typeof ApplicantTypesEnum[keyof typeof ApplicantTypesEnum]
 export type ListTypesEnum = typeof ListTypesEnum[keyof typeof ListTypesEnum]
 export type SectionTypes = typeof SectionTypes[keyof typeof SectionTypes]
-export type UrlMethods = typeof UrlMethods[keyof typeof UrlMethods]
-export type UrlTypes = typeof UrlTypes[keyof typeof UrlTypes]
 export type ApplicationStatus =
   typeof ApplicationStatus[keyof typeof ApplicationStatus]

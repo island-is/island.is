@@ -116,6 +116,7 @@ export const SortableTable = (props: SortableTableProps) => {
       )}
       {isMobile ? (
         <MobileTable
+          loading={props.tableLoading}
           inner={props.inner}
           header={props.title ?? ''}
           rows={items.map((item) => {
