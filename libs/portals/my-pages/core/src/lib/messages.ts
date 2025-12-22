@@ -1250,6 +1250,10 @@ export const m = defineMessages({
     id: 'service.portal:save',
     defaultMessage: 'Vista',
   },
+  saveAsDraft: {
+    id: 'service.portal:save-as-draft',
+    defaultMessage: 'Vista sem drög',
+  },
   saved: {
     id: 'service.portal:saved',
     defaultMessage: 'Vistað',
@@ -2077,6 +2081,23 @@ export const m = defineMessages({
   reviewTitle: {
     id: 'service.portal:review-title',
     defaultMessage: 'Lestu yfir svörin og sendu inn',
+  },
+  sendAnswers: {
+    id: 'service.portal:send-answers',
+    defaultMessage: 'Senda svör',
+  },
+  noAnswersIncluded: {
+    id: 'service.portal:no-answers-included',
+    defaultMessage: 'Engin svör hafa verið skráð',
+  },
+  noAnswersIncludedDetail: {
+    id: 'service.portal:no-answers-included-detail',
+    defaultMessage:
+      'Vinsamlegast farðu til baka og fylltu út spurningalistann.',
+  },
+  questionnaireCanceled: {
+    id: 'service.portal:questionnaire-canceled',
+    defaultMessage: 'Hætt við spurningalista',
   },
 })
 

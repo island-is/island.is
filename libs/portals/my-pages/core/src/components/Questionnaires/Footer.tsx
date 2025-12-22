@@ -1,6 +1,6 @@
 import { Box, Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import React from 'react'
+import { FC } from 'react'
 import { m } from '../../lib/messages'
 
 interface FooterButtonsProps {
@@ -8,67 +8,38 @@ interface FooterButtonsProps {
   onCancel?: () => void
   submitLabel?: string
   cancelLabel?: string
-  enableStepper?: boolean
-  canGoPrevious?: boolean
-  canGoNext?: boolean
-  handlePrevious?: () => void
-  handleNext?: () => void
+  submitDisabled?: boolean
 }
 
-export const QuestionnaireFooter: React.FC<FooterButtonsProps> = ({
+export const QuestionnaireFooter: FC<FooterButtonsProps> = ({
   onSubmit,
   onCancel,
   submitLabel,
   cancelLabel,
-  enableStepper = false,
-  canGoPrevious = false,
-  canGoNext = false,
-  handlePrevious,
-  handleNext,
+  submitDisabled = false,
 }) => {
   const { formatMessage } = useLocale()
-  return enableStepper ? (
+
+  return (
     <Box
       display="flex"
       justifyContent="spaceBetween"
-      alignItems="center"
-      paddingX={10}
-      paddingBottom={4}
-    >
-      <Box>
-        {canGoPrevious && (
-          <Button variant="ghost" onClick={handlePrevious}>
-            {formatMessage(m.lastQuestion)}
-          </Button>
-        )}
-      </Box>
-      <Box>
-        {canGoNext ? (
-          <Button variant="primary" onClick={handleNext}>
-            {formatMessage(m.nextQuestion)}
-          </Button>
-        ) : (
-          <Button variant="primary" onClick={onSubmit}>
-            {formatMessage(m.submit)}
-          </Button>
-        )}
-      </Box>
-    </Box>
-  ) : (
-    <Box
-      display="flex"
-      justifyContent="spaceBetween"
-      paddingX={[0, 0, 0, enableStepper ? 10 : 3]}
+      paddingX={[0, 0, 0, 3]}
       paddingY={2}
       paddingBottom={4}
     >
       <Box>
-        <Button variant="ghost" onClick={onCancel}>
+        <Button variant="ghost" onClick={onCancel} preTextIcon="arrowBack">
           {cancelLabel ? cancelLabel : formatMessage(m.buttonCancel)}
         </Button>
       </Box>
       <Box>
-        <Button variant="primary" onClick={onSubmit}>
+        <Button
+          disabled={submitDisabled}
+          variant="primary"
+          onClick={onSubmit}
+          icon="arrowForward"
+        >
           {submitLabel ? submitLabel : formatMessage(m.submit)}
         </Button>
       </Box>

@@ -1,6 +1,6 @@
 import { Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import React from 'react'
+import { FC } from 'react'
 import { m } from '../../lib/messages'
 import { QuestionAnswer } from '../../types/questionnaire'
 import { formatDateWithTime } from '../../utils/dateUtils'
@@ -37,7 +37,7 @@ const formatValue = (value: string): string => {
   return value
 }
 
-export const AnsweredQuestionnaire: React.FC<AnsweredQuestionnaireProps> = ({
+export const AnsweredQuestionnaire: FC<AnsweredQuestionnaireProps> = ({
   answers,
 }) => {
   const { formatMessage } = useLocale()
@@ -61,6 +61,7 @@ export const AnsweredQuestionnaire: React.FC<AnsweredQuestionnaireProps> = ({
               type: 'text' as const,
               boldValue: false,
               boldTitle: false,
+              splitValue: 'new-line' as const,
             }
           }) ?? []),
         ]}

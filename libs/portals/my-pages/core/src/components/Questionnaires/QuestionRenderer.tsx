@@ -4,7 +4,7 @@ import {
   QuestionnaireQuestion,
 } from '@island.is/api/schema'
 import { Box, DatePicker, Text } from '@island.is/island-ui/core'
-import React from 'react'
+import { FC } from 'react'
 import HtmlParser from 'react-html-parser'
 import useIsMobile from '../../hooks/useIsMobile/useIsMobile'
 import { QuestionAnswer } from '../../types/questionnaire'
@@ -24,7 +24,7 @@ interface QuestionRendererProps {
   error?: string
 }
 
-export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
+export const QuestionRenderer: FC<QuestionRendererProps> = ({
   question,
   answer,
   onAnswerChange,

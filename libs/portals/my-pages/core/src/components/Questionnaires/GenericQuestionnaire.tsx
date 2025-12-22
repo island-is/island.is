@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   Divider,
   GridColumn,
   GridContainer,
@@ -7,9 +8,8 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { QuestionRenderer } from '../Questionnaires/QuestionRenderer'
-import { Stepper } from '../Questionnaires/Stepper'
 import {
   isQuestionVisibleWithStructuredConditions,
   isSectionVisible,
@@ -19,6 +19,7 @@ import {
   Questionnaire,
   QuestionnaireAnswerOptionType,
   QuestionnaireQuestion,
+  QuestionnaireQuestionnairesOrganizationEnum,
 } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
@@ -30,26 +31,21 @@ import { calculateFormula } from './utils/calculations'
 
 interface GenericQuestionnaireProps {
   questionnaire: Questionnaire
-  onSubmit: (answers: { [key: string]: QuestionAnswer }) => void
+  onSubmit: (
+    answers: { [key: string]: QuestionAnswer },
+    asDraft?: boolean,
+  ) => void
   onCancel?: () => void
-  backLink?: string
-  enableStepper?: boolean
-  questionsPerStep?: number
   img?: string
   initialAnswers?: { [key: string]: QuestionAnswer }
-  isDraft?: boolean
 }
 
-export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
+export const GenericQuestionnaire: FC<GenericQuestionnaireProps> = ({
   questionnaire,
   onSubmit,
-  onCancel: _onCancel,
-  enableStepper = false,
-  questionsPerStep: _questionsPerStep = 3,
-  backLink,
+  onCancel,
   img,
   initialAnswers,
-  isDraft: _isDraft = false,
 }) => {
   const { formatMessage } = useLocale()
   const [answers, setAnswers] = useState<{ [key: string]: QuestionAnswer }>(
@@ -57,7 +53,6 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
   )
 
   const [showReview, setShowReview] = useState(false)
-  const [currentStep, setCurrentStep] = useState(0)
   const [errors, setErrors] = useState<{ [key: string]: string }>({})
 
   // Helper function to calculate formula
@@ -146,36 +141,6 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
     return processedSections.flatMap((section) => section.questions || [])
   }, [processedSections])
 
-  // Create stepper steps from sections if stepper is enabled
-  const questionSteps = useMemo(() => {
-    if (enableStepper) {
-      return processedSections.map((section) => section.questions || [])
-    }
-    return [visibleQuestions]
-  }, [enableStepper, processedSections, visibleQuestions])
-
-  // Create stepper steps
-  const stepperSteps = useMemo(() => {
-    if (!enableStepper || !questionSteps) {
-      return undefined
-    }
-
-    return questionSteps.map((_, index) => ({
-      id: `step-${index}`,
-      title: processedSections[index]?.title || `Step ${index + 1}`,
-      completed: index < currentStep,
-      disabled: false,
-    }))
-  }, [enableStepper, questionSteps, currentStep, processedSections])
-
-  useEffect(() => {
-    if (questionSteps && questionSteps.length > 0) {
-      setCurrentStep((prevStep) =>
-        Math.max(0, Math.min(prevStep, questionSteps.length - 1)),
-      )
-    }
-  }, [questionSteps])
-
   // Clear answers for hidden questions
   useEffect(() => {
     if (!questionnaire.sections?.length) return
@@ -245,58 +210,7 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
     [questionnaire.sections, calculateFormulaCallback],
   )
 
-  const validateCurrentStep = (): boolean => {
-    const currentQuestions = questionSteps
-      ? questionSteps[currentStep] || []
-      : []
-    const newErrors: { [key: string]: string } = {}
-    let isValid = true
-
-    currentQuestions.forEach((question: QuestionnaireQuestion) => {
-      const answer = answers[question.id]
-      if (
-        question.answerOptions.type === QuestionnaireAnswerOptionType.label ||
-        !question.required
-      )
-        return
-
-      const isEmpty =
-        !answer ||
-        !answer.answers ||
-        answer.answers.length === 0 ||
-        answer.answers.every((a) => !a.value || a.value.trim() === '')
-
-      if (question.required && isEmpty) {
-        newErrors[question.id] = formatMessage(m.requiredQuestion)
-        isValid = false
-      }
-    })
-
-    setErrors(newErrors)
-    return isValid
-  }
-
-  const handleNext = () => {
-    if (validateCurrentStep()) {
-      if (questionSteps && currentStep < questionSteps.length - 1) {
-        setCurrentStep((prev) => prev + 1)
-        window.scrollTo({ top: 0, behavior: 'smooth' })
-      }
-    }
-  }
-
-  const handlePrevious = () => {
-    if (currentStep > 0) {
-      setCurrentStep((prev) => prev - 1)
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-    }
-  }
-
-  const handleStepChange = (stepIndex: number) => {
-    setCurrentStep(stepIndex)
-  }
-
-  const handleSubmit = () => {
+  const handleSubmit = (asDraft?: boolean) => {
     let allValid = true
     const allErrors: { [key: string]: string } = {}
 
@@ -321,82 +235,55 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
     })
 
     if (allValid) {
-      if (showReview) {
-        onSubmit(answers)
-        setShowReview(false)
+      if (asDraft) {
+        onSubmit(answers, true)
       } else {
-        setShowReview(true)
+        if (showReview) {
+          onSubmit(answers, false)
+        } else {
+          setShowReview(true)
+        }
       }
     } else {
       setErrors(allErrors)
     }
   }
 
-  const currentQuestions = questionSteps?.[currentStep] || []
-  const isLastStep = currentStep === (questionSteps?.length || 1) - 1
-  const canGoNext = currentStep < (questionSteps?.length || 1) - 1
-  const canGoPrevious = currentStep > 0
-
   return (
-    <Box marginTop={enableStepper ? [8, 8, 8, 4] : 0}>
+    <Box marginTop={0}>
       {/* Header */}
       {/* Stepper (if enabled and multiple steps) */}
       <GridContainer>
         <GridRow>
-          {enableStepper && questionSteps && (
-            <GridColumn span={['12/12', '12/12', '3/12']}>
-              <Box
-                background={enableStepper ? 'blue100' : 'white'}
-                paddingBottom={3}
-              >
-                <Stepper
-                  steps={stepperSteps}
-                  currentStepIndex={currentStep}
-                  onStepChange={handleStepChange}
-                  onNext={handleNext}
-                  onPrevious={handlePrevious}
-                  nextLabel={isLastStep ? 'Review' : 'Next'}
-                  previousLabel="Back"
-                  allowClickableSteps={false}
-                  backLink={backLink}
-                />
-              </Box>
-            </GridColumn>
-          )}
-
-          <GridColumn
-            span={enableStepper ? ['12/12', '12/12', '9/12'] : '12/12'}
-          >
+          <GridColumn span={'12/12'}>
             <Box background="white" borderRadius="standard">
               <QuestionnaireHeader
                 title={questionnaire.baseInformation.title}
                 img={img}
-                enableStepper={enableStepper}
+                buttonGroup={
+                  questionnaire.baseInformation.organization ===
+                  QuestionnaireQuestionnairesOrganizationEnum.EL
+                    ? [
+                        <Button
+                          variant="utility"
+                          icon="save"
+                          iconType="outline"
+                          key="save-draft"
+                          onClick={() => handleSubmit(true)}
+                        >
+                          {formatMessage(m.saveAsDraft)}
+                        </Button>,
+                      ]
+                    : undefined
+                }
               />
               {/* Questions */}
-              <Box
-                style={{ minHeight: '400px' }}
-                marginX={enableStepper ? 10 : [0, 0, 0, 4]}
-                marginY={[2, 2, 2, 6]}
-              >
+              <Box style={{ minHeight: '400px' }} marginY={[2, 2, 2, 6]}>
                 {showReview ? (
                   <Review
                     answers={answers}
                     title={formatMessage(m.reviewTitle)}
                   />
-                ) : enableStepper ? (
-                  <Stack space={4}>
-                    {currentQuestions.map((question: QuestionnaireQuestion) => (
-                      <QuestionRenderer
-                        key={question.id}
-                        question={question}
-                        answer={answers[question.id]}
-                        onAnswerChange={handleAnswerChange}
-                        error={errors[question.id]}
-                        disabled={question.answerOptions.formula ? true : false}
-                      />
-                    ))}
-                  </Stack>
                 ) : (
                   <Stack space={4}>
                     {processedSections.map((section, sectionIndex) => (
@@ -450,11 +337,11 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
               </Box>
               {/* Navigation/Submit buttons */}
               <QuestionnaireFooter
-                onSubmit={handleSubmit}
-                onCancel={showReview ? () => setShowReview(false) : _onCancel}
+                onSubmit={() => handleSubmit(false)}
+                onCancel={showReview ? () => setShowReview(false) : onCancel}
                 submitLabel={
                   showReview
-                    ? formatMessage(m.submit)
+                    ? formatMessage(m.sendAnswers)
                     : formatMessage(m.forward)
                 }
                 cancelLabel={
@@ -462,11 +349,7 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
                     ? formatMessage(m.buttonEdit)
                     : formatMessage(m.buttonCancel)
                 }
-                enableStepper={enableStepper}
-                canGoPrevious={canGoPrevious}
-                canGoNext={canGoNext}
-                handlePrevious={handlePrevious}
-                handleNext={handleNext}
+                submitDisabled={showReview && Object.keys(answers).length === 0}
               />
             </Box>
           </GridColumn>

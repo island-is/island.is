@@ -7,6 +7,8 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import cn from 'classnames'
+import { ReactElement } from 'react'
+import HtmlParser from 'react-html-parser'
 import useIsMobile from '../../hooks/useIsMobile/useIsMobile'
 import { LinkButton } from '../LinkButton/LinkButton'
 import * as styles from './NestedLines.css'
@@ -14,9 +16,10 @@ import * as styles from './NestedLines.css'
 interface Props {
   data: {
     title: string
-    value?: string | number | React.ReactElement | string[]
+    value?: string | number | ReactElement | string[]
     type?: 'text' | 'link' | 'action'
     href?: string
+    splitValue?: 'new-line' | 'comma'
     boldTitle?: boolean
     boldValue?: boolean
     variant?: 'small' | 'default'
@@ -45,8 +48,9 @@ export const NestedLines = ({
     <Box background="blue100">
       <GridContainer className={styles.grid}>
         {data.map((item, i) => {
+          const splitValue = item.splitValue ?? 'comma'
           const value = Array.isArray(item.value)
-            ? item.value.join(', ')
+            ? item.value.join(splitValue === 'new-line' ? '<br/>' : ', ')
             : item.value
           const boldTitle = item.boldTitle ?? true
           const boldValue = item.boldValue ?? false
@@ -105,7 +109,7 @@ export const NestedLines = ({
                           as="span"
                           fontWeight={boldValue ? 'medium' : 'regular'}
                         >
-                          {value}
+                          {HtmlParser(value ? value.toString() : '')}
                         </Text>
                       )}
                     </Box>

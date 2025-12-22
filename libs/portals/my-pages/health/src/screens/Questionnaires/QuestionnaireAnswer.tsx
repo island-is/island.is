@@ -4,12 +4,13 @@ import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
 import {
   GenericQuestionnaire,
+  m,
   QuestionAnswer,
 } from '@island.is/portals/my-pages/core'
 import { useOrganizations } from '@island.is/portals/my-pages/graphql'
 import { Problem } from '@island.is/react-spa/shared'
 import { getOrganizationLogoUrl } from '@island.is/shared/utils'
-import React, { useMemo } from 'react'
+import { FC, useMemo } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { messages } from '../..'
 import { HealthPaths } from '../../lib/paths'
@@ -18,12 +19,15 @@ import {
   useSubmitQuestionnaireMutation,
 } from './questionnaires.generated'
 
-const QuestionnaireAnswer: React.FC = () => {
+const QuestionnaireAnswer: FC = () => {
   const { id, org } = useParams<{ id?: string; org?: string }>()
   const navigate = useNavigate()
   const { formatMessage, lang } = useLocale()
   const { data: organizations } = useOrganizations()
-  const [submitQuestionnaire] = useSubmitQuestionnaireMutation()
+  const [submitQuestionnaire] = useSubmitQuestionnaireMutation({
+    refetchQueries: ['GetAnsweredQuestionnaire'],
+    awaitRefetchQueries: true,
+  })
 
   const organization: QuestionnaireQuestionnairesOrganizationEnum | undefined =
     org === 'el'
@@ -41,6 +45,7 @@ const QuestionnaireAnswer: React.FC = () => {
       },
       locale: lang,
     },
+
     skip: !id,
   })
 
@@ -73,9 +78,6 @@ const QuestionnaireAnswer: React.FC = () => {
     )
   }, [questionnaire?.draftAnswers, questionnaire?.sections])
 
-  // Check if this is a draft
-  const isDraft = !!questionnaire?.draftAnswers?.length
-
   if (!id) {
     return (
       <Box background="white">
@@ -84,7 +86,10 @@ const QuestionnaireAnswer: React.FC = () => {
     )
   }
 
-  const handleSubmit = (answers: { [key: string]: QuestionAnswer }) => {
+  const handleSubmit = (
+    answers: { [key: string]: QuestionAnswer },
+    asDraft?: boolean,
+  ) => {
     if (!organization || !id) {
       toast.error(
         formatMessage(messages.errorSendingAnswers, {
@@ -108,6 +113,7 @@ const QuestionnaireAnswer: React.FC = () => {
         input: {
           id,
           organization: organization,
+          saveAsDraft: asDraft,
           entries: entries,
           formId: data?.questionnairesDetail?.baseInformation.formId || '',
         },
@@ -116,11 +122,19 @@ const QuestionnaireAnswer: React.FC = () => {
     })
       .then((response) => {
         if (response.data?.submitQuestionnaire.success) {
-          toast.success(
-            formatMessage(messages.yourAnswersForHasBeenSent, {
-              title: data?.questionnairesDetail?.baseInformation.title || '',
-            }),
-          )
+          asDraft
+            ? toast.success(
+                formatMessage(messages.questionnaireDraftSaved, {
+                  title:
+                    data?.questionnairesDetail?.baseInformation.title || '',
+                }),
+              )
+            : toast.success(
+                formatMessage(messages.yourAnswersForHasBeenSent, {
+                  title:
+                    data?.questionnairesDetail?.baseInformation.title || '',
+                }),
+              )
           navigate(
             HealthPaths.HealthQuestionnairesAnswered.replace(
               ':org',
@@ -156,14 +170,11 @@ const QuestionnaireAnswer: React.FC = () => {
   }
 
   const handleCancel = () => {
-    // TODO: clear answers or send draft?
-    toast.info('Hætt við spurningalista')
-
+    toast.info(formatMessage(m.questionnaireCanceled))
     navigate(-1)
   }
 
   return (
-    // If the stepper should be enabled, set the backgroun to blue100
     <Box display={'flex'} justifyContent={'center'}>
       <Box
         style={{ maxWidth: theme.breakpoints.xl }}
@@ -187,11 +198,8 @@ const QuestionnaireAnswer: React.FC = () => {
           <GenericQuestionnaire
             questionnaire={data.questionnairesDetail}
             initialAnswers={initialAnswers}
-            isDraft={isDraft}
             onSubmit={handleSubmit}
             onCancel={handleCancel}
-            enableStepper={false}
-            backLink={HealthPaths.HealthQuestionnaires}
             img={getOrganizationLogoUrl(
               data.questionnairesDetail?.baseInformation?.organization ?? '',
               organizations,

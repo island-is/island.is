@@ -187,7 +187,6 @@ export class QuestionnairesService {
     }
   }
 
-  // Build answered questionnaire response for LSH
   private async getLSHAnsweredQuestionnaire(
     _user: User,
     _locale: Locale,
@@ -216,6 +215,7 @@ export class QuestionnairesService {
           ? 'Spurningalisti'
           : 'Questionnaire',
       description: LSHquestionnaire?.description || undefined,
+      date: this.formatDate(LSHdata.answerDateTime),
       answers: LSHdata.answers?.map((answer) => {
         // Search through all sections to find the matching question
         const question = LSHquestionnaire?.sections

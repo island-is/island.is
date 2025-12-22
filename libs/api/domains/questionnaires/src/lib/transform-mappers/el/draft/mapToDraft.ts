@@ -40,7 +40,7 @@ export const mapDraftRepliesToAnswers = (
 
     const answerType = mapAnswerOptionType(question.type, question)
     const label = question.label
-    // Helper to get option label  for list questions
+    // Helper to get option label for list questions
     const getOptionLabel = (value: string): string | undefined => {
       // Handle boolean questions specially - they don't have values array
       if (question.type === 'bool') {
@@ -53,7 +53,7 @@ export const mapDraftRepliesToAnswers = (
         const option = question.values.find((v) => v.id === value)
         return option?.label
       }
-      return label
+      return undefined
     }
 
     let answerValue: Array<{ label?: string; value: string }>

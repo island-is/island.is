@@ -17,13 +17,13 @@ import {
   m,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
-import React, { useEffect, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { HealthPaths, messages } from '../..'
 import * as styles from './Questionnaires.css'
 import { useGetAnsweredQuestionnaireQuery } from './questionnaires.generated'
 
-const QuestionnaireAnswered: React.FC = () => {
+const QuestionnaireAnswered: FC = () => {
   const { id, org } = useParams<{
     id?: string
     org?: string
@@ -123,7 +123,6 @@ const QuestionnaireAnswered: React.FC = () => {
                 size="xs"
               />
             </Box>
-
             {isDraft ? (
               <Box className={styles.button}>
                 <Button
@@ -166,7 +165,7 @@ const QuestionnaireAnswered: React.FC = () => {
           <AnsweredQuestionnaire
             answers={currentSubmission?.answers?.map((answer) => ({
               questionId: answer.id,
-              question: answer.htmlLabel || answer.label || '',
+              question: answer.label || '',
               answers: answer.values.map((value) => ({
                 value,
               })),

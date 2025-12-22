@@ -1,7 +1,7 @@
-import React from 'react'
-import { Box, Text, Stack, FocusableBox } from '@island.is/island-ui/core'
-import * as styles from './QuestionTypes.css'
+import { Box, Stack, Text } from '@island.is/island-ui/core'
 import cn from 'classnames'
+import { FC, useMemo } from 'react'
+import * as styles from './QuestionTypes.css'
 export interface ScaleProps {
   id: string
   label?: string
@@ -18,7 +18,7 @@ export interface ScaleProps {
   showLabels?: boolean
 }
 
-export const Scale: React.FC<ScaleProps> = ({
+export const Scale: FC<ScaleProps> = ({
   label,
   min,
   max,
@@ -36,7 +36,7 @@ export const Scale: React.FC<ScaleProps> = ({
   const minNum = Number(min)
   const maxNum = Number(max)
 
-  const generateScaleValues = React.useMemo(() => {
+  const generateScaleValues = useMemo(() => {
     // Bail out early if values are invalid
     if (isNaN(minNum) || isNaN(maxNum) || minNum >= maxNum) {
       console.warn('Invalid min/max in Scale component', { min, max })
@@ -55,7 +55,7 @@ export const Scale: React.FC<ScaleProps> = ({
       return values.filter((val) => parseFloat(val) % 10 === 0)
     }
     return values
-  }, [minNum, maxNum, step])
+  }, [minNum, maxNum, step, min, max])
 
   return (
     <Box>
@@ -90,8 +90,6 @@ export const Scale: React.FC<ScaleProps> = ({
                 [styles.scaleButtonSelected]: value === scaleValue,
               })}
               style={{ height: '80px', width: '74px' }}
-              // background={value === scaleValue ? 'blue400' : 'blue100'}
-              // borderColor={value === scaleValue ? 'blue400' : 'blue200'}
               onClick={() => onChange(scaleValue)}
               disabled={disabled}
               display="flex"

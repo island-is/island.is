@@ -1916,6 +1916,10 @@ export const messages = defineMessages({
     defaultMessage: 'Svör þín við {title} hafa verið send',
     id: 'sp.health:your-answers-for-has-been-sent',
   },
+  questionnaireDraftSaved: {
+    defaultMessage: 'Drög við {title} hafa verið vistuð',
+    id: 'sp.health:questionnaire-draft-saved',
+  },
   errorSendingAnswers: {
     defaultMessage:
       'Ekki tókst að senda svör við {title}. Vinsamlegast reyndu aftur síðar eða hafðu samband við þjónustuaðila.',

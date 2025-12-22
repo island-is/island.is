@@ -14,9 +14,6 @@ export type { ScaleProps } from './QuestionsTypes/Scale'
 export { Thermometer } from './QuestionsTypes/Thermometer'
 export type { ThermometerProps } from './QuestionsTypes/Thermometer'
 
-export { Stepper } from './Stepper'
-export type { Step } from './Stepper'
-
 export { AnsweredQuestionnaire } from './AnsweredQuestionnaire'
 
 // Export generic questionnaire components

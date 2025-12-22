@@ -36,6 +36,9 @@ export class QuestionnaireInput {
 
   @Field(() => [QuestionnaireEntryInput])
   entries!: QuestionnaireEntryInput[]
+
+  @Field(() => Boolean, { nullable: true, defaultValue: false })
+  saveAsDraft?: boolean
 }
 
 @InputType()

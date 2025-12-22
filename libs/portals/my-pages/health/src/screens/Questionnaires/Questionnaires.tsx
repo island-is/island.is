@@ -23,7 +23,7 @@ import {
 } from '@island.is/portals/my-pages/core'
 import { debounceTime } from '@island.is/shared/constants'
 import debounce from 'lodash/debounce'
-import React, { useEffect, useMemo, useState } from 'react'
+import { FC, useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
@@ -40,12 +40,12 @@ const defaultFilterValues = {
 
 type FilterValues = {
   searchQuery: string
-  status: QuestionnaireQuestionnairesStatusEnum[] // TODO: switch to enum from graphql
-  organization: QuestionnaireQuestionnairesOrganizationEnum[] // TODO: switch to enum from graphql
-  treatment: string[] // TODO: switch to enum from graphql
+  status: QuestionnaireQuestionnairesStatusEnum[]
+  organization: QuestionnaireQuestionnairesOrganizationEnum[]
+  treatment: string[]
 }
 
-const Questionnaires: React.FC = () => {
+const Questionnaires: FC = () => {
   const { formatMessage, lang } = useLocale()
   const navigate = useNavigate()
   const [filterValues, setFilterValues] =

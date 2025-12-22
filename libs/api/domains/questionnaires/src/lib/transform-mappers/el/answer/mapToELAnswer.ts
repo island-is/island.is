@@ -191,6 +191,6 @@ export const mapToElAnswer = (
 
   return {
     replies,
-    isDraft: true, // TODO: Determine draft status based on input when ready
+    isDraft: true, //input.saveAsDraft ?? false, // TODO: CHANGE TO FALSE WHEN SERVICE CAN SUBMIT FINAL ANSWERS,
   }
 }

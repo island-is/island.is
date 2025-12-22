@@ -1,6 +1,6 @@
-import React, { useRef, useCallback, useState } from 'react'
 import { Box, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
+import React, { FC, useCallback, useRef, useState } from 'react'
 import * as styles from './QuestionTypes.css'
 export interface ThermometerProps {
   id: string
@@ -17,7 +17,7 @@ export interface ThermometerProps {
   step?: number
 }
 
-export const Thermometer: React.FC<ThermometerProps> = ({
+export const Thermometer: FC<ThermometerProps> = ({
   label,
   min,
   max,

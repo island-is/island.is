@@ -9,7 +9,7 @@ The library is organized into the following parts:
 - **Main Components** – High-level orchestrators (`GenericQuestionnaire`, `AnsweredQuestionnaire`)
 - **QuestionsTypes/** – Individual question input components (radio, text, table, etc.)
 - **utils/** – Shared utilities for visibility logic and formula calculations
-- **Supporting Components** – `QuestionRenderer`, `Stepper`
+- **Supporting Components** – `QuestionRenderer`
 
 ---
 
@@ -19,7 +19,6 @@ The library is organized into the following parts:
 
 The primary component for rendering an interactive questionnaire form. It handles:
 
-- Multi-section questionnaires with optional stepper navigation
 - Dynamic question visibility based on conditions
 - Answer state management and validation
 - Formula-based calculated fields
@@ -31,11 +30,11 @@ The primary component for rendering an interactive questionnaire form. It handle
 ```typescript
 interface GenericQuestionnaireProps {
   questionnaire: Questionnaire // GraphQL questionnaire model
-  onSubmit: (answers: { [key: string]: QuestionAnswer }) => void
+  onSubmit: (
+    answers: { [key: string]: QuestionAnswer },
+    asDraft?: boolean,
+  ) => void
   onCancel?: () => void
-  backLink?: string // Optional back navigation link
-  enableStepper?: boolean // Enable multi-step navigation (default: false)
-  questionsPerStep?: number // Questions per step (default: 3)
   img?: string // Optional header image
   initialAnswers?: { [key: string]: QuestionAnswer } // Pre-populate answers (drafts)
   isDraft?: boolean // Whether this is a draft submission
@@ -50,8 +49,6 @@ import { GenericQuestionnaire } from '@island.is/portals/my-pages/core'
   questionnaire={questionnaireData}
   onSubmit={(answers) => submitMutation({ answers })}
   onCancel={() => navigate('/questionnaires')}
-  enableStepper={true}
-  questionsPerStep={5}
   initialAnswers={draftAnswers}
 />
 ```
@@ -61,7 +58,6 @@ import { GenericQuestionnaire } from '@island.is/portals/my-pages/core'
 - **Visibility Logic**: Questions and sections automatically show/hide based on `visibilityConditions` and `dependsOn` fields
 - **Formula Calculations**: Questions with `formula` in `answerOptions` are automatically calculated from other answers
 - **Validation**: Required fields are validated before submission
-- **Progress Tracking**: Optional stepper UI shows progress through multi-section forms
 - **Draft Handling**: Can pre-populate answers from saved drafts via `initialAnswers`
 
 ---
@@ -267,33 +263,9 @@ Handles:
 - Date picker rendering for date types
 - Progress bar rendering for slider types
 
----
-
-### `Stepper`
-
-Multi-step form navigation component. Used by `GenericQuestionnaire` when `enableStepper={true}`.
-
-**Props:**
-
-```typescript
-interface StepperProps {
-  steps: Step[] // { id, title, description?, completed?, disabled? }[]
-  currentStepIndex: number
-  onStepChange: (stepIndex: number) => void
-  onNext?: () => void
-  onPrevious?: () => void
-  nextLabel?: string // default: 'Next'
-  previousLabel?: string // default: 'Previous'
-  allowClickableSteps?: boolean // default: false
-  backLink?: string
-}
-```
-
 Provides:
 
 - Visual progress indicator
-- Step-by-step navigation buttons
-- Optional clickable step indicators
 - Progress percentage calculation
 
 ---
@@ -420,9 +392,8 @@ Multiple tests regarding visibility mapping can be fount `visibilityUtils.spec.t
 
 1. **Always provide `onSubmit` handler** – Don't forget to handle the submission mutation
 2. **Use `initialAnswers` for drafts** – Pre-populate from `draftAnswers` in the GraphQL query
-3. **Enable stepper for long forms** – Improves UX when there are many questions
-4. **Handle formula fields carefully** – Don't allow user input for calculated fields
-5. **Test visibility logic thoroughly** – Complex conditions can create unexpected UX
+3. **Handle formula fields carefully** – Don't allow user input for calculated fields
+4. **Test visibility logic thoroughly** – Complex conditions can create unexpected UX
 
 ### When creating new question types:
 
