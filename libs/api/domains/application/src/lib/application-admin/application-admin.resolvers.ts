@@ -99,9 +99,7 @@ export class ApplicationAdminResolver {
 
   @Query(() => [ApplicationInstitution], { nullable: true })
   @Scopes(AdminPortalScope.applicationSystemAdmin)
-  async applicationApplicationsAdminInstitutions(
-    @CurrentUser() user: User,
-  ) {
+  async applicationApplicationsAdminInstitutions(@CurrentUser() user: User) {
     return this.applicationService.getApplicationInstitutions(user)
   }
 }

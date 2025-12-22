@@ -317,7 +317,9 @@ export class ApplicationService {
 
     const allTypeIds = Array.from(
       new Set(
-        allInstitutions.flatMap((institution) => institution.applicationTypesIds),
+        allInstitutions.flatMap(
+          (institution) => institution.applicationTypesIds,
+        ),
       ),
     )
 
