@@ -178,6 +178,7 @@ export class CourtDocumentRepositoryService {
     const filedDocuments = await this.courtDocumentModel.findAll({
       where: { caseId, courtSessionId },
       order: [['documentOrder', 'ASC']],
+      lock: transaction?.LOCK.UPDATE,
       transaction,
     })
 
