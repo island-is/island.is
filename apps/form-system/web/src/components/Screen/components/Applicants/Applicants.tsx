@@ -141,8 +141,9 @@ export const Applicants = ({ applicantField }: Props) => {
           </Text>
           <Stack space={2}>
             <NationalIdField
-              disabled
+              disabled={false}
               nationalId={nationalId}
+              legalEntity
               name={getValue(applicantField, 'name')}
             />
             <Input
@@ -150,7 +151,6 @@ export const Applicants = ({ applicantField }: Props) => {
               name="address"
               placeholder={formatMessage(m.address)}
               backgroundColor="white"
-              disabled
               value={getValue(applicantField, 'address') || ''}
             />
             <Input
@@ -158,7 +158,6 @@ export const Applicants = ({ applicantField }: Props) => {
               name="postalCode"
               placeholder={formatMessage(m.postalCode)}
               backgroundColor="white"
-              disabled
               value={getValue(applicantField, 'postalCode') || ''}
             />
           </Stack>

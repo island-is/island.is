@@ -44,7 +44,7 @@ export const IndividualApplicant = ({
       <Stack space={2}>
         <>
           <NationalIdField
-            disabled
+            disabled={true}
             nationalId={nationalId}
             name={getValue(applicant, 'name')}
           />

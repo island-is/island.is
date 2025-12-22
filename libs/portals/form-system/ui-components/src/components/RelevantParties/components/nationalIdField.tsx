@@ -5,10 +5,16 @@ import { m } from '../../../lib/messages'
 interface Props {
   nationalId?: string
   name?: string
+  legalEntity?: boolean
   disabled: boolean
 }
 
-export const NationalIdField = ({ nationalId, name, disabled }: Props) => {
+export const NationalIdField = ({
+  nationalId,
+  name,
+  disabled,
+  legalEntity,
+}: Props) => {
   const { formatMessage } = useLocale()
   return (
     <GridRow>
@@ -18,8 +24,7 @@ export const NationalIdField = ({ nationalId, name, disabled }: Props) => {
           name="nationalId"
           placeholder={formatMessage(m.nationalId)}
           value={nationalId}
-          disabled={disabled}
-          backgroundColor={disabled ? 'white' : 'blue'}
+          disabled={disabled && !legalEntity}
         />
       </GridColumn>
       <GridColumn span={['12/12', '12/12', '8/12', '8/12']}>
@@ -28,8 +33,8 @@ export const NationalIdField = ({ nationalId, name, disabled }: Props) => {
             label={formatMessage(m.fullName)}
             name="name"
             value={name}
+            disabled={disabled && !legalEntity}
             placeholder={formatMessage(m.fullName)}
-            disabled={true}
           />
         </Box>
       </GridColumn>
