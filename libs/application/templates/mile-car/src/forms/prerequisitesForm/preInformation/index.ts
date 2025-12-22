@@ -3,7 +3,7 @@ import {
   buildSection,
   buildImageField,
 } from '@island.is/application/core'
-import { HandShake } from '@island.is/application/assets/graphics'
+import { PersonsOnPhoneAndComputer } from '@island.is/application/assets/graphics'
 
 import { application as applicationMessages } from '../../../lib/messages'
 export const preInformation = buildSection({
@@ -17,7 +17,7 @@ export const preInformation = buildSection({
       children: [
         buildImageField({
           id: 'preInformationImage',
-          image: HandShake,
+          image: PersonsOnPhoneAndComputer,
           doesNotRequireAnswer: true,
         }),
       ],

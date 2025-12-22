@@ -7,7 +7,8 @@ import { TemplateApiModuleActionProps } from '../../../types'
 import { VehicleSearchApi } from '@island.is/clients/vehicles'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import { TemplateApiError } from '@island.is/nest/problem'
-import { coreErrorMessages } from '@island.is/application/core'
+import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
+import { MileageReadingApi } from '@island.is/clients/vehicles-mileage'
 
 @Injectable()
 export class MileCarService extends BaseTemplateApiService {
@@ -15,12 +16,17 @@ export class MileCarService extends BaseTemplateApiService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly notificationsService: NotificationsService,
     private readonly vehiclesApi: VehicleSearchApi,
+    private readonly mileageReadingApi: MileageReadingApi,
   ) {
     super(ApplicationTypes.MILE_CAR)
   }
 
   private vehiclesApiWithAuth(auth: Auth) {
     return this.vehiclesApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  private mileageReadingApiWithAuth(auth: Auth) {
+    return this.mileageReadingApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   async getCurrentVehicles({ auth }: TemplateApiModuleActionProps) {
@@ -80,12 +86,14 @@ export class MileCarService extends BaseTemplateApiService {
     }
   }
 
-  async submitApplication() {
-    // TODO: Implement this
-    await new Promise((resolve) => setTimeout(resolve, 2000))
+  async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
+    const permno =
+      getValueViaPath<string>(application.answers, 'pickVehicle.plate') || ''
 
-    return {
-      id: 1337,
-    }
+    return await this.mileageReadingApiWithAuth(auth).setVehicleOdometerAsMiles(
+      {
+        permno: permno,
+      },
+    )
   }
 }

@@ -8,15 +8,14 @@ import { DefaultEvents } from '@island.is/application/types'
 import { selectVehicle as selectVehicleMessages } from '../../../lib/messages'
 export const selectVehicleSection = buildSubSection({
   id: 'selectVehicleSection',
-  title: 'Veldu ökutæki',
   children: [
     buildMultiField({
       id: 'firstSection',
-      title: 'First section',
+      title: selectVehicleMessages.general.pageTitle,
+      description: selectVehicleMessages.general.description,
       children: [
         buildCustomField({
           id: 'vehiclesField',
-          title: 'Veldu ökutæki',
           component: 'VehiclesField',
         }),
         buildSubmitField({

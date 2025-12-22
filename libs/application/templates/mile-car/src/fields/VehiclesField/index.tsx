@@ -70,24 +70,16 @@ export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
           field={{
             id: 'pickVehicle',
             title: selectVehicleMessages.labels.title,
-            description: selectVehicleMessages.labels.description,
             type: FieldTypes.FIND_VEHICLE,
             component: FieldComponents.FIND_VEHICLE,
             children: undefined,
             getDetails: createGetVehicleDetailsWrapper(getVehicleDetails),
-            validationErrors: selectVehicleMessages.validation,
             additionalErrors: false,
-            fallbackErrorMessage:
-              selectVehicleMessages.validation.fallbackErrorMessage,
-            isNotDebtLessTag: selectVehicleMessages.labels.isNotDebtLessTag,
             findPlatePlaceholder:
               selectVehicleMessages.labels.findPlatePlaceholder,
             findVehicleButtonText: selectVehicleMessages.labels.findButton,
-            hasErrorTitle: selectVehicleMessages.labels.hasErrorTitle,
             notFoundErrorMessage: selectVehicleMessages.labels.notFoundMessage,
             notFoundErrorTitle: selectVehicleMessages.labels.notFoundTitle,
-            requiredValidVehicleErrorMessage:
-              selectVehicleMessages.errors.requiredValidVehicle,
           }}
         />
       ) : currentVehicleList.totalRecords > 5 ? (
@@ -102,18 +94,11 @@ export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
             itemType: 'VEHICLE',
             itemList: currentVehicleList?.vehicles,
             getDetails: createGetVehicleDetailsWrapper(getVehicleDetails),
-            shouldValidateErrorMessages: false,
-            shouldValidateDebtStatus: false,
             inputLabelText: selectVehicleMessages.labels.vehicle,
             inputPlaceholderText: selectVehicleMessages.labels.placeholder,
             alertMessageErrorTitle: selectVehicleMessages.labels.hasErrorTitle,
-            validationErrorMessages: selectVehicleMessages.validation,
-            validationErrorFallbackMessage:
-              selectVehicleMessages.validation.fallbackErrorMessage,
             inputErrorMessage:
               selectVehicleMessages.errors.requiredValidVehicle,
-            debtStatusErrorMessage:
-              selectVehicleMessages.labels.isNotDebtLessTag,
           }}
         />
       ) : (
@@ -127,16 +112,9 @@ export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
             children: undefined,
             itemType: 'VEHICLE',
             itemList: currentVehicleList?.vehicles,
-            shouldValidateErrorMessages: true,
-            shouldValidateDebtStatus: true,
             alertMessageErrorTitle: selectVehicleMessages.labels.hasErrorTitle,
-            validationErrorMessages: selectVehicleMessages.validation,
-            validationErrorFallbackMessage:
-              selectVehicleMessages.validation.fallbackErrorMessage,
             inputErrorMessage:
               selectVehicleMessages.errors.requiredValidVehicle,
-            debtStatusErrorMessage:
-              selectVehicleMessages.labels.isNotDebtLessTag,
           }}
         />
       )}

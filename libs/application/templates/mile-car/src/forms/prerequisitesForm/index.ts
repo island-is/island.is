@@ -13,6 +13,7 @@ import {
 } from '@island.is/application/types'
 import { externalData } from '../../lib/messages'
 import { preInformation } from './preInformation'
+import { selectVehicle as selectVehicleMessages } from '../../lib/messages'
 
 export const Prerequisites: Form = buildForm({
   id: 'PrerequisitesForm',
@@ -51,6 +52,11 @@ export const Prerequisites: Form = buildForm({
           ],
         }),
       ],
+    }),
+    buildSection({
+      id: 'pickVehicle',
+      title: selectVehicleMessages.general.sectionTitle,
+      children: [],
     }),
   ],
 })
