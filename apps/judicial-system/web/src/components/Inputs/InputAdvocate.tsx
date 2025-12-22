@@ -10,7 +10,7 @@ import { useIntl } from 'react-intl'
 import { SingleValue } from 'react-select'
 import { InputMask } from '@react-input/mask'
 
-import { Box, Input, Select } from '@island.is/island-ui/core'
+import { Input, Select } from '@island.is/island-ui/core'
 import { PHONE_NUMBER } from '@island.is/judicial-system/consts'
 import { formatPhoneNumber } from '@island.is/judicial-system/formatters'
 import { type Lawyer } from '@island.is/judicial-system/types'
@@ -28,6 +28,7 @@ import {
   phoneNumberLabelStrings,
   placeholderStrings,
 } from './InputAdvocate.strings'
+import { grid } from '../../utils/styles/recipes.css'
 
 interface Props {
   advocateType:
@@ -190,38 +191,35 @@ const InputAdvocate: FC<Props> = ({
   )
 
   return (
-    <>
-      <Box marginBottom={2}>
-        <Select
-          name="advocateName"
-          icon="search"
-          options={options}
-          label={formatMessage(nameLabelStrings[advocateType])}
-          placeholder={formatMessage(placeholderStrings.namePlaceholder)}
-          value={
-            lawyerName ? { label: lawyerName, value: lawyerEmail ?? '' } : null
-          }
-          onChange={handleAdvocateChange}
-          noOptionsMessage="Lögmaður fannst ekki í lögmannaskrá LMFÍ."
-          isDisabled={Boolean(disabled)}
-          isClearable
-        />
-      </Box>
-      <Box marginBottom={2}>
-        <Input
-          data-testid="defenderEmail"
-          name="defenderEmail"
-          autoComplete="off"
-          label={formatMessage(emailLabelStrings[advocateType])}
-          placeholder={formatMessage(placeholderStrings.emailPlaceholder)}
-          value={lawyerEmail ?? ''}
-          errorMessage={emailErrorMessage}
-          hasError={emailErrorMessage !== ''}
-          disabled={Boolean(disabled)}
-          onChange={handleEmailChange}
-          onBlur={handleEmailBlur}
-        />
-      </Box>
+    <div className={grid({ gap: 2 })}>
+      <Select
+        name="advocateName"
+        icon="search"
+        options={options}
+        label={formatMessage(nameLabelStrings[advocateType])}
+        placeholder={formatMessage(placeholderStrings.namePlaceholder)}
+        value={
+          lawyerName ? { label: lawyerName, value: lawyerEmail ?? '' } : null
+        }
+        onChange={handleAdvocateChange}
+        noOptionsMessage="Lögmaður fannst ekki í lögmannaskrá LMFÍ."
+        isDisabled={Boolean(disabled)}
+        isClearable
+      />
+      <Input
+        data-testid="defenderEmail"
+        name="defenderEmail"
+        autoComplete="off"
+        label={formatMessage(emailLabelStrings[advocateType])}
+        placeholder={formatMessage(placeholderStrings.emailPlaceholder)}
+        value={lawyerEmail ?? ''}
+        errorMessage={emailErrorMessage}
+        hasError={emailErrorMessage !== ''}
+        disabled={Boolean(disabled)}
+        onChange={handleEmailChange}
+        onBlur={handleEmailBlur}
+      />
+
       <InputMask
         component={Input}
         replacement={{ _: /\d/ }}
@@ -238,7 +236,7 @@ const InputAdvocate: FC<Props> = ({
         errorMessage={phoneNumberErrorMessage}
         hasError={phoneNumberErrorMessage !== ''}
       />
-    </>
+    </div>
   )
 }
 
