@@ -17,8 +17,6 @@ import { FormApplicantTypesResolver } from './formApplicantTypes/formApplicantTy
 import { FormApplicantTypesService } from './formApplicantTypes/formApplicantTypes.service'
 import { FormsResolver } from './forms/forms.resolver'
 import { FormsService } from './forms/forms.service'
-import { FormUrlsResolver } from './formUrls/formUrls.resolver'
-import { FormUrlsService } from './formUrls/formUrls.service'
 import { ListItemsResolver } from './listItems/listItems.resolver'
 import { ListItemsService } from './listItems/listItems.service'
 import { NationalRegistryResolver } from './nationalRegistry/nationalRegistry.resolver'
@@ -26,8 +24,6 @@ import { OrganizationPermissionsResolver } from './organizationPermissions/organ
 import { OrganizationPermissionsService } from './organizationPermissions/organizationPermissions.service'
 import { OrganizationsResolver } from './organizations/organizations.resolver'
 import { OrganizationsService } from './organizations/organizations.service'
-import { OrganizationUrlsResolver } from './organizationUrls/organizationUrls.resolver'
-import { OrganizationUrlsService } from './organizationUrls/organizationUrls.service'
 import { ScreensResolver } from './screens/screens.resolver'
 import { ScreensService } from './screens/screens.service'
 import { SectionsResolver } from './sections/sections.resolver'
@@ -57,10 +53,6 @@ import { TranslationsService } from './translations/translations.service'
     CertificationsService,
     OrganizationPermissionsResolver,
     OrganizationPermissionsService,
-    OrganizationUrlsResolver,
-    OrganizationUrlsService,
-    FormUrlsResolver,
-    FormUrlsService,
     FormApplicantTypesResolver,
     FormApplicantTypesService,
     CmsModule,
