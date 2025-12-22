@@ -258,15 +258,27 @@ export class CaseTableService {
 
     return {
       rowCount: cases.length,
-      rows: cases.map((c) => ({
-        caseId: c.id,
-        isMyCase: isMyCase(c, user),
-        actionOnRowClick: getActionOnRowClick(c, user),
-        contextMenuActions: getContextMenuActions(c, user),
-        cells: caseTableCellKeys.map((k) =>
-          caseTableCellGenerators[k].generate(c, user),
-        ),
-      })),
+      rows: cases.map((c) => {
+        const isMultipleDefendants = c.defendants && c.defendants.length > 1
+
+        if (isMultipleDefendants) {
+          return c.defendants?.map((defendant) => {
+            return {
+              caseId: c.id,
+              isMyCase: isMyCase(c, user),
+            }
+          })
+        }
+        return {
+          caseId: c.id,
+          isMyCase: isMyCase(c, user),
+          actionOnRowClick: getActionOnRowClick(c, user),
+          contextMenuActions: getContextMenuActions(c, user),
+          cells: caseTableCellKeys.map((k) =>
+            caseTableCellGenerators[k].generate(c, user),
+          ),
+        }
+      }),
     }
   }
 
