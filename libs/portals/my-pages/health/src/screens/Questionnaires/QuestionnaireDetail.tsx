@@ -17,8 +17,8 @@ import { FC } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { messages } from '../..'
 import { HealthPaths } from '../../lib/paths'
-import { useGetQuestionnaireQuery } from './questionnaires.generated'
 import * as styles from './Questionnaires.css'
+import { useGetQuestionnaireQuery } from './questionnaires.generated'
 
 const QuestionnaireDetail: FC = () => {
   const { id, org } = useParams<{ id?: string; org?: string }>()
@@ -65,15 +65,10 @@ const QuestionnaireDetail: FC = () => {
     undefined as QuestionnaireSubmissionDetail | undefined,
   )
 
-  const answerLink = latestSubmission
-    ? HealthPaths.HealthQuestionnairesAnswered.replace(
-        ':org',
-        organization?.toLocaleLowerCase() ?? '',
-      ).replace(':id', id)
-    : HealthPaths.HealthQuestionnairesAnswered.replace(
-        ':org',
-        organization?.toLocaleLowerCase() ?? '',
-      ).replace(':id', id)
+  const answerLink = HealthPaths.HealthQuestionnairesAnswered.replace(
+    ':org',
+    organization?.toLocaleLowerCase() ?? '',
+  ).replace(':id', id)
 
   const link = isAnswered
     ? answerLink

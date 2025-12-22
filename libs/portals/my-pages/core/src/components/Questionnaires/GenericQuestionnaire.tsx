@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   Divider,
   GridColumn,
   GridContainer,
@@ -24,6 +23,9 @@ import {
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { QuestionAnswer } from '../../types/questionnaire'
+import { QuestionnaireFooter } from './Footer'
+import { QuestionnaireHeader } from './Header'
+import { Review } from './Review'
 import { calculateFormula } from './utils/calculations'
 
 interface GenericQuestionnaireProps {
@@ -54,6 +56,7 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
     initialAnswers || {},
   )
 
+  const [showReview, setShowReview] = useState(false)
   const [currentStep, setCurrentStep] = useState(0)
   const [errors, setErrors] = useState<{ [key: string]: string }>({})
 
@@ -87,6 +90,7 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
         )
         calculatedAnswers[question.id] = {
           questionId: question.id,
+          question: question.label,
           answers: [
             {
               value: calculatedValue?.toString() || '',
@@ -219,6 +223,7 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
             )
             newAnswers[question.id] = {
               questionId: question.id,
+              question: question.label,
               answers: [
                 {
                   value: String(calculatedValue ?? ''),
@@ -316,7 +321,12 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
     })
 
     if (allValid) {
-      onSubmit(answers)
+      if (showReview) {
+        onSubmit(answers)
+        setShowReview(false)
+      } else {
+        setShowReview(true)
+      }
     } else {
       setErrors(allErrors)
     }
@@ -358,42 +368,23 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
             span={enableStepper ? ['12/12', '12/12', '9/12'] : '12/12'}
           >
             <Box background="white" borderRadius="standard">
-              <Box
-                borderBottomWidth="standard"
-                borderColor="blue200"
-                padding={[0, 0, 0, 3]}
-                display="flex"
-                flexDirection="row"
-                columnGap={3}
-              >
-                {img && (
-                  <Box
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                    background={enableStepper ? 'blue100' : 'white'}
-                    borderRadius="full"
-                    padding={1}
-                    style={{ maxWidth: 48, maxHeight: 48 }}
-                  >
-                    <img src={img} alt="" style={{ height: '100%' }} />
-                  </Box>
-                )}
-                <Box display={'flex'} flexDirection={'column'}>
-                  <Text variant="small">{formatMessage(m.questionnaires)}</Text>
-                  <Text variant="h5" as="h1" marginBottom={2}>
-                    {questionnaire.baseInformation.title}
-                  </Text>
-                </Box>
-              </Box>
-
+              <QuestionnaireHeader
+                title={questionnaire.baseInformation.title}
+                img={img}
+                enableStepper={enableStepper}
+              />
               {/* Questions */}
               <Box
                 style={{ minHeight: '400px' }}
                 marginX={enableStepper ? 10 : [0, 0, 0, 4]}
                 marginY={[2, 2, 2, 6]}
               >
-                {enableStepper ? (
+                {showReview ? (
+                  <Review
+                    answers={answers}
+                    title={formatMessage(m.reviewTitle)}
+                  />
+                ) : enableStepper ? (
                   <Stack space={4}>
                     {currentQuestions.map((question: QuestionnaireQuestion) => (
                       <QuestionRenderer
@@ -457,55 +448,26 @@ export const GenericQuestionnaire: React.FC<GenericQuestionnaireProps> = ({
                   </Stack>
                 )}
               </Box>
-
               {/* Navigation/Submit buttons */}
-              {enableStepper && questionSteps ? (
-                <Box
-                  display="flex"
-                  justifyContent="spaceBetween"
-                  alignItems="center"
-                  paddingX={10}
-                  paddingBottom={4}
-                >
-                  <Box>
-                    {canGoPrevious && (
-                      <Button variant="ghost" onClick={handlePrevious}>
-                        {formatMessage(m.lastQuestion)}
-                      </Button>
-                    )}
-                  </Box>
-                  <Box>
-                    {canGoNext ? (
-                      <Button variant="primary" onClick={handleNext}>
-                        {formatMessage(m.nextQuestion)}
-                      </Button>
-                    ) : (
-                      <Button variant="primary" onClick={handleSubmit}>
-                        {formatMessage(m.submit)}
-                      </Button>
-                    )}
-                  </Box>
-                </Box>
-              ) : (
-                <Box
-                  display="flex"
-                  justifyContent="spaceBetween"
-                  paddingX={[0, 0, 0, enableStepper ? 10 : 3]}
-                  paddingY={2}
-                  paddingBottom={4}
-                >
-                  <Box>
-                    <Button variant="ghost" onClick={_onCancel}>
-                      {formatMessage(m.buttonCancel)}
-                    </Button>
-                  </Box>
-                  <Box>
-                    <Button variant="primary" onClick={handleSubmit}>
-                      {formatMessage(m.submit)}
-                    </Button>
-                  </Box>
-                </Box>
-              )}
+              <QuestionnaireFooter
+                onSubmit={handleSubmit}
+                onCancel={showReview ? () => setShowReview(false) : _onCancel}
+                submitLabel={
+                  showReview
+                    ? formatMessage(m.submit)
+                    : formatMessage(m.forward)
+                }
+                cancelLabel={
+                  showReview
+                    ? formatMessage(m.buttonEdit)
+                    : formatMessage(m.buttonCancel)
+                }
+                enableStepper={enableStepper}
+                canGoPrevious={canGoPrevious}
+                canGoNext={canGoNext}
+                handlePrevious={handlePrevious}
+                handleNext={handleNext}
+              />
             </Box>
           </GridColumn>
         </GridRow>

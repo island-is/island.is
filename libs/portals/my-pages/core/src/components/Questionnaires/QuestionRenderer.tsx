@@ -75,6 +75,7 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
 
     onAnswerChange({
       questionId: question.id,
+      question: question.label,
       answers,
       type: questionType,
     })
@@ -310,22 +311,8 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
         )
       }
 
-      case QuestionnaireAnswerOptionType.label: {
-        return (
-          <Box marginY={4}>
-            <Text variant="h5" marginBottom={2}>
-              {HtmlParser(question.label)}
-            </Text>
-          </Box>
-        )
-      }
-
       default:
-        return (
-          <Box marginY={4}>
-            <Text variant="default">{HtmlParser(question.label)}</Text>
-          </Box>
-        )
+        return <Box marginY={4}></Box>
     }
   }
 

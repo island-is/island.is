@@ -2041,6 +2041,14 @@ export const m = defineMessages({
     id: 'service.portal:questionnaire',
     defaultMessage: 'Spurningalisti',
   },
+  question: {
+    id: 'service.portal:question',
+    defaultMessage: 'Spurning',
+  },
+  answer: {
+    id: 'service.portal:answer',
+    defaultMessage: 'Svar',
+  },
   forward: {
     id: 'service.portal:forward',
     defaultMessage: 'Áfram',
@@ -2065,6 +2073,10 @@ export const m = defineMessages({
   deleteRow: {
     id: 'service.portal:delete-row',
     defaultMessage: 'Eyða röð',
+  },
+  reviewTitle: {
+    id: 'service.portal:review-title',
+    defaultMessage: 'Lestu yfir svörin og sendu inn',
   },
 })
 

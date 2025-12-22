@@ -118,6 +118,7 @@ export const Table: React.FC<TableProps> = ({
 
     onChange({
       questionId: id,
+      question: '', // Question label is not needed here
       answers,
       type: QuestionnaireAnswerOptionType.table,
     })

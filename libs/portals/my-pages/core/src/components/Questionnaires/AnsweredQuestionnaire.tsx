@@ -1,16 +1,13 @@
-import { QuestionnaireAnsweredQuestionnaire } from '@island.is/api/schema'
-import {
-  Box,
-  Divider,
-  GridColumn,
-  Stack,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import React from 'react'
+import { m } from '../../lib/messages'
+import { QuestionAnswer } from '../../types/questionnaire'
 import { formatDateWithTime } from '../../utils/dateUtils'
+import { NestedLines } from '../NestedLines/NestedLines'
 
 interface AnsweredQuestionnaireProps {
-  questionnaire?: QuestionnaireAnsweredQuestionnaire
+  answers?: QuestionAnswer[]
 }
 
 const isValidDate = (dateString: string): boolean => {
@@ -41,36 +38,33 @@ const formatValue = (value: string): string => {
 }
 
 export const AnsweredQuestionnaire: React.FC<AnsweredQuestionnaireProps> = ({
-  questionnaire,
+  answers,
 }) => {
+  const { formatMessage } = useLocale()
   return (
     <Box>
-      <GridColumn span={['12/12', '12/12', '10/12']}>
-        <Stack space={4}>
-          {questionnaire?.answers?.map((item) => (
-            <>
-              <Box>
-                <Text fontWeight="medium" lineHeight="lg">
-                  {item.label}
-                </Text>
-                {item.values.length > 1
-                  ? item.values.map((v) => (
-                      <Box paddingLeft={2}>
-                        <Text>- {formatValue(v)}</Text>
-                      </Box>
-                    ))
-                  : null}
-                {item.values.length === 1 ? (
-                  <Box marginTop={1}>
-                    <Text>{formatValue(item.values[0])}</Text>
-                  </Box>
-                ) : null}
-              </Box>
-              <Divider />
-            </>
-          ))}
-        </Stack>
-      </GridColumn>
+      <NestedLines
+        ratio="6:6"
+        startColor="blue100"
+        data={[
+          {
+            title: formatMessage(m.question),
+            value: [formatMessage(m.answer)],
+            type: 'text' as const,
+            boldValue: true,
+            boldTitle: true,
+          },
+          ...(answers?.map((answer) => {
+            return {
+              title: answer.question,
+              value: answer.answers.map((a) => formatValue(a.label || a.value)),
+              type: 'text' as const,
+              boldValue: false,
+              boldTitle: false,
+            }
+          }) ?? []),
+        ]}
+      />
     </Box>
   )
 }

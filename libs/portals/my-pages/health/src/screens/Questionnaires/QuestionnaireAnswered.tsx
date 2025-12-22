@@ -1,4 +1,7 @@
-import { QuestionnaireAnsweredQuestionnaire } from '@island.is/api/schema'
+import {
+  QuestionnaireAnsweredQuestionnaire,
+  QuestionnaireAnswerOptionType,
+} from '@island.is/api/schema'
 import {
   Box,
   Button,
@@ -160,7 +163,16 @@ const QuestionnaireAnswered: React.FC = () => {
       )}
       {data?.getAnsweredQuestionnaire && !loading && !error && (
         <Box marginTop={4}>
-          <AnsweredQuestionnaire questionnaire={currentSubmission} />
+          <AnsweredQuestionnaire
+            answers={currentSubmission?.answers?.map((answer) => ({
+              questionId: answer.id,
+              question: answer.htmlLabel || answer.label || '',
+              answers: answer.values.map((value) => ({
+                value,
+              })),
+              type: QuestionnaireAnswerOptionType.text,
+            }))}
+          />
         </Box>
       )}
       {!loading && !data?.getAnsweredQuestionnaire && !error && (

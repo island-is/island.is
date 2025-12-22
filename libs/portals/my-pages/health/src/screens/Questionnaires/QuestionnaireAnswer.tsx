@@ -49,11 +49,19 @@ const QuestionnaireAnswer: React.FC = () => {
   const initialAnswers = useMemo(() => {
     if (!questionnaire?.draftAnswers?.length) return undefined
 
+    const questionLabels: { [key: string]: string } = {}
+    questionnaire.sections?.forEach((section) => {
+      section.questions?.forEach((q) => {
+        questionLabels[q.id] = q.label
+      })
+    })
+
     return questionnaire.draftAnswers.reduce(
       (acc, draft) => ({
         ...acc,
         [draft.questionId]: {
           questionId: draft.questionId,
+          question: questionLabels[draft.questionId] || '',
           type: draft.type as QuestionAnswer['type'],
           answers: draft.answers.map((a) => ({
             label: a.label ?? undefined,
@@ -63,7 +71,7 @@ const QuestionnaireAnswer: React.FC = () => {
       }),
       {} as { [key: string]: QuestionAnswer },
     )
-  }, [questionnaire?.draftAnswers])
+  }, [questionnaire?.draftAnswers, questionnaire?.sections])
 
   // Check if this is a draft
   const isDraft = !!questionnaire?.draftAnswers?.length

@@ -8,12 +8,17 @@ import {
   QuestionnaireDetailDto,
   TableQuestionDto,
 } from '@island.is/clients/health-directorate'
+import { AnswerOptionType } from '../../../../models/question.model'
 import { mapAnswerOptionType } from '../display/mapAnswerOptionType'
 
 export interface QuestionAnswer {
   questionId: string
-  answers: Array<{ label?: string; value: string }>
-  type: string
+  question: string
+  answers: Array<{
+    label?: string | undefined
+    value: string
+  }>
+  type: AnswerOptionType
 }
 
 /**
@@ -34,14 +39,21 @@ export const mapDraftRepliesToAnswers = (
     if (!question) return
 
     const answerType = mapAnswerOptionType(question.type, question)
-
-    // Helper to get option label for list questions
+    const label = question.label
+    // Helper to get option label  for list questions
     const getOptionLabel = (value: string): string | undefined => {
+      // Handle boolean questions specially - they don't have values array
+      if (question.type === 'bool') {
+        if (value === 'true') return 'Já'
+        if (value === 'false') return 'Nei'
+        return undefined
+      }
+
       if ('values' in question && question.values) {
         const option = question.values.find((v) => v.id === value)
         return option?.label
       }
-      return undefined
+      return label
     }
 
     let answerValue: Array<{ label?: string; value: string }>
@@ -142,6 +154,7 @@ export const mapDraftRepliesToAnswers = (
 
     answers[reply.questionId] = {
       questionId: reply.questionId,
+      question: label,
       answers: answerValue,
       type: answerType,
     }

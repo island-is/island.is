@@ -1,15 +1,15 @@
 import {
   Box,
-  Text,
+  Button,
+  GridColumn,
   GridContainer,
   GridRow,
-  GridColumn,
-  Button,
+  Text,
 } from '@island.is/island-ui/core'
 import cn from 'classnames'
-import * as styles from './NestedLines.css'
 import useIsMobile from '../../hooks/useIsMobile/useIsMobile'
 import { LinkButton } from '../LinkButton/LinkButton'
+import * as styles from './NestedLines.css'
 
 interface Props {
   data: {
@@ -17,15 +17,25 @@ interface Props {
     value?: string | number | React.ReactElement | string[]
     type?: 'text' | 'link' | 'action'
     href?: string
+    boldTitle?: boolean
+    boldValue?: boolean
+    variant?: 'small' | 'default'
     action?: () => void
   }[]
   width?: 'full' | 'half'
+  ratio?: '3:9' | '6:6'
+  startColor?: 'white' | 'blue100'
 }
 
-export const NestedLines = ({ data, width = 'full' }: Props) => {
+export const NestedLines = ({
+  data,
+  width = 'full',
+  ratio = '3:9',
+  startColor = 'white',
+}: Props) => {
   const isHalf = width === 'half'
-  const columnWidth = isHalf ? '6/12' : '9/12'
-  const titleWidth = '3/12'
+  const columnWidth = isHalf || ratio === '6:6' ? '6/12' : '9/12'
+  const titleWidth = ratio === '3:9' ? '3/12' : '6/12'
   const modulusCalculations = (index: number) => {
     return isHalf ? index % 4 === 0 || index % 4 === 1 : index % 2 === 0
   }
@@ -38,12 +48,17 @@ export const NestedLines = ({ data, width = 'full' }: Props) => {
           const value = Array.isArray(item.value)
             ? item.value.join(', ')
             : item.value
+          const boldTitle = item.boldTitle ?? true
+          const boldValue = item.boldValue ?? false
+          const variant = item.variant ?? 'small'
           return (
             <GridColumn
               key={i}
               span={isHalf && !isMobile ? '6/12' : '12/12'}
               className={cn(styles.noPadding, {
-                [styles.white]: modulusCalculations(i),
+                [styles.white]: modulusCalculations(
+                  startColor === 'white' ? i : i + 1,
+                ),
               })}
             >
               <GridContainer className={cn(styles.innerGrid)}>
@@ -52,7 +67,11 @@ export const NestedLines = ({ data, width = 'full' }: Props) => {
                     span={isMobile ? '6/12' : ['12/12', '12/12', titleWidth]}
                   >
                     <Box className={styles.titleCol}>
-                      <Text fontWeight="semiBold" variant="small" as="span">
+                      <Text
+                        fontWeight={boldTitle ? 'medium' : 'regular'}
+                        variant={variant}
+                        as="span"
+                      >
                         {item.title}
                       </Text>
                     </Box>
@@ -81,7 +100,11 @@ export const NestedLines = ({ data, width = 'full' }: Props) => {
                           {value}
                         </Button>
                       ) : (
-                        <Text variant="small" as="span">
+                        <Text
+                          variant={variant}
+                          as="span"
+                          fontWeight={boldValue ? 'medium' : 'regular'}
+                        >
                           {value}
                         </Text>
                       )}
