@@ -308,6 +308,11 @@ export const CivilClaimantFields = ({
                     ? civilClaimant.caseFilesSharedWithSpokesperson
                     : null,
                 })
+
+                handleSetAndSendCivilClaimantToServer({
+                  civilClaimantId: civilClaimant.id,
+                  caseFilesSharedWithSpokesperson: Boolean(spokespersonName),
+                })
               }}
               onEmailChange={(spokespersonEmail: string | null) =>
                 handleUpdateCivilClaimantState({
