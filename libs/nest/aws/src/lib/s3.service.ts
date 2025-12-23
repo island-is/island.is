@@ -22,7 +22,6 @@ import {
   PresignedPostOptions,
 } from '@aws-sdk/s3-presigned-post'
 import stream, { Readable } from 'stream'
-import { defaultProvider } from '@aws-sdk/credential-provider-node'
 
 export interface BucketKeyPair {
   bucket: string
@@ -39,29 +38,8 @@ export class S3Service {
     @Inject(LOGGER_PROVIDER) protected readonly logger: Logger,
   ) {}
 
-  private lastCredentialTime = 0
-  private readonly CREDENTIAL_REFRESH_INTERVAL = 50 * 60 * 1000 // 50 minutes
-
-  getS3Client(): S3Client {
-    const now = Date.now()
-
-    // Create new client if none exists or credentials are stale
-    if (
-      !this.s3Client ||
-      now - this.lastCredentialTime > this.CREDENTIAL_REFRESH_INTERVAL
-    ) {
-      this.s3Client = new S3Client({
-        credentials: defaultProvider(),
-        maxAttempts: 3,
-      })
-      this.lastCredentialTime = now
-    }
-
-    return this.s3Client
-  }
-
   public async getClientRegion(): Promise<string> {
-    return this.getS3Client().config.region()
+    return this.s3Client.config.region()
   }
 
   public async getFile(
@@ -91,7 +69,7 @@ export class S3Service {
       CopySource: encodeURIComponent(copySource),
     }
     try {
-      return await this.getS3Client().send(new CopyObjectCommand(input))
+      return await this.s3Client.send(new CopyObjectCommand(input))
     } catch (error) {
       this.logger.error(
         `Error occurred while copying file: ${key} to S3 bucket: ${bucket} from ${copySource}`,
@@ -125,7 +103,7 @@ export class S3Service {
 
     try {
       const parallelUpload = new Upload({
-        client: this.getS3Client(),
+        client: this.s3Client,
         params: uploadParams,
       })
 
@@ -155,7 +133,7 @@ export class S3Service {
     const expiration = expirationOverride ?? SIGNED_GET_EXPIRES
 
     const command = new GetObjectCommand({ Bucket: bucket, Key: key })
-    return getSignedUrl(this.getS3Client(), command, {
+    return getSignedUrl(this.s3Client, command, {
       expiresIn: expiration,
     })
   }
@@ -165,7 +143,7 @@ export class S3Service {
   ): Promise<PresignedPost> {
     try {
       // The S3 Aws sdk v3 returns a trailing forward slash
-      const post = await createPresignedPost(this.getS3Client(), params)
+      const post = await createPresignedPost(this.s3Client, params)
       if (post.url.endsWith('/')) {
         post.url = post.url.slice(0, -1)
       }
@@ -191,7 +169,7 @@ export class S3Service {
         Bucket: bucket,
         Key: key,
       })
-      const results = await this.getS3Client().send(command)
+      const results = await this.s3Client.send(command)
 
       return results?.TagSet ?? []
     } catch (error) {
@@ -212,7 +190,7 @@ export class S3Service {
         Bucket: bucket,
         Key: key,
       })
-      const results = await this.getS3Client().send(command)
+      const results = await this.s3Client.send(command)
 
       return results.$metadata.httpStatusCode === 200
     } catch (error) {
@@ -236,7 +214,7 @@ export class S3Service {
   ): Promise<boolean> {
     const { bucket, key } = this.getBucketKey(BucketKeyPairOrFilename)
     try {
-      const result = await this.getS3Client().send(
+      const result = await this.s3Client.send(
         new DeleteObjectCommand({
           Bucket: bucket,
           Key: key,
@@ -283,7 +261,7 @@ export class S3Service {
     key: string,
   ): Promise<GetObjectCommandOutput | undefined> {
     try {
-      return await this.getS3Client().send(
+      return await this.s3Client.send(
         new GetObjectCommand({
           Bucket: bucket,
           Key: key,
