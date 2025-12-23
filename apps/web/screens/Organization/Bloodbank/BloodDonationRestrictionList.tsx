@@ -367,7 +367,7 @@ const BloodDonationRestrictionList: CustomScreen<
                   )}
                   {item.effectiveDate && (
                     <Text variant="small">
-                      {formatMessage(m.listPage.effectiveDatePrefix)}{' '}
+                      {formatMessage(m.listPage.effectiveDatePrefix)}
                       {format(new Date(item.effectiveDate), 'd. MMMM yyyy')}
                     </Text>
                   )}
