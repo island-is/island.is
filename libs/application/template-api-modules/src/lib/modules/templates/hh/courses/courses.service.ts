@@ -116,7 +116,13 @@ export class CoursesService extends BaseTemplateApiService {
       // Use the first participant for the Zendesk ticket requester
       const firstParticipant = answers.participantList[0]?.nationalIdWithName
       if (!firstParticipant) {
-        throw new Error('No participants found in application')
+        throw new TemplateApiError(
+          {
+            title: 'No participants found in application',
+            summary: 'No participants found in application',
+          },
+          400,
+        )
       }
 
       const name = firstParticipant.name
