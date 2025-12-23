@@ -21,6 +21,7 @@ import {
   CaseFileCategory,
   DateType,
   EventType,
+  IndictmentDecision,
   StringType,
 } from '@island.is/judicial-system/types'
 
@@ -382,7 +383,12 @@ export class CaseRepositoryService {
       }
 
       const result = await this.caseModel.create(
-        { ...pick(caseToSplit, fieldsToCopy), splitCaseId: caseId },
+        {
+          ...pick(caseToSplit, fieldsToCopy),
+          splitCaseId: caseId,
+          // The new case is postponed indefinitely by default
+          indictmentDecision: IndictmentDecision.POSTPONING,
+        },
         createOptions,
       )
 
@@ -452,19 +458,31 @@ export class CaseRepositoryService {
         ),
       )
 
-      // Copy civil demands case string to the new case
+      // Set the postponedIndefinitelyExplanation case string
+      const caseStringCreateOptions: CreateOptions = {}
+
+      if (transaction) {
+        caseStringCreateOptions.transaction = transaction
+      }
+
+      promises.push(
+        this.caseStringModel.create(
+          {
+            caseId: splitCaseId,
+            stringType: StringType.POSTPONED_INDEFINITELY_EXPLANATION,
+            value: `Ákærði klofinn frá máli ${caseToSplit.courtCaseNumber}.`,
+          },
+          caseStringCreateOptions,
+        ),
+      )
+
+      // Copy the civil demands case string to the new case
       const civilDemands = await this.caseStringModel.findOne({
         where: { caseId, stringType: StringType.CIVIL_DEMANDS },
         transaction,
       })
 
       if (civilDemands) {
-        const caseStringCreateOptions: CreateOptions = {}
-
-        if (transaction) {
-          caseStringCreateOptions.transaction = transaction
-        }
-
         promises.push(
           this.caseStringModel.create(
             { ...civilDemands.toJSON(), id: undefined, caseId: splitCaseId },
