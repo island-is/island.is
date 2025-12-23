@@ -16,11 +16,11 @@ import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
+import { UserProfileApi, IdentityApi } from '../dataProviders'
 import { ApiActions, Events, Roles, States } from '../utils/constants'
 import { dataSchema } from './dataSchema'
 
 import { m } from './messages'
-import { IdentityApi, UserProfileApi } from '../dataProviders'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -95,7 +95,6 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
-              api: [UserProfileApi, IdentityApi],
               delete: true,
             },
           ],
