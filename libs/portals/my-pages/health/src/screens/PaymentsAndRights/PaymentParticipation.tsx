@@ -15,6 +15,7 @@ import {
   DownloadFileButtons,
   ExpandHeader,
   MobileTable,
+  NestedLines,
   StackWithBottomDivider,
   UserInfoLine,
   amountFormat,
@@ -34,6 +35,7 @@ import {
 } from './Payments.generated'
 import { PaymentTableRow } from './PaymentTableRow'
 import { PaymentsWrapper } from './wrapper/PaymentsWrapper'
+import { formatDateToMonthString } from '../../utils/format'
 
 export const PaymentPartication = () => {
   const { formatMessage, lang } = useLocale()
@@ -188,7 +190,9 @@ export const PaymentPartication = () => {
                       periods?.rightsPortalCopaymentPeriods.items.map(
                         (period, index) => ({
                           key: index,
-                          title: period.month ?? formatMessage(m.month),
+                          title:
+                            formatDateToMonthString('', period.month ?? '') ??
+                            formatMessage(m.month),
                           data: [
                             {
                               title: formatMessage(messages.statusOfRights),

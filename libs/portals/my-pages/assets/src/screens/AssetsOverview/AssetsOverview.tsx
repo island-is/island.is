@@ -1,22 +1,17 @@
 import { gql, useQuery } from '@apollo/client'
-import {
-  pagingFragment,
-  addressFragment,
-} from '@island.is/portals/my-pages/graphql'
 import { Query } from '@island.is/api/schema'
 import { Box, Button, GridColumn, GridRow } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import { HMS_SLUG, IntroWrapper, m } from '@island.is/portals/my-pages/core'
 import {
-  FootNote,
-  HMS_SLUG,
-  IntroHeader,
-  m,
-} from '@island.is/portals/my-pages/core'
+  addressFragment,
+  pagingFragment,
+} from '@island.is/portals/my-pages/graphql'
 
+import { Problem } from '@island.is/react-spa/shared'
 import { AssetCardLoader } from '../../components/AssetCardLoader'
 import AssetListCards from '../../components/AssetListCards'
 import { DEFAULT_PAGING_ITEMS } from '../../utils/const'
-import { Problem } from '@island.is/react-spa/shared'
 
 const GetRealEstateQuery = gql`
   query GetRealEstateQuery($input: GetMultiPropertyInput!) {
@@ -78,18 +73,16 @@ export const AssetsOverview = () => {
   }
 
   return (
-    <>
-      <IntroHeader
-        title={m.assets}
-        intro={{
-          id: 'sp.assets:intro',
-          defaultMessage:
-            'Hér birtast upplýsingar úr fasteignaskrá um fasteignir þínar, lönd og lóðir sem þú ert þinglýstur eigandi að.',
-        }}
-        serviceProviderSlug={HMS_SLUG}
-        serviceProviderTooltip={formatMessage(m.realEstateTooltip)}
-      />
-
+    <IntroWrapper
+      title={m.assets}
+      intro={{
+        id: 'sp.assets:intro',
+        defaultMessage:
+          'Hér birtast upplýsingar úr fasteignaskrá um fasteignir þínar, lönd og lóðir sem þú ert þinglýstur eigandi að.',
+      }}
+      serviceProviderSlug={HMS_SLUG}
+      serviceProviderTooltip={formatMessage(m.realEstateTooltip)}
+    >
       {loading && !error && <AssetCardLoader />}
       {error && !loading && <Problem error={error} noBorder={false} />}
       {assetData?.properties && assetData?.properties?.length > 0 && (
@@ -139,8 +132,7 @@ export const AssetsOverview = () => {
             imgSrc="./assets/images/sofa.svg"
           />
         )}
-      <FootNote serviceProviderSlug={HMS_SLUG} />
-    </>
+    </IntroWrapper>
   )
 }
 
