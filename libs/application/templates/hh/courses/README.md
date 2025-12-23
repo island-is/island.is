@@ -1,6 +1,6 @@
 # Course registrations for Heilsugæsla höfuðborgarsvæðisins
 
-### Description
+## Description
 
 The course registration application allows users to register both individuals and groups of individuals to specific courses.
 
