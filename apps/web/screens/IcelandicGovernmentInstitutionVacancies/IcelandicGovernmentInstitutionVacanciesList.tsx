@@ -295,8 +295,24 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
               icon: 'location' as const,
               text: vacancy.locations
                 .filter((location) => location.title)
-                .map((location) => location.title)
+                .map((location) =>
+                  location.postalCode && !vacancy.address
+                    ? `${location.title} (${location.postalCode})`
+                    : location.title,
+                )
                 .join(', '),
+            }
+          : undefined,
+        vacancy.address
+          ? {
+              icon: 'home' as const,
+              text: (() => {
+                const postalCode = vacancy.locations?.[0]?.postalCode
+                const addressParts = []
+                if (postalCode) addressParts.push(postalCode)
+                if (vacancy.address) addressParts.push(vacancy.address)
+                return addressParts.join(' ')
+              })(),
             }
           : undefined,
       ].filter(isDefined)
@@ -628,7 +644,10 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
                     </Inline>
                   </Box>
                 )}
-                <Box style={{ minHeight: '100vh' }}>
+                <Box
+                  style={{ minHeight: '100vh' }}
+                  className={styles.vacancyCardsWrapper}
+                >
                   <VacancyCardsGrid
                     columns={!isGridView ? 1 : 2}
                     variant="detailed"
@@ -756,7 +775,11 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
                 </Inline>
               </Box>
             )}
-            <Box marginTop={2} style={{ minHeight: '100vh' }}>
+            <Box
+              marginTop={2}
+              style={{ minHeight: '100vh' }}
+              className={styles.vacancyCardsWrapper}
+            >
               <VacancyCardsGrid
                 columns={1}
                 variant="detailed"
