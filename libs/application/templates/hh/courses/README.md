@@ -24,10 +24,6 @@ Data fetching from National Registry, User profile and course information is fet
 
 In the draft state, the user inputs all names of individuals who want to attend the course.
 
-#### Payment
-
-If a course has a price then the payment step asks the user to pay for the course, and if that succeeds then we move on to the next step.
-
 #### Completed
 
 User receives confirmation that the list of individuals have been registered for the course and information about the course registration gets sent to Zendesk.
