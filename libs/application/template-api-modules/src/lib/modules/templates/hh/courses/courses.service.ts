@@ -38,6 +38,10 @@ const GET_COURSE_BY_ID_QUERY = `
       instances {
         id
         startDate
+        startDateTimeDuration {
+          startTime
+          endTime
+        }
       }
     }
   }
@@ -72,6 +76,10 @@ export class CoursesService extends BaseTemplateApiService {
             instances: {
               id: string
               startDate: string
+              startDateTimeDuration?: {
+                startTime?: string
+                endTime?: string
+              }
             }[]
           }
         }>(auth.authorization, GET_COURSE_BY_ID_QUERY, {
@@ -126,8 +134,7 @@ export class CoursesService extends BaseTemplateApiService {
         application,
         courseResponse.data.getCourseById.id,
         courseResponse.data.getCourseById.title,
-        courseInstance.id,
-        courseInstance.startDate,
+        courseInstance,
       )
 
       await this.zendeskService.submitTicket({
@@ -163,21 +170,38 @@ export class CoursesService extends BaseTemplateApiService {
     application: ApplicationWithAttachments,
     courseId: string,
     courseTitle: string,
-    courseInstanceId: string,
-    courseInstanceStartDate: string,
+    courseInstance: {
+      id: string
+      startDate: string
+      startDateTimeDuration?: {
+        startTime?: string
+        endTime?: string
+      }
+    },
   ): Promise<string> {
     let message = ''
     message += `Námskeið: ${courseTitle}\n`
     message += `ID á námskeiði: ${courseId}\n`
-    message += `Upphafsdagsetning: ${courseInstanceStartDate}\n`
-    message += `ID á upphafsdagsetningu: ${courseInstanceId}\n\n`
+    message += `ID á upphafsdagsetningu: ${courseInstance.id}\n`
 
-    message += `Kennitala umsækjanda:${application.applicant}`
+    let startDateTimeDuration = ''
+    if (courseInstance.startDateTimeDuration?.startTime) {
+      startDateTimeDuration = courseInstance.startDateTimeDuration.startTime
+      if (courseInstance.startDateTimeDuration.endTime) {
+        startDateTimeDuration += ` - ${courseInstance.startDateTimeDuration.endTime}`
+      }
+    }
+
+    message += `Upphafsdagsetning: ${courseInstance.startDate} ${
+      startDateTimeDuration ?? ''
+    }\n`
+
+    message += `Kennitala umsækjanda: ${application.applicant}\n`
 
     const payer =
       answers.userIsPayingAsIndividual === YesOrNoEnum.YES
         ? {
-            name: 'Umsækjandi',
+            name: 'Umsækjandi (einstaklingsgreiðsla)',
             nationalId: application.applicant,
           }
         : answers.companyPayment?.nationalIdWithName
@@ -185,14 +209,12 @@ export class CoursesService extends BaseTemplateApiService {
     message += `Nafn greiðanda: ${payer?.name ?? ''}\n`
     message += `Kennitala greiðanda: ${payer?.nationalId ?? ''}\n`
 
-    message += `Upplýsingar um þátttakendur:\n`
     answers.participantList.forEach((participant, index) => {
       const p = participant.nationalIdWithName
-      message += `Þátttakandi ${index + 1}:\n`
-      message += `  Nafn: ${p.name}\n`
-      message += `  Kennitala: ${p.nationalId}\n`
-      message += `  Netfang: ${p.email}\n`
-      message += `  Símanúmer: ${p.phone}\n\n`
+      message += `Nafn þátttakanda ${index + 1}: ${p.name}\n`
+      message += `Kennitala þátttakanda ${index + 1}: ${p.nationalId}\n`
+      message += `Netfang þátttakanda ${index + 1}: ${p.email}\n`
+      message += `Símanúmer þátttakanda ${index + 1}: ${p.phone}\n`
     })
 
     return message
