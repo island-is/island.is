@@ -17,6 +17,7 @@ import {
   isDistrictCourtUser,
   isIndictmentCase,
   isProsecutionUser,
+  isPublicProsecutionOfficeUser,
   isRequestCase,
   type User as TUser,
 } from '@island.is/judicial-system/types'
@@ -256,29 +257,36 @@ export class CaseTableService {
       where: caseTableWhereOptions[type](user),
     })
 
-    return {
-      rowCount: cases.length,
-      rows: cases.map((c) => {
-        const isMultipleDefendants = c.defendants && c.defendants.length > 1
+    // Display defendants in separate lines for public prosecutors office
+    const displayCases: Case[] = isPublicProsecutionOfficeUser(user)
+      ? cases.flatMap((c) => {
+          const jsonCase = c.toJSON()
 
-        if (isMultipleDefendants) {
-          return c.defendants?.map((defendant) => {
-            return {
-              caseId: c.id,
-              isMyCase: isMyCase(c, user),
-            }
-          })
-        }
-        return {
-          caseId: c.id,
-          isMyCase: isMyCase(c, user),
-          actionOnRowClick: getActionOnRowClick(c, user),
-          contextMenuActions: getContextMenuActions(c, user),
-          cells: caseTableCellKeys.map((k) =>
-            caseTableCellGenerators[k].generate(c, user),
-          ),
-        }
-      }),
+          if (c.defendants && c.defendants.length > 0) {
+            return c.defendants.map(
+              (d) =>
+                ({
+                  ...jsonCase,
+                  defendants: [d],
+                } as Case),
+            )
+          }
+
+          return jsonCase as Case
+        })
+      : cases
+
+    return {
+      rowCount: displayCases.length,
+      rows: displayCases.map((c) => ({
+        caseId: c.id,
+        isMyCase: isMyCase(c, user),
+        actionOnRowClick: getActionOnRowClick(c, user),
+        contextMenuActions: getContextMenuActions(c, user),
+        cells: caseTableCellKeys.map((k) =>
+          caseTableCellGenerators[k].generate(c, user),
+        ),
+      })),
     }
   }
 
