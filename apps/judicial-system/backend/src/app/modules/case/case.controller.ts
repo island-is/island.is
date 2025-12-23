@@ -936,8 +936,6 @@ export class CaseController {
       theDefendant,
     )
 
-    this.eventService.postEvent('SPLIT', newCase)
-
     return newCase
   }
 
