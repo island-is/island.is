@@ -198,7 +198,7 @@ export class CoursesService extends BaseTemplateApiService {
       }
     }
 
-    message += `Upphafsdagsetning: ${courseInstance.startDate} ${
+    message += `Upphafsdagsetning: ${courseInstance.startDate.split('T')[0]} ${
       startDateTimeDuration ?? ''
     }\n`
 
