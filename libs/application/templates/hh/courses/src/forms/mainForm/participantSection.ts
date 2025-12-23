@@ -13,7 +13,6 @@ import {
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import type { Application, FormValue } from '@island.is/application/types'
-import { isCompanyType } from '../../utils/isCompanyType'
 
 const isUserParticipating = (answers: FormValue) =>
   getValueViaPath<string>(answers, 'userIsParticipating', YES) === YES
@@ -57,9 +56,7 @@ export const participantSection = buildSection({
           defaultValue: (application: Application) =>
             getValueViaPath<string>(
               application.externalData,
-              isCompanyType(application.externalData)
-                ? 'identity.data.actor.nationalId'
-                : 'identity.data.nationalId',
+              'identity.data.nationalId',
             ),
           condition: isUserParticipating,
         }),
@@ -71,9 +68,7 @@ export const participantSection = buildSection({
           defaultValue: (application: Application) =>
             getValueViaPath<string>(
               application.externalData,
-              isCompanyType(application.externalData)
-                ? 'identity.data.actor.name'
-                : 'identity.data.name',
+              'identity.data.name',
             ),
           condition: isUserParticipating,
         }),
