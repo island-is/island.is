@@ -11,7 +11,7 @@ import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { mapRentalApplicationData } from './utils/mapRentalApplicationData'
 import {
   fetchFinancialIndexationForMonths,
-  listOfLastMonths,
+  listMonthsFromDate,
   FinancialIndexationEntry,
   errorMapper,
 } from './utils/utils'
@@ -27,8 +27,9 @@ export class RentalAgreementService extends BaseTemplateApiService {
   }
 
   async consumerIndex(): Promise<FinancialIndexationEntry[]> {
-    const numberOfMonths = 8 // Number of months to fetch
-    const months = listOfLastMonths(numberOfMonths)
+    // Fetch from January 2023 (UI minDate for contract start) through next month
+    // This ensures all valid contract start dates have corresponding index values
+    const months = listMonthsFromDate(2023, 1)
 
     return await fetchFinancialIndexationForMonths(months)
   }
