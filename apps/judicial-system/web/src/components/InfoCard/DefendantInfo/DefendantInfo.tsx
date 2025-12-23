@@ -15,6 +15,7 @@ import {
   SessionArrangements,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useConnectedCasesQuery } from '@island.is/judicial-system-web/src/routes/Court/Indictments/Conclusion/connectedCases.generated'
+import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import RenderPersonalData from '../RenderPersonalInfo/RenderPersonalInfo'
 import {
@@ -24,6 +25,7 @@ import {
 import { strings as infoCardStrings } from '../useInfoCardItems.strings'
 import { strings } from './DefendantInfo.strings'
 import { link } from '../../MarkdownWrapper/MarkdownWrapper.css'
+import * as styles from './DefendantInfo.css'
 
 interface Defender {
   name?: string | null
@@ -80,6 +82,7 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
       },
     },
   })
+
   const connectedCases = connectedCasesData?.connectedCases
     ?.filter((connectedCase) =>
       connectedCase?.defendants?.some(
@@ -112,8 +115,8 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
     })
 
   return (
-    <>
-      <Box component="p" marginBottom={1}>
+    <Box className={grid({ gap: 1 })}>
+      <Text>
         <Text as="span" fontWeight="semiBold">{`${formatMessage(
           infoCardStrings.name,
         )}: `}</Text>
@@ -123,16 +126,16 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
             `, ${formatDOB(defendant.nationalId, defendant.noNationalId)}`}
           {defendant.citizenship && `, (${defendant.citizenship})`}
         </Text>
-      </Box>
-      <Box component="p" marginBottom={1}>
+      </Text>
+      <Text>
         <Text as="span" fontWeight="semiBold">{`${formatMessage(
           core.addressOrResidence,
         )}: `}</Text>
         <Text as="span">
           {defendant.address ? defendant.address : 'Ekki skráð'}
         </Text>
-      </Box>
-      <Box component="p">
+      </Text>
+      <Text>
         <Text as="span" whiteSpace="pre" fontWeight="semiBold">
           {`${defenderLabel}: `}
         </Text>
@@ -146,9 +149,9 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
         ) : (
           <Text as="span">{formatMessage(strings.noDefender)}</Text>
         )}
-      </Box>
+      </Text>
       {displayAppealExpirationInfo && (
-        <Text as="p" marginTop={1} fontWeight="semiBold">
+        <Text fontWeight="semiBold">
           {formatMessage(appealExpirationInfo.message, {
             appealExpirationDate: appealExpirationInfo.date,
             deadlineType: defendant.verdict?.isDefaultJudgement
@@ -161,7 +164,7 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
         defendant.verdict?.serviceRequirement &&
         defendant.verdict?.serviceRequirement !==
           ServiceRequirement.NOT_REQUIRED && (
-          <Text marginTop={1} fontWeight="semiBold">
+          <Text fontWeight="semiBold">
             {getVerdictViewDateText(
               formatMessage,
               defendant.verdict?.serviceDate,
@@ -169,42 +172,33 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
           </Text>
         )}
       {displaySentToPrisonAdminDate && defendant.sentToPrisonAdminDate && (
-        <Text marginTop={1} fontWeight="semiBold">
+        <Text fontWeight="semiBold">
           {formatMessage(strings.sendToPrisonAdminDate, {
             date: formatDate(defendant.sentToPrisonAdminDate, 'PPP'),
           })}
         </Text>
       )}
-      {displayOpenCaseReference && connectedCases && (
-        <Box marginTop={1}>
-          <Box display="flex" flexWrap="wrap">
-            <Box
-              display="inlineFlex"
-              columnGap={1}
-              alignItems="center"
-              marginRight={1}
-            >
-              <Icon
-                icon="warning"
-                size="medium"
-                color="blue400"
-                type="outline"
-              />
-              <Text fontWeight="semiBold">{'Opin mál gegn ákærða: '}</Text>
-            </Box>
-            {connectedCases.map((connectedCase, i) => {
-              return (
-                <Box component="span" key={i}>
-                  {connectedCase}
-                  {i < connectedCases.length - 1 && (
-                    <Text as="span" whiteSpace="pre">{`, `}</Text>
-                  )}
-                </Box>
-              )
-            })}
+      {displayOpenCaseReference && connectedCases && connectedCases.length > 0 && (
+        <Box display="flex" flexWrap="wrap">
+          <Box
+            display="inlineFlex"
+            columnGap={1}
+            alignItems="center"
+            className={styles.connectedCasesContainer}
+          >
+            <Icon icon="warning" size="medium" color="blue400" type="outline" />
+            <Text fontWeight="semiBold">{'Opin mál gegn ákærða: '}</Text>
           </Box>
+          {connectedCases.map((connectedCase, i) => (
+            <Box component="span" key={i}>
+              {connectedCase}
+              {i < connectedCases.length - 1 && (
+                <Text as="span" whiteSpace="pre">{`, `}</Text>
+              )}
+            </Box>
+          ))}
         </Box>
       )}
-    </>
+    </Box>
   )
 }
