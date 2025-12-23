@@ -16,12 +16,6 @@ export const getParticipantOverviewTableData = (
   answers: FormValue,
   _externalData: ExternalData,
 ): TableData => {
-  const userIsParticipating = getValueViaPath<YesOrNoEnum>(
-    answers,
-    'userIsParticipating',
-    YesOrNoEnum.YES,
-  )
-
   const tableData: TableData = {
     header: [
       m.overview.participantName,
@@ -30,17 +24,6 @@ export const getParticipantOverviewTableData = (
       m.overview.participantPhone,
     ],
     rows: [],
-  }
-
-  if (userIsParticipating === YesOrNoEnum.YES) {
-    tableData.rows.push([
-      getValueViaPath<string>(answers, 'applicant.name') ?? '',
-      getValueViaPath<string>(answers, 'applicant.nationalId') ?? '',
-      getValueViaPath<string>(answers, 'applicant.email') ?? '',
-      formatPhoneNumber(
-        getValueViaPath<string>(answers, 'applicant.phone') ?? '',
-      ),
-    ])
   }
 
   const participantList =

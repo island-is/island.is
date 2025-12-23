@@ -23,9 +23,8 @@ const participantSchema = z.object({
 })
 
 export const dataSchema = z.object({
-  userIsParticipating: z.nativeEnum(YesOrNoEnum).default(YesOrNoEnum.YES),
   userIsPayingAsIndividual: z.nativeEnum(YesOrNoEnum).default(YesOrNoEnum.YES),
-  participantList: z.array(participantSchema),
+  participantList: z.array(participantSchema).min(1),
   courseSelect: z.string().min(1),
   dateSelect: z.string().min(1),
 })

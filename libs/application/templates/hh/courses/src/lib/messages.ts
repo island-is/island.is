@@ -36,17 +36,6 @@ export const m = {
         'Til þess að auðvelda fyrir sækjum við persónuupplýsingar úr Þjóðskrá til þess að fylla út umsóknina',
       description: 'We will fetch name, national id and address',
     },
-    emailAndPhoneTitle: {
-      id: 'hh.courses.application:prerequisites.emailAndPhoneTitle',
-      defaultMessage: 'Netfang og símanúmer',
-      description: 'Email and phone title',
-    },
-    emailAndPhoneSubTitle: {
-      id: 'hh.courses.application:prerequisites.emailAndPhoneSubTitle',
-      defaultMessage:
-        'Til þess að auðvelda umsóknarferlið er gott að hafa fyllt út netfang og símanúmer á mínum síðum',
-      description: 'Email and phone sub title',
-    },
   }),
   course: defineMessages({
     sectionTitle: {
@@ -66,40 +55,10 @@ export const m = {
     },
   }),
   participant: defineMessages({
-    participantListTitle: {
-      id: 'hh.courses.application:participant.participantListTitle',
-      defaultMessage: 'Aðrir þátttakendur',
-      description: 'Title of participant list',
-    },
     sectionTitle: {
       id: 'hh.courses.application:participant.sectionTitle',
       defaultMessage: 'Þátttakendur',
       description: 'Title of participant section',
-    },
-    userInformationTitle: {
-      id: 'hh.courses.application:participant.userInformationTitle',
-      defaultMessage: 'Þínar upplýsingar',
-      description: 'Title of user information',
-    },
-    userName: {
-      id: 'hh.courses.application:participant.userName',
-      defaultMessage: 'Nafn',
-      description: 'Title of user name field',
-    },
-    userNationalId: {
-      id: 'hh.courses.application:participant.userNationalId',
-      defaultMessage: 'Kennitala',
-      description: 'Title of user national id field',
-    },
-    userEmail: {
-      id: 'hh.courses.application:participant.userEmail',
-      defaultMessage: 'Netfang',
-      description: 'Title of user email field',
-    },
-    userPhone: {
-      id: 'hh.courses.application:participant.userPhone',
-      defaultMessage: 'Símanúmer',
-      description: 'Title of user phone field',
     },
     participantName: {
       id: 'hh.courses.application:participant.participantName',
@@ -120,32 +79,6 @@ export const m = {
       id: 'hh.courses.application:participant.participantPhone',
       defaultMessage: 'Símanúmer',
       description: 'Title of participant phone field',
-    },
-    userIsParticipatingLabel: {
-      id: 'hh.courses.application:participant.userIsParticipatingLabel',
-      defaultMessage: 'Viltu skrá þig á námskeiðið?',
-      description: 'Label of user is participating field',
-    },
-    userIsParticipatingYesLabel: {
-      id: 'hh.courses.application:participant.userIsParticipatingYesLabel',
-      defaultMessage: 'Já',
-      description: 'Title of user is participating field',
-    },
-    userIsNotParticipatingNoLabel: {
-      id: 'hh.courses.application:participant.userIsNotParticipatingNoLabel',
-      defaultMessage: 'Nei',
-      description: 'Title of user is not participating field',
-    },
-    changeInfo: {
-      id: 'hh.courses.application:participant.changeInfo',
-      defaultMessage: 'Breyta upplýsingum á mínum síðum',
-      description: 'Title of change info field',
-    },
-    participantValidationError: {
-      id: 'hh.courses.application:participant.participantValidationError',
-      defaultMessage:
-        'Þú verður að skrá þig eða að minnsta kosti einn þátttakanda á námskeiðið',
-      description: 'Error message when no participants are registered',
     },
   }),
   payer: defineMessages({
