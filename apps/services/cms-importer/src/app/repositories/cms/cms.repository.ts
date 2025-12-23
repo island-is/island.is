@@ -1,10 +1,21 @@
 import { Injectable } from '@nestjs/common'
 import { isDefined } from '@island.is/shared/utils'
-import { ContentFields, Entry, KeyValueMap } from 'contentful-management'
-import { ManagementClientService } from '../modules/managementClient/managementClient.service'
-import { CmsGrant, CmsGrantInput } from '../app.types'
-import { CONTENT_TYPE, LOCALE } from '../constants'
+import {
+  ContentFields,
+  ContentType,
+  Entry,
+  KeyValueMap,
+} from 'contentful-management'
+import { ManagementClientService } from './managementClient/managementClient.service'
+import {
+  CONTENT_TYPE,
+  GENERIC_LIST_ITEM_CONTENT_TYPE,
+  LOCALE,
+} from '../../constants'
 import { logger } from '@island.is/logging'
+import { CmsGrant } from '../../grant-import/grant-import.types'
+import { CreationType, EntryInput } from './cms.types'
+import { ContentfulFetchResponse } from './managementClient/managementClient.types'
 
 @Injectable()
 export class CmsRepository {
@@ -64,8 +75,111 @@ export class CmsRepository {
     }
   }
 
-  updateContentfulGrants = async (grants: CmsGrantInput) => {
-    if (!grants.length) {
+  getGenericListItemEntries = async (
+    genericListId: string,
+  ): Promise<Entry[]> => {
+    const existingEntries = await this.managementClient.getEntries({
+      content_type: GENERIC_LIST_ITEM_CONTENT_TYPE,
+      select: 'fields,sys,metadata',
+      links_to_entry: genericListId,
+    })
+
+    if (!existingEntries?.ok) {
+      logger.warn(
+        `cms service failed to fetch items from ${genericListId} entries`,
+        {
+          error: existingEntries.error,
+        },
+      )
+      return []
+    }
+
+    return existingEntries.data.items.filter(isDefined)
+  }
+
+  createEntries = async (
+    entries: Array<CreationType>,
+    contentType: ContentType,
+  ) => {
+    logger.info('creating entries...')
+    if (!entries.length) {
+      logger.warn('no entries to create')
+      return [
+        {
+          ok: true,
+          error: 'no entries to create',
+        },
+      ]
+    }
+
+    const promises = entries
+      .map((entry) => {
+        if (!entry?.fields) {
+          logger.warn('No input fields, aborting creation...')
+          return
+        }
+        return this.createSingleEntry(contentType, entry)
+      })
+      .filter(isDefined)
+
+    const promiseRes = await Promise.allSettled(promises)
+
+    return promiseRes.map((pr) => {
+      if (pr.status === 'fulfilled' && pr.value) {
+        return { ok: true, entry: pr.value }
+      }
+      if (pr.status === 'rejected') {
+        return { ok: false, error: pr.reason }
+      }
+      return { ok: false }
+    })
+  }
+
+  private createSingleEntry = async (
+    contentType: ContentType,
+    input: CreationType,
+  ): Promise<Entry | undefined> => {
+    logger.info('creating single entry...')
+
+    const fields = input.fields?.['fields']
+
+    for (const inputFieldKey of Object.keys(fields)) {
+      if (!this.inputFieldExistsInContent(contentType.fields, inputFieldKey)) {
+        logger.info(`Field not found`, {
+          inputField: inputFieldKey,
+        })
+        return Promise.reject(`Invalid field in input fields: ${inputFieldKey}`)
+      }
+    }
+
+    let createdEntry: ContentfulFetchResponse<Entry> | undefined
+    try {
+      createdEntry = await this.managementClient.createEntry(
+        'genericListItem',
+        input,
+      )
+    } catch (e) {
+      logger.warn('belble')
+    }
+
+    logger.info('after create')
+
+    if (createdEntry?.ok) {
+      logger.info('Entry created', {
+        id: createdEntry.data.sys.id,
+      })
+      return createdEntry.data
+    }
+
+    logger.warn('Entry creation failed', {
+      error: createdEntry?.error,
+    })
+
+    return
+  }
+
+  updateEntries = async (entries: EntryInput, contentType: string) => {
+    if (!entries.length) {
       logger.warn('no entries to update')
       return [
         {
@@ -76,7 +190,7 @@ export class CmsRepository {
     }
 
     const contentTypeResponse = await this.managementClient.getContentType(
-      CONTENT_TYPE,
+      contentType,
     )
 
     if (!contentTypeResponse.ok) {
@@ -91,19 +205,19 @@ export class CmsRepository {
       ]
     }
 
-    const promises = grants
-      .map((grant) => {
-        if (!grant?.inputFields) {
+    const promises = entries
+      .map((entry) => {
+        if (!entry?.inputFields) {
           logger.warn('No input fields to update for grant', {
-            referenceId: grant.referenceId,
+            referenceId: entry.referenceId,
           })
           return
         }
-        return this.updateContentfulEntry(
-          grant.referenceId,
-          grant.cmsGrantEntry,
+        return this.updateSingleEntry(
+          entry.cmsEntry,
           contentTypeResponse.data?.fields,
-          grant?.inputFields,
+          entry?.inputFields,
+          entry?.referenceId,
         )
       })
       .filter(isDefined)
@@ -121,18 +235,11 @@ export class CmsRepository {
     })
   }
 
-  private inputFieldExistsInContent = (
-    contentFields: Array<ContentFields<KeyValueMap>>,
-    inputField: { key: string; value: unknown },
-  ) => {
-    return !!contentFields.find((ctf) => ctf.id === inputField.key)
-  }
-
-  private updateContentfulEntry = async (
-    grantReferenceId: string,
+  private updateSingleEntry = async (
     entry: Entry,
     contentFields: Array<ContentFields<KeyValueMap>>,
     inputFields: Array<{ key: string; value: unknown }>,
+    grantReferenceId?: string,
   ): Promise<Entry | undefined> => {
     if (entry.isUpdated()) {
       //Invalid state, log and skip
@@ -145,7 +252,7 @@ export class CmsRepository {
 
     let hasChanges = false
     for (const inputField of inputFields) {
-      if (!this.inputFieldExistsInContent(contentFields, inputField)) {
+      if (!this.inputFieldExistsInContent(contentFields, inputField.key)) {
         logger.info(`Field not found`, {
           inputField: inputField.key,
           id: entry.sys.id,
@@ -206,6 +313,13 @@ export class CmsRepository {
       id: entry.sys.id,
       referenceId: grantReferenceId,
     })
-    return Promise.resolve(undefined)
+    return undefined
+  }
+
+  private inputFieldExistsInContent = (
+    contentFields: Array<ContentFields<KeyValueMap>>,
+    inputFieldKey: string,
+  ) => {
+    return !!contentFields.find((ctf) => ctf.id === inputFieldKey)
   }
 }
