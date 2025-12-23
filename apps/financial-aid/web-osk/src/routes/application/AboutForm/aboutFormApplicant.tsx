@@ -1,5 +1,11 @@
 import React, { useContext } from 'react'
-import { Text, BulletList, Bullet, Box, Link } from '@island.is/island-ui/core'
+import {
+  Text,
+  BulletList,
+  Bullet,
+  Box,
+  LinkV2,
+} from '@island.is/island-ui/core'
 
 import { currentMonth } from '@island.is/financial-aid/shared/lib'
 import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
@@ -31,53 +37,53 @@ const AboutFormApplicant = () => {
           <Bullet>
             Áður en þú sækir um fjárhagsaðstoð skaltu athuga hvort þú eigir rétt
             á annarskonar aðstoð. Dæmi um önnur úrræði eru{' '}
-            <Link
+            <LinkV2
               href="https://www.stjornarradid.is/verkefni/almannatryggingar-og-lifeyrir/almannatryggingar/"
               color="blue400"
               underline="small"
               underlineVisibility="always"
             >
               almannatryggingar
-            </Link>
+            </LinkV2>
             {', '}
-            <Link
+            <LinkV2
               href="https://vinnumalastofnun.is/umsoknir/umsokn-um-atvinnuleysisbaetur"
               color="blue400"
               underline="small"
               underlineVisibility="always"
             >
               atvinnuleysisbætur
-            </Link>
+            </LinkV2>
             {', '}
-            <Link
+            <LinkV2
               href="https://www.lifeyrismal.is/is/sjodirnir"
               color="blue400"
               underline="small"
               underlineVisibility="always"
             >
               lífeyrissjóðir
-            </Link>
+            </LinkV2>
             {', '}
-            <Link
+            <LinkV2
               href="https://www.sjukra.is/"
               color="blue400"
               underline="small"
               underlineVisibility="always"
             >
               Sjúkratryggingar Íslands
-            </Link>{' '}
+            </LinkV2>{' '}
             og sjúkrasjóðir stéttarfélaga.
           </Bullet>
           <Bullet>
             Ef þú ert í lánshæfu námi gætir þú átt rétt á námsláni hjá{' '}
-            <Link
+            <LinkV2
               href="https://menntasjodur.is/"
               color="blue400"
               underline="small"
               underlineVisibility="always"
             >
               Menntasjóði námsmanna
-            </Link>
+            </LinkV2>
             .
           </Bullet>
         </BulletList>
