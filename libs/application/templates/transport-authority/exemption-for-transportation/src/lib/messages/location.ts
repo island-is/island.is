@@ -73,7 +73,7 @@ export const location = {
     directionsPlaceholder: {
       id: 'ta.eft.application:location.shortTerm.directionsPlaceholder',
       defaultMessage:
-        'Um Lambhagaveg, nr. 1 Hringveg, nr. 47 Hvalfjarðarveg, nr. 1 Hringveg, nr. 60 Vestfjarðarveg…',
+        'Um Lambhagaveg, nr. 1 Hringveg, nr. 47 Hvalfjarðarveg, nr. 1 Hringveg, nr. 60 Vestfjarðarveg...',
       description: 'Location directions placeholder',
     },
   }),
