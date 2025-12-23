@@ -2,13 +2,13 @@ import { Auth } from '@island.is/auth-nest-tools'
 import {
   AppointmentStatus,
   CreateEuPatientConsentDto,
-  HealthDirectorateHealthService,
-  HealthDirectorateOrganDonationService,
   HealthDirectorateVaccinationsService,
   OrganDonorDto,
   PrescriptionRenewalRequestDto,
   VaccinationDto,
   organLocale,
+  HealthDirectorateHealthService,
+  HealthDirectorateOrganDonationService,
 } from '@island.is/clients/health-directorate'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import type { Locale } from '@island.is/shared/types'

@@ -197,6 +197,7 @@ codemagic.yaml                                                                  
 /libs/api/domains/document-provider/                                                                                         @island-is/hugsmidjan @island-is/core
 /libs/api/domains/housing-benefits/                                                                                          @island-is/hugsmidjan
 /libs/api/domains/law-and-order/                                                                                             @island-is/hugsmidjan
+/libs/api/domains/questionnaires/                                                                                            @island-is/hugsmidjan
 /libs/clients/documents/                                                                                                     @island-is/hugsmidjan
 /libs/clients/documents-v2/                                                                                                  @island-is/hugsmidjan
 /libs/clients/finance/                                                                                                       @island-is/hugsmidjan

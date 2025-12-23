@@ -79,6 +79,7 @@ import {
   WatsonAssistantChatModule,
 } from '@island.is/api/domains/watson-assistant-chat'
 import { WorkMachinesModule } from '@island.is/api/domains/work-machines'
+import { QuestionnairesModule } from '@island.is/api/domains/questionnaires'
 import { PracticalExamsModule } from '@island.is/api/domains/practical-exams'
 import { SeminarsModule } from '@island.is/api/domains/seminars-ver'
 import { VmstApplicationsModule } from '@island.is/api/domains/vmst-applications'
@@ -335,6 +336,7 @@ const environment = getConfig
     OfficialJournalOfIcelandApplicationModule,
     LegalGazetteModule,
     CompanyRegistryModule,
+    QuestionnairesModule,
     IcelandicNamesModule.register({
       backendUrl: environment.icelandicNamesRegistry.backendUrl as string,
     }),
