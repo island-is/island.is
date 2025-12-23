@@ -1,7 +1,9 @@
 import { ApplicationTypes } from './ApplicationTypes'
-import { InstitutionTypes } from './InstitutionTypes'
-import { InstitutionContentfulIds } from './InstitutionContentfulIds'
-import { InstitutionNationalIds } from './InstitutionNationalIds'
+import {
+  InstitutionContentfulIds,
+  InstitutionNationalIds,
+  InstitutionTypes,
+} from './Institution'
 
 export const institutionMapper = {
   [ApplicationTypes.EXAMPLE_AUTH_DELEGATION]: {

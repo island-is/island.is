@@ -199,7 +199,7 @@ export const BaseSettings = () => {
         <Column span="5/10">
           <Input
             label={formatMessage(m.daysUntilExpiration)}
-            placeholder={formatMessage(m.max120Days)}
+            placeholder={formatMessage(m.max30Days)}
             name="applicationsDaysToRemove"
             value={
               form.daysUntilApplicationPrune === 0
@@ -208,14 +208,32 @@ export const BaseSettings = () => {
             }
             backgroundColor="blue"
             type="number"
+            max={30}
+            min={1}
             onFocus={(e) => setFocus(e.target.value)}
-            onBlur={(e) => e.target.value !== focus && formUpdate()}
-            onChange={(e) =>
-              controlDispatch({
-                type: 'CHANGE_DAYS_UNTIL_APPLICATION_PRUNE',
-                payload: { value: parseInt(e.target.value) },
-              })
-            }
+            onBlur={(e) => {
+              if (e.target.value !== focus) {
+                if (e.target.value === '' || Number(e.target.value) < 1) {
+                  e.target.value = '1'
+                  controlDispatch({
+                    type: 'CHANGE_DAYS_UNTIL_APPLICATION_PRUNE',
+                    payload: { value: 1 },
+                  })
+                  formUpdate({ ...form, daysUntilApplicationPrune: 1 })
+                } else {
+                  formUpdate()
+                }
+              }
+            }}
+            onChange={(e) => {
+              const value = Number(e.target.value)
+              if (value <= 30) {
+                controlDispatch({
+                  type: 'CHANGE_DAYS_UNTIL_APPLICATION_PRUNE',
+                  payload: { value: parseInt(e.target.value) },
+                })
+              }
+            }}
           />
         </Column>
       </Row>

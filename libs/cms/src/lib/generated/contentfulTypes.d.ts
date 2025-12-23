@@ -493,11 +493,14 @@ export interface IBloodDonationRestrictionFields {
   /** Lykilorð */
   keywords?: string | undefined
 
-  /** Nánar um áhrif á blóðgjöf */
+  /** Undantekningar og athugasemdir */
   detailedText?: Document | undefined
 
   /** Flokkur */
   filterTags?: IGenericTag[] | undefined
+
+  /** Gildir frá */
+  effectiveDate?: string | undefined
 }
 
 export interface IBloodDonationRestriction
@@ -4400,7 +4403,19 @@ export interface ISliceConnectedComponentFields {
     | 'Starfsrettindi/ProfessionRights'
     | 'VMST/ParentalLeaveCalculator'
     | 'DigitalIceland/BenefitsOfDigitalProcesses'
+    | 'WHODAS/Calculator'
+    | 'Brennuleyfi/BurningPermitList'
+    | 'DigitalIcelandMailingListThumbnailCard'
+    | 'DigitalIcelandStatistics'
+    | 'Trufelog/Lifsskodunarfelog'
+    | 'Landspitali/MemorialCard'
+    | 'Landspitali/DirectGrants'
+    | 'Police/FineAndSpeedMeasurementCalculator'
     | 'Personuvernd/SearchInput'
+    | 'Syslumenn/DrivingInstructorList'
+    | 'FSRE/EmployeeList'
+    | 'NewKilometerFee'
+    | 'LatestVerdicts'
     | undefined
 
   /** Localized JSON */

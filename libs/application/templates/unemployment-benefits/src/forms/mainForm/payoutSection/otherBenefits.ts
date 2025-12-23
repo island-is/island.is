@@ -88,7 +88,7 @@ export const otherBenefitsSubSection = buildSubSection({
             },
             subType: {
               component: 'select',
-              label: payoutMessages.otherBenefits.typeOfPayment,
+              label: payoutMessages.otherBenefits.subTypeOfPayment,
               required: true,
               condition: (application, activeField, _) => {
                 if (
@@ -187,10 +187,12 @@ export const otherBenefitsSubSection = buildSubSection({
                     'unemploymentApplication.data.supportData.pensionFunds',
                   ) ?? []
 
-                return pensionFunds?.map((fund) => ({
-                  value: fund.id ?? '',
-                  label: fund.name ?? '',
-                }))
+                return pensionFunds
+                  ?.filter((x) => x.visibleInIncomeEntryOnWeb)
+                  .map((fund) => ({
+                    value: fund.id ?? '',
+                    label: fund.name ?? '',
+                  }))
               },
             },
             union: {
