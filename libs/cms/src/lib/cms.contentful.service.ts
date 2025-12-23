@@ -1608,6 +1608,7 @@ export class CmsContentfulService {
       limit: 1000,
       include: 0,
       select: 'fields.title,sys',
+      'fields.organization.fields.slug': input.organizationSlug,
     }
 
     const response =
