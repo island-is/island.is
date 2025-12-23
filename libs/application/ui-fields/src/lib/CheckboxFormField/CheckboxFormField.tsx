@@ -46,6 +46,7 @@ export const CheckboxFormField = ({
     marginTop,
     marginBottom,
     clearOnChange,
+    clearOnChangeDefaultValue,
     setOnChange,
   } = field
   const { formatMessage, lang: locale } = useLocale()
@@ -123,6 +124,7 @@ export const CheckboxFormField = ({
             }),
           )}
           clearOnChange={clearOnChange}
+          clearOnChangeDefaultValue={clearOnChangeDefaultValue}
           setOnChange={
             typeof setOnChange === 'function'
               ? async (optionValue) =>

@@ -82,6 +82,7 @@ const extractCommonFields = (
     marginBottom,
     marginTop,
     clearOnChange,
+    clearOnChangeDefaultValue,
     setOnChange,
   } = data
 
@@ -99,6 +100,7 @@ const extractCommonFields = (
     marginBottom,
     marginTop,
     clearOnChange,
+    clearOnChangeDefaultValue,
     setOnChange,
   }
 }
@@ -114,6 +116,7 @@ export const buildCheckboxField = (
     backgroundColor = 'blue',
     spacing,
     clearOnChange,
+    clearOnChangeDefaultValue,
   } = data
   return {
     ...extractCommonFields(data),
@@ -125,6 +128,7 @@ export const buildCheckboxField = (
     required,
     spacing,
     clearOnChange,
+    clearOnChangeDefaultValue,
     type: FieldTypes.CHECKBOX,
     component: FieldComponents.CHECKBOX,
   }
