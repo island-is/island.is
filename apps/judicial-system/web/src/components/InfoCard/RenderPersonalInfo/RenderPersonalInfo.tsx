@@ -32,7 +32,7 @@ const RenderPersonalData = ({
     {name && (
       <RenderItem breakSpaces={breakSpaces}>
         <Text as="span" whiteSpace="pre">
-          <Box display="flex" alignItems="center">
+          <Box display="flex" alignItems="center" component="span">
             {`${name}${(email || phoneNumber) && !breakSpaces ? `, ` : ''}`}
             {onClick && (
               <span style={{ marginLeft: '4px' }}>

@@ -24,6 +24,7 @@ import { isNonEmptyArray } from '../../utils/arrayHelpers'
 import { sortByIcelandicAlphabet } from '../../utils/sortHelper'
 import { FormContext } from '../FormProvider/FormProvider'
 import { LinkComponent } from '../MarkdownWrapper/MarkdownWrapper'
+import { UserContext } from '../UserProvider/UserProvider'
 import { CivilClaimantInfo } from './CivilClaimantInfo/CivilClaimantInfo'
 import { DefendantInfo } from './DefendantInfo/DefendantInfo'
 import RenderPersonalData from './RenderPersonalInfo/RenderPersonalInfo'
@@ -35,6 +36,7 @@ import * as styles from './InfoCard.css'
 const useInfoCardItems = () => {
   const { formatMessage } = useIntl()
   const { workingCase } = useContext(FormContext)
+  const { limitedAccess } = useContext(UserContext)
 
   // helper for info card items. If items have no values they will have [{falsy value}]
   const showItem = (item: Item) =>
@@ -285,12 +287,16 @@ const useInfoCardItems = () => {
     title: 'Klofið frá',
     values: workingCase.splitCase
       ? [
-          <LinkComponent
-            href={`${constants.ROUTE_HANDLER_ROUTE}/${workingCase.splitCase.id}`}
-            key={workingCase.splitCase.id}
-          >
-            {workingCase.splitCase.courtCaseNumber}
-          </LinkComponent>,
+          limitedAccess ? (
+            workingCase.splitCase.courtCaseNumber
+          ) : (
+            <LinkComponent
+              href={`${constants.ROUTE_HANDLER_ROUTE}/${workingCase.splitCase.id}`}
+              key={workingCase.splitCase.id}
+            >
+              {workingCase.splitCase.courtCaseNumber}
+            </LinkComponent>
+          ),
         ]
       : [],
   }
