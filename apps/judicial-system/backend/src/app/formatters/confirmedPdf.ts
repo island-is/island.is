@@ -14,7 +14,17 @@ import { PDFKitCoatOfArms } from './PDFKitCoatOfArms'
 type ConfirmableCaseFileCategories =
   | CaseFileCategory.RULING
   | CaseFileCategory.COURT_RECORD
+  | CaseFileCategory.COURT_INDICTMENT_RULING_ORDER
 
+export const hasConfirmableCaseFileCategories = (
+  category: CaseFileCategory | undefined,
+): category is ConfirmableCaseFileCategories => {
+  return (
+    category === CaseFileCategory.RULING ||
+    category === CaseFileCategory.COURT_RECORD ||
+    category === CaseFileCategory.COURT_INDICTMENT_RULING_ORDER
+  )
+}
 // Colors
 const lightGray = rgb(0.9804, 0.9804, 0.9804)
 const darkGray = rgb(0.7961, 0.7961, 0.7961)
@@ -278,6 +288,10 @@ export const createConfirmedPdf = async (
     }
     case CaseFileCategory.COURT_RECORD: {
       await createCourtRecordConfirmation(confirmation, pdfDoc)
+      break
+    }
+    case CaseFileCategory.COURT_INDICTMENT_RULING_ORDER: {
+      await createRulingConfirmation(confirmation, pdfDoc)
       break
     }
     default: {
