@@ -192,7 +192,10 @@ const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
                   eyebrow: '',
                   link: {
                     label: title,
-                    href: `/umsoknir/hh-namskeid/${instance.id}`,
+                    href: `/umsoknir/hh-namskeid?selection=${JSON.stringify({
+                      courseId: course.id,
+                      courseInstanceId: instance.id,
+                    })}`,
                     openInNewTab: true,
                   },
                   detailLines,
