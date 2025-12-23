@@ -97,6 +97,7 @@ export enum ApplicationTypes {
   LEGAL_GAZETTE = 'LegalGazette',
   EXEMPTION_FOR_TRANSPORTATION = 'ExemptionForTransportation',
   REGISTRATION_OF_NEW_PROPERTY_NUMBERS = 'RegistrationOfNewPropertyNumbers',
+  MILE_CAR = 'MileCar',
 }
 
 export const ApplicationConfigurations = {
@@ -495,5 +496,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.REGISTRATION_OF_NEW_PROPERTY_NUMBERS]: {
     slug: 'skraning-fasteignanumera',
     translation: ['ronp.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.MILE_CAR]: {
+    slug: 'skraning-milubila',
+    translation: ['mcar.application', 'uiForms.application'],
   },
 }

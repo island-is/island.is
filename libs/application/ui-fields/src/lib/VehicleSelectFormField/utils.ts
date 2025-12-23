@@ -89,6 +89,12 @@ export const extractDetails = function (
     return {
       validationErrorMessages: response?.validationErrorMessages ?? [],
     }
+  } else if (
+    isResponseType<BasicVehicleInformation>(response, 'BasicVehicleInformation')
+  ) {
+    return {
+      ...extractCommonVehicleInfo(response),
+    }
   } else {
     // Handle unexpected response types
     throw new Error('Unexpected response type')
