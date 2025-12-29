@@ -61,10 +61,10 @@ export class CourseSyncService implements CmsSyncProvider<ICourse> {
             })
           }
 
-          if (entry.fields.organization?.fields?.slug) {
+          if (entry.fields.courseListPage?.sys?.id) {
             tags.push({
-              key: entry.fields.organization.fields.slug,
-              type: 'organization',
+              key: entry.fields.courseListPage.sys.id,
+              type: 'courseListPage',
             })
           }
 

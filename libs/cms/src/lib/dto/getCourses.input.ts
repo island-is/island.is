@@ -14,7 +14,7 @@ export class GetCoursesInput {
   lang: ElasticsearchIndexLocale = 'is'
 
   @Field(() => String, { nullable: true })
-  organizationSlug?: string
+  courseListPageId?: string
 }
 
 @InputType()
@@ -23,5 +23,5 @@ export class GetCourseCategoriesInput {
   lang: ElasticsearchIndexLocale = 'is'
 
   @Field(() => String, { nullable: true })
-  organizationSlug?: string
+  courseListPageId?: string
 }

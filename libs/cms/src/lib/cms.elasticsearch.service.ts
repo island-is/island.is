@@ -1591,7 +1591,7 @@ export class CmsElasticsearchService {
       })
     }
 
-    if (!!input.organizationSlug && input.organizationSlug.length > 0) {
+    if (!!input.courseListPageId && input.courseListPageId.length > 0) {
       must.push({
         nested: {
           path: 'tags',
@@ -1600,12 +1600,12 @@ export class CmsElasticsearchService {
               must: [
                 {
                   term: {
-                    'tags.key': input.organizationSlug,
+                    'tags.key': input.courseListPageId,
                   },
                 },
                 {
                   term: {
-                    'tags.type': 'organization',
+                    'tags.type': 'courseListPage',
                   },
                 },
               ],
