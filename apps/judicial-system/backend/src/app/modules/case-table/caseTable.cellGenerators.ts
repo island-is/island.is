@@ -796,7 +796,7 @@ const arraignmentDate: CaseTableCellGenerator<StringGroupValue> = {
 }
 
 const indictmentArraignmentDate: CaseTableCellGenerator<StringGroupValue> = {
-  attributes: ['courtSessionType'],
+  attributes: ['courtSessionType', 'indictmentDecision'],
   includes: {
     dateLogs: {
       model: DateLog,
@@ -806,6 +806,10 @@ const indictmentArraignmentDate: CaseTableCellGenerator<StringGroupValue> = {
     },
   },
   generate: (c: Case): CaseTableCell<StringGroupValue> => {
+    if (c.indictmentDecision === IndictmentDecision.POSTPONING) {
+      return generateCell({ strList: ['Frestað'] }, '999999999999')
+    }
+
     const courtDate = getIndictmentCourtDate(c)
 
     const datePart = formatDate(courtDate, 'EEE d. MMMM yyyy')
@@ -821,7 +825,10 @@ const indictmentArraignmentDate: CaseTableCellGenerator<StringGroupValue> = {
 
     if (!timePart) {
       // This should never happen, but if it does, we return the court date only
-      return generateCell({ strList: [`${capitalize(datePart)}`] }, sortValue)
+      return generateCell(
+        { strList: [courtSessionType, `${capitalize(datePart)}`] },
+        sortValue,
+      )
     }
 
     return generateCell(
