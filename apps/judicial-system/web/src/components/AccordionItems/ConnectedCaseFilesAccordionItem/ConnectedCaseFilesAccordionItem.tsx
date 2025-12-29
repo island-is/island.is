@@ -1,5 +1,5 @@
 import { FC } from 'react'
-±
+
 import { AccordionItem } from '@island.is/island-ui/core'
 import { IndictmentCaseFilesList } from '@island.is/judicial-system-web/src/components'
 import { Case } from '@island.is/judicial-system-web/src/graphql/schema'
