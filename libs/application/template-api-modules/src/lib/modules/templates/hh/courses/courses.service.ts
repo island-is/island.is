@@ -1,15 +1,16 @@
 import { Inject, Injectable } from '@nestjs/common'
 import {
   ApplicationTypes,
-  ApplicationWithAttachments,
+  type ApplicationWithAttachments,
+  type NationalRegistryIndividual,
 } from '@island.is/application/types'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { ZendeskService } from '@island.is/clients/zendesk'
-import { YesOrNoEnum } from '@island.is/application/core'
+import { YesOrNoEnum, getValueViaPath } from '@island.is/application/core'
+import { TemplateApiError } from '@island.is/nest/problem'
 import { SharedTemplateApiService } from '../../../shared'
 import type { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
-import { TemplateApiError } from '@island.is/nest/problem'
 
 type NationalIdWithName = {
   nationalId: string
@@ -113,21 +114,42 @@ export class CoursesService extends BaseTemplateApiService {
         )
       }
 
-      // Use the first participant for the Zendesk ticket requester
-      const firstParticipant = answers.participantList[0]?.nationalIdWithName
-      if (!firstParticipant) {
+      const nationalRegistryData = application.externalData?.nationalRegistry
+        ?.data as NationalRegistryIndividual | undefined
+      const applicantName = nationalRegistryData?.fullName
+      const applicantEmail = getValueViaPath<string>(
+        application.externalData,
+        'userProfile.data.email',
+      )
+      const applicantPhone = getValueViaPath<string>(
+        application.externalData,
+        'userProfile.data.mobilePhoneNumber',
+      )
+
+      const firstParticipant = answers.participantList.find(
+        (participant) =>
+          Boolean(participant?.nationalIdWithName?.name) &&
+          Boolean(participant?.nationalIdWithName?.email) &&
+          Boolean(participant?.nationalIdWithName?.phone),
+      )
+
+      const name =
+        applicantName ?? firstParticipant?.nationalIdWithName?.name ?? ''
+      const email =
+        applicantEmail ?? firstParticipant?.nationalIdWithName?.email ?? ''
+      const phone =
+        applicantPhone ?? firstParticipant?.nationalIdWithName?.phone ?? ''
+
+      if (!name || !email || !phone) {
         throw new TemplateApiError(
           {
-            title: 'No participants found in application',
-            summary: 'No participants found in application',
+            title: 'No contact information found',
+            summary:
+              'Neither applicant nor participant information is available',
           },
           400,
         )
       }
-
-      const name = firstParticipant.name
-      const email = firstParticipant.email
-      const phone = firstParticipant.phone
 
       let user = await this.zendeskService.getUserByEmail(email)
 
