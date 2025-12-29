@@ -170,7 +170,7 @@ describe('AuditTrailService generic', () => {
     await expect(
       service.audit(userId, action, Promise.reject('Rejected'), idFromResult),
     ).rejects.toBe('Rejected')
-    await expect(spy).toHaveBeenCalledWith(
+    expect(spy).toHaveBeenCalledWith(
       JSON.stringify({
         user: userId,
         action,
