@@ -133,12 +133,19 @@ export class CoursesService extends BaseTemplateApiService {
           Boolean(participant?.nationalIdWithName?.phone),
       )
 
-      const name =
-        applicantName ?? firstParticipant?.nationalIdWithName?.name ?? ''
-      const email =
-        applicantEmail ?? firstParticipant?.nationalIdWithName?.email ?? ''
-      const phone =
-        applicantPhone ?? firstParticipant?.nationalIdWithName?.phone ?? ''
+      let name = ''
+      let email = ''
+      let phone = ''
+
+      if (firstParticipant) {
+        name = firstParticipant?.nationalIdWithName?.name ?? ''
+        email = firstParticipant?.nationalIdWithName?.email ?? ''
+        phone = firstParticipant?.nationalIdWithName?.phone ?? ''
+      } else {
+        name = applicantName ?? ''
+        email = applicantEmail ?? ''
+        phone = applicantPhone ?? ''
+      }
 
       if (!name || !email || !phone) {
         throw new TemplateApiError(
