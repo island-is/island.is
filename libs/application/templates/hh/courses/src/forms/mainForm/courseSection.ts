@@ -1,4 +1,3 @@
-import gql from 'graphql-tag'
 import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
 import is from 'date-fns/locale/is'
@@ -15,40 +14,12 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
+import {
+  GET_COURSE_BY_ID_QUERY,
+  GET_COURSE_SELECT_OPTIONS_QUERY,
+} from '../../graphql'
 
 const QUERY_PARAM_KEY = 'initialQuery'
-
-const GET_COURSE_SELECT_OPTIONS_QUERY = gql`
-  query GetCourseSelectOptions($input: GetCourseSelectOptionsInput!) {
-    getCourseSelectOptions(input: $input) {
-      items {
-        id
-        title
-      }
-    }
-  }
-`
-
-const GET_COURSE_BY_ID_QUERY = gql`
-  query GetCourseById($input: GetCourseByIdInput!) {
-    getCourseById(input: $input) {
-      instances {
-        id
-        startDate
-        startDateTimeDuration {
-          startTime
-          endTime
-        }
-        location
-        displayedTitle
-        price {
-          amount
-        }
-        description
-      }
-    }
-  }
-`
 
 const parseQueryParamValue = (
   value?: string,
