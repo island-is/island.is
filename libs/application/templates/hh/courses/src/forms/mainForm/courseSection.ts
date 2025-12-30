@@ -18,20 +18,9 @@ import {
   GET_COURSE_BY_ID_QUERY,
   GET_COURSE_SELECT_OPTIONS_QUERY,
 } from '../../graphql'
+import { parseQueryParamValue } from '../../utils/parseQueryParamValue'
 
 const QUERY_PARAM_KEY = 'initialQuery'
-
-const parseQueryParamValue = (
-  value?: string,
-): { courseId?: string; courseInstanceId?: string } | undefined => {
-  if (!value) return undefined
-  try {
-    const parsedValue = JSON.parse(value)
-    return parsedValue
-  } catch {
-    return undefined
-  }
-}
 
 export const courseSection = buildSection({
   id: 'courseSection',
