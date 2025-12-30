@@ -81,6 +81,7 @@ export const FamilyMemberCard: FC<
       : InformationPaths.UserInfo
   }
   return (
+    //TODO: Replace with Island UI Card when it supports images
     <ActionCard
       image={{ type: 'avatar' }}
       translateLabel="no"

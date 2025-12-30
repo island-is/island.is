@@ -30,6 +30,7 @@
 import {
   Box,
   GridColumn,
+  GridContainer,
   GridRow,
   Icon,
   Inline,
@@ -121,7 +122,7 @@ export const InfoCard: React.FC<InfoCardProps> = ({
         border="standard"
         borderColor="blue200"
         borderRadius="large"
-        padding={3}
+        padding={[2, 2, 2, 3]}
         className={styles.boxContainer}
         height="full"
         background="white"

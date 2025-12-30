@@ -134,6 +134,7 @@ const MedicinePrescriptions = () => {
       serviceProviderTooltip={formatMessage(
         messages.landlaeknirMedicinePrescriptionsTooltip,
       )}
+      childrenWidthFull
     >
       {error && !loading && <Problem error={error} noBorder={false} />}
 
