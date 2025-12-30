@@ -32,6 +32,7 @@ import {
   type User as TUser,
 } from '@island.is/judicial-system/types'
 
+import { getCaseFileHash } from '../../formatters'
 import { InternalCaseService } from '../case/internalCase.service'
 import { PdfService } from '../case/pdf.service'
 import { CourtDocumentFolder, CourtService } from '../court'
@@ -332,6 +333,11 @@ export class SubpoenaService {
           theCase,
           civilClaimFile,
         )
+        const civilClaimantHash = getCaseFileHash(civilClaimPdf)
+        await this.fileService.updateCaseFile(theCase.id, civilClaimFile.id, {
+          hash: civilClaimantHash.hash,
+          hashAlgorithm: civilClaimantHash.hashAlgorithm,
+        })
 
         civilClaimPdfs.push(Base64.btoa(civilClaimPdf.toString('binary')))
       }
