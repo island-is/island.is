@@ -49,6 +49,7 @@ env:
   FUNDING_GOVERNMENT_PROJECTS_APPLICATION_RECIPIENT_EMAIL_ADDRESS: 'island@island.is'
   FUNDING_GOVERNMENT_PROJECTS_APPLICATION_RECIPIENT_NAME: 'Stafrænt Ísland'
   GRAPHQL_API_URL: 'http://api.islandis.svc.cluster.local'
+  HH_COURSES_ZENDESK_SUBJECT: 'Skráning á námskeið - Heilsugæsla höfuðborgarsvæðisins'
   HMS_CONTRACTS_AUTH_CLIENT_ID: '44055958-a462-4ba8-bbd2-5bfedbbd18c0'
   HMS_CONTRACTS_AUTH_TENANT_ID: 'c7256472-2622-417e-8955-a54eeb0a110e'
   HMS_CONTRACTS_AUTH_TOKEN_ENDPOINT: 'https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/token'
@@ -156,6 +157,7 @@ env:
   XROAD_VMST_MEMBER_CODE: '7005942039'
   XROAD_WORK_ACCIDENT_PATH: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/slysaskraning-token'
   XROAD_WORK_MACHINE_LICENSE_PATH: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/vinnuvelar-token'
+  ZENDESK_CONTACT_FORM_SUBDOMAIN: 'digitaliceland'
 grantNamespaces:
   - 'services-payments'
   - 'nginx-ingress-internal'
@@ -281,6 +283,8 @@ secrets:
   XROAD_VMST_API_KEY: '/k8s/vmst-client/VMST_API_KEY'
   XROAD_VMST_UNEMPLOYMENT_PASSWORD: '/k8s/xroad/XROAD_VMST_UNEMPLOYMENT_PASSWORD'
   XROAD_VMST_UNEMPLOYMENT_USERNAME: '/k8s/xroad/XROAD_VMST_UNEMPLOYMENT_USERNAME'
+  ZENDESK_CONTACT_FORM_EMAIL: '/k8s/api/ZENDESK_CONTACT_FORM_EMAIL'
+  ZENDESK_CONTACT_FORM_TOKEN: '/k8s/api/ZENDESK_CONTACT_FORM_TOKEN'
 securityContext:
   allowPrivilegeEscalation: false
   privileged: false

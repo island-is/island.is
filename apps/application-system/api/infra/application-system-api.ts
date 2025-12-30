@@ -348,6 +348,17 @@ export const serviceSetup = (services: {
         staging: 'e2411f5c-436a-4c17-aa14-eab9c225bc06',
         prod: '44055958-a462-4ba8-bbd2-5bfedbbd18c0',
       },
+      ZENDESK_CONTACT_FORM_SUBDOMAIN: {
+        dev: 'digitaliceland',
+        staging: 'digitaliceland',
+        prod: 'digitaliceland',
+      },
+      HH_COURSES_ZENDESK_SUBJECT: {
+        dev: '[TEST] Skráning á námskeið - Heilsugæsla höfuðborgarsvæðisins',
+        staging:
+          '[TEST] Skráning á námskeið - Heilsugæsla höfuðborgarsvæðisins',
+        prod: 'Skráning á námskeið - Heilsugæsla höfuðborgarsvæðisins',
+      },
     })
     .xroad(
       Base,
@@ -438,6 +449,8 @@ export const serviceSetup = (services: {
         '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
       HMS_CONTRACTS_AUTH_CLIENT_SECRET:
         '/k8s/application-system-api/HMS_CONTRACTS_AUTH_CLIENT_SECRET',
+      ZENDESK_CONTACT_FORM_EMAIL: '/k8s/api/ZENDESK_CONTACT_FORM_EMAIL',
+      ZENDESK_CONTACT_FORM_TOKEN: '/k8s/api/ZENDESK_CONTACT_FORM_TOKEN',
     })
     .db()
     .migrations()
