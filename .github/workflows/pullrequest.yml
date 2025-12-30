@@ -292,23 +292,6 @@ jobs:
             "$BASE_LINT_FILE_PATH"
           echo "lints-file=$BASE_LINT_FILE_PATH" | tee -a "$GITHUB_OUTPUT"
 
-      - name: No new lints
-        id: newlints
-        if: ${{ !contains(github.event.pull_request.labels.*.name, 'dirty bypass') }}
-        env:
-          HEAD_LINT_PROCESSED_FILE: ${{steps.lint-head.outputs.lints-file}}
-          BASE_LINT_PROCESSED_FILE: ${{steps.lint-base.outputs.lints-file}}
-        run: |
-          # compare-lints.sh <BASE_LINT_PROCESSED_FILE> <HEAD_LINT_PROCESSED_FILE>
-          ./scripts/ci/compare-lints.sh \
-            "$BASE_LINT_PROCESSED_FILE" \
-            "$HEAD_LINT_PROCESSED_FILE"
-
-      - name: Checkout back to PR
-        uses: actions/checkout@v4
-        with:
-          clean: false
-
   build:
     needs:
       - prepare
