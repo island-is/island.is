@@ -1519,6 +1519,9 @@
       ],
       "@island.is/application/templates/mile-car": [
         "libs/application/templates/mile-car/src/index.ts"
+      ],
+      "@island.is/application/templates/transport-authority/mile-car": [
+        "libs/application/templates/transport-authority/mile-car/src/index.ts"
       ]
     },
     "resolveJsonModule": true

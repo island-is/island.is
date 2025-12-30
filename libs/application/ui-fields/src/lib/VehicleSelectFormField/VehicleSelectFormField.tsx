@@ -112,6 +112,7 @@ export const VehicleSelectFormField: FC<React.PropsWithChildren<Props>> = ({
         role: vehicle.role,
         isDebtLess: vehicleDetails?.isDebtLess,
         validationErrorMessages: vehicleDetails?.validationErrorMessages,
+        vehicleHasMilesOdometer: vehicleDetails?.vehicleHasMilesOdometer,
       })
 
       const hasValidationError =

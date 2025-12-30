@@ -141,6 +141,10 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
     setValue(`${field.id}.color`, vehicleDetails?.color || undefined)
     setValue(`${field.id}.requireMileage`, vehicleDetails?.requireMileage)
     setValue(`${field.id}.mileageReading`, vehicleDetails?.mileageReading)
+    setValue(
+      `${field.id}.vehicleHasMilesOdometer`,
+      vehicleDetails?.vehicleHasMilesOdometer,
+    )
 
     setValue('vehicleMileage.requireMileage', vehicleDetails?.requireMileage)
     setValue('vehicleMileage.mileageReading', vehicleDetails?.mileageReading)

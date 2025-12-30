@@ -276,7 +276,7 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
       '@island.is/application/templates/hms/registration-of-new-property-numbers'
     ),
   [ApplicationTypes.MILE_CAR]: () =>
-    import('@island.is/application/templates/mile-car'),
+    import('@island.is/application/templates/transport-authority/mile-car'),
 }
 
 export default templates
