@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text, Box, Link } from '@island.is/island-ui/core'
+import { Text, Box, LinkV2 } from '@island.is/island-ui/core'
 
 import * as styles from './ProfileUnit.css'
 
@@ -10,9 +10,9 @@ export const LinkItem = (
 ) => {
   return (
     link && (
-      <Link href={link} color="blue400" onClick={onclick}>
+      <LinkV2 href={link} color="blue400" onClick={onclick}>
         {content}
-      </Link>
+      </LinkV2>
     )
   )
 }
