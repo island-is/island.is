@@ -27,12 +27,14 @@ const template: ApplicationTemplate<
   ApplicationStateSchema<Events>,
   Events
 > = {
-  type: ApplicationTypes.HH_COURSES,
+  type: ApplicationTypes.HEISLUGAESLA_HOFUDBORDARSVAEDISINS_NAMSKEID,
   name: m.general.applicationTitle,
   codeOwner: CodeOwners.Stefna,
   institution: m.general.institutionName,
   translationNamespaces:
-    ApplicationConfigurations[ApplicationTypes.HH_COURSES].translation,
+    ApplicationConfigurations[
+      ApplicationTypes.HEISLUGAESLA_HOFUDBORDARSVAEDISINS_NAMSKEID
+    ].translation,
   dataSchema,
   allowMultipleApplicationsInDraft: true,
   initialQueryParameter: 'selection',

@@ -496,7 +496,7 @@ export const institutionMapper = {
     slug: InstitutionTypes.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
     contentfulId: InstitutionContentfulIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
   },
-  [ApplicationTypes.HH_COURSES]: {
+  [ApplicationTypes.HEISLUGAESLA_HOFUDBORDARSVAEDISINS_NAMSKEID]: {
     nationalId: InstitutionNationalIds.HEILSUGAESLA_HOFUDBORDARSVAEDISINS,
     slug: InstitutionTypes.HEILSUGAESLA_HOFUDBORDARSVAEDISINS,
     contentfulId: InstitutionContentfulIds.HEILSUGAESLA_HOFUDBORDARSVAEDISINS,
