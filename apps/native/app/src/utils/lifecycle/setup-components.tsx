@@ -34,6 +34,9 @@ import { OnboardingBiometricsScreen } from '../../screens/onboarding/onboarding-
 import { OnboardingNotificationsScreen } from '../../screens/onboarding/onboarding-notifications'
 import { OnboardingPinCodeScreen } from '../../screens/onboarding/onboarding-pin-code'
 import { PasskeyScreen } from '../../screens/passkey/passkey'
+import { PrescriptionsScreen } from '../../screens/prescriptions/prescriptions'
+import { MedicineDispensationDetailScreen } from '../../screens/prescriptions/components/medicine-dispensation-detail'
+import { MedicineDispensationsScreen } from '../../screens/prescriptions/components/medicine-dispensations'
 import { RegisterEmailScreen } from '../../screens/register-email/register-email'
 import { EditBankInfoScreen } from '../../screens/settings/edit-bank-info'
 import { EditConfirmScreen } from '../../screens/settings/edit-confirm'
@@ -55,12 +58,6 @@ import {
 import { registerComponent } from '../register-component'
 
 export function registerAllComponents() {
-  // dev only
-  if (__DEV__) {
-    // registerComponent(CR.DevtoolsStorybookScreen, StorybookScreen)
-    // registerComponent(CR.DevtoolsCognitoAuthScreen, CognitoAuthScreen)
-  }
-
   // screens
   registerComponent(
     CR.LoginScreen,
@@ -120,6 +117,13 @@ export function registerAllComponents() {
     ApplicationsIncompleteScreen,
   )
   registerComponent(CR.VaccinationsScreen, VaccinationsScreen)
+  registerComponent(CR.PrescriptionsScreen, PrescriptionsScreen)
+  registerComponent(
+    CR.MedicineDispensationDetailScreen,
+    MedicineDispensationDetailScreen,
+  )
+  registerComponent(CR.MedicineDispensationsScreen, MedicineDispensationsScreen)
+
   registerComponent(CR.RegisterEmailScreen, RegisterEmailScreen)
 
   // Overlay

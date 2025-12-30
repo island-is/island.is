@@ -83,7 +83,7 @@ const Host = styled.View<{
 }>`
   border-color: ${({ borderColor, theme }) => theme.color[borderColor]};
   border-width: 1px;
-  border-radius: 24px;
+  border-radius: ${({ theme }) => theme.border.radius.large};
 
   justify-content: center;
   align-items: center;
