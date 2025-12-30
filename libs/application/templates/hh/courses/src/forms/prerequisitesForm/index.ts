@@ -6,14 +6,15 @@ import {
   buildSubmitField,
   coreMessages,
 } from '@island.is/application/core'
-import { DefaultEvents } from '@island.is/application/types'
-import { FormModes } from '@island.is/application/types'
+import { DefaultEvents, FormModes } from '@island.is/application/types'
+import { HeilsugaeslaHofudborgarsvaedidinsLogo } from '@island.is/application/assets/institution-logos'
 import { m } from '../../lib/messages'
 
 export const Prerequisites = buildForm({
   id: 'PrerequisitesDraft',
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
+  logo: HeilsugaeslaHofudborgarsvaedidinsLogo,
   children: [
     buildSection({
       id: 'conditions',

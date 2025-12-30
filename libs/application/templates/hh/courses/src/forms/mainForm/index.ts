@@ -1,5 +1,6 @@
 import { buildForm } from '@island.is/application/core'
 import { FormModes } from '@island.is/application/types'
+import { HeilsugaeslaHofudborgarsvaedidinsLogo } from '@island.is/application/assets/institution-logos'
 import { participantSection } from './participantSection'
 import { overviewSection } from './overview'
 import { courseSection } from './courseSection'
@@ -11,4 +12,5 @@ export const MainForm = buildForm({
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
   children: [courseSection, participantSection, payerSection, overviewSection],
+  logo: HeilsugaeslaHofudborgarsvaedidinsLogo,
 })
