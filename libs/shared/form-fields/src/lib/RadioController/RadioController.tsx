@@ -44,6 +44,14 @@ interface Props {
   paddingBottom?: BoxProps['paddingBottom']
   paddingTop?: BoxProps['paddingTop']
   clearOnChange?: string[]
+  clearOnChangeDefaultValue?:
+    | string
+    | string[]
+    | boolean
+    | boolean[]
+    | number
+    | number[]
+    | undefined
 }
 
 export const RadioController: FC<React.PropsWithChildren<Props>> = ({
@@ -62,6 +70,7 @@ export const RadioController: FC<React.PropsWithChildren<Props>> = ({
   paddingBottom = 2,
   paddingTop = 0,
   clearOnChange,
+  clearOnChangeDefaultValue,
 }) => {
   const { clearErrors, setValue } = useFormContext()
 
@@ -89,7 +98,11 @@ export const RadioController: FC<React.PropsWithChildren<Props>> = ({
                   onSelect(target.value)
                   setValue(id, target.value)
                   if (clearOnChange) {
-                    clearInputsOnChange(clearOnChange, setValue)
+                    clearInputsOnChange(
+                      clearOnChange,
+                      setValue,
+                      clearOnChangeDefaultValue,
+                    )
                   }
                 }}
                 checked={option.value === value}
