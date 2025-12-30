@@ -122,10 +122,11 @@ export const applicantTableFields: Record<string, RepeaterItem> = {
     searchCompanies: false,
   },
   phone: {
-    component: 'phone',
+    component: 'input',
     required: true,
     label: m.misc.phoneNumber,
-    enableCountrySelector: false,
+    placeholder: '000-0000',
+    format: '###-####',
     width: 'half',
   },
   email: {
@@ -150,10 +151,11 @@ export const landLordInfoTableFields: Record<string, RepeaterItem> = {
     searchCompanies: false,
   },
   phone: {
-    component: 'phone',
+    component: 'input',
     required: true,
     label: m.misc.phoneNumber,
-    enableCountrySelector: false,
+    placeholder: '000-0000',
+    format: '###-####',
     width: 'half',
   },
   email: {
