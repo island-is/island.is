@@ -30,6 +30,11 @@ const ButtonContainer = styled(View)`
   bottom: ${theme.spacing[2]}px;
 `
 
+const DatePickerContainer = styled(View)`
+  margin-horizontal: ${({ theme }) => theme.spacing[2]}px;
+  gap: ${({ theme }) => theme.spacing[2]}px;
+`
+
 const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks((theme, intl) => ({
     topBar: {
@@ -242,24 +247,26 @@ export function InboxFilterScreen({
             title={intl.formatMessage({ id: 'inbox.filterDatesTitle' })}
             startOpen={!!dateFrom || !!dateTo}
           >
-            <DatePickerInput
-              label={intl.formatMessage({ id: 'inbox.filterDateFromLabel' })}
-              placeholder={intl.formatMessage({
-                id: 'inbox.filterDatePlaceholder',
-              })}
-              onSelectDate={setDateFrom}
-              selectedDate={dateFrom}
-            />
-            <DatePickerInput
-              label={intl.formatMessage({ id: 'inbox.filterDateToLabel' })}
-              placeholder={intl.formatMessage({
-                id: 'inbox.filterDatePlaceholder',
-              })}
-              maximumDate={new Date()}
-              minimumDate={dateFrom}
-              onSelectDate={setDateTo}
-              selectedDate={dateTo}
-            />
+            <DatePickerContainer>
+              <DatePickerInput
+                label={intl.formatMessage({ id: 'inbox.filterDateFromLabel' })}
+                placeholder={intl.formatMessage({
+                  id: 'inbox.filterDatePlaceholder',
+                })}
+                onSelectDate={setDateFrom}
+                selectedDate={dateFrom}
+              />
+              <DatePickerInput
+                label={intl.formatMessage({ id: 'inbox.filterDateToLabel' })}
+                placeholder={intl.formatMessage({
+                  id: 'inbox.filterDatePlaceholder',
+                })}
+                maximumDate={new Date()}
+                minimumDate={dateFrom}
+                onSelectDate={setDateTo}
+                selectedDate={dateTo}
+              />
+            </DatePickerContainer>
           </AccordionItem>
         </Accordion>
       </ScrollView>
