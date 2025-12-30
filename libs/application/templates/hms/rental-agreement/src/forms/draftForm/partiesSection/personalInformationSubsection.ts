@@ -10,7 +10,7 @@ export const personalInformationSubsection = buildSubSection({
     applicantInformationMultiField({
       applicantInformationDescription:
         m.partiesDetails.personalInformationDescription,
-      phoneEnableCountrySelector: true,
+      phoneEnableCountrySelector: false,
     }),
   ],
 })

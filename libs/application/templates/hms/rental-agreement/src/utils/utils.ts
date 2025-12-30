@@ -54,8 +54,7 @@ export const isValidMeterStatus = (value: string) => {
 }
 
 export const isValidPhoneNumber = (phoneNumber: string) => {
-  // Try to parse without default country to support international numbers
-  const phone = parsePhoneNumberFromString(phoneNumber)
+  const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
   if (isRunningOnEnvironment('local') || isRunningOnEnvironment('dev')) {
     return !!phone
   } else {
@@ -64,26 +63,19 @@ export const isValidPhoneNumber = (phoneNumber: string) => {
 }
 
 export const isValidMobileNumber = (phoneNumber: string) => {
-  // Try to parse without default country to support international numbers
-  const phone = parsePhoneNumberFromString(phoneNumber)
+  const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
   if (isRunningOnEnvironment('local') || isRunningOnEnvironment('dev')) {
-    return !!phone
+    return !!phone && /^[06-8]/.test(String(phone?.nationalNumber))
   } else {
-    // For Icelandic mobile numbers, check if they start with 6-8
-    // For international numbers, accept any valid mobile type
-    if (phone?.country === 'IS') {
-      return (
-        phone && phone.isValid() && /^[6-8]/.test(String(phone?.nationalNumber))
-      )
-    }
-    return phone && phone.isValid()
+    return (
+      phone && phone.isValid() && /^[6-8]/.test(String(phone?.nationalNumber))
+    )
   }
 }
 
 export const formatPhoneNumber = (phoneNumber: string): string => {
-  // Try to parse without default country to support international numbers
-  const phone = parsePhoneNumberFromString(phoneNumber)
-  return phone?.formatInternational() || phoneNumber
+  const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
+  return phone?.formatNational() || phoneNumber
 }
 
 export const formatBankInfo = (bankInfo: BankAccount) => {
@@ -130,10 +122,11 @@ export const applicantTableFields: Record<string, RepeaterItem> = {
     searchCompanies: false,
   },
   phone: {
-    component: 'phone',
+    component: 'input',
     required: true,
     label: m.misc.phoneNumber,
-    enableCountrySelector: true,
+    placeholder: '000-0000',
+    format: '###-####',
     width: 'half',
   },
   email: {
@@ -158,10 +151,11 @@ export const landLordInfoTableFields: Record<string, RepeaterItem> = {
     searchCompanies: false,
   },
   phone: {
-    component: 'phone',
+    component: 'input',
     required: true,
     label: m.misc.phoneNumber,
-    enableCountrySelector: true,
+    placeholder: '000-0000',
+    format: '###-####',
     width: 'half',
   },
   email: {

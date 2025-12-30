@@ -22,7 +22,6 @@ import { shouldShowRepresentativeTable } from '../../../utils/conditions'
 import { buildCheckboxField } from '@island.is/application/core'
 import { buildDescriptionField } from '@island.is/application/core'
 import { buildNationalIdWithNameField } from '@island.is/application/core'
-import { buildPhoneField } from '@island.is/application/core'
 import { buildTextField } from '@island.is/application/core'
 import { YES } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
@@ -73,12 +72,13 @@ export const partiesSubsection = buildSubSection({
           searchCompanies: false,
           required: true,
         }),
-        buildPhoneField({
+        buildTextField({
           condition: applicantIsCompany,
           id: 'parties.signatory.phone',
-          enableCountrySelector: true,
-          required: true,
           title: m.misc.phoneNumber,
+          placeholder: '000-0000',
+          format: '###-####',
+          required: true,
           width: 'half',
         }),
         buildTextField({
@@ -144,12 +144,13 @@ export const partiesSubsection = buildSubSection({
           marginBottom: 2,
           searchCompanies: false,
         }),
-        buildPhoneField({
+        buildTextField({
           condition: shouldShowRepresentativeTable,
           id: 'parties.landlordInfo.representativeTable.0.phone',
-          enableCountrySelector: true,
-          required: true,
           title: m.misc.phoneNumber,
+          placeholder: '000-0000',
+          format: '###-####',
+          required: true,
           width: 'half',
         }),
         buildTextField({
