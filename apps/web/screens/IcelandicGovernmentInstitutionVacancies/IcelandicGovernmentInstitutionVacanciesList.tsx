@@ -289,17 +289,19 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
       const displayLogoUrl =
         !vacancy.institutionName && vacancyComesFromCms ? '' : logoUrl
 
+      if (vacancy.address) {
+        // Handle address and postal code display
+        console.log('Address:', vacancy.address)
+        console.log('Locations:', vacancy.locations)
+      }
+
       const detailLines = [
         vacancy.locations && vacancy.locations.length > 0
           ? {
               icon: 'location' as const,
               text: vacancy.locations
                 .filter((location) => location.title)
-                .map((location) =>
-                  location.postalCode && !vacancy.address
-                    ? `${location.title} (${location.postalCode})`
-                    : location.title,
-                )
+                .map((location) => location.title)
                 .join(', '),
             }
           : undefined,
@@ -307,9 +309,7 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
           ? {
               icon: 'home' as const,
               text: (() => {
-                const postalCode = vacancy.locations?.[0]?.postalCode
                 const addressParts = []
-                if (postalCode) addressParts.push(postalCode)
                 if (vacancy.address) addressParts.push(vacancy.address)
                 return addressParts.join(' ')
               })(),
