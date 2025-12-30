@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common'
 import {
   ApplicationTypes,
+  type ExternalData,
   type ApplicationWithAttachments,
-  type NationalRegistryIndividual,
 } from '@island.is/application/types'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { ZendeskService } from '@island.is/clients/zendesk'
@@ -11,25 +11,7 @@ import { TemplateApiError } from '@island.is/nest/problem'
 import { SharedTemplateApiService } from '../../../shared'
 import type { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
-
-type NationalIdWithName = {
-  nationalId: string
-  name: string
-  email: string
-  phone: string
-}
-
-type ApplicationAnswers = {
-  userIsPayingAsIndividual: YesOrNoEnum
-  participantList: Array<{
-    nationalIdWithName: NationalIdWithName
-  }>
-  courseSelect: string
-  dateSelect: string
-  companyPayment?: {
-    nationalIdWithName: NationalIdWithName
-  }
-}
+import type { ApplicationAnswers } from './types'
 
 const GET_COURSE_BY_ID_QUERY = `
   query GetCourseById($input: GetCourseByIdInput!) {
@@ -67,66 +49,22 @@ export class CoursesService extends BaseTemplateApiService {
     auth,
   }: TemplateApiModuleActionProps): Promise<{ success: boolean }> {
     try {
-      const answers = application.answers as ApplicationAnswers
-
-      const courseResponse = await this.sharedTemplateApiService
-        .makeGraphqlQuery<{
-          getCourseById: {
-            id: string
-            title: string
-            instances: {
-              id: string
-              startDate: string
-              startDateTimeDuration?: {
-                startTime?: string
-                endTime?: string
-              }
-            }[]
-          }
-        }>(auth.authorization, GET_COURSE_BY_ID_QUERY, {
-          input: {
-            id: answers.courseSelect,
-          },
-        })
-        .then((response) => response.json())
-
-      if (!courseResponse.data?.getCourseById?.id) {
-        throw new TemplateApiError(
-          {
-            title: 'Course not found',
-            summary: 'Course not found',
-          },
-          404,
-        )
-      }
-
-      const courseInstance = courseResponse.data.getCourseById.instances.find(
-        (instance) => instance.id === answers.dateSelect,
+      const { course, courseInstance } = await this.getCourseById(
+        getValueViaPath<string>(application.answers, 'courseSelect', ''),
+        getValueViaPath<string>(application.answers, 'dateSelect', ''),
+        auth.authorization,
       )
 
-      if (!courseInstance || !answers.dateSelect) {
-        throw new TemplateApiError(
-          {
-            title: 'Course instance not found',
-            summary: 'Course instance not found',
-          },
-          404,
-        )
-      }
+      const participantList =
+        getValueViaPath<ApplicationAnswers['participantList']>(
+          application.answers,
+          'participantList',
+        ) ?? []
 
-      const nationalRegistryData = application.externalData?.nationalRegistry
-        ?.data as NationalRegistryIndividual | undefined
-      const applicantName = nationalRegistryData?.fullName
-      const applicantEmail = getValueViaPath<string>(
-        application.externalData,
-        'userProfile.data.email',
-      )
-      const applicantPhone = getValueViaPath<string>(
-        application.externalData,
-        'userProfile.data.mobilePhoneNumber',
-      )
+      const { applicantName, applicantEmail, applicantPhone } =
+        await this.extractApplicantInfo(application.externalData)
 
-      const firstParticipant = answers.participantList.find(
+      const firstParticipant = participantList.find(
         (participant) =>
           Boolean(participant?.nationalIdWithName?.name) &&
           Boolean(participant?.nationalIdWithName?.email) &&
@@ -147,7 +85,7 @@ export class CoursesService extends BaseTemplateApiService {
         phone = applicantPhone ?? ''
       }
 
-      if (!name || !email || !phone) {
+      if (!name || !email || !phone)
         throw new TemplateApiError(
           {
             title: 'No contact information found',
@@ -156,7 +94,6 @@ export class CoursesService extends BaseTemplateApiService {
           },
           400,
         )
-      }
 
       let user = await this.zendeskService.getUserByEmail(email)
 
@@ -165,10 +102,10 @@ export class CoursesService extends BaseTemplateApiService {
       }
 
       const message = await this.formatApplicationMessage(
-        answers,
         application,
-        courseResponse.data.getCourseById.id,
-        courseResponse.data.getCourseById.title,
+        participantList,
+        course.id,
+        course.title,
         courseInstance,
       )
 
@@ -200,9 +137,101 @@ export class CoursesService extends BaseTemplateApiService {
     }
   }
 
+  private async getCourseById(
+    courseId: string | undefined,
+    courseInstanceId: string | undefined,
+    authorization: string,
+  ) {
+    if (!courseId)
+      throw new TemplateApiError(
+        {
+          title: 'Course id not provided',
+          summary: 'Course id not provided',
+        },
+        400,
+      )
+    if (!courseInstanceId)
+      throw new TemplateApiError(
+        {
+          title: 'Course instance id not provided',
+          summary: 'Course instance id not provided',
+        },
+        400,
+      )
+
+    const response = await this.sharedTemplateApiService
+      .makeGraphqlQuery<{
+        getCourseById: {
+          id: string
+          title: string
+          instances: {
+            id: string
+            startDate: string
+            startDateTimeDuration?: {
+              startTime?: string
+              endTime?: string
+            }
+          }[]
+        }
+      }>(authorization, GET_COURSE_BY_ID_QUERY, {
+        input: {
+          id: courseId,
+        },
+      })
+      .then((response) => response.json())
+
+    const course = response.data?.getCourseById
+    const courseInstance = course?.instances.find(
+      (instance) => instance.id === courseInstanceId,
+    )
+
+    if (!course)
+      throw new TemplateApiError(
+        {
+          title: 'Course not found',
+          summary: 'Course not found',
+        },
+        404,
+      )
+    if (!courseInstance)
+      throw new TemplateApiError(
+        {
+          title: 'Course instance not found',
+          summary: 'Course instance not found',
+        },
+        404,
+      )
+
+    return {
+      course,
+      courseInstance,
+    }
+  }
+
+  private async extractApplicantInfo(externalData: ExternalData) {
+    const applicantName = getValueViaPath<string>(
+      externalData,
+      'nationalRegistry.data.fullName',
+    )
+    const applicantEmail = getValueViaPath<string>(
+      externalData,
+      'userProfile.data.email',
+    )
+    const applicantPhone = getValueViaPath<string>(
+      externalData,
+      'userProfile.data.mobilePhoneNumber',
+    )
+
+    return {
+      applicantName,
+      applicantEmail,
+      applicantPhone,
+    }
+  }
+
   private async formatApplicationMessage(
-    answers: ApplicationAnswers,
     application: ApplicationWithAttachments,
+    participantList: ApplicationAnswers['participantList'],
     courseId: string,
     courseTitle: string,
     courseInstance: {
@@ -214,7 +243,20 @@ export class CoursesService extends BaseTemplateApiService {
       }
     },
   ): Promise<string> {
+    const userIsPayingAsIndividual = getValueViaPath<YesOrNoEnum>(
+      application.answers,
+      'userIsPayingAsIndividual',
+      YesOrNoEnum.YES,
+    )
+    const companyPayment = getValueViaPath<{
+      nationalIdWithName: {
+        name: string
+        nationalId: string
+      }
+    }>(application.answers, 'companyPayment')
+
     let message = ''
+    message += `ID á umsókn: ${application.id}\n`
     message += `Námskeið: ${courseTitle}\n`
     message += `ID á námskeiði: ${courseId}\n`
     message += `ID á upphafsdagsetningu: ${courseInstance.id}\n`
@@ -234,17 +276,17 @@ export class CoursesService extends BaseTemplateApiService {
     message += `Kennitala umsækjanda: ${application.applicant}\n`
 
     const payer =
-      answers.userIsPayingAsIndividual === YesOrNoEnum.YES
+      userIsPayingAsIndividual === YesOrNoEnum.YES
         ? {
             name: 'Umsækjandi (einstaklingsgreiðsla)',
             nationalId: application.applicant,
           }
-        : answers.companyPayment?.nationalIdWithName
+        : companyPayment?.nationalIdWithName
 
     message += `Nafn greiðanda: ${payer?.name ?? ''}\n`
     message += `Kennitala greiðanda: ${payer?.nationalId ?? ''}\n`
 
-    answers.participantList.forEach((participant, index) => {
+    participantList.forEach((participant, index) => {
       const p = participant.nationalIdWithName
       message += `Nafn þátttakanda ${index + 1}: ${p.name}\n`
       message += `Kennitala þátttakanda ${index + 1}: ${p.nationalId}\n`
