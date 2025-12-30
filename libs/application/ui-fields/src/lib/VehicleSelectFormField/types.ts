@@ -15,6 +15,7 @@ export interface VehicleDetails extends BasicVehicleDetails {
   mileageReading?: string | null
   isDebtLess?: boolean | null
   validationErrorMessages?: ValidationErrorMessage[]
+  vehicleHasMilesOdometer?: boolean
 }
 
 export interface BasicPlateOwnership {

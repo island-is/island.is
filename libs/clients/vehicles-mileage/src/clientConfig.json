@@ -2,7 +2,7 @@
   "openapi": "3.0.4",
   "info": {
     "title": "SGS Rest API",
-    "description": "Mileage reading API developed in .Net8.0 - Release-28 : 20250915.1",
+    "description": "Mileage reading API developed in .Net8.0 - Release-32 : 20251218.1",
     "contact": {
       "name": "Samgöngustofa",
       "email": "tolvuhjalp@samgongustofa.is"
@@ -908,6 +908,53 @@
           }
         }
       }
+    },
+    "/setvehicleodometerasmiles/{permno}": {
+      "post": {
+        "tags": ["MileageReading"],
+        "summary": "Post mileage reading",
+        "operationId": "SetVehicleOdometerAsMiles",
+        "parameters": [
+          {
+            "name": "permno",
+            "in": "path",
+            "description": "Vehicle permanent number",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "schema": { "type": "string", "default": "1.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "schema": { "type": "string", "default": "1.0" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "OK" },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1078,12 +1125,13 @@
         "description": "Dto for status of bulk mileage reading request"
       },
       "DeleteMileageReadingNoErrorCheckModel": {
-        "required": ["internalId", "permno"],
+        "required": ["permno"],
         "type": "object",
         "properties": {
           "permno": {
             "maxLength": 5,
             "minLength": 5,
+            "pattern": "^[ABCDEFGHIJKLMNOPRSTUVXYZÞÖ][ABCDEFGHIJKLMNOPRSTUVXYZÞÖ][ABCDEFGHIJKLMNOPRSTUVXYZÞÖ0-9][0-9][0-9]$",
             "type": "string",
             "description": "Vehicle permno."
           },
@@ -1153,15 +1201,20 @@
         "description": "Mileage data transfer object"
       },
       "MileageReadingModel": {
-        "required": ["permno"],
+        "required": ["mileage", "permno"],
         "type": "object",
         "properties": {
           "permno": {
+            "maxLength": 5,
+            "minLength": 5,
+            "pattern": "^[ABCDEFGHIJKLMNOPRSTUVXYZÞÖ][ABCDEFGHIJKLMNOPRSTUVXYZÞÖ][ABCDEFGHIJKLMNOPRSTUVXYZÞÖ0-9][0-9][0-9]$",
             "type": "string",
-            "description": "Vehicle permno",
-            "nullable": true
+            "description": "Vehicle permno"
           },
           "mileage": {
+            "maximum": 999999999,
+            "minimum": 0,
+            "exclusiveMinimum": true,
             "type": "integer",
             "description": "Milegae",
             "format": "int32"
@@ -1171,31 +1224,33 @@
         "description": "One mileage entity"
       },
       "PostBulkMileageReadingModel": {
-        "required": ["originCode"],
+        "required": ["mileageData", "originCode"],
         "type": "object",
         "properties": {
           "originCode": {
+            "maxLength": 10,
+            "minLength": 1,
             "type": "string",
-            "description": "Origin code of reading",
-            "nullable": true
+            "description": "Origin code of reading"
           },
           "mileageData": {
+            "minItems": 1,
             "type": "array",
             "items": { "$ref": "#/components/schemas/MileageReadingModel" },
-            "description": "Mileage reading data",
-            "nullable": true
+            "description": "Mileage reading data"
           }
         },
         "additionalProperties": false,
         "description": "Bulk mileage reading model"
       },
       "PostMileageReadingModel": {
-        "required": ["mileage", "originCode", "permno"],
+        "required": ["originCode", "permno"],
         "type": "object",
         "properties": {
           "permno": {
             "maxLength": 5,
             "minLength": 5,
+            "pattern": "^[ABCDEFGHIJKLMNOPRSTUVXYZÞÖ][ABCDEFGHIJKLMNOPRSTUVXYZÞÖ][ABCDEFGHIJKLMNOPRSTUVXYZÞÖ0-9][0-9][0-9]$",
             "type": "string",
             "description": "Vehicle permanent number"
           },
@@ -1213,7 +1268,7 @@
             "description": "Where does reading come from"
           },
           "mileage": {
-            "maximum": 9999999,
+            "maximum": 999999999,
             "minimum": 0,
             "exclusiveMinimum": true,
             "type": "integer",
@@ -1250,12 +1305,13 @@
         "additionalProperties": false
       },
       "PutMileageReadingModel": {
-        "required": ["internalId", "mileage", "originCode", "permno"],
+        "required": ["originCode", "permno"],
         "type": "object",
         "properties": {
           "permno": {
             "maxLength": 5,
             "minLength": 5,
+            "pattern": "^[ABCDEFGHIJKLMNOPRSTUVXYZÞÖ][ABCDEFGHIJKLMNOPRSTUVXYZÞÖ][ABCDEFGHIJKLMNOPRSTUVXYZÞÖ0-9][0-9][0-9]$",
             "type": "string",
             "description": "Vehicle permanent number"
           },
@@ -1267,12 +1323,14 @@
             "readOnly": true
           },
           "internalId": {
+            "minimum": 0,
+            "exclusiveMinimum": true,
             "type": "integer",
             "description": "Internal id",
             "format": "int32"
           },
           "mileage": {
-            "maximum": 9999999,
+            "maximum": 999999999,
             "minimum": 0,
             "exclusiveMinimum": true,
             "type": "integer",
@@ -1287,9 +1345,9 @@
           },
           "originCode": {
             "maxLength": 10,
+            "minLength": 1,
             "type": "string",
-            "description": "Origin code, see /codetables/mileagereadingorigin",
-            "nullable": true
+            "description": "Origin code, see /codetables/mileagereadingorigin"
           }
         },
         "additionalProperties": false,
