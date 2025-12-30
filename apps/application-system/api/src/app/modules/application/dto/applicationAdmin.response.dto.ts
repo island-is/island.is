@@ -147,5 +147,6 @@ export class ApplicationInstitution {
   @ApiProperty()
   @Expose()
   @IsArray()
+  @IsString({ each: true })
   applicationTypes!: string[]
 }

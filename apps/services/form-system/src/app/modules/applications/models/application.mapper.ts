@@ -286,10 +286,6 @@ export class ApplicationMapper {
           variant: app.tagVariant,
         },
         deleteButton: false,
-        pendingAction: {
-          displayStatus: 'success',
-          title: app.completedMessage,
-        },
         history:
           app.events?.map((event) => {
             return {

@@ -107,6 +107,7 @@ const courtSessionOptions = [
 const Conclusion: FC = () => {
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
+
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const {
@@ -864,10 +865,11 @@ const Conclusion: FC = () => {
           text="Smelltu á hnappinn til að stofna nýtt mál eða skráðu inn málsnúmer sem er þegar til í Auði. Gögn ásamt sögu máls verða flutt á nýja málið."
           primaryButton={{
             text: 'Staðfesta',
-            onClick: () =>
+            onClick: () => {
               router.push(
                 `${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${workingCase.id}`,
-              ),
+              )
+            },
             isDisabled: !validate([
               [splitCaseCourtCaseNumber, ['empty', 'S-case-number']],
             ]).isValid,
@@ -879,7 +881,10 @@ const Conclusion: FC = () => {
               state: CaseState.RECEIVED,
               type: CaseType.INDICTMENT,
             }}
-            onCreateCourtCase={() => createCourtCase(splitCaseId)}
+            onCreateCourtCase={async () => {
+              const courtCaseNumber = await createCourtCase(splitCaseId)
+              return courtCaseNumber ?? ''
+            }}
             onChange={(courtCaseNumber) => {
               setSplitCaseCourtCaseNumber(courtCaseNumber)
             }}

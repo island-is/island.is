@@ -14,7 +14,6 @@ import {
   ApplicationsSuperAdminFilters,
   ApplicationsAdminStatisticsInput,
   ApplicationTypesInstitutionAdminInput,
-  ApplicationInstitutionsAdminInput,
 } from './dto/applications-admin-inputs'
 import {
   ApplicationAdmin,
@@ -100,11 +99,7 @@ export class ApplicationAdminResolver {
 
   @Query(() => [ApplicationInstitution], { nullable: true })
   @Scopes(AdminPortalScope.applicationSystemAdmin)
-  async applicationApplicationsAdminInstitutions(
-    @CurrentUser() user: User,
-    @Args('input')
-    input: ApplicationInstitutionsAdminInput,
-  ) {
-    return this.applicationService.getApplicationInstitutions(user, input)
+  async applicationApplicationsAdminInstitutions(@CurrentUser() user: User) {
+    return this.applicationService.getApplicationInstitutions(user)
   }
 }

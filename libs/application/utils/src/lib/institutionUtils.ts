@@ -6,13 +6,13 @@ export const getTypeIdsForInstitution = (nationalId: string): string[] => {
     institutionMapper,
     (application) => application.nationalId,
   )
-  return institutions[nationalId]
+  return institutions[nationalId] ?? []
 }
 
-export const getInstitutionsWithApplicationTypes = (): Institution[] => {
+export const getInstitutionsWithApplicationTypesIds = (): Institution[] => {
   const result = new Map<string, Institution>()
 
-  for (const [applicationType, institution] of Object.entries(
+  for (const [applicationTypeId, institution] of Object.entries(
     institutionMapper,
   )) {
     const key = institution.slug // group by slug (or nationalId if preferred)
@@ -20,11 +20,11 @@ export const getInstitutionsWithApplicationTypes = (): Institution[] => {
     if (!result.has(key)) {
       result.set(key, {
         ...institution,
-        applicationTypes: [],
+        applicationTypesIds: [],
       })
     }
 
-    result.get(key)?.applicationTypes.push(applicationType)
+    result.get(key)?.applicationTypesIds.push(applicationTypeId)
   }
 
   return Array.from(result.values())

@@ -20,7 +20,6 @@ import {
   ApplicationsAdminStatisticsInput,
   ApplicationsAdminFilters,
   ApplicationTypesInstitutionAdminInput,
-  ApplicationInstitutionsAdminInput,
 } from './application-admin/dto/applications-admin-inputs'
 
 @Injectable()
@@ -157,13 +156,10 @@ export class ApplicationService {
     ).adminControllerGetCountByTypeIdAndStatus(input)
   }
 
-  async getApplicationInstitutions(
-    user: User,
-    input: ApplicationInstitutionsAdminInput,
-  ) {
+  async getApplicationInstitutions(user: User) {
     return this.applicationApiWithAuth(
       user,
-    ).adminControllerGetInstitutionsSuperAdminRaw(input)
+    ).adminControllerGetInstitutionsSuperAdminRaw({})
   }
 
   async update(input: UpdateApplicationInput, auth: Auth, locale: Locale) {
