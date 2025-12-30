@@ -23,6 +23,7 @@ const participantSchema = z.object({
 })
 
 export const dataSchema = z.object({
+  approveExternalData: z.boolean().refine((v) => v),
   userIsPayingAsIndividual: z.nativeEnum(YesOrNoEnum).default(YesOrNoEnum.YES),
   participantList: z.array(participantSchema).min(1),
   courseSelect: z.string().min(1),
