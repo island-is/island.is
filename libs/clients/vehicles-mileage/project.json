@@ -33,6 +33,7 @@
       "options": {
         "command": "yarn openapi-generator -o libs/clients/vehicles-mileage/gen/fetch -i libs/clients/vehicles-mileage/src/clientConfig.json"
       },
+      "cache": false,
       "outputs": ["{projectRoot}/gen/fetch"]
     }
   }
