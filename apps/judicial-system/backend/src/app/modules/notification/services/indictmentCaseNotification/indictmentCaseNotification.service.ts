@@ -443,9 +443,9 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
     }
 
     const subject = `Mál ${splitCourtCaseNumber} klofið`
-    const body = `Aðili hefur verið klofinn frá máli ${splitCourtCaseNumber} hjá ${
-      theCase.court?.name || 'héraðsdómi'
-    }. Nýtt málsnúmer viðkomandi er ${newCourtCaseNumber}.`
+    const body = `Aðili hefur verið klofinn frá máli ${splitCourtCaseNumber} hjá ${applyDativeCaseToCourtName(
+      theCase.court?.name || 'héraðsdómi',
+    )}. Nýtt málsnúmer viðkomandi er ${newCourtCaseNumber}.`
     const promises: Promise<Recipient>[] = []
 
     const defenders = _uniqBy(
