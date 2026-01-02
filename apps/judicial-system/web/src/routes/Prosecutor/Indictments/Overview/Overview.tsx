@@ -259,7 +259,7 @@ const Overview: FC = () => {
               <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
             )} */}
             {hasMergeCases && (
-              <Accordion>
+              <Accordion dividerOnBottom={false} dividerOnTop={false}>
                 {workingCase.mergedCases?.map((mergedCase) => (
                   <Box key={mergedCase.id}>
                     <ConnectedCaseFilesAccordionItem

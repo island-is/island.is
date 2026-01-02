@@ -45,15 +45,7 @@ export const DefendantServiceRequirement = ({
   )
 
   return (
-    <Box
-      component="section"
-      marginBottom={
-        workingCase.defendants &&
-        workingCase.defendants.length - 1 === defendantIndex
-          ? 5
-          : 3
-      }
-    >
+    <Box component="section">
       <BlueBox>
         <SectionHeading
           title={defendant.name || ''}

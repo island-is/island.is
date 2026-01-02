@@ -48,6 +48,7 @@ import {
   useFileList,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import { strings } from './Summary.strings'
 import * as styles from './Summary.css'
@@ -220,76 +221,79 @@ const Summary: FC = () => {
         <PageTitle includeTag={!!workingCase.indictmentRulingDecision}>
           {formatMessage(strings.title)}
         </PageTitle>
-        <Box component="section" marginBottom={1}>
-          <Text variant="h2" as="h2">
-            {formatMessage(core.caseNumber, {
-              caseNumber: workingCase.courtCaseNumber,
-            })}
-          </Text>
-        </Box>
-        <Box component="section" marginBottom={2}>
-          <ProsecutorAndDefendantsEntries workingCase={workingCase} />
-        </Box>
-        <Box component="section" marginBottom={6}>
-          <InfoCardClosedIndictment />
-        </Box>
-        {workingCase.mergedCases && workingCase.mergedCases.length > 0 && (
-          <Accordion>
-            {workingCase.mergedCases.map((mergedCase) => (
-              <Box marginBottom={5} key={mergedCase.id}>
-                <ConnectedCaseFilesAccordionItem
-                  connectedCaseParentId={workingCase.id}
-                  connectedCase={mergedCase}
-                />
-              </Box>
-            ))}
-          </Accordion>
-        )}
-        <SectionHeading title={formatMessage(strings.caseFiles)} />
-        {(rulingFiles.length > 0 ||
-          courtRecordFiles.length > 0 ||
-          workingCase.withCourtSessions) && (
-          <Box marginBottom={5}>
-            <Text variant="h4" as="h4">
-              {formatMessage(strings.caseFilesSubtitleRuling)}
+        <div className={grid({ gap: 5, marginBottom: 10 })}>
+          <Box component="section" className={grid({ gap: 1 })}>
+            <Text variant="h2" as="h2">
+              {formatMessage(core.caseNumber, {
+                caseNumber: workingCase.courtCaseNumber,
+              })}
             </Text>
-            {
-              // We show a court record pdf button if the case should have court sessions
-              // but we disable the button if the court record pdf does not exist (should not happen)
-              workingCase.withCourtSessions && (
-                <PdfButton
-                  caseId={workingCase.id}
-                  title={`Þingbók ${workingCase.courtCaseNumber}.pdf`}
-                  pdfType="courtRecord"
-                  renderAs="row"
-                  elementId="Þingbók"
-                  disabled={!hasGeneratedCourtRecord}
-                />
-              )
-            }
-            {courtRecordFiles.length > 0 && (
-              <RenderFiles caseFiles={courtRecordFiles} onOpenFile={onOpen} />
-            )}
-            {rulingFiles.length > 0 && (
-              <RenderFiles caseFiles={rulingFiles} onOpenFile={onOpen} />
-            )}
+            <ProsecutorAndDefendantsEntries workingCase={workingCase} />
           </Box>
-        )}
-        <Box marginBottom={8} component="section">
-          <SectionHeading
-            title={formatMessage(strings.courtEndTimeTitle)}
-            description={formatMessage(strings.courtEndTimeDescription)}
-          />
-          <DateTime
-            name="courtEndDate"
-            selectedDate={workingCase.courtEndTime}
-            onChange={handleCourtEndTimeChange}
-            blueBox={true}
-            datepickerLabel="Dagsetning lykta"
-            dateOnly
-            required
-          />
-        </Box>
+          <Box component="section">
+            <InfoCardClosedIndictment />
+          </Box>
+          {workingCase.mergedCases && workingCase.mergedCases.length > 0 && (
+            <Accordion dividerOnBottom={false} dividerOnTop={false}>
+              {workingCase.mergedCases.map((mergedCase) => (
+                <Box key={mergedCase.id}>
+                  <ConnectedCaseFilesAccordionItem
+                    connectedCaseParentId={workingCase.id}
+                    connectedCase={mergedCase}
+                  />
+                </Box>
+              ))}
+            </Accordion>
+          )}
+          {(rulingFiles.length > 0 ||
+            courtRecordFiles.length > 0 ||
+            workingCase.withCourtSessions) && (
+            <div>
+              <SectionHeading
+                title={formatMessage(strings.caseFiles)}
+                marginBottom={5}
+              />
+              <Text variant="h4" as="h4">
+                {formatMessage(strings.caseFilesSubtitleRuling)}
+              </Text>
+              {
+                // We show a court record pdf button if the case should have court sessions
+                // but we disable the button if the court record pdf does not exist (should not happen)
+                workingCase.withCourtSessions && (
+                  <PdfButton
+                    caseId={workingCase.id}
+                    title={`Þingbók ${workingCase.courtCaseNumber}.pdf`}
+                    pdfType="courtRecord"
+                    renderAs="row"
+                    elementId="Þingbók"
+                    disabled={!hasGeneratedCourtRecord}
+                  />
+                )
+              }
+              {courtRecordFiles.length > 0 && (
+                <RenderFiles caseFiles={courtRecordFiles} onOpenFile={onOpen} />
+              )}
+              {rulingFiles.length > 0 && (
+                <RenderFiles caseFiles={rulingFiles} onOpenFile={onOpen} />
+              )}
+            </div>
+          )}
+          <Box component="section">
+            <SectionHeading
+              title={formatMessage(strings.courtEndTimeTitle)}
+              description={formatMessage(strings.courtEndTimeDescription)}
+            />
+            <DateTime
+              name="courtEndDate"
+              selectedDate={workingCase.courtEndTime}
+              onChange={handleCourtEndTimeChange}
+              blueBox={true}
+              datepickerLabel="Dagsetning lykta"
+              dateOnly
+              required
+            />
+          </Box>
+        </div>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
