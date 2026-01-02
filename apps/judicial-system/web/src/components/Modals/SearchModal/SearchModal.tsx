@@ -9,6 +9,7 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCaseList } from '@island.is/judicial-system-web/src/utils/hooks'
+import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import { ModalContainer } from '../Modal/Modal'
 import { useSearchCasesLazyQuery } from './searchCases.generated'
@@ -51,7 +52,7 @@ const SearchResultButton: FC<ResultsProps> = ({
       >
         <Box display="flex" alignItems="flexStart" flexDirection={'column'}>
           <Text variant="eyebrow">{capitalize(formatCaseType(caseType))}</Text>
-          <Text variant="h3" as="p" fontWeight="light">
+          <Text variant="h3" as="p" fontWeight="light" textAlign="left">
             {descriptor}
           </Text>
         </Box>
@@ -214,11 +215,11 @@ const SearchModal: FC<Props> = ({ onClose }) => {
                 maxHeight: { duration: 0.5, ease: 'easeOut' },
               }}
             >
-              <div className={styles.searchResults}>
+              <div className={grid({ gap: 2 })}>
                 <Text variant="eyebrow" color="dark300">
                   {`Leitarniðurstöður (${searchResults[1]})`}
                 </Text>
-                <ul className={styles.searchResults}>
+                <ul className={grid({ gap: 2 })}>
                   {searchResults[0].map((searchResult, index) => (
                     <li
                       key={searchResult.props.caseId ?? index}
