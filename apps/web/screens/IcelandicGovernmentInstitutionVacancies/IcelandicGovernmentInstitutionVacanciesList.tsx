@@ -289,12 +289,6 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
       const displayLogoUrl =
         !vacancy.institutionName && vacancyComesFromCms ? '' : logoUrl
 
-      if (vacancy.address) {
-        // Handle address and postal code display
-        console.log('Address:', vacancy.address)
-        console.log('Locations:', vacancy.locations)
-      }
-
       const detailLines = [
         vacancy.locations && vacancy.locations.length > 0
           ? {
@@ -308,11 +302,7 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
         vacancy.address
           ? {
               icon: 'home' as const,
-              text: (() => {
-                const addressParts = []
-                if (vacancy.address) addressParts.push(vacancy.address)
-                return addressParts.join(' ')
-              })(),
+              text: vacancy.address,
             }
           : undefined,
       ].filter(isDefined)
