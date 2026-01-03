@@ -198,7 +198,7 @@
     "firebase-admin": "11.5.0",
     "folder-hash": "4.0.0",
     "font-awesome": "4.7.0",
-    "form-data": "3.0.0",
+    "form-data": "3.0.4",
     "formik": "2.2.9",
     "fridagar": "^3.2.0",
     "fuse.js": "7.0.0",
