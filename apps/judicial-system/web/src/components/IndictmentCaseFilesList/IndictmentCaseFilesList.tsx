@@ -67,11 +67,12 @@ export const RenderFiles: FC<RenderFilesProps> = ({
     useFiledCourtDocuments()
 
   const getFileName = (file: CaseFile) => {
+    const fileName = file.userGeneratedFilename ?? file.name
     if (!showFiledDocumentNumber) {
-      return file.name
+      return fileName
     }
 
-    return prefixUploadedDocumentNameWithDocumentOrder(file.id, file.name ?? '')
+    return prefixUploadedDocumentNameWithDocumentOrder(file.id, fileName ?? '')
   }
 
   return (
@@ -136,6 +137,9 @@ const useFilteredCaseFiles = (caseFiles?: CaseFile[] | null) => {
       costBreakdowns: filterByCategories(CaseFileCategory.COST_BREAKDOWN),
       others: filterByCategories(CaseFileCategory.CASE_FILE),
       rulings: filterByCategories(CaseFileCategory.RULING),
+      rulingOrders: filterByCategories(
+        CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
+      ),
       courtRecords: filterByCategories(CaseFileCategory.COURT_RECORD),
       criminalRecordUpdate: filterByCategories(
         CaseFileCategory.CRIMINAL_RECORD_UPDATE,
@@ -417,8 +421,9 @@ const IndictmentCaseFilesList: FC<Props> = ({
               hasGeneratedCourtRecord ||
               (permissions.canViewRulings &&
                 filteredFiles.rulings.length > 0) ||
-              permissions.canViewVerdictServiceCertificate) && (
-              <Box>
+              permissions.canViewVerdictServiceCertificate ||
+              filteredFiles.rulingOrders.length > 0) && (
+              <Box marginBottom={5}>
                 <SectionHeading
                   title={formatMessage(strings.rulingAndCourtRecordsTitle)}
                   marginBottom={1}
@@ -445,6 +450,10 @@ const IndictmentCaseFilesList: FC<Props> = ({
                     onOpenFile={onOpen}
                   />
                 )}
+                <RenderFiles
+                  caseFiles={filteredFiles.rulingOrders}
+                  onOpenFile={onOpen}
+                />
                 {permissions.canViewVerdictServiceCertificate &&
                   workingCase.defendants?.map((defendant) => {
                     if (
