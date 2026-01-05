@@ -436,6 +436,10 @@ export const include: Includeable[] = [
     order: [['created', 'ASC']],
     separate: true,
   },
+  {
+    model: Case,
+    as: 'splitCase',
+  },
 ]
 
 @Injectable()
