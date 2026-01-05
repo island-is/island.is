@@ -231,9 +231,7 @@ const projectPurchaseSchema = z
     (data) => {
       return (
         data.radio !== YES ||
-        (data.contractor?.nationalId &&
-          data.contractor.name &&
-          kennitala.isCompany(data.contractor.nationalId))
+        (data.contractor?.nationalId && data.contractor.name)
       )
     },
     {

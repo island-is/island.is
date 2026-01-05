@@ -19,6 +19,7 @@ import {
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
 import { useI18n } from '@island.is/web/i18n'
+import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { webRichText } from '@island.is/web/utils/richText'
@@ -42,6 +43,7 @@ const BloodDonationRestrictionDetails: CustomScreen<
   BloodDonationRestrictionDetailsProps
 > = ({ item, organizationPage, namespace }) => {
   const { formatMessage } = useIntl()
+  const { format } = useDateUtils()
   const router = useRouter()
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
@@ -117,6 +119,12 @@ const BloodDonationRestrictionDetails: CustomScreen<
             <Text variant="small">
               {formatMessage(m.listPage.keywordsTextPrefix)}
               {item.keywordsText}
+            </Text>
+          )}
+          {item.effectiveDate && (
+            <Text variant="small">
+              {formatMessage(m.listPage.effectiveDatePrefix)}
+              {format(new Date(item.effectiveDate), 'd. MMMM yyyy')}
             </Text>
           )}
         </Stack>

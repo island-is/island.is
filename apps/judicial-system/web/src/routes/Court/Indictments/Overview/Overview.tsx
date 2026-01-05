@@ -23,7 +23,10 @@ import {
   UserContext,
   // useIndictmentsLawsBroken, NOTE: Temporarily hidden while list of laws broken is not complete
 } from '@island.is/judicial-system-web/src/components'
-import { IndictmentDecision } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseState,
+  IndictmentDecision,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import ReturnIndictmentModal from '../ReturnIndictmentCaseModal/ReturnIndictmentCaseModal'
@@ -74,7 +77,7 @@ const OverviewBody = ({
             </Box>
           )}
         <Box component="section" marginBottom={5}>
-          <InfoCardActiveIndictment />
+          <InfoCardActiveIndictment displayOpenCaseReference={true} />
         </Box>
         {/* 
     NOTE: Temporarily hidden while list of laws broken is not complete in
@@ -112,7 +115,7 @@ const OverviewBody = ({
                   `${constants.INDICTMENTS_ADD_FILES_IN_COURT_ROUTE}/${workingCase.id}`,
                 )
               }}
-              disabled={false}
+              disabled={workingCase.state === CaseState.CORRECTING}
             >
               {formatMessage(strings.addFilesButtonText)}
             </Button>

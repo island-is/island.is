@@ -4,14 +4,12 @@ import {
   CreatedAt,
   DataType,
   ForeignKey,
-  HasMany,
   Model,
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
 import { Field } from '../../fields/models/field.model'
 import { ValueType } from '../../../dataTypes/valueTypes/valueType.model'
-import { ApplicationEvent } from './applicationEvent.model'
 import { Application } from './application.model'
 import { FieldTypesEnum } from '@island.is/form-system/shared'
 
@@ -50,9 +48,6 @@ export class Value extends Model<Value> {
     values: Object.values(FieldTypesEnum),
   })
   fieldType!: string
-
-  @HasMany(() => ApplicationEvent)
-  events?: ApplicationEvent[]
 
   @ForeignKey(() => Field)
   @Column({

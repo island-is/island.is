@@ -33,6 +33,7 @@ export const root = style({
 export const hidden = style({
   opacity: 0,
   zIndex: 0,
+  pointerEvents: 'none',
 })
 
 export const message = style({
@@ -128,6 +129,7 @@ export const circleRoot = style({
       outline: `2px solid ${theme.color.mint400}`,
     },
   },
+  transition: 'opacity 1s ease',
 })
 
 export const circleRootPushUp = style({

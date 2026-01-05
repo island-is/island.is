@@ -202,6 +202,7 @@ export enum CaseState {
   REJECTED = 'REJECTED',
   DISMISSED = 'DISMISSED',
   DELETED = 'DELETED',
+  CORRECTING = 'CORRECTING',
 }
 
 export enum IndictmentCaseState {
@@ -212,6 +213,7 @@ export enum IndictmentCaseState {
   WAITING_FOR_CANCELLATION = CaseState.WAITING_FOR_CANCELLATION,
   COMPLETED = CaseState.COMPLETED,
   DELETED = CaseState.DELETED,
+  CORRECTING = CaseState.CORRECTING,
 }
 
 export enum RequestCaseState {
@@ -242,6 +244,7 @@ export enum CaseTransition {
   DELETE = 'DELETE',
   DENY_INDICTMENT = 'DENY_INDICTMENT',
   DISMISS = 'DISMISS',
+  MOVE = 'MOVE',
   OPEN = 'OPEN',
   RECEIVE = 'RECEIVE',
   RECEIVE_APPEAL = 'RECEIVE_APPEAL',
@@ -251,7 +254,6 @@ export enum CaseTransition {
   RETURN_INDICTMENT = 'RETURN_INDICTMENT',
   SUBMIT = 'SUBMIT',
   WITHDRAW_APPEAL = 'WITHDRAW_APPEAL',
-  MOVE = 'MOVE',
 }
 
 export enum IndictmentCaseTransition {
@@ -260,11 +262,11 @@ export enum IndictmentCaseTransition {
   COMPLETE = CaseTransition.COMPLETE,
   DELETE = CaseTransition.DELETE,
   DENY_INDICTMENT = CaseTransition.DENY_INDICTMENT,
+  MOVE = CaseTransition.MOVE,
   RECEIVE = CaseTransition.RECEIVE,
   REOPEN = CaseTransition.REOPEN,
   RETURN_INDICTMENT = CaseTransition.RETURN_INDICTMENT,
   SUBMIT = CaseTransition.SUBMIT,
-  MOVE = CaseTransition.MOVE,
 }
 
 export enum RequestCaseTransition {
@@ -273,6 +275,7 @@ export enum RequestCaseTransition {
   COMPLETE_APPEAL = CaseTransition.COMPLETE_APPEAL,
   DELETE = CaseTransition.DELETE,
   DISMISS = CaseTransition.DISMISS,
+  MOVE = CaseTransition.MOVE,
   OPEN = CaseTransition.OPEN,
   RECEIVE = CaseTransition.RECEIVE,
   RECEIVE_APPEAL = CaseTransition.RECEIVE_APPEAL,
@@ -281,7 +284,6 @@ export enum RequestCaseTransition {
   REOPEN_APPEAL = CaseTransition.REOPEN_APPEAL,
   SUBMIT = CaseTransition.SUBMIT,
   WITHDRAW_APPEAL = CaseTransition.WITHDRAW_APPEAL,
-  MOVE = CaseTransition.MOVE,
 }
 
 /* eslint-disable @typescript-eslint/naming-convention */
@@ -323,11 +325,12 @@ export enum CaseDecision {
 }
 
 export enum IndictmentDecision {
-  POSTPONING = 'POSTPONING',
-  SCHEDULING = 'SCHEDULING',
-  POSTPONING_UNTIL_VERDICT = 'POSTPONING_UNTIL_VERDICT',
   COMPLETING = 'COMPLETING',
+  POSTPONING = 'POSTPONING',
+  POSTPONING_UNTIL_VERDICT = 'POSTPONING_UNTIL_VERDICT',
   REDISTRIBUTING = 'REDISTRIBUTING',
+  SCHEDULING = 'SCHEDULING',
+  SPLITTING = 'SPLITTING',
 }
 
 export enum CaseAppealRulingDecision {
@@ -461,7 +464,10 @@ export const completedRequestCaseStates = [
   CaseState.DISMISSED,
 ]
 
-export const completedIndictmentCaseStates = [CaseState.COMPLETED]
+export const completedIndictmentCaseStates = [
+  CaseState.COMPLETED,
+  CaseState.CORRECTING,
+]
 
 export const completedCaseStates = completedRequestCaseStates.concat(
   completedIndictmentCaseStates,
@@ -482,6 +488,7 @@ export const isRulingOrDismissalCase = (
       ].includes(rulingDecision),
   )
 }
+
 export const hasIndictmentCaseBeenSubmittedToCourt = (
   state?: CaseState | null,
 ): boolean => {

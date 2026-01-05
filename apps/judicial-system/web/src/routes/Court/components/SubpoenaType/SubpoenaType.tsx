@@ -14,6 +14,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import {
   Case,
+  CaseState,
   Defendant,
   SubpoenaType as SubpoenaTypeEnum,
   UpdateDefendantInput,
@@ -77,6 +78,7 @@ const SubpoenaType: FC<SubpoenaTypeProps> = ({
                     item.onUpdate({ caseId, defendantId, isAlternativeService })
                   }}
                   tooltip={strings.alternativeServiceTooltip}
+                  disabled={workingCase.state === CaseState.CORRECTING}
                   backgroundColor="white"
                   large
                   filled
@@ -103,7 +105,10 @@ const SubpoenaType: FC<SubpoenaTypeProps> = ({
                         alternativeServiceDescription,
                       })
                     }}
-                    disabled={item.alternativeServiceDescriptionDisabled}
+                    disabled={
+                      item.alternativeServiceDescriptionDisabled ||
+                      workingCase.state === CaseState.CORRECTING
+                    }
                     required
                   />
                 </Box>
@@ -125,7 +130,10 @@ const SubpoenaType: FC<SubpoenaTypeProps> = ({
 
                     item.onUpdate({ caseId, defendantId, subpoenaType })
                   }}
-                  disabled={item.subpoenaDisabled}
+                  disabled={
+                    item.subpoenaDisabled ||
+                    workingCase.state === CaseState.CORRECTING
+                  }
                 />
                 <RadioButton
                   large
@@ -143,7 +151,10 @@ const SubpoenaType: FC<SubpoenaTypeProps> = ({
 
                     item.onUpdate({ caseId, defendantId, subpoenaType })
                   }}
-                  disabled={item.subpoenaDisabled}
+                  disabled={
+                    item.subpoenaDisabled ||
+                    workingCase.state === CaseState.CORRECTING
+                  }
                 />
               </Box>
             </BlueBox>

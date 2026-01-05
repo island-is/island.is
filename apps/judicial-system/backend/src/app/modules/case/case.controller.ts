@@ -905,7 +905,11 @@ export class CaseController {
     CaseWriteGuard,
     DefendantExistsGuard,
   )
-  @RolesRules(districtCourtJudgeRule)
+  @RolesRules(
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+  )
   @UseInterceptors(CaseInterceptor)
   @Post('case/:caseId/defendant/:defendantId/split')
   @ApiCreatedResponse({
@@ -921,12 +925,16 @@ export class CaseController {
   ): Promise<Case> {
     this.logger.debug(`Splitting defendant ${defendantId} from case ${caseId}`)
 
+    if (!theCase.defendants || theCase.defendants.length < 2) {
+      throw new BadRequestException(
+        'Cannot split defendant from case with less than two defendants',
+      )
+    }
+
     const newCase = await this.caseService.splitDefendantFromCase(
       theCase,
       theDefendant,
     )
-
-    this.eventService.postEvent('SPLIT', newCase)
 
     return newCase
   }

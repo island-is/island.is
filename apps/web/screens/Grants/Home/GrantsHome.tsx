@@ -46,8 +46,9 @@ const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
   locale,
   customPageData,
 }) => {
-  useLocalLinkTypeResolver()
   useContentfulId(customPageData?.id)
+  useLocalLinkTypeResolver('grantsplaza')
+
   const intl = useIntl()
   const { linkResolver } = useLinkResolver()
 
@@ -127,6 +128,32 @@ const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
           alt: formatMessage(m.home.featuredImageAlt),
         }}
         offset
+        quickLinks={[
+          {
+            title: formatMessage(m.bullets.open),
+            href: searchUrl + '?status=open',
+          },
+          {
+            title: formatMessage(m.bullets.nativeFunds),
+            href: searchUrl + '?category=grant-category-native',
+          },
+          {
+            title: formatMessage(m.bullets.technologyDevelopmentFund),
+            href: `${searchUrl}?query=${formatMessage(
+              m.bullets.technologyDevelopment,
+            ).toLowerCase()}`,
+          },
+          {
+            title: formatMessage(m.bullets.financing),
+            href: searchUrl + '?type=grant-type-financing',
+          },
+          {
+            title: formatMessage(m.bullets.companies),
+            href: `${searchUrl}?query=${formatMessage(
+              m.bullets.companies,
+            ).toLowerCase()}`,
+          },
+        ]}
         breadcrumbs={
           breadcrumbItems && (
             <Breadcrumbs

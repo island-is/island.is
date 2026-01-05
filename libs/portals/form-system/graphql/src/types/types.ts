@@ -4,7 +4,6 @@ import {
   FormSystemFormApplicant,
   FormSystemFormCertificationType,
   FormSystemListType,
-  FormSystemOrganizationUrl,
   FormSystemPermissionType,
   FormSystemApplication,
   FormSystemOption,
@@ -24,8 +23,7 @@ export interface FormsLoaderResponse {
   certificationTypes: FormSystemPermissionType[]
   listTypes: FormSystemPermissionType[]
   fieldTypes: FormSystemPermissionType[]
-  submitUrls: FormSystemOrganizationUrl[]
-  validationUrls: FormSystemOrganizationUrl[]
+  submissionUrls: string[]
 }
 
 export interface FormLoaderResponse {
@@ -34,6 +32,7 @@ export interface FormLoaderResponse {
   certificationTypes: FormSystemFormCertificationType[]
   applicantTypes: FormSystemFormApplicant[]
   listTypes: FormSystemListType[]
+  submissionUrls: string[]
 }
 
 export interface ApplicationsLoaderResponse {
@@ -51,8 +50,6 @@ export interface AdminLoaderResponse {
   certficationTypes: FormSystemPermissionType[]
   listTypes: FormSystemPermissionType[]
   fieldTypes: FormSystemPermissionType[]
-  submitUrls: FormSystemOrganizationUrl[]
-  validationUrls: FormSystemOrganizationUrl[]
   organizations: Option<string>[]
 }
 

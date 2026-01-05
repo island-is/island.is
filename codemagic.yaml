@@ -18,7 +18,7 @@ definitions:
     node: 20.19.5
     # TODO: Remove/upgrade after upgrading to react-native 0.76.9 or higher, fixing 16.3 build issues:
     # https://github.com/facebook/react-native/issues/50411#issuecomment-2776681575
-    xcode: 16.2
+  xcode: '26.0.1'
   shared_envs: &shared_envs
     XCODE_WORKSPACE: 'IslandApp.xcworkspace'
     CM_CLONE_DEPTH: 200
