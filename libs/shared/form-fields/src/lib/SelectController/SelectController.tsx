@@ -35,6 +35,14 @@ interface SelectControllerProps<Value, IsMulti extends boolean = false> {
   internalKey?: string
   filterConfig?: SelectProps<Value, IsMulti>['filterConfig']
   clearOnChange?: string[]
+  clearOnChangeDefaultValue?:
+    | string
+    | string[]
+    | boolean
+    | boolean[]
+    | number
+    | number[]
+    | undefined
   readOnly?: boolean
   setOnChange?:
     | { key: string; value: any }[]
@@ -65,6 +73,7 @@ export const SelectController = <Value, IsMulti extends boolean = false>({
   internalKey,
   filterConfig,
   clearOnChange,
+  clearOnChangeDefaultValue,
   setOnChange,
   readOnly,
 }: SelectControllerProps<Value, IsMulti> & TestSupport) => {
@@ -195,7 +204,11 @@ export const SelectController = <Value, IsMulti extends boolean = false>({
               }
 
               if (clearOnChange) {
-                clearInputsOnChange(clearOnChange, setValue)
+                clearInputsOnChange(
+                  clearOnChange,
+                  setValue,
+                  clearOnChangeDefaultValue,
+                )
               }
 
               if (isClearable && newVal === null) {
