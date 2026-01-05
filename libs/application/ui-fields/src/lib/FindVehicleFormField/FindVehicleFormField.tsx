@@ -383,52 +383,52 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
                   }
                   message={
                     <Box>
-                      {!vehicleDetails.isDebtLess ||
-                        (!!vehicleDetails.validationErrorMessages?.length && (
-                          <BulletList>
-                            {!vehicleDetails.isDebtLess && (
-                              <Bullet>
-                                {isNotDebtLessTag &&
+                      {(!vehicleDetails.isDebtLess ||
+                        !!vehicleDetails.validationErrorMessages?.length) && (
+                        <BulletList>
+                          {!vehicleDetails.isDebtLess && (
+                            <Bullet>
+                              {isNotDebtLessTag &&
+                                formatText(
+                                  isNotDebtLessTag,
+                                  application,
+                                  formatMessage,
+                                )}
+                            </Bullet>
+                          )}
+                          {!!vehicleDetails.validationErrorMessages?.length &&
+                            vehicleDetails.validationErrorMessages?.map(
+                              (error) => {
+                                const message = formatMessage(
+                                  (validationErrors &&
+                                    getValueViaPath(
+                                      validationErrors,
+                                      error.errorNo || '',
+                                    )) ||
+                                    '',
+                                )
+                                const defaultMessage = error.defaultMessage
+                                const fallbackMessage =
+                                  fallbackErrorMessage &&
                                   formatText(
-                                    isNotDebtLessTag,
+                                    fallbackErrorMessage,
                                     application,
                                     formatMessage,
-                                  )}
-                              </Bullet>
-                            )}
-                            {!!vehicleDetails.validationErrorMessages?.length &&
-                              vehicleDetails.validationErrorMessages?.map(
-                                (error) => {
-                                  const message = formatMessage(
-                                    (validationErrors &&
-                                      getValueViaPath(
-                                        validationErrors,
-                                        error.errorNo || '',
-                                      )) ||
-                                      '',
-                                  )
-                                  const defaultMessage = error.defaultMessage
-                                  const fallbackMessage =
-                                    fallbackErrorMessage &&
-                                    formatText(
-                                      fallbackErrorMessage,
-                                      application,
-                                      formatMessage,
-                                    ) +
-                                      ' - ' +
-                                      error.errorNo
+                                  ) +
+                                    ' - ' +
+                                    error.errorNo
 
-                                  return (
-                                    <Bullet>
-                                      {message ||
-                                        defaultMessage ||
-                                        fallbackMessage}
-                                    </Bullet>
-                                  )
-                                },
-                              )}
-                          </BulletList>
-                        ))}
+                                return (
+                                  <Bullet>
+                                    {message ||
+                                      defaultMessage ||
+                                      fallbackMessage}
+                                  </Bullet>
+                                )
+                              },
+                            )}
+                        </BulletList>
+                      )}
                     </Box>
                   }
                 />
