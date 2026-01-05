@@ -119,6 +119,7 @@ export const attributes: (keyof Case)[] = [
   'hasCivilClaims',
   'isCompletedWithoutRuling',
   'isRegisteredInPrisonSystem',
+  'rulingModifiedHistory',
 ]
 
 export interface LimitedAccessUpdateCase
@@ -434,6 +435,10 @@ export const include: Includeable[] = [
     required: false,
     order: [['created', 'ASC']],
     separate: true,
+  },
+  {
+    model: Case,
+    as: 'splitCase',
   },
 ]
 

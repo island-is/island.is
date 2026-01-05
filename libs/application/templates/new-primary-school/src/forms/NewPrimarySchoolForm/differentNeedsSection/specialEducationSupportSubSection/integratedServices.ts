@@ -1,6 +1,9 @@
 import { buildRadioField, NO, YES } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import { newPrimarySchoolMessages } from '../../../../lib/messages'
+import {
+  differentNeedsMessages,
+  sharedMessages,
+} from '../../../../lib/messages'
 import {
   getApplicationExternalData,
   getDefaultYESNOValue,
@@ -9,22 +12,20 @@ import {
 export const integratedServices = [
   buildRadioField({
     id: 'specialEducationSupport.hasIntegratedServices',
-    title:
-      newPrimarySchoolMessages.differentNeeds
-        .specialEducationHasIntegratedServices,
+    title: differentNeedsMessages.specialEducationSupport.hasIntegratedServices,
     description:
-      newPrimarySchoolMessages.differentNeeds.hasIntegratedServicesDescription,
+      differentNeedsMessages.support.hasIntegratedServicesDescription,
     width: 'half',
     required: true,
     space: 4,
     options: [
       {
-        label: newPrimarySchoolMessages.shared.yes,
+        label: sharedMessages.yes,
         dataTestId: 'has-integrated-services',
         value: YES,
       },
       {
-        label: newPrimarySchoolMessages.shared.no,
+        label: sharedMessages.no,
         dataTestId: 'no-has-integrated-services',
         value: NO,
       },

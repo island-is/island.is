@@ -87,6 +87,13 @@ export const locationSection = buildSection({
         }),
 
         // Directions
+        buildDescriptionField({
+          id: 'location.shortTerm.directionsSubtitle',
+          title: location.shortTerm.directionsSubtitle,
+          titleVariant: 'h5',
+          description: location.shortTerm.directionsDescription,
+          condition: checkIfExemptionTypeShortTerm,
+        }),
         buildTextField({
           id: 'location.shortTerm.directions',
           variant: 'textarea',

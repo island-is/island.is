@@ -71,9 +71,6 @@ export class FormDto {
   @ApiProperty()
   hasSummaryScreen!: boolean
 
-  @ApiPropertyOptional()
-  isZendeskEnabled?: boolean
-
   @ApiProperty({ type: CompletedSectionInfo })
   completedSectionInfo!: CompletedSectionInfo
 
@@ -82,9 +79,6 @@ export class FormDto {
 
   @ApiPropertyOptional({ type: [FormCertificationTypeDto] })
   certificationTypes?: FormCertificationTypeDto[]
-
-  @ApiPropertyOptional({ type: [String] })
-  urls?: string[]
 
   @ApiPropertyOptional({ type: [SectionDto] })
   sections?: SectionDto[]

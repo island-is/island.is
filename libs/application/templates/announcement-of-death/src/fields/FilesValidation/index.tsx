@@ -18,19 +18,15 @@ export const FilesValidation: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const authorizationForFuneralExpenses = watch(
     'authorizationForFuneralExpenses',
   )
-  const financesDataCollectionPermission = watch(
-    'financesDataCollectionPermission',
-  )
-
-  // Check if all three fields have been filled with a valid recipient (not empty string)
+  // Check if required fields have been filled with a valid recipient (not empty string)
   const isValidValue = (val: string | undefined) => {
     return val !== undefined && val !== null && val !== '' && val.length > 0
   }
 
+  // financesDataCollectionPermission is optional, so only check the first two fields
   const allFieldsFilled =
     isValidValue(certificateOfDeathAnnouncement) &&
-    isValidValue(authorizationForFuneralExpenses) &&
-    isValidValue(financesDataCollectionPermission)
+    isValidValue(authorizationForFuneralExpenses)
 
   // Set validation callback
   useEffect(() => {
@@ -60,8 +56,7 @@ export const FilesValidation: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const hasErrors =
     !!errors?.[filesValidation] ||
     !!errors?.certificateOfDeathAnnouncement ||
-    !!errors?.authorizationForFuneralExpenses ||
-    !!errors?.financesDataCollectionPermission
+    !!errors?.authorizationForFuneralExpenses
 
   return (
     <Box>

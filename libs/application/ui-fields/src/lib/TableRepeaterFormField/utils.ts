@@ -42,10 +42,18 @@ const handleNationalIdWithNameItem = <T>(
       const formattedNationalId = kennitala.format(
         (nestedObject as { nationalId: string })?.nationalId,
       )
+
+      // create flat map from nestedObject
+      const flat: Record<string, T> = {}
+      Object.keys(nestedObject as Record<string, unknown>).forEach((key) => {
+        flat[`${item.id}.${key}`] = (nestedObject as Record<string, T>)[key]
+      })
+
       return {
         ...nestedObject,
         nationalId: formattedNationalId as T,
         ...rest,
+        ...flat,
       }
     }
     return value

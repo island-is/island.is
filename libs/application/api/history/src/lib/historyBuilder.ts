@@ -26,6 +26,9 @@ export class HistoryBuilder {
     formatMessage: FormatMessage,
     templateHelper: ApplicationTemplateHelper<TContext, TStateSchema, TEvents>,
     application: Application,
+    currentUserRole: string,
+    currentUserNationalId: string,
+    isAdmin: boolean,
   ): Promise<HistoryResponseDto[] | []> {
     const result = []
 
@@ -46,10 +49,15 @@ export class HistoryBuilder {
         // Only fetch subject/actor name by nationalId if necessary
         let subjectName: string | undefined
         let actorName: string | undefined
-        if (
-          historyLog.includeSubjectAndActor &&
-          (subjectNationalId || actorNationalId)
-        ) {
+        const includeSubjectAndActor: boolean | undefined =
+          typeof historyLog.includeSubjectAndActor === 'function'
+            ? historyLog.includeSubjectAndActor(
+                currentUserRole,
+                currentUserNationalId,
+                isAdmin,
+              )
+            : historyLog.includeSubjectAndActor
+        if (includeSubjectAndActor && (subjectNationalId || actorNationalId)) {
           ;[subjectName, actorName] = await Promise.all([
             subjectNationalId
               ? this.identityService
