@@ -6,9 +6,9 @@ import { Box, Table as T, Text } from '@island.is/island-ui/core'
 import { formatCurrency } from '@island.is/shared/utils'
 
 import { EmptyTable } from '../components/EmptyTable/EmptyTable'
+import { m } from '../messages'
 import { GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_GROUP } from './Overview.graphql'
 import * as styles from './Overview.css'
-import { m } from '../messages'
 
 interface Props {
   supplierId: string

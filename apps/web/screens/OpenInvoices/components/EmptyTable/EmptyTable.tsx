@@ -1,6 +1,8 @@
+import { MessageDescriptor } from 'react-intl'
+
 import { Box, BoxProps, LoadingDots, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { MessageDescriptor } from 'react-intl'
+
 import * as styles from './EmptyTable.css'
 
 type Props = {
