@@ -10,11 +10,9 @@ import { FileModule } from './modules/file/file.module'
 import { FormApplicantTypesModule } from './modules/formApplicantTypes/formApplicantTypes.module'
 import { FormCertificationTypesModule } from './modules/formCertificationTypes/formCertificationTypes.module'
 import { FormsModule } from './modules/forms/forms.module'
-import { FormUrlsModule } from './modules/formUrls/formUrls.module'
 import { ListItemsModule } from './modules/listItems/listItems.module'
 import { OrganizationPermissionsModule } from './modules/organizationPermissions/organizationPermissions.module'
 import { OrganizationsModule } from './modules/organizations/organizations.module'
-import { OrganizationUrlsModule } from './modules/organizationUrls/organizationUrls.module'
 import { ScreensModule } from './modules/screens/screens.module'
 import { SectionsModule } from './modules/sections/sections.module'
 import { ServicesModule } from './modules/services/services.module'
@@ -38,9 +36,7 @@ import { PruneModule } from './modules/services/prune/prune.module'
     ApplicationsModule,
     FormApplicantTypesModule,
     FormCertificationTypesModule,
-    FormUrlsModule,
     OrganizationPermissionsModule,
-    OrganizationUrlsModule,
     ServicesModule,
     FileModule,
     PruneModule,

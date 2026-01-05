@@ -6,11 +6,9 @@ import {
   FormApplicantTypesApi,
   FormCertificationTypesApi,
   FormsApi,
-  FormUrlsApi,
   ListItemsApi,
   OrganizationPermissionsApi,
   OrganizationsApi,
-  OrganizationUrlsApi,
   ScreensApi,
   SectionsApi,
 } from '../../gen/fetch'
@@ -27,8 +25,6 @@ const apis = [
   FormApplicantTypesApi,
   FormCertificationTypesApi,
   OrganizationPermissionsApi,
-  OrganizationUrlsApi,
-  FormUrlsApi,
   FilesApi,
 ]
 
