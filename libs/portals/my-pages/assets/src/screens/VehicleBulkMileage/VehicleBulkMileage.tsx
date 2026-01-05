@@ -80,7 +80,7 @@ const VehicleBulkMileage = () => {
     setTotalPages(data?.vehiclesListV3?.totalPages || 1)
   }, [data])
 
-  const onMileageUpdate = () => {
+  const onMileageUpdate = useCallback(() => {
     refetch({
       input: {
         page,
@@ -90,7 +90,7 @@ const VehicleBulkMileage = () => {
         includeNextMainInspectionDate: false,
       },
     })
-  }
+  }, [refetch, page, search])
 
   const debouncedQuery = useMemo(() => {
     return debounce(() => {
