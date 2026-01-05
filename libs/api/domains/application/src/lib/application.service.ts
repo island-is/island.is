@@ -156,6 +156,12 @@ export class ApplicationService {
     ).adminControllerGetCountByTypeIdAndStatus(input)
   }
 
+  async getApplicationInstitutions(user: User) {
+    return this.applicationApiWithAuth(
+      user,
+    ).adminControllerGetInstitutionsSuperAdminRaw({})
+  }
+
   async update(input: UpdateApplicationInput, auth: Auth, locale: Locale) {
     const { id, ...updateApplicationDto } = input
 
