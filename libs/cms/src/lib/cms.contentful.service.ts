@@ -52,7 +52,7 @@ import {
 } from './models/openDataSubpage.model'
 import { GetOpenDataSubpageInput } from './dto/getOpenDataSubpage.input'
 import { mapProjectPage, ProjectPage } from './models/projectPage.model'
-import { IProjectPage } from './generated/contentfulTypes'
+import { ICourseListPage, IProjectPage } from './generated/contentfulTypes'
 import { GetSupportQNAsInput } from './dto/getSupportQNAs.input'
 import { mapSupportQNA, SupportQNA } from './models/supportQNA.model'
 import { GetSupportCategoryInput } from './dto/getSupportCategory.input'
@@ -104,6 +104,8 @@ import {
 } from './models/bloodDonationRestriction.model'
 import { GetCourseByIdInput } from './dto/getCourseById.input'
 import { mapCourse } from './models/course.model'
+import { GetCourseListPageByIdInput } from './dto/getCourseListPageById.input'
+import { mapCourseListPage } from './models/courseListPage.model'
 
 const errorHandler = (name: string) => {
   return (error: Error) => {
@@ -1596,5 +1598,26 @@ export class CmsContentfulService {
     )
 
     return mappedCourse
+  }
+
+  async getCourseListPageById(input: GetCourseListPageByIdInput) {
+    const params = {
+      content_type: 'courseListPage',
+      limit: 1,
+      include: 0,
+    }
+
+    const response =
+      await this.contentfulRepository.getLocalizedEntry<types.ICourseListPageFields>(
+        input.id,
+        input.lang,
+        params,
+      )
+
+    if (response?.sys?.contentType?.sys?.id !== 'courseListPage') {
+      return null
+    }
+
+    return mapCourseListPage(response as ICourseListPage)
   }
 }

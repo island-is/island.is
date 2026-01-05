@@ -16,19 +16,22 @@ import type {
   Price,
   Query,
   QueryGetCourseByIdArgs,
+  QueryGetCourseListPageByIdArgs,
   QueryGetNamespaceArgs,
-  QueryGetOrganizationPageArgs,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
-import { withMainLayout } from '@island.is/web/layouts/main'
+import { LayoutProps, withMainLayout } from '@island.is/web/layouts/main'
 import type { Screen, ScreenContext } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { webRichText } from '@island.is/web/utils/richText'
 
-import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_PAGE_QUERY } from '../../queries'
-import { GET_COURSE_BY_ID_QUERY } from '../../queries/Courses'
+import { GET_NAMESPACE_QUERY } from '../../queries'
+import {
+  GET_COURSE_BY_ID_QUERY,
+  GET_COURSE_LIST_PAGE_BY_ID_QUERY,
+} from '../../queries/Courses'
 
 const formatPrice = (price: Price, locale: Locale) => {
   const amount = price?.amount
@@ -56,19 +59,28 @@ const formatPrice = (price: Price, locale: Locale) => {
 }
 
 type CourseDetailsScreenContext = ScreenContext & {
-  organizationPage: Query['getOrganizationPage']
+  organizationPage: OrganizationPage
+  courseListPageId: string
+  courseId: string
+}
+
+export interface Props {
+  layoutProps: LayoutProps
+  componentProps: CourseDetailsProps
 }
 
 export interface CourseDetailsProps {
   course: Course
   organizationPage: OrganizationPage
   namespace: Record<string, string>
+  courseListPage: Query['getCourseListPageById']
 }
 
 const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
   course,
   organizationPage,
   namespace,
+  courseListPage,
 }) => {
   const router = useRouter()
   const pathWithoutQueryParams = router.asPath.split('?')[0]
@@ -111,13 +123,13 @@ const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
           href: linkResolver('organizationpage', [organizationPage?.slug]).href,
         },
         {
-          title: n(
-            'courseListPageTitle',
-            activeLocale === 'is' ? 'Námskeið' : 'Courses',
-          ),
-          href: linkResolver('organizationcourseoverview', [
-            organizationPage.slug,
-          ]).href,
+          title:
+            courseListPage?.title ||
+            n(
+              'courseListPageTitle',
+              activeLocale === 'is' ? 'Námskeið' : 'Courses',
+            ),
+          href: router.pathname.split('/').slice(0, -1).join('/'),
         },
       ]}
     >
@@ -210,39 +222,24 @@ const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
 CourseDetails.getProps = async ({
   apolloClient,
   locale,
-  query,
   organizationPage,
+  courseListPageId,
+  courseId,
 }) => {
-  const querySlugs = (query.slugs ?? []) as string[]
-  const [organizationPageSlug, _, courseId] = querySlugs
-
   if (!courseId) {
     throw new CustomNextError(404, 'Course ID is required')
   }
+  if (!courseListPageId) {
+    throw new CustomNextError(404, 'Course list page id was not provided')
+  }
 
   const [
-    {
-      data: { getOrganizationPage },
-    },
     namespace,
     {
       data: { getCourseById },
     },
+    courseListPage,
   ] = await Promise.all([
-    !organizationPage
-      ? apolloClient.query<Query, QueryGetOrganizationPageArgs>({
-          query: GET_ORGANIZATION_PAGE_QUERY,
-          variables: {
-            input: {
-              slug: organizationPageSlug,
-              lang: locale,
-              subpageSlugs: querySlugs.slice(1),
-            },
-          },
-        })
-      : {
-          data: { getOrganizationPage: organizationPage },
-        },
     apolloClient
       .query<Query, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,
@@ -266,27 +263,27 @@ CourseDetails.getProps = async ({
         },
       },
     }),
+    apolloClient.query<Query, QueryGetCourseListPageByIdArgs>({
+      query: GET_COURSE_LIST_PAGE_BY_ID_QUERY,
+      variables: {
+        input: {
+          id: courseListPageId,
+          lang: locale,
+        },
+      },
+    }),
   ])
 
-  if (!getOrganizationPage) {
-    throw new CustomNextError(404, 'Organization page not found')
-  }
   if (!getCourseById) {
     throw new CustomNextError(404, 'Course not found')
   }
 
-  if (getCourseById.organizationId !== getOrganizationPage?.organization?.id) {
-    throw new CustomNextError(404, 'Course belongs to another organization')
-  }
-
   return {
-    organizationPage: getOrganizationPage,
+    organizationPage,
     course: getCourseById,
     namespace,
-    ...getThemeConfig(
-      getOrganizationPage?.theme,
-      getOrganizationPage?.organization,
-    ),
+    courseListPage: courseListPage.data?.getCourseListPageById,
+    ...getThemeConfig(organizationPage?.theme, organizationPage?.organization),
   }
 }
 

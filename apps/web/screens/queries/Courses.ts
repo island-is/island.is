@@ -72,3 +72,12 @@ export const GET_COURSE_BY_ID_QUERY = gql`
   }
   ${slices}
 `
+
+export const GET_COURSE_LIST_PAGE_BY_ID_QUERY = gql`
+  query GetCourseListPageById($input: GetCourseListPageByIdInput!) {
+    getCourseListPageById(input: $input) {
+      id
+      title
+    }
+  }
+`

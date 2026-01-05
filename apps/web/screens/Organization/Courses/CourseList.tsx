@@ -21,31 +21,39 @@ import type {
   OrganizationPage,
   Query,
   QueryGetCourseCategoriesArgs,
+  QueryGetCourseListPageByIdArgs,
   QueryGetCoursesArgs,
   QueryGetNamespaceArgs,
-  QueryGetOrganizationPageArgs,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
-import { withMainLayout } from '@island.is/web/layouts/main'
+import { LayoutProps, withMainLayout } from '@island.is/web/layouts/main'
 import type { Screen, ScreenContext } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
 
-import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_PAGE_QUERY } from '../../queries'
+import { GET_NAMESPACE_QUERY } from '../../queries'
 import {
   GET_COURSE_CATEGORIES_QUERY,
+  GET_COURSE_LIST_PAGE_BY_ID_QUERY,
   GET_ORGANIZATION_COURSES_QUERY,
 } from '../../queries/Courses'
 
 type CourseListScreenContext = ScreenContext & {
-  organizationPage?: Query['getOrganizationPage']
+  organizationPage: OrganizationPage
+  courseListPageId: string
 }
 
-export interface CourseListProps {
+export interface Props {
+  layoutProps: LayoutProps
+  componentProps: CourseListProps
+}
+
+interface CourseListProps {
   organizationPage: OrganizationPage
   namespace: Record<string, string>
   initialItemsResponse: Query['getCourses']
   courseCategories: Query['getCourseCategories']['items']
+  courseListPage: Query['getCourseListPageById']
 }
 
 const CourseList: Screen<CourseListProps, CourseListScreenContext> = ({
@@ -53,6 +61,7 @@ const CourseList: Screen<CourseListProps, CourseListScreenContext> = ({
   namespace,
   initialItemsResponse,
   courseCategories,
+  courseListPage,
 }) => {
   const { activeLocale } = useI18n()
   const { linkResolver } = useLinkResolver()
@@ -143,9 +152,9 @@ const CourseList: Screen<CourseListProps, CourseListScreenContext> = ({
         items: navList,
       }}
     >
-      <Stack space={3}>
+      <Stack space={0}>
         <Text variant="h1" as="h1">
-          {n('courseListPageTitle', 'Námskeið')}
+          {courseListPage?.title || n('courseListPageTitle', 'Námskeið')}
         </Text>
         <GenericList
           filterTags={courseCategories.map((category) => ({
@@ -216,32 +225,14 @@ const CourseList: Screen<CourseListProps, CourseListScreenContext> = ({
 CourseList.getProps = async ({
   apolloClient,
   locale,
-  query,
   organizationPage,
+  courseListPageId,
 }) => {
-  const querySlugs = (query.slugs ?? []) as string[]
-  const [organizationPageSlug] = querySlugs
+  if (!courseListPageId) {
+    throw new CustomNextError(404, 'Course list page id was not provided')
+  }
 
-  const [
-    {
-      data: { getOrganizationPage },
-    },
-    namespace,
-  ] = await Promise.all([
-    !organizationPage
-      ? apolloClient.query<Query, QueryGetOrganizationPageArgs>({
-          query: GET_ORGANIZATION_PAGE_QUERY,
-          variables: {
-            input: {
-              slug: organizationPageSlug,
-              lang: locale,
-              subpageSlugs: querySlugs.slice(1),
-            },
-          },
-        })
-      : {
-          data: { getOrganizationPage: organizationPage },
-        },
+  const [namespace, courseListPage] = await Promise.all([
     apolloClient
       .query<Query, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,
@@ -257,13 +248,16 @@ CourseList.getProps = async ({
           ? JSON.parse(variables.data.getNamespace.fields)
           : {},
       ),
+    apolloClient.query<Query, QueryGetCourseListPageByIdArgs>({
+      query: GET_COURSE_LIST_PAGE_BY_ID_QUERY,
+      variables: {
+        input: {
+          id: courseListPageId,
+          lang: locale,
+        },
+      },
+    }),
   ])
-
-  if (!getOrganizationPage) {
-    throw new CustomNextError(404, 'Organization page not found')
-  }
-
-  const organizationSlug = getOrganizationPage.organization?.slug
 
   const [coursesResponse, courseCategoriesResponse] = await Promise.all([
     apolloClient.query<Query, QueryGetCoursesArgs>({
@@ -271,7 +265,7 @@ CourseList.getProps = async ({
       variables: {
         input: {
           lang: locale,
-          organizationSlug,
+          courseListPageId,
         },
       },
     }),
@@ -280,22 +274,20 @@ CourseList.getProps = async ({
       variables: {
         input: {
           lang: locale,
-          organizationSlug,
+          courseListPageId,
         },
       },
     }),
   ])
 
   return {
-    organizationPage: getOrganizationPage,
+    organizationPage,
     namespace,
     initialItemsResponse: coursesResponse.data?.getCourses,
     courseCategories:
       courseCategoriesResponse.data?.getCourseCategories?.items ?? [],
-    ...getThemeConfig(
-      getOrganizationPage?.theme,
-      getOrganizationPage?.organization,
-    ),
+    courseListPage: courseListPage.data?.getCourseListPageById,
+    ...getThemeConfig(organizationPage?.theme, organizationPage?.organization),
   }
 }
 

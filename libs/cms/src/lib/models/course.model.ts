@@ -92,7 +92,7 @@ export const mapCourse = ({ fields, sys }: ICourse): Course => {
       : [],
     categories: fields.categories ? fields.categories.map(mapGenericTag) : [],
     instances: fields.instances ? fields.instances.map(mapCourseInstance) : [],
-    organizationId: fields.organization?.sys?.id ?? '',
+    organizationId: fields.courseListPage?.fields?.organization?.sys?.id ?? '',
   }
 }
 
