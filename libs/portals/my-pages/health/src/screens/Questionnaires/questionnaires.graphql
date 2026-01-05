@@ -75,6 +75,7 @@ query GetQuestionnaireWithQuestions(
       questions {
         __typename
         id
+        originalId
         label
         sublabel
         htmlLabel

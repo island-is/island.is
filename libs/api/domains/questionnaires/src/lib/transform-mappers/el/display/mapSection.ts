@@ -22,7 +22,7 @@ export const mapGroupToSection = (
     id: group.id,
     title: group.title,
     questions: group.items.map((item) =>
-      mapItemToQuestion(item, allQuestions, locale, triggers),
+      mapItemToQuestion(item, allQuestions, locale, triggers, group.id),
     ),
     ...groupTriggerDeps,
   }

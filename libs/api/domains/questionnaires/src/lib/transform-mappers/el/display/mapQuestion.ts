@@ -11,9 +11,13 @@ export const mapItemToQuestion = (
   allQuestions: HealthDirectorateQuestionDto[],
   locale: 'is' | 'en',
   triggers?: Record<string, HealthDirectorateQuestionTriggers[]>,
+  groupId?: string,
 ): Question => {
   const answerType = mapAnswerOptionType(item.type, item)
   const triggerDeps = mapTriggers(allQuestions, triggers, item.id)
+
+  // Create unique ID by combining group and item IDs to avoid collisions
+  const uniqueId = groupId ? `${groupId}__${item.id}` : item.id
 
   // Handle options based on question type
   let options: Array<{ label: string; value: string; id: string }> | undefined
@@ -34,7 +38,8 @@ export const mapItemToQuestion = (
   }
 
   const answerOptions = {
-    id: item.id,
+    id: uniqueId,
+    originalId: item.id, // Keep original ID for submission
     type: answerType,
     label: undefined,
     options,
@@ -73,7 +78,8 @@ export const mapItemToQuestion = (
   }
 
   return {
-    id: item.id,
+    id: uniqueId,
+    originalId: item.id, // Keep original ID for submission
     label: item.label,
     htmlLabel: item.htmlLabel,
     sublabel: item.hint,

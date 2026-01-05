@@ -319,7 +319,11 @@ export const QuestionRenderer: FC<QuestionRendererProps> = ({
   return (
     <Box marginBottom={4}>
       <Text variant="h5" marginBottom={question.sublabel ? 1 : 3}>
-        {HtmlParser(question.label)}
+        {HtmlParser(
+          question.htmlLabel && question.htmlLabel.length > 0
+            ? question.htmlLabel
+            : question.label || '',
+        )}
         {question.answerOptions.type === 'number' &&
           question.answerOptions.min &&
           question.answerOptions.max &&
