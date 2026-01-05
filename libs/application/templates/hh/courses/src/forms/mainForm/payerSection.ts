@@ -6,7 +6,6 @@ import {
   getValueViaPath,
   NO,
   buildNationalIdWithNameField,
-  buildCustomField,
   YesOrNoEnum,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
@@ -20,7 +19,7 @@ export const payerSection = buildSection({
       title: m.payer.sectionTitle,
       children: [
         buildRadioField({
-          id: 'userIsPayingAsIndividual',
+          id: 'payment.userIsPayingAsIndividual',
           title: m.payer.userIsPayingAsIndividualLabel,
           defaultValue: YES,
           width: 'half',
@@ -32,7 +31,7 @@ export const payerSection = buildSection({
         }),
         buildNationalIdWithNameField({
           marginTop: 4,
-          id: 'companyPayment',
+          id: 'payment.companyPayment',
           title: m.payer.companyInfoTitle,
           titleVariant: 'h4',
           required: true,
@@ -41,13 +40,9 @@ export const payerSection = buildSection({
           condition: (answers) =>
             getValueViaPath<YesOrNoEnum>(
               answers,
-              'userIsPayingAsIndividual',
+              'payment.userIsPayingAsIndividual',
               YesOrNoEnum.YES,
             ) === YesOrNoEnum.NO,
-        }),
-        buildCustomField({
-          id: 'payerValidation',
-          component: 'PayerValidation',
         }),
       ],
     }),

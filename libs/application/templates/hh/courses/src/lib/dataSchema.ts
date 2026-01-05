@@ -2,6 +2,39 @@ import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import { isValidPhoneNumber } from '../utils/isValidPhoneNumber'
 import { YesOrNoEnum } from '@island.is/application/core'
+import { m } from './messages'
+
+const paymentSchema = z
+  .object({
+    userIsPayingAsIndividual: z
+      .nativeEnum(YesOrNoEnum)
+      .default(YesOrNoEnum.YES),
+    companyPayment: z
+      .object({
+        nationalId: z.union([z.string().min(1), z.literal(''), z.undefined()]),
+        name: z.union([z.string().min(1), z.literal(''), z.undefined()]),
+      })
+      .optional(),
+  })
+  .superRefine((data, ctx) => {
+    const { userIsPayingAsIndividual, companyPayment } = data
+    if (userIsPayingAsIndividual === YesOrNoEnum.YES) {
+      return
+    }
+    if (
+      userIsPayingAsIndividual === YesOrNoEnum.NO &&
+      (!companyPayment?.nationalId ||
+        !companyPayment?.name ||
+        companyPayment.nationalId.length === 0 ||
+        companyPayment.name.length === 0)
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        params: m.payer.payerValidationError,
+        path: ['companyPayment', 'nationalId'],
+      })
+    }
+  })
 
 const nationalIdWithNameSchema = z.object({
   nationalId: z
@@ -24,10 +57,10 @@ const participantSchema = z.object({
 
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
-  userIsPayingAsIndividual: z.nativeEnum(YesOrNoEnum).default(YesOrNoEnum.YES),
   participantList: z.array(participantSchema).min(1),
   courseSelect: z.string().min(1),
   dateSelect: z.string().min(1),
+  payment: paymentSchema,
 })
 
 export type ApplicationAnswers = z.TypeOf<typeof dataSchema>
