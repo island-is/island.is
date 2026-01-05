@@ -21,13 +21,36 @@ export const options = {
 }
 
 export const dot = style({
-  width: '8px',
-  height: '8px',
+  width: '44px',
+  height: '44px',
   borderRadius: '50%',
-  backgroundColor: 'white',
-  border: '2px solid transparent',
+  backgroundColor: 'transparent',
+  border: 'none',
   zIndex: 10,
   position: 'relative',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  padding: 0,
+  cursor: 'pointer',
+  selectors: {
+    '&::before': {
+      content: '""',
+      width: '8px',
+      height: '8px',
+      borderRadius: '50%',
+      backgroundColor: 'white',
+      border: '2px solid transparent',
+      display: 'block',
+    },
+    '&:focus': {
+      outline: `2px solid ${theme.color.blue400}`,
+      outlineOffset: '2px',
+    },
+    '&:focus:not(:focus-visible)': {
+      outline: 'none',
+    },
+  },
 })
 
 export const dotSelected = style({})
@@ -40,7 +63,7 @@ export const hoverIndicator = style({
   position: 'absolute',
   top: '50%',
   transform: 'translate(-50%, -50%)',
-  zIndex: 5,
+  zIndex: 4,
   pointerEvents: 'none',
   opacity: 0,
   transition: 'opacity 0.2s ease',
@@ -58,7 +81,7 @@ export const selectedIndicator = style({
   position: 'absolute',
   top: '50%',
   transform: 'translate(-50%, -50%)',
-  zIndex: 5,
+  zIndex: 4,
   pointerEvents: 'none',
 })
 
