@@ -2,7 +2,6 @@ import { Stack } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
-  FootNote,
   IntroWrapper,
   m,
   THJODSKRA_SLUG,
@@ -82,6 +81,7 @@ const UserInfoOverview = () => {
     }
 
     fetchChildCustodyData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, userInfo.profile.nationalId])
 
   return (
