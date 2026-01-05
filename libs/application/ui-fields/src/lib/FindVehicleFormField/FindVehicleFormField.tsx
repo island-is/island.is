@@ -53,6 +53,7 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
     requiredValidVehicleErrorMessage,
     isMachine,
     isEnergyFunds,
+    isMileCar,
     energyFundsMessages,
     clearOnChange,
   } = field
@@ -128,7 +129,8 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
   const setVehicleValues = (vehicleDetails: VehicleDetails) => {
     const vehicleDisabled =
       additionalErrors &&
-      (!vehicleDetails?.isDebtLess ||
+      ((vehicleDetails?.vehicleHasMilesOdometer && isMileCar) ||
+        !vehicleDetails?.isDebtLess ||
         !!vehicleDetails?.validationErrorMessages?.length)
 
     const permno = vehicleDisabled ? '' : vehicleDetails?.permno || ''
@@ -141,10 +143,6 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
     setValue(`${field.id}.color`, vehicleDetails?.color || undefined)
     setValue(`${field.id}.requireMileage`, vehicleDetails?.requireMileage)
     setValue(`${field.id}.mileageReading`, vehicleDetails?.mileageReading)
-    setValue(
-      `${field.id}.vehicleHasMilesOdometer`,
-      vehicleDetails?.vehicleHasMilesOdometer,
-    )
 
     setValue('vehicleMileage.requireMileage', vehicleDetails?.requireMileage)
     setValue('vehicleMileage.mileageReading', vehicleDetails?.mileageReading)
@@ -240,7 +238,8 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
 
   const vehicleDisabled =
     additionalErrors &&
-    (!vehicleDetails?.isDebtLess ||
+    ((vehicleDetails?.vehicleHasMilesOdometer && isMileCar) ||
+      !vehicleDetails?.isDebtLess ||
       !!vehicleDetails?.validationErrorMessages?.length)
 
   const machineDisabled = machineDetails?.disabled
@@ -384,47 +383,52 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
                   }
                   message={
                     <Box>
-                      <BulletList>
-                        {!vehicleDetails.isDebtLess && (
-                          <Bullet>
-                            {isNotDebtLessTag &&
-                              formatText(
-                                isNotDebtLessTag,
-                                application,
-                                formatMessage,
-                              )}
-                          </Bullet>
-                        )}
-                        {!!vehicleDetails.validationErrorMessages?.length &&
-                          vehicleDetails.validationErrorMessages?.map(
-                            (error) => {
-                              const message = formatMessage(
-                                (validationErrors &&
-                                  getValueViaPath(
-                                    validationErrors,
-                                    error.errorNo || '',
-                                  )) ||
-                                  '',
-                              )
-                              const defaultMessage = error.defaultMessage
-                              const fallbackMessage =
-                                fallbackErrorMessage &&
-                                formatText(
-                                  fallbackErrorMessage,
-                                  application,
-                                  formatMessage,
-                                ) +
-                                  ' - ' +
-                                  error.errorNo
+                      {!vehicleDetails.isDebtLess ||
+                        (!!vehicleDetails.validationErrorMessages?.length && (
+                          <BulletList>
+                            {!vehicleDetails.isDebtLess && (
+                              <Bullet>
+                                {isNotDebtLessTag &&
+                                  formatText(
+                                    isNotDebtLessTag,
+                                    application,
+                                    formatMessage,
+                                  )}
+                              </Bullet>
+                            )}
+                            {!!vehicleDetails.validationErrorMessages?.length &&
+                              vehicleDetails.validationErrorMessages?.map(
+                                (error) => {
+                                  const message = formatMessage(
+                                    (validationErrors &&
+                                      getValueViaPath(
+                                        validationErrors,
+                                        error.errorNo || '',
+                                      )) ||
+                                      '',
+                                  )
+                                  const defaultMessage = error.defaultMessage
+                                  const fallbackMessage =
+                                    fallbackErrorMessage &&
+                                    formatText(
+                                      fallbackErrorMessage,
+                                      application,
+                                      formatMessage,
+                                    ) +
+                                      ' - ' +
+                                      error.errorNo
 
-                              return (
-                                <Bullet>
-                                  {message || defaultMessage || fallbackMessage}
-                                </Bullet>
-                              )
-                            },
-                          )}
-                      </BulletList>
+                                  return (
+                                    <Bullet>
+                                      {message ||
+                                        defaultMessage ||
+                                        fallbackMessage}
+                                    </Bullet>
+                                  )
+                                },
+                              )}
+                          </BulletList>
+                        ))}
                     </Box>
                   }
                 />

@@ -17,6 +17,7 @@ import {
 } from '@island.is/application/ui-fields'
 import { selectVehicle as selectVehicleMessages } from '../../lib/messages'
 import { useLazyVehicleDetails } from '../../hooks/useLazyVehicleDetails'
+import { BasicVehicleInformation } from '@island.is/api/schema'
 
 export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
   props,
@@ -25,14 +26,16 @@ export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
   const { setValue } = useFormContext()
   const { application } = props
   const [updateApplication] = useMutation(UPDATE_APPLICATION)
-  const currentVehicleList = application.externalData
-    .currentVehicleListWithMileCar.data as CurrentVehiclesAndRecords
+  const currentVehicleList = application.externalData.currentVehicleList
+    .data as CurrentVehiclesAndRecords
 
   const getVehicleDetails = useLazyVehicleDetails()
   const createGetVehicleDetailsWrapper = (
-    getVehicleDetailsFunction: (variables: {
-      permno: string
-    }) => Promise<ApolloQueryResult<any>>,
+    getVehicleDetailsFunction: (variables: { permno: string }) => Promise<
+      ApolloQueryResult<{
+        vehicleBasicInfoByPermno: BasicVehicleInformation
+      }>
+    >,
   ) => {
     return async (plate: string) => {
       const variables = { permno: plate }
@@ -74,7 +77,10 @@ export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
             component: FieldComponents.FIND_VEHICLE,
             children: undefined,
             getDetails: createGetVehicleDetailsWrapper(getVehicleDetails),
-            additionalErrors: false,
+            additionalErrors: true,
+            isMileCar: true,
+            hasErrorTitle:
+              selectVehicleMessages.validation.requiredValidVehicle,
             findPlatePlaceholder:
               selectVehicleMessages.labels.findPlatePlaceholder,
             findVehicleButtonText: selectVehicleMessages.labels.findButton,
