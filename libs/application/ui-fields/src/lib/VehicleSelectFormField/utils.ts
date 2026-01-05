@@ -94,6 +94,7 @@ export const extractDetails = function (
   ) {
     return {
       ...extractCommonVehicleInfo(response),
+      isDebtLess: true,
     }
   } else {
     // Handle unexpected response types
