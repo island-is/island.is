@@ -6,6 +6,7 @@ import {
 import { useCallback } from 'react'
 
 export const useLazyQuery = <
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   TData = any,
   TVariables extends OperationVariables = OperationVariables,
 >(
@@ -19,6 +20,7 @@ export const useLazyQuery = <
         query,
         variables,
       }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [client],
   )
 }
