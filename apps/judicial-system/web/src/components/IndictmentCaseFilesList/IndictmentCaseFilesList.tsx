@@ -423,7 +423,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
                 filteredFiles.rulings.length > 0) ||
               permissions.canViewVerdictServiceCertificate ||
               filteredFiles.rulingOrders.length > 0) && (
-              <Box marginBottom={5}>
+              <div>
                 <SectionHeading
                   title={formatMessage(strings.rulingAndCourtRecordsTitle)}
                   marginBottom={1}
@@ -481,7 +481,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
                       />
                     )
                   })}
-              </Box>
+              </div>
             )}
             <FileSection
               title={formatMessage(caseFiles.criminalRecordUpdateSection)}
