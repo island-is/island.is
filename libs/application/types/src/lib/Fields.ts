@@ -186,6 +186,7 @@ export type RepeaterItem = {
         ) => string | string[] | undefined)
   }
   clearOnChange?: MaybeWithIndex<string[]>
+  clearOnChangeDefaultValue?: string | boolean | number | undefined
   setOnChange?:
     | { key: string; value: any }[]
     | ((
@@ -349,6 +350,14 @@ export interface BaseField extends FormItem {
   marginBottom?: BoxProps['marginBottom']
   marginTop?: BoxProps['marginTop']
   clearOnChange?: string[]
+  clearOnChangeDefaultValue?:
+    | string
+    | string[]
+    | boolean
+    | boolean[]
+    | number
+    | number[]
+    | undefined
   setOnChange?:
     | { key: string; value: any }[]
     | ((
