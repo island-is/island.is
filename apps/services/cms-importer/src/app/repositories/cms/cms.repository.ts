@@ -13,63 +13,24 @@ import {
   LOCALE,
 } from '../../constants'
 import { logger } from '@island.is/logging'
-import { CmsGrant } from '../../grant-import/grant-import.types'
-import { CreationType, EntryInput } from './cms.types'
+import { CreationType, EntryInput, EntryUpdateResult } from './cms.types'
 import { ContentfulFetchResponse } from './managementClient/managementClient.types'
 
 @Injectable()
 export class CmsRepository {
   constructor(private readonly managementClient: ManagementClientService) {}
 
-  private referenceIdPattern = /^([0-9]+)-([0-9]+)$/
-
-  private parseReferenceId = (referenceId: string): string | null => {
-    const regExResult = this.referenceIdPattern.exec(referenceId)
-    if (!regExResult) {
-      return null
-    }
-    return regExResult[2]
-  }
-
-  getContentfulGrants = async (): Promise<Array<CmsGrant>> => {
+  getContentByType = async (contentType: string): Promise<Array<Entry>> => {
     const entryResponse = await this.managementClient.getEntries({
       content_type: CONTENT_TYPE,
     })
 
     if (entryResponse.ok) {
       return entryResponse.data.items
-        .map((e) => {
-          const referenceId =
-            e.fields?.['grantApplicationId']?.[LOCALE] ?? undefined
-          const dateFrom = e.fields?.['grantDateFrom']?.[LOCALE] ?? undefined
-          const dateTo = e.fields?.['grantDateTo']?.[LOCALE] ?? undefined
-          const status = e.fields?.['grantStatus']?.[LOCALE] ?? undefined
-
-          if (referenceId < 0 || status !== 'Automatic') {
-            return
-          }
-          const grantId = this.parseReferenceId(referenceId)
-
-          if (!grantId) {
-            logger.warn('Invalid grant id, aborting...', {
-              referenceId: grantId,
-            })
-            return
-          }
-
-          return {
-            entry: e,
-            id: e.sys.id,
-            referenceId,
-            grantId,
-            dateFrom,
-            dateTo,
-          }
-        })
-        .filter(isDefined)
     } else {
-      logger.warn(`cms service failed to fetch grants`, {
+      logger.warn(`cms service failed to fetch content`, {
         error: entryResponse.error,
+        contentType,
       })
       return []
     }
@@ -159,10 +120,10 @@ export class CmsRepository {
         input,
       )
     } catch (e) {
-      logger.warn('belble')
+      logger.warn('Entry creation failed', {
+        error: e,
+      })
     }
-
-    logger.info('after create')
 
     if (createdEntry?.ok) {
       logger.info('Entry created', {
@@ -171,19 +132,18 @@ export class CmsRepository {
       return createdEntry.data
     }
 
-    logger.warn('Entry creation failed', {
-      error: createdEntry?.error,
-    })
-
     return
   }
 
-  updateEntries = async (entries: EntryInput, contentType: string) => {
+  updateEntries = async (
+    entries: EntryInput,
+    contentType: string,
+  ): Promise<Array<EntryUpdateResult>> => {
     if (!entries.length) {
       logger.warn('no entries to update')
       return [
         {
-          ok: true,
+          ok: 'noop',
           error: 'no entries to update',
         },
       ]
@@ -199,7 +159,7 @@ export class CmsRepository {
       })
       return [
         {
-          ok: false,
+          ok: 'error',
           error: contentTypeResponse.error.message,
         },
       ]
@@ -226,12 +186,12 @@ export class CmsRepository {
 
     return promiseRes.map((pr) => {
       if (pr.status === 'fulfilled' && pr.value) {
-        return { ok: true, entry: pr.value }
+        return { ok: 'success', entry: pr.value }
       }
       if (pr.status === 'rejected') {
-        return { ok: false, error: pr.reason }
+        return { ok: 'error', error: pr.reason }
       }
-      return { ok: false }
+      return { ok: 'unknown' }
     })
   }
 
@@ -239,13 +199,13 @@ export class CmsRepository {
     entry: Entry,
     contentFields: Array<ContentFields<KeyValueMap>>,
     inputFields: Array<{ key: string; value: unknown }>,
-    grantReferenceId?: string,
+    referenceId?: string,
   ): Promise<Entry | undefined> => {
     if (entry.isUpdated()) {
       //Invalid state, log and skip
       logger.warn(`Entry has unpublished changes, please publish!`, {
         id: entry.sys.id,
-        referenceId: grantReferenceId,
+        referenceId,
       })
       return Promise.reject(`Entry has unpublished changes`)
     }
@@ -256,7 +216,7 @@ export class CmsRepository {
         logger.info(`Field not found`, {
           inputField: inputField.key,
           id: entry.sys.id,
-          referenceId: grantReferenceId,
+          referenceId,
         })
         return Promise.reject(
           `Invalid field in input fields: ${inputField.key}`,
@@ -267,7 +227,7 @@ export class CmsRepository {
         logger.info(`Field not found in entry, updating...`, {
           inputField: inputField.key,
           id: entry.sys.id,
-          referenceId: grantReferenceId,
+          referenceId,
         })
         hasChanges = true
         entry.fields[inputField.key] = {
@@ -284,34 +244,34 @@ export class CmsRepository {
     if (hasChanges) {
       logger.info('updating values', {
         id: entry.sys.id,
-        referenceId: grantReferenceId,
+        referenceId,
       })
       const updatedEntry = await entry.update()
 
       logger.info('Entry updated', {
         id: updatedEntry.sys.id,
-        referenceId: grantReferenceId,
+        referenceId,
       })
 
       //If not currently published, stop.
       if (!hasEntryBeenPublishedBefore) {
         logger.info('returning updated entry, no publication', {
           id: updatedEntry.sys.id,
-          referenceId: grantReferenceId,
+          referenceId,
         })
         return updatedEntry
       } else {
         const publishedEntry = await updatedEntry.publish()
         logger.info('Entry published, returning published entry', {
           id: publishedEntry.sys.id,
-          referenceId: grantReferenceId,
+          referenceId,
         })
         return publishedEntry
       }
     }
     logger.info('Values unchanged, aborting update', {
       id: entry.sys.id,
-      referenceId: grantReferenceId,
+      referenceId,
     })
     return undefined
   }

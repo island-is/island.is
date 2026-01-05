@@ -4,8 +4,9 @@ import { GrantsRepository } from '../repositories/grants/grants.repository'
 import { logger } from '@island.is/logging'
 import { isDefined } from '@island.is/shared/utils'
 import { parseGrantDate } from './utils'
-import { CONTENT_TYPE } from '../constants'
+import { CONTENT_TYPE, LOCALE } from '../constants'
 import { EntryInput } from '../repositories/cms/cms.types'
+import { parseReferenceId } from '../utils'
 
 @Injectable()
 export class GrantImportService {
@@ -20,9 +21,43 @@ export class GrantImportService {
     logger.info('...grant import worker finished.')
   }
 
+  private getContentfulGrants = async () => {
+    const grants = await this.cmsRepository.getContentByType(CONTENT_TYPE)
+    return grants
+      .map((grant) => {
+        const referenceId =
+          grant.fields?.['grantApplicationId']?.[LOCALE] ?? undefined
+        const dateFrom = grant.fields?.['grantDateFrom']?.[LOCALE] ?? undefined
+        const dateTo = grant.fields?.['grantDateTo']?.[LOCALE] ?? undefined
+        const status = grant.fields?.['grantStatus']?.[LOCALE] ?? undefined
+
+        if (referenceId < 0 || status !== 'Automatic') {
+          return
+        }
+        const grantId = parseReferenceId(referenceId)
+
+        if (!grantId) {
+          logger.warn('Invalid grant id, aborting...', {
+            referenceId: grantId,
+          })
+          return
+        }
+
+        return {
+          entry: grant,
+          id: grant.sys.id,
+          referenceId,
+          grantId,
+          dateFrom,
+          dateTo,
+        }
+      })
+      .filter(isDefined)
+  }
+
   private async processGrants() {
     const [cmsGrants, clientGrants] = await Promise.all([
-      this.cmsRepository.getContentfulGrants(),
+      this.getContentfulGrants(),
       this.clientsRepository.getGrants(),
     ])
 

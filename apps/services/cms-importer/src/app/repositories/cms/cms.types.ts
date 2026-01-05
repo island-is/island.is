@@ -40,6 +40,10 @@ export type EntryUpdateResult =
       error?: string
     }
   | {
-      ok: 'somewhat'
+      ok: 'noop'
+      error?: string
+    }
+  | {
+      ok: 'unknown'
       error?: string
     }
