@@ -20,6 +20,7 @@ import {
   ApplicationAdminPaginatedResponse,
   ApplicationStatistics,
   ApplicationTypeAdminInstitution,
+  ApplicationInstitution,
 } from '../application.model'
 import { ApplicationService } from '../application.service'
 
@@ -104,5 +105,11 @@ export class ApplicationAdminResolver {
       user,
       input,
     )
+  }
+
+  @Query(() => [ApplicationInstitution], { nullable: true })
+  @Scopes(AdminPortalScope.applicationSystemAdmin)
+  async applicationApplicationsAdminInstitutions(@CurrentUser() user: User) {
+    return this.applicationService.getApplicationInstitutions(user)
   }
 }

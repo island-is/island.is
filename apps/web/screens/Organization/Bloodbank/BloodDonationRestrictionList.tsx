@@ -41,6 +41,7 @@ import {
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
 import { useI18n } from '@island.is/web/i18n'
+import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { webRichText } from '@island.is/web/utils/richText'
@@ -91,6 +92,7 @@ const BloodDonationRestrictionList: CustomScreen<
   tags,
   customPageData,
 }) => {
+  const { format } = useDateUtils()
   const { formatMessage } = useIntl()
   const router = useRouter()
   const n = useNamespace(namespace)
@@ -363,8 +365,11 @@ const BloodDonationRestrictionList: CustomScreen<
                       {highlightMatch(item.keywordsText, trimmedQueryString)}
                     </Text>
                   )}
-                  {Boolean(item.effectiveDate) && (
-                    <Text variant="small">{item.effectiveDate}</Text>
+                  {item.effectiveDate && (
+                    <Text variant="small">
+                      {formatMessage(m.listPage.effectiveDatePrefix)}
+                      {format(new Date(item.effectiveDate), 'd. MMMM yyyy')}
+                    </Text>
                   )}
                 </FocusableBox>
               ))}

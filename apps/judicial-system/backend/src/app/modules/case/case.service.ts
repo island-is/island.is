@@ -53,6 +53,7 @@ import {
   defendantEventTypes,
   EventType,
   eventTypes,
+  IndictmentCaseNotificationType,
   IndictmentDecision,
   isCompletedCase,
   isIndictmentCase,
@@ -1056,6 +1057,16 @@ export class CaseService {
         // Without the flag, email (2) would get notification including the court case number.
         // For more context: https://github.com/island-is/island.is/pull/17385/files#r1904268032
         body: { withCourtCaseNumber: false },
+      })
+    }
+
+    if (theCase.splitCaseId) {
+      messages.push({
+        type: MessageType.INDICTMENT_CASE_NOTIFICATION,
+        caseId: theCase.id,
+        body: {
+          type: IndictmentCaseNotificationType.INDICTMENT_SPLIT_COMPLETED,
+        },
       })
     }
 
