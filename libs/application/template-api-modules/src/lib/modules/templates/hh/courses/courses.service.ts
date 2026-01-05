@@ -41,7 +41,7 @@ export class CoursesService extends BaseTemplateApiService {
     private readonly zendeskService: ZendeskService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {
-    super(ApplicationTypes.HEISLUGAESLA_HOFUDBORDARSVAEDISINS_NAMSKEID)
+    super(ApplicationTypes.HEILSUGAESLA_HOFUDBORDARSVAEDISINS_NAMSKEID)
   }
 
   async submitApplication({
