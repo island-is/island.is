@@ -81,9 +81,7 @@ export const InfoLine = ({
   tooltipFull,
 }: Props) => {
   const { formatMessage } = useLocale()
-  //   buttonColumnSpan={'3/12'}
-  //  valueColumnSpan={'5/12'}
-  //labelColumnSpan={'4/12'}
+
   return (
     <>
       <Box

@@ -9,6 +9,7 @@ import {
 import * as styles from './SidebarLayout.css'
 import cn from 'classnames'
 import { useWindowSize } from 'react-use'
+import { XL_SCREEN_WIDTH } from '../../lib/constants'
 
 interface SidebarLayoutProps {
   children: ReactNode
@@ -21,9 +22,9 @@ export const SidebarLayout: FC<SidebarLayoutProps> = ({
   isSticky = true,
   children,
 }) => {
-  const xlScreenWidth = 1512
   const { width } = useWindowSize()
-  const isXLScreen = width > xlScreenWidth
+  const isXLScreen = width > XL_SCREEN_WIDTH
+
   return (
     <Box paddingTop={[0, 0, 9]}>
       <GridContainer position="none">

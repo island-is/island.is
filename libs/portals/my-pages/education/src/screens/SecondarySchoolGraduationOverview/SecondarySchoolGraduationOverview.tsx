@@ -23,7 +23,7 @@ export const EducationGraduationDetail = () => {
 
   return (
     <IntroWrapper
-      title={formatMessage(edMessage.graduations)}
+      title={edMessage.graduations}
       intro={defineMessage({
         id: 'sp.education-secondary-school:grad-overview-intro',
         defaultMessage:
