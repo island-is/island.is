@@ -87,7 +87,7 @@ export class CourtDocumentRepositoryService {
       })
 
       const courtSessionId =
-        lastCourtSession && !lastCourtSession.endDate
+        lastCourtSession && !lastCourtSession.isConfirmed
           ? lastCourtSession.id
           : undefined
 
