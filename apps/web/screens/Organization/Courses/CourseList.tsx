@@ -54,6 +54,7 @@ interface CourseListProps {
   initialItemsResponse: Query['getCourses']
   courseCategories: Query['getCourseCategories']['items']
   courseListPage: Query['getCourseListPageById']
+  courseListPageId: string
 }
 
 const CourseList: Screen<CourseListProps, CourseListScreenContext> = ({
@@ -62,6 +63,7 @@ const CourseList: Screen<CourseListProps, CourseListScreenContext> = ({
   initialItemsResponse,
   courseCategories,
   courseListPage,
+  courseListPageId,
 }) => {
   const { activeLocale } = useI18n()
   const { linkResolver } = useLinkResolver()
@@ -183,6 +185,7 @@ const CourseList: Screen<CourseListProps, CourseListScreenContext> = ({
                   lang: activeLocale,
                   organizationSlug: organizationPage.organization?.slug,
                   page,
+                  courseListPageId,
                 },
               },
             })
@@ -287,6 +290,7 @@ CourseList.getProps = async ({
     courseCategories:
       courseCategoriesResponse.data?.getCourseCategories?.items ?? [],
     courseListPage: courseListPage.data?.getCourseListPageById,
+    courseListPageId,
     ...getThemeConfig(organizationPage?.theme, organizationPage?.organization),
   }
 }

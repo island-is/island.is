@@ -23,6 +23,7 @@ export const GET_ORGANIZATION_COURSES_QUERY = gql`
         categoryKeys
         lang
         organizationSlug
+        courseListPageId
       }
     }
   }
