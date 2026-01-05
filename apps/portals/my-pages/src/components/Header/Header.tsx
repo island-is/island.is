@@ -74,6 +74,7 @@ export const Header = ({
     isNavigatingRef.current = true
     setDisableTransition(true)
     setHeaderVisible(true)
+    headerVisibleRef.current = true
     lastScrollYRef.current = 0
     notifyVisibilityChange(true)
 
