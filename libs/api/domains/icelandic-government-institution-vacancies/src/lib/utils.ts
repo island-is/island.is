@@ -203,6 +203,7 @@ export const mapIcelandicGovernmentInstitutionVacanciesFromExternalSystem =
             : item.stofnunNr,
         logoUrl: item.logoURL,
         locations,
+        address: item.heimilisfang,
       })
     }
 

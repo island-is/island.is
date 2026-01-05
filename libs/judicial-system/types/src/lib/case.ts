@@ -488,6 +488,7 @@ export const isRulingOrDismissalCase = (
       ].includes(rulingDecision),
   )
 }
+
 export const hasIndictmentCaseBeenSubmittedToCourt = (
   state?: CaseState | null,
 ): boolean => {

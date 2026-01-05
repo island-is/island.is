@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   ConflictException,
+  Inject,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -11,13 +12,11 @@ import pick from 'lodash/pick'
 import zipObject from 'lodash/zipObject'
 
 import { User } from '@island.is/auth-nest-tools'
-import { UrlTypes } from '@island.is/form-system/enums'
 import {
   FormStatus,
   SectionTypes,
   UpdateFormError,
   UpdateFormResponse,
-  UrlMethods,
   UpdateFormStatusDto,
 } from '@island.is/form-system/shared'
 import { randomUUID } from 'crypto'
@@ -49,12 +48,9 @@ import { FieldDto } from '../fields/models/dto/field.dto'
 import { Field } from '../fields/models/field.model'
 import { FormCertificationTypeDto } from '../formCertificationTypes/models/dto/formCertificationType.dto'
 import { FormCertificationType } from '../formCertificationTypes/models/formCertificationType.model'
-import { FormUrl } from '../formUrls/models/formUrl.model'
 import { ListItem } from '../listItems/models/listItem.model'
 import { OrganizationPermission } from '../organizationPermissions/models/organizationPermission.model'
 import { Organization } from '../organizations/models/organization.model'
-import { OrganizationUrlDto } from '../organizationUrls/models/dto/organizationUrl.dto'
-import { OrganizationUrl } from '../organizationUrls/models/organizationUrl.model'
 import { ScreenDto } from '../screens/models/dto/screen.dto'
 import { Screen } from '../screens/models/screen.model'
 import { SectionDto } from '../sections/models/dto/section.dto'
@@ -63,6 +59,7 @@ import { FormDto } from './models/dto/form.dto'
 import { FormResponseDto } from './models/dto/form.response.dto'
 import { UpdateFormDto } from './models/dto/updateForm.dto'
 import { Form } from './models/form.model'
+import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 
 @Injectable()
 export class FormsService {
@@ -81,13 +78,11 @@ export class FormsService {
     private readonly listItemModel: typeof ListItem,
     @InjectModel(Organization)
     private readonly organizationModel: typeof Organization,
-    @InjectModel(OrganizationUrl)
-    private readonly organizationUrlModel: typeof OrganizationUrl,
     @InjectModel(FormCertificationType)
     private readonly formCertificationTypeModel: typeof FormCertificationType,
-    @InjectModel(FormUrl)
-    private readonly formUrlModel: typeof FormUrl,
     private readonly sequelize: Sequelize,
+    @Inject(LOGGER_PROVIDER)
+    private readonly logger: Logger,
   ) {}
 
   async findAll(user: User, nationalId: string): Promise<FormResponseDto> {
@@ -410,17 +405,32 @@ export class FormsService {
       throw new NotFoundException(`Form with id '${derivedFromId}' not found`)
     }
 
-    const slugToBeArchived = formToBeArchived.slug
-    formToBeArchived.status = FormStatus.ARCHIVED
-    formToBeArchived.slug = `${formToBeArchived.slug}-archived-${Date.now()}`
-    await formToBeArchived.save()
+    await this.sequelize.transaction(async (transaction) => {
+      try {
+        await this.applicationModel.destroy({
+          where: { formId: id },
+          transaction,
+        })
 
-    formToBePublished.slug =
-      formToBePublished.slug === `${slugToBeArchived}-i-breytingu`
-        ? slugToBeArchived
-        : formToBePublished.slug
-    formToBePublished.status = FormStatus.PUBLISHED
-    await formToBePublished.save()
+        const slugToBeArchived = formToBeArchived.slug
+        formToBeArchived.status = FormStatus.ARCHIVED
+        formToBeArchived.slug = `${
+          formToBeArchived.slug
+        }-archived-${Date.now()}`
+        await formToBeArchived.save({ transaction })
+
+        formToBePublished.slug =
+          formToBePublished.slug === `${slugToBeArchived}-i-breytingu`
+            ? slugToBeArchived
+            : formToBePublished.slug
+        formToBePublished.status = FormStatus.PUBLISHED
+        await formToBePublished.save({ transaction })
+      } catch (error) {
+        throw new InternalServerErrorException(
+          `Unexpected error publishing form '${id}'.`,
+        )
+      }
+    })
 
     const formResponse = await this.buildFormResponse(formToBeArchived)
 
@@ -498,10 +508,6 @@ export class FormsService {
           model: FormCertificationType,
           as: 'formCertificationTypes',
         },
-        {
-          model: FormUrl,
-          as: 'formUrls',
-        },
       ],
       order: [
         [{ model: Section, as: 'sections' }, 'displayOrder', 'ASC'],
@@ -544,11 +550,6 @@ export class FormsService {
       applicantTypes: await this.getApplicantTypes(),
       listTypes: await this.getListTypes(form.organizationId),
       submissionUrls: await this.getSubmissionUrls(form.organizationId),
-      submitUrls: await this.getUrls(form.organizationId, UrlTypes.SUBMIT),
-      validationUrls: await this.getUrls(
-        form.organizationId,
-        UrlTypes.VALIDATION,
-      ),
     }
 
     if (form.completedSectionInfo) {
@@ -575,30 +576,6 @@ export class FormsService {
 
     // Return unique values preserving insertion order
     return Array.from(new Set(urls))
-  }
-
-  private async getUrls(
-    organizationId: string,
-    type: string,
-  ): Promise<OrganizationUrlDto[]> {
-    const organizationUrls = await this.organizationUrlModel.findAll({
-      where: { organizationId: organizationId, type: type },
-    })
-
-    const keys = ['id', 'url', 'isXroad', 'isTest', 'type', 'method']
-
-    const organizationUrlsDto: OrganizationUrlDto[] = []
-
-    organizationUrls.map((organizationUrl) => {
-      organizationUrlsDto.push(
-        defaults(
-          pick(organizationUrl, keys),
-          zipObject(keys, Array(keys.length).fill(null)) as OrganizationUrlDto,
-        ),
-      )
-    })
-
-    return organizationUrlsDto
   }
 
   private async getApplicantTypes(): Promise<ApplicantType[]> {
@@ -685,29 +662,7 @@ export class FormsService {
     return organizationListTypes
   }
 
-  private async isZendeskEnabled(
-    organizationId: string,
-    formUrls: FormUrl[],
-  ): Promise<boolean> {
-    const organizationUrls = await this.organizationUrlModel.findAll({
-      where: { organizationId: organizationId },
-    })
-
-    return formUrls.some((formUrl) =>
-      organizationUrls.some(
-        (orgUrl) =>
-          orgUrl.id === formUrl.organizationUrlId &&
-          orgUrl.method === UrlMethods.SEND_TO_ZENDESK,
-      ),
-    )
-  }
-
   private async setArrays(form: Form): Promise<FormDto> {
-    const isZendesk = await this.isZendeskEnabled(
-      form.organizationId,
-      form.formUrls ?? [],
-    )
-
     const formKeys = [
       'id',
       'organizationId',
@@ -741,7 +696,6 @@ export class FormsService {
         sections: [],
         screens: [],
         fields: [],
-        isZendeskEnabled: isZendesk,
       },
     ) as FormDto
 
@@ -756,10 +710,6 @@ export class FormsService {
           ),
         ) as FormCertificationTypeDto,
       )
-    })
-
-    form.formUrls?.map((formUrl) => {
-      formDto.urls?.push(formUrl.organizationUrlId)
     })
 
     const sectionKeys = [
@@ -925,7 +875,6 @@ export class FormsService {
     const fields: Field[] = []
     const listItems: ListItem[] = []
     const formCertificationTypes: FormCertificationType[] = []
-    const formUrls: FormUrl[] = []
 
     for (const section of existingForm.sections) {
       const newSection = section.toJSON()
@@ -963,25 +912,6 @@ export class FormsService {
       }
     }
 
-    const hasCompleted = sections.some(
-      (s) => s.sectionType === SectionTypes.COMPLETED,
-    )
-    if (!hasCompleted) {
-      const maxOrder =
-        sections.length > 0
-          ? Math.max(...sections.map((s) => s.displayOrder ?? 0))
-          : 0
-      sections.push({
-        id: uuidV4(),
-        formId: newForm.id,
-        sectionType: SectionTypes.COMPLETED,
-        displayOrder: maxOrder + 1,
-        name: { is: 'Staðfesting', en: 'Confirmation' },
-        created: new Date(),
-        modified: new Date(),
-      } as Section)
-    }
-
     if (existingForm.formCertificationTypes) {
       for (const certificationType of existingForm.formCertificationTypes) {
         const newFormCertificationType = certificationType.toJSON()
@@ -990,17 +920,6 @@ export class FormsService {
         newFormCertificationType.created = new Date()
         newFormCertificationType.modified = new Date()
         formCertificationTypes.push(newFormCertificationType)
-      }
-    }
-
-    if (existingForm.formUrls) {
-      for (const formUrl of existingForm.formUrls) {
-        const newFormUrl = formUrl.toJSON()
-        newFormUrl.id = uuidV4()
-        newFormUrl.formId = newForm.id
-        newFormUrl.created = new Date()
-        newFormUrl.modified = new Date()
-        formUrls.push(newFormUrl)
       }
     }
 
@@ -1017,11 +936,11 @@ export class FormsService {
             transaction,
           },
         )
-        await this.formUrlModel.bulkCreate(formUrls, { transaction })
       })
     } catch (error) {
+      this.logger.error(`Failed to copy form '${id}'`, error)
       throw new InternalServerErrorException(
-        `Unexpected error copying form '${id}'.`,
+        `Unexpected error copying form '${id}'`,
       )
     }
 

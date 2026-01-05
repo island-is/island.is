@@ -245,7 +245,7 @@ const RentalAgreementTemplate: ApplicationTemplate<
         meta: {
           name: States.SIGNING,
           status: 'inprogress',
-          lifecycle: pruneAfterDays(10),
+          lifecycle: pruneAfterDays(31),
           onEntry: defineTemplateApi({
             action: TemplateApiActions.submitApplicationToHmsRentalService,
           }),
