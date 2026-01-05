@@ -255,7 +255,7 @@ export class AwsS3Service {
     }
 
     return this.putObject(caseType, confirmedKey, confirmedContent).then(() =>
-      this.getObject(caseType, confirmedContent),
+      this.getObject(caseType, confirmedKey),
     )
   }
 

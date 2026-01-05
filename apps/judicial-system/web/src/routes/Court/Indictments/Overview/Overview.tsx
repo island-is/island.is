@@ -51,6 +51,7 @@ const OverviewBody = ({
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
   // const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
 
+  const isUserAssignedJudge = user?.id && user.id === workingCase.judge?.id
   return (
     <>
       <PageHeader title={formatMessage(titles.court.indictments.overview)} />
@@ -105,7 +106,12 @@ const OverviewBody = ({
         )}
         <Box component="section" marginBottom={10}>
           <IndictmentCaseFilesList workingCase={workingCase} />
-          <Box display="flex" justifyContent="flexEnd" marginBottom={3}>
+          <Box
+            display="flex"
+            justifyContent="flexEnd"
+            marginBottom={3}
+            columnGap={2}
+          >
             <Button
               variant="primary"
               icon="add"
@@ -119,6 +125,20 @@ const OverviewBody = ({
             >
               {formatMessage(strings.addFilesButtonText)}
             </Button>
+            {isUserAssignedJudge && (
+              <Button
+                variant="primary"
+                icon="add"
+                size="small"
+                onClick={() => {
+                  router.push(
+                    `${constants.INDICTMENTS_ADD_RULING_ORDER_IN_COURT_ROUTE}/${workingCase.id}`,
+                  )
+                }}
+              >
+                Kveða upp úrskurð undir rekstri máls
+              </Button>
+            )}
           </Box>
         </Box>
       </FormContentContainer>

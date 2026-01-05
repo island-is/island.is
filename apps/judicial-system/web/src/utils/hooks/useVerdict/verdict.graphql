@@ -2,6 +2,7 @@ query Verdict($input: VerdictQueryInput!) {
   verdict(input: $input) {
     id
     created
+    modified
     appealDate
     appealDecision
     serviceRequirement
