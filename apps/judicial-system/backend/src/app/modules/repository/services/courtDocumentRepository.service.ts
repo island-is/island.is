@@ -592,9 +592,11 @@ export class CourtDocumentRepositoryService {
             'ASC',
           ],
         ],
-        transaction: transaction,
+        transaction,
       })
+
       const mergedCaseIds = this.getMergedCaseIds(courtSessions)
+
       if (mergedCaseIds.length > 0) {
         await this.courtDocumentModel.update(
           { mergedDocumentOrder: literal('merged_document_order - 1') },
@@ -718,14 +720,13 @@ export class CourtDocumentRepositoryService {
     await this.courtDocumentModel.update(
       { documentOrder: literal(`document_order + ${reservedSlots}`) },
       {
-        where: {
-          caseId,
-          documentOrder: { [Op.gte]: nextOrder },
-        },
-        transaction: transaction,
+        where: { caseId, documentOrder: { [Op.gte]: nextOrder } },
+        transaction,
       },
     )
+
     const mergedCaseIds = this.getMergedCaseIds(courtSessions)
+
     if (mergedCaseIds.length > 0) {
       // Increase order of potential merged documents after the current position
       await this.courtDocumentModel.update(
@@ -736,10 +737,10 @@ export class CourtDocumentRepositoryService {
         },
         {
           where: {
-            caseId: { [Op.in]: mergedCaseIds },
+            caseId: mergedCaseIds,
             mergedDocumentOrder: { [Op.gte]: nextOrder },
           },
-          transaction: transaction,
+          transaction,
         },
       )
     }
