@@ -7,6 +7,7 @@ import {
   FilterMultiChoiceProps,
 } from '@island.is/island-ui/core'
 import {
+  useGetApplicationInstitutionsQuery,
   useGetApplicationsInstitutionAdminQuery,
   useGetApplicationsSuperAdminQuery,
   useGetOrganizationsQuery,
@@ -67,7 +68,13 @@ const CombinedOverview = ({ isSuperAdmin }: CombinedOverviewProps) => {
     ssr: false,
   })
 
+  const {
+    data: organizationDataWithNationalId,
+    loading: loadinOrganizationDataWithNationalId,
+  } = useGetApplicationInstitutionsQuery({ ssr: false })
   const useAdvancedSearch = !!filters.typeIdValue
+
+  console.log('organizationDataWithNationalId', organizationDataWithNationalId)
 
   const commonVariables = {
     input: {
