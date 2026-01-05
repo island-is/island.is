@@ -37,7 +37,7 @@ export const externalData = {
     subTitle: {
       id: 'mcar.application:externalData.transportAuthority.subTitle',
       defaultMessage:
-        'Upplýsingar úr ökutækjaskrá  - Upplýsingar um þínar bifreiðar og stöðu þeirra',
+        'Upplýsingar úr ökutækjaskrá - Upplýsingar um þínar bifreiðar og stöðu þeirra',
       description: 'transport authority sub title',
     },
   }),

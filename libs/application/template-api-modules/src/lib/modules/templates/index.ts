@@ -270,7 +270,6 @@ export const modules = [
   ExemptionForTransportationModule,
   RegistrationOfNewPropertyNumbersModule,
   MileCarModule,
-  MileCarModule,
 ]
 
 export const services = [
