@@ -102,7 +102,8 @@ export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
             getDetails: createGetVehicleDetailsWrapper(getVehicleDetails),
             inputLabelText: selectVehicleMessages.labels.vehicle,
             inputPlaceholderText: selectVehicleMessages.labels.placeholder,
-            alertMessageErrorTitle: selectVehicleMessages.labels.hasErrorTitle,
+            alertMessageErrorTitle:
+              selectVehicleMessages.validation.requiredValidVehicle,
             inputErrorMessage:
               selectVehicleMessages.errors.requiredValidVehicle,
           }}
@@ -118,7 +119,8 @@ export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
             children: undefined,
             itemType: 'VEHICLE',
             itemList: currentVehicleList?.vehicles,
-            alertMessageErrorTitle: selectVehicleMessages.labels.hasErrorTitle,
+            alertMessageErrorTitle:
+              selectVehicleMessages.validation.requiredValidVehicle,
             inputErrorMessage:
               selectVehicleMessages.errors.requiredValidVehicle,
           }}

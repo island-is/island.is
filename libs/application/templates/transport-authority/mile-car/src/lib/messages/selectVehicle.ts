@@ -60,11 +60,6 @@ export const selectVehicle = {
       defaultMessage: 'Ökutæki með plötunúmerið {plate} fannst ekki',
       description: 'vehicle not found message',
     },
-    hasErrorTitle: {
-      id: 'mcar.application:information.labels.pickVehicle.hasErrorTitle',
-      defaultMessage: 'Ekki er hægt að selja þessa bifreið vegna:',
-      description: 'Pick vehicle has an error title',
-    },
     plate: {
       id: 'mcar.application:information.labels.vehicle.plate',
       defaultMessage: 'Númer ökutækis',
