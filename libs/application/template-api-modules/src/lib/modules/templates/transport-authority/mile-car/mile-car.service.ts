@@ -67,15 +67,18 @@ export class MileCarService extends BaseTemplateApiService {
     const resultData = result.data || []
 
     if (totalRecords < 20) {
-      console.log(' in here?', resultData)
-      const vehicles = resultData.map(async (vehicle) => {
-        return {
-          permno: vehicle.permno || undefined,
-          make: vehicle.make || undefined,
-          color: vehicle.colorName || undefined,
-          role: vehicle.role || undefined,
-        }
-      })
+      const vehicles = resultData
+        .filter((x) => !x.vehicleHasMilesOdometer)
+        .map((vehicle) => {
+          return {
+            permno: vehicle.permno || undefined,
+            make: vehicle.make || undefined,
+            color: vehicle.colorName || undefined,
+            role: vehicle.role || undefined,
+            vehicleHasMilesOdometer:
+              vehicle.vehicleHasMilesOdometer || undefined,
+          }
+        })
 
       return {
         totalRecords: totalRecords,

@@ -71,6 +71,13 @@ export const selectVehicle = {
       description: 'Vehicle plate number label',
     },
   }),
+  validation: defineMessages({
+    requiredValidVehicle: {
+      id: 'mcar.application:information.validation.requiredValidVehicle',
+      defaultMessage: 'Þetta ökutæki er nú þegar skráð sem mílubíll',
+      description: 'Error message if the vehicle chosen is already a mile car',
+    },
+  }),
   errors: defineMessages({
     requiredValidVehicle: {
       id: 'mcar.application:error.requiredValidVehicle',

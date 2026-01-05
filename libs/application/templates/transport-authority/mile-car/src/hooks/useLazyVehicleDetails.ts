@@ -6,7 +6,7 @@ import { useLazyQuery } from './useLazyQuery'
 export const useLazyVehicleDetails = () => {
   return useLazyQuery<
     {
-      vehicleInformation: BasicVehicleInformation
+      vehicleBasicInfoByPermno: BasicVehicleInformation
     },
     {
       permno: string
