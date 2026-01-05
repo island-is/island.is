@@ -1,16 +1,21 @@
 import { isDefined } from '@island.is/shared/utils'
 import { LOCALE, EN_LOCALE } from '../../constants'
-import { CreationType, LocalizedContent, LocalizedValue } from './cms.types'
+import {
+  CmsRichTextDocument,
+  CreationType,
+  Localized,
+  RichTextParagraph,
+} from './cms.types'
 
 interface Props {
   listId: string
   properties: {
     internalTitle: string
-    title: LocalizedValue
-    slug: LocalizedValue
+    title: Localized<unknown>
+    slug: Localized<unknown>
     tagIds?: string[]
-    cardIntro?: LocalizedContent
-    content?: LocalizedContent
+    cardIntro?: Localized<Array<RichTextParagraph>>
+    content?: Localized<Array<RichTextParagraph>>
   }
   ownerTags: string[]
 }
@@ -23,38 +28,32 @@ export const generateGenericListItem = ({
   const { internalTitle, title, slug, tagIds, cardIntro, content } = properties
 
   const newEntry: CreationType['fields'] = {
-    genericList: {
-      [LOCALE]: {
-        sys: {
-          id: listId,
-          linkType: 'Entry',
-        },
+    genericList: mapLocalizedValue<unknown>({
+      sys: {
+        id: listId,
+        linkType: 'Entry',
       },
-    },
-    ...(cardIntro && {
-      cardIntro: generateContentFormatting(cardIntro),
     }),
-    internalTitle: {
-      [LOCALE]: internalTitle,
-    },
+    ...(cardIntro && {
+      cardIntro: mapLocalizedRichTextDocument(cardIntro['is-IS'], cardIntro.en),
+    }),
+    internalTitle: mapLocalizedValue(internalTitle),
     ...(tagIds && {
-      filterTags: {
-        [LOCALE]: tagIds.filter(isDefined).map((tagId) => ({
+      filterTags: mapLocalizedValue(
+        tagIds.filter(isDefined).map((tagId) => ({
           sys: {
             id: tagId,
             linkType: 'Entry',
           },
         })),
-      },
+      ),
     }),
     title,
     slug,
     ...(content && {
-      content: generateContentFormatting(content),
+      content: mapLocalizedRichTextDocument(content['is-IS'], content.en),
     }),
-    fullWidthImageInContent: {
-      [LOCALE]: false,
-    },
+    fullWidthImageInContent: mapLocalizedValue(false),
   }
   return {
     fields: newEntry,
@@ -70,29 +69,34 @@ export const generateGenericListItem = ({
   }
 }
 
-const generateContentFormatting = (content: LocalizedContent) => {
+export const mapLocalizedRichTextDocument = (
+  isContent: Array<RichTextParagraph>,
+  enContent?: Array<RichTextParagraph>,
+): Localized<CmsRichTextDocument> => {
   return {
-    [EN_LOCALE]: {
-      data: {},
-      nodeType: 'document',
-      content: content.en.map((paragraph) => ({
+    ...(enContent && {
+      [EN_LOCALE]: {
         data: {},
-        nodeType: 'paragraph',
-        content: paragraph.items.map((item) => ({
+        nodeType: 'document',
+        content: enContent.map((paragraph) => ({
           data: {},
-          marks: item.isBold ? [{ type: 'bold' }] : [],
-          value: item.value,
-          nodeType: 'text',
+          nodeType: 'paragraph',
+          content: paragraph.values.map((item) => ({
+            data: {},
+            marks: item.isBold ? [{ type: 'bold' }] : [],
+            value: item.value,
+            nodeType: 'text',
+          })),
         })),
-      })),
-    },
+      },
+    }),
     [LOCALE]: {
       data: {},
       nodeType: 'document',
-      content: content['is-IS'].map((paragraph) => ({
+      content: isContent.map((paragraph) => ({
         data: {},
         nodeType: 'paragraph',
-        content: paragraph.items.map((item) => ({
+        content: paragraph.values.map((item) => ({
           data: {},
           marks: item.isBold ? [{ type: 'bold' }] : [],
           value: item.value,
@@ -100,5 +104,17 @@ const generateContentFormatting = (content: LocalizedContent) => {
         })),
       })),
     },
+  }
+}
+
+export const mapLocalizedValue = <T>(isValue: T, enValue?: T): Localized<T> => {
+  if (enValue) {
+    return {
+      [LOCALE]: isValue,
+      [EN_LOCALE]: enValue,
+    }
+  }
+  return {
+    [LOCALE]: isValue,
   }
 }

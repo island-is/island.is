@@ -7,21 +7,32 @@ export type EntryInput = Array<{
   referenceId?: string
 }>
 
-export interface LocalizedValue {
-  [EN_LOCALE]: string
-  [LOCALE]: string
+export interface Localized<T> {
+  [EN_LOCALE]?: T
+  [LOCALE]: T
 }
 
-export interface LocalizedContent {
-  [EN_LOCALE]: Array<Paragraph>
-  [LOCALE]: Array<Paragraph>
+export interface CmsRichTextDocument {
+  data: object
+  nodeType: 'document'
+  content: Array<{
+    data: object
+    nodeType: 'paragraph'
+    content: Array<{
+      marks: Array<{
+        type: string
+      }>
+      value: string
+      nodeType: 'text'
+    }>
+  }>
 }
 
-export interface Paragraph {
-  items: Array<ContentItem>
+export interface RichTextParagraph {
+  values: Array<RichTextValue>
 }
 
-export interface ContentItem {
+export interface RichTextValue {
   value: string
   isBold?: boolean
 }

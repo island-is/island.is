@@ -1,6 +1,5 @@
-import { LOCALE, EN_LOCALE } from '../../constants'
-import { CreationType, LocalizedContent } from '../cms/cms.types'
-import { generateGenericListItem } from '../cms/mapper'
+import { CreationType, RichTextParagraph } from '../cms/cms.types'
+import { generateGenericListItem, mapLocalizedValue } from '../cms/mapper'
 import { BuildingDto } from './dto/building.dto'
 import slugify from '@sindresorhus/slugify'
 
@@ -19,95 +18,78 @@ export const mapFSREBuildingToGenericListItem = (
     ownerTags: [OWNER_TAG],
     properties: {
       internalTitle: `FSRE: ${data.address}_${data.id}`,
-      title: {
-        [EN_LOCALE]: data.address,
-        [LOCALE]: data.address,
-      },
-      slug: {
-        [EN_LOCALE]: slug,
-        [LOCALE]: slug,
-      },
+      title: mapLocalizedValue(data.address, data.address),
+      slug: mapLocalizedValue(slug, slug),
       tagIds,
-      cardIntro: generateCardIntro(data),
-      content: generateContent(data),
+      cardIntro: mapLocalizedValue(
+        generateCardIntroForLocale(data, 'is'),
+        generateCardIntroForLocale(data, 'en'),
+      ),
+      content: mapLocalizedValue(
+        generateContentForLocale(data, 'is'),
+        generateContentForLocale(data, 'en'),
+      ),
     },
   })
 }
 
-const generateCardIntro = (data: BuildingDto): LocalizedContent => {
-  const cardIntro: LocalizedContent = {
-    [LOCALE]: [],
-    [EN_LOCALE]: [],
-  }
+const generateCardIntroForLocale = (
+  data: BuildingDto,
+  locale: 'is' | 'en',
+): Array<RichTextParagraph> => {
+  const cardIntro: Array<RichTextParagraph> = []
 
   if (data.municipality) {
-    cardIntro[LOCALE].push({
-      items: [{ value: data.municipality, isBold: true }],
-    })
-    cardIntro[EN_LOCALE].push({
-      items: [{ value: data.municipality, isBold: true }],
+    cardIntro.push({
+      values: [{ value: data.municipality, isBold: true }],
     })
   }
 
   if (data.use) {
-    const textIs = data.squareMeters
-      ? `${data.use} (${data.squareMeters} fm)`
-      : data.use
-    const textEn = data.squareMeters ? `(${data.squareMeters} sq.m)` : undefined
-
-    cardIntro[LOCALE].push({
-      items: [{ value: textIs }],
-    })
-    if (textEn) {
-      cardIntro[EN_LOCALE].push({
-        items: [{ value: textEn }],
+    if (locale === 'is') {
+      const textIs = data.squareMeters
+        ? `${data.use} (${data.squareMeters} fm)`
+        : data.use
+      cardIntro.push({
+        values: [{ value: textIs }],
+      })
+    } else {
+      const textEn = data.squareMeters
+        ? `${data.use} (${data.squareMeters} sq.m)`
+        : data.use
+      cardIntro.push({
+        values: [{ value: textEn }],
       })
     }
   }
 
   if (data.propertyManagement) {
-    cardIntro[LOCALE].push({
-      items: [{ value: `Eignastjórn: ${data.propertyManagement.join(', ')}` }],
-    })
-    cardIntro[EN_LOCALE].push({
-      items: [
-        {
-          value: `Property Management: ${data.propertyManagement.join(', ')}`,
-        },
-      ],
+    const label = locale === 'is' ? 'Eignastjórn: ' : 'Property Management: '
+    cardIntro.push({
+      values: [{ value: `${label}${data.propertyManagement.join(', ')}` }],
     })
   }
 
   return cardIntro
 }
 
-const generateContent = (data: BuildingDto): LocalizedContent => {
-  const content: LocalizedContent = {
-    [LOCALE]: [],
-    [EN_LOCALE]: [],
-  }
+const generateContentForLocale = (
+  data: BuildingDto,
+  locale: 'is' | 'en',
+): Array<RichTextParagraph> => {
+  const content: Array<{ values: Array<{ value: string; isBold?: boolean }> }> =
+    []
 
   if (data.municipality) {
-    content[LOCALE].push({
-      items: [{ value: data.municipality, isBold: true }],
-    })
-    content[EN_LOCALE].push({
-      items: [{ value: data.municipality, isBold: true }],
+    content.push({
+      values: [{ value: data.municipality, isBold: true }],
     })
   }
 
-  content[LOCALE].push({
-    items: [
-      { value: 'Fastanúmer: ' },
-      {
-        value: data.id,
-        isBold: true,
-      },
-    ],
-  })
-  content[EN_LOCALE].push({
-    items: [
-      { value: 'Id number: ' },
+  const idLabel = locale === 'is' ? 'Fastanúmer: ' : 'Id number: '
+  content.push({
+    values: [
+      { value: idLabel },
       {
         value: data.id,
         isBold: true,
@@ -116,66 +98,47 @@ const generateContent = (data: BuildingDto): LocalizedContent => {
   })
 
   if (data.squareMeters) {
-    content[LOCALE].push({
-      items: [
-        { value: 'Stærð (fm): ' },
-        { value: data.squareMeters.toString(), isBold: true },
-      ],
-    })
-    content[EN_LOCALE].push({
-      items: [
-        { value: 'Area (sq.m): ' },
+    const areaLabel = locale === 'is' ? 'Stærð (fm): ' : 'Area (sq.m): '
+    content.push({
+      values: [
+        { value: areaLabel },
         { value: data.squareMeters.toString(), isBold: true },
       ],
     })
   }
 
   if (data.built) {
-    content[LOCALE].push({
-      items: [{ value: 'Byggingarár: ' }, { value: data.built, isBold: true }],
-    })
-    content[EN_LOCALE].push({
-      items: [
-        { value: 'Year of construction: ' },
-        { value: data.built, isBold: true },
-      ],
+    const builtLabel =
+      locale === 'is' ? 'Byggingarár: ' : 'Year of construction: '
+    content.push({
+      values: [{ value: builtLabel }, { value: data.built, isBold: true }],
     })
   }
 
   if (data.use) {
-    content[LOCALE].push({
-      items: [{ value: 'Starfssemi: ' }, { value: data.use, isBold: true }],
-    })
-    content[EN_LOCALE].push({
-      items: [{ value: 'Function: ' }, { value: data.use, isBold: true }],
+    const useLabel = locale === 'is' ? 'Starfssemi: ' : 'Function: '
+    content.push({
+      values: [{ value: useLabel }, { value: data.use, isBold: true }],
     })
   }
 
   if (data.propertyManagement) {
-    content[LOCALE].push({
-      items: [
-        { value: 'Eignastjórn: ' },
-        { value: data.propertyManagement.join(', '), isBold: true },
-      ],
-    })
-    content[EN_LOCALE].push({
-      items: [
-        { value: 'Property management: ' },
+    const propLabel =
+      locale === 'is' ? 'Eignastjórn: ' : 'Property management: '
+    content.push({
+      values: [
+        { value: propLabel },
         { value: data.propertyManagement.join(', '), isBold: true },
       ],
     })
   }
 
   if (data.accountManagement) {
-    content[LOCALE].push({
-      items: [
-        { value: 'Viðskiptastjórn: ' },
-        { value: data.accountManagement.join(', '), isBold: true },
-      ],
-    })
-    content[EN_LOCALE].push({
-      items: [
-        { value: 'Account management: ' },
+    const accountLabel =
+      locale === 'is' ? 'Viðskiptastjórn: ' : 'Account management: '
+    content.push({
+      values: [
+        { value: accountLabel },
         { value: data.accountManagement.join(', '), isBold: true },
       ],
     })
