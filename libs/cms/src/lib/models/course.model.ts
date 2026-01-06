@@ -5,6 +5,7 @@ import { mapDocument, SliceUnion } from '../unions/slice.union'
 import { GenericTag, mapGenericTag } from './genericTag.model'
 import { mapPrice, Price } from './price.model'
 import { GetCoursesInput } from '../dto/getCourses.input'
+import { GetCourseSelectOptionsInput } from '../dto/getCourseSelectOptions.input'
 
 @ObjectType()
 class CourseInstanceTimeDuration {
@@ -121,4 +122,25 @@ class CourseCategory {
 export class CourseCategoriesResponse {
   @CacheField(() => [CourseCategory])
   items!: CourseCategory[]
+}
+
+@ObjectType()
+class CourseSelectOption {
+  @Field(() => String)
+  id!: string
+
+  @Field(() => String)
+  title!: string
+}
+
+@ObjectType()
+export class CourseSelectOptionsResponse {
+  @CacheField(() => [CourseSelectOption])
+  items!: CourseSelectOption[]
+
+  @Field(() => Int)
+  total!: number
+
+  @CacheField(() => GetCourseSelectOptionsInput)
+  input!: GetCourseSelectOptionsInput
 }
