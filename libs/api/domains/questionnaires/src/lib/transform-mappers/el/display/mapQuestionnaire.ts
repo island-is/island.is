@@ -14,10 +14,11 @@ import {
 import { mapDraftRepliesToAnswers } from '../draft/mapToDraft'
 import { HealthDirectorateQuestionDto } from '../types'
 import { mapGroupToSection } from './mapSection'
+import { FormatMessage } from '@island.is/cms-translations'
 
 export const mapELQuestionnaire = (
   q: QuestionnaireDetailDto | QuestionnaireBaseDto,
-  locale: 'is' | 'en',
+  formatMessage: FormatMessage,
 ): Questionnaire => {
   const isDetailed = 'groups' in q && 'triggers' in q
   let allQuestions: HealthDirectorateQuestionDto[] = []
@@ -62,7 +63,7 @@ export const mapELQuestionnaire = (
       : undefined,
     sections: isDetailed
       ? q.groups.map((g) =>
-          mapGroupToSection(g, allQuestions, locale, q.triggers),
+          mapGroupToSection(g, allQuestions, formatMessage, q.triggers),
         )
       : undefined,
     draftAnswers,

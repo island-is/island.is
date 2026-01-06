@@ -17,6 +17,7 @@ import {
   LshClientService,
   Questionnaire as LSHQuestionnaireType,
 } from '@island.is/clients/lsh'
+import { IntlService } from '@island.is/cms-translations'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { AnsweredQuestionnaires } from '../models/answeredQuestion.model'
 import { Questionnaire } from '../models/questionnaire.model'
@@ -30,14 +31,17 @@ import { mapToElAnswer } from './transform-mappers/el/answer/mapToELAnswer'
 import { mapELQuestionnaire } from './transform-mappers/el/display/mapQuestionnaire'
 import { mapToLshAnswer } from './transform-mappers/lsh/answer/mapToLSHAnswer'
 import { mapLshQuestionnaire } from './transform-mappers/lsh/display/mapQuestionnaire'
+import { NAMESPACE } from './utils/constants'
+import { m } from './utils/messages'
 
 @Injectable()
 export class QuestionnairesService {
   constructor(
-    private readonly api: HealthDirectorateHealthService,
-    private readonly lshApi: LshClientService,
+    private api: HealthDirectorateHealthService,
+    private lshApi: LshClientService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
+    private readonly intlService: IntlService,
   ) {}
 
   async getQuestionnaire(
@@ -68,7 +72,7 @@ export class QuestionnairesService {
         const lshQuestionnaire: LSHQuestionnaireType | null =
           lshQuestionnaires?.find((q) => q.gUID === input.id) || null
 
-        return this.getLSHQuestionnaire(locale, lshQuestionnaire)
+        return await this.getLSHQuestionnaire(locale, lshQuestionnaire)
       }
     } catch (e) {
       this.logger.warn('Error fetching LSH questionnaire', e)
@@ -125,6 +129,10 @@ export class QuestionnairesService {
     questionnaireId: string,
     submissionId: string,
   ): Promise<AnsweredQuestionnaires | null> {
+    const { formatMessage } = await this.intlService.useIntl(
+      [NAMESPACE],
+      locale,
+    )
     try {
       const ELdata = await this.api.getQuestionnaireAnswered(
         user,
@@ -143,8 +151,7 @@ export class QuestionnairesService {
 
       const submission = {
         id: questionnaireId,
-        title:
-          ELdata.title || locale === 'is' ? 'Spurningalisti' : 'Questionnaire',
+        title: ELdata.title || formatMessage(m.questionnaireWithoutTitle),
         isDraft: ELdata.submission.isDraft || false,
         description: ELdata.message || undefined,
         date:
@@ -192,6 +199,10 @@ export class QuestionnairesService {
     locale: Locale,
     input: QuestionnaireAnsweredInput,
   ): Promise<AnsweredQuestionnaires | null> {
+    const { formatMessage } = await this.intlService.useIntl(
+      [NAMESPACE],
+      locale,
+    )
     const LSHdata = await this.lshApi.getAnsweredQuestionnaire(
       user,
       locale,
@@ -211,9 +222,7 @@ export class QuestionnairesService {
     const data = {
       id: LSHdata.gUID || 'undefined-id',
       title:
-        LSHquestionnaire?.header || locale === 'is'
-          ? 'Spurningalisti'
-          : 'Questionnaire',
+        LSHquestionnaire?.header || formatMessage(m.questionnaireWithoutTitle),
       description: LSHquestionnaire?.description || undefined,
       date: this.formatDate(LSHdata.answerDateTime),
       answers: LSHdata.answers?.map((answer) => {
@@ -311,7 +320,10 @@ export class QuestionnairesService {
     locale: Locale,
   ): Promise<QuestionnairesList | null> {
     let ELquestionnaires: QuestionnairesList = { questionnaires: [] }
-
+    const { formatMessage } = await this.intlService.useIntl(
+      [NAMESPACE],
+      locale,
+    )
     try {
       const data: QuestionnaireBaseDto[] | null =
         await this.api.getQuestionnaires(user, locale)
@@ -320,7 +332,7 @@ export class QuestionnairesService {
           (data ?? []).map((q) => {
             return {
               id: q.questionnaireId,
-              title: this.getDefaultQuestionnaireTitle(locale, q.title),
+              title: q.title ?? formatMessage(m.questionnaireWithoutTitle),
               description: q.message ?? undefined,
               sentDate: q.createdDate?.toDateString() || '',
               organization: QuestionnairesOrganizationEnum.EL,
@@ -351,7 +363,9 @@ export class QuestionnairesService {
             .map((item: LSHQuestionnaireType) => {
               return {
                 id: item.gUID || 'undefined-id',
-                title: item.caption ? item.caption : 'Spurningalisti',
+                title: item.caption
+                  ? item.caption
+                  : formatMessage(m.questionnaireWithoutTitle),
                 description: item.description ?? undefined,
                 sentDate: item.validFromDateTime.toISOString(),
                 organization: QuestionnairesOrganizationEnum.LSH,
@@ -391,18 +405,23 @@ export class QuestionnairesService {
     }
   }
 
-  private getELQuestionnaire(
+  private async getELQuestionnaire(
     locale: Locale,
     withQuestions?: boolean,
     data?: QuestionnaireDetailDto | null,
-  ): Questionnaire | null {
+  ): Promise<Questionnaire | null> {
     if (!data) return null
+    const { formatMessage } = await this.intlService.useIntl(
+      [NAMESPACE],
+      locale,
+    )
+
     return withQuestions
-      ? mapELQuestionnaire(data, locale)
+      ? mapELQuestionnaire(data, formatMessage)
       : {
           baseInformation: {
             id: data.questionnaireId,
-            title: this.getDefaultQuestionnaireTitle(locale, data.title),
+            title: data.title ?? formatMessage(m.questionnaireWithoutTitle),
             sentDate: data.lastSubmitted?.toDateString() || '',
             status: data.hasDraft
               ? QuestionnairesStatusEnum.draft
@@ -425,15 +444,20 @@ export class QuestionnairesService {
         }
   }
 
-  private getLSHQuestionnaire(
+  private async getLSHQuestionnaire(
     locale: Locale,
     data?: LSHQuestionnaireType | null | undefined,
-  ): Questionnaire | null {
+  ): Promise<Questionnaire | null> {
     if (!data) return null
+    const { formatMessage } = await this.intlService.useIntl(
+      [NAMESPACE],
+      locale,
+    )
+
     return {
       baseInformation: {
         id: data.gUID || 'undefined-id',
-        title: this.getDefaultQuestionnaireTitle(locale, data.caption),
+        title: data.caption ?? formatMessage(m.questionnaireWithoutTitle),
         status: data.answerDateTime
           ? QuestionnairesStatusEnum.answered
           : new Date(data.validToDateTime) < new Date()
@@ -469,18 +493,5 @@ export class QuestionnairesService {
       return QuestionnairesOrganizationEnum.EL
     }
     return null
-  }
-
-  private getDefaultQuestionnaireTitle(
-    locale: Locale,
-    preferredTitle?: string | null,
-  ): string {
-    if (preferredTitle) {
-      return preferredTitle
-    }
-
-    return locale === 'is'
-      ? 'Ónefndur spurningalisti'
-      : 'Untitled questionnaire'
   }
 }

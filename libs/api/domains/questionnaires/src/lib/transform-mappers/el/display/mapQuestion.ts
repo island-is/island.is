@@ -5,11 +5,13 @@ import {
   HealthDirectorateQuestionTriggers,
 } from '../types'
 import { mapTriggers } from './mapTriggers'
+import { FormatMessage } from '@island.is/cms-translations'
+import { m } from '../../../utils/messages'
 
 export const mapItemToQuestion = (
   item: HealthDirectorateQuestionDto,
   allQuestions: HealthDirectorateQuestionDto[],
-  locale: 'is' | 'en',
+  formatMessage: FormatMessage,
   triggers?: Record<string, HealthDirectorateQuestionTriggers[]>,
   groupId?: string,
 ): Question => {
@@ -25,8 +27,8 @@ export const mapItemToQuestion = (
   if (item.type === 'bool') {
     // Boolean questions get Yes/No options
     options = [
-      { label: locale === 'is' ? 'Já' : 'Yes', value: 'true', id: 'true' },
-      { label: locale === 'is' ? 'Nei' : 'No', value: 'false', id: 'false' },
+      { label: formatMessage(m.yes), value: 'true', id: 'true' },
+      { label: formatMessage(m.no), value: 'false', id: 'false' },
     ]
   } else if ('values' in item && item.values) {
     // List questions use provided values

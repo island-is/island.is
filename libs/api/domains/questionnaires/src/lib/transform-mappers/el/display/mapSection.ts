@@ -6,11 +6,12 @@ import {
 import { QuestionnaireSection } from '../../../../models/questionnaire.model'
 import { mapGroupTriggers } from './mapGroupTriggers'
 import { mapItemToQuestion } from './mapQuestion'
+import { FormatMessage } from '@island.is/cms-translations'
 
 export const mapGroupToSection = (
   group: QuestionGroupDto,
   allQuestions: HealthDirectorateQuestionDto[],
-  locale: 'is' | 'en',
+  formatMessage: FormatMessage,
   triggers?: Record<string, HealthDirectorateQuestionTriggers[]>,
 ): QuestionnaireSection => {
   // Check if this group has any triggers targeting it
@@ -22,7 +23,7 @@ export const mapGroupToSection = (
     id: group.id,
     title: group.title,
     questions: group.items.map((item) =>
-      mapItemToQuestion(item, allQuestions, locale, triggers, group.id),
+      mapItemToQuestion(item, allQuestions, formatMessage, triggers, group.id),
     ),
     ...groupTriggerDeps,
   }
