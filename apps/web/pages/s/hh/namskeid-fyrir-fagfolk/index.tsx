@@ -47,11 +47,6 @@ Component.getProps = async (context) => {
   const namespace = extractNamespaceFromOrganization(
     getOrganizationPage?.organization,
   )
-  console.log('namespace', {
-    namespace,
-    test:
-      namespace?.idOfCourseListPageForProfessionals ?? '147YftiWFQsBcbUFFe2rj1',
-  })
 
   const modifiedContext = {
     ...context,

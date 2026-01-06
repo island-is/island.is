@@ -48,11 +48,6 @@ Component.getProps = async (context) => {
     getOrganizationPage?.organization,
   )
 
-  console.log('namespace', {
-    namespace,
-    test: namespace?.idOfCourseListPageForThePublic ?? '6pkONOn80xzGTGij6qtjai',
-  })
-
   const modifiedContext = {
     ...context,
     organizationPage: getOrganizationPage,
