@@ -11,7 +11,7 @@ import {
   ApplicationStateSchema,
   Application,
   defineTemplateApi,
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   UserProfileApi,
   DefaultEvents,
   ApplicationConfigurations,
@@ -141,7 +141,7 @@ const EstateTemplate: ApplicationTemplate<
               actions: [{ event: 'SUBMIT', name: '', type: 'primary' }],
               write: 'all',
               delete: true,
-              api: [NationalRegistryUserApi, UserProfileApi, EstateApi],
+              api: [NationalRegistryV3UserApi, UserProfileApi, EstateApi],
             },
             {
               id: Roles.APPLICANT_OFFICIAL_DIVISION,
@@ -152,7 +152,7 @@ const EstateTemplate: ApplicationTemplate<
               actions: [{ event: 'SUBMIT', name: '', type: 'primary' }],
               write: 'all',
               delete: true,
-              api: [NationalRegistryUserApi, UserProfileApi, EstateApi],
+              api: [NationalRegistryV3UserApi, UserProfileApi, EstateApi],
             },
             {
               id: Roles.APPLICANT_PERMIT_FOR_UNDIVIDED_ESTATE,
@@ -167,7 +167,7 @@ const EstateTemplate: ApplicationTemplate<
               write: 'all',
               delete: true,
               api: [
-                NationalRegistryUserApi,
+                NationalRegistryV3UserApi,
                 UserProfileApi,
                 EstateApi,
                 SyslumadurPaymentCatalogApi,
@@ -187,7 +187,7 @@ const EstateTemplate: ApplicationTemplate<
               write: 'all',
               delete: true,
               api: [
-                NationalRegistryUserApi,
+                NationalRegistryV3UserApi,
                 UserProfileApi,
                 EstateApi,
                 SyslumadurPaymentCatalogApi,

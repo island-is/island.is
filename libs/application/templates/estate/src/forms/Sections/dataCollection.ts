@@ -4,7 +4,7 @@ import {
   buildSection,
 } from '@island.is/application/core'
 import {
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   UserProfileApi,
 } from '@island.is/application/types'
 import { EstateApi } from '../../dataProviders'
@@ -38,7 +38,7 @@ export const dataCollection = buildSection({
                 m.providerSubtitleDivisionOfEstateByHeirs,
         }),
         buildDataProviderItem({
-          provider: NationalRegistryUserApi,
+          provider: NationalRegistryV3UserApi,
           title: m.personalInfoProviderTitle,
           subTitle: ({ answers }) =>
             answers.selectedEstate === EstateTypes.estateWithoutAssets
