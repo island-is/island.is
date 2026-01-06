@@ -46,7 +46,7 @@ export const GET_COURSE_BY_ID_QUERY = gql`
     getCourseById(input: $input) {
       id
       title
-      organizationId
+      courseListPageId
       description {
         ...AllSlices
       }

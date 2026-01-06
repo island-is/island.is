@@ -278,6 +278,16 @@ CourseDetails.getProps = async ({
     throw new CustomNextError(404, 'Course not found')
   }
 
+  if (
+    Boolean(getCourseById.courseListPageId) &&
+    getCourseById.courseListPageId !== courseListPageId
+  ) {
+    throw new CustomNextError(
+      404,
+      'Course belongs to a different course list page',
+    )
+  }
+
   return {
     organizationPage,
     course: getCourseById,
