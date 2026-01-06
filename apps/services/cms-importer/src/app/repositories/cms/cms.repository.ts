@@ -7,7 +7,11 @@ import {
   KeyValueMap,
 } from 'contentful-management'
 import { ManagementClientService } from './managementClient/managementClient.service'
-import { GENERIC_LIST_ITEM_CONTENT_TYPE, LOCALES_ARRAY } from '../../constants'
+import {
+  GENERIC_LIST_ITEM_CONTENT_TYPE,
+  LOCALE,
+  LOCALES_ARRAY,
+} from '../../constants'
 import { logger } from '@island.is/logging'
 import {
   CmsEntryOpResult,
@@ -133,7 +137,6 @@ export class CmsRepository {
   ): Promise<Entry | undefined> => {
     logger.info('creating single entry...')
 
-    logger.info('fields', Object.keys(input.fields))
     const fields = input.fields
 
     for (const inputFieldKey of Object.keys(fields)) {
@@ -170,6 +173,7 @@ export class CmsRepository {
   updateEntries = async (
     entries: Array<EntryUpdateDto>,
     contentType: ContentTypeOptions,
+    abortIfUnpublished = true,
   ): Promise<Array<CmsEntryOpResult>> => {
     if (!entries.length) {
       logger.warn('no entries to update')
@@ -221,6 +225,7 @@ export class CmsRepository {
           contentTypeResponse.data?.fields,
           entry?.inputFields,
           entry?.referenceId,
+          abortIfUnpublished,
         )
       })
       .filter(isDefined)
@@ -243,8 +248,12 @@ export class CmsRepository {
     contentFields: Array<ContentFields<KeyValueMap>>,
     inputFields: Localized<Array<{ key: string; value: unknown }>>,
     referenceId?: string,
+    abortIfUnpublished = true,
   ): Promise<Entry | undefined> => {
-    if (entry.isUpdated()) {
+    logger.info('updating a single entry', {
+      abortIfUnpublished,
+    })
+    if (abortIfUnpublished && entry.isUpdated()) {
       //Invalid state, log and skip
       logger.warn(`Entry has unpublished changes, please publish!`, {
         id: entry.sys.id,

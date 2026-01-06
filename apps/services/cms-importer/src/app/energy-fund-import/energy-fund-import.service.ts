@@ -38,7 +38,6 @@ export class EnergyFundImportService {
 
     //first we create the entries
     await this.createEntries(grants)
-
     //then we update the entries
     await this.updateEntries(grants)
   }
@@ -81,18 +80,8 @@ export class EnergyFundImportService {
       return
     }
 
-    const responses = await this.cmsRepository.createEntries(
-      newEntries,
-      'grant',
-    )
-
-    responses.forEach((response) => {
-      if (response.status === 'success') {
-        logger.info('createdEntry', response.entry)
-      } else {
-        logger.info('entry creation failed', response.error)
-      }
-    })
+    await this.cmsRepository.createEntries(newEntries, 'genericListItem')
+    logger.info('entries creation finished')
   }
 
   private async updateEntries(grants: EnergyGrantCollectionDto): Promise<void> {
@@ -117,17 +106,12 @@ export class EnergyFundImportService {
       return
     }
 
-    const responses = await this.cmsRepository.updateEntries(
+    await this.cmsRepository.updateEntries(
       entriesToUpdate,
       'genericListItem',
+      false,
     )
 
-    responses.forEach((response) => {
-      if (response.status === 'success') {
-        logger.info('updatedEntry', response.entry)
-      } else {
-        logger.info('entry update failed', response.error)
-      }
-    })
+    logger.info('entries update finished')
   }
 }
