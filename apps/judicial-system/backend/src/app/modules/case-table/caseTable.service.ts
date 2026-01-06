@@ -263,16 +263,10 @@ export class CaseTableService {
           const jsonCase = c.toJSON()
 
           if (c.defendants && c.defendants.length > 0) {
-            return c.defendants.map(
-              (d) =>
-                ({
-                  ...jsonCase,
-                  defendants: [d],
-                } as Case),
-            )
+            return c.defendants.map((d) => ({ ...jsonCase, defendants: [d] }))
           }
 
-          return jsonCase as Case
+          return jsonCase
         })
       : cases
 
