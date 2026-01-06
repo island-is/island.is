@@ -56,6 +56,7 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
     isMileCar,
     energyFundsMessages,
     clearOnChange,
+    clearOnChangeDefaultValue,
   } = field
 
   const [plate, setPlate] = useState<string>(
@@ -291,6 +292,7 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
             }}
             maxLength={isMachine ? 7 : 5}
             clearOnChange={clearOnChange}
+            clearOnChangeDefaultValue={clearOnChangeDefaultValue}
           />
         </Box>
         <Button onClick={findVehicleByPlate} disabled={buttonDisabled}>

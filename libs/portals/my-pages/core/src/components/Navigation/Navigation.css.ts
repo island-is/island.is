@@ -71,9 +71,14 @@ export const menuBtn = style({
   outline: 'none',
   borderRadius: 8,
   padding: `${theme.spacing['p2']}px ${theme.spacing[2]}px`,
-  transition: 'box-shadow .25s, color .25s, background-color .25s',
+  transition:
+    'box-shadow 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94), color 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94), background-color 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+  willChange: 'transform, box-shadow',
   ':focus-visible': {
     boxShadow: `0 0 0 3px ${theme.color.blue400}`,
+  },
+  ':active': {
+    transform: 'scale(0.98)', // Subtle press feedback
   },
 })
 
@@ -173,14 +178,16 @@ export const scrolledMenu = style({
   position: 'relative',
   marginLeft: 0,
   marginRight: 0,
-  transition: 'margin-left 200ms ease, margin-right 200ms ease',
+  transition:
+    'margin-left 100ms cubic-bezier(0.25, 0.46, 0.45, 0.94), margin-right 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94), border-radius 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94)',
 })
 
 export const scrolledMenuVisible = style({
   borderRadius: 'unset',
   marginLeft: -theme.spacing[2],
   marginRight: -theme.spacing[2],
-  transition: 'margin-left 200ms ease, margin-right 200ms ease',
+  transition:
+    'margin-left 100ms cubic-bezier(0.25, 0.46, 0.45, 0.94), margin-right 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94), border-radius 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94)',
 })
 
 export const mobileNav = style({

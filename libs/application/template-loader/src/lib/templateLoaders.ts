@@ -277,6 +277,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     ),
   [ApplicationTypes.MILE_CAR]: () =>
     import('@island.is/application/templates/transport-authority/mile-car'),
+  [ApplicationTypes.HEILSUGAESLA_HOFUDBORDARSVAEDISINS_NAMSKEID]: () =>
+    import('@island.is/application/templates/hh/courses'),
 }
 
 export default templates

@@ -6,19 +6,21 @@ import {
 import { Box, Stack, Tabs, TagVariant } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
-  ActionCard,
   CardLoader,
   IntroWrapper,
   m as coreMessages,
+  ActionCard,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { m } from '../../lib/messages'
 import { getPathFromType } from '../../utils/mapPaths'
 import { useGenericLicenseCollectionQuery } from './LicensesOverview.generated'
+import { useNavigate } from 'react-router-dom'
 
 export const LicensesOverview = () => {
   useNamespaces('sp.license')
   const { formatMessage, lang } = useLocale()
+  const navigate = useNavigate()
 
   const { data, loading, error } = useGenericLicenseCollectionQuery({
     variables: {
@@ -43,6 +45,7 @@ export const LicensesOverview = () => {
   const generateLicense = (userLicense: GenericUserLicense, index: number) => {
     const isPayloadEmpty = (userLicense.payload?.data.length || 0) <= 0
     return (
+      // TODO: Replace with Island UI Card when it supports images
       <ActionCard
         key={`license-card-${userLicense.payload?.metadata.licenseId}-${index}`}
         image={{
@@ -57,11 +60,13 @@ export const LicensesOverview = () => {
           label:
             userLicense.payload?.metadata.ctaLink?.label ??
             formatMessage(m.seeDetails),
-          url:
-            userLicense.payload?.metadata.ctaLink?.value ??
-            `${getPathFromType(userLicense.license.type)}/${
-              userLicense.payload?.metadata.licenseId
-            } `,
+          onClick: () =>
+            navigate(
+              userLicense.payload?.metadata.ctaLink?.value ??
+                `${getPathFromType(userLicense.license.type)}/${
+                  userLicense.payload?.metadata.licenseId
+                } `,
+            ),
           variant: 'text',
         }}
         backgroundColor={userLicense.payload?.data?.length ? 'white' : 'blue'}

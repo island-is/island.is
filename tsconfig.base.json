@@ -449,6 +449,9 @@
       "@island.is/application/templates/healthcare-work-permit": [
         "libs/application/templates/healthcare-work-permit/src/index.ts"
       ],
+      "@island.is/application/templates/hh/courses": [
+        "libs/application/templates/hh/courses/src/index.ts"
+      ],
       "@island.is/application/templates/hms/fire-compensation-appraisal": [
         "libs/application/templates/hms/fire-compensation-appraisal/src/index.ts"
       ],
