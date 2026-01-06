@@ -12,7 +12,7 @@ import { TableRepeaterFormField } from '@island.is/application/ui-fields'
 import { format as formatKennitala } from 'kennitala'
 import React, { FC } from 'react'
 import { useFriggOptions } from '../../hooks/useFriggOptions'
-import { newPrimarySchoolMessages } from '../../lib/messages'
+import { childrenNGuardiansMessages, sharedMessages } from '../../lib/messages'
 import { OptionsType } from '../../utils/constants'
 import {
   getOtherGuardian,
@@ -40,17 +40,14 @@ const RelativesTableRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         children: undefined,
         id,
         title,
-        formTitle:
-          newPrimarySchoolMessages.childrenNGuardians
-            .relativesRegistrationTitle,
-        addItemButtonText:
-          newPrimarySchoolMessages.childrenNGuardians.relativesAddRelative,
+        formTitle: childrenNGuardiansMessages.relatives.registrationTitle,
+        addItemButtonText: childrenNGuardiansMessages.relatives.addRelative,
         saveItemButtonText:
-          newPrimarySchoolMessages.childrenNGuardians.relativesRegisterRelative,
+          childrenNGuardiansMessages.relatives.registerRelative,
         removeButtonTooltipText:
-          newPrimarySchoolMessages.childrenNGuardians.relativesDeleteRelative,
+          childrenNGuardiansMessages.relatives.deleteRelative,
         editButtonTooltipText:
-          newPrimarySchoolMessages.childrenNGuardians.relativesEditRelative,
+          childrenNGuardiansMessages.relatives.editRelative,
         marginTop: 0,
         maxRows: 4,
         editField: true,
@@ -58,11 +55,11 @@ const RelativesTableRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           nationalIdWithName: {
             component: 'nationalIdWithName',
             searchPersons: true,
-            customNameLabel: newPrimarySchoolMessages.shared.fullName,
+            customNameLabel: sharedMessages.fullName,
           },
           phoneNumber: {
             component: 'input',
-            label: newPrimarySchoolMessages.shared.phoneNumber,
+            label: sharedMessages.phoneNumber,
             width: 'half',
             type: 'tel',
             format: '###-####',
@@ -71,9 +68,9 @@ const RelativesTableRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           },
           relation: {
             component: 'select',
-            label: newPrimarySchoolMessages.shared.relation,
+            label: sharedMessages.relation,
             width: 'half',
-            placeholder: newPrimarySchoolMessages.shared.relationPlaceholder,
+            placeholder: sharedMessages.relationPlaceholder,
             options: relationFriggOptions,
             dataTestId: 'relative-relation',
           },
@@ -101,10 +98,10 @@ const RelativesTableRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                 : '',
           },
           header: [
-            newPrimarySchoolMessages.shared.fullName,
-            newPrimarySchoolMessages.shared.nationalId,
-            newPrimarySchoolMessages.shared.phoneNumber,
-            newPrimarySchoolMessages.shared.relation,
+            sharedMessages.fullName,
+            sharedMessages.nationalId,
+            sharedMessages.phoneNumber,
+            sharedMessages.relation,
           ],
         },
       }}

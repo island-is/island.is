@@ -112,7 +112,9 @@ const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
           },
           {
             title: formatMessage(m.bullets.technologyDevelopmentFund),
-            href: searchUrl + '?query=tækniþróunar',
+            href: `${searchUrl}?query=${formatMessage(
+              m.bullets.technologyDevelopment,
+            ).toLowerCase()}`,
           },
           {
             title: formatMessage(m.bullets.financing),
@@ -120,7 +122,9 @@ const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
           },
           {
             title: formatMessage(m.bullets.companies),
-            href: searchUrl + '?query=fyrirtæki',
+            href: `${searchUrl}?query=${formatMessage(
+              m.bullets.companies,
+            ).toLowerCase()}`,
           },
         ]}
         breadcrumbs={

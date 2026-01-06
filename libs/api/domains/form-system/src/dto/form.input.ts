@@ -1,4 +1,3 @@
-import { FormUrlDto } from '@island.is/form-system/shared'
 import { Field, InputType, Int } from '@nestjs/graphql'
 import { FormApplicantInput } from './applicant.input'
 import {
@@ -41,27 +40,6 @@ export class GetFormInput {
 export class GetFormsInput {
   @Field(() => String, { nullable: true })
   nationalId?: string
-}
-
-@InputType('FormSystemOrganizationUrlInput')
-export class OrganizationUrlInput {
-  @Field(() => String, { nullable: true })
-  id?: string
-
-  @Field(() => String, { nullable: true })
-  url?: string
-
-  @Field(() => Boolean, { nullable: true })
-  isXroad?: boolean
-
-  @Field(() => Boolean, { nullable: true })
-  isTest?: boolean
-
-  @Field(() => String, { nullable: true })
-  type?: string
-
-  @Field(() => String, { nullable: true })
-  method?: string
 }
 
 @InputType('FormSystemUpdateFormDtoInput')
@@ -185,9 +163,6 @@ export class FormInput {
 
   @Field(() => String, { nullable: true })
   status?: string
-
-  @Field(() => [FormUrlDto], { nullable: 'itemsAndList' })
-  urls?: FormUrlDto[]
 }
 
 @InputType('FormSystemFormResponseInput')
@@ -209,7 +184,4 @@ export class FormResponseInput {
 
   @Field(() => [FormInput], { nullable: 'itemsAndList' })
   forms?: FormInput[]
-
-  @Field(() => [OrganizationUrlInput], { nullable: 'itemsAndList' })
-  urls?: OrganizationUrlInput[]
 }

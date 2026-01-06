@@ -5,20 +5,20 @@ import {
   buildRadioField,
   buildSubSection,
 } from '@island.is/application/core'
-import { newPrimarySchoolMessages } from '../../../lib/messages'
+import { differentNeedsMessages } from '../../../lib/messages'
 import { hasOtherPayer, shouldShowPage } from '../../../utils/conditionUtils'
 import { ApplicationFeatureKey, PayerOption } from '../../../utils/constants'
 
 export const payerSubSection = buildSubSection({
   id: 'payerSubSection',
-  title: newPrimarySchoolMessages.differentNeeds.payerSubSectionTitle,
+  title: differentNeedsMessages.payer.subSectionTitle,
   condition: (answers, externalData) =>
     shouldShowPage(answers, externalData, ApplicationFeatureKey.PAYMENT_INFO),
   children: [
     buildMultiField({
       id: 'payer',
-      title: newPrimarySchoolMessages.differentNeeds.payerTitle,
-      description: newPrimarySchoolMessages.differentNeeds.payerDescription,
+      title: differentNeedsMessages.payer.title,
+      description: differentNeedsMessages.payer.description,
       children: [
         buildRadioField({
           id: 'payer.option',
@@ -27,13 +27,12 @@ export const payerSubSection = buildSubSection({
           space: 0,
           options: [
             {
-              label:
-                newPrimarySchoolMessages.differentNeeds.payerOptionApplicant,
+              label: differentNeedsMessages.payer.optionApplicant,
               dataTestId: 'payer-option-applicant',
               value: PayerOption.APPLICANT,
             },
             {
-              label: newPrimarySchoolMessages.differentNeeds.payerOptionOther,
+              label: differentNeedsMessages.payer.optionOther,
               dataTestId: 'payer-option-other',
               value: PayerOption.OTHER,
             },
@@ -41,9 +40,8 @@ export const payerSubSection = buildSubSection({
         }),
         buildDescriptionField({
           id: 'payer.other.description',
-          title: newPrimarySchoolMessages.differentNeeds.payerInformation,
-          description:
-            newPrimarySchoolMessages.differentNeeds.payerInformationDescription,
+          title: differentNeedsMessages.payer.information,
+          description: differentNeedsMessages.payer.informationDescription,
           titleVariant: 'h4',
           space: 4,
           condition: (answers) => hasOtherPayer(answers),

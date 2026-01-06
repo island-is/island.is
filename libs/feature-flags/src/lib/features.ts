@@ -63,6 +63,7 @@ export enum Features {
   healthPaymentOverview = 'isHealthPaymentsDocumentOverviewEnabled',
   isIDSAdminSsoSettingEnabled = 'isIDSAdminSsoSettingEnabled',
   isIdentityDocumentEnabled = 'isIdentityDocumentEnabled',
+  isServicePortalHealthAppointmentsPageEnabled = 'isServicePortalHealthAppointmentsPageEnabled',
 
   //New License service fetch enabled
   licensesV2 = 'isLicensesV2Enabled',
@@ -136,6 +137,8 @@ export enum Features {
   digitalTachographDriversCardAllowFakeData = 'digitalTachographDriversCardAllowFakeData',
 
   isPortalAirDiscountPageDisabled = 'isPortalAirDiscountPageDisabled',
+
+  isHHCourseApplicationEnabled = 'isHHCourseApplicationEnabled',
 }
 
 export enum ServerSideFeature {

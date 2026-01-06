@@ -75,7 +75,7 @@ export const OtherParent = ({
                   parentalLeaveFormMessages.shared.otherParentName,
                 )}
                 value={
-                  (VMSTOtherParent.otherParentName || otherParentName) ?? ''
+                  VMSTOtherParent?.otherParentName ?? otherParentName ?? ''
                 }
               />
             </GridColumn>
@@ -85,11 +85,11 @@ export const OtherParent = ({
                   parentalLeaveFormMessages.shared.otherParentID,
                 )}
                 value={
-                  (VMSTOtherParent.otherParentId
+                  VMSTOtherParent?.otherParentId
                     ? formatKennitala(VMSTOtherParent.otherParentId)
                     : otherParentId
                     ? formatKennitala(otherParentId)
-                    : otherParentId) ?? ''
+                    : ''
                 }
               />
             </GridColumn>
