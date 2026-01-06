@@ -41,8 +41,8 @@ export class QuestionnairesService {
   ) {}
 
   async getQuestionnaire(
-    _user: User,
-    _locale: Locale,
+    user: User,
+    locale: Locale,
     input: GetQuestionnaireInput,
   ): Promise<Questionnaire | null> {
     try {
@@ -51,7 +51,7 @@ export class QuestionnairesService {
         if (input.includeQuestions) {
           // Fetch full questionnaire including sections and questions
           const lshQuestionnaireWithQuestions =
-            await this.lshApi.getQuestionnaire(_user, _locale, input.id)
+            await this.lshApi.getQuestionnaire(user, locale, input.id)
 
           if (!lshQuestionnaireWithQuestions) {
             return null
@@ -62,13 +62,13 @@ export class QuestionnairesService {
 
         // Otherwise fetch the list and select the matching questionnaire header
         const lshQuestionnaires = await this.lshApi.getQuestionnaires(
-          _user,
-          _locale,
+          user,
+          locale,
         )
         const lshQuestionnaire: LSHQuestionnaireType | null =
           lshQuestionnaires?.find((q) => q.gUID === input.id) || null
 
-        return this.getLSHQuestionnaire(_locale, lshQuestionnaire)
+        return this.getLSHQuestionnaire(locale, lshQuestionnaire)
       }
     } catch (e) {
       this.logger.warn('Error fetching LSH questionnaire', e)
@@ -78,9 +78,9 @@ export class QuestionnairesService {
       if (input.organization === QuestionnairesOrganizationEnum.EL) {
         // Fetch questionnaire from EL (Health Directorate)
         const elData: QuestionnaireDetailDto | null =
-          await this.api.getQuestionnaire(_user, _locale, input.id)
+          await this.api.getQuestionnaire(user, locale, input.id)
 
-        return this.getELQuestionnaire(_locale, input.includeQuestions, elData)
+        return this.getELQuestionnaire(locale, input.includeQuestions, elData)
       }
     } catch (e) {
       this.logger.warn('Error fetching EL questionnaire', e)
@@ -89,8 +89,8 @@ export class QuestionnairesService {
   }
 
   async getAnsweredQuestionnaire(
-    _user: User,
-    _locale: Locale,
+    user: User,
+    locale: Locale,
     input: QuestionnaireAnsweredInput,
   ): Promise<AnsweredQuestionnaires | null> {
     const organization = this.normalizeOrganization(input.organization)
@@ -104,15 +104,15 @@ export class QuestionnairesService {
       input.submissionId
     ) {
       return this.getELAnsweredQuestionnaire(
-        _user,
-        _locale,
+        user,
+        locale,
         input.id,
         input.submissionId,
       )
     }
 
     if (organization === QuestionnairesOrganizationEnum.LSH) {
-      return this.getLSHAnsweredQuestionnaire(_user, _locale, input)
+      return this.getLSHAnsweredQuestionnaire(user, locale, input)
     }
 
     return null
@@ -120,15 +120,15 @@ export class QuestionnairesService {
 
   // Build answered questionnaire response for EL (Health Directorate)
   private async getELAnsweredQuestionnaire(
-    _user: User,
-    _locale: Locale,
+    user: User,
+    locale: Locale,
     questionnaireId: string,
     submissionId: string,
   ): Promise<AnsweredQuestionnaires | null> {
     try {
       const ELdata = await this.api.getQuestionnaireAnswered(
-        _user,
-        _locale,
+        user,
+        locale,
         questionnaireId,
         submissionId,
       )
@@ -144,7 +144,7 @@ export class QuestionnairesService {
       const submission = {
         id: questionnaireId,
         title:
-          ELdata.title || _locale === 'is' ? 'Spurningalisti' : 'Questionnaire',
+          ELdata.title || locale === 'is' ? 'Spurningalisti' : 'Questionnaire',
         isDraft: ELdata.submission.isDraft || false,
         description: ELdata.message || undefined,
         date:
@@ -188,19 +188,19 @@ export class QuestionnairesService {
   }
 
   private async getLSHAnsweredQuestionnaire(
-    _user: User,
-    _locale: Locale,
+    user: User,
+    locale: Locale,
     input: QuestionnaireAnsweredInput,
   ): Promise<AnsweredQuestionnaires | null> {
     const LSHdata = await this.lshApi.getAnsweredQuestionnaire(
-      _user,
-      _locale,
+      user,
+      locale,
       input.id,
     )
 
     const LSHquestionnaire = await this.lshApi.getQuestionnaire(
-      _user,
-      _locale,
+      user,
+      locale,
       input.id,
     )
 
@@ -211,7 +211,7 @@ export class QuestionnairesService {
     const data = {
       id: LSHdata.gUID || 'undefined-id',
       title:
-        LSHquestionnaire?.header || _locale === 'is'
+        LSHquestionnaire?.header || locale === 'is'
           ? 'Spurningalisti'
           : 'Questionnaire',
       description: LSHquestionnaire?.description || undefined,
@@ -307,20 +307,20 @@ export class QuestionnairesService {
   }
 
   async getQuestionnaires(
-    _user: User,
-    _locale: Locale,
+    user: User,
+    locale: Locale,
   ): Promise<QuestionnairesList | null> {
     let ELquestionnaires: QuestionnairesList = { questionnaires: [] }
 
     try {
       const data: QuestionnaireBaseDto[] | null =
-        await this.api.getQuestionnaires(_user, _locale)
+        await this.api.getQuestionnaires(user, locale)
       ELquestionnaires = {
         questionnaires:
           (data ?? []).map((q) => {
             return {
               id: q.questionnaireId,
-              title: this.getDefaultQuestionnaireTitle(_locale, q.title),
+              title: this.getDefaultQuestionnaireTitle(locale, q.title),
               description: q.message ?? undefined,
               sentDate: q.createdDate?.toDateString() || '',
               organization: QuestionnairesOrganizationEnum.EL,
@@ -343,7 +343,7 @@ export class QuestionnairesService {
 
     try {
       const lshData: LSHQuestionnaireType[] | null =
-        await this.lshApi.getQuestionnaires(_user, 'is')
+        await this.lshApi.getQuestionnaires(user, 'is')
       LSHquestionnaires = {
         questionnaires:
           (lshData ?? [])
@@ -392,17 +392,17 @@ export class QuestionnairesService {
   }
 
   private getELQuestionnaire(
-    _locale: Locale,
+    locale: Locale,
     withQuestions?: boolean,
     data?: QuestionnaireDetailDto | null,
   ): Questionnaire | null {
     if (!data) return null
     return withQuestions
-      ? mapELQuestionnaire(data, _locale)
+      ? mapELQuestionnaire(data, locale)
       : {
           baseInformation: {
             id: data.questionnaireId,
-            title: this.getDefaultQuestionnaireTitle(_locale, data.title),
+            title: this.getDefaultQuestionnaireTitle(locale, data.title),
             sentDate: data.lastSubmitted?.toDateString() || '',
             status: data.hasDraft
               ? QuestionnairesStatusEnum.draft
@@ -426,14 +426,14 @@ export class QuestionnairesService {
   }
 
   private getLSHQuestionnaire(
-    _locale: Locale,
+    locale: Locale,
     data?: LSHQuestionnaireType | null | undefined,
   ): Questionnaire | null {
     if (!data) return null
     return {
       baseInformation: {
         id: data.gUID || 'undefined-id',
-        title: this.getDefaultQuestionnaireTitle(_locale, data.caption),
+        title: this.getDefaultQuestionnaireTitle(locale, data.caption),
         status: data.answerDateTime
           ? QuestionnairesStatusEnum.answered
           : new Date(data.validToDateTime) < new Date()
