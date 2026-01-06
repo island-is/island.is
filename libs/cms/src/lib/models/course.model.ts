@@ -58,24 +58,6 @@ const mapCourseInstance = ({
 }
 
 @ObjectType()
-class CourseActiveLocales {
-  @Field(() => Boolean)
-  is!: boolean
-
-  @Field(() => Boolean)
-  en!: boolean
-}
-
-@ObjectType()
-export class CourseDetails {
-  @CacheField(() => Course, { nullable: true })
-  course?: Course | null
-
-  @CacheField(() => CourseActiveLocales, { nullable: true })
-  activeLocales?: CourseActiveLocales | null
-}
-
-@ObjectType()
 export class Course {
   @Field(() => ID)
   id!: string
@@ -97,6 +79,24 @@ export class Course {
 
   @Field(() => String, { nullable: true })
   courseListPageId?: string | null
+}
+
+@ObjectType()
+class CourseActiveLocales {
+  @Field(() => Boolean)
+  is!: boolean
+
+  @Field(() => Boolean)
+  en!: boolean
+}
+
+@ObjectType()
+export class CourseDetails {
+  @CacheField(() => Course, { nullable: true })
+  course?: Course | null
+
+  @CacheField(() => CourseActiveLocales, { nullable: true })
+  activeLocales?: CourseActiveLocales | null
 }
 
 export const mapCourse = ({ fields, sys }: ICourse): Course => {
