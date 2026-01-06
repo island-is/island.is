@@ -31,25 +31,22 @@ export const overviewStatistics = buildSection({
                 'getCurrentVehiclesRateCategory.data',
               ) ?? []
 
+              const dayRates = rates
+              .filter(
+                (x) =>
+                  x.dayRateEntries && hasActiveDayRate(x.dayRateEntries),
+              )
+              .length ?? 0
+
             return [
               ['Fjöldi bifreiða á skrá', vehicles.length.toString()],
               [
                 'Fjöldi bifreiða á daggjaldi',
-                rates
-                  .filter(
-                    (x) =>
-                      x.dayRateEntries && hasActiveDayRate(x.dayRateEntries),
-                  )
-                  .length.toString(),
+                dayRates.toString(),
               ],
               [
                 'Fjöldi bifreiða á kílómetragjaldi',
-                rates
-                  .filter(
-                    (x) =>
-                      !x.dayRateEntries || !hasActiveDayRate(x.dayRateEntries),
-                  )
-                  .length.toString(),
+                (vehicles.length - dayRates).toString(),
               ],
             ]
           },
