@@ -94,50 +94,47 @@ export const convertToQueryParams = <T>(data: T) => {
   return queryParams
 }
 
-export const getDateOfCalculationsOptions = (pageData?: CustomPage | null) => {
-  const options: Option<string>[] = [
-    ...(pageData?.configJson?.dateOfCalculationOptions ?? [
-      {
-        label: '2024',
-        value: new Date(2024, 11, 31).toISOString(),
-      },
-      {
-        label: '2023 (júl-des)',
-        value: new Date(2023, 11, 31).toISOString(),
-      },
-      {
-        label: '2023 (jan-jún)',
-        value: new Date(2023, 5, 30).toISOString(),
-      },
-      {
-        label: '2022 (jún-des)',
-        value: new Date(2022, 11, 31).toISOString(),
-      },
-      {
-        label: '2022 (jan-maí)',
-        value: new Date(2022, 5, 31).toISOString(),
-      },
-    ]),
-  ]
+export type DateOfCalculationOptionsMap = Record<string, Option<string>[]>
 
-  const missingYearOptions: Option<string>[] = []
-  if (pageData?.configJson?.addMissingYearsAutomatically !== false) {
-    let year = new Date().getFullYear()
-    while (year > new Date(options[0].value).getFullYear()) {
-      missingYearOptions.push({
-        label: year.toString(),
-        value: new Date(year, 11, 31).toISOString(),
-      })
-      year -= 1
+export const getDateOfCalculationsOptionsMap = (
+  pageData?: CustomPage | null,
+): DateOfCalculationOptionsMap => {
+  const optionsMap: DateOfCalculationOptionsMap =
+    pageData?.configJson?.dateOfCalculationsOptionsMap ?? {}
+
+  for (const key in optionsMap) {
+    const options = [
+      ...(optionsMap[key as keyof DateOfCalculationOptionsMap] ?? []),
+    ]
+    const missingYearOptions: Option<string>[] = []
+    if (
+      pageData?.configJson?.addMissingYearsAutomaticallyMap?.[key] !== false
+    ) {
+      let year = new Date().getFullYear()
+      while (year > new Date(options[0].value).getFullYear()) {
+        missingYearOptions.push({
+          label: year.toString(),
+          value: new Date(year, 11, 31).toISOString(),
+        })
+        year -= 1
+      }
+      missingYearOptions.reverse()
     }
-    missingYearOptions.reverse()
+
+    for (const missingYearOption of missingYearOptions) {
+      options.unshift(missingYearOption)
+    }
   }
 
-  for (const missingYearOption of missingYearOptions) {
-    options.unshift(missingYearOption)
-  }
+  return optionsMap
+}
 
-  return options
+export const getDateOfCalculationsOptions = (
+  pageData: CustomPage | null | undefined,
+  key: keyof DateOfCalculationOptionsMap,
+) => {
+  const optionsMap = getDateOfCalculationsOptionsMap(pageData)
+  return optionsMap[key] ?? []
 }
 
 export const extractSlug = (

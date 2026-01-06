@@ -633,7 +633,11 @@ PensionCalculatorResults.getProps = async ({
 }) => {
   const calculationInput = convertQueryParametersToCalculationInput(query)
   const slug = extractSlug(locale, customPageData)
-  const dateOfCalculationsOptions = getDateOfCalculationsOptions(customPageData)
+  const dateOfCalculationsOptions = getDateOfCalculationsOptions(
+    customPageData,
+    calculationInput.typeOfBasePension ??
+      SocialInsurancePensionCalculationBasePensionType.Retirement,
+  )
   const [
     {
       data: { getOrganizationPage },

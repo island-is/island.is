@@ -119,14 +119,12 @@ interface PensionCalculatorProps {
   organizationPage: OrganizationPage
   organization: Organization
   defaultValues: CalculationInput
-  dateOfCalculationsOptions: Option<string>[]
 }
 
 const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
   organizationPage,
   organization,
   defaultValues,
-  dateOfCalculationsOptions,
   customPageData,
 }) => {
   const { formatMessage } = useIntl()
@@ -136,12 +134,21 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
     defaultValues,
   })
 
+  const typeOfBasePension = methods.watch('typeOfBasePension')
+
+  const dateOfCalculationsOptions = useMemo(() => {
+    return getDateOfCalculationsOptions(
+      customPageData,
+      typeOfBasePension ?? BasePensionType.Retirement,
+    )
+  }, [customPageData, typeOfBasePension])
+
   const [dateOfCalculations, setDateOfCalculations] = useQueryState(
     'dateOfCalculations',
     {
       defaultValue:
         methods.formState.defaultValues?.dateOfCalculations ??
-        dateOfCalculationsOptions[0].value,
+        dateOfCalculationsOptions[0]?.value,
     },
   )
 
@@ -161,7 +168,6 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
       : false,
   )
 
-  const typeOfBasePension = methods.watch('typeOfBasePension')
   const birthMonth = methods.watch('birthMonth')
   const birthYear = methods.watch('birthYear')
   const startMonth = methods.watch('startMonth')
@@ -348,7 +354,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
       }),
       dateOfCalculations: data.dateOfCalculations
         ? data.dateOfCalculations
-        : dateOfCalculationsOptions[0].value,
+        : dateOfCalculationsOptions[0]?.value,
     })
     setLoadingResultPage(true)
     router.push(`${baseUrl}?${queryParams.toString()}`)
@@ -494,8 +500,8 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
   const title = `${formatMessage(translationStrings.mainTitle)}`
   const titlePostfix = (
     allCalculatorsOptions.find((o) => o.value === dateOfCalculations)?.label ??
-    dateOfCalculationsOptions[0].label
-  ).toLowerCase()
+    dateOfCalculationsOptions[0]?.label
+  )?.toLowerCase()
 
   const startMonthOptions = useMemo(() => {
     if (!defaultPensionDate) {
@@ -1306,7 +1312,14 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                             </Text>
                           </Box>
 
-                          <Button loading={loadingResultPage} type="submit">
+                          <Button
+                            loading={loadingResultPage}
+                            type="submit"
+                            disabled={
+                              !dateOfCalculations ||
+                              !dateOfCalculationsOptions?.length
+                            }
+                          >
                             {formatMessage(translationStrings.calculateResults)}
                           </Button>
                         </Stack>
@@ -1376,19 +1389,24 @@ PensionCalculator.getProps = async ({
 
   let defaultValues = convertQueryParametersToCalculationInput(query)
 
-  const dateOfCalculationsOptions = getDateOfCalculationsOptions(customPageData)
+  const defaultTypeOfBasePension = defaultValues.typeOfBasePension
+    ? defaultValues.typeOfBasePension
+    : BasePensionType.Retirement
+
+  const dateOfCalculationsOptions = getDateOfCalculationsOptions(
+    customPageData,
+    defaultTypeOfBasePension,
+  )
 
   defaultValues = {
     ...defaultValues,
-    typeOfBasePension: defaultValues.typeOfBasePension
-      ? defaultValues.typeOfBasePension
-      : BasePensionType.Retirement,
+    typeOfBasePension: defaultTypeOfBasePension,
     typeOfPeriodIncome: defaultValues.typeOfPeriodIncome
       ? defaultValues.typeOfPeriodIncome
       : PeriodIncomeType.Month,
     dateOfCalculations: defaultValues.dateOfCalculations
       ? defaultValues.dateOfCalculations
-      : dateOfCalculationsOptions[0].value,
+      : dateOfCalculationsOptions[0]?.value,
   }
 
   const organizationNamespace =
@@ -1399,7 +1417,6 @@ PensionCalculator.getProps = async ({
     organization: getOrganization,
     defaultValues,
     customTopLoginButtonItem: organizationNamespace?.customTopLoginButtonItem,
-    dateOfCalculationsOptions,
     ...getThemeConfig(
       getOrganizationPage?.theme,
       getOrganizationPage?.organization,
