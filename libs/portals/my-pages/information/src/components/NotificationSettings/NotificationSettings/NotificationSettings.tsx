@@ -59,6 +59,11 @@ export const NotificationSettings = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userProfile])
 
+  useEffect(() => {
+    setSettings({ ...settings, wantsPaper: wantsPaper ?? false })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [wantsPaper])
+
   const onChange = async (
     updatedSettings: Partial<UserProfileNotificationSettings>,
   ) => {

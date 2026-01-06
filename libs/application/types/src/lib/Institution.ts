@@ -24,6 +24,7 @@ export enum InstitutionContentfulIds {
   DOMSMALARADUNEYTID = '26M5901Ntp7GhY14TRYSvw',
   MIDSTOD_MENNTUNAR_SKOLATHJONUSTU = '48Sa01Rahbo7FAdWPQbRub',
   HUSNAEDIS_OG_MANNVIRKJASTOFNUN = '53jrbgxPKpbNtordSfEZUK',
+  HEILSUGAESLA_HOFUDBORDARSVAEDISINS = '5H6d3uPjeKCIybpy1ZclmS',
 }
 
 /* eslint-disable local-rules/disallow-kennitalas */
@@ -54,6 +55,7 @@ export enum InstitutionNationalIds {
   DOMSMALA_RADUNEYTID = '5804170510',
   MIDSTOD_MENNTUNAR_SKOLATHJONUSTU = '6601241280',
   HUSNAEDIS_OG_MANNVIRKJASTOFNUN = '5812191480',
+  HEILSUGAESLA_HOFUDBORDARSVAEDISINS = '5210050760',
 }
 
 // This slug is the institution slug from the graphql endpoint getOrganizations
@@ -83,6 +85,7 @@ export enum InstitutionTypes {
   DOMSMALARADUNEYTID = 'domsmalaraduneytid',
   MIDSTOD_MENNTUNAR_SKOLATHJONUSTU = 'midstod-menntunar-og-skolathjonustu',
   HUSNAEDIS_OG_MANNVIRKJASTOFNUN = 'husnaedis-og-mannvirkjastofnun',
+  HEILSUGAESLA_HOFUDBORDARSVAEDISINS = 'hh',
 }
 
 export interface Institution {

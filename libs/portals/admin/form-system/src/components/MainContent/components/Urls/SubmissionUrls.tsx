@@ -42,7 +42,7 @@ export const SubmissionUrls = () => {
         <Box marginTop={4}>
           <Input
             label={formatMessage(m.newFormUrlButton)}
-            placeholder="/r1/IS/..."
+            placeholder="IS/..."
             name="submission-url"
             value={submissionUrlInput}
             backgroundColor="white"
@@ -57,7 +57,7 @@ export const SubmissionUrls = () => {
           </Box>
           <Box marginTop={2}>
             <Text variant="small">
-              {formatMessage(m.urlFormatInstruction)} <strong>/r1/IS/</strong>
+              {formatMessage(m.urlFormatInstruction)} <strong>IS/</strong>
             </Text>
           </Box>
         </Box>
