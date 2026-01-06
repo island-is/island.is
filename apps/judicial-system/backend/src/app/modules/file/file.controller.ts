@@ -199,7 +199,7 @@ export class FileController {
 
   // Strictly speaking, only district court users need access to
   // split case files
-  // However, giving prosecution and apppeals court users access
+  // However, giving prosecution and appeals court users access
   // does not pose a security risk
   @UseGuards(
     CaseReadGuard,
