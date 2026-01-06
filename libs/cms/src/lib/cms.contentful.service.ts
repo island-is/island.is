@@ -106,7 +106,7 @@ import {
   mapBloodDonationRestrictionListItem,
 } from './models/bloodDonationRestriction.model'
 import { GetCourseByIdInput } from './dto/getCourseById.input'
-import { mapCourse } from './models/course.model'
+import { CourseDetails, mapCourse } from './models/course.model'
 import { GetCourseListPageByIdInput } from './dto/getCourseListPageById.input'
 import { mapCourseListPage } from './models/courseListPage.model'
 import { GetCourseSelectOptionsInput } from './dto/getCourseSelectOptions.input'
@@ -1568,19 +1568,29 @@ export class CmsContentfulService {
     return items
   }
 
-  async getCourseById(input: GetCourseByIdInput) {
+  async getCourseById(
+    input: GetCourseByIdInput,
+  ): Promise<CourseDetails | null> {
     const params = {
       content_type: 'course',
       limit: 1,
       include: 4,
     }
 
-    const response =
+    const isResponse =
       await this.contentfulRepository.getLocalizedEntry<types.ICourseFields>(
         input.id,
-        input.lang,
+        'is',
         params,
       )
+    const enResponse =
+      await this.contentfulRepository.getLocalizedEntry<types.ICourseFields>(
+        input.id,
+        'en',
+        params,
+      )
+
+    const response = input.lang === 'is' ? isResponse : enResponse
 
     if (response?.sys?.contentType?.sys?.id !== 'course') {
       return null
@@ -1601,7 +1611,13 @@ export class CmsContentfulService {
         new Date(a.startDate).getTime() - new Date(b.startDate).getTime(),
     )
 
-    return mappedCourse
+    return {
+      course: mappedCourse,
+      activeLocales: {
+        is: Boolean(isResponse?.fields?.title),
+        en: Boolean(enResponse?.fields?.title),
+      },
+    }
   }
 
   async getCourseListPageById(input: GetCourseListPageByIdInput) {

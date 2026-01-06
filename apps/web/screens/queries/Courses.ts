@@ -44,30 +44,36 @@ export const GET_COURSE_CATEGORIES_QUERY = gql`
 export const GET_COURSE_BY_ID_QUERY = gql`
   query GetCourseById($input: GetCourseByIdInput!) {
     getCourseById(input: $input) {
-      id
-      title
-      courseListPageId
-      description {
-        ...AllSlices
+      activeLocales {
+        is
+        en
       }
-      categories {
+      course {
         id
         title
-        slug
-      }
-      instances {
-        id
-        startDate
-        startDateTimeDuration {
-          startTime
-          endTime
+        courseListPageId
+        description {
+          ...AllSlices
         }
-        location
-        displayedTitle
-        price {
-          amount
+        categories {
+          id
+          title
+          slug
         }
-        description
+        instances {
+          id
+          startDate
+          startDateTimeDuration {
+            startTime
+            endTime
+          }
+          location
+          displayedTitle
+          price {
+            amount
+          }
+          description
+        }
       }
     }
   }

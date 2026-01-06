@@ -56,8 +56,10 @@ export const LanguageToggler = ({
       return null
     }
 
-    if (hrefOverride?.[otherLanguage]) {
-      return goToOtherLanguagePage(hrefOverride[otherLanguage])
+    if (hrefOverride) {
+      if (hrefOverride[otherLanguage])
+        return goToOtherLanguagePage(hrefOverride[otherLanguage])
+      return setShowDialog(true)
     }
 
     const pathWithoutQueryParams = Router.asPath.split('?')[0]

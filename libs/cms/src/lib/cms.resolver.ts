@@ -156,8 +156,8 @@ import {
 import { GenericList } from './models/genericList.model'
 import { FeaturedGenericListItems } from './models/featuredGenericListItems.model'
 import {
-  Course,
   CourseCategoriesResponse,
+  CourseDetails,
   CourseList,
   CourseSelectOptionsResponse,
 } from './models/course.model'
@@ -832,10 +832,10 @@ export class CmsResolver {
   }
 
   @CacheControl(defaultCache)
-  @Query(() => Course, { nullable: true })
+  @Query(() => CourseDetails, { nullable: true })
   getCourseById(
     @Args('input') input: GetCourseByIdInput,
-  ): Promise<Course | null> {
+  ): Promise<CourseDetails | null> {
     return this.cmsContentfulService.getCourseById(input)
   }
 

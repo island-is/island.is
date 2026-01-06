@@ -48,12 +48,18 @@ Component.getProps = async (context) => {
     getOrganizationPage?.organization,
   )
 
+  const courseId = context.query.courseId as string
+
   const modifiedContext = {
     ...context,
     organizationPage: getOrganizationPage,
     courseListPageId: (namespace?.idOfCourseListPageForThePublic ??
       '6pkONOn80xzGTGij6qtjai') as string,
-    courseId: context.query.courseId as string,
+    courseId,
+    languageToggleHrefOverride: {
+      is: `/s/hh/namskeid-fyrir-almenning/${courseId}`,
+      en: `/en/o/hh/courses-for-the-public/${courseId}`,
+    },
   }
 
   return CourseDetails.getProps(modifiedContext)

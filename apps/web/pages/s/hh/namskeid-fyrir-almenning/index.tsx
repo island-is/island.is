@@ -53,6 +53,10 @@ Component.getProps = async (context) => {
     organizationPage: getOrganizationPage,
     courseListPageId: (namespace?.idOfCourseListPageForThePublic ??
       '6pkONOn80xzGTGij6qtjai') as string,
+    languageToggleHrefOverride: {
+      is: `/s/hh/namskeid-fyrir-almenning`,
+      en: `/en/o/hh/courses-for-the-public`,
+    },
   }
 
   return CourseListPage.getProps(modifiedContext)

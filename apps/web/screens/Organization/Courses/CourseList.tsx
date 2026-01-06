@@ -41,6 +41,10 @@ import {
 type CourseListScreenContext = ScreenContext & {
   organizationPage: OrganizationPage
   courseListPageId: string
+  languageToggleHrefOverride?: {
+    is: string
+    en: string
+  }
 }
 
 export interface Props {
@@ -230,6 +234,7 @@ CourseList.getProps = async ({
   locale,
   organizationPage,
   courseListPageId,
+  languageToggleHrefOverride,
 }) => {
   if (!courseListPageId) {
     throw new CustomNextError(404, 'Course list page id was not provided')
@@ -291,6 +296,7 @@ CourseList.getProps = async ({
       courseCategoriesResponse.data?.getCourseCategories?.items ?? [],
     courseListPage: courseListPage.data?.getCourseListPageById,
     courseListPageId,
+    languageToggleHrefOverride,
     ...getThemeConfig(organizationPage?.theme, organizationPage?.organization),
   }
 }
