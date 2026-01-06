@@ -10,6 +10,8 @@ import {
 } from '@island.is/clients/health-directorate'
 import { AnswerOptionType } from '../../../../models/question.model'
 import { mapAnswerOptionType } from '../display/mapAnswerOptionType'
+import { FormatMessage } from '@island.is/cms-translations'
+import { m } from '../../../utils/messages'
 
 export interface QuestionAnswer {
   questionId: string
@@ -26,6 +28,7 @@ export interface QuestionAnswer {
  */
 export const mapDraftRepliesToAnswers = (
   questionnaire: QuestionnaireDetailDto,
+  formatMessage: FormatMessage,
 ): { [key: string]: QuestionAnswer } => {
   if (!questionnaire.replies || questionnaire.replies.length === 0) {
     return {}
@@ -44,8 +47,8 @@ export const mapDraftRepliesToAnswers = (
     const getOptionLabel = (value: string): string | undefined => {
       // Handle boolean questions specially - they don't have values array
       if (question.type === 'bool') {
-        if (value === 'true') return 'Já'
-        if (value === 'false') return 'Nei'
+        if (value === 'true') return formatMessage(m.yes)
+        if (value === 'false') return formatMessage(m.no)
         return undefined
       }
 

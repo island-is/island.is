@@ -48,6 +48,6 @@ export const mapToLshAnswer = (
     })),
     formID: input.formId,
     gUID: input.id,
-    instanceID: '', // TODO check what this is
+    instanceID: '', // Should be empty
   }
 }

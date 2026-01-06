@@ -76,7 +76,6 @@ export class LshClientService {
     id: string,
     answers: QuestionnaireAnswers,
   ): Promise<GenericStatusResponse> => {
-    console.log('Submitting questionnaire to LSH with answers:', answers)
     return await this.questionnaireWithAuth(
       user,
     ).apiQuestionnaireGuidAnswersPost({

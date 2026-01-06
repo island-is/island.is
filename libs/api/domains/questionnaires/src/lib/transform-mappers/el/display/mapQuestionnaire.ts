@@ -28,7 +28,9 @@ export const mapELQuestionnaire = (
 
   // Get draft answers if available
   const draftAnswersMap =
-    isDetailed && q.replies?.length ? mapDraftRepliesToAnswers(q) : undefined
+    isDetailed && q.replies?.length
+      ? mapDraftRepliesToAnswers(q, formatMessage)
+      : undefined
 
   // Convert draft answers map to array for GraphQL
   const draftAnswers = draftAnswersMap
@@ -49,9 +51,9 @@ export const mapELQuestionnaire = (
         : QuestionnairesStatusEnum.notAnswered,
       description: isDetailed ? q.message ?? undefined : q.message || undefined,
       formId: q.questionnaireId,
-      organization: QuestionnairesOrganizationEnum.EL, // TODO: ask if this is correct
+      organization: QuestionnairesOrganizationEnum.EL,
     },
-    expirationDate: isDetailed ? q.expiryDate ?? undefined : undefined,
+    expirationDate: isDetailed && q.expiryDate ? q.expiryDate : undefined,
     canSubmit: isDetailed ? q.canSubmit : undefined,
     submissions: isDetailed
       ? q.submissions.map((sub) => ({

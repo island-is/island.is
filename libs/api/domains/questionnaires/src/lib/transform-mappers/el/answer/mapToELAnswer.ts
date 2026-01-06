@@ -97,7 +97,7 @@ export const mapToElAnswer = (
               columnType = parts[1]
               value = parts.slice(2).join(':') // In case value contains ':'
             } else if (parts.length === 2) {
-              // Old format: "columnId:value"
+              // Old format: "columnId:value". Keep it for backward compatibility on dev lists
               columnId = parts[0]
               value = parts[1]
             }
@@ -191,6 +191,6 @@ export const mapToElAnswer = (
 
   return {
     replies,
-    isDraft: true, //input.saveAsDraft ?? false, // TODO: CHANGE TO FALSE WHEN SERVICE CAN SUBMIT FINAL ANSWERS,
+    isDraft: input.saveAsDraft ?? false,
   }
 }
