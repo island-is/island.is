@@ -99,6 +99,22 @@ const Waitlist = lazy(() => import('./screens/Waitlists/Waitlists'))
 
 const WaitlistDetail = lazy(() => import('./screens/Waitlists/WaitlistsDetail'))
 
+const Questionnaires = lazy(() =>
+  import('./screens/Questionnaires/Questionnaires'),
+)
+
+const QuestionnairesDetail = lazy(() =>
+  import('./screens/Questionnaires/QuestionnaireDetail'),
+)
+
+const QuestionnairesAnswer = lazy(() =>
+  import('./screens/Questionnaires/AnswerQuestionnaire'),
+)
+
+const QuestionnairesAnswered = lazy(() =>
+  import('./screens/Questionnaires/AnsweredQuestionnaire'),
+)
+
 const PatientData = lazy(() => import('./screens/PatientData/PatientData'))
 
 const PatientDataPermits = lazy(() =>
@@ -132,6 +148,7 @@ export const healthModule: PortalModule = {
     {
       name: m.health,
       path: HealthPaths.HealthRoot,
+
       enabled: [
         ApiScope.healthPayments,
         ApiScope.healthMedicines,
@@ -395,6 +412,34 @@ export const healthModule: PortalModule = {
       key: 'HealthWaitlists',
       enabled: userInfo.scopes.includes(ApiScope.health),
       element: <WaitlistDetail />,
+    },
+    {
+      name: hm.questionnaires,
+      path: HealthPaths.HealthQuestionnaires,
+      key: 'HealthQuestionnaires',
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      element: <Questionnaires />,
+    },
+    {
+      name: hm.questionnaires,
+      path: HealthPaths.HealthQuestionnairesDetail,
+      key: 'HealthQuestionnaires',
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      element: <QuestionnairesDetail />,
+    },
+    {
+      name: hm.questionnaire,
+      path: HealthPaths.HealthQuestionnairesAnswer,
+      key: 'HealthQuestionnaires',
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      element: <QuestionnairesAnswer />,
+    },
+    {
+      name: hm.questionnaire,
+      path: HealthPaths.HealthQuestionnairesAnswered,
+      key: 'HealthQuestionnaires',
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      element: <QuestionnairesAnswered />,
     },
     {
       name: hm.patientData,

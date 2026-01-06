@@ -1,0 +1,153 @@
+query GetQuestionnaires($locale: String!) {
+  questionnairesList(locale: $locale) {
+    questionnaires {
+      id
+      title
+      description
+      sentDate
+      status
+      lastSubmitted
+      organization
+      department
+    }
+  }
+}
+
+query GetQuestionnaire($locale: String!, $input: GetQuestionnaireInput!) {
+  questionnairesDetail(locale: $locale, input: $input) {
+    baseInformation {
+      __typename
+      id
+      title
+      description
+      sentDate
+      status
+      lastSubmitted
+      organization
+      department
+    }
+    expirationDate
+    canSubmit
+    submissions {
+      __typename
+      id
+      isDraft
+      lastUpdated
+      createdAt
+    }
+  }
+}
+
+query GetQuestionnaireWithQuestions(
+  $locale: String!
+  $input: GetQuestionnaireInput!
+) {
+  questionnairesDetail(locale: $locale, input: $input) {
+    baseInformation {
+      __typename
+      id
+      title
+      organization
+      department
+      sentDate
+      formId
+    }
+    canSubmit
+    draftAnswers {
+      questionId
+      answers {
+        label
+        value
+      }
+      type
+    }
+    sections {
+      __typename
+      title
+      id
+      dependsOn
+      visibilityConditions {
+        questionId
+        operator
+        expectedValues
+        showWhenMatched
+      }
+      questions {
+        __typename
+        id
+        originalId
+        label
+        sublabel
+        htmlLabel
+        required
+        dependsOn
+        visibilityConditions {
+          questionId
+          operator
+          expectedValues
+          showWhenMatched
+        }
+        answerOptions {
+          __typename
+          type
+          placeholder
+          maxLength
+          min
+          max
+          maxLabel
+          minLabel
+          decimal
+          formula
+          numRows
+          maxRows
+          columns {
+            id
+            label
+            type
+            required
+            multiline
+            maxLength
+          }
+          options {
+            __typename
+            id
+            label
+            value
+          }
+        }
+      }
+    }
+  }
+}
+
+query GetAnsweredQuestionnaire(
+  $input: QuestionnaireAnsweredInput!
+  $locale: String!
+) {
+  getAnsweredQuestionnaire(input: $input, locale: $locale) {
+    data {
+      id
+      formId
+      submissionId
+      isDraft
+      date
+      title
+      description
+      answers {
+        id
+        label
+        htmlLabel
+        sublabel
+        values
+      }
+    }
+  }
+}
+
+mutation SubmitQuestionnaire($input: QuestionnaireInput!, $locale: String!) {
+  submitQuestionnaire(input: $input, locale: $locale) {
+    __typename
+    success
+    message
+  }
+}
