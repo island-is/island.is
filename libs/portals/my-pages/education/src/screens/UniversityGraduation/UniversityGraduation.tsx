@@ -74,6 +74,7 @@ export const UniversityGraduation = () => {
               return null
             }
             return (
+              //TODO: Replace with Island UI Card when it supports images
               <ActionCard
                 key={`education-graduation-${index}`}
                 heading={
