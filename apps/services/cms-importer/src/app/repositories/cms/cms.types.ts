@@ -5,7 +5,7 @@ export type ContentTypeOptions = 'grant' | 'genericListItem'
 
 export interface EntryUpdateDto {
   cmsEntry: Entry
-  inputFields: EntryInputFields
+  inputFields: Localized<EntryInputFields>
   referenceId?: string
 }
 

@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import { CmsRepository } from '../repositories/cms/cms.repository'
 import { logger } from '@island.is/logging'
 import { ClientAPI } from 'contentful-management'
-import { CreationType } from '../repositories/cms/cms.types'
+import { EntryCreationDto } from '../repositories/cms/cms.types'
 import { isDefined } from '@island.is/shared/utils'
 import { ENVIRONMENT, LOCALE, SPACE_ID } from '../constants'
 import { FSREBuildingsRepository } from '../repositories/fsre-buildings/fsreBuildings.repository'
@@ -31,7 +31,7 @@ export class FSREBuildingsImportService {
       const existingEntries =
         await this.cmsRepository.getGenericListItemEntries(GENERIC_LIST_ID)
 
-      const newEntries: Array<CreationType> = buildings
+      const newEntries: Array<EntryCreationDto> = buildings
         .map((eg) => {
           if (
             existingEntries.find(

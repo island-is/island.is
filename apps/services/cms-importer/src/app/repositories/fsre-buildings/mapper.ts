@@ -1,4 +1,4 @@
-import { CreationType, RichTextParagraph } from '../cms/cms.types'
+import { EntryCreationDto, RichTextParagraph } from '../cms/cms.types'
 import { generateGenericListItem, mapLocalizedValue } from '../cms/mapper'
 import { BuildingDto } from './dto/building.dto'
 import slugify from '@sindresorhus/slugify'
@@ -9,7 +9,7 @@ export const mapFSREBuildingToGenericListItem = (
   data: BuildingDto,
   genericListId: string,
   tagsRegistry: Record<string, string>,
-): CreationType | undefined => {
+): EntryCreationDto | undefined => {
   const tagIds = data.region ? [tagsRegistry[data.region]] : undefined
   const slug = slugify(data.address, { separator: '-' })
 

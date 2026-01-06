@@ -61,7 +61,7 @@ export class GrantImportService {
       this.clientsRepository.getGrants(),
     ])
 
-    const grantsToUpdate: EntryUpdateDto = clientGrants
+    const grantsToUpdate: Array<EntryUpdateDto> = clientGrants
       .map((grant) => {
         const clientGrant = cmsGrants.find((cg) => cg.grantId === grant.id)
 
@@ -118,34 +118,36 @@ export class GrantImportService {
         return {
           referenceId: clientGrant.referenceId,
           cmsEntry: clientGrant.entry,
-          inputFields: [
-            {
-              key: 'grantDateFrom',
-              value: parsedGrantDateFrom.date,
-            },
-            {
-              key: 'grantDateTo',
-              value: parsedGrantDateTo.date,
-            },
-            parsedGrantDateFrom.hour
-              ? {
-                  key: 'grantOpenFromHour',
-                  value:
-                    parsedGrantDateFrom.hour === 0
-                      ? undefined
-                      : parsedGrantDateFrom.hour,
-                }
-              : undefined,
-            parsedGrantDateTo.hour
-              ? {
-                  key: 'grantOpenToHour',
-                  value:
-                    parsedGrantDateTo.hour === 0
-                      ? undefined
-                      : parsedGrantDateTo.hour,
-                }
-              : undefined,
-          ].filter(isDefined),
+          inputFields: {
+            [LOCALE]: [
+              {
+                key: 'grantDateFrom',
+                value: parsedGrantDateFrom.date,
+              },
+              {
+                key: 'grantDateTo',
+                value: parsedGrantDateTo.date,
+              },
+              parsedGrantDateFrom.hour
+                ? {
+                    key: 'grantOpenFromHour',
+                    value:
+                      parsedGrantDateFrom.hour === 0
+                        ? undefined
+                        : parsedGrantDateFrom.hour,
+                  }
+                : undefined,
+              parsedGrantDateTo.hour
+                ? {
+                    key: 'grantOpenToHour',
+                    value:
+                      parsedGrantDateTo.hour === 0
+                        ? undefined
+                        : parsedGrantDateTo.hour,
+                  }
+                : undefined,
+            ].filter(isDefined),
+          },
         }
       })
       .filter(isDefined)

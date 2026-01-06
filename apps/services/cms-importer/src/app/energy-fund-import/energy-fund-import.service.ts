@@ -3,11 +3,14 @@ import { CmsRepository } from '../repositories/cms/cms.repository'
 import { logger } from '@island.is/logging'
 import { EnergyGrantsRepository } from '../repositories/energy-grants/energyGrants.repository'
 import { ClientAPI } from 'contentful-management'
-import { CreationType } from '../repositories/cms/cms.types'
+import { EntryCreationDto } from '../repositories/cms/cms.types'
 import { isDefined } from '@island.is/shared/utils'
-import { ENVIRONMENT, LOCALE,  } from '../constants'
+import { LOCALE } from '../constants'
 import { PREVIOUS_RECIPIENTS_GENERIC_LIST_ID, UOS_TAGS } from './constants'
-import { mapCreationType } from '../repositories/energy-grants/mapper'
+import {
+  mapEntryCreationDto,
+  mapEntryUpdateDto,
+} from '../repositories/energy-grants/mapper'
 import { EnergyGrantCollectionDto } from '../repositories/energy-grants/dto/energyGrantCollection.dto'
 
 @Injectable()
@@ -28,12 +31,19 @@ export class EnergyFundImportService {
   private async processEnergyGrants() {
     const grants = await this.clientsRepository.getEnergyGrants(20)
 
-    if (grants) {
-      this.createEntries(grants)
+    if (!grants) {
+      logger.warn('No grants to process')
+      return
     }
+
+    //first we create the entries
+    await this.createEntries(grants)
+
+    //then we update the entries
+    await this.updateEntries(grants)
   }
 
-  private async createEntries(grants: EnergyGrantCollectionDto) {
+  private async createEntries(grants: EnergyGrantCollectionDto): Promise<void> {
     const existingEntries = await this.cmsRepository.getGenericListItemEntries(
       PREVIOUS_RECIPIENTS_GENERIC_LIST_ID,
     )
@@ -48,7 +58,7 @@ export class EnergyFundImportService {
       })
       .filter(isDefined)
 
-    const newEntries: Array<CreationType> = grants.grants
+    const newEntries: Array<EntryCreationDto> = grants.grants
       .map((eg) => {
         if (previousEntryNames.find((i) => i === eg.projectName)) {
           logger.info('Entry already exists, skipping.', {
@@ -57,7 +67,7 @@ export class EnergyFundImportService {
           return null
         }
 
-        return mapCreationType(
+        return mapEntryCreationDto(
           eg,
           PREVIOUS_RECIPIENTS_GENERIC_LIST_ID,
           UOS_TAGS,
@@ -68,12 +78,7 @@ export class EnergyFundImportService {
     logger.info('creating energy fund entries...')
     if (!newEntries.length) {
       logger.warn('no  energy fund entries to create')
-      return [
-        {
-          ok: true,
-          error: 'no energy fund entries to create',
-        },
-      ]
+      return
     }
 
     const responses = await this.cmsRepository.createEntries(
@@ -90,24 +95,39 @@ export class EnergyFundImportService {
     })
   }
 
-  private async updateEntries(grants: EnergyGrantCollectionDto) {
+  private async updateEntries(grants: EnergyGrantCollectionDto): Promise<void> {
     const existingEntries = await this.cmsRepository.getGenericListItemEntries(
       PREVIOUS_RECIPIENTS_GENERIC_LIST_ID,
     )
 
     const entriesToUpdate = grants.grants
       .map((eg) => {
-        const matchingEntry = existingEntries.find(i => i.fields['internalTitle']?.[LOCALE] === eg.projectName)
+        const matchingEntry = existingEntries.find(
+          (i) => i.fields['internalTitle']?.[LOCALE] === eg.projectName,
+        )
         if (matchingEntry) {
-          return eg.
+          return mapEntryUpdateDto(matchingEntry, eg)
         }
-
-        return mapEnergyGrantToGenericListItem(
-          eg,
-          PREVIOUS_RECIPIENTS_GENERIC_LIST_ID,
-          UOS_TAGS,
-        )a
       })
       .filter(isDefined)
+
+    logger.info('updating energy fund entries...')
+    if (!entriesToUpdate.length) {
+      logger.warn('no energy fund entries to update')
+      return
+    }
+
+    const responses = await this.cmsRepository.updateEntries(
+      entriesToUpdate,
+      'genericListItem',
+    )
+
+    responses.forEach((response) => {
+      if (response.status === 'success') {
+        logger.info('updatedEntry', response.entry)
+      } else {
+        logger.info('entry update failed', response.error)
+      }
+    })
   }
 }

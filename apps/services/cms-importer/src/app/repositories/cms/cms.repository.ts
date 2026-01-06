@@ -7,13 +7,14 @@ import {
   KeyValueMap,
 } from 'contentful-management'
 import { ManagementClientService } from './managementClient/managementClient.service'
-import { GENERIC_LIST_ITEM_CONTENT_TYPE, LOCALE } from '../../constants'
+import { GENERIC_LIST_ITEM_CONTENT_TYPE, LOCALES_ARRAY } from '../../constants'
 import { logger } from '@island.is/logging'
 import {
   CmsEntryOpResult,
   ContentTypeOptions,
   EntryCreationDto,
   EntryUpdateDto,
+  Localized,
 } from './cms.types'
 import { ContentfulFetchResponse } from './managementClient/managementClient.types'
 
@@ -132,7 +133,8 @@ export class CmsRepository {
   ): Promise<Entry | undefined> => {
     logger.info('creating single entry...')
 
-    const fields = input.fields?.['fields']
+    logger.info('fields', Object.keys(input.fields))
+    const fields = input.fields
 
     for (const inputFieldKey of Object.keys(fields)) {
       if (!this.inputFieldExistsInContent(contentType.fields, inputFieldKey)) {
@@ -209,7 +211,7 @@ export class CmsRepository {
     const promises = entries
       .map((entry) => {
         if (!entry?.inputFields) {
-          logger.warn('No input fields to update for grant', {
+          logger.warn('No input fields to update', {
             referenceId: entry.referenceId,
           })
           return
@@ -239,7 +241,7 @@ export class CmsRepository {
   private updateSingleEntry = async (
     entry: Entry,
     contentFields: Array<ContentFields<KeyValueMap>>,
-    inputFields: Array<{ key: string; value: unknown }>,
+    inputFields: Localized<Array<{ key: string; value: unknown }>>,
     referenceId?: string,
   ): Promise<Entry | undefined> => {
     if (entry.isUpdated()) {
@@ -252,31 +254,40 @@ export class CmsRepository {
     }
 
     let hasChanges = false
-    for (const inputField of inputFields) {
-      if (!this.inputFieldExistsInContent(contentFields, inputField.key)) {
-        logger.info(`Field not found`, {
-          inputField: inputField.key,
-          id: entry.sys.id,
-          referenceId,
-        })
-        return Promise.reject(
-          `Invalid field in input fields: ${inputField.key}`,
-        )
+    for (const locale of LOCALES_ARRAY) {
+      const fieldsForLocale = inputFields[locale as keyof typeof inputFields]
+      if (!fieldsForLocale) {
+        continue
       }
 
-      if (!entry.fields[inputField.key]?.[LOCALE] && inputField.value) {
-        logger.info(`Field not found in entry, updating...`, {
-          inputField: inputField.key,
-          id: entry.sys.id,
-          referenceId,
-        })
-        hasChanges = true
-        entry.fields[inputField.key] = {
-          [LOCALE]: inputField.value,
+      for (const inputField of fieldsForLocale) {
+        if (!this.inputFieldExistsInContent(contentFields, inputField.key)) {
+          logger.info(`Field not found`, {
+            inputField: inputField.key,
+            id: entry.sys.id,
+            referenceId,
+          })
+          return Promise.reject(
+            `Invalid field in input fields: ${inputField.key}`,
+          )
         }
-      } else if (entry.fields[inputField.key]?.[LOCALE] !== inputField.value) {
-        hasChanges = true
-        entry.fields[inputField.key][LOCALE] = inputField.value
+
+        if (!entry.fields[inputField.key]?.[locale] && inputField.value) {
+          logger.info(`Field not found in entry, updating...`, {
+            inputField: inputField.key,
+            id: entry.sys.id,
+            referenceId,
+          })
+          hasChanges = true
+          entry.fields[inputField.key] = {
+            [locale]: inputField.value,
+          }
+        } else if (
+          entry.fields[inputField.key]?.[locale] !== inputField.value
+        ) {
+          hasChanges = true
+          entry.fields[inputField.key][locale] = inputField.value
+        }
       }
     }
 
