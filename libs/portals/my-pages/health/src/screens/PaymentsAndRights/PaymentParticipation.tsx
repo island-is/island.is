@@ -15,7 +15,6 @@ import {
   DownloadFileButtons,
   ExpandHeader,
   MobileTable,
-  NestedLines,
   StackWithBottomDivider,
   UserInfoLine,
   amountFormat,
@@ -29,13 +28,13 @@ import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import { CONTENT_GAP, SECTION_GAP } from '../../utils/constants'
 import { exportPaymentParticipationOverview } from '../../utils/FileBreakdown'
+import { formatDateToMonthString } from '../../utils/format'
 import {
   useGetCopaymentPeriodsQuery,
   useGetCopaymentStatusQuery,
 } from './Payments.generated'
 import { PaymentTableRow } from './PaymentTableRow'
 import { PaymentsWrapper } from './wrapper/PaymentsWrapper'
-import { formatDateToMonthString } from '../../utils/format'
 
 export const PaymentPartication = () => {
   const { formatMessage, lang } = useLocale()

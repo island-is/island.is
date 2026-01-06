@@ -30,7 +30,6 @@
 import {
   Box,
   GridColumn,
-  GridContainer,
   GridRow,
   Icon,
   Inline,
