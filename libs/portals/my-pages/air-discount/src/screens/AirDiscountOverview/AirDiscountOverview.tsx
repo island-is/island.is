@@ -3,7 +3,6 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   m as coreMessage,
   CardLoader,
-  FootNote,
   VEGAGERDIN_SLUG,
   formatDateWithTime,
   IntroWrapper,
