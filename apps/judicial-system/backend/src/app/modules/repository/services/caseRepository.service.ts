@@ -19,6 +19,7 @@ import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
   CaseFileCategory,
+  CaseState,
   DateType,
   EventType,
   IndictmentDecision,
@@ -341,7 +342,6 @@ export class CaseRepositoryService {
         'type',
         'indictmentSubtypes',
         'description',
-        'state',
         'policeCaseNumbers',
         'courtId',
         'demands',
@@ -385,6 +385,7 @@ export class CaseRepositoryService {
       const result = await this.caseModel.create(
         {
           ...pick(caseToSplit, fieldsToCopy),
+          state: CaseState.SUBMITTED,
           splitCaseId: caseId,
           // The new case is postponed indefinitely by default
           indictmentDecision: IndictmentDecision.POSTPONING,
