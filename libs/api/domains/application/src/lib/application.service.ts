@@ -146,14 +146,22 @@ export class ApplicationService {
     })
   }
 
-  async getApplicationCountByTypeIdAndStatus(
+  async getSuperAdminApplicationCountByTypeIdAndStatus(
     user: User,
-    locale: Locale,
     input: ApplicationsAdminStatisticsInput,
   ) {
     return this.applicationApiWithAuth(
       user,
-    ).adminControllerGetCountByTypeIdAndStatus(input)
+    ).adminControllerGetSuperAdminCountByTypeIdAndStatus(input)
+  }
+
+  async getInstitutionApplicationCountByTypeIdAndStatus(
+    user: User,
+    input: ApplicationsAdminStatisticsInput,
+  ) {
+    return this.applicationApiWithAuth(
+      user,
+    ).adminControllerGetInstitutionCountByTypeIdAndStatus(input)
   }
 
   async getApplicationInstitutions(user: User) {
