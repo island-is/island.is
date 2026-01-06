@@ -1,6 +1,5 @@
-import { Box } from '@island.is/island-ui/core'
+import { Box, ActionCard } from '@island.is/island-ui/core'
 import {
-  ActionCard,
   CardLoader,
   m as coreMessages,
   formatDate,
@@ -13,11 +12,12 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { LawAndOrderPaths } from '../../lib/paths'
 import { Problem } from '@island.is/react-spa/shared'
 import { useGetPoliceCasesQuery } from './PoliceCases.generated'
+import { useNavigate } from 'react-router-dom'
 
 const PoliceCases = () => {
   useNamespaces('sp.law-and-order')
   const { formatMessage } = useLocale()
-
+  const navigate = useNavigate()
   const { data, loading, error } = useGetPoliceCasesQuery()
 
   const cases = data?.lawAndOrderPoliceCasesPaginatedCollection?.data ?? []
@@ -83,10 +83,13 @@ const PoliceCases = () => {
               cta={{
                 label: formatMessage(messages.seeInfo),
                 variant: 'text',
-                url: LawAndOrderPaths.PoliceCasesDetail.replace(
-                  ':id',
-                  c.number ?? '',
-                ),
+                onClick: () =>
+                  navigate(
+                    LawAndOrderPaths.PoliceCasesDetail.replace(
+                      ':id',
+                      c.number ?? '',
+                    ),
+                  ),
               }}
             />
           </Box>

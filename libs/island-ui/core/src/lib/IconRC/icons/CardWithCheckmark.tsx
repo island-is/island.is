@@ -9,7 +9,7 @@ const SvgCardWithCheckmark = ({
   return (
     <svg
       className="card_svg__ionicon"
-      viewBox="0 0 27 27"
+      viewBox="4 4 24 24"
       aria-labelledby={titleId}
       {...props}
     >

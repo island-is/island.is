@@ -38,6 +38,15 @@ const ReferralsDetail: React.FC = () => {
       loading={loading}
       marginBottom={6}
     >
+      {!loading && !error && referral === null && (
+        <Problem
+          type="not_found"
+          title={formatMessage(messages.referralNotFound)}
+          message={formatMessage(messages.referralNotFoundDetail)}
+          imgSrc="./assets/images/nodata.svg"
+          noBorder={false}
+        />
+      )}
       {error && !loading && <Problem error={error} noBorder={false} />}
       {!error && (
         <InfoLineStack space={1} label={formatMessage(messages.information)}>

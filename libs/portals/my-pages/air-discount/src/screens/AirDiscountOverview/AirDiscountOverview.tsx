@@ -2,16 +2,15 @@ import { useEffect, useState } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   m as coreMessage,
-  ActionCard,
   CardLoader,
-  FootNote,
-  IntroHeader,
   VEGAGERDIN_SLUG,
   formatDateWithTime,
+  IntroWrapper,
 } from '@island.is/portals/my-pages/core'
 import { gql, useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
 import {
+  ActionCard,
   Box,
   Bullet,
   BulletList,
@@ -149,42 +148,38 @@ export const AirDiscountOverview = () => {
   }
 
   return (
-    <>
+    <IntroWrapper
+      title={formatMessage(m.introTitle)}
+      serviceProviderSlug={VEGAGERDIN_SLUG}
+      serviceProviderTooltip={formatMessage(coreMessage.airDiscountTooltip)}
+    >
       <Box marginBottom={[3, 4, 5]}>
         <GridRow>
           <GridColumn span={['8/8', '8/8']} order={1}>
-            <IntroHeader
-              title={formatMessage(m.introTitle)}
-              serviceProviderSlug={VEGAGERDIN_SLUG}
-              serviceProviderTooltip={formatMessage(
-                coreMessage.airDiscountTooltip,
-              )}
+            <Text variant="default" paddingTop={2}>
+              {formatMessage(m.introLink, {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                link: (str: any) => (
+                  <a
+                    href="https://island.is/loftbru/notendaskilmalar-vegagerdarinnar-fyrir-loftbru"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <Button variant="text">{str}</Button>
+                  </a>
+                ),
+              })}
+            </Text>
+            <GridColumn
+              span={['12/12', '12/12', '7/8']}
+              order={3}
+              paddingTop={4}
             >
-              <Text variant="default" paddingTop={2}>
-                {formatMessage(m.introLink, {
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  link: (str: any) => (
-                    <a
-                      href="https://island.is/loftbru/notendaskilmalar-vegagerdarinnar-fyrir-loftbru"
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      <Button variant="text">{str}</Button>
-                    </a>
-                  ),
-                })}
-              </Text>
-              <GridColumn
-                span={['12/12', '12/12', '7/8']}
-                order={3}
-                paddingTop={4}
-              >
-                <BulletList>
-                  <Bullet>{formatMessage(m.discountTextFirst)}</Bullet>
-                  <Bullet>{formatMessage(m.discountTextSecond)}</Bullet>
-                </BulletList>
-              </GridColumn>
-            </IntroHeader>
+              <BulletList>
+                <Bullet>{formatMessage(m.discountTextFirst)}</Bullet>
+                <Bullet>{formatMessage(m.discountTextSecond)}</Bullet>
+              </BulletList>
+            </GridColumn>
           </GridColumn>
         </GridRow>
       </Box>
@@ -227,20 +222,22 @@ export const AirDiscountOverview = () => {
                     key={`loftbru-item-${index}`}
                     heading={item.user.name}
                     text={message}
-                    secondaryText={
+                    subText={
                       item.user.fund?.credit === 0
                         ? undefined
                         : item.discountCode
                         ? item.discountCode
                         : formatMessage(m.codeGenFailed)
                     }
-                    cta={{
-                      label: formatMessage(m.copyCode),
-                      onClick: () => copy(item.discountCode),
-                      centered: true,
-                      icon: isCopied ? 'checkmark' : 'copy',
-                      hide: item.user.fund?.credit === 0 || !item.discountCode,
-                    }}
+                    cta={
+                      item.user.fund?.credit === 0 || !item.discountCode
+                        ? undefined
+                        : {
+                            label: formatMessage(m.copyCode),
+                            onClick: () => copy(item.discountCode),
+                            icon: isCopied ? 'checkmark' : 'copy',
+                          }
+                    }
                   />
                 )
               })}
@@ -263,7 +260,7 @@ export const AirDiscountOverview = () => {
                     key={`loftbru-item-connection-code-${codeIndex}`}
                     heading={item.user.name}
                     text={formatMessage(m.flight) + ': ' + code.flightDesc}
-                    secondaryText={code.code}
+                    subText={code.code}
                     tag={{
                       label:
                         formatMessage(m.validTo) +
@@ -273,7 +270,6 @@ export const AirDiscountOverview = () => {
                     cta={{
                       label: formatMessage(m.copyCode),
                       onClick: () => copy(code.code),
-                      centered: true,
                       icon: isCopied ? 'checkmark' : 'copy',
                     }}
                   />
@@ -298,8 +294,7 @@ export const AirDiscountOverview = () => {
           <UsageTable data={flightLegs} />
         </Box>
       )}
-      <FootNote serviceProviderSlug={VEGAGERDIN_SLUG} />
-    </>
+    </IntroWrapper>
   )
 }
 
