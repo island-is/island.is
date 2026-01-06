@@ -49,6 +49,7 @@ import {
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import {
   mapPoliceCaseFileToPoliceCaseFileCheck,
@@ -264,7 +265,7 @@ const UploadFilesToPoliceCase: FC<UploadFilesToPoliceCaseProps> = ({
   }
 
   return (
-    <>
+    <section className={grid({ gap: 5 })}>
       <PoliceCaseFiles
         onUpload={onPoliceCaseFileUpload}
         policeCaseFileList={policeCaseFileList}
@@ -291,7 +292,7 @@ const UploadFilesToPoliceCase: FC<UploadFilesToPoliceCaseProps> = ({
         onRetry={(file) => handleRetry(file, updateUploadFile)}
         errorMessage={errorMessage}
       />
-    </>
+    </section>
   )
 }
 
@@ -326,9 +327,9 @@ const PoliceUploadListMemo: FC<PoliceUploadListMenuProps> = memo(
     const { formatMessage } = useIntl()
 
     return (
-      <Box paddingBottom={4}>
+      <Box className={grid({ gap: 4 })}>
         {policeCaseNumbers?.map((policeCaseNumber, index) => (
-          <Box key={index} marginBottom={6}>
+          <Box key={index}>
             <SectionHeading
               title={formatMessage(strings.policeCaseNumberSectionHeading, {
                 policeCaseNumber,
@@ -413,21 +414,19 @@ const PoliceCaseFilesRoute = () => {
       />
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.heading)}</PageTitle>
-        <Box marginBottom={5}>
+        <div className={grid({ gap: 5, marginBottom: 10 })}>
           <ProsecutorCaseInfo workingCase={workingCase} />
-        </Box>
-        <Box marginBottom={5}>
           <InfoBox text={formatMessage(strings.infoBox)} />
-        </Box>
-        <PoliceUploadListMemo
-          caseId={workingCase.id}
-          caseFiles={workingCase.caseFiles}
-          subtypes={workingCase.indictmentSubtypes}
-          crimeScenes={workingCase.crimeScenes}
-          setAllUploaded={setAllUploadedForPoliceCaseNumber}
-          policeCaseNumbers={workingCase.policeCaseNumbers}
-          caseOrigin={workingCase.origin}
-        />
+          <PoliceUploadListMemo
+            caseId={workingCase.id}
+            caseFiles={workingCase.caseFiles}
+            subtypes={workingCase.indictmentSubtypes}
+            crimeScenes={workingCase.crimeScenes}
+            setAllUploaded={setAllUploadedForPoliceCaseNumber}
+            policeCaseNumbers={workingCase.policeCaseNumbers}
+            caseOrigin={workingCase.origin}
+          />
+        </div>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
