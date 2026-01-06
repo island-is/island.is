@@ -602,7 +602,7 @@ export class CourtDocumentRepositoryService {
           { mergedDocumentOrder: literal('merged_document_order - 1') },
           {
             where: {
-              caseId: { [Op.in]: mergedCaseIds },
+              caseId: mergedCaseIds,
               mergedDocumentOrder: { [Op.gt]: deletedOrder },
             },
             transaction,
