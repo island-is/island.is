@@ -63,12 +63,6 @@ export const rcDemands = {
         description:
           'Notaður sem titill fyrir "lagaákvæði sem brot varða við" hlutann á lagagrundvöllur og dómkröfur skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
-      label: {
-        id: 'judicial.system.restriction_cases:police_demands.laws_broken.label',
-        defaultMessage: 'Lagaákvæði sem ætluð brot {defendant} þykja varða við',
-        description:
-          'Notaður sem titill í "lagaákvæði sem brot varða við" textaboxi á lagagrundvöllur og dómkröfur skrefi í gæsluvarðhalds- og farbannsmálum.',
-      },
       placeholder: {
         id: 'judicial.system.restriction_cases:police_demands.laws_broken.placeholder',
         defaultMessage:
