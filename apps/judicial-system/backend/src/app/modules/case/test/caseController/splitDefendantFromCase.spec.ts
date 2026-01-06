@@ -126,7 +126,6 @@ describe('CaseController - Split defendant from case', () => {
       mockFindOne.mockResolvedValueOnce(fullSplitCase)
 
       then = await givenWhenThen(caseId, defendantId, theCase, defendantToSplit)
-      console.log(then)
     })
 
     it('should create new case and transfer defendant', () => {
