@@ -74,6 +74,7 @@ import { serviceSetup as authAdminApiSetup } from '../../../apps/services/auth/a
 import { EnvironmentServices } from '.././dsl/types/charts'
 import { ServiceBuilder } from '../dsl/dsl'
 import { serviceSetup as formSystemApiSetup } from '../../../apps/services/form-system/infra/form-system'
+import { workerSetup as formSystemWorkerSetup } from '../../../apps/services/form-system/infra/form-system'
 import { serviceSetup as formSystemWebSetup } from '../../../apps/form-system/web/infra/form-system-web'
 import { serviceSetup as paymentFlowUpdateHandlerSetup } from '../../../apps/services/payment-flow-update-handler/infra/payment-flow-update-handler'
 
@@ -120,6 +121,7 @@ const universityGatewayService = universityGatewaySetup()
 const universityGatewayWorker = universityGatewayWorkerSetup()
 
 const formSystemApi = formSystemApiSetup()
+const formSystemWorker = formSystemWorkerSetup()
 const formSystemWeb = formSystemWebSetup()
 
 const paymentFlowUpdateHandlerService = paymentFlowUpdateHandlerSetup()
@@ -314,6 +316,7 @@ export const Services: EnvironmentServices = {
     paymentsService,
     bffServicePortalService,
     formSystemApi,
+    formSystemWorker,
     formSystemWeb,
     paymentFlowUpdateHandlerService,
   ],

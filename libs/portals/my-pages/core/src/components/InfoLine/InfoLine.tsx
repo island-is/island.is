@@ -65,11 +65,11 @@ export const InfoLine = ({
   loading,
   button,
   tooltip,
-  labelColumnSpan = ['1/1', '1/1', '1/1', '5/12'],
+  labelColumnSpan = ['1/1', '1/1', '1/1', '4/12'],
   valueColumnSpan = button
     ? ['1/1', '6/12', '6/12', '5/12']
-    : ['1/1', '1/1', '1/1', '7/12'],
-  buttonColumnSpan = ['1/1', '6/12', '6/12', '2/12'],
+    : ['1/1', '1/1', '1/1', '5/12'],
+  buttonColumnSpan = ['1/1', '6/12', '6/12', '3/12'],
   paddingY = 2,
   paddingBottom,
   warning,
@@ -125,6 +125,7 @@ export const InfoLine = ({
               width="full"
               className={styles.content}
               overflow="hidden"
+              flexWrap="wrap"
             >
               {loading ? (
                 <SkeletonLoader width="70%" height={27} />

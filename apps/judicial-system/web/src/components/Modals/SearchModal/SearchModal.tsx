@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef, useState } from 'react'
+import { FC, useContext, useEffect, useRef, useState } from 'react'
 import cn from 'classnames'
 import { AnimatePresence, motion } from 'motion/react'
 
@@ -7,9 +7,19 @@ import {
   capitalize,
   formatCaseType,
 } from '@island.is/judicial-system/formatters'
-import { CaseType } from '@island.is/judicial-system/types'
+import {
+  isCourtOfAppealsUser,
+  isDistrictCourtUser,
+  isProsecutionUser,
+} from '@island.is/judicial-system/types'
+import {
+  CaseType,
+  SearchCasesRow,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCaseList } from '@island.is/judicial-system-web/src/utils/hooks'
+import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
+import { UserContext } from '../../UserProvider/UserProvider'
 import { ModalContainer } from '../Modal/Modal'
 import { useSearchCasesLazyQuery } from './searchCases.generated'
 import * as styles from './SearchModal.css'
@@ -22,6 +32,7 @@ interface ResultsProps {
   caseId: string
   caseType: CaseType
   descriptor: string
+  caseNumber?: string | null
   onClick: () => void
 }
 
@@ -29,6 +40,7 @@ const SearchResultButton: FC<ResultsProps> = ({
   caseId,
   caseType,
   descriptor,
+  caseNumber,
   onClick,
 }: ResultsProps) => {
   const { handleOpenCase } = useCaseList()
@@ -41,19 +53,17 @@ const SearchResultButton: FC<ResultsProps> = ({
         onClick()
       }}
     >
-      <Box
-        border="standard"
-        padding={2}
-        borderRadius="large"
-        display="flex"
-        alignItems="center"
-        justifyContent="spaceBetween"
-      >
-        <Box display="flex" alignItems="flexStart" flexDirection={'column'}>
+      <Box border="standard" padding={2} borderRadius="large">
+        <Box display="flex" alignItems="flexStart" flexDirection="column">
           <Text variant="eyebrow">{capitalize(formatCaseType(caseType))}</Text>
-          <Text variant="h3" as="p" fontWeight="light">
+          <Text variant="h3" as="p" fontWeight="light" textAlign="left">
             {descriptor}
           </Text>
+          {caseNumber && (
+            <Text variant="small" color="dark300">
+              {`Málsnúmer: ${caseNumber}`}
+            </Text>
+          )}
         </Box>
       </Box>
     </button>
@@ -61,12 +71,14 @@ const SearchResultButton: FC<ResultsProps> = ({
 }
 
 const SearchModal: FC<Props> = ({ onClose }) => {
+  const { handleOpenCase } = useCaseList()
+  const { user } = useContext(UserContext)
+
   const [searchString, setSearchString] = useState<string>('')
   const [focusIndex, setFocusIndex] = useState<number>(-1)
-  const { handleOpenCase } = useCaseList()
-
   const [searchResults, setSearchResults] =
     useState<[JSX.Element[], number | undefined]>()
+
   const searchInputRef = useRef<HTMLInputElement>(null)
   const itemRefs = useRef<(HTMLLIElement | null)[]>([])
 
@@ -134,13 +146,28 @@ const SearchModal: FC<Props> = ({ onClose }) => {
           variables: { input: { query: searchString } },
         })
 
+        const getCaseNumber = (row: SearchCasesRow) => {
+          if (!user) {
+            return undefined
+          }
+
+          return isProsecutionUser(user)
+            ? row.policeCaseNumbers[0]
+            : isDistrictCourtUser(user)
+            ? row.courtCaseNumber
+            : isCourtOfAppealsUser(user)
+            ? row.appealCaseNumber
+            : undefined
+        }
+
         setSearchResults([
           results.data && results.data.searchCases.rowCount > 0
-            ? results.data?.searchCases.rows.map((row, idx) => (
+            ? results.data?.searchCases.rows.map((row: SearchCasesRow) => (
                 <SearchResultButton
-                  key={idx}
+                  key={row.caseId}
                   caseId={row.caseId}
                   caseType={row.caseType}
+                  caseNumber={getCaseNumber(row)}
                   descriptor={`${row.matchedValue}${
                     row.matchedField === 'defendantName'
                       ? ''
@@ -170,7 +197,7 @@ const SearchModal: FC<Props> = ({ onClose }) => {
       setSearchResults(undefined)
       setFocusIndex(-1)
     }
-  }, [onClose, searchCases, searchString])
+  }, [onClose, searchCases, searchString, user])
 
   return (
     <ModalContainer title="Leit" onClose={onClose} position="top">
@@ -214,11 +241,11 @@ const SearchModal: FC<Props> = ({ onClose }) => {
                 maxHeight: { duration: 0.5, ease: 'easeOut' },
               }}
             >
-              <div className={styles.searchResults}>
+              <div className={grid({ gap: 2 })}>
                 <Text variant="eyebrow" color="dark300">
                   {`Leitarniðurstöður (${searchResults[1]})`}
                 </Text>
-                <ul className={styles.searchResults}>
+                <ul className={grid({ gap: 2 })}>
                   {searchResults[0].map((searchResult, index) => (
                     <li
                       key={searchResult.props.caseId ?? index}

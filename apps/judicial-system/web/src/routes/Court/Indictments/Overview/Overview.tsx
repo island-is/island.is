@@ -23,7 +23,10 @@ import {
   UserContext,
   // useIndictmentsLawsBroken, NOTE: Temporarily hidden while list of laws broken is not complete
 } from '@island.is/judicial-system-web/src/components'
-import { IndictmentDecision } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseState,
+  IndictmentDecision,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import ReturnIndictmentModal from '../ReturnIndictmentCaseModal/ReturnIndictmentCaseModal'
@@ -48,6 +51,7 @@ const OverviewBody = ({
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
   // const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
 
+  const isUserAssignedJudge = user?.id && user.id === workingCase.judge?.id
   return (
     <>
       <PageHeader title={formatMessage(titles.court.indictments.overview)} />
@@ -74,7 +78,7 @@ const OverviewBody = ({
             </Box>
           )}
         <Box component="section" marginBottom={5}>
-          <InfoCardActiveIndictment />
+          <InfoCardActiveIndictment displayOpenCaseReference={true} />
         </Box>
         {/* 
     NOTE: Temporarily hidden while list of laws broken is not complete in
@@ -102,7 +106,12 @@ const OverviewBody = ({
         )}
         <Box component="section" marginBottom={10}>
           <IndictmentCaseFilesList workingCase={workingCase} />
-          <Box display="flex" justifyContent="flexEnd" marginBottom={3}>
+          <Box
+            display="flex"
+            justifyContent="flexEnd"
+            marginBottom={3}
+            columnGap={2}
+          >
             <Button
               variant="primary"
               icon="add"
@@ -112,10 +121,24 @@ const OverviewBody = ({
                   `${constants.INDICTMENTS_ADD_FILES_IN_COURT_ROUTE}/${workingCase.id}`,
                 )
               }}
-              disabled={false}
+              disabled={workingCase.state === CaseState.CORRECTING}
             >
               {formatMessage(strings.addFilesButtonText)}
             </Button>
+            {isUserAssignedJudge && (
+              <Button
+                variant="primary"
+                icon="add"
+                size="small"
+                onClick={() => {
+                  router.push(
+                    `${constants.INDICTMENTS_ADD_RULING_ORDER_IN_COURT_ROUTE}/${workingCase.id}`,
+                  )
+                }}
+              >
+                Kveða upp úrskurð undir rekstri máls
+              </Button>
+            )}
           </Box>
         </Box>
       </FormContentContainer>

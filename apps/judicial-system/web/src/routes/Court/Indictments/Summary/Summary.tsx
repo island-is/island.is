@@ -18,13 +18,11 @@ import {
 import { hasGeneratedCourtRecordPdf } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
-  CaseTag,
   ConnectedCaseFilesAccordionItem,
   DateTime,
   FormContentContainer,
   FormContext,
   FormFooter,
-  getIndictmentRulingDecisionTag,
   InfoCardClosedIndictment,
   Modal,
   PageHeader,
@@ -32,6 +30,7 @@ import {
   PageTitle,
   PdfButton,
   RenderFiles,
+  RulingModifiedModal,
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
@@ -40,6 +39,7 @@ import {
   CaseFile,
   CaseFileCategory,
   CaseIndictmentRulingDecision,
+  CaseState,
   CaseTransition,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
@@ -52,6 +52,8 @@ import {
 import { strings } from './Summary.strings'
 import * as styles from './Summary.css'
 
+type modal = 'CONFIRM_INDICTMENT' | 'CONFIRM_RULING' | 'CORRECTION_EXPLANATION'
+
 const Summary: FC = () => {
   const { formatMessage } = useIntl()
   const {
@@ -63,9 +65,8 @@ const Summary: FC = () => {
   } = useContext(FormContext)
   const { transitionCase, isTransitioningCase, setAndSendCaseToServer } =
     useCase()
-  const [modalVisible, setModalVisible] = useState<
-    'CONFIRM_INDICTMENT' | 'CONFIRM_RULING'
-  >()
+
+  const [modalVisible, setModalVisible] = useState<modal>()
   const [rulingUrl, setRulingUrl] = useState<string>()
   const [hasReviewed, setHasReviewed] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState(true)
@@ -106,7 +107,7 @@ const Summary: FC = () => {
     return router.push(`${destination}/${workingCase.id}`)
   }
 
-  const handleModalPrimaryButtonClick = async () => {
+  const completeCase = async () => {
     const transitionSuccess = await transitionCase(
       workingCase.id,
       CaseTransition.COMPLETE,
@@ -118,6 +119,14 @@ const Summary: FC = () => {
     }
 
     router.push(`${constants.INDICTMENTS_COMPLETED_ROUTE}/${workingCase.id}`)
+  }
+
+  const handleModalPrimaryButtonClick = async () => {
+    if (workingCase.state === CaseState.CORRECTING) {
+      setModalVisible('CORRECTION_EXPLANATION')
+    } else {
+      await completeCase()
+    }
   }
 
   const handleRuling = async () => {
@@ -192,10 +201,6 @@ const Summary: FC = () => {
     [[] as CaseFile[], [] as CaseFile[]],
   )
 
-  const indictmentRulingTag = getIndictmentRulingDecisionTag(
-    workingCase.indictmentRulingDecision,
-  )
-
   const canUserCompleteCase =
     (workingCase.indictmentRulingDecision !==
       CaseIndictmentRulingDecision.RULING &&
@@ -212,17 +217,9 @@ const Summary: FC = () => {
     >
       <PageHeader title={formatMessage(strings.htmlTitle)} />
       <FormContentContainer>
-        <Box display="flex" justifyContent="spaceBetween">
-          <PageTitle>{formatMessage(strings.title)}</PageTitle>
-          {workingCase.indictmentRulingDecision && (
-            <Box marginTop={2}>
-              <CaseTag
-                color={indictmentRulingTag.color}
-                text={formatMessage(indictmentRulingTag.text)}
-              />
-            </Box>
-          )}
-        </Box>
+        <PageTitle includeTag={!!workingCase.indictmentRulingDecision}>
+          {formatMessage(strings.title)}
+        </PageTitle>
         <Box component="section" marginBottom={1}>
           <Text variant="h2" as="h2">
             {formatMessage(core.caseNumber, {
@@ -418,6 +415,23 @@ const Summary: FC = () => {
             text: formatMessage(strings.completeCaseModalSecondaryButton),
             onClick: () => setModalVisible(undefined),
           }}
+        />
+      )}
+      {modalVisible === 'CORRECTION_EXPLANATION' && (
+        <RulingModifiedModal
+          onCancel={() =>
+            setModalVisible(
+              workingCase.indictmentRulingDecision ===
+                CaseIndictmentRulingDecision.RULING
+                ? 'CONFIRM_RULING'
+                : 'CONFIRM_INDICTMENT',
+            )
+          }
+          onContinue={async () => await completeCase()}
+          continueDisabled={isTransitioningCase}
+          description="Skráðu hvað var leiðrétt í dómnum eða þingbókinni. Aðilar máls munu fá skilaboðin."
+          defaultExplanation="Með heimild í 3. mgr. 186. gr. laga nr. 88/2008 hefur dómur verið leiðréttur."
+          fieldToModify="rulingModifiedHistory"
         />
       )}
     </PageLayout>

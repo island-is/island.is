@@ -25,20 +25,7 @@ export const FormResponseFragment = gql`
     forms {
       ...Form
     }
-    submitUrls {
-      id
-      url
-      isTest
-      type
-      method
-    }
-    validationUrls {
-      id
-      url
-      isTest
-      type
-      method
-    }
+    submissionUrls
     organizations {
       value
       label

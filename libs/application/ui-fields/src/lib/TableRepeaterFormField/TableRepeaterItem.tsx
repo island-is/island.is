@@ -107,6 +107,7 @@ export const Item = ({
     updateValueObj,
     defaultValue,
     clearOnChange,
+    clearOnChangeDefaultValue,
     setOnChange,
     ...props
   } = item
@@ -307,6 +308,11 @@ export const Item = ({
     labelVal = label(activeIndex)
   } else {
     labelVal = label
+  }
+
+  let disableDropdownVal: boolean | undefined
+  if (component === 'phone') {
+    disableDropdownVal = !(item.enableCountrySelector ?? false)
   }
 
   const setOnChangeFunc =
@@ -558,12 +564,16 @@ export const Item = ({
             application={application}
             large={true}
             clearOnChange={clearOnChangeVal}
+            clearOnChangeDefaultValue={clearOnChangeDefaultValue}
             setOnChange={setOnChangeFunc}
             {...props}
             {...(component === 'date'
               ? { maxDate: maxDateVal, minDate: minDateVal }
               : {})}
             {...(component === 'input' ? { suffix: suffixVal } : {})}
+            {...(component === 'phone'
+              ? { disableDropdown: disableDropdownVal }
+              : {})}
           />
         )}
     </GridColumn>

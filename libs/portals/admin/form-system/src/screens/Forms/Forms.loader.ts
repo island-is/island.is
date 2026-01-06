@@ -6,7 +6,6 @@ import {
   FormSystemFormResponse,
   FormSystemOption,
   FormSystemOrganizationAdmin,
-  FormSystemOrganizationUrl,
   FormSystemPermissionType,
 } from '@island.is/api/schema'
 import {
@@ -140,17 +139,6 @@ export const formsLoader: WrappedLoaderFn = ({ client, userInfo }) => {
         isCommon: type?.isCommon,
       })) as FormSystemPermissionType[]
 
-    const mapOrganizationUrls = (
-      urls: FormSystemOrganizationUrl[],
-    ): FormSystemOrganizationUrl[] =>
-      urls?.map((url) => ({
-        id: url?.id,
-        url: url?.url,
-        type: url?.type,
-        method: url?.method,
-        isTest: url?.isTest,
-      })) as FormSystemOrganizationUrl[]
-
     return {
       forms: forms,
       organizations: organizations,
@@ -170,16 +158,6 @@ export const formsLoader: WrappedLoaderFn = ({ client, userInfo }) => {
       certificationTypes: mapPermissionTypes(admin.certificationTypes || []),
       listTypes: mapPermissionTypes(admin.listTypes || []),
       fieldTypes: mapPermissionTypes(admin.fieldTypes || []),
-      submitUrls: mapOrganizationUrls(
-        (admin.submitUrls || []).filter(
-          (url): url is FormSystemOrganizationUrl => url !== null,
-        ),
-      ),
-      validationUrls: mapOrganizationUrls(
-        (admin.validationUrls || []).filter(
-          (url): url is FormSystemOrganizationUrl => url !== null,
-        ),
-      ),
     }
   }
 }

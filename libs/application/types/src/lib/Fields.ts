@@ -186,6 +186,7 @@ export type RepeaterItem = {
         ) => string | string[] | undefined)
   }
   clearOnChange?: MaybeWithIndex<string[]>
+  clearOnChangeDefaultValue?: string | boolean | number | undefined
   setOnChange?:
     | { key: string; value: any }[]
     | ((
@@ -216,6 +217,7 @@ export type RepeaterItem = {
       component: 'phone'
       allowedCountryCodes?: string[]
       enableCountrySelector?: boolean
+      format?: string
     }
   | {
       component: 'date'
@@ -247,10 +249,6 @@ export type RepeaterItem = {
       nameDefaultValue?: string
       searchPersons?: boolean
       searchCompanies?: boolean
-    }
-  | {
-      component: 'phone'
-      format: string
     }
   | {
       component: 'selectAsync'
@@ -352,6 +350,14 @@ export interface BaseField extends FormItem {
   marginBottom?: BoxProps['marginBottom']
   marginTop?: BoxProps['marginTop']
   clearOnChange?: string[]
+  clearOnChangeDefaultValue?:
+    | string
+    | string[]
+    | boolean
+    | boolean[]
+    | number
+    | number[]
+    | undefined
   setOnChange?:
     | { key: string; value: any }[]
     | ((

@@ -7,6 +7,7 @@ import {
   FormContext,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
+import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useCase,
   useUsers,
@@ -87,7 +88,9 @@ const SelectCourtOfficials = () => {
             options={judges}
             onChange={(selectedOption) => setJudge(selectedOption?.value)}
             required
-            isDisabled={usersLoading}
+            isDisabled={
+              usersLoading || workingCase.state === CaseState.CORRECTING
+            }
           />
         </Box>
         <Select
@@ -98,7 +101,9 @@ const SelectCourtOfficials = () => {
           options={registrars}
           onChange={(selectedOption) => setRegistrar(selectedOption?.value)}
           isClearable
-          isDisabled={usersLoading}
+          isDisabled={
+            usersLoading || workingCase.state === CaseState.CORRECTING
+          }
         />
       </BlueBox>
     </>

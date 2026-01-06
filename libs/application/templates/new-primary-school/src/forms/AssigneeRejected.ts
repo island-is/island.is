@@ -7,12 +7,16 @@ import {
   buildTextField,
 } from '@island.is/application/core'
 import { Application, DefaultEvents, Form } from '@island.is/application/types'
-import { assigneeMessages, newPrimarySchoolMessages } from '../lib/messages'
+import {
+  assigneeMessages,
+  overviewMessages,
+  sharedMessages,
+} from '../lib/messages'
 import { States } from '../utils/constants'
 import {
   getApplicationAnswers,
-  getSchoolName,
   getOtherGuardian,
+  getSchoolName,
 } from '../utils/newPrimarySchoolUtils'
 
 export const AssigneeRejected: Form = buildForm({
@@ -61,7 +65,7 @@ export const AssigneeRejected: Form = buildForm({
             }),
             buildTextField({
               id: 'assigneeRejected.nationalId',
-              title: newPrimarySchoolMessages.shared.nationalId,
+              title: sharedMessages.nationalId,
               width: 'full',
               format: '######-####',
               disabled: true,
@@ -79,7 +83,7 @@ export const AssigneeRejected: Form = buildForm({
             }),
             buildTextField({
               id: 'assigneeRejected.selectedSchool',
-              title: newPrimarySchoolMessages.overview.selectedSchool,
+              title: overviewMessages.selectedSchool,
               width: 'full',
               disabled: true,
               defaultValue: (application: Application) => {
@@ -95,7 +99,7 @@ export const AssigneeRejected: Form = buildForm({
             }),
             buildAlertMessageField({
               id: 'assigneeRejected.alertMessage',
-              title: newPrimarySchoolMessages.shared.alertTitle,
+              title: sharedMessages.alertTitle,
               message: (application) => {
                 return application.state === States.OTHER_GUARDIAN_REJECTED
                   ? assigneeMessages.otherGuardian.alertMessage
