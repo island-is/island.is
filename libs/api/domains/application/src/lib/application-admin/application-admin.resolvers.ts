@@ -54,7 +54,10 @@ export class ApplicationAdminResolver {
   }
 
   @Query(() => [ApplicationTypeAdminInstitution], { nullable: true })
-  @Scopes(AdminPortalScope.applicationSystemInstitution)
+  @Scopes(
+    AdminPortalScope.applicationSystemInstitution,
+    AdminPortalScope.applicationSystemAdmin,
+  )
   async applicationTypesInstitutionAdmin(
     @CurrentUser() user: User,
     @Args('locale', { type: () => String, nullable: true })
@@ -100,8 +103,6 @@ export class ApplicationAdminResolver {
   @Query(() => [ApplicationInstitution], { nullable: true })
   @Scopes(AdminPortalScope.applicationSystemAdmin)
   async applicationApplicationsAdminInstitutions(@CurrentUser() user: User) {
-    const a = await this.applicationService.getApplicationInstitutions(user)
-    console.log('a', a)
-    return a
+    return this.applicationService.getApplicationInstitutions(user)
   }
 }

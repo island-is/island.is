@@ -18,7 +18,10 @@ import { m } from '../../lib/messages'
 import { ApplicationFilters, MultiChoiceFilter } from '../../types/filters'
 import { Organization } from '@island.is/shared/types'
 import { format as formatNationalId } from 'kennitala'
-import { useGetSuperApplicationTypesQuery } from '../../queries/overview.generated'
+import {
+  useGetInstitutionApplicationTypesQuery,
+  useGetSuperApplicationTypesQuery,
+} from '../../queries/overview.generated'
 
 interface Props {
   onTypeIdChange: (period: ApplicationFilters['typeIdValue']) => void
@@ -32,6 +35,7 @@ interface Props {
   organizations: Organization[]
   numberOfDocuments?: number
   showInstitutionFilter?: boolean
+  applicationTypes?: { id: string; value: string }[]
 }
 
 export const Filters = ({
@@ -45,6 +49,7 @@ export const Filters = ({
   multiChoiceFilters,
   organizations,
   showInstitutionFilter,
+  applicationTypes,
 }: Props) => {
   const [typeId, setTypeId] = useState<string | undefined>(undefined)
   const [nationalId, setNationalId] = useState('')
@@ -59,7 +64,11 @@ export const Filters = ({
     .sort((a, b) => a.title.localeCompare(b.title))
 
   const { data: typeData, loading: typesLoading } =
-    useGetSuperApplicationTypesQuery({})
+    useGetInstitutionApplicationTypesQuery({
+      variables: { input: { nationalId: '5501692829' } },
+    })
+
+  console.log('typeData', typeData)
 
   useDebounce(
     () => {
@@ -89,14 +98,14 @@ export const Filters = ({
 
   const institutionTypeIds = useMemo(() => {
     return (
-      typeData?.applicationTypesSuperAdmin
+      applicationTypes
         ?.map((type) => ({
           value: type.id,
-          label: type.name ?? '',
+          label: type.value ?? '',
         }))
         .sort((a, b) => a.label.localeCompare(b.label, 'is')) ?? []
     )
-  }, [typeData])
+  }, [applicationTypes])
 
   return (
     <Box

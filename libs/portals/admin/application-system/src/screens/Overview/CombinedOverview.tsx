@@ -170,6 +170,7 @@ const CombinedOverview = ({ isSuperAdmin }: CombinedOverviewProps) => {
     selected,
   }) => {
     if (categoryId === MultiChoiceFilter.INSTITUTION) {
+      console.log('changing institution??')
       // Special case for institutions, because we need to map institution slugs to application typeIds
       const typeIds = flatten(selected.map((x) => institutionApplications[x]))
       setInstitutionFilters(typeIds.length > 0 ? typeIds : undefined)
@@ -243,6 +244,7 @@ const CombinedOverview = ({ isSuperAdmin }: CombinedOverviewProps) => {
             : institutionData?.applicationApplicationsInstitutionAdmin?.count
         }
         showInstitutionFilter={isSuperAdmin}
+        // applicationTypes={organizationDataWithNationalId?.applicationApplicationsAdminInstitutions?.map(x => {return {id: x.nationalId, value: x.contentfulId}})}
       />
 
       {isLoading ? (
