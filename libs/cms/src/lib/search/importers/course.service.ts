@@ -21,7 +21,10 @@ export class CourseSyncService implements CmsSyncProvider<ICourse> {
 
       const course = entry as ICourse
 
-      if (course.fields.title && course.fields.organization?.fields?.slug) {
+      if (
+        course.fields.title &&
+        course.fields.courseListPage?.fields?.organization?.fields?.slug
+      ) {
         entriesToUpdate.push(course)
       } else {
         entriesToDelete.push(entry.sys.id)
