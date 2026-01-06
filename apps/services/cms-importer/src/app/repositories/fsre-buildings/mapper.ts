@@ -1,36 +1,121 @@
-import { EntryCreationDto, RichTextParagraph } from '../cms/cms.types'
-import { generateGenericListItem, mapLocalizedValue } from '../cms/mapper'
+import {
+  EntryCreationDto,
+  EntryUpdateDto,
+  Localized,
+  RichTextParagraph,
+  CmsRichTextDocument,
+} from '../cms/cms.types'
+import {
+  generateGenericListItem,
+  mapLocalizedValue,
+  mapLocalizedRichTextDocument,
+} from '../cms/mapper'
 import { BuildingDto } from './dto/building.dto'
 import slugify from '@sindresorhus/slugify'
+import { Entry } from 'contentful-management'
+import { EN_LOCALE, LOCALE } from '../../constants'
+import { isDefined } from '@island.is/shared/utils'
 
 const OWNER_TAG = 'ownerFsre'
 
-export const mapFSREBuildingToGenericListItem = (
+export const mapEntryCreationDto = (
   data: BuildingDto,
   genericListId: string,
   tagsRegistry: Record<string, string>,
 ): EntryCreationDto | undefined => {
-  const tagIds = data.region ? [tagsRegistry[data.region]] : undefined
-  const slug = slugify(data.address, { separator: '-' })
+  const tagIds = data.region
+    ? [tagsRegistry[data.region]].filter(isDefined)
+    : undefined
 
   return generateGenericListItem({
     listId: genericListId,
     ownerTags: [OWNER_TAG],
-    properties: {
-      internalTitle: `FSRE: ${data.address}_${data.id}`,
-      title: mapLocalizedValue(data.address, data.address),
-      slug: mapLocalizedValue(slug, slug),
-      tagIds,
-      cardIntro: mapLocalizedValue(
-        generateCardIntroForLocale(data, 'is'),
-        generateCardIntroForLocale(data, 'en'),
-      ),
-      content: mapLocalizedValue(
-        generateContentForLocale(data, 'is'),
-        generateContentForLocale(data, 'en'),
-      ),
-    },
+    properties: mapCreationProperties(data, tagIds),
   })
+}
+
+export const mapEntryUpdateDto = (
+  cmsEntry: Entry,
+  data: BuildingDto,
+): EntryUpdateDto | undefined => {
+  const properties = mapUpdateProperties(data)
+  const fields: Array<keyof typeof properties> = [
+    'title',
+    'slug',
+    'cardIntro',
+    'content',
+  ]
+
+  const createFieldMappings = (locale: string) =>
+    fields.map((fieldKey) => ({
+      key: fieldKey,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      value: (properties[fieldKey] as any)?.[locale],
+    }))
+
+  return {
+    cmsEntry,
+    inputFields: {
+      [LOCALE]: createFieldMappings(LOCALE),
+      [EN_LOCALE]: createFieldMappings(EN_LOCALE),
+    },
+  }
+}
+
+const generateCardIntroContent = (
+  data: BuildingDto,
+): Localized<Array<RichTextParagraph>> => ({
+  [LOCALE]: generateCardIntroForLocale(data, 'is'),
+  [EN_LOCALE]: generateCardIntroForLocale(data, 'en'),
+})
+
+const generateMainContent = (
+  data: BuildingDto,
+): Localized<Array<RichTextParagraph>> => ({
+  [LOCALE]: generateContentForLocale(data, 'is'),
+  [EN_LOCALE]: generateContentForLocale(data, 'en'),
+})
+
+const mapCreationProperties = (data: BuildingDto, tagIds?: string[]) => ({
+  internalTitle: `FSRE: ${data.address}_${data.id}`,
+  title: mapTitle(data),
+  slug: mapSlug(data),
+  tagIds,
+  cardIntro: generateCardIntroContent(data),
+  content: generateMainContent(data),
+})
+
+const mapUpdateProperties = (
+  data: BuildingDto,
+): {
+  title: Localized<string>
+  slug: Localized<string>
+  cardIntro: Localized<CmsRichTextDocument>
+  content: Localized<CmsRichTextDocument>
+} => {
+  const cardIntroContent = generateCardIntroContent(data)
+  const mainContent = generateMainContent(data)
+
+  return {
+    title: mapTitle(data),
+    slug: mapSlug(data),
+    cardIntro: mapLocalizedRichTextDocument(
+      cardIntroContent[LOCALE],
+      cardIntroContent[EN_LOCALE],
+    ),
+    content: mapLocalizedRichTextDocument(
+      mainContent[LOCALE],
+      mainContent[EN_LOCALE],
+    ),
+  }
+}
+
+const mapTitle = (data: BuildingDto): Localized<string> =>
+  mapLocalizedValue(data.address, data.address)
+
+const mapSlug = (data: BuildingDto): Localized<string> => {
+  const slug = slugify(data.address, { separator: '-' })
+  return mapLocalizedValue(slug, slug)
 }
 
 const generateCardIntroForLocale = (
@@ -77,8 +162,7 @@ const generateContentForLocale = (
   data: BuildingDto,
   locale: 'is' | 'en',
 ): Array<RichTextParagraph> => {
-  const content: Array<{ values: Array<{ value: string; isBold?: boolean }> }> =
-    []
+  const content: Array<RichTextParagraph> = []
 
   if (data.municipality) {
     content.push({

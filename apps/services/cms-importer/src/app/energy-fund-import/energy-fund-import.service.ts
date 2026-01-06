@@ -1,8 +1,7 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { CmsRepository } from '../repositories/cms/cms.repository'
 import { logger } from '@island.is/logging'
 import { EnergyGrantsRepository } from '../repositories/energy-grants/energyGrants.repository'
-import { ClientAPI } from 'contentful-management'
 import { EntryCreationDto } from '../repositories/cms/cms.types'
 import { isDefined } from '@island.is/shared/utils'
 import { LOCALE } from '../constants'
@@ -18,8 +17,6 @@ export class EnergyFundImportService {
   constructor(
     private readonly cmsRepository: CmsRepository,
     private readonly clientsRepository: EnergyGrantsRepository,
-    @Inject('contentful-management-client')
-    private readonly client: ClientAPI,
   ) {}
 
   public async run() {

@@ -1,83 +1,113 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { CmsRepository } from '../repositories/cms/cms.repository'
 import { logger } from '@island.is/logging'
-import { ClientAPI } from 'contentful-management'
 import { EntryCreationDto } from '../repositories/cms/cms.types'
 import { isDefined } from '@island.is/shared/utils'
-import { ENVIRONMENT, LOCALE, SPACE_ID } from '../constants'
+import { LOCALE } from '../constants'
 import { FSREBuildingsRepository } from '../repositories/fsre-buildings/fsreBuildings.repository'
 import { GENERIC_LIST_ID, REGION_TAGS } from './constants'
-import { mapFSREBuildingToGenericListItem } from '../repositories/fsre-buildings/mapper'
+import {
+  mapEntryCreationDto,
+  mapEntryUpdateDto,
+} from '../repositories/fsre-buildings/mapper'
+import { BuildingDto } from '../repositories/fsre-buildings/dto/building.dto'
 
 @Injectable()
 export class FSREBuildingsImportService {
   constructor(
     private readonly cmsRepository: CmsRepository,
     private readonly clientsRepository: FSREBuildingsRepository,
-    @Inject('contentful-management-client')
-    private readonly client: ClientAPI,
   ) {}
 
   public async run() {
     logger.info('FSRE buildings import worker starting...')
-    await this.processEntries()
+    await this.processFSREBuildings()
     logger.info('...FSRE buildings import worker finished.')
   }
 
-  private async processEntries() {
+  private async processFSREBuildings() {
     const buildings = await this.clientsRepository.getBuildings()
 
-    if (buildings) {
-      const existingEntries =
-        await this.cmsRepository.getGenericListItemEntries(GENERIC_LIST_ID)
-
-      const newEntries: Array<EntryCreationDto> = buildings
-        .map((eg) => {
-          if (
-            existingEntries.find(
-              (i) =>
-                i.fields['internalTitle']?.[LOCALE] ===
-                `FSRE: ${eg.address}_${eg.id}`,
-            )
-          ) {
-            logger.info('Entry already exists, skipping.', {
-              name: eg.address,
-            })
-            return null
-          }
-
-          return mapFSREBuildingToGenericListItem(
-            eg,
-            GENERIC_LIST_ID,
-            REGION_TAGS,
-          )
-        })
-        .filter(isDefined)
-
-      logger.info('creating FSRE building entries...')
-      if (!newEntries.length) {
-        logger.warn('no FSRE building entries to create')
-        return [
-          {
-            ok: true,
-            error: 'no FSRE building entries to create',
-          },
-        ]
-      }
-
-      for (const entry of newEntries) {
-        logger.warn('entry', entry.fields['internalTitle'])
-        const createdEntry = await this.client
-          .getSpace(SPACE_ID)
-          .then((space) => space.getEnvironment(ENVIRONMENT))
-          .then((env) => env.createEntry('genericListItem', entry))
-          .then((res) => ({ ok: true as const, data: res }))
-          .catch((e) => ({
-            ok: false as const,
-            error: e,
-          }))
-        logger.info('createdEntry', createdEntry)
-      }
+    if (!buildings || !buildings.length) {
+      logger.warn('No buildings to process')
+      return
     }
+
+    //first we create the entries
+    await this.createEntries(buildings)
+    //then we update the entries
+    await this.updateEntries(buildings)
+  }
+
+  private async createEntries(buildings: Array<BuildingDto>): Promise<void> {
+    const existingEntries = await this.cmsRepository.getGenericListItemEntries(
+      GENERIC_LIST_ID,
+    )
+
+    const previousEntryNames: Array<string> = existingEntries
+      .map((i) => {
+        const title: string = i.fields['internalTitle']?.[LOCALE]
+        if (!title) {
+          return null
+        }
+        return title
+      })
+      .filter(isDefined)
+
+    const newEntries: Array<EntryCreationDto> = buildings
+      .map((building) => {
+        const internalTitle = `FSRE: ${building.address}_${building.id}`
+
+        if (previousEntryNames.find((i) => i === internalTitle)) {
+          logger.info('Entry already exists, skipping.', {
+            name: internalTitle,
+          })
+          return null
+        }
+
+        return mapEntryCreationDto(building, GENERIC_LIST_ID, REGION_TAGS)
+      })
+      .filter(isDefined)
+
+    logger.info('creating FSRE building entries...')
+    if (!newEntries.length) {
+      logger.warn('no FSRE building entries to create')
+      return
+    }
+
+    await this.cmsRepository.createEntries(newEntries, 'genericListItem')
+    logger.info('entries creation finished')
+  }
+
+  private async updateEntries(buildings: Array<BuildingDto>): Promise<void> {
+    const existingEntries = await this.cmsRepository.getGenericListItemEntries(
+      GENERIC_LIST_ID,
+    )
+
+    const entriesToUpdate = buildings
+      .map((building) => {
+        const internalTitle = `FSRE: ${building.address}_${building.id}`
+        const matchingEntry = existingEntries.find(
+          (i) => i.fields['internalTitle']?.[LOCALE] === internalTitle,
+        )
+        if (matchingEntry) {
+          return mapEntryUpdateDto(matchingEntry, building)
+        }
+      })
+      .filter(isDefined)
+
+    logger.info('updating FSRE building entries...')
+    if (!entriesToUpdate.length) {
+      logger.warn('no FSRE building entries to update')
+      return
+    }
+
+    await this.cmsRepository.updateEntries(
+      entriesToUpdate,
+      'genericListItem',
+      false,
+    )
+
+    logger.info('entries update finished')
   }
 }
