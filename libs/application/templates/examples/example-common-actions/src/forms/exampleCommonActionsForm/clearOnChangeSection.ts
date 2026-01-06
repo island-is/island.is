@@ -34,11 +34,16 @@ export const clearOnChangeSection = buildSection({
           description: `To try it out simply enter some text in the bottom text field
           and change the selections in any of the other fields.`,
         }),
+        buildDescriptionField({
+          id: 'descriptionField3',
+          description: `The "empty" value for the fields that are cleared can be specified using the clearOnChangeDefaultValue property. Note that although we are using a string here the values can be strings, numbers or booleans`,
+        }),
         buildAsyncSelectField({
           id: 'asyncSelectField',
           title: 'Async Select',
           loadingError: 'Loading error',
           clearOnChange: ['clearableTextField'],
+          clearOnChangeDefaultValue: 'Cleared by async select field',
           loadOptions: async ({ apolloClient }) => {
             const { data } = await apolloClient.query<Query>({
               query: friggOrganizationsByTypeQuery,
@@ -61,30 +66,35 @@ export const clearOnChangeSection = buildSection({
             { value: 'option1', label: 'Option 1' },
             { value: 'option2', label: 'Option 2' },
           ],
+          clearOnChangeDefaultValue: 'Cleared by select field',
         }),
 
         buildPhoneField({
           id: 'phoneField',
           title: 'Phone Field',
           clearOnChange: ['clearableTextField'],
+          clearOnChangeDefaultValue: 'Cleared by phone field',
         }),
 
         buildDateField({
           id: 'dateField',
           title: 'Date Field',
           clearOnChange: ['clearableTextField'],
+          clearOnChangeDefaultValue: 'Cleared by date field',
         }),
 
         buildTextField({
           id: 'textField',
           title: 'Text Field',
           clearOnChange: ['clearableTextField'],
+          clearOnChangeDefaultValue: 'Cleared by text field',
         }),
 
         buildRadioField({
           id: 'radioField',
           title: 'Radio Field',
           clearOnChange: ['clearableTextField'],
+          clearOnChangeDefaultValue: 'Cleared by radio field',
           options: [
             { value: 'option1', label: 'Option 1' },
             { value: 'option2', label: 'Option 2' },
@@ -96,6 +106,7 @@ export const clearOnChangeSection = buildSection({
           title: 'Checkbox Field',
           marginTop: 2,
           clearOnChange: ['clearableTextField'],
+          clearOnChangeDefaultValue: 'Cleared by checkbox field',
           options: [
             { value: 'option1', label: 'Option 1' },
             { value: 'option2', label: 'Option 2' },
@@ -106,6 +117,7 @@ export const clearOnChangeSection = buildSection({
           id: 'nationalIdWithNameField',
           title: 'NationalId With Name Field',
           clearOnChange: ['clearableTextField'],
+          clearOnChangeDefaultValue: 'Cleared by national id with name field',
         }),
 
         buildDividerField({}),
