@@ -26,6 +26,7 @@ export const VehicleCard: FC<React.PropsWithChildren<Props>> = ({
   const text = vehicle.colorName ? vehicle.colorName + ' - ' + plate : plate
 
   return (
+    //TODO: Replace with Island UI Card, decide if we should add secondaryTag or find another solution
     <ActionCard
       heading={heading}
       text={text}
