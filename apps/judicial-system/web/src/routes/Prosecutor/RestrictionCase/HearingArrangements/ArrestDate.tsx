@@ -1,7 +1,10 @@
 import { Dispatch, FC, SetStateAction, useCallback, useMemo } from 'react'
 
-import { Box, Text } from '@island.is/island-ui/core'
-import { DateTime } from '@island.is/judicial-system-web/src/components'
+import { Box } from '@island.is/island-ui/core'
+import {
+  DateTime,
+  SectionHeading,
+} from '@island.is/judicial-system-web/src/components'
 import {
   Case,
   CaseType,
@@ -47,12 +50,8 @@ const ArrestDate: FC<Props> = ({ title, workingCase, setWorkingCase }) => {
   )
 
   return (
-    <Box component="section" marginBottom={5}>
-      <Box marginBottom={3}>
-        <Text as="h3" variant="h3">
-          {title}
-        </Text>
-      </Box>
+    <Box component="section">
+      <SectionHeading title={title} />
       <DateTime
         name="arrestDate"
         maxDate={new Date()}
