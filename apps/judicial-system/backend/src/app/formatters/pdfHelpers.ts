@@ -13,7 +13,8 @@ export interface Confirmation {
 }
 
 export const calculatePt = (px: number) => Math.ceil(px * 0.74999943307122)
-export const smallFontSize = 5
+export const xsFontSize = 5
+export const smallFontSize = 9
 export const baseFontSize = 11
 export const basePlusFontSize = 12
 export const mediumFontSize = 14
@@ -141,7 +142,7 @@ export const drawConfirmation = (
   const coatOfArmsX = pageMargin + calculatePt(8)
   const titleHeight = calculatePt(16)
   const titleX = coatOfArmsX + coatOfArmsWidth + calculatePt(8)
-  const fontSize = calculatePt(smallFontSize) * 0.7
+  const fontSize = calculatePt(xsFontSize) * 0.7
 
   // Page width minus 2 times the page margin
   const totalWidth = doc.page.width - pageMargin * 2
@@ -187,7 +188,7 @@ export const drawConfirmation = (
   doc.fill('black')
   doc.font('Times-Bold')
   doc
-    .fontSize(calculatePt(smallFontSize))
+    .fontSize(calculatePt(xsFontSize))
     .text('Réttarvörslugátt', titleX, titleTextY, {
       continued: true,
       lineBreak: false,
@@ -215,7 +216,7 @@ export const drawConfirmation = (
     const dateWidth = doc.widthOfString(dateString)
 
     doc
-      .fontSize(calculatePt(smallFontSize))
+      .fontSize(calculatePt(xsFontSize))
       .text(
         formatDate(date) ?? '',
         coatOfArmsX +
