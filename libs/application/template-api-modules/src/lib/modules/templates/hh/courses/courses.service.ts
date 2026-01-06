@@ -245,7 +245,7 @@ export class CoursesService extends BaseTemplateApiService {
   ): Promise<string> {
     const userIsPayingAsIndividual = getValueViaPath<YesOrNoEnum>(
       application.answers,
-      'userIsPayingAsIndividual',
+      'payment.userIsPayingAsIndividual',
       YesOrNoEnum.YES,
     )
     const companyPayment = getValueViaPath<{
@@ -253,7 +253,7 @@ export class CoursesService extends BaseTemplateApiService {
         name: string
         nationalId: string
       }
-    }>(application.answers, 'companyPayment')
+    }>(application.answers, 'payment.companyPayment')
 
     let message = ''
     message += `ID á umsókn: ${application.id}\n`

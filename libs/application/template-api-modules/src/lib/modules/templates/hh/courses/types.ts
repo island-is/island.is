@@ -8,13 +8,15 @@ type NationalIdWithName = {
 }
 
 export type ApplicationAnswers = {
-  userIsPayingAsIndividual: YesOrNoEnum
+  payment: {
+    userIsPayingAsIndividual: YesOrNoEnum
+    companyPayment?: {
+      nationalIdWithName: NationalIdWithName
+    }
+  }
   participantList: Array<{
     nationalIdWithName: NationalIdWithName
   }>
   courseSelect: string
   dateSelect: string
-  companyPayment?: {
-    nationalIdWithName: NationalIdWithName
-  }
 }

@@ -52,7 +52,7 @@ export const getPayerOverviewItems = (
 ): Array<KeyValueItem> => {
   const userIsPayingAsIndividual = getValueViaPath<YesOrNoEnum>(
     answers,
-    'userIsPayingAsIndividual',
+    'payment.userIsPayingAsIndividual',
     YesOrNoEnum.YES,
   )
 
@@ -74,7 +74,7 @@ export const getPayerOverviewItems = (
       valueText:
         getValueViaPath<string>(
           answers,
-          'companyPayment.nationalIdWithName.name',
+          'payment.companyPayment.nationalIdWithName.name',
         ) ?? '',
     })
     items.push({
@@ -83,7 +83,7 @@ export const getPayerOverviewItems = (
       valueText:
         getValueViaPath<string>(
           answers,
-          'companyPayment.nationalIdWithName.nationalId',
+          'payment.companyPayment.nationalIdWithName.nationalId',
         ) ?? '',
     })
   }
