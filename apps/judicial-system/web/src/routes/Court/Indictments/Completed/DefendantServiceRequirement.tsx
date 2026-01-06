@@ -21,10 +21,8 @@ import * as styles from './Completed.css'
 
 export const DefendantServiceRequirement = ({
   defendant,
-  defendantIndex,
 }: {
   defendant: Defendant
-  defendantIndex: number
 }) => {
   const { formatMessage } = useIntl()
   const { workingCase, setWorkingCase } = useContext(FormContext)

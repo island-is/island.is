@@ -305,16 +305,13 @@ const Completed: FC = () => {
                 required
               />
               <div className={grid({ gap: 4 })}>
-                {workingCase.defendants?.map((defendant, index) => {
+                {workingCase.defendants?.map((defendant) => {
                   const { verdict } = defendant
                   if (!verdict) return null
 
                   return (
                     <Box key={defendant.id} className={grid({ gap: 3 })}>
-                      <DefendantServiceRequirement
-                        defendant={defendant}
-                        defendantIndex={index}
-                      />
+                      <DefendantServiceRequirement defendant={defendant} />
                       {verdict.serviceRequirement ===
                         ServiceRequirement.REQUIRED && (
                         <InformationForDefendant defendant={defendant} />
