@@ -591,13 +591,8 @@ export class DrivingLicenseApi {
     pickUpLicense: boolean
     imageBiometricsId: string | null
   }): Promise<number> {
-    const {
-      districtId,
-      token,
-      stolenOrLost,
-      pickUpLicense,
-      imageBiometricsId,
-    } = params
+    const { districtId, token, stolenOrLost, pickUpLicense } = params
+    // Note: imageBiometricsId was removed from the API in the latest version
     return await this.v5.apiDrivinglicenseV5ApplicationsNewCollaborativePost({
       apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
       apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
@@ -607,7 +602,6 @@ export class DrivingLicenseApi {
         licenseStolenOrLost: stolenOrLost,
         userId: v5.DRIVING_LICENSE_API_USER_ID,
         pickUpLicense,
-        imageBiometricsId,
       },
     })
   }
@@ -672,14 +666,13 @@ export class DrivingLicenseApi {
   async getAllPhotosFromThjodskra(params: {
     token: string
   }): Promise<ImagesFromThjodskraDto> {
+    // API updated: now uses JWT token to identify user (no SSN path parameter needed)
     const res =
-      await this.imageApiV5.apiImagecontrollerV5FromnationalregistryWithagerestrictionGet(
-        {
-          apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
-          apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
-          jwttoken: params.token.replace('Bearer ', ''),
-        },
-      )
+      await this.imageApiV5.apiImagecontrollerV5FromnationalregistryGet({
+        apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
+        apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+        jwttoken: params.token.replace('Bearer ', ''),
+      })
 
     return res
   }
