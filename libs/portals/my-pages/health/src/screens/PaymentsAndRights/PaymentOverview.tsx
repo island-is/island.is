@@ -328,6 +328,7 @@ export const PaymentOverview = () => {
                           enabledDocumentFlag && item.downloadUrl ? (
                             <Button
                               iconType="outline"
+                              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                               onClick={() => onFetchDocument(item.downloadUrl!)}
                               variant="ghost"
                               icon="open"
