@@ -10,7 +10,6 @@ import {
 } from 'contentful-management'
 import { ContentfulFetchResponse } from './managementClient.types'
 import { SPACE_ID, ENVIRONMENT } from '../../../constants'
-import { logger } from '@island.is/logging'
 
 @Injectable()
 export class ManagementClientService {

@@ -7,13 +7,14 @@ import {
   KeyValueMap,
 } from 'contentful-management'
 import { ManagementClientService } from './managementClient/managementClient.service'
-import {
-  CONTENT_TYPE,
-  GENERIC_LIST_ITEM_CONTENT_TYPE,
-  LOCALE,
-} from '../../constants'
+import { GENERIC_LIST_ITEM_CONTENT_TYPE, LOCALE } from '../../constants'
 import { logger } from '@island.is/logging'
-import { CreationType, EntryInput, EntryUpdateResult } from './cms.types'
+import {
+  CmsEntryOpResult,
+  ContentTypeOptions,
+  EntryCreationDto,
+  EntryUpdateDto,
+} from './cms.types'
 import { ContentfulFetchResponse } from './managementClient/managementClient.types'
 
 @Injectable()
@@ -22,7 +23,7 @@ export class CmsRepository {
 
   getContentByType = async (contentType: string): Promise<Array<Entry>> => {
     const entryResponse = await this.managementClient.getEntries({
-      content_type: CONTENT_TYPE,
+      content_type: contentType,
     })
 
     if (entryResponse.ok) {
@@ -34,6 +35,23 @@ export class CmsRepository {
       })
       return []
     }
+  }
+
+  private getContentType = async (
+    contentType: 'grant' | 'genericListItem',
+  ): Promise<ContentType | null> => {
+    const contentTypeResponse = await this.managementClient.getContentType(
+      contentType,
+    )
+
+    if (!contentTypeResponse.ok) {
+      logger.warn('cms content type fetch failed', {
+        error: contentTypeResponse.error,
+      })
+      return null
+    }
+
+    return contentTypeResponse.data
   }
 
   getGenericListItemEntries = async (
@@ -59,15 +77,27 @@ export class CmsRepository {
   }
 
   createEntries = async (
-    entries: Array<CreationType>,
-    contentType: ContentType,
-  ) => {
+    entries: Array<EntryCreationDto>,
+    contentType: ContentTypeOptions,
+  ): Promise<Array<CmsEntryOpResult>> => {
     logger.info('creating entries...')
+
+    const cmsContentType = await this.getContentType(contentType)
+
+    if (!cmsContentType) {
+      return [
+        {
+          status: 'error',
+          error: 'invalid content type',
+        },
+      ]
+    }
+
     if (!entries.length) {
       logger.warn('no entries to create')
       return [
         {
-          ok: true,
+          status: 'noop',
           error: 'no entries to create',
         },
       ]
@@ -79,7 +109,7 @@ export class CmsRepository {
           logger.warn('No input fields, aborting creation...')
           return
         }
-        return this.createSingleEntry(contentType, entry)
+        return this.createSingleEntry(cmsContentType, entry)
       })
       .filter(isDefined)
 
@@ -87,18 +117,18 @@ export class CmsRepository {
 
     return promiseRes.map((pr) => {
       if (pr.status === 'fulfilled' && pr.value) {
-        return { ok: true, entry: pr.value }
+        return { status: 'success', entry: pr.value }
       }
       if (pr.status === 'rejected') {
-        return { ok: false, error: pr.reason }
+        return { status: 'error', error: pr.reason }
       }
-      return { ok: false }
+      return { status: 'unknown' }
     })
   }
 
   private createSingleEntry = async (
     contentType: ContentType,
-    input: CreationType,
+    input: EntryCreationDto,
   ): Promise<Entry | undefined> => {
     logger.info('creating single entry...')
 
@@ -136,15 +166,26 @@ export class CmsRepository {
   }
 
   updateEntries = async (
-    entries: EntryInput,
-    contentType: string,
-  ): Promise<Array<EntryUpdateResult>> => {
+    entries: Array<EntryUpdateDto>,
+    contentType: ContentTypeOptions,
+  ): Promise<Array<CmsEntryOpResult>> => {
     if (!entries.length) {
       logger.warn('no entries to update')
       return [
         {
-          ok: 'noop',
+          status: 'noop',
           error: 'no entries to update',
+        },
+      ]
+    }
+
+    const cmsContentType = await this.getContentType(contentType)
+
+    if (!cmsContentType) {
+      return [
+        {
+          status: 'error',
+          error: 'invalid content type',
         },
       ]
     }
@@ -159,7 +200,7 @@ export class CmsRepository {
       })
       return [
         {
-          ok: 'error',
+          status: 'error',
           error: contentTypeResponse.error.message,
         },
       ]
@@ -186,12 +227,12 @@ export class CmsRepository {
 
     return promiseRes.map((pr) => {
       if (pr.status === 'fulfilled' && pr.value) {
-        return { ok: 'success', entry: pr.value }
+        return { status: 'success', entry: pr.value }
       }
       if (pr.status === 'rejected') {
-        return { ok: 'error', error: pr.reason }
+        return { status: 'error', error: pr.reason }
       }
-      return { ok: 'unknown' }
+      return { status: 'unknown' }
     })
   }
 

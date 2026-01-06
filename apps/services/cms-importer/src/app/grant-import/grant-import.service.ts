@@ -5,7 +5,7 @@ import { logger } from '@island.is/logging'
 import { isDefined } from '@island.is/shared/utils'
 import { parseGrantDate } from './utils'
 import { CONTENT_TYPE, LOCALE } from '../constants'
-import { EntryInput } from '../repositories/cms/cms.types'
+import { EntryUpdateDto } from '../repositories/cms/cms.types'
 import { parseReferenceId } from '../utils'
 
 @Injectable()
@@ -61,7 +61,7 @@ export class GrantImportService {
       this.clientsRepository.getGrants(),
     ])
 
-    const grantsToUpdate: EntryInput = clientGrants
+    const grantsToUpdate: EntryUpdateDto = clientGrants
       .map((grant) => {
         const clientGrant = cmsGrants.find((cg) => cg.grantId === grant.id)
 

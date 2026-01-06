@@ -1,16 +1,17 @@
 import { formatCurrency, isDefined } from '@island.is/shared/utils'
-import { CreationType } from '../cms/cms.types'
+import { EntryCreationDto, EntryUpdateDto } from '../cms/cms.types'
 import { EnergyGrantDto } from './dto/energyGrant.dto'
 import { generateGenericListItem, mapLocalizedValue } from '../cms/mapper'
 import slugify from '@sindresorhus/slugify'
+import { Entry } from 'contentful-management'
 
 const OWNER_TAGS = ['ownerOrkustofnun', 'ownerUmhverfisstofnun']
 
-export const mapEnergyGrantToGenericListItem = (
+export const mapEntryCreationDto = (
   data: EnergyGrantDto,
   genericListId: string,
   tagsRegistry: Record<string, string>,
-): CreationType | undefined => {
+): EntryCreationDto | undefined => {
   const slug = slugify(`${data.projectName}-${data.caseId}`)
   return generateGenericListItem({
     listId: genericListId,
@@ -168,4 +169,14 @@ export const mapEnergyGrantToGenericListItem = (
       ),
     },
   })
+}
+
+export const mapEntryUpdateDto = (
+  cmsEntry: Entry,
+  data: EnergyGrantDto,
+): EntryUpdateDto | undefined => {
+  return {
+    cmsEntry,
+    inputFields: {},
+  }
 }

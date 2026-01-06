@@ -2,7 +2,7 @@ import { isDefined } from '@island.is/shared/utils'
 import { LOCALE, EN_LOCALE } from '../../constants'
 import {
   CmsRichTextDocument,
-  CreationType,
+  EntryCreationDto,
   Localized,
   RichTextParagraph,
 } from './cms.types'
@@ -24,10 +24,10 @@ export const generateGenericListItem = ({
   listId,
   ownerTags,
   properties,
-}: Props): CreationType | undefined => {
+}: Props): EntryCreationDto | undefined => {
   const { internalTitle, title, slug, tagIds, cardIntro, content } = properties
 
-  const newEntry: CreationType['fields'] = {
+  const newEntry: EntryCreationDto['fields'] = {
     genericList: mapLocalizedValue<unknown>({
       sys: {
         id: listId,

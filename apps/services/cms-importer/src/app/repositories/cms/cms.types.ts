@@ -1,11 +1,15 @@
 import { Entry, EntryProps } from 'contentful-management'
 import { EN_LOCALE, LOCALE } from '../../constants'
 
-export type EntryInput = Array<{
+export type ContentTypeOptions = 'grant' | 'genericListItem'
+
+export interface EntryUpdateDto {
   cmsEntry: Entry
   inputFields: EntryInputFields
   referenceId?: string
-}>
+}
+
+export type EntryCreationDto = Omit<EntryProps, 'sys'>
 
 export interface Localized<T> {
   [EN_LOCALE]?: T
@@ -37,24 +41,22 @@ export interface RichTextValue {
   isBold?: boolean
 }
 
-export type CreationType = Omit<EntryProps, 'sys'>
-
 export type EntryInputFields = Array<{ key: string; value: unknown }>
 
-export type EntryUpdateResult =
+export type CmsEntryOpResult =
   | {
-      ok: 'success'
+      status: 'success'
       entry: Entry
     }
   | {
-      ok: 'error'
+      status: 'error'
       error?: string
     }
   | {
-      ok: 'noop'
+      status: 'noop'
       error?: string
     }
   | {
-      ok: 'unknown'
+      status: 'unknown'
       error?: string
     }
