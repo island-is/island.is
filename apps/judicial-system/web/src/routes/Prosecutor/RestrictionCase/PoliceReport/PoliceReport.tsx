@@ -2,7 +2,7 @@ import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Box, Input, Text, Tooltip } from '@island.is/island-ui/core'
+import { Box, Input } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { rcReportForm, titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -14,8 +14,10 @@ import {
   PageLayout,
   PageTitle,
   ProsecutorCaseInfo,
+  SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import { useDebouncedInput } from '@island.is/judicial-system-web/src/utils/hooks'
+import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { isPoliceReportStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 
 export const PoliceReport = () => {
@@ -43,24 +45,18 @@ export const PoliceReport = () => {
       />
       <FormContentContainer>
         <PageTitle>{formatMessage(rcReportForm.heading)}</PageTitle>
-        <Box marginBottom={5}>
+        <div className={grid({ gap: 5, marginBottom: 10 })}>
           <ProsecutorCaseInfo workingCase={workingCase} />
-        </Box>
-        <Box component="section" marginBottom={7}>
-          <Box marginBottom={4}>
-            <Text as="h3" variant="h3">
-              {formatMessage(rcReportForm.sections.demands.heading)}{' '}
-              <Tooltip
-                text={formatMessage(rcReportForm.sections.demands.tooltip)}
-              />
-            </Text>
-          </Box>
-          <Box marginBottom={3}>
+          <Box component="section">
+            <SectionHeading
+              title={formatMessage(rcReportForm.sections.demands.heading)}
+              tooltip={formatMessage(rcReportForm.sections.demands.tooltip)}
+            />
             <Input
               name="demands"
               label={formatMessage(rcReportForm.sections.demands.label)}
               placeholder={'Hverjar eru kröfur ákæruvaldsins?'}
-              value={demandsInput.value || ''}
+              value={demandsInput.value}
               errorMessage={demandsInput.errorMessage}
               hasError={demandsInput.hasError}
               onChange={(evt) => demandsInput.onChange(evt.target.value)}
@@ -70,19 +66,11 @@ export const PoliceReport = () => {
               required
             />
           </Box>
-        </Box>
-        <Box component="section" marginBottom={7}>
-          <Box marginBottom={2}>
-            <Text as="h3" variant="h3">
-              {formatMessage(rcReportForm.sections.caseFacts.heading)}{' '}
-              <Tooltip
-                placement="right"
-                as="span"
-                text={formatMessage(rcReportForm.sections.caseFacts.tooltip)}
-              />
-            </Text>
-          </Box>
-          <Box marginBottom={3}>
+          <Box component="section">
+            <SectionHeading
+              title={formatMessage(rcReportForm.sections.caseFacts.heading)}
+              tooltip={formatMessage(rcReportForm.sections.caseFacts.tooltip)}
+            />
             <Input
               data-testid="caseFacts"
               name="caseFacts"
@@ -92,7 +80,7 @@ export const PoliceReport = () => {
               )}
               errorMessage={caseFactsInput.errorMessage}
               hasError={caseFactsInput.hasError}
-              value={caseFactsInput.value || ''}
+              value={caseFactsInput.value}
               onChange={(evt) => caseFactsInput.onChange(evt.target.value)}
               onBlur={(evt) => caseFactsInput.onBlur(evt.target.value)}
               required
@@ -100,21 +88,15 @@ export const PoliceReport = () => {
               textarea
             />
           </Box>
-        </Box>
-        <Box component="section" marginBottom={7}>
-          <Box marginBottom={2}>
-            <Text as="h3" variant="h3">
-              {formatMessage(rcReportForm.sections.legalArguments.heading)}{' '}
-              <Tooltip
-                placement="right"
-                as="span"
-                text={formatMessage(
-                  rcReportForm.sections.legalArguments.tooltip,
-                )}
-              />
-            </Text>
-          </Box>
-          <Box marginBottom={7}>
+          <Box component="section">
+            <SectionHeading
+              title={formatMessage(
+                rcReportForm.sections.legalArguments.heading,
+              )}
+              tooltip={formatMessage(
+                rcReportForm.sections.legalArguments.tooltip,
+              )}
+            />
             <Input
               data-testid="legalArguments"
               name="legalArguments"
@@ -122,7 +104,7 @@ export const PoliceReport = () => {
               placeholder={formatMessage(
                 rcReportForm.sections.legalArguments.placeholder,
               )}
-              value={legalArgumentsInput.value || ''}
+              value={legalArgumentsInput.value}
               errorMessage={legalArgumentsInput.errorMessage}
               hasError={legalArgumentsInput.hasError}
               onChange={(evt) => legalArgumentsInput.onChange(evt.target.value)}
@@ -132,10 +114,10 @@ export const PoliceReport = () => {
               rows={14}
             />
           </Box>
-          <Box component="section" marginBottom={7}>
+          <Box component="section">
             <CommentsInput />
           </Box>
-        </Box>
+        </div>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
