@@ -275,6 +275,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import(
       '@island.is/application/templates/hms/registration-of-new-property-numbers'
     ),
+  [ApplicationTypes.HEILSUGAESLA_HOFUDBORDARSVAEDISINS_NAMSKEID]: () =>
+    import('@island.is/application/templates/hh/courses'),
 }
 
 export default templates
