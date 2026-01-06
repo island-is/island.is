@@ -7,12 +7,9 @@ import {
 } from '@nestjs/common'
 
 import { Case } from '../../repository'
-import { FileService } from '../file.service'
 
 @Injectable()
 export class SplitCaseFileExistsGuard implements CanActivate {
-  constructor(private readonly fileService: FileService) {}
-
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest()
 
