@@ -155,8 +155,4 @@ export const is2025PreviewActive = (customPageData?: CustomPage | null) => {
   return Boolean(customPageData?.configJson?.show2025Preview)
 }
 
-export const is2025FormPreviewActive = (customPageData?: CustomPage | null) => {
-  return Boolean(customPageData?.configJson?.show2025FormPreview)
-}
-
 export const NEW_SYSTEM_TAKES_PLACE_DATE = new Date(2025, 8, 2)

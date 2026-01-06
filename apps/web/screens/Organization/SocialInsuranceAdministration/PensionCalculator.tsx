@@ -58,7 +58,6 @@ import {
   convertToQueryParams,
   extractSlug,
   getDateOfCalculationsOptions,
-  is2025FormPreviewActive,
   NEW_SYSTEM_TAKES_PLACE_DATE,
 } from './utils'
 import * as styles from './PensionCalculator.css'
@@ -181,25 +180,31 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
       : maxMonthPensionDelayIfBornAfter1951
 
   const allCalculatorsOptions = useMemo(() => {
-    const options = [...dateOfCalculationsOptions]
-
-    if (is2025FormPreviewActive(customPageData)) {
-      options.unshift({
-        label: formatMessage(translationStrings.form2025PreviewLabel),
-        value: NEW_SYSTEM_TAKES_PLACE_DATE.toISOString(),
-      })
-    }
-
-    return options
-  }, [customPageData, dateOfCalculationsOptions, formatMessage])
+    return [...dateOfCalculationsOptions]
+  }, [dateOfCalculationsOptions])
 
   const isNewSystemActive =
-    is2025FormPreviewActive(customPageData) &&
-    dateOfCalculations === NEW_SYSTEM_TAKES_PLACE_DATE.toISOString()
+    new Date(dateOfCalculations) >= NEW_SYSTEM_TAKES_PLACE_DATE
 
   const basePensionTypeOptions = useMemo<Option<BasePensionType>[]>(() => {
     if (isNewSystemActive) {
       const options = [
+        {
+          label: formatMessage(translationStrings.basePensionRetirementLabel),
+          value: BasePensionType.Retirement,
+        },
+        {
+          label: formatMessage(
+            translationStrings.basePensionFishermanRetirementLabel,
+          ),
+          value: BasePensionType.FishermanRetirement,
+        },
+        {
+          label: formatMessage(
+            translationStrings.basePensionHalfRetirementLabel,
+          ),
+          value: BasePensionType.HalfRetirement,
+        },
         {
           label: formatMessage(
             translationStrings.basePensionNewSystemDisabilityLabel,
@@ -405,23 +410,27 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
   // Make sure we never enter an invalid state
   useEffect(() => {
     if (isNewSystemActive) {
-      if (
-        typeOfBasePension !== BasePensionType.NewSystemDisability &&
-        typeOfBasePension !== BasePensionType.NewSystemPartialDisability &&
-        typeOfBasePension !== BasePensionType.NewSystemMedicalAndRehabilitation
-      ) {
+      if (typeOfBasePension === BasePensionType.Disability) {
         methods.setValue(
           'typeOfBasePension',
           BasePensionType.NewSystemDisability,
+        )
+      } else if (typeOfBasePension === BasePensionType.Rehabilitation) {
+        methods.setValue(
+          'typeOfBasePension',
+          BasePensionType.NewSystemMedicalAndRehabilitation,
         )
       }
     } else {
       if (
         typeOfBasePension === BasePensionType.NewSystemDisability ||
-        typeOfBasePension === BasePensionType.NewSystemPartialDisability ||
+        typeOfBasePension === BasePensionType.NewSystemPartialDisability
+      ) {
+        methods.setValue('typeOfBasePension', BasePensionType.Disability)
+      } else if (
         typeOfBasePension === BasePensionType.NewSystemMedicalAndRehabilitation
       ) {
-        methods.setValue('typeOfBasePension', BasePensionType.Retirement)
+        methods.setValue('typeOfBasePension', BasePensionType.Rehabilitation)
       }
     }
   }, [isNewSystemActive, methods, typeOfBasePension])
@@ -482,17 +491,11 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
     return options
   }, [defaultPensionDate, maxMonthPensionDelay, maxMonthPensionHurry])
 
-  const title = `${formatMessage(
-    isNewSystemActive
-      ? translationStrings.form2025PreviewMainTitle
-      : translationStrings.mainTitle,
-  )}`
-  const titlePostfix = `${(
+  const title = `${formatMessage(translationStrings.mainTitle)}`
+  const titlePostfix = (
     allCalculatorsOptions.find((o) => o.value === dateOfCalculations)?.label ??
     dateOfCalculationsOptions[0].label
-  ).toLowerCase()}`
-
-  const titleVariant = isNewSystemActive ? 'h2' : 'h1'
+  ).toLowerCase()
 
   const startMonthOptions = useMemo(() => {
     if (!defaultPensionDate) {
@@ -556,10 +559,8 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
               <Box paddingY={5}>
                 <Stack space={3}>
                   <PensionCalculatorTitle
-                    isNewSystemActive={isNewSystemActive}
                     title={title}
                     titlePostfix={titlePostfix}
-                    titleVariant={titleVariant}
                   />
                   <Text>{formatMessage(translationStrings.isTurnedOff)}</Text>
                 </Stack>
@@ -582,10 +583,8 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                       <Stack space={3}>
                         <Box paddingTop={6}>
                           <PensionCalculatorTitle
-                            isNewSystemActive={isNewSystemActive}
                             title={title}
                             titlePostfix={titlePostfix}
-                            titleVariant={titleVariant}
                           />
                         </Box>
                       </Stack>
@@ -619,30 +618,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                             size="sm"
                             options={allCalculatorsOptions}
                             onSelect={(option) => {
-                              if (option) {
-                                setDateOfCalculations(option.value)
-                                if (isNewSystemActive) {
-                                  if (
-                                    option.value ===
-                                    NEW_SYSTEM_TAKES_PLACE_DATE.toISOString()
-                                  ) {
-                                    // Date is being moved to the new system date
-                                    methods.setValue(
-                                      'typeOfBasePension',
-                                      BasePensionType.NewSystemDisability,
-                                    )
-                                  } else if (
-                                    dateOfCalculations ===
-                                    NEW_SYSTEM_TAKES_PLACE_DATE.toISOString()
-                                  ) {
-                                    // Date is being moved from new system date
-                                    methods.setValue(
-                                      'typeOfBasePension',
-                                      BasePensionType.Retirement,
-                                    )
-                                  }
-                                }
-                              }
+                              if (option) setDateOfCalculations(option.value)
                             }}
                           />
                         </Box>
