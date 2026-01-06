@@ -102,15 +102,16 @@ export class ApplicationsService {
           status: ApplicationStatus.DRAFT,
           nationalId,
           draftTotalSteps: form.draftTotalSteps,
-          pruneAt: calculatePruneAt(form.daysUntilApplicationPrune || 30),
+          pruneAt: calculatePruneAt(form.daysUntilApplicationPrune),
         } as Application,
         { transaction },
       )
 
       await this.applicationEventModel.create(
         {
-          eventType: ApplicationEvents.APPLICATION_CREATED,
           applicationId: newApplication.id,
+          eventType: ApplicationEvents.APPLICATION_CREATED,
+          eventMessage: { is: 'Umsókn hafin', en: 'Application created' },
         } as ApplicationEvent,
         { transaction },
       )
@@ -229,22 +230,13 @@ export class ApplicationsService {
       })
 
       field.values?.forEach(async (value, index) => {
-        const newValue = await this.valueModel.create({
+        await this.valueModel.create({
           fieldId: field.id,
           fieldType: field.fieldType,
           applicationId: applicationDto.id,
           order: index,
           json: value.json,
         } as Value)
-
-        if (field.fieldType === FieldTypesEnum.FILE) {
-          await this.applicationEventModel.create({
-            eventType: ApplicationEvents.FILE_CREATED,
-            applicationId: applicationDto.id,
-            isFileEvent: true,
-            valueId: newValue.id,
-          } as ApplicationEvent)
-        }
       })
     })
 
@@ -284,10 +276,22 @@ export class ApplicationsService {
     if (success) {
       application.status = ApplicationStatus.COMPLETED
       application.submittedAt = applicationDto.submittedAt
-      application.pruneAt = calculatePruneAt(
-        form.daysUntilApplicationPrune || 30,
-      )
-      await application.save()
+      application.pruneAt = calculatePruneAt(form.daysUntilApplicationPrune)
+      await this.sequelize.transaction(async (transaction) => {
+        await application.save({ transaction })
+
+        await this.applicationEventModel.create(
+          {
+            applicationId: application.id,
+            eventType: ApplicationEvents.APPLICATION_SUBMITTED,
+            eventMessage: {
+              is: 'Umsókn móttekin',
+              en: 'Application submitted',
+            },
+          } as ApplicationEvent,
+          { transaction },
+        )
+      })
     }
 
     return success
@@ -316,28 +320,16 @@ export class ApplicationsService {
           {
             model: ApplicationEvent,
             as: 'events',
-            where: { isFileEvent: false },
           },
           {
             model: Value,
             as: 'files',
             where: { fieldType: FieldTypesEnum.FILE },
-            include: [
-              {
-                model: ApplicationEvent,
-                as: 'events',
-              },
-            ],
           },
         ],
         order: [
           [{ model: ApplicationEvent, as: 'events' }, 'created', 'ASC'],
-          [
-            { model: Value, as: 'files' },
-            { model: ApplicationEvent, as: 'events' },
-            'created',
-            'ASC',
-          ],
+          [{ model: Value, as: 'files' }, 'created', 'ASC'],
         ],
       })
 
@@ -382,7 +374,6 @@ export class ApplicationsService {
         {
           model: ApplicationEvent,
           as: 'events',
-          where: { isFileEvent: false },
         },
         {
           model: Value,
@@ -475,7 +466,10 @@ export class ApplicationsService {
         pruned: false,
         isTest: false,
       },
-      include: [{ model: Value, as: 'values' }],
+      include: [
+        { model: Value, as: 'values' },
+        { model: ApplicationEvent, as: 'events' },
+      ],
     })
 
     const loginTypes = await this.getLoginTypes(user)
@@ -500,8 +494,6 @@ export class ApplicationsService {
       if (app.status === ApplicationStatus.COMPLETED) {
         app.tagLabel = locale === 'is' ? 'Innsend' : 'Completed'
         app.tagVariant = 'mint'
-        app.completedMessage =
-          locale === 'is' ? 'Umsókn móttekin' : 'Application received'
       }
 
       const organizationInfo = getOrganizationInfoByNationalId(
@@ -515,6 +507,7 @@ export class ApplicationsService {
     const mappedApplications =
       await this.applicationMapper.mapApplicationsToMyPagesApplications(
         applicationsByUser,
+        locale,
       )
 
     return mappedApplications

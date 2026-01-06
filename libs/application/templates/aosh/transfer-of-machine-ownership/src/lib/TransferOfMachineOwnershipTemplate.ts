@@ -243,6 +243,7 @@ const template: ApplicationTemplate<
               return getReviewStatePendingAction(
                 nationalId,
                 getReviewers(application.answers),
+                true,
               )
             },
           },
