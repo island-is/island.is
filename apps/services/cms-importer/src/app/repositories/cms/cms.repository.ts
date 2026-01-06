@@ -7,11 +7,7 @@ import {
   KeyValueMap,
 } from 'contentful-management'
 import { ManagementClientService } from './managementClient/managementClient.service'
-import {
-  GENERIC_LIST_ITEM_CONTENT_TYPE,
-  LOCALE,
-  LOCALES_ARRAY,
-} from '../../constants'
+import { GENERIC_LIST_ITEM_CONTENT_TYPE, LOCALES_ARRAY } from '../../constants'
 import { logger } from '@island.is/logging'
 import {
   CmsEntryOpResult,

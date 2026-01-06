@@ -15,7 +15,6 @@ import {
 import slugify from '@sindresorhus/slugify'
 import { Entry } from 'contentful-management'
 import { EN_LOCALE, LOCALE } from '../../constants'
-import { PREVIOUS_RECIPIENTS_GENERIC_LIST_ID } from '../../energy-fund-import/constants'
 
 const OWNER_TAGS = ['ownerOrkustofnun', 'ownerUmhverfisstofnun']
 
