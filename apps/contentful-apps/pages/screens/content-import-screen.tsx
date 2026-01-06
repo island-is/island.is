@@ -8,8 +8,6 @@ import {
   Button,
   Flex,
   FormControl,
-  Note,
-  Paragraph,
   Select,
   Stack,
 } from '@contentful/f36-components'
