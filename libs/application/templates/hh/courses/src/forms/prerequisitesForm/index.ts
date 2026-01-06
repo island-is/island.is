@@ -7,14 +7,14 @@ import {
   coreMessages,
 } from '@island.is/application/core'
 import { DefaultEvents, FormModes } from '@island.is/application/types'
-import { HeilsugaeslaHofudborgarsvaedidinsLogo } from '@island.is/application/assets/institution-logos'
+import { HeilsugaeslaHofudborgarsvaedisinsLogo } from '@island.is/application/assets/institution-logos'
 import { m } from '../../lib/messages'
 
 export const Prerequisites = buildForm({
   id: 'PrerequisitesDraft',
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
-  logo: HeilsugaeslaHofudborgarsvaedidinsLogo,
+  logo: HeilsugaeslaHofudborgarsvaedisinsLogo,
   children: [
     buildSection({
       id: 'conditions',
