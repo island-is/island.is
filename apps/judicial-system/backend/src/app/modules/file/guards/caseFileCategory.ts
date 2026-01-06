@@ -28,6 +28,7 @@ const defenderCaseFileCategoriesForRequestCases = [
 const defenderDefaultCaseFileCategoriesForIndictmentCases = [
   CaseFileCategory.COURT_RECORD,
   CaseFileCategory.RULING,
+  CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
 ]
 
 const defenderCaseFileCategoriesForIndictmentCases =
