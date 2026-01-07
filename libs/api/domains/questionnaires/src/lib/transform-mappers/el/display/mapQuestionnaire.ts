@@ -41,7 +41,7 @@ export const mapELQuestionnaire = (
     baseInformation: {
       id: q.questionnaireId,
       title: q.title ?? q.questionnaireId,
-      sentDate: new Date().toISOString(),
+      sentDate: q.createdDate?.toISOString() ?? new Date().toISOString(),
       status: isDetailed
         ? q.submissions.length > 0
           ? QuestionnairesStatusEnum.answered
