@@ -108,7 +108,7 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
           entityId: auth.nationalId,
           dayRateRegistrationModel: {
             skraningaradili:
-              application.applicantActors[0] ?? application.applicant ?? null,
+              application.applicant ?? application.applicantActors[0] ?? null,
             entries:
               data?.map((c) => {
                 return {
@@ -127,7 +127,7 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
           entityId: auth.nationalId,
           deregistrationModel: {
             afskraningaradili:
-              application.applicantActors[0] ?? application.applicant ?? null,
+              application.applicant ?? application.applicantActors[0] ?? null,
             entries:
               data?.map((c) => {
                 return {
