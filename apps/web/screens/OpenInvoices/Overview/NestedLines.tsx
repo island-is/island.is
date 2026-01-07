@@ -1,4 +1,4 @@
-import { FormattedMessage, useIntl } from 'react-intl'
+import { useIntl } from 'react-intl'
 import { useQuery } from '@apollo/client'
 
 import { Query } from '@island.is/api/schema'

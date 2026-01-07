@@ -1,18 +1,13 @@
 import { useMemo } from 'react'
-import { useIntl } from 'react-intl'
 import { Column, useExpanded, useSortBy, useTable } from 'react-table'
 
-import {
-  IcelandicGovernmentInstitutionsInvoiceGroup,
-  IcelandicGovernmentInstitutionsInvoiceGroups,
-} from '@island.is/api/schema'
+import { IcelandicGovernmentInstitutionsInvoiceGroup } from '@island.is/api/schema'
 import { Box, Button, Icon, Table as T, Text } from '@island.is/island-ui/core'
 import { formatCurrency } from '@island.is/shared/utils'
 
 import { EmptyTable } from '../components/EmptyTable/EmptyTable'
 import { NestedLines } from './NestedLines'
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface Props {
   dateTo?: Date
   dateFrom?: Date

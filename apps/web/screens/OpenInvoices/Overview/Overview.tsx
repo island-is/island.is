@@ -62,13 +62,12 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
   const { formatMessage } = useIntl()
   const { linkResolver } = useLinkResolver()
 
-  const [getInvoiceGroups, { data: invoiceGroupsData, error, loading }] =
-    useLazyQuery<
-      {
-        icelandicGovernmentInstitutionsInvoiceGroups: IcelandicGovernmentInstitutionsInvoiceGroups
-      },
-      QueryIcelandicGovernmentInstitutionsInvoiceGroupsArgs
-    >(GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_GROUPS)
+  const [getInvoiceGroups, { data: invoiceGroupsData }] = useLazyQuery<
+    {
+      icelandicGovernmentInstitutionsInvoiceGroups: IcelandicGovernmentInstitutionsInvoiceGroups
+    },
+    QueryIcelandicGovernmentInstitutionsInvoiceGroupsArgs
+  >(GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_GROUPS)
 
   const baseUrl = linkResolver('openinvoicesoverview', [], locale).href
 

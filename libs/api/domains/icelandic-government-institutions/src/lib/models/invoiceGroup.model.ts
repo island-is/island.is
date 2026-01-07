@@ -1,5 +1,4 @@
 import { Field, ID, Int, ObjectType } from '@nestjs/graphql'
-import { Invoice } from './invoice.model'
 import { Supplier } from './supplier.model'
 import { Customer } from './customer.model'
 
