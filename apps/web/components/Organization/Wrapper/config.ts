@@ -30,6 +30,11 @@ export const zendeskConfig: Record<
       snippetUrl:
         'https://static.zdassets.com/ekr/snippet.js?key=dc0c86b4-a02a-45e9-85d5-0aa570708ad9',
     },
+    // Skatturinn - Organization
+    '4yJlHgCMTqpgRSj4p6LuBQ': {
+      snippetUrl:
+        'https://static.zdassets.com/ekr/snippet.js?key=f12bfedb-fc2c-477d-8f28-b31a036fba35',
+    },
   },
   en: {
     // Samgöngustofa - Organization
@@ -51,6 +56,11 @@ export const zendeskConfig: Record<
     kENblMMMvZ3DlyXw1dwxQ: {
       snippetUrl:
         'https://static.zdassets.com/ekr/snippet.js?key=dc0c86b4-a02a-45e9-85d5-0aa570708ad9',
+    },
+    // Skatturinn - Organization
+    '4yJlHgCMTqpgRSj4p6LuBQ': {
+      snippetUrl:
+        'https://static.zdassets.com/ekr/snippet.js?key=f12bfedb-fc2c-477d-8f28-b31a036fba35',
     },
   },
 }
@@ -130,42 +140,8 @@ export const watsonConfig: Record<
   Locale,
   Record<string, WatsonChatPanelProps>
 > = {
-  en: {
-    // Skatturinn - Organization
-    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/4yJlHgCMTqpgRSj4p6LuBQ
-    '4yJlHgCMTqpgRSj4p6LuBQ': {
-      integrationID: '98ba51da-1677-4881-a133-7ea019ae7b87',
-      region: 'eu-gb',
-      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
-      showLauncher: false,
-      carbonTheme: 'g10',
-      namespaceKey: 'skatturinn',
-      onLoad(instance) {
-        instance.updateHomeScreenConfig({
-          bot_avatar_url:
-            'https://images.ctfassets.net/8k0h54kbe6bj/5m9muELNRJMRgsPHP1t28a/caa4d23d14738400f262373e5a9cb066/islandissseoakgf2.PNG?h=250',
-        })
-      },
-    },
-  },
+  en: {},
   is: {
-    // Skatturinn - Organization
-    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/4yJlHgCMTqpgRSj4p6LuBQ
-    '4yJlHgCMTqpgRSj4p6LuBQ': {
-      integrationID: '84f62b21-aa50-4d49-b413-597b6a959910',
-      region: 'eu-gb',
-      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
-      showLauncher: false,
-      carbonTheme: 'g10',
-      namespaceKey: 'skatturinn',
-      onLoad(instance) {
-        instance.updateHomeScreenConfig({
-          bot_avatar_url:
-            'https://images.ctfassets.net/8k0h54kbe6bj/5m9muELNRJMRgsPHP1t28a/caa4d23d14738400f262373e5a9cb066/islandissseoakgf2.PNG?h=250',
-        })
-      },
-    },
-
     // Digital Iceland (Stafrænt Ísland) - Organization
     // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/1JHJe1NDwbBjEr7OVdjuFD
     '1JHJe1NDwbBjEr7OVdjuFD': {
