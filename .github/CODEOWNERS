@@ -356,6 +356,8 @@ codemagic.yaml                                                                  
 /libs/clients/verdicts/                                                                                                      @island-is/stefna
 /libs/api/domains/landspitali/                                                                                               @island-is/stefna
 /apps/services/payment-flow-update-handler/                                                                                  @island-is/stefna
+/libs/application/templates/hh/courses/                                                                                      @island-is/stefna
+/libs/application/template-api-modules/src/lib/modules/templates/hh/courses/                                                 @island-is/stefna
 
 /libs/island-ui/                                                                                                             @island-is/island-ui
 

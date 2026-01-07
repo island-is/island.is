@@ -77,8 +77,26 @@ export class Course {
   @CacheField(() => [CourseInstance])
   instances!: CourseInstance[]
 
-  @Field(() => String)
-  organizationId!: string
+  @Field(() => String, { nullable: true })
+  courseListPageId?: string | null
+}
+
+@ObjectType()
+class CourseActiveLocales {
+  @Field(() => Boolean)
+  is!: boolean
+
+  @Field(() => Boolean)
+  en!: boolean
+}
+
+@ObjectType()
+export class CourseDetails {
+  @CacheField(() => Course, { nullable: true })
+  course?: Course | null
+
+  @CacheField(() => CourseActiveLocales, { nullable: true })
+  activeLocales?: CourseActiveLocales | null
 }
 
 export const mapCourse = ({ fields, sys }: ICourse): Course => {
@@ -93,7 +111,7 @@ export const mapCourse = ({ fields, sys }: ICourse): Course => {
       : [],
     categories: fields.categories ? fields.categories.map(mapGenericTag) : [],
     instances: fields.instances ? fields.instances.map(mapCourseInstance) : [],
-    organizationId: fields.organization?.sys?.id ?? '',
+    courseListPageId: fields.courseListPage?.sys?.id ?? null,
   }
 }
 
