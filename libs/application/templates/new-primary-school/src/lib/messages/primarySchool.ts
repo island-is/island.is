@@ -143,7 +143,7 @@ export const primarySchoolMessages = {
       description: 'Select nursery',
     },
     hasCurrentNursery: {
-      id: 'nps.application:primarySchool.primarySchool.hasCurrentNursery',
+      id: 'nps.application:primarySchool.currentNursery.hasCurrentNursery',
       defaultMessage: 'Er barnið þitt í leikskóla á Íslandi?',
       description: 'Does your child attend a nursery in Iceland?',
     },
