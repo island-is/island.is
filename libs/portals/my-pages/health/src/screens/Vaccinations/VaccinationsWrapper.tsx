@@ -47,6 +47,7 @@ export const VaccinationsWrapper = () => {
       intro={formatMessage(m.vaccinationsIntro)}
       serviceProviderSlug={HEALTH_DIRECTORATE_SLUG}
       serviceProviderTooltip={formatMessage(m.landlaeknirVaccinationsTooltip)}
+      childrenWidthFull
       buttonGroup={[
         <LinkButton
           key="vaccinations-read-about"

@@ -159,12 +159,14 @@ import {
   Course,
   CourseCategoriesResponse,
   CourseList,
+  CourseSelectOptionsResponse,
 } from './models/course.model'
 import {
   GetCourseCategoriesInput,
   GetCoursesInput,
 } from './dto/getCourses.input'
 import { GetCourseByIdInput } from './dto/getCourseById.input'
+import { GetCourseSelectOptionsInput } from './dto/getCourseSelectOptions.input'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -833,6 +835,14 @@ export class CmsResolver {
     @Args('input') input: GetCourseByIdInput,
   ): Promise<Course | null> {
     return this.cmsContentfulService.getCourseById(input)
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => CourseSelectOptionsResponse)
+  getCourseSelectOptions(
+    @Args('input') input: GetCourseSelectOptionsInput,
+  ): Promise<CourseSelectOptionsResponse> {
+    return this.cmsContentfulService.getCourseSelectOptions(input)
   }
 }
 
