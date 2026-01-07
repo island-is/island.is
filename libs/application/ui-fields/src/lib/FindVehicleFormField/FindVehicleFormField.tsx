@@ -389,7 +389,7 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
                         !!vehicleDetails.validationErrorMessages?.length) && (
                         <BulletList>
                           {!vehicleDetails.isDebtLess && (
-                            <Bullet>
+                            <Bullet key="isdebtless">
                               {isNotDebtLessTag &&
                                 formatText(
                                   isNotDebtLessTag,
@@ -421,7 +421,7 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
                                     error.errorNo
 
                                 return (
-                                  <Bullet>
+                                  <Bullet key={error.errorNo}>
                                     {message ||
                                       defaultMessage ||
                                       fallbackMessage}
