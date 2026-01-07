@@ -902,6 +902,7 @@ export interface FindVehicleField extends InputField {
   requiredValidVehicleErrorMessage?: FormText
   isMachine?: boolean
   isEnergyFunds?: boolean
+  isMileCar?: boolean
   energyFundsMessages?: Record<string, FormText>
 }
 
