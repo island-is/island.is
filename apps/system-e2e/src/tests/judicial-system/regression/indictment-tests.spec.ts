@@ -289,4 +289,34 @@ test.describe.serial('Indictment tests', () => {
     await page.getByTestId('continueButton').click()
     await page.getByTestId('modalPrimaryButton').click()
   })
+
+  test('public prosecutor office should assign a reviewer to an indictment', async ({
+    publicProsecutorOfficePage,
+  }) => {
+    const page = publicProsecutorOfficePage
+
+    // Case list for new cases
+    await page.goto('/malalistar/ny-sakamal')
+    await expect(page).toHaveURL('/malalistar/ny-sakamal')
+    await page.getByText(accusedName).click()
+
+    // Indictment overview
+    await page.getByText('Veldu saksóknara').click()
+    await page
+      .getByTestId('select-reviewer')
+      .getByText('Test Ríkissaksóknari')
+      .last()
+      .click()
+
+    await Promise.all([
+      page.getByTestId('continueButton').click(),
+      verifyRequestCompletion(page, '/api/graphql', 'UpdateCase'),
+    ])
+    await page.getByTestId('modalSecondaryButton').click()
+
+    // Case list for assigned cases
+    await page.goto('/malalistar/sakamal-i-yfirlestri')
+    await expect(page).toHaveURL('/malalistar/sakamal-i-yfirlestri')
+    await expect(page.getByText(accusedName)).toHaveCount(1)
+  })
 })
