@@ -6,6 +6,7 @@ import {
 } from '@island.is/api/schema'
 import { NO, YES } from '@island.is/application/core'
 import {
+  AttachmentItem,
   ExternalData,
   FormValue,
   KeyValueItem,
@@ -26,7 +27,13 @@ import {
   friggOptionsQuery,
   friggOrganizationsByTypeQuery,
 } from '../graphql/queries'
-import { newPrimarySchoolMessages } from '../lib/messages'
+import {
+  childrenNGuardiansMessages,
+  differentNeedsMessages,
+  overviewMessages,
+  primarySchoolMessages,
+  sharedMessages,
+} from '../lib/messages'
 import {
   hasBehaviorSchoolOrDepartmentSubType,
   hasSpecialEducationCaseManager,
@@ -111,28 +118,28 @@ export const childItems = async (
   const baseItems: Array<KeyValueItem> = [
     {
       width: 'half',
-      keyText: newPrimarySchoolMessages.shared.fullName,
+      keyText: sharedMessages.fullName,
       valueText: childInfo?.name,
     },
     {
       width: 'half',
-      keyText: newPrimarySchoolMessages.shared.nationalId,
+      keyText: sharedMessages.nationalId,
       valueText: formatKennitala(childInfo?.nationalId ?? ''),
     },
     {
       width: 'half',
-      keyText: newPrimarySchoolMessages.shared.address,
+      keyText: sharedMessages.address,
       valueText: childInfo?.address?.streetAddress,
     },
     {
       width: 'half',
-      keyText: newPrimarySchoolMessages.shared.municipality,
+      keyText: sharedMessages.municipality,
       valueText: `${childInfo?.address?.postalCode}, ${childInfo?.address?.city}`,
     },
 
     {
       width: 'half',
-      keyText: newPrimarySchoolMessages.shared.gender,
+      keyText: sharedMessages.gender,
       valueText: genderMessage,
     },
   ]
@@ -143,9 +150,7 @@ export const childItems = async (
       ? [
           {
             width: 'half',
-            keyText:
-              newPrimarySchoolMessages.childrenNGuardians
-                .childInfoPreferredName,
+            keyText: childrenNGuardiansMessages.childInfo.preferredName,
             valueText: childInfo?.preferredName,
           },
         ]
@@ -157,8 +162,7 @@ export const childItems = async (
       ? [
           {
             width: 'half',
-            keyText:
-              newPrimarySchoolMessages.childrenNGuardians.childInfoPronouns,
+            keyText: childrenNGuardiansMessages.childInfo.pronouns,
             valueText: childInfo?.pronouns
               .map((pronoun) => getSelectedOptionLabel(pronounOptions, pronoun))
               .join(', '),
@@ -180,40 +184,40 @@ export const guardiansItems = (
   const baseItems: Array<KeyValueItem> = [
     {
       width: 'half',
-      keyText: newPrimarySchoolMessages.shared.fullName,
+      keyText: sharedMessages.fullName,
       valueText: guardians[index].fullName,
     },
     {
       width: 'half',
-      keyText: newPrimarySchoolMessages.shared.nationalId,
+      keyText: sharedMessages.nationalId,
       valueText: formatKennitala(guardians[index].nationalId ?? ''),
     },
     {
       width: 'half',
-      keyText: newPrimarySchoolMessages.shared.address,
+      keyText: sharedMessages.address,
       valueText: guardians[index].address.streetAddress,
     },
     {
       width: 'half',
-      keyText: newPrimarySchoolMessages.shared.municipality,
+      keyText: sharedMessages.municipality,
       valueText: `${guardians[index].address.postalCode}, ${guardians[index].address.city}`,
     },
     {
       width: 'half',
-      keyText: newPrimarySchoolMessages.shared.email,
+      keyText: sharedMessages.email,
       valueText: guardians[index].email,
     },
     {
       width: 'half',
-      keyText: newPrimarySchoolMessages.shared.phoneNumber,
+      keyText: sharedMessages.phoneNumber,
       valueText: formatNumber(guardians[index].phoneNumber, 'International'),
     },
     {
       width: 'half',
-      keyText: newPrimarySchoolMessages.childrenNGuardians.requiresInterpreter,
+      keyText: childrenNGuardiansMessages.guardians.requiresInterpreter,
       valueText: guardians[index].requiresInterpreter.includes(YES)
-        ? newPrimarySchoolMessages.shared.yes
-        : newPrimarySchoolMessages.shared.no,
+        ? sharedMessages.yes
+        : sharedMessages.no,
     },
   ]
 
@@ -223,7 +227,7 @@ export const guardiansItems = (
     ? [
         {
           width: 'half',
-          keyText: newPrimarySchoolMessages.shared.language,
+          keyText: sharedMessages.language,
           valueText: getLanguageByCode(guardians[index].preferredLanguage ?? '')
             ?.name,
         },
@@ -249,10 +253,10 @@ export const relativesTable = async (
 
   return {
     header: [
-      newPrimarySchoolMessages.shared.fullName,
-      newPrimarySchoolMessages.shared.nationalId,
-      newPrimarySchoolMessages.shared.phoneNumber,
-      newPrimarySchoolMessages.shared.relation,
+      sharedMessages.fullName,
+      sharedMessages.nationalId,
+      sharedMessages.phoneNumber,
+      sharedMessages.relation,
     ],
     rows: relatives.map((r) => [
       r.nationalIdWithName.name,
@@ -276,7 +280,7 @@ export const currentSchoolItems = (
   const baseItems: Array<KeyValueItem> = [
     {
       width: 'half',
-      keyText: newPrimarySchoolMessages.primarySchool.currentSchool,
+      keyText: primarySchoolMessages.currentSchool.currentSchool,
       valueText:
         getCurrentSchoolName(externalData) ||
         getSchoolName(externalData, currentSchoolId ?? ''),
@@ -287,9 +291,9 @@ export const currentSchoolItems = (
     ? [
         {
           width: 'half',
-          keyText: newPrimarySchoolMessages.primarySchool.grade,
+          keyText: primarySchoolMessages.currentSchool.grade,
           valueText: {
-            ...newPrimarySchoolMessages.primarySchool.currentGrade,
+            ...primarySchoolMessages.currentSchool.currentGrade,
             values: {
               grade: formatGrade(childGradeLevel ?? '', locale),
             },
@@ -324,7 +328,7 @@ export const currentNurseryItems = async (
   return [
     {
       width: 'full',
-      keyText: newPrimarySchoolMessages.overview.currentNursery,
+      keyText: overviewMessages.currentNursery,
       valueText: currentNurseryName,
     },
   ]
@@ -349,8 +353,8 @@ export const schoolItems = (
       width: 'half',
       keyText:
         applyForPreferredSchool === YES
-          ? newPrimarySchoolMessages.overview.neighbourhoodSchool
-          : newPrimarySchoolMessages.overview.selectedSchool,
+          ? overviewMessages.neighbourhoodSchool
+          : overviewMessages.selectedSchool,
       valueText:
         applyForPreferredSchool === YES
           ? getPreferredSchoolName(externalData)
@@ -363,7 +367,7 @@ export const schoolItems = (
       ? [
           {
             width: 'half',
-            keyText: newPrimarySchoolMessages.overview.expectedStartDate,
+            keyText: overviewMessages.expectedStartDate,
             valueText: format(parseISO(expectedStartDate ?? ''), 'dd.MM.yyyy', {
               locale: is,
             }),
@@ -378,7 +382,7 @@ export const schoolItems = (
       ? [
           {
             width: 'half',
-            keyText: newPrimarySchoolMessages.overview.expectedEndDate,
+            keyText: overviewMessages.expectedEndDate,
             valueText: format(parseISO(expectedEndDate ?? ''), 'dd.MM.yyyy', {
               locale: is,
             }),
@@ -391,7 +395,7 @@ export const schoolItems = (
       ? alternativeSpecialEducationDepartment.map(({ department }, index) => ({
           width: 'half',
           keyText: {
-            ...newPrimarySchoolMessages.primarySchool
+            ...primarySchoolMessages.newSchool
               .alternativeSpecialEducationDepartment,
             values: { index: index + 2 },
           },
@@ -426,9 +430,7 @@ export const reasonForApplicationItems = async (
   return [
     {
       width: 'full',
-      keyText:
-        newPrimarySchoolMessages.primarySchool
-          .reasonForApplicationSubSectionTitle,
+      keyText: primarySchoolMessages.reasonForApplication.subSectionTitle,
       valueText:
         getSelectedOptionLabel(reasonFriggOptions, reasonForApplicationId) ||
         '',
@@ -456,8 +458,7 @@ export const counsellingRegardingApplicationItems = async (
     {
       width: 'full',
       keyText:
-        newPrimarySchoolMessages.primarySchool
-          .counsellingRegardingApplicationSubSectionTitle,
+        primarySchoolMessages.counsellingRegardingApplication.subSectionTitle,
       valueText:
         getSelectedOptionLabel(
           reasonFriggOptions,
@@ -467,12 +468,9 @@ export const counsellingRegardingApplicationItems = async (
     {
       width: 'full',
       keyText:
-        newPrimarySchoolMessages.primarySchool
-          .counsellingRegardingApplicationHasVisitedSchool,
+        primarySchoolMessages.counsellingRegardingApplication.hasVisitedSchool,
       valueText:
-        hasVisitedSchool === YES
-          ? newPrimarySchoolMessages.shared.yes
-          : newPrimarySchoolMessages.shared.no,
+        hasVisitedSchool === YES ? sharedMessages.yes : sharedMessages.no,
     },
   ]
 }
@@ -481,10 +479,7 @@ export const siblingsTable = (answers: FormValue): TableData => {
   const { siblings } = getApplicationAnswers(answers)
 
   return {
-    header: [
-      newPrimarySchoolMessages.shared.fullName,
-      newPrimarySchoolMessages.shared.nationalId,
-    ],
+    header: [sharedMessages.fullName, sharedMessages.nationalId],
     rows: siblings.map((s) => [
       s.nationalIdWithName.name,
       formatKennitala(s.nationalIdWithName.nationalId),
@@ -516,7 +511,7 @@ export const languagesItems = async (
   const baseItems: Array<KeyValueItem> = [
     {
       width: 'full',
-      keyText: newPrimarySchoolMessages.overview.languageEnvironment,
+      keyText: overviewMessages.languageEnvironment,
       valueText:
         getSelectedOptionLabel(
           languageEnvironmentOptions,
@@ -530,7 +525,7 @@ export const languagesItems = async (
       ? selectedLanguages?.map(({ code }, index) => ({
           width: 'half',
           keyText: {
-            ...newPrimarySchoolMessages.differentNeeds.languageSelectionTitle,
+            ...differentNeedsMessages.language.languageSelectionTitle,
             values: { index: `${index + 1}` },
           },
           valueText: getLanguageByCode(code)?.name,
@@ -544,7 +539,7 @@ export const languagesItems = async (
       ? [
           {
             width: 'full',
-            keyText: newPrimarySchoolMessages.overview.preferredLanguage,
+            keyText: overviewMessages.preferredLanguage,
             valueText: getLanguageByCode(preferredLanguage)?.name,
           },
         ]
@@ -553,11 +548,8 @@ export const languagesItems = async (
   const baseItems2: Array<KeyValueItem> = [
     {
       width: 'full',
-      keyText: newPrimarySchoolMessages.differentNeeds.signLanguage,
-      valueText:
-        signLanguage === YES
-          ? newPrimarySchoolMessages.shared.yes
-          : newPrimarySchoolMessages.shared.no,
+      keyText: differentNeedsMessages.language.signLanguage,
+      valueText: signLanguage === YES ? sharedMessages.yes : sharedMessages.no,
     },
   ]
 
@@ -603,8 +595,7 @@ export const healthProtectionItems = async (
       ? [
           {
             width: 'full',
-            keyText:
-              newPrimarySchoolMessages.overview.foodAllergiesOrIntolerances,
+            keyText: overviewMessages.foodAllergiesOrIntolerances,
             valueText: foodAllergiesOrIntolerances
               .map((foodAllergyOrIntolerance) =>
                 getSelectedOptionLabel(
@@ -623,7 +614,7 @@ export const healthProtectionItems = async (
     ? [
         {
           width: 'full',
-          keyText: newPrimarySchoolMessages.overview.otherAllergies,
+          keyText: overviewMessages.otherAllergies,
           valueText: otherAllergies
             .map((otherAllergy) =>
               getSelectedOptionLabel(otherAllergiesOptions, otherAllergy),
@@ -639,11 +630,9 @@ export const healthProtectionItems = async (
       ? [
           {
             width: 'full',
-            keyText: newPrimarySchoolMessages.overview.usesEpiPen,
+            keyText: overviewMessages.usesEpiPen,
             valueText:
-              usesEpiPen === YES
-                ? newPrimarySchoolMessages.shared.yes
-                : newPrimarySchoolMessages.shared.no,
+              usesEpiPen === YES ? sharedMessages.yes : sharedMessages.no,
           },
         ]
       : []
@@ -652,21 +641,21 @@ export const healthProtectionItems = async (
     {
       width: 'full',
       keyText:
-        newPrimarySchoolMessages.differentNeeds.hasConfirmedMedicalDiagnoses,
+        differentNeedsMessages.healthProtection.hasConfirmedMedicalDiagnoses,
       valueText:
         hasConfirmedMedicalDiagnoses === YES
-          ? newPrimarySchoolMessages.shared.yes
-          : newPrimarySchoolMessages.shared.no,
+          ? sharedMessages.yes
+          : sharedMessages.no,
     },
     {
       width: 'full',
       keyText:
-        newPrimarySchoolMessages.differentNeeds
+        differentNeedsMessages.healthProtection
           .requestsMedicationAdministration,
       valueText:
         requestsMedicationAdministration === YES
-          ? newPrimarySchoolMessages.shared.yes
-          : newPrimarySchoolMessages.shared.no,
+          ? sharedMessages.yes
+          : sharedMessages.no,
     },
   ]
 
@@ -698,23 +687,17 @@ export const supportItems = (answers: FormValue): Array<KeyValueItem> => {
       width: 'full',
       keyText:
         applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
-          ? newPrimarySchoolMessages.differentNeeds.enrollmentHasDiagnoses
-          : newPrimarySchoolMessages.differentNeeds.hasDiagnoses,
-      valueText:
-        hasDiagnoses === YES
-          ? newPrimarySchoolMessages.shared.yes
-          : newPrimarySchoolMessages.shared.no,
+          ? differentNeedsMessages.support.enrollmentHasDiagnoses
+          : differentNeedsMessages.support.hasDiagnoses,
+      valueText: hasDiagnoses === YES ? sharedMessages.yes : sharedMessages.no,
     },
     {
       width: 'full',
       keyText:
         applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
-          ? newPrimarySchoolMessages.differentNeeds.enrollmentHasHadSupport
-          : newPrimarySchoolMessages.differentNeeds.hasHadSupport,
-      valueText:
-        hasHadSupport === YES
-          ? newPrimarySchoolMessages.shared.yes
-          : newPrimarySchoolMessages.shared.no,
+          ? differentNeedsMessages.support.enrollmentHasHadSupport
+          : differentNeedsMessages.support.hasHadSupport,
+      valueText: hasHadSupport === YES ? sharedMessages.yes : sharedMessages.no,
     },
   ]
 
@@ -723,11 +706,11 @@ export const supportItems = (answers: FormValue): Array<KeyValueItem> => {
       ? [
           {
             width: 'full',
-            keyText: newPrimarySchoolMessages.differentNeeds.hasWelfareContact,
+            keyText: differentNeedsMessages.support.hasWelfareContact,
             valueText:
               hasWelfareContact === YES
-                ? newPrimarySchoolMessages.shared.yes
-                : newPrimarySchoolMessages.shared.no,
+                ? sharedMessages.yes
+                : sharedMessages.no,
           },
         ]
       : []
@@ -737,22 +720,19 @@ export const supportItems = (answers: FormValue): Array<KeyValueItem> => {
       ? [
           {
             width: 'half',
-            keyText: newPrimarySchoolMessages.differentNeeds.welfareContactName,
+            keyText: differentNeedsMessages.support.welfareContactName,
             valueText: welfareContactName,
           },
           {
             width: 'half',
-            keyText:
-              newPrimarySchoolMessages.differentNeeds.welfareContactEmail,
+            keyText: differentNeedsMessages.support.welfareContactEmail,
             valueText: welfareContactEmail,
           },
           {
             width: 'full',
-            keyText: newPrimarySchoolMessages.differentNeeds.hasCaseManager,
+            keyText: differentNeedsMessages.support.hasCaseManager,
             valueText:
-              hasCaseManager === YES
-                ? newPrimarySchoolMessages.shared.yes
-                : newPrimarySchoolMessages.shared.no,
+              hasCaseManager === YES ? sharedMessages.yes : sharedMessages.no,
           },
         ]
       : []
@@ -764,12 +744,12 @@ export const supportItems = (answers: FormValue): Array<KeyValueItem> => {
       ? [
           {
             width: 'half',
-            keyText: newPrimarySchoolMessages.differentNeeds.caseManagerName,
+            keyText: differentNeedsMessages.support.caseManagerName,
             valueText: caseManagerName,
           },
           {
             width: 'half',
-            keyText: newPrimarySchoolMessages.differentNeeds.caseManagerEmail,
+            keyText: differentNeedsMessages.support.caseManagerEmail,
             valueText: caseManagerEmail,
           },
         ]
@@ -780,12 +760,11 @@ export const supportItems = (answers: FormValue): Array<KeyValueItem> => {
       ? [
           {
             width: 'full',
-            keyText:
-              newPrimarySchoolMessages.differentNeeds.hasIntegratedServices,
+            keyText: differentNeedsMessages.support.hasIntegratedServices,
             valueText:
               hasIntegratedServices === YES
-                ? newPrimarySchoolMessages.shared.yes
-                : newPrimarySchoolMessages.shared.no,
+                ? sharedMessages.yes
+                : sharedMessages.no,
           },
         ]
       : []
@@ -793,12 +772,9 @@ export const supportItems = (answers: FormValue): Array<KeyValueItem> => {
   const baseItems2: Array<KeyValueItem> = [
     {
       width: 'full',
-      keyText:
-        newPrimarySchoolMessages.differentNeeds.requestingMeetingDescription,
+      keyText: differentNeedsMessages.support.requestingMeetingDescription,
       valueText:
-        requestingMeeting === YES
-          ? newPrimarySchoolMessages.shared.yes
-          : newPrimarySchoolMessages.shared.no,
+        requestingMeeting === YES ? sharedMessages.yes : sharedMessages.no,
     },
   ]
 
@@ -810,6 +786,23 @@ export const supportItems = (answers: FormValue): Array<KeyValueItem> => {
     ...welfareContactItems2,
     ...baseItems2,
   ]
+}
+
+export const attachmentItems = (answers: FormValue): Array<AttachmentItem> => {
+  const { attachmentsFiles } = getApplicationAnswers(answers)
+
+  return attachmentsFiles.map((file) => {
+    const fullName = file.name || ''
+    const nameArray = fullName.split('.')
+    const fileType = nameArray.pop()?.toUpperCase()
+    const fileName = nameArray.join('.')
+
+    return {
+      width: 'full',
+      fileName: fileName,
+      fileType: fileType || undefined,
+    }
+  })
 }
 
 export const specialEducationSupportItems = async (
@@ -884,13 +877,11 @@ export const specialEducationSupportItems = async (
   const baseItems: Array<KeyValueItem> = [
     {
       width: 'full',
-      keyText:
-        newPrimarySchoolMessages.differentNeeds
-          .specialEducationHasWelfareContact,
+      keyText: differentNeedsMessages.specialEducationSupport.hasWelfareContact,
       valueText:
         specialEducationHasWelfareContact === YES
-          ? newPrimarySchoolMessages.shared.yes
-          : newPrimarySchoolMessages.shared.no,
+          ? sharedMessages.yes
+          : sharedMessages.no,
     },
   ]
 
@@ -899,13 +890,12 @@ export const specialEducationSupportItems = async (
       ? [
           {
             width: 'half',
-            keyText: newPrimarySchoolMessages.differentNeeds.welfareContactName,
+            keyText: differentNeedsMessages.support.welfareContactName,
             valueText: specialEducationWelfareContactName,
           },
           {
             width: 'half',
-            keyText:
-              newPrimarySchoolMessages.differentNeeds.welfareContactEmail,
+            keyText: differentNeedsMessages.support.welfareContactEmail,
             valueText: specialEducationWelfareContactEmail,
           },
         ]
@@ -914,12 +904,11 @@ export const specialEducationSupportItems = async (
   const baseItems2: Array<KeyValueItem> = [
     {
       width: 'full',
-      keyText:
-        newPrimarySchoolMessages.differentNeeds.specialEducationHasCaseManager,
+      keyText: differentNeedsMessages.specialEducationSupport.hasCaseManager,
       valueText:
         specialEducationHasCaseManager === YES
-          ? newPrimarySchoolMessages.shared.yes
-          : newPrimarySchoolMessages.shared.no,
+          ? sharedMessages.yes
+          : sharedMessages.no,
     },
   ]
 
@@ -929,12 +918,12 @@ export const specialEducationSupportItems = async (
     ? [
         {
           width: 'half',
-          keyText: newPrimarySchoolMessages.differentNeeds.caseManagerName,
+          keyText: differentNeedsMessages.support.caseManagerName,
           valueText: specialEducationCaseManagerName,
         },
         {
           width: 'half',
-          keyText: newPrimarySchoolMessages.differentNeeds.caseManagerEmail,
+          keyText: differentNeedsMessages.support.caseManagerEmail,
           valueText: specialEducationCaseManagerEmail,
         },
       ]
@@ -944,21 +933,21 @@ export const specialEducationSupportItems = async (
     {
       width: 'full',
       keyText:
-        newPrimarySchoolMessages.differentNeeds
-          .specialEducationHasIntegratedServices,
+        differentNeedsMessages.specialEducationSupport.hasIntegratedServices,
       valueText:
         specialEducationHasIntegratedServices === YES
-          ? newPrimarySchoolMessages.shared.yes
-          : newPrimarySchoolMessages.shared.no,
+          ? sharedMessages.yes
+          : sharedMessages.no,
     },
     {
       width: 'full',
       keyText:
-        newPrimarySchoolMessages.differentNeeds.hasAssessmentOfSupportNeeds,
+        differentNeedsMessages.specialEducationSupport
+          .hasAssessmentOfSupportNeeds,
       valueText:
         hasAssessmentOfSupportNeeds === YES
-          ? newPrimarySchoolMessages.shared.yes
-          : newPrimarySchoolMessages.shared.no,
+          ? sharedMessages.yes
+          : sharedMessages.no,
     },
   ]
 
@@ -968,12 +957,12 @@ export const specialEducationSupportItems = async (
           {
             width: 'full',
             keyText:
-              newPrimarySchoolMessages.differentNeeds
+              differentNeedsMessages.specialEducationSupport
                 .isAssessmentOfSupportNeedsInProgress,
             valueText:
               isAssessmentOfSupportNeedsInProgress === YES
-                ? newPrimarySchoolMessages.shared.yes
-                : newPrimarySchoolMessages.shared.no,
+                ? sharedMessages.yes
+                : sharedMessages.no,
           },
         ]
       : []
@@ -984,7 +973,8 @@ export const specialEducationSupportItems = async (
           {
             width: 'full',
             keyText:
-              newPrimarySchoolMessages.differentNeeds.supportNeedsAssessmentBy,
+              differentNeedsMessages.specialEducationSupport
+                .supportNeedsAssessmentBy,
             valueText: getSelectedOptionLabel(
               assessorOptions,
               supportNeedsAssessmentBy,
@@ -996,11 +986,10 @@ export const specialEducationSupportItems = async (
   const baseItems4: Array<KeyValueItem> = [
     {
       width: 'full',
-      keyText: newPrimarySchoolMessages.differentNeeds.hasConfirmedDiagnosis,
+      keyText:
+        differentNeedsMessages.specialEducationSupport.hasConfirmedDiagnosis,
       valueText:
-        hasConfirmedDiagnosis === YES
-          ? newPrimarySchoolMessages.shared.yes
-          : newPrimarySchoolMessages.shared.no,
+        hasConfirmedDiagnosis === YES ? sharedMessages.yes : sharedMessages.no,
     },
   ]
 
@@ -1010,11 +999,12 @@ export const specialEducationSupportItems = async (
           {
             width: 'full',
             keyText:
-              newPrimarySchoolMessages.differentNeeds.isDiagnosisInProgress,
+              differentNeedsMessages.specialEducationSupport
+                .isDiagnosisInProgress,
             valueText:
               isDiagnosisInProgress === YES
-                ? newPrimarySchoolMessages.shared.yes
-                : newPrimarySchoolMessages.shared.no,
+                ? sharedMessages.yes
+                : sharedMessages.no,
           },
         ]
       : []
@@ -1025,7 +1015,8 @@ export const specialEducationSupportItems = async (
     ? [
         {
           width: 'full',
-          keyText: newPrimarySchoolMessages.differentNeeds.atWhichDiagnostician,
+          keyText:
+            differentNeedsMessages.specialEducationSupport.atWhichDiagnostician,
           valueText: diagnosticians
             .map((diagnostician) =>
               getSelectedOptionLabel(diagnosisSpecialistOptions, diagnostician),
@@ -1038,11 +1029,10 @@ export const specialEducationSupportItems = async (
   const baseItems5: Array<KeyValueItem> = [
     {
       width: 'full',
-      keyText: newPrimarySchoolMessages.differentNeeds.hasOtherSpecialists,
+      keyText:
+        differentNeedsMessages.specialEducationSupport.hasOtherSpecialists,
       valueText:
-        hasOtherSpecialists === YES
-          ? newPrimarySchoolMessages.shared.yes
-          : newPrimarySchoolMessages.shared.no,
+        hasOtherSpecialists === YES ? sharedMessages.yes : sharedMessages.no,
     },
   ]
 
@@ -1050,7 +1040,8 @@ export const specialEducationSupportItems = async (
     ? [
         {
           width: 'full',
-          keyText: newPrimarySchoolMessages.differentNeeds.atWhichSpecialist,
+          keyText:
+            differentNeedsMessages.specialEducationSupport.atWhichSpecialist,
           valueText: specialists
             .map((specialist) =>
               getSelectedOptionLabel(professionalOptions, specialist),
@@ -1064,12 +1055,12 @@ export const specialEducationSupportItems = async (
     {
       width: 'full',
       keyText:
-        newPrimarySchoolMessages.differentNeeds
+        differentNeedsMessages.specialEducationSupport
           .hasReceivedServicesFromMunicipality,
       valueText:
         hasReceivedServicesFromMunicipality === YES
-          ? newPrimarySchoolMessages.shared.yes
-          : newPrimarySchoolMessages.shared.no,
+          ? sharedMessages.yes
+          : sharedMessages.no,
     },
   ]
 
@@ -1078,7 +1069,8 @@ export const specialEducationSupportItems = async (
       ? [
           {
             width: 'full',
-            keyText: newPrimarySchoolMessages.differentNeeds.whichService,
+            keyText:
+              differentNeedsMessages.specialEducationSupport.whichService,
             valueText: servicesFromMunicipality
               .map((service) =>
                 getSelectedOptionLabel(serviceCenterOptions, service),
@@ -1096,12 +1088,12 @@ export const specialEducationSupportItems = async (
         {
           width: 'full',
           keyText:
-            newPrimarySchoolMessages.differentNeeds
+            differentNeedsMessages.specialEducationSupport
               .hasReceivedChildAndAdolescentPsychiatryServices,
           valueText:
             hasReceivedChildAndAdolescentPsychiatryServices === YES
-              ? newPrimarySchoolMessages.shared.yes
-              : newPrimarySchoolMessages.shared.no,
+              ? sharedMessages.yes
+              : sharedMessages.no,
         },
       ]
     : []
@@ -1113,11 +1105,12 @@ export const specialEducationSupportItems = async (
           {
             width: 'full',
             keyText:
-              newPrimarySchoolMessages.differentNeeds.isOnWaitlistForServices,
+              differentNeedsMessages.specialEducationSupport
+                .isOnWaitlistForServices,
             valueText:
               isOnWaitlistForServices === YES
-                ? newPrimarySchoolMessages.shared.yes
-                : newPrimarySchoolMessages.shared.no,
+                ? sharedMessages.yes
+                : sharedMessages.no,
           },
         ]
       : []
@@ -1128,7 +1121,7 @@ export const specialEducationSupportItems = async (
           {
             width: 'full',
             keyText:
-              newPrimarySchoolMessages.differentNeeds
+              differentNeedsMessages.specialEducationSupport
                 .whichChildAndAdolescentPsychiatryDepartment,
             valueText: getSelectedOptionLabel(
               childAndAdolescentMentalHealthDepartmentOptions,
@@ -1147,7 +1140,7 @@ export const specialEducationSupportItems = async (
           {
             width: 'full',
             keyText:
-              newPrimarySchoolMessages.differentNeeds
+              differentNeedsMessages.specialEducationSupport
                 .childAndAdolescentPsychiatryServicesReceived,
             valueText: childAndAdolescentPsychiatryServicesReceived
               .map((service) =>
@@ -1169,12 +1162,12 @@ export const specialEducationSupportItems = async (
         {
           width: 'full',
           keyText:
-            newPrimarySchoolMessages.differentNeeds
+            differentNeedsMessages.specialEducationSupport
               .hasBeenReportedToChildProtectiveServices,
           valueText:
             hasBeenReportedToChildProtectiveServices === YES
-              ? newPrimarySchoolMessages.shared.yes
-              : newPrimarySchoolMessages.shared.no,
+              ? sharedMessages.yes
+              : sharedMessages.no,
         },
       ]
     : []
@@ -1186,12 +1179,12 @@ export const specialEducationSupportItems = async (
           {
             width: 'full',
             keyText:
-              newPrimarySchoolMessages.differentNeeds
+              differentNeedsMessages.specialEducationSupport
                 .isCaseOpenWithChildProtectiveServices,
             valueText:
               isCaseOpenWithChildProtectiveServices === YES
-                ? newPrimarySchoolMessages.shared.yes
-                : newPrimarySchoolMessages.shared.no,
+                ? sharedMessages.yes
+                : sharedMessages.no,
           },
         ]
       : []
@@ -1221,33 +1214,26 @@ export const specialEducationSupportItems = async (
 }
 
 export const payerItems = (answers: FormValue): Array<KeyValueItem> => {
-  const { payer, payerName, payerNationalId, payerEmail } =
-    getApplicationAnswers(answers)
+  const { payer, payerName, payerNationalId } = getApplicationAnswers(answers)
 
   return payer === PayerOption.APPLICANT
     ? [
         {
           width: 'full',
-          keyText: newPrimarySchoolMessages.differentNeeds.payerSubSectionTitle,
-          valueText:
-            newPrimarySchoolMessages.differentNeeds.payerOptionApplicant,
+          keyText: differentNeedsMessages.payer.subSectionTitle,
+          valueText: differentNeedsMessages.payer.optionApplicant,
         },
       ]
     : [
         {
           width: 'half',
-          keyText: newPrimarySchoolMessages.shared.fullName,
+          keyText: sharedMessages.fullName,
           valueText: payerName,
         },
         {
           width: 'half',
-          keyText: newPrimarySchoolMessages.shared.nationalId,
+          keyText: sharedMessages.nationalId,
           valueText: formatKennitala(payerNationalId ?? ''),
-        },
-        {
-          width: 'half',
-          keyText: newPrimarySchoolMessages.shared.email,
-          valueText: payerEmail,
         },
       ]
 }

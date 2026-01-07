@@ -1,5 +1,4 @@
 import {
-  Box,
   Checkbox,
   Input,
   Stack,
@@ -23,7 +22,6 @@ import {
 } from '@island.is/api/schema'
 import { FeatureFlagClient, Features } from '@island.is/feature-flags'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
-import { useSuperAdmin } from '../../../hooks/useSuperAdmin'
 
 interface CompareArgs {
   currVal: FormData
@@ -66,7 +64,6 @@ const Lifetime = ({
   const { actionData, client } = useClient()
   const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
   const [isSsoSettingsEnabled, setSsoSettingsEnabled] = useState(false)
-  const { isSuperAdmin } = useSuperAdmin()
   const [isReady, setIsReady] = useState(false)
 
   useEffect(() => {
@@ -138,7 +135,6 @@ const Lifetime = ({
                 label={formatMessage(m.allowSSO)}
                 backgroundColor="blue"
                 large
-                disabled={!isSuperAdmin}
                 defaultChecked={inputValues.sso === AuthAdminClientSso.enabled}
                 checked={inputValues.sso === AuthAdminClientSso.enabled}
                 name="sso"

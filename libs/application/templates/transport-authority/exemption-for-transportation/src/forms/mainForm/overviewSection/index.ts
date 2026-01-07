@@ -5,6 +5,7 @@ import {
   buildOverviewField,
   buildSection,
   buildSubmitField,
+  getValueViaPath,
   YES,
 } from '@island.is/application/core'
 import {
@@ -50,6 +51,21 @@ export const overviewSection = buildSection({
           title: overview.exemptionPeriod.subtitle,
           backId: 'exemptionPeriodMultiField',
           items: getExemptionPeriodOverviewItems,
+        }),
+        buildAlertMessageField({
+          id: 'overview.exemptionPeriodError',
+          alertType: 'error',
+          title: overview.exemptionPeriod.errorTitle,
+          message: overview.exemptionPeriod.errorMessage,
+          condition: (answers) => {
+            const todayIsoStr = new Date().toISOString().slice(0, 10)
+            const dateFromStr = getValueViaPath<string>(
+              answers,
+              'exemptionPeriod.dateFrom',
+            )
+            if (!dateFromStr) return false
+            return dateFromStr < todayIsoStr
+          },
         }),
         buildOverviewField({
           id: 'overview.shortTermlocation',

@@ -12,16 +12,19 @@ import {
   PendingAction,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { info, isValid } from 'kennitala'
 import { MessageDescriptor } from 'react-intl'
 import {
-  newPrimarySchoolMessages,
+  differentNeedsMessages,
   pendingActionMessages,
+  sharedMessages,
 } from '../lib/messages'
 import {
   Affiliation,
   Child,
   ChildInformation,
+  FileType,
   FriggChildInformation,
   HealthProfileModel,
   Organization,
@@ -34,7 +37,9 @@ import {
 } from '../types'
 import {
   AgentType,
+  ApplicationFeatureConfigType,
   ApplicationType,
+  AttachmentOptions,
   CaseWorkerInputTypeEnum,
   FIRST_GRADE_AGE,
   OptionsType,
@@ -313,8 +318,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'payer.other.nationalId',
   )
 
-  const payerEmail = getValueViaPath<string>(answers, 'payer.other.email')
-
   const expectedStartDate = getValueViaPath<string>(
     answers,
     'startingSchool.expectedStartDate',
@@ -367,6 +370,14 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
   const currentSchoolId = getValueViaPath<string>(
     answers,
     'currentSchool.school',
+  )
+
+  const attachmentsFiles =
+    getValueViaPath<FileType[]>(answers, 'attachments.files') ?? []
+
+  const attachmentsAnswer = getValueViaPath<AttachmentOptions>(
+    answers,
+    'attachments.answer',
   )
 
   const terms = getValueViaPath<YesOrNo>(answers, 'acceptTerms[0]', NO)
@@ -454,7 +465,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     payer,
     payerName,
     payerNationalId,
-    payerEmail,
     expectedStartDate,
     expectedStartDateHiddenInput,
     temporaryStay,
@@ -466,6 +476,8 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     currentNursery,
     applyForPreferredSchool,
     currentSchoolId,
+    attachmentsFiles,
+    attachmentsAnswer,
     terms,
     fieldInspection,
     additionalDataProvisioning,
@@ -674,28 +686,28 @@ export const determineNameFromApplicationAnswers = (
   const { applicationType } = getApplicationAnswers(application.answers)
 
   if (!applicationType) {
-    return newPrimarySchoolMessages.shared.applicationName
+    return sharedMessages.applicationName
   }
 
   return applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
-    ? newPrimarySchoolMessages.shared.enrollmentApplicationName
+    ? sharedMessages.enrollmentApplicationName
     : applicationType === ApplicationType.CONTINUING_ENROLLMENT
-    ? newPrimarySchoolMessages.shared.continuingEnrollmentApplicationName
-    : newPrimarySchoolMessages.shared.newPrimarySchoolApplicationName
+    ? sharedMessages.continuingEnrollmentApplicationName
+    : sharedMessages.newPrimarySchoolApplicationName
 }
 
 export const formatGender = (genderCode?: string): MessageDescriptor => {
   switch (genderCode) {
     case '1':
     case '3':
-      return newPrimarySchoolMessages.shared.male
+      return sharedMessages.male
     case '2':
     case '4':
-      return newPrimarySchoolMessages.shared.female
+      return sharedMessages.female
     case '7':
     case '8':
     default:
-      return newPrimarySchoolMessages.shared.otherGender
+      return sharedMessages.otherGender
   }
 }
 
@@ -719,6 +731,14 @@ export const getApplicationType = (
   const nationalId = childNationalId || ''
   const nationalIdInfo = info(nationalId)
   const yearOfBirth = nationalIdInfo?.birthday?.getFullYear()
+
+  // Needed to test ENROLLMENT_IN_PRIMARY_SCHOOL application on dev
+  if (
+    (isRunningOnEnvironment('local') || isRunningOnEnvironment('dev')) &&
+    nationalId === '5555555559' // Bína Maack
+  ) {
+    return ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
+  }
 
   if (!isValid(nationalId) || !yearOfBirth) {
     return undefined
@@ -937,10 +957,8 @@ export const getWelfareContactDescription = (application: Application) => {
   const { applicationType } = getApplicationAnswers(application.answers)
 
   return applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
-    ? newPrimarySchoolMessages.differentNeeds
-        .hasWelfareNurserySchoolContactDescription
-    : newPrimarySchoolMessages.differentNeeds
-        .hasWelfarePrimarySchoolContactDescription
+    ? differentNeedsMessages.support.hasWelfareNurserySchoolContactDescription
+    : differentNeedsMessages.support.hasWelfarePrimarySchoolContactDescription
 }
 
 export const getReasonOptionsType = (
@@ -955,4 +973,25 @@ export const getReasonOptionsType = (
     : selectedSchoolSector === OrganizationSector.PRIVATE
     ? OptionsType.REASON_PRIVATE_SCHOOL
     : OptionsType.REASON
+}
+
+export const mapApplicationType = (answers: FormValue) => {
+  const { applicationType, applyForPreferredSchool } =
+    getApplicationAnswers(answers)
+
+  switch (applicationType) {
+    case ApplicationType.NEW_PRIMARY_SCHOOL:
+      return ApplicationFeatureConfigType.TRANSFER
+
+    case ApplicationType.CONTINUING_ENROLLMENT:
+      return ApplicationFeatureConfigType.CONTINUATION
+
+    case ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL:
+      return applyForPreferredSchool === YES
+        ? ApplicationFeatureConfigType.ENROLLMENT
+        : ApplicationFeatureConfigType.TRANSFER
+
+    default:
+      return ApplicationFeatureConfigType.ENROLLMENT
+  }
 }

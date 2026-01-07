@@ -1,4 +1,4 @@
-import { useCallback, useContext, useState } from 'react'
+import { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
@@ -31,12 +31,8 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { CaseDecision } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  removeTabsValidateAndSet,
-  validateAndSendToServer,
-} from '@island.is/judicial-system-web/src/utils/formHelper'
-import {
   useCase,
-  useDeb,
+  useDebouncedInput,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isRulingValidIC } from '@island.is/judicial-system-web/src/utils/validate'
@@ -51,20 +47,18 @@ const Ruling = () => {
     caseNotFound,
     isCaseUpToDate,
   } = useContext(FormContext)
-  const { setAndSendCaseToServer, updateCase } = useCase()
+  const { setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
 
-  const [courtCaseFactsEM, setCourtCaseFactsEM] = useState<string>('')
-  const [courtLegalArgumentsEM, setCourtLegalArgumentsEM] = useState<string>('')
-  const [prosecutorDemandsEM, setProsecutorDemandsEM] = useState<string>('')
-  const [introductionEM, setIntroductionEM] = useState<string>('')
-
-  useDeb(workingCase, [
-    'prosecutorDemands',
-    'courtCaseFacts',
-    'courtLegalArguments',
-    'conclusion',
+  const courtCaseFactsInput = useDebouncedInput('courtCaseFacts', ['empty'])
+  const courtLegalArgumentsInput = useDebouncedInput('courtLegalArguments', [
+    'empty',
   ])
+  const prosecutorDemandsInput = useDebouncedInput('prosecutorDemands', [
+    'empty',
+  ])
+  const introductionInput = useDebouncedInput('introduction', ['empty'])
+  const conclusionInput = useDebouncedInput('conclusion', [])
 
   const initialize = useCallback(() => {
     setAndSendCaseToServer(
@@ -176,33 +170,14 @@ const Ruling = () => {
             data-testid="introduction"
             name="introduction"
             label={formatMessage(m.sections.introduction.label)}
-            value={workingCase.introduction || ''}
             placeholder={formatMessage(m.sections.introduction.placeholder)}
-            onChange={(event) =>
-              removeTabsValidateAndSet(
-                'introduction',
-                event.target.value,
-                ['empty'],
-                setWorkingCase,
-                introductionEM,
-                setIntroductionEM,
-              )
-            }
-            onBlur={(event) =>
-              validateAndSendToServer(
-                'introduction',
-                event.target.value,
-                ['empty'],
-                workingCase,
-                updateCase,
-                setIntroductionEM,
-              )
-            }
-            errorMessage={introductionEM}
-            hasError={introductionEM !== ''}
+            value={introductionInput.value || ''}
+            onChange={(evt) => introductionInput.onChange(evt.target.value)}
+            onBlur={(evt) => introductionInput.onBlur(evt.target.value)}
+            errorMessage={introductionInput.errorMessage}
+            hasError={introductionInput.hasError}
             textarea
             rows={7}
-            autoExpand={{ on: true, maxHeight: 300 }}
             required={isRulingRequired}
             disabled={!isRulingRequired}
           />
@@ -217,35 +192,18 @@ const Ruling = () => {
             data-testid="prosecutorDemands"
             name="prosecutorDemands"
             label={formatMessage(m.sections.prosecutorDemands.label)}
-            value={workingCase.prosecutorDemands || ''}
             placeholder={formatMessage(
               m.sections.prosecutorDemands.placeholder,
             )}
-            onChange={(event) =>
-              removeTabsValidateAndSet(
-                'prosecutorDemands',
-                event.target.value,
-                ['empty'],
-                setWorkingCase,
-                prosecutorDemandsEM,
-                setProsecutorDemandsEM,
-              )
+            value={prosecutorDemandsInput.value || ''}
+            onChange={(evt) =>
+              prosecutorDemandsInput.onChange(evt.target.value)
             }
-            onBlur={(event) =>
-              validateAndSendToServer(
-                'prosecutorDemands',
-                event.target.value,
-                ['empty'],
-                workingCase,
-                updateCase,
-                setProsecutorDemandsEM,
-              )
-            }
-            errorMessage={prosecutorDemandsEM}
-            hasError={prosecutorDemandsEM !== ''}
+            onBlur={(evt) => prosecutorDemandsInput.onBlur(evt.target.value)}
+            errorMessage={prosecutorDemandsInput.errorMessage}
+            hasError={prosecutorDemandsInput.hasError}
             textarea
             rows={7}
-            autoExpand={{ on: true, maxHeight: 300 }}
             required={isRulingRequired}
             disabled={!isRulingRequired}
           />
@@ -264,33 +222,14 @@ const Ruling = () => {
               data-testid="courtCaseFacts"
               name="courtCaseFacts"
               label={formatMessage(m.sections.courtCaseFacts.label)}
-              value={workingCase.courtCaseFacts || ''}
               placeholder={formatMessage(m.sections.courtCaseFacts.placeholder)}
-              onChange={(event) =>
-                removeTabsValidateAndSet(
-                  'courtCaseFacts',
-                  event.target.value,
-                  ['empty'],
-                  setWorkingCase,
-                  courtCaseFactsEM,
-                  setCourtCaseFactsEM,
-                )
-              }
-              onBlur={(event) =>
-                validateAndSendToServer(
-                  'courtCaseFacts',
-                  event.target.value,
-                  ['empty'],
-                  workingCase,
-                  updateCase,
-                  setCourtCaseFactsEM,
-                )
-              }
-              errorMessage={courtCaseFactsEM}
-              hasError={courtCaseFactsEM !== ''}
+              value={courtCaseFactsInput.value || ''}
+              onChange={(evt) => courtCaseFactsInput.onChange(evt.target.value)}
+              onBlur={(evt) => courtCaseFactsInput.onBlur(evt.target.value)}
+              errorMessage={courtCaseFactsInput.errorMessage}
+              hasError={courtCaseFactsInput.hasError}
               textarea
               rows={16}
-              autoExpand={{ on: true, maxHeight: 600 }}
               required={isRulingRequired}
               disabled={!isRulingRequired}
             />
@@ -310,35 +249,20 @@ const Ruling = () => {
               data-testid="courtLegalArguments"
               name="courtLegalArguments"
               label={formatMessage(m.sections.courtLegalArguments.label)}
-              value={workingCase.courtLegalArguments || ''}
+              value={courtLegalArgumentsInput.value || ''}
               placeholder={formatMessage(
                 m.sections.courtLegalArguments.placeholder,
               )}
-              onChange={(event) =>
-                removeTabsValidateAndSet(
-                  'courtLegalArguments',
-                  event.target.value,
-                  ['empty'],
-                  setWorkingCase,
-                  courtLegalArgumentsEM,
-                  setCourtLegalArgumentsEM,
-                )
+              onChange={(evt) =>
+                courtLegalArgumentsInput.onChange(evt.target.value)
               }
-              onBlur={(event) =>
-                validateAndSendToServer(
-                  'courtLegalArguments',
-                  event.target.value,
-                  ['empty'],
-                  workingCase,
-                  updateCase,
-                  setCourtLegalArgumentsEM,
-                )
+              onBlur={(evt) =>
+                courtLegalArgumentsInput.onBlur(evt.target.value)
               }
-              errorMessage={courtLegalArgumentsEM}
-              hasError={courtLegalArgumentsEM !== ''}
+              errorMessage={courtLegalArgumentsInput.errorMessage}
+              hasError={courtLegalArgumentsInput.hasError}
               textarea
               rows={16}
-              autoExpand={{ on: true, maxHeight: 600 }}
               required={isRulingRequired}
               disabled={!isRulingRequired}
             />
@@ -350,11 +274,7 @@ const Ruling = () => {
               {formatMessage(m.sections.ruling.title)}
             </Text>
           </Box>
-          <RulingInput
-            workingCase={workingCase}
-            setWorkingCase={setWorkingCase}
-            disabled={!isRulingRequired}
-          />
+          <RulingInput disabled={!isRulingRequired} />
         </Box>
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
@@ -418,26 +338,9 @@ const Ruling = () => {
             name="conclusion"
             label={formatMessage(m.sections.conclusion.label)}
             placeholder={formatMessage(m.sections.conclusion.placeholder)}
-            value={workingCase.conclusion || ''}
-            onChange={(event) =>
-              removeTabsValidateAndSet(
-                'conclusion',
-                event.target.value,
-                [],
-                setWorkingCase,
-              )
-            }
-            onBlur={(event) =>
-              validateAndSendToServer(
-                'conclusion',
-                event.target.value,
-                [],
-                workingCase,
-                updateCase,
-              )
-            }
+            value={conclusionInput.value || ''}
+            onChange={(evt) => conclusionInput.onChange(evt.target.value)}
             rows={7}
-            autoExpand={{ on: true, maxHeight: 300 }}
             textarea
             disabled={!isRulingRequired}
           />

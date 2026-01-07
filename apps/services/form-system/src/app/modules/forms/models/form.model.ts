@@ -14,7 +14,6 @@ import { CompletedSectionInfo } from '../../../dataTypes/completedSectionInfo.mo
 import { Dependency } from '../../../dataTypes/dependency.model'
 import { LanguageType } from '../../../dataTypes/languageType.model'
 import { FormCertificationType } from '../../formCertificationTypes/models/formCertificationType.model'
-import { FormUrl } from '../../formUrls/models/formUrl.model'
 import { Organization } from '../../organizations/models/organization.model'
 import { Section } from '../../sections/models/section.model'
 
@@ -74,6 +73,20 @@ export class Form extends Model<Form> {
 
   @UpdatedAt
   modified!: CreationOptional<Date>
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    defaultValue: '',
+  })
+  submissionServiceUrl!: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    defaultValue: '',
+  })
+  validationServiceUrl!: string
 
   @Column({
     type: DataType.BOOLEAN,
@@ -160,9 +173,6 @@ export class Form extends Model<Form> {
 
   @HasMany(() => FormCertificationType)
   formCertificationTypes?: FormCertificationType[]
-
-  @HasMany(() => FormUrl)
-  formUrls?: FormUrl[]
 
   @ForeignKey(() => Organization)
   @Column({

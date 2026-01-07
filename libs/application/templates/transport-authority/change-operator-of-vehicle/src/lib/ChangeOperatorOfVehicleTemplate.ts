@@ -37,7 +37,6 @@ import {
   getExtraData,
   getReviewerRole,
   getReviewers,
-  hasReviewerApproved,
 } from '../utils'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScope } from '@island.is/auth/scopes'
@@ -225,8 +224,9 @@ const template: ApplicationTemplate<
             ],
             pendingAction: (application, _role, nationalId) => {
               return getReviewStatePendingAction(
-                hasReviewerApproved(application.answers, nationalId),
+                nationalId,
                 getReviewers(application.answers),
+                true,
               )
             },
           },

@@ -38,7 +38,7 @@ import { ApiScope } from '@island.is/auth/scopes'
 import { assign } from 'xstate'
 import set from 'lodash/set'
 import { CodeOwners } from '@island.is/shared/constants'
-import { getReviewers, hasReviewerApproved } from '../utils'
+import { getReviewers } from '../utils'
 
 const pruneInDaysAtMidnight = (application: Application, days: number) => {
   const date = new Date(application.created)
@@ -186,7 +186,7 @@ const template: ApplicationTemplate<
         entry: 'assignUsers',
         meta: {
           name: applicationMessage.name.defaultMessage,
-          status: FormModes.DRAFT,
+          status: FormModes.IN_PROGRESS,
           onDelete: defineTemplateApi({
             action: ApiActions.deleteApplication,
           }),
@@ -199,18 +199,35 @@ const template: ApplicationTemplate<
               {
                 onEvent: DefaultEvents.REJECT,
                 logMessage: coreHistoryMessages.applicationRejected,
-                includeSubjectAndActor: true,
+                includeSubjectAndActor: (role, _nationalId, isAdmin) => {
+                  return isAdmin || role === Roles.APPLICANT
+                },
+              },
+              {
+                onEvent: DefaultEvents.APPROVE,
+                logMessage: applicationMessage.historyLogApplicationApprovedBy,
+                includeSubjectAndActor: (role, _nationalId, isAdmin) => {
+                  return isAdmin || role === Roles.APPLICANT
+                },
               },
               {
                 onEvent: DefaultEvents.SUBMIT,
-                logMessage: coreHistoryMessages.applicationApproved,
-                includeSubjectAndActor: true,
+                logMessage: applicationMessage.historyLogApplicationApproved,
               },
             ],
-            pendingAction: (application, _role, nationalId) => {
+            pendingAction: (application, role, nationalId, isAdmin) => {
               return getReviewStatePendingAction(
-                hasReviewerApproved(application.answers, nationalId),
+                nationalId,
                 getReviewers(application.answers),
+                isAdmin || role === Roles.APPLICANT,
+                {
+                  youNeedToReviewDescription:
+                    applicationMessage.pendingActionYouNeedToReviewDescription,
+                  waitingForReviewDescription:
+                    applicationMessage.pendingActionWaitingForReviewDescription,
+                  whoNeedsToReviewDescription:
+                    applicationMessage.pendingActionWhoNeedsToReviewDescription,
+                },
               )
             },
           },

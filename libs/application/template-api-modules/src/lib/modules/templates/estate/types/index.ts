@@ -139,6 +139,7 @@ export type UploadData = {
   debts: Debt[]
   representative?: Representative
   districtCommissionerHasWill: string
+  knowledgeOfOtherWills: string
   settlement: string
   remarksOnTestament: string
   dividedEstate: string

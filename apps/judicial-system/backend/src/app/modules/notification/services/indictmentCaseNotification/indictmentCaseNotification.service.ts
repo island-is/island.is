@@ -13,6 +13,7 @@ import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
 
 import {
+  DEFENDER_INDICTMENT_ROUTE,
   INDICTMENTS_OVERVIEW_ROUTE,
   ROUTE_HANDLER_ROUTE,
 } from '@island.is/judicial-system/consts'
@@ -151,6 +152,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
     const formattedSubject = this.formatMessage(
       strings.indictmentCompletedWithRuling.subject,
       {
+        isCorrection: Boolean(theCase.rulingModifiedHistory),
         courtCaseNumber: theCase.courtCaseNumber,
       },
     )
@@ -158,6 +160,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
     const formattedBody = this.formatMessage(
       strings.indictmentCompletedWithRuling.body,
       {
+        isCorrection: Boolean(theCase.rulingModifiedHistory),
         courtCaseNumber: theCase.courtCaseNumber,
         policeCaseNumber:
           theCase.policeCaseNumbers.length > 0
@@ -165,7 +168,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
             : '',
         courtName: applyDativeCaseToCourtName(theCase.court?.name || ''),
         serviceRequirement:
-          theCase.defendants?.[0]?.verdict?.serviceRequirement,
+          theCase.defendants?.[0]?.verdicts?.[0]?.serviceRequirement,
         caseOrigin: theCase.origin,
       },
     )
@@ -430,6 +433,86 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
     return result
   }
 
+  private sendSplitCompletedEmailNotification(
+    theCase: Case,
+  ): Promise<Recipient>[] {
+    const splitCourtCaseNumber = theCase.splitCase?.courtCaseNumber
+    const newCourtCaseNumber = theCase.courtCaseNumber
+    if (!splitCourtCaseNumber || !newCourtCaseNumber) {
+      return []
+    }
+
+    const subject = `Mál ${splitCourtCaseNumber} klofið`
+    const body = `Aðili hefur verið klofinn frá máli ${splitCourtCaseNumber} hjá ${applyDativeCaseToCourtName(
+      theCase.court?.name || 'héraðsdómi',
+    )}. Nýtt málsnúmer viðkomandi er ${newCourtCaseNumber}.`
+    const promises: Promise<Recipient>[] = []
+
+    const defenders = _uniqBy(
+      theCase.defendants ?? [],
+      (d: Defendant) => d.defenderEmail,
+    ).filter(({ isDefenderChoiceConfirmed }) => isDefenderChoiceConfirmed)
+
+    if (theCase.prosecutor) {
+      const recipientEmail = theCase.prosecutor.email
+      if (recipientEmail) {
+        promises.push(
+          this.sendEmail({
+            subject,
+            html: `${body} Sjá nánar á <a href="${this.config.clientUrl}${ROUTE_HANDLER_ROUTE}/${theCase.id}">yfirlitssíðu málsins í Réttarvörslugátt.</a>`,
+            recipientName: theCase.prosecutor.name,
+            recipientEmail: theCase.prosecutor.email,
+          }),
+        )
+      }
+    }
+    defenders.forEach(({ defenderName, defenderEmail }) => {
+      if (defenderName && defenderEmail) {
+        promises.push(
+          this.sendEmail({
+            subject,
+            html: `${body} Sjá nánar á <a href="${formatDefenderRoute(
+              this.config.clientUrl,
+              theCase.type,
+              theCase.id,
+            )}${DEFENDER_INDICTMENT_ROUTE}/${
+              theCase.id
+            }">yfirlitssíðu málsins í Réttarvörslugátt.</a>`,
+            recipientName: defenderName,
+            recipientEmail: defenderEmail,
+          }),
+        )
+      }
+    })
+    return promises
+  }
+
+  private async sendSplitCompletedNotifications(
+    theCase: Case,
+  ): Promise<DeliverResponse> {
+    if (
+      this.hasSentNotification(
+        IndictmentCaseNotificationType.INDICTMENT_SPLIT_COMPLETED,
+        theCase.notifications,
+      )
+    ) {
+      return { delivered: true }
+    }
+    this.eventService.postEvent('SPLIT', theCase)
+
+    const promises: Promise<Recipient>[] =
+      this.sendSplitCompletedEmailNotification(theCase)
+
+    const recipients = await Promise.all(promises)
+    const result = await this.recordNotification(
+      theCase.id,
+      IndictmentCaseNotificationType.INDICTMENT_SPLIT_COMPLETED,
+      recipients,
+    )
+
+    return result
+  }
+
   private sendNotification(
     notificationType: IndictmentCaseNotificationType,
     theCase: Case,
@@ -442,6 +525,8 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
         return this.sendVerdictInfoNotification(theCase)
       case IndictmentCaseNotificationType.CRIMINAL_RECORD_FILES_UPLOADED:
         return this.sendCriminalRecordFilesUploadedNotification(theCase)
+      case IndictmentCaseNotificationType.INDICTMENT_SPLIT_COMPLETED:
+        return this.sendSplitCompletedNotifications(theCase)
 
       default:
         throw new InternalServerErrorException(
