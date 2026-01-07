@@ -22,7 +22,8 @@ const RejectionCommentModal = ({
 
   return (
     <ModalBase
-      baseId="changeStatus"
+      baseId="rejectionComment"
+      modalLabel="Rejection Comment modal"
       isVisible={isVisible}
       onVisibilityChange={(visibility) => {
         if (visibility !== isVisible) {
