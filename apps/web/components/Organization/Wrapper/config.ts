@@ -25,6 +25,11 @@ export const zendeskConfig: Record<
       snippetUrl:
         'https://static.zdassets.com/ekr/snippet.js?key=dc0c86b4-a02a-45e9-85d5-0aa570708ad9',
     },
+    // Skatturinn - Organization
+    '4yJlHgCMTqpgRSj4p6LuBQ': {
+      snippetUrl:
+        'https://static.zdassets.com/ekr/snippet.js?key=f12bfedb-fc2c-477d-8f28-b31a036fba35',
+    },
   },
   en: {
     // Sjúkratryggingar - Organization
@@ -41,6 +46,11 @@ export const zendeskConfig: Record<
     kENblMMMvZ3DlyXw1dwxQ: {
       snippetUrl:
         'https://static.zdassets.com/ekr/snippet.js?key=dc0c86b4-a02a-45e9-85d5-0aa570708ad9',
+    },
+    // Skatturinn - Organization
+    '4yJlHgCMTqpgRSj4p6LuBQ': {
+      snippetUrl:
+        'https://static.zdassets.com/ekr/snippet.js?key=f12bfedb-fc2c-477d-8f28-b31a036fba35',
     },
   },
 }
@@ -121,22 +131,6 @@ export const watsonConfig: Record<
   Record<string, WatsonChatPanelProps>
 > = {
   en: {
-    // Skatturinn - Organization
-    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/4yJlHgCMTqpgRSj4p6LuBQ
-    '4yJlHgCMTqpgRSj4p6LuBQ': {
-      integrationID: '98ba51da-1677-4881-a133-7ea019ae7b87',
-      region: 'eu-gb',
-      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
-      showLauncher: false,
-      carbonTheme: 'g10',
-      namespaceKey: 'skatturinn',
-      onLoad(instance) {
-        instance.updateHomeScreenConfig({
-          bot_avatar_url:
-            'https://images.ctfassets.net/8k0h54kbe6bj/5m9muELNRJMRgsPHP1t28a/caa4d23d14738400f262373e5a9cb066/islandissseoakgf2.PNG?h=250',
-        })
-      },
-    },
     // Samgöngustofa - Organization
     '6IZT17s7stKJAmtPutjpD7': {
       integrationID: 'ee1c15db-7151-4487-bc9a-9f32f1f8ae3b',
