@@ -283,12 +283,12 @@ CourseDetails.getProps = async ({
     }),
   ])
 
-  if (!getCourseById) {
+  if (!getCourseById?.course) {
     throw new CustomNextError(404, 'Course not found')
   }
 
   if (
-    Boolean(getCourseById.courseListPageId) &&
+    getCourseById.course?.courseListPageId &&
     getCourseById.courseListPageId !== courseListPageId
   ) {
     throw new CustomNextError(
