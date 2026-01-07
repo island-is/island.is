@@ -9,10 +9,19 @@ import { InheritanceReportInfo } from '@island.is/clients/syslumenn'
 import { DebtTypes as ClientDebtType } from '@island.is/clients/syslumenn'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { MessageDescriptor } from 'react-intl'
+import { sanitize as sanitizeNationalId } from 'kennitala'
 import type { Answers } from '../../types'
 import { DebtTypes } from '../../types'
 import { PrePaidInheritanceOptions } from '../constants'
 import { InheritanceReport } from '../dataSchema'
+
+export const nationalIdsMatch = (
+  id1: string | undefined | null,
+  id2: string | undefined | null,
+): boolean => {
+  if (!id1 || !id2) return false
+  return sanitizeNationalId(id1) === sanitizeNationalId(id2)
+}
 
 export const currencyStringToNumber = (str: string) => {
   if (!str) {

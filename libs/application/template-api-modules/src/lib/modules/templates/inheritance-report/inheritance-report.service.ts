@@ -15,13 +15,17 @@ import {
 } from '@island.is/application/types'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { infer as zinfer } from 'zod'
-import { inheritanceReportSchema } from '@island.is/application/templates/inheritance-report'
+import {
+  inheritanceReportSchema,
+  nationalIdsMatch,
+} from '@island.is/application/templates/inheritance-report'
 import type { Logger } from '@island.is/logging'
 import { expandAnswers } from './utils/mappers'
 import { NationalRegistryXRoadService } from '@island.is/api/domains/national-registry-x-road'
 import { S3Service } from '@island.is/nest/aws'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { coreErrorMessages } from '@island.is/application/core'
+import set from 'lodash/set'
 
 type InheritanceSchema = zinfer<typeof inheritanceReportSchema>
 
@@ -34,6 +38,41 @@ export class InheritanceReportService extends BaseTemplateApiService {
     private readonly s3Service: S3Service,
   ) {
     super(ApplicationTypes.INHERITANCE_REPORT)
+  }
+
+  async approveByAssignee({ application, auth }: TemplateApiModuleActionProps) {
+    const actorNationalId = auth.actor?.nationalId ?? auth.nationalId
+    const answers = application.answers as InheritanceSchema
+
+    const heirs = answers?.heirs?.data ?? []
+    const updatedHeirs = heirs.map((heir) => {
+      if (!nationalIdsMatch(heir?.nationalId, actorNationalId)) {
+        return heir
+      }
+
+      return {
+        ...heir,
+        approved: true,
+        approvedDate: new Date().toISOString(),
+      }
+    })
+
+    const didUpdate = heirs.some((heir) =>
+      nationalIdsMatch(heir?.nationalId, actorNationalId),
+    )
+    if (!didUpdate) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.failedDataProviderSubmit,
+          summary: 'Approving user is not a listed heir on this application.',
+        },
+        400,
+      )
+    }
+
+    set(application.answers, 'heirs.data', updatedHeirs)
+
+    return { success: true }
   }
 
   async syslumennOnEntry({ application }: TemplateApiModuleActionProps) {
@@ -89,7 +128,7 @@ export class InheritanceReportService extends BaseTemplateApiService {
     }
   }
 
-  async completeApplication({ application }: TemplateApiModuleActionProps) {
+  async submitToSyslumenn({ application }: TemplateApiModuleActionProps) {
     const nationalRegistryData = application.externalData.nationalRegistry
       ?.data as NationalRegistryIndividual
 
@@ -181,6 +220,40 @@ export class InheritanceReportService extends BaseTemplateApiService {
       )
     }
     return { success: result.success, id: result.caseNumber }
+  }
+
+  async getSignatories(_props: TemplateApiModuleActionProps) {
+    const { application } = _props
+    const answers = application.answers as InheritanceSchema
+
+    // TODO: Replace this mock implementation with actual API call to syslumennService
+    // when the endpoint becomes available
+    // const caseNumber = application.externalData?.submitToSyslumenn?.data?.id
+    // return await this.syslumennService.getInheritanceReportSignatories(caseNumber)
+
+    // Mock implementation: Return signatories based on heirs from application answers
+    const heirs = answers?.heirs?.data || []
+
+    return {
+      success: true,
+      signatories: heirs
+        .filter((heir) => heir.enabled)
+        .map((heir, index: number) => ({
+          name: heir.name || '',
+          nationalId: heir.nationalId || '',
+          // Mock: First heir is signed, rest are pending
+          signed: index === 0,
+        })),
+    }
+  }
+
+
+  async completeApplication(_props: TemplateApiModuleActionProps) {
+    // This method is called when entering the 'done' state
+    // after all signatories have signed
+    // Currently, no additional actions are needed as submission
+    // was already handled in submitToSyslumenn
+    return { success: true }
   }
 
   async maritalStatus({ auth }: TemplateApiModuleActionProps) {

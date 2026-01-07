@@ -370,6 +370,12 @@ export interface InheritanceReportInfo {
   inheritanceTax?: InheritanceTax
 }
 
+export interface InheritanceSignatory {
+  name: string
+  nationalId: string
+  signed: boolean
+}
+
 // Copied from propertyDetails in @island.is/api/domains/assets. Only properties in use
 export interface PropertyDetail {
   defaultAddress?: PropertyLocation

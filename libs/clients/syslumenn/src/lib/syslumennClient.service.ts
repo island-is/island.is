@@ -34,6 +34,7 @@ import {
   EstateRelations,
   Homestay,
   InheritanceReportInfo,
+  InheritanceSignatory,
   InheritanceTax,
   Lawyer,
   ManyPropertyDetail,
@@ -646,6 +647,16 @@ export class SyslumennService {
       },
     })
     return res
+  }
+
+  // TODO: This method needs to be implemented by the external API provider
+  // For now, it throws an error to indicate the API endpoint is not yet available
+  async getInheritanceReportSignatories(
+    caseNumber: string,
+  ): Promise<InheritanceSignatory[]> {
+    throw new Error(
+      `getInheritanceReportSignatories is not yet implemented by the external API provider. Case number: ${caseNumber}`,
+    )
   }
 
   async getEstateInfo(nationalId: string): Promise<EstateInfo[]> {

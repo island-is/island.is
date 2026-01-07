@@ -560,6 +560,8 @@ export const inheritanceReportSchema = z.object({
         dateOfBirth: z.string().optional(),
         initial: z.boolean(),
         enabled: z.boolean(),
+        approved: z.boolean().optional(),
+        approvedDate: z.string().optional(),
         phone: z.string().optional(),
         email: z.string().optional(),
         heirsPercentage: z.string().optional(),
