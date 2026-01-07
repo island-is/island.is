@@ -289,7 +289,7 @@ CourseDetails.getProps = async ({
 
   if (
     getCourseById.course?.courseListPageId &&
-    getCourseById.courseListPageId !== courseListPageId
+    getCourseById.course.courseListPageId !== courseListPageId
   ) {
     throw new CustomNextError(
       404,
