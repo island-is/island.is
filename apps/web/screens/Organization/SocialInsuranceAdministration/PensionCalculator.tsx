@@ -219,15 +219,15 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
         },
         {
           label: formatMessage(
-            translationStrings.basePensionNewSystemPartialDisabilityLabel,
-          ),
-          value: BasePensionType.NewSystemPartialDisability,
-        },
-        {
-          label: formatMessage(
             translationStrings.basePensionNewSystemMedicalAndRehabilitation,
           ),
           value: BasePensionType.NewSystemMedicalAndRehabilitation,
+        },
+        {
+          label: formatMessage(
+            translationStrings.basePensionNewSystemPartialDisabilityLabel,
+          ),
+          value: BasePensionType.NewSystemPartialDisability,
         },
       ]
       return options
@@ -603,51 +603,50 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                           />
                         </Box>
                       </Stack>
-                      <Box
-                        columnGap={3}
-                        rowGap={3}
-                        display="flex"
-                        flexDirection="row"
-                        justifyContent="spaceBetween"
-                        alignItems="flexEnd"
-                        flexWrap="wrap"
+                      <Box className={styles.textMaxWidth}>
+                        <MarkdownText>
+                          {formatMessage(translationStrings.introduction)}
+                        </MarkdownText>
+                      </Box>
+                      <Inline
+                        alignY="center"
+                        space={3}
+                        collapseBelow="lg"
+                        flexWrap="nowrap"
                       >
-                        <Box className={styles.textMaxWidth}>
-                          <MarkdownText>
-                            {formatMessage(translationStrings.introduction)}
-                          </MarkdownText>
-                        </Box>
-
-                        <Box className={styles.dateOfCalculationsSelect}>
+                        <Box className={styles.inputContainer}>
                           <SelectController
-                            id={'dateOfCalculations' as keyof CalculationInput}
-                            name={
-                              'dateOfCalculations' as keyof CalculationInput
-                            }
+                            id={'typeOfBasePension' as keyof CalculationInput}
+                            name={'typeOfBasePension' as keyof CalculationInput}
                             label={formatMessage(
-                              translationStrings.dateOfCalculationsLabel,
+                              translationStrings.typeOfBasePensionLabel,
                             )}
-                            placeholder={formatMessage(
-                              translationStrings.dateOfCalculationsPlaceholder,
-                            )}
-                            size="sm"
-                            options={allCalculatorsOptions}
-                            onSelect={(option) => {
-                              if (option) setDateOfCalculations(option.value)
-                            }}
+                            options={basePensionTypeOptions}
                           />
                         </Box>
-                      </Box>
-                      <Box className={styles.inputContainer}>
-                        <SelectController
-                          id={'typeOfBasePension' as keyof CalculationInput}
-                          name={'typeOfBasePension' as keyof CalculationInput}
-                          label={formatMessage(
-                            translationStrings.typeOfBasePensionLabel,
-                          )}
-                          options={basePensionTypeOptions}
-                        />
-                      </Box>
+                        <Box className={styles.inputContainer}>
+                          <Box className={styles.dateOfCalculationsSelect}>
+                            <SelectController
+                              id={
+                                'dateOfCalculations' as keyof CalculationInput
+                              }
+                              name={
+                                'dateOfCalculations' as keyof CalculationInput
+                              }
+                              label={formatMessage(
+                                translationStrings.dateOfCalculationsLabel,
+                              )}
+                              placeholder={formatMessage(
+                                translationStrings.dateOfCalculationsPlaceholder,
+                              )}
+                              options={allCalculatorsOptions}
+                              onSelect={(option) => {
+                                if (option) setDateOfCalculations(option.value)
+                              }}
+                            />
+                          </Box>
+                        </Box>
+                      </Inline>
                     </Stack>
                   </GridColumn>
                 </GridRow>
