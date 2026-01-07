@@ -1,7 +1,7 @@
 import { FC, useContext } from 'react'
 import { useIntl } from 'react-intl'
 
-import { AlertMessage, Box } from '@island.is/island-ui/core'
+import { AlertMessage } from '@island.is/island-ui/core'
 import { isIndictmentCase } from '@island.is/judicial-system/types'
 import {
   FormContext,
