@@ -441,6 +441,15 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
     }
   }, [isNewSystemActive, methods, typeOfBasePension])
 
+  useEffect(() => {
+    if (
+      !dateOfCalculationsOptions.find(
+        (option) => option.value === dateOfCalculations,
+      )
+    )
+      setDateOfCalculations(null)
+  }, [dateOfCalculations, dateOfCalculationsOptions, setDateOfCalculations])
+
   const birthYearOptions = useMemo<Option<number>[]>(() => {
     const today = new Date()
     const options: Option<number>[] = []
