@@ -6,7 +6,7 @@ import {
   getState,
   Routes,
 } from '@island.is/financial-aid/shared/lib'
-import { Box, Button, Icon, Text } from '@island.is/island-ui/core'
+import { Box, Button, Icon, Text, LinkV2 } from '@island.is/island-ui/core'
 import React from 'react'
 
 import * as styles from './ApplicationHeader.css'
@@ -19,7 +19,6 @@ import {
   GenerateName,
 } from '@island.is/financial-aid-web/veita/src/components'
 import { useApplicationState } from '@island.is/financial-aid-web/veita/src/utils/useApplicationState'
-import Link from 'next/link'
 
 interface ApplicantProps {
   application: Application
@@ -169,7 +168,7 @@ const ApplicationHeader = ({
             <Box marginX={1}>
               <Text variant="small">·</Text>
             </Box>
-            <Link
+            <LinkV2
               href={Routes.printApplicationProfile(application.id)}
               target="_blank"
               className={styles.button}
@@ -178,7 +177,7 @@ const ApplicationHeader = ({
                 <Icon icon="print" type="outline" size="small" />
               </Box>
               <span>Prenta umsókn </span>
-            </Link>
+            </LinkV2>
           </>
         )}
       </Box>
