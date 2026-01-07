@@ -440,6 +440,7 @@ codemagic.yaml                                                                  
 /libs/application/templates/transport-authority/order-vehicle-registration-certificate                                       @island-is/origo
 /libs/application/templates/transport-authority/transfer-of-vehicle-ownership                                                @island-is/origo
 /libs/application/templates/transport-authority/exemption-for-transportation                                                 @island-is/origo
+/libs/application/templates/transport-authority/mile-car                                                                     @island-is/origo
 
 /libs/application/template-api-modules/src/lib/modules/templates/transport-authority/anonymity-in-vehicle-registry           @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/transport-authority/change-co-owner-of-vehicle              @island-is/origo
@@ -450,6 +451,7 @@ codemagic.yaml                                                                  
 /libs/application/template-api-modules/src/lib/modules/templates/transport-authority/order-vehicle-license-plate             @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/transport-authority/order-vehicle-registration-certificate  @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/transport-authority/transfer-of-vehicle-ownership           @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/transport-authority/mile-car                                @island-is/origo
 
 /libs/api/domains/transport-authority/                                                                                       @island-is/origo
 /libs/clients/transport-authority/                                                                                           @island-is/origo
