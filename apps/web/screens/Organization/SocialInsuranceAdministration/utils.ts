@@ -103,15 +103,18 @@ export const getDateOfCalculationsOptionsMap = (
     pageData?.configJson?.dateOfCalculationsOptionsMap ?? {}
 
   for (const key in optionsMap) {
-    const options = [
-      ...(optionsMap[key as keyof DateOfCalculationOptionsMap] ?? []),
-    ]
+    optionsMap[key] = [...(optionsMap[key] ?? [])]
+    const options = optionsMap[key]
+
     const missingYearOptions: Option<string>[] = []
     if (
       pageData?.configJson?.addMissingYearsAutomaticallyMap?.[key] !== false
     ) {
       let year = new Date().getFullYear()
-      while (year > new Date(options[0].value).getFullYear()) {
+      while (
+        options[0]?.value &&
+        year > new Date(options[0].value).getFullYear()
+      ) {
         missingYearOptions.push({
           label: year.toString(),
           value: new Date(year, 11, 31).toISOString(),
