@@ -19,7 +19,6 @@ import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 import { FormSystemPaths } from '../../../../lib/paths'
 import { StatusTag } from '../../../StatusTag/StatusTag'
-import { TranslationTag } from '../../../TranslationTag/TranslationTag'
 
 interface Props {
   id?: string | null
@@ -54,7 +53,6 @@ export const TableRow = ({
   id,
   name,
   lastModified,
-  translated,
   setFormsState,
   slug,
   status,
@@ -268,12 +266,11 @@ export const TableRow = ({
   return (
     <Box
       paddingTop={2}
-      paddingBottom={1}
       onClick={() => setIsOpen(!isOpen)}
       style={{ cursor: '' }}
     >
       <Row key={id}>
-        <Column span="5/12">
+        <Column span="8/12">
           <ColumnText text={name ? name : ''} />
         </Column>
         <Column span="2/12">
@@ -285,12 +282,8 @@ export const TableRow = ({
             })}
           />
         </Column>
+
         <Column span="1/12">
-          <Box display="flex">
-            <TranslationTag translated={translated ? translated : false} />
-          </Box>
-        </Column>
-        <Column span="2/12">
           <Box display="flex">
             <StatusTag status={status ?? ''} />
           </Box>
