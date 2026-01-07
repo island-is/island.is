@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import {
   Box,
   Button,
-  Link,
+  LinkV2,
   Text,
   toast,
   ToastContainer,
@@ -334,14 +334,14 @@ const MunicipalityProfile = ({
                 Hlekkur á reglur fjárhagsaðstoðar sveitarfélagsins
               </Text>
             </Box>
-            <Link
+            <LinkV2
               color="blue400"
               underline="small"
               underlineVisibility="always"
               href={municipality.rulesHomepage}
             >
               {municipality.rulesHomepage}
-            </Link>
+            </LinkV2>
           </Box>
         )}
         {municipality.email && (
@@ -351,14 +351,14 @@ const MunicipalityProfile = ({
                 Almennt netfang sveitarfélagsins (félagsþjónusta)
               </Text>
             </Box>
-            <Link
+            <LinkV2
               color="blue400"
               underline="small"
               underlineVisibility="always"
               href={`mailto: ${municipality.email}`}
             >
               {municipality.email}
-            </Link>
+            </LinkV2>
           </Box>
         )}
         {municipality.homepage && (
@@ -368,14 +368,14 @@ const MunicipalityProfile = ({
                 Vefur sveitarfélagsins
               </Text>
             </Box>
-            <Link
+            <LinkV2
               color="blue400"
               underline="small"
               underlineVisibility="always"
               href={municipality.homepage}
             >
               {municipality.homepage}
-            </Link>
+            </LinkV2>
           </Box>
         )}
       </Box>
