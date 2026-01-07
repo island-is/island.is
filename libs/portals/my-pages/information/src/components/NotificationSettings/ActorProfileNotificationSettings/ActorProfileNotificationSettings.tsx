@@ -70,6 +70,11 @@ export const ActorProfileNotificationSettings = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profile])
 
+  useEffect(() => {
+    setSettings({ ...settings, wantsPaper: wantsPaper ?? false })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [wantsPaper])
+
   const onChange = async (updatedSettings: Partial<Settings>) => {
     const oldSettings = { ...settings }
     const newSettings = { ...settings, ...updatedSettings }

@@ -18,7 +18,7 @@ import {
 } from '@island.is/portals/my-pages/core'
 import { vehicleMessage as messages, vehicleMessage } from '../../lib/messages'
 import * as styles from './VehicleBulkMileage.css'
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, useCallback } from 'react'
 import VehicleBulkMileageTable from './VehicleBulkMileageTable'
 import { VehicleType } from './types'
 import { FormProvider, useForm } from 'react-hook-form'
@@ -40,7 +40,57 @@ const VehicleBulkMileage = () => {
   const [page, setPage] = useState<number>(1)
   const [totalPages, setTotalPages] = useState<number>(1)
   const [search, setSearch] = useState<string>()
-  const [vehicleListQuery, { loading, error }] = useVehiclesListLazyQuery()
+  const [vehicleListQuery, { data, loading, error, refetch }] =
+    useVehiclesListLazyQuery()
+
+  useEffect(() => {
+    if (!data) return
+
+    const vehicles: Array<VehicleType> =
+      data?.vehiclesListV3?.vehicleList
+        ?.map((v) => {
+          if (!v.make) {
+            return null
+          }
+
+          const lastMileageRegistration =
+            v.mileageDetails?.lastMileageRegistration &&
+            v.mileageDetails.lastMileageRegistration.date &&
+            v.mileageDetails.lastMileageRegistration.mileage &&
+            v.mileageDetails.lastMileageRegistration.originCode
+              ? {
+                  date: new Date(v.mileageDetails.lastMileageRegistration.date),
+                  mileage: v.mileageDetails.lastMileageRegistration.mileage,
+                  origin: v.mileageDetails.lastMileageRegistration.originCode,
+                  internalId:
+                    v.mileageDetails.lastMileageRegistration.internalId ??
+                    undefined,
+                }
+              : undefined
+
+          return {
+            vehicleId: v.vehicleId,
+            vehicleType: v.make,
+            lastMileageRegistration,
+            co2: v.co2 ?? undefined,
+          }
+        })
+        .filter(isDefined) ?? []
+    setVehicles(vehicles)
+    setTotalPages(data?.vehiclesListV3?.totalPages || 1)
+  }, [data])
+
+  const onMileageUpdate = useCallback(() => {
+    refetch({
+      input: {
+        page,
+        pageSize: 10,
+        query: search ?? undefined,
+        filterOnlyVehiclesUserCanRegisterMileage: true,
+        includeNextMainInspectionDate: false,
+      },
+    })
+  }, [refetch, page, search])
 
   const debouncedQuery = useMemo(() => {
     return debounce(() => {
@@ -51,46 +101,9 @@ const VehicleBulkMileage = () => {
             pageSize: 10,
             query: search ?? undefined,
             filterOnlyVehiclesUserCanRegisterMileage: true,
-            filterOnlyMileageRequiredVehicles: true,
             includeNextMainInspectionDate: false,
           },
         },
-      }).then((res) => {
-        const vehicles: Array<VehicleType> =
-          res.data?.vehiclesListV3?.vehicleList
-            ?.map((v) => {
-              if (!v.make) {
-                return null
-              }
-
-              const lastMileageRegistration =
-                v.mileageDetails?.lastMileageRegistration &&
-                v.mileageDetails.lastMileageRegistration.date &&
-                v.mileageDetails.lastMileageRegistration.mileage &&
-                v.mileageDetails.lastMileageRegistration.originCode
-                  ? {
-                      date: new Date(
-                        v.mileageDetails.lastMileageRegistration.date,
-                      ),
-                      mileage: v.mileageDetails.lastMileageRegistration.mileage,
-                      origin:
-                        v.mileageDetails.lastMileageRegistration.originCode,
-                      internalId:
-                        v.mileageDetails.lastMileageRegistration.internalId ??
-                        undefined,
-                    }
-                  : undefined
-
-              return {
-                vehicleId: v.vehicleId,
-                vehicleType: v.make,
-                lastMileageRegistration,
-                co2: v.co2 ?? undefined,
-              }
-            })
-            .filter(isDefined) ?? []
-        setVehicles(vehicles)
-        setTotalPages(res?.data?.vehiclesListV3?.totalPages || 1)
       })
     }, debounceTime.search)
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -141,6 +154,7 @@ const VehicleBulkMileage = () => {
           }
           serviceProviderSlug={SAMGONGUSTOFA_SLUG}
           serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
+          childrenWidthFull
           buttonGroup={
             isAllowedBulkMileageUpload
               ? [
@@ -189,7 +203,11 @@ const VehicleBulkMileage = () => {
           <Stack space={4}>
             {error && !loading && <Problem error={error} noBorder={false} />}
             {!error && (
-              <VehicleBulkMileageTable loading={loading} vehicles={vehicles} />
+              <VehicleBulkMileageTable
+                loading={loading}
+                vehicles={vehicles}
+                onMileageUpdateCallback={onMileageUpdate}
+              />
             )}
 
             {totalPages > 1 && (

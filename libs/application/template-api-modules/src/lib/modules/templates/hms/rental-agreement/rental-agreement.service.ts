@@ -27,19 +27,18 @@ export class RentalAgreementService extends BaseTemplateApiService {
   }
 
   async consumerIndex(): Promise<FinancialIndexationEntry[]> {
-    const numberOfMonths = 8 // Number of months to fetch
+    const numberOfMonths = 36 // Number of months to fetch
     const months = listOfLastMonths(numberOfMonths)
 
     return await fetchFinancialIndexationForMonths(months)
   }
 
   async sendDraft({ application, auth }: TemplateApiModuleActionProps) {
+    const { id, answers } = application
+
     return await this.homeApiWithAuth(auth).contractSendDraftPost({
       draftRequest: {
-        ...draftAnswers(
-          applicationAnswers(application.answers),
-          application.id,
-        ),
+        ...draftAnswers(applicationAnswers(answers), id),
       },
     })
   }

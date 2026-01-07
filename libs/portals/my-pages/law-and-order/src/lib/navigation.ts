@@ -18,12 +18,7 @@ export const lawAndOrderNavigation: PortalNavigationItem = {
   },
   children: [
     {
-      name: m.overview,
-      searchHide: true,
-      path: LawAndOrderPaths.Overview,
-    },
-    {
-      name: m.myCourtCases,
+      name: m.courtCases,
       description: m.myCourtCasesIntro,
       path: LawAndOrderPaths.CourtCases,
       children: [
@@ -31,6 +26,7 @@ export const lawAndOrderNavigation: PortalNavigationItem = {
           name: m.courtCases,
           path: LawAndOrderPaths.CourtCaseDetail,
           navHide: true,
+          breadcrumbHide: true,
           children: [
             {
               name: m.subpoena,
@@ -43,6 +39,19 @@ export const lawAndOrderNavigation: PortalNavigationItem = {
               navHide: true,
             },
           ],
+        },
+      ],
+    },
+    {
+      name: m.policeCases,
+      description: m.myPoliceCasesIntro,
+      path: LawAndOrderPaths.PoliceCases,
+      children: [
+        {
+          name: m.policeCases,
+          breadcrumbHide: true,
+          path: LawAndOrderPaths.PoliceCasesDetail,
+          navHide: true,
         },
       ],
     },

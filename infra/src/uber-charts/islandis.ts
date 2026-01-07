@@ -27,7 +27,11 @@ import { serviceSetup as consultationPortalSetup } from '../../../apps/consultat
 import { serviceSetup as xroadCollectorSetup } from '../../../apps/services/xroad-collector/infra/xroad-collector'
 
 import { serviceSetup as licenseApiSetup } from '../../../apps/services/license-api/infra/license-api'
-import { workerSetup as cmsImporterSetup } from '../../../apps/services/cms-importer/infra/cms-importer-worker'
+import {
+  workerSetup as cmsImporterSetup,
+  energyFundImportSetup as cmsImporterEnergyFundImportSetup,
+  fsreBuildingsImportSetup as cmsImporterFsreBuildingsImportSetup,
+} from '../../../apps/services/cms-importer/infra/cms-importer-worker'
 
 import { serviceSetup as skilavottordWebSetup } from '../../../apps/skilavottord/web/infra/skilavottord-web'
 import { serviceSetup as skilavottordWsSetup } from '../../../apps/skilavottord/ws/infra/skilavottord-ws'
@@ -70,6 +74,7 @@ import { serviceSetup as authAdminApiSetup } from '../../../apps/services/auth/a
 import { EnvironmentServices } from '.././dsl/types/charts'
 import { ServiceBuilder } from '../dsl/dsl'
 import { serviceSetup as formSystemApiSetup } from '../../../apps/services/form-system/infra/form-system'
+import { workerSetup as formSystemWorkerSetup } from '../../../apps/services/form-system/infra/form-system'
 import { serviceSetup as formSystemWebSetup } from '../../../apps/form-system/web/infra/form-system-web'
 import { serviceSetup as paymentFlowUpdateHandlerSetup } from '../../../apps/services/payment-flow-update-handler/infra/payment-flow-update-handler'
 
@@ -116,6 +121,7 @@ const universityGatewayService = universityGatewaySetup()
 const universityGatewayWorker = universityGatewayWorkerSetup()
 
 const formSystemApi = formSystemApiSetup()
+const formSystemWorker = formSystemWorkerSetup()
 const formSystemWeb = formSystemWebSetup()
 
 const paymentFlowUpdateHandlerService = paymentFlowUpdateHandlerSetup()
@@ -156,6 +162,8 @@ const xroadCollector = xroadCollectorSetup()
 
 const licenseApi = licenseApiSetup()
 const cmsImporter = cmsImporterSetup()
+const cmsImporterEnergyGrantImport = cmsImporterEnergyFundImportSetup()
+const cmsImporterFsreBuildingsImport = cmsImporterFsreBuildingsImportSetup()
 
 const storybook = storybookSetup({})
 
@@ -203,6 +211,8 @@ export const Services: EnvironmentServices = {
     userNotificationBirthdayWorkerService,
     licenseApi,
     cmsImporter,
+    cmsImporterEnergyGrantImport,
+    cmsImporterFsreBuildingsImport,
     sessionsService,
     sessionsWorker,
     sessionsCleanupWorker,
@@ -247,6 +257,8 @@ export const Services: EnvironmentServices = {
     userNotificationBirthdayWorkerService,
     licenseApi,
     cmsImporter,
+    cmsImporterEnergyGrantImport,
+    cmsImporterFsreBuildingsImport,
     sessionsService,
     sessionsWorker,
     sessionsCleanupWorker,
@@ -290,6 +302,8 @@ export const Services: EnvironmentServices = {
     appSystemApiWorker,
     contentfulEntryTagger,
     cmsImporter,
+    cmsImporterEnergyGrantImport,
+    cmsImporterFsreBuildingsImport,
     licenseApi,
     sessionsService,
     sessionsWorker,
@@ -302,6 +316,7 @@ export const Services: EnvironmentServices = {
     paymentsService,
     bffServicePortalService,
     formSystemApi,
+    formSystemWorker,
     formSystemWeb,
     paymentFlowUpdateHandlerService,
   ],

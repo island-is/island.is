@@ -19,6 +19,7 @@ const StateModalContainer = ({
   return (
     <ModalBase
       baseId="changeStatus"
+      modalLabel="Change status modal"
       isVisible={isVisible}
       onVisibilityChange={(visibility) => {
         onVisibilityChange(visibility)

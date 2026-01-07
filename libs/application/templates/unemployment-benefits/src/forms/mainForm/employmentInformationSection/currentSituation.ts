@@ -11,15 +11,15 @@ import {
 import { employment as employmentMessages } from '../../../lib/messages'
 import { EmploymentStatus } from '../../../shared'
 import {
-  getEmploymentFromRsk,
   hasEmployer,
   isEmployed,
   isEmployedAtAll,
   isEmployedPartTime,
   isOccasionallyEmployed,
 } from '../../../utils'
-import { GaldurDomainModelsSettingsJobCodesJobCodeDTO } from '@island.is/clients/vmst-unemployment'
 import { Application } from '@island.is/application/types'
+import { getRskOptions } from '../../../utils/getRskOptions'
+import { getJobCodeOptions } from '../../../utils/getJobCodeOptions'
 
 export const currentSituationSubSection = buildSubSection({
   id: 'currentSituationSubSection',
@@ -90,6 +90,10 @@ export const currentSituationSubSection = buildSubSection({
               values: { index: index + 1 },
             }
           },
+          hideAddButton: (application) => {
+            const employed = isEmployed(application.answers)
+            return employed
+          },
           formTitleVariant: 'h5',
           formTitleNumbering: 'none',
           width: 'full',
@@ -100,22 +104,9 @@ export const currentSituationSubSection = buildSubSection({
               component: 'select',
               required: true,
               label:
-                employmentMessages.employmentHistory.labels.lastJobRepeater,
-              options(application) {
-                const employmentList = getEmploymentFromRsk(
-                  application.externalData,
-                )
-
-                return employmentList
-                  .filter((x) => !!x.employerSSN)
-                  .map((job) => ({
-                    value: job.employerSSN ?? '',
-                    label:
-                      job.employerSSN !== '-'
-                        ? `${job.employer || ''}, ${job.employerSSN || ''}`
-                        : job.employer || '',
-                  }))
-              },
+                employmentMessages.employmentHistory.labels.employerSelectLabel,
+              options: (application, _, locale, formatMessage) =>
+                getRskOptions(application, formatMessage),
             },
             employer: {
               component: 'nationalIdWithName',
@@ -141,23 +132,8 @@ export const currentSituationSubSection = buildSubSection({
               label: employmentMessages.employmentHistory.labels.lastJobTitle,
               width: 'half',
               required: true,
-              options: (application, _, locale) => {
-                const jobList =
-                  getValueViaPath<
-                    GaldurDomainModelsSettingsJobCodesJobCodeDTO[]
-                  >(
-                    application.externalData,
-                    'unemploymentApplication.data.supportData.jobCodes',
-                  ) ?? []
-                return jobList.map((job) => ({
-                  value:
-                    (locale === 'is' ? job.name : job.english ?? job.name) ||
-                    '',
-                  label:
-                    (locale === 'is' ? job.name : job.english ?? job.name) ||
-                    '',
-                }))
-              },
+              options: (application, _activeField, locale) =>
+                getJobCodeOptions(application, locale),
             },
             percentage: {
               component: 'input',
@@ -241,6 +217,7 @@ export const currentSituationSubSection = buildSubSection({
         buildCustomField({
           id: 'currentSituation.updateEmploymentHistory',
           component: 'UpdateEmploymentHistory',
+          doesNotRequireAnswer: true,
         }),
       ],
     }),

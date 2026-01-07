@@ -6,7 +6,7 @@ import {
   YES,
 } from '@island.is/application/core'
 import { ApplicationType } from '../../../utils/constants'
-import { newPrimarySchoolMessages } from '../../../lib/messages'
+import { primarySchoolMessages } from '../../../lib/messages'
 import {
   getApplicationAnswers,
   getPreferredSchoolName,
@@ -14,7 +14,7 @@ import {
 
 export const schoolSubSection = buildSubSection({
   id: 'schoolSubSection',
-  title: newPrimarySchoolMessages.primarySchool.schoolSubSectionTitle,
+  title: primarySchoolMessages.school.subSectionTitle,
   condition: (answers) => {
     // Only display section if application type is "Enrollment in primary school"
     const { applicationType } = getApplicationAnswers(answers)
@@ -23,9 +23,8 @@ export const schoolSubSection = buildSubSection({
   children: [
     buildMultiField({
       id: 'school',
-      title: newPrimarySchoolMessages.primarySchool.schoolSubSectionTitle,
-      description:
-        newPrimarySchoolMessages.primarySchool.schoolSubSectionDescription,
+      title: primarySchoolMessages.school.subSectionTitle,
+      description: primarySchoolMessages.school.description,
       children: [
         buildRadioField({
           id: 'school.applyForPreferredSchool',
@@ -34,11 +33,10 @@ export const schoolSubSection = buildSubSection({
             return [
               {
                 label:
-                  newPrimarySchoolMessages.primarySchool
-                    .schoolApplyForPreferredSchoolLabel,
+                  primarySchoolMessages.school.applyForPreferredSchoolLabel,
                 subLabel: {
-                  ...newPrimarySchoolMessages.primarySchool
-                    .schoolApplyForPreferredSchoolSubLabel,
+                  ...primarySchoolMessages.school
+                    .applyForPreferredSchoolSubLabel,
                   values: {
                     preferredSchoolName: getPreferredSchoolName(
                       application.externalData,
@@ -48,12 +46,9 @@ export const schoolSubSection = buildSubSection({
                 value: YES,
               },
               {
-                label:
-                  newPrimarySchoolMessages.primarySchool
-                    .schoolApplyForOtherSchoolLabel,
+                label: primarySchoolMessages.school.applyForOtherSchoolLabel,
                 subLabel:
-                  newPrimarySchoolMessages.primarySchool
-                    .schoolApplyForOtherSchoolSubLabel,
+                  primarySchoolMessages.school.applyForOtherSchoolSubLabel,
                 value: NO,
               },
             ]

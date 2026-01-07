@@ -1,4 +1,4 @@
-import { LawChapterSlug } from '@island.is/regulations-tools/types'
+import { LawChapterSlug } from '@dmr.is/regulations-tools/types'
 import { Field, InputType } from '@nestjs/graphql'
 import { IsOptional } from 'class-validator'
 

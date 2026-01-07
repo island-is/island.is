@@ -7,15 +7,9 @@ interface EmptyCardProps {
   title: string
   description?: string
   img?: string
-  size?: 'small' | 'large'
 }
 
-export const EmptyCard = ({
-  title,
-  description,
-  img,
-  size = 'small',
-}: EmptyCardProps) => {
+export const EmptyCard = ({ title, description, img }: EmptyCardProps) => {
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
 
@@ -36,7 +30,7 @@ export const EmptyCard = ({
       <Box marginRight={isMobile ? 0 : 3}>
         <Text
           variant="h3"
-          marginBottom={isMobile || size === 'large' ? 1 : 0}
+          marginBottom={isMobile ? 1 : 0}
           textAlign={isMobile ? 'center' : 'left'}
         >
           {title}

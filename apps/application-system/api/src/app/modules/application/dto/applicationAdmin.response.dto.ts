@@ -116,7 +116,7 @@ export class ApplicationStatistics {
   name?: string
 }
 
-export class ApplicationTypeAdminInstitution {
+export class ApplicationTypeAdmin {
   @ApiProperty()
   @Expose()
   @IsString()
@@ -126,4 +126,27 @@ export class ApplicationTypeAdminInstitution {
   @Expose()
   @IsString()
   name?: string
+}
+
+export class ApplicationInstitution {
+  @ApiProperty()
+  @Expose()
+  @IsString()
+  nationalId!: string
+
+  @ApiProperty()
+  @Expose()
+  @IsString()
+  slug!: string
+
+  @ApiProperty()
+  @Expose()
+  @IsString()
+  contentfulId!: string
+
+  @ApiProperty()
+  @Expose()
+  @IsArray()
+  @IsString({ each: true })
+  applicationTypes!: string[]
 }

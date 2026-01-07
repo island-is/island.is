@@ -7,8 +7,6 @@ import { Form } from '../forms/models/form.model'
 import { ApplicationMapper } from './models/application.mapper'
 import { Value } from './models/value.model'
 import { Organization } from '../organizations/models/organization.model'
-import { FormUrl } from '../formUrls/models/formUrl.model'
-import { OrganizationUrl } from '../organizationUrls/models/organizationUrl.model'
 import { ServiceManager } from '../services/service.manager'
 import { ZendeskService } from '../services/zendesk.service'
 import { NudgeService } from '../services/nudge.service'
@@ -29,8 +27,6 @@ import { ListItem } from '../listItems/models/listItem.model'
       Form,
       Value,
       Organization,
-      FormUrl,
-      OrganizationUrl,
       Screen,
       Field,
       Section,

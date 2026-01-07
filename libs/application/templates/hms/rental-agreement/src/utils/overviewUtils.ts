@@ -85,12 +85,9 @@ const getApplicantsItem = (
   externalData: ExternalData,
   role: ApplicantsRole,
 ) => {
-  const applicantsRole = getValueViaPath<string>(
-    answers,
-    'assignApplicantParty.applicantsRole',
-  )
+  const partyRole = getValueViaPath<string>(answers, 'parties.applicantsRole')
 
-  if (applicantsRole !== role) {
+  if (partyRole !== role) {
     return []
   }
 
@@ -189,6 +186,19 @@ export const landlordRepresentativeOverview = (
     : []
 
   return [...applicantRepresentative, ...items]
+}
+
+export const signatoryOverview = (answers: FormValue): Array<KeyValueItem> => {
+  const signatory = getValueViaPath<ApplicantsInfo>(
+    answers,
+    'parties.signatory',
+  )
+
+  if (!signatory) {
+    return []
+  }
+
+  return formatPartyItems([signatory])
 }
 
 export const tenantOverview = (

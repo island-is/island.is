@@ -13,7 +13,7 @@ import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import cn from 'classnames'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { messages } from '../../../../lib/messages'
 import { PrescriptionItem } from '../../../../utils/types'
 import { usePostPrescriptionRenewalMutation } from '../../Prescriptions.generated'
@@ -43,6 +43,10 @@ const RenewPrescriptionModal: React.FC<Props> = ({
     return index % 2 === 0
   }
   const [modalVisible, setModalVisible] = useState<boolean>(isVisible ?? false)
+
+  useEffect(() => {
+    setModalVisible(isVisible)
+  }, [isVisible])
 
   const [postRenewal, { data: renewalData, error: renewalError, loading }] =
     usePostPrescriptionRenewalMutation()

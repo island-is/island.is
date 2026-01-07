@@ -413,7 +413,7 @@ export const transformApplicationToParentalLeaveDTO = (
     applicationFundId: applicationFundId,
     applicant: application.applicant,
     otherParentId:
-      VMSTOtherParent.otherParentId || getOtherParentId(application),
+      VMSTOtherParent?.otherParentId ?? getOtherParentId(application),
     expectedDateOfBirth: isFosterCareOrAdoption
       ? isDateInTheFuture(selectedChild.dateOfBirth!)
         ? selectedChild.dateOfBirth!

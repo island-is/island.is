@@ -21,13 +21,10 @@ import { VehicleBulkMileageSaveButton } from './VehicleBulkMileageSaveButton'
 import { InputController } from '@island.is/shared/form-fields'
 import * as styles from './VehicleBulkMileage.css'
 import { displayWithUnit } from '../../utils/displayWithUnit'
-import { isReadDateToday } from '../../utils/readDate'
 import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import format from 'date-fns/format'
 import { VehicleBulkMileageSubData } from './VehicleBulkMileageSubData'
 import { Features, useFeatureFlagClient } from '@island.is/react/feature-flags'
-
-const ORIGIN_CODE = 'ISLAND.IS'
 
 type MutationStatus =
   | 'initial'
@@ -39,8 +36,12 @@ type MutationStatus =
 
 interface Props {
   vehicle: VehicleType
+  onMileageUpdateCallback?: () => void
 }
-export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
+export const VehicleBulkMileageRow = ({
+  vehicle,
+  onMileageUpdateCallback,
+}: Props) => {
   const { formatMessage } = useLocale()
   const [postError, setPostError] = useState<string | null>(null)
   const [localInternalId, setLocalInternalId] = useState<number>()
@@ -157,10 +158,13 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
     setTimeout(() => {
       if (postStatus === 'success') {
         registrationsRefetch()
+        if (onMileageUpdateCallback) {
+          onMileageUpdateCallback()
+        }
         reset()
       }
     }, 500)
-  }, [postStatus, registrationsRefetch])
+  }, [onMileageUpdateCallback, postStatus, registrationsRefetch, reset])
 
   useEffect(() => {
     switch (postStatus) {
@@ -328,61 +332,6 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
                   postError ? `${vehicle.vehicleId}-error` : undefined
                 }
                 rules={{
-                  validate: {
-                    userHasPostAccess: () => {
-                      if (
-                        mileageData?.vehicleMileageDetails
-                          ?.canUserRegisterVehicleMileage
-                      ) {
-                        return true
-                      }
-                      return formatMessage(
-                        vehicleMessage.mileageYouAreNotAllowed,
-                      )
-                    },
-                    readDate: () => {
-                      if (
-                        !mileageData?.vehicleMileageDetails?.editing &&
-                        !mileageData?.vehicleMileageDetails?.canRegisterMileage
-                      ) {
-                        return formatMessage(
-                          vehicleMessage.mileageAlreadyRegistered,
-                        )
-                      }
-                      return true
-                    },
-                    value: (value: number) => {
-                      // Input number must be higher than the highest known mileage registration value
-                      if (mileageData?.vehicleMileageDetails?.data) {
-                        // If we're in editing mode, we want to find the highest confirmed registered number, ignoring all Island.is registrations from today.
-                        const confirmedRegistrations =
-                          mileageData.vehicleMileageDetails.data.filter(
-                            (item) => {
-                              if (item.readDate) {
-                                const isIslandIsReadingToday =
-                                  item.originCode === ORIGIN_CODE &&
-                                  isReadDateToday(new Date(item.readDate))
-                                return !isIslandIsReadingToday
-                              }
-                              return true
-                            },
-                          )
-
-                        const detailArray = mileageData.vehicleMileageDetails
-                          .editing
-                          ? confirmedRegistrations
-                          : mileageData.vehicleMileageDetails.data
-
-                        const latestRegistration =
-                          detailArray[0].mileageNumber ?? 0
-                        if (latestRegistration > value) {
-                          return formatMessage(
-                            vehicleMessage.mileageInputTooLow,
-                          )
-                        }
-                      }
-                    },
-                  },
                   required: {
                     value: true,
                     message: formatMessage(

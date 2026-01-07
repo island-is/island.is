@@ -18,6 +18,9 @@ export class Prescription {
   type?: string
 
   @Field({ nullable: true })
+  strength?: string
+
+  @Field({ nullable: true })
   form?: string
 
   @Field({ nullable: true })
@@ -52,6 +55,9 @@ export class Prescription {
 
   @Field(() => Boolean)
   isRenewable!: boolean
+
+  @Field({ nullable: true })
+  renewResponseMessage?: string
 
   @Field(() => PrescribedItemRenewalBlockedReasonEnum, { nullable: true })
   renewalBlockedReason?: PrescribedItemRenewalBlockedReasonEnum

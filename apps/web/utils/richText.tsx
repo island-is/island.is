@@ -36,6 +36,7 @@ import {
   KilometerFee,
   MasterList,
   MultipleStatistics,
+  NewKilometerFee,
   OneColumnTextSlice,
   OverviewLinksSlice,
   ParentalLeaveCalculator,
@@ -93,6 +94,7 @@ import { GrindavikResidentialPropertyPurchaseCalculator } from '../components/co
 import HousingBenefitCalculator from '../components/connected/HousingBenefitCalculator/HousingBenefitCalculator/HousingBenefitCalculator'
 import { DirectGrants } from '../components/connected/landspitali/Grants/Grants'
 import { MemorialCard } from '../components/connected/landspitali/MemorialCards/MemorialCards'
+import { LatestVerdicts } from '../components/connected/LatestVerdicts'
 import { BurningPermitList } from '../components/connected/syslumenn/CardLists/BurningPermitList/BurningPermitList'
 import { ReligiousOrganizationList } from '../components/connected/syslumenn/CardLists/ReligiousOrganizationList/ReligiousOrganizationList'
 import SyslumennDrivingInstructorList from '../components/connected/syslumenn/DrivingInstructorList/DrivingInstructorList'
@@ -187,6 +189,9 @@ export const webRenderConnectedComponent = (
     case 'KilometerFee':
       connectedComponent = <KilometerFee slice={slice} />
       break
+    case 'NewKilometerFee':
+      connectedComponent = <NewKilometerFee slice={slice} />
+      break
     case 'SpecificHousingBenefitSupportCalculator':
       connectedComponent = <SpecificHousingBenefitSupportCalculator />
       break
@@ -242,6 +247,9 @@ export const webRenderConnectedComponent = (
       break
     case 'FSRE/EmployeeList':
       connectedComponent = <ConnectedTeamList slice={slice} />
+      break
+    case 'LatestVerdicts':
+      connectedComponent = <LatestVerdicts slice={slice} />
       break
     default:
       connectedComponent = renderConnectedComponent(slice)

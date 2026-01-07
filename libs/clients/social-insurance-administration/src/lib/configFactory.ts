@@ -4,7 +4,7 @@ import {
   IdsClientConfig,
   XRoadConfig,
 } from '@island.is/nest/config'
-import { SocialInsuranceAdministrationClientConfig } from './socialInsuranceAdministrationClient.config'
+import { SocialInsuranceAdministrationClientConfig } from './config/socialInsuranceAdministrationClient.config'
 import { Scope } from './socialInsuranceAdministrationClient.type'
 
 export const ConfigFactory = (

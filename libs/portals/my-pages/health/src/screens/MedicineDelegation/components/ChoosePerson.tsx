@@ -40,7 +40,11 @@ const FirstStep: FC<FirstStepProps> = ({ setFormState, formState }) => {
           nationalId: data.identity?.nationalId || '',
           name: data.identity?.name || '',
         })
-        setFormState({ ...formState, nationalId: data.identity?.nationalId })
+        setFormState({
+          ...formState,
+          nationalId: data.identity?.nationalId,
+          name: data.identity?.name,
+        })
       }
     },
   })
@@ -64,9 +68,23 @@ const FirstStep: FC<FirstStepProps> = ({ setFormState, formState }) => {
                 name="nationalId"
                 value={formState?.nationalId}
                 onChange={(e) => {
-                  if (e.target.value.length === 10) {
+                  const value = e.target.value
+
+                  // Clear the name if the value changes
+                  setPerson({
+                    nationalId: value,
+                    name: undefined,
+                  })
+
+                  setFormState({
+                    ...formState,
+                    nationalId: value,
+                    name: undefined,
+                  })
+
+                  if (value.length === 10) {
                     getPersonById({
-                      variables: { input: { nationalId: e.target.value } },
+                      variables: { input: { nationalId: value } },
                     })
                   }
                 }}

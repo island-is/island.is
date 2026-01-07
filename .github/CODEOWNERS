@@ -206,7 +206,7 @@ codemagic.yaml                                                                  
 /libs/clients/work-machines/                                                                                                 @island-is/hugsmidjan @island-is/origo
 /libs/clients/disability-license/                                                                                            @island-is/hugsmidjan
 /libs/clients/firearm-license/                                                                                               @island-is/hugsmidjan
-/libs/clients/hunting-license/                                                                                               @island-is/hugsmidjan
+/libs/clients/nvs-permits/                                                                                                   @island-is/hugsmidjan
 /libs/clients/smartsolutions/                                                                                                @island-is/hugsmidjan
 /libs/clients/smart-solutions-v2/                                                                                            @island-is/hugsmidjan
 /libs/clients/license-client/                                                                                                @island-is/hugsmidjan @island-is/aranja
@@ -220,6 +220,7 @@ codemagic.yaml                                                                  
 /libs/clients/vehicles-mileage/                                                                                              @island-is/hugsmidjan
 /libs/clients/user-notification/                                                                                             @island-is/hugsmidjan
 /libs/clients/passports/                                                                                                     @island-is/hugsmidjan
+/libs/clients/police-cases/                                                                                                  @island-is/hugsmidjan
 /libs/clients/p-card/                                                                                                        @island-is/hugsmidjan
 /libs/clients/assets/                                                                                                        @island-is/hugsmidjan
 /libs/clients/university-careers/                                                                                            @island-is/hugsmidjan
@@ -440,6 +441,7 @@ codemagic.yaml                                                                  
 /libs/application/templates/transport-authority/order-vehicle-registration-certificate                                       @island-is/origo
 /libs/application/templates/transport-authority/transfer-of-vehicle-ownership                                                @island-is/origo
 /libs/application/templates/transport-authority/exemption-for-transportation                                                 @island-is/origo
+/libs/application/templates/transport-authority/mile-car                                                                     @island-is/origo
 
 /libs/application/template-api-modules/src/lib/modules/templates/transport-authority/anonymity-in-vehicle-registry           @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/transport-authority/change-co-owner-of-vehicle              @island-is/origo
@@ -450,6 +452,7 @@ codemagic.yaml                                                                  
 /libs/application/template-api-modules/src/lib/modules/templates/transport-authority/order-vehicle-license-plate             @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/transport-authority/order-vehicle-registration-certificate  @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/transport-authority/transfer-of-vehicle-ownership           @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/transport-authority/mile-car                                @island-is/origo
 
 /libs/api/domains/transport-authority/                                                                                       @island-is/origo
 /libs/clients/transport-authority/                                                                                           @island-is/origo

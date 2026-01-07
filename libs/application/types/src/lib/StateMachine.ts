@@ -88,7 +88,13 @@ export type HistoryEventMessage<T extends EventObject = AnyEventObject> = {
   onEvent: Event<T> | string
   logMessage:
     | StaticText
-    | ((values: { subject?: string; actor?: string }) => StaticText)
+    | ((application: Application, subjectNationalId?: string) => StaticText)
+  /**
+   * Whether subject and actor should be added to history log
+   */
+  includeSubjectAndActor?:
+    | boolean
+    | ((role: ApplicationRole, nationalId: string, isAdmin: boolean) => boolean)
 }
 
 export interface ApplicationStateMeta<
@@ -123,6 +129,7 @@ export interface ApplicationStateMeta<
           application: Application,
           role: ApplicationRole,
           nationalId: string,
+          isAdmin: boolean,
         ) => PendingAction)
     /** @deprecated is generated from status of current state */
     tag?: { label?: StaticText; variant?: ActionCardTag }

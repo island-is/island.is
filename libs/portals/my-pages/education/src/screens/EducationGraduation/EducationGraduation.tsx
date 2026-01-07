@@ -4,7 +4,6 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   ActionCard,
   CardLoader,
-  IntroHeader,
   IntroWrapper,
   m,
 } from '@island.is/portals/my-pages/core'
@@ -80,6 +79,7 @@ export const EducationGraduation = () => {
               return null
             }
             return (
+              //TODO: Replace with Island UI Card when it supports images
               <ActionCard
                 key={`education-graduation-${index}`}
                 heading={

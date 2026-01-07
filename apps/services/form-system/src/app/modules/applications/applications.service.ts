@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Sequelize } from 'sequelize-typescript'
 import { Op } from 'sequelize'
@@ -39,6 +43,7 @@ import { getOrganizationInfoByNationalId } from '../../../utils/organizationInfo
 import { AuthDelegationType } from '@island.is/shared/types'
 import * as kennitala from 'kennitala'
 import type { Locale } from '@island.is/shared/types'
+import { calculatePruneAt } from '../../../utils/calculatePruneAt'
 
 @Injectable()
 export class ApplicationsService {
@@ -72,8 +77,10 @@ export class ApplicationsService {
       throw new NotFoundException(`Form with slug '${slug}' not found`)
     }
 
+    const allowedLoginTypes = await this.getAllowedLoginTypes(form)
+
     const loginTypes = await this.getLoginTypes(user)
-    if (!this.isLoginAllowed(loginTypes, form.allowedLoginTypes)) {
+    if (!this.isLoginAllowed(loginTypes, allowedLoginTypes)) {
       const responseDto = new ApplicationResponseDto()
       responseDto.isLoginTypeAllowed = false
       return responseDto
@@ -95,14 +102,16 @@ export class ApplicationsService {
           status: ApplicationStatus.DRAFT,
           nationalId,
           draftTotalSteps: form.draftTotalSteps,
+          pruneAt: calculatePruneAt(form.daysUntilApplicationPrune),
         } as Application,
         { transaction },
       )
 
       await this.applicationEventModel.create(
         {
-          eventType: ApplicationEvents.APPLICATION_CREATED,
           applicationId: newApplication.id,
+          eventType: ApplicationEvents.APPLICATION_CREATED,
+          eventMessage: { is: 'Umsókn hafin', en: 'Application created' },
         } as ApplicationEvent,
         { transaction },
       )
@@ -169,7 +178,8 @@ export class ApplicationsService {
 
       newApplicationId = newApplication.id
     })
-    const applicationDto = await this.getApplication(newApplicationId, null)
+    const applicationDto = await this.getApplication(newApplicationId, '', null)
+
     return applicationDto
   }
 
@@ -220,22 +230,13 @@ export class ApplicationsService {
       })
 
       field.values?.forEach(async (value, index) => {
-        const newValue = await this.valueModel.create({
+        await this.valueModel.create({
           fieldId: field.id,
           fieldType: field.fieldType,
           applicationId: applicationDto.id,
           order: index,
           json: value.json,
         } as Value)
-
-        if (field.fieldType === FieldTypesEnum.FILE) {
-          await this.applicationEventModel.create({
-            eventType: ApplicationEvents.FILE_CREATED,
-            applicationId: applicationDto.id,
-            isFileEvent: true,
-            valueId: newValue.id,
-          } as ApplicationEvent)
-        }
       })
     })
 
@@ -251,12 +252,19 @@ export class ApplicationsService {
 
   async submit(id: string): Promise<boolean> {
     const application = await this.applicationModel.findByPk(id)
+    const form = await this.formModel.findByPk(application?.formId || '')
 
     if (!application) {
       throw new NotFoundException(`Application with id '${id}' not found.`)
     }
 
-    const applicationResponseDto = await this.getApplication(id, null)
+    if (!form) {
+      throw new NotFoundException(
+        `Form with id '${application.formId}' not found.`,
+      )
+    }
+
+    const applicationResponseDto = await this.getApplication(id, '', null)
     if (!applicationResponseDto.application) {
       throw new NotFoundException(`Application DTO with id '${id}' not found.`)
     }
@@ -268,7 +276,22 @@ export class ApplicationsService {
     if (success) {
       application.status = ApplicationStatus.COMPLETED
       application.submittedAt = applicationDto.submittedAt
-      await application.save()
+      application.pruneAt = calculatePruneAt(form.daysUntilApplicationPrune)
+      await this.sequelize.transaction(async (transaction) => {
+        await application.save({ transaction })
+
+        await this.applicationEventModel.create(
+          {
+            applicationId: application.id,
+            eventType: ApplicationEvents.APPLICATION_SUBMITTED,
+            eventMessage: {
+              is: 'Umsókn móttekin',
+              en: 'Application submitted',
+            },
+          } as ApplicationEvent,
+          { transaction },
+        )
+      })
     }
 
     return success
@@ -297,28 +320,16 @@ export class ApplicationsService {
           {
             model: ApplicationEvent,
             as: 'events',
-            where: { isFileEvent: false },
           },
           {
             model: Value,
             as: 'files',
             where: { fieldType: FieldTypesEnum.FILE },
-            include: [
-              {
-                model: ApplicationEvent,
-                as: 'events',
-              },
-            ],
           },
         ],
         order: [
           [{ model: ApplicationEvent, as: 'events' }, 'created', 'ASC'],
-          [
-            { model: Value, as: 'files' },
-            { model: ApplicationEvent, as: 'events' },
-            'created',
-            'ASC',
-          ],
+          [{ model: Value, as: 'files' }, 'created', 'ASC'],
         ],
       })
 
@@ -354,6 +365,7 @@ export class ApplicationsService {
 
   async getApplication(
     applicationId: string,
+    slug: string,
     user: User | null,
   ): Promise<ApplicationResponseDto> {
     const application = await this.applicationModel.findOne({
@@ -362,7 +374,6 @@ export class ApplicationsService {
         {
           model: ApplicationEvent,
           as: 'events',
-          where: { isFileEvent: false },
         },
         {
           model: Value,
@@ -381,12 +392,15 @@ export class ApplicationsService {
     const form = await this.getApplicationForm(
       application.formId,
       applicationId,
+      slug,
     )
+
+    const allowedLoginTypes = await this.getAllowedLoginTypes(form)
 
     if (user) {
       const loginTypes = await this.getLoginTypes(user)
       if (
-        !this.isLoginAllowed(loginTypes, form.allowedLoginTypes) ||
+        !this.isLoginAllowed(loginTypes, allowedLoginTypes) ||
         !this.doesUserMatchApplication(application, user, loginTypes)
       ) {
         const responseDto = new ApplicationResponseDto()
@@ -418,16 +432,23 @@ export class ApplicationsService {
       throw new NotFoundException(`Form with slug '${slug}' not found`)
     }
 
+    const allowedLoginTypes = await this.getAllowedLoginTypes(form)
+
     const loginTypes = await this.getLoginTypes(user)
-    if (!this.isLoginAllowed(loginTypes, form.allowedLoginTypes)) {
+    if (!this.isLoginAllowed(loginTypes, allowedLoginTypes)) {
       const responseDto = new ApplicationResponseDto()
       responseDto.isLoginTypeAllowed = false
       return responseDto
     }
 
-    const existingApplications = await this.findAllByUserAndForm(user, form.id)
+    const existingApplications = await this.findAllByUserAndForm(
+      user,
+      form.id,
+      slug,
+    )
     const responseDto = new ApplicationResponseDto()
     responseDto.applications = existingApplications
+    responseDto.isLoginTypeAllowed = true
     return responseDto
   }
 
@@ -445,7 +466,10 @@ export class ApplicationsService {
         pruned: false,
         isTest: false,
       },
-      include: [{ model: Value, as: 'values' }],
+      include: [
+        { model: Value, as: 'values' },
+        { model: ApplicationEvent, as: 'events' },
+      ],
     })
 
     const loginTypes = await this.getLoginTypes(user)
@@ -470,8 +494,6 @@ export class ApplicationsService {
       if (app.status === ApplicationStatus.COMPLETED) {
         app.tagLabel = locale === 'is' ? 'Innsend' : 'Completed'
         app.tagVariant = 'mint'
-        app.completedMessage =
-          locale === 'is' ? 'Umsókn móttekin' : 'Application received'
       }
 
       const organizationInfo = getOrganizationInfoByNationalId(
@@ -485,6 +507,7 @@ export class ApplicationsService {
     const mappedApplications =
       await this.applicationMapper.mapApplicationsToMyPagesApplications(
         applicationsByUser,
+        locale,
       )
 
     return mappedApplications
@@ -493,6 +516,7 @@ export class ApplicationsService {
   private async findAllByUserAndForm(
     user: User,
     formId: string,
+    slug: string,
   ): Promise<ApplicationDto[]> {
     const hasDelegation =
       Array.isArray(user.delegationType) && user.delegationType.length > 0
@@ -520,6 +544,7 @@ export class ApplicationsService {
     for (const application of applicationsByUser) {
       const applicationResponseDto = await this.getApplication(
         application.id,
+        slug,
         null,
       )
       if (!applicationResponseDto.application) {
@@ -532,6 +557,31 @@ export class ApplicationsService {
     }
 
     return applicationDtos
+  }
+
+  private async getAllowedLoginTypes(form: Form): Promise<string[]> {
+    const result: string[] = []
+
+    const partySection = form.sections.find(
+      (section) => section.sectionType === SectionTypes.PARTIES,
+    )
+
+    if (!partySection) {
+      throw new NotFoundException(
+        `Party section not found in form with id '${form.id}'`,
+      )
+    }
+
+    for (const screen of partySection.screens ?? []) {
+      for (const field of screen.fields ?? []) {
+        const applicantType = field?.fieldSettings?.applicantType
+        if (applicantType) {
+          result.push(applicantType)
+        }
+      }
+    }
+
+    return result
   }
 
   private isLoginAllowed(
@@ -601,6 +651,7 @@ export class ApplicationsService {
   private async getApplicationForm(
     formId: string,
     applicationId: string,
+    slug: string,
   ): Promise<Form> {
     const form = await this.formModel.findOne({
       where: { id: formId },
@@ -667,6 +718,16 @@ export class ApplicationsService {
 
     if (!form) {
       throw new NotFoundException(`Form with id '${formId}' not found`)
+    }
+
+    if (slug && form.slug !== slug) {
+      throw new NotFoundException(
+        `Form with slug '${slug}' not found for application '${applicationId}'`,
+      )
+    }
+
+    if (form.status === FormStatus.ARCHIVED) {
+      throw new ConflictException(`Form with id '${formId}' is archived`)
     }
 
     return form

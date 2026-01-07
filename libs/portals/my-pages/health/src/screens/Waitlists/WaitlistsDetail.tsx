@@ -1,5 +1,4 @@
 import { HealthDirectorateWaitlist } from '@island.is/api/schema'
-import { Button } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   formatDate,
@@ -7,7 +6,6 @@ import {
   InfoLine,
   InfoLineStack,
   IntroWrapper,
-  LinkResolver,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import React from 'react'
@@ -22,7 +20,6 @@ type UseParams = {
 const WaitlistsDetail: React.FC = () => {
   useNamespaces('sp.health')
   const { formatMessage, lang } = useLocale()
-
   const { id } = useParams() as UseParams
 
   const { data, loading, error } = useGetWaitlistDetailQuery({
@@ -38,43 +35,37 @@ const WaitlistsDetail: React.FC = () => {
       intro={formatMessage(messages.waitlistsIntro)}
       serviceProviderSlug={HEALTH_DIRECTORATE_SLUG}
       serviceProviderTooltip={formatMessage(
-        messages.landlaeknirVaccinationsTooltip,
+        messages.landlaeknirWaitlistTooltip,
       )}
-      buttonGroup={[
-        <LinkResolver href={'/'} key="link-to-detail-info">
-          <Button variant="utility" size="small" icon="open" iconType="outline">
-            {formatMessage(messages.moreDetail)}
-          </Button>
-        </LinkResolver>,
-      ]}
       marginBottom={6}
     >
       {!loading && !error && waitlist === null && (
         <Problem
-          type="no_data"
-          message={formatMessage(messages.noWaitlists)}
+          type="not_found"
+          title={formatMessage(messages.waitlistNotFound)}
+          message={formatMessage(messages.waitlistNotFoundDetail)}
           imgSrc="./assets/images/nodata.svg"
           noBorder={false}
         />
       )}
       {error && !loading && <Problem error={error} noBorder={false} />}
-      {!error && !loading && waitlist && (
+      {!error && waitlist != null && (
         <InfoLineStack space={1}>
           <InfoLine
             loading={loading}
-            label={formatMessage(messages.waitlist)}
+            label={messages.waitlist}
             content={waitlist?.name ?? formatMessage(messages.noDataRegistered)}
           />
           <InfoLine
             loading={loading}
-            label={formatMessage(messages.organization)}
+            label={messages.organization}
             content={
               waitlist?.organization ?? formatMessage(messages.noDataRegistered)
             }
           />
           <InfoLine
             loading={loading}
-            label={formatMessage(messages.registeredToList)}
+            label={messages.registeredToList}
             content={
               formatDate(waitlist?.waitBegan) ??
               formatMessage(messages.noDataRegistered)
@@ -82,14 +73,14 @@ const WaitlistsDetail: React.FC = () => {
           />
           <InfoLine
             loading={loading}
-            label={formatMessage(messages.status)}
+            label={messages.status}
             content={
               waitlist?.status ?? formatMessage(messages.noDataRegistered)
             }
           />
           <InfoLine
             loading={loading}
-            label={formatMessage(messages.statusLastUpdated)}
+            label={messages.statusLastUpdated}
             content={
               formatDate(waitlist?.lastUpdated) ??
               formatMessage(messages.noDataRegistered)

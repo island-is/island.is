@@ -33,7 +33,10 @@ export const districtCourtJudgeNotificationRule: RolesRule = {
   role: UserRole.DISTRICT_COURT_JUDGE,
   type: RulesType.FIELD_VALUES,
   dtoField: 'type',
-  dtoFieldValues: [CaseNotificationType.COURT_DATE],
+  dtoFieldValues: [
+    CaseNotificationType.COURT_DATE,
+    CaseNotificationType.RULING_ORDER_ADDED,
+  ],
 }
 
 // Allows district court registrars to send notifications

@@ -16,6 +16,7 @@ import {
   UpdateOrganDonorDto,
   WaitingListEntryDto,
   donationExceptionControllerGetOrgansV1,
+  meAppointmentControllerGetPatientAppointmentsV1,
   meDonorStatusControllerGetOrganDonorStatusV1,
   meDonorStatusControllerUpdateOrganDonorStatusV1,
   mePatientConcentEuControllerCreateEuPatientConsentForPatientV1,
@@ -34,10 +35,13 @@ import {
   meWaitingListControllerGetWaitingListEntriesV1,
 } from './gen/fetch'
 import {
+  AppointmentDto,
+  AppointmentStatus,
   ConsentCountryDto,
   CreateEuPatientConsentDto,
   CreateOrUpdatePrescriptionCommissionDto,
   EuPatientConsentDto,
+  EuPatientConsentStatus,
   Locale,
   PrescriptionCommissionDto,
 } from './gen/fetch/types.gen'
@@ -271,7 +275,6 @@ export class HealthDirectorateHealthService {
   public async getMedicineDelegations(
     auth: Auth,
     locale: Locale,
-    active: boolean,
     status: string[],
   ): Promise<Array<PrescriptionCommissionDto> | null> {
     const medicineDelegations = await withAuthContext(auth, () =>
@@ -279,7 +282,6 @@ export class HealthDirectorateHealthService {
         mePrescriptionCommissionControllerGetPrescriptionCommissionsV1({
           query: {
             status: status,
-            active: active,
           },
         }),
       ),
@@ -310,7 +312,7 @@ export class HealthDirectorateHealthService {
   public async getPermits(
     auth: Auth,
     locale: Locale,
-    status: string[],
+    status: EuPatientConsentStatus[],
     dateFrom?: Date | undefined,
     dateTo?: Date | undefined,
   ): Promise<EuPatientConsentDto[] | null> {
@@ -388,26 +390,10 @@ export class HealthDirectorateHealthService {
     auth: Auth,
     input: CreateEuPatientConsentDto,
   ): Promise<unknown> {
-    if (!input.validTo || !input.validFrom) {
-      return null
-    }
-    const validFrom = new Date(input.validFrom)
-    const validTo = new Date(input.validTo)
-
-    if (isNaN(validFrom.getTime()) || isNaN(validTo.getTime())) {
-      this.logger.debug('Invalid date values provided to createPermit')
-      return null
-    }
-
     return await withAuthContext(auth, () =>
       data(
         mePatientConcentEuControllerCreateEuPatientConsentForPatientV1({
-          body: {
-            codes: ['PATIENT_SUMMARY'], // hardcoded as it will always be this value
-            countryCodes: input.countryCodes,
-            validFrom: validFrom,
-            validTo: validTo,
-          },
+          body: input,
         }),
       ),
     )
@@ -423,5 +409,27 @@ export class HealthDirectorateHealthService {
         }),
       ),
     )
+  }
+
+  /* Appointments */
+  public async getAppointments(
+    auth: Auth,
+    from?: Date,
+    statuses?: AppointmentStatus[],
+  ): Promise<AppointmentDto[] | null> {
+    const defaultFrom = new Date()
+
+    const appointments = await withAuthContext(auth, () =>
+      data(
+        meAppointmentControllerGetPatientAppointmentsV1({
+          query: {
+            fromStartTime: from ?? defaultFrom,
+            status: statuses,
+          },
+        }),
+      ),
+    )
+
+    return appointments ?? null
   }
 }

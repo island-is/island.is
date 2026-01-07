@@ -13,7 +13,6 @@ export const lastJobSchema = z.object({
   percentage: z.string().optional(),
   startDate: z.string().optional(),
   endDate: z.string().optional(),
-  predictedEndDate: z.string().optional(),
 })
 
 export const employmentHistorySchema = z
@@ -22,14 +21,6 @@ export const employmentHistorySchema = z
       .nativeEnum(YesOrNoEnum)
       .refine((v) => Object.values(YesOrNoEnum).includes(v)),
     independentOwnSsn: z.nativeEnum(YesOrNoEnum).optional(),
-    ownSSNJob: z
-      .object({
-        title: z.string().optional(),
-        percentage: z.string().optional(),
-        startDate: z.string().optional(),
-        endDate: z.string().optional(),
-      })
-      .optional(),
     lastJobs: z.array(lastJobSchema).optional(),
     currentJobs: z.array(lastJobSchema).optional(),
     hasWorkedEes: z.nativeEnum(YesOrNoEnum).optional(),
@@ -40,6 +31,24 @@ export const employmentHistorySchema = z
       if (!job.nationalIdWithName) {
         ctx.addIssue({
           path: ['lastJobs', index, 'nationalIdWithName'],
+          code: z.ZodIssueCode.custom,
+        })
+      }
+      if (!job.percentage) {
+        ctx.addIssue({
+          path: ['lastJobs', index, 'percentage'],
+          code: z.ZodIssueCode.custom,
+        })
+      }
+      if (!job.startDate) {
+        ctx.addIssue({
+          path: ['lastJobs', index, 'startDate'],
+          code: z.ZodIssueCode.custom,
+        })
+      }
+      if (!job.endDate) {
+        ctx.addIssue({
+          path: ['lastJobs', index, 'endDate'],
           code: z.ZodIssueCode.custom,
         })
       }
