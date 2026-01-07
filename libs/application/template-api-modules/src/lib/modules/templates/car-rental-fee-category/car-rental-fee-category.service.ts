@@ -88,7 +88,7 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
   }: TemplateApiModuleActionProps): Promise<boolean> {
     const data = getValueViaPath<CarCategoryRecord[]>(
       application.answers,
-      'dataToChange.data',
+      'carsToChange',
     )
 
     const rateToChangeTo = getValueViaPath<RateCategory>(
