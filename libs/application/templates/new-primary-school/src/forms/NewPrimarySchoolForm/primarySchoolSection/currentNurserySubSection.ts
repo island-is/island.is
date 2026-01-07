@@ -43,7 +43,7 @@ export const currentNurserySubSection = buildSubSection({
               value: NO,
             },
           ],
-        }),        
+        }),
         buildAsyncSelectField({
           id: 'currentNursery.municipality',
           title: sharedMessages.municipality,

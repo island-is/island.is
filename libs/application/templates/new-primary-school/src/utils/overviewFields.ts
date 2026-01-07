@@ -98,12 +98,13 @@ export const overviewFields = (editable?: boolean) => {
       backId: editable ? 'currentNursery' : undefined,
       loadItems: currentNurseryItems,
       condition: (answers) => {
-        const { applicationType, hasCurrentNursery } = getApplicationAnswers(answers)
+        const { applicationType, hasCurrentNursery } =
+          getApplicationAnswers(answers)
 
         return (
-          applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL && 
+          applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL &&
           hasCurrentNursery === YES
-        )  
+        )
       },
     }),
     buildOverviewField({

@@ -361,7 +361,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     answers,
     'currentNursery.nursery',
   )
-  
+
   const hasCurrentNursery = getValueViaPath<YesOrNo>(
     answers,
     'currentNursery.hasCurrentNursery',

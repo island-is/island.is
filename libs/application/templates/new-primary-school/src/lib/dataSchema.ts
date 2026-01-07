@@ -111,22 +111,18 @@ export const dataSchema = z.object({
     })
     .refine(
       ({ hasCurrentNursery, municipality }) =>
-        hasCurrentNursery === YES
-        ? !!municipality
-        : true,
-      { 
-        path: ['municipality'], 
+        hasCurrentNursery === YES ? !!municipality : true,
+      {
+        path: ['municipality'],
       },
     )
     .refine(
       ({ hasCurrentNursery, nursery }) =>
-        hasCurrentNursery === YES
-        ? !!nursery
-        : true,
-      { 
+        hasCurrentNursery === YES ? !!nursery : true,
+      {
         path: ['nursery'],
       },
-    ), 
+    ),
   reasonForApplication: z.object({
     reason: z.string(),
   }),

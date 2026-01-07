@@ -545,9 +545,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
       }),
       clearCurrentNursery: assign((context) => {
         const { application } = context
-        const { hasCurrentNursery } = getApplicationAnswers(
-          application.answers,
-        )
+        const { hasCurrentNursery } = getApplicationAnswers(application.answers)
 
         if (!(hasCurrentNursery === YES)) {
           unset(application.answers, 'currentNursery.municipality')
