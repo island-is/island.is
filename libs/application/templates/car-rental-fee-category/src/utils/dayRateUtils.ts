@@ -9,7 +9,10 @@ export const isDayRateEntryActive = (
   const validTo = entry.validTo ? new Date(entry.validTo) : null
   // Dayrate changes active the day after its requested to be set
   // So we also look 1 day into the future just in case
-  return (validFrom <= currentDate || validFrom <= addDays(currentDate, 1)) && (!validTo || validTo > currentDate)
+  return (
+    (validFrom <= currentDate || validFrom <= addDays(currentDate, 1)) &&
+    (!validTo || validTo > currentDate)
+  )
 }
 
 export const hasActiveDayRate = (
