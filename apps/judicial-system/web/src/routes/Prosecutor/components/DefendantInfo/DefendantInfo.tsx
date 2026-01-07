@@ -29,6 +29,7 @@ import {
   validateAndSetErrorMessage,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useNationalRegistry } from '@island.is/judicial-system-web/src/utils/hooks'
+import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { isBusiness } from '@island.is/judicial-system-web/src/utils/utils'
 
 import * as strings from './DefendantInfo.strings'
@@ -131,9 +132,9 @@ const DefendantInfo: FC<Props> = (props) => {
   }, [businessData, businessError])
 
   return (
-    <BlueBox>
+    <BlueBox className={grid({ gap: 2 })}>
       {onDelete && (
-        <Box marginBottom={2} display="flex" justifyContent="flexEnd">
+        <Box display="flex" justifyContent="flexEnd">
           <Button
             onClick={() => onDelete(defendant)}
             colorScheme="destructive"
@@ -145,140 +146,132 @@ const DefendantInfo: FC<Props> = (props) => {
           </Button>
         </Box>
       )}
-      <Box marginBottom={2}>
-        <Checkbox
-          name={`noNationalId-${defendant.id}`}
-          label={formatMessage(
-            strings.defendantInfo.doesNotHaveIcelandicNationalId,
+      <Checkbox
+        name={`noNationalId-${defendant.id}`}
+        label={formatMessage(
+          strings.defendantInfo.doesNotHaveIcelandicNationalId,
+          {
+            isIndictment: isIndictmentCase(workingCase.type),
+          },
+        )}
+        checked={Boolean(defendant.noNationalId)}
+        onChange={() => {
+          setNationalIdNotFound(false)
+
+          updateDefendantState(
             {
-              isIndictment: isIndictmentCase(workingCase.type),
-            },
-          )}
-          checked={Boolean(defendant.noNationalId)}
-          onChange={() => {
-            setNationalIdNotFound(false)
-
-            updateDefendantState(
-              {
-                caseId: workingCase.id,
-                defendantId: defendant.id,
-                noNationalId: !defendant.noNationalId,
-                nationalId: null,
-              },
-              setWorkingCase,
-            )
-
-            onChange({
               caseId: workingCase.id,
               defendantId: defendant.id,
               noNationalId: !defendant.noNationalId,
               nationalId: null,
-            })
-          }}
-          filled
-          large
-          disabled={nationalIdImmutable}
-        />
-      </Box>
-      <Box marginBottom={2}>
-        <InputNationalId
-          isDateOfBirth={Boolean(defendant.noNationalId)}
-          value={defendant.nationalId ?? ''}
-          onBlur={(value) =>
-            onChange({
+            },
+            setWorkingCase,
+          )
+
+          onChange({
+            caseId: workingCase.id,
+            defendantId: defendant.id,
+            noNationalId: !defendant.noNationalId,
+            nationalId: null,
+          })
+        }}
+        filled
+        large
+        disabled={nationalIdImmutable}
+      />
+      <InputNationalId
+        isDateOfBirth={Boolean(defendant.noNationalId)}
+        value={defendant.nationalId ?? ''}
+        onBlur={(value) =>
+          onChange({
+            caseId: workingCase.id,
+            defendantId: defendant.id,
+            nationalId: value || null,
+          })
+        }
+        onChange={(value) =>
+          updateDefendantState(
+            {
               caseId: workingCase.id,
               defendantId: defendant.id,
               nationalId: value || null,
-            })
-          }
-          onChange={(value) =>
-            updateDefendantState(
-              {
-                caseId: workingCase.id,
-                defendantId: defendant.id,
-                nationalId: value || null,
-              },
-              setWorkingCase,
-            )
-          }
-          disabled={nationalIdImmutable}
-          required={!defendant.noNationalId}
-        />
-        {defendant.nationalId?.length === 11 && nationalIdNotFound && (
-          <Text color="red600" variant="eyebrow" marginTop={1}>
-            {formatMessage(core.nationalIdNotFoundInNationalRegistry)}
-          </Text>
-        )}
-      </Box>
-      <Box marginBottom={2}>
-        <InputName
-          value={defendant.name ?? ''}
-          onBlur={(value) =>
-            onChange({
+            },
+            setWorkingCase,
+          )
+        }
+        disabled={nationalIdImmutable}
+        required={!defendant.noNationalId}
+      />
+      {defendant.nationalId?.length === 11 && nationalIdNotFound && (
+        <Text color="red600" variant="eyebrow" marginTop={1}>
+          {formatMessage(core.nationalIdNotFoundInNationalRegistry)}
+        </Text>
+      )}
+      <InputName
+        value={defendant.name ?? ''}
+        onBlur={(value) =>
+          onChange({
+            caseId: workingCase.id,
+            defendantId: defendant.id,
+            name: value.trim(),
+          })
+        }
+        onChange={(value) => {
+          updateDefendantState(
+            {
               caseId: workingCase.id,
               defendantId: defendant.id,
-              name: value.trim(),
-            })
-          }
-          onChange={(value) => {
-            updateDefendantState(
-              {
-                caseId: workingCase.id,
-                defendantId: defendant.id,
-                name: value,
-              },
-              setWorkingCase,
-            )
-          }}
-          required
-        />
-      </Box>
-      <Box marginBottom={2}>
-        <Input
-          data-testid="accusedAddress"
-          name="accusedAddress"
-          autoComplete="off"
-          label={formatMessage(core.addressOrResidence)}
-          placeholder={formatMessage(core.addressOrResidence)}
-          value={defendant.address ?? ''}
-          errorMessage={accusedAddressErrorMessage}
-          hasError={
-            Boolean(accusedAddressErrorMessage) &&
-            accusedAddressErrorMessage !== ''
-          }
-          onChange={(evt) => {
-            removeErrorMessageIfValid(
-              ['empty'],
-              evt.target.value,
-              accusedAddressErrorMessage,
-              setAccusedAddressErrorMessage,
-            )
+              name: value,
+            },
+            setWorkingCase,
+          )
+        }}
+        required
+      />
+      <Input
+        data-testid="accusedAddress"
+        name="accusedAddress"
+        autoComplete="off"
+        label={formatMessage(core.addressOrResidence)}
+        placeholder={formatMessage(core.addressOrResidence)}
+        value={defendant.address ?? ''}
+        errorMessage={accusedAddressErrorMessage}
+        hasError={
+          Boolean(accusedAddressErrorMessage) &&
+          accusedAddressErrorMessage !== ''
+        }
+        onChange={(evt) => {
+          removeErrorMessageIfValid(
+            ['empty'],
+            evt.target.value,
+            accusedAddressErrorMessage,
+            setAccusedAddressErrorMessage,
+          )
 
-            updateDefendantState(
-              {
-                caseId: workingCase.id,
-                defendantId: defendant.id,
-                address: evt.target.value,
-              },
-              setWorkingCase,
-            )
-          }}
-          onBlur={(evt) => {
-            validateAndSetErrorMessage(
-              ['empty'],
-              evt.target.value,
-              setAccusedAddressErrorMessage,
-            )
-
-            onChange({
+          updateDefendantState(
+            {
               caseId: workingCase.id,
               defendantId: defendant.id,
-              address: evt.target.value.trim(),
-            })
-          }}
-          required
-        />
-      </Box>
+              address: evt.target.value,
+            },
+            setWorkingCase,
+          )
+        }}
+        onBlur={(evt) => {
+          validateAndSetErrorMessage(
+            ['empty'],
+            evt.target.value,
+            setAccusedAddressErrorMessage,
+          )
+
+          onChange({
+            caseId: workingCase.id,
+            defendantId: defendant.id,
+            address: evt.target.value.trim(),
+          })
+        }}
+        required
+      />
       <GridContainer>
         <GridRow>
           <GridColumn span="6/12">
