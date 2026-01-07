@@ -2091,6 +2091,10 @@ export const messages = defineMessages({
     defaultMessage: 'Embætti landlæknis',
     id: 'sp.health:health-directorate',
   },
+  landspitali: {
+    defaultMessage: 'Landspítali',
+    id: 'sp.health:landspitali',
+  },
   invalidatePermit: {
     defaultMessage: 'Eyða',
     id: 'sp.health:invalidate-permit',

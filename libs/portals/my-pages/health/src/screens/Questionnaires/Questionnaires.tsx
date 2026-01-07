@@ -216,12 +216,12 @@ const Questionnaires: FC = () => {
               {[
                 {
                   name: 'lsh',
-                  label: 'Landspítali',
+                  label: formatMessage(messages.landspitali),
                   organization: QuestionnaireQuestionnairesOrganizationEnum.LSH,
                 },
                 {
                   name: 'el',
-                  label: 'Embætti Landlæknis',
+                  label: formatMessage(messages.healthDirectorate),
                   organization: QuestionnaireQuestionnairesOrganizationEnum.EL,
                 },
               ].map(({ name, label, organization }) => (
@@ -295,8 +295,8 @@ const Questionnaires: FC = () => {
                 eyebrow={
                   questionnaire.organization ===
                   QuestionnaireQuestionnairesOrganizationEnum.EL
-                    ? 'Embætti Landlæknis'
-                    : 'Landspítali'
+                    ? formatMessage(messages.healthDirectorate)
+                    : formatMessage(messages.landspitali)
                 }
                 eyebrowColor="purple400"
                 text={formatDate(questionnaire.sentDate)}

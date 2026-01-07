@@ -102,6 +102,10 @@ export const thermoMeterDragLine = style({
   backgroundColor: theme.color.mint400,
   transform: 'translateY(-1px)',
   zIndex: 5,
+  transition: 'none',
+})
+export const thermoMeterDragLineActive = style({
+  transition: 'transform 0.3s, top 0.2s ease',
 })
 
 export const thermoMeterThumbContainer = style({

@@ -40,7 +40,7 @@ export const Table: React.FC<TableProps> = ({
   onChange,
   disabled = false,
   error,
-  numRows: _numRows = 1,
+  numRows = 1,
   maxRows = 10,
 }) => {
   useNamespaces('service.portal')
@@ -79,10 +79,10 @@ export const Table: React.FC<TableProps> = ({
     })
 
     // Determine number of rows from the column with most entries
-    const maxRowCount = Math.max(
-      ...Object.values(answersByColumn).map((arr) => arr.length),
-      0,
-    )
+    const maxRowCount =
+      numRows ??
+      maxRows ??
+      Math.max(...Object.values(answersByColumn).map((arr) => arr.length), 0)
 
     // Build rows
     for (let i = 0; i < maxRowCount; i++) {
@@ -194,7 +194,7 @@ export const Table: React.FC<TableProps> = ({
             locale="is"
             id={`${id}_${column.id}_new`}
             label={column.label}
-            placeholderText="Veldu dagsetningu"
+            placeholderText={formatMessage(m.chooseDate)}
             selected={cellValue ? new Date(cellValue) : undefined}
             handleChange={(date: Date) =>
               handleCurrentRowChange(
@@ -261,7 +261,7 @@ export const Table: React.FC<TableProps> = ({
                   {column.required && <span style={{ color: 'red' }}> *</span>}
                 </T.HeadData>
               ))}
-              <T.HeadData align="right">Aðgerðir</T.HeadData>
+              <T.HeadData align="right">{formatMessage(m.actions)}</T.HeadData>
             </T.Row>
           </T.Head>
           <T.Body>
@@ -270,7 +270,7 @@ export const Table: React.FC<TableProps> = ({
                 <T.Data colSpan={columns.length + 1}>
                   <Box paddingY={3} display="flex" justifyContent="center">
                     <Text variant="small" color="dark300">
-                      Engin gögn skráð
+                      {formatMessage(m.noData)}
                     </Text>
                   </Box>
                 </T.Data>
@@ -296,7 +296,9 @@ export const Table: React.FC<TableProps> = ({
                         iconType="outline"
                         onClick={() => handleRemoveRow(rowIndex)}
                         disabled={disabled}
-                        aria-label={`Eyða röð ${rowIndex + 1}`}
+                        aria-label={`${formatMessage(m.deleteRow)} ${
+                          rowIndex + 1
+                        }`}
                       >
                         {formatMessage(m.deleteRow)}
                       </Button>

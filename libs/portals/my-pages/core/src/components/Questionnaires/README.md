@@ -37,7 +37,6 @@ interface GenericQuestionnaireProps {
   onCancel?: () => void
   img?: string // Optional header image
   initialAnswers?: { [key: string]: QuestionAnswer } // Pre-populate answers (drafts)
-  isDraft?: boolean // Whether this is a draft submission
 }
 ```
 
@@ -62,23 +61,23 @@ import { GenericQuestionnaire } from '@island.is/portals/my-pages/core'
 
 ---
 
-### `AnsweredQuestionnaire`
+### `Answered`
 
 A read-only component that displays submitted questionnaire answers. Used to show historical submissions.
 
 **Props:**
 
 ```typescript
-interface AnsweredQuestionnaireProps {
-  questionnaire?: QuestionnaireAnsweredQuestionnaire
+interface AnsweredProps {
+  answers?: QuestionAnswer[]
 }
 ```
 
 **Usage:**
 
 ```tsx
-import { AnsweredQuestionnaire } from '@island.is/portals/my-pages/core'
-;<AnsweredQuestionnaire questionnaire={submittedQuestionnaire} />
+import { Answered } from '@island.is/portals/my-pages/core'
+;<Answered answers={questionAnswers} />
 ```
 
 Automatically formats answers including:
@@ -126,13 +125,14 @@ Multi-select checkbox group. Maps to `QuestionnaireAnswerOptionType.checkbox`.
 ```typescript
 interface MultipleProps {
   id: string
-  label?: string
   options: MultipleOption[] // { label, value, disabled? }[]
   value?: string[]
   onChange: (values: string[]) => void
   error?: string
   disabled?: boolean
   required?: boolean
+  direction?: 'horizontal' | 'vertical' // default: 'vertical'
+  maxSelections?: number // Limit number of selections
 }
 ```
 
@@ -151,15 +151,17 @@ interface TextInputProps {
   value?: string
   onChange: (value: string) => void
   placeholder?: string
-  type?: 'text' | 'number' | 'email' // default: 'text'
-  maxLength?: number
-  min?: number // for number type
-  max?: number // for number type
+  type?: 'text' | 'number' | 'decimal' // default: 'text'
+  maxLength?: string // Note: string not number
+  min?: string // for number/decimal type (string not number)
+  max?: string // for number/decimal type (string not number)
+  step?: number // for decimal type
   error?: string
   disabled?: boolean
   required?: boolean
-  textarea?: boolean // Multi-line text area
-  rows?: number // Rows for textarea
+  multiline?: boolean // Multi-line text area
+  rows?: number // Rows for textarea (default: 4)
+  backgroundColor?: 'white' | 'blue' // default: 'blue'
 }
 ```
 
@@ -174,7 +176,6 @@ Dynamic table input for structured data. Maps to `QuestionnaireAnswerOptionType.
 ```typescript
 interface TableProps {
   id: string
-  label: string
   columns: QuestionnaireTableColumn[] // Column definitions with type, label, options
   value?: QuestionAnswer
   onChange: (answer: QuestionAnswer) => void
@@ -203,14 +204,17 @@ Numeric slider or scale input. Maps to `QuestionnaireAnswerOptionType.slider`.
 interface ScaleProps {
   id: string
   label?: string
-  min: number
-  max: number
+  min: string | number
+  max: string | number
   step?: number // default: 1
-  value?: number
-  onChange: (value: number) => void
-  showLabels?: boolean // Show min/max labels
+  value?: string | null
+  onChange: (value: string) => void
+  showLabels?: boolean // Show min/max labels (default: true)
+  minLabel?: string
+  maxLabel?: string
   error?: string
   disabled?: boolean
+  required?: boolean
 }
 ```
 
@@ -226,11 +230,16 @@ Visual thermometer-style rating scale. Maps to `QuestionnaireAnswerOptionType.th
 interface ThermometerProps {
   id: string
   label?: string
-  options: { label: string; value: string }[]
-  value?: string
+  min: string
+  max: string
+  value?: string | null
   onChange: (value: string) => void
   error?: string
   disabled?: boolean
+  required?: boolean
+  minLabel?: string
+  maxLabel?: string
+  step?: number // default: 1
 }
 ```
 

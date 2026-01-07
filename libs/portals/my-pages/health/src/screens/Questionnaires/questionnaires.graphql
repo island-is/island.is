@@ -1,3 +1,89 @@
+fragment QuestionnaireBaseInfo on QuestionnaireBaseInformation {
+  __typename
+  id
+  title
+  description
+  sentDate
+  status
+  lastSubmitted
+  organization
+  department
+}
+
+fragment QuestionnaireSubmission on QuestionnaireSubmissionDetail {
+  __typename
+  id
+  isDraft
+  lastUpdated
+  createdAt
+}
+
+fragment VisibilityCondition on QuestionnaireVisibilityCondition {
+  questionId
+  operator
+  expectedValues
+  showWhenMatched
+}
+
+fragment AnswerOptions on QuestionnaireAnswerOption {
+  __typename
+  type
+  placeholder
+  maxLength
+  min
+  max
+  maxLabel
+  minLabel
+  decimal
+  formula
+  numRows
+  maxRows
+  columns {
+    id
+    label
+    type
+    required
+    multiline
+    maxLength
+  }
+  options {
+    __typename
+    id
+    label
+    value
+  }
+}
+
+fragment QuestionDetail on QuestionnaireQuestion {
+  __typename
+  id
+  originalId
+  label
+  sublabel
+  htmlLabel
+  required
+  dependsOn
+  visibilityConditions {
+    ...VisibilityCondition
+  }
+  answerOptions {
+    ...AnswerOptions
+  }
+}
+
+fragment QuestionnaireSection on QuestionnaireSection {
+  __typename
+  title
+  id
+  dependsOn
+  visibilityConditions {
+    ...VisibilityCondition
+  }
+  questions {
+    ...QuestionDetail
+  }
+}
+
 query GetQuestionnaires($locale: String!) {
   questionnairesList(locale: $locale) {
     questionnaires {
@@ -16,24 +102,12 @@ query GetQuestionnaires($locale: String!) {
 query GetQuestionnaire($locale: String!, $input: GetQuestionnaireInput!) {
   questionnairesDetail(locale: $locale, input: $input) {
     baseInformation {
-      __typename
-      id
-      title
-      description
-      sentDate
-      status
-      lastSubmitted
-      organization
-      department
+      ...QuestionnaireBaseInfo
     }
     expirationDate
     canSubmit
     submissions {
-      __typename
-      id
-      isDraft
-      lastUpdated
-      createdAt
+      ...QuestionnaireSubmission
     }
   }
 }
@@ -62,60 +136,7 @@ query GetQuestionnaireWithQuestions(
       type
     }
     sections {
-      __typename
-      title
-      id
-      dependsOn
-      visibilityConditions {
-        questionId
-        operator
-        expectedValues
-        showWhenMatched
-      }
-      questions {
-        __typename
-        id
-        originalId
-        label
-        sublabel
-        htmlLabel
-        required
-        dependsOn
-        visibilityConditions {
-          questionId
-          operator
-          expectedValues
-          showWhenMatched
-        }
-        answerOptions {
-          __typename
-          type
-          placeholder
-          maxLength
-          min
-          max
-          maxLabel
-          minLabel
-          decimal
-          formula
-          numRows
-          maxRows
-          columns {
-            id
-            label
-            type
-            required
-            multiline
-            maxLength
-          }
-          options {
-            __typename
-            id
-            label
-            value
-          }
-        }
-      }
+      ...QuestionnaireSection
     }
   }
 }

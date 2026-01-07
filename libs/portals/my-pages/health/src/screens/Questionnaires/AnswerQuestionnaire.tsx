@@ -1,6 +1,5 @@
 import { QuestionnaireQuestionnairesOrganizationEnum } from '@island.is/api/schema'
 import { Box, LoadingDots, toast } from '@island.is/island-ui/core'
-import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
 import {
   GenericQuestionnaire,
@@ -14,6 +13,7 @@ import { FC, useMemo } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { messages } from '../..'
 import { HealthPaths } from '../../lib/paths'
+import * as styles from './Questionnaires.css'
 import {
   useGetQuestionnaireWithQuestionsQuery,
   useSubmitQuestionnaireMutation,
@@ -175,17 +175,13 @@ const AnswerQuestionnaire: FC = () => {
   }
 
   return (
-    <Box display={'flex'} justifyContent={'center'}>
-      <Box
-        style={{ maxWidth: theme.breakpoints.xl }}
-        background={'white'}
-        width="full"
-      >
+    <Box display="flex" justifyContent="center">
+      <Box className={styles.answeredContainer} background="white" width="full">
         {loading && !error && (
           <Box
-            display={'flex'}
-            justifyContent={'center'}
-            alignItems={'center'}
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
             height="full"
           >
             <LoadingDots />

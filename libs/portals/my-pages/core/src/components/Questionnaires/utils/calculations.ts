@@ -1,3 +1,6 @@
+/*
+Specific calculations for LSH questionnaires. They may contain formulas and values derived from user answers. */
+
 import { QuestionAnswer } from '../../../types/questionnaire'
 
 const asNumber = (v: unknown): number => {

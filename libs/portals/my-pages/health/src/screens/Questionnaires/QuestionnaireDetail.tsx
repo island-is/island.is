@@ -1,4 +1,3 @@
-/* eslint-disable eqeqeq */
 import {
   QuestionnaireQuestionnairesOrganizationEnum,
   QuestionnaireQuestionnairesStatusEnum,
@@ -42,11 +41,11 @@ const QuestionnaireDetail: FC = () => {
 
   const questionnaire = data?.questionnairesDetail
   const status = questionnaire?.baseInformation.status
-  const isAnswered = status == QuestionnaireQuestionnairesStatusEnum.answered
+  const isAnswered = status === QuestionnaireQuestionnairesStatusEnum.answered
   const notAnswered =
-    status == QuestionnaireQuestionnairesStatusEnum.notAnswered
+    status === QuestionnaireQuestionnairesStatusEnum.notAnswered
   const isExpired = status === QuestionnaireQuestionnairesStatusEnum.expired
-  const isDraft = status == QuestionnaireQuestionnairesStatusEnum.draft
+  const isDraft = status === QuestionnaireQuestionnairesStatusEnum.draft
 
   if (!id) {
     return (
@@ -59,7 +58,7 @@ const QuestionnaireDetail: FC = () => {
   const latestSubmission = questionnaire?.submissions?.reduce(
     (latest, current) =>
       !latest ||
-      (current.lastUpdated && current.lastUpdated > (latest.lastUpdated || ''))
+      (current.lastUpdated && current.lastUpdated > latest.lastUpdated)
         ? current
         : latest,
     undefined as QuestionnaireSubmissionDetail | undefined,
@@ -182,11 +181,10 @@ const QuestionnaireDetail: FC = () => {
               content={
                 questionnaire?.baseInformation.organization ===
                 QuestionnaireQuestionnairesOrganizationEnum.EL
-                  ? 'Embætti Landlæknis'
-                  : 'Landspítali'
+                  ? formatMessage(messages.healthDirectorate)
+                  : formatMessage(messages.landspitali)
               }
             />,
-
             <InfoLine
               loading={loading}
               key="questionnaire-sent"

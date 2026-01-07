@@ -2,6 +2,8 @@ import { Box, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import React, { FC, useCallback, useRef, useState } from 'react'
 import * as styles from './QuestionTypes.css'
+import cn from 'classnames'
+
 export interface ThermometerProps {
   id: string
   label?: string
@@ -87,7 +89,7 @@ export const Thermometer: FC<ThermometerProps> = ({
     // Safety checks to prevent infinite loops
     if (isNaN(minNum) || isNaN(maxNum) || stepNum <= 0 || minNum > maxNum) {
       console.warn('Invalid thermometer values:', { min, max, step })
-      return ['0', '50', '100'] // Fallback values
+      return ['0', '100'] // Fallback values
     }
 
     const allValues = []
@@ -211,13 +213,13 @@ export const Thermometer: FC<ThermometerProps> = ({
           {/* Max label */}
           <Box>
             <Text variant="small" color="blue400" fontWeight="medium">
-              {maxLabel || 'Gifurleg vanlíðan'}
+              {maxLabel || 'MAX'}
             </Text>
           </Box>
           {/* Min label */}
           <Box>
             <Text variant="small" color="blue400" fontWeight="medium">
-              {minLabel || 'Engin vanlíðan'}
+              {minLabel || 'MIN'}
             </Text>
           </Box>
         </Box>
@@ -262,22 +264,24 @@ export const Thermometer: FC<ThermometerProps> = ({
         >
           {/* Connecting line from thumb to thermometer */}
           <Box
-            className={styles.thermoMeterDragLine}
+            className={cn(styles.thermoMeterDragLine, {
+              [styles.thermoMeterDragLineActive]: !isDragging,
+            })}
             style={{
               top: `${getThumbPosition()}px`,
-              transition: isDragging ? 'none' : 'transform 0.3s, top 0.2s ease',
             }}
           />
 
           {/* Draggable thumb - exactly like Slider component */}
           <Box
-            className={styles.thermoMeterDraggerContainer}
+            className={cn(styles.thermoMeterDraggerContainer, {
+              [styles.thermoMeterDragLineActive]: !isDragging,
+            })}
             ref={thumbRef}
             onPointerDown={handlePointerDown}
             style={{
               cursor: disabled ? 'not-allowed' : 'pointer',
               top: `${getThumbPosition()}px`,
-              transition: isDragging ? 'none' : 'transform 0.3s, top 0.2s ease',
             }}
             // Pseudo-elements using Box components since we can't use CSS pseudo-elements in style prop
           >

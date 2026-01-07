@@ -15,6 +15,8 @@ import { TextInput } from '../Questionnaires/QuestionsTypes/TextInput'
 import { Thermometer } from '../Questionnaires/QuestionsTypes/Thermometer'
 import { Scale } from './QuestionsTypes/Scale'
 import { Table } from './QuestionsTypes/Table'
+import { useLocale } from '@island.is/localization'
+import { m } from '../../lib/messages'
 
 interface QuestionRendererProps {
   question: QuestionnaireQuestion
@@ -31,6 +33,7 @@ export const QuestionRenderer: FC<QuestionRendererProps> = ({
   disabled = false,
   error,
 }) => {
+  const { formatMessage } = useLocale()
   const isMobile = useIsMobile()
 
   const handleValueChange = (
@@ -257,7 +260,8 @@ export const QuestionRenderer: FC<QuestionRendererProps> = ({
               locale="is"
               id={question.id}
               placeholderText={
-                question.answerOptions.placeholder || 'Veldu dagsetningu'
+                question.answerOptions.placeholder ||
+                formatMessage(m.chooseDate)
               }
               selected={dateValue ? new Date(dateValue) : undefined}
               handleChange={(date: Date) =>

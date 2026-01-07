@@ -1,4 +1,3 @@
-// Export all questionnaire components
 export { TextInput } from './QuestionsTypes/TextInput'
 export type { TextInputProps } from './QuestionsTypes/TextInput'
 
@@ -15,7 +14,5 @@ export { Thermometer } from './QuestionsTypes/Thermometer'
 export type { ThermometerProps } from './QuestionsTypes/Thermometer'
 
 export { Answered } from './Answered'
-
-// Export generic questionnaire components
 export { QuestionRenderer } from './QuestionRenderer'
 export { GenericQuestionnaire } from './GenericQuestionnaire'
