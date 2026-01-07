@@ -17,12 +17,6 @@ export const translationStrings = defineMessages({
     defaultMessage: 'Þú vilt hefja töku eftir 67 ára aldur',
     description: 'Upplýsingar sem birtast ef þú vilt seinka töku ellilífeyris',
   },
-  form2025PreviewLabel: {
-    id: 'web.pensionCalculator:form2025PreviewLabel',
-    defaultMessage: 'Eftir 1. september 2025',
-    description:
-      'Valmöguleiki í dropdown fyrir "Allar reiknivélar" ef það á að leyfa eftir 1. sept 2025 preview',
-  },
   results2025ImageUrl: {
     id: 'web.pensionCalculator:results2025ImageUrl',
     defaultMessage:
@@ -453,11 +447,6 @@ export const translationStrings = defineMessages({
     defaultMessage: 'Reiknivél lífeyris',
     description: 'Aðal titill',
   },
-  form2025PreviewMainTitle: {
-    id: 'web.pensionCalculator:form2025PreviewMainTitle',
-    defaultMessage: 'Reiknivél örorku- og endurhæfingargreiðslna',
-    description: 'Aðal titill fyrir nýju eftir 1. sept 2025 reiknivél',
-  },
   resultDisclaimer: {
     id: 'web.pensionCalculator:resultDisclaimer',
     defaultMessage:
@@ -631,13 +620,6 @@ export const translationStrings = defineMessages({
     id: 'web.pensionCalculator:after1stSeptember2025',
     defaultMessage: 'Eftir 1. september 2025',
     description: 'Eftir 1. september 2025',
-  },
-  after1stSeptember2025IconUrl: {
-    id: 'web.pensionCalculator:after1stSeptember2025IconUrl',
-    defaultMessage:
-      'https://images.ctfassets.net/8k0h54kbe6bj/5RIwKVet87Nm4ycltkzjnX/9c594855a9b2f90dde63766ee87a09ca/58dd40fbf365769d984be22a9b64bc29.png',
-    description:
-      'Mynd vinstra megin við titil "Reiknivél örorku- og endurhæfingargreiðslna eftir 1. september 2025"',
   },
   after1stSeptember2025Calculate: {
     id: 'web.pensionCalculator:after1stSeptember2025Calculate',
