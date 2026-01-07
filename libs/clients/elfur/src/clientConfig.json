@@ -938,26 +938,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OpenInvoiceGroupResponseDto"
-                  }
+                  "$ref": "#/components/schemas/OpenInvoicesGroupCollectionResponseDto"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OpenInvoiceGroupResponseDto"
-                  }
+                  "$ref": "#/components/schemas/OpenInvoicesGroupCollectionResponseDto"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OpenInvoiceGroupResponseDto"
-                  }
+                  "$ref": "#/components/schemas/OpenInvoicesGroupCollectionResponseDto"
                 }
               }
             }
@@ -4111,14 +4102,12 @@
           "totalPaymentsSum": {
             "type": "number",
             "description": "Gets or sets the total sum of each invoice group invoices",
-            "format": "double",
-            "nullable": true
+            "format": "double"
           },
           "totalPaymentCount": {
-            "type": "number",
+            "type": "integer",
             "description": "Gets or sets the total count invoice group invoices",
-            "format": "double",
-            "nullable": true
+            "format": "int32"
           }
         },
         "additionalProperties": false,
@@ -4136,10 +4125,52 @@
             },
             "description": "Gets or sets a list of invoices belonging to the group",
             "nullable": true
+          },
+          "periodSumPaymentAmountsISK": {
+            "type": "number",
+            "description": "Gets or sets the total sum of period payment amounts in ISK",
+            "format": "double",
+            "nullable": true
+          },
+          "periodPaymentCount": {
+            "type": "integer",
+            "description": "Gets or sets the total count of period payments",
+            "format": "int32",
+            "nullable": true
           }
         },
         "additionalProperties": false,
         "description": "Represents all invoices between a specified supplier-customer relationship"
+      },
+      "OpenInvoicesGroupCollectionResponseDto": {
+        "type": "object",
+        "properties": {
+          "totalCount": {
+            "type": "integer",
+            "description": "Gets or sets the number invoice groups",
+            "format": "int32"
+          },
+          "totalPaymentsSum": {
+            "type": "number",
+            "description": "Gets or sets the total payment sum for all groups",
+            "format": "double"
+          },
+          "totalPaymentsCount": {
+            "type": "integer",
+            "description": "Gets or sets the total payment count for all groups",
+            "format": "int32"
+          },
+          "invoiceGroups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OpenInvoiceGroupResponseDto"
+            },
+            "description": "Gets or sets the customer information",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Represents a collection of invoices between a specified supplier-customer relationship"
       },
       "OrganizationResponseDto": {
         "type": "object",
