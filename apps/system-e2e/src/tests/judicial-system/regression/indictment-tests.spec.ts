@@ -319,4 +319,27 @@ test.describe.serial('Indictment tests', () => {
     await expect(page).toHaveURL('/malalistar/sakamal-i-yfirlestri')
     await expect(page.getByText(accusedName)).toHaveCount(1)
   })
+
+  test('public prosecutor should receive and review indictment', async ({
+    publicProsecutorPage,
+  }) => {
+    const page = publicProsecutorPage
+
+    // Case list for cases in review
+    await page.goto('/malalistar/sakamal-til-yfirlestrar')
+    await expect(page).toHaveURL('/malalistar/sakamal-til-yfirlestrar')
+    await page.getByText(accusedName).click()
+
+    await page.getByText('Una héraðsdómi').click()
+    await page.getByTestId('continueButton').click(),
+      await Promise.all([
+        page.getByTestId('modalPrimaryButton').click(),
+        verifyRequestCompletion(page, '/api/graphql', 'UpdateCase'),
+      ])
+
+    // Case list for reviewed cases
+    await page.goto('/malalistar/yfirlesin-sakamal')
+    await expect(page).toHaveURL('/malalistar/yfirlesin-sakamal')
+    await expect(page.getByText(accusedName)).toHaveCount(1)
+  })
 })
