@@ -39,7 +39,7 @@ import {
   EstateFeatureFlags,
 } from './getApplicationFeatureFlags'
 import { CodeOwners } from '@island.is/shared/constants'
-import { getChargeItems } from '../utils/getChargeItems'
+import { getChargeItems, getExtraData } from '../utils/getChargeItems'
 
 const configuration = ApplicationConfigurations[ApplicationTypes.ESTATE]
 
@@ -216,6 +216,7 @@ const EstateTemplate: ApplicationTemplate<
       [States.payment]: buildPaymentState({
         organizationId: InstitutionNationalIds.SYSLUMENN,
         chargeItems: getChargeItems,
+        extraData: getExtraData,
         submitTarget: States.done,
         abortTarget: States.draft,
         lifecycle: {
