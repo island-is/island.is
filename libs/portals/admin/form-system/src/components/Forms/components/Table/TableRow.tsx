@@ -62,6 +62,9 @@ export const TableRow = ({
   const { formatMessage, formatDate } = useIntl()
   const [updateFormStatus] = useMutation(UPDATE_FORM_STATUS)
   const [copyForm] = useMutation(COPY_FORM)
+  const [isPencilHovered, setIsPencilHovered] = useState(false)
+
+  const handleToggle = () => setIsOpen((prev) => !prev)
 
   const dropdownItems = useMemo(() => {
     const copy = {
@@ -266,8 +269,11 @@ export const TableRow = ({
   return (
     <Box
       paddingTop={2}
-      onClick={() => setIsOpen(!isOpen)}
-      style={{ cursor: '' }}
+      onClick={handleToggle}
+      role="button"
+      aria-expanded={isOpen}
+      tabIndex={0}
+      style={{ cursor: 'pointer' }}
     >
       <Row key={id}>
         <Column span="8/12">
@@ -293,27 +299,56 @@ export const TableRow = ({
           <Box display="flex" justifyContent="flexEnd" alignItems="center">
             {(status === FormStatus.IN_DEVELOPMENT ||
               status === FormStatus.PUBLISHED_BEING_CHANGED) && (
-              <Box marginRight={1} onClick={goToForm} cursor="pointer">
-                <Icon icon="pencil" color="blue400" type="filled" />
+              <Box
+                marginRight={1}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  goToForm()
+                }}
+                cursor="pointer"
+                onMouseOver={() => setIsPencilHovered(true)}
+                onMouseOut={() => setIsPencilHovered(false)}
+              >
+                <Icon
+                  icon="pencil"
+                  color={isPencilHovered ? 'blue300' : 'blue400'}
+                  type="filled"
+                />
               </Box>
             )}
-            <DropdownMenu
-              menuLabel={`${formatMessage(m.actions)} ${name}`}
-              disclosure={
-                <Button
-                  icon="ellipsisVertical"
-                  circle
-                  colorScheme="negative"
-                  title={formatMessage(m.actions)}
-                  inline
-                  aria-label={`Aðgerðir`}
-                />
-              }
-              items={dropdownItems}
-            />
+            <Box onClick={(e) => e.stopPropagation()}>
+              <DropdownMenu
+                menuLabel={`${formatMessage(m.actions)} ${name}`}
+                disclosure={
+                  <Button
+                    icon="ellipsisVertical"
+                    circle
+                    colorScheme="negative"
+                    title={formatMessage(m.actions)}
+                    inline
+                    aria-label={`Aðgerðir`}
+                  />
+                }
+                items={dropdownItems}
+              />
+            </Box>
           </Box>
         </Column>
       </Row>
+
+      {isOpen && (
+        <Box paddingTop={2} paddingBottom={2}>
+          <Row>
+            <Column span="8/12">
+              <Text variant="medium">{slug}</Text>
+            </Column>
+            <Column span="4/12">
+              <Text variant="medium">ID: {id}</Text>
+            </Column>
+          </Row>
+        </Box>
+      )}
+
       <Divider />
     </Box>
   )
