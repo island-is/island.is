@@ -14,14 +14,10 @@ import {
     children: [
       buildMultiField({
         id: 'carsChangesCountMultiField',
-        title: 'Skrá bifreiðar á kílómetragjald eða daggjald',
+        title: 'Staðfesta breytingar',
         children: [
-          buildDescriptionField({
-            id: 'carsChangesCountDescription',
-            description: 'Veldur þær breytingar sem þú vilt gera',
-          }),
           buildStaticTableField({
-            header: ['Fjöldi bíla', ''],
+            header: ['Fjöldi bifreiða breytt'],
             rows: (application) => {
                 const data = getValueViaPath<CarCategoryRecord[]>(
                     application.answers,
@@ -29,7 +25,7 @@ import {
                   ) ?? []
 
               return [
-                ['Fjöldi bifreiða breytt', data.length.toString()],
+                [data.length.toString()],
               ]
             },
           }),
