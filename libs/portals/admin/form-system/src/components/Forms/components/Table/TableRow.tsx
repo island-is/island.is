@@ -11,6 +11,7 @@ import {
   Divider,
   DropdownMenu,
   GridRow as Row,
+  Stack,
   Text,
 } from '@island.is/island-ui/core'
 import { Dispatch, SetStateAction, useMemo, useState } from 'react'
@@ -338,8 +339,8 @@ export const TableRow = ({
       </Row>
 
       {isOpen && (
-        <>
-          <Box paddingTop={2} paddingBottom={1} paddingLeft={1}>
+        <Box paddingTop={1} paddingBottom={2} paddingLeft={1}>
+          <Stack space={1}>
             <Row>
               <Column span="12/12">
                 <Text variant="medium">
@@ -347,26 +348,22 @@ export const TableRow = ({
                 </Text>
               </Column>
             </Row>
-          </Box>
-          <Box paddingBottom={1} paddingLeft={1}>
             <Row>
               <Column span="12/12">
                 <Text variant="medium">
-                  <strong>URL:</strong> {url}
+                  <strong>Url:</strong> {url}
                 </Text>
               </Column>
             </Row>
-          </Box>
-          <Box paddingBottom={2} paddingLeft={1}>
             <Row>
               <Column span="12/12">
                 <Text variant="medium">
-                  <strong>ID:</strong> {id}
+                  <strong>Id:</strong> {id}
                 </Text>
               </Column>
             </Row>
-          </Box>
-        </>
+          </Stack>
+        </Box>
       )}
 
       <Divider />
