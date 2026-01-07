@@ -125,6 +125,11 @@ export const primarySchoolMessages = {
       defaultMessage: 'Upplýsingar um núverandi leikskóla',
       description: 'Information about current nursery',
     },
+    subSectionDescription: {
+      id: 'nps.application:primarySchool.currentNursery.subSectionDescription',
+      defaultMessage: 'Við undirbúning fyrir móttöku barns í grunnskóla er gagnlegt að vita úr hvaða leikskóla barnið kemur. Athugið að engar upplýsingar eru fluttar með sjálfvirkum hætti milli leikskóla og grunnskóla.',
+      description: 'When preparing for the admission of a child to primary school, it is useful to know from which nursery the child comes. Please note that no information is transferred automatically between nursery and primary school.',
+    },
     nursery: {
       id: 'nps.application:primarySchool.currentNursery.nursery',
       defaultMessage: 'Leikskóli',
@@ -134,6 +139,11 @@ export const primarySchoolMessages = {
       id: 'nps.application:primarySchool.currentNursery.nurseryPlaceholder',
       defaultMessage: 'Veldu leikskóla',
       description: 'Select nursery',
+    },
+    hasCurrentNursery: {
+    id: 'nps.application:primarySchool.primarySchool.hasCurrentNursery',
+    defaultMessage: 'Er barnið þitt í leikskóla á Íslandi?',
+    description: 'Does your child attend a nursery in Iceland?',
     },
   }),
   school: defineMessages({

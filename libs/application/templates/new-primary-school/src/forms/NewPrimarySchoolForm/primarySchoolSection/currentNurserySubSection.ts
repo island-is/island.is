@@ -1,8 +1,11 @@
 import {
   buildAsyncSelectField,
   buildMultiField,
+  buildRadioField,
   buildSubSection,
   coreErrorMessages,
+  NO,
+  YES,
 } from '@island.is/application/core'
 import { friggOrganizationsByTypeQuery } from '../../../graphql/queries'
 import { ApplicationType } from '../../../utils/constants'
@@ -22,7 +25,25 @@ export const currentNurserySubSection = buildSubSection({
     buildMultiField({
       id: 'currentNursery',
       title: primarySchoolMessages.currentNursery.subSectionTitle,
+      description: primarySchoolMessages.currentNursery.subSectionDescription,
       children: [
+        buildRadioField({
+          id: 'currentNursery.hasCurrentNursery',
+          title: primarySchoolMessages.currentNursery.hasCurrentNursery,
+          width: 'half',
+          required: true,
+          space: 0,
+          options: [
+            {
+              label: sharedMessages.yes,
+              value: YES,
+            },
+            {
+              label: sharedMessages.no,
+              value: NO,
+            },
+          ],
+        }),        
         buildAsyncSelectField({
           id: 'currentNursery.municipality',
           title: sharedMessages.municipality,
@@ -47,6 +68,11 @@ export const currentNurserySubSection = buildSubSection({
                 }))
                 .sort((a, b) => a.label.localeCompare(b.label)) ?? []
             )
+          },
+          condition: (answers) => {
+            const { hasCurrentNursery } = getApplicationAnswers(answers)
+
+            return hasCurrentNursery === YES
           },
         }),
         buildAsyncSelectField({
@@ -79,10 +105,10 @@ export const currentNurserySubSection = buildSubSection({
             )
           },
           condition: (answers) => {
-            const { currentNurseryMunicipality } =
+            const { currentNurseryMunicipality, hasCurrentNursery } =
               getApplicationAnswers(answers)
 
-            return !!currentNurseryMunicipality
+            return !!currentNurseryMunicipality && hasCurrentNursery === YES
           },
         }),
       ],
