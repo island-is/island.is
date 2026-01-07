@@ -1577,18 +1577,18 @@ export class CmsContentfulService {
       include: 4,
     }
 
-    const isResponse =
-      await this.contentfulRepository.getLocalizedEntry<types.ICourseFields>(
+    const [isResponse, enResponse] = await Promise.all([
+      this.contentfulRepository.getLocalizedEntry<types.ICourseFields>(
         input.id,
         'is',
-        params,
-      )
-    const enResponse =
-      await this.contentfulRepository.getLocalizedEntry<types.ICourseFields>(
+        { ...params, include: input.lang === 'is' ? 4 : 0 },
+      ),
+      this.contentfulRepository.getLocalizedEntry<types.ICourseFields>(
         input.id,
         'en',
-        params,
-      )
+        { ...params, include: input.lang === 'en' ? 4 : 0 },
+      ),
+    ])
 
     const response = input.lang === 'is' ? isResponse : enResponse
 
