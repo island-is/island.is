@@ -81,7 +81,7 @@ export const HearingArrangements = () => {
           hasSentNotification(
             NotificationType.HEADS_UP,
             workingCase.notifications,
-          )
+          ).hasSent
         ) {
           router.push(`${destination}/${workingCase.id}`)
         } else {

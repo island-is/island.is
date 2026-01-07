@@ -134,7 +134,6 @@ const HearingArrangements = () => {
           titles.court.investigationCases.hearingArrangements,
         )}
       />
-
       <>
         <FormContentContainer>
           {workingCase.requestProsecutorOnlySession &&
