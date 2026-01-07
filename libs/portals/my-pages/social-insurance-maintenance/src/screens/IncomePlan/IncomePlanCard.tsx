@@ -18,6 +18,7 @@ export const IncomePlanCard = ({ status, registrationDate }: Props) => {
 
   const baseActionCard = (text?: string, cta?: boolean) => {
     return (
+      //TODO: Replace with Island UI Card when it supports images
       <ActionCard
         image={{
           type: 'image',

@@ -62,6 +62,10 @@ export const VehicleRadioFormField: FC<React.PropsWithChildren<Props>> = ({
       setValue(`${field.id}.plate`, permno)
       setValue(`${field.id}.type`, vehicle?.make)
       setValue(`${field.id}.color`, vehicle?.color || undefined)
+      setValue(
+        `${field.id}.vehicleHasMilesOdometer`,
+        vehicle?.vehicleHasMilesOdometer,
+      )
 
       setValue('vehicleMileage.requireMileage', vehicle?.requireMileage)
       setValue('vehicleMileage.mileageReading', vehicle?.mileageReading)

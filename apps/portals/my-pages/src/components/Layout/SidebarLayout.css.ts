@@ -1,6 +1,7 @@
 import { style } from '@vanilla-extract/css'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 import { SERVICE_PORTAL_HEADER_HEIGHT_LG } from '@island.is/portals/my-pages/constants'
+
 const top = SERVICE_PORTAL_HEADER_HEIGHT_LG
 const sidebarWidth = {
   desktop: '318px',
