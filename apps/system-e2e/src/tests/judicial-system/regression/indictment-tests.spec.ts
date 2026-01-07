@@ -331,11 +331,11 @@ test.describe.serial('Indictment tests', () => {
     await page.getByText(accusedName).click()
 
     await page.getByText('Una héraðsdómi').click()
-    await page.getByTestId('continueButton').click(),
-      await Promise.all([
-        page.getByTestId('modalPrimaryButton').click(),
-        verifyRequestCompletion(page, '/api/graphql', 'UpdateCase'),
-      ])
+    await page.getByTestId('continueButton').click()
+    await Promise.all([
+      page.getByTestId('modalPrimaryButton').click(),
+      verifyRequestCompletion(page, '/api/graphql', 'UpdateCase'),
+    ])
 
     // Case list for reviewed cases
     await page.goto('/malalistar/yfirlesin-sakamal')
