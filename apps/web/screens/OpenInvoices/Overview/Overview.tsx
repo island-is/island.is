@@ -127,7 +127,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
     } else return initialInvoiceGroups?.totalCount ?? 0
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    invoiceGroupsData?.icelandicGovernmentInstitutionsInvoiceGroups.totalCount,
+    invoiceGroupsData?.icelandicGovernmentInstitutionsInvoiceGroups?.totalCount,
   ])
 
   const totalPages = useMemo(() => {

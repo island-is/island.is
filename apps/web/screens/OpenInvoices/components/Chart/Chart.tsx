@@ -68,7 +68,7 @@ const Legend = (props: LegendProps) => {
     <Inline space={3}>
       {payload.map((entry) => {
         return (
-          <Box display="flex" alignItems="center">
+          <Box key={entry.id} display="flex" alignItems="center">
             <Box
               marginRight={1}
               className={styles.legendIcon}

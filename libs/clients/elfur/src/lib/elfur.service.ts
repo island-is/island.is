@@ -15,7 +15,6 @@ import { mapCustomerDto } from './dtos/customer.dto'
 import { InvoiceTypesDto } from './dtos/invoiceTypes.dto'
 import { mapInvoiceTypeDto } from './dtos/invoiceType.dto'
 import { mapPageInfo } from './utils/pageInfo.util'
-import { InvoiceGroupDto, mapInvoiceGroupDto } from './dtos/invoiceGroup.dto'
 import { InvoiceGroupRequestDto } from './dtos/invoiceGroupRequest.dto'
 import {
   InvoiceGroupCollectionDto,
