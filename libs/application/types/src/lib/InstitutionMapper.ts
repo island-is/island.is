@@ -496,6 +496,11 @@ export const institutionMapper = {
     slug: InstitutionTypes.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
     contentfulId: InstitutionContentfulIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
   },
+  [ApplicationTypes.MILE_CAR]: {
+    nationalId: InstitutionNationalIds.SAMGONGUSTOFA,
+    slug: InstitutionTypes.SAMGONGUSTOFA,
+    contentfulId: InstitutionContentfulIds.SAMGONGUSTOFA,
+  },
   [ApplicationTypes.HEILSUGAESLA_HOFUDBORDARSVAEDISINS_NAMSKEID]: {
     nationalId: InstitutionNationalIds.HEILSUGAESLA_HOFUDBORDARSVAEDISINS,
     slug: InstitutionTypes.HEILSUGAESLA_HOFUDBORDARSVAEDISINS,
