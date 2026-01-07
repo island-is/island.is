@@ -10,7 +10,6 @@ import {
   DialogPrompt,
   Divider,
   DropdownMenu,
-  Icon,
   GridRow as Row,
   Text,
 } from '@island.is/island-ui/core'
@@ -32,6 +31,7 @@ interface Props {
   beenPublished?: boolean
   setFormsState: Dispatch<SetStateAction<FormSystemForm[]>>
   status?: string
+  url?: string
 }
 
 const PATH =
@@ -56,13 +56,13 @@ export const TableRow = ({
   setFormsState,
   slug,
   status,
+  url,
 }: Props) => {
   const [isOpen, setIsOpen] = useState(false)
   const navigate = useNavigate()
   const { formatMessage, formatDate } = useIntl()
   const [updateFormStatus] = useMutation(UPDATE_FORM_STATUS)
   const [copyForm] = useMutation(COPY_FORM)
-  const [isPencilHovered, setIsPencilHovered] = useState(false)
 
   const handleToggle = () => setIsOpen((prev) => !prev)
 
@@ -273,7 +273,12 @@ export const TableRow = ({
       role="button"
       aria-expanded={isOpen}
       tabIndex={0}
-      style={{ cursor: 'pointer' }}
+      style={{
+        cursor: 'pointer',
+        border: isOpen ? '1px solid #E5E7EB' : 'none',
+        borderRadius: isOpen ? '1px' : 'none',
+        // backgroundColor: isOpen ? '#FBFCFD' : 'white',
+      }}
     >
       <Row key={id}>
         <Column span="8/12">
@@ -300,23 +305,21 @@ export const TableRow = ({
             {(status === FormStatus.IN_DEVELOPMENT ||
               status === FormStatus.PUBLISHED_BEING_CHANGED) && (
               <Box
-                marginRight={1}
+                // marginRight={1}
                 onClick={(e) => {
                   e.stopPropagation()
-                  goToForm()
                 }}
-                cursor="pointer"
-                onMouseOver={() => setIsPencilHovered(true)}
-                onMouseOut={() => setIsPencilHovered(false)}
               >
-                <Icon
+                <Button
                   icon="pencil"
-                  color={isPencilHovered ? 'blue300' : 'blue400'}
-                  type="filled"
+                  circle
+                  colorScheme="negative"
+                  inline
+                  onClick={goToForm}
                 />
               </Box>
             )}
-            <Box onClick={(e) => e.stopPropagation()}>
+            <Box marginRight={1} onClick={(e) => e.stopPropagation()}>
               <DropdownMenu
                 menuLabel={`${formatMessage(m.actions)} ${name}`}
                 disclosure={
@@ -337,16 +340,35 @@ export const TableRow = ({
       </Row>
 
       {isOpen && (
-        <Box paddingTop={2} paddingBottom={2}>
-          <Row>
-            <Column span="8/12">
-              <Text variant="medium">{slug}</Text>
-            </Column>
-            <Column span="4/12">
-              <Text variant="medium">ID: {id}</Text>
-            </Column>
-          </Row>
-        </Box>
+        <>
+          <Box paddingTop={2} paddingBottom={1} paddingLeft={1}>
+            <Row>
+              <Column span="12/12">
+                <Text variant="medium">
+                  <strong>Slug:</strong> {slug}
+                </Text>
+              </Column>
+            </Row>
+          </Box>
+          <Box paddingBottom={1} paddingLeft={1}>
+            <Row>
+              <Column span="12/12">
+                <Text variant="medium">
+                  <strong>URL:</strong> {url}
+                </Text>
+              </Column>
+            </Row>
+          </Box>
+          <Box paddingBottom={2} paddingLeft={1}>
+            <Row>
+              <Column span="12/12">
+                <Text variant="medium">
+                  <strong>ID:</strong> {id}
+                </Text>
+              </Column>
+            </Row>
+          </Box>
+        </>
       )}
 
       <Divider />
