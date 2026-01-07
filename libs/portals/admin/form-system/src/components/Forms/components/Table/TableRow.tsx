@@ -277,7 +277,6 @@ export const TableRow = ({
         cursor: 'pointer',
         border: isOpen ? '1px solid #E5E7EB' : 'none',
         borderRadius: isOpen ? '1px' : 'none',
-        // backgroundColor: isOpen ? '#FBFCFD' : 'white',
       }}
     >
       <Row key={id}>
@@ -305,7 +304,6 @@ export const TableRow = ({
             {(status === FormStatus.IN_DEVELOPMENT ||
               status === FormStatus.PUBLISHED_BEING_CHANGED) && (
               <Box
-                // marginRight={1}
                 onClick={(e) => {
                   e.stopPropagation()
                 }}
