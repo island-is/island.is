@@ -19,7 +19,6 @@ import {
   PageTitle,
   ProsecutorCaseInfo,
   SectionHeading,
-  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseState,
@@ -46,7 +45,6 @@ const HearingArrangements = () => {
   const router = useRouter()
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
-  const { user } = useContext(UserContext)
   const translatorInput = useDebouncedInput('translator')
   const { formatMessage } = useIntl()
   const {
