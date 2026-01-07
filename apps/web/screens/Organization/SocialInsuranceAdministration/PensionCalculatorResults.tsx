@@ -283,7 +283,7 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
   const { linkResolver } = useLinkResolver()
 
   const dateOfCalculations =
-    calculationInput.dateOfCalculations ?? dateOfCalculationsOptions[0].value
+    calculationInput.dateOfCalculations ?? dateOfCalculationsOptions?.[0]?.value
 
   const highlightedItems = calculation.highlightedItems ?? []
 
@@ -296,7 +296,8 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
   const title = formatMessage(translationStrings.mainTitle)
   const titlePostfix = (
     allCalculatorsOptions.find((o) => o.value === dateOfCalculations)?.label ??
-    dateOfCalculationsOptions[0].label
+    dateOfCalculationsOptions[0]?.label ??
+    ''
   ).toLowerCase()
 
   const calculationIsPresent =
@@ -311,8 +312,8 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
   const highlighted2025ItemIsPresent =
     highlightedItems2025.length > 0 &&
     is2025PreviewActive(customPageData) &&
-    calculationInput.dateOfCalculations &&
-    new Date(calculationInput.dateOfCalculations).getFullYear() >= 2024
+    dateOfCalculations &&
+    new Date(dateOfCalculations).getFullYear() >= 2024
 
   const isTurnedOff = customPageData?.configJson?.isTurnedOff ?? false
 
@@ -418,7 +419,7 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
                                   SocialInsurancePensionCalculationBasePensionType.Disability
                                   ? String(
                                       new Date(
-                                        calculationInput.dateOfCalculations ||
+                                        dateOfCalculations ||
                                           new Date().toISOString(),
                                       ).getFullYear(),
                                     )
