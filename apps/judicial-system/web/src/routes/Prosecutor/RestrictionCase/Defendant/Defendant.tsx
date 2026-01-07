@@ -149,7 +149,7 @@ export const Defendant = () => {
                   setClientPoliceNumbers={setClientPoliceNumbers}
                 />
               </Box>
-              {workingCase.defendants && (
+              {workingCase.defendants && workingCase.defendants.length > 0 && (
                 <Box component="section">
                   <SectionHeading
                     title={formatMessage(m.sections.accusedInfo.heading)}
