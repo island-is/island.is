@@ -1,6 +1,11 @@
 import { getValueViaPath } from '@island.is/application/core'
-import { Application, BasicChargeItem } from '@island.is/application/types'
+import {
+  Application,
+  BasicChargeItem,
+  ExtraData,
+} from '@island.is/application/types'
 import { CHARGE_ITEM_CODES, EstateTypes } from '../lib/constants'
+import { getEstateDataFromApplication, isEstateInfo } from '../lib/utils'
 
 export const getChargeItems = (
   application: Application,
@@ -16,4 +21,18 @@ export const getChargeItems = (
 
   // Default: undivided estate
   return [{ code: CHARGE_ITEM_CODES.UNDIVIDED_ESTATE }]
+}
+
+export const getExtraData = (application: Application): ExtraData[] => {
+  const data = getEstateDataFromApplication(application)
+  if (isEstateInfo(data)) {
+    return [
+      { name: 'caseNumber', value: data.estate.caseNumber ?? '' },
+      {
+        name: 'nationalIdOfDeceased',
+        value: data.estate.nationalIdOfDeceased ?? '',
+      },
+    ]
+  }
+  return []
 }
