@@ -28,8 +28,8 @@ type LanguageTogglerProps = {
   buttonColorScheme?: ButtonTypes['colorScheme']
   queryParams?: LayoutProps['languageToggleQueryParams']
   hrefOverride?: {
-    is: string
-    en: string
+    is?: string
+    en?: string
   }
 }
 
