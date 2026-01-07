@@ -1,5 +1,4 @@
 import {
-    buildDescriptionField,
     buildMultiField,
     buildSection,
     buildStaticTableField,
