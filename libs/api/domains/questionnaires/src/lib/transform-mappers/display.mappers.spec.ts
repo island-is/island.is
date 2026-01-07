@@ -7,6 +7,15 @@ import {
 } from '../../models/questionnaires.model'
 import type { QuestionnaireBody } from '@island.is/clients/lsh'
 import type { QuestionnaireDetailDto } from '@island.is/clients/health-directorate'
+import { createTestIntl } from '@island.is/cms-translations/test'
+
+const { formatMessage } = createTestIntl({
+  locale: 'is',
+  messages: {
+    'sp.health:yes': 'Já',
+    'sp.health:no': 'Nei',
+  },
+})
 
 describe('display mappers', () => {
   describe('LSH questionnaire mapping', () => {
@@ -235,7 +244,7 @@ describe('display mappers', () => {
         expiryDate,
       } as unknown as QuestionnaireDetailDto
 
-      const mapped = mapELQuestionnaire(elDetail, 'is')
+      const mapped = mapELQuestionnaire(elDetail, formatMessage)
 
       expect(mapped.baseInformation.id).toBe('el-q-1')
       expect(mapped.baseInformation.formId).toBe('el-q-1')
@@ -315,7 +324,7 @@ describe('display mappers', () => {
         expiryDate: null,
       } as unknown as QuestionnaireDetailDto
 
-      const mapped = mapELQuestionnaire(elDetail, 'is')
+      const mapped = mapELQuestionnaire(elDetail, formatMessage)
 
       const section = mapped.sections?.[0]
       const dependentQuestion = section?.questions?.find((q) => q.id === 'q2')

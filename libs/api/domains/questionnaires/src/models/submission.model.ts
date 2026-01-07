@@ -48,10 +48,10 @@ export const QuestionnaireSubmissionAnswer = createUnionType({
       if ('valueId' in value) {
         return [QuestionnaireSubmissionValues]
       }
-      if ('value' in value && typeof value.value === 'boolean') {
+      if ('answer' in value && typeof value.answer === 'boolean') {
         return QuestionnaireSubmissionBooleanAnswer
       }
-      if ('value' in value && typeof value.value === 'string') {
+      if ('answer' in value && typeof value.answer === 'string') {
         return QuestionnaireSubmissionStringAnswer
       }
     }

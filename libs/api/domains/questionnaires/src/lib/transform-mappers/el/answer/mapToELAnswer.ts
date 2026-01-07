@@ -71,7 +71,9 @@ export const mapToElAnswer = (
       ) {
         return {
           questionId,
-          answer: parseFloat(answerValues[0]) || 0,
+          answer: isNaN(parseFloat(answerValues[0]))
+            ? 0
+            : parseFloat(answerValues[0]),
         } as NumberReply
       }
 

@@ -349,13 +349,14 @@ export class QuestionnairesService {
       }
     } catch (e) {
       this.logger.warn('EL questionnaires fetch failed', e)
+      return null
     }
 
     let LSHquestionnaires: QuestionnairesList = { questionnaires: [] }
 
     try {
       const lshData: LSHQuestionnaireType[] | null =
-        await this.lshApi.getQuestionnaires(user, 'is')
+        await this.lshApi.getQuestionnaires(user, locale || 'is')
       LSHquestionnaires = {
         questionnaires:
           (lshData ?? [])
@@ -380,6 +381,7 @@ export class QuestionnairesService {
       }
     } catch (e) {
       this.logger.warn('LSH questionnaires fetch failed', e)
+      return null
     }
 
     const allLists = [ELquestionnaires, LSHquestionnaires]

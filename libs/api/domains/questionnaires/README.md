@@ -61,11 +61,56 @@ See `src/lib/transform-mappers/el/README.md` for more detail.
 
 ## Using the models in resolvers
 
+### Fetching questionnaires
+
 Resolvers typically:
 
 1. Call the appropriate client (`LshClientService` or `HealthDirectorateHealthService`).
 2. Pass the DTO into the correct mapper (`mapLshQuestionnaire` or `mapELQuestionnaire`).
 3. Return the resulting `Questionnaire` object from GraphQL.
+
+### Submitting questionnaire answers
+
+The answer submission flow follows these steps:
+
+**Entry point:** `submitQuestionnaire` mutation in `QuestionnairesResolver`
+
+- Accepts `QuestionnaireInput` (contains user answers from the portal)
+- Routes to `QuestionnairesService.submitQuestionnaire()`
+
+**Service layer flow:**
+
+1. Determine the organization (`LSH` or `EL`) from the input
+2. Use the appropriate reverse mapper to convert GraphQL DTOs to provider payloads:
+   - **For LSH:** `mapToLshAnswer(input)` → `AnsweredQuestionnaireBody`
+     - Located in `src/lib/transform-mappers/lsh/answer/mapToLSHAnswer.ts`
+     - Converts `QuestionnaireInput` into LSH's expected format
+   - **For EL:** `mapToElAnswer(input)` → `SubmitQuestionnaireDto`
+     - Located in `src/lib/transform-mappers/el/answer/mapToELAnswer.ts`
+     - Converts `QuestionnaireInput` into Health Directorate's expected format
+3. Call the appropriate client service with the mapped payload:
+   - **LSH:** `LshClientService.postAnsweredQuestionnaire(user, locale, id, payload)`
+   - **EL:** `HealthDirectorateHealthService.submitQuestionnaire(user, locale, id, payload)`
+4. Return a `QuestionnairesResponse` with `success` and `message` fields
+
+**End-to-end flow:**
+
+```
+User answers (portal)
+  → GraphQL mutation (submitQuestionnaire)
+    → QuestionnairesService.submitQuestionnaire()
+      → mapToLshAnswer() OR mapToElAnswer()
+        → LshClientService OR HealthDirectorateHealthService
+          → External provider API
+            → Response
+              → QuestionnairesResponse (success/failure)
+```
+
+**Key points:**
+
+- Always use the reverse mappers (`mapToLshAnswer` or `mapToElAnswer`) to ensure proper data transformation
+- The mappers handle converting internal `QuestionnaireEntryInput` structures to provider-specific answer formats
+- Error handling is built into the service layer and returns appropriate success/failure responses
 
 ## Running unit tests
 

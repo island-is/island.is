@@ -325,9 +325,7 @@ export class HealthDirectorateHealthService {
     submissionId: string,
   ): Promise<QuestionnaireSubmissionDetailDto | null> {
     try {
-      this.logger.debug(
-        `Fetching answered questionnaire - id: ${id}, submissionId: ${submissionId}`,
-      )
+      this.logger.debug(`Fetching answered questionnaire`, { id, submissionId })
 
       const questionnaires = await withAuthContext(auth, () =>
         data(
@@ -341,12 +339,10 @@ export class HealthDirectorateHealthService {
       )
 
       if (!questionnaires) {
-        this.logger.debug(
-          'No answered questionnaire data returned for id: ' +
-            id +
-            ' and submissionId: ' +
-            submissionId,
-        )
+        this.logger.debug('No answered questionnaire data returned', {
+          id,
+          submissionId,
+        })
         return null
       }
 
@@ -357,12 +353,13 @@ export class HealthDirectorateHealthService {
         )
       }
 
-      return JSON.parse(JSON.stringify(questionnaires))
+      return questionnaires
     } catch (error) {
-      this.logger.error(
-        `Error fetching questionnaire answered data for id: ${id}, submissionId: ${submissionId}`,
+      this.logger.error(`Error fetching questionnaire answered data`, {
+        id,
+        submissionId,
         error,
-      )
+      })
       return null
     }
   }
