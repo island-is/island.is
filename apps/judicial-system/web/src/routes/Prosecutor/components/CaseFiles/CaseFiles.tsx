@@ -191,8 +191,6 @@ export const CaseFiles = () => {
     removeUploadFile(file)
   }
 
-  console.log(caseFilesComments)
-
   return (
     <PageLayout
       workingCase={workingCase}
