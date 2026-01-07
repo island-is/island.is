@@ -138,6 +138,7 @@ export enum Features {
 
   isPortalAirDiscountPageDisabled = 'isPortalAirDiscountPageDisabled',
 
+  isMileCarEnabled = 'isMileCarEnabled',
   isHHCourseApplicationEnabled = 'isHHCourseApplicationEnabled',
 }
 

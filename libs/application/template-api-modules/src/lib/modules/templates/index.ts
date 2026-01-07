@@ -1,3 +1,5 @@
+import { MileCarModule } from './transport-authority/mile-car/mile-car.module'
+import { MileCarService } from './transport-authority/mile-car/mile-car.service'
 import { CoursesModule } from './hh/courses/courses.module'
 import { CoursesService } from './hh/courses/courses.service'
 import { RegistrationOfNewPropertyNumbersModule } from './hms/registration-of-new-property-numbers/registration-of-new-property-numbers.module'
@@ -269,6 +271,7 @@ export const modules = [
   FireCompensationAppraisalModule,
   ExemptionForTransportationModule,
   RegistrationOfNewPropertyNumbersModule,
+  MileCarModule,
   CoursesModule,
 ]
 
@@ -361,5 +364,6 @@ export const services = [
   FireCompensationAppraisalService,
   ExemptionForTransportationService,
   RegistrationOfNewPropertyNumbersService,
+  MileCarService,
   CoursesService,
 ]
