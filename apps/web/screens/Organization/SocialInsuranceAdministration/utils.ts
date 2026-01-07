@@ -99,8 +99,9 @@ export type DateOfCalculationOptionsMap = Record<string, Option<string>[]>
 export const getDateOfCalculationsOptionsMap = (
   pageData?: CustomPage | null,
 ): DateOfCalculationOptionsMap => {
-  const optionsMap: DateOfCalculationOptionsMap =
-    pageData?.configJson?.dateOfCalculationsOptionsMap ?? {}
+  const optionsMap: DateOfCalculationOptionsMap = {
+    ...(pageData?.configJson?.dateOfCalculationsOptionsMap ?? {}),
+  }
 
   for (const key in optionsMap) {
     optionsMap[key] = [...(optionsMap[key] ?? [])]
