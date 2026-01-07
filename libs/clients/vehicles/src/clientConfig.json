@@ -2,7 +2,7 @@
   "openapi": "3.0.4",
   "info": {
     "title": "SamgÃ¶ngustofa",
-    "description": "Leitar eftir Ã¶kutÃ¦kjum Ãºt frÃ¡ fastanÃºmeri, skrÃ¡ningarnÃºmeri eÃ°a verksmiÃ°junÃºmeri - Release-66 : 20250922.2",
+    "description": "Leitar eftir Ã¶kutÃ¦kjum Ãºt frÃ¡ fastanÃºmeri, skrÃ¡ningarnÃºmeri eÃ°a verksmiÃ°junÃºmeri - Release-69 : 20251230.1",
     "contact": {
       "name": "Samgongustofa",
       "url": "https://www.samgongustofa.is/",
@@ -1832,6 +1832,10 @@
             "type": "boolean",
             "nullable": true
           },
+          "vehicleHasMilesOdometer": {
+            "type": "boolean",
+            "nullable": true
+          },
           "technical": {
             "$ref": "#/components/schemas/BasicVehicleInformationTechnicalDto"
           },
@@ -3214,6 +3218,10 @@
             "nullable": true
           },
           "availableMileageRegistration": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "vehicleHasMilesOdometer": {
             "type": "boolean",
             "nullable": true
           }
