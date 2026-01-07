@@ -9,7 +9,7 @@ import {
   QueryOptions,
 } from 'contentful-management'
 import { ContentfulFetchResponse } from './managementClient.types'
-import { ENVIRONMENT, SPACE_ID } from '../../constants'
+import { SPACE_ID, ENVIRONMENT } from '../../../constants'
 
 @Injectable()
 export class ManagementClientService {
@@ -22,8 +22,8 @@ export class ManagementClientService {
     query?: QueryOptions,
   ): Promise<
     ContentfulFetchResponse<Collection<Entry, EntryProps<KeyValueMap>>>
-  > =>
-    this.client
+  > => {
+    return this.client
       .getSpace(SPACE_ID)
       .then((space) => space.getEnvironment(ENVIRONMENT))
       .then((environment) => environment.getEntries(query))
@@ -32,6 +32,22 @@ export class ManagementClientService {
         ok: false as const,
         error: e,
       }))
+  }
+
+  createEntry = async (
+    contentTypeId: string,
+    data: Omit<EntryProps, 'sys'>,
+  ): Promise<ContentfulFetchResponse<Entry>> => {
+    return this.client
+      .getSpace(SPACE_ID)
+      .then((space) => space.getEnvironment(ENVIRONMENT))
+      .then((env) => env.createEntry(contentTypeId, data))
+      .then((entry) => ({ ok: true as const, data: entry }))
+      .catch((e) => ({
+        ok: false as const,
+        error: e,
+      }))
+  }
 
   getEntry = async (entryId: string): Promise<ContentfulFetchResponse<Entry>> =>
     this.client

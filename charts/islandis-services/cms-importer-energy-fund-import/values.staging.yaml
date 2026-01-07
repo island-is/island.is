@@ -16,7 +16,7 @@ global:
     env:
       AWS_REGION: 'eu-west-1'
       NPM_CONFIG_UPDATE_NOTIFIER: 'false'
-name: 'cms-importer-worker'
+name: 'cms-importer-energy-fund-import'
 args:
   - 'main.cjs'
 command:
