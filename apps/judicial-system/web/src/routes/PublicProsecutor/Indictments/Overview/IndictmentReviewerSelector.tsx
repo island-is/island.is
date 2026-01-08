@@ -77,7 +77,7 @@ export const IndictmentReviewerSelector = ({
         <Select
           name="reviewer"
           dataTestId="select-reviewer"
-          label={'Veldu saksóknara'}
+          label="Veldu saksóknara"
           placeholder={fm(strings.reviewerPlaceholder)}
           value={
             selectedIndictmentReviewer
