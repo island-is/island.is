@@ -22,7 +22,6 @@ import {
   InputController,
   SelectController,
 } from '@island.is/shared/form-fields'
-import { sortAlpha } from '@island.is/shared/utils'
 import { getThemeConfig, MarkdownText } from '@island.is/web/components'
 import {
   CustomPageUniqueIdentifier,
@@ -58,7 +57,6 @@ import {
   convertToQueryParams,
   extractSlug,
   getDateOfCalculationsOptions,
-  NEW_SYSTEM_TAKES_PLACE_DATE,
 } from './utils'
 import * as styles from './PensionCalculator.css'
 
