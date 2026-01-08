@@ -10,7 +10,7 @@ import { useIntl } from 'react-intl'
 import { SingleValue } from 'react-select'
 import { InputMask } from '@react-input/mask'
 
-import { Box, Input, Select } from '@island.is/island-ui/core'
+import { Input, Select } from '@island.is/island-ui/core'
 import { PHONE_NUMBER } from '@island.is/judicial-system/consts'
 import { formatPhoneNumber } from '@island.is/judicial-system/formatters'
 import { type Lawyer } from '@island.is/judicial-system/types'
