@@ -1,4 +1,3 @@
-import { NationalRegistryXRoadService } from '@island.is/api/domains/national-registry-x-road'
 import { getSlugFromType } from '@island.is/application/core'
 import {
   errorMessages,
@@ -13,6 +12,7 @@ import {
 import {
   ApplicationTypes,
   ApplicationWithAttachments,
+  ChildrenCustodyInformationParameters,
 } from '@island.is/application/types'
 import {
   FriggClientService,
@@ -34,12 +34,13 @@ import {
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { getConfigValue } from '../../shared/shared.utils'
 import { transformApplicationToNewPrimarySchoolDTO } from './new-primary-school.utils'
+import { NationalRegistryV3Service } from '../../shared/api/national-registry-v3/national-registry-v3.service'
 
 @Injectable()
 export class NewPrimarySchoolService extends BaseTemplateApiService {
   constructor(
     private readonly friggClientService: FriggClientService,
-    private readonly nationalRegistryService: NationalRegistryXRoadService,
+    private readonly nationalRegistryV3Service: NationalRegistryV3Service,
     private readonly s3Service: S3Service,
     private readonly notificationsService: NotificationsService,
     private readonly configService: ConfigService<SharedModuleConfig>,
@@ -64,7 +65,10 @@ export class NewPrimarySchoolService extends BaseTemplateApiService {
     const tenthGradeYear = currentYear - TENTH_GRADE_AGE
 
     const children =
-      await this.nationalRegistryService.getChildrenCustodyInformation(auth)
+      await this.nationalRegistryV3Service.childrenCustodyInformation({
+        auth,
+        params: undefined,
+      } as TemplateApiModuleActionProps<ChildrenCustodyInformationParameters>)
 
     // Check if the child is at primary school age and lives with the applicant
     const filteredChildren = children.filter((child) => {
