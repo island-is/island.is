@@ -46,35 +46,15 @@ interface DefendantInfoProps {
   displayOpenCaseReference?: boolean
 }
 
-export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
-  const {
-    defendant,
-    workingCaseId,
-    courtId,
-    displayAppealExpirationInfo,
-    displayVerdictViewDate,
-    displaySentToPrisonAdminDate = true,
-    displayOpenCaseReference,
-    defender,
-  } = props
-  const { formatMessage } = useIntl()
-  const hasDefender = defendant.defenderName || defender?.name
-  const defenderLabel =
-    defender?.sessionArrangement ===
-    SessionArrangements.ALL_PRESENT_SPOKESPERSON
-      ? formatMessage(strings.spokesperson)
-      : formatMessage(strings.defender)
-  const defenderName = defendant.defenderName || defender?.name
-  const defenderEmail = defendant.defenderEmail || defender?.email
-  const defenderPhoneNumber =
-    defendant.defenderPhoneNumber || defender?.phoneNumber
-
-  const appealExpirationInfo = getAppealExpirationInfo({
-    verdictAppealDeadline: defendant.verdictAppealDeadline,
-    isVerdictAppealDeadlineExpired: defendant.isVerdictAppealDeadlineExpired,
-    serviceRequirement: defendant.verdict?.serviceRequirement,
-  })
-
+const ConnectedCasesInfo = ({
+  defendant,
+  workingCaseId,
+  courtId,
+}: {
+  defendant: Defendant
+  workingCaseId: string
+  courtId?: string
+}) => {
   const { data: connectedCasesData } = useConnectedCasesQuery({
     variables: {
       input: {
@@ -82,7 +62,6 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
       },
     },
   })
-
   const connectedCases = connectedCasesData?.connectedCases
     ?.filter((connectedCase) =>
       connectedCase?.defendants?.some(
@@ -113,6 +92,61 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
         </Text>
       )
     })
+
+  return (
+    connectedCases &&
+    connectedCases.length > 0 && (
+      <Box display="flex" flexWrap="wrap">
+        <Box
+          display="inlineFlex"
+          columnGap={1}
+          alignItems="center"
+          className={styles.connectedCasesContainer}
+        >
+          <Icon icon="warning" size="medium" color="blue400" type="outline" />
+          <Text fontWeight="semiBold">{'Opin mál gegn ákærða: '}</Text>
+        </Box>
+        {connectedCases.map((connectedCase, i) => (
+          <Box component="span" key={i}>
+            {connectedCase}
+            {i < connectedCases.length - 1 && (
+              <Text as="span" whiteSpace="pre">{`, `}</Text>
+            )}
+          </Box>
+        ))}
+      </Box>
+    )
+  )
+}
+
+export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
+  const {
+    defendant,
+    workingCaseId,
+    courtId,
+    displayAppealExpirationInfo,
+    displayVerdictViewDate,
+    displaySentToPrisonAdminDate = true,
+    displayOpenCaseReference,
+    defender,
+  } = props
+  const { formatMessage } = useIntl()
+  const hasDefender = defendant.defenderName || defender?.name
+  const defenderLabel =
+    defender?.sessionArrangement ===
+    SessionArrangements.ALL_PRESENT_SPOKESPERSON
+      ? formatMessage(strings.spokesperson)
+      : formatMessage(strings.defender)
+  const defenderName = defendant.defenderName || defender?.name
+  const defenderEmail = defendant.defenderEmail || defender?.email
+  const defenderPhoneNumber =
+    defendant.defenderPhoneNumber || defender?.phoneNumber
+
+  const appealExpirationInfo = getAppealExpirationInfo({
+    verdictAppealDeadline: defendant.verdictAppealDeadline,
+    isVerdictAppealDeadlineExpired: defendant.isVerdictAppealDeadlineExpired,
+    serviceRequirement: defendant.verdict?.serviceRequirement,
+  })
 
   return (
     <Box className={grid({ gap: 1 })}>
@@ -178,26 +212,12 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
           })}
         </Text>
       )}
-      {displayOpenCaseReference && connectedCases && connectedCases.length > 0 && (
-        <Box display="flex" flexWrap="wrap">
-          <Box
-            display="inlineFlex"
-            columnGap={1}
-            alignItems="center"
-            className={styles.connectedCasesContainer}
-          >
-            <Icon icon="warning" size="medium" color="blue400" type="outline" />
-            <Text fontWeight="semiBold">{'Opin mál gegn ákærða: '}</Text>
-          </Box>
-          {connectedCases.map((connectedCase, i) => (
-            <Box component="span" key={i}>
-              {connectedCase}
-              {i < connectedCases.length - 1 && (
-                <Text as="span" whiteSpace="pre">{`, `}</Text>
-              )}
-            </Box>
-          ))}
-        </Box>
+      {displayOpenCaseReference && (
+        <ConnectedCasesInfo
+          defendant={defendant}
+          workingCaseId={workingCaseId}
+          courtId={courtId}
+        />
       )}
     </Box>
   )
