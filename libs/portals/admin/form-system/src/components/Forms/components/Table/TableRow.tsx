@@ -296,13 +296,15 @@ export const TableRow = ({
           <ColumnText text={name ? name : ''} />
         </Column>
         <Column span="2/12">
-          <ColumnText
-            text={formatDate(lastModified ? lastModified : new Date(), {
-              day: 'numeric',
-              month: 'numeric',
-              year: 'numeric',
-            })}
-          />
+          <Box display="flex" justifyContent="flexEnd">
+            <Text variant="medium">
+              {formatDate(lastModified ? lastModified : new Date(), {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+              })}
+            </Text>
+          </Box>
         </Column>
 
         <Column span="2/12">

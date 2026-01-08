@@ -21,9 +21,11 @@ export const TableHeader = () => {
           </Box>
         </Column>
         <Column span="2/12">
-          <Text variant="medium" fontWeight="semiBold">
-            {formatMessage(m.lastModified)}
-          </Text>
+          <Box display="flex" justifyContent="flexEnd">
+            <Text variant="medium" fontWeight="semiBold">
+              {formatMessage(m.lastModified)}
+            </Text>
+          </Box>
         </Column>
 
         <Column span="2/12">
