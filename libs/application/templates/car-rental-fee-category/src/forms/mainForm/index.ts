@@ -8,12 +8,14 @@ import { tableViewSelectionSection } from './tableViewSelection'
 import { verifySection } from './verify'
 import { endOfMonthCheck } from './endOfMonthCheck'
 import { areLessThan7DaysLeftOfMonth } from '../../utils/dayRateUtils'
+import { carsChangesCountSection } from './carsChangesCount'
 
 const applicationChildren = [
   overviewStatistics,
   categorySelection,
   singleOrMultiSelection,
   multiUploadSection,
+  carsChangesCountSection,
   tableViewSelectionSection,
   verifySection,
 ]
