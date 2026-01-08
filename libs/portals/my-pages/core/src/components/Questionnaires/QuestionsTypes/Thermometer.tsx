@@ -123,7 +123,7 @@ export const Thermometer: FC<ThermometerProps> = ({
     // Safety checks to prevent infinite loops
     if (isNaN(minNum) || isNaN(maxNum) || stepNum <= 0 || minNum > maxNum) {
       console.warn('Invalid thermometer values:', { min, max, step })
-      return ['0', '100'] // Fallback values
+      return []
     }
 
     const allValues = []
@@ -232,18 +232,7 @@ export const Thermometer: FC<ThermometerProps> = ({
   }
 
   return (
-    <Box
-      role="slider"
-      aria-labelledby={`${label}-label`}
-      aria-valuemin={parseFloat(min)}
-      aria-valuemax={parseFloat(max)}
-      aria-valuenow={
-        value && typeof value === 'string' ? parseFloat(value) : undefined
-      }
-      aria-disabled={disabled}
-      tabIndex={disabled ? -1 : 0}
-      onKeyDown={handleKeyDown}
-    >
+    <Box onKeyDown={handleKeyDown}>
       {label && (
         <Box marginBottom={3}>
           <Text variant="h5" id={`${label}-label`}>

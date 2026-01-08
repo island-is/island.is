@@ -51,9 +51,18 @@ export const Scale: FC<ScaleProps> = ({
       values.push(i.toString())
       if (i + s > maxNum) break // prevent floating point overflow
     }
-    // If we have more than 20 values, show only every 10th
+    // If we have more than 20 values, sample by index
     if (values.length > 20) {
-      return values.filter((_, index) => index % 10 === 0)
+      const interval = Math.ceil(values.length / 20)
+      const sampledValues = values.filter((_, index) => index % interval === 0)
+
+      // Ensure the last value is always included
+      const lastValue = values[values.length - 1]
+      if (sampledValues[sampledValues.length - 1] !== lastValue) {
+        sampledValues.push(lastValue)
+      }
+
+      return sampledValues
     }
     return values
   }, [minNum, maxNum, step, min, max])

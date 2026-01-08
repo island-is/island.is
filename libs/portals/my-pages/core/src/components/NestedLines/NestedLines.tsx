@@ -18,7 +18,6 @@ const sanitizeConfig: sanitizeHtml.IOptions = {
   allowedTags: [
     'br',
     'strong',
-    'a',
     'p',
     'ul',
     'ol',

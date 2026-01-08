@@ -33,8 +33,6 @@ const checkIsSelected = (
 
   for (const item of value) {
     if (item.value === expectedValue) return true
-    if (typeof value === 'string') return value === expectedValue
-    if (typeof value === 'number') return value === expectedValue
   }
 
   return false
@@ -255,9 +253,16 @@ export const evaluateExpression = (expression: string): number => {
 
         const leftValue = parseExpression(left)
         const rightValue = parseExpression(right)
-        return operator === '*'
-          ? leftValue * rightValue
-          : leftValue / rightValue
+
+        if (operator === '/') {
+          if (rightValue === 0) {
+            console.error('Division by zero')
+            return 0
+          }
+          return leftValue / rightValue
+        }
+
+        return leftValue * rightValue
       }
     }
 
