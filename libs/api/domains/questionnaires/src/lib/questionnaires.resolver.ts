@@ -5,6 +5,7 @@ import {
   Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
+import { ApiScope } from '@island.is/auth/scopes'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import {
@@ -13,7 +14,7 @@ import {
   Features,
 } from '@island.is/nest/feature-flags'
 import type { Locale } from '@island.is/shared/types'
-import { Inject, Scope, UseGuards } from '@nestjs/common'
+import { Inject, UseGuards } from '@nestjs/common'
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { AnsweredQuestionnaires } from '../models/answeredQuestion.model'
 import { Questionnaire } from '../models/questionnaire.model'
@@ -23,9 +24,8 @@ import {
   QuestionnaireAnsweredInput,
   QuestionnaireInput,
 } from './dto/questionnaire.input'
-import { QuestionnairesService } from './questionnaires.service'
 import { QuestionnairesResponse } from './dto/response.dto'
-import { ApiScope } from '@island.is/auth/scopes'
+import { QuestionnairesService } from './questionnaires.service'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Resolver()

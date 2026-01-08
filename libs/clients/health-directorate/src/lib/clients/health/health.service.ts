@@ -288,7 +288,7 @@ export class HealthDirectorateHealthService {
     )
 
     if (!questionnaires) {
-      this.logger.debug('No questionnaires data returned')
+      this.logger.debug(`No questionnaires data returned for locale ${locale}`)
       return null
     }
 
