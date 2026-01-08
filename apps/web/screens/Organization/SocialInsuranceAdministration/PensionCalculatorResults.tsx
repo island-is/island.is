@@ -377,12 +377,6 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
                               customPageData={customPageData}
                               highlightedItems={highlightedItems}
                               topHeadingLevel={2}
-                              topHeadingText={String(
-                                new Date(
-                                  dateOfCalculations ||
-                                    new Date().toISOString(),
-                                ).getFullYear(),
-                              )}
                             />
                           </Box>
                         </Stack>
@@ -458,12 +452,6 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
             <HighlightedItems
               customPageData={customPageData}
               highlightedItems={highlightedItems}
-              topHeadingText={String(
-                new Date(
-                  calculationInput.dateOfCalculations ||
-                    new Date().toISOString(),
-                ).getFullYear(),
-              )}
               topHeadingLevel={2}
             />
           )}
