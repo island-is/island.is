@@ -150,7 +150,7 @@ export const TableRow = ({
           })
           setFormsState((prevForms) => {
             const returnedForm = data.updateFormSystemFormStatus.form
-            const publishedSlug = returnedForm?.slug.replace(
+            const publishedSlug = returnedForm?.slug?.replace(
               /-archived-\d+$/,
               '',
             )
