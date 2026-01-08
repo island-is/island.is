@@ -1,4 +1,4 @@
-import { FC, useCallback, useContext, useState } from 'react'
+import { FC, Fragment, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -204,7 +204,7 @@ const IndictmentOverview: FC = () => {
           )}
           {isDefenceUser(user) &&
             workingCase.defendants?.map((defendant) => (
-              <>
+              <Fragment key={defendant.id}>
                 {defendant.alternativeServiceDescription && (
                   <AlternativeServiceAnnouncement
                     key={defendant.id}
@@ -226,7 +226,7 @@ const IndictmentOverview: FC = () => {
                       />
                     </Box>
                   ))}
-              </>
+              </Fragment>
             ))}
           {caseHasBeenReceivedByCourt &&
             workingCase.court &&
@@ -285,7 +285,7 @@ const IndictmentOverview: FC = () => {
               <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
             )} */}
               {hasMergeCases && (
-                <Accordion>
+                <Accordion dividerOnBottom={false} dividerOnTop={false}>
                   {workingCase.mergedCases?.map((mergedCase) => (
                     <Box key={mergedCase.id}>
                       <ConnectedCaseFilesAccordionItem

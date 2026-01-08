@@ -119,6 +119,8 @@ export const attributes: (keyof Case)[] = [
   'hasCivilClaims',
   'isCompletedWithoutRuling',
   'isRegisteredInPrisonSystem',
+  'rulingModifiedHistory',
+  'withCourtSessions',
 ]
 
 export interface LimitedAccessUpdateCase
@@ -307,6 +309,7 @@ export const include: Includeable[] = [
         CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
         CaseFileCategory.CIVIL_CLAIM,
         CaseFileCategory.SENT_TO_PRISON_ADMIN_FILE,
+        CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
       ],
     },
     separate: true,
@@ -371,6 +374,7 @@ export const include: Includeable[] = [
               CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
               CaseFileCategory.DEFENDANT_CASE_FILE,
               CaseFileCategory.CIVIL_CLAIM,
+              CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
             ],
           },
         },
@@ -434,6 +438,10 @@ export const include: Includeable[] = [
     required: false,
     order: [['created', 'ASC']],
     separate: true,
+  },
+  {
+    model: Case,
+    as: 'splitCase',
   },
 ]
 

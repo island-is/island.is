@@ -30,12 +30,12 @@ import { ChildrenApi, SchoolsApi } from '../dataProviders'
 import {
   hasForeignLanguages,
   hasOtherPayer,
-  needsOtherGuardianApproval,
-  needsPayerApproval,
-  shouldShowExpectedEndDate,
   hasSpecialEducationSubType,
   isWelfareContactSelected,
+  needsOtherGuardianApproval,
+  needsPayerApproval,
   shouldShowAlternativeSpecialEducationDepartment,
+  shouldShowExpectedEndDate,
   showCaseManagerFields,
 } from '../utils/conditionUtils'
 import {
@@ -57,8 +57,10 @@ import { dataSchema } from './dataSchema'
 import {
   assigneeMessages,
   historyMessages,
-  newPrimarySchoolMessages,
+  overviewMessages,
   pendingActionMessages,
+  prerequisitesMessages,
+  sharedMessages,
   statesMessages,
 } from './messages'
 
@@ -70,7 +72,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
   type: ApplicationTypes.NEW_PRIMARY_SCHOOL,
   name: determineNameFromApplicationAnswers,
   codeOwner: CodeOwners.Deloitte,
-  institution: newPrimarySchoolMessages.shared.institution,
+  institution: sharedMessages.institution,
   translationNamespaces: ApplicationConfigurations.NewPrimarySchool.translation,
   dataSchema,
   allowedDelegations: [
@@ -117,7 +119,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: newPrimarySchoolMessages.pre.startApplication,
+                  name: prerequisitesMessages.children.startApplication,
                   type: 'primary',
                 },
               ],
@@ -172,7 +174,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: newPrimarySchoolMessages.overview.submitButton,
+                  name: overviewMessages.submitButton,
                   type: 'primary',
                 },
               ],

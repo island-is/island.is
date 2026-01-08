@@ -80,10 +80,6 @@ export const UploadCarCategoryFile = ({
       const vehicleEntry = currentRates?.find(
         (rate) => rate.permno === vehicle.permno,
       )
-      // Cannot change rate category of a car that isnt in the response from
-      if (!vehicleEntry) {
-        return acc
-      }
 
       const activeDayRate = vehicleEntry?.dayRateEntries?.find((entry) =>
         isDayRateEntryActive(entry, currentDate),
@@ -135,7 +131,7 @@ export const UploadCarCategoryFile = ({
       return
     }
 
-    setValue('dataToChange', dataToChange)
+    setValue('carsToChange', dataToChange)
   }
 
   const handleOnInputFileUploadError = (files: FileRejection[]) => {

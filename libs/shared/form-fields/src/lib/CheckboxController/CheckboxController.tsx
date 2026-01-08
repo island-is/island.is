@@ -35,6 +35,14 @@ interface CheckboxControllerProps {
   backgroundColor?: InputBackgroundColor
   onSelect?: (s: string[]) => void
   clearOnChange?: string[]
+  clearOnChangeDefaultValue?:
+    | string
+    | string[]
+    | boolean
+    | boolean[]
+    | number
+    | number[]
+    | undefined
   setOnChange?: // eslint-disable-next-line @typescript-eslint/no-explicit-any
   | { key: string; value: any }[]
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -58,6 +66,7 @@ export const CheckboxController: FC<
   onSelect = () => undefined,
   clearOnChange,
   setOnChange,
+  clearOnChangeDefaultValue,
 }) => {
   const { clearErrors, setValue } = useFormContext()
 
@@ -106,7 +115,11 @@ export const CheckboxController: FC<
                   setValue(id, newChoices)
                   onSelect(newChoices)
                   if (clearOnChange) {
-                    clearInputsOnChange(clearOnChange, setValue)
+                    clearInputsOnChange(
+                      clearOnChange,
+                      setValue,
+                      clearOnChangeDefaultValue,
+                    )
                   }
                   if (setOnChange) {
                     setInputsOnChange(

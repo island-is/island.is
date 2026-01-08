@@ -82,6 +82,7 @@ const extractCommonFields = (
     marginBottom,
     marginTop,
     clearOnChange,
+    clearOnChangeDefaultValue,
     setOnChange,
   } = data
 
@@ -99,6 +100,7 @@ const extractCommonFields = (
     marginBottom,
     marginTop,
     clearOnChange,
+    clearOnChangeDefaultValue,
     setOnChange,
   }
 }
@@ -114,6 +116,7 @@ export const buildCheckboxField = (
     backgroundColor = 'blue',
     spacing,
     clearOnChange,
+    clearOnChangeDefaultValue,
   } = data
   return {
     ...extractCommonFields(data),
@@ -125,6 +128,7 @@ export const buildCheckboxField = (
     required,
     spacing,
     clearOnChange,
+    clearOnChangeDefaultValue,
     type: FieldTypes.CHECKBOX,
     component: FieldComponents.CHECKBOX,
   }
@@ -698,6 +702,7 @@ export const buildAlertMessageField = (
     links,
     shouldBlockInSetBeforeSubmitCallback,
     allowMultipleSetBeforeSubmitCallbacks,
+    doesNotRequireAnswer: data.doesNotRequireAnswer ?? true,
   }
 }
 
@@ -778,6 +783,7 @@ export const buildImageField = (
     imagePosition,
     type: FieldTypes.IMAGE,
     component: FieldComponents.IMAGE,
+    doesNotRequireAnswer: data.doesNotRequireAnswer ?? true,
   }
 }
 
@@ -835,6 +841,7 @@ export const buildHiddenInputWithWatchedValue = (
     watchValue: data.watchValue,
     title: '',
     children: undefined,
+    doesNotRequireAnswer: data.doesNotRequireAnswer ?? true,
   }
 }
 
@@ -860,6 +867,7 @@ export const buildHiddenInput = (
     children: undefined,
     defaultValue: data.defaultValue,
     dontDefaultToEmptyString: data.dontDefaultToEmptyString,
+    doesNotRequireAnswer: data.doesNotRequireAnswer ?? true,
   }
 }
 

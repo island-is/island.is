@@ -5,7 +5,10 @@ import {
   YES,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import { newPrimarySchoolMessages } from '../../../../lib/messages'
+import {
+  differentNeedsMessages,
+  sharedMessages,
+} from '../../../../lib/messages'
 import { hasSpecialEducationWelfareContact } from '../../../../utils/conditionUtils'
 import { CaseWorkerInputTypeEnum } from '../../../../utils/constants'
 import {
@@ -17,19 +20,18 @@ import {
 export const welfareContact = [
   buildRadioField({
     id: 'specialEducationSupport.hasWelfareContact',
-    title:
-      newPrimarySchoolMessages.differentNeeds.specialEducationHasWelfareContact,
+    title: differentNeedsMessages.specialEducationSupport.hasWelfareContact,
     description: getWelfareContactDescription,
     width: 'half',
     required: true,
     options: [
       {
-        label: newPrimarySchoolMessages.shared.yes,
+        label: sharedMessages.yes,
         dataTestId: 'has-welfare-contact',
         value: YES,
       },
       {
-        label: newPrimarySchoolMessages.shared.no,
+        label: sharedMessages.no,
         dataTestId: 'no-has-welfare-contact',
         value: NO,
       },
@@ -42,7 +44,7 @@ export const welfareContact = [
   }),
   buildTextField({
     id: 'specialEducationSupport.welfareContact.name',
-    title: newPrimarySchoolMessages.differentNeeds.welfareContactName,
+    title: differentNeedsMessages.support.welfareContactName,
     width: 'half',
     required: true,
     condition: hasSpecialEducationWelfareContact,
@@ -54,7 +56,7 @@ export const welfareContact = [
   }),
   buildTextField({
     id: 'specialEducationSupport.welfareContact.email',
-    title: newPrimarySchoolMessages.differentNeeds.welfareContactEmail,
+    title: differentNeedsMessages.support.welfareContactEmail,
     width: 'half',
     required: true,
     condition: hasSpecialEducationWelfareContact,

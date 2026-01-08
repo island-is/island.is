@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { ApplicationTypes } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { VehicleSearchApi } from '@island.is/clients/vehicles'
@@ -13,12 +13,14 @@ import {
   RateCategory,
 } from '@island.is/application/templates/car-rental-fee-category'
 import { TemplateApiError } from '@island.is/nest/problem'
+import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 @Injectable()
 export class CarRentalFeeCategoryService extends BaseTemplateApiService {
   constructor(
     private readonly vehiclesApi: VehicleSearchApi,
     private readonly rentalDayRateClient: RskRentalDayRateClient,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {
     super(ApplicationTypes.CAR_RENTAL_FEE_CATEGORY)
   }
@@ -66,9 +68,18 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
   async getCurrentVehiclesRateCategory({
     auth,
   }: TemplateApiModuleActionProps): Promise<Array<EntryModel>> {
-    return await this.rentalsApiWithAuth(auth).apiDayRateEntriesEntityIdGet({
-      entityId: auth.nationalId,
-    })
+    try {
+      const resp = await this.rentalsApiWithAuth(
+        auth,
+      ).apiDayRateEntriesEntityIdGet({
+        entityId: auth.nationalId,
+      })
+      this.logger.info('Current vehicles rate category debug response', resp)
+      return resp
+    } catch (error) {
+      this.logger.error('Error getting current vehicles rate category', error)
+      throw error
+    }
   }
 
   async postDataToSkatturinn({
@@ -77,7 +88,7 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
   }: TemplateApiModuleActionProps): Promise<boolean> {
     const data = getValueViaPath<CarCategoryRecord[]>(
       application.answers,
-      'dataToChange.data',
+      'carsToChange',
     )
 
     const rateToChangeTo = getValueViaPath<RateCategory>(
@@ -90,14 +101,14 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
     const tomorrow = new Date(now.setHours(24, 0, 0, 0))
 
     try {
-      if (rateToChangeTo === RateCategory.KMRATE) {
+      if (rateToChangeTo === RateCategory.DAYRATE) {
         await this.rentalsApiWithAuth(
           auth,
         ).apiDayRateEntriesEntityIdRegisterPost({
           entityId: auth.nationalId,
           dayRateRegistrationModel: {
             skraningaradili:
-              application.applicantActors[0] ?? application.applicant ?? null,
+              application.applicant ?? application.applicantActors[0] ?? null,
             entries:
               data?.map((c) => {
                 return {
@@ -116,7 +127,7 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
           entityId: auth.nationalId,
           deregistrationModel: {
             afskraningaradili:
-              application.applicantActors[0] ?? application.applicant ?? null,
+              application.applicant ?? application.applicantActors[0] ?? null,
             entries:
               data?.map((c) => {
                 return {
@@ -130,6 +141,7 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
         return true
       }
     } catch (error) {
+      this.logger.error('Error posting data to skatturinn', error)
       if (
         error &&
         typeof error === 'object' &&

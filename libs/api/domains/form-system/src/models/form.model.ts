@@ -10,7 +10,6 @@ import { FormApplicant } from './formApplicant.model'
 import { LanguageType } from './languageType.model'
 import { ListType } from './listItem.model'
 import { Option } from './option.model'
-import { OrganizationUrl } from './organizationUrl.model'
 import { Screen as ScreenModel } from './screen.model'
 import { Section } from './section.model'
 
@@ -88,9 +87,6 @@ export class Form {
   @Field(() => Boolean)
   hasSummaryScreen!: boolean
 
-  @Field(() => Boolean, { nullable: true })
-  isZendeskEnabled?: boolean
-
   @Field(() => CompletedSectionInfo, { nullable: true })
   completedSectionInfo?: CompletedSectionInfo
 
@@ -114,9 +110,6 @@ export class Form {
 
   @Field(() => String)
   status!: string
-
-  @Field(() => [String], { nullable: 'itemsAndList' })
-  urls?: string[]
 }
 
 @ObjectType('FormSystemFormResponse')
@@ -141,12 +134,6 @@ export class FormResponse {
 
   @Field(() => [String], { nullable: 'itemsAndList' })
   submissionUrls?: string[]
-
-  @Field(() => [OrganizationUrl], { nullable: 'itemsAndList' })
-  submitUrls?: OrganizationUrl[]
-
-  @Field(() => [OrganizationUrl], { nullable: 'itemsAndList' })
-  validationUrls?: OrganizationUrl[]
 
   @Field(() => [Option], { nullable: 'itemsAndList' })
   organizations?: Option[]

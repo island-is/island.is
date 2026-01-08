@@ -31,6 +31,19 @@ export const healthNavigation: PortalNavigationItem = {
       path: HealthPaths.HealthBasicOld,
     },
     {
+      name: messages.appointments,
+      searchHide: false,
+      path: HealthPaths.HealthAppointments,
+      searchTags: [s.appointment, s.appointmentBook, s.appointmentDoctor],
+      children: [
+        {
+          name: messages.appointmentDetail,
+          path: HealthPaths.HealthAppointmentDetail,
+          navHide: true,
+        },
+      ],
+    },
+    {
       name: messages.referrals,
       path: HealthPaths.HealthReferrals,
       searchTags: [s.healthReferrals],
