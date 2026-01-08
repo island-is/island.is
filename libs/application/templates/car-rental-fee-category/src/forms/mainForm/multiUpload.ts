@@ -4,7 +4,6 @@ import {
   buildDescriptionField,
   buildMultiField,
   buildSection,
-  buildSubmitField,
   getValueViaPath,
 } from '@island.is/application/core'
 import { generateExcelSheet } from '../../utils/generateExcelSheet'
@@ -50,18 +49,6 @@ export const multiUploadSection = buildSection({
               generateExcelSheet(vehicleMap, rateCategory),
           },
         ),
-        buildSubmitField({
-          id: 'submit',
-          title: 'Submit',
-          refetchApplicationAfterSubmit: true,
-          actions: [
-            {
-              event: 'SUBMIT',
-              name: 'Submit',
-              type: 'primary',
-            },
-          ],
-        }),
       ],
     }),
   ],

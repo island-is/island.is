@@ -26,6 +26,7 @@ type BaseProps = {
   img?: string
   isSubheading?: boolean
   children?: React.ReactNode
+  childrenWidthFull?: boolean
   buttonGroup?: Array<React.ReactNode>
   buttonGroupAlignment?: ResponsiveProp<
     'flexStart' | 'flexEnd' | 'spaceBetween'
@@ -53,7 +54,7 @@ interface WithIntroProps extends BaseProps {
 export type IntroWrapperProps = WithIntroComponentProps | WithIntroProps
 
 export const IntroWrapper = (props: IntroWrapperProps) => {
-  const { marginBottom } = props
+  const { marginBottom, childrenWidthFull = false } = props
   const { formatMessage } = useLocale()
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
@@ -152,7 +153,11 @@ export const IntroWrapper = (props: IntroWrapperProps) => {
           </GridColumn>
         </GridRow>
       )}
-      {props.children}
+      <GridRow>
+        <GridColumn span={childrenWidthFull || isMobile ? '12/12' : '10/12'}>
+          {props.children}
+        </GridColumn>
+      </GridRow>
       <FootNote serviceProviderSlug={props.serviceProviderSlug} />
     </Box>
   )

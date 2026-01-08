@@ -13,12 +13,6 @@ import OrganizationSubPageGenericListItem, {
 import OrganizationCategory, {
   type OrganizationCategoryProps,
 } from '@island.is/web/screens/Organization/Category/Category'
-import CourseDetails, {
-  type CourseDetailsProps,
-} from '@island.is/web/screens/Organization/Courses/CourseDetails'
-import CourseList, {
-  type CourseListProps,
-} from '@island.is/web/screens/Organization/Courses/CourseList'
 import Home, {
   type HomeProps,
 } from '@island.is/web/screens/Organization/Home/Home'
@@ -58,7 +52,6 @@ import SubPage, {
 import { GET_ORGANIZATION_PAGE_QUERY } from '@island.is/web/screens/queries'
 import type { Screen as ScreenType } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
-import { extractNamespaceFromOrganization } from '@island.is/web/utils/extractNamespaceFromOrganization'
 import { getServerSidePropsWrapper } from '@island.is/web/utils/getServerSidePropsWrapper'
 
 enum PageType {
@@ -76,8 +69,6 @@ enum PageType {
   EVENT_DETAILS = 'event-details',
   GENERIC_LIST_ITEM = 'generic-list-item',
   CATEGORY = 'category',
-  COURSE_LIST = 'course-list',
-  COURSE_DETAILS = 'course-details',
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -106,8 +97,6 @@ const pageMap: Record<PageType, FC<any>> = {
     <OrganizationSubPageGenericListItem {...props} />
   ),
   [PageType.CATEGORY]: (props) => <OrganizationCategory {...props} />,
-  [PageType.COURSE_LIST]: (props) => <CourseList {...props} />,
-  [PageType.COURSE_DETAILS]: (props) => <CourseDetails {...props} />,
 }
 
 interface Props {
@@ -195,20 +184,6 @@ interface Props {
           componentProps: OrganizationCategoryProps
         }
       }
-    | {
-        type: PageType.COURSE_LIST
-        props: {
-          layoutProps: LayoutProps
-          componentProps: CourseListProps
-        }
-      }
-    | {
-        type: PageType.COURSE_DETAILS
-        props: {
-          layoutProps: LayoutProps
-          componentProps: CourseDetailsProps
-        }
-      }
 }
 
 export const Component: ScreenType<Props> = ({ page }: Props) => {
@@ -247,10 +222,6 @@ Component.getProps = async (context) => {
   const modifiedContext = { ...context, organizationPage }
 
   const isStandaloneTheme = organizationPage.theme === 'standalone'
-
-  const organizationNamespace = extractNamespaceFromOrganization(
-    organizationPage.organization,
-  )
 
   if (slugs.length === 1) {
     if (isStandaloneTheme) {
@@ -296,17 +267,6 @@ Component.getProps = async (context) => {
           },
         }
       }
-      if (
-        slugs[1] === 'courses' &&
-        Boolean(organizationNamespace['organizationCourseListEnabled'])
-      ) {
-        return {
-          page: {
-            type: PageType.COURSE_LIST,
-            props: await CourseList.getProps(modifiedContext),
-          },
-        }
-      }
     } else {
       if (slugs[1] === 'frett') {
         return {
@@ -329,17 +289,6 @@ Component.getProps = async (context) => {
           page: {
             type: PageType.PUBLISHED_MATERIAL,
             props: await PublishedMaterial.getProps(modifiedContext),
-          },
-        }
-      }
-      if (
-        slugs[1] === 'namskeid' &&
-        Boolean(organizationNamespace['organizationCourseListEnabled'])
-      ) {
-        return {
-          page: {
-            type: PageType.COURSE_LIST,
-            props: await CourseList.getProps(modifiedContext),
           },
         }
       }
@@ -418,17 +367,6 @@ Component.getProps = async (context) => {
           },
         }
       }
-      if (
-        slugs[1] === 'courses' &&
-        Boolean(organizationNamespace['organizationCourseDetailsEnabled'])
-      ) {
-        return {
-          page: {
-            type: PageType.COURSE_DETAILS,
-            props: await CourseDetails.getProps(modifiedContext),
-          },
-        }
-      }
     } else {
       if (slugs[1] === 'frett') {
         return {
@@ -443,17 +381,6 @@ Component.getProps = async (context) => {
           page: {
             type: PageType.EVENT_DETAILS,
             props: await OrganizationEventArticle.getProps(modifiedContext),
-          },
-        }
-      }
-      if (
-        slugs[1] === 'namskeid' &&
-        Boolean(organizationNamespace['organizationCourseDetailsEnabled'])
-      ) {
-        return {
-          page: {
-            type: PageType.COURSE_DETAILS,
-            props: await CourseDetails.getProps(modifiedContext),
           },
         }
       }

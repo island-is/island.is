@@ -924,6 +924,14 @@ export const messages = defineMessages({
     id: 'sp.health:no-waitlists',
     defaultMessage: 'Engin skráning á biðlista finnst',
   },
+  waitlistNotFound: {
+    id: 'sp.health:waitlist-not-found',
+    defaultMessage: 'Biðlisti fannst ekki',
+  },
+  waitlistNotFoundDetail: {
+    id: 'sp.health:waitlist-not-found-detail',
+    defaultMessage: 'Enginn biðlisti finnst með þessu skráningarnúmeri. ',
+  },
   waitlistsIntro: {
     id: 'sp.health:waitlists-intro',
     defaultMessage: 'Hér finnur þú biðlista ...',
@@ -970,7 +978,6 @@ export const messages = defineMessages({
     defaultMessage: 'Greiðsluþátttaka',
     id: 'sp.health:medicine-payment-participation',
   },
-
   medicinePrescriptionHistory: {
     defaultMessage: 'Lyfjasagan',
     id: 'sp.health:medicine-prescription-history',
@@ -988,7 +995,6 @@ export const messages = defineMessages({
     defaultMessage: 'Lyfjaávísanir',
     id: 'sp.health:medicine-prescriptions',
   },
-
   monthlyBreakdownOfInvoices: {
     defaultMessage: 'Sundurliðun reikninga í völdum mánuði',
     id: 'sp.health:monthly-breakdown-of-invoices',
@@ -1362,6 +1368,14 @@ export const messages = defineMessages({
     defaultMessage: 'Tilvísun',
     id: 'sp.health:single-referral',
   },
+  referralNotFound: {
+    id: 'sp.health:referral-not-found',
+    defaultMessage: 'Tilvísun fannst ekki',
+  },
+  referralNotFoundDetail: {
+    id: 'sp.health:referral-not-found-detail',
+    defaultMessage: 'Engin tilvísun finnst með þessu skráningarnúmeri. ',
+  },
   reason: {
     defaultMessage: 'Ástæða',
     id: 'sp.health:reason',
@@ -1497,6 +1511,10 @@ export const messages = defineMessages({
   type: {
     defaultMessage: 'Tegund',
     id: 'sp.health:type',
+  },
+  therapyType: {
+    defaultMessage: 'Tegund þjálfunar',
+    id: 'sp.health:therapy-type',
   },
   typeofService: {
     defaultMessage: 'Tegund þjónustu',

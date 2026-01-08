@@ -36,8 +36,12 @@ type MutationStatus =
 
 interface Props {
   vehicle: VehicleType
+  onMileageUpdateCallback?: () => void
 }
-export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
+export const VehicleBulkMileageRow = ({
+  vehicle,
+  onMileageUpdateCallback,
+}: Props) => {
   const { formatMessage } = useLocale()
   const [postError, setPostError] = useState<string | null>(null)
   const [localInternalId, setLocalInternalId] = useState<number>()
@@ -154,10 +158,13 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
     setTimeout(() => {
       if (postStatus === 'success') {
         registrationsRefetch()
+        if (onMileageUpdateCallback) {
+          onMileageUpdateCallback()
+        }
         reset()
       }
     }, 500)
-  }, [postStatus, registrationsRefetch])
+  }, [onMileageUpdateCallback, postStatus, registrationsRefetch, reset])
 
   useEffect(() => {
     switch (postStatus) {
