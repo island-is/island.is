@@ -1,5 +1,5 @@
 import { Transaction } from 'sequelize'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { InternalServerErrorException } from '@nestjs/common'
 
