@@ -38,6 +38,6 @@ switch (job) {
     break
   }
   default: {
-    throw Error('invalid service argument provided')
+    console.debug('No argument provided, nothing executed')
   }
 }
