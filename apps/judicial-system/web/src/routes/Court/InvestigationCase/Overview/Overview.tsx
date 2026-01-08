@@ -111,7 +111,7 @@ const Overview = () => {
         {workingCase.state === CaseState.RECEIVED &&
           workingCase.arraignmentDate?.date &&
           workingCase.court && (
-            <Box component="section">
+            <Box component="section" marginBottom={5}>
               <CaseScheduledCard
                 court={workingCase.court}
                 courtDate={workingCase.arraignmentDate.date}
