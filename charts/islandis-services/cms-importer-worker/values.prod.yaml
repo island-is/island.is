@@ -64,7 +64,6 @@ resources:
   requests:
     cpu: '100m'
     memory: '128Mi'
-schedule: '0 15,0 * * *'
 secrets:
   CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
   CONTENTFUL_MANAGEMENT_ACCESS_TOKEN: '/k8s/contentful-entry-tagger/CONTENTFUL_MANAGEMENT_ACCESS_TOKEN'

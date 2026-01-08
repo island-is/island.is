@@ -629,6 +629,9 @@
       "@island.is/application/templates/transport-authority/license-plate-renewal": [
         "libs/application/templates/transport-authority/license-plate-renewal/src/index.ts"
       ],
+      "@island.is/application/templates/transport-authority/mile-car": [
+        "libs/application/templates/transport-authority/mile-car/src/index.ts"
+      ],
       "@island.is/application/templates/transport-authority/order-vehicle-license-plate": [
         "libs/application/templates/transport-authority/order-vehicle-license-plate/src/index.ts"
       ],

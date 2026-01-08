@@ -68,6 +68,9 @@ enum Organization {
 
   /** Samgöngustofa */
   TRANSPORT_AUTHORITY = '6IZT17s7stKJAmtPutjpD7',
+
+  /** Skatturinn */
+  SKATTURINN = '4yJlHgCMTqpgRSj4p6LuBQ',
 }
 
 export const zendeskConfig: Record<
@@ -91,6 +94,10 @@ export const zendeskConfig: Record<
       snippetUrl:
         'https://static.zdassets.com/ekr/snippet.js?key=dc0c86b4-a02a-45e9-85d5-0aa570708ad9',
     },
+    [Organization.SKATTURINN]: {
+      snippetUrl:
+        'https://static.zdassets.com/ekr/snippet.js?key=f12bfedb-fc2c-477d-8f28-b31a036fba35',
+    },
   },
   en: {
     [Organization.TRANSPORT_AUTHORITY]: {
@@ -108,6 +115,10 @@ export const zendeskConfig: Record<
     [Organization.DISTRICT_COMMISSIONER]: {
       snippetUrl:
         'https://static.zdassets.com/ekr/snippet.js?key=dc0c86b4-a02a-45e9-85d5-0aa570708ad9',
+    },
+    [Organization.SKATTURINN]: {
+      snippetUrl:
+        'https://static.zdassets.com/ekr/snippet.js?key=f12bfedb-fc2c-477d-8f28-b31a036fba35',
     },
   },
 }
