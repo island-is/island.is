@@ -13,7 +13,7 @@ export const TableHeader = () => {
   return (
     <Box className={styles.header}>
       <Row>
-        <Column span="5/12">
+        <Column span="8/12">
           <Box paddingLeft={2}>
             <Text variant="medium" fontWeight="semiBold">
               {formatMessage(m.name)}
@@ -25,16 +25,13 @@ export const TableHeader = () => {
             {formatMessage(m.lastModified)}
           </Text>
         </Column>
+
         <Column span="1/12">
-          <Text variant="medium" fontWeight="semiBold">
-            {formatMessage(m.translations)}
-          </Text>
-        </Column>
-        <Column span="2/12">
           <Text variant="medium" fontWeight="semiBold">
             {formatMessage(m.state)}
           </Text>
         </Column>
+
         <Column span="1/12">
           <Text variant="medium" fontWeight="semiBold">
             {formatMessage(m.actions)}
