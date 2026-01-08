@@ -37,8 +37,8 @@ export class MileCarService extends BaseTemplateApiService {
       auth,
     ).currentvehicleswithmileageandinspGet({
       showOwned: true,
-      showCoowned: false,
-      showOperated: false,
+      showCoowned: true,
+      showOperated: true,
       page: 1,
       pageSize: 20,
     })
