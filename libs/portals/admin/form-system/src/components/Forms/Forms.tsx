@@ -230,6 +230,7 @@ export const Forms = () => {
                 setFormsState={setForms}
                 status={f?.status}
                 lastModified={f?.modified}
+                url={f?.submissionServiceUrl ?? ''}
               />
             )
           })}

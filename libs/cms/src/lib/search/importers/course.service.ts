@@ -21,7 +21,10 @@ export class CourseSyncService implements CmsSyncProvider<ICourse> {
 
       const course = entry as ICourse
 
-      if (course.fields.title && course.fields.organization?.fields?.slug) {
+      if (
+        course.fields.title &&
+        course.fields.courseListPage?.fields?.organization?.fields?.slug
+      ) {
         entriesToUpdate.push(course)
       } else {
         entriesToDelete.push(entry.sys.id)
@@ -61,10 +64,17 @@ export class CourseSyncService implements CmsSyncProvider<ICourse> {
             })
           }
 
-          if (entry.fields.organization?.fields?.slug) {
+          if (entry.fields.courseListPage?.fields?.organization?.fields?.slug) {
             tags.push({
-              key: entry.fields.organization.fields.slug,
+              key: entry.fields.courseListPage.fields.organization.fields.slug,
               type: 'organization',
+            })
+          }
+
+          if (entry.fields.courseListPage?.sys?.id) {
+            tags.push({
+              key: entry.fields.courseListPage.sys.id,
+              type: 'courseListPageId',
             })
           }
 
