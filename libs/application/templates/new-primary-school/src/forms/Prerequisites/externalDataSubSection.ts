@@ -4,7 +4,7 @@ import {
   buildSubSection,
 } from '@island.is/application/core'
 import {
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   UserProfileApi,
 } from '@island.is/application/types'
 import { ChildrenApi, SchoolsApi } from '../../dataProviders'
@@ -21,7 +21,7 @@ export const externalDataSubSection = buildSubSection({
       checkboxLabel: newPrimarySchoolMessages.pre.checkboxProvider,
       dataProviders: [
         buildDataProviderItem({
-          provider: NationalRegistryUserApi,
+          provider: NationalRegistryV3UserApi,
           title: newPrimarySchoolMessages.pre.nationalRegistryInformationTitle,
           subTitle:
             newPrimarySchoolMessages.pre.nationalRegistryInformationSubTitle,
