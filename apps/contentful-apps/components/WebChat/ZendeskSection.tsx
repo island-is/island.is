@@ -3,7 +3,7 @@ import type { FieldExtensionSDK } from '@contentful/app-sdk'
 import { Flex, FormControl, TextInput } from '@contentful/f36-components'
 
 import { FormFieldHeading } from '../FormFieldHeading'
-import type { ZendeskConfiguration } from './types'
+import { WebChatType, type ZendeskConfiguration } from './types'
 
 interface SectionProps {
   sdk: FieldExtensionSDK
@@ -24,12 +24,12 @@ export const ZendeskSection = ({ sdk, value, updateValue }: SectionProps) => {
               localeNames={sdk.locales.names}
             />
             <TextInput
-              value={value.snippetUrl?.[locale]}
+              value={value[WebChatType.Zendesk]?.snippetUrl?.[locale]}
               onChange={(event) => {
                 updateValue((previousValue) => ({
                   ...previousValue,
                   snippetUrl: {
-                    ...previousValue.snippetUrl,
+                    ...previousValue[WebChatType.Zendesk]?.snippetUrl,
                     [locale]: event.target.value,
                   },
                 }))

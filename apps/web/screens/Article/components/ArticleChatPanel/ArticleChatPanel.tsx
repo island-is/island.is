@@ -13,7 +13,6 @@ import {
   excludedOrganizationWatsonConfig,
   liveChatIncConfig,
   watsonConfig,
-  zendeskConfig,
 } from './config'
 
 interface ArticleChatPanelProps {

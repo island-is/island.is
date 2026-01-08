@@ -5,66 +5,6 @@ import {
   WatsonChatPanelProps,
 } from '../../ChatPanel'
 
-export const zendeskConfig: Record<
-  Locale,
-  Record<string, { snippetUrl: string }>
-> = {
-  is: {
-    // Samgöngustofa - Organization
-    '6IZT17s7stKJAmtPutjpD7': {
-      snippetUrl:
-        'https://static.zdassets.com/ekr/snippet.js?key=6b9864d4-1892-4ea0-8d29-b609d7c53542',
-    },
-    // Sjúkratryggingar - Organization
-    '3pZwAagW0UY26giHaxHthe': {
-      snippetUrl:
-        'https://static.zdassets.com/ekr/snippet.js?key=9989d2fe-0b2e-40a8-bc4e-33e5e4c07359',
-    },
-    // Útlendingastofnun - Organization
-    '77rXck3sISbMsUv7BO1PG2': {
-      snippetUrl:
-        'https://static.zdassets.com/ekr/snippet.js?key=34869229-7aad-4b2f-90b2-f2984fdd14dc',
-    },
-    // Sýslumenn - Organization
-    kENblMMMvZ3DlyXw1dwxQ: {
-      snippetUrl:
-        'https://static.zdassets.com/ekr/snippet.js?key=dc0c86b4-a02a-45e9-85d5-0aa570708ad9',
-    },
-    // Skatturinn - Organization
-    '4yJlHgCMTqpgRSj4p6LuBQ': {
-      snippetUrl:
-        'https://static.zdassets.com/ekr/snippet.js?key=f12bfedb-fc2c-477d-8f28-b31a036fba35',
-    },
-  },
-  en: {
-    // Samgöngustofa - Organization
-    '6IZT17s7stKJAmtPutjpD7': {
-      snippetUrl:
-        'https://static.zdassets.com/ekr/snippet.js?key=6b9864d4-1892-4ea0-8d29-b609d7c53542',
-    },
-    // Sjúkratryggingar - Organization
-    '3pZwAagW0UY26giHaxHthe': {
-      snippetUrl:
-        'https://static.zdassets.com/ekr/snippet.js?key=9989d2fe-0b2e-40a8-bc4e-33e5e4c07359',
-    },
-    // Útlendingastofnun - Organization
-    '77rXck3sISbMsUv7BO1PG2': {
-      snippetUrl:
-        'https://static.zdassets.com/ekr/snippet.js?key=34869229-7aad-4b2f-90b2-f2984fdd14dc',
-    },
-    // Sýslumenn - Organization
-    kENblMMMvZ3DlyXw1dwxQ: {
-      snippetUrl:
-        'https://static.zdassets.com/ekr/snippet.js?key=dc0c86b4-a02a-45e9-85d5-0aa570708ad9',
-    },
-    // Skatturinn - Organization
-    '4yJlHgCMTqpgRSj4p6LuBQ': {
-      snippetUrl:
-        'https://static.zdassets.com/ekr/snippet.js?key=f12bfedb-fc2c-477d-8f28-b31a036fba35',
-    },
-  },
-}
-
 export const liveChatIncConfig: Record<
   Locale,
   Record<string, LiveChatIncChatPanelProps>
