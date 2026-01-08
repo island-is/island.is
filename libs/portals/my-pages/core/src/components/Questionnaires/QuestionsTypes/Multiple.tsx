@@ -73,18 +73,18 @@ export const Multiple: React.FC<MultipleProps> = ({
 
   return (
     <Box>
-      {maxSelections && (
-        <Box marginBottom={2}>
+      <Box marginBottom={2}>
+        {maxSelections && (
           <Text variant="small" color="dark300">
             ({formatMessage(m.maxSelections, { count: maxSelections })})
           </Text>
-          {required && (
-            <Text variant="small" color="red400">
-              {'* ' + formatMessage(m.requiredQuestion)}
-            </Text>
-          )}
-        </Box>
-      )}
+        )}
+        {required && (
+          <Text variant="small" color="red400">
+            {'* ' + formatMessage(m.requiredQuestion)}
+          </Text>
+        )}
+      </Box>
       {direction === 'horizontal' ? (
         <Inline space={2}>{checkboxes}</Inline>
       ) : (
