@@ -303,8 +303,15 @@ test.describe.serial('Indictment tests', () => {
 
     // Indictment overview
 
-    // note: this is not a standard since all cases should be served and updated via external sources
+    // Note: this is not a standard UX path since all cases should be served and updated via external sources
     await page.locator('input[id=defendantServiceDate]').fill(today)
+    await page.keyboard.press('Escape')
+
+    await Promise.all([
+      page.getByTestId('button-defendant-service-date').click(),
+      verifyRequestCompletion(page, '/api/graphql', 'UpdateVerdict'),
+    ])
+
     await page.getByText('Veldu saksóknara').click()
     await page
       .getByTestId('select-reviewer')
