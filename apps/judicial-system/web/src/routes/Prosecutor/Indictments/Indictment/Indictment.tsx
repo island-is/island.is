@@ -64,24 +64,25 @@ export const getIndictmentIntroductionAutofill = (
         `\n\n${formatMessage(strings.indictmentIntroductionAutofillCourt, {
           court: applyDativeCaseToCourtName(court?.name || 'héraðsdómi'),
         })}`,
-        `\n\n${defendants.map((defendant) => {
-          return `\n          ${formatMessage(
-            strings.indictmentIntroductionAutofillDefendant,
-            {
-              defendantName: defendant.name
-                ? applyCase('þgf', defendant.name)
-                : 'Ekki skráð',
-              defendantNationalId: defendant.nationalId
-                ? formatNationalId(defendant.nationalId)
-                : 'Ekki skráð',
-            },
-          )}\n          ${
-            defendant.address
-              ? applyCaseToAddress('þgf', defendant.address)
-              : 'Ekki skráð'
-          },`
-        })}
-    `,
+        `\n\n${defendants
+          .map((defendant) => {
+            return `\n          ${formatMessage(
+              strings.indictmentIntroductionAutofillDefendant,
+              {
+                defendantName: defendant.name
+                  ? applyCase('þgf', defendant.name)
+                  : 'Ekki skráð',
+                defendantNationalId: defendant.nationalId
+                  ? formatNationalId(defendant.nationalId)
+                  : 'Ekki skráð',
+              },
+            )}\n          ${
+              defendant.address
+                ? applyCaseToAddress('þgf', defendant.address)
+                : 'Ekki skráð'
+            },`
+          })
+          .join('')}`,
       ]
     : []
 }
