@@ -122,8 +122,8 @@ const Ruling = () => {
       />
       <FormContentContainer>
         <PageTitle>{formatMessage(m.title)}</PageTitle>
+        <CourtCaseInfo workingCase={workingCase} />
         <div className={grid({ gap: 5, marginBottom: 10 })}>
-          <CourtCaseInfo workingCase={workingCase} />
           <Box component="section">
             <Accordion>
               <PoliceRequestAccordionItem workingCase={workingCase} />
