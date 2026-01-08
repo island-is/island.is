@@ -12,12 +12,13 @@ import { Case, CaseString } from '../modules/repository'
 import {
   addEmptyLines,
   addGiganticHeading,
-  addIndictmentConfirmation,
   addNormalPlusCenteredText,
   addNormalPlusJustifiedText,
   addNormalPlusText,
   addNormalText,
   Confirmation,
+  drawConfirmation,
+  formatActor,
   setTitle,
 } from './pdfHelpers'
 
@@ -73,7 +74,27 @@ export const createIndictment = async (
   setTitle(doc, formatMessage(indictment.title))
 
   if (confirmation) {
-    addIndictmentConfirmation(doc, confirmation)
+    drawConfirmation(doc, {
+      showLockIcon: true,
+      confirmationText: 'Skjal samþykkt rafrænt',
+      boxes: [
+        {
+          title: 'Samþykktaraðili',
+          content: formatActor(confirmation.actor, confirmation.title),
+          widthPercent: 40,
+        },
+        {
+          title: 'Embætti',
+          content: confirmation.institution,
+          widthPercent: 40,
+        },
+        {
+          title: 'Útgáfa ákæru',
+          content: formatDate(confirmation.date) ?? '',
+          widthPercent: 20,
+        },
+      ],
+    })
   }
 
   addEmptyLines(doc, 6, doc.page.margins.left)
