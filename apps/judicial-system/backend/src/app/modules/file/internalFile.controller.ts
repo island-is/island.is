@@ -21,13 +21,13 @@ import { CaseExistsGuard, CurrentCase } from '../case'
 import { Case, CaseFile } from '../repository'
 import { DeliverDto } from './dto/deliver.dto'
 import { CurrentCaseFile } from './guards/caseFile.decorator'
-import { CaseFileExistsGuard } from './guards/caseFileExists.guard'
+import { SplitCaseFileExistsGuard } from './guards/splitCaseFileExists.guard'
 import { DeliverResponse } from './models/deliver.response'
 import { FileService } from './file.service'
 
 @Controller('api/internal/case/:caseId')
 @ApiTags('internal files')
-@UseGuards(TokenGuard, CaseExistsGuard, CaseFileExistsGuard)
+@UseGuards(TokenGuard, CaseExistsGuard, SplitCaseFileExistsGuard)
 export class InternalFileController {
   constructor(
     private readonly fileService: FileService,

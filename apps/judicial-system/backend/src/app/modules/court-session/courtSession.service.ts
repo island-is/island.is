@@ -54,6 +54,7 @@ export class CourtSessionService {
       EventType.INDICTMENT_CONFIRMED,
       theCase.eventLogs,
     )
+
     // Start with the generated indictment PDF
     await this.courtDocumentService.createInCourtSession(
       theCase.id,
