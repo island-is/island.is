@@ -9,14 +9,14 @@ import { Value } from '../applications/models/value.model'
 import { FileConfig } from './file.config'
 import { FileController } from './file.controller'
 import { FileService } from './file.service'
-import { FileStorageWrapperModule } from './fileStorageWrapper'
 import { UploadProcessor } from './upload.processor'
+import { FileStorageModule } from '@island.is/file-storage'
 
 @Module({
   imports: [
     AwsModule,
     LoggingModule,
-    FileStorageWrapperModule,
+    FileStorageModule,
     SequelizeModule.forFeature([Value]),
     ConfigModule.forFeature(FileConfig),
     NestBullModule.registerQueueAsync({
