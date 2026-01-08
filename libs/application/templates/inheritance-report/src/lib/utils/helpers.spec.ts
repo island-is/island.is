@@ -1,4 +1,4 @@
-import { isValidEmail, valueToNumber } from './helpers'
+import { isValidEmail, valueToNumber, nationalIdsMatch } from './helpers'
 
 describe('isValidEmail', () => {
   it('should return false if email is malformed', () => {
@@ -41,5 +41,39 @@ describe('valueToNumber', () => {
       -12.1234211234233,
     )
     expect(valueToNumber('-1.123.123 kr', ',')).toBe(-1123123)
+  })
+})
+
+describe('nationalIdsMatch', () => {
+  it('should return true for matching national IDs', () => {
+    expect(nationalIdsMatch('0101302209', '0101302209')).toBe(true)
+    expect(nationalIdsMatch('1234567890', '1234567890')).toBe(true)
+  })
+
+  it('should return true for matching national IDs with different formats', () => {
+    // kennitala sanitize removes hyphens
+    expect(nationalIdsMatch('010130-2209', '0101302209')).toBe(true)
+    expect(nationalIdsMatch('0101302209', '010130-2209')).toBe(true)
+    expect(nationalIdsMatch('010130-2209', '010130-2209')).toBe(true)
+  })
+
+  it('should return false for non-matching national IDs', () => {
+    expect(nationalIdsMatch('0101302209', '0101302399')).toBe(false)
+    expect(nationalIdsMatch('1234567890', '0987654321')).toBe(false)
+  })
+
+  it('should return false for null or undefined inputs', () => {
+    expect(nationalIdsMatch(null, '0101302209')).toBe(false)
+    expect(nationalIdsMatch('0101302209', null)).toBe(false)
+    expect(nationalIdsMatch(null, null)).toBe(false)
+    expect(nationalIdsMatch(undefined, '0101302209')).toBe(false)
+    expect(nationalIdsMatch('0101302209', undefined)).toBe(false)
+    expect(nationalIdsMatch(undefined, undefined)).toBe(false)
+  })
+
+  it('should return false for empty strings', () => {
+    expect(nationalIdsMatch('', '0101302209')).toBe(false)
+    expect(nationalIdsMatch('0101302209', '')).toBe(false)
+    expect(nationalIdsMatch('', '')).toBe(false)
   })
 })
