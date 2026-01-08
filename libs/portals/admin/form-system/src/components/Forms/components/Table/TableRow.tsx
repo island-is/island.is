@@ -150,11 +150,22 @@ export const TableRow = ({
           })
           setFormsState((prevForms) => {
             const returnedForm = data.updateFormSystemFormStatus.form
+            const publishedSlug = returnedForm?.slug.replace(
+              /-archived-\d+$/,
+              '',
+            )
 
             return prevForms
               .map((form) =>
                 form.id === id
-                  ? { ...form, status: FormStatus.PUBLISHED }
+                  ? {
+                      ...form,
+                      status: FormStatus.PUBLISHED,
+                      slug:
+                        slug === publishedSlug + '-i-breytingu'
+                          ? publishedSlug
+                          : slug,
+                    }
                   : form,
               )
               .filter((form) => form.id !== returnedForm.id)
@@ -231,7 +242,7 @@ export const TableRow = ({
               setFormsState((prevForms) => {
                 const filtered = prevForms.filter((form) => form.id !== id)
                 const returnedForm = data.updateFormSystemFormStatus.form
-                return returnedForm ? [...filtered, returnedForm] : filtered
+                return returnedForm ? [returnedForm, ...filtered] : filtered
               })
             } catch (error) {
               console.error('Error deleting form:', error)
@@ -281,7 +292,7 @@ export const TableRow = ({
       }}
     >
       <Row key={id}>
-        <Column span="8/12">
+        <Column span="7/12">
           <ColumnText text={name ? name : ''} />
         </Column>
         <Column span="2/12">
@@ -294,8 +305,8 @@ export const TableRow = ({
           />
         </Column>
 
-        <Column span="1/12">
-          <Box display="flex">
+        <Column span="2/12">
+          <Box display="flex" justifyContent="center">
             <StatusTag status={status ?? ''} />
           </Box>
         </Column>
@@ -318,7 +329,7 @@ export const TableRow = ({
                 />
               </Box>
             )}
-            <Box marginRight={1} onClick={(e) => e.stopPropagation()}>
+            <Box marginRight={2} onClick={(e) => e.stopPropagation()}>
               <DropdownMenu
                 menuLabel={`${formatMessage(m.actions)} ${name}`}
                 disclosure={
