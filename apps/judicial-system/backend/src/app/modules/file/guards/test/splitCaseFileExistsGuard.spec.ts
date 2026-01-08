@@ -8,7 +8,8 @@ import {
 
 import { createTestingFileModule } from '../../test/createTestingFileModule'
 
-import { CaseFileExistsGuard } from '../caseFileExists.guard'
+import { CaseFile } from '../../../repository'
+import { SplitCaseFileExistsGuard } from '../splitCaseFileExists.guard'
 
 interface Then {
   result: boolean
@@ -17,15 +18,18 @@ interface Then {
 
 type GivenWhenThen = () => Promise<Then>
 
-describe('Case File Exists Guard', () => {
+describe('Split Case File Exists Guard', () => {
   const mockRequest = jest.fn()
+  let mockFileModel: typeof CaseFile
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { fileService } = await createTestingFileModule()
+    const { fileModel, fileService } = await createTestingFileModule()
+
+    mockFileModel = fileModel
 
     givenWhenThen = async (): Promise<Then> => {
-      const guard = new CaseFileExistsGuard(fileService)
+      const guard = new SplitCaseFileExistsGuard(fileService)
       const then = {} as Then
 
       try {
@@ -51,6 +55,34 @@ describe('Case File Exists Guard', () => {
         params: { fileId },
         case: { id: caseId, caseFiles: [caseFile] },
       }))
+      const mockFindOne = mockFileModel.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce(caseFile)
+
+      then = await givenWhenThen()
+    })
+
+    it('should activate', () => {
+      expect(then.result).toBe(true)
+    })
+  })
+
+  describe('case file exists in split case', () => {
+    const caseId = uuid()
+    const fileId = uuid()
+    const caseFile = { id: fileId, caseId }
+    let then: Then
+
+    beforeEach(async () => {
+      mockRequest.mockImplementationOnce(() => ({
+        params: { fileId },
+        case: {
+          id: caseId,
+          caseFiles: [{ id: uuid() }],
+          splitCases: [{ id: uuid(), caseFiles: [caseFile] }],
+        },
+      }))
+      const mockFindOne = mockFileModel.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce(caseFile)
 
       then = await givenWhenThen()
     })
@@ -68,7 +100,11 @@ describe('Case File Exists Guard', () => {
     beforeEach(async () => {
       mockRequest.mockImplementationOnce(() => ({
         params: { fileId },
-        case: { id: caseId, caseFiles: [{ id: uuid() }] },
+        case: {
+          id: caseId,
+          caseFiles: [{ id: uuid() }],
+          splitCases: [{ id: uuid(), caseFiles: [{ id: uuid() }] }],
+        },
       }))
 
       then = await givenWhenThen()
@@ -82,7 +118,7 @@ describe('Case File Exists Guard', () => {
     })
   })
 
-  describe('missing case', () => {
+  describe('missing case id', () => {
     let then: Then
 
     beforeEach(async () => {
@@ -104,7 +140,7 @@ describe('Case File Exists Guard', () => {
     beforeEach(async () => {
       mockRequest.mockImplementationOnce(() => ({
         params: {},
-        case: { id: caseId, caseFiles: [] },
+        case: { id: caseId, caseFiles: [{ id: uuid() }] },
       }))
 
       then = await givenWhenThen()
