@@ -48,8 +48,8 @@ export class MileCarService extends BaseTemplateApiService {
     if (!totalRecords) {
       throw new TemplateApiError(
         {
-          title: coreErrorMessages.vehiclesEmptyListOwner,
-          summary: coreErrorMessages.vehiclesEmptyListOwner,
+          title: coreErrorMessages.vehiclesEmptyListOwnerOrCoOwner,
+          summary: coreErrorMessages.vehiclesEmptyListOwnerOrCoOwner,
         },
         400,
       )
