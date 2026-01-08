@@ -621,21 +621,6 @@ export const translationStrings = defineMessages({
     description:
       'Lýsing fyrir ofan mánuð og ár reit varðandi hvenær notandi vill hefja töku á ellilífeyri',
   },
-  after1stSeptember2025: {
-    id: 'web.pensionCalculator:after1stSeptember2025',
-    defaultMessage: 'Eftir 1. september 2025',
-    description: 'Eftir 1. september 2025',
-  },
-  after1stSeptember2025Calculate: {
-    id: 'web.pensionCalculator:after1stSeptember2025Calculate',
-    defaultMessage: 'Reikna',
-    description: 'Reikna',
-  },
-  after1stSeptember2025Description: {
-    id: 'web.pensionCalculator:after1stSeptember2025Description',
-    defaultMessage: 'Sjá útreikning örorkulífeyris í nýju kerfi',
-    description: 'Sjá útreikning örorkulífeyris í nýju kerfi',
-  },
   birthMonthLabel: {
     id: 'web.pensionCalculator:birthMonthLabel',
     defaultMessage: 'Mánuður',
