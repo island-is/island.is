@@ -49,9 +49,9 @@ export const loadDateSelectOptions = async ({
       },
     },
   })
-  if (!data?.getCourseById) return []
+  if (!data?.getCourseById?.course) return []
 
-  return data.getCourseById.instances.map((instance) => {
+  return data.getCourseById.course.instances.map((instance) => {
     const formattedDate = format(parseISO(instance.startDate), 'd. MMMM yyyy', {
       locale: is,
     })
