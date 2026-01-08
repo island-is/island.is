@@ -11,6 +11,7 @@ export const completedForm = buildForm({
       alertTitle: confirmationMessages.alertTitle,
       expandableHeader: confirmationMessages.accordionTitle,
       expandableDescription: confirmationMessages.accordionText,
+      expandableIntro: confirmationMessages.accordionIntro,
     }),
   ],
 })
