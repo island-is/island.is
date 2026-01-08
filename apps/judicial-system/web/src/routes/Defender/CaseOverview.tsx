@@ -218,7 +218,9 @@ export const CaseOverview = () => {
               />
             </Box>
           )}
-          <AppealCaseFilesOverview />
+          <Box marginBottom={6}>
+            <AppealCaseFilesOverview />
+          </Box>
           {(workingCase.requestSharedWithDefender ===
             RequestSharedWithDefender.READY_FOR_COURT ||
             workingCase.requestSharedWithDefender ===

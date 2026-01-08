@@ -20,6 +20,7 @@ import {
 import {
   FormContext,
   PdfButton,
+  SectionHeading,
   SignedDocument,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
@@ -103,11 +104,9 @@ const CaseDocuments: FC<Props> = ({
   }
 
   return (
-    <Box marginBottom={10}>
-      <Text as="h3" variant="h3" marginBottom={1}>
-        {formatMessage(m.caseDocuments)}
-      </Text>
-      <Box marginBottom={2} component="ul">
+    <Box component="section">
+      <SectionHeading title={formatMessage(m.caseDocuments)} marginBottom={1} />
+      <Box component="ul">
         {!isPrisonSystemUser(user) && (
           <li>
             <PdfButton

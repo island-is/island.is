@@ -33,6 +33,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { strings } from './AppealCaseFilesOverview.strings'
+import { grid } from '../../utils/styles/recipes.css'
 import * as styles from './AppealCaseFilesOverview.css'
 
 const AppealCaseFilesOverview = () => {
@@ -102,8 +103,8 @@ const AppealCaseFilesOverview = () => {
     isCompletedCase(workingCase.state) &&
     allFiles &&
     allFiles.length > 0 && (
-      <>
-        <Box marginBottom={[2, 5]}>
+      <div className={grid({ gap: 3 })}>
+        <Box>
           <SectionHeading
             title="Skjöl kærumáls"
             tooltip={
@@ -111,6 +112,7 @@ const AppealCaseFilesOverview = () => {
                 ? 'Verjandi sér einungis kæru og greinargerð.'
                 : undefined
             }
+            marginBottom={1}
           />
           {allFiles.map((file) => {
             const prosecutorSubmitted = file.category?.includes('PROSECUTOR')
@@ -203,7 +205,7 @@ const AppealCaseFilesOverview = () => {
         {(isProsecutionUser(user) || isDefenceUser(user)) &&
           workingCase.appealState &&
           workingCase.appealState !== CaseAppealState.COMPLETED && (
-            <Box display="flex" justifyContent="flexEnd" marginTop={3}>
+            <Box display="flex" justifyContent="flexEnd">
               <Button
                 icon="add"
                 onClick={() => {
@@ -222,7 +224,7 @@ const AppealCaseFilesOverview = () => {
         <AnimatePresence>
           {fileNotFound && <FileNotFoundModal dismiss={dismissFileNotFound} />}
         </AnimatePresence>
-      </>
+      </div>
     )
   )
 }
