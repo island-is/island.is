@@ -15,6 +15,9 @@ export class GetCoursesInput {
 
   @Field(() => String, { nullable: true })
   organizationSlug?: string
+
+  @Field(() => String, { nullable: true })
+  courseListPageId?: string
 }
 
 @InputType()
@@ -24,4 +27,7 @@ export class GetCourseCategoriesInput {
 
   @Field(() => String, { nullable: true })
   organizationSlug?: string
+
+  @Field(() => String, { nullable: true })
+  courseListPageId?: string
 }
