@@ -128,6 +128,189 @@ describe('InheritanceReportService', () => {
       ).rejects.toBeTruthy()
     })
   })
+
+  describe('getSignatories', () => {
+    it('returns signatories based on enabled heirs', async () => {
+      const application = createApplication({
+        typeId: ApplicationTypes.INHERITANCE_REPORT,
+        answers: {
+          heirs: {
+            data: [
+              {
+                name: 'Heir A',
+                nationalId: '0101302209',
+                enabled: true,
+              },
+              {
+                name: 'Heir B',
+                nationalId: '0101302399',
+                enabled: true,
+              },
+            ],
+          },
+        },
+      })
+
+      const auth = createCurrentUser({
+        nationalId: '0101301234',
+        scope: ['@island.is/applications:write'],
+      })
+
+      const result = await service.getSignatories({
+        application,
+        auth,
+        currentUserLocale: 'is',
+      } as any)
+
+      expect(result.success).toBe(true)
+      expect(result.signatories).toHaveLength(2)
+      expect(result.signatories[0]).toEqual({
+        name: 'Heir A',
+        nationalId: '0101302209',
+        signed: true, // Mock: first heir is signed
+      })
+      expect(result.signatories[1]).toEqual({
+        name: 'Heir B',
+        nationalId: '0101302399',
+        signed: false, // Mock: rest are pending
+      })
+    })
+
+    it('filters out disabled heirs', async () => {
+      const application = createApplication({
+        typeId: ApplicationTypes.INHERITANCE_REPORT,
+        answers: {
+          heirs: {
+            data: [
+              {
+                name: 'Heir A',
+                nationalId: '0101302209',
+                enabled: true,
+              },
+              {
+                name: 'Heir B (disabled)',
+                nationalId: '0101302399',
+                enabled: false,
+              },
+              {
+                name: 'Heir C',
+                nationalId: '0101302499',
+                enabled: true,
+              },
+            ],
+          },
+        },
+      })
+
+      const auth = createCurrentUser({
+        nationalId: '0101301234',
+        scope: ['@island.is/applications:write'],
+      })
+
+      const result = await service.getSignatories({
+        application,
+        auth,
+        currentUserLocale: 'is',
+      } as any)
+
+      expect(result.success).toBe(true)
+      expect(result.signatories).toHaveLength(2)
+      expect(result.signatories[0].name).toBe('Heir A')
+      expect(result.signatories[1].name).toBe('Heir C')
+    })
+
+    it('returns empty array when no heirs exist', async () => {
+      const application = createApplication({
+        typeId: ApplicationTypes.INHERITANCE_REPORT,
+        answers: {
+          heirs: {
+            data: [],
+          },
+        },
+      })
+
+      const auth = createCurrentUser({
+        nationalId: '0101301234',
+        scope: ['@island.is/applications:write'],
+      })
+
+      const result = await service.getSignatories({
+        application,
+        auth,
+        currentUserLocale: 'is',
+      } as any)
+
+      expect(result.success).toBe(true)
+      expect(result.signatories).toEqual([])
+    })
+
+    it('handles undefined heirs data', async () => {
+      const application = createApplication({
+        typeId: ApplicationTypes.INHERITANCE_REPORT,
+        answers: {
+          heirs: {},
+        },
+      })
+
+      const auth = createCurrentUser({
+        nationalId: '0101301234',
+        scope: ['@island.is/applications:write'],
+      })
+
+      const result = await service.getSignatories({
+        application,
+        auth,
+        currentUserLocale: 'is',
+      } as any)
+
+      expect(result.success).toBe(true)
+      expect(result.signatories).toEqual([])
+    })
+
+    it('sets first heir as signed and rest as pending (mock behavior)', async () => {
+      const application = createApplication({
+        typeId: ApplicationTypes.INHERITANCE_REPORT,
+        answers: {
+          heirs: {
+            data: [
+              {
+                name: 'Heir A',
+                nationalId: '0101302209',
+                enabled: true,
+              },
+              {
+                name: 'Heir B',
+                nationalId: '0101302399',
+                enabled: true,
+              },
+              {
+                name: 'Heir C',
+                nationalId: '0101302499',
+                enabled: true,
+              },
+            ],
+          },
+        },
+      })
+
+      const auth = createCurrentUser({
+        nationalId: '0101301234',
+        scope: ['@island.is/applications:write'],
+      })
+
+      const result = await service.getSignatories({
+        application,
+        auth,
+        currentUserLocale: 'is',
+      } as any)
+
+      expect(result.success).toBe(true)
+      expect(result.signatories).toHaveLength(3)
+      expect(result.signatories[0].signed).toBe(true)
+      expect(result.signatories[1].signed).toBe(false)
+      expect(result.signatories[2].signed).toBe(false)
+    })
+  })
 })
 
 
