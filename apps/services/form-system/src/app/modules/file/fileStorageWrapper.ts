@@ -9,7 +9,7 @@ import { ConfigModule } from '@nestjs/config'
     {
       provide: 'CONFIGURATION(FileStorageModule)',
       useValue: {
-        uploadBucket:
+        tempBucket:
           process.env.FILE_STORAGE_UPLOAD_BUCKET ?? 'island-is-dev-upload-api',
         region: process.env.AWS_REGION ?? 'eu-west-1',
       },
