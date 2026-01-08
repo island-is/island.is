@@ -143,14 +143,8 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
     )
   }, [customPageData, typeOfBasePension])
 
-  const [dateOfCalculations, setDateOfCalculations] = useQueryState(
-    'dateOfCalculations',
-    {
-      defaultValue:
-        methods.formState.defaultValues?.dateOfCalculations ??
-        dateOfCalculationsOptions[0]?.value,
-    },
-  )
+  const [dateOfCalculations, setDateOfCalculations] =
+    useQueryState('dateOfCalculations')
 
   const currencyInputMaxLength =
     customPageData?.configJson?.currencyInputMaxLength ?? 14
@@ -189,50 +183,8 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
     return [...dateOfCalculationsOptions]
   }, [dateOfCalculationsOptions])
 
-  const isNewSystemActive =
-    new Date(dateOfCalculations) >= NEW_SYSTEM_TAKES_PLACE_DATE
-
   const basePensionTypeOptions = useMemo<Option<BasePensionType>[]>(() => {
-    if (isNewSystemActive) {
-      const options = [
-        {
-          label: formatMessage(translationStrings.basePensionRetirementLabel),
-          value: BasePensionType.Retirement,
-        },
-        {
-          label: formatMessage(
-            translationStrings.basePensionFishermanRetirementLabel,
-          ),
-          value: BasePensionType.FishermanRetirement,
-        },
-        {
-          label: formatMessage(
-            translationStrings.basePensionHalfRetirementLabel,
-          ),
-          value: BasePensionType.HalfRetirement,
-        },
-        {
-          label: formatMessage(
-            translationStrings.basePensionNewSystemDisabilityLabel,
-          ),
-          value: BasePensionType.NewSystemDisability,
-        },
-        {
-          label: formatMessage(
-            translationStrings.basePensionNewSystemMedicalAndRehabilitation,
-          ),
-          value: BasePensionType.NewSystemMedicalAndRehabilitation,
-        },
-        {
-          label: formatMessage(
-            translationStrings.basePensionNewSystemPartialDisabilityLabel,
-          ),
-          value: BasePensionType.NewSystemPartialDisability,
-        },
-      ]
-      return options
-    }
-    const options = [
+    return [
       {
         label: formatMessage(translationStrings.basePensionRetirementLabel),
         value: BasePensionType.Retirement,
@@ -244,6 +196,10 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
         value: BasePensionType.FishermanRetirement,
       },
       {
+        label: formatMessage(translationStrings.basePensionHalfRetirementLabel),
+        value: BasePensionType.HalfRetirement,
+      },
+      {
         label: formatMessage(translationStrings.basePensionDisabilityLabel),
         value: BasePensionType.Disability,
       },
@@ -252,14 +208,13 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
         value: BasePensionType.Rehabilitation,
       },
       {
-        label: formatMessage(translationStrings.basePensionHalfRetirementLabel),
-        value: BasePensionType.HalfRetirement,
+        label: formatMessage(
+          translationStrings.basePensionNewSystemPartialDisabilityLabel,
+        ),
+        value: BasePensionType.NewSystemPartialDisability,
       },
     ]
-
-    options.sort(sortAlpha('label'))
-    return options
-  }, [formatMessage, isNewSystemActive])
+  }, [formatMessage])
 
   const hasSpouseOptions = useMemo<Option<boolean>[]>(() => {
     return [
@@ -413,36 +368,9 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
     ]
   }, [formatMessage])
 
-  // Make sure we never enter an invalid state
-  useEffect(() => {
-    if (isNewSystemActive) {
-      if (typeOfBasePension === BasePensionType.Disability) {
-        methods.setValue(
-          'typeOfBasePension',
-          BasePensionType.NewSystemDisability,
-        )
-      } else if (typeOfBasePension === BasePensionType.Rehabilitation) {
-        methods.setValue(
-          'typeOfBasePension',
-          BasePensionType.NewSystemMedicalAndRehabilitation,
-        )
-      }
-    } else {
-      if (
-        typeOfBasePension === BasePensionType.NewSystemDisability ||
-        typeOfBasePension === BasePensionType.NewSystemPartialDisability
-      ) {
-        methods.setValue('typeOfBasePension', BasePensionType.Disability)
-      } else if (
-        typeOfBasePension === BasePensionType.NewSystemMedicalAndRehabilitation
-      ) {
-        methods.setValue('typeOfBasePension', BasePensionType.Rehabilitation)
-      }
-    }
-  }, [isNewSystemActive, methods, typeOfBasePension])
-
   useEffect(() => {
     if (
+      dateOfCalculations &&
       !dateOfCalculationsOptions.find(
         (option) => option.value === dateOfCalculations,
       )
@@ -635,6 +563,9 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                               translationStrings.typeOfBasePensionLabel,
                             )}
                             options={basePensionTypeOptions}
+                            placeholder={formatMessage(
+                              translationStrings.typeOfBasePensionPlaceholder,
+                            )}
                             onSelect={(option) => {
                               if (option && !dateOfCalculations) {
                                 const dateOptions =

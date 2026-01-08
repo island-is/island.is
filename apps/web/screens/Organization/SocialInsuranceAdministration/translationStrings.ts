@@ -12,6 +12,11 @@ export const translationStrings = defineMessages({
       'Í reiknivélinni getur þú sett inn mismunandi forsendur og séð hvernig það hefur áhrif á greiðslurnar þínar. Lífeyrir er fyrir flesta grunnlífeyrir frá Tryggingastofnun og viðbótagreiðslur. Ef þú ert með aðrar tekjur en lífeyri frá TR, getur það haft áhrif á réttindin þín.',
     description: 'Upplýsingar efst á fyrstu síðu',
   },
+  typeOfBasePensionPlaceholder: {
+    id: 'web.pensionCalculator:typeOfBasePensionPlaceholder',
+    defaultMessage: 'Veldu tegund greiðslna',
+    description: 'Tegund lífeyris, placeholder',
+  },
   pensionStartIsDelayed: {
     id: 'web.pensionCalculator:pensionStartIsDelayed',
     defaultMessage: 'Þú vilt hefja töku eftir 67 ára aldur',
