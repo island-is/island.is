@@ -1,8 +1,8 @@
 import { Box, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
-import React, { FC, useCallback, useRef, useState } from 'react'
-import * as styles from './QuestionTypes.css'
 import cn from 'classnames'
+import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
+import * as styles from './QuestionTypes.css'
 
 export interface ThermometerProps {
   id: string
@@ -39,6 +39,27 @@ export const Thermometer: FC<ThermometerProps> = ({
   const thumbRef = useRef<HTMLDivElement>(null)
   const [isDragging, setIsDragging] = useState(false)
 
+  // Refs to track active listeners for cleanup
+  const pointerMoveHandlerRef = useRef<((e: PointerEvent) => void) | null>(null)
+  const pointerUpHandlerRef = useRef<((e: PointerEvent) => void) | null>(null)
+
+  // Cleanup listeners on unmount
+  useEffect(() => {
+    return () => {
+      if (pointerMoveHandlerRef.current) {
+        document.removeEventListener(
+          'pointermove',
+          pointerMoveHandlerRef.current,
+        )
+        pointerMoveHandlerRef.current = null
+      }
+      if (pointerUpHandlerRef.current) {
+        document.removeEventListener('pointerup', pointerUpHandlerRef.current)
+        pointerUpHandlerRef.current = null
+      }
+    }
+  }, [])
+
   // Handle vertical dragging
   const handlePointerDown = (event: React.PointerEvent<HTMLElement>) => {
     if (disabled || event.button !== 0) return
@@ -72,15 +93,28 @@ export const Thermometer: FC<ThermometerProps> = ({
 
     const handlePointerUp = () => {
       setIsDragging(false)
-      document.removeEventListener('pointermove', handlePointerMove)
-      document.removeEventListener('pointerup', handlePointerUp)
+      if (pointerMoveHandlerRef.current) {
+        document.removeEventListener(
+          'pointermove',
+          pointerMoveHandlerRef.current,
+        )
+        pointerMoveHandlerRef.current = null
+      }
+      if (pointerUpHandlerRef.current) {
+        document.removeEventListener('pointerup', pointerUpHandlerRef.current)
+        pointerUpHandlerRef.current = null
+      }
     }
+
+    // Store refs for cleanup
+    pointerMoveHandlerRef.current = handlePointerMove
+    pointerUpHandlerRef.current = handlePointerUp
 
     document.addEventListener('pointermove', handlePointerMove)
     document.addEventListener('pointerup', handlePointerUp)
   }
 
-  // Calculate display values (show every 10th if range is large)
+  // Calculate display values (sample by index if range is large)
   const getDisplayValues = () => {
     const minNum = parseFloat(min)
     const maxNum = parseFloat(max)
@@ -97,9 +131,20 @@ export const Thermometer: FC<ThermometerProps> = ({
       allValues.push(i.toString())
     }
 
-    // If we have more than 20 values, show only every 10th
+    // If we have more than 20 values, sample by index
     if (allValues.length > 20) {
-      return allValues.filter((val) => parseFloat(val) % 10 === 0)
+      const interval = Math.ceil(allValues.length / 20)
+      const sampledValues = allValues.filter(
+        (_, index) => index % interval === 0,
+      )
+
+      // Ensure the last value is always included
+      const lastValue = allValues[allValues.length - 1]
+      if (sampledValues[sampledValues.length - 1] !== lastValue) {
+        sampledValues.push(lastValue)
+      }
+
+      return sampledValues
     }
     return allValues
   }
@@ -187,10 +232,21 @@ export const Thermometer: FC<ThermometerProps> = ({
   }
 
   return (
-    <Box>
+    <Box
+      role="slider"
+      aria-labelledby={`${label}-label`}
+      aria-valuemin={parseFloat(min)}
+      aria-valuemax={parseFloat(max)}
+      aria-valuenow={
+        value && typeof value === 'string' ? parseFloat(value) : undefined
+      }
+      aria-disabled={disabled}
+      tabIndex={disabled ? -1 : 0}
+      onKeyDown={handleKeyDown}
+    >
       {label && (
         <Box marginBottom={3}>
-          <Text variant="h5">
+          <Text variant="h5" id={`${label}-label`}>
             {label}
             {required && <span style={{ color: 'red' }}> *</span>}
           </Text>

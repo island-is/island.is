@@ -220,25 +220,48 @@ export const evaluateExpression = (expression: string): number => {
         expr.substring(0, lastOpen) + subResult + expr.substring(firstClose + 1)
     }
 
-    // Parse addition and subtraction (lowest precedence)
-    const addSubMatch = expr.match(/^(.+?)([+-])(.+)$/)
-    if (addSubMatch) {
-      const left = parseExpression(addSubMatch[1])
-      const operator = addSubMatch[2]
-      const right = parseExpression(addSubMatch[3])
-      return operator === '+' ? left + right : left - right
+    // Find rightmost top-level '+' or '-' (lowest precedence, left-to-right associativity)
+    let parenDepth = 0
+    for (let i = expr.length - 1; i >= 0; i--) {
+      const char = expr[i]
+      if (char === ')') parenDepth++
+      else if (char === '(') parenDepth--
+      else if (parenDepth === 0 && (char === '+' || char === '-')) {
+        // Skip if this is a leading minus sign
+        if (i === 0) continue
+
+        const left = expr.substring(0, i)
+        const operator = char
+        const right = expr.substring(i + 1)
+
+        const leftValue = parseExpression(left)
+        const rightValue = parseExpression(right)
+        return operator === '+'
+          ? leftValue + rightValue
+          : leftValue - rightValue
+      }
     }
 
-    // Parse multiplication and division (higher precedence)
-    const mulDivMatch = expr.match(/^(.+?)([*/])(.+)$/)
-    if (mulDivMatch) {
-      const left = parseExpression(mulDivMatch[1])
-      const operator = mulDivMatch[2]
-      const right = parseExpression(mulDivMatch[3])
-      return operator === '*' ? left * right : left / right
+    // Find rightmost top-level '*' or '/' (higher precedence, left-to-right associativity)
+    parenDepth = 0
+    for (let i = expr.length - 1; i >= 0; i--) {
+      const char = expr[i]
+      if (char === ')') parenDepth++
+      else if (char === '(') parenDepth--
+      else if (parenDepth === 0 && (char === '*' || char === '/')) {
+        const left = expr.substring(0, i)
+        const operator = char
+        const right = expr.substring(i + 1)
+
+        const leftValue = parseExpression(left)
+        const rightValue = parseExpression(right)
+        return operator === '*'
+          ? leftValue * rightValue
+          : leftValue / rightValue
+      }
     }
 
-    // Parse number
+    // Parse number (or handle leading minus)
     const num = parseFloat(expr)
     if (isNaN(num)) {
       throw new Error(`Invalid number: ${expr}`)

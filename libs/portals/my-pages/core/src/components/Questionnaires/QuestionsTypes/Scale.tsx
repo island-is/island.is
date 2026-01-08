@@ -19,6 +19,7 @@ export interface ScaleProps {
 }
 
 export const Scale: FC<ScaleProps> = ({
+  id,
   label,
   min,
   max,
@@ -52,7 +53,7 @@ export const Scale: FC<ScaleProps> = ({
     }
     // If we have more than 20 values, show only every 10th
     if (values.length > 20) {
-      return values.filter((val) => parseFloat(val) % 10 === 0)
+      return values.filter((_, index) => index % 10 === 0)
     }
     return values
   }, [minNum, maxNum, step, min, max])
@@ -60,7 +61,7 @@ export const Scale: FC<ScaleProps> = ({
   return (
     <Box>
       {label && (
-        <Text variant="h5" marginBottom={2}>
+        <Text variant="h5" marginBottom={2} id={`${id}-label`}>
           {label}
           {required && <span style={{ color: 'red' }}> *</span>}
         </Text>
@@ -82,7 +83,14 @@ export const Scale: FC<ScaleProps> = ({
           </Box>
         )}
 
-        <Box className={styles.scaleContainer} display="flex" flexWrap="nowrap">
+        <Box
+          className={styles.scaleContainer}
+          display="flex"
+          flexWrap="nowrap"
+          role="radiogroup"
+          aria-required={required}
+          aria-labelledby={label ? `${id}-label` : undefined}
+        >
           {generateScaleValues.map((scaleValue) => (
             <Box
               key={scaleValue}
@@ -95,6 +103,10 @@ export const Scale: FC<ScaleProps> = ({
               display="flex"
               justifyContent="center"
               alignItems="center"
+              role="radio"
+              aria-checked={value === scaleValue}
+              aria-disabled={disabled}
+              type="button"
               color={value === scaleValue ? 'white' : 'dark400'}
             >
               <Text

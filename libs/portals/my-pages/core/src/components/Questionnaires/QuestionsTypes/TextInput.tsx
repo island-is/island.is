@@ -1,4 +1,4 @@
-import { Box, Input, Text } from '@island.is/island-ui/core'
+import { Box, Input } from '@island.is/island-ui/core'
 import React from 'react'
 import { useIsMobile } from '../../..'
 
@@ -13,11 +13,10 @@ export interface TextInputProps {
   required?: boolean
   multiline?: boolean
   rows?: number
-  maxLength?: string
+  maxLength?: number
   type?: 'text' | 'number' | 'decimal'
   min?: string
   max?: string
-  step?: number
   backgroundColor?: 'white' | 'blue'
 }
 
@@ -37,7 +36,6 @@ export const TextInput: React.FC<TextInputProps> = ({
   min,
   max,
   backgroundColor = 'blue',
-  step: _step,
 }) => {
   const isMobile = useIsMobile()
   const handleChange = (

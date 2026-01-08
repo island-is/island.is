@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import '@testing-library/jest-dom'
 import { QuestionnaireVisibilityOperator } from '@island.is/api/schema'
+import '@testing-library/jest-dom'
 import { QuestionAnswer } from '../../../types/questionnaire'
 import {
+  evaluateExpression,
   evaluateStructuredVisibilityConditions,
   extractDependenciesFromStructuredConditions,
   isQuestionVisibleWithStructuredConditions,
@@ -21,6 +22,7 @@ const createAnswer = (
     label: labels?.[index],
   })),
   type: 'radio' as any,
+  question: '',
 })
 
 describe('visibilityUtils', () => {
@@ -876,6 +878,122 @@ describe('visibilityUtils', () => {
       const answers = {}
 
       expect(isSectionVisible(section, answers)).toBe(true)
+    })
+  })
+
+  describe('evaluateExpression', () => {
+    describe('basic arithmetic', () => {
+      it('should evaluate simple addition', () => {
+        expect(evaluateExpression('2 + 3')).toBe(5)
+        expect(evaluateExpression('10 + 20')).toBe(30)
+      })
+
+      it('should evaluate simple subtraction', () => {
+        expect(evaluateExpression('10 - 3')).toBe(7)
+        expect(evaluateExpression('100 - 50')).toBe(50)
+      })
+
+      it('should evaluate simple multiplication', () => {
+        expect(evaluateExpression('4 * 5')).toBe(20)
+        expect(evaluateExpression('7 * 8')).toBe(56)
+      })
+
+      it('should evaluate simple division', () => {
+        expect(evaluateExpression('20 / 4')).toBe(5)
+        expect(evaluateExpression('100 / 10')).toBe(10)
+      })
+
+      it('should handle decimal numbers', () => {
+        expect(evaluateExpression('2.5 + 3.5')).toBe(6)
+        expect(evaluateExpression('10.5 * 2')).toBe(21)
+        expect(evaluateExpression('7.5 / 2.5')).toBe(3)
+      })
+
+      it('should handle negative numbers', () => {
+        expect(evaluateExpression('-5 + 3')).toBe(-2)
+        expect(evaluateExpression('-10 * 2')).toBe(-20)
+        expect(evaluateExpression('-8 / 4')).toBe(-2)
+      })
+    })
+
+    describe('operator precedence', () => {
+      it('should respect multiplication precedence over addition', () => {
+        expect(evaluateExpression('2 + 3 * 4')).toBe(14) // 2 + 12 = 14
+        expect(evaluateExpression('10 + 5 * 2')).toBe(20) // 10 + 10 = 20
+      })
+
+      it('should respect division precedence over subtraction', () => {
+        expect(evaluateExpression('20 - 10 / 2')).toBe(15) // 20 - 5 = 15
+        expect(evaluateExpression('100 - 50 / 5')).toBe(90) // 100 - 10 = 90
+      })
+
+      it('should handle mixed operations with correct precedence', () => {
+        expect(evaluateExpression('2 + 3 * 4 - 5')).toBe(9) // 2 + 12 - 5 = 9
+        expect(evaluateExpression('10 / 2 + 3 * 4')).toBe(17) // 5 + 12 = 17
+      })
+    })
+
+    describe('left-to-right associativity', () => {
+      it('should evaluate left-to-right for subtraction', () => {
+        expect(evaluateExpression('10 - 5 - 2')).toBe(3) // (10 - 5) - 2 = 3, not 10 - (5 - 2) = 7
+        expect(evaluateExpression('20 - 10 - 5')).toBe(5) // (20 - 10) - 5 = 5, not 20 - (10 - 5) = 15
+      })
+
+      it('should evaluate left-to-right for division', () => {
+        expect(evaluateExpression('20 / 4 / 2')).toBe(2.5) // (20 / 4) / 2 = 2.5, not 20 / (4 / 2) = 10
+        expect(evaluateExpression('100 / 10 / 2')).toBe(5) // (100 / 10) / 2 = 5, not 100 / (10 / 2) = 20
+      })
+
+      it('should evaluate left-to-right for addition', () => {
+        expect(evaluateExpression('1 + 2 + 3')).toBe(6)
+        expect(evaluateExpression('5 + 10 + 15')).toBe(30)
+      })
+
+      it('should evaluate left-to-right for multiplication', () => {
+        expect(evaluateExpression('2 * 3 * 4')).toBe(24)
+        expect(evaluateExpression('5 * 2 * 3')).toBe(30)
+      })
+    })
+
+    describe('parentheses', () => {
+      it('should respect parentheses for grouping', () => {
+        expect(evaluateExpression('(2 + 3) * 4')).toBe(20)
+        expect(evaluateExpression('2 * (3 + 4)')).toBe(14)
+      })
+
+      it('should handle nested parentheses', () => {
+        expect(evaluateExpression('((2 + 3) * 4) + 5')).toBe(25)
+        expect(evaluateExpression('2 * ((3 + 4) * 5)')).toBe(70)
+      })
+
+      it('should handle multiple parentheses groups', () => {
+        expect(evaluateExpression('(2 + 3) * (4 + 5)')).toBe(45)
+        expect(evaluateExpression('(10 - 5) + (20 / 4)')).toBe(10)
+      })
+    })
+
+    describe('whitespace handling', () => {
+      it('should handle expressions with no spaces', () => {
+        expect(evaluateExpression('2+3*4')).toBe(14)
+        expect(evaluateExpression('10-5/2')).toBe(7.5)
+      })
+
+      it('should handle expressions with extra spaces', () => {
+        expect(evaluateExpression('  2  +  3  ')).toBe(5)
+        expect(evaluateExpression('10   *   5')).toBe(50)
+      })
+    })
+
+    describe('complex expressions', () => {
+      it('should evaluate complex multi-operation expressions', () => {
+        expect(evaluateExpression('2 + 3 * 4 - 5 / 2')).toBe(11.5) // 2 + 12 - 2.5 = 11.5
+        expect(evaluateExpression('(10 + 5) * 2 - 8 / 4')).toBe(28) // 15 * 2 - 2 = 28
+      })
+
+      it('should handle expressions with decimals and operators', () => {
+        expect(evaluateExpression('10.5 + 2.5 * 4')).toBe(20.5) // 10.5 + 10 = 20.5
+        expect(evaluateExpression('(7.5 - 2.5) / 2')).toBe(2.5) // 5 / 2 = 2.5
+      })
     })
   })
 })

@@ -77,12 +77,11 @@ export const Table: React.FC<TableProps> = ({
       }
     })
 
-    // Determine number of rows from the column with most entries
-    const maxRowCount =
-      numRows ??
-      maxRows ??
-      Math.max(...Object.values(answersByColumn).map((arr) => arr.length), 0)
-
+    const actualRowCount = Math.max(
+      ...Object.values(answersByColumn).map((arr) => arr.length),
+      0,
+    )
+    const maxRowCount = Math.min(actualRowCount, maxRows)
     // Build rows
     for (let i = 0; i < maxRowCount; i++) {
       const row: TableRowData = {}
@@ -170,7 +169,7 @@ export const Table: React.FC<TableProps> = ({
             onChange={(value) => handleCurrentRowChange(column.id, value)}
             disabled={disabled || rows.length >= maxRows}
             multiline={column.multiline ?? false}
-            maxLength={column.maxLength?.toString()}
+            maxLength={column.maxLength ?? undefined}
           />
         )
 

@@ -7,12 +7,31 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import cn from 'classnames'
-import { isValidElement, ReactElement } from 'react'
+import { isValidElement, memo, ReactElement, useMemo } from 'react'
 import HtmlParser from 'react-html-parser'
+import sanitizeHtml from 'sanitize-html'
 import useIsMobile from '../../hooks/useIsMobile/useIsMobile'
 import { LinkButton } from '../LinkButton/LinkButton'
 import * as styles from './NestedLines.css'
-import sanitizeHtml from 'sanitize-html'
+
+const sanitizeConfig: sanitizeHtml.IOptions = {
+  allowedTags: [
+    'br',
+    'strong',
+    'a',
+    'p',
+    'ul',
+    'ol',
+    'li',
+    'h1',
+    'h2',
+    'h3',
+    'h4',
+    'h5',
+    'h6',
+  ],
+  allowedAttributes: {},
+}
 
 interface Props {
   data: {
@@ -30,6 +49,38 @@ interface Props {
   ratio?: '3:9' | '6:6'
   startColor?: 'white' | 'blue100'
 }
+
+const SanitizedValue = memo(
+  ({
+    value,
+    variant,
+    boldValue,
+  }: {
+    value: string | number | ReactElement | undefined
+    variant: 'small' | 'default'
+    boldValue: boolean
+  }) => {
+    const sanitizedValue = useMemo(() => {
+      if (typeof value === 'object' && isValidElement(value)) {
+        return value
+      }
+      const stringValue = value ? value.toString() : ''
+      return HtmlParser(sanitizeHtml(stringValue, sanitizeConfig))
+    }, [value])
+
+    return (
+      <Text
+        variant={variant}
+        as="span"
+        fontWeight={boldValue ? 'medium' : 'regular'}
+      >
+        {sanitizedValue}
+      </Text>
+    )
+  },
+)
+
+SanitizedValue.displayName = 'SanitizedValue'
 
 export const NestedLines = ({
   data,
@@ -105,17 +156,11 @@ export const NestedLines = ({
                           {value}
                         </Button>
                       ) : (
-                        <Text
+                        <SanitizedValue
+                          value={value}
                           variant={variant}
-                          as="span"
-                          fontWeight={boldValue ? 'medium' : 'regular'}
-                        >
-                          {typeof value === 'object' && isValidElement(value)
-                            ? value
-                            : HtmlParser(
-                                sanitizeHtml(value ? value.toString() : ''),
-                              )}
-                        </Text>
+                          boldValue={boldValue}
+                        />
                       )}
                     </Box>
                   </GridColumn>
