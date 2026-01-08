@@ -7,7 +7,7 @@ import {
   calculatePt,
   Confirmation,
   drawTextWithEllipsisPDFKit,
-  smallFontSize,
+  xsFontSize,
 } from './pdfHelpers'
 import { PDFKitCoatOfArms } from './PDFKitCoatOfArms'
 
@@ -91,21 +91,21 @@ const createRulingConfirmation = async (
   doc.drawText('Réttarvörslugátt', {
     x: titleX,
     y: height - pageMargin - titleHeight + calculatePt(16),
-    size: calculatePt(smallFontSize),
+    size: calculatePt(xsFontSize),
     font: timesRomanBoldFont,
   })
 
   doc.drawText('Rafræn staðfesting', {
     x: 158,
     y: height - pageMargin - titleHeight + calculatePt(16),
-    size: calculatePt(smallFontSize),
+    size: calculatePt(xsFontSize),
     font: timesRomanFont,
   })
 
   doc.drawText(formatDate(confirmation.date) || '', {
     x: shadowWidth - calculatePt(24),
     y: height - pageMargin - titleHeight + calculatePt(16),
-    size: calculatePt(smallFontSize),
+    size: calculatePt(xsFontSize),
     font: timesRomanFont,
   })
 
@@ -123,7 +123,7 @@ const createRulingConfirmation = async (
   doc.drawText('Dómstóll', {
     x: titleX,
     y: height - pageMargin - titleHeight - calculatePt(10),
-    size: calculatePt(smallFontSize),
+    size: calculatePt(xsFontSize),
     font: timesRomanBoldFont,
   })
 
@@ -132,7 +132,7 @@ const createRulingConfirmation = async (
       x: titleX,
       y: height - pageMargin - titleHeight - calculatePt(22),
       font: timesRomanFont,
-      size: calculatePt(smallFontSize),
+      size: calculatePt(xsFontSize),
     })
   }
 
@@ -150,7 +150,7 @@ const createRulingConfirmation = async (
   doc.drawText('Samþykktaraðili', {
     x: titleX + institutionWidth,
     y: height - pageMargin - titleHeight - calculatePt(10),
-    size: calculatePt(smallFontSize),
+    size: calculatePt(xsFontSize),
     font: timesRomanBoldFont,
   })
 
@@ -159,14 +159,14 @@ const createRulingConfirmation = async (
       `${confirmation.actor}${
         confirmation.title ? `, ${lowercase(confirmation.title)}` : ''
       }`,
-      calculatePt(smallFontSize),
+      calculatePt(xsFontSize),
     )
     drawTextWithEllipsisPDFKit(
       doc,
       `${confirmation.actor}${
         confirmation.title ? `, ${lowercase(confirmation.title)}` : ''
       }`,
-      { type: timesRomanFont, size: calculatePt(smallFontSize) },
+      { type: timesRomanFont, size: calculatePt(xsFontSize) },
       titleX + institutionWidth,
       height - pageMargin - titleHeight - calculatePt(22),
       confirmedByWidth - 16,
@@ -228,21 +228,21 @@ const createCourtRecordConfirmation = async (
   doc.drawText('Réttarvörslugátt', {
     x: titleX,
     y: height - pageMargin - titleHeight + calculatePt(16),
-    size: calculatePt(smallFontSize),
+    size: calculatePt(xsFontSize),
     font: timesRomanBoldFont,
   })
 
   doc.drawText('Rafræn staðfesting', {
     x: 158,
     y: height - pageMargin - titleHeight + calculatePt(16),
-    size: calculatePt(smallFontSize),
+    size: calculatePt(xsFontSize),
     font: timesRomanFont,
   })
 
   doc.drawText(formatDate(confirmation.date) || '', {
     x: shadowWidth - calculatePt(24),
     y: height - pageMargin - titleHeight + calculatePt(16),
-    size: calculatePt(smallFontSize),
+    size: calculatePt(xsFontSize),
     font: timesRomanFont,
   })
 
@@ -260,7 +260,7 @@ const createCourtRecordConfirmation = async (
   doc.drawText('Dómstóll', {
     x: titleX,
     y: height - pageMargin - titleHeight - calculatePt(10),
-    size: calculatePt(smallFontSize),
+    size: calculatePt(xsFontSize),
     font: timesRomanBoldFont,
   })
 
@@ -269,7 +269,7 @@ const createCourtRecordConfirmation = async (
       x: titleX,
       y: height - pageMargin - titleHeight - calculatePt(22),
       font: timesRomanFont,
-      size: calculatePt(smallFontSize),
+      size: calculatePt(xsFontSize),
     })
   }
 }
