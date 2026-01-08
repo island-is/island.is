@@ -117,10 +117,13 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
               }) ?? null,
           },
         }
-        this.logger.info('Full body of request to register cars to day rate', requestBody)
+        this.logger.info(
+          'Full body of request to register cars to day rate',
+          requestBody,
+        )
         await this.rentalsApiWithAuth(
           auth,
-        ).apiDayRateEntriesEntityIdRegisterPost({...requestBody})
+        ).apiDayRateEntriesEntityIdRegisterPost({ ...requestBody })
         return true
       } else {
         const requestBody = {
@@ -138,10 +141,13 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
               }) ?? null,
           },
         }
-        this.logger.info('Full body of request to deregister cars from day rate', requestBody)
+        this.logger.info(
+          'Full body of request to deregister cars from day rate',
+          requestBody,
+        )
         await this.rentalsApiWithAuth(
           auth,
-        ).apiDayRateEntriesEntityIdDeregisterPost({...requestBody})
+        ).apiDayRateEntriesEntityIdDeregisterPost({ ...requestBody })
         return true
       }
     } catch (error) {
