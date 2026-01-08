@@ -286,6 +286,7 @@ export const Overview = () => {
                   </Button>
                 ) : (
                   <Button
+                    dataTestId="button-send-case-to-prison-admin"
                     variant="text"
                     onClick={() => handleSendToPrisonAdmin(defendant)}
                     size="small"
