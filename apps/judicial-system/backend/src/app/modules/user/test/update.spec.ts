@@ -2,7 +2,7 @@ import { uuid } from 'uuidv4'
 
 import { createTestingUserModule } from './createTestingUserModule'
 
-import { Institution, User } from '../../repository'
+import { User } from '../../repository'
 
 interface Then {
   result: User
@@ -41,9 +41,7 @@ describe('UserController - Update', () => {
 
     beforeEach(async () => {
       const mockUpdate = mockUserModel.update as jest.Mock
-      mockUpdate.mockResolvedValueOnce([1])
-      const mockFindByPk = mockUserModel.findByPk as jest.Mock
-      mockFindByPk.mockResolvedValueOnce(user)
+      mockUpdate.mockResolvedValueOnce([1, [user]])
 
       then = await givenWhenThen()
     })
@@ -51,11 +49,8 @@ describe('UserController - Update', () => {
     it('should return the updated user', () => {
       expect(mockUserModel.update).toHaveBeenCalledWith(
         { name, title },
-        { where: { id: userId } },
+        { where: { id: userId }, returning: true },
       )
-      expect(mockUserModel.findByPk).toHaveBeenCalledWith(userId, {
-        include: [{ model: Institution, as: 'institution' }],
-      })
       expect(then.result).toBe(user)
     })
   })
