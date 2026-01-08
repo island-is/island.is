@@ -7,15 +7,29 @@ import {
 } from '../../models/questionnaires.model'
 import type { QuestionnaireBody } from '@island.is/clients/lsh'
 import type { QuestionnaireDetailDto } from '@island.is/clients/health-directorate'
-import { createTestIntl } from '@island.is/cms-translations/test'
+import type { MessageDescriptor } from '@formatjs/intl'
 
-const { formatMessage } = createTestIntl({
-  locale: 'is',
-  messages: {
+// Mock formatMessage function
+const formatMessage = (
+  descriptor: MessageDescriptor | string,
+  _values?: Record<string, unknown>,
+): string => {
+  if (typeof descriptor === 'string') {
+    return descriptor
+  }
+
+  // Mock translations for tests
+  const translations: Record<string, string> = {
     'sp.health:yes': 'Já',
     'sp.health:no': 'Nei',
-  },
-})
+  }
+
+  const defaultMessage =
+    typeof descriptor.defaultMessage === 'string'
+      ? descriptor.defaultMessage
+      : ''
+  return translations[descriptor.id as string] || defaultMessage || ''
+}
 
 describe('display mappers', () => {
   describe('LSH questionnaire mapping', () => {
@@ -73,8 +87,8 @@ describe('display mappers', () => {
       expect(question?.label).toBe('Select an option')
       expect(question?.answerOptions.type).toBe(AnswerOptionType.radio)
       expect(question?.answerOptions.options).toEqual([
-        { id: 'AOption A', label: 'Option A', value: 'A' },
-        { id: 'BOption B', label: 'Option B', value: 'B' },
+        { id: 'A', label: 'Option A', value: 'A' },
+        { id: 'B', label: 'Option B', value: 'B' },
       ])
     })
 
@@ -267,7 +281,8 @@ describe('display mappers', () => {
       expect(section?.questions).toHaveLength(1)
 
       const question = section?.questions?.[0]
-      expect(question?.id).toBe('bool-q1')
+      expect(question?.id).toBe('group-1__bool-q1')
+      expect(question?.originalId).toBe('bool-q1')
       expect(question?.label).toBe('Are you OK?')
       expect(question?.answerOptions.type).toBe(AnswerOptionType.radio)
 
@@ -327,9 +342,11 @@ describe('display mappers', () => {
       const mapped = mapELQuestionnaire(elDetail, formatMessage)
 
       const section = mapped.sections?.[0]
-      const dependentQuestion = section?.questions?.find((q) => q.id === 'q2')
+      const dependentQuestion = section?.questions?.find(
+        (q) => q.id === 'group-1__q2',
+      )
 
-      // q2 should depend on q1 via triggers
+      // q2 should depend on q1 via triggers (dependsOn uses original IDs, not namespaced)
       expect(dependentQuestion?.dependsOn).toEqual(['q1'])
       expect(dependentQuestion?.visibilityConditions).toBeDefined()
       expect(dependentQuestion?.visibilityConditions?.[0].questionId).toBe('q1')
