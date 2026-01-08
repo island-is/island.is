@@ -11,6 +11,7 @@ import React, {
 } from 'react'
 import HtmlParser from 'react-html-parser'
 import * as styles from './ProgressBar.css'
+import sanitizeHtml from 'sanitize-html'
 
 interface Props {
   id: string
@@ -131,7 +132,7 @@ export const ProgressBar: FC<Props> = ({
     <Box width={vertical ? undefined : 'full'}>
       {label && (
         <Text variant="h5" marginBottom={2} id={labelId}>
-          {HtmlParser(label)}
+          {HtmlParser(sanitizeHtml(label))}
           {required && <span style={{ color: 'red' }}> *</span>}
         </Text>
       )}

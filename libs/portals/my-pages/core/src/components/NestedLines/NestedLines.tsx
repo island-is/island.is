@@ -7,11 +7,12 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import cn from 'classnames'
-import { ReactElement } from 'react'
+import { isValidElement, ReactElement } from 'react'
 import HtmlParser from 'react-html-parser'
 import useIsMobile from '../../hooks/useIsMobile/useIsMobile'
 import { LinkButton } from '../LinkButton/LinkButton'
 import * as styles from './NestedLines.css'
+import sanitizeHtml from 'sanitize-html'
 
 interface Props {
   data: {
@@ -109,7 +110,11 @@ export const NestedLines = ({
                           as="span"
                           fontWeight={boldValue ? 'medium' : 'regular'}
                         >
-                          {HtmlParser(value ? value.toString() : '')}
+                          {typeof value === 'object' && isValidElement(value)
+                            ? value
+                            : HtmlParser(
+                                sanitizeHtml(value ? value.toString() : ''),
+                              )}
                         </Text>
                       )}
                     </Box>

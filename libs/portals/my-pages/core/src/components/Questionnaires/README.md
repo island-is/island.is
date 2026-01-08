@@ -391,7 +391,7 @@ The components are **provider-agnostic** – they work with questionnaires from 
 
 ## Testing
 
-Multiple tests regarding visibility mapping can be fount `visibilityUtils.spec.ts`
+Multiple tests regarding visibility mapping can be found `visibilityUtils.spec.ts`
 
 ---
 

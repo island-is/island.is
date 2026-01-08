@@ -1,22 +1,21 @@
 import {
-  Box,
-  Button,
-  GridColumn,
-  GridRow,
-  Text,
-  Table as T,
-} from '@island.is/island-ui/core'
-import React, { useState } from 'react'
-import HtmlParser from 'react-html-parser'
-import { QuestionAnswer } from '../../../types/questionnaire'
-import { TextInput } from './TextInput'
-import { DatePicker } from '@island.is/island-ui/core'
-import {
   QuestionnaireAnswerOptionType,
   QuestionnaireTableColumn,
 } from '@island.is/api/schema'
+import {
+  Box,
+  Button,
+  DatePicker,
+  GridColumn,
+  GridRow,
+  Table as T,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import React, { useState } from 'react'
 import { m } from '../../../lib/messages'
+import { QuestionAnswer } from '../../../types/questionnaire'
+import { TextInput } from './TextInput'
 
 interface TableProps {
   id: string

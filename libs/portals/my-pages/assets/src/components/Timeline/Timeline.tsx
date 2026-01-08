@@ -87,7 +87,7 @@ export const Timeline: FC<Props> = ({
             {currentProgress && (
               <>
                 <ProgressBar
-                  id="timeline-progres-current"
+                  id="timeline-progress-current"
                   progress={currentProgress}
                 />
                 {tooltipText && (

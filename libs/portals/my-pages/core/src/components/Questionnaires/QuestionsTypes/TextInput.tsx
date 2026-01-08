@@ -67,6 +67,19 @@ export const TextInput: React.FC<TextInputProps> = ({
 
     onChange(newValue)
   }
+  const handleBlur = () => {
+    if (type === 'number' && value) {
+      const numValue = parseFloat(value)
+      if (!isNaN(numValue)) {
+        if (min !== undefined && numValue < parseFloat(min)) {
+          onChange(min.toString())
+        } else if (max !== undefined && numValue > parseFloat(max)) {
+          onChange(max.toString())
+        }
+      }
+    }
+  }
+
   return (
     <Box
       width={
@@ -86,6 +99,7 @@ export const TextInput: React.FC<TextInputProps> = ({
         placeholder={placeholder}
         value={value}
         onChange={handleChange}
+        onBlur={handleBlur}
         hasError={!!error}
         errorMessage={error}
         disabled={disabled}

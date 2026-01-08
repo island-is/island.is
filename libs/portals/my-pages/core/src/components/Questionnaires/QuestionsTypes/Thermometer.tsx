@@ -115,8 +115,6 @@ export const Thermometer: FC<ThermometerProps> = ({
 
     // Calculate position (reversed because highest value is at top)
     const reversedIndex = displayValues.length - 1 - currentIndex
-
-    console.log('reversedIndex, segmentHeight:', reversedIndex, segmentHeight)
     return reversedIndex * segmentHeight + segmentHeight / 2
   }
 

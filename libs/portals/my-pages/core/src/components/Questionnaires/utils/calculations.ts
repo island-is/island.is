@@ -2,6 +2,7 @@
 Specific calculations for LSH questionnaires. They may contain formulas and values derived from user answers. */
 
 import { QuestionAnswer } from '../../../types/questionnaire'
+import { evaluateExpression } from './visibilityUtils'
 
 const asNumber = (v: unknown): number => {
   if (typeof v === 'number' && Number.isFinite(v)) return v
@@ -103,18 +104,15 @@ const safeEval = (expr: string): number | null => {
   const cleaned = expr.trim()
   if (!cleaned) return null
 
-  // Allow only numbers, ops, and whitespace
+  // Validate expression contains only numbers, operators, parentheses, decimal points, and whitespace
   if (!/^[0-9+\-*/().\s]+$/.test(cleaned)) {
-    // If it’s just a single number that includes a leading minus or decimals, parse it
+    // If it's just a single number that includes a leading minus or decimals, parse it
     const n = Number(cleaned)
     return Number.isFinite(n) ? n : null
   }
 
   try {
-    // eslint-disable-next-line no-new-func
-    const fn = new Function(`return (${cleaned});`)
-    const out = fn()
-    return typeof out === 'number' && Number.isFinite(out) ? out : null
+    return evaluateExpression(cleaned)
   } catch {
     return null
   }

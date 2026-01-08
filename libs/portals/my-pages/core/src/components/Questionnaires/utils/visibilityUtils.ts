@@ -192,7 +192,7 @@ export const isSectionVisible = (
 
 // Safe expression evaluator for mathematical formulas
 // Wrap in try-catch when calling this function
-const evaluateExpression = (expression: string): number => {
+export const evaluateExpression = (expression: string): number => {
   // Clean the expression - only allow numbers, operators, parentheses, and whitespace
   const cleanExpression = expression.replace(/[^0-9+\-*/().]/g, ' ').trim()
 
@@ -248,41 +248,4 @@ const evaluateExpression = (expression: string): number => {
   }
 
   return parseExpression(cleanExpression)
-}
-
-// Calculate LSH based questions formula value based on current answers
-export const calculateFormula = (
-  formula: string,
-  answers: { [key: string]: QuestionAnswer },
-): number | null => {
-  let expression = formula.trim()
-
-  // Replace all @@@QuestionId with actual values
-  const questionRefs = expression.match(/@@@([a-zA-Z0-9_-]+)/g)
-  if (questionRefs) {
-    for (const ref of questionRefs) {
-      const questionId = ref.replace('@@@', '')
-      const answer = answers[questionId]
-      let value = 0
-
-      if (answer && answer.answers && answer.answers.length > 0) {
-        // Sum all values in the answers array
-        value = answer.answers.reduce((sum: number, item) => {
-          const num =
-            typeof item.value === 'number' ? item.value : parseFloat(item.value)
-          return sum + (isNaN(num) ? 0 : num)
-        }, 0)
-      }
-
-      expression = expression.replace(ref, value.toString())
-    }
-  }
-
-  try {
-    const result = evaluateExpression(expression)
-    return typeof result === 'number' ? result : 0
-  } catch (error) {
-    console.warn('Error evaluating formula:', formula, error)
-    return 0
-  }
 }

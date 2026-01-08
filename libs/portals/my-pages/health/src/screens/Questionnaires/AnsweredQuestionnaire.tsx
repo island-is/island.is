@@ -86,7 +86,7 @@ const AnsweredQuestionnaire: FC = () => {
       loading={loading}
       buttonGroupAlignment={'spaceBetween'}
       buttonGroup={[
-        <Box>
+        <Box key="submission-select-container">
           <Inline space={2} alignY={'bottom'}>
             <Box className={styles.select}>
               <Select
@@ -144,6 +144,7 @@ const AnsweredQuestionnaire: FC = () => {
           </Inline>
         </Box>,
         <Button
+          key={'print-button'}
           variant="utility"
           onClick={() => window.print()}
           preTextIcon="print"

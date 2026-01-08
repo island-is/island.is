@@ -90,7 +90,7 @@ export const Scale: FC<ScaleProps> = ({
                 [styles.scaleButtonSelected]: value === scaleValue,
               })}
               style={{ height: '80px', width: '74px' }}
-              onClick={() => onChange(scaleValue)}
+              onClick={!disabled ? () => onChange(scaleValue) : undefined}
               disabled={disabled}
               display="flex"
               justifyContent="center"
