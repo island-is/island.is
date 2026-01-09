@@ -23,7 +23,7 @@ describe('buildPaymentState', () => {
       organizationId: InstitutionNationalIds.SYSLUMENN,
       chargeItems: [{ code: 'SOME_CODE' }],
       submitTarget: [
-        { target: 'TARGET_1', cond: (context) => false },
+        { target: 'TARGET_1', cond: () => false },
         { target: 'TARGET_2' },
       ],
     })
@@ -139,13 +139,15 @@ describe('buildPaymentState', () => {
     }
 
     const onEntryArray = result.meta.onEntry as TemplateApi<unknown>[]
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const configuredApi = onEntryArray[0] as any
 
     expect(configuredApi.params.payerNationalId).toBe('1234567890')
   })
 
   it('configures payerNationalId as a function correctly', () => {
-    const payerFn = (app: any) => '1234567890'
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const payerFn = (_app: any) => '1234567890'
     const options = {
       organizationId: InstitutionNationalIds.SYSLUMENN,
       chargeItems: [{ code: 'SOME_CHARGE_CODE' }],
@@ -158,6 +160,7 @@ describe('buildPaymentState', () => {
     }
 
     const onEntryArray = result.meta.onEntry as TemplateApi<unknown>[]
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const configuredApi = onEntryArray[0] as any
 
     expect(configuredApi.params.payerNationalId).toBe(payerFn)
@@ -175,6 +178,7 @@ describe('buildPaymentState', () => {
     }
 
     const onEntryArray = result.meta.onEntry as TemplateApi<unknown>[]
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const configuredApi = onEntryArray[0] as any
 
     expect(configuredApi.params.payerNationalId).toBeUndefined()
