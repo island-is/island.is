@@ -1,6 +1,6 @@
 import { useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { FileUploadStatus, toast, UploadFile } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'

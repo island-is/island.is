@@ -40,7 +40,7 @@ export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
 
   return (
     <Box paddingTop={2}>
-      {currentVehicleList.totalRecords > 20 ? (
+      {currentVehicleList.totalRecords >= 20 ? (
         <FindVehicleFormField
           setFieldLoadingState={props.setFieldLoadingState}
           setSubmitButtonDisabled={props.setSubmitButtonDisabled}
