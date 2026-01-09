@@ -21,10 +21,8 @@ import * as styles from './Completed.css'
 
 export const DefendantServiceRequirement = ({
   defendant,
-  defendantIndex,
 }: {
   defendant: Defendant
-  defendantIndex: number
 }) => {
   const { formatMessage } = useIntl()
   const { workingCase, setWorkingCase } = useContext(FormContext)
@@ -45,15 +43,7 @@ export const DefendantServiceRequirement = ({
   )
 
   return (
-    <Box
-      component="section"
-      marginBottom={
-        workingCase.defendants &&
-        workingCase.defendants.length - 1 === defendantIndex
-          ? 5
-          : 3
-      }
-    >
+    <Box component="section">
       <BlueBox>
         <SectionHeading
           title={defendant.name || ''}
