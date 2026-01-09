@@ -184,7 +184,7 @@ export const guardiansSubSection = buildSubSection({
             hasOtherGuardian(answers, externalData),
           defaultValue: (application: Application) =>
             getOtherGuardian(application.answers, application.externalData)
-              ?.address.streetName,
+              ?.address.streetAddress,
         }),
         buildTextField({
           id: 'guardians[1].address.postalCode',
