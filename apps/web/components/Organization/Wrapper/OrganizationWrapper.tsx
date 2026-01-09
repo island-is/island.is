@@ -41,6 +41,7 @@ import {
   SearchBox,
   SidebarShipSearchInput,
   Sticky,
+  WatsonChatPanel,
   WebChat,
   Webreader,
 } from '@island.is/web/components'
@@ -97,6 +98,7 @@ import { UniversityStudiesHeader } from './Themes/UniversityStudiesTheme'
 import UniversityStudiesFooter from './Themes/UniversityStudiesTheme/UniversityStudiesFooter'
 import { UtlendingastofnunFooter } from './Themes/UtlendingastofnunTheme'
 import { VinnueftilitidHeader } from './Themes/VinnueftirlitidTheme'
+import { watsonConfig } from './config'
 import * as styles from './OrganizationWrapper.css'
 
 interface NavigationData {
@@ -848,57 +850,23 @@ const OrganizationChat = ({
 
   if (!data?.getWebChat?.webChatConfiguration) return null
 
-  return <WebChat webChat={data.getWebChat} pushUp={pushUp} />
-
-  // const organizationIdWithLiveChat =
-  //   organizationId in liveChatIncConfig[activeLocale]
-  //     ? organizationId
-  //     : undefined
-
-  // if (organizationIdWithLiveChat) {
-  //   return (
-  //     <LiveChatIncChatPanel
-  //       {...liveChatIncConfig[activeLocale][organizationIdWithLiveChat]}
-  //     />
-  //   )
-  // }
-
-  // const organizationIdWithWatson =
-  //   organizationId in watsonConfig[activeLocale] ? organizationId : undefined
-
-  // if (organizationIdWithWatson) {
-  //   return (
-  //     <WatsonChatPanel
-  //       {...watsonConfig[activeLocale][organizationIdWithWatson]}
-  //     />
-  //   )
-  // }
-
-  // const organizationIdWithBoost =
-  //   organizationId in boostChatPanelEndpoints ? organizationId : undefined
-
-  // if (organizationIdWithBoost) {
-  //   return (
-  //     <BoostChatPanel
-  //       endpoint={
-  //         organizationIdWithBoost as keyof typeof boostChatPanelEndpoints
-  //       }
-  //     />
-  //   )
-  // }
-
-  // const organizationIdWithZendesk =
-  //   organizationId in zendeskConfig[activeLocale] ? organizationId : undefined
-
-  // if (organizationIdWithZendesk) {
-  //   return (
-  //     <ZendeskChatPanel
-  //       {...zendeskConfig[activeLocale][organizationIdWithZendesk]}
-  //     />
-  //   )
-  // }
-
-  // return null
+  return (
+    <WebChat
+      webChat={data.getWebChat}
+      pushUp={pushUp}
+      renderFallback={() => {
+        if (organizationId in watsonConfig[activeLocale]) {
+          return (
+            <WatsonChatPanel
+              {...watsonConfig[activeLocale][organizationId]}
+              pushUp={pushUp}
+            />
+          )
+        }
+        return null
+      }}
+    />
+  )
 }
 
 const SecondaryMenu = ({

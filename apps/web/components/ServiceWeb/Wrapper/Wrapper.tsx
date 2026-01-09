@@ -167,10 +167,19 @@ export const Wrapper: FC<React.PropsWithChildren<WrapperProps>> = ({
           namespace={namespace}
         />
       </ServiceWebContext.Provider>
-      <WebChat webChat={webChatData?.getWebChat} />
-      {organization?.id in watsonConfig[activeLocale] && (
-        <WatsonChatPanel {...watsonConfig[activeLocale][organization.id]} />
-      )}
+      <WebChat
+        webChat={webChatData?.getWebChat}
+        renderFallback={() => {
+          if (organization?.id in watsonConfig[activeLocale]) {
+            return (
+              <WatsonChatPanel
+                {...watsonConfig[activeLocale][organization.id]}
+              />
+            )
+          }
+          return null
+        }}
+      />
     </>
   )
 }

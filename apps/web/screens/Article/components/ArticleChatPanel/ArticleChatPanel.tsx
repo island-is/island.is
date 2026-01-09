@@ -1,11 +1,4 @@
-import {
-  BoostChatPanel,
-  boostChatPanelEndpoints,
-  LiveChatIncChatPanel,
-  WatsonChatPanel,
-  WebChat,
-  ZendeskChatPanel,
-} from '@island.is/web/components'
+import { WatsonChatPanel, WebChat } from '@island.is/web/components'
 import {
   GetSingleArticleQuery,
   GetWebChatQuery,
@@ -15,7 +8,6 @@ import { useI18n } from '@island.is/web/i18n'
 import {
   defaultWatsonConfig,
   excludedOrganizationWatsonConfig,
-  liveChatIncConfig,
   watsonConfig,
 } from './config'
 
@@ -30,6 +22,7 @@ export const ArticleChatPanel = ({
   pushUp,
   webChat,
 }: ArticleChatPanelProps) => {
+  const { activeLocale } = useI18n()
   if (
     (article?.body ?? []).findIndex(
       (slice) =>
@@ -41,7 +34,49 @@ export const ArticleChatPanel = ({
     return null
   }
 
-  return <WebChat pushUp={pushUp} webChat={webChat} />
+  return (
+    <WebChat
+      pushUp={pushUp}
+      webChat={webChat}
+      renderFallback={() => {
+        if (article?.id && article.id in watsonConfig[activeLocale])
+          return (
+            <WatsonChatPanel
+              {...watsonConfig[activeLocale][article.id]}
+              pushUp={pushUp}
+            />
+          )
+
+        if (
+          article?.organization?.some((o) => o.id in watsonConfig[activeLocale])
+        ) {
+          const organizationId = article.organization.find(
+            (o) => o.id in watsonConfig[activeLocale],
+          )?.id
+          return (
+            <WatsonChatPanel
+              {...watsonConfig[activeLocale][organizationId ?? '']}
+              pushUp={pushUp}
+            />
+          )
+        }
+
+        if (
+          !article?.organization?.some((o) =>
+            excludedOrganizationWatsonConfig.includes(o.id),
+          )
+        )
+          return (
+            <WatsonChatPanel
+              {...defaultWatsonConfig[activeLocale]}
+              pushUp={pushUp}
+            />
+          )
+
+        return null
+      }}
+    />
+  )
 }
 
 export default ArticleChatPanel
