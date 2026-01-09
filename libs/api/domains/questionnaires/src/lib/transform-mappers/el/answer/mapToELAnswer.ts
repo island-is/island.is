@@ -1,17 +1,9 @@
 import { SubmitQuestionnaireDto } from '@island.is/clients/health-directorate'
+import { FormatMessage } from '@island.is/cms-translations'
 import { AnswerOptionType } from '../../../../models/question.model'
 import { QuestionnaireInput } from '../../../dto/questionnaire.input'
-import {
-  BooleanReply,
-  DateReply,
-  ListReply,
-  NumberReply,
-  Reply,
-  StringReply,
-  TableReply,
-} from '../types'
 import { m } from '../../../utils/messages'
-import { FormatMessage } from '@island.is/cms-translations'
+import { Reply } from '../types'
 
 /**
  * Maps a QuestionnaireInput to the Health Directorate submission format
