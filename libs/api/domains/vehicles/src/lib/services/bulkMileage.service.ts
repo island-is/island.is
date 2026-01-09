@@ -25,6 +25,7 @@ import {
   parseBufferToMileageRecord,
   getFileTypeFromUrl,
 } from '../utils/parseFileToMileage'
+import { uuid } from 'uuidv4'
 
 const namespaces = ['api.bulk-vehicle-mileage']
 
@@ -191,30 +192,50 @@ export class BulkMileageService {
     auth: User,
     input: PostVehicleBulkMileageFileInput,
   ): Promise<VehiclesBulkMileageReadingResponse | null> {
+    const { formatMessage } = await this.intlService.useIntl(
+      namespaces,
+      input.locale ?? 'is',
+    )
+    const bulkMileageGuid = uuid()
     const uploadUrl = await this.prepareDownload(input.fileUrl)
+
+    this.logger.debug('Upload url fetched', {
+      category: LOG_CATEGORY,
+      bulkMileageGuid,
+      uploadUrl,
+    })
 
     // Download the file from S3 using the signed URL
     let file: Buffer | null = null
     try {
       const response = await fetch(uploadUrl)
       if (!response.ok) {
+        this.logger.warn('Bulk mileage upload download failed', {
+          category: LOG_CATEGORY,
+          bulkMileageGuid,
+          uploadUrl,
+          status: response.status,
+          statusText: response.statusText,
+        })
         throw new Error(`HTTP ${response.status}: ${response.statusText}`)
       }
 
       const arrayBuffer = await response.arrayBuffer()
       file = Buffer.from(arrayBuffer)
     } catch (error) {
-      this.logger.error('Failed to download file from S3', {
+      this.logger.warn('Failed to download file from S3', {
         category: LOG_CATEGORY,
-        error: error.message,
+        error,
+        bulkMileageGuid,
         uploadUrl,
       })
       throw new Error('Failed to download file from S3')
     }
 
     if (!file || file.length === 0) {
-      this.logger.error('Downloaded file is empty or null', {
+      this.logger.warn('Downloaded file is empty or null', {
         category: LOG_CATEGORY,
+        bulkMileageGuid,
         uploadUrl,
       })
       throw new Error('Downloaded file is empty')
@@ -224,28 +245,33 @@ export class BulkMileageService {
     const records = await parseBufferToMileageRecord(
       file,
       type as 'csv' | 'xlsx',
+      formatMessage,
     )
 
     if (!Array.isArray(records)) {
-      if (records.code === 1) {
-        this.logger.debug(
-          `'Fastanúmersdálk vantar eða er skrifaður rangt. Dálkanafn þarf að vera eitt af eftirfarandi; "permno", "vehicleid", "bilnumer","okutaeki","fastanumer"'`,
-        )
-      } else if (records.code === 2) {
-        this.logger.debug(
-          `'Kílómetrastöðudálkur er ekki réttur. Dálkanafn þarf að vera "mileage"'`,
-        )
-      } else {
-        this.logger.debug(
-          `'Óþekkt villa við að vinna úr skrá. Vinsamlegast reyndu aftur.'`,
-        )
+      this.logger.warn(`${records.message}`, {
+        category: LOG_CATEGORY,
+        bulkMileageGuid,
+        uploadUrl,
+        type,
+      })
+      return {
+        errorCode: 400,
+        errorMessage: records.message,
       }
-      return null
     }
 
     if (!records.length) {
-      this.logger.info('Upphleðsla mistókst. Engin gögn í skjali')
-      return null
+      this.logger.warn('File upload failed. No data in file', {
+        category: LOG_CATEGORY,
+        bulkMileageGuid,
+        uploadUrl,
+        type,
+      })
+      return {
+        errorCode: 400,
+        errorMessage: 'No valid mileage data in parsed file.',
+      }
     }
 
     try {
@@ -255,16 +281,22 @@ export class BulkMileageService {
       })
 
       this.logger.info('Bulk mileage file processed successfully', {
-        category: LOG_CATEGORY,
         recordCount: records.length,
         fileSize: file.length,
+        category: LOG_CATEGORY,
+        bulkMileageGuid,
+        uploadUrl,
+        type,
       })
       return res
     } catch (error) {
       this.logger.error('Failed to process bulk mileage records', {
         category: LOG_CATEGORY,
-        error: error.message,
+        error,
         recordCount: records.length,
+        bulkMileageGuid,
+        uploadUrl,
+        type,
       })
       throw error
     }
