@@ -41,6 +41,7 @@ export const SelectFormField: FC<React.PropsWithChildren<Props>> = ({
     marginTop,
     marginBottom,
     clearOnChange,
+    clearOnChangeDefaultValue,
     setOnChange,
     isClearable,
   } = field
@@ -112,6 +113,7 @@ export const SelectFormField: FC<React.PropsWithChildren<Props>> = ({
           // @ts-ignore make web strict
           onSelect={onSelect}
           clearOnChange={clearOnChange}
+          clearOnChangeDefaultValue={clearOnChangeDefaultValue}
           setOnChange={
             typeof setOnChange === 'function'
               ? async (optionValue) =>

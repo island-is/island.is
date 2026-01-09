@@ -1,4 +1,4 @@
-import { InstitutionNationalIds } from '../../../InstitutionNationalIds'
+import { InstitutionNationalIds } from '../../../Institution'
 import { defineTemplateApi } from '../../TemplateApi'
 import { PaymentCatalogItem } from '../models'
 

@@ -34,9 +34,10 @@ export const TherapiesWrapper = ({
       intro={formatMessage(messages.therapyDescription)}
       serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
       serviceProviderTooltip={formatMessage(messages.healthTooltip)}
+      childrenWidthFull
     >
       <TabNavigation
-        label={formatMessage(messages.therapyTitle)}
+        label={formatMessage(messages.therapyType)}
         pathname={pathname}
         items={
           healthNavigation.children?.find((itm) => itm.name === m.therapies)

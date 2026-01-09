@@ -128,7 +128,7 @@ const Component = forwardRef<
         display="flex"
         flexDirection="row"
         paddingY={3}
-        paddingX={4}
+        paddingX={[3, 3, 3, 4]}
         borderRadius="large"
         borderColor={borderColor}
         borderWidth="standard"
@@ -156,9 +156,9 @@ const Component = forwardRef<
             >
               {icon && (
                 <Box
-                  paddingRight={1}
+                  marginRight={'p1'}
                   display="flex"
-                  alignItems="center"
+                  alignItems="flexStart"
                   className={styles.icon}
                 >
                   {icon}

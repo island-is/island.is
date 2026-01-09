@@ -5,6 +5,7 @@ import { mapDocument, SliceUnion } from '../unions/slice.union'
 import { GenericTag, mapGenericTag } from './genericTag.model'
 import { mapPrice, Price } from './price.model'
 import { GetCoursesInput } from '../dto/getCourses.input'
+import { GetCourseSelectOptionsInput } from '../dto/getCourseSelectOptions.input'
 
 @ObjectType()
 class CourseInstanceTimeDuration {
@@ -76,8 +77,26 @@ export class Course {
   @CacheField(() => [CourseInstance])
   instances!: CourseInstance[]
 
-  @Field(() => String)
-  organizationId!: string
+  @Field(() => String, { nullable: true })
+  courseListPageId?: string | null
+}
+
+@ObjectType()
+class CourseActiveLocales {
+  @Field(() => Boolean)
+  is!: boolean
+
+  @Field(() => Boolean)
+  en!: boolean
+}
+
+@ObjectType()
+export class CourseDetails {
+  @CacheField(() => Course, { nullable: true })
+  course?: Course | null
+
+  @CacheField(() => CourseActiveLocales, { nullable: true })
+  activeLocales?: CourseActiveLocales | null
 }
 
 export const mapCourse = ({ fields, sys }: ICourse): Course => {
@@ -92,7 +111,7 @@ export const mapCourse = ({ fields, sys }: ICourse): Course => {
       : [],
     categories: fields.categories ? fields.categories.map(mapGenericTag) : [],
     instances: fields.instances ? fields.instances.map(mapCourseInstance) : [],
-    organizationId: fields.organization?.sys?.id ?? '',
+    courseListPageId: fields.courseListPage?.sys?.id ?? null,
   }
 }
 
@@ -121,4 +140,25 @@ class CourseCategory {
 export class CourseCategoriesResponse {
   @CacheField(() => [CourseCategory])
   items!: CourseCategory[]
+}
+
+@ObjectType()
+class CourseSelectOption {
+  @Field(() => String)
+  id!: string
+
+  @Field(() => String)
+  title!: string
+}
+
+@ObjectType()
+export class CourseSelectOptionsResponse {
+  @CacheField(() => [CourseSelectOption])
+  items!: CourseSelectOption[]
+
+  @Field(() => Int)
+  total!: number
+
+  @CacheField(() => GetCourseSelectOptionsInput)
+  input!: GetCourseSelectOptionsInput
 }

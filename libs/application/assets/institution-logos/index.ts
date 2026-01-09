@@ -19,6 +19,7 @@ export { TheEnergyAgencyLogo } from './TheEnergyAgencyLogo' // Orkustofnun
 export { TheIcelandicPoliceLogo } from './TheIcelandicPoliceLogo' // Lögreglan
 export { TheIcelandicRecyclingFundLogo } from './TheIcelandicRecyclingFundLogo' // Úrvinnslusjóður
 export { TransportAuthorityLogo } from './TransportAuthorityLogo' // Samgöngustofa
+export { HeilsugaeslaHofudborgarsvaedisinsLogo } from './HeilsugaeslaHofudborgarsvaedisinsLogo' // Heilsugæsla höfuðborgarsvæðisins
 
 // Coat of arms
 export { CoatOfArms } from './CoatOfArms' // Skjaldarmerkið

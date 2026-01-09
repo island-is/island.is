@@ -39,10 +39,6 @@ export const routesTemplate = {
     is: '/s/[organization]/vidburdir',
     en: '/en/o/[organization]/events',
   },
-  organizationcourseoverview: {
-    is: '/s/[organization]/namskeid',
-    en: '/en/o/[organization]/courses',
-  },
   aboutsubpage: {
     is: '/s/stafraent-island/[slug]',
     en: '',
@@ -158,10 +154,6 @@ export const routesTemplate = {
   event: {
     is: '/s/[organization]/vidburdir/[slug]',
     en: '/en/o/[organization]/events/[slug]',
-  },
-  organizationcourse: {
-    is: '/s/[organization]/namskeid/[slug]',
-    en: '/en/o/[organization]/courses/[slug]',
   },
   organizationsubpage: {
     is: '/s/[slug]/[subSlug]',

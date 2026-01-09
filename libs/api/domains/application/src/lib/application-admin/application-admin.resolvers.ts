@@ -20,6 +20,7 @@ import {
   ApplicationAdminPaginatedResponse,
   ApplicationStatistics,
   ApplicationTypeAdminInstitution,
+  ApplicationInstitution,
 } from '../application.model'
 import { ApplicationService } from '../application.service'
 
@@ -84,15 +85,31 @@ export class ApplicationAdminResolver {
   @Scopes(AdminPortalScope.applicationSystemAdmin)
   async applicationApplicationsAdminStatistics(
     @CurrentUser() user: User,
-    @Args('locale', { type: () => String, nullable: true })
-    locale: Locale = 'is',
     @Args('input')
     input: ApplicationsAdminStatisticsInput,
   ) {
-    return this.applicationService.getApplicationCountByTypeIdAndStatus(
+    return this.applicationService.getSuperAdminApplicationCountByTypeIdAndStatus(
       user,
-      locale,
       input,
     )
+  }
+
+  @Query(() => [ApplicationStatistics], { nullable: true })
+  @Scopes(AdminPortalScope.applicationSystemInstitution)
+  async applicationApplicationsInstitutionStatistics(
+    @CurrentUser() user: User,
+    @Args('input')
+    input: ApplicationsAdminStatisticsInput,
+  ) {
+    return this.applicationService.getInstitutionApplicationCountByTypeIdAndStatus(
+      user,
+      input,
+    )
+  }
+
+  @Query(() => [ApplicationInstitution], { nullable: true })
+  @Scopes(AdminPortalScope.applicationSystemAdmin)
+  async applicationApplicationsAdminInstitutions(@CurrentUser() user: User) {
+    return this.applicationService.getApplicationInstitutions(user)
   }
 }
