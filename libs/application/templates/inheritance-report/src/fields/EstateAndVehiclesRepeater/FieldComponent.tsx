@@ -19,10 +19,13 @@ export const FieldComponent = ({
   fieldName,
   error,
   answers,
-  readOnly,
+  isInitial,
   disabled,
 }: FieldComponentProps) => {
   const { formatMessage } = useLocale()
+
+  // For initial/prefilled rows, only the share field is editable
+  const readOnly = isInitial && field.id !== 'share'
 
   const defaultProps = {
     ...field,
