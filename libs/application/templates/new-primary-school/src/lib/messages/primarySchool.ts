@@ -147,6 +147,13 @@ export const primarySchoolMessages = {
       defaultMessage: 'Er barnið þitt í leikskóla á Íslandi?',
       description: 'Does your child attend a nursery in Iceland?',
     },
+    alertMessage: {
+      id: 'nps.application:primarySchool.currentNursery.alertMessage',
+      defaultMessage:
+        'Í skólanámskrá hvers leikskóla er tilgreint hvaða upplýsingar skulu almennt fylgja barni á milli skólastiga og rétt forsjáraðila í þeim efnum. Nánar má svo lesa um öflun, meðferð og vörslu upplýsinga um börn í leikskólum og miðlun upplýsinga milli leik- og grunnskóla í reglugerð nr. 896/2009.',
+      description:
+        'The curriculum of each nursery specifies which information should generally accompany a child between school levels and the rights of the guardian in that regard. You can read more about the collection, usage and storage of information about children in nurseries and the sharing of information between nurseries and primary schools in regulation no. 896/2009.',
+    },
   }),
   school: defineMessages({
     subSectionTitle: {

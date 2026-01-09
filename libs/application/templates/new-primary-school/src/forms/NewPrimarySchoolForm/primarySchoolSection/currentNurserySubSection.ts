@@ -1,4 +1,5 @@
 import {
+  buildAlertMessageField,
   buildAsyncSelectField,
   buildMultiField,
   buildRadioField,
@@ -110,6 +111,20 @@ export const currentNurserySubSection = buildSubSection({
 
             return !!currentNurseryMunicipality && hasCurrentNursery === YES
           },
+        }),
+        buildAlertMessageField({
+          id: 'currentNursery.nurseryAlertMessage',
+          title: sharedMessages.alertTitle,
+          message: primarySchoolMessages.currentNursery.alertMessage,
+          condition: (answers) => {
+            const { currentNursery, hasCurrentNursery } =
+              getApplicationAnswers(answers)
+
+            return !!currentNursery && hasCurrentNursery === YES
+          },
+          doesNotRequireAnswer: true,
+          alertType: 'warning',
+          marginTop: 4,
         }),
       ],
     }),

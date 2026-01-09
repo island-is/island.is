@@ -256,19 +256,7 @@ export const supportSubSection = buildSubSection({
         }),
         buildAlertMessageField({
           id: 'support.supportAlertMessage',
-          title: (application) => {
-            const { applicationType } = getApplicationAnswers(
-              application.answers,
-            )
-
-            return applicationType === ApplicationType.NEW_PRIMARY_SCHOOL &&
-              getSelectedSchoolSubType(
-                application.answers,
-                application.externalData,
-              ) === OrganizationSubType.INTERNATIONAL_SCHOOL
-              ? sharedMessages.alertTitle.description
-              : sharedMessages.alertTitle
-          },
+          title: sharedMessages.alertTitle,
           message: (application) => {
             const { applicationType } = getApplicationAnswers(
               application.answers,
