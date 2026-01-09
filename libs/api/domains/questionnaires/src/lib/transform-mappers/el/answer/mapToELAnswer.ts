@@ -18,7 +18,7 @@ import { FormatMessage } from '@island.is/cms-translations'
  */
 export const mapToElAnswer = (
   input: QuestionnaireInput,
-  formatMessage: FormatMessage
+  formatMessage: FormatMessage,
 ): SubmitQuestionnaireDto => {
   const replies: SubmitQuestionnaireDto['replies'] = input.entries.map(
     (entry) => {
@@ -33,7 +33,7 @@ export const mapToElAnswer = (
             id: ans.value,
             answer: ans.label ?? formatMessage(m.noLabel),
           })),
-        } satisfies ListReply
+        }
       }
 
       if (entry.type === AnswerOptionType.radio) {
@@ -42,7 +42,7 @@ export const mapToElAnswer = (
           return {
             questionId,
             answer: firstAnswer.value === 'true',
-          } satisfies BooleanReply
+          }
         }
         return {
           questionId,
@@ -52,7 +52,7 @@ export const mapToElAnswer = (
               answer: firstAnswer.label || firstAnswer.value,
             },
           ],
-        } satisfies ListReply
+        }
       }
 
       // Handle date fields (DateReply)
@@ -63,7 +63,7 @@ export const mapToElAnswer = (
         return {
           questionId,
           answer: answerValues[0] || '', // Should be ISO date string
-        } satisfies DateReply
+        }
       }
 
       // Handle number fields (NumberReply)
@@ -77,7 +77,7 @@ export const mapToElAnswer = (
           answer: isNaN(parseFloat(answerValues[0]))
             ? 0
             : parseFloat(answerValues[0]),
-        } satisfies NumberReply
+        }
       }
 
       // Handle table fields (TableReply)
@@ -142,7 +142,7 @@ export const mapToElAnswer = (
               row.push({
                 questionId: columnId,
                 answer: value === 'true',
-              } satisfies BooleanReply)
+              })
             } else if (
               columnType === 'date' ||
               /^\d{4}-\d{2}-\d{2}/.test(value)
@@ -150,7 +150,7 @@ export const mapToElAnswer = (
               row.push({
                 questionId: columnId,
                 answer: value,
-              } satisfies DateReply)
+              })
             } else if (
               columnType === 'number' ||
               (!isNaN(parseFloat(value)) && value.trim() !== '')
@@ -158,12 +158,12 @@ export const mapToElAnswer = (
               row.push({
                 questionId: columnId,
                 answer: parseFloat(value),
-              } satisfies NumberReply)
+              })
             } else {
               row.push({
                 questionId: columnId,
                 answer: value,
-              } satisfies StringReply)
+              })
             }
           })
 
@@ -173,7 +173,7 @@ export const mapToElAnswer = (
         return {
           questionId,
           rows,
-        } satisfies TableReply
+        }
       }
 
       // Handle boolean fields (BooleanReply)
@@ -183,14 +183,14 @@ export const mapToElAnswer = (
         return {
           questionId,
           answer: firstValue === 'true',
-        } satisfies BooleanReply
+        }
       }
 
       // Default to StringReply for text, textarea, etc.
       return {
         questionId,
         answer: answerValues[0] || '',
-      } satisfies StringReply
+      }
     },
   )
 

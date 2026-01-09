@@ -14,8 +14,8 @@ import { FormatMessage } from '@island.is/cms-translations'
 import { m } from '../../../utils/messages'
 
 interface Answer {
-   label?: string | undefined
-    value: string
+  label?: string | undefined
+  value: string
 }
 export interface QuestionAnswer {
   questionId: string
@@ -67,7 +67,7 @@ export const mapDraftRepliesToAnswers = (
       answerValue = []
 
       // Get column information from the table question
-      const tableQuestion = question satisfies TableQuestionDto
+      const tableQuestion = question
       const columns = 'items' in tableQuestion ? tableQuestion.items : []
 
       reply.rows.forEach((row) => {
