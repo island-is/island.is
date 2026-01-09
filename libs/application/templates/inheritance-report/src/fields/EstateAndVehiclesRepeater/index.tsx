@@ -185,7 +185,7 @@ export const EstateAndVehiclesRepeater: FC<
                     fieldName={fieldName}
                     error={error}
                     answers={application.answers}
-                    readOnly={repeaterField.initial}
+                    isInitial={repeaterField.initial}
                     disabled={!repeaterField.enabled}
                   />
                 )
