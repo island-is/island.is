@@ -154,7 +154,7 @@ const template: ApplicationTemplate<
     if (isCompany(nationalId)) {
       return Roles.APPLICANT
     }
-  
+
     return Roles.NOTALLOWED
   },
 }
