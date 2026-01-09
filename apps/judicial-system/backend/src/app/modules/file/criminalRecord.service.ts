@@ -1,6 +1,6 @@
 import { Agent } from 'https'
 import fetch from 'isomorphic-fetch'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import {
   BadGatewayException,
