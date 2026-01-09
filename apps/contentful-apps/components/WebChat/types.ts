@@ -2,7 +2,6 @@ export enum WebChatType {
   Zendesk = 'zendesk',
   LiveChat = 'livechat',
   Boost = 'boost',
-  WatsonIBM = 'watsonIBM',
 }
 
 export type ZendeskConfiguration = {
@@ -43,17 +42,7 @@ export type BoostConfiguration = {
   }
 >
 
-export type WatsonIBMConfiguration = {
-  type: WebChatType.WatsonIBM
-} & Record<
-  string,
-  {
-    [WebChatType.WatsonIBM]?: {}
-  }
->
-
 export type Configuration =
   | ZendeskConfiguration
   | LiveChatConfiguration
   | BoostConfiguration
-  | WatsonIBMConfiguration
