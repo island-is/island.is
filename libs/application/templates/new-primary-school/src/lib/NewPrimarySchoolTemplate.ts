@@ -16,7 +16,7 @@ import {
   DefaultEvents,
   FormModes,
   InstitutionNationalIds,
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   UserProfileApi,
   defineTemplateApi,
 } from '@island.is/application/types'
@@ -127,7 +127,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
               read: 'all',
               delete: true,
               api: [
-                NationalRegistryUserApi,
+                NationalRegistryV3UserApi,
                 UserProfileApi,
                 ChildrenApi,
                 SchoolsApi,
