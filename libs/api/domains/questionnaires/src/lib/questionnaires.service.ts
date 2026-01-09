@@ -49,46 +49,39 @@ export class QuestionnairesService {
     locale: Locale,
     input: GetQuestionnaireInput,
   ): Promise<Questionnaire | null> {
-    try {
-      // Fetch questionnaire from LSH
-      if (input.organization === QuestionnairesOrganizationEnum.LSH) {
-        if (input.includeQuestions) {
-          // Fetch full questionnaire including sections and questions
-          const lshQuestionnaireWithQuestions =
-            await this.lshApi.getQuestionnaire(user, locale, input.id)
+    // Fetch questionnaire from LSH
+    if (input.organization === QuestionnairesOrganizationEnum.LSH) {
+      if (input.includeQuestions) {
+        // Fetch full questionnaire including sections and questions
+        const lshQuestionnaireWithQuestions =
+          await this.lshApi.getQuestionnaire(user, locale, input.id)
 
-          if (!lshQuestionnaireWithQuestions) {
-            return null
-          }
-
-          return mapLshQuestionnaire(lshQuestionnaireWithQuestions)
+        if (!lshQuestionnaireWithQuestions) {
+          return null
         }
 
-        // Otherwise fetch the list and select the matching questionnaire header
-        const lshQuestionnaires = await this.lshApi.getQuestionnaires(
-          user,
-          locale,
-        )
-        const lshQuestionnaire: LSHQuestionnaireType | null =
-          lshQuestionnaires?.find((q) => q.gUID === input.id) || null
-
-        return await this.getLSHQuestionnaire(locale, lshQuestionnaire)
+        return mapLshQuestionnaire(lshQuestionnaireWithQuestions)
       }
-    } catch (e) {
-      this.logger.warn('Error fetching LSH questionnaire', e)
+
+      // Otherwise fetch the list and select the matching questionnaire header
+      const lshQuestionnaires = await this.lshApi.getQuestionnaires(
+        user,
+        locale,
+      )
+      const lshQuestionnaire: LSHQuestionnaireType | null =
+        lshQuestionnaires?.find((q) => q.gUID === input.id) ?? null
+
+      return await this.getLSHQuestionnaire(locale, lshQuestionnaire)
     }
 
-    try {
-      if (input.organization === QuestionnairesOrganizationEnum.EL) {
-        // Fetch questionnaire from EL (Health Directorate)
-        const elData: QuestionnaireDetailDto | null =
-          await this.api.getQuestionnaire(user, locale, input.id)
+    if (input.organization === QuestionnairesOrganizationEnum.EL) {
+      // Fetch questionnaire from EL (Health Directorate)
+      const elData: QuestionnaireDetailDto | null =
+        await this.api.getQuestionnaire(user, locale, input.id)
 
-        return this.getELQuestionnaire(locale, input.includeQuestions, elData)
-      }
-    } catch (e) {
-      this.logger.warn('Error fetching EL questionnaire', e)
+      return this.getELQuestionnaire(locale, input.includeQuestions, elData)
     }
+
     return null
   }
 
@@ -146,16 +139,16 @@ export class QuestionnairesService {
       }
 
       const repliesMap = new Map(
-        ELdata.replies?.map((reply) => [reply.questionId, reply]) || [],
+        ELdata.replies?.map((reply) => [reply.questionId, reply]) ?? [],
       )
 
       const submission = {
         id: questionnaireId,
-        title: ELdata.title || formatMessage(m.questionnaireWithoutTitle),
-        isDraft: ELdata.submission.isDraft || false,
-        description: ELdata.message || undefined,
+        title: ELdata.title ?? formatMessage(m.questionnaireWithoutTitle),
+        isDraft: ELdata.submission.isDraft ?? false,
+        description: ELdata.message ?? undefined,
         date:
-          this.formatDate(ELdata.submission?.submittedDate) ||
+          this.formatDate(ELdata.submission?.submittedDate) ??
           this.formatDate(ELdata.submission?.lastUpdatedDate),
 
         answers:
@@ -178,18 +171,17 @@ export class QuestionnairesService {
                   }
 
                   return {
-                    id: item.id || 'undefined-id',
-                    label: item.label || '',
+                    id: item.id ?? 'undefined-id',
+                    label: item.label ?? formatMessage(m.noLabel),
                     values,
                   }
-                }) || [],
+                }) ?? [],
             )
-            .filter((answer) => answer !== undefined) || [],
+            .filter((answer) => answer !== undefined) ?? [],
       }
 
       return { data: [submission] }
     } catch (error) {
-      this.logger.warn('Error fetching EL answered questionnaire', error)
       return null
     }
   }
@@ -220,27 +212,27 @@ export class QuestionnairesService {
     }
 
     const data = {
-      id: LSHdata.gUID || 'undefined-id',
+      id: LSHdata.gUID ?? 'undefined-id',
       title:
-        LSHquestionnaire?.header || formatMessage(m.questionnaireWithoutTitle),
-      description: LSHquestionnaire?.description || undefined,
+        LSHquestionnaire?.header ?? formatMessage(m.questionnaireWithoutTitle),
+      description: LSHquestionnaire?.description ?? undefined,
       date: this.formatDate(LSHdata.answerDateTime),
       answers: LSHdata.answers?.map((answer) => {
         // Search through all sections to find the matching question
         const question = LSHquestionnaire?.sections
-          ?.flatMap((section) => section.questions || [])
+          ?.flatMap((section) => section.questions ?? [])
           .find((q) => q.entryID === answer.entryID)
 
         // Map values to their labels from the question options
         const valueLabels =
           answer.values?.map((value) => {
             const option = question?.options?.find((opt) => opt.value === value)
-            return option?.label || value
-          }) || []
+            return option?.label ?? value
+          }) ?? []
 
         return {
-          id: answer.entryID || 'undefined-id',
-          label: question?.question || 'LABEL',
+          id: answer.entryID ?? 'undefined-id',
+          label: question?.question ?? formatMessage(m.noLabel),
           values: valueLabels,
         }
       }),
@@ -255,7 +247,10 @@ export class QuestionnairesService {
     locale: Locale,
   ): Promise<QuestionnairesResponse> {
     const organization = this.normalizeOrganization(input.organization)
-
+    const { formatMessage } = await this.intlService.useIntl(
+      [NAMESPACE],
+      locale,
+    )
     if (!organization) {
       return {
         success: false,
@@ -274,11 +269,10 @@ export class QuestionnairesService {
           lshAnswer,
         )
         return {
-          success: response?.status === 'success' || true,
-          message: response?.message || 'Questionnaire submitted successfully',
+          success: response?.status === 'success',
+          message: response?.message ?? 'Questionnaire submitted successfully',
         }
       } catch (e) {
-        this.logger.warn('Error submitting questionnaire to LSH', e)
         return {
           success: false,
           message: 'Error submitting questionnaire to LSH',
@@ -289,7 +283,7 @@ export class QuestionnairesService {
     // Submit to EL (Health Directorate)
     if (organization === QuestionnairesOrganizationEnum.EL) {
       try {
-        const elAnswer = mapToElAnswer(input)
+        const elAnswer = mapToElAnswer(input, formatMessage)
         const response = await this.api.submitQuestionnaire(
           user,
           locale,
@@ -301,7 +295,6 @@ export class QuestionnairesService {
           message: response?.toString(),
         }
       } catch (e) {
-        this.logger.warn('Error submitting questionnaire to EL', e)
         return {
           success: false,
           message: 'Error submitting questionnaire to EL',
@@ -334,7 +327,7 @@ export class QuestionnairesService {
               id: q.questionnaireId,
               title: q.title ?? formatMessage(m.questionnaireWithoutTitle),
               description: q.message ?? undefined,
-              sentDate: q.createdDate?.toDateString() || '',
+              sentDate: q.createdDate?.toDateString() ?? '',
               organization: QuestionnairesOrganizationEnum.EL,
               department: undefined,
               status:
@@ -345,10 +338,9 @@ export class QuestionnairesService {
                   : QuestionnairesStatusEnum.notAnswered,
               lastSubmitted: q.lastSubmitted,
             }
-          }) || [],
+          }) ?? [],
       }
     } catch (e) {
-      this.logger.warn('EL questionnaires fetch failed', e)
       return null
     }
 
@@ -356,14 +348,14 @@ export class QuestionnairesService {
 
     try {
       const lshData: LSHQuestionnaireType[] | null =
-        await this.lshApi.getQuestionnaires(user, locale || 'is')
+        await this.lshApi.getQuestionnaires(user, locale ?? 'is')
       LSHquestionnaires = {
         questionnaires:
           (lshData ?? [])
             .filter((item: LSHQuestionnaireType) => item.gUID != null)
             .map((item: LSHQuestionnaireType) => {
               return {
-                id: item.gUID || 'undefined-id',
+                id: item.gUID ?? 'undefined-id',
                 title: item.caption
                   ? item.caption
                   : formatMessage(m.questionnaireWithoutTitle),
@@ -380,7 +372,6 @@ export class QuestionnairesService {
             }) || [],
       }
     } catch (e) {
-      this.logger.warn('LSH questionnaires fetch failed', e)
       return null
     }
 
@@ -424,7 +415,7 @@ export class QuestionnairesService {
           baseInformation: {
             id: data.questionnaireId,
             title: data.title ?? formatMessage(m.questionnaireWithoutTitle),
-            sentDate: data.lastSubmitted?.toDateString() || '',
+            sentDate: data.lastSubmitted?.toDateString() ?? '',
             status: data.hasDraft
               ? QuestionnairesStatusEnum.draft
               : data.submissions?.length > 0
@@ -432,7 +423,7 @@ export class QuestionnairesService {
               : !data.canSubmit
               ? QuestionnairesStatusEnum.expired
               : QuestionnairesStatusEnum.notAnswered,
-            description: data.message || undefined,
+            description: data.message ?? undefined,
             organization: QuestionnairesOrganizationEnum.EL,
           },
           submissions: data.submissions?.map((sub) => ({
@@ -458,19 +449,20 @@ export class QuestionnairesService {
 
     return {
       baseInformation: {
-        id: data.gUID || 'undefined-id',
+        id: data.gUID ?? 'undefined-id',
         title: data.caption ?? formatMessage(m.questionnaireWithoutTitle),
         status: data.answerDateTime
           ? QuestionnairesStatusEnum.answered
           : new Date(data.validToDateTime) < new Date()
           ? QuestionnairesStatusEnum.expired
           : QuestionnairesStatusEnum.notAnswered,
-        sentDate: data.validFromDateTime?.toISOString() || '',
-        description: data.description || undefined,
+        sentDate: data.validFromDateTime?.toISOString() ?? '',
+        description: data.description ?? undefined,
         organization: QuestionnairesOrganizationEnum.LSH,
       },
     }
   }
+
   private formatDate(date?: Date | string | null): string | undefined {
     if (!date) return undefined
     if (date instanceof Date) return date.toDateString()

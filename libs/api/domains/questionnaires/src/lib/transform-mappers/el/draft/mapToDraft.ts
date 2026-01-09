@@ -13,13 +13,14 @@ import { mapAnswerOptionType } from '../display/mapAnswerOptionType'
 import { FormatMessage } from '@island.is/cms-translations'
 import { m } from '../../../utils/messages'
 
+interface Answer {
+   label?: string | undefined
+    value: string
+}
 export interface QuestionAnswer {
   questionId: string
   question: string
-  answers: Array<{
-    label?: string | undefined
-    value: string
-  }>
+  answers: Array<Answer>
   type: AnswerOptionType
 }
 
@@ -33,7 +34,6 @@ export const mapDraftRepliesToAnswers = (
   if (!questionnaire.replies || questionnaire.replies.length === 0) {
     return {}
   }
-
   const answers: { [key: string]: QuestionAnswer } = {}
   const allQuestions = questionnaire.groups.flatMap((g) => g.items)
 
@@ -59,7 +59,7 @@ export const mapDraftRepliesToAnswers = (
       return undefined
     }
 
-    let answerValue: Array<{ label?: string; value: string }>
+    let answerValue: Array<Answer>
 
     // Handle different reply types
     if ('rows' in reply && Array.isArray(reply.rows)) {
@@ -67,13 +67,13 @@ export const mapDraftRepliesToAnswers = (
       answerValue = []
 
       // Get column information from the table question
-      const tableQuestion = question as TableQuestionDto
-      const columns = tableQuestion.items || []
+      const tableQuestion = question satisfies TableQuestionDto
+      const columns = 'items' in tableQuestion ? tableQuestion.items : []
 
       reply.rows.forEach((row) => {
         row.forEach((cell) => {
           // Find the column definition for this cell
-          const column = columns.find((col) => col.id === cell.questionId)
+          const column = columns?.find((col) => col.id === cell.questionId)
           if (!column) return
 
           // Determine the type based on the answer value type

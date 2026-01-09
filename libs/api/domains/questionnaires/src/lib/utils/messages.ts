@@ -14,4 +14,8 @@ export const m = defineMessages({
     id: `${NAMESPACE}:questionnaireWithoutTitle`,
     defaultMessage: 'Ónefndur spurningalisti',
   },
+  noLabel: {
+    id: `${NAMESPACE}:noLabel`,
+    defaultMessage: 'Enginn titill',
+  },
 })

@@ -17,7 +17,7 @@ export const mapQuestion = (q: QuestionType): Question => {
     placeholder: undefined,
     options: q.options?.map((opt) => ({
       // Use value + label to get a stable, unique id for each option
-      id: opt.value ?? opt.label ?? '',
+      id: [opt.value, opt.label].join('-'),
       label: opt.label ?? '',
       value: opt.value ?? '',
     })),
@@ -46,7 +46,7 @@ export const mapQuestion = (q: QuestionType): Question => {
   const allDeps = [...new Set([...visibilityDeps, ...explicitDeps])]
 
   return {
-    id: q.entryID || 'undefined-id',
+    id: q.entryID ?? q.question ?? 'undefined-id',
     label: q.question ?? '',
     sublabel:
       [q.description?.trim(), q.instructions?.trim()]

@@ -10,46 +10,49 @@ import {
   StringReply,
   TableReply,
 } from '../types'
+import { m } from '../../../utils/messages'
+import { FormatMessage } from '@island.is/cms-translations'
 
 /**
  * Maps a QuestionnaireInput to the Health Directorate submission format
  */
 export const mapToElAnswer = (
   input: QuestionnaireInput,
+  formatMessage: FormatMessage
 ): SubmitQuestionnaireDto => {
   const replies: SubmitQuestionnaireDto['replies'] = input.entries.map(
     (entry) => {
       const questionId = entry.entryID
-      const answerValues = entry.answers.map((a) => a.values)
+      const answerValues = entry.answers.map((a) => a.value)
 
       // Handle multi-select / checkbox (ListReply)
       if (entry.type === AnswerOptionType.checkbox) {
         return {
           questionId,
           values: entry.answers.map((ans) => ({
-            id: ans.values,
-            answer: ans.label,
+            id: ans.value,
+            answer: ans.label ?? formatMessage(m.noLabel),
           })),
-        } as ListReply
+        } satisfies ListReply
       }
 
       if (entry.type === AnswerOptionType.radio) {
         const firstAnswer = entry.answers[0]
-        if (firstAnswer.values === 'true' || firstAnswer.values === 'false') {
+        if (firstAnswer.value === 'true' || firstAnswer.value === 'false') {
           return {
             questionId,
-            answer: firstAnswer.values === 'true',
-          } as BooleanReply
+            answer: firstAnswer.value === 'true',
+          } satisfies BooleanReply
         }
         return {
           questionId,
           values: [
             {
-              id: firstAnswer.values,
-              answer: firstAnswer.label || firstAnswer.values,
+              id: firstAnswer.value,
+              answer: firstAnswer.label || firstAnswer.value,
             },
           ],
-        } as ListReply
+        } satisfies ListReply
       }
 
       // Handle date fields (DateReply)
@@ -60,7 +63,7 @@ export const mapToElAnswer = (
         return {
           questionId,
           answer: answerValues[0] || '', // Should be ISO date string
-        } as DateReply
+        } satisfies DateReply
       }
 
       // Handle number fields (NumberReply)
@@ -74,7 +77,7 @@ export const mapToElAnswer = (
           answer: isNaN(parseFloat(answerValues[0]))
             ? 0
             : parseFloat(answerValues[0]),
-        } as NumberReply
+        } satisfies NumberReply
       }
 
       // Handle table fields (TableReply)
@@ -87,8 +90,8 @@ export const mapToElAnswer = (
 
         // Extract column values and types from answers
         entry.answers.forEach((ans) => {
-          if (ans.values) {
-            const parts = ans.values.split(':')
+          if (ans.value) {
+            const parts = ans.value.split(':')
             let columnId = ''
             let columnType: string | undefined
             let value = ''
@@ -139,7 +142,7 @@ export const mapToElAnswer = (
               row.push({
                 questionId: columnId,
                 answer: value === 'true',
-              } as BooleanReply)
+              } satisfies BooleanReply)
             } else if (
               columnType === 'date' ||
               /^\d{4}-\d{2}-\d{2}/.test(value)
@@ -147,7 +150,7 @@ export const mapToElAnswer = (
               row.push({
                 questionId: columnId,
                 answer: value,
-              } as DateReply)
+              } satisfies DateReply)
             } else if (
               columnType === 'number' ||
               (!isNaN(parseFloat(value)) && value.trim() !== '')
@@ -155,12 +158,12 @@ export const mapToElAnswer = (
               row.push({
                 questionId: columnId,
                 answer: parseFloat(value),
-              } as NumberReply)
+              } satisfies NumberReply)
             } else {
               row.push({
                 questionId: columnId,
                 answer: value,
-              } as StringReply)
+              } satisfies StringReply)
             }
           })
 
@@ -170,7 +173,7 @@ export const mapToElAnswer = (
         return {
           questionId,
           rows,
-        } as TableReply
+        } satisfies TableReply
       }
 
       // Handle boolean fields (BooleanReply)
@@ -180,14 +183,14 @@ export const mapToElAnswer = (
         return {
           questionId,
           answer: firstValue === 'true',
-        } as BooleanReply
+        } satisfies BooleanReply
       }
 
       // Default to StringReply for text, textarea, etc.
       return {
         questionId,
         answer: answerValues[0] || '',
-      } as StringReply
+      } satisfies StringReply
     },
   )
 

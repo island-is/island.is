@@ -120,8 +120,7 @@ export const mapTriggers = (
       array.findIndex(
         (c) =>
           c.questionId === condition.questionId &&
-          JSON.stringify(c.expectedValues) ===
-            JSON.stringify(condition.expectedValues),
+          c.expectedValues === condition.expectedValues,
       ) === index
     )
   })

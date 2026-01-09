@@ -43,8 +43,8 @@ export const mapToLshAnswer = (
   return {
     answers: input.entries.map((entry) => ({
       entryID: entry.entryID,
-      type: typeMapper(entry.type as AnswerOptionType),
-      values: entry.answers.map((a) => a.values) as [string],
+      type: typeMapper(entry.type satisfies AnswerOptionType),
+      values: entry.answers.map((a) => a.value) satisfies string[],
     })),
     formID: input.formId,
     gUID: input.id,

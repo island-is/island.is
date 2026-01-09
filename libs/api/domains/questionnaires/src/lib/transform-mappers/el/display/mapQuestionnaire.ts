@@ -49,7 +49,7 @@ export const mapELQuestionnaire = (
         : q.numSubmissions > 0
         ? QuestionnairesStatusEnum.answered
         : QuestionnairesStatusEnum.notAnswered,
-      description: isDetailed ? q.message ?? undefined : q.message || undefined,
+      description: q.message ?? undefined,
       formId: q.questionnaireId,
       organization: QuestionnairesOrganizationEnum.EL,
     },

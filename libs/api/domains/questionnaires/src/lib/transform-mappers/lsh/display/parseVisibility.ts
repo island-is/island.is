@@ -298,8 +298,7 @@ export const parseVisibility = (
         (c) =>
           c.questionId === condition.questionId &&
           c.operator === condition.operator &&
-          JSON.stringify(c.expectedValues) ===
-            JSON.stringify(condition.expectedValues) &&
+          c.expectedValues === condition.expectedValues &&
           c.showWhenMatched === condition.showWhenMatched,
       )
     )
