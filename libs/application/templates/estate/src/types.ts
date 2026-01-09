@@ -29,6 +29,8 @@ export interface EstateMember {
   phone?: string
   email?: string
   advocate?: Advocate
+  approved?: boolean
+  approvedDate?: string
 }
 
 export type GunsRepeaterProps = {

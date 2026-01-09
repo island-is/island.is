@@ -16,6 +16,7 @@ export const FILE_SIZE_LIMIT = 10000000 // 10MB
 export enum States {
   prerequisites = 'prerequisites',
   draft = 'draft',
+  inReview = 'inReview',
   payment = 'payment',
   done = 'done',
 }
@@ -23,6 +24,7 @@ export enum States {
 export enum ApiActions {
   completeApplication = 'completeApplication',
   syslumennOnEntry = 'syslumennOnEntry',
+  approveByAssignee = 'approveByAssignee',
 }
 
 export type EstateEvent =
@@ -40,6 +42,7 @@ export enum Roles {
   APPLICANT_NO_ASSETS = 'applicant_no_assets',
   APPLICANT_PERMIT_FOR_UNDIVIDED_ESTATE = 'applicant_permit_for_undivided_estate',
   APPLICANT_DIVISION_OF_ESTATE_BY_HEIRS = 'applicant_division_of_estate_by_heirs',
+  ASSIGNEE = 'assignee',
 }
 
 export const EstateTypes = {
