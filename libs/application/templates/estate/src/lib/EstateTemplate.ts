@@ -40,6 +40,7 @@ import {
 } from './getApplicationFeatureFlags'
 import { CodeOwners } from '@island.is/shared/constants'
 import { getChargeItems, getExtraData } from '../utils/getChargeItems'
+import { getEstateDataFromApplication, isEstateInfo } from './utils'
 
 const configuration = ApplicationConfigurations[ApplicationTypes.ESTATE]
 
@@ -224,6 +225,13 @@ const EstateTemplate: ApplicationTemplate<
           shouldBePruned: true,
           whenToPrune: 60 * 24 * 3600 * 1000, // 60 days
           shouldDeleteChargeIfPaymentFulfilled: true,
+        },
+        payerNationalId: (application) => {
+          const data = getEstateDataFromApplication(application)
+          if (isEstateInfo(data) && data.estate.nationalIdOfDeceased) {
+            return data.estate.nationalIdOfDeceased
+          }
+          return application.applicant
         },
       }),
       [States.done]: {

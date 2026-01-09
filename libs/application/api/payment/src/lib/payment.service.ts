@@ -234,6 +234,7 @@ export class PaymentService {
     applicationId: string,
     extraData: ExtraData[] | undefined,
     locale?: string | undefined,
+    payerNationalId?: string,
   ): Promise<CreateChargeResult> {
     // Retrieve charge items from FJS
     const catalogChargeItems = await this.findCatalogChargeItems(
@@ -290,7 +291,7 @@ export class PaymentService {
             quantity: chargeItem.quantity ?? 1,
             price: chargeItem.priceAmount,
           })),
-          payerNationalId: user.nationalId,
+          payerNationalId: payerNationalId ?? user.nationalId,
           organisationId: performingOrganizationID,
           onUpdateUrl: onUpdateUrl.toString(),
           metadata: {

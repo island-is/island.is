@@ -20,6 +20,8 @@ export interface CreateChargeParameters {
   extraData?:
     | ExtraData[]
     | ((application: Application) => ExtraData[] | undefined)
+  /** Optional payer national ID. If not provided, the logged-in user's national ID is used. */
+  payerNationalId?: string | ((application: Application) => string)
 }
 
 export const CreateChargeApi = defineTemplateApi<CreateChargeParameters>({
