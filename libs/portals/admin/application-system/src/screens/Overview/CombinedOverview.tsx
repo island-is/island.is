@@ -68,6 +68,7 @@ const CombinedOverview = ({ isSuperAdmin }: CombinedOverviewProps) => {
     ssr: false,
   })
 
+  console.log('orgData', orgData)
   const {
     data: organizationDataWithNationalId,
     loading: loadinOrganizationDataWithNationalId,
@@ -137,6 +138,7 @@ const CombinedOverview = ({ isSuperAdmin }: CombinedOverviewProps) => {
   const typeIds = applicationAdminList?.map((x) => x.typeId) as string[]
   const availableOrganizations = organizations?.filter((x) => {
     const allApplications = institutionApplications[x.slug]
+    console.log('allApplications', allApplications)
     return allApplications?.some((x) => typeIds?.includes(x))
   })
 

@@ -68,7 +68,7 @@ export const Filters = ({
       variables: { input: { nationalId: '5501692829' } },
     })
 
-  console.log('typeData', typeData)
+  // console.log('typeData', typeData)
 
   useDebounce(
     () => {

@@ -17,7 +17,7 @@ export enum InstitutionContentfulIds {
   TRYGGINGASTOFNUN = '3dgsobJuiJXC1oOxhGpcUY',
   URVINNSLUSJODUR = '1jZFdAD0iL0LpR42BbuoEF',
   UTLENDINGASTOFNUN = '77rXck3sISbMsUv7BO1PG2',
-  ORKUSTOFNUN = '1g7I83SBjDyHp35Wgc86uZ',
+  ORKUSTOFNUN = '19fqyfgFLmHgk2hCRX22L2',
   EMBAETTI_LANDLAEKNIS = '7qgJZc8vO7ZHWmfSrZp9Kn',
   VINNUEFTIRLITID = '39S5VumPfb1hXBJm3SnE02',
   HASKOLARADUNEYTI = '3sehE6LnPfPkS6fR0DkIqK',
@@ -76,13 +76,13 @@ export enum InstitutionTypes {
   TRYGGINGASTOFNUN = 'tryggingastofnun',
   URVINNSLUSJODUR = 'urvinnslusjodur',
   UTLENDINGASTOFNUN = 'utlendingastofnun',
-  ORKUSTOFNUN = 'Orkustofnun',
+  ORKUSTOFNUN = 'Umhverfis- og orkustofnun',
   EMBAETTI_LANDLAEKNIS = 'embaetti-landlaeknis',
   VINNUEFTIRLITID = 'vinnueftirlitid',
   HASKOLARADUNEYTI = 'haskolaraduneyti',
   DOMSMALARADUNEYTID = 'domsmalaraduneytid',
   MIDSTOD_MENNTUNAR_SKOLATHJONUSTU = 'midstod-menntunar-og-skolathjonustu',
-  HUSNAEDIS_OG_MANNVIRKJASTOFNUN = 'husnaedis-og-mannvirkjastofnun',
+  HUSNAEDIS_OG_MANNVIRKJASTOFNUN = 'hms',
 }
 
 export interface Institution {
