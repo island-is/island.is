@@ -58,7 +58,7 @@ export const Footer = ({
                     '1/1',
                     columns.length % 3 === 0 ? '4/12' : '6/12',
                     columns.length % 3 === 0 ? '4/12' : '6/12',
-                    '3/12',
+                    columns.length % 3 === 0 ? '4/12' : '3/12',
                   ]}
                   paddingBottom={3}
                 >
