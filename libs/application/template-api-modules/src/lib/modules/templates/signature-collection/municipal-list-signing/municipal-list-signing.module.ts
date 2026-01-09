@@ -6,18 +6,10 @@ import { SharedTemplateAPIModule } from '../../../shared'
 // Here you import your module service
 import { MunicipalListSigningService } from './municipal-list-signing.service'
 import { SignatureCollectionClientModule } from '@island.is/clients/signature-collection'
-import {
-  NationalRegistryClientModule,
-  NationalRegistryClientService,
-} from '@island.is/clients/national-registry-v2'
 
 @Module({
-  imports: [
-    SharedTemplateAPIModule,
-    SignatureCollectionClientModule,
-    NationalRegistryClientModule,
-  ],
-  providers: [MunicipalListSigningService, NationalRegistryClientService],
+  imports: [SharedTemplateAPIModule, SignatureCollectionClientModule],
+  providers: [MunicipalListSigningService],
   exports: [MunicipalListSigningService],
 })
 export class MunicipalListSigningModule {}
