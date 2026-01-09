@@ -21,6 +21,7 @@ import { assign } from 'xstate'
 import { SkatturApi, VehiclesApi } from '../dataProviders'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScope } from '@island.is/auth/scopes'
+import { isCompany } from 'kennitala'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -57,6 +58,14 @@ const template: ApplicationTemplate<
               read: 'all',
               api: [VehiclesApi, SkatturApi],
               delete: true,
+            },
+            {
+              id: Roles.NOTALLOWED,
+              formLoader: () =>
+                import('../forms/notAllowed').then((val) =>
+                  Promise.resolve(val.notAllowedForm),
+                ),
+              read: 'all',
             },
           ],
         },
@@ -142,10 +151,12 @@ const template: ApplicationTemplate<
     nationalId: string,
     application: Application,
   ): ApplicationRole | undefined {
-    if (nationalId === application.applicant) {
+    // Only allow companies or delegated actors to access the application
+    if (isCompany(nationalId)) {
       return Roles.APPLICANT
     }
-    return undefined
+  
+    return Roles.NOTALLOWED
   },
 }
 
