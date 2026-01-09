@@ -269,7 +269,7 @@ export class QuestionnairesService {
           lshAnswer,
         )
         return {
-          success: response?.status === 'success',
+          success: true,
           message: response?.message ?? 'Questionnaire submitted successfully',
         }
       } catch (e) {

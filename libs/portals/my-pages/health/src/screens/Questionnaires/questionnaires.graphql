@@ -1,4 +1,4 @@
-fragment QuestionnaireBaseInfo on QuestionnaireBaseInformation {
+fragment QuestionnaireBaseInfo on QuestionnairesBaseItem {
   __typename
   id
   title
