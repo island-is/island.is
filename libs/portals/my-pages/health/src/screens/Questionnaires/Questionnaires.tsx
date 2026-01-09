@@ -127,7 +127,7 @@ const Questionnaires: FC = () => {
           matchesOrganization &&
           matchesExpired
         )
-      }) || [],
+      }) ?? [],
     )
   }, [filterValues, data, showExpired])
 

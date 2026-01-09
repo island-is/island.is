@@ -118,7 +118,7 @@ export const Thermometer: FC<ThermometerProps> = ({
   const getDisplayValues = () => {
     const minNum = parseFloat(min)
     const maxNum = parseFloat(max)
-    const stepNum = step || 1
+    const stepNum = step ?? 1
 
     // Safety checks to prevent infinite loops
     if (isNaN(minNum) || isNaN(maxNum) || stepNum <= 0 || minNum > maxNum) {
@@ -256,13 +256,13 @@ export const Thermometer: FC<ThermometerProps> = ({
           {/* Max label */}
           <Box>
             <Text variant="small" color="blue400" fontWeight="medium">
-              {maxLabel || 'MAX'}
+              {maxLabel || 'Max'}
             </Text>
           </Box>
           {/* Min label */}
           <Box>
             <Text variant="small" color="blue400" fontWeight="medium">
-              {minLabel || 'MIN'}
+              {minLabel || 'Min'}
             </Text>
           </Box>
         </Box>

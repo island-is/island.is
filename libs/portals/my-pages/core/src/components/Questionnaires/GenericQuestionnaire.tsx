@@ -71,7 +71,7 @@ export const GenericQuestionnaire: FC<GenericQuestionnaireProps> = ({
     if (!questionnaire.sections?.length) return
 
     const allQuestions = questionnaire.sections.flatMap(
-      (s) => s.questions || [],
+      (s) => s.questions ?? [],
     )
     const calculatedAnswers: { [key: string]: QuestionAnswer } = {}
 
@@ -81,14 +81,14 @@ export const GenericQuestionnaire: FC<GenericQuestionnaireProps> = ({
       if (extendedAnswerOptions?.formula) {
         const calculatedValue = calculateFormulaCallback(
           extendedAnswerOptions.formula,
-          initialAnswers || {},
+          initialAnswers ?? {},
         )
         calculatedAnswers[question.id] = {
           questionId: question.id,
           question: question.label,
           answers: [
             {
-              value: calculatedValue?.toString() || '',
+              value: calculatedValue?.toString() ?? '',
             },
           ],
           type: question.answerOptions.type,
@@ -138,7 +138,7 @@ export const GenericQuestionnaire: FC<GenericQuestionnaireProps> = ({
 
   // Get all visible questions for backwards compatibility
   const visibleQuestions = useMemo(() => {
-    return processedSections.flatMap((section) => section.questions || [])
+    return processedSections.flatMap((section) => section.questions ?? [])
   }, [processedSections])
 
   // Clear answers for hidden questions
@@ -147,7 +147,7 @@ export const GenericQuestionnaire: FC<GenericQuestionnaireProps> = ({
 
     const visibleQuestionIds = new Set(
       processedSections.flatMap(
-        (section) => section.questions?.map((q) => q.id) || [],
+        (section) => section.questions?.map((q) => q.id) ?? [],
       ),
     )
 
@@ -177,7 +177,7 @@ export const GenericQuestionnaire: FC<GenericQuestionnaireProps> = ({
 
         // Calculate any formulas that depend on changed values
         const allQuestions =
-          questionnaire.sections?.flatMap((s) => s.questions || []) || []
+          questionnaire.sections?.flatMap((s) => s.questions ?? []) ?? []
 
         for (const question of allQuestions) {
           const extendedAnswerOptions = question.answerOptions

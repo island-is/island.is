@@ -1,6 +1,7 @@
 import {
   QuestionnaireAnsweredQuestionnaire,
   QuestionnaireAnswerOptionType,
+  QuestionnaireQuestionnairesOrganizationEnum,
 } from '@island.is/api/schema'
 import {
   Box,
@@ -36,20 +37,27 @@ const AnsweredQuestionnaire: FC = () => {
   const [currentSubmission, setCurrentSubmission] =
     useState<QuestionnaireAnsweredQuestionnaire>()
 
+  const organization: QuestionnaireQuestionnairesOrganizationEnum | undefined =
+    org === 'el'
+      ? QuestionnaireQuestionnairesOrganizationEnum.EL
+      : org === 'lsh'
+      ? QuestionnaireQuestionnairesOrganizationEnum.LSH
+      : QuestionnaireQuestionnairesOrganizationEnum.EL // TODO: Change default value to undefined later
+
   const { data, loading, error } = useGetAnsweredQuestionnaireQuery({
+    skip: !id || !org,
     variables: {
       input: {
-        id: id || '',
-        submissionId: submissionId || '',
-        organization: org || '',
+        id: id ?? '',
+        submissionId: submissionId ?? '',
+        organization: organization,
       },
       locale: lang,
     },
-    skip: !id,
   })
 
   const hasMoreThanOneSubmission =
-    (data?.getAnsweredQuestionnaire?.data?.length || 0) > 1
+    (data?.getAnsweredQuestionnaire?.data?.length ?? 0) > 1
 
   const isDraft = currentSubmission?.isDraft
 
@@ -81,7 +89,7 @@ const AnsweredQuestionnaire: FC = () => {
 
   return (
     <IntroWrapper
-      title={data?.getAnsweredQuestionnaire?.data[0]?.title || ''}
+      title={data?.getAnsweredQuestionnaire?.data[0]?.title ?? ''}
       intro={formatMessage(messages.answeredQuestionnaireAnswered)}
       loading={loading}
       buttonGroupAlignment={'spaceBetween'}
@@ -106,7 +114,7 @@ const AnsweredQuestionnaire: FC = () => {
                         arg: formatDate(currentSubmission.date),
                       })
                     : formatMessage(messages.unknown),
-                  value: currentSubmission?.id || '',
+                  value: currentSubmission?.id ?? '',
                 }}
                 value={{
                   label: currentSubmission?.date
@@ -114,11 +122,13 @@ const AnsweredQuestionnaire: FC = () => {
                         arg: formatDate(currentSubmission.date),
                       })
                     : formatMessage(messages.unknown),
-                  value: currentSubmission?.id || '',
+                  value: currentSubmission?.id ?? '',
                 }}
                 key="submission-select"
                 onChange={(option) =>
-                  handleSubmissionChange(option?.value as string)
+                  option?.value != null
+                    ? handleSubmissionChange(option.value)
+                    : null
                 }
                 size="xs"
               />
@@ -166,7 +176,7 @@ const AnsweredQuestionnaire: FC = () => {
           <Answered
             answers={currentSubmission?.answers?.map((answer) => ({
               questionId: answer.id,
-              question: answer.label || '',
+              question: answer.label ?? '',
               answers: answer.values.map((value) => ({
                 value,
               })),

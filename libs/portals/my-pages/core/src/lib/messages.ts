@@ -2107,6 +2107,11 @@ export const m = defineMessages({
     id: 'service.portal:questionnaire-canceled',
     defaultMessage: 'Hætt við spurningalista',
   },
+  a11yProgressBarDescription: {
+    id: 'service.portal:a11y-progress-bar-description',
+    defaultMessage:
+      'Notaðu örvatakka til að fara á milli valkosta. Ýttu á Enter eða Space til að velja.',
+  },
 })
 
 export const searchTagsMessages = defineMessages({

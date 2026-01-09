@@ -47,7 +47,7 @@ export const QuestionRenderer: FC<QuestionRendererProps> = ({
       const options = question.answerOptions.options
       if (!options) return undefined
       const option = options.find((opt) => opt.value === val)
-      return option?.label || undefined
+      return option?.label ?? undefined
     }
 
     // For types that need option labels: radio, checkbox, thermometer, slider
@@ -99,7 +99,11 @@ export const QuestionRenderer: FC<QuestionRendererProps> = ({
             onChange={(value: string) => handleValueChange(value)}
             disabled={disabled}
             error={error}
-            maxLength={question.answerOptions.maxLength ?? undefined}
+            maxLength={
+              question.answerOptions.maxLength
+                ? Number(question.answerOptions.maxLength)
+                : undefined
+            }
           />
         )
       }
@@ -115,7 +119,11 @@ export const QuestionRenderer: FC<QuestionRendererProps> = ({
             error={error}
             multiline
             rows={4}
-            maxLength={question.answerOptions.maxLength ?? undefined}
+            maxLength={
+              question.answerOptions.maxLength
+                ? Number(question.answerOptions.maxLength)
+                : undefined
+            }
           />
         )
       }
@@ -125,14 +133,14 @@ export const QuestionRenderer: FC<QuestionRendererProps> = ({
         return (
           <TextInput
             id={question.id}
-            placeholder={question.answerOptions.placeholder || ''}
+            placeholder={question.answerOptions.placeholder ?? undefined}
             value={firstValue ?? ''}
             onChange={(value: string) => handleValueChange(value)}
             disabled={disabled}
             error={error}
             type={question.answerOptions.decimal ? 'decimal' : 'number'}
-            min={question.answerOptions.min || undefined}
-            max={question.answerOptions.max || undefined}
+            min={question.answerOptions.min ?? undefined}
+            max={question.answerOptions.max ?? undefined}
           />
         )
       }
@@ -144,8 +152,8 @@ export const QuestionRenderer: FC<QuestionRendererProps> = ({
           <Radio
             id={question.id}
             options={options.map((option) => ({
-              value: option.value || '',
-              label: option.label || '',
+              value: option.value ?? '',
+              label: option.label ?? '',
             }))}
             value={answer?.answers?.[0]?.value ?? ''}
             onChange={(value: string) => {
@@ -166,8 +174,8 @@ export const QuestionRenderer: FC<QuestionRendererProps> = ({
           <Multiple
             id={question.id}
             options={options.map((option) => ({
-              value: option.value || '',
-              label: option.label || '',
+              value: option.value ?? '',
+              label: option.label ?? '',
             }))}
             value={selectedValues}
             onChange={(values: string[]) => handleValueChange(values)}
@@ -190,8 +198,8 @@ export const QuestionRenderer: FC<QuestionRendererProps> = ({
             onChange={(value: string) => handleValueChange(value)}
             disabled={disabled}
             error={error}
-            minLabel={answerOptions.minLabel || undefined}
-            maxLabel={answerOptions.maxLabel || undefined}
+            minLabel={answerOptions.minLabel ?? undefined}
+            maxLabel={answerOptions.maxLabel ?? undefined}
             showLabels={!!(answerOptions.minLabel || answerOptions.maxLabel)}
           />
         )
@@ -202,20 +210,20 @@ export const QuestionRenderer: FC<QuestionRendererProps> = ({
         return (
           <Thermometer
             id={question.id}
-            min={answerOptions.min || '0'}
-            max={answerOptions.max || '10'}
+            min={answerOptions.min ?? '0'}
+            max={answerOptions.max ?? '10'}
             value={answer?.answers?.[0]?.value ?? null}
             onChange={(value: string) => handleValueChange(value)}
             disabled={disabled}
             error={error}
-            minLabel={answerOptions.minLabel || 'Min'}
-            maxLabel={answerOptions.maxLabel || 'Max'}
+            minLabel={answerOptions.minLabel ?? 'Min'}
+            maxLabel={answerOptions.maxLabel ?? 'Max'}
           />
         )
       }
 
       case QuestionnaireAnswerOptionType.slider: {
-        const options = question.answerOptions.options || []
+        const options = question.answerOptions.options ?? []
         const firstValue = answer?.answers?.[0]?.value
         const selectedValue: QuestionnaireOptionsLabelValue | undefined = {
           id: question.id,
@@ -240,8 +248,8 @@ export const QuestionRenderer: FC<QuestionRendererProps> = ({
               id={question.id}
               progress={progress}
               options={options?.map((option) => ({
-                label: option.label || '',
-                value: option.value || '',
+                label: option.label ?? '',
+                value: option.value ?? '',
               }))}
               selectedValue={selectedValue}
               onOptionClick={(value) => handleValueChange(value)}
@@ -326,7 +334,7 @@ export const QuestionRenderer: FC<QuestionRendererProps> = ({
         {HtmlParser(
           question.htmlLabel && question.htmlLabel.length > 0
             ? question.htmlLabel
-            : question.label || '',
+            : question.label ?? '',
         )}
         {question.answerOptions.type === 'number' &&
           question.answerOptions.min &&

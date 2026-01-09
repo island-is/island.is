@@ -55,7 +55,7 @@ export const Answered: FC<AnsweredProps> = ({ answers }) => {
           ...(answers?.map((answer) => {
             return {
               title: answer.question,
-              value: answer.answers.map((a) => formatValue(a.label || a.value)),
+              value: answer.answers.map((a) => formatValue(a.label ?? a.value)),
               type: 'text' as const,
               boldValue: false,
               boldTitle: false,

@@ -1,4 +1,7 @@
-import { QuestionnaireQuestionnairesOrganizationEnum } from '@island.is/api/schema'
+import {
+  QuestionnaireQuestionnairesOrganizationEnum,
+  QuestionnaireAnswerOptionType,
+} from '@island.is/api/schema'
 import { Box, LoadingDots, toast } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
@@ -39,7 +42,7 @@ const AnswerQuestionnaire: FC = () => {
   const { data, loading, error } = useGetQuestionnaireWithQuestionsQuery({
     variables: {
       input: {
-        id: id || '',
+        id: id ?? '',
         organization: organization,
         includeQuestions: true,
       },
@@ -51,6 +54,14 @@ const AnswerQuestionnaire: FC = () => {
 
   const questionnaire = data?.questionnairesDetail
 
+  const isValidQuestionnaireAnswerType = (
+    type: string,
+  ): type is QuestionnaireAnswerOptionType => {
+    return Object.values(QuestionnaireAnswerOptionType).includes(
+      type as QuestionnaireAnswerOptionType,
+    )
+  }
+
   const initialAnswers = useMemo(() => {
     if (!questionnaire?.draftAnswers?.length) return undefined
 
@@ -61,20 +72,26 @@ const AnswerQuestionnaire: FC = () => {
       })
     })
 
-    return questionnaire.draftAnswers.reduce(
-      (acc, draft) => ({
-        ...acc,
-        [draft.questionId]: {
-          questionId: draft.questionId,
-          question: questionLabels[draft.questionId] || '',
-          type: draft.type as QuestionAnswer['type'],
-          answers: draft.answers.map((a) => ({
-            label: a.label ?? undefined,
-            value: a.value,
-          })),
-        },
-      }),
-      {} as { [key: string]: QuestionAnswer },
+    return questionnaire.draftAnswers.reduce<{ [key: string]: QuestionAnswer }>(
+      (acc, draft) => {
+        if (!isValidQuestionnaireAnswerType(draft.type)) {
+          return acc
+        }
+
+        return {
+          ...acc,
+          [draft.questionId]: {
+            questionId: draft.questionId,
+            question: questionLabels[draft.questionId] ?? '',
+            type: draft.type,
+            answers: draft.answers.map((a) => ({
+              label: a.label ?? undefined,
+              value: a.value,
+            })),
+          },
+        }
+      },
+      {},
     )
   }, [questionnaire?.draftAnswers, questionnaire?.sections])
 
@@ -93,7 +110,9 @@ const AnswerQuestionnaire: FC = () => {
     if (!organization || !id) {
       toast.error(
         formatMessage(messages.errorSendingAnswers, {
-          title: data?.questionnairesDetail?.baseInformation.title || '',
+          title:
+            data?.questionnairesDetail?.baseInformation.title ??
+            formatMessage(m.unknown),
         }),
       )
       return
@@ -104,7 +123,7 @@ const AnswerQuestionnaire: FC = () => {
       type: answer.type,
       answers: answer.answers.map((a) => ({
         label: a.label,
-        values: a.value,
+        value: a.value,
       })),
     }))
 
@@ -115,7 +134,7 @@ const AnswerQuestionnaire: FC = () => {
           organization: organization,
           saveAsDraft: asDraft,
           entries: entries,
-          formId: data?.questionnairesDetail?.baseInformation.formId || '',
+          formId: data?.questionnairesDetail?.baseInformation.formId ?? '',
         },
         locale: lang,
       },
@@ -126,13 +145,13 @@ const AnswerQuestionnaire: FC = () => {
             ? toast.success(
                 formatMessage(messages.questionnaireDraftSaved, {
                   title:
-                    data?.questionnairesDetail?.baseInformation.title || '',
+                    data?.questionnairesDetail?.baseInformation.title ?? '',
                 }),
               )
             : toast.success(
                 formatMessage(messages.yourAnswersForHasBeenSent, {
                   title:
-                    data?.questionnairesDetail?.baseInformation.title || '',
+                    data?.questionnairesDetail?.baseInformation.title ?? '',
                 }),
               )
           navigate(
@@ -143,18 +162,18 @@ const AnswerQuestionnaire: FC = () => {
               .replace(':id', id)
               .replace(
                 ':submissionId',
-                response.data?.submitQuestionnaire.message || '',
+                response.data?.submitQuestionnaire.message ?? '',
               ),
             {
               state: {
-                submissionId: response.data?.submitQuestionnaire.message || '',
+                submissionId: response.data?.submitQuestionnaire.message ?? '',
               },
             },
           )
         } else {
           toast.error(
             formatMessage(messages.errorSendingAnswers, {
-              title: data?.questionnairesDetail?.baseInformation.title || '',
+              title: data?.questionnairesDetail?.baseInformation.title ?? '',
             }),
           )
           return
@@ -163,7 +182,7 @@ const AnswerQuestionnaire: FC = () => {
       .catch(() => {
         toast.error(
           formatMessage(messages.errorSendingAnswers, {
-            title: data?.questionnairesDetail?.baseInformation.title || '',
+            title: data?.questionnairesDetail?.baseInformation.title ?? '',
           }),
         )
       })

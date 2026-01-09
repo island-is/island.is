@@ -39,7 +39,6 @@ export const Table: React.FC<TableProps> = ({
   onChange,
   disabled = false,
   error,
-  numRows = 1,
   maxRows = 10,
 }) => {
   useNamespaces('service.portal')
@@ -73,7 +72,7 @@ export const Table: React.FC<TableProps> = ({
         if (!answersByColumn[column.id]) {
           answersByColumn[column.id] = []
         }
-        answersByColumn[column.id].push(rowValue || '')
+        answersByColumn[column.id].push(rowValue ?? '')
       }
     })
 
@@ -86,7 +85,7 @@ export const Table: React.FC<TableProps> = ({
     for (let i = 0; i < maxRowCount; i++) {
       const row: TableRowData = {}
       columns.forEach((col) => {
-        row[col.id] = answersByColumn[col.id]?.[i] || ''
+        row[col.id] = answersByColumn[col.id]?.[i] ?? ''
       })
       rows.push(row)
     }
@@ -104,7 +103,7 @@ export const Table: React.FC<TableProps> = ({
 
     newRows.forEach((row) => {
       columns.forEach((col) => {
-        const cellValue = row[col.id] || ''
+        const cellValue = row[col.id] ?? ''
         if (cellValue) {
           answers.push({
             value: `${col.id}:${col.type}:${cellValue}`,
@@ -156,7 +155,7 @@ export const Table: React.FC<TableProps> = ({
   }
 
   const renderFormInput = (column: QuestionnaireTableColumn) => {
-    const cellValue = currentRow[column.id] || ''
+    const cellValue = currentRow[column.id] ?? ''
 
     switch (column.type) {
       case 'string':

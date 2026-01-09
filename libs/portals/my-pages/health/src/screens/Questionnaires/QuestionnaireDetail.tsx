@@ -33,7 +33,7 @@ const QuestionnaireDetail: FC = () => {
 
   const { data, loading, error } = useGetQuestionnaireQuery({
     variables: {
-      input: { id: id || '', organization: organization },
+      input: { id: id ?? '', organization: organization },
       locale: lang,
     },
     skip: !id,
@@ -55,14 +55,20 @@ const QuestionnaireDetail: FC = () => {
     )
   }
 
-  const latestSubmission = questionnaire?.submissions?.reduce(
-    (latest, current) =>
-      !latest ||
-      (current.lastUpdated && current.lastUpdated > latest.lastUpdated)
-        ? current
-        : latest,
-    undefined as QuestionnaireSubmissionDetail | undefined,
-  )
+  const latestSubmission = questionnaire?.submissions?.reduce<
+    QuestionnaireSubmissionDetail | undefined
+  >((latest, current) => {
+    // First submission becomes the latest
+    if (!latest) return current
+
+    // If current has a newer lastUpdated timestamp, it becomes the latest
+    if (current.lastUpdated && current.lastUpdated > (latest.lastUpdated ?? '')) {
+      return current
+    }
+
+    // Otherwise keep the previous latest
+    return latest
+  }, undefined)
 
   const answerLink = HealthPaths.HealthQuestionnairesAnswered.replace(
     ':org',

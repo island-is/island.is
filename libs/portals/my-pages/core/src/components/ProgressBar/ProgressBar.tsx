@@ -12,6 +12,8 @@ import React, {
 import HtmlParser from 'react-html-parser'
 import * as styles from './ProgressBar.css'
 import sanitizeHtml from 'sanitize-html'
+import { useLocale } from '@island.is/localization'
+import { m } from '../../lib/messages'
 
 interface Props {
   id: string
@@ -55,6 +57,27 @@ export const ProgressBar: FC<Props> = ({
   )
   const labelId = `progress-label-${id}`
   const descriptionId = `progress-description-${id}`
+
+  const { formatMessage } = useLocale()
+
+  // Helper function to calculate position for an option based on its index
+  const calculateOptionPosition = (
+    index: number,
+    totalOptions: number,
+    useEdgePositioning = false,
+  ): number => {
+    const isFirst = index === 0
+    const isLast = index === totalOptions - 1
+    const isMiddle = !isFirst && !isLast
+
+    if (useEdgePositioning && !isMiddle) {
+      // For edge items (first/last), use different positioning for text labels
+      return (index / totalOptions) * 100 + (isLast ? 2 : 0)
+    }
+
+    // Standard positioning for dots and indicators
+    return (index / (totalOptions - 1)) * 100 + (isLast ? -1 : isFirst ? 1 : 0)
+  }
 
   // Check if the selected value actually exists in this instance's options
   const hasValidSelection = useMemo(
@@ -142,8 +165,7 @@ export const ProgressBar: FC<Props> = ({
           id={descriptionId}
           className={styles.optionsDescription}
         >
-          Use arrow keys to navigate between options. Press Enter or Space to
-          select.
+          {formatMessage(m.a11yProgressBarDescription)}
         </Box>
       )}
       <Box
@@ -205,11 +227,8 @@ export const ProgressBar: FC<Props> = ({
               options.length > 0 &&
               options.map((option, index) => {
                 const isSelected = selectedValue?.value === option.value
-                const isLast = index === options.length - 1
                 const isFirst = index === 0
-                const position =
-                  (index / (options.length - 1)) * 100 +
-                  (isLast ? -1 : isFirst ? 1 : 0)
+                const position = calculateOptionPosition(index, options.length)
 
                 // Make sure each radiogroup has exactly one tabbable option:
                 // - If selection is valid → the selected one
@@ -286,11 +305,7 @@ export const ProgressBar: FC<Props> = ({
               {options.map((option, index) => {
                 if (selectedValue.value !== option.value) return null
 
-                const isLast = index === options.length - 1
-                const isFirst = index === 0
-                const position =
-                  (index / (options.length - 1)) * 100 +
-                  (isLast ? -1 : isFirst ? 1 : 0)
+                const position = calculateOptionPosition(index, options.length)
 
                 return (
                   <Box
@@ -320,11 +335,7 @@ export const ProgressBar: FC<Props> = ({
                 // Don't show hover indicator on the selected item
                 if (selectedValue?.value === option.value) return null
 
-                const isLast = index === options.length - 1
-                const isFirst = index === 0
-                const position =
-                  (index / (options.length - 1)) * 100 +
-                  (isLast ? -1 : isFirst ? 1 : 0)
+                const position = calculateOptionPosition(index, options.length)
 
                 return (
                   <Box
@@ -357,9 +368,11 @@ export const ProgressBar: FC<Props> = ({
               const isMiddle = !isFirst && !isLast
 
               // For middle items, use dot position; for first/last, use edge positions
-              const position = isMiddle
-                ? (index / (options.length - 1)) * 100
-                : (index / options.length) * 100 + (isLast ? 2 : 0)
+              const position = calculateOptionPosition(
+                index,
+                options.length,
+                !isMiddle, // Use edge positioning for first/last items
+              )
 
               const textAlign = isLast ? 'right' : 'left'
 
