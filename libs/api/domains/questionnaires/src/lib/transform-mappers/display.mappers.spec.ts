@@ -87,8 +87,8 @@ describe('display mappers', () => {
       expect(question?.label).toBe('Select an option')
       expect(question?.answerOptions.type).toBe(AnswerOptionType.radio)
       expect(question?.answerOptions.options).toEqual([
-        { id: 'A', label: 'Option A', value: 'A' },
-        { id: 'B', label: 'Option B', value: 'B' },
+        { id: 'A-Option A', label: 'Option A', value: 'A' },
+        { id: 'B-Option B', label: 'Option B', value: 'B' },
       ])
     })
 
