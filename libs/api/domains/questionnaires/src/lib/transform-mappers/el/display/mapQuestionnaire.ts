@@ -23,7 +23,7 @@ export const mapELQuestionnaire = (
   const isDetailed = 'groups' in q && 'triggers' in q
   let allQuestions: HealthDirectorateQuestionDto[] = []
   if (isDetailed) {
-    allQuestions = q.groups.flatMap((g) => g.items)
+    allQuestions = q.groups.flatMap((g) => g.items ?? [])
   }
 
   // Get draft answers if available

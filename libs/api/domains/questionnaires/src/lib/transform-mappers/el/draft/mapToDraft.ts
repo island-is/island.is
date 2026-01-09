@@ -4,14 +4,11 @@
  * into the answer format expected by the frontend questionnaire UI.
  */
 
-import {
-  QuestionnaireDetailDto,
-  TableQuestionDto,
-} from '@island.is/clients/health-directorate'
-import { AnswerOptionType } from '../../../../models/question.model'
-import { mapAnswerOptionType } from '../display/mapAnswerOptionType'
+import { QuestionnaireDetailDto } from '@island.is/clients/health-directorate'
 import { FormatMessage } from '@island.is/cms-translations'
+import { AnswerOptionType } from '../../../../models/question.model'
 import { m } from '../../../utils/messages'
+import { mapAnswerOptionType } from '../display/mapAnswerOptionType'
 
 interface Answer {
   label?: string | undefined
@@ -42,7 +39,7 @@ export const mapDraftRepliesToAnswers = (
     if (!question) return
 
     const answerType = mapAnswerOptionType(question.type, question)
-    const label = question.label
+    const label = question.label ?? formatMessage(m.noLabel)
     // Helper to get option label for list questions
     const getOptionLabel = (value: string): string | undefined => {
       // Handle boolean questions specially - they don't have values array

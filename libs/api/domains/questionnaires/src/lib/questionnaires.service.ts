@@ -327,7 +327,7 @@ export class QuestionnairesService {
               id: q.questionnaireId,
               title: q.title ?? formatMessage(m.questionnaireWithoutTitle),
               description: q.message ?? undefined,
-              sentDate: q.createdDate?.toDateString() ?? '',
+              sentDate: q.createdDate?.toISOString() ?? '',
               organization: QuestionnairesOrganizationEnum.EL,
               department: undefined,
               status:
@@ -360,7 +360,7 @@ export class QuestionnairesService {
                   ? item.caption
                   : formatMessage(m.questionnaireWithoutTitle),
                 description: item.description ?? undefined,
-                sentDate: item.validFromDateTime.toISOString(),
+                sentDate: item.validFromDateTime?.toISOString() ?? '',
                 organization: QuestionnairesOrganizationEnum.LSH,
                 department: item.department ?? undefined,
                 status: item.answerDateTime
@@ -390,8 +390,8 @@ export class QuestionnairesService {
           if (!aIsExpired && bIsExpired) return -1
 
           // Then sort by date (newest first)
-          const dateA = new Date(a.sentDate).getTime()
-          const dateB = new Date(b.sentDate).getTime()
+          const dateA = Date.parse(a.sentDate) || 0
+          const dateB = Date.parse(b.sentDate) || 0
 
           return dateB - dateA
         }),
