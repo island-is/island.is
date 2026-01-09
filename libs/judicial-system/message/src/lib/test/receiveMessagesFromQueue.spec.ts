@@ -1,4 +1,4 @@
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 import { SQSClient } from '@aws-sdk/client-sqs'
 
 import { Message } from '../message'

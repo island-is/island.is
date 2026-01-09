@@ -46,6 +46,7 @@ export type CaseEvent =
   | 'CREATE_XRD'
   | 'EXTEND'
   | 'RESUBMIT'
+  | 'SCHEDULE_ARRAIGNMENT_DATE'
   | 'SCHEDULE_COURT_DATE'
   | 'SPLIT'
   | 'SUBPOENA_SERVICE_STATUS'
@@ -74,6 +75,7 @@ const caseEvent: Record<CaseEvent, string> = {
   [CaseTransition.REOPEN_APPEAL]: ':building_construction: Kæra opnuð aftur',
   RESUBMIT: ':mailbox_with_mail: Sent aftur',
   [CaseTransition.RETURN_INDICTMENT]: ':woman-gesturing-no: Ákæra afturkölluð',
+  SCHEDULE_ARRAIGNMENT_DATE: ':calendar: Þingfestingartíma úthlutað',
   SCHEDULE_COURT_DATE: ':timer_clock: Fyrirtökutíma úthlutað',
   SPLIT: ':scissors: Mál klofið',
   [CaseTransition.SUBMIT]: ':mailbox_with_mail: Sent',
@@ -91,6 +93,7 @@ const caseEventsToLog = [
   'COMPLETE',
   'DISMISS',
   'REJECT',
+  'SCHEDULE_ARRAIGNMENT_DATE',
   'SCHEDULE_COURT_DATE',
   'SUBPOENA_SERVICE_STATUS',
   'VERDICT_SERVICE_STATUS',
@@ -139,7 +142,7 @@ export class EventService {
         ? `\n>Landsréttur *${theCase.appealCaseNumber}*`
         : ''
       const courtDateText =
-        event === 'SCHEDULE_COURT_DATE'
+        event === 'SCHEDULE_COURT_DATE' || event === 'SCHEDULE_ARRAIGNMENT_DATE'
           ? `\n>Dómari ${
               theCase.judge?.name ?? 'er ekki skráður'
             }\n>Dómritari ${
@@ -373,6 +376,7 @@ export class EventService {
     let extraInfo
 
     switch (event) {
+      case 'SCHEDULE_ARRAIGNMENT_DATE':
       case 'SCHEDULE_COURT_DATE':
         extraInfo = `courtDate: ${formatDate(
           DateLog.courtDate(theCase.dateLogs)?.date ??

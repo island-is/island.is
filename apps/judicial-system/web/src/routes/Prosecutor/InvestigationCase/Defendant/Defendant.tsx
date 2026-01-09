@@ -2,7 +2,7 @@ import { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence, motion } from 'motion/react'
 import { useRouter } from 'next/router'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { Box, Button } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
@@ -70,7 +70,8 @@ const Defendant = () => {
         newDefendants[indexOfDefendantToUpdate] = {
           ...newDefendants[indexOfDefendantToUpdate],
           ...update,
-        } as TDefendant
+        }
+
         return { ...prevWorkingCase, defendants: newDefendants }
       })
     },

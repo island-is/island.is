@@ -1458,7 +1458,8 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                 />
                 <BlueBox className={styles.grid}>
                   <RadioButton
-                    name={`result_no-${courtSession.id}`}
+                    name="result_verdict"
+                    id={`result_no-${courtSession.id}`}
                     label="Nei"
                     backgroundColor="white"
                     checked={
@@ -1479,7 +1480,8 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                     large
                   />
                   <RadioButton
-                    name={`result_verdict-${courtSession.id}`}
+                    name="result_verdict"
+                    id={`result_verdict-${courtSession.id}`}
                     label="Dómur kveðinn upp"
                     backgroundColor="white"
                     checked={
@@ -1497,7 +1499,8 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                     large
                   />
                   <RadioButton
-                    name={`result_ruling-${courtSession.id}`}
+                    name="result_verdict"
+                    id={`result_ruling-${courtSession.id}`}
                     label="Úrskurður kveðinn upp"
                     backgroundColor="white"
                     checked={

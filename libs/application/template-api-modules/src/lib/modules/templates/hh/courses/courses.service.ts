@@ -16,14 +16,16 @@ import type { ApplicationAnswers } from './types'
 const GET_COURSE_BY_ID_QUERY = `
   query GetCourseById($input: GetCourseByIdInput!) {
     getCourseById(input: $input) {
-      id
-      title
-      instances {
+      course {
         id
-        startDate
-        startDateTimeDuration {
-          startTime
-          endTime
+        title
+        instances {
+          id
+          startDate
+          startDateTimeDuration {
+            startTime
+            endTime
+          }
         }
       }
     }
@@ -162,16 +164,18 @@ export class CoursesService extends BaseTemplateApiService {
     const response = await this.sharedTemplateApiService
       .makeGraphqlQuery<{
         getCourseById: {
-          id: string
-          title: string
-          instances: {
+          course: {
             id: string
-            startDate: string
-            startDateTimeDuration?: {
-              startTime?: string
-              endTime?: string
-            }
-          }[]
+            title: string
+            instances: {
+              id: string
+              startDate: string
+              startDateTimeDuration?: {
+                startTime?: string
+                endTime?: string
+              }
+            }[]
+          }
         }
       }>(authorization, GET_COURSE_BY_ID_QUERY, {
         input: {
@@ -180,7 +184,7 @@ export class CoursesService extends BaseTemplateApiService {
       })
       .then((response) => response.json())
 
-    const course = response.data?.getCourseById
+    const course = response.data?.getCourseById?.course
     const courseInstance = course?.instances.find(
       (instance) => instance.id === courseInstanceId,
     )

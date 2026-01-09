@@ -64,24 +64,25 @@ export const getIndictmentIntroductionAutofill = (
         `\n\n${formatMessage(strings.indictmentIntroductionAutofillCourt, {
           court: applyDativeCaseToCourtName(court?.name || 'héraðsdómi'),
         })}`,
-        `\n\n${defendants.map((defendant) => {
-          return `\n          ${formatMessage(
-            strings.indictmentIntroductionAutofillDefendant,
-            {
-              defendantName: defendant.name
-                ? applyCase('þgf', defendant.name)
-                : 'Ekki skráð',
-              defendantNationalId: defendant.nationalId
-                ? formatNationalId(defendant.nationalId)
-                : 'Ekki skráð',
-            },
-          )}\n          ${
-            defendant.address
-              ? applyCaseToAddress('þgf', defendant.address)
-              : 'Ekki skráð'
-          },`
-        })}
-    `,
+        `\n\n${defendants
+          .map((defendant) => {
+            return `\n          ${formatMessage(
+              strings.indictmentIntroductionAutofillDefendant,
+              {
+                defendantName: defendant.name
+                  ? applyCase('þgf', defendant.name)
+                  : 'Ekki skráð',
+                defendantNationalId: defendant.nationalId
+                  ? formatNationalId(defendant.nationalId)
+                  : 'Ekki skráð',
+              },
+            )}\n          ${
+              defendant.address
+                ? applyCaseToAddress('þgf', defendant.address)
+                : 'Ekki skráð'
+            },`
+          })
+          .join('')}`,
       ]
     : []
 }
@@ -275,49 +276,57 @@ const Indictment = () => {
   const handleUpdateIndictmentCount = useCallback(
     async (
       indictmentCountId: string,
-      updatedIndictmentCount: UpdateIndictmentCount,
+      indictmentCountUpdate: UpdateIndictmentCount,
       updatedOffenses?: Offense[],
     ) => {
       if (
-        updatedIndictmentCount.policeCaseNumber &&
+        indictmentCountUpdate.policeCaseNumber &&
         policeCaseData?.policeCaseInfo
       ) {
         const vehicleNumber = policeCaseData.policeCaseInfo?.find(
           (policeCase) =>
             policeCase?.policeCaseNumber ===
-            updatedIndictmentCount.policeCaseNumber,
+            indictmentCountUpdate.policeCaseNumber,
         )?.licencePlate
 
         if (vehicleNumber)
-          updatedIndictmentCount.vehicleRegistrationNumber = vehicleNumber
+          indictmentCountUpdate.vehicleRegistrationNumber = vehicleNumber
+      }
+
+      const prevIndictmentCount = workingCase.indictmentCounts?.find(
+        (count) => count.id === indictmentCountId,
+      )
+
+      if (!prevIndictmentCount) {
+        return
       }
 
       const returnedIndictmentCount = await updateIndictmentCount(
         workingCase.id,
         indictmentCountId,
-        updatedIndictmentCount,
+        indictmentCountUpdate,
       )
 
       if (!returnedIndictmentCount) {
         return
       }
 
-      const prevSuspensionOffenses = getSuspensionOffenses(
-        workingCase.indictmentCounts,
-      )
-
-      const newSuspensionOffenses = getSuspensionOffenses(
-        workingCase.indictmentCounts?.map((count) =>
-          count.id === indictmentCountId
-            ? {
-                ...returnedIndictmentCount,
-                offenses: updatedOffenses ?? count.offenses,
-              }
-            : count,
-        ),
-      )
+      const updatedIndictmentCount = {
+        ...returnedIndictmentCount,
+        offenses: updatedOffenses ?? prevIndictmentCount.offenses,
+      }
 
       if (updatedOffenses && updatedOffenses?.length > 0) {
+        const prevSuspensionOffenses = getSuspensionOffenses(
+          workingCase.indictmentCounts,
+        )
+
+        const newSuspensionOffenses = getSuspensionOffenses(
+          workingCase.indictmentCounts?.map((count) =>
+            count.id === indictmentCountId ? updatedIndictmentCount : count,
+          ),
+        )
+
         setSuspensionRequest(
           prevSuspensionOffenses,
           newSuspensionOffenses,
@@ -327,9 +336,8 @@ const Indictment = () => {
 
       updateIndictmentCountState(
         indictmentCountId,
-        returnedIndictmentCount,
+        updatedIndictmentCount,
         setWorkingCase,
-        updatedOffenses,
       )
     },
     [
