@@ -149,7 +149,6 @@ const template: ApplicationTemplate<
   },
   mapUserToRole(
     nationalId: string,
-    application: Application,
   ): ApplicationRole | undefined {
     // Only allow companies or delegated actors to access the application
     if (isCompany(nationalId)) {
