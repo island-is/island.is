@@ -93,12 +93,6 @@ export const employmentHistorySubSection = buildSubSection({
           condition: isIndependent,
         }),
         /* IS NOT INDEPENDENT */
-        buildDescriptionField({
-          id: 'employmentHistoryNotIndependentDescription',
-          title: employmentMessages.employmentHistory.labels.lastJobLabel,
-          titleVariant: 'h5',
-          condition: (answers) => !isIndependent(answers),
-        }),
         buildFieldsRepeaterField({
           id: 'employmentHistory.currentJobs',
           hideAddButton: true,
@@ -133,7 +127,7 @@ export const employmentHistorySubSection = buildSubSection({
           marginTop: 0,
           marginBottom: 0,
           formTitle:
-            employmentMessages.employmentHistory.labels.lastJobRepeater,
+            employmentMessages.employmentHistory.labels.currentJobRepeater,
           formTitleVariant: 'h5',
           fields: {
             'employer.nationalId': {
@@ -207,7 +201,6 @@ export const employmentHistorySubSection = buildSubSection({
                 ) {
                   return ''
                 }
-
                 return repeaterJobs[index]?.title || ''
               },
             },
@@ -330,25 +323,21 @@ export const employmentHistorySubSection = buildSubSection({
           },
         }),
 
+        buildDescriptionField({
+          id: 'employmentHistoryLabel',
+          title:
+            employmentMessages.employmentHistory.labels.lastJobsRepeaterTitle,
+          description: employmentMessages.employmentHistory.labels.lastJobLabel,
+          titleVariant: 'h5',
+          condition: (answers) => !isIndependent(answers),
+        }),
+
         buildFieldsRepeaterField({
           id: 'employmentHistory.lastJobs',
           marginTop: 0,
-          minRows: 0,
-          formTitle: (index, application) => {
-            const repeaterJobs =
-              getValueViaPath<CurrentEmploymentInAnswers[]>(
-                application.answers,
-                'currentSituation.currentSituationRepeater',
-                [],
-              ) ?? []
-            return {
-              ...employmentMessages.employmentHistory.labels.lastJobRepeater,
-              values: {
-                value: repeaterJobs.length + index + 1,
-              },
-            }
-          },
-          formTitleNumbering: 'none',
+          minRows: 1,
+          formTitle:
+            employmentMessages.employmentHistory.labels.lastJobRepeater,
           formTitleVariant: 'h5',
           fields: {
             nationalIdWithName: {
