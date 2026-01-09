@@ -1,6 +1,6 @@
 import { FC, useContext } from 'react'
 
-import { Box, ResponsiveSpace } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 import { InstitutionType } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { UserContext } from '../UserProvider/UserProvider'
@@ -10,10 +10,9 @@ import * as styles from './Logo.css'
 
 interface Props {
   defaultInstitution?: string | null
-  marginBottom?: ResponsiveSpace
 }
 
-const Logo: FC<Props> = ({ defaultInstitution = '', marginBottom }) => {
+const Logo: FC<Props> = ({ defaultInstitution = '' }) => {
   const { user } = useContext(UserContext)
   if (!user) {
     return null
@@ -36,7 +35,7 @@ const Logo: FC<Props> = ({ defaultInstitution = '', marginBottom }) => {
   const isPolice = institutionType === InstitutionType.POLICE_PROSECUTORS_OFFICE
 
   return (
-    <Box display="flex" marginBottom={marginBottom}>
+    <Box display="flex">
       <Box marginRight={2}>
         {isPolice ? <PoliceStar /> : <LandWightsLogo />}
       </Box>
