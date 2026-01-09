@@ -1,4 +1,4 @@
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { SigningServiceResponse } from '@island.is/dokobit-signing'
 
