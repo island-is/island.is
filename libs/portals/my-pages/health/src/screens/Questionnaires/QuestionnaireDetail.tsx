@@ -62,7 +62,10 @@ const QuestionnaireDetail: FC = () => {
     if (!latest) return current
 
     // If current has a newer lastUpdated timestamp, it becomes the latest
-    if (current.lastUpdated && current.lastUpdated > (latest.lastUpdated ?? '')) {
+    if (
+      current.lastUpdated &&
+      current.lastUpdated > (latest.lastUpdated ?? '')
+    ) {
       return current
     }
 
