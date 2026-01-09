@@ -40,6 +40,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import useEventLog from '@island.is/judicial-system-web/src/utils/hooks/useEventLog'
 import useVerdict from '@island.is/judicial-system-web/src/utils/hooks/useVerdict'
+import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import { ConfirmationInformation } from './ConfirmationInformation'
 import { CriminalRecordUpdate } from './CriminalRecordUpdate'
@@ -233,104 +234,96 @@ const Completed: FC = () => {
               </Box>
             ),
         )}
-        <Box marginBottom={5} component="section">
-          <InfoCardClosedIndictment />
-        </Box>
-        {isRulingOrDismissalCase(workingCase.indictmentRulingDecision) && (
-          <Conclusion
-            title={`${
-              workingCase.indictmentRulingDecision ===
-              CaseIndictmentRulingDecision.RULING
-                ? 'Dóms'
-                : 'Úrskurðar'
-            }orð héraðsdóms`}
-            conclusionText={workingCase.courtSessions?.at(-1)?.ruling}
-            judgeName={workingCase.judge?.name}
-          />
-        )}
-        {(hasLawsBroken || hasMergeCases) && (
-          <Box marginBottom={5}>
-            {/*
+        <div className={grid({ gap: 5, marginBottom: 10 })}>
+          <Box component="section">
+            <InfoCardClosedIndictment />
+          </Box>
+          {isRulingOrDismissalCase(workingCase.indictmentRulingDecision) && (
+            <Conclusion
+              title={`${
+                workingCase.indictmentRulingDecision ===
+                CaseIndictmentRulingDecision.RULING
+                  ? 'Dóms'
+                  : 'Úrskurðar'
+              }orð héraðsdóms`}
+              conclusionText={workingCase.courtSessions?.at(-1)?.ruling}
+              judgeName={workingCase.judge?.name}
+            />
+          )}
+          {(hasLawsBroken || hasMergeCases) && (
+            <>
+              {/*
             NOTE: Temporarily hidden while list of laws broken is not complete in
             indictment cases
             
             {hasLawsBroken && (
               <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
             )} */}
-            {hasMergeCases && (
-              <Accordion>
-                {workingCase.mergedCases?.map((mergedCase) => (
-                  <Box key={mergedCase.id}>
-                    <ConnectedCaseFilesAccordionItem
-                      connectedCaseParentId={workingCase.id}
-                      connectedCase={mergedCase}
-                    />
-                  </Box>
-                ))}
-              </Accordion>
-            )}
+              {hasMergeCases && (
+                <Accordion dividerOnBottom={false} dividerOnTop={false}>
+                  {workingCase.mergedCases?.map((mergedCase) => (
+                    <Box key={mergedCase.id}>
+                      <ConnectedCaseFilesAccordionItem
+                        connectedCaseParentId={workingCase.id}
+                        connectedCase={mergedCase}
+                      />
+                    </Box>
+                  ))}
+                </Accordion>
+              )}
+            </>
+          )}
+          <Box component="section">
+            <IndictmentCaseFilesList workingCase={workingCase} />
           </Box>
-        )}
-        <Box marginBottom={5} component="section">
-          <IndictmentCaseFilesList workingCase={workingCase} />
-        </Box>
-        {isRulingOrFine && (
-          <Box marginBottom={isRuling ? 5 : 10} component="section">
-            <CriminalRecordUpdate
-              uploadFiles={uploadFiles}
-              addUploadFiles={addUploadFiles}
-              updateUploadFile={updateUploadFile}
-              removeUploadFile={removeUploadFile}
-            />
-          </Box>
-        )}
-        {/* NOTE: This is a temp state for cases that were already in progress when the new court record was released */}
-        {includeRulingText && isRuling && (
-          <Box marginBottom={5}>
-            <SectionHeading title={'Dómsorð'} marginBottom={2} heading="h4" />
-            <RulingInput
-              rows={8}
-              label="Dómsorð"
-              placeholder="Hvert er dómsorðið?"
-              required
-            />
-          </Box>
-        )}
-        {isRuling && (
-          <Box marginBottom={5} component="section">
-            <SectionHeading
-              title={formatMessage(strings.serviceRequirementTitle)}
-              required
-            />
-            {workingCase.defendants?.map((defendant, index) => {
-              const { verdict } = defendant
-              if (!verdict) return null
+          {isRulingOrFine && (
+            <Box component="section">
+              <CriminalRecordUpdate
+                uploadFiles={uploadFiles}
+                addUploadFiles={addUploadFiles}
+                updateUploadFile={updateUploadFile}
+                removeUploadFile={removeUploadFile}
+              />
+            </Box>
+          )}
+          {/* NOTE: This is a temp state for cases that were already in progress when the new court record was released */}
+          {includeRulingText && isRuling && (
+            <div>
+              <SectionHeading title="Dómsorð" marginBottom={2} heading="h4" />
+              <RulingInput
+                rows={8}
+                label="Dómsorð"
+                placeholder="Hvert er dómsorðið?"
+                required
+              />
+            </div>
+          )}
+          {isRuling && (
+            <Box component="section">
+              <SectionHeading
+                title={formatMessage(strings.serviceRequirementTitle)}
+                required
+              />
+              <div className={grid({ gap: 4 })}>
+                {workingCase.defendants?.map((defendant) => {
+                  const { verdict } = defendant
+                  if (!verdict) return null
 
-              const isLastDefendantElement =
-                workingCase.defendants &&
-                workingCase.defendants.length - 1 === index
-              return (
-                <Box
-                  marginBottom={isLastDefendantElement ? 0 : 4}
-                  key={defendant.id}
-                >
-                  <React.Fragment key={defendant.id}>
-                    <DefendantServiceRequirement
-                      defendant={defendant}
-                      defendantIndex={index}
-                    />
-                    {verdict.serviceRequirement ===
-                      ServiceRequirement.REQUIRED && (
-                      <InformationForDefendant defendant={defendant} />
-                    )}
-                  </React.Fragment>
-                </Box>
-              )
-            })}
-          </Box>
-        )}
+                  return (
+                    <Box key={defendant.id} className={grid({ gap: 3 })}>
+                      <DefendantServiceRequirement defendant={defendant} />
+                      {verdict.serviceRequirement ===
+                        ServiceRequirement.REQUIRED && (
+                        <InformationForDefendant defendant={defendant} />
+                      )}
+                    </Box>
+                  )
+                })}
+              </div>
+            </Box>
+          )}
+        </div>
       </FormContentContainer>
-      <Box marginBottom={10} />
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={getStandardUserDashboardRoute(user)}

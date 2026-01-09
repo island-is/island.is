@@ -11,7 +11,10 @@ import {
   Offense,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { removeErrorMessageIfValid } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { UpdateIndictmentCount } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  UpdateIndictmentCount,
+  UpdateIndictmentCountState,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { strings } from './SpeedingOffenseFields.strings'
 
@@ -29,9 +32,8 @@ export const SpeedingOffenseFields = ({
   ) => void
   updateIndictmentCountState: (
     indictmentCountId: string,
-    update: UpdateIndictmentCount,
+    update: UpdateIndictmentCountState,
     setWorkingCase: Dispatch<SetStateAction<Case>>,
-    updatedOffenses?: Offense[],
   ) => void
 }) => {
   const { formatMessage } = useIntl()
@@ -77,9 +79,7 @@ export const SpeedingOffenseFields = ({
               return
             }
 
-            handleIndictmentCountChanges({
-              recordedSpeed,
-            })
+            handleIndictmentCountChanges({ recordedSpeed })
           }}
           name="recordedSpeed"
           autoComplete="off"
@@ -119,9 +119,7 @@ export const SpeedingOffenseFields = ({
             return
           }
 
-          handleIndictmentCountChanges({
-            speedLimit,
-          })
+          handleIndictmentCountChanges({ speedLimit })
         }}
         name="speedLimit"
         autoComplete="off"

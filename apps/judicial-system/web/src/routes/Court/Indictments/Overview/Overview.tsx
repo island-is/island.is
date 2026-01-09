@@ -28,6 +28,7 @@ import {
   IndictmentDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
+import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import ReturnIndictmentModal from '../ReturnIndictmentCaseModal/ReturnIndictmentCaseModal'
 import { strings } from './Overview.strings'
@@ -39,6 +40,7 @@ const OverviewBody = ({
   handleNavigationTo: (destination: string) => Promise<void>
 }) => {
   const { user } = useContext(UserContext)
+
   const router = useRouter()
 
   const { workingCase, isLoadingWorkingCase, setWorkingCase } =
@@ -59,28 +61,29 @@ const OverviewBody = ({
         <PageTitle>{formatMessage(strings.inProgressTitle)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         <ServiceAnnouncements defendants={workingCase.defendants} />
-        {workingCase.court &&
-          latestDate?.date &&
-          workingCase.indictmentDecision !== IndictmentDecision.COMPLETING &&
-          workingCase.indictmentDecision !==
-            IndictmentDecision.REDISTRIBUTING && (
-            <Box component="section" marginBottom={5}>
-              <IndictmentCaseScheduledCard
-                court={workingCase.court}
-                indictmentDecision={workingCase.indictmentDecision}
-                courtDate={latestDate.date}
-                courtRoom={latestDate.location}
-                postponedIndefinitelyExplanation={
-                  workingCase.postponedIndefinitelyExplanation
-                }
-                courtSessionType={workingCase.courtSessionType}
-              />
-            </Box>
-          )}
-        <Box component="section" marginBottom={5}>
-          <InfoCardActiveIndictment displayOpenCaseReference={true} />
-        </Box>
-        {/* 
+        <div className={grid({ gap: 5, marginBottom: 10 })}>
+          {workingCase.court &&
+            latestDate?.date &&
+            workingCase.indictmentDecision !== IndictmentDecision.COMPLETING &&
+            workingCase.indictmentDecision !==
+              IndictmentDecision.REDISTRIBUTING && (
+              <Box component="section">
+                <IndictmentCaseScheduledCard
+                  court={workingCase.court}
+                  indictmentDecision={workingCase.indictmentDecision}
+                  courtDate={latestDate.date}
+                  courtRoom={latestDate.location}
+                  postponedIndefinitelyExplanation={
+                    workingCase.postponedIndefinitelyExplanation
+                  }
+                  courtSessionType={workingCase.courtSessionType}
+                />
+              </Box>
+            )}
+          <Box component="section">
+            <InfoCardActiveIndictment displayOpenCaseReference={true} />
+          </Box>
+          {/* 
     NOTE: Temporarily hidden while list of laws broken is not complete in
     indictment cases
     
@@ -89,11 +92,10 @@ const OverviewBody = ({
         <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
       </Box>
     )} */}
-        {workingCase.mergedCases && workingCase.mergedCases.length > 0 && (
-          <>
-            <Accordion>
+          {workingCase.mergedCases && workingCase.mergedCases.length > 0 && (
+            <Accordion dividerOnBottom={false} dividerOnTop={false}>
               {workingCase.mergedCases.map((mergedCase) => (
-                <Box marginBottom={5} key={mergedCase.id}>
+                <Box key={mergedCase.id}>
                   <ConnectedCaseFilesAccordionItem
                     connectedCaseParentId={workingCase.id}
                     connectedCase={mergedCase}
@@ -101,15 +103,14 @@ const OverviewBody = ({
                 </Box>
               ))}
             </Accordion>
-            <Box marginBottom={5} />
-          </>
-        )}
-        <Box component="section" marginBottom={10}>
-          <IndictmentCaseFilesList workingCase={workingCase} />
+          )}
+          <Box component="section">
+            <IndictmentCaseFilesList workingCase={workingCase} />
+          </Box>
           <Box
+            component="section"
             display="flex"
             justifyContent="flexEnd"
-            marginBottom={3}
             columnGap={2}
           >
             <Button
@@ -140,7 +141,7 @@ const OverviewBody = ({
               </Button>
             )}
           </Box>
-        </Box>
+        </div>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
@@ -154,10 +155,10 @@ const OverviewBody = ({
           }
           nextButtonText={formatMessage(core.continue)}
           /* 
-        The return indictment feature has been removed for the time being but
-        we want to hold on to the functionality for now, since we are likely
-        to change this feature in the future.
-      */
+            The return indictment feature has been removed for the time being but
+            we want to hold on to the functionality for now, since we are likely
+            to change this feature in the future.
+          */
           // actionButtonText={formatMessage(strings.returnIndictmentButtonText)}
           // actionButtonColorScheme={'destructive'}
           // actionButtonIsDisabled={!caseHasBeenReceivedByCourt}
