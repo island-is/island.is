@@ -294,6 +294,7 @@ test.describe.serial('Indictment tests', () => {
     publicProsecutorOfficePage,
   }) => {
     const page = publicProsecutorOfficePage
+    const today = getDaysFromNow()
 
     // Case list for new cases
     await page.goto('/malalistar/ny-sakamal')
@@ -301,6 +302,16 @@ test.describe.serial('Indictment tests', () => {
     await page.getByText(accusedName).click()
 
     // Indictment overview
+
+    // Note: this is not a standard UX path since all cases should be served and updated via external sources
+    await page.locator('input[id=defendantServiceDate]').fill(today)
+    await page.keyboard.press('Escape')
+
+    await Promise.all([
+      page.getByTestId('button-defendant-service-date').click(),
+      verifyRequestCompletion(page, '/api/graphql', 'UpdateVerdict'),
+    ])
+
     await page.getByText('Veldu saksóknara').click()
     await page
       .getByTestId('select-reviewer')
@@ -340,6 +351,29 @@ test.describe.serial('Indictment tests', () => {
     // Case list for reviewed cases
     await page.goto('/malalistar/yfirlesin-sakamal')
     await expect(page).toHaveURL('/malalistar/yfirlesin-sakamal')
+    await expect(page.getByText(accusedName)).toHaveCount(1)
+  })
+
+  test('public prosecutor office should deliver indictment to prison', async ({
+    publicProsecutorOfficePage,
+  }) => {
+    const page = publicProsecutorOfficePage
+
+    // Case list for cases already reviewed
+    await page.goto('/malalistar/yfirlesin-sakamal')
+    await expect(page).toHaveURL('/malalistar/yfirlesin-sakamal')
+    await page.getByText(accusedName).click()
+
+    await page.getByTestId('button-send-case-to-prison-admin').click()
+    await page.getByTestId('continueButton').click()
+    await Promise.all([
+      page.getByTestId('modalPrimaryButton').click(),
+      verifyRequestCompletion(page, '/api/graphql', 'UpdateDefendant'),
+    ])
+
+    // Case list for defendants sent to prison
+    await page.goto('/malalistar/sakamal-i-fullnustu')
+    await expect(page).toHaveURL('/malalistar/sakamal-i-fullnustu')
     await expect(page.getByText(accusedName)).toHaveCount(1)
   })
 })
