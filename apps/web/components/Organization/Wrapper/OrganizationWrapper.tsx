@@ -10,6 +10,7 @@ import { IntlConfig, IntlProvider } from 'react-intl'
 import { useWindowSize } from 'react-use'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
+import { useQuery } from '@apollo/client'
 
 import {
   Box,
@@ -33,29 +34,28 @@ import {
 import { theme } from '@island.is/island-ui/theme'
 import { shouldLinkBeAnAnchorTag } from '@island.is/shared/utils'
 import {
-  BoostChatPanel,
-  boostChatPanelEndpoints,
   DefaultHeaderProps,
   Footer as WebFooter,
   HeadWithSocialSharing,
-  LiveChatIncChatPanel,
   OrganizationSearchInput,
   SearchBox,
   SidebarShipSearchInput,
   Sticky,
+  WebChat,
   Webreader,
-  ZendeskChatPanel,
 } from '@island.is/web/components'
-import { DefaultHeader, WatsonChatPanel } from '@island.is/web/components'
+import { DefaultHeader } from '@island.is/web/components'
 import {
   SLICE_SPACING,
   STICKY_NAV_MAX_WIDTH_LG,
 } from '@island.is/web/constants'
 import { GlobalContext } from '@island.is/web/context'
 import {
+  GetWebChatQuery,
   Image,
   Organization,
   OrganizationPage,
+  QueryGetWebChatArgs,
 } from '@island.is/web/graphql/schema'
 import {
   useLinkResolver,
@@ -65,6 +65,7 @@ import {
 import { useI18n } from '@island.is/web/i18n'
 import { LayoutProps } from '@island.is/web/layouts/main'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
+import { GET_WEB_CHAT } from '@island.is/web/screens/queries/WebChat'
 import { getBackgroundStyle } from '@island.is/web/utils/organization'
 
 import { LatestNewsCardConnectedComponent } from '../LatestNewsCardConnectedComponent'
@@ -96,7 +97,6 @@ import { UniversityStudiesHeader } from './Themes/UniversityStudiesTheme'
 import UniversityStudiesFooter from './Themes/UniversityStudiesTheme/UniversityStudiesFooter'
 import { UtlendingastofnunFooter } from './Themes/UtlendingastofnunTheme'
 import { VinnueftilitidHeader } from './Themes/VinnueftirlitidTheme'
-import { liveChatIncConfig, watsonConfig, zendeskConfig } from './config'
 import * as styles from './OrganizationWrapper.css'
 
 interface NavigationData {
@@ -816,64 +816,89 @@ export const OrganizationFooter: React.FC<
 }
 
 export const OrganizationChatPanel = ({
-  organizationIds,
+  organizationId,
 }: {
-  organizationIds: string[]
+  organizationId: string | undefined
+  pushUp?: boolean
+}) => {
+  if (!organizationId) return null
+  return <OrganizationChat organizationId={organizationId} />
+}
+
+const OrganizationChat = ({
+  organizationId,
+  pushUp,
+}: {
+  organizationId: string
   pushUp?: boolean
 }) => {
   const { activeLocale } = useI18n()
 
-  const organizationIdWithLiveChat = organizationIds.find((id) => {
-    return id in liveChatIncConfig[activeLocale]
-  })
+  const { data } = useQuery<GetWebChatQuery, QueryGetWebChatArgs>(
+    GET_WEB_CHAT,
+    {
+      variables: {
+        input: {
+          displayLocationIds: [organizationId],
+          lang: activeLocale,
+        },
+      },
+    },
+  )
 
-  if (organizationIdWithLiveChat) {
-    return (
-      <LiveChatIncChatPanel
-        {...liveChatIncConfig[activeLocale][organizationIdWithLiveChat]}
-      />
-    )
-  }
+  if (!data?.getWebChat?.webChatConfiguration) return null
 
-  const organizationIdWithWatson = organizationIds.find((id) => {
-    return id in watsonConfig[activeLocale]
-  })
+  return <WebChat webChat={data.getWebChat} pushUp={pushUp} />
 
-  if (organizationIdWithWatson) {
-    return (
-      <WatsonChatPanel
-        {...watsonConfig[activeLocale][organizationIdWithWatson]}
-      />
-    )
-  }
+  // const organizationIdWithLiveChat =
+  //   organizationId in liveChatIncConfig[activeLocale]
+  //     ? organizationId
+  //     : undefined
 
-  const organizationIdWithBoost = organizationIds.find((id) => {
-    return id in boostChatPanelEndpoints
-  })
+  // if (organizationIdWithLiveChat) {
+  //   return (
+  //     <LiveChatIncChatPanel
+  //       {...liveChatIncConfig[activeLocale][organizationIdWithLiveChat]}
+  //     />
+  //   )
+  // }
 
-  if (organizationIdWithBoost) {
-    return (
-      <BoostChatPanel
-        endpoint={
-          organizationIdWithBoost as keyof typeof boostChatPanelEndpoints
-        }
-      />
-    )
-  }
+  // const organizationIdWithWatson =
+  //   organizationId in watsonConfig[activeLocale] ? organizationId : undefined
 
-  const organizationIdWithZendesk = organizationIds.find((id) => {
-    return id in zendeskConfig[activeLocale]
-  })
+  // if (organizationIdWithWatson) {
+  //   return (
+  //     <WatsonChatPanel
+  //       {...watsonConfig[activeLocale][organizationIdWithWatson]}
+  //     />
+  //   )
+  // }
 
-  if (organizationIdWithZendesk) {
-    return (
-      <ZendeskChatPanel
-        {...zendeskConfig[activeLocale][organizationIdWithZendesk]}
-      />
-    )
-  }
+  // const organizationIdWithBoost =
+  //   organizationId in boostChatPanelEndpoints ? organizationId : undefined
 
-  return null
+  // if (organizationIdWithBoost) {
+  //   return (
+  //     <BoostChatPanel
+  //       endpoint={
+  //         organizationIdWithBoost as keyof typeof boostChatPanelEndpoints
+  //       }
+  //     />
+  //   )
+  // }
+
+  // const organizationIdWithZendesk =
+  //   organizationId in zendeskConfig[activeLocale] ? organizationId : undefined
+
+  // if (organizationIdWithZendesk) {
+  //   return (
+  //     <ZendeskChatPanel
+  //       {...zendeskConfig[activeLocale][organizationIdWithZendesk]}
+  //     />
+  //   )
+  // }
+
+  // return null
 }
 
 const SecondaryMenu = ({
@@ -1358,9 +1383,7 @@ export const OrganizationWrapper: React.FC<
       )}
       {n('enableOrganizationChatPanelForOrgPages', true) && (
         <OrganizationChatPanel
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore make web strict
-          organizationIds={[organizationPage?.organization?.id]}
+          organizationId={organizationPage?.organization?.id}
         />
       )}
     </>

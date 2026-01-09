@@ -1,43 +1,6 @@
 import { Locale } from '@island.is/shared/types'
-import {
-  LiveChatIncChatPanelProps,
-  WatsonChatPanelProps,
-} from '@island.is/web/components'
+import { WatsonChatPanelProps } from '@island.is/web/components'
 import { setupOneScreenWatsonChatBot } from '@island.is/web/utils/webChat'
-
-export const liveChatIncConfig: Record<
-  Locale,
-  Record<string, LiveChatIncChatPanelProps>
-> = {
-  is: {
-    // Vinnueftirlitið - Organization
-    '39S5VumPfb1hXBJm3SnE02': {
-      license: '13346703',
-      version: '2.0',
-      showLauncher: false,
-    },
-    // Landspítali - Organization
-    '2rIt6lQNXZNORCgEWhNonO': {
-      license: '9218745',
-      version: '2.0',
-      showLauncher: false,
-    },
-  },
-  en: {
-    // Vinnueftirlitið - Organization
-    '39S5VumPfb1hXBJm3SnE02': {
-      license: '13346703',
-      version: '2.0',
-      showLauncher: false,
-    },
-    // Landspítali - Organization
-    '2rIt6lQNXZNORCgEWhNonO': {
-      license: '9218745',
-      version: '2.0',
-      showLauncher: false,
-    },
-  },
-}
 
 export const defaultWatsonConfig: Record<Locale, WatsonChatPanelProps> = {
   is: {

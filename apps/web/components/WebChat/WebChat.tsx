@@ -1,7 +1,10 @@
 import type { GetWebChatQuery } from '@island.is/web/graphql/schema'
-import { useI18n } from '@island.is/web/i18n'
 
-import { ZendeskChatPanel } from '../ChatPanel'
+import {
+  BoostChatPanel,
+  LiveChatIncChatPanel,
+  ZendeskChatPanel,
+} from '../ChatPanel'
 
 interface WebChatProps {
   webChat: GetWebChatQuery['getWebChat']
@@ -9,19 +12,48 @@ interface WebChatProps {
 }
 
 const WebChat = ({ webChat, pushUp }: WebChatProps) => {
-  const { activeLocale } = useI18n()
-
   if (!webChat) return null
 
-  if (webChat.webChatConfiguration?.type === 'zendesk') {
-    const snippetUrl =
-      webChat.webChatConfiguration.zendesk?.snippetUrl?.[
-        activeLocale === 'is' ? 'is-IS' : activeLocale
-      ]
+  const webChatType = webChat.webChatConfiguration?.type
 
-    if (!snippetUrl) return null
+  if (
+    webChatType === 'zendesk' &&
+    webChat.webChatConfiguration.zendesk?.snippetUrl
+  )
+    return (
+      <ZendeskChatPanel
+        snippetUrl={webChat.webChatConfiguration.zendesk?.snippetUrl}
+        pushUp={pushUp}
+      />
+    )
 
-    return <ZendeskChatPanel snippetUrl={snippetUrl} pushUp={pushUp} />
+  if (webChatType === 'livechat') {
+    const { license, version, group, showLauncher } =
+      webChat.webChatConfiguration.livechat ?? {}
+    if (!license || !version) return null
+    return (
+      <LiveChatIncChatPanel
+        license={license}
+        version={version}
+        group={group}
+        showLauncher={showLauncher}
+        pushUp={pushUp}
+      />
+    )
+  }
+
+  if (webChatType === 'boost') {
+    const { id, conversationKey, url } =
+      webChat.webChatConfiguration.boost ?? {}
+    if (!id || !conversationKey || !url) return null
+    return (
+      <BoostChatPanel
+        id={id}
+        conversationKey={conversationKey}
+        url={url}
+        pushUp={pushUp}
+      />
+    )
   }
 
   return null

@@ -3,6 +3,8 @@ import type { FieldExtensionSDK } from '@contentful/app-sdk'
 import { Flex, FormControl, Select } from '@contentful/f36-components'
 import { useSDK } from '@contentful/react-apps-toolkit'
 
+import { BoostSection } from './BoostSection'
+import { LiveChatSection } from './LiveChatZection'
 import { type Configuration, WebChatType } from './types'
 import { ZendeskSection } from './ZendeskSection'
 
@@ -34,16 +36,28 @@ const WebChatConfigurationField = () => {
         <Select
           value={value.type}
           onChange={(event) => {
-            updateValue((previousValue) => ({
-              ...previousValue,
-              type: event.target.value as WebChatType,
-            }))
+            updateValue(
+              (previousValue) =>
+                ({
+                  ...previousValue,
+                  type: event.target.value as WebChatType,
+                } as Configuration),
+            )
           }}
         >
+          <Select.Option value={WebChatType.Boost}>Boost</Select.Option>
+          <Select.Option value={WebChatType.LiveChat}>LiveChat</Select.Option>
           <Select.Option value={WebChatType.Zendesk}>Zendesk</Select.Option>
+          <Select.Option value={WebChatType.WatsonIBM}>WatsonIBM</Select.Option>
         </Select>
       </FormControl>
 
+      {value.type === WebChatType.Boost && (
+        <BoostSection sdk={sdk} value={value} updateValue={updateValue} />
+      )}
+      {value.type === WebChatType.LiveChat && (
+        <LiveChatSection sdk={sdk} value={value} updateValue={updateValue} />
+      )}
       {value.type === WebChatType.Zendesk && (
         <ZendeskSection sdk={sdk} value={value} updateValue={updateValue} />
       )}

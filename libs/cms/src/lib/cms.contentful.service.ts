@@ -3,6 +3,7 @@ import { logger } from '@island.is/logging'
 import { ApolloError } from 'apollo-server-express'
 import { Injectable } from '@nestjs/common'
 import sortBy from 'lodash/sortBy'
+import type { EntryCollection } from 'contentful'
 import * as types from './generated/contentfulTypes'
 import { Article, mapArticle } from './models/article.model'
 import { ContentSlug, TextFieldLocales } from './models/contentSlug.model'
@@ -1670,6 +1671,23 @@ export class CmsContentfulService {
     return { items, total: response.total, input }
   }
 
+  private findBestWebChatMatch(
+    response: EntryCollection<types.IWebChatFields>,
+  ): types.IWebChat | null {
+    let bestMatch: types.IWebChat | null = null
+
+    for (const item of response.items) {
+      const webChatEntry = item as types.IWebChat
+      for (const location of webChatEntry.fields.displayLocations ?? []) {
+        if (location.sys.contentType.sys.id !== 'organization')
+          return webChatEntry
+        bestMatch = webChatEntry
+      }
+    }
+
+    return bestMatch
+  }
+
   async getWebChat(input: GetWebChatInput): Promise<WebChat | null> {
     const params = {
       content_type: 'webChat',
@@ -1683,19 +1701,9 @@ export class CmsContentfulService {
         1,
       )
 
-    let bestMatch: types.IWebChat | null = null
-
-    for (const item of response.items) {
-      const webChatEntry = item as types.IWebChat
-      for (const location of webChatEntry.fields.displayLocations ?? []) {
-        if (location.sys.contentType.sys.id !== 'organization')
-          return mapWebChat(webChatEntry)
-        bestMatch = webChatEntry
-      }
-    }
-
+    const bestMatch = this.findBestWebChatMatch(response)
     if (!bestMatch) return null
 
-    return mapWebChat(bestMatch)
+    return mapWebChat(bestMatch, input.lang)
   }
 }

@@ -7,25 +7,50 @@ export enum WebChatType {
 
 export type ZendeskConfiguration = {
   type: WebChatType.Zendesk
-  [WebChatType.Zendesk]?: {
-    snippetUrl?: Record<string, string>
+} & Record<
+  string,
+  {
+    [WebChatType.Zendesk]?: {
+      snippetUrl?: string
+    }
   }
-}
+>
 
 export type LiveChatConfiguration = {
   type: WebChatType.LiveChat
-  [WebChatType.LiveChat]?: {}
-}
+} & Record<
+  string,
+  {
+    [WebChatType.LiveChat]?: {
+      license?: string
+      version?: string
+      group?: string
+      showLauncher?: boolean
+    }
+  }
+>
 
 export type BoostConfiguration = {
   type: WebChatType.Boost
-  [WebChatType.Boost]?: {}
-}
+} & Record<
+  string,
+  {
+    [WebChatType.Boost]?: {
+      id?: string
+      conversationKey?: string
+      url?: string
+    }
+  }
+>
 
 export type WatsonIBMConfiguration = {
   type: WebChatType.WatsonIBM
-  [WebChatType.WatsonIBM]?: {}
-}
+} & Record<
+  string,
+  {
+    [WebChatType.WatsonIBM]?: {}
+  }
+>
 
 export type Configuration =
   | ZendeskConfiguration

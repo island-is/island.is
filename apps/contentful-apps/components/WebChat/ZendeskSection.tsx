@@ -24,13 +24,16 @@ export const ZendeskSection = ({ sdk, value, updateValue }: SectionProps) => {
               localeNames={sdk.locales.names}
             />
             <TextInput
-              value={value[WebChatType.Zendesk]?.snippetUrl?.[locale]}
+              value={value[WebChatType.Zendesk]?.[locale]?.snippetUrl}
               onChange={(event) => {
                 updateValue((previousValue) => ({
                   ...previousValue,
-                  snippetUrl: {
-                    ...previousValue[WebChatType.Zendesk]?.snippetUrl,
-                    [locale]: event.target.value,
+                  [WebChatType.Zendesk]: {
+                    ...previousValue[WebChatType.Zendesk],
+                    [locale]: {
+                      ...previousValue[WebChatType.Zendesk]?.[locale],
+                      snippetUrl: event.target.value,
+                    },
                   },
                 }))
               }}

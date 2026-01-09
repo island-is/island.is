@@ -12,9 +12,14 @@ export class WebChat {
   webChatConfiguration!: unknown
 }
 
-export const mapWebChat = (webChat: IWebChat): WebChat => {
+export const mapWebChat = (webChat: IWebChat, locale: string): WebChat => {
   return {
     id: webChat.sys.id,
-    webChatConfiguration: webChat.fields.webChatConfiguration ?? {},
+    webChatConfiguration: {
+      type: webChat.fields.webChatConfiguration?.type,
+      ...webChat.fields.webChatConfiguration?.[
+        locale === 'is' ? 'is-IS' : locale
+      ],
+    },
   }
 }
