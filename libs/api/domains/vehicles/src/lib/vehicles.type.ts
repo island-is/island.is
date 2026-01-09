@@ -9,3 +9,8 @@ export interface VehicleSearchOperatorDto {
 export interface VehicleSearchCustomDto
   extends VehicleSearchDto,
     VehicleSearchOperatorDto {}
+
+export enum LocaleEnum {
+  En = 'en',
+  Is = 'is',
+}
