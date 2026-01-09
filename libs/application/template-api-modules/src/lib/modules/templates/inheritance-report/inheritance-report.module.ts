@@ -4,14 +4,14 @@ import { SharedTemplateAPIModule } from '../../shared'
 import { SyslumennClientModule } from '@island.is/clients/syslumenn'
 
 import { InheritanceReportService } from './inheritance-report.service'
-import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-registry-x-road'
+import { NationalRegistryV3Module } from '../../shared/api/national-registry-v3/national-registry-v3.module'
 import { AwsModule } from '@island.is/nest/aws'
 
 @Module({
   imports: [
     SharedTemplateAPIModule,
     SyslumennClientModule,
-    NationalRegistryXRoadModule,
+    NationalRegistryV3Module,
     AwsModule,
   ],
   providers: [InheritanceReportService],

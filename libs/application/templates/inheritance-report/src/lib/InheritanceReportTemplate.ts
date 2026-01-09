@@ -10,7 +10,7 @@ import {
   ApplicationStateSchema,
   Application,
   defineTemplateApi,
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   UserProfileApi,
   DefaultEvents,
   ApplicationConfigurations,
@@ -125,7 +125,11 @@ const InheritanceReportTemplate: ApplicationTemplate<
               actions: [{ event: 'SUBMIT', name: '', type: 'primary' }],
               write: 'all',
               delete: true,
-              api: [NationalRegistryUserApi, UserProfileApi, EstateOnEntryApi],
+              api: [
+                NationalRegistryV3UserApi,
+                UserProfileApi,
+                EstateOnEntryApi,
+              ],
             },
             {
               id: Roles.PREPAID_INHERITANCE_APPLICANT,
@@ -137,7 +141,7 @@ const InheritanceReportTemplate: ApplicationTemplate<
               write: 'all',
               delete: true,
               api: [
-                NationalRegistryUserApi,
+                NationalRegistryV3UserApi,
                 UserProfileApi,
                 EstateOnEntryApi,
                 MaritalStatusApi,
