@@ -329,7 +329,6 @@ export const employmentHistorySubSection = buildSubSection({
             employmentMessages.employmentHistory.labels.lastJobsRepeaterTitle,
           description: employmentMessages.employmentHistory.labels.lastJobLabel,
           titleVariant: 'h5',
-          condition: (answers) => !isIndependent(answers),
         }),
 
         buildFieldsRepeaterField({
