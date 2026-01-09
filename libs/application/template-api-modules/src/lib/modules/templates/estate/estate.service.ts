@@ -11,7 +11,10 @@ import {
   SyslumennService,
 } from '@island.is/clients/syslumenn'
 import { infer as zinfer } from 'zod'
-import { estateSchema } from '@island.is/application/templates/estate'
+import {
+  estateSchema,
+  nationalIdsMatch,
+} from '@island.is/application/templates/estate'
 import {
   estateTransformer,
   generateRawUploadData,
@@ -23,6 +26,7 @@ import { BaseTemplateApiService } from '../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
+import set from 'lodash/set'
 import {
   ApplicationAttachments,
   AttachmentPaths,
@@ -44,6 +48,41 @@ export class EstateTemplateService extends BaseTemplateApiService {
     private readonly s3Service: S3Service,
   ) {
     super(ApplicationTypes.ESTATE)
+  }
+
+  async approveByAssignee({ application, auth }: TemplateApiModuleActionProps) {
+    const actorNationalId = auth.actor?.nationalId ?? auth.nationalId
+    const answers = application.answers as unknown as EstateSchema
+
+    const estateMembers = answers?.estate?.estateMembers ?? []
+    const updatedMembers = estateMembers.map((member) => {
+      if (!nationalIdsMatch(member?.nationalId, actorNationalId)) {
+        return member
+      }
+
+      return {
+        ...member,
+        approved: true,
+        approvedDate: new Date().toISOString(),
+      }
+    })
+
+    const didUpdate = estateMembers.some((member) =>
+      nationalIdsMatch(member?.nationalId, actorNationalId),
+    )
+    if (!didUpdate) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.failedDataProviderSubmit,
+          summary: 'Approving user is not a listed estate member on this application.',
+        },
+        400,
+      )
+    }
+
+    set(application.answers, 'estate.estateMembers', updatedMembers)
+
+    return { success: true }
   }
 
   async estateProvider({

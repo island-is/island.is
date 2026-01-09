@@ -1350,4 +1350,116 @@ export const m = defineMessages({
     defaultMessage: 'Yfirdráttur',
     description: 'Overdraft debt type',
   },
+
+  // InReview state messages
+  inReviewGeneralTitle: {
+    id: 'es.application:inReview.general.title',
+    defaultMessage: 'Yfirlit samþykkja',
+    description: 'InReview state title',
+  },
+  applicantInReviewTitle: {
+    id: 'es.application:applicantInReview.title',
+    defaultMessage: 'Yfirlit samþykkja erfingja',
+    description: 'Applicant in review title',
+  },
+  applicantInReviewDescription: {
+    id: 'es.application:applicantInReview.description',
+    defaultMessage:
+      'Allir erfingjar þurfa að samþykkja gögnin áður en hægt er að senda umsóknina til sýslumanns.',
+    description: 'Applicant in review description',
+  },
+  applicantInReviewTableTitle: {
+    id: 'es.application:applicantInReview.tableTitle',
+    defaultMessage: 'Erfingjar sem þurfa að samþykkja',
+    description: 'Applicant in review table title',
+  },
+  applicantInReviewStatusLabel: {
+    id: 'es.application:applicantInReview.statusLabel',
+    defaultMessage: 'Staða samþykkis',
+    description: 'Approval status label',
+  },
+  applicantInReviewStatusApproved: {
+    id: 'es.application:applicantInReview.status.approved',
+    defaultMessage: 'Samþykkt',
+    description: 'Approved status',
+  },
+  applicantInReviewStatusPending: {
+    id: 'es.application:applicantInReview.status.pending',
+    defaultMessage: 'Í bið',
+    description: 'Pending status',
+  },
+  applicantInReviewInfoTitle: {
+    id: 'es.application:applicantInReview.infoTitle',
+    defaultMessage: 'Næstu skref',
+    description: 'Next steps title',
+  },
+  applicantInReviewInfoDescription: {
+    id: 'es.application:applicantInReview.infoDescription',
+    defaultMessage:
+      'Þegar allir erfingjar hafa samþykkt birtist hnappur hér að neðan til að senda umsóknina til sýslumanns. Ef þú vilt breyta gögnum í umsókninni geturðu farið til baka með "Breyta gögnum" hnappinn.',
+    description: 'Next steps description',
+  },
+  applicantInReviewSubmit: {
+    id: 'es.application:applicantInReview.submit',
+    defaultMessage: 'Senda til sýslumanns',
+    description: 'Submit to syslumenn button',
+  },
+  applicantInReviewTitleAllApproved: {
+    id: 'es.application:applicantInReview.titleAllApproved',
+    defaultMessage: 'Allir erfingjar hafa samþykkt',
+    description: 'All approved title',
+  },
+  applicantInReviewDescriptionAllApproved: {
+    id: 'es.application:applicantInReview.descriptionAllApproved',
+    defaultMessage:
+      'Allir erfingjar hafa samþykkt gögnin. Þú getur nú sent umsóknina til sýslumanns.',
+    description: 'All approved description',
+  },
+  inReviewActionsBackToEdit: {
+    id: 'es.application:inReview.actions.backToEdit',
+    defaultMessage: 'Breyta gögnum',
+    description: 'Back to edit button',
+  },
+  inReviewNameLabel: {
+    id: 'es.application:inReview.nameLabel',
+    defaultMessage: 'Nafn',
+    description: 'Name label',
+  },
+  inReviewNationalIdLabel: {
+    id: 'es.application:inReview.nationalIdLabel',
+    defaultMessage: 'Kennitala',
+    description: 'National ID label',
+  },
+  assigneeInReviewDescription: {
+    id: 'es.application:assigneeInReview.description',
+    defaultMessage:
+      'Vinsamlegast farðu yfir gögnin í umsókninni og samþykktu ef þú ert samþykk/ur.',
+    description: 'Assignee in review description',
+  },
+  assigneeInReviewInfoTitle: {
+    id: 'es.application:assigneeInReview.infoTitle',
+    defaultMessage: 'Samþykkja umsókn',
+    description: 'Assignee info title',
+  },
+  assigneeReviewApprove: {
+    id: 'es.application:assigneeReview.approve',
+    defaultMessage: 'Samþykkja',
+    description: 'Approve button',
+  },
+  assigneeReviewReject: {
+    id: 'es.application:assigneeReview.reject',
+    defaultMessage: 'Hafna',
+    description: 'Reject button',
+  },
+  assigneeApprovedTitle: {
+    id: 'es.application:assigneeApproved.title',
+    defaultMessage: 'Þú hefur samþykkt umsóknina',
+    description: 'Assignee approved title',
+  },
+  assigneeApprovedDescription: {
+    id: 'es.application:assigneeApproved.description',
+    defaultMessage:
+      'Þú hefur samþykkt gögnin í umsókninni. Umsóknin verður send til sýslumanns þegar allir erfingjar hafa samþykkt.',
+    description: 'Assignee approved description',
+  },
 })
