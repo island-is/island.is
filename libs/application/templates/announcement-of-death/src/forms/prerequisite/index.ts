@@ -16,7 +16,7 @@ import {
   Form,
   FormModes,
   DefaultEvents,
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   UserProfileApi,
   ExistingApplicationApi,
   Application,
@@ -50,7 +50,7 @@ export const prerequisite = (): Form => {
             checkboxLabel: m.dataCollectionCheckboxLabel,
             dataProviders: [
               buildDataProviderItem({
-                provider: NationalRegistryUserApi,
+                provider: NationalRegistryV3UserApi,
                 title: m.dataCollectionNationalRegistryTitle,
                 subTitle: m.dataCollectionNationalRegistrySubtitle,
               }),

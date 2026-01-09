@@ -1,4 +1,4 @@
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import { CaseNotificationType, User } from '@island.is/judicial-system/types'

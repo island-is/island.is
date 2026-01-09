@@ -1,4 +1,4 @@
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { CourtClientService } from '@island.is/judicial-system/court-client'
 import { User } from '@island.is/judicial-system/types'

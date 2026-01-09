@@ -7,7 +7,7 @@ import {
 } from '@island.is/nest/config'
 import { LshClientConfig } from './lsh.config'
 import { Provider } from '@nestjs/common'
-import { BloodApi, Configuration } from '../../gen/fetch'
+import { BloodApi, Configuration, QuestionnaireApi } from '../../gen/fetch'
 
 export const LshApiProvider: Provider<BloodApi> = {
   provide: BloodApi,
@@ -28,7 +28,41 @@ export const LshApiProvider: Provider<BloodApi> = {
                 issuer: idsClientConfig.issuer,
                 clientId: idsClientConfig.clientId,
                 clientSecret: idsClientConfig.clientSecret,
-                scope: config.scope,
+                scope: config.bloodScope,
+              }
+            : undefined,
+        }),
+        basePath: `${xroadConfig.xRoadBasePath}/r1/${config.baseUrl}`,
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          'X-Road-Client': xroadConfig.xRoadClient,
+        },
+      }),
+    ),
+  inject: [XRoadConfig.KEY, LshClientConfig.KEY, IdsClientConfig.KEY],
+}
+
+export const LshQuestionnaireApiProvider: Provider<QuestionnaireApi> = {
+  provide: QuestionnaireApi,
+  scope: LazyDuringDevScope,
+  useFactory: (
+    xroadConfig: ConfigType<typeof XRoadConfig>,
+    config: ConfigType<typeof LshClientConfig>,
+    idsClientConfig: ConfigType<typeof IdsClientConfig>,
+  ) =>
+    new QuestionnaireApi(
+      new Configuration({
+        fetchApi: createEnhancedFetch({
+          name: 'clients-questionnaire-lsh',
+          organizationSlug: 'landspitali',
+          autoAuth: idsClientConfig.isConfigured
+            ? {
+                mode: 'tokenExchange',
+                issuer: idsClientConfig.issuer,
+                clientId: idsClientConfig.clientId,
+                clientSecret: idsClientConfig.clientSecret,
+                scope: config.questionnaireScope,
               }
             : undefined,
         }),
