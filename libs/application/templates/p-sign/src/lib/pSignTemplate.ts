@@ -11,7 +11,7 @@ import {
   Application,
   DefaultEvents,
   defineTemplateApi,
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   UserProfileApi,
   DistrictsApi,
   QualityPhotoApi,
@@ -67,7 +67,7 @@ const PSignTemplate: ApplicationTemplate<
               ],
               write: 'all',
               api: [
-                NationalRegistryUserApi,
+                NationalRegistryV3UserApi,
                 UserProfileApi,
                 DistrictsApi,
                 QualityPhotoApi,
@@ -90,7 +90,7 @@ const PSignTemplate: ApplicationTemplate<
               ],
               write: 'all',
               api: [
-                NationalRegistryUserApi,
+                NationalRegistryV3UserApi,
                 UserProfileApi,
                 DistrictsApi,
                 QualityPhotoApi,

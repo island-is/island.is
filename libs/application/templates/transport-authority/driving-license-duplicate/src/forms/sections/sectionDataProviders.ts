@@ -9,7 +9,7 @@ import {
   JurisdictionApi,
   QualityPhotoApi,
   AllPhotosFromThjodskraApi,
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   UserProfileApi,
 } from '@island.is/application/types'
 import {
@@ -36,7 +36,7 @@ export const sectionDataProviders = (
         dataProviders: [
           buildDataProviderItem({
             // on dev, skip this data provider for test purposes
-            provider: allowFakeData ? undefined : NationalRegistryUserApi,
+            provider: allowFakeData ? undefined : NationalRegistryV3UserApi,
             title: m.dataCollectionNationalRegistryTitle,
             subTitle: m.dataCollectionNationalRegistrySubtitle,
           }),
