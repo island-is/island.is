@@ -1,6 +1,16 @@
 import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
+  invalidVehicleColumnHeader: {
+    id: 'api.bulk-vehicle-mileage:invalid-vehicle-column-header',
+    defaultMessage:
+      'Fastanúmersdálk vantar eða er skrifaður rangt. Dálkanafn þarf að vera eitt af eftirfarandi; "permno", "vehicleid", "bilnumer","okutaeki","fastanumer"',
+  },
+  invalidMileageColumnHeader: {
+    id: 'api.bulk-vehicle-mileage:invalid-mileage-column-header',
+    defaultMessage:
+      'Kílómetrastöðudálkur er ekki réttur. Dálkanafn þarf að vera eitt af eftirfarandi; "kilometrastada", "mileage", "odometer"',
+  },
   tooManyPermno: {
     id: 'api.bulk-vehicle-mileage:too-many-permno',
     defaultMessage: 'Sama fastanúmer birtist oft í skjali',
