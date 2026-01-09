@@ -279,6 +279,11 @@ export class PaymentService {
 
     const { returnUrl, cancelUrl } = await this.getReturnUrls(applicationId)
 
+    const resolvedPayerNationalId =
+      payerNationalId && payerNationalId.trim().length > 0
+        ? payerNationalId
+        : user.nationalId
+
     const paymentFlowUrls =
       await this.paymentsApi.paymentFlowControllerCreatePaymentUrl({
         createPaymentFlowInput: {
@@ -291,7 +296,7 @@ export class PaymentService {
             quantity: chargeItem.quantity ?? 1,
             price: chargeItem.priceAmount,
           })),
-          payerNationalId: payerNationalId ?? user.nationalId,
+          payerNationalId: resolvedPayerNationalId,
           organisationId: performingOrganizationID,
           onUpdateUrl: onUpdateUrl.toString(),
           metadata: {
