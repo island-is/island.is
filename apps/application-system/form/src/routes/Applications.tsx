@@ -29,6 +29,7 @@ import {
   ProblemType,
 } from '@island.is/shared/problem'
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
+import { useGetOrganizationsQuery } from '@island.is/portals/my-pages/graphql'
 import {
   ApplicationCard,
   ApplicationContext,
@@ -36,6 +37,7 @@ import {
   ApplicationTemplate,
 } from '@island.is/application/types'
 import { EventObject } from 'xstate'
+import { Organization } from '@island.is/shared/types'
 
 type UseParams = {
   slug: string
@@ -76,6 +78,26 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
       },
       skip: !type && !delegationsChecked,
       fetchPolicy: 'cache-and-network',
+    },
+  )
+
+  const { data: orgData, loading: loadingOrg } = useGetOrganizationsQuery({
+    variables: {
+      input: {
+        lang: 'is',
+      },
+    },
+  })
+
+  const mappedOrganizations = data?.ApplicationSystemCard.map(
+    (card: ApplicationCard) => {
+      const org = orgData?.getOrganizations?.items.find(
+        (org) => org.id === card.orgContentfulId,
+      )
+      return {
+        ...org,
+        slug: card.org ?? '',
+      }
     },
   )
 
@@ -124,7 +146,7 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
     }
   }, [type, data, delegationsChecked])
 
-  if (loading) {
+  if (loading || loadingOrg) {
     return <ApplicationLoading />
   }
 
@@ -185,7 +207,7 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
   return (
     <Page>
       <GridContainer>
-        {!loading && !isEmpty(data?.ApplicationSystemCard) && (
+        {!loading && !loadingOrg && !isEmpty(data?.ApplicationSystemCard) && (
           <Box marginBottom={5}>
             <Box
               marginTop={5}
@@ -216,6 +238,7 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
             {data?.ApplicationSystemCard && (
               <ApplicationList
                 applications={data.ApplicationSystemCard}
+                organizations={mappedOrganizations as Organization[]}
                 onClick={(applicationUrl) => navigate(`../${applicationUrl}`)}
                 refetch={refetch}
               />
