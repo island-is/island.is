@@ -221,11 +221,7 @@ const VehicleBulkMileageUpload = () => {
             title={formatMessage(vehicleMessage.dragFileToUpload)}
             description={formatMessage(vehicleMessage.fileUploadAcceptedTypes)}
             buttonLabel={formatMessage(vehicleMessage.selectFileToUpload)}
-            disabled={
-              !!data?.vehicleBulkMileagePostFile?.errorMessage ||
-              loadingURL ||
-              loading
-            }
+            disabled={loadingURL || loading}
             files={activeFile ? [activeFile] : []}
             accept={['.csv', '.xlsx']}
             multiple={false}

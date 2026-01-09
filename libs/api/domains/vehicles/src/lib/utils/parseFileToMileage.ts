@@ -1,6 +1,9 @@
 import { isDefined } from '@island.is/shared/utils'
 import XLSX from 'xlsx'
 import { parse } from 'csv-parse'
+import { m } from '../messages'
+import { FormatMessage } from '@island.is/cms-translations'
+import { MessageDescriptor } from 'react-intl'
 
 export interface MileageRecord {
   permno: string
@@ -21,18 +24,15 @@ const vehicleIndexTitle = [
 ]
 const mileageIndexTitle = ['kilometrastada', 'mileage', 'odometer']
 
-export const errorMap: Record<number, string> = {
-  1: `Invalid vehicle column header. Must be one of the following: ${vehicleIndexTitle.join(
-    ', ',
-  )}`,
-  2: `Invalid mileage column header. Must be one of the following: ${mileageIndexTitle.join(
-    ', ',
-  )}`,
+export const errorMap: Record<number, MessageDescriptor> = {
+  1: m.invalidVehicleColumnHeader,
+  2: m.invalidMileageColumnHeader,
 }
 
 export const parseBufferToMileageRecord = async (
   buffer: Buffer,
   type: 'csv' | 'xlsx',
+  formatMessage: FormatMessage,
 ): Promise<Array<MileageRecord> | MileageError> => {
   const parsedLines: Array<Array<string>> = await (type === 'csv'
     ? parseCsvFromBuffer(buffer)
@@ -53,7 +53,7 @@ export const parseBufferToMileageRecord = async (
   if (vehicleIndex < 0) {
     return {
       code: 1,
-      message: errorMap[1],
+      message: formatMessage(errorMap[1]),
     }
   }
 
@@ -64,7 +64,7 @@ export const parseBufferToMileageRecord = async (
   if (mileageIndex < 0) {
     return {
       code: 2,
-      message: errorMap[2],
+      message: formatMessage(errorMap[2]),
     }
   }
 
