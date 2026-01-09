@@ -9,12 +9,12 @@ export class WebChat {
   id!: string
 
   @CacheField(() => GraphQLJSON)
-  configuration!: unknown
+  webChatConfiguration!: unknown
 }
 
 export const mapWebChat = (webChat: IWebChat): WebChat => {
   return {
     id: webChat.sys.id,
-    configuration: webChat.fields.webChatConfiguration ?? {},
+    webChatConfiguration: webChat.fields.webChatConfiguration ?? {},
   }
 }

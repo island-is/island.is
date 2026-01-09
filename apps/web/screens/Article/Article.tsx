@@ -42,9 +42,11 @@ import type {
   ConnectedComponent,
   GetNamespaceQuery,
   GetSingleArticleQuery,
+  GetWebChatQuery,
   Organization,
   QueryGetNamespaceArgs,
   QueryGetSingleArticleArgs,
+  QueryGetWebChatArgs,
   Stepper as StepperSchema,
 } from '@island.is/web/graphql/schema'
 import { useNamespace, usePlausiblePageview } from '@island.is/web/hooks'
@@ -71,6 +73,7 @@ import { useScrollPosition } from '../../hooks/useScrollPosition'
 import { scrollTo } from '../../hooks/useScrollSpy'
 import { SidebarLayout } from '../Layouts/SidebarLayout'
 import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from '../queries'
+import { GET_WEB_CHAT } from '../queries/WebChat'
 import { ArticleChatPanel } from './components/ArticleChatPanel'
 
 type Article = GetSingleArticleQuery['getSingleArticle']
@@ -341,6 +344,7 @@ export interface ArticleProps {
   stepOptionsFromNamespace: { data: Record<string, any>[]; slug: string }[]
   stepperNamespace: GetNamespaceQuery['getNamespace']
   organizationNamespace: Record<string, string>
+  webChat: GetWebChatQuery['getWebChat']
 }
 
 const ArticleScreen: Screen<ArticleProps> = ({
@@ -349,6 +353,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
   stepperNamespace,
   stepOptionsFromNamespace,
   organizationNamespace,
+  webChat,
 }) => {
   const { activeLocale } = useI18n()
   const portalRef = useRef()
@@ -890,7 +895,11 @@ const ArticleScreen: Screen<ArticleProps> = ({
             portalRef.current,
           )}
       </SidebarLayout>
-      <ArticleChatPanel article={article} pushUp={chatBubbleIsPushedUp} />
+      <ArticleChatPanel
+        article={article}
+        pushUp={chatBubbleIsPushedUp}
+        webChat={webChat}
+      />
       <div>
         <OrganizationFooter
           organizations={article?.organization as Organization[]}
@@ -969,6 +978,28 @@ ArticleScreen.getProps = async ({ apolloClient, query, locale }) => {
     article.organization?.[0],
   ) as Record<string, string>
 
+  const webChatDisplayLocationIds = [article.id]
+
+  const organizationId = article.organization?.[0]?.id
+  if (organizationId) webChatDisplayLocationIds.push(organizationId)
+
+  const webChatResponse = await Promise.allSettled([
+    apolloClient.query<GetWebChatQuery, QueryGetWebChatArgs>({
+      query: GET_WEB_CHAT,
+      variables: {
+        input: {
+          lang: locale,
+          displayLocationIds: webChatDisplayLocationIds,
+        },
+      },
+    }),
+  ])
+
+  const webChat =
+    webChatResponse?.[0]?.status === 'fulfilled'
+      ? webChatResponse[0].value?.data?.getWebChat
+      : null
+
   return {
     article,
     namespace,
@@ -976,6 +1007,7 @@ ArticleScreen.getProps = async ({ apolloClient, query, locale }) => {
     stepperNamespace,
     customTopLoginButtonItem: organizationNamespace?.customTopLoginButtonItem,
     organizationNamespace,
+    webChat,
     ...getThemeConfig(article),
   }
 }

@@ -5491,8 +5491,8 @@ export interface IWebChatFields {
   /** Internal Title */
   internalTitle: string
 
-  /** Organization */
-  organization: IOrganization
+  /** Display Locations */
+  displayLocations: (IOrganization | IArticle)[]
 
   /** Web Chat Configuration */
   webChatConfiguration?: Record<string, any> | undefined

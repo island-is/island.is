@@ -110,6 +110,8 @@ import { CourseDetails, mapCourse } from './models/course.model'
 import { GetCourseListPageByIdInput } from './dto/getCourseListPageById.input'
 import { mapCourseListPage } from './models/courseListPage.model'
 import { GetCourseSelectOptionsInput } from './dto/getCourseSelectOptions.input'
+import { GetWebChatInput } from './dto/getWebChat.input'
+import { mapWebChat, WebChat } from './models/webChat.model'
 
 const errorHandler = (name: string) => {
   return (error: Error) => {
@@ -1666,5 +1668,34 @@ export class CmsContentfulService {
     items.sort(sortAlpha('title'))
 
     return { items, total: response.total, input }
+  }
+
+  async getWebChat(input: GetWebChatInput): Promise<WebChat | null> {
+    const params = {
+      content_type: 'webChat',
+      'fields.displayLocations.sys.id[in]': input.displayLocationIds.join(','),
+    }
+
+    const response =
+      await this.contentfulRepository.getLocalizedEntries<types.IWebChatFields>(
+        input.lang,
+        params,
+        1,
+      )
+
+    let bestMatch: types.IWebChat | null = null
+
+    for (const item of response.items) {
+      const webChatEntry = item as types.IWebChat
+      for (const location of webChatEntry.fields.displayLocations ?? []) {
+        if (location.sys.contentType.sys.id !== 'organization')
+          return mapWebChat(webChatEntry)
+        bestMatch = webChatEntry
+      }
+    }
+
+    if (!bestMatch) return null
+
+    return mapWebChat(bestMatch)
   }
 }
