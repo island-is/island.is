@@ -409,7 +409,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
             )}
           </>
         )}
-        {showFiles && (
+        {(showFiles || hasGeneratedCourtRecord) && (
           <>
             <FileSection
               title={formatMessage(strings.civilClaimsTitle)}

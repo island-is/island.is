@@ -102,9 +102,7 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
 
     try {
       if (rateToChangeTo === RateCategory.DAYRATE) {
-        await this.rentalsApiWithAuth(
-          auth,
-        ).apiDayRateEntriesEntityIdRegisterPost({
+        const requestBody = {
           entityId: auth.nationalId,
           dayRateRegistrationModel: {
             skraningaradili:
@@ -118,12 +116,17 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
                 }
               }) ?? null,
           },
-        })
-        return true
-      } else {
+        }
+        this.logger.info(
+          'Full body of request to register cars to day rate',
+          requestBody,
+        )
         await this.rentalsApiWithAuth(
           auth,
-        ).apiDayRateEntriesEntityIdDeregisterPost({
+        ).apiDayRateEntriesEntityIdRegisterPost({ ...requestBody })
+        return true
+      } else {
+        const requestBody = {
           entityId: auth.nationalId,
           deregistrationModel: {
             afskraningaradili:
@@ -137,7 +140,14 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
                 }
               }) ?? null,
           },
-        })
+        }
+        this.logger.info(
+          'Full body of request to deregister cars from day rate',
+          requestBody,
+        )
+        await this.rentalsApiWithAuth(
+          auth,
+        ).apiDayRateEntriesEntityIdDeregisterPost({ ...requestBody })
         return true
       }
     } catch (error) {

@@ -1,4 +1,4 @@
-import { Fragment, useMemo, useState } from 'react'
+import { Fragment, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 
 import {
@@ -59,7 +59,6 @@ import {
   convertToQueryParams,
   extractSlug,
   getDateOfCalculationsOptions,
-  is2025PreviewActive,
 } from './utils'
 import * as styles from './PensionCalculatorResults.css'
 
@@ -263,7 +262,6 @@ interface PensionCalculatorResultsProps {
   organizationPage: OrganizationPage
   organization: Organization
   calculation: SocialInsurancePensionCalculationResponse
-  calculation2025: SocialInsurancePensionCalculationResponse
   calculationInput: SocialInsurancePensionCalculationInput
   queryParamString: string
   dateOfCalculationsOptions: Option<string>[]
@@ -273,7 +271,6 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
   organizationPage,
   organization,
   calculation,
-  calculation2025,
   calculationInput,
   queryParamString,
   dateOfCalculationsOptions,
@@ -286,8 +283,6 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
     calculationInput.dateOfCalculations ?? dateOfCalculationsOptions?.[0]?.value
 
   const highlightedItems = calculation.highlightedItems ?? []
-
-  const highlightedItems2025 = calculation2025.highlightedItems ?? []
 
   const allCalculatorsOptions = useMemo(() => {
     return [...dateOfCalculationsOptions]
@@ -304,25 +299,13 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
     typeof calculation.groups?.length === 'number' &&
     calculation.groups.length > 0
 
-  const calculation2025IsPresent =
-    typeof calculation2025.groups?.length === 'number' &&
-    calculation2025.groups.length > 0
-
   const highlightedItemPresent = highlightedItems.length > 0
-  const highlighted2025ItemIsPresent =
-    highlightedItems2025.length > 0 &&
-    is2025PreviewActive(customPageData) &&
-    dateOfCalculations &&
-    new Date(dateOfCalculations).getFullYear() >= 2024
 
   const isTurnedOff = customPageData?.configJson?.isTurnedOff ?? false
 
   const changeAssumtionsHref = `${
     linkResolver('pensioncalculator').href
   }?${queryParamString}`
-
-  const [showDisabilityChangesIn2025, setShowDisabilityChangesIn2025] =
-    useState(false)
 
   return (
     <>
@@ -373,11 +356,7 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
                         />
                         <Box className={styles.textMaxWidth}>
                           <Text>
-                            {formatMessage(
-                              highlighted2025ItemIsPresent
-                                ? translationStrings.result2025Disclaimer
-                                : translationStrings.resultDisclaimer,
-                            )}
+                            {formatMessage(translationStrings.resultDisclaimer)}
                           </Text>
                         </Box>
                       </Stack>
@@ -393,105 +372,12 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
                       </Hidden>
                       {highlightedItemPresent && (
                         <Stack space={2}>
-                          {highlighted2025ItemIsPresent &&
-                            calculationInput.typeOfBasePension ===
-                              SocialInsurancePensionCalculationBasePensionType.Disability && (
-                              <Text as="h2" variant="h3">
-                                {formatMessage(
-                                  translationStrings.highlightedResult2025ItemHeading,
-                                )}
-                              </Text>
-                            )}
                           <Box className={styles.highlightedItemsContainer}>
                             <HighlightedItems
                               customPageData={customPageData}
                               highlightedItems={highlightedItems}
-                              topHeadingLevel={
-                                highlighted2025ItemIsPresent &&
-                                calculationInput.typeOfBasePension ===
-                                  SocialInsurancePensionCalculationBasePensionType.Disability
-                                  ? 3
-                                  : 2
-                              }
-                              topHeadingText={
-                                highlighted2025ItemIsPresent &&
-                                calculationInput.typeOfBasePension ===
-                                  SocialInsurancePensionCalculationBasePensionType.Disability
-                                  ? String(
-                                      new Date(
-                                        dateOfCalculations ||
-                                          new Date().toISOString(),
-                                      ).getFullYear(),
-                                    )
-                                  : ''
-                              }
+                              topHeadingLevel={2}
                             />
-
-                            {calculationInput.typeOfBasePension ===
-                              SocialInsurancePensionCalculationBasePensionType.Disability &&
-                              highlighted2025ItemIsPresent && (
-                                <Box className={styles.longLine} />
-                              )}
-
-                            {showDisabilityChangesIn2025 &&
-                              highlighted2025ItemIsPresent && (
-                                <HighlightedItems
-                                  customPageData={customPageData}
-                                  highlightedItems={highlightedItems2025}
-                                  topHeadingText={formatMessage(
-                                    translationStrings.after1stSeptember2025,
-                                  )}
-                                  topHeadingLevel={
-                                    calculationInput.typeOfBasePension ===
-                                    SocialInsurancePensionCalculationBasePensionType.Disability
-                                      ? 3
-                                      : 2
-                                  }
-                                />
-                              )}
-
-                            {calculationInput.typeOfBasePension ===
-                              SocialInsurancePensionCalculationBasePensionType.Disability &&
-                              !showDisabilityChangesIn2025 &&
-                              highlighted2025ItemIsPresent && (
-                                <Stack space={3}>
-                                  <Text variant="h4" as="h3">
-                                    {formatMessage(
-                                      translationStrings.after1stSeptember2025,
-                                    )}
-                                  </Text>
-                                  <Inline space={3} alignY="center">
-                                    <img
-                                      width="80px"
-                                      height="80px"
-                                      src={formatMessage(
-                                        translationStrings.results2025ImageUrl,
-                                      )}
-                                      alt=""
-                                    />
-                                    {
-                                      <Box className={styles.text2025Container}>
-                                        <Text>
-                                          {formatMessage(
-                                            translationStrings.after1stSeptember2025Description,
-                                          )}
-                                        </Text>
-                                      </Box>
-                                    }
-                                  </Inline>
-                                  <Button
-                                    onClick={() => {
-                                      setShowDisabilityChangesIn2025(true)
-                                    }}
-                                    variant="ghost"
-                                    size="small"
-                                  >
-                                    {formatMessage(
-                                      translationStrings.after1stSeptember2025Calculate,
-                                    )}
-                                  </Button>
-                                </Stack>
-                              )}
                           </Box>
                         </Stack>
                       )}
@@ -513,11 +399,7 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
                             labelVariant="h3"
                             labelUse="h3"
                             label={formatMessage(
-                              highlighted2025ItemIsPresent &&
-                                calculationInput.typeOfBasePension ===
-                                  SocialInsurancePensionCalculationBasePensionType.Disability
-                                ? translationStrings.resultDetails2024Label
-                                : translationStrings.resultDetailsLabel,
+                              translationStrings.resultDetailsLabel,
                             )}
                           >
                             <Box>
@@ -545,20 +427,6 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
                               </Hidden>
                             </Box>
                           </AccordionItem>
-                          {calculation2025IsPresent &&
-                            showDisabilityChangesIn2025 && (
-                              <AccordionItem
-                                startExpanded={false}
-                                id="resultDetails"
-                                labelVariant="h3"
-                                labelUse="h3"
-                                label={formatMessage(
-                                  translationStrings.result2025DetailsLabel,
-                                )}
-                              >
-                                <ResultTable groups={calculation2025.groups} />
-                              </AccordionItem>
-                            )}
                         </Accordion>
                       )}
                     </Stack>
@@ -577,36 +445,14 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
               {title}
             </Text>
             <Box className={styles.textMaxWidth}>
-              <Text>
-                {highlighted2025ItemIsPresent
-                  ? formatMessage(translationStrings.result2025Disclaimer)
-                  : formatMessage(translationStrings.resultDisclaimer)}
-              </Text>
+              <Text>{formatMessage(translationStrings.resultDisclaimer)}</Text>
             </Box>
           </Stack>
           {highlightedItemPresent && (
             <HighlightedItems
               customPageData={customPageData}
               highlightedItems={highlightedItems}
-              topHeadingText={
-                highlighted2025ItemIsPresent &&
-                calculationInput.typeOfBasePension ===
-                  SocialInsurancePensionCalculationBasePensionType.Disability
-                  ? String(
-                      new Date(
-                        calculationInput.dateOfCalculations ||
-                          new Date().toISOString(),
-                      ).getFullYear(),
-                    )
-                  : ''
-              }
-              topHeadingLevel={
-                highlighted2025ItemIsPresent &&
-                calculationInput.typeOfBasePension ===
-                  SocialInsurancePensionCalculationBasePensionType.Disability
-                  ? 3
-                  : 2
-              }
+              topHeadingLevel={2}
             />
           )}
           <Box paddingTop={2}>
@@ -616,14 +462,6 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
       </Box>
     </>
   )
-}
-
-const isSameYear = (
-  date1: string | null | undefined,
-  date2: string | null | undefined,
-) => {
-  if (!date1 || !date2) return false
-  return new Date(date1).getFullYear() === new Date(date2).getFullYear()
 }
 
 PensionCalculatorResults.getProps = async ({
@@ -648,9 +486,6 @@ PensionCalculatorResults.getProps = async ({
     },
     {
       data: { getPensionCalculation },
-    },
-    {
-      data: { getPensionCalculation: getPensionCalculation2025 },
     },
   ] = await Promise.all([
     apolloClient.query<Query, QueryGetOrganizationPageArgs>({
@@ -678,32 +513,6 @@ PensionCalculatorResults.getProps = async ({
         input: calculationInput,
       },
     }),
-    calculationInput.typeOfBasePension ===
-      SocialInsurancePensionCalculationBasePensionType.Disability &&
-    is2025PreviewActive(customPageData) &&
-    isSameYear(
-      dateOfCalculationsOptions?.[0]?.value,
-      calculationInput.dateOfCalculations,
-    )
-      ? apolloClient.query<Query, QueryGetPensionCalculationArgs>({
-          query: GET_PENSION_CALCULATION,
-          variables: {
-            input: {
-              ...calculationInput,
-              dateOfCalculations: new Date(2025, 8, 1).toISOString(),
-              typeOfBasePension:
-                SocialInsurancePensionCalculationBasePensionType.NewSystem,
-            },
-          },
-        })
-      : {
-          data: {
-            getPensionCalculation: {
-              groups: [],
-              highlightedItems: [],
-            },
-          },
-        },
   ])
 
   if (!getOrganizationPage) {
@@ -730,7 +539,6 @@ PensionCalculatorResults.getProps = async ({
     organizationPage: getOrganizationPage,
     organization: getOrganization,
     calculation: getPensionCalculation,
-    calculation2025: getPensionCalculation2025,
     calculationInput,
     dateOfCalculationsOptions,
     queryParamString: queryParams.toString(),

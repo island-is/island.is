@@ -139,10 +139,19 @@ export class VerdictService {
     return this.sequelize.transaction(async (transaction) => {
       return await Promise.all(
         verdicts.map((verdict) => {
-          // Only the latest verdict is relevant
-          const currentVerdict = defendants?.find(
+          const currentDefendant = defendants?.find(
             (defendant) => verdict.defendantId === defendant.id,
-          )?.verdicts?.[0]
+          )
+
+          // This prevents the creation of verdicts for defendants that do not belong to the case
+          if (!currentDefendant) {
+            throw new BadRequestException(
+              `Defendant ${verdict.defendantId} of case ${caseId} does not exist`,
+            )
+          }
+
+          // Only the latest verdict is relevant
+          const currentVerdict = currentDefendant?.verdicts?.[0]
 
           if (currentVerdict) {
             const { defendantId, ...update } = verdict
