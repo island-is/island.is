@@ -300,7 +300,6 @@ export class DelegationsIndexService {
     // Add condition for non-custom delegation types
     if (allDelegationTypes.size > 0) {
       orConditions.push({
-        ...where,
         type: { [Op.in]: Array.from(allDelegationTypes) },
       })
     }
@@ -309,7 +308,6 @@ export class DelegationsIndexService {
     if (customDelegationScopes.size > 0) {
       for (const scopeName of customDelegationScopes) {
         orConditions.push({
-          ...where,
           type: { [Op.in]: [AuthDelegationType.Custom] },
           customDelegationScopes: { [Op.contains]: [scopeName] },
         })
@@ -322,6 +320,7 @@ export class DelegationsIndexService {
         ? await this.delegationIndexModel
             .findAll({
               where: {
+                ...where,
                 [Op.or]: orConditions,
               },
             })
