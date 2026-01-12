@@ -95,7 +95,7 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
     fetchPolicy: 'cache-and-network',
   })
 
-  const mappedOrganizations = data?.ApplicationSystemCard.map(
+  const mappedOrganizations = (orgData?.getOrganizations?.items ?? []).map(
     (card: ApplicationCard) => {
       const org = orgData?.getOrganizations?.items.find(
         (org: Organization) => org.id === card.orgContentfulId,
