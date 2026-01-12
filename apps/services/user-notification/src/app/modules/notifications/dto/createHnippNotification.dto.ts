@@ -62,15 +62,6 @@ export class CreateHnippNotificationDto {
     ],
   })
   args!: ArgumentDto[]
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional({
-    example: 'Email subject line',
-    description:
-      'Optional subject line for email notifications. If not provided, the template title will be used.',
-  })
-  subject?: string
 }
 
 export class InternalCreateHnippNotificationDto extends CreateHnippNotificationDto {
