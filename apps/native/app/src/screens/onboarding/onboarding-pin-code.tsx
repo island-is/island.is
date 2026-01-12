@@ -186,6 +186,7 @@ export const OnboardingPinCodeScreen: NavigationFunctionComponent<{
                     <FormattedMessage id="onboarding.pinCode.cancelButtonText" />
                   )
                 }
+                arrowBack={true}
                 onPress={onCancelPress}
                 testID={testIDs.ONBOARDING_CONFIRM_PIN_CANCEL}
               />

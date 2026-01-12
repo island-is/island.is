@@ -3,12 +3,11 @@ import { Includeable, Op } from 'sequelize'
 import { Writable } from 'stream'
 
 import {
+  forwardRef,
   Inject,
   Injectable,
-  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -22,31 +21,40 @@ import {
   CaseFileState,
   CaseNotificationType,
   CaseState,
+  completedIndictmentCaseStates,
   dateTypes,
   defendantEventTypes,
   eventTypes,
+  isIndictmentCase,
+  isRequestCase,
   stringTypes,
   UserRole,
 } from '@island.is/judicial-system/types'
 
 import { nowFactory, uuidFactory } from '../../factories'
-import { AwsS3Service } from '../aws-s3'
+import { CivilClaimantService, DefendantService } from '../defendant'
+import { FileService, getDefenceUserCaseFileCategories } from '../file'
 import {
+  Case,
+  CaseFile,
+  CaseRepositoryService,
+  CaseString,
   CivilClaimant,
-  CivilClaimantService,
+  CourtDocument,
+  CourtSession,
+  CourtSessionString,
+  DateLog,
   Defendant,
   DefendantEventLog,
-  DefendantService,
-} from '../defendant'
-import { EventLog } from '../event-log'
-import { CaseFile, defenderCaseFileCategoriesForRequestCases } from '../file'
-import { IndictmentCount } from '../indictment-count'
-import { Institution } from '../institution'
-import { Subpoena } from '../subpoena'
-import { User } from '../user'
-import { Case } from './models/case.model'
-import { CaseString } from './models/caseString.model'
-import { DateLog } from './models/dateLog.model'
+  EventLog,
+  IndictmentCount,
+  Institution,
+  Offense,
+  Subpoena,
+  User,
+  Verdict,
+  Victim,
+} from '../repository'
 import { PdfService } from './pdf.service'
 
 export const attributes: (keyof Case)[] = [
@@ -109,6 +117,10 @@ export const attributes: (keyof Case)[] = [
   'indictmentReviewDecision',
   'indictmentReviewerId',
   'hasCivilClaims',
+  'isCompletedWithoutRuling',
+  'isRegisteredInPrisonSystem',
+  'rulingModifiedHistory',
+  'withCourtSessions',
 ]
 
 export interface LimitedAccessUpdateCase
@@ -119,6 +131,7 @@ export interface LimitedAccessUpdateCase
     | 'defendantStatementDate'
     | 'openedByDefender'
     | 'appealRulingDecision'
+    | 'isRegisteredInPrisonSystem'
   > {}
 
 export const include: Includeable[] = [
@@ -185,11 +198,17 @@ export const include: Includeable[] = [
         separate: true,
       },
       {
+        model: Verdict,
+        as: 'verdicts',
+        required: false,
+        order: [['created', 'DESC']],
+        separate: true,
+      },
+      {
         model: DefendantEventLog,
         as: 'eventLogs',
         required: false,
         where: { eventType: defendantEventTypes },
-        order: [['created', 'DESC']],
         separate: true,
       },
     ],
@@ -207,6 +226,57 @@ export const include: Includeable[] = [
     as: 'indictmentCounts',
     required: false,
     order: [['created', 'ASC']],
+    include: [
+      {
+        model: Offense,
+        as: 'offenses',
+        required: false,
+        order: [['created', 'ASC']],
+        separate: true,
+      },
+    ],
+    separate: true,
+  },
+  {
+    model: CourtSession,
+    as: 'courtSessions',
+    required: false,
+    order: [['created', 'ASC']],
+    include: [
+      {
+        model: User,
+        as: 'judge',
+        required: false,
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: User,
+        as: 'attestingWitness',
+        required: false,
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: CourtDocument,
+        as: 'filedDocuments',
+        required: false,
+        order: [['documentOrder', 'ASC']],
+        separate: true,
+      },
+      {
+        model: CourtDocument,
+        as: 'mergedFiledDocuments',
+        required: false,
+        order: [['mergedDocumentOrder', 'ASC']],
+        separate: true,
+      },
+      {
+        model: CourtSessionString,
+        as: 'courtSessionStrings',
+        required: false,
+        order: [['created', 'ASC']],
+        separate: true,
+      },
+    ],
     separate: true,
   },
   {
@@ -229,12 +299,17 @@ export const include: Includeable[] = [
         CaseFileCategory.APPEAL_COURT_RECORD,
         CaseFileCategory.COURT_RECORD,
         CaseFileCategory.CRIMINAL_RECORD,
+        CaseFileCategory.CRIMINAL_RECORD_UPDATE,
         CaseFileCategory.COST_BREAKDOWN,
         CaseFileCategory.CASE_FILE,
         CaseFileCategory.PROSECUTOR_CASE_FILE,
         CaseFileCategory.DEFENDANT_CASE_FILE,
+        CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
+        CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
+        CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
         CaseFileCategory.CIVIL_CLAIM,
         CaseFileCategory.SENT_TO_PRISON_ADMIN_FILE,
+        CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
       ],
     },
     separate: true,
@@ -244,7 +319,6 @@ export const include: Includeable[] = [
     as: 'eventLogs',
     required: false,
     where: { eventType: eventTypes },
-    order: [['created', 'DESC']],
     separate: true,
   },
   {
@@ -262,11 +336,24 @@ export const include: Includeable[] = [
     where: { stringType: stringTypes },
     separate: true,
   },
-  { model: Case, as: 'mergeCase', attributes },
+  {
+    model: Case,
+    as: 'mergeCase',
+    attributes,
+    include: [
+      {
+        model: CourtSession,
+        as: 'courtSessions',
+        required: false,
+        order: [['created', 'ASC']],
+        separate: true,
+      },
+    ],
+  },
   {
     model: Case,
     as: 'mergedCases',
-    where: { state: CaseState.COMPLETED },
+    where: { state: completedIndictmentCaseStates },
     include: [
       {
         model: CaseFile,
@@ -282,12 +369,62 @@ export const include: Includeable[] = [
               CaseFileCategory.CRIMINAL_RECORD_UPDATE,
               CaseFileCategory.CASE_FILE,
               CaseFileCategory.PROSECUTOR_CASE_FILE,
+              CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
+              CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
+              CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
               CaseFileCategory.DEFENDANT_CASE_FILE,
               CaseFileCategory.CIVIL_CLAIM,
+              CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
             ],
           },
         },
         separate: true,
+      },
+      {
+        model: Defendant,
+        as: 'defendants',
+        required: false,
+        order: [['created', 'ASC']],
+        include: [
+          {
+            model: Subpoena,
+            as: 'subpoenas',
+            required: false,
+            order: [['created', 'DESC']],
+            separate: true,
+          },
+        ],
+        separate: true,
+      },
+      {
+        model: CourtSession,
+        as: 'courtSessions',
+        required: false,
+        order: [['created', 'ASC']],
+        separate: true,
+        include: [
+          {
+            model: CourtDocument,
+            as: 'filedDocuments',
+            required: false,
+            order: [['documentOrder', 'ASC']],
+            separate: true,
+          },
+          {
+            model: CourtDocument,
+            as: 'mergedFiledDocuments',
+            required: false,
+            order: [['mergedDocumentOrder', 'ASC']],
+            separate: true,
+          },
+          {
+            model: CourtSessionString,
+            as: 'courtSessionStrings',
+            required: false,
+            order: [['created', 'ASC']],
+            separate: true,
+          },
+        ],
       },
       { model: Institution, as: 'court' },
       { model: User, as: 'judge' },
@@ -295,22 +432,35 @@ export const include: Includeable[] = [
     ],
     separate: true,
   },
+  {
+    model: Victim,
+    as: 'victims',
+    required: false,
+    order: [['created', 'ASC']],
+    separate: true,
+  },
+  {
+    model: Case,
+    as: 'splitCase',
+  },
 ]
 
 @Injectable()
 export class LimitedAccessCaseService {
   constructor(
     private readonly messageService: MessageService,
+    @Inject(forwardRef(() => DefendantService))
     private readonly defendantService: DefendantService,
+    @Inject(forwardRef(() => CivilClaimantService))
     private readonly civilClaimantService: CivilClaimantService,
     private readonly pdfService: PdfService,
-    private readonly awsS3Service: AwsS3Service,
-    @InjectModel(Case) private readonly caseModel: typeof Case,
+    private readonly fileService: FileService,
+    private readonly caseRepositoryService: CaseRepositoryService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
   async findById(caseId: string): Promise<Case> {
-    const theCase = await this.caseModel.findOne({
+    const theCase = await this.caseRepositoryService.findOne({
       attributes,
       include,
       where: {
@@ -332,21 +482,7 @@ export class LimitedAccessCaseService {
     update: LimitedAccessUpdateCase,
     user: TUser,
   ): Promise<Case> {
-    const [numberOfAffectedRows] = await this.caseModel.update(
-      { ...update },
-      { where: { id: theCase.id } },
-    )
-
-    if (numberOfAffectedRows > 1) {
-      // Tolerate failure, but log error
-      this.logger.error(
-        `Unexpected number of rows (${numberOfAffectedRows}) affected when updating case ${theCase.id}`,
-      )
-    } else if (numberOfAffectedRows < 1) {
-      throw new InternalServerErrorException(
-        `Could not update case ${theCase.id}`,
-      )
-    }
+    await this.caseRepositoryService.update(theCase.id, update)
 
     const messages = []
 
@@ -355,7 +491,7 @@ export class LimitedAccessCaseService {
         ?.filter(
           (caseFile) =>
             caseFile.state === CaseFileState.STORED_IN_RVG &&
-            caseFile.key &&
+            caseFile.isKeyAccessible &&
             caseFile.category &&
             [
               CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
@@ -435,7 +571,7 @@ export class LimitedAccessCaseService {
   }
 
   async findDefenderByNationalId(nationalId: string): Promise<User> {
-    return this.caseModel
+    return this.caseRepositoryService
       .findOne({
         where: {
           defenderNationalId: normalizeAndFormatNationalId(nationalId),
@@ -489,16 +625,16 @@ export class LimitedAccessCaseService {
 
   private zipFiles(files: { data: Buffer; name: string }[]): Promise<Buffer> {
     return new Promise((resolve, reject) => {
-      const buffs: Buffer[] = []
+      const sinc: Uint8Array[] = []
       const converter = new Writable()
 
       converter._write = (chunk, _encoding, cb) => {
-        buffs.push(chunk)
+        sinc.push(chunk)
         process.nextTick(cb)
       }
 
       converter.on('finish', () => {
-        resolve(Buffer.concat(buffs))
+        resolve(Buffer.concat(sinc))
       })
 
       const archive = archiver('zip')
@@ -517,45 +653,157 @@ export class LimitedAccessCaseService {
     })
   }
 
-  async getAllFilesZip(theCase: Case, user: TUser): Promise<Buffer> {
-    const filesToZip: { data: Buffer; name: string }[] = []
+  private async tryAddFileToFilesToZip(
+    bufferPromise: Promise<Buffer>,
+    name: string,
+    filesToZip: { data: Buffer; name: string }[] = [],
+  ) {
+    const data = await bufferPromise
 
-    const caseFilesByCategory =
+    filesToZip.push({ data, name: name })
+  }
+
+  private async tryAddGeneratedPdfToFilesToZip(
+    pdfPromise: Promise<Buffer>,
+    name: string,
+    filesToZip: { data: Buffer; name: string }[] = [],
+  ) {
+    try {
+      await this.tryAddFileToFilesToZip(pdfPromise, name, filesToZip)
+    } catch (error) {
+      // Tolerate failure, but log what happened
+      this.logger.warn(`Could not generate PDF ${name}`, { error })
+    }
+  }
+
+  private async tryAddCaseFileFromS3ToFilesToZip(
+    theCase: Case,
+    file: CaseFile,
+    filesToZip: { data: Buffer; name: string }[] = [],
+  ) {
+    try {
+      await this.tryAddFileToFilesToZip(
+        this.fileService.getCaseFileFromS3(theCase, file),
+        file.name,
+        filesToZip,
+      )
+    } catch (error) {
+      // Tolerate failure, but log what happened
+      this.logger.warn(
+        `Could not get file ${file.id} of case ${file.caseId} from AWS S3`,
+        { error },
+      )
+    }
+  }
+
+  async getAllFilesZip(theCase: Case, user: TUser): Promise<Buffer> {
+    const allowedCaseFileCategories = getDefenceUserCaseFileCategories(
+      user.nationalId,
+      theCase.type,
+      theCase.defendants,
+      theCase.civilClaimants,
+    )
+
+    const allowedCaseFiles =
       theCase.caseFiles?.filter(
         (file) =>
-          file.key &&
+          file.isKeyAccessible &&
           file.category &&
-          defenderCaseFileCategoriesForRequestCases.includes(file.category),
+          allowedCaseFileCategories.includes(file.category),
       ) ?? []
 
-    // TODO: speed this up by fetching all files in parallel
-    for (const file of caseFilesByCategory) {
-      await this.awsS3Service
-        .getObject(theCase.type, file.key)
-        .then((content) => filesToZip.push({ data: content, name: file.name }))
-        .catch((reason) =>
-          // Tolerate failure, but log what happened
-          this.logger.warn(
-            `Could not get file ${file.id} of case ${file.caseId} from AWS S3`,
-            { reason },
+    const promises: Promise<void>[] = []
+    const filesToZip: { data: Buffer; name: string }[] = []
+
+    allowedCaseFiles.forEach((file) => {
+      promises.push(
+        this.tryAddCaseFileFromS3ToFilesToZip(theCase, file, filesToZip),
+      )
+    })
+
+    if (isRequestCase(theCase.type)) {
+      promises.push(
+        this.tryAddGeneratedPdfToFilesToZip(
+          this.pdfService.getRequestPdf(theCase),
+          'Krafa.pdf',
+          filesToZip,
+        ),
+        this.tryAddGeneratedPdfToFilesToZip(
+          this.pdfService.getCourtRecordPdf(theCase, user),
+          'Þingbók.pdf',
+          filesToZip,
+        ),
+      )
+
+      if (!theCase.isCompletedWithoutRuling) {
+        promises.push(
+          this.tryAddGeneratedPdfToFilesToZip(
+            this.pdfService.getRulingPdf(theCase),
+            'Úrskurður.pdf',
+            filesToZip,
           ),
         )
+      }
     }
 
-    filesToZip.push(
-      {
-        data: await this.pdfService.getRequestPdf(theCase),
-        name: 'krafa.pdf',
-      },
-      {
-        data: await this.pdfService.getCourtRecordPdf(theCase, user),
-        name: 'þingbok.pdf',
-      },
-      {
-        data: await this.pdfService.getRulingPdf(theCase),
-        name: 'urskurður.pdf',
-      },
-    )
+    if (
+      isIndictmentCase(theCase.type) &&
+      (Defendant.isConfirmedDefenderOfDefendantWithCaseFileAccess(
+        user.nationalId,
+        theCase.defendants,
+      ) ||
+        CivilClaimant.isConfirmedSpokespersonOfCivilClaimantWithCaseFileAccess(
+          user.nationalId,
+          theCase.civilClaimants,
+        ))
+    ) {
+      promises.push(
+        this.tryAddGeneratedPdfToFilesToZip(
+          this.pdfService.getIndictmentPdf(theCase),
+          'Ákæra.pdf',
+          filesToZip,
+        ),
+      )
+
+      theCase.policeCaseNumbers.forEach((policeCaseNumber) => {
+        promises.push(
+          this.tryAddGeneratedPdfToFilesToZip(
+            this.pdfService.getCaseFilesRecordPdf(theCase, policeCaseNumber),
+            `Skjalaskrá-${policeCaseNumber}.pdf`,
+            filesToZip,
+          ),
+        )
+      })
+
+      theCase.defendants?.forEach((defendant) =>
+        defendant.subpoenas?.forEach((subpoena) =>
+          promises.push(
+            this.tryAddGeneratedPdfToFilesToZip(
+              this.pdfService.getSubpoenaPdf(theCase, defendant, subpoena),
+              `Fyrirkall-${defendant.name}.pdf`,
+              filesToZip,
+            ),
+          ),
+        ),
+      )
+
+      if (
+        allowedCaseFileCategories.includes(CaseFileCategory.COURT_RECORD) &&
+        !theCase.caseFiles?.some(
+          (file) => file.category === CaseFileCategory.COURT_RECORD,
+        )
+      ) {
+        promises.push(
+          this.tryAddGeneratedPdfToFilesToZip(
+            this.pdfService.getCourtRecordPdfForIndictmentCase(theCase, user),
+            'Þingbók.pdf',
+            filesToZip,
+          ),
+        )
+      }
+    }
+
+    await Promise.all(promises)
 
     return this.zipFiles(filesToZip)
   }

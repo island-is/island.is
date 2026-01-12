@@ -1,5 +1,7 @@
 import React, { FC } from 'react'
+
 import { Box, BoxProps } from '@island.is/island-ui/core'
+
 import * as styles from './SidebarBox.css'
 
 export const SidebarBox: FC<React.PropsWithChildren<BoxProps>> = ({

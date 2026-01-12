@@ -10,40 +10,44 @@ import {
 } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import SpotlightSearch from 'react-native-spotlight-search'
-import { useTheme } from 'styled-components/native'
-import { useNavigationComponentDidAppear } from 'react-native-navigation-hooks'
+import styled, { useTheme } from 'styled-components/native'
 
+import refreshIcon from '../../assets/icons/refresh.png'
+import illustrationSrc from '../../assets/illustrations/le-retirement-s3.png'
+import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
+import { useFeatureFlag } from '../../contexts/feature-flag-provider'
+import {
+  GenericLicenseType,
+  GenericUserLicense,
+  useListLicensesQuery,
+} from '../../graphql/types/schema'
+import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
+import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
+import { useLocale } from '../../hooks/use-locale'
+import { syncLicenseWidgetData } from '../../lib/widget-sync'
+import { usePreferencesStore } from '../../stores/preferences-store'
 import {
   Alert,
   Button,
   EmptyList,
   GeneralCardSkeleton,
+  TabButtons,
   TopLine,
   Typography,
 } from '../../ui'
-import illustrationSrc from '../../assets/illustrations/le-retirement-s3.png'
-import refreshIcon from '../../assets/icons/refresh.png'
-import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
-import {
-  GenericLicenseType,
-  GenericUserLicense,
-  IdentityDocumentModel,
-  useGetIdentityDocumentQuery,
-  useListLicensesQuery,
-} from '../../graphql/types/schema'
-import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
-import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
-import { usePreferencesStore } from '../../stores/preferences-store'
 import { isIos } from '../../utils/devices'
 import { getRightButtons } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
+import { INCLUDED_LICENSE_TYPES } from '../wallet-pass/wallet-pass.constants'
 import { WalletItem } from './components/wallet-item'
-import { useLocale } from '../../hooks/use-locale'
-import { useFeatureFlag } from '../../contexts/feature-flag-provider'
+
+const Tabs = styled.View`
+  margin-top: ${({ theme }) => theme.spacing[1]}px;
+  margin-horizontal: ${({ theme }) => theme.spacing[2]}px;
+`
 
 type FlatListItem =
   | GenericUserLicense
-  | IdentityDocumentModel
   | { __typename: 'Skeleton'; id: string }
   | { __typename: 'Error'; id: string }
 
@@ -55,30 +59,23 @@ const getSkeletonArr = (): FlatListItem[] =>
 
 const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks(
-    (theme, intl, initialized) => ({
+    (theme, intl) => ({
       topBar: {
         title: {
           text: intl.formatMessage({ id: 'wallet.screenTitle' }),
         },
-        rightButtons: initialized
-          ? getRightButtons({
-              icons: ['licenseScan'],
-              theme: theme as any,
-            })
-          : [],
+        rightButtons: getRightButtons({
+          icons: ['licenseScan'],
+          theme: theme,
+        }),
       },
       bottomTab: {
         iconColor: theme.color.blue400,
-        text: initialized
-          ? intl.formatMessage({ id: 'wallet.bottomTabText' })
-          : '',
+        text: intl.formatMessage({ id: 'wallet.bottomTabText' }),
       },
     }),
     {
       topBar: {
-        largeTitle: {
-          visible: true,
-        },
         scrollEdgeAppearance: {
           active: true,
           noBorder: true,
@@ -105,22 +102,22 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
   const intl = useIntl()
   const scrollY = useRef(new Animated.Value(0)).current
   const { dismiss, dismissed } = usePreferencesStore()
-  const [hiddenContent, setHiddenContent] = useState(isIos)
   const isBarcodeEnabled = useFeatureFlag('isBarcodeEnabled', false)
+  const isIdentityDocumentEnabled = useFeatureFlag(
+    'isIdentityDocumentEnabled',
+    false,
+  )
+  const [selectedTab, setSelectedTab] = useState(0)
 
   // Query list of licenses
   const res = useListLicensesQuery({
     variables: {
       input: {
         includedTypes: [
-          GenericLicenseType.DriversLicense,
-          GenericLicenseType.AdrLicense,
-          GenericLicenseType.MachineLicense,
-          GenericLicenseType.FirearmLicense,
-          GenericLicenseType.DisabilityLicense,
-          GenericLicenseType.PCard,
-          GenericLicenseType.Ehic,
-          GenericLicenseType.HuntingLicense,
+          ...INCLUDED_LICENSE_TYPES,
+          ...(isIdentityDocumentEnabled
+            ? [GenericLicenseType.IdentityDocument]
+            : []),
         ],
       },
       locale: useLocale(),
@@ -128,29 +125,36 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
     fetchPolicy: 'cache-first',
   })
 
-  // Additional licenses
-  const resPassport = useGetIdentityDocumentQuery()
-
   useConnectivityIndicator({
     componentId,
     rightButtons: getRightButtons({ icons: ['licenseScan'] }),
-    queryResult: [res, resPassport],
+    queryResult: res,
     refetching,
   })
 
   // Filter licenses
   const licenseItems = useMemo(() => {
     if ((!res.loading && !res.error) || res.data) {
-      return (res.data?.genericLicenses ?? []).filter(({ license }) => {
-        if (license.status === 'Unknown') {
-          return false
-        }
-        return true
-      })
+      return (res.data?.genericLicenseCollection?.licenses ?? []).filter(
+        ({ license }) => {
+          if (license.status === 'Unknown') {
+            return false
+          }
+          return true
+        },
+      )
     }
 
     return []
   }, [res])
+
+  useEffect(() => {
+    if (licenseItems) {
+      // Update available licenses in the widgets
+      // @todo remove the data on logout/session expired.
+      syncLicenseWidgetData(licenseItems)
+    }
+  }, [licenseItems])
 
   const lastUpdatedFormatted = useMemo(() => {
     const lastUpdated = licenseItems.find((item) => item.fetch.updated)?.fetch
@@ -159,16 +163,19 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
     return lastUpdated
       ? intl.formatDate(new Date(parseInt(lastUpdated, 10)))
       : undefined
-  }, [licenseItems])
+  }, [licenseItems, intl])
 
-  console.log(lastUpdatedFormatted)
+  const hasChildLicenses = licenseItems.some(
+    (license) => license.isOwnerChildOfUser,
+  )
 
   // indexing list for spotlight search IOS
   useEffect(() => {
     const indexItems = licenseItems.map((item) => {
       return {
-        title: item.license.type,
-        uniqueIdentifier: `/wallet/${item.license.type}`,
+        title: item.payload?.metadata?.name ?? item.license.type,
+        type: item.license.type,
+        uniqueIdentifier: `/wallet/${item.license.type}/${item.payload?.metadata?.licenseId}`,
         contentDescription: item.license.provider.id,
         domain: 'licences',
       }
@@ -178,16 +185,16 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
     }
   }, [licenseItems])
 
+  const refetch = res.refetch
   const onRefresh = useCallback(() => {
     try {
       if (loadingTimeout.current) {
         clearTimeout(loadingTimeout.current)
       }
       setRefetching(true)
-      res
-        .refetch()
+      refetch()
         .then(() => {
-          ;(loadingTimeout as any).current = setTimeout(() => {
+          loadingTimeout.current = setTimeout(() => {
             setRefetching(false)
           }, 1331)
         })
@@ -197,26 +204,14 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
     } catch (err) {
       setRefetching(false)
     }
-  }, [])
+  }, [refetch])
 
-  // Using the onRefresh function when pressing the update button in ios is buggy,
-  // it scrolls the list half out of view when done - so we do it manually instead
+  // Using the onRefresh function when pressing the update button in ios is buggy.
+  // Instead we manually scroll to the top of the list. And then call the onRefresh function which will trigger RefreshControl loading spinner.
   const programmaticScrollWhenRefreshing = () => {
-    flatListRef.current?.scrollToOffset({ offset: -300, animated: true })
-    res
-      .refetch()
-      .then(() => {
-        // Ofsetting to 0 scrolls the top of the list out of view, so we offset to -150
-        flatListRef.current?.scrollToOffset({ offset: -150, animated: true })
-      })
-      .catch(() => {
-        flatListRef.current?.scrollToOffset({ offset: -150, animated: true })
-      })
+    flatListRef.current?.scrollToOffset({ offset: 0, animated: true })
+    onRefresh()
   }
-
-  useNavigationComponentDidAppear(() => {
-    setHiddenContent(false)
-  }, componentId)
 
   const renderItem = useCallback(
     ({ item }: ListRenderItemInfo<FlatListItem>) => {
@@ -229,14 +224,21 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
       }
 
       if (
-        item.__typename === 'GenericUserLicense' ||
-        item.__typename === 'IdentityDocumentModel'
+        item.__typename === 'GenericUserLicense' &&
+        selectedTab === 0 &&
+        !item.isOwnerChildOfUser
+      ) {
+        return <WalletItem item={item} />
+      } else if (
+        item.__typename === 'GenericUserLicense' &&
+        selectedTab === 1 &&
+        item.isOwnerChildOfUser
       ) {
         return <WalletItem item={item} />
       }
       return null
     },
-    [theme],
+    [theme, selectedTab],
   )
 
   const keyExtractor = useCallback((item: FlatListItem, index: number) => {
@@ -244,114 +246,128 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
     const type = item.__typename
 
     if (type === 'GenericUserLicense') {
-      return item.license.type ?? fallback
-    } else if (type === 'IdentityDocumentModel') {
-      return item.number ?? fallback
+      return `${item.license.type}-${fallback}`
     }
 
     return (item as { id: string })?.id ?? fallback
   }, [])
 
   const data = useMemo<FlatListItem[]>(() => {
-    if (
-      (res.loading && !res.data) ||
-      (resPassport.loading && !resPassport.data)
-    ) {
+    if (res.loading && !res.data) {
       return getSkeletonArr()
     }
 
-    return [
-      ...licenseItems,
-      ...(resPassport?.data?.getIdentityDocument ?? []),
-    ] as FlatListItem[]
-  }, [licenseItems, resPassport, res.loading, res.data])
-
-  // Fix for a bug in react-native-navigation where the large title is not visible on iOS with bottom tabs https://github.com/wix/react-native-navigation/issues/6717
-  if (hiddenContent) {
-    return null
-  }
+    return [...licenseItems] as FlatListItem[]
+  }, [licenseItems, res.loading, res.data])
 
   return (
     <>
-      <Animated.FlatList
-        ref={flatListRef}
-        testID={testIDs.SCREEN_HOME}
-        style={{
-          zIndex: 9,
-        }}
-        contentInset={{
-          bottom: 32,
-        }}
-        refreshControl={
-          <RefreshControl refreshing={refetching} onRefresh={onRefresh} />
-        }
-        scrollEventThrottle={16}
-        scrollToOverflowEnabled={true}
-        onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-          {
-            useNativeDriver: true,
-          },
-        )}
-        ListHeaderComponent={
-          isIos && !isBarcodeEnabled ? (
-            <View style={{ marginBottom: 16 }}>
-              <Alert
-                type="info"
-                visible={!dismissed.includes('howToUseLicence')}
-                message={intl.formatMessage({ id: 'wallet.alertMessage' })}
-                onClose={() => dismiss('howToUseLicence')}
+      <View style={{ flex: 1 }}>
+        <Animated.FlatList
+          ref={flatListRef}
+          testID={testIDs.SCREEN_HOME}
+          style={{
+            zIndex: 9,
+          }}
+          contentInset={{
+            bottom: 32,
+          }}
+          contentContainerStyle={{
+            paddingTop: theme.spacing[2],
+          }}
+          refreshControl={
+            <RefreshControl refreshing={refetching} onRefresh={onRefresh} />
+          }
+          scrollEventThrottle={16}
+          scrollToOverflowEnabled={true}
+          onScroll={Animated.event(
+            [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+            {
+              useNativeDriver: true,
+            },
+          )}
+          ListHeaderComponent={
+            (isIos && !isBarcodeEnabled) || hasChildLicenses ? (
+              <View style={{ marginBottom: 16 }}>
+                {isIos && !isBarcodeEnabled && (
+                  <Alert
+                    type="info"
+                    visible={!dismissed.includes('howToUseLicence')}
+                    message={intl.formatMessage({ id: 'wallet.alertMessage' })}
+                    onClose={() => dismiss('howToUseLicence')}
+                  />
+                )}
+                {hasChildLicenses && (
+                  <Tabs>
+                    <TabButtons
+                      buttons={[
+                        {
+                          title: intl.formatMessage({
+                            id: 'wallet.yourLicenses',
+                          }),
+                        },
+                        {
+                          title: intl.formatMessage({
+                            id: 'wallet.childLicenses',
+                          }),
+                        },
+                      ]}
+                      selectedTab={selectedTab}
+                      setSelectedTab={setSelectedTab}
+                    />
+                  </Tabs>
+                )}
+              </View>
+            ) : null
+          }
+          ListEmptyComponent={
+            <View style={{ marginTop: 80, paddingHorizontal: 16 }}>
+              <EmptyList
+                title={intl.formatMessage({ id: 'wallet.emptyListTitle' })}
+                description={intl.formatMessage({
+                  id: 'wallet.emptyListDescription',
+                })}
+                image={
+                  <Image
+                    source={illustrationSrc}
+                    style={{ width: 146, height: 198 }}
+                    resizeMode="contain"
+                  />
+                }
               />
             </View>
-          ) : null
-        }
-        ListEmptyComponent={
-          <View style={{ marginTop: 80, paddingHorizontal: 16 }}>
-            <EmptyList
-              title={intl.formatMessage({ id: 'wallet.emptyListTitle' })}
-              description={intl.formatMessage({
-                id: 'wallet.emptyListDescription',
-              })}
-              image={
-                <Image
-                  source={illustrationSrc}
-                  style={{ width: 146, height: 198 }}
-                  resizeMode="contain"
-                />
-              }
-            />
-          </View>
-        }
-        ListFooterComponent={
-          <View
-            style={{
-              justifyContent: 'center',
-              alignItems: 'center',
-              marginTop: theme.spacing[1],
-            }}
-          >
-            {lastUpdatedFormatted && (
-              <Typography variant="body3">
-                {intl.formatMessage(
-                  { id: 'wallet.lastUpdated' },
-                  { date: lastUpdatedFormatted },
-                )}
-              </Typography>
-            )}
-            <Button
-              onPress={() =>
-                isIos ? programmaticScrollWhenRefreshing() : onRefresh()
-              }
-              title={intl.formatMessage({ id: 'wallet.update' })}
-              isTransparent={true}
-              icon={refreshIcon}
-            />
-          </View>
-        }
-        data={data}
-        keyExtractor={keyExtractor}
-        renderItem={renderItem}
-      />
+          }
+          ListFooterComponent={
+            <View
+              style={{
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginTop: theme.spacing[3],
+              }}
+            >
+              {lastUpdatedFormatted && (
+                <Typography variant="body3">
+                  {intl.formatMessage(
+                    { id: 'wallet.lastUpdated' },
+                    { date: lastUpdatedFormatted },
+                  )}
+                </Typography>
+              )}
+              <Button
+                onPress={() =>
+                  isIos ? programmaticScrollWhenRefreshing() : onRefresh()
+                }
+                title={intl.formatMessage({ id: 'wallet.update' })}
+                isTransparent={true}
+                icon={refreshIcon}
+              />
+            </View>
+          }
+          data={data}
+          keyExtractor={keyExtractor}
+          renderItem={renderItem}
+        />
+      </View>
       <TopLine scrollY={scrollY} />
       <BottomTabsIndicator index={1} total={5} />
     </>

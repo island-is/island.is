@@ -17,41 +17,36 @@ import { NavigationFunctionComponent } from 'react-native-navigation'
 import PassKit, { AddPassButton } from 'react-native-passkit-wallet'
 import styled, { useTheme } from 'styled-components/native'
 
-import {
-  Alert as InfoAlert,
-  dynamicColor,
-  LICENSE_CARD_ROW_GAP,
-  LicenseCard,
-} from '../../ui'
+import { useFragment_experimental } from '@apollo/client/react/hooks'
 import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import {
   GenericLicenseType,
   GenericUserLicense,
+  GenericUserLicenseExpiryStatus,
+  GenericUserLicenseFragmentFragmentDoc,
   GenericUserLicensePkPassStatus,
   useGeneratePkPassMutation,
   useGetLicenseQuery,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
-import { isAndroid, isIos } from '../../utils/devices'
+import { useLocale } from '../../hooks/use-locale'
+import { useOfflineStore } from '../../stores/offline-store'
+import { usePreferencesStore } from '../../stores/preferences-store'
+import {
+  dynamicColor,
+  Alert as InfoAlert,
+  LICENSE_CARD_ROW_GAP,
+  LicenseCard,
+} from '../../ui'
+import { isAndroid, isIos, isIosLiquidGlassEnabled } from '../../utils/devices'
 import { screenWidth } from '../../utils/dimensions'
 import { FieldRender } from './components/field-render'
-import { useOfflineStore } from '../../stores/offline-store'
-import { useLocale } from '../../hooks/use-locale'
 import {
   BARCODE_MAX_WIDTH,
   INFORMATION_BASE_TOP_SPACING,
+  SHOW_INFO_ALERT_TYPES,
 } from './wallet-pass.constants'
-
-const getImageFromRawData = (rawData: string) => {
-  try {
-    const parsedData: { photo?: { image?: string } } = JSON.parse(rawData)
-
-    return parsedData?.photo?.image
-  } catch (e) {
-    return undefined
-  }
-}
 
 const Information = styled.ScrollView<{ topSpacing?: number }>`
   flex: 1;
@@ -119,7 +114,7 @@ const Spacer = styled.View`
 
 const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks(
-    (theme, intl) => ({
+    (_theme, intl) => ({
       topBar: {
         title: {
           text: intl.formatMessage({ id: 'walletPass.screenTitle' }),
@@ -138,17 +133,69 @@ const { useNavigationOptions, getNavigationOptions } =
     },
   )
 
+const getInfoAlertMessageIds = (
+  licenseType: GenericLicenseType,
+  licenseNumber?: string,
+) => {
+  const isTravelIdentityDocument =
+    licenseType === GenericLicenseType.IdentityDocument &&
+    licenseNumber?.startsWith('ID')
+  switch (licenseType) {
+    case GenericLicenseType.DriversLicense:
+      return {
+        title: 'licenseDetail.driversLicense.alert.title',
+        description: 'licenseDetail.driversLicense.alert.description',
+        dismissible: true,
+      }
+    case GenericLicenseType.PCard:
+      return {
+        title: 'licenseDetail.pcard.alert.title',
+        description: 'licenseDetail.pcard.alert.description',
+      }
+    case GenericLicenseType.Ehic:
+      return {
+        title: 'licenseDetail.ehic.alert.title',
+        description: 'licenseDetail.ehic.alert.description',
+      }
+    case GenericLicenseType.IdentityDocument:
+      return {
+        title: isTravelIdentityDocument
+          ? 'licenseDetail.identityTravelDocument.alert.title'
+          : 'licenseDetail.identityDocument.alert.title',
+        description: isTravelIdentityDocument
+          ? 'licenseDetail.identityTravelDocument.alert.description'
+          : 'licenseDetail.identityDocument.alert.description',
+      }
+    case GenericLicenseType.Passport:
+      return {
+        title: 'licenseDetail.passport.alert.title',
+        description: 'licenseDetail.passport.alert.description',
+      }
+  }
+}
+
 export const WalletPassScreen: NavigationFunctionComponent<{
   id: string
+  type: string
   item?: GenericUserLicense
   cardHeight?: number
-}> = ({ id, item, componentId, cardHeight = 140 }) => {
+}> = ({ id, item, type, componentId, cardHeight = 96 }) => {
   useNavigationOptions(componentId)
   useConnectivityIndicator({ componentId })
   const theme = useTheme()
   const intl = useIntl()
   const [addingToWallet, setAddingToWallet] = useState(false)
+  const walletPassDismissedInfoAlerts = usePreferencesStore(
+    (state) => state.walletPassDismissedInfoAlerts,
+  )
+  const setWalletPassInfoAlertDismissed = usePreferencesStore(
+    (state) => state.setWalletPassInfoAlertDismissed,
+  )
   const isBarcodeEnabled = useFeatureFlag('isBarcodeEnabled', false)
+  const isAddToWalletButtonEnabled = useFeatureFlag(
+    'isAddToWalletButtonEnabled',
+    true,
+  )
   const fadeInAnim = useRef(new Animated.Value(0)).current
   const isConnected = useOfflineStore(({ isConnected }) => isConnected)
 
@@ -157,33 +204,98 @@ export const WalletPassScreen: NavigationFunctionComponent<{
     fetchPolicy: 'network-only',
     variables: {
       input: {
-        licenseType: item?.license.type ?? id,
+        licenseType: type,
+        licenseId: id,
       },
       locale: useLocale(),
     },
   })
 
-  const data = res.data?.genericLicense ?? item
+  // useFragment will get the license by license type and license id from license list cache
+  const licenseFromCache = useFragment_experimental<GenericUserLicense>({
+    fragment: GenericUserLicenseFragmentFragmentDoc,
+    fragmentName: 'GenericUserLicenseFragment',
+    from: {
+      __typename: 'GenericUserLicense',
+      license: {
+        type,
+      },
+      payload: {
+        metadata: {
+          licenseId: id,
+        },
+      },
+    },
+    returnPartialData: true,
+  })
+
+  const data = res.data?.genericLicense ?? item ?? licenseFromCache?.data
+  const isExpired = data?.payload?.metadata?.expired
+  const expireDate = item?.payload?.metadata?.expireDate
+  const expireWarning =
+    item?.payload?.metadata?.expiryStatus ===
+    GenericUserLicenseExpiryStatus.Expiring
   const fields = data?.payload?.data ?? []
   const isTablet = screenWidth > 760
   const pkPassAllowed =
     data?.license?.pkpass &&
     data?.license?.pkpassStatus === GenericUserLicensePkPassStatus.Available
-  const allowLicenseBarcode =
-    isBarcodeEnabled && pkPassAllowed && !data?.payload?.metadata?.expired
+  const allowLicenseBarcode = isBarcodeEnabled && pkPassAllowed && !isExpired
   const licenseType = data?.license?.type
   const barcodeWidth = isTablet
     ? BARCODE_MAX_WIDTH // For tablets - make sure barcode is not huge
     : screenWidth - theme.spacing[4] * 2 - theme.spacing.smallGutter * 2
   const barcodeHeight = barcodeWidth / 3
   const updated = data?.fetch?.updated
+  const markInfoAlertAsDismissed = useCallback(async () => {
+    setWalletPassInfoAlertDismissed(type)
+  }, [type, setWalletPassInfoAlertDismissed])
+
+  const shouldShowExpireDate = !!(
+    (licenseType === GenericLicenseType.IdentityDocument ||
+      licenseType === GenericLicenseType.Passport) &&
+    expireDate
+  )
+
+  const showInfoAlert =
+    licenseType && SHOW_INFO_ALERT_TYPES.includes(licenseType)
+
+  const alertMessageIds = showInfoAlert
+    ? getInfoAlertMessageIds(
+        licenseType,
+        data?.payload?.metadata?.licenseNumber ?? undefined,
+      )
+    : undefined
+
+  const isInfoAlertDismissed = useCallback(
+    (alertType?: string) => {
+      if (!alertMessageIds?.dismissible || !alertType) {
+        return false
+      }
+
+      return walletPassDismissedInfoAlerts?.[alertType] ? true : false
+    },
+    [walletPassDismissedInfoAlerts, alertMessageIds?.dismissible],
+  )
 
   const { loading } = res
 
   const informationTopSpacing =
     (allowLicenseBarcode && ((loading && !data?.barcode) || data?.barcode)) ||
-    ((!isConnected || res.error) && isBarcodeEnabled)
-      ? barcodeHeight + LICENSE_CARD_ROW_GAP
+    ((!isConnected || res.error) && allowLicenseBarcode)
+      ? barcodeHeight + LICENSE_CARD_ROW_GAP + theme.spacing[4]
+      : theme.spacing[2]
+
+  // Calculate bottom inset based on the content
+  const bottomInset =
+    informationTopSpacing || (!isConnected && isBarcodeEnabled)
+      ? isTablet
+        ? 340
+        : !allowLicenseBarcode
+        ? 80 // less spacing needed if no barcode available (expired or not available)
+        : isAddToWalletButtonEnabled
+        ? 182
+        : 192 // Extra spacing needed at bottom if no button is shown
       : 0
 
   const [key, setKey] = useState(0)
@@ -191,7 +303,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
     // Used to rerender ScrollView to have correct ContentInset based on barcode/no barcode
     // Remove once barcodes are live
     setKey((prev) => prev + 1)
-  }, [isBarcodeEnabled])
+  }, [isBarcodeEnabled, isAddToWalletButtonEnabled])
 
   const fadeIn = () => {
     Animated.timing(fadeInAnim, {
@@ -307,14 +419,14 @@ export const WalletPassScreen: NavigationFunctionComponent<{
             intl.formatMessage({
               id: 'walletPass.errorTitle',
             }),
-            item?.license?.type === 'DriversLicense'
+            item?.license?.type === GenericLicenseType.DriversLicense
               ? intl.formatMessage({
                   id: 'walletPass.errorNotPossibleToAddDriverLicense',
                 })
               : intl.formatMessage({
                   id: 'walletPass.errorAddingOrFetching',
                 }),
-            item?.license?.type === 'DriversLicense'
+            item?.license?.type === GenericLicenseType.DriversLicense
               ? [
                   {
                     text: intl.formatMessage({
@@ -363,17 +475,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
 
   const renderButtons = () => {
     if (isIos) {
-      return (
-        <AddPassButton
-          style={{ height: 52 }}
-          addPassButtonStyle={
-            theme.isDark
-              ? PassKit.AddPassButtonStyle.blackOutline
-              : PassKit.AddPassButtonStyle.black
-          }
-          onPress={onAddPkPass}
-        />
-      )
+      return <AddPassButton style={{ height: 52 }} onPress={onAddPkPass} />
     }
 
     return (
@@ -394,22 +496,35 @@ export const WalletPassScreen: NavigationFunctionComponent<{
 
   return (
     <View style={{ flex: 1 }}>
-      <View style={{ height: cardHeight }} />
+      <View
+        style={{
+          height: isIosLiquidGlassEnabled ? 2 * cardHeight : cardHeight,
+        }}
+      />
       <LicenseCardWrapper>
         <LicenseCard
           nativeID={`license-${licenseType}_destination`}
           type={licenseType}
-          title={data?.payload?.metadata?.name ?? undefined}
+          title={
+            data?.payload?.metadata?.title ??
+            data?.payload?.metadata?.name ??
+            undefined
+          }
           loading={res.loading}
-          error={!!res.error}
+          error={res.error}
           logo={
-            isBarcodeEnabled &&
-            data?.license?.type === GenericLicenseType.DriversLicense
-              ? getImageFromRawData(data?.payload?.rawData)
+            isBarcodeEnabled
+              ? data?.payload?.metadata.photo ?? undefined
               : undefined
           }
-          date={updated ? new Date(Number(updated)) : undefined}
-          status={!data?.payload?.metadata?.expired ? 'VALID' : 'NOT_VALID'}
+          date={
+            shouldShowExpireDate
+              ? new Date(expireDate)
+              : updated
+              ? new Date(Number(updated))
+              : undefined
+          }
+          status={!isExpired ? 'VALID' : 'NOT_VALID'}
           {...(allowLicenseBarcode && {
             barcode: {
               value: data?.barcode?.token,
@@ -420,17 +535,13 @@ export const WalletPassScreen: NavigationFunctionComponent<{
               height: barcodeHeight,
             },
           })}
-          showBarcodeOfflineMessage={!isConnected && isBarcodeEnabled}
+          showBarcodeOfflineMessage={!isConnected}
+          allowLicenseBarcode={allowLicenseBarcode}
         />
       </LicenseCardWrapper>
       <Information
         contentInset={{
-          bottom:
-            informationTopSpacing || (!isConnected && isBarcodeEnabled)
-              ? isTablet
-                ? 340
-                : 162
-              : 0,
+          bottom: bottomInset,
         }}
         key={key}
         topSpacing={informationTopSpacing}
@@ -444,9 +555,8 @@ export const WalletPassScreen: NavigationFunctionComponent<{
                 : theme.spacing[2],
           }}
         >
-          {/* Show info alert if PCard or Ehic */}
-          {(licenseType === GenericLicenseType.PCard ||
-            licenseType === GenericLicenseType.Ehic) && (
+          {/* Show info alert if PCard, Ehic, Passport or IdentityDocument */}
+          {showInfoAlert && !isInfoAlertDismissed(licenseType) && (
             <View
               style={{
                 paddingTop: theme.spacing[3],
@@ -454,22 +564,46 @@ export const WalletPassScreen: NavigationFunctionComponent<{
             >
               <InfoAlert
                 title={intl.formatMessage({
-                  id:
-                    licenseType === GenericLicenseType.PCard
-                      ? 'licenseDetail.pcard.alert.title'
-                      : 'licenseDetail.ehic.alert.title',
+                  id: alertMessageIds?.title,
                 })}
                 message={intl.formatMessage({
-                  id:
-                    licenseType === GenericLicenseType.PCard
-                      ? 'licenseDetail.pcard.alert.description'
-                      : 'licenseDetail.ehic.alert.description',
+                  id: alertMessageIds?.description,
+                })}
+                {...(alertMessageIds?.dismissible && {
+                  onClose: () => {
+                    markInfoAlertAsDismissed()
+                  },
                 })}
                 type="info"
                 hasBorder
               />
             </View>
           )}
+          {/* Show expire warning if license is Passport or IdentityDocument and it is about to expire */}
+          {expireWarning &&
+          (licenseType === GenericLicenseType.Passport ||
+            licenseType === GenericLicenseType.IdentityDocument) ? (
+            <View
+              style={{
+                paddingTop: theme.spacing[2],
+                paddingBottom: 10,
+              }}
+            >
+              <InfoAlert
+                title={intl.formatMessage({
+                  id: 'licenseDetail.warning.title',
+                })}
+                message={intl.formatMessage({
+                  id:
+                    licenseType === GenericLicenseType.Passport
+                      ? 'licenseDetail.passport.warning.description'
+                      : 'licenseDetail.identityDocument.warning.description',
+                })}
+                type="warning"
+                hasBorder
+              />
+            </View>
+          ) : null}
           {!data?.payload?.data && loading ? (
             <ActivityIndicator
               size="large"
@@ -481,7 +615,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
           )}
         </SafeAreaView>
 
-        {pkPassAllowed && isBarcodeEnabled && (
+        {isAddToWalletButtonEnabled && pkPassAllowed && isBarcodeEnabled && (
           <ButtonWrapper>{renderButtons()}</ButtonWrapper>
         )}
         {isAndroid && <Spacer />}
@@ -491,7 +625,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
           The reason for the animation is to avoid rendering flicker.
           The component will on first render the isBarcodeEnabled flag to be false and then set it to true after Configcat has fetched the flag.
        */}
-      {pkPassAllowed && !isBarcodeEnabled && (
+      {isAddToWalletButtonEnabled && pkPassAllowed && !isBarcodeEnabled && (
         <ButtonWrapper floating>
           <Animated.View style={{ opacity: fadeInAnim }}>
             {renderButtons()}

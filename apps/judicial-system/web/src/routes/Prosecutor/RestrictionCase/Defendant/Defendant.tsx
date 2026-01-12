@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 
 import { Box, Input, Text, Tooltip } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
+import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import {
   accused as m,
   core,
@@ -17,14 +18,14 @@ import {
   PageHeader,
   PageLayout,
   PageTitle,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  Case,
   CaseOrigin,
   CaseType,
-  Defendant as TDefendant,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
   validateAndSendToServer,
   validateAndSet,
@@ -43,6 +44,7 @@ import {
 } from '../../components'
 
 export const Defendant = () => {
+  const { user } = useContext(UserContext)
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const [leadInvestigatorErrorMessage, setLeadInvestigatorErrorMessage] =
@@ -70,7 +72,7 @@ export const Defendant = () => {
         newDefendants[indexOfDefendantToUpdate] = {
           ...newDefendants[indexOfDefendantToUpdate],
           ...update,
-        } as TDefendant
+        }
 
         return { ...prevWorkingCase, defendants: newDefendants }
       })
@@ -226,7 +228,7 @@ export const Defendant = () => {
           <FormContentContainer isFooter>
             <FormFooter
               nextButtonIcon="arrowForward"
-              previousUrl={constants.CASES_ROUTE}
+              previousUrl={getStandardUserDashboardRoute(user)}
               nextIsLoading={isCreatingCase}
               nextIsDisabled={!stepIsValid}
               onNextButtonClick={() =>

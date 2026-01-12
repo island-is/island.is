@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import cn from 'classnames'
 
 import {
@@ -66,11 +66,7 @@ export const DefaultHeader: React.FC<
   const logoProvided = !!logo
   const LinkWrapper = logoHref ? Link : Box
 
-  const [isMobile, setIsMobile] = useState(false)
-
-  useEffect(() => {
-    setIsMobile(width < theme.breakpoints.lg)
-  }, [width])
+  const isMobile = width < theme.breakpoints.lg
 
   return (
     <>
@@ -106,7 +102,8 @@ export const DefaultHeader: React.FC<
       <div
         className={cn({ [styles.gridContainerWidth]: !fullWidth })}
         style={{
-          background: isMobile ? mobileBackground || background : background,
+          background:
+            isMobile || isSubpage ? mobileBackground || background : background,
         }}
       >
         <div
@@ -163,15 +160,20 @@ export const DefaultHeader: React.FC<
                 </Hidden>
               )}
               <Box
-                className={cn(styles.title, titleClassName)}
-                paddingLeft={
-                  !isMobile ? titleSectionPaddingLeft : isSubpage ? 2 : 0
-                }
+                className={cn(
+                  styles.title,
+                  {
+                    [styles.titleSubpage]: isSubpage,
+                  },
+                  titleClassName,
+                )}
+                paddingLeft={!isMobile ? titleSectionPaddingLeft : undefined}
               >
                 <Text
-                  variant={isSubpage && isMobile ? 'h4' : 'h2'}
+                  variant={isSubpage ? 'h4' : 'h2'}
                   as="h1"
                   color={!customTitleColor ? titleColor : undefined}
+                  className={styles.titleText}
                 >
                   <span style={{ color: customTitleColor }}>{title}</span>
                 </Text>

@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useRef, DependencyList, MutableRefObject } from 'react'
+import { DependencyList, MutableRefObject, useRef } from 'react'
+
 import { useIsomorphicLayoutEffect } from './useIsomorphicLayoutEffect'
 
 interface ScrollProps {

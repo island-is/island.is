@@ -2,8 +2,8 @@ import { Locale } from '@island.is/shared/types'
 
 import {
   ArticleCategory,
-  MenuLinkWithChildren,
   MenuLink,
+  MenuLinkWithChildren,
 } from '../graphql/schema'
 import { linkResolver, LinkType } from '../hooks/useLinkResolver'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -11,7 +11,7 @@ import { linkResolver, LinkType } from '../hooks/useLinkResolver'
 export const formatMegaMenuLinks = (
   locale: Locale,
   menuLinks: (MenuLinkWithChildren | MenuLink)[],
-) => {
+): Array<{ text: string; href: string; sub: any } | null> => {
   return menuLinks
     .map((linkData) => {
       let sub

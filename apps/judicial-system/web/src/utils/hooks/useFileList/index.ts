@@ -1,7 +1,8 @@
-import { useContext, useEffect, useMemo, useState } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { validate as validateUuid } from 'uuid'
 
-import { toast } from '@island.is/island-ui/core'
+import { toast, UploadFile } from '@island.is/island-ui/core'
 import { errors } from '@island.is/judicial-system-web/messages'
 import {
   FormContext,
@@ -10,8 +11,14 @@ import {
 import { CaseFileState } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import useIsMobile from '../useIsMobile/useIsMobile'
-import { useGetSignedUrlLazyQuery } from './getSigendUrl.generated'
-import { useLimitedAccessGetSignedUrlLazyQuery } from './limitedAccessGetSigendUrl.generated'
+import {
+  GetSignedUrlQuery,
+  useGetSignedUrlLazyQuery,
+} from './getSigendUrl.generated'
+import {
+  LimitedAccessGetSignedUrlQuery,
+  useLimitedAccessGetSignedUrlLazyQuery,
+} from './limitedAccessGetSigendUrl.generated'
 
 interface Parameters {
   caseId: string
@@ -25,65 +32,50 @@ const useFileList = ({ caseId, connectedCaseParentId }: Parameters) => {
   const isMobile = useIsMobile()
   const [fileNotFound, setFileNotFound] = useState<boolean>()
 
-  const openFile = (url: string) => {
-    window.open(url, isMobile ? '_self' : '_blank', 'noopener, noreferrer')
-  }
+  const openFile = useCallback(
+    (url: string) => {
+      window.open(url, isMobile ? '_self' : '_blank', 'noopener, noreferrer')
+    },
+    [isMobile],
+  )
 
-  const [
-    getSignedUrl,
-    { error: fullAccessError, variables: fullAccessVariables },
-  ] = useGetSignedUrlLazyQuery({
+  // Lazy queries
+  const [getSignedUrl, fullAccessQueryState] = useGetSignedUrlLazyQuery({
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
-    onCompleted(data) {
-      if (data?.getSignedUrl?.url) {
-        openFile(data.getSignedUrl.url)
-      }
-    },
-    onError: () => {
-      toast.error(formatMessage(errors.openDocument))
-    },
+    onError: () => toast.error(formatMessage(errors.openDocument)),
   })
 
-  const [
-    limitedAccessGetSignedUrl,
-    { error: limitedAccessError, variables: limitedAccessVariables },
-  ] = useLimitedAccessGetSignedUrlLazyQuery({
-    fetchPolicy: 'no-cache',
-    errorPolicy: 'all',
-    onCompleted(data) {
-      if (data?.limitedAccessGetSignedUrl?.url) {
-        openFile(data.limitedAccessGetSignedUrl.url)
-      }
-    },
-    onError: () => {
-      toast.error(formatMessage(errors.openDocument))
-    },
-  })
+  const [limitedAccessGetSignedUrl, limitedAccessQueryState] =
+    useLimitedAccessGetSignedUrlLazyQuery({
+      fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
+      onError: () => toast.error(formatMessage(errors.openDocument)),
+    })
 
+  // Error handling
   useEffect(() => {
-    const error = limitedAccess ? limitedAccessError : fullAccessError
-
+    const error = limitedAccess
+      ? limitedAccessQueryState.error
+      : fullAccessQueryState.error
     const variables = limitedAccess
-      ? limitedAccessVariables
-      : fullAccessVariables
+      ? limitedAccessQueryState.variables
+      : fullAccessQueryState.variables
 
     if (error && variables) {
-      const code = error?.graphQLErrors[0].extensions?.code
-
-      // If the file no longer exists or access in no longer permitted
+      const code = error.graphQLErrors?.[0]?.extensions?.code
       if (
         code === 'https://httpstatuses.org/404' ||
         code === 'https://httpstatuses.org/403'
       ) {
         setFileNotFound(true)
-        setWorkingCase((prevWorkingCase) => ({
-          ...prevWorkingCase,
-          caseFiles: prevWorkingCase.caseFiles?.map((file) =>
+        setWorkingCase((prev) => ({
+          ...prev,
+          caseFiles: prev.caseFiles?.map((file) =>
             file.id === variables.input.id
               ? {
                   ...file,
-                  key: undefined,
+                  isKeyAccessible: false,
                   status:
                     file.state === CaseFileState.STORED_IN_COURT
                       ? 'done-broken'
@@ -95,42 +87,83 @@ const useFileList = ({ caseId, connectedCaseParentId }: Parameters) => {
       }
     }
   }, [
-    fullAccessError,
-    fullAccessVariables,
     limitedAccess,
-    limitedAccessError,
-    limitedAccessVariables,
+    fullAccessQueryState.error,
+    fullAccessQueryState.variables,
+    limitedAccessQueryState.error,
+    limitedAccessQueryState.variables,
     setWorkingCase,
   ])
 
-  const onOpen = useMemo(
-    () => (fileId: string) => {
+  // Unified helper: get a signed URL
+  const getFileUrl = useCallback(
+    async (fileId: string): Promise<string | undefined> => {
       const query = limitedAccess ? limitedAccessGetSignedUrl : getSignedUrl
-
-      query({
-        variables: {
-          input: {
-            id: fileId,
-            caseId: connectedCaseParentId ?? caseId,
-            mergedCaseId: connectedCaseParentId && caseId,
+      try {
+        const { data } = await query({
+          variables: {
+            input: {
+              id: fileId,
+              caseId: connectedCaseParentId ?? caseId,
+              mergedCaseId: connectedCaseParentId && caseId,
+            },
           },
-        },
-      })
+        })
+
+        return limitedAccess
+          ? (data as LimitedAccessGetSignedUrlQuery).limitedAccessGetSignedUrl
+              ?.url
+          : (data as GetSignedUrlQuery).getSignedUrl?.url
+      } catch {
+        toast.error(formatMessage(errors.openDocument))
+        return undefined
+      }
     },
     [
-      caseId,
-      connectedCaseParentId,
-      getSignedUrl,
       limitedAccess,
       limitedAccessGetSignedUrl,
+      getSignedUrl,
+      connectedCaseParentId,
+      caseId,
+      formatMessage,
     ],
   )
 
-  const dismissFileNotFound = () => {
-    setFileNotFound(false)
-  }
+  // Handlers
+  const onOpen = useCallback(
+    async (fileId: string) => {
+      const url = await getFileUrl(fileId)
 
-  return { fileNotFound, dismissFileNotFound, onOpen }
+      if (url) openFile(url)
+    },
+    [getFileUrl, openFile],
+  )
+
+  const onOpenFile = useCallback(
+    async (file: UploadFile) => {
+      if (!file.id) return
+
+      if (!validateUuid(file.id)) {
+        const previewUrl = URL.createObjectURL(file.originalFileObj as Blob)
+        openFile(previewUrl)
+        setTimeout(() => URL.revokeObjectURL(previewUrl), 1000 * 60)
+      } else {
+        const url = await getFileUrl(file.id)
+        if (url) openFile(url)
+      }
+    },
+    [getFileUrl, openFile],
+  )
+
+  const dismissFileNotFound = () => setFileNotFound(false)
+
+  return {
+    fileNotFound,
+    dismissFileNotFound,
+    onOpen,
+    onOpenFile,
+    getFileUrl,
+  }
 }
 
 export default useFileList

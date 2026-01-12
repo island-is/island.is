@@ -7,8 +7,6 @@ mutation CreateIndictmentCount($input: CreateIndictmentCountInput!) {
     policeCaseNumber
     vehicleRegistrationNumber
     legalArguments
-    offenses
-    substances
     lawsBroken
     incidentDescription
   }

@@ -4,12 +4,12 @@ import { Box } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/shared/types'
 import {
   CategoryItems,
+  DigitalIcelandLatestNewsSlice,
   LifeEventsSection,
-  NewsItems,
   SearchSection,
   WatsonChatPanel,
 } from '@island.is/web/components'
-import { FRONTPAGE_NEWS_TAG_ID } from '@island.is/web/constants'
+import { FRONTPAGE_NEWS_TAG_SLUG } from '@island.is/web/constants'
 import { GlobalContext } from '@island.is/web/context'
 import {
   ContentLanguage,
@@ -36,7 +36,7 @@ import { watsonConfig } from './config'
 interface HomeProps {
   categories: GetArticleCategoriesQuery['getArticleCategories']
   news: GetNewsQuery['getNews']['items']
-  page: GetFrontpageQuery['getFrontpage']
+  page?: GetFrontpageQuery['getFrontpage']
   locale: Locale
 }
 
@@ -63,12 +63,17 @@ const Home: Screen<HomeProps> = ({ categories, news, page, locale }) => {
         <SearchSection
           headingId="search-section-title"
           quickContentLabel={n('quickContentLabel', 'Beint að efninu')}
-          placeholder={n('heroSearchPlaceholder')}
+          placeholder={n(
+            'heroSearchPlaceholder',
+            activeLocale === 'is' ? 'Leitaðu á Ísland.is' : 'Search Ísland.is',
+          )}
           activeLocale={activeLocale}
           page={page}
           browserVideoUnsupported={n(
             'browserVideoUnsupported',
-            'Vafrinn þinn getur ekki spilað HTML myndbönd.',
+            activeLocale === 'is'
+              ? 'Vafrinn þinn getur ekki spilað HTML myndbönd.'
+              : 'Your browser can not play HTML videos',
           )}
         />
       </Box>
@@ -81,13 +86,21 @@ const Home: Screen<HomeProps> = ({ categories, news, page, locale }) => {
         aria-labelledby="life-events-title"
       >
         <LifeEventsSection
-          heading={n('lifeEventsTitle')}
+          heading={n(
+            'lifeEventsTitle',
+            activeLocale === 'is' ? 'Lífsviðburðir' : 'Life events',
+          )}
           headingId="life-events-title"
           items={(page?.lifeEvents as LifeEventPage[]) ?? []}
-          seeMoreText={n('seeMoreLifeEvents')}
+          seeMoreText={n(
+            'seeMoreLifeEvents',
+            activeLocale === 'is'
+              ? 'Skoða alla lífsviðburði'
+              : 'See all life events',
+          )}
           cardsButtonTitle={n(
             'LifeEventsCardsButtonTitle',
-            'Skoða lífsviðburð',
+            activeLocale === 'is' ? 'Skoða lífsviðburð' : 'See life event',
           )}
         />
       </Box>
@@ -99,21 +112,30 @@ const Home: Screen<HomeProps> = ({ categories, news, page, locale }) => {
         aria-labelledby="categories-title"
       >
         <CategoryItems
-          heading={n('articlesTitle')}
+          heading={n(
+            'articlesTitle',
+            activeLocale === 'is' ? 'Þjónustuflokkar' : 'Services',
+          )}
           headingId="categories-title"
           items={categories}
         />
       </Box>
-      <Box
-        component="section"
-        paddingTop={[8, 8, 6]}
-        aria-labelledby="news-items-title"
-      >
-        <NewsItems
-          heading={gn('newsAndAnnouncements')}
-          headingTitle="news-items-title"
-          seeMoreText={gn('seeMore')}
-          items={news}
+      <Box paddingTop={[8, 8, 6]}>
+        <DigitalIcelandLatestNewsSlice
+          slice={{
+            title: gn(
+              'newsAndAnnouncements',
+              activeLocale === 'is'
+                ? 'Fréttir og tilkynningar'
+                : 'News and announcements',
+            ),
+            news: news,
+            readMoreText: gn(
+              'seeMore',
+              activeLocale === 'is' ? 'Sjá meira' : 'See more',
+            ),
+          }}
+          seeMoreLinkVariant="frontpage"
         />
       </Box>
       {watsonConfig[locale] && (
@@ -156,7 +178,7 @@ Home.getProps = async ({ apolloClient, locale }) => {
         input: {
           size: 3,
           lang: locale as ContentLanguage,
-          tags: [FRONTPAGE_NEWS_TAG_ID],
+          tags: [FRONTPAGE_NEWS_TAG_SLUG],
         },
       },
     }),
@@ -177,7 +199,7 @@ Home.getProps = async ({ apolloClient, locale }) => {
         ...item,
         genericTags:
           item?.genericTags?.filter(
-            (tag) => tag.slug !== FRONTPAGE_NEWS_TAG_ID,
+            (tag) => tag.slug !== FRONTPAGE_NEWS_TAG_SLUG,
           ) ?? [],
       })) ?? [],
     categories: getArticleCategories,

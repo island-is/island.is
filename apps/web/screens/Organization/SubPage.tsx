@@ -10,11 +10,13 @@ import {
   GridRow,
   Link,
   NavigationItem,
+  ResponsiveSpace,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/shared/types'
 import {
+  DigitalIcelandLatestNewsSlice,
   getThemeConfig,
   OrganizationWrapper,
   SignLanguageButton,
@@ -67,8 +69,10 @@ export const SubPageContent = ({
   namespace,
   organizationPage,
   subpageTitleVariant = 'h1',
+  paddingTop = 4,
 }: Pick<SubPageProps, 'subpage' | 'organizationPage' | 'namespace'> & {
   subpageTitleVariant?: 'h1' | 'h2'
+  paddingTop?: ResponsiveSpace
 }) => {
   const n = useNamespace(namespace)
   const { activeLocale } = useI18n()
@@ -122,7 +126,7 @@ export const SubPageContent = ({
   return (
     <>
       <GridContainer>
-        <Box paddingTop={4}>
+        <Box paddingTop={paddingTop}>
           <GridRow>
             <GridColumn span={['9/9', '9/9', '7/9']} offset={['0', '0', '1/9']}>
               <GridContainer>
@@ -246,7 +250,19 @@ export const getSubpageNavList = (
     return generateNavigationItems(organizationPage, pathname)
   }
 
-  const items = generateNavigationItems(
+  let items = generateNavigationItems(organizationPage, pathname)
+  const someItemIsActive = items.some(
+    (item) =>
+      Boolean(item.active) ||
+      Boolean(item.items?.some((subItem) => Boolean(subItem.active))),
+  )
+
+  if (someItemIsActive) {
+    return items
+  }
+
+  // Only match a potential smaller depth if no match is found otherwise
+  items = generateNavigationItems(
     organizationPage,
     pathname
       .split('/')
@@ -255,6 +271,50 @@ export const getSubpageNavList = (
   )
 
   return items
+}
+
+export const SubPageBottomSlices = ({
+  organizationPage,
+  subpage,
+  namespace,
+}: Pick<SubPageProps, 'organizationPage' | 'subpage' | 'namespace'>) => {
+  return (
+    !!organizationPage && (
+      <Stack
+        space={
+          subpage?.bottomSlices && subpage.bottomSlices.length > 0
+            ? SLICE_SPACING
+            : 0
+        }
+      >
+        {subpage?.bottomSlices?.map((slice) => {
+          if (
+            (organizationPage.slug === 'stafraent-island' ||
+              organizationPage.slug === 'digital-iceland') &&
+            slice.__typename === 'LatestNewsSlice'
+          ) {
+            return (
+              <Box paddingTop={[5, 5, 8]} paddingBottom={[2, 2, 5]}>
+                <DigitalIcelandLatestNewsSlice
+                  slice={slice}
+                  slug={organizationPage.slug}
+                />
+              </Box>
+            )
+          }
+          return (
+            <SliceMachine
+              key={slice.id}
+              slice={slice}
+              namespace={namespace}
+              slug={organizationPage.slug}
+              fullWidth={true}
+            />
+          )
+        })}
+      </Stack>
+    )
+  )
 }
 
 type SubPageScreenContext = ScreenContext & {
@@ -272,6 +332,7 @@ const SubPage: Screen<SubPageProps, SubPageScreenContext> = ({
   backLink,
 }) => {
   const router = useRouter()
+  const { activeLocale } = useI18n()
 
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
@@ -317,29 +378,40 @@ const SubPage: Screen<SubPageProps, SubPageScreenContext> = ({
       }
       navigationData={{
         title: n('navigationTitle', 'Efnisyfirlit'),
-        items: getSubpageNavList(organizationPage, router),
+        items: getSubpageNavList(
+          organizationPage,
+          router,
+          activeLocale === 'is' ? 3 : 4,
+        ),
       }}
+      mainContent={
+        customContent ? (
+          <GridContainer>
+            <Box paddingTop={4}>
+              <GridRow>
+                <GridColumn
+                  span={['9/9', '9/9', '7/9']}
+                  offset={['0', '0', '1/9']}
+                >
+                  {customContent}
+                </GridColumn>
+              </GridRow>
+            </Box>
+          </GridContainer>
+        ) : (
+          <SubPageContent
+            subpage={subpage}
+            namespace={namespace}
+            organizationPage={organizationPage}
+          />
+        )
+      }
     >
-      {customContent ? (
-        <GridContainer>
-          <Box paddingTop={4}>
-            <GridRow>
-              <GridColumn
-                span={['9/9', '9/9', '7/9']}
-                offset={['0', '0', '1/9']}
-              >
-                {customContent}
-              </GridColumn>
-            </GridRow>
-          </Box>
-        </GridContainer>
-      ) : (
-        <SubPageContent
-          subpage={subpage}
-          namespace={namespace}
-          organizationPage={organizationPage}
-        />
-      )}
+      <SubPageBottomSlices
+        namespace={namespace}
+        organizationPage={organizationPage}
+        subpage={subpage}
+      />
     </OrganizationWrapper>
   )
 }
@@ -358,7 +430,10 @@ const renderSlices = (
       return <SliceTableOfContents slices={slices} sliceExtraText={extraText} />
     default:
       return slices.map((slice, index) => {
-        if (slice.__typename === 'AnchorPageListSlice') {
+        if (
+          slice.__typename === 'AnchorPageListSlice' ||
+          slice.__typename === 'OrganizationParentSubpageList'
+        ) {
           return (
             <SliceMachine
               key={slice.id}
@@ -418,6 +493,7 @@ SubPage.getProps = async ({
             input: {
               slug: slug as string,
               lang: locale as ContentLanguage,
+              subpageSlugs: subSlug ? [subSlug] : [],
             },
           },
         })

@@ -1,10 +1,10 @@
 import React from 'react'
-import { useIntl } from 'react-intl'
-import styled from 'styled-components'
+import { FormattedMessage, useIntl } from 'react-intl'
+import styled from 'styled-components/native'
 import { Image, SafeAreaView, View } from 'react-native'
 import { ApolloError } from '@apollo/client'
 
-import { EmptyCard, StatusCardSkeleton } from '../../ui'
+import { EmptyCard, StatusCardSkeleton, Heading } from '../../ui'
 import leJobss3 from '../../assets/illustrations/le-jobs-s3.png'
 import {
   Application,
@@ -25,6 +25,14 @@ const Wrapper = styled(View)`
   margin-horizontal: ${({ theme }) => theme.spacing[2]}px;
 `
 
+const Host = styled.View`
+  margin-bottom: ${({ theme }) => theme.spacing[2]}px;
+`
+
+const EmptyHeading = styled.View`
+  margin-horizontal: ${({ theme }) => theme.spacing[2]}px;
+`
+
 const validateApplicationsInitialData = ({
   data,
   loading,
@@ -36,7 +44,10 @@ const validateApplicationsInitialData = ({
     return true
   }
   // Only show widget initially if there are applications
-  if (data?.applicationApplications?.length !== 0) {
+  if (
+    data?.applicationApplications?.length &&
+    data?.applicationApplications?.length !== 0
+  ) {
     return true
   }
   return false
@@ -61,21 +72,28 @@ const ApplicationsModule = React.memo(
         ) : (
           <>
             {count === 0 && (
-              <Wrapper>
-                <EmptyCard
-                  text={intl.formatMessage({
-                    id: 'applications.emptyDescription',
-                  })}
-                  image={
-                    <Image
-                      source={leJobss3}
-                      resizeMode="contain"
-                      style={{ height: 87, width: 69 }}
-                    />
-                  }
-                  link={null}
-                />
-              </Wrapper>
+              <Host>
+                <EmptyHeading>
+                  <Heading>
+                    <FormattedMessage id="homeOptions.applications" />
+                  </Heading>
+                </EmptyHeading>
+                <Wrapper>
+                  <EmptyCard
+                    text={intl.formatMessage({
+                      id: 'applications.emptyDescription',
+                    })}
+                    image={
+                      <Image
+                        source={leJobss3}
+                        resizeMode="contain"
+                        style={{ height: 87, width: 69 }}
+                      />
+                    }
+                    link={null}
+                  />
+                </Wrapper>
+              </Host>
             )}
             {count !== 0 && (
               <ApplicationsPreview

@@ -1,4 +1,7 @@
 import { useEffect, useState } from 'react'
+import { EntryProps } from 'contentful-management'
+import { DialogExtensionSDK, locations } from '@contentful/app-sdk'
+import { FieldExtensionSDK } from '@contentful/app-sdk'
 import {
   Box,
   Button,
@@ -8,16 +11,13 @@ import {
   Spinner,
   TextInput,
 } from '@contentful/f36-components'
-import { DialogExtensionSDK, locations } from '@contentful/app-sdk'
-import { useCMA, useSDK } from '@contentful/react-apps-toolkit'
-import { EntryProps } from 'contentful-management'
-import { SearchIcon, CloseIcon } from '@contentful/f36-icons'
 import { Pagination } from '@contentful/f36-components'
-import { FieldExtensionSDK } from '@contentful/app-sdk'
+import { CloseIcon, SearchIcon } from '@contentful/f36-icons'
 import {
   CombinedLinkActions,
   MultipleEntryReferenceEditor,
 } from '@contentful/field-editor-reference'
+import { useCMA, useSDK } from '@contentful/react-apps-toolkit'
 
 const DEBOUNCE_TIME = 500
 

@@ -15,23 +15,36 @@ import { canLimitedAccessUserViewCaseFile } from '../../file'
 export class LimitedAccessCaseFileInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler) {
     const request = context.switchToHttp().getRequest()
-    const user: User = request.user
+    const user: User = request.user?.currentUser
 
     return next.handle().pipe(
       map((theCase) => {
         const caseFiles = theCase.caseFiles?.filter(
-          ({ category }: { category: CaseFileCategory }) =>
-            canLimitedAccessUserViewCaseFile(
+          ({
+            category,
+            submittedBy,
+            fileRepresentative,
+          }: {
+            category: CaseFileCategory
+            submittedBy: string
+            fileRepresentative: string
+          }) =>
+            canLimitedAccessUserViewCaseFile({
               user,
-              theCase.type,
-              theCase.state,
-              category,
-              theCase.defendants,
-              theCase.civilClaimants,
-            ),
+              caseType: theCase.type,
+              caseState: theCase.state,
+              submittedBy,
+              fileRepresentative,
+              caseFileCategory: category,
+              defendants: theCase.defendants,
+              civilClaimants: theCase.civilClaimants,
+            }),
         )
 
-        return { ...theCase, caseFiles }
+        return {
+          ...theCase,
+          caseFiles,
+        }
       }),
     )
   }

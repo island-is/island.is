@@ -10,7 +10,7 @@ import {
 } from '@island.is/judicial-system/audit-trail'
 import {
   CurrentGraphQlUser,
-  JwtGraphQlAuthGuard,
+  JwtGraphQlAuthUserGuard,
 } from '@island.is/judicial-system/auth'
 import type { User } from '@island.is/judicial-system/types'
 
@@ -18,7 +18,7 @@ import { BackendService } from '../backend'
 import { SubpoenaQueryInput } from './dto/subpoena.input'
 import { Subpoena } from './models/subpoena.model'
 
-@UseGuards(JwtGraphQlAuthGuard)
+@UseGuards(JwtGraphQlAuthUserGuard)
 @Resolver()
 export class SubpoenaResolver {
   constructor(

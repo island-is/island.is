@@ -4,8 +4,6 @@ import PDFDocument from 'pdfkit'
 import { FormatMessage } from '@island.is/cms-translations'
 
 import {
-  capitalize,
-  formatAppeal,
   formatDate,
   formatRequestCaseType,
   lowercase,
@@ -13,13 +11,12 @@ import {
 import {
   completedRequestCaseStates,
   isRestrictionCase,
-  SessionArrangements,
   User,
 } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../factories'
 import { courtRecord } from '../messages'
-import { Case } from '../modules/case'
+import { Case } from '../modules/repository'
 import {
   addCoatOfArms,
   addEmptyLines,
@@ -65,7 +62,7 @@ const constructRestrictionCourtRecordPdf = (
     bufferPages: true,
   })
 
-  const sinc: Buffer[] = []
+  const sinc: Uint8Array[] = []
 
   doc.on('data', (chunk) => sinc.push(chunk))
 
@@ -197,65 +194,17 @@ const constructRestrictionCourtRecordPdf = (
     doc,
     theCase.conclusion ?? formatMessage(courtRecord.missingConclusion),
   )
+
   addEmptyLines(doc)
   addNormalCenteredText(
     doc,
     theCase.judge?.name ?? formatMessage(courtRecord.missingJudge),
     'Times-Bold',
   )
-  addEmptyLines(doc, 2)
-  addNormalJustifiedText(
-    doc,
-    formatMessage(courtRecord.conclusionIntro),
-    'Times-Roman',
-  )
-  addEmptyLines(doc)
-  addNormalJustifiedText(doc, formatMessage(courtRecord.appealDirections))
-
-  let prosecutorAppeal = formatAppeal(
-    theCase.prosecutorAppealDecision,
-    capitalize(formatMessage(courtRecord.prosecutor)),
-  )
-
-  if (prosecutorAppeal) {
-    prosecutorAppeal = `${prosecutorAppeal} ${
-      theCase.prosecutorAppealAnnouncement ?? ''
-    }`
-  } else {
-    prosecutorAppeal = theCase.prosecutorAppealAnnouncement ?? ''
-  }
-
-  if (prosecutorAppeal) {
-    addEmptyLines(doc)
-    addNormalJustifiedText(doc, prosecutorAppeal)
-  }
-
-  let accusedAppeal = formatAppeal(
-    theCase.accusedAppealDecision,
-    capitalize(
-      formatMessage(courtRecord.defendant, {
-        suffix:
-          theCase.defendants && theCase.defendants?.length > 1 ? 'ar' : 'i',
-      }),
-    ),
-  )
-
-  if (accusedAppeal) {
-    accusedAppeal = `${accusedAppeal} ${
-      theCase.accusedAppealAnnouncement ?? ''
-    }`
-  } else {
-    accusedAppeal = theCase.accusedAppealAnnouncement ?? ''
-  }
-
-  if (accusedAppeal) {
-    addEmptyLines(doc)
-    addNormalJustifiedText(doc, accusedAppeal)
-  }
 
   if (theCase.endOfSessionBookings) {
     addEmptyLines(doc)
-    addNormalJustifiedText(doc, theCase.endOfSessionBookings)
+    addNormalJustifiedText(doc, theCase.endOfSessionBookings, 'Times-Roman')
   }
 
   if (theCase.registrar) {
@@ -313,9 +262,11 @@ const constructInvestigationCourtRecordPdf = (
     bufferPages: true,
   })
 
-  const sinc: Buffer[] = []
+  const sinc: Uint8Array[] = []
 
   doc.on('data', (chunk) => sinc.push(chunk))
+
+  const isCaseCompletedWithRuling = !theCase.isCompletedWithoutRuling
 
   const title = formatMessage(courtRecord.title)
 
@@ -437,78 +388,31 @@ const constructInvestigationCourtRecordPdf = (
       formatMessage(courtRecord.missingSessionBookings),
   )
   setLineGap(doc, 3)
+
   addEmptyLines(doc, 2)
-  setLineGap(doc, 16)
-  addMediumHeading(doc, formatMessage(courtRecord.conclusionHeading))
-  setLineGap(doc, 1)
-  addNormalJustifiedText(
-    doc,
-    theCase.conclusion ?? formatMessage(courtRecord.missingConclusion),
-  )
-  addEmptyLines(doc)
-  addNormalCenteredText(
-    doc,
-    theCase.judge?.name ?? formatMessage(courtRecord.missingJudge),
-    'Times-Bold',
-  )
-  addEmptyLines(doc, 2)
-  addNormalJustifiedText(
-    doc,
-    formatMessage(courtRecord.conclusionIntro),
-    'Times-Roman',
-  )
+  if (isCaseCompletedWithRuling) {
+    setLineGap(doc, 16)
 
-  if (theCase.sessionArrangements === SessionArrangements.ALL_PRESENT) {
+    addMediumHeading(doc, formatMessage(courtRecord.conclusionHeading))
+
+    setLineGap(doc, 1)
+
+    addNormalJustifiedText(
+      doc,
+      theCase.conclusion ?? formatMessage(courtRecord.missingConclusion),
+    )
+
     addEmptyLines(doc)
-    addNormalJustifiedText(doc, formatMessage(courtRecord.appealDirections))
-  }
-
-  let prosecutorAppeal = formatAppeal(
-    theCase.prosecutorAppealDecision,
-    capitalize(formatMessage(courtRecord.prosecutor)),
-  )
-
-  if (prosecutorAppeal) {
-    prosecutorAppeal = `${prosecutorAppeal} ${
-      theCase.prosecutorAppealAnnouncement ?? ''
-    }`
-  } else {
-    prosecutorAppeal = theCase.prosecutorAppealAnnouncement ?? ''
-  }
-
-  if (prosecutorAppeal) {
-    addEmptyLines(doc)
-    addNormalJustifiedText(doc, prosecutorAppeal)
-  }
-
-  const multipleDefendants =
-    (theCase.defendants && theCase.defendants.length > 1) || false
-
-  let accusedAppeal = formatAppeal(
-    theCase.accusedAppealDecision,
-    capitalize(
-      formatMessage(courtRecord.defendant, {
-        suffix: multipleDefendants ? 'ar' : 'i',
-      }),
-    ),
-  )
-
-  if (accusedAppeal) {
-    accusedAppeal = `${accusedAppeal} ${
-      theCase.accusedAppealAnnouncement ?? ''
-    }`
-  } else {
-    accusedAppeal = theCase.accusedAppealAnnouncement ?? ''
-  }
-
-  if (accusedAppeal) {
-    addEmptyLines(doc)
-    addNormalJustifiedText(doc, accusedAppeal)
+    addNormalCenteredText(
+      doc,
+      theCase.judge?.name ?? formatMessage(courtRecord.missingJudge),
+      'Times-Bold',
+    )
   }
 
   if (theCase.endOfSessionBookings) {
     addEmptyLines(doc)
-    addNormalJustifiedText(doc, theCase.endOfSessionBookings)
+    addNormalJustifiedText(doc, theCase.endOfSessionBookings, 'Times-Roman')
   }
 
   if (theCase.registrar) {

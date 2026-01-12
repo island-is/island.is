@@ -13,6 +13,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import {
+  DigitalIcelandLatestNewsSlice,
   getThemeConfig,
   IconTitleCard,
   OrganizationWrapper,
@@ -189,6 +190,7 @@ const OrganizationHomePage = ({
                   marginBottom={
                     index === organizationPage.slices.length - 1 ? 5 : 0
                   }
+                  params={{ isFrontpage: true }}
                 />
               )
             })}
@@ -204,21 +206,50 @@ const OrganizationHomePage = ({
             : 0
         }
       >
-        {organizationPage?.bottomSlices.map((slice) => (
-          <SliceMachine
-            key={slice.id}
-            slice={slice}
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore make web strict
-            namespace={namespace}
-            slug={organizationPage.slug}
-            fullWidth={true}
-            params={{
-              latestNewsSliceColorVariant:
-                organizationPage.theme === 'landing_page' ? 'blue' : 'default',
-            }}
-          />
-        ))}
+        {organizationPage?.bottomSlices.map((slice, index) => {
+          if (
+            slice.__typename === 'LatestNewsSlice' &&
+            slice.news.length >= 3
+          ) {
+            return (
+              <Box
+                paddingTop={[5, 5, 8]}
+                paddingBottom={[2, 2, 5]}
+                key={slice.id}
+              >
+                <DigitalIcelandLatestNewsSlice
+                  slice={slice}
+                  slug={organizationPage.slug}
+                />
+              </Box>
+            )
+          }
+          return (
+            <Box
+              key={slice.id}
+              paddingBottom={
+                index === organizationPage.bottomSlices.length - 1
+                  ? SLICE_SPACING
+                  : 0
+              }
+            >
+              <SliceMachine
+                slice={slice}
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore make web strict
+                namespace={namespace}
+                slug={organizationPage.slug}
+                fullWidth={true}
+                params={{
+                  latestNewsSliceColorVariant:
+                    organizationPage.theme === 'landing_page'
+                      ? 'blue'
+                      : 'default',
+                }}
+              />
+            </Box>
+          )
+        })}
       </Stack>
       {organizationPage?.theme === 'landing_page' && (
         <LandingPageFooter

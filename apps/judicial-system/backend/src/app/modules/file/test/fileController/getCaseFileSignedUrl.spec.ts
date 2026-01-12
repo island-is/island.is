@@ -1,4 +1,4 @@
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { NotFoundException } from '@nestjs/common'
 
@@ -7,8 +7,7 @@ import { CaseType } from '@island.is/judicial-system/types'
 import { createTestingFileModule } from '../createTestingFileModule'
 
 import { AwsS3Service } from '../../../aws-s3'
-import { Case } from '../../../case'
-import { CaseFile } from '../../models/file.model'
+import { Case, CaseFile } from '../../../repository'
 import { SignedUrl } from '../../models/signedUrl.model'
 
 interface Then {
@@ -56,7 +55,7 @@ describe('FileController - Get case file signed url', () => {
     const caseId = uuid()
     const fileId = uuid()
     const key = `${uuid()}/${uuid()}/test.txt`
-    const caseFile = { id: fileId, key } as CaseFile
+    const caseFile = { id: fileId, key, isKeyAccessible: true } as CaseFile
     const theCase = {
       id: uuid(),
       type: CaseType.ADMISSION_TO_FACILITY,
@@ -92,7 +91,7 @@ describe('FileController - Get case file signed url', () => {
     const caseId = uuid()
     const fileId = uuid()
     const key = `${uuid()}/${uuid()}/test.txt`
-    const caseFile = { id: fileId, key } as CaseFile
+    const caseFile = { id: fileId, key, isKeyAccessible: true } as CaseFile
     const theCase = {
       id: caseId,
       type: CaseType.INDICTMENT,
@@ -108,9 +107,9 @@ describe('FileController - Get case file signed url', () => {
       then = await givenWhenThen(caseId, theCase, fileId, caseFile)
     })
 
-    it('should remove the key and throw', () => {
+    it('should set isKeyAccessible to false and throw', () => {
       expect(mockUpdate).toHaveBeenCalledWith(
-        { key: null },
+        { isKeyAccessible: false },
         { where: { id: fileId } },
       )
       expect(then.error).toBeInstanceOf(NotFoundException)
@@ -122,7 +121,7 @@ describe('FileController - Get case file signed url', () => {
     const caseId = uuid()
     const fileId = uuid()
     const key = `${uuid()}/${uuid()}/test.txt`
-    const caseFile = { id: fileId, key } as CaseFile
+    const caseFile = { id: fileId, key, isKeyAccessible: true } as CaseFile
     const theCase = {} as Case
     let then: Then
 

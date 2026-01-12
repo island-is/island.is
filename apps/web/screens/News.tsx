@@ -20,12 +20,12 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import {
+  DigitalIcelandNewsCard,
   HeadWithSocialSharing,
   NewsArticle,
-  NewsCard,
   Webreader,
 } from '@island.is/web/components'
-import { FRONTPAGE_NEWS_TAG_ID } from '@island.is/web/constants'
+import { FRONTPAGE_NEWS_TAG_SLUG } from '@island.is/web/constants'
 import { useNamespace } from '@island.is/web/hooks'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { withMainLayout } from '@island.is/web/layouts/main'
@@ -224,6 +224,9 @@ const NewsListNew: Screen<NewsListProps> = ({
     imageHeight: socialImage?.height?.toString(),
   }
 
+  const indexableBySearchEngine =
+    newsItem?.organization?.canPagesBeFoundInSearchResults ?? true
+
   return (
     <>
       {/**
@@ -232,7 +235,11 @@ const NewsListNew: Screen<NewsListProps> = ({
       <HeadWithSocialSharing
         title={metaTitle}
         {...(newsItemMeta && { ...newsItemMeta })}
-      />
+      >
+        {!indexableBySearchEngine && (
+          <meta name="robots" content="noindex, nofollow" />
+        )}
+      </HeadWithSocialSharing>
       <SidebarLayout sidebarContent={sidebar}>
         <Box
           display={['none', 'none', 'flex']}
@@ -344,27 +351,28 @@ const NewsListNew: Screen<NewsListProps> = ({
         )}
         {!!newsList.length && (
           <Box className="rs_read" marginTop={spacing}>
-            {newsList.map(({ title, intro, image, slug, date }, index) => {
-              const mini = index > 2
+            {newsList.map(
+              ({ title, intro, image, slug, date, genericTags }, index) => {
+                const mini =
+                  selectedPage > 1 || (selectedPage === 1 && index > 2)
 
-              return (
-                <Box marginBottom={mini ? spacingMini : spacing}>
-                  <NewsCard
-                    key={index}
-                    title={title}
-                    introduction={intro}
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    // @ts-expect-error make web strict
-                    image={image}
-                    titleAs="h2"
-                    href={linkResolver('news', [slug]).href}
-                    date={date}
-                    readMoreText={n('readMore', 'Lesa nánar')}
-                    mini={mini}
-                  />
-                </Box>
-              )
-            })}
+                return (
+                  <Box marginBottom={mini ? spacingMini : spacing}>
+                    <DigitalIcelandNewsCard
+                      key={slug}
+                      title={title}
+                      description={intro}
+                      imageSrc={image?.url ?? ''}
+                      tags={genericTags.map((tag) => tag.title)}
+                      href={linkResolver('news', [slug]).href}
+                      date={date}
+                      mini={mini}
+                      titleAs="h2"
+                    />
+                  </Box>
+                )
+              },
+            )}
             {!!newsList.length && (
               <Box marginTop={[4, 4, 8]}>
                 <Pagination
@@ -412,7 +420,7 @@ NewsListNew.getProps = async ({ apolloClient, locale, query }) => {
   const year = getIntParam(query.y, { minValue: 1000, maxValue: 9999 })
   const month = year && getIntParam(query.m, { minValue: 1, maxValue: 12 })
   const selectedPage = getIntParam(query.page, { minValue: 1 }) ?? 1
-  const tag = (query.tag as string) ?? FRONTPAGE_NEWS_TAG_ID
+  const tag = (query.tag as string) ?? FRONTPAGE_NEWS_TAG_SLUG
   const [
     {
       data: { getNewsDates: newsDatesList },
@@ -492,7 +500,7 @@ NewsListNew.getProps = async ({ apolloClient, locale, query }) => {
   }
 
   const filterOutFrontpageTag = (tag: GenericTag) =>
-    tag?.slug !== FRONTPAGE_NEWS_TAG_ID
+    tag?.slug !== FRONTPAGE_NEWS_TAG_SLUG
 
   return {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment

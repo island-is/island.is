@@ -1,13 +1,8 @@
-import { CourtDocument, SubstanceMap } from '@island.is/judicial-system/types'
-import {
-  Case,
-  CaseListEntry,
-  IndictmentCount,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
 
 export type ReactSelectOption = {
   label: string
-  value: string | number
+  value: string | number | null
   __isNew__?: boolean
 }
 
@@ -16,14 +11,18 @@ export enum LoginErrorCodes {
   UNAUTHENTICATED = 'innskraning-utrunnin',
   LOGIN_FAILED = 'innskraning-ogild',
   DEPRECATED_LOGIN = 'innskraning-gomul',
+  INVALID_USER = 'innskraning-ogildur-notandi',
+  LOGIN_ERROR = 'innskraning-villa',
 }
 
 export type directionType = 'ascending' | 'descending'
 export type sortableTableColumn = keyof CaseListEntry
+export type sortableFn = 'number'
 
 export interface SortConfig {
   column: sortableTableColumn
   direction: directionType
+  sortFn?: sortableFn
 }
 
 interface NationalRegistryPerson {
@@ -163,26 +162,4 @@ export interface NationalRegistryResponseBusiness {
   items?: NationalRegistryBusiness[]
   meta?: NationalRegistryMeta
   error?: string
-}
-
-/**
- * We are in the process of stopping using the Case type and
- * using the generated Case type from /graphql/schema.tsx instead.
- * We use this type so that we don't have to migrate all the code
- * at once and this type will be removed when we are done.
- */
-export interface TempIndictmentCount
-  extends Omit<IndictmentCount, 'substances'> {
-  substances?: SubstanceMap | null
-}
-
-export interface TempCase
-  extends Omit<
-    Case,
-    'courtDocuments' | 'parentCase' | 'childCase' | 'indictmentCounts'
-  > {
-  courtDocuments?: CourtDocument[] | null
-  parentCase?: TempCase | null
-  childCase?: TempCase | null
-  indictmentCounts?: TempIndictmentCount[] | null
 }

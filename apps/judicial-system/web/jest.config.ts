@@ -1,9 +1,10 @@
-/* eslint-disable */
 export default {
   preset: './jest.preset.js',
   rootDir: '../../..',
   roots: [__dirname],
-  testEnvironment: 'jest-environment-jsdom',
+  testEnvironment: 'jsdom',
+  detectOpenHandles: false,
+  detectLeaks: false,
   transform: {
     '^(?!.*\\.(js|jsx|ts|tsx|css|json)$)': '@nx/react/plugins/jest',
     '^.+\\.[tj]sx?$': [

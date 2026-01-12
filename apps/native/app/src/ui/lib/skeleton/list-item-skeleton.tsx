@@ -5,6 +5,7 @@ import { Skeleton } from './skeleton'
 
 interface ListItemSkeletonProps {
   multilineMessage?: boolean
+  showDate?: boolean
 }
 
 const Host = styled.SafeAreaView`
@@ -70,6 +71,7 @@ const Message = styled.View<{ multilineMessage: boolean }>`
 
 export function ListItemSkeleton({
   multilineMessage = false,
+  showDate = true,
 }: ListItemSkeletonProps) {
   return (
     <Host>
@@ -81,9 +83,11 @@ export function ListItemSkeleton({
           <Title>
             <Skeleton active style={{ borderRadius: 4 }} height={17} />
           </Title>
-          <Date>
-            <Skeleton active style={{ borderRadius: 4 }} height={17} />
-          </Date>
+          {showDate && (
+            <Date>
+              <Skeleton active style={{ borderRadius: 4 }} height={17} />
+            </Date>
+          )}
         </Row>
         <Message multilineMessage={multilineMessage}>
           <Skeleton active style={{ borderRadius: 4 }} height={17} />

@@ -41,11 +41,11 @@ export const coaJudgesCompleteAppealCaseTest = async (
   // Ruling
   await expect(page).toHaveURL(`/landsrettur/urskurdur/${caseId}`)
   await page.locator('label').filter({ hasText: 'Staðfesting' }).click()
-  await page.getByPlaceholder('Hver eru úrskurðarorð Landsréttar?').click()
+  await page.getByPlaceholder('Hvert er úrskurðarorð Landsréttar?').click()
   await page
-    .getByPlaceholder('Hver eru úrskurðarorð Landsréttar?')
+    .getByPlaceholder('Hvert er úrskurðarorð Landsréttar?')
     .fill('Test úrskurðarorð Landsréttar')
-  await page.getByPlaceholder('Hver eru úrskurðarorð Landsréttar?').press('Tab')
+  await page.getByPlaceholder('Hvert er úrskurðarorð Landsréttar?').press('Tab')
   await uploadDocument(
     page,
     async () => {

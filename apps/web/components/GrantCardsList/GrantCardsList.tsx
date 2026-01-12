@@ -3,12 +3,13 @@ import localeEN from 'date-fns/locale/en-GB'
 import localeIS from 'date-fns/locale/is'
 import { useRouter } from 'next/router'
 
-import { ActionCard, Box, InfoCardGrid } from '@island.is/island-ui/core'
+import { ActionCard, Box, InfoCardGrid, Text } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
 import {
   Grant,
   GrantCardsList as GrantCardsListSchema,
+  GrantCardsListSorting,
   GrantStatus,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
@@ -19,6 +20,12 @@ import { TranslationKeys } from './types'
 interface SliceProps {
   slice: GrantCardsListSchema
 }
+
+const OPEN_GRANT_STATUSES = [
+  GrantStatus.AlwaysOpen,
+  GrantStatus.Open,
+  GrantStatus.OpenWithNote,
+]
 
 const formatDate = (
   date: Date,
@@ -36,6 +43,14 @@ const formatDate = (
 }
 
 const containsTimePart = (date: string) => date.includes('T')
+
+const isGrantOpen = (grant: Grant): 'open' | 'closed' | 'unknown' => {
+  if (!grant.status) {
+    return 'unknown'
+  }
+
+  return OPEN_GRANT_STATUSES.includes(grant.status) ? 'open' : 'closed'
+}
 
 const GrantCardsList = ({ slice }: SliceProps) => {
   const { activeLocale } = useI18n()
@@ -108,25 +123,62 @@ const GrantCardsList = ({ slice }: SliceProps) => {
     }
   }
 
-  if (slice.resolvedGrantsList?.items.length === 1) {
-    const grant = slice.resolvedGrantsList.items[0]
+  const grantItems = [...(slice.resolvedGrantsList?.items ?? [])]
+
+  if (grantItems.length === 1 && !slice.alwaysDisplayResultsAsCards) {
+    const grant = grantItems[0]
+
+    const grantStatus = isGrantOpen(grant)
+
+    const cardText =
+      grantStatus !== 'unknown'
+        ? `${getTranslationString(
+            grantStatus === 'open' ? 'applicationOpen' : 'applicationClosed',
+          )} / ${parseStatus(grant)}`
+        : undefined
+
     return (
-      <ActionCard
-        heading={grant.name}
-        backgroundColor="blue"
-        cta={{
-          disabled: !grant.applicationUrl?.slug,
-          label: grant.applicationButtonLabel ?? getTranslationString('apply'),
-          onClick: () => router.push(grant.applicationUrl?.slug ?? ''),
-          icon: 'open',
-          iconType: 'outline',
-        }}
-      />
+      <>
+        {slice.displayTitle && (
+          <Box marginBottom={2}>
+            <Text variant="h3" as="h3" color="dark400">
+              {slice.title}
+            </Text>
+          </Box>
+        )}
+        <ActionCard
+          heading={grant.name}
+          text={cardText}
+          backgroundColor="blue"
+          cta={{
+            disabled: isGrantOpen(grant) !== 'open',
+            size: 'small',
+            label:
+              grant.applicationButtonLabel ?? getTranslationString('apply'),
+            onClick: () => router.push(grant.applicationUrl?.slug ?? ''),
+            icon: 'open',
+            iconType: 'outline',
+          }}
+        />
+      </>
     )
   }
 
-  const cards = slice.resolvedGrantsList?.items
+  if (grantItems.length > 1) {
+    if (slice.sorting === GrantCardsListSorting.MostRecentlyUpdatedFirst) {
+      grantItems.sort(
+        (a, b) =>
+          new Date(a.lastUpdateTimestamp).getTime() -
+          new Date(b.lastUpdateTimestamp).getTime(),
+      )
+    } else if (slice.sorting === GrantCardsListSorting.Alphabetical) {
+      grantItems.sort((a, b) => a.name.localeCompare(b.name))
+    }
+  }
+
+  const cards = grantItems
     ?.map((grant) => {
+      const grantIsOpen = isGrantOpen(grant)
       if (grant.id) {
         return {
           id: grant.id,
@@ -145,11 +197,23 @@ const GrantCardsList = ({ slice }: SliceProps) => {
           link: {
             label: getTranslationString('applicationClosed'),
             href: linkResolver(
-              'styrkjatorggrant',
+              'grantsplazagrant',
               [grant?.applicationId ?? ''],
               activeLocale,
             ).href,
           },
+          tags: [
+            grantIsOpen !== 'unknown'
+              ? {
+                  label: getTranslationString(
+                    grantIsOpen === 'open'
+                      ? 'applicationOpen'
+                      : 'applicationClosed',
+                  ),
+                  variant: grantIsOpen === 'open' ? 'mint' : 'rose',
+                }
+              : undefined,
+          ].filter(isDefined),
           detailLines: [
             grant.dateFrom && grant.dateTo
               ? {
@@ -183,14 +247,21 @@ const GrantCardsList = ({ slice }: SliceProps) => {
     .filter(isDefined)
 
   return (
-    <Box padding={1} borderColor="blue100" borderRadius="large">
+    <>
+      {slice.displayTitle && (
+        <Box marginBottom={2}>
+          <Text variant="h3" as="h3" color="dark400">
+            {slice.title}
+          </Text>
+        </Box>
+      )}
       <InfoCardGrid
         columns={1}
         cardsBorder="blue200"
         variant="detailed"
         cards={cards ?? []}
       />
-    </Box>
+    </>
   )
 }
 

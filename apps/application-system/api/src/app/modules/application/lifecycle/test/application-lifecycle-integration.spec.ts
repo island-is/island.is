@@ -184,7 +184,7 @@ export const createApplication = async () => {
   const response = await server
     .post('/applications')
     .send({
-      typeId: ApplicationTypes.EXAMPLE,
+      typeId: ApplicationTypes.EXAMPLE_COMMON_ACTIONS,
     })
     .expect(201)
   return response

@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { Box, Checkbox } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import {
   BlueBox,
   FormContext,
@@ -32,6 +32,10 @@ const ProsecutorSectionHeightenedSecurity = () => {
       const updatedCase = await updateCase(workingCase.id, {
         prosecutorId: prosecutorId,
       })
+
+      if (!updatedCase) {
+        return
+      }
 
       const prosecutor = updatedCase?.prosecutor
 
@@ -96,20 +100,20 @@ const ProsecutorSectionHeightenedSecurity = () => {
         <Modal
           title={formatMessage(strings.accessModalTitle)}
           text={formatMessage(strings.accessModalText)}
-          primaryButtonText={formatMessage(
-            strings.accessModalPrimaryButtonText,
-          )}
-          secondaryButtonText={formatMessage(
-            strings.accessModalSecondaryButtonText,
-          )}
-          onPrimaryButtonClick={async () => {
-            if (substituteProsecutorId) {
-              await setProsecutor(substituteProsecutorId)
-              router.push(constants.CASES_ROUTE)
-            }
+          primaryButton={{
+            text: formatMessage(strings.accessModalPrimaryButtonText),
+            onClick: async () => {
+              if (substituteProsecutorId) {
+                await setProsecutor(substituteProsecutorId)
+                router.push(getStandardUserDashboardRoute(user))
+              }
+            },
           }}
-          onSecondaryButtonClick={() => {
-            setIsProsecutorAccessModalVisible(false)
+          secondaryButton={{
+            text: formatMessage(strings.accessModalSecondaryButtonText),
+            onClick: () => {
+              setIsProsecutorAccessModalVisible(false)
+            },
           }}
         />
       )}

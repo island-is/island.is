@@ -11,6 +11,7 @@ import {
 import {
   EmailSignup,
   GenericListWrapper,
+  IntroLinkImageSlice,
   RichText,
   SectionWithVideo,
 } from '@island.is/web/components'
@@ -22,6 +23,7 @@ import {
 import { webRenderConnectedComponent } from '@island.is/web/utils/richText'
 
 import { FeaturedSupportQNAs } from '../../FeaturedSupportQNAs'
+import { OrganizationParentSubpageListSlice } from './OrganizationParentSubpageListSlice/OrganizationParentSubpageListSlice'
 
 const DistrictsSlice = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.DistrictsSlice),
@@ -109,6 +111,12 @@ const LatestGenericListItems = dynamic(() =>
 
 const FeaturedLinksSlice = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.FeaturedLinksSlice),
+)
+
+const FeaturedGenericListItemsSlice = dynamic(() =>
+  import('@island.is/web/components').then(
+    (mod) => mod.FeaturedGenericListItemsSlice,
+  ),
 )
 
 interface SliceMachineProps {
@@ -209,6 +217,7 @@ export const renderSlice = (
           filterTags={(slice as GenericListSchema).filterTags}
           defaultOrder={(slice as GenericListSchema).defaultOrder}
           showSearchInput={(slice as GenericListSchema).showSearchInput ?? true}
+          textSearchOrder={slice.textSearchOrder ?? 'Default'}
         />
       )
     case 'TeamList':
@@ -227,6 +236,17 @@ export const renderSlice = (
     }
     case 'FeaturedLinks':
       return <FeaturedLinksSlice slice={slice} />
+    case 'OrganizationParentSubpageList':
+      return (
+        <OrganizationParentSubpageListSlice
+          slice={slice}
+          isFrontpage={params?.isFrontpage}
+        />
+      )
+    case 'IntroLinkImage':
+      return <IntroLinkImageSlice slice={slice} />
+    case 'FeaturedGenericListItems':
+      return <FeaturedGenericListItemsSlice slice={slice} />
     default:
       return <RichText body={[slice]} />
   }

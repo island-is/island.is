@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+
 import { Box, Hidden, Inline, Text } from '@island.is/island-ui/core'
 import { ProjectPage } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'

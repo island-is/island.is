@@ -3,12 +3,14 @@ import { getModelToken } from '@nestjs/sequelize'
 
 import { TestApp } from '@island.is/testing/nest'
 
-import { EmailVerification } from '../src/app/user-profile/emailVerification.model'
-import { SmsVerification } from '../src/app/user-profile/smsVerification.model'
-import { UserProfile } from '../src/app/user-profile/userProfile.model'
-import { UserDeviceTokens } from '../src/app/user-profile/userDeviceTokens.model'
+import { EmailVerification } from '../src/app/user-profile/models/emailVerification.model'
+import { SmsVerification } from '../src/app/user-profile/models/smsVerification.model'
+import { UserProfile } from '../src/app/user-profile/models/userProfile.model'
+import { UserDeviceTokens } from '../src/app/user-profile/models/userDeviceTokens.model'
 import { DataStatus } from '../src/app/user-profile/types/dataStatusTypes'
-import { ActorProfile } from '../src/app/v2/models/actor-profile.model'
+import { ActorProfile } from '../src/app/user-profile/models/actor-profile.model'
+import { Emails } from '../src/app/user-profile/models/emails.model'
+import { uuid } from 'uuidv4'
 
 export class FixtureFactory {
   constructor(private app: TestApp) {}
@@ -17,35 +19,104 @@ export class FixtureFactory {
     return this.app.get(getModelToken(model))
   }
 
-  createUserProfile({
+  async createUserProfile({
     nationalId,
-    email = null,
+    emails = [],
     mobilePhoneNumber = null,
     locale = null,
     mobilePhoneNumberVerified = false,
-    emailVerified = false,
     lastNudge = null,
     nextNudge = null,
-    emailStatus = DataStatus.NOT_DEFINED,
     mobileStatus = DataStatus.NOT_DEFINED,
+  }: {
+    nationalId: string
+    emails?: Array<{
+      email: string | null
+      primary?: boolean
+      emailStatus?: DataStatus
+    }>
+    mobilePhoneNumber?: string | null
+    locale?: string | null
+    mobilePhoneNumberVerified?: boolean
+    lastNudge?: Date | null
+    nextNudge?: Date | null
+    emailStatus?: DataStatus
+    mobileStatus?: DataStatus
   }) {
     const userProfileModel = this.get(UserProfile)
 
-    return userProfileModel.create<UserProfile>({
-      nationalId,
-      email,
-      mobilePhoneNumber,
-      locale,
-      mobilePhoneNumberVerified,
-      emailVerified,
-      emailStatus,
-      mobileStatus,
-      lastNudge: lastNudge && lastNudge.toISOString(),
-      nextNudge: nextNudge && nextNudge.toISOString(),
-    })
+    return await userProfileModel
+      .create<UserProfile>(
+        {
+          nationalId,
+          mobilePhoneNumber,
+          locale,
+          mobilePhoneNumberVerified,
+          mobileStatus,
+          lastNudge: lastNudge && lastNudge.toISOString(),
+          nextNudge: nextNudge && nextNudge.toISOString(),
+          emails:
+            emails?.map(({ email, primary, emailStatus }) => ({
+              id: uuid(),
+              email: email ? email : null,
+              primary: primary ? primary : false,
+              emailStatus: emailStatus ? emailStatus : DataStatus.NOT_DEFINED,
+              nationalId,
+            })) ?? [],
+        },
+        {
+          include: [
+            {
+              model: Emails,
+              as: 'emails',
+            },
+          ],
+        },
+      )
+      .catch((err) => {
+        console.error('Error creating user profile:', err)
+        throw err
+      })
   }
 
-  async createEmailVerification({ nationalId, email, hash, tries = 0 }) {
+  async createEmail({
+    nationalId,
+    email,
+    primary = false,
+    emailStatus = DataStatus.NOT_DEFINED,
+  }: {
+    nationalId: string
+    email?: string | null
+    primary?: boolean
+    emailStatus?: DataStatus
+  }) {
+    const emailModel = this.get(Emails)
+
+    return await emailModel
+      .create<Emails>({
+        id: uuid(),
+        nationalId,
+        email: email ? email : undefined,
+        primary,
+        emailStatus,
+      })
+      .catch((err) => {
+        console.error('Error creating email:', err)
+        throw err
+      })
+  }
+
+  async createEmailVerification({
+    nationalId,
+    email,
+    hash,
+    tries = 0,
+  }: {
+    nationalId: string
+    email: string
+    hash: string
+    tries?: number
+  }) {
     const verificationModel = this.get(EmailVerification)
 
     return await verificationModel.create<EmailVerification>({
@@ -62,6 +133,11 @@ export class FixtureFactory {
     mobilePhoneNumber,
     smsCode,
     tries = 0,
+  }: {
+    nationalId: string
+    mobilePhoneNumber: string
+    smsCode: string
+    tries?: number
   }) {
     const verificationModel = this.get(SmsVerification)
 
@@ -74,7 +150,13 @@ export class FixtureFactory {
     })
   }
 
-  async createUserDeviceToken({ nationalId, deviceToken }) {
+  async createUserDeviceToken({
+    nationalId,
+    deviceToken,
+  }: {
+    nationalId: string
+    deviceToken: string
+  }) {
     const userDeviceTokenModel = this.get(UserDeviceTokens)
 
     return userDeviceTokenModel.create<UserDeviceTokens>({
@@ -87,10 +169,12 @@ export class FixtureFactory {
     toNationalId,
     fromNationalId,
     emailNotifications,
+    emailsId,
   }: {
     toNationalId: string
     fromNationalId: string
     emailNotifications: boolean
+    emailsId?: string
   }) {
     const actorProfileModel = this.get(ActorProfile)
 
@@ -98,6 +182,7 @@ export class FixtureFactory {
       toNationalId,
       fromNationalId,
       emailNotifications,
+      emailsId,
     })
   }
 }

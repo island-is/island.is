@@ -1,4 +1,5 @@
 import { Appearance, ColorSchemeName } from 'react-native'
+import { DefaultTheme } from 'styled-components'
 
 import { AppearanceMode, ThemeMode } from '../stores/preferences-store'
 import { theme } from '../ui'
@@ -53,7 +54,7 @@ const defaultTheme = 'light'
 export function getThemeWithPreferences(
   { appearanceMode }: { appearanceMode: AppearanceMode },
   systemScheme: ColorSchemeName = Appearance.getColorScheme() ?? defaultTheme,
-) {
+): DefaultTheme {
   // get color scheme from system if "automatic"
   // otherwise from appearanceMode
   // const colorScheme = (

@@ -13,13 +13,14 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
   CurrentHttpUser,
-  JwtAuthGuard,
+  JwtAuthUserGuard,
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
 import type { User } from '@island.is/judicial-system/types'
 
-import { Case, CaseExistsGuard, CaseWriteGuard, CurrentCase } from '../case'
+import { CaseExistsGuard, CaseWriteGuard, CurrentCase } from '../case'
+import { Case } from '../repository'
 import { NotificationDto } from './dto/notification.dto'
 import {
   courtOfAppealsAssistantNotificationRule,
@@ -36,7 +37,7 @@ import { NotificationService } from './notification.service'
 
 @Controller('api/case/:caseId/notification')
 @ApiTags('notifications')
-@UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard)
+@UseGuards(JwtAuthUserGuard, RolesGuard, CaseExistsGuard)
 export class NotificationController {
   constructor(
     private readonly notificationService: NotificationService,

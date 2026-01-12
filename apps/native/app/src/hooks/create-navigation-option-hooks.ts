@@ -1,40 +1,36 @@
 import defaultsDeep from 'lodash/defaultsDeep'
 import { useEffect } from 'react'
 import { IntlShape, createIntl, useIntl } from 'react-intl'
-import { Platform } from 'react-native'
 import { Options } from 'react-native-navigation'
 import { useNavigation } from 'react-native-navigation-hooks/dist'
 import { DefaultTheme, useTheme } from 'styled-components'
 import { en } from '../messages/en'
 import { is } from '../messages/is'
 import { preferencesStore } from '../stores/preferences-store'
-import { uiStore, useUiStore } from '../stores/ui-store'
+import { isAndroid } from '../utils/devices'
 import { getThemeWithPreferences } from '../utils/get-theme-with-preferences'
 
 type ApplyNavigationOptionsCallback = (
   theme: DefaultTheme,
   intl: IntlShape,
-  initialized: boolean,
 ) => Options
 
 const defaultOptions = (
   theme: DefaultTheme,
-  initialized: boolean,
   staticOptions: Options,
 ): Options => {
   const options: Options = {}
 
   options.window = {
-    backgroundColor:
-      Platform.OS === 'android'
-        ? theme.shade.background
-        : {
-            dark: theme.shades.dark.background,
-            light: theme.shades.light.background,
-          },
+    backgroundColor: isAndroid
+      ? theme.shade.background
+      : {
+          dark: theme.shades.dark.background,
+          light: theme.shades.light.background,
+        },
   }
 
-  if (Platform.OS === 'android') {
+  if (isAndroid) {
     options.layout = {
       backgroundColor: theme.shade.background,
       componentBackgroundColor: theme.shade.background,
@@ -43,18 +39,16 @@ const defaultOptions = (
 
   if (staticOptions.bottomTab) {
     options.bottomTab = {
-      iconColor: !initialized ? theme.shade.background : theme.shade.foreground,
+      iconColor: theme.shade.foreground,
       selectedIconColor: theme.color.blue400,
-      textColor:
-        Platform.OS === 'android'
-          ? theme.shade.foreground
-          : { light: 'black', dark: 'white' },
-      selectedTextColor:
-        Platform.OS === 'android'
-          ? theme.shade.foreground
-          : { light: 'black', dark: 'white' },
+      textColor: isAndroid
+        ? theme.shade.foreground
+        : { light: 'black', dark: 'white' },
+      selectedTextColor: isAndroid
+        ? theme.shade.foreground
+        : { light: 'black', dark: 'white' },
     }
-    if (Platform.OS === 'android') {
+    if (isAndroid) {
       options.bottomTabs = {
         backgroundColor: theme.shade.background,
       }
@@ -64,23 +58,22 @@ const defaultOptions = (
   if (staticOptions.topBar) {
     options.topBar = {
       title: {
-        color:
-          Platform.OS === 'android'
-            ? theme.shade.foreground
-            : { light: 'black', dark: 'white' },
+        color: isAndroid
+          ? theme.shade.foreground
+          : { light: 'black', dark: 'white' },
       },
       animateRightButtons: false,
       animateLeftButtons: false,
       noBorder: true,
     }
-    if (Platform.OS === 'android') {
+    if (isAndroid) {
       options.topBar.background = {
         color: theme.shade.background,
       }
     }
   }
 
-  if (Platform.OS === 'android') {
+  if (isAndroid) {
     options.bottomTabs = {
       backgroundColor: theme.shade.background,
     }
@@ -103,23 +96,22 @@ export const createNavigationOptionHooks = (
     useNavigationOptions(componentId: string) {
       const theme = useTheme()
       const intl = useIntl()
-      const { initializedApp } = useUiStore()
       const { mergeOptions } = useNavigation(componentId)
+
       useEffect(() => {
-        const optionsToUpdate = callback?.(theme, intl, initializedApp)
+        const optionsToUpdate = callback?.(theme, intl)
         defaultsDeep(
           optionsToUpdate,
           staticOptions,
-          defaultOptions(theme, initializedApp, staticOptions),
+          defaultOptions(theme, staticOptions),
         )
         if (optionsToUpdate) {
           mergeOptions(optionsToUpdate)
         }
-      }, [callback, theme, intl, initializedApp])
+      }, [callback, theme, intl])
     },
     getNavigationOptions() {
       const preferences = preferencesStore.getState()
-      const { initializedApp } = uiStore.getState()
       const theme = getThemeWithPreferences({
         appearanceMode: preferences.appearanceMode,
       })
@@ -127,11 +119,11 @@ export const createNavigationOptionHooks = (
         locale: preferences.locale,
         messages: preferences.locale === 'en-US' ? en : is,
       })
-      const optionsToUpdate = callback?.(theme, intl, initializedApp) ?? {}
+      const optionsToUpdate = callback?.(theme, intl) ?? {}
       return defaultsDeep(
         optionsToUpdate,
         staticOptions,
-        defaultOptions(theme, initializedApp, staticOptions),
+        defaultOptions(theme, staticOptions),
       )
     },
   }

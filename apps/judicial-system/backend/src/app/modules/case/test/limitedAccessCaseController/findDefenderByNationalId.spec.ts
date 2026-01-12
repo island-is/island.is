@@ -1,5 +1,5 @@
 import { Op } from 'sequelize'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { NotFoundException } from '@nestjs/common'
 
@@ -10,8 +10,7 @@ import { createTestingCaseModule } from '../createTestingCaseModule'
 import { nowFactory, uuidFactory } from '../../../../factories'
 import { randomDate } from '../../../../test'
 import { CivilClaimantService, DefendantService } from '../../../defendant'
-import { User } from '../../../user'
-import { Case } from '../../models/case.model'
+import { CaseRepositoryService, User } from '../../../repository'
 
 jest.mock('../../../../factories')
 
@@ -33,20 +32,20 @@ describe('LimitedAccessCaseController - Find defender by national id', () => {
 
   let mockDefendantService: DefendantService
   let mockCivilClaimantService: CivilClaimantService
-  let mockCaseModel: typeof Case
+  let mockCaseRepositoryService: CaseRepositoryService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
     const {
       defendantService,
       civilClaimantService,
-      caseModel,
+      caseRepositoryService,
       limitedAccessCaseController,
     } = await createTestingCaseModule()
 
     mockDefendantService = defendantService
     mockCivilClaimantService = civilClaimantService
-    mockCaseModel = caseModel
+    mockCaseRepositoryService = caseRepositoryService
 
     const mockFindLatestDefendantByDefenderNationalId =
       mockDefendantService.findLatestDefendantByDefenderNationalId as jest.Mock
@@ -54,7 +53,7 @@ describe('LimitedAccessCaseController - Find defender by national id', () => {
     const mockFindLatestClaimantBySpokespersonNationalId =
       mockCivilClaimantService.findLatestClaimantBySpokespersonNationalId as jest.Mock
     mockFindLatestClaimantBySpokespersonNationalId.mockResolvedValue(null)
-    const mockFindOne = mockCaseModel.findOne as jest.Mock
+    const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
     mockFindOne.mockResolvedValue(null)
     const mockToday = nowFactory as jest.Mock
     mockToday.mockReturnValueOnce(date)
@@ -82,7 +81,7 @@ describe('LimitedAccessCaseController - Find defender by national id', () => {
     })
 
     it('should look for defender', () => {
-      expect(mockCaseModel.findOne).toHaveBeenCalledWith({
+      expect(mockCaseRepositoryService.findOne).toHaveBeenCalledWith({
         where: {
           defenderNationalId: [defenderNationalId, formattedDefenderNationalId],
           state: { [Op.not]: CaseState.DELETED },
@@ -105,7 +104,7 @@ describe('LimitedAccessCaseController - Find defender by national id', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockFindOne = mockCaseModel.findOne as jest.Mock
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
       mockFindOne.mockResolvedValueOnce({
         defenderNationalId,
         defenderName,

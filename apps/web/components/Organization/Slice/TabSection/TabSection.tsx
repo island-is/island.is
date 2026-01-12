@@ -3,12 +3,6 @@ import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/client'
 import slugify from '@sindresorhus/slugify'
 
-import { useI18n } from '@island.is/web/i18n'
-import {
-  GetTabSectionQuery,
-  QueryGetTabSectionArgs,
-  TabSection,
-} from '@island.is/web/graphql/schema'
 import {
   Box,
   GridColumnProps,
@@ -16,10 +10,15 @@ import {
   Tabs,
   Text,
 } from '@island.is/island-ui/core'
-import { webRichText } from '@island.is/web/utils/richText'
-import { GET_TAB_SECTION_QUERY } from '@island.is/web/screens/queries/TabSection'
-
+import {
+  GetTabSectionQuery,
+  QueryGetTabSectionArgs,
+  TabSection,
+} from '@island.is/web/graphql/schema'
+import { useI18n } from '@island.is/web/i18n'
 import * as styles from '@island.is/web/screens/Organization/Organization.css'
+import { GET_TAB_SECTION_QUERY } from '@island.is/web/screens/queries/TabSection'
+import { webRichText } from '@island.is/web/utils/richText'
 
 interface SliceProps {
   slice: TabSection
@@ -104,7 +103,7 @@ export const TabSectionSlice: React.FC<React.PropsWithChildren<SliceProps>> = ({
                   <img
                     src={tab.image.url}
                     className={styles.tabSectionImg}
-                    alt=""
+                    alt={tab.image.description ?? ''}
                   />
                 )}
                 <Text variant="h2" as="h2" marginBottom={3}>

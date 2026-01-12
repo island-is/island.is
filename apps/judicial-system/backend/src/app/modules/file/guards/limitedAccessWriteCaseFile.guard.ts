@@ -13,14 +13,14 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { Case } from '../../case'
+import { Case } from '../../repository'
 
 @Injectable()
 export class LimitedAccessWriteCaseFileGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest()
 
-    const user: User = request.user
+    const user: User = request.user?.currentUser
 
     if (!user) {
       throw new InternalServerErrorException('Missing user')
@@ -43,7 +43,13 @@ export class LimitedAccessWriteCaseFileGuard implements CanActivate {
 
     if (user.role === UserRole.DEFENDER) {
       if (isIndictmentCase(theCase.type)) {
-        if (caseFileCategory === CaseFileCategory.DEFENDANT_CASE_FILE) {
+        if (
+          [
+            CaseFileCategory.DEFENDANT_CASE_FILE,
+            CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
+            CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
+          ].includes(caseFileCategory)
+        ) {
           return true
         }
       } else if (

@@ -9,6 +9,7 @@ import {
   clientBaseAttributes,
   ClientDelegationType,
   ClientGrantType,
+  ClientSso,
   defaultAcrValue,
   RefreshTokenExpiration,
   SequelizeConfigService,
@@ -121,6 +122,7 @@ const createTestClientData = async (app: TestApp, user: User) => {
       (type) => type.delegationType,
     ),
     allowedAcr: [defaultAcrValue],
+    sso: ClientSso.Enabled,
   }
 }
 
@@ -151,6 +153,7 @@ const clientForCreateTest: Partial<AdminCreateClientDto> = {
   requirePkce: true,
   promptDelegations: true,
   singleSession: true,
+  sso: ClientSso.Enabled,
 }
 
 describe('MeClientsController with auth', () => {
@@ -352,6 +355,7 @@ describe('MeClientsController with auth', () => {
         singleSession: false,
         allowedAcr: [defaultAcrValue],
         supportedDelegationTypes: [],
+        sso: ClientSso.Enabled,
       })
 
       // Assert - db record
@@ -364,6 +368,7 @@ describe('MeClientsController with auth', () => {
         clientType: newClient.clientType,
         clientName: newClient.clientName,
         domainName: tenantId,
+        sso: ClientSso.Enabled,
 
         ...typeSpecificDefaults,
       })
@@ -401,6 +406,7 @@ describe('MeClientsController with auth', () => {
         clientId: newClientId,
         clientName: 'test-client',
         clientType: 'web',
+        sso: ClientSso.Enabled,
       }
 
       // Act
@@ -450,6 +456,7 @@ describe('MeClientsController with auth', () => {
         customClaims: typeSpecificDefaults.customClaims ?? [],
         singleSession: false,
         supportedDelegationTypes: [],
+        sso: ClientSso.Enabled,
         allowedAcr: typeSpecificDefaults.allowedAcr ?? [defaultAcrValue],
       })
 
@@ -464,6 +471,7 @@ describe('MeClientsController with auth', () => {
         clientType: newClient.clientType,
         clientName: newClient.clientName,
         domainName: tenantId,
+        sso: ClientSso.Enabled,
 
         slidingRefreshTokenLifetime:
           typeSpecificDefaults.slidingRefreshTokenLifetime ??
@@ -580,6 +588,7 @@ describe('MeClientsController with auth', () => {
         singleSession: typeSpecificDefaults.singleSession ?? false,
         allowedAcr: [defaultAcrValue],
         supportedDelegationTypes: [],
+        sso: ClientSso.Enabled,
       })
 
       // Assert - db record
@@ -593,6 +602,7 @@ describe('MeClientsController with auth', () => {
         clientType: newClient.clientType,
         clientName: newClient.clientName,
         domainName: tenantId,
+        sso: ClientSso.Enabled,
 
         slidingRefreshTokenLifetime:
           typeSpecificDefaults.slidingRefreshTokenLifetime ??
@@ -629,6 +639,7 @@ describe('MeClientsController with auth', () => {
       clientId: newClientId,
       clientName: 'test-client',
       clientType: 'web',
+      sso: ClientSso.Enabled,
       supportedDelegationTypes: [
         AuthDelegationType.Custom,
         AuthDelegationType.PersonalRepresentative,
@@ -908,6 +919,7 @@ describe('MeClientsController with auth', () => {
             },
           ],
           allowedAcr: ['some-acr-value'],
+          sso: ClientSso.Enabled,
         }
 
         // Act

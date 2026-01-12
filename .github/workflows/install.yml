@@ -1,0 +1,296 @@
+name: 'Prep Dependencies'
+on:
+  workflow_call:
+    inputs:
+      force_all_to_be_affected:
+        description: 'Should all be affected'
+        required: false
+        type: boolean
+        default: false
+      main_branch:
+        default: 'main'
+        type: string
+      skip_user_check:
+        description: 'Skip user permission check'
+        required: false
+        type: boolean
+        default: false
+      run_merge_queue:
+        description: 'Should the merge queue step run'
+        required: false
+        type: boolean
+        default: false
+    outputs:
+      MQ_SHA:
+        value: ${{ jobs.install.outputs.MQ_SHA}}
+      MQ_DOCKER_TAG:
+        value: ${{ jobs.install.outputs.MQ_DOCKER_TAG }}
+      MQ_HELM_VALUES_BRANCH:
+        value: ${{ jobs.install.outputs.MQ_HELM_VALUES_BRANCH }}
+      MQ_ARTIFACT_NAME:
+        value: ${{ jobs.install.outputs.MQ_ARTIFACT_NAME }}
+      MQ_GIT_BRANCH:
+        value: ${{ jobs.install.outputs.MQ_GIT_BRANCH }}
+      MQ_SHOULD_RUN_BUILD:
+        value: ${{ jobs.install.outputs.MQ_SHOULD_RUN_BUILD}}
+      TEST_CHUNKS:
+        value: ${{ jobs.install.outputs.TEST_CHUNKS }}
+      E2E_CHUNKS:
+        value: ${{ jobs.install.outputs.E2E_CHUNKS }}
+      E2E_BUILD_ID:
+        value: ${{ jobs.install.outputs.E2E_BUILD_ID }}
+      BUILD_CHUNKS:
+        value: ${{ jobs.install.outputs.BUILD_CHUNKS }}
+      LINT_CHUNKS:
+        value: ${{ jobs.install.outputs.LINT_CHUNKS }}
+      DOCKER_CHUNKS:
+        value: ${{ jobs.install.outputs.DOCKER_CHUNKS }}
+      NX_HEAD:
+        value: ${{ jobs.install.outputs.NX_HEAD }}
+      NX_BASE:
+        value: ${{ jobs.install.outputs.NX_BASE }}
+      DEPLOY_FEATURE:
+        value: ${{ jobs.install.outputs.DEPLOY_FEATURE }}
+      is-unicorn:
+        value: ${{ jobs.install.outputs.is-unicorn }}
+env:
+  COMPOSE_HTTP_TIMEOUT: 180
+  SKIP_GENERATED_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-generated-cache') }}
+  NX_AFFECTED_ALL: ${{ inputs.force_all_to_be_affected || contains(github.event.pull_request.labels.*.name, 'nx-affected-all') }}
+  DISABLE_CHUNKS: 'true'
+  DISABLE_GROUPING: 'false'
+  DISABLE_PROBLEMATIC: 'false'
+  CHUNK_SIZE: '8'
+  MAX_JOBS: '3'
+  NX_PARALLEL: '2'
+  NX_MAX_PARALLEL: '4'
+  NX_TASKS_RUNNER: ci
+  NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+  RUNS_ON_BUCKET_NAME: ${{ vars.RUNS_ON_BUCKET_NAME }}
+  AWS_REGION: eu-west-1
+  GENERATED_FILES: ${{ github.sha }}.tar.gz
+  AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
+  SERVERSIDE_FEATURES_ON: ''
+  DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com
+  DOCKER_BASE_IMAGE_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/ecr-public
+  CI_DEBUG: ${{ contains(github.event.pull_request.labels.*.name, 'ci debug') }}
+  SKIP_TESTS: ${{ contains(github.event.pull_request.labels.*.name, 'test nothing') }}
+  DEPLOY_FEATURE: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
+  YARN_ENABLE_HARDENED_MODE: '0'
+
+jobs:
+  install:
+    outputs:
+      MQ_SHA: ${{ steps.prepare-merge-queue.outputs.GIT_SHA }}
+      MQ_HELM_VALUES_BRANCH: ${{ steps.prepare-merge-queue.outputs.HELM_VALUES_BRANCH }}
+      MQ_DOCKER_TAG: ${{ steps.prepare-merge-queue.outputs.DOCKER_TAG }}
+      MQ_ARTIFACT_NAME: ${{ steps.prepare-merge-queue.outputs.ARTIFACT_NAME }}
+      MQ_GIT_BRANCH: ${{ steps.prepare-merge-queue.outputs.GIT_BRANCH }}
+      MQ_SHOULD_RUN_BUILD: ${{ steps.prepare-merge-queue.outputs.SHOULD_RUN_BUILD }}
+      LINT_CHUNKS: ${{ steps.lint_projects.outputs.CHUNKS }}
+      TEST_CHUNKS: ${{ steps.test_projects.outputs.CHUNKS }}
+      E2E_CHUNKS: ${{ steps.e2e_projects.outputs.CHUNKS }}
+      BUILD_CHUNKS: ${{ steps.build_projects.outputs.CHUNKS }}
+      DOCKER_CHUNKS: ${{ steps.docker_projects.outputs.BUILD_CHUNKS }}
+      E2E_BUILD_ID: ${{ steps.e2e_projects.outputs.E2E_BUILD_ID }}
+      NX_HEAD: ${{ steps.export-sha.outputs.NX_HEAD }}
+      NX_BASE: ${{ steps.export-sha.outputs.NX_BASE }}
+      DEPLOY_FEATURE: ${{ steps.set-outputs.outputs.DEPLOY_FEATURE }}
+      is-unicorn: ${{ steps.unicorn.outputs.is-unicorn }}
+    runs-on: arc-shared
+    permissions:
+      contents: 'read'
+      actions: 'read'
+    steps:
+      - name: Set outputs
+        id: set-outputs
+        run: |
+          echo "DEPLOY_FEATURE: $DEPLOY_FEATURE"
+          echo "DEPLOY_FEATURE=${DEPLOY_FEATURE}" >> "$GITHUB_OUTPUT"
+
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+
+      - name: load-deps
+        uses: ./.github/actions/load-deps
+
+      - id: get-branch
+        env:
+          RAW_REF: ${{ inputs.main_branch }}
+        run: |
+          echo "MAIN_BRANCH=${RAW_REF#refs/heads/}" >> "$GITHUB_OUTPUT"
+          echo "MAIN_BRANCH=${RAW_REF#refs/heads/}"
+
+      - name: Derive appropriate SHAs
+        if: ${{ inputs.run_merge_queue == false && !github.event.localrun }}
+        uses: nrwl/nx-set-shas@v4
+        with:
+          main-branch-name: ${{ steps.get-branch.outputs.MAIN_BRANCH }}
+
+      - name: Set base/head sha output
+        id: export-sha
+        shell: bash
+        env:
+          MAIN_BRANCH: ${{ steps.get-branch.outputs.MAIN_BRANCH }}
+          RUN_MERGE_QUEUE_INPUT: ${{ inputs.run_merge_queue }}
+        run: |
+          if [[ "$RUN_MERGE_QUEUE_INPUT" == "true" ]]; then
+            # In merge queue we always want to use the last
+            # commit as head - last commit sha is alway succesful
+            # since else it won't get merged!
+            # checkout this PR: https://github.com/nrwl/nx-set-shas/pull/145/files
+            # when this gets merged we can remove this hack!
+            #
+            # If we do not do this we will get the wrong base sha
+            # :(
+            NX_HEAD="$GITHUB_SHA"
+            NX_BASE=$(git rev-parse HEAD^1)
+            echo "NX_HEAD=$NX_HEAD" >> "$GITHUB_OUTPUT"
+            echo "NX_BASE=$NX_BASE" >> "$GITHUB_OUTPUT"
+            echo "HEAD=$NX_HEAD" >> "$GITHUB_ENV"
+            echo "BASE=$NX_BASE" >> "$GITHUB_ENV"
+            exit 0
+          fi
+          echo "NX_HEAD=$NX_HEAD" >> "$GITHUB_OUTPUT"
+          echo "NX_BASE=$NX_BASE" >> "$GITHUB_OUTPUT"
+          # NOTE: we reference BASE and HEAD elsewhere
+          echo "HEAD=$NX_HEAD" >> "$GITHUB_ENV"
+          echo "BASE=$NX_BASE" >> "$GITHUB_ENV"
+          if [[ "$MAIN_BRANCH" == release/* ]]; then
+            echo "SKIP_JUDICIAL=true" >> "$GITHUB_OUTPUT"
+            echo "SKIP_JUDICIAL=true" >> "$GITHUB_ENV"
+            export SKIP_JUDICIAL="true"
+          else
+            echo "SKIP_JUDICIAL=false" >> "$GITHUB_OUTPUT"
+            echo "SKIP_JUDICIAL=false" >> "$GITHUB_ENV"
+            export SKIP_JUDICIAL="false"
+          fi
+          echo "Skipping judicial: $SKIP_JUDICIAL"
+          echo "Current base SHA is $NX_BASE and head SHA is $NX_HEAD"
+          echo "{\"base_sha\": \"$NX_BASE\", \"head_sha\":\"$NX_HEAD\"}" > event.json
+
+      - name: Git bot config
+        id: git-bot-config
+        run: |
+          git config --global user.email "ci@island.is"
+          git config --global user.name "CI Bot"
+      - name: Prepare merge queue
+        id: prepare-merge-queue
+        if: ${{ inputs.run_merge_queue == true }}
+        run: |
+          node scripts/ci/docker/generate-tag.mjs
+
+      # This is to increase the retention days for our GitHub Actions run events
+      # See this for more information:
+      # https://github.blog/changelog/2020-10-08-github-actions-ability-to-change-retention-days-for-artifacts-and-logs/
+      - name: Keep PR run event
+        uses: actions/upload-artifact@b18b1d32f3f31abcdc29dee3f2484801fe7822f4
+
+        # Don't run this step locally
+        if: ${{ !github.event.localrun && inputs.run_merge_queue == false }}
+        with:
+          name: pr-event
+          path: event.json
+          retention-days: 90
+          include-hidden-files: true
+          if-no-files-found: error
+
+      - name: test-everything
+        uses: ./.github/actions/test-everything
+
+      - name: Set unicorn
+        id: unicorn
+        env:
+          NX_BASE: ${{ steps.export-sha.outputs.NX_BASE }}
+          NX_HEAD: ${{ steps.export-sha.outputs.NX_HEAD }}
+        run: |
+          meta_obj="{\"head\": \"${NX_HEAD}\", \"base\": \"${NX_BASE}\" }"
+          is_unicorn=$(node scripts/ci/unicorn-utils.mjs is-unicorn "$meta_obj")
+          unicorns=$(node scripts/ci/unicorn-utils.mjs show-unicorns "$meta_obj")
+          unicorns_json=$(node scripts/ci/unicorn-utils.mjs show-unicorns "$meta_obj" --json)
+          echo is-unicorn="$is_unicorn" | tee -a "$GITHUB_OUTPUT"
+          echo unicorns="$unicorns" | tee -a "$GITHUB_OUTPUT"
+          echo unicorn-chunks="$unicorns_json" | tee -a "$GITHUB_OUTPUT"
+
+      - name: Prepare lint targets
+        id: lint_projects
+        env:
+          # Linting is easy, no need to split/chunk it
+          DISABLE_CHUNKS: 'true'
+          DISABLE_GROUPING: 'true'
+          DISABLE_PROBLEMATIC: 'true'
+        run: |
+          set -euo pipefail
+          CHUNKS="$(./scripts/ci/generate-chunks.sh lint)"
+          if [[ "$CHUNKS" != "[]" ]]; then
+            echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Prepare test targets
+        id: test_projects
+        if: ${{ steps.set-outputs.outputs.DEPLOY_FEATURE != 'true' }}
+        run: |
+          set -euo pipefail
+          CHUNKS="$(./scripts/ci/generate-chunks.sh test)"
+          if [[ "$CHUNKS" != "[]" ]]; then
+            echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Prepare e2e targets
+        id: e2e_projects
+        if: ${{ steps.set-outputs.outputs.DEPLOY_FEATURE != 'true' }}
+        env:
+          CHUNK_SIZE: 1
+        run: |
+          set -euo pipefail
+          CHUNKS="$(./scripts/ci/generate-chunks.sh e2e)"
+          if [[ "$CHUNKS" != "[]" ]]; then
+            echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
+          fi
+          echo E2E_BUILD_ID="$GITHUB_RUN_ID-$GITHUB_RUN_NUMBER-$(uuidgen)" >> "$GITHUB_OUTPUT"
+
+      - name: Prepare build targets
+        id: build_projects
+        if: ${{ steps.set-outputs.outputs.DEPLOY_FEATURE != 'true' }}
+        run: |
+          set -euo pipefail
+          CHUNKS="$(./scripts/ci/generate-chunks.sh build)"
+          if [[ "$CHUNKS" != "[]" ]]; then
+            echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Prepare docker build targets
+        id: docker_projects
+        if: ${{ steps.set-outputs.outputs.DEPLOY_FEATURE != 'true' }}
+        run: |
+          set -euo pipefail
+          CHUNKS="$(./scripts/ci/generate-docker-chunks.sh "docker-express" "docker-express-yarn" "docker-next" "docker-static" "docker-playwright" "docker-jest")"
+          echo "CHUNKS: '$CHUNKS'"
+          if [[ "$CHUNKS" != "[]" ]]; then
+            echo "BUILD_CHUNKS=$(echo "$CHUNKS" | jq -cM '. | map("\(.|tostring)")')" >> "$GITHUB_OUTPUT"
+            echo "CHUNKS='$CHUNKS'" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: License audit Node modules
+        run: ./scripts/ci/20_license-audit.sh
+
+      - name: Check user permissions
+        uses: actions-cool/check-user-permission@v2
+        id: check-permission
+        # This fails locally without a token, and only prevents "admin" label usage
+        if: ${{ !github.event.localrun && !inputs.skip_user_check }}
+
+      - name: Set magic env if test-everything label is set
+        if: ${{ contains(github.event.pull_request.labels.*.name, 'test everything') && steps.check-permission.outcome == 'success' && steps.check-permission.outputs['user-permission'] == 'admin' }}
+        run: |
+          echo "AFFECTED_ALL=7913-$GITHUB_HEAD_REF" >> "$GITHUB_ENV"
+
+      - name: Warn if user does not have the required permissions
+        if: ${{ contains(github.event.pull_request.labels.*.name, 'test everything') && steps.check-permission.outcome == 'success'&& steps.check-permission.outputs['user-permission'] != 'admin' }}
+        run: |
+          echo "## WARN permissions" >> "$GITHUB_STEP_SUMMARY"
+          echo "User '$GITHUB_ACTOR' does not have the required permissions to apply the 'test everything' label" >> "$GITHUB_STEP_SUMMARY"

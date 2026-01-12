@@ -1,16 +1,27 @@
 import { ApiPropertyOptional } from '@nestjs/swagger'
-import { OrganizationDto } from '../../../organizations/models/dto/organization.dto'
+import { CompletedSectionInfo } from '../../../../dataTypes/completedSectionInfo.model'
+import { Dependency } from '../../../../dataTypes/dependency.model'
+import { LanguageType } from '../../../../dataTypes/languageType.model'
+import { FormCertificationTypeDto } from '../../../formCertificationTypes/models/dto/formCertificationType.dto'
 import { SectionDto } from '../../../sections/models/dto/section.dto'
+import { ApplicationEventDto } from './applicationEvent.dto'
+import { ValueDto } from './value.dto'
 
 export class ApplicationDto {
   @ApiPropertyOptional()
   id?: string
 
-  @ApiPropertyOptional({ type: OrganizationDto })
-  organization?: OrganizationDto
+  @ApiPropertyOptional({ type: LanguageType })
+  organizationName?: LanguageType
 
   @ApiPropertyOptional()
   formId?: string
+
+  @ApiPropertyOptional({ type: LanguageType })
+  formName?: LanguageType
+
+  @ApiPropertyOptional()
+  isTest?: boolean
 
   @ApiPropertyOptional()
   slug?: string
@@ -21,6 +32,42 @@ export class ApplicationDto {
   @ApiPropertyOptional({ type: Date })
   modified?: Date
 
+  @ApiPropertyOptional({ type: Date })
+  submittedAt?: Date
+
+  @ApiPropertyOptional({ type: [Dependency] })
+  dependencies?: Dependency[]
+
+  @ApiPropertyOptional({ type: [String] })
+  completed?: string[]
+
+  @ApiPropertyOptional()
+  status?: string
+
+  @ApiPropertyOptional()
+  allowProceedOnValidationFail?: boolean
+
+  @ApiPropertyOptional()
+  hasSummaryScreen?: boolean
+
+  @ApiPropertyOptional()
+  hasPayment?: boolean
+
+  @ApiPropertyOptional({ type: [ApplicationEventDto] })
+  events?: ApplicationEventDto[]
+
   @ApiPropertyOptional({ type: [SectionDto] })
   sections?: SectionDto[]
+
+  @ApiPropertyOptional({ type: [ValueDto] })
+  files?: ValueDto[]
+
+  @ApiPropertyOptional({ type: [FormCertificationTypeDto] })
+  certificationTypes?: FormCertificationTypeDto[]
+
+  @ApiPropertyOptional({ type: CompletedSectionInfo })
+  completedSectionInfo?: CompletedSectionInfo
+
+  submissionServiceUrl?: string
+  validationServiceUrl?: string
 }

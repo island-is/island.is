@@ -15,9 +15,8 @@ import {
 import { navigateTo } from '../../lib/deep-linking'
 import {
   GenericLicenseType,
-  GetIdentityDocumentQuery,
+  GenericUserLicense,
   ListLicensesQuery,
-  useGetIdentityDocumentQuery,
   useListLicensesQuery,
 } from '../../graphql/types/schema'
 import illustrationSrc from '../../assets/illustrations/le-retirement-s3.png'
@@ -30,9 +29,7 @@ const Host = styled.View`
 
 interface LicenseModuleProps {
   data: ListLicensesQuery | undefined
-  dataPassport: GetIdentityDocumentQuery | undefined
   loading: boolean
-  loadingPassport: boolean
   error?: ApolloError | undefined
 }
 
@@ -48,7 +45,7 @@ const validateLicensesInitialData = ({
   }
   // We only want to show the widget for the first time if the user has driving license
   if (
-    data?.genericLicenses?.some(
+    data?.genericLicenseCollection?.licenses?.some(
       (license) => license.license.type === GenericLicenseType.DriversLicense,
     )
   ) {
@@ -58,55 +55,23 @@ const validateLicensesInitialData = ({
   return false
 }
 
-const useGetLicensesData = ({ skipFetching }: { skipFetching: boolean }) => {
-  // Query list of licenses
-  const { data, loading, error, refetch } = useListLicensesQuery({
-    variables: {
-      input: {
-        includedTypes: [
-          GenericLicenseType.DriversLicense,
-          GenericLicenseType.AdrLicense,
-          GenericLicenseType.MachineLicense,
-          GenericLicenseType.FirearmLicense,
-          GenericLicenseType.DisabilityLicense,
-          GenericLicenseType.PCard,
-          GenericLicenseType.Ehic,
-          GenericLicenseType.HuntingLicense,
-        ],
-      },
-    },
-    fetchPolicy: 'cache-first',
-    skip: skipFetching,
-  })
+const isLicenseEmptyStateOrChildLicense = (license: GenericUserLicense) => {
+  const isPassportOrIdentityDocument =
+    license.license.type === GenericLicenseType.Passport ||
+    license.license.type === GenericLicenseType.IdentityDocument
 
-  // Additional licenses
-  const {
-    data: dataPassport,
-    loading: loadingPassport,
-    error: errorPassport,
-    refetch: refetchPassport,
-  } = useGetIdentityDocumentQuery({ skip: skipFetching })
+  // We receive an "empty" license item if the user has no passport or identity document
+  // We don't want to show them on the home screen
+  const noLicense =
+    isPassportOrIdentityDocument &&
+    !license?.payload?.metadata?.licenseNumber &&
+    !license?.payload?.data?.length
 
-  return {
-    data,
-    dataPassport,
-    loading,
-    loadingPassport,
-    error,
-    errorPassport,
-    refetch,
-    refetchPassport,
-  }
+  return !!(noLicense || license?.isOwnerChildOfUser)
 }
 
 const LicensesModule = React.memo(
-  ({
-    data,
-    dataPassport,
-    loading,
-    loadingPassport,
-    error,
-  }: LicenseModuleProps) => {
+  ({ data, loading, error }: LicenseModuleProps) => {
     const theme = useTheme()
     const intl = useIntl()
 
@@ -114,20 +79,16 @@ const LicensesModule = React.memo(
       return null
     }
 
-    const licenses = data?.genericLicenses
-    const passport = dataPassport?.getIdentityDocument
+    const licenses = data?.genericLicenseCollection?.licenses
 
-    const count = licenses?.length ?? 0 + (passport ? 1 : 0)
+    const count = licenses?.length ?? 0
 
-    const allLicenses = [...(licenses ?? []), ...(passport ?? [])]
+    const allLicenses = [...(licenses ?? [])]
     const viewPagerItemWidth = screenWidth - theme.spacing[2] * 3
 
     const items = allLicenses
-      .filter(
-        (license) =>
-          license.__typename === 'GenericUserLicense' ||
-          license.__typename === 'IdentityDocumentModel',
-      )
+      .filter((license) => license.__typename === 'GenericUserLicense')
+      ?.filter((license) => !isLicenseEmptyStateOrChildLicense(license))
       ?.slice(0, 3)
       .map((item, index) => (
         <WalletItem
@@ -182,7 +143,7 @@ const LicensesModule = React.memo(
               <FormattedMessage id="homeOptions.licenses" />
             </Heading>
           </TouchableOpacity>
-          {(loading || loadingPassport) && !data ? (
+          {loading && !data ? (
             <GeneralCardSkeleton height={104} />
           ) : (
             <>
@@ -213,4 +174,4 @@ const LicensesModule = React.memo(
   },
 )
 
-export { LicensesModule, validateLicensesInitialData, useGetLicensesData }
+export { LicensesModule, validateLicensesInitialData, useListLicensesQuery }

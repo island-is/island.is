@@ -13,6 +13,7 @@ export const serviceSetup = (services: {
     .image('consultation-portal')
     .namespace('consultation-portal')
     .codeOwner(CodeOwners.Advania)
+    .serviceAccount('consultation-portal')
     .liveness('/liveness')
     .readiness('/liveness')
     .replicaCount({
@@ -46,8 +47,7 @@ export const serviceSetup = (services: {
       },
     })
     .secrets({
-      DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID',
-      DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN',
+      DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN',
       IDENTITY_SERVER_SECRET: '/k8s/consultation-portal/IDENTITY_SERVER_SECRET',
     })
     .ingress({

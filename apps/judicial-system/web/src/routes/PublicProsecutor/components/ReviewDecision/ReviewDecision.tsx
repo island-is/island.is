@@ -2,12 +2,12 @@ import { Dispatch, FC, SetStateAction, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Box, RadioButton, Text } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import { RadioButton, Text } from '@island.is/island-ui/core'
+import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
-  isPublicProsecutor,
-  isPublicProsecutorUser,
+  isPublicProsecutionOfficeUser,
+  isPublicProsecutionUser,
 } from '@island.is/judicial-system/types'
 import {
   BlueBox,
@@ -61,7 +61,7 @@ export const ReviewDecision: FC<Props> = (props) => {
       indictmentReviewDecision: indictmentReviewDecision,
     })
     if (updateSuccess) {
-      router.push(constants.CASES_ROUTE)
+      router.push(getStandardUserDashboardRoute(user))
     }
   }
 
@@ -80,12 +80,12 @@ export const ReviewDecision: FC<Props> = (props) => {
     },
   ]
 
-  if (!(isPublicProsecutor(user) || isPublicProsecutorUser(user))) {
+  if (!(isPublicProsecutionUser(user) || isPublicProsecutionOfficeUser(user))) {
     return null
   }
 
   return (
-    <Box marginBottom={5}>
+    <>
       <SectionHeading
         title={fm(strings.title, { isFine })}
         description={
@@ -128,13 +128,17 @@ export const ReviewDecision: FC<Props> = (props) => {
               reviewerDecision: indictmentReviewDecision,
             },
           )}
-          primaryButtonText={fm(strings.reviewModalPrimaryButtonText)}
-          secondaryButtonText={fm(strings.reviewModalSecondaryButtonText)}
+          primaryButton={{
+            text: fm(strings.reviewModalPrimaryButtonText),
+            onClick: handleReviewDecision,
+          }}
+          secondaryButton={{
+            text: fm(strings.reviewModalSecondaryButtonText),
+            onClick: () => setModalVisible(undefined),
+          }}
           onClose={() => setModalVisible(undefined)}
-          onPrimaryButtonClick={handleReviewDecision}
-          onSecondaryButtonClick={() => setModalVisible(undefined)}
         />
       )}
-    </Box>
+    </>
   )
 }

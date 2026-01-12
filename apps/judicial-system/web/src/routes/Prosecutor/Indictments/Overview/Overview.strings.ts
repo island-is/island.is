@@ -135,4 +135,16 @@ export const overview = {
     description:
       'Texti á takka til að bæta við skjölum á Yfirlit ákæru skefi í ákærum.',
   }),
+  indictmentCancelledTitle: defineMessage({
+    id: 'judicial.system.indictments:overview.indictment_cancelled_title',
+    defaultMessage: 'Mál afturkallað',
+    description:
+      'Texti í info boxi þegar ákæra hefur verið afturkölluð á Yfirlit ákæru skefi í ákærum.',
+  }),
+  indictmentCancelledMessage: defineMessage({
+    id: 'judicial.system.indictments:overview.indictment_cancelled_message',
+    defaultMessage: 'Dómstóll mun ljúka máli með afturköllun.',
+    description:
+      'Texti í info boxi þegar ákæra hefur verið afturkölluð á Yfirlit ákæru skefi í ákærum.',
+  }),
 }

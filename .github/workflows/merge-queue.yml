@@ -1,30 +1,327 @@
 name: Validate code in the merge queue (post merge)
 
 on:
-  workflow_dispatch:
+  workflow_dispatch: {}
   merge_group:
 
+defaults:
+  run:
+    shell: bash -euxo pipefail {0}
+
+concurrency:
+  group: merge-queue-post-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+env:
+  ACTIONS_STEP_DEBUG: 'true'
+  DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com
+  DOCKER_BASE_IMAGE_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/ecr-public
+  SPINNAKER_URL: https://spinnaker-gate.shared.devland.is
+  COMPOSE_HTTP_TIMEOUT: 180
+  GITHUB_ACTIONS_CACHE_URL: https://cache.dev01.devland.is/
+  NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+  NX_TASKS_RUNNER: ci
+  CONFIGCAT_MAIN_CONFIG_ID: 08d8c761-021c-46f0-8671-6244663a372f
+  CONFIGCAT_MOBILE_APP_CONFIG_ID: 08daf234-7573-4b3b-85f6-189fc7502542
+  DISABLE_CHUNKS: 'false'
+  DISABLE_GROUPING: 'false'
+  DISABLE_PROBLEMATIC: 'false'
+  CHUNK_SIZE: '3'
+  MAX_JOBS: '2'
+  NX_PARALLEL: '2'
+  NX_MAX_PARALLEL: '4'
+  NODE_IMAGE_VERSION: 20
+  RUNS_ON_BUCKET_NAME: ${{ vars.RUNS_ON_BUCKET_NAME }}
+  AWS_REGION: eu-west-1
+  AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
+  SERVERSIDE_FEATURES_ON: ''
+  GENERATED_FILES: ${{ github.sha }}.tar.gz
+  YARN_ENABLE_HARDENED_MODE: '0'
+
 jobs:
-  success:
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+  pre-checks:
+    uses: ./.github/workflows/pre-checks.yml
+    secrets: inherit
+  prepare:
+    permissions:
+      contents: 'read'
+      actions: 'read'
+    uses: ./.github/workflows/install.yml
+    secrets: inherit
+    with:
+      run_merge_queue: true
+      force_all_to_be_affected: ${{ github.event_name == 'workflow_dispatch' }}
+      main_branch: ${{ github.event.merge_group.base_ref || github.ref_name }}
+    needs:
+      - pre-checks
+  docker-build:
+    needs:
+      - prepare
+      - pre-checks
+    runs-on: arc-shared
+    if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && needs.prepare.outputs.DOCKER_CHUNKS }}
+    permissions:
+      actions: read
+      contents: read
+    env:
+      # Just so this is not an unassigned variable
+      AFFECTED_ALL: ''
+      DOCKER_TAG: ${{ needs.prepare.outputs.MQ_DOCKER_TAG}}
+      GIT_BRANCH: ${{ needs.prepare.outputs.MQ_GIT_BRANCH }}
+      GIT_COMMIT_SHA: ${{ needs.prepare.outputs.MQ_SHA }}
+      # Fix this
+      NODE_IMAGE_VERSION: ${{ needs.pre-checks.outputs.NODE_IMAGE_VERSION}}
+      PUBLISH: true
+      DISABLE_CHUNKS: true
+      MAX_JOBS: 3
+      NX_PARALLEL: 1
+    strategy:
+      fail-fast: false
+      matrix:
+        chunk: ${{ fromJson(needs.prepare.outputs.DOCKER_CHUNKS) }}
     steps:
-      - name: Dump GitHub context
-        env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}
+      - name: Gather apps
+        id: gather
         run: |
-          echo "$GITHUB_CONTEXT"
-      - name: Announce success
-        run: echo "Build is successful"
+          set -euo pipefail
+          AFFECTED_PROJECTS="$(echo '${{ matrix.chunk }}' | jq -r '.projects')"
+          DOCKER_TYPE="$(echo '${{ matrix.chunk }}' | jq -r '.docker_type')"
+          APP_HOME="$(echo '${{ matrix.chunk }}' | jq -r '.home')"
+          APP_DIST_HOME="$(echo '${{ matrix.chunk }}' | jq -r '.dist')"
+          {
+            echo "AFFECTED_PROJECTS=$AFFECTED_PROJECTS"
+            echo "DOCKER_TYPE=$DOCKER_TYPE"
+            echo "APP_HOME=$APP_HOME"
+            echo "APP_DIST_HOME=$APP_DIST_HOME"
+          } >> "$GITHUB_ENV"
+        continue-on-error: true
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+      - name: Set id for matrix
+        run: |
+          node ./scripts/ci/docker/create-id.mjs
+      - name: load-deps
+        uses: ./.github/actions/load-deps
+      - name: Docker login to ECR repo
+        if: steps.gather.outcome == 'success'
+        run: ./scripts/ci/docker-login-ecr.sh
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Prepare Docker build arguments
+        id: dockerargs
+        if: steps.gather.outcome == 'success'
+        env:
+          DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
+        run: |
+          set -x
+          # Strip protocol prefix and .git postfix
+          SERVER_URL="${{ github.server_url }}/${{ github.repository }}"
+          SERVER_URL="${SERVER_URL#*://}"
+          SERVER_URL="${SERVER_URL%.git}"
+          build_args=(
+            --build-arg="DOCKER_IMAGE_REGISTRY=${DOCKER_BASE_IMAGE_REGISTRY}"
+            --build-arg="NODE_IMAGE_VERSION=${NODE_IMAGE_VERSION}"
+            --build-arg="GIT_BRANCH=${GIT_BRANCH}"
+            --build-arg="GIT_COMMIT_SHA=${GIT_COMMIT_SHA}"
+            --build-arg="GIT_REPOSITORY_URL=${SERVER_URL}"
+            --build-arg="NX_PARALLEL=${NX_PARALLEL}"
+            --build-arg="NX_MAX_PARALLEL=${NX_MAX_PARALLEL}"
+            --build-arg="NX_TASKS_RUNNER=ci"
+          )
+          export EXTRA_DOCKER_BUILD_ARGS="${build_args[*]}"
+          echo "EXTRA_DOCKER_BUILD_ARGS=${EXTRA_DOCKER_BUILD_ARGS}" >> "${GITHUB_ENV}"
+
+          # Create a temporary file with the NX_CLOUD_ACCESS_TOKEN
+          echo "${{ secrets.NX_CLOUD_ACCESS_TOKEN }}" > nx_cloud_access_token.txt
+
+          # Add secret to EXTRA_DOCKER_BUILD_ARGS
+          echo "EXTRA_DOCKER_BUILD_ARGS=${EXTRA_DOCKER_BUILD_ARGS} --secret id=nx_cloud_access_token,src=nx_cloud_access_token.txt" >> "${GITHUB_ENV}"
+
+      - name: Check if cached buildx image exists
+        id: cache-check
+        run: |
+          if ! docker pull ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1 ; then
+            docker pull docker.io/moby/buildkit:buildx-stable-1
+            docker tag docker.io/moby/buildkit:buildx-stable-1 ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
+            docker push ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
+          fi
+
+      - name: Building Docker images
+        continue-on-error: true
+        id: dockerbuild
+        if: steps.gather.outcome == 'success'
+        env:
+          GIT_COMMIT_SHA: ${{ github.sha }}
+          DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
+          S3_DOCKER_CACHE_BUCKET: ${{ vars.S3_DOCKER_CACHE_BUCKET }}
+        run: |
+          set -x
+          echo "Node image tag is: '${NODE_IMAGE_VERSION}'"
+          echo "Docker build args are: 'EXTRA_DOCKER_BUILD_ARGS'"
+          export EXTRA_DOCKER_BUILD_ARGS
+          ./scripts/ci/run-in-parallel.sh "90_${DOCKER_TYPE}"
+
+      - name: Building Docker images Retry
+        if: steps.gather.outcome == 'success' && steps.dockerbuild.outcome == 'failure'
+        env:
+          GIT_COMMIT_SHA: ${{ github.sha }}
+          DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
+          S3_DOCKER_CACHE_BUCKET: ${{ vars.S3_DOCKER_CACHE_BUCKET }}
+        run: |
+          set -x
+          echo "Node image tag is: '${NODE_IMAGE_VERSION}'"
+          echo "Docker build args are: 'EXTRA_DOCKER_BUILD_ARGS'"
+          export EXTRA_DOCKER_BUILD_ARGS
+          ./scripts/ci/run-in-parallel.sh "90_${DOCKER_TYPE}"
+      - name: Docker build output
+        uses: cloudposse/github-action-matrix-outputs-write@v1
+        with:
+          matrix-step-name: ${{ github.job }}
+          matrix-key: ${{ env.MATRIX_ID }}
+          outputs: |-
+            value: ${{ env.JSON_value }}
+            project: ${{ env.JSON_project }}
+            target: ${{ env.JSON_target }}
+            imageName: ${{ env.JSON_imageName }}
+            imageTag: ${{ env.JSON_imageTag }}
+
+  e2e:
+    uses: ./.github/workflows/e2e.yml
+    needs:
+      - prepare
+    if: ${{ needs.prepare.outputs.E2E_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' }}
+    secrets: inherit
+    with:
+      e2e_build_id: '${{ needs.prepare.outputs.E2E_BUILD_ID }}-${{ github.run_attempt }}'
+      nx_base: ${{ needs.prepare.outputs.NX_BASE }}
+      nx_head: ${{ needs.prepare.outputs.NX_HEAD }}
+      affected_projects: ${{ matrix.projects }}
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.prepare.outputs.E2E_CHUNKS) }}
+
+  tests:
+    needs:
+      - prepare
+    if: ${{ needs.prepare.outputs.TEST_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' }}
+    runs-on: arc-shared
+    timeout-minutes: 45
+    env:
+      AFFECTED_PROJECTS: ${{ matrix.projects }}
+      NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
+      NX_HEAD: ${{ needs.prepare.outputs.NX_HEAD }}
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+
+      - name: load-deps
+        uses: ./.github/actions/load-deps
+
+      - name: Run unit tests
+        uses: ./.github/actions/unit-test
+        with:
+          dd-api-key: '${{ secrets.DD_API_KEY }}'
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          docker-registry: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
+
+  success:
+    runs-on: arc-shared
+    if: ${{ !cancelled() }}
+    needs:
+      - prepare
+      - tests
+      - docker-build
+    steps:
+      - name: Check prepare success
+        run: '[[ ${{ needs.prepare.result }} == "success" ]] || exit 1'
+      - name: Check tests success
+        run: '[[ ${{ needs.tests.result }} != "failure" && ${{ needs.tests.result }} != "abandoned" && ${{ needs.tests.result }} != "cancelled" ]] || exit 1'
+      - name: Check build success
+        run: '[[ ${{ needs.docker-build.result }} != "failure" && ${{ needs.docker-build.result }} != "abandoned" && ${{ needs.docker-build.result }} != "cancelled" ]] || exit 1'
+      - name: Get docker-build output
+        uses: cloudposse/github-action-matrix-outputs-read@v1
+        id: read
+        with:
+          matrix-step-name: docker-build
+      - name: checkout
+        if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]' }}
+        uses: actions/checkout@v4
+
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+        if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]' }}
+
+      - name: load-deps
+        uses: ./.github/actions/load-deps
+        if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]' }}
+      - name: Prepare artifact to be uploaded
+        if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]' }}
+        env:
+          JSON_DATA: ${{ steps.read.outputs.result }}
+        run: |
+          node scripts/ci/docker/write-data.mjs
+      - name: Get manifest data
+        id: manifest
+        if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          node scripts/ci/docker/bootstrap.mjs
+          node scripts/ci/docker/get-data.mjs
+      - name: Update helm-values repository
+        uses: ./.github/actions/update-helm-values
+        if: ${{ steps.manifest.outputs.MQ_HAS_OUTPUT == 'true' && needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]' }}
+        with:
+          files: ${{ steps.manifest.outputs.MQ_CHANGED_FILES }}
+          ssh-key: ${{ secrets.HELM_VALUES_SSH_KEY }}
+          app-id: ${{ secrets.HELM_VALUES_APP_ID }}
+          branch: ${{ needs.prepare.outputs.MQ_HELM_VALUES_BRANCH }}
+          commit-msg: ${{ steps.manifest.outputs.MQ_COMMIT_MSG }}
+      - name: Update judicial system
+        id: judicial-system
+        if: ${{ github.event.merge_group.base_ref == 'refs/heads/main' && needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]'  }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SHOULD_DEPLOY_JUDICIAL: true
+        run: |
+          node scripts/ci/docker/get-data.mjs --deploy-judicial
+      - name: Update helm-values repository with judicial system DEV
+        uses: ./.github/actions/update-helm-values
+        if: ${{ steps.judicial-system.outputs.MQ_HAS_OUTPUT == 'true' }}
+        with:
+          files: ${{ steps.judicial-system.outputs.MQ_JUDICIAL_DEV }}
+          ssh-key: ${{ secrets.HELM_VALUES_SSH_KEY }}
+          app-id: ${{ secrets.HELM_VALUES_APP_ID }}
+          commit-msg: ${{ steps.judicial-system.outputs.MQ_COMMIT_MSG }}
+          branch: main
+
+      - name: Update helm-values repository with judicial system PROD
+        uses: ./.github/actions/update-helm-values
+        if: ${{ steps.judicial-system.outputs.MQ_HAS_OUTPUT == 'true' }}
+        with:
+          files: ${{ steps.judicial-system.outputs.MQ_JUDICIAL_PROD }}
+          ssh-key: ${{ secrets.HELM_VALUES_SSH_KEY }}
+          app-id: ${{ secrets.HELM_VALUES_APP_ID }}
+          commit-msg: ${{ steps.judicial-system.outputs.MQ_COMMIT_MSG }}
+          branch: release
+
+  # Remove this as a required status check and switch to something more meaningful
   codeowners-check:
     name: Lint CODEOWNERS
-    runs-on: ec2-runners
+    runs-on: arc-shared
     env:
       CHECK: 'false'
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-
     steps:
       - name: Codeowners validation
         run: |

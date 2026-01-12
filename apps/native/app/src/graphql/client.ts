@@ -2,7 +2,6 @@ import {
   ApolloClient,
   ApolloLink,
   defaultDataIdFromObject,
-  fromPromise,
   HttpLink,
   InMemoryCache,
   NormalizedCacheObject,
@@ -21,6 +20,7 @@ import { createMMKVStorage } from '../stores/mmkv'
 import { offlineStore } from '../stores/offline-store'
 import { MainBottomTabs } from '../utils/component-registry'
 import { getCustomUserAgent } from '../utils/user-agent'
+import { GenericUserLicense } from './types/schema'
 
 const apolloMMKVStorage = createMMKVStorage({ withEncryption: true })
 
@@ -46,11 +46,6 @@ const httpLink = new HttpLink({
   fetch,
 })
 
-const getNewToken = async () => {
-  await authStore.getState().refresh()
-  return authStore.getState().authorizeResult?.accessToken
-}
-
 const retryLink = new RetryLink({
   attempts: {
     max: 3,
@@ -63,84 +58,74 @@ const retryLink = new RetryLink({
   },
 })
 
-const errorLink = onError(
-  ({ graphQLErrors, networkError, forward, operation }) => {
-    if (graphQLErrors) {
-      if (graphQLErrors?.[0]?.message === 'Unauthorized') {
-        return fromPromise(
-          getNewToken().catch((error) => {
-            return
-          }),
-        )
-          .filter((value) => Boolean(value))
-          .flatMap((accessToken: any) => {
-            const oldHeaders = operation.getContext().headers
-            operation.setContext({
-              headers: {
-                ...oldHeaders,
-                authorization: `Bearer ${accessToken}`,
-              },
-            })
-            return forward(operation)
-          })
-      }
+const errorLink = onError(({ graphQLErrors, networkError }) => {
+  if (graphQLErrors) {
+    graphQLErrors.map((graphQLError) =>
+      console.log(`[GraphQL error]: ${JSON.stringify(graphQLError, null, 2)}`),
+    )
+  }
 
-      graphQLErrors.map(({ message, locations, path }) =>
-        console.log(
-          `[GraphQL error]: Message: ${message}, Location: ${JSON.stringify(
-            locations,
-          )}, Path: ${JSON.stringify(path)}`,
-        ),
-      )
-    }
+  if (networkError) {
+    console.log(`[Network error]: ${networkError}`)
 
-    if (networkError) {
-      console.log(`[Network error]: ${networkError}`)
+    // Detect possible OAuth needed
+    if (networkError.name === 'ServerParseError') {
+      const redirectUrl = (networkError as { response?: { url: string } })
+        .response?.url
+      if (
+        redirectUrl &&
+        redirectUrl.indexOf('cognito.shared.devland.is') >= 0
+      ) {
+        authStore.setState({ cognitoAuthUrl: redirectUrl })
 
-      // Detect possible OAuth needed
-      if (networkError.name === 'ServerParseError') {
-        const redirectUrl = (networkError as any).response?.url
-        if (
-          redirectUrl &&
-          redirectUrl.indexOf('cognito.shared.devland.is') >= 0
-        ) {
-          authStore.setState({ cognitoAuthUrl: redirectUrl })
-          if (config.isTestingApp && authStore.getState().authorizeResult) {
-            openNativeBrowser(cognitoAuthUrl(), MainBottomTabs)
-          }
+        if (config.isTestingApp && authStore.getState().authorizeResult) {
+          openNativeBrowser(cognitoAuthUrl(), MainBottomTabs)
         }
       }
     }
-  },
-)
-
-const getAndRefreshToken = () => {
-  const { authorizeResult, refresh } = authStore.getState()
-
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const isTokenAboutToExpire =
-    new Date(authorizeResult?.accessTokenExpirationDate ?? 0).getTime() <
-    Date.now() - 60 * 5 * 1000
-  if (isTokenAboutToExpire) {
-    // expires in less than 5 minutes, so refresh
-    refresh()
   }
+})
+
+const getAndRefreshToken = async () => {
+  const { refresh } = authStore.getState()
+  let { authorizeResult } = authStore.getState()
+
+  const timeUntilExpiration =
+    new Date(authorizeResult?.accessTokenExpirationDate ?? 0).getTime() -
+    Date.now()
+  const isTokenPerhapsExpired = timeUntilExpiration < 5 * 1000
+  const isTokenCloseToExpiring = timeUntilExpiration < 60 * 1000
+  if (isTokenPerhapsExpired) {
+    // get a new token to be safe
+    await refresh()
+    authorizeResult = authStore.getState().authorizeResult
+  } else if (isTokenCloseToExpiring) {
+    // expires in less than 60 seconds, so refresh in the background
+    refresh().catch((err) => {
+      console.error('Failed to refresh token in the background', err)
+    })
+  }
+
   return authorizeResult?.accessToken
 }
 
-const authLink = setContext(async (_, { headers }) => ({
-  headers: {
-    ...headers,
-    authorization: `Bearer ${getAndRefreshToken()}`,
-    'X-Cognito-Token': `Bearer ${
-      environmentStore.getState().cognito?.accessToken
-    }`,
-    'User-Agent': getCustomUserAgent(),
-    cookie: [authStore.getState().cookies]
-      .filter((x) => String(x) !== '')
-      .join('; '),
-  },
-}))
+const authLink = setContext(async (_, { headers }) => {
+  const token = await getAndRefreshToken()
+
+  return {
+    headers: {
+      ...headers,
+      authorization: `Bearer ${token}`,
+      'X-Cognito-Token': `Bearer ${
+        environmentStore.getState().cognito?.accessToken
+      }`,
+      'User-Agent': getCustomUserAgent(),
+      cookie: [authStore.getState().cookies]
+        .filter((x) => String(x) !== '')
+        .join('; '),
+    },
+  }
+})
 
 export const archivedCache = new Map()
 
@@ -183,6 +168,32 @@ const cache = new InMemoryCache({
             return archivedCache.get(id)
           },
         },
+      },
+    },
+    // Custom cache key for GenericUserLicense.
+    // The backend does not expose a single stable id, so we synthesise one from
+    // license.type and payload.metadata.licenseId. This must stay in sync with
+    // the fields selected in GenericUserLicenseFragment so list and detail
+    // queries for the same license share the same cache entry.
+    GenericUserLicense: {
+      keyFields: (object) => {
+        const licenseType = (object as GenericUserLicense).license?.type
+        const licenseId = (object as GenericUserLicense).payload?.metadata
+          ?.licenseId
+
+        if (licenseType && licenseId) {
+          // Composite key ensures no collisions between different license types
+          // that might share the same licenseId.
+          return `${licenseType}:${licenseId}`
+        }
+
+        if (licenseId) {
+          // Fallback when type is missing but licenseId is still unique enough.
+          return licenseId
+        }
+
+        // Last resort – let Apollo fall back to its default normalisation.
+        return defaultDataIdFromObject(object) ?? undefined
       },
     },
   },

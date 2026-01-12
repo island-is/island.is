@@ -45,6 +45,7 @@ import settings from '../../assets/icons/settings.png'
 import inboxRead from '../../assets/icons/inbox-read.png'
 import emptyIllustrationSrc from '../../assets/illustrations/le-company-s3.png'
 import { useBrowser } from '../../lib/use-browser'
+import { useLocale } from '../../hooks/use-locale'
 
 const LoadingWrapper = styled.View`
   padding-vertical: ${({ theme }) => theme.spacing[3]}px;
@@ -95,7 +96,7 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
   )
 
   const { data, loading, error, fetchMore } = useGetUserNotificationsQuery({
-    variables: { input: { limit: DEFAULT_PAGE_SIZE } },
+    variables: { input: { limit: DEFAULT_PAGE_SIZE }, locale: useLocale() },
   })
   const showError = error && !data
 
@@ -250,10 +251,7 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
     )
   }
 
-  const keyExtractor = useCallback(
-    (item: ListItem) => item.id.toString(),
-    [memoizedData],
-  )
+  const keyExtractor = useCallback((item: ListItem) => item.id.toString(), [])
 
   return (
     <>

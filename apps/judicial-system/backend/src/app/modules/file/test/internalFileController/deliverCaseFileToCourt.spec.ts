@@ -1,5 +1,5 @@
 import each from 'jest-each'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { NotFoundException } from '@nestjs/common'
 
@@ -13,10 +13,9 @@ import {
 import { createTestingFileModule } from '../createTestingFileModule'
 
 import { AwsS3Service } from '../../../aws-s3'
-import { Case } from '../../../case'
 import { CourtDocumentFolder, CourtService } from '../../../court'
+import { Case, CaseFile } from '../../../repository'
 import { DeliverResponse } from '../../models/deliver.response'
-import { CaseFile } from '../../models/file.model'
 
 interface Then {
   result: DeliverResponse
@@ -82,6 +81,7 @@ describe('InternalFileController - Deliver case file to court', () => {
     const caseFile = {
       id: fileId,
       key,
+      isKeyAccessible: true,
       name: fileName,
       type: fileType,
     } as CaseFile
@@ -137,17 +137,23 @@ describe('InternalFileController - Deliver case file to court', () => {
   })
 
   each`
-    caseFileCategory                                          | courtDocumentFolder
-    ${CaseFileCategory.COURT_RECORD}                          | ${CourtDocumentFolder.COURT_DOCUMENTS}
-    ${CaseFileCategory.RULING}                                | ${CourtDocumentFolder.COURT_DOCUMENTS}
-    ${CaseFileCategory.CRIMINAL_RECORD}                       | ${CourtDocumentFolder.CASE_DOCUMENTS}
-    ${CaseFileCategory.COST_BREAKDOWN}                        | ${CourtDocumentFolder.CASE_DOCUMENTS}
-    ${CaseFileCategory.CASE_FILE}                             | ${CourtDocumentFolder.CASE_DOCUMENTS}
-    ${CaseFileCategory.PROSECUTOR_APPEAL_BRIEF}               | ${CourtDocumentFolder.APPEAL_DOCUMENTS}
-    ${CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE}     | ${CourtDocumentFolder.APPEAL_DOCUMENTS}
-    ${CaseFileCategory.DEFENDANT_APPEAL_BRIEF}                | ${CourtDocumentFolder.APPEAL_DOCUMENTS}
-    ${CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE}      | ${CourtDocumentFolder.APPEAL_DOCUMENTS}
-    ${CaseFileCategory.APPEAL_RULING}                         | ${CourtDocumentFolder.APPEAL_DOCUMENTS}
+    caseFileCategory                                                | courtDocumentFolder
+    ${CaseFileCategory.COURT_RECORD}                                | ${CourtDocumentFolder.COURT_DOCUMENTS}
+    ${CaseFileCategory.RULING}                                      | ${CourtDocumentFolder.COURT_DOCUMENTS}
+    ${CaseFileCategory.CASE_FILE}                                   | ${CourtDocumentFolder.CASE_DOCUMENTS}
+    ${CaseFileCategory.PROSECUTOR_CASE_FILE}                        | ${CourtDocumentFolder.CASE_DOCUMENTS}
+    ${CaseFileCategory.DEFENDANT_CASE_FILE}                         | ${CourtDocumentFolder.CASE_DOCUMENTS}
+    ${CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE}             | ${CourtDocumentFolder.CASE_DOCUMENTS}
+    ${CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE} | ${CourtDocumentFolder.CASE_DOCUMENTS}
+    ${CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE}       | ${CourtDocumentFolder.CASE_DOCUMENTS}
+    ${CaseFileCategory.CRIMINAL_RECORD}                             | ${CourtDocumentFolder.CASE_DOCUMENTS}
+    ${CaseFileCategory.COST_BREAKDOWN}                              | ${CourtDocumentFolder.CASE_DOCUMENTS}
+    ${CaseFileCategory.CIVIL_CLAIM}                                 | ${CourtDocumentFolder.CASE_DOCUMENTS}
+    ${CaseFileCategory.PROSECUTOR_APPEAL_BRIEF}                     | ${CourtDocumentFolder.APPEAL_DOCUMENTS}
+    ${CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE}           | ${CourtDocumentFolder.APPEAL_DOCUMENTS}
+    ${CaseFileCategory.DEFENDANT_APPEAL_BRIEF}                      | ${CourtDocumentFolder.APPEAL_DOCUMENTS}
+    ${CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE}            | ${CourtDocumentFolder.APPEAL_DOCUMENTS}
+    ${CaseFileCategory.APPEAL_RULING}                               | ${CourtDocumentFolder.APPEAL_DOCUMENTS}
     `.describe(
     'indictment $caseFileCategory file upload to court folder $courtDocumentFolder',
     ({ caseFileCategory, courtDocumentFolder }) => {
@@ -166,6 +172,7 @@ describe('InternalFileController - Deliver case file to court', () => {
       const caseFile = {
         id: fileId,
         key,
+        isKeyAccessible: true,
         name: fileName,
         type: fileType,
         category: caseFileCategory,
@@ -202,7 +209,7 @@ describe('InternalFileController - Deliver case file to court', () => {
     const theCase = { id: caseId } as Case
     const fileId = uuid()
     const key = `${caseId}/${uuid()}/test.txt`
-    const caseFile = { id: fileId, key } as CaseFile
+    const caseFile = { id: fileId, key, isKeyAccessible: true } as CaseFile
     const content = Buffer.from('Test content')
     let then: Then
 
@@ -263,7 +270,7 @@ describe('InternalFileController - Deliver case file to court', () => {
     const theCase = { id: caseId } as Case
     const fileId = uuid()
     const key = `${caseId}/${uuid()}/test.txt`
-    const caseFile = { id: fileId, key } as CaseFile
+    const caseFile = { id: fileId, key, isKeyAccessible: true } as CaseFile
     let then: Then
 
     beforeEach(async () => {
@@ -273,9 +280,9 @@ describe('InternalFileController - Deliver case file to court', () => {
       then = await givenWhenThen(caseId, fileId, theCase, caseFile)
     })
 
-    it('should remove the key', () => {
+    it('should set isKeyAccessible to false', () => {
       expect(mockFileModel.update).toHaveBeenCalledWith(
-        { key: null },
+        { isKeyAccessible: false },
         { where: { id: fileId } },
       )
     })
@@ -291,7 +298,7 @@ describe('InternalFileController - Deliver case file to court', () => {
     const theCase = { id: caseId } as Case
     const fileId = uuid()
     const key = `${caseId}/${uuid()}/test.txt`
-    const caseFile = { id: fileId, key } as CaseFile
+    const caseFile = { id: fileId, key, isKeyAccessible: true } as CaseFile
     let then: Then
 
     beforeEach(async () => {
@@ -312,7 +319,7 @@ describe('InternalFileController - Deliver case file to court', () => {
     const theCase = { id: caseId } as Case
     const fileId = uuid()
     const key = `${caseId}/${uuid()}/test.txt`
-    const caseFile = { id: fileId, key } as CaseFile
+    const caseFile = { id: fileId, key, isKeyAccessible: true } as CaseFile
     let then: Then
 
     beforeEach(async () => {
@@ -335,7 +342,7 @@ describe('InternalFileController - Deliver case file to court', () => {
     const theCase = { id: caseId } as Case
     const fileId = uuid()
     const key = `${caseId}/${uuid()}/test.txt`
-    const caseFile = { id: fileId, key } as CaseFile
+    const caseFile = { id: fileId, key, isKeyAccessible: true } as CaseFile
     const content = Buffer.from('Test content')
     let then: Then
 
@@ -361,7 +368,7 @@ describe('InternalFileController - Deliver case file to court', () => {
     const theCase = { id: caseId } as Case
     const fileId = uuid()
     const key = `${caseId}/${uuid()}/test.txt`
-    const caseFile = { id: fileId, key } as CaseFile
+    const caseFile = { id: fileId, key, isKeyAccessible: true } as CaseFile
     const content = Buffer.from('Test content')
     let then: Then
 

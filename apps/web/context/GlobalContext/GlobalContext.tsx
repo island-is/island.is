@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { FC, createContext, useState } from 'react'
+import React, { createContext, FC, useState } from 'react'
+
+import type { LinkType } from '@island.is/web/hooks'
 
 export type NamespaceType = {
   [key: string]: any
@@ -10,9 +12,11 @@ export interface GlobalContextProps {
   isServiceWeb?: boolean
   contentfulIds: string[]
   resolveLinkTypeLocally?: boolean
+  linkType?: LinkType | null
   setGlobalNamespace: (ns: NamespaceType) => void
   setContentfulIds: (ids: string[]) => void
   setResolveLinkTypeLocally: (localResolution: boolean) => void
+  setLinkType: (linkType: LinkType | null) => void
 }
 
 export interface GlobalContextProviderProps {
@@ -24,9 +28,11 @@ export const GlobalContext = createContext<GlobalContextProps>({
   globalNamespace: {},
   contentfulIds: [],
   resolveLinkTypeLocally: false,
+  linkType: null,
   setGlobalNamespace: () => null,
   setContentfulIds: () => null,
   setResolveLinkTypeLocally: () => null,
+  setLinkType: () => null,
 })
 
 export const GlobalContextProvider: FC<
@@ -50,6 +56,13 @@ export const GlobalContextProvider: FC<
     }))
   }
 
+  const setLinkType = (linkType: LinkType | null) => {
+    setState((prevState) => ({
+      ...prevState,
+      linkType: linkType,
+    }))
+  }
+
   const initialState: GlobalContextProps = {
     globalNamespace: namespace,
     isServiceWeb,
@@ -57,6 +70,7 @@ export const GlobalContextProvider: FC<
     setGlobalNamespace,
     setContentfulIds,
     setResolveLinkTypeLocally,
+    setLinkType,
   }
 
   const [state, setState] = useState(initialState)

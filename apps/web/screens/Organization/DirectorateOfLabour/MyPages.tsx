@@ -70,46 +70,50 @@ const MyPages: CustomScreen<MyPagesProps> = ({
       minimal
       mainContent={
         <Box paddingBottom={8} paddingTop={[1, 1, 2]}>
-          <GridRow rowGap={5}>
-            <GridColumn span={['1/1', '1/1', '1/1', '4/7', '6/12']}>
-              <Text variant="h1" as="h1">
-                {formatMessage(m.mainTitle)}
-              </Text>
-
-              <Stack space={1}>
-                {webRichText(
-                  customPageData?.content ?? [],
-                  undefined,
-                  activeLocale,
-                )}
-              </Stack>
-            </GridColumn>
-            <GridColumn span={['1/1', '1/1', '1/1', '3/7', '6/12']}>
-              <Stack space={3}>
-                <CategoryCard
-                  heading={formatMessage(m.individualsLabel)}
-                  text={formatMessage(m.individualsDescription)}
-                  href={formatMessage(m.individualsHref)}
-                  src={formatMessage(m.individualsImageSrc)}
-                  alt=""
-                />
-                <CategoryCard
-                  heading={formatMessage(m.companyLabel)}
-                  text={formatMessage(m.companyDescription)}
-                  href={formatMessage(m.companyHref)}
-                  src={formatMessage(m.companyImageSrc)}
-                  alt=""
-                />
-                <CategoryCard
-                  heading={formatMessage(m.parentalLeaveLabel)}
-                  text={formatMessage(m.parentalLeaveDescription)}
-                  href={formatMessage(m.parentalLeaveHref)}
-                  src={formatMessage(m.parentalLeaveImageSrc)}
-                  alt=""
-                />
-              </Stack>
-            </GridColumn>
-          </GridRow>
+          <Stack space={5}>
+            <Text variant="h1" as="h1">
+              {formatMessage(m.mainTitle)}
+            </Text>
+            <GridRow
+              rowGap={5}
+              direction={[
+                'columnReverse',
+                'columnReverse',
+                'columnReverse',
+                'row',
+              ]}
+            >
+              <GridColumn span={['1/1', '1/1', '1/1', '4/7', '6/12']}>
+                <Stack space={1}>
+                  {webRichText(
+                    customPageData?.content ?? [],
+                    undefined,
+                    activeLocale,
+                  )}
+                </Stack>
+              </GridColumn>
+              <GridColumn span={['1/1', '1/1', '1/1', '3/7', '6/12']}>
+                <Stack space={3}>
+                  <CategoryCard
+                    heading={formatMessage(m.individualsLabel)}
+                    text={formatMessage(m.individualsDescription)}
+                    href={formatMessage(m.individualsHref)}
+                    src={formatMessage(m.individualsImageSrc)}
+                    alt=""
+                    autoStack={true}
+                  />
+                  <CategoryCard
+                    heading={formatMessage(m.companyLabel)}
+                    text={formatMessage(m.companyDescription)}
+                    href={formatMessage(m.companyHref)}
+                    src={formatMessage(m.companyImageSrc)}
+                    alt=""
+                    autoStack={true}
+                  />
+                </Stack>
+              </GridColumn>
+            </GridRow>
+          </Stack>
         </Box>
       }
     >
@@ -136,6 +140,7 @@ MyPages.getProps = async ({ apolloClient, locale }) => {
         input: {
           slug: organizationSlug,
           lang: locale as ContentLanguage,
+          subpageSlugs: [locale === 'is' ? 'minar-sidur' : 'my-pages'],
         },
       },
     }),
@@ -163,6 +168,10 @@ MyPages.getProps = async ({ apolloClient, locale }) => {
   const organizationNamespace = extractNamespaceFromOrganization(
     getOrganizationPage.organization,
   )
+
+  if (organizationNamespace?.myPagesJumpPageIsDisabled) {
+    throw new CustomNextError(404, 'VMST my pages link page has been disabled')
+  }
 
   return {
     organizationPage: getOrganizationPage,

@@ -39,17 +39,22 @@ export const CivilClaimantInfo: FC<CivilClaimantInfoProps> = (props) => {
               ? `${formatMessage(strings.lawyer)}: `
               : `${formatMessage(strings.spokesperson)}: `}
           </Text>
-          {RenderPersonalData(
-            civilClaimant.spokespersonName,
-            civilClaimant.spokespersonEmail,
-            civilClaimant.spokespersonPhoneNumber,
-            false,
-          )}
+          {RenderPersonalData({
+            name: civilClaimant.spokespersonName,
+            email: civilClaimant.spokespersonEmail,
+            phoneNumber: civilClaimant.spokespersonPhoneNumber,
+            breakSpaces: false,
+          })}
         </>
       ) : (
-        <Text>{`${formatMessage(strings.lawyer)}: ${formatMessage(
-          strings.noLawyer,
-        )}`}</Text>
+        <>
+          <Text
+            as="span"
+            whiteSpace="pre"
+            fontWeight="semiBold"
+          >{`${formatMessage(strings.lawyer)}: `}</Text>
+          <Text as="span">{`${formatMessage(strings.noLawyer)}`}</Text>
+        </>
       )}
     </>
   )

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common'
+import { MiddlewareConsumer, Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 
 import { signingModuleConfig } from '@island.is/dokobit-signing'
@@ -14,11 +14,16 @@ import {
 import { courtClientModuleConfig } from '@island.is/judicial-system/court-client'
 import { messageModuleConfig } from '@island.is/judicial-system/message'
 
+import { CaseContextMiddleware, RequestContextMiddleware } from './middleware'
 import {
   awsS3ModuleConfig,
   CaseModule,
   caseModuleConfig,
+  CaseTableModule,
   courtModuleConfig,
+  CourtSessionModule,
+  CriminalRecordModule,
+  criminalRecordModuleConfig,
   DefendantModule,
   EventLogModule,
   eventModuleConfig,
@@ -26,13 +31,19 @@ import {
   fileModuleConfig,
   IndictmentCountModule,
   InstitutionModule,
+  lawyerRegistryConfig,
+  LawyerRegistryModule,
   NotificationModule,
   notificationModuleConfig,
   PoliceModule,
   policeModuleConfig,
+  RepositoryModule,
+  StatisticsModule,
   SubpoenaModule,
   UserModule,
   userModuleConfig,
+  VerdictModule,
+  VictimModule,
 } from './modules'
 import { SequelizeConfigService } from './sequelizeConfig.service'
 
@@ -43,15 +54,23 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
     }),
     SharedAuthModule,
     CaseModule,
+    CourtSessionModule,
     DefendantModule,
     IndictmentCountModule,
     UserModule,
     InstitutionModule,
     FileModule,
+    CriminalRecordModule,
     NotificationModule,
     PoliceModule,
     EventLogModule,
     SubpoenaModule,
+    VerdictModule,
+    VictimModule,
+    CaseTableModule,
+    LawyerRegistryModule,
+    StatisticsModule,
+    RepositoryModule,
     ProblemModule.forRoot({ logAllErrors: true }),
     ConfigModule.forRoot({
       isGlobal: true,
@@ -65,13 +84,26 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
         caseModuleConfig,
         fileModuleConfig,
         notificationModuleConfig,
+        lawyerRegistryConfig,
         policeModuleConfig,
         userModuleConfig,
         awsS3ModuleConfig,
         eventModuleConfig,
         courtModuleConfig,
+        criminalRecordModuleConfig,
       ],
     }),
   ],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(RequestContextMiddleware).forRoutes('*')
+    consumer
+      .apply(CaseContextMiddleware)
+      .forRoutes(
+        '/api/case/:caseId',
+        '/api/internal/case/:caseId',
+        '/api/internal/case/indictment/:caseId',
+      )
+  }
+}

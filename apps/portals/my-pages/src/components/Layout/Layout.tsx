@@ -1,20 +1,26 @@
-import React, { FC, useState } from 'react'
-import Header from '../Header/Header'
 import { ToastContainer } from '@island.is/island-ui/core'
-import AuthOverlay from '../Loaders/AuthOverlay/AuthOverlay'
-import { useLocation } from 'react-router-dom'
 import { useNamespaces } from '@island.is/localization'
-import { GlobalAlertBannerSection } from '../AlertBanners/GlobalAlertBannerSection'
-import { useAlertBanners } from '@island.is/portals/my-pages/graphql'
-import { useMeasure } from 'react-use'
-import { useDynamicRoutesWithNavigation } from '@island.is/portals/my-pages/core'
 import { useActiveModule } from '@island.is/portals/core'
+import {
+  SearchPaths,
+  ServicePortalPaths,
+  useDynamicRoutesWithNavigation,
+} from '@island.is/portals/my-pages/core'
+import { useAlertBanners } from '@island.is/portals/my-pages/graphql'
+import { useFeatureFlagClient } from '@island.is/react/feature-flags'
+import React, { FC, useEffect, useState } from 'react'
+import { matchPath, useLocation } from 'react-router-dom'
+import { useMeasure } from 'react-use'
 import { MAIN_NAVIGATION } from '../../lib/masterNavigation'
+import { GlobalAlertBannerSection } from '../AlertBanners/GlobalAlertBannerSection'
+import Header from '../Header/Header'
+import AuthOverlay from '../Loaders/AuthOverlay/AuthOverlay'
 import FullWidthLayout from './FullWidthLayout'
 import { NarrowLayout } from './NarrowLayout'
+import { HeaderVisibilityContext } from '../../context/HeaderVisibilityContext'
 
 export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
-  useNamespaces(['service.portal', 'global', 'portals'])
+  useNamespaces(['service.portal', 'global', 'portals', 'sp.search.tags'])
   const activeModule = useActiveModule()
   const { pathname } = useLocation()
 
@@ -31,33 +37,64 @@ export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
   )
   const isFullwidth = activeModule?.layout === 'full'
 
-  return (
-    <div>
-      <AuthOverlay />
-      <ToastContainer useKeyframeStyles={false} />
-      {globalBanners.length > 0 && (
-        <GlobalAlertBannerSection ref={ref} banners={globalBanners} />
-      )}
-      <Header position={height && globalBanners.length > 0 ? height : 0} />
+  const [showSearch, setShowSearch] = useState<boolean>(false)
+  const [headerVisible, setHeaderVisible] = useState<boolean>(true)
 
-      {!isFullwidth && activeParent && (
-        <NarrowLayout
-          activeParent={activeParent}
-          height={height}
-          pathname={pathname}
-        >
-          {children}
-        </NarrowLayout>
-      )}
-      {(isFullwidth || !activeParent) && (
-        <FullWidthLayout
-          activeParent={activeParent}
-          height={height}
-          pathname={pathname}
-        >
-          {children}
-        </FullWidthLayout>
-      )}
-    </div>
+  const featureFlagClient = useFeatureFlagClient()
+  useEffect(() => {
+    const isFlagEnabled = async () => {
+      const ffEnabled = await featureFlagClient.getValue(
+        'isMyPagesSearchEnabled',
+        false,
+      )
+      if (ffEnabled) {
+        setShowSearch(ffEnabled as boolean)
+      }
+    }
+    isFlagEnabled()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const disableSearch = [
+    ...Object.values(ServicePortalPaths),
+    ...Object.values(SearchPaths),
+  ].find((route) => matchPath(route, pathname))
+
+  return (
+    <HeaderVisibilityContext.Provider
+      value={{ headerVisible, setHeaderVisible }}
+    >
+      <div>
+        <AuthOverlay />
+        <ToastContainer useKeyframeStyles={false} />
+        {globalBanners.length > 0 && (
+          <GlobalAlertBannerSection ref={ref} banners={globalBanners} />
+        )}
+        <Header
+          position={height && globalBanners.length > 0 ? height : 0}
+          includeSearchInHeader={!disableSearch && showSearch}
+          onHeaderVisibilityChange={setHeaderVisible}
+        />
+
+        {!isFullwidth && activeParent && (
+          <NarrowLayout
+            activeParent={activeParent}
+            height={height}
+            pathname={pathname}
+          >
+            {children}
+          </NarrowLayout>
+        )}
+        {(isFullwidth || !activeParent) && (
+          <FullWidthLayout
+            activeParent={activeParent}
+            height={height}
+            pathname={pathname}
+          >
+            {children}
+          </FullWidthLayout>
+        )}
+      </div>
+    </HeaderVisibilityContext.Provider>
   )
 }

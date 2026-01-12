@@ -1,22 +1,44 @@
 query CurrentUser {
   currentUser {
-    id
-    created
-    modified
-    active
-    name
-    title
-    role
-    email
-    mobileNumber
-    nationalId
-    canConfirmIndictment
-    institution {
+    user {
       id
-      type
+      created
+      modified
+      active
       name
-      defaultCourtId
-      policeCaseNumberPrefix
+      title
+      role
+      email
+      mobileNumber
+      nationalId
+      canConfirmIndictment
+      institution {
+        id
+        type
+        name
+        defaultCourtId
+        policeCaseNumberPrefix
+      }
+    }
+    eligibleUsers {
+      id
+      created
+      modified
+      active
+      name
+      title
+      role
+      email
+      mobileNumber
+      nationalId
+      canConfirmIndictment
+      institution {
+        id
+        type
+        name
+        defaultCourtId
+        policeCaseNumberPrefix
+      }
     }
   }
 }

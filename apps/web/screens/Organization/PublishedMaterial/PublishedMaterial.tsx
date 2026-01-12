@@ -86,13 +86,13 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
   const orderByOptions = useMemo(() => {
     return [
       {
-        label: n('orderByReleaseDateDescending', 'Útgáfudagur (nýtt)'),
+        label: n('orderByReleaseDateDescending', 'Nýtt efst'),
         value: 'order-by-release-date-descending',
         field: 'releaseDate',
         order: 'desc',
       },
       {
-        label: n('orderByReleaseDateAscending', 'Útgáfudagur (gamalt)'),
+        label: n('orderByReleaseDateAscending', 'Elsta efst'),
         value: 'order-by-release-date-ascending',
         field: 'releaseDate',
         order: 'asc',
@@ -513,6 +513,9 @@ PublishedMaterial.getProps = async ({ apolloClient, locale, query }) => {
         input: {
           slug: organizationPageSlug,
           lang: locale as ContentLanguage,
+          subpageSlugs: [
+            locale === 'is' ? 'utgefid-efni' : 'published-material',
+          ],
         },
       },
     }),

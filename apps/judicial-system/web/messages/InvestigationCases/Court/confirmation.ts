@@ -20,6 +20,12 @@ export const icConfirmation = {
         description:
           'Notaður sem texti í "áfram" takkanum á staðfesingar skrefi í rannsóknarheimildum þegar verið er að samþykkja kröfu',
       },
+      continueWithoutRulingButtonText: {
+        id: 'judicial.system.investigation_cases:confirmation.footer.accepting.continue_without_ruling_button_text',
+        defaultMessage: 'Ljúka máli án úrskurðar',
+        description:
+          'Notaður sem texti í "áfram" takkanum á staðfesingar skrefi í rannsóknarheimildum þegar verið er að ljúka máli án úrskurðar',
+      },
     }),
     rejecting: defineMessages({
       continueButtonText: {

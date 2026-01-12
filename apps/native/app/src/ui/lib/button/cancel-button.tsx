@@ -1,12 +1,14 @@
 import React from 'react'
 import { Image, TouchableOpacityProps } from 'react-native'
-import styled from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 import arrow from '../../assets/icons/arrow.png'
-import { dynamicColor, font } from '../../utils'
+import { dynamicColor } from '../../utils'
+import { Typography } from '../typography/typography'
 
 interface CancelProps extends TouchableOpacityProps {
   title: React.ReactNode
   isSmall?: boolean
+  arrowBack?: boolean
 }
 
 const Host = styled.TouchableOpacity`
@@ -23,23 +25,45 @@ const Wrapper = styled.View`
   align-items: center;
 `
 
-const Title = styled.Text<{ isSmall?: boolean }>`
-  margin-right: 7px;
-  padding: 4px 0;
-  ${font({
-    fontWeight: '600',
-    fontSize: ({ isSmall }) => (isSmall ? 12 : 16),
-    lineHeight: ({ isSmall }) => (isSmall ? 16 : 24),
-    color: (props) => props.theme.color.blue400,
-  })}
+const Title = styled(Typography)<{ arrowBack?: boolean }>`
+  margin-right: ${({ theme, arrowBack }) =>
+    arrowBack ? 0 : theme.spacing[1]}px;
+  margin-left: ${({ theme, arrowBack }) =>
+    arrowBack ? theme.spacing[1] : 0}px;
+  padding: ${({ theme }) => theme.spacing.smallGutter}px 1px;
 `
 
-export function CancelButton({ title, isSmall, ...rest }: CancelProps) {
+export function CancelButton({
+  title,
+  isSmall,
+  arrowBack,
+  ...rest
+}: CancelProps) {
+  const theme = useTheme()
   return (
     <Host {...(rest as any)}>
       <Wrapper>
-        <Title isSmall={isSmall}>{title}</Title>
-        <Image source={arrow} style={{ width: 10, height: 10 }} />
+        {arrowBack && (
+          <Image
+            source={arrow}
+            style={{
+              width: 10,
+              height: 10,
+              transform: [{ rotate: '-180deg' }],
+            }}
+          />
+        )}
+        <Title
+          variant={isSmall ? 'body3' : 'body'}
+          weight={600}
+          color={theme.color.blue400}
+          arrowBack={arrowBack}
+        >
+          {title}
+        </Title>
+        {!arrowBack && (
+          <Image source={arrow} style={{ width: 10, height: 10 }} />
+        )}
       </Wrapper>
     </Host>
   )

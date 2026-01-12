@@ -1,4 +1,4 @@
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import {
   BadRequestException,
@@ -6,26 +6,40 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 
+import { IndictmentCountService } from '../../indictmentCount.service'
 import { IndictmentCountExistsGuard } from '../indictmentCountExists.guard'
 
 interface Then {
-  result: boolean
-  error: Error
+  result?: boolean
+  error?: Error
 }
 
 type GivenWhenThen = () => Promise<Then>
 
 describe('Indictment Count Exists Guard', () => {
-  const mockRequest = jest.fn()
+  let mockRequest: jest.Mock
+  let mockFindById: jest.Mock
+  let mockIndictmentCountService: Partial<IndictmentCountService>
+  let guard: IndictmentCountExistsGuard
   let givenWhenThen: GivenWhenThen
 
-  beforeEach(async () => {
+  beforeEach(() => {
+    mockRequest = jest.fn()
+    mockFindById = jest.fn()
+
+    mockIndictmentCountService = {
+      findById: mockFindById,
+    }
+
+    guard = new IndictmentCountExistsGuard(
+      mockIndictmentCountService as IndictmentCountService,
+    )
+
     givenWhenThen = async (): Promise<Then> => {
-      const guard = new IndictmentCountExistsGuard()
       const then = {} as Then
 
       try {
-        then.result = guard.canActivate({
+        then.result = await guard.canActivate({
           switchToHttp: () => ({ getRequest: mockRequest }),
         } as unknown as ExecutionContext)
       } catch (error) {
@@ -40,16 +54,18 @@ describe('Indictment Count Exists Guard', () => {
     const caseId = uuid()
     const indictmentCountId = uuid()
     const indictmentCount = { id: indictmentCountId, caseId }
-    const theCase = { id: caseId, indictmentCounts: [indictmentCount] }
+    const theCase = { id: caseId }
     const request = {
       params: { caseId, indictmentCountId },
       case: theCase,
       indictmentCount: undefined,
     }
+
     let then: Then
 
     beforeEach(async () => {
-      mockRequest.mockReturnValueOnce(request)
+      mockRequest.mockReturnValue(request)
+      mockFindById.mockResolvedValue(indictmentCount)
 
       then = await givenWhenThen()
     })
@@ -63,21 +79,23 @@ describe('Indictment Count Exists Guard', () => {
   describe('indictment count does not exist', () => {
     const caseId = uuid()
     const indictmentCountId = uuid()
-    const theCase = { id: caseId, indictmentCounts: [] }
+    const theCase = { id: caseId }
+
     let then: Then
 
     beforeEach(async () => {
-      mockRequest.mockReturnValueOnce({
+      mockRequest.mockReturnValue({
         params: { caseId, indictmentCountId },
         case: theCase,
       })
+      mockFindById.mockResolvedValue(null)
 
       then = await givenWhenThen()
     })
 
     it('should throw NotFoundException', () => {
       expect(then.error).toBeInstanceOf(NotFoundException)
-      expect(then.error.message).toBe(
+      expect(then.error?.message).toBe(
         `Indictment count ${indictmentCountId} of case ${caseId} does not exist`,
       )
     })
@@ -87,31 +105,32 @@ describe('Indictment Count Exists Guard', () => {
     let then: Then
 
     beforeEach(async () => {
-      mockRequest.mockReturnValueOnce({ params: {} })
+      mockRequest.mockReturnValue({ params: {} })
 
       then = await givenWhenThen()
     })
 
     it('should throw BadRequestException', () => {
       expect(then.error).toBeInstanceOf(BadRequestException)
-      expect(then.error.message).toBe('Missing case')
+      expect(then.error?.message).toBe('Missing case')
     })
   })
 
   describe('missing indictment count id', () => {
     const caseId = uuid()
-    const theCase = { id: caseId, indictmentCounts: [] }
+    const theCase = { id: caseId }
+
     let then: Then
 
     beforeEach(async () => {
-      mockRequest.mockReturnValueOnce({ params: { caseId }, case: theCase })
+      mockRequest.mockReturnValue({ params: { caseId }, case: theCase })
 
       then = await givenWhenThen()
     })
 
     it('should throw BadRequestException', () => {
       expect(then.error).toBeInstanceOf(BadRequestException)
-      expect(then.error.message).toBe('Missing indictment count id')
+      expect(then.error?.message).toBe('Missing indictment count id')
     })
   })
 })

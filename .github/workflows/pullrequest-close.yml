@@ -4,46 +4,101 @@ on:
   pull_request:
     types:
       - closed
-
 defaults:
   run:
     shell: bash
+env:
+  RUNS_ON_BUCKET_NAME: ${{ vars.RUNS_ON_BUCKET_NAME }}
+  AWS_REGION: eu-west-1
+  YARN_ENABLE_HARDENED_MODE: '0'
 
 jobs:
-  cleanup:
-    name: Clean up feature deployment
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+  check-unicorn:
+    name: Is this a unicorn PR
+    if: github.event.pull_request.merged == true
+    runs-on: arc-shared
+    timeout-minutes: 10
     steps:
-      - name: Get git branch
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+
+      - name: Derive appropriate SHAs
+        uses: nrwl/nx-set-shas@v4
+
+      - name: Debug HEAD/BASE
         run: |
-          set -euo pipefail
-          GIT_BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF/refs\/heads\//}}"
-          echo "GIT_BRANCH=$GIT_BRANCH" >> "$GITHUB_ENV"
-      - name: Generate deployment branch name
-        id: git-branch-deploy
+          echo "BASE: $NX_BASE"
+          echo "HEAD: $NX_HEAD"
+
+      - name: Check unicorn affected
+        id: unicorn_affected
         run: |
-          set -euo pipefail
-          GIT_BRANCH_DEPLOY="$GIT_BRANCH"
-          if [[ ! ("$GIT_BRANCH_DEPLOY" =~ "feature/") ]]; then
-            # If event is pull request but branch is not prefixed with feature/
-            GIT_BRANCH_DEPLOY=feature/$GIT_BRANCH_DEPLOY
-          fi
-          # Avoid too long resource names
-          GIT_BRANCH_DEPLOY="${GIT_BRANCH_DEPLOY:0:50}"
-          echo "GIT_BRANCH_DEPLOY=$GIT_BRANCH_DEPLOY" >> "$GITHUB_ENV"
-      - name: Clean up feature
+          echo "Comparing nx affected for \"${NX_HEAD}\" using \"${NX_BASE}\" as base branch"
+          echo "IS_UNICORN=$(node scripts/ci/unicorn-utils.mjs is-unicorn "{\"head\": \"${NX_HEAD}\", \"base\": \"${NX_BASE}\" }")" >> "$GITHUB_OUTPUT"
+
+      - name: Results
+        run: |
+          echo "Unicorn = ${{ steps.unicorn_affected.outputs.IS_UNICORN }}"
+
+      - name: Find Latest Release Branch
+        if: ${{ steps.unicorn_affected.outputs.IS_UNICORN == 'true' }}
+        id: get_latest_release
+        run: |
+          LATEST_RELEASE="$(node scripts/ci/get-last-release.mjs "$(git branch -r)")"
+          echo "LATEST_RELEASE=$LATEST_RELEASE" >> "$GITHUB_OUTPUT"
+
+      - run: "echo 'latest release: ${{ steps.get_latest_release.outputs.LATEST_RELEASE }}'"
+      - name: Get token
+        id: get-token
+        shell: bash
         env:
-          SPINNAKER_WEBHOOK_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_TOKEN }}
-          SPINNAKER_URL: https://spinnaker-gate.shared.devland.is
+          APP_ID: ${{ secrets.ISLAND_IS_APP_KEY }}
+          PRIVATE_KEY: ${{ secrets.ISLAND_IS_SSH_KEY }}
         run: |
-          set -euo pipefail
-          curl "$SPINNAKER_URL/webhooks/webhook/feature-cleanup" -H "content-type: application/json" --data-binary @- <<BODY
-          {
-            "token": "$SPINNAKER_WEBHOOK_TOKEN",
-            "parameters": {
-              "feature_name": "$(echo "$GIT_BRANCH_DEPLOY" | cut -d"/" -f2- | tr -cd '[:alnum:]-' | tr '[:upper:]' '[:lower:]' | cut -c1-50)"
-            }
-          }
-          BODY
+          node scripts/ci/docker/get-github-token.mjs
+      - name: Create a PR
+        if: ${{ steps.unicorn_affected.outputs.IS_UNICORN == 'true' }}
+        id: create_pr
+        env:
+          GITHUB_TOKEN: ${{ steps.get-token.outputs.token }}
+          PR_BRANCH: cherry-picks/${{ github.head_ref }}
+          TARGET_BRANCH: release/${{ steps.get_latest_release.outputs.LATEST_RELEASE }}
+          HEAD_REF: ${{ github.head_ref }}
+          MERGE_COMMIT_SHA: ${{ github.event.pull_request.merge_commit_sha }}
+          ACTOR: ${{ github.actor }}
+        run: |
+          git config --global user.email "${ACTOR}@users.noreply.github.com"
+          git config --global user.name "${ACTOR} (automated)"
+          echo "${MERGE_COMMIT_SHA}"
+          echo "${HEAD_REF}"
+
+          git fetch origin "$TARGET_BRANCH:$TARGET_BRANCH"
+          # Check for differences between the merge_commit and release branch
+          if git diff --quiet "$MERGE_COMMIT_SHA" "$TARGET_BRANCH"; then
+              echo "No differences found between '$MERGE_COMMIT_SHA' and '$TARGET_BRANCH' branch"
+              exit 0
+          fi
+
+          git checkout "${TARGET_BRANCH}"
+          git checkout -b "${PR_BRANCH}"
+          git cherry-pick -x "${MERGE_COMMIT_SHA}"
+          git commit --allow-empty -am "chore: automated cherry-pick of ${MERGE_COMMIT_SHA}"
+          git push --set-upstream origin "${PR_BRANCH}"
+          echo "new branch created"
+          PR=$(gh pr create -B "${TARGET_BRANCH}" -H "${PR_BRANCH}" --title "chore: automated cherry-pick of ${MERGE_COMMIT_SHA}" --body "Automated cherry-pick of ${MERGE_COMMIT_SHA}")
+          echo "${PR} created"
+          echo "PR=${PR}" >> "$GITHUB_OUTPUT"
+
+      - name: Send slack message
+        if: ${{ steps.unicorn_affected.outputs.IS_UNICORN == 'true' && steps.create_pr.outputs.PR != '' }}
+        uses: slackapi/slack-github-action@v2.0.0
+        with:
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
+          payload: |
+            channel: ${{ secrets.SLACK_CHANNEL_ID }}
+            text: "A new PR has been created on behalf of ${{ github.actor }}: ${{ steps.create_pr.outputs.PR }}"

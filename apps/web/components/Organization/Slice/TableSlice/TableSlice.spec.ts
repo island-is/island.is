@@ -1,4 +1,5 @@
 import { Block, BLOCKS, Document } from '@contentful/rich-text-types'
+
 import {
   extractTableRowsFromRichTextDocument,
   extractTextFromRichTextTableCell,

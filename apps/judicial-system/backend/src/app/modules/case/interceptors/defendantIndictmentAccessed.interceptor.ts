@@ -12,21 +12,20 @@ import {
   User,
 } from '@island.is/judicial-system/types'
 
-import { DefendantEventLog, DefendantService } from '../../defendant'
-import { Case } from '../models/case.model'
+import { DefendantService } from '../../defendant'
+import { Case, DefendantEventLog } from '../../repository'
 
 const hasValidOpenByPrisonAdminEvent = (
   defendantEventLogs: DefendantEventLog[],
 ) => {
-  const sentToPrisonAdminDate = DefendantEventLog.getDefendantEventLogTypeDate({
+  const sentToPrisonAdminDate = DefendantEventLog.getEventLogDateByEventType(
+    DefendantEventType.SENT_TO_PRISON_ADMIN,
     defendantEventLogs,
-    eventType: DefendantEventType.SENT_TO_PRISON_ADMIN,
-  })
-  const openedByPrisonAdminDate =
-    DefendantEventLog.getDefendantEventLogTypeDate({
-      defendantEventLogs,
-      eventType: DefendantEventType.OPENED_BY_PRISON_ADMIN,
-    })
+  )
+  const openedByPrisonAdminDate = DefendantEventLog.getEventLogDateByEventType(
+    DefendantEventType.OPENED_BY_PRISON_ADMIN,
+    defendantEventLogs,
+  )
   return (
     sentToPrisonAdminDate &&
     openedByPrisonAdminDate &&
@@ -40,7 +39,7 @@ export class DefendantIndictmentAccessedInterceptor implements NestInterceptor {
 
   intercept(context: ExecutionContext, next: CallHandler) {
     const request = context.switchToHttp().getRequest()
-    const user: User = request.user
+    const user: User = request.user?.currentUser
     const theCase: Case = request.case
 
     if (isIndictmentCase(theCase.type) && isPrisonAdminUser(user)) {

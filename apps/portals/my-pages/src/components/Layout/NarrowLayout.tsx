@@ -1,25 +1,24 @@
-import { ReactNode } from 'react'
-import {
-  Box,
-  Navigation,
-  NavigationItem,
-  Icon,
-} from '@island.is/island-ui/core'
-import ContentBreadcrumbs from '../../components/ContentBreadcrumbs/ContentBreadcrumbs'
-import {
-  m,
-  ServicePortalNavigationItem,
-  ModuleAlertBannerSection,
-  GoBack,
-} from '@island.is/portals/my-pages/core'
-import { useLocale } from '@island.is/localization'
-import { useWindowSize } from 'react-use'
-import SidebarLayout from './SidebarLayout'
-import Sticky from '../Sticky/Sticky'
-import { Link as ReactLink } from 'react-router-dom'
+import { Box, Icon, NavigationItem } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
-import * as styles from './Layout.css'
+import { useLocale } from '@island.is/localization'
 import { PortalNavigationItem } from '@island.is/portals/core'
+import { SERVICE_PORTAL_HEADER_HEIGHT_SM } from '@island.is/portals/my-pages/constants'
+import { useHeaderVisibility } from '../../context/HeaderVisibilityContext'
+import {
+  GoBack,
+  m,
+  ModuleAlertBannerSection,
+  Navigation,
+  ServicePortalNavigationItem,
+} from '@island.is/portals/my-pages/core'
+import { ReactNode } from 'react'
+import { Link as ReactLink } from 'react-router-dom'
+import { useWindowSize } from 'react-use'
+import ContentBreadcrumbs from '../../components/ContentBreadcrumbs/ContentBreadcrumbs'
+import Sticky from '../Sticky/Sticky'
+import * as styles from './Layout.css'
+import SidebarLayout from './SidebarLayout'
+import cn from 'classnames'
 
 interface NarrowLayoutProps {
   activeParent?: PortalNavigationItem
@@ -40,6 +39,9 @@ export const NarrowLayout = ({
 
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
+  const { headerVisible } = useHeaderVisibility()
+
+  const stickyHeight = headerVisible ? SERVICE_PORTAL_HEADER_HEIGHT_SM - 1 : -1 // -1 to hide the shadow
 
   const mapChildren = (item: ServicePortalNavigationItem): SubNavItemType => {
     if (item.children) {
@@ -105,7 +107,6 @@ export const NarrowLayout = ({
                   title={formatMessage(activeParent?.name ?? m.tableOfContents)}
                   items={subNavItems ?? []}
                   expand
-                  expandOnActivation
                   titleIcon={activeParent?.icon}
                 />
               </Box>
@@ -122,7 +123,14 @@ export const NarrowLayout = ({
       >
         <ContentBreadcrumbs />
         {isMobile && subNavItems && subNavItems.length > 0 && (
-          <Box paddingBottom={3} width="full">
+          <Box
+            paddingBottom={3}
+            width="full"
+            className={cn(styles.mobileNav, {
+              [styles.mobileNavHidden]: !headerVisible,
+            })}
+            style={{ top: stickyHeight }}
+          >
             <Navigation
               renderLink={(link, item) => {
                 return item?.href ? (
@@ -132,7 +140,7 @@ export const NarrowLayout = ({
                 )
               }}
               asSpan
-              baseId={'service-portal-mobile-navigation'}
+              baseId="service-portal-mobile-navigation"
               title={
                 activeParent?.name
                   ? formatMessage(activeParent?.name)

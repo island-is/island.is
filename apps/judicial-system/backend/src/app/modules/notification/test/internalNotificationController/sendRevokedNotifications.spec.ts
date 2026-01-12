@@ -1,9 +1,12 @@
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
+
+import { ConfigType } from '@nestjs/config'
 
 import { EmailService } from '@island.is/email-service'
 
 import {
   CaseNotificationType,
+  CaseType,
   NotificationType,
 } from '@island.is/judicial-system/types'
 
@@ -12,10 +15,10 @@ import {
   createTestUsers,
 } from '../createTestingNotificationModule'
 
-import { Case } from '../../../case'
+import { Case, Notification } from '../../../repository'
 import { CaseNotificationDto } from '../../dto/caseNotification.dto'
 import { DeliverResponse } from '../../models/deliver.response'
-import { Notification } from '../../models/notification.model'
+import { notificationModuleConfig } from '../../notification.config'
 
 interface Then {
   result: DeliverResponse
@@ -36,9 +39,11 @@ describe('InternalNotificationController - Send revoked notifications for indict
   const courtName = uuid()
   const courtCaseNumber = uuid()
   const policeCaseNumbers = ['007-2022-01']
+  let mockConfig: ConfigType<typeof notificationModuleConfig>
 
   const theCase = {
     id: caseId,
+    type: CaseType.INDICTMENT,
     judge: { name: judge.name, email: judge.email },
     registrar: { name: registrar.name, email: registrar.email },
     defendants: [
@@ -59,11 +64,16 @@ describe('InternalNotificationController - Send revoked notifications for indict
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { emailService, notificationModel, internalNotificationController } =
-      await createTestingNotificationModule()
+    const {
+      emailService,
+      notificationModel,
+      internalNotificationController,
+      notificationConfig,
+    } = await createTestingNotificationModule()
 
     mockEmailService = emailService
     mockNotificationModel = notificationModel
+    mockConfig = notificationConfig
 
     givenWhenThen = async (notifications?: Notification[]) => {
       const then = {} as Then
@@ -94,25 +104,27 @@ describe('InternalNotificationController - Send revoked notifications for indict
     })
 
     it('should send a notifications', () => {
+      const subject = `Ákæra afturkölluð í máli ${courtCaseNumber}`
+      const courtHtml = `${prosecutorsOfficeName} hefur afturkallað ákæru í máli ${courtCaseNumber}. Hægt er að nálgast yfirlitssíðu málsins í <a href="${mockConfig.clientUrl}">Réttarvörslugátt</a>.`
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
           to: [{ address: judge.email, name: judge.name }],
-          subject: `Ákæra afturkölluð í máli ${courtCaseNumber}`,
-          html: `${prosecutorsOfficeName} hefur afturkallað ákæru í máli ${courtCaseNumber}. Hægt er að nálgast yfirlitssíðu málsins á <a href="https://rettarvorslugatt.island.is">rettarvorslugatt.island.is</a>.`,
+          subject,
+          html: courtHtml,
         }),
       )
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
           to: [{ address: registrar.email, name: registrar.name }],
-          subject: `Ákæra afturkölluð í máli ${courtCaseNumber}`,
-          html: `${prosecutorsOfficeName} hefur afturkallað ákæru í máli ${courtCaseNumber}. Hægt er að nálgast yfirlitssíðu málsins á <a href="https://rettarvorslugatt.island.is">rettarvorslugatt.island.is</a>.`,
+          subject,
+          html: courtHtml,
         }),
       )
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
           to: [{ address: defender.email, name: defender.name }],
-          subject: `Ákæra afturkölluð í máli ${courtCaseNumber}`,
-          html: `Dómstóllinn hafði skráð þig sem verjanda í málinu.<br /><br />Sjá nánar á <a href="http://localhost:4200/verjandi/akaera/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
+          subject,
+          html: `${prosecutorsOfficeName} hefur afturkallað ákæru í máli ${courtCaseNumber}.<br /><br />Hægt er að nálgast yfirlitssíðu málsins á <a href="${mockConfig.clientUrl}/verjandi/akaera/${theCase.id}">rettarvorslugatt.island.is</a>.`,
         }),
       )
       expect(mockNotificationModel.create).toHaveBeenCalledWith({

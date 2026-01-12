@@ -4,6 +4,18 @@ query Case($input: CaseQueryInput!) {
     created
     modified
     type
+    splitCases {
+      id
+      courtCaseNumber
+      defendants {
+        id
+        name
+      }
+    }
+    splitCase {
+      id
+      courtCaseNumber
+    }
     indictmentSubtypes
     description
     state
@@ -27,19 +39,19 @@ query Case($input: CaseQueryInput!) {
       requestedDefenderName
       isDefenderChoiceConfirmed
       caseFilesSharedWithDefender
-      serviceRequirement
-      verdictViewDate
       verdictAppealDeadline
-      verdictAppealDate
       isVerdictAppealDeadlineExpired
       subpoenaType
       isSentToPrisonAdmin
       sentToPrisonAdminDate
       openedByPrisonAdminDate
       punishmentType
+      isAlternativeService
+      alternativeServiceDescription
       subpoenas {
         id
         created
+        modified
         serviceStatus
         serviceDate
         servedBy
@@ -47,7 +59,26 @@ query Case($input: CaseQueryInput!) {
         defenderNationalId
         caseId
         defendantId
-        subpoenaId
+        policeSubpoenaId
+      }
+      verdict {
+        id
+        modified
+        caseId
+        defendantId
+        created
+        verdictDeliveredToNationalCommissionersOffice
+        appealDate
+        appealDecision
+        serviceRequirement
+        serviceStatus
+        serviceDate
+        serviceInformationForDefendant
+        externalPoliceDocumentId
+        comment
+        deliveredToDefenderNationalId
+        servedBy
+        isDefaultJudgement
       }
     }
     defenderName
@@ -160,6 +191,7 @@ query Case($input: CaseQueryInput!) {
         state
         key
         size
+        isKeyAccessible
       }
     }
     childCase {
@@ -195,6 +227,9 @@ query Case($input: CaseQueryInput!) {
       displayDate
       policeFileId
       submittedBy
+      submissionDate
+      fileRepresentative
+      isKeyAccessible
     }
     isAppealDeadlineExpired
     isAppealGracePeriodExpired
@@ -206,6 +241,7 @@ query Case($input: CaseQueryInput!) {
     defendantWaivesRightToCounsel
     crimeScenes
     indictmentIntroduction
+    publicProsecutorIsRegisteredInPoliceSystem
     indictmentCounts {
       id
       caseId
@@ -213,12 +249,97 @@ query Case($input: CaseQueryInput!) {
       created
       modified
       vehicleRegistrationNumber
-      offenses
-      substances
+      offenses {
+        id
+        indictmentCountId
+        created
+        modified
+        offense
+        substances
+      }
       lawsBroken
       incidentDescription
       legalArguments
       indictmentCountSubtypes
+      recordedSpeed
+      speedLimit
+    }
+    withCourtSessions
+    courtSessions {
+      id
+      created
+      modified
+      caseId
+      location
+      judgeId
+      judge {
+        id
+        name
+      }
+      startDate
+      endDate
+      isClosed
+      closedLegalProvisions
+      attendees
+      entries
+      rulingType
+      ruling
+      isAttestingWitness
+      attestingWitnessId
+      attestingWitness {
+        id
+        name
+      }
+      closingEntries
+      isConfirmed
+      filedDocuments {
+        id
+        created
+        modified
+        caseId
+        courtSessionId
+        documentType
+        documentOrder
+        mergedDocumentOrder
+        name
+        caseFileId
+        generatedPdfUri
+        submittedBy
+      }
+      mergedFiledDocuments {
+        id
+        created
+        modified
+        caseId
+        courtSessionId
+        documentType
+        documentOrder
+        mergedCourtSessionId
+        mergedDocumentOrder
+        name
+        caseFileId
+        generatedPdfUri
+        submittedBy
+      }
+      courtSessionStrings {
+        id
+        courtSessionId
+        mergedCaseId
+        stringType
+        value
+      }
+    }
+    unfiledCourtDocuments {
+      id
+      created
+      modified
+      caseId
+      courtSessionId
+      documentType
+      documentOrder
+      name
+      caseFileId
+      generatedPdfUri
     }
     requestDriversLicenseSuspension
     appealState
@@ -259,14 +380,6 @@ query Case($input: CaseQueryInput!) {
     requestAppealRulingNotToBePublished
     indictmentDeniedExplanation
     indictmentReturnedExplanation
-    eventLogs {
-      id
-      created
-      caseId
-      eventType
-      nationalId
-      userRole
-    }
     arraignmentDate {
       date
       location
@@ -287,11 +400,10 @@ query Case($input: CaseQueryInput!) {
       name
     }
     indictmentAppealDeadline
-    indictmentVerdictViewedByAll
     indictmentVerdictAppealDeadlineExpired
+    indictmentVerdictViewedByAll
     indictmentDecision
     indictmentReviewDecision
-    indictmentCompletedDate
     courtSessionType
     mergeCase {
       id
@@ -301,6 +413,52 @@ query Case($input: CaseQueryInput!) {
       id
       courtCaseNumber
       type
+      state
+      indictmentRulingDecision
+      hasCivilClaims
+      withCourtSessions
+      courtSessions {
+        id
+        startDate
+        endDate
+        isConfirmed
+        filedDocuments {
+          id
+          created
+          modified
+          caseId
+          courtSessionId
+          documentType
+          documentOrder
+          mergedDocumentOrder
+          name
+          caseFileId
+          generatedPdfUri
+          submittedBy
+        }
+        mergedFiledDocuments {
+          id
+          created
+          modified
+          caseId
+          courtSessionId
+          documentType
+          documentOrder
+          mergedCourtSessionId
+          mergedDocumentOrder
+          name
+          caseFileId
+          generatedPdfUri
+          submittedBy
+        }
+        courtSessionStrings {
+          id
+          courtSessionId
+          mergedCaseId
+          stringType
+          value
+        }
+      }
       court {
         id
         name
@@ -339,10 +497,7 @@ query Case($input: CaseQueryInput!) {
         requestedDefenderName
         isDefenderChoiceConfirmed
         caseFilesSharedWithDefender
-        serviceRequirement
-        verdictViewDate
         verdictAppealDeadline
-        verdictAppealDate
         isVerdictAppealDeadlineExpired
         subpoenaType
         punishmentType
@@ -355,7 +510,16 @@ query Case($input: CaseQueryInput!) {
           comment
           defenderNationalId
           caseId
-          subpoenaId
+          policeSubpoenaId
+        }
+        verdict {
+          id
+          appealDate
+          appealDecision
+          serviceRequirement
+          serviceDate
+          serviceInformationForDefendant
+          externalPoliceDocumentId
         }
       }
       caseFiles {
@@ -371,6 +535,7 @@ query Case($input: CaseQueryInput!) {
         userGeneratedFilename
         displayDate
         submittedBy
+        isKeyAccessible
       }
       policeCaseNumbers
       indictmentSubtypes
@@ -390,8 +555,35 @@ query Case($input: CaseQueryInput!) {
       caseFilesSharedWithSpokesperson
       isSpokespersonConfirmed
     }
+    victims {
+      id
+      name
+      hasNationalId
+      nationalId
+      hasLawyer
+      lawyerNationalId
+      lawyerName
+      lawyerEmail
+      lawyerPhoneNumber
+      lawyerAccessToRequest
+    }
     mergeCaseNumber
     civilDemands
+    penalties
     hasCivilClaims
+    isCompletedWithoutRuling
+    caseSentToCourtDate
+    indictmentReviewedDate
+    indictmentCompletedDate
+    indictmentSentToPublicProsecutorDate
+    defenceAppealResultAccessDate
+    prosecutionAppealResultAccessDate
+    prisonStaffAppealResultAccessDate
+    requestCompletedDate
+    caseRepresentatives {
+      name
+      nationalId
+      caseFileCategory
+    }
   }
 }

@@ -1,5 +1,9 @@
-import { Box, Text } from '@island.is/island-ui/core'
+import c from 'classnames'
 
+import { Box, Text } from '@island.is/island-ui/core'
+import { OfficialJournalOfIcelandAdvertAppendix } from '@island.is/web/graphql/schema'
+
+import { Appendixes } from './OJOIAppendix'
 import * as s from './OJOIAdvertDisplay.css'
 
 export type OJOIAdvertDisplayProps = {
@@ -9,6 +13,7 @@ export type OJOIAdvertDisplayProps = {
   advertSubject: string
   advertText: string
   isLegacy: boolean
+  additions?: OfficialJournalOfIcelandAdvertAppendix[]
 }
 
 export const OJOIAdvertDisplay = ({
@@ -17,7 +22,7 @@ export const OJOIAdvertDisplay = ({
   advertType,
   advertSubject,
   advertText,
-  isLegacy,
+  additions,
 }: OJOIAdvertDisplayProps) => {
   if (!advertText) {
     return null
@@ -39,17 +44,22 @@ export const OJOIAdvertDisplay = ({
           Nr. {advertNumber}
         </Text>
         <Text variant="eyebrow" color="purple400">
-          Undirritað: {signatureDate}
+          {signatureDate}
         </Text>
       </Box>
-      <Box textAlign="center" marginBottom={[2, 3, 4]}>
+      <Box textAlign="center" display="flex" flexDirection="column">
         <Text variant="h3">{advertType}</Text>
-        <Text variant="h4">{advertSubject}</Text>
+        <Text variant="h4" className={s.advertDescription}>
+          {advertSubject}
+        </Text>
       </Box>
       <Box
-        className={isLegacy ? s.bodyText : s.bodyText}
+        className={c(s.bodyText, 'ojoi-advert-display-wrapper')}
         dangerouslySetInnerHTML={{ __html: advertText }}
       ></Box>
+      {additions && additions.length > 0 && (
+        <Appendixes additions={additions} />
+      )}
     </Box>
   )
 }

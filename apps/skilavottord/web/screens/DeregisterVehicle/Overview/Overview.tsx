@@ -16,20 +16,16 @@ import {
 
 import { hasPermission } from '@island.is/skilavottord-web/auth/utils'
 import {
-  NotFound,
   PartnerPageLayout,
   Sidenav,
 } from '@island.is/skilavottord-web/components'
+import PageHeader from '@island.is/skilavottord-web/components/PageHeader/PageHeader'
 import { UserContext } from '@island.is/skilavottord-web/context'
-import {
-  Query,
-  Role,
-  Vehicle,
-} from '@island.is/skilavottord-web/graphql/schema'
+import { Query, Vehicle } from '@island.is/skilavottord-web/graphql/schema'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { BASE_PATH } from '@island.is/skilavottord/consts'
 import { CarsTable } from './components/CarsTable'
-import PageHeader from '@island.is/skilavottord-web/components/PageHeader/PageHeader'
+import AuthGuard from '@island.is/skilavottord-web/components/AuthGuard/AuthGuard'
 
 export const SkilavottordRecyclingPartnerVehiclesQuery = gql`
   query skilavottordRecyclingPartnerVehiclesQuery($after: String!) {
@@ -123,73 +119,72 @@ const Overview: FC<React.PropsWithChildren<unknown>> = () => {
     router.push(`${routes.deregisterVehicle.select}`)
   }
 
-  if (!user) {
-    return null
-  } else if (!hasPermission('deregisterVehicle', user?.role as Role)) {
-    return <NotFound />
-  }
-
   return (
-    <PartnerPageLayout
-      side={
-        <Sidenav
-          title={sidenavText.title}
-          sections={[
-            {
-              icon: 'car',
-              title: `${sidenavText.deregister}`,
-              link: `${routes.deregisterVehicle.baseRoute}`,
-            },
-            {
-              icon: 'business',
-              title: `${sidenavText.companyInfo}`,
-              link: `${routes.companyInfo.baseRoute}`,
-            },
-            {
-              ...(hasPermission('accessControlCompany', user?.role)
-                ? {
-                    icon: 'lockClosed',
-                    title: `${sidenavText.accessControl}`,
-                    link: `${routes.accessControlCompany}`,
-                  }
-                : null),
-            } as React.ComponentProps<typeof Sidenav>['sections'][0],
-          ].filter(Boolean)}
-          activeSection={0}
-        />
-      }
-    >
-      <Stack space={6}>
-        <GridColumn span={['8/8', '8/8', '7/8', '7/8']}>
-          <Stack space={4}>
-            <Breadcrumbs>
-              <Link href={`${BASE_PATH}${routes.home['recyclingCompany']}`}>
-                Ísland.is
-              </Link>
-              <span>{t.title}</span>
-            </Breadcrumbs>
-            <PageHeader title={t.title} info={t.info} />
-            <Box marginTop={4}>
-              <Button onClick={handleDeregister}>{t.buttons.deregister}</Button>
-            </Box>
-          </Stack>
-        </GridColumn>
-        {vehicles?.length > 0 && (
-          <Box marginX={1}>
+    <AuthGuard permission="deregisterVehicle" loading={loading && !vehicleData}>
+      <PartnerPageLayout
+        side={
+          <Sidenav
+            title={sidenavText.title}
+            sections={[
+              {
+                icon: 'car',
+                title: `${sidenavText.deregister}`,
+                link: `${routes.deregisterVehicle.baseRoute}`,
+              },
+              {
+                icon: 'business',
+                title: `${sidenavText.companyInfo}`,
+                link: `${routes.companyInfo.baseRoute}`,
+              },
+              {
+                ...(user?.role &&
+                hasPermission('accessControlCompany', user.role)
+                  ? {
+                      icon: 'lockClosed',
+                      title: `${sidenavText.accessControl}`,
+                      link: `${routes.accessControlCompany}`,
+                    }
+                  : null),
+              } as React.ComponentProps<typeof Sidenav>['sections'][0],
+            ].filter(Boolean)}
+            activeSection={0}
+          />
+        }
+      >
+        <Stack space={6}>
+          <GridColumn span={['8/8', '8/8', '7/8', '7/8']}>
             <Stack space={4}>
-              <Text variant="h3">{t.subtitles.history}</Text>
-              <CarsTable titles={t.table} deregisteredVehicles={vehicles} />
+              <Breadcrumbs>
+                <Link href={`${BASE_PATH}${routes.home['recyclingCompany']}`}>
+                  Ísland.is
+                </Link>
+                <span>{t.title}</span>
+              </Breadcrumbs>
+              <PageHeader title={t.title} info={t.info} />
+              <Box marginTop={4}>
+                <Button onClick={handleDeregister}>
+                  {t.buttons.deregister}
+                </Button>
+              </Box>
             </Stack>
-          </Box>
-        )}
-        {loading && (
-          <Box display="flex" justifyContent="center">
-            <LoadingDots />
-          </Box>
-        )}
-        <div ref={triggerRef} />
-      </Stack>
-    </PartnerPageLayout>
+          </GridColumn>
+          {vehicles?.length > 0 && (
+            <Box marginX={1}>
+              <Stack space={4}>
+                <Text variant="h3">{t.subtitles.history}</Text>
+                <CarsTable titles={t.table} deregisteredVehicles={vehicles} />
+              </Stack>
+            </Box>
+          )}
+          {loading && (
+            <Box display="flex" justifyContent="center">
+              <LoadingDots />
+            </Box>
+          )}
+          <div ref={triggerRef} />
+        </Stack>
+      </PartnerPageLayout>
+    </AuthGuard>
   )
 }
 

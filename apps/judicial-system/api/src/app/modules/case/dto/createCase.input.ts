@@ -7,7 +7,7 @@ import {
 } from 'class-validator'
 import { GraphQLJSONObject } from 'graphql-type-json'
 
-import { Field, InputType } from '@nestjs/graphql'
+import { Field, ID, InputType } from '@nestjs/graphql'
 
 import type {
   CrimeSceneMap,
@@ -75,4 +75,9 @@ export class CreateCaseInput {
   @IsOptional()
   @Field(() => GraphQLJSONObject, { nullable: true })
   readonly crimeScenes?: CrimeSceneMap
+
+  @Allow()
+  @IsOptional()
+  @Field(() => ID, { nullable: true })
+  readonly prosecutorId?: string
 }

@@ -1,5 +1,5 @@
-import { useCallback, useContext, useState } from 'react'
-import { IntlShape, useIntl } from 'react-intl'
+import { useCallback, useContext } from 'react'
+import { useIntl } from 'react-intl'
 import formatISO from 'date-fns/formatISO'
 import { useRouter } from 'next/router'
 
@@ -12,7 +12,7 @@ import {
   Tooltip,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { formatDate, formatDOB } from '@island.is/judicial-system/formatters'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
 import { core, ruling, titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -30,83 +30,16 @@ import {
   RestrictionLength,
   RulingInput,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  CaseDecision,
-  CaseType,
-  Defendant,
-} from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
-import {
-  removeTabsValidateAndSet,
-  validateAndSendToServer,
-} from '@island.is/judicial-system-web/src/utils/formHelper'
+import { CaseDecision } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useCase,
-  useDeb,
+  useDebouncedInput,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isRulingValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 
-import { rcRuling as m } from './Ruling.strings'
-
-export const getConclusionAutofill = (
-  formatMessage: IntlShape['formatMessage'],
-  workingCase: Case,
-  decision: CaseDecision,
-  defendant: Defendant,
-  validToDate?: string | null,
-  isCustodyIsolation?: boolean | null,
-  isolationToDate?: string | null,
-) => {
-  const isolationEndsBeforeValidToDate =
-    validToDate &&
-    isolationToDate &&
-    new Date(validToDate) > new Date(isolationToDate)
-
-  const defendantDOB = formatDOB(
-    defendant.nationalId,
-    defendant.noNationalId,
-    '',
-  )
-
-  return decision === CaseDecision.DISMISSING
-    ? formatMessage(m.sections.conclusion.dismissingAutofill, {
-        defendantName: defendant.name,
-        isExtended:
-          workingCase.parentCase &&
-          isAcceptingCaseDecision(workingCase.parentCase.decision),
-        caseType: workingCase.type,
-      })
-    : decision === CaseDecision.REJECTING
-    ? formatMessage(m.sections.conclusion.rejectingAutofill, {
-        defendantName: defendant.name,
-        defendantDOB: defendantDOB ? `, ${defendantDOB}, ` : ', ',
-        isExtended:
-          workingCase.parentCase &&
-          isAcceptingCaseDecision(workingCase.parentCase.decision),
-        caseType: workingCase.type,
-      })
-    : formatMessage(m.sections.conclusion.acceptingAutofill, {
-        defendantName: defendant.name,
-        defendantDOB: defendantDOB ? `, ${defendantDOB}, ` : ', ',
-        isExtended:
-          workingCase.parentCase &&
-          isAcceptingCaseDecision(workingCase.parentCase.decision) &&
-          decision !== CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
-        caseType:
-          decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-            ? CaseType.TRAVEL_BAN
-            : workingCase.type,
-        validToDate: `${formatDate(validToDate, 'PPPPp')
-          ?.replace('dagur,', 'dagsins')
-          ?.replace(' kl.', ', kl.')}`,
-        hasIsolation: isAcceptingCaseDecision(decision) && isCustodyIsolation,
-        isolationEndsBeforeValidToDate,
-        isolationToDate: formatDate(isolationToDate, 'PPPPp')
-          ?.replace('dagur,', 'dagsins')
-          ?.replace(' kl.', ', kl.'),
-      })
-}
+import { getConclusionAutofill } from './Ruling.logic'
+import { strings } from './Ruling.strings'
 
 export const Ruling = () => {
   const {
@@ -117,32 +50,26 @@ export const Ruling = () => {
     isCaseUpToDate,
   } = useContext(FormContext)
 
-  const [introductionErrorMessage, setIntroductionErrorMessage] =
-    useState<string>('')
-  const [courtCaseFactsErrorMessage, setCourtCaseFactsErrorMessage] =
-    useState<string>('')
-  const [courtLegalArgumentsErrorMessage, setCourtLegalArgumentsErrorMessage] =
-    useState<string>('')
-  const [prosecutorDemandsErrorMessage, setProsecutorDemandsMessage] =
-    useState<string>('')
-
   const router = useRouter()
 
-  const { updateCase, setAndSendCaseToServer } = useCase()
+  const { setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
 
-  useDeb(workingCase, [
-    'prosecutorDemands',
-    'courtCaseFacts',
-    'courtLegalArguments',
-    'conclusion',
+  const prosecutorDemandsInput = useDebouncedInput('prosecutorDemands', [
+    'empty',
   ])
+  const conclusionInput = useDebouncedInput('conclusion', [])
+  const courtCaseFactsInput = useDebouncedInput('courtCaseFacts', ['empty'])
+  const courtLegalArgumentsInput = useDebouncedInput('courtLegalArguments', [
+    'empty',
+  ])
+  const introductionInput = useDebouncedInput('introduction', ['empty'])
 
   const initialize = useCallback(() => {
     setAndSendCaseToServer(
       [
         {
-          introduction: formatMessage(m.sections.introduction.autofill, {
+          introduction: formatMessage(strings.sections.introduction.autofill, {
             date: formatDate(workingCase.arraignmentDate?.date, 'PPP'),
           }),
           prosecutorDemands: workingCase.demands,
@@ -338,7 +265,7 @@ export const Ruling = () => {
     >
       <PageHeader title={formatMessage(titles.court.restrictionCases.ruling)} />
       <FormContentContainer>
-        <PageTitle>{formatMessage(m.title)}</PageTitle>
+        <PageTitle>{formatMessage(strings.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={5}>
           <Accordion>
@@ -354,91 +281,57 @@ export const Ruling = () => {
           <Box component="section" marginBottom={5}></Box>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              {formatMessage(m.sections.introduction.title)}
+              {formatMessage(strings.sections.introduction.title)}
             </Text>
           </Box>
           <Input
             data-testid="introduction"
             name="introduction"
-            label={formatMessage(m.sections.introduction.label)}
-            value={workingCase.introduction || ''}
-            placeholder={formatMessage(m.sections.introduction.placeholder)}
-            onChange={(event) =>
-              removeTabsValidateAndSet(
-                'introduction',
-                event.target.value,
-                ['empty'],
-                setWorkingCase,
-                introductionErrorMessage,
-                setIntroductionErrorMessage,
-              )
-            }
-            onBlur={(event) =>
-              validateAndSendToServer(
-                'introduction',
-                event.target.value,
-                ['empty'],
-                workingCase,
-                updateCase,
-                setIntroductionErrorMessage,
-              )
-            }
-            errorMessage={introductionErrorMessage}
-            hasError={introductionErrorMessage !== ''}
+            label={formatMessage(strings.sections.introduction.label)}
+            value={introductionInput.value || ''}
+            placeholder={formatMessage(
+              strings.sections.introduction.placeholder,
+            )}
+            onChange={(evt) => introductionInput.onChange(evt.target.value)}
+            onBlur={(evt) => introductionInput.onBlur(evt.target.value)}
+            errorMessage={introductionInput.errorMessage}
+            hasError={introductionInput.hasError}
             textarea
             rows={7}
-            autoExpand={{ on: true, maxHeight: 300 }}
             required
           />
         </Box>
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              {formatMessage(m.sections.prosecutorDemands.title)}
+              {formatMessage(strings.sections.prosecutorDemands.title)}
             </Text>
           </Box>
           <Input
             data-testid="prosecutorDemands"
             name="prosecutorDemands"
-            label={formatMessage(m.sections.prosecutorDemands.label)}
-            value={workingCase.prosecutorDemands || ''}
+            label={formatMessage(strings.sections.prosecutorDemands.label)}
+            value={prosecutorDemandsInput.value || ''}
             placeholder={formatMessage(
-              m.sections.prosecutorDemands.placeholder,
+              strings.sections.prosecutorDemands.placeholder,
             )}
-            onChange={(event) =>
-              removeTabsValidateAndSet(
-                'prosecutorDemands',
-                event.target.value,
-                ['empty'],
-                setWorkingCase,
-                prosecutorDemandsErrorMessage,
-                setProsecutorDemandsMessage,
-              )
+            onChange={(evt) =>
+              prosecutorDemandsInput.onChange(evt.target.value)
             }
-            onBlur={(event) =>
-              validateAndSendToServer(
-                'prosecutorDemands',
-                event.target.value,
-                ['empty'],
-                workingCase,
-                updateCase,
-                setProsecutorDemandsMessage,
-              )
-            }
-            errorMessage={prosecutorDemandsErrorMessage}
-            hasError={prosecutorDemandsErrorMessage !== ''}
+            onBlur={(evt) => prosecutorDemandsInput.onBlur(evt.target.value)}
+            errorMessage={prosecutorDemandsInput.errorMessage}
+            hasError={prosecutorDemandsInput.hasError}
             textarea
             rows={7}
-            autoExpand={{ on: true, maxHeight: 300 }}
             required
           />
         </Box>
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              {`${formatMessage(m.sections.courtCaseFacts.title)} `}
+              {`${formatMessage(strings.sections.courtCaseFacts.title)} `}
               <Tooltip
-                text={formatMessage(m.sections.courtCaseFacts.tooltip)}
+                text={formatMessage(strings.sections.courtCaseFacts.tooltip)}
               />
             </Text>
           </Box>
@@ -446,34 +339,17 @@ export const Ruling = () => {
             <Input
               data-testid="courtCaseFacts"
               name="courtCaseFacts"
-              label={formatMessage(m.sections.courtCaseFacts.label)}
-              value={workingCase.courtCaseFacts || ''}
-              placeholder={formatMessage(m.sections.courtCaseFacts.placeholder)}
-              onChange={(event) =>
-                removeTabsValidateAndSet(
-                  'courtCaseFacts',
-                  event.target.value,
-                  ['empty'],
-                  setWorkingCase,
-                  courtCaseFactsErrorMessage,
-                  setCourtCaseFactsErrorMessage,
-                )
-              }
-              onBlur={(event) =>
-                validateAndSendToServer(
-                  'courtCaseFacts',
-                  event.target.value,
-                  ['empty'],
-                  workingCase,
-                  updateCase,
-                  setCourtCaseFactsErrorMessage,
-                )
-              }
-              errorMessage={courtCaseFactsErrorMessage}
-              hasError={courtCaseFactsErrorMessage !== ''}
+              label={formatMessage(strings.sections.courtCaseFacts.label)}
+              value={courtCaseFactsInput.value || ''}
+              placeholder={formatMessage(
+                strings.sections.courtCaseFacts.placeholder,
+              )}
+              onChange={(evt) => courtCaseFactsInput.onChange(evt.target.value)}
+              onBlur={(evt) => courtCaseFactsInput.onBlur(evt.target.value)}
+              errorMessage={courtCaseFactsInput.errorMessage}
+              hasError={courtCaseFactsInput.hasError}
               textarea
               rows={16}
-              autoExpand={{ on: true, maxHeight: 600 }}
               required
             />
           </Box>
@@ -481,9 +357,11 @@ export const Ruling = () => {
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              {`${formatMessage(m.sections.courtLegalArguments.title)} `}
+              {`${formatMessage(strings.sections.courtLegalArguments.title)} `}
               <Tooltip
-                text={formatMessage(m.sections.courtLegalArguments.tooltip)}
+                text={formatMessage(
+                  strings.sections.courtLegalArguments.tooltip,
+                )}
               />
             </Text>
           </Box>
@@ -491,36 +369,21 @@ export const Ruling = () => {
             <Input
               data-testid="courtLegalArguments"
               name="courtLegalArguments"
-              label={formatMessage(m.sections.courtLegalArguments.label)}
-              value={workingCase.courtLegalArguments || ''}
+              label={formatMessage(strings.sections.courtLegalArguments.label)}
+              value={courtLegalArgumentsInput.value || ''}
               placeholder={formatMessage(
-                m.sections.courtLegalArguments.placeholder,
+                strings.sections.courtLegalArguments.placeholder,
               )}
-              onChange={(event) =>
-                removeTabsValidateAndSet(
-                  'courtLegalArguments',
-                  event.target.value,
-                  ['empty'],
-                  setWorkingCase,
-                  courtLegalArgumentsErrorMessage,
-                  setCourtLegalArgumentsErrorMessage,
-                )
+              onChange={(evt) =>
+                courtLegalArgumentsInput.onChange(evt.target.value)
               }
-              onBlur={(event) =>
-                validateAndSendToServer(
-                  'courtLegalArguments',
-                  event.target.value,
-                  ['empty'],
-                  workingCase,
-                  updateCase,
-                  setCourtLegalArgumentsErrorMessage,
-                )
+              onBlur={(evt) =>
+                courtLegalArgumentsInput.onBlur(evt.target.value)
               }
-              errorMessage={courtLegalArgumentsErrorMessage}
-              hasError={courtLegalArgumentsErrorMessage !== ''}
+              errorMessage={courtLegalArgumentsInput.errorMessage}
+              hasError={courtLegalArgumentsInput.hasError}
               textarea
               rows={16}
-              autoExpand={{ on: true, maxHeight: 600 }}
               required
             />
           </Box>
@@ -528,18 +391,15 @@ export const Ruling = () => {
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              {formatMessage(m.sections.ruling.title)}
+              {formatMessage(strings.sections.ruling.title)}
             </Text>
           </Box>
-          <RulingInput
-            workingCase={workingCase}
-            setWorkingCase={setWorkingCase}
-          />
+          <RulingInput />
         </Box>
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              {formatMessage(m.sections.decision.title)}
+              {formatMessage(strings.sections.decision.title)}
             </Text>
           </Box>
           <Box marginBottom={5}>
@@ -651,35 +511,18 @@ export const Ruling = () => {
         <Box component="section" marginBottom={5}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
-              {formatMessage(m.sections.conclusion.title)}
+              {formatMessage(strings.sections.conclusion.title)}
             </Text>
           </Box>
           <Input
             name="conclusion"
             data-testid="conclusion"
-            label={formatMessage(m.sections.conclusion.label)}
-            value={workingCase.conclusion || ''}
-            placeholder={formatMessage(m.sections.conclusion.placeholder)}
-            onChange={(event) =>
-              removeTabsValidateAndSet(
-                'conclusion',
-                event.target.value,
-                [],
-                setWorkingCase,
-              )
-            }
-            onBlur={(event) =>
-              validateAndSendToServer(
-                'conclusion',
-                event.target.value,
-                [],
-                workingCase,
-                updateCase,
-              )
-            }
+            label={formatMessage(strings.sections.conclusion.label)}
+            value={conclusionInput.value || ''}
+            placeholder={formatMessage(strings.sections.conclusion.placeholder)}
+            onChange={(evt) => conclusionInput.onChange(evt.target.value)}
             textarea
             rows={7}
-            autoExpand={{ on: true, maxHeight: 300 }}
           />
         </Box>
         <Box marginBottom={10}>
@@ -687,6 +530,7 @@ export const Ruling = () => {
             caseId={workingCase.id}
             title={formatMessage(core.pdfButtonRuling)}
             pdfType="ruling"
+            elementId={formatMessage(core.pdfButtonRuling)}
           />
         </Box>
       </FormContentContainer>

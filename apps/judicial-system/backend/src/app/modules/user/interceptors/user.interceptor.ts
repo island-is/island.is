@@ -10,7 +10,7 @@ import {
 import { isAdminUser, User as TUser } from '@island.is/judicial-system/types'
 
 import { EventLogService } from '../../event-log'
-import { User } from '../user.model'
+import { User } from '../../repository'
 
 @Injectable()
 export class UserInterceptor implements NestInterceptor {
@@ -18,7 +18,7 @@ export class UserInterceptor implements NestInterceptor {
 
   intercept(context: ExecutionContext, next: CallHandler) {
     const request = context.switchToHttp().getRequest()
-    const user: TUser = request.user
+    const user: TUser = request.user?.currentUser
 
     return next.handle().pipe(
       map(async (users: User[]) =>
@@ -27,7 +27,9 @@ export class UserInterceptor implements NestInterceptor {
               .loginMap(users.map((user) => user.nationalId))
               .then((map) =>
                 users.map((user: User) => {
-                  const log = map.get(user.nationalId)
+                  const log = map.get(
+                    `${user.nationalId}-${user.role}-${user.institution?.name}`,
+                  )
 
                   return {
                     id: user.id,

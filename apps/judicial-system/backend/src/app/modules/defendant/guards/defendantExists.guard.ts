@@ -6,7 +6,7 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 
-import { Case } from '../../case'
+import { Case } from '../../repository'
 
 @Injectable()
 export class DefendantExistsGuard implements CanActivate {

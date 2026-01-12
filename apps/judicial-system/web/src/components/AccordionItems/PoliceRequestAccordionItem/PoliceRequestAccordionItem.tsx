@@ -17,8 +17,10 @@ import {
   restrictionsV2,
 } from '@island.is/judicial-system-web/messages'
 import { lawsBrokenAccordion } from '@island.is/judicial-system-web/messages/Core/lawsBrokenAccordion'
-import { CaseLegalProvisions } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import {
+  Case,
+  CaseLegalProvisions,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
 
 import AccordionListItem from '../../AccordionListItem/AccordionListItem'

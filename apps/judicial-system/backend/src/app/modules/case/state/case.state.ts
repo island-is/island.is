@@ -5,6 +5,7 @@ import {
   CaseAppealRulingDecision,
   CaseAppealState,
   CaseDecision,
+  CaseIndictmentRulingDecision,
   CaseState,
   CaseTransition,
   IndictmentCaseState,
@@ -24,8 +25,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../../factories'
-import { UpdateCase } from '../case.service'
-import { Case } from '../models/case.model'
+import { Case, UpdateCase } from '../../repository'
 
 type Actor = 'Prosecution' | 'Defence' | 'Neutral'
 
@@ -83,6 +83,19 @@ const indictmentCaseStateMachine: Map<
     },
   ],
   [
+    IndictmentCaseTransition.MOVE,
+    {
+      fromStates: [IndictmentCaseState.RECEIVED],
+      transition: (update: UpdateCase) => ({
+        ...update,
+        courtCaseNumber: null,
+        judgeId: null,
+        registrarId: null,
+        state: CaseState.SUBMITTED,
+      }),
+    },
+  ],
+  [
     IndictmentCaseTransition.ASK_FOR_CANCELLATION,
     {
       fromStates: [IndictmentCaseState.SUBMITTED, IndictmentCaseState.RECEIVED],
@@ -125,11 +138,14 @@ const indictmentCaseStateMachine: Map<
       fromStates: [
         IndictmentCaseState.WAITING_FOR_CANCELLATION,
         IndictmentCaseState.RECEIVED,
+        IndictmentCaseState.CORRECTING,
       ],
-      transition: (update: UpdateCase) => ({
+      transition: (update: UpdateCase, theCase: Case) => ({
         ...update,
+        // Shouldn't ever happen since court end time should always be set
+        // but just in case, we don't want rulingDate to be empty when completed.
+        rulingDate: theCase.courtEndTime ?? nowFactory(),
         state: CaseState.COMPLETED,
-        rulingDate: nowFactory(),
       }),
     },
   ],
@@ -146,15 +162,45 @@ const indictmentCaseStateMachine: Map<
       }),
     },
   ],
+  [
+    IndictmentCaseTransition.REOPEN,
+    {
+      fromStates: [IndictmentCaseState.COMPLETED],
+      transition: (update: UpdateCase, theCase: Case) => {
+        if (
+          theCase.indictmentRulingDecision ===
+          CaseIndictmentRulingDecision.WITHDRAWAL
+        ) {
+          throw new ForbiddenException(
+            'Cannot reopen a case that has been withdrawn',
+          )
+        }
+
+        return {
+          ...update,
+          state: CaseState.CORRECTING,
+          courtRecordHash: null,
+        }
+      },
+    },
+  ],
 ])
 
 const requestCaseCompletionSideEffect =
   (state: CaseState) => (update: UpdateCase, theCase: Case) => {
-    const currentCourtEndTime = update.courtEndTime ?? theCase.courtEndTime
+    const currentCourtEndTime =
+      update.courtEndTime ?? theCase.courtEndTime ?? nowFactory()
     const newUpdate: UpdateCase = {
       ...update,
       state,
       rulingDate: currentCourtEndTime,
+    }
+
+    // Handle completed without ruling
+    const isCompletedWithoutRuling =
+      update.isCompletedWithoutRuling ?? theCase.isCompletedWithoutRuling
+    if (isCompletedWithoutRuling) {
+      newUpdate.rulingSignatureDate = null
     }
 
     // Handle appealed in court
@@ -221,6 +267,20 @@ const requestCaseStateMachine: Map<RequestCaseTransition, RequestCaseRule> =
         transition: (update: UpdateCase) => ({
           ...update,
           state: CaseState.RECEIVED,
+        }),
+      },
+    ],
+    [
+      RequestCaseTransition.MOVE,
+      {
+        fromStates: [RequestCaseState.RECEIVED],
+        fromAppealStates: [undefined],
+        transition: (update: UpdateCase) => ({
+          ...update,
+          courtCaseNumber: null,
+          judgeId: null,
+          registrarId: null,
+          state: CaseState.SUBMITTED,
         }),
       },
     ],

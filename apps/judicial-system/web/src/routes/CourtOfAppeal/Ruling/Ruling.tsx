@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 
 import {
   Box,
+  FileUploadStatus,
   Input,
   InputFileUpload,
   RadioButton,
@@ -37,13 +38,14 @@ import {
 import {
   formatDateForServer,
   useCase,
+  useFileList,
   useOnceOn,
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isCourtOfAppealRulingStepFieldsValid } from '@island.is/judicial-system-web/src/utils/validate'
 
-import CaseNumbers from '../components/CaseNumbers/CaseNumbers'
+import { CaseNumbers } from '../components'
 import { courtOfAppealRuling as strings } from './Ruling.strings'
 
 const CourtOfAppealRuling = () => {
@@ -64,6 +66,9 @@ const CourtOfAppealRuling = () => {
   const { handleUpload, handleRetry, handleRemove } = useS3Upload(
     workingCase.id,
   )
+  const { onOpenFile } = useFileList({
+    caseId: workingCase.id,
+  })
   const { updateCase, setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
   const router = useRouter()
@@ -102,7 +107,7 @@ const CourtOfAppealRuling = () => {
       uploadFiles.some(
         (file) =>
           file.category === CaseFileCategory.APPEAL_RULING &&
-          file.status === 'done',
+          file.status === FileUploadStatus.done,
       ))
 
   const handleRulingDecisionChange = (
@@ -214,12 +219,13 @@ const CourtOfAppealRuling = () => {
           <Box marginBottom={10}>
             <SectionHeading title={formatMessage(strings.courtRecordHeading)} />
             <InputFileUpload
-              fileList={uploadFiles.filter(
+              name="appealCourtRecord"
+              files={uploadFiles.filter(
                 (file) =>
                   file.category === CaseFileCategory.APPEAL_COURT_RECORD,
               )}
               accept="application/pdf"
-              header={formatMessage(strings.inputFieldLabel)}
+              title={formatMessage(strings.inputFieldLabel)}
               description={formatMessage(core.uploadBoxDescription, {
                 fileEndings: '.pdf',
               })}
@@ -232,6 +238,7 @@ const CourtOfAppealRuling = () => {
                   updateUploadFile,
                 )
               }}
+              onOpenFile={(file) => onOpenFile(file)}
               onRemove={(file) => handleRemove(file, removeUploadFile)}
               onRetry={(file) => handleRetry(file, updateUploadFile)}
             />
@@ -330,7 +337,6 @@ const CourtOfAppealRuling = () => {
                 textarea
                 rows={7}
                 required
-                autoExpand={{ on: true, maxHeight: 300 }}
                 hasError={appealConclusionErrorMessage !== ''}
                 errorMessage={appealConclusionErrorMessage}
               />
@@ -341,11 +347,12 @@ const CourtOfAppealRuling = () => {
                 required
               />
               <InputFileUpload
-                fileList={uploadFiles.filter(
+                name="appealRuling"
+                files={uploadFiles.filter(
                   (file) => file.category === CaseFileCategory.APPEAL_RULING,
                 )}
                 accept="application/pdf"
-                header={formatMessage(strings.inputFieldLabel)}
+                title={formatMessage(strings.inputFieldLabel)}
                 description={formatMessage(core.uploadBoxDescription, {
                   fileEndings: '.pdf',
                 })}
@@ -358,6 +365,7 @@ const CourtOfAppealRuling = () => {
                     updateUploadFile,
                   )
                 }}
+                onOpenFile={(file) => onOpenFile(file)}
                 onRemove={(file) => handleRemove(file, removeUploadFile)}
                 onRetry={(file) => handleRetry(file, updateUploadFile)}
               />

@@ -1,5 +1,5 @@
 import { Response } from 'express'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import {
   CaseState,
@@ -11,7 +11,7 @@ import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { createIndictment } from '../../../../formatters'
 import { AwsS3Service } from '../../../aws-s3'
-import { Case } from '../../models/case.model'
+import { Case } from '../../../repository'
 
 jest.mock('../../../../formatters/indictmentPdf')
 

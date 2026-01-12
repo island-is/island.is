@@ -1,24 +1,43 @@
 {
-  "name": "services-form-system",
+  "name": "services-form-system-api",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/services/form-system/src",
   "projectType": "application",
   "tags": ["scope:nest"],
   "targets": {
     "build": {
-      "executor": "./tools/executors/node:build",
+      "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/services/form-system",
         "main": "apps/services/form-system/src/main.ts",
         "tsConfig": "apps/services/form-system/tsconfig.app.json",
-        "assets": ["apps/services/form-system/src/assets"]
+        "generatePackageJson": true,
+        "esbuildConfig": "tools/esbuild.config.js",
+        "format": ["cjs"],
+        "assets": [
+          "apps/services/form-system/src/assets",
+          {
+            "glob": "*",
+            "input": "apps/services/form-system/migrations",
+            "output": "./migrations"
+          },
+          {
+            "glob": ".sequelizerc",
+            "input": "apps/services/form-system",
+            "output": "./"
+          },
+          {
+            "glob": "sequelize.config.js",
+            "input": "apps/services/form-system",
+            "output": "./"
+          }
+        ]
       },
       "configurations": {
         "production": {
           "optimization": true,
-          "extractLicenses": true,
-          "inspect": false
+          "extractLicenses": true
         }
       }
     },
@@ -26,22 +45,29 @@
       "executor": "@nx/js:node",
       "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "services-form-system:build"
+        "buildTarget": "services-form-system-api:build"
       },
       "configurations": {
         "development": {
-          "buildTarget": "services-form-system:build:development"
+          "buildTarget": "services-form-system-api:build:development"
         },
         "production": {
-          "buildTarget": "services-form-system:build:production"
+          "buildTarget": "services-form-system-api:build:production"
         }
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["apps/services/form-system/**/*.ts"]
+      }
+    },
+    "worker": {
+      "executor": "@nx/js:node",
+      "options": {
+        "buildTarget": "services-form-system-api:build",
+        "args": ["--job", "worker"]
       }
     },
     "test": {
@@ -56,6 +82,13 @@
           "ci": true,
           "codeCoverage": true
         }
+      }
+    },
+    "dev-services": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker compose up -d",
+        "cwd": "apps/services/form-system"
       }
     },
     "codegen/backend-schema": {
@@ -79,22 +112,25 @@
         "cwd": "apps/services/form-system"
       }
     },
-    "seed/generate": {
+    "docker-express-yarn": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express-yarn`"
+    },
+    "dev-init": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "sequelize-cli seed:generate",
-        "cwd": "apps/services/form-system"
+        "commands": [
+          "yarn nx run services-form-system-api:dev-services",
+          "yarn nx run services-form-system-api:migrate"
+        ],
+        "parallel": false
       }
     },
-    "seed": {
+    "dev": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "sequelize-cli db:seed:all",
-        "cwd": "apps/services/form-system"
+        "commands": ["yarn start services-form-system-api"],
+        "parallel": true
       }
-    },
-    "docker-express": {
-      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
     }
   }
 }

@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { Fragment, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
 
@@ -23,9 +23,12 @@ import {
 import { isNonEmptyArray } from '../../utils/arrayHelpers'
 import { sortByIcelandicAlphabet } from '../../utils/sortHelper'
 import { FormContext } from '../FormProvider/FormProvider'
+import { LinkComponent } from '../MarkdownWrapper/MarkdownWrapper'
+import { UserContext } from '../UserProvider/UserProvider'
 import { CivilClaimantInfo } from './CivilClaimantInfo/CivilClaimantInfo'
 import { DefendantInfo } from './DefendantInfo/DefendantInfo'
 import RenderPersonalData from './RenderPersonalInfo/RenderPersonalInfo'
+import { VictimInfo } from './VictimInfo/VictimInfo'
 import { Item } from './InfoCard'
 import { strings } from './useInfoCardItems.strings'
 import * as styles from './InfoCard.css'
@@ -33,17 +36,25 @@ import * as styles from './InfoCard.css'
 const useInfoCardItems = () => {
   const { formatMessage } = useIntl()
   const { workingCase } = useContext(FormContext)
+  const { limitedAccess } = useContext(UserContext)
 
   // helper for info card items. If items have no values they will have [{falsy value}]
   const showItem = (item: Item) =>
     isNonEmptyArray(item.values) && !!item.values[0]
 
-  const defendants = (
-    caseType?: CaseType | null,
-    displayAppealExpirationInfo?: boolean,
-    displayVerdictViewDate?: boolean,
-    displaySentToPrisonAdminDate?: boolean,
-  ): Item => {
+  const defendants = ({
+    caseType,
+    displayAppealExpirationInfo,
+    displayVerdictViewDate,
+    displaySentToPrisonAdminDate,
+    displayOpenCaseReference,
+  }: {
+    caseType?: CaseType | null
+    displayAppealExpirationInfo?: boolean
+    displayVerdictViewDate?: boolean
+    displaySentToPrisonAdminDate?: boolean
+    displayOpenCaseReference?: boolean
+  }): Item => {
     const defendants = workingCase.defendants
     const isMultipleDefendants = defendants && defendants.length > 1
 
@@ -77,6 +88,8 @@ const useInfoCardItems = () => {
             >
               <DefendantInfo
                 defendant={defendant}
+                workingCaseId={workingCase.id}
+                courtId={workingCase.court?.id}
                 defender={{
                   name: workingCase.defenderName,
                   email: workingCase.defenderEmail,
@@ -86,6 +99,7 @@ const useInfoCardItems = () => {
                 displayAppealExpirationInfo={displayAppealExpirationInfo}
                 displayVerdictViewDate={displayVerdictViewDate}
                 displaySentToPrisonAdminDate={displaySentToPrisonAdminDate}
+                displayOpenCaseReference={displayOpenCaseReference}
               />
             </div>
           ))
@@ -95,20 +109,24 @@ const useInfoCardItems = () => {
 
   const indictmentCreated: Item = {
     id: 'indictment-created-item',
-    title: formatMessage(strings.indictmentCreated),
-    values: [formatDate(workingCase.created, 'PP')],
+    title: formatMessage(strings.indictmentSentToCourt),
+    values: [formatDate(workingCase.caseSentToCourtDate, 'PP')],
   }
 
-  const prosecutor = (caseType?: CaseType | null): Item => ({
+  const prosecutor = (
+    caseType?: CaseType | null,
+    onClick?: () => void,
+  ): Item => ({
     id: 'prosecutor-item',
     title: formatMessage(
       isRequestCase(caseType) ? core.prosecutorPerson : strings.prosecutor,
     ),
     values: [
-      RenderPersonalData(
-        workingCase.prosecutor?.name,
-        workingCase.prosecutor?.email,
-      ),
+      RenderPersonalData({
+        name: workingCase.prosecutor?.name,
+        email: workingCase.prosecutor?.email,
+        onClick,
+      }),
     ],
   })
 
@@ -156,7 +174,10 @@ const useInfoCardItems = () => {
     id: 'judges-item',
     title: formatMessage(core.judge),
     values: [
-      RenderPersonalData(workingCase.judge?.name, workingCase.judge?.email),
+      RenderPersonalData({
+        name: workingCase.judge?.name,
+        email: workingCase.judge?.email,
+      }),
     ],
   }
 
@@ -170,25 +191,10 @@ const useInfoCardItems = () => {
     id: 'registrar-item',
     title: formatMessage(core.registrar),
     values: [
-      RenderPersonalData(
-        workingCase.registrar?.name,
-        workingCase.registrar?.email,
-      ),
-    ],
-  }
-
-  const offense: Item = {
-    id: 'offense-item',
-    title: formatMessage(strings.offense),
-    values: [
-      <>
-        {readableIndictmentSubtypes(
-          workingCase.policeCaseNumbers,
-          workingCase.indictmentSubtypes,
-        ).map((subtype) => (
-          <Text key={subtype}>{capitalize(subtype)}</Text>
-        ))}
-      </>,
+      RenderPersonalData({
+        name: workingCase.registrar?.name,
+        email: workingCase.registrar?.email,
+      }),
     ],
   }
 
@@ -257,6 +263,43 @@ const useInfoCardItems = () => {
     title: formatMessage(core.court),
     values: [mergedCase.court?.name],
   })
+
+  const splitCases: Item = {
+    id: 'split-cases-item',
+    title: 'Klofinn frá',
+    values:
+      workingCase.splitCases?.flatMap((splitCase) =>
+        splitCase.defendants?.map((defendant) => (
+          <Fragment key={defendant.id}>
+            <Text>{defendant.name}</Text>
+            <LinkComponent
+              href={`/${constants.ROUTE_HANDLER_ROUTE}/${splitCase.id}`}
+            >
+              {splitCase.courtCaseNumber}
+            </LinkComponent>
+          </Fragment>
+        )),
+      ) || [],
+  }
+
+  const splitCase: Item = {
+    id: 'split-case-item',
+    title: 'Klofið frá',
+    values: workingCase.splitCase
+      ? [
+          limitedAccess ? (
+            workingCase.splitCase.courtCaseNumber
+          ) : (
+            <LinkComponent
+              href={`${constants.ROUTE_HANDLER_ROUTE}/${workingCase.splitCase.id}`}
+              key={workingCase.splitCase.id}
+            >
+              {workingCase.splitCase.courtCaseNumber}
+            </LinkComponent>
+          ),
+        ]
+      : [],
+  }
 
   const appealCaseNumber: Item = {
     id: 'appeal-case-number-item',
@@ -379,6 +422,40 @@ const useInfoCardItems = () => {
       : [],
   }
 
+  const victims: Item = {
+    id: 'victim-item',
+    title: (
+      <Text
+        variant="h4"
+        as="h4"
+        marginBottom={
+          workingCase.victims && workingCase.victims.length > 1 ? 3 : 2
+        }
+      >
+        {workingCase.victims && workingCase.victims.length > 1
+          ? 'Brotaþolar'
+          : 'Brotaþoli'}
+      </Text>
+    ),
+    values: workingCase.victims
+      ? workingCase.victims.map((victim, index) => (
+          <div
+            key={victim.id}
+            className={cn(
+              workingCase.victims && workingCase.victims.length > 1
+                ? styles.renderDivider
+                : undefined,
+              workingCase.victims && index === workingCase.victims.length - 1
+                ? styles.last
+                : undefined,
+            )}
+          >
+            <VictimInfo victim={victim} />
+          </div>
+        ))
+      : [],
+  }
+
   return {
     showItem,
     defendants,
@@ -392,7 +469,6 @@ const useInfoCardItems = () => {
     judge,
     caseType,
     registrar,
-    offense,
     requestedCourtDate,
     mergeCase,
     mergedCasePoliceCaseNumbers,
@@ -408,6 +484,9 @@ const useInfoCardItems = () => {
     indictmentReviewedDate,
     parentCaseValidToDate,
     civilClaimants,
+    splitCases,
+    splitCase,
+    victims,
   }
 }
 

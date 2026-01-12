@@ -1,3 +1,4 @@
+import { ICalendar } from 'datebook'
 import _uniqBy from 'lodash/uniqBy'
 
 import { Injectable, InternalServerErrorException } from '@nestjs/common'
@@ -12,8 +13,8 @@ import { NotificationType } from '@island.is/judicial-system/types'
 import { filterWhitelistEmails, stripHtmlTags } from '../../formatters'
 import { notifications } from '../../messages'
 import { EventService } from '../event'
+import { Notification, Recipient } from '../repository'
 import { DeliverResponse } from './models/deliver.response'
-import { Notification, Recipient } from './models/notification.model'
 import { notificationModuleConfig } from './notification.config'
 
 interface Attachment {
@@ -76,14 +77,21 @@ export abstract class BaseNotificationService {
     return whitelistedEmails
   }
 
-  protected async sendEmail(
-    subject: string,
-    html: string,
-    recipientName?: string,
-    recipientEmail?: string,
-    attachments?: Attachment[],
-    skipTail?: boolean,
-  ): Promise<Recipient> {
+  protected async sendEmail({
+    subject,
+    html,
+    recipientName,
+    recipientEmail,
+    attachments,
+    skipTail,
+  }: {
+    subject: string
+    html: string
+    recipientName?: string
+    recipientEmail?: string
+    attachments?: Attachment[]
+    skipTail?: boolean
+  }): Promise<Recipient> {
     try {
       // This is to handle a comma separated list of emails
       // We use the first one as the main recipient and the rest as CC
@@ -96,7 +104,10 @@ export abstract class BaseNotificationService {
       html =
         html.match(/<a/g) || skipTail
           ? html
-          : `${html} ${this.formatMessage(notifications.emailTail)}`
+          : `${html} ${this.formatMessage(notifications.emailTail, {
+              linkStart: `<a href="${this.config.clientUrl}">`,
+              linkEnd: '</a>',
+            })}`
 
       await this.emailService.sendEmail({
         from: {
@@ -192,5 +203,37 @@ export abstract class BaseNotificationService {
         )
       )
     })
+  }
+
+  protected createICalAttachment({
+    scheduledDate,
+    eventOrganizer,
+    location,
+    title,
+  }: {
+    scheduledDate: Date
+    eventOrganizer: { name: string; email: string }
+    location: string
+    title: string
+  }): Attachment | undefined {
+    const start = new Date(scheduledDate.toString().split('.')[0])
+    const end = new Date(scheduledDate.getTime() + 30 * 60000)
+
+    const icalendar = new ICalendar({
+      title,
+      location,
+      start,
+      end,
+    })
+
+    return {
+      filename: 'court-date.ics',
+      content: icalendar
+        .addProperty(
+          `ORGANIZER;CN=${eventOrganizer.name}`,
+          `MAILTO:${eventOrganizer.email}`,
+        )
+        .render(),
+    }
   }
 }

@@ -1,11 +1,15 @@
-import { uuid } from 'uuidv4'
+import { Op } from 'sequelize'
+import { v4 as uuid } from 'uuid'
 
-import { UserRole } from '@island.is/judicial-system/types'
+import {
+  InstitutionType,
+  User as TUser,
+  UserRole,
+} from '@island.is/judicial-system/types'
 
 import { createTestingUserModule } from './createTestingUserModule'
 
-import { Institution } from '../../institution'
-import { User } from '../user.model'
+import { Institution, User } from '../../repository'
 
 interface Then {
   result: User[]
@@ -27,7 +31,10 @@ describe('UserController - Get all', () => {
       const then = {} as Then
 
       await userController
-        .getAll({ role } as User)
+        .getAll({
+          role,
+          institution: { type: InstitutionType.POLICE_PROSECUTORS_OFFICE },
+        } as TUser)
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 
@@ -50,13 +57,43 @@ describe('UserController - Get all', () => {
       expect(mockUserModel.findAll).toHaveBeenCalledWith({
         order: ['name'],
         include: [{ model: Institution, as: 'institution' }],
+        where: {
+          role: { [Op.not]: UserRole.ADMIN },
+          '$institution.type$': Object.values(InstitutionType),
+        },
+      })
+      expect(then.result).toEqual(users)
+    })
+  })
+
+  describe('Local admin user gets users', () => {
+    const users = [{ id: uuid() }, { id: uuid() }]
+    let then: Then
+
+    beforeEach(async () => {
+      const mockFindAll = mockUserModel.findAll as jest.Mock
+      mockFindAll.mockResolvedValueOnce(users)
+
+      then = await givenWhenThen(UserRole.LOCAL_ADMIN)
+    })
+
+    it('should return all users', () => {
+      expect(mockUserModel.findAll).toHaveBeenCalledWith({
+        order: ['name'],
+        include: [{ model: Institution, as: 'institution' }],
+        where: {
+          role: { [Op.not]: UserRole.LOCAL_ADMIN },
+          '$institution.type$': [InstitutionType.POLICE_PROSECUTORS_OFFICE],
+        },
       })
       expect(then.result).toEqual(users)
     })
   })
 
   describe.each(
-    Object.values(UserRole).filter((role) => role !== UserRole.ADMIN),
+    Object.values(UserRole).filter(
+      (role) => ![UserRole.ADMIN, UserRole.LOCAL_ADMIN].includes(role),
+    ),
   )('Non admin user gets users', (role) => {
     const users = [{ id: uuid() }, { id: uuid() }]
     let then: Then

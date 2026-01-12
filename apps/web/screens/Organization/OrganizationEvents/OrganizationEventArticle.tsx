@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import cn from 'classnames'
+import addDays from 'date-fns/addDays'
 import { useRouter } from 'next/router'
 
 import { EmbeddedVideo, Image } from '@island.is/island-ui/contentful'
@@ -15,6 +16,7 @@ import {
 } from '@island.is/island-ui/core'
 import type { Locale } from '@island.is/shared/types'
 import {
+  AddToCalendarButton,
   EventLocation,
   EventTime,
   getThemeConfig,
@@ -43,7 +45,9 @@ import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import type { Screen, ScreenContext } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
+import { formatEventLocation } from '@island.is/web/utils/event'
 import { extractNamespaceFromOrganization } from '@island.is/web/utils/extractNamespaceFromOrganization'
+import { formatEventDate } from '@island.is/web/utils/formatEventDate'
 import { getOrganizationSidebarNavigationItems } from '@island.is/web/utils/organization'
 import { webRichText } from '@island.is/web/utils/richText'
 
@@ -79,7 +83,7 @@ const EventItemImage = ({
             ? eventItem.contentImage?.url + '?w=1000&fm=webp&q=80'
             : ''
         }
-        alt=""
+        alt={eventItem.contentImage?.description ?? ''}
       />
     </Box>
   )
@@ -88,15 +92,28 @@ const EventItemImage = ({
 const EventInformationBox = ({
   event,
   namespace,
+  hasEventOccurred,
 }: {
   event: EventModel
   namespace: Record<string, string>
+  hasEventOccurred: boolean
 }) => {
   const { activeLocale } = useI18n()
-  const { format } = useDateUtils()
-  const formattedDate =
-    event.startDate && format(new Date(event.startDate), 'do MMMM yyyy')
   const n = useNamespace(namespace)
+  const { format } = useDateUtils()
+  const timeSuffix = n(
+    'timeSuffix',
+    activeLocale === 'is' ? 'til' : 'to',
+  ) as string
+  const dateSuffix = n('dateSuffix', ' - ') as string
+  const formattedDate = formatEventDate(
+    format,
+    ` ${dateSuffix} `,
+    event.startDate,
+    event.time?.endDate,
+  )
+
+  const router = useRouter()
 
   return (
     <Box background="blue100" borderRadius="large" padding={[3, 3, 3, 2, 3]}>
@@ -111,22 +128,49 @@ const EventInformationBox = ({
             <EventTime
               startTime={event.time?.startTime ?? ''}
               endTime={event.time?.endTime ?? ''}
-              timePrefix={
-                n('timePrefix', activeLocale === 'is' ? 'kl.' : '') as string
-              }
-              timeSuffix={
-                n('timeSuffix', activeLocale === 'is' ? 'til' : 'to') as string
-              }
+              timePrefix={n('timePrefix', '') as string}
+              timeSuffix={timeSuffix}
             />
           </Box>
         )}
-        {((event.location?.useFreeText && event.location?.freeText) ||
-          event.location?.streetAddress) && (
+        {((Boolean(event.location?.useFreeText) &&
+          Boolean(event.location?.freeText)) ||
+          Boolean(event.location?.streetAddress)) && (
           <Box display="flex" flexWrap="nowrap" columnGap={ICON_TEXT_SPACE}>
             <Box>
               <Icon color="blue400" icon="location" type="outline" />
             </Box>
             <EventLocation location={event.location} />
+          </Box>
+        )}
+        {!hasEventOccurred && Boolean(event.startDate) && (
+          <Box
+            display="flex"
+            flexWrap="nowrap"
+            columnGap={ICON_TEXT_SPACE}
+            alignItems="center"
+          >
+            <Box>
+              <Icon color="blue400" icon="add" type="outline" />
+            </Box>
+            <AddToCalendarButton
+              event={{
+                title: event.title,
+                description: '',
+                pageUrl: `${
+                  typeof window !== 'undefined'
+                    ? window.location.origin
+                    : 'https://island.is'
+                }${router.asPath}`,
+                location: formatEventLocation(event.location),
+                startDate: format(new Date(event.startDate), 'yyyy-MM-dd'),
+                startTime: event.time?.startTime,
+                endTime: event.time?.endTime,
+                endDate: event.time?.endDate
+                  ? format(new Date(event.time.endDate), 'yyyy-MM-dd')
+                  : undefined,
+              }}
+            />
           </Box>
         )}
       </Stack>
@@ -139,6 +183,7 @@ export interface OrganizationEventArticleProps {
   event: EventModel
   namespace: Record<string, string>
   locale: Locale
+  hasEventOccurred: boolean
 }
 
 type OrganizationEventArticleScreenContext = ScreenContext & {
@@ -148,7 +193,7 @@ type OrganizationEventArticleScreenContext = ScreenContext & {
 const OrganizationEventArticle: Screen<
   OrganizationEventArticleProps,
   OrganizationEventArticleScreenContext
-> = ({ organizationPage, event, namespace, locale }) => {
+> = ({ organizationPage, event, namespace, locale, hasEventOccurred }) => {
   const n = useNamespace(namespace)
   const router = useRouter()
 
@@ -245,7 +290,11 @@ const OrganizationEventArticle: Screen<
               paddingTop={[2, 2, 2, 0, 0]}
               paddingBottom={2}
             >
-              <EventInformationBox event={event} namespace={namespace} />
+              <EventInformationBox
+                event={event}
+                namespace={namespace}
+                hasEventOccurred={hasEventOccurred}
+              />
             </GridColumn>
             {!isSmall && !event.video?.url && event.contentImage?.url && (
               <GridColumn paddingBottom={3} span={isSmall ? '12/12' : '7/12'}>
@@ -268,11 +317,7 @@ const OrganizationEventArticle: Screen<
                 renderComponent: {
                   Image: (slice: ImageSchema) => (
                     <Box className={styles.clearBoth}>
-                      <Image
-                        {...slice}
-                        thumbnail={slice.url + '?w=50'}
-                        url={slice.url + '?w=1000'}
-                      />
+                      <Image {...slice} url={slice.url} />
                     </Box>
                   ),
                 },
@@ -307,6 +352,7 @@ OrganizationEventArticle.getProps = async ({
               input: {
                 slug: organizationPageSlug,
                 lang: locale as Locale,
+                subpageSlugs: [locale === 'is' ? 'vidburdir' : 'events'],
               },
             },
           })
@@ -356,8 +402,26 @@ OrganizationEventArticle.getProps = async ({
     )
   }
 
+  const eventBelongsToOrganization =
+    Boolean(event.organization?.slug) &&
+    Boolean(organizationPage.organization?.slug) &&
+    event.organization?.slug === organizationPage.organization?.slug
+
+  if (!eventBelongsToOrganization) {
+    throw new CustomNextError(
+      404,
+      `Event ${event.slug} does not belong to organization ${organizationPage.organization?.slug}`,
+    )
+  }
+
+  let hasEventOccurred = true
+  if (Boolean(event.endDate) || Boolean(event.startDate)) {
+    const dateString = event.endDate ? event.endDate : event.startDate
+    hasEventOccurred = addDays(new Date(dateString), 1) < new Date()
+  }
+
   const organizationNamespace = extractNamespaceFromOrganization(
-    organizationPage.organization,
+    organizationPage?.organization,
   )
 
   return {
@@ -365,6 +429,7 @@ OrganizationEventArticle.getProps = async ({
     event,
     namespace,
     locale: locale as Locale,
+    hasEventOccurred,
     customTopLoginButtonItem: organizationNamespace?.customTopLoginButtonItem,
     ...getThemeConfig(organizationPage?.theme, organizationPage?.organization),
   }

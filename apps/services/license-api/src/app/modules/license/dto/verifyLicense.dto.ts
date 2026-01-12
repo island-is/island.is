@@ -1,6 +1,13 @@
 import { IsPersonNationalId } from '@island.is/nest/core'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { IsBoolean, IsObject, IsOptional, IsString } from 'class-validator'
+import {
+  IsBoolean,
+  IsEnum,
+  IsObject,
+  IsOptional,
+  IsString,
+} from 'class-validator'
+import { LicenseApiVersion } from '../license.types'
 
 export class VerifyLicenseRequest {
   @ApiProperty({ description: 'PDF417 barcode scanner data' })

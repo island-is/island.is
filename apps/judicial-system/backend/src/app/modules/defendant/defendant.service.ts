@@ -1,12 +1,8 @@
-import { literal, Op } from 'sequelize'
-import { Transaction } from 'sequelize/types'
+import { literal, Op, Transaction } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 
-import {
-  Inject,
-  Injectable,
-  InternalServerErrorException,
-} from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
+import { Inject, Injectable } from '@nestjs/common'
+import { InjectConnection } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -28,21 +24,24 @@ import {
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
 
-import { Case } from '../case/models/case.model'
 import { CourtService } from '../court'
+import {
+  Case,
+  Defendant,
+  DefendantEventLogRepositoryService,
+  DefendantRepositoryService,
+} from '../repository'
 import { CreateDefendantDto } from './dto/createDefendant.dto'
 import { InternalUpdateDefendantDto } from './dto/internalUpdateDefendant.dto'
 import { UpdateDefendantDto } from './dto/updateDefendant.dto'
-import { Defendant } from './models/defendant.model'
-import { DefendantEventLog } from './models/defendantEventLog.model'
 import { DeliverResponse } from './models/deliver.response'
 
 @Injectable()
 export class DefendantService {
   constructor(
-    @InjectModel(Defendant) private readonly defendantModel: typeof Defendant,
-    @InjectModel(DefendantEventLog)
-    private readonly defendantEventLogModel: typeof DefendantEventLog,
+    @InjectConnection() private readonly sequelize: Sequelize,
+    private readonly defendantRepositoryService: DefendantRepositoryService,
+    private readonly defendantEventLogRepositoryService: DefendantEventLogRepositoryService,
     private readonly courtService: CourtService,
     private readonly messageService: MessageService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
@@ -164,10 +163,21 @@ export class DefendantService {
       ) {
         // Defender was just confirmed by judge
         if (!oldDefendant.isDefenderChoiceConfirmed) {
+          // send general defender assignment email
           messages.push({
             type: MessageType.DEFENDANT_NOTIFICATION,
             caseId: theCase.id,
             body: { type: DefendantNotificationType.DEFENDER_ASSIGNED },
+            elementId: updatedDefendant.id,
+          })
+          // send a notification to follow-up on scheduled court date
+          messages.push({
+            type: MessageType.DEFENDANT_NOTIFICATION,
+            caseId: theCase.id,
+            user,
+            body: {
+              type: DefendantNotificationType.DEFENDER_COURT_DATE_FOLLOW_UP,
+            },
             elementId: updatedDefendant.id,
           })
         }
@@ -196,7 +206,7 @@ export class DefendantService {
     defendantToCreate: CreateDefendantDto,
     transaction: Transaction,
   ): Promise<Defendant> {
-    return this.defendantModel.create(
+    return this.defendantRepositoryService.create(
       { ...defendantToCreate, caseId },
       { transaction },
     )
@@ -207,7 +217,7 @@ export class DefendantService {
     defendantToCreate: CreateDefendantDto,
     user: User,
   ): Promise<Defendant> {
-    const defendant = await this.defendantModel.create({
+    const defendant = await this.defendantRepositoryService.create({
       ...defendantToCreate,
       caseId: theCase.id,
     })
@@ -230,26 +240,12 @@ export class DefendantService {
     update: UpdateDefendantDto,
     transaction?: Transaction,
   ) {
-    const [numberOfAffectedRows, defendants] = await this.defendantModel.update(
-      update,
-      { where: { id: defendantId, caseId }, returning: true, transaction },
-    )
-
-    if (numberOfAffectedRows > 1) {
-      // Tolerate failure, but log error
-      this.logger.error(
-        `Unexpected number of rows (${numberOfAffectedRows}) affected when updating defendant ${defendantId} of case ${caseId}`,
-      )
-    } else if (numberOfAffectedRows < 1) {
-      throw new InternalServerErrorException(
-        `Could not update defendant ${defendantId} of case ${caseId}`,
-      )
-    }
-
-    return defendants[0]
+    return this.defendantRepositoryService.update(caseId, defendantId, update, {
+      transaction,
+    })
   }
 
-  async updateRequestCaseDefendant(
+  private async updateRequestCaseDefendant(
     theCase: Case,
     defendant: Defendant,
     update: UpdateDefendantDto,
@@ -271,41 +267,46 @@ export class DefendantService {
     return updatedDefendant
   }
 
-  async createDefendantEvent({
-    caseId,
-    defendantId,
-    eventType,
-  }: {
-    caseId: string
-    defendantId: string
-    eventType: DefendantEventType
-  }): Promise<void> {
-    await this.defendantEventLogModel.create({
-      caseId,
-      defendantId,
-      eventType,
-    })
+  async createDefendantEvent(
+    event: {
+      caseId: string
+      defendantId: string
+      eventType: DefendantEventType
+    },
+    transaction?: Transaction,
+  ): Promise<void> {
+    await this.defendantEventLogRepositoryService.create(event, { transaction })
   }
 
-  async updateIndictmentCaseDefendant(
+  private async updateIndictmentCaseDefendant(
     theCase: Case,
     defendant: Defendant,
     update: UpdateDefendantDto,
     user: User,
   ): Promise<Defendant> {
-    const updatedDefendant = await this.updateDatabaseDefendant(
-      theCase.id,
-      defendant.id,
-      update,
-    )
+    const updatedDefendant = await this.sequelize.transaction(
+      async (transaction) => {
+        const updatedDefendant = await this.updateDatabaseDefendant(
+          theCase.id,
+          defendant.id,
+          update,
+          transaction,
+        )
 
-    if (update.isSentToPrisonAdmin) {
-      this.createDefendantEvent({
-        caseId: theCase.id,
-        defendantId: defendant.id,
-        eventType: DefendantEventType.SENT_TO_PRISON_ADMIN,
-      })
-    }
+        if (update.isSentToPrisonAdmin) {
+          await this.createDefendantEvent(
+            {
+              caseId: theCase.id,
+              defendantId: defendant.id,
+              eventType: DefendantEventType.SENT_TO_PRISON_ADMIN,
+            },
+            transaction,
+          )
+        }
+
+        return updatedDefendant
+      },
+    )
 
     await this.sendIndictmentCaseUpdateDefendantMessages(
       theCase,
@@ -339,29 +340,52 @@ export class DefendantService {
     theCase: Case,
     defendant: Defendant,
     update: InternalUpdateDefendantDto,
-    isDefenderChoiceConfirmed = false,
     transaction?: Transaction,
   ): Promise<Defendant> {
     // The reason we have a separate dto for this is because requests that end here
-    // are initiated by outside API's which should not be able to edit other fields
-    // Defendant updated originating from the judicial system should use the UpdateDefendantDto
+    // are initiated by outside API's which should not be able to edit other fields directly
+    // Defendant updates originating from the judicial system should use the UpdateDefendantDto
     // and go through the update method above using the defendantId.
-    // This is also why we may set the isDefenderChoiceConfirmed to false here - the judge needs to confirm all changes.
+
+    // If there is a change in the defender choice after the judge has confirmed the choice,
+    // we need to set the isDefenderChoiceConfirmed to false
+    const resetDefenderChoiceConfirmed =
+      defendant?.isDefenderChoiceConfirmed &&
+      ((update.defenderChoice &&
+        defendant?.defenderChoice !== update.defenderChoice) ||
+        (update.defenderNationalId &&
+          defendant?.defenderNationalId !== update.defenderNationalId))
 
     const updatedDefendant = await this.updateDatabaseDefendant(
       theCase.id,
       defendant.id,
-      { ...update, isDefenderChoiceConfirmed },
+      {
+        ...update,
+        ...(resetDefenderChoiceConfirmed && {
+          isDefenderChoiceConfirmed: false,
+        }),
+      },
       transaction,
     )
 
-    // Notify the court if the defendant has changed the defender choice
-    if (
+    if (updatedDefendant.defenderChoice === DefenderChoice.DELEGATE) {
+      await this.messageService.sendMessagesToQueue([
+        {
+          type: MessageType.DEFENDANT_NOTIFICATION,
+          caseId: theCase.id,
+          elementId: updatedDefendant.id,
+          body: {
+            type: DefendantNotificationType.DEFENDANT_DELEGATED_DEFENDER_CHOICE,
+          },
+        },
+      ])
+    } else if (
       !updatedDefendant.isDefenderChoiceConfirmed &&
       updatedDefendant.defenderChoice === DefenderChoice.CHOOSE &&
       (updatedDefendant.defenderChoice !== defendant.defenderChoice ||
         updatedDefendant.defenderNationalId !== defendant.defenderNationalId)
     ) {
+      // Notify the court if the defendant has changed the defender choice
       await this.messageService.sendMessagesToQueue([
         {
           type: MessageType.DEFENDANT_NOTIFICATION,
@@ -382,20 +406,7 @@ export class DefendantService {
     defendantId: string,
     user: User,
   ): Promise<boolean> {
-    const numberOfAffectedRows = await this.defendantModel.destroy({
-      where: { id: defendantId, caseId: theCase.id },
-    })
-
-    if (numberOfAffectedRows > 1) {
-      // Tolerate failure, but log error
-      this.logger.error(
-        `Unexpected number of rows (${numberOfAffectedRows}) affected when deleting defendant ${defendantId} of case ${theCase.id}`,
-      )
-    } else if (numberOfAffectedRows < 1) {
-      throw new InternalServerErrorException(
-        `Could not delete defendant ${defendantId} of case ${theCase.id}`,
-      )
-    }
+    await this.defendantRepositoryService.delete(theCase.id, defendantId)
 
     if (theCase.courtCaseNumber) {
       // This should only happen to non-indictment cases.
@@ -421,7 +432,7 @@ export class DefendantService {
       return false
     }
 
-    const defendantsInCustody = await this.defendantModel.findAll({
+    const defendantsInCustody = await this.defendantRepositoryService.findAll({
       include: [
         {
           model: Case,
@@ -442,7 +453,7 @@ export class DefendantService {
   findLatestDefendantByDefenderNationalId(
     nationalId: string,
   ): Promise<Defendant | null> {
-    return this.defendantModel.findOne({
+    return this.defendantRepositoryService.findOne({
       include: [
         {
           model: Case,

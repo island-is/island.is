@@ -1,31 +1,17 @@
-import { useCallback, useContext, useEffect, useState } from 'react'
+import { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'motion/react'
 import { useRouter } from 'next/router'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
-import {
-  Box,
-  Button,
-  Input,
-  Select,
-  Text,
-  toast,
-} from '@island.is/island-ui/core'
-import { theme } from '@island.is/island-ui/theme'
+import { Box, Button } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import {
-  capitalize,
-  formatCaseType,
-} from '@island.is/judicial-system/formatters'
 import {
   core,
   defendant as m,
-  errors,
   titles,
 } from '@island.is/judicial-system-web/messages'
 import {
-  BlueBox,
   DefenderInfo,
   FormContentContainer,
   FormContext,
@@ -33,26 +19,24 @@ import {
   PageHeader,
   PageLayout,
   PageTitle,
+  ProsecutorCaseInfo,
+  SectionHeading,
+  VictimInfo,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  Case,
   CaseOrigin,
-  CaseType,
   Defendant as TDefendant,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
-  useCase,
   useDefendants,
+  useVictim,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isBusiness } from '@island.is/judicial-system-web/src/utils/utils'
 import { isDefendantStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 
-import {
-  DefendantInfo,
-  PoliceCaseNumbers,
-  usePoliceCaseNumbers,
-} from '../../components'
+import { DefendantInfo } from '../../components'
 
 const Defendant = () => {
   const router = useRouter()
@@ -60,72 +44,14 @@ const Defendant = () => {
 
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
-  const { createCase, isCreatingCase, setAndSendCaseToServer } = useCase()
+  const { createVictimAndSetState, deleteVictimAndSetState } = useVictim()
   const { formatMessage } = useIntl()
-  // This state is needed because type is initially set to OHTER on the
-  // workingCase and we need to validate that the user selects an option
-  // from the case type list to allow the user to continue.
-  const [caseType, setCaseType] = useState<CaseType | null>()
-
-  useEffect(() => {
-    if (workingCase.id) {
-      setCaseType(workingCase.type)
-    }
-  }, [workingCase.id, workingCase.type])
-
-  const { clientPoliceNumbers, setClientPoliceNumbers } =
-    usePoliceCaseNumbers(workingCase)
 
   const handleNavigationTo = useCallback(
     async (destination: string) => {
-      if (!workingCase.id) {
-        const createdCase = await createCase(workingCase)
-
-        if (createdCase) {
-          workingCase.defendants?.forEach(async (defendant, index) => {
-            if (
-              index === 0 &&
-              createdCase.defendants &&
-              createdCase.defendants.length > 0
-            ) {
-              await updateDefendant({
-                caseId: createdCase.id,
-                defendantId: createdCase.defendants[0].id,
-                gender: defendant.gender,
-                name: defendant.name,
-                address: defendant.address,
-                nationalId: defendant.nationalId || null,
-                noNationalId: defendant.noNationalId,
-                citizenship: defendant.citizenship,
-              })
-            } else {
-              await createDefendant({
-                caseId: createdCase.id,
-                gender: defendant.gender,
-                name: defendant.name,
-                address: defendant.address,
-                nationalId: defendant.nationalId || null,
-                noNationalId: defendant.noNationalId,
-                citizenship: defendant.citizenship,
-              })
-            }
-          })
-          router.push(`${destination}/${createdCase.id}`)
-        } else {
-          toast.error(formatMessage(errors.createCase))
-        }
-      } else {
-        router.push(`${destination}/${workingCase.id}`)
-      }
+      router.push(`${destination}/${workingCase.id}`)
     },
-    [
-      workingCase,
-      createCase,
-      router,
-      updateDefendant,
-      createDefendant,
-      formatMessage,
-    ],
+    [workingCase, router],
   )
 
   const updateDefendantState = useCallback(
@@ -144,7 +70,8 @@ const Defendant = () => {
         newDefendants[indexOfDefendantToUpdate] = {
           ...newDefendants[indexOfDefendantToUpdate],
           ...update,
-        } as TDefendant
+        }
+
         return { ...prevWorkingCase, defendants: newDefendants }
       })
     },
@@ -190,16 +117,25 @@ const Defendant = () => {
     }))
   }
 
+  const addDefendantButtonId = 'addDefendantButton'
+
   const handleCreateDefendantClick = async () => {
     if (workingCase.id) {
       const defendantId = await createDefendant({ caseId: workingCase.id })
-
       createEmptyDefendant(defendantId)
     } else {
       createEmptyDefendant()
     }
 
-    window.scrollTo(0, document.body.scrollHeight)
+    // Scroll to the new defendant
+    setTimeout(() => {
+      const element = document.getElementById(addDefendantButtonId)
+
+      element?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'end',
+      })
+    }, 50)
   }
 
   const createEmptyDefendant = (defendantId?: string) => {
@@ -212,11 +148,7 @@ const Defendant = () => {
     }))
   }
 
-  const stepIsValid = isDefendantStepValidIC(
-    workingCase,
-    caseType,
-    clientPoliceNumbers,
-  )
+  const stepIsValid = isDefendantStepValidIC(workingCase)
 
   return (
     <PageLayout
@@ -234,104 +166,15 @@ const Defendant = () => {
       <FormContentContainer>
         <Box marginBottom={10}>
           <PageTitle>{formatMessage(m.heading)}</PageTitle>
-          <Box component="section" marginBottom={5}>
-            <PoliceCaseNumbers
+          <Box marginBottom={5}>
+            <ProsecutorCaseInfo
               workingCase={workingCase}
-              setWorkingCase={setWorkingCase}
-              clientPoliceNumbers={clientPoliceNumbers}
-              setClientPoliceNumbers={setClientPoliceNumbers}
+              hideDefendants
+              hideCourt
             />
           </Box>
           <Box component="section" marginBottom={5}>
-            <Box marginBottom={3}>
-              <Text as="h3" variant="h3">
-                {formatMessage(m.sections.investigationType.heading)}
-              </Text>
-            </Box>
-            <BlueBox>
-              <Box marginBottom={3}>
-                <Select
-                  name="type"
-                  options={constants.InvestigationCaseTypes}
-                  label={formatMessage(m.sections.investigationType.type.label)}
-                  placeholder={formatMessage(
-                    m.sections.investigationType.type.placeholder,
-                  )}
-                  onChange={(selectedOption) => {
-                    const type = selectedOption?.value
-
-                    setCaseType(type)
-                    setAndSendCaseToServer(
-                      [
-                        {
-                          type,
-                          force: true,
-                        },
-                      ],
-                      workingCase,
-                      setWorkingCase,
-                    )
-                  }}
-                  value={
-                    workingCase.id
-                      ? {
-                          value: workingCase.type,
-                          label: capitalize(formatCaseType(workingCase.type)),
-                        }
-                      : undefined
-                  }
-                  formatGroupLabel={() => (
-                    <div
-                      style={{
-                        width: 'calc(100% + 24px)',
-                        height: '3px',
-                        marginLeft: '-12px',
-                        backgroundColor: theme.color.dark300,
-                      }}
-                    />
-                  )}
-                  required
-                />
-              </Box>
-              <Input
-                data-testid="description"
-                name="description"
-                label={formatMessage(
-                  m.sections.investigationType.description.label,
-                )}
-                placeholder={formatMessage(
-                  m.sections.investigationType.description.placeholder,
-                )}
-                value={workingCase.description || ''}
-                autoComplete="off"
-                onChange={(evt) => {
-                  setWorkingCase((prevWorkingCase) => ({
-                    ...prevWorkingCase,
-                    description: evt.target.value,
-                  }))
-                }}
-                onBlur={(evt) =>
-                  setAndSendCaseToServer(
-                    [
-                      {
-                        description: evt.target.value.trim(),
-                        force: true,
-                      },
-                    ],
-                    workingCase,
-                    setWorkingCase,
-                  )
-                }
-                maxLength={255}
-              />
-            </BlueBox>
-          </Box>
-          <Box component="section" marginBottom={5}>
-            <Box marginBottom={3}>
-              <Text as="h3" variant="h3">
-                {formatMessage(m.sections.defendantInfo.heading)}
-              </Text>
-            </Box>
+            <SectionHeading title="Varnaraðili" />
             <AnimatePresence>
               {workingCase.defendants &&
                 workingCase.defendants.map((defendant, index) => (
@@ -372,7 +215,8 @@ const Defendant = () => {
             </AnimatePresence>
             <Box display="flex" justifyContent="flexEnd" marginTop={3}>
               <Button
-                data-testid="addDefendantButton"
+                data-testid={addDefendantButtonId}
+                id={addDefendantButtonId}
                 variant="ghost"
                 icon="add"
                 onClick={handleCreateDefendantClick}
@@ -401,18 +245,77 @@ const Defendant = () => {
             </motion.section>
           </AnimatePresence>
         </Box>
+        {workingCase.id &&
+          (workingCase.victims && workingCase.victims?.length === 0 ? (
+            <Box
+              component="section"
+              marginBottom={5}
+              display="flex"
+              justifyContent="flexEnd"
+            >
+              <Button
+                data-testid="addFirstVictimButton"
+                icon="add"
+                variant="ghost"
+                onClick={() =>
+                  createVictimAndSetState(workingCase.id, setWorkingCase)
+                }
+              >
+                Skrá brotaþola
+              </Button>
+            </Box>
+          ) : (
+            <Box component="section" marginBottom={5}>
+              <SectionHeading title="Brotaþoli" />
+              <AnimatePresence>
+                {workingCase.victims?.map((victim) => (
+                  <motion.div
+                    key={victim.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                  >
+                    <VictimInfo
+                      victim={victim}
+                      workingCase={workingCase}
+                      setWorkingCase={setWorkingCase}
+                      onDelete={() =>
+                        deleteVictimAndSetState(
+                          workingCase.id,
+                          victim,
+                          setWorkingCase,
+                        )
+                      }
+                    />
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+              <Box display="flex" justifyContent="flexEnd" marginTop={2}>
+                <Button
+                  data-testid="addVictimButton"
+                  variant="ghost"
+                  icon="add"
+                  onClick={() =>
+                    createVictimAndSetState(workingCase.id, setWorkingCase)
+                  }
+                >
+                  Bæta við brotaþola
+                </Button>
+              </Box>
+            </Box>
+          ))}
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
           nextButtonIcon="arrowForward"
-          previousUrl={`${constants.CASES_ROUTE}`}
+          previousUrl={`${constants.INVESTIGATION_CASE_REGISTRATION_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
             handleNavigationTo(
               constants.INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE,
             )
           }
           nextIsDisabled={!stepIsValid}
-          nextIsLoading={isCreatingCase}
+          nextIsLoading={isLoadingWorkingCase}
           nextButtonText={formatMessage(
             workingCase.id === '' ? core.createCase : core.continue,
           )}

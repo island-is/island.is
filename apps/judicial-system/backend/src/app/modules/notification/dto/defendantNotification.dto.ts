@@ -1,7 +1,8 @@
-import { IsEnum, IsNotEmpty } from 'class-validator'
+import { IsEnum, IsNotEmpty, IsObject, IsOptional } from 'class-validator'
 
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
+import type { User } from '@island.is/judicial-system/types'
 import { DefendantNotificationType } from '@island.is/judicial-system/types'
 
 export class DefendantNotificationDto {
@@ -9,4 +10,9 @@ export class DefendantNotificationDto {
   @IsEnum(DefendantNotificationType)
   @ApiProperty({ enum: DefendantNotificationType })
   readonly type!: DefendantNotificationType
+
+  @IsOptional()
+  @IsObject()
+  @ApiPropertyOptional({ type: Object })
+  readonly user?: User
 }

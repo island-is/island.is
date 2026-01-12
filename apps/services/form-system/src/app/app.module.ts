@@ -4,17 +4,20 @@ import { AuditModule } from '@island.is/nest/audit'
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { environment } from '../environments'
-import { FormsModule } from './modules/forms/forms.module'
-import { ScreensModule } from './modules/screens/screens.module'
-import { FieldSettingsModule } from './modules/fieldSettings/fieldSettings.module'
-import { FieldsModule } from './modules/fields/fields.module'
-import { ListsModule } from './modules/lists/lists.module'
-import { OrganizationsModule } from './modules/organizations/organizations.module'
-import { SectionsModule } from './modules/sections/sections.module'
-import { CertificationsModule } from './modules/certifications/certifications.module'
-import { SequelizeConfigService } from './sequelizeConfig.service'
-import { ListItemsModule } from './modules/listItems/listItems.module'
 import { ApplicationsModule } from './modules/applications/applications.module'
+import { FieldsModule } from './modules/fields/fields.module'
+import { FileModule } from './modules/file/file.module'
+import { FormApplicantTypesModule } from './modules/formApplicantTypes/formApplicantTypes.module'
+import { FormCertificationTypesModule } from './modules/formCertificationTypes/formCertificationTypes.module'
+import { FormsModule } from './modules/forms/forms.module'
+import { ListItemsModule } from './modules/listItems/listItems.module'
+import { OrganizationPermissionsModule } from './modules/organizationPermissions/organizationPermissions.module'
+import { OrganizationsModule } from './modules/organizations/organizations.module'
+import { ScreensModule } from './modules/screens/screens.module'
+import { SectionsModule } from './modules/sections/sections.module'
+import { ServicesModule } from './modules/services/services.module'
+import { SequelizeConfigService } from './sequelizeConfig.service'
+import { PruneModule } from './modules/services/prune/prune.module'
 
 @Module({
   imports: [
@@ -29,11 +32,14 @@ import { ApplicationsModule } from './modules/applications/applications.module'
     SectionsModule,
     ScreensModule,
     FieldsModule,
-    CertificationsModule,
-    ListsModule,
-    FieldSettingsModule,
     ListItemsModule,
     ApplicationsModule,
+    FormApplicantTypesModule,
+    FormCertificationTypesModule,
+    OrganizationPermissionsModule,
+    ServicesModule,
+    FileModule,
+    PruneModule,
   ],
 })
 export class AppModule {}

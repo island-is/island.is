@@ -1,5 +1,10 @@
 // Source of truth for other languages
 export const is = {
+  // General buttons
+  'button.change': 'Breyta',
+  'button.open': 'Skoða',
+  'button.moreInfoHere': 'Nánari upplýsingar hér',
+
   // login
   'login.welcomeMessage': 'Skráðu þig inn í appið með rafrænum skilríkjum',
   'login.loginButtonText': 'Skrá inn',
@@ -18,10 +23,12 @@ export const is = {
     'Uppfærð réttindi vantar, vinsamlegast skráðu þig inn aftur.',
   'login.expiredMissingUserMessage':
     'Tókst ekki að sækja notendaupplýsingar, vinsamlegast skráðu þig inn aftur.',
+  'login.expiredMessage': 'Vinsamlegast skráðu þig inn aftur.',
 
   // app lock
   'applock.title': 'Sláðu inn 4 tölustafa PIN',
   'applock.attempts': 'tilraunir eftir',
+  'applock.attempt': 'tilraun eftir',
 
   // onboarding
   'onboarding.notifications.title':
@@ -182,6 +189,10 @@ export const is = {
   'home.vehicleModule.summary':
     'Skrá kílómetrastöðu rafmagns- og tengiltvinnbíla',
   'home.vehicleModule.button': 'Mín ökutæki',
+  'homeBanner.vehicleMileage.title': 'Skrá kílómetrastöðu',
+  'homeBanner.vehicleMileage.description':
+    'Skráðu kílómetrastöðu þinna ökutækja',
+  'homeBanner.vehicleMileage.cta': 'Skoða ökutæki',
   'button.seeAll': 'Sjá allt',
 
   // home options
@@ -236,10 +247,49 @@ export const is = {
   'inbox.filterDateConfirm': 'Staðfesta',
   'inbox.filterDateCancel': 'Hætta við',
 
+  // inbox bulk select
+  'inbox.bulkSelectButton': 'Velja skjöl',
+  'inbox.bulkSelectAllButton': 'Velja allt',
+  'inbox.bulkDeselectAllButton': 'Afvelja allt',
+  'inbox.bulkSelectCancelButton': 'Hætta við',
+  'inbox.bulkSelectActionStar': 'Stjörnumerkja',
+  'inbox.bulkSelectActionArchive': 'Geymsla',
+  'inbox.bulkSelectActionRead': 'Merkja lesið',
+  'inbox.bulkSelect.starSuccess': 'Valin skjöl stjörnumerkt',
+  'inbox.bulkSelect.archiveSuccess': 'Valin skjöl færð í geymslu',
+  'inbox.bulkSelect.markAsReadSuccess': 'Valin skjöl merkt sem lesin',
+  'inbox.bulkSelect.starError': 'Ekki tókst að stjörnumerkja skjöl',
+  'inbox.bulkSelect.archiveError': 'Ekki tókst að færa skjöl í geymslu',
+  'inbox.bulkSelect.markAsReadError': 'Ekki tókst að merkja skjöl sem lesin',
+  'inbox.bulkSelect.pleaseTryAgain': 'Vinsamlegast prófaðu aftur síðar',
+
   // document detail
-  'documentDetail.screenTitle': 'Skjal',
+  'documentDetail.screenTitle': 'Póstur',
   'documentDetail.loadingText': 'Sæki skjal',
   'documentDetail.errorUnknown': 'Villa kom upp við að sækja skjal',
+  'documentDetail.buttonReply': 'Svara pósti',
+  'documentDetail.buttonCommunications': 'Samskipti',
+
+  // document reply
+  'documentReply.to': 'Til',
+  'documentReply.from': 'Frá',
+  'documentReply.message': 'Skilaboð',
+  'documentReply.messagePlaceholder': 'Skrifaðu skilaboð hér',
+  'documentReply.uploadAttachment': 'Hlaða upp skjali',
+  'documentReply.sendMessage': 'Senda skilaboð',
+
+  // document communications
+  'documentCommunications.caseNumber': 'Málsnúmer',
+  'documentCommunications.initialReply':
+    'Skilaboðin eru móttekin og mál hefur verið stofnað. Þú getur haldið áfram samskiptunum hér eða í gegnum þitt persónulega netfang {email}.',
+  'documentCommunications.cannotReply':
+    'Ekki er hægt að svara þessum skilaboðum því sendandi hefur lokað fyrir frekari svör í þessu samtali.',
+
+  // register email
+  'registerEmail.title': 'Vinsamlegast skráðu netfang',
+  'registerEmail.description': 'Til þess að svara pósti þarf að skrá netfang',
+  'registerEmail.button': 'Skrá netfang',
+  'registerEmail.cancel': 'Hætta við',
 
   // profile
   'profile.screenTitle': 'Meira',
@@ -251,6 +301,12 @@ export const is = {
   'profile.finance': 'Fjármál',
   'profile.airDiscount': 'Loftbrú',
   'profile.health': 'Heilsa',
+  'profile.moreInfo': 'Meira á mínum síðum',
+  'profile.accessControl': 'Aðgangsstýring',
+  'profile.supportPayments': 'Framfærsla',
+  'profile.education': 'Menntun',
+  'profile.lawAndOrder': 'Lög og reglur',
+  'profile.occupationalLicenses': 'Starfsleyfi',
 
   // vehicles
   'vehicles.screenTitle': 'Ökutæki',
@@ -259,6 +315,7 @@ export const is = {
     'Ökutæki sem eru skráð á þig munu birtast hér.',
   'vehicles.nextInspectionLabel': 'Næsta skoðun {date}',
   'vehicles.mileageRequired': 'Kílómetragjald',
+  'vehicles.registerMileage': 'Skrá kílómetrastöðu',
 
   // vehicles detail
   'vehicleDetail.regno': 'Skráningarnúmer',
@@ -308,11 +365,29 @@ export const is = {
   'vehicle.mileage.historyTitle': 'Skráningar',
   'vehicle.mileage.editRecordButton': 'Breyta færslu',
 
+  // vehicle links
+  'vehicle.links.ownerLookup': 'Uppfletting í ökutækjaskrá',
+  'vehicle.links.vehicleHistory': 'Ökutækjaferill',
+  'vehicle.links.reportOwnerChange': 'Tilkynna eigendaskipti',
+  'vehicle.links.returnCertificate': 'Skilavottorð',
+  'vehicle.links.nameConfidentiality': 'Nafnleynd í ökutækjaskrá',
+
+  // vehicle dropdown links
+  'vehicle.links.dropdown.orderNumberPlate': 'Panta númeraplötu',
+  'vehicle.links.dropdown.orderRegistrationCertificate':
+    'Panta skráningarskírteini',
+  'vehicle.links.dropdown.changeCoOwner': 'Breyta meðeiganda',
+  'vehicle.links.dropdown.changeOperator': 'Breyta umráðamanni',
+  'vehicle.links.dropdown.vehicleHistoryReport': 'Ferilskýrsla',
+
   // assets overview
   'assetsOvervies.screenTitle': 'Fasteignir',
   'assetsOverview.emptyListTitle': 'Engar fasteignir finnast fyrir notanda',
   'assetsOverview.emptyListDescription':
     'Fasteignir sem skráðar eru á þig munu birtast hér.',
+
+  // assets links
+  'assets.links.mortgageCertificate': 'Veðbókarvottorð',
 
   // assets details
   'assetsDetail.propertyNumber': 'Fastanúmer',
@@ -340,6 +415,10 @@ export const is = {
   'finance.heading.title': 'Staða við ríkissjóð og stofnanir',
   'finance.heading.subtitle':
     'Hér sérð þú sundurliðun skulda og/eða inneigna hjá ríkissjóði og stofnunum.',
+  'finance.links.payments': 'Greiðslur',
+  'finance.links.loans': 'Lán',
+  'finance.links.transactions': 'Hreyfingar',
+  'finance.links.status': 'Staða',
 
   // finance detail
   'financeDetail.title': 'Ítarupplýsingar',
@@ -387,6 +466,8 @@ export const is = {
     'Þegar þú færð t.d. ökuskírteini, skotvopnaleyfi eða veiðikort frá hinu opinbera birtast þau hér.',
   'wallet.lastUpdated': 'Síðast uppfært: {date}',
   'wallet.update': 'Uppfæra',
+  'wallet.yourLicenses': 'Þín skírteini',
+  'wallet.childLicenses': 'Skírteini barna þinna',
 
   // wallet pass
   'walletPass.screenTitle': 'Skírteini',
@@ -405,29 +486,46 @@ export const is = {
     'Þú getur ekki bætt við skírteinum á þetta tæki.',
   'walletPass.barcodeErrorNotConnected':
     'Ekki er hægt að skanna skírteini nema að tækið sé nettengt.',
-  'walletPass.barcodeErrorFailedToFetch': 'Ekki tókst að sækja barkóða',
+  'walletPass.barcodeErrorFailedToFetch': 'Ekki tókst að sækja strikamerki',
+  'walletPass.barcodeErrorBadSession':
+    'Strikamerki var nýverið sótt á öðru tæki. Vinsamlegast reyndu aftur síðar.',
   'walletPass.validLicense': 'Í gildi',
   'walletPass.expiredLicense': 'Útrunnið',
-  'walletPass.passportNumber': 'Númer vegabréfs: {licenseNumber}',
-  'walletPass.licenseNumber': 'Skírteinisnúmer: {licenseNumber}',
   'walletPass.errorFetchingLicense': 'Ekki tókst að uppfæra',
 
-  // wallet passport
-  'walletPassport.screenTitle': 'Vegabréf',
-  'walletPassport.infoTitle': 'Mundu eftir vegabréfinu!',
-  'walletPassport.infoDescription':
-    'Þetta yfirlit gildir ekki sem ferðaskilríki.',
-  'walletPassport.warningTitle': 'Rennur út innan 6 mánaða',
-  'walletPassport.warningDescription':
+  // license details
+  'licenseDetail.pcard.alert.title': 'Mundu eftir stæðiskortinu!',
+  'licenseDetail.pcard.alert.description':
+    'Þetta yfirlit gildir ekki sem stæðiskort.',
+  'licenseDetail.driversLicense.alert.title': 'Ertu að fara erlendis?',
+  'licenseDetail.driversLicense.alert.description':
+    'Mundu eftir kortinu þar sem stafræna ökuskírteinið gildir ekki erlendis',
+  'licenseDetail.ehic.alert.title': 'Mundu eftir kortinu!',
+  'licenseDetail.ehic.alert.description':
+    'Þetta yfirlit gildir ekki sem sjúkratryggingakort.',
+  'licenseDetail.passport.alert.title':
+    'Þetta er eingöngu yfirlit og gildir ekki sem persónu- eða ferðaskilríki',
+  'licenseDetail.passport.alert.description':
+    'Einungis skilríkið sjálft er gilt persónu- og ferðaskilríki.',
+  'licenseDetail.identityDocument.alert.title':
+    'Þetta er eingöngu yfirlit og gildir ekki sem persónuskilríki',
+  'licenseDetail.identityDocument.alert.description':
+    'Einungis skilríkið sjálft er fullgilt persónuskilríki.',
+  'licenseDetail.identityTravelDocument.alert.title':
+    'Þetta er eingöngu yfirlit og gildir ekki sem persónu- eða ferðaskilríki',
+  'licenseDetail.identityTravelDocument.alert.description':
+    'Einungis skilríkið sjálft er gilt persónu- og ferðaskilríki.',
+  'licenseDetail.warning.title': 'Rennur út innan 6 mánaða',
+  'licenseDetail.passport.warning.description':
     'Athugið að vegabréfið þitt mun renna út innan næstu 6 mánaða.',
-  'walletPassport.displayName': 'Nafn einstaklings',
-  'walletPassport.number': 'Númer vegabréfs',
-  'walletPassport.issuingDate': 'Útgáfudagur',
-  'walletPassport.expirationDate': 'Lokadagur',
-  'walletPassport.mrzName': 'Nafn á tölvulesanlegu formi',
-  'walletPassport.children': 'Vegabréf barna',
-  'walletPassport.noPassport': 'Ekki til útgefið vegabréf.',
-  'walletPassport.noPassportLink': 'Nánar á island.is/vegabref',
+  'licenseDetail.identityDocument.warning.description':
+    'Athugið að nafnskírteinið þitt mun renna út innan næstu 6 mánaða.',
+  'licenseDetail.passport.noPassport': 'Engin gild vegabréf',
+  'licenseDetail.identityDocument.noIdentityDocument':
+    'Engin gild nafnskilríki',
+  'licenseDetail.apply': 'Sækja um',
+  'licenseDetail.passport.title': 'Vegabréf',
+  'licenseDetail.identityDocument.title': 'Nafnskírteini',
 
   // license scanner
   'licenseScanner.title': 'Skilríkjaskanni',
@@ -472,14 +570,6 @@ export const is = {
   'licenseScannerResult.nationalId': 'Kennitala',
   'licenseScannerResult.driverLicenseNumber': 'Númer ökuskírteinis',
 
-  // license details
-  'licenseDetail.pcard.alert.title': 'Mundu eftir stæðiskortinu!',
-  'licenseDetail.pcard.alert.description':
-    'Þetta yfirlit gildir ekki sem stæðiskort.',
-  'licenseDetail.ehic.alert.title': 'Mundu eftir kortinu!',
-  'licenseDetail.ehic.alert.description':
-    'Þetta yfirlit gildir ekki sem sjúkratryggingakort.',
-
   // notifications
   'notifications.screenTitle': 'Tilkynningar',
   'notifications.markAllAsRead': 'Merkja allt lesið',
@@ -516,6 +606,8 @@ export const is = {
     completed {Afgreidd}
     rejected {Hafnað}
     draft {Í vinnslu hjá þér}
+    approved {Samþykkt}
+    notstarted {Ekki hafin}
     other {Staða óþekkt}
   }`,
   'applicationStatusCard.draftProgress':
@@ -589,6 +681,9 @@ export const is = {
   'airDiscount.emptyListTitle': 'Enginn réttur',
   'airDiscount.emptyListDescription':
     'Einungis íbúar landsbyggðarinnar sem eiga lögheimili fjarri höfuðborgarsvæðinu og eyjum eiga rétt á Loftbrú.',
+  'airDiscount.disabledTitle': 'Loftbrú lokuð',
+  'airDiscount.disabledDescription':
+    'Afsláttarkóðar Loftbrúar eru ekki í gildi í augnablikinu.',
 
   // offline
   'offline.title': 'Ekkert netsamband',
@@ -655,6 +750,12 @@ export const is = {
     'Greiðsluþrep {level}, þú greiðir {percentage}%',
   'health.overview.medicinePurchaseNoActivePeriodWarning':
     'Nýtt greiðslutímabil hefst við næstu lyfjakaup',
+  'health.overview.basicInformation': 'Grunnupplýsingar',
+  'health.overview.bloodType': 'Blóðflokkur',
+  'health.overview.bloodTypeDescription': 'Þú ert í blóðflokki {bloodType}',
+  'health.overview.noBloodTypeRegistered': 'Ekki verið flokkaður',
+  'health.overview.dentist': 'Tannlæknir',
+  'health.overview.noDentistRegistered': 'Enginn tannlæknir skráður',
 
   // health - vaccinations
   'health.vaccinations.screenTitle': 'Bólusetningar',

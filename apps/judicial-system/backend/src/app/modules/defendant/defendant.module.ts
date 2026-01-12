@@ -3,11 +3,8 @@ import { SequelizeModule } from '@nestjs/sequelize'
 
 import { MessageModule } from '@island.is/judicial-system/message'
 
-import { CaseModule } from '../case/case.module'
-import { CourtModule } from '../court/court.module'
-import { CivilClaimant } from './models/civilClaimant.model'
-import { Defendant } from './models/defendant.model'
-import { DefendantEventLog } from './models/defendantEventLog.model'
+import { CivilClaimant } from '../repository'
+import { CaseModule, CourtModule, RepositoryModule } from '..'
 import { CivilClaimantController } from './civilClaimant.controller'
 import { CivilClaimantService } from './civilClaimant.service'
 import { DefendantController } from './defendant.controller'
@@ -20,7 +17,8 @@ import { LimitedAccessDefendantController } from './limitedAccessDefendant.contr
     MessageModule,
     forwardRef(() => CourtModule),
     forwardRef(() => CaseModule),
-    SequelizeModule.forFeature([Defendant, CivilClaimant, DefendantEventLog]),
+    forwardRef(() => RepositoryModule),
+    SequelizeModule.forFeature([CivilClaimant]),
   ],
   controllers: [
     DefendantController,

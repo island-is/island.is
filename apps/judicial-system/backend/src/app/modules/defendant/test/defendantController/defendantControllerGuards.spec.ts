@@ -1,18 +1,14 @@
-import { JwtAuthGuard, RolesGuard } from '@island.is/judicial-system/auth'
+import { JwtAuthUserGuard, RolesGuard } from '@island.is/judicial-system/auth'
 
+import { verifyGuards } from '../../../../test'
+import { CaseExistsGuard, CaseWriteGuard } from '../../../case'
 import { DefendantController } from '../../defendant.controller'
 
-describe('DefendantController - guards', () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let guards: any[]
-
-  beforeEach(() => {
-    guards = Reflect.getMetadata('__guards__', DefendantController)
-  })
-
-  it('should have the right guard configuration', () => {
-    expect(guards).toHaveLength(2)
-    expect(new guards[0]()).toBeInstanceOf(JwtAuthGuard)
-    expect(new guards[1]()).toBeInstanceOf(RolesGuard)
-  })
+describe('DefendantController - Top-level guards', () => {
+  verifyGuards(DefendantController, undefined, [
+    JwtAuthUserGuard,
+    RolesGuard,
+    CaseExistsGuard,
+    CaseWriteGuard,
+  ])
 })

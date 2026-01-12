@@ -329,7 +329,13 @@
         "primaryButton": "Reyna aftur",
         "secondaryButton": "Hætta við"
       },
-      "currentMileage": "Núverandi kílómetrastaða",
+      "currentMileage": {
+        "label": "Núverandi kílómetrastaða",
+        "rules": {
+          "validate": "Núverandi km staða er lægri en skráð km staða"
+        },
+        "info": "Móttökuaðila ber að skrá núverandi kílómetrastöðu við afskráningu"
+      },
       "numberplate": {
         "sectionTitle": "Upplýsingar um númeraplötur",
         "alert": {
@@ -599,7 +605,8 @@
           "rules": {
             "required": "Skylda er að fylla út sveitarfélag"
           }
-        }
+        },
+        "recyclingCompanyOther": "Aðrir"
       },
       "buttons": {
         "cancel": "Hætta við",
@@ -608,17 +615,23 @@
       }
     }
   },
-  "notFound": {
-    "title": "Umbeðin slóð fannst ekki",
-    "content": "Eitthvað hefur farið úrskeiðis, vinsamlegast reynið aftur",
-    "button": "Til baka"
-  },
   "errorBoundary": {
     "title": "Villa kom upp",
     "contents": [
       "Eitthvað hefur farið úrskeiðis.",
       "Vinsamlega <a href='https://island.is/stafraent-island/hafa-samband/'>hafðu samband</a> fyrir frekari hjálp"
     ]
+  },
+  "alerts": {
+    "accessDenied": {
+      "title": "Aðgangi hafnað",
+      "message": "Þú hefur ekki nauðsynlegar heimildir til að skoða þessa síðu. Vinsamlegast hafðu samband við vefsíðustjóra til að fá frekari aðstoð"
+    },
+    "notFound": {
+      "title": "Umbeðin slóð fannst ekki",
+      "message": "Eitthvað hefur farið úrskeiðis, vinsamlegast reynið aftur",
+      "button": "Til baka"
+    }
   },
   "routes": {
     "home": {

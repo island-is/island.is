@@ -1,7 +1,12 @@
 import { FC, useContext } from 'react'
 
-import { EventType } from '../../graphql/schema'
+import {
+  isPrisonAdminUser,
+  isPublicProsecutionOfficeUser,
+} from '@island.is/judicial-system/types'
+
 import { FormContext } from '../FormProvider/FormProvider'
+import { UserContext } from '../UserProvider/UserProvider'
 import InfoCard from './InfoCard'
 import useInfoCardItems from './useInfoCardItems'
 
@@ -13,6 +18,7 @@ export interface Props {
 
 const InfoCardClosedIndictment: FC<Props> = (props) => {
   const { workingCase } = useContext(FormContext)
+  const { user } = useContext(UserContext)
 
   const {
     showItem,
@@ -24,11 +30,13 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
     court,
     prosecutor,
     judge,
-    offense,
+    offenses,
     indictmentReviewer,
     indictmentReviewDecision,
     indictmentReviewedDate,
+    indictmentCreated,
     civilClaimants,
+    registrar,
   } = useInfoCardItems()
 
   const {
@@ -37,22 +45,18 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
     displaySentToPrisonAdminDate,
   } = props
 
-  const reviewedDate = workingCase.eventLogs?.find(
-    (log) => log.eventType === EventType.INDICTMENT_REVIEWED,
-  )?.created
-
   return (
     <InfoCard
       sections={[
         {
           id: 'defendants-section',
           items: [
-            defendants(
-              workingCase.type,
+            defendants({
+              caseType: workingCase.type,
               displayAppealExpirationInfo,
               displayVerdictViewDate,
               displaySentToPrisonAdminDate,
-            ),
+            }),
           ],
         },
         ...(workingCase.hasCivilClaims
@@ -61,6 +65,7 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
         {
           id: 'case-info-section',
           items: [
+            indictmentCreated,
             policeCaseNumbers,
             courtCaseNumber,
             prosecutorsOffice,
@@ -68,11 +73,13 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
             court,
             prosecutor(workingCase.type),
             judge,
-            offense,
+            ...(workingCase.registrar ? [registrar] : []),
+            offenses,
           ],
           columns: 2,
         },
-        ...(workingCase.indictmentReviewer?.name
+        ...(workingCase.indictmentReviewer?.name &&
+        (isPublicProsecutionOfficeUser(user) || isPrisonAdminUser(user))
           ? [
               {
                 id: 'additional-data-section',
@@ -81,8 +88,12 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
                   ...(workingCase.indictmentReviewDecision
                     ? [indictmentReviewDecision]
                     : []),
-                  ...(reviewedDate
-                    ? [indictmentReviewedDate(reviewedDate)]
+                  ...(workingCase.indictmentReviewedDate
+                    ? [
+                        indictmentReviewedDate(
+                          workingCase.indictmentReviewedDate,
+                        ),
+                      ]
                     : []),
                 ],
                 columns: 2,

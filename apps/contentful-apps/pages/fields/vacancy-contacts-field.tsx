@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
-import { Button, Box, TextInput, Text } from '@contentful/f36-components'
-import { PlusIcon, DeleteIcon } from '@contentful/f36-icons'
-import { FieldExtensionSDK } from '@contentful/app-sdk'
-import { useSDK } from '@contentful/react-apps-toolkit'
 import { useDebounce } from 'react-use'
+import { FieldExtensionSDK } from '@contentful/app-sdk'
+import { Box, Button, Text, TextInput } from '@contentful/f36-components'
+import { DeleteIcon, PlusIcon } from '@contentful/f36-icons'
+import { useSDK } from '@contentful/react-apps-toolkit'
 
 const DEBOUNCE_TIME = 300
 
@@ -11,6 +11,7 @@ interface Contact {
   name?: string
   email?: string
   phone?: string
+  jobTitle?: string
 }
 
 const VacancyContactsField = () => {
@@ -88,6 +89,22 @@ const VacancyContactsField = () => {
                       return {
                         ...prevContact,
                         name: ev.target.value,
+                      }
+                    }),
+                  )
+                }}
+              />
+
+              <Text>Job Title</Text>
+              <TextInput
+                value={contact.jobTitle}
+                onChange={(ev) => {
+                  setContacts((prevContacts) =>
+                    prevContacts.map((prevContact, prevIndex) => {
+                      if (prevIndex !== index) return prevContact
+                      return {
+                        ...prevContact,
+                        jobTitle: ev.target.value,
                       }
                     }),
                   )

@@ -1,4 +1,4 @@
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import {
   CaseState,
@@ -8,10 +8,9 @@ import {
   investigationCases,
   restrictionCases,
   User,
-  UserRole,
 } from '@island.is/judicial-system/types'
 
-import { Case } from '../../models/case.model'
+import { Case } from '../../../repository'
 import { verifyFullAccess, verifyNoAccess } from './verify'
 
 const continueFromCaseState = (user: User, type: string, state: string) => {
@@ -62,10 +61,7 @@ const continueFromIndictmentType = (user: User, type: string) => {
   })
 }
 
-describe.each([
-  UserRole.DISTRICT_COURT_JUDGE,
-  UserRole.DISTRICT_COURT_REGISTRAR,
-])('district court user %s', (role) => {
+describe.each(districtCourtRoles)('district court user %s', (role) => {
   const user = {
     role,
     institution: { id: uuid(), type: InstitutionType.DISTRICT_COURT },
@@ -102,34 +98,6 @@ describe.each([
           continueFromCaseState(user, type, state)
         },
       )
-    },
-  )
-
-  describe.each(indictmentCases)('accessible case type %s', (type) => {
-    continueFromIndictmentType(user, type)
-  })
-})
-
-describe.each(
-  districtCourtRoles.filter(
-    (role) =>
-      role !== UserRole.DISTRICT_COURT_JUDGE &&
-      role !== UserRole.DISTRICT_COURT_REGISTRAR,
-  ),
-)('district court user %s', (role) => {
-  const user = {
-    role,
-    institution: { id: uuid(), type: InstitutionType.DISTRICT_COURT },
-  } as User
-
-  describe.each([...restrictionCases, ...investigationCases])(
-    'inaccessible case type %s',
-    (type) => {
-      const theCase = {
-        type,
-      } as Case
-
-      verifyNoAccess(theCase, user)
     },
   )
 

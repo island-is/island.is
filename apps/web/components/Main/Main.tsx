@@ -14,6 +14,8 @@ export const Main: React.FC<React.PropsWithChildren<unknown>> = ({
         tabIndex: -1,
         outline: 'none',
         id: 'main-content',
+        display: 'flex',
+        flexGrow: 1,
       }
     : {}
   return (

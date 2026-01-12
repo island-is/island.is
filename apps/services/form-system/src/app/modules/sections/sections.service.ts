@@ -8,12 +8,20 @@ import { UpdateSectionsDisplayOrderDto } from './models/dto/updateSectionsDispla
 import defaults from 'lodash/defaults'
 import pick from 'lodash/pick'
 import zipObject from 'lodash/zipObject'
+import { Form } from '../forms/models/form.model'
+import {
+  filterArrayDependency,
+  filterDependency,
+} from '../../../utils/dependenciesHelper'
+import { SectionTypes } from '@island.is/form-system/shared'
 
 @Injectable()
 export class SectionsService {
   constructor(
     @InjectModel(Section)
     private readonly sectionModel: typeof Section,
+    @InjectModel(Form)
+    private readonly formModel: typeof Form,
   ) {}
 
   async create(createSectionDto: CreateSectionDto): Promise<SectionDto> {
@@ -27,32 +35,25 @@ export class SectionsService {
       zipObject(keys, Array(keys.length).fill(null)),
     ) as SectionDto
 
+    const form = await this.formModel.findByPk(section.formId)
+    if (form) {
+      form.draftTotalSteps++
+      await form.save()
+    }
+
     return sectionDto
   }
 
-  async update(
-    id: string,
-    updateSectionDto: UpdateSectionDto,
-  ): Promise<SectionDto> {
+  async update(id: string, updateSectionDto: UpdateSectionDto): Promise<void> {
     const section = await this.sectionModel.findByPk(id)
 
     if (!section) {
       throw new NotFoundException(`Section with id '${id}' not found`)
     }
 
-    section.name = updateSectionDto.name
-    section.waitingText = updateSectionDto.waitingText
-    section.modified = new Date()
+    Object.assign(section, updateSectionDto)
 
     await section.save()
-
-    const keys = ['id', 'name', 'sectionType', 'displayOrder', 'waitingText']
-    const sectionDto: SectionDto = defaults(
-      pick(section, keys),
-      zipObject(keys, Array(keys.length).fill(null)),
-    ) as SectionDto
-
-    return sectionDto
   }
 
   async updateDisplayOrder(
@@ -72,6 +73,13 @@ export class SectionsService {
         )
       }
 
+      if (
+        section.sectionType === SectionTypes.SUMMARY ||
+        section.sectionType === SectionTypes.PAYMENT ||
+        section.sectionType === SectionTypes.COMPLETED
+      )
+        continue
+
       await section.update({
         displayOrder: i,
       })
@@ -83,6 +91,34 @@ export class SectionsService {
 
     if (!section) {
       throw new NotFoundException(`Section with id '${id}' not found`)
+    }
+
+    const form = await this.formModel.findByPk(section.formId)
+
+    if (form) {
+      const { dependencies } = form
+      const screens = await section.$get('screens', {
+        attributes: ['id'],
+      })
+      if (Array.isArray(screens) && screens.length) {
+        const screenIds = screens.map((screen: { id: string }) => screen.id)
+        const fieldsPerScreen = await Promise.all(
+          screens.map((s) => s.$get('fields', { attributes: ['id'] })),
+        )
+        const fieldIds = fieldsPerScreen
+          .flat()
+          .map((field: { id: string }) => field.id)
+        const newDependencies = filterArrayDependency(dependencies, [
+          ...screenIds,
+          ...fieldIds,
+          id,
+        ])
+        form.dependencies = newDependencies
+      } else {
+        form.dependencies = filterDependency(dependencies, id)
+      }
+      form.draftTotalSteps--
+      await form.save()
     }
 
     section.destroy()

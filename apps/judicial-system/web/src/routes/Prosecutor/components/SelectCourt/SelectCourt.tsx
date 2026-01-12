@@ -1,9 +1,12 @@
 import { FC, useContext } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Box, Select, Text } from '@island.is/island-ui/core'
+import { Select } from '@island.is/island-ui/core'
 import { selectCourt as m } from '@island.is/judicial-system-web/messages'
-import { FormContext } from '@island.is/judicial-system-web/src/components'
+import {
+  FormContext,
+  SectionHeading,
+} from '@island.is/judicial-system-web/src/components'
 import { Institution } from '@island.is/judicial-system-web/src/graphql/schema'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import {
@@ -35,6 +38,10 @@ const SelectCourt: FC = () => {
         courtId,
       })
 
+      if (!updatedCase) {
+        return
+      }
+
       setWorkingCase((prevWorkingCase) => ({
         ...prevWorkingCase,
         court: updatedCase?.court,
@@ -44,11 +51,7 @@ const SelectCourt: FC = () => {
 
   return (
     <>
-      <Box marginBottom={3}>
-        <Text as="h3" variant="h3">
-          {formatMessage(m.title)}
-        </Text>
-      </Box>
+      <SectionHeading title={formatMessage(m.title)} heading="h2" />
       <Select
         name="court"
         label={formatMessage(m.label)}

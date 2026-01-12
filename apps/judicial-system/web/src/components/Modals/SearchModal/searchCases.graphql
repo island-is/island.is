@@ -1,0 +1,19 @@
+query SearchCases($input: SearchCasesQueryInput!) {
+  searchCases(input: $input) {
+    rowCount
+    rows {
+      caseId
+      caseType
+      policeCaseNumbers
+      courtCaseNumber
+      appealCaseNumber
+      matchedField
+      matchedValue
+      policeCaseNumbers
+      courtCaseNumber
+      appealCaseNumber
+      defendantNationalId
+      defendantName
+    }
+  }
+}

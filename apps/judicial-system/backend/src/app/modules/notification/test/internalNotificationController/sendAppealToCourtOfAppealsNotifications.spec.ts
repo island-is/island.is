@@ -1,4 +1,4 @@
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { EmailService } from '@island.is/email-service'
 import { SmsService } from '@island.is/nova-sms'
@@ -15,7 +15,7 @@ import {
   createTestUsers,
 } from '../createTestingNotificationModule'
 
-import { Case } from '../../../case'
+import { Case } from '../../../repository'
 import { DeliverResponse } from '../../models/deliver.response'
 
 interface Then {
@@ -93,7 +93,7 @@ describe('InternalNotificationController - Send appeal to court of appeals notif
       then = await givenWhenThen(
         {
           role: UserRole.PROSECUTOR,
-          institution: { type: InstitutionType.PROSECUTORS_OFFICE },
+          institution: { type: InstitutionType.POLICE_PROSECUTORS_OFFICE },
         } as User,
         uuid(),
       )
@@ -143,7 +143,7 @@ describe('InternalNotificationController - Send appeal to court of appeals notif
     beforeEach(async () => {
       then = await givenWhenThen({
         role: UserRole.PROSECUTOR,
-        institution: { type: InstitutionType.PROSECUTORS_OFFICE },
+        institution: { type: InstitutionType.POLICE_PROSECUTORS_OFFICE },
       } as User)
     })
 

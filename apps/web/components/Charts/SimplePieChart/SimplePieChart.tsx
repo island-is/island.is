@@ -1,21 +1,22 @@
-import {
-  PieChart,
-  Pie,
-  Cell,
-  Tooltip,
-  ResponsiveContainer,
-  TooltipProps,
-  Legend,
-} from 'recharts'
 import cn from 'classnames'
 import {
-  COLORS,
-  RenderLegend,
-  renderCustomizedLabel,
-} from '../sharedChartComponents'
-import { useWindowSize } from '@island.is/web/hooks/useViewport'
-import { theme } from '@island.is/island-ui/theme'
+  Cell,
+  Legend,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  TooltipProps,
+} from 'recharts'
 
+import { theme } from '@island.is/island-ui/theme'
+import { useWindowSize } from '@island.is/web/hooks/useViewport'
+
+import {
+  COLORS,
+  renderCustomizedLabel,
+  RenderLegend,
+} from '../sharedChartComponents'
 import * as styles from './SimplePieChart.css'
 
 interface CustomTooltipProps extends TooltipProps<string, number> {

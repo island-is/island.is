@@ -14,17 +14,23 @@ import {
   isPrisonAdminUser,
   isPrisonStaffUser,
   isProsecutionUser,
-  isPublicProsecutorUser,
+  isPublicProsecutionOfficeUser,
   isRequestCase,
   isRestrictionCase,
-  RequestSharedWithDefender,
+  RequestSharedWhen,
   type User,
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { CivilClaimant, Defendant } from '../../defendant'
-import { Case } from '../models/case.model'
-import { DateLog } from '../models/dateLog.model'
+import {
+  Case,
+  CivilClaimant,
+  DateLog,
+  Defendant,
+  EventLog,
+  Victim,
+} from '../../repository'
+import { MinimalCase } from '../models/case.types'
 
 const canProsecutionUserAccessCase = (
   theCase: Case,
@@ -49,6 +55,7 @@ const canProsecutionUserAccessCase = (
       CaseState.REJECTED,
       CaseState.DISMISSED,
       CaseState.COMPLETED,
+      CaseState.CORRECTING,
     ].includes(theCase.state)
   ) {
     return false
@@ -76,14 +83,17 @@ const canProsecutionUserAccessCase = (
   return true
 }
 
-const canPublicProsecutionUserAccessCase = (theCase: Case): boolean => {
+export const canPublicProsecutionUserAccessCase = (theCase: Case): boolean => {
   // Check case type access
   if (!isIndictmentCase(theCase.type)) {
     return false
   }
 
   // Check case state access
-  if (theCase.state !== CaseState.COMPLETED) {
+  if (
+    theCase.state !== CaseState.COMPLETED &&
+    theCase.state !== CaseState.CORRECTING
+  ) {
     return false
   }
 
@@ -99,31 +109,15 @@ const canPublicProsecutionUserAccessCase = (theCase: Case): boolean => {
   }
 
   // Make sure the indictment has been sent to the public prosecutor
-  if (
-    !theCase.eventLogs?.some(
-      (eventLog) =>
-        eventLog.eventType === EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
-    )
-  ) {
-    return false
-  }
-
-  return true
+  return Boolean(
+    EventLog.getEventLogByEventType(
+      EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+      theCase.eventLogs,
+    ),
+  )
 }
 
 const canDistrictCourtUserAccessCase = (theCase: Case, user: User): boolean => {
-  // Check case type access
-  if (
-    ![
-      UserRole.DISTRICT_COURT_JUDGE,
-      UserRole.DISTRICT_COURT_REGISTRAR,
-    ].includes(user.role)
-  ) {
-    if (!isIndictmentCase(theCase.type)) {
-      return false
-    }
-  }
-
   // Check case state access
   if (isRequestCase(theCase.type)) {
     if (
@@ -144,6 +138,7 @@ const canDistrictCourtUserAccessCase = (theCase: Case, user: User): boolean => {
       CaseState.WAITING_FOR_CANCELLATION,
       CaseState.RECEIVED,
       CaseState.COMPLETED,
+      CaseState.CORRECTING,
     ].includes(theCase.state)
   ) {
     return false
@@ -238,7 +233,9 @@ const canPrisonAdminUserAccessCase = (
 ): boolean => {
   // Prison admin users cannot update cases
   if (forUpdate) {
-    return false
+    if (!isIndictmentCase(theCase.type) && theCase.type !== CaseType.CUSTODY) {
+      return false
+    }
   }
 
   // Check case type access
@@ -271,7 +268,10 @@ const canPrisonAdminUserAccessCase = (
 
   if (isIndictmentCase(theCase.type)) {
     // Check case state access
-    if (theCase.state !== CaseState.COMPLETED) {
+    if (
+      theCase.state !== CaseState.COMPLETED &&
+      theCase.state !== CaseState.CORRECTING
+    ) {
       return false
     }
 
@@ -302,6 +302,59 @@ const canPrisonAdminUserAccessCase = (
   return true
 }
 
+const canDefenceUserAccessRequestCaseState = ({
+  requestSharedWhen,
+  state,
+  dateLogs,
+}: {
+  requestSharedWhen?: string
+  state: CaseState
+  dateLogs?: DateLog[]
+}) => {
+  // Check submitted case access
+  const canDefenderAccessSubmittedCase =
+    requestSharedWhen === RequestSharedWhen.READY_FOR_COURT
+
+  if (state === CaseState.SUBMITTED && !canDefenderAccessSubmittedCase) {
+    return false
+  }
+
+  // Check received case access
+  const canDefenderAccessReceivedCase =
+    canDefenderAccessSubmittedCase || Boolean(DateLog.arraignmentDate(dateLogs))
+
+  if (state === CaseState.RECEIVED && !canDefenderAccessReceivedCase) {
+    return false
+  }
+
+  return true
+}
+
+const canCaseDefendantDefenceUserAccessRequestCase = (
+  theCase: Case,
+  user: User,
+) => {
+  if (
+    !canDefenceUserAccessRequestCaseState({
+      requestSharedWhen: theCase.requestSharedWithDefender,
+      state: theCase.state,
+      dateLogs: theCase.dateLogs,
+    })
+  ) {
+    return false
+  }
+
+  const normalizedAndFormattedNationalId = normalizeAndFormatNationalId(
+    user.nationalId,
+  )
+
+  // Check case defender assignment
+  return (
+    theCase.defenderNationalId &&
+    normalizedAndFormattedNationalId.includes(theCase.defenderNationalId)
+  )
+}
+
 const canDefenceUserAccessRequestCase = (
   theCase: Case,
   user: User,
@@ -319,46 +372,30 @@ const canDefenceUserAccessRequestCase = (
     return false
   }
 
-  // Check submitted case access
-  const canDefenderAccessSubmittedCase =
-    theCase.requestSharedWithDefender ===
-    RequestSharedWithDefender.READY_FOR_COURT
-
-  if (
-    theCase.state === CaseState.SUBMITTED &&
-    !canDefenderAccessSubmittedCase
-  ) {
-    return false
-  }
-
-  // Check received case access
-  const canDefenderAccessReceivedCase =
-    canDefenderAccessSubmittedCase ||
-    Boolean(DateLog.arraignmentDate(theCase.dateLogs))
-
-  if (theCase.state === CaseState.RECEIVED && !canDefenderAccessReceivedCase) {
-    return false
-  }
-
-  const normalizedAndFormattedNationalId = normalizeAndFormatNationalId(
-    user.nationalId,
-  )
-
-  // Check case defender assignment
-  if (
-    theCase.defenderNationalId &&
-    normalizedAndFormattedNationalId.includes(theCase.defenderNationalId)
-  ) {
+  // CASE DEFENDANT
+  if (canCaseDefendantDefenceUserAccessRequestCase(theCase, user)) {
     return true
   }
 
-  return false
+  // VICTIM LAWYER
+  const victimWithLawyer = Victim.getVictimWithLawyer(
+    user.nationalId,
+    theCase.victims,
+  )
+
+  return Boolean(
+    victimWithLawyer &&
+      canDefenceUserAccessRequestCaseState({
+        requestSharedWhen: victimWithLawyer.lawyerAccessToRequest,
+        state: theCase.state,
+        dateLogs: theCase.dateLogs,
+      }),
+  )
 }
 
 const canDefenceUserAccessIndictmentCase = (
   theCase: Case,
   user: User,
-  forUpdate: boolean,
 ): boolean => {
   // Check case state access
   if (
@@ -366,6 +403,7 @@ const canDefenceUserAccessIndictmentCase = (
       CaseState.WAITING_FOR_CANCELLATION,
       CaseState.RECEIVED,
       CaseState.COMPLETED,
+      CaseState.CORRECTING,
     ].includes(theCase.state)
   ) {
     return false
@@ -395,8 +433,7 @@ const canDefenceUserAccessIndictmentCase = (
     CivilClaimant.isConfirmedSpokespersonOfCivilClaimant(
       user.nationalId,
       theCase.civilClaimants,
-    ) &&
-    !forUpdate
+    )
   ) {
     return true
   }
@@ -404,17 +441,13 @@ const canDefenceUserAccessIndictmentCase = (
   return false
 }
 
-const canDefenceUserAccessCase = (
-  theCase: Case,
-  user: User,
-  forUpdate: boolean,
-): boolean => {
+const canDefenceUserAccessCase = (theCase: Case, user: User): boolean => {
   if (isRequestCase(theCase.type)) {
     return canDefenceUserAccessRequestCase(theCase, user)
   }
 
   if (isIndictmentCase(theCase.type)) {
-    return canDefenceUserAccessIndictmentCase(theCase, user, forUpdate)
+    return canDefenceUserAccessIndictmentCase(theCase, user)
   }
 
   // Other cases are not accessible to defence users
@@ -447,13 +480,29 @@ export const canUserAccessCase = (
   }
 
   if (isDefenceUser(user)) {
-    return canDefenceUserAccessCase(theCase, user, forUpdate)
+    return canDefenceUserAccessCase(theCase, user)
   }
 
-  if (isPublicProsecutorUser(user)) {
+  if (isPublicProsecutionOfficeUser(user)) {
     return canPublicProsecutionUserAccessCase(theCase)
   }
 
   // Other users cannot access cases
+  return false
+}
+
+export const canUserAccessMinimalCase = (
+  theCase: MinimalCase,
+  user: User,
+): boolean => {
+  if (isProsecutionUser(user)) {
+    return canProsecutionUserAccessCase(theCase, user, false)
+  }
+
+  if (isDistrictCourtUser(user)) {
+    return canDistrictCourtUserAccessCase(theCase, user)
+  }
+
+  // Other users can be added when needed
   return false
 }

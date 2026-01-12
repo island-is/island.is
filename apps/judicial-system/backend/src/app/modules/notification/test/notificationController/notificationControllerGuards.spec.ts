@@ -1,6 +1,6 @@
 import { CanActivate } from '@nestjs/common'
 
-import { JwtAuthGuard, RolesGuard } from '@island.is/judicial-system/auth'
+import { JwtAuthUserGuard, RolesGuard } from '@island.is/judicial-system/auth'
 
 import { CaseExistsGuard } from '../../../case'
 import { NotificationController } from '../../notification.controller'
@@ -17,15 +17,15 @@ describe('NotificationController - guards', () => {
     expect(guards).toHaveLength(3)
   })
 
-  describe('JwtAuthGuard', () => {
+  describe('JwtAuthUserGuard', () => {
     let guard: CanActivate
 
     beforeEach(() => {
       guard = new guards[0]()
     })
 
-    it('should have JwtAuthGuard as guard 0', () => {
-      expect(guard).toBeInstanceOf(JwtAuthGuard)
+    it('should have JwtAuthUserGuard as guard 0', () => {
+      expect(guard).toBeInstanceOf(JwtAuthUserGuard)
     })
   })
 

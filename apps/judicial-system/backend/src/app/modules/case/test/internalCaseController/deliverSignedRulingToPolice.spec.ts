@@ -1,5 +1,5 @@
 import { Base64 } from 'js-base64'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import {
   CaseOrigin,
@@ -13,7 +13,7 @@ import { createTestingCaseModule } from '../createTestingCaseModule'
 import { randomDate } from '../../../../test'
 import { AwsS3Service } from '../../../aws-s3'
 import { PoliceDocumentType, PoliceService } from '../../../police'
-import { Case } from '../../models/case.model'
+import { Case } from '../../../repository'
 import { DeliverResponse } from '../../models/deliver.response'
 
 interface Then {

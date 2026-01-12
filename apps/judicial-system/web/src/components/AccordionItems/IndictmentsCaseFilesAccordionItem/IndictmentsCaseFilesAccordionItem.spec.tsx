@@ -1,5 +1,6 @@
 import faker from 'faker'
 
+import { FileUploadStatus } from '@island.is/island-ui/core'
 import { CaseFileState } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import {
@@ -303,10 +304,11 @@ describe('sortedFilesInChapter', () => {
   it('should return an array of files in chapter sorted by orderWithinChapter', () => {
     expect(sortedFilesInChapter(0, caseFiles)).toEqual([
       {
-        canEdit: true,
+        canEdit: ['fileName', 'displayDate'],
         category: undefined,
         displayDate: undefined,
-        status: 'done',
+        status: FileUploadStatus.done,
+        size: 1,
         userGeneratedFilename: undefined,
         displayText: caseFiles[1].name,
         isDivider: false,
@@ -318,10 +320,11 @@ describe('sortedFilesInChapter', () => {
         canOpen: false,
       },
       {
-        canEdit: true,
+        canEdit: ['fileName', 'displayDate'],
         category: undefined,
         displayDate: undefined,
-        status: 'done',
+        status: FileUploadStatus.done,
+        size: 1,
         userGeneratedFilename: undefined,
         displayText: caseFiles[0].name,
         isDivider: false,
@@ -333,10 +336,11 @@ describe('sortedFilesInChapter', () => {
         canOpen: false,
       },
       {
-        canEdit: true,
+        canEdit: ['fileName', 'displayDate'],
         category: undefined,
         displayDate: undefined,
-        status: 'done',
+        status: FileUploadStatus.done,
+        size: 1,
         userGeneratedFilename: undefined,
         displayText: caseFiles[2].name,
         isDivider: false,

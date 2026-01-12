@@ -8,6 +8,7 @@ mutation UpdateCase($input: UpdateCaseInput!) {
     description
     state
     policeCaseNumbers
+    publicProsecutorIsRegisteredInPoliceSystem
     defendants {
       id
       noNationalId
@@ -26,8 +27,8 @@ mutation UpdateCase($input: UpdateCaseInput!) {
     }
     defenderName
     defenderNationalId
-    defenderEmail
     defenderPhoneNumber
+    defenderEmail
     requestSharedWithDefender
     isHeightenedSecurityLevel
     court {
@@ -126,6 +127,7 @@ mutation UpdateCase($input: UpdateCaseInput!) {
         state
         key
         size
+        isKeyAccessible
       }
     }
     childCase {
@@ -154,6 +156,7 @@ mutation UpdateCase($input: UpdateCaseInput!) {
       userGeneratedFilename
       displayDate
       policeFileId
+      isKeyAccessible
     }
     isAppealDeadlineExpired
     isAppealGracePeriodExpired
@@ -172,8 +175,6 @@ mutation UpdateCase($input: UpdateCaseInput!) {
       created
       modified
       vehicleRegistrationNumber
-      offenses
-      substances
       lawsBroken
       incidentDescription
       legalArguments
@@ -210,20 +211,30 @@ mutation UpdateCase($input: UpdateCaseInput!) {
     appealConclusion
     appealRulingDecision
     appealRulingModifiedHistory
-    appealValidToDate
     isAppealCustodyIsolation
+    appealValidToDate
     appealIsolationToDate
     requestAppealRulingNotToBePublished
+    isRegisteredInPrisonSystem
     prosecutorsOffice {
       id
       name
     }
-    indictmentDeniedExplanation
     indictmentReturnedExplanation
     indictmentDecision
+    indictmentDeniedExplanation
     mergeCase {
       id
     }
-    mergeCaseNumber
+    civilClaimants {
+      id
+      name
+      nationalId
+    }
+    caseRepresentatives {
+      nationalId
+      name
+      caseFileCategory
+    }
   }
 }

@@ -94,17 +94,6 @@ export const errors = defineMessages({
     description:
       'Notaður sem villuskilaboð þegar ekki gengur að sækja lögmanna skrá',
   },
-  fetchLawyer: {
-    id: 'judicial.system.core:errors.fetch_lawyer',
-    defaultMessage: 'Upp kom villa við að sækja lögmann úr lögmanna skrá',
-    description:
-      'Notaður sem villuskilaboð þegar ekki gengur að sækja lögmann úr lögmanna skrá',
-  },
-  copyLink: {
-    id: 'judicial.system.core:errors.copy_link',
-    defaultMessage: 'Ekki tókst að afrita hlekk',
-    description: 'Notaður sem villuskilaboð þegar ekki gengur að afrita hlekk',
-  },
   createIndictmentCount: {
     id: 'judicial.system.core:errors.create_indictment_count',
     defaultMessage: 'Upp kom villa við að stofna nýjan ákærulið',
@@ -121,6 +110,22 @@ export const errors = defineMessages({
     id: 'judicial.system.core:errors.delete_indictment_count',
     defaultMessage: 'Upp kom villa við að eyða ákærulið',
     description: 'Notaður sem villuskilaboð þegar ekki gengur að eyða ákærulíð',
+  },
+  createOffense: {
+    id: 'judicial.system.core:errors.create_offense',
+    defaultMessage: 'Upp kom villa við að stofna nýtt brot',
+    description:
+      'Notaður sem villuskilaboð þegar ekki gengur að stofna nýtt brot',
+  },
+  updateOffense: {
+    id: 'judicial.system.core:errors.update_offense',
+    defaultMessage: 'Upp kom villa við að uppfæra brot',
+    description: 'Notaður sem villuskilaboð þegar ekki gengur að uppfæra brot',
+  },
+  deleteOffense: {
+    id: 'judicial.system.core:errors.delete_offense',
+    defaultMessage: 'Upp kom villa við að eyða broti',
+    description: 'Notaður sem villuskilaboð þegar ekki gengur að eyða broti',
   },
   getCaseToOpen: {
     id: 'judicial.system.core:errors.getCaseToOpen',

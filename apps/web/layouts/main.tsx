@@ -109,6 +109,10 @@ export interface LayoutProps {
   articleAlertBannerContent?: GetAlertBannerQuery['getAlertBanner']
   customAlertBannerContent?: GetAlertBannerQuery['getAlertBanner']
   languageToggleQueryParams?: Record<Locale, Record<string, string>>
+  languageToggleHrefOverride?: {
+    is: string
+    en: string
+  }
   footerVersion?: 'default' | 'organization'
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-expect-error make web strict
@@ -120,15 +124,10 @@ export interface LayoutProps {
   children?: React.ReactNode
 }
 
-if (
-  publicRuntimeConfig.ddRumApplicationId &&
-  publicRuntimeConfig.ddRumClientToken &&
-  typeof window !== 'undefined'
-) {
-  userMonitoring.initDdRum({
+if (publicRuntimeConfig.ddLogsClientToken && typeof window !== 'undefined') {
+  userMonitoring.initDdLogs({
     service: 'islandis',
-    applicationId: publicRuntimeConfig.ddRumApplicationId,
-    clientToken: publicRuntimeConfig.ddRumClientToken,
+    clientToken: publicRuntimeConfig.ddLogsClientToken,
     env: publicRuntimeConfig.environment || 'local',
     version: publicRuntimeConfig.appVersion || 'local',
   })
@@ -160,6 +159,7 @@ const Layout: Screen<LayoutProps> = ({
   children,
   megaMenuData,
   customTopLoginButtonItem,
+  languageToggleHrefOverride,
 }) => {
   const { activeLocale, t } = useI18n()
   const { linkResolver } = useLinkResolver()
@@ -217,9 +217,15 @@ const Layout: Screen<LayoutProps> = ({
           )}`,
           ...customAlertBannerContent,
         },
-      ].filter(
-        (banner) => !Cookies.get(banner.bannerId) && banner?.showAlertBanner,
-      ),
+      ].filter((banner) => {
+        return (
+          !Cookies.get(banner.bannerId) &&
+          banner.showAlertBanner &&
+          (Boolean(banner.title) ||
+            Boolean(banner.description) ||
+            (Boolean(banner.linkTitle) && Boolean(banner.link)))
+        )
+      }),
     )
   }, [
     alertBannerContent,
@@ -414,11 +420,19 @@ const Layout: Screen<LayoutProps> = ({
                     : undefined
                 }
                 customTopLoginButtonItem={customTopLoginButtonItem}
+                loginButtonType={n('minarsidurLoginButtonType', 'dropdown')}
+                languageToggleHrefOverride={languageToggleHrefOverride}
               />
             </ColorSchemeContext.Provider>
           )}
           <Main>
-            {wrapContent ? <Box width="full">{children}</Box> : children}
+            {wrapContent ? (
+              <Box width="full" display="flex" flexDirection="column">
+                {children}
+              </Box>
+            ) : (
+              children
+            )}
           </Main>
         </MenuTabsContext.Provider>
         {showFooter && (
@@ -703,6 +717,10 @@ interface LayoutComponentProps {
     buttonType: string
     blacklistedPathnames?: string[]
   }
+  languageToggleHrefOverride?: {
+    is: string
+    en: string
+  }
 }
 
 export const withMainLayout = <T, C extends ScreenContext>(
@@ -751,6 +769,9 @@ export const withMainLayout = <T, C extends ScreenContext>(
     const customTopLoginButtonItem =
       layoutComponentProps?.customTopLoginButtonItem
 
+    const languageToggleHrefOverride =
+      layoutComponentProps?.languageToggleHrefOverride
+
     return {
       layoutProps: {
         ...layoutProps,
@@ -761,6 +782,7 @@ export const withMainLayout = <T, C extends ScreenContext>(
         customAlertBannerContent,
         languageToggleQueryParams,
         customTopLoginButtonItem,
+        languageToggleHrefOverride,
       },
       componentProps,
     }

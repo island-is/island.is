@@ -15,8 +15,10 @@ import {
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import {
+  Case,
+  CaseOrigin,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 
@@ -43,6 +45,32 @@ export const usePoliceCaseNumbers = (workingCase: Case) => {
   return { clientPoliceNumbers, setClientPoliceNumbers }
 }
 
+const validatePoliceCaseNumber = (
+  value: string | undefined,
+  existingNumbers: string[] | null | undefined,
+): { isValid: boolean; errorMessage?: string } => {
+  if (!value) {
+    return { isValid: false, errorMessage: 'Value is required' }
+  }
+
+  const baseValidation = validate([
+    [value, ['empty', 'police-casenumber-format']],
+  ])
+
+  if (!baseValidation.isValid) {
+    return baseValidation
+  }
+
+  if (existingNumbers?.includes(value)) {
+    return {
+      isValid: false,
+      errorMessage: 'This police case number already exists',
+    }
+  }
+
+  return { isValid: true }
+}
+
 export const PoliceCaseNumbers: FC<Props> = ({
   workingCase,
   setWorkingCase,
@@ -53,21 +81,21 @@ export const PoliceCaseNumbers: FC<Props> = ({
   const { setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
   const isLOKECase = workingCase.origin === CaseOrigin.LOKE
-
   const [hasError, setHasError] = useState(false)
+
   const updatePoliceNumbers = useCallback(
     (newPoliceCaseNumbers: string[]) => {
       setClientPoliceNumbers(newPoliceCaseNumbers)
-      setAndSendCaseToServer(
-        [
-          {
-            policeCaseNumbers: newPoliceCaseNumbers,
-            force: true,
-          },
-        ],
-        workingCase,
-        setWorkingCase,
-      )
+      if (newPoliceCaseNumbers.length > 0) {
+        setAndSendCaseToServer(
+          [{ policeCaseNumbers: newPoliceCaseNumbers, force: true }],
+          workingCase,
+          setWorkingCase,
+        )
+        setHasError(false)
+      } else {
+        setHasError(true)
+      }
     },
     [
       workingCase,
@@ -79,35 +107,84 @@ export const PoliceCaseNumbers: FC<Props> = ({
 
   const onAdd = useCallback(
     (value: string) => {
-      if (validate([[value, ['empty', 'police-casenumber-format']]]).isValid) {
+      const validation = validatePoliceCaseNumber(
+        value,
+        clientPoliceNumbers ?? [],
+      )
+      if (validation.isValid) {
         updatePoliceNumbers([...(clientPoliceNumbers ?? []), value])
-        setHasError(false)
       }
     },
-    [clientPoliceNumbers, updatePoliceNumbers, setHasError],
+    [clientPoliceNumbers, updatePoliceNumbers],
   )
 
   const onRemove = useCallback(
     (value: string) => () => {
-      const newPoliceCaseNumbers = clientPoliceNumbers?.filter(
-        (number) => number !== value,
+      if (!clientPoliceNumbers) return
+
+      let firstOccurrenceSkipped = false
+
+      const newPoliceCaseNumbers = clientPoliceNumbers.filter(
+        (number, index) => {
+          if (isLOKECase && number === value && index === 0) {
+            if (!firstOccurrenceSkipped) {
+              firstOccurrenceSkipped = true // Skip the first occurrence
+              return true
+            }
+            return false // Remove all other instances
+          }
+          return number !== value // Remove in non-LOKE cases
+        },
       )
-      if (newPoliceCaseNumbers && newPoliceCaseNumbers.length > 0) {
-        updatePoliceNumbers(newPoliceCaseNumbers)
-      } else {
-        setHasError(true)
-      }
-      setClientPoliceNumbers(newPoliceCaseNumbers)
+
+      updatePoliceNumbers(newPoliceCaseNumbers)
     },
-    [clientPoliceNumbers, updatePoliceNumbers, setClientPoliceNumbers],
+    [clientPoliceNumbers, updatePoliceNumbers, isLOKECase],
   )
+
+  const renderPoliceCaseNumbersList = () => {
+    if (!clientPoliceNumbers?.length) {
+      return (
+        <Text color="dark400" dataTestId="noPoliceCaseNumbersAssignedMessage">
+          {formatMessage(m.noPoliceCaseNumbersAssignedMessage)}
+        </Text>
+      )
+    }
+
+    return (
+      <Box
+        display="flex"
+        flexWrap="wrap"
+        columnGap={1}
+        rowGap={1}
+        data-testid="policeCaseNumbers-list"
+      >
+        {clientPoliceNumbers.map((policeCaseNumber, index) => (
+          <Tag
+            variant="darkerBlue"
+            onClick={onRemove(policeCaseNumber)}
+            aria-label={`Eyða númeri ${policeCaseNumber}`}
+            disabled={isLOKECase && index === 0}
+            key={`${policeCaseNumber}-${index}`}
+          >
+            <Box display="flex" alignItems="center">
+              <Box paddingRight={'smallGutter'}>{policeCaseNumber}</Box>
+              {isLOKECase && index === 0 ? null : (
+                <Icon icon="close" size="small" />
+              )}
+            </Box>
+          </Tag>
+        ))}
+      </Box>
+    )
+  }
 
   return (
     <>
       <SectionHeading title={formatMessage(m.heading)} required />
       <MultipleValueList
         name="policeCaseNumbers"
-        inputMask="999-9999-9999999"
+        inputMask="police-case-numbers"
         inputLabel={formatMessage(m.label)}
         inputPlaceholder={formatMessage(m.placeholder, {
           prefix:
@@ -118,9 +195,12 @@ export const PoliceCaseNumbers: FC<Props> = ({
         })}
         onAddValue={onAdd}
         buttonText={formatMessage(m.buttonText)}
-        isDisabled={(value) =>
-          !validate([[value, ['empty', 'police-casenumber-format']]]).isValid
-        }
+        // this disables the button
+        isButtonDisabled={(value) => {
+          if (!value) return true
+          return !validatePoliceCaseNumber(value, clientPoliceNumbers ?? [])
+            .isValid
+        }}
         onBlur={(event) => {
           setHasError(
             Boolean(
@@ -133,39 +213,7 @@ export const PoliceCaseNumbers: FC<Props> = ({
         hasError={hasError}
         errorMessage={validate([[undefined, ['empty']]]).errorMessage}
       >
-        {clientPoliceNumbers && clientPoliceNumbers.length === 0 ? (
-          <Text color="dark400" dataTestId="noPoliceCaseNumbersAssignedMessage">
-            {formatMessage(m.noPoliceCaseNumbersAssignedMessage)}
-          </Text>
-        ) : (
-          <Box
-            display="flex"
-            flexWrap="wrap"
-            data-testid="policeCaseNumbers-list"
-          >
-            {clientPoliceNumbers?.map((policeCaseNumber, index) => (
-              <Box
-                key={`${policeCaseNumber}-${index}`}
-                paddingRight={1}
-                paddingBottom={1}
-              >
-                <Tag
-                  variant="darkerBlue"
-                  onClick={onRemove(policeCaseNumber)}
-                  aria-label={`Eyða númeri ${policeCaseNumber}`}
-                  disabled={isLOKECase && index === 0}
-                >
-                  <Box display="flex" alignItems="center">
-                    <Box paddingRight={'smallGutter'}>{policeCaseNumber}</Box>
-                    {isLOKECase && index > 0 ? null : (
-                      <Icon icon="close" size="small" />
-                    )}
-                  </Box>
-                </Tag>
-              </Box>
-            ))}
-          </Box>
-        )}
+        {renderPoliceCaseNumbersList()}
       </MultipleValueList>
     </>
   )

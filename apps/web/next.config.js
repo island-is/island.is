@@ -11,8 +11,7 @@ const graphqlPath = '/api/graphql'
 const {
   API_URL = 'http://localhost:4444',
   DISABLE_API_CATALOGUE,
-  DD_RUM_APPLICATION_ID,
-  DD_RUM_CLIENT_TOKEN,
+  DD_LOGS_CLIENT_TOKEN,
   APP_VERSION,
   ENVIRONMENT,
   CONFIGCAT_SDK_KEY,
@@ -35,6 +34,22 @@ const nextConfig = {
       {
         source: '/opinbernyskopun/rss.xml',
         destination: '/api/rss/opinbernyskopun',
+      },
+      {
+        source: '/rss/domar',
+        destination: '/api/domar/rss',
+      },
+      {
+        source: '/rss/domar.xml',
+        destination: '/api/domar/rss',
+      },
+      {
+        source: '/rss/dagskra-domstola',
+        destination: '/api/dagskra-domstola/rss',
+      },
+      {
+        source: '/rss/dagskra-domstola.xml',
+        destination: '/api/dagskra-domstola/rss',
       },
     ]
   },
@@ -122,7 +137,7 @@ const nextConfig = {
       },
     ]
   },
-  webpack: (config, { isServer }) => {
+  webpack: (config, { isServer, dev }) => {
     if (process.env.ANALYZE === 'true' && !isServer) {
       config.plugins.push(
         new DuplicatesPlugin({
@@ -157,6 +172,10 @@ const nextConfig = {
       )
     }
 
+    if (!dev && isServer) {
+      config.devtool = 'source-map'
+    }
+
     const modules = path.resolve(__dirname, '../..', 'node_modules')
 
     config.resolve.alias = {
@@ -189,8 +208,7 @@ const nextConfig = {
     graphqlUrl: '',
     graphqlEndpoint: graphqlPath,
     disableApiCatalog: DISABLE_API_CATALOGUE,
-    ddRumApplicationId: DD_RUM_APPLICATION_ID,
-    ddRumClientToken: DD_RUM_CLIENT_TOKEN,
+    ddLogsClientToken: DD_LOGS_CLIENT_TOKEN,
     appVersion: APP_VERSION,
     environment: ENVIRONMENT,
     configCatSdkKey: CONFIGCAT_SDK_KEY,

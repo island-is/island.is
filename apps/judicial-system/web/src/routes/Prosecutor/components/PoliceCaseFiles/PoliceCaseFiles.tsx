@@ -2,7 +2,7 @@ import { FC, useContext } from 'react'
 import { useIntl } from 'react-intl'
 
 import { AlertMessage, Box } from '@island.is/island-ui/core'
-import { CaseType, isIndictmentCase } from '@island.is/judicial-system/types'
+import { isIndictmentCase } from '@island.is/judicial-system/types'
 import {
   FormContext,
   Item,
@@ -10,6 +10,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseOrigin,
+  CaseType,
   PoliceCaseFile,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
@@ -66,41 +67,43 @@ const PoliceCaseFiles: FC<Props> = ({
   return (
     <Box marginBottom={5}>
       {workingCase.origin === CaseOrigin.LOKE && (
-        <SelectableList
-          items={policeCaseFileList?.map((p) => {
-            return {
-              id: p.id,
-              name: p.name,
-              ...(isIndictment ? validateFileName(p.name) : {}),
+        <Box marginBottom={3}>
+          <SelectableList
+            items={policeCaseFileList?.map((p) => {
+              return {
+                id: p.id,
+                name: p.name,
+                ...(isIndictment ? validateFileName(p.name) : {}),
+              }
+            })}
+            CTAButton={{
+              onClick: onUpload,
+              label: formatMessage(strings.uploadButtonLabel),
+            }}
+            errorMessage={
+              policeCaseFiles?.hasError
+                ? formatMessage(strings.couldNotGetFromLOKEMessage)
+                : undefined
             }
-          })}
-          CTAButton={{
-            onClick: onUpload,
-            label: formatMessage(strings.uploadButtonLabel),
-          }}
-          errorMessage={
-            policeCaseFiles?.hasError
-              ? formatMessage(strings.couldNotGetFromLOKEMessage)
-              : undefined
-          }
-          isLoading={
-            policeCaseFiles?.isLoading === undefined
-              ? true
-              : policeCaseFiles?.isLoading
-          }
-          successMessage={
-            policeCaseFileList?.length === 0
-              ? formatMessage(strings.allFilesUploadedMessage)
-              : undefined
-          }
-          warningMessage={
-            policeCaseFiles?.files.length === 0
-              ? formatMessage(strings.noFilesFoundInLOKEMessage, {
-                  isIndictmentCase: isIndictmentCase(workingCase.type),
-                })
-              : undefined
-          }
-        />
+            isLoading={
+              policeCaseFiles?.isLoading === undefined
+                ? true
+                : policeCaseFiles?.isLoading
+            }
+            successMessage={
+              policeCaseFileList?.length === 0
+                ? formatMessage(strings.allFilesUploadedMessage)
+                : undefined
+            }
+            warningMessage={
+              policeCaseFiles?.files.length === 0
+                ? formatMessage(strings.noFilesFoundInLOKEMessage, {
+                    isIndictmentCase: isIndictmentCase(workingCase.type),
+                  })
+                : undefined
+            }
+          />
+        </Box>
       )}
       {workingCase.origin !== CaseOrigin.LOKE && (
         <AlertMessage

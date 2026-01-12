@@ -1,6 +1,7 @@
-import { AllSlicesFragment as Slice } from '@island.is/web/graphql/schema'
-import { Document, BLOCKS, Block, Text } from '@contentful/rich-text-types'
+import { Block, BLOCKS, Document, Text } from '@contentful/rich-text-types'
 import slugify from '@sindresorhus/slugify'
+
+import { AllSlicesFragment as Slice } from '@island.is/web/graphql/schema'
 
 const headingLevels = ['h2', 'h3', 'h4', 'h5'] as const
 type HeadingType = typeof headingLevels[number]

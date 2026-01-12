@@ -1,6 +1,6 @@
-import { CreationOptional, NonAttribute } from 'sequelize'
+import { FormStatus } from '@island.is/form-system/shared'
+import { CreationOptional } from 'sequelize'
 import {
-  BelongsToMany,
   Column,
   CreatedAt,
   DataType,
@@ -10,12 +10,12 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { Section } from '../../sections/models/section.model'
-import { Organization } from '../../organizations/models/organization.model'
+import { CompletedSectionInfo } from '../../../dataTypes/completedSectionInfo.model'
+import { Dependency } from '../../../dataTypes/dependency.model'
 import { LanguageType } from '../../../dataTypes/languageType.model'
-import { FormApplicant } from '../../applicants/models/formApplicant.model'
-import { CertificationType } from '../../certifications/models/certificationType.model'
-import { randomUUID } from 'crypto'
+import { FormCertificationType } from '../../formCertificationTypes/models/formCertificationType.model'
+import { Organization } from '../../organizations/models/organization.model'
+import { Section } from '../../sections/models/section.model'
 
 @Table({ tableName: 'form' })
 export class Form extends Model<Form> {
@@ -28,6 +28,13 @@ export class Form extends Model<Form> {
   id!: string
 
   @Column({
+    type: DataType.UUID,
+    allowNull: false,
+    defaultValue: DataType.UUIDV4,
+  })
+  identifier!: string
+
+  @Column({
     type: DataType.JSON,
     allowNull: false,
     defaultValue: new LanguageType(),
@@ -36,13 +43,29 @@ export class Form extends Model<Form> {
 
   @Column({
     type: DataType.STRING,
-    allowNull: false,
+    allowNull: true,
     unique: true,
-    defaultValue: randomUUID(),
   })
   slug!: string
 
-  @Column
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  organizationNationalId!: string
+
+  @Column({
+    type: DataType.JSON,
+    allowNull: true,
+    defaultValue: new LanguageType(),
+  })
+  organizationDisplayName?: LanguageType
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+    defaultValue: null,
+  })
   invalidationDate?: Date
 
   @CreatedAt
@@ -50,6 +73,34 @@ export class Form extends Model<Form> {
 
   @UpdatedAt
   modified!: CreationOptional<Date>
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    defaultValue: '',
+  })
+  submissionServiceUrl!: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    defaultValue: '',
+  })
+  validationServiceUrl!: string
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  hasPayment!: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  beenPublished!: boolean
 
   @Column({
     type: DataType.BOOLEAN,
@@ -60,36 +111,68 @@ export class Form extends Model<Form> {
 
   @Column({
     type: DataType.INTEGER,
-    defaultValue: 60,
+    defaultValue: 30,
   })
-  applicationDaysToRemove!: number
+  daysUntilApplicationPrune!: number
 
   @Column({
-    type: DataType.INTEGER,
-    allowNull: false,
-    defaultValue: 0,
+    type: DataType.UUID,
+    allowNull: true,
   })
-  derivedFrom!: number
+  derivedFrom!: string | null
+
+  @Column({
+    type: DataType.ENUM,
+    allowNull: false,
+    values: Object.values(FormStatus),
+    defaultValue: FormStatus.IN_DEVELOPMENT,
+  })
+  status!: string
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  allowProceedOnValidationFail!: boolean
 
   @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
     defaultValue: true,
   })
-  stopProgressOnValidatingScreen!: boolean
+  hasSummaryScreen!: boolean
+
+  @Column({
+    type: DataType.JSONB,
+    allowNull: false,
+    defaultValue: () => ({
+      title: new LanguageType(),
+      confirmationHeader: new LanguageType(),
+      confirmationText: new LanguageType(),
+      additionalInfo: [],
+    }),
+  })
+  completedSectionInfo!: CompletedSectionInfo
+
+  @Column({
+    type: DataType.NUMBER,
+    allowNull: false,
+    defaultValue: 0,
+  })
+  draftTotalSteps!: number
 
   @Column({
     type: DataType.JSON,
     allowNull: true,
-    defaultValue: () => new LanguageType(),
   })
-  completedMessage?: LanguageType
+  dependencies?: Dependency[]
 
   @HasMany(() => Section)
   sections!: Section[]
 
-  @HasMany(() => FormApplicant)
-  applicants?: FormApplicant[]
+  @HasMany(() => FormCertificationType)
+  formCertificationTypes?: FormCertificationType[]
 
   @ForeignKey(() => Organization)
   @Column({
@@ -98,11 +181,4 @@ export class Form extends Model<Form> {
     field: 'organization_id',
   })
   organizationId!: string
-
-  @BelongsToMany(() => CertificationType, {
-    through: 'form_certification_type',
-    foreignKey: 'form_id',
-    otherKey: 'certification_type_id',
-  })
-  certificationTypes?: NonAttribute<CertificationType[]>
 }

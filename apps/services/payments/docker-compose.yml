@@ -1,0 +1,19 @@
+version: '3.3'
+
+services:
+  db_payments:
+    image: public.ecr.aws/docker/library/postgres:15.3-alpine
+    container_name: db_payments
+    networks:
+      - local
+    volumes:
+      - ./local-db/:/docker-entrypoint-initdb.d/:Z
+    environment:
+      - POSTGRES_DB=dev_db
+      - POSTGRES_USER=dev_db
+      - POSTGRES_PASSWORD=dev_db
+    ports:
+      - 5434:5432
+
+networks:
+  local:

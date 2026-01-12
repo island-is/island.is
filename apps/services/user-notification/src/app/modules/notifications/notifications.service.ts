@@ -64,10 +64,10 @@ export class NotificationsService {
       nationalId: senderId,
       locale: mapToContentfulLocale(locale),
     }
-    const res = await this.cmsService.fetchData(
+    const res = (await this.cmsService.fetchData(
       GetOrganizationByNationalId,
       queryVariables,
-    )
+    )) as any
     const items = res.organizationCollection.items
     if (items.length > 0) {
       const [item] = items
@@ -122,7 +122,10 @@ export class NotificationsService {
   async getTemplates(locale?: Locale): Promise<HnippTemplate[]> {
     locale = mapToLocale(locale as Locale)
     const queryVariables = { locale: mapToContentfulLocale(locale) }
-    const res = await this.cmsService.fetchData(GetTemplates, queryVariables)
+    const res = (await this.cmsService.fetchData(
+      GetTemplates,
+      queryVariables,
+    )) as any
 
     return res.hnippTemplateCollection.items.map((template: HnippTemplate) => ({
       ...template,
@@ -139,57 +142,62 @@ export class NotificationsService {
       templateId,
       locale: mapToContentfulLocale(locale),
     }
-    const res = await this.cmsService.fetchData(
+    const res = (await this.cmsService.fetchData(
       GetTemplateByTemplateId,
       queryVariables,
-    )
+    )) as any
     const items = res.hnippTemplateCollection.items
     if (items.length > 0) {
       const template = items[0]
+
       return { ...template, args: template.args || [] } // Ensure args is an array
     } else {
       throw new NotFoundException(`Template not found for ID: ${templateId}`)
     }
   }
-  /**
-   * Checks if the arguments provided in the request body are valid for the template and checks if the number of arguments match
-   */
-  async validate(templateId: string, args: ArgumentDto[]) {
-    const template = await this.getTemplate(templateId)
 
-    if (!this.validateArgCounts(args, template)) {
+  /**
+   * Validates that all required arguments are provided for the template.
+   * Throws BadRequestException if any required arguments are missing.
+   */
+  validate(template: HnippTemplate, args: ArgumentDto[]): void {
+    const providedKeys = args.map((arg) => arg.key)
+
+    const missingArgs = template.args.filter(
+      (requiredKey) => !providedKeys.includes(requiredKey),
+    )
+    if (missingArgs.length > 0) {
       throw new BadRequestException(
-        `Number of arguments doesn't match, template requires ${template.args.length} arguments but ${args.length} were provided`,
+        `Missing required arguments for template '${
+          template.templateId
+        }': ${missingArgs.join(', ')}. Required args are: ${template.args.join(
+          ', ',
+        )}`,
       )
     }
-
-    const validArgs = this.validateArgs(args, template)
-
-    if (!validArgs.isValid && validArgs.message) {
-      throw new BadRequestException(validArgs.message)
-    }
-  }
-
-  validateArgCounts(args: ArgumentDto[], template: HnippTemplate): boolean {
-    return args.length == template.args.length
   }
 
   /**
-   * Checks if the arguments provided in the request body are valid for the template
+   * Sanitizes arguments by filtering out any that don't exist in the template.
+   * Logs warnings for invalid args and returns only valid ones.
    */
-  validateArgs(args: ArgumentDto[], template: HnippTemplate) {
+  sanitize(template: HnippTemplate, args: ArgumentDto[]): ArgumentDto[] {
+    const validArgs: ArgumentDto[] = []
+
+    // Filter args and log warnings for invalid ones
     for (const arg of args) {
-      if (!template.args.includes(arg.key)) {
-        return {
-          isValid: false,
-          message: `${arg.key} is not a valid argument for template: ${template.templateId}`,
-        }
+      if (template.args.includes(arg.key)) {
+        validArgs.push(arg)
+      } else {
+        this.logger.warn(
+          `Filtering out invalid argument '${arg.key}' for template '${
+            template.templateId
+          }'. Valid args are: ${template.args.join(', ')}`,
+        )
       }
     }
 
-    return {
-      isValid: true,
-    }
+    return validArgs
   }
 
   /**

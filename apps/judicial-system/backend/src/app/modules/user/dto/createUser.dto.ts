@@ -5,8 +5,8 @@ import {
   IsNotEmpty,
   IsString,
   IsUUID,
+  Length,
   MaxLength,
-  MinLength,
 } from 'class-validator'
 
 import { ApiProperty } from '@nestjs/swagger'
@@ -18,8 +18,7 @@ import { nationalIdTransformer } from '../../../transformers'
 export class CreateUserDto {
   @IsNotEmpty()
   @IsString()
-  @MinLength(10)
-  @MaxLength(10)
+  @Length(10, 10)
   @Transform(nationalIdTransformer)
   @ApiProperty({ type: String })
   readonly nationalId!: string

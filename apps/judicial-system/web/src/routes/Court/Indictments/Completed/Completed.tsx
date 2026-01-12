@@ -1,18 +1,14 @@
 import { FC, useCallback, useContext, useState } from 'react'
+import React from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
+import { Accordion, AlertMessage, Box } from '@island.is/island-ui/core'
+import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
+import { isRulingOrDismissalCase } from '@island.is/judicial-system/types'
+import { titles } from '@island.is/judicial-system-web/messages'
 import {
-  Accordion,
-  Box,
-  InputFileUpload,
-  RadioButton,
-  UploadFile,
-} from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
-import { core, titles } from '@island.is/judicial-system-web/messages'
-import {
-  BlueBox,
+  Conclusion,
   ConnectedCaseFilesAccordionItem,
   CourtCaseInfo,
   FormContentContainer,
@@ -21,115 +17,179 @@ import {
   IndictmentCaseFilesList,
   // IndictmentsLawsBrokenAccordionItem, NOTE: Temporarily hidden while list of laws broken is not complete
   InfoCardClosedIndictment,
+  MarkdownWrapper,
   Modal,
   PageHeader,
   PageLayout,
   PageTitle,
+  ReopenModal,
+  RulingInput,
   SectionHeading,
   useIndictmentsLawsBroken,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import VerdictStatusAlert from '@island.is/judicial-system-web/src/components/VerdictStatusAlert/VerdictStatusAlert'
 import {
-  CaseFileCategory,
   CaseIndictmentRulingDecision,
   EventType,
   ServiceRequirement,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  useDefendants,
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import useEventLog from '@island.is/judicial-system-web/src/utils/hooks/useEventLog'
+import useVerdict from '@island.is/judicial-system-web/src/utils/hooks/useVerdict'
+import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
+import { ConfirmationInformation } from './ConfirmationInformation'
+import { CriminalRecordUpdate } from './CriminalRecordUpdate'
+import { DefendantServiceRequirement } from './DefendantServiceRequirement'
+import { InformationForDefendant } from './InformationForDefendant'
 import strings from './Completed.strings'
 
+type modal =
+  | 'CONFIRM_AND_SEND_TO_PUBLIC_PROSECUTOR'
+  | 'DELIVER_VERDICTS'
+  | 'REOPEN'
+
 const Completed: FC = () => {
+  const { user } = useContext(UserContext)
+
   const { formatMessage } = useIntl()
-  const { setAndSendDefendantToServer } = useDefendants()
-  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+  const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
-  const { uploadFiles, addUploadFiles, removeUploadFile, updateUploadFile } =
+  const { deliverCaseVerdict } = useVerdict()
+  const { uploadFiles, addUploadFiles, updateUploadFile, removeUploadFile } =
     useUploadFiles(workingCase.caseFiles)
-  const { handleUpload, handleRemove } = useS3Upload(workingCase.id)
+  const { handleUpload } = useS3Upload(workingCase.id)
   const { createEventLog } = useEventLog()
   const lawsBroken = useIndictmentsLawsBroken(workingCase)
-  const [modalVisible, setModalVisible] =
-    useState<'SENT_TO_PUBLIC_PROSECUTOR'>()
 
-  const sentToPublicProsecutor = workingCase.eventLogs?.some(
-    (log) => log.eventType === EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+  const [isLoading, setIsLoading] = useState(false)
+  const [modalVisible, setModalVisible] = useState<modal>()
+
+  // If the case has not been sent to the public prosecutor after completion/correction
+  // then show the send to public prosecutor button
+  const isSentToPublicProsecutor = Boolean(
+    workingCase.indictmentCompletedDate &&
+      workingCase.indictmentSentToPublicProsecutorDate &&
+      workingCase.indictmentSentToPublicProsecutorDate >
+        workingCase.indictmentCompletedDate,
   )
 
-  const handleNextButtonClick = useCallback(async () => {
+  const completeCaseConfirmation = useCallback(async () => {
+    setIsLoading(true)
+
+    const eventLogCreated = await createEventLog({
+      caseId: workingCase.id,
+      eventType: EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+    })
+
+    if (!eventLogCreated) {
+      setIsLoading(false)
+      return
+    }
+
+    router.push(getStandardUserDashboardRoute(user))
+
+    setIsLoading(false)
+  }, [createEventLog, workingCase.id, user])
+
+  const completeCaseConfirmationWithVerdictDelivery = useCallback(async () => {
+    setIsLoading(true)
+
+    const results = await deliverCaseVerdict(workingCase.id)
+
+    if (!results) {
+      setIsLoading(false)
+      return
+    }
+
+    completeCaseConfirmation()
+  }, [completeCaseConfirmation, deliverCaseVerdict, workingCase.id])
+
+  // TODO: It would probably make sense to separate delivering verdicts
+  //       from sending to the public prosecutor - that way we can
+  //       create some logic around changes service requirements
+  const handleCaseConfirmation = useCallback(async () => {
+    setIsLoading(true)
+
     const uploadResult = await handleUpload(
       uploadFiles.filter((file) => file.percent === 0),
       updateUploadFile,
     )
+
     if (uploadResult !== 'ALL_SUCCEEDED') {
+      setIsLoading(false)
       return
     }
 
-    const eventLogCreated = createEventLog({
-      caseId: workingCase.id,
-      eventType: EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
-    })
-    if (!eventLogCreated) {
+    // The verdict needs to be delivered to some defendants
+    const requiresVerdictDeliveryToDefendants = workingCase.defendants?.some(
+      ({ verdict }) =>
+        verdict?.serviceRequirement === ServiceRequirement.REQUIRED,
+    )
+
+    if (requiresVerdictDeliveryToDefendants) {
+      // If verdicts have already been sent, then we ask
+      if (workingCase.indictmentSentToPublicProsecutorDate) {
+        setIsLoading(false)
+        setModalVisible('DELIVER_VERDICTS')
+        return
+      }
+
+      completeCaseConfirmationWithVerdictDelivery()
       return
     }
 
-    setModalVisible('SENT_TO_PUBLIC_PROSECUTOR')
+    completeCaseConfirmation()
   }, [
     handleUpload,
     uploadFiles,
     updateUploadFile,
-    createEventLog,
-    workingCase.id,
+    workingCase.defendants,
+    workingCase.indictmentSentToPublicProsecutorDate,
+    completeCaseConfirmation,
+    completeCaseConfirmationWithVerdictDelivery,
   ])
-
-  const handleRemoveFile = useCallback(
-    (file: UploadFile) => {
-      if (file.key) {
-        handleRemove(file, removeUploadFile)
-      } else {
-        removeUploadFile(file)
-      }
-    },
-    [handleRemove, removeUploadFile],
-  )
-
-  const handleCriminalRecordUpdateUpload = useCallback(
-    (files: File[]) => {
-      addUploadFiles(files, {
-        category: CaseFileCategory.CRIMINAL_RECORD_UPDATE,
-        status: 'done',
-      })
-    },
-    [addUploadFiles],
-  )
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
     [workingCase.id],
   )
 
-  const isRulingOrFine =
-    workingCase.indictmentRulingDecision &&
-    [
-      CaseIndictmentRulingDecision.RULING,
-      CaseIndictmentRulingDecision.FINE,
-    ].includes(workingCase.indictmentRulingDecision)
-
   const isRuling =
     workingCase.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
+  const isFine =
+    workingCase.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
+  const isRulingOrFine = isRuling || isFine
 
-  const stepIsValid = () =>
-    workingCase.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
-      ? workingCase.defendants?.every(
-          (defendant) =>
-            defendant.serviceRequirement !== undefined &&
-            defendant.serviceRequirement !== null,
+  const includeRulingText =
+    !workingCase.withCourtSessions ||
+    !workingCase.courtSessions ||
+    workingCase.courtSessions.length === 0
+
+  const stepIsValid = () => {
+    const isValidDefendants = isRuling
+      ? workingCase.defendants?.every((defendant) =>
+          defendant.verdict?.serviceRequirement ===
+          ServiceRequirement.NOT_APPLICABLE
+            ? Boolean(defendant.verdict?.appealDecision)
+            : Boolean(defendant.verdict?.serviceRequirement),
         )
       : true
+    const isValidRuling =
+      includeRulingText &&
+      workingCase.defendants?.some(
+        (defendant) =>
+          defendant.verdict?.serviceRequirement === ServiceRequirement.REQUIRED,
+      )
+        ? workingCase.ruling
+        : true
+
+    return isValidDefendants && isValidRuling
+  }
 
   const hasLawsBroken = lawsBroken.size > 0
   const hasMergeCases =
@@ -146,177 +206,178 @@ const Completed: FC = () => {
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.heading)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
-        <Box marginBottom={5} component="section">
-          <InfoCardClosedIndictment />
-        </Box>
-        {(hasLawsBroken || hasMergeCases) && (
+        {workingCase.rulingModifiedHistory && (
           <Box marginBottom={5}>
-            {/*
+            <AlertMessage
+              type="info"
+              title="Mál leiðrétt"
+              message={
+                <MarkdownWrapper
+                  markdown={workingCase.rulingModifiedHistory}
+                  textProps={{ variant: 'small' }}
+                />
+              }
+            />
+          </Box>
+        )}
+        {workingCase.defendants?.map(
+          (defendant) =>
+            defendant.verdict && (
+              <Box
+                key={`${defendant.id}${defendant.verdict.id}`}
+                marginBottom={2}
+              >
+                <VerdictStatusAlert
+                  defendant={defendant}
+                  verdict={defendant.verdict}
+                />
+              </Box>
+            ),
+        )}
+        <div className={grid({ gap: 5, marginBottom: 10 })}>
+          <Box component="section">
+            <InfoCardClosedIndictment />
+          </Box>
+          {isRulingOrDismissalCase(workingCase.indictmentRulingDecision) && (
+            <Conclusion
+              title={`${
+                workingCase.indictmentRulingDecision ===
+                CaseIndictmentRulingDecision.RULING
+                  ? 'Dóms'
+                  : 'Úrskurðar'
+              }orð héraðsdóms`}
+              conclusionText={workingCase.courtSessions?.at(-1)?.ruling}
+              judgeName={workingCase.judge?.name}
+            />
+          )}
+          {(hasLawsBroken || hasMergeCases) && (
+            <>
+              {/*
             NOTE: Temporarily hidden while list of laws broken is not complete in
             indictment cases
             
             {hasLawsBroken && (
               <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
             )} */}
-            {hasMergeCases && (
-              <Accordion>
-                {workingCase.mergedCases?.map((mergedCase) => (
-                  <Box key={mergedCase.id}>
-                    <ConnectedCaseFilesAccordionItem
-                      connectedCaseParentId={workingCase.id}
-                      connectedCase={mergedCase}
-                    />
-                  </Box>
-                ))}
-              </Accordion>
-            )}
-          </Box>
-        )}
-        <Box marginBottom={5} component="section">
-          <IndictmentCaseFilesList workingCase={workingCase} />
-        </Box>
-        {!sentToPublicProsecutor && isRulingOrFine && (
-          <Box marginBottom={isRuling ? 5 : 10} component="section">
-            <SectionHeading
-              title={formatMessage(strings.criminalRecordUpdateTitle)}
-            />
-            <InputFileUpload
-              fileList={uploadFiles.filter(
-                (file) =>
-                  file.category === CaseFileCategory.CRIMINAL_RECORD_UPDATE,
+              {hasMergeCases && (
+                <Accordion dividerOnBottom={false} dividerOnTop={false}>
+                  {workingCase.mergedCases?.map((mergedCase) => (
+                    <Box key={mergedCase.id}>
+                      <ConnectedCaseFilesAccordionItem
+                        connectedCaseParentId={workingCase.id}
+                        connectedCase={mergedCase}
+                      />
+                    </Box>
+                  ))}
+                </Accordion>
               )}
-              accept="application/pdf"
-              header={formatMessage(core.uploadBoxTitle)}
-              buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
-              description={formatMessage(core.uploadBoxDescription, {
-                fileEndings: '.pdf',
-              })}
-              onChange={handleCriminalRecordUpdateUpload}
-              onRemove={handleRemoveFile}
-            />
+            </>
+          )}
+          <Box component="section">
+            <IndictmentCaseFilesList workingCase={workingCase} />
           </Box>
-        )}
-        {isRuling && (
-          <Box marginBottom={10} component="section">
-            <SectionHeading
-              title={formatMessage(strings.serviceRequirementTitle)}
-            />
-            {workingCase.defendants?.map((defendant, index) => (
-              <Box
-                key={defendant.id}
-                component="section"
-                marginBottom={
-                  workingCase.defendants &&
-                  workingCase.defendants.length - 1 === index
-                    ? 10
-                    : 3
-                }
-              >
-                <BlueBox>
-                  <SectionHeading
-                    title={defendant.name || ''}
-                    marginBottom={2}
-                    heading="h4"
-                    required
-                  />
-                  <Box marginBottom={2}>
-                    <RadioButton
-                      id={`defendant-${defendant.id}-service-requirement-not-applicable`}
-                      name={`defendant-${defendant.id}-service-requirement`}
-                      checked={
-                        defendant.serviceRequirement ===
-                        ServiceRequirement.NOT_APPLICABLE
-                      }
-                      disabled={sentToPublicProsecutor}
-                      onChange={() => {
-                        setAndSendDefendantToServer(
-                          {
-                            defendantId: defendant.id,
-                            caseId: workingCase.id,
-                            serviceRequirement:
-                              ServiceRequirement.NOT_APPLICABLE,
-                          },
-                          setWorkingCase,
-                        )
-                      }}
-                      large
-                      backgroundColor="white"
-                      label={formatMessage(
-                        strings.serviceRequirementNotApplicable,
+          {isRulingOrFine && (
+            <Box component="section">
+              <CriminalRecordUpdate
+                uploadFiles={uploadFiles}
+                addUploadFiles={addUploadFiles}
+                updateUploadFile={updateUploadFile}
+                removeUploadFile={removeUploadFile}
+              />
+            </Box>
+          )}
+          {/* NOTE: This is a temp state for cases that were already in progress when the new court record was released */}
+          {includeRulingText && isRuling && (
+            <div>
+              <SectionHeading title="Dómsorð" marginBottom={2} heading="h4" />
+              <RulingInput
+                rows={8}
+                label="Dómsorð"
+                placeholder="Hvert er dómsorðið?"
+                required
+              />
+            </div>
+          )}
+          {isRuling && (
+            <Box component="section">
+              <SectionHeading
+                title={formatMessage(strings.serviceRequirementTitle)}
+                required
+              />
+              <div className={grid({ gap: 4 })}>
+                {workingCase.defendants?.map((defendant) => {
+                  const { verdict } = defendant
+                  if (!verdict) return null
+
+                  return (
+                    <Box key={defendant.id} className={grid({ gap: 3 })}>
+                      <DefendantServiceRequirement defendant={defendant} />
+                      {verdict.serviceRequirement ===
+                        ServiceRequirement.REQUIRED && (
+                        <InformationForDefendant defendant={defendant} />
                       )}
-                    />
-                  </Box>
-                  <Box marginBottom={2}>
-                    <RadioButton
-                      id={`defendant-${defendant.id}-service-requirement-required`}
-                      name={`defendant-${defendant.id}-service-requirement`}
-                      checked={
-                        defendant.serviceRequirement ===
-                        ServiceRequirement.REQUIRED
-                      }
-                      disabled={sentToPublicProsecutor}
-                      onChange={() => {
-                        setAndSendDefendantToServer(
-                          {
-                            defendantId: defendant.id,
-                            caseId: workingCase.id,
-                            serviceRequirement: ServiceRequirement.REQUIRED,
-                          },
-                          setWorkingCase,
-                        )
-                      }}
-                      large
-                      backgroundColor="white"
-                      label={formatMessage(strings.serviceRequirementRequired)}
-                    />
-                  </Box>
-                  <RadioButton
-                    id={`defendant-${defendant.id}-service-requirement-not-required`}
-                    name={`defendant-${defendant.id}-service-requirement`}
-                    checked={
-                      defendant.serviceRequirement ===
-                      ServiceRequirement.NOT_REQUIRED
-                    }
-                    disabled={sentToPublicProsecutor}
-                    onChange={() => {
-                      setAndSendDefendantToServer(
-                        {
-                          defendantId: defendant.id,
-                          caseId: workingCase.id,
-                          serviceRequirement: ServiceRequirement.NOT_REQUIRED,
-                        },
-                        setWorkingCase,
-                      )
-                    }}
-                    large
-                    backgroundColor="white"
-                    label={formatMessage(strings.serviceRequirementNotRequired)}
-                    tooltip={formatMessage(
-                      strings.serviceRequirementNotRequiredTooltip,
-                    )}
-                  />
-                </BlueBox>
-              </Box>
-            ))}
-          </Box>
-        )}
+                    </Box>
+                  )
+                })}
+              </div>
+            </Box>
+          )}
+        </div>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={constants.CASES_ROUTE}
-          hideNextButton={!isRulingOrFine || sentToPublicProsecutor}
+          previousUrl={getStandardUserDashboardRoute(user)}
+          hideActionButton={
+            workingCase.indictmentRulingDecision ===
+            CaseIndictmentRulingDecision.WITHDRAWAL
+          }
+          actionButtonText="Leiðrétta mál"
+          actionButtonColorScheme="default"
+          actionButtonVariant="primary"
+          onActionButtonClick={() => setModalVisible('REOPEN')}
+          hideNextButton={!isRulingOrFine || isSentToPublicProsecutor}
           nextButtonText={formatMessage(strings.sendToPublicProsecutor)}
           nextIsDisabled={!stepIsValid()}
-          onNextButtonClick={handleNextButtonClick}
+          onNextButtonClick={() => {
+            setModalVisible('CONFIRM_AND_SEND_TO_PUBLIC_PROSECUTOR')
+          }}
         />
       </FormContentContainer>
-      {modalVisible === 'SENT_TO_PUBLIC_PROSECUTOR' && (
+      {modalVisible === 'CONFIRM_AND_SEND_TO_PUBLIC_PROSECUTOR' && (
         <Modal
-          title={formatMessage(strings.sentToPublicProsecutorModalTitle)}
-          text={formatMessage(strings.sentToPublicProsecutorModalMessage)}
-          primaryButtonText={formatMessage(core.closeModal)}
-          onPrimaryButtonClick={() => router.push(constants.CASES_ROUTE)}
+          title="Viltu senda mál til ákæruvalds?"
+          text={<ConfirmationInformation uploadFiles={uploadFiles} />}
+          primaryButton={{
+            text: 'Staðfesta',
+            icon: 'checkmark',
+            isLoading: isLoading,
+            onClick: handleCaseConfirmation,
+          }}
+          secondaryButton={{
+            text: 'Hætta við',
+            onClick: () => setModalVisible(undefined),
+          }}
         />
+      )}
+      {modalVisible === 'DELIVER_VERDICTS' && (
+        <Modal
+          title="Viltu senda dóm í birtingu?"
+          text="Hægt er að senda nýtt eintak af dómi í birtingu ef þörf krefur."
+          primaryButton={{
+            text: 'Já, senda',
+            icon: 'checkmark',
+            isLoading: isLoading,
+            onClick: completeCaseConfirmationWithVerdictDelivery,
+          }}
+          secondaryButton={{
+            text: 'Nei',
+            isLoading: isLoading,
+            onClick: completeCaseConfirmation,
+          }}
+        />
+      )}
+      {modalVisible === 'REOPEN' && (
+        <ReopenModal onClose={() => setModalVisible(undefined)} />
       )}
     </PageLayout>
   )

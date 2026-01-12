@@ -1,4 +1,4 @@
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { type ConfigType } from '@island.is/nest/config'
 
@@ -12,11 +12,10 @@ import { createTestingFileModule } from '../createTestingFileModule'
 
 import { nowFactory } from '../../../../factories'
 import { AwsS3Service } from '../../../aws-s3'
-import { Case } from '../../../case'
 import { CourtService } from '../../../court'
+import { Case, CaseFile } from '../../../repository'
 import { fileModuleConfig } from '../../file.config'
 import { DeliverResponse } from '../../models/deliver.response'
-import { CaseFile } from '../../models/file.model'
 
 interface Then {
   result: DeliverResponse
@@ -43,6 +42,7 @@ describe('InternalFileController - Deliver case file to court of appeals', () =>
     category,
     name,
     key,
+    isKeyAccessible: true,
   } as CaseFile
   const theCase = {
     id: caseId,

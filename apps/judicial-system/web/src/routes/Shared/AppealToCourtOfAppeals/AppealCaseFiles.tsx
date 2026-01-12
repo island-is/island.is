@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 
 import {
   Box,
+  FileUploadStatus,
   InputFileUpload,
   Text,
   UploadFile,
@@ -23,11 +24,11 @@ import {
   PageHeader,
   PageLayout,
   PageTitle,
+  RequestAppealRulingNotToBePublishedCheckbox,
+  RulingDateLabel,
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import RequestAppealRulingNotToBePublishedCheckbox from '@island.is/judicial-system-web/src/components/RequestAppealRulingNotToBePublishedCheckbox/RequestAppealRulingNotToBePublishedCheckbox'
-import RulingDateLabel from '@island.is/judicial-system-web/src/components/RulingDateLabel/RulingDateLabel'
 import {
   CaseAppealDecision,
   CaseFileCategory,
@@ -36,6 +37,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useCase,
+  useFileList,
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -58,6 +60,9 @@ const AppealFiles = () => {
     updateUploadFile,
   } = useUploadFiles()
   const { handleUpload, handleRemove } = useS3Upload(workingCase.id)
+  const { onOpenFile } = useFileList({
+    caseId: workingCase.id,
+  })
   const { sendNotification } = useCase()
 
   const appealCaseFilesType = isDefenceUser(user)
@@ -112,7 +117,10 @@ const AppealFiles = () => {
   }
 
   const handleChange = (files: File[]) => {
-    addUploadFiles(files, { category: appealCaseFilesType, status: 'done' })
+    addUploadFiles(files, {
+      category: appealCaseFilesType,
+      status: FileUploadStatus.done,
+    })
   }
 
   return (
@@ -159,13 +167,14 @@ const AppealFiles = () => {
               `${formatMessage(strings.appealCaseFilesCOASubtitle)}`}
           </Text>
           <InputFileUpload
-            fileList={uploadFiles.filter(
+            name="appealCaseFiles"
+            files={uploadFiles.filter(
               (file) =>
                 file.category &&
                 caseFilesTypesToDisplay.includes(file.category),
             )}
             accept={'application/pdf'}
-            header={formatMessage(core.uploadBoxTitle)}
+            title={formatMessage(core.uploadBoxTitle)}
             description={formatMessage(core.uploadBoxDescription, {
               fileEndings: '.pdf',
             })}
@@ -174,6 +183,7 @@ const AppealFiles = () => {
             onRemove={handleRemoveFile}
             hideIcons={!allFilesDoneOrError}
             disabled={!allFilesDoneOrError}
+            onOpenFile={(file) => onOpenFile(file)}
           />
         </Box>
         {isProsecutionUser(user) && (
@@ -202,9 +212,9 @@ const AppealFiles = () => {
           text={formatMessage(strings.appealCaseFilesUpdatedModalText, {
             isDefenceUser: isDefenceUser(user),
           })}
-          secondaryButtonText={formatMessage(core.closeModal)}
-          onSecondaryButtonClick={() => {
-            router.push(previousUrl)
+          secondaryButton={{
+            text: formatMessage(core.closeModal),
+            onClick: () => router.push(previousUrl),
           }}
         />
       )}

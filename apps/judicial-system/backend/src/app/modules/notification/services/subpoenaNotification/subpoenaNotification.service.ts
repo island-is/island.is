@@ -15,11 +15,10 @@ import { type ConfigType } from '@island.is/nest/config'
 import { ROUTE_HANDLER_ROUTE } from '@island.is/judicial-system/consts'
 import { SubpoenaNotificationType } from '@island.is/judicial-system/types'
 
-import { Case } from '../../../case'
 import { EventService } from '../../../event'
+import { Case, Notification, Recipient } from '../../../repository'
 import { BaseNotificationService } from '../../baseNotification.service'
 import { DeliverResponse } from '../../models/deliver.response'
-import { Notification, Recipient } from '../../models/notification.model'
 import { notificationModuleConfig } from '../../notification.config'
 import { strings } from './subpoenaNotification.strings'
 
@@ -67,14 +66,14 @@ export class SubpoenaNotificationService extends BaseNotificationService {
     for (const recipient of to) {
       if (recipient.email && recipient.name) {
         promises.push(
-          this.sendEmail(
-            formattedSubject,
-            formattedBody,
-            recipient.name,
-            recipient.email,
-            undefined,
-            true,
-          ),
+          this.sendEmail({
+            subject: formattedSubject,
+            html: formattedBody,
+            recipientName: recipient.name,
+            recipientEmail: recipient.email,
+            attachments: undefined,
+            skipTail: true,
+          }),
         )
       }
     }

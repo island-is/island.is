@@ -15,7 +15,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
   CurrentHttpUser,
-  JwtAuthGuard,
+  JwtAuthUserGuard,
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
@@ -28,7 +28,6 @@ import {
 
 import { defenderRule, prisonSystemStaffRule } from '../../guards'
 import {
-  Case,
   CaseCompletedGuard,
   CaseReadGuard,
   CaseTypeGuard,
@@ -38,6 +37,7 @@ import {
 } from '../case'
 import { MergedCaseExistsGuard } from '../case/guards/mergedCaseExists.guard'
 import { CivilClaimantExistsGuard } from '../defendant'
+import { Case, CaseFile } from '../repository'
 import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
 import { CurrentCaseFile } from './guards/caseFile.decorator'
@@ -46,14 +46,13 @@ import { CreateCivilClaimantCaseFileGuard } from './guards/createCivilClaimantCa
 import { LimitedAccessViewCaseFileGuard } from './guards/limitedAccessViewCaseFile.guard'
 import { LimitedAccessWriteCaseFileGuard } from './guards/limitedAccessWriteCaseFile.guard'
 import { DeleteFileResponse } from './models/deleteFile.response'
-import { CaseFile } from './models/file.model'
 import { PresignedPost } from './models/presignedPost.model'
 import { SignedUrl } from './models/signedUrl.model'
 import { FileService } from './file.service'
 
 @Controller('api/case/:caseId/limitedAccess')
 @ApiTags('files')
-@UseGuards(JwtAuthGuard, RolesGuard, LimitedAccessCaseExistsGuard)
+@UseGuards(JwtAuthUserGuard, RolesGuard, LimitedAccessCaseExistsGuard)
 export class LimitedAccessFileController {
   constructor(
     private readonly fileService: FileService,
@@ -116,8 +115,8 @@ export class LimitedAccessFileController {
   // limit file creation to defendant's and spokesperson's clients
   @UseGuards(
     new CaseTypeGuard([...indictmentCases]),
-    CivilClaimantExistsGuard,
     CaseWriteGuard,
+    CivilClaimantExistsGuard,
     LimitedAccessWriteCaseFileGuard,
     CreateCivilClaimantCaseFileGuard,
   )

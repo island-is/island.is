@@ -12,23 +12,32 @@ export const notificationModuleConfig = defineConfig({
       fromName: env.required('EMAIL_FROM_NAME', 'Réttarvörslugátt'),
       replyToEmail: env.required('EMAIL_REPLY_TO', 'ben10@omnitrix.is'),
       replyToName: env.required('EMAIL_REPLY_TO_NAME', 'Réttarvörslugátt'),
-      prisonEmail: env.required('PRISON_EMAIL', ''),
-      prisonAdminEmail: env.required('PRISON_ADMIN_EMAIL', ''),
+      prisonEmail: env.required('PRISON_EMAIL', 'jl+d+prison@kolibri.is'),
+      prisonAdminEmail: env.required(
+        'PRISON_ADMIN_EMAIL',
+        'jl+d+prisonAdmin@kolibri.is',
+      ),
       prisonAdminIndictmentEmails: env.required(
         'PRISON_ADMIN_INDICTMENT_EMAILS',
-        '',
+        'jl+d+prisonAdminIndictment@kolibri.is',
       ),
       publicProsecutorCriminalRecordsEmail: env.required(
         'PUBLIC_PROSECUTOR_CRIMINAL_RECORDS_EMAIL',
-        '',
+        'jl+d+publicProsecutorCriminalRecord@kolibri.is',
       ),
-      courtsEmails: env.requiredJSON('COURTS_EMAILS', {}) as {
+      courtsEmails: env.requiredJSON('COURTS_EMAILS', {
+        'd1e6e06f-dcfd-45e0-9a24-2fdabc2cc8bf': 'jl+d+court@kolibri.is',
+      }) as {
         [key: string]: string
       },
-      policeInstitutionEmails: env.requiredJSON(
-        'POLICE_INSTITUTIONS_EMAILS',
-        {},
-      ) as {
+      courtOfAppealsAssistantEmails: env.required(
+        'COURT_OF_APPEALS_ASSISTANT_EMAILS',
+        'jl+d+courtOfAppeals@kolibri.is',
+      ),
+      policeInstitutionEmails: env.requiredJSON('POLICE_INSTITUTIONS_EMAILS', {
+        '53581d7b-0591-45e5-9cbe-c96b2f82da85':
+          'jl+d+policeInstitution@kolibri.is',
+      }) as {
         [key: string]: string
       },
     },

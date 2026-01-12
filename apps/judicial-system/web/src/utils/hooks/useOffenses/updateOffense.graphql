@@ -1,0 +1,10 @@
+mutation UpdateOffense($input: UpdateOffenseInput!) {
+  updateOffense(input: $input) {
+    id
+    created
+    modified
+    indictmentCountId
+    offense
+    substances
+  }
+}

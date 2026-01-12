@@ -1,30 +1,32 @@
 import { useRouter } from 'next/router'
+
 import { BreadCrumbItem } from '@island.is/island-ui/core'
-import { Screen } from '@island.is/web/types'
+import { Locale } from '@island.is/shared/types'
+import { HeadWithSocialSharing, NewsArticle } from '@island.is/web/components'
+import {
+  ContentLanguage,
+  GetNamespaceQuery,
+  GetSingleNewsItemQuery,
+  ProjectPage,
+  Query,
+  QueryGetNamespaceArgs,
+  QueryGetProjectPageArgs,
+  QueryGetSingleNewsArgs,
+} from '@island.is/web/graphql/schema'
+import { useNamespace } from '@island.is/web/hooks'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import { useLocalLinkTypeResolver } from '@island.is/web/hooks/useLocalLinkTypeResolver'
+import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   GET_NAMESPACE_QUERY,
   GET_SINGLE_NEWS_ITEM_QUERY,
 } from '@island.is/web/screens/queries'
-import { withMainLayout } from '@island.is/web/layouts/main'
-import useContentfulId from '@island.is/web/hooks/useContentfulId'
-import {
-  ContentLanguage,
-  GetSingleNewsItemQuery,
-  QueryGetSingleNewsArgs,
-  QueryGetNamespaceArgs,
-  GetNamespaceQuery,
-  Query,
-  QueryGetProjectPageArgs,
-  ProjectPage,
-} from '@island.is/web/graphql/schema'
-import { HeadWithSocialSharing, NewsArticle } from '@island.is/web/components'
-import { useNamespace } from '@island.is/web/hooks'
+import { Screen } from '@island.is/web/types'
+
 import { useLinkResolver } from '../../hooks/useLinkResolver'
 import { CustomNextError } from '../../units/errors'
-import { useLocalLinkTypeResolver } from '@island.is/web/hooks/useLocalLinkTypeResolver'
-import { Locale } from '@island.is/shared/types'
-import { ProjectWrapper } from './components/ProjectWrapper'
 import { GET_PROJECT_PAGE_QUERY } from '../queries/Project'
+import { ProjectWrapper } from './components/ProjectWrapper'
 import { getThemeConfig } from './utils'
 
 interface ProjectNewsArticleleProps {
@@ -46,7 +48,7 @@ const ProjectNewsArticle: Screen<ProjectNewsArticleleProps> = ({
   // @ts-ignore make web strict
   const n = useNamespace(namespace)
   useContentfulId(projectPage.id, newsItem?.id)
-  useLocalLinkTypeResolver()
+  useLocalLinkTypeResolver('projectnews')
 
   const overviewPath: string = Router.asPath.substring(
     0,
@@ -81,6 +83,9 @@ const ProjectNewsArticle: Screen<ProjectNewsArticleleProps> = ({
     },
   ]
 
+  const indexableBySearchEngine =
+    newsItem?.organization?.canPagesBeFoundInSearchResults ?? true
+
   return (
     <>
       <ProjectWrapper
@@ -97,7 +102,11 @@ const ProjectNewsArticle: Screen<ProjectNewsArticleleProps> = ({
         imageUrl={newsItem?.image?.url}
         imageWidth={newsItem?.image?.width.toString()}
         imageHeight={newsItem?.image?.height.toString()}
-      />
+      >
+        {!indexableBySearchEngine && (
+          <meta name="robots" content="noindex, nofollow" />
+        )}
+      </HeadWithSocialSharing>
     </>
   )
 }
@@ -160,6 +169,17 @@ ProjectNewsArticle.getProps = async ({ apolloClient, locale, query }) => {
 
   if (!newsItem) {
     throw new CustomNextError(404, 'News not found')
+  }
+
+  const newsItemBelongsToProject = newsItem.genericTags.some(
+    (tag) => tag.id === projectPage.newsTag?.id,
+  )
+
+  if (!newsItemBelongsToProject) {
+    throw new CustomNextError(
+      404,
+      `News item ${newsItem.slug} does not belong to project ${projectPage.slug}`,
+    )
   }
 
   return {

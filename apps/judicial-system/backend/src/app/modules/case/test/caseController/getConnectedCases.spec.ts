@@ -1,8 +1,8 @@
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
-import { Case } from '../../models/case.model'
+import { Case, CaseRepositoryService } from '../../../repository'
 
 interface Then {
   result: Case[]
@@ -12,12 +12,13 @@ interface Then {
 type GivenWhenThen = (caseId: string, theCase: Case) => Promise<Then>
 
 describe('CaseController - Get connected cases', () => {
-  let mockCaseModel: typeof Case
+  let mockCaseRepositoryService: CaseRepositoryService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { caseModel, caseController } = await createTestingCaseModule()
-    mockCaseModel = caseModel
+    const { caseRepositoryService, caseController } =
+      await createTestingCaseModule()
+    mockCaseRepositoryService = caseRepositoryService
 
     givenWhenThen = async (caseId: string, theCase: Case) => {
       const then = {} as Then
@@ -59,7 +60,7 @@ describe('CaseController - Get connected cases', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockFindAll = mockCaseModel.findAll as jest.Mock
+      const mockFindAll = mockCaseRepositoryService.findAll as jest.Mock
       mockFindAll.mockResolvedValueOnce([connectedCase1, connectedCase2])
       then = await givenWhenThen(caseId, theCase)
     })

@@ -1,0 +1,37 @@
+name: Scanflags
+
+on:
+  schedule:
+    - cron: '0 5 * * *'
+
+defaults:
+  run:
+    shell: bash
+
+concurrency:
+  group: scanflag-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: false
+
+env:
+  CONFIGCAT_MAIN_CONFIG_ID: 08d8c761-021c-46f0-8671-6244663a372f
+  CONFIGCAT_MOBILE_APP_CONFIG_ID: 08daf234-7573-4b3b-85f6-189fc7502542
+
+jobs:
+  scanflags:
+    runs-on: arc-shared
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Scan & upload main config
+        uses: configcat/scan-repository@v2
+        with:
+          api-user: ${{ secrets.CONFIG_USERNAME }}
+          api-pass: ${{ secrets.CONFIG_PASSWORD }}
+          config-id: ${{ env.CONFIGCAT_MAIN_CONFIG_ID }}
+      - name: Scan & upload mobile app config
+        uses: configcat/scan-repository@v2
+        with:
+          api-user: ${{ secrets.CONFIG_USERNAME}}
+          api-pass: ${{ secrets.CONFIG_PASSWORD }}
+          config-id: ${{ env.CONFIGCAT_MOBILE_APP_CONFIG_ID }}
+          sub-folder: apps/native

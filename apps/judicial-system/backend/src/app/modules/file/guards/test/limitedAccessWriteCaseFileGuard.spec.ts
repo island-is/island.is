@@ -55,7 +55,7 @@ describe('LimitedAccess Write Case File Guard', () => {
 
         beforeEach(() => {
           mockRequest.mockImplementationOnce(() => ({
-            user: { role: UserRole.DEFENDER },
+            user: { currentUser: { role: UserRole.DEFENDER } },
             case: {},
             body: { category },
           }))
@@ -73,7 +73,7 @@ describe('LimitedAccess Write Case File Guard', () => {
 
         beforeEach(() => {
           mockRequest.mockImplementationOnce(() => ({
-            user: { role: UserRole.DEFENDER },
+            user: { currentUser: { role: UserRole.DEFENDER } },
             case: {},
             caseFile: { category },
           }))
@@ -99,7 +99,7 @@ describe('LimitedAccess Write Case File Guard', () => {
 
       beforeEach(() => {
         mockRequest.mockImplementationOnce(() => ({
-          user: { role: UserRole.DEFENDER },
+          user: { currentUser: { role: UserRole.DEFENDER } },
           case: {},
           body: { category },
         }))
@@ -118,7 +118,7 @@ describe('LimitedAccess Write Case File Guard', () => {
 
       beforeEach(() => {
         mockRequest.mockImplementationOnce(() => ({
-          user: { role: UserRole.DEFENDER },
+          user: { currentUser: { role: UserRole.DEFENDER } },
           case: {},
           caseFile: { category },
         }))
@@ -144,7 +144,7 @@ describe('LimitedAccess Write Case File Guard', () => {
 
           beforeEach(() => {
             mockRequest.mockImplementationOnce(() => ({
-              user: { role },
+              user: { currentUser: { role } },
               case: {},
               body: { category },
             }))
@@ -163,7 +163,7 @@ describe('LimitedAccess Write Case File Guard', () => {
 
           beforeEach(() => {
             mockRequest.mockImplementationOnce(() => ({
-              user: { role },
+              user: { currentUser: { role } },
               case: {},
               caseFile: { category },
             }))
@@ -199,7 +199,7 @@ describe('LimitedAccess Write Case File Guard', () => {
     let then: Then
 
     beforeEach(() => {
-      mockRequest.mockImplementationOnce(() => ({ user: {} }))
+      mockRequest.mockImplementationOnce(() => ({ user: { currentUser: {} } }))
 
       then = givenWhenThen()
     })
@@ -214,7 +214,10 @@ describe('LimitedAccess Write Case File Guard', () => {
     let then: Then
 
     beforeEach(() => {
-      mockRequest.mockImplementationOnce(() => ({ user: {}, case: {} }))
+      mockRequest.mockImplementationOnce(() => ({
+        user: { currentUser: {} },
+        case: {},
+      }))
 
       then = givenWhenThen()
     })
@@ -231,7 +234,7 @@ describe('LimitedAccess Write Case File Guard', () => {
 
       beforeEach(() => {
         mockRequest.mockImplementationOnce(() => ({
-          user: { role: UserRole.DEFENDER },
+          user: { currentUser: { role: UserRole.DEFENDER } },
           case: { type: CaseType.INDICTMENT },
           body: { category: CaseFileCategory.DEFENDANT_CASE_FILE },
         }))
@@ -249,7 +252,7 @@ describe('LimitedAccess Write Case File Guard', () => {
 
       beforeEach(() => {
         mockRequest.mockImplementationOnce(() => ({
-          user: { role: UserRole.DEFENDER },
+          user: { currentUser: { role: UserRole.DEFENDER } },
           case: { type: CaseType.INDICTMENT },
           caseFile: { category: CaseFileCategory.DEFENDANT_CASE_FILE },
         }))
@@ -271,7 +274,7 @@ describe('LimitedAccess Write Case File Guard', () => {
 
       beforeEach(() => {
         mockRequest.mockImplementationOnce(() => ({
-          user: { role: UserRole.DEFENDER },
+          user: { currentUser: { role: UserRole.DEFENDER } },
           case: { type: caseType },
           body: { category: CaseFileCategory.DEFENDANT_CASE_FILE },
         }))
@@ -290,7 +293,7 @@ describe('LimitedAccess Write Case File Guard', () => {
 
       beforeEach(() => {
         mockRequest.mockImplementationOnce(() => ({
-          user: { role: UserRole.DEFENDER },
+          user: { currentUser: { role: UserRole.DEFENDER } },
           case: { type: caseType },
           caseFile: { category: CaseFileCategory.DEFENDANT_CASE_FILE },
         }))

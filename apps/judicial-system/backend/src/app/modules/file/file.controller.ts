@@ -1,3 +1,5 @@
+import { Request } from 'express'
+
 import {
   Body,
   Controller,
@@ -7,6 +9,8 @@ import {
   Param,
   Patch,
   Post,
+  Req,
+  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
@@ -16,10 +20,11 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
   CurrentHttpUser,
-  JwtAuthGuard,
+  JwtAuthUserGuard,
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
+import { IDS_ACCESS_TOKEN_NAME } from '@island.is/judicial-system/consts'
 import type { User } from '@island.is/judicial-system/types'
 import {
   indictmentCases,
@@ -39,7 +44,6 @@ import {
   publicProsecutorStaffRule,
 } from '../../guards'
 import {
-  Case,
   CaseExistsGuard,
   CaseNotCompletedGuard,
   CaseReadGuard,
@@ -49,7 +53,12 @@ import {
   CurrentCase,
 } from '../case'
 import { MergedCaseExistsGuard } from '../case/guards/mergedCaseExists.guard'
-import { CivilClaimantExistsGuard, DefendantExistsGuard } from '../defendant'
+import {
+  CivilClaimantExistsGuard,
+  CurrentDefendant,
+  DefendantExistsGuard,
+} from '../defendant'
+import { Case, CaseFile, Defendant } from '../repository'
 import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
 import { UpdateFilesDto } from './dto/updateFile.dto'
@@ -57,24 +66,27 @@ import { CurrentCaseFile } from './guards/caseFile.decorator'
 import { CaseFileExistsGuard } from './guards/caseFileExists.guard'
 import { CreateCivilClaimantCaseFileGuard } from './guards/createCivilClaimantCaseFile.guard'
 import { CreateDefendantCaseFileGuard } from './guards/createDefendantCaseFile.guard'
+import { SplitCaseFileExistsGuard } from './guards/splitCaseFileExists.guard'
 import { ViewCaseFileGuard } from './guards/viewCaseFile.guard'
 import { DeleteFileResponse } from './models/deleteFile.response'
-import { CaseFile } from './models/file.model'
 import { PresignedPost } from './models/presignedPost.model'
 import { SignedUrl } from './models/signedUrl.model'
+import { UploadCriminalRecordFileResponse } from './models/uploadCriminalRecordFile.response'
 import { UploadFileToCourtResponse } from './models/uploadFileToCourt.response'
+import { CriminalRecordService } from './criminalRecord.service'
 import { FileService } from './file.service'
 
 @Controller('api/case/:caseId')
 @ApiTags('files')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthUserGuard, RolesGuard, CaseExistsGuard)
 export class FileController {
   constructor(
     private readonly fileService: FileService,
+    private readonly criminalRecordService: CriminalRecordService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @UseGuards(RolesGuard, CaseExistsGuard, CaseWriteGuard)
+  @UseGuards(CaseWriteGuard)
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
@@ -101,7 +113,7 @@ export class FileController {
     return this.fileService.createPresignedPost(theCase, createPresignedPost)
   }
 
-  @UseGuards(RolesGuard, CaseExistsGuard, CaseWriteGuard)
+  @UseGuards(CaseWriteGuard)
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
@@ -129,13 +141,8 @@ export class FileController {
     return this.fileService.createCaseFile(theCase, createFile, user)
   }
 
-  @UseGuards(
-    RolesGuard,
-    CaseExistsGuard,
-    DefendantExistsGuard,
-    CaseWriteGuard,
-    CreateDefendantCaseFileGuard,
-  )
+  // TODO: Add tests for this endpoint
+  @UseGuards(CaseWriteGuard, DefendantExistsGuard, CreateDefendantCaseFileGuard)
   @RolesRules(publicProsecutorStaffRule)
   @Post('defendant/:defendantId/file')
   @ApiCreatedResponse({
@@ -160,11 +167,10 @@ export class FileController {
     )
   }
 
+  // TODO: Add tests for this endpoint
   @UseGuards(
-    RolesGuard,
-    CaseExistsGuard,
-    CivilClaimantExistsGuard,
     CaseWriteGuard,
+    CivilClaimantExistsGuard,
     CreateCivilClaimantCaseFileGuard,
   )
   @RolesRules() // This endpoint is not used by any role at the moment
@@ -191,12 +197,14 @@ export class FileController {
     )
   }
 
+  // Strictly speaking, only district court users need access to
+  // split case files
+  // However, giving prosecution and appeals court users access
+  // does not pose a security risk
   @UseGuards(
-    RolesGuard,
-    CaseExistsGuard,
     CaseReadGuard,
     MergedCaseExistsGuard,
-    CaseFileExistsGuard,
+    SplitCaseFileExistsGuard,
     ViewCaseFileGuard,
   )
   @RolesRules(
@@ -228,7 +236,7 @@ export class FileController {
     return this.fileService.getCaseFileSignedUrl(theCase, caseFile)
   }
 
-  @UseGuards(RolesGuard, CaseExistsGuard, CaseWriteGuard, CaseFileExistsGuard)
+  @UseGuards(CaseWriteGuard, CaseFileExistsGuard)
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
@@ -256,14 +264,16 @@ export class FileController {
   }
 
   @UseGuards(
-    RolesGuard,
-    CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseWriteGuard,
     CaseReceivedGuard,
     CaseFileExistsGuard,
   )
-  @RolesRules(districtCourtJudgeRule, districtCourtRegistrarRule)
+  @RolesRules(
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+  )
   @Post('file/:fileId/court')
   @ApiOkResponse({
     type: UploadFileToCourtResponse,
@@ -282,8 +292,6 @@ export class FileController {
   }
 
   @UseGuards(
-    RolesGuard,
-    CaseExistsGuard,
     new CaseTypeGuard(indictmentCases),
     CaseWriteGuard,
     CaseNotCompletedGuard,
@@ -302,5 +310,39 @@ export class FileController {
     this.logger.debug(`Updating files of case ${caseId}`, { updateFiles })
 
     return this.fileService.updateFiles(caseId, updateFiles.files)
+  }
+
+  // TODO: Add tests for this endpoint
+  @UseGuards(CaseWriteGuard, DefendantExistsGuard)
+  @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
+  @Post('defendant/:defendantId/criminalRecordFile')
+  @ApiCreatedResponse({
+    type: UploadCriminalRecordFileResponse,
+    description:
+      'Uploads the latest criminal record file for defendant to the national commissioner office',
+  })
+  async uploadCriminalRecordFile(
+    @Param('caseId') caseId: string,
+    @Param('defendantId') defendantId: string,
+    @Req() req: Request,
+    @CurrentHttpUser() user: User,
+    @CurrentDefendant() defendant: Defendant,
+    @CurrentCase() theCase: Case,
+  ): Promise<UploadCriminalRecordFileResponse> {
+    this.logger.debug(
+      `Uploading the latest criminal record file for defendant ${defendantId} of case ${caseId} to S3`,
+    )
+
+    const accessToken = req.cookies[IDS_ACCESS_TOKEN_NAME]
+    if (!accessToken) {
+      throw new UnauthorizedException('Missing access token in session')
+    }
+
+    return this.criminalRecordService.uploadCriminalRecordFile({
+      caseType: theCase.type,
+      accessToken,
+      defendant,
+      user,
+    })
   }
 }

@@ -1,14 +1,16 @@
 import React from 'react'
 import { SafeAreaView, ViewStyle } from 'react-native'
-import styled from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 
-import { CustomLicenseType, LicenseListCard } from '../../../ui'
+import { LicenseListCard, Link, LinkText } from '../../../ui'
 import { Pressable as PressableRaw } from '../../../components/pressable/pressable'
 import {
+  GenericLicenseType,
   GenericUserLicense,
-  IdentityDocumentModel,
 } from '../../../graphql/types/schema'
 import { navigateTo } from '../../../lib/deep-linking'
+import externalLinkIcon from '../../../assets/icons/external-link.png'
+import { FormattedMessage, useIntl } from 'react-intl'
 
 const Container = styled.View`
   padding-left: ${({ theme }) => theme.spacing[2]}px;
@@ -21,63 +23,87 @@ const Pressable = styled(PressableRaw)`
 `
 
 export const WalletItem = React.memo(
-  ({
-    item,
-    style,
-  }: {
-    item: GenericUserLicense | IdentityDocumentModel
-    style?: ViewStyle
-  }) => {
-    let cardHeight = 140
-    const type = item.__typename
+  ({ item, style }: { item: GenericUserLicense; style?: ViewStyle }) => {
+    let cardHeight = 96
+    const type = item.license?.type
+    const intl = useIntl()
+    const theme = useTheme()
 
-    // Passport card
-    if (type === 'IdentityDocumentModel') {
-      const isInvalid = item?.status?.toLowerCase() === 'invalid'
+    const isPassportOrIdentityDocument =
+      type === GenericLicenseType.Passport ||
+      type === GenericLicenseType.IdentityDocument
 
-      return (
-        <Container
-          style={style}
-          onLayout={(e) => {
-            cardHeight = Math.round(e.nativeEvent.layout.height)
-          }}
-        >
+    // We receive an "empty" license item if the user has no passport or identity document
+    const noLicense =
+      isPassportOrIdentityDocument &&
+      !item?.payload?.metadata?.licenseNumber &&
+      !item?.payload?.data?.length
+
+    return (
+      <Container
+        style={style}
+        onLayout={(e) => {
+          cardHeight = Math.round(e.nativeEvent.layout.height)
+        }}
+      >
+        {noLicense ? (
+          <SafeAreaView style={{ marginBottom: theme.spacing[2] }}>
+            <LicenseListCard
+              type={type}
+              subtitle={item?.payload?.metadata?.subtitle}
+              emptyState={true}
+              title={
+                item?.isOwnerChildOfUser
+                  ? type === GenericLicenseType.Passport
+                    ? intl.formatMessage({
+                        id: 'licenseDetail.passport.title',
+                      })
+                    : type === GenericLicenseType.IdentityDocument
+                    ? intl.formatMessage({
+                        id: 'licenseDetail.identityDocument.title',
+                      })
+                    : ''
+                  : item?.payload?.metadata?.name
+              }
+              childName={
+                item?.isOwnerChildOfUser
+                  ? item?.payload?.metadata?.name
+                  : undefined
+              }
+              link={
+                <Link
+                  url={
+                    item?.payload?.metadata?.ctaLink?.value ??
+                    type === GenericLicenseType.Passport
+                      ? 'https://island.is/vegabref'
+                      : 'https://island.is/nafnskirteini'
+                  }
+                >
+                  <LinkText
+                    variant="small"
+                    icon={externalLinkIcon}
+                    underlined={false}
+                  >
+                    {item?.payload?.metadata?.ctaLink?.label ?? (
+                      <FormattedMessage id="licenseDetail.apply" />
+                    )}
+                  </LinkText>
+                </Link>
+              }
+            />
+          </SafeAreaView>
+        ) : (
           <Pressable
-            style={style}
             onPress={() => {
-              navigateTo(`/walletpassport/${item?.number}`, {
-                fromId: `license-${CustomLicenseType.Passport}_source`,
-                toId: `license-${CustomLicenseType.Passport}_destination`,
-                cardHeight: cardHeight,
-              })
-            }}
-          >
-            <SafeAreaView>
-              <LicenseListCard
-                nativeID={`license-${CustomLicenseType.Passport}_source`}
-                type={CustomLicenseType.Passport}
-                licenseNumber={item?.numberWithType ?? ''}
-              />
-            </SafeAreaView>
-          </Pressable>
-        </Container>
-      )
-    } else if (type === 'GenericUserLicense') {
-      return (
-        <Container
-          style={style}
-          onLayout={(e) => {
-            cardHeight = Math.round(e.nativeEvent.layout.height)
-          }}
-        >
-          <Pressable
-            onPress={() => {
-              navigateTo(`/wallet/${item?.license?.type}`, {
-                item,
-                fromId: `license-${item?.license?.type}_source`,
-                toId: `license-${item?.license?.type}_destination`,
-                cardHeight,
-              })
+              navigateTo(
+                `/wallet/${item?.license.type}/${item.payload?.metadata?.licenseId}`,
+                {
+                  item,
+                  fromId: `license-${item?.license?.type}_source`,
+                  toId: `license-${item?.license?.type}_destination`,
+                  cardHeight,
+                },
+              )
             }}
           >
             <SafeAreaView>
@@ -85,14 +111,12 @@ export const WalletItem = React.memo(
                 nativeID={`license-${item?.license?.type}_source`}
                 title={item?.payload?.metadata?.name}
                 type={item?.license?.type}
-                licenseNumber={item?.payload?.metadata?.licenseNumber}
+                subtitle={item?.payload?.metadata?.subtitle}
               />
             </SafeAreaView>
           </Pressable>
-        </Container>
-      )
-    }
-
-    return null
+        )}
+      </Container>
+    )
   },
 )

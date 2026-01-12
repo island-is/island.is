@@ -1,6 +1,6 @@
 import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { AnimatePresence } from 'framer-motion'
+import { AnimatePresence } from 'motion/react'
 import { useRouter } from 'next/router'
 
 import {
@@ -11,6 +11,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
+import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { formatDate, lowercase } from '@island.is/judicial-system/formatters'
 import {
   core,
@@ -165,7 +166,9 @@ export const Overview = () => {
             caseType: workingCase.type,
           })}
         </PageTitle>
-        <ProsecutorCaseInfo workingCase={workingCase} />
+        <Box marginBottom={5}>
+          <ProsecutorCaseInfo workingCase={workingCase} />
+        </Box>
         {workingCase.state === CaseState.RECEIVED &&
           workingCase.arraignmentDate?.date &&
           workingCase.court && (
@@ -182,7 +185,7 @@ export const Overview = () => {
             sections={[
               {
                 id: 'defendants-section',
-                items: [defendants(workingCase.type)],
+                items: [defendants({ caseType: workingCase.type })],
               },
               {
                 id: 'case-info-section',
@@ -306,6 +309,7 @@ export const Overview = () => {
             caseId={workingCase.id}
             title={formatMessage(core.pdfButtonRequest)}
             pdfType="request"
+            elementId={formatMessage(core.pdfButtonRequest)}
           />
         </Box>
       </FormContentContainer>
@@ -350,16 +354,16 @@ export const Overview = () => {
               caseType: workingCase.type,
             })}
             text={modalText}
-            onClose={() => router.push(constants.CASES_ROUTE)}
-            onSecondaryButtonClick={() => {
-              router.push(constants.CASES_ROUTE)
+            onClose={() => router.push(getStandardUserDashboardRoute(user))}
+            secondaryButton={{
+              text: formatMessage(core.closeModal),
+              onClick: () => router.push(getStandardUserDashboardRoute(user)),
             }}
             errorMessage={
               sendNotificationError
                 ? formatMessage(errors.sendNotification)
                 : undefined
             }
-            secondaryButtonText={formatMessage(core.closeModal)}
           />
         )}
       </AnimatePresence>

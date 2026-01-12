@@ -3,6 +3,7 @@ import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 export const serviceSetup = (): ServiceBuilder<'portals-admin'> =>
   service('portals-admin')
     .namespace('portals-admin')
+    .serviceAccount('portals-admin')
     .liveness('/liveness')
     .readiness('/readiness')
     .replicaCount({
@@ -21,8 +22,7 @@ export const serviceSetup = (): ServiceBuilder<'portals-admin'> =>
     })
     .secrets({
       SI_PUBLIC_CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY',
-      SI_PUBLIC_DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID',
-      SI_PUBLIC_DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN',
+      SI_PUBLIC_DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN',
     })
     .ingress({
       primary: {

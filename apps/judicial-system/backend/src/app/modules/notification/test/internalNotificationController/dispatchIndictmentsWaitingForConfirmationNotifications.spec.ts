@@ -1,10 +1,10 @@
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import {
   InstitutionNotificationType,
-  InstitutionType,
   NotificationDispatchType,
+  prosecutorsOfficeTypes,
 } from '@island.is/judicial-system/types'
 
 import { createTestingNotificationModule } from '../createTestingNotificationModule'
@@ -69,7 +69,7 @@ describe('InternalNotificationController - Dispatch indictments waiting for conf
 
     it('should send message to queue', () => {
       expect(mockInstitutionService.getAll).toHaveBeenCalledWith(
-        InstitutionType.PROSECUTORS_OFFICE,
+        prosecutorsOfficeTypes,
       )
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
         {

@@ -78,6 +78,16 @@ export interface PortalNavigationItem {
 
 Each module implements its own routes (see above). Routes should only be returned if available to the session scope. Items will be rendered into the navigation if a route has been declared for it.
 
+### Configuring route search behaviour
+
+Each module is automatically added to the search index, except for modules hidden from navigation or are inaccessible for the user. The currently active route is also filtered out. Each route can opt out of being indexed by setting the `searchHide` property to `true`.
+
+For optimal results, the `description` property should be set to the same message as is displayed in the dashboard and in the page header. If the dashboard message and the page header message are different, set the `intro` property as the header message id.
+
+These messages must be stored in the `service.portal` CMS namespace.
+
+For better results, consider adding some tags to the `searchTags` property. The tags to be added should be stored in the `sp.search.tags` CMS namespace.
+
 ### Sentry
 
 A sentry project is available [here](https://sentry.io/organizations/island_is/issues/?project=5501494).

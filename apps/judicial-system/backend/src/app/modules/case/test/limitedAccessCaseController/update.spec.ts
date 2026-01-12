@@ -1,4 +1,4 @@
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import {
@@ -12,7 +12,7 @@ import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { nowFactory } from '../../../../factories'
 import { randomDate } from '../../../../test'
-import { Case } from '../../models/case.model'
+import { Case, CaseRepositoryService } from '../../../repository'
 
 jest.mock('../../../../factories')
 
@@ -56,21 +56,24 @@ describe('LimitedAccessCaseController - Update', () => {
   } as Case
 
   let mockMessageService: MessageService
-  let mockCaseModel: typeof Case
+  let mockCaseRepositoryService: CaseRepositoryService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { messageService, caseModel, limitedAccessCaseController } =
-      await createTestingCaseModule()
+    const {
+      messageService,
+      caseRepositoryService,
+      limitedAccessCaseController,
+    } = await createTestingCaseModule()
 
     mockMessageService = messageService
-    mockCaseModel = caseModel
+    mockCaseRepositoryService = caseRepositoryService
 
     const mockToday = nowFactory as jest.Mock
     mockToday.mockReturnValueOnce(date)
-    const mockUpdate = mockCaseModel.update as jest.Mock
-    mockUpdate.mockResolvedValue([1])
-    const mockFindOne = mockCaseModel.findOne as jest.Mock
+    const mockUpdate = mockCaseRepositoryService.update as jest.Mock
+    mockUpdate.mockResolvedValue(updatedCase)
+    const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
     mockFindOne.mockResolvedValue(updatedCase)
 
     givenWhenThen = async () => {
@@ -99,10 +102,9 @@ describe('LimitedAccessCaseController - Update', () => {
     })
 
     it('should update the case', () => {
-      expect(mockCaseModel.update).toHaveBeenCalledWith(
-        { defendantStatementDate: date },
-        { where: { id: caseId } },
-      )
+      expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(caseId, {
+        defendantStatementDate: date,
+      })
     })
 
     it('should queue messages', () => {

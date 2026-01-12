@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 
 import { Box } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
+import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { isInvestigationCase } from '@island.is/judicial-system/types'
 import {
   AlertBanner,
@@ -23,8 +24,7 @@ import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/h
 import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
 import { shouldUseAppealWithdrawnRoutes } from '@island.is/judicial-system-web/src/utils/utils'
 
-import CaseFilesOverview from '../components/CaseFilesOverview/CaseFilesOverview'
-import CaseOverviewHeader from '../components/CaseOverviewHeader/CaseOverviewHeader'
+import { CaseFilesOverview, CaseOverviewHeader } from '../components'
 import { overview as strings } from './Overview.strings'
 
 const CourtOfAppealOverview = () => {
@@ -46,6 +46,8 @@ const CourtOfAppealOverview = () => {
     judge,
     registrar,
     caseType,
+    victims,
+    showItem,
   } = useInfoCardItems()
 
   const handleNavigationTo = (destination: string) =>
@@ -86,8 +88,16 @@ const CourtOfAppealOverview = () => {
               sections={[
                 {
                   id: 'defendants-section',
-                  items: [defendants(workingCase.type)],
+                  items: [defendants({ caseType: workingCase.type })],
                 },
+                ...(showItem(victims)
+                  ? [
+                      {
+                        id: 'victims-section',
+                        items: [victims],
+                      },
+                    ]
+                  : []),
                 {
                   id: 'case-info-section',
                   items: [
@@ -127,7 +137,7 @@ const CourtOfAppealOverview = () => {
         </FormContentContainer>
         <FormContentContainer isFooter>
           <FormFooter
-            previousUrl={constants.COURT_OF_APPEAL_CASES_ROUTE}
+            previousUrl={getStandardUserDashboardRoute(user)}
             onNextButtonClick={() =>
               handleNavigationTo(
                 shouldUseAppealWithdrawnRoutes(workingCase)

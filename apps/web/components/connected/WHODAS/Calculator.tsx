@@ -35,6 +35,7 @@ interface Question {
   question: string
   answerOptions: {
     score: number
+    text?: string
   }[]
 }
 
@@ -89,11 +90,13 @@ const WHODASForm = ({ step, stepIndex, state, setState }: WHODASFormProps) => {
                     return null
                   }
 
-                  const label = formatMessage(
-                    m.answerLabel[
-                      String(answerIndex) as keyof typeof m.answerLabel
-                    ],
-                  )
+                  const label =
+                    option.text ||
+                    formatMessage(
+                      m.answerLabel[
+                        String(answerIndex) as keyof typeof m.answerLabel
+                      ],
+                    )
                   return (
                     <RadioButton
                       key={id}

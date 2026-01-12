@@ -8,18 +8,28 @@ import {
   FilterProps,
 } from '@island.is/island-ui/core'
 import { isDefined } from '@island.is/shared/utils'
-import { GenericTag, GrantStatus } from '@island.is/web/graphql/schema'
+import { GenericTag } from '@island.is/web/graphql/schema'
 
 import { m } from '../messages'
-import { SearchState } from './SearchResults'
+
+export interface SearchState {
+  status?: 'open' | 'closed'
+  category?: Array<string>
+  type?: Array<string>
+  organization?: Array<string>
+}
 
 interface Props {
-  onSearchUpdate: (categoryId: keyof SearchState, value: unknown) => void
+  onSearchUpdate: (
+    categoryId: keyof SearchState,
+    values?: Array<string>,
+  ) => void
   onReset: () => void
   searchState?: SearchState
   tags: Array<GenericTag>
   url: string
   variant?: FilterProps['variant']
+  hits?: number
 }
 
 export const GrantsSearchResultsFilter = ({
@@ -29,8 +39,9 @@ export const GrantsSearchResultsFilter = ({
   tags,
   url,
   variant = 'default',
+  hits,
 }: Props) => {
-  const { formatMessage } = useIntl()
+  const { formatMessage, locale } = useIntl()
 
   const sortedFilters = {
     categories: sortBy(
@@ -54,12 +65,18 @@ export const GrantsSearchResultsFilter = ({
     >
       <Filter
         labelClearAll={formatMessage(m.search.clearFilters)}
-        labelOpen=""
-        labelClear=""
+        labelOpen={formatMessage(m.search.openFilter)}
+        labelClose={formatMessage(m.search.closeFilter)}
+        labelClear={formatMessage(m.search.clearFilters)}
+        labelTitle={formatMessage(m.search.filterTitle)}
+        labelResult={formatMessage(m.search.viewResults)}
+        resultCount={hits}
         onFilterClear={onReset}
         variant={variant}
+        align={'right'}
+        usePopoverDiscloureButtonStyling
       >
-        <Box background="white" padding={[1, 1, 2]} borderRadius="large">
+        <Box background="white" borderRadius="large">
           <FilterMultiChoice
             labelClear={formatMessage(m.search.clearFilterCategory)}
             onChange={({ categoryId, selected }) => {
@@ -75,14 +92,17 @@ export const GrantsSearchResultsFilter = ({
               {
                 id: 'status',
                 label: formatMessage(m.search.applicationStatus),
-                selected: searchState?.['status'] ?? [],
+                singleOption: true,
+                selected: searchState?.['status']
+                  ? [searchState['status']]
+                  : [],
                 filters: [
                   {
-                    value: GrantStatus.Open.toString().toLowerCase(),
+                    value: 'open',
                     label: formatMessage(m.search.applicationOpen),
                   },
                   {
-                    value: GrantStatus.Closed.toString().toLowerCase(),
+                    value: 'closed',
                     label: formatMessage(m.search.applicationClosed),
                   },
                 ],
@@ -116,8 +136,18 @@ export const GrantsSearchResultsFilter = ({
                 selected: searchState?.['organization'] ?? [],
                 filters: [
                   {
-                    value: 'rannsoknamidstoed-islands-rannis',
+                    value:
+                      locale === 'is'
+                        ? 'rannis'
+                        : 'the-icelandic-centre-for-research',
                     label: 'Rannís',
+                  },
+                  {
+                    value:
+                      locale === 'is'
+                        ? 'Umhverfis- og orkustofnun'
+                        : 'Environment and Energy Agency',
+                    label: 'Umhverfis- og orkustofnun',
                   },
                 ],
               },

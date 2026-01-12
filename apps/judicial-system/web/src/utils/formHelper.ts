@@ -2,11 +2,7 @@ import { SetStateAction } from 'react'
 import compareAsc from 'date-fns/compareAsc'
 
 import * as constants from '@island.is/judicial-system/consts'
-import {
-  IndictmentSubtype,
-  IndictmentSubtypeMap,
-} from '@island.is/judicial-system/types'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { replaceTabs } from './formatters'
 import { UpdateCase } from './hooks'
@@ -147,7 +143,7 @@ export const hasDateChanged = (
 }
 
 export type stepValidationsType = {
-  [constants.CASES_ROUTE]: () => boolean
+  [constants.CASE_TABLE_GROUPS_ROUTE]: () => boolean
   [constants.CREATE_RESTRICTION_CASE_ROUTE]: (theCase: Case) => boolean
   [constants.CREATE_TRAVEL_BAN_ROUTE]: (theCase: Case) => boolean
   [constants.RESTRICTION_CASE_DEFENDANT_ROUTE]: (theCase: Case) => boolean
@@ -159,6 +155,7 @@ export type stepValidationsType = {
   [constants.RESTRICTION_CASE_CASE_FILES_ROUTE]: () => boolean
   [constants.RESTRICTION_CASE_OVERVIEW_ROUTE]: () => boolean
   [constants.CREATE_INVESTIGATION_CASE_ROUTE]: (theCase: Case) => boolean
+  [constants.INVESTIGATION_CASE_REGISTRATION_ROUTE]: (theCase: Case) => boolean
   [constants.INVESTIGATION_CASE_DEFENDANT_ROUTE]: (theCase: Case) => boolean
   [constants.INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE]: (
     theCase: Case,
@@ -172,9 +169,9 @@ export type stepValidationsType = {
   [constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE]: () => boolean
   [constants.INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE]: () => boolean
   [constants.INDICTMENTS_CASE_FILE_ROUTE]: () => boolean
+  [constants.INDICTMENTS_CASE_FILES_ROUTE]: (theCase: Case) => boolean
   [constants.INDICTMENTS_PROCESSING_ROUTE]: (theCase: Case) => boolean
   [constants.INDICTMENTS_INDICTMENT_ROUTE]: (theCase: Case) => boolean
-  [constants.INDICTMENTS_CASE_FILES_ROUTE]: (theCase: Case) => boolean
   [constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE]: (
     theCase: Case,
   ) => boolean
@@ -201,6 +198,7 @@ export type stepValidationsType = {
   ) => boolean
   [constants.INDICTMENTS_SUBPOENA_ROUTE]: (theCase: Case) => boolean
   [constants.INDICTMENTS_DEFENDER_ROUTE]: (theCase: Case) => boolean
+  [constants.INDICTMENTS_COURT_RECORD_ROUTE]: (theCase: Case) => boolean
   [constants.INDICTMENTS_CONCLUSION_ROUTE]: (theCase: Case) => boolean
   [constants.INDICTMENTS_COURT_OVERVIEW_ROUTE]: () => boolean
   [constants.INDICTMENTS_SUMMARY_ROUTE]: () => boolean
@@ -213,7 +211,7 @@ export type stepValidationsType = {
 
 export const stepValidations = (): stepValidationsType => {
   return {
-    [constants.CASES_ROUTE]: () => true,
+    [constants.CASE_TABLE_GROUPS_ROUTE]: () => true,
     [constants.CREATE_RESTRICTION_CASE_ROUTE]: (theCase: Case) =>
       validations.isDefendantStepValidRC(theCase, theCase.policeCaseNumbers),
     [constants.CREATE_TRAVEL_BAN_ROUTE]: (theCase: Case) =>
@@ -229,17 +227,15 @@ export const stepValidations = (): stepValidationsType => {
     [constants.RESTRICTION_CASE_CASE_FILES_ROUTE]: () => true,
     [constants.RESTRICTION_CASE_OVERVIEW_ROUTE]: () => true,
     [constants.CREATE_INVESTIGATION_CASE_ROUTE]: (theCase: Case) =>
-      validations.isDefendantStepValidIC(
+      validations.isDefendantStepValidIC(theCase),
+    [constants.INVESTIGATION_CASE_REGISTRATION_ROUTE]: (theCase: Case) =>
+      validations.isRegistrationStepValid(
         theCase,
         theCase.type,
         theCase.policeCaseNumbers,
       ),
     [constants.INVESTIGATION_CASE_DEFENDANT_ROUTE]: (theCase: Case) =>
-      validations.isDefendantStepValidIC(
-        theCase,
-        theCase.type,
-        theCase.policeCaseNumbers,
-      ),
+      validations.isDefendantStepValidIC(theCase),
     [constants.INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE]: (
       theCase: Case,
     ) => validations.isHearingArrangementsStepValidIC(theCase),
@@ -253,11 +249,11 @@ export const stepValidations = (): stepValidationsType => {
       validations.isDefendantStepValidIndictments(theCase),
     [constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE]: () => true,
     [constants.INDICTMENTS_CASE_FILE_ROUTE]: () => true,
+    [constants.INDICTMENTS_CASE_FILES_ROUTE]: () => true,
     [constants.INDICTMENTS_PROCESSING_ROUTE]: (theCase: Case) =>
       validations.isProcessingStepValidIndictments(theCase),
     [constants.INDICTMENTS_INDICTMENT_ROUTE]: (theCase: Case) =>
       validations.isIndictmentStepValid(theCase),
-    [constants.INDICTMENTS_CASE_FILES_ROUTE]: () => true,
     [constants.INDICTMENTS_SUMMARY_ROUTE]: () => true,
     [constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE]: (
       theCase: Case,
@@ -290,6 +286,9 @@ export const stepValidations = (): stepValidationsType => {
       validations.isSubpoenaStepValid(theCase),
     [constants.INDICTMENTS_DEFENDER_ROUTE]: (theCase: Case) =>
       validations.isDefenderStepValid(theCase),
+    [constants.INDICTMENTS_COURT_RECORD_ROUTE]: (theCase: Case) =>
+      validations.isIndictmentCourtRecordStepValid(theCase) &&
+      (theCase.courtSessions?.every((c) => c.isConfirmed) || false),
     [constants.INDICTMENTS_CONCLUSION_ROUTE]: (theCase: Case) =>
       validations.isConclusionStepValid(theCase),
     [constants.INDICTMENTS_COURT_OVERVIEW_ROUTE]: () => true,
@@ -319,23 +318,4 @@ export const findFirstInvalidStep = (steps: string[], theCase: Case) => {
     stepsToCheck.find(([, validationFn]) => !validationFn(theCase)) ?? []
 
   return key
-}
-
-export const isTrafficViolationIndictmentCount = (
-  policeCaseNumber?: string | null,
-  indictmentSubtypes?: IndictmentSubtypeMap,
-) => {
-  if (!policeCaseNumber || !indictmentSubtypes) {
-    return false
-  }
-
-  if (
-    indictmentSubtypes[policeCaseNumber].length === 1 &&
-    indictmentSubtypes[policeCaseNumber][0] ===
-      IndictmentSubtype.TRAFFIC_VIOLATION
-  ) {
-    return true
-  }
-
-  return false
 }

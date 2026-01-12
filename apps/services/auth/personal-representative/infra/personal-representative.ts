@@ -8,7 +8,7 @@ import {
 
 const REDIS_NODE_CONFIG = {
   dev: json([
-    'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+    'clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com:6379',
   ]),
   staging: json([
     'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
@@ -23,6 +23,7 @@ export const serviceSetup =
     return service('services-auth-personal-representative')
       .namespace('personal-representative')
       .image('services-auth-personal-representative')
+      .serviceAccount('services-auth-personal-representative')
       .db({ name: 'servicesauth' })
       .env({
         IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api',
@@ -34,9 +35,10 @@ export const serviceSetup =
         XROAD_NATIONAL_REGISTRY_ACTOR_TOKEN: 'true',
         XROAD_RSK_PROCURING_ACTOR_TOKEN: 'true',
         XROAD_NATIONAL_REGISTRY_SERVICE_PATH: {
-          dev: 'IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1',
-          staging: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1',
-          prod: 'IS/GOV/6503760649/SKRA-Protected/Einstaklingar-v1',
+          dev: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Einstaklingar-v1',
+          staging:
+            'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Einstaklingar-v1',
+          prod: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Einstaklingar-v1',
         },
         XROAD_NATIONAL_REGISTRY_REDIS_NODES: REDIS_NODE_CONFIG,
         XROAD_RSK_PROCURING_REDIS_NODES: REDIS_NODE_CONFIG,

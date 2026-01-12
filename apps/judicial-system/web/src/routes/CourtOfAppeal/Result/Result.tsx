@@ -2,7 +2,7 @@ import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { AlertBanner, AlertMessage, Box } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { isInvestigationCase } from '@island.is/judicial-system/types'
 import {
   CaseFilesAccordionItem,
@@ -22,8 +22,7 @@ import useInfoCardItems from '@island.is/judicial-system-web/src/components/Info
 import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/hooks'
 import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
 
-import CaseFilesOverview from '../components/CaseFilesOverview/CaseFilesOverview'
-import CaseOverviewHeader from '../components/CaseOverviewHeader/CaseOverviewHeader'
+import { CaseFilesOverview, CaseOverviewHeader } from '../components'
 import { result as strings } from './Result.strings'
 
 type modalTypes = 'reopenCase' | 'none'
@@ -51,6 +50,8 @@ const CourtOfAppealResult = () => {
     appealCaseNumber,
     appealAssistant,
     appealJudges,
+    victims,
+    showItem,
   } = useInfoCardItems()
 
   return (
@@ -102,8 +103,16 @@ const CourtOfAppealResult = () => {
               sections={[
                 {
                   id: 'defendants-section',
-                  items: [defendants(workingCase.type)],
+                  items: [defendants({ caseType: workingCase.type })],
                 },
+                ...(showItem(victims)
+                  ? [
+                      {
+                        id: 'victims-section',
+                        items: [victims],
+                      },
+                    ]
+                  : []),
                 {
                   id: 'case-info-section',
                   items: [
@@ -154,7 +163,7 @@ const CourtOfAppealResult = () => {
         </FormContentContainer>
         <FormContentContainer isFooter>
           <FormFooter
-            previousUrl={constants.COURT_OF_APPEAL_CASES_ROUTE}
+            previousUrl={getStandardUserDashboardRoute(user)}
             nextButtonText={formatMessage(strings.nextButtonText)}
             onNextButtonClick={() => setModalVisible('reopenCase')}
           />

@@ -4,11 +4,11 @@ import { useIntl } from 'react-intl'
 import { toast } from '@island.is/island-ui/core'
 import { errors } from '@island.is/judicial-system-web/messages'
 import {
+  Case,
   CreateDefendantInput,
   Defendant,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { useCreateDefendantMutation } from './createDefendant.generated'
 import { useDeleteDefendantMutation } from './deleteDefendant.generated'
@@ -60,6 +60,7 @@ const useDefendants = () => {
         return Boolean(data?.deleteDefendant?.deleted)
       } catch (error) {
         toast.error(formatMessage(errors.deleteDefendant))
+
         return false
       }
     },
@@ -78,6 +79,7 @@ const useDefendants = () => {
         return Boolean(data)
       } catch (error) {
         toast.error(formatMessage(errors.updateDefendant))
+
         return false
       }
     },
@@ -96,6 +98,7 @@ const useDefendants = () => {
         return Boolean(data)
       } catch (error) {
         toast.error(formatMessage(errors.updateDefendant))
+
         return false
       }
     },

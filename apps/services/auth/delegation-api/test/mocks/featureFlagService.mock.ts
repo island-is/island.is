@@ -1,3 +1,3 @@
 export const FeatureFlagServiceMock = {
-  getValue: () => true,
+  getValue: () => Promise.resolve('*'),
 }

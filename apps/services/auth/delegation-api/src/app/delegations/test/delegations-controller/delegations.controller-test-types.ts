@@ -83,24 +83,31 @@ export const scopes: Record<string, Scope> = {
   legalGuardian: {
     name: '@lg1',
     grantToLegalGuardians: true,
+    supportedDelegationTypes: [AuthDelegationType.LegalGuardian],
   },
   procurationHolder: {
     name: '@ph1',
     grantToProcuringHolders: true,
+    supportedDelegationTypes: [AuthDelegationType.ProcurationHolder],
   },
   custom: {
     name: '@cu1',
     allowExplicitDelegationGrant: true,
+    supportedDelegationTypes: [AuthDelegationType.Custom],
   },
   custom2: {
     name: '@cu2',
     allowExplicitDelegationGrant: true,
+    supportedDelegationTypes: [AuthDelegationType.Custom],
   },
   representative: {
     name: '@pr1',
     grantToPersonalRepresentatives: true,
     personalRepresentativeRightTypePermissions: [
       personalRepresentativeRightTypeCodePostholf,
+    ],
+    supportedDelegationTypes: [
+      PersonalRepresentativeDelegationType.PersonalRepresentativePostholf,
     ],
   },
   all: {
@@ -112,9 +119,16 @@ export const scopes: Record<string, Scope> = {
     personalRepresentativeRightTypePermissions: [
       personalRepresentativeRightTypeCodePostholf,
     ],
+    supportedDelegationTypes: [
+      AuthDelegationType.LegalGuardian,
+      AuthDelegationType.ProcurationHolder,
+      AuthDelegationType.Custom,
+      AuthDelegationType.PersonalRepresentative,
+    ],
   },
   none: {
     name: '@none',
+    supportedDelegationTypes: [],
   },
 }
 
@@ -156,6 +170,7 @@ export class TestCase {
       grantToProcuringHolders: s.grantToProcuringHolders,
       allowExplicitDelegationGrant: s.allowExplicitDelegationGrant,
       grantToPersonalRepresentatives: s.grantToPersonalRepresentatives,
+      supportedDelegationTypes: s.supportedDelegationTypes,
     }))
   }
 

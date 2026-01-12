@@ -59,6 +59,8 @@ const Overview = () => {
     requestedCourtDate,
     prosecutor,
     caseType,
+    victims,
+    showItem,
   } = useInfoCardItems()
 
   const handleNavigationTo = useCallback(
@@ -120,8 +122,16 @@ const Overview = () => {
             sections={[
               {
                 id: 'defendants-section',
-                items: [defendants(workingCase.type)],
+                items: [defendants({ caseType: workingCase.type })],
               },
+              ...(showItem(victims)
+                ? [
+                    {
+                      id: 'victims-section',
+                      items: [victims],
+                    },
+                  ]
+                : []),
               {
                 id: 'case-info-section',
                 items: [
@@ -213,6 +223,7 @@ const Overview = () => {
                 caseId={workingCase.id}
                 title={formatMessage(core.pdfButtonRequest)}
                 pdfType="request"
+                elementId={formatMessage(core.pdfButtonRequest)}
               />
             </Box>
             <Button

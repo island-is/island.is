@@ -18,7 +18,7 @@ const imageName = 'services-auth-ids-api'
 
 const REDIS_NODE_CONFIG = {
   dev: json([
-    'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+    'clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com:6379',
   ]),
   staging: json([
     'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
@@ -33,6 +33,7 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
     .namespace(namespace)
     .image(imageName)
     .codeOwner(CodeOwners.Aranja)
+    .serviceAccount('services-auth-ids-api')
     .env({
       IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api',
       IDENTITY_SERVER_ISSUER_URL: {
@@ -47,16 +48,15 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
         prod: 'https://innskra.island.is/api',
       },
       USER_PROFILE_CLIENT_URL: {
-        dev: 'http://web-service-portal-api.service-portal.svc.cluster.local',
-        staging:
-          'http://web-service-portal-api.service-portal.svc.cluster.local',
+        dev: 'https://service-portal-api.internal.dev01.devland.is',
+        staging: 'http://service-portal-api.service-portal.svc.cluster.local',
         prod: 'https://service-portal-api.internal.island.is',
       },
       USER_PROFILE_CLIENT_SCOPE: json([UserProfileScope.read]),
       XROAD_NATIONAL_REGISTRY_SERVICE_PATH: {
-        dev: 'IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1',
-        staging: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1',
-        prod: 'IS/GOV/6503760649/SKRA-Protected/Einstaklingar-v1',
+        dev: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Einstaklingar-v1',
+        staging: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Einstaklingar-v1',
+        prod: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Einstaklingar-v1',
       },
       XROAD_NATIONAL_REGISTRY_REDIS_NODES: REDIS_NODE_CONFIG,
       COMPANY_REGISTRY_REDIS_NODES: REDIS_NODE_CONFIG,
@@ -66,7 +66,7 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
         staging: 'IS-TEST/GOV/5402696029/Skatturinn/ft-v1',
         prod: 'IS/GOV/5402696029/Skatturinn/ft-v1',
       },
-      XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1',
+      XROAD_TJODSKRA_API_PATH: '/SKRA-Cloud-Protected/Einstaklingar-v1',
       XROAD_TJODSKRA_MEMBER_CODE: {
         prod: '6503760649',
         dev: '10001',
@@ -138,8 +138,8 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
       },
     })
     .replicaCount({
-      default: 2,
-      min: 2,
+      default: 6,
+      min: 6,
       max: 15,
     })
     .grantNamespaces('nginx-ingress-external', 'user-notification', 'datadog')
@@ -153,8 +153,9 @@ export const cleanupSetup = (): ServiceBuilder<typeof cleanupId> =>
   service(cleanupId)
     .namespace(namespace)
     .image(imageName)
+    .serviceAccount('services-auth-ids-api-cleanup')
     .command('node')
-    .args('main.js', '--job=cleanup')
+    .args('main.cjs', '--job=cleanup')
     .resources({
       limits: {
         cpu: '400m',

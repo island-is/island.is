@@ -8,35 +8,54 @@
   "generators": {},
   "targets": {
     "build": {
-      "executor": "./tools/executors/node:build",
+      "executor": "@nx/esbuild:esbuild",
       "options": {
         "outputPath": "dist/apps/air-discount-scheme/backend",
         "main": "apps/air-discount-scheme/backend/src/main.ts",
         "tsConfig": "apps/air-discount-scheme/backend/tsconfig.app.json",
+        "external": [
+          "@nestjs/microservices",
+          "@nestjs/websockets",
+          "cache-manager",
+          "cache-manager-redis-store",
+          "amqp-connection-manager",
+          "amqplib",
+          "nats",
+          "kafkajs",
+          "mqtt",
+          "redis",
+          "pg-native"
+        ],
+        "generatePackageJson": true,
+        "esbuildConfig": "tools/esbuild.config.js",
+        "format": ["cjs"],
         "assets": [
           {
-            "glob": "*sequelize*",
-            "input": "apps/air-discount-scheme/backend",
-            "output": "./"
+            "glob": "**/*",
+            "input": "apps/air-discount-scheme/backend/src/assets",
+            "output": "assets"
           },
           {
-            "glob": "migrations/**",
             "input": "apps/air-discount-scheme/backend",
-            "output": "./"
+            "output": ".",
+            "glob": "migrations/**/*"
           },
           {
-            "glob": ".sequelizerc",
             "input": "apps/air-discount-scheme/backend",
-            "output": "./"
+            "output": ".",
+            "glob": ".sequelizerc"
+          },
+          {
+            "input": "apps/air-discount-scheme/backend",
+            "output": ".",
+            "glob": "sequelize.config.js"
           }
-        ],
-        "maxWorkers": 2
+        ]
       },
       "configurations": {
         "production": {
           "optimization": true,
-          "extractLicenses": true,
-          "inspect": false
+          "extractLicenses": true
         }
       },
       "outputs": ["{options.outputPath}"]
@@ -64,7 +83,10 @@
     "dev-services": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "docker compose up -d",
+        "commands": [
+          "docker compose up -d",
+          "docker compose -f ../../../scripts/docker-compose/redis-cluster.yml up -d"
+        ],
         "cwd": "apps/air-discount-scheme/backend"
       }
     },
@@ -109,8 +131,8 @@
         "cwd": "apps/air-discount-scheme/backend"
       }
     },
-    "docker-express": {
-      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
+    "docker-express-yarn": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express-yarn`"
     }
   }
 }

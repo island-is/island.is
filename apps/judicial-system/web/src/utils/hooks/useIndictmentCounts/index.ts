@@ -2,22 +2,22 @@ import { Dispatch, SetStateAction, useCallback } from 'react'
 import { useIntl } from 'react-intl'
 
 import { toast } from '@island.is/island-ui/core'
-import { SubstanceMap } from '@island.is/judicial-system/types'
 import { errors } from '@island.is/judicial-system-web/messages'
-import { UpdateIndictmentCountInput } from '@island.is/judicial-system-web/src/graphql/schema'
-import { indictmentCount } from '@island.is/judicial-system-web/src/routes/Prosecutor/Indictments/Indictment/IndictmentCount.strings'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import {
+  Case,
+  Offense,
+  UpdateIndictmentCountInput,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { useCreateIndictmentCountMutation } from './createIndictmentCount.generated'
 import { useDeleteIndictmentCountMutation } from './deleteIndictmentCount.generated'
 import { useUpdateIndictmentCountMutation } from './updateIndictmentCount.generated'
 
 export interface UpdateIndictmentCount
-  extends Omit<
-    UpdateIndictmentCountInput,
-    'caseId' | 'indictmentCountId' | 'substances'
-  > {
-  substances?: SubstanceMap | null
+  extends Omit<UpdateIndictmentCountInput, 'caseId' | 'indictmentCountId'> {}
+
+export type UpdateIndictmentCountState = UpdateIndictmentCount & {
+  offenses?: Offense[] | null
 }
 
 const useIndictmentCounts = () => {
@@ -31,11 +31,7 @@ const useIndictmentCounts = () => {
     async (caseId: string) => {
       try {
         const { data } = await createIndictmentCountMutation({
-          variables: {
-            input: {
-              caseId,
-            },
-          },
+          variables: { input: { caseId } },
         })
 
         if (!data) {
@@ -54,12 +50,7 @@ const useIndictmentCounts = () => {
     async (caseId: string, indictmentCountId: string) => {
       try {
         const { data } = await deleteIndictmentCountMutation({
-          variables: {
-            input: {
-              caseId,
-              indictmentCountId,
-            },
-          },
+          variables: { input: { caseId, indictmentCountId } },
         })
 
         return data?.deleteIndictmentCount?.deleted
@@ -78,18 +69,13 @@ const useIndictmentCounts = () => {
     ) => {
       try {
         const { data } = await updateIndictmentCountMutation({
-          variables: {
-            input: {
-              indictmentCountId,
-              caseId,
-              ...update,
-            },
-          },
+          variables: { input: { indictmentCountId, caseId, ...update } },
         })
 
         if (!data) {
           toast.error(formatMessage(errors.updateIndictmentCount))
         }
+
         return data?.updateIndictmentCount
       } catch (e) {
         toast.error(formatMessage(errors.updateIndictmentCount))
@@ -101,7 +87,7 @@ const useIndictmentCounts = () => {
   const updateIndictmentCountState = useCallback(
     (
       indictmentCountId: string,
-      update: UpdateIndictmentCount,
+      update: UpdateIndictmentCountState,
       setWorkingCase: Dispatch<SetStateAction<Case>>,
     ) => {
       setWorkingCase((prevWorkingCase) => {
@@ -127,21 +113,11 @@ const useIndictmentCounts = () => {
     [],
   )
 
-  const lawTag = useCallback(
-    (law: number[]) =>
-      formatMessage(indictmentCount.lawsBrokenTag, {
-        paragraph: law[1],
-        article: law[0],
-      }),
-    [formatMessage],
-  )
-
   return {
     updateIndictmentCount,
     createIndictmentCount,
     deleteIndictmentCount,
     updateIndictmentCountState,
-    lawTag,
   }
 }
 

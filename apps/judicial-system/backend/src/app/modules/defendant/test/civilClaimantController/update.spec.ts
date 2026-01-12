@@ -1,12 +1,12 @@
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import { CivilClaimantNotificationType } from '@island.is/judicial-system/types'
 
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
 
+import { CivilClaimant } from '../../../repository'
 import { UpdateCivilClaimantDto } from '../../dto/updateCivilClaimant.dto'
-import { CivilClaimant } from '../../models/civilClaimant.model'
 
 interface Then {
   result: CivilClaimant

@@ -26,6 +26,7 @@ import {
 import { Locale } from '@island.is/shared/types'
 import {
   AppendedArticleComponents,
+  FineAndSpeedMeasurementCalculator,
   HeadWithSocialSharing,
   InstitutionPanel,
   InstitutionsPanel,
@@ -38,6 +39,7 @@ import {
 } from '@island.is/web/components'
 import type {
   AllSlicesFragment as Slice,
+  ConnectedComponent,
   GetNamespaceQuery,
   GetSingleArticleQuery,
   Organization,
@@ -54,7 +56,11 @@ import { CustomNextError } from '@island.is/web/units/errors'
 import { extractNamespaceFromOrganization } from '@island.is/web/utils/extractNamespaceFromOrganization'
 import { createNavigation } from '@island.is/web/utils/navigation'
 import { getOrganizationLink } from '@island.is/web/utils/organization'
-import { webRichText } from '@island.is/web/utils/richText'
+import {
+  TranslationNamespaceProvider,
+  webRenderConnectedComponent,
+  webRichText,
+} from '@island.is/web/utils/richText'
 
 import {
   LinkResolverResponse,
@@ -488,6 +494,17 @@ const ArticleScreen: Screen<ArticleProps> = ({
     return items
   }, [article, inStepperView, subArticle])
 
+  const hasFineCalculator = article?.body?.some(
+    (content) =>
+      content.__typename === 'ConnectedComponent' &&
+      content.componentType === 'Police/FineAndSpeedMeasurementCalculator',
+  )
+
+  const chatBubbleIsPushedUp =
+    isVisible &&
+    (Boolean(processEntry?.processLink) || hasFineCalculator) &&
+    mounted
+
   const content = (
     <Box paddingTop={subArticle ? 2 : 4}>
       {!inStepperView && (
@@ -515,6 +532,26 @@ const ArticleScreen: Screen<ArticleProps> = ({
                     />
                   </Box>
                 ),
+                ConnectedComponent: (
+                  slice: ConnectedComponent & { componentType?: string },
+                ) => {
+                  if (
+                    slice.componentType !==
+                    'Police/FineAndSpeedMeasurementCalculator'
+                  ) {
+                    return webRenderConnectedComponent(slice)
+                  }
+                  return (
+                    <TranslationNamespaceProvider
+                      messages={slice.translationStrings ?? slice.json ?? {}}
+                    >
+                      <FineAndSpeedMeasurementCalculator
+                        slice={slice}
+                        chatBubbleIsPushedUp={chatBubbleIsPushedUp}
+                      />
+                    </TranslationNamespaceProvider>
+                  )
+                },
               },
             },
             activeLocale,
@@ -610,6 +647,10 @@ const ArticleScreen: Screen<ArticleProps> = ({
       </Box>
     </Box>
   )
+
+  const indexableBySearchEngine =
+    article?.organization?.[0]?.canPagesBeFoundInSearchResults ?? true
+
   return (
     <>
       <HeadWithSocialSharing
@@ -619,7 +660,11 @@ const ArticleScreen: Screen<ArticleProps> = ({
         imageWidth={article?.featuredImage?.width.toString()}
         imageHeight={article?.featuredImage?.height.toString()}
         keywords={article?.keywords}
-      />
+      >
+        {!indexableBySearchEngine && (
+          <meta name="robots" content="noindex, nofollow" />
+        )}
+      </HeadWithSocialSharing>
       <SidebarLayout
         isSticky={false}
         sidebarContent={
@@ -845,15 +890,12 @@ const ArticleScreen: Screen<ArticleProps> = ({
             portalRef.current,
           )}
       </SidebarLayout>
-      <ArticleChatPanel
-        article={article}
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error make web strict
-        pushUp={isVisible && processEntry?.processLink && mounted}
-      />
-      <OrganizationFooter
-        organizations={article?.organization as Organization[]}
-      />
+      <ArticleChatPanel article={article} pushUp={chatBubbleIsPushedUp} />
+      <div>
+        <OrganizationFooter
+          organizations={article?.organization as Organization[]}
+        />
+      </div>
     </>
   )
 }

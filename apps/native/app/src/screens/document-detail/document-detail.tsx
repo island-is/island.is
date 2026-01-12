@@ -1,12 +1,12 @@
 import { useApolloClient, useFragment_experimental } from '@apollo/client'
 import React, { useEffect, useRef, useState } from 'react'
-import { FormattedDate, useIntl } from 'react-intl'
+import { useIntl } from 'react-intl'
 import {
-  Alert as RNAlert,
   Animated,
-  Platform,
+  Alert as RNAlert,
   StyleSheet,
   View,
+  SafeAreaView,
 } from 'react-native'
 import {
   Navigation,
@@ -16,29 +16,45 @@ import {
 import {
   useNavigationButtonPress,
   useNavigationComponentDidAppear,
-} from 'react-native-navigation-hooks/dist'
-import Pdf, { Source } from 'react-native-pdf'
+} from 'react-native-navigation-hooks'
 import WebView from 'react-native-webview'
 import styled, { useTheme } from 'styled-components/native'
 
-import { Alert, blue400, dynamicColor, Header, Loader, Problem } from '../../ui'
+import { PdfViewer } from '../../components/pdf-viewer/pdf-viewer'
+import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import {
   DocumentV2,
   DocumentV2Action,
   ListDocumentFragmentDoc,
-  useGetDocumentQuery,
   useDocumentConfirmActionsLazyQuery,
+  useGetDocumentQuery,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { useLocale } from '../../hooks/use-locale'
+import { useNavigationModal } from '../../hooks/use-navigation-modal'
 import { toggleAction } from '../../lib/post-mail-action'
-import { authStore } from '../../stores/auth-store'
-import { useOrganizationsStore } from '../../stores/organizations-store'
-import { ButtonRegistry } from '../../utils/component-registry'
-import { getButtonsForActions } from './utils/get-buttons-for-actions'
 import { useBrowser } from '../../lib/use-browser'
+import { useOrganizationsStore } from '../../stores/organizations-store'
+import {
+  Alert,
+  Button,
+  Header,
+  Loader,
+  Problem,
+  blue400,
+  dynamicColor,
+} from '../../ui'
+import {
+  ButtonRegistry,
+  ComponentRegistry,
+} from '../../utils/component-registry'
+import { ListParams } from '../inbox/components/pressable-list-item'
+import { ButtonDrawer } from './components/button-drawer'
+import { getButtonsForActions } from './utils/get-buttons-for-actions'
 import { shareFile } from './utils/share-file'
+import { DocumentReplyInfo, DocumentReplyScreenProps } from './document-reply'
+import { DocumentCommunicationsScreenProps } from './document-communications'
 
 const Host = styled.SafeAreaView`
   margin-left: ${({ theme }) => theme.spacing[2]}px;
@@ -46,11 +62,8 @@ const Host = styled.SafeAreaView`
 `
 
 const Border = styled.View`
-  height: 1px;
-  background-color: ${dynamicColor((props) => ({
-    dark: props.theme.shades.dark.shade200,
-    light: props.theme.color.blue100,
-  }))};
+  border-bottom-width: ${({ theme }) => theme.border.width.standard}px;
+  border-bottom-color: ${({ theme }) => theme.color.blue200};
 `
 
 const ActionsWrapper = styled.View`
@@ -64,11 +77,12 @@ const PdfWrapper = styled.View`
   background-color: ${dynamicColor('background')};
 `
 
-const DocumentWrapper = styled.View<{ hasMarginTop?: boolean }>`
+const DocumentWrapper = styled.View`
   flex: 1;
   margin-horizontal: ${({ theme }) => theme.spacing[2]}px;
   padding-top: ${({ theme }) => theme.spacing[2]}px;
 `
+
 const regexForBr = /<br\s*\/>/gi
 
 // Styles for html documents
@@ -160,7 +174,7 @@ function getRightButtonsForDocumentDetail({
 
 const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks(
-    (theme, intl) => ({
+    (_theme, intl) => ({
       topBar: {
         title: {
           text: intl.formatMessage({ id: 'documentDetail.screenTitle' }),
@@ -179,69 +193,24 @@ const { useNavigationOptions, getNavigationOptions } =
     },
   )
 
-interface PdfViewerProps {
-  url: string
-  body: string
-  onLoaded: (path: string) => void
-  onError: (err: Error) => void
-}
-
-const PdfViewer = React.memo(
-  ({ url, body, onLoaded, onError }: PdfViewerProps) => {
-    const extraProps = {
-      activityIndicatorProps: {
-        color: '#0061ff',
-        progressTintColor: '#ccdfff',
-      },
-    }
-
-    return (
-      <Pdf
-        source={
-          {
-            uri: url,
-            headers: {
-              'content-type': 'application/x-www-form-urlencoded',
-            },
-            body,
-            method: 'POST',
-          } as Source
-        }
-        onLoadComplete={(_, filePath) => {
-          onLoaded?.(filePath)
-        }}
-        onError={(err) => {
-          onError?.(err as Error)
-        }}
-        trustAllCerts={Platform.select({ android: false, ios: undefined })}
-        style={{
-          flex: 1,
-          backgroundColor: 'transparent',
-        }}
-        {...extraProps}
-      />
-    )
-  },
-  (prevProps, nextProps) => {
-    if (prevProps.url === nextProps.url && prevProps.body === nextProps.body) {
-      return true
-    }
-    return false
-  },
-)
-
 export const DocumentDetailScreen: NavigationFunctionComponent<{
   docId: string
   isUrgent?: boolean
-}> = ({ componentId, docId, isUrgent }) => {
+  listParams: ListParams
+}> = ({ componentId, docId, isUrgent, listParams }) => {
   useNavigationOptions(componentId)
 
+  const { showModal } = useNavigationModal()
   const client = useApolloClient()
   const intl = useIntl()
   const htmlStyles = useHtmlStyles()
   const { openBrowser } = useBrowser()
   const { getOrganizationLogoUrl } = useOrganizationsStore()
-  const [accessToken, setAccessToken] = useState<string>()
+  const isFeature2WayMailboxEnabled = useFeatureFlag(
+    'is2WayMailboxEnabled',
+    false,
+  )
+
   const [error, setError] = useState(false)
   const [showConfirmedAlert, setShowConfirmedAlert] = useState(false)
   const [visible, setVisible] = useState(false)
@@ -331,9 +300,25 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     },
   })
 
-  const Document = {
-    ...(doc?.data || {}),
-    ...(docRes.data?.documentV2 || {}),
+  const documentFromCache: Partial<DocumentV2> = doc?.data ?? {}
+  const documentFromQuery: Partial<DocumentV2> = docRes.data?.documentV2 ?? {}
+
+  const Document: Partial<DocumentV2> = {
+    ...documentFromCache,
+    ...documentFromQuery,
+  }
+
+  // We need to set the values from the cache to the document object since the cache is not updated immediately
+  if (documentFromCache.bookmarked !== undefined) {
+    Document.bookmarked = documentFromCache.bookmarked
+  }
+
+  if (documentFromCache.archived !== undefined) {
+    Document.archived = documentFromCache.archived
+  }
+
+  if (documentFromCache.opened !== undefined) {
+    Document.opened = documentFromCache.opened
   }
 
   const hasActions = !!Document.actions?.length
@@ -345,7 +330,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     (hasAlert && !hasConfirmation) ||
     (hasActions && !showConfirmedAlert && !hasConfirmation)
 
-  const loading = docRes.loading || !accessToken
+  const loading = docRes.loading
   const fileTypeLoaded = !!Document?.content?.type
   const hasError = error || docRes.error
 
@@ -354,7 +339,13 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     Document?.content?.type.toLocaleLowerCase() === 'html' &&
     Document.content?.value !== ''
 
-  const onShare = () => shareFile({ document: Document as DocumentV2, pdfUrl })
+  const onShare = () =>
+    shareFile({
+      document: Document as DocumentV2,
+      type: hasPdf ? 'pdf' : isHtml ? 'html' : 'url',
+      pdfUrl,
+      content: !hasPdf ? Document.content?.value : undefined,
+    })
 
   useConnectivityIndicator({
     componentId,
@@ -366,14 +357,11 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   })
 
   useNavigationButtonPress(({ buttonId }) => {
-    if (buttonId === ButtonRegistry.DocumentArchiveButton) {
-      toggleAction(Document.archived ? 'unarchive' : 'archive', Document.id!)
+    if (buttonId === ButtonRegistry.DocumentArchiveButton && Document.id) {
+      toggleAction(Document.archived ? 'unarchive' : 'archive', Document.id)
     }
-    if (buttonId === ButtonRegistry.DocumentStarButton) {
-      toggleAction(
-        Document.bookmarked ? 'unbookmark' : 'bookmark',
-        Document.id!,
-      )
+    if (buttonId === ButtonRegistry.DocumentStarButton && Document.id) {
+      toggleAction(Document.bookmarked ? 'unbookmark' : 'bookmark', Document.id)
     }
     if (buttonId === ButtonRegistry.ShareButton && loaded) {
       onShare()
@@ -417,26 +405,12 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
       return
     }
     markDocumentAsRead()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [Document.id])
-
-  useEffect(() => {
-    const { authorizeResult, refresh } = authStore.getState()
-    const isExpired =
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      new Date(authorizeResult?.accessTokenExpirationDate ?? 0).getTime() <
-      Date.now()
-    if (isExpired) {
-      refresh().then(() => {
-        setAccessToken(authStore.getState().authorizeResult?.accessToken)
-      })
-    } else {
-      setAccessToken(authorizeResult?.accessToken)
-    }
-  }, [])
 
   const fadeAnim = useRef(new Animated.Value(0)).current
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (loaded) {
       Animated.timing(fadeAnim, {
         toValue: 1,
@@ -444,21 +418,72 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
         useNativeDriver: true,
       }).start()
     }
-  }, [loaded])
+  }, [loaded, fadeAnim])
+
+  /**
+   * Navigate to the document reply modal.
+   * It will pass the first reply info down so that the document communications screen can show the first reply info.
+   */
+  const onFirstReplyPress = () => {
+    const senderName = Document.sender?.name
+
+    if (!senderName) {
+      return
+    }
+
+    const passProps: DocumentReplyScreenProps = {
+      senderName,
+      documentId: docId,
+      subject: Document.subject ?? '',
+      isFirstReply: true,
+      onReplySuccess(info) {
+        docRes.refetch()
+        onCommunicationsPress(info)
+      },
+    }
+
+    showModal(ComponentRegistry.DocumentReplyScreen, {
+      passProps,
+    })
+  }
+
+  /**
+   * Navigate to the document communications modal.
+   */
+  const onCommunicationsPress = (reply?: DocumentReplyInfo) => {
+    const passProps: DocumentCommunicationsScreenProps = {
+      documentId: docId,
+      ticketId: Document.ticket?.id ?? undefined,
+      firstReplyInfo: reply,
+    }
+
+    Navigation.push(componentId, {
+      component: {
+        name: ComponentRegistry.DocumentCommunicationsScreen,
+        passProps,
+        options: {
+          topBar: {
+            title: {
+              text: Document.subject,
+            },
+          },
+        },
+      },
+    })
+  }
+
+  const isReplyable = Document.replyable ?? false
+  const hasComments = Document?.ticket?.comments?.length ?? null
 
   return (
     <>
       <Host>
         <Header
           title={Document.sender?.name ?? ''}
-          date={
-            Document.publicationDate ? (
-              <FormattedDate value={Document.publicationDate} />
-            ) : undefined
-          }
+          date={Document.publicationDate ?? undefined}
+          category={listParams?.category?.name}
           message={Document.subject}
           isLoading={loading && !Document.subject}
-          hasBorder={false}
           logo={getOrganizationLogoUrl(Document.sender?.name ?? '', 75)}
           label={isUrgent ? intl.formatMessage({ id: 'inbox.urgent' }) : ''}
         />
@@ -484,7 +509,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
         </ActionsWrapper>
       )}
       <Border />
-      <DocumentWrapper hasMarginTop={true}>
+      <DocumentWrapper>
         <Animated.View
           style={{
             flex: 1,
@@ -512,11 +537,12 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
               />
             ) : hasPdf ? (
               <PdfWrapper>
-                {visible && accessToken && (
+                {visible && (
                   <PdfViewer
                     url={`data:application/pdf;base64,${Document.content?.value}`}
-                    body={`documentId=${Document.id}&__accessToken=${accessToken}`}
-                    onLoaded={(filePath: any) => {
+                    subject={Document.subject ?? ''}
+                    senderName={Document.sender?.name ?? ''}
+                    onLoaded={(filePath) => {
                       setPdfUrl(filePath)
                       setLoaded(true)
                     }}
@@ -541,7 +567,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
             ))}
         </Animated.View>
 
-        {(!loaded || !accessToken || hasError) && (
+        {(!loaded || hasError) && (
           <View
             style={[
               StyleSheet.absoluteFill,
@@ -562,6 +588,34 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
           </View>
         )}
       </DocumentWrapper>
+      {isFeature2WayMailboxEnabled && isReplyable && !loading && (
+        <ButtonDrawer>
+          <SafeAreaView>
+            <Button
+              title={intl.formatMessage({
+                id: hasComments
+                  ? 'documentDetail.buttonCommunications'
+                  : 'documentDetail.buttonReply',
+              })}
+              isTransparent
+              isOutlined
+              iconPosition="start"
+              icon={
+                hasComments
+                  ? require('../../assets/icons/chatbubbles.png')
+                  : require('../../assets/icons/reply.png')
+              }
+              onPress={() => {
+                if (hasComments) {
+                  onCommunicationsPress()
+                } else {
+                  onFirstReplyPress()
+                }
+              }}
+            />
+          </SafeAreaView>
+        </ButtonDrawer>
+      )}
     </>
   )
 }

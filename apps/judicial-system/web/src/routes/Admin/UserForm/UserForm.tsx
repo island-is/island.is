@@ -1,5 +1,13 @@
-import { FC, SetStateAction, useCallback, useEffect, useState } from 'react'
-import InputMask from 'react-input-mask'
+import {
+  Dispatch,
+  FC,
+  SetStateAction,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
+import { InputMask } from '@react-input/mask'
 
 import {
   Box,
@@ -9,15 +17,24 @@ import {
   Select,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { isCoreUser } from '@island.is/judicial-system/types'
+import {
+  formatNationalId,
+  formatPhoneNumber,
+} from '@island.is/judicial-system/formatters'
+import {
+  getAdminUserInstitutionScope,
+  getAdminUserInstitutionUserRoles,
+  isCoreUser,
+  isProsecutorsOffice,
+} from '@island.is/judicial-system/types'
 import {
   FormContentContainer,
   FormFooter,
   PageTitle,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
   Institution,
-  InstitutionType,
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -29,7 +46,107 @@ import {
   validate,
   Validation,
 } from '../../../utils/validate'
+import { userRoleToString } from '../userRoleToString'
 import * as styles from './UserForm.css'
+
+interface UserRoleRadioButtonProps {
+  userRole: UserRole
+  user: User
+  setUser: Dispatch<SetStateAction<User>>
+  disabled?: boolean
+}
+
+const UserRoleRadioButton: FC<UserRoleRadioButtonProps> = ({
+  userRole,
+  user,
+  setUser,
+  disabled,
+}) => {
+  return (
+    <RadioButton
+      name="role"
+      id={userRole}
+      label={userRoleToString(userRole)}
+      checked={user.role === userRole}
+      onChange={() => setUser((prevUser) => ({ ...prevUser, role: userRole }))}
+      disabled={disabled}
+      large
+    />
+  )
+}
+
+interface UserRolePairProps {
+  userRole1: UserRole
+  userRole2: UserRole
+  user: User
+  setUser: Dispatch<SetStateAction<User>>
+  disabled?: boolean
+}
+
+const UserRolePair: FC<UserRolePairProps> = ({
+  userRole1,
+  userRole2,
+  user,
+  setUser,
+  disabled,
+}) => {
+  return (
+    <Box className={styles.roleRow}>
+      <Box className={styles.roleColumn}>
+        <UserRoleRadioButton
+          userRole={userRole1}
+          user={user}
+          setUser={setUser}
+          disabled={disabled}
+        />
+      </Box>
+      <Box className={styles.roleColumn}>
+        {userRole2 && (
+          <UserRoleRadioButton
+            userRole={userRole2}
+            user={user}
+            setUser={setUser}
+            disabled={disabled}
+          />
+        )}
+      </Box>
+    </Box>
+  )
+}
+
+interface RolesRadioButtonsProps {
+  userRoles: UserRole[]
+  user: User
+  setUser: Dispatch<SetStateAction<User>>
+  disabled?: boolean
+}
+
+const RolesRadioButtons: FC<RolesRadioButtonsProps> = ({
+  userRoles,
+  user,
+  setUser,
+  disabled,
+}) => {
+  const rolePairs = []
+
+  for (let i = 0; i < userRoles.length; i += 2) {
+    const userRole1 = userRoles[i]
+    const userRole2 = userRoles[i + 1] // may be undefined if odd number of roles
+
+    rolePairs.push(
+      <UserRolePair
+        key={userRole1}
+        userRole1={userRole1}
+        userRole2={userRole2}
+        user={user}
+        setUser={setUser}
+        disabled={disabled}
+      />,
+    )
+  }
+
+  return rolePairs
+}
 
 type ExtendedOption = ReactSelectOption & { institution: Institution }
 
@@ -46,7 +163,13 @@ export const UserForm: FC<Props> = ({
   onSave,
   loading,
 }) => {
-  const [user, setUser] = useState<User>(existingUser)
+  const { user: admin } = useContext(UserContext)
+
+  const [user, setUser] = useState<User>({
+    ...existingUser,
+    nationalId: existingUser.nationalId,
+    mobileNumber: existingUser.mobileNumber,
+  })
 
   const { personData, personError } = useNationalRegistry(user.nationalId)
 
@@ -58,13 +181,12 @@ export const UserForm: FC<Props> = ({
     useState<string>()
   const [emailErrorMessage, setEmailErrorMessage] = useState<string>()
 
+  const isNewUser = user.id.length === 0
+
   const setName = useCallback(
     (name: string) => {
       if (name !== user.name) {
-        setUser({
-          ...user,
-          name: name,
-        })
+        setUser((prevUser) => ({ ...prevUser, name: name }))
       }
     },
     [user],
@@ -82,19 +204,23 @@ export const UserForm: FC<Props> = ({
     }
   }, [personData, personError, setName])
 
-  const selectInstitutions = institutions.map((institution) => ({
-    label: institution.name ?? '',
-    value: institution.id,
-    institution,
-  }))
+  const selectInstitutions = institutions
+    .filter(
+      (institution) =>
+        institution.type &&
+        getAdminUserInstitutionScope(admin).includes(institution.type),
+    )
+    .map((institution) => ({
+      label: institution.name ?? '',
+      value: institution.id,
+      institution,
+    }))
 
   const usersInstitution = selectInstitutions.find(
     (institution) => institution.value === user.institution?.id,
   )
 
-  const isValid = () => {
-    return isAdminUserFormValid(user) && isCoreUser(user)
-  }
+  const isValid = isAdminUserFormValid(user) && isCoreUser(user)
 
   const storeAndRemoveErrorIfValid = (
     field: string,
@@ -102,10 +228,7 @@ export const UserForm: FC<Props> = ({
     validations: Validation[],
     setErrorMessage: (value: SetStateAction<string | undefined>) => void,
   ) => {
-    setUser({
-      ...user,
-      [field]: value,
-    })
+    setUser((prevUser) => ({ ...prevUser, [field]: value }))
 
     if (validate([[value, validations]]).isValid) {
       setErrorMessage(undefined)
@@ -139,38 +262,35 @@ export const UserForm: FC<Props> = ({
         <PageTitle>Notandi</PageTitle>
         <Box marginBottom={2}>
           <InputMask
-            // eslint-disable-next-line local-rules/disallow-kennitalas
-            mask="999999-9999"
-            maskPlaceholder={null}
-            value={user.nationalId || ''}
+            component={Input}
+            mask={constants.SSN}
+            replacement={{ _: /\d/ }}
+            value={formatNationalId(user.nationalId)}
             onChange={(event) =>
               storeAndRemoveErrorIfValid(
                 'nationalId',
-                event.target.value.replace('-', ''),
+                event.target.value,
                 ['empty', 'national-id'],
                 setNationalIdErrorMessage,
               )
             }
             onBlur={(event) =>
               validateAndSetError(
-                event.target.value.replace('-', ''),
+                event.target.value,
                 ['empty', 'national-id'],
                 setNationalIdErrorMessage,
               )
             }
-            readOnly={user.id.length > 0 ? true : false}
-          >
-            <Input
-              data-testid="nationalId"
-              name="nationalId"
-              label="Kennitala"
-              placeholder="Kennitala"
-              autoComplete="off"
-              required
-              hasError={nationalIdErrorMessage !== undefined}
-              errorMessage={nationalIdErrorMessage}
-            />
-          </InputMask>
+            readOnly={!isNewUser}
+            data-testid="nationalId"
+            name="nationalId"
+            label="Kennitala"
+            placeholder="Kennitala"
+            autoComplete="off"
+            required
+            hasError={nationalIdErrorMessage !== undefined}
+            errorMessage={nationalIdErrorMessage}
+          />
         </Box>
         <Box marginBottom={2}>
           <Input
@@ -206,163 +326,38 @@ export const UserForm: FC<Props> = ({
             value={usersInstitution}
             options={selectInstitutions}
             onChange={(selectedOption) =>
-              setUser({
-                ...user,
+              setUser((prevUser) => ({
+                ...prevUser,
                 institution: (selectedOption as ExtendedOption).institution,
-              })
+              }))
             }
+            isDisabled={!isNewUser}
             required
           />
         </Box>
-        {user.institution?.type === InstitutionType.PROSECUTORS_OFFICE ? (
-          <Box display="flex" marginBottom={2}>
-            <Box className={styles.roleColumn}>
-              <RadioButton
-                name="role"
-                id="roleProsecutor"
-                label="Saksóknari"
-                checked={user.role === UserRole.PROSECUTOR}
-                onChange={() => setUser({ ...user, role: UserRole.PROSECUTOR })}
-                large
-              />
-            </Box>
-            <Box className={styles.roleColumn}>
-              <RadioButton
-                name="role"
-                id="roleProsecutorRepresentative"
-                label="Fulltrúi"
-                checked={user.role === UserRole.PROSECUTOR_REPRESENTATIVE}
-                onChange={() =>
-                  setUser({ ...user, role: UserRole.PROSECUTOR_REPRESENTATIVE })
-                }
-                large
-              />
-            </Box>
-            {user.institution.id === '8f9e2f6d-6a00-4a5e-b39b-95fd110d762e' && (
-              <Box className={styles.roleColumn}>
-                <RadioButton
-                  name="role"
-                  id="rolePublicProsecutorStaff"
-                  label="Skrifstofa"
-                  checked={user.role === UserRole.PUBLIC_PROSECUTOR_STAFF}
-                  onChange={() =>
-                    setUser({ ...user, role: UserRole.PUBLIC_PROSECUTOR_STAFF })
-                  }
-                  large
-                />
-              </Box>
+        {user.institution?.type && (
+          <RolesRadioButtons
+            userRoles={getAdminUserInstitutionUserRoles(
+              admin,
+              user.institution?.type,
             )}
-          </Box>
-        ) : user.institution?.type === InstitutionType.DISTRICT_COURT ? (
-          <Box display="flex" marginBottom={2}>
-            <Box className={styles.roleColumn}>
-              <RadioButton
-                name="role"
-                id="roleJudge"
-                label="Dómari"
-                checked={user.role === UserRole.DISTRICT_COURT_JUDGE}
-                onChange={() =>
-                  setUser({ ...user, role: UserRole.DISTRICT_COURT_JUDGE })
-                }
-                large
-              />
-            </Box>
-            <Box className={styles.roleColumn}>
-              <RadioButton
-                name="role"
-                id="roleRegistrar"
-                label="Dómritari"
-                checked={user.role === UserRole.DISTRICT_COURT_REGISTRAR}
-                onChange={() =>
-                  setUser({ ...user, role: UserRole.DISTRICT_COURT_REGISTRAR })
-                }
-                large
-              />
-            </Box>
-            <Box className={styles.roleColumn}>
-              <RadioButton
-                name="role"
-                id="roleAssistant"
-                label="Aðstoðarmaður dómara"
-                checked={user.role === UserRole.DISTRICT_COURT_ASSISTANT}
-                onChange={() =>
-                  setUser({ ...user, role: UserRole.DISTRICT_COURT_ASSISTANT })
-                }
-                large
-              />
-            </Box>
-          </Box>
-        ) : user.institution?.type === InstitutionType.COURT_OF_APPEALS ? (
-          <Box display="flex" marginBottom={2}>
-            <Box className={styles.roleColumn}>
-              <RadioButton
-                name="role"
-                id="roleJudge"
-                label="Dómari"
-                checked={user.role === UserRole.COURT_OF_APPEALS_JUDGE}
-                onChange={() =>
-                  setUser({ ...user, role: UserRole.COURT_OF_APPEALS_JUDGE })
-                }
-                large
-              />
-            </Box>
-            <Box className={styles.roleColumn}>
-              <RadioButton
-                name="role"
-                id="roleRegistrar"
-                label="Dómritari"
-                checked={user.role === UserRole.COURT_OF_APPEALS_REGISTRAR}
-                onChange={() =>
-                  setUser({
-                    ...user,
-                    role: UserRole.COURT_OF_APPEALS_REGISTRAR,
-                  })
-                }
-                large
-              />
-            </Box>
-            <Box className={styles.roleColumn}>
-              <RadioButton
-                name="role"
-                id="roleAssistant"
-                label="Aðstoðarmaður dómara"
-                checked={user.role === UserRole.COURT_OF_APPEALS_ASSISTANT}
-                onChange={() =>
-                  setUser({
-                    ...user,
-                    role: UserRole.COURT_OF_APPEALS_ASSISTANT,
-                  })
-                }
-                large
-              />
-            </Box>
-          </Box>
-        ) : user.institution?.type === InstitutionType.PRISON ||
-          user.institution?.type === InstitutionType.PRISON_ADMIN ? (
-          <Box display="flex" marginBottom={2}>
-            <Box className={styles.roleColumn}>
-              <RadioButton
-                name="role"
-                id="rolePrisonSystemStaff"
-                label="Fangelsisyfirvöld"
-                checked={user.role === UserRole.PRISON_SYSTEM_STAFF}
-                onChange={() =>
-                  setUser({ ...user, role: UserRole.PRISON_SYSTEM_STAFF })
-                }
-                large
-              />
-            </Box>
-          </Box>
-        ) : null}
-        {user.institution?.type === InstitutionType.PROSECUTORS_OFFICE &&
+            user={user}
+            setUser={setUser}
+            disabled={!isNewUser}
+          />
+        )}
+        {isProsecutorsOffice(user.institution?.type) &&
           user.role === UserRole.PROSECUTOR && (
             <Box marginBottom={2}>
               <Checkbox
                 name="canConfirmIndictment"
-                label="Notandi getur staðfest kærur"
+                label="Notandi getur staðfest ákærur"
                 checked={Boolean(user.canConfirmIndictment)}
                 onChange={({ target }) =>
-                  setUser({ ...user, canConfirmIndictment: target.checked })
+                  setUser((prevUser) => ({
+                    ...prevUser,
+                    canConfirmIndictment: target.checked,
+                  }))
                 }
                 large
                 filled
@@ -397,36 +392,34 @@ export const UserForm: FC<Props> = ({
         </Box>
         <Box marginBottom={2}>
           <InputMask
-            mask="999-9999"
-            maskPlaceholder={null}
-            value={user.mobileNumber || ''}
+            component={Input}
+            mask={constants.PHONE_NUMBER}
+            replacement={{ _: /\d/ }}
+            value={formatPhoneNumber(user.mobileNumber)}
             onChange={(event) =>
               storeAndRemoveErrorIfValid(
                 'mobileNumber',
-                event.target.value.replace('-', ''),
+                event.target.value,
                 ['empty'],
                 setMobileNumberErrorMessage,
               )
             }
             onBlur={(event) =>
               validateAndSetError(
-                event.target.value.replace('-', ''),
+                event.target.value,
                 ['empty'],
                 setMobileNumberErrorMessage,
               )
             }
-          >
-            <Input
-              data-testid="mobileNumber"
-              name="mobileNumber"
-              label="Símanúmer"
-              placeholder="Símanúmer"
-              autoComplete="off"
-              required
-              hasError={mobileNumberErrorMessage !== undefined}
-              errorMessage={mobileNumberErrorMessage}
-            />
-          </InputMask>
+            data-testid="mobileNumber"
+            name="mobileNumber"
+            label="Símanúmer"
+            placeholder="Símanúmer"
+            autoComplete="off"
+            required
+            hasError={mobileNumberErrorMessage !== undefined}
+            errorMessage={mobileNumberErrorMessage}
+          />
         </Box>
         <Box marginBottom={2}>
           <Input
@@ -461,7 +454,7 @@ export const UserForm: FC<Props> = ({
             label="Virkur notandi"
             checked={Boolean(user.active)}
             onChange={({ target }) =>
-              setUser({ ...user, active: target.checked })
+              setUser((prevUser) => ({ ...prevUser, active: target.checked }))
             }
             large
             filled
@@ -472,7 +465,7 @@ export const UserForm: FC<Props> = ({
         <FormFooter
           nextButtonIcon="arrowForward"
           onNextButtonClick={saveUser}
-          nextIsDisabled={!isValid()}
+          nextIsDisabled={!isValid}
           nextIsLoading={loading}
           nextButtonText="Vista"
           previousUrl={constants.USERS_ROUTE}

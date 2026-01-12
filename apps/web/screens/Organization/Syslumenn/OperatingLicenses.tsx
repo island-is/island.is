@@ -490,7 +490,18 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
               </Text>
               <Text paddingBottom={2}>
                 {n('operatingLicensesValidPeriod', 'Gildistími')}:{' '}
-                {getLicenseValidPeriod(operatingLicense)}
+                {getLicenseValidPeriod(operatingLicense)}{' '}
+                {operatingLicense.validTo ? (
+                  <span>
+                    -{' '}
+                    <strong>
+                      {n(
+                        'operatingLicensesTemporaryPermit',
+                        'Bráðabirgðaleyfi',
+                      )}
+                    </strong>
+                  </span>
+                ) : null}
               </Text>
 
               <Text paddingBottom={0}>
@@ -634,6 +645,7 @@ OperatingLicenses.getProps = async ({ apolloClient, locale, req }) => {
         input: {
           slug: slug,
           lang: locale as ContentLanguage,
+          subpageSlugs: [subSlug],
         },
       },
     }),

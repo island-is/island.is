@@ -1,5 +1,5 @@
 import format from 'date-fns/format'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { formatCaseType } from '@island.is/judicial-system/formatters'
 import {
@@ -15,7 +15,7 @@ import { nowFactory } from '../../../../factories'
 import { getRequestPdfAsBuffer } from '../../../../formatters'
 import { randomDate } from '../../../../test'
 import { CourtDocumentFolder, CourtService } from '../../../court'
-import { Case } from '../../models/case.model'
+import { Case } from '../../../repository'
 import { DeliverResponse } from '../../models/deliver.response'
 
 jest.mock('../../../../factories/date.factory')
@@ -28,7 +28,7 @@ interface Then {
 
 type GivenWhenThen = (caseId: string, theCase: Case) => Promise<Then>
 
-describe('InternalCaseController - Deliver requst to court', () => {
+describe('InternalCaseController - Deliver request to court', () => {
   const now = randomDate()
   const userId = uuid()
   const user = { id: userId } as User

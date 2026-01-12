@@ -1,13 +1,14 @@
 import { BLOCKS } from '@contentful/rich-text-types'
+
 import { richText, SliceType } from '@island.is/island-ui/contentful'
 import {
   Box,
-  GridContainer,
-  Text,
-  GridRow,
   GridColumn,
+  GridContainer,
+  GridRow,
   Hidden,
   Inline,
+  Text,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { FooterItem } from '@island.is/web/graphql/schema'

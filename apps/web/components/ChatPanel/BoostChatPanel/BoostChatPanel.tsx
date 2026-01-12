@@ -84,6 +84,10 @@ export const BoostChatPanel: React.FC<
       el.id = 'boost-script'
       document.body.appendChild(el)
     }
+
+    return () => {
+      window.boost?.chatPanel?.minimize()
+    }
   }, [activeLocale, endpoint])
 
   const { data } = useQuery<Query, QueryGetNamespaceArgs>(GET_NAMESPACE_QUERY, {

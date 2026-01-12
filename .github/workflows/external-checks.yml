@@ -11,12 +11,9 @@ defaults:
 jobs:
   codeowners-check:
     name: Lint CODEOWNERS
-    runs-on: ec2-runners
+    runs-on: arc-shared
     env:
       CHECK: 'false'
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-
     steps:
       - uses: actions/checkout@v4
         with:
@@ -32,22 +29,34 @@ jobs:
               exit 1
             fi
           fi
+      - name: Setup yarn
+        if: env.CHECK == 'true'
+        uses: ./.github/actions/setup-yarn
+      - name: Get token
+        id: get-token
+        if: env.CHECK == 'true'
+        shell: bash
+        env:
+          APP_ID: ${{ secrets.ISLAND_IS_APP_KEY }}
+          PRIVATE_KEY: ${{ secrets.ISLAND_IS_SSH_KEY }}
+        run: |
+          node scripts/ci/docker/get-github-token.mjs
       - name: Check indentation
         if: env.CHECK == 'true'
         run: |
           set -euo pipefail
-          no_different_indentations="$(cat .github/CODEOWNERS | grep -v '^#' | awk NF | sed s/@.*//g | awk '{ print length }' | sort | uniq | wc -l)"
+          no_different_indentations="$(grep -v '^#' .github/CODEOWNERS | awk NF | sed s/@.*//g | awk '{ print length }' | sort | uniq | wc -l)"
           if [[ "$no_different_indentations" != "1" ]]; then
             echo "CODEOWNERS has $no_different_indentations different indentations."
             echo "Make sure that all teams start in the same column."
-            cat .github/CODEOWNERS | grep -v '^#' | awk NF
+            grep -v '^#' .github/CODEOWNERS | awk NF
             exit 1
           fi
       - name: Codeowners validation
         if: env.CHECK == 'true'
         run: |
           set -euo pipefail
-          curl -sfL https://raw.githubusercontent.com/mszostok/codeowners-validator/main/install.sh | sh -s -- -b "$HOME" v0.7.4
+          curl -sfL https://raw.githubusercontent.com/mszostok/codeowners-validator/main/install.sh | sh -s -- -b "$HOME" v0.7.2
           REPOSITORY_PATH="." \
           GITHUB_ACCESS_TOKEN="$GH_TOKEN" \
           EXPERIMENTAL_CHECKS="notowned" \
@@ -55,4 +64,4 @@ jobs:
           OWNER_CHECKER_REPOSITORY="island-is/island.is" \
           ~/codeowners-validator
         env:
-          GH_TOKEN: ${{secrets.OWNERS_VALIDATOR_GITHUB_SECRET}}
+          GH_TOKEN: ${{ steps.get-token.outputs.token }}

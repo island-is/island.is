@@ -1,63 +1,35 @@
-import { Dispatch, FC, SetStateAction } from 'react'
+import { FC } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Input, Text, Tooltip } from '@island.is/island-ui/core'
-import { commentsInput } from '@island.is/judicial-system-web/messages/Core/commentsInput'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import { commentsInput as strings } from '@island.is/judicial-system-web/messages/Core/commentsInput'
 
-import {
-  removeTabsValidateAndSet,
-  validateAndSendToServer,
-} from '../../utils/formHelper'
-import { useCase, useDeb } from '../../utils/hooks'
+import { useDebouncedInput } from '../../utils/hooks'
 
-interface Props {
-  workingCase: Case
-  setWorkingCase: Dispatch<SetStateAction<Case>>
-}
-const CommentsInput: FC<Props> = (props) => {
-  const { workingCase, setWorkingCase } = props
+const CommentsInput: FC = () => {
   const { formatMessage } = useIntl()
-  const { updateCase } = useCase()
-  useDeb(workingCase, 'comments')
+  const commentsInput = useDebouncedInput('comments', [])
 
   return (
     <>
       <Box marginBottom={3}>
         <Text as="h3" variant="h3">
-          {formatMessage(commentsInput.heading)}{' '}
+          {formatMessage(strings.heading)}{' '}
           <Tooltip
             placement="right"
             as="span"
-            text={formatMessage(commentsInput.tooltip)}
+            text={formatMessage(strings.tooltip)}
           />
         </Text>
       </Box>
       <Input
         name="comments"
-        label={formatMessage(commentsInput.label)}
-        placeholder={formatMessage(commentsInput.placeholder)}
-        value={workingCase.comments || ''}
-        onChange={(event) =>
-          removeTabsValidateAndSet(
-            'comments',
-            event.target.value,
-            [],
-            setWorkingCase,
-          )
-        }
-        onBlur={(event) =>
-          validateAndSendToServer(
-            'comments',
-            event.target.value,
-            [],
-            workingCase,
-            updateCase,
-          )
-        }
+        label={formatMessage(strings.label)}
+        placeholder={formatMessage(strings.placeholder)}
+        value={commentsInput.value ?? ''}
+        onChange={(evt) => commentsInput.onChange(evt.target.value)}
         textarea
         rows={7}
-        autoExpand={{ on: true, maxHeight: 300 }}
       />
     </>
   )

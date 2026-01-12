@@ -151,7 +151,7 @@ export const routesTemplate = {
     is: '/s/[organization]/frett/[slug]',
     en: '/en/o/[organization]/news/[slug]',
   },
-  organizationevent: {
+  event: {
     is: '/s/[organization]/vidburdir/[slug]',
     en: '/en/o/[organization]/events/[slug]',
   },
@@ -162,6 +162,30 @@ export const routesTemplate = {
   organizationpage: {
     is: '/s/[slug]',
     en: '/en/o/[slug]',
+  },
+  blooddonationrestrictionlist: {
+    is: '/s/blodbankinn/ahrif-a-blodgjof',
+    en: '/en/o/icelandic-blood-bank/affecting-factors',
+  },
+  blooddonationrestrictiondetails: {
+    is: '/s/blodbankinn/ahrif-a-blodgjof/[id]',
+    en: '/en/o/icelandic-blood-bank/affecting-factors/[id]',
+  },
+  organizationparentsubpagechild: {
+    is: '/s/[slug]/[subSlug]/[childSlug]',
+    en: '/en/o/[slug]/[subSlug]/[childSlug]',
+  },
+  grantsplaza: {
+    is: '/styrkjatorg',
+    en: '/en/grants-plaza',
+  },
+  grantsplazasearch: {
+    is: '/styrkjatorg/styrkir',
+    en: '/en/grants-plaza/grants',
+  },
+  grantsplazagrant: {
+    is: '/styrkjatorg/styrkur/[id]',
+    en: '/en/grants-plaza/grant/[id]',
   },
   organizations: {
     is: '/s',
@@ -207,14 +231,6 @@ export const routesTemplate = {
     is: '/lifsvidburdir/[slug]',
     en: '/en/life-events/[slug]',
   },
-  adgerdirpage: {
-    is: '/covid-adgerdir/[slug]',
-    en: '/en/covid-operations/[slug]',
-  },
-  adgerdirfrontpage: {
-    is: '/covid-adgerdir',
-    en: '/en/covid-operations',
-  },
   regulation: {
     is: '/reglugerdir/nr/[number]',
     en: '',
@@ -235,8 +251,20 @@ export const routesTemplate = {
     is: '/stjornartidindi/malaflokkar',
     en: '',
   },
+  ojoirss: {
+    is: '/stjornartidindi/rss',
+    en: '',
+  },
   ojoihome: {
     is: '/stjornartidindi',
+    en: '',
+  },
+  ojoiabout: {
+    is: '/stjornartidindi/um',
+    en: '',
+  },
+  ojoihelp: {
+    is: '/stjornartidindi/leidbeiningar',
     en: '',
   },
   login: {
@@ -310,18 +338,6 @@ export const routesTemplate = {
   undirskriftalistar: {
     is: '/undirskriftalistar',
     en: '/en/petitions',
-  },
-  styrkjatorg: {
-    is: '/styrkjatorg',
-    en: '',
-  },
-  styrkjatorgsearch: {
-    is: '/styrkjatorg/styrkir',
-    en: '',
-  },
-  styrkjatorggrant: {
-    is: '/styrkjatorg/styrkur/[id]',
-    en: '',
   },
 }
 

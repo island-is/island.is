@@ -1,22 +1,30 @@
-import {
-  Stack,
-  Hidden,
-  GridColumn,
-  Pagination,
-  Text,
-  Select,
-  Option,
-  Box,
-  Link,
-  Inline,
-  Tag,
-  LinkV2,
-} from '@island.is/island-ui/core'
-import { LinkType, useLinkResolver, useNamespace } from '@island.is/web/hooks'
-import { NewsCard, Webreader } from '@island.is/web/components'
 import { useRouter } from 'next/router'
+
+import {
+  Box,
+  GridColumn,
+  Hidden,
+  Inline,
+  Link,
+  LinkV2,
+  Option,
+  Pagination,
+  Select,
+  Stack,
+  Tag,
+  Text,
+} from '@island.is/island-ui/core'
+import {
+  DigitalIcelandNewsCard,
+  NewsCard,
+  Webreader,
+} from '@island.is/web/components'
+import { FRONTPAGE_NEWS_TAG_SLUG } from '@island.is/web/constants'
 import { GenericTag, GetNewsQuery } from '@island.is/web/graphql/schema'
+import { LinkType, useLinkResolver, useNamespace } from '@island.is/web/hooks'
+
 import { makeHref } from './utils'
+import * as styles from './NewsList.css'
 
 interface NewsListProps {
   title: string
@@ -34,6 +42,7 @@ interface NewsListProps {
   monthOptions: { label: any; value: any }[]
   newsPerPage?: number
   newsTags?: GenericTag[]
+  variant?: 'default' | 'digital-iceland'
 }
 
 export const NewsList = ({
@@ -52,6 +61,7 @@ export const NewsList = ({
   newsPerPage = 10,
   monthOptions,
   newsTags,
+  variant = 'default',
 }: NewsListProps) => {
   const router = useRouter()
   const n = useNamespace(namespace)
@@ -173,27 +183,54 @@ export const NewsList = ({
         </Text>
       )}
       <Box className="rs_read">
-        <Stack space={[3, 3, 4]}>
-          {newsList.map((newsItem, index) => (
-            <NewsCard
-              key={index}
-              title={newsItem.title}
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore make web strict
-              introduction={newsItem.intro}
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore make web strict
-              image={newsItem.image}
-              titleAs="h2"
-              href={
-                linkResolver(newsItemLinkType, [parentPageSlug, newsItem.slug])
-                  .href
-              }
-              date={newsItem.date}
-              readMoreText={n('readMore', 'Lesa nánar')}
-            />
-          ))}
-        </Stack>
+        {variant === 'default' && (
+          <Stack space={[3, 3, 4]}>
+            {newsList.map((newsItem, index) => (
+              <NewsCard
+                key={index}
+                title={newsItem.title}
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore make web strict
+                introduction={newsItem.intro}
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore make web strict
+                image={newsItem.image}
+                titleAs="h2"
+                href={
+                  linkResolver(newsItemLinkType, [
+                    parentPageSlug,
+                    newsItem.slug,
+                  ]).href
+                }
+                date={newsItem.date}
+                readMoreText={n('readMore', 'Lesa nánar')}
+              />
+            ))}
+          </Stack>
+        )}
+        {variant === 'digital-iceland' && (
+          <Box>
+            {newsList.map((newsItem, index) => (
+              <DigitalIcelandNewsCard
+                key={newsItem.id}
+                date={newsItem.date}
+                href={
+                  linkResolver(newsItemLinkType, [
+                    parentPageSlug,
+                    newsItem.slug,
+                  ]).href
+                }
+                imageSrc={newsItem.image?.url ?? ''}
+                tags={newsItem.genericTags
+                  .filter((tag) => tag.slug !== FRONTPAGE_NEWS_TAG_SLUG)
+                  .map((tag) => tag.title)}
+                title={newsItem.title}
+                description={newsItem.intro}
+                mini={selectedPage > 1 || (selectedPage === 1 && index > 2)}
+              />
+            ))}
+          </Box>
+        )}
       </Box>
       {newsList.length > 0 && (
         <Box paddingTop={[4, 4, 8]}>

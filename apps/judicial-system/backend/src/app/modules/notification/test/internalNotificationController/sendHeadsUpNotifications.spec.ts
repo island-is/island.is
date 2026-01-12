@@ -1,4 +1,4 @@
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { SmsService } from '@island.is/nova-sms'
 
@@ -10,7 +10,7 @@ import {
 
 import { createTestingNotificationModule } from '../createTestingNotificationModule'
 
-import { Case } from '../../../case'
+import { Case } from '../../../repository'
 import { DeliverResponse } from '../../models/deliver.response'
 
 interface Then {

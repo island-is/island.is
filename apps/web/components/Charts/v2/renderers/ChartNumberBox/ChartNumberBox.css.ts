@@ -7,6 +7,7 @@ export const wrapper = style({
   gap: theme.spacing[2],
   gridTemplateColumns: '1fr',
   width: '100%',
+  height: '100%',
 })
 
 export const wrapperTwoChildren = style({

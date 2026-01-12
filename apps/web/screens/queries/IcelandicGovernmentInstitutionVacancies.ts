@@ -5,6 +5,7 @@ export const GET_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES = gql`
     $input: IcelandicGovernmentInstitutionVacanciesInput!
   ) {
     icelandicGovernmentInstitutionVacancies(input: $input) {
+      fetchErrorOccurred
       vacancies {
         id
         fieldOfWork
@@ -18,6 +19,7 @@ export const GET_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES = gql`
           title
           postalCode
         }
+        address
       }
     }
   }
@@ -52,6 +54,7 @@ export const GET_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCY_DETAILS = gql`
           name
           email
           phone
+          jobTitle
         }
       }
     }

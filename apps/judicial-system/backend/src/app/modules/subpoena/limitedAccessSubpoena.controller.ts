@@ -15,14 +15,13 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
-  JwtAuthGuard,
+  JwtAuthUserGuard,
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
 import { indictmentCases } from '@island.is/judicial-system/types'
 
 import {
-  Case,
   CaseExistsGuard,
   CaseReadGuard,
   CaseTypeGuard,
@@ -30,22 +29,23 @@ import {
   defenderGeneratedPdfRule,
   PdfService,
 } from '../case'
-import { CurrentDefendant, Defendant, DefendantExistsGuard } from '../defendant'
+import { CurrentDefendant, DefendantExistsGuard } from '../defendant'
+import { Case, Defendant, Subpoena } from '../repository'
 import { CurrentSubpoena } from './guards/subpoena.decorator'
 import { SubpoenaExistsGuard } from './guards/subpoenaExists.guard'
-import { Subpoena } from './models/subpoena.model'
 
 @Controller([
   'api/case/:caseId/limitedAccess/defendant/:defendantId/subpoena/:subpoenaId',
 ])
 @ApiTags('limited access subpoenas')
 @UseGuards(
-  JwtAuthGuard,
+  JwtAuthUserGuard,
   CaseExistsGuard,
   RolesGuard,
   new CaseTypeGuard(indictmentCases),
   CaseReadGuard,
   DefendantExistsGuard,
+  SubpoenaExistsGuard,
 )
 export class LimitedAccessSubpoenaController {
   constructor(
@@ -53,7 +53,6 @@ export class LimitedAccessSubpoenaController {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @UseGuards(SubpoenaExistsGuard)
   @RolesRules(defenderGeneratedPdfRule)
   @Get()
   @Header('Content-Type', 'application/pdf')

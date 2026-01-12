@@ -1,4 +1,4 @@
-import AsyncStorage from '@react-native-community/async-storage'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import createUse from 'zustand'
 import { persist } from 'zustand/middleware'
 import create, { State } from 'zustand/vanilla'
@@ -9,6 +9,7 @@ export interface EnvironmentConfig {
   label: string
   idsIssuer: string
   apiUrl: string
+  baseUrl: string
   configCat: string | null
   datadog: string | null
 }
@@ -73,10 +74,17 @@ export const environmentStore = create<EnvironmentStore>(
                 'X-Cognito-Token': `Bearer ${get().cognito?.accessToken}`,
               },
             }).then((r) => r.json() as Promise<EnvironmentResponse>)
-            const ids = res.results.ids.map((n) => ({
-              ...((environments as any)[n.id] ?? {}),
-              ...n,
-            }))
+            const ids = res.results.ids.map((n) => {
+              const local =
+                environments[n.id as keyof typeof environments] ?? {}
+              const remote = n as any
+              return {
+                ...local,
+                ...n,
+                // Preserve baseUrl from local if remote does not provide it
+                baseUrl: remote.baseUrl ?? remote.apiUrl.replace('/api', ''),
+              }
+            })
             const dev = ids.find((n) => n.id === 'dev')
             const result = [
               ...ids,
@@ -87,9 +95,11 @@ export const environmentStore = create<EnvironmentStore>(
                 apiUrl: `https://${branch.host}${branch.path}`,
               })),
               environments.local,
-            ]
+              environments.mock,
+            ] as EnvironmentConfig[]
             set({ loading: false, fetchedAt: Date.now(), result })
-            return result
+
+            return result as EnvironmentConfig[]
           } catch (err) {
             // noop
           }

@@ -1,11 +1,10 @@
 import { Response } from 'express'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { createTestingSubpoenaModule } from '../createTestingSubpoenaModule'
 
-import { Case, PdfService } from '../../../case'
-import { Defendant } from '../../../defendant/models/defendant.model'
-import { Subpoena } from '../../models/subpoena.model'
+import { PdfService } from '../../../case'
+import { Case, Defendant, Subpoena } from '../../../repository'
 
 interface Then {
   error: Error

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import { Animated, Platform, SafeAreaView, StyleSheet } from 'react-native'
 import styled from 'styled-components/native'
+import { isIosLiquidGlassEnabled } from '../../../utils/devices'
 import { dynamicColor } from '../../utils'
 
 const Host = styled(Animated.View)`
@@ -12,7 +13,6 @@ const Host = styled(Animated.View)`
 
 interface TopLineProps {
   scrollY: Animated.Value
-  offset?: number
 }
 
 export function TopLine({ scrollY }: TopLineProps) {
@@ -28,9 +28,16 @@ export function TopLine({ scrollY }: TopLineProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scrollY])
 
+  if (isIosLiquidGlassEnabled) return null
+
   return (
     <SafeAreaView
-      style={{ width: '100%', position: 'absolute', top: 0, zIndex: 10 }}
+      style={{
+        width: '100%',
+        position: 'absolute',
+        top: 0,
+        zIndex: 10,
+      }}
     >
       <Host
         style={{

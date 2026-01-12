@@ -1,5 +1,5 @@
-import AsyncStorage from '@react-native-community/async-storage'
-import messaging from '@react-native-firebase/messaging'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { getToken } from '@react-native-firebase/messaging'
 import { Navigation } from 'react-native-navigation'
 import createUse from 'zustand'
 import { persist } from 'zustand/middleware'
@@ -19,18 +19,8 @@ import {
 import { ComponentRegistry } from '../utils/component-registry'
 import { getRightButtons } from '../utils/get-main-root'
 import { setBadgeCountAsync } from 'expo-notifications'
-
-export interface Notification {
-  id: string
-  category?: string
-  title: string
-  subtitle?: string
-  body?: string
-  copy?: string
-  data: Record<string, any>
-  date: number
-  read: boolean
-}
+import { preferencesStore } from './preferences-store'
+import { app } from '../lib/firebase'
 
 interface NotificationsState extends State {
   unseenCount: number
@@ -59,7 +49,7 @@ export const notificationsStore = create<NotificationsStore>(
 
       async syncToken() {
         const client = await getApolloClientAsync()
-        const token = await messaging().getToken()
+        const token = await getToken(app.messaging())
         const { pushToken: oldToken, deletePushToken } = get()
 
         if (oldToken !== token) {
@@ -69,7 +59,7 @@ export const notificationsStore = create<NotificationsStore>(
 
           try {
             // Register the new push token
-            const res = await client.mutate<
+            await client.mutate<
               AddUserProfileDeviceTokenMutation,
               AddUserProfileDeviceTokenMutationVariables
             >({
@@ -128,6 +118,7 @@ export const notificationsStore = create<NotificationsStore>(
       },
       async checkUnseen() {
         const client = await getApolloClientAsync()
+        const locale = preferencesStore.getState().locale
 
         try {
           const res = await client.query<
@@ -140,6 +131,7 @@ export const notificationsStore = create<NotificationsStore>(
               input: {
                 limit: 1,
               },
+              locale: locale === 'is-IS' ? 'is' : 'en',
             },
           })
 

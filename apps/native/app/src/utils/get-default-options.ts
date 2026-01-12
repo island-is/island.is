@@ -1,6 +1,6 @@
-import { Platform } from 'react-native'
 import { Options } from 'react-native-navigation'
 import { preferencesStore } from '../stores/preferences-store'
+import { isAndroid, isIosLiquidGlassEnabled } from './devices'
 import { getThemeWithPreferences } from './get-theme-with-preferences'
 
 export function getDefaultOptions(
@@ -8,14 +8,18 @@ export function getDefaultOptions(
 ): Options {
   return {
     topBar: {
-      background:
-        Platform.OS === 'android'
-          ? {
-              color: theme.shade.background,
-            }
-          : {},
+      background: isAndroid
+        ? {
+            color: theme.shade.background,
+          }
+        : {},
       backButton: {
         color: theme.color.blue400,
+        ...(isIosLiquidGlassEnabled
+          ? {
+              showTitle: false,
+            }
+          : {}),
       },
       elevation: 0,
       title: {
@@ -35,46 +39,63 @@ export function getDefaultOptions(
       animateLeftButtons: false,
       borderHeight: 0,
       borderColor: 'transparent',
+      ...(isIosLiquidGlassEnabled
+        ? {
+            background: {
+              color: 'transparent',
+            },
+            scrollEdgeAppearance: {
+              active: true,
+              noBorder: true,
+            },
+            drawBehind: true,
+            translucent: true,
+          }
+        : {}),
     },
     navigationBar: {
       backgroundColor: theme.shade.background,
       visible: true,
     },
-    statusBar:
-      Platform.OS === 'android'
-        ? {
-            animate: true,
-            backgroundColor: theme.shade.background,
-            style: theme.isDark ? 'light' : 'dark',
-          }
-        : undefined,
+    statusBar: isAndroid
+      ? {
+          animate: true,
+          backgroundColor: theme.shade.background,
+          style: theme.isDark ? 'light' : 'dark',
+        }
+      : undefined,
     window: {
-      backgroundColor:
-        Platform.OS === 'android'
-          ? theme.shade.background
-          : {
-              dark: theme.shades.dark.background,
-              light: theme.shades.light.background,
-            },
+      backgroundColor: isAndroid
+        ? theme.shade.background
+        : {
+            dark: theme.shades.dark.background,
+            light: theme.shades.light.background,
+          },
     },
-    layout:
-      Platform.OS === 'android'
-        ? {
-            backgroundColor: theme.shade.background,
-            componentBackgroundColor: theme.shade.background,
-            fitSystemWindows: true,
-            topMargin: 0,
-          }
-        : {},
+    layout: isAndroid
+      ? {
+          backgroundColor: theme.shade.background,
+          componentBackgroundColor: theme.shade.background,
+          fitSystemWindows: true,
+          topMargin: 0,
+        }
+      : {},
     bottomTabs: {
       animateTabSelection: false,
       elevation: 0,
-      borderWidth: Platform.OS === 'android' ? 0 : undefined,
+      borderWidth: isAndroid ? 0 : undefined,
       hideShadow: true,
       titleDisplayMode: 'alwaysShow',
-      ...(Platform.OS === 'android'
+      ...(isAndroid
         ? {
             backgroundColor: theme.shade.background,
+          }
+        : {}),
+      ...(isIosLiquidGlassEnabled
+        ? {
+            backgroundColor: 'transparent',
+            drawBehind: true,
+            translucent: true,
           }
         : {}),
     },

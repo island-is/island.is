@@ -1,15 +1,13 @@
-import { createIntl } from 'react-intl'
-
 import {
   CaseCustodyRestrictions,
   CaseDecision,
   CaseType,
   Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { createFormatMessage } from '@island.is/judicial-system-web/src/utils/testHelpers.logic'
 
 import { DemandsAutofillProps, getDemandsAutofill } from './PoliceDemands'
 
-const intl = createIntl({ locale: 'is', onError: () => jest.fn() })
 describe('getDemandsAutofill', () => {
   const baseDefendant = {
     name: 'Blær',
@@ -17,8 +15,10 @@ describe('getDemandsAutofill', () => {
     nationalId: '0000000000',
   } as Defendant
   const courtName = 'Héraðsdómur'
+
+  const formatMessage = createFormatMessage()
   const f = (props: DemandsAutofillProps): string => {
-    return getDemandsAutofill(intl.formatMessage, props)
+    return getDemandsAutofill(formatMessage, props)
   }
 
   it('should format custody case', () => {

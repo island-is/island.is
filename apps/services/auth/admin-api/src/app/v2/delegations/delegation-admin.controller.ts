@@ -125,6 +125,29 @@ export class DelegationAdminController {
     )
   }
 
+  @BypassAuth()
+  @UseGuards(new ZendeskAuthGuard(env.zendeskDeleteGeneralMandateWebhookSecret))
+  @Post('/revert-zendesk')
+  @Documentation({
+    response: { status: 200 },
+  })
+  async deleteByZendeskId(
+    @Body() { id }: ZendeskWebhookInputDto,
+  ): Promise<void> {
+    await this.auditService.auditPromise<boolean>(
+      {
+        system: true,
+        namespace,
+        action: 'deleteByZendeskId',
+        resources: id,
+        meta: (deleted) => ({
+          deleted,
+        }),
+      },
+      this.delegationAdminService.deleteDelegationByZendeskId(id),
+    )
+  }
+
   @Delete(':delegationId')
   @Scopes(DelegationAdminScopes.admin)
   @Documentation({

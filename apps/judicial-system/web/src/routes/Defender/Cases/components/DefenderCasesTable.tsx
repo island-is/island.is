@@ -7,17 +7,17 @@ import { core, tables } from '@island.is/judicial-system-web/messages'
 import {
   TagAppealState,
   TagCaseState,
+  useOpenCaseInNewTab,
   useWithdrawAppealMenuOption,
   WithdrawAppealContextMenuModal,
 } from '@island.is/judicial-system-web/src/components'
-import { useContextMenu } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
 import {
   ColumnCaseType,
   CourtCaseNumber,
   CourtDate,
-  CreatedDate,
   DefendantInfo,
   getDurationDate,
+  TableDate,
 } from '@island.is/judicial-system-web/src/components/Table'
 import Table from '@island.is/judicial-system-web/src/components/Table/Table'
 import TagContainer from '@island.is/judicial-system-web/src/components/Tags/TagContainer/TagContainer'
@@ -33,7 +33,7 @@ export const DefenderCasesTable: FC<Props> = ({
   showingCompletedCases,
 }) => {
   const { formatMessage } = useIntl()
-  const { openCaseInNewTabMenuItem } = useContextMenu()
+  const { openCaseInNewTab } = useOpenCaseInNewTab()
 
   const {
     withdrawAppealMenuOption,
@@ -51,30 +51,28 @@ export const DefenderCasesTable: FC<Props> = ({
           },
           {
             title: capitalize(formatMessage(core.defendant, { suffix: 'i' })),
-            sortable: { isSortable: true, key: 'defendants' },
+            sortBy: 'defendants',
           },
           {
             title: formatMessage(tables.type),
           },
           {
-            title: formatMessage(tables.created),
-            sortable: { isSortable: true, key: 'created' },
+            title: formatMessage(tables.sentToCourtDate),
+            sortBy: 'caseSentToCourtDate',
           },
-          { title: formatMessage(tables.state) },
+          { title: formatMessage(tables.state), sortBy: 'state' },
           {
             title: formatMessage(
               showingCompletedCases
                 ? tables.duration
                 : tables.hearingArrangementDate,
             ),
-            sortable: showingCompletedCases
-              ? undefined
-              : { isSortable: true, key: 'courtDate' },
+            sortBy: showingCompletedCases ? undefined : 'courtDate',
           },
         ]}
         data={cases}
         generateContextMenuItems={(row) => [
-          openCaseInNewTabMenuItem(row.id),
+          openCaseInNewTab(row.id),
           ...(shouldDisplayWithdrawAppealOption(row)
             ? [withdrawAppealMenuOption(row.id)]
             : []),
@@ -101,19 +99,13 @@ export const DefenderCasesTable: FC<Props> = ({
               />
             ),
           },
-          { cell: (row) => <CreatedDate created={row.created} /> },
+          {
+            cell: (row) => <TableDate displayDate={row.caseSentToCourtDate} />,
+          },
           {
             cell: (row) => (
               <TagContainer>
-                <TagCaseState
-                  caseState={row.state}
-                  caseType={row.type}
-                  isValidToDateInThePast={row.isValidToDateInThePast}
-                  courtDate={row.courtDate}
-                  indictmentDecision={row.indictmentDecision}
-                  indictmentRulingDecision={row.indictmentRulingDecision}
-                  defendants={row.defendants}
-                />
+                <TagCaseState theCase={row} />
                 {row.appealState && (
                   <TagAppealState
                     appealState={row.appealState}

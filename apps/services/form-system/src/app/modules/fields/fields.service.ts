@@ -1,36 +1,36 @@
+import { FieldTypesEnum } from '@island.is/form-system/shared'
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { FieldSettingsService } from '../fieldSettings/fieldSettings.service'
+import defaults from 'lodash/defaults'
+import pick from 'lodash/pick'
+import zipObject from 'lodash/zipObject'
+import {
+  filterDependency,
+  filterOnlyParents,
+} from '../../../utils/dependenciesHelper'
+import { FieldSettingsFactory } from '../../dataTypes/fieldSettings/fieldSettings.factory'
+import { FieldSettings } from '../../dataTypes/fieldSettings/fieldSettings.model'
+import { Form } from '../forms/models/form.model'
+import { Screen } from '../screens/models/screen.model'
+import { Section } from '../sections/models/section.model'
 import { CreateFieldDto } from './models/dto/createField.dto'
 import { FieldDto } from './models/dto/field.dto'
 import { UpdateFieldDto } from './models/dto/updateField.dto'
-import { FieldMapper } from './models/field.mapper'
-import { Field } from './models/field.model'
 import { UpdateFieldsDisplayOrderDto } from './models/dto/updateFieldsDisplayOrder.dto'
+import { Field } from './models/field.model'
 
 @Injectable()
 export class FieldsService {
   constructor(
     @InjectModel(Field)
     private readonly fieldModel: typeof Field,
-    private readonly fieldSettingsService: FieldSettingsService,
-    private readonly fieldMapper: FieldMapper,
+    @InjectModel(Screen)
+    private readonly screenModel: typeof Screen,
+    @InjectModel(Section)
+    private readonly sectionModel: typeof Section,
+    @InjectModel(Form)
+    private readonly formModel: typeof Form,
   ) {}
-
-  async findOne(id: string): Promise<FieldDto> {
-    const field = await this.findById(id)
-    const fieldSettingsDto = await this.fieldSettingsService.findOne(
-      id,
-      field.fieldType,
-    )
-
-    const fieldDto: FieldDto = this.fieldMapper.mapFieldToFieldDto(
-      field,
-      fieldSettingsDto,
-    )
-
-    return fieldDto
-  }
 
   async findById(id: string): Promise<Field> {
     const field = await this.fieldModel.findByPk(id)
@@ -43,32 +43,69 @@ export class FieldsService {
   }
 
   async create(createFieldDto: CreateFieldDto): Promise<FieldDto> {
-    const { screenId } = createFieldDto
-
+    const { screenId, fieldType, displayOrder } = createFieldDto
     const newField: Field = await this.fieldModel.create({
       screenId: screenId,
+      fieldType: fieldType,
+      displayOrder: displayOrder,
+      fieldSettings: FieldSettingsFactory.getClass(
+        fieldType,
+        new FieldSettings(),
+      ),
     } as Field)
 
-    const newFieldSettingsDto = await this.fieldSettingsService.create(
-      newField.id,
-    )
-
-    const fieldDto: FieldDto = this.fieldMapper.mapFieldToFieldDto(
-      newField,
-      newFieldSettingsDto,
-    )
+    const keys = [
+      'id',
+      'screenId',
+      'name',
+      'displayOrder',
+      'description',
+      'isPartOfMultiset',
+      'isRequired',
+      'fieldType',
+      'fieldSettings',
+    ]
+    const fieldDto: FieldDto = defaults(
+      pick(newField, keys),
+      zipObject(keys, Array(keys.length).fill(null)),
+    ) as FieldDto
 
     return fieldDto
   }
 
   async update(id: string, updateFieldDto: UpdateFieldDto): Promise<void> {
     const field = await this.findById(id)
+    const currentFieldType = field.fieldType
 
-    this.fieldMapper.mapUpdateFieldDtoToField(field, updateFieldDto)
+    if (
+      currentFieldType === FieldTypesEnum.DROPDOWN_LIST ||
+      currentFieldType === FieldTypesEnum.RADIO_BUTTONS ||
+      currentFieldType === FieldTypesEnum.CHECKBOX
+    ) {
+      const screen = await this.screenModel.findByPk(field.screenId)
+      const section = await this.sectionModel.findByPk(screen?.sectionId)
+      const form = await this.formModel.findByPk(section?.formId)
 
-    if (updateFieldDto.fieldSettings) {
-      await this.fieldSettingsService.update(id, updateFieldDto.fieldSettings)
+      let listItemIds: string[] = []
+
+      if (
+        currentFieldType === FieldTypesEnum.DROPDOWN_LIST ||
+        currentFieldType === FieldTypesEnum.RADIO_BUTTONS
+      ) {
+        listItemIds = field.list?.map((item) => item.id) || []
+        // TODO: listItems should be deleted from the database as well
+      }
+
+      if (form) {
+        const { dependencies } = form
+        const ids = listItemIds.length > 0 ? listItemIds : id
+        const newDependencies = filterOnlyParents(dependencies, ids)
+        form.dependencies = newDependencies
+        form.save()
+      }
     }
+
+    Object.assign(field, updateFieldDto)
 
     await field.save()
   }
@@ -96,6 +133,34 @@ export class FieldsService {
 
   async delete(id: string): Promise<void> {
     const field = await this.findById(id)
+
+    if (!field) {
+      throw new NotFoundException(`Field with id '${id}' not found`)
+    }
+    // Make sure to delete all instances of the fieldId in the dependencies array
+
+    const screen = await this.screenModel.findByPk(field.screenId)
+    const section = await this.sectionModel.findByPk(screen?.sectionId)
+    const form = await this.formModel.findByPk(section?.formId)
+
+    let listItemIds: string[] = []
+
+    if (
+      field.fieldType === FieldTypesEnum.DROPDOWN_LIST ||
+      field.fieldType === FieldTypesEnum.RADIO_BUTTONS
+    ) {
+      // If the field is a dropdown or radio buttons, we need to remove any dependencies that reference its options
+      listItemIds = field.list?.map((item) => item.id) || []
+    }
+
+    if (form) {
+      const { dependencies } = form
+      const idsToRemove = listItemIds.length > 0 ? listItemIds : id
+      const newDependencies = filterDependency(dependencies, idsToRemove)
+      form.dependencies = newDependencies
+      form.save()
+    }
+
     field?.destroy()
   }
 }

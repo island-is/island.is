@@ -1,4 +1,4 @@
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { UserRole } from '@island.is/judicial-system/types'
 
@@ -6,8 +6,7 @@ import { createTestingUserModule } from './createTestingUserModule'
 
 import { nowFactory } from '../../../factories'
 import { randomDate } from '../../../test'
-import { Institution } from '../../institution'
-import { User } from '../user.model'
+import { Institution, User } from '../../repository'
 
 jest.mock('../../../factories')
 
@@ -51,40 +50,43 @@ describe('UserController - Get by national id', () => {
     })
 
     it('should return the user', () => {
-      expect(then.result).toEqual({
-        id: '8f8f6522-95c8-46dd-98ef-cbc198544871',
-        nationalId: '3333333333',
-        name: 'Addi Admin',
-        title: 'notendaumsjón',
-        created: date,
-        modified: date,
-        mobileNumber: '',
-        email: '',
-        role: UserRole.ADMIN,
-        active: true,
-        canConfirmIndictment: false,
-      })
+      expect(then.result).toEqual([
+        {
+          id: '8f8f6522-95c8-46dd-98ef-cbc198544871',
+          nationalId: '3333333333',
+          name: 'Addi Admin',
+          title: 'notendaumsjón',
+          created: date,
+          modified: date,
+          mobileNumber: '',
+          email: '',
+          role: UserRole.ADMIN,
+          active: true,
+          canConfirmIndictment: false,
+        },
+      ])
     })
   })
 
   describe('user found', () => {
     const nationalId = uuid()
-    const user = { id: uuid() } as User
+    const user1 = { id: uuid() } as User
+    const user2 = { id: uuid() } as User
     let then: Then
 
     beforeEach(async () => {
-      const mockFindOne = mockUserModel.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce(user)
+      const mockFindOne = mockUserModel.findAll as jest.Mock
+      mockFindOne.mockResolvedValueOnce([user1, user2])
 
       then = await givenWhenThen(nationalId)
     })
 
     it('should return the user', () => {
-      expect(mockUserModel.findOne).toHaveBeenCalledWith({
+      expect(mockUserModel.findAll).toHaveBeenCalledWith({
         where: { nationalId, active: true },
         include: [{ model: Institution, as: 'institution' }],
       })
-      expect(then.result).toBe(user)
+      expect(then.result).toEqual([user1, user2])
     })
   })
 })

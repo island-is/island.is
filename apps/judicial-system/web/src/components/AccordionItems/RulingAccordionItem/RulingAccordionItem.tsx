@@ -3,9 +3,9 @@ import { useIntl } from 'react-intl'
 
 import { AccordionItem, Box, Text } from '@island.is/island-ui/core'
 import { rulingAccordion as m } from '@island.is/judicial-system-web/messages'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { AccordionListItem } from '../..'
+import { AccordionListItem, SectionHeading } from '../..'
 
 interface Props {
   workingCase: Case
@@ -27,29 +27,39 @@ const RulingAccordionItem: FC<Props> = ({
       startExpanded={startExpanded}
     >
       <Box component="section">
-        <Box marginBottom={2}>
-          <Text as="h4" variant="h4">
-            {formatMessage(m.title)}
-          </Text>
-        </Box>
-        <AccordionListItem
-          title={formatMessage(m.sections.prosecutorDemands.title)}
-        >
-          <Text>{workingCase.prosecutorDemands}</Text>
-        </AccordionListItem>
-        <AccordionListItem
-          title={formatMessage(m.sections.courtCaseFacts.title)}
-        >
-          <Text>{workingCase.courtCaseFacts}</Text>
-        </AccordionListItem>
-        <AccordionListItem
-          title={formatMessage(m.sections.courtLegalArguments.title)}
-        >
-          <Text>{workingCase.courtLegalArguments}</Text>
-        </AccordionListItem>
-        <AccordionListItem title={formatMessage(m.sections.ruling.title)}>
-          <Text whiteSpace="breakSpaces">{workingCase.ruling}</Text>
-        </AccordionListItem>
+        {workingCase.isCompletedWithoutRuling ? (
+          <SectionHeading
+            title={formatMessage(m.sections.noRuling.title)}
+            heading="h4"
+            marginBottom={2}
+          />
+        ) : (
+          <>
+            <SectionHeading
+              title={formatMessage(m.title)}
+              heading="h4"
+              marginBottom={2}
+            />
+            <AccordionListItem
+              title={formatMessage(m.sections.prosecutorDemands.title)}
+            >
+              <Text>{workingCase.prosecutorDemands}</Text>
+            </AccordionListItem>
+            <AccordionListItem
+              title={formatMessage(m.sections.courtCaseFacts.title)}
+            >
+              <Text>{workingCase.courtCaseFacts}</Text>
+            </AccordionListItem>
+            <AccordionListItem
+              title={formatMessage(m.sections.courtLegalArguments.title)}
+            >
+              <Text>{workingCase.courtLegalArguments}</Text>
+            </AccordionListItem>
+            <AccordionListItem title={formatMessage(m.sections.ruling.title)}>
+              <Text whiteSpace="breakSpaces">{workingCase.ruling}</Text>
+            </AccordionListItem>
+          </>
+        )}
       </Box>
     </AccordionItem>
   )

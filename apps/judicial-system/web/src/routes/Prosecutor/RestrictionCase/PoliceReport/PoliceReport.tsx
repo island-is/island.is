@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react'
+import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -15,28 +15,17 @@ import {
   PageTitle,
   ProsecutorCaseInfo,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  removeTabsValidateAndSet,
-  validateAndSendToServer,
-} from '@island.is/judicial-system-web/src/utils/formHelper'
-import { useCase, useDeb } from '@island.is/judicial-system-web/src/utils/hooks'
+import { useDebouncedInput } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isPoliceReportStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 
 export const PoliceReport = () => {
-  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+  const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const router = useRouter()
-  const [demandsErrorMessage, setDemandsErrorMessage] = useState<string>('')
-  const [caseFactsErrorMessage, setCaseFactsErrorMessage] = useState<string>('')
-  const [legalArgumentsErrorMessage, setLegalArgumentsErrorMessage] =
-    useState<string>('')
-
+  const demandsInput = useDebouncedInput('demands', ['empty'])
+  const caseFactsInput = useDebouncedInput('caseFacts', ['empty'])
+  const legalArgumentsInput = useDebouncedInput('legalArguments', ['empty'])
   const { formatMessage } = useIntl()
-
-  const { updateCase } = useCase()
-
-  useDeb(workingCase, ['demands', 'caseFacts', 'legalArguments'])
-
   const stepIsValid = isPoliceReportStepValidRC(workingCase)
   const handleNavigationTo = (destination: string) =>
     router.push(`${destination}/${workingCase.id}`)
@@ -54,7 +43,9 @@ export const PoliceReport = () => {
       />
       <FormContentContainer>
         <PageTitle>{formatMessage(rcReportForm.heading)}</PageTitle>
-        <ProsecutorCaseInfo workingCase={workingCase} />
+        <Box marginBottom={5}>
+          <ProsecutorCaseInfo workingCase={workingCase} />
+        </Box>
         <Box component="section" marginBottom={7}>
           <Box marginBottom={4}>
             <Text as="h3" variant="h3">
@@ -68,34 +59,13 @@ export const PoliceReport = () => {
             <Input
               name="demands"
               label={formatMessage(rcReportForm.sections.demands.label)}
-              placeholder={formatMessage(
-                rcReportForm.sections.demands.placeholder,
-              )}
-              value={workingCase.demands || ''}
-              errorMessage={demandsErrorMessage}
-              hasError={demandsErrorMessage !== ''}
-              onChange={(event) =>
-                removeTabsValidateAndSet(
-                  'demands',
-                  event.target.value,
-                  ['empty'],
-                  setWorkingCase,
-                  demandsErrorMessage,
-                  setDemandsErrorMessage,
-                )
-              }
-              onBlur={(event) =>
-                validateAndSendToServer(
-                  'demands',
-                  event.target.value,
-                  ['empty'],
-                  workingCase,
-                  updateCase,
-                  setDemandsErrorMessage,
-                )
-              }
+              placeholder={'Hverjar eru kröfur ákæruvaldsins?'}
+              value={demandsInput.value || ''}
+              errorMessage={demandsInput.errorMessage}
+              hasError={demandsInput.hasError}
+              onChange={(evt) => demandsInput.onChange(evt.target.value)}
+              onBlur={(evt) => demandsInput.onBlur(evt.target.value)}
               rows={7}
-              autoExpand={{ on: true, maxHeight: 300 }}
               textarea
               required
             />
@@ -120,32 +90,13 @@ export const PoliceReport = () => {
               placeholder={formatMessage(
                 rcReportForm.sections.caseFacts.placeholder,
               )}
-              errorMessage={caseFactsErrorMessage}
-              hasError={caseFactsErrorMessage !== ''}
-              value={workingCase.caseFacts || ''}
-              onChange={(event) =>
-                removeTabsValidateAndSet(
-                  'caseFacts',
-                  event.target.value,
-                  ['empty'],
-                  setWorkingCase,
-                  caseFactsErrorMessage,
-                  setCaseFactsErrorMessage,
-                )
-              }
-              onBlur={(event) =>
-                validateAndSendToServer(
-                  'caseFacts',
-                  event.target.value,
-                  ['empty'],
-                  workingCase,
-                  updateCase,
-                  setCaseFactsErrorMessage,
-                )
-              }
+              errorMessage={caseFactsInput.errorMessage}
+              hasError={caseFactsInput.hasError}
+              value={caseFactsInput.value || ''}
+              onChange={(evt) => caseFactsInput.onChange(evt.target.value)}
+              onBlur={(evt) => caseFactsInput.onBlur(evt.target.value)}
               required
               rows={14}
-              autoExpand={{ on: true, maxHeight: 600 }}
               textarea
             />
           </Box>
@@ -171,40 +122,18 @@ export const PoliceReport = () => {
               placeholder={formatMessage(
                 rcReportForm.sections.legalArguments.placeholder,
               )}
-              value={workingCase.legalArguments || ''}
-              errorMessage={legalArgumentsErrorMessage}
-              hasError={legalArgumentsErrorMessage !== ''}
-              onChange={(event) =>
-                removeTabsValidateAndSet(
-                  'legalArguments',
-                  event.target.value,
-                  ['empty'],
-                  setWorkingCase,
-                  legalArgumentsErrorMessage,
-                  setLegalArgumentsErrorMessage,
-                )
-              }
-              onBlur={(event) =>
-                validateAndSendToServer(
-                  'legalArguments',
-                  event.target.value,
-                  ['empty'],
-                  workingCase,
-                  updateCase,
-                  setLegalArgumentsErrorMessage,
-                )
-              }
+              value={legalArgumentsInput.value || ''}
+              errorMessage={legalArgumentsInput.errorMessage}
+              hasError={legalArgumentsInput.hasError}
+              onChange={(evt) => legalArgumentsInput.onChange(evt.target.value)}
+              onBlur={(evt) => legalArgumentsInput.onBlur(evt.target.value)}
               required
               textarea
               rows={14}
-              autoExpand={{ on: true, maxHeight: 600 }}
             />
           </Box>
           <Box component="section" marginBottom={7}>
-            <CommentsInput
-              workingCase={workingCase}
-              setWorkingCase={setWorkingCase}
-            />
+            <CommentsInput />
           </Box>
         </Box>
       </FormContentContainer>

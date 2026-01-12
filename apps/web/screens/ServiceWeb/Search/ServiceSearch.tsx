@@ -460,6 +460,7 @@ ServiceSearch.getProps = async ({ apolloClient, locale, query }) => {
     searchResults,
     locale: locale as Locale,
     serviceWebPage: getServiceWebPage,
+    customAlertBanner: getServiceWebPage?.alertBanner,
   }
 }
 

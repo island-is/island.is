@@ -6,8 +6,8 @@ import {
   NestInterceptor,
 } from '@nestjs/common'
 
+import { Case } from '../../repository'
 import { InternalCaseService } from '../internalCase.service'
-import { Case } from '../models/case.model'
 
 @Injectable()
 export class CaseOriginalAncestorInterceptor implements NestInterceptor {

@@ -1,11 +1,19 @@
-import { useCallback, useContext, useState } from 'react'
+import { useCallback, useContext, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
-import { AlertMessage, Box, RadioButton, Text } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  RadioButton,
+  Text,
+  Tooltip,
+} from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
+import { isDistrictCourtUser } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
+  ArraignmentAlert,
   BlueBox,
   CourtArrangements,
   CourtCaseInfo,
@@ -17,12 +25,16 @@ import {
   PageHeader,
   PageLayout,
   PageTitle,
+  SectionHeading,
   useCourtArrangements,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import { LegalRightsProtectorInputFields } from '@island.is/judicial-system-web/src/components/VictimInfo/LegalRightsProtectorInputFields'
 import {
   NotificationType,
   SessionArrangements,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   useCase,
@@ -41,6 +53,8 @@ const HearingArrangements = () => {
     caseNotFound,
     isCaseUpToDate,
   } = useContext(FormContext)
+  const { user } = useContext(UserContext)
+
   const { formatMessage } = useIntl()
   const { setAndSendCaseToServer, sendNotification, isSendingNotification } =
     useCase()
@@ -78,42 +92,33 @@ const HearingArrangements = () => {
 
   useOnceOn(isCaseUpToDate, initialize)
 
-  const handleNavigationTo = useCallback(
-    async (destination: keyof stepValidationsType) => {
-      await sendCourtDateToServer()
-
-      const isCorrectingRuling = workingCase.notifications?.some(
-        (notification) => notification.type === NotificationType.RULING,
-      )
-
-      if (
-        isCorrectingRuling ||
-        (hasSentNotification(
-          NotificationType.COURT_DATE,
-          workingCase.notifications,
-        ).hasSent &&
-          !courtDateHasChanged)
-      ) {
-        router.push(`${destination}/${workingCase.id}`)
-      } else {
-        setNavigateTo(destination)
-      }
-    },
-    [
-      sendCourtDateToServer,
-      workingCase.notifications,
-      workingCase.id,
-      courtDateHasChanged,
-    ],
+  const courtDateNotification = useMemo(
+    () =>
+      hasSentNotification(
+        NotificationType.COURT_DATE,
+        workingCase.notifications,
+      ),
+    [workingCase.notifications],
   )
+
+  const isCorrectingRuling = Boolean(workingCase.requestCompletedDate)
+
+  const handleNavigationTo = async (destination: keyof stepValidationsType) => {
+    await sendCourtDateToServer()
+
+    if (
+      isCorrectingRuling ||
+      (courtDateNotification.hasSent && !courtDateHasChanged)
+    ) {
+      router.push(`${destination}/${workingCase.id}`)
+    } else {
+      setNavigateTo(destination)
+    }
+  }
 
   const stepIsValid = isCourtHearingArrangementsStepValidIC(
     workingCase,
     courtDate,
-  )
-
-  const isCorrectingRuling = workingCase.notifications?.some(
-    (notification) => notification.type === NotificationType.RULING,
   )
 
   return (
@@ -142,15 +147,7 @@ const HearingArrangements = () => {
                 />
               </Box>
             )}
-          {workingCase.comments && (
-            <Box marginBottom={5}>
-              <AlertMessage
-                type="warning"
-                title={formatMessage(m.comments.title)}
-                message={workingCase.comments}
-              />
-            </Box>
-          )}
+          <ArraignmentAlert />
           <PageTitle>{formatMessage(m.title)}</PageTitle>
           <CourtCaseInfo workingCase={workingCase} />
           <Box component="section" marginBottom={8}>
@@ -316,6 +313,39 @@ const HearingArrangements = () => {
               />
             </Box>
           )}
+          {workingCase.sessionArrangements ===
+            SessionArrangements.ALL_PRESENT &&
+            isNonEmptyArray(workingCase.victims) && (
+              <>
+                <SectionHeading
+                  title={
+                    workingCase.victims && workingCase.victims.length > 1
+                      ? 'Réttargæslumenn'
+                      : 'Réttargæslumaður'
+                  }
+                  tooltip={
+                    isDistrictCourtUser(user) ? (
+                      <Tooltip
+                        text="Lögmaður sem er valinn hér verður skipaður réttargæslumaður brotaþola í þinghaldi og fær sendan úrskurð rafrænt."
+                        placement="right"
+                      />
+                    ) : null
+                  }
+                />
+                {workingCase.victims.map((victim) => (
+                  <Box key={victim.id} component="section" marginBottom={4}>
+                    <BlueBox>
+                      <LegalRightsProtectorInputFields
+                        victim={victim}
+                        workingCase={workingCase}
+                        setWorkingCase={setWorkingCase}
+                        useVictimNameAsTitle
+                      />
+                    </BlueBox>
+                  </Box>
+                ))}
+              </>
+            )}
         </FormContentContainer>
         <FormContentContainer isFooter>
           <FormFooter
@@ -341,30 +371,34 @@ const HearingArrangements = () => {
                 : m.modal.prosecutorPresentText,
               { courtDateHasChanged },
             )}
-            onPrimaryButtonClick={async () => {
-              const notificationSent = await sendNotification(
-                workingCase.id,
-                NotificationType.COURT_DATE,
-              )
+            primaryButton={{
+              text: formatMessage(m.modal.primaryButtonText),
+              onClick: async () => {
+                const notificationSent = await sendNotification(
+                  workingCase.id,
+                  NotificationType.COURT_DATE,
+                )
 
-              if (notificationSent) {
+                if (notificationSent) {
+                  router.push(`${navigateTo}/${workingCase.id}`)
+                }
+              },
+              isLoading: isSendingNotification,
+            }}
+            secondaryButton={{
+              text: formatMessage(m.modal.secondaryButtonText, {
+                courtDateHasChanged,
+              }),
+              onClick: () => {
+                sendNotification(
+                  workingCase.id,
+                  NotificationType.COURT_DATE,
+                  true,
+                )
+
                 router.push(`${navigateTo}/${workingCase.id}`)
-              }
+              },
             }}
-            onSecondaryButtonClick={() => {
-              sendNotification(
-                workingCase.id,
-                NotificationType.COURT_DATE,
-                true,
-              )
-
-              router.push(`${navigateTo}/${workingCase.id}`)
-            }}
-            primaryButtonText={formatMessage(m.modal.primaryButtonText)}
-            secondaryButtonText={formatMessage(m.modal.secondaryButtonText, {
-              courtDateHasChanged,
-            })}
-            isPrimaryButtonLoading={isSendingNotification}
           />
         )}
       </>

@@ -28,15 +28,13 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 import { Screen } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { webRichText } from '@island.is/web/utils/richText'
+import { shortenText } from '@island.is/web/utils/shortenText'
 
 import { withCustomPageWrapper } from '../CustomPage/CustomPageWrapper'
 import SidebarLayout from '../Layouts/SidebarLayout'
 import { GET_NAMESPACE_QUERY } from '../queries'
 import { GET_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCY_DETAILS } from '../queries/IcelandicGovernmentInstitutionVacancies'
-import {
-  shortenText,
-  VACANCY_INTRO_MAX_LENGTH,
-} from './IcelandicGovernmentInstitutionVacanciesList'
+import { VACANCY_INTRO_MAX_LENGTH } from './IcelandicGovernmentInstitutionVacanciesList'
 
 type Vacancy = IcelandicGovernmentInstitutionVacancyByIdResponse['vacancy']
 
@@ -309,11 +307,11 @@ const IcelandicGovernmentInstitutionVacancyDetails: Screen<
             <Stack space={2}>
               {vacancy.contacts.map((contact, index) => (
                 <Box className="rs_read" key={index}>
-                  <Text>
-                    {contact.name && contact.email
-                      ? `${contact.name}, `
-                      : contact.name}
-                    {contact.email && (
+                  <Text>{contact.name ?? ''}</Text>
+                  {contact.jobTitle && <Text>{contact.jobTitle}</Text>}
+                  {contact.email && (
+                    <Text>
+                      {n('email', 'Tölvupóstur:')}{' '}
                       <LinkV2
                         underlineVisibility="always"
                         underline="normal"
@@ -322,8 +320,9 @@ const IcelandicGovernmentInstitutionVacancyDetails: Screen<
                       >
                         {contact.email}
                       </LinkV2>
-                    )}
-                  </Text>
+                    </Text>
+                  )}
+
                   {contact.phone && (
                     <Text>
                       {n('telephone', 'Sími:')} {contact.phone}

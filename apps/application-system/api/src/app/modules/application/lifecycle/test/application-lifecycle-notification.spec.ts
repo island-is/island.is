@@ -14,6 +14,7 @@ import {
 
 import { ApplicationLifeCycleService } from '../application-lifecycle.service'
 import { ApplicationService } from '@island.is/application/api/core'
+import { HistoryService } from '@island.is/application/api/history'
 import { ApplicationChargeService } from '../../charge/application-charge.service'
 
 jest.mock('@island.is/application/template-loader')
@@ -51,6 +52,10 @@ describe('ApplicationLifeCycleService', () => {
           provide: NotificationsApi,
           useValue: {},
         },
+        {
+          provide: HistoryService,
+          useValue: {},
+        },
       ],
     }).compile()
 
@@ -63,7 +68,7 @@ describe('ApplicationLifeCycleService', () => {
     it('should return notification when all required fields are present', async () => {
       const mockApplication = {
         id: '123',
-        typeId: ApplicationTypes.EXAMPLE,
+        typeId: ApplicationTypes.EXAMPLE_COMMON_ACTIONS,
         state: 'draft',
         applicant: 'user123',
         answers: {},
@@ -115,7 +120,7 @@ describe('ApplicationLifeCycleService', () => {
     it('should handle function-based pruneMessage', async () => {
       const mockApplication = {
         id: '123',
-        typeId: ApplicationTypes.EXAMPLE,
+        typeId: ApplicationTypes.EXAMPLE_COMMON_ACTIONS,
         state: 'draft',
         applicant: 'user123',
         answers: {},
@@ -167,7 +172,7 @@ describe('ApplicationLifeCycleService', () => {
     it('should return null when required fields are missing', async () => {
       const mockApplication = {
         id: '123',
-        typeId: ApplicationTypes.EXAMPLE,
+        typeId: ApplicationTypes.EXAMPLE_COMMON_ACTIONS,
         state: 'draft',
         applicant: 'user123',
         answers: {},
@@ -238,6 +243,10 @@ describe('ApplicationLifeCycleService', () => {
         {
           provide: NotificationsApi,
           useValue: notificationApi,
+        },
+        {
+          provide: HistoryService,
+          useValue: {},
         },
       ],
     }).compile()
@@ -311,7 +320,7 @@ describe('ApplicationLifeCycleService', () => {
     it('should handle malformed pruneMessage function', async () => {
       const mockApplication = {
         id: '123',
-        typeId: ApplicationTypes.EXAMPLE,
+        typeId: ApplicationTypes.EXAMPLE_COMMON_ACTIONS,
         state: 'draft',
         applicant: 'user123',
         answers: {},

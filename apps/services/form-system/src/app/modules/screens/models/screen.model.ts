@@ -48,7 +48,7 @@ export class Screen extends Model<Screen> {
     allowNull: false,
     defaultValue: false,
   })
-  isHidden!: boolean
+  isCompleted!: boolean
 
   @Column({
     type: DataType.INTEGER,
@@ -65,7 +65,7 @@ export class Screen extends Model<Screen> {
   callRuleset!: boolean
 
   @HasMany(() => Field)
-  fields?: Field[]
+  fields!: Field[]
 
   @ForeignKey(() => Section)
   @Column({

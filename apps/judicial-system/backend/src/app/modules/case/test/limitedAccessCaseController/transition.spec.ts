@@ -1,5 +1,5 @@
 import { Transaction } from 'sequelize'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import type { User } from '@island.is/judicial-system/types'
@@ -19,7 +19,7 @@ import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { nowFactory } from '../../../../factories'
 import { randomDate } from '../../../../test'
-import { Case } from '../../models/case.model'
+import { Case, CaseRepositoryService } from '../../../repository'
 
 jest.mock('../../../../factories')
 
@@ -45,18 +45,21 @@ describe('LimitedAccessCaseController - Transition', () => {
     {
       id: defenderAppealBriefId,
       key: uuid(),
+      isKeyAccessible: true,
       state: CaseFileState.STORED_IN_RVG,
       category: CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
     },
     {
       id: defenderAppealBriefCaseFileId1,
       key: uuid(),
+      isKeyAccessible: true,
       state: CaseFileState.STORED_IN_RVG,
       category: CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
     },
     {
       id: defenderAppealBriefCaseFileId2,
       key: uuid(),
+      isKeyAccessible: true,
       state: CaseFileState.STORED_IN_RVG,
       category: CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
     },
@@ -64,19 +67,19 @@ describe('LimitedAccessCaseController - Transition', () => {
 
   let transaction: Transaction
   let mockMessageService: MessageService
-  let mockCaseModel: typeof Case
+  let mockCaseRepositoryService: CaseRepositoryService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
     const {
       sequelize,
       messageService,
-      caseModel,
+      caseRepositoryService,
       limitedAccessCaseController,
     } = await createTestingCaseModule()
 
     mockMessageService = messageService
-    mockCaseModel = caseModel
+    mockCaseRepositoryService = caseRepositoryService
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
@@ -86,8 +89,8 @@ describe('LimitedAccessCaseController - Transition', () => {
 
     const mockToday = nowFactory as jest.Mock
     mockToday.mockReturnValueOnce(date)
-    const mockUpdate = mockCaseModel.update as jest.Mock
-    mockUpdate.mockResolvedValue([1])
+    const mockUpdate = mockCaseRepositoryService.update as jest.Mock
+    mockUpdate.mockResolvedValue({})
 
     givenWhenThen = async (
       state: CaseState,
@@ -130,20 +133,17 @@ describe('LimitedAccessCaseController - Transition', () => {
       let then: Then
 
       beforeEach(async () => {
-        const mockFindOne = mockCaseModel.findOne as jest.Mock
+        const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
         mockFindOne.mockResolvedValueOnce(updatedCase)
 
         then = await givenWhenThen(state, CaseTransition.APPEAL)
       })
 
       it('should transition the case', () => {
-        expect(mockCaseModel.update).toHaveBeenCalledWith(
-          {
-            appealState: CaseAppealState.APPEALED,
-            accusedPostponedAppealDate: date,
-          },
-          { where: { id: caseId } },
-        )
+        expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(caseId, {
+          appealState: CaseAppealState.APPEALED,
+          accusedPostponedAppealDate: date,
+        })
       })
 
       it('should queue a notification message', () => {
@@ -193,7 +193,7 @@ describe('LimitedAccessCaseController - Transition', () => {
       let then: Then
 
       beforeEach(async () => {
-        const mockFindOne = mockCaseModel.findOne as jest.Mock
+        const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
         mockFindOne.mockResolvedValueOnce(updatedCase)
 
         then = await givenWhenThen(
@@ -204,13 +204,10 @@ describe('LimitedAccessCaseController - Transition', () => {
       })
 
       it('should transition the case', () => {
-        expect(mockCaseModel.update).toHaveBeenCalledWith(
-          {
-            appealState: CaseAppealState.WITHDRAWN,
-            appealRulingDecision: CaseAppealRulingDecision.DISCONTINUED,
-          },
-          { where: { id: caseId } },
-        )
+        expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(caseId, {
+          appealState: CaseAppealState.WITHDRAWN,
+          appealRulingDecision: CaseAppealRulingDecision.DISCONTINUED,
+        })
       })
 
       it('should queue a notification message', () => {

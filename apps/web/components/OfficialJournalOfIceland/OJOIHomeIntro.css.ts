@@ -1,6 +1,6 @@
 import { style } from '@vanilla-extract/css'
 
-import { spacing } from '@island.is/island-ui/theme'
+import { spacing, theme } from '@island.is/island-ui/theme'
 
 export const introSummary = style({})
 
@@ -27,5 +27,16 @@ export const introImage = style({
   maxHeight: '17em',
   display: 'block',
   margin: 'auto',
+  width: '100%',
+})
+
+export const searchBox = style({
+  outline: 'none',
+  padding: `8px 0 2px ${theme.spacing[2]}px`,
+  fontSize: '24px',
+  fontWeight: theme.typography.light,
+  backgroundColor: theme.color.blue100,
+  border: 0,
+  color: theme.color.black,
   width: '100%',
 })

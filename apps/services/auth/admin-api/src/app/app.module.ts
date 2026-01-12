@@ -33,6 +33,7 @@ import { ProvidersModule } from './v2/providers/providers.module'
 import { ScopesModule } from './v2/scopes/scopes.module'
 import { ClientSecretsModule } from './v2/secrets/client-secrets.module'
 import { TenantsModule } from './v2/tenants/tenants.module'
+import { IdentityConfirmationApiModule } from './v2/identity-confirmation/identity-confirmation.module'
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { TenantsModule } from './v2/tenants/tenants.module'
     TenantsModule,
     ClientsV2Module,
     ClientSecretsModule,
+    IdentityConfirmationApiModule,
     ProblemModule,
     ProvidersModule,
     ScopesModule,

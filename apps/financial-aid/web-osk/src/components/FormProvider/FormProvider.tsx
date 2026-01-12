@@ -7,7 +7,7 @@ import {
   FormSpouse,
   DirectTaxPayment,
 } from '@island.is/financial-aid/shared/lib'
-import { UploadFile } from '@island.is/island-ui/core'
+import { UploadFileDeprecated } from '@island.is/island-ui/core'
 import { uuid } from 'uuidv4'
 
 export interface Form {
@@ -22,10 +22,10 @@ export interface Form {
   employment?: Employment
   employmentCustom?: string
   hasIncome?: boolean
-  incomeFiles: UploadFile[]
-  taxReturnFiles: UploadFile[]
-  taxReturnFromRskFile: UploadFile[]
-  otherFiles: UploadFile[]
+  incomeFiles: UploadFileDeprecated[]
+  taxReturnFiles: UploadFileDeprecated[]
+  taxReturnFromRskFile: UploadFileDeprecated[]
+  otherFiles: UploadFileDeprecated[]
   usePersonalTaxCredit?: boolean
   bankNumber?: string
   ledger?: string

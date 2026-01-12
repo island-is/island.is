@@ -1,47 +1,49 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
-import { GET_OPEN_DATA_PAGE_QUERY, GET_CATEGORIES_QUERY } from '../queries'
-import {
-  GetOpenDataPageQuery,
-  QueryGetOpenDataPageArgs,
-  GetGroupedMenuQuery,
-  QueryGetGroupedMenuArgs,
-  GetArticleCategoriesQuery,
-  QueryGetArticleCategoriesArgs,
-  ContentLanguage,
-} from '@island.is/web/graphql/schema'
-import {
-  GridContainer,
-  Box,
-  GridRow,
-  GridColumn,
-  Breadcrumbs,
-  Text,
-  Link,
-  Button,
-} from '@island.is/island-ui/core'
+import { useMeasure } from 'react-use'
+import cn from 'classnames'
 import NextLink from 'next/link'
-import { Screen } from '@island.is/web/types'
+
 import {
-  Section,
-  StatisticsCardsSection,
-  DataLinkSection,
-  SimpleLineChart,
-  ChartsCard,
-  SectionTitle,
-  Header,
-} from '@island.is/web/components'
-import { withMainLayout } from '@island.is/web/layouts/main'
-import { useLinkResolver } from '../../hooks/useLinkResolver'
+  Box,
+  Breadcrumbs,
+  Button,
+  GridColumn,
+  GridContainer,
+  GridRow,
+  Link,
+  Text,
+} from '@island.is/island-ui/core'
 import { Locale } from '@island.is/shared/types'
-import { GET_GROUPED_MENU_QUERY } from '../queries/Menu'
+import {
+  ChartsCard,
+  DataLinkSection,
+  Header,
+  Section,
+  SectionTitle,
+  SimpleLineChart,
+  StatisticsCardsSection,
+} from '@island.is/web/components'
+import {
+  ContentLanguage,
+  GetArticleCategoriesQuery,
+  GetGroupedMenuQuery,
+  GetOpenDataPageQuery,
+  QueryGetArticleCategoriesArgs,
+  QueryGetGroupedMenuArgs,
+  QueryGetOpenDataPageArgs,
+} from '@island.is/web/graphql/schema'
+import { withMainLayout } from '@island.is/web/layouts/main'
+import { Screen } from '@island.is/web/types'
 import {
   formatMegaMenuCategoryLinks,
   formatMegaMenuLinks,
 } from '@island.is/web/utils/processMenuData'
+
+import { useLinkResolver } from '../../hooks/useLinkResolver'
+import { GET_CATEGORIES_QUERY, GET_OPEN_DATA_PAGE_QUERY } from '../queries'
+import { GET_GROUPED_MENU_QUERY } from '../queries/Menu'
 import * as styles from './OpenData.css'
-import { useMeasure } from 'react-use'
-import cn from 'classnames'
 
 interface OpenDataProps {
   page: GetOpenDataPageQuery['getOpenDataPage']

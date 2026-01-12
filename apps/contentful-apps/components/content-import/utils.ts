@@ -15,7 +15,7 @@ export const extractContentType = (
 ) => {
   let validations = field.contentfulField.data.validations ?? []
   if (validations.length === 0) {
-    validations = field.contentfulField.data.items.validations ?? []
+    validations = field.contentfulField.data.items?.validations ?? []
   }
   return validations.find((v) => v?.linkContentType)?.linkContentType?.[0] ?? ''
 }

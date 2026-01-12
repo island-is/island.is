@@ -1,6 +1,11 @@
 import { TranslatedMessages } from './index'
 
 export const en: TranslatedMessages = {
+  // General buttons
+  'button.change': 'Change',
+  'button.open': 'Open',
+  'button.moreInfoHere': 'More info here',
+
   // login
   'login.welcomeMessage': 'Log in to the app with electronic ID',
   'login.loginButtonText': 'Login',
@@ -19,10 +24,12 @@ export const en: TranslatedMessages = {
     'Updated permissions required, please login again.',
   'login.expiredMissingUserMessage':
     'Could not fetch user information, please login again.',
+  'login.expiredMessage': 'Please log in again.',
 
   // app lock
   'applock.title': 'Enter a 4-digit PIN',
   'applock.attempts': 'attempts left',
+  'applock.attempt': 'attempt left',
 
   // onboarding
   'onboarding.notifications.title':
@@ -182,6 +189,10 @@ export const en: TranslatedMessages = {
   'home.vehicleModule.summary':
     'Enter mileage of electric and plug-in hybrid vehicles',
   'home.vehicleModule.button': 'My vehicles',
+  'homeBanner.vehicleMileage.title': 'Register mileage',
+  'homeBanner.vehicleMileage.description':
+    'Register the mileage of your vehicles',
+  'homeBanner.vehicleMileage.cta': 'View vehicles',
   'button.seeAll': 'See all',
 
   // home options
@@ -236,10 +247,50 @@ export const en: TranslatedMessages = {
   'inbox.filterDateConfirm': 'Confirm',
   'inbox.filterDateCancel': 'Cancel',
 
+  // inbox bulk select
+  'inbox.bulkSelectButton': 'Select documents',
+  'inbox.bulkSelectAllButton': 'Select all',
+  'inbox.bulkDeselectAllButton': 'Deselect all',
+  'inbox.bulkSelectCancelButton': 'Cancel',
+  'inbox.bulkSelectActionStar': 'Star',
+  'inbox.bulkSelectActionArchive': 'Archive',
+  'inbox.bulkSelectActionRead': 'Mark as read',
+  'inbox.bulkSelect.starSuccess': 'Selected documents starred',
+  'inbox.bulkSelect.archiveSuccess': 'Selected documents archived',
+  'inbox.bulkSelect.markAsReadSuccess': 'Selected documents marked as read',
+  'inbox.bulkSelect.starError': 'Could not star documents',
+  'inbox.bulkSelect.archiveError': 'Could not archive documents',
+  'inbox.bulkSelect.markAsReadError': 'Could not mark documents as read',
+  'inbox.bulkSelect.pleaseTryAgain': 'Please try again later',
+
   // document detail
   'documentDetail.screenTitle': 'Document',
   'documentDetail.loadingText': 'Loading document',
   'documentDetail.errorUnknown': 'Error occurred while loading document',
+  'documentDetail.buttonReply': 'Reply',
+  'documentDetail.buttonCommunications': 'Communications',
+
+  // document reply
+  'documentReply.to': 'To',
+  'documentReply.from': 'From',
+  'documentReply.message': 'Message',
+  'documentReply.messagePlaceholder': 'Write message here',
+  'documentReply.uploadAttachment': 'Upload document',
+  'documentReply.sendMessage': 'Send message',
+
+  // document communications
+  'documentCommunications.caseNumber': 'Case number',
+  'documentCommunications.initialReply':
+    'The message has been received and a case has been created. You can continue the conversation here or via your personal email {email}.',
+  'documentCommunications.cannotReply':
+    'This message cannot be replied to because the sender has blocked further replies in this conversation.',
+
+  // register email
+  'registerEmail.title': 'Please register your email',
+  'registerEmail.description':
+    'To reply to email, you need to register an email',
+  'registerEmail.button': 'Register email',
+  'registerEmail.cancel': 'Cancel',
 
   // wallet
   'wallet.screenTitle': 'Wallet',
@@ -251,6 +302,8 @@ export const en: TranslatedMessages = {
     'When you get e.g. driving licenses, firearms licenses or fishing licenses from the government, they appear here.',
   'wallet.lastUpdated': 'Last updated: {date}',
   'wallet.update': 'Update',
+  'wallet.yourLicenses': 'Your licenses',
+  'wallet.childLicenses': 'Your children’s licenses',
 
   // wallet pass
   'walletPass.screenTitle': 'Pass',
@@ -269,29 +322,45 @@ export const en: TranslatedMessages = {
 
   'walletPass.barcodeErrorNotConnected':
     'Not possible to scan barcode if the device is not connected to the internet.',
-  'walletPass.barcodeErrorFailedToFetch': 'Could not fetch barcode',
+  'walletPass.barcodeErrorFailedToFetch': 'Unable to fetch barcode',
+  'walletPass.barcodeErrorBadSession':
+    'The barcode was recently retrieved on another device. Please try again later.',
   'walletPass.validLicense': 'Valid',
   'walletPass.expiredLicense': 'Expired',
-  'walletPass.passportNumber': 'Passport number: {licenseNumber}',
-  'walletPass.licenseNumber': 'License number: {licenseNumber}',
   'walletPass.errorFetchingLicense': 'Could not update license',
 
-  // wallet passport
-  'walletPassport.screenTitle': 'Passport',
-  'walletPassport.infoTitle': 'Remember the passport!',
-  'walletPassport.infoDescription':
-    'This summary is not valid as a travel document.',
-  'walletPassport.warningTitle': 'Expires within 6 months',
-  'walletPassport.warningDescription':
+  // license details
+  'licenseDetail.pcard.alert.title': 'Remember the parking card!',
+  'licenseDetail.pcard.alert.description':
+    'This summary is not valid as a parking card.',
+  'licenseDetail.driversLicense.alert.title': 'Are you traveling abroad?',
+  'licenseDetail.driversLicense.alert.description':
+    'Remember to bring the card since the digital driver license is not valid outside of Iceland.',
+  'licenseDetail.ehic.alert.title': 'Remember the card!',
+  'licenseDetail.ehic.alert.description':
+    'This summary is not valid as a European Health Insurance card.',
+  'licenseDetail.passport.alert.title':
+    'This is for information only and is not valid for identification or travel',
+  'licenseDetail.passport.alert.description':
+    'Only the physical document is valid for identification and travel.',
+  'licenseDetail.identityDocument.alert.title':
+    'This is for information only and is not valid for identification purposes',
+  'licenseDetail.identityDocument.alert.description':
+    'Only the physical document is valid for identification.',
+  'licenseDetail.identityTravelDocument.alert.title':
+    'This is for information only and is not valid for identification or travel',
+  'licenseDetail.identityTravelDocument.alert.description':
+    'Only the physical document is valid for identification and travel.',
+  'licenseDetail.warning.title': 'Expires within 6 months',
+  'licenseDetail.passport.warning.description':
     'Note that your passport will expire within the next 6 months.',
-  'walletPassport.displayName': 'Name',
-  'walletPassport.number': 'Number',
-  'walletPassport.issuingDate': 'Date issued',
-  'walletPassport.expirationDate': 'Expiration date',
-  'walletPassport.mrzName': 'Machine-readable name',
-  'walletPassport.children': 'Childrens passport',
-  'walletPassport.noPassport': 'No passport.',
-  'walletPassport.noPassportLink': 'Read more at island.is/vegabref',
+  'licenseDetail.identityDocument.warning.description':
+    'Note that your Id-card will expire within the next 6 months.',
+  'licenseDetail.passport.noPassport': 'No valid passport',
+  'licenseDetail.identityDocument.noIdentityDocument': 'No valid Id-cards',
+  'licenseDetail.apply': 'Apply',
+  'licenseDetail.passport.title': 'Passport',
+  'licenseDetail.identityDocument.title': 'ID-card',
 
   // license scanner
   'licenseScanner.title': 'Scan barcode',
@@ -336,14 +405,6 @@ export const en: TranslatedMessages = {
   'licenseScannerResult.birthDate': 'Birthdate',
   'licenseScannerResult.driverLicenseNumber': 'Driver license number',
 
-  // license details
-  'licenseDetail.pcard.alert.title': 'Remember the parking card!',
-  'licenseDetail.pcard.alert.description':
-    'This summary is not valid as a parking card.',
-  'licenseDetail.ehic.alert.title': 'Remember the card!',
-  'licenseDetail.ehic.alert.description':
-    'This summary is not valid as a European Health Insurance card.',
-
   // notifications
   'notifications.screenTitle': 'Notifications',
   'notifications.markAllAsRead': 'Mark all as read',
@@ -363,6 +424,12 @@ export const en: TranslatedMessages = {
   'profile.finance': 'Finance',
   'profile.airDiscount': 'Air discount',
   'profile.health': 'Health',
+  'profile.moreInfo': 'More on my-pages',
+  'profile.accessControl': 'Access control',
+  'profile.supportPayments': 'Support payments',
+  'profile.education': 'Education',
+  'profile.lawAndOrder': 'Law and order',
+  'profile.occupationalLicenses': 'Occupational licenses',
 
   // vehicles
   'vehicles.screenTitle': 'Vehicles',
@@ -371,6 +438,7 @@ export const en: TranslatedMessages = {
     'Vehicles registered to you will appear here.',
   'vehicles.nextInspectionLabel': 'Next inspection {date}',
   'vehicles.mileageRequired': 'Kilometre fee',
+  'vehicles.registerMileage': 'Register mileage',
 
   // vehicles detail
   'vehicleDetail.regno': 'Registration number',
@@ -420,11 +488,30 @@ export const en: TranslatedMessages = {
   'vehicle.mileage.historyTitle': 'Mileage history',
   'vehicle.mileage.editRecordButton': 'Edit mileage',
 
+  // vehicle links
+  'vehicle.links.ownerLookup': 'Vehicle registry lookup',
+  'vehicle.links.vehicleHistory': 'Vehicle history',
+  'vehicle.links.reportOwnerChange': 'Report change of ownership',
+  'vehicle.links.returnCertificate': 'Return certificate',
+  'vehicle.links.nameConfidentiality':
+    'Name confidentiality in vehicle registry',
+
+  // vehicle dropdown links
+  'vehicle.links.dropdown.orderNumberPlate': 'Order number plate',
+  'vehicle.links.dropdown.orderRegistrationCertificate':
+    'Order registration certificate',
+  'vehicle.links.dropdown.changeCoOwner': 'Change co-owner',
+  'vehicle.links.dropdown.changeOperator': 'Change operator',
+  'vehicle.links.dropdown.vehicleHistoryReport': 'Vehicle history report',
+
   // assets overview
   'assetsOvervies.screenTitle': 'Assets',
   'assetsOverview.emptyListTitle': 'No assets found for the user',
   'assetsOverview.emptyListDescription':
     'Assets registered to you will appear here.',
+
+  // assets links
+  'assets.links.mortgageCertificate': 'Mortgage certificate',
 
   // assets details
   'assetsDetail.propertyNumber': 'Property number',
@@ -452,6 +539,10 @@ export const en: TranslatedMessages = {
   'finance.heading.title': 'Financial standing with the government',
   'finance.heading.subtitle':
     'Here you can see an overview of your debt and/or credit balance with the government.',
+  'finance.links.payments': 'Payments',
+  'finance.links.loans': 'Loans',
+  'finance.links.transactions': 'Transactions',
+  'finance.links.status': 'Status',
 
   // finance detail
   'financeDetail.title': 'Detailed information',
@@ -516,6 +607,8 @@ export const en: TranslatedMessages = {
     completed {Completed}
     rejected {Rejected}
     draft {Application in progress}
+    approved {Approved}
+    notstarted {Not started}
     other {Unknown status}
   }`,
   'applicationStatusCard.draftProgress':
@@ -588,6 +681,9 @@ export const en: TranslatedMessages = {
   'airDiscount.emptyListTitle': 'No benefits',
   'airDiscount.emptyListDescription':
     'Only inhabitants with a legal domicile in rural areas far away from the Capital area and on islands are eligible for a discount with Loftbru. (see map on loftbru.is)',
+  'airDiscount.disabledTitle': 'Loftbru closed',
+  'airDiscount.disabledDescription':
+    'The Loftbrú Air discount codes are not valid at the moment.',
 
   // offline
   'offline.title': 'No internet connection',
@@ -655,6 +751,12 @@ export const en: TranslatedMessages = {
   'health.overview.levelStatusValue': 'Level {level}, you pay {percentage}%',
   'health.overview.medicinePurchaseNoActivePeriodWarning':
     'A new payment period begins with the next medicine purchase',
+  'health.overview.basicInformation': 'Basic information',
+  'health.overview.bloodType': 'Blood group',
+  'health.overview.bloodTypeDescription': 'Your blood group is {bloodType}',
+  'health.overview.noBloodTypeRegistered': 'No blood type registered',
+  'health.overview.dentist': 'Dentist',
+  'health.overview.noDentistRegistered': 'No dentist registered',
 
   // health - vaccinations
   'health.vaccinations.screenTitle': 'Vaccinations',

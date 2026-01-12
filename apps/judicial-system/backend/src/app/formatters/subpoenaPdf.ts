@@ -15,11 +15,8 @@ import { SubpoenaType } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../factories/date.factory'
 import { subpoena as strings } from '../messages'
-import { Case } from '../modules/case'
-import { Defendant } from '../modules/defendant'
-import { Subpoena } from '../modules/subpoena'
+import { Case, Defendant, Subpoena } from '../modules/repository'
 import {
-  addConfirmation,
   addEmptyLines,
   addFooter,
   addHugeHeading,
@@ -27,6 +24,8 @@ import {
   addNormalRightAlignedText,
   addNormalText,
   Confirmation,
+  drawConfirmation,
+  formatActor,
   setTitle,
 } from './pdfHelpers'
 
@@ -51,7 +50,7 @@ export const createSubpoena = (
     bufferPages: true,
   })
 
-  const sinc: Buffer[] = []
+  const sinc: Uint8Array[] = []
   const intro = getIntro(defendant.gender)
 
   doc.on('data', (chunk) => sinc.push(chunk))
@@ -72,7 +71,7 @@ export const createSubpoena = (
 
   arraignmentDate = arraignmentDate ?? subpoena?.arraignmentDate
   location = location ?? subpoena?.location
-  subpoenaType = subpoenaType ?? defendant.subpoenaType
+  subpoenaType = subpoenaType ?? subpoena?.type
 
   if (theCase.court?.name) {
     addNormalText(
@@ -167,7 +166,23 @@ export const createSubpoena = (
   addFooter(doc)
 
   if (confirmation) {
-    addConfirmation(doc, confirmation)
+    drawConfirmation(doc, {
+      showLockIcon: false,
+      confirmationText: 'Rafræn staðfesting',
+      date: confirmation.date,
+      boxes: [
+        {
+          title: 'Dómstóll',
+          content: confirmation.institution,
+          widthPercent: 50,
+        },
+        {
+          title: 'Samþykktaraðili',
+          content: formatActor(confirmation.actor, confirmation.title),
+          widthPercent: 50,
+        },
+      ],
+    })
   }
 
   doc.end()

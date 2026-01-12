@@ -34,12 +34,6 @@ export const strings = defineMessages({
     description:
       'Notaður sem titill á staðfestingarglugga um að hvort eigi að ljúka máli.',
   },
-  completeCaseModalBody: {
-    id: 'judicial.system.core:indictments.summary.complete_case_modal_body',
-    defaultMessage: 'Niðurstaða málsins verður send ákæranda og verjanda.',
-    description:
-      'Notaður sem texti í staðfestingarglugga um hvort eigi að ljúka máli.',
-  },
   completeCaseModalPrimaryButton: {
     id: 'judicial.system.core:indictments.summary.complete_case_modal_primary_button',
     defaultMessage: 'Já, ljúka máli',
@@ -57,5 +51,16 @@ export const strings = defineMessages({
     defaultMessage: 'Einungis skráður dómari getur lokið málinu',
     description:
       'Notaður sem texti í stað "áfram" takkans á samantektarskjá ákæru þegar "áfram" takkinn er falinn',
+  },
+  courtEndTimeTitle: {
+    id: 'judicial.system.core:indictments.summary.court_end_time_title',
+    defaultMessage: 'Dagsetning lykta',
+    description: 'Notaður sem titill fyrir dagsetning lykta á samantektarskjá',
+  },
+  courtEndTimeDescription: {
+    id: 'judicial.system.core:indictments.summary.court_end_time_description_v2',
+    defaultMessage:
+      'Vinsamlegast skráið dagsetningu lykta, þ.e. hvenær dómur var kveðinn upp, dagsetning viðurlagaákvörðunar eða annarra lykta. Þessi dagsetning skilar sér til ríkissaksóknara og áfrýjunarfrestir og aðrir frestir miðast við hana.',
+    description: 'Notaður sem lýsing fyrir dagsetning lykta á samantektarskjá',
   },
 })

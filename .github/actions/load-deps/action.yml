@@ -1,0 +1,68 @@
+name: 'Load Dependencies'
+description: 'Prerequisite is that the prepare step has already been run'
+
+inputs:
+  working-directory:
+    description: 'Directory to run the action in'
+    required: false
+    default: './'
+  cache-path:
+    description: 'Cache path'
+    required: false
+    default: ${{ runner.temp }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set RUNS_ON_S3_BUCKET_CACHE
+      shell: bash
+      if: ${{ !github.event.localrun && env.RUNS_ON_BUCKET_NAME }}
+      run: echo "RUNS_ON_S3_BUCKET_CACHE=${{ env.RUNS_ON_BUCKET_NAME }}" >> $GITHUB_ENV
+
+    - name: Set env
+      id: prepare
+      shell: bash
+      run: |
+        export GENERATED_FILES_PATH=${{ inputs.cache-path }}/${{ env.GENERATED_FILES }}
+        echo "GENERATED_FILES_PATH=$GENERATED_FILES_PATH" >> "$GITHUB_OUTPUT"
+        echo "INPUTS_LIST_FILE=dist/codegen_inputs_list.txt" >> "$GITHUB_OUTPUT"
+
+    - name: INFO
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      run: |
+        echo "generated files: ${{ steps.prepare.outputs.GENERATED_FILES_PATH }}"
+
+    - name: Generate hash for generated files list
+      id: generate-files-hash
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        node ./scripts/ci/generate-files.mjs /dev/null \
+          --skip-codegen \
+          --inputsFile=${{ steps.prepare.outputs.INPUTS_LIST_FILE }} \
+          --outputsFile=/dev/null
+
+    - name: Cache generated files
+      uses: runs-on/cache@v4
+      id: restore-codegen-cache
+      with:
+        path: |
+          ${{ steps.prepare.outputs.GENERATED_FILES_PATH }}
+        key: generated-files-${{ hashFiles(steps.prepare.outputs.INPUTS_LIST_FILE) }}
+
+    - name: Prepare generated files
+      if: steps.restore-codegen-cache.outputs.cache-hit != 'true'
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      run: |
+        node ./scripts/ci/generate-files.mjs ${{ steps.prepare.outputs.GENERATED_FILES_PATH }}
+
+    - name: Extract generated files
+      if: steps.restore-codegen-cache.outputs.cache-hit == 'true'
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      run: |
+        echo "::group::Extract generated files"
+        tar -xzvf ${{ steps.prepare.outputs.GENERATED_FILES_PATH }}
+        echo "::endgroup::"

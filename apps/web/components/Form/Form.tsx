@@ -9,12 +9,12 @@ import {
   Checkbox,
   DatePicker,
   Input,
-  InputFileUpload,
+  InputFileUploadDeprecated,
   RadioButton,
   Select,
   Stack,
   Text,
-  UploadFile,
+  UploadFileDeprecated,
 } from '@island.is/island-ui/core'
 import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 import {
@@ -61,6 +61,7 @@ export enum FormFieldType {
   DROPDOWN = 'dropdown',
   RADIO = 'radio',
   DATE = 'date',
+  NUMERIC = 'numeric',
 }
 
 interface FormFieldProps {
@@ -97,6 +98,21 @@ export const FormField = ({
           errorMessage={error}
           value={value}
           onChange={(e) => onChange(slug, e.target.value)}
+        />
+      )
+    case FormFieldType.NUMERIC:
+      return (
+        <Input
+          key={slug}
+          placeholder={field.placeholder}
+          name={slug}
+          label={field.title}
+          required={field.required}
+          hasError={!!error}
+          errorMessage={error}
+          value={value}
+          inputMode="numeric"
+          onChange={(e) => onChange(slug, e.target.value.replace(/\D/g, ''))}
         />
       )
     case FormFieldType.TEXT:
@@ -169,7 +185,30 @@ export const FormField = ({
           </Stack>
         </Box>
       )
-    case FormFieldType.ACCEPT_TERMS:
+    case FormFieldType.ACCEPT_TERMS: {
+      const hasError = !!error
+
+      if (!field.placeholder) {
+        return (
+          <Stack space={2}>
+            <Checkbox
+              id={slug}
+              label={field.title}
+              checked={value === 'true'}
+              onChange={(e) =>
+                onChange(slug, e.target.checked ? 'true' : 'false')
+              }
+              hasError={hasError}
+            />
+            {hasError && (
+              <Text variant="eyebrow" color="red600">
+                {error}
+              </Text>
+            )}
+          </Stack>
+        )
+      }
+
       return (
         <Stack space={2}>
           <Text variant="h5" color="blue600">
@@ -180,20 +219,23 @@ export const FormField = ({
               </span>
             )}
           </Text>
-          {!!error && (
+          {hasError && (
             <Text variant="eyebrow" color="red600">
               {error}
             </Text>
           )}
           <Checkbox
+            id={slug}
             label={field.placeholder}
             checked={value === 'true'}
             onChange={(e) =>
               onChange(slug, e.target.checked ? 'true' : 'false')
             }
+            hasError={hasError}
           />
         </Stack>
       )
+    }
     case FormFieldType.CHECKBOXES:
       return (
         <Stack space={2}>
@@ -293,7 +335,9 @@ export const Form = ({ form }: FormProps) => {
 
     return Object.fromEntries(fields)
   })
-  const [fileList, setFileList] = useState<Record<string, UploadFile[]>>(() =>
+  const [fileList, setFileList] = useState<
+    Record<string, UploadFileDeprecated[]>
+  >(() =>
     Object.fromEntries(
       form.fields
         .filter((field) => field.type === FormFieldType.FILE)
@@ -506,7 +550,7 @@ export const Form = ({ form }: FormProps) => {
   }
 
   const uploadFile = async (
-    file: UploadFile,
+    file: UploadFileDeprecated,
     response: PresignedPost,
     fieldSlug: string,
   ) => {
@@ -639,6 +683,7 @@ export const Form = ({ form }: FormProps) => {
               files: files.map((f) => f[1]).flat(),
               recipientFormFieldDeciderValue:
                 getRecipientFormFieldDeciderValue(),
+              lang: activeLocale,
             },
           },
         }).then(() => {
@@ -793,7 +838,7 @@ export const Form = ({ form }: FormProps) => {
               .map((field) => {
                 const slug = getUniqueFormFieldValue(field)
                 return (
-                  <InputFileUpload
+                  <InputFileUploadDeprecated
                     key={slug}
                     header={field.title}
                     description={field.placeholder}

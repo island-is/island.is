@@ -1,10 +1,16 @@
 query ListLicenses($input: GetGenericLicensesInput!, $locale: String) {
-  genericLicenses(input: $input, locale: $locale) {
-    ...GenericUserLicenseFragment
+  genericLicenseCollection(input: $input, locale: $locale) {
+    errors {
+      code
+      message
+    }
+    licenses {
+      ...GenericUserLicenseFragment
+    }
   }
 }
 
-query GetLicense($input: GetGenericLicenseInput!, $locale: String) {
+query GetLicense($input: GetGenericLicenseInput!, $locale: String!) {
   genericLicense(input: $input, locale: $locale) {
     ...GenericUserLicenseFragment
     barcode {
@@ -35,28 +41,30 @@ mutation VerifyPkPass($input: VerifyPkPassInput!) {
 mutation VerifyLicenseBarcode($input: VerifyLicenseBarcodeInput!) {
   verifyLicenseBarcode(input: $input) {
     data {
+      __typename
       ... on LicenseDriverLicenseData {
         nationalId
         name
         picture
+      }
+      ... on LicenseFirearmLicenseData {
+        nationalId
+        name
+        picture
+      }
+      ... on LicenseHuntingLicenseData {
+        nationalId
+        name
+        picture
+      }
+      ... on LicenseGeneralLicenseData {
+        nationalId
+        name
       }
     }
     valid
     error
     licenseType
     barcodeType
-  }
-}
-
-query GetIdentityDocument {
-  getIdentityDocument {
-    ...identityDocumentFragment
-  }
-  getIdentityDocumentChildren {
-    childNationalId
-    childName
-    passports {
-      ...identityDocumentFragment
-    }
   }
 }

@@ -1,10 +1,13 @@
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
 
-import { Case } from '../../../case'
+import {
+  Case,
+  Defendant,
+  DefendantRepositoryService,
+} from '../../../repository'
 import { InternalUpdateDefendantDto } from '../../dto/internalUpdateDefendant.dto'
-import { Defendant } from '../../models/defendant.model'
 
 interface Then {
   result: Defendant
@@ -23,7 +26,7 @@ describe('InternalDefendantController - Update defendant', () => {
     nationalId: defendantNationalId,
     ...update,
   }
-  let mockDefendantModel: typeof Defendant
+  let mockDefendantRepositoryService: DefendantRepositoryService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
@@ -31,12 +34,12 @@ describe('InternalDefendantController - Update defendant', () => {
       id: defendantId,
       nationalId: defendantNationalId,
     } as Defendant
-    const { defendantModel, internalDefendantController } =
+    const { defendantRepositoryService, internalDefendantController } =
       await createTestingDefendantModule()
 
-    mockDefendantModel = defendantModel
+    mockDefendantRepositoryService = defendantRepositoryService
 
-    const mockUpdate = mockDefendantModel.update as jest.Mock
+    const mockUpdate = mockDefendantRepositoryService.update as jest.Mock
     mockUpdate.mockRejectedValue(new Error('Some error'))
 
     givenWhenThen = async () => {
@@ -61,15 +64,17 @@ describe('InternalDefendantController - Update defendant', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockUpdate = mockDefendantModel.update as jest.Mock
-      mockUpdate.mockResolvedValue([1, [updatedDefendant]])
+      const mockUpdate = mockDefendantRepositoryService.update as jest.Mock
+      mockUpdate.mockResolvedValue(updatedDefendant)
 
       then = await givenWhenThen()
     })
     it('should update the defendant', async () => {
-      expect(mockDefendantModel.update).toHaveBeenCalledWith(
-        { ...update, isDefenderChoiceConfirmed: false },
-        { where: { id: defendantId, caseId }, returning: true },
+      expect(mockDefendantRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
+        defendantId,
+        { ...update },
+        { transaction: undefined },
       )
       expect(then.result).toEqual(updatedDefendant)
     })

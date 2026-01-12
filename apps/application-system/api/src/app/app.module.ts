@@ -13,6 +13,7 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
 import { ApplicationModule } from './modules/application/application.module'
 import { DrivingLicenseBookClientConfig } from '@island.is/clients/driving-license-book'
 import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
+import { NationalRegistryV3ApplicationsClientConfig } from '@island.is/clients/national-registry-v3-applications'
 import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 import { DrivingLicenseApiConfig } from '@island.is/clients/driving-license'
 import { MunicipalitiesFinancialAidConfig } from '@island.is/clients/municipalities-financial-aid'
@@ -33,15 +34,20 @@ import { AlthingiOmbudsmanClientConfig } from '@island.is/clients/althingi-ombud
 import { DirectorateOfImmigrationClientConfig } from '@island.is/clients/directorate-of-immigration'
 import { CarRecyclingClientConfig } from '@island.is/clients/car-recycling'
 import { ArborgWorkpoinClientConfig } from '@island.is/clients/workpoint/arborg'
-import { SocialInsuranceAdministrationClientConfig } from '@island.is/clients/social-insurance-administration'
+import {
+  SocialInsuranceAdministrationClientConfig,
+  SocialInsuranceAdministrationClientConfigV2,
+} from '@island.is/clients/social-insurance-administration'
 import { SignatureCollectionClientConfig } from '@island.is/clients/signature-collection'
 import { InnaClientConfig } from '@island.is/clients/inna'
 import { OfficialJournalOfIcelandClientConfig } from '@island.is/clients/official-journal-of-iceland'
 import { OfficialJournalOfIcelandApplicationClientConfig } from '@island.is/clients/official-journal-of-iceland/application'
+import { LegalGazetteClientConfig } from '@island.is/clients/legal-gazette'
 import {
   HealthDirectorateClientConfig,
   HealthDirectorateVaccinationsClientConfig,
   HealthDirectorateOrganDonationClientConfig,
+  HealthDirectorateHealthClientConfig,
 } from '@island.is/clients/health-directorate'
 import {
   AgriculturalUniversityOfIcelandCareerClientConfig,
@@ -52,7 +58,6 @@ import {
   UniversityOfIcelandCareerClientConfig,
 } from '@island.is/clients/university-careers'
 import { DataProtectionComplaintClientConfig } from '@island.is/clients/data-protection-complaint'
-import { CriminalRecordClientConfig } from '@island.is/clients/criminal-record'
 import { HealthInsuranceV2ClientConfig } from '@island.is/clients/icelandic-health-insurance/health-insurance'
 import { VmstClientConfig } from '@island.is/clients/vmst'
 import { RightsPortalClientConfig } from '@island.is/clients/icelandic-health-insurance/rights-portal'
@@ -62,7 +67,15 @@ import { emailModuleConfig } from '@island.is/email-service'
 import { sharedModuleConfig } from '@island.is/application/template-api-modules'
 import { UserNotificationClientConfig } from '@island.is/clients/user-notification'
 import { NationalRegistryV3ClientConfig } from '@island.is/clients/national-registry-v3'
+import { SeminarsClientConfig } from '@island.is/clients/seminars-ver'
 import { SecondarySchoolClientConfig } from '@island.is/clients/secondary-school'
+import { WorkMachinesClientConfig } from '@island.is/clients/work-machines'
+import { BankInfoClientConfig } from '@island.is/clients/fjs/bank-info'
+import { PaymentsApiClientConfig } from '@island.is/clients/payments'
+import { VmstUnemploymentClientConfig } from '@island.is/clients/vmst-unemployment'
+import { HmsRentalAgreementClientConfig } from '@island.is/clients/hms-rental-agreement'
+import { ExemptionForTransportationClientConfig } from '@island.is/clients/transport-authority/exemption-for-transportation'
+import { ZendeskServiceConfig } from '@island.is/clients/zendesk'
 
 @Module({
   imports: [
@@ -80,6 +93,7 @@ import { SecondarySchoolClientConfig } from '@island.is/clients/secondary-school
         DrivingLicenseApiConfig,
         DrivingLicenseBookClientConfig,
         NationalRegistryClientConfig,
+        NationalRegistryV3ApplicationsClientConfig,
         FeatureFlagConfig,
         MunicipalitiesFinancialAidConfig,
         FishingLicenseClientConfig,
@@ -100,13 +114,16 @@ import { SecondarySchoolClientConfig } from '@island.is/clients/secondary-school
         CarRecyclingClientConfig,
         ArborgWorkpoinClientConfig,
         SocialInsuranceAdministrationClientConfig,
+        SocialInsuranceAdministrationClientConfigV2,
         SignatureCollectionClientConfig,
         InnaClientConfig,
         OfficialJournalOfIcelandClientConfig,
         OfficialJournalOfIcelandApplicationClientConfig,
+        LegalGazetteClientConfig,
         HealthDirectorateVaccinationsClientConfig,
         HealthDirectorateOrganDonationClientConfig,
         HealthDirectorateClientConfig,
+        HealthDirectorateHealthClientConfig,
         AgriculturalUniversityOfIcelandCareerClientConfig,
         BifrostUniversityCareerClientConfig,
         UniversityOfAkureyriCareerClientConfig,
@@ -114,7 +131,6 @@ import { SecondarySchoolClientConfig } from '@island.is/clients/secondary-school
         HolarUniversityCareerClientConfig,
         IcelandUniversityOfTheArtsCareerClientConfig,
         DataProtectionComplaintClientConfig,
-        CriminalRecordClientConfig,
         HealthInsuranceV2ClientConfig,
         VmstClientConfig,
         RightsPortalClientConfig,
@@ -124,7 +140,15 @@ import { SecondarySchoolClientConfig } from '@island.is/clients/secondary-school
         sharedModuleConfig,
         UserNotificationClientConfig,
         NationalRegistryV3ClientConfig,
+        SeminarsClientConfig,
         SecondarySchoolClientConfig,
+        WorkMachinesClientConfig,
+        BankInfoClientConfig,
+        PaymentsApiClientConfig,
+        VmstUnemploymentClientConfig,
+        HmsRentalAgreementClientConfig,
+        ExemptionForTransportationClientConfig,
+        ZendeskServiceConfig,
       ],
     }),
   ],

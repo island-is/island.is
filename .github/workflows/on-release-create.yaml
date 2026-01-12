@@ -1,0 +1,21 @@
+name: Release created
+
+on:
+  push:
+    branches:
+      - 'releases/**'
+jobs:
+  mq:
+    if: github.event.created
+    runs-on: arc-shared
+    env:
+      GIT_BRANCH: ${{ github.ref_name }}
+    steps:
+      - run: |
+          export GIT_BRANCH="${GIT_BRANCH:-${GITHUB_REF#refs/heads/}}"
+          echo "New release branch created: $GIT_BRANCH"
+          curl -X POST \
+          -H "Accept: application/vnd.github+json" \
+          -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+          https://api.github.com/repos/${{ github.repository }}/actions/workflows/merge-queue.yml/dispatches \
+          -d "{\"ref\":\"$GIT_BRANCH\"}"

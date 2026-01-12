@@ -1,13 +1,12 @@
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { CaseFileState, CaseType } from '@island.is/judicial-system/types'
 
 import { createTestingFileModule } from '../createTestingFileModule'
 
 import { AwsS3Service } from '../../../aws-s3'
-import { Case } from '../../../case'
+import { Case, CaseFile } from '../../../repository'
 import { DeleteFileResponse } from '../../models/deleteFile.response'
-import { CaseFile } from '../../models/file.model'
 
 interface Then {
   result: DeleteFileResponse
@@ -59,7 +58,7 @@ describe('LimitedAccessFileController - Delete case file', () => {
     const theCase = { id: caseId, type: caseType } as Case
     const fileId = uuid()
     const key = `${uuid()}/${uuid()}/test.txt`
-    const caseFile = { id: fileId, key } as CaseFile
+    const caseFile = { id: fileId, key, isKeyAccessible: true } as CaseFile
     let then: Then
 
     beforeEach(async () => {
@@ -71,30 +70,11 @@ describe('LimitedAccessFileController - Delete case file', () => {
 
     it('should update the case file status in the database', () => {
       expect(mockFileModel.update).toHaveBeenCalledWith(
-        { state: CaseFileState.DELETED, key: null },
+        { state: CaseFileState.DELETED, isKeyAccessible: false },
         { where: { id: fileId } },
       )
       expect(mockAwsS3Service.deleteObject).toHaveBeenCalledWith(caseType, key)
       expect(then.result).toEqual({ success: true })
-    })
-  })
-
-  describe('AWS S3 removal skipped', () => {
-    const caseId = uuid()
-    const caseType = CaseType.CUSTODY
-    const theCase = { id: caseId, type: caseType } as Case
-    const fileId = uuid()
-    const caseFile = { id: fileId } as CaseFile
-
-    beforeEach(async () => {
-      const mockUpdate = mockFileModel.update as jest.Mock
-      mockUpdate.mockResolvedValueOnce([1])
-
-      await givenWhenThen(caseId, theCase, fileId, caseFile)
-    })
-
-    it('should not attempt to remove from AWS S3', () => {
-      expect(mockAwsS3Service.deleteObject).not.toHaveBeenCalled()
     })
   })
 

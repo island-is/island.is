@@ -1,15 +1,15 @@
 import { forwardRef, Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 
-import { CaseModule } from '../case/case.module'
-import { IndictmentCount } from './models/indictmentCount.model'
+import { IndictmentCount, Offense } from '../repository'
+import { CaseModule } from '..'
 import { IndictmentCountController } from './indictmentCount.controller'
 import { IndictmentCountService } from './indictmentCount.service'
 
 @Module({
   imports: [
     forwardRef(() => CaseModule),
-    SequelizeModule.forFeature([IndictmentCount]),
+    SequelizeModule.forFeature([IndictmentCount, Offense]),
   ],
   controllers: [IndictmentCountController],
   providers: [IndictmentCountService],

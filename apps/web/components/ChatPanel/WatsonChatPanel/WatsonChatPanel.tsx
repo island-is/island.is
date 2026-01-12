@@ -174,7 +174,6 @@ const ChatFeedbackPanel = ({
         </Box>
 
         <Input
-          autoExpand={{ on: true, maxHeight: 300 }}
           textarea
           rows={3}
           size="xs"
@@ -241,7 +240,7 @@ const getScriptSource = (version: string) => {
 
 const loadScript = (
   options: Window['watsonAssistantChatOptions'],
-  version = 'latest',
+  version = '8.7.0',
 ) => {
   window.watsonAssistantChatOptions = options
   const scriptElement = document.createElement('script')
@@ -257,7 +256,7 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
     useState(false)
 
   const {
-    version = 'latest',
+    version = '8.7.0',
     showLauncher = true,
     namespaceKey,
     onLoad,
@@ -334,6 +333,7 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
           },
           serviceDesk: {
             skipConnectAgentCard: true,
+            ...props.serviceDesk,
           },
           ...propsCopy,
           onLoad: (instance) => {
@@ -449,70 +449,67 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
           )}
         />
       )}
-      {!shouldDisplayFeedbackPanel && (
-        <ChatBubble
-          text={n('chatBubbleText', 'Hæ, get ég aðstoðað?')}
-          isVisible={true}
-          onClick={() => {
-            watsonInstance.current?.openWindow()
-            setHasButtonBeenClicked(true)
-          }}
-          pushUp={pushUp}
-          loading={loading}
-          embedDisclaimerProps={
-            replaceDirectorateOfImmigrationWebChatWithAI &&
-            props.integrationID === '9e320784-ad44-4da9-9eb3-f305057a196a'
-              ? {
-                  localStorageKey: 'watsonAssistantChatAllowed',
-                  texts: {
-                    message:
-                      activeLocale === 'is' ? (
-                        <Text variant="small">
-                          Þetta netspjall er hýst af þriðja aðila. Með því að
-                          halda áfram samþykkir þú{' '}
-                          {!chatTermsUrl ? (
-                            'skilmála'
-                          ) : (
-                            <a href={chatTermsUrl ?? ''}>skilmála</a>
-                          )}{' '}
-                          þeirra.
-                        </Text>
-                      ) : (
-                        <Text variant="small">
-                          This AI chatbot is hosted by a third party and by
-                          continuing, you are agreeing to their{' '}
-                          {!chatTermsUrl ? (
-                            'terms and conditions'
-                          ) : (
-                            <a href={chatTermsUrl ?? ''}>
-                              terms and conditions
-                            </a>
-                          )}
-                          . The chatbots purpose is to assist you in your search
-                          for information, it's still learning so suggestions
-                          must be taken with caution.
-                        </Text>
-                      ),
-                    remember: n(
-                      'rememberThisSetting',
-                      activeLocale === 'is'
-                        ? 'Muna þessa stillingu'
-                        : 'Remember this setting',
+      <ChatBubble
+        text={n('chatBubbleText', 'Hæ, get ég aðstoðað?')}
+        isVisible={true}
+        onClick={() => {
+          watsonInstance.current?.openWindow()
+          setHasButtonBeenClicked(true)
+        }}
+        pushUp={pushUp}
+        loading={loading}
+        embedDisclaimerProps={
+          replaceDirectorateOfImmigrationWebChatWithAI &&
+          props.integrationID === '9e320784-ad44-4da9-9eb3-f305057a196a'
+            ? {
+                localStorageKey: 'watsonAssistantChatAllowed',
+                texts: {
+                  message:
+                    activeLocale === 'is' ? (
+                      <Text variant="small">
+                        Þetta netspjall er hýst af þriðja aðila. Með því að
+                        halda áfram samþykkir þú{' '}
+                        {!chatTermsUrl ? (
+                          'skilmála'
+                        ) : (
+                          <a href={chatTermsUrl ?? ''}>skilmála</a>
+                        )}{' '}
+                        þeirra.
+                      </Text>
+                    ) : (
+                      <Text variant="small">
+                        This AI chatbot is hosted by a third party and by
+                        continuing, you are agreeing to their{' '}
+                        {!chatTermsUrl ? (
+                          'terms and conditions'
+                        ) : (
+                          <a href={chatTermsUrl ?? ''}>terms and conditions</a>
+                        )}
+                        . The chatbots purpose is to assist you in your search
+                        for information, it's still learning so suggestions must
+                        be taken with caution.
+                      </Text>
                     ),
-                    accept: n(
-                      'accept',
-                      activeLocale === 'is' ? 'Halda áfram' : 'I agree',
-                    ),
-                    cancel: n(
-                      'cancel',
-                      activeLocale === 'is' ? 'Hætta við' : 'I disagree',
-                    ),
-                  },
-                }
-              : undefined
-          }
-        />
-      )}
+                  remember: n(
+                    'rememberThisSetting',
+                    activeLocale === 'is'
+                      ? 'Muna þessa stillingu'
+                      : 'Remember this setting',
+                  ),
+                  accept: n(
+                    'accept',
+                    activeLocale === 'is' ? 'Halda áfram' : 'I agree',
+                  ),
+                  cancel: n(
+                    'cancel',
+                    activeLocale === 'is' ? 'Hætta við' : 'I disagree',
+                  ),
+                },
+              }
+            : undefined
+        }
+      />
+
       <ToastContainer />
     </Hidden>
   )

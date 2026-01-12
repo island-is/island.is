@@ -13,18 +13,18 @@ import {
   isCourtOfAppealsUser,
   isDistrictCourtUser,
   isProsecutionUser,
-  isPublicProsecutorUser,
+  isPublicProsecutionOfficeUser,
   User,
 } from '@island.is/judicial-system/types'
 
-import { Case } from '../../case'
+import { Case } from '../../repository'
 
 @Injectable()
 export class ViewCaseFileGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest()
 
-    const user: User = request.user
+    const user: User = request.user?.currentUser
 
     if (!user) {
       throw new InternalServerErrorException('Missing user')
@@ -40,7 +40,7 @@ export class ViewCaseFileGuard implements CanActivate {
       return true
     }
 
-    if (isPublicProsecutorUser(user) && isCompletedCase(theCase.state)) {
+    if (isPublicProsecutionOfficeUser(user) && isCompletedCase(theCase.state)) {
       return true
     }
 

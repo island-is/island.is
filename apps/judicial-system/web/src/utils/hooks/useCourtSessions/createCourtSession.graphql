@@ -1,0 +1,6 @@
+mutation CreateCourtSession($input: CreateCourtSessionInput!) {
+  createCourtSession(input: $input) {
+    id
+    created
+  }
+}

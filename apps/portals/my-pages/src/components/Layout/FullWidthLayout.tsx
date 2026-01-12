@@ -10,6 +10,7 @@ import {
 import {
   m,
   ModuleAlertBannerSection,
+  SearchPaths,
   TabNavigation,
 } from '@island.is/portals/my-pages/core'
 import * as styles from './Layout.css'
@@ -36,6 +37,7 @@ type FullWidthLayoutProps = {
   isDashboard: boolean
   isDocuments: boolean
   isFinance: boolean
+  isSearch: boolean
 } & FullWidthLayoutWrapperProps
 
 export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
@@ -46,6 +48,7 @@ export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
   isDashboard,
   isDocuments,
   isFinance,
+  isSearch,
 }) => {
   const navigate = useNavigate()
   const { formatMessage } = useLocale()
@@ -79,8 +82,8 @@ export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
         minHeight: `calc(100vh - ${theme.headerHeight.large}px`,
       }}
     >
-      <Box>
-        {!isDashboard && !isDocuments && (
+      <Box className={styles.fullWidthInner} marginX={'auto'}>
+        {!isDashboard && !isDocuments && !isSearch && (
           <>
             <Box paddingBottom={[3, 4]} paddingTop={[4, 4, 0]}>
               <GridContainer className={styles.wrap} position="none">
@@ -115,7 +118,11 @@ export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
                   <GridColumn span="12/12">
                     <IntroHeader
                       title={activeParent?.name || ''}
-                      intro={activeParent?.heading}
+                      intro={
+                        isFinance
+                          ? activeParent?.intro
+                          : activeParent?.description
+                      }
                     />
                   </GridColumn>
                 </GridRow>
@@ -163,6 +170,11 @@ const FullWidthLayoutWrapper: FC<FullWidthLayoutWrapperProps> = (props) => {
   const isFinance = Object.values(FinancePaths).find((route) =>
     matchPath(route, props.pathname),
   )
+
+  const isSearch = Object.values(SearchPaths).find((route) =>
+    matchPath(route, props.pathname),
+  )
+
   const isSpecialView = !!isDashboard || !!isDocuments
 
   return (
@@ -170,6 +182,7 @@ const FullWidthLayoutWrapper: FC<FullWidthLayoutWrapperProps> = (props) => {
       isDashboard={!!isDashboard}
       isDocuments={!!isDocuments}
       isFinance={!!isFinance}
+      isSearch={!!isSearch}
       {...props}
     >
       <ModuleAlertBannerSection paddingTop={isSpecialView ? 0 : 2} />

@@ -1,9 +1,9 @@
 version: '3.3'
 
 services:
-  db_reference_backend:
+  db_form-system:
     image: public.ecr.aws/docker/library/postgres:15.3-alpine
-    container_name: form-system
+    container_name: db_form_system
     networks:
       - local
     environment:
@@ -11,7 +11,7 @@ services:
       - POSTGRES_USER=dev_db
       - POSTGRES_PASSWORD=dev_db
     ports:
-      - 5432:5432
+      - 5438:5432
 
 networks:
   local:

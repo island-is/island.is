@@ -13,14 +13,21 @@
       }
     },
     "build": {
-      "executor": "./tools/executors/node:build",
+      "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/services/user-notification",
         "main": "apps/services/user-notification/src/main.ts",
         "tsConfig": "apps/services/user-notification/tsconfig.app.json",
+        "generatePackageJson": true,
+        "esbuildConfig": "tools/esbuild.config.js",
+        "format": ["cjs"],
         "assets": [
-          "apps/services/user-notification/src/assets",
+          {
+            "glob": "**/*",
+            "input": "apps/services/user-notification/src/assets",
+            "output": "./assets"
+          },
           {
             "glob": "*",
             "input": "apps/services/user-notification/migrations",
@@ -47,7 +54,6 @@
         "production": {
           "optimization": true,
           "extractLicenses": true,
-          "inspect": false,
           "fileReplacements": [
             {
               "replace": "apps/services/user-notification/src/environments/environment.ts",
@@ -77,6 +83,13 @@
         "args": ["--job", "cleanup"]
       }
     },
+    "birthday": {
+      "executor": "@nx/js:node",
+      "options": {
+        "buildTarget": "services-user-notification:build",
+        "args": ["--job", "worker", "--isBirthdayWorker"]
+      }
+    },
     "lint": {
       "executor": "@nx/eslint:lint"
     },
@@ -90,7 +103,10 @@
     "dev-services": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "docker compose up -d --build",
+        "commands": [
+          "docker compose up -d --build",
+          "docker compose -f ../../../scripts/docker-compose/redis-cluster.yml up -d"
+        ],
         "cwd": "apps/services/user-notification"
       }
     },
@@ -141,8 +157,8 @@
         "parallel": true
       }
     },
-    "docker-express": {
-      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
+    "docker-express-yarn": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express-yarn`"
     }
   }
 }

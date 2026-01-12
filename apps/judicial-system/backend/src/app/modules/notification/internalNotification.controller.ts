@@ -18,15 +18,14 @@ import {
 } from '@island.is/judicial-system/message'
 import { indictmentCases } from '@island.is/judicial-system/types'
 
-import { Case, CaseHasExistedGuard, CaseTypeGuard, CurrentCase } from '../case'
+import { CaseHasExistedGuard, CaseTypeGuard, CurrentCase } from '../case'
 import {
-  CivilClaimant,
   CivilClaimantExistsGuard,
   CurrentCivilClaimant,
   CurrentDefendant,
-  Defendant,
-  DefendantExistsGuard,
+  SplitDefendantExistsGuard,
 } from '../defendant'
+import { Case, CivilClaimant, Defendant } from '../repository'
 import { SubpoenaExistsGuard } from '../subpoena'
 import { CaseNotificationDto } from './dto/caseNotification.dto'
 import { CivilClaimantNotificationDto } from './dto/civilClaimantNotification.dto'
@@ -81,6 +80,7 @@ export class InternalNotificationController {
       notificationDto.type,
       theCase,
       notificationDto.user,
+      notificationDto.userDescriptor,
     )
   }
 
@@ -104,6 +104,7 @@ export class InternalNotificationController {
     return this.indictmentCaseNotificationService.sendIndictmentCaseNotification(
       notificationDto.type,
       theCase,
+      notificationDto.userDescriptor,
     )
   }
 
@@ -112,7 +113,11 @@ export class InternalNotificationController {
       messageEndpoint[MessageType.SUBPOENA_NOTIFICATION]
     }/:defendantId/:subpoenaId`,
   )
-  @UseGuards(CaseHasExistedGuard, DefendantExistsGuard, SubpoenaExistsGuard)
+  @UseGuards(
+    CaseHasExistedGuard,
+    SplitDefendantExistsGuard,
+    SubpoenaExistsGuard,
+  )
   @ApiCreatedResponse({
     type: DeliverResponse,
     description: 'Sends a subpoena notification for an existing subpoena',
@@ -139,7 +144,7 @@ export class InternalNotificationController {
       messageEndpoint[MessageType.DEFENDANT_NOTIFICATION]
     }/:defendantId`,
   )
-  @UseGuards(CaseHasExistedGuard, DefendantExistsGuard)
+  @UseGuards(CaseHasExistedGuard, SplitDefendantExistsGuard)
   @ApiCreatedResponse({
     type: DeliverResponse,
     description:
@@ -160,6 +165,7 @@ export class InternalNotificationController {
       notificationDto.type,
       theCase,
       defendant,
+      notificationDto.user,
     )
   }
 
@@ -228,6 +234,7 @@ export class InternalNotificationController {
     return this.notificationDispatchService.dispatchEventNotification(
       notificationDto.type,
       theCase,
+      notificationDto.userDescriptor,
     )
   }
 

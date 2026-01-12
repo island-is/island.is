@@ -1,6 +1,6 @@
 import { getModelToken } from '@nestjs/sequelize'
 import addYears from 'date-fns/addYears'
-import kennitala from 'kennitala'
+import { generatePerson } from 'kennitala'
 import times from 'lodash/times'
 import request from 'supertest'
 
@@ -730,15 +730,6 @@ describe('ActorDelegationsController', () => {
             let clientInstance: any
 
             const mockForKt = (kt: string): void => {
-              jest.spyOn(kennitala, 'info').mockReturnValue({
-                kt,
-                age: 16,
-                birthday: addYears(Date.now(), -15),
-                birthdayReadable: '',
-                type: 'person',
-                valid: true,
-              })
-
               jest
                 .spyOn(clientInstance, 'getIndividual')
                 .mockResolvedValueOnce({
@@ -763,7 +754,7 @@ describe('ActorDelegationsController', () => {
             })
 
             it('should return delegations', async () => {
-              const kt = '1111089030'
+              const kt = generatePerson(addYears(Date.now(), -15))
 
               // Arrange
               mockForKt(kt)

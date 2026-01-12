@@ -37,9 +37,9 @@ const envVariables: EnvironmentVariables = {
     prod: 'false',
   },
   AUTH_DELEGATION_API_URL: {
-    dev: 'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local',
+    dev: 'https://auth-delegation-api.internal.identity-server.dev01.devland.is',
     staging:
-      'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local',
+      'http://services-auth-delegation-api.identity-server-delegation.svc.cluster.local',
     prod: 'https://auth-delegation-api.internal.innskra.island.is',
   },
   AUTH_DELEGATION_MACHINE_CLIENT_SCOPE: json([
@@ -55,8 +55,6 @@ const secrets: Secrets = {
   EMAIL_FROM_NAME: '/k8s/service-portal/api/EMAIL_FROM_NAME',
   EMAIL_REPLY_TO: '/k8s/service-portal/api/EMAIL_REPLY_TO',
   EMAIL_REPLY_TO_NAME: '/k8s/service-portal/api/EMAIL_REPLY_TO_NAME',
-  ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE',
-  ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH',
   IDENTITY_SERVER_CLIENT_ID: `/k8s/service-portal/api/SERVICE_PORTAL_API_CLIENT_ID`,
   IDENTITY_SERVER_CLIENT_SECRET: `/k8s/service-portal/api/SERVICE_PORTAL_API_CLIENT_SECRET`,
   NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
@@ -74,13 +72,12 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceId> =>
     .xroad(Base, Client, NationalRegistryB2C)
     .migrations()
     .liveness('/liveness')
-    .readiness('/readiness')
+    .readiness('/health/check')
     .replicaCount({
       default: 2,
       max: 30,
       min: 2,
     })
-    .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({
       internal: {
         host: {

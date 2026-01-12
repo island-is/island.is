@@ -1,4 +1,4 @@
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { EmailService } from '@island.is/email-service'
 
@@ -14,7 +14,7 @@ import {
   createTestUsers,
 } from '../createTestingNotificationModule'
 
-import { Case } from '../../../case'
+import { Case } from '../../../repository'
 import { DeliverResponse } from '../../models/deliver.response'
 
 interface Then {
@@ -105,7 +105,7 @@ describe('InternalNotificationController - Send appeal statement notifications',
       then = await givenWhenThen(
         {
           role: UserRole.PROSECUTOR,
-          institution: { type: InstitutionType.PROSECUTORS_OFFICE },
+          institution: { type: InstitutionType.POLICE_PROSECUTORS_OFFICE },
         } as User,
         uuid(),
         appealCaseNumber,
@@ -135,7 +135,7 @@ describe('InternalNotificationController - Send appeal statement notifications',
       then = await givenWhenThen(
         {
           role: UserRole.PROSECUTOR,
-          institution: { type: InstitutionType.PROSECUTORS_OFFICE },
+          institution: { type: InstitutionType.POLICE_PROSECUTORS_OFFICE },
         } as User,
         undefined,
         appealCaseNumber,
@@ -192,7 +192,7 @@ describe('InternalNotificationController - Send appeal statement notifications',
       then = await givenWhenThen(
         {
           role: UserRole.PROSECUTOR,
-          institution: { type: InstitutionType.PROSECUTORS_OFFICE },
+          institution: { type: InstitutionType.POLICE_PROSECUTORS_OFFICE },
         } as User,
         uuid(),
       )
@@ -216,7 +216,7 @@ describe('InternalNotificationController - Send appeal statement notifications',
     beforeEach(async () => {
       then = await givenWhenThen({
         role: UserRole.PROSECUTOR,
-        institution: { type: InstitutionType.PROSECUTORS_OFFICE },
+        institution: { type: InstitutionType.POLICE_PROSECUTORS_OFFICE },
       } as User)
     })
 

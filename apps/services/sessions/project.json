@@ -6,12 +6,15 @@
   "tags": ["scope:nest"],
   "targets": {
     "build": {
-      "executor": "./tools/executors/node:build",
+      "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/services/sessions/api",
         "main": "apps/services/sessions/src/main.ts",
         "tsConfig": "apps/services/sessions/tsconfig.app.json",
+        "generatePackageJson": true,
+        "esbuildConfig": "tools/esbuild.config.js",
+        "format": ["cjs"],
         "assets": [
           {
             "glob": "*",
@@ -34,8 +37,7 @@
         "production": {
           "outputPath": "dist/apps/services/sessions",
           "optimization": true,
-          "extractLicenses": true,
-          "inspect": false
+          "extractLicenses": true
         }
       }
     },
@@ -86,7 +88,10 @@
     "dev-services": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "docker compose up -d",
+        "commands": [
+          "docker compose up -d",
+          "docker compose -f ../../../scripts/docker-compose/redis-cluster.yml up -d"
+        ],
         "cwd": "apps/services/sessions"
       }
     },
@@ -121,8 +126,8 @@
         "cwd": "apps/services/sessions"
       }
     },
-    "docker-express": {
-      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
+    "docker-express-yarn": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express-yarn`"
     }
   }
 }

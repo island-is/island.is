@@ -17,262 +17,150 @@ env:
   COMPOSE_HTTP_TIMEOUT: 180
   SKIP_GENERATED_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-generated-cache') }}
   NX_AFFECTED_ALL: ${{ contains(github.event.pull_request.labels.*.name, 'nx-affected-all') }}
+  NX_SKIP_NX_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-nx-cache') }}
+  DISABLE_CHUNKS: 'true'
+  DISABLE_GROUPING: 'false'
+  DISABLE_PROBLEMATIC: 'false'
+  CHUNK_SIZE: '8'
+  MAX_JOBS: '3'
+  NX_PARALLEL: '2'
+  NX_MAX_PARALLEL: '4'
+  NX_TASKS_RUNNER: ci
+  NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+  RUNS_ON_BUCKET_NAME: ${{ vars.RUNS_ON_BUCKET_NAME }}
+  AWS_REGION: eu-west-1
+  GENERATED_FILES: ${{ github.sha }}.tar.gz
+  AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
+  SERVERSIDE_FEATURES_ON: ''
+  DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com
+  DOCKER_BASE_IMAGE_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/ecr-public
+  CI_DEBUG: ${{ contains(github.event.pull_request.labels.*.name, 'ci debug') }}
+  SKIP_TESTS: ${{ contains(github.event.pull_request.labels.*.name, 'test nothing') }}
+  DEPLOY_FEATURE: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
+  YARN_ENABLE_HARDENED_MODE: '0'
 
 jobs:
   prepare:
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-    timeout-minutes: 35
+    permissions:
+      contents: 'read'
+      actions: 'read'
+    uses: ./.github/workflows/install.yml
+    secrets: inherit
+    with:
+      main_branch: ${{ github.base_ref }}
 
-    env:
-      AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
-      CHUNK_SIZE: 7
-      SERVERSIDE_FEATURES_ON: ''
-      DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
-      DOCKER_BASE_IMAGE_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/ecr-public
-
-    outputs:
-      TEST_CHUNKS: ${{ steps.test_projects.outputs.CHUNKS }}
-      E2E_CHUNKS: ${{ steps.e2e_projects.outputs.CHUNKS }}
-      E2E_BUILD_ID: ${{ steps.e2e_projects.outputs.BUILD_ID }}
-      LINT_CHUNKS: ${{ steps.lint_projects.outputs.CHUNKS }}
-      BUILD_CHUNKS: ${{ steps.build_projects.outputs.CHUNKS }}
-      CACHE_KEYS: ${{ steps.get-cache.outputs.keys }}
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: 'package.json'
-
-      - name: Setup yarn
-        run: corepack enable
-
-      - name: Check node version
-        run: |
-          set -euo pipefail
-          node -v
-          ls -l `which node`
-      - name: Checking out relevant branches
-        run: |
-          set -euo pipefail
-          git checkout "$GITHUB_HEAD_REF"
-          git checkout "$GITHUB_BASE_REF"
-          git checkout "$GITHUB_SHA"
-          git config --global user.email "ci@island.is"
-          git config --global user.name "CI Bot"
-
-          BASE_SHA="$(git merge-base HEAD "$GITHUB_BASE_REF")"
-          HEAD_SHA="$(git merge-base HEAD "$GITHUB_HEAD_REF")"
-          echo "Current base SHA is '$BASE_SHA' and head SHA is '$HEAD_SHA'"
-          echo "{\"base_sha\": \"$BASE_SHA\", \"head_sha\":\"$HEAD_SHA\"}" > event.json
-
-      # This is to increase the retention days for our GitHub Actions run events
-      # See this for more information:
-      # https://github.blog/changelog/2020-10-08-github-actions-ability-to-change-retention-days-for-artifacts-and-logs/
-      - name: Keep PR run event
-        uses: actions/upload-artifact@b18b1d32f3f31abcdc29dee3f2484801fe7822f4
-        with:
-          name: pr-event
-          path: event.json
-          retention-days: 90
-          include-hidden-files: true
-          if-no-files-found: error
-
-      - name: Get cache
-        id: get-cache
-        uses: ./.github/actions/get-cache
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          enable-cache: 'node_modules,cypress,generated-files'
-
-      - run: |
-          set -euo pipefail
-          echo "HEAD=$GITHUB_SHA" >> "$GITHUB_ENV"
-          export HEAD_REF="$GITHUB_HEAD_REF"
-          export BASE_REF="$GITHUB_BASE_REF"
-          export PR_REF="$GITHUB_SHA"
-          export SHELL=/usr/bin/bash
-          export WORKFLOW_ID=pullrequest
-          source ./scripts/ci/00_prepare-base-tags.sh "$(git merge-base HEAD "$GITHUB_BASE_REF")"
-          git checkout "$GITHUB_SHA"
-          echo "BASE=$BASE" >> "$GITHUB_ENV"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          HTML_URL: ${{ github.event.pull_request.html_url }}
-          ISSUE_REPORTING_SLACK_WEBHOOK_URL: ${{ secrets.SLACK_BUILD_ISSUES_REPORTING_WEBHOOK_URL }}
-        name: Preparing HEAD and BASE tags
-
-      - name: License audit Node modules
-        run: ./scripts/ci/20_license-audit.sh
-
-      - name: Check user permissions
-        uses: actions-cool/check-user-permission@v2
-        id: check-permission
-
-      - name: Set magic env if test-everything label is set
-        if: ${{ contains(github.event.pull_request.labels.*.name, 'test everything') && steps.check-permission.outputs['user-permission'] == 'admin' }}
-        run: |
-          echo "AFFECTED_ALL=7913-$GITHUB_HEAD_REF" >> "$GITHUB_ENV"
-
-      - name: Warn if user does not have the required permissions
-        if: ${{ contains(github.event.pull_request.labels.*.name, 'test everything') && steps.check-permission.outputs['user-permission'] != 'admin' }}
-        run: |
-          echo "## WARN permissions" >> "$GITHUB_STEP_SUMMARY"
-          echo "User '$GITHUB_ACTOR' does not have the required permissions to apply the 'test everything' label" >> "$GITHUB_STEP_SUMMARY"
-
-      - name: Prepare lint targets
-        id: lint_projects
-        run: |
-          set -euo pipefail
-          CHUNKS="$(./scripts/ci/generate-chunks.sh lint)"
-          if [[ "$CHUNKS" != "[]" ]]; then
-            echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Prepare test targets
-        id: test_projects
-        run: |
-          set -euo pipefail
-          CHUNKS="$(./scripts/ci/generate-chunks.sh test)"
-          if [[ "$CHUNKS" != "[]" ]]; then
-            echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Prepare e2e targets
-        id: e2e_projects
-        env:
-          CHUNK_SIZE: 1
-        run: |
-          set -euo pipefail
-          CHUNKS="$(./scripts/ci/generate-chunks.sh e2e-ci)"
-          if [[ "$CHUNKS" != "[]" ]]; then
-            echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
-          fi
-          echo BUILD_ID="$GITHUB_RUN_ID-$GITHUB_RUN_NUMBER-$(uuidgen)" >> "$GITHUB_OUTPUT"
-
-      - name: Prepare build targets
-        id: build_projects
-        env:
-          CHUNK_SIZE: 4
-        run: |
-          set -euo pipefail
-          CHUNKS="$(./scripts/ci/generate-chunks.sh build)"
-          if [[ "$CHUNKS" != "[]" ]]; then
-            echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
-          fi
-      - name: Check release-manager approval
-        id: check-release-manager-approval
-        if: ${{ contains(github.event.pull_request.labels.*.name, 'automerge') && contains(github.event.pull_request.head.ref, '/pre-release/') }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          set -euo pipefail
-          node -r esbuild-register .github/actions/check-team-approval.ts release-managers
   tests:
     needs:
       - prepare
-    if: needs.prepare.outputs.TEST_CHUNKS
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    if: ${{ needs.prepare.outputs.TEST_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' }}
+    runs-on: arc-shared
     timeout-minutes: 45
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
-      MAX_JOBS: 1
+      NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: 'package.json'
+      - name: checkout
+        uses: actions/checkout@v4
 
       - name: Setup yarn
-        run: corepack enable
+        uses: ./.github/actions/setup-yarn
 
-      - name: Get cache
-        id: get-cache
-        uses: ./.github/actions/get-cache
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
-          enable-cache: 'node_modules,cypress,generated-files'
+      - name: load-deps
+        uses: ./.github/actions/load-deps
 
-      - uses: ./.github/actions/unit-test
+      - name: Run unit tests
+        uses: ./.github/actions/unit-test
         with:
           dd-api-key: '${{ secrets.DD_API_KEY }}'
-          codecov-token: ${{ secrets.CODECOV_TOKEN }}
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           docker-registry: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
 
-  e2e:
+  unicorn-tests:
+    name: All projects have some tests
     needs:
       - prepare
-    if: needs.prepare.outputs.E2E_CHUNKS
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-    timeout-minutes: 45
+    if: ${{ needs.prepare.outputs.TEST_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' && needs.prepare.outputs.is-unicorn == 'true' }}
+    runs-on: arc-shared
     env:
-      AFFECTED_PROJECT: ${{ matrix.projects }}
-      CYPRESS_PROJECT_ID: 4q7jz8
-      CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-      API_MOCKS: 'true'
-      NODE_OPTIONS: --max-old-space-size=4096
-      E2E_BUILD_ID: '${{ needs.prepare.outputs.E2E_BUILD_ID }}-${{ github.run_attempt }}'
+      CHUNKS: ${{ needs.prepare.outputs.TEST_CHUNKS }}
+      NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
+      NX_HEAD: ${{ needs.prepare.outputs.NX_HEAD }}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          # Need full repo for Nx to find the commits at NX_* below
+          fetch-depth: 0
+
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+
+      - name: load-deps
+        uses: ./.github/actions/load-deps
+
+      - name: Find unicorn projects
+        id: unicorn
+        run: |
+          unicorns=$(node scripts/ci/unicorn-utils.mjs show-unicorns --json)
+          jq -ncr --argjson chunks "$CHUNKS" --argjson unicorns "$unicorns" '
+            [
+                $chunks.projects
+              | .[]
+              | select( . | IN( $unicorns | .[] ) )
+            ]
+            | "projects=\(. | join(","))"
+          ' | tee -a "$GITHUB_OUTPUT"
+
+      - name: Verify that projects have some tests
+        if: ${{ steps.unicorn.outputs.projects != '' }}
+        env:
+          projects: ${{ steps.unicorn.outputs.projects }}
+        run: |
+          # Get list of tests, with `<project-name>: ` prefixed (stream style, without cache), grouping by unique prefixes (sorted)
+          yarn nx run-many -t test --skip-nx-cache --output-style=stream --projects="${projects}" --parallel --verbose -- --listTests |
+            grep -P "^(${projects//,/|}): " | cut -d':' -f1 | sort -u > /tmp/projects-with-tests
+          # Get affected projects sorted
+          echo -e "${projects}" | sed 's/,/\n/g' | sort -u > /tmp/projects-all
+          if ! d=$(diff /tmp/projects-with-tests /tmp/projects-all); then
+            echo "These projects don't have any tests:"
+            echo "${d}"
+            exit 1
+          fi
+          echo "All projects ($projects) have tests."
+
+  e2e:
+    uses: ./.github/workflows/e2e.yml
+    needs:
+      - prepare
+    if: ${{ needs.prepare.outputs.E2E_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' }}
+    secrets: inherit
+    with:
+      e2e_build_id: '${{ needs.prepare.outputs.E2E_BUILD_ID }}-${{ github.run_attempt }}'
+      nx_base: ${{ needs.prepare.outputs.NX_BASE }}
+      nx_head: ${{ needs.prepare.outputs.NX_HEAD }}
+      affected_projects: ${{ matrix.projects }}
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.E2E_CHUNKS) }}
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: 'package.json'
-
-      - name: Setup yarn
-        run: corepack enable
-
-      - name: Get cache
-        id: get-cache
-        uses: ./.github/actions/get-cache
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
-          enable-cache: 'node_modules,cypress,generated-files'
-
-      - name: Running e2e tests
-        run: ./scripts/ci/40_e2e.sh "${AFFECTED_PROJECT}"
 
   linting-workspace:
     needs:
       - prepare
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-    timeout-minutes: 5
+    runs-on: arc-shared
+    timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: 'package.json'
+      - name: checkout
+        uses: actions/checkout@v4
+
       - name: Setup yarn
-        run: corepack enable
-      - name: Get cache
-        id: get-cache
-        uses: ./.github/actions/get-cache
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
-          enable-cache: 'node_modules,generated-files'
+        uses: ./.github/actions/setup-yarn
+
+      - name: load-deps
+        uses: ./.github/actions/load-deps
 
       - name: Linting workspace
         run: ./scripts/ci/20_lint-workspace.sh
@@ -288,119 +176,166 @@ jobs:
         with:
           github_token: ${{ secrets.github_token }}
           reporter: github-pr-review
-          fail-level: info
+          fail_level: info
           exclude: >-
             */node_modules/*
 
   formatting:
     needs:
       - prepare
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-    timeout-minutes: 5
+    runs-on: arc-shared
+    timeout-minutes: 15
+    env:
+      NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
     steps:
       - uses: actions/checkout@v4
         if: ${{ github.event_name == 'pull_request' }}
         with:
-          token: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
           ref: ${{ github.event.pull_request.head.ref }}
+          persist-credentials: false
+          # Need full repo for Nx to find the commits at NX_*
+          fetch-depth: 0
 
-      - uses: actions/checkout@v4
-        if: ${{ github.ref == 'ref/heads/main' }}
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: 'package.json'
       - name: Setup yarn
-        run: corepack enable
-
-      - name: Get cache
-        id: get-cache
-        uses: ./.github/actions/get-cache
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
-          enable-cache: 'node_modules'
-
-      - name: NX format:check
-        if: ${{ github.ref == 'ref/heads/main' }}
-        run: ./scripts/ci/20_check-formatting.sh "check"
+        uses: ./.github/actions/setup-yarn
 
       - name: NX format:write
-        if: ${{ github.event_name == 'pull_request' }}
+        env:
+          DIRTYBOT_KEY: ${{ secrets.ISLAND_IS_SSH_KEY }}
+          DIRTYBOT_APP_ID: ${{ secrets.ISLAND_IS_APP_KEY }}
         run: |
-          ./scripts/ci/20_check-formatting.sh "write"
-          ./infra/scripts/ci/git-check-dirty.sh "/" "nx format:write" "dirtybot"
+          yarn nx format:write
+          node scripts/ci/docker/git-check-dirty.mjs "." "format" "dirtybot"
+
+  lintfix-changed-files:
+    name: Lintfix Changed Files
+    runs-on: arc-shared
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'dirty bypass') }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          # Need full repo for Nx to find the commits at NX_* below
+          fetch-depth: 0
+          persist-credentials: false
+          # Need ref to know where to push to
+          # https://github.com/actions/checkout#push-a-commit-to-a-pr-using-the-built-in-token
+          ref: ${{ github.event.pull_request.head.ref }}
+
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+
+      - name: Run lintfix
+        id: lintfix
+        # NOTE: We want to use the PR base, not last good, since the lint is not part of "good" build
+        # and causes unintended lint changes when using a different commit
+        run: |
+          yarn nx affected -t lint --base="origin/$GITHUB_BASE_REF" --fix
+          if ! git diff "$GITHUB_BASE_REF" --exit-code; then
+            echo "FILES_CHANGED=true" | tee -a "$GITHUB_OUTPUT"
+          fi
+
+      - name: Commit changed files
+        if: ${{ steps.lintfix.outputs.FILES_CHANGED == 'true' }}
+        env:
+          DIRTYBOT_KEY: ${{ secrets.ISLAND_IS_SSH_KEY }}
+          DIRTYBOT_APP_ID: ${{ secrets.ISLAND_IS_APP_KEY }}
+        run: node scripts/ci/docker/git-check-dirty.mjs "." "lintfix" "dirtybot"
 
   linting:
     needs:
       - prepare
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    runs-on: arc-shared
     timeout-minutes: 35
     if: needs.prepare.outputs.LINT_CHUNKS
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
       NODE_OPTIONS: --max-old-space-size=4096
-      MAX_JOBS: 3
+      NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.LINT_CHUNKS) }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: 'package.json'
+      - name: checkout
+        uses: actions/checkout@v4
+
       - name: Setup yarn
-        run: corepack enable
-      - name: Get cache
-        id: get-cache
-        uses: ./.github/actions/get-cache
+        uses: ./.github/actions/setup-yarn
+
+      - name: Create output directory for lint output
+        run: |
+          mkdir -p dist/
+          echo "HEAD_LINT_FILE_PATH=dist/lints-processed-head.txt" >> "$GITHUB_ENV"
+          echo "BASE_LINT_FILE_PATH=dist/lints-processed-base.txt" >> "$GITHUB_ENV"
+
+      - name: Lint head
+        id: lint-head
+        run: |
+          ./scripts/ci/lint-and-parse.sh \
+            "$AFFECTED_PROJECTS" \
+            "$HEAD_LINT_FILE_PATH"
+          echo "lints-file=$HEAD_LINT_FILE_PATH" | tee -a "$GITHUB_OUTPUT"
+
+      # Checkout for linting base
+      - uses: actions/checkout@v4
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'dirty bypass') }}
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
-          enable-cache: 'node_modules,generated-files'
-      - name: Linting
-        run: ./scripts/ci/run-in-parallel-native.sh lint
+          ref: ${{ github.event.pull_request.base.ref }}
+          clean: false
+
+      - name: Lint base
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'dirty bypass') }}
+        id: lint-base
+        run: |
+          ./scripts/ci/lint-and-parse.sh \
+            "$AFFECTED_PROJECTS" \
+            "$BASE_LINT_FILE_PATH"
+          echo "lints-file=$BASE_LINT_FILE_PATH" | tee -a "$GITHUB_OUTPUT"
+
+      - name: No new lints
+        id: newlints
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'dirty bypass') }}
+        env:
+          HEAD_LINT_PROCESSED_FILE: ${{steps.lint-head.outputs.lints-file}}
+          BASE_LINT_PROCESSED_FILE: ${{steps.lint-base.outputs.lints-file}}
+        run: |
+          # compare-lints.sh <BASE_LINT_PROCESSED_FILE> <HEAD_LINT_PROCESSED_FILE>
+          ./scripts/ci/compare-lints.sh \
+            "$BASE_LINT_PROCESSED_FILE" \
+            "$HEAD_LINT_PROCESSED_FILE"
+
+      - name: Checkout back to PR
+        uses: actions/checkout@v4
+        with:
+          clean: false
 
   build:
     needs:
       - prepare
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    runs-on: arc-shared
     timeout-minutes: 35
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
-      MAX_JOBS: 2
+      NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.BUILD_CHUNKS) }}
-    if: needs.prepare.outputs.BUILD_CHUNKS
+    if: ${{ needs.prepare.outputs.BUILD_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: 'package.json'
+      - name: checkout
+        uses: actions/checkout@v4
+
       - name: Setup yarn
-        run: corepack enable
-      - name: Get cache
-        id: get-cache
-        uses: ./.github/actions/get-cache
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
-          enable-cache: 'node_modules,generated-files'
+        uses: ./.github/actions/setup-yarn
+
+      - name: load-deps
+        uses: ./.github/actions/load-deps
 
       - name: Building
         run: ./scripts/ci/run-in-parallel-native.sh build
 
   success:
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    runs-on: arc-shared
     if: ${{ !cancelled() }}
     needs:
       - prepare
@@ -411,20 +346,28 @@ jobs:
       - formatting
       - e2e
       - build
+      - unicorn-tests
     steps:
-      - name: Check prepare success
-        run: '[[ ${{ needs.prepare.result }} == "success" ]] || exit 1'
-      - name: Check tests success
-        run: '[[ ${{ needs.tests.result }} != "failure" ]] || exit 1'
-      - name: Check e2e success
-        run: '[[ ${{ needs.e2e.result }} != "failure" ]] || exit 1'
-      - name: Check linting success
-        run: '[[ ${{ needs.linting.result }} != "failure" ]] || exit 1'
-      - name: Check run-shellcheck success
-        run: '[[ ${{ needs.run-shellcheck.result }} != "failure" ]] || exit 1'
-      - name: Check formatting success
-        run: '[[ ${{ needs.formatting.result }} != "failure" ]] || exit 1'
-      - name: Check build success
-        run: '[[ ${{ needs.build.result }} != "failure" ]] || exit 1'
+      - name: Notify about deploy-feature label
+        if: ${{ github.event.pull_request.auto_merge && needs.prepare.outputs.DEPLOY_FEATURE == 'true' }}
+        run: |
+          echo "- 👉 Remove the \`deploy-feature\` label if you want this PR to be merged automatically" >> "$GITHUB_STEP_SUMMARY"
+          exit 1
+
+      - name: Collect
+        env:
+          NEEDS: ${{ toJSON(needs) }}
+        run: |
+          # "failed" here is everything that wasn't successful or skipped (e.g. "failuer", "cancelled")
+          failed_dependencies=$(jq -nr --argjson needs "$NEEDS" ' $needs | with_entries(select(.value.result != "success" and .value.result != "skipped")) ')
+          echo -n "Did any dependency fail? "
+          if jq -ne --argjson failures "$failed_dependencies" '$failures | length > 0'; then
+            failure_statuses=$(jq -nr --argjson failures "$failed_dependencies" '[ $failures | to_entries | .[] | "\(.key) (\(.value.result))" ] | join(", ")')
+            echo "::error title=NEEDS::Some dependencies failed: $failure_statuses"
+            exit 1
+          fi
+          echo "::info title=NEEDS::No failing dependencies 🎉"
+          exit 0
+
       - name: Announce success
         run: echo "Build is successful"

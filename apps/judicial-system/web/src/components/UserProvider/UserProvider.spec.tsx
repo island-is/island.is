@@ -25,7 +25,9 @@ describe('UserProvider', () => {
      * user is being set.
      */
     expect(
-      await screen.findByRole('button', { name: 'Wonder Woman' }),
+      await screen.findByRole('button', {
+        name: 'Notendaupplýsingar fyrir Wonder Woman',
+      }),
     ).toBeInTheDocument()
   })
 })

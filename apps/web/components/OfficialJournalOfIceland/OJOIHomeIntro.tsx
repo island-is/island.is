@@ -1,5 +1,8 @@
 import {
+  ArrowLink,
   Box,
+  Column,
+  Columns,
   GridColumn,
   GridContainer,
   GridRow,
@@ -20,6 +23,8 @@ export type OJOIHomeIntroProps = {
   quickLinks: Array<{ title: string; href: string; variant?: TagVariant }>
   searchUrl: string
   shortcutsTitle: string
+  buttonTitle?: string
+  buttonUrl?: string
   featuredImage?: string
 }
 
@@ -48,8 +53,14 @@ export const OJOIHomeIntro = (props: OJOIHomeIntroProps) => {
           {organization?.description && (
             <Text variant="default">{organization?.description}</Text>
           )}
-
-          <Box paddingTop={6} component="form" action={props.searchUrl}>
+          {props.buttonUrl && (
+            <Box marginTop={1} alignSelf={'flexEnd'}>
+              <ArrowLink href={props.buttonUrl}>
+                {props.buttonTitle ?? 'Lesa meira'}
+              </ArrowLink>
+            </Box>
+          )}
+          <Box paddingTop={4} component="form" action={props.searchUrl}>
             <Input
               id="q"
               name="q"
@@ -57,6 +68,7 @@ export const OJOIHomeIntro = (props: OJOIHomeIntroProps) => {
               backgroundColor={['blue']}
               size="md"
               icon={{ name: 'search', type: 'outline' }}
+              className={s.searchBox}
             />
           </Box>
 
@@ -64,13 +76,31 @@ export const OJOIHomeIntro = (props: OJOIHomeIntroProps) => {
             <Text variant="eyebrow" as="h3" paddingBottom={1} color="purple400">
               {props.shortcutsTitle}
             </Text>
-            <Inline space={1}>
-              {props.quickLinks.map((q, i) => (
-                <Tag key={i} href={q.href} variant={q.variant}>
-                  {q.title}
-                </Tag>
-              ))}
-            </Inline>
+
+            <Columns collapseBelow="sm" space={1}>
+              <Column>
+                <Inline space={1}>
+                  {props.quickLinks
+                    .filter((item) => item.variant !== 'mint')
+                    .map((q) => (
+                      <Tag key={q.href} href={q.href} variant={q.variant}>
+                        {q.title}
+                      </Tag>
+                    ))}
+                </Inline>
+              </Column>
+              <Column width="content">
+                <Box marginLeft={'auto'}>
+                  {props.quickLinks
+                    .filter((item) => item.variant === 'mint')
+                    .map((q) => (
+                      <Tag key={q.href} href={q.href} variant={q.variant}>
+                        {q.title}
+                      </Tag>
+                    ))}
+                </Box>
+              </Column>
+            </Columns>
           </Box>
         </GridColumn>
 

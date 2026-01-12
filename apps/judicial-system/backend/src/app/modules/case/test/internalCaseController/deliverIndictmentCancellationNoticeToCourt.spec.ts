@@ -1,11 +1,11 @@
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { CaseType, User } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { CourtService } from '../../../court'
-import { Case } from '../../models/case.model'
+import { Case } from '../../../repository'
 import { DeliverResponse } from '../../models/deliver.response'
 
 interface Then {
@@ -86,7 +86,7 @@ describe('InternalCaseController - Deliver indictment cancellation notice to cou
         courtName,
         courtCaseNumber,
         `Ákæra afturkölluð í máli ${courtCaseNumber}`,
-        `${prosecutorsOffice} hefur afturkallað ákæru í máli ${courtCaseNumber}. Hægt er að nálgast yfirlitssíðu málsins á rettarvorslugatt.island.is.`,
+        `${prosecutorsOffice} hefur afturkallað ákæru í máli ${courtCaseNumber}. Hægt er að nálgast yfirlitssíðu málsins í Réttarvörslugátt.`,
       )
 
       expect(then.result).toEqual({ delivered: true })
@@ -109,7 +109,7 @@ describe('InternalCaseController - Deliver indictment cancellation notice to cou
         courtName,
         courtCaseNumber,
         'Ákæra afturkölluð',
-        `${prosecutorsOffice} hefur afturkallað ákæru í máli ${policeCase1}, ${policeCase2}. Hægt er að nálgast yfirlitssíðu málsins á rettarvorslugatt.island.is.`,
+        `${prosecutorsOffice} hefur afturkallað ákæru í máli ${policeCase1}, ${policeCase2}. Hægt er að nálgast yfirlitssíðu málsins í Réttarvörslugátt.`,
       )
 
       expect(then.result).toEqual({ delivered: true })

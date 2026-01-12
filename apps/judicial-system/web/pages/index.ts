@@ -1,3 +1,3 @@
-import Login from '@island.is/judicial-system-web/src/routes/Shared/Login/Login'
+import Landing from '@island.is/judicial-system-web/src/routes/Shared/Landing/Landing'
 
-export default Login
+export default Landing

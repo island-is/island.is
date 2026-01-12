@@ -15,7 +15,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
   CurrentHttpUser,
-  JwtAuthGuard,
+  JwtAuthUserGuard,
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
@@ -23,13 +23,13 @@ import type { User } from '@island.is/judicial-system/types'
 
 import { prosecutorRepresentativeRule, prosecutorRule } from '../../guards'
 import {
-  Case,
   CaseExistsGuard,
   CaseNotCompletedGuard,
   CaseOriginalAncestorInterceptor,
   CaseReadGuard,
   CurrentCase,
 } from '../case'
+import { Case } from '../repository'
 import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
 import { PoliceCaseInfo } from './models/policeCaseInfo.model'
@@ -39,7 +39,7 @@ import { PoliceService } from './police.service'
 @Controller('api/case/:caseId')
 @ApiTags('police files')
 @UseGuards(
-  JwtAuthGuard,
+  JwtAuthUserGuard,
   RolesGuard,
   CaseExistsGuard,
   CaseReadGuard,

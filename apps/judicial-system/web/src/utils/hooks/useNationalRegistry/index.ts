@@ -30,6 +30,8 @@ const useNationalRegistry = (nationalId?: string | null) => {
       fetcher,
     )
 
+  const personLoading = shouldFetch && !personData && !personError
+
   const { data: businessData, error: businessError } =
     useSWR<NationalRegistryResponseBusiness>(
       shouldFetch && nationalId && isValidNationalId && isBusiness(nationalId)
@@ -37,6 +39,8 @@ const useNationalRegistry = (nationalId?: string | null) => {
         : null,
       fetcher,
     )
+
+  const businessLoading = shouldFetch && !businessData && !businessError
 
   useEffect(() => {
     if (shouldFetch) {
@@ -62,8 +66,10 @@ const useNationalRegistry = (nationalId?: string | null) => {
   return {
     personData,
     personError,
+    personLoading,
     businessData,
     businessError,
+    businessLoading,
   }
 }
 

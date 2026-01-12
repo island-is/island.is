@@ -1,6 +1,6 @@
 import { style, styleVariants } from '@vanilla-extract/css'
 
-import { theme } from '@island.is/island-ui/theme'
+import { theme, transparent } from '@island.is/island-ui/theme'
 
 export const caseFileWrapper = style({
   display: 'flex',
@@ -13,21 +13,33 @@ export const caseFileWrapper = style({
   borderRadius: theme.border.radius.large,
   border: '1px solid',
   transition: 'background-color 0.2s ease-in-out',
+  height: '100%',
 })
 
-export const caseFileWrapperStates = styleVariants({
-  error: {
-    background: theme.color.red100,
-    borderColor: 'transparent',
-  },
-  done: {
-    background: theme.color.blue100,
-    borderColor: 'transparent',
-  },
-  uploading: {
-    background: 'transparent',
+export const caseFileWrapperBackground = styleVariants({
+  white: {
+    background: theme.color.white,
     borderColor: theme.color.blue200,
   },
+})
+
+export const error = style({
+  background: theme.color.red100,
+  borderColor: 'transparent',
+})
+
+export const done = style({
+  background: theme.color.blue100,
+  borderColor: 'transparent',
+})
+
+export const uploading = style({
+  background: 'transparent',
+  borderColor: theme.color.blue200,
+})
+
+export const disabled = style({
+  background: theme.color.blue100,
 })
 
 export const editCaseFileInputContainer = style({
@@ -59,6 +71,14 @@ export const editCaseFileButton = style({
 })
 
 export const background = styleVariants({
+  disabled: {
+    selectors: {
+      '&:hover': {
+        backgroundColor: transparent,
+        cursor: 'auto',
+      },
+    },
+  },
   primary: {
     selectors: {
       '&:hover': {

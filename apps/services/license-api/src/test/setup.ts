@@ -2,12 +2,12 @@ import { TestApp, testServer, useAuth } from '@island.is/testing/nest'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 import { AppModule } from '../app/app.module'
 import { User } from '@island.is/auth-nest-tools'
-import { LicenseService } from '../app/modules/license/license.service'
 import { TestingModuleBuilder } from '@nestjs/testing'
+import { LicenseServiceV1 } from '../app/modules/license/services'
 
 export let app: TestApp
 
-class MockLicenseService implements Partial<LicenseService> {
+class MockLicenseServiceV1 implements Partial<LicenseServiceV1> {
   updateLicense = jest
     .fn()
     .mockResolvedValue({ ok: true, updatedSuccess: true })
@@ -20,7 +20,7 @@ export const setupWithAuth = async (user: User): Promise<TestApp> => {
     appModule: AppModule,
     enableVersioning: true,
     override: (builder: TestingModuleBuilder) =>
-      builder.overrideProvider(LicenseService).useClass(MockLicenseService),
+      builder.overrideProvider(LicenseServiceV1).useClass(MockLicenseServiceV1),
     hooks: [useAuth({ auth: user })],
   })
   return app

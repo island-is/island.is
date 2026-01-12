@@ -1,6 +1,6 @@
 import { FC, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { AnimatePresence } from 'framer-motion'
+import { AnimatePresence } from 'motion/react'
 import { useRouter } from 'next/router'
 
 import {
@@ -12,6 +12,7 @@ import {
   toast,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
+import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { core, errors, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
@@ -28,11 +29,13 @@ import {
   PageLayout,
   PageTitle,
   ProsecutorCaseInfo,
+  ProsecutorSelection,
   SectionHeading,
-  ServiceAnnouncement,
+  ServiceAnnouncements,
   useIndictmentsLawsBroken,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import InputPenalties from '@island.is/judicial-system-web/src/components/Inputs/InputPenalties'
 import {
   CaseState,
   CaseTransition,
@@ -54,12 +57,16 @@ const Overview: FC = () => {
     | 'caseSentForConfirmationModal'
     | 'caseDeniedModal'
     | 'askForCancellationModal'
+    | 'editProsecutor'
   >('noModal')
   const [indictmentConfirmationDecision, setIndictmentConfirmationDecision] =
     useState<'confirm' | 'deny'>()
+  const [menuIsOpen, setMenuIsOpen] = useState<boolean>(false)
+  const [prosecutorsCount, setProsecutorsCount] = useState<number>(0)
+
   const router = useRouter()
   const { formatMessage } = useIntl()
-  const { transitionCase, isTransitioningCase } = useCase()
+  const { transitionCase, updateCase, isTransitioningCase } = useCase()
   const lawsBroken = useIndictmentsLawsBroken(workingCase)
 
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
@@ -141,7 +148,7 @@ const Overview: FC = () => {
       return
     }
 
-    router.push(constants.CASES_ROUTE)
+    router.push(getStandardUserDashboardRoute(user))
   }
 
   const handleAskForCancellation = async () => {
@@ -153,7 +160,20 @@ const Overview: FC = () => {
       return
     }
 
-    router.push(constants.CASES_ROUTE)
+    router.push(getStandardUserDashboardRoute(user))
+  }
+
+  const calculateMargin = (count: number) => {
+    if (count === 0) {
+      return 40
+    }
+
+    const cappedCount = Math.min(count, 5)
+    const baseMargin = 50
+    const marginPerProsecutor = 65
+    const margin = baseMargin + (cappedCount - 2) * marginPerProsecutor
+
+    return Math.max(2, margin)
   }
 
   const hasLawsBroken = lawsBroken.size > 0
@@ -176,7 +196,7 @@ const Overview: FC = () => {
               title={formatMessage(strings.indictmentDeniedExplanationTitle)}
               message={workingCase.indictmentDeniedExplanation}
               type="info"
-            ></AlertMessage>
+            />
           </Box>
         )}
         {workingCase.indictmentReturnedExplanation && (
@@ -185,22 +205,26 @@ const Overview: FC = () => {
               title={formatMessage(strings.indictmentReturnedExplanationTitle)}
               message={workingCase.indictmentReturnedExplanation}
               type="warning"
-            ></AlertMessage>
+            />
           </Box>
         )}
         <PageTitle>{formatMessage(strings.heading)}</PageTitle>
-        <ProsecutorCaseInfo workingCase={workingCase} />
-        {workingCase.defendants?.map((defendant) =>
-          defendant.subpoenas?.map((subpoena) => (
-            <ServiceAnnouncement
-              key={`${subpoena.id}-${subpoena.created}`}
-              subpoena={subpoena}
-              defendantName={defendant.name}
+        <Box marginBottom={5}>
+          <ProsecutorCaseInfo workingCase={workingCase} />
+        </Box>
+        {workingCase.state === CaseState.WAITING_FOR_CANCELLATION && (
+          <Box marginBottom={2}>
+            <AlertMessage
+              title={formatMessage(strings.indictmentCancelledTitle)}
+              message={formatMessage(strings.indictmentCancelledMessage)}
+              type="warning"
             />
-          )),
+          </Box>
         )}
+        <ServiceAnnouncements defendants={workingCase.defendants} />
         {workingCase.court &&
           latestDate?.date &&
+          workingCase.state !== CaseState.WAITING_FOR_CANCELLATION &&
           workingCase.indictmentDecision !== IndictmentDecision.COMPLETING &&
           workingCase.indictmentDecision !==
             IndictmentDecision.REDISTRIBUTING && (
@@ -218,7 +242,12 @@ const Overview: FC = () => {
             </Box>
           )}
         <Box component="section" marginBottom={5}>
-          <InfoCardActiveIndictment displayVerdictViewDate />
+          <InfoCardActiveIndictment
+            displayVerdictViewDate
+            onProsecutorClick={() => {
+              setModal('editProsecutor')
+            }}
+          />
         </Box>
         {(hasLawsBroken || hasMergeCases) && (
           <Box marginBottom={5}>
@@ -230,7 +259,7 @@ const Overview: FC = () => {
               <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
             )} */}
             {hasMergeCases && (
-              <Accordion>
+              <Accordion dividerOnBottom={false} dividerOnTop={false}>
                 {workingCase.mergedCases?.map((mergedCase) => (
                   <Box key={mergedCase.id}>
                     <ConnectedCaseFilesAccordionItem
@@ -243,19 +272,11 @@ const Overview: FC = () => {
             )}
           </Box>
         )}
-        <Box
-          marginBottom={
-            userCanAddDocuments || userCanSendIndictmentToCourt ? 5 : 10
-          }
-        >
+        <Box marginBottom={5}>
           <IndictmentCaseFilesList workingCase={workingCase} />
         </Box>
         {userCanAddDocuments && (
-          <Box
-            display="flex"
-            justifyContent="flexEnd"
-            marginBottom={userCanSendIndictmentToCourt ? 5 : 10}
-          >
+          <Box display="flex" justifyContent="flexEnd" marginBottom={5}>
             <Button
               size="small"
               icon="add"
@@ -270,7 +291,7 @@ const Overview: FC = () => {
           </Box>
         )}
         {userCanSendIndictmentToCourt && (
-          <Box marginBottom={10}>
+          <Box marginBottom={5}>
             <SectionHeading
               title={formatMessage(strings.indictmentConfirmationTitle)}
               required
@@ -299,14 +320,17 @@ const Overview: FC = () => {
             </BlueBox>
           </Box>
         )}
+        <Box component="section" marginBottom={10}>
+          <InputPenalties />
+        </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
           nextButtonIcon="arrowForward"
           previousUrl={
             isIndictmentReceived || isIndictmentWaitingForCancellation
-              ? constants.CASES_ROUTE
-              : `${constants.INDICTMENTS_CASE_FILES_ROUTE}/${workingCase.id}`
+              ? getStandardUserDashboardRoute(user)
+              : `${constants.INDICTMENTS_INDICTMENT_ROUTE}/${workingCase.id}`
           }
           nextButtonText={
             userCanSendIndictmentToCourt
@@ -340,48 +364,89 @@ const Overview: FC = () => {
             title={formatMessage(strings.caseSubmitModalTitle)}
             text={formatMessage(strings.caseSubmitModalText)}
             onClose={() => setModal('noModal')}
-            secondaryButtonText={formatMessage(
-              strings.caseSubmitSecondaryButtonText,
-            )}
-            onSecondaryButtonClick={() => setModal('noModal')}
-            onPrimaryButtonClick={handleConfirmIndictment}
-            primaryButtonText={formatMessage(
-              strings.caseSubmitPrimaryButtonText,
-            )}
-            isPrimaryButtonLoading={isTransitioningCase}
+            primaryButton={{
+              text: formatMessage(strings.caseSubmitPrimaryButtonText),
+              onClick: handleConfirmIndictment,
+              isLoading: isTransitioningCase,
+            }}
+            secondaryButton={{
+              text: formatMessage(strings.caseSubmitSecondaryButtonText),
+              onClick: () => setModal('noModal'),
+            }}
           />
         ) : modal === 'caseSentForConfirmationModal' ? (
           <Modal
             title={formatMessage(strings.indictmentSentForConfirmationTitle)}
             text={formatMessage(strings.indictmentSentForConfirmationText)}
-            onClose={() => router.push(constants.CASES_ROUTE)}
-            onPrimaryButtonClick={() => {
-              router.push(constants.CASES_ROUTE)
+            onClose={() => router.push(getStandardUserDashboardRoute(user))}
+            primaryButton={{
+              text: formatMessage(core.closeModal),
+              onClick: () => {
+                router.push(getStandardUserDashboardRoute(user))
+              },
             }}
-            primaryButtonText={formatMessage(core.closeModal)}
           />
         ) : modal === 'caseDeniedModal' ? (
           <DenyIndictmentCaseModal
             workingCase={workingCase}
             setWorkingCase={setWorkingCase}
             onClose={() => setModal('noModal')}
-            onComplete={() => router.push(constants.CASES_ROUTE)}
+            onComplete={() => router.push(getStandardUserDashboardRoute(user))}
           />
         ) : modal === 'askForCancellationModal' ? (
           <Modal
             title={formatMessage(strings.askForCancellationModalTitle)}
             text={formatMessage(strings.askForCancellationModalText)}
             onClose={() => setModal('noModal')}
-            secondaryButtonText={formatMessage(
-              strings.askForCancellationSecondaryButtonText,
-            )}
-            onSecondaryButtonClick={() => setModal('noModal')}
-            onPrimaryButtonClick={handleAskForCancellation}
-            primaryButtonText={formatMessage(
-              strings.askForCancellationPrimaryButtonText,
-            )}
-            isPrimaryButtonLoading={isTransitioningCase}
+            primaryButton={{
+              text: formatMessage(strings.askForCancellationPrimaryButtonText),
+              onClick: handleAskForCancellation,
+              isLoading: isTransitioningCase,
+            }}
+            secondaryButton={{
+              text: formatMessage(
+                strings.askForCancellationSecondaryButtonText,
+              ),
+              onClick: () => setModal('noModal'),
+            }}
           />
+        ) : modal === 'editProsecutor' ? (
+          <Modal
+            title="Breyta um ákæranda"
+            text="Nýr ákærandi mun verða skráður sem ákærandi í málinu og fá tilkynningar er það varðar."
+            onClose={() => setModal('noModal')}
+            primaryButton={{
+              text: 'Staðfesta',
+              onClick: async () => {
+                const prosecutorId = workingCase?.prosecutor?.id
+                await updateCase(workingCase.id, {
+                  prosecutorId,
+                })
+                setModal('noModal')
+              },
+            }}
+            secondaryButton={{
+              text: 'Loka glugga',
+              onClick: () => setModal('noModal'),
+            }}
+          >
+            <div
+              style={{
+                marginBottom: menuIsOpen
+                  ? calculateMargin(prosecutorsCount)
+                  : 40,
+              }}
+            >
+              <ProsecutorSelection
+                placeholder="Veldu ákæranda til að taka við málinu"
+                isRequired={false}
+                shouldInitializeSelector={true}
+                onMenuOpen={() => setMenuIsOpen(true)}
+                onMenuClose={() => setMenuIsOpen(false)}
+                onProsecutorsLoaded={(count) => setProsecutorsCount(count)}
+              />
+            </div>
+          </Modal>
         ) : null}
       </AnimatePresence>
     </PageLayout>

@@ -1,0 +1,160 @@
+name: Pre checks
+
+on:
+  workflow_call:
+    outputs:
+      NODE_IMAGE_VERSION:
+        value: ${{ jobs.should-run.outputs.NODE_IMAGE_VERSION }}
+      GIT_BRANCH:
+        value: ${{ jobs.should-run.outputs.GIT_BRANCH }}
+      GIT_BASE_BRANCH:
+        value: ${{ jobs.should-run.outputs.GIT_BASE_BRANCH }}
+      GIT_BRANCH_DEPLOY:
+        value: ${{ jobs.should-run.outputs.GIT_BRANCH_DEPLOY }}
+      FEATURE_NAME:
+        value: ${{ jobs.should-run.outputs.FEATURE_NAME }}
+      PRE_CHECK:
+        value: ${{ jobs.should-run.outputs.PRE_CHECK }}
+      PRE_RELEASE:
+        value: ${{ jobs.should-run.outputs.PRE_RELEASE }}
+
+env:
+  DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com
+  DOCKER_BASE_IMAGE_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/ecr-public
+  SPINNAKER_URL: https://spinnaker-gate.shared.devland.is
+  COMPOSE_HTTP_TIMEOUT: 180
+  GITHUB_ACTIONS_CACHE_URL: https://cache.dev01.devland.is/
+  SKIP_GENERATED_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-generated-cache') }}
+  NX_AFFECTED_ALL: ${{ contains(github.event.pull_request.labels.*.name, 'nx-affected-all') }}
+  NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+  NX_TASKS_RUNNER: ci
+  CONFIGCAT_MAIN_CONFIG_ID: 08d8c761-021c-46f0-8671-6244663a372f
+  CONFIGCAT_MOBILE_APP_CONFIG_ID: 08daf234-7573-4b3b-85f6-189fc7502542
+  DISABLE_CHUNKS: 'false'
+  DISABLE_GROUPING: 'false'
+  DISABLE_PROBLEMATIC: 'false'
+  CHUNK_SIZE: '3'
+  MAX_JOBS: '2'
+  NX_PARALLEL: '2'
+  NX_MAX_PARALLEL: '4'
+  NODE_IMAGE_VERSION: 20
+  AWS_REGION: eu-west-1
+  GENERATED_FILES: ${{ github.sha }}.tar.gz
+  YARN_ENABLE_HARDENED_MODE: '0'
+
+jobs:
+  should-run:
+    name: Check if job should run
+    runs-on: arc-shared
+    env:
+      CREATE_PATTERNS: ^release/
+      PRE_RELEASE_PATTERN: ^pre-release/
+    outputs:
+      NODE_IMAGE_VERSION: ${{ steps.git-branch.outputs.NODE_IMAGE_VERSION }}
+      GIT_BRANCH: ${{ steps.git-branch.outputs.GIT_BRANCH }}
+      GIT_BASE_BRANCH: ${{ steps.git-base-branch.outputs.GIT_BASE_BRANCH }}
+      GIT_BRANCH_DEPLOY: ${{ steps.git-branch-deploy.outputs.GIT_BRANCH_DEPLOY }}
+      FEATURE_NAME: ${{ steps.git-branch-deploy.outputs.FEATURE_NAME }}
+      PRE_CHECK: ${{ steps.should-run.outputs.PRE_CHECK }}
+      PRE_RELEASE: ${{ steps.should-run.outputs.PRE_RELEASE }}
+    steps:
+      - name: Get git branch
+        id: git-branch
+        run: |
+          set -euo pipefail
+          GIT_BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF/refs\/heads\//}}"
+          echo GIT_BRANCH="${GIT_BRANCH}" >> "$GITHUB_OUTPUT"
+          echo GIT_BRANCH="$GIT_BRANCH" >> "$GITHUB_ENV"
+
+      - name: Set GIT_BASE_BRANCH
+        id: git-base-branch
+        run: |
+          # NOTE: moved from push.yml
+          if [[ -n "$GITHUB_BASE_REF" ]]
+          then
+            # in a PR
+            echo GIT_BASE_BRANCH="$GITHUB_BASE_REF" >> "$GITHUB_OUTPUT"
+          else
+           # on main
+            echo GIT_BASE_BRANCH="main" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Generate deployment branch name
+        id: git-branch-deploy
+        run: |
+          set -euo pipefail
+          export GIT_BRANCH_DEPLOY="$GIT_BRANCH"
+          if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
+            if [[ ! ("$GIT_BRANCH_DEPLOY" =~ "feature/") ]]; then
+              # If event is pull request but branch is not prefixed with feature/
+              GIT_BRANCH_DEPLOY="feature/$GIT_BRANCH_DEPLOY"
+            fi
+            # Avoid too long resource names
+            GIT_BRANCH_DEPLOY="${GIT_BRANCH_DEPLOY:0:50}"
+          fi
+          echo GIT_BRANCH_DEPLOY="${GIT_BRANCH_DEPLOY}" >> "$GITHUB_OUTPUT"
+          echo GIT_BRANCH_DEPLOY="$GIT_BRANCH_DEPLOY" >> "$GITHUB_ENV"
+          echo FEATURE_NAME="$(echo "$GIT_BRANCH_DEPLOY" | cut -d"/" -f2- | tr -cd '[:alnum:]-' | tr '[:upper:]' '[:lower:]' | cut -c1-50)" >> "$GITHUB_OUTPUT"
+      - name: Check if we want to run workflow
+        id: should-run
+        env:
+          SPINNAKER_WEBHOOK_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_TOKEN }}
+        run: |
+          echo "GITHUB_EVENT_NAME is '$GITHUB_EVENT_NAME'"
+          echo "PRE_RELEASE=false" >> "$GITHUB_OUTPUT"
+
+          if [[ "$GITHUB_EVENT_NAME" == "create" ]]; then
+            echo "Workflow was created because of branch creation. Branch name is '$GIT_BRANCH'"
+
+            for pre_pattern in ${PRE_RELEASE_PATTERN//,/ }
+            do
+                echo "Checking branch against pre_release_pattern '$pre_pattern'"
+                echo "Check if this is a pre-release and if it should generate a feature-deploy"
+                if [[ "$GIT_BRANCH" =~ $pre_pattern ]]; then
+                  echo "'$GIT_BRANCH' matches 'pre_$pattern', continuing with build"
+                  echo "PRE_CHECK=feature-deploy" >> "$GITHUB_OUTPUT"
+                  echo "PRE_RELEASE=true" >> "$GITHUB_OUTPUT"
+                  exit 0
+                fi
+            done
+
+            for pattern in ${CREATE_PATTERNS//,/ }
+            do
+                echo "Checking branch against pattern '$pattern'"
+                if [[ "$GIT_BRANCH" =~ $pattern ]]; then
+                  echo "'$GIT_BRANCH' matches '$pattern', continuing with build"
+                  echo "PRE_CHECK=push" >> "$GITHUB_OUTPUT"
+                  exit 0
+                fi
+            done
+            echo "No pattern matches '$GIT_BRANCH', exiting."
+            exit 0
+          fi
+          if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
+            if [[ "${{ github.event.action }}" == "labeled" ]]; then
+              echo "Action is labeled, using label that was applied: '${{ github.event.label.name }}'"
+              deployFeature="$([[ "${{ github.event.label.name }}" == "deploy-feature" ]] && echo true || echo false )"
+            else
+              echo "Action is ${{ github.event.action }}, using labels on PR"
+              deployFeature=${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
+            fi
+            if [[ "$deployFeature" == "true" ]]; then
+              echo "Pull request contains deploy-feature label, continuing with feature deployment"
+              echo "PRE_CHECK=feature-deploy" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            echo "Pull request does not have deploy-feature label, exiting..."
+            exit 0
+          fi
+          for pre_pattern in ${PRE_RELEASE_PATTERN//,/ }
+            do
+                echo "Checking branch against pre_release_pattern '$pre_pattern'"
+                echo "Check if this is a pre-release and if it should generate a feature-deploy"
+                if [[ "$GIT_BRANCH" =~ $pre_pattern ]]; then
+                  echo "'$GIT_BRANCH' matches 'pre_$pattern', continuing with build"
+                  echo "PRE_CHECK=feature-deploy" >> "$GITHUB_OUTPUT"
+                  echo "PRE_RELEASE=true" >> "$GITHUB_OUTPUT"
+                  exit 0
+                fi
+            done
+          echo "PRE_CHECK=push" >> "$GITHUB_OUTPUT"

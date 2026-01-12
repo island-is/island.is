@@ -1,8 +1,8 @@
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
-import { Case } from '../../models/case.model'
+import { Case } from '../../../repository'
 
 interface Then {
   result: Case

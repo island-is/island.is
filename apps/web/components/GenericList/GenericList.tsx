@@ -25,7 +25,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
-import { Locale } from '@island.is/shared/types'
+import { shouldLinkOpenInNewWindow } from '@island.is/shared/utils'
 import { NewsCard } from '@island.is/web/components'
 import {
   GenericListItem,
@@ -52,25 +52,6 @@ import * as styles from './GenericList.css'
 
 const DEBOUNCE_TIME_IN_MS = 300
 const ITEMS_PER_PAGE = 10
-
-const getResultsFoundText = (totalItems: number, locale: Locale) => {
-  const singular = locale === 'is' ? 'niðurstaða fannst' : 'result found'
-  const plural = locale === 'is' ? 'niðurstöður fundust' : 'results found'
-
-  if (locale !== 'is') {
-    if (totalItems === 1) {
-      return singular
-    }
-    return plural
-  }
-
-  // Handle Icelandic locale specifically
-  if (totalItems % 10 === 1 && totalItems % 100 !== 11) {
-    return singular
-  }
-
-  return plural
-}
 
 interface ItemProps {
   item: GenericListItem
@@ -141,7 +122,8 @@ export const ClickableItem = ({ item, baseUrl }: ClickableItemProps) => {
     icon = 'document'
   } else if (item.externalUrl) {
     href = item.externalUrl
-    icon = 'open'
+    const isInternalLink = !shouldLinkOpenInNewWindow(href)
+    if (!isInternalLink) icon = 'open'
   }
 
   const filterTags = item.filterTags ?? []
@@ -263,6 +245,7 @@ interface GenericListProps {
   totalItems: number
   displayError: boolean
   showSearchInput?: boolean
+  showSearchFilters?: boolean
 }
 
 export const GenericList = ({
@@ -277,6 +260,7 @@ export const GenericList = ({
   displayError,
   children,
   showSearchInput = true,
+  showSearchFilters = true,
 }: React.PropsWithChildren<GenericListProps>) => {
   const [searchValue, setSearchValue] = useQueryState(searchQueryId)
   const [page, setPage] = useQueryState(pageQueryId, parseAsInteger)
@@ -331,10 +315,6 @@ export const GenericList = ({
 
   const noResultsFoundText =
     activeLocale === 'is' ? 'Engar niðurstöður fundust' : 'No results found'
-
-  const resultsFoundText = getResultsFoundText(totalItems, activeLocale)
-
-  const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE)
 
   const filterInputComponent = (
     <FilterInput
@@ -398,12 +378,12 @@ export const GenericList = ({
     <Box paddingBottom={3}>
       <GridContainer>
         <Stack space={4}>
-          {showSearchInput && (
+          {(showSearchInput || showSearchFilters) && (
             <Box ref={ref}>
-              {filterCategories.length > 1 && (
+              {showSearchFilters && filterCategories.length > 1 && (
                 <Stack space={4}>
                   <Stack space={3}>
-                    {isMobile && filterInputComponent}
+                    {isMobile && showSearchInput && filterInputComponent}
                     <Filter
                       resultCount={totalItems}
                       labelClear={
@@ -493,49 +473,54 @@ export const GenericList = ({
                 </Stack>
               )}
 
-              {filterCategories.length <= 1 && (
-                <Stack space={4}>
-                  <Stack space={3}>
-                    {filterInputComponent}
-                    {selectedFilters.length > 0 && selectedFiltersComponent}
+              {(showSearchFilters || showSearchInput) &&
+                filterCategories.length <= 1 && (
+                  <Stack space={4}>
+                    <Stack space={3}>
+                      {showSearchInput && filterInputComponent}
+                      {showSearchFilters &&
+                        selectedFilters.length > 0 &&
+                        selectedFiltersComponent}
+                    </Stack>
+                    {showSearchFilters && (
+                      <Inline space={1}>
+                        {filterCategories[0]?.filters
+                          ?.filter((tag) => {
+                            const isActive = Boolean(
+                              selectedFilters.find(
+                                (filter) => filter.value === tag.value,
+                              ),
+                            )
+                            return !isActive
+                          })
+                          .map((tag) => {
+                            const category = filterCategories[0]?.id
+                            const value = tag.value
+                            const label = tag.label
+                            return (
+                              <Tag
+                                key={tag.value}
+                                onClick={() => {
+                                  if (!category) {
+                                    return
+                                  }
+                                  setPage(null)
+                                  setParameters((prevParameters) => ({
+                                    ...prevParameters,
+                                    [category]: (
+                                      prevParameters?.[category] ?? []
+                                    ).concat(value),
+                                  }))
+                                }}
+                              >
+                                {label}
+                              </Tag>
+                            )
+                          })}
+                      </Inline>
+                    )}
                   </Stack>
-                  <Inline space={1}>
-                    {filterTags
-                      ?.filter((tag) => {
-                        const isActive = Boolean(
-                          selectedFilters.find(
-                            (filter) => filter.value === tag.slug,
-                          ),
-                        )
-                        return !isActive
-                      })
-                      .map((tag) => {
-                        const category = tag.genericTagGroup?.slug
-                        const value = tag.slug
-                        const label = tag.title
-                        return (
-                          <Tag
-                            key={tag.id}
-                            onClick={() => {
-                              if (!category) {
-                                return
-                              }
-                              setPage(null)
-                              setParameters((prevParameters) => ({
-                                ...prevParameters,
-                                [category]: (
-                                  prevParameters?.[category] ?? []
-                                ).concat(value),
-                              }))
-                            }}
-                          >
-                            {label}
-                          </Tag>
-                        )
-                      })}
-                  </Inline>
-                </Stack>
-              )}
+                )}
             </Box>
           )}
 
@@ -553,23 +538,7 @@ export const GenericList = ({
           {totalItems === 0 && !displayError && !loading && (
             <Text>{noResultsFoundText}</Text>
           )}
-          {totalItems > 0 && (
-            <Stack space={3}>
-              <Inline space={2} justifyContent="spaceBetween" alignY="center">
-                <Text>
-                  {totalItems} {resultsFoundText}
-                </Text>
-                {totalPages > 1 && (
-                  <Text>
-                    {activeLocale === 'is' ? 'Síða' : 'Page'} {page ?? 1}{' '}
-                    {activeLocale === 'is' ? 'af' : 'of'} {totalPages}
-                  </Text>
-                )}
-              </Inline>
-              {children}
-            </Stack>
-          )}
-
+          {totalItems > 0 && children}
           {totalItems > ITEMS_PER_PAGE && (
             <Pagination
               page={page ?? 1}
@@ -608,6 +577,7 @@ interface GenericListWrapperProps {
   itemType?: string | null
   filterTags?: GenericTag[] | null
   defaultOrder?: GetGenericListItemsInputOrderBy | null
+  textSearchOrder?: 'Default' | 'Score'
   showSearchInput?: boolean
 }
 
@@ -617,6 +587,7 @@ export const GenericListWrapper = ({
   itemType,
   searchInputPlaceholder,
   defaultOrder,
+  textSearchOrder,
   showSearchInput,
 }: GenericListWrapperProps) => {
   const searchQueryId = `${id}q`
@@ -670,6 +641,10 @@ export const GenericListWrapper = ({
       searchInputPlaceholder={searchInputPlaceholder}
       displayError={errorOccurred}
       fetchListItems={({ page, searchValue, tags, tagGroups }) => {
+        let orderBy = defaultOrder
+        if (searchValue.trim().length > 0 && textSearchOrder === 'Score') {
+          orderBy = GetGenericListItemsInputOrderBy.Score
+        }
         fetchListItems({
           variables: {
             input: {
@@ -680,7 +655,7 @@ export const GenericListWrapper = ({
               queryString: searchValue,
               tags,
               tagGroups,
-              orderBy: defaultOrder,
+              orderBy,
             },
           },
         })
@@ -691,6 +666,7 @@ export const GenericListWrapper = ({
       searchQueryId={searchQueryId}
       tagQueryId={tagQueryId}
       showSearchInput={showSearchInput}
+      showSearchFilters={showSearchInput}
     >
       <GridContainer>
         <GridRow rowGap={3}>

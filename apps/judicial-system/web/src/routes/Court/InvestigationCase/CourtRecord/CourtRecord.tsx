@@ -1,4 +1,4 @@
-import { FC, useCallback, useContext, useState } from 'react'
+import { FC, useCallback, useContext } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import router from 'next/router'
 
@@ -12,7 +12,10 @@ import {
   Tooltip,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { lowercase } from '@island.is/judicial-system/formatters'
+import {
+  applyDativeCaseToCourtName,
+  lowercase,
+} from '@island.is/judicial-system/formatters'
 import {
   closedCourt,
   core,
@@ -34,26 +37,25 @@ import {
   PdfButton,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  Case,
+  CaseAppealDecision,
   CaseType,
   SessionArrangements,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
-import {
-  removeTabsValidateAndSet,
-  validateAndSendToServer,
-} from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   formatDateForServer,
   useCase,
-  useDeb,
+  useDebouncedInput,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   isCourtRecordStepValidIC,
+  isNullOrUndefined,
   Validation,
 } from '@island.is/judicial-system-web/src/utils/validate'
 
 import AppealSections from '../../components/AppealSections/AppealSections'
+import { populateEndOfCourtSessionBookingsIntro } from '../../shared/populateEndOfCourtSessionBookingsIntro'
 
 const getSessionBookingsAutofill = (
   formatMessage: IntlShape['formatMessage'],
@@ -92,7 +94,7 @@ const getSessionBookingsAutofill = (
 }
 
 const CourtRecord: FC = () => {
-  const { setAndSendCaseToServer, updateCase } = useCase()
+  const { setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
   const {
     workingCase,
@@ -102,20 +104,28 @@ const CourtRecord: FC = () => {
     isCaseUpToDate,
   } = useContext(FormContext)
 
-  const [courtLocationEM, setCourtLocationEM] = useState<string>('')
-  const [sessionBookingsErrorMessage, setSessionBookingsMessage] =
-    useState<string>('')
-
-  useDeb(workingCase, [
-    'courtAttendees',
+  const sessionBookingValidation: Validation[] =
+    workingCase.sessionArrangements === SessionArrangements.NONE_PRESENT
+      ? []
+      : ['empty']
+  const courtAttendeesInput = useDebouncedInput('courtAttendees', [])
+  const courtLocationInput = useDebouncedInput('courtLocation', ['empty'])
+  const sessionBookingsInput = useDebouncedInput(
     'sessionBookings',
-    'accusedAppealAnnouncement',
-    'prosecutorAppealAnnouncement',
+    sessionBookingValidation,
+  )
+  const endOfSessionBookingsInput = useDebouncedInput(
     'endOfSessionBookings',
-  ])
+    [],
+  )
+
+  const hasMissingInfoInRulingStep = workingCase.isCompletedWithoutRuling
+    ? !workingCase.decision
+    : !workingCase.decision || !workingCase.ruling || !workingCase.conclusion
 
   const initialize = useCallback(() => {
     const autofillAttendees = []
+    const endOfSessionBookings: string[] = []
 
     if (workingCase.sessionArrangements === SessionArrangements.NONE_PRESENT) {
       autofillAttendees.push(formatMessage(core.sessionArrangementsNonePresent))
@@ -161,18 +171,15 @@ const CourtRecord: FC = () => {
         }
       }
     }
+    populateEndOfCourtSessionBookingsIntro(workingCase, endOfSessionBookings)
 
     setAndSendCaseToServer(
       [
         {
           courtStartDate: workingCase.arraignmentDate?.date,
-          courtLocation: workingCase.court?.name
-            ? `í ${
-                workingCase.court.name.indexOf('dómur') > -1
-                  ? workingCase.court.name.replace('dómur', 'dómi')
-                  : workingCase.court.name
-              }`
-            : undefined,
+          courtLocation: `í ${applyDativeCaseToCourtName(
+            workingCase.court?.name || 'héraðsdómi',
+          )}`,
           courtAttendees:
             autofillAttendees.length > 0
               ? autofillAttendees.join('')
@@ -203,6 +210,10 @@ const CourtRecord: FC = () => {
                 SessionArrangements.NONE_PRESENT
               ? formatMessage(m.sections.sessionBookings.autofillNonePresent)
               : undefined,
+          endOfSessionBookings:
+            endOfSessionBookings.length > 0
+              ? endOfSessionBookings.join('')
+              : undefined,
         },
       ],
       workingCase,
@@ -213,14 +224,57 @@ const CourtRecord: FC = () => {
   useOnceOn(isCaseUpToDate, initialize)
 
   const stepIsValid = isCourtRecordStepValidIC(workingCase)
-  const sessionBookingValidation: Validation[] =
-    workingCase.sessionArrangements === SessionArrangements.NONE_PRESENT
-      ? []
-      : ['empty']
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
     [workingCase.id],
   )
+
+  const handleEndOfSessionBookingsUpdate = ({
+    accusedAppealDecision,
+    accusedAppealAnnouncement,
+    prosecutorAppealDecision,
+    prosecutorAppealAnnouncement,
+  }: {
+    accusedAppealDecision?: CaseAppealDecision
+    accusedAppealAnnouncement?: string
+    prosecutorAppealDecision?: CaseAppealDecision
+    prosecutorAppealAnnouncement?: string
+  }) => {
+    const endOfSessionBookings: string[] = []
+    const updatedCase = {
+      ...workingCase,
+      ...(!isNullOrUndefined(accusedAppealDecision)
+        ? { accusedAppealDecision }
+        : {}),
+      ...(!isNullOrUndefined(accusedAppealAnnouncement)
+        ? { accusedAppealAnnouncement }
+        : {}),
+      ...(!isNullOrUndefined(prosecutorAppealDecision)
+        ? { prosecutorAppealDecision }
+        : {}),
+      ...(!isNullOrUndefined(prosecutorAppealAnnouncement)
+        ? { prosecutorAppealAnnouncement }
+        : {}),
+    }
+    populateEndOfCourtSessionBookingsIntro(updatedCase, endOfSessionBookings)
+
+    // override existing end of session booking if there
+    // is a update for a given working case (e.g. appeal decision)
+    // that should trigger an end of session bookings default text update
+    setAndSendCaseToServer(
+      [
+        {
+          endOfSessionBookings:
+            endOfSessionBookings.length > 0
+              ? endOfSessionBookings.join('')
+              : undefined,
+          force: true,
+        },
+      ],
+      workingCase,
+      setWorkingCase,
+    )
+  }
 
   return (
     <PageLayout
@@ -270,30 +324,12 @@ const CourtRecord: FC = () => {
               name="courtLocation"
               tooltip={formatMessage(m.sections.courtLocation.tooltip)}
               label={formatMessage(m.sections.courtLocation.label)}
-              value={workingCase.courtLocation || ''}
+              value={courtLocationInput.value || ''}
               placeholder={formatMessage(m.sections.courtLocation.placeholder)}
-              onChange={(event) =>
-                removeTabsValidateAndSet(
-                  'courtLocation',
-                  event.target.value,
-                  ['empty'],
-                  setWorkingCase,
-                  courtLocationEM,
-                  setCourtLocationEM,
-                )
-              }
-              onBlur={(event) =>
-                validateAndSendToServer(
-                  'courtLocation',
-                  event.target.value,
-                  ['empty'],
-                  workingCase,
-                  updateCase,
-                  setCourtLocationEM,
-                )
-              }
-              errorMessage={courtLocationEM}
-              hasError={courtLocationEM !== ''}
+              onChange={(evt) => courtLocationInput.onChange(evt.target.value)}
+              onBlur={(evt) => courtLocationInput.onBlur(evt.target.value)}
+              errorMessage={courtLocationInput.errorMessage}
+              hasError={courtLocationInput.hasError}
               autoComplete="off"
               required
             />
@@ -323,22 +359,11 @@ const CourtRecord: FC = () => {
             data-testid="courtAttendees"
             name="courtAttendees"
             label="Mættir eru"
-            value={workingCase.courtAttendees || ''}
             placeholder="Skrifa hér..."
-            onChange={(event) =>
-              removeTabsValidateAndSet(
-                'courtAttendees',
-                event.target.value,
-                [],
-                setWorkingCase,
-              )
-            }
-            onBlur={(event) =>
-              updateCase(workingCase.id, { courtAttendees: event.target.value })
-            }
+            value={courtAttendeesInput.value ?? ''}
+            onChange={(evt) => courtAttendeesInput.onChange(evt.target.value)}
             textarea
             rows={7}
-            autoExpand={{ on: true, maxHeight: 300 }}
           />
         </Box>
         <Box component="section" marginBottom={8}>
@@ -361,35 +386,18 @@ const CourtRecord: FC = () => {
               data-testid="sessionBookings"
               name="sessionBookings"
               label={formatMessage(m.sections.sessionBookings.label)}
-              value={workingCase.sessionBookings || ''}
+              value={sessionBookingsInput.value ?? ''}
               placeholder={formatMessage(
                 m.sections.sessionBookings.placeholder,
               )}
-              onChange={(event) =>
-                removeTabsValidateAndSet(
-                  'sessionBookings',
-                  event.target.value,
-                  sessionBookingValidation,
-                  setWorkingCase,
-                  sessionBookingsErrorMessage,
-                  setSessionBookingsMessage,
-                )
+              onChange={(evt) =>
+                sessionBookingsInput.onChange(evt.target.value)
               }
-              onBlur={(event) =>
-                validateAndSendToServer(
-                  'sessionBookings',
-                  event.target.value,
-                  sessionBookingValidation,
-                  workingCase,
-                  updateCase,
-                  setSessionBookingsMessage,
-                )
-              }
-              errorMessage={sessionBookingsErrorMessage}
-              hasError={sessionBookingsErrorMessage !== ''}
+              onBlur={(evt) => sessionBookingsInput.onBlur(evt.target.value)}
+              errorMessage={sessionBookingsInput.errorMessage}
+              hasError={sessionBookingsInput.hasError}
               textarea
               rows={16}
-              autoExpand={{ on: true, maxHeight: 600 }}
               required={sessionBookingValidation.length > 0}
             />
           </Box>
@@ -410,6 +418,7 @@ const CourtRecord: FC = () => {
           <AppealSections
             workingCase={workingCase}
             setWorkingCase={setWorkingCase}
+            onChange={handleEndOfSessionBookingsUpdate}
           />
         </Box>
         <Box component="section" marginBottom={5}>
@@ -423,29 +432,14 @@ const CourtRecord: FC = () => {
               data-testid="endOfSessionBookings"
               name="endOfSessionBookings"
               label={formatMessage(m.sections.endOfSessionBookings.label)}
-              value={workingCase.endOfSessionBookings || ''}
+              value={endOfSessionBookingsInput.value || ''}
               placeholder={formatMessage(
                 m.sections.endOfSessionBookings.placeholder,
               )}
-              onChange={(event) =>
-                removeTabsValidateAndSet(
-                  'endOfSessionBookings',
-                  event.target.value,
-                  [],
-                  setWorkingCase,
-                )
-              }
-              onBlur={(event) =>
-                validateAndSendToServer(
-                  'endOfSessionBookings',
-                  event.target.value,
-                  [],
-                  workingCase,
-                  updateCase,
-                )
+              onChange={(evt) =>
+                endOfSessionBookingsInput.onChange(evt.target.value)
               }
               rows={16}
-              autoExpand={{ on: true, maxHeight: 600 }}
               textarea
             />
           </Box>
@@ -500,6 +494,7 @@ const CourtRecord: FC = () => {
             caseId={workingCase.id}
             title={formatMessage(core.pdfButtonRulingShortVersion)}
             pdfType="courtRecord"
+            elementId={formatMessage(core.pdfButtonRulingShortVersion)}
           />
         </Box>
       </FormContentContainer>
@@ -512,16 +507,13 @@ const CourtRecord: FC = () => {
             handleNavigationTo(constants.INVESTIGATION_CASE_CONFIRMATION_ROUTE)
           }
           nextIsDisabled={!stepIsValid}
-          hideNextButton={
-            !workingCase.decision ||
-            !workingCase.conclusion ||
-            !workingCase.ruling
-          }
+          hideNextButton={hasMissingInfoInRulingStep}
           infoBoxText={
-            !workingCase.decision ||
-            !workingCase.conclusion ||
-            !workingCase.ruling
-              ? formatMessage(m.sections.nextButtonInfo.text)
+            hasMissingInfoInRulingStep
+              ? formatMessage(m.sections.nextButtonInfo.text, {
+                  isCompletedWithoutRuling:
+                    workingCase.isCompletedWithoutRuling,
+                })
               : ''
           }
         />

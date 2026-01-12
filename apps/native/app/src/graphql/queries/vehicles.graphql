@@ -28,6 +28,7 @@ query GetVehicle($input: GetVehicleDetailInput!) {
       trailerWithoutBrakesWeight
       nextAvailableMileageReadDate
       requiresMileageRegistration
+      availableMileageRegistration
       canRegisterMileage
     }
     basicInfo {

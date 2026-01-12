@@ -16,11 +16,7 @@ import {
   Table as T,
   Text,
 } from '@island.is/island-ui/core'
-import {
-  hasDeveloperRole,
-  hasPermission,
-} from '@island.is/skilavottord-web/auth/utils'
-import { NotFound } from '@island.is/skilavottord-web/components'
+import { hasDeveloperRole } from '@island.is/skilavottord-web/auth/utils'
 import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import Sidenav from '@island.is/skilavottord-web/components/Sidenav/Sidenav'
 import { UserContext } from '@island.is/skilavottord-web/context'
@@ -39,6 +35,7 @@ import { BASE_PATH } from '@island.is/skilavottord/consts'
 
 import { AccessControlCreate, AccessControlUpdate } from './components'
 
+import AuthGuard from '@island.is/skilavottord-web/components/AuthGuard/AuthGuard'
 import PageHeader from '@island.is/skilavottord-web/components/PageHeader/PageHeader'
 import * as styles from './AccessControl.css'
 
@@ -114,12 +111,6 @@ const AccessControlCompany: FC<React.PropsWithChildren<unknown>> = () => {
     activeLocale,
   } = useI18n()
 
-  if (!user) {
-    return null
-  } else if (!hasPermission('accessControlCompany', user?.role as Role)) {
-    return <NotFound />
-  }
-
   const {
     data: accessControlsData,
     error,
@@ -165,19 +156,15 @@ const AccessControlCompany: FC<React.PropsWithChildren<unknown>> = () => {
   ] = useState(false)
   const [partner, setPartner] = useState<AccessControlType>()
 
-  // const error = recyclingPartnerError || accessControlsError
-  // const loading = recyclingPartnerLoading || accessControlsLoading
-  // const isData = !!recyclingPartnerData && !!accessControlsData
   const isData = !!accessControlsData
 
-  const accessControls =
+  let accessControls =
     accessControlsData?.skilavottordAccessControlsByRecyclingPartner || []
 
-  // const partners = recyclingPartnerData?.skilavottordAllRecyclingPartners || []
-  // const recyclingPartners = filterInternalPartners(partners).map((partner) => ({
-  //   label: partner.companyName,
-  //   value: partner.companyId,
-  // }))
+  // Remove the users with municipality role
+  accessControls = accessControls.filter(
+    (accessCtrl) => accessCtrl.role !== AccessControlRole.municipality,
+  )
 
   const roles = Object.keys(AccessControlRole)
     .filter((role) =>
@@ -225,194 +212,199 @@ const AccessControlCompany: FC<React.PropsWithChildren<unknown>> = () => {
   }
 
   return (
-    <PartnerPageLayout
-      side={
-        <Sidenav
-          title={sidenavText.title}
-          sections={[
-            {
-              icon: 'car',
-              title: `${sidenavText.deregister}`,
-              link: `${routes.deregisterVehicle.baseRoute}`,
-            },
-            {
-              icon: 'business',
-              title: `${sidenavText.companyInfo}`,
-              link: `${routes.companyInfo.baseRoute}`,
-            },
-            {
-              icon: 'lockClosed',
-              title: `${sidenavText.accessControl}`,
-              link: `${routes.accessControlCompany}`,
-            },
-          ]}
-          activeSection={2}
-        />
-      }
+    <AuthGuard
+      permission="accessControlCompany"
+      loading={loading && !accessControlsData}
     >
-      <Stack space={4}>
-        <Box>
-          <Breadcrumbs
-            items={[
+      <PartnerPageLayout
+        side={
+          <Sidenav
+            title={sidenavText.title}
+            sections={[
               {
-                title: 'Ísland.is',
-                href: `${BASE_PATH}${routes.home['recyclingCompany']}`,
+                icon: 'car',
+                title: `${sidenavText.deregister}`,
+                link: `${routes.deregisterVehicle.baseRoute}`,
               },
               {
-                title: t.title,
+                icon: 'business',
+                title: `${sidenavText.companyInfo}`,
+                link: `${routes.companyInfo.baseRoute}`,
+              },
+              {
+                icon: 'lockClosed',
+                title: `${sidenavText.accessControl}`,
+                link: `${routes.accessControlCompany}`,
               },
             ]}
-            renderLink={(link, item) => {
-              return item?.href ? (
-                <NextLink href={item?.href} legacyBehavior>
-                  {link}
-                </NextLink>
-              ) : (
-                link
-              )
-            }}
+            activeSection={2}
           />
-        </Box>
-        <Box
-          display="flex"
-          alignItems="flexStart"
-          justifyContent="spaceBetween"
-        >
-          <PageHeader info={t.info} title={t.title} />
-
-          <AccessControlCreate
-            title={t.modal.titles.add}
-            text={t.modal.subtitles.add}
-            show={isCreateAccessControlModalVisible}
-            onCancel={handleCreateAccessControlCloseModal}
-            onSubmit={handleCreateAccessControl}
-            roles={roles}
-          />
-        </Box>
-        <Stack space={3}>
-          <Box display="flex" justifyContent="flexEnd">
-            <Button onClick={handleCreateAccessControlOpenModal}>
-              {t.buttons.add}
-            </Button>
+        }
+      >
+        <Stack space={4}>
+          <Box>
+            <Breadcrumbs
+              items={[
+                {
+                  title: 'Ísland.is',
+                  href: `${BASE_PATH}${routes.home['recyclingCompany']}`,
+                },
+                {
+                  title: t.title,
+                },
+              ]}
+              renderLink={(link, item) => {
+                return item?.href ? (
+                  <NextLink href={item?.href} legacyBehavior>
+                    {link}
+                  </NextLink>
+                ) : (
+                  link
+                )
+              }}
+            />
           </Box>
-          {loading ? (
-            <SkeletonLoader width="100%" height={206} />
-          ) : !isData || error ? (
-            <Box marginTop={4}>
-              <Text>{t.empty}</Text>
+          <Box
+            display="flex"
+            alignItems="flexStart"
+            justifyContent="spaceBetween"
+          >
+            <PageHeader info={t.info} title={t.title} />
+
+            <AccessControlCreate
+              title={t.modal.titles.add}
+              text={t.modal.subtitles.add}
+              show={isCreateAccessControlModalVisible}
+              onCancel={handleCreateAccessControlCloseModal}
+              onSubmit={handleCreateAccessControl}
+              roles={roles}
+            />
+          </Box>
+          <Stack space={3}>
+            <Box display="flex" justifyContent="flexEnd">
+              <Button onClick={handleCreateAccessControlOpenModal}>
+                {t.buttons.add}
+              </Button>
             </Box>
-          ) : (
-            <Table>
-              <Head>
-                <Row>
-                  <HeadData>
-                    <Text variant="eyebrow">{t.tableHeaders.nationalId}</Text>
-                  </HeadData>
-                  <HeadData>
-                    <Text variant="eyebrow">{t.tableHeaders.name}</Text>
-                  </HeadData>
-                  <HeadData>
-                    <Text variant="eyebrow">{t.tableHeaders.email}</Text>
-                  </HeadData>
-                  <HeadData>
-                    <Text variant="eyebrow">{t.tableHeaders.phone}</Text>
-                  </HeadData>
-                  <HeadData>
-                    <Text variant="eyebrow">{t.tableHeaders.role}</Text>
-                  </HeadData>
-                  <HeadData>
-                    <Text variant="eyebrow">
-                      {t.tableHeaders.recyclingLocation}
-                    </Text>
-                  </HeadData>
-                  <HeadData></HeadData>
-                </Row>
-              </Head>
-              <Body>
-                {accessControls.map((item) => (
-                  <Row key={item.nationalId}>
-                    <Data>{kennitala.format(item.nationalId)}</Data>
-                    <Data>{item.name}</Data>
-                    <Data>{item.email}</Data>
-                    <Data>{item.phone}</Data>
-                    <Data>
-                      {getRoleTranslation(
-                        item.role as AccessControlRole & Role,
-                        activeLocale,
-                      )}
-                    </Data>
-                    <Data>{item.recyclingLocation}</Data>
-                    <Data>
-                      <DropdownMenu
-                        disclosure={
-                          <Button
-                            variant="text"
-                            icon="chevronDown"
-                            size="small"
-                            nowrap
-                          >
-                            {t.buttons.actions}
-                          </Button>
-                        }
-                        items={[
-                          {
-                            title: t.buttons.edit,
-                            onClick: () => setPartner(item),
-                          },
-                          {
-                            title: t.buttons.delete,
-                            render: () => (
-                              <DialogPrompt
-                                title={t.modal.titles.delete}
-                                description={t.modal.subtitles.delete}
-                                baseId={`delete-${item.nationalId}-dialog`}
-                                ariaLabel={`delete-${item.nationalId}-dialog`}
-                                disclosureElement={
-                                  <Box
-                                    display="flex"
-                                    alignItems="center"
-                                    justifyContent="center"
-                                    paddingY={2}
-                                    cursor="pointer"
-                                    className={styles.deleteMenuItem}
-                                  >
-                                    <Text variant="eyebrow" color="red600">
-                                      {t.buttons.delete}
-                                    </Text>
-                                  </Box>
-                                }
-                                buttonTextCancel={t.modal.buttons.cancel}
-                                buttonTextConfirm={t.modal.buttons.confirm}
-                                onConfirm={() =>
-                                  handleDeleteAccessControl({
-                                    nationalId: item.nationalId,
-                                  })
-                                }
-                              />
-                            ),
-                          },
-                        ]}
-                        menuLabel={t.buttons.actions}
-                      />
-                    </Data>
+            {loading ? (
+              <SkeletonLoader width="100%" height={206} />
+            ) : !isData || error ? (
+              <Box marginTop={4}>
+                <Text>{t.empty}</Text>
+              </Box>
+            ) : (
+              <Table>
+                <Head>
+                  <Row>
+                    <HeadData>
+                      <Text variant="eyebrow">{t.tableHeaders.nationalId}</Text>
+                    </HeadData>
+                    <HeadData>
+                      <Text variant="eyebrow">{t.tableHeaders.name}</Text>
+                    </HeadData>
+                    <HeadData>
+                      <Text variant="eyebrow">{t.tableHeaders.email}</Text>
+                    </HeadData>
+                    <HeadData>
+                      <Text variant="eyebrow">{t.tableHeaders.phone}</Text>
+                    </HeadData>
+                    <HeadData>
+                      <Text variant="eyebrow">{t.tableHeaders.role}</Text>
+                    </HeadData>
+                    <HeadData>
+                      <Text variant="eyebrow">
+                        {t.tableHeaders.recyclingLocation}
+                      </Text>
+                    </HeadData>
+                    <HeadData></HeadData>
                   </Row>
-                ))}
-              </Body>
-            </Table>
-          )}
+                </Head>
+                <Body>
+                  {accessControls.map((item) => (
+                    <Row key={item.nationalId}>
+                      <Data>{kennitala.format(item.nationalId)}</Data>
+                      <Data>{item.name}</Data>
+                      <Data>{item.email}</Data>
+                      <Data>{item.phone}</Data>
+                      <Data>
+                        {getRoleTranslation(
+                          item.role as AccessControlRole & Role,
+                          activeLocale,
+                        )}
+                      </Data>
+                      <Data>{item.recyclingLocation}</Data>
+                      <Data>
+                        <DropdownMenu
+                          disclosure={
+                            <Button
+                              variant="text"
+                              icon="chevronDown"
+                              size="small"
+                              nowrap
+                            >
+                              {t.buttons.actions}
+                            </Button>
+                          }
+                          items={[
+                            {
+                              title: t.buttons.edit,
+                              onClick: () => setPartner(item),
+                            },
+                            {
+                              title: t.buttons.delete,
+                              render: () => (
+                                <DialogPrompt
+                                  title={t.modal.titles.delete}
+                                  description={t.modal.subtitles.delete}
+                                  baseId={`delete-${item.nationalId}-dialog`}
+                                  ariaLabel={`delete-${item.nationalId}-dialog`}
+                                  disclosureElement={
+                                    <Box
+                                      display="flex"
+                                      alignItems="center"
+                                      justifyContent="center"
+                                      paddingY={2}
+                                      cursor="pointer"
+                                      className={styles.deleteMenuItem}
+                                    >
+                                      <Text variant="eyebrow" color="red600">
+                                        {t.buttons.delete}
+                                      </Text>
+                                    </Box>
+                                  }
+                                  buttonTextCancel={t.modal.buttons.cancel}
+                                  buttonTextConfirm={t.modal.buttons.confirm}
+                                  onConfirm={() =>
+                                    handleDeleteAccessControl({
+                                      nationalId: item.nationalId,
+                                    })
+                                  }
+                                />
+                              ),
+                            },
+                          ]}
+                          menuLabel={t.buttons.actions}
+                        />
+                      </Data>
+                    </Row>
+                  ))}
+                </Body>
+              </Table>
+            )}
+          </Stack>
         </Stack>
-      </Stack>
-      <AccessControlUpdate
-        title={t.modal.titles.edit}
-        text={t.modal.subtitles.edit}
-        show={!!partner}
-        onCancel={handleUpdateAccessControlCloseModal}
-        onSubmit={handleUpdateAccessControl}
-        // recyclingPartners={recyclingPartners}
-        roles={roles}
-        currentPartner={partner}
-      />
-    </PartnerPageLayout>
+        <AccessControlUpdate
+          title={t.modal.titles.edit}
+          text={t.modal.subtitles.edit}
+          show={!!partner}
+          onCancel={handleUpdateAccessControlCloseModal}
+          onSubmit={handleUpdateAccessControl}
+          // recyclingPartners={recyclingPartners}
+          roles={roles}
+          currentPartner={partner}
+        />
+      </PartnerPageLayout>
+    </AuthGuard>
   )
 }
 

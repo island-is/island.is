@@ -1,10 +1,11 @@
 import dynamic from 'next/dynamic'
-import { ProjectPage } from '@island.is/web/graphql/schema'
+
 import {
   FiskistofaFooter,
-  LandskjorstjornFooter,
   Footer,
+  LandskjorstjornFooter,
 } from '@island.is/web/components'
+import { ProjectPage } from '@island.is/web/graphql/schema'
 
 const OpinberNyskopunFooter = dynamic(() =>
   import('./themes/OpinberNyskopun/OpinberNyskopunFooter').then(

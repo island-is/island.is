@@ -22,7 +22,6 @@ import {
   InputController,
   SelectController,
 } from '@island.is/shared/form-fields'
-import { sortAlpha } from '@island.is/shared/utils'
 import { getThemeConfig, MarkdownText } from '@island.is/web/components'
 import {
   CustomPageUniqueIdentifier,
@@ -58,8 +57,6 @@ import {
   convertToQueryParams,
   extractSlug,
   getDateOfCalculationsOptions,
-  is2025FormPreviewActive,
-  NEW_SYSTEM_TAKES_PLACE_DATE,
 } from './utils'
 import * as styles from './PensionCalculator.css'
 
@@ -120,14 +117,12 @@ interface PensionCalculatorProps {
   organizationPage: OrganizationPage
   organization: Organization
   defaultValues: CalculationInput
-  dateOfCalculationsOptions: Option<string>[]
 }
 
 const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
   organizationPage,
   organization,
   defaultValues,
-  dateOfCalculationsOptions,
   customPageData,
 }) => {
   const { formatMessage } = useIntl()
@@ -137,14 +132,17 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
     defaultValues,
   })
 
-  const [dateOfCalculations, setDateOfCalculations] = useQueryState(
-    'dateOfCalculations',
-    {
-      defaultValue:
-        methods.formState.defaultValues?.dateOfCalculations ??
-        dateOfCalculationsOptions[0].value,
-    },
-  )
+  const typeOfBasePension = methods.watch('typeOfBasePension')
+
+  const dateOfCalculationsOptions = useMemo(() => {
+    return getDateOfCalculationsOptions(
+      customPageData,
+      typeOfBasePension ?? BasePensionType.Retirement,
+    )
+  }, [customPageData, typeOfBasePension])
+
+  const [dateOfCalculations, setDateOfCalculations] =
+    useQueryState('dateOfCalculations')
 
   const currencyInputMaxLength =
     customPageData?.configJson?.currencyInputMaxLength ?? 14
@@ -162,7 +160,6 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
       : false,
   )
 
-  const typeOfBasePension = methods.watch('typeOfBasePension')
   const birthMonth = methods.watch('birthMonth')
   const birthYear = methods.watch('birthYear')
   const startMonth = methods.watch('startMonth')
@@ -181,47 +178,11 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
       : maxMonthPensionDelayIfBornAfter1951
 
   const allCalculatorsOptions = useMemo(() => {
-    const options = [...dateOfCalculationsOptions]
-
-    if (is2025FormPreviewActive(customPageData)) {
-      options.unshift({
-        label: formatMessage(translationStrings.form2025PreviewLabel),
-        value: NEW_SYSTEM_TAKES_PLACE_DATE.toISOString(),
-      })
-    }
-
-    return options
-  }, [customPageData, dateOfCalculationsOptions, formatMessage])
-
-  const isNewSystemActive =
-    is2025FormPreviewActive(customPageData) &&
-    dateOfCalculations === NEW_SYSTEM_TAKES_PLACE_DATE.toISOString()
+    return [...dateOfCalculationsOptions]
+  }, [dateOfCalculationsOptions])
 
   const basePensionTypeOptions = useMemo<Option<BasePensionType>[]>(() => {
-    if (isNewSystemActive) {
-      const options = [
-        {
-          label: formatMessage(
-            translationStrings.basePensionNewSystemDisabilityLabel,
-          ),
-          value: BasePensionType.NewSystemDisability,
-        },
-        {
-          label: formatMessage(
-            translationStrings.basePensionNewSystemPartialDisabilityLabel,
-          ),
-          value: BasePensionType.NewSystemPartialDisability,
-        },
-        {
-          label: formatMessage(
-            translationStrings.basePensionNewSystemMedicalAndRehabilitation,
-          ),
-          value: BasePensionType.NewSystemMedicalAndRehabilitation,
-        },
-      ]
-      return options
-    }
-    const options = [
+    return [
       {
         label: formatMessage(translationStrings.basePensionRetirementLabel),
         value: BasePensionType.Retirement,
@@ -233,6 +194,10 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
         value: BasePensionType.FishermanRetirement,
       },
       {
+        label: formatMessage(translationStrings.basePensionHalfRetirementLabel),
+        value: BasePensionType.HalfRetirement,
+      },
+      {
         label: formatMessage(translationStrings.basePensionDisabilityLabel),
         value: BasePensionType.Disability,
       },
@@ -241,14 +206,13 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
         value: BasePensionType.Rehabilitation,
       },
       {
-        label: formatMessage(translationStrings.basePensionHalfRetirementLabel),
-        value: BasePensionType.HalfRetirement,
+        label: formatMessage(
+          translationStrings.basePensionNewSystemPartialDisabilityLabel,
+        ),
+        value: BasePensionType.NewSystemPartialDisability,
       },
     ]
-
-    options.sort(sortAlpha('label'))
-    return options
-  }, [formatMessage, isNewSystemActive])
+  }, [formatMessage])
 
   const hasSpouseOptions = useMemo<Option<boolean>[]>(() => {
     return [
@@ -343,7 +307,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
       }),
       dateOfCalculations: data.dateOfCalculations
         ? data.dateOfCalculations
-        : dateOfCalculationsOptions[0].value,
+        : dateOfCalculationsOptions[0]?.value,
     })
     setLoadingResultPage(true)
     router.push(`${baseUrl}?${queryParams.toString()}`)
@@ -402,29 +366,25 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
     ]
   }, [formatMessage])
 
-  // Make sure we never enter an invalid state
   useEffect(() => {
-    if (isNewSystemActive) {
-      if (
-        typeOfBasePension !== BasePensionType.NewSystemDisability &&
-        typeOfBasePension !== BasePensionType.NewSystemPartialDisability &&
-        typeOfBasePension !== BasePensionType.NewSystemMedicalAndRehabilitation
-      ) {
-        methods.setValue(
-          'typeOfBasePension',
-          BasePensionType.NewSystemDisability,
-        )
-      }
-    } else {
-      if (
-        typeOfBasePension === BasePensionType.NewSystemDisability ||
-        typeOfBasePension === BasePensionType.NewSystemPartialDisability ||
-        typeOfBasePension === BasePensionType.NewSystemMedicalAndRehabilitation
-      ) {
-        methods.setValue('typeOfBasePension', BasePensionType.Retirement)
-      }
+    if (
+      dateOfCalculations &&
+      !dateOfCalculationsOptions.find(
+        (option) => option.value === dateOfCalculations,
+      )
+    ) {
+      setDateOfCalculations(dateOfCalculationsOptions[0]?.value)
+      methods.setValue(
+        'dateOfCalculations',
+        dateOfCalculationsOptions[0]?.value,
+      )
     }
-  }, [isNewSystemActive, methods, typeOfBasePension])
+  }, [
+    dateOfCalculations,
+    dateOfCalculationsOptions,
+    setDateOfCalculations,
+    methods,
+  ])
 
   const birthYearOptions = useMemo<Option<number>[]>(() => {
     const today = new Date()
@@ -482,17 +442,11 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
     return options
   }, [defaultPensionDate, maxMonthPensionDelay, maxMonthPensionHurry])
 
-  const title = `${formatMessage(
-    isNewSystemActive
-      ? translationStrings.form2025PreviewMainTitle
-      : translationStrings.mainTitle,
-  )}`
-  const titlePostfix = `${(
+  const title = `${formatMessage(translationStrings.mainTitle)}`
+  const titlePostfix = (
     allCalculatorsOptions.find((o) => o.value === dateOfCalculations)?.label ??
-    dateOfCalculationsOptions[0].label
-  ).toLowerCase()}`
-
-  const titleVariant = isNewSystemActive ? 'h2' : 'h1'
+    dateOfCalculationsOptions[0]?.label
+  )?.toLowerCase()
 
   const startMonthOptions = useMemo(() => {
     if (!defaultPensionDate) {
@@ -556,10 +510,8 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
               <Box paddingY={5}>
                 <Stack space={3}>
                   <PensionCalculatorTitle
-                    isNewSystemActive={isNewSystemActive}
                     title={title}
                     titlePostfix={titlePostfix}
-                    titleVariant={titleVariant}
                   />
                   <Text>{formatMessage(translationStrings.isTurnedOff)}</Text>
                 </Stack>
@@ -570,7 +522,10 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
       )}
       {!isTurnedOff && (
         <FormProvider {...methods}>
-          <form onSubmit={methods.handleSubmit(onSubmit)}>
+          <form
+            onSubmit={methods.handleSubmit(onSubmit)}
+            className={styles.form}
+          >
             <Stack space={6}>
               <GridContainer>
                 <GridRow>
@@ -582,763 +537,788 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                       <Stack space={3}>
                         <Box paddingTop={6}>
                           <PensionCalculatorTitle
-                            isNewSystemActive={isNewSystemActive}
                             title={title}
                             titlePostfix={titlePostfix}
-                            titleVariant={titleVariant}
                           />
                         </Box>
                       </Stack>
-                      <Box
-                        columnGap={3}
-                        rowGap={3}
-                        display="flex"
-                        flexDirection="row"
-                        justifyContent="spaceBetween"
-                        alignItems="flexEnd"
-                        flexWrap="wrap"
+                      <Box className={styles.textMaxWidth}>
+                        <MarkdownText>
+                          {formatMessage(translationStrings.introduction)}
+                        </MarkdownText>
+                      </Box>
+                      <Inline
+                        alignY="center"
+                        space={3}
+                        collapseBelow="lg"
+                        flexWrap="nowrap"
                       >
-                        <Box className={styles.textMaxWidth}>
-                          <MarkdownText>
-                            {formatMessage(translationStrings.introduction)}
-                          </MarkdownText>
-                        </Box>
-
-                        <Box className={styles.dateOfCalculationsSelect}>
+                        <Box className={styles.inputContainer}>
                           <SelectController
-                            id={'dateOfCalculations' as keyof CalculationInput}
-                            name={
-                              'dateOfCalculations' as keyof CalculationInput
-                            }
+                            id={'typeOfBasePension' as keyof CalculationInput}
+                            name={'typeOfBasePension' as keyof CalculationInput}
                             label={formatMessage(
-                              translationStrings.dateOfCalculationsLabel,
+                              translationStrings.typeOfBasePensionLabel,
                             )}
+                            options={basePensionTypeOptions}
                             placeholder={formatMessage(
-                              translationStrings.dateOfCalculationsPlaceholder,
+                              translationStrings.typeOfBasePensionPlaceholder,
                             )}
-                            size="sm"
-                            options={allCalculatorsOptions}
                             onSelect={(option) => {
-                              if (option) {
-                                setDateOfCalculations(option.value)
-                                if (isNewSystemActive) {
-                                  if (
-                                    option.value ===
-                                    NEW_SYSTEM_TAKES_PLACE_DATE.toISOString()
-                                  ) {
-                                    // Date is being moved to the new system date
-                                    methods.setValue(
-                                      'typeOfBasePension',
-                                      BasePensionType.NewSystemDisability,
-                                    )
-                                  } else if (
-                                    dateOfCalculations ===
-                                    NEW_SYSTEM_TAKES_PLACE_DATE.toISOString()
-                                  ) {
-                                    // Date is being moved from new system date
-                                    methods.setValue(
-                                      'typeOfBasePension',
-                                      BasePensionType.Retirement,
-                                    )
-                                  }
-                                }
+                              if (option && !dateOfCalculations) {
+                                const dateOptions =
+                                  getDateOfCalculationsOptions(
+                                    customPageData,
+                                    option.value,
+                                  )
+                                setDateOfCalculations(dateOptions?.[0]?.value)
+                                methods.setValue(
+                                  'dateOfCalculations',
+                                  dateOptions?.[0]?.value,
+                                )
                               }
                             }}
                           />
                         </Box>
-                      </Box>
-                      <Box className={styles.inputContainer}>
-                        <SelectController
-                          id={'typeOfBasePension' as keyof CalculationInput}
-                          name={'typeOfBasePension' as keyof CalculationInput}
-                          label={formatMessage(
-                            translationStrings.typeOfBasePensionLabel,
-                          )}
-                          options={basePensionTypeOptions}
-                        />
-                      </Box>
+                        <Box className={styles.inputContainer}>
+                          <Box className={styles.dateOfCalculationsSelect}>
+                            <SelectController
+                              id={
+                                'dateOfCalculations' as keyof CalculationInput
+                              }
+                              name={
+                                'dateOfCalculations' as keyof CalculationInput
+                              }
+                              label={formatMessage(
+                                translationStrings.dateOfCalculationsLabel,
+                              )}
+                              placeholder={formatMessage(
+                                translationStrings.dateOfCalculationsPlaceholder,
+                              )}
+                              options={allCalculatorsOptions}
+                              onSelect={(option) => {
+                                if (option) setDateOfCalculations(option.value)
+                              }}
+                              disabled={!typeOfBasePension}
+                            />
+                          </Box>
+                        </Box>
+                      </Inline>
                     </Stack>
                   </GridColumn>
                 </GridRow>
               </GridContainer>
-
-              <Box paddingY={5} background="blue100">
-                <GridContainer>
-                  <GridRow>
-                    <GridColumn
-                      offset={['0', '0', '0', '1/9']}
-                      className={styles.fullWidth}
-                    >
-                      <Stack space={5}>
-                        {hasStartDate(typeOfBasePension) && (
-                          <Stack space={3}>
-                            <Box className={styles.textMaxWidth}>
-                              <Text variant="h2" as="h2">
-                                {formatMessage(
-                                  translationStrings.startOfPaymentsHeading,
-                                )}
-                              </Text>
-                            </Box>
-
-                            <Box className={styles.textMaxWidth}>
-                              <Text>
-                                {formatMessage(
-                                  translationStrings.startOfPaymentsDescription,
-                                )}
-                              </Text>
-                            </Box>
-
-                            <Box className={styles.textMaxWidth}>
-                              <Text>
-                                {formatMessage(
-                                  translationStrings.birthMonthAndYearDescription,
-                                )}
-                              </Text>
-                            </Box>
-
-                            <Inline space={3} collapseBelow="sm">
-                              <Box className={styles.monthSelectContainer}>
-                                <SelectController
-                                  id={'birthMonth' as keyof CalculationInput}
-                                  name={'birthMonth' as keyof CalculationInput}
-                                  options={monthOptions}
-                                  label={formatMessage(
-                                    translationStrings.birthMonthLabel,
+              {typeOfBasePension && (
+                <Box paddingY={5} background="blue100">
+                  <GridContainer>
+                    <GridRow>
+                      <GridColumn
+                        offset={['0', '0', '0', '1/9']}
+                        className={styles.fullWidth}
+                      >
+                        <Stack space={5}>
+                          {hasStartDate(typeOfBasePension) && (
+                            <Stack space={3}>
+                              <Box className={styles.textMaxWidth}>
+                                <Text variant="h2" as="h2">
+                                  {formatMessage(
+                                    translationStrings.startOfPaymentsHeading,
                                   )}
-                                  placeholder={formatMessage(
-                                    translationStrings.birthMonthPlaceholder,
-                                  )}
-                                  onSelect={(option) => {
-                                    methods.setValue(
-                                      'startMonth',
-                                      option.value > 10 ? 0 : option.value + 1,
-                                    )
-                                    methods.setValue(
-                                      'startYear',
-                                      birthYear +
-                                        defaultPensionAge +
-                                        (option.value > 10 ? 1 : 0),
-                                    )
-                                  }}
-                                />
+                                </Text>
                               </Box>
-                              <Box className={styles.yearSelectContainer}>
-                                <SelectController
-                                  id={'birthYear' as keyof CalculationInput}
-                                  name={'birthYear' as keyof CalculationInput}
-                                  options={birthYearOptions}
-                                  label={formatMessage(
-                                    translationStrings.birthYearLabel,
-                                  )}
-                                  placeholder={formatMessage(
-                                    translationStrings.birthYearPlaceholder,
-                                  )}
-                                  onSelect={(option) => {
-                                    methods.setValue(
-                                      'startYear',
-                                      option.value + defaultPensionAge,
-                                    )
-                                  }}
-                                />
-                              </Box>
-                            </Inline>
 
-                            {startYearOptions?.length > 0 && (
                               <Box className={styles.textMaxWidth}>
                                 <Text>
                                   {formatMessage(
-                                    translationStrings.startMonthAndYearDescription,
-                                    {
-                                      month:
-                                        activeLocale !== 'en'
-                                          ? lowercaseFirstLetter(
-                                              defaultStartMonthLabel,
-                                            )
-                                          : defaultStartMonthLabel,
-                                      year: startYearOptions?.[2]?.label,
-                                    },
+                                    translationStrings.startOfPaymentsDescription,
                                   )}
                                 </Text>
                               </Box>
-                            )}
 
-                            {typeof birthMonth === 'number' &&
-                              typeof birthYear === 'number' && (
-                                <Inline space={3} collapseBelow="sm">
-                                  <Box className={styles.monthSelectContainer}>
-                                    <SelectController
-                                      id={
-                                        'startMonth' as keyof CalculationInput
-                                      }
-                                      name={
-                                        'startMonth' as keyof CalculationInput
-                                      }
-                                      options={startMonthOptions}
-                                      label={formatMessage(
-                                        translationStrings.startMonthLabel,
-                                      )}
-                                      placeholder={formatMessage(
-                                        translationStrings.startMonthPlaceholder,
-                                      )}
-                                    />
-                                  </Box>
-                                  <Box className={styles.yearSelectContainer}>
-                                    <SelectController
-                                      id={'startYear' as keyof CalculationInput}
-                                      name={
-                                        'startYear' as keyof CalculationInput
-                                      }
-                                      disabled={
-                                        typeof birthMonth !== 'number' ||
-                                        typeof birthYear !== 'number'
-                                      }
-                                      options={startYearOptions}
-                                      label={formatMessage(
-                                        translationStrings.startYearLabel,
-                                      )}
-                                      placeholder={formatMessage(
-                                        translationStrings.startYearPlaceholder,
-                                      )}
-                                      onSelect={(option) => {
-                                        if (!defaultPensionDate) {
-                                          return
-                                        }
-                                        if (
-                                          option.value ===
-                                          startYearOptions[0]?.value
-                                        ) {
-                                          const minMonth = add(
-                                            defaultPensionDate,
-                                            {
-                                              months: -maxMonthPensionHurry,
-                                            },
-                                          ).getMonth()
-                                          if (
-                                            typeof startMonth === 'number' &&
-                                            startMonth < minMonth
-                                          ) {
-                                            methods.setValue(
-                                              'startMonth',
-                                              minMonth,
-                                            )
-                                          }
-                                        }
-
-                                        if (
-                                          option.value ===
-                                          startYearOptions[
-                                            startYearOptions.length - 1
-                                          ]?.value
-                                        ) {
-                                          const maxMonth = add(
-                                            defaultPensionDate,
-                                            {
-                                              months: maxMonthPensionDelay,
-                                            },
-                                          ).getMonth()
-
-                                          if (
-                                            typeof startMonth === 'number' &&
-                                            startMonth > maxMonth
-                                          ) {
-                                            methods.setValue(
-                                              'startMonth',
-                                              maxMonth,
-                                            )
-                                          }
-                                        }
-                                      }}
-                                    />
-                                  </Box>
-                                </Inline>
-                              )}
-
-                            {typeof monthOffset === 'number' &&
-                              monthOffset !== 0 && (
+                              <Box className={styles.textMaxWidth}>
                                 <Text>
                                   {formatMessage(
-                                    monthOffset > 0
-                                      ? translationStrings.pensionStartIsDelayed
-                                      : translationStrings.pensionStartIsHurried,
-                                    {
-                                      monthAmount: `${Math.abs(monthOffset)} ${
-                                        activeLocale === 'is'
-                                          ? 'mánuð'
-                                          : 'month'
-                                      }${
-                                        Math.abs(monthOffset) !== 1
-                                          ? activeLocale === 'is'
-                                            ? 'i'
-                                            : 's'
-                                          : ''
-                                      }`,
-                                    },
+                                    translationStrings.birthMonthAndYearDescription,
                                   )}
                                 </Text>
-                              )}
-                          </Stack>
-                        )}
-                        <Text variant="h2" as="h2">
-                          {formatMessage(
-                            translationStrings.yourCircumstancesHeading,
-                          )}
-                        </Text>
-
-                        <Stack space={6}>
-                          <Stack space={3}>
-                            <Box className={styles.inputContainer}>
-                              <SelectController
-                                id={'hasSpouse' as keyof CalculationInput}
-                                name={'hasSpouse' as keyof CalculationInput}
-                                label={formatMessage(
-                                  translationStrings.hasSpouseLabel,
-                                )}
-                                placeholder={formatMessage(
-                                  translationStrings.hasSpousePlaceholder,
-                                )}
-                                options={hasSpouseOptions}
-                              />
-                            </Box>
-
-                            <Box className={styles.inputContainer}>
-                              <SelectController
-                                id={'livingCondition' as keyof CalculationInput}
-                                name={
-                                  'livingCondition' as keyof CalculationInput
-                                }
-                                label={formatMessage(
-                                  translationStrings.livingConditionLabel,
-                                )}
-                                placeholder={formatMessage(
-                                  translationStrings.livingConditionPlaceholder,
-                                )}
-                                options={livingConditionOptions}
-                              />
-                            </Box>
-
-                            <Box className={styles.inputContainer}>
-                              <SelectController
-                                id={'childCount' as keyof CalculationInput}
-                                name={'childCount' as keyof CalculationInput}
-                                label={formatMessage(
-                                  translationStrings.childCountLabel,
-                                )}
-                                placeholder={formatMessage(
-                                  translationStrings.childCountPlaceholder,
-                                )}
-                                options={childCountOptions}
-                              />
-                            </Box>
-
-                            {(typeOfBasePension ===
-                              BasePensionType.Disability ||
-                              typeOfBasePension ===
-                                BasePensionType.NewSystemDisability ||
-                              typeOfBasePension ===
-                                BasePensionType.NewSystemPartialDisability ||
-                              typeOfBasePension ===
-                                BasePensionType.Rehabilitation) && (
-                              <Box className={styles.inputContainer}>
-                                <InputController
-                                  id={
-                                    'ageOfFirst75DisabilityAssessment' as keyof CalculationInput
-                                  }
-                                  name={
-                                    'ageOfFirst75DisabilityAssessment' as keyof CalculationInput
-                                  }
-                                  label={formatMessage(
-                                    typeOfBasePension ===
-                                      BasePensionType.Disability ||
-                                      typeOfBasePension ===
-                                        BasePensionType.NewSystemDisability ||
-                                      typeOfBasePension ===
-                                        BasePensionType.NewSystemPartialDisability
-                                      ? translationStrings.ageOfFirst75DisabilityAssessment
-                                      : translationStrings.ageOfFirst75RehabilitationAssessment,
-                                  )}
-                                  suffix={
-                                    ' ' +
-                                    formatMessage(
-                                      translationStrings.ageOfFirst75DisabilityAssessmentSuffix,
-                                    )
-                                  }
-                                  type="number"
-                                  maxLength={
-                                    formatMessage(
-                                      translationStrings.ageOfFirst75DisabilityAssessmentSuffix,
-                                    ).length + 3
-                                  }
-                                  placeholder={formatMessage(
-                                    translationStrings.ageOfFirst75DisabilityAssessmentPlaceholder,
-                                  )}
-                                />
                               </Box>
-                            )}
-                          </Stack>
-                          {!hasDisabilityAssessment(typeOfBasePension) && (
-                            <Stack space={2}>
-                              <Text>
-                                {formatMessage(
-                                  translationStrings.hasLivedAbroadLabel,
-                                )}
-                              </Text>
-                              <Box className={styles.inputContainer}>
-                                <Inline space={3}>
-                                  <RadioButton
-                                    id="hasLivedAbroadNo"
-                                    checked={hasLivedAbroad === false}
-                                    onChange={() => {
-                                      setHasLivedAbroad(false)
+
+                              <Inline space={3} collapseBelow="sm">
+                                <Box className={styles.monthSelectContainer}>
+                                  <SelectController
+                                    id={'birthMonth' as keyof CalculationInput}
+                                    name={
+                                      'birthMonth' as keyof CalculationInput
+                                    }
+                                    options={monthOptions}
+                                    label={formatMessage(
+                                      translationStrings.birthMonthLabel,
+                                    )}
+                                    placeholder={formatMessage(
+                                      translationStrings.birthMonthPlaceholder,
+                                    )}
+                                    onSelect={(option) => {
                                       methods.setValue(
-                                        'livingConditionAbroadInYears',
-                                        null,
+                                        'startMonth',
+                                        option.value > 10
+                                          ? 0
+                                          : option.value + 1,
+                                      )
+                                      methods.setValue(
+                                        'startYear',
+                                        birthYear +
+                                          defaultPensionAge +
+                                          (option.value > 10 ? 1 : 0),
                                       )
                                     }}
-                                    label={formatMessage(
-                                      translationStrings.hasLivedAbroadNo,
-                                    )}
                                   />
-                                  <RadioButton
-                                    id="hasLivedAbroadYes"
-                                    checked={hasLivedAbroad === true}
-                                    onChange={() => {
-                                      setHasLivedAbroad(true)
+                                </Box>
+                                <Box className={styles.yearSelectContainer}>
+                                  <SelectController
+                                    id={'birthYear' as keyof CalculationInput}
+                                    name={'birthYear' as keyof CalculationInput}
+                                    options={birthYearOptions}
+                                    label={formatMessage(
+                                      translationStrings.birthYearLabel,
+                                    )}
+                                    placeholder={formatMessage(
+                                      translationStrings.birthYearPlaceholder,
+                                    )}
+                                    onSelect={(option) => {
+                                      methods.setValue(
+                                        'startYear',
+                                        option.value + defaultPensionAge,
+                                      )
                                     }}
-                                    label={formatMessage(
-                                      translationStrings.hasLivedAbroadYes,
-                                    )}
                                   />
-                                </Inline>
+                                </Box>
+                              </Inline>
+
+                              {startYearOptions?.length > 0 && (
+                                <Box className={styles.textMaxWidth}>
+                                  <MarkdownText>
+                                    {formatMessage(
+                                      translationStrings.startMonthAndYearDescriptionMarkdown,
+                                      {
+                                        month:
+                                          activeLocale !== 'en'
+                                            ? lowercaseFirstLetter(
+                                                defaultStartMonthLabel,
+                                              )
+                                            : defaultStartMonthLabel,
+                                        year: startYearOptions?.[2]?.label,
+                                      },
+                                    )}
+                                  </MarkdownText>
+                                </Box>
+                              )}
+
+                              {typeof birthMonth === 'number' &&
+                                typeof birthYear === 'number' && (
+                                  <Inline space={3} collapseBelow="sm">
+                                    <Box
+                                      className={styles.monthSelectContainer}
+                                    >
+                                      <SelectController
+                                        id={
+                                          'startMonth' as keyof CalculationInput
+                                        }
+                                        name={
+                                          'startMonth' as keyof CalculationInput
+                                        }
+                                        options={startMonthOptions}
+                                        label={formatMessage(
+                                          translationStrings.startMonthLabel,
+                                        )}
+                                        placeholder={formatMessage(
+                                          translationStrings.startMonthPlaceholder,
+                                        )}
+                                      />
+                                    </Box>
+                                    <Box className={styles.yearSelectContainer}>
+                                      <SelectController
+                                        id={
+                                          'startYear' as keyof CalculationInput
+                                        }
+                                        name={
+                                          'startYear' as keyof CalculationInput
+                                        }
+                                        disabled={
+                                          typeof birthMonth !== 'number' ||
+                                          typeof birthYear !== 'number'
+                                        }
+                                        options={startYearOptions}
+                                        label={formatMessage(
+                                          translationStrings.startYearLabel,
+                                        )}
+                                        placeholder={formatMessage(
+                                          translationStrings.startYearPlaceholder,
+                                        )}
+                                        onSelect={(option) => {
+                                          if (!defaultPensionDate) {
+                                            return
+                                          }
+                                          if (
+                                            option.value ===
+                                            startYearOptions[0]?.value
+                                          ) {
+                                            const minMonth = add(
+                                              defaultPensionDate,
+                                              {
+                                                months: -maxMonthPensionHurry,
+                                              },
+                                            ).getMonth()
+                                            if (
+                                              typeof startMonth === 'number' &&
+                                              startMonth < minMonth
+                                            ) {
+                                              methods.setValue(
+                                                'startMonth',
+                                                minMonth,
+                                              )
+                                            }
+                                          }
+
+                                          if (
+                                            option.value ===
+                                            startYearOptions[
+                                              startYearOptions.length - 1
+                                            ]?.value
+                                          ) {
+                                            const maxMonth = add(
+                                              defaultPensionDate,
+                                              {
+                                                months: maxMonthPensionDelay,
+                                              },
+                                            ).getMonth()
+
+                                            if (
+                                              typeof startMonth === 'number' &&
+                                              startMonth > maxMonth
+                                            ) {
+                                              methods.setValue(
+                                                'startMonth',
+                                                maxMonth,
+                                              )
+                                            }
+                                          }
+                                        }}
+                                      />
+                                    </Box>
+                                  </Inline>
+                                )}
+
+                              {typeof monthOffset === 'number' &&
+                                monthOffset !== 0 && (
+                                  <Text>
+                                    {formatMessage(
+                                      monthOffset > 0
+                                        ? translationStrings.pensionStartIsDelayed
+                                        : translationStrings.pensionStartIsHurried,
+                                      {
+                                        monthAmount: `${Math.abs(
+                                          monthOffset,
+                                        )} ${
+                                          activeLocale === 'is'
+                                            ? 'mánuð'
+                                            : 'month'
+                                        }${
+                                          Math.abs(monthOffset) !== 1
+                                            ? activeLocale === 'is'
+                                              ? 'i'
+                                              : 's'
+                                            : ''
+                                        }`,
+                                      },
+                                    )}
+                                  </Text>
+                                )}
+                            </Stack>
+                          )}
+                          <Text variant="h2" as="h2">
+                            {formatMessage(
+                              translationStrings.yourCircumstancesHeading,
+                            )}
+                          </Text>
+
+                          <Stack space={6}>
+                            <Stack space={3}>
+                              <Box className={styles.inputContainer}>
+                                <SelectController
+                                  id={'hasSpouse' as keyof CalculationInput}
+                                  name={'hasSpouse' as keyof CalculationInput}
+                                  label={formatMessage(
+                                    translationStrings.hasSpouseLabel,
+                                  )}
+                                  placeholder={formatMessage(
+                                    translationStrings.hasSpousePlaceholder,
+                                  )}
+                                  options={hasSpouseOptions}
+                                />
                               </Box>
 
-                              {hasLivedAbroad && (
+                              <Box className={styles.inputContainer}>
+                                <SelectController
+                                  id={
+                                    'livingCondition' as keyof CalculationInput
+                                  }
+                                  name={
+                                    'livingCondition' as keyof CalculationInput
+                                  }
+                                  label={formatMessage(
+                                    translationStrings.livingConditionLabel,
+                                  )}
+                                  placeholder={formatMessage(
+                                    translationStrings.livingConditionPlaceholder,
+                                  )}
+                                  options={livingConditionOptions}
+                                />
+                              </Box>
+
+                              <Box className={styles.inputContainer}>
+                                <SelectController
+                                  id={'childCount' as keyof CalculationInput}
+                                  name={'childCount' as keyof CalculationInput}
+                                  label={formatMessage(
+                                    translationStrings.childCountLabel,
+                                  )}
+                                  placeholder={formatMessage(
+                                    translationStrings.childCountPlaceholder,
+                                  )}
+                                  options={childCountOptions}
+                                />
+                              </Box>
+
+                              {(typeOfBasePension ===
+                                BasePensionType.Disability ||
+                                typeOfBasePension ===
+                                  BasePensionType.NewSystemDisability ||
+                                typeOfBasePension ===
+                                  BasePensionType.NewSystemPartialDisability ||
+                                typeOfBasePension ===
+                                  BasePensionType.Rehabilitation) && (
                                 <Box className={styles.inputContainer}>
                                   <InputController
                                     id={
-                                      'livingConditionAbroadInYears' as keyof CalculationInput
+                                      'ageOfFirst75DisabilityAssessment' as keyof CalculationInput
                                     }
                                     name={
-                                      'livingConditionAbroadInYears' as keyof CalculationInput
+                                      'ageOfFirst75DisabilityAssessment' as keyof CalculationInput
                                     }
                                     label={formatMessage(
-                                      translationStrings.livingConditionAbroadInYearsLabel,
+                                      typeOfBasePension ===
+                                        BasePensionType.Disability ||
+                                        typeOfBasePension ===
+                                          BasePensionType.NewSystemDisability ||
+                                        typeOfBasePension ===
+                                          BasePensionType.NewSystemPartialDisability
+                                        ? translationStrings.ageOfFirst75DisabilityAssessment
+                                        : translationStrings.ageOfFirst75RehabilitationAssessment,
                                     )}
-                                    placeholder={formatMessage(
-                                      translationStrings.livingConditionAbroadInYearsPlaceholder,
-                                    )}
+                                    suffix={
+                                      ' ' +
+                                      formatMessage(
+                                        translationStrings.ageOfFirst75DisabilityAssessmentSuffix,
+                                      )
+                                    }
                                     type="number"
-                                    suffix={` ${formatMessage(
-                                      translationStrings.yearsSuffix,
-                                    )}`}
-                                    format={(value) => {
-                                      if (
-                                        Number(value) >
-                                        maxLivingConditionAbroadInYears
-                                      ) {
-                                        value = String(
-                                          maxLivingConditionAbroadInYears,
-                                        )
-                                      }
-                                      return `${value} ${formatMessage(
-                                        translationStrings.yearsSuffix,
-                                      )}`
-                                    }}
+                                    maxLength={
+                                      formatMessage(
+                                        translationStrings.ageOfFirst75DisabilityAssessmentSuffix,
+                                      ).length + 3
+                                    }
+                                    placeholder={formatMessage(
+                                      translationStrings.ageOfFirst75DisabilityAssessmentPlaceholder,
+                                    )}
                                   />
                                 </Box>
                               )}
                             </Stack>
-                          )}
+                            {!hasDisabilityAssessment(typeOfBasePension) && (
+                              <Stack space={2}>
+                                <Text>
+                                  {formatMessage(
+                                    translationStrings.hasLivedAbroadLabel,
+                                  )}
+                                </Text>
+                                <Box className={styles.inputContainer}>
+                                  <Inline space={3}>
+                                    <RadioButton
+                                      id="hasLivedAbroadNo"
+                                      checked={hasLivedAbroad === false}
+                                      onChange={() => {
+                                        setHasLivedAbroad(false)
+                                        methods.setValue(
+                                          'livingConditionAbroadInYears',
+                                          null,
+                                        )
+                                      }}
+                                      label={formatMessage(
+                                        translationStrings.hasLivedAbroadNo,
+                                      )}
+                                    />
+                                    <RadioButton
+                                      id="hasLivedAbroadYes"
+                                      checked={hasLivedAbroad === true}
+                                      onChange={() => {
+                                        setHasLivedAbroad(true)
+                                      }}
+                                      label={formatMessage(
+                                        translationStrings.hasLivedAbroadYes,
+                                      )}
+                                    />
+                                  </Inline>
+                                </Box>
 
-                          <NumericInputFieldWrapper
-                            heading={formatMessage(
-                              translationStrings.taxCardRatioHeading,
-                            )}
-                            description={formatMessage(
-                              translationStrings.taxCardRatioDescription,
-                            )}
-                          >
-                            <Box className={styles.inputContainer}>
-                              <InputController
-                                id={'taxCard' as keyof CalculationInput}
-                                name={'taxCard' as keyof CalculationInput}
-                                label={formatMessage(
-                                  translationStrings.taxCardRatioLabel,
+                                {hasLivedAbroad && (
+                                  <Box className={styles.inputContainer}>
+                                    <InputController
+                                      id={
+                                        'livingConditionAbroadInYears' as keyof CalculationInput
+                                      }
+                                      name={
+                                        'livingConditionAbroadInYears' as keyof CalculationInput
+                                      }
+                                      label={formatMessage(
+                                        translationStrings.livingConditionAbroadInYearsLabel,
+                                      )}
+                                      placeholder={formatMessage(
+                                        translationStrings.livingConditionAbroadInYearsPlaceholder,
+                                      )}
+                                      type="number"
+                                      suffix={` ${formatMessage(
+                                        translationStrings.yearsSuffix,
+                                      )}`}
+                                      format={(value) => {
+                                        if (
+                                          Number(value) >
+                                          maxLivingConditionAbroadInYears
+                                        ) {
+                                          value = String(
+                                            maxLivingConditionAbroadInYears,
+                                          )
+                                        }
+                                        return `${value} ${formatMessage(
+                                          translationStrings.yearsSuffix,
+                                        )}`
+                                      }}
+                                    />
+                                  </Box>
                                 )}
-                                placeholder="%"
-                                type="number"
-                                suffix="%"
-                                format={(value) => {
-                                  if (Number(value) > maxTaxCardRatio) {
-                                    value = String(maxTaxCardRatio)
-                                  }
-                                  return `${value}%`
-                                }}
-                              />
-                            </Box>
-                          </NumericInputFieldWrapper>
-                        </Stack>
+                              </Stack>
+                            )}
 
-                        <Text variant="h2" as="h2">
-                          {formatMessage(translationStrings.mainIncomeHeading)}
-                        </Text>
+                            <NumericInputFieldWrapper
+                              heading={formatMessage(
+                                translationStrings.taxCardRatioHeading,
+                              )}
+                              description={formatMessage(
+                                translationStrings.taxCardRatioDescription,
+                              )}
+                            >
+                              <Box className={styles.inputContainer}>
+                                <InputController
+                                  id={'taxCard' as keyof CalculationInput}
+                                  name={'taxCard' as keyof CalculationInput}
+                                  label={formatMessage(
+                                    translationStrings.taxCardRatioLabel,
+                                  )}
+                                  placeholder="%"
+                                  type="number"
+                                  suffix="%"
+                                  format={(value) => {
+                                    if (Number(value) > maxTaxCardRatio) {
+                                      value = String(maxTaxCardRatio)
+                                    }
+                                    return `${value}%`
+                                  }}
+                                />
+                              </Box>
+                            </NumericInputFieldWrapper>
+                          </Stack>
 
-                        <MarkdownText>
-                          {formatMessage(translationStrings.incomeDisclaimer)}
-                        </MarkdownText>
-
-                        <Stack space={3}>
-                          <Text variant="h4" as="h3">
+                          <Text variant="h2" as="h2">
                             {formatMessage(
-                              translationStrings.incomeBeforeTaxHeading,
+                              translationStrings.mainIncomeHeading,
                             )}
                           </Text>
 
-                          <Box className={styles.inputContainer}>
-                            <Controller
-                              name={
-                                'typeOfPeriodIncome' as keyof CalculationInput
-                              }
-                              render={({ field: { value, onChange } }) => (
-                                <GridRow rowGap={3}>
-                                  <GridColumn span={['1/1', '1/2']}>
-                                    <RadioButton
-                                      id="typeOfPeriodIncomeMonth"
-                                      checked={value === PeriodIncomeType.Month}
-                                      onChange={() => {
-                                        onChange(PeriodIncomeType.Month)
-                                      }}
-                                      label={formatMessage(
-                                        translationStrings.typeOfPeriodIncomeMonthLabel,
-                                      )}
-                                    />
-                                  </GridColumn>
-                                  <GridColumn span={['1/1', '1/2']}>
-                                    <RadioButton
-                                      id="typeOfPeriodIncomeYear"
-                                      checked={value === PeriodIncomeType.Year}
-                                      onChange={() => {
-                                        onChange(PeriodIncomeType.Year)
-                                      }}
-                                      label={formatMessage(
-                                        translationStrings.typeOfPeriodIncomeYearLabel,
-                                      )}
-                                    />
-                                  </GridColumn>
-                                </GridRow>
+                          <MarkdownText>
+                            {formatMessage(translationStrings.incomeDisclaimer)}
+                          </MarkdownText>
+
+                          <Stack space={3}>
+                            <Text variant="h4" as="h3">
+                              {formatMessage(
+                                translationStrings.incomeBeforeTaxHeading,
                               )}
-                            />
-                          </Box>
-                        </Stack>
-                        <Text>
-                          {formatMessage(translationStrings.amountDisclaimer)}
-                        </Text>
-
-                        <Stack space={6}>
-                          <NumericInputFieldWrapper
-                            heading={formatMessage(
-                              translationStrings.incomeHeading,
-                            )}
-                            description={formatMessage(
-                              translationStrings.incomeDescription,
-                            )}
-                          >
-                            <Box className={styles.inputContainer}>
-                              <InputController
-                                id={'income' as keyof CalculationInput}
-                                name={'income' as keyof CalculationInput}
-                                label={formatMessage(
-                                  translationStrings.incomeLabel,
-                                )}
-                                placeholder="kr."
-                                currency={true}
-                                maxLength={currencyInputMaxLength}
-                              />
-                            </Box>
-                          </NumericInputFieldWrapper>
-
-                          <NumericInputFieldWrapper
-                            heading={formatMessage(
-                              translationStrings.pensionPaymentsHeading,
-                            )}
-                            description={formatMessage(
-                              translationStrings.pensionPaymentsDescription,
-                            )}
-                          >
-                            <Box className={styles.inputContainer}>
-                              <InputController
-                                id={'pensionPayments' as keyof CalculationInput}
-                                name={
-                                  'pensionPayments' as keyof CalculationInput
-                                }
-                                label={formatMessage(
-                                  translationStrings.pensionPaymentsLabel,
-                                )}
-                                placeholder="kr."
-                                currency={true}
-                                maxLength={currencyInputMaxLength}
-                              />
-                            </Box>
-                          </NumericInputFieldWrapper>
-
-                          <NumericInputFieldWrapper
-                            heading={formatMessage(
-                              translationStrings.privatePensionPaymentsHeading,
-                            )}
-                            description={formatMessage(
-                              translationStrings.privatePensionPaymentsDescription,
-                            )}
-                          >
-                            <Box className={styles.inputContainer}>
-                              <InputController
-                                id={
-                                  'privatePensionPayments' as keyof CalculationInput
-                                }
-                                name={
-                                  'privatePensionPayments' as keyof CalculationInput
-                                }
-                                label={formatMessage(
-                                  translationStrings.privatePensionPaymentsLabel,
-                                )}
-                                placeholder="kr."
-                                currency={true}
-                                maxLength={currencyInputMaxLength}
-                              />
-                            </Box>
-                          </NumericInputFieldWrapper>
-
-                          <NumericInputFieldWrapper
-                            heading={formatMessage(
-                              translationStrings.otherIncomeHeading,
-                            )}
-                            description={formatMessage(
-                              translationStrings.otherIncomeDescription,
-                            )}
-                          >
-                            <Box className={styles.inputContainer}>
-                              <InputController
-                                id={'otherIncome' as keyof CalculationInput}
-                                name={'otherIncome' as keyof CalculationInput}
-                                label={formatMessage(
-                                  translationStrings.otherIncomeLabel,
-                                )}
-                                placeholder="kr."
-                                currency={true}
-                                maxLength={currencyInputMaxLength}
-                              />
-                            </Box>
-                          </NumericInputFieldWrapper>
-
-                          <NumericInputFieldWrapper
-                            heading={formatMessage(
-                              translationStrings.capitalIncomeHeading,
-                            )}
-                            description={formatMessage(
-                              translationStrings.capitalIncomeDescription,
-                            )}
-                          >
-                            <Box className={styles.inputContainer}>
-                              <InputController
-                                id={'capitalIncome' as keyof CalculationInput}
-                                name={'capitalIncome' as keyof CalculationInput}
-                                label={formatMessage(
-                                  translationStrings.capitalIncomeLabel,
-                                )}
-                                placeholder="kr."
-                                currency={true}
-                                maxLength={currencyInputMaxLength}
-                              />
-                            </Box>
-                          </NumericInputFieldWrapper>
-
-                          <NumericInputFieldWrapper
-                            heading={formatMessage(
-                              translationStrings.foreignBasicPensionHeading,
-                            )}
-                            description={formatMessage(
-                              translationStrings.foreignBasicPensionDescription,
-                            )}
-                          >
-                            <Box className={styles.inputContainer}>
-                              <InputController
-                                id={
-                                  'foreignBasicPension' as keyof CalculationInput
-                                }
-                                name={
-                                  'foreignBasicPension' as keyof CalculationInput
-                                }
-                                label={formatMessage(
-                                  translationStrings.foreignBasicPensionLabel,
-                                )}
-                                placeholder="kr."
-                                currency={true}
-                                maxLength={currencyInputMaxLength}
-                              />
-                            </Box>
-                          </NumericInputFieldWrapper>
-
-                          <NumericInputFieldWrapper
-                            heading={formatMessage(
-                              translationStrings.benefitsFromMunicipalityHeading,
-                            )}
-                            description={formatMessage(
-                              translationStrings.benefitsFromMunicipalityDescription,
-                            )}
-                          >
-                            <Box className={styles.inputContainer}>
-                              <InputController
-                                id={
-                                  'benefitsFromMunicipality' as keyof CalculationInput
-                                }
-                                name={
-                                  'benefitsFromMunicipality' as keyof CalculationInput
-                                }
-                                label={formatMessage(
-                                  translationStrings.benefitsFromMunicipalityLabel,
-                                )}
-                                placeholder="kr."
-                                currency={true}
-                                maxLength={currencyInputMaxLength}
-                              />
-                            </Box>
-                          </NumericInputFieldWrapper>
-
-                          <NumericInputFieldWrapper
-                            heading={formatMessage(
-                              translationStrings.premiumHeading,
-                            )}
-                            description={formatMessage(
-                              translationStrings.premiumDescription,
-                            )}
-                          >
-                            <Box className={styles.inputContainer}>
-                              <InputController
-                                id={'premium' as keyof CalculationInput}
-                                name={'premium' as keyof CalculationInput}
-                                label={formatMessage(
-                                  translationStrings.premiumLabel,
-                                )}
-                                placeholder="kr."
-                                currency={true}
-                                maxLength={currencyInputMaxLength}
-                              />
-                            </Box>
-                          </NumericInputFieldWrapper>
-
-                          <Box className={styles.textMaxWidth}>
-                            <Text variant="h5">
-                              {formatMessage(translationStrings.disclaimer)}
                             </Text>
-                          </Box>
 
-                          <Button loading={loadingResultPage} type="submit">
-                            {formatMessage(translationStrings.calculateResults)}
-                          </Button>
+                            <Box className={styles.inputContainer}>
+                              <Controller
+                                name={
+                                  'typeOfPeriodIncome' as keyof CalculationInput
+                                }
+                                render={({ field: { value, onChange } }) => (
+                                  <GridRow rowGap={3}>
+                                    <GridColumn span={['1/1', '1/2']}>
+                                      <RadioButton
+                                        id="typeOfPeriodIncomeMonth"
+                                        checked={
+                                          value === PeriodIncomeType.Month
+                                        }
+                                        onChange={() => {
+                                          onChange(PeriodIncomeType.Month)
+                                        }}
+                                        label={formatMessage(
+                                          translationStrings.typeOfPeriodIncomeMonthLabel,
+                                        )}
+                                      />
+                                    </GridColumn>
+                                    <GridColumn span={['1/1', '1/2']}>
+                                      <RadioButton
+                                        id="typeOfPeriodIncomeYear"
+                                        checked={
+                                          value === PeriodIncomeType.Year
+                                        }
+                                        onChange={() => {
+                                          onChange(PeriodIncomeType.Year)
+                                        }}
+                                        label={formatMessage(
+                                          translationStrings.typeOfPeriodIncomeYearLabel,
+                                        )}
+                                      />
+                                    </GridColumn>
+                                  </GridRow>
+                                )}
+                              />
+                            </Box>
+                          </Stack>
+                          <Text>
+                            {formatMessage(translationStrings.amountDisclaimer)}
+                          </Text>
+
+                          <Stack space={6}>
+                            <NumericInputFieldWrapper
+                              heading={formatMessage(
+                                translationStrings.incomeHeading,
+                              )}
+                              description={formatMessage(
+                                translationStrings.incomeDescription,
+                              )}
+                            >
+                              <Box className={styles.inputContainer}>
+                                <InputController
+                                  id={'income' as keyof CalculationInput}
+                                  name={'income' as keyof CalculationInput}
+                                  label={formatMessage(
+                                    translationStrings.incomeLabel,
+                                  )}
+                                  placeholder="kr."
+                                  currency={true}
+                                  maxLength={currencyInputMaxLength}
+                                />
+                              </Box>
+                            </NumericInputFieldWrapper>
+
+                            <NumericInputFieldWrapper
+                              heading={formatMessage(
+                                translationStrings.pensionPaymentsHeading,
+                              )}
+                              description={formatMessage(
+                                translationStrings.pensionPaymentsDescription,
+                              )}
+                            >
+                              <Box className={styles.inputContainer}>
+                                <InputController
+                                  id={
+                                    'pensionPayments' as keyof CalculationInput
+                                  }
+                                  name={
+                                    'pensionPayments' as keyof CalculationInput
+                                  }
+                                  label={formatMessage(
+                                    translationStrings.pensionPaymentsLabel,
+                                  )}
+                                  placeholder="kr."
+                                  currency={true}
+                                  maxLength={currencyInputMaxLength}
+                                />
+                              </Box>
+                            </NumericInputFieldWrapper>
+
+                            <NumericInputFieldWrapper
+                              heading={formatMessage(
+                                translationStrings.privatePensionPaymentsHeading,
+                              )}
+                              description={formatMessage(
+                                translationStrings.privatePensionPaymentsDescription,
+                              )}
+                            >
+                              <Box className={styles.inputContainer}>
+                                <InputController
+                                  id={
+                                    'privatePensionPayments' as keyof CalculationInput
+                                  }
+                                  name={
+                                    'privatePensionPayments' as keyof CalculationInput
+                                  }
+                                  label={formatMessage(
+                                    translationStrings.privatePensionPaymentsLabel,
+                                  )}
+                                  placeholder="kr."
+                                  currency={true}
+                                  maxLength={currencyInputMaxLength}
+                                />
+                              </Box>
+                            </NumericInputFieldWrapper>
+
+                            <NumericInputFieldWrapper
+                              heading={formatMessage(
+                                translationStrings.otherIncomeHeading,
+                              )}
+                              description={formatMessage(
+                                translationStrings.otherIncomeDescription,
+                              )}
+                            >
+                              <Box className={styles.inputContainer}>
+                                <InputController
+                                  id={'otherIncome' as keyof CalculationInput}
+                                  name={'otherIncome' as keyof CalculationInput}
+                                  label={formatMessage(
+                                    translationStrings.otherIncomeLabel,
+                                  )}
+                                  placeholder="kr."
+                                  currency={true}
+                                  maxLength={currencyInputMaxLength}
+                                />
+                              </Box>
+                            </NumericInputFieldWrapper>
+
+                            <NumericInputFieldWrapper
+                              heading={formatMessage(
+                                translationStrings.capitalIncomeHeading,
+                              )}
+                              description={formatMessage(
+                                translationStrings.capitalIncomeDescription,
+                              )}
+                            >
+                              <Box className={styles.inputContainer}>
+                                <InputController
+                                  id={'capitalIncome' as keyof CalculationInput}
+                                  name={
+                                    'capitalIncome' as keyof CalculationInput
+                                  }
+                                  label={formatMessage(
+                                    translationStrings.capitalIncomeLabel,
+                                  )}
+                                  placeholder="kr."
+                                  currency={true}
+                                  maxLength={currencyInputMaxLength}
+                                />
+                              </Box>
+                            </NumericInputFieldWrapper>
+
+                            <NumericInputFieldWrapper
+                              heading={formatMessage(
+                                translationStrings.foreignBasicPensionHeading,
+                              )}
+                              description={formatMessage(
+                                translationStrings.foreignBasicPensionDescription,
+                              )}
+                            >
+                              <Box className={styles.inputContainer}>
+                                <InputController
+                                  id={
+                                    'foreignBasicPension' as keyof CalculationInput
+                                  }
+                                  name={
+                                    'foreignBasicPension' as keyof CalculationInput
+                                  }
+                                  label={formatMessage(
+                                    translationStrings.foreignBasicPensionLabel,
+                                  )}
+                                  placeholder="kr."
+                                  currency={true}
+                                  maxLength={currencyInputMaxLength}
+                                />
+                              </Box>
+                            </NumericInputFieldWrapper>
+
+                            <NumericInputFieldWrapper
+                              heading={formatMessage(
+                                translationStrings.benefitsFromMunicipalityHeading,
+                              )}
+                              description={formatMessage(
+                                translationStrings.benefitsFromMunicipalityDescription,
+                              )}
+                            >
+                              <Box className={styles.inputContainer}>
+                                <InputController
+                                  id={
+                                    'benefitsFromMunicipality' as keyof CalculationInput
+                                  }
+                                  name={
+                                    'benefitsFromMunicipality' as keyof CalculationInput
+                                  }
+                                  label={formatMessage(
+                                    translationStrings.benefitsFromMunicipalityLabel,
+                                  )}
+                                  placeholder="kr."
+                                  currency={true}
+                                  maxLength={currencyInputMaxLength}
+                                />
+                              </Box>
+                            </NumericInputFieldWrapper>
+
+                            <NumericInputFieldWrapper
+                              heading={formatMessage(
+                                translationStrings.premiumHeading,
+                              )}
+                              description={formatMessage(
+                                translationStrings.premiumDescription,
+                              )}
+                            >
+                              <Box className={styles.inputContainer}>
+                                <InputController
+                                  id={'premium' as keyof CalculationInput}
+                                  name={'premium' as keyof CalculationInput}
+                                  label={formatMessage(
+                                    translationStrings.premiumLabel,
+                                  )}
+                                  placeholder="kr."
+                                  currency={true}
+                                  maxLength={currencyInputMaxLength}
+                                />
+                              </Box>
+                            </NumericInputFieldWrapper>
+
+                            <Box className={styles.textMaxWidth}>
+                              <Text variant="h5">
+                                {formatMessage(translationStrings.disclaimer)}
+                              </Text>
+                            </Box>
+
+                            <Button
+                              loading={loadingResultPage}
+                              type="submit"
+                              disabled={
+                                !dateOfCalculations ||
+                                !dateOfCalculationsOptions?.length
+                              }
+                            >
+                              {formatMessage(
+                                translationStrings.calculateResults,
+                              )}
+                            </Button>
+                          </Stack>
                         </Stack>
-                      </Stack>
-                    </GridColumn>
-                  </GridRow>
-                </GridContainer>
-              </Box>
+                      </GridColumn>
+                    </GridRow>
+                  </GridContainer>
+                </Box>
+              )}
+              {!typeOfBasePension && <Box paddingY={2} />}
             </Stack>
           </form>
         </FormProvider>
@@ -1369,6 +1349,7 @@ PensionCalculator.getProps = async ({
         input: {
           slug,
           lang: locale,
+          subpageSlugs: [locale === 'is' ? 'reiknivel' : 'calculator'],
         },
       },
     }),
@@ -1399,19 +1380,11 @@ PensionCalculator.getProps = async ({
 
   let defaultValues = convertQueryParametersToCalculationInput(query)
 
-  const dateOfCalculationsOptions = getDateOfCalculationsOptions(customPageData)
-
   defaultValues = {
     ...defaultValues,
-    typeOfBasePension: defaultValues.typeOfBasePension
-      ? defaultValues.typeOfBasePension
-      : BasePensionType.Retirement,
     typeOfPeriodIncome: defaultValues.typeOfPeriodIncome
       ? defaultValues.typeOfPeriodIncome
       : PeriodIncomeType.Month,
-    dateOfCalculations: defaultValues.dateOfCalculations
-      ? defaultValues.dateOfCalculations
-      : dateOfCalculationsOptions[0].value,
   }
 
   const organizationNamespace =
@@ -1422,7 +1395,6 @@ PensionCalculator.getProps = async ({
     organization: getOrganization,
     defaultValues,
     customTopLoginButtonItem: organizationNamespace?.customTopLoginButtonItem,
-    dateOfCalculationsOptions,
     ...getThemeConfig(
       getOrganizationPage?.theme,
       getOrganizationPage?.organization,

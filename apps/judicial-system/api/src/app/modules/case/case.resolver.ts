@@ -10,9 +10,9 @@ import {
 } from '@island.is/judicial-system/audit-trail'
 import {
   CurrentGraphQlUser,
-  JwtGraphQlAuthGuard,
+  JwtGraphQlAuthUserGuard,
 } from '@island.is/judicial-system/auth'
-import type { User } from '@island.is/judicial-system/types'
+import { type User } from '@island.is/judicial-system/types'
 
 import { BackendService } from '../backend'
 import { CaseQueryInput } from './dto/case.input'
@@ -22,6 +22,7 @@ import { ExtendCaseInput } from './dto/extendCase.input'
 import { RequestSignatureInput } from './dto/requestSignature.input'
 import { SendNotificationInput } from './dto/sendNotification.input'
 import { SignatureConfirmationQueryInput } from './dto/signatureConfirmation.input'
+import { SplitDefendantFromCaseInput } from './dto/splitDefendantFromCase.input'
 import { TransitionCaseInput } from './dto/transitionCase.input'
 import { UpdateCaseInput } from './dto/updateCase.input'
 import { CaseInterceptor } from './interceptors/case.interceptor'
@@ -30,7 +31,7 @@ import { RequestSignatureResponse } from './models/requestSignature.response'
 import { SendNotificationResponse } from './models/sendNotification.response'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 
-@UseGuards(JwtGraphQlAuthGuard)
+@UseGuards(JwtGraphQlAuthUserGuard)
 @Resolver(() => Case)
 export class CaseResolver {
   constructor(
@@ -251,6 +252,27 @@ export class CaseResolver {
       user.id,
       AuditedAction.EXTEND_CASE,
       backendService.extendCase(input.id),
+      (theCase) => theCase.id,
+    )
+  }
+
+  @Mutation(() => Case, { nullable: true })
+  @UseInterceptors(CaseInterceptor)
+  splitDefendantFromCase(
+    @Args('input', { type: () => SplitDefendantFromCaseInput })
+    input: SplitDefendantFromCaseInput,
+    @CurrentGraphQlUser() user: User,
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
+  ): Promise<Case> {
+    const { id, defendantId } = input
+
+    this.logger.debug(`Splitting defendant ${defendantId} from case ${id}`)
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.SPLIT_DEFENDANT_FROM_CASE,
+      backendService.splitDefendantFromCase(id, defendantId),
       (theCase) => theCase.id,
     )
   }

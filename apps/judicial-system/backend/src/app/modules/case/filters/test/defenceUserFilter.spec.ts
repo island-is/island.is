@@ -1,4 +1,4 @@
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import {
   CaseState,
@@ -13,8 +13,8 @@ import {
   User,
 } from '@island.is/judicial-system/types'
 
-import { Case } from '../../models/case.model'
-import { verifyFullAccess, verifyNoAccess, verifyReadAccess } from './verify'
+import { Case } from '../../../repository'
+import { verifyFullAccess, verifyNoAccess } from './verify'
 
 // TODO: Fix defender indictment tests
 //       Add spokesperson tests
@@ -321,7 +321,7 @@ describe.each(defenceRoles)('defence user %s', (role) => {
           dateLogs: [{ dateType: DateType.ARRAIGNMENT_DATE, date: new Date() }],
         } as Case
 
-        verifyReadAccess(theCase, user)
+        verifyFullAccess(theCase, user)
       })
     })
   })

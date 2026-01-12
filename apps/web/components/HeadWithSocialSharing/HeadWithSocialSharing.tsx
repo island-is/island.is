@@ -30,6 +30,10 @@ export const HeadWithSocialSharing: FC<
     : false
   const isUsableImage = !isSvg && usableContentTypes.includes(imageContentType)
 
+  const encodedImageUrl = !imageUrl
+    ? ''
+    : encodeURI(`${imageUrl.startsWith('//') ? 'https:' : ''}${imageUrl}`)
+
   return (
     <Head>
       {title.length > 0 ? (
@@ -59,14 +63,10 @@ export const HeadWithSocialSharing: FC<
 
       {isUsableImage && imageUrl && imageUrl.length > 0 ? (
         <>
-          <meta
-            property="og:image"
-            content={`${imageUrl.startsWith('//') ? 'https:' : ''}${imageUrl}`}
-            key="ogImage"
-          />
+          <meta property="og:image" content={encodedImageUrl} key="ogImage" />
           <meta
             property="twitter:image"
-            content={`${imageUrl.startsWith('//') ? 'https:' : ''}${imageUrl}`}
+            content={encodedImageUrl}
             key="twitterImage"
           />
           <meta

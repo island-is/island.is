@@ -1,15 +1,20 @@
 import faker from 'faker'
-import { act, render, screen } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup'
 
-import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseListEntry,
+  CaseState,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   ApolloProviderWrapper,
   IntlProviderWrapper,
 } from '@island.is/judicial-system-web/src/utils/testHelpers'
 
 import { sortableTableColumn } from '../../types'
+import TagCaseState from '../Tags/TagCaseState/TagCaseState'
+import DefendantInfo from './DefendantInfo/DefendantInfo'
 import Table from './Table'
 
 import '@testing-library/react'
@@ -34,19 +39,15 @@ describe('Table', () => {
   })
 
   const clickButtonByTestId = async (testId: string) => {
-    await act(async () => {
-      await user.click(await screen.findByTestId(testId))
-    })
+    const testIdElement = await screen.findByTestId(testId)
+    await user.click(testIdElement)
   }
 
   it('should sort by date', async () => {
     const thead = [
       {
         title: 'Title',
-        sortable: {
-          isSortable: true,
-          key: 'indictmentAppealDeadline' as sortableTableColumn,
-        },
+        sortBy: 'indictmentAppealDeadline' as sortableTableColumn,
       },
     ]
 
@@ -77,11 +78,7 @@ describe('Table', () => {
       </IntlProviderWrapper>,
     )
 
-    await act(async () => {
-      await user.click(
-        await screen.findByTestId('indictmentAppealDeadlineSortButton'),
-      )
-    })
+    await clickButtonByTestId('indictmentAppealDeadlineSortButton')
 
     const tableRows = await screen.findAllByTestId('tableRow')
 
@@ -101,10 +98,7 @@ describe('Table', () => {
     const thead = [
       {
         title: 'Name',
-        sortable: {
-          isSortable: true,
-          key: 'defendants' as sortableTableColumn,
-        },
+        sortBy: 'defendants' as sortableTableColumn,
       },
     ]
 
@@ -121,18 +115,18 @@ describe('Table', () => {
       },
     ]
 
-    const columns: { cell: (row: CaseListEntry) => JSX.Element }[] =
-      data.flatMap(
-        (dataItem) =>
-          dataItem.defendants?.map((defendant) => ({
-            cell: () => <p>{defendant.name}</p>,
-          })) || [],
-      )
-
     render(
       <IntlProviderWrapper>
         <ApolloProviderWrapper>
-          <Table thead={thead} data={data} columns={columns} />
+          <Table
+            thead={thead}
+            data={data}
+            columns={[
+              {
+                cell: (row) => <DefendantInfo defendants={row.defendants} />,
+              },
+            ]}
+          />
         </ApolloProviderWrapper>
       </IntlProviderWrapper>,
     )
@@ -148,5 +142,51 @@ describe('Table', () => {
     const tableRows2 = await screen.findAllByTestId('tableRow')
     expect(tableRows2[0]).toHaveTextContent('Jon Harring Sr.')
     expect(tableRows2[1]).toHaveTextContent('Bono Stingsson')
+  })
+
+  it('should sort by state', async () => {
+    const thead = [
+      {
+        title: 'State',
+        sortBy: 'state' as sortableTableColumn,
+      },
+    ]
+
+    const data: CaseListEntry[] = [
+      {
+        created: '2021-01-01T00:00:00Z',
+        id: faker.datatype.uuid(),
+        state: CaseState.DRAFT,
+      },
+      {
+        created: '2021-01-02T00:00:00Z',
+        id: faker.datatype.uuid(),
+        state: CaseState.SUBMITTED,
+      },
+    ]
+
+    render(
+      <IntlProviderWrapper>
+        <ApolloProviderWrapper>
+          <Table
+            thead={thead}
+            data={data}
+            columns={[{ cell: (row) => <TagCaseState theCase={row} /> }]}
+          />
+        </ApolloProviderWrapper>
+      </IntlProviderWrapper>,
+    )
+
+    await clickButtonByTestId('stateSortButton')
+
+    const tableRows = await screen.findAllByTestId('tableRow')
+    expect(tableRows[0]).toHaveTextContent('Drög')
+    expect(tableRows[1]).toHaveTextContent('Sent')
+
+    await clickButtonByTestId('stateSortButton')
+
+    const tableRows2 = await screen.findAllByTestId('tableRow')
+    expect(tableRows2[0]).toHaveTextContent('Sent')
+    expect(tableRows2[1]).toHaveTextContent('Drög')
   })
 })

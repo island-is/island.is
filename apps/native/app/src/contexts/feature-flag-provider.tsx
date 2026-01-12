@@ -1,4 +1,4 @@
-import AsyncStorage from '@react-native-community/async-storage'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import * as configcat from 'configcat-js'
 import React, {
   FC,
@@ -15,7 +15,7 @@ import { useEnvironmentStore } from '../stores/environment-store'
 
 interface FeatureFlagUser {
   identifier: string
-  attributes?: { [key: string]: string }
+  custom: { [key: string]: string }
 }
 
 export interface FeatureFlagClient {
@@ -40,14 +40,14 @@ export interface FeatureFlagContextProviderProps {
 }
 
 class ConfigCatAsyncStorageCache {
-  set(key: string, config: configcat.ProjectConfig) {
-    return AsyncStorage.setItem(key, JSON.stringify(config))
+  set(key: string, config: string) {
+    return AsyncStorage.setItem(key, config)
   }
   async get(key: string) {
     const item = await AsyncStorage.getItem(key)
     if (item) {
       try {
-        return JSON.parse(item) as configcat.ProjectConfig
+        return item
       } catch (err) {
         // noop
       }
@@ -94,7 +94,7 @@ export const FeatureFlagProvider: FC<
       userInfo && userInfo.nationalId
         ? {
             identifier: userInfo.nationalId,
-            attributes: {
+            custom: {
               nationalId: userInfo.nationalId,
               name: userInfo.name,
             },

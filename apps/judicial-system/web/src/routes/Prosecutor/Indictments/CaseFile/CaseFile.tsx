@@ -1,6 +1,6 @@
 import { useCallback, useContext, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { LayoutGroup } from 'framer-motion'
+import { LayoutGroup } from 'motion/react'
 import router from 'next/router'
 
 import { Accordion, AlertMessage, Box } from '@island.is/island-ui/core'
@@ -89,18 +89,22 @@ const CaseFile = () => {
           </LayoutGroup>
         </Box>
         <Box marginBottom={7}>
-          {workingCase.policeCaseNumbers?.map((policeCaseNumber, index) => (
-            <Box marginBottom={2} key={`${policeCaseNumber}-${index}`}>
-              <PdfButton
-                caseId={workingCase.id}
-                title={formatMessage(m.pdfButtonText, {
-                  policeCaseNumber: policeCaseNumber,
-                })}
-                pdfType="caseFilesRecord"
-                elementId={policeCaseNumber}
-              />
-            </Box>
-          ))}
+          {workingCase.policeCaseNumbers?.map((policeCaseNumber, index) => {
+            const caseFilesRecordFileName = formatMessage(m.pdfButtonText, {
+              policeCaseNumber: policeCaseNumber,
+            })
+
+            return (
+              <Box marginBottom={2} key={`${policeCaseNumber}-${index}`}>
+                <PdfButton
+                  caseId={workingCase.id}
+                  title={caseFilesRecordFileName}
+                  pdfType="caseFilesRecord"
+                  elementId={[policeCaseNumber, caseFilesRecordFileName]}
+                />
+              </Box>
+            )
+          })}
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
@@ -108,7 +112,7 @@ const CaseFile = () => {
           nextButtonIcon="arrowForward"
           previousUrl={`${constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
-            handleNavigationTo(constants.INDICTMENTS_PROCESSING_ROUTE)
+            handleNavigationTo(constants.INDICTMENTS_CASE_FILES_ROUTE)
           }
           nextIsLoading={isLoadingWorkingCase}
           nextIsDisabled={editCount > 0}

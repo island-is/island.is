@@ -1,4 +1,4 @@
-import { FC, PropsWithChildren, ReactNode, useContext } from 'react'
+import { FC, PropsWithChildren, ReactNode, useContext, useRef } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
 
@@ -14,9 +14,10 @@ import {
   Section,
   Text,
 } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import {
   isDefenceUser,
+  isDistrictCourtUser,
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
 import {
@@ -24,10 +25,10 @@ import {
   sections as formStepperSections,
 } from '@island.is/judicial-system-web/messages'
 import {
+  Case,
   InstitutionType,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useSections } from '@island.is/judicial-system-web/src/utils/hooks'
 
@@ -132,10 +133,15 @@ const SidePanel: FC<SidePanelProps> = ({
   const { getSections } = useSections(isValid, onNavigationTo)
   const sections = getSections(workingCase, user)
   const { formatMessage } = useIntl()
+
   const activeSection = sections.findIndex((s) => s.isActive)
   const activeSubSection = sections[activeSection]?.children.findIndex(
     (s) => s.isActive,
   )
+  const showCourtCaseNumber = isDistrictCourtUser(user)
+
+  const courtCaseNumber = useRef(workingCase.courtCaseNumber)
+
   return (
     <GridColumn span={['12/12', '12/12', '4/12', '3/12']}>
       <div className={styles.formStepperContainer}>
@@ -145,7 +151,11 @@ const SidePanel: FC<SidePanelProps> = ({
               <Logo defaultInstitution={workingCase.court?.name} />
             </Box>
           )}
-          <Box marginBottom={6}>
+          <Box
+            marginBottom={[1, 1, showCourtCaseNumber ? 4 : 6]}
+            marginLeft={[3, 3, 0]}
+            marginTop={[2, 2, 0]}
+          >
             <Text variant="h3" as="h3">
               {formatMessage(
                 user?.institution?.type === InstitutionType.COURT_OF_APPEALS
@@ -155,6 +165,11 @@ const SidePanel: FC<SidePanelProps> = ({
                   : formStepperSections.title,
                 { caseType: workingCase.type },
               )}
+            </Text>
+            <Text>
+              {showCourtCaseNumber && courtCaseNumber.current
+                ? courtCaseNumber.current
+                : '\u00A0'}
             </Text>
           </Box>
           <FormStepperV2
@@ -210,17 +225,10 @@ const PageLayout: FC<PropsWithChildren<PageProps>> = ({
           : formatMessage(pageLayout.otherRoles.alertMessage)
       }
       variant="error"
-      link={
-        isDefenceUser(user)
-          ? {
-              href: constants.DEFENDER_CASES_ROUTE,
-              title: 'Fara á yfirlitssíðu',
-            }
-          : {
-              href: constants.CASES_ROUTE,
-              title: 'Fara á yfirlitssíðu',
-            }
-      }
+      link={{
+        href: getStandardUserDashboardRoute(user),
+        title: 'Fara á yfirlitssíðu',
+      }}
     />
   ) : children ? (
     <>

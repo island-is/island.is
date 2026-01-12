@@ -13,7 +13,9 @@ import {
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
 import {
+  FALLBACK_ORG_LOGO_URL,
   LinkResolver,
+  ORG_LOGO_PARAMS,
   PlausiblePageviewDetail,
   ServicePortalPaths,
   m,
@@ -21,16 +23,12 @@ import {
 } from '@island.is/portals/my-pages/core'
 import {
   DocumentLine,
-  DocumentLineV3,
   DocumentsPaths,
-  useDocumentListV3,
+  useDocumentList,
 } from '@island.is/portals/my-pages/documents'
-import { useOrganizations } from '@island.is/portals/my-pages/graphql'
 import { useUserInfo } from '@island.is/react-spa/bff'
-import { useFeatureFlagClient } from '@island.is/react/feature-flags'
-import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 import cn from 'classnames'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useWindowSize } from 'react-use'
 import DocumentsEmpty from '../../components/DocumentsEmpty/DocumentsEmpty'
@@ -42,7 +40,6 @@ import * as styles from './Dashboard.css'
 export const Dashboard = () => {
   const userInfo = useUserInfo()
 
-  const { data: organizations } = useOrganizations()
   const { formatMessage } = useLocale()
   const { width } = useWindowSize()
   const location = useLocation()
@@ -51,27 +48,7 @@ export const Dashboard = () => {
   const IS_COMPANY = userInfo?.profile?.subjectType === 'legalEntity'
   const hasDelegationAccess = userInfo?.scopes?.includes(DocumentsScope.main)
 
-  // Versioning feature flag. Remove after feature is live.
-  const [v3Enabled, setV3Enabled] = useState<boolean>()
-
-  const { filteredDocuments, data, loading } = useDocumentListV3({
-    defaultPageSize: 8,
-  })
-
-  const featureFlagClient = useFeatureFlagClient()
-  useEffect(() => {
-    const isFlagEnabled = async () => {
-      const ffEnabled = await featureFlagClient.getValue(
-        `isServicePortalDocumentsV3PageEnabled`,
-        false,
-      )
-      if (ffEnabled) {
-        setV3Enabled(ffEnabled as boolean)
-      }
-    }
-    isFlagEnabled()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  const { filteredDocuments, data, loading } = useDocumentList()
 
   useEffect(() => {
     PlausiblePageviewDetail(
@@ -246,41 +223,17 @@ export const Dashboard = () => {
                 ) : filteredDocuments.length > 0 ? (
                   filteredDocuments.map((doc, i) => (
                     <Box key={doc.id}>
-                      {v3Enabled ? (
-                        <DocumentLineV3
-                          img={
-                            doc?.sender?.name
-                              ? getOrganizationLogoUrl(
-                                  doc?.sender?.name,
-                                  organizations,
-                                  60,
-                                  'none',
-                                )
-                              : undefined
-                          }
-                          documentLine={doc}
-                          active={false}
-                          asFrame
-                          includeTopBorder={i === 0}
-                        />
-                      ) : (
-                        <DocumentLine
-                          img={
-                            doc?.sender?.name
-                              ? getOrganizationLogoUrl(
-                                  doc?.sender?.name,
-                                  organizations,
-                                  60,
-                                  'none',
-                                )
-                              : undefined
-                          }
-                          documentLine={doc}
-                          active={false}
-                          asFrame
-                          includeTopBorder={i === 0}
-                        />
-                      )}
+                      <DocumentLine
+                        img={
+                          doc?.sender?.logoUrl
+                            ? doc.sender.logoUrl.concat(ORG_LOGO_PARAMS)
+                            : FALLBACK_ORG_LOGO_URL
+                        }
+                        documentLine={doc}
+                        active={false}
+                        asFrame
+                        includeTopBorder={i === 0}
+                      />
                     </Box>
                   ))
                 ) : (

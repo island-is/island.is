@@ -28,6 +28,7 @@ type WrapperProps = {
   organization?: Organization
   breadcrumbItems?: BreadCrumbItem[]
   children?: ReactNode
+  preFooter?: ReactNode
   sidebarContent?: ReactNode
   goBackUrl?: string
   hideTitle?: boolean
@@ -41,6 +42,7 @@ export const OJOIWrapper = ({
   organization,
   breadcrumbItems,
   children,
+  preFooter,
   sidebarContent,
   goBackUrl,
   hideTitle,
@@ -178,6 +180,8 @@ export const OJOIWrapper = ({
       )}
 
       {!sidebarContent && isHomePage && children}
+
+      {preFooter}
 
       <Box className="rs_read" background="blue100">
         <WebFooter

@@ -6,10 +6,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { Case } from '../models/case.model'
-import {
-  getIndictmentDefendantsInfo,
-  getIndictmentInfo,
-} from './case.transformer'
+import { getIndictmentInfo } from './case.transformer'
 
 const RequestSharedWithDefenderAllowedStates: {
   [key in RequestSharedWithDefender]: CaseState[]
@@ -54,17 +51,14 @@ const transformRequestCase = (theCase: Case): Case => {
 }
 
 const transformIndictmentCase = (theCase: Case): Case => {
-  const { indictmentRulingDecision, rulingDate, defendants, eventLogs } =
-    theCase
+  const { indictmentRulingDecision, rulingDate, defendants } = theCase
   return {
     ...theCase,
-    ...getIndictmentInfo(
+    ...getIndictmentInfo({
       indictmentRulingDecision,
       rulingDate,
       defendants,
-      eventLogs,
-    ),
-    defendants: getIndictmentDefendantsInfo(theCase),
+    }),
   }
 }
 

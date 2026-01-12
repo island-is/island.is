@@ -1,5 +1,4 @@
 import { useQuery } from '@apollo/client'
-import gql from 'graphql-tag'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 import React, { FC, useContext } from 'react'
@@ -14,42 +13,21 @@ import {
 } from '@island.is/island-ui/core'
 import {
   hasMunicipalityRole,
-  hasPermission,
+  Page,
 } from '@island.is/skilavottord-web/auth/utils'
-import { NotFound } from '@island.is/skilavottord-web/components'
 import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import {
   Query,
   RecyclingPartner,
-  Role,
 } from '@island.is/skilavottord-web/graphql/schema'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { filterInternalPartners } from '@island.is/skilavottord-web/utils'
 
+import AuthGuard from '@island.is/skilavottord-web/components/AuthGuard/AuthGuard'
 import NavigationLinks from '@island.is/skilavottord-web/components/NavigationLinks/NavigationLinks'
 import PageHeader from '@island.is/skilavottord-web/components/PageHeader/PageHeader'
-
-export const SkilavottordRecyclingPartnersQuery = gql`
-  query skilavottordRecyclingPartnersQuery(
-    $isMunicipalityPage: Boolean!
-    $municipalityId: String
-  ) {
-    skilavottordRecyclingPartners(
-      isMunicipalityPage: $isMunicipalityPage
-      municipalityId: $municipalityId
-    ) {
-      companyId
-      companyName
-      address
-      postnumber
-      email
-      active
-      municipalityId
-      isMunicipality
-    }
-  }
-`
+import { SkilavottordRecyclingPartnersQuery } from '@island.is/skilavottord-web/graphql/queries'
 
 const RecyclingCompanies: FC<React.PropsWithChildren<unknown>> = () => {
   const { Table, Head, Row, HeadData, Body, Data } = T
@@ -67,6 +45,7 @@ const RecyclingCompanies: FC<React.PropsWithChildren<unknown>> = () => {
   let title = t.title
   let info = t.info
   let empty = t.empty
+  let permission = 'recyclingCompanies' as Page
 
   if (router.route === routes.municipalities.baseRoute) {
     activeSection = 1
@@ -75,6 +54,7 @@ const RecyclingCompanies: FC<React.PropsWithChildren<unknown>> = () => {
     empty = mt.empty
     isMunicipalityPage = true
     buttonText = t.buttons.addMunicipality
+    permission = 'municipalities'
   }
 
   // Show only recycling companies for the municipality
@@ -90,14 +70,9 @@ const RecyclingCompanies: FC<React.PropsWithChildren<unknown>> = () => {
         isMunicipalityPage: isMunicipalityPage,
         municipalityId: partnerId,
       },
+      fetchPolicy: 'cache-and-network',
     },
   )
-
-  if (!user) {
-    return null
-  } else if (!hasPermission('recyclingCompanies', user?.role as Role)) {
-    return <NotFound />
-  }
 
   const partners = data?.skilavottordRecyclingPartners || []
   const recyclingPartners = filterInternalPartners(partners)
@@ -130,96 +105,99 @@ const RecyclingCompanies: FC<React.PropsWithChildren<unknown>> = () => {
   }
 
   return (
-    <PartnerPageLayout side={<NavigationLinks activeSection={activeSection} />}>
-      <Stack space={4}>
-        <Breadcrumbs
-          items={[
-            { title: 'Ísland.is', href: routes.home['recyclingFund'] },
-            {
-              title: title,
-            },
-          ]}
-          renderLink={(link, item) => {
-            return item?.href ? (
-              <NextLink href={item?.href} legacyBehavior>
-                {link}
-              </NextLink>
-            ) : (
-              link
-            )
-          }}
-        />
-        <PageHeader title={title} info={info} />
-        <Box display="flex" justifyContent="flexEnd">
-          <Button onClick={handleCreate}>{buttonText}</Button>
-        </Box>
-        {error || (loading && !data) ? (
-          <Text>{empty}</Text>
-        ) : (
-          <Stack space={3}>
-            <Table>
-              <Head>
-                <Row>
-                  <HeadData>
-                    <Text variant="eyebrow">{t.tableHeaders.name}</Text>
-                  </HeadData>
-                  <HeadData>
-                    <Text variant="eyebrow">{t.tableHeaders.id}</Text>
-                  </HeadData>
-                  <HeadData>
-                    <Text variant="eyebrow">{t.tableHeaders.address}</Text>
-                  </HeadData>
-                  <HeadData>
-                    <Text variant="eyebrow">{t.tableHeaders.postnumber}</Text>
-                  </HeadData>
-                  <HeadData>
-                    <Text variant="eyebrow">{t.tableHeaders.email}</Text>
-                  </HeadData>
-                  <HeadData>
-                    <Text variant="eyebrow">{t.tableHeaders.status}</Text>
-                  </HeadData>
-                  <HeadData></HeadData>
-                </Row>
-              </Head>
-              <Body>
-                {recyclingPartners.map((partner: RecyclingPartner) => (
-                  <Row key={partner.companyId}>
-                    <Data>{partner.companyName}</Data>
-                    <Data>{partner.companyId}</Data>
-                    <Data>{partner.address}</Data>
-                    <Data>{partner.postnumber}</Data>
-                    <Data>{partner.email}</Data>
-                    <Data>
-                      {partner.active ? (
-                        <Text
-                          color="mint400"
-                          fontWeight="semiBold"
-                          variant="eyebrow"
+    <AuthGuard permission={permission} loading={loading && !data}>
+      <PartnerPageLayout
+        side={<NavigationLinks activeSection={activeSection} />}
+      >
+        <Stack space={4}>
+          <Breadcrumbs
+            items={[
+              { title: 'Ísland.is', href: routes.home['recyclingFund'] },
+              {
+                title: title,
+              },
+            ]}
+            renderLink={(link, item) => {
+              return item?.href ? (
+                <NextLink href={item?.href} legacyBehavior>
+                  {link}
+                </NextLink>
+              ) : (
+                link
+              )
+            }}
+          />
+          <PageHeader title={title} info={info} />
+          <Box display="flex" justifyContent="flexEnd">
+            <Button onClick={handleCreate}>{buttonText}</Button>
+          </Box>
+          {error || (loading && !data) ? (
+            <Text>{empty}</Text>
+          ) : (
+            <Stack space={3}>
+              <Table>
+                <Head>
+                  <Row>
+                    <HeadData>
+                      <Text variant="eyebrow">{t.tableHeaders.name}</Text>
+                    </HeadData>
+                    <HeadData>
+                      <Text variant="eyebrow">{t.tableHeaders.id}</Text>
+                    </HeadData>
+                    <HeadData>
+                      <Text variant="eyebrow">{t.tableHeaders.address}</Text>
+                    </HeadData>
+                    <HeadData>
+                      <Text variant="eyebrow">{t.tableHeaders.postnumber}</Text>
+                    </HeadData>
+                    <HeadData>
+                      <Text variant="eyebrow">{t.tableHeaders.email}</Text>
+                    </HeadData>
+                    <HeadData>
+                      <Text variant="eyebrow">{t.tableHeaders.status}</Text>
+                    </HeadData>
+                    <HeadData></HeadData>
+                  </Row>
+                </Head>
+                <Body>
+                  {recyclingPartners.map((partner: RecyclingPartner) => (
+                    <Row key={partner.companyId}>
+                      <Data>{partner.companyName}</Data>
+                      <Data>{partner.companyId}</Data>
+                      <Data>{partner.address}</Data>
+                      <Data>{partner.postnumber}</Data>
+                      <Data>{partner.email}</Data>
+                      <Data>
+                        {partner.active ? (
+                          <Text
+                            color="mint400"
+                            fontWeight="semiBold"
+                            variant="eyebrow"
+                          >
+                            {t.status.active}
+                          </Text>
+                        ) : (
+                          <Text
+                            color="red600"
+                            fontWeight="semiBold"
+                            variant="eyebrow"
+                          >
+                            {t.status.inactive}
+                          </Text>
+                        )}
+                      </Data>
+                      <Data>
+                        <Button
+                          variant="text"
+                          icon="chevronForward"
+                          size="small"
+                          nowrap
+                          onClick={() => handleUpdate(partner.companyId)}
                         >
-                          {t.status.active}
-                        </Text>
-                      ) : (
-                        <Text
-                          color="red600"
-                          fontWeight="semiBold"
-                          variant="eyebrow"
-                        >
-                          {t.status.inactive}
-                        </Text>
-                      )}
-                    </Data>
-                    <Data>
-                      <Button
-                        variant="text"
-                        icon="chevronForward"
-                        size="small"
-                        nowrap
-                        onClick={() => handleUpdate(partner.companyId)}
-                      >
-                        {t.buttons.view}
-                      </Button>
+                          {t.buttons.view}
+                        </Button>
 
-                      {/* <DropdownMenu
+                        {/* <DropdownMenu
                         disclosure={
                           <Button
                             variant="text"
@@ -270,15 +248,16 @@ const RecyclingCompanies: FC<React.PropsWithChildren<unknown>> = () => {
                         ]}
                         menuLabel={t.buttons.actions}
                       /> */}
-                    </Data>
-                  </Row>
-                ))}
-              </Body>
-            </Table>
-          </Stack>
-        )}
-      </Stack>
-    </PartnerPageLayout>
+                      </Data>
+                    </Row>
+                  ))}
+                </Body>
+              </Table>
+            </Stack>
+          )}
+        </Stack>
+      </PartnerPageLayout>
+    </AuthGuard>
   )
 }
 

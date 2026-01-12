@@ -7,7 +7,10 @@ import {
   LoadingDots,
   Select,
 } from '@island.is/island-ui/core'
-import { Case } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  Case,
+  CaseState,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 
 import { useConnectedCasesQuery } from './connectedCases.generated'
@@ -91,7 +94,6 @@ const SelectConnectedCase: FC<Props> = ({
     return connectedCases.length === 0 ? (
       <AlertMessage
         type="warning"
-        title={formatMessage(strings.noConnectedCasesTitle)}
         message={formatMessage(strings.noConnectedCasesMessage)}
       />
     ) : (
@@ -104,7 +106,11 @@ const SelectConnectedCase: FC<Props> = ({
         onChange={(selectedOption) => {
           setConnectedCase((selectedOption?.value as string) || null)
         }}
-        isDisabled={connectedCasesLoading || Boolean(mergeCaseNumber)}
+        isDisabled={
+          connectedCasesLoading ||
+          Boolean(mergeCaseNumber) ||
+          workingCase.state === CaseState.CORRECTING
+        }
         isClearable
       />
     )

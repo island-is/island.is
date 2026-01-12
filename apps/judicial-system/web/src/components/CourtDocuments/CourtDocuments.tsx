@@ -1,28 +1,22 @@
 import { Dispatch, FC, SetStateAction, useState } from 'react'
 import { useIntl } from 'react-intl'
-import Select from 'react-select'
 
 import { Box, Tag, Text } from '@island.is/island-ui/core'
-import { theme } from '@island.is/island-ui/theme'
 import { formatRequestCaseType } from '@island.is/judicial-system/formatters'
 import { CourtDocument } from '@island.is/judicial-system/types'
 import { core, courtDocuments } from '@island.is/judicial-system-web/messages'
-import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  ReactSelectOption,
-  TempCase as Case,
-} from '@island.is/judicial-system-web/src/types'
+  BaseSelect,
+  IconButton,
+} from '@island.is/judicial-system-web/src/components'
+import {
+  Case,
+  UserRole,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import IconButton from '../IconButton/IconButton'
 import MultipleValueList from '../MultipleValueList/MultipleValueList'
-import {
-  ClearIndicator,
-  DropdownIndicator,
-  Option,
-  Placeholder,
-  SingleValue,
-} from '../SelectComponents/SelectComponents'
 import * as styles from './CourtDocuments.css'
 
 interface Props {
@@ -33,10 +27,13 @@ interface Props {
 const CourtDocuments: FC<Props> = ({ workingCase, setWorkingCase }) => {
   const { formatMessage } = useIntl()
   const { setAndSendCaseToServer, isUpdatingCase } = useCase()
-  const [submittedByMenuIsOpen, setSubmittedByMenuIsOpen] = useState<number>(-1)
   const [updateIndex, setUpdateIndex] = useState<number | undefined>(undefined)
 
   const whoFiledOptions = [
+    {
+      value: null,
+      label: 'Hreinsa val',
+    },
     {
       value: UserRole.PROSECUTOR,
       label: formatMessage(courtDocuments.whoFiled.prosecutor),
@@ -109,7 +106,7 @@ const CourtDocuments: FC<Props> = ({ workingCase, setWorkingCase }) => {
         inputLabel={formatMessage(courtDocuments.add.label)}
         inputPlaceholder={formatMessage(courtDocuments.add.placeholder)}
         buttonText={formatMessage(courtDocuments.add.buttonText)}
-        isDisabled={(value) => !value}
+        isButtonDisabled={(value) => !value}
       >
         <>
           <Box marginBottom={1}>
@@ -139,69 +136,9 @@ const CourtDocuments: FC<Props> = ({ workingCase, setWorkingCase }) => {
                   <Text variant="h4">{courtDocument.name}</Text>
                 </div>
                 <div className={styles.dropdownContainer}>
-                  <Select
-                    classNamePrefix="court-documents-select"
+                  <BaseSelect
                     options={whoFiledOptions}
-                    placeholder={formatMessage(
-                      courtDocuments.whoFiled.placeholder,
-                    )}
                     isLoading={isUpdatingCase && updateIndex === index}
-                    components={{
-                      DropdownIndicator,
-                      IndicatorSeparator: null,
-                      Placeholder,
-                      Option,
-                      ClearIndicator,
-                      SingleValue,
-                    }}
-                    styles={{
-                      control: (baseStyles) => ({
-                        ...baseStyles,
-                        border: 'none',
-                        cursor: 'pointer',
-                        boxShadow:
-                          submittedByMenuIsOpen === index
-                            ? `inset 0 0 0 3px ${theme.color.mint400}`
-                            : 'none',
-                        borderTopLeftRadius: 8,
-                        borderTopRightRadius: 8,
-                        borderBottomLeftRadius:
-                          submittedByMenuIsOpen === index ? 0 : 8,
-                        borderBottomRightRadius:
-                          submittedByMenuIsOpen === index ? 0 : 8,
-                        transition: 'none',
-                      }),
-                      menu: (baseStyles) => ({
-                        ...baseStyles,
-                        marginTop: -3,
-                        borderTopLeftRadius: 0,
-                        borderTopRightRadius: 0,
-                        boxShadow: 'none',
-                        borderTop: `none`,
-                        borderRight: `3px solid ${theme.color.mint400}`,
-                        borderLeft: `3px solid ${theme.color.mint400}`,
-                        borderBottom: `3px solid ${theme.color.mint400}`,
-                        borderBottomLeftRadius: 8,
-                        borderBottomRightRadius: 8,
-                        boxSizing: 'border-box',
-                      }),
-                      option: (baseStyles, { isSelected }) => ({
-                        ...baseStyles,
-                        cursor: 'pointer',
-                        position: 'relative',
-                        padding: `${theme.spacing[1]}px`,
-                        background: isSelected ? theme.color.blue200 : 'white',
-                        '&:hover': {
-                          background: isSelected
-                            ? theme.color.blue200
-                            : theme.color.blue100,
-                        },
-                      }),
-                      container: (baseStyles) => ({
-                        ...baseStyles,
-                        width: '100%',
-                      }),
-                    }}
                     value={
                       courtDocument.submittedBy
                         ? whoFiledOptions.find(
@@ -216,14 +153,6 @@ const CourtDocuments: FC<Props> = ({ workingCase, setWorkingCase }) => {
                         (option as ReactSelectOption)?.value as UserRole,
                       )
                     }}
-                    onMenuOpen={() => {
-                      setSubmittedByMenuIsOpen(index)
-                    }}
-                    onMenuClose={() => {
-                      setSubmittedByMenuIsOpen(-1)
-                    }}
-                    isSearchable={false}
-                    isClearable
                   />
                 </div>
                 <Box display="flex" alignItems="center">

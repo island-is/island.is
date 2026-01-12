@@ -10,7 +10,7 @@ import {
 } from '@island.is/judicial-system/audit-trail'
 import {
   CurrentGraphQlUser,
-  JwtGraphQlAuthGuard,
+  JwtGraphQlAuthUserGuard,
 } from '@island.is/judicial-system/auth'
 import type { User } from '@island.is/judicial-system/types'
 
@@ -18,10 +18,10 @@ import { BackendService } from '../backend'
 import { CreateIndictmentCountInput } from './dto/createIndictmentCount.input'
 import { DeleteIndictmentCountInput } from './dto/deleteIndictmentCount.input'
 import { UpdateIndictmentCountInput } from './dto/updateIndictmentCount.input'
-import { DeleteIndictmentCountResponse } from './models/delete.response'
+import { DeleteResponse } from './models/delete.response'
 import { IndictmentCount } from './models/indictmentCount.model'
 
-@UseGuards(JwtGraphQlAuthGuard)
+@UseGuards(JwtGraphQlAuthUserGuard)
 @Resolver()
 export class IndictmentCountResolver {
   constructor(
@@ -38,14 +38,14 @@ export class IndictmentCountResolver {
     @Context('dataSources')
     { backendService }: { backendService: BackendService },
   ): Promise<IndictmentCount> {
-    this.logger.debug(
-      `Creating a new indictment count for case ${input.caseId}`,
-    )
+    const { caseId, ...createIndictmentCount } = input
+
+    this.logger.debug(`Creating a new indictment count for case ${caseId}`)
 
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.CREATE_INDICTMENT_COUNT,
-      backendService.createIndictmentCount(input),
+      backendService.createIndictmentCount(caseId, createIndictmentCount),
       (theIndictmentCount) => theIndictmentCount.id,
     )
   }
@@ -58,35 +58,43 @@ export class IndictmentCountResolver {
     @Context('dataSources')
     { backendService }: { backendService: BackendService },
   ): Promise<IndictmentCount> {
+    const { caseId, indictmentCountId, ...updateIndictmentCount } = input
+
     this.logger.debug(
-      `Updating indictment count ${input.indictmentCountId} for case ${input.caseId}`,
+      `Updating indictment count ${indictmentCountId} for case ${caseId}`,
     )
 
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.UPDATE_INDICTMENT_COUNT,
-      backendService.updateIndictmentCount(input),
-      input.indictmentCountId,
+      backendService.updateIndictmentCount(
+        caseId,
+        indictmentCountId,
+        updateIndictmentCount,
+      ),
+      indictmentCountId,
     )
   }
 
-  @Mutation(() => DeleteIndictmentCountResponse, { nullable: true })
+  @Mutation(() => DeleteResponse, { nullable: true })
   deleteIndictmentCount(
     @Args('input', { type: () => DeleteIndictmentCountInput })
     input: DeleteIndictmentCountInput,
     @CurrentGraphQlUser() user: User,
     @Context('dataSources')
     { backendService }: { backendService: BackendService },
-  ): Promise<DeleteIndictmentCountResponse> {
+  ): Promise<DeleteResponse> {
+    const { caseId, indictmentCountId } = input
+
     this.logger.debug(
-      `Deleting indictment count ${input.indictmentCountId} for case ${input.caseId}`,
+      `Deleting indictment count ${indictmentCountId} for case ${caseId}`,
     )
 
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.UPDATE_INDICTMENT_COUNT,
-      backendService.deleteIndictmentCount(input),
-      input.indictmentCountId,
+      backendService.deleteIndictmentCount(caseId, indictmentCountId),
+      indictmentCountId,
     )
   }
 }

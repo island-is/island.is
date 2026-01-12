@@ -10,7 +10,6 @@ import {
   GridContainer,
   GridRow,
   Stack,
-  Tag,
   Text,
 } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/shared/types'
@@ -18,8 +17,8 @@ import { SLICE_SPACING } from '@island.is/web/constants'
 import {
   ContentLanguage,
   CustomPageUniqueIdentifier,
-  OfficialJournalOfIcelandAdvert,
   OfficialJournalOfIcelandAdvertMainCategory,
+  OfficialJournalOfIcelandAdvertsResponse,
   Query,
   QueryGetOrganizationArgs,
   QueryOfficialJournalOfIcelandAdvertsArgs,
@@ -43,6 +42,8 @@ import {
   ADVERTS_QUERY,
   MAIN_CATEGORIES_QUERY,
 } from '../queries/OfficialJournalOfIceland'
+import { getTodayParams } from './lib/getTodayParams'
+import { ORGANIZATION_SLUG } from './constants'
 import { m } from './messages'
 
 const OJOIHomePage: CustomScreen<OJOIHomeProps> = ({
@@ -56,6 +57,7 @@ const OJOIHomePage: CustomScreen<OJOIHomeProps> = ({
 
   const baseUrl = linkResolver('ojoihome', [], locale).href
   const searchUrl = linkResolver('ojoisearch', [], locale).href
+  const readMoreUrl = linkResolver('ojoiabout', [], locale).href
   const categoriesUrl = linkResolver('ojoicategories', [], locale).href
 
   const breadcrumbItems = [
@@ -84,6 +86,8 @@ const OJOIHomePage: CustomScreen<OJOIHomeProps> = ({
           searchUrl={searchUrl}
           shortcutsTitle={formatMessage(m.home.shortcuts)}
           featuredImage={formatMessage(m.home.featuredImage)}
+          buttonUrl={readMoreUrl}
+          buttonTitle={formatMessage(m.home.readMore)}
           quickLinks={[
             {
               title: 'A deild',
@@ -98,19 +102,26 @@ const OJOIHomePage: CustomScreen<OJOIHomeProps> = ({
               href: searchUrl + '?deild=c-deild',
             },
             {
-              title: 'Grindavík',
-              href: searchUrl + '?malaflokkur=grindavik',
+              title: 'Lög',
+              href:
+                searchUrl +
+                '?tegund=a-deild-log-log%2Ca-deild-log%2Cb-deild-log&sida=1&staerd=20',
+              variant: 'purple',
+            },
+            {
+              title: 'Reglugerðir',
+              href: searchUrl + '?tegund=b-deild-reglugerd',
               variant: 'purple',
             },
             {
               title: 'Gjaldskrár',
-              href: searchUrl + '?malaflokkur=gjaldskra',
+              href: searchUrl + '?tegund=b-deild-gjaldskra',
               variant: 'purple',
             },
             {
-              title: 'Covid 19',
-              href: searchUrl + '?malaflokkur=covid-19',
-              variant: 'purple',
+              title: 'Auglýsendur',
+              href: '/umsoknir/stjornartidindi',
+              variant: 'mint',
             },
           ]}
           breadCrumbs={
@@ -201,7 +212,7 @@ const OJOIHomePage: CustomScreen<OJOIHomeProps> = ({
 }
 
 interface OJOIHomeProps {
-  adverts: OfficialJournalOfIcelandAdvert[]
+  adverts: OfficialJournalOfIcelandAdvertsResponse['adverts']
   mainCategories?: OfficialJournalOfIcelandAdvertMainCategory[]
   organization?: Query['getOrganization']
   locale: Locale
@@ -226,8 +237,7 @@ const OJOIHome: CustomScreen<OJOIHomeProps> = ({
 }
 
 OJOIHome.getProps = async ({ apolloClient, locale }) => {
-  const organizationSlug = 'stjornartidindi'
-
+  const adverts: OfficialJournalOfIcelandAdvertsResponse['adverts'] = []
   const [
     {
       data: { officialJournalOfIcelandAdverts },
@@ -244,7 +254,8 @@ OJOIHome.getProps = async ({ apolloClient, locale }) => {
       variables: {
         input: {
           page: 1,
-          pageSize: 5,
+          pageSize: 200,
+          ...getTodayParams(),
         },
       },
     }),
@@ -259,19 +270,40 @@ OJOIHome.getProps = async ({ apolloClient, locale }) => {
       query: GET_ORGANIZATION_QUERY,
       variables: {
         input: {
-          slug: organizationSlug,
+          slug: ORGANIZATION_SLUG,
           lang: locale as ContentLanguage,
         },
       },
     }),
   ])
 
+  if (officialJournalOfIcelandAdverts.adverts.length) {
+    adverts.push(...officialJournalOfIcelandAdverts.adverts)
+  } else {
+    // If there are no adverts from "today", we will fetch the latest 5 adverts.
+    const {
+      data: { officialJournalOfIcelandAdverts },
+    } = await apolloClient.query<
+      Query,
+      QueryOfficialJournalOfIcelandAdvertsArgs
+    >({
+      query: ADVERTS_QUERY,
+      variables: {
+        input: {
+          page: 1,
+          pageSize: 5,
+        },
+      },
+    })
+    adverts.push(...officialJournalOfIcelandAdverts.adverts)
+  }
+
   if (!getOrganization?.hasALandingPage) {
     throw new CustomNextError(404, 'Organization page not found')
   }
 
   return {
-    adverts: officialJournalOfIcelandAdverts.adverts,
+    adverts,
     mainCategories: officialJournalOfIcelandMainCategories.mainCategories,
     organization: getOrganization,
     locale: locale as Locale,

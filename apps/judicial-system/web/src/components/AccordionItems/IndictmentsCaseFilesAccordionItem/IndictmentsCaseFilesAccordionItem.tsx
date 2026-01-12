@@ -15,16 +15,16 @@ import {
   Reorder,
   useDragControls,
   useMotionValue,
-} from 'framer-motion'
-import { uuid } from 'uuidv4'
+} from 'motion/react'
+import { v4 as uuid } from 'uuid'
 
 import {
   AccordionItem,
   AlertMessage,
   Box,
+  FileUploadStatus,
   Text,
   toast,
-  UploadFileStatus,
 } from '@island.is/island-ui/core'
 import {
   CrimeSceneMap,
@@ -160,9 +160,10 @@ export const sortedFilesInChapter = (
         displayText: file.name,
         userGeneratedFilename: file.userGeneratedFilename,
         displayDate: file.displayDate,
-        canOpen: Boolean(file.key),
-        status: 'done' as UploadFileStatus,
-        canEdit: true,
+        canOpen: file.isKeyAccessible ?? false,
+        status: FileUploadStatus.done,
+        canEdit: ['fileName', 'displayDate'] as const,
+        size: file.size,
       }
     })
     .sort((a, b) => {
@@ -209,8 +210,13 @@ const CaseFile: FC<CaseFileProps> = (props) => {
       return
     }
 
-    // Prevents text selection when dragging
-    evt.preventDefault()
+    const target = evt.target as HTMLElement
+    const tag = target.tagName.toLowerCase()
+
+    if (tag !== 'input') {
+      // Prevents text selection when dragging
+      evt.preventDefault()
+    }
 
     setIsDragging(true)
     controls.start(evt)
@@ -351,9 +357,10 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
             displayText: caseFile.name,
             userGeneratedFilename: caseFile.userGeneratedFilename,
             displayDate: caseFile.displayDate,
-            canOpen: Boolean(caseFile.key),
-            status: 'done' as UploadFileStatus,
-            canEdit: true,
+            canOpen: caseFile.isKeyAccessible ?? false,
+            status: FileUploadStatus.done,
+            size: caseFile.size,
+            canEdit: ['fileName', 'displayDate'] as const,
           }
         }),
     ])

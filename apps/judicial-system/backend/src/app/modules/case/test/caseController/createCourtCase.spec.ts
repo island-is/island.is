@@ -1,5 +1,5 @@
 import { Transaction } from 'sequelize'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import {
@@ -19,8 +19,8 @@ import { createTestingCaseModule } from '../createTestingCaseModule'
 import { nowFactory } from '../../../../factories'
 import { randomDate, randomEnum } from '../../../../test'
 import { CourtService } from '../../../court'
+import { Case, CaseRepositoryService } from '../../../repository'
 import { include } from '../../case.service'
-import { Case } from '../../models/case.model'
 
 jest.mock('../../../../factories')
 
@@ -43,7 +43,7 @@ describe('CaseController - Create court case', () => {
   let mockMessageService: MessageService
   let mockCourtService: CourtService
   let transaction: Transaction
-  let mockCaseModel: typeof Case
+  let mockCaseRepositoryService: CaseRepositoryService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
@@ -51,13 +51,13 @@ describe('CaseController - Create court case', () => {
       messageService,
       courtService,
       sequelize,
-      caseModel,
+      caseRepositoryService,
       caseController,
     } = await createTestingCaseModule()
 
     mockMessageService = messageService
     mockCourtService = courtService
-    mockCaseModel = caseModel
+    mockCaseRepositoryService = caseRepositoryService
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
@@ -67,8 +67,8 @@ describe('CaseController - Create court case', () => {
 
     const mockCreateCourtCase = mockCourtService.createCourtCase as jest.Mock
     mockCreateCourtCase.mockResolvedValue(courtCaseNumber)
-    const mockUpdate = mockCaseModel.update as jest.Mock
-    mockUpdate.mockResolvedValue([1])
+    const mockUpdate = mockCaseRepositoryService.update as jest.Mock
+    mockUpdate.mockResolvedValue({})
 
     givenWhenThen = async (caseId: string, user: TUser, theCase: Case) => {
       const then = {} as Then
@@ -110,7 +110,7 @@ describe('CaseController - Create court case', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockFindOne = mockCaseModel.findOne as jest.Mock
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
       mockFindOne.mockResolvedValueOnce(returnedCase)
 
       const mockToday = nowFactory as jest.Mock
@@ -130,16 +130,18 @@ describe('CaseController - Create court case', () => {
         false,
         undefined,
       )
-      expect(mockCaseModel.update).toHaveBeenCalledWith(
+      expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
         { courtCaseNumber },
-        { where: { id: caseId }, transaction },
+        { transaction },
       )
-      expect(mockCaseModel.findOne).toHaveBeenCalledWith({
+      expect(mockCaseRepositoryService.findOne).toHaveBeenCalledWith({
         include,
         where: {
           id: caseId,
           isArchived: false,
         },
+        transaction,
       })
       expect(then.result).toBe(returnedCase)
     })
@@ -178,7 +180,7 @@ describe('CaseController - Create court case', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockFindOne = mockCaseModel.findOne as jest.Mock
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
       mockFindOne.mockResolvedValueOnce(returnedCase)
 
       then = await givenWhenThen(caseId, user, theCase)
@@ -195,16 +197,18 @@ describe('CaseController - Create court case', () => {
         false,
         indictmentSubtypes,
       )
-      expect(mockCaseModel.update).toHaveBeenCalledWith(
+      expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
         { courtCaseNumber },
-        { where: { id: caseId }, transaction },
+        { transaction },
       )
-      expect(mockCaseModel.findOne).toHaveBeenCalledWith({
+      expect(mockCaseRepositoryService.findOne).toHaveBeenCalledWith({
         include,
         where: {
           id: caseId,
           isArchived: false,
         },
+        transaction,
       })
       expect(then.result).toBe(returnedCase)
     })
@@ -227,16 +231,17 @@ describe('CaseController - Create court case', () => {
     } as Case
 
     beforeEach(async () => {
-      const mockFindOne = mockCaseModel.findOne as jest.Mock
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
       mockFindOne.mockResolvedValueOnce(returnedCase)
 
       await givenWhenThen(caseId, user, theCase)
     })
 
     it('should update the court case number', () => {
-      expect(mockCaseModel.update).toHaveBeenCalledWith(
+      expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
         { state: CaseState.RECEIVED, courtCaseNumber },
-        { where: { id: caseId }, transaction },
+        { transaction },
       )
     })
   })
@@ -256,7 +261,7 @@ describe('CaseController - Create court case', () => {
     } as Case
 
     beforeEach(async () => {
-      const mockFindOne = mockCaseModel.findOne as jest.Mock
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
       mockFindOne.mockResolvedValueOnce(returnedCase)
 
       await givenWhenThen(caseId, user, theCase)
@@ -308,24 +313,28 @@ describe('CaseController - Create court case', () => {
         {
           id: criminalRecordId,
           key: uuid(),
+          isKeyAccessible: true,
           state: CaseFileState.STORED_IN_RVG,
           category: CaseFileCategory.CRIMINAL_RECORD,
         },
         {
           id: costBreakdownId,
           key: uuid(),
+          isKeyAccessible: true,
           state: CaseFileState.STORED_IN_RVG,
           category: CaseFileCategory.COST_BREAKDOWN,
         },
         {
           id: uncategorisedId,
           key: uuid(),
+          isKeyAccessible: true,
           state: CaseFileState.STORED_IN_RVG,
           category: CaseFileCategory.CASE_FILE,
         },
         {
           id: uuid(),
           key: uuid(),
+          isKeyAccessible: true,
           state: CaseFileState.STORED_IN_COURT,
           category: CaseFileCategory.CASE_FILE,
         },
@@ -334,7 +343,7 @@ describe('CaseController - Create court case', () => {
     } as Case
 
     beforeEach(async () => {
-      const mockFindOne = mockCaseModel.findOne as jest.Mock
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
       mockFindOne.mockResolvedValueOnce(returnedCase)
 
       await givenWhenThen(caseId, user, theCase)
@@ -387,7 +396,7 @@ describe('CaseController - Create court case', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockUpdate = mockCaseModel.update as jest.Mock
+      const mockUpdate = mockCaseRepositoryService.update as jest.Mock
       mockUpdate.mockRejectedValueOnce(new Error('Some error'))
 
       then = await givenWhenThen(caseId, user, theCase)
@@ -405,7 +414,7 @@ describe('CaseController - Create court case', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockFindOne = mockCaseModel.findOne as jest.Mock
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
       mockFindOne.mockRejectedValueOnce(new Error('Some error'))
 
       then = await givenWhenThen(caseId, user, theCase)

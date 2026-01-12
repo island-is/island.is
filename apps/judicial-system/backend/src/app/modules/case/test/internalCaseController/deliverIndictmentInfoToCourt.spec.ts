@@ -1,4 +1,4 @@
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import {
   CaseType,
@@ -11,8 +11,8 @@ import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { randomDate } from '../../../../test'
 import { CourtService } from '../../../court'
+import { Case } from '../../../repository'
 import { DeliverDto } from '../../dto/deliver.dto'
-import { Case } from '../../models/case.model'
 import { DeliverResponse } from '../../models/deliver.response'
 
 interface Then {

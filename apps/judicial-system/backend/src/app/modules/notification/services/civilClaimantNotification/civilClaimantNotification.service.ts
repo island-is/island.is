@@ -16,12 +16,15 @@ import { DEFENDER_INDICTMENT_ROUTE } from '@island.is/judicial-system/consts'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { CivilClaimantNotificationType } from '@island.is/judicial-system/types'
 
-import { Case } from '../../../case'
-import { CivilClaimant } from '../../../defendant'
 import { EventService } from '../../../event'
+import {
+  Case,
+  CivilClaimant,
+  Notification,
+  Recipient,
+} from '../../../repository'
 import { BaseNotificationService } from '../../baseNotification.service'
 import { DeliverResponse } from '../../models/deliver.response'
-import { Notification, Recipient } from '../../models/notification.model'
 import { notificationModuleConfig } from '../../notification.config'
 import { strings } from './civilClaimantNotification.strings'
 
@@ -75,14 +78,14 @@ export class CivilClaimantNotificationService extends BaseNotificationService {
 
     if (civilClaimant.isSpokespersonConfirmed) {
       promises.push(
-        this.sendEmail(
-          formattedSubject,
-          formattedBody,
-          civilClaimant.spokespersonName,
-          civilClaimant.spokespersonEmail,
-          undefined,
-          true,
-        ),
+        this.sendEmail({
+          subject: formattedSubject,
+          html: formattedBody,
+          recipientName: civilClaimant.spokespersonName,
+          recipientEmail: civilClaimant.spokespersonEmail,
+          attachments: undefined,
+          skipTail: true,
+        }),
       )
     }
 

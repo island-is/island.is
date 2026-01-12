@@ -65,7 +65,7 @@ describe('testing get all for user with admin scope', () => {
     const creationResponse = await server
       .post('/applications')
       .send({
-        typeId: ApplicationTypes.EXAMPLE,
+        typeId: ApplicationTypes.EXAMPLE_COMMON_ACTIONS,
       })
       .expect(201)
 

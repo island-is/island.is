@@ -13,10 +13,6 @@ inputs:
   docker-registry:
     description: 'Docker registry'
     required: true
-  codecov-token:
-    description: 'Codecov token'
-    required: true
-
 runs:
   using: 'composite'
   steps:
@@ -27,62 +23,29 @@ runs:
         AWS_ACCESS_KEY_ID: ${{ inputs.aws-access-key-id }}
         AWS_SECRET_ACCESS_KEY: ${{ inputs.aws-secret-access-key }}
         DOCKER_REGISTRY: ${{ inputs.docker-registry }}
-    - name: Set Codeconv version numner
-      run: |
-        echo "CODECOV_REV=v0.3.2" >> $GITHUB_ENV
-      shell: bash
 
-    - uses: actions/setup-node@v4
+    - name: Configure Datadog Test Optimization
+      uses: datadog/test-visibility-github-action@v2
       with:
-        node-version-file: 'package.json'
-
-    - name: Setup yarn
-      run: corepack enable
-      shell: bash
+        languages: 'js'
+        api_key: ${{ inputs.dd-api-key }}
+        site: datadoghq.eu
 
     - name: Running tests
-      run: ./scripts/ci/run-in-parallel.sh 30_test
+      run: ./scripts/ci/30_test.sh
       shell: bash
       env:
         DOCKER_REGISTRY: ${{ inputs.docker-registry }}
         DD_API_KEY: ${{ inputs.dd-api-key }}
 
-    - name: Cached codecov uploader
-      id: codecov-cache
-      uses: actions/cache@v4
-      with:
-        path: codecov
-        key: ${{ runner.os }}-codeconv-${{ env.CODECOV_REV }}
-
-    - name: Fetch codecov uploader
-      if: steps.codecov-cache.outputs.cache-hit != 'true'
-      run: |
-        # Importing pgp keys
-        curl https://keybase.io/codecovsecurity/pgp_keys.asc | gpg --no-default-keyring --keyring trustedkeys.gpg --import
-
-        curl -O https://uploader.codecov.io/$CODECOV_REV/linux/codecov
-        curl -O https://uploader.codecov.io/$CODECOV_REV/linux/codecov.SHA256SUM
-        curl -O https://uploader.codecov.io/$CODECOV_REV/linux/codecov.SHA256SUM.sig
-
-        # Integrity check
-        gpgv codecov.SHA256SUM.sig codecov.SHA256SUM
-        shasum -a 256 -c codecov.SHA256SUM
-        rm codecov.SHA256SUM.sig codecov.SHA256SUM
+    - name: Upload coverage reports to Datadog
       shell: bash
-
-    - name: Install codecov uploader
-      id: codecov
-      run: |
-        chmod +x codecov
-
-        # Adding codecov uploader to PATH
-        mkdir -p "$HOME/.local/bin"
-        cp codecov "$HOME/.local/bin/codecov"
-        echo "$HOME/.local/bin" >> $GITHUB_PATH
-      shell: bash
-
-    - name: Upload coverage reports
-      run: ./scripts/ci/run-in-parallel.sh 50_upload-coverage || true # If for some reason codecov is down, we can still build. This is not a perfect solution though.
-      shell: bash
+      run: yarn datadog-ci coverage upload .
       env:
-        CODECOV_TOKEN: ${{ inputs.codecov-token }}
+        DD_API_KEY: ${{ inputs.dd-api-key }}
+        DD_SITE: datadoghq.eu
+
+    - name: Set RUNS_ON_S3_BUCKET_CACHE
+      shell: bash
+      if: ${{ !github.event.localrun && env.RUNS_ON_BUCKET_NAME }}
+      run: echo "RUNS_ON_S3_BUCKET_CACHE=${{ env.RUNS_ON_BUCKET_NAME }}" >> $GITHUB_ENV

@@ -1,19 +1,21 @@
 import { ReactNode, useMemo } from 'react'
 import { BLOCKS } from '@contentful/rich-text-types'
+
+import { SliceType } from '@island.is/island-ui/contentful'
 import {
   Box,
   GridColumn,
   GridContainer,
   GridRow,
-  Text,
   Hyphen,
   Link,
+  Text,
 } from '@island.is/island-ui/core'
-import { webRichText } from '@island.is/web/utils/richText'
-import { FooterItem } from '@island.is/web/graphql/schema'
-import { SliceType } from '@island.is/island-ui/contentful'
 import { SpanType } from '@island.is/island-ui/core/types'
+import { FooterItem } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
+import { webRichText } from '@island.is/web/utils/richText'
+
 import * as styles from './HveFooter.css'
 
 const ROWS_PER_COLUMN = 2

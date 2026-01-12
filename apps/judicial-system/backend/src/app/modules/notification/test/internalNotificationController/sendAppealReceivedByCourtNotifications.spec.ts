@@ -1,4 +1,4 @@
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { EmailService } from '@island.is/email-service'
 import { SmsService } from '@island.is/nova-sms'
@@ -15,7 +15,7 @@ import {
   createTestUsers,
 } from '../createTestingNotificationModule'
 
-import { Case } from '../../../case'
+import { Case } from '../../../repository'
 import { DeliverResponse } from '../../models/deliver.response'
 
 interface Then {
@@ -26,11 +26,14 @@ interface Then {
 type GivenWhenThen = (defenderNationalId?: string) => Promise<Then>
 
 describe('InternalNotificationController - Send appeal received by court notifications', () => {
-  const { coa, defender, prosecutor } = createTestUsers([
-    'coa',
-    'defender',
-    'prosecutor',
-  ])
+  const { coa, defender, prosecutor, coaAssistant1, coaAssistant2 } =
+    createTestUsers([
+      'coa',
+      'defender',
+      'prosecutor',
+      'coaAssistant1',
+      'coaAssistant2',
+    ])
 
   const userId = uuid()
   const caseId = uuid()
@@ -44,6 +47,7 @@ describe('InternalNotificationController - Send appeal received by court notific
 
   beforeEach(async () => {
     process.env.COURTS_EMAILS = `{"4676f08b-aab4-4b4f-a366-697540788088":"${coa.email}"}`
+    process.env.COURT_OF_APPEALS_ASSISTANT_EMAILS = `${coaAssistant1.email}, ${coaAssistant2.email} `
 
     const { emailService, smsService, internalNotificationController } =
       await createTestingNotificationModule()
@@ -89,7 +93,7 @@ describe('InternalNotificationController - Send appeal received by court notific
       then = await givenWhenThen(uuid())
     })
 
-    it('should send notification to prosecutor and defender', () => {
+    it('should send notification to court of appeals, prosecutor and defender', () => {
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
           to: [
@@ -105,6 +109,38 @@ describe('InternalNotificationController - Send appeal received by court notific
           )}. Hægt er að nálgast gögn málsins á <a href="http://localhost:4200/landsrettur/yfirlit/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
       )
+
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [
+            {
+              name: 'Landsréttur',
+              address: coaAssistant1.email,
+            },
+          ],
+          subject: `Upplýsingar vegna kæru í máli ${courtCaseNumber}`,
+          html: `Kæra í máli ${courtCaseNumber} hefur borist Landsrétti. Frestur til að skila greinargerð er til ${formatDate(
+            getStatementDeadline(receivedDate),
+            'PPPp',
+          )}. Hægt er að nálgast gögn málsins á <a href="http://localhost:4200/landsrettur/yfirlit/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
+        }),
+      )
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [
+            {
+              name: 'Landsréttur',
+              address: coaAssistant2.email,
+            },
+          ],
+          subject: `Upplýsingar vegna kæru í máli ${courtCaseNumber}`,
+          html: `Kæra í máli ${courtCaseNumber} hefur borist Landsrétti. Frestur til að skila greinargerð er til ${formatDate(
+            getStatementDeadline(receivedDate),
+            'PPPp',
+          )}. Hægt er að nálgast gögn málsins á <a href="http://localhost:4200/landsrettur/yfirlit/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
+        }),
+      )
+
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
           to: [{ name: prosecutor.name, address: prosecutor.email }],
@@ -115,6 +151,7 @@ describe('InternalNotificationController - Send appeal received by court notific
           )}. Hægt er að skila greinargerð og nálgast gögn málsins á <a href="http://localhost:4200/krafa/yfirlit/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
       )
+
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
           to: [{ name: defender.name, address: defender.email }],
@@ -125,6 +162,7 @@ describe('InternalNotificationController - Send appeal received by court notific
           )}. Hægt er að skila greinargerð og nálgast gögn málsins á <a href="http://localhost:4200/verjandi/krafa/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
       )
+
       expect(then.result).toEqual({ delivered: true })
     })
 

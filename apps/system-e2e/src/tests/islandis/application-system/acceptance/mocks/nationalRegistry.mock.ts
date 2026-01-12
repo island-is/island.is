@@ -1,9 +1,95 @@
 import { Response } from '@anev/ts-mountebank'
-import { NationalRegistry } from '../../../../../../../../infra/src/dsl/xroad'
+import {
+  NationalRegistry,
+  NationalRegistryB2C,
+} from '../../../../../../../../infra/src/dsl/xroad'
 import { addXroadMock } from '../../../../../support/wire-mocks'
 
 export const loadNationalRegistryXroadMocks = async () => {
+  /* Gervimaður Ameríka */
+  await addXroadMock({
+    config: NationalRegistryB2C,
+    prefix: 'NATIONAL_REGISTRY_B2C_PATH',
+    apiPath: '/Midlun/v1/Einstaklingar/0101302989',
+    prefixType: 'only-base-path',
+    response: new Response().withJSONBody({
+      kennitala: '0101302989',
+      nafn: 'Gervimaður Ameríka',
+    }),
+  })
+  /* Gervimaður Evrópa */
+  await addXroadMock({
+    config: NationalRegistryB2C,
+    prefix: 'NATIONAL_REGISTRY_B2C_PATH',
+    apiPath: '/Midlun/v1/Einstaklingar/0101302719',
+    prefixType: 'only-base-path',
+    response: new Response().withJSONBody({
+      kennitala: '0101302719',
+      nafn: 'Gervimaður Evrópa',
+    }),
+  })
+
   /* Gervimaður Afríka */
+  await addXroadMock({
+    config: NationalRegistryB2C,
+    prefix: 'NATIONAL_REGISTRY_B2C_APPLICATION_PATH',
+    apiPath: '/Einstaklingar/0101303019',
+    prefixType: 'only-base-path',
+    response: new Response().withJSONBody({
+      kennitala: '0101303019',
+      nafn: 'Gervimaður Afríka',
+      kynKodi: '1',
+      kynTexti: 'Karl',
+      bannmerking: false,
+      faedingardagur: '1930-01-01T00:00:00',
+      logheimili: {
+        heimilisfang: 'Fellsmúli 2',
+        ibudanumer: null,
+        postnumer: '108',
+        stadur: 'Reykjavík',
+        sveitarfelagsnumer: '0000',
+      },
+      adsetur: {
+        heimilisfang: 'Engihjalli 3',
+        ibudanumer: null,
+        postnumer: '200',
+        stadur: 'Kópavogur',
+        sveitarfelagsnumer: '1000',
+      },
+    }),
+  })
+  await addXroadMock({
+    config: NationalRegistryB2C,
+    prefix: 'NATIONAL_REGISTRY_B2C_APPLICATION_PATH',
+    apiPath: '/Einstaklingar/0101303019/rikisfang',
+    prefixType: 'only-base-path',
+    response: new Response().withJSONBody({
+      kodi: 'IS',
+      land: 'Ísland',
+    }),
+  })
+  await addXroadMock({
+    config: NationalRegistryB2C,
+    prefix: 'NATIONAL_REGISTRY_B2C_APPLICATION_PATH',
+    apiPath: '/Einstaklingar/0101303019/hjuskapur',
+    prefixType: 'only-base-path',
+    response: new Response().withJSONBody({
+      hjuskapur: {
+        hjuskaparKodi: '1',
+        hjuskaparTexti: 'Ógift(ur)',
+        dagsetningBreytt: '1992-11-16T00:00:00',
+        kennitalaMaka: '0101307789',
+        nafnMaka: 'Gervimaður útlönd',
+      },
+      sambud: {
+        sambud: false,
+        sambudTexti: null,
+        dagsetningBreytt: null,
+        kennitalaMaka: null,
+        nafnMaka: null,
+      },
+    }),
+  })
   await addXroadMock({
     config: NationalRegistry,
     prefix: 'XROAD_NATIONAL_REGISTRY_SERVICE_PATH',
@@ -90,6 +176,77 @@ export const loadNationalRegistryXroadMocks = async () => {
     prefixType: 'only-base-path',
     response: new Response().withJSONBody(['0101303019']),
   })
+  await addXroadMock({
+    config: NationalRegistry,
+    prefix: 'XROAD_NATIONAL_REGISTRY_SERVICE_PATH',
+    apiPath: '/api/v1/einstaklingar/0101303019/forsja',
+    prefixType: 'only-base-path',
+    response: new Response().withJSONBody(['1111111119']),
+  })
+  await addXroadMock({
+    config: NationalRegistry,
+    prefix: 'XROAD_NATIONAL_REGISTRY_SERVICE_PATH',
+    apiPath: '/api/v1/einstaklingar/0101303019/forsja/1111111119',
+    prefixType: 'only-base-path',
+    response: new Response().withJSONBody(['0101307789']),
+  })
+  await addXroadMock({
+    config: NationalRegistry,
+    prefix: 'XROAD_NATIONAL_REGISTRY_SERVICE_PATH',
+    apiPath: '/api/v1/einstaklingar/0101303019/fjolskyldumedlimir',
+    prefixType: 'only-base-path',
+    response: new Response().withJSONBody({
+      fjolskyldunumer: '0101303019',
+      einstaklingar: [
+        {
+          kennitala: '0101303019',
+          nafn: 'Gervimaður Afríka',
+          eiginnafn: 'Gervimaður',
+          millinafn: null,
+          kenninafn: 'Afríka',
+          fulltNafn: 'Gervimaður Afríka',
+          kynkodi: '1',
+          bannmerking: false,
+          faedingardagur: '1930-01-01T00:00:00',
+          logheimili: {
+            heiti: 'Gullengi 4',
+            postnumer: '112',
+            stadur: 'Reykjavík',
+            sveitarfelagsnumer: '0000',
+          },
+          adsetur: {
+            heiti: 'Fellsmúli 2',
+            postnumer: '108',
+            stadur: 'Reykjavík',
+            sveitarfelagsnumer: '0000',
+          },
+        },
+        {
+          kennitala: '0101307789',
+          nafn: 'Gervimaður útlönd',
+          eiginnafn: 'Gervimaður',
+          millinafn: null,
+          kenninafn: 'útlönd',
+          fulltNafn: 'Gervimaður útlönd',
+          kynkodi: '1',
+          bannmerking: false,
+          faedingardagur: '1930-01-01T00:00:00',
+          logheimili: {
+            heiti: 'Engihjalli 3',
+            postnumer: '200',
+            stadur: 'Kópavogur',
+            sveitarfelagsnumer: '1000',
+          },
+          adsetur: {
+            heiti: 'Fellsmúli 2',
+            postnumer: '108',
+            stadur: 'Reykjavík',
+            sveitarfelagsnumer: '0000',
+          },
+        },
+      ],
+    }),
+  })
 
   /* Gervimaður útlönd */
   await addXroadMock({
@@ -152,6 +309,37 @@ export const loadNationalRegistryXroadMocks = async () => {
       sveitarfelagsnumer: '0000',
       stadur: 'Reykjavík',
       faedingardagur: '1930-01-01T00:00:00',
+    }),
+  })
+
+  /* Stubbur Maack */
+  await addXroadMock({
+    config: NationalRegistry,
+    prefix: 'XROAD_NATIONAL_REGISTRY_SERVICE_PATH',
+    apiPath: '/api/v1/einstaklingar/1111111119',
+    prefixType: 'only-base-path',
+    response: new Response().withJSONBody({
+      kennitala: '1111111119',
+      nafn: 'Stubbur Maack',
+      eiginnafn: 'Stubbur',
+      millinafn: null,
+      kenninafn: 'Maack',
+      fulltNafn: 'Stubbur Maack',
+      kynkodi: '3',
+      bannmerking: false,
+      faedingardagur: '2011-11-11T00:00:00',
+      logheimili: {
+        heiti: 'Skógarbraut 931A',
+        postnumer: '262',
+        stadur: 'Reykjanesbær',
+        sveitarfelagsnumer: '2000',
+      },
+      adsetur: {
+        heiti: 'Fellsmúli 2',
+        postnumer: '108',
+        stadur: 'Reykjavík',
+        sveitarfelagsnumer: '0000',
+      },
     }),
   })
 

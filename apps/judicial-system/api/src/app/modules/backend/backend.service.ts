@@ -6,7 +6,14 @@ import { Inject, Injectable } from '@nestjs/common'
 import { type ConfigType } from '@island.is/nest/config'
 import { ProblemError } from '@island.is/nest/problem'
 
-import { DateType, type User, UserRole } from '@island.is/judicial-system/types'
+import {
+  CaseTableType,
+  DateType,
+  Lawyer,
+  LawyerType,
+  mapToLawyer,
+  type User,
+} from '@island.is/judicial-system/types'
 
 import {
   Case,
@@ -15,46 +22,89 @@ import {
   SignatureConfirmationResponse,
 } from '../case'
 import { CaseListEntry } from '../case-list'
+import { CaseTableResponse, SearchCasesResponse } from '../case-table'
+import {
+  CourtDocumentResponse,
+  CourtSessionResponse,
+  DeleteCourtDocumentResponse,
+  DeleteCourtSessionResponse,
+} from '../court-session'
+import { CourtSessionString } from '../court-session/dto/courtSessionString.response'
 import {
   CivilClaimant,
   Defendant,
   DeleteCivilClaimantResponse,
   DeleteDefendantResponse,
 } from '../defendant'
-import { CreateEventLogInput } from '../event-log'
 import {
   CaseFile,
   DeleteFileResponse,
   PresignedPost,
   SignedUrl,
   UpdateFilesResponse,
+  UploadCriminalRecordFileResponse,
   UploadFileToCourtResponse,
 } from '../file'
-import {
-  CreateIndictmentCountInput,
-  DeleteIndictmentCountInput,
-  DeleteIndictmentCountResponse,
-  IndictmentCount,
-  UpdateIndictmentCountInput,
-} from '../indictment-count'
+import { DeleteResponse, IndictmentCount, Offense } from '../indictment-count'
 import { Institution } from '../institution'
 import {
   PoliceCaseFile,
   PoliceCaseInfo,
   UploadPoliceCaseFileResponse,
 } from '../police'
+import { CaseStatistics } from '../statistics'
+import {
+  CaseDataExportInput,
+  IndictmentCaseStatistics,
+  IndictmentStatisticsInput,
+  RequestCaseStatistics,
+  RequestStatisticsInput,
+  SubpoenaStatistics,
+  SubpoenaStatisticsInput,
+} from '../statistics'
 import { Subpoena } from '../subpoena'
+import { DeliverCaseVerdictResponse, Verdict } from '../verdict'
+import { DeleteVictimResponse, Victim } from '../victim'
 import { backendModuleConfig } from './backend.config'
+
+type Transformer<TResult> = (data: never) => TResult
+
+// Find a way to get types from the backend
+const caseTransformer = <TCase>(data: never): TCase => {
+  const theCase = data as TCase & {
+    dateLogs?: { dateType: DateType; date: string }[]
+  }
+
+  return {
+    ...theCase,
+    arraignmentDate: theCase.dateLogs?.find(
+      (dateLog) => dateLog.dateType === DateType.ARRAIGNMENT_DATE,
+    ),
+    courtDate: theCase.dateLogs?.find(
+      (dateLog) => dateLog.dateType === DateType.COURT_DATE,
+    ),
+  }
+}
+
+const lawyerTransformer: Transformer<Lawyer> = (data) => mapToLawyer(data)
+
+const lawyersTransformer: Transformer<Lawyer[]> = (lawyers: []) =>
+  lawyers.map((lawyer) => mapToLawyer(lawyer))
 
 @Injectable()
 export class BackendService extends DataSource<{ req: Request }> {
   private headers!: { [key: string]: string }
+  private secretTokenHeaders!: { [key: string]: string }
 
   constructor(
     @Inject(backendModuleConfig.KEY)
     private readonly config: ConfigType<typeof backendModuleConfig>,
   ) {
     super()
+    this.secretTokenHeaders = {
+      'Content-Type': 'application/json',
+      authorization: `Bearer ${this.config.secretToken}`,
+    }
   }
 
   initialize(config: DataSourceConfig<{ req: Request }>): void {
@@ -68,14 +118,14 @@ export class BackendService extends DataSource<{ req: Request }> {
   private async callBackend<TResult>(
     route: string,
     options: RequestInit,
-    transformer?: (data: unknown) => TResult,
+    transformer?: Transformer<TResult>,
   ): Promise<TResult> {
     return fetch(`${this.config.backendUrl}/api/${route}`, options).then(
       async (res) => {
         const response = await res.json()
 
         if (res.ok) {
-          return transformer ? transformer(response) : response
+          return transformer ? transformer(response as never) : response
         }
 
         throw new ProblemError(response)
@@ -85,7 +135,7 @@ export class BackendService extends DataSource<{ req: Request }> {
 
   private get<TResult>(
     route: string,
-    transformer?: (data: unknown) => TResult,
+    transformer?: Transformer<TResult>,
   ): Promise<TResult> {
     return this.callBackend<TResult>(
       route,
@@ -97,7 +147,7 @@ export class BackendService extends DataSource<{ req: Request }> {
   private post<TBody, TResult>(
     route: string,
     body?: TBody,
-    transformer?: (data: unknown) => TResult,
+    transformer?: Transformer<TResult>,
   ): Promise<TResult> {
     return this.callBackend<TResult>(
       route,
@@ -109,7 +159,7 @@ export class BackendService extends DataSource<{ req: Request }> {
   private put<TBody, TResult>(
     route: string,
     body: TBody,
-    transformer?: (data: unknown) => TResult,
+    transformer?: Transformer<TResult>,
   ): Promise<TResult> {
     return this.callBackend<TResult>(
       route,
@@ -121,7 +171,7 @@ export class BackendService extends DataSource<{ req: Request }> {
   private patch<TBody, TResult>(
     route: string,
     body: TBody,
-    transformer?: (data: unknown) => TResult,
+    transformer?: Transformer<TResult>,
   ): Promise<TResult> {
     return this.callBackend<TResult>(
       route,
@@ -132,30 +182,13 @@ export class BackendService extends DataSource<{ req: Request }> {
 
   private delete<TResult>(
     route: string,
-    transformer?: (data: unknown) => TResult,
+    transformer?: Transformer<TResult>,
   ): Promise<TResult> {
     return this.callBackend<TResult>(
       route,
       { method: 'DELETE', headers: this.headers },
       transformer,
     )
-  }
-
-  // Find a way to get types from the backend
-  private caseTransformer<Case>(data: unknown): Case {
-    const theCase = data as Case & {
-      dateLogs?: { dateType: DateType; date: string }[]
-    }
-
-    return {
-      ...theCase,
-      arraignmentDate: theCase.dateLogs?.find(
-        (dateLog) => dateLog.dateType === DateType.ARRAIGNMENT_DATE,
-      ),
-      courtDate: theCase.dateLogs?.find(
-        (dateLog) => dateLog.dateType === DateType.COURT_DATE,
-      ),
-    }
   }
 
   getInstitutions(): Promise<Institution[]> {
@@ -166,150 +199,258 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.get('users')
   }
 
-  getUser(id: string): Promise<User> {
-    return this.get(`user/${id}`)
+  getUser(userId: string): Promise<User> {
+    return this.get(`user/${userId}`)
   }
 
   createUser(createUser: unknown): Promise<User> {
     return this.post('user', createUser)
   }
 
-  updateUser(id: string, updateUser: unknown): Promise<User> {
-    return this.put(`user/${id}`, updateUser)
+  updateUser(userId: string, updateUser: unknown): Promise<User> {
+    return this.put(`user/${userId}`, updateUser)
   }
 
   getCases(): Promise<CaseListEntry[]> {
     return this.get('cases')
   }
 
-  getCase(id: string): Promise<Case> {
-    return this.get<Case>(`case/${id}`, this.caseTransformer)
+  getCase(caseId: string): Promise<Case> {
+    return this.get<Case>(`case/${caseId}`, caseTransformer)
   }
 
-  getConnectedCases(id: string): Promise<Case[]> {
-    return this.get(`case/${id}/connectedCases`)
+  getCaseTable(type: CaseTableType): Promise<CaseTableResponse> {
+    return this.get<CaseTableResponse>(
+      `case-table?type=${type}`,
+      caseTransformer,
+    )
+  }
+
+  searchCases(query: string): Promise<SearchCasesResponse> {
+    const params = new URLSearchParams()
+    params.append('query', query)
+
+    return this.get(`search-cases?${params.toString()}`)
+  }
+
+  getCaseStatistics(
+    fromDate?: Date,
+    toDate?: Date,
+    institutionId?: string,
+  ): Promise<CaseStatistics> {
+    const params = new URLSearchParams()
+
+    if (fromDate) params.append('fromDate', fromDate.toISOString())
+    if (toDate) params.append('toDate', toDate.toISOString())
+    if (institutionId) params.append('institutionId', institutionId)
+
+    return this.get(`cases/statistics?${params.toString()}`)
+  }
+
+  getIndictmentCaseStatistics(
+    query: IndictmentStatisticsInput,
+  ): Promise<IndictmentCaseStatistics> {
+    const searchParams = this.serializeNestedObject(query)
+    return this.get(`cases/indictments/statistics?${searchParams.toString()}`)
+  }
+
+  private serializeNestedObject<T extends object>(
+    object: T,
+    rootKey = 'query',
+  ): string {
+    const params = new URLSearchParams()
+    Object.entries(object).forEach(([key, value]) => {
+      if (value && typeof value === 'object' && !(value instanceof Date)) {
+        // Note: currently only handle one level of nested object
+        Object.entries(value).forEach(([subKey, subValue]) => {
+          if (subValue !== undefined && subValue !== null && subValue !== '') {
+            const valStr =
+              subValue instanceof Date
+                ? subValue.toISOString()
+                : subValue.toString()
+            params.append(`${rootKey}[${key}][${subKey}]`, valStr)
+          }
+        })
+      } else if (value) {
+        const valStr =
+          value instanceof Date ? value.toISOString() : value.toString()
+        params.append(`${rootKey}[${key}]`, valStr)
+      }
+    })
+
+    return params.toString()
+  }
+
+  getRequestCaseStatistics(
+    query: RequestStatisticsInput,
+  ): Promise<RequestCaseStatistics> {
+    const searchParams = this.serializeNestedObject(query)
+    return this.get(`cases/requests/statistics?${searchParams}`)
+  }
+
+  getSubpoenaStatistics(
+    query: SubpoenaStatisticsInput,
+  ): Promise<SubpoenaStatistics> {
+    const searchParams = this.serializeNestedObject(query)
+    return this.get(`cases/subpoenas/statistics?${searchParams}`)
+  }
+
+  getPreprocessedDataCsvSignedUrl(
+    query: CaseDataExportInput,
+  ): Promise<SignedUrl> {
+    const searchParams = this.serializeNestedObject(query)
+    return this.get(`cases/statistics/export-csv?${searchParams}`)
+  }
+
+  getConnectedCases(caseId: string): Promise<Case[]> {
+    return this.get(`case/${caseId}/connectedCases`)
   }
 
   createCase(createCase: unknown): Promise<Case> {
-    return this.post<unknown, Case>('case', createCase, this.caseTransformer)
+    return this.post<unknown, Case>('case', createCase, caseTransformer)
   }
 
-  updateCase(id: string, updateCase: unknown): Promise<Case> {
+  updateCase(caseId: string, updateCase: unknown): Promise<Case> {
     return this.patch<unknown, Case>(
-      `case/${id}`,
+      `case/${caseId}`,
       updateCase,
-      this.caseTransformer,
+      caseTransformer,
     )
   }
 
-  transitionCase(id: string, transitionCase: unknown): Promise<Case> {
+  transitionCase(caseId: string, transitionCase: unknown): Promise<Case> {
     return this.patch<unknown, Case>(
-      `case/${id}/state`,
+      `case/${caseId}/state`,
       transitionCase,
-      this.caseTransformer,
+      caseTransformer,
     )
   }
 
-  requestCourtRecordSignature(id: string): Promise<RequestSignatureResponse> {
-    return this.post(`case/${id}/courtRecord/signature`)
+  requestCourtRecordSignature(
+    caseId: string,
+  ): Promise<RequestSignatureResponse> {
+    return this.post(`case/${caseId}/courtRecord/signature`)
   }
 
   getCourtRecordSignatureConfirmation(
-    id: string,
+    caseId: string,
     documentToken: string,
   ): Promise<SignatureConfirmationResponse> {
     return this.get(
-      `case/${id}/courtRecord/signature?documentToken=${documentToken}`,
+      `case/${caseId}/courtRecord/signature?documentToken=${documentToken}`,
     )
   }
 
-  requestRulingSignature(id: string): Promise<RequestSignatureResponse> {
-    return this.post(`case/${id}/ruling/signature`)
+  requestRulingSignature(caseId: string): Promise<RequestSignatureResponse> {
+    return this.post(`case/${caseId}/ruling/signature`)
   }
 
   getRulingSignatureConfirmation(
-    id: string,
+    caseId: string,
     documentToken: string,
   ): Promise<SignatureConfirmationResponse> {
     return this.get(
-      `case/${id}/ruling/signature?documentToken=${documentToken}`,
+      `case/${caseId}/ruling/signature?documentToken=${documentToken}`,
     )
   }
 
   sendNotification(
-    id: string,
+    caseId: string,
     sendNotification: unknown,
   ): Promise<SendNotificationResponse> {
-    return this.post(`case/${id}/notification`, sendNotification)
+    return this.post(`case/${caseId}/notification`, sendNotification)
   }
 
-  extendCase(id: string): Promise<Case> {
+  extendCase(caseId: string): Promise<Case> {
     return this.post<unknown, Case>(
-      `case/${id}/extend`,
+      `case/${caseId}/extend`,
       undefined,
-      this.caseTransformer,
+      caseTransformer,
     )
   }
 
-  createCourtCase(id: string): Promise<Case> {
+  splitDefendantFromCase(caseId: string, defendantId: string): Promise<Case> {
     return this.post<unknown, Case>(
-      `case/${id}/court`,
+      `case/${caseId}/defendant/${defendantId}/split`,
       undefined,
-      this.caseTransformer,
+      caseTransformer,
+    )
+  }
+
+  createCourtCase(caseId: string): Promise<Case> {
+    return this.post<unknown, Case>(
+      `case/${caseId}/court`,
+      undefined,
+      caseTransformer,
+    )
+  }
+
+  deliverCaseVerdict(caseId: string) {
+    return this.post<unknown, DeliverCaseVerdictResponse>(
+      `case/${caseId}/deliverVerdict`,
     )
   }
 
   createCasePresignedPost(
-    id: string,
+    caseId: string,
     createPresignedPost: unknown,
   ): Promise<PresignedPost> {
-    return this.post(`case/${id}/file/url`, createPresignedPost)
+    return this.post(`case/${caseId}/file/url`, createPresignedPost)
   }
 
-  createCaseFile(id: string, createFile: unknown): Promise<CaseFile> {
-    return this.post(`case/${id}/file`, createFile)
+  uploadCriminalRecordFile(
+    caseId: string,
+    defendantId: string,
+  ): Promise<UploadCriminalRecordFileResponse> {
+    return this.post(
+      `case/${caseId}/defendant/${defendantId}/criminalRecordFile`,
+    )
+  }
+
+  createCaseFile(caseId: string, createFile: unknown): Promise<CaseFile> {
+    return this.post(`case/${caseId}/file`, createFile)
   }
 
   createDefendantCaseFile(
-    id: string,
+    caseId: string,
     createFile: unknown,
     defendantId: string,
   ): Promise<CaseFile> {
-    return this.post(`case/${id}/defendant/${defendantId}/file`, createFile)
+    return this.post(`case/${caseId}/defendant/${defendantId}/file`, createFile)
   }
 
   createCivilClaimantCaseFile(
-    id: string,
+    caseId: string,
     createFile: unknown,
     civilClaimantId: string,
   ): Promise<CaseFile> {
     return this.post(
-      `case/${id}/civilClaimant/${civilClaimantId}/file`,
+      `case/${caseId}/civilClaimant/${civilClaimantId}/file`,
       createFile,
     )
   }
 
   getCaseFileSignedUrl(
     caseId: string,
-    id: string,
+    fileId: string,
     mergedCaseId?: string,
   ): Promise<SignedUrl> {
     const mergedCaseInjection = mergedCaseId
       ? `/mergedCase/${mergedCaseId}`
       : ''
 
-    return this.get(`case/${caseId}${mergedCaseInjection}/file/${id}/url`)
+    return this.get(`case/${caseId}${mergedCaseInjection}/file/${fileId}/url`)
   }
 
-  deleteCaseFile(caseId: string, id: string): Promise<DeleteFileResponse> {
-    return this.delete(`case/${caseId}/file/${id}`)
+  deleteCaseFile(caseId: string, fileId: string): Promise<DeleteFileResponse> {
+    return this.delete(`case/${caseId}/file/${fileId}`)
   }
 
   uploadCaseFileToCourt(
     caseId: string,
-    id: string,
+    fileId: string,
   ): Promise<UploadFileToCourtResponse> {
-    return this.post(`case/${caseId}/file/${id}/court`)
+    return this.post(`case/${caseId}/file/${fileId}/court`)
   }
 
   async updateFiles(
@@ -383,6 +524,25 @@ export class BackendService extends DataSource<{ req: Request }> {
     )
   }
 
+  createVerdicts(caseId: string, createVerdicts: unknown): Promise<Verdict[]> {
+    return this.post(`case/${caseId}/verdicts`, createVerdicts)
+  }
+
+  updateVerdict(
+    caseId: string,
+    defendantId: string,
+    updateVerdict: unknown,
+  ): Promise<Verdict> {
+    return this.patch(
+      `case/${caseId}/defendant/${defendantId}/verdict`,
+      updateVerdict,
+    )
+  }
+
+  getVerdict(caseId: string, defendantId: string): Promise<Verdict> {
+    return this.get<Verdict>(`case/${caseId}/defendant/${defendantId}/verdict`)
+  }
+
   createCivilClaimant(
     caseId: string,
     createCivilClaimant: unknown,
@@ -408,19 +568,37 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.delete(`case/${caseId}/civilClaimant/${civilClaimantId}`)
   }
 
-  createIndictmentCount(
-    input: CreateIndictmentCountInput,
-  ): Promise<IndictmentCount> {
-    const { caseId, ...createIndictmentCount } = input
+  createVictim(caseId: string, createVictim: unknown): Promise<Victim> {
+    return this.post(`case/${caseId}/victim`, createVictim)
+  }
 
+  updateVictim(
+    caseId: string,
+    victimId: string,
+    updateVictim: unknown,
+  ): Promise<Victim> {
+    return this.patch(`case/${caseId}/victim/${victimId}`, updateVictim)
+  }
+
+  deleteVictim(
+    caseId: string,
+    victimId: string,
+  ): Promise<DeleteVictimResponse> {
+    return this.delete(`case/${caseId}/victim/${victimId}`)
+  }
+
+  createIndictmentCount(
+    caseId: string,
+    createIndictmentCount: unknown,
+  ): Promise<IndictmentCount> {
     return this.post(`case/${caseId}/indictmentCount`, createIndictmentCount)
   }
 
   updateIndictmentCount(
-    input: UpdateIndictmentCountInput,
+    caseId: string,
+    indictmentCountId: string,
+    updateIndictmentCount: unknown,
   ): Promise<IndictmentCount> {
-    const { caseId, indictmentCountId, ...updateIndictmentCount } = input
-
     return this.patch(
       `case/${caseId}/indictmentCount/${indictmentCountId}`,
       updateIndictmentCount,
@@ -428,75 +606,189 @@ export class BackendService extends DataSource<{ req: Request }> {
   }
 
   deleteIndictmentCount(
-    input: DeleteIndictmentCountInput,
-  ): Promise<DeleteIndictmentCountResponse> {
-    const { caseId, indictmentCountId } = input
-
+    caseId: string,
+    indictmentCountId: string,
+  ): Promise<DeleteResponse> {
     return this.delete(`case/${caseId}/indictmentCount/${indictmentCountId}`)
   }
 
-  limitedAccessGetCase(id: string): Promise<Case> {
-    return this.get<Case>(`case/${id}/limitedAccess`, this.caseTransformer)
+  createCourtSession(
+    caseId: string,
+    createCourtSession: unknown,
+  ): Promise<CourtSessionResponse> {
+    return this.post(`case/${caseId}/courtSession`, createCourtSession)
   }
 
-  limitedAccessUpdateCase(id: string, updateCase: unknown): Promise<Case> {
+  updateCourtSession(
+    caseId: string,
+    courtSessionId: string,
+    updateCourtSession: unknown,
+  ): Promise<CourtSessionResponse> {
+    return this.patch(
+      `case/${caseId}/courtSession/${courtSessionId}`,
+      updateCourtSession,
+    )
+  }
+
+  updateCourtSessionString(
+    caseId: string,
+    courtSessionId: string,
+    updateCourtSessionString: unknown,
+  ): Promise<CourtSessionString> {
+    return this.patch(
+      `case/${caseId}/courtSession/${courtSessionId}/courtSessionString`,
+      updateCourtSessionString,
+    )
+  }
+
+  deleteCourtSession(
+    caseId: string,
+    courtSessionId: string,
+  ): Promise<DeleteCourtSessionResponse> {
+    return this.delete(`case/${caseId}/courtSession/${courtSessionId}`)
+  }
+
+  createCourtDocument(
+    caseId: string,
+    courtSessionId: string,
+    createCourtDocument: unknown,
+  ): Promise<CourtDocumentResponse> {
+    return this.post(
+      `case/${caseId}/courtSession/${courtSessionId}/courtDocument`,
+      createCourtDocument,
+    )
+  }
+
+  updateCourtDocument(
+    caseId: string,
+    courtSessionId: string,
+    courtDocumentId: string,
+    updateCourtDocument: unknown,
+  ): Promise<CourtDocumentResponse> {
+    return this.patch(
+      `case/${caseId}/courtSession/${courtSessionId}/courtDocument/${courtDocumentId}`,
+      updateCourtDocument,
+    )
+  }
+
+  fileCourtDocumentInCourtSession(
+    caseId: string,
+    courtSessionId: string,
+    courtDocumentId: string,
+  ): Promise<CourtDocumentResponse> {
+    return this.patch(`case/${caseId}/courtDocument/${courtDocumentId}`, {
+      courtSessionId,
+    })
+  }
+
+  deleteCourtDocument(
+    caseId: string,
+    courtSessionId: string,
+    courtDocumentId: string,
+  ): Promise<DeleteCourtDocumentResponse> {
+    return this.delete(
+      `case/${caseId}/courtSession/${courtSessionId}/courtDocument/${courtDocumentId}`,
+    )
+  }
+
+  createOffense(
+    caseId: string,
+    indictmentCountId: string,
+    createOffense: unknown,
+  ): Promise<Offense> {
+    return this.post(
+      `case/${caseId}/indictmentCount/${indictmentCountId}/offense`,
+      createOffense,
+    )
+  }
+
+  updateOffense(
+    caseId: string,
+    indictmentCountId: string,
+    offenseId: string,
+    updateOffense: unknown,
+  ): Promise<Offense> {
+    return this.patch(
+      `case/${caseId}/indictmentCount/${indictmentCountId}/offense/${offenseId}`,
+      updateOffense,
+    )
+  }
+
+  deleteOffense(
+    caseId: string,
+    indictmentCountId: string,
+    offenseId: string,
+  ): Promise<DeleteResponse> {
+    return this.delete(
+      `case/${caseId}/indictmentCount/${indictmentCountId}/offense/${offenseId}`,
+    )
+  }
+
+  limitedAccessGetCase(caseId: string): Promise<Case> {
+    return this.get<Case>(`case/${caseId}/limitedAccess`, caseTransformer)
+  }
+
+  limitedAccessUpdateCase(caseId: string, updateCase: unknown): Promise<Case> {
     return this.patch<unknown, Case>(
-      `case/${id}/limitedAccess`,
+      `case/${caseId}/limitedAccess`,
       updateCase,
-      this.caseTransformer,
+      caseTransformer,
     )
   }
 
   limitedAccessTransitionCase(
-    id: string,
+    caseId: string,
     transitionCase: unknown,
   ): Promise<Case> {
     return this.patch<unknown, Case>(
-      `case/${id}/limitedAccess/state`,
+      `case/${caseId}/limitedAccess/state`,
       transitionCase,
-      this.caseTransformer,
+      caseTransformer,
     )
   }
 
   limitedAccessCreateCasePresignedPost(
-    id: string,
+    caseId: string,
     createPresignedPost: unknown,
   ): Promise<PresignedPost> {
-    return this.post(`case/${id}/limitedAccess/file/url`, createPresignedPost)
+    return this.post(
+      `case/${caseId}/limitedAccess/file/url`,
+      createPresignedPost,
+    )
   }
 
   limitedAccessCreateCaseFile(
-    id: string,
+    caseId: string,
     createFile: unknown,
   ): Promise<CaseFile> {
-    return this.post(`case/${id}/limitedAccess/file`, createFile)
+    return this.post(`case/${caseId}/limitedAccess/file`, createFile)
   }
 
   limitedAccessCreateDefendantCaseFile(
-    id: string,
+    caseId: string,
     createFile: unknown,
     defendantId: string,
   ): Promise<CaseFile> {
     return this.post(
-      `case/${id}/limitedAccess$/defendant/${defendantId}/file`,
+      `case/${caseId}/limitedAccess/defendant/${defendantId}/file`,
       createFile,
     )
   }
 
   limitedAccessCreateCivilClaimantCaseFile(
-    id: string,
+    caseId: string,
     createFile: unknown,
     civilClaimantId: string,
   ): Promise<CaseFile> {
     return this.post(
-      `case/${id}/limitedAccess$/civilClaimant/${civilClaimantId}/file`,
+      `case/${caseId}/limitedAccess/civilClaimant/${civilClaimantId}/file`,
       createFile,
     )
   }
 
   limitedAccessGetCaseFileSignedUrl(
     caseId: string,
-    id: string,
+    fileId: string,
     mergedCaseId?: string,
   ): Promise<SignedUrl> {
     const mergedCaseInjection = mergedCaseId
@@ -504,29 +796,67 @@ export class BackendService extends DataSource<{ req: Request }> {
       : ''
 
     return this.get(
-      `case/${caseId}/limitedAccess${mergedCaseInjection}/file/${id}/url`,
+      `case/${caseId}/limitedAccess${mergedCaseInjection}/file/${fileId}/url`,
     )
   }
 
   limitedAccessDeleteCaseFile(
     caseId: string,
-    id: string,
+    fileId: string,
   ): Promise<DeleteFileResponse> {
-    return this.delete(`case/${caseId}/limitedAccess/file/${id}`)
+    return this.delete(`case/${caseId}/limitedAccess/file/${fileId}`)
   }
 
-  createEventLog(eventLog: CreateEventLogInput, userRole?: UserRole) {
-    return fetch(`${this.config.backendUrl}/api/eventLog/event`, {
+  createEventLog(eventLog: unknown): Promise<boolean> {
+    return this.callBackend<boolean>('eventLog/event', {
       method: 'POST',
-      headers: {
-        authorization: `Bearer ${this.config.secretToken}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        ...eventLog,
-        userRole,
-      }),
+      body: JSON.stringify(eventLog),
+      headers: this.secretTokenHeaders,
     })
+  }
+
+  findUsersByNationalId(nationalId: string): Promise<User[]> {
+    const params = new URLSearchParams()
+    params.append('nationalId', nationalId)
+
+    return this.callBackend<User[]>(`user?${params.toString()}`, {
+      headers: this.secretTokenHeaders,
+    })
+  }
+
+  findDefenderByNationalId(nationalId: string): Promise<User> {
+    const params = new URLSearchParams()
+    params.append('nationalId', nationalId)
+
+    return this.callBackend<User>(
+      `cases/limitedAccess/defender?${params.toString()}`,
+      { headers: this.secretTokenHeaders },
+    )
+  }
+
+  getLawyers(lawyerType?: LawyerType): Promise<Lawyer[]> {
+    let queryString = ''
+
+    if (lawyerType) {
+      const params = new URLSearchParams()
+      params.append('lawyerType', lawyerType)
+      const query = params.toString()
+      queryString = `?${query}`
+    }
+
+    return this.callBackend(
+      `lawyer-registry${queryString}`,
+      { headers: this.secretTokenHeaders },
+      lawyersTransformer,
+    )
+  }
+
+  getLawyer(nationalId: string): Promise<Lawyer> {
+    return this.callBackend(
+      `lawyer-registry/${nationalId}`,
+      { headers: this.secretTokenHeaders },
+      lawyerTransformer,
+    )
   }
 }
 

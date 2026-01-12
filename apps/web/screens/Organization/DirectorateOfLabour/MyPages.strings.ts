@@ -50,28 +50,6 @@ export const m = defineMessages({
     description:
       'https://images.ctfassets.net/8k0h54kbe6bj/74YI1HhTZ5ufC1qSsr2TEF/315ca87541dd256c196d6394a6ecf50b/Vinnumalastofnun-Logo.svg',
   },
-  parentalLeaveLabel: {
-    id: 'web.directorateOfLabour.myPages:parentalLeaveLabel',
-    defaultMessage: 'Fæðingarorlof',
-    description: 'Fæðingarorlof',
-  },
-  parentalLeaveDescription: {
-    id: 'web.directorateOfLabour.myPages:parentalLeaveDescription',
-    defaultMessage: 'Innsend umsókn um fæðingarorlof.',
-    description: 'Innsend umsókn um fæðingarorlof.',
-  },
-  parentalLeaveHref: {
-    id: 'web.directorateOfLabour.myPages:parentalLeaveHref',
-    defaultMessage: 'https://island.is/umsoknir/faedingarorlof/',
-    description: 'https://island.is/umsoknir/faedingarorlof/',
-  },
-  parentalLeaveImageSrc: {
-    id: 'web.directorateOfLabour.myPages:parentalLeaveImageSrc',
-    defaultMessage:
-      'https://images.ctfassets.net/8k0h54kbe6bj/5ijRCutRCFu4Y9aPS0ys4Z/b809c1cb81df9d27ea99a30e00c2d1e8/is-logo-stakt_2x.png',
-    description:
-      'https://images.ctfassets.net/8k0h54kbe6bj/5ijRCutRCFu4Y9aPS0ys4Z/b809c1cb81df9d27ea99a30e00c2d1e8/is-logo-stakt_2x.png',
-  },
   loginLabel: {
     id: 'web.directorateOfLabour.myPages:loginLabel',
     defaultMessage: 'Innskráning',

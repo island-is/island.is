@@ -17,6 +17,7 @@ import {
   defaultRenderMarkObject,
   defaultRenderNodeObject,
 } from '@island.is/island-ui/contentful'
+import { GridContainer } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/shared/types'
 import {
   AccordionSlice,
@@ -28,13 +29,16 @@ import {
   ChartNumberBox,
   ChartsCard,
   ChartsCardsProps,
+  DigitalIcelandMailingListThumbnailCard,
   DrivingInstructorList,
   EmailSignup,
   Form,
   GenericListWrapper,
+  IntroLinkImageSlice,
   KilometerFee,
   MasterList,
   MultipleStatistics,
+  NewKilometerFee,
   OneColumnTextSlice,
   OverviewLinksSlice,
   ParentalLeaveCalculator,
@@ -63,13 +67,16 @@ import {
   EmailSignup as EmailSignupSchema,
   Embed as EmbedSchema,
   FeaturedEvents as FeaturedEventsSchema,
+  FeaturedGenericListItems,
   FeaturedSupportQnAs as FeaturedSupportQNAsSchema,
   Form as FormSchema,
   GenericList as GenericListSchema,
   GetTeamMembersInputOrderBy,
   GrantCardsList as GrantCardsListSchema,
+  IntroLinkImage,
   MultipleStatistics as MultipleStatisticsSchema,
   OneColumnText,
+  OrganizationParentSubpageList,
   OverviewLinks as OverviewLinksSliceSchema,
   PowerBiSlice as PowerBiSliceSchema,
   SectionWithImage as SectionWithImageSchema,
@@ -84,8 +91,15 @@ import { useI18n } from '@island.is/web/i18n'
 
 import AdministrationOfOccupationalSafetyAndHealthCourses from '../components/connected/AdministrationOfOccupationalSafetyAndHealthCourses/AdministrationOfOccupationalSafetyAndHealthCourses'
 import { BenefitsOfDigitalProcessesCalculator } from '../components/connected/BenefitsOfDigitalProcessesCalculator/BenefitsOfDigitalProcessesCalculator'
+import { DigitalIcelandStatistics } from '../components/connected/DigitalIcelandStatistics/DigitalIcelandStatistics'
 import { GrindavikResidentialPropertyPurchaseCalculator } from '../components/connected/GrindavikResidentialPropertyPurchaseCalculator'
 import HousingBenefitCalculator from '../components/connected/HousingBenefitCalculator/HousingBenefitCalculator/HousingBenefitCalculator'
+import { DirectGrants } from '../components/connected/landspitali/Grants/Grants'
+import { MemorialCard } from '../components/connected/landspitali/MemorialCards/MemorialCards'
+import { LatestVerdicts } from '../components/connected/LatestVerdicts'
+import { BurningPermitList } from '../components/connected/syslumenn/CardLists/BurningPermitList/BurningPermitList'
+import { ReligiousOrganizationList } from '../components/connected/syslumenn/CardLists/ReligiousOrganizationList/ReligiousOrganizationList'
+import SyslumennDrivingInstructorList from '../components/connected/syslumenn/DrivingInstructorList/DrivingInstructorList'
 import JourneymanList from '../components/connected/syslumenn/TableLists/JourneymanList/JourneymanList'
 import ProfessionRights from '../components/connected/syslumenn/TableLists/ProfessionRights/ProfessionRights'
 import { UmsCostOfLivingCalculator } from '../components/connected/UmbodsmadurSkuldara'
@@ -94,12 +108,14 @@ import FeaturedEvents from '../components/FeaturedEvents/FeaturedEvents'
 import FeaturedSupportQNAs from '../components/FeaturedSupportQNAs/FeaturedSupportQNAs'
 import { GrantCardsList } from '../components/GrantCardsList'
 import { EmbedSlice } from '../components/Organization/Slice/EmbedSlice/EmbedSlice'
+import { FeaturedGenericListItemsSlice } from '../components/Organization/Slice/FeaturedGenericListItemsSlice/FeaturedGenericListItemsSlice'
+import { OrganizationParentSubpageListSlice } from '../components/Organization/Slice/OrganizationParentSubpageListSlice/OrganizationParentSubpageListSlice'
 
 interface TranslationNamespaceProviderProps {
   messages: IntlConfig['messages']
 }
 
-const TranslationNamespaceProvider = ({
+export const TranslationNamespaceProvider = ({
   messages,
   children,
 }: PropsWithChildren<TranslationNamespaceProviderProps>) => {
@@ -174,6 +190,9 @@ export const webRenderConnectedComponent = (
     case 'KilometerFee':
       connectedComponent = <KilometerFee slice={slice} />
       break
+    case 'NewKilometerFee':
+      connectedComponent = <NewKilometerFee slice={slice} />
+      break
     case 'SpecificHousingBenefitSupportCalculator':
       connectedComponent = <SpecificHousingBenefitSupportCalculator />
       break
@@ -201,6 +220,34 @@ export const webRenderConnectedComponent = (
       break
     case 'WHODAS/Calculator':
       connectedComponent = <WHODASCalculator slice={slice} />
+      break
+    case 'DigitalIcelandMailingListThumbnailCard':
+      connectedComponent = (
+        <GridContainer>
+          <DigitalIcelandMailingListThumbnailCard slice={slice} />
+        </GridContainer>
+      )
+      break
+    case 'Brennuleyfi/BurningPermitList':
+      connectedComponent = <BurningPermitList slice={slice} />
+      break
+    case 'DigitalIcelandStatistics':
+      connectedComponent = <DigitalIcelandStatistics />
+      break
+    case 'Trufelog/Lifsskodunarfelog':
+      connectedComponent = <ReligiousOrganizationList slice={slice} />
+      break
+    case 'Landspitali/MemorialCard':
+      connectedComponent = <MemorialCard slice={slice} />
+      break
+    case 'Landspitali/DirectGrants':
+      connectedComponent = <DirectGrants slice={slice} />
+      break
+    case 'Syslumenn/DrivingInstructorList':
+      connectedComponent = <SyslumennDrivingInstructorList slice={slice} />
+      break
+    case 'LatestVerdicts':
+      connectedComponent = <LatestVerdicts slice={slice} />
       break
     default:
       connectedComponent = renderConnectedComponent(slice)
@@ -276,6 +323,7 @@ const defaultRenderComponent = {
       filterTags={slice.filterTags}
       defaultOrder={slice.defaultOrder}
       showSearchInput={slice.showSearchInput ?? true}
+      textSearchOrder={slice.textSearchOrder ?? 'Default'}
     />
   ),
   TeamList: (slice: TeamList) => (
@@ -289,12 +337,20 @@ const defaultRenderComponent = {
     />
   ),
   Image: (slice: ImageProps) => {
-    const thumbnailUrl = slice?.url ? slice.url + '?w=50' : ''
-    const url = slice?.url ? slice.url + '?w=1000' : ''
-    return <Image {...slice} thumbnail={thumbnailUrl} url={url} />
+    const url = slice?.url ? slice.url : ''
+    return <Image {...slice} url={url} />
   },
   GrantCardsList: (slice: GrantCardsListSchema) => (
     <GrantCardsList slice={slice} />
+  ),
+  OrganizationParentSubpageList: (slice: OrganizationParentSubpageList) => (
+    <OrganizationParentSubpageListSlice slice={slice} />
+  ),
+  IntroLinkImage: (slice: IntroLinkImage) => (
+    <IntroLinkImageSlice slice={slice} />
+  ),
+  FeaturedGenericListItems: (slice: FeaturedGenericListItems) => (
+    <FeaturedGenericListItemsSlice slice={slice} />
   ),
 }
 

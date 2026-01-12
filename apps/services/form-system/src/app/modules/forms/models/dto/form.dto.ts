@@ -1,10 +1,11 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { CompletedSectionInfo } from '../../../../dataTypes/completedSectionInfo.model'
+import { Dependency } from '../../../../dataTypes/dependency.model'
 import { LanguageType } from '../../../../dataTypes/languageType.model'
-import { FormApplicantDto } from '../../../applicants/models/dto/formApplicant.dto'
-import { ScreenDto } from '../../../screens/models/dto/screen.dto'
 import { FieldDto } from '../../../fields/models/dto/field.dto'
+import { FormCertificationTypeDto } from '../../../formCertificationTypes/models/dto/formCertificationType.dto'
+import { ScreenDto } from '../../../screens/models/dto/screen.dto'
 import { SectionDto } from '../../../sections/models/dto/section.dto'
-import { CertificationTypeDto } from '../../../certifications/models/dto/certificationType.dto'
 
 export class FormDto {
   @ApiProperty()
@@ -12,6 +13,18 @@ export class FormDto {
 
   @ApiProperty()
   organizationId!: string
+
+  @ApiProperty()
+  organizationNationalId!: string
+
+  @ApiPropertyOptional()
+  organizationTitle?: string
+
+  @ApiPropertyOptional()
+  organizationTitleEn?: string
+
+  @ApiPropertyOptional({ type: LanguageType })
+  organizationDisplayName?: LanguageType
 
   @ApiProperty({ type: LanguageType })
   name!: LanguageType
@@ -29,25 +42,43 @@ export class FormDto {
   modified!: Date
 
   @ApiProperty()
+  submissionServiceUrl!: string
+
+  @ApiProperty()
+  validationServiceUrl!: string
+
+  @ApiProperty()
+  hasPayment!: boolean
+
+  @ApiProperty()
+  beenPublished!: boolean
+
+  @ApiProperty()
   isTranslated!: boolean
 
   @ApiProperty()
-  applicationDaysToRemove!: number
+  daysUntilApplicationPrune!: number
 
   @ApiProperty()
-  derivedFrom!: number
+  derivedFrom!: string
 
   @ApiProperty()
-  stopProgressOnValidatingScreen!: boolean
+  status!: string
 
-  @ApiPropertyOptional({ type: LanguageType })
-  completedMessage?: LanguageType
+  @ApiProperty()
+  allowProceedOnValidationFail!: boolean
 
-  @ApiPropertyOptional({ type: [CertificationTypeDto] })
-  certificationTypes?: CertificationTypeDto[]
+  @ApiProperty()
+  hasSummaryScreen!: boolean
 
-  @ApiPropertyOptional({ type: [FormApplicantDto] })
-  applicants?: FormApplicantDto[]
+  @ApiProperty({ type: CompletedSectionInfo })
+  completedSectionInfo!: CompletedSectionInfo
+
+  @ApiPropertyOptional({ type: [Dependency] })
+  dependencies?: Dependency[]
+
+  @ApiPropertyOptional({ type: [FormCertificationTypeDto] })
+  certificationTypes?: FormCertificationTypeDto[]
 
   @ApiPropertyOptional({ type: [SectionDto] })
   sections?: SectionDto[]

@@ -115,7 +115,9 @@ const HearingArrangements = () => {
         <>
           <FormContentContainer>
             <PageTitle>{formatMessage(m.heading)}</PageTitle>
-            <ProsecutorCaseInfo workingCase={workingCase} hideCourt />
+            <Box marginBottom={5}>
+              <ProsecutorCaseInfo workingCase={workingCase} hideCourt />
+            </Box>
             <ProsecutorSectionHeightenedSecurity />
             <Box component="section" marginBottom={5}>
               <SelectCourt />
@@ -189,23 +191,25 @@ const HearingArrangements = () => {
             <Modal
               title={formatMessage(m.modal.heading)}
               text={formatMessage(m.modal.text)}
-              primaryButtonText={formatMessage(m.modal.primaryButtonText)}
-              secondaryButtonText={formatMessage(m.modal.secondaryButtonText)}
-              onClose={() => setNavigateTo(undefined)}
-              onSecondaryButtonClick={() =>
-                router.push(`${navigateTo}/${workingCase.id}`)
-              }
-              onPrimaryButtonClick={async () => {
-                const notificationSent = await sendNotification(
-                  workingCase.id,
-                  NotificationType.HEADS_UP,
-                )
+              primaryButton={{
+                text: formatMessage(m.modal.primaryButtonText),
+                onClick: async () => {
+                  const notificationSent = await sendNotification(
+                    workingCase.id,
+                    NotificationType.HEADS_UP,
+                  )
 
-                if (notificationSent) {
-                  router.push(`${navigateTo}/${workingCase.id}`)
-                }
+                  if (notificationSent) {
+                    router.push(`${navigateTo}/${workingCase.id}`)
+                  }
+                },
+                isLoading: isSendingNotification,
               }}
-              isPrimaryButtonLoading={isSendingNotification}
+              secondaryButton={{
+                text: formatMessage(m.modal.secondaryButtonText),
+                onClick: () => router.push(`${navigateTo}/${workingCase.id}`),
+              }}
+              onClose={() => setNavigateTo(undefined)}
               errorMessage={
                 sendNotificationError
                   ? formatMessage(errors.sendNotification)

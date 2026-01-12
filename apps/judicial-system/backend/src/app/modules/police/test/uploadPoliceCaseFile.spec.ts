@@ -1,6 +1,6 @@
 import fetch from 'isomorphic-fetch'
 import { Base64 } from 'js-base64'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { BadGatewayException, NotFoundException } from '@nestjs/common'
 
@@ -9,7 +9,7 @@ import { CaseType, User } from '@island.is/judicial-system/types'
 import { createTestingPoliceModule } from './createTestingPoliceModule'
 
 import { AwsS3Service } from '../../aws-s3'
-import { Case } from '../../case'
+import { Case } from '../../repository'
 import { UploadPoliceCaseFileDto } from '../dto/uploadPoliceCaseFile.dto'
 import { UploadPoliceCaseFileResponse } from '../models/uploadPoliceCaseFile.response'
 

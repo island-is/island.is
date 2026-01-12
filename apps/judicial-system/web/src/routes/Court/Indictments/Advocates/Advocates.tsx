@@ -1,11 +1,15 @@
 import { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
+import { AnimatePresence, motion } from 'motion/react'
 import { useRouter } from 'next/router'
+import { Tooltip, TooltipAnchor, TooltipProvider } from '@ariakit/react'
 
-import { AlertMessage, Box } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import { Box, Icon, Text } from '@island.is/island-ui/core'
+import {
+  INDICTMENTS_COURT_RECORD_ROUTE,
+  INDICTMENTS_SUBPOENA_ROUTE,
+} from '@island.is/judicial-system/consts'
 import { titles } from '@island.is/judicial-system-web/messages'
-import { core } from '@island.is/judicial-system-web/messages'
 import {
   CourtCaseInfo,
   FormContentContainer,
@@ -38,6 +42,10 @@ const Advocates = () => {
 
   const stepIsValid = isDefenderStepValid(workingCase)
   const hasCivilClaimants = (workingCase.civilClaimants?.length ?? 0) > 0
+  const allDefendersHaveBeenConfirmed =
+    workingCase.defendants?.every(
+      (defendant) => defendant.isDefenderChoiceConfirmed,
+    ) || false
 
   return (
     <PageLayout
@@ -51,35 +59,52 @@ const Advocates = () => {
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
-        <Box component="section" marginBottom={5}>
-          <AlertMessage
-            message={formatMessage(strings.alertBannerText)}
-            type="info"
-          />
-          {workingCase.defendants
-            ?.filter((defendant) => defendant.requestedDefenderChoice)
-            .map((defendant) => (
-              <Box marginTop={2}>
-                <AlertMessage
-                  title={formatMessage(strings.defenderChoiceAlertTitle, {
-                    defendantName: defendant.name,
-                  })}
-                  message={formatMessage(strings.defenderChoiceAlertMessage, {
-                    requestedDefenderChoice: defendant.requestedDefenderChoice,
-                    requestedDefenderName: defendant.requestedDefenderName,
-                    requestedDefenderNationalId:
-                      defendant.requestedDefenderNationalId,
-                  })}
-                  type="warning"
-                />
-              </Box>
-            ))}
-        </Box>
         <Box component="section" marginBottom={hasCivilClaimants ? 5 : 10}>
-          <SectionHeading
-            title={formatMessage(strings.selectDefenderHeading)}
-            required
-          />
+          <Box
+            display="flex"
+            columnGap={1}
+            alignItems="center"
+            marginBottom={3}
+          >
+            <SectionHeading title="Verjendur varnaraðila" marginBottom={0} />
+            <AnimatePresence>
+              {!allDefendersHaveBeenConfirmed && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0 }}
+                  animate={{
+                    opacity: 1,
+                    scale: 1,
+                  }}
+                  exit={{
+                    opacity: 0,
+                    scale: 0,
+                  }}
+                >
+                  <TooltipProvider timeout={0}>
+                    <TooltipAnchor
+                      render={
+                        <Box display="flex">
+                          <Icon
+                            icon="warning"
+                            size="large"
+                            color="red300"
+                            type="outline"
+                          />
+                        </Box>
+                      }
+                    />
+                    <Tooltip>
+                      <Box background="dark400" borderRadius="full" padding={1}>
+                        <Text color="white" variant="small">
+                          Ákærunni hefur ekki verið deilt með öllum verjendum
+                        </Text>
+                      </Box>
+                    </Tooltip>
+                  </TooltipProvider>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </Box>
           {workingCase.defendants?.map((defendant, index) => (
             <SelectDefender defendant={defendant} key={index} />
           ))}
@@ -98,13 +123,12 @@ const Advocates = () => {
       <FormContentContainer isFooter>
         <FormFooter
           nextButtonIcon="arrowForward"
-          previousUrl={`${constants.INDICTMENTS_SUBPOENA_ROUTE}/${workingCase.id}`}
+          previousUrl={`${INDICTMENTS_SUBPOENA_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoadingWorkingCase}
-          nextButtonText={formatMessage(core.continue)}
-          nextUrl={`${constants.INDICTMENTS_CONCLUSION_ROUTE}/${workingCase.id}`}
+          nextUrl={`${INDICTMENTS_COURT_RECORD_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!stepIsValid}
           onNextButtonClick={() =>
-            handleNavigationTo(constants.INDICTMENTS_CONCLUSION_ROUTE)
+            handleNavigationTo(INDICTMENTS_COURT_RECORD_ROUTE)
           }
         />
       </FormContentContainer>

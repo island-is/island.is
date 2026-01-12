@@ -1,5 +1,7 @@
 import {
   BadGatewayException,
+  BadRequestException,
+  ForbiddenException,
   Inject,
   Injectable,
   NotFoundException,
@@ -11,25 +13,28 @@ import {
   AuditedAction,
   AuditTrailService,
 } from '@island.is/judicial-system/audit-trail'
-import { LawyersService } from '@island.is/judicial-system/lawyers'
-import { DefenderChoice } from '@island.is/judicial-system/types'
+import {
+  DefenderChoice,
+  isCompletedCase,
+} from '@island.is/judicial-system/types'
 
+import { appModuleConfig } from '../../app.config'
 import { UpdateSubpoenaDto } from './dto/subpoena.dto'
+import { UpdateVerdictAppealDecisionDto } from './dto/verdictAppeal.dto'
 import { CaseResponse } from './models/case.response'
 import { CasesResponse } from './models/cases.response'
 import { InternalCaseResponse } from './models/internal/internalCase.response'
 import { InternalCasesResponse } from './models/internal/internalCases.response'
 import { InternalDefendantResponse } from './models/internal/internalDefendant.response'
 import { SubpoenaResponse } from './models/subpoena.response'
-import { caseModuleConfig } from './case.config'
+import { VerdictResponse } from './models/verdict.response'
 
 @Injectable()
 export class CaseService {
   constructor(
-    @Inject(caseModuleConfig.KEY)
-    private readonly config: ConfigType<typeof caseModuleConfig>,
+    @Inject(appModuleConfig.KEY)
+    private readonly config: ConfigType<typeof appModuleConfig>,
     private readonly auditTrailService: AuditTrailService,
-    private readonly lawyersService: LawyersService,
   ) {}
 
   async getCases(nationalId: string, lang?: string): Promise<CasesResponse[]> {
@@ -68,15 +73,47 @@ export class CaseService {
   }
 
   async updateSubpoena(
-    nationalId: string,
     caseId: string,
+    nationalId: string,
     updateSubpoena: UpdateSubpoenaDto,
     lang?: string,
   ): Promise<SubpoenaResponse> {
-    return await this.auditTrailService.audit(
+    return this.auditTrailService.audit(
       'digital-mailbox-api',
       AuditedAction.UPDATE_SUBPOENA,
-      this.updateSubpoenaInfo(nationalId, caseId, updateSubpoena, lang),
+      this.updateSubpoenaInfo(caseId, nationalId, updateSubpoena, lang),
+      nationalId,
+    )
+  }
+
+  async updateVerdictAppeal(
+    caseId: string,
+    nationalId: string,
+    verdictAppeal: UpdateVerdictAppealDecisionDto,
+    lang?: string,
+  ): Promise<VerdictResponse> {
+    return this.auditTrailService.audit(
+      'digital-mailbox-api',
+      AuditedAction.UPDATE_VERDICT_APPEAL_DECISION,
+      this.updateVerdictAppealDecisionInfo(
+        caseId,
+        nationalId,
+        verdictAppeal,
+        lang,
+      ),
+      nationalId,
+    )
+  }
+
+  async getVerdict(
+    caseId: string,
+    nationalId: string,
+    lang?: string,
+  ): Promise<VerdictResponse> {
+    return this.auditTrailService.audit(
+      'digital-mailbox-api',
+      AuditedAction.GET_VERDICT,
+      this.getVerdictInfo(caseId, nationalId, lang),
       nationalId,
     )
   }
@@ -86,7 +123,6 @@ export class CaseService {
     lang?: string,
   ): Promise<CasesResponse[]> {
     const response = await this.fetchCases(nationalId)
-
     return CasesResponse.fromInternalCasesResponse(response, lang)
   }
 
@@ -96,27 +132,21 @@ export class CaseService {
     lang?: string,
   ): Promise<CaseResponse> {
     const response = await this.fetchCase(caseId, nationalId)
-
     return CaseResponse.fromInternalCaseResponse(response, lang)
   }
 
   private async getSubpoenaInfo(
     caseId: string,
-    defendantNationalId: string,
+    nationalId: string,
     lang?: string,
   ): Promise<SubpoenaResponse> {
-    const caseData = await this.fetchCase(caseId, defendantNationalId)
-
-    return SubpoenaResponse.fromInternalCaseResponse(
-      caseData,
-      defendantNationalId,
-      lang,
-    )
+    const caseData = await this.fetchCase(caseId, nationalId)
+    return SubpoenaResponse.fromInternalCaseResponse(caseData, nationalId, lang)
   }
 
   private async updateSubpoenaInfo(
-    defendantNationalId: string,
     caseId: string,
+    nationalId: string,
     defenderAssignment: UpdateSubpoenaDto,
     lang?: string,
   ): Promise<SubpoenaResponse> {
@@ -124,39 +154,93 @@ export class CaseService {
 
     if (defenderAssignment.defenderChoice === DefenderChoice.CHOOSE) {
       if (!defenderAssignment.defenderNationalId) {
-        throw new NotFoundException(
+        throw new BadRequestException(
           'Defender national id is required for choice',
         )
       }
 
-      chosenLawyer = await this.lawyersService.getLawyer(
-        defenderAssignment.defenderNationalId,
+      const res = await fetch(
+        `${this.config.backendUrl}/api/lawyer-registry/${defenderAssignment.defenderNationalId}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${this.config.secretToken}`,
+          },
+        },
       )
 
-      if (!chosenLawyer) {
-        throw new NotFoundException(
-          'Selected lawyer was not found in the lawyer registry',
-        )
+      if (res.ok) {
+        chosenLawyer = await res.json()
+
+        if (!chosenLawyer) {
+          throw new NotFoundException(
+            'Selected lawyer was not found in the lawyer registry',
+          )
+        }
       }
     }
 
     const defenderChoice = {
       defenderChoice: defenderAssignment.defenderChoice,
       defenderNationalId: defenderAssignment.defenderNationalId,
-      defenderName: chosenLawyer?.Name,
-      defenderEmail: chosenLawyer?.Email,
-      defenderPhoneNumber: chosenLawyer?.Phone,
+      defenderName: chosenLawyer?.name,
+      defenderEmail: chosenLawyer?.email,
+      defenderPhoneNumber: chosenLawyer?.phoneNumber,
       requestedDefenderChoice: defenderAssignment.defenderChoice,
       requestedDefenderNationalId: defenderAssignment.defenderNationalId,
-      requestedDefenderName: chosenLawyer?.Name,
+      requestedDefenderName: chosenLawyer?.name,
     }
-    await this.patchDefenseInfo(defendantNationalId, caseId, defenderChoice)
 
-    const updatedCase = await this.fetchCase(caseId, defendantNationalId)
+    await this.patchDefendant(caseId, nationalId, defenderChoice)
+    const updatedCase = await this.fetchCase(caseId, nationalId)
 
     return SubpoenaResponse.fromInternalCaseResponse(
       updatedCase,
-      defendantNationalId,
+      nationalId,
+      lang,
+    )
+  }
+
+  private async getVerdictInfo(
+    caseId: string,
+    nationalId: string,
+    lang?: string,
+  ): Promise<VerdictResponse> {
+    const caseData = await this.fetchCase(caseId, nationalId)
+
+    const isCaseSentToPublicProsecutor = Boolean(
+      caseData.indictmentSentToPublicProsecutorDate,
+    )
+
+    // we also have to ensure that the verdict is completed, confirmed and sent to public prosecutor.
+    // sent to public prosecutor indicates that the verdict has been delivered to police if that was requested
+    if (!isCompletedCase(caseData.state) || !isCaseSentToPublicProsecutor) {
+      throw new BadRequestException(
+        `Verdict is not available for case ${caseId}. Case must be completed before verdict can be accessed.`,
+      )
+    }
+
+    if (!caseData.rulingDate) {
+      throw new NotFoundException(
+        `Verdict has not been issued for case ${caseId}`,
+      )
+    }
+
+    return VerdictResponse.fromInternalCaseResponse(caseData, nationalId, lang)
+  }
+
+  private async updateVerdictAppealDecisionInfo(
+    caseId: string,
+    nationalId: string,
+    verdictAppeal: UpdateVerdictAppealDecisionDto,
+    lang?: string,
+  ): Promise<VerdictResponse> {
+    await this.patchVerdictAppeal(caseId, nationalId, verdictAppeal)
+    const updatedCase = await this.fetchCase(caseId, nationalId)
+    return VerdictResponse.fromInternalCaseResponse(
+      updatedCase,
+      nationalId,
       lang,
     )
   }
@@ -164,121 +248,118 @@ export class CaseService {
   private async fetchCases(
     nationalId: string,
   ): Promise<InternalCasesResponse[]> {
-    try {
-      const res = await fetch(
-        `${this.config.backendUrl}/api/internal/cases/indictments/defendant/${nationalId}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            authorization: `Bearer ${this.config.secretToken}`,
-          },
-        },
-      )
-
-      if (!res.ok) {
-        throw new BadGatewayException(
-          'Unexpected error occurred while fetching cases',
-        )
-      }
-
-      return await res.json()
-    } catch (reason) {
-      throw new BadGatewayException(`Failed to fetch cases: ${reason.message}`)
-    }
+    const response = await this.makeRequest(
+      `${this.config.backendUrl}/api/internal/cases/indictments/defendant/${nationalId}`,
+      'GET',
+    )
+    return response.json()
   }
 
   private async fetchCase(
     caseId: string,
     nationalId: string,
   ): Promise<InternalCaseResponse> {
+    const response = await this.makeRequest(
+      `${this.config.backendUrl}/api/internal/case/indictment/${caseId}/defendant/${nationalId}`,
+      'GET',
+    )
+    return response.json()
+  }
+
+  private async patchDefendant(
+    caseId: string,
+    nationalId: string,
+    updates: Record<string, unknown>,
+  ): Promise<InternalDefendantResponse> {
+    const response = await this.makeRequest(
+      `${this.config.backendUrl}/api/internal/case/${caseId}/defense/${nationalId}`,
+      'PATCH',
+      updates,
+    )
+
+    const updatedDefendant =
+      (await response.json()) as InternalDefendantResponse
+    return {
+      id: updatedDefendant.id,
+      defenderChoice: updatedDefendant.defenderChoice,
+      defenderName: updatedDefendant.defenderName,
+    } as InternalDefendantResponse
+  }
+
+  private async patchVerdictAppeal(
+    caseId: string,
+    nationalId: string,
+    verdictAppeal: UpdateVerdictAppealDecisionDto,
+  ): Promise<void> {
+    await this.makeRequest(
+      `${this.config.backendUrl}/api/internal/case/${caseId}/defendant/${nationalId}/verdict-appeal`,
+      'PATCH',
+      { appealDecision: verdictAppeal.verdictAppealDecision },
+    )
+  }
+
+  private async makeRequest(
+    url: string,
+    method: 'GET' | 'PATCH',
+    body?: unknown,
+  ): Promise<Response> {
     try {
-      const res = await fetch(
-        `${this.config.backendUrl}/api/internal/case/indictment/${caseId}/defendant/${nationalId}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            authorization: `Bearer ${this.config.secretToken}`,
-          },
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+          authorization: `Bearer ${this.config.secretToken}`,
         },
-      )
+        ...(typeof body !== 'undefined' ? { body: JSON.stringify(body) } : {}),
+      })
 
-      if (!res.ok) {
-        if (res.status === 404) {
-          throw new NotFoundException(`Case ${caseId} not found`)
-        }
-
-        const reason = await res.text()
-
-        throw new BadGatewayException(
-          reason || 'Unexpected error occurred while fetching case by ID',
-        )
+      if (!response.ok) {
+        await this.handleHttpError(response, url)
       }
 
-      const caseData = await res.json()
-
-      return caseData
-    } catch (reason) {
+      return response
+    } catch (error) {
       if (
-        reason instanceof BadGatewayException ||
-        reason instanceof NotFoundException
+        error instanceof NotFoundException ||
+        error instanceof BadGatewayException ||
+        error instanceof ForbiddenException ||
+        error instanceof BadRequestException
       ) {
-        throw reason
+        throw error
       }
 
       throw new BadGatewayException(
-        `Failed to fetch case by id: ${reason.message}`,
+        `Request failed for ${url}: ${error.message || 'Unknown error'}`,
       )
     }
   }
 
-  private async patchDefenseInfo(
-    defendantNationalId: string,
-    caseId: string,
-    defenderChoice: {
-      requestedDefenderChoice: DefenderChoice
-      requestedDefenderNationalId: string | undefined
-      requestedDefenderName?: string
-    },
-  ): Promise<InternalDefendantResponse> {
-    try {
-      const response = await fetch(
-        `${this.config.backendUrl}/api/internal/case/${caseId}/defense/${defendantNationalId}`,
-        {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-            authorization: `Bearer ${this.config.secretToken}`,
-          },
-          body: JSON.stringify(defenderChoice),
-        },
-      )
+  private async handleHttpError(
+    response: Response,
+    url: string,
+  ): Promise<never> {
+    const status = response.status
 
-      if (!response.ok) {
-        const errorResponse = await response.json()
-        throw new BadGatewayException(
-          `Failed to assign defender: ${
-            errorResponse.message || response.statusText
-          }`,
-        )
-      }
-
-      const updatedDefendant =
-        (await response.json()) as InternalDefendantResponse
-
-      return {
-        id: updatedDefendant.id,
-        defenderChoice: updatedDefendant.defenderChoice,
-        defenderName: updatedDefendant.defenderName,
-      } as InternalDefendantResponse
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw error
-      }
-      throw new BadGatewayException(
-        error.message || 'An unexpected error occurred',
-      )
+    if (status === 400) {
+      throw new BadRequestException('Bad request')
     }
+
+    if (status === 404) {
+      throw new NotFoundException('Resource not found')
+    }
+
+    if (status === 403) {
+      throw new ForbiddenException('Access denied or operation not allowed')
+    }
+
+    let errorMessage = 'Request failed'
+    try {
+      const errorBody = await response.json()
+      errorMessage = errorBody.message || errorMessage
+    } catch {
+      errorMessage = response.statusText || errorMessage
+    }
+
+    throw new BadGatewayException(`${errorMessage} (${status}) for ${url}`)
   }
 }

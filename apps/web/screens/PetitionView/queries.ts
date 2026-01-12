@@ -1,9 +1,11 @@
 import gql from 'graphql-tag'
 import { useQuery } from '@apollo/client'
+
 import {
   EndorsementList,
   PaginatedEndorsementResponse,
 } from '@island.is/web/graphql/schema'
+
 import { pageSize } from './utils'
 
 const GetGeneralPetitionList = gql`

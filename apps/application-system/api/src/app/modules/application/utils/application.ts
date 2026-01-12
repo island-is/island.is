@@ -6,7 +6,6 @@ import {
 } from '@island.is/application/core'
 import {
   Application,
-  ApplicationConfigurations,
   ApplicationContext,
   ApplicationLifecycle,
   ApplicationStateSchema,
@@ -21,6 +20,8 @@ import { EventObject } from 'xstate'
 import { FormatMessage } from '@island.is/cms-translations'
 import { ApplicationStatistics } from '../dto/applicationAdmin.response.dto'
 import { ApplicationState } from '@island.is/financial-aid/shared/lib'
+import { expandFieldKeys } from '../lifecycle/application-lifecycle.utils'
+import { IdentityClientService } from '@island.is/clients/identity'
 
 export const getApplicationLifecycle = (
   application: Application,
@@ -110,6 +111,28 @@ export const getApplicationStatisticsNameTranslationString = (
   return formatMessage(template.name)
 }
 
+export const getApplicationGenericNameTranslationString = (
+  template: Template,
+  formatMessage: FormatMessage,
+) => {
+  if (typeof template.name === 'function') {
+    const returnValue = template.name(mockApplicationFromTypeId(template.type))
+
+    if (
+      isObject(returnValue) &&
+      'value' in returnValue &&
+      'name' in returnValue
+    ) {
+      return formatMessage(returnValue.name, {
+        value: returnValue.value,
+      })
+    }
+    return formatMessage(returnValue)
+  }
+
+  return formatMessage(template.name)
+}
+
 export const getPaymentStatusForAdmin = (
   payment: { fulfilled: boolean; created: Date } | null,
 ) => {
@@ -118,23 +141,6 @@ export const getPaymentStatusForAdmin = (
   }
   if (payment?.created) {
     return 'unpaid'
-  }
-  return null
-}
-
-export const getApplicantName = (application: Application) => {
-  if (application.externalData.nationalRegistry) {
-    return getValueViaPath(
-      application.externalData,
-      'nationalRegistry.data.fullName',
-    )
-  }
-  if (application.externalData.identity) {
-    return getValueViaPath(application.externalData, 'identity.data.name')
-  }
-  // special case for parental leave
-  if (application.externalData.person) {
-    return getValueViaPath(application.externalData, 'person.data.fullname')
   }
   return null
 }
@@ -257,4 +263,94 @@ const hasContent = (value: unknown): boolean => {
     return Object.keys(value).length > 0
   }
   return false
+}
+
+/**
+ * Collects and formats admin-visible data from an application for the admin portal.
+ *
+ * - Expands keys with `$` wildcards (e.g. `coOwners.$.name`) into explicit paths.
+ * - Gathers all values for each key (single or multiple, depending on wildcard).
+ * - Keeps the original `key` with the `$` placeholder intact for readability in config.
+ * - Returns values as a string array (`value`), even for single-value fields.
+ *
+ * Example 1:
+ *   config = { key: 'coOwners.$.name' }
+ *   answers = { coOwners: [{ name: 'Alice' }, { name: 'Bob' }] }
+ *
+ *   result = {
+ *     key: 'coOwners.$.name',
+ *     values: ['Alice', 'Bob'],
+ *     label: 'Co-owner Name'
+ *   }
+ *
+ * Example 2 (with nationalId):
+ *   config = { key: 'coOwners.$.nationalId', isNationalId = true }
+ *   answers = { coOwners: [{ nationalId: '1234567890' }] }
+ *
+ *   result = {
+ *     key: 'coOwners.$.nationalId',
+ *     values: ['Alice (1234567890)'],
+ *     label: 'Co-owner'
+ *   }
+ */
+export const getAdminDataForAdminPortal = async (
+  template: Template,
+  application: Application,
+  formatMessage: FormatMessage,
+  identityService: IdentityClientService,
+): Promise<Array<{ key: string; values: string[]; label: string }>> => {
+  if (!template.adminDataConfig?.answers) return []
+
+  // Simple per-request memoization to reduce duplicate NR calls
+  const nationalIdMap = new Map<string, string>()
+  const resolveWithNationalIdMap = async (
+    nationalId: string,
+  ): Promise<string> => {
+    const valueFromMap = nationalIdMap.get(nationalId)
+    if (valueFromMap) return valueFromMap
+    const valueFromApi =
+      (await identityService.tryToGetNameFromNationalId(nationalId, true)) ??
+      nationalId
+    nationalIdMap.set(nationalId, valueFromApi)
+    return valueFromApi
+  }
+
+  return Promise.all(
+    template.adminDataConfig.answers
+      .filter((config) => config.isListed)
+      .map(async (config) => {
+        let expandedKeys: string[] = []
+        try {
+          expandedKeys = expandFieldKeys(application.answers, [config.key])
+        } catch {
+          expandedKeys = []
+        }
+
+        let values: string[] = expandedKeys
+          .map((expandedKey) =>
+            getValueViaPath(application.answers, expandedKey),
+          )
+          .flatMap((v) => {
+            if (v === undefined || v === null) return []
+            if (Array.isArray(v)) return v.filter((x) => x != null).map(String)
+            if (typeof v === 'object') return []
+            return [String(v)]
+          })
+
+        // If this field contains national IDs, fetch names and format them
+        if (config.isNationalId) {
+          values = await Promise.all(
+            values.map((nationalId) => resolveWithNationalIdMap(nationalId)),
+          )
+        }
+
+        const label = config.label ? formatMessage(config.label) : ''
+
+        return {
+          key: config.key,
+          values,
+          label,
+        }
+      }),
+  )
 }

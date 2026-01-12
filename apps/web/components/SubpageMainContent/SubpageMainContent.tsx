@@ -1,5 +1,6 @@
 import React, { ReactNode } from 'react'
-import { GridContainer, GridRow, GridColumn } from '@island.is/island-ui/core'
+
+import { GridColumn, GridContainer, GridRow } from '@island.is/island-ui/core'
 
 interface SubpageMainProps {
   main: ReactNode

@@ -2,7 +2,7 @@ import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { AlertMessage, Box, Button, Text } from '@island.is/island-ui/core'
+import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
   isCompletedCase,
@@ -27,18 +27,17 @@ import {
   PageLayout,
   PdfButton,
   SignedDocument,
+  ZipButton,
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseState,
   RequestSharedWithDefender,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { api } from '@island.is/judicial-system-web/src/services'
 import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import InfoCard from '../../components/InfoCard/InfoCard'
 import useInfoCardItems from '../../components/InfoCard/useInfoCardItems'
 import { strings } from './CaseOverview.strings'
-import * as styles from './CaseOverview.css'
 
 type availableModals =
   | 'NoModal'
@@ -69,6 +68,8 @@ export const CaseOverview = () => {
     appealCaseNumber,
     appealAssistant,
     appealJudges,
+    victims,
+    showItem,
   } = useInfoCardItems()
   const router = useRouter()
   const [modalVisible, setModalVisible] = useState<availableModals>('NoModal')
@@ -154,8 +155,16 @@ export const CaseOverview = () => {
               sections={[
                 {
                   id: 'defendants-section',
-                  items: [defendants(workingCase.type)],
+                  items: [defendants({ caseType: workingCase.type })],
                 },
+                ...(showItem(victims)
+                  ? [
+                      {
+                        id: 'victims-section',
+                        items: [victims],
+                      },
+                    ]
+                  : []),
                 {
                   id: 'case-info-section',
                   items: [
@@ -224,7 +233,8 @@ export const CaseOverview = () => {
                   renderAs="row"
                   caseId={workingCase.id}
                   title={formatMessage(core.pdfButtonRequest)}
-                  pdfType={'request'}
+                  pdfType="request"
+                  elementId={formatMessage(core.pdfButtonRequest)}
                 />
                 {isCompletedCase(workingCase.state) && (
                   <>
@@ -232,7 +242,10 @@ export const CaseOverview = () => {
                       renderAs="row"
                       caseId={workingCase.id}
                       title={formatMessage(core.pdfButtonRulingShortVersion)}
-                      pdfType={'courtRecord'}
+                      pdfType="courtRecord"
+                      elementId={formatMessage(
+                        core.pdfButtonRulingShortVersion,
+                      )}
                     >
                       {workingCase.courtRecordSignatory ? (
                         <SignedDocument
@@ -245,32 +258,26 @@ export const CaseOverview = () => {
                       renderAs="row"
                       caseId={workingCase.id}
                       title={formatMessage(core.pdfButtonRuling)}
-                      pdfType={'ruling'}
+                      pdfType="ruling"
+                      elementId={formatMessage(core.pdfButtonRuling)}
+                      disabled={workingCase.isCompletedWithoutRuling || false}
                     >
                       {workingCase.rulingSignatureDate ? (
                         <SignedDocument
                           signatory={workingCase.judge?.name}
                           signingDate={workingCase.rulingSignatureDate}
                         />
+                      ) : workingCase.isCompletedWithoutRuling ? (
+                        <Text>{formatMessage(strings.noRuling)}</Text>
                       ) : (
                         <Text>{formatMessage(strings.unsignedRuling)}</Text>
                       )}
                     </PdfButton>
                     <Box marginTop={7}>
-                      <a
-                        href={`${api.apiUrl}/api/case/${workingCase.id}/limitedAccess/allFiles`}
-                        download={`mal_${workingCase.courtCaseNumber}`}
-                        className={styles.downloadAllButton}
-                      >
-                        <Button
-                          variant="ghost"
-                          size="small"
-                          icon="download"
-                          iconType="outline"
-                        >
-                          {formatMessage(strings.getAllDocuments)}
-                        </Button>
-                      </a>
+                      <ZipButton
+                        caseId={workingCase.id}
+                        courtCaseNumber={workingCase.courtCaseNumber}
+                      />
                     </Box>
                   </>
                 )}
@@ -282,19 +289,23 @@ export const CaseOverview = () => {
           <Modal
             title={formatMessage(strings.confirmAppealAfterDeadlineModalTitle)}
             text={formatMessage(strings.confirmAppealAfterDeadlineModalText)}
-            primaryButtonText={formatMessage(
-              strings.confirmAppealAfterDeadlineModalPrimaryButtonText,
-            )}
-            secondaryButtonText={formatMessage(
-              strings.confirmAppealAfterDeadlineModalSecondaryButtonText,
-            )}
-            onPrimaryButtonClick={() => {
-              router.push(
-                `${constants.DEFENDER_APPEAL_ROUTE}/${workingCase.id}`,
-              )
+            primaryButton={{
+              text: formatMessage(
+                strings.confirmAppealAfterDeadlineModalPrimaryButtonText,
+              ),
+              onClick: () => {
+                router.push(
+                  `${constants.DEFENDER_APPEAL_ROUTE}/${workingCase.id}`,
+                )
+              },
             }}
-            onSecondaryButtonClick={() => {
-              setModalVisible('NoModal')
+            secondaryButton={{
+              text: formatMessage(
+                strings.confirmAppealAfterDeadlineModalSecondaryButtonText,
+              ),
+              onClick: () => {
+                setModalVisible('NoModal')
+              },
             }}
           />
         )}
@@ -304,19 +315,23 @@ export const CaseOverview = () => {
               strings.confirmStatementAfterDeadlineModalTitle,
             )}
             text={formatMessage(strings.confirmStatementAfterDeadlineModalText)}
-            primaryButtonText={formatMessage(
-              strings.confirmStatementAfterDeadlineModalPrimaryButtonText,
-            )}
-            secondaryButtonText={formatMessage(
-              strings.confirmStatementAfterDeadlineModalSecondaryButtonText,
-            )}
-            onPrimaryButtonClick={() => {
-              router.push(
-                `${constants.DEFENDER_STATEMENT_ROUTE}/${workingCase.id}`,
-              )
+            primaryButton={{
+              text: formatMessage(
+                strings.confirmStatementAfterDeadlineModalPrimaryButtonText,
+              ),
+              onClick: () => {
+                router.push(
+                  `${constants.DEFENDER_STATEMENT_ROUTE}/${workingCase.id}`,
+                )
+              },
             }}
-            onSecondaryButtonClick={() => {
-              setModalVisible('NoModal')
+            secondaryButton={{
+              text: formatMessage(
+                strings.confirmStatementAfterDeadlineModalSecondaryButtonText,
+              ),
+              onClick: () => {
+                setModalVisible('NoModal')
+              },
             }}
           />
         )}

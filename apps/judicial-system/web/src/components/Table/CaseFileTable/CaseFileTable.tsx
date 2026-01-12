@@ -6,18 +6,21 @@ import {
   capitalize,
   formatDate,
   getInitials,
+  getRoleTitleFromCaseFileCategory,
 } from '@island.is/judicial-system/formatters'
 import { tables } from '@island.is/judicial-system-web/messages'
 import {
-  CreatedDate,
   SortButton,
   TableContainer,
+  TableDate,
   TableHeaderText,
 } from '@island.is/judicial-system-web/src/components/Table'
 import { CaseFile } from '@island.is/judicial-system-web/src/graphql/schema'
-import { useSort } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  useFiledCourtDocuments,
+  useSort,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 
-import { strings } from './CaseFileTable.strings'
 import * as tableStyles from '../Table.css'
 import * as styles from './CaseFileTable.css'
 
@@ -33,7 +36,8 @@ const CaseFileTable: FC<Props> = ({
   onOpenFile,
 }) => {
   const { formatMessage } = useIntl()
-
+  const { prefixUploadedDocumentNameWithDocumentOrder } =
+    useFiledCourtDocuments()
   const { sortedData, requestSort, getClassNamesFor, isActiveColumn } = useSort(
     'created',
     'descending',
@@ -62,13 +66,17 @@ const CaseFileTable: FC<Props> = ({
           <TableHeaderText title={formatMessage(tables.caseFileDate)} />
           <th className={tableStyles.th}>
             <SortButton
-              {...createSortProps(formatMessage(tables.sent), 'created')}
+              {...createSortProps(formatMessage(tables.received), 'created')}
             />
           </th>
         </>
       }
     >
       {sortedData.map((file) => {
+        const initials = getInitials(
+          file.fileRepresentative ?? file.submittedBy,
+        )
+
         return (
           <tr key={file.id}>
             <td>
@@ -77,23 +85,29 @@ const CaseFileTable: FC<Props> = ({
                 className={styles.linkButton}
               >
                 <Text color="blue400" variant="h5">
-                  {file.userGeneratedFilename}
+                  {prefixUploadedDocumentNameWithDocumentOrder(
+                    file.id,
+                    file.userGeneratedFilename ?? '',
+                  )}
                 </Text>
               </Box>
             </td>
             <td>
-              <CreatedDate created={file.displayDate ?? file.created} />
+              <TableDate displayDate={file.displayDate ?? file.created} />
             </td>
             <td>
               <Box className={styles.noWrapColumn}>
                 <Text>
-                  {formatDate(file.created, "dd.MM.yyyy 'kl.' HH:mm")}
+                  {file.fileRepresentative
+                    ? formatDate(file.submissionDate || file.created)
+                    : formatDate(file.created, "dd.MM.yyyy 'kl.' HH:mm")}
                 </Text>
                 <Text variant="small">
-                  {formatMessage(strings.submittedBy, {
-                    category: file.category,
-                    initials: getInitials(file.submittedBy),
-                  })}
+                  {`${getRoleTitleFromCaseFileCategory(
+                    file.category ?? null,
+                  )} ${initials ? `(${initials})` : ''} ${
+                    file.fileRepresentative ? 'lagði fram' : 'sendi inn'
+                  }`}
                 </Text>
               </Box>
             </td>

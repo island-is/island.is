@@ -1,70 +1,39 @@
 import { useIntl } from 'react-intl'
-import useSWR from 'swr'
+import Cookie from 'js-cookie'
+import useSWRImmutable from 'swr/immutable'
 
 import { toast } from '@island.is/island-ui/core'
+import { CSRF_COOKIE_NAME } from '@island.is/judicial-system/consts'
 import { type Lawyer } from '@island.is/judicial-system/types'
 import { errors as errorMessages } from '@island.is/judicial-system-web/messages'
 
-const LAWYER_REGISTRY_URL = '/api/defender/lawyerRegistry'
-
-export const useGetLawyers = (): Lawyer[] => {
+export const useGetLawyers = (shouldFetch?: boolean): Lawyer[] => {
   const { formatMessage } = useIntl()
-  const fetcher = (url: string): Promise<Lawyer[]> =>
-    fetch(url).then((res) => {
+  const fetcher = (url: string): Promise<Lawyer[]> => {
+    const token = Cookie.get(CSRF_COOKIE_NAME)
+    const options = token
+      ? { headers: { authorization: `Bearer ${token}` } }
+      : {}
+
+    return fetch(url, options).then((res) => {
       if (!res.ok) {
         throw new Error('Failed to get lawyers from lawyer registry')
       }
 
       return res.json()
     })
+  }
 
-  const { data, error } = useSWR<Lawyer[]>(LAWYER_REGISTRY_URL, fetcher, {
-    revalidateIfStale: false,
-    revalidateOnFocus: false,
-    revalidateOnReconnect: false,
-    errorRetryCount: 2,
-  })
+  const { data, error } = useSWRImmutable<Lawyer[]>(
+    shouldFetch ? '/api/defender/lawyerRegistry' : null,
+    fetcher,
+    { shouldRetryOnError: false, errorRetryCount: 0 },
+  )
 
   if (error) {
     toast.error(formatMessage(errorMessages.fetchLawyers))
     return []
   }
 
-  return data || []
-}
-
-export const useGetLawyer = (
-  nationalId?: string | null,
-  shouldFetch?: boolean,
-): Lawyer | undefined => {
-  const { formatMessage } = useIntl()
-
-  const fetcher = (url: string): Promise<Lawyer> =>
-    fetch(url).then((res) => {
-      if (!res.ok) {
-        throw new Error(
-          `Failed to get lawyer with nationalId ${nationalId} from lawyer registry`,
-        )
-      }
-
-      return res.json()
-    })
-
-  const { data, error } = useSWR<Lawyer>(
-    nationalId && shouldFetch ? `${LAWYER_REGISTRY_URL}/${nationalId}` : null,
-    fetcher,
-    {
-      revalidateIfStale: false,
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
-      errorRetryCount: 2,
-    },
-  )
-
-  if (error) {
-    toast.error(formatMessage(errorMessages.fetchLawyer))
-    return undefined
-  }
-
-  return data
+  return data ?? []
 }

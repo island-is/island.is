@@ -31,7 +31,7 @@ export const serviceSetup = (services: {
         prod: 'true',
       },
       RedisSettings__Address: {
-        dev: 'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com',
+        dev: 'clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com',
         staging:
           'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com',
         prod: 'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com',
@@ -57,13 +57,15 @@ export const serviceSetup = (services: {
         prod: 'true',
       },
       IdentityServer__ConsentsScope: '@island.is/auth/consents',
-      PersistenceSettings__BaseAddress: ref(
-        (h) => `http://${h.svc(services.authIdsApi)}`,
-      ),
+      PersistenceSettings__BaseAddress: {
+        local: ref((h) => `http://${h.svc(services.authIdsApi)}`),
+        dev: 'http://services-auth-ids-api',
+        staging: ref((h) => `http://${h.svc(services.authIdsApi)}`),
+        prod: ref((h) => `http://${h.svc(services.authIdsApi)}`),
+      },
       SessionsApiSettings__BaseAddress: {
-        dev: 'http://web-services-sessions.services-sessions.svc.cluster.local',
-        staging:
-          'http://web-services-sessions.services-sessions.svc.cluster.local',
+        dev: 'https://sessions-api.internal.dev01.devland.is',
+        staging: 'http://services-sessions.services-sessions.svc.cluster.local',
         prod: 'https://sessions-api.internal.island.is',
       },
       PersistenceSettings__DelegationsCacheEnabled: {
@@ -72,9 +74,18 @@ export const serviceSetup = (services: {
         prod: 'true',
       },
       MeUserProfileApiSettings__BaseAddress: {
-        dev: 'http://web-service-portal-api.service-portal.svc.cluster.local',
-        staging:
-          'http://web-service-portal-api.service-portal.svc.cluster.local',
+        dev: 'https://service-portal-api.internal.dev01.devland.is',
+        staging: 'http://service-portal-api.service-portal.svc.cluster.local',
+        prod: 'https://service-portal-api.internal.island.is',
+      },
+      ActorUserProfileApiSettings__BaseAddress: {
+        dev: 'https://service-portal-api.internal.dev01.devland.is',
+        staging: 'http://service-portal-api.service-portal.svc.cluster.local',
+        prod: 'https://service-portal-api.internal.island.is',
+      },
+      EmailsApiSettings__BaseAddress: {
+        dev: 'https://service-portal-api.internal.dev01.devland.is',
+        staging: 'http://service-portal-api.service-portal.svc.cluster.local',
         prod: 'https://service-portal-api.internal.island.is',
       },
       Application__MinCompletionPortThreads: '10',
@@ -108,8 +119,7 @@ export const serviceSetup = (services: {
         '/k8s/identity-server/redaction/USER_IDENTIFIERS_KEY_ID',
       Redaction__UserIdentifiers__Key:
         '/k8s/identity-server/redaction/USER_IDENTIFIERS_KEY',
-      Datadog__RUM__ApplicationId: '/k8s/ids/DD_RUM_APPLICATION_ID',
-      Datadog__RUM__ClientToken: '/k8s/ids/DD_RUM_CLIENT_TOKEN',
+      Datadog__ClientLogs__Token: '/k8s/identity-server/DD_LOGS_CLIENT_TOKEN',
     })
     .ingress({
       primary: {
@@ -170,7 +180,7 @@ export const serviceSetup = (services: {
           'ad.datadoghq.com/identity-server.check_names': '["openmetrics"]',
           'ad.datadoghq.com/identity-server.init_configs': '[{}]',
           'ad.datadoghq.com/identity-server.instances':
-            '[{"prometheus_url": "http://%%host%%:5003/metrics","namespace": "identity-server","metrics":["*"]}]',
+            '[{"prometheus_url": "http://%%host%%:5003/metrics","namespace": "identity-server","metrics":["identityserver_*"]}]',
         },
       },
       staging: {
@@ -180,7 +190,7 @@ export const serviceSetup = (services: {
           'ad.datadoghq.com/identity-server.check_names': '["openmetrics"]',
           'ad.datadoghq.com/identity-server.init_configs': '[{}]',
           'ad.datadoghq.com/identity-server.instances':
-            '[{"prometheus_url": "http://%%host%%:5003/metrics","namespace": "identity-server","metrics":["*"]}]',
+            '[{"prometheus_url": "http://%%host%%:5003/metrics","namespace": "identity-server","metrics":["identityserver_*"]}]',
         },
       },
       prod: {
@@ -190,7 +200,7 @@ export const serviceSetup = (services: {
           'ad.datadoghq.com/identity-server.check_names': '["openmetrics"]',
           'ad.datadoghq.com/identity-server.init_configs': '[{}]',
           'ad.datadoghq.com/identity-server.instances':
-            '[{"prometheus_url": "http://%%host%%:5003/metrics","namespace": "identity-server","metrics":["*"]}]',
+            '[{"prometheus_url": "http://%%host%%:5003/metrics","namespace": "identity-server","metrics":["identityserver_*"]}]',
         },
       },
     })

@@ -15,6 +15,7 @@ import {
 const serviceName = 'user-notification'
 const serviceWorkerName = `${serviceName}-worker`
 const serviceCleanupWorkerName = `${serviceName}-cleanup-worker`
+const serviceBirthdayWorkerName = `${serviceName}-birthday-worker`
 const imageName = `services-${serviceName}`
 const MAIN_QUEUE_NAME = serviceName
 const DEAD_LETTER_QUEUE_NAME = `${serviceName}-failure`
@@ -33,9 +34,9 @@ const getEnv = (services: {
     (ctx) => `http://${ctx.svc(services.userProfileApi)}`,
   ),
   AUTH_DELEGATION_API_URL: {
-    dev: 'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local',
+    dev: 'https://auth-delegation-api.internal.identity-server.dev01.devland.is',
     staging:
-      'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local',
+      'http://services-auth-delegation-api.identity-server-delegation.svc.cluster.local',
     prod: 'https://auth-delegation-api.internal.innskra.island.is',
   },
   AUTH_DELEGATION_MACHINE_CLIENT_SCOPE: json([
@@ -65,7 +66,7 @@ export const userNotificationServiceSetup = (services: {
     .codeOwner(CodeOwners.Juni)
     .db()
     .command('node')
-    .args('--no-experimental-fetch', 'main.js')
+    .args('--no-experimental-fetch', 'main.cjs')
     .redis()
     .env(getEnv(services))
     .secrets({
@@ -103,6 +104,15 @@ export const userNotificationServiceSetup = (services: {
           },
         },
       },
+      internal: {
+        host: {
+          dev: serviceName,
+          staging: serviceName,
+          prod: serviceName,
+        },
+        paths: ['/'],
+        public: false,
+      },
     })
     .resources({
       limits: {
@@ -130,7 +140,7 @@ export const userNotificationWorkerSetup = (services: {
     .serviceAccount(serviceWorkerName)
     .codeOwner(CodeOwners.Juni)
     .command('node')
-    .args('--no-experimental-fetch', 'main.js', '--job=worker')
+    .args('--no-experimental-fetch', 'main.cjs', '--job=worker')
     .db()
     .migrations()
     .redis()
@@ -179,11 +189,54 @@ export const userNotificationCleanUpWorkerSetup = (): ServiceBuilder<
     .serviceAccount(serviceCleanupWorkerName)
     .codeOwner(CodeOwners.Juni)
     .command('node')
-    .args('--no-experimental-fetch', 'main.js', '--job=cleanup')
+    .args('--no-experimental-fetch', 'main.cjs', '--job=cleanup')
     .db({ name: 'user-notification' })
     .migrations()
     .extraAttributes({
       dev: { schedule: '@hourly' },
+      staging: { schedule: '@midnight' },
+      prod: { schedule: '@midnight' },
+    })
+
+export const userNotificationBirthdayWorkerSetup = (services: {
+  userProfileApi: ServiceBuilder<'service-portal-api'>
+}): ServiceBuilder<typeof serviceBirthdayWorkerName> =>
+  service(serviceBirthdayWorkerName)
+    .image(imageName)
+    .namespace(serviceName)
+    .serviceAccount(serviceBirthdayWorkerName)
+    .codeOwner(CodeOwners.Juni)
+    .db({ name: 'user-notification' })
+    .command('node')
+    .args(
+      '--no-experimental-fetch',
+      'main.cjs',
+      '--job=worker',
+      '--isBirthdayWorker',
+    )
+    .redis()
+    .env({ ...getEnv(services) })
+    .secrets({
+      FIREBASE_CREDENTIALS: `/k8s/${serviceName}/firestore-credentials`,
+      CONTENTFUL_ACCESS_TOKEN: `/k8s/${serviceName}/CONTENTFUL_ACCESS_TOKEN`,
+      IDENTITY_SERVER_CLIENT_ID: `/k8s/${serviceName}/USER_NOTIFICATION_CLIENT_ID`,
+      IDENTITY_SERVER_CLIENT_SECRET: `/k8s/${serviceName}/USER_NOTIFICATION_CLIENT_SECRET`,
+      NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
+        '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
+    })
+    .resources({
+      limits: {
+        cpu: '400m',
+        memory: '384Mi',
+      },
+      requests: {
+        cpu: '150m',
+        memory: '256Mi',
+      },
+    })
+    .xroad(Base, Client, NationalRegistryB2C, RskCompanyInfo)
+    .extraAttributes({
+      dev: { schedule: '0 12 * * *' }, // 12 at noon every day
       staging: { schedule: '@midnight' },
       prod: { schedule: '@midnight' },
     })

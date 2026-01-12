@@ -5,6 +5,7 @@ export const serviceSetup =
     return service('services-auth-personal-representative-public')
       .namespace('personal-representative')
       .image('services-auth-personal-representative-public')
+      .serviceAccount('services-auth-personal-representative-public')
       .db({
         name: 'servicesauth',
       })

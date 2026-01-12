@@ -6,21 +6,26 @@ import {
   useRef,
   useState,
 } from 'react'
-import InputMask from 'react-input-mask'
+import { InputMask } from '@react-input/mask'
 
 import { Button, Input } from '@island.is/island-ui/core'
+import { POLICE_CASE_NUMBER } from '@island.is/judicial-system/consts'
 
 import BlueBox from '../BlueBox/BlueBox'
 import * as styles from './MultipleValueList.css'
+
+type MaskType = 'police-case-numbers'
 
 interface MultipleValueListProps {
   onAddValue: (nextValue: string) => void
   inputLabel: string
   inputPlaceholder: string
-  inputMask?: string
+  inputMask?: MaskType
   buttonText: string
   name: string
-  isDisabled: (value?: string) => boolean
+  isButtonDisabled: (value?: string) => boolean
+  isDisabled?: boolean
+  isLoading?: boolean
   hasError?: boolean
   errorMessage?: string
   onBlur?: (event: FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => void
@@ -34,7 +39,9 @@ const MultipleValueList: FC<PropsWithChildren<MultipleValueListProps>> = ({
   inputMask,
   name,
   buttonText,
+  isButtonDisabled,
   isDisabled,
+  isLoading,
   hasError,
   errorMessage,
   onBlur,
@@ -42,6 +49,13 @@ const MultipleValueList: FC<PropsWithChildren<MultipleValueListProps>> = ({
   // State needed since InputMask dose not clear input if invalid value is entered
   const [value, setValue] = useState('')
   const valueRef = useRef<HTMLInputElement>(null)
+
+  const masks = {
+    'police-case-numbers': {
+      mask: POLICE_CASE_NUMBER,
+      replacement: { _: /\d/ },
+    },
+  }
 
   const clearInput = () => {
     if (valueRef.current) {
@@ -54,34 +68,37 @@ const MultipleValueList: FC<PropsWithChildren<MultipleValueListProps>> = ({
   const handleEnter = (
     event: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    if (event.key === 'Enter' && !isDisabled(value)) {
+    if (event.key === 'Enter' && !isButtonDisabled(value)) {
       onAddValue(value)
       clearInput()
     }
   }
 
   return (
-    <BlueBox dataTestId="multipleValueListContainer">
+    <BlueBox
+      dataTestId="multipleValueListContainer"
+      className={styles.container}
+    >
       <div className={styles.addCourtDocumentContainer}>
         {inputMask ? (
           <InputMask
-            mask={inputMask}
-            maskPlaceholder={null}
+            mask={masks[inputMask].mask}
+            replacement={masks[inputMask].replacement}
+            component={Input}
             onChange={(event) => setValue(event.target.value)}
             onBlur={onBlur}
-          >
-            <Input
-              name={name}
-              label={inputLabel}
-              placeholder={inputPlaceholder}
-              size="sm"
-              autoComplete="off"
-              ref={valueRef}
-              onKeyDown={handleEnter}
-              hasError={hasError}
-              errorMessage={errorMessage}
-            />
-          </InputMask>
+            name={name}
+            label={inputLabel}
+            placeholder={inputPlaceholder}
+            value={value}
+            size="sm"
+            autoComplete="off"
+            ref={valueRef}
+            onKeyDown={handleEnter}
+            hasError={hasError}
+            errorMessage={errorMessage}
+            disabled={isDisabled}
+          />
         ) : (
           <Input
             name={name}
@@ -95,12 +112,14 @@ const MultipleValueList: FC<PropsWithChildren<MultipleValueListProps>> = ({
             onBlur={onBlur}
             hasError={hasError}
             errorMessage={errorMessage}
+            disabled={isDisabled}
           />
         )}
         <Button
           icon="add"
           size="small"
-          disabled={isDisabled(value)}
+          disabled={isButtonDisabled(value) || value === ''}
+          loading={isLoading}
           onClick={() => {
             onAddValue(value)
             clearInput()

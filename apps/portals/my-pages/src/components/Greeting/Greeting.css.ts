@@ -1,22 +1,17 @@
 import { style } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
 
-export const greetingContainer = style({
-  marginBottom: -theme.spacing[3],
-  '@media': {
-    [`screen and (max-width: ${theme.breakpoints.lg}px)`]: {
-      marginBottom: 0,
-    },
-  },
+export const searchBox = style({
+  outline: 'none',
+  padding: `8px 0 2px ${theme.spacing[2]}px`,
+  fontSize: '24px',
+  fontWeight: theme.typography.light,
+  backgroundColor: theme.color.blue100,
+  border: 0,
+  color: theme.color.black,
 })
 
-export const greetingTextBox = style({
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'center',
-  height: '100%',
-})
-
-export const greetingSvg = style({
-  marginTop: -theme.spacing[2],
+export const image = style({
+  width: '100%',
+  maxWidth: '546px',
 })

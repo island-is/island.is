@@ -1,4 +1,4 @@
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { BadRequestException } from '@nestjs/common'
 
@@ -9,7 +9,7 @@ import { createTestingCaseModule } from '../createTestingCaseModule'
 import { createCaseFilesRecord } from '../../../../formatters'
 import { AwsS3Service } from '../../../aws-s3'
 import { CourtDocumentFolder, CourtService } from '../../../court'
-import { Case } from '../../models/case.model'
+import { Case } from '../../../repository'
 import { DeliverResponse } from '../../models/deliver.response'
 
 jest.mock('../../../../formatters/caseFilesRecordPdf')

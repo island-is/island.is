@@ -8,14 +8,11 @@ import {
   Button,
   Flex,
   FormControl,
-  Note,
-  Paragraph,
   Select,
   Stack,
 } from '@contentful/f36-components'
 import { useCMA, useSDK } from '@contentful/react-apps-toolkit'
 import { richTextFromMarkdown } from '@contentful/rich-text-from-markdown'
-import slugify from '@sindresorhus/slugify'
 
 import { GridContainer } from '@island.is/island-ui/core'
 
@@ -41,7 +38,11 @@ import {
   TITLE_SEARCH_POSTFIX,
 } from '../../constants'
 import { useContentTypeData } from '../../hooks/useContentTypeData'
-import { getContentfulEntries, parseContentfulErrorMessage } from '../../utils'
+import {
+  getContentfulEntries,
+  parseContentfulErrorMessage,
+  slugify,
+} from '../../utils'
 
 const convertHtmlToContentfulRichText = (html: string) => {
   const markdown = NodeHtmlMarkdown.translate(html || '')
@@ -115,9 +116,7 @@ const ContentImportScreen = () => {
 
         fields[field.contentfulField.data.id] = {
           ...fields[field.contentfulField.data.id],
-          [field.contentfulField.locale]: slugify(row[i], {
-            customReplacements: [['ö', 'o']],
-          }),
+          [field.contentfulField.locale]: slugify(row[i]),
         }
       }
 
@@ -297,16 +296,6 @@ const ContentImportScreen = () => {
         (field.contentfulField.data.required && field.selectedId) ||
         !field.contentfulField.data.required,
     )
-
-  if (!sdk.user.spaceMembership.admin) {
-    return (
-      <Flex marginTop="spacingXl" justifyContent="center">
-        <Note title="Access denied" style={{ maxWidth: '800px' }}>
-          <Paragraph>Only admins are allowed to import content</Paragraph>
-        </Note>
-      </Flex>
-    )
-  }
 
   return (
     <Box padding="spacingXl" id="content-import-screen-container">

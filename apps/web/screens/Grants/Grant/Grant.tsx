@@ -23,6 +23,8 @@ import {
   QueryGetSingleGrantArgs,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { webRichText } from '@island.is/web/utils/richText'
@@ -39,18 +41,20 @@ import DetailPanel from './GrantSidebar/DetailPanel'
 import ExtraPanel from './GrantSidebar/ExtraPanel'
 import { GrantSidebar } from './GrantSidebar/GrantSidebar'
 
-const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
+const GrantSinglePage: CustomScreen<GrantSingleProps> = ({
+  grant,
+  locale,
+  customPageData,
+}) => {
+  useContentfulId(customPageData?.id, grant?.id)
+  useLocalLinkTypeResolver('grantsplazagrant')
+
   const { formatMessage } = useIntl()
   const { linkResolver } = useLinkResolver()
   const router = useRouter()
 
-  const baseUrl = linkResolver('styrkjatorg', [], locale).href
-  const searchUrl = linkResolver('styrkjatorgsearch', [], locale).href
-  const currentUrl = linkResolver(
-    'styrkjatorggrant',
-    [grant?.applicationId ?? ''],
-    locale,
-  ).href
+  const baseUrl = linkResolver('grantsplaza', [], locale).href
+  const searchUrl = linkResolver('grantsplazasearch', [], locale).href
 
   const breadcrumbItems = [
     {
@@ -65,11 +69,6 @@ const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
       title: formatMessage(m.search.results),
       href: searchUrl,
     },
-    {
-      title: grant?.name ?? formatMessage(m.home.grant),
-      href: currentUrl,
-      isTag: true,
-    },
   ]
 
   const status = useMemo(
@@ -80,6 +79,10 @@ const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
   if (!grant) {
     return null
   }
+
+  const applicationStatusLabel = status?.applicationStatus
+    ? generateStatusTag(status.applicationStatus, formatMessage)?.label
+    : undefined
 
   return (
     <GrantWrapper
@@ -117,11 +120,13 @@ const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
             <ActionCard
               heading={grant.name}
               text={
-                status
-                  ? generateStatusTag(status.applicationStatus, formatMessage)
-                      ?.label +
-                    (status.deadlineStatus ? ' / ' + status.deadlineStatus : '')
-                  : ''
+                applicationStatusLabel
+                  ? `${applicationStatusLabel}${
+                      status?.deadlineStatus
+                        ? ' / ' + status.deadlineStatus
+                        : ''
+                    }`
+                  : undefined
               }
               backgroundColor="blue"
               cta={{
@@ -172,6 +177,24 @@ const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
                 <Box className="rs_read">
                   {webRichText(
                     grant.howToApply as SliceType[],
+                    undefined,
+                    locale,
+                  )}
+                </Box>
+              </Box>
+              <Divider />
+            </>
+          ) : undefined}
+
+          {grant.answeringQuestions?.length ? (
+            <>
+              <Box>
+                <Text variant="h3">
+                  {formatMessage(m.single.answeringQuestions)}
+                </Text>
+                <Box className="rs_read">
+                  {webRichText(
+                    grant.answeringQuestions as SliceType[],
                     undefined,
                     locale,
                   )}

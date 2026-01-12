@@ -1,0 +1,72 @@
+name: 'Setup yarn'
+description: 'Yarn setup and install dependencies'
+inputs:
+  working-directory:
+    description: 'Directory to run the action in'
+    required: false
+    default: '.'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Corepack
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        corepack enable
+
+    - name: Check node version
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      run: |
+        set -euo pipefail
+        node -v
+        yarn --version
+        ls -l "$(which node)"
+
+    - name: Get Cache Directory Paths
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      id: cache-paths
+      run: |
+        echo "yarn-cache=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+        # Set output only if cypress exists (empty otherwise)
+        CYPRESS_CACHE_FOLDER=
+        if jq -e '(.dependencies // {}) * (.devDependencies // {}) | keys | .[] | select(. == "cypress")' package.json; then
+          CYPRESS_CACHE_FOLDER="${{ runner.temp }}/.cypress-cache"
+        fi
+        echo "CYPRESS_CACHE_FOLDER=$CYPRESS_CACHE_FOLDER" | tee -a "$GITHUB_ENV"
+        echo "cypress-cache=$CYPRESS_CACHE_FOLDER" | tee -a "$GITHUB_OUTPUT"
+
+    # Set RunsOn S3 cache bucket only for CI runs
+    #
+    # This step conditionally sets RUNS_ON_S3_BUCKET_CACHE from RUNS_ON_BUCKET_NAME
+    # to enable S3 bucket caching in CI while avoiding issues in local Act runs.
+    # When running locally, RunsOn would attempt to access a bucket with an empty
+    # name, causing the workflow to skip any caching. When this step is skipped
+    # (env not set), RunsOn falls back to actions/cache, which Act implements a local
+    # version of.
+    - name: Set env for RunsOn
+      shell: bash
+      if: ${{ !github.event.localrun && env.RUNS_ON_BUCKET_NAME }}
+      run: echo "RUNS_ON_S3_BUCKET_CACHE=${{ env.RUNS_ON_BUCKET_NAME }}" >> $GITHUB_ENV
+
+    - name: Cache Dependencies
+      uses: runs-on/cache@v4
+      id: restore-cache
+      with:
+        path: |
+          ${{ steps.cache-paths.outputs.yarn-cache }}
+          ${{ steps.cache-paths.outputs.cypress-cache }}
+          ${{ inputs.working-directory }}/node_modules
+        key: ${{ runner.os }}-deps-${{ steps.cache-paths.outputs.cypress-cache && 'cypress' || '' }}-${{ hashFiles(format('{0}/yarn.lock', inputs.working-directory)) }}-1-node_modules
+      env:
+        AWS_REGION: ${{ env.AWS_REGION || 'eu-west-1' }}
+
+    - name: Yarn install
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      if: ${{ steps.restore-cache.outputs.cache-hit != 'true' }}
+      run: |
+        yarn install --immutable
+        if [[ -n "$CYPRESS_CACHE_FOLDER" ]]; then yarn cypress install; fi

@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react'
-import { FormattedMessage } from 'react-intl'
+import { FormattedMessage, useIntl } from 'react-intl'
 import {
   ActivityIndicator,
   Animated,
@@ -11,7 +11,6 @@ import {
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import { useTheme } from 'styled-components/native'
 
-import { EmptyList, GeneralCardSkeleton, TopLine } from '../../ui'
 import illustrationSrc from '../../assets/illustrations/le-moving-s4.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import {
@@ -20,8 +19,12 @@ import {
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
+import { EmptyList, GeneralCardSkeleton, TopLine } from '../../ui'
 import { testIDs } from '../../utils/test-ids'
 import { VehicleItem } from './components/vehicle-item'
+
+import { MoreInfoContiner } from '../../components/more-info-container/more-info-container'
+import { useMyPagesLinks } from '../../lib/my-pages-links'
 
 const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks((theme, intl) => ({
@@ -61,7 +64,7 @@ const Empty = () => (
 
 const input = {
   page: 1,
-  pageSize: 10,
+  pageSize: 15,
 }
 
 export const VehiclesScreen: NavigationFunctionComponent = ({
@@ -69,6 +72,7 @@ export const VehiclesScreen: NavigationFunctionComponent = ({
 }) => {
   useNavigationOptions(componentId)
   const theme = useTheme()
+  const intl = useIntl()
 
   const flatListRef = useRef<FlatList>(null)
   const [refetching, setRefetching] = useState(false)
@@ -87,6 +91,31 @@ export const VehiclesScreen: NavigationFunctionComponent = ({
     queryResult: res,
     refetching,
   })
+
+  const myPagesLinks = useMyPagesLinks()
+
+  const externalLinks = [
+    {
+      link: myPagesLinks.ownerLookup,
+      title: intl.formatMessage({ id: 'vehicle.links.ownerLookup' }),
+    },
+    {
+      link: myPagesLinks.vehicleHistory,
+      title: intl.formatMessage({ id: 'vehicle.links.vehicleHistory' }),
+    },
+    {
+      link: myPagesLinks.reportOwnerChange,
+      title: intl.formatMessage({ id: 'vehicle.links.reportOwnerChange' }),
+    },
+    {
+      link: myPagesLinks.returnCertificate,
+      title: intl.formatMessage({ id: 'vehicle.links.returnCertificate' }),
+    },
+    {
+      link: myPagesLinks.nameConfidentiality,
+      title: intl.formatMessage({ id: 'vehicle.links.nameConfidentiality' }),
+    },
+  ]
 
   // What to do when refreshing
   const onRefresh = useCallback(() => {
@@ -216,14 +245,29 @@ export const VehiclesScreen: NavigationFunctionComponent = ({
             })
         }}
         ListFooterComponent={
-          loadingMore ? (
-            <View>
-              <ActivityIndicator size="small" animating />
+          <>
+            {loadingMore ? (
+              <View>
+                <ActivityIndicator size="small" animating />
+              </View>
+            ) : null}
+            <View
+              style={{
+                paddingHorizontal: 16,
+                paddingVertical: 12,
+              }}
+            >
+              <MoreInfoContiner
+                externalLinks={externalLinks}
+                componentId={componentId}
+              />
             </View>
-          ) : null
+          </>
         }
       />
+
       <TopLine scrollY={scrollY} />
+
       <BottomTabsIndicator index={2} total={3} />
     </>
   )

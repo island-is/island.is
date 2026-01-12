@@ -1,7 +1,7 @@
-import { createIntl } from 'react-intl'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import {
+  Case,
   CaseDecision,
   CaseState,
   CaseType,
@@ -9,7 +9,7 @@ import {
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import { createFormatMessage } from '@island.is/judicial-system-web/src/utils/testHelpers.logic'
 
 import {
   getExtensionInfoText,
@@ -22,7 +22,7 @@ describe('shouldHideNextButton', () => {
   const prosecutor = {
     id: uuid(),
     role: UserRole.PROSECUTOR,
-    institution: { type: InstitutionType.PROSECUTORS_OFFICE },
+    institution: { type: InstitutionType.POLICE_PROSECUTORS_OFFICE },
   } as User
 
   it.each`
@@ -99,14 +99,11 @@ describe('shouldHideNextButton', () => {
 })
 
 describe('getExtensionInfoText', () => {
-  const formatMessage = createIntl({
-    locale: 'is',
-    onError: jest.fn,
-  }).formatMessage
+  const formatMessage = createFormatMessage()
 
   const prosecutor = {
     role: UserRole.PROSECUTOR,
-    institution: { type: InstitutionType.PROSECUTORS_OFFICE },
+    institution: { type: InstitutionType.POLICE_PROSECUTORS_OFFICE },
   } as User
 
   const fn = (theCase: Case, user?: User) =>

@@ -1,4 +1,4 @@
-import { Transaction } from 'sequelize/types'
+import { Transaction } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 
 import { Inject, Injectable } from '@nestjs/common'
@@ -11,10 +11,12 @@ import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import {
   EventNotificationType,
   EventType,
+  User,
+  UserDescriptor,
 } from '@island.is/judicial-system/types'
 
+import { EventLog } from '../repository'
 import { CreateEventLogDto } from './dto/createEventLog.dto'
-import { EventLog } from './models/eventLog.model'
 
 const allowMultiple: EventType[] = [
   EventType.LOGIN,
@@ -22,13 +24,23 @@ const allowMultiple: EventType[] = [
   EventType.LOGIN_BYPASS,
   EventType.LOGIN_BYPASS_UNAUTHORIZED,
   EventType.INDICTMENT_CONFIRMED,
+  EventType.COURT_DATE_SCHEDULED,
+  EventType.INDICTMENT_CRIMINAL_RECORD_UPDATED_BY_COURT,
+  EventType.REQUEST_COMPLETED,
+  EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+  EventType.INDICTMENT_COMPLETED,
 ]
+
+const allowOnePerUserRole: EventType[] = [EventType.APPEAL_RESULT_ACCESSED]
 
 const eventToNotificationMap: Partial<
   Record<EventType, EventNotificationType>
 > = {
   INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR:
     EventNotificationType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+  INDICTMENT_CRIMINAL_RECORD_UPDATED_BY_COURT:
+    EventNotificationType.INDICTMENT_CRIMINAL_RECORD_UPDATED_BY_COURT,
+  COURT_DATE_SCHEDULED: EventNotificationType.COURT_DATE_SCHEDULED,
 }
 
 @Injectable()
@@ -41,38 +53,74 @@ export class EventLogService {
     private readonly logger: Logger,
   ) {}
 
+  async createWithUser(
+    eventType: EventType,
+    caseId: string,
+    user: User,
+    transaction?: Transaction,
+  ): Promise<void> {
+    await this.create(
+      {
+        eventType,
+        caseId,
+        nationalId: user.nationalId,
+        userRole: user.role,
+        userName: user.name,
+        userTitle: user.title,
+        institutionName: user.institution?.name,
+      },
+      transaction,
+    )
+  }
+
   async create(
     event: CreateEventLogDto,
     transaction?: Transaction,
-  ): Promise<void> {
-    const { eventType, caseId, userRole, nationalId } = event
+  ): Promise<boolean> {
+    const { eventType, caseId, userName, userRole, institutionName } = event
 
     if (!allowMultiple.includes(event.eventType)) {
       const where = Object.fromEntries(
-        Object.entries({ caseId, eventType, nationalId, userRole }).filter(
-          ([_, value]) => value !== undefined,
-        ),
+        // The user name and title do not matter when checking for duplicates
+        Object.entries({
+          eventType,
+          caseId,
+          userRole: allowOnePerUserRole.includes(eventType)
+            ? userRole
+            : undefined,
+        }).filter(([_, value]) => value !== undefined),
       )
 
-      const eventExists = await this.eventLogModel.findOne({ where })
+      const eventExists = await this.eventLogModel.findOne({
+        where,
+        transaction,
+      })
 
       if (eventExists) {
-        return
+        return true
       }
     }
 
     try {
-      await this.eventLogModel.create(
-        { eventType, caseId, nationalId, userRole },
-        { transaction },
-      )
+      await this.eventLogModel.create({ ...event }, { transaction })
+
+      return true
     } catch (error) {
       // Tolerate failure but log error
       this.logger.error('Failed to create event log', error)
-    }
 
-    if (caseId) {
-      this.addEventNotificationToQueue(eventType, caseId)
+      return false
+    } finally {
+      if (caseId) {
+        this.addEventNotificationToQueue({
+          eventType,
+          caseId,
+          userDescriptor: {
+            name: userName,
+            institution: { name: institutionName },
+          },
+        })
+      }
     }
   }
 
@@ -81,9 +129,11 @@ export class EventLogService {
   ): Promise<Map<string, { latest: Date; count: number }>> {
     return this.eventLogModel
       .count({
-        group: ['nationalId'],
+        group: ['nationalId', 'userRole', 'institutionName'],
         attributes: [
           'nationalId',
+          'userRole',
+          'institutionName',
           [Sequelize.fn('max', Sequelize.col('created')), 'latest'],
           [Sequelize.fn('count', Sequelize.col('national_id')), 'count'],
         ],
@@ -96,15 +146,48 @@ export class EventLogService {
         (logs) =>
           new Map(
             logs.map((log) => [
-              log.nationalId as string,
+              `${log.nationalId}-${log.userRole}-${log.institutionName}`,
               { latest: log.latest as Date, count: log.count },
             ]),
           ),
       )
   }
 
+  async copyEventLogsToCase(
+    fromCaseId: string,
+    toCaseId: string,
+    transaction?: Transaction,
+  ): Promise<void> {
+    const eventLogs = await this.eventLogModel.findAll({
+      where: {
+        caseId: fromCaseId,
+        eventType: [
+          EventType.INDICTMENT_CONFIRMED,
+          EventType.CASE_SENT_TO_COURT,
+          EventType.CASE_RECEIVED_BY_COURT,
+        ],
+      },
+      transaction,
+    })
+
+    for (const eventLog of eventLogs) {
+      await this.eventLogModel.create(
+        { ...eventLog.toJSON(), id: undefined, caseId: toCaseId },
+        { transaction },
+      )
+    }
+  }
+
   // Sends events to queue for notification dispatch
-  private addEventNotificationToQueue(eventType: EventType, caseId: string) {
+  private addEventNotificationToQueue({
+    eventType,
+    caseId,
+    userDescriptor,
+  }: {
+    eventType: EventType
+    caseId: string
+    userDescriptor: UserDescriptor
+  }) {
     const notificationType = eventToNotificationMap[eventType]
 
     if (notificationType) {
@@ -113,7 +196,10 @@ export class EventLogService {
           {
             type: MessageType.EVENT_NOTIFICATION_DISPATCH,
             caseId: caseId,
-            body: { type: notificationType },
+            // There is a user property defined in the Message type definition, but
+            // in the event log service we won't always have a registered user with required props (e.g. user id)
+            // Thus we refrain from passing down the user instance in the event service
+            body: { type: notificationType, userDescriptor },
           },
         ])
       } catch (error) {

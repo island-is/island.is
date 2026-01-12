@@ -1,8 +1,8 @@
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { EmailService } from '@island.is/email-service'
 
-import { ROUTE_HANDLER_ROUTE } from '@island.is/judicial-system/consts'
+import { CASE_TABLE_GROUPS_ROUTE } from '@island.is/judicial-system/consts'
 import {
   CaseType,
   DefendantNotificationType,
@@ -10,11 +10,9 @@ import {
 
 import { createTestingNotificationModule } from '../../createTestingNotificationModule'
 
-import { Case } from '../../../../case'
-import { Defendant } from '../../../../defendant'
+import { Case, Defendant, Notification } from '../../../../repository'
 import { DefendantNotificationDto } from '../../../dto/defendantNotification.dto'
 import { DeliverResponse } from '../../../models/deliver.response'
-import { Notification } from '../../../models/notification.model'
 
 jest.mock('../../../../../factories')
 
@@ -120,7 +118,7 @@ describe('InternalNotificationController - Defendant - Send indictment sent to p
 
             attachments: undefined,
             subject: `Mál S-123-456/2024 til fullnustu`,
-            html: expect.stringContaining(ROUTE_HANDLER_ROUTE),
+            html: expect.stringContaining(CASE_TABLE_GROUPS_ROUTE),
             text: expect.stringContaining(
               'Ríkissaksóknari hefur sent mál S-123-456/2024 til fullnustu.',
             ),

@@ -7,11 +7,15 @@ import {
   INDICTMENTS_COMPLETED_ROUTE,
   INDICTMENTS_COURT_OVERVIEW_ROUTE,
   INDICTMENTS_OVERVIEW_ROUTE,
+  PRISON_CLOSED_INDICTMENT_OVERVIEW_ROUTE,
+  PUBLIC_PROSECUTOR_STAFF_INDICTMENT_OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
   isCompletedCase,
   isDistrictCourtUser,
+  isPrisonSystemUser,
   isProsecutionUser,
+  isPublicProsecutionOfficeUser,
 } from '@island.is/judicial-system/types'
 import {
   FormContext,
@@ -26,38 +30,61 @@ import {
 
 import * as styles from './RouteHandler.css'
 
-type UserType = 'prosecution' | 'districtCourt'
+type UserType =
+  | 'prosecution'
+  | 'publicProsecutor'
+  | 'districtCourt'
+  | 'prisonSystem'
 type CaseStatus = 'completed' | 'ongoing'
 
 const routes: Partial<
-  Record<CaseType, Record<UserType, Record<CaseStatus, string>>>
+  Record<CaseType, Record<UserType, Record<CaseStatus, string | null>>>
 > = {
   [CaseType.INDICTMENT]: {
     prosecution: {
       completed: CLOSED_INDICTMENT_OVERVIEW_ROUTE,
       ongoing: INDICTMENTS_OVERVIEW_ROUTE,
     },
+    publicProsecutor: {
+      completed: PUBLIC_PROSECUTOR_STAFF_INDICTMENT_OVERVIEW_ROUTE,
+      ongoing: null,
+    },
     districtCourt: {
       completed: INDICTMENTS_COMPLETED_ROUTE,
       ongoing: INDICTMENTS_COURT_OVERVIEW_ROUTE,
     },
+    prisonSystem: {
+      completed: PRISON_CLOSED_INDICTMENT_OVERVIEW_ROUTE,
+      ongoing: null,
+    },
   },
 }
 
-const getCaseStatus = (state?: CaseState | null): CaseStatus =>
-  isCompletedCase(state) ? 'completed' : 'ongoing'
+const getCaseStatus = (
+  state: CaseState | undefined | null,
+  userType?: UserType | null,
+): CaseStatus =>
+  isCompletedCase(state)
+    ? userType === 'districtCourt' && state === CaseState.CORRECTING
+      ? 'ongoing'
+      : 'completed'
+    : 'ongoing'
 
-const getRoute = (caseToOpen?: Case, user?: User): string => {
+const getRoute = (caseToOpen: Case, user: User): string => {
   if (!caseToOpen || !user) {
     return '/'
   }
 
   const userType: UserType | null = isProsecutionUser(user)
     ? 'prosecution'
+    : isPublicProsecutionOfficeUser(user)
+    ? 'publicProsecutor'
     : isDistrictCourtUser(user)
     ? 'districtCourt'
+    : isPrisonSystemUser(user)
+    ? 'prisonSystem'
     : null
-  const caseStatus = getCaseStatus(caseToOpen.state)
+  const caseStatus = getCaseStatus(caseToOpen.state, userType)
 
   const route =
     caseToOpen.type &&

@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common'
 
-import { DefenderModule } from '../defender'
+import { BackendModule } from '../backend/backend.module'
 import { AuthController } from './auth.controller'
 import { AuthService } from './auth.service'
 
 @Module({
-  imports: [DefenderModule],
+  imports: [BackendModule],
   controllers: [AuthController],
   providers: [AuthService],
 })

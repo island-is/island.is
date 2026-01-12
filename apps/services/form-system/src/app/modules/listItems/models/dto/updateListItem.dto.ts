@@ -1,33 +1,33 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { ApiPropertyOptional } from '@nestjs/swagger'
 import { LanguageType } from '../../../../dataTypes/languageType.model'
 import {
   IsBoolean,
-  IsNotEmpty,
+  IsOptional,
   IsString,
   ValidateNested,
 } from 'class-validator'
 import { Type } from 'class-transformer'
 
 export class UpdateListItemDto {
-  @IsNotEmpty()
+  @IsOptional()
   @ValidateNested()
   @Type(() => LanguageType)
-  @ApiProperty({ type: LanguageType })
-  label!: LanguageType
+  @ApiPropertyOptional({ type: LanguageType })
+  label?: LanguageType
 
-  @IsNotEmpty()
+  @IsOptional()
   @ValidateNested()
   @Type(() => LanguageType)
   @ApiPropertyOptional({ type: LanguageType })
   description?: LanguageType
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
-  @ApiProperty()
-  value!: string
+  @ApiPropertyOptional()
+  value?: string
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsBoolean()
-  @ApiProperty()
-  isSelected!: boolean
+  @ApiPropertyOptional()
+  isSelected?: boolean
 }

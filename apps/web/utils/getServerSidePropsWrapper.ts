@@ -6,7 +6,7 @@ import { logger } from '@island.is/logging'
 import initApollo from '../graphql/client'
 import { getLocaleFromPath } from '../i18n'
 import type { ScreenContext } from '../types'
-import { CustomNextError } from '../units/errors'
+import { CustomNextError, CustomNextRedirect } from '../units/errors'
 import { fetch404RedirectUrl } from './fetch404RedirectUrl'
 import { safelyExtractPathnameFromUrl } from './safelyExtractPathnameFromUrl'
 
@@ -48,9 +48,20 @@ export const getServerSidePropsWrapper: (
       props,
     }
   } catch (error) {
+    if (error instanceof CustomNextRedirect) {
+      return {
+        redirect: {
+          destination: error.destination,
+          permanent: error.permanent,
+        },
+      }
+    }
     if (error instanceof CustomNextError) {
       if (error.statusCode === 404) {
-        logger.info(error.title || '404 error occurred on web', error)
+        logger.info(
+          error.title || '404 status code, page not found on web',
+          error,
+        )
 
         const path = safelyExtractPathnameFromUrl(ctx.req.url)
         if (!path) {

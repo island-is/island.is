@@ -1,9 +1,10 @@
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { ForbiddenException } from '@nestjs/common'
 
 import {
   CaseAppealState,
+  CaseIndictmentRulingDecision,
   CaseState,
   CaseTransition,
   indictmentCases,
@@ -14,7 +15,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { Case } from '../models/case.model'
+import { Case } from '../../repository'
 import { transitionCase } from './case.state'
 
 describe('Transition Case', () => {
@@ -27,11 +28,7 @@ describe('Transition Case', () => {
           transitionCase(
             CaseTransition.OPEN,
             { id: uuid(), state: fromState, type } as Case,
-            {
-              id: uuid(),
-              role: UserRole.PROSECUTOR,
-              institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-            } as User,
+            { id: uuid() } as User,
           )
 
         // Act and assert
@@ -59,11 +56,7 @@ describe('Transition Case', () => {
                 appealState: fromAppealState,
                 type,
               } as Case,
-              {
-                id: uuid(),
-                role: UserRole.PROSECUTOR,
-                institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-              } as User,
+              { id: uuid() } as User,
             )
 
             // Assert
@@ -84,11 +77,7 @@ describe('Transition Case', () => {
                   appealState: fromAppealState,
                   type,
                 } as Case,
-                {
-                  id: uuid(),
-                  role: UserRole.PROSECUTOR,
-                  institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-                } as User,
+                { id: uuid() } as User,
               )
 
             // Act and assert
@@ -115,11 +104,7 @@ describe('Transition Case', () => {
                   appealState: fromAppealState,
                   type,
                 } as Case,
-                {
-                  id: uuid(),
-                  role: UserRole.PROSECUTOR,
-                  institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-                } as User,
+                { id: uuid() } as User,
               )
 
             // Act and assert
@@ -140,11 +125,7 @@ describe('Transition Case', () => {
         const res = transitionCase(
           CaseTransition.ASK_FOR_CONFIRMATION,
           { id: uuid(), state: fromState, type } as Case,
-          {
-            id: uuid(),
-            role: UserRole.PROSECUTOR,
-            institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-          } as User,
+          { id: uuid() } as User,
         )
 
         // Assert
@@ -162,11 +143,7 @@ describe('Transition Case', () => {
         transitionCase(
           CaseTransition.ASK_FOR_CONFIRMATION,
           { id: uuid(), state: fromState, type } as Case,
-          {
-            id: uuid(),
-            role: UserRole.PROSECUTOR,
-            institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-          } as User,
+          { id: uuid() } as User,
         )
 
       // Act and assert
@@ -191,11 +168,7 @@ describe('Transition Case', () => {
                   appealState: fromAppealState,
                   type,
                 } as Case,
-                {
-                  id: uuid(),
-                  role: UserRole.PROSECUTOR,
-                  institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-                } as User,
+                { id: uuid() } as User,
               )
 
             // Act and assert
@@ -216,11 +189,7 @@ describe('Transition Case', () => {
         const res = transitionCase(
           CaseTransition.DENY_INDICTMENT,
           { id: uuid(), state: fromState, type } as Case,
-          {
-            id: uuid(),
-            role: UserRole.PROSECUTOR,
-            institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-          } as User,
+          { id: uuid() } as User,
         )
 
         // Assert
@@ -238,11 +207,7 @@ describe('Transition Case', () => {
         transitionCase(
           CaseTransition.DENY_INDICTMENT,
           { id: uuid(), state: fromState, type } as Case,
-          {
-            id: uuid(),
-            role: UserRole.PROSECUTOR,
-            institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-          } as User,
+          { id: uuid() } as User,
         )
 
       // Act and assert
@@ -267,11 +232,7 @@ describe('Transition Case', () => {
                   appealState: fromAppealState,
                   type,
                 } as Case,
-                {
-                  id: uuid(),
-                  role: UserRole.PROSECUTOR,
-                  institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-                } as User,
+                { id: uuid() } as User,
               )
 
             // Act and assert
@@ -292,11 +253,7 @@ describe('Transition Case', () => {
         const res = transitionCase(
           CaseTransition.SUBMIT,
           { id: uuid(), state: fromState, type } as Case,
-          {
-            id: uuid(),
-            role: UserRole.PROSECUTOR,
-            institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-          } as User,
+          { id: uuid() } as User,
         )
 
         // Assert
@@ -314,11 +271,7 @@ describe('Transition Case', () => {
         transitionCase(
           CaseTransition.SUBMIT,
           { id: uuid(), state: fromState, type } as Case,
-          {
-            id: uuid(),
-            role: UserRole.PROSECUTOR,
-            institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-          } as User,
+          { id: uuid() } as User,
         )
 
       // Act and assert
@@ -345,11 +298,7 @@ describe('Transition Case', () => {
                 appealState: fromAppealState,
                 type,
               } as Case,
-              {
-                id: uuid(),
-                role: UserRole.PROSECUTOR,
-                institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-              } as User,
+              { id: uuid() } as User,
             )
 
             // Assert
@@ -370,11 +319,7 @@ describe('Transition Case', () => {
                   appealState: fromAppealState,
                   type,
                 } as Case,
-                {
-                  id: uuid(),
-                  role: UserRole.PROSECUTOR,
-                  institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-                } as User,
+                { id: uuid() } as User,
               )
 
             // Act and assert
@@ -401,11 +346,7 @@ describe('Transition Case', () => {
                   appealState: fromAppealState,
                   type,
                 } as Case,
-                {
-                  id: uuid(),
-                  role: UserRole.PROSECUTOR,
-                  institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-                } as User,
+                { id: uuid() } as User,
               )
 
             // Act and assert
@@ -426,11 +367,7 @@ describe('Transition Case', () => {
         const res = transitionCase(
           CaseTransition.ASK_FOR_CANCELLATION,
           { id: uuid(), state: fromState, type } as Case,
-          {
-            id: uuid(),
-            role: UserRole.PROSECUTOR,
-            institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-          } as User,
+          { id: uuid() } as User,
         )
 
         // Assert
@@ -448,11 +385,7 @@ describe('Transition Case', () => {
         transitionCase(
           CaseTransition.ASK_FOR_CANCELLATION,
           { id: uuid(), state: fromState, type } as Case,
-          {
-            id: uuid(),
-            role: UserRole.PROSECUTOR,
-            institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-          } as User,
+          { id: uuid() } as User,
         )
 
       // Act and assert
@@ -477,11 +410,7 @@ describe('Transition Case', () => {
                   appealState: fromAppealState,
                   type,
                 } as Case,
-                {
-                  id: uuid(),
-                  role: UserRole.PROSECUTOR,
-                  institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-                } as User,
+                { id: uuid() } as User,
               )
 
             // Act and assert
@@ -502,11 +431,7 @@ describe('Transition Case', () => {
         const res = transitionCase(
           CaseTransition.RECEIVE,
           { id: uuid(), state: fromState, type } as Case,
-          {
-            id: uuid(),
-            role: UserRole.PROSECUTOR,
-            institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-          } as User,
+          { id: uuid() } as User,
         )
 
         // Assert
@@ -524,11 +449,7 @@ describe('Transition Case', () => {
         transitionCase(
           CaseTransition.RECEIVE,
           { id: uuid(), state: fromState, type } as Case,
-          {
-            id: uuid(),
-            role: UserRole.PROSECUTOR,
-            institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-          } as User,
+          { id: uuid() } as User,
         )
 
       // Act and assert
@@ -555,11 +476,7 @@ describe('Transition Case', () => {
                 appealState: fromAppealState,
                 type,
               } as Case,
-              {
-                id: uuid(),
-                role: UserRole.PROSECUTOR,
-                institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-              } as User,
+              { id: uuid() } as User,
             )
 
             // Assert
@@ -580,11 +497,7 @@ describe('Transition Case', () => {
                   appealState: fromAppealState,
                   type,
                 } as Case,
-                {
-                  id: uuid(),
-                  role: UserRole.PROSECUTOR,
-                  institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-                } as User,
+                { id: uuid() } as User,
               )
 
             // Act and assert
@@ -611,11 +524,7 @@ describe('Transition Case', () => {
                   appealState: fromAppealState,
                   type,
                 } as Case,
-                {
-                  id: uuid(),
-                  role: UserRole.PROSECUTOR,
-                  institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-                } as User,
+                { id: uuid() } as User,
               )
 
             // Act and assert
@@ -636,11 +545,7 @@ describe('Transition Case', () => {
         const res = transitionCase(
           CaseTransition.RETURN_INDICTMENT,
           { id: uuid(), state: fromState, type } as Case,
-          {
-            id: uuid(),
-            role: UserRole.PROSECUTOR,
-            institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-          } as User,
+          { id: uuid() } as User,
         )
 
         // Assert
@@ -658,11 +563,7 @@ describe('Transition Case', () => {
         transitionCase(
           CaseTransition.RETURN_INDICTMENT,
           { id: uuid(), state: fromState, type } as Case,
-          {
-            id: uuid(),
-            role: UserRole.PROSECUTOR,
-            institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-          } as User,
+          { id: uuid() } as User,
         )
 
       // Act and assert
@@ -687,11 +588,7 @@ describe('Transition Case', () => {
                   appealState: fromAppealState,
                   type,
                 } as Case,
-                {
-                  id: uuid(),
-                  role: UserRole.PROSECUTOR,
-                  institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-                } as User,
+                { id: uuid() } as User,
               )
 
             // Act and assert
@@ -706,6 +603,7 @@ describe('Transition Case', () => {
     const allowedFromStates = [
       CaseState.WAITING_FOR_CANCELLATION,
       CaseState.RECEIVED,
+      CaseState.CORRECTING,
     ]
 
     describe.each(allowedFromStates)(
@@ -715,11 +613,7 @@ describe('Transition Case', () => {
         const res = transitionCase(
           CaseTransition.COMPLETE,
           { id: uuid(), state: fromState, type } as Case,
-          {
-            id: uuid(),
-            role: UserRole.PROSECUTOR,
-            institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-          } as User,
+          { id: uuid() } as User,
         )
 
         // Assert
@@ -737,11 +631,7 @@ describe('Transition Case', () => {
         transitionCase(
           CaseTransition.COMPLETE,
           { id: uuid(), state: fromState, type } as Case,
-          {
-            id: uuid(),
-            role: UserRole.PROSECUTOR,
-            institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-          } as User,
+          { id: uuid() } as User,
         )
 
       // Act and assert
@@ -766,11 +656,7 @@ describe('Transition Case', () => {
                   appealState: fromAppealState,
                   type,
                 } as Case,
-                {
-                  id: uuid(),
-                  role: UserRole.PROSECUTOR,
-                  institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-                } as User,
+                { id: uuid() } as User,
               )
 
             // Act and assert
@@ -790,11 +676,7 @@ describe('Transition Case', () => {
           transitionCase(
             CaseTransition.ACCEPT,
             { id: uuid(), state: fromState, type } as Case,
-            {
-              id: uuid(),
-              role: UserRole.PROSECUTOR,
-              institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-            } as User,
+            { id: uuid() } as User,
           )
 
         // Act and assert
@@ -825,11 +707,7 @@ describe('Transition Case', () => {
                 appealState: fromAppealState,
                 type,
               } as Case,
-              {
-                id: uuid(),
-                role: UserRole.PROSECUTOR,
-                institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-              } as User,
+              { id: uuid() } as User,
             )
 
             // Assert
@@ -856,11 +734,7 @@ describe('Transition Case', () => {
                   appealState: fromAppealState,
                   type,
                 } as Case,
-                {
-                  id: uuid(),
-                  role: UserRole.PROSECUTOR,
-                  institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-                } as User,
+                { id: uuid() } as User,
               )
 
             // Act and assert
@@ -880,11 +754,7 @@ describe('Transition Case', () => {
           transitionCase(
             CaseTransition.REJECT,
             { id: uuid(), state: fromState, type } as Case,
-            {
-              id: uuid(),
-              role: UserRole.PROSECUTOR,
-              institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-            } as User,
+            { id: uuid() } as User,
           )
 
         // Act and assert
@@ -915,11 +785,7 @@ describe('Transition Case', () => {
                 appealState: fromAppealState,
                 type,
               } as Case,
-              {
-                id: uuid(),
-                role: UserRole.PROSECUTOR,
-                institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-              } as User,
+              { id: uuid() } as User,
             )
 
             // Assert
@@ -946,11 +812,7 @@ describe('Transition Case', () => {
                   appealState: fromAppealState,
                   type,
                 } as Case,
-                {
-                  id: uuid(),
-                  role: UserRole.PROSECUTOR,
-                  institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-                } as User,
+                { id: uuid() } as User,
               )
 
             // Act and assert
@@ -970,11 +832,7 @@ describe('Transition Case', () => {
           transitionCase(
             CaseTransition.DISMISS,
             { id: uuid(), state: fromState, type } as Case,
-            {
-              id: uuid(),
-              role: UserRole.PROSECUTOR,
-              institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-            } as User,
+            { id: uuid() } as User,
           )
 
         // Act and assert
@@ -1005,11 +863,7 @@ describe('Transition Case', () => {
                 appealState: fromAppealState,
                 type,
               } as Case,
-              {
-                id: uuid(),
-                role: UserRole.PROSECUTOR,
-                institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-              } as User,
+              { id: uuid() } as User,
             )
 
             // Assert
@@ -1036,11 +890,7 @@ describe('Transition Case', () => {
                   appealState: fromAppealState,
                   type,
                 } as Case,
-                {
-                  id: uuid(),
-                  role: UserRole.PROSECUTOR,
-                  institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-                } as User,
+                { id: uuid() } as User,
               )
 
             // Act and assert
@@ -1064,11 +914,7 @@ describe('Transition Case', () => {
         const res = transitionCase(
           CaseTransition.DELETE,
           { id: uuid(), state: fromState, type } as Case,
-          {
-            id: uuid(),
-            role: UserRole.PROSECUTOR,
-            institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-          } as User,
+          { id: uuid() } as User,
         )
 
         // Assert
@@ -1086,11 +932,7 @@ describe('Transition Case', () => {
         transitionCase(
           CaseTransition.DELETE,
           { id: uuid(), state: fromState, type } as Case,
-          {
-            id: uuid(),
-            role: UserRole.PROSECUTOR,
-            institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-          } as User,
+          { id: uuid() } as User,
         )
 
       // Act and assert
@@ -1122,11 +964,7 @@ describe('Transition Case', () => {
                 appealState: fromAppealState,
                 type,
               } as Case,
-              {
-                id: uuid(),
-                role: UserRole.PROSECUTOR,
-                institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-              } as User,
+              { id: uuid() } as User,
             )
 
             // Assert
@@ -1147,11 +985,7 @@ describe('Transition Case', () => {
                   appealState: fromAppealState,
                   type,
                 } as Case,
-                {
-                  id: uuid(),
-                  role: UserRole.PROSECUTOR,
-                  institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-                } as User,
+                { id: uuid() } as User,
               )
 
             // Act and assert
@@ -1178,11 +1012,7 @@ describe('Transition Case', () => {
                   appealState: fromAppealState,
                   type,
                 } as Case,
-                {
-                  id: uuid(),
-                  role: UserRole.PROSECUTOR,
-                  institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-                } as User,
+                { id: uuid() } as User,
               )
 
             // Act and assert
@@ -1194,25 +1024,83 @@ describe('Transition Case', () => {
   )
 
   describe.each(indictmentCases)('reopen %s', (type) => {
-    describe.each(Object.values(CaseState))(
-      'state %s - should not reopen',
-      (fromState) => {
-        // Arrange
-        const act = () =>
-          transitionCase(
+    const allowedFromStates = [CaseState.COMPLETED]
+
+    describe.each(allowedFromStates)('state %s', (fromState) => {
+      const allowedIndictmentRulingDecisions = [
+        undefined,
+        CaseIndictmentRulingDecision.RULING,
+        CaseIndictmentRulingDecision.FINE,
+        CaseIndictmentRulingDecision.DISMISSAL,
+        CaseIndictmentRulingDecision.CANCELLATION,
+        CaseIndictmentRulingDecision.MERGE,
+      ]
+
+      describe.each(allowedIndictmentRulingDecisions)(
+        'indictment ruling decision %s - should reopen',
+        (indictmentRulingDecision) => {
+          // Act
+          const res = transitionCase(
             CaseTransition.REOPEN,
-            { id: uuid(), state: fromState, type } as Case,
             {
               id: uuid(),
-              role: UserRole.PROSECUTOR,
-              institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-            } as User,
+              state: fromState,
+              type,
+              indictmentRulingDecision,
+            } as Case,
+            { id: uuid() } as User,
           )
 
-        // Act and assert
-        expect(act).toThrow(ForbiddenException)
-      },
-    )
+          // Assert
+          expect(res).toMatchObject({ state: CaseState.CORRECTING })
+        },
+      )
+
+      describe.each(
+        Object.values(CaseIndictmentRulingDecision).filter(
+          (indictmentRulingDecision) =>
+            !allowedIndictmentRulingDecisions.includes(
+              indictmentRulingDecision,
+            ),
+        ),
+      )(
+        'indictment ruling decision %s - should not reopen',
+        (indictmentRulingDecision) => {
+          // Arrange
+          const act = () =>
+            transitionCase(
+              CaseTransition.REOPEN,
+              {
+                id: uuid(),
+                state: fromState,
+                type,
+                indictmentRulingDecision,
+              } as Case,
+              { id: uuid() } as User,
+            )
+
+          // Act and assert
+          expect(act).toThrow(ForbiddenException)
+        },
+      )
+    })
+
+    describe.each(
+      Object.values(CaseState).filter(
+        (state) => !allowedFromStates.includes(state),
+      ),
+    )('state %s - should not reopen', (fromState) => {
+      // Arrange
+      const act = () =>
+        transitionCase(
+          CaseTransition.REOPEN,
+          { id: uuid(), state: fromState, type } as Case,
+          { id: uuid() } as User,
+        )
+
+      // Act and assert
+      expect(act).toThrow(ForbiddenException)
+    })
   })
 
   describe.each([...restrictionCases, ...investigationCases])(
@@ -1241,11 +1129,7 @@ describe('Transition Case', () => {
                 appealState: fromAppealState,
                 type,
               } as Case,
-              {
-                id: uuid(),
-                role: UserRole.PROSECUTOR,
-                institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-              } as User,
+              { id: uuid() } as User,
             )
 
             // Assert
@@ -1272,11 +1156,7 @@ describe('Transition Case', () => {
                   appealState: fromAppealState,
                   type,
                 } as Case,
-                {
-                  id: uuid(),
-                  role: UserRole.PROSECUTOR,
-                  institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-                } as User,
+                { id: uuid() } as User,
               )
 
             // Act and assert
@@ -1296,11 +1176,7 @@ describe('Transition Case', () => {
           transitionCase(
             CaseTransition.APPEAL,
             { id: uuid(), state: fromState, type } as Case,
-            {
-              id: uuid(),
-              role: UserRole.PROSECUTOR,
-              institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-            } as User,
+            { id: uuid() } as User,
           )
 
         // Act and assert
@@ -1335,7 +1211,9 @@ describe('Transition Case', () => {
               {
                 id: uuid(),
                 role: UserRole.PROSECUTOR,
-                institution: { type: InstitutionType.PROSECUTORS_OFFICE },
+                institution: {
+                  type: InstitutionType.POLICE_PROSECUTORS_OFFICE,
+                },
               } as User,
             )
 
@@ -1360,7 +1238,9 @@ describe('Transition Case', () => {
                 {
                   id: uuid(),
                   role: UserRole.PROSECUTOR,
-                  institution: { type: InstitutionType.PROSECUTORS_OFFICE },
+                  institution: {
+                    type: InstitutionType.POLICE_PROSECUTORS_OFFICE,
+                  },
                 } as User,
               )
 
@@ -1391,7 +1271,9 @@ describe('Transition Case', () => {
                 {
                   id: uuid(),
                   role: UserRole.PROSECUTOR,
-                  institution: { type: InstitutionType.PROSECUTORS_OFFICE },
+                  institution: {
+                    type: InstitutionType.POLICE_PROSECUTORS_OFFICE,
+                  },
                 } as User,
               )
 
@@ -1412,11 +1294,7 @@ describe('Transition Case', () => {
           transitionCase(
             CaseTransition.WITHDRAW_APPEAL,
             { id: uuid(), state: fromState, type } as Case,
-            {
-              id: uuid(),
-              role: UserRole.PROSECUTOR,
-              institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-            } as User,
+            { id: uuid() } as User,
           )
 
         // Act and assert
@@ -1451,11 +1329,7 @@ describe('Transition Case', () => {
                 appealState: fromAppealState,
                 type,
               } as Case,
-              {
-                id: uuid(),
-                role: UserRole.PROSECUTOR,
-                institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-              } as User,
+              { id: uuid() } as User,
             )
 
             // Assert
@@ -1480,11 +1354,7 @@ describe('Transition Case', () => {
                 appealState: fromAppealState,
                 type,
               } as Case,
-              {
-                id: uuid(),
-                role: UserRole.PROSECUTOR,
-                institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-              } as User,
+              { id: uuid() } as User,
             )
 
           // Act and assert
@@ -1510,11 +1380,7 @@ describe('Transition Case', () => {
                   appealState: fromAppealState,
                   type,
                 } as Case,
-                {
-                  id: uuid(),
-                  role: UserRole.PROSECUTOR,
-                  institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-                } as User,
+                { id: uuid() } as User,
               )
 
             // Act and assert
@@ -1534,11 +1400,7 @@ describe('Transition Case', () => {
           transitionCase(
             CaseTransition.RECEIVE_APPEAL,
             { id: uuid(), state: fromState, type } as Case,
-            {
-              id: uuid(),
-              role: UserRole.PROSECUTOR,
-              institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-            } as User,
+            { id: uuid() } as User,
           )
 
         // Act and assert
@@ -1570,11 +1432,7 @@ describe('Transition Case', () => {
                 appealState: fromAppealState,
                 type,
               } as Case,
-              {
-                id: uuid(),
-                role: UserRole.PROSECUTOR,
-                institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-              } as User,
+              { id: uuid() } as User,
             )
 
             // Assert
@@ -1597,11 +1455,7 @@ describe('Transition Case', () => {
                 appealState: fromAppealState,
                 type,
               } as Case,
-              {
-                id: uuid(),
-                role: UserRole.PROSECUTOR,
-                institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-              } as User,
+              { id: uuid() } as User,
             )
 
           // Act and assert
@@ -1627,11 +1481,7 @@ describe('Transition Case', () => {
                   appealState: fromAppealState,
                   type,
                 } as Case,
-                {
-                  id: uuid(),
-                  role: UserRole.PROSECUTOR,
-                  institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-                } as User,
+                { id: uuid() } as User,
               )
 
             // Act and assert
@@ -1651,11 +1501,7 @@ describe('Transition Case', () => {
           transitionCase(
             CaseTransition.COMPLETE_APPEAL,
             { id: uuid(), state: fromState, type } as Case,
-            {
-              id: uuid(),
-              role: UserRole.PROSECUTOR,
-              institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-            } as User,
+            { id: uuid() } as User,
           )
 
         // Act and assert
@@ -1690,11 +1536,7 @@ describe('Transition Case', () => {
                 appealState: fromAppealState,
                 type,
               } as Case,
-              {
-                id: uuid(),
-                role: UserRole.PROSECUTOR,
-                institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-              } as User,
+              { id: uuid() } as User,
             )
 
             // Assert
@@ -1719,11 +1561,7 @@ describe('Transition Case', () => {
                 appealState: fromAppealState,
                 type,
               } as Case,
-              {
-                id: uuid(),
-                role: UserRole.PROSECUTOR,
-                institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-              } as User,
+              { id: uuid() } as User,
             )
 
           // Act and assert
@@ -1749,11 +1587,7 @@ describe('Transition Case', () => {
                   appealState: fromAppealState,
                   type,
                 } as Case,
-                {
-                  id: uuid(),
-                  role: UserRole.PROSECUTOR,
-                  institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-                } as User,
+                { id: uuid() } as User,
               )
 
             // Act and assert
@@ -1773,11 +1607,7 @@ describe('Transition Case', () => {
           transitionCase(
             CaseTransition.REOPEN_APPEAL,
             { id: uuid(), state: fromState, type } as Case,
-            {
-              id: uuid(),
-              role: UserRole.PROSECUTOR,
-              institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-            } as User,
+            { id: uuid() } as User,
           )
 
         // Act and assert
@@ -1809,11 +1639,7 @@ describe('Transition Case', () => {
                 appealState: fromAppealState,
                 type,
               } as Case,
-              {
-                id: uuid(),
-                role: UserRole.PROSECUTOR,
-                institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-              } as User,
+              { id: uuid() } as User,
             )
 
             // Assert
@@ -1836,11 +1662,7 @@ describe('Transition Case', () => {
                 appealState: fromAppealState,
                 type,
               } as Case,
-              {
-                id: uuid(),
-                role: UserRole.PROSECUTOR,
-                institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-              } as User,
+              { id: uuid() } as User,
             )
 
           // Act and assert
@@ -1866,11 +1688,7 @@ describe('Transition Case', () => {
                   appealState: fromAppealState,
                   type,
                 } as Case,
-                {
-                  id: uuid(),
-                  role: UserRole.PROSECUTOR,
-                  institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-                } as User,
+                { id: uuid() } as User,
               )
 
             // Act and assert
@@ -1880,4 +1698,40 @@ describe('Transition Case', () => {
       })
     },
   )
+
+  describe.each(indictmentCases)('move %s', (type) => {
+    const allowedFromStates = [CaseState.RECEIVED]
+
+    describe.each(allowedFromStates)(
+      'state %s - should move case to submitted',
+      (fromState) => {
+        // Act
+        const res = transitionCase(
+          CaseTransition.MOVE,
+          { id: uuid(), state: fromState, type } as Case,
+          { id: uuid() } as User,
+        )
+
+        // Assert
+        expect(res).toMatchObject({ state: CaseState.SUBMITTED })
+      },
+    )
+
+    describe.each(
+      Object.values(CaseState).filter(
+        (state) => !allowedFromStates.includes(state),
+      ),
+    )('state %s - should not move case', (fromState) => {
+      // Arrange
+      const act = () =>
+        transitionCase(
+          CaseTransition.MOVE,
+          { id: uuid(), state: fromState, type } as Case,
+          { id: uuid() } as User,
+        )
+
+      // Act and assert
+      expect(act).toThrow(ForbiddenException)
+    })
+  })
 })

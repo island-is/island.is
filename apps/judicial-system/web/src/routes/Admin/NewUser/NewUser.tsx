@@ -11,7 +11,6 @@ import {
 import {
   CreateUserInput,
   User,
-  UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
 
@@ -22,16 +21,7 @@ import * as styles from '../Users/Users.css'
 
 const user: User = {
   id: '',
-  created: '',
-  modified: '',
-  nationalId: '',
-  name: '',
-  title: '',
-  mobileNumber: '',
-  email: '',
-  role: UserRole.PROSECUTOR,
-  institution: undefined,
-  active: true,
+  active: false,
   canConfirmIndictment: false,
 }
 
@@ -60,11 +50,11 @@ export const NewUser = () => {
         variables: {
           input: {
             name: user.name,
-            nationalId: user.nationalId,
+            nationalId: user.nationalId?.replace('-', ''),
             role: user.role,
             institutionId: user.institution.id,
             title: user.title,
-            mobileNumber: user.mobileNumber,
+            mobileNumber: user.mobileNumber?.replace('-', ''),
             email: user.email,
             active: user.active,
             canConfirmIndictment: user.canConfirmIndictment,

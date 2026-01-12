@@ -437,6 +437,7 @@ Home.getProps = async ({ apolloClient, locale, query }) => {
       : [],
     serviceWebPage: getServiceWebPage,
     locale: locale as Locale,
+    customAlertBanner: getServiceWebPage?.alertBanner,
   }
 }
 

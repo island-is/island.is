@@ -1,17 +1,21 @@
-import addDays from 'date-fns/addDays'
-import parseISO from 'date-fns/parseISO'
-
 import { TagVariant } from '@island.is/island-ui/core'
-import { formatDate } from '@island.is/judicial-system/formatters'
 import {
+  formatDate,
+  normalizeAndFormatNationalId,
+} from '@island.is/judicial-system/formatters'
+import { isProsecutionUser } from '@island.is/judicial-system/types'
+import {
+  Case,
   CaseAppealState,
   CaseCustodyRestrictions,
+  CivilClaimant,
+  Defendant,
   DefendantPlea,
   Gender,
   Notification,
   NotificationType,
+  User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 export const getShortGender = (gender?: Gender): string => {
   switch (gender) {
@@ -53,16 +57,9 @@ export const getRestrictionTagVariant = (
   }
 }
 
-export const fileSize = (bytes?: number) => {
-  if (!bytes) return ''
-
+export const fileSize = (bytes: number) => {
   const kb = Math.ceil(bytes / 1024)
   return kb >= 10000 ? `${kb.toString().substring(0, 2)}MB` : `${kb}KB`
-}
-
-export const getAppealEndDate = (rulingDate: string) => {
-  const appealEndDate = addDays(parseISO(rulingDate), 3)
-  return formatDate(appealEndDate, 'PPPp')
 }
 
 export const isBusiness = (nationalId?: string | null) => {
@@ -145,5 +142,83 @@ export const shouldUseAppealWithdrawnRoutes = (theCase: Case): boolean => {
       !theCase.appealJudge1 ||
       !theCase.appealJudge2 ||
       !theCase.appealJudge3)
+  )
+}
+
+export const shouldDisplayGeneratedPdfFiles = (theCase: Case, user?: User) =>
+  Boolean(
+    isProsecutionUser(user) ||
+      theCase.defendants?.some(
+        (defendant) =>
+          defendant.isDefenderChoiceConfirmed &&
+          defendant.caseFilesSharedWithDefender &&
+          defendant.defenderNationalId &&
+          normalizeAndFormatNationalId(user?.nationalId).includes(
+            defendant.defenderNationalId,
+          ),
+      ) ||
+      theCase.civilClaimants?.some(
+        (civilClaimant) =>
+          civilClaimant.hasSpokesperson &&
+          civilClaimant.isSpokespersonConfirmed &&
+          civilClaimant.caseFilesSharedWithSpokesperson &&
+          civilClaimant.spokespersonNationalId &&
+          normalizeAndFormatNationalId(user?.nationalId).includes(
+            civilClaimant.spokespersonNationalId,
+          ),
+      ),
+  )
+
+export const isCaseDefendantDefender = (
+  user?: User,
+  workingCase?: { defendants?: Defendant[] | null },
+) =>
+  workingCase?.defendants?.some(
+    (defendant) =>
+      defendant?.defenderNationalId &&
+      normalizeAndFormatNationalId(user?.nationalId).includes(
+        defendant.defenderNationalId,
+      ),
+  )
+
+export const isCaseCivilClaimantSpokesperson = (
+  user?: User,
+  workingCase?: { civilClaimants?: CivilClaimant[] | null },
+) =>
+  workingCase?.civilClaimants?.some(
+    (civilClaimant) =>
+      civilClaimant?.spokespersonNationalId &&
+      normalizeAndFormatNationalId(user?.nationalId).includes(
+        civilClaimant.spokespersonNationalId,
+      ),
+  )
+
+export const isCaseCivilClaimantLegalSpokesperson = (
+  user?: User,
+  workingCase?: { civilClaimants?: CivilClaimant[] | null },
+) =>
+  workingCase?.civilClaimants?.some(
+    (civilClaimant) =>
+      civilClaimant?.spokespersonNationalId &&
+      normalizeAndFormatNationalId(user?.nationalId).includes(
+        civilClaimant.spokespersonNationalId,
+      ) &&
+      civilClaimant.spokespersonIsLawyer,
+  )
+
+// Use the gender of the single defendant if there is only one,
+// otherwise default to male
+export const getDefaultDefendantGender = (defendants?: Defendant[] | null) =>
+  defendants && defendants.length === 1
+    ? defendants[0].gender ?? Gender.MALE
+    : Gender.MALE
+
+export const isPartiallyVisible = (el: HTMLElement): boolean => {
+  const rect = el.getBoundingClientRect()
+  return (
+    rect.bottom >= 0 &&
+    rect.right >= 0 &&
+    rect.top <= window.innerHeight &&
+    rect.left <= window.innerWidth
   )
 }

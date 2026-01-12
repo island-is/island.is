@@ -1,5 +1,5 @@
 import { Response } from 'express'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { BadRequestException } from '@nestjs/common'
 
@@ -14,8 +14,7 @@ import { createTestingCaseModule } from '../createTestingCaseModule'
 import { createCaseFilesRecord } from '../../../../formatters'
 import { randomDate } from '../../../../test'
 import { AwsS3Service } from '../../../aws-s3'
-import { CaseFile } from '../../../file'
-import { Case } from '../../models/case.model'
+import { Case, CaseFile } from '../../../repository'
 
 jest.mock('../../../../formatters/caseFilesRecordPdf')
 

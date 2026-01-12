@@ -1,4 +1,3 @@
-import React, { ReactElement } from 'react'
 import {
   Box,
   GridContainer,
@@ -7,20 +6,21 @@ import {
   ModalBase,
   Text,
 } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
+import { useLocale } from '@island.is/localization'
 import {
+  m,
   ServicePortalPaths,
   useDynamicRoutesWithNavigation,
 } from '@island.is/portals/my-pages/core'
-import * as styles from './Sidemenu.css'
 import { sharedMessages } from '@island.is/shared/translations'
-import { useLocale, useNamespaces } from '@island.is/localization'
-import { MAIN_NAVIGATION } from '../../lib/masterNavigation'
-import { theme } from '@island.is/island-ui/theme'
-import { useWindowSize } from 'react-use'
 import cn from 'classnames'
+import { ReactElement } from 'react'
+import { useWindowSize } from 'react-use'
+import { MAIN_NAVIGATION } from '../../lib/masterNavigation'
+import * as styles from './Sidemenu.css'
 import SidemenuItem from './SidemenuItem'
-import { m } from '@island.is/portals/my-pages/core'
-
+import { CloseButton } from '../Button/CloseButton/CloseButton'
 interface Props {
   setSideMenuOpen: (status: boolean) => void
   sideMenuOpen: boolean
@@ -31,25 +31,14 @@ const Sidemenu = ({
   sideMenuOpen,
   rightPosition,
 }: Props): ReactElement | null => {
-  useNamespaces(['service.portal'])
   const navigation = useDynamicRoutesWithNavigation(MAIN_NAVIGATION)
   const { formatMessage } = useLocale()
   const { width } = useWindowSize()
-
   const isMobile = width < theme.breakpoints.md
 
   const onClose = () => {
     setSideMenuOpen(false)
   }
-  const closeButton = (
-    <button
-      className={styles.closeButton}
-      onClick={() => setSideMenuOpen(false)}
-      aria-label={formatMessage(sharedMessages.close)}
-    >
-      <Icon icon="close" color="blue600" />
-    </button>
-  )
 
   const content = (
     <Box display="flex" justifyContent="flexEnd">
@@ -75,13 +64,7 @@ const Sidemenu = ({
         }
       >
         <Box display="flex" flexDirection="column" className={styles.wrapper}>
-          <Box
-            display="flex"
-            flexDirection="row"
-            alignItems="center"
-            marginBottom={1}
-            marginTop={2}
-          >
+          <Box display="flex" flexDirection="row" alignItems="center">
             <Box
               borderRadius="full"
               background="blue100"
@@ -109,13 +92,22 @@ const Sidemenu = ({
             )}
           </Box>
         </Box>
-        <Hidden below="md">{closeButton}</Hidden>
+        <Hidden below="md">
+          <CloseButton
+            onClick={() => setSideMenuOpen(false)}
+            aria-label={formatMessage(sharedMessages.close)}
+          />
+        </Hidden>
       </Box>
     </Box>
   )
 
   return isMobile ? (
-    <Box display={sideMenuOpen ? 'flex' : 'none'} height="full">
+    <Box
+      display={sideMenuOpen ? 'flex' : 'none'}
+      height="full"
+      id="sidemenu-mobile"
+    >
       {content}
     </Box>
   ) : (

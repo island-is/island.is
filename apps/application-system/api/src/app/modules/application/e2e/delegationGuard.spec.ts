@@ -89,7 +89,7 @@ describe('Application system API delegation guard', () => {
       method: 'POST',
       endpoint: '/applications',
       send: {
-        typeId: ApplicationTypes.EXAMPLE,
+        typeId: ApplicationTypes.EXAMPLE_COMMON_ACTIONS,
       },
     },
     {

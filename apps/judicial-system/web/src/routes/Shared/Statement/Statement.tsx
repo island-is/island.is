@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 
 import {
   Box,
+  FileUploadStatus,
   InputFileUpload,
   Text,
   UploadFile,
@@ -23,11 +24,11 @@ import {
   PageHeader,
   PageLayout,
   PageTitle,
+  RequestAppealRulingNotToBePublishedCheckbox,
   RulingDateLabel,
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import RequestAppealRulingNotToBePublishedCheckbox from '@island.is/judicial-system-web/src/components/RequestAppealRulingNotToBePublishedCheckbox/RequestAppealRulingNotToBePublishedCheckbox'
 import {
   CaseAppealDecision,
   CaseFileCategory,
@@ -35,6 +36,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useCase,
+  useFileList,
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -57,6 +59,11 @@ const Statement = () => {
     updateUploadFile,
     removeUploadFile,
   } = useUploadFiles(workingCase.caseFiles)
+
+  const { onOpenFile } = useFileList({
+    caseId: workingCase.id,
+  })
+
   const { handleUpload, handleRemove } = useS3Upload(workingCase.id)
 
   const appealStatementType = !isDefenceUser(user)
@@ -111,7 +118,10 @@ const Statement = () => {
   }
 
   const handleChange = (files: File[], category: CaseFileCategory) => {
-    addUploadFiles(files, { category, status: 'done' })
+    addUploadFiles(files, {
+      category,
+      status: FileUploadStatus.done,
+    })
   }
 
   return (
@@ -122,6 +132,11 @@ const Statement = () => {
           {formatMessage(strings.title)}
         </PageTitle>
         <Box marginBottom={7}>
+          {workingCase.courtCaseNumber && (
+            <Text as="h2" variant="h2" fontWeight="semiBold" marginBottom={1}>
+              Mál nr. {workingCase.courtCaseNumber}
+            </Text>
+          )}
           {workingCase.rulingDate && (
             <RulingDateLabel rulingDate={workingCase.rulingDate} />
           )}
@@ -150,18 +165,21 @@ const Statement = () => {
                 title={formatMessage(strings.uploadStatementTitle)}
                 required
               />
+
               <InputFileUpload
-                fileList={uploadFiles.filter(
+                name="appealStatement"
+                files={uploadFiles.filter(
                   (file) => file.category === appealStatementType,
                 )}
                 accept={'application/pdf'}
-                header={formatMessage(core.uploadBoxTitle)}
+                title={formatMessage(core.uploadBoxTitle)}
                 description={formatMessage(core.uploadBoxDescription, {
                   fileEndings: '.pdf',
                 })}
                 buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
                 onChange={(files) => handleChange(files, appealStatementType)}
                 onRemove={(file) => handleRemoveFile(file)}
+                onOpenFile={(file) => onOpenFile(file)}
                 hideIcons={!allFilesDoneOrError}
                 disabled={!allFilesDoneOrError}
               />
@@ -181,17 +199,19 @@ const Statement = () => {
                   `${formatMessage(strings.appealCaseFilesCOASubtitle)}`}
               </Text>
               <InputFileUpload
-                fileList={uploadFiles.filter(
+                name="appealCaseFiles"
+                files={uploadFiles.filter(
                   (file) => file.category === appealCaseFilesType,
                 )}
                 accept={'application/pdf'}
-                header={formatMessage(core.uploadBoxTitle)}
+                title={formatMessage(core.uploadBoxTitle)}
                 description={formatMessage(core.uploadBoxDescription, {
                   fileEndings: '.pdf',
                 })}
                 buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
                 onChange={(files) => handleChange(files, appealCaseFilesType)}
                 onRemove={(file) => handleRemoveFile(file)}
+                onOpenFile={(file) => onOpenFile(file)}
                 hideIcons={!allFilesDoneOrError}
                 disabled={!allFilesDoneOrError}
               />
@@ -225,8 +245,10 @@ const Statement = () => {
           text={formatMessage(strings.statementSentModalText, {
             isDefender: isDefenceUser(user),
           })}
-          secondaryButtonText={formatMessage(core.closeModal)}
-          onSecondaryButtonClick={() => router.push(previousUrl)}
+          secondaryButton={{
+            text: formatMessage(core.closeModal),
+            onClick: () => router.push(previousUrl),
+          }}
         />
       )}
     </PageLayout>

@@ -1,10 +1,12 @@
 import * as constants from '@island.is/judicial-system/consts'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import { Case } from '@island.is/judicial-system-web/src/graphql/schema'
+import { faker } from '@island.is/shared/mocking'
 
 import {
   findFirstInvalidStep,
   hasDateChanged,
   toggleInArray,
+  validateAndSendToServer,
 } from './formHelper'
 
 describe('toggleInArray', () => {
@@ -117,5 +119,52 @@ describe('findLastValidStep', () => {
     )
 
     expect(lastValidStep).toEqual(constants.INDICTMENTS_CASE_FILES_ROUTE)
+  })
+})
+
+describe('validateAndSendToServer', () => {
+  test('should call the updateCase function with the correct parameters', () => {
+    // Arrange
+    const spy = jest.fn()
+    const fieldToUpdate = 'courtCaseNumber'
+    const value = '1234/1234'
+    const id = faker.datatype.uuid()
+    const theCase = { id } as Case
+    const update = {
+      courtCaseNumber: value,
+    }
+
+    // Act
+    validateAndSendToServer(
+      fieldToUpdate,
+      value,
+      ['appeal-case-number-format'],
+      theCase,
+      spy,
+    )
+
+    // Assert
+    expect(spy).toBeCalledWith(id, update)
+  })
+
+  test('should not call the updateCase function if the value is invalid', () => {
+    // Arrange
+    const spy = jest.fn()
+    const fieldToUpdate = 'courtCaseNumber'
+    const value = '12341234'
+    const id = faker.datatype.uuid()
+    const theCase = { id } as Case
+
+    // Act
+    validateAndSendToServer(
+      fieldToUpdate,
+      value,
+      ['appeal-case-number-format'],
+      theCase,
+      spy,
+    )
+
+    // Assert
+    expect(spy).not.toHaveBeenCalled()
   })
 })

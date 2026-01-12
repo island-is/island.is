@@ -25,6 +25,7 @@ import {
 import { theme } from '@island.is/island-ui/theme'
 import {
   ApiCatalogueFilter,
+  getThemeConfig,
   OrganizationWrapper,
   ServiceList,
   Webreader,
@@ -231,56 +232,62 @@ const ApiCatalogue: Screen<HomestayProps> = ({
   )
 
   return (
-    <>
-      <OrganizationWrapper
-        pageTitle={subpage?.title ?? ''}
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore make web strict
-        organizationPage={organizationPage}
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore make web strict
-        pageFeaturedImage={subpage?.featuredImage}
-        showReadSpeaker={false}
-        breadcrumbItems={[
-          {
-            title: 'Ísland.is',
-            href: linkResolver('homepage').href,
-          },
-          {
-            title: organizationPage?.title ?? '',
-            href: linkResolver('organizationpage', [
-              organizationPage?.slug ?? '',
-            ]).href,
-          },
-        ]}
-        navigationData={{
-          title: nn('navigationTitle', 'Efnisyfirlit'),
-          items: navList,
-        }}
-        showSecondaryMenu={false}
-      >
-        <Box paddingBottom={0}>
-          <Text variant="h1" as="h2">
-            {subpage?.title}
-          </Text>
-          <Webreader
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore make web strict
-            readId={null}
-            readClass="rs_read"
-          />
+    <OrganizationWrapper
+      pageTitle={subpage?.title ?? ''}
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
+      organizationPage={organizationPage}
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
+      pageFeaturedImage={subpage?.featuredImage}
+      showReadSpeaker={false}
+      breadcrumbItems={[
+        {
+          title: 'Ísland.is',
+          href: linkResolver('homepage').href,
+        },
+        {
+          title: organizationPage?.title ?? '',
+          href: linkResolver('organizationpage', [organizationPage?.slug ?? ''])
+            .href,
+        },
+      ]}
+      navigationData={{
+        title: nn('navigationTitle', 'Efnisyfirlit'),
+        items: navList,
+      }}
+      showSecondaryMenu={false}
+      mainContent={
+        <Box>
+          <Box paddingBottom={0}>
+            <Text variant="h1" as="h2">
+              {subpage?.title}
+            </Text>
+            <Webreader
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
+              readId={null}
+              readClass="rs_read"
+            />
+          </Box>
+          {webRichText(subpage?.description as SliceType[], {
+            renderNode: {
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
+              [INLINES.HYPERLINK]: (node, children: ReactNode) => (
+                <ArrowLink href={node.data.uri}>{children}</ArrowLink>
+              ),
+            },
+          })}
         </Box>
-        {webRichText(subpage?.description as SliceType[], {
-          renderNode: {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore make web strict
-            [INLINES.HYPERLINK]: (node, children: ReactNode) => (
-              <ArrowLink href={node.data.uri}>{children}</ArrowLink>
-            ),
-          },
-        })}
-      </OrganizationWrapper>
-      <Box background="blue100" display="inlineBlock" width="full">
+      }
+    >
+      <Box
+        background="blue100"
+        display="inlineBlock"
+        width="full"
+        paddingBottom={3}
+      >
         <ColorSchemeContext.Provider value={{ colorScheme: 'blue' }}>
           <GridContainer id="service-list">
             <Box marginY={[3, 3, 6]}>
@@ -360,13 +367,16 @@ const ApiCatalogue: Screen<HomestayProps> = ({
           </GridContainer>
         </ColorSchemeContext.Provider>
       </Box>
-    </>
+      <Box paddingBottom={4} />
+    </OrganizationWrapper>
   )
 }
 
 ApiCatalogue.getProps = async ({ apolloClient, locale }) => {
   const organizationSlug =
     locale === 'en' ? 'digital-iceland' : 'stafraent-island'
+
+  const apiCatalogueSlug = locale === 'en' ? 'webservices' : 'vefthjonustur'
 
   const [
     {
@@ -385,6 +395,7 @@ ApiCatalogue.getProps = async ({ apolloClient, locale }) => {
         input: {
           slug: organizationSlug,
           lang: locale as ContentLanguage,
+          subpageSlugs: [apiCatalogueSlug],
         },
       },
     }),
@@ -393,7 +404,7 @@ ApiCatalogue.getProps = async ({ apolloClient, locale }) => {
       variables: {
         input: {
           organizationSlug,
-          slug: locale === 'en' ? 'webservices' : 'vefthjonustur',
+          slug: apiCatalogueSlug,
           lang: locale as ContentLanguage,
         },
       },
@@ -456,6 +467,10 @@ ApiCatalogue.getProps = async ({ apolloClient, locale }) => {
     filterContent,
     navigationLinks,
     showSearchInHeader: false,
+    ...getThemeConfig(
+      getOrganizationPage?.theme,
+      getOrganizationPage?.organization,
+    ),
   }
 }
 

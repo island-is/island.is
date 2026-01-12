@@ -13,7 +13,7 @@ import {
 
 const REDIS_NODE_CONFIG = {
   dev: json([
-    'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+    'clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com:6379',
   ]),
   staging: json([
     'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
@@ -28,6 +28,7 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-public-api'> => {
     .namespace('identity-server-admin')
     .image('services-auth-public-api')
     .db({ name: 'servicesauth' })
+    .serviceAccount('services-auth-public-api')
     .codeOwner(CodeOwners.Aranja)
     .env({
       IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api',
@@ -41,13 +42,13 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-public-api'> => {
         staging: 'https://identity-server.staging01.devland.is/api',
         prod: 'https://innskra.island.is/api',
       },
-      XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1',
+      XROAD_TJODSKRA_API_PATH: '/SKRA-Cloud-Protected/Einstaklingar-v1',
       XROAD_NATIONAL_REGISTRY_ACTOR_TOKEN: 'true',
       XROAD_RSK_PROCURING_ACTOR_TOKEN: 'true',
       XROAD_NATIONAL_REGISTRY_SERVICE_PATH: {
-        dev: 'IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1',
-        staging: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1',
-        prod: 'IS/GOV/6503760649/SKRA-Protected/Einstaklingar-v1',
+        dev: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Einstaklingar-v1',
+        staging: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Einstaklingar-v1',
+        prod: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Einstaklingar-v1',
       },
       XROAD_NATIONAL_REGISTRY_REDIS_NODES: REDIS_NODE_CONFIG,
       XROAD_RSK_PROCURING_REDIS_NODES: REDIS_NODE_CONFIG,
@@ -110,6 +111,7 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-public-api'> => {
         },
         paths: ['/api(/|$)(.*)'],
         public: true,
+        pathTypeOverride: 'ImplementationSpecific',
         extraAnnotations: {
           dev: {
             'nginx.ingress.kubernetes.io/proxy-buffering': 'on',

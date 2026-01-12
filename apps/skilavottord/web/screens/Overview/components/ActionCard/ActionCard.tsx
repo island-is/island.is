@@ -34,11 +34,9 @@ export const ActionCard: FC<React.PropsWithChildren<ActionCardProps>> = ({
   const isTablet = width < theme.breakpoints.lg
 
   const toolTipText = (
-    <>
-      <Text variant="small">
-        {t.tooltip.text} <a href={t.tooltip.link}>{t.tooltip.link}</a>
-      </Text>
-    </>
+    <Text variant="small">
+      {t.tooltip.text} <a href={t.tooltip.link}>{t.tooltip.link}</a>
+    </Text>
   )
 
   const modelYear = formatYear(firstRegDate, dateFormat.is)

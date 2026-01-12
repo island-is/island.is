@@ -1,0 +1,70 @@
+name: Deduplicate yarn dependencies
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to run deduplication on'
+        required: true
+        type: string
+        default: 'main'
+      write:
+        description: 'Run in write mode to apply deduplication'
+        required: true
+        type: boolean
+      token:
+        description: 'GitHub token to push changes (defaults to github token)'
+        required: false
+        type: string
+
+defaults:
+  run:
+    shell: bash -euo pipefail {0}
+
+concurrency:
+  # See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#example-using-a-fallback-value
+  group: push-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+env:
+  RUNS_ON_BUCKET_NAME: ${{ vars.RUNS_ON_BUCKET_NAME }}
+  AWS_REGION: eu-west-1
+
+jobs:
+  dedupe:
+    name: Deduplicate
+    runs-on: arc-shared
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch }}
+          fetch-depth: 0
+      - name: Should dedupe?
+        id: dedupe
+        run: |
+          if git diff --name-only | grep package.json; then
+            echo "should=true" | tee -a "$GITHUB_OUTPUT"
+          else
+            echo "should=false" | tee -a "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/checkout@v4
+        if: ${{ github.event_name == 'pull_request' && steps.dedupe.outputs.should == 'true' }}
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          persist-credentials: false
+
+      - name: Setup yarn
+        if: ${{ steps.dedupe.outputs.should == 'true' }}
+        uses: ./.github/actions/setup-yarn
+
+      - name: Deduplicate (check)
+        if: ${{ !inputs.write && steps.dedupe.outputs.should == 'true' }}
+        run: yarn dedupe --check
+      - name: Deduplicate (write)
+        if: ${{ inputs.write && steps.dedupe.outputs.should == 'true' }}
+        env:
+          DIRTYBOT_KEY: ${{ secrets.ISLAND_IS_SSH_KEY }}
+          DIRTYBOT_APP_ID: ${{ secrets.ISLAND_IS_APP_KEY }}
+        run: |
+          yarn dedupe
+          node scripts/ci/docker/git-check-dirty.mjs "./yarn.lock" "dedupe" "dirtybot"

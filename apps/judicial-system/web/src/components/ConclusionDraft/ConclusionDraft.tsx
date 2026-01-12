@@ -8,7 +8,7 @@ import {
   Decision,
   RulingInput,
 } from '@island.is/judicial-system-web/src/components'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { useCase } from '../../utils/hooks'
 
@@ -128,11 +128,7 @@ const ConclusionDraft: FC<Props> = ({ workingCase, setWorkingCase }) => {
       <Box marginBottom={3}>
         <Text variant="h3">Drög að niðurstöðu</Text>
       </Box>
-      <RulingInput
-        workingCase={workingCase}
-        setWorkingCase={setWorkingCase}
-        rows={12}
-      />
+      <RulingInput rows={12} />
     </>
   )
 }

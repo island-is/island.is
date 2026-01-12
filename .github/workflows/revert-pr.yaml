@@ -25,9 +25,7 @@ jobs:
   detect-failure:
     name: Determine Failure
     if: ${{ github.event.workflow_run.conclusion == 'failure' }}
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    runs-on: arc-shared
     outputs:
       PR_NUMBER: ${{ steps.fetch-pr.outputs.PR_NUMBER }}
     steps:
@@ -41,13 +39,13 @@ jobs:
         id: fetch-pr
         run: |
           COMMIT_SHA="${{ github.event.workflow_run.head_commit.id }}"
-          if ! PR_NUMBER=$(bash ./scripts/ci/get-pr.sh "$COMMIT_SHA"); then
+          if ! PR_NUMBER=$(bash ./scripts/ci/get-pr.sh "${COMMIT_SHA}"); then
             echo "Error: Failed to get PR number for commit $COMMIT_SHA"
             exit 1
           fi
 
           if [ -n "$PR_NUMBER" ]; then
-            echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_OUTPUT
+            echo "PR_NUMBER=$PR_NUMBER" >> "$GITHUB_OUTPUT"
           else
             echo "No merged PR found for commit $COMMIT_SHA."
           fi
@@ -71,9 +69,7 @@ jobs:
     name: Automated PR revert
     needs: detect-failure
     if: ${{ needs.detect-failure.outputs.PR_NUMBER && github.event.workflow_run.conclusion == 'failure' }}
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    runs-on: arc-shared
     steps:
       - name: Debug
         run: |
@@ -83,14 +79,12 @@ jobs:
       - name: Execute PR revert
         if: ${{ vars.ENABLE_PR_REVERT == 'true' }}
         run: |
-          REVERT_PR=$(bash ./scripts/ci/revert-pr.sh "$PR_NUMBER")
-          gh pr edit $REVERT_PR --add-label "automerge,high priority"
+          REVERT_PR=$(bash ./scripts/ci/revert-pr.sh "${PR_NUMBER}")
+          gh pr edit "$REVERT_PR" --add-label "automerge,high priority"
 
   manual-revert-pr:
     name: Manual PR revert
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    runs-on: arc-shared
     if: ${{ github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'revert') && (github.event.pull_request.merged == true || github.event.pull_request.draft == true) && github.actor != 'github-actions' }}
     steps:
       - name: Debug
@@ -102,4 +96,4 @@ jobs:
         if: ${{ vars.ENABLE_PR_REVERT == 'true' }}
         run: |
           REVERT_PR=$(bash ./scripts/ci/revert-pr.sh "${{ github.event.pull_request.number }}")
-          gh pr edit $REVERT_PR --add-label "automerge,high priority"
+          gh pr edit "$REVERT_PR" --add-label "automerge,high priority"

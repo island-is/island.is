@@ -1,13 +1,16 @@
 import { IntlFormatters } from 'react-intl'
 
-import { isInvestigationCase } from '@island.is/judicial-system/types'
+import {
+  isCompletedCase,
+  isInvestigationCase,
+} from '@island.is/judicial-system/types'
 import { sections as m } from '@island.is/judicial-system-web/messages'
 import {
+  Case,
   CaseDecision,
   CaseState,
   CaseType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 export const formatCaseResult = (
   formatMessage: IntlFormatters['formatMessage'],
@@ -33,7 +36,7 @@ export const formatCaseResult = (
     }
   } else if (caseResult === CaseState.DISMISSED) {
     return formatMessage(m.caseResults.dissmissed)
-  } else if (caseResult === CaseState.COMPLETED) {
+  } else if (isCompletedCase(caseResult)) {
     return formatMessage(m.caseResults.indictmentClosed)
   } else {
     return formatMessage(m.caseResults.result)

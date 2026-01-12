@@ -3,22 +3,32 @@ fragment GenericLicenseDataFieldFragment on GenericLicenseDataField {
   name
   label
   value
+  link {
+    type
+  }
   fields {
     type
     name
     label
     value
+    link {
+      type
+    }
     fields {
       type
       name
       label
       value
+      link {
+        type
+      }
     }
   }
 }
 
 fragment GenericUserLicenseFragment on GenericUserLicense {
   nationalId
+  isOwnerChildOfUser
   license {
     type
     provider {
@@ -37,11 +47,19 @@ fragment GenericUserLicenseFragment on GenericUserLicense {
     data {
       ...GenericLicenseDataFieldFragment
     }
-    rawData
     metadata {
       licenseNumber
+      licenseId
       expired
+      expireDate
+      expiryStatus
       name
+      title
+      subtitle
+      photo
+      displayTag {
+        text
+      }
     }
   }
 }

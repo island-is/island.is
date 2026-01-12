@@ -5,6 +5,7 @@ import { useRouter } from 'next/router'
 import {
   Box,
   ContentBlock,
+  FileUploadStatus,
   Input,
   InputFileUpload,
   Text,
@@ -27,11 +28,10 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
-import { removeTabsValidateAndSet } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   TUploadFile,
-  useCase,
-  useDeb,
+  useDebouncedInput,
+  useFileList,
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -46,7 +46,7 @@ import { usePoliceCaseFilesQuery } from './policeCaseFiles.generated'
 import { caseFiles as strings } from './CaseFiles.strings'
 
 export const CaseFiles = () => {
-  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+  const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const {
     data: policeData,
@@ -76,9 +76,12 @@ export const CaseFiles = () => {
   } = useUploadFiles(workingCase.caseFiles)
   const { handleUpload, handleUploadFromPolice, handleRetry, handleRemove } =
     useS3Upload(workingCase.id)
-  const { updateCase } = useCase()
 
-  useDeb(workingCase, 'caseFilesComments')
+  const { onOpenFile } = useFileList({
+    caseId: workingCase.id,
+  })
+
+  const caseFilesComments = useDebouncedInput('caseFilesComments', [])
 
   useEffect(() => {
     if (workingCase.origin !== CaseOrigin.LOKE) {
@@ -127,8 +130,11 @@ export const CaseFiles = () => {
   }, [policeCaseFiles, workingCase.caseFiles])
 
   const uploadErrorMessage = useMemo(() => {
-    if (uploadFiles.some((file) => file.status === 'error')) {
+    if (uploadFiles.some((file) => file.status === FileUploadStatus.error)) {
       return formatMessage(errors.general)
+    }
+    if (uploadFiles.some((file) => file.size === 0)) {
+      return 'Villa kom upp. Tómt skjal.'
     } else {
       return undefined
     }
@@ -199,7 +205,9 @@ export const CaseFiles = () => {
       <PageHeader title={formatMessage(strings.title)} />
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.heading)}</PageTitle>
-        <ProsecutorCaseInfo workingCase={workingCase} />
+        <Box marginBottom={5}>
+          <ProsecutorCaseInfo workingCase={workingCase} />
+        </Box>
         <ParentCaseFiles files={workingCase.parentCase?.caseFiles} />
         <SectionHeading
           title={formatMessage(strings.policeCaseFilesHeading)}
@@ -221,8 +229,8 @@ export const CaseFiles = () => {
             <InputFileUpload
               name="fileUpload"
               accept={Object.values(fileExtensionWhitelist)}
-              fileList={uploadFiles.filter((file) => !file.category)}
-              header={formatMessage(strings.filesLabel)}
+              files={uploadFiles.filter((file) => !file.category)}
+              title={formatMessage(strings.filesLabel)}
               buttonLabel={formatMessage(strings.filesButtonLabel)}
               onChange={(files) =>
                 handleUpload(addUploadFiles(files), updateUploadFile)
@@ -231,7 +239,7 @@ export const CaseFiles = () => {
               onRetry={(file) => handleRetry(file, updateUploadFile)}
               errorMessage={uploadErrorMessage}
               disabled={isUploadingPoliceCaseFiles}
-              showFileSize
+              onOpenFile={(file) => onOpenFile(file)}
             />
           </ContentBlock>
         </Box>
@@ -251,23 +259,10 @@ export const CaseFiles = () => {
               name="caseFilesComments"
               label={formatMessage(strings.commentsLabel)}
               placeholder={formatMessage(strings.commentsPlaceholder)}
-              value={workingCase.caseFilesComments || ''}
-              onChange={(event) =>
-                removeTabsValidateAndSet(
-                  'caseFilesComments',
-                  event.target.value,
-                  [],
-                  setWorkingCase,
-                )
-              }
-              onBlur={(evt) =>
-                updateCase(workingCase.id, {
-                  caseFilesComments: evt.target.value,
-                })
-              }
+              value={caseFilesComments.value || ''}
+              onChange={(evt) => caseFilesComments.onChange(evt.target.value)}
               textarea
               rows={7}
-              autoExpand={{ on: true, maxHeight: 300 }}
             />
           </Box>
         </Box>

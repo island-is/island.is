@@ -11,7 +11,11 @@ import { useIntl } from 'react-intl'
 import _isEqual from 'lodash/isEqual'
 import router from 'next/router'
 
-import { Box, InputFileUpload } from '@island.is/island-ui/core'
+import {
+  Box,
+  FileUploadStatus,
+  InputFileUpload,
+} from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
   CrimeSceneMap,
@@ -41,6 +45,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   TUploadFile,
+  useFileList,
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -80,6 +85,9 @@ const UploadFilesToPoliceCase: FC<UploadFilesToPoliceCaseProps> = ({
   } = useUploadFiles(caseFiles)
   const { handleUpload, handleUploadFromPolice, handleRetry, handleRemove } =
     useS3Upload(caseId)
+  const { onOpenFile } = useFileList({
+    caseId,
+  })
   const {
     data: policeData,
     loading: policeDataLoading,
@@ -98,8 +106,11 @@ const UploadFilesToPoliceCase: FC<UploadFilesToPoliceCaseProps> = ({
   >([])
 
   const errorMessage = useMemo(() => {
-    if (uploadFiles.some((file) => file.status === 'error')) {
+    if (uploadFiles.some((file) => file.status === FileUploadStatus.error)) {
       return formatMessage(errorMessages.general)
+    }
+    if (uploadFiles.some((file) => file.size === 0)) {
+      return 'Villa kom upp. Tómt skjal.'
     } else {
       return undefined
     }
@@ -261,9 +272,9 @@ const UploadFilesToPoliceCase: FC<UploadFilesToPoliceCaseProps> = ({
       />
       <InputFileUpload
         name="fileUpload"
-        fileList={uploadFiles}
+        files={uploadFiles}
         accept="application/pdf"
-        header={formatMessage(strings.inputFileUpload.header)}
+        title={formatMessage(strings.inputFileUpload.header)}
         description={formatMessage(strings.inputFileUpload.description)}
         buttonLabel={formatMessage(strings.inputFileUpload.buttonLabel)}
         onChange={(files) =>
@@ -275,10 +286,10 @@ const UploadFilesToPoliceCase: FC<UploadFilesToPoliceCaseProps> = ({
             updateUploadFile,
           )
         }
+        onOpenFile={(file) => onOpenFile(file)}
         onRemove={(file) => handleRemove(file, removeFileCB)}
         onRetry={(file) => handleRetry(file, updateUploadFile)}
         errorMessage={errorMessage}
-        showFileSize
       />
     </>
   )
@@ -402,7 +413,9 @@ const PoliceCaseFilesRoute = () => {
       />
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.heading)}</PageTitle>
-        <ProsecutorCaseInfo workingCase={workingCase} />
+        <Box marginBottom={5}>
+          <ProsecutorCaseInfo workingCase={workingCase} />
+        </Box>
         <Box marginBottom={5}>
           <InfoBox text={formatMessage(strings.infoBox)} />
         </Box>

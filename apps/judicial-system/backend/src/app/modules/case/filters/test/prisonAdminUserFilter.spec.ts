@@ -11,8 +11,8 @@ import {
   User,
 } from '@island.is/judicial-system/types'
 
-import { Case } from '../../models/case.model'
-import { verifyNoAccess, verifyReadAccess } from './verify'
+import { Case } from '../../../repository'
+import { verifyFullAccess, verifyNoAccess, verifyReadAccess } from './verify'
 
 describe.each(prisonSystemRoles)('prison admin user %s', (role) => {
   const user = {
@@ -88,8 +88,11 @@ describe.each(prisonSystemRoles)('prison admin user %s', (role) => {
             'accessible case decision %s',
             (decision) => {
               const theCase = { type, state, decision } as Case
-
-              verifyReadAccess(theCase, user)
+              if (type === CaseType.CUSTODY) {
+                verifyFullAccess(theCase, user)
+              } else {
+                verifyReadAccess(theCase, user)
+              }
             },
           )
         },
@@ -213,7 +216,11 @@ describe.each(prisonSystemRoles)('prison admin user %s', (role) => {
                       defendants: [{ isSentToPrisonAdmin: true }],
                     } as Case
 
-                    verifyReadAccess(theCase, user)
+                    if (type === CaseType.INDICTMENT) {
+                      verifyFullAccess(theCase, user)
+                    } else {
+                      verifyReadAccess(theCase, user)
+                    }
                   })
                 },
               )

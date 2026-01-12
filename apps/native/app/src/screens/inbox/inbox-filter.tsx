@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { ScrollView, View } from 'react-native'
 import { Navigation } from 'react-native-navigation'
+import { useNavigationButtonPress } from 'react-native-navigation-hooks'
 
 import {
   Accordion,
@@ -22,7 +23,6 @@ import {
   DocumentsV2Sender,
 } from '../../graphql/types/schema'
 import styled from 'styled-components'
-import { useNavigationButtonPress } from 'react-native-navigation-hooks'
 
 const ButtonContainer = styled(View)`
   margin-left: ${({ theme }) => theme.spacing[2]}px;
@@ -42,7 +42,7 @@ const { useNavigationOptions, getNavigationOptions } =
     },
   }))
 
-export function InboxFilterScreen(props: {
+type InboxFilterScreenProps = {
   opened: boolean
   bookmarked: boolean
   archived: boolean
@@ -53,8 +53,13 @@ export function InboxFilterScreen(props: {
   dateFrom?: Date
   dateTo?: Date
   componentId: string
-}) {
-  useConnectivityIndicator({ componentId: props.componentId })
+}
+
+export function InboxFilterScreen({
+  componentId,
+  ...props
+}: InboxFilterScreenProps) {
+  useConnectivityIndicator({ componentId })
 
   const intl = useIntl()
   const [opened, setOpened] = useState(props.opened)
@@ -89,36 +94,16 @@ export function InboxFilterScreen(props: {
     dateTo
   )
 
-  useNavigationOptions(props.componentId)
+  useNavigationOptions(componentId)
 
   useNavigationButtonPress(({ buttonId }) => {
     if (buttonId === ButtonRegistry.InboxFilterClearButton) {
       clearAllFilters()
     }
-  }, props.componentId)
+  }, componentId)
 
   useEffect(() => {
-    Navigation.updateProps(ComponentRegistry.InboxScreen, {
-      opened,
-      bookmarked,
-      archived,
-      senderNationalId: selectedSenders,
-      categoryIds: selectedCategories,
-      dateFrom,
-      dateTo,
-    })
-  }, [
-    opened,
-    bookmarked,
-    archived,
-    selectedSenders,
-    selectedCategories,
-    dateFrom,
-    dateTo,
-  ])
-
-  useEffect(() => {
-    Navigation.mergeOptions(props.componentId, {
+    Navigation.mergeOptions(componentId, {
       topBar: {
         rightButtons: isSelected
           ? [
@@ -132,7 +117,34 @@ export function InboxFilterScreen(props: {
           : [],
       },
     })
-  }, [isSelected, props.componentId, intl])
+  }, [isSelected, componentId, intl])
+
+  const onApplyFilters = useCallback(() => {
+    Navigation.updateProps(
+      ComponentRegistry.InboxScreen,
+      {
+        opened,
+        bookmarked,
+        archived,
+        senderNationalId: selectedSenders,
+        categoryIds: selectedCategories,
+        dateFrom,
+        dateTo,
+      },
+      () => {
+        Navigation.pop(componentId)
+      },
+    )
+  }, [
+    componentId,
+    opened,
+    bookmarked,
+    archived,
+    selectedSenders,
+    selectedCategories,
+    dateFrom,
+    dateTo,
+  ])
 
   return (
     <View
@@ -255,9 +267,7 @@ export function InboxFilterScreen(props: {
         <ButtonContainer>
           <Button
             title={intl.formatMessage({ id: 'inbox.filterApplyButton' })}
-            onPress={() => {
-              Navigation.pop(props.componentId)
-            }}
+            onPress={onApplyFilters}
           />
         </ButtonContainer>
       )}

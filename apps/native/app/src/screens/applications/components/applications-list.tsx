@@ -6,6 +6,7 @@ import {
   Image,
   ListRenderItemInfo,
   RefreshControl,
+  SafeAreaView,
   View,
 } from 'react-native'
 import { useTheme } from 'styled-components'
@@ -195,7 +196,7 @@ export const ApplicationsList = ({
       {showError ? (
         <Problem withContainer />
       ) : (
-        <>
+        <SafeAreaView>
           <Animated.FlatList
             ref={flatListRef}
             contentContainerStyle={{
@@ -219,7 +220,7 @@ export const ApplicationsList = ({
           />
           <TopLine scrollY={scrollY} />
           <BottomTabsIndicator index={1} total={5} />
-        </>
+        </SafeAreaView>
       )}
     </View>
   )

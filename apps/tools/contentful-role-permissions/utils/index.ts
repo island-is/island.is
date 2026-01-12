@@ -1,9 +1,4 @@
 import {
-  contentfulManagementAccessToken,
-  spaceId,
-  environmentId,
-} from '../constants'
-import {
   CollectionProp,
   ContentTypeProps,
   createClient as createManagementClient,
@@ -12,10 +7,17 @@ import {
   RoleProps,
   TagProps,
 } from 'contentful-management'
-import slugify from '@sindresorhus/slugify'
 import type { ActionType } from 'contentful-management/dist/typings/entities/role'
-import type { CheckboxState } from '../types'
+import slugify from '@sindresorhus/slugify'
+
 import { sortAlpha } from '@island.is/shared/utils'
+
+import {
+  contentfulManagementAccessToken,
+  environmentId,
+  spaceId,
+} from '../constants'
+import type { CheckboxState } from '../types'
 
 let client: PlainClientAPI | null = null
 
@@ -49,8 +51,8 @@ export const getAllContentTypesInAscendingOrder = async () => {
     contentTypes.length < contentfulTypesResponse.total
   ) {
     contentfulTypesResponse = await client.contentType.getMany({
-      limit: 100,
       query: {
+        limit: 100,
         skip: contentTypes.length,
       },
     })
@@ -65,7 +67,9 @@ export const getAllContentTypesInAscendingOrder = async () => {
 export const getAllTags = async () => {
   const client = getContentfulManagementApiClient()
   const response = await client.tag.getMany({
-    limit: 1000,
+    query: {
+      limit: 1000,
+    },
   })
   const tags = response.items
   return tags

@@ -23,6 +23,7 @@ const complexOrg = {
   address: 'Sultugata 10',
   email: 'storlax@sameinadir.is',
   phoneNumber: '5551234',
+  zendeskId: '123123',
   administrativeContact: {
     name: 'Siggi stórlax',
     email: 'hjalp@sameinadir.is',
@@ -107,6 +108,7 @@ describe('Organisation API', () => {
     expect(body.address).toEqual(complexOrg.address)
     expect(body.email).toEqual(complexOrg.email)
     expect(body.phoneNumber).toEqual(complexOrg.phoneNumber)
+    expect(body.zendeskId).toEqual(complexOrg.zendeskId)
     expect(body.administrativeContact.name).toEqual(
       complexOrg.administrativeContact.name,
     )

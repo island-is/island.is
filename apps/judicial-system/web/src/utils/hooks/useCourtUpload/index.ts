@@ -8,10 +8,10 @@ import {
 import { ApolloError } from '@apollo/client'
 
 import {
+  Case,
   CaseFile,
   CaseFileState,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { useUploadFileToCourtMutation } from './uploadFileToCourt.generated'
 
@@ -74,13 +74,13 @@ export const useCourtUpload = (
       .filter((file) => !file.status)
       .forEach((file) => {
         if (file.state === CaseFileState.STORED_IN_COURT) {
-          if (file.key) {
+          if (file.isKeyAccessible) {
             setFileUploadStatus(workingCase, file, 'done')
           } else {
             setFileUploadStatus(workingCase, file, 'done-broken')
           }
         } else if (file.state === CaseFileState.STORED_IN_RVG) {
-          if (file.key) {
+          if (file.isKeyAccessible) {
             setFileUploadStatus(workingCase, file, 'not-uploaded')
           } else {
             setFileUploadStatus(workingCase, file, 'broken')
@@ -114,7 +114,10 @@ export const useCourtUpload = (
       const xFiles = files as CaseFileWithStatus[]
       xFiles.forEach(async (file) => {
         try {
-          if (file.state === CaseFileState.STORED_IN_RVG && file.key) {
+          if (
+            file.state === CaseFileState.STORED_IN_RVG &&
+            file.isKeyAccessible
+          ) {
             setFileUploadStatus(workingCase, file, 'uploading')
 
             await uploadFileToCourtMutation({
@@ -152,7 +155,7 @@ export const useCourtUpload = (
             } else {
               setFileUploadStatus(
                 workingCase,
-                { ...file, key: undefined },
+                { ...file, isKeyAccessible: false },
                 'broken',
               )
             }

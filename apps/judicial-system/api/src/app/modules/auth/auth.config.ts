@@ -4,7 +4,7 @@ export const authModuleConfig = defineConfig({
   name: 'AuthModule',
   load: (env) => ({
     production: env.optional('NODE_ENV') === 'production',
-    scope: env.required('AUTH_IDS_SCOPE', 'openid profile'),
+    scope: env.required('AUTH_IDS_SCOPE', 'openid profile offline_access'),
     clientId: env.required(
       'AUTH_IDS_CLIENT_ID',
       '@rettarvorslugatt.island.is/web',

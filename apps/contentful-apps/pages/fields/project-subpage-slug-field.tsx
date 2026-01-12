@@ -4,7 +4,8 @@ import type { EntryProps } from 'contentful-management'
 import { FieldExtensionSDK } from '@contentful/app-sdk'
 import { Stack, Text, TextInput } from '@contentful/f36-components'
 import { useCMA, useSDK } from '@contentful/react-apps-toolkit'
-import slugify from '@sindresorhus/slugify'
+
+import { slugify } from '../../utils'
 
 const DEBOUNCE_TIME = 100
 

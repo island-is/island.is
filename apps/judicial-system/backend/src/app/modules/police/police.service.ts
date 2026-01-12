@@ -1,7 +1,7 @@
 import { Agent } from 'https'
 import fetch from 'isomorphic-fetch'
 import { Base64 } from 'js-base64'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 import { z } from 'zod'
 
 import {
@@ -12,6 +12,7 @@ import {
   NotFoundException,
   ServiceUnavailableException,
 } from '@nestjs/common'
+import { InjectModel } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -22,19 +23,26 @@ import {
 } from '@island.is/shared/utils/server'
 
 import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
-import type { User } from '@island.is/judicial-system/types'
+import type {
+  SubpoenaPoliceDocumentInfo,
+  User,
+  VerdictPoliceDocumentInfo,
+} from '@island.is/judicial-system/types'
 import {
   CaseState,
   CaseType,
+  getServiceDateFromSupplements,
+  IndictmentCaseSubtypes,
+  mapPoliceVerdictDeliveryStatus,
+  PoliceFileTypeCode,
   ServiceStatus,
+  VerdictServiceStatus,
 } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
 import { AwsS3Service } from '../aws-s3'
-import { Case } from '../case'
-import { Defendant } from '../defendant/models/defendant.model'
 import { EventService } from '../event'
-import { Subpoena, SubpoenaService } from '../subpoena'
+import { Case, DateLog, Defendant, IndictmentSubtype } from '../repository'
 import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
 import { CreateSubpoenaResponse } from './models/createSubpoena.response'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
@@ -51,6 +59,10 @@ export enum PoliceDocumentType {
   RVDO = 'RVDO', // Dómur
   RVAS = 'RVAS', // Ákæra
   RVMG = 'RVMG', // Málsgögn
+  RVMV = 'RVMV', // Viðbótargögn verjanda
+  RVVS = 'RVVS', // Viðbótargögn sækjanda
+  RVFK = 'RVFK', // Fyrirkall
+  RVBD = 'BRTNG_RVBD', // Birtingarvottorð dóms
 }
 
 export interface PoliceDocument {
@@ -64,6 +76,10 @@ export interface SubpoenaInfo {
   servedBy?: string
   defenderNationalId?: string
   serviceDate?: Date
+}
+
+interface CreateDocumentResponse {
+  externalPoliceDocumentId: string
 }
 
 const getChapter = (category?: string): number | undefined => {
@@ -118,7 +134,7 @@ export class PoliceService {
     domsSkjalsFlokkun: z.optional(z.string()),
     dagsStofnad: z.optional(z.string()),
     skjalasnid: z.optional(z.string()),
-    tegundSkjals: z.optional(this.policeCaseFileType),
+    tegundSkjals: this.policeCaseFileType.nullish(),
   })
   private readonly crimeSceneStructure = z.object({
     vettvangur: z.optional(z.string()),
@@ -129,6 +145,7 @@ export class PoliceService {
     gotuNumer: z.string().nullish(),
     sveitafelag: z.string().nullish(),
     postnumer: z.string().nullish(),
+    artalNrGreinLidur: z.string().nullish(),
   })
   private responseStructure = z.object({
     malsnumer: z.string(),
@@ -148,15 +165,36 @@ export class PoliceService {
     deliveredToLawyer: z.boolean().nullish(),
   })
 
+  private documentStructure = z.object({
+    comment: z.string().nullish(),
+    servedBy: z.string().nullish(),
+    servedAt: z.string().nullish(),
+    delivered: z.boolean().nullish(),
+    deliveredOnPaper: z.boolean().nullish(),
+    deliveredToLawyer: z.boolean().nullish(),
+    defenderNationalId: z.string().nullish(),
+    deliveredOnIslandis: z.boolean().nullish(),
+    deliveredToDefendant: z.boolean().nullish(),
+    deliveryMethod: z.string().nullish(),
+    supplements: z
+      .array(
+        z.object({
+          code: z.string().nullish(),
+          value: z.string().nullish(),
+        }),
+      )
+      .nullish(),
+  })
+
   constructor(
+    @InjectModel(IndictmentSubtype)
+    private readonly indictmentSubtypeModel: typeof IndictmentSubtype,
     @Inject(policeModuleConfig.KEY)
     private readonly config: ConfigType<typeof policeModuleConfig>,
     @Inject(forwardRef(() => EventService))
     private readonly eventService: EventService,
     @Inject(forwardRef(() => AwsS3Service))
     private readonly awsS3Service: AwsS3Service,
-    @Inject(forwardRef(() => SubpoenaService))
-    private readonly subpoenaService: SubpoenaService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {
     this.xRoadPath = createXRoadAPIPath(
@@ -344,11 +382,11 @@ export class PoliceService {
   }
 
   async getSubpoenaStatus(
-    subpoenaId: string,
+    policeSubpoenaId: string,
     user?: User,
-  ): Promise<SubpoenaInfo> {
+  ): Promise<SubpoenaPoliceDocumentInfo> {
     return this.fetchPoliceDocumentApi(
-      `${this.xRoadPath}/GetSubpoenaStatus?id=${subpoenaId}`,
+      `${this.xRoadPath}/GetSubpoenaStatus?id=${policeSubpoenaId}`,
     )
       .then(async (res: Response) => {
         if (res.ok) {
@@ -382,7 +420,7 @@ export class PoliceService {
         // The police system does not provide a structured error response.
         // When a subpoena does not exist, a stack trace is returned.
         throw new NotFoundException({
-          message: `Subpoena with id ${subpoenaId} does not exist`,
+          message: `Subpoena with police subpoena id ${policeSubpoenaId} does not exist`,
           detail: reason,
         })
       })
@@ -395,7 +433,7 @@ export class PoliceService {
           // Act as if the subpoena does not exist
           throw new NotFoundException({
             ...reason,
-            message: `Subpoena ${subpoenaId} does not exist`,
+            message: `Subpoena ${policeSubpoenaId} does not exist`,
             detail: reason.message,
           })
         }
@@ -403,7 +441,7 @@ export class PoliceService {
         this.eventService.postErrorEvent(
           'Failed to get subpoena',
           {
-            subpoenaId,
+            policeSubpoenaId,
             actor: user?.name || 'Digital-mailbox',
             institution: user?.institution?.name,
           },
@@ -412,7 +450,7 @@ export class PoliceService {
 
         throw new BadGatewayException({
           ...reason,
-          message: `Failed to get subpoena ${subpoenaId}`,
+          message: `Failed to get subpoena ${policeSubpoenaId}`,
           detail: reason.message,
         })
       })
@@ -444,38 +482,62 @@ export class PoliceService {
             }
           })
 
-          response.malseinings?.forEach(
-            (info: {
-              upprunalegtMalsnumer: string
-              vettvangur?: string
-              brotFra?: string
-              licencePlate?: string
-              gotuHeiti?: string | null
-              gotuNumer?: string | null
-              sveitafelag?: string | null
-            }) => {
-              const policeCaseNumber = info.upprunalegtMalsnumer
+          await Promise.all(
+            (response.malseinings ?? []).map(
+              async (info: {
+                upprunalegtMalsnumer: string
+                vettvangur?: string
+                brotFra?: string
+                licencePlate?: string
+                gotuHeiti?: string | null
+                gotuNumer?: string | null
+                sveitafelag?: string | null
+                artalNrGreinLidur?: string | null
+              }) => {
+                const policeCaseNumber = info.upprunalegtMalsnumer
+                const article = info.artalNrGreinLidur
+                const subtype = await this.getSubtypeByArticle(article)
+                const key = Object.keys(IndictmentCaseSubtypes).find(
+                  (k) =>
+                    IndictmentCaseSubtypes[
+                      k as keyof typeof IndictmentCaseSubtypes
+                    ] === subtype?.offenseType,
+                )
 
-              const place = formatCrimeScenePlace(
-                info.gotuHeiti,
-                info.gotuNumer,
-                info.sveitafelag,
-              )
-              const date = info.brotFra ? new Date(info.brotFra) : undefined
-              const licencePlate = info.licencePlate
+                const place = formatCrimeScenePlace(
+                  info.gotuHeiti,
+                  info.gotuNumer,
+                  info.sveitafelag,
+                )
+                const date = info.brotFra ? new Date(info.brotFra) : undefined
+                const licencePlate = info.licencePlate
 
-              const foundCase = cases.find(
-                (item) => item.policeCaseNumber === policeCaseNumber,
-              )
+                const foundCase = cases.find(
+                  (item) => item.policeCaseNumber === policeCaseNumber,
+                )
 
-              if (!foundCase) {
-                cases.push({ policeCaseNumber, place, date })
-              } else if (date && (!foundCase.date || date > foundCase.date)) {
-                foundCase.place = place
-                foundCase.date = date
-                foundCase.licencePlate = licencePlate
-              }
-            },
+                if (!foundCase) {
+                  cases.push({
+                    policeCaseNumber,
+                    place,
+                    date,
+                    licencePlate,
+                    subtypes: key ? [key] : [],
+                  })
+                } else {
+                  if (date && (!foundCase.date || date > foundCase.date)) {
+                    foundCase.place = place
+                    foundCase.date = date
+                    foundCase.licencePlate = licencePlate
+                    foundCase.subtypes = []
+                  }
+
+                  if (key && !foundCase.subtypes?.includes(key)) {
+                    foundCase.subtypes?.push(key)
+                  }
+                }
+              },
+            ),
           )
 
           return cases
@@ -588,11 +650,11 @@ export class PoliceService {
           // Do not spam the logs with errors
           // Act as if the case was updated
           return true
-        } else {
-          this.logger.error(`Failed to update police case ${caseId}`, {
-            reason,
-          })
         }
+
+        this.logger.error(`Failed to update police case ${caseId}`, {
+          reason,
+        })
 
         this.eventService.postErrorEvent(
           'Failed to update police case',
@@ -612,25 +674,181 @@ export class PoliceService {
       })
   }
 
+  async createDocument({
+    caseId,
+    defendantId,
+    user,
+    documentName,
+    documentFiles,
+    documentDates,
+    fileTypeCode,
+    caseSupplements,
+  }: {
+    caseId: string
+    defendantId: string
+    user: User
+    documentName: string
+    documentFiles: { name: string; documentBase64: string }[]
+    documentDates: { code: string; value: Date }[]
+    fileTypeCode: string
+    caseSupplements: { code: string; value: string }[]
+  }): Promise<CreateDocumentResponse | undefined> {
+    const { name: actor } = user
+
+    const createDocumentPath = `${this.xRoadPath}/CreateDocument`
+
+    try {
+      const res = await this.fetchPoliceCaseApi(createDocumentPath, {
+        method: 'POST',
+        headers: {
+          accept: '*/*',
+          'Content-Type': 'application/json',
+          'X-Road-Client': this.config.clientId,
+          'X-API-KEY': this.config.policeApiKey,
+        },
+        agent: this.agent,
+        body: JSON.stringify({
+          documentName: documentName,
+          documentFiles,
+          fileTypeCode,
+          supplements: caseSupplements,
+          dates: documentDates,
+        }),
+      } as RequestInit)
+
+      if (res.ok) {
+        const policeResponse = await res.json()
+        this.logger.debug(
+          `Verdict for defendant ${defendantId} with police document id ${policeResponse.id} and file type code ${fileTypeCode} delivered to national commissioners office `,
+        )
+        return { externalPoliceDocumentId: policeResponse.id }
+      }
+    } catch (error) {
+      this.logger.error(
+        `${createDocumentPath} - create external police document for file type code ${fileTypeCode} for case ${caseId}`,
+        {
+          error,
+        },
+      )
+
+      this.eventService.postErrorEvent(
+        'Failed to create external police document file',
+        {
+          caseId,
+          defendantId,
+          actor,
+        },
+        error,
+      )
+
+      throw error
+    }
+  }
+
+  async getVerdictDocumentStatus(
+    policeDocumentId: string,
+    user?: User,
+  ): Promise<VerdictPoliceDocumentInfo> {
+    return this.fetchPoliceDocumentApi(
+      `${this.xRoadPath}/GetDeliveryStatus?id=${policeDocumentId}`,
+    )
+      .then(async (res: Response) => {
+        if (res.ok) {
+          const response: z.infer<typeof this.documentStructure> =
+            await res.json()
+          this.documentStructure.parse(response)
+          const serviceStatus = mapPoliceVerdictDeliveryStatus({
+            delivered: response.delivered ?? false,
+            deliveredOnPaper: response.deliveredOnPaper ?? false,
+            deliveredOnIslandis: response.deliveredOnIslandis ?? false,
+            deliveredToLawyer: response.deliveredToLawyer ?? false,
+            deliveredToDefendant: response.deliveredToDefendant ?? false,
+            deliveryMethod: response.deliveryMethod ?? undefined,
+          })
+
+          const legalPaperServiceDate =
+            serviceStatus === VerdictServiceStatus.LEGAL_PAPER
+              ? getServiceDateFromSupplements(response.supplements ?? undefined)
+              : undefined
+
+          const servedAt =
+            response.servedAt && !Number.isNaN(Date.parse(response.servedAt))
+              ? new Date(response.servedAt)
+              : undefined
+
+          return {
+            serviceStatus: serviceStatus,
+            deliveredToDefenderNationalId:
+              response.defenderNationalId ?? undefined,
+            comment: response.comment ?? undefined,
+            servedBy: response.servedBy ?? undefined,
+            serviceDate: legalPaperServiceDate ?? servedAt,
+          }
+        }
+        const reason = await res.text()
+
+        // The police system does not provide a structured error response.
+        // When a document does not exist, a stack trace is returned.
+        throw new NotFoundException({
+          message: `Document with police document id ${policeDocumentId} does not exist`,
+          detail: reason,
+        })
+      })
+      .catch((reason) => {
+        if (reason instanceof NotFoundException) {
+          throw reason
+        }
+
+        if (reason instanceof ServiceUnavailableException) {
+          // Act as if the document does not exist
+          throw new NotFoundException({
+            ...reason,
+            message: `Police document ${policeDocumentId} does not exist`,
+            detail: reason.message,
+          })
+        }
+
+        this.eventService.postErrorEvent(
+          'Failed to get police document status',
+          {
+            policeDocumentId,
+            actor: user?.name || 'Digital-mailbox',
+            institution: user?.institution?.name,
+          },
+          reason,
+        )
+
+        throw new BadGatewayException({
+          message: `Failed to get police document status ${policeDocumentId}`,
+          detail:
+            reason instanceof Error
+              ? reason.message
+              : typeof reason === 'string'
+              ? reason
+              : JSON.stringify(reason),
+        })
+      })
+  }
+
   async createSubpoena(
-    workingCase: Case,
+    theCase: Case,
     defendant: Defendant,
     subpoena: string,
     indictment: string,
     user: User,
+    civilClaims: string[],
   ): Promise<CreateSubpoenaResponse> {
     const { courtCaseNumber, dateLogs, prosecutor, policeCaseNumbers, court } =
-      workingCase
+      theCase
     const { nationalId: defendantNationalId } = defendant
     const { name: actor } = user
 
     const normalizedNationalId =
       normalizeAndFormatNationalId(defendantNationalId)[0]
 
-    const documentName = `Fyrirkall í máli ${workingCase.courtCaseNumber}`
-    const arraignmentInfo = dateLogs?.find(
-      (dateLog) => dateLog.dateType === 'ARRAIGNMENT_DATE',
-    )
+    const documentName = `Fyrirkall í máli ${theCase.courtCaseNumber}`
+    const arraignmentInfo = DateLog.arraignmentDate(dateLogs)
+
     try {
       const res = await this.fetchPoliceCaseApi(
         `${this.xRoadPath}/CreateSubpoena`,
@@ -645,7 +863,7 @@ export class PoliceService {
           agent: this.agent,
           body: JSON.stringify({
             documentName: documentName,
-            documentsBase64: [subpoena, indictment],
+            documentsBase64: [subpoena, indictment, ...civilClaims],
             courtRegistrationDate: arraignmentInfo?.date,
             prosecutorSsn: prosecutor?.nationalId,
             prosecutedSsn: normalizedNationalId,
@@ -654,27 +872,27 @@ export class PoliceService {
             courtCeremony: 'Þingfesting',
             lokeCaseNumber: policeCaseNumbers?.[0],
             courtCaseNumber: courtCaseNumber,
-            fileTypeCode: 'BRTNG',
-            rvgCaseId: workingCase.id,
+            fileTypeCode: PoliceFileTypeCode.SUBPOENA,
+            rvgCaseId: theCase.id,
           }),
         } as RequestInit,
       )
 
       if (res.ok) {
         const subpoenaResponse = await res.json()
-        return { subpoenaId: subpoenaResponse.id }
+        return { policeSubpoenaId: subpoenaResponse.id }
       }
 
       throw await res.text()
     } catch (error) {
-      this.logger.error(`Failed create subpoena for case ${workingCase.id}`, {
+      this.logger.error(`Failed create subpoena for case ${theCase.id}`, {
         error,
       })
 
       this.eventService.postErrorEvent(
         'Failed to create subpoena',
         {
-          caseId: workingCase.id,
+          caseId: theCase.id,
           defendantId: defendant?.id,
           actor,
         },
@@ -686,17 +904,15 @@ export class PoliceService {
   }
 
   async revokeSubpoena(
-    workingCase: Case,
-    subpoena: Subpoena,
+    theCase: Case,
+    policeSubpoenaId: string,
     user: User,
   ): Promise<boolean> {
     const { name: actor } = user
 
-    const subpoenaId = subpoena.subpoenaId
-
     try {
       const res = await this.fetchPoliceCaseApi(
-        `${this.xRoadPath}/InvalidateCourtSummon?sekGuid=${subpoenaId}`,
+        `${this.xRoadPath}/InvalidateCourtSummon?sekGuid=${policeSubpoenaId}`,
         {
           method: 'POST',
           headers: {
@@ -715,7 +931,7 @@ export class PoliceService {
       throw await res.text()
     } catch (error) {
       this.logger.error(
-        `Failed revoke subpoena with id ${subpoenaId} for case ${workingCase.id} from police`,
+        `Failed revoke subpoena with police subpoena id ${policeSubpoenaId} for case ${theCase.id} from police`,
         {
           error,
         },
@@ -724,8 +940,8 @@ export class PoliceService {
       this.eventService.postErrorEvent(
         'Failed to revoke subpoena from police',
         {
-          caseId: workingCase.id,
-          subpoenaId,
+          caseId: theCase.id,
+          policeSubpoenaId,
           actor,
         },
         error,
@@ -733,5 +949,13 @@ export class PoliceService {
 
       return false
     }
+  }
+
+  getSubtypeByArticle(
+    article?: string | null,
+  ): Promise<IndictmentSubtype | null> {
+    return this.indictmentSubtypeModel.findOne({
+      where: { article },
+    })
   }
 }

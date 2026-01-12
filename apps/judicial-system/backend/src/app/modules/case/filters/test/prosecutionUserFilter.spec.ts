@@ -1,4 +1,4 @@
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import {
   CaseState,
@@ -12,7 +12,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { Case } from '../../models/case.model'
+import { Case } from '../../../repository'
 import { canUserAccessCase } from '../case.filter'
 import { verifyNoAccess, verifyReadAccess } from './verify'
 
@@ -182,7 +182,10 @@ describe('prosecusion user PROSECUTOR', () => {
   const user = {
     id: uuid(),
     role: UserRole.PROSECUTOR,
-    institution: { id: uuid(), type: InstitutionType.PROSECUTORS_OFFICE },
+    institution: {
+      id: uuid(),
+      type: InstitutionType.POLICE_PROSECUTORS_OFFICE,
+    },
   } as User
 
   describe.each([
@@ -200,7 +203,10 @@ describe.each(prosecutionRoles.filter((role) => role !== UserRole.PROSECUTOR))(
     const user = {
       id: uuid(),
       role,
-      institution: { id: uuid(), type: InstitutionType.PROSECUTORS_OFFICE },
+      institution: {
+        id: uuid(),
+        type: InstitutionType.POLICE_PROSECUTORS_OFFICE,
+      },
     } as User
 
     const accessibleCaseTypes = indictmentCases

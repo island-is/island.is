@@ -1,104 +1,10 @@
 import { useEffect, useState } from 'react'
-import { EntryProps, KeyValueMap } from 'contentful-management'
-import { CMAClient, SidebarExtensionSDK } from '@contentful/app-sdk'
+import { SidebarExtensionSDK } from '@contentful/app-sdk'
 import { Button, Text } from '@contentful/f36-components'
 import { useCMA, useSDK } from '@contentful/react-apps-toolkit'
 
-import {
-  CONTENTFUL_ENVIRONMENT,
-  CONTENTFUL_SPACE,
-  DEFAULT_LOCALE,
-  DEV_WEB_BASE_URL,
-} from '../../constants'
-
-const previewLinkHandler = {
-  vacancy: (entry: EntryProps<KeyValueMap>) => {
-    return `${DEV_WEB_BASE_URL}/starfatorg/c-${entry.sys.id}`
-  },
-  article: (entry: EntryProps<KeyValueMap>) => {
-    return `${DEV_WEB_BASE_URL}/${entry.fields.slug[DEFAULT_LOCALE]}`
-  },
-  subArticle: async (entry: EntryProps<KeyValueMap>, cma: CMAClient) => {
-    const parentArticleId = entry.fields.parent?.[DEFAULT_LOCALE]?.sys?.id
-    const parentArticle = await cma.entry.get({
-      entryId: parentArticleId,
-      environmentId: CONTENTFUL_ENVIRONMENT,
-      spaceId: CONTENTFUL_SPACE,
-    })
-    return `${DEV_WEB_BASE_URL}/${
-      parentArticle?.fields?.slug[DEFAULT_LOCALE]
-    }/${entry.fields.url[DEFAULT_LOCALE]?.split('/')?.pop() ?? ''}`
-  },
-  organizationPage: (entry: EntryProps<KeyValueMap>) => {
-    return `${DEV_WEB_BASE_URL}/s/${entry.fields.slug[DEFAULT_LOCALE]}`
-  },
-  projectPage: (entry: EntryProps<KeyValueMap>) => {
-    return `${DEV_WEB_BASE_URL}/v/${entry.fields.slug[DEFAULT_LOCALE]}`
-  },
-  organizationSubpage: async (
-    entry: EntryProps<KeyValueMap>,
-    cma: CMAClient,
-  ) => {
-    const organizationPageId =
-      entry.fields.organizationPage?.[DEFAULT_LOCALE]?.sys?.id
-    const [organizationPage, organizationParentSubpageResponse] =
-      await Promise.all([
-        cma.entry.get({
-          entryId: organizationPageId,
-          environmentId: CONTENTFUL_ENVIRONMENT,
-          spaceId: CONTENTFUL_SPACE,
-        }),
-        cma.entry.getMany({
-          query: {
-            content_type: 'organizationParentSubpage',
-            include: 1,
-            links_to_entry: entry.sys.id,
-            'sys.archivedAt[exists]': false,
-          },
-        }),
-      ])
-
-    const orgPageSlug = organizationPage?.fields?.slug?.[DEFAULT_LOCALE]
-    const slug = entry.fields.slug[DEFAULT_LOCALE]
-
-    if (!organizationParentSubpageResponse?.items?.length) {
-      return `${DEV_WEB_BASE_URL}/s/${orgPageSlug}/${slug}`
-    }
-    return `${DEV_WEB_BASE_URL}/s/${orgPageSlug}/${organizationParentSubpageResponse.items[0].fields.slug[DEFAULT_LOCALE]}/${slug}`
-  },
-  anchorPage: (entry: EntryProps<KeyValueMap>) => {
-    const middlePart =
-      entry.fields.pageType?.[DEFAULT_LOCALE] === 'Digital Iceland Service'
-        ? 's/stafraent-island/thjonustur'
-        : 'lifsvidburdir'
-
-    return `${DEV_WEB_BASE_URL}/${middlePart}/${entry.fields.slug[DEFAULT_LOCALE]}`
-  },
-  lifeEventPage: (entry: EntryProps<KeyValueMap>) => {
-    return `${DEV_WEB_BASE_URL}/lifsvidburdir/${entry.fields.slug[DEFAULT_LOCALE]}`
-  },
-  news: (entry: EntryProps<KeyValueMap>) => {
-    return `${DEV_WEB_BASE_URL}/frett/${entry.fields.slug[DEFAULT_LOCALE]}`
-  },
-  manual: (entry: EntryProps<KeyValueMap>) => {
-    return `${DEV_WEB_BASE_URL}/handbaekur/${entry.fields.slug[DEFAULT_LOCALE]}`
-  },
-  organizationParentSubpage: async (
-    entry: EntryProps<KeyValueMap>,
-    cma: CMAClient,
-  ) => {
-    const organizationPageId =
-      entry.fields.organizationPage?.[DEFAULT_LOCALE]?.sys?.id
-    const organizationPage = await cma.entry.get({
-      entryId: organizationPageId,
-      environmentId: CONTENTFUL_ENVIRONMENT,
-      spaceId: CONTENTFUL_SPACE,
-    })
-    const orgPageSlug = organizationPage?.fields?.slug?.[DEFAULT_LOCALE]
-
-    return `${DEV_WEB_BASE_URL}/s/${orgPageSlug}/${entry.fields.slug[DEFAULT_LOCALE]}`
-  },
-}
+import { CONTENTFUL_ENVIRONMENT, CONTENTFUL_SPACE } from '../../constants'
+import { previewLinkHandler } from '../../utils'
 
 const PreviewLinkSidebar = () => {
   const sdk = useSDK<SidebarExtensionSDK>()

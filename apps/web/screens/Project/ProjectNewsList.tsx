@@ -71,7 +71,7 @@ const ProjectNewsList: Screen<ProjectNewsListProps> = ({
   const router = useRouter()
   const { getMonthByIndex } = useDateUtils()
   useContentfulId(projectPage.id)
-  useLocalLinkTypeResolver()
+  useLocalLinkTypeResolver('projectnewsoverview')
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore make web strict
   const n = useNamespace(namespace)
@@ -172,6 +172,7 @@ const ProjectNewsList: Screen<ProjectNewsListProps> = ({
           monthOptions={monthOptions}
           title={newsTitle}
           newsPerPage={10}
+          variant="digital-iceland"
         />
       </ProjectWrapper>
       <HeadWithSocialSharing

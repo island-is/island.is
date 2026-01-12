@@ -37,7 +37,6 @@ import {
   SearchInput,
 } from '@island.is/web/components'
 import {
-  AdgerdirPage,
   AnchorPage,
   Article,
   ContentLanguage,
@@ -52,6 +51,7 @@ import {
   Manual,
   News,
   OrganizationPage,
+  OrganizationParentSubpage,
   OrganizationSubpage,
   ProjectPage,
   QueryGetNamespaceArgs,
@@ -85,6 +85,22 @@ import { ActionType, initialState, reducer } from './Search.state'
 
 const PERPAGE = 10
 
+const ALL_TYPES: `${SearchableContentTypes}`[] = [
+  'webArticle',
+  'webLifeEventPage',
+  'webDigitalIcelandService',
+  'webDigitalIcelandCommunityPage',
+  'webSubArticle',
+  'webLink',
+  'webNews',
+  'webOrganizationSubpage',
+  'webOrganizationPage',
+  'webProjectPage',
+  'webManual',
+  'webManualChapterItem',
+  'webOrganizationParentSubpage',
+]
+
 type SearchQueryFilters = {
   category: string
   type: string
@@ -111,14 +127,14 @@ export type SearchEntryType = Article &
   AnchorPage &
   LifeEventPage &
   News &
-  AdgerdirPage &
   SubArticle &
   OrganizationSubpage &
   OrganizationPage &
   LinkItem &
   ProjectPage &
   Manual &
-  ManualChapterItem
+  ManualChapterItem &
+  OrganizationParentSubpage
 
 const connectedTypes: Partial<
   Record<
@@ -132,8 +148,8 @@ const connectedTypes: Partial<
     'WebOrganizationSubpage',
     'webOrganizationPage',
     'WebProjectPage',
+    'WebOrganizationParentSubpage',
   ],
-  webAdgerdirPage: ['WebAdgerdirPage'],
   webNews: ['WebNews'],
   webQNA: ['WebQna'],
   webLifeEventPage: ['WebLifeEventPage'],
@@ -203,6 +219,11 @@ const Search: Screen<CategoryProps> = ({
         )?.count ?? 0
 
       total +=
+        (countResults?.typesCount ?? []).find(
+          (x) => x.key === 'webOrganizationParentSubpage',
+        )?.count ?? 0
+
+      total +=
         (countResults?.typesCount ?? []).find((x) => x.key === 'webProjectPage')
           ?.count ?? 0
 
@@ -229,11 +250,13 @@ const Search: Screen<CategoryProps> = ({
       case 'News':
         labels.push(n('newsTitle'))
         break
-      case 'AdgerdirPage':
-        labels.push(n('adgerdirTitle'))
-        break
       case 'ManualChapterItem':
         labels.push(item.manualChapter.title)
+        break
+      case 'OrganizationParentSubpage':
+        if (item.organizationPageTitle) {
+          labels.push(item.organizationPageTitle)
+        }
         break
       default:
         break
@@ -316,9 +339,9 @@ const Search: Screen<CategoryProps> = ({
     ]
   }, [countResults.typesCount, getArticleCount, tagTitles])
 
-  const getItemLink = (item: SearchEntryType) => {
+  const getItemLink = (item: SearchEntryType): string => {
     if (item.__typename === 'AnchorPage') {
-      return linkResolver(extractAnchorPageLinkType(item), [item.slug])
+      return linkResolver(extractAnchorPageLinkType(item), [item.slug]).href
     }
 
     if (item.__typename === 'ManualChapterItem') {
@@ -326,12 +349,20 @@ const Search: Screen<CategoryProps> = ({
         item.manual.slug,
         item.manualChapter.slug,
         item.id,
-      ])
+      ]).href
+    }
+
+    if (item.__typename === 'OrganizationSubpage' && item.url.length === 3) {
+      return linkResolver('organizationparentsubpagechild', item.url).href
+    }
+
+    if (item.__typename === 'OrganizationParentSubpage') {
+      return (item.href as string) ?? ''
     }
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore make web strict
-    return linkResolver(item.__typename, item.url ?? item.slug?.split('/'))
+    return linkResolver(item.__typename, item.url ?? item.slug?.split('/')).href
   }
 
   const getItemImages = (item: SearchEntryType) => {
@@ -562,6 +593,7 @@ const Search: Screen<CategoryProps> = ({
                 quickContentLabel={n('quickContentLabel', 'Beint að efninu')}
                 activeLocale={activeLocale}
                 initialInputValue={q}
+                organization={state.query.organization?.[0]}
               />
               <Box width="full">
                 <Inline
@@ -752,6 +784,7 @@ const Search: Screen<CategoryProps> = ({
                       thumbnail,
                       labels,
                       parentTitle,
+                      link: linkHref,
                       ...rest
                     },
                     index,
@@ -775,6 +808,7 @@ const Search: Screen<CategoryProps> = ({
                         image={thumbnail ? thumbnail : image}
                         subTitle={parentTitle}
                         highlightedResults={true}
+                        link={{ href: linkHref }}
                         {...rest}
                       />
                     )
@@ -853,26 +887,11 @@ Search.getProps = async ({ apolloClient, locale, query }) => {
     // @ts-ignore make web strict
     (x: SearchableContentTypes) => x,
   )
-  const allTypes: `${SearchableContentTypes}`[] = [
-    'webArticle',
-    'webLifeEventPage',
-    'webDigitalIcelandService',
-    'webDigitalIcelandCommunityPage',
-    'webAdgerdirPage',
-    'webSubArticle',
-    'webLink',
-    'webNews',
-    'webOrganizationSubpage',
-    'webOrganizationPage',
-    'webProjectPage',
-    'webManual',
-    'webManualChapterItem',
-  ]
 
   const ensureContentTypeExists = (
     types: string[],
   ): types is SearchableContentTypes[] =>
-    !!types.length && allTypes.every((type) => allTypes.includes(type))
+    !!types.length && ALL_TYPES.every((type) => ALL_TYPES.includes(type))
 
   const [
     {
@@ -893,8 +912,8 @@ Search.getProps = async ({ apolloClient, locale, query }) => {
           queryString,
           types: types.length
             ? types
-            : ensureContentTypeExists(allTypes)
-            ? allTypes
+            : ensureContentTypeExists(ALL_TYPES)
+            ? ALL_TYPES
             : [],
           ...(tags.length && { tags }),
           ...countTag,
@@ -917,7 +936,7 @@ Search.getProps = async ({ apolloClient, locale, query }) => {
             'organization' as SearchableTags,
             'processentry' as SearchableTags,
           ],
-          types: ensureContentTypeExists(allTypes) ? allTypes : [],
+          types: ensureContentTypeExists(ALL_TYPES) ? ALL_TYPES : [],
           countTypes: true,
           countProcessEntry: true,
         },
@@ -1004,6 +1023,7 @@ const EnglishResultsLink: FC<
         query: {
           queryString: q,
           language: 'en' as ContentLanguage,
+          types: ALL_TYPES as SearchableContentTypes[],
         },
       },
     })

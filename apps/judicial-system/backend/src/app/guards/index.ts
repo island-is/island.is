@@ -8,6 +8,7 @@ export {
   courtOfAppealsRegistrarRule,
   courtOfAppealsAssistantRule,
   prisonSystemStaffRule,
+  localAdminRule,
   adminRule,
   defenderRule,
   publicProsecutorStaffRule,

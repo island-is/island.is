@@ -1,6 +1,6 @@
 import { FC, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { AnimatePresence } from 'framer-motion'
+import { AnimatePresence } from 'motion/react'
 import { useRouter } from 'next/router'
 
 import { Box, Select } from '@island.is/island-ui/core'
@@ -31,7 +31,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/utils'
 import { isCourtOfAppealCaseStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
-import CaseNumberInput from '../components/CaseNumberInput/CaseNumberInput'
+import { CaseNumberInput } from '../components'
 import { useAppealCaseUsersQuery } from './appealCaseUsers.generated'
 import { appealCase as strings } from './AppealCase.strings'
 
@@ -119,6 +119,10 @@ const AppealCase: FC = () => {
         [coaJudgeProperty]: coaJudgeId,
       })
 
+      if (!updatedCase) {
+        return
+      }
+
       const coaJudge =
         coaJudgeProperty === 'appealJudge1Id'
           ? { appealJudge1: updatedCase?.appealJudge1 }
@@ -138,6 +142,10 @@ const AppealCase: FC = () => {
       const updatedCase = await updateCase(workingCase.id, {
         appealAssistantId,
       })
+
+      if (!updatedCase) {
+        return
+      }
 
       setWorkingCase((prevWorkingCase) => ({
         ...prevWorkingCase,
@@ -244,17 +252,23 @@ const AppealCase: FC = () => {
                 ? strings.notificationsFailedModalMessage
                 : strings.modalMessage,
             )}
-            primaryButtonText={formatMessage(strings.modalPrimaryButton)}
-            onPrimaryButtonClick={() => router.push(`${navigateTo}/${id}`)}
-            onSecondaryButtonClick={() => {
-              sendNotifications()
+            primaryButton={{
+              text: formatMessage(strings.modalPrimaryButton),
+              onClick: () => router.push(`${navigateTo}/${id}`),
             }}
-            secondaryButtonText={
+            secondaryButton={
               sendNotificationError
-                ? formatMessage(strings.notificationFailedModalSecondaryButton)
+                ? {
+                    text: formatMessage(
+                      strings.notificationFailedModalSecondaryButton,
+                    ),
+                    onClick: () => {
+                      sendNotifications()
+                    },
+                    isLoading: isSendingNotification,
+                  }
                 : undefined
             }
-            isSecondaryButtonLoading={isSendingNotification}
           />
         )}
       </AnimatePresence>

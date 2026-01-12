@@ -6,10 +6,10 @@ import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { caseDates } from '@island.is/judicial-system-web/messages'
 import {
+  Case,
   CaseDecision,
   CaseType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import * as styles from './CaseDates.css'
 

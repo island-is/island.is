@@ -1,10 +1,9 @@
 import formatISO from 'date-fns/formatISO'
 import { Base64 } from 'js-base64'
-import { Sequelize } from 'sequelize-typescript'
 import { ConfidentialClientApplication } from '@azure/msal-node'
 
 import { Inject, Injectable, ServiceUnavailableException } from '@nestjs/common'
-import { InjectConnection, InjectModel } from '@nestjs/sequelize'
+import { InjectModel } from '@nestjs/sequelize'
 
 import { EmailService } from '@island.is/email-service'
 import type { Logger } from '@island.is/logging'
@@ -13,19 +12,24 @@ import type { ConfigType } from '@island.is/nest/config'
 
 import { CourtClientService } from '@island.is/judicial-system/court-client'
 import { sanitize } from '@island.is/judicial-system/formatters'
-import type { User, UserRole } from '@island.is/judicial-system/types'
+import type {
+  Subtype,
+  User,
+  UserDescriptor,
+  UserRole,
+} from '@island.is/judicial-system/types'
 import {
   CaseAppealRulingDecision,
   CaseDecision,
   CaseFileCategory,
   CaseType,
-  IndictmentSubtype,
+  courtSubtypes,
   IndictmentSubtypeMap,
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
 
 import { EventService } from '../event'
-import { RobotLog } from './models/robotLog.model'
+import { RobotLog } from '../repository'
 import { courtModuleConfig } from './court.config'
 
 export enum CourtDocumentFolder {
@@ -37,90 +41,6 @@ export enum CourtDocumentFolder {
   SUBPOENA_DOCUMENTS = 'Boðanir',
 }
 
-export type Subtype = Exclude<CaseType, CaseType.INDICTMENT> | IndictmentSubtype
-
-type CourtSubtypes = {
-  [c in Subtype]: string | [string, string]
-}
-
-// Maps case types to subtypes in the court system
-export const courtSubtypes: CourtSubtypes = {
-  ALCOHOL_LAWS: 'Áfengislagabrot',
-  CHILD_PROTECTION_LAWS: 'Barnaverndarlög',
-  INDECENT_EXPOSURE: 'Blygðunarsemisbrot',
-  LEGAL_ENFORCEMENT_LAWS: 'Brot gegn lögreglulögum',
-  POLICE_REGULATIONS: 'Brot gegn lögreglusamþykkt',
-  INTIMATE_RELATIONS: 'Brot í nánu sambandi',
-  ANIMAL_PROTECTION: 'Brot á lögum um dýravernd',
-  FOREIGN_NATIONALS: 'Brot á lögum um útlendinga',
-  PUBLIC_SERVICE_VIOLATION: 'Brot í opinberu starfi',
-  PROPERTY_DAMAGE: 'Eignaspjöll',
-  NARCOTICS_OFFENSE: 'Fíkniefnalagabrot',
-  EMBEZZLEMENT: 'Fjárdráttur',
-  FRAUD: 'Fjársvik',
-  LOOTING: 'Gripdeild',
-  OTHER_CRIMINAL_OFFENSES: 'Hegningarlagabrot önnur',
-  DOMESTIC_VIOLENCE: 'Heimilisofbeldi',
-  THREAT: 'Hótun',
-  BREAKING_AND_ENTERING: 'Húsbrot',
-  COVER_UP: 'Hylming',
-  SEXUAL_OFFENSES_OTHER_THAN_RAPE: 'Kynferðisbrot önnur en nauðgun',
-  MAJOR_ASSAULT: 'Líkamsárás - meiriháttar',
-  MINOR_ASSAULT: 'Líkamsárás - minniháttar',
-  AGGRAVATED_ASSAULT: 'Líkamsárás - sérlega hættuleg',
-  ASSAULT_LEADING_TO_DEATH: 'Líkamsárás sem leiðir til dauða',
-  BODILY_INJURY: 'Líkamsmeiðingar',
-  MEDICINES_OFFENSE: 'Lyfjalög',
-  MURDER: 'Manndráp',
-  RAPE: 'Nauðgun',
-  UTILITY_THEFT: 'Nytjastuldur',
-  MONEY_LAUNDERING: 'Peningaþvætti',
-  OTHER_OFFENSES: 'Sérrefsilagabrot önnur',
-  NAVAL_LAW_VIOLATION: 'Siglingalagabrot',
-  TAX_VIOLATION: 'Skattalagabrot',
-  ATTEMPTED_MURDER: 'Tilraun til manndráps',
-  CUSTOMS_VIOLATION: 'Tollalagabrot',
-  TRAFFIC_VIOLATION: 'Umferðarlagabrot',
-  WEPONS_VIOLATION: 'Vopnalagabrot',
-  THEFT: 'Þjófnaður',
-  // 'Afhending gagna',
-  // 'Afturköllun á skipun verjanda',
-  OTHER: 'Annað',
-  TRACKING_EQUIPMENT: 'Eftirfararbúnaður',
-  TRAVEL_BAN: ['Farbann', 'Framlenging farbanns'],
-  // 'Framlenging frests',
-  // 'Framsalsmál',
-  // 'Frestur',
-  CUSTODY: ['Gæsluvarðhald', 'Framlenging gæsluvarðhalds'],
-  ADMISSION_TO_FACILITY: 'Vistun á viðeigandi stofnun',
-  PSYCHIATRIC_EXAMINATION: 'Geðrannsókn',
-  // 'Handtaka',
-  SOUND_RECORDING_EQUIPMENT: 'Hljóðupptökubúnaði komið fyrir',
-  SEARCH_WARRANT: 'Húsleit',
-  AUTOPSY: 'Krufning',
-  // 'Lausn út öryggisgæslu',
-  BODY_SEARCH: 'Leit og líkamsrannsókn',
-  // 'Lögmæti rannsóknarathafna',
-  RESTRAINING_ORDER: 'Nálgunarbann',
-  RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME: 'Nálgunarbann', // this mapping to Nálgunarbann is indented
-  EXPULSION_FROM_HOME: 'Nálgunarbann og brottvísun af heimili',
-  // 'Réttarstaða afplánunarfanga',
-  // 'Réttarstaða gæsluvarðhaldsfanga',
-  PAROLE_REVOCATION: 'Rof á reynslulausn',
-  BANKING_SECRECY_WAIVER: 'Rof bankaleyndar',
-  // 'Sekt vitnis',
-  // 'Sektir málflytjenda',
-  PHONE_TAPPING: 'Símhlerun',
-  // 'Skýrslutaka brotaþola eldri en 18 ára',
-  // 'Skýrslutaka brotaþola yngri en 18 ára',
-  // 'Skýrslutaka fyrir dómi',
-  TELECOMMUNICATIONS: 'Upplýsingar um fjarskiptasamskipti',
-  INTERNET_USAGE: 'Upplýsingar um vefnotkun',
-  ELECTRONIC_DATA_DISCOVERY_INVESTIGATION: 'Rannsókn á rafrænum gögnum',
-  // TODO: replace with appropriate type when it has been created in the court system
-  VIDEO_RECORDING_EQUIPMENT: 'Annað',
-}
-
 enum RobotEmailType {
   CASE_CONCLUSION = 'CASE_CONCLUSION',
   APPEAL_CASE_RECEIVED_DATE = 'APPEAL_CASE_RECEIVED_DATE',
@@ -129,6 +49,7 @@ enum RobotEmailType {
   APPEAL_CASE_FILE = 'APPEAL_CASE_FILE',
   NEW_INDICTMENT_INFO = 'INDICTMENT_INFO',
   INDICTMENT_CASE_ASSIGNED_ROLES = 'INDICTMENT_CASE_ASSIGNED_ROLES',
+  INDICTMENT_CASE_ARRAIGNMENT_DATE = 'INDICTMENT_CASE_ARRAIGNMENT_DATE',
   INDICTMENT_CASE_DEFENDER_INFO = 'INDICTMENT_CASE_DEFENDER_INFO',
   INDICTMENT_CASE_CANCELLATION_NOTICE = 'INDICTMENT_CASE_CANCELLATION_NOTICE',
 }
@@ -141,7 +62,6 @@ export class CourtService {
     private readonly courtClientService: CourtClientService,
     private readonly emailService: EmailService,
     private readonly eventService: EventService,
-    @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(RobotLog) private readonly robotLogModel: typeof RobotLog,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
     @Inject(courtModuleConfig.KEY)
@@ -163,7 +83,9 @@ export class CourtService {
             },
           })
       } else {
-        logger.error('Missing required configuration for Microsoft Graph API')
+        this.logger.error(
+          'Missing required configuration for Microsoft Graph API',
+        )
       }
     }
   }
@@ -376,7 +298,7 @@ export class CourtService {
   }
 
   async createEmail(
-    user: User,
+    user: UserDescriptor,
     caseId: string,
     courtId: string,
     courtCaseNumber: string,
@@ -674,6 +596,38 @@ export class CourtService {
     } catch (error) {
       this.eventService.postErrorEvent(
         'Failed to update indictment case with assigned roles',
+        {
+          caseId,
+          actor: user.name,
+          courtCaseNumber,
+        },
+        error,
+      )
+
+      throw error
+    }
+  }
+
+  updateIndictmentCaseWithArraignmentDate(
+    user: User,
+    caseId: string,
+    courtName?: string,
+    courtCaseNumber?: string,
+    arraignmentDate?: Date,
+  ): Promise<unknown> {
+    try {
+      const subject = `${courtName} - ${courtCaseNumber} - þingfesting`
+      const content = JSON.stringify({ arraignmentDate })
+
+      return this.sendToRobot(
+        subject,
+        content,
+        RobotEmailType.INDICTMENT_CASE_ARRAIGNMENT_DATE,
+        caseId,
+      )
+    } catch (error) {
+      this.eventService.postErrorEvent(
+        'Failed to update indictment case with arraignment date',
         {
           caseId,
           actor: user.name,

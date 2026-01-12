@@ -117,6 +117,9 @@ const Webreader: FC<React.PropsWithChildren<WebReaderProps>> = ({
           accessKey="L"
           title={buttonTitle}
           href={href}
+          onClick={(event) => {
+            event.preventDefault() // So the Plausible outbound link tracking script doesn't open the href
+          }}
         >
           <span className="rsbtn_left rsimg rspart">
             <span className="rsbtn_text">

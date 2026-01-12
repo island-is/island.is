@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { IconButton, Menu } from '@contentful/f36-components'
-import { MoreVerticalIcon } from '@contentful/f36-icons'
+import { MoreHorizontalIcon } from '@contentful/f36-icons'
 
 import { findNodes, type Tree, TreeNodeType } from './utils'
 
@@ -8,6 +8,8 @@ interface EditMenuProps {
   onEdit: () => void
   onRemove: () => void
   onMarkEntryAsPrimary: (nodeId: number, entryId: string) => void
+  onPublish?: () => void
+  onUnpublish?: () => void
   entryId?: string
   entryNodeId: number
   root: Tree
@@ -18,6 +20,8 @@ export const EditMenu = ({
   onEdit,
   onRemove,
   onMarkEntryAsPrimary,
+  onPublish,
+  onUnpublish,
   isEntryNodePrimaryLocation,
   entryId,
   entryNodeId,
@@ -35,10 +39,12 @@ export const EditMenu = ({
   return (
     <Menu>
       <Menu.Trigger>
-        <IconButton icon={<MoreVerticalIcon />} aria-label="Edit" />
+        <IconButton icon={<MoreHorizontalIcon />} aria-label="Edit" />
       </Menu.Trigger>
       <Menu.List>
         <Menu.Item onClick={onEdit}>Edit</Menu.Item>
+        {onPublish && <Menu.Item onClick={onPublish}>Publish</Menu.Item>}
+        {onUnpublish && <Menu.Item onClick={onUnpublish}>Unpublish</Menu.Item>}
         {sameEntryNodes.length > 1 && (
           <Menu.Item
             disabled={isEntryNodePrimaryLocation}

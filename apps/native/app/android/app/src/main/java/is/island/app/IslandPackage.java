@@ -21,6 +21,7 @@ public class IslandPackage implements ReactPackage {
        List<NativeModule> modules = new ArrayList<>();
 
        modules.add(new IslandModule(reactContext));
+       modules.add(new LicenseWidgetModule(reactContext));
 
        return modules;
    }

@@ -1,5 +1,6 @@
 import {
   CodeOwners,
+  Context,
   ref,
   service,
   ServiceBuilder,
@@ -26,6 +27,8 @@ import {
   PaymentSchedule,
   Properties,
   RskCompanyInfo,
+  RskCarRentalRate,
+  SeminarsVer,
   SocialInsuranceAdministration,
   TransportAuthority,
   Vehicles,
@@ -36,22 +39,39 @@ import {
   Inna,
   OfficialJournalOfIceland,
   OfficialJournalOfIcelandApplication,
+  LegalGazette,
   VehiclesMileage,
   UniversityCareers,
   Frigg,
   HealthDirectorateVaccination,
+  HealthDirectorateHealthService,
   HealthDirectorateOrganDonation,
   WorkAccidents,
   NationalRegistryB2C,
   SecondarySchool,
+  PracticalExams,
+  RentalService,
+  FireCompensation,
+  VMSTUnemployment,
 } from '../../../../infra/src/dsl/xroad'
 
 export const GRAPHQL_API_URL_ENV_VAR_NAME = 'GRAPHQL_API_URL' // This property is a part of a circular dependency that is treated specially in certain deployment types
+
+/**
+ * Make sure that each feature deployment has its own bull prefix. Since each
+ * feature deployment has its own database and applications, we don't want bull
+ * jobs to jump between environments.
+ */
+const APPLICATION_SYSTEM_BULL_PREFIX = (ctx: Context) =>
+  ctx.featureDeploymentName
+    ? `application_system_api_bull_module.${ctx.featureDeploymentName}`
+    : 'application_system_api_bull_module'
 
 const namespace = 'application-system'
 const serviceAccount = 'application-system-api'
 export const workerSetup = (services: {
   userNotificationService: ServiceBuilder<'services-user-notification'>
+  paymentsApi: ServiceBuilder<'services-payments'>
 }): ServiceBuilder<'application-system-api-worker'> =>
   service('application-system-api-worker')
     .namespace(namespace)
@@ -96,8 +116,25 @@ export const workerSetup = (services: {
       USER_NOTIFICATION_API_URL: ref(
         (h) => `http://${h.svc(services.userNotificationService)}`,
       ),
+      APPLICATION_SYSTEM_BULL_PREFIX,
+      PAYMENTS_API_URL: ref((h) => `http://${h.svc(services.paymentsApi)}`),
+      PAYMENT_API_CALLBACK_URL: ref(
+        (ctx) =>
+          `http://${
+            ctx.featureDeploymentName ? `${ctx.featureDeploymentName}-` : ''
+          }application-system-api.application-system.svc.cluster.local`,
+      ),
     })
-    .xroad(Base, Client, Payment, Inna, EHIC, WorkMachines)
+    .xroad(
+      Base,
+      Client,
+      Payment,
+      Inna,
+      EHIC,
+      WorkMachines,
+      NationalRegistryB2C,
+      RskCompanyInfo,
+    )
     .secrets({
       IDENTITY_SERVER_CLIENT_SECRET:
         '/k8s/application-system/api/IDENTITY_SERVER_CLIENT_SECRET',
@@ -115,8 +152,10 @@ export const workerSetup = (services: {
       ARK_BASE_URL: '/k8s/application-system-api/ARK_BASE_URL',
       DOMSYSLA_PASSWORD: '/k8s/application-system-api/DOMSYSLA_PASSWORD',
       DOMSYSLA_USERNAME: '/k8s/application-system-api/DOMSYSLA_USERNAME',
+      NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
+        '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
     })
-    .args('main.js', '--job', 'worker')
+    .args('main.cjs', '--job', 'worker')
     .command('node')
     .extraAttributes({
       dev: { schedule: '*/30 * * * *' },
@@ -135,6 +174,7 @@ export const serviceSetup = (services: {
   // The user profile service is named service-portal-api in infra setup
   servicePortalApi: ServiceBuilder<'service-portal-api'>
   userNotificationService: ServiceBuilder<'services-user-notification'>
+  paymentsApi: ServiceBuilder<'services-payments'>
 }): ServiceBuilder<'application-system-api'> =>
   service('application-system-api')
     .namespace(namespace)
@@ -142,7 +182,7 @@ export const serviceSetup = (services: {
     .command('node')
     .redis()
     .codeOwner(CodeOwners.NordaApplications)
-    .args('main.js')
+    .args('main.cjs')
     .env({
       EMAIL_REGION: 'eu-west-1',
       IDENTITY_SERVER_ISSUER_URL: {
@@ -157,10 +197,15 @@ export const serviceSetup = (services: {
         prod: 'cdn.contentful.com',
       },
       CLIENT_LOCATION_ORIGIN: {
-        dev: 'https://beta.dev01.devland.is/umsoknir',
-        staging: 'https://beta.staging01.devland.is/umsoknir',
-        prod: 'https://island.is/umsoknir',
-        local: 'http://localhost:4200/umsoknir',
+        dev: ref(
+          (ctx) =>
+            `https://${
+              ctx.featureDeploymentName ? `${ctx.featureDeploymentName}-` : ''
+            }beta.dev01.devland.is/umsoknir`,
+        ),
+        staging: `https://beta.staging01.devland.is/umsoknir`,
+        prod: `https://island.is/umsoknir`,
+        local: 'http://localhost:4242/umsoknir',
       },
       APPLICATION_ATTACHMENT_BUCKET: {
         dev: 'island-is-dev-storage-application-system',
@@ -177,8 +222,7 @@ export const serviceSetup = (services: {
         staging: 'island-is-staging-fs-presign-bucket',
         prod: 'island-is-prod-fs-presign-bucket',
       },
-      [GRAPHQL_API_URL_ENV_VAR_NAME]:
-        'http://web-api.islandis.svc.cluster.local',
+      [GRAPHQL_API_URL_ENV_VAR_NAME]: 'http://api.islandis.svc.cluster.local',
       INSTITUTION_APPLICATION_RECIPIENT_EMAIL_ADDRESS: {
         dev: 'gunnar.ingi@fjr.is',
         staging: 'gunnar.ingi@fjr.is',
@@ -241,9 +285,14 @@ export const serviceSetup = (services: {
         prod: 'IS/GOV/4707171140/Domstolasyslan/JusticePortal-v1',
       },
       XROAD_ALTHINGI_OMBUDSMAN_SERVICE_PATH: {
-        dev: 'IS-DEV/GOV/10047/UA-Protected/kvortun-v1/',
-        staging: 'IS-TEST/GOV/10047/UA-Protected/kvortun-v1/',
+        dev: 'IS-DEV/GOV/10047/UA-Protected/kvortun-v1',
+        staging: 'IS-TEST/GOV/10047/UA-Protected/kvortun-v1',
         prod: 'IS/GOV/5605882089/UA-Protected/kvortun-v1',
+      },
+      XROAD_FJS_BANKINFO_PATH: {
+        dev: 'IS-DEV/GOV/10021/FJS-Public/TBRBankMgrService_v1',
+        staging: 'IS-TEST/GOV/10021/FJS-Public/TBRBankMgrService_v1',
+        prod: 'IS/GOV/5402697509/FJS-Public/TBRBankMgrService_v1',
       },
       NOVA_ACCEPT_UNAUTHORIZED: {
         dev: 'true',
@@ -262,10 +311,10 @@ export const serviceSetup = (services: {
           )}/app/skilavottord/api/graphql`,
       ),
       UNIVERSITY_GATEWAY_API_URL: {
-        dev: 'http://web-services-university-gateway.services-university-gateway.svc.cluster.local',
+        dev: 'http://services-university-gateway.services-university-gateway.svc.cluster.local',
         staging:
-          'http://web-services-university-gateway.services-university-gateway.svc.cluster.local',
-        prod: 'http://web-services-university-gateway.services-university-gateway.svc.cluster.local',
+          'http://services-university-gateway.services-university-gateway.svc.cluster.local',
+        prod: 'http://services-university-gateway.services-university-gateway.svc.cluster.local',
       },
       SERVICE_USER_PROFILE_URL: ref(
         (h) => `http://${h.svc(services.servicePortalApi)}`,
@@ -273,6 +322,43 @@ export const serviceSetup = (services: {
       USER_NOTIFICATION_API_URL: ref(
         (h) => `http://${h.svc(services.userNotificationService)}`,
       ),
+      APPLICATION_SYSTEM_BULL_PREFIX,
+      PAYMENTS_API_URL: ref((h) => `http://${h.svc(services.paymentsApi)}`),
+      PAYMENT_API_CALLBACK_URL: ref(
+        (ctx) =>
+          `http://application-system-api.${
+            ctx.featureDeploymentName
+              ? `feature-${ctx.featureDeploymentName}`
+              : 'application-system'
+          }.svc.cluster.local`,
+      ),
+      HMS_CONTRACTS_AUTH_TOKEN_ENDPOINT: {
+        dev: 'https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/token',
+        staging:
+          'https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/token',
+        prod: 'https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/token',
+      },
+      HMS_CONTRACTS_AUTH_TENANT_ID: {
+        dev: 'c7256472-2622-417e-8955-a54eeb0a110e',
+        staging: 'c7256472-2622-417e-8955-a54eeb0a110e',
+        prod: 'c7256472-2622-417e-8955-a54eeb0a110e',
+      },
+      HMS_CONTRACTS_AUTH_CLIENT_ID: {
+        dev: 'e2411f5c-436a-4c17-aa14-eab9c225bc06',
+        staging: 'e2411f5c-436a-4c17-aa14-eab9c225bc06',
+        prod: '44055958-a462-4ba8-bbd2-5bfedbbd18c0',
+      },
+      ZENDESK_CONTACT_FORM_SUBDOMAIN: {
+        dev: 'digitaliceland',
+        staging: 'digitaliceland',
+        prod: 'digitaliceland',
+      },
+      HH_COURSES_ZENDESK_SUBJECT: {
+        dev: '[TEST] Skráning á námskeið - Heilsugæsla höfuðborgarsvæðisins',
+        staging:
+          '[TEST] Skráning á námskeið - Heilsugæsla höfuðborgarsvæðisins',
+        prod: 'Skráning á námskeið - Heilsugæsla höfuðborgarsvæðisins',
+      },
     })
     .xroad(
       Base,
@@ -291,8 +377,10 @@ export const serviceSetup = (services: {
       ChargeFjsV2,
       EnergyFunds,
       Finance,
+      FireCompensation,
       Properties,
       RskCompanyInfo,
+      RskCarRentalRate,
       VehicleServiceFjsV1,
       Inna,
       VehiclesMileage,
@@ -302,18 +390,24 @@ export const serviceSetup = (services: {
       EHIC,
       DirectorateOfImmigration,
       SocialInsuranceAdministration,
+      SeminarsVer,
       OccupationalLicenses,
       SignatureCollection,
       WorkMachines,
       ArborgWorkpoint,
       OfficialJournalOfIceland,
       OfficialJournalOfIcelandApplication,
+      LegalGazette,
       UniversityCareers,
       Frigg,
       HealthDirectorateVaccination,
+      HealthDirectorateHealthService,
       HealthDirectorateOrganDonation,
       WorkAccidents,
       SecondarySchool,
+      PracticalExams,
+      RentalService,
+      VMSTUnemployment,
     )
     .secrets({
       NOVA_URL: '/k8s/application-system-api/NOVA_URL',
@@ -344,8 +438,6 @@ export const serviceSetup = (services: {
         '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_ID',
       FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET:
         '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET',
-      ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE',
-      ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH',
       VMST_ID: '/k8s/application-system/VMST_ID',
       DOMSYSLA_PASSWORD: '/k8s/application-system-api/DOMSYSLA_PASSWORD',
       DOMSYSLA_USERNAME: '/k8s/application-system-api/DOMSYSLA_USERNAME',
@@ -355,6 +447,10 @@ export const serviceSetup = (services: {
         '/k8s/api/ALTHINGI_OMBUDSMAN_XROAD_PASSWORD',
       NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
         '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
+      HMS_CONTRACTS_AUTH_CLIENT_SECRET:
+        '/k8s/application-system-api/HMS_CONTRACTS_AUTH_CLIENT_SECRET',
+      ZENDESK_CONTACT_FORM_EMAIL: '/k8s/api/ZENDESK_CONTACT_FORM_EMAIL',
+      ZENDESK_CONTACT_FORM_TOKEN: '/k8s/api/ZENDESK_CONTACT_FORM_TOKEN',
     })
     .db()
     .migrations()
@@ -369,7 +465,6 @@ export const serviceSetup = (services: {
       max: 60,
       min: 2,
     })
-    .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({
       primary: {
         host: {
@@ -401,4 +496,4 @@ export const serviceSetup = (services: {
         },
       },
     })
-    .grantNamespaces('nginx-ingress-internal', 'islandis')
+    .grantNamespaces('services-payments', 'nginx-ingress-internal', 'islandis')

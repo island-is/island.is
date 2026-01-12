@@ -1,13 +1,13 @@
 import { Dispatch, FC, SetStateAction } from 'react'
 import { useIntl } from 'react-intl'
-import { AnimatePresence } from 'framer-motion'
+import { AnimatePresence } from 'motion/react'
 
 import { core } from '@island.is/judicial-system-web/messages'
 import {
   ConclusionDraft,
   Modal,
 } from '@island.is/judicial-system-web/src/components'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 
 interface Props {
   workingCase: Case
@@ -35,8 +35,10 @@ const DraftConclusionModal: FC<Props> = ({
               setWorkingCase={setWorkingCase}
             />
           }
-          primaryButtonText={formatMessage(core.closeModal)}
-          onPrimaryButtonClick={() => setIsDraftingConclusion(false)}
+          primaryButton={{
+            text: formatMessage(core.closeModal),
+            onClick: () => setIsDraftingConclusion(false),
+          }}
         />
       )}
     </AnimatePresence>

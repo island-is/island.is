@@ -1,8 +1,8 @@
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { createTestingInstitutionModule } from './createTestingInstitutionModule'
 
-import { Institution } from '../institution.model'
+import { Institution } from '../../repository'
 
 interface Then {
   result: Institution[]

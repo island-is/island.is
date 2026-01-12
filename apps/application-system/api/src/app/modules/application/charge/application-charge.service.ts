@@ -27,6 +27,9 @@ export class ApplicationChargeService {
 
       // No need to delete charge if never existed
       if (!payment) {
+        this.logger.info(
+          `Not deleting charge for application ${application.id} because it does not have a payment`,
+        )
         return
       }
 
@@ -42,14 +45,32 @@ export class ApplicationChargeService {
         if (
           !stateConfig.meta?.lifecycle?.shouldDeleteChargeIfPaymentFulfilled
         ) {
+          this.logger.info(
+            `Not deleting charge for application ${application.id} because its lifecycle does not allow it`,
+          )
           return
         }
       }
-
       // Delete the charge, using the ID we got from FJS
-      const chargeId = payment.id
-      if (chargeId) {
-        await this.chargeFjsV2ClientService.deleteCharge(chargeId)
+      const paymentUrl = JSON.parse(payment.definition as unknown as string)
+        .paymentUrl as string
+      let requestId = payment.request_id as string
+
+      // new mockpayments are getting requestIds and fake urls
+      //if requestId is not set, we need to get it from the paymentUrl
+      if (!requestId && paymentUrl) {
+        const url = new URL(paymentUrl)
+        requestId = url.pathname.split('/').pop() ?? ''
+        this.logger.info(
+          'requestId not set, falling back to getting it from paymentUrl',
+        )
+      }
+
+      if (requestId) {
+        this.logger.info('deleteCharge chargeId', requestId)
+        await this.chargeFjsV2ClientService.deleteCharge(requestId)
+      } else {
+        this.logger.warn('No requestId found, skipping deleteCharge')
       }
     } catch (error) {
       this.logger.error(

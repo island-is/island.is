@@ -59,6 +59,12 @@ export const DEFAULT_EDITABLE_ENTRY_TYPE_IDS = [
   'teamMember',
   'namespace',
   'tableSlice',
+  'genericList',
+  'genericListItem',
+  'featuredLinks',
+  'manual',
+  'manualChapter',
+  'featured',
 ]
 
 export const DEFAULT_READ_ONLY_ENTRY_IDS = [

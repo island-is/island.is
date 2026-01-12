@@ -1,12 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useDebounce } from 'react-use'
 import type { FieldExtensionSDK } from '@contentful/app-sdk'
 import { Stack, Text, TextInput } from '@contentful/f36-components'
 import { useCMA, useSDK } from '@contentful/react-apps-toolkit'
-import slugify from '@sindresorhus/slugify'
 
-import { CUSTOM_SLUGIFY_REPLACEMENTS } from '../../constants'
-import { slugifyDate } from '../../utils'
+import { slugify, slugifyDate } from '../../utils'
 
 const DEBOUNCE_TIME = 100
 
@@ -50,23 +48,32 @@ const GenericListItemSlugField = () => {
     sdk.window.startAutoResizer()
   }, [sdk.window])
 
+  const initialRender = useRef({
+    title: true,
+    date: true,
+  })
+
   useEffect(() => {
     const unsubscribeFromTitleValueChanges = sdk.entry.fields.title
       .getForLocale(sdk.field.locale)
       .onValueChanged((newTitle) => {
+        if (initialRender.current.title) {
+          initialRender.current.title = false
+          return
+        }
         if (!newTitle || hasEntryBeenPublished) {
           return
         }
         const date = sdk.entry.fields.date.getValue()
-        setValue(
-          `${slugify(newTitle, {
-            customReplacements: CUSTOM_SLUGIFY_REPLACEMENTS,
-          })}${date ? '-' + slugifyDate(date) : ''}`,
-        )
+        setValue(`${slugify(newTitle)}${date ? '-' + slugifyDate(date) : ''}`)
       })
 
     const unsubscribeFromDateValueChanges =
       sdk.entry.fields.date.onValueChanged((newDate) => {
+        if (initialRender.current.date) {
+          initialRender.current.date = false
+          return
+        }
         const date = newDate
         const title = sdk.entry.fields.title
           .getForLocale(sdk.field.locale)
@@ -74,11 +81,7 @@ const GenericListItemSlugField = () => {
         if (!title || hasEntryBeenPublished) {
           return
         }
-        setValue(
-          `${slugify(title, {
-            customReplacements: CUSTOM_SLUGIFY_REPLACEMENTS,
-          })}${date ? `-${slugifyDate(date)}` : ''}`,
-        )
+        setValue(`${slugify(title)}${date ? `-${slugifyDate(date)}` : ''}`)
       })
 
     return () => {

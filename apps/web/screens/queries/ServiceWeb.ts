@@ -5,6 +5,19 @@ import { htmlFields, slices } from './fragments'
 export const GET_SERVICE_WEB_PAGE_QUERY = gql`
   query GetServiceWebPage($input: GetServiceWebPageInput!) {
     getServiceWebPage(input: $input) {
+      alertBanner {
+        showAlertBanner
+        bannerVariant
+        title
+        description
+        linkTitle
+        link {
+          slug
+          type
+        }
+        isDismissable
+        dismissedForDays
+      }
       slices {
         ...AllSlices
       }

@@ -5,8 +5,8 @@ import { Test } from '@nestjs/testing'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
+import { Institution } from '../../repository'
 import { InstitutionController } from '../institution.controller'
-import { Institution } from '../institution.model'
 import { InstitutionService } from '../institution.service'
 
 export const createTestingInstitutionModule = async () => {

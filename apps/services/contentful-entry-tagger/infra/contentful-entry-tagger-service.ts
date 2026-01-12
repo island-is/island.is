@@ -17,7 +17,7 @@ export const serviceSetup =
           host: {
             dev: 'contentful-entry-tagger-service',
             staging: 'contentful-entry-tagger-service',
-            prod: 'contentful-entry-tagger-service.devland.is',
+            prod: 'contentful-entry-tagger-service',
           },
           paths: ['/'],
         },

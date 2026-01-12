@@ -5,7 +5,7 @@ import {
   DdSdkReactNativeConfiguration,
 } from '@datadog/mobile-react-native'
 import messaging from '@react-native-firebase/messaging'
-import perf from '@react-native-firebase/perf'
+import { initializePerformance } from '@react-native-firebase/perf'
 import {
   DynamicColorIOS,
   ImageStyle,
@@ -16,33 +16,12 @@ import {
   ViewStyle,
 } from 'react-native'
 import DeviceInfo from 'react-native-device-info'
-
-// uncomment polyfills that are needed.
-// make sure to add locales that are needed as well
-import 'intl'
-import 'intl/locale-data/jsonp/en'
-import 'intl/locale-data/jsonp/is'
-import '@formatjs/intl-locale/polyfill'
-import '@formatjs/intl-getcanonicallocales/polyfill'
-import '@formatjs/intl-pluralrules/polyfill'
-import '@formatjs/intl-pluralrules/locale-data/en'
-import '@formatjs/intl-pluralrules/locale-data/is'
-import '@formatjs/intl-numberformat/polyfill'
-import '@formatjs/intl-numberformat/locale-data/en'
-import '@formatjs/intl-numberformat/locale-data/is'
-import '@formatjs/intl-datetimeformat/polyfill'
-import '@formatjs/intl-datetimeformat/locale-data/en'
-import '@formatjs/intl-datetimeformat/locale-data/is'
-import '@formatjs/intl-datetimeformat/add-golden-tz'
-import '@formatjs/intl-relativetimeformat/polyfill'
-import '@formatjs/intl-relativetimeformat/locale-data/en'
-import '@formatjs/intl-relativetimeformat/locale-data/is'
 import KeyboardManager from 'react-native-keyboard-manager'
 import { Navigation } from 'react-native-navigation'
 import { getConfig } from '../../config'
 import { isIos } from '../devices'
 import { performanceMetrics } from '../performance-metrics'
-import { setupQuickActions } from '../quick-actions'
+import { app } from '../../lib/firebase'
 
 type PatchedStyleSheet = typeof StyleSheet & {
   _create: typeof StyleSheet.create
@@ -90,8 +69,7 @@ export function applyDynamicColorSupport() {
 applyDynamicColorSupport()
 
 if (__DEV__) {
-  perf().setPerformanceCollectionEnabled(false)
-  // require('../devtools/index')
+  initializePerformance(app)
 } else {
   // datadog rum config
   const ddconfig = new DdSdkReactNativeConfiguration(
@@ -106,6 +84,7 @@ if (__DEV__) {
   ddconfig.nativeCrashReportEnabled = true
   ddconfig.site = 'EU'
   ddconfig.serviceName = 'mobile-app'
+  ddconfig.sessionSamplingRate = 10
 
   // initialize datadog rum
   DdSdkReactNative.initialize(ddconfig)
@@ -140,32 +119,12 @@ LogBox.ignoreLogs([
   /new NativeEventEmitter/,
 ])
 
-// set default timezone
-if (typeof HermesInternal === 'object' && HermesInternal !== null) {
-  if ('__setDefaultTimeZone' in Intl.DateTimeFormat) {
-    ;(Intl.DateTimeFormat as any).__setDefaultTimeZone('UTC')
-  }
-}
-
-// overwrite global Intl
-if (isIos) {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  global.Intl = (global as any).IntlPolyfill
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  ;(global.Intl as any).__disableRegExpRestore()
-}
-
 export function setupGlobals() {
   // keyboard manager
   if (isIos) {
     KeyboardManager.setEnable(true)
     KeyboardManager.setEnableAutoToolbar(true)
     KeyboardManager.setToolbarPreviousNextButtonEnable(true)
-
-    // quick actions
-    setupQuickActions()
   }
 
   // set NSUserDefaults

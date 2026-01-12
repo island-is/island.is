@@ -54,7 +54,7 @@ export interface OrganizationNewsListProps {
   selectedMonth: number
   selectedPage: number
   selectedTag: string | string[]
-  namespace: GetNamespaceQuery['getNamespace']
+  namespace: Record<string, string>
   locale: Locale
 }
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -74,9 +74,8 @@ const OrganizationNewsList: Screen<OrganizationNewsListProps> = ({
   const router = useRouter()
   const { getMonthByIndex } = useDateUtils()
   useContentfulId(organizationPage.id)
-  useLocalLinkTypeResolver()
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore make web strict
+  useLocalLinkTypeResolver('organizationnewsoverview')
+
   const n = useNamespaceStrict(namespace)
 
   const newsOverviewUrl = linkResolver(
@@ -174,8 +173,6 @@ const OrganizationNewsList: Screen<OrganizationNewsListProps> = ({
       sidebarContent={
         <NewsListSidebar
           months={months}
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore make web strict
           namespace={namespace}
           newsOverviewUrl={newsOverviewUrl}
           selectedMonth={selectedMonth}
@@ -189,8 +186,6 @@ const OrganizationNewsList: Screen<OrganizationNewsListProps> = ({
       }
     >
       <NewsList
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore make web strict
         namespace={namespace}
         newsItemLinkType="organizationnews"
         newsOverviewUrl={newsOverviewUrl}
@@ -210,6 +205,7 @@ const OrganizationNewsList: Screen<OrganizationNewsListProps> = ({
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore make web strict
         newsTags={organizationPage.secondaryNewsTags}
+        variant="digital-iceland"
       />
     </OrganizationWrapper>
   )
@@ -247,6 +243,7 @@ OrganizationNewsList.getProps = async ({ apolloClient, query, locale }) => {
           input: {
             slug: organizationPageSlug,
             lang: locale as Locale,
+            subpageSlugs: [locale === 'is' ? 'frett' : 'news'],
           },
         },
       }),
