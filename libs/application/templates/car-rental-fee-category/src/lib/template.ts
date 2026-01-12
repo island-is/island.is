@@ -147,12 +147,15 @@ const template: ApplicationTemplate<
       })),
     },
   },
-  mapUserToRole(nationalId: string): ApplicationRole | undefined {
+  mapUserToRole(
+    nationalId: string,
+    application: Application,
+  ): ApplicationRole | undefined {
     // Only allow companies or delegated actors to access the application
     if (isCompany(nationalId)) {
       return Roles.APPLICANT
     }
-
+  
     return Roles.NOTALLOWED
   },
 }
