@@ -299,6 +299,7 @@ export class AdminController {
     )
   }
 
+  //todo sækja nationalId úr token WEE WOOO
   @Scopes(AdminPortalScope.applicationSystemInstitution)
   @BypassDelegation()
   @Get('admin/applications/application-types/:nationalId/')
