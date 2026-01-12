@@ -44,9 +44,10 @@ describe('InternalCaseController - Deliver case files record to police', () => {
     type: caseType,
     state: caseState,
     policeCaseNumbers: [policeCaseNumber],
-    defendants: [{ nationalId: defendantNationalId }],
+    defendants: [{ nationalId: uuid() }],
     courtId,
     courtCaseNumber,
+    policeDefendantNationalId: defendantNationalId,
   } as Case
   const pdf = Buffer.from('test case files record')
 
