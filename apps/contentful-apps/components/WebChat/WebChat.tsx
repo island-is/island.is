@@ -11,7 +11,7 @@ import { Flex, FormControl, Select } from '@contentful/f36-components'
 import { useSDK } from '@contentful/react-apps-toolkit'
 
 import { BoostSection } from './BoostSection'
-import { LiveChatSection } from './LiveChatZection'
+import { LiveChatSection } from './LiveChatSection'
 import { type Configuration, WebChatType } from './types'
 import { ZendeskSection } from './ZendeskSection'
 
