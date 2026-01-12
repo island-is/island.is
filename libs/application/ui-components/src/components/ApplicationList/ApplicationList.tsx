@@ -25,6 +25,7 @@ type ApplicationFields = Pick<
   | 'name'
   | 'progress'
   | 'org'
+  | 'orgContentfulId'
 >
 
 interface Props {
@@ -55,8 +56,9 @@ const ApplicationList = ({
     if (!organizations) {
       return ''
     }
-    const institutionSlug = application.org as InstitutionTypes
-    const institution = organizations.find((x) => x.slug === institutionSlug)
+    const institution = organizations.find(
+      (x) => x.id === application.orgContentfulId,
+    )
     return getOrganizationLogoUrl(
       institution?.title ?? 'stafraent-island',
       organizations,
