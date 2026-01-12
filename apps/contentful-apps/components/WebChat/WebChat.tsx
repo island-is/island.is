@@ -1,4 +1,11 @@
-import { type SetStateAction, useCallback, useEffect, useState } from 'react'
+import {
+  type SetStateAction,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
+import debounce from 'lodash/debounce'
 import type { FieldExtensionSDK } from '@contentful/app-sdk'
 import { Flex, FormControl, Select } from '@contentful/f36-components'
 import { useSDK } from '@contentful/react-apps-toolkit'
@@ -8,21 +15,39 @@ import { LiveChatSection } from './LiveChatZection'
 import { type Configuration, WebChatType } from './types'
 import { ZendeskSection } from './ZendeskSection'
 
+const DEBOUNCE_DELAY = 300
+
 const WebChatConfigurationField = () => {
   const sdk = useSDK<FieldExtensionSDK>()
   const [value, setValue] = useState<Configuration>(sdk.field.getValue() || {})
+
+  const setFieldValue = useMemo(
+    () =>
+      debounce((newValue: Configuration) => {
+        sdk.field.setValue(newValue)
+      }, DEBOUNCE_DELAY),
+    [sdk.field],
+  )
 
   const updateValue = useCallback(
     (newValue: SetStateAction<Configuration>) => {
       setValue((previousValue) => {
         const updatedValue =
           typeof newValue === 'function' ? newValue(previousValue) : newValue
-        sdk.field.setValue(updatedValue)
+        // Debounce the value update
+        setFieldValue(updatedValue)
         return updatedValue
       })
     },
-    [sdk.field],
+    [setFieldValue],
   )
+
+  // Cleanup debounced function on unmount
+  useEffect(() => {
+    return () => {
+      setFieldValue.cancel()
+    }
+  }, [setFieldValue])
 
   useEffect(() => {
     sdk.window.startAutoResizer()

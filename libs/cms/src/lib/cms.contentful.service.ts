@@ -1679,7 +1679,7 @@ export class CmsContentfulService {
     for (const item of response.items) {
       const webChatEntry = item as types.IWebChat
       for (const location of webChatEntry.fields.displayLocations ?? []) {
-        if (location.sys.contentType.sys.id !== 'organization')
+        if (location?.sys?.contentType?.sys?.id !== 'organization')
           return webChatEntry
         bestMatch = webChatEntry
       }
