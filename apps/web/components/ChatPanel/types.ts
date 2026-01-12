@@ -1,7 +1,7 @@
-import { boostChatPanelEndpoints } from './BoostChatPanel/config'
-
 export interface BoostChatPanelProps {
-  endpoint: keyof typeof boostChatPanelEndpoints
+  id: string
+  conversationKey: string
+  url: string
   pushUp?: boolean
 }
 
