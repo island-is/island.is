@@ -38,6 +38,7 @@ interface GenericQuestionnaireProps {
   onCancel?: () => void
   img?: string
   initialAnswers?: { [key: string]: QuestionAnswer }
+  submitting?: boolean
 }
 
 export const GenericQuestionnaire: FC<GenericQuestionnaireProps> = ({
@@ -46,6 +47,7 @@ export const GenericQuestionnaire: FC<GenericQuestionnaireProps> = ({
   onCancel,
   img,
   initialAnswers,
+  submitting = false,
 }) => {
   const { formatMessage } = useLocale()
   const [answers, setAnswers] = useState<{ [key: string]: QuestionAnswer }>(
@@ -339,6 +341,7 @@ export const GenericQuestionnaire: FC<GenericQuestionnaireProps> = ({
               <QuestionnaireFooter
                 onSubmit={() => handleSubmit(false)}
                 onCancel={showReview ? () => setShowReview(false) : onCancel}
+                submitting={submitting}
                 submitLabel={
                   showReview
                     ? formatMessage(m.sendAnswers)

@@ -9,6 +9,7 @@ interface FooterButtonsProps {
   submitLabel?: string
   cancelLabel?: string
   submitDisabled?: boolean
+  submitting?: boolean
 }
 
 export const QuestionnaireFooter: FC<FooterButtonsProps> = ({
@@ -17,6 +18,7 @@ export const QuestionnaireFooter: FC<FooterButtonsProps> = ({
   submitLabel,
   cancelLabel,
   submitDisabled = false,
+  submitting = false,
 }) => {
   const { formatMessage } = useLocale()
 
@@ -29,7 +31,12 @@ export const QuestionnaireFooter: FC<FooterButtonsProps> = ({
       paddingBottom={4}
     >
       <Box>
-        <Button variant="ghost" onClick={onCancel} preTextIcon="arrowBack">
+        <Button
+          variant="ghost"
+          onClick={onCancel}
+          preTextIcon="arrowBack"
+          disabled={submitting}
+        >
           {cancelLabel ? cancelLabel : formatMessage(m.buttonCancel)}
         </Button>
       </Box>
@@ -39,6 +46,7 @@ export const QuestionnaireFooter: FC<FooterButtonsProps> = ({
           variant="primary"
           onClick={onSubmit}
           icon="arrowForward"
+          loading={submitting}
         >
           {submitLabel ? submitLabel : formatMessage(m.submit)}
         </Button>

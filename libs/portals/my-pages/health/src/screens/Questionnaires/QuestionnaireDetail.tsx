@@ -36,7 +36,7 @@ const QuestionnaireDetail: FC = () => {
       input: { id: id ?? '', organization: organization },
       locale: lang,
     },
-    skip: !id,
+    skip: !id || !organization,
   })
 
   const questionnaire = data?.questionnairesDetail
@@ -47,7 +47,7 @@ const QuestionnaireDetail: FC = () => {
   const isExpired = status === QuestionnaireQuestionnairesStatusEnum.expired
   const isDraft = status === QuestionnaireQuestionnairesStatusEnum.draft
 
-  if (!id) {
+  if (!id || !organization) {
     return (
       <Box background="white">
         <Problem type="not_found" noBorder={false} />
@@ -62,7 +62,10 @@ const QuestionnaireDetail: FC = () => {
     if (!latest) return current
 
     // If current has a newer lastUpdated timestamp, it becomes the latest
-    if (current.lastUpdated && current.lastUpdated > (latest.lastUpdated ?? '')) {
+    if (
+      current.lastUpdated &&
+      current.lastUpdated > (latest.lastUpdated ?? '')
+    ) {
       return current
     }
 
@@ -167,42 +170,39 @@ const QuestionnaireDetail: FC = () => {
       ]}
     >
       {questionnaire && !error && (
-        <InfoLineStack
-          children={[
-            <InfoLine
-              loading={loading}
-              key="questionnaire-status"
-              label={formatMessage(messages.status)}
-              content={
-                <Tag disabled outlined={false} variant={statusTagVariant}>
-                  {statusLabel}
-                </Tag>
-              }
-            />,
-
-            <InfoLine
-              loading={loading}
-              key="questionnaire-organization"
-              label={formatMessage(messages.organization)}
-              content={
-                questionnaire?.baseInformation.organization ===
-                QuestionnaireQuestionnairesOrganizationEnum.EL
-                  ? formatMessage(messages.healthDirectorate)
-                  : formatMessage(messages.landspitali)
-              }
-            />,
-            <InfoLine
-              loading={loading}
-              key="questionnaire-sent"
-              label={formatMessage(messages.date)}
-              content={
-                questionnaire?.baseInformation.sentDate
-                  ? formatDate(questionnaire?.baseInformation.sentDate)
-                  : formatMessage(messages.unknown)
-              }
-            />,
-          ]}
-        ></InfoLineStack>
+        <InfoLineStack>
+          <InfoLine
+            loading={loading}
+            key="questionnaire-status"
+            label={formatMessage(messages.status)}
+            content={
+              <Tag disabled outlined={false} variant={statusTagVariant}>
+                {statusLabel}
+              </Tag>
+            }
+          />
+          <InfoLine
+            loading={loading}
+            key="questionnaire-organization"
+            label={formatMessage(messages.organization)}
+            content={
+              questionnaire?.baseInformation.organization ===
+              QuestionnaireQuestionnairesOrganizationEnum.EL
+                ? formatMessage(messages.healthDirectorate)
+                : formatMessage(messages.landspitali)
+            }
+          />
+          <InfoLine
+            loading={loading}
+            key="questionnaire-sent"
+            label={formatMessage(messages.date)}
+            content={
+              questionnaire?.baseInformation.sentDate
+                ? formatDate(questionnaire?.baseInformation.sentDate)
+                : formatMessage(messages.unknown)
+            }
+          />
+        </InfoLineStack>
       )}
       {!loading && !data?.questionnairesDetail && !error && (
         <Box background="white" margin={4} borderRadius="lg">

@@ -1,6 +1,6 @@
 import {
-  QuestionnaireQuestionnairesOrganizationEnum,
   QuestionnaireAnswerOptionType,
+  QuestionnaireQuestionnairesOrganizationEnum,
 } from '@island.is/api/schema'
 import { Box, LoadingDots, toast } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -27,10 +27,11 @@ const AnswerQuestionnaire: FC = () => {
   const navigate = useNavigate()
   const { formatMessage, lang } = useLocale()
   const { data: organizations } = useOrganizations()
-  const [submitQuestionnaire] = useSubmitQuestionnaireMutation({
-    refetchQueries: ['GetAnsweredQuestionnaire'],
-    awaitRefetchQueries: true,
-  })
+  const [submitQuestionnaire, { loading: submitting }] =
+    useSubmitQuestionnaireMutation({
+      refetchQueries: ['GetAnsweredQuestionnaire'],
+      awaitRefetchQueries: true,
+    })
 
   const organization: QuestionnaireQuestionnairesOrganizationEnum | undefined =
     org === 'el'
@@ -213,6 +214,7 @@ const AnswerQuestionnaire: FC = () => {
           <GenericQuestionnaire
             questionnaire={data.questionnairesDetail}
             initialAnswers={initialAnswers}
+            submitting={submitting}
             onSubmit={handleSubmit}
             onCancel={handleCancel}
             img={getOrganizationLogoUrl(

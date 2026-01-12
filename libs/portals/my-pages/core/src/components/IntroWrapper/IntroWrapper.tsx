@@ -4,7 +4,6 @@ import {
   GridColumn,
   GridColumnProps,
   GridRow,
-  Inline,
   ResponsiveProp,
   SkeletonLoader,
   Stack,
