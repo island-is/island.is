@@ -61,7 +61,11 @@ export const Timeline: FC<Props> = ({
       )}
       {isMobile && currentProgress && (
         <Box display="flex">
-          <ProgressBar progress={currentProgress} vertical />
+          <ProgressBar
+            id="timeline-progress"
+            progress={currentProgress}
+            vertical
+          />
           <Box marginLeft="gutter">
             <Stack space={5}>
               {children?.map((child, index) => (
@@ -82,7 +86,10 @@ export const Timeline: FC<Props> = ({
           >
             {currentProgress && (
               <>
-                <ProgressBar progress={currentProgress} />
+                <ProgressBar
+                  id="timeline-progress-current"
+                  progress={currentProgress}
+                />
                 {tooltipText && (
                   <Tooltip text={tooltipText} placement="top">
                     <Box
