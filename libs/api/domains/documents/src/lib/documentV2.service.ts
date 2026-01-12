@@ -515,6 +515,10 @@ export class DocumentServiceV2 {
   }
 
   private getHiddenCategoriesIDs = (user: User) => {
+    // Test users
+    // Parent 121286-1499 (legal guardian)
+    // Teen 271009-1430 (16-17)
+    // Child  010714-1410 (under 16)
     try {
       const isDelegated = isDefined(user.delegationType)
       if (!isDelegated) return []
@@ -532,9 +536,8 @@ export class DocumentServiceV2 {
       // Hide health data if user is a legal guardian and child is 16 or older
       const hideHealthData = isLegalGuardian && !isMinor
 
-      // Hide law and order data if user is delegated and not a company
-      const hideLawAndOrderData = isDelegated && !isCompany
-
+      // Hide law and order data if user is delegated
+      const hideLawAndOrderData = isDelegated
       this.logger.debug('Should hide document categories', {
         hideHealthData,
         hideLawAndOrderData,
