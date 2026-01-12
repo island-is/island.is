@@ -196,17 +196,16 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
             defenderNationalId: string | null,
             defenderEmail: string | null,
             defenderPhoneNumber: string | null,
-          ) => {
+          ) =>
             handleSetAndSendDefendantToServer({
               defendantId: defendant.id,
               defenderName,
               defenderNationalId,
               defenderEmail,
               defenderPhoneNumber,
+              caseFilesSharedWithDefender: Boolean(defenderName),
             })
-
-            toggleCaseFilesSharedWithDefender(defendant, Boolean(defenderName))
-          }}
+          }
           onEmailChange={(defenderEmail: string | null) =>
             handleUpdateDefendantState({
               defendantId: defendant.id,
