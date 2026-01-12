@@ -269,7 +269,7 @@ export class QuestionnairesService {
           lshAnswer,
         )
         return {
-          success: response?.status === 'success',
+          success: true,
           message: response?.message ?? 'Questionnaire submitted successfully',
         }
       } catch (e) {
@@ -317,6 +317,7 @@ export class QuestionnairesService {
       [NAMESPACE],
       locale,
     )
+
     try {
       const data: QuestionnaireBaseDto[] | null =
         await this.api.getQuestionnaires(user, locale)
@@ -340,8 +341,8 @@ export class QuestionnairesService {
             }
           }) ?? [],
       }
-    } catch (e) {
-      return null
+    } catch (error) {
+      this.logger.error('Failed to fetch EL questionnaires', error)
     }
 
     let LSHquestionnaires: QuestionnairesList = { questionnaires: [] }
@@ -371,8 +372,8 @@ export class QuestionnairesService {
               }
             }) || [],
       }
-    } catch (e) {
-      return null
+    } catch (error) {
+      this.logger.error('Failed to fetch LSH questionnaires', error)
     }
 
     const allLists = [ELquestionnaires, LSHquestionnaires]
