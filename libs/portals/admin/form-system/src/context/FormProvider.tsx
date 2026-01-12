@@ -1,18 +1,10 @@
-import { useCallback, useEffect, useMemo, useReducer, useState } from 'react'
-import { ControlContext, IControlContext } from './ControlContext'
+import { useMutation } from '@apollo/client'
 import {
   FormSystemForm,
   FormSystemFormResponse,
   FormSystemSection,
 } from '@island.is/api/schema'
-import { ControlState, controlReducer } from '../hooks/controlReducer'
-import { ActiveItem, NavbarSelectStatus } from '../lib/utils/interfaces'
-import { removeTypename } from '../lib/utils/removeTypename'
-import { updateDnd } from '../lib/utils/updateDnd'
-import { defaultStep } from '../lib/utils/defaultStep'
-import { baseSettingsStep } from '../lib/utils/getBaseSettingsSection'
-import { updateActiveItemFn } from '../lib/utils/updateActiveItem'
-import { useMutation } from '@apollo/client'
+import { SectionTypes } from '@island.is/form-system/enums'
 import {
   GET_GOOGLE_TRANSLATION,
   UPDATE_FIELD,
@@ -23,9 +15,21 @@ import {
   UPDATE_SECTION,
   UPDATE_SECTION_DISPLAY_ORDER,
 } from '@island.is/form-system/graphql'
-import { updateFormFn } from '../lib/utils/updateFormFn'
-import { SectionTypes } from '@island.is/form-system/enums'
 import { GoogleTranslation } from '@island.is/form-system/shared'
+import { useCallback, useEffect, useMemo, useReducer, useState } from 'react'
+import { ControlState, controlReducer } from '../hooks/controlReducer'
+import { defaultStep } from '../lib/utils/defaultStep'
+import { baseSettingsStep } from '../lib/utils/getBaseSettingsSection'
+import {
+  ActiveItem,
+  NavbarSelectStatus,
+  OpenComponents,
+} from '../lib/utils/interfaces'
+import { removeTypename } from '../lib/utils/removeTypename'
+import { updateActiveItemFn } from '../lib/utils/updateActiveItem'
+import { updateDnd } from '../lib/utils/updateDnd'
+import { updateFormFn } from '../lib/utils/updateFormFn'
+import { ControlContext, IControlContext } from './ControlContext'
 
 export const FormProvider: React.FC<{
   children: React.ReactNode
@@ -39,16 +43,13 @@ export const FormProvider: React.FC<{
   const [selectStatus, setSelectStatus] = useState<NavbarSelectStatus>(
     NavbarSelectStatus.OFF,
   )
+  const [openComponents, setOpenComponents] = useState<OpenComponents>({
+    sections: [],
+    screens: [],
+  })
 
-  const {
-    fieldTypes,
-    listTypes,
-    certificationTypes,
-    applicantTypes,
-    submitUrls,
-    validationUrls,
-    form,
-  } = formBuilder
+  const { fieldTypes, listTypes, certificationTypes, applicantTypes, form } =
+    formBuilder
   const initialControl: ControlState = {
     activeItem: {
       type: 'Section',
@@ -73,6 +74,10 @@ export const FormProvider: React.FC<{
   const [updateForm] = useMutation(UPDATE_FORM)
   const [getGoogleTranslation] = useMutation(GET_GOOGLE_TRANSLATION)
   const [selectedUrls, setSelectedUrls] = useState<string[]>([])
+  const [submissionUrlInput, setSubmissionUrlInput] = useState<string>('')
+  const [submissionUrls, setSubmissionUrls] = useState<string[]>(
+    formBuilder.submissionUrls ? (formBuilder.submissionUrls as string[]) : [],
+  )
 
   const getTranslation = async (text: string): Promise<GoogleTranslation> => {
     try {
@@ -138,8 +143,10 @@ export const FormProvider: React.FC<{
       certificationTypes,
       fieldTypes,
       listTypes,
-      submitUrls,
-      validationUrls,
+      submissionUrls,
+      setSubmissionUrls,
+      submissionUrlInput,
+      setSubmissionUrlInput,
       setInSettings,
       inSettings,
       updateActiveItem,
@@ -155,8 +162,18 @@ export const FormProvider: React.FC<{
       getTranslation,
       selectedUrls,
       setSelectedUrls,
+      openComponents,
+      setOpenComponents,
     }),
-    [control, controlDispatch, inListBuilder, selectStatus, selectedUrls],
+    [
+      control,
+      controlDispatch,
+      inListBuilder,
+      selectStatus,
+      selectedUrls,
+      openComponents,
+      submissionUrlInput,
+    ],
   )
   useEffect(() => {
     if (process.env.NODE_ENV !== 'development') return
@@ -169,8 +186,6 @@ export const FormProvider: React.FC<{
       selectStatus,
       control,
     })
-    // console.log('dependencies:', control.form.dependencies)
-    // console.log('form:', control.form)
   }, [
     control.form?.id,
     control.activeItem?.type,

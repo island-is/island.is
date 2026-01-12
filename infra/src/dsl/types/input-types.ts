@@ -211,6 +211,7 @@ export type ReplicaCount = {
    * For more info, see this - https://prometheus.io/docs/prometheus/latest/querying/functions/#irate
    */
   scalingMagicNumber?: number
+  cpuAverageUtilization?: number
 }
 
 type Container = {

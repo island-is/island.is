@@ -6,13 +6,13 @@ import {
 } from '@island.is/application/core'
 import { friggOrganizationsByTypeQuery } from '../../../graphql/queries'
 import { ApplicationType } from '../../../utils/constants'
-import { newPrimarySchoolMessages } from '../../../lib/messages'
+import { primarySchoolMessages, sharedMessages } from '../../../lib/messages'
 import { getApplicationAnswers } from '../../../utils/newPrimarySchoolUtils'
 import { Query, OrganizationTypeEnum } from '@island.is/api/schema'
 
 export const currentNurserySubSection = buildSubSection({
   id: 'currentNurserySubSection',
-  title: newPrimarySchoolMessages.primarySchool.currentNurserySubSectionTitle,
+  title: primarySchoolMessages.currentNursery.subSectionTitle,
   condition: (answers) => {
     // Only display section if application type is "Enrollment in primary school"
     const { applicationType } = getApplicationAnswers(answers)
@@ -21,13 +21,12 @@ export const currentNurserySubSection = buildSubSection({
   children: [
     buildMultiField({
       id: 'currentNursery',
-      title:
-        newPrimarySchoolMessages.primarySchool.currentNurserySubSectionTitle,
+      title: primarySchoolMessages.currentNursery.subSectionTitle,
       children: [
         buildAsyncSelectField({
           id: 'currentNursery.municipality',
-          title: newPrimarySchoolMessages.shared.municipality,
-          placeholder: newPrimarySchoolMessages.shared.municipalityPlaceholder,
+          title: sharedMessages.municipality,
+          placeholder: sharedMessages.municipalityPlaceholder,
           loadingError: coreErrorMessages.failedDataProvider,
           dataTestId: 'current-nursery-municipality',
           loadOptions: async ({ apolloClient }) => {
@@ -52,9 +51,8 @@ export const currentNurserySubSection = buildSubSection({
         }),
         buildAsyncSelectField({
           id: 'currentNursery.nursery',
-          title: newPrimarySchoolMessages.primarySchool.nursery,
-          placeholder:
-            newPrimarySchoolMessages.primarySchool.nurseryPlaceholder,
+          title: primarySchoolMessages.currentNursery.nursery,
+          placeholder: primarySchoolMessages.currentNursery.nurseryPlaceholder,
           loadingError: coreErrorMessages.failedDataProvider,
           dataTestId: 'current-nursery-nursery',
           updateOnSelect: ['currentNursery.municipality'],

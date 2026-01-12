@@ -95,7 +95,6 @@ export interface UpdateCase
     | 'hasCivilClaims'
     | 'isRegisteredInPrisonSystem'
     | 'isArchived'
-    | 'courtRecordHash'
   > {
   type?: CaseType
   state?: CaseState
@@ -115,6 +114,8 @@ export interface UpdateCase
   courtDate?: UpdateDateLog
   postponedIndefinitelyExplanation?: string
   civilDemands?: string
+  penalties?: string
   rulingSignatureDate?: Date | null
   withCourtSessions?: boolean
+  courtRecordHash?: string | null
 }

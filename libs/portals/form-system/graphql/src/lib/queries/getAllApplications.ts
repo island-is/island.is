@@ -13,6 +13,7 @@ export const GET_ALL_APPLICATIONS = gql`
         isSelected
       }
       total
+      isLoginTypeAllowed
     }
   }
   ${ApplicationFragment}

@@ -8,7 +8,6 @@ import {
   Application,
   DefaultEvents,
   defineTemplateApi,
-  PendingAction,
   InstitutionNationalIds,
 } from '@island.is/application/types'
 import {
@@ -17,8 +16,7 @@ import {
   EphemeralStateLifeCycle,
   coreHistoryMessages,
   corePendingActionMessages,
-  getHistoryLogApprovedWithSubjectAndActor,
-  getHistoryLogRejectedWithSubjectAndActor,
+  getReviewStatePendingAction,
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
 import { ApiActions, OperatorInformation, UserInformation } from '../shared'
@@ -34,10 +32,10 @@ import { application as applicationMessage, information } from './messages'
 import { assign } from 'xstate'
 import set from 'lodash/set'
 import {
-  canReviewerApprove,
   isRemovingOperatorOnly,
   getChargeItems,
   getExtraData,
+  getReviewerRole,
   getReviewers,
 } from '../utils'
 import { AuthDelegationType } from '@island.is/shared/types'
@@ -62,43 +60,6 @@ const determineMessageFromApplicationAnswers = (application: Application) => {
   return {
     name: applicationMessage.name,
     value: plate ? `- ${plate}` : '',
-  }
-}
-
-const reviewStatePendingAction = (
-  application: Application,
-  role: string,
-  nationalId: string,
-): PendingAction => {
-  if (nationalId) {
-    if (nationalId === InstitutionNationalIds.SAMGONGUSTOFA) {
-      return {
-        title: corePendingActionMessages.waitingForReviewTitle,
-        content: {
-          ...corePendingActionMessages.whoNeedsToReviewDescription,
-          values: {
-            value: getReviewers(application.answers)
-              .filter((x) => !x.hasApproved)
-              .map((x) =>
-                x.name ? `${x.name} (${x.nationalId})` : x.nationalId,
-              )
-              .join(', '),
-          },
-        },
-        displayStatus: 'info',
-      }
-    } else if (canReviewerApprove(nationalId, application.answers)) {
-      return {
-        title: corePendingActionMessages.waitingForReviewTitle,
-        content: corePendingActionMessages.youNeedToReviewDescription,
-        displayStatus: 'warning',
-      }
-    }
-  }
-  return {
-    title: corePendingActionMessages.waitingForReviewTitle,
-    content: corePendingActionMessages.waitingForReviewDescription,
-    displayStatus: 'info',
   }
 }
 
@@ -222,18 +183,52 @@ const template: ApplicationTemplate<
             historyLogs: [
               {
                 onEvent: DefaultEvents.APPROVE,
-                logMessage: getHistoryLogApprovedWithSubjectAndActor,
+                logMessage: (application, subjectNationalId) => {
+                  if (!subjectNationalId)
+                    return coreHistoryMessages.applicationApprovedBy
+
+                  const role = getReviewerRole(
+                    application.answers,
+                    subjectNationalId,
+                  )
+                  if (role === 'ownerCoOwner')
+                    return applicationMessage.historyLogApprovedByCoOwner
+                  else if (role === 'operators')
+                    return applicationMessage.historyLogApprovedByNewOperator
+                  return coreHistoryMessages.applicationApprovedBy
+                },
+                includeSubjectAndActor: true,
               },
               {
                 onEvent: DefaultEvents.REJECT,
-                logMessage: getHistoryLogRejectedWithSubjectAndActor,
+                logMessage: (application, subjectNationalId) => {
+                  if (!subjectNationalId)
+                    return coreHistoryMessages.applicationRejected
+
+                  const role = getReviewerRole(
+                    application.answers,
+                    subjectNationalId,
+                  )
+                  if (role === 'ownerCoOwner')
+                    return applicationMessage.historyLogRejectedByCoOwner
+                  else if (role === 'operators')
+                    return applicationMessage.historyLogRejectedByNewOperator
+                  return coreHistoryMessages.applicationRejected
+                },
+                includeSubjectAndActor: true,
               },
               {
                 onEvent: DefaultEvents.SUBMIT,
                 logMessage: coreHistoryMessages.applicationApproved,
               },
             ],
-            pendingAction: reviewStatePendingAction,
+            pendingAction: (application, _role, nationalId) => {
+              return getReviewStatePendingAction(
+                nationalId,
+                getReviewers(application.answers),
+                true,
+              )
+            },
           },
           lifecycle: {
             shouldBeListed: true,

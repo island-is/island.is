@@ -232,7 +232,8 @@ export const isDefendantStepValidIC = (workingCase: Case): boolean => {
 
 export const isDefendantStepValidIndictments = (workingCase: Case): boolean => {
   return Boolean(
-    workingCase.policeCaseNumbers &&
+    workingCase.prosecutor &&
+      workingCase.policeCaseNumbers &&
       workingCase.policeCaseNumbers.length > 0 &&
       !workingCase.policeCaseNumbers.some(
         (n) =>
@@ -582,14 +583,19 @@ export const isCourtSessionValid = (courtSession: CourtSessionResponse) => {
   )
 }
 
-export const isIndictmentCourtRecordStepValid = (
-  courtSessions?: CourtSessionResponse[] | null,
-) => {
-  if (!Array.isArray(courtSessions) || courtSessions.length === 0) {
+export const isIndictmentCourtRecordStepValid = (workingCase: Case) => {
+  if (!workingCase.withCourtSessions) {
+    return true
+  }
+
+  if (
+    !Array.isArray(workingCase.courtSessions) ||
+    workingCase.courtSessions.length === 0
+  ) {
     return false
   }
 
-  return courtSessions.every(isCourtSessionValid)
+  return workingCase.courtSessions.every(isCourtSessionValid)
 }
 
 const isIndictmentRulingDecisionValid = (workingCase: Case) => {

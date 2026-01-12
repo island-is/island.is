@@ -93,7 +93,10 @@ export const Option = <
     <components.Option
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore make web strict
-      className={cn(styles.option, styles.optionSizes[size])}
+      className={cn(
+        size === 'xs' ? styles.optionExtraSmall : styles.option,
+        styles.optionSizes[size],
+      )}
       {...props}
     >
       <>

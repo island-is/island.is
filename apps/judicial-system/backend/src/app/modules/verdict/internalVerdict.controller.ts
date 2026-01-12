@@ -20,15 +20,18 @@ import {
 } from '@island.is/judicial-system/audit-trail'
 import { TokenGuard } from '@island.is/judicial-system/auth'
 import {
+  formatDate,
+  getVerdictServiceStatusText,
+} from '@island.is/judicial-system/formatters'
+import {
   messageEndpoint,
   MessageType,
 } from '@island.is/judicial-system/message'
 import {
   CaseIndictmentRulingDecision,
-  getIndictmentAppealDeadlineDate,
-  hasDatePassed,
+  getDefendantServiceDate,
+  getIndictmentAppealDeadline,
   indictmentCases,
-  ServiceRequirement,
 } from '@island.is/judicial-system/types'
 
 import {
@@ -41,10 +44,6 @@ import { CurrentDefendant, DefendantExistsGuard } from '../defendant'
 import { DefendantNationalIdExistsGuard } from '../defendant/guards/defendantNationalIdExists.guard'
 import { EventService } from '../event'
 import { Case, Defendant, Verdict } from '../repository'
-import {
-  VerdictService,
-  VerdictServiceCertificateDelivery,
-} from '../verdict/verdict.service'
 import { DeliverDto } from './dto/deliver.dto'
 import { InternalUpdateVerdictDto } from './dto/internalUpdateVerdict.dto'
 import { PoliceUpdateVerdictDto } from './dto/policeUpdateVerdict.dto'
@@ -52,6 +51,10 @@ import { ExternalPoliceVerdictExistsGuard } from './guards/ExternalPoliceVerdict
 import { CurrentVerdict } from './guards/verdict.decorator'
 import { VerdictExistsGuard } from './guards/verdictExists.guard'
 import { DeliverResponse } from './models/deliver.response'
+import {
+  VerdictService,
+  VerdictServiceCertificateDelivery,
+} from './verdict.service'
 
 const validateVerdictAppealUpdate = ({
   caseId,
@@ -69,10 +72,11 @@ const validateVerdictAppealUpdate = ({
       `Cannot register appeal – No ruling date has been set for case ${caseId}`,
     )
   }
-  const isServiceRequired =
-    verdict.serviceRequirement === ServiceRequirement.REQUIRED
-  const isFine = indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
-  const baseDate = isServiceRequired ? verdict.serviceDate : rulingDate
+
+  const baseDate = getDefendantServiceDate({
+    verdict,
+    fallbackDate: rulingDate,
+  })
 
   // this can only be thrown if service date is not set
   if (!baseDate) {
@@ -80,13 +84,13 @@ const validateVerdictAppealUpdate = ({
       `Cannot register appeal – Service date not set for case ${caseId}`,
     )
   }
-  const appealDeadline = getIndictmentAppealDeadlineDate({
+  const { deadlineDate, isDeadlineExpired } = getIndictmentAppealDeadline({
     baseDate: new Date(baseDate),
-    isFine,
+    isFine: indictmentRulingDecision === CaseIndictmentRulingDecision.FINE,
   })
-  if (hasDatePassed(appealDeadline)) {
+  if (isDeadlineExpired) {
     throw new BadRequestException(
-      `Appeal deadline has passed for case ${caseId}. Deadline was ${appealDeadline.toISOString()}`,
+      `Appeal deadline has passed for case ${caseId}. Deadline was ${deadlineDate.toISOString()}`,
     )
   }
 }
@@ -131,6 +135,9 @@ export class InternalVerdictController {
     this.logger.debug(
       `Delivering verdict ${verdict.id} pdf to the police centralized file service for defendant ${defendantId} of case ${caseId}`,
     )
+
+    // TODO: We should probably filter out defendants without national id when posting events to queue
+    //       This is not an error
     if (defendant.noNationalId) {
       throw new BadRequestException(
         `National id is required for ${defendant.id} when delivering verdict to national commissioners office`,
@@ -142,6 +149,7 @@ export class InternalVerdictController {
       results: DeliverResponse,
     ) => {
       const currentVerdict = await this.verdictService.findById(verdict.id)
+
       return {
         deliveredToPolice: results.delivered,
         verdictId: verdict.id,
@@ -151,6 +159,7 @@ export class InternalVerdictController {
         verdictDeliveredToPolice: new Date(),
       }
     }
+
     return this.auditTrailService.audit(
       deliverDto.user.id,
       AuditedAction.DELIVER_TO_NATIONAL_COMMISSIONERS_OFFICE_VERDICT,
@@ -165,17 +174,34 @@ export class InternalVerdictController {
     )
   }
 
-  @UseGuards(ExternalPoliceVerdictExistsGuard)
+  @UseGuards(ExternalPoliceVerdictExistsGuard, CaseExistsGuard)
   @Patch('verdict/:policeDocumentId')
   async updateVerdict(
     @Param('policeDocumentId') policeDocumentId: string,
     @CurrentVerdict() verdict: Verdict,
+    @CurrentCase() theCase: Case,
     @Body() update: PoliceUpdateVerdictDto,
   ): Promise<Verdict> {
-    this.logger.debug(
-      `Updating verdict by external police document id ${policeDocumentId}`,
+    this.logger.info(
+      `Updating verdict by external police document id ${policeDocumentId} of ${theCase.id}`,
     )
-    return await this.verdictService.updatePoliceDelivery(verdict, update)
+
+    const updatedVerdict = await this.verdictService.updatePoliceDelivery(
+      verdict,
+      update,
+    )
+
+    if (
+      updatedVerdict.serviceStatus &&
+      updatedVerdict.serviceStatus !== verdict.serviceStatus
+    ) {
+      this.eventService.postEvent('VERDICT_SERVICE_STATUS', theCase, false, {
+        Staða: getVerdictServiceStatusText(updatedVerdict.serviceStatus),
+        Birt: formatDate(updatedVerdict.serviceDate, 'Pp') ?? 'ekki skráð',
+      })
+    }
+
+    return updatedVerdict
   }
 
   @UseGuards(
@@ -223,9 +249,12 @@ export class InternalVerdictController {
     this.logger.debug(
       `Get verdict supplements for police document id ${policeDocumentId}`,
     )
+
+    // Todo: Use CurrentVerdict decorator to avoid querying for the verdict again
     const verdict = await this.verdictService.findByExternalPoliceDocumentId(
       policeDocumentId,
     )
+
     return {
       serviceInformationForDefendant: verdict.serviceInformationForDefendant,
     }

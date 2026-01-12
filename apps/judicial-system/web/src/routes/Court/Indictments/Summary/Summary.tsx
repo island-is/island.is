@@ -18,13 +18,11 @@ import {
 import { hasGeneratedCourtRecordPdf } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
-  CaseTag,
   ConnectedCaseFilesAccordionItem,
   DateTime,
   FormContentContainer,
   FormContext,
   FormFooter,
-  getIndictmentRulingDecisionTag,
   InfoCardClosedIndictment,
   Modal,
   PageHeader,
@@ -32,6 +30,7 @@ import {
   PageTitle,
   PdfButton,
   RenderFiles,
+  RulingModifiedModal,
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
@@ -40,6 +39,7 @@ import {
   CaseFile,
   CaseFileCategory,
   CaseIndictmentRulingDecision,
+  CaseState,
   CaseTransition,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
@@ -48,9 +48,12 @@ import {
   useFileList,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import { strings } from './Summary.strings'
 import * as styles from './Summary.css'
+
+type modal = 'CONFIRM_INDICTMENT' | 'CONFIRM_RULING' | 'CORRECTION_EXPLANATION'
 
 const Summary: FC = () => {
   const { formatMessage } = useIntl()
@@ -63,9 +66,8 @@ const Summary: FC = () => {
   } = useContext(FormContext)
   const { transitionCase, isTransitioningCase, setAndSendCaseToServer } =
     useCase()
-  const [modalVisible, setModalVisible] = useState<
-    'CONFIRM_INDICTMENT' | 'CONFIRM_RULING'
-  >()
+
+  const [modalVisible, setModalVisible] = useState<modal>()
   const [rulingUrl, setRulingUrl] = useState<string>()
   const [hasReviewed, setHasReviewed] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState(true)
@@ -106,7 +108,7 @@ const Summary: FC = () => {
     return router.push(`${destination}/${workingCase.id}`)
   }
 
-  const handleModalPrimaryButtonClick = async () => {
+  const completeCase = async () => {
     const transitionSuccess = await transitionCase(
       workingCase.id,
       CaseTransition.COMPLETE,
@@ -118,6 +120,14 @@ const Summary: FC = () => {
     }
 
     router.push(`${constants.INDICTMENTS_COMPLETED_ROUTE}/${workingCase.id}`)
+  }
+
+  const handleModalPrimaryButtonClick = async () => {
+    if (workingCase.state === CaseState.CORRECTING) {
+      setModalVisible('CORRECTION_EXPLANATION')
+    } else {
+      await completeCase()
+    }
   }
 
   const handleRuling = async () => {
@@ -192,10 +202,6 @@ const Summary: FC = () => {
     [[] as CaseFile[], [] as CaseFile[]],
   )
 
-  const indictmentRulingTag = getIndictmentRulingDecisionTag(
-    workingCase.indictmentRulingDecision,
-  )
-
   const canUserCompleteCase =
     (workingCase.indictmentRulingDecision !==
       CaseIndictmentRulingDecision.RULING &&
@@ -212,87 +218,82 @@ const Summary: FC = () => {
     >
       <PageHeader title={formatMessage(strings.htmlTitle)} />
       <FormContentContainer>
-        <Box display="flex" justifyContent="spaceBetween">
-          <PageTitle>{formatMessage(strings.title)}</PageTitle>
-          {workingCase.indictmentRulingDecision && (
-            <Box marginTop={2}>
-              <CaseTag
-                color={indictmentRulingTag.color}
-                text={formatMessage(indictmentRulingTag.text)}
-              />
-            </Box>
-          )}
-        </Box>
-        <Box component="section" marginBottom={1}>
-          <Text variant="h2" as="h2">
-            {formatMessage(core.caseNumber, {
-              caseNumber: workingCase.courtCaseNumber,
-            })}
-          </Text>
-        </Box>
-        <Box component="section" marginBottom={2}>
-          <ProsecutorAndDefendantsEntries workingCase={workingCase} />
-        </Box>
-        <Box component="section" marginBottom={6}>
-          <InfoCardClosedIndictment />
-        </Box>
-        {workingCase.mergedCases && workingCase.mergedCases.length > 0 && (
-          <Accordion>
-            {workingCase.mergedCases.map((mergedCase) => (
-              <Box marginBottom={5} key={mergedCase.id}>
-                <ConnectedCaseFilesAccordionItem
-                  connectedCaseParentId={workingCase.id}
-                  connectedCase={mergedCase}
-                />
-              </Box>
-            ))}
-          </Accordion>
-        )}
-        <SectionHeading title={formatMessage(strings.caseFiles)} />
-        {(rulingFiles.length > 0 ||
-          courtRecordFiles.length > 0 ||
-          workingCase.withCourtSessions) && (
-          <Box marginBottom={5}>
-            <Text variant="h4" as="h4">
-              {formatMessage(strings.caseFilesSubtitleRuling)}
+        <PageTitle includeTag={!!workingCase.indictmentRulingDecision}>
+          {formatMessage(strings.title)}
+        </PageTitle>
+        <div className={grid({ gap: 5, marginBottom: 10 })}>
+          <Box component="section" className={grid({ gap: 1 })}>
+            <Text variant="h2" as="h2">
+              {formatMessage(core.caseNumber, {
+                caseNumber: workingCase.courtCaseNumber,
+              })}
             </Text>
-            {
-              // We show a court record pdf button if the case should have court sessions
-              // but we disable the button if the court record pdf does not exist (should not happen)
-              workingCase.withCourtSessions && (
-                <PdfButton
-                  caseId={workingCase.id}
-                  title={`Þingbók ${workingCase.courtCaseNumber}.pdf`}
-                  pdfType="courtRecord"
-                  renderAs="row"
-                  elementId="Þingbók"
-                  disabled={!hasGeneratedCourtRecord}
-                />
-              )
-            }
-            {courtRecordFiles.length > 0 && (
-              <RenderFiles caseFiles={courtRecordFiles} onOpenFile={onOpen} />
-            )}
-            {rulingFiles.length > 0 && (
-              <RenderFiles caseFiles={rulingFiles} onOpenFile={onOpen} />
-            )}
+            <ProsecutorAndDefendantsEntries workingCase={workingCase} />
           </Box>
-        )}
-        <Box marginBottom={8} component="section">
-          <SectionHeading
-            title={formatMessage(strings.courtEndTimeTitle)}
-            description={formatMessage(strings.courtEndTimeDescription)}
-          />
-          <DateTime
-            name="courtEndDate"
-            selectedDate={workingCase.courtEndTime}
-            onChange={handleCourtEndTimeChange}
-            blueBox={true}
-            datepickerLabel="Dagsetning lykta"
-            dateOnly
-            required
-          />
-        </Box>
+          <Box component="section">
+            <InfoCardClosedIndictment />
+          </Box>
+          {workingCase.mergedCases && workingCase.mergedCases.length > 0 && (
+            <Accordion dividerOnBottom={false} dividerOnTop={false}>
+              {workingCase.mergedCases.map((mergedCase) => (
+                <Box key={mergedCase.id}>
+                  <ConnectedCaseFilesAccordionItem
+                    connectedCaseParentId={workingCase.id}
+                    connectedCase={mergedCase}
+                  />
+                </Box>
+              ))}
+            </Accordion>
+          )}
+          {(rulingFiles.length > 0 ||
+            courtRecordFiles.length > 0 ||
+            workingCase.withCourtSessions) && (
+            <div>
+              <SectionHeading
+                title={formatMessage(strings.caseFiles)}
+                marginBottom={5}
+              />
+              <Text variant="h4" as="h4">
+                {formatMessage(strings.caseFilesSubtitleRuling)}
+              </Text>
+              {
+                // We show a court record pdf button if the case should have court sessions
+                // but we disable the button if the court record pdf does not exist (should not happen)
+                workingCase.withCourtSessions && (
+                  <PdfButton
+                    caseId={workingCase.id}
+                    title={`Þingbók ${workingCase.courtCaseNumber}.pdf`}
+                    pdfType="courtRecord"
+                    renderAs="row"
+                    elementId="Þingbók"
+                    disabled={!hasGeneratedCourtRecord}
+                  />
+                )
+              }
+              {courtRecordFiles.length > 0 && (
+                <RenderFiles caseFiles={courtRecordFiles} onOpenFile={onOpen} />
+              )}
+              {rulingFiles.length > 0 && (
+                <RenderFiles caseFiles={rulingFiles} onOpenFile={onOpen} />
+              )}
+            </div>
+          )}
+          <Box component="section">
+            <SectionHeading
+              title={formatMessage(strings.courtEndTimeTitle)}
+              description={formatMessage(strings.courtEndTimeDescription)}
+            />
+            <DateTime
+              name="courtEndDate"
+              selectedDate={workingCase.courtEndTime}
+              onChange={handleCourtEndTimeChange}
+              blueBox={true}
+              datepickerLabel="Dagsetning lykta"
+              dateOnly
+              required
+            />
+          </Box>
+        </div>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
@@ -329,16 +330,18 @@ const Summary: FC = () => {
               </Box>
               <Box as="ul" marginLeft={2}>
                 <li>
-                  <Text>Vinsamlegast rýnið skjal fyrir staðfestingu.</Text>
+                  <Text as="span">
+                    Vinsamlegast rýnið skjal fyrir staðfestingu.
+                  </Text>
                 </li>
                 <li>
-                  <Text>
+                  <Text as="span">
                     Staðfestur dómur verður aðgengilegur málflytjendum í
                     Réttarvörslugátt.
                   </Text>
                 </li>
                 <li>
-                  <Text>
+                  <Text as="span">
                     Ef birta þarf dóminn verður hann sendur í rafræna birtingu í
                     stafrænt pósthólf dómfellda á island.is á næsta skrefi.
                   </Text>
@@ -416,6 +419,23 @@ const Summary: FC = () => {
             text: formatMessage(strings.completeCaseModalSecondaryButton),
             onClick: () => setModalVisible(undefined),
           }}
+        />
+      )}
+      {modalVisible === 'CORRECTION_EXPLANATION' && (
+        <RulingModifiedModal
+          onCancel={() =>
+            setModalVisible(
+              workingCase.indictmentRulingDecision ===
+                CaseIndictmentRulingDecision.RULING
+                ? 'CONFIRM_RULING'
+                : 'CONFIRM_INDICTMENT',
+            )
+          }
+          onContinue={async () => await completeCase()}
+          continueDisabled={isTransitioningCase}
+          description="Skráðu hvað var leiðrétt í dómnum eða þingbókinni. Aðilar máls munu fá skilaboðin."
+          defaultExplanation="Með heimild í 3. mgr. 186. gr. laga nr. 88/2008 hefur dómur verið leiðréttur."
+          fieldToModify="rulingModifiedHistory"
         />
       )}
     </PageLayout>

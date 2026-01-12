@@ -1,6 +1,6 @@
 import each from 'jest-each'
 import { Transaction } from 'sequelize'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { ConfigType } from '@island.is/nest/config'
 
@@ -142,11 +142,13 @@ describe('CaseController - Transition', () => {
             {
               id: caseFileId1,
               key: uuid(),
+              isKeyAccessible: true,
               state: CaseFileState.STORED_IN_RVG,
             },
             {
               id: caseFileId2,
               key: uuid(),
+              isKeyAccessible: true,
               state: CaseFileState.STORED_IN_COURT,
             },
           ]
@@ -327,11 +329,13 @@ describe('CaseController - Transition', () => {
           {
             id: caseFileId1,
             key: uuid(),
+            isKeyAccessible: true,
             state: CaseFileState.STORED_IN_RVG,
           },
           {
             id: caseFileId2,
             key: uuid(),
+            isKeyAccessible: true,
             state: CaseFileState.STORED_IN_COURT,
           },
         ]
@@ -600,24 +604,28 @@ describe('CaseController - Transition', () => {
             {
               id: prosecutorAppealBriefId,
               key: uuid(),
+              isKeyAccessible: true,
               state: CaseFileState.STORED_IN_RVG,
               category: CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
             },
             {
               id: prosecutorAppealBriefCaseFileId1,
               key: uuid(),
+              isKeyAccessible: true,
               state: CaseFileState.STORED_IN_RVG,
               category: CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE,
             },
             {
               id: prosecutorAppealBriefCaseFileId2,
               key: uuid(),
+              isKeyAccessible: true,
               state: CaseFileState.STORED_IN_RVG,
               category: CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE,
             },
             {
               id: appealRulingId,
               key: uuid(),
+              isKeyAccessible: true,
               state: CaseFileState.STORED_IN_RVG,
               category: CaseFileCategory.APPEAL_RULING,
             },

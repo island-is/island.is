@@ -17,6 +17,8 @@ export const notEligibleText = (externalData: ExternalData) => {
       return m.notEligible.applicantAlreadyHasPendingApplicationDescription
     case NotEligibleReasonCodes.APPLICANT_ALREADY_HAS_FULL_DISABILITY_PENSION:
       return m.notEligible.applicantAlreadyHasFullDisabilityPensionDescription
+    case NotEligibleReasonCodes.ERROR_PROCESSING_CLIENT:
+      return m.notEligible.errorProcessingClientDescription
     default:
       return undefined
   }

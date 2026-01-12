@@ -84,7 +84,7 @@ ingress:
           - '/download'
 namespace: 'download-service'
 podDisruptionBudget:
-  maxUnavailable: 1
+  minAvailable: 1
   unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534

@@ -112,6 +112,12 @@ export const employmentSearch = {
     pageTitle: {
       id: 'vmst.ub.application:employmentSearch.educationHistory.pageTitle',
       defaultMessage: 'Námsferill',
+      description: 'Education history page title',
+    },
+    pageDescription: {
+      id: 'vmst.ub.application:employmentSearch.educationHistory.pageDescription',
+      defaultMessage:
+        'Vinsamlegast skráðu inn eftirfarandi upplýsingar um nám í tímaröð',
       description: 'Education history page description',
     },
   }),
@@ -264,12 +270,12 @@ gerðar aðgengilegar atvinnurekendum innan EES sem leita að starfsfólki með 
       defaultMessage: `Til að fá atvinnuleysistryggingar þarftu að vera að virk/ur í að 
       leita þér að vinnu. Þú verður alltaf að staðfesta atvinnuleit milli 20. og 25. dags 
       hvers mánaðar. 
-      \nÞað gerir þú með því að fara inn á mínar síður Vinnumálastofnunar. 
-      \n**Þú þarft að staðfesta atvinnuleit, þrátt fyrir að:** 
-      \n* Ekki sé búið að afgreiða eða staðfesta umsókn þína
-      \n* Þú sért á biðtíma
-      \n* Þú sért með námssamning
-      \n* Þú sért í úrræðum á vegum Vinnumálastofnunar að undanskildum ráðningartengdum vinnumarkaðsúrræðum `,
+      \n Það gerir þú með því að fara inn á mínar síður Vinnumálastofnunar. 
+      \n **Þú þarft að staðfesta atvinnuleit, þrátt fyrir að:** 
+      \n *Ekki sé búið að afgreiða eða staðfesta umsókn þína
+      \n *Þú sért á biðtíma
+      \n *Þú sért með námssamning
+      \n *Þú sért í úrræðum á vegum Vinnumálastofnunar að undanskildum ráðningartengdum vinnumarkaðsúrræðum `,
       description: 'Employment search confirmation agreement page description',
     },
   }),

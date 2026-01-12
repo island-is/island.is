@@ -28,7 +28,7 @@ import {
   PARENTAL_LEAVE,
   StartDateOptions,
 } from '../constants'
-import Logo from '../assets/Logo'
+import { DirectorateOfLabourLogo } from '@island.is/application/assets/institution-logos'
 import { parentalLeaveFormMessages } from '../lib/messages'
 import {
   getAllPeriodDates,
@@ -49,7 +49,7 @@ import { useLocale } from '@island.is/localization'
 export const EditOrAddEmployersAndPeriods: Form = buildForm({
   id: 'ParentalLeaveEditOrAddEmployersAndPeriods',
   title: parentalLeaveFormMessages.shared.formEditTitle,
-  logo: Logo,
+  logo: DirectorateOfLabourLogo,
   mode: FormModes.DRAFT,
   children: [
     buildSection({

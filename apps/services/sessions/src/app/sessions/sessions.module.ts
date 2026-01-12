@@ -26,6 +26,10 @@ if (process.env.INIT_SCHEMA === 'true' || process.env.TESTS === 'true') {
     name: sessionsQueueName,
     useFactory: (config: ConfigType<typeof SessionsConfig>) => ({
       prefix: `{${bullModuleName}}`,
+      defaultJobOptions: {
+        removeOnComplete: { age: 5 * 60 },
+        removeOnFail: { age: 14 * 24 * 60 * 60 }, // 2 weeks
+      },
       createClient: () =>
         createRedisCluster({
           name: bullModuleName,

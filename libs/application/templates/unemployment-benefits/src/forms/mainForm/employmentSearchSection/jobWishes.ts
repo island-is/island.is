@@ -13,12 +13,10 @@ import {
   buildDateField,
 } from '@island.is/application/core'
 import { employmentSearch as employmentSearchMessages } from '../../../lib/messages'
-import {
-  GaldurDomainModelsSettingsJobCodesJobCodeDTO,
-  GaldurDomainModelsSettingsServiceAreasServiceAreaDTO,
-} from '@island.is/clients/vmst-unemployment'
+import { GaldurDomainModelsSettingsServiceAreasServiceAreaDTO } from '@island.is/clients/vmst-unemployment'
 import { Application } from '@island.is/application/types'
 import { CurrentEmploymentInAnswers, EmploymentStatus } from '../../../shared'
+import { getSortedJobCodes } from '../../../utils/getJobCodeOptions'
 
 export const jobWishesSubSection = buildSubSection({
   id: 'jobWishesSubSection',
@@ -41,12 +39,9 @@ export const jobWishesSubSection = buildSubSection({
           isMulti: true,
           required: true,
           options: (application, _, locale) => {
-            const jobList =
-              getValueViaPath<GaldurDomainModelsSettingsJobCodesJobCodeDTO[]>(
-                application.externalData,
-                'unemploymentApplication.data.supportData.jobCodes',
-              ) ?? []
-            return jobList.map((job) => ({
+            const sorted = getSortedJobCodes(application.externalData, locale)
+
+            return sorted.map((job) => ({
               value: job.id ?? '',
               label:
                 (locale === 'is' ? job.name : job.english ?? job.name) || '',
@@ -65,6 +60,8 @@ export const jobWishesSubSection = buildSubSection({
           variant: 'number',
           suffix: '%',
           required: true,
+          allowNegative: false,
+          max: 100,
         }),
         buildAlertMessageField({
           id: 'jobWishes.wantedJobAlert',
@@ -138,7 +135,6 @@ export const jobWishesSubSection = buildSubSection({
           id: 'jobWishes.location',
           title: employmentSearchMessages.jobWishes.location,
           isMulti: true,
-          required: true,
           options: (application, _, locale) => {
             const locations =
               getValueViaPath<

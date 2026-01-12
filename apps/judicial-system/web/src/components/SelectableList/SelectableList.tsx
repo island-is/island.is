@@ -12,6 +12,7 @@ import {
 
 import { IconAndText } from '../../routes/Prosecutor/components'
 import { selectableList as strings } from './SelectableList.strings'
+import * as styles from './SelectableList.css'
 
 interface CTAButtonAttributes {
   onClick: (selectedListItems: Item[]) => Promise<void> | void
@@ -26,12 +27,12 @@ export interface Item {
 }
 
 export interface SelectableItem extends Item {
-  checked: boolean
+  checked?: boolean
 }
 
 interface Props {
   selectAllText?: string
-  items?: Item[]
+  items?: SelectableItem[]
   CTAButton?: CTAButtonAttributes
   isLoading: boolean
   errorMessage?: string
@@ -94,6 +95,7 @@ const SelectableList: FC<Props> = (props) => {
       items.map((item) => ({
         ...item,
         checked:
+          item.checked ??
           (selectableItems.find((i) => i.id === item.id)?.checked &&
             !item.invalid) ??
           false,
@@ -111,10 +113,10 @@ const SelectableList: FC<Props> = (props) => {
   }
 
   const validSelectableItems = selectableItems.filter((item) => !item.invalid)
+
   return (
     <>
       <Box
-        marginBottom={3}
         borderColor="blue200"
         borderWidth="standard"
         paddingX={4}
@@ -151,9 +153,9 @@ const SelectableList: FC<Props> = (props) => {
           {isLoading ? (
             <Box
               textAlign="center"
-              paddingY={2}
+              paddingTop={1}
+              paddingBottom={2}
               paddingX={3}
-              marginBottom={2}
               key="loading-dots"
             >
               <LoadingDots />
@@ -183,18 +185,17 @@ const SelectableList: FC<Props> = (props) => {
               />
             </AnimateChildren>
           ) : (
-            <ul>
+            <ul className={styles.grid}>
               {selectableItems.map((item, index) => (
                 <motion.li
                   custom={index}
-                  initial={'hidden'}
-                  animate={'visible'}
+                  initial="hidden"
+                  animate="visible"
                   variants={selectableListItemVariants}
                   key={item.id}
                 >
                   <Box
                     key={item.id}
-                    marginBottom={index === selectableItems.length - 1 ? 0 : 2}
                     paddingX={3}
                     paddingY={2}
                     background={item.invalid ? 'red100' : 'blue100'}

@@ -220,10 +220,7 @@ export class SyslumennResolver {
   async getSyslumennElectronicIDStatus(
     @Args('input') input: GetElectronicIDInput,
   ): Promise<boolean> {
-    return this.syslumennService.hasElectronicID(
-      input.nationalId,
-      input.phoneNumber,
-    )
+    return this.syslumennService.hasElectronicID(input.nationalId)
   }
 
   @Directive(cacheControlDirective())

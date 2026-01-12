@@ -1,5 +1,5 @@
 import { ReactNode } from 'react'
-import { Image, Pressable, View } from 'react-native'
+import { Image, Pressable, SafeAreaView, View } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import { Colors } from '../../utils'
@@ -136,54 +136,60 @@ export const ProblemTemplate = ({
     getColorsByVariant(variant)
 
   return (
-    <Host borderColor={borderColor} noContainer={withContainer} size={size}>
-      {tag && (
-        <Tag backgroundColor={tagBackgroundColor}>
-          <TagText variant="eyebrow" color={tagColor}>
-            {tag}
-          </TagText>
-        </Tag>
-      )}
-      {showIcon && <Icon source={getIcon(variant)} />}
-      <Content>
-        <Typography
-          variant={size === 'small' ? 'heading5' : 'heading3'}
-          textAlign="center"
-        >
-          {title}
-        </Typography>
-        <Typography
-          variant={size === 'small' ? 'body3' : 'body'}
-          textAlign="center"
-        >
-          {message}
-        </Typography>
-        {detailLink && (
-          <Pressable
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: theme.spacing[1],
-              borderBottomWidth: 1,
-              marginTop: theme.spacing[1],
-              borderBottomColor: theme.color.blue400,
-            }}
-            onPress={() => {
-              openBrowser(detailLink.url, detailLink.componentId)
-            }}
-          >
-            <Typography variant="body" color={theme.color.blue400} weight="600">
-              {detailLink.text}
-            </Typography>
-            <Icon
-              style={{ width: theme.spacing[2], height: theme.spacing[2] }}
-              source={externalLinkIcon}
-            />
-          </Pressable>
+    <SafeAreaView style={{ flex: 1 }}>
+      <Host borderColor={borderColor} noContainer={withContainer} size={size}>
+        {tag && (
+          <Tag backgroundColor={tagBackgroundColor}>
+            <TagText variant="eyebrow" color={tagColor}>
+              {tag}
+            </TagText>
+          </Tag>
         )}
-      </Content>
-    </Host>
+        {showIcon && <Icon source={getIcon(variant)} />}
+        <Content>
+          <Typography
+            variant={size === 'small' ? 'heading5' : 'heading3'}
+            textAlign="center"
+          >
+            {title}
+          </Typography>
+          <Typography
+            variant={size === 'small' ? 'body3' : 'body'}
+            textAlign="center"
+          >
+            {message}
+          </Typography>
+          {detailLink && (
+            <Pressable
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: theme.spacing[1],
+                borderBottomWidth: 1,
+                marginTop: theme.spacing[1],
+                borderBottomColor: theme.color.blue400,
+              }}
+              onPress={() => {
+                openBrowser(detailLink.url, detailLink.componentId)
+              }}
+            >
+              <Typography
+                variant="body"
+                color={theme.color.blue400}
+                weight="600"
+              >
+                {detailLink.text}
+              </Typography>
+              <Icon
+                style={{ width: theme.spacing[2], height: theme.spacing[2] }}
+                source={externalLinkIcon}
+              />
+            </Pressable>
+          )}
+        </Content>
+      </Host>
+    </SafeAreaView>
   )
 }

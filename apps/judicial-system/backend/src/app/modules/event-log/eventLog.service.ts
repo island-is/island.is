@@ -27,6 +27,8 @@ const allowMultiple: EventType[] = [
   EventType.COURT_DATE_SCHEDULED,
   EventType.INDICTMENT_CRIMINAL_RECORD_UPDATED_BY_COURT,
   EventType.REQUEST_COMPLETED,
+  EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+  EventType.INDICTMENT_COMPLETED,
 ]
 
 const allowOnePerUserRole: EventType[] = [EventType.APPEAL_RESULT_ACCESSED]
@@ -149,6 +151,31 @@ export class EventLogService {
             ]),
           ),
       )
+  }
+
+  async copyEventLogsToCase(
+    fromCaseId: string,
+    toCaseId: string,
+    transaction?: Transaction,
+  ): Promise<void> {
+    const eventLogs = await this.eventLogModel.findAll({
+      where: {
+        caseId: fromCaseId,
+        eventType: [
+          EventType.INDICTMENT_CONFIRMED,
+          EventType.CASE_SENT_TO_COURT,
+          EventType.CASE_RECEIVED_BY_COURT,
+        ],
+      },
+      transaction,
+    })
+
+    for (const eventLog of eventLogs) {
+      await this.eventLogModel.create(
+        { ...eventLog.toJSON(), id: undefined, caseId: toCaseId },
+        { transaction },
+      )
+    }
   }
 
   // Sends events to queue for notification dispatch

@@ -47,7 +47,7 @@ import {
 import {
   formatDateForServer,
   useCase,
-  useDeb,
+  useDebouncedInput,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
@@ -70,20 +70,17 @@ export const CourtRecord: FC = () => {
 
   const [courtLocationErrorMessage, setCourtLocationMessage] =
     useState<string>('')
-  const [sessionBookingsErrorMessage, setSessionBookingsErrorMessage] =
-    useState<string>('')
 
   const router = useRouter()
   const { updateCase, setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
 
-  useDeb(workingCase, [
-    'courtAttendees',
-    'sessionBookings',
-    'accusedAppealAnnouncement',
-    'prosecutorAppealAnnouncement',
+  const courtAttendeesInput = useDebouncedInput('courtAttendees', [])
+  const sessionBookingsInput = useDebouncedInput('sessionBookings', ['empty'])
+  const endOfSessionBookingsInput = useDebouncedInput(
     'endOfSessionBookings',
-  ])
+    [],
+  )
 
   const initialize = useCallback(() => {
     const autofillAttendees = []
@@ -360,22 +357,11 @@ export const CourtRecord: FC = () => {
             data-testid="courtAttendees"
             name="courtAttendees"
             label="Mættir eru"
-            value={workingCase.courtAttendees || ''}
+            value={courtAttendeesInput.value || ''}
             placeholder="Skrifa hér..."
-            onChange={(event) =>
-              removeTabsValidateAndSet(
-                'courtAttendees',
-                event.target.value,
-                ['empty'],
-                setWorkingCase,
-              )
-            }
-            onBlur={(event) =>
-              updateCase(workingCase.id, { courtAttendees: event.target.value })
-            }
+            onChange={(evt) => courtAttendeesInput.onChange(evt.target.value)}
             textarea
             rows={7}
-            autoExpand={{ on: true, maxHeight: 300 }}
           />
         </Box>
         <Box component="section" marginBottom={8}>
@@ -398,35 +384,18 @@ export const CourtRecord: FC = () => {
               data-testid="sessionBookings"
               name="sessionBookings"
               label={formatMessage(m.sections.sessionBookings.label)}
-              value={workingCase.sessionBookings || ''}
+              value={sessionBookingsInput.value || ''}
               placeholder={formatMessage(
                 m.sections.sessionBookings.placeholder,
               )}
-              onChange={(event) =>
-                removeTabsValidateAndSet(
-                  'sessionBookings',
-                  event.target.value,
-                  ['empty'],
-                  setWorkingCase,
-                  sessionBookingsErrorMessage,
-                  setSessionBookingsErrorMessage,
-                )
+              onChange={(evt) =>
+                sessionBookingsInput.onChange(evt.target.value)
               }
-              onBlur={(event) =>
-                validateAndSendToServer(
-                  'sessionBookings',
-                  event.target.value,
-                  ['empty'],
-                  workingCase,
-                  updateCase,
-                  setSessionBookingsErrorMessage,
-                )
-              }
-              errorMessage={sessionBookingsErrorMessage}
-              hasError={sessionBookingsErrorMessage !== ''}
+              onBlur={(evt) => sessionBookingsInput.onBlur(evt.target.value)}
+              errorMessage={sessionBookingsInput.errorMessage}
+              hasError={sessionBookingsInput.hasError}
               textarea
               rows={16}
-              autoExpand={{ on: true, maxHeight: 600 }}
               required
             />
           </Box>
@@ -461,29 +430,14 @@ export const CourtRecord: FC = () => {
               data-testid="endOfSessionBookings"
               name="endOfSessionBookings"
               label={formatMessage(m.sections.endOfSessionBookings.label)}
-              value={workingCase.endOfSessionBookings || ''}
+              value={endOfSessionBookingsInput.value || ''}
               placeholder={formatMessage(
                 m.sections.endOfSessionBookings.placeholder,
               )}
-              onChange={(event) =>
-                removeTabsValidateAndSet(
-                  'endOfSessionBookings',
-                  event.target.value,
-                  [],
-                  setWorkingCase,
-                )
-              }
-              onBlur={(event) =>
-                validateAndSendToServer(
-                  'endOfSessionBookings',
-                  event.target.value,
-                  [],
-                  workingCase,
-                  updateCase,
-                )
+              onChange={(evt) =>
+                endOfSessionBookingsInput.onChange(evt.target.value)
               }
               rows={16}
-              autoExpand={{ on: true, maxHeight: 600 }}
               textarea
             />
           </Box>
@@ -538,6 +492,7 @@ export const CourtRecord: FC = () => {
             caseId={workingCase.id}
             title={formatMessage(core.pdfButtonRulingShortVersion)}
             pdfType="courtRecord"
+            elementId={formatMessage(core.pdfButtonRulingShortVersion)}
           />
         </Box>
       </FormContentContainer>

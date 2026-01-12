@@ -211,6 +211,7 @@ export class EstateTemplateService extends BaseTemplateApiService {
     }
 
     const uploadData = generateRawUploadData(answers, estateData, application)
+
     // We deep copy the pdfData since the transform function
     // for the PDF creation mutates the object
     const pdfData = structuredClone(uploadData)
@@ -247,11 +248,13 @@ export class EstateTemplateService extends BaseTemplateApiService {
       }
     }
 
+    const stringifiedData = stringifyObject(uploadData)
+
     const result: DataUploadResponse = await this.syslumennService
       .uploadData(
         [person],
         attachments,
-        stringifyObject(uploadData),
+        stringifiedData,
         uploadDataName,
         uploadDataId,
       )

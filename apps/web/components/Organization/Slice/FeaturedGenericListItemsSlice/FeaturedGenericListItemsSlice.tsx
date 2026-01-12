@@ -33,7 +33,7 @@ export const FeaturedGenericListItemsSlice = ({
       </Stack>
       {Boolean(slice.baseUrl) && slice.items.length > 0 && (
         <Box display="flex" justifyContent="flexEnd">
-          <LinkV2 href={slice.baseUrl}>
+          <LinkV2 href={slice.filterUrl || slice.baseUrl}>
             <Button
               variant="text"
               icon="arrowForward"

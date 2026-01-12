@@ -99,12 +99,27 @@ const Modal: FC<PropsWithChildren<ModalProps>> = ({
         role="dialog"
         aria-modal="true"
         data-testid="modal"
+        layout
+        transition={{
+          layout: {
+            duration: 0.3,
+            ease: 'easeInOut',
+          },
+        }}
       >
         <motion.div
           className={styles.modalContainer}
           initial="closed"
           animate="open"
           exit="closed"
+          layout="position"
+          transition={{
+            layout: {
+              duration: 0.3,
+              ease: 'easeInOut',
+              type: 'tween',
+            },
+          }}
           variants={modalVariants}
         >
           {onClose && (
@@ -142,6 +157,7 @@ const Modal: FC<PropsWithChildren<ModalProps>> = ({
             background="white"
             position="sticky"
             bottom={0}
+            zIndex={10}
           >
             {footerCheckbox && (
               <Checkbox

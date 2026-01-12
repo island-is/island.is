@@ -1,7 +1,8 @@
 import { GetServerSideProps } from 'next'
 import { FormProvider, useForm } from 'react-hook-form'
+import { useMemo } from 'react'
 
-import { Box, Button, Link, LinkV2 } from '@island.is/island-ui/core'
+import { Box, Button, LinkV2 } from '@island.is/island-ui/core'
 import { Features } from '@island.is/feature-flags'
 import { useLocale } from '@island.is/localization'
 import { findProblemInApolloError } from '@island.is/shared/problem'
@@ -52,6 +53,7 @@ interface PaymentPageProps {
     amount: number
     title: string
   }
+  isInvoicePaymentEnabledForUser: boolean
 }
 
 export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
@@ -88,6 +90,7 @@ export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
   let paymentFlow: PaymentPageProps['paymentFlow'] = null
   let paymentFlowErrorCode: PaymentPageProps['paymentFlowErrorCode'] = null
   let organization: PaymentPageProps['organization'] = null
+  let isInvoicePaymentEnabledForUser = false
 
   try {
     const { data } = await client.query<
@@ -152,6 +155,25 @@ export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
     }
   }
 
+  if (paymentFlow) {
+    try {
+      const userObj = {
+        identifier: paymentFlow.payerNationalId,
+        custom: {
+          nationalId: paymentFlow.payerNationalId,
+        },
+      }
+
+      isInvoicePaymentEnabledForUser = await configCatClient.getValueAsync(
+        Features.isIslandisInvoicePaymentAllowedForUser,
+        false,
+        userObj,
+      )
+    } catch (e) {
+      console.error('Error getting invoice payment enabled for user', e)
+    }
+  }
+
   const productInformation = {
     amount: paymentFlow?.productPrice ?? 0,
     title: paymentFlow?.productTitle ?? '',
@@ -165,6 +187,7 @@ export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
       paymentFlowErrorCode,
       organization,
       productInformation,
+      isInvoicePaymentEnabledForUser,
     },
   }
 }
@@ -173,6 +196,7 @@ function PaymentPage({
   paymentFlow,
   organization,
   productInformation,
+  isInvoicePaymentEnabledForUser,
 }: PaymentPageProps) {
   const methods = useForm({
     mode: 'onBlur',
@@ -199,6 +223,16 @@ function PaymentPage({
     paymentFlow,
     productInformation,
   })
+
+  const availablePaymentMethods = useMemo(() => {
+    const methods = [...(paymentFlow?.availablePaymentMethods ?? [])]
+
+    if (isInvoicePaymentEnabledForUser) {
+      methods.push('invoice')
+    }
+
+    return Array.from(new Set(methods)) as ('card' | 'invoice')[]
+  }, [paymentFlow?.availablePaymentMethods, isInvoicePaymentEnabledForUser])
 
   // Invoice payment doesn't have any input fields, so we don't need to check if it's valid
   const isCardPaymentInvalid =
@@ -284,12 +318,7 @@ function PaymentPage({
               <form onSubmit={methods.handleSubmit(handleFormSubmit)}>
                 <Box display="flex" flexDirection="column" rowGap={[2, 3]}>
                   <PaymentSelector
-                    availablePaymentMethods={
-                      (paymentFlow?.availablePaymentMethods as any) ?? [
-                        'card',
-                        'invoice',
-                      ]
-                    }
+                    availablePaymentMethods={availablePaymentMethods}
                     selectedPayment={selectedPaymentMethod as any}
                     onSelectPayment={changePaymentMethod}
                   />

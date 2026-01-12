@@ -1,4 +1,4 @@
-import { FC, useCallback, useContext, useState } from 'react'
+import { FC, Fragment, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -7,9 +7,9 @@ import * as constants from '@island.is/judicial-system/consts'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
-  Feature,
   isCompletedCase,
   isDefenceUser,
+  isProsecutionUser,
   isRulingOrDismissalCase,
   isSuccessfulServiceStatus,
 } from '@island.is/judicial-system/types'
@@ -19,7 +19,6 @@ import {
   Conclusion,
   ConnectedCaseFilesAccordionItem,
   CourtCaseInfo,
-  FeatureContext,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -28,6 +27,7 @@ import {
   // IndictmentsLawsBrokenAccordionItem, NOTE: Temporarily hidden while list of laws broken is not complete
   InfoCardActiveIndictment,
   InfoCardClosedIndictment,
+  MarkdownWrapper,
   PageHeader,
   PageLayout,
   PageTitle,
@@ -36,6 +36,7 @@ import {
   UserContext,
   ZipButton,
 } from '@island.is/judicial-system-web/src/components'
+import InputPenalties from '@island.is/judicial-system-web/src/components/Inputs/InputPenalties'
 import VerdictStatusAlert from '@island.is/judicial-system-web/src/components/VerdictStatusAlert/VerdictStatusAlert'
 import {
   CaseIndictmentRulingDecision,
@@ -109,7 +110,6 @@ const ServiceAnnouncement: FC<ServiceAnnouncementProps> = (props) => {
 const IndictmentOverview: FC = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
-  const { features } = useContext(FeatureContext)
 
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
@@ -174,9 +174,22 @@ const IndictmentOverview: FC = () => {
               : formatMessage(strings.inProgressTitle)}
           </PageTitle>
           <CourtCaseInfo workingCase={workingCase} />
+          {workingCase.rulingModifiedHistory && (
+            <Box marginBottom={5}>
+              <AlertMessage
+                type="info"
+                title="Mál leiðrétt"
+                message={
+                  <MarkdownWrapper
+                    markdown={workingCase.rulingModifiedHistory}
+                    textProps={{ variant: 'small' }}
+                  />
+                }
+              />
+            </Box>
+          )}
           {workingCase.defendants?.map(
             (defendant) =>
-              features?.includes(Feature.VERDICT_DELIVERY) &&
               defendant.verdict && (
                 <Box
                   key={`${defendant.id}${defendant.verdict.id}`}
@@ -191,7 +204,7 @@ const IndictmentOverview: FC = () => {
           )}
           {isDefenceUser(user) &&
             workingCase.defendants?.map((defendant) => (
-              <>
+              <Fragment key={defendant.id}>
                 {defendant.alternativeServiceDescription && (
                   <AlternativeServiceAnnouncement
                     key={defendant.id}
@@ -213,7 +226,7 @@ const IndictmentOverview: FC = () => {
                       />
                     </Box>
                   ))}
-              </>
+              </Fragment>
             ))}
           {caseHasBeenReceivedByCourt &&
             workingCase.court &&
@@ -272,7 +285,7 @@ const IndictmentOverview: FC = () => {
               <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
             )} */}
               {hasMergeCases && (
-                <Accordion>
+                <Accordion dividerOnBottom={false} dividerOnTop={false}>
                   {workingCase.mergedCases?.map((mergedCase) => (
                     <Box key={mergedCase.id}>
                       <ConnectedCaseFilesAccordionItem
@@ -333,6 +346,11 @@ const IndictmentOverview: FC = () => {
                 caseId={workingCase.id}
                 courtCaseNumber={workingCase.courtCaseNumber}
               />
+            </Box>
+          )}
+          {isProsecutionUser(user) && (
+            <Box component="section">
+              <InputPenalties />
             </Box>
           )}
         </Box>

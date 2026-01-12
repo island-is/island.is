@@ -30,7 +30,7 @@ export const BuyerSection: FC<
     <ReviewGroup
       editMessage={
         isBuyer &&
-        !hasReviewerApproved(reviewerNationalId, answers) &&
+        !hasReviewerApproved(answers, reviewerNationalId) &&
         application.state !== States.COMPLETED
           ? formatMessage(overview.labels.addBuyerOperatorButton)
           : undefined

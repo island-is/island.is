@@ -71,7 +71,7 @@ env:
   NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitystaging.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
   NATIONAL_REGISTRY_B2C_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
   NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitystaging.onmicrosoft.com/midlun/.default'
-  NODE_OPTIONS: '--max-old-space-size=2880 --enable-source-maps -r dd-trace/init'
+  NODE_OPTIONS: '--max-old-space-size=2250 --enable-source-maps -r dd-trace/init'
   PAYMENTS_API_URL: 'http://services-payments.services-payments.svc.cluster.local'
   RANNIS_GRANTS_URL: 'https://sjodir.rannis.is/statistics/fund_schedule.php'
   REGULATIONS_ADMIN_URL: 'http://regulations-admin-backend.regulations-admin.svc.cluster.local'
@@ -133,7 +133,6 @@ env:
   XROAD_HMS_RENTAL_SERVICE_PATH: 'IS-TEST/GOV/5812191480/HMS-Protected/Leigusamningar-v1'
   XROAD_HOLAR_UNIVERSITY_PATH: 'IS-TEST/EDU/10055/Holar-Protected/brautskraning-v1'
   XROAD_HOUSING_BENEFIT_CALCULATOR_PATH: 'IS-TEST/GOV/5812191480/HMS-Protected/calc-v1'
-  XROAD_HUNTING_LICENSE_PATH: 'IS-TEST/GOV/10009/Umhverfisstofnun-Protected/api'
   XROAD_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES_PATH: 'IS-TEST/GOV/10021/FJS-Protected/recruitment-v1'
   XROAD_ICELAND_UNIVERSITY_OF_THE_ARTS_PATH: 'IS-TEST/EDU/10049/LHI-Protected/brautskraning-v1'
   XROAD_INNA_PATH: 'IS-TEST/GOV/6601241280/MMS-Protected/inna-v1'
@@ -147,6 +146,7 @@ env:
   XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
   XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Einstaklingar-v1'
   XROAD_NATIONAL_REGISTRY_TIMEOUT: '20000'
+  XROAD_NVS_PERMITS_PATH: 'IS-TEST/GOV/10085/NVS-Protected/api'
   XROAD_OFFICIAL_JOURNAL_APPLICATION_PATH: 'IS-TEST/GOV/10014/DMR-Protected/official-journal-application'
   XROAD_OFFICIAL_JOURNAL_PATH: 'IS-TEST/GOV/10014/DMR-Protected/official-journal'
   XROAD_PASSPORT_LICENSE_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Forskraning-V1'
@@ -154,6 +154,7 @@ env:
   XROAD_PAYMENT_BASE_CALLBACK_URL: 'XROAD:'
   XROAD_PAYMENT_PROVIDER_ID: 'IS-TEST/GOV/10021/FJS-DEV-Public'
   XROAD_PAYMENT_SCHEDULE_PATH: 'IS-TEST/GOV/10021/FJS-Public/paymentSchedule_v1'
+  XROAD_POLICE_CASES_PATH: 'IS/GOV/5309672079/Logreglan-Protected/MittLogreglanApi-v1'
   XROAD_PRACTICAL_EXAMS_PATH: 'IS-TEST/GOV/4201810439/Vinnueftirlitid-Protected/verkleg-prof-token'
   XROAD_PROPERTIES_SERVICE_V2_PATH: 'IS-TEST/GOV/5812191480/HMS-Protected/Fasteignir-v1'
   XROAD_PROPERTIES_TIMEOUT: '35000'
@@ -170,6 +171,7 @@ env:
   XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
   XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
   XROAD_TR_PATH: 'IS-TEST/GOV/5012130120/TR-Protected/external-v1'
+  XROAD_TR_PATH_V2: 'IS-TEST/GOV/5012130120/TR-Protected/external-v2'
   XROAD_UNIVERSITY_OF_AKUREYRI_PATH: 'IS-TEST/EDU/10054/UNAK-Protected/brautskraning-v1'
   XROAD_UNIVERSITY_OF_ICELAND_PATH: 'IS-TEST/EDU/10010/HI-Protected/brautskraning-v1'
   XROAD_VEHICLES_MILEAGE_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Mileagereading-V1'
@@ -182,6 +184,7 @@ env:
   XROAD_VEHICLE_PLATE_RENEWAL_PATH: 'IS-TEST/GOV/10017/Samgongustofa-Protected/Vehicle-PlateOwnership-V1'
   XROAD_VEHICLE_PRINTING_PATH: 'IS-TEST/GOV/10017/Samgongustofa-Protected/Vehicle-Printing-V1'
   XROAD_VEHICLE_SERVICE_FJS_V1_PATH: 'IS-TEST/GOV/10021/FJS-Public/VehicleServiceFJS_v1'
+  XROAD_VERDICTS_GOPRO_PATH: 'IS-TEST/GOV/10019/Domstolasyslan-Client/Island-is'
   XROAD_VMST_API_PATH: '/VMST-ParentalLeave-Protected/ParentalLeaveApplication-v1'
   XROAD_VMST_MEMBER_CODE: '7005942039'
   XROAD_WORK_ACCIDENT_PATH: 'IS-TEST/GOV/4201810439/Vinnueftirlitid-Protected/slysaskraning-token'
@@ -200,9 +203,9 @@ grantNamespaces:
 grantNamespacesEnabled: true
 healthCheck:
   liveness:
-    initialDelaySeconds: 3
+    initialDelaySeconds: 10
     path: '/liveness'
-    timeoutSeconds: 3
+    timeoutSeconds: 5
   readiness:
     initialDelaySeconds: 3
     path: '/health'
@@ -210,7 +213,7 @@ healthCheck:
 hpa:
   scaling:
     metric:
-      cpuAverageUtilization: 90
+      cpuAverageUtilization: 70
       nginxRequestsIrate: 5
     replicas:
       max: 3
@@ -228,7 +231,7 @@ ingress:
           - '/api'
 namespace: 'islandis'
 podDisruptionBudget:
-  maxUnavailable: 1
+  minAvailable: 1
   unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534
@@ -240,10 +243,10 @@ replicaCount:
 resources:
   limits:
     cpu: '1200m'
-    memory: '3200Mi'
+    memory: '2500Mi'
   requests:
-    cpu: '400m'
-    memory: '896Mi'
+    cpu: '900m'
+    memory: '2000Mi'
 secrets:
   ADR_LICENSE_FETCH_TIMEOUT: '/k8s/api/ADR_LICENSE_FETCH_TIMEOUT'
   ADR_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/ADR_LICENSE_PASS_TEMPLATE_ID'
@@ -303,6 +306,7 @@ secrets:
   IDENTITY_SERVER_CLIENT_SECRET: '/k8s/api/IDENTITY_SERVER_CLIENT_SECRET'
   INTELLECTUAL_PROPERTY_API_KEY: '/k8s/api/IP_API_KEY'
   LANDSPITALI_PAYMENT_NATIONAL_ID_FALLBACK: '/k8s/api/LANDSPITALI_PAYMENT_NATIONAL_ID_FALLBACK'
+  LANDSPITALI_PAYMENT_ORGANISATION_ID: '/k8s/api/LANDSPITALI_PAYMENT_ORGANISATION_ID'
   LICENSE_SERVICE_BARCODE_SECRET_KEY: '/k8s/api/LICENSE_SERVICE_BARCODE_SECRET_KEY'
   MACHINE_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/MACHINE_LICENSE_PASS_TEMPLATE_ID'
   NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
@@ -321,6 +325,7 @@ secrets:
   REGULATIONS_FILE_UPLOAD_KEY_DRAFT: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_DRAFT'
   REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED'
   REGULATIONS_FILE_UPLOAD_KEY_PUBLISH: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PUBLISH'
+  RLS_CASES_API_KEY: '/k8s/api/RLS_CASES_API_KEY'
   RLS_PKPASS_API_KEY: '/k8s/api/RLS_PKPASS_API_KEY'
   SMART_SOLUTIONS_API_URL: '/k8s/api/SMART_SOLUTIONS_API_URL'
   SYSLUMENN_HOST: '/k8s/api/SYSLUMENN_HOST'

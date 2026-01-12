@@ -33,6 +33,7 @@ type Breadcrumb =
             icelandicSlug?: string
             englishSlug?: string
             childLinks: NavigationLinksCategoryLink[]
+            longLabel?: string
           }
         | { isCategory: false }
       )
@@ -119,6 +120,7 @@ export class OrganizationPageResolver {
         label,
         href,
         isCategory: false,
+        description: lang === 'en' ? node.descriptionEN : node.description,
       }
     }
     if (node.type === SitemapTreeNodeType.ENTRY) {
@@ -133,7 +135,10 @@ export class OrganizationPageResolver {
     }
     if (node.type === SitemapTreeNodeType.CATEGORY) {
       const nodeSlug = lang === 'en' ? node.slugEN : node.slug
-      const nodeLabel = lang === 'en' ? node.labelEN : node.label
+      const nodeLabel =
+        lang === 'en'
+          ? node.shortLabelEN || node.labelEN
+          : node.shortLabel || node.label
       if (!nodeSlug || !nodeLabel) return null
       return {
         label: nodeLabel,
@@ -141,6 +146,7 @@ export class OrganizationPageResolver {
           organizationPage.slug
         }/${nodeSlug}`,
         isCategory: true,
+        longLabel: lang === 'en' ? node.labelEN : node.label,
         description: lang === 'en' ? node.descriptionEN : node.description,
         icelandicSlug: node.slug,
         englishSlug: node.slugEN,
@@ -323,7 +329,10 @@ export class OrganizationPageResolver {
   ) {
     if (node.type === SitemapTreeNodeType.CATEGORY) {
       const nodeSlug = lang === 'en' ? node.slugEN : node.slug
-      const nodeLabel = lang === 'en' ? node.labelEN : node.label
+      const nodeLabel =
+        lang === 'en'
+          ? node.shortLabelEN || node.labelEN
+          : node.shortLabel || node.label
       if (!nodeSlug || !nodeLabel)
         return {
           label: '',
@@ -459,7 +468,7 @@ export class OrganizationPageResolver {
       const link = generateOrganizationSubpageLink(
         entry as IOrganizationParentSubpage | IOrganizationSubpage,
       )
-      if (Boolean(link?.url) && Boolean(link?.text)) {
+      if (link !== null && Boolean(link.url) && Boolean(link.text)) {
         entryMap.set(entry.sys.id, {
           link: {
             label: link.text,
@@ -488,6 +497,7 @@ export class OrganizationPageResolver {
       const lastBreadcrumb = breadcrumbs[breadcrumbs.length - 1]
       if (lastBreadcrumb.isCategory) {
         activeCategory = lastBreadcrumb
+        activeCategory.label = lastBreadcrumb.longLabel || activeCategory.label
       }
       breadcrumbs.pop()
     }

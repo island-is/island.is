@@ -27,7 +27,10 @@ interface UpdateLastHashOptions {
 
 export type processSyncDataInput<T> = (Entry<any> | T)[]
 export interface CmsSyncProvider<T, ProcessOutput = any> {
-  processSyncData: (entries: processSyncDataInput<T>) => ProcessOutput
+  processSyncData: (entries: processSyncDataInput<T>) => {
+    entriesToUpdate: ProcessOutput
+    entriesToDelete: string[]
+  }
   doMapping: (entries: ProcessOutput) => MappedData[]
 }
 
@@ -154,11 +157,12 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
     logger.info('Got sync data')
 
     // import data from all providers
-    const importableData = this.mappingService.mapData(items)
+    const { mappedData: importableData, entriesToDelete } =
+      this.mappingService.mapData(items)
 
     return {
       add: flatten(importableData),
-      remove: deletedEntryIds,
+      remove: deletedEntryIds.concat(entriesToDelete),
       postSyncOptions: {
         folderHash,
         elasticIndex,

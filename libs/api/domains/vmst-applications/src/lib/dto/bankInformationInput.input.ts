@@ -1,5 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql'
-import { IsNumber, IsString } from 'class-validator'
+import { IsOptional, IsNumber, IsString } from 'class-validator'
 
 @InputType('VmstApplicationsBankInformationPensionFundInput')
 export class VmstApplicationsBankInformationPensionFundInput {
@@ -49,8 +49,9 @@ export class VmstApplicationsBankInformationInput {
   })
   pensionFund?: VmstApplicationsBankInformationPensionFundInput
 
-  @Field()
-  doNotPayToUnion!: boolean
+  @Field({ nullable: true })
+  @IsOptional()
+  doNotPayToUnion?: boolean
 
   @Field(() => VmstApplicationsBankInformationUnionInput, { nullable: true })
   union?: VmstApplicationsBankInformationUnionInput

@@ -6,18 +6,15 @@ import { SharedTemplateAPIModule } from '../../../shared'
 // Here you import your module service
 import { ParliamentaryListCreationService } from './parliamentary-list-creation.service'
 import { SignatureCollectionClientModule } from '@island.is/clients/signature-collection'
-import {
-  NationalRegistryClientModule,
-  NationalRegistryClientService,
-} from '@island.is/clients/national-registry-v2'
+import { NationalRegistryV3Module } from '../../../shared/api/national-registry-v3/national-registry-v3.module'
 
 @Module({
   imports: [
     SharedTemplateAPIModule,
     SignatureCollectionClientModule,
-    NationalRegistryClientModule,
+    NationalRegistryV3Module,
   ],
-  providers: [ParliamentaryListCreationService, NationalRegistryClientService],
+  providers: [ParliamentaryListCreationService],
   exports: [ParliamentaryListCreationService],
 })
 export class ParliamentaryListCreationModule {}

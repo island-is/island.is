@@ -150,6 +150,9 @@
       "@island.is/api/domains/law-and-order": [
         "libs/api/domains/law-and-order/src/index.ts"
       ],
+      "@island.is/api/domains/legal-gazette": [
+        "libs/api/domains/legal-gazette/src/index.ts"
+      ],
       "@island.is/api/domains/license-service": [
         "libs/api/domains/license-service/src/index.ts"
       ],
@@ -158,6 +161,9 @@
       ],
       "@island.is/api/domains/municipalities-financial-aid": [
         "libs/api/domains/municipalities-financial-aid/src/index.ts"
+      ],
+      "@island.is/api/domains/my-pages": [
+        "libs/api/domains/my-pages/src/index.ts"
       ],
       "@island.is/api/domains/national-registry": [
         "libs/api/domains/national-registry/src/index.ts"
@@ -261,10 +267,21 @@
       "@island.is/api/domains/work-machines": [
         "libs/api/domains/work-machines/src/index.ts"
       ],
-      "@island.is/api/mocks": ["libs/api/mocks/src/index.ts"],
-      "@island.is/api/mocks-react": ["libs/api/mocks/src/react.ts"],
-      "@island.is/api/mocks/native": ["libs/api/mocks/src/native.ts"],
-      "@island.is/api/schema": ["libs/api/schema/src/index.ts"],
+       "@island.is/api/domains/questionnaires": [
+        "libs/api/domains/questionnaires/src/index.ts"
+      ],
+      "@island.is/api/mocks": [
+        "libs/api/mocks/src/index.ts"
+      ],
+      "@island.is/api/mocks-react": [
+        "libs/api/mocks/src/react.ts"
+      ],
+      "@island.is/api/mocks/native": [
+        "libs/api/mocks/src/native.ts"
+      ],
+      "@island.is/api/schema": [
+        "libs/api/schema/src/index.ts"
+      ],
       "@island.is/application/api/core": [
         "libs/application/api/core/src/index.ts"
       ],
@@ -276,6 +293,12 @@
       ],
       "@island.is/application/api/payment": [
         "libs/application/api/payment/src/index.ts"
+      ],
+      "@island.is/application/assets/graphics": [
+        "libs/application/assets/graphics/index.ts"
+      ],
+      "@island.is/application/assets/institution-logos": [
+        "libs/application/assets/institution-logos/index.ts"
       ],
       "@island.is/application/core": ["libs/application/core/src/index.ts"],
       "@island.is/application/core/messages": [
@@ -292,9 +315,6 @@
       ],
       "@island.is/application/template-loader": [
         "libs/application/template-loader/src/index.ts"
-      ],
-      "@island.is/application/templates/accident-notification": [
-        "libs/application/templates/accident-notification/src/index.ts"
       ],
       "@island.is/application/templates/activation-allowance": [
         "libs/application/templates/activation-allowance/src/index.ts"
@@ -371,26 +391,8 @@
       "@island.is/application/templates/document-provider-onboarding": [
         "libs/application/templates/document-provider-onboarding/src/index.ts"
       ],
-      "@island.is/application/templates/driving-assessment-approval": [
-        "libs/application/templates/driving-assessment-approval/src/index.ts"
-      ],
-      "@island.is/application/templates/driving-instructor-registrations": [
-        "libs/application/templates/driving-instructor-registrations/src/index.ts"
-      ],
-      "@island.is/application/templates/driving-learners-permit": [
-        "libs/application/templates/driving-learners-permit/src/index.ts"
-      ],
       "@island.is/application/templates/driving-license": [
         "libs/application/templates/driving-license/src/index.ts"
-      ],
-      "@island.is/application/templates/driving-license-book-update-instructor": [
-        "libs/application/templates/driving-license-book-update-instructor/src/index.ts"
-      ],
-      "@island.is/application/templates/driving-license-duplicate": [
-        "libs/application/templates/driving-license-duplicate/src/index.ts"
-      ],
-      "@island.is/application/templates/driving-school-confirmation": [
-        "libs/application/templates/driving-school-confirmation/src/index.ts"
       ],
       "@island.is/application/templates/energy-funds": [
         "libs/application/templates/energy-funds/src/index.ts"
@@ -400,9 +402,6 @@
       ],
       "@island.is/application/templates/estate/types": [
         "libs/application/templates/estate/src/types.ts"
-      ],
-      "@island.is/application/templates/european-health-insurance-card": [
-        "libs/application/templates/european-health-insurance-card/src/index.ts"
       ],
       "@island.is/application/templates/examples/example-auth-delegation": [
         "libs/application/templates/examples/example-auth-delegation/src/index.ts"
@@ -455,20 +454,20 @@
       "@island.is/application/templates/grindavik-housing-buyout": [
         "libs/application/templates/grindavik-housing-buyout/src/index.ts"
       ],
-      "@island.is/application/templates/health-insurance": [
-        "libs/application/templates/health-insurance/src/index.ts"
-      ],
-      "@island.is/application/templates/health-insurance-declaration": [
-        "libs/application/templates/health-insurance-declaration/src/index.ts"
-      ],
       "@island.is/application/templates/healthcare-license-certificate": [
         "libs/application/templates/healthcare-license-certificate/src/index.ts"
       ],
       "@island.is/application/templates/healthcare-work-permit": [
         "libs/application/templates/healthcare-work-permit/src/index.ts"
       ],
+      "@island.is/application/templates/hh/courses": [
+        "libs/application/templates/hh/courses/src/index.ts"
+      ],
       "@island.is/application/templates/hms/fire-compensation-appraisal": [
         "libs/application/templates/hms/fire-compensation-appraisal/src/index.ts"
+      ],
+      "@island.is/application/templates/hms/registration-of-new-property-numbers": [
+        "libs/application/templates/hms/registration-of-new-property-numbers/src/index.ts"
       ],
       "@island.is/application/templates/hms/rental-agreement": [
         "libs/application/templates/hms/rental-agreement/src/index.ts"
@@ -478,6 +477,18 @@
       ],
       "@island.is/application/templates/home-support": [
         "libs/application/templates/home-support/src/index.ts"
+      ],
+      "@island.is/application/templates/iceland-health/accident-notification": [
+        "libs/application/templates/iceland-health/accident-notification/src/index.ts"
+      ],
+      "@island.is/application/templates/iceland-health/european-health-insurance-card": [
+        "libs/application/templates/iceland-health/european-health-insurance-card/src/index.ts"
+      ],
+      "@island.is/application/templates/iceland-health/health-insurance": [
+        "libs/application/templates/iceland-health/health-insurance/src/index.ts"
+      ],
+      "@island.is/application/templates/iceland-health/health-insurance-declaration": [
+        "libs/application/templates/iceland-health/health-insurance-declaration/src/index.ts"
       ],
       "@island.is/application/templates/id-card": [
         "libs/application/templates/id-card/src/index.ts"
@@ -605,11 +616,32 @@
       "@island.is/application/templates/transport-authority/digital-tachograph-drivers-card": [
         "libs/application/templates/transport-authority/digital-tachograph-drivers-card/src/index.ts"
       ],
+      "@island.is/application/templates/transport-authority/driving-assessment-approval": [
+        "libs/application/templates/transport-authority/driving-assessment-approval/src/index.ts"
+      ],
+      "@island.is/application/templates/transport-authority/driving-instructor-registrations": [
+        "libs/application/templates/transport-authority/driving-instructor-registrations/src/index.ts"
+      ],
+      "@island.is/application/templates/transport-authority/driving-learners-permit": [
+        "libs/application/templates/transport-authority/driving-learners-permit/src/index.ts"
+      ],
+      "@island.is/application/templates/transport-authority/driving-license-book-update-instructor": [
+        "libs/application/templates/transport-authority/driving-license-book-update-instructor/src/index.ts"
+      ],
+      "@island.is/application/templates/transport-authority/driving-license-duplicate": [
+        "libs/application/templates/transport-authority/driving-license-duplicate/src/index.ts"
+      ],
+      "@island.is/application/templates/transport-authority/driving-school-confirmation": [
+        "libs/application/templates/transport-authority/driving-school-confirmation/src/index.ts"
+      ],
       "@island.is/application/templates/transport-authority/exemption-for-transportation": [
         "libs/application/templates/transport-authority/exemption-for-transportation/src/index.ts"
       ],
       "@island.is/application/templates/transport-authority/license-plate-renewal": [
         "libs/application/templates/transport-authority/license-plate-renewal/src/index.ts"
+      ],
+      "@island.is/application/templates/transport-authority/mile-car": [
+        "libs/application/templates/transport-authority/mile-car/src/index.ts"
       ],
       "@island.is/application/templates/transport-authority/order-vehicle-license-plate": [
         "libs/application/templates/transport-authority/order-vehicle-license-plate/src/index.ts"
@@ -769,9 +801,6 @@
       "@island.is/clients/housing-benefit-calculator": [
         "libs/clients/housing-benefit-calculator/src/index.ts"
       ],
-      "@island.is/clients/hunting-license": [
-        "libs/clients/hunting-license/src/index.ts"
-      ],
       "@island.is/clients/icelandic-government-institution-vacancies": [
         "libs/clients/icelandic-government-institution-vacancies/src/index.ts"
       ],
@@ -820,6 +849,9 @@
       "@island.is/clients/national-registry-v3-applications": [
         "libs/clients/national-registry/v3-applications/src/index.ts"
       ],
+      "@island.is/clients/nvs-permits": [
+        "libs/clients/nvs-permits/src/index.ts"
+      ],
       "@island.is/clients/official-journal-of-iceland": [
         "libs/clients/official-journal-of-iceland/public/src/index.ts"
       ],
@@ -832,6 +864,9 @@
         "libs/clients/payment-schedule/src/index.ts"
       ],
       "@island.is/clients/payments": ["libs/clients/payments/src/index.ts"],
+      "@island.is/clients/police-cases": [
+        "libs/clients/police-cases/src/index.ts"
+      ],
       "@island.is/clients/practical-exams-ver": [
         "libs/clients/practical-exams-ver/src/index.ts"
       ],
@@ -1185,6 +1220,9 @@
       "@island.is/portals/my-pages/licenses/messages": [
         "libs/portals/my-pages/licenses/src/lib/messages.ts"
       ],
+      "@island.is/portals/my-pages/mileage-registration": [
+        "libs/portals/my-pages/mileage-registration/src/index.ts"
+      ],
       "@island.is/portals/my-pages/modules": [
         "libs/portals/my-pages/modules/src/index.ts"
       ],
@@ -1270,7 +1308,8 @@
       "delegation-admin": ["libs/portals/admin/delegation-admin/src/index.ts"],
       "document-provider-dashboard": [
         "libs/clients/document-provider-dashboard/src/index.ts"
-      ]
+      ],
+      "my-pages": ["libs/api/domains/my-pages/src/index.ts"]
     },
     "resolveJsonModule": true
   }

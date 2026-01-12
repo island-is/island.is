@@ -44,6 +44,7 @@ import {
   SidebarShipSearchInput,
   Sticky,
   Webreader,
+  ZendeskChatPanel,
 } from '@island.is/web/components'
 import { DefaultHeader, WatsonChatPanel } from '@island.is/web/components'
 import {
@@ -95,7 +96,7 @@ import { UniversityStudiesHeader } from './Themes/UniversityStudiesTheme'
 import UniversityStudiesFooter from './Themes/UniversityStudiesTheme/UniversityStudiesFooter'
 import { UtlendingastofnunFooter } from './Themes/UtlendingastofnunTheme'
 import { VinnueftilitidHeader } from './Themes/VinnueftirlitidTheme'
-import { liveChatIncConfig, watsonConfig } from './config'
+import { liveChatIncConfig, watsonConfig, zendeskConfig } from './config'
 import * as styles from './OrganizationWrapper.css'
 
 interface NavigationData {
@@ -272,16 +273,6 @@ export const OrganizationHeader: React.FC<
           image={n(
             'hsnHeaderImage',
             'https://images.ctfassets.net/8k0h54kbe6bj/4v20729OMrRYkktuaCTWRi/675807c8c848895833c4a6a162f2813a/hsn-header-icon.svg',
-          )}
-        />
-      )
-    case 'hsu':
-      return (
-        <DefaultHeader
-          {...defaultProps}
-          image={n(
-            'hsuHeaderImage',
-            'https://images.ctfassets.net/8k0h54kbe6bj/sSSuQeq3oIx9hOrKRvfzm/447c7e6811c3fa9e9d548ecd4b6d7985/vector-myndir-hsu.svg',
           )}
         />
       )
@@ -644,6 +635,7 @@ export const OrganizationFooter: React.FC<
     case 'hsu':
       OrganizationFooterComponent = (
         <HeilbrigdisstofnunSudurlandsFooter
+          title={organization.title}
           footerItems={organization.footerItems}
           namespace={namespace}
         />
@@ -869,6 +861,18 @@ export const OrganizationChatPanel = ({
     )
   }
 
+  const organizationIdWithZendesk = organizationIds.find((id) => {
+    return id in zendeskConfig[activeLocale]
+  })
+
+  if (organizationIdWithZendesk) {
+    return (
+      <ZendeskChatPanel
+        {...zendeskConfig[activeLocale][organizationIdWithZendesk]}
+      />
+    )
+  }
+
   return null
 }
 
@@ -905,26 +909,6 @@ const SecondaryMenu = ({
     </Stack>
   </Box>
 )
-
-const getActiveNavigationItemTitle = (
-  navigationItems: NavigationItem[],
-  clientUrl: string,
-) => {
-  const clientUrlWithoutHashOrQueryParams = clientUrl
-    .split('?')[0]
-    .split('#')[0]
-
-  for (const item of navigationItems) {
-    if (clientUrlWithoutHashOrQueryParams === item.href) {
-      return item.title
-    }
-    for (const childItem of item.items ?? []) {
-      if (clientUrlWithoutHashOrQueryParams === childItem.href) {
-        return childItem.title
-      }
-    }
-  }
-}
 
 interface TranslationNamespaceProviderProps {
   messages: IntlConfig['messages']
@@ -1005,7 +989,6 @@ export const OrganizationWrapper: React.FC<
   const { width } = useWindowSize()
   const [isMobile, setIsMobile] = useState<boolean | undefined>()
   usePlausiblePageview(organizationPage.organization?.trackingDomain)
-  const { linkResolver } = useLinkResolver()
   useEffect(() => {
     setIsMobile(width < theme.breakpoints.md)
   }, [width])
@@ -1101,28 +1084,6 @@ export const OrganizationWrapper: React.FC<
     breadcrumbItemsProp,
   ])
 
-  const activeNavigationItemTitle = useMemo(() => {
-    const activeTitle = getActiveNavigationItemTitle(
-      navigationData.items,
-      router.asPath,
-    )
-    const pathname = new URL(router.asPath, 'https://island.is').pathname
-    if (
-      sitemapContentTypeDeterminesNavigationAndBreadcrumbs &&
-      linkResolver('organizationpage', [organizationPage.slug]).href ===
-        pathname
-    ) {
-      return undefined
-    }
-    return activeTitle
-  }, [
-    linkResolver,
-    navigationData.items,
-    organizationPage.slug,
-    router.asPath,
-    sitemapContentTypeDeterminesNavigationAndBreadcrumbs,
-  ])
-
   return (
     <>
       <HeadWithSocialSharing
@@ -1173,7 +1134,6 @@ export const OrganizationWrapper: React.FC<
                   baseId="pageNav"
                   items={navigationData.items}
                   title={navigationData.title}
-                  activeItemTitle={activeNavigationItemTitle}
                   renderLink={(link, item) => {
                     return !item?.href || shouldLinkBeAnAnchorTag(item.href) ? (
                       link
@@ -1252,7 +1212,6 @@ export const OrganizationWrapper: React.FC<
                   isMenuDialog={true}
                   items={navigationData.items}
                   title={navigationData.title}
-                  activeItemTitle={activeNavigationItemTitle}
                   renderLink={(link, item) => {
                     return item?.href ? (
                       <NextLink href={item?.href} legacyBehavior>

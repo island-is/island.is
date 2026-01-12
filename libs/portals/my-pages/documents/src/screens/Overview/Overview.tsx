@@ -11,12 +11,12 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
+  FALLBACK_ORG_LOGO_URL,
   GoBack,
   m,
+  ORG_LOGO_PARAMS,
   useScrollTopOnUpdate,
 } from '@island.is/portals/my-pages/core'
-import { useOrganizations } from '@island.is/portals/my-pages/graphql'
-import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 import debounce from 'lodash/debounce'
 import { useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
@@ -38,7 +38,6 @@ export const DocumentsOverview = () => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
   const location = useLocation()
-  const { data: organizations } = useOrganizations()
 
   const {
     selectedLines,
@@ -239,14 +238,9 @@ export const DocumentsOverview = () => {
                   <Box key={doc.id}>
                     <DocumentLine
                       img={
-                        doc?.sender?.name
-                          ? getOrganizationLogoUrl(
-                              doc?.sender?.name,
-                              organizations,
-                              60,
-                              'none',
-                            )
-                          : undefined
+                        doc?.sender?.logoUrl
+                          ? doc.sender.logoUrl.concat(ORG_LOGO_PARAMS)
+                          : FALLBACK_ORG_LOGO_URL
                       }
                       documentLine={doc}
                       hasInitialFocus={doc.id === focusId}

@@ -49,6 +49,7 @@ export const PaymentsWrapper = ({ children, pathname }: Props) => {
       intro={formatMessage(messages.paymentsIntro)}
       serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
       serviceProviderTooltip={formatMessage(messages.healthTooltip)}
+      childrenWidthFull
       buttonGroup={[
         <Button
           variant="utility"
@@ -73,7 +74,7 @@ export const PaymentsWrapper = ({ children, pathname }: Props) => {
         </Box>
       )}
       <TabNavigation
-        label={formatMessage(messages.payments)}
+        label={formatMessage(messages.paymentsAndRights)}
         pathname={pathname}
         items={
           healthNavigation.children?.find(

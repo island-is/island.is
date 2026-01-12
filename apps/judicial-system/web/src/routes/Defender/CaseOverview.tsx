@@ -155,7 +155,7 @@ export const CaseOverview = () => {
               sections={[
                 {
                   id: 'defendants-section',
-                  items: [defendants(workingCase.type)],
+                  items: [defendants({ caseType: workingCase.type })],
                 },
                 ...(showItem(victims)
                   ? [
@@ -234,6 +234,7 @@ export const CaseOverview = () => {
                   caseId={workingCase.id}
                   title={formatMessage(core.pdfButtonRequest)}
                   pdfType="request"
+                  elementId={formatMessage(core.pdfButtonRequest)}
                 />
                 {isCompletedCase(workingCase.state) && (
                   <>
@@ -242,6 +243,9 @@ export const CaseOverview = () => {
                       caseId={workingCase.id}
                       title={formatMessage(core.pdfButtonRulingShortVersion)}
                       pdfType="courtRecord"
+                      elementId={formatMessage(
+                        core.pdfButtonRulingShortVersion,
+                      )}
                     >
                       {workingCase.courtRecordSignatory ? (
                         <SignedDocument
@@ -255,6 +259,7 @@ export const CaseOverview = () => {
                       caseId={workingCase.id}
                       title={formatMessage(core.pdfButtonRuling)}
                       pdfType="ruling"
+                      elementId={formatMessage(core.pdfButtonRuling)}
                       disabled={workingCase.isCompletedWithoutRuling || false}
                     >
                       {workingCase.rulingSignatureDate ? (

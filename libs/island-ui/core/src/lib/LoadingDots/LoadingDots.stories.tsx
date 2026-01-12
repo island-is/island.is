@@ -8,14 +8,14 @@ export default {
 }
 
 export const Blue = () => <LoadingDots />
-export const BlueLarge = () => <LoadingDots large />
+export const BlueLarge = () => <LoadingDots size="large" />
 
 export const SingleBlue = () => <LoadingDots single />
-export const SingleBlueLarge = () => <LoadingDots large single />
+export const SingleBlueLarge = () => <LoadingDots size="large" single />
 
-export const GradientLarge = () => <LoadingDots large color="gradient" />
+export const GradientLarge = () => <LoadingDots size="large" color="gradient" />
 export const SingleGradientLarge = () => (
-  <LoadingDots single large color="gradient" />
+  <LoadingDots single size="large" color="gradient" />
 )
 
 export const CenteredInsideBox = () => (
@@ -26,6 +26,6 @@ export const CenteredInsideBox = () => (
     justifyContent="center"
     style={{ height: 200, backgroundColor: '#0061ff' }}
   >
-    <LoadingDots large color="white" />
+    <LoadingDots size="large" color="white" />
   </Box>
 )

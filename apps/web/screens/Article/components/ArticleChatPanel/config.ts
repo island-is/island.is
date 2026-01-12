@@ -39,6 +39,66 @@ export const liveChatIncConfig: Record<
   },
 }
 
+export const zendeskConfig: Record<
+  Locale,
+  Record<string, { snippetUrl: string }>
+> = {
+  is: {
+    // Samgöngustofa - Organization
+    '6IZT17s7stKJAmtPutjpD7': {
+      snippetUrl:
+        'https://static.zdassets.com/ekr/snippet.js?key=6b9864d4-1892-4ea0-8d29-b609d7c53542',
+    },
+    // Sjúkratryggingar - Organization
+    '3pZwAagW0UY26giHaxHthe': {
+      snippetUrl:
+        'https://static.zdassets.com/ekr/snippet.js?key=9989d2fe-0b2e-40a8-bc4e-33e5e4c07359',
+    },
+    // Útlendingastofnun - Organization
+    '77rXck3sISbMsUv7BO1PG2': {
+      snippetUrl:
+        'https://static.zdassets.com/ekr/snippet.js?key=34869229-7aad-4b2f-90b2-f2984fdd14dc',
+    },
+    // Sýslumenn - Organization
+    kENblMMMvZ3DlyXw1dwxQ: {
+      snippetUrl:
+        'https://static.zdassets.com/ekr/snippet.js?key=dc0c86b4-a02a-45e9-85d5-0aa570708ad9',
+    },
+    // Skatturinn - Organization
+    '4yJlHgCMTqpgRSj4p6LuBQ': {
+      snippetUrl:
+        'https://static.zdassets.com/ekr/snippet.js?key=f12bfedb-fc2c-477d-8f28-b31a036fba35',
+    },
+  },
+  en: {
+    // Samgöngustofa - Organization
+    '6IZT17s7stKJAmtPutjpD7': {
+      snippetUrl:
+        'https://static.zdassets.com/ekr/snippet.js?key=6b9864d4-1892-4ea0-8d29-b609d7c53542',
+    },
+    // Sjúkratryggingar - Organization
+    '3pZwAagW0UY26giHaxHthe': {
+      snippetUrl:
+        'https://static.zdassets.com/ekr/snippet.js?key=9989d2fe-0b2e-40a8-bc4e-33e5e4c07359',
+    },
+    // Útlendingastofnun - Organization
+    '77rXck3sISbMsUv7BO1PG2': {
+      snippetUrl:
+        'https://static.zdassets.com/ekr/snippet.js?key=34869229-7aad-4b2f-90b2-f2984fdd14dc',
+    },
+    // Sýslumenn - Organization
+    kENblMMMvZ3DlyXw1dwxQ: {
+      snippetUrl:
+        'https://static.zdassets.com/ekr/snippet.js?key=dc0c86b4-a02a-45e9-85d5-0aa570708ad9',
+    },
+    // Skatturinn - Organization
+    '4yJlHgCMTqpgRSj4p6LuBQ': {
+      snippetUrl:
+        'https://static.zdassets.com/ekr/snippet.js?key=f12bfedb-fc2c-477d-8f28-b31a036fba35',
+    },
+  },
+}
+
 export const defaultWatsonConfig: Record<Locale, WatsonChatPanelProps> = {
   is: {
     integrationID: 'b1a80e76-da12-4333-8872-936b08246eaa',
@@ -63,23 +123,6 @@ export const watsonConfig: Record<
   Record<string, WatsonChatPanelProps>
 > = {
   en: {
-    // Skrá eigendaskipti
-    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/4rr5MJWXB9xRz6VwHAKw78
-    '4rr5MJWXB9xRz6VwHAKw78': {
-      integrationID: 'ee1c15db-7151-4487-bc9a-9f32f1f8ae3b',
-      region: 'eu-gb',
-      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
-      showLauncher: false,
-      carbonTheme: 'g10',
-      namespaceKey: 'samgongustofa',
-      onLoad(instance) {
-        setupOneScreenWatsonChatBot(
-          instance,
-          'skra-eigendaskipti',
-          'ee1c15db-7151-4487-bc9a-9f32f1f8ae3b',
-        )
-      },
-    },
     // Name giving
     // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/lGjmpafx2P4yiA6Re3Nxd
     lGjmpafx2P4yiA6Re3Nxd: {
@@ -160,94 +203,6 @@ export const watsonConfig: Record<
           '2e32cba8-7379-44e9-b03e-af1ccdbe5982',
         ),
     },
-    // Tax on wages and pensions
-    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/6e3SWIyt0ayXwSuqB4HiiE
-    '6e3SWIyt0ayXwSuqB4HiiE': {
-      integrationID: '98ba51da-1677-4881-a133-7ea019ae7b87',
-      region: 'eu-gb',
-      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
-      showLauncher: false,
-      carbonTheme: 'g10',
-      namespaceKey: 'skatturinn',
-      onLoad(instance) {
-        instance.updateHomeScreenConfig({
-          bot_avatar_url:
-            'https://images.ctfassets.net/8k0h54kbe6bj/5m9muELNRJMRgsPHP1t28a/caa4d23d14738400f262373e5a9cb066/islandissseoakgf2.PNG?h=250',
-        })
-      },
-    },
-    // Child benefit
-    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/42poXejFLO31vxj67UW5J3
-    '42poXejFLO31vxj67UW5J3': {
-      integrationID: '98ba51da-1677-4881-a133-7ea019ae7b87',
-      region: 'eu-gb',
-      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
-      showLauncher: false,
-      carbonTheme: 'g10',
-      namespaceKey: 'skatturinn',
-      onLoad(instance) {
-        instance.updateHomeScreenConfig({
-          bot_avatar_url:
-            'https://images.ctfassets.net/8k0h54kbe6bj/5m9muELNRJMRgsPHP1t28a/caa4d23d14738400f262373e5a9cb066/islandissseoakgf2.PNG?h=250',
-        })
-      },
-    },
-
-    // Taxes on goods and services
-    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/4BECjoXzpyecbbp8rY1u7t
-    '4BECjoXzpyecbbp8rY1u7t': {
-      integrationID: '98ba51da-1677-4881-a133-7ea019ae7b87',
-      region: 'eu-gb',
-      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
-      showLauncher: false,
-      carbonTheme: 'g10',
-      namespaceKey: 'skatturinn',
-      onLoad(instance) {
-        instance.updateHomeScreenConfig({
-          bot_avatar_url:
-            'https://images.ctfassets.net/8k0h54kbe6bj/5m9muELNRJMRgsPHP1t28a/caa4d23d14738400f262373e5a9cb066/islandissseoakgf2.PNG?h=250',
-        })
-      },
-    },
-
-    // Skatturinn - Organization
-    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/4yJlHgCMTqpgRSj4p6LuBQ
-    '4yJlHgCMTqpgRSj4p6LuBQ': {
-      integrationID: '98ba51da-1677-4881-a133-7ea019ae7b87',
-      region: 'eu-gb',
-      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
-      showLauncher: false,
-      carbonTheme: 'g10',
-      namespaceKey: 'skatturinn',
-      onLoad(instance) {
-        instance.updateHomeScreenConfig({
-          bot_avatar_url:
-            'https://images.ctfassets.net/8k0h54kbe6bj/5m9muELNRJMRgsPHP1t28a/caa4d23d14738400f262373e5a9cb066/islandissseoakgf2.PNG?h=250',
-        })
-      },
-    },
-
-    // Útlendingastofnun - Organization
-    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/77rXck3sISbMsUv7BO1PG2
-    '77rXck3sISbMsUv7BO1PG2': {
-      integrationID: '9e320784-ad44-4da9-9eb3-f305057a196a',
-      region: 'eu-gb',
-      serviceInstanceID: '2529638b-503c-4374-955c-0310139ec177',
-      showLauncher: false,
-      carbonTheme: 'g10',
-      namespaceKey: 'default',
-    },
-
-    // Sjúkratryggingar - Organization
-    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/3pZwAagW0UY26giHaxHthe
-    '3pZwAagW0UY26giHaxHthe': {
-      integrationID: 'cba41fa0-12fb-4cb5-bd98-66a57cee42e0',
-      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
-      region: 'eu-gb',
-      showLauncher: false,
-      carbonTheme: 'g10',
-      namespaceKey: 'default',
-    },
 
     // European health insurance card
     // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/1AKWfq2dh9YnEyiG1yNeR8
@@ -290,16 +245,6 @@ export const watsonConfig: Record<
           defaultWatsonConfig.en.integrationID,
         )
       },
-    },
-
-    // Samgöngustofa - Organization
-    '6IZT17s7stKJAmtPutjpD7': {
-      integrationID: 'ee1c15db-7151-4487-bc9a-9f32f1f8ae3b',
-      region: 'eu-gb',
-      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
-      showLauncher: false,
-      carbonTheme: 'g10',
-      namespaceKey: 'samgongustofa',
     },
   },
   is: {
@@ -563,69 +508,6 @@ export const watsonConfig: Record<
         )
       },
     },
-    // Samgöngustofa - Organization
-    '6IZT17s7stKJAmtPutjpD7': {
-      integrationID: 'b0b445a4-4c49-4c79-9731-8d03f49c8cac',
-      region: 'eu-gb',
-      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
-      showLauncher: false,
-      carbonTheme: 'g10',
-      namespaceKey: 'samgongustofa',
-    },
-
-    // Uppfletting í ökutækjaskrá
-    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/5tyHpCXpWGZnhCCbP6eTb0
-    '5tyHpCXpWGZnhCCbP6eTb0': {
-      integrationID: 'b0b445a4-4c49-4c79-9731-8d03f49c8cac',
-      region: 'eu-gb',
-      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
-      showLauncher: false,
-      carbonTheme: 'g10',
-      namespaceKey: 'samgongustofa',
-      onLoad(instance) {
-        setupOneScreenWatsonChatBot(
-          instance,
-          'uppfletting-i-oekutaekjaskra',
-          'b0b445a4-4c49-4c79-9731-8d03f49c8cac',
-        )
-      },
-    },
-
-    // Skrá eigendaskipti
-    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/4rr5MJWXB9xRz6VwHAKw78
-    '4rr5MJWXB9xRz6VwHAKw78': {
-      integrationID: 'b0b445a4-4c49-4c79-9731-8d03f49c8cac',
-      region: 'eu-gb',
-      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
-      showLauncher: false,
-      carbonTheme: 'g10',
-      namespaceKey: 'samgongustofa',
-      onLoad(instance) {
-        setupOneScreenWatsonChatBot(
-          instance,
-          'skra-eigendaskipti',
-          'b0b445a4-4c49-4c79-9731-8d03f49c8cac',
-        )
-      },
-    },
-
-    // Skútan - skipaskráningar og lögskráningarkerfi
-    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/3wmGcP61YJePBL92ITgY64
-    '3wmGcP61YJePBL92ITgY64': {
-      integrationID: 'b0b445a4-4c49-4c79-9731-8d03f49c8cac',
-      region: 'eu-gb',
-      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
-      showLauncher: false,
-      carbonTheme: 'g10',
-      namespaceKey: 'samgongustofa',
-      onLoad(instance) {
-        setupOneScreenWatsonChatBot(
-          instance,
-          'skutan-skipaskra-og-logskraning',
-          'b0b445a4-4c49-4c79-9731-8d03f49c8cac',
-        )
-      },
-    },
 
     // Kílómetragjald
     // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/4ydMzxTVny5W9nTn6abfZm
@@ -851,100 +733,6 @@ export const watsonConfig: Record<
         ),
     },
 
-    // Skattur af launum og lífeyri
-    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/6e3SWIyt0ayXwSuqB4HiiE
-    '6e3SWIyt0ayXwSuqB4HiiE': {
-      integrationID: '84f62b21-aa50-4d49-b413-597b6a959910',
-      region: 'eu-gb',
-      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
-      showLauncher: false,
-      carbonTheme: 'g10',
-      namespaceKey: 'skatturinn',
-      onLoad(instance) {
-        instance.updateHomeScreenConfig({
-          bot_avatar_url:
-            'https://images.ctfassets.net/8k0h54kbe6bj/5m9muELNRJMRgsPHP1t28a/caa4d23d14738400f262373e5a9cb066/islandissseoakgf2.PNG?h=250',
-        })
-        setupOneScreenWatsonChatBot(
-          instance,
-          'almenntskattar',
-          '84f62b21-aa50-4d49-b413-597b6a959910',
-        )
-      },
-    },
-
-    // Barnabætur
-    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/42poXejFLO31vxj67UW5J3
-    '42poXejFLO31vxj67UW5J3': {
-      integrationID: '84f62b21-aa50-4d49-b413-597b6a959910',
-      region: 'eu-gb',
-      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
-      showLauncher: false,
-      carbonTheme: 'g10',
-      namespaceKey: 'skatturinn',
-      onLoad(instance) {
-        instance.updateHomeScreenConfig({
-          bot_avatar_url:
-            'https://images.ctfassets.net/8k0h54kbe6bj/5m9muELNRJMRgsPHP1t28a/caa4d23d14738400f262373e5a9cb066/islandissseoakgf2.PNG?h=250',
-        })
-        setupOneScreenWatsonChatBot(
-          instance,
-          'barnabaetur',
-          '84f62b21-aa50-4d49-b413-597b6a959910',
-        )
-      },
-    },
-
-    // Virðisaukaskattur og vörugjöld á vöru og þjónustu – almennar upplýsingar
-    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/4BECjoXzpyecbbp8rY1u7t
-    '4BECjoXzpyecbbp8rY1u7t': {
-      integrationID: '84f62b21-aa50-4d49-b413-597b6a959910',
-      region: 'eu-gb',
-      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
-      showLauncher: false,
-      carbonTheme: 'g10',
-      namespaceKey: 'skatturinn',
-      onLoad(instance) {
-        instance.updateHomeScreenConfig({
-          bot_avatar_url:
-            'https://images.ctfassets.net/8k0h54kbe6bj/5m9muELNRJMRgsPHP1t28a/caa4d23d14738400f262373e5a9cb066/islandissseoakgf2.PNG?h=250',
-        })
-        setupOneScreenWatsonChatBot(
-          instance,
-          'virdisaukaskattur',
-          '84f62b21-aa50-4d49-b413-597b6a959910',
-        )
-      },
-    },
-
-    // Skatturinn - Organization
-    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/4yJlHgCMTqpgRSj4p6LuBQ
-    '4yJlHgCMTqpgRSj4p6LuBQ': {
-      integrationID: '84f62b21-aa50-4d49-b413-597b6a959910',
-      region: 'eu-gb',
-      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
-      showLauncher: false,
-      carbonTheme: 'g10',
-      namespaceKey: 'skatturinn',
-      onLoad(instance) {
-        instance.updateHomeScreenConfig({
-          bot_avatar_url:
-            'https://images.ctfassets.net/8k0h54kbe6bj/5m9muELNRJMRgsPHP1t28a/caa4d23d14738400f262373e5a9cb066/islandissseoakgf2.PNG?h=250',
-        })
-      },
-    },
-
-    // Sýslumenn - Organization
-    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/kENblMMMvZ3DlyXw1dwxQ
-    kENblMMMvZ3DlyXw1dwxQ: {
-      integrationID: '0c96e8fb-d4dc-420e-97db-18b0f8bb4e3f',
-      region: 'eu-gb',
-      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
-      showLauncher: false,
-      carbonTheme: 'g10',
-      namespaceKey: 'default',
-    },
-
     // Sýslumaðurinn á Austurlandi
     // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/Xnes7x1ccvBvuZxInRXDm
     Xnes7x1ccvBvuZxInRXDm: {
@@ -1044,28 +832,6 @@ export const watsonConfig: Record<
       namespaceKey: 'default',
     },
 
-    // Útlendingastofnun - Organization
-    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/77rXck3sISbMsUv7BO1PG2
-    '77rXck3sISbMsUv7BO1PG2': {
-      integrationID: '89a03e83-5c73-4642-b5ba-cd3771ceca54',
-      region: 'eu-gb',
-      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
-      showLauncher: false,
-      carbonTheme: 'g10',
-      namespaceKey: 'default',
-    },
-
-    // Sjúkratryggingar - Organization
-    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/3pZwAagW0UY26giHaxHthe
-    '3pZwAagW0UY26giHaxHthe': {
-      integrationID: 'e625e707-c9ce-4048-802c-c12b905c28be',
-      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
-      region: 'eu-gb',
-      showLauncher: false,
-      carbonTheme: 'g10',
-      namespaceKey: 'default',
-    },
-
     // Evrópska sjúkratryggingakortið
     // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/1AKWfq2dh9YnEyiG1yNeR8
     '1AKWfq2dh9YnEyiG1yNeR8': {
@@ -1138,10 +904,6 @@ export const watsonConfig: Record<
 
 // If these organizations are not connected to an article then we show the default watson config
 export const excludedOrganizationWatsonConfig: string[] = [
-  // Sjúkratryggingar Íslands
-  // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/3pZwAagW0UY26giHaxHthe
-  '3pZwAagW0UY26giHaxHthe',
-
   // Heilbrigðisstofnun Norðurlands
   // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/EM4Y0gF4OoGhH9ZY0Dxl6
   'EM4Y0gF4OoGhH9ZY0Dxl6',
@@ -1154,10 +916,6 @@ export const excludedOrganizationWatsonConfig: string[] = [
   // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/7qgJZc8vO7ZHWmfSrZp9Kn
   '7qgJZc8vO7ZHWmfSrZp9Kn',
 
-  // Útlendingastofnun
-  // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/77rXck3sISbMsUv7BO1PG2
-  '77rXck3sISbMsUv7BO1PG2',
-
   // Tryggingastofnun
   // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/3dgsobJuiJXC1oOxhGpcUY
   '3dgsobJuiJXC1oOxhGpcUY',
@@ -1165,10 +923,6 @@ export const excludedOrganizationWatsonConfig: string[] = [
   // HMS
   // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/53jrbgxPKpbNtordSfEZUK
   '53jrbgxPKpbNtordSfEZUK',
-
-  // Sýslumenn - Organization
-  // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/kENblMMMvZ3DlyXw1dwxQ
-  'kENblMMMvZ3DlyXw1dwxQ',
 
   // Sýslumaðurinn á Austurlandi
   // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/Xnes7x1ccvBvuZxInRXDm

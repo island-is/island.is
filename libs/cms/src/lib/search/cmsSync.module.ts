@@ -35,6 +35,7 @@ import { TeamListSyncService } from './importers/teamList.service'
 import { MappingService } from './mapping.service'
 import { GrantsSyncService } from './importers/grants.service'
 import { BloodDonationRestrictionSyncService } from './importers/bloodDonationRestriction.service'
+import { CourseSyncService } from './importers/course.service'
 
 @Module({
   imports: [
@@ -74,6 +75,7 @@ import { BloodDonationRestrictionSyncService } from './importers/bloodDonationRe
     GenericListItemSyncService,
     TeamListSyncService,
     BloodDonationRestrictionSyncService,
+    CourseSyncService,
     MappingService,
   ],
   exports: [CmsSyncService],

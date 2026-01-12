@@ -59,7 +59,7 @@ export const createVerdictServiceCertificate = ({
     bufferPages: true,
   })
 
-  const sinc: Buffer[] = []
+  const sinc: Uint8Array[] = []
 
   doc.on('data', (chunk) => sinc.push(chunk))
 
@@ -86,11 +86,23 @@ export const createVerdictServiceCertificate = ({
 
   addEmptyLines(doc, 2)
 
-  addNormalText(doc, 'Birtingaraðili: ', 'Times-Bold', true)
+  addNormalText(
+    doc,
+    `${
+      verdict.serviceStatus === VerdictServiceStatus.LEGAL_PAPER ||
+      verdict.serviceStatus === VerdictServiceStatus.ELECTRONICALLY
+        ? 'Birtingarleið'
+        : 'Birtingaraðili'
+    }: `,
+    'Times-Bold',
+    true,
+  )
   addNormalText(
     doc,
     verdict.serviceStatus === VerdictServiceStatus.ELECTRONICALLY
       ? 'Rafrænt pósthólf island.is'
+      : verdict.serviceStatus === VerdictServiceStatus.LEGAL_PAPER
+      ? 'Lögbirtingur'
       : verdict.servedBy || 'Ekki skráð',
     'Times-Roman',
   )

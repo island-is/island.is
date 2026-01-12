@@ -2,28 +2,31 @@ import { Fragment, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Box, Button, Option, Text } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Button,
+  Option,
+  Text,
+} from '@island.is/island-ui/core'
 import {
   getStandardUserDashboardRoute,
   PUBLIC_PROSECUTOR_STAFF_INDICTMENT_SEND_TO_PRISON_ADMIN_ROUTE,
 } from '@island.is/judicial-system/consts'
-import {
-  Feature,
-  isRulingOrDismissalCase,
-} from '@island.is/judicial-system/types'
+import { isRulingOrDismissalCase } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   BlueBoxWithDate,
   Conclusion,
   CourtCaseInfo,
-  FeatureContext,
   FormContentContainer,
   FormContext,
   FormFooter,
   IndictmentCaseFilesList,
   // IndictmentsLawsBrokenAccordionItem, NOTE: Temporarily hidden while list of laws broken is not complete
   InfoCardClosedIndictment,
+  MarkdownWrapper,
   Modal,
   PageHeader,
   PageLayout,
@@ -70,7 +73,6 @@ export const Overview = () => {
   const { setAndSendVerdictToServer } = useVerdict()
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
-  const { features } = useContext(FeatureContext)
 
   const [selectedIndictmentReviewer, setSelectedIndictmentReviewer] =
     useState<Option<string> | null>()
@@ -158,6 +160,20 @@ export const Overview = () => {
       <FormContentContainer>
         <PageTitle>{fm(strings.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
+        {workingCase.rulingModifiedHistory && (
+          <Box marginBottom={5}>
+            <AlertMessage
+              type="info"
+              title="Mál leiðrétt"
+              message={
+                <MarkdownWrapper
+                  markdown={workingCase.rulingModifiedHistory}
+                  textProps={{ variant: 'small' }}
+                />
+              }
+            />
+          </Box>
+        )}
         {workingCase.defendants?.map((defendant) => {
           const { verdict } = defendant
 
@@ -171,37 +187,46 @@ export const Overview = () => {
           const isServiceNotApplicable =
             verdict?.serviceRequirement === ServiceRequirement.NOT_APPLICABLE
 
+          const canDefendantAppealVerdict = !!(
+            verdict &&
+            !verdict.isDefaultJudgement &&
+            (isServiceNotApplicable ||
+              (isServiceRequired && !!verdict.serviceDate))
+          )
+
           return (
             <Fragment key={defendant.id}>
               <Box className={styles.container}>
-                {features?.includes(Feature.VERDICT_DELIVERY) && verdict && (
+                {verdict && (
                   <VerdictStatusAlert verdict={verdict} defendant={defendant} />
                 )}
                 <Box component="section">
-                  <BlueBoxWithDate defendant={defendant} icon="calendar" />
+                  <BlueBoxWithDate
+                    defendant={defendant}
+                    canDefendantAppealVerdict={canDefendantAppealVerdict}
+                    icon="calendar"
+                  />
                 </Box>
-                {verdict &&
-                  (isServiceNotApplicable ||
-                    (isServiceRequired && verdict.serviceDate)) && (
-                    <Box component="section">
-                      <BlueBox>
-                        <SectionHeading
-                          title="Afstaða dómfellda til dóms"
-                          heading="h4"
-                          marginBottom={2}
-                          required
-                        />
-                        <Box marginBottom={2}>
-                          <Text variant="eyebrow">{defendant.name}</Text>
-                        </Box>
-                        <VerdictAppealDecisionChoice
-                          defendant={defendant}
-                          verdict={verdict}
-                          disabled={!!defendant.isSentToPrisonAdmin}
-                        />
-                      </BlueBox>
-                    </Box>
-                  )}
+                {canDefendantAppealVerdict && (
+                  <Box component="section">
+                    <BlueBox>
+                      <SectionHeading
+                        title="Afstaða dómfellda til dóms"
+                        heading="h4"
+                        marginBottom={2}
+                        required
+                      />
+                      <Box marginBottom={2}>
+                        <Text variant="eyebrow">{defendant.name}</Text>
+                      </Box>
+                      <VerdictAppealDecisionChoice
+                        defendant={defendant}
+                        verdict={verdict}
+                        disabled={!!defendant.isSentToPrisonAdmin}
+                      />
+                    </BlueBox>
+                  </Box>
+                )}
               </Box>
               <Box
                 display="flex"

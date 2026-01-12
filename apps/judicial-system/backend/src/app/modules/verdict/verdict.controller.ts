@@ -23,6 +23,7 @@ import {
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
+import { getVerdictServiceStatusText } from '@island.is/judicial-system/formatters'
 import { indictmentCases } from '@island.is/judicial-system/types'
 import { type User } from '@island.is/judicial-system/types'
 
@@ -36,12 +37,14 @@ import {
 import {
   CaseCompletedGuard,
   CaseExistsGuard,
+  CaseReadGuard,
   CaseTypeGuard,
   CaseWriteGuard,
   CurrentCase,
   PdfService,
 } from '../case'
 import { CurrentDefendant, DefendantExistsGuard } from '../defendant'
+import { EventService } from '../event'
 import { LawyerRegistryService } from '../lawyer-registry/lawyerRegistry.service'
 import { Case, Defendant, Verdict } from '../repository'
 import { CreateVerdictDto } from './dto/createVerdict.dto'
@@ -49,6 +52,7 @@ import { UpdateVerdictDto } from './dto/updateVerdict.dto'
 import { CurrentVerdict } from './guards/verdict.decorator'
 import { VerdictExistsGuard } from './guards/verdictExists.guard'
 import { VerdictService } from './verdict.service'
+
 @Controller('api/case/:caseId')
 @ApiTags('verdicts')
 @UseGuards(
@@ -56,22 +60,23 @@ import { VerdictService } from './verdict.service'
   RolesGuard,
   CaseExistsGuard,
   new CaseTypeGuard(indictmentCases),
-  CaseWriteGuard,
 )
 export class VerdictController {
   constructor(
     private readonly verdictService: VerdictService,
     private readonly lawyerRegistryService: LawyerRegistryService,
     private readonly pdfService: PdfService,
+    private readonly eventService: EventService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
+  @UseGuards(CaseWriteGuard)
   @RolesRules(
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
   )
-  @Patch('verdicts')
+  @Post('verdicts')
   @ApiOkResponse({
     type: Verdict,
     description: 'Create verdicts for relevant defendants',
@@ -90,7 +95,12 @@ export class VerdictController {
     )
   }
 
-  @UseGuards(DefendantExistsGuard, VerdictExistsGuard, CaseCompletedGuard)
+  @UseGuards(
+    CaseWriteGuard,
+    DefendantExistsGuard,
+    VerdictExistsGuard,
+    CaseCompletedGuard,
+  )
   @RolesRules(
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
@@ -120,7 +130,12 @@ export class VerdictController {
     )
   }
 
-  @UseGuards(DefendantExistsGuard, VerdictExistsGuard, CaseCompletedGuard)
+  @UseGuards(
+    CaseReadGuard,
+    DefendantExistsGuard,
+    VerdictExistsGuard,
+    CaseCompletedGuard,
+  )
   @RolesRules(publicProsecutorStaffRule, prisonSystemStaffRule)
   @Get('defendant/:defendantId/verdict/serviceCertificate')
   @Header('Content-Type', 'application/pdf')
@@ -157,7 +172,12 @@ export class VerdictController {
     res.end(pdf)
   }
 
-  @UseGuards(DefendantExistsGuard, VerdictExistsGuard, CaseCompletedGuard)
+  @UseGuards(
+    CaseReadGuard,
+    DefendantExistsGuard,
+    VerdictExistsGuard,
+    CaseCompletedGuard,
+  )
   @RolesRules(
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
@@ -172,17 +192,31 @@ export class VerdictController {
   async getVerdict(
     @Param('caseId') caseId: string,
     @Param('defendantId') defendantId: string,
+    @CurrentCase() theCase: Case,
     @CurrentVerdict() verdict: Verdict,
     @CurrentHttpUser() user: User,
   ): Promise<Verdict> {
     this.logger.debug(
       `Get verdict for ${verdict.id} of ${defendantId} in ${caseId}`,
     )
+    const currentVerdict = await this.verdictService.getAndSyncVerdict(
+      verdict,
+      user,
+    )
 
-    return this.verdictService.getAndSyncVerdict(verdict, user)
+    if (
+      currentVerdict.serviceStatus &&
+      currentVerdict.serviceStatus !== verdict.serviceStatus
+    ) {
+      this.eventService.postEvent('VERDICT_SERVICE_STATUS', theCase, false, {
+        Staða: getVerdictServiceStatusText(currentVerdict.serviceStatus),
+      })
+    }
+
+    return currentVerdict
   }
 
-  @UseGuards(CaseCompletedGuard)
+  @UseGuards(CaseWriteGuard, CaseCompletedGuard)
   @RolesRules(
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
@@ -200,6 +234,7 @@ export class VerdictController {
     this.logger.debug(
       `Deliver case ${caseId} verdict to all affected defendants`,
     )
+
     return await this.verdictService.addMessagesForCaseVerdictDeliveryToQueue(
       theCase,
       user,

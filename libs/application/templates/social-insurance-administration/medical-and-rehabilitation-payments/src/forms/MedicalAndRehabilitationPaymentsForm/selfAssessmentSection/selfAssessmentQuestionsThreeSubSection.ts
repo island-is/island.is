@@ -23,20 +23,20 @@ export const selfAssessmentQuestionsThreeSubSection = buildSubSection({
         medicalAndRehabilitationPaymentsFormMessage.selfAssessment.sectionTitle,
       children: [
         buildDescriptionField({
-          id: 'selfAssessment.mainProblemDescriptionField',
+          id: 'selfAssessmentQuestionsThree.mainProblemDescriptionField',
           title:
             medicalAndRehabilitationPaymentsFormMessage.selfAssessment
               .mainProblemTitle,
           titleVariant: 'h4',
         }),
         buildTextField({
-          id: 'selfAssessment.mainProblem',
+          id: 'selfAssessmentQuestionsThree.mainProblem',
           title:
             medicalAndRehabilitationPaymentsFormMessage.selfAssessment
               .mainProblem,
         }),
         buildRadioField({
-          id: 'selfAssessment.hasPreviouslyReceivedRehabilitationOrTreatment',
+          id: 'selfAssessmentQuestionsThree.hasPreviouslyReceivedRehabilitationOrTreatment',
           title:
             medicalAndRehabilitationPaymentsFormMessage.selfAssessment
               .hasPreviouslyReceivedRehabilitationOrTreatment,
@@ -46,7 +46,7 @@ export const selfAssessmentQuestionsThreeSubSection = buildSubSection({
           space: 4,
         }),
         buildTextField({
-          id: 'selfAssessment.previousRehabilitationOrTreatment',
+          id: 'selfAssessmentQuestionsThree.previousRehabilitationOrTreatment',
           title:
             medicalAndRehabilitationPaymentsFormMessage.selfAssessment
               .previousRehabilitationOrTreatment,
@@ -54,7 +54,7 @@ export const selfAssessmentQuestionsThreeSubSection = buildSubSection({
             shouldShowPreviousRehabilitationOrTreatmentFields(answers),
         }),
         buildRadioField({
-          id: 'selfAssessment.previousRehabilitationSuccessful',
+          id: 'selfAssessmentQuestionsThree.previousRehabilitationSuccessful',
           title:
             medicalAndRehabilitationPaymentsFormMessage.selfAssessment
               .previousRehabilitationSuccessful,
@@ -66,7 +66,7 @@ export const selfAssessmentQuestionsThreeSubSection = buildSubSection({
             shouldShowPreviousRehabilitationOrTreatmentFields(answers),
         }),
         buildTextField({
-          id: 'selfAssessment.previousRehabilitationSuccessfulFurtherExplanations',
+          id: 'selfAssessmentQuestionsThree.previousRehabilitationSuccessfulFurtherExplanations',
           title:
             medicalAndRehabilitationPaymentsFormMessage.selfAssessment
               .previousRehabilitationSuccessfulFurtherExplanations,

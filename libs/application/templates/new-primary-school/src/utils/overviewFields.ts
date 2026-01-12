@@ -1,21 +1,39 @@
-import { buildOverviewField, NO, YES } from '@island.is/application/core'
-import { newPrimarySchoolMessages } from '../lib/messages'
-import { ApplicationType, ReasonForApplicationOptions } from './constants'
+import { buildOverviewField, YES } from '@island.is/application/core'
+import {
+  childrenNGuardiansMessages,
+  differentNeedsMessages,
+  overviewMessages,
+  primarySchoolMessages,
+} from '../lib/messages'
+import {
+  hasSpecialEducationSubType,
+  shouldShowPage,
+  shouldShowReasonForApplicationPage,
+} from './conditionUtils'
+import {
+  ApplicationFeatureKey,
+  ApplicationType,
+  ReasonForApplicationOptions,
+} from './constants'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
 } from './newPrimarySchoolUtils'
 import {
+  attachmentItems,
   childItems,
+  counsellingRegardingApplicationItems,
   currentNurseryItems,
   currentSchoolItems,
   guardiansItems,
   healthProtectionItems,
   languagesItems,
+  payerItems,
   reasonForApplicationItems,
   relativesTable,
   schoolItems,
   siblingsTable,
+  specialEducationSupportItems,
   supportItems,
 } from './overviewItems'
 
@@ -26,7 +44,7 @@ const buildGuardianOverviewFields = (editable?: boolean) =>
     return buildOverviewField({
       id: `overview.guardians.${index}`,
       title: {
-        ...newPrimarySchoolMessages.overview.guardians,
+        ...overviewMessages.guardians,
         values: { index: index + 1 },
       },
       backId: editable ? 'guardians' : undefined,
@@ -43,23 +61,21 @@ export const overviewFields = (editable?: boolean) => {
   return [
     buildOverviewField({
       id: 'overview.childInfo',
-      title: newPrimarySchoolMessages.overview.child,
+      title: overviewMessages.child,
       backId: editable ? 'childInfo' : undefined,
       loadItems: childItems,
     }),
     ...buildGuardianOverviewFields(editable),
     buildOverviewField({
       id: 'overview.relatives',
-      title:
-        newPrimarySchoolMessages.childrenNGuardians.relativesSubSectionTitle,
+      title: childrenNGuardiansMessages.relatives.subSectionTitle,
       backId: editable ? 'relatives' : undefined,
       loadTableData: relativesTable,
     }),
     buildOverviewField({
       id: 'overview.currentSchool',
-      title:
-        newPrimarySchoolMessages.primarySchool.currentSchoolSubSectionTitle,
-      backId: (answers, externalData) => {
+      title: primarySchoolMessages.currentSchool.subSectionTitle,
+      backId: (_, externalData) => {
         const { primaryOrgId } = getApplicationExternalData(externalData)
 
         // If the primaryOrgId doesn't exists it means Frigg doesn't have the data
@@ -70,13 +86,15 @@ export const overviewFields = (editable?: boolean) => {
       condition: (answers) => {
         const { applicationType } = getApplicationAnswers(answers)
 
-        return applicationType === ApplicationType.NEW_PRIMARY_SCHOOL
+        return (
+          applicationType === ApplicationType.NEW_PRIMARY_SCHOOL ||
+          applicationType === ApplicationType.CONTINUING_ENROLLMENT
+        )
       },
     }),
     buildOverviewField({
       id: 'overview.currentNursery',
-      title:
-        newPrimarySchoolMessages.primarySchool.currentNurserySubSectionTitle,
+      title: primarySchoolMessages.currentNursery.subSectionTitle,
       backId: editable ? 'currentNursery' : undefined,
       loadItems: currentNurseryItems,
       condition: (answers) => {
@@ -87,7 +105,7 @@ export const overviewFields = (editable?: boolean) => {
     }),
     buildOverviewField({
       id: 'overview.school',
-      title: newPrimarySchoolMessages.overview.schoolTitle,
+      title: overviewMessages.schoolTitle,
       backId: (answers) => {
         const { applyForPreferredSchool } = getApplicationAnswers(answers)
 
@@ -98,25 +116,34 @@ export const overviewFields = (editable?: boolean) => {
           : undefined
       },
       items: schoolItems,
+      condition: (answers) => {
+        const { applicationType } = getApplicationAnswers(answers)
+
+        return (
+          applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL ||
+          applicationType === ApplicationType.NEW_PRIMARY_SCHOOL
+        )
+      },
     }),
     buildOverviewField({
       id: 'overview.reasonForApplication',
       backId: editable ? 'reasonForApplication' : undefined,
       loadItems: reasonForApplicationItems,
-      condition: (answers) => {
-        const { applicationType, applyForPreferredSchool } =
-          getApplicationAnswers(answers)
-
-        return (
-          applicationType === ApplicationType.NEW_PRIMARY_SCHOOL ||
-          (applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL &&
-            applyForPreferredSchool === NO)
-        )
-      },
+      condition: (answers, externalData) =>
+        shouldShowReasonForApplicationPage(answers) &&
+        !hasSpecialEducationSubType(answers, externalData),
+    }),
+    buildOverviewField({
+      id: 'overview.counsellingRegardingApplication',
+      backId: editable ? 'counsellingRegardingApplication' : undefined,
+      loadItems: counsellingRegardingApplicationItems,
+      condition: (answers, externalData) =>
+        shouldShowReasonForApplicationPage(answers) &&
+        hasSpecialEducationSubType(answers, externalData),
     }),
     buildOverviewField({
       id: 'overview.siblings',
-      title: newPrimarySchoolMessages.primarySchool.siblingsTitle,
+      title: primarySchoolMessages.siblings.title,
       backId: editable ? 'siblings' : undefined,
       tableData: siblingsTable,
       condition: (answers) => {
@@ -142,6 +169,33 @@ export const overviewFields = (editable?: boolean) => {
       id: 'overview.support',
       backId: editable ? 'support' : undefined,
       items: supportItems,
+      condition: (answers, externalData) =>
+        !hasSpecialEducationSubType(answers, externalData),
+    }),
+    buildOverviewField({
+      id: 'overview.specialEducationSupport',
+      backId: editable ? 'specialEducationSupport' : undefined,
+      loadItems: specialEducationSupportItems,
+      condition: (answers, externalData) =>
+        hasSpecialEducationSubType(answers, externalData),
+    }),
+    buildOverviewField({
+      id: 'overview.payer',
+      title: differentNeedsMessages.payer.subSectionTitle,
+      backId: editable ? 'payer' : undefined,
+      items: payerItems,
+      condition: (answers, externalData) =>
+        shouldShowPage(
+          answers,
+          externalData,
+          ApplicationFeatureKey.PAYMENT_INFO,
+        ),
+    }),
+    buildOverviewField({
+      id: 'overview.attachments',
+      title: differentNeedsMessages.attachments.subSectionTitle,
+      attachments: attachmentItems,
+      hideIfEmpty: true,
     }),
   ]
 }

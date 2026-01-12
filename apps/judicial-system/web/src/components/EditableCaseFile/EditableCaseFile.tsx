@@ -1,4 +1,4 @@
-import { FC, useMemo, useState } from 'react'
+import { FC, ReactNode, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useMeasure } from 'react-use'
 import cn from 'classnames'
@@ -28,6 +28,11 @@ import * as styles from './EditableCaseFile.css'
 export const editableFields = ['fileName', 'displayDate'] as const
 export type EditableFields = typeof editableFields[number]
 
+export interface Supplement {
+  enabled: ReactNode
+  disabled: ReactNode
+}
+
 export interface TEditableCaseFile {
   id: string
   category?: CaseFileCategory | null
@@ -41,6 +46,7 @@ export interface TEditableCaseFile {
   status?: FileUploadStatus
   size?: number | null
   submissionDate?: string | null
+  supplement?: Supplement
 }
 
 interface Props {
@@ -51,7 +57,7 @@ interface Props {
   disabled?: boolean
   onOpen?: (id: string) => void
   onRename: (id: string, name: string, displayDate: string) => void
-  onDelete: (file: TUploadFile) => void
+  onDelete?: (file: TUploadFile) => void
   onRetry?: (file: TUploadFile) => void
   onStartEditing?: () => void
   onStopEditing?: () => void
@@ -213,7 +219,7 @@ const EditableCaseFile: FC<Props> = (props) => {
                     </Box>
                   )}
                 </Box>
-                <Box display="flex" alignItems="center">
+                <Box display="flex" alignItems="center" columnGap={1}>
                   <button
                     onClick={handleEditFileButtonClick}
                     className={cn(styles.editCaseFileButton, {
@@ -226,7 +232,7 @@ const EditableCaseFile: FC<Props> = (props) => {
                   >
                     <Icon icon="checkmark" color={color} />
                   </button>
-                  <Box marginLeft={1}>
+                  {onDelete && (
                     <button
                       onClick={() => {
                         onDelete(caseFile as TUploadFile)
@@ -242,7 +248,7 @@ const EditableCaseFile: FC<Props> = (props) => {
                     >
                       <Icon icon="trash" color={color} type="outline" />
                     </button>
-                  </Box>
+                  )}
                 </Box>
               </Box>
             </motion.div>
@@ -257,44 +263,60 @@ const EditableCaseFile: FC<Props> = (props) => {
               style={{
                 display: 'flex',
                 justifyContent: 'space-between',
+                alignItems: 'center',
+                gap: 8,
               }}
               aria-live="polite"
             >
-              <Box
-                display="flex"
-                alignItems="center"
-                component={caseFile.canOpen ? 'button' : undefined}
-                onClick={() => {
-                  if (caseFile.canOpen && caseFile.id) {
-                    onOpen?.(caseFile.id)
-                  }
-                }}
-              >
-                <Text variant="h5">
-                  <span
+              <Box>
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  columnGap={1}
+                  component={caseFile.canOpen ? 'button' : undefined}
+                  onClick={() => {
+                    if (caseFile.canOpen && caseFile.id) {
+                      onOpen?.(caseFile.id)
+                    }
+                  }}
+                >
+                  <Text variant="h5">
+                    <span
+                      style={{
+                        display: 'block',
+                        maxWidth: `${width - (displayDate ? 180 : 90)}px`,
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                        ...(disabled ? { color: theme.color.dark300 } : {}),
+                      }}
+                    >
+                      {displayName}
+                    </span>
+                  </Text>
+                  {caseFile.canOpen && (
+                    <Icon
+                      icon="open"
+                      type="outline"
+                      size="small"
+                      color={disabled ? 'dark300' : undefined}
+                    />
+                  )}
+                </Box>
+                {caseFile.supplement && (
+                  <Box
                     style={{
-                      display: 'block',
-                      maxWidth: `${width - 180}px`,
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap',
                       ...(disabled ? { color: theme.color.dark300 } : {}),
                     }}
                   >
-                    {displayName}
-                  </span>
-                </Text>
-                {caseFile.canOpen && (
-                  <Box marginLeft={1}>
-                    <Icon icon="open" type="outline" size="small" />
+                    {disabled
+                      ? caseFile.supplement.disabled
+                      : caseFile.supplement.enabled}
                   </Box>
                 )}
               </Box>
-              <Box display="flex" alignItems="center">
-                <Box marginRight={1}>
-                  <Text variant="small">{displayDate}</Text>
-                </Box>
-
+              <Box display="flex" alignItems="center" columnGap={1}>
+                {displayDate && <Text variant="small">{displayDate}</Text>}
                 {caseFile.status === FileUploadStatus.uploading ? (
                   <Box className={styles.editCaseFileButton}>
                     <LoadingDots single />
@@ -318,11 +340,14 @@ const EditableCaseFile: FC<Props> = (props) => {
                       onStartEditing?.()
                     }}
                     className={cn(styles.editCaseFileButton, {
+                      [styles.background.disabled]: disabled,
                       [styles.background.primary]:
+                        !disabled &&
                         !!caseFile.canEdit?.length &&
                         caseFile.status !== FileUploadStatus.error,
                       [styles.background.secondary]:
-                        caseFile.status === FileUploadStatus.error || isEmpty,
+                        !disabled &&
+                        (caseFile.status === FileUploadStatus.error || isEmpty),
                     })}
                     disabled={!caseFile.canEdit?.length || disabled}
                     aria-label="Breyta skrá"

@@ -1,12 +1,12 @@
 import { buildForm, buildSection } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { information, externalData, confirmation } from '../lib/messages'
-import { Logo } from '../assets/Logo'
+import { TransportAuthorityLogo } from '@island.is/application/assets/institution-logos'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 
 export const Confirmation: Form = buildForm({
   id: 'ConfirmationForm',
-  logo: Logo,
+  logo: TransportAuthorityLogo,
   mode: FormModes.COMPLETED,
   children: [
     buildSection({

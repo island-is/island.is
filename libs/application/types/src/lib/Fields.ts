@@ -24,6 +24,7 @@ import React, { CSSProperties } from 'react'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { MessageDescriptor } from 'react-intl'
 import { Locale } from '@island.is/shared/types'
+import { FormatMessage } from './external'
 
 export type RecordObject<T = unknown> = Record<string, T>
 export type MaybeWithApplication<T> = T | ((application: Application) => T)
@@ -102,6 +103,7 @@ type TableRepeaterOptions =
       application: Application,
       activeField?: Record<string, string>,
       locale?: Locale,
+      formatMessage?: FormatMessage,
     ) => RepeaterOption[] | [])
 
 type MaybeWithApplicationAndActiveField<T> =
@@ -143,7 +145,7 @@ export type RepeaterItem = {
    * Defaults to true
    */
   displayInTable?: boolean
-  label?: StaticText
+  label?: MaybeWithIndex<StaticText>
   phoneLabel?: StaticText
   emailLabel?: StaticText
   customNameLabel?: StaticText
@@ -184,6 +186,7 @@ export type RepeaterItem = {
         ) => string | string[] | undefined)
   }
   clearOnChange?: MaybeWithIndex<string[]>
+  clearOnChangeDefaultValue?: string | boolean | number | undefined
   setOnChange?:
     | { key: string; value: any }[]
     | ((
@@ -208,11 +211,13 @@ export type RepeaterItem = {
       suffix?: FormText
       max?: number
       min?: number
+      allowNegative?: boolean
     }
   | {
       component: 'phone'
       allowedCountryCodes?: string[]
       enableCountrySelector?: boolean
+      format?: string
     }
   | {
       component: 'date'
@@ -242,10 +247,8 @@ export type RepeaterItem = {
       component: 'nationalIdWithName'
       nationalIdDefaultValue?: string
       nameDefaultValue?: string
-    }
-  | {
-      component: 'phone'
-      format: string
+      searchPersons?: boolean
+      searchCompanies?: boolean
     }
   | {
       component: 'selectAsync'
@@ -280,6 +283,7 @@ export type RepeaterItem = {
       errorTitle?: FormText
       fallbackErrorMessage?: FormText
       validationFailedErrorMessage?: FormText
+      isTrailer?: boolean
     }
   | {
       component: 'description'
@@ -346,6 +350,14 @@ export interface BaseField extends FormItem {
   marginBottom?: BoxProps['marginBottom']
   marginTop?: BoxProps['marginTop']
   clearOnChange?: string[]
+  clearOnChangeDefaultValue?:
+    | string
+    | string[]
+    | boolean
+    | boolean[]
+    | number
+    | number[]
+    | undefined
   setOnChange?:
     | { key: string; value: any }[]
     | ((
@@ -544,6 +556,7 @@ export interface TextField extends InputField {
   showMaxLength?: boolean
   max?: number
   min?: number
+  allowNegative?: boolean
   step?: string
   placeholder?: FormText
   variant?: TextFieldVariant
@@ -701,6 +714,10 @@ export interface PaymentChargeOverviewField extends BaseField {
   component: FieldComponents.PAYMENT_CHARGE_OVERVIEW
   forPaymentLabel: StaticText
   totalLabel: StaticText
+  unitPriceLabel?: StaticText
+  quantityLabel?: StaticText
+  quantityUnitLabel?: StaticText
+  totalPerUnitLabel?: StaticText
   getSelectedChargeItems: (application: Application) => {
     chargeItemCode: string
     chargeItemQuantity?: number
@@ -759,6 +776,7 @@ export interface NationalIdWithNameField extends InputField {
   phoneLabel?: StaticText
   emailLabel?: StaticText
   titleVariant?: TitleVariants
+  readonly?: boolean
 }
 
 type Modify<T, R> = Omit<T, keyof R> & R
@@ -846,7 +864,7 @@ export type FieldsRepeaterField = BaseField & {
   addItemButtonText?: StaticText
   saveItemButtonText?: StaticText
   hideRemoveButton?: boolean
-  hideAddButton?: boolean
+  hideAddButton?: MaybeWithApplication<boolean>
   displayTitleAsAccordion?: boolean
   itemCondition?: MaybeWithIndexAndApplication<boolean>
   fields: Record<string, RepeaterItem>
@@ -893,6 +911,7 @@ export interface FindVehicleField extends InputField {
   requiredValidVehicleErrorMessage?: FormText
   isMachine?: boolean
   isEnergyFunds?: boolean
+  isMileCar?: boolean
   energyFundsMessages?: Record<string, FormText>
 }
 
@@ -938,6 +957,7 @@ export interface HiddenInputWithWatchedValueField extends BaseField {
   type: FieldTypes.HIDDEN_INPUT_WITH_WATCHED_VALUE
   component: FieldComponents.HIDDEN_INPUT
   valueModifier?: (value: unknown, application?: Application) => unknown
+  dontDefaultToEmptyString?: boolean
 }
 
 export interface HiddenInputField extends BaseField {
@@ -1091,6 +1111,7 @@ export interface VehiclePermnoWithInfoField extends InputField {
   errorTitle?: FormText
   fallbackErrorMessage?: FormText
   validationFailedErrorMessage?: FormText
+  isTrailer: boolean
 }
 
 export type Field =

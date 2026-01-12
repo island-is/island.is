@@ -1,18 +1,30 @@
-import { NO, YES, YesOrNo, getValueViaPath } from '@island.is/application/core'
+import {
+  NO,
+  YES,
+  YesOrNo,
+  corePendingActionMessages,
+  getValueViaPath,
+} from '@island.is/application/core'
 import {
   Application,
   ExternalData,
   FormValue,
+  PendingAction,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { info, isValid } from 'kennitala'
 import { MessageDescriptor } from 'react-intl'
-import { newPrimarySchoolMessages } from '../lib/messages'
+import {
+  differentNeedsMessages,
+  pendingActionMessages,
+  sharedMessages,
+} from '../lib/messages'
 import {
   Affiliation,
   Child,
   ChildInformation,
+  FileType,
   FriggChildInformation,
   HealthProfileModel,
   Organization,
@@ -25,11 +37,17 @@ import {
 } from '../types'
 import {
   AgentType,
+  ApplicationFeatureConfigType,
   ApplicationType,
+  AttachmentOptions,
   CaseWorkerInputTypeEnum,
   FIRST_GRADE_AGE,
+  OptionsType,
+  OrganizationSector,
+  OrganizationSubType,
+  PayerOption,
   ReasonForApplicationOptions,
-  SchoolType,
+  Roles,
 } from './constants'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
@@ -55,14 +73,14 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
   const [reasonForApplicationId, reasonForApplication] =
     reasonForApplicationIdAndKey?.split('::') ?? []
 
-  const reasonForApplicationStreetAddress = getValueViaPath<string>(
+  const counsellingRegardingApplication = getValueViaPath<string>(
     answers,
-    'reasonForApplication.transferOfLegalDomicile.streetAddress',
+    'counsellingRegardingApplication.counselling',
   )
 
-  const reasonForApplicationPostalCode = getValueViaPath<string>(
+  const hasVisitedSchool = getValueViaPath<YesOrNo>(
     answers,
-    'reasonForApplication.transferOfLegalDomicile.postalCode',
+    'counsellingRegardingApplication.hasVisitedSchool',
   )
 
   const siblings = getValueViaPath<SiblingsRow[]>(answers, 'siblings') ?? []
@@ -173,6 +191,133 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     NO,
   )
 
+  const specialEducationHasWelfareContact = getValueViaPath<YesOrNo>(
+    answers,
+    'specialEducationSupport.hasWelfareContact',
+  )
+
+  const specialEducationWelfareContactName = getValueViaPath<string>(
+    answers,
+    'specialEducationSupport.welfareContact.name',
+  )
+
+  const specialEducationWelfareContactEmail = getValueViaPath<string>(
+    answers,
+    'specialEducationSupport.welfareContact.email',
+  )
+
+  const specialEducationHasCaseManager = getValueViaPath<YesOrNo>(
+    answers,
+    'specialEducationSupport.hasCaseManager',
+  )
+
+  const specialEducationCaseManagerName = getValueViaPath<string>(
+    answers,
+    'specialEducationSupport.caseManager.name',
+  )
+
+  const specialEducationCaseManagerEmail = getValueViaPath<string>(
+    answers,
+    'specialEducationSupport.caseManager.email',
+  )
+
+  const specialEducationHasIntegratedServices = getValueViaPath<YesOrNo>(
+    answers,
+    'specialEducationSupport.hasIntegratedServices',
+  )
+
+  const hasAssessmentOfSupportNeeds = getValueViaPath<YesOrNo>(
+    answers,
+    'specialEducationSupport.hasAssessmentOfSupportNeeds',
+  )
+
+  const isAssessmentOfSupportNeedsInProgress = getValueViaPath<YesOrNo>(
+    answers,
+    'specialEducationSupport.isAssessmentOfSupportNeedsInProgress',
+  )
+
+  const supportNeedsAssessmentBy = getValueViaPath<string>(
+    answers,
+    'specialEducationSupport.supportNeedsAssessmentBy',
+  )
+
+  const hasConfirmedDiagnosis = getValueViaPath<YesOrNo>(
+    answers,
+    'specialEducationSupport.hasConfirmedDiagnosis',
+  )
+
+  const isDiagnosisInProgress = getValueViaPath<YesOrNo>(
+    answers,
+    'specialEducationSupport.isDiagnosisInProgress',
+  )
+
+  const diagnosticians =
+    getValueViaPath<string[]>(
+      answers,
+      'specialEducationSupport.diagnosticians',
+    ) ?? []
+
+  const hasOtherSpecialists = getValueViaPath<YesOrNo>(
+    answers,
+    'specialEducationSupport.hasOtherSpecialists',
+  )
+
+  const specialists =
+    getValueViaPath<string[]>(answers, 'specialEducationSupport.specialists') ??
+    []
+
+  const hasReceivedServicesFromMunicipality = getValueViaPath<YesOrNo>(
+    answers,
+    'specialEducationSupport.hasReceivedServicesFromMunicipality',
+  )
+
+  const servicesFromMunicipality =
+    getValueViaPath<string[]>(
+      answers,
+      'specialEducationSupport.servicesFromMunicipality',
+    ) ?? []
+
+  const hasReceivedChildAndAdolescentPsychiatryServices =
+    getValueViaPath<YesOrNo>(
+      answers,
+      'specialEducationSupport.hasReceivedChildAndAdolescentPsychiatryServices',
+    )
+
+  const isOnWaitlistForServices = getValueViaPath<YesOrNo>(
+    answers,
+    'specialEducationSupport.isOnWaitlistForServices',
+  )
+
+  const childAndAdolescentPsychiatryDepartment = getValueViaPath<string>(
+    answers,
+    'specialEducationSupport.childAndAdolescentPsychiatryDepartment',
+  )
+
+  const childAndAdolescentPsychiatryServicesReceived =
+    getValueViaPath<string[]>(
+      answers,
+      'specialEducationSupport.childAndAdolescentPsychiatryServicesReceived',
+    ) ?? []
+
+  const hasBeenReportedToChildProtectiveServices = getValueViaPath<YesOrNo>(
+    answers,
+    'specialEducationSupport.hasBeenReportedToChildProtectiveServices',
+  )
+
+  const isCaseOpenWithChildProtectiveServices = getValueViaPath<YesOrNo>(
+    answers,
+    'specialEducationSupport.isCaseOpenWithChildProtectiveServices',
+  )
+
+  const payer = getValueViaPath<PayerOption>(answers, 'payer.option')
+
+  const payerName = getValueViaPath<string>(answers, 'payer.other.name')
+
+  const payerNationalId = getValueViaPath<string>(
+    answers,
+    'payer.other.nationalId',
+  )
+
   const expectedStartDate = getValueViaPath<string>(
     answers,
     'startingSchool.expectedStartDate',
@@ -199,19 +344,13 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'newSchool.municipality',
   )
 
-  const selectedSchoolIdAndType = getValueViaPath<string>(
-    answers,
-    'newSchool.school',
-  )
+  const selectedSchoolId = getValueViaPath<string>(answers, 'newSchool.school')
 
-  // School type is piggybacked on the value like 'id::subType::sector'
-  const [selectedSchool, selectedSchoolSubType, selectedSchoolSector] =
-    selectedSchoolIdAndType?.split('::') ?? []
-
-  const selectedSchoolType = getValueViaPath<SchoolType>(
-    answers,
-    'newSchool.type',
-  )
+  const alternativeSpecialEducationDepartment =
+    getValueViaPath<Array<{ department: string }>>(
+      answers,
+      'newSchool.alternativeSpecialEducationDepartment',
+    ) ?? []
 
   const currentNurseryMunicipality = getValueViaPath<string>(
     answers,
@@ -233,6 +372,40 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'currentSchool.school',
   )
 
+  const attachmentsFiles =
+    getValueViaPath<FileType[]>(answers, 'attachments.files') ?? []
+
+  const attachmentsAnswer = getValueViaPath<AttachmentOptions>(
+    answers,
+    'attachments.answer',
+  )
+
+  const terms = getValueViaPath<YesOrNo>(answers, 'acceptTerms[0]', NO)
+
+  const fieldInspection = getValueViaPath<YesOrNo>(
+    answers,
+    'childCircumstances.onSiteObservation[0]',
+    NO,
+  )
+
+  const additionalDataProvisioning = getValueViaPath<YesOrNo>(
+    answers,
+    'childCircumstances.onSiteObservationAdditionalInfo[0]',
+    NO,
+  )
+
+  const outsideSpecialist = getValueViaPath<YesOrNo>(
+    answers,
+    'childCircumstances.callInExpert[0]',
+    NO,
+  )
+
+  const childViewOnApplication = getValueViaPath<YesOrNo>(
+    answers,
+    'childCircumstances.childViews[0]',
+    NO,
+  )
+
   return {
     applicationType,
     childNationalId,
@@ -241,8 +414,8 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     relatives,
     reasonForApplication,
     reasonForApplicationId,
-    reasonForApplicationStreetAddress,
-    reasonForApplicationPostalCode,
+    counsellingRegardingApplication,
+    hasVisitedSchool,
     siblings,
     languageEnvironmentId,
     languageEnvironment,
@@ -266,19 +439,50 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     caseManagerName,
     caseManagerEmail,
     requestingMeeting,
+    specialEducationHasWelfareContact,
+    specialEducationWelfareContactName,
+    specialEducationWelfareContactEmail,
+    specialEducationHasCaseManager,
+    specialEducationCaseManagerName,
+    specialEducationCaseManagerEmail,
+    specialEducationHasIntegratedServices,
+    hasAssessmentOfSupportNeeds,
+    isAssessmentOfSupportNeedsInProgress,
+    supportNeedsAssessmentBy,
+    hasConfirmedDiagnosis,
+    isDiagnosisInProgress,
+    diagnosticians,
+    hasOtherSpecialists,
+    specialists,
+    hasReceivedServicesFromMunicipality,
+    servicesFromMunicipality,
+    hasReceivedChildAndAdolescentPsychiatryServices,
+    isOnWaitlistForServices,
+    childAndAdolescentPsychiatryDepartment,
+    childAndAdolescentPsychiatryServicesReceived,
+    hasBeenReportedToChildProtectiveServices,
+    isCaseOpenWithChildProtectiveServices,
+    payer,
+    payerName,
+    payerNationalId,
     expectedStartDate,
     expectedStartDateHiddenInput,
     temporaryStay,
     expectedEndDate,
     schoolMunicipality,
-    selectedSchool,
-    selectedSchoolSubType,
-    selectedSchoolSector,
-    selectedSchoolType,
+    selectedSchoolId,
+    alternativeSpecialEducationDepartment,
     currentNurseryMunicipality,
     currentNursery,
     applyForPreferredSchool,
     currentSchoolId,
+    attachmentsFiles,
+    attachmentsAnswer,
+    terms,
+    fieldInspection,
+    additionalDataProvisioning,
+    outsideSpecialist,
+    childViewOnApplication,
   }
 }
 
@@ -482,26 +686,28 @@ export const determineNameFromApplicationAnswers = (
   const { applicationType } = getApplicationAnswers(application.answers)
 
   if (!applicationType) {
-    return newPrimarySchoolMessages.shared.applicationName
+    return sharedMessages.applicationName
   }
 
   return applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
-    ? newPrimarySchoolMessages.shared.enrollmentApplicationName
-    : newPrimarySchoolMessages.shared.newPrimarySchoolApplicationName
+    ? sharedMessages.enrollmentApplicationName
+    : applicationType === ApplicationType.CONTINUING_ENROLLMENT
+    ? sharedMessages.continuingEnrollmentApplicationName
+    : sharedMessages.newPrimarySchoolApplicationName
 }
 
 export const formatGender = (genderCode?: string): MessageDescriptor => {
   switch (genderCode) {
     case '1':
     case '3':
-      return newPrimarySchoolMessages.shared.male
+      return sharedMessages.male
     case '2':
     case '4':
-      return newPrimarySchoolMessages.shared.female
+      return sharedMessages.female
     case '7':
     case '8':
     default:
-      return newPrimarySchoolMessages.shared.otherGender
+      return sharedMessages.otherGender
   }
 }
 
@@ -520,33 +726,47 @@ export const getApplicationType = (
 ) => {
   const { childNationalId } = getApplicationAnswers(answers)
   const { childInformation } = getApplicationExternalData(externalData)
-
   const currentYear = new Date().getFullYear()
   const firstGradeYear = currentYear - FIRST_GRADE_AGE
   const nationalId = childNationalId || ''
-
-  if (!isValid(nationalId)) {
-    return ApplicationType.NEW_PRIMARY_SCHOOL
-  }
-
   const nationalIdInfo = info(nationalId)
   const yearOfBirth = nationalIdInfo?.birthday?.getFullYear()
 
-  if (!yearOfBirth) {
+  // Needed to test ENROLLMENT_IN_PRIMARY_SCHOOL application on dev
+  if (
+    (isRunningOnEnvironment('local') || isRunningOnEnvironment('dev')) &&
+    nationalId === '5555555559' // Bína Maack
+  ) {
+    return ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
+  }
+
+  if (!isValid(nationalId) || !yearOfBirth) {
+    return undefined
+  }
+
+  // temporary check - need to be fixed before february 2026 after testing phase
+  // is over and rule about enrollment age has been finalized.
+  // if the child is 1 to 6 years old, it's an enrollment application
+  // so the year of birth can be between currentYear - 6 and currentYear - 1
+
+  // if the child is a first grader and not currently enrolled in a primary
+  // school, set the application type to enrollment in primary school
+  if (
+    yearOfBirth >= firstGradeYear &&
+    yearOfBirth <= currentYear - 1 &&
+    !childInformation?.primaryOrgId
+  ) {
+    return ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
+  }
+
+  // if the child is not a first grader and not currently enrolled in a primary
+  // school (no data in Frigg), set the application type to new primary school
+  if (yearOfBirth !== firstGradeYear && !childInformation?.primaryOrgId) {
     return ApplicationType.NEW_PRIMARY_SCHOOL
   }
 
-  // If there is no data in Frigg about the child, we need to determine the application type based on the year of birth
-  // REMOVE THIS WHEN ENROLLMENT_IN_PRIMARY_SCHOOL GOES LIVE
-  if (isRunningOnEnvironment('local') || isRunningOnEnvironment('dev')) {
-    if (!childInformation?.primaryOrgId) {
-      return yearOfBirth === firstGradeYear
-        ? ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
-        : ApplicationType.NEW_PRIMARY_SCHOOL
-    }
-  }
-
-  return ApplicationType.NEW_PRIMARY_SCHOOL
+  // else the application type should be determined by the applicant
+  return undefined
 }
 
 export const getGuardianByNationalId = (
@@ -624,4 +844,154 @@ export const getCurrentAndNextGrade = (grade: string): string[] => {
 
   // Only include the next grade if it's within bounds
   return next <= 10 ? [current, next.toString().padStart(2, '0')] : [current]
+}
+
+export const getSelectedSchoolData = (
+  externalData: ExternalData,
+  schoolId: string,
+) => {
+  const { schools } = getApplicationExternalData(externalData)
+
+  return schools.find((school) => school?.id === schoolId)
+}
+
+export const getSelectedSchoolSector = (
+  answers: FormValue,
+  externalData: ExternalData,
+) => {
+  const { selectedSchoolId } = getApplicationAnswers(answers)
+
+  if (!selectedSchoolId) {
+    return ''
+  }
+
+  return getSelectedSchoolData(externalData, selectedSchoolId)?.sector ?? ''
+}
+
+export const getSelectedSchoolSubType = (
+  answers: FormValue,
+  externalData: ExternalData,
+) => {
+  const { selectedSchoolId } = getApplicationAnswers(answers)
+
+  if (!selectedSchoolId) {
+    return ''
+  }
+
+  return getSelectedSchoolData(externalData, selectedSchoolId)?.subType ?? ''
+}
+
+export const getSelectedSchoolUnitId = (
+  answers: FormValue,
+  externalData: ExternalData,
+) => {
+  const { selectedSchoolId } = getApplicationAnswers(answers)
+  return selectedSchoolId
+    ? getSelectedSchoolData(externalData, selectedSchoolId)?.unitId ?? ''
+    : ''
+}
+
+export const payerApprovalStatePendingAction = (
+  _: Application,
+  role: string,
+): PendingAction => {
+  if (role === Roles.ASSIGNEE) {
+    return {
+      title: corePendingActionMessages.youNeedToReviewDescription,
+      content: pendingActionMessages.payerApprovalAssigneeDescription,
+      displayStatus: 'warning',
+    }
+  } else {
+    return {
+      title: corePendingActionMessages.waitingForReviewTitle,
+      content: pendingActionMessages.payerApprovalApplicantDescription,
+      displayStatus: 'info',
+    }
+  }
+}
+
+export const otherGuardianApprovalStatePendingAction = (
+  _: Application,
+  role: string,
+): PendingAction => {
+  if (role === Roles.ASSIGNEE) {
+    return {
+      title: corePendingActionMessages.youNeedToReviewDescription,
+      content: pendingActionMessages.otherGuardianApprovalAssigneeDescription,
+      displayStatus: 'warning',
+    }
+  } else {
+    return {
+      title: corePendingActionMessages.waitingForReviewTitle,
+      content: pendingActionMessages.otherGuardianApprovalApplicantDescription,
+      displayStatus: 'info',
+    }
+  }
+}
+
+export const getSpecialEducationDepartmentsInMunicipality = (
+  answers: FormValue,
+  externalData: ExternalData,
+) => {
+  const { schoolMunicipality } = getApplicationAnswers(answers)
+  const { schools, childGradeLevel } = getApplicationExternalData(externalData)
+
+  const specialEducationSubtypes = [
+    OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT,
+    OrganizationSubType.SPECIAL_EDUCATION_DISABILITY_DEPARTMENT,
+  ]
+
+  return schools.filter(
+    ({ subType, address, gradeLevels }) =>
+      address?.municipalityId === schoolMunicipality &&
+      specialEducationSubtypes.includes(subType) &&
+      (childGradeLevel
+        ? gradeLevels.some((grade) =>
+            getCurrentAndNextGrade(childGradeLevel).includes(grade),
+          )
+        : true),
+  )
+}
+
+export const getWelfareContactDescription = (application: Application) => {
+  const { applicationType } = getApplicationAnswers(application.answers)
+
+  return applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
+    ? differentNeedsMessages.support.hasWelfareNurserySchoolContactDescription
+    : differentNeedsMessages.support.hasWelfarePrimarySchoolContactDescription
+}
+
+export const getReasonOptionsType = (
+  answers: FormValue,
+  externalData: ExternalData,
+) => {
+  const selectedSchoolSector = getSelectedSchoolSector(answers, externalData)
+  const selectedSchoolSubType = getSelectedSchoolSubType(answers, externalData)
+
+  return selectedSchoolSubType === OrganizationSubType.INTERNATIONAL_SCHOOL
+    ? OptionsType.REASON_INTERNATIONAL_SCHOOL
+    : selectedSchoolSector === OrganizationSector.PRIVATE
+    ? OptionsType.REASON_PRIVATE_SCHOOL
+    : OptionsType.REASON
+}
+
+export const mapApplicationType = (answers: FormValue) => {
+  const { applicationType, applyForPreferredSchool } =
+    getApplicationAnswers(answers)
+
+  switch (applicationType) {
+    case ApplicationType.NEW_PRIMARY_SCHOOL:
+      return ApplicationFeatureConfigType.TRANSFER
+
+    case ApplicationType.CONTINUING_ENROLLMENT:
+      return ApplicationFeatureConfigType.CONTINUATION
+
+    case ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL:
+      return applyForPreferredSchool === YES
+        ? ApplicationFeatureConfigType.ENROLLMENT
+        : ApplicationFeatureConfigType.TRANSFER
+
+    default:
+      return ApplicationFeatureConfigType.ENROLLMENT
+  }
 }

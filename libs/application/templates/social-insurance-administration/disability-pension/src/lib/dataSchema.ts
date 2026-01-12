@@ -501,16 +501,17 @@ export const dataSchema = z.object({
   selfEvaluationAssistance: z.object({
     assistance: z.enum([YES, NO]),
   }),
-  questionAnswer: z.object({
-    id: z.string(),
-    answer: z.string(),
-  }),
   capabilityImpairment: z.object({
     questionAnswers: z
       .array(
         z.object({
           id: z.string(),
-          answer: z.string(),
+          answer: z
+            .string()
+            .min(1)
+            .refine((v) => !!v && v.trim().length > 0, {
+              params: errorMessages.selfAssessmentQuestionRequired,
+            }),
         }),
       )
       .optional()

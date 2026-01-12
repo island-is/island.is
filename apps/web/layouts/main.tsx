@@ -217,9 +217,15 @@ const Layout: Screen<LayoutProps> = ({
           )}`,
           ...customAlertBannerContent,
         },
-      ].filter(
-        (banner) => !Cookies.get(banner.bannerId) && banner?.showAlertBanner,
-      ),
+      ].filter((banner) => {
+        return (
+          !Cookies.get(banner.bannerId) &&
+          banner.showAlertBanner &&
+          (Boolean(banner.title) ||
+            Boolean(banner.description) ||
+            (Boolean(banner.linkTitle) && Boolean(banner.link)))
+        )
+      }),
     )
   }, [
     alertBannerContent,

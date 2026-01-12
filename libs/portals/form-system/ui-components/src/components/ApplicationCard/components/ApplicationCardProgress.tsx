@@ -25,7 +25,7 @@ const DraftProgressMeter = ({
 }: Props) => {
   const { status } = application
   const { formatMessage } = useLocale()
-  if (status !== ApplicationStatus.IN_PROGRESS) return null
+  if (status !== ApplicationStatus.DRAFT) return null
 
   const draftFinishedSteps =
     application.sections?.filter((s) =>

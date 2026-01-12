@@ -104,6 +104,7 @@ const extractCommonVehicleInfo = function (
     color: basicInfo.color || '',
     requireMileage: basicInfo.requireMileage || false,
     mileageReading: (basicInfo?.mileageReading || '') as string,
+    vehicleHasMilesOdometer: basicInfo.vehicleHasMilesOdometer || false,
   }
 }
 
@@ -160,6 +161,7 @@ export const extractDetails = function (
   ) {
     return {
       ...extractCommonVehicleInfo(response),
+      isDebtLess: true,
     }
   } else if (isResponseType<MachineDetails>(response, 'MachineDetails')) {
     return {

@@ -323,6 +323,17 @@ export const m = defineMessages({
     defaultMessage: 'Úps! Eitthvað fór úrskeiðis við að sækja gögnin',
     description: 'Oops! Something went wrong when fetching your data',
   },
+  errorExpirationValidationTitle: {
+    id: 'pa.application:error.expirationValidationTitle',
+    defaultMessage: 'Villa kom upp við að skila inn umsókn',
+    description: 'Error title when expiration validation fails',
+  },
+  errorExpirationValidationSummary: {
+    id: 'pa.application:error.expirationValidationSummary',
+    defaultMessage:
+      'Ekki tókst að staðfesta að vegabréfið þitt renni út innan 6 mánaða',
+    description: 'Error summary when expiration validation fails',
+  },
 
   /* Waiting For Confirmation Section */
   waitingForConfirmationTitle: {
