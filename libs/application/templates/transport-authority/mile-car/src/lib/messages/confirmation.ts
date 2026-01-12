@@ -21,6 +21,11 @@ export const confirmation = defineMessages({
     defaultMessage: 'Hvað gerist næst?',
     description: 'confirmation accordion title',
   },
+  accordionIntro: {
+    id: 'mcar.application:confirmation.accordionIntro',
+    defaultMessage: 'umsókn þín hefur verið móttekin og verður skoðuð.',
+    description: 'confirmation accordion intro',
+  },
   accordionText: {
     id: 'mcar.application:confirmation.accordionText',
     defaultMessage:
