@@ -2668,6 +2668,37 @@ export class CaseService {
         })
     }
 
+    if (method === 'audkenni') {
+      if (!theCase.judge?.nationalId) {
+        throw new Error('Judge national ID is required for Audkenni signing')
+      }
+
+      return this.signingService
+        .requestSignatureAudkenni(
+          theCase.judge.nationalId,
+          theCase.judge?.name ?? '',
+          'Ísland',
+          'ruling.pdf',
+          pdf,
+          'Undirrita skjal - Öryggistala',
+        )
+        .catch((error) => {
+          this.eventService.postErrorEvent(
+            `Failed to request a ruling signature via ${method}`,
+            {
+              caseId: theCase.id,
+              policeCaseNumbers: theCase.policeCaseNumbers.join(', '),
+              courtCaseNumber: theCase.courtCaseNumber,
+              actor: theCase.judge?.name,
+              institution: theCase.judge?.institution?.name,
+            },
+            error,
+          )
+
+          throw error
+        })
+    }
+
     return this.signingService
       .requestSignature(
         judge.mobileNumber,

@@ -117,6 +117,7 @@ import { SignatureConfirmationResponse } from './models/signatureConfirmation.re
 import { transitionCase } from './state/case.state'
 import { CaseService } from './case.service'
 import { PdfService } from './pdf.service'
+import { Transaction } from 'sequelize'
 
 @Controller('api')
 @ApiTags('cases')
@@ -872,6 +873,69 @@ export class CaseController {
         user,
         documentToken,
         method,
+        transaction,
+      ),
+    )
+  }
+
+  private async handleRequestRulingSignature(
+    caseId: string,
+    theCase: Case,
+    method: 'audkenni' | 'mobile',
+  ): Promise<SigningServiceResponse> {
+    this.logger.debug(
+      `Requesting a signature via ${method} for the ruling of case ${caseId}`,
+    )
+
+    return this.caseService
+      .requestRulingSignature(theCase, method)
+      .catch((error) => {
+        if (error instanceof DokobitError) {
+          throw new HttpException(
+            {
+              statusCode: error.status,
+              message: `Failed to request a ruling signature via ${method} for case ${caseId}`,
+              code: error.code,
+              error: error.message,
+            },
+            error.status,
+          )
+        }
+
+        throw error
+      })
+  }
+
+  @UseGuards(
+    RolesGuard,
+    CaseExistsGuard,
+    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    CaseWriteGuard,
+  )
+  @RolesRules(
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+  )
+  @Get('case/:caseId/courtRecord/signature/audkenni')
+  @ApiOkResponse({
+    type: SignatureConfirmationResponse,
+    description:
+      'Confirms a previously requested court record signature via Audkenni for an existing case',
+  })
+  async getCourtRecordSignatureConfirmationAudkenni(
+    @Param('caseId') caseId: string,
+    @CurrentHttpUser() user: User,
+    @CurrentCase() theCase: Case,
+    @Query('documentToken') documentToken: string,
+  ): Promise<SignatureConfirmationResponse> {
+    return this.sequelize.transaction((transaction) =>
+      this.handleGetCourtRecordSignatureConfirmation(
+        caseId,
+        theCase,
+        user,
+        documentToken,
+        'audkenni',
         transaction,
       ),
     )
