@@ -41,8 +41,11 @@ import {
   CurrentCase,
   PdfService,
 } from '../case'
-import { CurrentDefendant } from '../defendant/guards/defendant.decorator'
-import { DefendantExistsGuard } from '../defendant/guards/defendantExists.guard'
+import {
+  CurrentDefendant,
+  DefendantExistsGuard,
+  SplitDefendantExistsGuard,
+} from '../defendant'
 import { Case, Defendant, Subpoena } from '../repository'
 import { CurrentSubpoena } from './guards/subpoena.decorator'
 import {
@@ -59,7 +62,6 @@ import { SubpoenaService } from './subpoena.service'
   CaseExistsGuard,
   new CaseTypeGuard(indictmentCases),
   CaseReadGuard,
-  DefendantExistsGuard,
 )
 export class SubpoenaController {
   constructor(
@@ -76,7 +78,7 @@ export class SubpoenaController {
     districtCourtRegistrarRule,
   )
   @Get(':subpoenaId')
-  @UseGuards(SubpoenaExistsGuard)
+  @UseGuards(DefendantExistsGuard, SubpoenaExistsGuard)
   @ApiOkResponse({
     type: Subpoena,
     description: 'Gets the subpoena for a given defendant',
@@ -106,7 +108,10 @@ export class SubpoenaController {
     districtCourtAssistantRule,
   )
   @Get(['', ':subpoenaId/pdf'])
-  @UseGuards(SubpoenaExistsOptionalGuard)
+  // Strictly speaking, only district court users need access to
+  // split case defendants' subpoenas
+  // However, giving prosecution users access does not pose a security risk
+  @UseGuards(SplitDefendantExistsGuard, SubpoenaExistsOptionalGuard)
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
     content: { 'application/pdf': {} },
@@ -151,7 +156,10 @@ export class SubpoenaController {
     districtCourtAssistantRule,
   )
   @Get(':subpoenaId/serviceCertificate')
-  @UseGuards(SubpoenaExistsGuard)
+  // Strictly speaking, only district court users need access to
+  // split case defendants' subpoena service certificates
+  // However, giving prosecution users access does not pose a security risk
+  @UseGuards(SplitDefendantExistsGuard, SubpoenaExistsGuard)
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
     content: { 'application/pdf': {} },

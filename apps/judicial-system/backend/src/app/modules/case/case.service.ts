@@ -460,6 +460,22 @@ export const include: Includeable[] = [
         as: 'defendants',
         required: false,
         order: [['created', 'ASC']],
+        include: [
+          {
+            model: Subpoena,
+            as: 'subpoenas',
+            required: false,
+            order: [['created', 'DESC']],
+            separate: true,
+          },
+        ],
+        separate: true,
+      },
+      {
+        model: CaseFile,
+        as: 'caseFiles',
+        required: false,
+        where: { state: { [Op.not]: CaseFileState.DELETED } },
         separate: true,
       },
     ],
@@ -2724,44 +2740,42 @@ export class CaseService {
       'demands',
     ]
 
-    return this.sequelize
-      .transaction(async (transaction) => {
-        const extendedCase = await this.createCase(
-          {
-            ...(isRestrictionCase(theCase.type)
-              ? pick(theCase, copiedExtendRestrictionCaseFields)
-              : pick(theCase, copiedExtendInvestigationCaseFields)),
-            parentCaseId: theCase.id,
-            initialRulingDate: theCase.initialRulingDate ?? theCase.rulingDate,
-            creatingProsecutorId: user.id,
-            prosecutorId: user.id,
-            prosecutorsOfficeId: user.institution?.id,
-          },
-          transaction,
-        )
+    return this.sequelize.transaction(async (transaction) => {
+      const extendedCase = await this.createCase(
+        {
+          ...(isRestrictionCase(theCase.type)
+            ? pick(theCase, copiedExtendRestrictionCaseFields)
+            : pick(theCase, copiedExtendInvestigationCaseFields)),
+          parentCaseId: theCase.id,
+          initialRulingDate: theCase.initialRulingDate ?? theCase.rulingDate,
+          creatingProsecutorId: user.id,
+          prosecutorId: user.id,
+          prosecutorsOfficeId: user.institution?.id,
+        },
+        transaction,
+      )
 
-        if (theCase.defendants && theCase.defendants?.length > 0) {
-          await Promise.all(
-            theCase.defendants?.map((defendant) =>
-              this.defendantService.createForNewCase(
-                extendedCase.id,
-                {
-                  noNationalId: defendant.noNationalId,
-                  nationalId: defendant.nationalId,
-                  name: defendant.name,
-                  gender: defendant.gender,
-                  address: defendant.address,
-                  citizenship: defendant.citizenship,
-                },
-                transaction,
-              ),
+      if (theCase.defendants && theCase.defendants?.length > 0) {
+        await Promise.all(
+          theCase.defendants?.map((defendant) =>
+            this.defendantService.createForNewCase(
+              extendedCase.id,
+              {
+                noNationalId: defendant.noNationalId,
+                nationalId: defendant.nationalId,
+                name: defendant.name,
+                gender: defendant.gender,
+                address: defendant.address,
+                citizenship: defendant.citizenship,
+              },
+              transaction,
             ),
-          )
-        }
+          ),
+        )
+      }
 
-        return extendedCase
-      })
-      .then((extendedCase) => this.findById(extendedCase.id))
+      return extendedCase
+    })
   }
 
   async splitDefendantFromCase(
@@ -2776,6 +2790,14 @@ export class CaseService {
         defendant.id,
         { transaction },
       )
+
+      const fullSplitCase = await this.findById(
+        splitCase.id,
+        false,
+        transaction,
+      )
+
+      await this.handleCreateFirstCourtSession(fullSplitCase, transaction)
 
       await transaction.commit()
 

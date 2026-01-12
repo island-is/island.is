@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common'
 import { LshClientService } from './lsh.service'
-import { LshApiProvider } from './lsh.provider'
+import { LshApiProvider, LshQuestionnaireApiProvider } from './lsh.provider'
 
 @Module({
-  providers: [LshClientService, LshApiProvider],
+  providers: [LshClientService, LshApiProvider, LshQuestionnaireApiProvider],
   exports: [LshClientService],
 })
 export class LshClientModule {}
