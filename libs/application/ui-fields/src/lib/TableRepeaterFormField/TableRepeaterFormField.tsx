@@ -35,6 +35,7 @@ import { Item } from './TableRepeaterItem'
 import { Locale } from '@island.is/shared/types'
 import { useApolloClient } from '@apollo/client/react'
 import { uuid } from 'uuidv4'
+import { getDefaultValue } from '../../getDefaultValue'
 
 interface Props extends FieldBaseProps {
   field: TableRepeaterField
@@ -205,6 +206,22 @@ export const TableRepeaterFormField: FC<Props> = ({
         ...newValues,
       })
       setActiveIndex(0)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // Initialize with default values on mount
+  // only if no existing values are present and defaultValues is defined/non-empty
+  useEffect(() => {
+    const defaultValues = getDefaultValue(data, application, locale)
+    const oldValues = methods.getValues(data.id) || []
+    if (defaultValues && oldValues.length === 0) {
+      // Using setObjectValue to handle nested ids
+      const newValues = {}
+      setObjectWithNestedKey(newValues, data.id, defaultValues)
+      methods.reset({
+        ...newValues,
+      })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
