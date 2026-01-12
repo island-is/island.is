@@ -12,11 +12,11 @@ import {
   ApplicationConfigurations,
   ApplicationRole,
   DefaultEvents,
-  NationalRegistryUserApi,
   InstitutionNationalIds,
   defineTemplateApi,
-  NationalRegistrySpouseApi,
   UserProfileApi,
+  NationalRegistryV3UserApi,
+  NationalRegistryV3SpouseApi,
 } from '@island.is/application/types'
 import {
   coreMessages,
@@ -32,7 +32,7 @@ import {
   statesMessages as coreSIAStatesMessages,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import {
-  NationalRegistryCohabitantsApi,
+  NationalRegistryV3CohabitantsApi,
   SocialInsuranceAdministrationApplicantApi,
   SocialInsuranceAdministrationIsApplicantEligibleApi,
 } from '../dataProviders'
@@ -82,9 +82,9 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
               ],
               write: 'all',
               api: [
-                NationalRegistryUserApi,
-                NationalRegistryCohabitantsApi,
-                NationalRegistrySpouseApi,
+                NationalRegistryV3UserApi,
+                NationalRegistryV3CohabitantsApi,
+                NationalRegistryV3SpouseApi,
                 UserProfileApi.configure({
                   params: {
                     validateEmail: true,

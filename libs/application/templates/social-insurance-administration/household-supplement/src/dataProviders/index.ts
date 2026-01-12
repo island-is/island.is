@@ -1,14 +1,14 @@
 import { defineTemplateApi } from '@island.is/application/types'
 
 export {
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   UserProfileApi,
 } from '@island.is/application/types'
 
-export const NationalRegistryCohabitantsApi = defineTemplateApi({
+export const NationalRegistryV3CohabitantsApi = defineTemplateApi({
   action: 'getCohabitants',
   externalDataId: 'nationalRegistryCohabitants',
-  namespace: 'NationalRegistry',
+  namespace: 'NationalRegistryV3',
 })
 
 export const SocialInsuranceAdministrationApplicantApi = defineTemplateApi({

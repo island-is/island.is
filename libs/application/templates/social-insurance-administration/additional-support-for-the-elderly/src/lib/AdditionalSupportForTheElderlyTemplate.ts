@@ -12,10 +12,10 @@ import {
   ApplicationConfigurations,
   ApplicationRole,
   DefaultEvents,
-  NationalRegistryUserApi,
   InstitutionNationalIds,
   defineTemplateApi,
   UserProfileApi,
+  NationalRegistryV3UserApi,
 } from '@island.is/application/types'
 import {
   coreMessages,
@@ -25,9 +25,9 @@ import {
 } from '@island.is/application/core'
 
 import {
+  NationalRegistryV3CohabitantsApi,
   SocialInsuranceAdministrationApplicantApi,
   SocialInsuranceAdministrationIsApplicantEligibleApi,
-  NationalRegistryCohabitantsApi,
 } from '../dataProviders'
 import {
   Actions,
@@ -87,8 +87,8 @@ const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
               ],
               write: 'all',
               api: [
-                NationalRegistryUserApi,
-                NationalRegistryCohabitantsApi,
+                NationalRegistryV3UserApi,
+                NationalRegistryV3CohabitantsApi,
                 UserProfileApi.configure({
                   params: {
                     validateEmail: true,
