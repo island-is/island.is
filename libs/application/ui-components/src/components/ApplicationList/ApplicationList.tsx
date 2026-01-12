@@ -5,10 +5,7 @@ import {
   Stack,
   ToastContainer,
 } from '@island.is/island-ui/core'
-import {
-  ApplicationCard as ApplicationCardType,
-  InstitutionTypes,
-} from '@island.is/application/types'
+import { ApplicationCard as ApplicationCardType } from '@island.is/application/types'
 import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 import { Organization } from '@island.is/shared/types'
 import { ApplicationCard } from '../ApplicationCard/ApplicationCard'
