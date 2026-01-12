@@ -203,7 +203,7 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
               defenderNationalId,
               defenderEmail,
               defenderPhoneNumber,
-              caseFilesSharedWithDefender: Boolean(defenderName),
+              caseFilesSharedWithDefender: Boolean(defenderNationalId),
             })
           }
           onEmailChange={(defenderEmail: string | null) =>
