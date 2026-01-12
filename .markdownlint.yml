@@ -1,0 +1,4 @@
+line-length:
+  line_length: 500
+  heading_line_length: 80
+  code_block_line_length: 100

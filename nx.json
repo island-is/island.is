@@ -17,17 +17,25 @@
         "parallel": 1
       }
     },
-    "docker-test": {
-      "runner": "@nx/workspace/tasks-runners/default",
+    "ci": {
+      "runner": "nx-cloud",
       "options": {
-        "cacheableOperations": [],
-        "cacheDirectory": ".cache/nx"
+        "cacheableOperations": [
+          "build",
+          "lint",
+          "test",
+          "e2e",
+          "codegen/backend-client",
+          "codegen/backend-schema",
+          "codegen/frontend-client",
+          "generateDevIndexHTML"
+        ]
       }
     }
   },
-  "defaultProject": "web",
+  "nxCloudId": "64e4eb6a54304f090734e8df",
   "generators": {
-    "@nrwl/nx-plugin": {
+    "@nx/nx-plugin": {
       "plugin": {
         "linter": "eslint"
       }
@@ -51,6 +59,7 @@
       "application": {
         "style": "scss",
         "linter": "eslint",
+        "bundler": "webpack",
         "pascalCaseFiles": true,
         "babel": true
       },
@@ -98,7 +107,10 @@
       "inputs": ["production", "^production", "DevOps"]
     },
     "e2e": {
-      "inputs": ["default", "^production"]
+      "dependsOn": [],
+      "inputs": ["production", "^production", "DevOps"],
+      "outputs": [],
+      "cache": true
     },
     "lint": {
       "inputs": ["default", "{workspaceRoot}/.eslintrc.json"]
@@ -143,10 +155,25 @@
     "@nx/eslint:lint": {
       "inputs": ["default", "{workspaceRoot}/.eslintrc.json"],
       "cache": true
+    },
+    "@nx/next:build": {
+      "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": ["production", "^production", "DevOps"]
+    },
+    "@nx/webpack:webpack": {
+      "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": ["production", "^production", "DevOps"]
     }
   },
   "namedInputs": {
     "default": ["{projectRoot}/**/*", "sharedGlobals"],
+    "forceRebuild": [
+      {
+        "runtime": "node .github/actions/force-build.mjs"
+      }
+    ],
     "nodeVersion": [
       {
         "runtime": "node --version"
@@ -163,6 +190,7 @@
       "{workspaceRoot}/**/Dockerfile.*"
     ],
     "sharedGlobals": [
+      "{workspaceRoot}/infra/src/dsl/**/*",
       "{workspaceRoot}/eslint-local-rules.js",
       "{workspaceRoot}/nx.json",
       "{workspaceRoot}/tsconfig.base.json",
@@ -171,6 +199,7 @@
     ],
     "production": [
       "default",
+      "forceRebuild",
       "nodeVersion",
       "!{projectRoot}/.eslintrc.json",
       "!{projectRoot}/.storybook/**/*",
@@ -198,5 +227,16 @@
     ]
   },
   "useInferencePlugins": false,
-  "defaultBase": "main"
+  "defaultBase": "main",
+  "plugins": [
+    {
+      "plugin": "@nx/playwright/plugin",
+      "options": {
+        "targetName": "e2e"
+      }
+    }
+  ],
+  "tui": {
+    "enabled": false
+  }
 }

@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/coderabbitai/coderabbit-docs/refs/heads/main/static/schema/schema.v2.json
 language: 'en'
 early_access: true
 reviews:
@@ -6,7 +7,20 @@ reviews:
   poem: false
   review_status: true
   collapse_walkthrough: false
+  auto_title_instructions: 'A conventional commit compliant PR title with subject (fix,feat,ci, et.c.) that is descriptive for a generated changelog'
+  path_filters:
+    - '!charts/**'
+    - '!**/gen/fetch/**'
+    - '!**/dist/**'
   path_instructions:
+    - path: '.github/**/*'
+      instructions: |
+        "Confirm that the code adheres to the following:
+        - GitHub Actions workflows use 'arc-shared' as the valid runner for self-hosted ARC runners.
+        - CI pipelines are efficient, using appropriate caching strategies and minimal resource consumption.
+        - Reusable workflows and composite actions are properly structured for reusability.
+        - Dependency management workflows meet security requirements.
+        - Note: 'runs-on: arc-shared' is valid for our self-hosted runner configuration, despite standard linting warnings."
     - path: 'apps/services/**/*'
       instructions: |
         "Confirm that the code adheres to the following:

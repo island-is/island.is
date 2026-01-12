@@ -1,7 +1,3 @@
-# helm related files
-apps/**/infra/*
-libs/**/infra/*
-
 # Readmes in parent folders
 **/README.md
 
@@ -30,3 +26,6 @@ libs/shared/webpack
 
 # Ignoring tsconfig.base.json so changes to `paths` don't affect all projects
 tsconfig.base.json
+
+#ignore node_modules
+node_modules

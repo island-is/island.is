@@ -1,5 +1,8 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
+# developer files
+scripts/ci/docker-build-local.sh
+
 # compiled output
 dist/
 tmp/
@@ -33,6 +36,7 @@ TODO
 .envrc.private
 .nvmrc
 .node-version
+avante.md
 # IDE - VSCode
 .vscode/*
 !.vscode/settings.json
@@ -42,6 +46,7 @@ TODO
 *.code-workspace
 
 # misc
+/.*-cache
 /.sass-cache
 /connect.lock
 /coverage
@@ -69,7 +74,9 @@ helm/**/*.tgz
 libs/localization/messages.json
 
 # Ignore automatically openapi, generated schemas, types definitions, fragments types from codegen/autoSchemaFile/servers scripts
-/generated_files.tar.gz
+*.tar.gz
+*.tgz
+/*_list.txt
 *openapi.yaml
 api.graphql
 schema.d.ts
@@ -81,6 +88,7 @@ fragmentTypes.json
 **/gen/graphql.ts
 *.generated.ts
 /apps/**/src/index.html
+nx_cloud_access_token.txt
 
 # IDE - Visual Studio
 *.suo
@@ -169,3 +177,6 @@ service-account.json
 
 # testing
 /coverage
+charts/bootstrap
+.cursor/rules/nx-rules.mdc
+.github/instructions/nx.instructions.md
