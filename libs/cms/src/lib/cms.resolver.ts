@@ -156,8 +156,8 @@ import {
 import { GenericList } from './models/genericList.model'
 import { FeaturedGenericListItems } from './models/featuredGenericListItems.model'
 import {
-  Course,
   CourseCategoriesResponse,
+  CourseDetails,
   CourseList,
   CourseSelectOptionsResponse,
 } from './models/course.model'
@@ -166,6 +166,8 @@ import {
   GetCoursesInput,
 } from './dto/getCourses.input'
 import { GetCourseByIdInput } from './dto/getCourseById.input'
+import { GetCourseListPageByIdInput } from './dto/getCourseListPageById.input'
+import { CourseListPage } from './models/courseListPage.model'
 import { GetCourseSelectOptionsInput } from './dto/getCourseSelectOptions.input'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
@@ -830,14 +832,21 @@ export class CmsResolver {
   }
 
   @CacheControl(defaultCache)
-  @Query(() => Course, { nullable: true })
+  @Query(() => CourseDetails, { nullable: true })
   getCourseById(
     @Args('input') input: GetCourseByIdInput,
-  ): Promise<Course | null> {
+  ): Promise<CourseDetails | null> {
     return this.cmsContentfulService.getCourseById(input)
   }
 
   @CacheControl(defaultCache)
+  @Query(() => CourseListPage, { nullable: true })
+  getCourseListPageById(
+    @Args('input') input: GetCourseListPageByIdInput,
+  ): Promise<CourseListPage | null> {
+    return this.cmsContentfulService.getCourseListPageById(input)
+  }
+
   @Query(() => CourseSelectOptionsResponse)
   getCourseSelectOptions(
     @Args('input') input: GetCourseSelectOptionsInput,

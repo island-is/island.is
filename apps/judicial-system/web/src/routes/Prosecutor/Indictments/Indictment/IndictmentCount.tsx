@@ -44,6 +44,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   UpdateIndictmentCount,
+  UpdateIndictmentCountState,
   useLawTag,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
@@ -62,15 +63,14 @@ interface Props {
   setWorkingCase: Dispatch<SetStateAction<Case>>
   onChange: (
     indictmentCountId: string,
-    updatedIndictmentCount: UpdateIndictmentCount,
+    indictmentCountUpdate: UpdateIndictmentCount,
     updatedOffenses?: Offense[],
   ) => void
   onDelete?: (indictmentCountId: string) => Promise<void>
   updateIndictmentCountState: (
     indictmentCountId: string,
-    update: UpdateIndictmentCount,
+    indictmentCountUpdate: UpdateIndictmentCountState,
     setWorkingCase: Dispatch<SetStateAction<Case>>,
-    updatedOffenses?: Offense[],
   ) => void
 }
 
@@ -288,7 +288,7 @@ export const IndictmentCount: FC<Props> = ({
   )
 
   const handleIndictmentCountChanges = (
-    update: UpdateIndictmentCount,
+    indictmentCountUpdate: UpdateIndictmentCount,
     updatedOffenses?: Offense[],
   ) => {
     let lawsBroken
@@ -304,12 +304,15 @@ export const IndictmentCount: FC<Props> = ({
     }
 
     if (lawsBroken !== undefined) {
-      update.lawsBroken = lawsBroken
-      update.legalArguments = getLegalArguments(lawsBroken, formatMessage)
+      indictmentCountUpdate.lawsBroken = lawsBroken
+      indictmentCountUpdate.legalArguments = getLegalArguments(
+        lawsBroken,
+        formatMessage,
+      )
     }
 
     const policeCaseNumber =
-      update.policeCaseNumber ?? indictmentCount.policeCaseNumber
+      indictmentCountUpdate.policeCaseNumber ?? indictmentCount.policeCaseNumber
 
     const crimeScene = policeCaseNumber
       ? workingCase.crimeScenes[policeCaseNumber]
@@ -318,7 +321,7 @@ export const IndictmentCount: FC<Props> = ({
     const incidentDescription = getIncidentDescription(
       {
         ...indictmentCount,
-        ...update,
+        ...indictmentCountUpdate,
         ...(updatedOffenses ? { offenses: updatedOffenses } : {}),
       },
       gender,
@@ -331,7 +334,7 @@ export const IndictmentCount: FC<Props> = ({
       indictmentCount.id,
       {
         incidentDescription,
-        ...update,
+        ...indictmentCountUpdate,
       },
       updatedOffenses,
     )
@@ -489,9 +492,7 @@ export const IndictmentCount: FC<Props> = ({
 
                 updateIndictmentCountState(
                   indictmentCount.id,
-                  {
-                    vehicleRegistrationNumber: event.target.value,
-                  },
+                  { vehicleRegistrationNumber: event.target.value },
                   setWorkingCase,
                 )
               }}
@@ -540,7 +541,7 @@ export const IndictmentCount: FC<Props> = ({
                     ])
 
                     onChange(indictmentCount.id, {
-                      lawsBroken: lawsBroken,
+                      lawsBroken,
                       legalArguments: getLegalArguments(
                         lawsBroken,
                         formatMessage,
@@ -576,7 +577,7 @@ export const IndictmentCount: FC<Props> = ({
                             )
 
                             onChange(indictmentCount.id, {
-                              lawsBroken: lawsBroken,
+                              lawsBroken,
                               legalArguments: getLegalArguments(
                                 lawsBroken,
                                 formatMessage,

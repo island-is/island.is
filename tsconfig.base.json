@@ -267,10 +267,21 @@
       "@island.is/api/domains/work-machines": [
         "libs/api/domains/work-machines/src/index.ts"
       ],
-      "@island.is/api/mocks": ["libs/api/mocks/src/index.ts"],
-      "@island.is/api/mocks-react": ["libs/api/mocks/src/react.ts"],
-      "@island.is/api/mocks/native": ["libs/api/mocks/src/native.ts"],
-      "@island.is/api/schema": ["libs/api/schema/src/index.ts"],
+       "@island.is/api/domains/questionnaires": [
+        "libs/api/domains/questionnaires/src/index.ts"
+      ],
+      "@island.is/api/mocks": [
+        "libs/api/mocks/src/index.ts"
+      ],
+      "@island.is/api/mocks-react": [
+        "libs/api/mocks/src/react.ts"
+      ],
+      "@island.is/api/mocks/native": [
+        "libs/api/mocks/src/native.ts"
+      ],
+      "@island.is/api/schema": [
+        "libs/api/schema/src/index.ts"
+      ],
       "@island.is/application/api/core": [
         "libs/application/api/core/src/index.ts"
       ],
@@ -628,6 +639,9 @@
       ],
       "@island.is/application/templates/transport-authority/license-plate-renewal": [
         "libs/application/templates/transport-authority/license-plate-renewal/src/index.ts"
+      ],
+      "@island.is/application/templates/transport-authority/mile-car": [
+        "libs/application/templates/transport-authority/mile-car/src/index.ts"
       ],
       "@island.is/application/templates/transport-authority/order-vehicle-license-plate": [
         "libs/application/templates/transport-authority/order-vehicle-license-plate/src/index.ts"

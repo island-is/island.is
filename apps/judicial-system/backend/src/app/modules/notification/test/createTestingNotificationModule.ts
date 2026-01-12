@@ -1,5 +1,5 @@
 import { mock } from 'jest-mock-extended'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'

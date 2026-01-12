@@ -131,7 +131,7 @@ export const UploadCarCategoryFile = ({
       return
     }
 
-    setValue('dataToChange', dataToChange)
+    setValue('carsToChange', dataToChange)
   }
 
   const handleOnInputFileUploadError = (files: FileRejection[]) => {

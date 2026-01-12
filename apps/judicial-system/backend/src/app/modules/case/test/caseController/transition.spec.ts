@@ -1,6 +1,6 @@
 import each from 'jest-each'
 import { Transaction } from 'sequelize'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { ConfigType } from '@island.is/nest/config'
 

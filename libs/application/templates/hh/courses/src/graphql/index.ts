@@ -14,19 +14,21 @@ export const GET_COURSE_SELECT_OPTIONS_QUERY = gql`
 export const GET_COURSE_BY_ID_QUERY = gql`
   query GetCourseById($input: GetCourseByIdInput!) {
     getCourseById(input: $input) {
-      instances {
-        id
-        startDate
-        startDateTimeDuration {
-          startTime
-          endTime
+      course {
+        instances {
+          id
+          startDate
+          startDateTimeDuration {
+            startTime
+            endTime
+          }
+          location
+          displayedTitle
+          price {
+            amount
+          }
+          description
         }
-        location
-        displayedTitle
-        price {
-          amount
-        }
-        description
       }
     }
   }

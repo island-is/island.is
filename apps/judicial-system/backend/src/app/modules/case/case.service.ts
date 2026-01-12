@@ -2325,7 +2325,7 @@ export class CaseService {
           schedulingNewArraignmentDateForIndictmentCase &&
           theCase.defendants
         ) {
-          await Promise.all(
+          const dsPairs = await Promise.all(
             theCase.defendants
               .filter((defendant) => !defendant.isAlternativeService)
               .map(async (defendant) => {
@@ -2338,30 +2338,32 @@ export class CaseService {
                   defendant.subpoenaType,
                 )
 
-                // Only add a court document if a court session exists
-                if (
-                  !theCase.withCourtSessions ||
-                  !theCase.courtSessions ||
-                  theCase.courtSessions.length === 0
-                ) {
-                  return
-                }
-
-                const name = `Fyrirkall ${defendant.name} ${formatDate(
-                  subpoena.created,
-                )}`
-
-                return this.courtDocumentService.create(
-                  theCase.id,
-                  {
-                    documentType: CourtDocumentType.GENERATED_DOCUMENT,
-                    name,
-                    generatedPdfUri: `/api/case/${theCase.id}/subpoena/${defendant.id}/${subpoena.id}/${name}`,
-                  },
-                  transaction,
-                )
+                return { defendant, subpoena }
               }),
           )
+
+          // Add court documents if a court session exists
+          if (
+            theCase.withCourtSessions &&
+            theCase.courtSessions &&
+            theCase.courtSessions.length > 0
+          ) {
+            for (const { defendant, subpoena } of dsPairs) {
+              const name = `Fyrirkall ${defendant.name} ${formatDate(
+                subpoena.created,
+              )}`
+
+              await this.courtDocumentService.create(
+                theCase.id,
+                {
+                  documentType: CourtDocumentType.GENERATED_DOCUMENT,
+                  name,
+                  generatedPdfUri: `/api/case/${theCase.id}/subpoena/${defendant.id}/${subpoena.id}/${name}`,
+                },
+                transaction,
+              )
+            }
+          }
         }
 
         // Ensure that verdicts exist at this stage, if they don't exist we create them
@@ -2738,44 +2740,42 @@ export class CaseService {
       'demands',
     ]
 
-    return this.sequelize
-      .transaction(async (transaction) => {
-        const extendedCase = await this.createCase(
-          {
-            ...(isRestrictionCase(theCase.type)
-              ? pick(theCase, copiedExtendRestrictionCaseFields)
-              : pick(theCase, copiedExtendInvestigationCaseFields)),
-            parentCaseId: theCase.id,
-            initialRulingDate: theCase.initialRulingDate ?? theCase.rulingDate,
-            creatingProsecutorId: user.id,
-            prosecutorId: user.id,
-            prosecutorsOfficeId: user.institution?.id,
-          },
-          transaction,
-        )
+    return this.sequelize.transaction(async (transaction) => {
+      const extendedCase = await this.createCase(
+        {
+          ...(isRestrictionCase(theCase.type)
+            ? pick(theCase, copiedExtendRestrictionCaseFields)
+            : pick(theCase, copiedExtendInvestigationCaseFields)),
+          parentCaseId: theCase.id,
+          initialRulingDate: theCase.initialRulingDate ?? theCase.rulingDate,
+          creatingProsecutorId: user.id,
+          prosecutorId: user.id,
+          prosecutorsOfficeId: user.institution?.id,
+        },
+        transaction,
+      )
 
-        if (theCase.defendants && theCase.defendants?.length > 0) {
-          await Promise.all(
-            theCase.defendants?.map((defendant) =>
-              this.defendantService.createForNewCase(
-                extendedCase.id,
-                {
-                  noNationalId: defendant.noNationalId,
-                  nationalId: defendant.nationalId,
-                  name: defendant.name,
-                  gender: defendant.gender,
-                  address: defendant.address,
-                  citizenship: defendant.citizenship,
-                },
-                transaction,
-              ),
+      if (theCase.defendants && theCase.defendants?.length > 0) {
+        await Promise.all(
+          theCase.defendants?.map((defendant) =>
+            this.defendantService.createForNewCase(
+              extendedCase.id,
+              {
+                noNationalId: defendant.noNationalId,
+                nationalId: defendant.nationalId,
+                name: defendant.name,
+                gender: defendant.gender,
+                address: defendant.address,
+                citizenship: defendant.citizenship,
+              },
+              transaction,
             ),
-          )
-        }
+          ),
+        )
+      }
 
-        return extendedCase
-      })
-      .then((extendedCase) => this.findById(extendedCase.id))
+      return extendedCase
+    })
   }
 
   async splitDefendantFromCase(
