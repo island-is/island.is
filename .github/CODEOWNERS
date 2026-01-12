@@ -148,7 +148,6 @@ codemagic.yaml                                                                  
 /libs/dokobit-signing/                                                                                                       @island-is/kolibri-justice-league
 /libs/email-service/                                                                                                         @island-is/kolibri-justice-league
 
-# No active contract.
 /apps/financial-aid/                                                                                                         @island-is/kolibri-robin-hood
 /libs/financial-aid/                                                                                                         @island-is/kolibri-robin-hood
 /libs/api/domains/municipalities-financial-aid                                                                               @island-is/kolibri-robin-hood
