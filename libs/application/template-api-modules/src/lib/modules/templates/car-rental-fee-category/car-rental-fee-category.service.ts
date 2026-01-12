@@ -117,7 +117,7 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
               }) ?? null,
           },
         }
-        this.logger.info(
+        this.logger.warn(
           'Full body of request to register cars to day rate',
           requestBody,
         )
@@ -141,7 +141,7 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
               }) ?? null,
           },
         }
-        this.logger.info(
+        this.logger.warn(
           'Full body of request to deregister cars from day rate',
           requestBody,
         )
