@@ -6,6 +6,7 @@ import isEmpty from 'lodash/isEmpty'
 import {
   CREATE_APPLICATION,
   APPLICATION_CARDS,
+  GET_ORGANIZATIONS,
 } from '@island.is/application/graphql'
 import {
   Text,
@@ -29,7 +30,6 @@ import {
   ProblemType,
 } from '@island.is/shared/problem'
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
-import { useGetOrganizationsQuery } from '@island.is/portals/my-pages/graphql'
 import {
   ApplicationCard,
   ApplicationContext,
@@ -81,18 +81,24 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
     },
   )
 
-  const { data: orgData, loading: loadingOrg } = useGetOrganizationsQuery({
+  const {
+    data: orgData,
+    loading: loadingOrg,
+    error: orgError,
+    refetch: orgRefetch,
+  } = useLocalizedQuery(GET_ORGANIZATIONS, {
     variables: {
       input: {
         lang: 'is',
       },
     },
+    fetchPolicy: 'cache-and-network',
   })
 
   const mappedOrganizations = data?.ApplicationSystemCard.map(
     (card: ApplicationCard) => {
       const org = orgData?.getOrganizations?.items.find(
-        (org) => org.id === card.orgContentfulId,
+        (org: Organization) => org.id === card.orgContentfulId,
       )
       return {
         ...org,
