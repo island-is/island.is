@@ -590,7 +590,7 @@ export class CaseService {
     private readonly messageService: MessageService,
     private readonly caseRepositoryService: CaseRepositoryService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
-  ) {}
+  ) { }
 
   private formatMessage: FormatMessage = () => {
     throw new InternalServerErrorException('Format message not initialized')
@@ -1568,16 +1568,16 @@ export class CaseService {
       .map((updatedDefendant) => [
         ...(updatedCase.origin === CaseOrigin.LOKE
           ? [
-              {
-                type: MessageType.DELIVERY_TO_POLICE_SUBPOENA_FILE,
-                user,
-                caseId: theCase.id,
-                elementId: [
-                  updatedDefendant.id,
-                  updatedDefendant.subpoenas?.[0].id ?? '',
-                ],
-              },
-            ]
+            {
+              type: MessageType.DELIVERY_TO_POLICE_SUBPOENA_FILE,
+              user,
+              caseId: theCase.id,
+              elementId: [
+                updatedDefendant.id,
+                updatedDefendant.subpoenas?.[0].id ?? '',
+              ],
+            },
+          ]
           : []),
         {
           type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA,
@@ -1794,8 +1794,8 @@ export class CaseService {
         updatedCase.judge?.nationalId !== theCase.judge?.nationalId
           ? updatedCase.judge
           : updatedCase.registrar?.nationalId !== theCase.registrar?.nationalId
-          ? updatedCase.registrar
-          : null
+            ? updatedCase.registrar
+            : null
 
       if (updatedRole?.nationalId) {
         await this.addMessagesForIndictmentCourtRoleAssigned(
@@ -1832,7 +1832,7 @@ export class CaseService {
       const hasUpdatedArraignmentDate =
         updatedArraignmentDate &&
         updatedArraignmentDate.date.getTime() !==
-          arraignmentDate?.date.getTime()
+        arraignmentDate?.date.getTime()
 
       if (hasUpdatedArraignmentDate) {
         await this.addMessagesForIndictmentArraignmentDate(updatedCase, user)
@@ -1931,10 +1931,10 @@ export class CaseService {
           where: defendant.noNationalId
             ? { nationalId: defendant.nationalId, name: defendant.name }
             : {
-                nationalId: {
-                  [Op.in]: normalizeAndFormatNationalId(defendant.nationalId),
-                },
+              nationalId: {
+                [Op.in]: normalizeAndFormatNationalId(defendant.nationalId),
               },
+            },
         },
       ],
       attributes: ['id', 'courtCaseNumber', 'type', 'state'],
@@ -1962,8 +1962,8 @@ export class CaseService {
         prosecutorId: isIndictmentCase(caseToCreate.type)
           ? caseToCreate.prosecutorId
           : user.role === UserRole.PROSECUTOR
-          ? user.id
-          : undefined,
+            ? user.id
+            : undefined,
         courtId: isRequestCase(caseToCreate.type)
           ? user.institution?.defaultCourtId
           : undefined,
@@ -2385,7 +2385,7 @@ export class CaseService {
 
     const hasNewRulingDecision =
       theCase.indictmentRulingDecision ===
-        CaseIndictmentRulingDecision.RULING &&
+      CaseIndictmentRulingDecision.RULING &&
       !!update.indictmentRulingDecision &&
       [
         CaseIndictmentRulingDecision.CANCELLATION,
@@ -2463,13 +2463,11 @@ export class CaseService {
           mergedCaseId: theCase.id,
           update: {
             stringType: CourtSessionStringType.ENTRIES,
-            value: `Mál nr. ${
-              theCase.courtCaseNumber
-            } sem var höfðað á hendur ákærða${
-              caseSentToCourt
+            value: `Mál nr. ${theCase.courtCaseNumber
+              } sem var höfðað á hendur ákærða${caseSentToCourt
                 ? ` með ákæru útgefinni ${formatDate(caseSentToCourt, 'PPP')}`
                 : ''
-            }, er nú einnig tekið fyrir og það sameinað þessu máli, sbr. heimild í 1. mgr. 169. gr. laga nr. 88/2008 um meðferð sakamála, og verða þau eftirleiðis rekin undir málsnúmeri þessa máls.`,
+              }, er nú einnig tekið fyrir og það sameinað þessu máli, sbr. heimild í 1. mgr. 169. gr. laga nr. 88/2008 um meðferð sakamála, og verða þau eftirleiðis rekin undir málsnúmeri þessa máls.`,
           },
           transaction,
         })
@@ -2506,10 +2504,42 @@ export class CaseService {
   async requestCourtRecordSignature(
     theCase: Case,
     user: TUser,
+    method: 'audkenni' | 'mobile',
   ): Promise<SigningServiceResponse> {
     await this.refreshFormatMessage()
 
     const pdf = await getCourtRecordPdfAsString(theCase, this.formatMessage)
+
+    if (method === 'audkenni') {
+      if (!user.nationalId) {
+        throw new Error('User national ID is required for Audkenni signing')
+      }
+
+      return this.signingService
+        .requestSignatureAudkenni(
+          user.nationalId,
+          user.name ?? '',
+          'Ísland',
+          'courtRecord.pdf',
+          pdf,
+          'Undirrita skjal - Öryggistala',
+        )
+        .catch((error) => {
+          this.eventService.postErrorEvent(
+            `Failed to request a court record signature via ${method}`,
+            {
+              caseId: theCase.id,
+              policeCaseNumbers: theCase.policeCaseNumbers.join(', '),
+              courtCaseNumber: theCase.courtCaseNumber,
+              actor: user.name,
+              institution: user.institution?.name,
+            },
+            error,
+          )
+
+          throw error
+        })
+    }
 
     return this.signingService
       .requestSignature(
@@ -2522,7 +2552,7 @@ export class CaseService {
       )
       .catch((error) => {
         this.eventService.postErrorEvent(
-          'Failed to request a court record signature',
+          `Failed to request a court record signature via ${method}`,
           {
             caseId: theCase.id,
             policeCaseNumbers: theCase.policeCaseNumbers.join(', '),
@@ -2541,15 +2571,17 @@ export class CaseService {
     theCase: Case,
     user: TUser,
     documentToken: string,
+    method: 'audkenni' | 'mobile',
     transaction: Transaction,
   ): Promise<SignatureConfirmationResponse> {
     // This method should be called immediately after requestCourtRecordSignature
-
     try {
       const courtRecordPdf = await this.signingService.waitForSignature(
         'courtRecord.pdf',
         documentToken,
+        method,
       )
+
       const awsSuccess = await this.uploadSignedCourtRecordPdfToS3(
         theCase,
         courtRecordPdf,
@@ -2575,7 +2607,7 @@ export class CaseService {
       return { documentSigned: true }
     } catch (error) {
       this.eventService.postErrorEvent(
-        'Failed to get a court record signature confirmation',
+        `Failed to get a court record signature confirmation via ${method}`,
         {
           caseId: theCase.id,
           policeCaseNumbers: theCase.policeCaseNumbers.join(', '),
@@ -2598,10 +2630,43 @@ export class CaseService {
     }
   }
 
-  async requestRulingSignature(theCase: Case): Promise<SigningServiceResponse> {
+  async requestRulingSignature(
+    theCase: Case,
+    method: 'audkenni' | 'mobile',
+  ): Promise<SigningServiceResponse> {
     await this.refreshFormatMessage()
-
     const pdf = await getRulingPdfAsString(theCase, this.formatMessage)
+
+    if (method === 'audkenni') {
+      if (!theCase.judge?.nationalId) {
+        throw new Error('Judge national ID is required for Audkenni signing')
+      }
+
+      return this.signingService
+        .requestSignatureAudkenni(
+          theCase.judge.nationalId,
+          theCase.judge?.name ?? '',
+          'Ísland',
+          'ruling.pdf',
+          pdf,
+          'Undirrita skjal - Öryggistala',
+        )
+        .catch((error) => {
+          this.eventService.postErrorEvent(
+            `Failed to request a ruling signature via ${method}`,
+            {
+              caseId: theCase.id,
+              policeCaseNumbers: theCase.policeCaseNumbers.join(', '),
+              courtCaseNumber: theCase.courtCaseNumber,
+              actor: theCase.judge?.name,
+              institution: theCase.judge?.institution?.name,
+            },
+            error,
+          )
+
+          throw error
+        })
+    }
 
     return this.signingService
       .requestSignature(
@@ -2614,7 +2679,7 @@ export class CaseService {
       )
       .catch((error) => {
         this.eventService.postErrorEvent(
-          'Failed to request a ruling signature',
+          `Failed to request a ruling signature via ${method}`,
           {
             caseId: theCase.id,
             policeCaseNumbers: theCase.policeCaseNumbers.join(', '),
@@ -2633,6 +2698,7 @@ export class CaseService {
     theCase: Case,
     user: TUser,
     documentToken: string,
+    method: 'audkenni' | 'mobile',
     transaction: Transaction,
   ): Promise<SignatureConfirmationResponse> {
     // This method should be called immediately after requestRulingSignature
@@ -2640,7 +2706,9 @@ export class CaseService {
       const signedPdf = await this.signingService.waitForSignature(
         'ruling.pdf',
         documentToken,
+        method,
       )
+
       const awsSuccess = await this.uploadSignedRulingPdfToS3(
         theCase,
         signedPdf,
@@ -2663,7 +2731,7 @@ export class CaseService {
       return { documentSigned: true }
     } catch (error) {
       this.eventService.postErrorEvent(
-        'Failed to get a ruling signature confirmation',
+        `Failed to get a ruling signature confirmation via ${method}`,
         {
           caseId: theCase.id,
           policeCaseNumbers: theCase.policeCaseNumbers.join(', '),

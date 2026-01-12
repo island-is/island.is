@@ -332,6 +332,12 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.post(`case/${caseId}/courtRecord/signature`)
   }
 
+  requestCourtRecordSignatureAudkenni(
+    caseId: string,
+  ): Promise<RequestSignatureResponse> {
+    return this.post(`case/${caseId}/courtRecord/signature/audkenni`)
+  }
+
   getCourtRecordSignatureConfirmation(
     caseId: string,
     documentToken: string,
@@ -341,8 +347,23 @@ export class BackendService extends DataSource<{ req: Request }> {
     )
   }
 
+  getCourtRecordSignatureConfirmationAudkenni(
+    caseId: string,
+    documentToken: string,
+  ): Promise<SignatureConfirmationResponse> {
+    return this.get(
+      `case/${caseId}/courtRecord/signature/audkenni?documentToken=${documentToken}`,
+    )
+  }
+
   requestRulingSignature(caseId: string): Promise<RequestSignatureResponse> {
     return this.post(`case/${caseId}/ruling/signature`)
+  }
+
+  requestRulingSignatureAudkenni(
+    caseId: string,
+  ): Promise<RequestSignatureResponse> {
+    return this.post(`case/${caseId}/ruling/signature/audkenni`)
   }
 
   getRulingSignatureConfirmation(
@@ -351,6 +372,15 @@ export class BackendService extends DataSource<{ req: Request }> {
   ): Promise<SignatureConfirmationResponse> {
     return this.get(
       `case/${caseId}/ruling/signature?documentToken=${documentToken}`,
+    )
+  }
+
+  getRulingSignatureConfirmationAudkenni(
+    caseId: string,
+    documentToken: string,
+  ): Promise<SignatureConfirmationResponse> {
+    return this.get(
+      `case/${caseId}/ruling/signature/audkenni?documentToken=${documentToken}`,
     )
   }
 

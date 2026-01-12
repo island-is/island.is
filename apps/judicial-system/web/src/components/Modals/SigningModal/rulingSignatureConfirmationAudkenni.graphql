@@ -1,0 +1,7 @@
+query RulingSignatureConfirmationAudkenni($input: SignatureConfirmationQueryInput!) {
+  rulingSignatureConfirmationAudkenni(input: $input) {
+    documentSigned
+    code
+    message
+  }
+}

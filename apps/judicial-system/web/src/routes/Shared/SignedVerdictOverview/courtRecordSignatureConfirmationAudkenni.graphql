@@ -1,0 +1,7 @@
+query CourtRecordSignatureConfirmationAudkenni($input: SignatureConfirmationQueryInput!) {
+  courtRecordSignatureConfirmationAudkenni(input: $input) {
+    documentSigned
+    code
+    message
+  }
+}
