@@ -499,6 +499,7 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
               </GridColumn>
             )}
           </GridRow>
+
           {fetchErrorOccurred && displayFetchErrorIfPresent && (
             <Box paddingBottom={5}>
               <AlertMessage
