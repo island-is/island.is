@@ -304,10 +304,15 @@ export const CivilClaimantFields = ({
                   spokespersonNationalId,
                   spokespersonEmail,
                   spokespersonPhoneNumber,
-                  caseFilesSharedWithSpokesperson: spokespersonNationalId
-                    ? civilClaimant.caseFilesSharedWithSpokesperson
-                    : null,
+                  caseFilesSharedWithSpokesperson: Boolean(
+                    spokespersonNationalId,
+                  ),
                 })
+
+                // handleSetAndSendCivilClaimantToServer({
+                //   civilClaimantId: civilClaimant.id,
+                //   caseFilesSharedWithSpokesperson: Boolean(spokespersonName),
+                // })
               }}
               onEmailChange={(spokespersonEmail: string | null) =>
                 handleUpdateCivilClaimantState({
