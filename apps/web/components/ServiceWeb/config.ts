@@ -1,5 +1,8 @@
 import { Locale } from '@island.is/shared/types'
-import { WatsonChatPanelProps } from '@island.is/web/components'
+import type {
+  WatsonChatPanelProps,
+  ZendeskChatPanelProps,
+} from '@island.is/web/components'
 
 import { BackgroundVariations, Options } from './types'
 
@@ -71,11 +74,14 @@ enum Organization {
 
   /** Skatturinn */
   SKATTURINN = '4yJlHgCMTqpgRSj4p6LuBQ',
+
+  /** Vinnueftirlitið */
+  VINNUEFTIRLITID = '39S5VumPfb1hXBJm3SnE02',
 }
 
 export const zendeskConfig: Record<
   Locale,
-  Record<string, { snippetUrl: string }>
+  Record<string, ZendeskChatPanelProps>
 > = {
   is: {
     [Organization.ICELANDIC_HEALTH_INSURANCE]: {
@@ -94,6 +100,11 @@ export const zendeskConfig: Record<
       snippetUrl:
         'https://static.zdassets.com/ekr/snippet.js?key=f12bfedb-fc2c-477d-8f28-b31a036fba35',
     },
+    [Organization.VINNUEFTIRLITID]: {
+      snippetUrl:
+        'https://static.zdassets.com/ekr/snippet.js?key=a08836d9-21d0-44cf-a61d-4c2a20833140',
+      chatBubbleVariant: 'default',
+    },
   },
   en: {
     [Organization.ICELANDIC_HEALTH_INSURANCE]: {
@@ -111,6 +122,11 @@ export const zendeskConfig: Record<
     [Organization.SKATTURINN]: {
       snippetUrl:
         'https://static.zdassets.com/ekr/snippet.js?key=f12bfedb-fc2c-477d-8f28-b31a036fba35',
+    },
+    [Organization.VINNUEFTIRLITID]: {
+      snippetUrl:
+        'https://static.zdassets.com/ekr/snippet.js?key=a08836d9-21d0-44cf-a61d-4c2a20833140',
+      chatBubbleVariant: 'default',
     },
   },
 }

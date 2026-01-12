@@ -1,7 +1,8 @@
 import { Locale } from '@island.is/shared/types'
-import {
+import type {
   LiveChatIncChatPanelProps,
   WatsonChatPanelProps,
+  ZendeskChatPanelProps,
 } from '@island.is/web/components'
 import { setupOneScreenWatsonChatBot } from '@island.is/web/utils/webChat'
 
@@ -10,12 +11,6 @@ export const liveChatIncConfig: Record<
   Record<string, LiveChatIncChatPanelProps>
 > = {
   is: {
-    // Vinnueftirlitið - Organization
-    '39S5VumPfb1hXBJm3SnE02': {
-      license: '13346703',
-      version: '2.0',
-      showLauncher: false,
-    },
     // Landspítali - Organization
     '2rIt6lQNXZNORCgEWhNonO': {
       license: '9218745',
@@ -24,12 +19,6 @@ export const liveChatIncConfig: Record<
     },
   },
   en: {
-    // Vinnueftirlitið - Organization
-    '39S5VumPfb1hXBJm3SnE02': {
-      license: '13346703',
-      version: '2.0',
-      showLauncher: false,
-    },
     // Landspítali - Organization
     '2rIt6lQNXZNORCgEWhNonO': {
       license: '9218745',
@@ -41,7 +30,7 @@ export const liveChatIncConfig: Record<
 
 export const zendeskConfig: Record<
   Locale,
-  Record<string, { snippetUrl: string }>
+  Record<string, ZendeskChatPanelProps>
 > = {
   is: {
     // Samgöngustofa - Organization
@@ -69,6 +58,12 @@ export const zendeskConfig: Record<
       snippetUrl:
         'https://static.zdassets.com/ekr/snippet.js?key=f12bfedb-fc2c-477d-8f28-b31a036fba35',
     },
+    // Vinnueftirlitið - Organization
+    '39S5VumPfb1hXBJm3SnE02': {
+      snippetUrl:
+        'https://static.zdassets.com/ekr/snippet.js?key=a08836d9-21d0-44cf-a61d-4c2a20833140',
+      chatBubbleVariant: 'default',
+    },
   },
   en: {
     // Samgöngustofa - Organization
@@ -95,6 +90,12 @@ export const zendeskConfig: Record<
     '4yJlHgCMTqpgRSj4p6LuBQ': {
       snippetUrl:
         'https://static.zdassets.com/ekr/snippet.js?key=f12bfedb-fc2c-477d-8f28-b31a036fba35',
+    },
+    // Vinnueftirlitið - Organization
+    '39S5VumPfb1hXBJm3SnE02': {
+      snippetUrl:
+        'https://static.zdassets.com/ekr/snippet.js?key=a08836d9-21d0-44cf-a61d-4c2a20833140',
+      chatBubbleVariant: 'default',
     },
   },
 }

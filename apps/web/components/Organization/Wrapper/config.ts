@@ -3,11 +3,12 @@ import { Locale } from '@island.is/shared/types'
 import {
   LiveChatIncChatPanelProps,
   WatsonChatPanelProps,
+  ZendeskChatPanelProps,
 } from '../../ChatPanel'
 
 export const zendeskConfig: Record<
   Locale,
-  Record<string, { snippetUrl: string }>
+  Record<string, ZendeskChatPanelProps>
 > = {
   is: {
     // Sjúkratryggingar - Organization
@@ -30,6 +31,12 @@ export const zendeskConfig: Record<
       snippetUrl:
         'https://static.zdassets.com/ekr/snippet.js?key=f12bfedb-fc2c-477d-8f28-b31a036fba35',
     },
+    // Vinnueftirlitið - Organization
+    '39S5VumPfb1hXBJm3SnE02': {
+      snippetUrl:
+        'https://static.zdassets.com/ekr/snippet.js?key=a08836d9-21d0-44cf-a61d-4c2a20833140',
+      chatBubbleVariant: 'default',
+    },
   },
   en: {
     // Sjúkratryggingar - Organization
@@ -51,6 +58,12 @@ export const zendeskConfig: Record<
     '4yJlHgCMTqpgRSj4p6LuBQ': {
       snippetUrl:
         'https://static.zdassets.com/ekr/snippet.js?key=f12bfedb-fc2c-477d-8f28-b31a036fba35',
+    },
+    // Vinnueftirlitið - Organization
+    '39S5VumPfb1hXBJm3SnE02': {
+      snippetUrl:
+        'https://static.zdassets.com/ekr/snippet.js?key=a08836d9-21d0-44cf-a61d-4c2a20833140',
+      chatBubbleVariant: 'default',
     },
   },
 }
@@ -78,12 +91,6 @@ export const liveChatIncConfig: Record<
       license: '15092154',
       version: '2.0',
     },
-    // Vinnueftirlitið - Organization
-    '39S5VumPfb1hXBJm3SnE02': {
-      license: '13346703',
-      version: '2.0',
-      showLauncher: false,
-    },
     // Landspítali - Organization
     '2rIt6lQNXZNORCgEWhNonO': {
       license: '9218745',
@@ -109,13 +116,6 @@ export const liveChatIncConfig: Record<
     Un4jJk0rPybt9fu8gk94m: {
       license: '15092154',
       version: '2.0',
-    },
-
-    // Vinnueftirlitið - Organization
-    '39S5VumPfb1hXBJm3SnE02': {
-      license: '13346703',
-      version: '2.0',
-      showLauncher: false,
     },
     // Landspítali - Organization
     '2rIt6lQNXZNORCgEWhNonO': {
