@@ -25,7 +25,7 @@ const getBackgroundColor = (caseFile: CaseFileWithStatus): StatusColor => {
     caseFile.status === 'broken' ||
     caseFile.status === 'done-broken' ||
     !caseFile.id ||
-    !caseFile.key
+    !caseFile.isKeyAccessible
   ) {
     return { background: 'dark100', border: 'dark200' }
   } else if (caseFile.status === 'error' || caseFile.size === 0) {
@@ -107,7 +107,7 @@ const CaseFileList: FC<Props> = (props) => {
               }
               id={file.id}
               onClick={
-                canOpenFiles && file.key && file.id
+                canOpenFiles && file.isKeyAccessible && file.id
                   ? () => onOpen(file.id)
                   : undefined
               }

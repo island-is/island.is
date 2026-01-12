@@ -413,7 +413,9 @@ const PoliceCaseFilesRoute = () => {
       />
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.heading)}</PageTitle>
-        <ProsecutorCaseInfo workingCase={workingCase} />
+        <Box marginBottom={5}>
+          <ProsecutorCaseInfo workingCase={workingCase} />
+        </Box>
         <Box marginBottom={5}>
           <InfoBox text={formatMessage(strings.infoBox)} />
         </Box>

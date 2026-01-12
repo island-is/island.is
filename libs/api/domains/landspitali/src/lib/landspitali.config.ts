@@ -5,6 +5,7 @@ const schema = z.object({
   paymentFlowEventCallbackUrl: z.string(),
   paymentNationalIdFallback: z.string(),
   webDomain: z.string(),
+  landspitaliOrganisationId: z.string(),
 })
 
 export const LandspitaliApiModuleConfig = defineConfig({
@@ -18,5 +19,8 @@ export const LandspitaliApiModuleConfig = defineConfig({
       'LANDSPITALI_PAYMENT_NATIONAL_ID_FALLBACK',
     ),
     webDomain: env.required('WEB_DOMAIN'),
+    landspitaliOrganisationId: env.required(
+      'LANDSPITALI_PAYMENT_ORGANISATION_ID',
+    ),
   }),
 })

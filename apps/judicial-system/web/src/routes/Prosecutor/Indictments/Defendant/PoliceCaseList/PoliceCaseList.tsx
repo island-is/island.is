@@ -2,7 +2,7 @@ import { useContext, useMemo, useRef } from 'react'
 import { useIntl } from 'react-intl'
 import equal from 'fast-deep-equal'
 import { AnimatePresence, motion } from 'motion/react'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { Box, Button } from '@island.is/island-ui/core'
 import {
@@ -268,6 +268,7 @@ export const PoliceCaseList = () => {
       number: policeCaseInfo.policeCaseNumber || '',
       place: policeCaseInfo.place || undefined,
       date: policeCaseInfo.date ? new Date(policeCaseInfo.date) : undefined,
+      subtypes: policeCaseInfo.subtypes || undefined,
     }))
 
     handleCreatePoliceCases(policeCases)
@@ -403,6 +404,7 @@ export const PoliceCaseList = () => {
 
       let place: string | undefined = undefined
       let date: Date | undefined = undefined
+      let subtypes: IndictmentSubtype[] | undefined = undefined
 
       if (!policeCase.place && policeCaseInfo.place) {
         place = policeCaseInfo.place
@@ -410,6 +412,13 @@ export const PoliceCaseList = () => {
 
       if (!policeCase.date && policeCaseInfo.date) {
         date = new Date(policeCaseInfo.date)
+      }
+
+      if (
+        (!policeCase.subtypes || policeCase.subtypes?.length === 0) &&
+        policeCaseInfo.subtypes
+      ) {
+        subtypes = policeCaseInfo.subtypes
       }
 
       if (place || date) {
@@ -420,6 +429,15 @@ export const PoliceCaseList = () => {
               place: place ?? policeCase.place,
               date: date ?? policeCase.date,
             },
+          },
+        })
+      }
+
+      if (subtypes) {
+        updates.push({
+          index: idx,
+          update: {
+            subtypes,
           },
         })
       }

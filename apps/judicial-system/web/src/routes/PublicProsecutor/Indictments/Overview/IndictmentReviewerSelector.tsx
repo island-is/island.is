@@ -76,7 +76,8 @@ export const IndictmentReviewerSelector = ({
       <BlueBox>
         <Select
           name="reviewer"
-          label={fm(strings.reviewerLabel)}
+          dataTestId="select-reviewer"
+          label="Veldu saksóknara"
           placeholder={fm(strings.reviewerPlaceholder)}
           value={
             selectedIndictmentReviewer

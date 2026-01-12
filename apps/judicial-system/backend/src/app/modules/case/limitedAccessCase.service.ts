@@ -2,7 +2,12 @@ import archiver from 'archiver'
 import { Includeable, Op } from 'sequelize'
 import { Writable } from 'stream'
 
-import { Inject, Injectable, NotFoundException } from '@nestjs/common'
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -16,6 +21,7 @@ import {
   CaseFileState,
   CaseNotificationType,
   CaseState,
+  completedIndictmentCaseStates,
   dateTypes,
   defendantEventTypes,
   eventTypes,
@@ -36,6 +42,7 @@ import {
   CivilClaimant,
   CourtDocument,
   CourtSession,
+  CourtSessionString,
   DateLog,
   Defendant,
   DefendantEventLog,
@@ -112,6 +119,8 @@ export const attributes: (keyof Case)[] = [
   'hasCivilClaims',
   'isCompletedWithoutRuling',
   'isRegisteredInPrisonSystem',
+  'rulingModifiedHistory',
+  'withCourtSessions',
 ]
 
 export interface LimitedAccessUpdateCase
@@ -190,8 +199,10 @@ export const include: Includeable[] = [
       },
       {
         model: Verdict,
-        as: 'verdict',
+        as: 'verdicts',
         required: false,
+        order: [['created', 'DESC']],
+        separate: true,
       },
       {
         model: DefendantEventLog,
@@ -251,6 +262,20 @@ export const include: Includeable[] = [
         order: [['documentOrder', 'ASC']],
         separate: true,
       },
+      {
+        model: CourtDocument,
+        as: 'mergedFiledDocuments',
+        required: false,
+        order: [['mergedDocumentOrder', 'ASC']],
+        separate: true,
+      },
+      {
+        model: CourtSessionString,
+        as: 'courtSessionStrings',
+        required: false,
+        order: [['created', 'ASC']],
+        separate: true,
+      },
     ],
     separate: true,
   },
@@ -284,6 +309,7 @@ export const include: Includeable[] = [
         CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
         CaseFileCategory.CIVIL_CLAIM,
         CaseFileCategory.SENT_TO_PRISON_ADMIN_FILE,
+        CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
       ],
     },
     separate: true,
@@ -327,7 +353,7 @@ export const include: Includeable[] = [
   {
     model: Case,
     as: 'mergedCases',
-    where: { state: CaseState.COMPLETED },
+    where: { state: completedIndictmentCaseStates },
     include: [
       {
         model: CaseFile,
@@ -348,9 +374,26 @@ export const include: Includeable[] = [
               CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
               CaseFileCategory.DEFENDANT_CASE_FILE,
               CaseFileCategory.CIVIL_CLAIM,
+              CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
             ],
           },
         },
+        separate: true,
+      },
+      {
+        model: Defendant,
+        as: 'defendants',
+        required: false,
+        order: [['created', 'ASC']],
+        include: [
+          {
+            model: Subpoena,
+            as: 'subpoenas',
+            required: false,
+            order: [['created', 'DESC']],
+            separate: true,
+          },
+        ],
         separate: true,
       },
       {
@@ -365,6 +408,20 @@ export const include: Includeable[] = [
             as: 'filedDocuments',
             required: false,
             order: [['documentOrder', 'ASC']],
+            separate: true,
+          },
+          {
+            model: CourtDocument,
+            as: 'mergedFiledDocuments',
+            required: false,
+            order: [['mergedDocumentOrder', 'ASC']],
+            separate: true,
+          },
+          {
+            model: CourtSessionString,
+            as: 'courtSessionStrings',
+            required: false,
+            order: [['created', 'ASC']],
             separate: true,
           },
         ],
@@ -382,13 +439,19 @@ export const include: Includeable[] = [
     order: [['created', 'ASC']],
     separate: true,
   },
+  {
+    model: Case,
+    as: 'splitCase',
+  },
 ]
 
 @Injectable()
 export class LimitedAccessCaseService {
   constructor(
     private readonly messageService: MessageService,
+    @Inject(forwardRef(() => DefendantService))
     private readonly defendantService: DefendantService,
+    @Inject(forwardRef(() => CivilClaimantService))
     private readonly civilClaimantService: CivilClaimantService,
     private readonly pdfService: PdfService,
     private readonly fileService: FileService,
@@ -428,7 +491,7 @@ export class LimitedAccessCaseService {
         ?.filter(
           (caseFile) =>
             caseFile.state === CaseFileState.STORED_IN_RVG &&
-            caseFile.key &&
+            caseFile.isKeyAccessible &&
             caseFile.category &&
             [
               CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
@@ -644,7 +707,7 @@ export class LimitedAccessCaseService {
     const allowedCaseFiles =
       theCase.caseFiles?.filter(
         (file) =>
-          file.key &&
+          file.isKeyAccessible &&
           file.category &&
           allowedCaseFileCategories.includes(file.category),
       ) ?? []

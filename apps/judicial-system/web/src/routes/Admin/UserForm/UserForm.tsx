@@ -351,7 +351,7 @@ export const UserForm: FC<Props> = ({
             <Box marginBottom={2}>
               <Checkbox
                 name="canConfirmIndictment"
-                label="Notandi getur staðfest kærur"
+                label="Notandi getur staðfest ákærur"
                 checked={Boolean(user.canConfirmIndictment)}
                 onChange={({ target }) =>
                   setUser((prevUser) => ({

@@ -123,15 +123,15 @@ export const applicant = {
     pageDescription: {
       id: 'vmst.ub.application:applicant.informationChangeAgreement.pageDescription#markdown',
       defaultMessage: `Það er mjög mikilvægt að láta vita af öllum breytingum á þínum högum. Þar undir fellur:
-        \n* Breyttu heimilisfangi, símanúmeri og netfangi.
-        \n* Breytingar skal tilkynna á „Mínum síðum“.
+        \n *Breyttu heimilisfangi, símanúmeri og netfangi.
+        \n *Breytingar skal tilkynna á „Mínum síðum“.
         \n\nEinnig þarf að tilkynna aðrar breytingar sem geta haft áhrif á greiðslu bóta, þar undir fellur:
-        \n* Vinna
-        \n* Tekjur
-        \n* Nám
-        \n* Veikindi, starfshæfni
-        \n* Fæðingarorlof
-        \n\n[Sjá nánar á Vinnumálastofnun.is](https://island.is/s/vinnumalastofnun)`,
+        \n *Vinna
+        \n *Tekjur
+        \n *Nám
+        \n *Veikindi, starfshæfni
+        \n *Fæðingarorlof
+        \n [Sjá nánar á Vinnumálastofnun.is](https://island.is/s/vinnumalastofnun)`,
       description: 'information agreement page description',
     },
   }),

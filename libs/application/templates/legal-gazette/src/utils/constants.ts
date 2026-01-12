@@ -11,7 +11,7 @@ export enum LegalGazetteStates {
 export enum LegalGazetteAPIActions {
   submitApplication = 'submitApplication',
   deleteApplication = 'deleteApplication',
-  getCategories = 'getCategories',
+  getTypes = 'getTypes',
 }
 
 export const MAX_DATE_REPEATER_LENGTH = 3

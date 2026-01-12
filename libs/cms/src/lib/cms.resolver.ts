@@ -155,6 +155,20 @@ import {
 } from './models/bloodDonationRestriction.model'
 import { GenericList } from './models/genericList.model'
 import { FeaturedGenericListItems } from './models/featuredGenericListItems.model'
+import {
+  CourseCategoriesResponse,
+  CourseDetails,
+  CourseList,
+  CourseSelectOptionsResponse,
+} from './models/course.model'
+import {
+  GetCourseCategoriesInput,
+  GetCoursesInput,
+} from './dto/getCourses.input'
+import { GetCourseByIdInput } from './dto/getCourseById.input'
+import { GetCourseListPageByIdInput } from './dto/getCourseListPageById.input'
+import { CourseListPage } from './models/courseListPage.model'
+import { GetCourseSelectOptionsInput } from './dto/getCourseSelectOptions.input'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -795,6 +809,49 @@ export class CmsResolver {
     @Args('input') input: GetBloodDonationRestrictionDetailsInput,
   ): Promise<BloodDonationRestrictionDetails | null> {
     return this.cmsContentfulService.getBloodDonationRestrictionDetails(input)
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => CourseList, { nullable: true })
+  getCourses(@Args('input') input: GetCoursesInput): Promise<CourseList> {
+    return this.cmsElasticsearchService.getCourseList(
+      getElasticsearchIndex(input.lang),
+      input,
+    )
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => CourseCategoriesResponse)
+  getCourseCategories(
+    @Args('input') input: GetCourseCategoriesInput,
+  ): Promise<CourseCategoriesResponse> {
+    return this.cmsElasticsearchService.getCourseCategories(
+      getElasticsearchIndex(input.lang),
+      input,
+    )
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => CourseDetails, { nullable: true })
+  getCourseById(
+    @Args('input') input: GetCourseByIdInput,
+  ): Promise<CourseDetails | null> {
+    return this.cmsContentfulService.getCourseById(input)
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => CourseListPage, { nullable: true })
+  getCourseListPageById(
+    @Args('input') input: GetCourseListPageByIdInput,
+  ): Promise<CourseListPage | null> {
+    return this.cmsContentfulService.getCourseListPageById(input)
+  }
+
+  @Query(() => CourseSelectOptionsResponse)
+  getCourseSelectOptions(
+    @Args('input') input: GetCourseSelectOptionsInput,
+  ): Promise<CourseSelectOptionsResponse> {
+    return this.cmsContentfulService.getCourseSelectOptions(input)
   }
 }
 

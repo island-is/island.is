@@ -57,9 +57,9 @@ export const FieldTypes: FieldType[] = [
   },
   {
     id: FieldTypesEnum.DATE_PICKER,
-    name: { is: 'Dagssetning', en: 'Date picker' },
+    name: { is: 'Dagsetning', en: 'Date picker' },
     description: {
-      is: 'Notandi velur dagssetningu úr dagatali',
+      is: 'Notandi velur dagsetningu úr dagatali',
       en: 'User chooses date from calendar',
     },
     isCommon: true,

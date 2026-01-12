@@ -42,7 +42,6 @@ const template: ApplicationTemplate<
   featureFlag: Features.fireCompensationAppraisalEnabled,
   translationNamespaces:
     ApplicationConfigurations.FireCompensationAppraisal.translation,
-
   dataSchema,
   allowedDelegations: [
     {

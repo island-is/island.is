@@ -1,6 +1,6 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
-import { WorkingAbility } from '../shared'
+import { WorkingAbilityIds } from '../shared'
 
 export const needsMedicalReport = (answers: FormValue) => {
   const workingAbility = getValueViaPath<string>(
@@ -10,7 +10,7 @@ export const needsMedicalReport = (answers: FormValue) => {
   )
 
   return (
-    workingAbility === WorkingAbility.PARTLY_ABLE ||
-    workingAbility === WorkingAbility.DISABILITY
+    workingAbility === WorkingAbilityIds.PARTLY_ABLE ||
+    workingAbility === WorkingAbilityIds.DISABILITY
   )
 }

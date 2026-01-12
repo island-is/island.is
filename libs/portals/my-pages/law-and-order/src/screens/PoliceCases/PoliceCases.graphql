@@ -1,0 +1,27 @@
+query GetPoliceCases {
+  lawAndOrderPoliceCasesPaginatedCollection {
+    __typename
+    data {
+      __typename
+      cacheId
+      number
+      type
+      status {
+        __typename
+        value
+        headerDisplayString
+        descriptionDisplayString
+      }
+      contact
+      courtAdvocate
+      department
+      received
+      receivedLocation
+      modified
+    }
+    totalCount
+    pageInfo {
+      hasNextPage
+    }
+  }
+}

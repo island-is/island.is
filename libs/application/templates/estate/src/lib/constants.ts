@@ -16,6 +16,7 @@ export const FILE_SIZE_LIMIT = 10000000 // 10MB
 export enum States {
   prerequisites = 'prerequisites',
   draft = 'draft',
+  payment = 'payment',
   done = 'done',
 }
 
@@ -30,6 +31,8 @@ export type EstateEvent =
   | { type: DefaultEvents.SUBMIT }
   | { type: DefaultEvents.ASSIGN }
   | { type: DefaultEvents.EDIT }
+  | { type: DefaultEvents.PAYMENT }
+  | { type: DefaultEvents.ABORT }
 
 export enum Roles {
   APPLICANT = 'applicant',
@@ -59,8 +62,22 @@ export const relationWithApplicant = [
 
 export const SPOUSE = 'Maki'
 
+// Applicant relation enum for "Seta í óskiptu búi"
+export enum ApplicantRelation {
+  HEIR = 'Erfingi',
+  REPRESENTATIVE = 'Umboðsmaður',
+  EXCHANGE_MANAGER = 'Skiptastjóri',
+}
+
+// Charge item codes for estate payments
+export const CHARGE_ITEM_CODES = {
+  UNDIVIDED_ESTATE: 'AY147', // Leyfi til setu í óskiptu búi
+  DIVISION_OF_ESTATE_BY_HEIRS: 'AY146', // Leyfi til einkaskipta á dánarbúi - skiptagjald
+}
+
 export const heirAgeValidation = 'heirAgeValidation'
 export const missingHeirUndividedEstateValidation =
   'missingHeirUndividedEstateValidation'
 export const missingSpouseUndividedEstateValidation =
   'missingSpouseUndividedEstateValidation'
+export const multipleSpousesValidation = 'multipleSpousesValidation'

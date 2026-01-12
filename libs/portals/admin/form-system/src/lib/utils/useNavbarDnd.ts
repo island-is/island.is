@@ -1,10 +1,11 @@
 import {
-  useSensors,
-  useSensor,
-  PointerSensor,
-  DragStartEvent,
   DragOverEvent,
+  DragStartEvent,
+  PointerSensor,
+  useSensor,
+  useSensors,
 } from '@dnd-kit/core'
+import { FieldTypesEnum } from '@island.is/form-system/ui'
 import { useContext } from 'react'
 import { ControlContext, IControlContext } from '../../context/ControlContext'
 import { hasDependency } from './dependencyHelper'
@@ -89,6 +90,21 @@ export const useNavbarDnD = () => {
         type: 'REMOVE_DEPENDENCIES',
         payload: { activeId, update: formUpdate },
       })
+    }
+
+    if (activeField) {
+      const fieldItem = form.fields?.find((field) => field?.id === activeId)
+      if (fieldItem) {
+        if (
+          fieldItem.fieldType === FieldTypesEnum.DROPDOWN_LIST ||
+          fieldItem.fieldType === FieldTypesEnum.RADIO_BUTTONS
+        ) {
+          controlDispatch({
+            type: 'REMOVE_LIST_DEPENDENCIES',
+            payload: { field: fieldItem, update: formUpdate },
+          })
+        }
+      }
     }
   }
 

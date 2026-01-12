@@ -823,8 +823,8 @@ export const formatDefenderRoute = (
   }/${id}`
 }
 
-export const formatConfirmedIndictmentKey = (key?: string) =>
-  key?.replace(/\/([^/]*)$/, '/confirmed/$1') ?? ''
+export const formatConfirmedIndictmentKey = (key: string) =>
+  key.replace(/\/([^/]*)$/, '/confirmed/$1') ?? ''
 
 export const filterWhitelistEmails = (
   emails: string[],

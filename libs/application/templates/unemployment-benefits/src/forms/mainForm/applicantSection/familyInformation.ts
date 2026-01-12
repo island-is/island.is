@@ -93,6 +93,7 @@ export const familyInformationSubSection = buildSubSection({
               customNationalIdLabel: applicantMessages.labels.childNationalId,
               customNameLabel: applicantMessages.labels.childName,
               component: 'nationalIdWithName',
+              searchCompanies: false,
             },
           },
         }),

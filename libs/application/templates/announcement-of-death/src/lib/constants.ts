@@ -37,3 +37,6 @@ export const DayLifeCycle: StateLifeCycle = {
   shouldBePruned: true,
   whenToPrune: 1000 * 3600 * 24,
 }
+
+export const willValidation = 'willValidation'
+export const filesValidation = 'filesValidation'

@@ -66,10 +66,10 @@ export const applicantInformationSubSection = buildSubSection({
                 ?.filter(
                   ({ nameAndCode }) => nameAndCode && nameAndCode.length > 0,
                 )
-                .map(({ nameAndCode }) => {
+                .map(({ nameAndCode, id }) => {
                   return {
                     label: nameAndCode ?? '',
-                    value: nameAndCode ?? '',
+                    value: id || '',
                   }
                 }) ?? []
             )

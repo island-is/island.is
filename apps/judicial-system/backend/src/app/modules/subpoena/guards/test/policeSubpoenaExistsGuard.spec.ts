@@ -1,4 +1,4 @@
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import {
   BadRequestException,
@@ -8,7 +8,7 @@ import {
 
 import { createTestingSubpoenaModule } from '../../test/createTestingSubpoenaModule'
 
-import { Subpoena } from '../../../repository'
+import { SubpoenaRepositoryService } from '../../../repository'
 import { include } from '../../subpoena.service'
 import { PoliceSubpoenaExistsGuard } from '../policeSubpoenaExists.guard'
 
@@ -21,14 +21,14 @@ type GivenWhenThen = () => Promise<Then>
 
 describe('Police Subpoena Exists Guard', () => {
   const mockRequest = jest.fn()
-  let mockSubpoenaModel: typeof Subpoena
+  let mockSubpoenaRepositoryService: SubpoenaRepositoryService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { subpoenaModel, subpoenaService } =
+    const { subpoenaRepositoryService, subpoenaService } =
       await createTestingSubpoenaModule()
 
-    mockSubpoenaModel = subpoenaModel
+    mockSubpoenaRepositoryService = subpoenaRepositoryService
 
     givenWhenThen = async (): Promise<Then> => {
       const guard = new PoliceSubpoenaExistsGuard(subpoenaService)
@@ -57,14 +57,14 @@ describe('Police Subpoena Exists Guard', () => {
 
     beforeEach(async () => {
       mockRequest.mockReturnValueOnce(request)
-      const mockFindOne = mockSubpoenaModel.findOne as jest.Mock
+      const mockFindOne = mockSubpoenaRepositoryService.findOne as jest.Mock
       mockFindOne.mockResolvedValueOnce(subpoena)
 
       then = await givenWhenThen()
     })
 
     it('should activate', () => {
-      expect(mockSubpoenaModel.findOne).toHaveBeenCalledWith({
+      expect(mockSubpoenaRepositoryService.findOne).toHaveBeenCalledWith({
         include,
         where: { policeSubpoenaId },
       })

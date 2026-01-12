@@ -49,6 +49,7 @@ env:
   FUNDING_GOVERNMENT_PROJECTS_APPLICATION_RECIPIENT_EMAIL_ADDRESS: 'gunnar.ingi@fjr.is'
   FUNDING_GOVERNMENT_PROJECTS_APPLICATION_RECIPIENT_NAME: 'Gunnar Ingi'
   GRAPHQL_API_URL: 'http://api.islandis.svc.cluster.local'
+  HH_COURSES_ZENDESK_SUBJECT: '[TEST] Skráning á námskeið - Heilsugæsla höfuðborgarsvæðisins'
   HMS_CONTRACTS_AUTH_CLIENT_ID: 'e2411f5c-436a-4c17-aa14-eab9c225bc06'
   HMS_CONTRACTS_AUTH_TENANT_ID: 'c7256472-2622-417e-8955-a54eeb0a110e'
   HMS_CONTRACTS_AUTH_TOKEN_ENDPOINT: 'https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/token'
@@ -139,6 +140,7 @@ env:
   XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
   XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
   XROAD_TR_PATH: 'IS-TEST/GOV/5012130120/TR-Protected/external-v1'
+  XROAD_TR_PATH_V2: 'IS-TEST/GOV/5012130120/TR-Protected/external-v2'
   XROAD_UNIVERSITY_OF_AKUREYRI_PATH: 'IS-TEST/EDU/10054/UNAK-Protected/brautskraning-v1'
   XROAD_UNIVERSITY_OF_ICELAND_PATH: 'IS-TEST/EDU/10010/HI-Protected/brautskraning-v1'
   XROAD_VEHICLES_MILEAGE_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Mileagereading-V1'
@@ -155,6 +157,7 @@ env:
   XROAD_VMST_MEMBER_CODE: '7005942039'
   XROAD_WORK_ACCIDENT_PATH: 'IS-TEST/GOV/4201810439/Vinnueftirlitid-Protected/slysaskraning-token'
   XROAD_WORK_MACHINE_LICENSE_PATH: 'IS-TEST/GOV/4201810439/Vinnueftirlitid-Protected/vinnuvelar-token'
+  ZENDESK_CONTACT_FORM_SUBDOMAIN: 'digitaliceland'
 grantNamespaces:
   - 'services-payments'
   - 'nginx-ingress-internal'
@@ -220,7 +223,7 @@ initContainer:
     DB_PASS: '/k8s/application-system-api/DB_PASSWORD'
 namespace: 'application-system'
 podDisruptionBudget:
-  maxUnavailable: 1
+  minAvailable: 1
   unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534
@@ -280,6 +283,8 @@ secrets:
   XROAD_VMST_API_KEY: '/k8s/vmst-client/VMST_API_KEY'
   XROAD_VMST_UNEMPLOYMENT_PASSWORD: '/k8s/xroad/XROAD_VMST_UNEMPLOYMENT_PASSWORD'
   XROAD_VMST_UNEMPLOYMENT_USERNAME: '/k8s/xroad/XROAD_VMST_UNEMPLOYMENT_USERNAME'
+  ZENDESK_CONTACT_FORM_EMAIL: '/k8s/api/ZENDESK_CONTACT_FORM_EMAIL'
+  ZENDESK_CONTACT_FORM_TOKEN: '/k8s/api/ZENDESK_CONTACT_FORM_TOKEN'
 securityContext:
   allowPrivilegeEscalation: false
   privileged: false

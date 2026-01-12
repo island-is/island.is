@@ -32,18 +32,7 @@ export const licenseNavigation: PortalNavigationItem = {
     {
       navHide: true,
       name: m.detailInfo,
-      path: LicensePaths.LicensesDetailV2,
-    },
-    {
-      navHide: true,
-      name: m.detailInfo,
       path: LicensePaths.LicensesDetail,
-    },
-    {
-      navHide: true,
-      name: m.passport,
-      path: LicensePaths.LicensesPassportDetail,
-      activeIfExact: false,
     },
   ],
 }

@@ -44,12 +44,19 @@ export const generateAidOrNutrition = (
       value: data.refund.value,
     },
     type,
+    valid: data.valid ?? undefined,
     explanation: data.explanation ?? undefined,
     allowed12MonthPeriod: data.allowed12MonthPeriod ?? undefined,
     validUntil: data.validUntil ? data.validUntil : undefined,
     nextAllowedMonth: data.nextAllowedMonth ?? undefined,
     available: data.available ?? undefined,
-    location: data.location ?? undefined,
+    location: data.location
+      ? typeof data.location === 'string'
+        ? data.location.split('#')
+        : typeof data.location === 'object' && Array.isArray(data.location)
+        ? data.location
+        : undefined
+      : undefined,
     expiring: data.expiring ? data.expiring : false,
     renewalStatus:
       data.renewalStatus !== undefined

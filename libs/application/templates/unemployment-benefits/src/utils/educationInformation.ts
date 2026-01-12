@@ -1,6 +1,8 @@
-import { getValueViaPath, NO, YES } from '@island.is/application/core'
+import { getValueViaPath, YES } from '@island.is/application/core'
 import { EducationType } from '../shared'
-import { FormValue } from '@island.is/application/types'
+import { Application, FormValue } from '@island.is/application/types'
+import { Locale } from '@island.is/shared/types'
+import { GaldurDomainModelsEducationProgramDTO } from '@island.is/clients/vmst-unemployment'
 
 export const wasStudyingLastTwelveMonths = (answers: FormValue) => {
   const lastTwelveMonths = getValueViaPath<string>(
@@ -12,53 +14,74 @@ export const wasStudyingLastTwelveMonths = (answers: FormValue) => {
 
 export const isCurrentlyStudying = (answers: FormValue) => {
   const wasStudying = wasStudyingLastTwelveMonths(answers)
-  const educationType = getValueViaPath<string>(
-    answers,
-    'education.typeOfEducation',
-  )
-  return wasStudying && educationType === EducationType.CURRENT
+  const educationType =
+    getValueViaPath<Array<string>>(answers, 'education.typeOfEducation') || []
+  return wasStudying && educationType.includes(EducationType.CURRENT)
 }
 
 export const wasStudyingInTheLastYear = (answers: FormValue) => {
   const wasStudying = wasStudyingLastTwelveMonths(answers)
-  const educationType = getValueViaPath<string>(
-    answers,
-    'education.typeOfEducation',
-  )
-  return wasStudying && educationType === EducationType.LAST_YEAR
+  const educationType =
+    getValueViaPath<Array<string>>(answers, 'education.typeOfEducation') || []
+  return wasStudying && educationType.includes(EducationType.LAST_YEAR)
 }
 
 export const wasStudyingLastSemester = (answers: FormValue) => {
   const wasStudying = wasStudyingLastTwelveMonths(answers)
-  const educationType = getValueViaPath<string>(
-    answers,
-    'education.typeOfEducation',
-  )
-  return wasStudying && educationType === EducationType.LAST_SEMESTER
+  const educationType =
+    getValueViaPath<Array<string>>(answers, 'education.typeOfEducation') || []
+  return wasStudying && educationType.includes(EducationType.LAST_SEMESTER)
 }
 
-export const hasCurrentOrRecentEducation = (answers: FormValue) => {
-  const lastTwelve = wasStudyingLastTwelveMonths(answers)
-  const educationType = getValueViaPath<string>(
+export const sameEducationAsCurrent = (answers: FormValue) => {
+  const hasCheckedSame =
+    getValueViaPath<Array<string>>(
+      answers,
+      'educationHistory.lastSemester.sameAsAboveEducation',
+    ) || []
+
+  return hasCheckedSame.includes(YES)
+}
+
+export const sameEducationAsLastSemester = (answers: FormValue) => {
+  const hasCheckedSame =
+    getValueViaPath<Array<string>>(
+      answers,
+      'educationHistory.finishedEducation.sameAsAboveEducation',
+    ) || []
+
+  return hasCheckedSame.includes(YES)
+}
+
+export const lastSemesterEducationFinished = (answers: FormValue) => {
+  const lastSemesterEndDate = getValueViaPath<string>(
     answers,
-    'education.typeOfEducation',
+    'educationHistory.lastSemester.endDate',
   )
 
-  const lastSemester = didYouFinishLastSemester(answers)
-  const appliedForNext = appliedForNextSemester(answers)
+  return !!lastSemesterEndDate
+}
 
+export const showFinishedEducationField = (answers: FormValue) => {
+  if (sameEducationAsLastSemester(answers)) {
+    //if last semester education is the same as current, then we need to show this field as this can't be the same education as lastSemester
+    //if lastSemster is not checked, even though the sameEducationAsLastSemester has been submitted, meaning the user went back to education page and changed the answer, then we need to show the field
+    return (
+      (wasStudyingInTheLastYear(answers) && sameEducationAsCurrent(answers)) ||
+      !wasStudyingLastSemester(answers)
+    )
+  } else {
+    return wasStudyingInTheLastYear(answers)
+  }
+}
+
+export const showFinishedEducationDateField = (answers: FormValue) => {
   return (
-    lastTwelve &&
-    (educationType === EducationType.CURRENT ||
-      (educationType === EducationType.LAST_SEMESTER &&
-        (lastSemester === YES ||
-          (lastSemester === NO && appliedForNext === YES))) ||
-      educationType === EducationType.LAST_YEAR)
+    showFinishedEducationField(answers) ||
+    (!lastSemesterEducationFinished(answers) &&
+      wasStudyingLastTwelveMonths(answers) &&
+      wasStudyingInTheLastYear(answers))
   )
-}
-
-export const didYouFinishLastSemester = (answers: FormValue) => {
-  return getValueViaPath<string>(answers, 'education.didFinishLastSemester')
 }
 
 export const appliedForNextSemester = (answers: FormValue) => {
@@ -66,19 +89,82 @@ export const appliedForNextSemester = (answers: FormValue) => {
 }
 
 export const showAppliedForNextSemester = (answers: FormValue) => {
+  return wasStudyingLastSemester(answers) || isCurrentlyStudying(answers)
+}
+
+export const getLevelsOfStudyOptions = (
+  application: Application,
+  locale: Locale,
+) => {
+  const education =
+    getValueViaPath<GaldurDomainModelsEducationProgramDTO[]>(
+      application.externalData,
+      'unemploymentApplication.data.supportData.educationPrograms',
+    ) ?? []
   return (
-    wasStudyingLastTwelveMonths(answers) &&
-    wasStudyingLastSemester(answers) &&
-    didYouFinishLastSemester(answers) === NO
+    education.map((program) => ({
+      value: program.id ?? '',
+      label:
+        (locale === 'is' ? program.name : program.english ?? program.name) ||
+        '',
+    })) ?? []
   )
 }
 
-export const showCurrentEducationFields = (answers: FormValue) => {
+export const getDegreeOptions = (
+  application: Application,
+  locale: Locale,
+  levelOfStudy: string,
+) => {
+  const education =
+    getValueViaPath<GaldurDomainModelsEducationProgramDTO[]>(
+      application.externalData,
+      'unemploymentApplication.data.supportData.educationPrograms',
+    ) ?? []
+
+  const chosenLevelDegrees = education?.filter(
+    (program) => program.id === levelOfStudy,
+  )[0]?.degrees
   return (
-    wasStudyingLastTwelveMonths(answers) &&
-    (isCurrentlyStudying(answers) ||
-      wasStudyingInTheLastYear(answers) ||
-      (wasStudyingLastSemester(answers) &&
-        appliedForNextSemester(answers) !== NO))
+    chosenLevelDegrees?.map((degree) => ({
+      value: degree.id ?? '',
+      label:
+        (locale === 'is' ? degree.name : degree.english ?? degree.name) || '',
+    })) ?? []
+  )
+}
+
+export const getCourseOfStudy = (
+  application: Application,
+  levelOfStudy: string,
+  degreeAnswer: string,
+  locale: Locale,
+) => {
+  const education = getValueViaPath<GaldurDomainModelsEducationProgramDTO[]>(
+    application.externalData,
+    'unemploymentApplication.data.supportData.educationPrograms',
+  )
+
+  const chosenLevelDegrees = education?.filter(
+    (program) => program.id === levelOfStudy,
+  )[0]?.degrees
+
+  const chosenDegreeSubjects = chosenLevelDegrees?.find(
+    (degree) => degree.id === degreeAnswer,
+  )?.subjects
+  return (
+    chosenDegreeSubjects?.map((subject) => ({
+      value: subject.id ?? '',
+      label:
+        (locale === 'is' ? subject.name : subject.english ?? subject.name) ||
+        '',
+    })) ?? []
+  )
+}
+
+export const lastSemesterGeneralCondition = (answers: FormValue) => {
+  return (
+    (wasStudyingLastSemester(answers) && !sameEducationAsCurrent(answers)) ||
+    (!isCurrentlyStudying(answers) && sameEducationAsCurrent(answers))
   )
 }

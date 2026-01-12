@@ -28,6 +28,11 @@ export const overview = {
       defaultMessage: 'Seinni hluti: Atvinnuleitin',
       description: 'overview section second section title',
     },
+    submitButtonText: {
+      id: 'vmst.ub.application:overview.general.submitButtonText',
+      defaultMessage: 'Sækja um',
+      description: 'overview section submit button title',
+    },
   }),
   labels: {
     applicantOverview: defineMessages({
@@ -77,22 +82,6 @@ export const overview = {
         id: 'vmst.ub.application:overview.labels.education.notLastTvelveMonths',
         defaultMessage: 'Ekki verið í námi síðustu tólf mánuði',
         description: 'overview section education not last twelve months label',
-      },
-      currentEducation: {
-        id: 'vmst.ub.application:overview.labels.education.currentEducation',
-        defaultMessage: 'Upplýsingar um námið',
-        description: 'overview section current education label',
-      },
-      endDate: {
-        id: 'vmst.ub.application:overview.labels.education.endDate',
-        defaultMessage: 'Námslok',
-        description: 'overview section current education end date label',
-      },
-      predictedEndDate: {
-        id: 'vmst.ub.application:overview.labels.education.predictedEndDate',
-        defaultMessage: 'Áætluð námslok',
-        description:
-          'overview section current education predicted end date label',
       },
     }),
 
@@ -195,10 +184,36 @@ export const overview = {
     }),
 
     educationHistory: defineMessages({
+      currentEducation: {
+        id: 'vmst.ub.application:overview.labels.educationHistory.currentEducation',
+        defaultMessage: 'Núverandi nám',
+        description: 'overview section education history label',
+      },
+      lastSemesterEducation: {
+        id: 'vmst.ub.application:overview.labels.educationHistory.lastSemesterEducation',
+        defaultMessage: 'Nám síðustu annar',
+        description: 'overview section education history label',
+      },
+      graduatedLastTvelweMonthsEducation: {
+        id: 'vmst.ub.application:overview.labels.educationHistory.graduatedLastTvelweMonthsEducation',
+        defaultMessage: 'Nám lokið á síðustu 12 mánuðum',
+        description: 'overview section education history label',
+      },
       educationHistory: {
         id: 'vmst.ub.application:overview.labels.educationHistory.educationHistory',
-        defaultMessage: 'Námsferill',
+        defaultMessage: 'Fyrri nám',
         description: 'overview section education history label',
+      },
+      endDate: {
+        id: 'vmst.ub.application:overview.labels.education.endDate',
+        defaultMessage: 'Námslok',
+        description: 'overview section current education end date label',
+      },
+      predictedEndDate: {
+        id: 'vmst.ub.application:overview.labels.education.predictedEndDate',
+        defaultMessage: 'Áætluð námslok',
+        description:
+          'overview section current education predicted end date label',
       },
     }),
 

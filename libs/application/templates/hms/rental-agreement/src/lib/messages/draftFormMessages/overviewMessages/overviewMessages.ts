@@ -332,6 +332,11 @@ export const overview = defineMessages({
     defaultMessage: 'Umboðsaðilar leigusala',
     description: 'Delegator label',
   },
+  signatoryHeader: {
+    id: 'ra.application:summary.signatoryHeader',
+    defaultMessage: 'Undiritunaraðili fyrir hönd leigusala',
+    description: 'Signatory header',
+  },
   nationalIdLabel: {
     id: 'ra.application:summary.nationalIdLabel',
     defaultMessage: 'Kennitala: ',

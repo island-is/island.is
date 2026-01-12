@@ -29,6 +29,7 @@ const createMyPagesLinks = (baseUrl: string) => ({
   loans: `${baseUrl}/minarsidur/fjarmal/lan`,
   payments: `${baseUrl}/minarsidur/fjarmal/greidslur/greidslusedlar-og-greidslukvittanir`,
   transactions: `${baseUrl}/minarsidur/fjarmal/faerslur/flokkar`,
+  statusOverview: `${baseUrl}/minarsidur/fjarmal/stada`,
 })
 
 export const useMyPagesLinks = () => {

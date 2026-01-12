@@ -73,8 +73,8 @@ const serializeService: SerializeMethod<HelmService> = async (
     },
     secrets: {},
     podDisruptionBudget: serviceDef.podDisruptionBudget ?? {
-      maxUnavailable: 1,
       unhealthyPodEvictionPolicy: 'IfHealthyBudget',
+      minAvailable: 1,
     },
     healthCheck: {
       liveness: {
@@ -143,7 +143,8 @@ const serializeService: SerializeMethod<HelmService> = async (
         max: result.replicaCount.max,
       },
       metric: {
-        cpuAverageUtilization: 90,
+        cpuAverageUtilization:
+          serviceDef.replicaCount?.cpuAverageUtilization || 90,
       },
     },
   }

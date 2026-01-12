@@ -11,12 +11,12 @@ import {
   DefaultEvents,
   Form,
   FormModes,
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
 } from '@island.is/application/types'
 
 import { m } from '../lib/messages'
 import DigitalServices from '@island.is/application/templates/signature-collection/assets/DigitalServices'
-import Logo from '@island.is/application/templates/signature-collection/assets/Logo'
+import { NationalRegistryLogo } from '@island.is/application/assets/institution-logos'
 import { CanSignApi, GetListApi } from '../dataProviders'
 
 export const Prerequisites: Form = buildForm({
@@ -24,7 +24,7 @@ export const Prerequisites: Form = buildForm({
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
-  logo: Logo,
+  logo: NationalRegistryLogo,
   children: [
     buildSection({
       id: 'intro',
@@ -67,7 +67,7 @@ export const Prerequisites: Form = buildForm({
           }),
           dataProviders: [
             buildDataProviderItem({
-              provider: NationalRegistryUserApi,
+              provider: NationalRegistryV3UserApi,
               title: m.nationalRegistryProviderTitle,
               subTitle: m.nationalRegistryProviderSubtitle,
             }),

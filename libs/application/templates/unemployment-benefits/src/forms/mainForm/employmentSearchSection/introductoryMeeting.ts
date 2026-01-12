@@ -6,6 +6,7 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { employmentSearch as employmentSearchMessages } from '../../../lib/messages'
+import { GaldurDomainModelsSettingsIntroductoryMeetingLanguageIntroductoryMeetingLanguageDTO } from '@island.is/clients/vmst-unemployment'
 
 export const introductoryMeetingSubSection = buildSubSection({
   id: 'introductoryMeetingSubSection',
@@ -25,15 +26,20 @@ export const introductoryMeetingSubSection = buildSubSection({
           id: 'introductoryMeeting.language',
           title: employmentSearchMessages.introductoryMeeting.languageLabel,
           required: true,
-          options: (application) => {
+          options: (application, _, locale) => {
             const languages =
-              getValueViaPath<{ name: string }[]>(
+              getValueViaPath<
+                Array<GaldurDomainModelsSettingsIntroductoryMeetingLanguageIntroductoryMeetingLanguageDTO>
+              >(
                 application.externalData,
                 'unemploymentApplication.data.supportData.introductoryMeetingLanguages',
               ) || []
             return languages.map((language) => ({
-              value: language.name,
-              label: language.name,
+              value: language.languageCode || '',
+              label:
+                (locale === 'is'
+                  ? language.name
+                  : language.english ?? language.name) || '',
             }))
           },
           placeholder:

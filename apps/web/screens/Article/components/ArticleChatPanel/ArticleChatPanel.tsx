@@ -3,6 +3,7 @@ import {
   boostChatPanelEndpoints,
   LiveChatIncChatPanel,
   WatsonChatPanel,
+  ZendeskChatPanel,
 } from '@island.is/web/components'
 import { GetSingleArticleQuery } from '@island.is/web/graphql/schema'
 import { useI18n } from '@island.is/web/i18n'
@@ -12,6 +13,7 @@ import {
   excludedOrganizationWatsonConfig,
   liveChatIncConfig,
   watsonConfig,
+  zendeskConfig,
 } from './config'
 
 interface ArticleChatPanelProps {
@@ -81,6 +83,20 @@ export const ArticleChatPanel = ({
       (o) => o.id in boostChatPanelEndpoints,
     )?.id as keyof typeof boostChatPanelEndpoints
     Component = <BoostChatPanel endpoint={organizationId} pushUp={pushUp} />
+  }
+  // Zendesk
+  else if (
+    article?.organization?.some((o) => o.id in zendeskConfig[activeLocale])
+  ) {
+    const organizationId = article.organization.find(
+      (o) => o.id in zendeskConfig[activeLocale],
+    )?.id as keyof typeof zendeskConfig['is']
+    Component = (
+      <ZendeskChatPanel
+        {...zendeskConfig[activeLocale][organizationId]}
+        pushUp={pushUp}
+      />
+    )
   } else if (
     !article?.organization?.some((o) =>
       excludedOrganizationWatsonConfig.includes(o.id),

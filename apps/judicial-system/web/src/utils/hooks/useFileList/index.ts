@@ -75,7 +75,7 @@ const useFileList = ({ caseId, connectedCaseParentId }: Parameters) => {
             file.id === variables.input.id
               ? {
                   ...file,
-                  key: undefined,
+                  isKeyAccessible: false,
                   status:
                     file.state === CaseFileState.STORED_IN_COURT
                       ? 'done-broken'

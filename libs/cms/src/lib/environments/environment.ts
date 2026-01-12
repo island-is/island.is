@@ -28,6 +28,7 @@ export default {
     'teamList',
     'bloodDonationRestriction',
     'organizationParentSubpage',
+    'course',
   ],
   nestedContentTypes: [
     'alertBanner',

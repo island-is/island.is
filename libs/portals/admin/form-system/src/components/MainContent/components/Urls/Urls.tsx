@@ -1,163 +1,61 @@
-import { useContext, useEffect, useState } from 'react'
-import {
-  Box,
-  Checkbox,
-  GridColumn,
-  GridRow,
-  Text,
-} from '@island.is/island-ui/core'
-import { m } from '@island.is/form-system/ui'
-import { ControlContext } from '../../../../context/ControlContext'
+import { Box, Button, GridRow } from '@island.is/island-ui/core'
+import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
-import {
-  CREATE_FORM_URL,
-  DELETE_FORM_URL,
-} from '@island.is/form-system/graphql'
-import { useMutation } from '@apollo/client'
+import { m } from '@island.is/form-system/ui'
+import { SubmissionUrls } from './SubmissionUrls'
 
 export const Urls = () => {
   const { formatMessage } = useIntl()
-  const { control, submitUrls, controlDispatch } = useContext(ControlContext)
-  const { form } = control
-  const [formUrls, setFormUrls] = useState<string[]>(
-    (form.urls ?? []).filter((url): url is string => typeof url === 'string'),
-  )
-
-  useEffect(() => {
-    controlDispatch({
-      type: 'UPDATE_FORM_URLS',
-      payload: { newValue: formUrls },
-    })
-  }, [formUrls])
-
-  const [deleteUrl] = useMutation(DELETE_FORM_URL)
-  const [formSystemCreateFormUrlMutation] = useMutation(CREATE_FORM_URL, {
-    onCompleted: (newUrlData) => {
-      if (newUrlData?.createFormSystemFormUrl) {
-        setFormUrls((prevUrls) => [
-          ...prevUrls,
-          newUrlData.createFormSystemFormUrl.organizationUrlId,
-        ])
-      }
-    },
-  })
-
-  const handleCreateFormUrl = async (organizationUrlId: string) => {
-    try {
-      await formSystemCreateFormUrlMutation({
-        variables: {
-          input: {
-            organizationUrlId,
-            formId: form?.id,
-          },
-        },
-      })
-    } catch (error) {
-      throw new Error(
-        `Error creating form URL: ${
-          error instanceof Error ? error.message : 'Unknown error'
-        }`,
-      )
-    }
-  }
-
-  const handleDeleteFormUrl = async (organizationUrlId: string) => {
-    try {
-      await deleteUrl({
-        variables: {
-          input: {
-            organizationUrlId,
-            formId: form?.id,
-          },
-        },
-      })
-      setFormUrls((prevUrls) =>
-        prevUrls.filter((url) => url !== organizationUrlId),
-      )
-    } catch (error) {
-      throw new Error(
-        `Error deleting form URL: ${
-          error instanceof Error ? error.message : 'Unknown error'
-        }`,
-      )
-    }
-  }
+  const [activeComponent, setActiveComponent] = useState<
+    'submissionUrls' | 'validationUrls'
+  >('submissionUrls')
+  const activeColor = 'blueberry'
 
   return (
-    <Box marginTop={6}>
-      <Text variant="h4">
-        Veldu þær slóðir sem þú vilt nota fyrir þessa umsókn
-      </Text>
+    <>
       <GridRow>
-        <GridColumn span="5/10">
-          <Box marginTop={3}>
-            <strong>{formatMessage(m.prodUrl)}</strong>
-            {submitUrls &&
-              submitUrls
-                ?.filter((url) => !url?.isTest)
-                .map((url) => (
-                  <Box
-                    key={url?.id}
-                    display="flex"
-                    alignItems="center"
-                    marginTop={1}
-                  >
-                    <Checkbox
-                      checked={formUrls?.some((u) => u === url?.id)}
-                      onChange={async (e) => {
-                        if (typeof url?.id === 'string') {
-                          if (e.target.checked) {
-                            await handleCreateFormUrl(url.id)
-                          } else {
-                            await handleDeleteFormUrl(url.id)
-                          }
-                        }
-                      }}
-                      name={`prod-url-${url?.id}`}
-                      label={url?.url}
-                    />
-                  </Box>
-                ))}
+        <Box
+          marginTop={8}
+          marginBottom={2}
+          marginRight={1}
+          marginLeft={2}
+          display="flex"
+          justifyContent="flexEnd"
+          width="full"
+        >
+          <Box justifyContent="spaceBetween" display="flex" width="full">
+            <Box
+              display="flex"
+              flexDirection="row"
+              alignItems="center"
+              columnGap={4}
+            >
+              <Button
+                size="default"
+                variant="text"
+                colorScheme={
+                  activeComponent === 'submissionUrls' ? activeColor : 'default'
+                }
+                onClick={() => setActiveComponent('submissionUrls')}
+              >
+                {formatMessage(m.submitUrls)}
+              </Button>
+              {/* <Button
+                size="default"
+                variant="text"
+                colorScheme={
+                  activeComponent === 'validationUrls' ? activeColor : 'default'
+                }
+                onClick={() => setActiveComponent('validationUrls')}
+              >
+                {formatMessage(m.validationUrls)}
+              </Button> */}
+            </Box>
           </Box>
-        </GridColumn>
-        <GridColumn span="5/10">
-          <Box marginTop={3}>
-            <strong>{formatMessage(m.devUrl)}</strong>
-            {submitUrls &&
-              submitUrls
-                ?.filter((url) => url?.isTest)
-                .map((url) => (
-                  <Box
-                    key={url?.id}
-                    display="flex"
-                    alignItems="center"
-                    marginTop={1}
-                  >
-                    <Checkbox
-                      checked={formUrls?.some((u) => u === url?.id)}
-                      onChange={async (e) => {
-                        if (typeof url?.id === 'string') {
-                          if (e.target.checked) {
-                            await handleCreateFormUrl(url.id)
-                          } else {
-                            await handleDeleteFormUrl(url.id)
-                          }
-                        }
-                        controlDispatch({
-                          type: 'SET_IS_ZENDESK_ENABLED',
-                          payload: {
-                            value: e.target.checked,
-                          },
-                        })
-                      }}
-                      name={`test-url-${url?.id}`}
-                      label={url?.url}
-                    />
-                  </Box>
-                ))}
-          </Box>
-        </GridColumn>
+        </Box>
       </GridRow>
-    </Box>
+      {activeComponent === 'submissionUrls' && <SubmissionUrls />}
+      {/* {activeComponent === 'validationUrls' && <p>Reglukerfi</p>} */}
+    </>
   )
 }

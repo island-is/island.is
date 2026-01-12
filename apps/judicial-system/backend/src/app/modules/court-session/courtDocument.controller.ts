@@ -22,14 +22,22 @@ import {
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
-import { CourtDocumentType } from '@island.is/judicial-system/types'
+import {
+  CourtDocumentType,
+  indictmentCases,
+} from '@island.is/judicial-system/types'
 
 import {
   districtCourtAssistantRule,
   districtCourtJudgeRule,
   districtCourtRegistrarRule,
 } from '../../guards'
-import { CaseExistsGuard, CaseWriteGuard, CurrentCase } from '../case'
+import {
+  CaseExistsGuard,
+  CaseTypeGuard,
+  CaseWriteGuard,
+  CurrentCase,
+} from '../case'
 import { Case, CourtDocument } from '../repository'
 import { CreateCourtDocumentDto } from './dto/createCourtDocument.dto'
 import { DeleteCourtDocumentResponse } from './dto/deleteCourtDocument.response'
@@ -42,7 +50,13 @@ import { CourtDocumentService } from './courtDocument.service'
 
 @Controller('api/case/:caseId')
 @ApiTags('court-documents')
-@UseGuards(JwtAuthUserGuard, RolesGuard)
+@UseGuards(
+  JwtAuthUserGuard,
+  RolesGuard,
+  CaseExistsGuard,
+  new CaseTypeGuard(indictmentCases),
+  CaseWriteGuard,
+)
 export class CourtDocumentController {
   constructor(
     private readonly courtDocumentService: CourtDocumentService,
@@ -50,7 +64,7 @@ export class CourtDocumentController {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @UseGuards(CaseExistsGuard, CaseWriteGuard, CourtSessionExistsGuard)
+  @UseGuards(CourtSessionExistsGuard)
   @RolesRules(
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
@@ -80,12 +94,7 @@ export class CourtDocumentController {
     )
   }
 
-  @UseGuards(
-    CaseExistsGuard,
-    CaseWriteGuard,
-    CourtSessionExistsGuard,
-    FiledCourtDocumentExistsGuard,
-  )
+  @UseGuards(CourtSessionExistsGuard, FiledCourtDocumentExistsGuard)
   @RolesRules(
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
@@ -117,7 +126,7 @@ export class CourtDocumentController {
     )
   }
 
-  @UseGuards(CaseExistsGuard, CaseWriteGuard, UnfiledCourtDocumentExistsGuard)
+  @UseGuards(UnfiledCourtDocumentExistsGuard)
   @RolesRules(
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
@@ -156,12 +165,7 @@ export class CourtDocumentController {
     )
   }
 
-  @UseGuards(
-    CaseExistsGuard,
-    CaseWriteGuard,
-    CourtSessionExistsGuard,
-    FiledCourtDocumentExistsGuard,
-  )
+  @UseGuards(CourtSessionExistsGuard, FiledCourtDocumentExistsGuard)
   @RolesRules(
     districtCourtJudgeRule,
     districtCourtRegistrarRule,

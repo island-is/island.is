@@ -1,8 +1,9 @@
+// ATTENTION -> When adding or changing paths, please always make sure to redirect old paths. The app is using links to navigate
 const basicInformation = '/heilsa/grunnupplysingar'
-
 export enum HealthPaths {
   HealthRoot = '/heilsa',
 
+  HealthBasicOld = '/heilsa/yfirlit',
   HealthBasicInformation = `${basicInformation}`,
   HealthOverview = `${basicInformation}/yfirlit`,
 
@@ -48,6 +49,8 @@ export enum HealthPaths {
   HealthMedicinePrescriptionOverview = '/heilsa/lyf/lyfjaavisanir/yfirlit',
   HealthMedicinePrescriptionHistory = '/heilsa/lyf/lyfjasaga',
   HealthMedicineDelegation = '/heilsa/lyf/lyfjaumbod',
+  HealthMedicineDelegationDetail = '/heilsa/lyf/lyfjaumbod/:id',
+  HealthMedicineDelegationAdd = '/heilsa/lyf/lyfjaumbod/nytt-lyfjaumbod',
 
   HealthVaccinations = '/heilsa/bolusetningar',
   HealthVaccinationsGeneral = '/heilsa/bolusetningar/almennar',
@@ -60,4 +63,13 @@ export enum HealthPaths {
 
   HealthWaitlists = '/heilsa/bidlistar',
   HealthWaitlistsDetail = '/heilsa/bidlistar/:id',
+
+  HealthPatientData = '/heilsa/sjukraskra',
+  HealthPatientDataOverview = '/heilsa/sjukraskra/yfirlit',
+  HealthPatientDataPermits = '/heilsa/sjukraskra/heimildir',
+  HealthPatientDataPermitsDetail = '/heilsa/sjukraskra/heimildir/:id',
+  HealthPatientDataPermitsAdd = '/heilsa/sjukraskra/heimildir/ny-heimild',
+
+  HealthAppointments = '/heilsa/timabokanir',
+  HealthAppointmentDetail = '/heilsa/timabokanir/:id',
 }

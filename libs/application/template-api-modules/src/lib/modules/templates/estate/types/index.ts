@@ -60,6 +60,7 @@ type BankAccount = {
   balance?: string | number
   accruedInterest?: string | number
   accountTotal?: string | number
+  foreignBankAccount?: string[]
 }
 
 type Stock = {
@@ -138,9 +139,11 @@ export type UploadData = {
   debts: Debt[]
   representative?: Representative
   districtCommissionerHasWill: string
+  knowledgeOfOtherWills: string
   settlement: string
   remarksOnTestament: string
   dividedEstate: string
   deceasedWithUndividedEstate?: SpouseField
   estateWithoutAssetsInfo: EstateWithoutAssetsInfo
+  additionalComments?: string
 }

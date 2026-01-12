@@ -11,6 +11,7 @@ export type ActionCardProps = {
   headingVariant?: 'h3' | 'h4'
   renderHeading?: (headingEl: React.ReactNode) => React.ReactNode
   text?: string
+  subText?: string
   eyebrow?: string
   backgroundColor?: BackgroundColor
   focused?: boolean

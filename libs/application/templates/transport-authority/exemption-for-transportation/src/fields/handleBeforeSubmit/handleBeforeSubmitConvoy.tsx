@@ -5,7 +5,6 @@ import { useLocale } from '@island.is/localization'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import { useFormContext } from 'react-hook-form'
 import {
-  checkIfConvoyChanged,
   getUpdatedAxleSpacing,
   getUpdatedConvoy,
   getUpdatedFreightPairingList,
@@ -37,11 +36,6 @@ export const HandleBeforeSubmitConvoy: FC<FieldBaseProps> = ({
           )
           if (updatedConvoy) {
             newAnswers.convoy = updatedConvoy
-          }
-
-          if (!checkIfConvoyChanged(application.answers, newAnswers)) {
-            // No need to do anything if nothing of importance changed
-            return [true, null]
           }
 
           const updatedFreightPairing = getUpdatedFreightPairingList(

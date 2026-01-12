@@ -5,7 +5,7 @@ import {
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import {
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   TeachersApi,
   UserProfileApi,
   CurrentLicenseApi,
@@ -30,7 +30,7 @@ export const sectionExternalData = buildSubSection({
       checkboxLabel: m.externalDataAgreement,
       dataProviders: [
         buildDataProviderItem({
-          provider: NationalRegistryUserApi,
+          provider: NationalRegistryV3UserApi,
           title: m.nationalRegistryTitle,
           subTitle: m.nationalRegistrySubTitle,
         }),

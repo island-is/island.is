@@ -27,7 +27,7 @@ env:
   DISABLE_SYSLUMENN_PAGE: 'false'
   ENVIRONMENT: 'staging'
   LOG_LEVEL: 'info'
-  NODE_OPTIONS: '--max-old-space-size=691 --enable-source-maps -r dd-trace/init'
+  NODE_OPTIONS: '--max-old-space-size=1350 --enable-source-maps -r dd-trace/init'
   SERVERSIDE_FEATURES_ON: ''
   TRACKING_DOMAIN: 'beta.staging01.devland.is'
 grantNamespaces:
@@ -39,9 +39,9 @@ grantNamespaces:
 grantNamespacesEnabled: true
 healthCheck:
   liveness:
-    initialDelaySeconds: 3
+    initialDelaySeconds: 10
     path: '/liveness'
-    timeoutSeconds: 3
+    timeoutSeconds: 5
   readiness:
     initialDelaySeconds: 20
     path: '/readiness'
@@ -49,7 +49,7 @@ healthCheck:
 hpa:
   scaling:
     metric:
-      cpuAverageUtilization: 90
+      cpuAverageUtilization: 70
       nginxRequestsIrate: 5
     replicas:
       max: 3
@@ -69,7 +69,7 @@ ingress:
           - '/'
 namespace: 'islandis'
 podDisruptionBudget:
-  maxUnavailable: 1
+  minAvailable: 1
   unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534
@@ -80,11 +80,11 @@ replicaCount:
   min: 1
 resources:
   limits:
-    cpu: '1000m'
-    memory: '768Mi'
+    cpu: '1800m'
+    memory: '1500Mi'
   requests:
-    cpu: '300m'
-    memory: '384Mi'
+    cpu: '1200m'
+    memory: '1024Mi'
 secrets:
   CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
   DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN'

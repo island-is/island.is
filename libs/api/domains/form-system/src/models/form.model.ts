@@ -10,7 +10,6 @@ import { FormApplicant } from './formApplicant.model'
 import { LanguageType } from './languageType.model'
 import { ListType } from './listItem.model'
 import { Option } from './option.model'
-import { OrganizationUrl } from './organizationUrl.model'
 import { Screen as ScreenModel } from './screen.model'
 import { Section } from './section.model'
 
@@ -49,6 +48,12 @@ export class Form {
   @Field(() => Date, { nullable: true })
   invalidationDate?: Date
 
+  @Field(() => String, { nullable: true })
+  submissionServiceUrl?: string
+
+  @Field(() => String, { nullable: true })
+  validationServiceUrl?: string
+
   @Field(() => Boolean, { nullable: true })
   hasPayment?: boolean
 
@@ -74,16 +79,13 @@ export class Form {
   isTranslated!: boolean
 
   @Field(() => Int)
-  applicationDaysToRemove!: number
+  daysUntilApplicationPrune!: number
 
   @Field(() => Boolean)
   allowProceedOnValidationFail!: boolean
 
   @Field(() => Boolean)
   hasSummaryScreen!: boolean
-
-  @Field(() => Boolean, { nullable: true })
-  isZendeskEnabled?: boolean
 
   @Field(() => CompletedSectionInfo, { nullable: true })
   completedSectionInfo?: CompletedSectionInfo
@@ -108,9 +110,6 @@ export class Form {
 
   @Field(() => String)
   status!: string
-
-  @Field(() => [String], { nullable: 'itemsAndList' })
-  urls?: string[]
 }
 
 @ObjectType('FormSystemFormResponse')
@@ -133,11 +132,8 @@ export class FormResponse {
   @Field(() => [Form], { nullable: 'itemsAndList' })
   forms?: Form[]
 
-  @Field(() => [OrganizationUrl], { nullable: 'itemsAndList' })
-  submitUrls?: OrganizationUrl[]
-
-  @Field(() => [OrganizationUrl], { nullable: 'itemsAndList' })
-  validationUrls?: OrganizationUrl[]
+  @Field(() => [String], { nullable: 'itemsAndList' })
+  submissionUrls?: string[]
 
   @Field(() => [Option], { nullable: 'itemsAndList' })
   organizations?: Option[]

@@ -7,7 +7,7 @@ import {
   FilterMultiChoiceProps,
 } from '@island.is/island-ui/core'
 import {
-  useGetInstitutionApplicationsQuery,
+  useGetApplicationsInstitutionAdminQuery,
   useGetOrganizationsQuery,
 } from '../../queries/overview.generated'
 import { InstitutionFilters } from '../../components/Filters/InstitutionFilters'
@@ -49,13 +49,13 @@ const InstitutionOverview = () => {
     ssr: false,
   })
 
-  const useAdvancedSearch = !!filters.typeId
+  const useAdvancedSearch = !!filters.typeIdValue
 
   const {
     data: response,
     loading: queryLoading,
     refetch,
-  } = useGetInstitutionApplicationsQuery({
+  } = useGetApplicationsInstitutionAdminQuery({
     ssr: false,
     variables: {
       input: {
@@ -67,8 +67,8 @@ const InstitutionOverview = () => {
             : '',
         from: filters.period.from?.toISOString(),
         to: filters.period.to?.toISOString(),
-        typeIdValue: filters.typeId,
-        searchStrValue:
+        typeIdValue: filters.typeIdValue,
+        searchStr:
           useAdvancedSearch && filters.searchStr
             ? filters.searchStr.replace('-', '')
             : undefined,
@@ -87,10 +87,10 @@ const InstitutionOverview = () => {
   const organizations = (orgData?.getOrganizations?.items ??
     []) as Organization[]
 
-  const handleTypeIdChange = (typeId: ApplicationFilters['typeId']) => {
+  const handleTypeIdChange = (typeId: ApplicationFilters['typeIdValue']) => {
     setFilters((prev) => ({
       ...prev,
-      typeId: typeId,
+      typeIdValue: typeId,
     }))
   }
 

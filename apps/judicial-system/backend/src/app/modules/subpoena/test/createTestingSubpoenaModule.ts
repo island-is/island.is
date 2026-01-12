@@ -23,7 +23,7 @@ import { DefendantService } from '../../defendant'
 import { EventService } from '../../event'
 import { FileService } from '../../file'
 import { PoliceService } from '../../police'
-import { Defendant, Subpoena } from '../../repository'
+import { Defendant, SubpoenaRepositoryService } from '../../repository'
 import { UserService } from '../../user'
 import { InternalSubpoenaController } from '../internalSubpoena.controller'
 import { LimitedAccessSubpoenaController } from '../limitedAccessSubpoena.controller'
@@ -41,6 +41,7 @@ jest.mock('../../court-session/courtDocument.service')
 jest.mock('../../court/court.service')
 jest.mock('../../file/file.service')
 jest.mock('../../case/internalCase.service')
+jest.mock('../../repository/services/subpoenaRepository.service')
 
 export const createTestingSubpoenaModule = async () => {
   const subpoenaModule = await Test.createTestingModule({
@@ -76,17 +77,7 @@ export const createTestingSubpoenaModule = async () => {
           error: jest.fn(),
         },
       },
-      {
-        provide: getModelToken(Subpoena),
-        useValue: {
-          findOne: jest.fn(),
-          findAll: jest.fn(),
-          create: jest.fn(),
-          update: jest.fn(),
-          destroy: jest.fn(),
-          findByPk: jest.fn(),
-        },
-      },
+      SubpoenaRepositoryService,
       {
         provide: getModelToken(Defendant),
         useValue: {
@@ -117,9 +108,8 @@ export const createTestingSubpoenaModule = async () => {
   const internalCaseService =
     subpoenaModule.get<InternalCaseService>(InternalCaseService)
 
-  const subpoenaModel = await subpoenaModule.resolve<typeof Subpoena>(
-    getModelToken(Subpoena),
-  )
+  const subpoenaRepositoryService =
+    subpoenaModule.get<SubpoenaRepositoryService>(SubpoenaRepositoryService)
 
   const subpoenaService = subpoenaModule.get<SubpoenaService>(SubpoenaService)
 
@@ -143,7 +133,7 @@ export const createTestingSubpoenaModule = async () => {
     policeService,
     courtService,
     internalCaseService,
-    subpoenaModel,
+    subpoenaRepositoryService,
     subpoenaService,
     subpoenaController,
     internalSubpoenaController,

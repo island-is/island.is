@@ -19,6 +19,7 @@ import {
 
 import { Case } from './case.model'
 import { CourtDocument } from './courtDocument.model'
+import { CourtSessionString } from './courtSessionString.model'
 import { User } from './user.model'
 
 @Table({
@@ -118,9 +119,26 @@ export class CourtSession extends Model {
   @ApiPropertyOptional({ type: String })
   closingEntries?: string
 
-  @HasMany(() => CourtDocument, 'courtSessionId')
+  @HasMany(() => CourtDocument, {
+    foreignKey: 'courtSessionId',
+    as: 'filedDocuments',
+  })
   @ApiPropertyOptional({ type: () => [CourtDocument] })
   filedDocuments?: CourtDocument[]
+
+  @HasMany(() => CourtDocument, {
+    foreignKey: 'mergedCourtSessionId',
+    as: 'mergedFiledDocuments',
+  })
+  @ApiPropertyOptional({ type: () => [CourtDocument] })
+  mergedFiledDocuments?: CourtDocument[]
+
+  @HasMany(() => CourtSessionString, {
+    foreignKey: 'courtSessionId',
+    as: 'courtSessionStrings',
+  })
+  @ApiPropertyOptional({ type: () => [CourtSessionString] })
+  courtSessionStrings?: CourtSessionString[]
 
   @Column({ type: DataType.BOOLEAN, allowNull: true })
   @ApiPropertyOptional({ type: Boolean })

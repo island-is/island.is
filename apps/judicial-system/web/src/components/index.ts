@@ -1,5 +1,6 @@
 export { CourtCaseInfo, ProsecutorCaseInfo } from './CaseInfo/CaseInfo'
 export { default as AccordionListItem } from './AccordionListItem/AccordionListItem'
+export { default as BaseSelect } from './BaseSelect/BaseSelect'
 export { default as BlueBox } from './BlueBox/BlueBox'
 export { default as BlueBoxWithDate } from './BlueBoxWithIcon/BlueBoxWithDate'
 export { default as CaseDates } from './CaseDates/CaseDates'
@@ -67,7 +68,7 @@ export { default as ProsecutorSelection } from './ProsecutorSelection/Prosecutor
 export { RenderFiles } from './IndictmentCaseFilesList/IndictmentCaseFilesList'
 export { default as RestrictionTags } from './RestrictionTags/RestrictionTags'
 export { default as RulingAccordionItem } from './AccordionItems/RulingAccordionItem/RulingAccordionItem'
-export { default as RulingInput } from './RulingInput/RulingInput'
+export { default as RulingInput } from './Inputs/RulingInput'
 export { default as SectionHeading } from './SectionHeading/SectionHeading'
 
 export {

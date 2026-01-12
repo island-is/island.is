@@ -7,7 +7,7 @@ import {
   buildSection,
   buildSubmitField,
 } from '@island.is/application/core'
-import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
+import { SocialInsuranceAdministrationLogo } from '@island.is/application/assets/institution-logos'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import {
   Application,
@@ -30,7 +30,7 @@ import { incomePlanFormMessage } from '../lib/messages'
 export const PrerequisitesForm: Form = buildForm({
   id: 'IncomePlanPrerequisites',
   title: incomePlanFormMessage.pre.formTitle,
-  logo: Logo,
+  logo: SocialInsuranceAdministrationLogo,
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
   children: [

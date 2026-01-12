@@ -11,7 +11,11 @@ export const getTableData = (data: FileData) => {
   const headCells = data?.[0] ?? []
   const bodyRows = (
     data?.slice(1).filter((row) => row?.some((text) => text)) ?? []
-  ).map((row) => ({ row }))
+  ).map((row) => ({
+    row: row.map((text) =>
+      typeof text === 'number' ? Math.round(text) : text,
+    ) as string[],
+  }))
 
   let longestRowLength = 0
   for (const { row } of bodyRows) {

@@ -504,6 +504,9 @@ export class Case {
   @Field(() => String, { nullable: true })
   readonly requestCompletedDate?: string
 
+  @Field(() => String, { nullable: true })
+  readonly indictmentCompletedDate?: string
+
   @Field(() => [Victim], { nullable: true })
   readonly victims?: Victim[]
 
@@ -515,4 +518,13 @@ export class Case {
 
   @Field(() => Boolean, { nullable: true })
   readonly isRegisteredInPrisonSystem?: boolean
+
+  @Field(() => String, { nullable: true })
+  readonly penalties?: string
+
+  @Field(() => Case, { nullable: true })
+  readonly splitCase?: Case
+
+  @Field(() => [Case], { nullable: true })
+  readonly splitCases?: Case[]
 }

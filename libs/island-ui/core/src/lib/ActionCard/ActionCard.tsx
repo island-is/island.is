@@ -67,6 +67,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
   headingVariant = 'h3',
   renderHeading,
   text,
+  subText,
   eyebrow,
   backgroundColor = 'white',
   cta: _cta,
@@ -215,6 +216,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
         flexDirection="row"
         marginTop={hasTag ? 'auto' : 0}
         paddingTop={hasTag ? 1 : 0}
+        marginLeft={[0, 0, 5]}
       >
         <Button
           {...(cta.buttonType ?? { variant: cta.variant })}
@@ -328,6 +330,11 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
           {text && (
             <Text color={color} paddingTop={heading ? 1 : 0}>
               {text}
+            </Text>
+          )}
+          {subText && (
+            <Text color={color} paddingTop={'smallGutter'}>
+              {subText}
             </Text>
           )}
 

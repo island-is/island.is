@@ -1,25 +1,30 @@
 import { NO, YES } from '@island.is/application/core'
 import {
   AffiliationRole,
-  CaseWorkerInputTypeEnum,
-  OrganizationType,
-  OrganizationSubType,
-  OrganizationSector,
   AgentType,
+  ApplicationFeatureConfigType,
+  CaseWorkerInputTypeEnum,
+  OrganizationSector,
+  OrganizationSubType,
+  OrganizationType,
 } from './utils/constants'
 
 export type YesOrNoOrEmpty = typeof YES | typeof NO | ''
 
 export interface RelativesRow {
-  fullName: string
+  nationalIdWithName: {
+    name: string
+    nationalId: string
+  }
   phoneNumber: string
-  nationalId: string
   relation: string
 }
 
 export interface SiblingsRow {
-  fullName: string
-  nationalId: string
+  nationalIdWithName: {
+    name: string
+    nationalId: string
+  }
 }
 
 export type Child = {
@@ -41,11 +46,6 @@ export type ChildInformation = {
   }
   preferredName: string
   pronouns: string[]
-  differentPlaceOfResidence: string
-  placeOfResidence?: {
-    streetAddress: string
-    postalCode: string
-  }
   usePronounAndPreferredName?: string[]
 }
 
@@ -100,7 +100,7 @@ export type ApplicationFeatureModel = {
 }
 
 export type ApplicationFeatureConfig = {
-  applicationType: string // "enum": ["registration"] // TODO: Á að búa til enum í constants fyrir þetta? (eins og OrganizationType)
+  applicationType: ApplicationFeatureConfigType
   applicationFeatures: ApplicationFeatureModel[]
 }
 
@@ -113,8 +113,8 @@ export type AffiliationOrganization = {
   nationalId: string | null
   name: string
   type: OrganizationType
-  subType: OrganizationSubType | null // TODO: Getur þetta verið null?
-  sector: OrganizationSector | null // TODO: Getur þetta verið null?
+  subType: OrganizationSubType
+  sector: OrganizationSector
 }
 
 export type AddressModel = {
@@ -168,7 +168,6 @@ export type LanguageProfile = {
 export type FriggChildInformation = {
   id: string
   nationalId: string
-  // nationalIdType // TODO: Bæta við nýrri enum týpu? ["unknown", "individual", "system"]
   name: string
   nationality: string | null
   preferredName: string | null
@@ -195,13 +194,19 @@ export type CurrentSchool = {
   municipality?: string
 }
 
+export type FileType = {
+  key: string
+  name: string
+}
+
 export type Organization = {
   id: string
   name: string
   type: OrganizationType
-  subType: OrganizationSubType | null // TODO: Getur þetta verið null?
-  sector: OrganizationSector | null // TODO: Getur þetta verið null?
+  subType: OrganizationSubType
+  sector: OrganizationSector
   gradeLevels: string[]
+  address?: AddressModel
   unitId: string | null
   settings: ApplicationSettings | null
 }

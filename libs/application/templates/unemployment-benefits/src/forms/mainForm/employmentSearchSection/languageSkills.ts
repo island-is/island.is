@@ -8,6 +8,7 @@ import { employmentSearch as employmentSearchMessages } from '../../../lib/messa
 import { Application } from '@island.is/application/types'
 import { GaldurDomainModelsSelectItem } from '@island.is/clients/vmst-unemployment'
 import { Locale } from '@island.is/shared/types'
+import { LanguageIds } from '../../../shared'
 
 export const languageSkillsSubSection = buildSubSection({
   id: 'languageSkillsSubSection',
@@ -34,11 +35,18 @@ export const languageSkillsSubSection = buildSubSection({
                     application.externalData,
                     'unemploymentApplication.data.supportData.languageKnowledge',
                   ) || []
-                return languages.map((language) => ({
-                  value: language.id || '',
-                  label:
-                    (locale === 'is' ? language.name : language.english) || '',
-                }))
+                return languages
+                  .filter(
+                    (x) =>
+                      x.id !== LanguageIds.ENGLISH &&
+                      x.id !== LanguageIds.ICELANDIC,
+                  )
+                  .map((language) => ({
+                    value: language.id || '',
+                    label:
+                      (locale === 'is' ? language.name : language.english) ||
+                      '',
+                  }))
               },
               readonly: (application, _, index) => {
                 if (index !== undefined && index < 2) {
@@ -75,7 +83,7 @@ export const languageSkillsSubSection = buildSubSection({
               label: employmentSearchMessages.languageSkills.skill,
               component: 'select',
               width: 'half',
-              options: (application) => {
+              options: (application, _, locale) => {
                 const languageSkills =
                   getValueViaPath<Array<GaldurDomainModelsSelectItem>>(
                     application.externalData,
@@ -83,7 +91,10 @@ export const languageSkillsSubSection = buildSubSection({
                   ) || []
                 return languageSkills.map((skill) => ({
                   value: skill.id || '',
-                  label: skill.name || '',
+                  label:
+                    (locale === 'is'
+                      ? skill.name
+                      : skill.english ?? skill.name) || '',
                 }))
               },
             },

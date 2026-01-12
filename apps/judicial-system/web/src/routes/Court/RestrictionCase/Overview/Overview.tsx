@@ -131,7 +131,7 @@ export const JudgeOverview = () => {
             sections={[
               {
                 id: 'defendants-section',
-                items: [defendants(workingCase.type)],
+                items: [defendants({ caseType: workingCase.type })],
               },
               {
                 id: 'case-info-section',
@@ -249,6 +249,7 @@ export const JudgeOverview = () => {
               caseId={workingCase.id}
               title={formatMessage(core.pdfButtonRequest)}
               pdfType="request"
+              elementId={formatMessage(core.pdfButtonRequest)}
             />
           </Box>
           <Button

@@ -1,4 +1,4 @@
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import {
   CaseFileCategory,
@@ -38,7 +38,7 @@ describe('InternalVerdictController - Deliver verdict to national commissioners 
 
   const verdict = { id: verdictId } as Verdict
 
-  const defendant = { id: defendantId, verdict } as Defendant
+  const defendant = { id: defendantId, verdicts: [verdict] } as Defendant
   const theCase = {
     id: caseId,
     defendants: [defendant],
@@ -106,7 +106,7 @@ describe('InternalVerdictController - Deliver verdict to national commissioners 
             documentBase64: 'RMOzbXVy',
           },
         ],
-        documentDates: [{ code: 'ORDER_BY_DATE', value: new Date(2025, 1, 1) }],
+        documentDates: [{ code: 'ORDER_BY_DATE', value: new Date(2025, 3, 1) }],
         fileTypeCode: PoliceFileTypeCode.VERDICT,
         caseSupplements: [
           { code: 'RVG_CASE_ID', value: caseId },

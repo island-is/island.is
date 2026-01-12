@@ -17,13 +17,16 @@ export class HistoryResponseDto {
 
   constructor(
     timeStamp: Date,
-    log: StaticText,
+    message: StaticText,
     formatMessage: FormatMessage,
-    values?: Record<string, any>, // eslint-disable-line @typescript-eslint/no-explicit-any
+    subjectAndActorText?: string,
   ) {
     this.date = timeStamp
-    if (log) {
-      this.log = formatMessage(log, values)
+    if (message) {
+      this.log = formatMessage(message)
+      if (subjectAndActorText) {
+        this.log += subjectAndActorText
+      }
     } else {
       this.log = undefined
     }

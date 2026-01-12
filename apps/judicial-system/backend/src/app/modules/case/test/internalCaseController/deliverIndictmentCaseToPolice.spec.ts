@@ -1,5 +1,5 @@
 import { Base64 } from 'js-base64'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import {
   CaseFileCategory,
@@ -74,11 +74,13 @@ describe('InternalCaseController - Deliver indictment case to police', () => {
     const caseFile1 = {
       id: uuid(),
       key: uuid(),
+      isKeyAccessible: true,
       category: CaseFileCategory.COURT_RECORD,
     }
     const caseFile2 = {
       id: uuid(),
       key: uuid(),
+      isKeyAccessible: true,
       category: CaseFileCategory.RULING,
     }
     const theCase = {

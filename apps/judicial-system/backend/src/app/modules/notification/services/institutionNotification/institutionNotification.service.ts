@@ -1,3 +1,5 @@
+import addDays from 'date-fns/addDays'
+
 import {
   Inject,
   Injectable,
@@ -10,8 +12,14 @@ import { EmailService } from '@island.is/email-service'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
 
+import {
+  CLOSED_INDICTMENT_OVERVIEW_ROUTE,
+  INDICTMENTS_TO_REVIEW,
+} from '@island.is/judicial-system/consts'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import { InstitutionNotificationType } from '@island.is/judicial-system/types'
 
+import { nowFactory } from '../../../../factories'
 import { InternalCaseService } from '../../../case'
 import { EventService } from '../../../event'
 import { Notification, type User } from '../../../repository'
@@ -88,6 +96,54 @@ export class InstitutionNotificationService extends BaseNotificationService {
     )
   }
 
+  private async sendPublicProsecutorVerdictAppealDeadlineReminderNotification(
+    prosecutorsOfficeId: string,
+  ) {
+    const users = await this.userService.getProsecutorUsers(prosecutorsOfficeId)
+    const targetDate = addDays(nowFactory(), 7)
+
+    const emailPromises: Promise<unknown>[] = []
+    for (const prosecutorUser of users) {
+      const cases =
+        await this.internalCaseService.getIndictmentCasesWithVerdictAppealDeadlineOnTargetDate(
+          prosecutorUser.id,
+          targetDate,
+        )
+
+      if (!cases.length) {
+        continue
+      }
+      const areMultipleCases = cases.length > 1
+      const courtCaseNumbers = cases
+        .map((theCase) => theCase.courtCaseNumber)
+        .join(', ')
+
+      const redirectUrl = areMultipleCases
+        ? INDICTMENTS_TO_REVIEW
+        : `${CLOSED_INDICTMENT_OVERVIEW_ROUTE}/${cases[0].id}`
+      const subject = 'Áminning um yfirlestur'
+      const html = `Áminning um yfirlestur á mál${
+        areMultipleCases ? 'um:' : 'i'
+      } ${courtCaseNumbers}. Áfrýjunarfrestur er til ${formatDate(
+        targetDate,
+      )}. Sjá nánar í <a href="${
+        this.config.clientUrl
+      }${redirectUrl}">Réttarvörslugátt.</a>`
+
+      const recipient = this.sendEmail({
+        subject,
+        html,
+        recipientName: prosecutorUser.name,
+        recipientEmail: prosecutorUser.email,
+      })
+      this.logger.info(
+        `Public prosecutor verdict review reminder sent to ${prosecutorUser.id} for ${cases.length} cases`,
+      )
+      emailPromises.push(recipient)
+    }
+    return Promise.all(emailPromises)
+  }
+
   async sendNotification(
     type: InstitutionNotificationType,
     prosecutorsOfficeId: string,
@@ -96,6 +152,11 @@ export class InstitutionNotificationService extends BaseNotificationService {
       switch (type) {
         case InstitutionNotificationType.INDICTMENTS_WAITING_FOR_CONFIRMATION:
           await this.sendIndictmentsWaitingForConfirmationNotification(
+            prosecutorsOfficeId,
+          )
+          break
+        case InstitutionNotificationType.PUBLIC_PROSECUTOR_VERDICT_APPEAL_DEADLINE_REMINDER:
+          await this.sendPublicProsecutorVerdictAppealDeadlineReminderNotification(
             prosecutorsOfficeId,
           )
           break

@@ -4,8 +4,8 @@ import { BffInfo, Context, PortalKeys } from './types/input-types'
 import {
   adminPortalScopes,
   applicationSystemScopes,
-  servicePortalScopes,
   formSystemScopes,
+  servicePortalScopes,
 } from '../../../libs/auth/scopes/src/index'
 
 const MINAR_SIDUR: PortalKeys = 'minarsidur'
@@ -92,7 +92,7 @@ export const bffConfig = ({
           `http://localhost:4200/${key}`,
           // This is a special case for minarsidur, since it serves two applications
           ...(key === MINAR_SIDUR
-            ? ['http://localhost:4242/umsoknir', 'http://localhost:4201/form']
+            ? ['http://localhost:4242/umsoknir', 'http://localhost:4242/form']
             : []),
         ]),
         dev: ref((ctx) => json(getRedirectUris(getBaseUrl(ctx), key))),

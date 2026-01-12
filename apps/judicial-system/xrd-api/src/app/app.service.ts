@@ -18,6 +18,8 @@ import {
 import { getRulingInstructionItems } from '@island.is/judicial-system/formatters'
 import {
   DefenderChoice,
+  DocumentDeliverySupplementCode,
+  getServiceDateFromSupplements,
   InformationForDefendant,
   LawyerRegistry,
   LawyerType,
@@ -25,6 +27,7 @@ import {
   PoliceFileTypeCode,
   ServiceStatus,
   VerdictAppealDecision,
+  VerdictServiceStatus,
 } from '@island.is/judicial-system/types'
 
 import { CreateCaseDto } from './dto/createCase.dto'
@@ -283,8 +286,10 @@ export class AppService {
   ) {
     const deliveredAppealDecision =
       updatePoliceDocumentDelivery.supplements?.find(
-        (supplement) => supplement.code === 'APPEAL_DECISION',
+        (supplement) =>
+          supplement.code === DocumentDeliverySupplementCode.APPEAL_DECISION,
       )
+
     if (deliveredAppealDecision && deliveredAppealDecision.value) {
       const appealDecision = deliveredAppealDecision?.value
 
@@ -307,10 +312,21 @@ export class AppService {
       deliveredOnIslandis: updatePoliceDocumentDelivery.deliveredOnIslandis,
       deliveredToLawyer: updatePoliceDocumentDelivery.deliveredToLawyer,
       deliveredToDefendant: updatePoliceDocumentDelivery.deliveredToDefendant,
+      deliveryMethod: updatePoliceDocumentDelivery.deliveryMethod,
     })
 
+    // Ideally we would want to always get the service date from servedAt, but for legal paper
+    // deliveries, the service date is (for now) sent as a supplement, so we need to check there first
+    const legalPaperServiceDate =
+      serviceStatus === VerdictServiceStatus.LEGAL_PAPER
+        ? getServiceDateFromSupplements(
+            updatePoliceDocumentDelivery.supplements,
+          )
+        : undefined
+
     const parsedPoliceUpdate = {
-      serviceDate: updatePoliceDocumentDelivery.servedAt,
+      serviceDate:
+        legalPaperServiceDate ?? updatePoliceDocumentDelivery.servedAt,
       servedBy: updatePoliceDocumentDelivery.servedBy,
       comment: updatePoliceDocumentDelivery.comment,
       serviceStatus: serviceStatus,

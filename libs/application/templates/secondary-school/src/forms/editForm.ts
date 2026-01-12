@@ -10,7 +10,7 @@ import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { userInformationSection } from './secondarySchoolForm/userInformationSection'
 import { schoolSection } from './secondarySchoolForm/schoolSection'
 import { extraInformationSection } from './secondarySchoolForm/extraInformationSection'
-import { Logo } from '../assets/Logo'
+import { MmsLogo } from '@island.is/application/assets/institution-logos'
 import { conclusionSection } from './secondarySchoolForm/conclusionSection'
 import { error, overview } from '../lib/messages'
 import { getEndOfDayUTCDate, getFirstRegistrationEndDate } from '../utils'
@@ -18,7 +18,7 @@ import { getEndOfDayUTCDate, getFirstRegistrationEndDate } from '../utils'
 // Note: This form is identical to SecondarySchoolForm, except added ABORT action in buildSubmitField and custom field HandleBeforeSubmitInEdit
 export const Edit: Form = buildForm({
   id: 'SecondarySchoolForm',
-  logo: Logo,
+  logo: MmsLogo,
   mode: FormModes.DRAFT,
   renderLastScreenButton: false,
   renderLastScreenBackButton: true,

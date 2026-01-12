@@ -5,11 +5,11 @@ import {
   SocialInsuranceAdministrationClientService,
   TrWebApiServicesDomainEducationalInstitutionsModelsEducationalInstitutionsDto,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto,
-  TrWebExternalModelsServicePortalBaseCertificate,
-  TrWebExternalModelsServicePortalConfirmationOfIllHealth,
-  TrWebExternalModelsServicePortalConfirmationOfPendingResolution,
-  TrWebExternalModelsServicePortalConfirmedTreatment,
-  TrWebExternalModelsServicePortalRehabilitationPlan,
+  TrWebContractsExternalServicePortalBaseCertificate,
+  TrWebContractsExternalServicePortalConfirmationOfIllHealth,
+  TrWebContractsExternalServicePortalConfirmationOfPendingResolution,
+  TrWebContractsExternalServicePortalConfirmedTreatment,
+  TrWebContractsExternalServicePortalRehabilitationPlan,
 } from '@island.is/clients/social-insurance-administration'
 import {
   CmsElasticsearchService,
@@ -243,13 +243,13 @@ export class SocialInsuranceService {
 
   async getRehabilitationPlan(
     user: User,
-  ): Promise<TrWebExternalModelsServicePortalRehabilitationPlan> {
+  ): Promise<TrWebContractsExternalServicePortalRehabilitationPlan> {
     return await this.socialInsuranceApi.getRehabilitationPlan(user)
   }
 
   async getCertificateForSicknessAndRehabilitation(
     user: User,
-  ): Promise<TrWebExternalModelsServicePortalBaseCertificate> {
+  ): Promise<TrWebContractsExternalServicePortalBaseCertificate> {
     return await this.socialInsuranceApi.getCertificateForSicknessAndRehabilitation(
       user,
     )
@@ -257,22 +257,23 @@ export class SocialInsuranceService {
 
   async getDisabilityPensionCertificate(
     user: User,
+    locale: Locale,
   ): Promise<DisabilityPensionCertificate | null> {
     const data = await this.socialInsuranceApi
       .getCertificateForDisabilityPension(user)
       .catch(handle404)
-    return data ? mapDisabilityPensionCertificate(data) : null
+    return data ? mapDisabilityPensionCertificate(data, locale) : null
   }
 
   async getConfirmedTreatment(
     user: User,
-  ): Promise<TrWebExternalModelsServicePortalConfirmedTreatment> {
+  ): Promise<TrWebContractsExternalServicePortalConfirmedTreatment> {
     return await this.socialInsuranceApi.getConfirmedTreatment(user)
   }
 
   async getConfirmationOfPendingResolution(
     user: User,
-  ): Promise<TrWebExternalModelsServicePortalConfirmationOfPendingResolution> {
+  ): Promise<TrWebContractsExternalServicePortalConfirmationOfPendingResolution> {
     return await this.socialInsuranceApi.getConfirmationOfPendingResolution(
       user,
     )
@@ -280,7 +281,7 @@ export class SocialInsuranceService {
 
   async getConfirmationOfIllHealth(
     user: User,
-  ): Promise<TrWebExternalModelsServicePortalConfirmationOfIllHealth> {
+  ): Promise<TrWebContractsExternalServicePortalConfirmationOfIllHealth> {
     return await this.socialInsuranceApi.getConfirmationOfIllHealth(user)
   }
 

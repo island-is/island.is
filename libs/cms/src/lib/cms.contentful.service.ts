@@ -52,7 +52,7 @@ import {
 } from './models/openDataSubpage.model'
 import { GetOpenDataSubpageInput } from './dto/getOpenDataSubpage.input'
 import { mapProjectPage, ProjectPage } from './models/projectPage.model'
-import { IProjectPage } from './generated/contentfulTypes'
+import { ICourseListPage, IProjectPage } from './generated/contentfulTypes'
 import { GetSupportQNAsInput } from './dto/getSupportQNAs.input'
 import { mapSupportQNA, SupportQNA } from './models/supportQNA.model'
 import { GetSupportCategoryInput } from './dto/getSupportCategory.input'
@@ -90,7 +90,10 @@ import {
   OrganizationPageStandaloneSitemapLevel2,
 } from './models/organizationPageStandaloneSitemap.model'
 import { SitemapTree, SitemapTreeNodeType } from '@island.is/shared/types'
-import { getOrganizationPageUrlPrefix } from '@island.is/shared/utils'
+import {
+  getOrganizationPageUrlPrefix,
+  sortAlpha,
+} from '@island.is/shared/utils'
 import { NewsList } from './models/newsList.model'
 import { GetCmsNewsInput } from './dto/getNews.input'
 import {
@@ -102,6 +105,11 @@ import {
   mapBloodDonationRestrictionDetails,
   mapBloodDonationRestrictionListItem,
 } from './models/bloodDonationRestriction.model'
+import { GetCourseByIdInput } from './dto/getCourseById.input'
+import { CourseDetails, mapCourse } from './models/course.model'
+import { GetCourseListPageByIdInput } from './dto/getCourseListPageById.input'
+import { mapCourseListPage } from './models/courseListPage.model'
+import { GetCourseSelectOptionsInput } from './dto/getCourseSelectOptions.input'
 
 const errorHandler = (name: string) => {
   return (error: Error) => {
@@ -1558,5 +1566,105 @@ export class CmsContentfulService {
       )
 
     return items
+  }
+
+  async getCourseById(
+    input: GetCourseByIdInput,
+  ): Promise<CourseDetails | null> {
+    const params = {
+      content_type: 'course',
+      limit: 1,
+      include: 4,
+    }
+
+    const [isResponse, enResponse] = await Promise.all([
+      this.contentfulRepository.getLocalizedEntry<types.ICourseFields>(
+        input.id,
+        'is',
+        { ...params, include: input.lang === 'is' ? 4 : 0 },
+      ),
+      this.contentfulRepository.getLocalizedEntry<types.ICourseFields>(
+        input.id,
+        'en',
+        { ...params, include: input.lang === 'en' ? 4 : 0 },
+      ),
+    ])
+
+    const response = input.lang === 'is' ? isResponse : enResponse
+
+    if (response?.sys?.contentType?.sys?.id !== 'course') {
+      return null
+    }
+
+    const mappedCourse = mapCourse(response as types.ICourse)
+
+    // Filter out instances that are in the past
+    const today = new Date()
+    mappedCourse.instances = mappedCourse.instances.filter(
+      (instance) =>
+        Boolean(instance.startDate) && new Date(instance.startDate) > today,
+    )
+
+    // Sort instances in ascending start date order
+    mappedCourse.instances.sort(
+      (a, b) =>
+        new Date(a.startDate).getTime() - new Date(b.startDate).getTime(),
+    )
+
+    return {
+      course: mappedCourse,
+      activeLocales: {
+        is: Boolean(isResponse?.fields?.title),
+        en: Boolean(enResponse?.fields?.title),
+      },
+    }
+  }
+
+  async getCourseListPageById(input: GetCourseListPageByIdInput) {
+    const params = {
+      content_type: 'courseListPage',
+      limit: 1,
+      include: 0,
+    }
+
+    const response =
+      await this.contentfulRepository.getLocalizedEntry<types.ICourseListPageFields>(
+        input.id,
+        input.lang,
+        params,
+      )
+
+    if (response?.sys?.contentType?.sys?.id !== 'courseListPage') {
+      return null
+    }
+
+    return mapCourseListPage(response as ICourseListPage)
+  }
+
+  async getCourseSelectOptions(input: GetCourseSelectOptionsInput) {
+    const params = {
+      content_type: 'course',
+      limit: 1000,
+      include: 0,
+      select: 'fields.title,sys',
+      'fields.organization.sys.contentType.sys.id': 'organization',
+      'fields.organization.fields.slug': input.organizationSlug,
+    }
+
+    const response =
+      await this.contentfulRepository.getLocalizedEntries<types.ICourseFields>(
+        input.lang,
+        params,
+        0,
+      )
+
+    const items = response.items.map((item) => ({
+      id: item.sys.id,
+      title: item.fields.title,
+    }))
+
+    items.sort(sortAlpha('title'))
+
+    return { items, total: response.total, input }
   }
 }

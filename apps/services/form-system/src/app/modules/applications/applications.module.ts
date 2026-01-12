@@ -7,8 +7,6 @@ import { Form } from '../forms/models/form.model'
 import { ApplicationMapper } from './models/application.mapper'
 import { Value } from './models/value.model'
 import { Organization } from '../organizations/models/organization.model'
-import { FormUrl } from '../formUrls/models/formUrl.model'
-import { OrganizationUrl } from '../organizationUrls/models/organizationUrl.model'
 import { ServiceManager } from '../services/service.manager'
 import { ZendeskService } from '../services/zendesk.service'
 import { NudgeService } from '../services/nudge.service'
@@ -17,6 +15,9 @@ import { ValidationService } from '../services/validation.service'
 import { Screen } from '../screens/models/screen.model'
 import { Field } from '../fields/models/field.model'
 import { Section } from '../sections/models/section.model'
+import { FormCertificationType } from '../formCertificationTypes/models/formCertificationType.model'
+import { OrganizationPermission } from '../organizationPermissions/models/organizationPermission.model'
+import { ListItem } from '../listItems/models/listItem.model'
 
 @Module({
   imports: [
@@ -26,11 +27,12 @@ import { Section } from '../sections/models/section.model'
       Form,
       Value,
       Organization,
-      FormUrl,
-      OrganizationUrl,
       Screen,
       Field,
       Section,
+      FormCertificationType,
+      OrganizationPermission,
+      ListItem,
     ]),
   ],
   controllers: [ApplicationsController],

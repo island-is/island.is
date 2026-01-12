@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { useWindowSize } from 'react-use'
 import isEqual from 'lodash/isEqual'
 import { useRouter } from 'next/router'
 
@@ -6,15 +7,13 @@ import {
   AlertMessage,
   Box,
   Breadcrumbs,
+  Button,
   Filter,
   FilterInput,
   FilterMultiChoice,
-  FocusableBox,
   GridColumn,
   GridContainer,
   GridRow,
-  Hidden,
-  Hyphen,
   Inline,
   Pagination,
   Stack,
@@ -22,12 +21,8 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
-import { sortAlpha } from '@island.is/shared/utils'
-import {
-  FilterTag,
-  HeadWithSocialSharing,
-  Webreader,
-} from '@island.is/web/components'
+import { isDefined, sortAlpha } from '@island.is/shared/utils'
+import { HeadWithSocialSharing, Webreader } from '@island.is/web/components'
 import {
   CustomPageUniqueIdentifier,
   GetIcelandicGovernmentInstitutionVacanciesQuery,
@@ -37,22 +32,22 @@ import {
   IcelandicGovernmentInstitutionVacanciesResponse,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
-import { useWindowSize } from '@island.is/web/hooks/useViewport'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { Screen } from '@island.is/web/types'
-import { shortenText } from '@island.is/web/utils/shortenText'
 
 import { withCustomPageWrapper } from '../CustomPage/CustomPageWrapper'
-import { extractFilterTags } from '../Organization/PublishedMaterial/utils'
 import { GET_NAMESPACE_QUERY } from '../queries'
 import { GET_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES } from '../queries/IcelandicGovernmentInstitutionVacancies'
+import { getDeadlineVariant, getExcerpt } from './utils'
+import { VacancyCardsGrid } from './VacancyCardsGrid'
 import * as styles from './IcelandicGovernmentInstitutionVacanciesList.css'
 
 type Vacancy =
   IcelandicGovernmentInstitutionVacanciesResponse['vacancies'][number]
 
-const ITEMS_PER_PAGE = 8
-export const VACANCY_INTRO_MAX_LENGTH = 80
+const ITEMS_PER_PAGE = 12
+const SHOW_CURRENT_BREADCRUMB = false
+export const VACANCY_INTRO_MAX_LENGTH = 280
 
 const mapVacanciesField = (
   vacancies: Vacancy[],
@@ -108,13 +103,16 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
 
-  const { width } = useWindowSize()
-  const isMobile = width < theme.breakpoints.md
-
   const pathname = linkResolver('vacancies').href
 
   const [selectedPage, setSelectedPage] = useState(1)
   const [searchTerm, setSearchTerm] = useState('')
+  const [isGridView, setIsGridView] = useState(true)
+  const [isMounted, setIsMounted] = useState(false)
+
+  const { width } = useWindowSize()
+  // Guard against SSR hydration mismatch - default to desktop layout on server
+  const isTablet = isMounted && width <= theme.breakpoints.lg
 
   const [parameters, setParameters] = useState<{
     fieldOfWork: string[]
@@ -127,6 +125,18 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
   })
 
   const searchTermHasBeenInitialized = useRef(false)
+
+  // Set mounted state after first render to enable responsive layout
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
+  // Force grid view on mobile/tablet
+  useEffect(() => {
+    if (isTablet && !isGridView) {
+      setIsGridView(true)
+    }
+  }, [isTablet, isGridView])
 
   const filteredVacancies = vacancies.filter((vacancy) => {
     const searchKeywords = searchTerm
@@ -195,6 +205,27 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
     [vacancies],
   )
 
+  const filterCategories = [
+    {
+      id: 'location',
+      label: n('location', 'Staðsetning') as string,
+      selected: parameters.location,
+      filters: locationOptions,
+    },
+    {
+      id: 'fieldOfWork',
+      label: n('fieldOfWork', 'Störf') as string,
+      selected: parameters.fieldOfWork,
+      filters: fieldOfWorkOptions,
+    },
+    {
+      id: 'institution',
+      label: n('institution', 'Stofnun/ráðuneyti') as string,
+      selected: parameters.institution,
+      filters: institutionOptions,
+    },
+  ]
+
   const clearSearch = () => {
     setParameters({
       fieldOfWork: [],
@@ -204,7 +235,105 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
     setSearchTerm('')
   }
 
+  const renderFilterTags = (
+    filterType: 'fieldOfWork' | 'location' | 'institution',
+    filters: string[],
+  ) => {
+    return filters.map((filter) => (
+      <Tag
+        key={filter}
+        variant="white"
+        onClick={() => {
+          setParameters((prev) => ({
+            ...prev,
+            [filterType]: prev[filterType].filter((f) => f !== filter),
+          }))
+          setSelectedPage(1)
+        }}
+      >
+        <Box flexDirection="row" alignItems="center">
+          {filter}
+          <Box
+            component="span"
+            marginLeft={1}
+            style={{ fontSize: '0.75rem', fontWeight: 'normal' }}
+          >
+            &#10005;
+          </Box>
+        </Box>
+      </Tag>
+    ))
+  }
+
   const totalPages = Math.ceil(filteredVacancies.length / ITEMS_PER_PAGE)
+
+  const paginatedVacancies = filteredVacancies.slice(
+    ITEMS_PER_PAGE * (selectedPage - 1),
+    ITEMS_PER_PAGE * selectedPage,
+  )
+
+  const vacancyCards = paginatedVacancies
+    .map((vacancy) => {
+      if (!vacancy || !vacancy.id) {
+        return null
+      }
+
+      const logoUrl =
+        vacancy.logoUrl ||
+        n(
+          'fallbackLogoUrl',
+          'https://images.ctfassets.net/8k0h54kbe6bj/6XhCz5Ss17OVLxpXNVDxAO/d3d6716bdb9ecdc5041e6baf68b92ba6/coat_of_arms.svg',
+        )
+
+      const vacancyComesFromCms = vacancy.id?.startsWith('c-')
+      const displayLogoUrl =
+        !vacancy.institutionName && vacancyComesFromCms ? '' : logoUrl
+
+      const detailLines = [
+        vacancy.locations && vacancy.locations.length > 0
+          ? {
+              icon: 'location' as const,
+              text: vacancy.locations
+                .filter((location) => location.title)
+                .map((location) => location.title)
+                .join(', '),
+            }
+          : undefined,
+        vacancy.address
+          ? {
+              icon: 'home' as const,
+              text: vacancy.address,
+            }
+          : undefined,
+      ].filter(isDefined)
+
+      const tags = [
+        vacancy.applicationDeadlineTo && {
+          label: `${n('applicationDeadlineTo', 'Umsóknarfrestur')}: ${
+            vacancy.applicationDeadlineTo
+          }`,
+          variant: getDeadlineVariant(vacancy.applicationDeadlineTo),
+        },
+      ].filter(isDefined)
+
+      return {
+        id: vacancy.id,
+        eyebrow: vacancy.fieldOfWork ?? vacancy.institutionName ?? '',
+        subEyebrow: vacancy.institutionName,
+        title: vacancy.title ?? '',
+        description: getExcerpt(vacancy.intro ?? '', VACANCY_INTRO_MAX_LENGTH),
+        logo: displayLogoUrl,
+        logoAlt: vacancy.institutionName ?? '',
+        link: {
+          label: n('viewDetails', 'Skoða nánar'),
+          href: linkResolver('vacancydetails', [vacancy.id?.toString() || ''])
+            .href,
+        },
+        tags,
+        detailLines,
+      }
+    })
+    .filter(isDefined)
 
   // Initial page load
   useEffect(() => {
@@ -313,35 +442,12 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [parameters, searchTerm, selectedPage])
 
-  const filterCategories = [
-    {
-      id: 'location',
-      label: n('location', 'Staðsetning') as string,
-      selected: parameters.location,
-      filters: locationOptions,
-    },
-    {
-      id: 'fieldOfWork',
-      label: n('fieldOfWork', 'Störf') as string,
-      selected: parameters.fieldOfWork,
-      filters: fieldOfWorkOptions,
-    },
-    {
-      id: 'institution',
-      label: n('institution', 'Stofnun/ráðuneyti') as string,
-      selected: parameters.institution,
-      filters: institutionOptions,
-    },
-  ]
-
-  const selectedFilters = extractFilterTags(filterCategories)
-
   const mainTitle = n('mainTitle', 'Starfatorg - laus störf hjá ríkinu')
   const ogTitle = n('ogTitle', 'Starfatorg - laus störf hjá ríkinu | Ísland.is')
   const displayFetchErrorIfPresent = n('displayFetchErrorIfPresent', true)
 
   return (
-    <Box paddingTop={[0, 0, 8]}>
+    <Box paddingTop={8} paddingBottom={6}>
       <HeadWithSocialSharing
         title={ogTitle}
         description={n(
@@ -355,9 +461,19 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
       />
       <GridContainer>
         <Box>
-          <GridRow marginBottom={[5, 5, 5, 0]}>
+          <GridRow marginBottom={5}>
             <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
-              <Breadcrumbs items={[{ title: 'Ísland.is', href: '/' }]} />
+              <Breadcrumbs
+                items={[
+                  { title: 'Ísland.is', href: '/' },
+                  SHOW_CURRENT_BREADCRUMB
+                    ? {
+                        title: n('breadcrumbTitle', 'Starfatorg'),
+                        href: linkResolver('vacancies').href,
+                      }
+                    : undefined,
+                ].filter(isDefined)}
+              />
               <Box className="rs_read" marginTop={2}>
                 <Text variant="h1" as="h1">
                   {mainTitle}
@@ -369,8 +485,8 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
                 readClass="rs_read"
               />
             </GridColumn>
-            <GridColumn span="1/2">
-              <Hidden below="lg">
+            {!isTablet && (
+              <GridColumn span="1/2">
                 <Box display="flex" justifyContent="center" width="full">
                   <img
                     src={n(
@@ -380,80 +496,8 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
                     alt=""
                   />
                 </Box>
-              </Hidden>
-            </GridColumn>
-          </GridRow>
-
-          <Filter
-            resultCount={filteredVacancies?.length ?? 0}
-            variant={isMobile ? 'dialog' : 'popover'}
-            labelClear={n('clearFilter', 'Hreinsa síu')}
-            labelClearAll={n('clearAllFilters', 'Hreinsa allar síur')}
-            labelOpen={n('openFilter', 'Opna síu')}
-            labelClose={n('closeFilter', 'Loka síu')}
-            labelResult={n('viewResults', 'Skoða niðurstöður')}
-            labelTitle={n('filterMenuTitle', 'Opna síu')}
-            onFilterClear={clearSearch}
-            filterInput={
-              <Box className={styles.filterInput}>
-                <FilterInput
-                  placeholder={n(
-                    'filterSearchPlaceholder',
-                    'Leita í Starfatorgi',
-                  )}
-                  name="filterInput"
-                  value={searchTerm}
-                  onChange={(value) => {
-                    setSelectedPage(1)
-                    setSearchTerm(value)
-                    searchTermHasBeenInitialized.current = true
-                  }}
-                />
-              </Box>
-            }
-          >
-            <FilterMultiChoice
-              labelClear={n('clearSelection', 'Hreinsa val')}
-              onChange={({ categoryId, selected }) => {
-                setSelectedPage(1)
-                setParameters((prevParameters) => ({
-                  ...prevParameters,
-                  [categoryId]: selected,
-                }))
-              }}
-              onClear={(categoryId) => {
-                setSelectedPage(1)
-                setParameters((prevParameters) => ({
-                  ...prevParameters,
-                  [categoryId]: [],
-                }))
-              }}
-              categories={filterCategories}
-            ></FilterMultiChoice>
-          </Filter>
-
-          <GridRow className={styles.filterTagRow} alignItems="center">
-            <GridColumn span="8/12">
-              <Inline space={1}>
-                {selectedFilters.map(({ label, value, category }) => (
-                  <FilterTag
-                    key={value}
-                    onClick={() => {
-                      setParameters((prevParameters) => ({
-                        ...prevParameters,
-                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                        // @ts-ignore make web strict
-                        [category]: (prevParameters[category] ?? []).filter(
-                          (prevValue: string) => prevValue !== value,
-                        ),
-                      }))
-                    }}
-                  >
-                    {label}
-                  </FilterTag>
-                ))}
-              </Inline>
-            </GridColumn>
+              </GridColumn>
+            )}
           </GridRow>
           {fetchErrorOccurred && displayFetchErrorIfPresent && (
             <Box paddingBottom={5}>
@@ -469,182 +513,303 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
           )}
         </Box>
       </GridContainer>
-      <Box paddingTop={3} paddingBottom={6} background="blue100">
-        <GridContainer>
-          <Box className="rs_read" marginBottom={6}>
-            <Text>
-              {filteredVacancies.length}{' '}
-              {filteredVacancies.length % 10 === 1 &&
-              filteredVacancies.length % 100 !== 11
-                ? n('singleJobFound', 'starf fannst')
-                : n('jobsFound', 'störf fundust')}
-            </Text>
-          </Box>
-          <GridRow rowGap={[3, 3, 6]}>
-            {filteredVacancies
-              .slice(
-                ITEMS_PER_PAGE * (selectedPage - 1),
-                ITEMS_PER_PAGE * selectedPage,
-              )
-              .map((vacancy) => {
-                let logoUrl =
-                  vacancy.logoUrl ||
-                  n(
-                    'fallbackLogoUrl',
-                    'https://images.ctfassets.net/8k0h54kbe6bj/6XhCz5Ss17OVLxpXNVDxAO/d3d6716bdb9ecdc5041e6baf68b92ba6/coat_of_arms.svg',
-                  )
-
-                const vacancyComesFromCms = vacancy.id?.startsWith('c-')
-
-                if (!vacancy.institutionName && vacancyComesFromCms) {
-                  logoUrl = ''
-                }
-
-                return (
-                  <GridColumn
-                    key={vacancy.id}
-                    span={['1/1', '1/1', '1/1', '1/2']}
-                  >
-                    <FocusableBox
-                      height="full"
-                      href={`${
-                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                        // @ts-ignore make web strict
-                        linkResolver('vacancydetails', [vacancy.id?.toString()])
-                          .href
-                      }`}
-                      background="white"
-                      borderRadius="large"
-                      borderColor="blue200"
-                      borderWidth="standard"
-                      padding={[3, 3, 'containerGutter']}
-                      overflow="hidden"
-                    >
-                      <Box width="full">
-                        <GridRow
-                          rowGap={[2, 2, 2, 5]}
-                          direction={['column', 'column', 'column', 'row']}
-                          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                          // @ts-ignore make web strict
-                          alignItems={[null, null, null, 'center']}
-                          align="spaceBetween"
-                          className={styles.vacancyCard}
-                        >
-                          <GridColumn className={styles.vacancyCardText}>
-                            <Stack space={2}>
-                              <Text variant="eyebrow">
-                                {vacancy.fieldOfWork}
-                              </Text>
-                              <Box className="rs_read">
-                                <Text color="blue400" variant="h3">
-                                  <Hyphen>{vacancy.title ?? ''}</Hyphen>
-                                </Text>
-                              </Box>
-                              <Box className="rs_read">
-                                <Text>
-                                  {shortenText(
-                                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                                    // @ts-ignore make web strict
-                                    vacancy.intro,
-                                    VACANCY_INTRO_MAX_LENGTH,
-                                  )}
-                                </Text>
-                              </Box>
-                              <Box className="rs_read">
-                                <Inline space={1}>
-                                  {vacancy.institutionName && (
-                                    <Tag outlined={true} disabled={true}>
-                                      {vacancy.institutionName}
-                                    </Tag>
-                                  )}
-                                  {vacancy.locations &&
-                                    vacancy.locations
-                                      .filter((location) => location.title)
-                                      .map((location, index) => (
-                                        <Tag
-                                          key={index}
-                                          outlined={true}
-                                          disabled
-                                        >
-                                          {location.title}
-                                        </Tag>
-                                      ))}
-                                </Inline>
-                              </Box>
-                              {vacancy.applicationDeadlineTo && (
-                                <Box className="rs_read">
-                                  <Tag
-                                    outlined={true}
-                                    disabled
-                                    variant="purple"
-                                  >
-                                    {n(
-                                      'applicationDeadlineTo',
-                                      'Umsóknarfrestur',
-                                    )}{' '}
-                                    {vacancy.applicationDeadlineTo}
-                                  </Tag>
-                                </Box>
-                              )}
-                            </Stack>
-                          </GridColumn>
-
-                          <GridColumn>
-                            <Box width="full">
-                              {logoUrl && (
-                                <>
-                                  <Hidden below="lg">
-                                    <img
-                                      className={styles.logo}
-                                      src={logoUrl}
-                                      alt=""
-                                    />
-                                  </Hidden>
-                                  <Hidden above="md">
-                                    <Box
-                                      display="flex"
-                                      justifyContent="center"
-                                      width="full"
-                                    >
-                                      <img
-                                        className={styles.logo}
-                                        src={logoUrl}
-                                        alt=""
-                                      />
-                                    </Box>
-                                  </Hidden>
-                                </>
-                              )}
-                            </Box>
-                          </GridColumn>
-                        </GridRow>
-                      </Box>
-                    </FocusableBox>
-                  </GridColumn>
-                )
-              })}
-          </GridRow>
-          {filteredVacancies.length > 0 && (
-            <Box paddingTop={8}>
-              <Pagination
-                variant="blue"
-                page={selectedPage}
-                itemsPerPage={ITEMS_PER_PAGE}
-                totalItems={filteredVacancies.length}
-                totalPages={totalPages}
-                renderLink={(page, className, children) => (
-                  <button
-                    onClick={() => {
-                      setSelectedPage(page)
+      <Box background="blue100">
+        {!isTablet && (
+          <GridContainer>
+            <Box
+              display="flex"
+              flexDirection="row"
+              height="full"
+              paddingY={6}
+              position="relative"
+            >
+              {/* Sidebar */}
+              <Box
+                printHidden
+                display={['none', 'none', 'block']}
+                position="sticky"
+                alignSelf="flexStart"
+                className={styles.sidebar}
+                style={{ top: 72 }}
+              >
+                <Stack space={3}>
+                  <Text variant="h4" as="h4" paddingY={1}>
+                    {n('search', 'Leit')}
+                  </Text>
+                  <FilterInput
+                    placeholder={n(
+                      'filterSearchPlaceholder',
+                      'Leita í Starfatorgi',
+                    )}
+                    name="sidebarFilterInput"
+                    value={searchTerm}
+                    onChange={(value) => {
+                      setSelectedPage(1)
+                      setSearchTerm(value)
+                      searchTermHasBeenInitialized.current = true
                     }}
+                  />
+                  <Filter
+                    labelClear={n('clear', 'Hreinsa')}
+                    labelClearAll={n('clearAllFilters', 'Hreinsa allar síur')}
+                    labelOpen={n('open', 'Opna')}
+                    labelClose={n('close', 'Loka')}
+                    labelResult={n('showResults', 'Skoða niðurstöður')}
+                    labelTitle={n('filterResults', 'Sía niðurstöður')}
+                    onFilterClear={() => {
+                      setParameters({
+                        fieldOfWork: [],
+                        location: [],
+                        institution: [],
+                      })
+                    }}
+                    variant="default"
                   >
-                    <span className={className}>{children}</span>
-                  </button>
+                    <FilterMultiChoice
+                      labelClear={n('clearFilter', 'Hreinsa val')}
+                      onChange={({ categoryId, selected }) => {
+                        setSelectedPage(1)
+                        setParameters((prevParams) => ({
+                          ...prevParams,
+                          [categoryId]: selected,
+                        }))
+                      }}
+                      onClear={(categoryId) => {
+                        setSelectedPage(1)
+                        setParameters((prevParams) => ({
+                          ...prevParams,
+                          [categoryId]: [],
+                        }))
+                      }}
+                      categories={filterCategories}
+                    />
+                  </Filter>
+                </Stack>
+              </Box>
+
+              {/* Content */}
+              <Box
+                flexGrow={1}
+                paddingLeft={2}
+                className={styles.contentWrapper}
+              >
+                <Box
+                  className="rs_read"
+                  marginBottom={3}
+                  display="flex"
+                  justifyContent="spaceBetween"
+                  alignItems="center"
+                >
+                  <Text>
+                    <strong>{filteredVacancies.length}</strong>{' '}
+                    {filteredVacancies.length % 10 === 1 &&
+                    filteredVacancies.length % 100 !== 11
+                      ? n('singleJobFound', 'starf fannst')
+                      : n('jobsFound', 'störf fundust')}
+                  </Text>
+                  {!isTablet && (
+                    <Button
+                      variant="utility"
+                      icon={isGridView ? 'menu' : 'gridView'}
+                      iconType="filled"
+                      colorScheme="white"
+                      size="small"
+                      onClick={() => setIsGridView(!isGridView)}
+                    >
+                      {isGridView
+                        ? n('displayList', 'Sýna sem lista')
+                        : n('displayGrid', 'Sýna sem spjöld')}
+                    </Button>
+                  )}
+                </Box>
+                {(parameters.fieldOfWork.length > 0 ||
+                  parameters.location.length > 0 ||
+                  parameters.institution.length > 0) && (
+                  <Box marginBottom={3}>
+                    <Inline space={2}>
+                      {renderFilterTags('fieldOfWork', parameters.fieldOfWork)}
+                      {renderFilterTags('location', parameters.location)}
+                      {renderFilterTags('institution', parameters.institution)}
+                    </Inline>
+                  </Box>
                 )}
-              />
+                <Box
+                  style={{ minHeight: '100vh' }}
+                  className={styles.vacancyCardsWrapper}
+                >
+                  <VacancyCardsGrid
+                    columns={!isGridView ? 1 : 2}
+                    variant="detailed"
+                    cards={vacancyCards}
+                  />
+                  {vacancyCards.length === 0 && (
+                    <Box
+                      display="flex"
+                      justifyContent="center"
+                      alignItems="center"
+                      paddingY={8}
+                    >
+                      <Text variant="h5">
+                        {n('noResults', 'Engar niðurstöður fundust')}
+                      </Text>
+                    </Box>
+                  )}
+                </Box>
+                {filteredVacancies.length > 0 && (
+                  <Box marginTop={2} paddingBottom={2}>
+                    <Pagination
+                      variant="blue"
+                      page={selectedPage}
+                      itemsPerPage={ITEMS_PER_PAGE}
+                      totalItems={filteredVacancies.length}
+                      totalPages={totalPages}
+                      renderLink={(page, className, children) => (
+                        <button
+                          onClick={() => {
+                            setSelectedPage(page)
+                          }}
+                        >
+                          <span className={className}>{children}</span>
+                        </button>
+                      )}
+                    />
+                  </Box>
+                )}
+              </Box>
             </Box>
-          )}
-        </GridContainer>
+          </GridContainer>
+        )}
+        {isTablet && (
+          <Box marginX={3} paddingTop={3}>
+            <Stack space={1}>
+              <Text variant="h5" as="h4" paddingY={1}>
+                {n('search', 'Leit')}
+              </Text>
+              <FilterInput
+                placeholder={n(
+                  'filterSearchPlaceholder',
+                  'Leita í Starfatorgi',
+                )}
+                name="mobileFilterInput"
+                value={searchTerm}
+                onChange={(value) => {
+                  setSelectedPage(1)
+                  setSearchTerm(value)
+                  searchTermHasBeenInitialized.current = true
+                }}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter') {
+                    event.currentTarget.blur()
+                  }
+                }}
+                backgroundColor="white"
+              />
+            </Stack>
+            <Box
+              marginTop={2}
+              display="flex"
+              justifyContent="spaceBetween"
+              alignItems="center"
+            >
+              <Text>
+                <strong>{filteredVacancies.length}</strong>{' '}
+                {filteredVacancies.length % 10 === 1 &&
+                filteredVacancies.length % 100 !== 11
+                  ? n('singleJobFound', 'starf fannst')
+                  : n('jobsFound', 'störf fundust')}
+              </Text>
+              <Box>
+                <Filter
+                  resultCount={filteredVacancies?.length ?? 0}
+                  variant="dialog"
+                  labelClear={n('clearFilter', 'Hreinsa síu')}
+                  labelClearAll={n('clearAllFilters', 'Hreinsa allar síur')}
+                  labelOpen={n('openFilter', 'Sía niðurstöður')}
+                  labelClose={n('closeFilter', 'Loka síu')}
+                  labelResult={n('viewResults', 'Skoða niðurstöður')}
+                  labelTitle={n('filterMenuTitle', 'Sía niðurstöður')}
+                  onFilterClear={clearSearch}
+                  align="right"
+                  usePopoverDiscloureButtonStyling
+                >
+                  <FilterMultiChoice
+                    labelClear={n('clearSelection', 'Hreinsa val')}
+                    onChange={({ categoryId, selected }) => {
+                      setSelectedPage(1)
+                      setParameters((prevParameters) => ({
+                        ...prevParameters,
+                        [categoryId]: selected,
+                      }))
+                    }}
+                    onClear={(categoryId) => {
+                      setSelectedPage(1)
+                      setParameters((prevParameters) => ({
+                        ...prevParameters,
+                        [categoryId]: [],
+                      }))
+                    }}
+                    categories={filterCategories}
+                  />
+                </Filter>
+              </Box>
+            </Box>
+            {(parameters.fieldOfWork.length > 0 ||
+              parameters.location.length > 0 ||
+              parameters.institution.length > 0) && (
+              <Box marginTop={2}>
+                <Inline space={2}>
+                  {renderFilterTags('fieldOfWork', parameters.fieldOfWork)}
+                  {renderFilterTags('location', parameters.location)}
+                  {renderFilterTags('institution', parameters.institution)}
+                </Inline>
+              </Box>
+            )}
+            <Box
+              marginTop={2}
+              style={{ minHeight: '100vh' }}
+              className={styles.vacancyCardsWrapper}
+            >
+              <VacancyCardsGrid
+                columns={1}
+                variant="detailed"
+                cards={vacancyCards}
+                forceMediumSize={true}
+              />
+              {vacancyCards.length === 0 && (
+                <Box
+                  display="flex"
+                  justifyContent="center"
+                  alignItems="center"
+                  paddingY={8}
+                >
+                  <Text variant="h5">
+                    {n('noResults', 'Engar niðurstöður fundust')}
+                  </Text>
+                </Box>
+              )}
+            </Box>
+            {filteredVacancies.length > 0 && (
+              <Box marginTop={2} paddingBottom={4}>
+                <Pagination
+                  variant="blue"
+                  page={selectedPage}
+                  itemsPerPage={ITEMS_PER_PAGE}
+                  totalItems={filteredVacancies.length}
+                  totalPages={totalPages}
+                  renderLink={(page, className, children) => (
+                    <button
+                      onClick={() => {
+                        setSelectedPage(page)
+                      }}
+                    >
+                      <span className={className}>{children}</span>
+                    </button>
+                  )}
+                />
+              </Box>
+            )}
+          </Box>
+        )}
       </Box>
     </Box>
   )

@@ -166,7 +166,9 @@ export const Overview = () => {
             caseType: workingCase.type,
           })}
         </PageTitle>
-        <ProsecutorCaseInfo workingCase={workingCase} />
+        <Box marginBottom={5}>
+          <ProsecutorCaseInfo workingCase={workingCase} />
+        </Box>
         {workingCase.state === CaseState.RECEIVED &&
           workingCase.arraignmentDate?.date &&
           workingCase.court && (
@@ -183,7 +185,7 @@ export const Overview = () => {
             sections={[
               {
                 id: 'defendants-section',
-                items: [defendants(workingCase.type)],
+                items: [defendants({ caseType: workingCase.type })],
               },
               {
                 id: 'case-info-section',
@@ -307,6 +309,7 @@ export const Overview = () => {
             caseId={workingCase.id}
             title={formatMessage(core.pdfButtonRequest)}
             pdfType="request"
+            elementId={formatMessage(core.pdfButtonRequest)}
           />
         </Box>
       </FormContentContainer>

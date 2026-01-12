@@ -122,7 +122,7 @@ const Overview = () => {
             sections={[
               {
                 id: 'defendants-section',
-                items: [defendants(workingCase.type)],
+                items: [defendants({ caseType: workingCase.type })],
               },
               ...(showItem(victims)
                 ? [
@@ -223,6 +223,7 @@ const Overview = () => {
                 caseId={workingCase.id}
                 title={formatMessage(core.pdfButtonRequest)}
                 pdfType="request"
+                elementId={formatMessage(core.pdfButtonRequest)}
               />
             </Box>
             <Button

@@ -10,9 +10,14 @@ import { VehicleBulkMileageRow } from './VehicleBulkMileageRow'
 interface Props {
   vehicles: Array<VehicleType>
   loading: boolean
+  onMileageUpdateCallback?: () => void
 }
 
-const VehicleBulkMileageTable = ({ vehicles, loading }: Props) => {
+const VehicleBulkMileageTable = ({
+  vehicles,
+  loading,
+  onMileageUpdateCallback,
+}: Props) => {
   const { formatMessage } = useLocale()
 
   const rows = useMemo(() => {
@@ -20,9 +25,10 @@ const VehicleBulkMileageTable = ({ vehicles, loading }: Props) => {
       <VehicleBulkMileageRow
         key={`vehicle-row-${item.vehicleId}`}
         vehicle={item}
+        onMileageUpdateCallback={onMileageUpdateCallback}
       />
     ))
-  }, [vehicles])
+  }, [onMileageUpdateCallback, vehicles])
 
   const totalLastMileage = useMemo(() => {
     if (!vehicles.length) {

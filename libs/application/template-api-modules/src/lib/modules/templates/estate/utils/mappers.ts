@@ -312,6 +312,7 @@ export const expandBankAccounts = (
         balance: bankAccount.balance ?? '',
         accruedInterest: bankAccount.accruedInterest ?? '0',
         accountTotal: bankAccount.accountTotal ?? '',
+        foreignBankAccount: bankAccount.foreignBankAccount ?? [],
       })
     })
 

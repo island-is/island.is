@@ -1,11 +1,10 @@
 import { ApolloError } from '@apollo/client'
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useRef, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import {
+  Animated,
   Image,
   RefreshControl,
-  SafeAreaView,
-  ScrollView,
   TouchableOpacity,
   useWindowDimensions,
   View,
@@ -38,12 +37,9 @@ import {
   Input,
   InputRow,
   Problem,
+  TopLine,
   Typography,
 } from '../../ui'
-
-const Host = styled(SafeAreaView)`
-  flex: 1;
-`
 
 const ButtonWrapper = styled.View`
   flex-direction: row;
@@ -169,6 +165,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
   const buttonStyle = { flex: 1, minWidth: width * 0.5 - theme.spacing[3] }
   const isVaccinationsEnabled = useFeatureFlag('isVaccinationsEnabled', false)
   const isOrganDonationEnabled = useFeatureFlag('isOrganDonationEnabled', false)
+  const scrollY = useRef(new Animated.Value(0)).current
 
   const now = useMemo(() => new Date().toISOString(), [])
 
@@ -267,8 +264,8 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
   ])
 
   return (
-    <Host>
-      <ScrollView
+    <>
+      <Animated.ScrollView
         refreshControl={
           <RefreshControl refreshing={refetching} onRefresh={onRefresh} />
         }
@@ -276,6 +273,12 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
           paddingHorizontal: theme.spacing[2],
           paddingBottom: theme.spacing[4],
         }}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          {
+            useNativeDriver: true,
+          },
+        )}
       >
         <Heading>
           <FormattedMessage
@@ -494,7 +497,10 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
         <HeadingSection
           title={intl.formatMessage({ id: 'health.overview.statusOfRights' })}
           onPress={() =>
-            openBrowser(`${origin}/minarsidur/heilsa/yfirlit`, componentId)
+            openBrowser(
+              `${origin}/minarsidur/heilsa/greidslur/rettindi`,
+              componentId,
+            )
           }
         />
         {(healthInsuranceRes.data && healthInsuranceData?.isInsured) ||
@@ -571,11 +577,10 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
             rightElement={
               <ExternalLink
                 onPress={() =>
-                  navigateTo('/webview', {
-                    source: {
-                      uri: `${origin}/minarsidur/heilsa/grunnupplysingar/heilsugaesla`,
-                    },
-                  })
+                  openBrowser(
+                    `${origin}/minarsidur/heilsa/grunnupplysingar/heilsugaesla`,
+                    componentId,
+                  )
                 }
                 text="button.open"
                 topAlign={healthCenterRes.error ? true : false}
@@ -611,11 +616,10 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
             rightElement={
               <ExternalLink
                 onPress={() =>
-                  navigateTo('/webview', {
-                    source: {
-                      uri: `${origin}/minarsidur/heilsa/grunnupplysingar/heilsugaesla/skraning`,
-                    },
-                  })
+                  openBrowser(
+                    `${origin}/minarsidur/heilsa/grunnupplysingar/heilsugaesla/skraning`,
+                    componentId,
+                  )
                 }
                 text="button.change"
                 topAlign={healthCenterRes.error ? true : false}
@@ -650,11 +654,10 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
             rightElement={
               <ExternalLink
                 onPress={() =>
-                  navigateTo('/webview', {
-                    source: {
-                      uri: `${origin}/minarsidur/heilsa/grunnupplysingar/tannlaeknar`,
-                    },
-                  })
+                  openBrowser(
+                    `${origin}/minarsidur/heilsa/grunnupplysingar/tannlaeknar`,
+                    componentId,
+                  )
                 }
                 text="button.open"
                 topAlign={dentistRes.error ? true : false}
@@ -690,11 +693,10 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
               rightElement={
                 <ExternalLink
                   onPress={() =>
-                    navigateTo('/webview', {
-                      source: {
-                        uri: `${origin}/minarsidur/heilsa/grunnupplysingar/liffaeragjof`,
-                      },
-                    })
+                    openBrowser(
+                      `${origin}/minarsidur/heilsa/grunnupplysingar/liffaeragjof`,
+                      componentId,
+                    )
                   }
                   text="button.open"
                   topAlign={organDonationRes.error ? true : false}
@@ -738,11 +740,10 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
             rightElement={
               <ExternalLink
                 onPress={() =>
-                  navigateTo('/webview', {
-                    source: {
-                      uri: `${origin}/minarsidur/heilsa/blodflokkur`,
-                    },
-                  })
+                  openBrowser(
+                    `${origin}/minarsidur/heilsa/blodflokkur`,
+                    componentId,
+                  )
                 }
                 text="button.open"
                 topAlign={bloodTypeRes.error ? true : false}
@@ -751,8 +752,9 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
             noBorder
           />
         </InputRow>
-      </ScrollView>
-    </Host>
+      </Animated.ScrollView>
+      <TopLine scrollY={scrollY} />
+    </>
   )
 }
 

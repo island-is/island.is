@@ -1,12 +1,12 @@
 import { buildForm } from '@island.is/application/core'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import { FormModes } from '@island.is/application/types'
-import { Logo } from '../../assets/Logo'
+import { TransportAuthorityLogo } from '@island.is/application/assets/institution-logos'
 import { conclusion } from '../../lib/messages'
 
 export const completedForm = buildForm({
   id: 'completedForm',
-  logo: Logo,
+  logo: TransportAuthorityLogo,
   mode: FormModes.COMPLETED,
   children: [
     buildFormConclusionSection({

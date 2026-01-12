@@ -12,14 +12,14 @@ import {
   ChildrenCustodyInformationApi,
 } from '@island.is/application/types'
 import { LocaleApi, UnemploymentApi, UserProfileApi } from '../../dataProviders'
-import Logo from '../../assets/Logo'
 import { externalData } from '../../lib/messages'
+import { DirectorateOfLabourLogo } from '@island.is/application/assets/institution-logos'
 
 export const Prerequisites = buildForm({
   id: 'PrerequisitesDraft',
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
-  logo: Logo,
+  logo: DirectorateOfLabourLogo,
   children: [
     buildSection({
       id: 'conditions',
