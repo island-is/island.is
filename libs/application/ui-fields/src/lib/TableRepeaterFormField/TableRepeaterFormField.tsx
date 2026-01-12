@@ -219,7 +219,9 @@ export const TableRepeaterFormField: FC<Props> = ({
       // Using setObjectValue to handle nested ids
       const newValues = {}
       setObjectWithNestedKey(newValues, data.id, defaultValues)
+      const existingValues = methods.getValues()
       methods.reset({
+        ...existingValues,
         ...newValues,
       })
     }
