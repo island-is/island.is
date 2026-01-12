@@ -47,11 +47,21 @@ export class FileService {
       `Queueing copy job for file ${sourceKey} from ${this.config.tempBucket} to ${targetBucket}`,
     )
 
-    await this.uploadQueue.add('upload', {
-      fieldId,
-      key: sourceKey,
-      valueId,
-    })
+    try {
+      await Promise.race([
+        this.uploadQueue.add('upload', { fieldId, key: sourceKey, valueId }),
+        new Promise((_, reject) =>
+          setTimeout(
+            () => reject(new Error('Timed out adding job to upload queue')),
+            5000,
+          ),
+        ),
+      ])
+      this.logger.info('✅ Job added to upload queue')
+    } catch (e) {
+      this.logger.error('❌ Failed to add job to upload queue', e)
+      throw e
+    }
   }
 
   //   let attempts = 0
