@@ -34,13 +34,11 @@ export const sectionExistingApplication = buildSubSection({
       children: [
         buildCustomField({
           id: 'existingApplicationLink',
-          title: '',
           description: m.existingApplicationExists,
           component: 'LinkExistingApplication',
         }),
         buildSubmitField({
           id: 'submit',
-          title: '',
           placement: 'footer',
           refetchApplicationAfterSubmit: true,
           actions: [],

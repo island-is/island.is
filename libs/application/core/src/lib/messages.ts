@@ -299,6 +299,11 @@ export const coreMessages = defineMessages({
     defaultMessage: 'Hlekkur afritaður',
     description: 'Copy link success toast',
   },
+  copyLinkButtonTitle: {
+    id: 'application.system:copyLinkButtonTitle',
+    defaultMessage: 'Afrita tengil',
+    description: 'Copy link button title',
+  },
 })
 
 export const coreDefaultFieldMessages = defineMessages({
@@ -337,6 +342,21 @@ export const coreDefaultFieldMessages = defineMessages({
     id: 'application.system:core.default.pdfLinkButtonField.downloadButtonTitle',
     defaultMessage: 'Hlaða niður skjali',
     description: 'Button label to download file',
+  },
+  defaultQuantityTitle: {
+    id: 'application.system:core.default.pdfLinkButtonField.defaultQuantityTitle',
+    defaultMessage: 'Fjöldi',
+    description: 'Quantity label for payment overview field',
+  },
+  defaultUnitPriceTitle: {
+    id: 'application.system:core.default.pdfLinkButtonField.defaultUnitPriceTitle',
+    defaultMessage: 'Verð',
+    description: 'Unit price label for payment overview field',
+  },
+  defaultTotalPerUnitTitle: {
+    id: 'application.system:core.default.pdfLinkButtonField.defaultTotalPerUnitTitle',
+    defaultMessage: 'Samtals verð',
+    description: 'Total per unit label for payment overview field',
   },
 })
 
@@ -385,10 +405,27 @@ export const coreErrorMessages = defineMessages({
     description:
       'Text that appears when district comissioner has validation fails in pre-data',
   },
+  errorDataProviderEstateValidationNothingFoundSummary: {
+    id: 'application.system:core.error.dataProviderEstateValidationNothingFoundSummary',
+    defaultMessage:
+      'Engin dánarbú fundust. Vinsamlegast hafðu samband við Sýslumenn ef þú telur að um villu sé að ræða.',
+    description:
+      'Text that appears when district comissioner has no estate data in pre-data',
+  },
   fileUpload: {
     id: 'application.system:core.error.file.upload',
     defaultMessage: 'Villa kom upp við að hlaða inn einni eða fleiri skrám.',
     description: 'Error message when upload file fails',
+  },
+  fileUploadMalware: {
+    id: 'application.system:core.error.file.uploadMalware',
+    defaultMessage: 'Eftirfarandi skrár hafa verið merktar sýktar: {files}',
+    description: 'Error message when upload file has been flagged for malware',
+  },
+  uploadMultipleNotAllowed: {
+    id: 'application.system:core.error.file.uploadMultipleNotAllowed',
+    defaultMessage: 'Það má bara hlaða upp einni skrá',
+    description: 'Error message when multi upload is not allowed.',
   },
   fileRemove: {
     id: 'application.system:core.error.file.remove',
@@ -406,6 +443,12 @@ export const coreErrorMessages = defineMessages({
     defaultMessage:
       'Skrárnar eru samtals of stórar. Hægt er að hlaða inn skrám sem eru samtals {maxSizeInMb}MB eða minni.',
     description: 'Error message when sum of file sizes exceeds max size limit',
+  },
+  fileMaxCountLimitExceeded: {
+    id: 'application.system:core.error.file.maxCountLimitExceeded',
+    defaultMessage:
+      'Of margar skrár. Mest er hægt að hlaða inn {maxFileCount} skrám.',
+    description: 'Error message when file count exceeds max count limit',
   },
   fileInvalidExtension: {
     id: 'application.system:core.error.file.invalidExtension',
@@ -457,7 +500,7 @@ export const coreErrorMessages = defineMessages({
     description: 'Message indicating submission after payment failed',
   },
   paymentSubmitFailedDescription: {
-    id: 'application.system:core.payment.submitTitle',
+    id: 'application.system:core.payment.paymentSubmitFailedDescription',
     defaultMessage:
       'Villa hefur komið upp við áframhaldandi vinnslu. Vinsamlegast reynið aftur síðar. Ef villa endurtekur sig vinsamlegast hafið samband við island@island.is.',
     description: 'Message indicating submission after payment failed',
@@ -701,25 +744,36 @@ export const coreErrorMessages = defineMessages({
   },
   noBankAccountError: {
     id: 'application.system:core.fetch.data.noBankAccountError',
-    defaultMessage: 'Þú ert ekki með skráðan bankareikning',
+    defaultMessage: 'Bankareikningur ekki skráður',
     description: 'No bank account error',
+  },
+  noBankAccountErrorDescription: {
+    id: 'application.system:core.fetch.data.noBankAccountErrorDescription#markdown',
+    defaultMessage:
+      'Þú ert ekki með skráðan bankareikning hjá Ísland.is. Vinsamlegast skráðu það [hér]({link})',
+    description: 'No bank account error',
+  },
+  invalidBankAccountError: {
+    id: 'application.system:core.fetch.data.invalidBankAccountError',
+    defaultMessage: 'Ógildur bankareikningur skráður',
+    description: 'Invalid bank account registered',
+  },
+  invalidEmailOrPhone: {
+    id: 'application.system:core.fetch.data.invalidEmailOrPhone',
+    defaultMessage: 'Ekkert netfang né símanúmer skráð',
+    description: 'No email address or phone number registered',
+  },
+  invalidEmailOrPhoneDescription: {
+    id: 'application.system:core.fetch.data.noEmailError.invalidEmailOrPhoneDescription#markdown',
+    defaultMessage:
+      'Þú ert hvorki með skráð netfang né símanúmer hjá Ísland.is. Vinsamlegast skráðu það [hér]({link}).',
+    description:
+      'You neither have a registered email address nor phone number at Ísland.is. Please register an email address and phone number here .',
   },
   noEmailFound: {
     id: 'application.system:core.fetch.data.noEmailError',
     defaultMessage: 'Ekkert netfang skráð',
     description: 'No email address registered',
-  },
-  invalidPhoneNumber: {
-    id: 'application.system:core.fetch.data.invalidPhoneNumber',
-    defaultMessage: 'Ógilt símanúmer',
-    description: 'Invalid phone number',
-  },
-  invalidPhoneNumberDescription: {
-    id: 'application.system:core.fetch.data.invalidPhoneNumberDescription#markdown',
-    defaultMessage:
-      'Skráð símanúmer hjá Ísland.is er ekki gilt. Vinsamlegast skráðu það á [mínum síðum]({link}).',
-    description:
-      'You do not have a valid phone number registered at Ísland.is. Please register a phone number on mínar síður',
   },
   noEmailFoundDescription: {
     id: 'application.system:core.fetch.data.noEmailError.description#markdown',
@@ -728,10 +782,32 @@ export const coreErrorMessages = defineMessages({
     description:
       'You do not have a registered email address at Ísland.is. Please register an email address here .',
   },
+  invalidPhone: {
+    id: 'application.system:core.fetch.data.invalidPhone',
+    defaultMessage: 'Ekkert símanúmer skráð',
+    description: 'Invalid phone number',
+  },
+  invalidPhoneDescription: {
+    id: 'application.system:core.fetch.data.invalidPhoneDescription#markdown',
+    defaultMessage:
+      'Þú ert ekki með skráð símanúmer hjá Ísland.is. Vinsamlegast skráðu það á [hér]({link}).',
+    description:
+      'You not have a registered phone number at Ísland.is. Please register a phone number here .',
+  },
   machinesEmptyListDefault: {
     id: 'application.system:core.fetch.data.machinesEmptyListDefault',
     defaultMessage: 'Ekki fundust nein tæki',
     description: 'Did not find any machines',
+  },
+  cantConnectToVer: {
+    id: 'application.system:core.fetch.data.cantConnectToVer',
+    defaultMessage: 'Ekki tókst að senda inn umsókn til Vinnueftirlitsins',
+    description: 'Cant connect to Vinnueftirlit',
+  },
+  licensesEmptyListDefault: {
+    id: 'application.system:core.fetch.data.licensesEmptyListDefault',
+    defaultMessage: 'Ekki fundust nein réttindi',
+    description: 'Did not find any licenses',
   },
   nationalRegistryName: {
     id: 'application.system:core.fetch.data.nationalRegistryName',
@@ -742,6 +818,16 @@ export const coreErrorMessages = defineMessages({
     id: 'application.system:core.fetch.data.nationalRegistryNationalId',
     defaultMessage: 'Kennitala',
     description: 'National ID',
+  },
+  nationalRegistryPhone: {
+    id: 'application.system:core.fetch.data.nationalRegistryPhone',
+    defaultMessage: 'Símanúmer',
+    description: 'Phone number',
+  },
+  nationalRegistryEmail: {
+    id: 'application.system:core.fetch.data.nationalRegistryEmail',
+    defaultMessage: 'Netfang',
+    description: 'Email',
   },
   nationalRegistryNameNotFoundForNationalId: {
     id: 'application.system:core.fetch.data.nationalRegistryNameNotFoundForNationalId',
@@ -763,6 +849,38 @@ export const coreErrorMessages = defineMessages({
     id: 'application.system:core.fetch.data.drivingLicenseBookActiveBookNotFound',
     defaultMessage: 'Ekki fannst virk ökunámsbók',
     description: 'Did not find active student book',
+  },
+  vehicleNotFoundForPermno: {
+    id: 'application.system:core.fetch.data.vehicleNotFoundForPermno',
+    defaultMessage: 'Tókst ekki að sækja ökutæki út frá þessu bílnúmeri.',
+    description:
+      'Error message if there was no vehicle associated with given permno',
+  },
+  noContractFoundTitle: {
+    id: 'application.system:core.fetch.data.noContractFoundTitle',
+    defaultMessage: 'Engir samningar fundust',
+    description: 'No contract found title',
+  },
+  noContractFoundSummary: {
+    id: 'application.system:core.fetch.data.noContractFoundSummary',
+    defaultMessage:
+      'Engir gildir samningar fundust skráðir fyrir þessa kennitölu.',
+    description: 'No contract found summary',
+  },
+  noPropertiesFoundTitle: {
+    id: 'application.system:core.fetch.data.noPropertiesFoundTitle',
+    defaultMessage: 'Engar eignir fundust',
+    description: 'No properties found title',
+  },
+  noPropertiesFoundSummary: {
+    id: 'application.system:core.fetch.data.noPropertiesFoundSummary',
+    defaultMessage: 'Engar eignir fundust skráðar fyrir þessa kennitölu.',
+    description: 'No properties found summary',
+  },
+  needToFinishRegistration: {
+    id: 'application.system:core.fetch.data.needToFinishRegistration',
+    defaultMessage: 'Vantar að klára skráningu',
+    description: 'Need to finish registration to continue',
   },
 })
 
@@ -996,6 +1114,11 @@ export const coreHistoryMessages = defineMessages({
     defaultMessage: 'Umsókn samþykkt',
     description: 'History application accepted',
   },
+  applicationApprovedBy: {
+    id: 'application.system:core.history.applicationApprovedBy',
+    defaultMessage: 'Samþykkt.',
+    description: 'History log approved',
+  },
   applicationRejected: {
     id: 'application.system:core.history.applicationRejected',
     defaultMessage: 'Umsókn hafnað',
@@ -1046,6 +1169,16 @@ export const coreHistoryMessages = defineMessages({
     defaultMessage: 'Umsókn móttekin',
     description: 'History application received',
   },
+  byReviewer: {
+    id: 'application.system:core.history.byReviewer',
+    defaultMessage: ' [{subject}]',
+    description: 'History log by reviewer',
+  },
+  byReviewerWithActor: {
+    id: 'application.system:core.history.byReviewerWithActor',
+    defaultMessage: '  [{actor} fyrir hönd {subject}]',
+    description: 'History log by actor on behalf of reviewer',
+  },
 })
 
 export const corePendingActionMessages = defineMessages({
@@ -1090,9 +1223,24 @@ export const corePendingActionMessages = defineMessages({
     defaultMessage: 'Umsóknin þín er í bið eftir yfirferð',
     description: 'Pending action waiting for review description',
   },
+  waitingForReviewFromSpouseDescription: {
+    id: 'application.system:core.pendingAction.waitingForReviewFromSpouseDescription',
+    defaultMessage: 'Umsóknin þín bíður yfirferðar frá maka umsækjanda.',
+    description: 'Pending action waiting for review from spouse description',
+  },
+  waitingForReviewFromParentBDescription: {
+    id: 'application.system:core.pendingAction.waitingForReviewFromParentBDescription',
+    defaultMessage: 'Umsóknin þín bíður yfirferðar frá forsjáraðila 2.',
+    description: 'Pending action waiting for review from parent B description',
+  },
   youNeedToReviewDescription: {
     id: 'application.system:core.pendingAction.youNeedToReviewDescription',
     defaultMessage: 'Beðið er eftir þínu samþykki á þessa umsókn',
     description: 'Pending action you need to review description',
+  },
+  whoNeedsToReviewDescription: {
+    id: 'application.system:core.pendingAction.whoNeedsToReviewDescription',
+    defaultMessage: 'Beðið er eftir samþykki frá eftirfarandi aðilum: {value}',
+    description: 'Pending action list up who needs to review description',
   },
 })

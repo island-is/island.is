@@ -15,7 +15,7 @@ export const aboutSpouseForm = {
     description: {
       id: 'fa.application:section.aboutSpouseForm.general.description#markdown',
       defaultMessage:
-        'Maki þinn ({spouseName}) hefur sótt um fjárhagsaðstoð fyrir {currentMonth} mánuð.\n\n Svo hægt sé að klára umsóknina þurfum við að fá þig til að hlaða upp **tekjuagögnum** til að reikna út fjárhagsaðstoð til útgreiðslu í byrjun {nextMonth}.',
+        'Maki þinn ({spouseName}) hefur sótt um fjárhagsaðstoð fyrir {currentMonth} mánuð.\n\n Svo hægt sé að klára umsóknina þurfum við að fá þig til að hlaða upp **tekjugögnum** til að reikna út fjárhagsaðstoð til útgreiðslu í byrjun {nextMonth}.',
       description: 'About spouse form page description',
     },
   }),

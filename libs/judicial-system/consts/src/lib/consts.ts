@@ -2,10 +2,16 @@ import { CaseType } from '@island.is/judicial-system/types'
 
 export const EXPIRES_IN_SECONDS = 4 * 60 * 60
 export const EXPIRES_IN_MILLISECONDS = EXPIRES_IN_SECONDS * 1000
+export const REFRESH_TOKEN_EXPIRES_IN_SECONDS = 8 * 60 * 60
+export const REFRESH_TOKEN_EXPIRES_IN_MILLISECONDS =
+  REFRESH_TOKEN_EXPIRES_IN_SECONDS * 1000
+
 export const CSRF_COOKIE_NAME = 'judicial-system.csrf'
 export const ACCESS_TOKEN_COOKIE_NAME = 'judicial-system.token'
 export const CODE_VERIFIER_COOKIE_NAME = 'judicial-system.code_verifier'
 export const IDS_ID_TOKEN_NAME = 'judicial-system.ids.id_token'
+export const IDS_ACCESS_TOKEN_NAME = 'judicial-system.ids.access_token'
+export const IDS_REFRESH_TOKEN_NAME = 'judicial-system.ids.refresh_token'
 
 export const InvestigationCaseTypes = [
   {
@@ -31,6 +37,10 @@ export const InvestigationCaseTypes = [
   {
     label: '',
     options: [
+      {
+        label: 'Brottvísun af heimili',
+        value: CaseType.EXPULSION_FROM_HOME,
+      },
       {
         label: 'Geðrannsókn',
         value: CaseType.PSYCHIATRIC_EXAMINATION,
@@ -60,16 +70,20 @@ export const InvestigationCaseTypes = [
         value: CaseType.RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME,
       },
       {
-        label: 'Brottvísun af heimili',
-        value: CaseType.EXPULSION_FROM_HOME,
-      },
-      {
         label: 'Rannsókn á rafrænum gögnum',
         value: CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION,
       },
       {
         label: 'Rof á reynslulausn',
         value: CaseType.PAROLE_REVOCATION,
+      },
+      {
+        label: 'Skýrslutaka brotaþola yngri en 18 ára',
+        value: CaseType.STATEMENT_FROM_MINOR,
+      },
+      {
+        label: 'Skýrslutaka fyrir dómi',
+        value: CaseType.STATEMENT_IN_COURT,
       },
       {
         label: 'Upplýsingar um vefnotkun',
@@ -105,7 +119,6 @@ export const PUBLIC_PROSECUTOR_STAFF_INDICTMENT_SEND_TO_PRISON_ADMIN_ROUTE =
 //#endregion Public prosecutor user routes
 
 //#region Prison user routes
-export const PRISON_CASES_ROUTE = '/fangelsi/krofur'
 export const PRISON_SIGNED_VERDICT_OVERVIEW_ROUTE = '/fangelsi/krafa/yfirlit'
 export const PRISON_CLOSED_INDICTMENT_OVERVIEW_ROUTE =
   '/fangelsi/akaera/yfirlit'
@@ -113,7 +126,6 @@ export const PRISON_CLOSED_INDICTMENT_OVERVIEW_ROUTE =
 
 //#region Court of appeals user routes
 export const COURT_OF_APPEAL_OVERVIEW_ROUTE = '/landsrettur/yfirlit'
-export const COURT_OF_APPEAL_CASES_ROUTE = '/landsrettur/krofur'
 export const COURT_OF_APPEAL_CASE_ROUTE = '/landsrettur/kaera'
 export const COURT_OF_APPEAL_RULING_ROUTE = '/landsrettur/urskurdur'
 export const COURT_OF_APPEAL_RESULT_ROUTE = '/landsrettur/nidurstada'
@@ -148,9 +160,14 @@ export const INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE =
   '/domur/akaera/mottaka'
 export const INDICTMENTS_SUBPOENA_ROUTE = '/domur/akaera/fyrirkall'
 export const INDICTMENTS_DEFENDER_ROUTE = '/domur/akaera/malflytjendur'
-export const INDICTMENTS_CONCLUSION_ROUTE = '/domur/akaera/nidurstada'
+export const INDICTMENTS_COURT_RECORD_ROUTE = '/domur/akaera/thingbok'
+export const INDICTMENTS_CONCLUSION_ROUTE = '/domur/akaera/stada-og-lyktir'
 export const INDICTMENTS_SUMMARY_ROUTE = '/domur/akaera/samantekt'
 export const INDICTMENTS_COMPLETED_ROUTE = '/domur/akaera/lokid'
+export const INDICTMENTS_ADD_FILES_IN_COURT_ROUTE = '/domur/akaera/gogn'
+export const INDICTMENTS_ADD_RULING_ORDER_IN_COURT_ROUTE =
+  '/domur/akaera/urskurdir'
+
 //#endregion District court user routes
 
 //#region Prosecutor user routes
@@ -167,6 +184,8 @@ export const RESTRICTION_CASE_POLICE_REPORT_ROUTE = '/krafa/greinargerd'
 export const RESTRICTION_CASE_CASE_FILES_ROUTE = '/krafa/rannsoknargogn'
 export const RESTRICTION_CASE_OVERVIEW_ROUTE = '/krafa/stadfesta'
 
+export const INVESTIGATION_CASE_REGISTRATION_ROUTE =
+  '/krafa/rannsoknarheimild/efni-krofu'
 export const INVESTIGATION_CASE_DEFENDANT_ROUTE =
   '/krafa/rannsoknarheimild/varnaradili'
 export const INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE =
@@ -187,22 +206,25 @@ export const STATEMENT_ROUTE = '/greinargerd'
 export const INDICTMENTS_DEFENDANT_ROUTE = '/akaera/akaerdi'
 export const INDICTMENTS_POLICE_CASE_FILES_ROUTE = '/akaera/malsgogn'
 export const INDICTMENTS_CASE_FILE_ROUTE = '/akaera/skjalaskra'
+export const INDICTMENTS_CASE_FILES_ROUTE = '/akaera/domskjol'
 export const INDICTMENTS_PROCESSING_ROUTE = '/akaera/malsmedferd'
 export const INDICTMENTS_INDICTMENT_ROUTE = '/akaera/akaera'
-export const INDICTMENTS_CASE_FILES_ROUTE = '/akaera/domskjol'
 export const INDICTMENTS_OVERVIEW_ROUTE = '/akaera/stadfesta'
 export const CLOSED_INDICTMENT_OVERVIEW_ROUTE = '/akaera/yfirlit'
 export const INDICTMENTS_ADD_FILES_ROUTE = '/akaera/gogn'
+export const INDICTMENTS_TO_REVIEW = '/malalistar/sakamal-til-yfirlestrar'
 //#endregion Prosecutor user routes
 
 //#region Admin user routes
 export const USERS_ROUTE = '/notendur'
 export const CREATE_USER_ROUTE = '/notendur/nyr'
 export const CHANGE_USER_ROUTE = '/notendur/breyta'
+export const STATISTICS_ROUTE = '/notendur/tolfraedi'
+
 //#endregion Admin user routes
 
 //#region Shared routes
-export const CASES_ROUTE = '/krofur'
+export const CASE_TABLE_GROUPS_ROUTE = '/malalistar'
 export const SIGNED_VERDICT_OVERVIEW_ROUTE = '/krafa/yfirlit'
 export const ROUTE_HANDLER_ROUTE = '/beinir'
 //#endregion Shared routes
@@ -229,9 +251,9 @@ export const prosecutorIndictmentRoutes = [
   INDICTMENTS_DEFENDANT_ROUTE,
   INDICTMENTS_POLICE_CASE_FILES_ROUTE,
   INDICTMENTS_CASE_FILE_ROUTE,
+  INDICTMENTS_CASE_FILES_ROUTE,
   INDICTMENTS_PROCESSING_ROUTE,
   INDICTMENTS_INDICTMENT_ROUTE,
-  INDICTMENTS_CASE_FILES_ROUTE,
   INDICTMENTS_OVERVIEW_ROUTE,
 ]
 
@@ -256,3 +278,12 @@ export const courtInvestigationCasesRoutes = [
 // Feedback
 export const FEEDBACK_FORM_URL =
   'https://form.asana.com?k=45fPB_e65kYFDjvG-18f0w&d=203394141643832'
+
+// Masks
+export const POLICE_CASE_NUMBER = '___-____-_______'
+export const SSN = '______-____'
+export const PHONE_NUMBER = '___-____'
+export const EDITABLE_DATE = '__.__.____'
+export const DATE_PICKER_TIME = '  :  '
+export const SUBSTANCE_ALCOHOL = '_,__'
+export const SPEED = '___'

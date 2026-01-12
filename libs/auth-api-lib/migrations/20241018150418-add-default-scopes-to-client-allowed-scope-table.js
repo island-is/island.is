@@ -16,6 +16,7 @@ module.exports = {
       const clientIds = clients.map((client) => client.client_id)
 
       if (!clientIds.length) {
+        await transaction.commit()
         return
       }
 
@@ -43,6 +44,7 @@ module.exports = {
       }
 
       if (!rows.length) {
+        await transaction.commit()
         return
       }
 

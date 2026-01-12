@@ -52,7 +52,7 @@ export const PaymentPlanTable = ({ isLoading, data, totalAmount }: Props) => {
           justifyContent="center"
           marginTop={2}
         >
-          <LoadingDots large color="gradient" />
+          <LoadingDots size="large" color="gradient" />
         </Box>
       )}
       {!isLoading && (

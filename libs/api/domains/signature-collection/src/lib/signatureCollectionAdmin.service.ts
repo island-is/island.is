@@ -11,12 +11,14 @@ import { SignatureCollectionBulk } from './models/bulk.model'
 import { SignatureCollectionCandidateLookUp } from './models/signee.model'
 import { SignatureCollectionListInput } from './dto/singatureList.input'
 import {
+  CollectionType,
   ReasonKey,
-  SignatureCollectionAdminClientService,
   SignatureCollectionClientService,
+  SignatureCollectionManagerClientService,
+  SignatureCollectionMunicipalityClientService,
+  SignatureCollectionAdminClientService,
 } from '@island.is/clients/signature-collection'
 import { SignatureCollectionExtendDeadlineInput } from './dto/extendDeadline.input'
-import { User } from '@island.is/auth-nest-tools'
 import { SignatureCollectionListBulkUploadInput } from './dto/bulkUpload.input'
 import { SignatureCollectionSlug } from './models/slug.model'
 import { SignatureCollectionListStatus } from './models/status.model'
@@ -24,42 +26,81 @@ import { SignatureCollectionIdInput } from './dto/collectionId.input'
 import { SignatureCollectionSignatureUpdateInput } from './dto/signatureUpdate.input'
 import { SignatureCollectionSignatureLookupInput } from './dto/signatureLookup.input'
 import { SignatureCollectionAreaSummaryReportInput } from './dto/areaSummaryReport.input'
-import { SignatureCollectionAreaSummaryReport } from './models/areaSummaryReport.model'
+import { SignatureCollectionSummaryReport } from './models/summaryReport.model'
 import {
-  SignatureCollectionListIdInput,
+  SignatureCollectionCandidateIdInput,
   SignatureCollectionUploadPaperSignatureInput,
 } from './dto'
+import { SignatureCollectionAdmin } from './models/admin.model'
+import { AdminPortalScope } from '@island.is/auth/scopes'
+import { SignatureCollectionLockListInput } from './dto/lockList.input'
 
 @Injectable()
 export class SignatureCollectionAdminService {
   constructor(
-    private signatureCollectionClientService: SignatureCollectionAdminClientService,
-    private signatureCollectionBasicService: SignatureCollectionClientService,
+    private basicService: SignatureCollectionClientService,
+    // admin = LKS
+    private adminClientService: SignatureCollectionAdminClientService,
+    // manager = Þjóðskrá
+    private managerClientService: SignatureCollectionManagerClientService,
+    // municipality = Sveitarfélög
+    private municipalityService: SignatureCollectionMunicipalityClientService,
   ) {}
 
-  async currentCollection(user: User): Promise<SignatureCollection> {
-    return await this.signatureCollectionClientService.currentCollection(user)
+  private getService(scope: AdminPortalScope) {
+    switch (scope) {
+      case AdminPortalScope.signatureCollectionManage:
+        return this.managerClientService
+      case AdminPortalScope.signatureCollectionMunicipality:
+        return this.municipalityService
+      default:
+        return this.adminClientService
+    }
+  }
+
+  async getLatestCollectionForType(
+    admin: SignatureCollectionAdmin,
+    collectionType: CollectionType,
+  ): Promise<SignatureCollection> {
+    return this.getService(admin.adminScope).getLatestCollectionForType(
+      admin,
+      collectionType,
+    )
   }
 
   async allLists(
     input: SignatureCollectionIdInput,
-    user: User,
+    admin: SignatureCollectionAdmin,
   ): Promise<SignatureCollectionList[]> {
-    return await this.signatureCollectionClientService.getLists(input, user)
+    return this.getService(admin.adminScope).getLists(input, admin)
   }
 
-  async list(listId: string, user: User): Promise<SignatureCollectionList> {
-    return await this.signatureCollectionClientService.getList(listId, user)
+  async listsForCandidate(
+    input: SignatureCollectionCandidateIdInput,
+    admin: SignatureCollectionAdmin,
+  ): Promise<SignatureCollectionList[]> {
+    return this.getService(admin.adminScope).getLists(input, admin)
+  }
+
+  async list(
+    listId: string,
+    admin: SignatureCollectionAdmin,
+  ): Promise<SignatureCollectionList> {
+    return this.getService(admin.adminScope).getList(listId, admin)
   }
 
   async getCanSignInfo(
-    auth: User,
+    admin: SignatureCollectionAdmin,
     nationalId: string,
     listId: string,
+    collectionType: CollectionType,
   ): Promise<SignatureCollectionSuccess> {
-    const signatureSignee =
-      await this.signatureCollectionBasicService.getSignee(auth, nationalId)
-    const list = await this.list(listId, auth)
+    const signatureSignee = await this.basicService.getSignee(
+      admin,
+      collectionType,
+      nationalId,
+    )
+    const list = await this.list(listId, admin)
     // Current signatures should not prevent paper signatures
     const canSign =
       signatureSignee.canSign ||
@@ -80,152 +121,143 @@ export class SignatureCollectionAdminService {
 
   async signatures(
     listId: string,
-    user: User,
+    admin: SignatureCollectionAdmin,
   ): Promise<SignatureCollectionSignature[]> {
-    return await this.signatureCollectionClientService.getSignatures(
-      listId,
-      user,
-    )
+    return this.getService(admin.adminScope).getSignatures(listId, admin)
   }
 
   async compareLists(
     { nationalIds, listId }: SignatureCollectionListNationalIdsInput,
-    user: User,
+    admin: SignatureCollectionAdmin,
   ): Promise<SignatureCollectionSignature[]> {
-    return await this.signatureCollectionClientService.compareBulkSignaturesOnList(
+    return this.getService(admin.adminScope).compareBulkSignaturesOnList(
       listId,
       nationalIds,
-      user,
+      admin,
     )
   }
 
   async signee(
     nationalId: string,
-    user: User,
+    collectionType: CollectionType,
+    admin: SignatureCollectionAdmin,
   ): Promise<SignatureCollectionCandidateLookUp> {
-    return await this.signatureCollectionClientService.candidateLookup(
+    return await this.getService(admin.adminScope).candidateLookup(
       nationalId,
-      user,
+      collectionType,
+      admin,
     )
   }
 
   async create(
-    user: User,
+    admin: SignatureCollectionAdmin,
     input: SignatureCollectionListInput,
   ): Promise<SignatureCollectionSlug> {
-    return await this.signatureCollectionClientService.createListsAdmin(
-      input,
-      user,
-    )
+    return this.getService(admin.adminScope).createListsAdmin(input, admin)
   }
 
   async unsignAdmin(
     signatureId: string,
-    user: User,
+    admin: SignatureCollectionAdmin,
   ): Promise<SignatureCollectionSuccess> {
-    return await this.signatureCollectionClientService.unsignListAdmin(
-      signatureId,
-      user,
-    )
+    return this.getService(admin.adminScope).unsignListAdmin(signatureId, admin)
   }
 
   async extendDeadline(
     { listId, newEndDate }: SignatureCollectionExtendDeadlineInput,
-    user: User,
+    admin: SignatureCollectionAdmin,
   ): Promise<SignatureCollectionSuccess> {
-    return await this.signatureCollectionClientService.extendDeadline(
+    return await this.getService(admin.adminScope).extendDeadline(
       listId,
       newEndDate,
-      user,
+      admin,
     )
   }
 
   async bulkUploadSignatures(
     input: SignatureCollectionListBulkUploadInput,
-    user: User,
+    admin: SignatureCollectionAdmin,
   ): Promise<SignatureCollectionBulk> {
-    return await this.signatureCollectionClientService.bulkUploadSignatures(
+    return await this.getService(admin.adminScope).bulkUploadSignatures(
       input,
-      user,
+      admin,
     )
   }
 
   async bulkCompareSignaturesAllLists(
     { nationalIds, collectionId }: SignatureCollectionNationalIdsInput,
-    user: User,
+    admin: SignatureCollectionAdmin,
   ): Promise<SignatureCollectionSignature[]> {
-    return await this.signatureCollectionClientService.compareBulkSignaturesOnAllLists(
-      nationalIds,
-      collectionId,
-      user,
-    )
+    return await this.getService(
+      admin.adminScope,
+    ).compareBulkSignaturesOnAllLists(nationalIds, collectionId, admin)
   }
 
   async processCollection(
     collectionId: string,
-    user: User,
+    admin: SignatureCollectionAdmin,
   ): Promise<SignatureCollectionSuccess> {
-    return await this.signatureCollectionClientService.processCollection(
+    return await this.getService(admin.adminScope).processCollection(
       collectionId,
-      user,
+      admin,
     )
   }
 
   async listStatus(
     listId: string,
-    user: User,
+    admin: SignatureCollectionAdmin,
   ): Promise<SignatureCollectionListStatus> {
-    const status = await this.signatureCollectionClientService.listStatus(
+    const status = await this.getService(admin.adminScope).listStatus(
       listId,
-      user,
+      admin,
     )
     return { status }
   }
 
   async toggleListStatus(
     listId: string,
-    user: User,
+    admin: SignatureCollectionAdmin,
   ): Promise<SignatureCollectionSuccess> {
-    return await this.signatureCollectionClientService.toggleListStatus(
+    return await this.getService(admin.adminScope).toggleListStatus(
       listId,
-      user,
+      admin,
     )
   }
 
   async removeCandidate(
     candidateId: string,
-    user: User,
+    admin: SignatureCollectionAdmin,
   ): Promise<SignatureCollectionSuccess> {
-    return await this.signatureCollectionClientService.removeCandidate(
+    return await this.getService(admin.adminScope).removeCandidate(
       candidateId,
-      user,
+      admin,
     )
   }
 
   async removeList(
     listId: string,
-    user: User,
+    admin: SignatureCollectionAdmin,
   ): Promise<SignatureCollectionSuccess> {
-    return await this.signatureCollectionClientService.removeList(listId, user)
+    return await this.getService(admin.adminScope).removeList(listId, admin)
   }
 
   async updateSignaturePageNumber(
-    user: User,
+    admin: SignatureCollectionAdmin,
     input: SignatureCollectionSignatureUpdateInput,
   ): Promise<SignatureCollectionSuccess> {
-    return await this.signatureCollectionClientService.updateSignaturePageNumber(
-      user,
+    return await this.getService(admin.adminScope).updateSignaturePageNumber(
+      admin,
       input.signatureId,
       input.pageNumber,
     )
   }
 
   async signatureLookup(
-    user: User,
+    admin: SignatureCollectionAdmin,
     input: SignatureCollectionSignatureLookupInput,
   ): Promise<SignatureCollectionSignature[]> {
-    return await this.signatureCollectionClientService.signatureLookup(
-      user,
+    return await this.getService(admin.adminScope).signatureLookup(
+      admin,
       input.collectionId,
       input.nationalId,
     )
@@ -233,32 +265,49 @@ export class SignatureCollectionAdminService {
 
   async getAreaSummaryReport(
     input: SignatureCollectionAreaSummaryReportInput,
-    user: User,
-  ): Promise<SignatureCollectionAreaSummaryReport> {
-    return await this.signatureCollectionClientService.getAreaSummaryReport(
-      user,
+    admin: SignatureCollectionAdmin,
+  ): Promise<SignatureCollectionSummaryReport> {
+    return await this.getService(admin.adminScope).getAreaSummaryReport(
+      admin,
       input.collectionId,
       input.areaId,
     )
   }
 
-  async lockList(
-    input: SignatureCollectionListIdInput,
-    user: User,
-  ): Promise<SignatureCollectionSuccess> {
-    return await this.signatureCollectionClientService.lockList(
-      user,
-      input.listId,
+  async getCandidateSummaryReport(
+    input: SignatureCollectionCandidateIdInput,
+    admin: SignatureCollectionAdmin,
+  ): Promise<SignatureCollectionSummaryReport> {
+    return await this.getService(admin.adminScope).getCandidateSummaryReport(
+      admin,
+      input.candidateId,
     )
+  }
+
+  async lockList(
+    input: SignatureCollectionLockListInput,
+    admin: SignatureCollectionAdmin,
+  ): Promise<SignatureCollectionSuccess> {
+    return await this.getService(admin.adminScope).lockList(admin, input)
   }
 
   async uploadPaperSignature(
     input: SignatureCollectionUploadPaperSignatureInput,
-    user: User,
+    admin: SignatureCollectionAdmin,
   ): Promise<SignatureCollectionSuccess> {
-    return await this.signatureCollectionClientService.uploadPaperSignature(
-      user,
+    return await this.getService(admin.adminScope).uploadPaperSignature(
+      admin,
       input,
+    )
+  }
+
+  async startMunicipalityCollection(
+    admin: SignatureCollectionAdmin,
+    areaId: string,
+  ): Promise<SignatureCollectionSuccess> {
+    return await this.getService(admin.adminScope).startMunicipalityCollection(
+      admin,
+      areaId,
     )
   }
 }

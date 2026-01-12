@@ -1,9 +1,11 @@
 import { HTMLText } from '@island.is/regulations'
-import { Editor, EditorFileUploader } from '@island.is/regulations-tools/Editor'
-import { useEffect, useRef, useState } from 'react'
+import { Editor, EditorFileUploader } from '@dmr.is/regulations-tools/Editor'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Controller } from 'react-hook-form'
 import { classes, editorWrapper, errorStyle } from './HTMLEditor.css'
 import { Box, Stack, Text } from '@island.is/island-ui/core'
+import debounce from 'lodash/debounce'
+import { DEBOUNCE_INPUT_TIMER } from '../../lib/constants'
 type Props = {
   title?: string
   name: string
@@ -14,6 +16,7 @@ type Props = {
   error?: string
   readOnly?: boolean
   controller?: boolean
+  fileUploader: EditorFileUploader
 }
 
 export const HTMLEditor = ({
@@ -26,6 +29,7 @@ export const HTMLEditor = ({
   hideWarnings,
   readOnly = false,
   controller = true,
+  fileUploader,
 }: Props) => {
   const [initialValue, setInitalValue] = useState(value)
   const valueRef = useRef(() => value)
@@ -40,9 +44,12 @@ export const HTMLEditor = ({
     }
   }, [value, readOnly])
 
-  const fileUploader = (): EditorFileUploader => async (blob) => {
-    throw new Error('Not implemented')
-  }
+  const handleChange = useCallback(
+    debounce((value: HTMLText) => {
+      onChange?.(value)
+    }, DEBOUNCE_INPUT_TIMER),
+    [onChange],
+  )
 
   return controller ? (
     <Controller
@@ -101,7 +108,7 @@ export const HTMLEditor = ({
           valueRef={valueRef}
           classes={classes}
           onChange={() => {
-            onChange && onChange(valueRef.current())
+            handleChange(valueRef.current())
           }}
           onBlur={() => {
             onChange && onChange(valueRef.current())

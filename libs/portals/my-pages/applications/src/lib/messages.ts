@@ -116,7 +116,7 @@ export const m = defineMessages({
       'Error message when no completed applications are found in the overview for national id',
   },
   defaultInstitutionLabel: {
-    id: 'application.system:default-institution-label',
+    id: 'sp.applications:default-institution-label',
     defaultMessage: 'Allar stofnanir',
     description: 'Default institution filter label',
   },

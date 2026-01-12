@@ -13,7 +13,7 @@ import {
   buildSubSection,
   buildTextField,
 } from '@island.is/application/core'
-import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
+import { SocialInsuranceAdministrationLogo } from '@island.is/application/assets/institution-logos'
 import {
   BankAccountType,
   fileUploadSharedProps,
@@ -51,7 +51,7 @@ import {
 export const PensionSupplementForm: Form = buildForm({
   id: 'PensionSupplementDraft',
   title: socialInsuranceAdministrationMessage.shared.formTitle,
-  logo: Logo,
+  logo: SocialInsuranceAdministrationLogo,
   mode: FormModes.DRAFT,
   children: [
     buildSection({
@@ -106,7 +106,6 @@ export const PensionSupplementForm: Form = buildForm({
                 }),
                 buildRadioField({
                   id: 'paymentInfo.bankAccountType',
-                  title: '',
                   defaultValue: (application: Application) => {
                     const { bankAccountType } = getApplicationAnswers(
                       application.answers,
@@ -556,7 +555,6 @@ export const PensionSupplementForm: Form = buildForm({
       children: [
         buildMultiField({
           id: 'confirm',
-          title: '',
           children: [
             buildCustomField(
               {

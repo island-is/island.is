@@ -1,48 +1,5 @@
-query getApplications($input: ApplicationApplicationsAdminInput!) {
+query getApplicationsSuperAdmin($input: ApplicationsSuperAdminFilters!) {
   applicationApplicationsAdmin(input: $input) {
-    id
-    typeId
-    applicant
-    state
-    created
-    modified
-    assignees
-    applicantActors
-    name
-    pruned
-    pruneAt
-    institution
-    progress
-    status
-    applicantName
-    paymentStatus
-    actionCard {
-      title
-      description
-      tag {
-        label
-        variant
-      }
-      pendingAction {
-        displayStatus
-        content
-        title
-      }
-      history {
-        log
-        date
-      }
-      deleteButton
-      draftTotalSteps
-      draftFinishedSteps
-    }
-  }
-}
-
-query getInstitutionApplications(
-  $input: ApplicationApplicationsInstitutionAdminInput!
-) {
-  applicationApplicationsInstitutionAdmin(input: $input) {
     rows {
       id
       typeId
@@ -53,9 +10,16 @@ query getInstitutionApplications(
       assignees
       applicantActors
       name
+      pruned
+      pruneAt
       institution
       progress
       status
+      adminData {
+        key
+        values
+        label
+      }
       applicantName
       paymentStatus
       actionCard {
@@ -83,6 +47,71 @@ query getInstitutionApplications(
   }
 }
 
+query getApplicationsInstitutionAdmin($input: ApplicationsAdminFilters!) {
+  applicationApplicationsInstitutionAdmin(input: $input) {
+    rows {
+      id
+      typeId
+      applicant
+      state
+      created
+      modified
+      assignees
+      applicantActors
+      name
+      pruned
+      pruneAt
+      institution
+      progress
+      status
+      adminData {
+        key
+        values
+        label
+      }
+      applicantName
+      paymentStatus
+      actionCard {
+        title
+        description
+        tag {
+          label
+          variant
+        }
+        pendingAction {
+          displayStatus
+          content
+          title
+        }
+        history {
+          log
+          date
+        }
+        deleteButton
+        draftTotalSteps
+        draftFinishedSteps
+      }
+    }
+    count
+  }
+}
+
+query getInstitutionApplicationTypes(
+  $input: ApplicationTypesInstitutionAdminInput!
+) {
+  applicationTypesInstitutionAdmin(input: $input) {
+    id
+    name
+  }
+}
+
+query getSuperApplicationTypes {
+  applicationTypesSuperAdmin {
+    id
+    name
+  }
+}
+
 query getOrganizations($input: GetOrganizationsInput) {
   getOrganizations(input: $input) {
     items {
@@ -98,9 +127,7 @@ query getOrganizations($input: GetOrganizationsInput) {
   }
 }
 
-query getApplicationStatistics(
-  $input: ApplicationApplicationsAdminStatisticsInput!
-) {
+query getApplicationsStatistics($input: ApplicationsAdminStatisticsInput!) {
   applicationApplicationsAdminStatistics(input: $input) {
     typeid
     count
@@ -110,5 +137,29 @@ query getApplicationStatistics(
     rejected
     approved
     name
+  }
+}
+
+query getApplicationsInstitutionStatistics(
+  $input: ApplicationsAdminStatisticsInput!
+) {
+  applicationApplicationsInstitutionStatistics(input: $input) {
+    typeid
+    count
+    draft
+    inprogress
+    completed
+    rejected
+    approved
+    name
+  }
+}
+
+query getApplicationInstitutions {
+  applicationApplicationsAdminInstitutions {
+    nationalId
+    slug
+    contentfulId
+    applicationTypes
   }
 }

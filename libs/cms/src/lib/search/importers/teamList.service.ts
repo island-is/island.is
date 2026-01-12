@@ -10,9 +10,13 @@ import { extractChildEntryIds } from './utils'
 @Injectable()
 export class TeamListSyncService implements CmsSyncProvider<ITeamList> {
   processSyncData(entries: processSyncDataInput<ITeamList>) {
-    return entries.filter(
+    const entriesToUpdate = entries.filter(
       (entry) => entry.sys.contentType.sys.id === 'teamList',
     )
+    return {
+      entriesToUpdate,
+      entriesToDelete: [],
+    }
   }
 
   doMapping(entries: ITeamList[]): MappedData[] {
@@ -28,6 +32,9 @@ export class TeamListSyncService implements CmsSyncProvider<ITeamList> {
       const teamList = mapTeamList(teamListEntry)
       let counter = teamList.teamMembers?.length ?? 9999
       for (const member of teamList.teamMembers ?? []) {
+        if (!member.name) {
+          continue
+        }
         try {
           const memberEntry = teamListEntry.fields.teamMembers?.find(
             (m) => m.sys.id === member.id,
@@ -46,7 +53,7 @@ export class TeamListSyncService implements CmsSyncProvider<ITeamList> {
           const content = contentSection.join(' ')
           teamMembers.push({
             _id: member.id,
-            title: member.name,
+            title: member.name.toLowerCase(),
             content,
             contentWordCount: content?.split(/\s+/).length,
             type: 'webTeamMember',
@@ -63,7 +70,7 @@ export class TeamListSyncService implements CmsSyncProvider<ITeamList> {
             ],
             dateCreated: member.createdAt ?? '',
             dateUpdated: new Date().getTime().toString(),
-            // Use the release date field as a way to order search results inthe  same order as the team members list in the CMS
+            // Use the release date field as a way to order search results in the  same order as the team members list in the CMS
             releaseDate: String(counter--),
           })
         } catch (error) {
@@ -76,7 +83,7 @@ export class TeamListSyncService implements CmsSyncProvider<ITeamList> {
     }
 
     return teamMembers.concat(
-      // Append the team list document tagged with the ids of its members so we can later look up what list a member belongs to
+      // Append the team list document tagged with the id's of its members so we can later look up what list a member belongs to
       entries.map((teamListEntry) => {
         const childEntryIds = extractChildEntryIds(teamListEntry)
         return {

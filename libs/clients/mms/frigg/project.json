@@ -3,9 +3,10 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/mms/frigg/src",
   "projectType": "library",
+  "tags": ["lib:client", "scope:client"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "options": {
         "lintFilePatterns": ["libs/clients/mms/frigg/**/*.{ts,tsx,js,jsx}"]
       }
@@ -22,7 +23,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "curl -H \"X-Road-Client: IS-DEV/GOV/10000/island-is-client\" http://localhost:8081/r1/IS-DEV/GOV/10066/MMS-Protected/getOpenAPI?serviceCode=frigg-form-service > src/clientConfig.json",
+          "curl -H \"X-Road-Client: IS-DEV/GOV/10000/island-is-client\" http://localhost:8081/r1/IS-DEV/GOV/10066/MMS-Protected/getOpenAPI?serviceCode=frigg-form-api > src/clientConfig.json",
           "prettier --write src/clientConfig.json"
         ],
         "parallel": false,
@@ -36,6 +37,5 @@
       },
       "outputs": ["{projectRoot}/gen/fetch"]
     }
-  },
-  "tags": ["lib:client", "scope:client"]
+  }
 }

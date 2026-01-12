@@ -12,6 +12,7 @@ import {
 } from '@island.is/application/types'
 import { LoginServiceSchema } from './dataSchema'
 import { application } from './messages'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const States = {
   draft: 'draft',
@@ -26,7 +27,7 @@ enum Roles {
   APPLICANT = 'applicant',
 }
 
-enum TEMPLATE_API_ACTIONS {
+enum TemplateApiActions {
   // Has to match name of action in template API module
   // (will be refactored when state machine is a part of API module)
   sendApplication = 'sendApplication',
@@ -39,8 +40,9 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.LOGIN_SERVICE,
   name: application.name,
+  codeOwner: CodeOwners.NordaApplications,
   institution: application.institutionName,
-  translationNamespaces: [ApplicationConfigurations.LoginService.translation],
+  translationNamespaces: ApplicationConfigurations.LoginService.translation,
   dataSchema: LoginServiceSchema,
   stateMachineConfig: {
     initial: States.draft,
@@ -91,7 +93,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
           onEntry: defineTemplateApi({
-            action: TEMPLATE_API_ACTIONS.sendApplication,
+            action: TemplateApiActions.sendApplication,
           }),
           roles: [
             {

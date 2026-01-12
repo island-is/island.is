@@ -1,0 +1,34 @@
+{
+  "name": "application-templates-municipal-list-creation",
+  "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/application/templates/signature-collection/municipal-list-creation/src",
+  "projectType": "library",
+  "tags": ["scope:application-system", "lib:application-system"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/application/templates/signature-collection/municipal-list-creation/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/application/templates/signature-collection/municipal-list-creation"
+      ],
+      "options": {
+        "jestConfig": "libs/application/templates/signature-collection/municipal-list-creation/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "extract-strings": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/signature-collection/municipal-list-creation/src/**/*.{js,ts,tsx}'"
+      }
+    }
+  }
+}

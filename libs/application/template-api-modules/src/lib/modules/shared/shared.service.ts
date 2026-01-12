@@ -201,6 +201,7 @@ export class SharedTemplateApiService {
     performingOrganizationID: string,
     chargeItems: BasicChargeItem[],
     extraData: ExtraData[] | undefined = undefined,
+    currentUserLocale: string | undefined = undefined,
   ) {
     return this.paymentService.createCharge(
       user,
@@ -208,11 +209,12 @@ export class SharedTemplateApiService {
       chargeItems,
       applicationId,
       extraData,
+      currentUserLocale,
     )
   }
 
-  async getPaymentStatus(user: User, applicationId: string) {
-    return this.paymentService.getStatus(user, applicationId)
+  async getPaymentStatus(applicationId: string) {
+    return this.paymentService.getStatus(applicationId)
   }
 
   async storeNonceForApplication(application: Application): Promise<string> {

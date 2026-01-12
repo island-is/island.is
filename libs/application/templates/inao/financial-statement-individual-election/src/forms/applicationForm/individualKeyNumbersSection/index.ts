@@ -1,18 +1,15 @@
-import { buildSection, getValueViaPath } from '@island.is/application/core'
-import { GREATER } from '../../../lib/utils/constants'
-import { m } from '../../../lib/utils/messages'
+import { buildSection } from '@island.is/application/core'
+import { m } from '../../../lib/messages'
 import { operatingCostSubSection } from './operatingcostSubSection'
 import { equityAndLiabilitiesSubSection } from './equitiesAndLiabilitiesSubSection'
 import { capitalNumberSection } from './capitalNumbersSection'
+import { isGreaterThanIncomeLimit } from '../../../utils/conditions'
 
 export const individualKeyNumbersSection = buildSection({
   id: 'keyNumbers',
   title: m.keyNumbers,
-  condition: (answers) => {
-    const greaterThanLimit =
-      getValueViaPath(answers, 'election.incomeLimit') === GREATER
-    return greaterThanLimit
-  },
+  condition: isGreaterThanIncomeLimit,
+
   children: [
     operatingCostSubSection,
     capitalNumberSection,

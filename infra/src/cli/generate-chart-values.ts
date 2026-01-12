@@ -1,11 +1,12 @@
 import { renderEnv } from './render-env'
 import { ChartName, Deployments, Charts } from '../uber-charts/all-charts'
-import { writeFileSync, mkdirSync } from 'fs'
+import { writeFileSync, mkdirSync, rmSync } from 'fs'
 import { Envs } from '../environments'
 import { OpsEnv } from '../dsl/types/input-types'
 import path from 'path'
 import yaml from 'yaml'
 import type { ToStringOptions } from 'yaml'
+import { REMOVE_APP_FROM_UBERCHART } from './const'
 
 const yamlOptions: ToStringOptions = {
   defaultStringType: 'QUOTE_SINGLE',
@@ -21,6 +22,18 @@ const headerComment = `#########################################################
 
 `
 
+const relativeChartDir = '../../../charts'
+const cleanOrphanDirs = (filePath: string): void => {
+  try {
+    rmSync(filePath, { recursive: true })
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(
+        `Failed to clean orphan directories at ${filePath}: ${error.message}`,
+      )
+    }
+  }
+}
 const writeYamlFile = (filePath: string, content: unknown) => {
   const doc = new yaml.Document()
   doc.contents = doc.createNode(content)
@@ -31,25 +44,43 @@ const writeYamlFile = (filePath: string, content: unknown) => {
 }
 
 const generateChartValues = async () => {
-  console.log('Gathering charts')
-
+  console.log('Cleaning orphan charts')
+  cleanOrphanDirs(path.join(__dirname, relativeChartDir))
   for (const [name, envs] of Object.entries(Deployments)) {
     for (const [envType, envName] of Object.entries(envs)) {
-      console.log(`Processing ${name} ${envName} ${envType}`)
       const renderedYaml = await renderEnv(envType as OpsEnv, name as ChartName)
       const renderedValues = yaml
         .parseDocument(renderedYaml, { schema: 'json' })
         .toJSON()
+      console.log(`Writing values.${Envs[envName].type}.yaml`)
+
+      const umbrellaChartValues = (() => {
+        // Copy the value
+        const _copy = JSON.parse(JSON.stringify(renderedValues))
+        const removeApp = [
+          ...REMOVE_APP_FROM_UBERCHART.all,
+          ...(envType in REMOVE_APP_FROM_UBERCHART
+            ? REMOVE_APP_FROM_UBERCHART[envType]
+            : []),
+        ]
+        for (const app of removeApp) {
+          if (_copy[app]) {
+            console.log(`Removing ${app} from umbrella chart for ${envName}`)
+            delete _copy[app]
+          }
+        }
+        return _copy
+      })()
 
       // Write umbrella chart values
       writeYamlFile(
         path.join(
           __dirname,
-          '/../../../charts',
+          relativeChartDir,
           name,
           `values.${Envs[envName].type}.yaml`,
         ),
-        renderedValues,
+        umbrellaChartValues,
       )
 
       // Write individual service values
@@ -67,7 +98,7 @@ const generateChartValues = async () => {
           writeYamlFile(
             path.join(
               __dirname,
-              `/../../../charts/${name}-services`,
+              `${relativeChartDir}/${name}-services`,
               serviceName,
               `values.${Envs[envName].type}.yaml`,
             ),

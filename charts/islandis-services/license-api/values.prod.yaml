@@ -24,7 +24,7 @@ env:
   IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
   LICENSE_SERVICE_REDIS_NODES: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
   LOG_LEVEL: 'info'
-  NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
+  NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
   SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   XROAD_BASE_PATH: 'http://securityserver.island.is'
   XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.island.is/r1/IS'
@@ -35,7 +35,7 @@ env:
   XROAD_DRIVING_LICENSE_V4_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v4'
   XROAD_DRIVING_LICENSE_V5_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v5'
   XROAD_FIREARM_LICENSE_PATH: 'IS/GOV/5309672079/Logreglan-Protected/island-api-v1'
-  XROAD_HUNTING_LICENSE_PATH: 'IS/GOV/7010022880/Umhverfisstofnun-Protected/api'
+  XROAD_NVS_PERMITS_PATH: 'IS/GOV/7009241570/NVS-Protected/api'
   XROAD_TLS_BASE_PATH: 'https://securityserver.island.is'
   XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
 grantNamespaces:
@@ -71,7 +71,10 @@ ingress:
           - '/'
 namespace: 'license-api'
 podDisruptionBudget:
-  maxUnavailable: 1
+  minAvailable: 1
+  unhealthyPodEvictionPolicy: 'IfHealthyBudget'
+podSecurityContext:
+  fsGroup: 65534
 pvcs: []
 replicaCount:
   default: 2
@@ -111,3 +114,8 @@ secrets:
 securityContext:
   allowPrivilegeEscalation: false
   privileged: false
+serviceAccount:
+  annotations:
+    eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/license-api'
+  create: true
+  name: 'license-api'

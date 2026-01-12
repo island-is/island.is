@@ -1,11 +1,11 @@
 import { HTMLText } from '@island.is/regulations'
-import { Editor, EditorFileUploader } from '@island.is/regulations-tools/Editor'
-import { useCallback, useEffect, useRef } from 'react'
+import { Editor } from '@dmr.is/regulations-tools/Editor'
+import { useRef } from 'react'
 import { classes, editorWrapper } from '../htmlEditor/HTMLEditor.css'
-import { baseConfig } from '../htmlEditor/config/baseConfig'
 import { Box } from '@island.is/island-ui/core'
 import { useApplication } from '../../hooks/useUpdateApplication'
 import set from 'lodash/set'
+import { useApplicationAssetUploader } from '../../hooks/useAssetUpload'
 
 type Props = {
   applicationId: string
@@ -26,19 +26,26 @@ export const OJOIHtmlController = ({
     applicationId,
   })
 
-  const valueRef = useRef(() =>
-    defaultValue ? (defaultValue as HTMLText) : ('' as HTMLText),
-  )
+  const { useFileUploader } = useApplicationAssetUploader({ applicationId })
 
-  const fileUploader = (): EditorFileUploader => async (blob) => {
-    throw new Error('Not implemented')
-  }
+  const valueRef = useRef(() => {
+    const defaultHtml = Buffer.from(defaultValue || '', 'base64').toString(
+      'utf-8',
+    )
+
+    return defaultHtml as HTMLText
+  })
+
+  const fileUploader = useFileUploader()
 
   const handleChange = (value: HTMLText) => {
-    const currentAnswers = structuredClone(application.answers)
-    const newAnswers = set(currentAnswers, name, value)
+    // convert incoming html to base64
+    const base64 = Buffer.from(value).toString('base64')
 
-    onChange && onChange(value)
+    const currentAnswers = structuredClone(application.answers)
+    const newAnswers = set(currentAnswers, name, base64)
+
+    onChange && onChange(base64 as HTMLText)
     return newAnswers
   }
 
@@ -55,7 +62,7 @@ export const OJOIHtmlController = ({
       <Editor
         key={editorKey}
         classes={classes}
-        fileUploader={fileUploader}
+        fileUploader={fileUploader()}
         valueRef={valueRef}
         onChange={() => {
           // add little bit of delay for valueRef to update

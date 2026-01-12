@@ -131,6 +131,7 @@ const mapContacts = (item: DefaultApiVacanciesListItem) => {
           typeof contact?.simi === 'number'
             ? String(contact?.simi)
             : contact?.simi,
+        jobTitle: contact?.starfsheiti,
       })
     }
   } else {
@@ -202,6 +203,7 @@ export const mapIcelandicGovernmentInstitutionVacanciesFromExternalSystem =
             : item.stofnunNr,
         logoUrl: item.logoURL,
         locations,
+        address: item.heimilisfang,
       })
     }
 

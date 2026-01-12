@@ -23,6 +23,7 @@ export const DisplayFormField = ({ field, application }: Props) => {
     rightAlign = false,
     halfWidthOwnline = false,
     clearOnChange,
+    clearOnChangeDefaultValue,
   } = field
   const { watch, setValue } = useFormContext()
   const allValues = watch()
@@ -30,7 +31,7 @@ export const DisplayFormField = ({ field, application }: Props) => {
   const [displayValue, setDisplayValue] = useState(allValues[id])
 
   useEffect(() => {
-    const newDisplayValue = value(allValues)
+    const newDisplayValue = value(allValues, application.externalData)
     if (newDisplayValue !== displayValue) {
       setDisplayValue(newDisplayValue)
       setValue(id, newDisplayValue)
@@ -92,6 +93,7 @@ export const DisplayFormField = ({ field, application }: Props) => {
               : variant
           }
           clearOnChange={clearOnChange}
+          clearOnChangeDefaultValue={clearOnChangeDefaultValue}
         />
       </Box>
     </Box>

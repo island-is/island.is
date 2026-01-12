@@ -1,4 +1,5 @@
 import {
+  Application,
   ApplicationContext,
   ApplicationStateSchema,
   FormatMessage,
@@ -7,10 +8,15 @@ import { Injectable } from '@nestjs/common'
 import { EventObject } from 'xstate'
 import { HistoryResponseDto } from './dto/history.dto'
 import { History } from './history.model'
-import { ApplicationTemplateHelper } from '@island.is/application/core'
+import {
+  ApplicationTemplateHelper,
+  coreHistoryMessages,
+} from '@island.is/application/core'
+import { IdentityClientService } from '@island.is/clients/identity'
 
 @Injectable()
 export class HistoryBuilder {
+  constructor(private identityService: IdentityClientService) {}
   async buildApplicationHistory<
     TContext extends ApplicationContext,
     TStateSchema extends ApplicationStateSchema<TEvents>,
@@ -19,19 +25,81 @@ export class HistoryBuilder {
     history: History[],
     formatMessage: FormatMessage,
     templateHelper: ApplicationTemplateHelper<TContext, TStateSchema, TEvents>,
+    application: Application,
+    currentUserRole: string,
+    currentUserNationalId: string,
+    isAdmin: boolean,
   ): Promise<HistoryResponseDto[] | []> {
     const result = []
 
     for (const entry of history) {
-      const { entryTimestamp, stateKey, exitEvent } = entry
+      const {
+        entryTimestamp,
+        stateKey,
+        exitEvent,
+        exitEventSubjectNationalId: subjectNationalId,
+        exitEventActorNationalId: actorNationalId,
+      } = entry
 
       if (!exitEvent) continue
 
-      const entryLog = templateHelper.getHistoryLogs(stateKey, exitEvent)
+      const historyLog = templateHelper.getHistoryLog(stateKey, exitEvent)
 
-      if (entryLog) {
+      if (historyLog) {
+        // Only fetch subject/actor name by nationalId if necessary
+        let subjectName: string | undefined
+        let actorName: string | undefined
+        const includeSubjectAndActor: boolean | undefined =
+          typeof historyLog.includeSubjectAndActor === 'function'
+            ? historyLog.includeSubjectAndActor(
+                currentUserRole,
+                currentUserNationalId,
+                isAdmin,
+              )
+            : historyLog.includeSubjectAndActor
+        if (includeSubjectAndActor && (subjectNationalId || actorNationalId)) {
+          ;[subjectName, actorName] = await Promise.all([
+            subjectNationalId
+              ? this.identityService
+                  .tryToGetNameFromNationalId(subjectNationalId)
+                  .then((name) => name ?? subjectNationalId)
+              : Promise.resolve(undefined),
+
+            actorNationalId
+              ? this.identityService
+                  .tryToGetNameFromNationalId(actorNationalId)
+                  .then((name) => name ?? actorNationalId)
+              : Promise.resolve(undefined),
+          ])
+        }
+
+        const message =
+          typeof historyLog.logMessage === 'function'
+            ? historyLog.logMessage(application, subjectNationalId)
+            : historyLog.logMessage
+
+        let subjectAndActorText: string | undefined
+        if (subjectName) {
+          if (actorName && subjectNationalId !== actorNationalId) {
+            subjectAndActorText = formatMessage(
+              coreHistoryMessages.byReviewerWithActor,
+              { subject: subjectName, actor: actorName },
+            )
+          } else {
+            subjectAndActorText = formatMessage(
+              coreHistoryMessages.byReviewer,
+              { subject: subjectName },
+            )
+          }
+        }
+
         result.push(
-          new HistoryResponseDto(entryTimestamp, entryLog, formatMessage),
+          new HistoryResponseDto(
+            entryTimestamp,
+            message,
+            formatMessage,
+            subjectAndActorText,
+          ),
         )
       }
     }

@@ -7,7 +7,7 @@ import {
   coreMessages,
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
-import Logo from '../../components/Logo'
+import { InaoLogo } from '@island.is/application/assets/institution-logos'
 import {
   CurrentUserTypeProvider,
   IdentityApiProvider,
@@ -17,10 +17,9 @@ import { m } from '../../lib/messages'
 
 export const PrerequisitesForm: Form = buildForm({
   id: 'PrerequisitesForm',
-  title: '',
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
-  logo: Logo,
+  logo: InaoLogo,
   children: [
     buildSection({
       id: 'ExternalDataSection',
@@ -50,7 +49,6 @@ export const PrerequisitesForm: Form = buildForm({
           submitField: buildSubmitField({
             id: 'submit',
             placement: 'footer',
-            title: '',
             refetchApplicationAfterSubmit: true,
             actions: [
               {

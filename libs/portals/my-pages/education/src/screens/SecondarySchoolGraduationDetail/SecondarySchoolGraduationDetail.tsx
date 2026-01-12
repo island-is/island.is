@@ -3,7 +3,7 @@ import {
   formatDate,
   IntroHeader,
   m,
-  MENNTAMALASTOFNUN_SLUG,
+  MMS_SLUG,
   SortableTable,
 } from '@island.is/portals/my-pages/core'
 import {
@@ -70,7 +70,7 @@ export const EducationGraduationDetail = () => {
           graduationItem.organisation ?? ''
         }`}
         intro={formatMessage(edMessage.careerIntro)}
-        serviceProviderSlug={MENNTAMALASTOFNUN_SLUG}
+        serviceProviderSlug={MMS_SLUG}
         serviceProviderTooltip={formatMessage(m.mmsTooltipSecondary)}
         marginBottom={6}
       />

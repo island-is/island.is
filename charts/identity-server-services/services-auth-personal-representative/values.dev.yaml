@@ -19,7 +19,7 @@ global:
 name: 'services-auth-personal-representative'
 enabled: true
 env:
-  COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
+  COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com:6379"]'
   COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10006/Skatturinn/ft-v1'
   DB_HOST: 'postgres-applications.internal'
   DB_NAME: 'servicesauth'
@@ -32,7 +32,7 @@ env:
   NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
   NATIONAL_REGISTRY_B2C_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1'
   NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitydev.onmicrosoft.com/midlun/.default'
-  NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
+  NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
   SERVERSIDE_FEATURES_ON: ''
   SYSLUMENN_HOST: 'https://api.syslumenn.is/staging'
   SYSLUMENN_TIMEOUT: '3000'
@@ -40,11 +40,11 @@ env:
   XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
   XROAD_CLIENT_ID: 'IS-DEV/GOV/10000/island-is-client'
   XROAD_NATIONAL_REGISTRY_ACTOR_TOKEN: 'true'
-  XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
-  XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1'
+  XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com:6379"]'
+  XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Einstaklingar-v1'
   XROAD_RSK_PROCURING_ACTOR_TOKEN: 'true'
   XROAD_RSK_PROCURING_PATH: 'IS-DEV/GOV/10006/Skatturinn/relationships-v1'
-  XROAD_RSK_PROCURING_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
+  XROAD_RSK_PROCURING_REDIS_NODES: '["clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com:6379"]'
   XROAD_TLS_BASE_PATH: 'https://securityserver.dev01.devland.is'
   XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
   ZENDESK_CONTACT_FORM_SUBDOMAIN: 'digitaliceland'
@@ -65,8 +65,8 @@ hpa:
       cpuAverageUtilization: 90
       nginxRequestsIrate: 5
     replicas:
-      max: 10
-      min: 2
+      max: 3
+      min: 1
 image:
   repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-personal-representative'
 ingress:
@@ -80,12 +80,15 @@ ingress:
           - '/'
 namespace: 'personal-representative'
 podDisruptionBudget:
-  maxUnavailable: 1
+  minAvailable: 1
+  unhealthyPodEvictionPolicy: 'IfHealthyBudget'
+podSecurityContext:
+  fsGroup: 65534
 pvcs: []
 replicaCount:
-  default: 2
-  max: 10
-  min: 2
+  default: 1
+  max: 3
+  min: 1
 resources:
   limits:
     cpu: '400m'
@@ -106,3 +109,8 @@ secrets:
 securityContext:
   allowPrivilegeEscalation: false
   privileged: false
+serviceAccount:
+  annotations:
+    eks.amazonaws.com/role-arn: 'arn:aws:iam::324037283794:role/services-auth-personal-representative'
+  create: true
+  name: 'services-auth-personal-representative'

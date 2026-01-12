@@ -1,8 +1,4 @@
-import {
-  FieldBaseProps,
-  GenericFormField,
-  YES,
-} from '@island.is/application/types'
+import { FieldBaseProps, GenericFormField } from '@island.is/application/types'
 import { FC, useEffect } from 'react'
 import {
   Box,
@@ -24,6 +20,7 @@ import { FileUploadController } from '@island.is/application/ui-components'
 import { useFormContext } from 'react-hook-form'
 import { EducationDetailsItem } from '../../shared/types'
 import { degreeLevelOptions } from '../../lib/constants'
+import { YES } from '@island.is/application/core'
 
 interface DetailsRepeaterItemProps extends FieldBaseProps {
   index: number

@@ -33,13 +33,11 @@ export const overviewSection = buildSection({
         buildCustomField({
           component: 'Overview',
           id: 'overview',
-          title: '',
           description: '',
         }),
         buildSubmitField({
           id: 'submit',
           placement: 'footer',
-          title: '',
           actions: [
             {
               event: DefaultEvents.SUBMIT,

@@ -18,10 +18,8 @@ import {
   DistrictsApi,
   InstitutionNationalIds,
   PassportsApi,
-  PendingAction,
   StaticText,
 } from '@island.is/application/types'
-import { Features } from '@island.is/feature-flags'
 import { assign } from 'xstate'
 import {
   DeliveryAddressApi,
@@ -36,7 +34,8 @@ import { application as applicationMessage } from './messages'
 import { Events, Roles, States, ApiActions, Routes } from './constants'
 import { IdCardSchema } from './dataSchema'
 import { buildPaymentState } from '@island.is/application/utils'
-import { getChargeItems, hasReviewer, hasReviewerApproved } from '../utils'
+import { getChargeItems, hasReviewer } from '../utils'
+import { CodeOwners } from '@island.is/shared/constants'
 
 export const needsReview = (context: ApplicationContext) => {
   const { answers, externalData } = context.application
@@ -57,35 +56,16 @@ export const determineMessageFromApplicationAnswers = (
   return nameObject
 }
 
-const reviewStatePendingAction = (
-  application: Application,
-  role: ApplicationRole,
-): PendingAction => {
-  if (role === Roles.ASSIGNEE && !hasReviewerApproved(application.answers)) {
-    return {
-      title: corePendingActionMessages.waitingForReviewTitle,
-      content: corePendingActionMessages.youNeedToReviewDescription,
-      displayStatus: 'warning',
-    }
-  } else {
-    return {
-      title: corePendingActionMessages.waitingForReviewTitle,
-      content: corePendingActionMessages.waitingForReviewDescription,
-      displayStatus: 'info',
-    }
-  }
-}
-
 const IdCardTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
   Events
 > = {
   type: ApplicationTypes.ID_CARD,
-  name: applicationMessage.name, // TODO make dynamic if possible
-  featureFlag: Features.idCardApplication,
+  name: applicationMessage.name,
+  codeOwner: CodeOwners.Origo,
   dataSchema: IdCardSchema,
-  translationNamespaces: [ApplicationConfigurations.IdCard.translation],
+  translationNamespaces: ApplicationConfigurations.IdCard.translation,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -221,11 +201,26 @@ const IdCardTemplate: ApplicationTemplate<
             },
             historyLogs: [
               {
-                logMessage: applicationMessage.historyWaitingForParentB,
+                logMessage: applicationMessage.historyLogApprovedByParentB,
                 onEvent: DefaultEvents.SUBMIT,
+                includeSubjectAndActor: true,
               },
             ],
-            pendingAction: reviewStatePendingAction,
+            pendingAction: (_, role) => {
+              return role === Roles.ASSIGNEE
+                ? {
+                    title: corePendingActionMessages.waitingForReviewTitle,
+                    content:
+                      corePendingActionMessages.youNeedToReviewDescription,
+                    displayStatus: 'warning',
+                  }
+                : {
+                    title: corePendingActionMessages.waitingForReviewTitle,
+                    content:
+                      corePendingActionMessages.waitingForReviewFromParentBDescription,
+                    displayStatus: 'info',
+                  }
+            },
           },
         },
         on: {

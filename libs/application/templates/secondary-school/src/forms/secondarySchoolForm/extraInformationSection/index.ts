@@ -11,6 +11,7 @@ import { error, extraInformation } from '../../../lib/messages'
 import { getAllLanguageCodes } from '@island.is/shared/utils'
 import {
   FILE_SIZE_LIMIT,
+  FILE_TOTAL_SIZE_LIMIT,
   FILE_TYPES_ALLOWED,
   getEndOfDayUTCDate,
   getFirstRegistrationEndDate,
@@ -24,7 +25,6 @@ export const extraInformationSection = buildSection({
     buildMultiField({
       id: 'extraInformationMultiField',
       title: extraInformation.general.pageTitle,
-      description: extraInformation.general.description,
       children: [
         buildAlertMessageField({
           id: 'alertPastRegistrationEndDate',
@@ -51,6 +51,7 @@ export const extraInformationSection = buildSection({
           placeholder: extraInformation.nativeLanguage.selectPlaceholder,
           width: 'full',
           doesNotRequireAnswer: true,
+          isClearable: true,
           options: () => {
             const languages = getAllLanguageCodes().filter(
               (x) => x.code !== LANGUAGE_CODE_ICELANDIC,
@@ -78,6 +79,8 @@ export const extraInformationSection = buildSection({
           rows: 5,
           title: extraInformation.other.textareaLabel,
           placeholder: extraInformation.other.textareaPlaceholder,
+          maxLength: 3000,
+          showMaxLength: true,
         }),
 
         // Supporting documents
@@ -90,10 +93,11 @@ export const extraInformationSection = buildSection({
         }),
         buildFileUploadField({
           id: 'extraInformation.supportingDocuments',
-          title: '',
           introduction: '',
           uploadAccept: FILE_TYPES_ALLOWED,
           maxSize: FILE_SIZE_LIMIT,
+          totalMaxSize: FILE_TOTAL_SIZE_LIMIT,
+          uploadMultiple: true,
           uploadHeader: extraInformation.supportingDocuments.fileUploadHeader,
           uploadDescription:
             extraInformation.supportingDocuments.fileUploadDescription,

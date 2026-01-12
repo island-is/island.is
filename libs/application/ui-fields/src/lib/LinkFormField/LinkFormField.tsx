@@ -13,6 +13,7 @@ type Props = {
 
 export const LinkFormField = ({ field, application }: Props) => {
   const { formatMessage, lang: locale } = useLocale()
+  const { variant, justifyContent } = field
   const openLink = useCallback(() => {
     window.open(
       formatText(field.link ?? '', application, formatMessage),
@@ -38,7 +39,12 @@ export const LinkFormField = ({ field, application }: Props) => {
   const { marginTop = 2, marginBottom = 2 } = field
 
   return (
-    <Box marginTop={marginTop} marginBottom={marginBottom}>
+    <Box
+      marginTop={marginTop}
+      marginBottom={marginBottom}
+      display="flex"
+      justifyContent={justifyContent}
+    >
       <Button
         colorScheme="default"
         icon={field.iconProps?.icon ?? 'download'}
@@ -47,10 +53,10 @@ export const LinkFormField = ({ field, application }: Props) => {
         preTextIconType="filled"
         size="small"
         type="button"
-        variant="ghost"
+        variant={variant}
       >
         {formatTextWithLocale(
-          field.title,
+          field.title ?? '',
           application,
           locale as Locale,
           formatMessage,

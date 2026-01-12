@@ -19,6 +19,7 @@ import { ApiActions } from '../shared'
 import { AnonymityInVehicleRegistrySchema } from './dataSchema'
 import { application } from './messages'
 import { AnonymityStatusApi } from '../dataProviders'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -27,10 +28,10 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.ANONYMITY_IN_VEHICLE_REGISTRY,
   name: application.name,
+  codeOwner: CodeOwners.Origo,
   institution: application.institutionName,
-  translationNamespaces: [
+  translationNamespaces:
     ApplicationConfigurations.AnonymityInVehicleRegistry.translation,
-  ],
   dataSchema: AnonymityInVehicleRegistrySchema,
   stateMachineConfig: {
     initial: States.DRAFT,

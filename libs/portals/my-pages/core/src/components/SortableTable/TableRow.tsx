@@ -25,13 +25,21 @@ export const TableRow = ({
   ellipsisLength?: number
   onExpandCallback?: () => void
 }) => {
-  const { id, tag, lastNode, children, subTitleFirstCol, ...itemObject } = item
+  const {
+    id,
+    tag,
+    lastNode,
+    children,
+    subTitleFirstCol,
+    onExpandCallback: onExpandCallbackProp,
+    ...itemObject
+  } = item
   const valueItems = Object.values(itemObject)
 
   const renderValueItem = (valueItem: any, i: number) => {
     if (tag && valueItems.length - 1 === i) {
       return (
-        <Tag variant={tag} outlined={tagOutlined}>
+        <Tag variant={tag} outlined={tagOutlined} disabled>
           {valueItem}
         </Tag>
       )
@@ -68,7 +76,9 @@ export const TableRow = ({
     return (
       <>
         <Text variant="medium" as="span">
-          {ellipsisLength ? ellipsis(valueItem, ellipsisLength) : valueItem}
+          {ellipsisLength && valueItem
+            ? ellipsis(valueItem, ellipsisLength)
+            : valueItem}
         </Text>
         {i === 0 && subTitleFirstCol && (
           <Text variant="small">{subTitleFirstCol}</Text>
@@ -82,7 +92,7 @@ export const TableRow = ({
       key={id}
       data={valueItems.map((valueItem, i) => ({
         value: renderValueItem(valueItem, i),
-        align: align ?? 'left',
+        align: i === valueItems.length - 1 ? 'right' : align ?? 'left',
       }))}
       onExpandCallback={onExpandCallback}
     >

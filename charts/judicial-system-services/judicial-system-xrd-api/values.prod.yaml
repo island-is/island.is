@@ -24,7 +24,7 @@ env:
   AUDIT_TRAIL_USE_GENERIC_LOGGER: 'false'
   BACKEND_URL: 'http://web-judicial-system-backend'
   LOG_LEVEL: 'info'
-  NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
+  NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
   SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
 grantNamespaces:
   - 'nginx-ingress-internal'
@@ -59,7 +59,8 @@ ingress:
           - '/'
 namespace: 'judicial-system'
 podDisruptionBudget:
-  maxUnavailable: 1
+  minAvailable: 1
+  unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534
 pvcs: []

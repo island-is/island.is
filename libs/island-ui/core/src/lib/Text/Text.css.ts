@@ -55,6 +55,10 @@ export const capitalizeFirstLetter = style({
   },
 })
 
+export const disabledText = style({
+  color: theme.color.dark300,
+})
+
 export const base = style({
   ['-webkit-font-smoothing' as any]: 'antialiased',
 })

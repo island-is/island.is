@@ -9,7 +9,6 @@ export default {
     'news',
     'page',
     'grant',
-    'vidspyrnaPage',
     'menu',
     'groupedMenu',
     'organizationPage',
@@ -27,6 +26,9 @@ export default {
     'customPage',
     'genericListItem',
     'teamList',
+    'bloodDonationRestriction',
+    'organizationParentSubpage',
+    'course',
   ],
   nestedContentTypes: [
     'alertBanner',

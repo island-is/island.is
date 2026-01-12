@@ -514,16 +514,80 @@
         }
       }
     },
-    "/api/imagecontroller/v5/{SSN}/fromnationalregistry": {
+    "/api/imagecontroller/v5/fromnationalregistrybybiometricid/{biometricId}": {
       "get": {
         "tags": ["Image"],
         "summary": "Get for all images from thjodskra",
         "parameters": [
           {
-            "name": "SSN",
+            "name": "biometricId",
             "in": "path",
-            "description": "Person social serial number",
+            "description": "BiometricId from specific image",
             "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "5.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "5.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImageFromThjodskraDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImageFromThjodskraDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImageFromThjodskraDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/imagecontroller/v5/fromnationalregistry": {
+      "get": {
+        "tags": ["Image"],
+        "summary": "Get for all images from thjodskra",
+        "parameters": [
+          {
+            "name": "jwttoken",
+            "in": "header",
+            "description": "Token with national id",
             "schema": { "type": "string" }
           },
           {
@@ -561,7 +625,271 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
           }
+        }
+      }
+    },
+    "/api/imagecontroller/v5/fromnationalregistry/withagerestriction": {
+      "get": {
+        "tags": ["Image"],
+        "summary": "Get for all images from thjodskra",
+        "parameters": [
+          {
+            "name": "jwttoken",
+            "in": "header",
+            "description": "Token with national id",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "5.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "5.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImagesFromThjodskraDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImagesFromThjodskraDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImagesFromThjodskraDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/imagecontroller/v5/hasqualityscannedphoto": {
+      "get": {
+        "tags": ["Image"],
+        "summary": "Check if person has quality marked scanned photo",
+        "parameters": [
+          {
+            "name": "jwttoken",
+            "in": "header",
+            "description": "Token with national id",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "5.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "5.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": { "type": "integer", "format": "int32" }
+              },
+              "application/json": {
+                "schema": { "type": "integer", "format": "int32" }
+              },
+              "text/json": {
+                "schema": { "type": "integer", "format": "int32" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/imagecontroller/v5/hasqualityscannedsignature": {
+      "get": {
+        "tags": ["Image"],
+        "summary": "Check if person has quality marked scanned photo",
+        "parameters": [
+          {
+            "name": "jwttoken",
+            "in": "header",
+            "description": "Token with national id",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "5.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "5.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": { "type": "integer", "format": "int32" }
+              },
+              "application/json": {
+                "schema": { "type": "integer", "format": "int32" }
+              },
+              "text/json": {
+                "schema": { "type": "integer", "format": "int32" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/imagecontroller/v5/{SSN}/getqualityscannedphoto": {
+      "get": {
+        "tags": ["Image"],
+        "summary": "Get quality marked scanned photo for person",
+        "parameters": [
+          {
+            "name": "jwttoken",
+            "in": "header",
+            "description": "Token with national id",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "SSN",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "5.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "5.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": { "type": "string", "format": "byte" }
+              },
+              "application/json": {
+                "schema": { "type": "string", "format": "byte" }
+              },
+              "text/json": { "schema": { "type": "string", "format": "byte" } }
+            }
+          },
+          "204": { "description": "No Content" }
+        }
+      }
+    },
+    "/api/imagecontroller/v5/{SSN}/getqualityscannedsignature": {
+      "get": {
+        "tags": ["Image"],
+        "summary": "Get quality marked scanned signature for person",
+        "parameters": [
+          {
+            "name": "jwttoken",
+            "in": "header",
+            "description": "Token with national id",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "SSN",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "5.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "5.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": { "type": "string", "format": "byte" }
+              },
+              "application/json": {
+                "schema": { "type": "string", "format": "byte" }
+              },
+              "text/json": { "schema": { "type": "string", "format": "byte" } }
+            }
+          },
+          "204": { "description": "No Content" }
         }
       }
     },
@@ -2606,6 +2934,316 @@
           }
         }
       }
+    },
+    "/api/drivinglicense/v5/licenseactions/producedbyskra/{licenseId}": {
+      "post": {
+        "tags": ["Okuskirteini"],
+        "summary": "Mark license produced by SKRA",
+        "parameters": [
+          {
+            "name": "licenseId",
+            "in": "path",
+            "description": "License number",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "5.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "5.0" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "OK" },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/drivinglicense/v5/licenseactions/producedbyskraandsenthome/{licenseId}": {
+      "post": {
+        "tags": ["Okuskirteini"],
+        "summary": "Mark license produced by SKRA",
+        "parameters": [
+          {
+            "name": "licenseId",
+            "in": "path",
+            "description": "License number",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "5.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "5.0" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "OK" },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/drivinglicense/v5/licenseactions/producedbyskraandsenttodistrict/{licenseId}": {
+      "post": {
+        "tags": ["Okuskirteini"],
+        "summary": "Mark license produced by SKRA",
+        "parameters": [
+          {
+            "name": "licenseId",
+            "in": "path",
+            "description": "License number",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "5.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "5.0" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "OK" },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/drivinglicense/v5/licenseactions/productionerror/{licenseId}": {
+      "post": {
+        "tags": ["Okuskirteini"],
+        "summary": "Update license, a production error occured",
+        "parameters": [
+          {
+            "name": "licenseId",
+            "in": "path",
+            "description": "License number",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "5.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "5.0" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "OK" },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/drivinglicense/v5/licenseactions/productionerrorwithmsg/{licenseId}": {
+      "post": {
+        "tags": ["Okuskirteini"],
+        "summary": "Update license, a production error occured",
+        "parameters": [
+          {
+            "name": "licenseId",
+            "in": "path",
+            "description": "License number",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "5.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "5.0" }
+          }
+        ],
+        "requestBody": {
+          "description": "Model with error message",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LicenseProductionErrorMsgModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "OK" },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -3203,6 +3841,11 @@
             "description": "Content document type",
             "nullable": true
           },
+          "contentSpecification": {
+            "type": "string",
+            "description": "Content specification",
+            "nullable": true
+          },
           "created": {
             "type": "string",
             "description": "Created",
@@ -3310,6 +3953,18 @@
         },
         "additionalProperties": false,
         "description": "Entity for comments on licence"
+      },
+      "LicenseProductionErrorMsgModel": {
+        "type": "object",
+        "properties": {
+          "errorMessage": {
+            "type": "string",
+            "description": "Error message",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "License production error message model"
       },
       "LicenseStatusDto": {
         "type": "object",
@@ -3525,6 +4180,21 @@
           "licenseStolenOrLost": {
             "type": "boolean",
             "description": "Has last license been lost or stolen",
+            "nullable": true
+          },
+          "pickUpLicense": {
+            "type": "boolean",
+            "description": "Is person going to pick up license at district",
+            "nullable": true
+          },
+          "imageBiometricsId": {
+            "type": "string",
+            "description": "If person chooses image from þjóðskrá, then this is\r\na placeholder for that biometric id",
+            "nullable": true
+          },
+          "signatureBiometricsId": {
+            "type": "string",
+            "description": "If person chooses signature from þjóðskrá, then this is\r\na placeholder for that biometric id",
             "nullable": true
           }
         },

@@ -1,5 +1,5 @@
 import each from 'jest-each'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 import { SQSClient } from '@aws-sdk/client-sqs'
 
 import { User } from '@island.is/judicial-system/types'

@@ -8,12 +8,20 @@ export const USER_PROFILE = gql`
       locale
       email
       bankInfo
+      bankInfoError
       emailStatus
       emailVerified
       mobileStatus
       mobilePhoneNumberVerified
       emailNotifications
       needsNudge
+      emails {
+        id
+        email
+        emailStatus
+        primary
+        isConnectedToActorProfile
+      }
     }
   }
 `

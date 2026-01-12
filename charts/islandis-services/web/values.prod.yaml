@@ -19,14 +19,14 @@ global:
 name: 'web'
 enabled: true
 env:
-  API_URL: 'http://web-api'
+  API_URL: 'http://api'
   CODE_OWNER: 'stefna'
   DISABLE_API_CATALOGUE: 'false'
   DISABLE_ORGANIZATION_CHATBOT: 'false'
   DISABLE_SYSLUMENN_PAGE: 'false'
   ENVIRONMENT: 'prod'
   LOG_LEVEL: 'info'
-  NODE_OPTIONS: '--max-old-space-size=691 -r dd-trace/init'
+  NODE_OPTIONS: '--max-old-space-size=1350 --enable-source-maps -r dd-trace/init'
   SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   TRACKING_DOMAIN: 'island.is'
 grantNamespaces:
@@ -38,9 +38,9 @@ grantNamespaces:
 grantNamespacesEnabled: true
 healthCheck:
   liveness:
-    initialDelaySeconds: 3
+    initialDelaySeconds: 10
     path: '/liveness'
-    timeoutSeconds: 3
+    timeoutSeconds: 5
   readiness:
     initialDelaySeconds: 20
     path: '/readiness'
@@ -48,11 +48,11 @@ healthCheck:
 hpa:
   scaling:
     metric:
-      cpuAverageUtilization: 90
+      cpuAverageUtilization: 70
       nginxRequestsIrate: 5
     replicas:
       max: 50
-      min: 2
+      min: 3
 image:
   repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/web'
 ingress:
@@ -71,23 +71,30 @@ ingress:
           - '/'
 namespace: 'islandis'
 podDisruptionBudget:
-  maxUnavailable: 1
+  minAvailable: 1
+  unhealthyPodEvictionPolicy: 'IfHealthyBudget'
+podSecurityContext:
+  fsGroup: 65534
 pvcs: []
 replicaCount:
-  default: 2
+  default: 3
   max: 50
-  min: 2
+  min: 3
 resources:
   limits:
-    cpu: '1000m'
-    memory: '768Mi'
+    cpu: '1800m'
+    memory: '1500Mi'
   requests:
-    cpu: '300m'
-    memory: '384Mi'
+    cpu: '1200m'
+    memory: '1024Mi'
 secrets:
   CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-  DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID'
-  DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN'
+  DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN'
 securityContext:
   allowPrivilegeEscalation: false
   privileged: false
+serviceAccount:
+  annotations:
+    eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/web'
+  create: true
+  name: 'web'

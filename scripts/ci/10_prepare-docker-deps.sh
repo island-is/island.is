@@ -3,28 +3,24 @@ set -euxo pipefail
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 
-# shellcheck disable=SC1091
+# shellcheck source-path=SCRIPTDIR
 source "$DIR"/_common.sh
+# shellcheck source-path=SCRIPTDIR
+source "$DIR"/09_load-buildkit-driver.sh
 
 mkdir -p "$PROJECT_ROOT"/cache
 
-NODE_IMAGE_TAG=${NODE_IMAGE_TAG:-$(./scripts/ci/get-node-version.mjs)}
+NODE_IMAGE_VERSION=${NODE_IMAGE_VERSION:-20}
+DOCKER_REGISTRY=${DOCKER_REGISTRY:-821090935708.dkr.ecr.eu-west-1.amazonaws.com}
 
-docker buildx create --driver docker-container --use || true
-
+# Build and push deps layer to S3
+echo "Building and pushing deps layer to S3..."
 docker buildx build \
   --platform=linux/amd64 \
-  --cache-to=type=local,dest="$PROJECT_ROOT"/cache \
-  --build-arg NODE_IMAGE_TAG="$NODE_IMAGE_TAG" \
-  -f "${DIR}"/Dockerfile \
+  -f "${DIR}/Dockerfile" \
+  --cache-from="type=s3,region=eu-west-1,bucket=${S3_DOCKER_CACHE_BUCKET},name=deps-cache" \
+  --cache-to="type=s3,region=eu-west-1,bucket=${S3_DOCKER_CACHE_BUCKET},name=deps-cache,mode=max" \
   --target=deps \
   "$PROJECT_ROOT"
 
-docker buildx build \
-  --platform=linux/amd64 \
-  --cache-from=type=local,src="$PROJECT_ROOT"/cache \
-  --cache-to=type=local,dest="$PROJECT_ROOT"/cache_output \
-  --build-arg NODE_IMAGE_TAG="$NODE_IMAGE_TAG" \
-  -f "${DIR}"/Dockerfile \
-  --target=output-base \
-  "$PROJECT_ROOT"
+echo "Build complete!"

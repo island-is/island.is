@@ -12,12 +12,11 @@ import {
   conclusion,
   review,
 } from '../lib/messages'
-import { Logo } from '../assets/Logo'
+import { TransportAuthorityLogo } from '@island.is/application/assets/institution-logos'
 
 export const Rejected: Form = buildForm({
   id: 'RejectedApplicationForm',
-  title: '',
-  logo: Logo,
+  logo: TransportAuthorityLogo,
   mode: FormModes.REJECTED,
   children: [
     buildSection({
@@ -56,7 +55,6 @@ export const Rejected: Form = buildForm({
             buildCustomField({
               component: 'RejectedConclusion',
               id: 'RejectedConclusion',
-              title: '',
               description: '',
             }),
           ],

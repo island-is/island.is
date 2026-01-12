@@ -1,13 +1,10 @@
+import { getValueViaPath, NO, YES, YesOrNo } from '@island.is/application/core'
 import { ApplicationContext } from '@island.is/application/types'
-
-import { getValueViaPath } from '@island.is/application/core'
 import {
-  NO,
   PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
   PARENTAL_LEAVE,
   States,
-  YES,
 } from '../constants'
 import {
   getApplicationAnswers,
@@ -15,7 +12,7 @@ import {
   requiresOtherParentApproval,
   residentGrantIsOpenForApplication,
 } from '../lib/parentalLeaveUtils'
-import { EmployerRow, Period, YesOrNo } from '../types'
+import { EmployerRow, Period } from '../types'
 
 export const allEmployersHaveApproved = (context: ApplicationContext) => {
   const employers = getValueViaPath<EmployerRow[]>(
@@ -28,7 +25,10 @@ export const allEmployersHaveApproved = (context: ApplicationContext) => {
 
   // We need to check if the employer has opened the application (has a value in 'reviewerNationalRegistryId')
   // because it is not recorded if the employer has approved the application until after this check
-  return employers.every((e) => !!e.reviewerNationalRegistryId)
+  // Employer does not need to approve application if "stillEmployed" is NO
+  return employers.every(
+    (e) => !!e.reviewerNationalRegistryId || e.stillEmployed === NO,
+  )
 }
 
 export const hasEmployer = (context: ApplicationContext) => {
@@ -122,23 +122,20 @@ export const restructureVMSTPeriods = (context: ApplicationContext) => {
       useLength = periods[0].useLength ?? NO
     }
 
-    if (!period.rightsCodePeriod.includes('DVAL')) {
-      // API returns multiple rightsCodePeriod in string ('M-L-GR, M-FS')
-      const rightsCodePeriod = period.rightsCodePeriod.split(',')[0]
-      const obj = {
-        startDate: period.from,
-        endDate: period.to,
-        ratio: period.ratio.split(',')[0],
-        rawIndex: index,
-        firstPeriodStart: firstPeriodStart,
-        useLength: useLength as YesOrNo,
-        rightCodePeriod: rightsCodePeriod,
-        daysToUse: period.days,
-        paid: period.paid,
-        approved: period.approved,
-      }
-      newPeriods.push(obj)
+    const rightsCodePeriod = period.rightsCodePeriod.split(',')[0]
+    const obj = {
+      startDate: period.from,
+      endDate: period.to,
+      ratio: period.ratio.split(',')[0],
+      rawIndex: index,
+      firstPeriodStart: firstPeriodStart,
+      useLength: useLength as YesOrNo,
+      rightCodePeriod: rightsCodePeriod,
+      daysToUse: period.days,
+      paid: period.paid,
+      approved: period.approved,
     }
+    newPeriods.push(obj)
   })
 
   return newPeriods

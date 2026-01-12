@@ -33,7 +33,7 @@ export const IframeModalDiv = forwardRef(
   (props: DialogProps, ref: Ref<HTMLDivElement>) => {
     const [mounted, setMounted] = useState(false)
 
-    useLayoutEffect(function () {
+    useLayoutEffect(() => {
       setMounted(true)
     }, [])
 
@@ -69,7 +69,9 @@ export const IframeModal: FC<React.PropsWithChildren<IframeModalProps>> = ({
     <>
       {!!disclosure && (
         <DialogDisclosure {...dialog} {...disclosure.props}>
-          {(disclosureProps) => React.cloneElement(disclosure, disclosureProps)}
+          {(disclosureProps: any) =>
+            React.cloneElement(disclosure, disclosureProps)
+          }
         </DialogDisclosure>
       )}
       <DialogBackdrop {...dialog} as={IframeModalDiv}>

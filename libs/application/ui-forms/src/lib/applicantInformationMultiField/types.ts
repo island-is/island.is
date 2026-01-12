@@ -1,4 +1,4 @@
-import { FormText } from '@island.is/application/types'
+import { Condition, FormText, StaticText } from '@island.is/application/types'
 export interface ApplicantInformationInterface {
   externalData: {
     // new dataprovider
@@ -36,9 +36,21 @@ export interface ApplicantInformationInterface {
 }
 
 export type applicantInformationProps = {
+  phoneCondition?: Condition
   phoneRequired?: boolean
+  phoneDisabled?: boolean
+  phoneEnableCountrySelector?: boolean
+  emailCondition?: Condition
   emailRequired?: boolean
   emailDisabled?: boolean
+  addressRequired?: boolean
+  postalCodeRequired?: boolean
+  cityRequired?: boolean
+  applicantInformationTitle?: FormText
   applicantInformationDescription?: FormText
-  readOnly?: boolean
+  baseInfoReadOnly?: boolean
+  emailAndPhoneReadOnly?: boolean
+  compactFields?: boolean
+  customAddressLabel?: StaticText
+  customPostalCodeAndCityLabel?: StaticText
 }

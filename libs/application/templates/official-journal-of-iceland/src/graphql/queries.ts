@@ -1,5 +1,4 @@
 import { gql } from '@apollo/client'
-import { signatureMembers } from './fragments'
 
 export const GET_PRICE_QUERY = gql`
   query GetPrice($id: String!) {
@@ -11,7 +10,7 @@ export const GET_PRICE_QUERY = gql`
 
 export const ADVERTS_QUERY = gql`
   query Adverts($input: OfficialJournalOfIcelandAdvertsInput!) {
-    officialJournalOfIcelandAdverts(input: $input) {
+    officialJournalOfIcelandAdvertsFull(input: $input) {
       adverts {
         id
         department {
@@ -153,29 +152,29 @@ export const INVOLVED_PARTY_SIGNATURES_QUERY = gql`
   query InvolvedPartySignatures(
     $input: OfficialJournalOfIcelandApplicationInvolvedPartySignaturesInput!
   ) {
-    officialJournalOfIcelandApplicationInvolvedPartySignatures(input: $input) {
-      __typename
-      id
-      additionalSignature
-      date
-      html
-      institution
-      involvedParty {
-        id
-        slug
-        title
-      }
-      members {
-        ...SignatureMember
-      }
-      ... on OfficialJournalOfIcelandApplicationInvolvedPartySignaturesCommittee {
+    officialJournalOfIcelandApplicationInvolvedPartySignature(input: $input) {
+      type
+      records {
+        institution
+        signatureDate
+        additionalSignature
         chairman {
-          ...SignatureMember
+          name
+          above
+          before
+          after
+          below
+        }
+        members {
+          name
+          above
+          before
+          after
+          below
         }
       }
     }
   }
-  ${signatureMembers}
 `
 
 export const TYPES_QUERY = gql`
@@ -195,6 +194,28 @@ export const TYPES_QUERY = gql`
         hasPreviousPage
         nextPage
         previousPage
+      }
+    }
+  }
+`
+
+export const ADVERT_TEMPLATE_QUERY = gql`
+  query GetAdvertTemplate(
+    $params: OfficialJournalOfIcelandAdvertTemplateInput!
+  ) {
+    officialJournalOfIcelandApplicationAdvertTemplate(input: $params) {
+      html
+      type
+    }
+  }
+`
+
+export const ADVERT_TEMPLATE_TYPES_QUERY = gql`
+  query GetAdvertTemplateTypes {
+    officialJournalOfIcelandApplicationAdvertTemplateTypes {
+      types {
+        title
+        type
       }
     }
   }
@@ -258,7 +279,18 @@ export const INVOLVED_PARTIES_QUERY = gql`
         id
         title
         slug
+        nationalId
       }
+    }
+  }
+`
+
+export const MY_USER_INFO_QUERY = gql`
+  query MyUserInfo {
+    officialJournalOfIcelandApplicationGetMyUserInfo {
+      firstName
+      lastName
+      email
     }
   }
 `
@@ -299,6 +331,8 @@ export const GET_PRESIGNED_URL_MUTATION = gql`
   ) {
     officialJournalOfIcelandApplicationGetPresignedUrl(input: $input) {
       url
+      key
+      cdn
     }
   }
 `
@@ -347,7 +381,7 @@ export const GET_COMMENTS_QUERY = gql`
       comments {
         id
         age
-        title
+        action
         direction
         comment
         creator
@@ -374,6 +408,7 @@ export const GET_APPLICATION_CASE_QUERY = gql`
       communicationStatus
       categories
       html
+      expectedPublishDate
     }
   }
 `

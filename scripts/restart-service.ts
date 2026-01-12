@@ -19,14 +19,14 @@ const argv = yargs(process.argv.slice(2))
     },
     cluster: {
       choices: [
-        'dev-cluster01',
-        'staging-cluster01',
-        'prod-cluster01',
-        'ids-prod-cluster01',
+        'dev-cluster02',
+        'staging-cluster02',
+        'prod-cluster02',
+        'ids-prod-cluster02',
       ],
       demandOption: true,
       description: 'Cluster ID',
-      default: 'dev-cluster01',
+      default: 'dev-cluster02',
     },
     chart: {
       choices: ['islandis', 'judicial-system'],

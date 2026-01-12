@@ -45,7 +45,7 @@ export const RejectedConclusion: FC<React.PropsWithChildren<FieldBaseProps>> = (
         </Text>
         <Text variant="h5" marginY={2}>
           {rejecter.name || ''}, kt.{' '}
-          {kennitala.format(rejecter.nationalId || '', '-')} (
+          {kennitala.format(rejecter.nationalId || '')} (
           {formatMessage(conclusion.rejected[rejecter.type])})
         </Text>
         <Text marginBottom={2}>

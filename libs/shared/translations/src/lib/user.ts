@@ -3,7 +3,23 @@ import { defineMessages } from 'react-intl'
 export const userMessages = defineMessages({
   userButtonAria: {
     id: 'global:userButtonAria',
+    description: 'DEPRECATED - Lýsing á notendavalmynd fyrir skjálesara',
+    defaultMessage: 'Útskráning og aðgangsstillingar fyrir {arg}',
+  },
+  userButtonAriaLabel: {
+    id: 'global:userButtonAriaLabel',
     description: 'Lýsing á notendavalmynd fyrir skjálesara',
+    defaultMessage: 'Útskráning og aðgangsstillingar fyrir {arg}',
+  },
+  userButtonDelegationAriaLabel: {
+    id: 'global:userButtonDelegationAriaLabel',
+    description: 'Lýsing á notendavalmynd fyrir skjálesara ef í umboði',
+    defaultMessage:
+      'Útskráning og aðgangsstillingar fyrir {arg} í umboði {delegationArg} ',
+  },
+  userButtonAriaModalLabel: {
+    id: 'global:userButtonAriaModalLabel',
+    description: 'Lýsing á notendavalmyndarmódal fyrir skjálesara',
     defaultMessage: 'Útskráning og aðgangsstillingar',
   },
 

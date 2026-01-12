@@ -1,56 +1,131 @@
-import { Box, Stack, Tag } from '@island.is/island-ui/core'
+import {
+  HealthDirectoratePrescribedItemCategory,
+  HealthDirectoratePrescription,
+} from '@island.is/api/schema'
+import {
+  Box,
+  Checkbox,
+  Filter,
+  Input,
+  Pagination,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
-  EmptyTable,
   HEALTH_DIRECTORATE_SLUG,
   IntroWrapper,
-  SortableTable,
+  m,
 } from '@island.is/portals/my-pages/core'
-import React, { useEffect, useState } from 'react'
+import { Problem } from '@island.is/react-spa/shared'
+import { debounceTime } from '@island.is/shared/constants'
+import debounce from 'lodash/debounce'
+import { useEffect, useMemo, useState } from 'react'
 import { messages } from '../../lib/messages'
+import PrescriptionsTable from './components/PrescriptionsTable'
+import { useGetMedicinePrescriptionsQuery } from './Prescriptions.generated'
 
-import {
-  MedicineDispenseData,
-  MedicinePrescriptionDetailData,
-  MedicinePrescriptionDetailData2,
-  MedicinePrescriptionsData,
-} from '../../utils/mockData'
-import DispensingContainer from './components/DispensingContainer/DispensingContainer'
-import NestedInfoLines from './components/NestedInfoLines/NestedInfoLines'
-import RenewPrescriptionModal from './components/RenewPrescriptionModal/RenewPrescriptionModal'
+const ITEMS_ON_PAGE = 10
+
+const defaultFilterValues = {
+  searchQuery: '',
+  categories: [],
+}
+
+type FilterValues = {
+  searchQuery: string
+  categories: HealthDirectoratePrescribedItemCategory[]
+}
 
 const MedicinePrescriptions = () => {
-  const { formatMessage } = useLocale()
-  const [activePrescription, setActivePrescription] = React.useState<any>(null)
-  const [openModal, setOpenModal] = useState(false)
-  const [activeTag, setActiveTag] = useState('0')
-  const stringMaxLength = 22
-  const filterList = (id: string) => {
-    if (activeTag !== id) setActiveTag(id)
-    if (id === '0') return MedicinePrescriptionsData
-    return MedicinePrescriptionsData.filter((item) => item.id === id)
+  const { formatMessage, lang } = useLocale()
+  const [page, setPage] = useState(1)
+  const [filterValues, setFilterValues] =
+    useState<FilterValues>(defaultFilterValues)
+
+  const { data, error, loading } = useGetMedicinePrescriptionsQuery({
+    variables: { locale: lang },
+  })
+
+  const filteredPrescriptions =
+    data?.healthDirectoratePrescriptions.prescriptions
+
+  useEffect(() => {
+    setPage(1)
+  }, [filterValues])
+
+  const debouncedSetSearchQuery = useMemo(
+    () =>
+      debounce((value: string) => {
+        setFilterValues((prev) => ({
+          ...prev,
+          searchQuery: value,
+        }))
+      }, debounceTime.search),
+    [],
+  )
+
+  const handleSearchChange = (value: string) => {
+    debouncedSetSearchQuery(value)
   }
 
-  const tagLabels = [
-    {
-      label: 'Öll lyf',
-      id: '0',
-    },
-    {
-      label: 'Lyf notuð reglulega',
-      id: '1',
-    },
-    {
-      label: 'Tímabundin lyf',
-      id: '2',
-    },
-    {
-      label: 'Lyfjakúrar',
-      id: '3',
-    },
-  ]
+  useEffect(() => {
+    return () => {
+      debouncedSetSearchQuery.cancel()
+    }
+  }, [debouncedSetSearchQuery])
 
-  const filteredData = filterList(activeTag)
+  const toggleCategory = (
+    category: HealthDirectoratePrescribedItemCategory,
+  ) => {
+    setFilterValues((prev) => ({
+      ...prev,
+      categories: prev.categories.includes(category)
+        ? prev.categories.filter((c) => c !== category)
+        : [...prev.categories, category],
+    }))
+  }
+
+  const filteredMedicines = useMemo<
+    HealthDirectoratePrescription[] | undefined
+  >(() => {
+    if (!data?.healthDirectoratePrescriptions.prescriptions) {
+      return []
+    }
+
+    return filteredPrescriptions?.filter((medicine) => {
+      const matchesSearch = medicine.name
+        ?.toLowerCase()
+        .includes(filterValues.searchQuery.toLowerCase())
+
+      const matchesCategories =
+        filterValues.categories.length === 0 ||
+        (medicine.category &&
+          filterValues.categories.includes(medicine.category))
+
+      // If no categories selected, ignore category filtering
+      const shouldInclude =
+        (filterValues.categories.length === 0 || matchesCategories) &&
+        matchesSearch
+
+      return shouldInclude
+    })
+  }, [
+    filterValues,
+    filteredPrescriptions,
+    data?.healthDirectoratePrescriptions.prescriptions,
+  ])
+
+  const totalPages =
+    filteredMedicines && filteredMedicines.length > ITEMS_ON_PAGE
+      ? Math.ceil(filteredMedicines.length / ITEMS_ON_PAGE)
+      : 0
+
+  const paginatedData = filteredMedicines?.slice(
+    ITEMS_ON_PAGE * (page - 1),
+    ITEMS_ON_PAGE * page,
+  )
+
   return (
     <IntroWrapper
       title={formatMessage(messages.medicinePrescriptions)}
@@ -59,99 +134,100 @@ const MedicinePrescriptions = () => {
       serviceProviderTooltip={formatMessage(
         messages.landlaeknirMedicinePrescriptionsTooltip,
       )}
+      childrenWidthFull
     >
-      <Box>
-        <Box display="flex" flexDirection="row" flexWrap={'wrap'}>
-          {tagLabels.map((item) => (
-            <Box marginRight={1} marginBottom={[1, 1, 1, 2, 2]}>
-              <Tag
-                onClick={() => filterList(item.id)}
-                children={item.label}
-                active={item.id === activeTag}
+      {error && !loading && <Problem error={error} noBorder={false} />}
+
+      {!error && (
+        <>
+          <Filter
+            variant="popover"
+            align="left"
+            reverse
+            labelClearAll={formatMessage(m.clearAllFilters)}
+            labelClear={formatMessage(m.clearFilter)}
+            labelOpen={formatMessage(m.openFilter)}
+            onFilterClear={() => {
+              setFilterValues(defaultFilterValues)
+            }}
+            filterInput={
+              <Input
+                placeholder={formatMessage(m.searchPlaceholder)}
+                name="rafraen-skjol-input"
+                size="xs"
+                label={formatMessage(m.searchLabel)}
+                onChange={(e) => handleSearchChange(e.target.value)}
+                backgroundColor="blue"
+                icon={{ name: 'search' }}
               />
+            }
+          >
+            <Box padding={4}>
+              <Text
+                variant="default"
+                as="p"
+                fontWeight="semiBold"
+                paddingBottom={2}
+              >
+                {formatMessage(m.filterBy)}
+              </Text>
+
+              <Stack space={2}>
+                {[
+                  {
+                    name: 'regularMedicine',
+                    label: formatMessage(messages.regularMedicine),
+                    category: HealthDirectoratePrescribedItemCategory.Regular,
+                  },
+                  {
+                    name: 'temporaryMedicine',
+                    label: formatMessage(messages.temporaryMedicine),
+                    category: HealthDirectoratePrescribedItemCategory.Pn,
+                  },
+                  {
+                    name: 'regimentMedicine',
+                    label: formatMessage(messages.regimentMedicine),
+                    category: HealthDirectoratePrescribedItemCategory.Regiment,
+                  },
+                ].map(({ name, label, category }) => (
+                  <Checkbox
+                    key={name}
+                    name={name}
+                    label={label}
+                    value={name}
+                    checked={filterValues.categories.includes(category)}
+                    onChange={() => {
+                      toggleCategory(category)
+                    }}
+                  />
+                ))}
+              </Stack>
             </Box>
-          ))}
+          </Filter>
+          <Box marginTop={4}>
+            <PrescriptionsTable data={paginatedData} loading={loading} />
+          </Box>
+        </>
+      )}
+
+      {totalPages > 0 ? (
+        <Box paddingTop={8}>
+          <Pagination
+            page={page}
+            totalPages={totalPages}
+            renderLink={(page, className, children) => (
+              <Box
+                cursor="pointer"
+                className={className}
+                onClick={() => setPage(page)}
+                component="button"
+              >
+                {children}
+              </Box>
+            )}
+          />
         </Box>
-        <SortableTable
-          title=""
-          labels={{
-            medicine: formatMessage(messages.medicineTitle),
-            usedFor: formatMessage(messages.usedFor),
-            process: formatMessage(messages.process),
-            validTo: formatMessage(messages.medicineValidTo),
-            status: formatMessage(messages.renewal),
-          }}
-          expandable
-          align="left"
-          defaultSortByKey="medicine"
-          mobileTitleKey="medicine"
-          ellipsisLength={stringMaxLength}
-          items={
-            filteredData?.map((item, i) => ({
-              id: item?.id ?? `${i}`,
-              medicine: item?.medicineName ?? '',
-              usedFor: item?.usedFor ?? '',
-              process: item?.process ?? '',
-              validTo: item?.validTo ?? '',
-              status: undefined,
-              lastNode:
-                item?.status.type === 'renew'
-                  ? {
-                      type: 'action',
-                      label: formatMessage(messages.renew),
-                      action: () => {
-                        setActivePrescription(item)
-                        setOpenModal(true)
-                      },
-                      icon: { icon: 'reload', type: 'outline' },
-                    }
-                  : item?.status.type === 'tooltip'
-                  ? {
-                      type: 'info',
-                      label: item.status.data,
-                      text: formatMessage(messages.notValidForRenewal),
-                    }
-                  : { type: 'text', label: item.status.data },
-
-              children: (
-                <Box background={'blue100'}>
-                  <Stack space={2}>
-                    <NestedInfoLines
-                      label={formatMessage(messages.moreDetailedInfo)}
-                      data={MedicinePrescriptionDetailData}
-                    />
-                    <NestedInfoLines
-                      label={formatMessage(messages.version)}
-                      data={MedicinePrescriptionDetailData2}
-                    />
-                    <DispensingContainer
-                      label={formatMessage(messages.dispenseHistory)}
-                      data={MedicineDispenseData}
-                    />
-                  </Stack>
-                </Box>
-              ),
-              subTitleFirstCol: item?.instructions,
-            })) ?? []
-          }
-        />
-      </Box>
-
-      {activePrescription && (
-        <RenewPrescriptionModal
-          id={`renewPrescriptionModal-${activePrescription.id}`}
-          activePrescription={activePrescription}
-          toggleClose={openModal}
-          isVisible={openModal}
-        />
-      )}
-      {/* || loading */}
-      {!filteredData.length && (
-        <EmptyTable
-          // loading={loading}
-          message={formatMessage(messages.noDataFound, { arg: 'lyf' })}
-        />
-      )}
+      ) : null}
     </IntroWrapper>
   )
 }

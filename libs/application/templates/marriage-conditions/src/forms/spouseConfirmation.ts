@@ -12,8 +12,8 @@ import {
   buildPhoneField,
   buildImageField,
   buildAlertMessageField,
+  YES,
 } from '@island.is/application/core'
-import { YES } from '../lib/constants'
 import { m } from '../lib/messages'
 import {
   Form,
@@ -24,7 +24,7 @@ import {
 } from '@island.is/application/types'
 import { Individual } from '../types'
 import { format as formatNationalId } from 'kennitala'
-import { UserProfile } from '../types/schema'
+import { UserProfile } from '@island.is/api/schema'
 import { fakeDataSection } from './fakeDataSection'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
@@ -35,7 +35,6 @@ import DigitalServices from '../assets/DigitalServices'
 export const spouseConfirmation = ({ allowFakeData = false }): Form =>
   buildForm({
     id: 'spouseConfirmation',
-    title: '',
     mode: FormModes.IN_PROGRESS,
     renderLastScreenButton: true,
     renderLastScreenBackButton: true,
@@ -63,7 +62,6 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
             children: [
               buildCheckboxField({
                 id: 'spouseApprove',
-                title: '',
                 options: [
                   { value: YES, label: m.spouseContinue },
                   //followup: { value: NO, label: m.spouseDecline },
@@ -258,7 +256,6 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
                   buildDescriptionField({
                     id: 'space',
                     space: 'containerGutter',
-                    title: '',
                   }),
                 ],
               }),
@@ -285,14 +282,12 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
             children: [
               buildImageField({
                 id: 'image',
-                title: '',
                 image: DigitalServices,
                 imageWidth: '50%',
                 imagePosition: 'center',
               }),
               buildDescriptionField({
                 id: 'space',
-                title: '',
                 space: 'gutter',
               }),
               buildAlertMessageField({
@@ -303,7 +298,6 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
               }),
               buildCheckboxField({
                 id: 'spouseConfirmMissingInfo',
-                title: '',
                 large: true,
                 defaultValue: [],
                 options: [
@@ -327,7 +321,6 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
             children: [
               buildCustomField({
                 id: 'spouseOverview',
-                title: '',
                 component: 'ApplicationOverview',
               }),
             ],
@@ -340,7 +333,6 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
         children: [
           buildMultiField({
             id: 'payment',
-            title: '',
             children: [
               buildCustomField(
                 {
@@ -354,7 +346,6 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
               ),
               buildSubmitField({
                 id: 'submitPayment',
-                title: '',
                 placement: 'footer',
                 refetchApplicationAfterSubmit: true,
                 actions: [

@@ -24,9 +24,9 @@ export const bankInfoForm = {
       description: 'Bank info description title',
     },
     description: {
-      id: 'fa.application:section.bankInfoForm.general.description',
+      id: 'fa.application:section.bankInfoForm.general.description#markdown',
       defaultMessage:
-        'Þér er ekki skylt að gefa upp bankaupplýsingar hér. Ef þú gefur bankaupplýsingarnar upp verða þær geymdar í gagnagrunni fjárhagsaðstoðar sveitarfélaganna. Kjósirðu að gefa þær ekki upp núna verður hringt í þig og óskað eftir þeim ef umsóknin verður samþykkt.',
+        '#####Þér er ekki skylt að gefa upp bankaupplýsingar hér. Ef þú gefur bankaupplýsingarnar upp verða þær geymdar í gagnagrunni fjárhagsaðstoðar sveitarfélaganna. Kjósirðu að gefa þær ekki upp núna verður hringt í þig og óskað eftir þeim ef umsóknin verður samþykkt.',
       description: 'Bank info description',
     },
   }),

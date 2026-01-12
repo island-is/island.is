@@ -24,6 +24,7 @@ export const buyerSubSection = buildSubSection({
           id: 'buyer',
           title: information.labels.buyer.nationalId,
           width: 'full',
+          searchCompanies: true,
         }),
         buildTextField({
           id: 'buyer.email',
@@ -48,7 +49,6 @@ export const buyerSubSection = buildSubSection({
         }),
         buildCustomField({
           id: 'buyer.custom',
-          title: '',
           component: 'StopBuyerIfSameAsSeller',
         }),
       ],

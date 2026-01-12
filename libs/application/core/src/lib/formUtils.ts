@@ -248,6 +248,7 @@ export const formatText = <T extends FormTextArray | FormText>(
   application: Application,
   formatMessage: MessageFormatter,
 ): T extends FormTextArray ? string[] : string => {
+  text = text ?? ''
   if (typeof text === 'function') {
     const message = (text as (_: Application) => StaticText | StaticText[])(
       application,
@@ -289,12 +290,24 @@ export const formatTextWithLocale = <
 ): T extends FormTextArray ? string[] : string => {
   if (typeof text === 'function') {
     const message = (
-      text as (_: Application, locale: Locale) => StaticText | StaticText[]
-    )(application, locale)
+      text as (
+        _: Application,
+        locale: Locale,
+        formatMessage?: MessageFormatter,
+      ) => StaticText | StaticText[]
+    )(application, locale, formatMessage)
     if (Array.isArray(message)) {
       return message.map((m) =>
         handleMessageFormatting(m, formatMessage),
       ) as T extends FormTextArray ? string[] : string
+    } else if (typeof message === 'object') {
+      const staticTextObject = message as StaticTextObject
+      if (staticTextObject.values) {
+        return formatMessage(
+          staticTextObject,
+          staticTextObject.values,
+        ) as T extends FormTextArray ? string[] : string
+      }
     }
     return handleMessageFormatting(
       message,

@@ -1,11 +1,11 @@
 import {
-  Box,
+  Checkbox,
   Input,
   Stack,
   Text,
   ToggleSwitchCheckbox,
 } from '@island.is/island-ui/core'
-import React, { useCallback } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../../lib/messages'
 import { ClientFormTypes } from '../EditClient.schema'
@@ -15,6 +15,13 @@ import { useReadableSeconds } from '../../../hooks/useReadableSeconds'
 import { FormCard } from '../../../components/FormCard/FormCard'
 import { useClient } from '../ClientContext'
 import { checkEnvironmentsSync } from '../../../utils/checkEnvironmentsSync'
+import {
+  AuthAdminClientEnvironment,
+  AuthAdminClientSso,
+  AuthAdminRefreshTokenExpiration,
+} from '@island.is/api/schema'
+import { FeatureFlagClient, Features } from '@island.is/feature-flags'
+import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 
 interface CompareArgs {
   currVal: FormData
@@ -31,30 +38,51 @@ interface CompareArgs {
 const compare = ({ currVal, orgVal, key }: CompareArgs) =>
   currVal.get(key) !== orgVal.get(key)
 
-interface LifetimeProps {
-  absoluteRefreshTokenLifetime: number
-  refreshTokenExpiration: boolean
-  slidingRefreshTokenLifetime: number
-}
+type LifetimeProps = Pick<
+  AuthAdminClientEnvironment,
+  | 'sso'
+  | 'absoluteRefreshTokenLifetime'
+  | 'refreshTokenExpiration'
+  | 'slidingRefreshTokenLifetime'
+>
 
 const Lifetime = ({
   absoluteRefreshTokenLifetime,
   slidingRefreshTokenLifetime,
   refreshTokenExpiration,
+  sso,
 }: LifetimeProps) => {
   const { formatMessage } = useLocale()
-  const [lifetime, setLifetime] = useEnvironmentState({
+  const [inputValues, setInputValues] = useEnvironmentState({
     absoluteRefreshTokenLifetime,
-    refreshTokenExpiration,
+    refreshTokenExpiration:
+      refreshTokenExpiration === AuthAdminRefreshTokenExpiration.Sliding,
     slidingRefreshTokenLifetime,
+    sso: sso,
   })
   const { formatErrorMessage } = useErrorFormatMessage()
   const { actionData, client } = useClient()
+  const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
+  const [isSsoSettingsEnabled, setSsoSettingsEnabled] = useState(false)
+  const [isReady, setIsReady] = useState(false)
+
+  useEffect(() => {
+    const checkSsoSettingsEnabled = async () => {
+      const ssoSettingsEnabled = await featureFlagClient.getValue(
+        Features.isIDSAdminSsoSettingEnabled,
+        false,
+      )
+      setSsoSettingsEnabled(ssoSettingsEnabled)
+      setIsReady(true)
+    }
+
+    checkSsoSettingsEnabled()
+  }, [featureFlagClient])
 
   const setLifeTimeLength = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    setLifetime((prev) => ({
+    setInputValues((prev) => ({
       ...prev,
       [event.target.name]: +event.target.value,
     }))
@@ -81,86 +109,110 @@ const Lifetime = ({
   )
 
   const readableAbsoluteLifetime = useReadableSeconds(
-    lifetime.absoluteRefreshTokenLifetime,
+    inputValues.absoluteRefreshTokenLifetime,
   )
   const readableInactivityLifetime = useReadableSeconds(
-    lifetime.slidingRefreshTokenLifetime,
+    inputValues.slidingRefreshTokenLifetime,
   )
 
   return (
-    <FormCard
-      title={formatMessage(m.lifetime)}
-      description={formatMessage(m.lifeTimeDescription)}
-      customValidation={customFormValidation}
-      intent={ClientFormTypes.lifeTime}
-      inSync={checkEnvironmentsSync(client.environments, [
-        'absoluteRefreshTokenLifetime',
-        'slidingRefreshTokenLifetime',
-        'refreshTokenExpiration',
-      ])}
-    >
-      <Stack space={3}>
-        <Stack space={1}>
-          <Input
-            size="sm"
-            type="number"
-            name="absoluteRefreshTokenLifetime"
-            value={lifetime.absoluteRefreshTokenLifetime}
-            backgroundColor="blue"
-            onChange={setLifeTimeLength}
-            label={formatMessage(m.absoluteLifetime)}
-            errorMessage={formatErrorMessage(
-              actionData?.errors
-                ?.absoluteRefreshTokenLifetime as unknown as string,
-            )}
-          />
-          <Text variant={'small'}>
-            {formatMessage(m.absoluteLifetimeDescription)}
-            <br />
-            {readableAbsoluteLifetime}
-          </Text>
-        </Stack>
-        <Stack space={1}>
-          <ToggleSwitchCheckbox
-            label={formatMessage(m.inactivityExpiration)}
-            checked={lifetime.refreshTokenExpiration}
-            name="refreshTokenExpiration"
-            value={lifetime.refreshTokenExpiration.toString()}
-            onChange={() =>
-              setLifetime((prev) => ({
-                ...prev,
-                refreshTokenExpiration: !lifetime.refreshTokenExpiration,
-              }))
-            }
-          />
-          <Text variant={'small'}>
-            {formatMessage(m.inactivityExpirationDescription)}
-          </Text>
-        </Stack>
-        {lifetime.refreshTokenExpiration && (
+    isReady && (
+      <FormCard
+        title={formatMessage(m.lifetime)}
+        description={formatMessage(m.lifeTimeDescription)}
+        customValidation={customFormValidation}
+        intent={ClientFormTypes.lifeTime}
+        inSync={checkEnvironmentsSync(client.environments, [
+          'absoluteRefreshTokenLifetime',
+          'slidingRefreshTokenLifetime',
+          'refreshTokenExpiration',
+        ])}
+      >
+        <Stack space={3}>
+          {isSsoSettingsEnabled && (
+            <Stack space={1}>
+              <Checkbox
+                label={formatMessage(m.allowSSO)}
+                backgroundColor="blue"
+                large
+                defaultChecked={inputValues.sso === AuthAdminClientSso.enabled}
+                checked={inputValues.sso === AuthAdminClientSso.enabled}
+                name="sso"
+                value="true"
+                onChange={(e) => {
+                  setInputValues({
+                    ...inputValues,
+                    sso: e.target.checked
+                      ? AuthAdminClientSso.enabled
+                      : AuthAdminClientSso.disabled,
+                  })
+                }}
+                subLabel={formatMessage(m.allowSSODescription)}
+              />
+            </Stack>
+          )}
           <Stack space={1}>
             <Input
               size="sm"
               type="number"
-              name="slidingRefreshTokenLifetime"
-              value={lifetime.slidingRefreshTokenLifetime}
+              name="absoluteRefreshTokenLifetime"
+              value={inputValues.absoluteRefreshTokenLifetime}
               backgroundColor="blue"
               onChange={setLifeTimeLength}
-              label={formatMessage(m.inactivityLifetime)}
+              label={formatMessage(m.absoluteLifetime)}
               errorMessage={formatErrorMessage(
                 actionData?.errors
-                  ?.slidingRefreshTokenLifetime as unknown as string,
+                  ?.absoluteRefreshTokenLifetime as unknown as string,
               )}
             />
             <Text variant={'small'}>
-              {formatMessage(m.inactivityLifetimeDescription)}
+              {formatMessage(m.absoluteLifetimeDescription)}
               <br />
-              {readableInactivityLifetime}
+              {readableAbsoluteLifetime}
             </Text>
           </Stack>
-        )}
-      </Stack>
-    </FormCard>
+          <Stack space={1}>
+            <ToggleSwitchCheckbox
+              label={formatMessage(m.inactivityExpiration)}
+              checked={inputValues.refreshTokenExpiration}
+              name="refreshTokenExpiration"
+              value={inputValues.refreshTokenExpiration.toString()}
+              onChange={() =>
+                setInputValues((prev) => ({
+                  ...prev,
+                  refreshTokenExpiration: !inputValues.refreshTokenExpiration,
+                }))
+              }
+            />
+            <Text variant={'small'}>
+              {formatMessage(m.inactivityExpirationDescription)}
+            </Text>
+          </Stack>
+          {inputValues.refreshTokenExpiration && (
+            <Stack space={1}>
+              <Input
+                size="sm"
+                type="number"
+                name="slidingRefreshTokenLifetime"
+                value={inputValues.slidingRefreshTokenLifetime}
+                backgroundColor="blue"
+                onChange={setLifeTimeLength}
+                label={formatMessage(m.inactivityLifetime)}
+                errorMessage={formatErrorMessage(
+                  actionData?.errors
+                    ?.slidingRefreshTokenLifetime as unknown as string,
+                )}
+              />
+              <Text variant={'small'}>
+                {formatMessage(m.inactivityLifetimeDescription)}
+                <br />
+                {readableInactivityLifetime}
+              </Text>
+            </Stack>
+          )}
+        </Stack>
+      </FormCard>
+    )
   )
 }
 

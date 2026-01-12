@@ -1,11 +1,15 @@
 import * as styles from './SecondaryContact.css'
 
 import { Box, Button, Icon, Stack, Text } from '@island.is/island-ui/core'
-import { NO, YES } from '../../constants'
 import React, { FC } from 'react'
 
 import { FieldBaseProps } from '@island.is/application/types'
-import { formatText, formatTextWithLocale } from '@island.is/application/core'
+import {
+  formatText,
+  formatTextWithLocale,
+  NO,
+  YES,
+} from '@island.is/application/core'
 import { institutionApplicationMessages as m } from '../../lib/messages'
 import { useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
@@ -17,7 +21,7 @@ const SecondaryContact: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 }) => {
   const { setValue, getValues } = useFormContext()
   const { formatMessage, lang: locale } = useLocale()
-  const { id, title } = field
+  const { id, title = '' } = field
   const isEnabled = getValues('hasSecondaryContact') === YES
 
   const enableSecondaryContact = () => {

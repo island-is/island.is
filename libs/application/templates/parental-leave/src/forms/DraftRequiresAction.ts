@@ -5,7 +5,7 @@ import {
   buildSubmitField,
 } from '@island.is/application/core'
 import { DefaultEvents, Form } from '@island.is/application/types'
-import Logo from '../assets/Logo'
+import { DirectorateOfLabourLogo } from '@island.is/application/assets/institution-logos'
 import { States as ApplicationStates } from '../constants'
 import {
   inReviewFormMessages,
@@ -15,12 +15,11 @@ import {
 export const DraftRequiresAction: Form = buildForm({
   id: 'ParentalLeaveSubmissionNeedsAction',
   title: inReviewFormMessages.formTitle,
-  logo: Logo,
+  logo: DirectorateOfLabourLogo,
   renderLastScreenButton: true,
   children: [
     buildSection({
       id: 'draftRequiresAction.section',
-      title: '',
       children: [
         buildMultiField({
           id: 'draftRequiresAction.multiField',
@@ -37,7 +36,6 @@ export const DraftRequiresAction: Form = buildForm({
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
-              title: '',
               refetchApplicationAfterSubmit: true,
               actions: [
                 {

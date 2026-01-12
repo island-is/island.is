@@ -5,12 +5,11 @@ import {
   buildTextField,
   getValueViaPath,
   buildHiddenInput,
-  buildSubmitField,
 } from '@island.is/application/core'
 import { plateDelivery } from '../../../lib/messages/plateDelivery'
 import { AddressDeliveryType, CurrentAddress } from '../../../shared'
 import { Application as ApplicationSchema } from '@island.is/api/schema'
-import { Application, DefaultEvents } from '@island.is/application/types'
+import { Application } from '@island.is/application/types'
 
 export const plateDeliverySubSection = buildSubSection({
   id: 'plateDeliverySubSection',

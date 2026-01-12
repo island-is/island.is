@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { error } from './error'
-import { APPLICATION_TYPES, NO, OPERATION_CATEGORY, YES } from './constants'
+import { ApplicationTypes, OperationCategory } from './constants'
 import {
   isValid24HFormatTime,
   isValidEmail,
@@ -9,6 +9,7 @@ import {
   validateApplicationInfoCategory,
 } from './utils'
 import { m } from './messages'
+import { NO, YES } from '@island.is/application/core'
 
 const FileSchema = z.object({
   name: z.string(),
@@ -46,20 +47,6 @@ const Properties = z
   )
   .array()
 
-const TimeRefine = z.object({
-  from: z.string().refine((x) => (x ? isValid24HFormatTime(x) : false), {
-    params: error.invalidValue,
-  }),
-  to: z.string().refine((x) => (x ? isValid24HFormatTime(x) : false), {
-    params: error.invalidValue,
-  }),
-})
-
-const OpeningHoursRefine = z.object({
-  weekdays: TimeRefine,
-  weekends: TimeRefine,
-})
-
 const Time = z.object({
   from: z.string().optional(),
   to: z.string().optional(),
@@ -75,26 +62,17 @@ const OpeningHours = z
 type OpeningHours = z.infer<typeof OpeningHours>
 type Time = z.infer<typeof Time>
 
-const refineOpeningHours = (oh: OpeningHours): boolean => {
-  try {
-    OpeningHoursRefine.parse(oh)
-    return true
-  } catch (e) {
-    return false
-  }
-}
-
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   applicationInfo: z
     .object({
-      operation: z.enum([APPLICATION_TYPES.HOTEL, APPLICATION_TYPES.RESTURANT]),
+      operation: z.enum([ApplicationTypes.HOTEL, ApplicationTypes.RESTURANT]),
       typeHotel: z.string().optional(),
       typeResturant: z.array(z.string()).optional(),
       category: z.enum([
-        OPERATION_CATEGORY.TWO,
-        OPERATION_CATEGORY.THREE,
-        OPERATION_CATEGORY.FOUR,
+        OperationCategory.TWO,
+        OperationCategory.THREE,
+        OperationCategory.FOUR,
       ]),
       willServe: z.array(z.enum([YES, NO])).optional(),
     })
@@ -102,9 +80,9 @@ export const dataSchema = z.object({
     // Check category
     .refine(
       ({ operation, category }) =>
-        (operation === APPLICATION_TYPES.HOTEL &&
+        (operation === ApplicationTypes.HOTEL &&
           validateApplicationInfoCategory({ operation, category })) ||
-        (operation === APPLICATION_TYPES.RESTURANT &&
+        (operation === ApplicationTypes.RESTURANT &&
           validateApplicationInfoCategory({ operation, category })),
       {
         message: error.invalidValue.defaultMessage,
@@ -114,8 +92,8 @@ export const dataSchema = z.object({
     // Check type for hotel
     .refine(
       ({ operation, typeHotel }) =>
-        (operation === APPLICATION_TYPES.HOTEL && !!typeHotel) ||
-        operation === APPLICATION_TYPES.RESTURANT,
+        (operation === ApplicationTypes.HOTEL && !!typeHotel) ||
+        operation === ApplicationTypes.RESTURANT,
       {
         message: error.invalidValue.defaultMessage,
         path: ['typeHotel'],
@@ -124,8 +102,8 @@ export const dataSchema = z.object({
     // Check type for resturant
     .refine(
       ({ operation, typeResturant }) =>
-        operation === APPLICATION_TYPES.HOTEL ||
-        (operation === APPLICATION_TYPES.RESTURANT &&
+        operation === ApplicationTypes.HOTEL ||
+        (operation === ApplicationTypes.RESTURANT &&
           typeResturant?.length &&
           typeResturant?.length > 0),
       {
@@ -166,23 +144,82 @@ export const dataSchema = z.object({
     })
     .partial()
     .refine(
-      ({ alcohol, willServe, outside }) => {
-        return (
-          (willServe?.includes(YES) &&
-            refineOpeningHours(alcohol) &&
-            refineOpeningHours(outside)) ||
-          (!willServe?.includes(YES) &&
-            refineOpeningHours(alcohol) &&
-            (outside
-              ? refineOpeningHours(outside) || !refineOpeningHours(outside)
-              : true))
-        )
+      ({ alcohol }) => isValid24HFormatTime(alcohol?.weekdays?.from ?? ''),
+      {
+        message: error.hoursFormat.defaultMessage,
+        path: ['alcohol', 'weekdays', 'from'],
+      },
+    )
+    .refine(
+      ({ alcohol }) => isValid24HFormatTime(alcohol?.weekdays?.to ?? ''),
+      {
+        message: error.hoursFormat.defaultMessage,
+        path: ['alcohol', 'weekdays', 'to'],
+      },
+    )
+    .refine(
+      ({ alcohol }) => isValid24HFormatTime(alcohol?.weekends?.from ?? ''),
+      {
+        message: error.hoursFormat.defaultMessage,
+        path: ['alcohol', 'weekends', 'from'],
+      },
+    )
+    .refine(
+      ({ alcohol }) => isValid24HFormatTime(alcohol?.weekends?.to ?? ''),
+      {
+        message: error.hoursFormat.defaultMessage,
+        path: ['alcohol', 'weekends', 'to'],
+      },
+    )
+    .refine(
+      ({ outside, willServe }) => {
+        if (willServe?.includes(YES)) {
+          return isValid24HFormatTime(outside?.weekdays?.from ?? '')
+        }
+        return true
       },
       {
-        message: error.openingHours.defaultMessage,
-        path: ['willServe'],
+        message: error.hoursFormat.defaultMessage,
+        path: ['outside', 'weekdays', 'from'],
+      },
+    )
+    .refine(
+      ({ outside, willServe }) => {
+        if (willServe?.includes(YES)) {
+          return isValid24HFormatTime(outside?.weekdays?.to ?? '')
+        }
+        return true
+      },
+      {
+        message: error.hoursFormat.defaultMessage,
+        path: ['outside', 'weekdays', 'to'],
+      },
+    )
+    .refine(
+      ({ outside, willServe }) => {
+        if (willServe?.includes(YES)) {
+          return isValid24HFormatTime(outside?.weekends?.from ?? '')
+        }
+        return true
+      },
+      {
+        message: error.hoursFormat.defaultMessage,
+        path: ['outside', 'weekends', 'from'],
+      },
+    )
+    .refine(
+      ({ outside, willServe }) => {
+        if (willServe?.includes(YES)) {
+          return isValid24HFormatTime(outside?.weekends?.to ?? '')
+        }
+        return true
+      },
+      {
+        message: error.hoursFormat.defaultMessage,
+        path: ['outside', 'weekends', 'to'],
       },
     ),
+
   temporaryLicense: z.array(z.enum([YES, NO])).optional(),
   debtClaim: z.array(z.enum([YES, NO])).optional(),
   otherInfoText: z.string().optional(),

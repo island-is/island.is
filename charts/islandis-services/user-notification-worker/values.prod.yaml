@@ -19,7 +19,7 @@ global:
 name: 'user-notification-worker'
 args:
   - '--no-experimental-fetch'
-  - 'main.js'
+  - 'main.cjs'
   - '--job=worker'
 command:
   - 'node'
@@ -41,17 +41,19 @@ env:
   IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
   LOG_LEVEL: 'info'
   MAIN_QUEUE_NAME: 'user-notification'
+  NATIONAL_REGISTRY_B2C_APPLICATION_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/MidlunUmsoknir-v1'
+  NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraidentity.onmicrosoft.com/midlunumsoknir/.default'
   NATIONAL_REGISTRY_B2C_CLIENT_ID: '2304d7ca-7ed3-4188-8b6d-e1b7e0e3df7f'
   NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentity.b2clogin.com/skraidentity.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
   NATIONAL_REGISTRY_B2C_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
   NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentity.onmicrosoft.com/midlun/.default'
-  NODE_OPTIONS: '--max-old-space-size=345 -r dd-trace/init'
+  NODE_OPTIONS: '--max-old-space-size=345 --enable-source-maps -r dd-trace/init'
   REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
   REDIS_USE_SSL: 'true'
   SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   SERVICE_PORTAL_BFF_LOGIN_URL: 'https://island.is/bff/login'
   SERVICE_PORTAL_CLICK_ACTION_URL: 'https://island.is/minarsidur'
-  USER_PROFILE_CLIENT_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
+  USER_PROFILE_CLIENT_URL: 'http://service-portal-api.service-portal.svc.cluster.local'
   XROAD_BASE_PATH: 'http://securityserver.island.is'
   XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.island.is/r1/IS'
   XROAD_CLIENT_ID: 'IS/GOV/5501692829/island-is-client'
@@ -107,7 +109,8 @@ initContainer:
     DB_PASS: '/k8s/user-notification/DB_PASSWORD'
 namespace: 'user-notification'
 podDisruptionBudget:
-  maxUnavailable: 1
+  minAvailable: 1
+  unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534
 pvcs: []

@@ -5,7 +5,6 @@ export enum SearchableContentTypes {
   webDigitalIcelandService = 'webDigitalIcelandService',
   webDigitalIcelandCommunityPage = 'webDigitalIcelandCommunityPage',
   webNews = 'webNews',
-  webAdgerdirPage = 'webAdgerdirPage',
   webOrganizationSubpage = 'webOrganizationSubpage',
   webOrganizationPage = 'webOrganizationPage',
   webQNA = 'webQNA',
@@ -13,4 +12,5 @@ export enum SearchableContentTypes {
   webProjectPage = 'webProjectPage',
   webManual = 'webManual',
   webManualChapterItem = 'webManualChapterItem',
+  webOrganizationParentSubpage = 'webOrganizationParentSubpage',
 }

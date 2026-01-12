@@ -3,10 +3,11 @@ import * as z from 'zod'
 import {
   ComplainedForTypes,
   ComplaineeTypes,
+  GenderAnswerOptions,
   OmbudsmanComplaintTypeEnum,
 } from '../shared'
 import { error } from './messages/error'
-import { NO, YES } from '@island.is/application/types'
+import { NO, YES } from '@island.is/application/core'
 
 const FileSchema = z.object({
   name: z.string(),
@@ -73,6 +74,7 @@ export const ComplaintsToAlthingiOmbudsmanSchema = z.object({
       },
     ),
   attachments: z.object({ documents: z.array(FileSchema).optional() }),
+  genderAnswer: z.nativeEnum(GenderAnswerOptions),
 })
 
 export type ComplaintsToAlthingiOmbudsman = z.TypeOf<

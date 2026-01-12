@@ -1,13 +1,12 @@
 import { buildForm, buildSection } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
-import { LogreglanLogo } from '../../assets'
+import { TheIcelandicPoliceLogo } from '@island.is/application/assets/institution-logos'
 import { m } from '../../lib/messages'
 import { sectionFakeData } from './sectionFakeData'
 import { sectionExternalData } from './sectionExternalData'
 import { sectionApplicationFor } from './sectionApplicationFor'
 import { sectionRequirements } from './sectionRequirements'
 import { sectionExistingApplication } from './sectionExistingApplication'
-import { sectionDigitalLicenseInfo } from './sectionDigitalLicenseInfo'
 import { sectionAdvancedLicenseSelection } from './sectionAdvancedLicenseSelection'
 
 interface DrivingLicenseFormConfig {
@@ -27,8 +26,7 @@ export const getForm = ({
 }: DrivingLicenseFormConfig): Form =>
   buildForm({
     id: 'DrivingLicenseApplicationPrerequisitesForm',
-    title: '',
-    logo: LogreglanLogo,
+    logo: TheIcelandicPoliceLogo,
     mode: FormModes.DRAFT,
     renderLastScreenButton: true,
     renderLastScreenBackButton: true,
@@ -50,7 +48,6 @@ export const getForm = ({
               ]
             : []),
           ...(allowAdvanced ? [sectionAdvancedLicenseSelection] : []),
-          sectionDigitalLicenseInfo,
           sectionRequirements,
         ],
       }),

@@ -28,9 +28,6 @@ export const input = style({
     [`&:focus:hover`]: {
       borderColor: theme.color.transparent,
     },
-    [`&::placeholder`]: {
-      color: theme.color.dark400,
-    },
   },
 })
 
@@ -64,6 +61,18 @@ export const sizes = styleVariants({
       md: {
         paddingRight: 52,
         height: 48,
+        fontSize: 18,
+      },
+    }),
+  },
+  'semi-large': {
+    paddingRight: 40,
+    height: 56,
+    fontSize: 16,
+    ...themeUtils.responsiveStyle({
+      md: {
+        paddingRight: 56,
+        height: 64,
         fontSize: 18,
       },
     }),
@@ -129,6 +138,30 @@ export const blueberry = style({
   },
 })
 
+export const blue = style({
+  backgroundColor: theme.color.transparent,
+  boxShadow: `inset 0 0 0 1px ${theme.color.blue600}`,
+  border: 'none',
+  color: theme.color.blue600,
+  transition: 'box-shadow .25s',
+  ':focus': {
+    boxShadow: 'none',
+    border: 'none',
+  },
+  ':hover': {
+    boxShadow: `inset 0 0 0 ${2}px ${theme.color.blue600}`,
+  },
+  '::placeholder': {
+    color: theme.color.blue600,
+  },
+  selectors: {
+    [`&:focus:hover`]: {
+      boxShadow: 'none',
+      border: 'none',
+    },
+  },
+})
+
 export const dark = style({
   backgroundColor: theme.color.transparent,
   boxShadow: `inset 0 0 0 1px ${theme.color.dark400}`,
@@ -156,4 +189,11 @@ export const dark = style({
 export const hasError = style({
   borderColor: `${theme.color.red600}`,
   background: `${theme.color.red100}`,
+})
+
+export const isCompanySearch = style({
+  paddingTop: 32,
+  paddingLeft: 20,
+  paddingBottom: 8,
+  fontWeight: theme.typography.medium,
 })

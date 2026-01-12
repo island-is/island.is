@@ -128,6 +128,49 @@
         ]
       }
     },
+    "/api/TrufelogOgLifsskodunarfelog/{audkenni}": {
+      "get": {
+        "tags": ["Syslumenn"],
+        "operationId": "TrufelogOgLifsskodunarfelog_Get",
+        "parameters": [
+          {
+            "name": "audkenni",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrufelogOgLisskodunarfelogModel"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": ""
+          },
+          "default": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "JWTToken": []
+          }
+        ]
+      }
+    },
     "/api/SkraSveinsbref": {
       "post": {
         "tags": ["Syslumenn"],
@@ -388,6 +431,63 @@
                   "items": {
                     "$ref": "#/components/schemas/EmbaettiOgStarfsstodvar"
                   }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTToken": []
+          }
+        ]
+      }
+    },
+    "/api/Okukennaraleyfi/{audkenni}": {
+      "get": {
+        "tags": ["Syslumenn"],
+        "operationId": "Okukennaraleyfi_Get",
+        "parameters": [
+          {
+            "name": "audkenni",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Okukennarar"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -686,6 +786,63 @@
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/Afengisleyfi"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTToken": []
+          }
+        ]
+      }
+    },
+    "/api/Brennuleyfi/{audkenni}": {
+      "get": {
+        "tags": ["Syslumenn"],
+        "operationId": "Brennuleyfi_Get",
+        "parameters": [
+          {
+            "name": "audkenni",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Brennuleyfi"
                   }
                 }
               }
@@ -1807,7 +1964,7 @@
         ]
       }
     },
-    "/{audkenni}": {
+    "/api/Erfdafjarskattur/{audkenni}": {
       "get": {
         "tags": ["Syslumenn"],
         "operationId": "Erfdafjarskattur_Get",
@@ -2301,6 +2458,41 @@
         ]
       }
     },
+    "/api/v1/AfgreidaSakavottord": {
+      "post": {
+        "tags": ["Syslumenn"],
+        "operationId": "AfgreidaSakavottord_Post",
+        "requestBody": {
+          "x-name": "payload",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SyslSkeyti"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Skilabod"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTToken": []
+          }
+        ]
+      }
+    },
     "/api/AlmennFyrirspurn/{audkenni}/{eining}/{adgerd}": {
       "get": {
         "tags": ["Syslumenn"],
@@ -2351,6 +2543,121 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTToken": []
+          }
+        ]
+      }
+    },
+    "/api/AlmennUmsokn": {
+      "post": {
+        "tags": ["Syslumenn"],
+        "operationId": "AlmennUmsokn_Post",
+        "requestBody": {
+          "x-name": "value",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationSystem"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTToken": []
+          }
+        ]
+      }
+    },
+    "/api/AlmennUmsokn/Upload": {
+      "post": {
+        "tags": ["Syslumenn"],
+        "operationId": "AlmennUmsokn_Post2",
+        "requestBody": {
+          "x-name": "file",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationFilesContent"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTToken": []
+          }
+        ]
+      }
+    },
+    "/api/AlmennUmsoknRegluverk": {
+      "post": {
+        "tags": ["Syslumenn"],
+        "operationId": "AlmennUmsoknRegluverk_Post",
+        "requestBody": {
+          "x-name": "value",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RootReglusett"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
                 }
               }
             }
@@ -2477,6 +2784,82 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErfdarskraSkeyti"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTToken": []
+          }
+        ]
+      }
+    },
+    "/api/FasteignOgEigendur/{fastanumer}/{audkenni}": {
+      "get": {
+        "tags": ["Syslumenn"],
+        "operationId": "FasteignOgEigendur_Get",
+        "parameters": [
+          {
+            "name": "fastanumer",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "audkenni",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FasteignOgEigendur"
+                  }
                 }
               }
             }
@@ -2771,6 +3154,42 @@
           },
           "401": {
             "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTToken": []
+          }
+        ]
+      }
+    },
+    "/api/KannaSakavottordAuth": {
+      "get": {
+        "tags": ["Syslumenn"],
+        "operationId": "KannaSakavottordAuth_Get",
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "",
             "content": {
               "application/json": {
                 "schema": {
@@ -4002,6 +4421,32 @@
           }
         }
       },
+      "TrufelogOgLisskodunarfelogModel": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "nafnFelags": {
+            "type": "string",
+            "nullable": true
+          },
+          "forstodumadur": {
+            "type": "string",
+            "nullable": true
+          },
+          "heimili": {
+            "type": "string",
+            "nullable": true
+          },
+          "postnumer": {
+            "type": "string",
+            "nullable": true
+          },
+          "sveitarfelag": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
       "NyskraAdfaraBeidniSvar": {
         "type": "object",
         "additionalProperties": false,
@@ -4138,6 +4583,24 @@
             "nullable": true
           },
           "starfsstodID": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "Okukennarar": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "nafn": {
+            "type": "string",
+            "nullable": true
+          },
+          "postnumer": {
+            "type": "string",
+            "nullable": true
+          },
+          "sveitafelag": {
             "type": "string",
             "nullable": true
           }
@@ -4330,6 +4793,56 @@
           "starfsstodEmbaettis": {
             "type": "string",
             "nullable": true
+          }
+        }
+      },
+      "Brennuleyfi": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "abyrgdaradili": {
+            "type": "string",
+            "nullable": true
+          },
+          "leyfishafi": {
+            "type": "string",
+            "nullable": true
+          },
+          "stadur": {
+            "type": "string",
+            "nullable": true
+          },
+          "dagsetningFra": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "dagsetningTil": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "timiFra": {
+            "type": "string",
+            "nullable": true
+          },
+          "timiTil": {
+            "type": "string",
+            "nullable": true
+          },
+          "tegund": {
+            "type": "string",
+            "nullable": true
+          },
+          "undirtegund": {
+            "type": "string",
+            "nullable": true
+          },
+          "embaetti": {
+            "type": "string",
+            "nullable": true
+          },
+          "staerd": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },
@@ -5276,8 +5789,8 @@
             "format": "int32"
           },
           "stadaISK": {
-            "type": "integer",
-            "format": "int32"
+            "type": "number",
+            "format": "decimal"
           },
           "mynt": {
             "type": "string",
@@ -5312,8 +5825,8 @@
             "nullable": true
           },
           "stadaISK": {
-            "type": "integer",
-            "format": "int32"
+            "type": "number",
+            "format": "decimal"
           },
           "erSkradAMarkad": {
             "type": "boolean"
@@ -5333,8 +5846,8 @@
             "nullable": true
           },
           "stadaIsk": {
-            "type": "integer",
-            "format": "int32"
+            "type": "number",
+            "format": "decimal"
           }
         }
       },
@@ -5347,16 +5860,16 @@
             "nullable": true
           },
           "stadaISK": {
-            "type": "integer",
-            "format": "int32"
+            "type": "number",
+            "format": "decimal"
           },
           "afallnirVextirISK": {
-            "type": "integer",
-            "format": "int32"
+            "type": "number",
+            "format": "decimal"
           },
           "stadaSamtalsISK": {
-            "type": "integer",
-            "format": "int32"
+            "type": "number",
+            "format": "decimal"
           },
           "mynt": {
             "type": "string",
@@ -5373,8 +5886,8 @@
             "nullable": true
           },
           "stadaISK": {
-            "type": "integer",
-            "format": "int32"
+            "type": "number",
+            "format": "decimal"
           }
         }
       },
@@ -5413,8 +5926,8 @@
             "nullable": true
           },
           "stadaIsk": {
-            "type": "integer",
-            "format": "int32"
+            "type": "number",
+            "format": "decimal"
           }
         }
       },
@@ -5427,12 +5940,12 @@
             "nullable": true
           },
           "inneignISK": {
-            "type": "integer",
-            "format": "int32"
+            "type": "number",
+            "format": "decimal"
           },
           "skuldISK": {
-            "type": "integer",
-            "format": "int32"
+            "type": "number",
+            "format": "decimal"
           }
         }
       },
@@ -5453,8 +5966,8 @@
             "nullable": true
           },
           "stadaISK": {
-            "type": "integer",
-            "format": "int32"
+            "type": "number",
+            "format": "decimal"
           }
         }
       },
@@ -6109,6 +6622,240 @@
           }
         }
       },
+      "ApplicationSystem": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "language": {
+            "type": "string",
+            "nullable": true
+          },
+          "portalApplicationID": {
+            "type": "string",
+            "nullable": true
+          },
+          "applicationType": {
+            "type": "string",
+            "nullable": true
+          },
+          "adilar": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/Adilar"
+            }
+          },
+          "notandagogn": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/Notandagogn"
+            }
+          },
+          "files": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/ApplicationFiles"
+            }
+          },
+          "status": {
+            "$ref": "#/components/schemas/CurrentApplicationStatus"
+          }
+        }
+      },
+      "Adilar": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "kennitala": {
+            "type": "string",
+            "nullable": true
+          },
+          "heiti": {
+            "type": "string",
+            "nullable": true
+          },
+          "heimili": {
+            "type": "string",
+            "nullable": true
+          },
+          "tegund": {
+            "$ref": "#/components/schemas/ApplicantType"
+          },
+          "hlutverk": {
+            "type": "string",
+            "nullable": true
+          },
+          "netfang": {
+            "type": "string",
+            "nullable": true
+          },
+          "simi": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "ApplicantType": {
+        "type": "integer",
+        "description": "0 = Auðkenndur\n1 = Einstaklingur\n2 = Lögaðili\n-2 = Umboð",
+        "x-enumNames": ["Auðkenndur", "Einstaklingur", "Lögaðili", "Umboð"],
+        "enum": [0, 1, 2, -2]
+      },
+      "Notandagogn": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "flokkur": {
+            "type": "string",
+            "nullable": true
+          },
+          "heiti": {
+            "type": "string",
+            "nullable": true
+          },
+          "tegund": {
+            "type": "string",
+            "nullable": true
+          },
+          "gildi": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "ApplicationFiles": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "flokkur": {
+            "$ref": "#/components/schemas/ApplicationFileTypes"
+          },
+          "heiti": {
+            "type": "string",
+            "nullable": true
+          },
+          "tegund": {
+            "type": "string",
+            "nullable": true
+          },
+          "fileID": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "ApplicationFileTypes": {
+        "type": "integer",
+        "description": "1 = Service\n2 = Uploads\n3 = Additional\n4 = Reviews\n5 = Process",
+        "x-enumNames": [
+          "Service",
+          "Uploads",
+          "Additional",
+          "Reviews",
+          "Process"
+        ],
+        "enum": [1, 2, 3, 4, 5]
+      },
+      "CurrentApplicationStatus": {
+        "type": "integer",
+        "description": "70 = approved\n71 = iteration\n73 = paymentIteration\n80 = declined\n90 = delisted\n100 = expired\n1100 = onHold",
+        "x-enumNames": [
+          "approved",
+          "iteration",
+          "paymentIteration",
+          "declined",
+          "delisted",
+          "expired",
+          "onHold"
+        ],
+        "enum": [70, 71, 73, 80, 90, 100, 1100]
+      },
+      "ApplicationFilesContent": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "fileID": {
+            "type": "string",
+            "nullable": true
+          },
+          "applicationID": {
+            "type": "string",
+            "nullable": true
+          },
+          "content": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "RootReglusett": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "language": {
+            "$ref": "#/components/schemas/PortalLanguage"
+          },
+          "portalApplicationID": {
+            "type": "string",
+            "nullable": true
+          },
+          "applicationType": {
+            "type": "string",
+            "nullable": true
+          },
+          "adilar": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/Adilar"
+            }
+          },
+          "notandagogn": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/Notandagogn"
+            }
+          },
+          "reglusett": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/Reglusett"
+            }
+          }
+        }
+      },
+      "PortalLanguage": {
+        "type": "integer",
+        "description": "1 = icelandic\n2 = english",
+        "x-enumNames": ["icelandic", "english"],
+        "enum": [1, 2]
+      },
+      "Reglusett": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "flokkur": {
+            "type": "string",
+            "nullable": true
+          },
+          "heiti": {
+            "type": "string",
+            "nullable": true
+          },
+          "tegund": {
+            "type": "string",
+            "nullable": true
+          },
+          "gildi": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
       "ThjoldskraEnstaklingar": {
         "type": "object",
         "additionalProperties": false,
@@ -6222,6 +6969,65 @@
         "additionalProperties": false,
         "properties": {
           "stada": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "FasteignOgEigendur": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "fastnum": {
+            "type": "string",
+            "nullable": true
+          },
+          "landNr": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "heiti": {
+            "type": "string",
+            "nullable": true
+          },
+          "svfn": {
+            "type": "string",
+            "nullable": true
+          },
+          "svetiarfelag": {
+            "type": "string",
+            "nullable": true
+          },
+          "notkun": {
+            "type": "string",
+            "nullable": true
+          },
+          "eining": {
+            "type": "string",
+            "nullable": true
+          },
+          "byggd": {
+            "type": "string",
+            "nullable": true
+          },
+          "eigendur": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/Eigendur"
+            }
+          }
+        }
+      },
+      "Eigendur": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "kennitala": {
+            "type": "string",
+            "nullable": true
+          },
+          "nafn": {
             "type": "string",
             "nullable": true
           }

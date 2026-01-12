@@ -1,11 +1,12 @@
 {
-  "name": "api/domains/form-system",
+  "name": "api-domains-form-system",
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/api/domains/form-system/src",
   "projectType": "library",
+  "tags": ["lib:api", "scope:api"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["libs/api/domains/form-system/**/*.ts"]
@@ -25,6 +26,5 @@
         }
       }
     }
-  },
-  "tags": ["lib:api", "scope:api"]
+  }
 }

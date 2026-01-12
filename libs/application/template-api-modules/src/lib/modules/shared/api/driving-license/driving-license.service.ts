@@ -1,20 +1,21 @@
 import { Injectable } from '@nestjs/common'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
-import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
+import {
+  coreErrorMessages,
+  getValueViaPath,
+  YES,
+} from '@island.is/application/core'
 
 import {
   StudentAssessment,
   DrivingLicenseFakeData,
-  HasQualityPhoto,
-  YES,
   DrivingLicense,
   HasQualitySignature,
 } from './types'
 import {
   DrivingLicenseBookService,
   Organization as DrivingLicenseBookSchool,
-  TeacherRights,
 } from '@island.is/api/domains/driving-license-book'
 import {
   DrivingLicenseApi,
@@ -24,6 +25,7 @@ import {
 import sortTeachers from './sortTeachers'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { CurrentLicenseParameters } from '@island.is/application/types'
+import { getTodayDateWithMonthDiff } from './utils'
 
 @Injectable()
 export class DrivingLicenseProviderService extends BaseTemplateApiService {
@@ -138,13 +140,39 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
     application,
     params,
   }: TemplateApiModuleActionProps<CurrentLicenseParameters>): Promise<DrivingLicense> {
+    let drivingLicense
+
     const fakeData = getValueViaPath<DrivingLicenseFakeData>(
       application.answers,
       'fakeData',
     )
     if (fakeData?.useFakeData === YES) {
-      return {
-        currentLicense: fakeData.currentLicense === 'temp' ? 'B' : null,
+      const currentLicense = (() => {
+        switch (fakeData.currentLicense) {
+          case 'temp':
+            return 'B'
+          case 'B':
+          case 'C':
+          case 'C1':
+          case 'D':
+          case 'D1':
+            return fakeData.currentLicense
+          default:
+            return null
+        }
+      })()
+      drivingLicense = {
+        currentLicense,
+        categories: [
+          {
+            id: Math.floor(Math.random() * 100000000),
+            nr: currentLicense,
+            name: currentLicense || '', // for useLegacyVersion
+            issued: getTodayDateWithMonthDiff(-12),
+            expires: getTodayDateWithMonthDiff(14 * 12), // license is valid for 15 years total
+            comments: '',
+          },
+        ],
         remarks:
           fakeData.remarks === YES
             ? [
@@ -155,21 +183,20 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
                 },
               ]
             : undefined,
+        id: Math.floor(Math.random() * 100000000),
       }
-    }
-
-    let drivingLicense
-    if (params?.useLegacyVersion) {
-      drivingLicense = await this.drivingLicenseService.legacyGetCurrentLicense(
-        {
-          nationalId: auth.nationalId,
-          token: auth.authorization,
-        },
-      )
     } else {
-      drivingLicense = await this.drivingLicenseService.getCurrentLicense({
-        token: auth.authorization,
-      })
+      if (params?.useLegacyVersion) {
+        drivingLicense =
+          await this.drivingLicenseService.legacyGetCurrentLicense({
+            nationalId: auth.nationalId,
+            token: auth.authorization,
+          })
+      } else {
+        drivingLicense = await this.drivingLicenseService.getCurrentLicense({
+          token: auth.authorization,
+        })
+      }
     }
 
     const categoryB = (drivingLicense?.categories ?? []).find(
@@ -177,13 +204,16 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
     )
 
     // Validate that user has the necessary categories
+    const today = new Date()
     if (
       params?.validCategories &&
       (!drivingLicense?.categories ||
-        !drivingLicense.categories.some((x) =>
-          params.validCategories?.includes(
-            params?.useLegacyVersion ? x.name : x.nr || '',
-          ),
+        !drivingLicense.categories.some(
+          (x) =>
+            (!x.expires || x.expires >= today) &&
+            params.validCategories?.includes(
+              (params?.useLegacyVersion ? x.name : x.nr) || '',
+            ),
         ))
     ) {
       throw new TemplateApiError(
@@ -210,7 +240,10 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
   async qualityPhoto({
     auth,
     application,
-  }: TemplateApiModuleActionProps): Promise<HasQualityPhoto> {
+  }: TemplateApiModuleActionProps): Promise<{
+    hasQualityPhoto: boolean
+    qualityPhoto: string | null
+  }> {
     // If running locally or on dev allow for fake data
     const useFakeData = getValueViaPath<'yes' | 'no'>(
       application.answers,
@@ -222,13 +255,19 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
         application.answers,
         'fakeData.qualityPhoto',
       )
-      return { hasQualityPhoto: hasQualityPhoto === 'yes' }
+      return { hasQualityPhoto: hasQualityPhoto === 'yes', qualityPhoto: null }
     }
     const hasQualityPhoto = await this.drivingLicenseService.getHasQualityPhoto(
       { token: auth.authorization },
     )
+
+    const qualityPhoto = await this.drivingLicenseService.getQualityPhoto({
+      token: auth.authorization,
+    })
+
     return {
       hasQualityPhoto,
+      qualityPhoto: qualityPhoto?.data || null,
     }
   }
 
@@ -261,6 +300,22 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
       })
     return {
       hasQualitySignature,
+    }
+  }
+
+  async allPhotosFromThjodskra({ auth }: TemplateApiModuleActionProps) {
+    try {
+      return await this.drivingLicenseService.getAllPhotosFromThjodskra({
+        token: auth.authorization,
+      })
+    } catch (error) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.failedDataProvider,
+          summary: coreErrorMessages.errorDataProvider,
+        },
+        400,
+      )
     }
   }
 

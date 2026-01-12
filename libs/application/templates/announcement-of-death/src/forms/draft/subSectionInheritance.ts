@@ -25,20 +25,21 @@ export const subSectionInheritance = buildSubSection({
           titleVariant: 'h3',
         }),
         buildCustomField({
-          title: '',
           id: 'estateMembers',
           component: 'EstateMemberRepeater',
-          childInputIds: ['estateMembers.encountered', 'estateMembers.members'],
+          childInputIds: [
+            'estateMembers.encountered',
+            'estateMembers.members',
+            'estateMembers.applicantAdded',
+          ],
         }),
         buildDescriptionField({
           id: 'inheritanceConfirmationDescription',
-          title: '',
           description: m.inheritanceConfirmationDescription,
           space: 'containerGutter',
         }),
         buildCheckboxField({
           id: 'estateMembers.confirmation',
-          title: '',
           large: false,
           backgroundColor: 'white',
           options: [{ value: YES, label: m.inheritanceConfirmation }],

@@ -7,14 +7,14 @@ import {
   coreMessages,
 } from '@island.is/application/core'
 import { Form, FormModes, IdentityApi } from '@island.is/application/types'
-import Logo from '../assets/Logo'
+import { TheIcelandicRecyclingFundLogo } from '@island.is/application/assets/institution-logos'
 
 import { carRecyclingMessages } from '../lib/messages'
 
 export const Prerequisites: Form = buildForm({
   id: 'CarRecyclingPrerequisites',
   title: carRecyclingMessages.shared.formTitle,
-  logo: Logo,
+  logo: TheIcelandicRecyclingFundLogo,
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
@@ -31,7 +31,6 @@ export const Prerequisites: Form = buildForm({
           submitField: buildSubmitField({
             id: 'submit',
             placement: 'footer',
-            title: '',
             refetchApplicationAfterSubmit: true,
             actions: [
               {

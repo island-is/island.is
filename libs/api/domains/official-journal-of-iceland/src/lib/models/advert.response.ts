@@ -6,6 +6,8 @@ import {
   AdvertMainCategory,
   AdvertType,
   AdvertMainType,
+  AdvertSimilar,
+  AdvertLean,
 } from './advert.model'
 import { AdvertPaging } from './advert-paging.model'
 
@@ -66,10 +68,18 @@ export class AdvertInstitutionsResponse {
   paging!: AdvertPaging
 }
 
-@ObjectType('OfficialJournalOfIcelandAdvertsResponse')
-export class AdvertsResponse {
+@ObjectType('OfficialJournalOfIcelandAdvertsFullResponse')
+export class AdvertsFullResponse {
   @Field(() => [Advert])
   adverts!: Advert[]
+
+  @Field(() => AdvertPaging)
+  paging!: AdvertPaging
+}
+@ObjectType('OfficialJournalOfIcelandAdvertsResponse')
+export class AdvertsResponse {
+  @Field(() => [AdvertLean])
+  adverts!: AdvertLean[]
 
   @Field(() => AdvertPaging)
   paging!: AdvertPaging
@@ -79,6 +89,12 @@ export class AdvertsResponse {
 export class AdvertResponse {
   @Field(() => Advert)
   advert?: Advert
+}
+
+@ObjectType('OfficialJournalOfIcelandAdvertSimilarResponse')
+export class AdvertSimilarResponse {
+  @Field(() => [AdvertSimilar])
+  adverts!: AdvertSimilar[]
 }
 
 @ObjectType('OfficialJournalOfIcelandMainTypesResponse')

@@ -4,6 +4,7 @@ import {
   buildSubSection,
   buildDescriptionField,
   buildCustomField,
+  buildPhoneField,
 } from '@island.is/application/core'
 import { applicant } from '../../../lib/messages'
 import { Application } from '@island.is/api/schema'
@@ -99,15 +100,15 @@ export const userInformationSubSection = buildSubSection({
           defaultValue: (application: Application) =>
             application.externalData?.userProfile?.data?.email,
         }),
-        buildTextField({
+        buildPhoneField({
           id: 'applicant.phone',
           title: applicant.labels.userInformation.phone,
           width: 'half',
-          variant: 'tel',
-          format: '###-####',
           required: true,
           defaultValue: (application: Application) =>
             application.externalData?.userProfile?.data?.mobilePhoneNumber,
+          allowedCountryCodes: ['IS'],
+          enableCountrySelector: false,
         }),
         buildDescriptionField({
           id: 'qualityPhotoSubtitle',
@@ -117,7 +118,6 @@ export const userInformationSubSection = buildSubSection({
         }),
         buildCustomField({
           id: 'qualityPhoto',
-          title: '',
           component: 'QualityPhoto',
         }),
         buildDescriptionField({
@@ -128,7 +128,6 @@ export const userInformationSubSection = buildSubSection({
         }),
         buildCustomField({
           id: 'qualitySignature',
-          title: '',
           component: 'QualitySignature',
         }),
       ],

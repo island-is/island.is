@@ -162,6 +162,28 @@ export const pruneEntryHyperlink = (node: any) => {
           ...target.fields.organizationPage,
           fields: extractPrimitiveFields(target.fields.organizationPage.fields),
         },
+        organizationParentSubpage: target.fields.organizationParentSubpage
+          ? {
+              ...target.fields.organizationParentSubpage,
+              fields: extractPrimitiveFields(
+                target.fields.organizationParentSubpage.fields,
+              ),
+            }
+          : null,
+      },
+    }
+  } else if (
+    contentTypeId === 'organizationParentSubpage' &&
+    target.fields?.organizationPage?.fields
+  ) {
+    node.data.target = {
+      ...target,
+      fields: {
+        ...extractPrimitiveFields(target.fields),
+        organizationPage: {
+          ...target.fields.organizationPage,
+          fields: extractPrimitiveFields(target.fields.organizationPage.fields),
+        },
       },
     }
   } else if (contentTypeId === 'price' && target.fields?.organization?.fields) {
@@ -206,6 +228,7 @@ export const pruneNonSearchableSliceUnionFields = (
       ...slice,
       json: {},
       configJson: {},
+      translationStrings: {},
     }
   }
   if ((slice as { typename?: string })?.typename === 'EmailSignup') {

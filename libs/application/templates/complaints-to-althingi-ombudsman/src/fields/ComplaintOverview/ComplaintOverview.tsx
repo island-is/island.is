@@ -1,4 +1,4 @@
-import { FieldBaseProps, YES } from '@island.is/application/types'
+import { FieldBaseProps } from '@island.is/application/types'
 import { Box, GridRow, GridColumn, Text } from '@island.is/island-ui/core'
 import { ReviewGroup } from '@island.is/application/ui-components'
 import React, { FC } from 'react'
@@ -7,14 +7,16 @@ import {
   complaintOverview,
   information,
   complaintInformation,
+  gender,
 } from '../../lib/messages'
 import { ValueLine } from './ValueLine'
 import { ComplainedFor } from './ComplainedFor'
 import { ComplaintInformation } from './ComplaintInformation'
-import { yesNoMessageMapper } from '../../utils'
+import { getGenderLabel, yesNoMessageMapper } from '../../utils'
 import { OmbudsmanComplaintTypeEnum } from '../../shared'
 import { DocumentCard } from '../components'
 import { useLocale } from '@island.is/localization'
+import { YES } from '@island.is/application/core'
 
 type Props = FieldBaseProps & { field: { props: { isEditable: boolean } } }
 
@@ -197,6 +199,19 @@ export const ComplaintOverview: FC<React.PropsWithChildren<Props>> = ({
                 {formatMessage(complaintOverview.labels.complaintNoDocuments)}
               </Text>
             )}
+          </GridColumn>
+        </GridRow>
+      </ReviewGroup>
+      <ReviewGroup
+        isEditable={isEditable}
+        editAction={() => changeScreens('section.gender')}
+      >
+        <GridRow>
+          <GridColumn span="9/12">
+            <ValueLine
+              label={gender.general.title}
+              value={formatMessage(getGenderLabel(answers.genderAnswer))}
+            />
           </GridColumn>
         </GridRow>
       </ReviewGroup>

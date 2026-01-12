@@ -1,13 +1,14 @@
-import React, { FC, ReactElement, useEffect, useState } from 'react'
-import * as styles from './Modal.css'
 import {
   Box,
-  ModalBase,
   Button,
   ButtonProps,
+  Hyphen,
+  ModalBase,
+  ResponsiveProp,
   Text,
-  Inline,
 } from '@island.is/island-ui/core'
+import React, { FC, ReactElement, useEffect, useState } from 'react'
+import * as styles from './Modal.css'
 
 interface Props {
   id: string
@@ -26,6 +27,11 @@ interface Props {
     text?: string
     loading?: boolean
   }>
+  buttonsSpacing?:
+    | ResponsiveProp<
+        'center' | 'flexStart' | 'flexEnd' | 'spaceBetween' | 'spaceAround'
+      >
+    | undefined
   iconSrc?: string
   iconAlt?: string
   /**
@@ -49,6 +55,7 @@ export const Modal: FC<React.PropsWithChildren<Props>> = ({
   skeleton,
   iconAlt,
   iconSrc,
+  buttonsSpacing,
 }) => {
   const [closing, setClosing] = useState(false)
   const [startClosing, setStartClosing] = useState(false)
@@ -98,6 +105,7 @@ export const Modal: FC<React.PropsWithChildren<Props>> = ({
             display="flex"
             flexDirection="row"
             alignItems="center"
+            borderRadius="standard"
             rowGap={2}
             paddingY={[3, 6, 12]}
             paddingX={[3, 6, 12, 14]}
@@ -112,19 +120,25 @@ export const Modal: FC<React.PropsWithChildren<Props>> = ({
                 }}
                 size="large"
               />
-            </Box>{' '}
-            <Box>
+            </Box>
+            <Box width="full">
               <Box marginBottom={6}>
                 {title && (
-                  <Text variant="h3" marginBottom={'auto'}>
-                    {title}
+                  <Text variant="h3" marginBottom={1}>
+                    <Hyphen>{title}</Hyphen>
                   </Text>
                 )}
                 {text && <Text>{text}</Text>}
               </Box>
               {children}
               {buttons && (
-                <Inline space={2}>
+                <Box
+                  display="flex"
+                  flexDirection="row"
+                  justifyContent={buttonsSpacing ?? 'flexStart'}
+                  columnGap={2}
+                  marginTop={4}
+                >
                   {buttons.map((b) => (
                     <Button
                       key={b.id}
@@ -136,7 +150,7 @@ export const Modal: FC<React.PropsWithChildren<Props>> = ({
                       {b.text}
                     </Button>
                   ))}
-                </Inline>
+                </Box>
               )}
             </Box>
             {iconSrc && (

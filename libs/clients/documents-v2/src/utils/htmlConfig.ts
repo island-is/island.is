@@ -39,7 +39,8 @@ const svgAttributes = [
   'rx',
   'ry',
   'points',
-  'xlink:href',
+  'href',
+  'xlink:href', // Legacy href for SVGs
 ]
 
 export const svgAttr = {
@@ -54,5 +55,5 @@ export const svgAttr = {
   ellipse: svgAttributes,
   text: svgAttributes,
   tspan: svgAttributes,
-  use: ['xlink:href'],
+  use: ['xlink:href', 'href'],
 }

@@ -1,5 +1,5 @@
 {
-  "openapi": "3.0.1",
+  "openapi": "3.0.4",
   "info": {
     "title": "Landlæknir API",
     "description": "Vefþjónustur á vegum Landlæknis.",
@@ -214,7 +214,7 @@
         },
         "responses": {
           "200": {
-            "description": "Skilar base64 streng",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -241,9 +241,7 @@
                 }
               }
             }
-          },
-          "400": { "description": "Kennitala er á röngu formi" },
-          "404": { "description": "Starfsmaður fannst ekki" }
+          }
         }
       }
     },
@@ -289,7 +287,7 @@
             "name": "ssnNumber",
             "in": "path",
             "required": true,
-            "schema": { "type": "string", "nullable": true }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -406,7 +404,7 @@
         },
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": { "schema": { "type": "string" } },
               "application/json": { "schema": { "type": "string" } },
@@ -450,6 +448,205 @@
   },
   "components": {
     "schemas": {
+      "Adilar": {
+        "type": "object",
+        "properties": {
+          "kennitala": {
+            "type": "string",
+            "description": "kennitala for legal / natural persons",
+            "nullable": true
+          },
+          "heiti": {
+            "type": "string",
+            "description": "Name",
+            "nullable": true
+          },
+          "heimili": {
+            "type": "string",
+            "description": "Address",
+            "nullable": true
+          },
+          "tegund": { "$ref": "#/components/schemas/applicantType" },
+          "hlutverk": {
+            "type": "string",
+            "description": "description for the person",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Information regarding legal and natural persons within the application."
+      },
+      "AdilarItem": {
+        "type": "object",
+        "properties": {
+          "kennitala": { "type": "string", "nullable": true },
+          "heiti": { "type": "string", "nullable": true },
+          "heimili": { "type": "string", "nullable": true },
+          "stadur": { "type": "string", "nullable": true },
+          "postnumer": { "type": "string", "nullable": true },
+          "tegund": { "type": "integer", "format": "int32" },
+          "hlutverk": { "type": "string", "nullable": true },
+          "netfang": { "type": "string", "nullable": true },
+          "simi": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "FilesItem": {
+        "type": "object",
+        "properties": {
+          "flokkur": { "type": "integer", "format": "int32" },
+          "heiti": { "type": "string", "nullable": true },
+          "dags": { "type": "string", "nullable": true },
+          "tegund": { "type": "string", "nullable": true },
+          "fileID": { "type": "string", "nullable": true },
+          "ending": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "GreidslaItem": {
+        "type": "object",
+        "properties": {
+          "upphaed": { "type": "number", "format": "double" },
+          "dags": { "type": "string", "nullable": true },
+          "korthafi": { "type": "string", "nullable": true },
+          "kortanumer": { "type": "string", "nullable": true },
+          "tegundKorts": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "Heilbrigdisstarfsmenn": {
+        "type": "object",
+        "properties": {
+          "logadili_ID": {
+            "type": "integer",
+            "description": "ID á Lögaðila",
+            "format": "int32",
+            "example": 12
+          },
+          "numer": {
+            "type": "string",
+            "description": "Númer",
+            "nullable": true,
+            "example": "1234"
+          },
+          "kennitala": {
+            "type": "string",
+            "description": "Kennitala",
+            "nullable": true,
+            "example": "0101012229"
+          },
+          "nafn": {
+            "type": "string",
+            "description": "Nafn",
+            "nullable": true,
+            "example": "Jón Jónsson"
+          },
+          "kyn": {
+            "type": "integer",
+            "description": "Kyn",
+            "format": "int32",
+            "example": 2
+          },
+          "menntun": {
+            "type": "string",
+            "description": "Menntun",
+            "nullable": true,
+            "example": "Læknir"
+          },
+          "kandidats_ar": {
+            "type": "string",
+            "description": "Kandidats ár",
+            "nullable": true,
+            "example": "2000"
+          },
+          "leyfisstada": {
+            "type": "string",
+            "description": "Leyfisstaða",
+            "nullable": true,
+            "example": "Almennt lækingaleyfi"
+          },
+          "dags_Laekn_Leyfis": {
+            "type": "string",
+            "description": "Dagsetning Leyfis",
+            "nullable": true,
+            "example": "04/22/2005 00:00:00"
+          },
+          "dags_Sergr_1": {
+            "type": "string",
+            "description": "Dags Sérgrein 1",
+            "nullable": true,
+            "example": "04/22/2005 00:00:00"
+          },
+          "sergr_1": {
+            "type": "string",
+            "description": "Sérgrein 1",
+            "nullable": true,
+            "example": "04/22/2005 00:00:00"
+          },
+          "dags_Sergr_2": {
+            "type": "string",
+            "description": "Dags Sérgrein 2",
+            "nullable": true,
+            "example": "Almennar lyflækningar"
+          },
+          "sergr_2": {
+            "type": "string",
+            "description": "Sérgrein 2",
+            "nullable": true,
+            "example": "04/22/2005 00:00:00"
+          },
+          "dags_Sergr_3": {
+            "type": "string",
+            "description": "Dags Sérgrein 3",
+            "nullable": true,
+            "example": "Líknarlækningar"
+          },
+          "sergr_3": {
+            "type": "string",
+            "description": "Sérgrein 3",
+            "nullable": true,
+            "example": "01-01-2000"
+          },
+          "dags_Sergr_4": {
+            "type": "string",
+            "description": "Dags Sérgrein 4",
+            "nullable": true,
+            "example": "04/22/2005 00:00:00"
+          },
+          "sergr_4": {
+            "type": "string",
+            "description": "Sérgrein 4",
+            "nullable": true,
+            "example": "Almennar lyflækningar"
+          },
+          "sidast_Breytt": {
+            "type": "string",
+            "description": "Síðast breytt",
+            "nullable": true,
+            "example": "04/22/2005 00:00:00"
+          },
+          "ny_Leyfisstada": {
+            "type": "string",
+            "description": "Ný Leyfisstaða",
+            "nullable": true,
+            "example": ""
+          },
+          "ny_Dags_Leyfisstodu": {
+            "type": "string",
+            "description": "Ný Dagsetning leyfisstöðu",
+            "nullable": true,
+            "example": "01-01-2000"
+          },
+          "audkenni": {
+            "type": "string",
+            "description": "Auðkenni",
+            "nullable": true,
+            "example": "HJ"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Gagnaklasi fyrir skil á upplýsingum Heilbrigðisstarfsmenn"
+      },
       "MinarSidur": {
         "type": "object",
         "properties": {
@@ -477,11 +674,23 @@
             "nullable": true,
             "example": "Sjúkraflutningamaður"
           },
+          "starfsstett_En": {
+            "type": "string",
+            "description": "Starfsstétt - ensk þýðing",
+            "nullable": true,
+            "example": "Paramedic"
+          },
           "leyfi": {
             "type": "string",
             "description": "Leyfi",
             "nullable": true,
             "example": "Starfsleyfi"
+          },
+          "leyfi_En": {
+            "type": "string",
+            "description": "Leyfi - ensk þýðing",
+            "nullable": true,
+            "example": "Occupational license"
           },
           "leyfisnumer": {
             "type": "string",
@@ -494,14 +703,14 @@
             "description": "Gildir frá dagsetning",
             "format": "date-time",
             "nullable": true,
-            "example": "2009-11-03T00:00:00.0000000"
+            "example": "2009-11-03T00:00:00"
           },
           "gildir_TIl": {
             "type": "string",
             "description": "Gildir Til dagsetning",
             "format": "date-time",
             "nullable": true,
-            "example": "2009-11-03T00:00:00.0000000"
+            "example": "2009-11-03T00:00:00"
           },
           "id": {
             "type": "integer",
@@ -518,6 +727,173 @@
         },
         "additionalProperties": false,
         "description": "Gagnaklasi fyrir skil á upplýsingum fyrir viðkomandi starfsmann"
+      },
+      "Nam": {
+        "type": "object",
+        "properties": {
+          "educationId": {
+            "type": "integer",
+            "description": "Prof_id",
+            "format": "int32"
+          },
+          "graduationDate": {
+            "type": "string",
+            "description": "Útskriftadagsetning",
+            "format": "date-time",
+            "example": "2009-11-03T00:00:00"
+          },
+          "school": {
+            "type": "string",
+            "description": "Nafn skóla",
+            "nullable": true,
+            "example": "Háskóli Íslands "
+          }
+        },
+        "additionalProperties": false
+      },
+      "NamsUpplysingar": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int32" },
+          "idProfession": {
+            "type": "string",
+            "description": "Auðkenni Starfstétts",
+            "nullable": true,
+            "example": "SF"
+          },
+          "educationId": {
+            "type": "integer",
+            "description": "Prof_id",
+            "format": "int32"
+          },
+          "educationName": {
+            "type": "string",
+            "description": "Nafn á prófi",
+            "nullable": true,
+            "example": "Framhaldskólapróf"
+          },
+          "educationValidFrom": {
+            "type": "string",
+            "description": "Gildir frá dagsetning á prófinu",
+            "format": "date-time",
+            "nullable": true,
+            "example": "2009-11-03T00:00:00"
+          },
+          "shortId": {
+            "type": "string",
+            "description": "Stutt ID frá háskólunum. Notað til að mappa saman nám.",
+            "nullable": true,
+            "example": "HJÚ273"
+          },
+          "dataOrder": {
+            "type": "integer",
+            "description": "Röðun prófa/gagna, 1 = lægsta stig. NoOfData = hæðsta stig",
+            "format": "int32",
+            "example": 1
+          },
+          "noOfData": {
+            "type": "integer",
+            "description": "Fjöldi prófa/gagna sem þarf að skila.",
+            "format": "int32",
+            "example": 2
+          }
+        },
+        "additionalProperties": false
+      },
+      "Notandagogn": {
+        "type": "object",
+        "properties": {
+          "flokkur": {
+            "type": "string",
+            "description": "Group name",
+            "nullable": true
+          },
+          "heiti": {
+            "type": "string",
+            "description": "Name of the variable",
+            "nullable": true
+          },
+          "tegund": {
+            "type": "string",
+            "description": "Type of variable",
+            "nullable": true
+          },
+          "gildi": {
+            "type": "string",
+            "description": "Value for inspection",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data entered by the applicant to be inspected bu the ruleset"
+      },
+      "NotandagognItem": {
+        "type": "object",
+        "properties": {
+          "guid": { "type": "string", "nullable": true },
+          "flokkur": { "type": "string", "nullable": true },
+          "heiti": { "type": "string", "nullable": true },
+          "tegund": { "type": "string", "nullable": true },
+          "gildi": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false,
+        "description": "Kennitala á Viðkomandi"
+      },
+      "Reglusett": {
+        "type": "object",
+        "properties": {
+          "flokkur": {
+            "type": "string",
+            "description": "Groupname for the variable",
+            "nullable": true
+          },
+          "heiti": {
+            "type": "string",
+            "description": "Name of the variable",
+            "nullable": true
+          },
+          "tegund": {
+            "type": "string",
+            "description": "Type of variable",
+            "nullable": true
+          },
+          "gildi": {
+            "type": "string",
+            "description": "The value to be set for the variable",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data the can be set by the ruleset."
+      },
+      "ReglusettVottordB": {
+        "type": "object",
+        "properties": {
+          "adilar": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Adilar" },
+            "description": "List of persons that have a role in the application",
+            "nullable": true
+          },
+          "notandagogn": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Notandagogn" },
+            "description": "Information extracted from the application the the ruleset can use.",
+            "nullable": true
+          },
+          "reglusett": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Reglusett" },
+            "description": "Variable that the ruleset can set to be used in the application.\r\nCurrently we support String, Int and Date.",
+            "nullable": true
+          },
+          "applicationType": {
+            "type": "string",
+            "description": "Unique id for the application type this unique id is provided when\r\nthe application is made by the provider. This can be used to have\r\ndifferent behaviour depending on application type.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
       },
       "Rekstraradilar": {
         "type": "object",
@@ -604,7 +980,7 @@
             "type": "string",
             "description": "Tegund Rekstrarforms",
             "nullable": true,
-            "example": "null"
+            "example": null
           },
           "svidsnumer": {
             "type": "string",
@@ -748,189 +1124,6 @@
         "additionalProperties": false,
         "description": "Gagnaklasi fyrir skil á upplýsingum fyrir Rekstraraðila"
       },
-      "Heilbrigdisstarfsmenn": {
-        "type": "object",
-        "properties": {
-          "logadili_ID": {
-            "type": "integer",
-            "description": "ID á Lögaðila",
-            "format": "int32",
-            "example": 12
-          },
-          "numer": {
-            "type": "string",
-            "description": "Númer",
-            "nullable": true,
-            "example": "1234"
-          },
-          "kennitala": {
-            "type": "string",
-            "description": "Kennitala",
-            "nullable": true,
-            "example": "0101012229"
-          },
-          "nafn": {
-            "type": "string",
-            "description": "Nafn",
-            "nullable": true,
-            "example": "Jón Jónsson"
-          },
-          "kyn": {
-            "type": "integer",
-            "description": "Kyn",
-            "format": "int32",
-            "example": 2
-          },
-          "menntun": {
-            "type": "string",
-            "description": "Menntun",
-            "nullable": true,
-            "example": "Læknir"
-          },
-          "kandidats_ar": {
-            "type": "string",
-            "description": "Kandidats ár",
-            "nullable": true,
-            "example": "2000"
-          },
-          "leyfisstada": {
-            "type": "string",
-            "description": "Leyfisstaða",
-            "nullable": true,
-            "example": "Almennt lækingaleyfi"
-          },
-          "dags_Laekn_Leyfis": {
-            "type": "string",
-            "description": "Dagsetning Leyfis",
-            "nullable": true,
-            "example": "04/22/2005 00:00:00"
-          },
-          "dags_Sergr_1": {
-            "type": "string",
-            "description": "Dags Sérgrein 1",
-            "nullable": true,
-            "example": "04/22/2005 00:00:00"
-          },
-          "sergr_1": {
-            "type": "string",
-            "description": "Sérgrein 1",
-            "nullable": true,
-            "example": "04/22/2005 00:00:00"
-          },
-          "dags_Sergr_2": {
-            "type": "string",
-            "description": "Dags Sérgrein 2",
-            "nullable": true,
-            "example": "Almennar lyflækningar"
-          },
-          "sergr_2": {
-            "type": "string",
-            "description": "Sérgrein 2",
-            "nullable": true,
-            "example": "04/22/2005 00:00:00"
-          },
-          "dags_Sergr_3": {
-            "type": "string",
-            "description": "Dags Sérgrein 3",
-            "nullable": true,
-            "example": "Líknarlækningar"
-          },
-          "sergr_3": {
-            "type": "string",
-            "description": "Sérgrein 3",
-            "nullable": true,
-            "example": "01-01-2000"
-          },
-          "dags_Sergr_4": {
-            "type": "string",
-            "description": "Dags Sérgrein 4",
-            "nullable": true,
-            "example": "04/22/2005 00:00:00"
-          },
-          "sergr_4": {
-            "type": "string",
-            "description": "Sérgrein 4",
-            "nullable": true,
-            "example": "Almennar lyflækningar"
-          },
-          "sidast_Breytt": {
-            "type": "string",
-            "description": "Síðast breytt",
-            "nullable": true,
-            "example": "04/22/2005 00:00:00"
-          },
-          "ny_Leyfisstada": {
-            "type": "string",
-            "description": "Ný Leyfisstaða",
-            "nullable": true,
-            "example": ""
-          },
-          "ny_Dags_Leyfisstodu": {
-            "type": "string",
-            "description": "Ný Dagsetning leyfisstöðu",
-            "nullable": true,
-            "example": "01-01-2000"
-          },
-          "audkenni": {
-            "type": "string",
-            "description": "Auðkenni",
-            "nullable": true,
-            "example": "HJ"
-          }
-        },
-        "additionalProperties": false,
-        "description": "Gagnaklasi fyrir skil á upplýsingum Heilbrigðisstarfsmenn"
-      },
-      "NamsUpplysingar": {
-        "type": "object",
-        "properties": {
-          "id": { "type": "integer", "format": "int32" },
-          "idProfession": {
-            "type": "string",
-            "description": "Auðkenni Starfstétts",
-            "nullable": true,
-            "example": "SF"
-          },
-          "educationId": {
-            "type": "integer",
-            "description": "Prof_id",
-            "format": "int32",
-            "example": 0
-          },
-          "educationName": {
-            "type": "string",
-            "description": "Nafn á prófi",
-            "nullable": true,
-            "example": "Framhaldskólapróf"
-          },
-          "educationValidFrom": {
-            "type": "string",
-            "description": "Gildir frá dagsetning á prófinu",
-            "format": "date-time",
-            "nullable": true,
-            "example": "2009-11-03T00:00:00.0000000"
-          },
-          "shortId": {
-            "type": "string",
-            "description": "Stutt ID frá háskólunum. Notað til að mappa saman nám.",
-            "nullable": true,
-            "example": "HJÚ273"
-          },
-          "dataOrder": {
-            "type": "integer",
-            "description": "Röðun prófa/gagna, 1 = lægsta stig. NoOfData = hæðsta stig",
-            "format": "int32",
-            "example": 1
-          },
-          "noOfData": {
-            "type": "integer",
-            "description": "Fjöldi prófa/gagna sem þarf að skila.",
-            "format": "int32",
-            "example": 2
-          }
-        },
-        "additionalProperties": false
-      },
       "StarfsleyfiUmsoknStarfsleyfi": {
         "type": "object",
         "properties": {
@@ -981,38 +1174,183 @@
             "description": "Gildir frá dagsetning",
             "format": "date-time",
             "nullable": true,
-            "example": "2009-11-03T00:00:00.0000000"
+            "example": "2009-11-03T00:00:00"
           },
           "validTo": {
             "type": "string",
             "description": "Gildir Til dagsetning",
             "format": "date-time",
             "nullable": true,
-            "example": "2009-11-03T00:00:00.0000000"
+            "example": "2009-11-03T00:00:00"
           }
         },
         "additionalProperties": false
       },
-      "Nam": {
+      "StarfsleyfiVottord": {
         "type": "object",
         "properties": {
-          "educationId": {
+          "ssnNumber": {
+            "type": "string",
+            "description": "Kennitala á Viðkomandi",
+            "nullable": true,
+            "example": "123456-1234"
+          },
+          "name": {
+            "type": "string",
+            "description": "Nafn á viðkomandi",
+            "nullable": true,
+            "example": "Jón Jónsson"
+          },
+          "idProfession": {
+            "type": "string",
+            "description": "Auðkenni Starfstétts",
+            "nullable": true,
+            "example": "SF"
+          },
+          "professionIsl": {
+            "type": "string",
+            "description": "Heiti starfsstétt",
+            "nullable": true,
+            "example": "Sjúkraflutningamaður"
+          },
+          "professionEn": {
+            "type": "string",
+            "description": "Heiti starfsstétt á ensku",
+            "nullable": true,
+            "example": "Emergency Medical Technician"
+          },
+          "specialityIsl": {
+            "type": "string",
+            "description": "Leyfi",
+            "nullable": true,
+            "example": "Starfsleyfi"
+          },
+          "specialityEn": {
+            "type": "string",
+            "description": "Leyfi á ensku",
+            "nullable": true,
+            "example": "Licence to practice"
+          },
+          "isSpeciality": {
             "type": "integer",
-            "description": "Prof_id",
+            "description": "Er leyfið sérfræðileyfi?",
             "format": "int32",
             "example": 0
           },
-          "graduationDate": {
+          "validFrom": {
             "type": "string",
-            "description": "Útskriftadagsetning",
+            "description": "Gildir frá dagsetning",
             "format": "date-time",
-            "example": "2009-11-03T00:00:00.0000000"
-          },
-          "school": {
-            "type": "string",
-            "description": "Nafn skóla",
             "nullable": true,
-            "example": "Háskóli Íslands"
+            "example": "2009-11-03T00:00:00"
+          },
+          "validTo": {
+            "type": "string",
+            "description": "Gildir Til dagsetning",
+            "format": "date-time",
+            "nullable": true,
+            "example": "2009-11-03T00:00:00"
+          },
+          "isRestricted": {
+            "type": "integer",
+            "description": "Er Starfsmaður með takmarkað leyfi?",
+            "format": "int32",
+            "example": 0
+          }
+        },
+        "additionalProperties": false
+      },
+      "StarfstettVottord": {
+        "type": "object",
+        "properties": {
+          "ssnNumber": {
+            "type": "string",
+            "description": "Kennitala á Viðkomandi",
+            "nullable": true,
+            "example": "123456-1234"
+          },
+          "name": {
+            "type": "string",
+            "description": "Nafn á viðkomandi",
+            "nullable": true,
+            "example": "Jón Jónsson"
+          },
+          "idProfession": {
+            "type": "string",
+            "description": "Auðkenni Starfstétts",
+            "nullable": true,
+            "example": "SF"
+          },
+          "professionIsl": {
+            "type": "string",
+            "description": "Heiti starfsstétt",
+            "nullable": true,
+            "example": "Sjúkraflutningamaður"
+          },
+          "professionEn": {
+            "type": "string",
+            "description": "Heiti starfsstétt á ensku",
+            "nullable": true,
+            "example": "Emergency Medical Technician"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UploadFilesItem": {
+        "type": "object",
+        "properties": {
+          "file": { "type": "string", "nullable": true },
+          "applicationID": { "type": "string", "nullable": true },
+          "content": { "type": "string", "nullable": true },
+          "applicationType": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "UtbuaSkjalRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Nafn heilbrigðisstarfsmanns",
+            "nullable": true,
+            "example": "Jón Jónsson"
+          },
+          "dateOfBirth": {
+            "type": "string",
+            "description": "Afmælisdagur heilbrigðisstarfsmanns. Þarf að vera á 'DD.MM.YYYY' sniði",
+            "nullable": true,
+            "example": "01.01.2000"
+          },
+          "email": {
+            "type": "string",
+            "description": "Netfang heilbrigðisstarfsmanns",
+            "nullable": true,
+            "example": "jonjonsson@landlaeknir.is"
+          },
+          "phoneNo": {
+            "type": "string",
+            "description": "Símanúmer heilbrigðisstarfsmanns",
+            "nullable": true,
+            "example": "0000000"
+          },
+          "idProfession": {
+            "type": "string",
+            "description": "Auðkenni Starfstétt heilbrigðisstarfsmanns",
+            "nullable": true,
+            "example": "HJ"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Gagnaklasi fyrir Innsigluð vottorð"
+      },
+      "UtbuaSkjalResponse": {
+        "type": "object",
+        "properties": {
+          "base64String": {
+            "type": "string",
+            "description": "Base64 strengur",
+            "nullable": true,
+            "example": "\"JVBER..."
           }
         },
         "additionalProperties": false
@@ -1077,215 +1415,6 @@
         },
         "additionalProperties": false
       },
-      "StarfsleyfiVottord": {
-        "type": "object",
-        "properties": {
-          "ssnNumber": {
-            "type": "string",
-            "description": "Kennitala á Viðkomandi",
-            "nullable": true,
-            "example": "123456-1234"
-          },
-          "name": {
-            "type": "string",
-            "description": "Nafn á viðkomandi",
-            "nullable": true,
-            "example": "Jón Jónsson"
-          },
-          "idProfession": {
-            "type": "string",
-            "description": "Auðkenni Starfstétts",
-            "nullable": true,
-            "example": "SF"
-          },
-          "professionIsl": {
-            "type": "string",
-            "description": "Heiti starfsstétt",
-            "nullable": true,
-            "example": "Sjúkraflutningamaður"
-          },
-          "professionEn": {
-            "type": "string",
-            "description": "Heiti starfsstétt á ensku",
-            "nullable": true,
-            "example": "Emergency Medical Technician"
-          },
-          "specialityIsl": {
-            "type": "string",
-            "description": "Leyfi",
-            "nullable": true,
-            "example": "Starfsleyfi"
-          },
-          "specialityEn": {
-            "type": "string",
-            "description": "Leyfi á ensku",
-            "nullable": true,
-            "example": "Licence to practice"
-          },
-          "isSpeciality": {
-            "type": "integer",
-            "description": "Er leyfið sérfræðileyfi?",
-            "format": "int32",
-            "example": 0
-          },
-          "validFrom": {
-            "type": "string",
-            "description": "Gildir frá dagsetning",
-            "format": "date-time",
-            "nullable": true,
-            "example": "2009-11-03T00:00:00.0000000"
-          },
-          "validTo": {
-            "type": "string",
-            "description": "Gildir Til dagsetning",
-            "format": "date-time",
-            "nullable": true,
-            "example": "2009-11-03T00:00:00.0000000"
-          },
-          "isRestricted": {
-            "type": "integer",
-            "description": "Er Starfsmaður með takmarkað leyfi?",
-            "format": "int32",
-            "example": 0
-          }
-        },
-        "additionalProperties": false
-      },
-      "StarfstettVottord": {
-        "type": "object",
-        "properties": {
-          "ssnNumber": {
-            "type": "string",
-            "description": "Kennitala á Viðkomandi",
-            "nullable": true,
-            "example": "123456-1234"
-          },
-          "name": {
-            "type": "string",
-            "description": "Nafn á viðkomandi",
-            "nullable": true,
-            "example": "Jón Jónsson"
-          },
-          "idProfession": {
-            "type": "string",
-            "description": "Auðkenni Starfstétts",
-            "nullable": true,
-            "example": "SF"
-          },
-          "professionIsl": {
-            "type": "string",
-            "description": "Heiti starfsstétt",
-            "nullable": true,
-            "example": "Sjúkraflutningamaður"
-          },
-          "professionEn": {
-            "type": "string",
-            "description": "Heiti starfsstétt á ensku",
-            "nullable": true,
-            "example": "Emergency Medical Technician"
-          }
-        },
-        "additionalProperties": false
-      },
-      "UtbuaSkjalRequest": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "description": "Nafn heilbrigðisstarfsmanns",
-            "nullable": true,
-            "example": "Jón Jónsson"
-          },
-          "dateOfBirth": {
-            "type": "string",
-            "description": "Afmælisdagur heilbrigðisstarfsmanns. Þarf að vera á 'DD.MM.YYYY' sniði",
-            "nullable": true,
-            "example": "01.01.2000"
-          },
-          "email": {
-            "type": "string",
-            "description": "Netfang heilbrigðisstarfsmanns",
-            "nullable": true,
-            "example": "jonjonsson@landlaeknir.is"
-          },
-          "phoneNo": {
-            "type": "string",
-            "description": "Símanúmer heilbrigðisstarfsmanns",
-            "nullable": true,
-            "example": "0000000"
-          },
-          "idProfession": {
-            "type": "string",
-            "description": "Auðkenni Starfstétt heilbrigðisstarfsmanns",
-            "nullable": true,
-            "example": "HJ"
-          }
-        },
-        "additionalProperties": false,
-        "description": "Gagnaklasi fyrir Innsigluð vottorð"
-      },
-      "UtbuaSkjalResponse": {
-        "type": "object",
-        "properties": {
-          "base64String": {
-            "type": "string",
-            "description": "Base64 strengur",
-            "nullable": true,
-            "example": "\"JVBER..."
-          }
-        },
-        "additionalProperties": false
-      },
-      "AdilarItem": {
-        "type": "object",
-        "properties": {
-          "kennitala": { "type": "string", "nullable": true },
-          "heiti": { "type": "string", "nullable": true },
-          "heimili": { "type": "string", "nullable": true },
-          "stadur": { "type": "string", "nullable": true },
-          "postnumer": { "type": "string", "nullable": true },
-          "tegund": { "type": "integer", "format": "int32" },
-          "hlutverk": { "type": "string", "nullable": true },
-          "netfang": { "type": "string", "nullable": true },
-          "simi": { "type": "string", "nullable": true }
-        },
-        "additionalProperties": false
-      },
-      "NotandagognItem": {
-        "type": "object",
-        "properties": {
-          "guid": { "type": "string", "nullable": true },
-          "flokkur": { "type": "string", "nullable": true },
-          "heiti": { "type": "string", "nullable": true },
-          "tegund": { "type": "string", "nullable": true },
-          "gildi": { "type": "string", "nullable": true }
-        },
-        "additionalProperties": false,
-        "description": "Kennitala á Viðkomandi"
-      },
-      "GreidslaItem": {
-        "type": "object",
-        "properties": {
-          "upphaed": { "type": "number", "format": "double" },
-          "dags": { "type": "string", "nullable": true },
-          "korthafi": { "type": "string", "nullable": true },
-          "kortanumer": { "type": "string", "nullable": true },
-          "tegundKorts": { "type": "string", "nullable": true }
-        },
-        "additionalProperties": false
-      },
-      "FilesItem": {
-        "type": "object",
-        "properties": {
-          "flokkur": { "type": "integer", "format": "int32" },
-          "heiti": { "type": "string", "nullable": true },
-          "dags": { "type": "string", "nullable": true },
-          "tegund": { "type": "string", "nullable": true },
-          "fileID": { "type": "string", "nullable": true },
-          "ending": { "type": "string", "nullable": true }
-        },
-        "additionalProperties": false
-      },
       "VottordUpplB": {
         "type": "object",
         "properties": {
@@ -1314,132 +1443,11 @@
         },
         "additionalProperties": false
       },
-      "UploadFilesItem": {
-        "type": "object",
-        "properties": {
-          "file": { "type": "string", "nullable": true },
-          "applicationID": { "type": "string", "nullable": true },
-          "content": { "type": "string", "nullable": true },
-          "applicationType": { "type": "string", "nullable": true }
-        },
-        "additionalProperties": false
-      },
       "applicantType": {
         "enum": [0, 1, 2, -2],
         "type": "integer",
         "description": "Type of applicants",
         "format": "int32"
-      },
-      "Adilar": {
-        "type": "object",
-        "properties": {
-          "kennitala": {
-            "type": "string",
-            "description": "kennitala for legal / natural persons",
-            "nullable": true
-          },
-          "heiti": {
-            "type": "string",
-            "description": "Name",
-            "nullable": true
-          },
-          "heimili": {
-            "type": "string",
-            "description": "Address",
-            "nullable": true
-          },
-          "tegund": { "$ref": "#/components/schemas/applicantType" },
-          "hlutverk": {
-            "type": "string",
-            "description": "description for the person",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false,
-        "description": "Information regarding legal and natural persons within the application."
-      },
-      "Notandagogn": {
-        "type": "object",
-        "properties": {
-          "flokkur": {
-            "type": "string",
-            "description": "Group name",
-            "nullable": true
-          },
-          "heiti": {
-            "type": "string",
-            "description": "Name of the variable",
-            "nullable": true
-          },
-          "tegund": {
-            "type": "string",
-            "description": "Type of variable",
-            "nullable": true
-          },
-          "gildi": {
-            "type": "string",
-            "description": "Value for inspection",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false,
-        "description": "Data entered by the applicant to be inspected bu the ruleset"
-      },
-      "Reglusett": {
-        "type": "object",
-        "properties": {
-          "flokkur": {
-            "type": "string",
-            "description": "Groupname for the variable",
-            "nullable": true
-          },
-          "heiti": {
-            "type": "string",
-            "description": "Name of the variable",
-            "nullable": true
-          },
-          "tegund": {
-            "type": "string",
-            "description": "Type of variable",
-            "nullable": true
-          },
-          "gildi": {
-            "type": "string",
-            "description": "The value to be set for the variable",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false,
-        "description": "Data the can be set by the ruleset."
-      },
-      "ReglusettVottordB": {
-        "type": "object",
-        "properties": {
-          "adilar": {
-            "type": "array",
-            "items": { "$ref": "#/components/schemas/Adilar" },
-            "description": "List of persons that have a role in the application",
-            "nullable": true
-          },
-          "notandagogn": {
-            "type": "array",
-            "items": { "$ref": "#/components/schemas/Notandagogn" },
-            "description": "Information extracted from the application the the ruleset can use.",
-            "nullable": true
-          },
-          "reglusett": {
-            "type": "array",
-            "items": { "$ref": "#/components/schemas/Reglusett" },
-            "description": "Variable that the ruleset can set to be used in the application.\r\nCurrently we support String, Int and Date.",
-            "nullable": true
-          },
-          "applicationType": {
-            "type": "string",
-            "description": "Unique id for the application type this unique id is provided when\r\nthe application is made by the provider. This can be used to have\r\ndifferent behaviour depending on application type.",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
       }
     },
     "securitySchemes": {

@@ -37,7 +37,7 @@ export const OperatorSection: FC<
               {isOperator && `(${formatMessage(review.status.youLabel)})`}
             </Text>
             <Text>{name}</Text>
-            <Text>{kennitala.format(nationalId || '', '-')}</Text>
+            <Text>{kennitala.format(nationalId || '')}</Text>
             <Text>{email}</Text>
             <Text>{formatPhoneNumber(phone || '')}</Text>
           </Box>

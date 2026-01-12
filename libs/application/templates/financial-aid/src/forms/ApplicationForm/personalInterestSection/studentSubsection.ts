@@ -19,7 +19,6 @@ export const studentSubsection = buildSubSection({
       children: [
         buildRadioField({
           id: 'student.isStudent',
-          title: '',
           options: studentOptions,
           marginBottom: 2,
         }),

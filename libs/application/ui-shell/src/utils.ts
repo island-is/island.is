@@ -65,22 +65,25 @@ export const getFieldsWithNoAnswer = (
 
 export const findSubmitField = (
   screen: FormScreen,
-): SubmitField | undefined => {
+): Array<SubmitField> | undefined => {
   if (screen.type === FieldTypes.SUBMIT) {
-    return screen
+    return [screen]
   }
+
   if (screen.type === FormItemTypes.MULTI_FIELD) {
-    const reviewScreen = screen.children.find(
+    const reviewScreen = screen.children.filter(
       (child) => child.type === FieldTypes.SUBMIT,
     )
-    if (reviewScreen !== undefined) {
-      return reviewScreen as SubmitField
+    if (reviewScreen.length > 0) {
+      return reviewScreen as Array<SubmitField>
     }
   }
-  if (screen.type === FormItemTypes.EXTERNAL_DATA_PROVIDER) {
-    if (screen.submitField !== undefined) {
-      return screen.submitField
-    }
+
+  if (
+    screen.type === FormItemTypes.EXTERNAL_DATA_PROVIDER &&
+    screen.submitField !== undefined
+  ) {
+    return [screen.submitField]
   }
   return undefined
 }

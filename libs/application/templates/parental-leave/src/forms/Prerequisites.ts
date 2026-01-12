@@ -1,4 +1,6 @@
 import {
+  NO,
+  YES,
   buildAlertMessageField,
   buildDataProviderItem,
   buildDataProviderPermissionItem,
@@ -21,17 +23,14 @@ import {
   FormModes,
   UserProfileApi,
 } from '@island.is/application/types'
-import { conclusionMessages } from '@island.is/application/ui-forms'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
-import Logo from '../assets/Logo'
+import { DirectorateOfLabourLogo } from '@island.is/application/assets/institution-logos'
 import { defaultMultipleBirthsMonths } from '../config'
 import {
   ADOPTION,
-  NO,
   OTHER_NO_CHILDREN_FOUND,
   PERMANENT_FOSTER_CARE,
   ParentalRelations,
-  YES,
 } from '../constants'
 import { ChildrenApi, GetPersonInformation } from '../dataProviders'
 import { errorMessages, parentalLeaveFormMessages } from '../lib/messages'
@@ -52,7 +51,7 @@ const shouldRenderMockDataSubSection = !isRunningOnEnvironment('production')
 export const PrerequisitesForm: Form = buildForm({
   id: 'ParentalLeavePrerequisites',
   title: parentalLeaveFormMessages.shared.formTitle,
-  logo: Logo,
+  logo: DirectorateOfLabourLogo,
   mode: FormModes.DRAFT,
   children: [
     buildSection({
@@ -383,6 +382,12 @@ export const PrerequisitesForm: Form = buildForm({
                   subTitle:
                     parentalLeaveFormMessages.shared.salaryInformationSubTitle,
                 }),
+                buildDataProviderPermissionItem({
+                  id: 'taxInfo',
+                  title: parentalLeaveFormMessages.shared.taxInformationTitle,
+                  subTitle:
+                    parentalLeaveFormMessages.shared.taxInformationSubTitle,
+                }),
               ],
             }),
           ],
@@ -454,7 +459,6 @@ export const PrerequisitesForm: Form = buildForm({
                 }),
                 buildSubmitField({
                   id: 'toDraft',
-                  title: '',
                   refetchApplicationAfterSubmit: true,
                   actions: [
                     {
@@ -470,7 +474,6 @@ export const PrerequisitesForm: Form = buildForm({
             // Tackle that as AS task.
             buildDescriptionField({
               id: 'unused',
-              title: '',
               description: '',
             }),
           ],
@@ -543,7 +546,6 @@ export const PrerequisitesForm: Form = buildForm({
                 }),
                 buildSubmitField({
                   id: 'toDraft',
-                  title: '',
                   refetchApplicationAfterSubmit: true,
                   actions: [
                     {
@@ -561,7 +563,6 @@ export const PrerequisitesForm: Form = buildForm({
             // Tackle that as AS task.
             buildDescriptionField({
               id: 'unused',
-              title: '',
               description: '',
             }),
           ],
@@ -578,7 +579,6 @@ export const PrerequisitesForm: Form = buildForm({
               children: [
                 buildRadioField({
                   id: 'selectedChild',
-                  title: '',
                   description:
                     parentalLeaveFormMessages.selectChild.screenDescription,
                   required: true,
@@ -640,7 +640,6 @@ export const PrerequisitesForm: Form = buildForm({
                 }),
                 buildSubmitField({
                   id: 'toDraft',
-                  title: '',
                   refetchApplicationAfterSubmit: true,
                   actions: [
                     {
@@ -657,7 +656,6 @@ export const PrerequisitesForm: Form = buildForm({
             // Tackle that as AS task.
             buildDescriptionField({
               id: 'unused',
-              title: '',
               description: '',
             }),
           ],

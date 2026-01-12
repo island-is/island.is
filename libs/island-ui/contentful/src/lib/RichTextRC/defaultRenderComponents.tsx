@@ -19,6 +19,7 @@ import { SectionWithVideo } from '../SectionWithVideo/SectionWithVideo'
 import { TeamList } from '../TeamList/TeamList'
 import { ContactUs } from '../ContactUs/ContactUs'
 import { Location } from '../Location/Location'
+import { SignatureCollectionCollectionType } from '@island.is/api/schema'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore make web strict
 export const renderConnectedComponent = (slice) => {
@@ -43,7 +44,15 @@ export const renderConnectedComponent = (slice) => {
     case 'Lögmenn/Lawyers':
       return <LawyersList slice={slice} />
     case 'Meðmælalistar/SignatureLists':
-      return <SignatureLists slice={slice} />
+      return (
+        <SignatureLists
+          slice={slice}
+          collectionType={
+            (slice?.configJson?.collectionType ??
+              (SignatureCollectionCollectionType.OtherUnknown as unknown)) as SignatureCollectionCollectionType
+          }
+        />
+      )
     default:
       break
   }
@@ -64,7 +73,7 @@ export const defaultRenderComponentObject = {
   Statistics: (slice) => <Statistics {...slice} />,
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore make web strict
-  Image: (slice) => <Image {...slice} thumbnail={slice.url + '?w=50'} />,
+  Image: (slice) => <Image {...slice} />,
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore make web strict
   Asset: (slice) => <AssetLink {...slice} />,

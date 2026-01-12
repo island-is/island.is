@@ -3,9 +3,10 @@ import {
   buildSubSection,
   buildTextField,
   buildCheckboxField,
+  YES,
+  NO,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import { NO, YES } from '../../lib/constants'
 
 export const subSectionOtherInfo = buildSubSection({
   id: 'otherInfo',

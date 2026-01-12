@@ -25,7 +25,7 @@ env:
   BACKEND_URL: 'http://web-judicial-system-backend'
   IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
   LOG_LEVEL: 'info'
-  NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
+  NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
   SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
 grantNamespaces:
   - 'nginx-ingress-internal'
@@ -60,7 +60,8 @@ ingress:
           - '/'
 namespace: 'judicial-system'
 podDisruptionBudget:
-  maxUnavailable: 1
+  minAvailable: 1
+  unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534
 pvcs: []
@@ -70,11 +71,11 @@ replicaCount:
   min: 3
 resources:
   limits:
-    cpu: '200m'
-    memory: '256Mi'
+    cpu: '400m'
+    memory: '512Mi'
   requests:
-    cpu: '100m'
-    memory: '128Mi'
+    cpu: '30m'
+    memory: '256Mi'
 secrets:
   BACKEND_ACCESS_TOKEN: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN'
   CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'

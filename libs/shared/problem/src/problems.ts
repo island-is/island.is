@@ -14,6 +14,7 @@ export interface HttpProblem extends BaseProblem {
 export interface HttpInternalServerErrorProblem extends BaseProblem {
   type: ProblemType.HTTP_INTERNAL_SERVER_ERROR
   stack?: string
+  organizationSlug?: string
 }
 
 export type ValidationFailedFields = {
@@ -30,6 +31,9 @@ export type AlternativeSubject = {
 export interface BadSubjectProblem extends BaseProblem {
   type: ProblemType.BAD_SUBJECT
   alternativeSubjects?: AlternativeSubject[]
+}
+export interface BadSessionProblem extends BaseProblem {
+  type: ProblemType.BAD_SESSION
 }
 
 export interface AttemptFailedProblem extends BaseProblem {

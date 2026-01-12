@@ -2,9 +2,9 @@ import { defineTemplateApi } from '@island.is/application/types'
 import { ApiActions } from '../lib/constants'
 
 export {
-  NationalRegistryUserApi,
-  NationalRegistrySpouseApi,
-  ChildrenCustodyInformationApi,
+  NationalRegistryV3UserApi,
+  NationalRegistryV3SpouseApi,
+  ChildrenCustodyInformationApiV3,
 } from '@island.is/application/types'
 
 export const CurrentApplicationApi = defineTemplateApi({

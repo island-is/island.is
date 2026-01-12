@@ -11,4 +11,4 @@ export interface SmartSolutionsConfig {
 export const GRAPHQL_CLIENT_FACTORY = 'grahpql-client-factory'
 
 /** Category to attach each log message to */
-export const LOG_CATEGORY = 'clients-smart-solutions'
+export const LOG_CATEGORY = 'clients-smart-solutions-v2'

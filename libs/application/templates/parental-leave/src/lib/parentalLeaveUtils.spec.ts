@@ -12,8 +12,6 @@ import {
 } from '@island.is/application/types'
 
 import {
-  NO,
-  YES,
   MANUAL,
   SINGLE,
   SPOUSE,
@@ -58,6 +56,7 @@ import {
   getActionName,
 } from './parentalLeaveUtils'
 import { PersonInformation } from '../types'
+import { NO, YES } from '@island.is/application/core'
 
 const buildApplication = (data?: {
   answers?: FormValue
@@ -179,12 +178,48 @@ describe('getExpectedDateOfBirthOrAdoptionDateOrBirthDate', () => {
       },
     })
 
-    const res = getExpectedDateOfBirthOrAdoptionDateOrBirthDate(
-      application,
-      true,
-    )
+    const res = getExpectedDateOfBirthOrAdoptionDateOrBirthDate(application)
 
     expect(res).toEqual('2021-05-10')
+  })
+
+  it('should return the selected child adoption date if adoption', () => {
+    const application = buildApplication({
+      answers: {
+        selectedChild: 0,
+      },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 180,
+                transferredDays: undefined, // Transferred days are only defined for secondary parents
+                parentalRelation: ParentalRelations.primary,
+                expectedDateOfBirth: '',
+                adoptionDate: '2021-05-17',
+                dateOfBirth: '2021-01-01',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date(),
+          status: 'success',
+        },
+        dateOfBirth: {
+          data: {
+            dateOfBirth: '2021-01-01',
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = getExpectedDateOfBirthOrAdoptionDateOrBirthDate(application)
+
+    expect(res).toEqual('2021-05-17')
   })
 })
 
@@ -422,7 +457,7 @@ describe('getMaxMultipleBirthsDays', () => {
 
     const res = getMaxMultipleBirthsDays(application.answers)
 
-    expect(res).toEqual(90)
+    expect(res).toEqual(180)
   })
 
   it('should return the number of maximum multiple request days for 3 children', () => {
@@ -438,7 +473,7 @@ describe('getMaxMultipleBirthsDays', () => {
 
     const res = getMaxMultipleBirthsDays(application.answers)
 
-    expect(res).toEqual(180)
+    expect(res).toEqual(360)
   })
 })
 
@@ -456,7 +491,7 @@ describe('getMaxMultipleBirthsInMonths', () => {
 
     const res = getMaxMultipleBirthsInMonths(application.answers)
 
-    expect(res).toEqual(3)
+    expect(res).toEqual(6)
   })
 })
 
@@ -474,7 +509,7 @@ describe('getMaxMultipleBirthsAndDefaultMonths', () => {
 
     const res = getMaxMultipleBirthsAndDefaultMonths(application.answers)
 
-    expect(res).toEqual(9)
+    expect(res).toEqual(12)
   })
 })
 
@@ -483,7 +518,7 @@ describe('getAvailableRightsInDays', () => {
     const application = buildApplication({
       answers: {
         selectedChild: 0,
-        multipleBirthsRequestDays: 90,
+        multipleBirthsRequestDays: 180,
         multipleBirths: {
           hasMultipleBirths: YES,
           multipleBirths: 2,
@@ -515,7 +550,7 @@ describe('getAvailableRightsInDays', () => {
 
     const res = getAvailableRightsInDays(application)
 
-    expect(res).toBe(300)
+    expect(res).toBe(390)
   })
 
   it('should return the number of available right with multiple births and giving days for primary parent', () => {
@@ -959,7 +994,7 @@ describe('getAvailableRightsInMonths', () => {
     const application = buildApplication({
       answers: {
         selectedChild: 0,
-        multipleBirthsRequestDays: 90,
+        multipleBirthsRequestDays: 180,
         multipleBirths: {
           hasMultipleBirths: YES,
           multipleBirths: 2,
@@ -991,7 +1026,7 @@ describe('getAvailableRightsInMonths', () => {
 
     const res = getAvailableRightsInMonths(application)
 
-    expect(res).toBe(10)
+    expect(res).toBe(13)
   })
 })
 
@@ -1065,7 +1100,7 @@ describe('Single Parent', () => {
 
     const res = getAvailableRightsInDays(application)
 
-    expect(res).toBe(450)
+    expect(res).toBe(540)
   })
 
   it('getAvailablePersonalRightsSingleParentInMonths - should return 12 months for single parents', () => {
@@ -1227,6 +1262,7 @@ describe('getApplicationExternalData', () => {
       dataProvider: {
         children: 'Mock child',
       },
+      VMSTOtherParent: {},
       navId: '',
       userEmail: 'mock@email.is',
       userPhoneNumber: 'Mock number',

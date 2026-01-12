@@ -5,15 +5,22 @@ import { SignatureCollectionPaths } from './lib/paths'
 import { ApiScope } from '@island.is/auth/scopes'
 import { Navigate } from 'react-router-dom'
 
-const SignatureListsParliamentary = lazy(() =>
+const SignatureCollectionParliamentary = lazy(() =>
   import('./screens/Parliamentary/'),
 )
-const SignatureListsPresidential = lazy(() => import('./screens/Presidential'))
+const SignatureCollectionPresidential = lazy(() =>
+  import('./screens/Presidential'),
+)
+const SignatureCollectionMunicipal = lazy(() => import('./screens/Municipal'))
+
 const ViewListPresidential = lazy(() =>
   import('./screens/Presidential/OwnerView/ViewList'),
 )
 const ViewListParliamentary = lazy(() =>
   import('./screens/Parliamentary/OwnerView/ViewList'),
+)
+const ViewListMunicipal = lazy(() =>
+  import('./screens/Municipal/OwnerView/ViewList'),
 )
 
 export const signatureCollectionModule: PortalModule = {
@@ -26,8 +33,11 @@ export const signatureCollectionModule: PortalModule = {
         path: SignatureCollectionPaths.RootPath,
         enabled: userInfo.scopes.includes(ApiScope.signatureCollection),
         element: (
-          /* Default path to general petitions since these are always ongoing */
-          <Navigate to={SignatureCollectionPaths.GeneralPetitions} replace />
+          /* Default path to municipal lists since these are next */
+          <Navigate
+            to={SignatureCollectionPaths.SignatureCollectionMunicipalLists}
+            replace
+          />
         ),
       },
       // Parliamentary
@@ -36,7 +46,7 @@ export const signatureCollectionModule: PortalModule = {
         enabled: userInfo.scopes.includes(ApiScope.signatureCollection),
         path: SignatureCollectionPaths.SignatureCollectionParliamentaryLists,
         key: 'ParliamentaryLists',
-        element: <SignatureListsParliamentary />,
+        element: <SignatureCollectionParliamentary />,
       },
       {
         name: m.signatureCollectionParliamentaryLists,
@@ -51,7 +61,7 @@ export const signatureCollectionModule: PortalModule = {
         enabled: userInfo.scopes.includes(ApiScope.signatureCollection),
         path: SignatureCollectionPaths.SignatureCollectionLists,
         key: 'PresidentialLists',
-        element: <SignatureListsPresidential />,
+        element: <SignatureCollectionPresidential />,
       },
       {
         name: m.signatureCollectionPresidentialLists,
@@ -59,6 +69,21 @@ export const signatureCollectionModule: PortalModule = {
         key: 'PresidentialLists',
         enabled: userInfo.scopes.includes(ApiScope.signatureCollection),
         element: <ViewListPresidential />,
+      },
+      // Municipal
+      {
+        name: m.signatureCollectionMunicipalLists,
+        enabled: userInfo.scopes.includes(ApiScope.signatureCollection),
+        path: SignatureCollectionPaths.SignatureCollectionMunicipalLists,
+        key: 'MunicipalLists',
+        element: <SignatureCollectionMunicipal />,
+      },
+      {
+        name: m.signatureCollectionMunicipalLists,
+        path: SignatureCollectionPaths.ViewMunicipalList,
+        key: 'MunicipalLists',
+        enabled: userInfo.scopes.includes(ApiScope.signatureCollection),
+        element: <ViewListMunicipal />,
       },
     ]
 
@@ -69,14 +94,12 @@ export const signatureCollectionModule: PortalModule = {
     {
       name: m.signatureCollectionParliamentaryLists,
       path: SignatureCollectionPaths.CompanySignatureCollectionParliamentaryLists,
-      key: 'ParliamentaryLists',
       enabled: userInfo.scopes.includes(ApiScope.signatureCollection),
-      element: <SignatureListsParliamentary />,
+      element: <SignatureCollectionParliamentary />,
     },
     {
       name: m.signatureCollectionParliamentaryLists,
       path: SignatureCollectionPaths.CompanyViewParliamentaryList,
-      key: 'ParliamentaryLists',
       enabled: userInfo.scopes.includes(ApiScope.signatureCollection),
       element: <ViewListParliamentary />,
     },

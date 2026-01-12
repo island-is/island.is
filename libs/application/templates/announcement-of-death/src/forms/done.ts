@@ -8,7 +8,7 @@ import {
   buildImageField,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
-import CoatOfArms from '../assets/CoatOfArms'
+import { CoatOfArms } from '@island.is/application/assets/institution-logos'
 import { m } from '../lib/messages'
 import {
   files,
@@ -30,7 +30,6 @@ export const done: Form = buildForm({
   children: [
     buildSection({
       id: 'done',
-      title: '',
       children: [
         buildMultiField({
           id: 'done',
@@ -40,12 +39,10 @@ export const done: Form = buildForm({
           children: [
             buildCustomField({
               id: 'viewOverviewButton',
-              title: '',
               component: 'ViewOverviewInDone',
             }),
             buildImageField({
               id: 'viewOverview',
-              title: '',
               image: AOD,
               imagePosition: 'center',
               condition: (answers) =>
@@ -53,7 +50,6 @@ export const done: Form = buildForm({
             }),
             buildDescriptionField({
               id: 'nextSteps',
-              title: '',
               description: m.nextStepsText,
               condition: (answers) =>
                 getValueViaPath(answers, 'viewOverview') !== true,

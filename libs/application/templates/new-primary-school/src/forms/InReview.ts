@@ -1,23 +1,23 @@
 import {
-  buildCustomField,
   buildForm,
+  buildMultiField,
   buildSection,
 } from '@island.is/application/core'
 import { Form } from '@island.is/application/types'
-import { inReviewFormMessages } from '../lib/messages'
+import { overviewFields } from '../utils/overviewFields'
+import { overviewMessages } from '../lib/messages'
 
 export const InReview: Form = buildForm({
-  id: 'inReviewForm',
-  title: inReviewFormMessages.formTitle,
+  id: 'newPrimarySchoolInReview',
   children: [
     buildSection({
       id: 'review',
-      title: '',
+      tabTitle: overviewMessages.sectionTitle,
       children: [
-        buildCustomField({
-          id: 'inReview',
-          title: '',
-          component: 'Review',
+        buildMultiField({
+          id: 'inReviewOverviewScreen',
+          title: overviewMessages.sectionTitle,
+          children: [...overviewFields(false)],
         }),
       ],
     }),

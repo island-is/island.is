@@ -32,7 +32,7 @@ env:
   NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentity.b2clogin.com/skraidentity.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
   NATIONAL_REGISTRY_B2C_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
   NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentity.onmicrosoft.com/midlun/.default'
-  NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
+  NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
   SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   SYSLUMENN_HOST: 'https://api.syslumenn.is/api'
   SYSLUMENN_TIMEOUT: '3000'
@@ -41,7 +41,7 @@ env:
   XROAD_CLIENT_ID: 'IS/GOV/5501692829/island-is-client'
   XROAD_NATIONAL_REGISTRY_ACTOR_TOKEN: 'true'
   XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379"]'
-  XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS/GOV/6503760649/SKRA-Protected/Einstaklingar-v1'
+  XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Einstaklingar-v1'
   XROAD_RSK_PROCURING_ACTOR_TOKEN: 'true'
   XROAD_RSK_PROCURING_PATH: 'IS/GOV/5402696029/Skatturinn/relationships-v1'
   XROAD_RSK_PROCURING_REDIS_NODES: '["clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379"]'
@@ -80,7 +80,10 @@ ingress:
           - '/'
 namespace: 'personal-representative'
 podDisruptionBudget:
-  maxUnavailable: 1
+  minAvailable: 1
+  unhealthyPodEvictionPolicy: 'IfHealthyBudget'
+podSecurityContext:
+  fsGroup: 65534
 pvcs: []
 replicaCount:
   default: 2
@@ -106,3 +109,8 @@ secrets:
 securityContext:
   allowPrivilegeEscalation: false
   privileged: false
+serviceAccount:
+  annotations:
+    eks.amazonaws.com/role-arn: 'arn:aws:iam::567113216315:role/services-auth-personal-representative'
+  create: true
+  name: 'services-auth-personal-representative'

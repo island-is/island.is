@@ -1,10 +1,10 @@
 import {
-  buildCustomField,
   buildDescriptionField,
   buildKeyValueField,
   getValueViaPath,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
+import { Files } from '../../lib/dataSchema'
 
 export const overviewAttachments = [
   buildDescriptionField({
@@ -15,32 +15,51 @@ export const overviewAttachments = [
     marginBottom: 'gutter',
   }),
   buildKeyValueField({
+    label: m.additionalCommentsTitle,
+    value: ({ answers }) =>
+      getValueViaPath<string>(answers, 'additionalComments') || '',
+    condition: (answers) => {
+      const comments = getValueViaPath<string>(answers, 'additionalComments')
+      return comments !== undefined && comments.trim().length > 0
+    },
+  }),
+  buildDescriptionField({
+    id: 'additionalComments_space',
+    space: 'gutter',
+    condition: (answers) => {
+      const comments = getValueViaPath<string>(answers, 'additionalComments')
+      return comments !== undefined && comments.trim().length > 0
+    },
+  }),
+  buildKeyValueField({
     label: '',
     value: ({ answers }) => {
-      const attachments = getValueViaPath(answers, 'estateAttachments') as any
-      return attachments?.attached.file.map(
-        (f: { key: string; name: string }) => {
-          return f.name
-        },
+      const files = getValueViaPath<Array<Files>>(
+        answers,
+        'estateAttachments.attached.file',
       )
+      return files?.map((f) => {
+        return f.name
+      })
     },
     condition: (answers) => {
-      const files = getValueViaPath(answers, 'estateAttachments') as {
-        attached: { file: { length: number } }
-      }
-      return files?.attached?.file?.length > 0
+      const fileLength = getValueViaPath<number>(
+        answers,
+        'estateAttachments.attached.file.length',
+      )
+      return fileLength !== undefined && fileLength > 0
     },
   }),
   buildDescriptionField({
     id: 'attachmentsNotFilledOut',
-    title: '',
     description: m.notFilledOutItalic,
     space: 'gutter',
     condition: (answers) => {
-      const files = getValueViaPath(answers, 'estateAttachments') as {
-        attached: { file: { length: number } }
-      }
-      return files?.attached?.file?.length === 0
+      const fileLength = getValueViaPath<number>(
+        answers,
+        'estateAttachments.attached.file.length',
+      )
+      return fileLength === 0
     },
   }),
 ]

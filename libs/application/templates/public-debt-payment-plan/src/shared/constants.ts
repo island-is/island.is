@@ -1,5 +1,3 @@
-export const YES = 'yes'
-export const NO = 'no'
 export const AMOUNT = 'amount'
 export const MONTHS = 'months'
 export const isPaymentPlanFulfilledField = 'paymentPlanContext.isFulfilled'

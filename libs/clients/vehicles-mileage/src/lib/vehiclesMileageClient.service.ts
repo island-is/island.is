@@ -1,50 +1,46 @@
-import { Configuration, MileageReadingApi } from '../../gen/fetch'
-import { Provider } from '@nestjs/common'
+import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
+import { MileageReadingApi } from '../../gen/fetch'
+import { GetMileageReadingInput } from './inputs/getMileageReadings.input'
 import {
-  ConfigType,
-  XRoadConfig,
-  LazyDuringDevScope,
-  IdsClientConfig,
-} from '@island.is/nest/config'
-import { VehiclesMileageClientConfig } from './vehiclesMileageClient.config'
-import { createEnhancedFetch } from '@island.is/clients/middlewares'
+  MileageHistoryDto,
+  mapMileageReadingsDto,
+} from './dtos/mileageReading.dto'
+import { Inject, Injectable } from '@nestjs/common'
+import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 
-export const VehiclesMileageApiProvider: Provider<MileageReadingApi> = {
-  provide: MileageReadingApi,
-  scope: LazyDuringDevScope,
-  useFactory: (
-    xroadConfig: ConfigType<typeof XRoadConfig>,
-    config: ConfigType<typeof VehiclesMileageClientConfig>,
-    idsClientConfig: ConfigType<typeof IdsClientConfig>,
-  ) =>
-    new MileageReadingApi(
-      new Configuration({
-        fetchApi: createEnhancedFetch({
-          name: 'clients-vehicles-mileage',
-          organizationSlug: 'samgongustofa',
-          autoAuth: idsClientConfig.isConfigured
-            ? {
-                mode: 'tokenExchange',
-                issuer: idsClientConfig.issuer,
-                clientId: idsClientConfig.clientId,
-                clientSecret: idsClientConfig.clientSecret,
-                scope: config.scope,
-              }
-            : undefined,
-        }),
+@Injectable()
+export class VehiclesMileageClientService {
+  constructor(
+    private readonly mileageReadingApi: MileageReadingApi,
+    @Inject(LOGGER_PROVIDER)
+    private readonly logger: Logger,
+  ) {}
 
-        basePath: `${xroadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
-        headers: {
-          'X-Road-Client': xroadConfig.xRoadClient,
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-      }),
-    ),
+  private getMileageWithAuth = (user: User) => {
+    return this.mileageReadingApi.withMiddleware(
+      new AuthMiddleware(user as Auth),
+    )
+  }
 
-  inject: [
-    XRoadConfig.KEY,
-    VehiclesMileageClientConfig.KEY,
-    IdsClientConfig.KEY,
-  ],
+  getMileageHistory = async (
+    user: User,
+    input: GetMileageReadingInput,
+  ): Promise<MileageHistoryDto | null> => {
+    const res = await this.getMileageWithAuth(user).getMileageReading({
+      permno: input.vehicleId,
+      includeDeleted: false,
+    })
+
+    const samplePermno = res.length > 0 ? res[0].permno : undefined
+
+    if (!samplePermno) {
+      this.logger.warn('Mileage response has no vehicle id, invalid response')
+      return null
+    }
+
+    return {
+      vehicleId: samplePermno,
+      registrationHistory: mapMileageReadingsDto(res),
+    }
+  }
 }

@@ -66,7 +66,7 @@ export const PaymentPending: FC<
 
     if (!paymentStatus.fulfilled) {
       if (shouldRedirect) {
-        window.document.location.href = getRedirectUrl(paymentStatus.paymentUrl)
+        window.document.location.href = paymentStatus.paymentUrl
       }
       return
     }
@@ -127,7 +127,7 @@ export const PaymentPending: FC<
           height: 400,
         }}
       >
-        <LoadingDots large />
+        <LoadingDots size="large" />
       </Box>
     </Box>
   )

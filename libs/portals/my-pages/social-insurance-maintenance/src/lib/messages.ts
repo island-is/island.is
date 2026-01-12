@@ -70,6 +70,10 @@ export const m = defineMessages({
     id: 'sp.social-insurance-maintenance:payment-types',
     defaultMessage: 'Greiðslutegundir',
   },
+  year: {
+    id: 'sp.social-insurance-maintenance:year',
+    defaultMessage: 'Árið',
+  },
   yearCumulativeTotal: {
     id: 'sp.social-insurance-maintenance:year-cumulative-total',
     defaultMessage: 'Samtals fyrir árið',
@@ -82,6 +86,10 @@ export const m = defineMessages({
     id: 'sp.social-insurance-maintenance:payments-received',
     defaultMessage: 'Útborgað',
   },
+  totalPaymentsReceived: {
+    id: 'sp.social-insurance-maintenance:total-payments-received',
+    defaultMessage: 'Útborgað',
+  },
   noPaymentsFound: {
     id: 'sp.social-insurance-maintenance:no-payments-found',
     defaultMessage: 'Engar greiðslur fundust fyrir þetta ár',
@@ -92,11 +100,15 @@ export const m = defineMessages({
   },
   viewIncomePlan: {
     id: 'sp.social-insurance-maintenance:view-income-plan',
-    defaultMessage: 'Skoða tekjuáætlun',
+    defaultMessage: 'Skoða núgildandi tekjuáætlun',
   },
   submitIncomePlan: {
     id: 'sp.social-insurance-maintenance:submit-income-plan',
     defaultMessage: 'Senda inn tekjuáætlun',
+  },
+  type: {
+    id: 'sp.social-insurance-maintenance:type',
+    defaultMessage: 'Tegund',
   },
   incomeType: {
     id: 'sp.social-insurance-maintenance:income-type',
@@ -114,9 +126,25 @@ export const m = defineMessages({
     id: 'sp.social-insurance-maintenance:received-in-progress',
     defaultMessage: 'Móttekið til vinnslu',
   },
+  continueApplication: {
+    id: 'sp.social-insurance-maintenance:continue-application',
+    defaultMessage: 'Halda áfram með umsókn',
+  },
   noActiveIncomePlan: {
     id: 'sp.social-insurance-maintenance:no-active-income-plan',
     defaultMessage: 'Engin gild tekjuáætlun',
+  },
+  applicationInProgress: {
+    id: 'sp.social-insurance-maintenance:application-in-progress',
+    defaultMessage: 'Umsókn í vinnslu',
+  },
+  applicationRejected: {
+    id: 'sp.social-insurance-maintenance:application-rejected',
+    defaultMessage: 'Umsókn hafnað',
+  },
+  applicationInReview: {
+    id: 'sp.social-insurance-maintenance:application-in-review',
+    defaultMessage: 'Umsókn bíður samþykkis',
   },
   incomePlanLink: {
     id: 'sp.social-insurance-maintenance:income-plan-link',
@@ -131,5 +159,9 @@ export const m = defineMessages({
     id: 'sp.social-insurance-maintenance:payment-plan-temporarily-unavailable',
     defaultMessage:
       'Bráðabirgðagreiðsluáætlun 2025 verður tilbúin seinni part desember',
+  },
+  breakdown: {
+    id: 'sp.social-insurance-maintenance:payment-plan-breakdown',
+    defaultMessage: 'Sundurliðun',
   },
 })

@@ -10,11 +10,9 @@ import {
   ReviewScreenProps,
 } from '../../../shared'
 import { getValueViaPath } from '@island.is/application/core'
-import {
-  formatPhoneNumber,
-  ReviewGroup,
-} from '@island.is/application/ui-components'
+import { ReviewGroup } from '@island.is/application/ui-components'
 import kennitala from 'kennitala'
+import { formatPhoneNumber } from '../../../utils'
 
 export const CoOwnersSection: FC<
   React.PropsWithChildren<FieldBaseProps & ReviewScreenProps>
@@ -76,9 +74,9 @@ export const CoOwnersSection: FC<
                     {isCoOwner && `(${formatMessage(review.status.youLabel)})`}
                   </Text>
                   <Text>{name}</Text>
-                  <Text>{kennitala.format(nationalId!, '-')}</Text>
+                  <Text>{kennitala.format(nationalId!)}</Text>
                   <Text>{email}</Text>
-                  <Text>{formatPhoneNumber(phone!)}</Text>
+                  <Text>{formatPhoneNumber(phone)}</Text>
                 </Box>
               </GridColumn>
             )

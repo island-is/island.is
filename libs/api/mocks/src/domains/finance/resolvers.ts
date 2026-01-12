@@ -3,6 +3,7 @@ import { store } from './store'
 
 export const resolvers: Resolvers = {
   Slice: {
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     __resolveType: (parent) => {
       return parent.__typename as never
     },
@@ -11,6 +12,9 @@ export const resolvers: Resolvers = {
   Query: {
     getFinanceStatus: () => {
       return store.financeStatus
+    },
+    getDebtStatus: () => {
+      return store.debtStatus
     },
     getFinanceStatusDetails: () => {
       return store.financeStatusDetails

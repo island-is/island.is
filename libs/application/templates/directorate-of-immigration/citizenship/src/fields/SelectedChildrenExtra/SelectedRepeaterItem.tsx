@@ -16,19 +16,14 @@ import {
   InputController,
   RadioController,
 } from '@island.is/shared/form-fields'
-import {
-  FieldBaseProps,
-  GenericFormField,
-  NO,
-  YES,
-} from '@island.is/application/types'
+import { FieldBaseProps, GenericFormField } from '@island.is/application/types'
 import { information, personal, selectChildren } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { HiddenTextInput } from '../HiddenTextInput'
 import debounce from 'lodash/debounce'
 import { ChildrenOfApplicant } from '../../shared'
 import { getSelectedCustodyChild } from '../../utils'
-import { getErrorViaPath } from '@island.is/application/core'
+import { getErrorViaPath, NO, YES } from '@island.is/application/core'
 
 interface Props {
   index: number

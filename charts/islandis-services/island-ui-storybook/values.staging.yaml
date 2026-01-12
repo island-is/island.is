@@ -20,7 +20,7 @@ name: 'island-ui-storybook'
 enabled: true
 env:
   LOG_LEVEL: 'info'
-  NODE_OPTIONS: '--max-old-space-size=230'
+  NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps'
   SERVERSIDE_FEATURES_ON: ''
 grantNamespaces:
   - 'nginx-ingress-external'
@@ -55,7 +55,8 @@ ingress:
           - '/'
 namespace: 'storybook'
 podDisruptionBudget:
-  maxUnavailable: 1
+  minAvailable: 1
+  unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 pvcs: []
 replicaCount:
   default: 1

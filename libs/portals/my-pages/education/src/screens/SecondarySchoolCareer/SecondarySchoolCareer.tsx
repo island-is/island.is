@@ -4,7 +4,7 @@ import {
   formatDate,
   IntroHeader,
   m,
-  MENNTAMALASTOFNUN_SLUG,
+  MMS_SLUG,
   SortableTable,
 } from '@island.is/portals/my-pages/core'
 import { Box, Column, SkeletonLoader } from '@island.is/island-ui/core'
@@ -27,7 +27,7 @@ export const EducationGraduationDetail = () => {
       <IntroHeader
         title={m.educationFramhskoliCareer}
         intro={edMessage.careerIntro}
-        serviceProviderSlug={MENNTAMALASTOFNUN_SLUG}
+        serviceProviderSlug={MMS_SLUG}
         serviceProviderTooltip={formatMessage(m.mmsTooltipSecondary)}
       />
       {/* <GridRow marginTop={4}>

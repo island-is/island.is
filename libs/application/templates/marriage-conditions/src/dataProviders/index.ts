@@ -6,7 +6,7 @@ import {
 } from '@island.is/application/types'
 
 export {
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   UserProfileApi,
   DistrictsApi,
 } from '@island.is/application/types'

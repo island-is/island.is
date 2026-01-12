@@ -38,6 +38,7 @@ import {
 import { dataSchema } from './dataSchema'
 import { buildPaymentState } from '@island.is/application/utils'
 import { needAssignment } from './utils'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const pruneAfter = (time: number) => {
   return {
@@ -69,6 +70,7 @@ const PassportTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.PASSPORT,
   name: m.formName.defaultMessage,
+  codeOwner: CodeOwners.Juni,
   featureFlag: Features.passportApplication,
   dataSchema,
   stateMachineConfig: {
@@ -190,6 +192,7 @@ const PassportTemplate: ApplicationTemplate<
               {
                 logMessage: m.confirmedByParentB,
                 onEvent: DefaultEvents.SUBMIT,
+                includeSubjectAndActor: true,
               },
             ],
             pendingAction: {

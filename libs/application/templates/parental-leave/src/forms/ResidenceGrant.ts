@@ -6,14 +6,14 @@ import {
   buildSubmitField,
 } from '@island.is/application/core'
 import { DefaultEvents, Form } from '@island.is/application/types'
-import Logo from '../assets/Logo'
+import { DirectorateOfLabourLogo } from '@island.is/application/assets/institution-logos'
 import { FILE_SIZE_LIMIT } from '../constants'
 import { parentalLeaveFormMessages } from '../lib/messages'
 
 export const ResidenceGrant: Form = buildForm({
   id: 'residenceGrantApplication',
   title: parentalLeaveFormMessages.residenceGrantMessage.residenceGrantTitle,
-  logo: Logo,
+  logo: DirectorateOfLabourLogo,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
   children: [
@@ -34,7 +34,6 @@ export const ResidenceGrant: Form = buildForm({
           children: [
             buildFileUploadField({
               id: 'fileUpload.residenceGrant',
-              title: '',
               maxSize: FILE_SIZE_LIMIT,
               uploadAccept: '.pdf',
               uploadDescription:
@@ -45,7 +44,6 @@ export const ResidenceGrant: Form = buildForm({
             buildSubmitField({
               id: 'residenceGrant.submit',
               placement: 'footer',
-              title: '',
               refetchApplicationAfterSubmit: true,
               actions: [
                 {

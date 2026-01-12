@@ -4,6 +4,7 @@ import { BaseTemplateApiService } from '../../base-template-api.service'
 import {
   ApplicationTypes,
   ApplicationWithAttachments,
+  NationalRegistryIndividual,
 } from '@island.is/application/types'
 import {
   ApplicationType as SecondarySchoolApplicationType,
@@ -25,7 +26,7 @@ import {
   getRecipients,
 } from './utils'
 import {
-  generateApplicationRejectedEmail,
+  generateApplicationDeletedEmail,
   generateApplicationSubmittedEmail,
 } from './emailGenerators'
 import { getValueViaPath } from '@island.is/application/core'
@@ -43,7 +44,19 @@ export class SecondarySchoolService extends BaseTemplateApiService {
   async getStudentInfo({
     auth,
   }: TemplateApiModuleActionProps): Promise<Student> {
-    return this.secondarySchoolClient.getStudentInfo(auth)
+    const result = await this.secondarySchoolClient.getStudentInfo(auth)
+
+    if (result.hasActiveApplication) {
+      throw new TemplateApiError(
+        {
+          title: error.errorValidateCanCreateTitle,
+          summary: error.errorValidateCanCreateDescription,
+        },
+        400,
+      )
+    }
+
+    return result
   }
 
   async getSchools({
@@ -70,50 +83,46 @@ export class SecondarySchoolService extends BaseTemplateApiService {
     return schools
   }
 
-  async validateCanCreate({
-    auth,
-  }: TemplateApiModuleActionProps): Promise<void> {
-    const canCreate = await this.secondarySchoolClient.validateCanCreate(auth)
-
-    if (!canCreate) {
-      throw new TemplateApiError(
-        {
-          title: error.errorValidateCanCreateTitle,
-          summary: error.errorValidateCanCreateDescription,
-        },
-        400,
-      )
-    }
-  }
-
   async deleteApplication({
     application,
     auth,
   }: TemplateApiModuleActionProps): Promise<void> {
-    const externalApplicationId = getValueViaPath<string>(
-      application.externalData,
-      'submitApplication.data',
+    const externalId = await this.secondarySchoolClient.getExternalId(
+      auth,
+      application.id,
     )
-    if (externalApplicationId) {
-      // Delete the application in MMS
-      await this.secondarySchoolClient.delete(auth, externalApplicationId)
 
-      // If that succeeded, send email to applicant and custodians
-      await this.sendEmailAboutDeleteApplication(application)
+    if (externalId) {
+      try {
+        // Delete the application in MMS
+        await this.secondarySchoolClient.delete(auth, application.id)
+
+        try {
+          // If that succeeded, send email to applicant and custodians
+          await this.sendEmailAboutDeleteApplication(application)
+        } catch (emailError) {
+          logger.error(
+            `Application deleted but failed to send notification emails: ${emailError.message}`,
+            { applicationId: application.id },
+          )
+        }
+      } catch (error) {
+        throw new Error(
+          `Failed to delete application ${application.id}: ${error.message}`,
+        )
+      }
     }
   }
 
   private async sendEmailAboutDeleteApplication(
     application: ApplicationWithAttachments,
   ) {
-    const recipientList = getRecipients(application.answers).filter(
-      (x) => !!x.email,
-    )
+    const recipientList = getRecipients(application).filter((x) => !!x.email)
     await Promise.all(
       recipientList.map((recipient) =>
         this.sharedTemplateAPIService
           .sendEmail(
-            (props) => generateApplicationRejectedEmail(props, recipient),
+            (props) => generateApplicationDeletedEmail(props, recipient),
             application,
           )
           .catch((e) => {
@@ -130,53 +139,94 @@ export class SecondarySchoolService extends BaseTemplateApiService {
     application,
     auth,
   }: TemplateApiModuleActionProps): Promise<string> {
-    // Get values from answers
-    const applicant = getValueViaPath<SecondarySchoolAnswers['applicant']>(
-      application.answers,
-      'applicant',
+    // Get external id
+    const externalId = await this.secondarySchoolClient.getExternalId(
+      auth,
+      application.id,
     )
-    const applicationType = getValueViaPath<SecondarySchoolApplicationType>(
-      application.answers,
-      'applicationType.value',
-    )
-    const contacts = getCleanContacts(application)
-    const schoolSelection = getCleanSchoolSelection(application)
-    const extraInformation = getValueViaPath<
-      SecondarySchoolAnswers['extraInformation']
-    >(application.answers, 'extraInformation')
 
-    // Submit the application
-    let applicationId: string | undefined
+    // Validate if user can submit application (has another active application)
+    const studentInfo = await this.secondarySchoolClient.getStudentInfo(auth)
+    if (
+      studentInfo.hasActiveApplication &&
+      (!externalId || !studentInfo.externalIds.includes(externalId))
+    ) {
+      throw new TemplateApiError(
+        {
+          title: error.errorValidateCanCreateTitle,
+          summary: error.errorValidateCanCreateDescription,
+        },
+        400,
+      )
+    }
+
     try {
-      applicationId = await this.secondarySchoolClient.create(auth, {
-        nationalId: auth.nationalId,
-        name: applicant?.name || '',
-        phone: applicant?.phoneNumber || '',
-        email: applicant?.email || '',
-        address: applicant?.address || '',
-        postalCode: applicant?.postalCode || '',
-        city: applicant?.city || '',
-        isFreshman: applicationType === SecondarySchoolApplicationType.FRESHMAN,
-        contacts: contacts,
-        schools: schoolSelection,
-        nativeLanguageCode: extraInformation?.nativeLanguageCode,
-        otherDescription: extraInformation?.otherDescription,
-        attachments: await Promise.all(
-          (extraInformation?.supportingDocuments || []).map(
-            async (attachment) => {
-              const fileContent = await this.getAttachmentAsBase64(
-                application,
-                attachment,
-              )
-              return {
-                fileName: attachment.name,
-                fileContent,
-                contentType: `application/${attachment.name.split('.').pop()}`,
-              }
-            },
+      // Get values from externalData
+      const nationalRegistryData = getValueViaPath<NationalRegistryIndividual>(
+        application.externalData,
+        'nationalRegistry.data',
+      )
+
+      // Get values from answers
+      const applicant = getValueViaPath<SecondarySchoolAnswers['applicant']>(
+        application.answers,
+        'applicant',
+      )
+      const applicationType = getValueViaPath<SecondarySchoolApplicationType>(
+        application.answers,
+        'applicationType.value',
+      )
+      const contacts = getCleanContacts(application)
+      const schoolSelection = getCleanSchoolSelection(application)
+      const extraInformation = getValueViaPath<
+        SecondarySchoolAnswers['extraInformation']
+      >(application.answers, 'extraInformation')
+
+      // Submit the application
+      const applicationId = await this.secondarySchoolClient.createOrUpdate(
+        auth,
+        {
+          externalId,
+          id: application.id,
+          nationalId: auth.nationalId,
+          name: applicant?.name || '',
+          genderCode: nationalRegistryData?.genderCode,
+          phone: applicant?.phoneNumber || '',
+          email: applicant?.email || '',
+          address: applicant?.address || '',
+          postalCode: applicant?.postalCode || '',
+          city: applicant?.city || '',
+          isFreshman:
+            applicationType === SecondarySchoolApplicationType.FRESHMAN,
+          contacts: contacts,
+          schools: schoolSelection,
+          nativeLanguageCode: extraInformation?.nativeLanguageCode || undefined,
+          otherDescription: extraInformation?.otherDescription,
+          attachments: await Promise.all(
+            (extraInformation?.supportingDocuments || []).map(
+              async (attachment) => {
+                const fileContent = await this.getAttachmentAsBase64(
+                  application,
+                  attachment,
+                )
+                const contentType = this.getMimeType(
+                  attachment.name.split('.').pop(),
+                )
+                return {
+                  fileName: attachment.name,
+                  fileContent,
+                  contentType,
+                }
+              },
+            ),
           ),
-        ),
-      })
+        },
+      )
+
+      // Send email to applicant and all contacts
+      await this.sendEmailAboutSubmitApplication(application)
+
+      return applicationId
     } catch (e) {
       throw new TemplateApiError(
         {
@@ -186,18 +236,13 @@ export class SecondarySchoolService extends BaseTemplateApiService {
         500,
       )
     }
-
-    // Send email to applicant and all contacts
-    await this.sendEmailAboutSubmitApplication(application)
-
-    return applicationId
   }
 
   private async sendEmailAboutSubmitApplication(
     application: ApplicationWithAttachments,
   ) {
     // Send email to applicant and all contacts
-    const recipientList = getRecipients(application.answers)
+    const recipientList = getRecipients(application)
     await Promise.all(
       recipientList.map((recipient) =>
         this.sharedTemplateAPIService
@@ -250,5 +295,27 @@ export class SecondarySchoolService extends BaseTemplateApiService {
     } catch (error) {
       throw new Error(`Failed to retrieve attachment: ${error.message}`)
     }
+  }
+
+  private getMimeType(extension?: string): string {
+    const fileExtensionWhitelist = {
+      '.pdf': 'application/pdf',
+      '.jpg': 'image/jpeg',
+      '.jpeg': 'image/jpeg',
+      '.png': 'image/png',
+    }
+
+    const contentType =
+      extension &&
+      getValueViaPath<string>(
+        fileExtensionWhitelist,
+        `.${extension.toLowerCase()}`,
+      )
+
+    if (!contentType) {
+      throw new Error(`Invalid extension in attachment: ${extension}`)
+    }
+
+    return contentType
   }
 }

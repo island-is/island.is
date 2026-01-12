@@ -7,6 +7,7 @@ import { OrganizationTag, mapOrganizationTag } from './organizationTag.model'
 import { FooterItem, mapFooterItem } from './footerItem.model'
 import { mapNamespace, Namespace } from './namespace.model'
 import { GenericTag, mapGenericTag } from './genericTag.model'
+import { EmailSignup, mapEmailSignup } from './emailSignup.model'
 
 @ObjectType()
 export class Organization {
@@ -75,6 +76,12 @@ export class Organization {
 
   @Field({ nullable: true })
   referenceIdentifier?: string
+
+  @CacheField(() => [EmailSignup], { nullable: true })
+  newsBottomSlices?: Array<EmailSignup>
+
+  @Field(() => Boolean, { nullable: true })
+  canPagesBeFoundInSearchResults?: boolean
 }
 
 export const mapOrganization = ({
@@ -109,5 +116,8 @@ export const mapOrganization = ({
     hasALandingPage: fields.hasALandingPage ?? true,
     trackingDomain: fields.trackingDomain ?? '',
     referenceIdentifier: fields.referenceIdentifier,
+    newsBottomSlices: (fields.newsBottomSlices ?? []).map(mapEmailSignup),
+    canPagesBeFoundInSearchResults:
+      fields.canPagesBeFoundInSearchResults ?? true,
   }
 }

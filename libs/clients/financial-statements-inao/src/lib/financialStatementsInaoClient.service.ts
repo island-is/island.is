@@ -32,6 +32,11 @@ import {
 } from './utils/filenames'
 import { lookup, LookupType } from './utils/lookup'
 
+type FinancialLimit = {
+  year: number
+  limit: number
+}
+
 @Injectable()
 export class FinancialStatementsInaoClientService {
   constructor(
@@ -84,7 +89,7 @@ export class FinancialStatementsInaoClientService {
   }
 
   async getUserClientType(nationalId: string): Promise<ClientType | null> {
-    const select = '$select=star_nationalid, star_name, star_type'
+    const select = '$select=star_nationalid,star_name,star_type'
     const filter = `$filter=star_nationalid eq '${encodeURIComponent(
       nationalId,
     )}'`
@@ -112,7 +117,7 @@ export class FinancialStatementsInaoClientService {
   }
 
   async getClientIdByNationalId(nationalId: string): Promise<string | null> {
-    const select = '$select=star_nationalid, star_name, star_type'
+    const select = '$select=star_nationalid,star_name,star_type'
     const filter = `$filter=star_nationalid eq '${encodeURIComponent(
       nationalId,
     )}'`
@@ -218,6 +223,26 @@ export class FinancialStatementsInaoClientService {
     return null
   }
 
+  async getAllClientFinancialLimits(
+    clientType: number,
+  ): Promise<Array<FinancialLimit> | null> {
+    const select = '$select=star_value,star_year'
+    const filter = `$filter=star_client_type eq ${clientType}`
+    const url = `${this.basePath}/star_clientfinanciallimits?${select}&${filter}`
+    const data = await this.getData(url)
+
+    if (!data || !data.value) return null
+
+    const financialLimits: FinancialLimit[] = data.value.map((x: any) => {
+      return {
+        year: x.star_year,
+        limit: x.star_value,
+      }
+    })
+
+    return financialLimits
+  }
+
   async getFinancialTypes(): Promise<FinancialType[] | null> {
     const select =
       '$select=star_name,star_code,star_numeric,star_istaxinformation,star_supertype'
@@ -240,15 +265,12 @@ export class FinancialStatementsInaoClientService {
     input: PersonalElectionSubmitInput,
   ): Promise<boolean> {
     const financialValues: LookupType[] = []
-
     if (!input.noValueStatement && input.values) {
       const financialTypes = await this.getFinancialTypes()
-
       if (!financialTypes) {
         this.logger.error('Failed to get financial types')
         return false
       }
-
       const list: KeyValue[] = []
       list.push({ key: 100, value: input.values.contributionsByLegalEntities })
       list.push({ key: 101, value: input.values.individualContributions })
@@ -288,8 +310,6 @@ export class FinancialStatementsInaoClientService {
       star_email: input.digitalSignee.email,
       star_phone: input.digitalSignee.phone,
     }
-
-    this.logger.info('FinancialStatement request body', body)
 
     const financialStatementId = await this.postFinancialStatement(body)
 
@@ -369,8 +389,6 @@ export class FinancialStatementsInaoClientService {
       star_phone: digitalSignee.phone,
     }
 
-    this.logger.info('FinancialStatement request body', body)
-
     const financialStatementId = await this.postFinancialStatement(body)
 
     if (!financialStatementId) {
@@ -444,8 +462,6 @@ export class FinancialStatementsInaoClientService {
       star_email: digitalSignee.email,
       star_phone: digitalSignee.phone,
     }
-
-    this.logger.info('FinancialStatement request body', body)
 
     const financialStatementId = await this.postFinancialStatement(body)
 

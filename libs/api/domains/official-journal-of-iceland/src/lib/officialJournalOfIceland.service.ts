@@ -9,6 +9,7 @@ import {
   QueryParams,
   TypeQueryParams,
   MainTypesQueryParams,
+  AdvertSimilarParams,
 } from './models/advert.input'
 import {
   AdvertCategoryResponse,
@@ -16,6 +17,8 @@ import {
   AdvertInstitutionsResponse,
   AdvertMainCategoriesResponse,
   AdvertResponse,
+  AdvertsFullResponse,
+  AdvertSimilarResponse,
   AdvertsResponse,
   AdvertTypesResponse,
   MainTypesResponse,
@@ -70,8 +73,18 @@ export class OfficialJournalOfIcelandService {
     return await this.ojoiService.getAdvertById(params)
   }
 
+  async getSimilarAdvertsById(
+    params: AdvertSimilarParams,
+  ): Promise<AdvertSimilarResponse> {
+    return await this.ojoiService.getSimilarAdvertsById(params)
+  }
+
   async getAdverts(input: GetAdvertsRequest): Promise<AdvertsResponse> {
     return await this.ojoiService.getAdverts(input)
+  }
+
+  async getAdvertsFull(input: GetAdvertsRequest): Promise<AdvertsFullResponse> {
+    return await this.ojoiService.getAdvertsFull(input)
   }
 
   async getCasesInProgress(

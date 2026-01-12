@@ -24,11 +24,11 @@ export class PassportsClient implements LicenseClient<LicenseType.Passport> {
     user: User,
   ): Promise<Result<Array<IdentityDocument | IdentityDocumentChild>>> {
     try {
-      const { userPassport, childPassports } =
-        await this.passportService.getCurrentPassport(user)
+      const { userPassports, childPassports } =
+        await this.passportService.getAllIdentityDocuments(user)
 
       let passports: Array<IdentityDocument | IdentityDocumentChild> = [
-        userPassport,
+        ...(userPassports || []),
       ].filter(isDefined)
 
       if (childPassports) {

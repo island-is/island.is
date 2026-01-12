@@ -7,9 +7,9 @@ import {
   buildSection,
   buildSubmitField,
   buildTextField,
+  YES,
 } from '@island.is/application/core'
 
-import { YES } from '../constants'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import { institutionApplicationMessages as m } from '../lib/messages'
 
@@ -31,7 +31,6 @@ export const application: Form = buildForm({
               {
                 id: 'applicant.institutionSubtitle',
                 component: 'FieldDescription',
-                title: '',
               },
               {
                 subTitle: m.applicant.institutionSubtitle,
@@ -144,7 +143,6 @@ export const application: Form = buildForm({
           children: [
             buildCustomField({
               id: 'constraints',
-              title: '',
               component: 'Constraints',
             }),
           ],
@@ -163,7 +161,6 @@ export const application: Form = buildForm({
           children: [
             buildCustomField({
               id: 'reviewScreen',
-              title: '',
               component: 'ReviewScreen',
             }),
             buildSubmitField({

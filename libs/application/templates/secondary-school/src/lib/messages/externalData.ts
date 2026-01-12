@@ -36,7 +36,8 @@ export const externalData = {
     },
     subTitle: {
       id: 'ss.application:externalData.nationalRegistry.subTitle',
-      defaultMessage: 'Hér sækjum við nafn, kennitölu og heimilisfang',
+      defaultMessage:
+        'Til þess að auðvelda fyrir sækjum við persónuupplýsingar úr Þjóðskrá til þess að fylla út umsóknina',
       description: 'We will fetch name, national id and address',
     },
   }),
@@ -64,7 +65,7 @@ export const externalData = {
     subTitle: {
       id: 'ss.application:externalData.educationalCareer.subTitle',
       defaultMessage:
-        'Lokaeinkunnir úr grunnskóla eða upplýsingar um fyrirliggjandi námsgráður og skírteini.',
+        'Upplýsingar um lokaeinkunnir úr grunnskóla eða fyrirliggjandi námsgráður og skírteini verða sóttar við úrvinnslu umsókna.',
       description: 'We will fetch degrees and certificates',
     },
   }),

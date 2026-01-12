@@ -1,4 +1,4 @@
-import React, { HTMLAttributes } from 'react'
+import React, { ClipboardEvent, HTMLAttributes } from 'react'
 
 import * as styles from './Input.css'
 import { Icon as IconType, Type } from '../IconRC/iconMap'
@@ -50,11 +50,12 @@ export interface InputComponentProps {
    * While true hover state will not show and focus state will be always on
    */
   fixedFocusState?: boolean
-  autoComplete?: 'on' | 'off'
-  autoExpand?: {
-    on: boolean
-    maxHeight?: number
-  }
+  autoComplete?:
+    | 'on'
+    | 'off'
+    // A one-time password (OTP) for verifying user identity that is used as an additional factor in a sign-in flow.
+    // Most commonly this is a code received via some out-of-channel mechanism, such as SMS, email, or authenticator application.
+    | 'one-time-code'
   inputMode?: HTMLAttributes<HTMLInputElement>['inputMode']
 }
 
@@ -85,6 +86,9 @@ export interface InputProps extends InputComponentProps {
   max?: number | string
   min?: number | string
   step?: string
+  hideIcon?: boolean
+  oneDigit?: boolean
+  onPaste?(event: ClipboardEvent<HTMLInputElement>): void
 }
 
 export interface AsideProps {

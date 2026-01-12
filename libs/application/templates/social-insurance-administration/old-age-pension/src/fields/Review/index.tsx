@@ -1,9 +1,4 @@
-import {
-  Application,
-  Field,
-  RecordObject,
-  YES,
-} from '@island.is/application/types'
+import { Application, Field, RecordObject } from '@island.is/application/types'
 import {
   Box,
   GridColumn,
@@ -36,6 +31,7 @@ import { OnePaymentPerYear } from './review-groups/OnePaymentPerYear'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 import { States } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
+import { YES } from '@island.is/application/core'
 
 interface ReviewScreenProps {
   application: Application

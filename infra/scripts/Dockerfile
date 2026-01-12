@@ -1,25 +1,29 @@
-ARG DOCKER_IMAGE_REGISTRY=public.ecr.aws
-ARG NODE_IMAGE_TAG
-FROM ${DOCKER_IMAGE_REGISTRY}/docker/library/node:${NODE_IMAGE_TAG} AS runner
+FROM public.ecr.aws/docker/library/node:20.15.0-bookworm-slim AS runner
 
 # hadolint ignore=DL3018
-RUN apk add --no-cache postgresql-client bash
+RUN apt-get update && apt-get install -y \
+  postgresql \
+  python3 \
+  make \
+  g++ \
+  && rm -rf /var/lib/apt/lists/*
 
-FROM ${DOCKER_IMAGE_REGISTRY}/docker/library/node:${NODE_IMAGE_TAG} AS build
+FROM public.ecr.aws/docker/library/node:20.15.0-bookworm-slim AS build
 WORKDIR /app/infra
-
 ENV NODE_OPTIONS=--openssl-legacy-provider
+COPY infra/.yarnrc.yml infra/package.json infra/yarn.lock ./
+COPY infra/.yarn/releases .yarn/releases
+RUN ls -al
+RUN yarn --version
 
-COPY infra/package.json infra/yarn.lock /app/infra/
-COPY .yarn/ ./.yarn
 RUN yarn install --immutable
 
-COPY infra/ /app/infra/
+COPY infra/ ./
 COPY apps /app/apps/
 COPY libs /app/libs/
 
-RUN ./node_modules/.bin/ncc build src/feature-env.ts -o /app/dist/feature-env && \
-  ./node_modules/.bin/ncc build src/secrets.ts -o /app/dist/secrets
+RUN yarn ncc build src/feature-env.ts -o /app/dist/feature-env && \
+  yarn ncc build src/secrets.ts -o /app/dist/secrets
 
 FROM runner
 WORKDIR /app

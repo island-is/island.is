@@ -33,7 +33,6 @@ export const OtherDocumentsSection = buildSubSection({
         }),
         buildCustomField({
           id: Routes.OTHERDOCUMENTS,
-          title: '',
           component: 'OtherDocuments',
         }),
       ],

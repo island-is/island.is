@@ -21,12 +21,14 @@ import { z } from 'zod'
 import { ApiActions } from '../shared'
 import { m } from './messages'
 import {
-  UserProfileApi,
-  SyslumadurPaymentCatalogApi,
   CriminalRecordApi,
+  IdentityApi,
+  MockableSyslumadurPaymentCatalogApi,
+  SyslumadurPaymentCatalogApi,
 } from '../dataProviders'
 import { buildPaymentState } from '@island.is/application/utils'
 import { getChargeItems } from '../utils'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const CriminalRecordSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -39,8 +41,9 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.CRIMINAL_RECORD,
   name: m.name,
+  codeOwner: CodeOwners.Origo,
   institution: m.institutionName,
-  translationNamespaces: [ApplicationConfigurations.CriminalRecord.translation],
+  translationNamespaces: ApplicationConfigurations.CriminalRecord.translation,
   dataSchema: CriminalRecordSchema,
   stateMachineConfig: {
     initial: States.DRAFT,
@@ -78,9 +81,10 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               api: [
-                UserProfileApi,
                 SyslumadurPaymentCatalogApi,
+                MockableSyslumadurPaymentCatalogApi,
                 CriminalRecordApi,
+                IdentityApi,
               ],
             },
           ],

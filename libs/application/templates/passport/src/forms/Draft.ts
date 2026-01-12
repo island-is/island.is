@@ -86,7 +86,6 @@ export const Draft: Form = buildForm({
           children: [
             buildCustomField({
               id: 'passport',
-              title: '',
               component: 'PassportSelection',
             }),
           ],
@@ -109,7 +108,6 @@ export const Draft: Form = buildForm({
           children: [
             buildRadioField({
               id: 'service.type',
-              title: '',
               width: 'half',
               options: ({ answers, externalData }: Application) => {
                 const regularCode = getChargeCode(
@@ -164,14 +162,12 @@ export const Draft: Form = buildForm({
           children: [
             buildCustomField({
               id: 'paymentCharge',
-              title: '',
               component: 'PaymentCharge',
               doesNotRequireAnswer: true,
             }),
             buildSubmitField({
               id: 'payment',
               placement: 'footer',
-              title: '',
               refetchApplicationAfterSubmit: true,
               actions: [
                 {

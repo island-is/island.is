@@ -1,4 +1,4 @@
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, YES } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import { QUALITY_PHOTO } from './queries.graphql'
 import { useQuery, ApolloError } from '@apollo/client'
@@ -20,8 +20,6 @@ const FAKE_QUALITY_PHOTO = {
   loading: false,
   error: undefined,
 }
-
-const YES = 'yes'
 
 const hasFakeQualityPhoto = (application: Application): boolean => {
   // If running locally or on dev allow for fake data

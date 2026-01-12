@@ -16,13 +16,20 @@ const UPDATE_ORGANISATION_MUTATION = gql`
       address
       email
       phoneNumber
+      zendeskId
     }
   }
 `
 
 export type OrganisationInput = Pick<
   Organisation,
-  'id' | 'nationalId' | 'name' | 'address' | 'email' | 'phoneNumber'
+  | 'id'
+  | 'nationalId'
+  | 'name'
+  | 'address'
+  | 'email'
+  | 'phoneNumber'
+  | 'zendeskId'
 >
 
 export type OnCompletedArgumentsType = {
@@ -31,7 +38,9 @@ export type OnCompletedArgumentsType = {
 
 type OnCompletedFunctionType = (data: OnCompletedArgumentsType) => void
 
-export function useUpdateOrganisation(onCompleted?: OnCompletedFunctionType) {
+export const useUpdateOrganisation = (
+  onCompleted?: OnCompletedFunctionType,
+) => {
   const [updateOrganisationMutation, { called, loading, error }] = useMutation(
     UPDATE_ORGANISATION_MUTATION,
     { onCompleted },
@@ -40,6 +49,7 @@ export function useUpdateOrganisation(onCompleted?: OnCompletedFunctionType) {
   const { formatMessage } = useLocale()
   const errorMsg = formatMessage(m.SingleProviderUpdateInformationError)
   const successMsg = formatMessage(m.SingleProviderUpdateInformationSuccess)
+
   React.useEffect(() => {
     if (!called) {
       return

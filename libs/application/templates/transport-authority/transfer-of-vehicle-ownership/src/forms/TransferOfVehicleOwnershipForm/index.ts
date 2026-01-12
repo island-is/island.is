@@ -4,12 +4,11 @@ import { informationSection } from './InformationSection'
 import { conclusionSection } from './conclusionSection'
 import { paymentSection } from './paymentSection'
 import { prerequisitesSection } from './prerequisitesSection'
-import { Logo } from '../../assets/Logo'
+import { TransportAuthorityLogo } from '@island.is/application/assets/institution-logos'
 
 export const TransferOfVehicleOwnershipForm: Form = buildForm({
   id: 'TransferOfVehicleOwnershipFormDraft',
-  title: '',
-  logo: Logo,
+  logo: TransportAuthorityLogo,
   mode: FormModes.DRAFT,
   children: [
     prerequisitesSection,

@@ -14,7 +14,6 @@ import {
   DefaultEvents,
   NationalRegistryUserApi,
   InstitutionNationalIds,
-  YES,
   defineTemplateApi,
   NationalRegistrySpouseApi,
   UserProfileApi,
@@ -24,8 +23,8 @@ import {
   pruneAfterDays,
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
+  YES,
 } from '@island.is/application/core'
-import { HouseholdSupplementHousing } from './constants'
 import { dataSchema } from './dataSchema'
 import { householdSupplementFormMessage, statesMessages } from './messages'
 import {
@@ -35,7 +34,6 @@ import {
 import {
   NationalRegistryCohabitantsApi,
   SocialInsuranceAdministrationApplicantApi,
-  SocialInsuranceAdministrationCurrenciesApi,
   SocialInsuranceAdministrationIsApplicantEligibleApi,
 } from '../dataProviders'
 import {
@@ -43,9 +41,9 @@ import {
   Roles,
   States,
   Actions,
-  BankAccountType,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
-import { getApplicationAnswers, isEligible } from './householdSupplementUtils'
+import { getApplicationAnswers, eligible } from './householdSupplementUtils'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const HouseholdSupplementTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -54,6 +52,7 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.HOUSEHOLD_SUPPLEMENT,
   name: householdSupplementFormMessage.shared.applicationTitle,
+  codeOwner: CodeOwners.Deloitte,
   institution: socialInsuranceAdministrationMessage.shared.institution,
   translationNamespaces:
     ApplicationConfigurations.HouseholdSupplement.translation,
@@ -92,7 +91,6 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
                   },
                 }),
                 SocialInsuranceAdministrationApplicantApi,
-                SocialInsuranceAdministrationCurrenciesApi,
                 SocialInsuranceAdministrationIsApplicantEligibleApi,
               ],
               delete: true,
@@ -104,7 +102,7 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
             {
               target: States.DRAFT,
               cond: (application) =>
-                isEligible(application?.application?.externalData),
+                eligible(application?.application?.externalData),
             },
             {
               actions: 'setApproveExternalData',
@@ -113,12 +111,7 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
-        exit: [
-          'clearBankAccountInfo',
-          'clearFileUpload',
-          'clearTemp',
-          'restoreAnswersFromTemp',
-        ],
+        exit: ['clearFileUpload', 'clearTemp', 'restoreAnswersFromTemp'],
         meta: {
           name: States.DRAFT,
           status: 'draft',
@@ -214,6 +207,10 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
           INREVIEW: {
             target: States.TRYGGINGASTOFNUN_IN_REVIEW,
           },
+          ADDITIONALDOCUMENTSREQUIRED: {
+            target: States.ADDITIONAL_DOCUMENTS_REQUIRED,
+          },
+          DISMISS: { target: States.DISMISSED },
         },
       },
       [States.TRYGGINGASTOFNUN_IN_REVIEW]: {
@@ -259,6 +256,7 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
           ADDITIONALDOCUMENTSREQUIRED: {
             target: States.ADDITIONAL_DOCUMENTS_REQUIRED,
           },
+          DISMISS: { target: States.DISMISSED },
         },
       },
       [States.ADDITIONAL_DOCUMENTS_REQUIRED]: {
@@ -307,6 +305,7 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
         },
         on: {
           SUBMIT: [{ target: States.TRYGGINGASTOFNUN_IN_REVIEW }],
+          DISMISS: { target: States.DISMISSED },
         },
       },
       [States.APPROVED]: {
@@ -344,6 +343,39 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
                 // TODO: Þurfum mögulega að breyta þessu þegar við vitum hvernig TR gerir stöðubreytingar
                 onEvent: States.REJECTED,
                 logMessage: coreSIAStatesMessages.applicationRejected,
+              },
+            ],
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              read: 'all',
+            },
+          ],
+        },
+      },
+      [States.DISMISSED]: {
+        meta: {
+          name: States.DISMISSED,
+          status: 'rejected',
+          lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            tag: {
+              label: coreSIAStatesMessages.dismissedTag,
+            },
+            pendingAction: {
+              title: statesMessages.householdSupplementDismissed,
+              content: statesMessages.householdSupplementDismissedDescription,
+              displayStatus: 'error',
+            },
+            historyLogs: [
+              {
+                onEvent: States.DISMISSED,
+                logMessage: statesMessages.householdSupplementDismissed,
               },
             ],
           },
@@ -440,33 +472,10 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
         const { application } = context
         const { answers } = application
 
-        const { householdSupplementHousing, householdSupplementChildren } =
-          getApplicationAnswers(answers)
+        const { householdSupplementChildren } = getApplicationAnswers(answers)
 
         if (householdSupplementChildren !== YES) {
           unset(answers, 'fileUpload.schoolConfirmation')
-        }
-
-        if (householdSupplementHousing !== HouseholdSupplementHousing.RENTER) {
-          unset(answers, 'fileUpload.leaseAgreement')
-        }
-
-        return context
-      }),
-      clearBankAccountInfo: assign((context) => {
-        const { application } = context
-        const { bankAccountType } = getApplicationAnswers(application.answers)
-
-        if (bankAccountType === BankAccountType.ICELANDIC) {
-          unset(application.answers, 'paymentInfo.iban')
-          unset(application.answers, 'paymentInfo.swift')
-          unset(application.answers, 'paymentInfo.bankName')
-          unset(application.answers, 'paymentInfo.bankAddress')
-          unset(application.answers, 'paymentInfo.currency')
-        }
-
-        if (bankAccountType === BankAccountType.FOREIGN) {
-          unset(application.answers, 'paymentInfo.bank')
         }
 
         return context

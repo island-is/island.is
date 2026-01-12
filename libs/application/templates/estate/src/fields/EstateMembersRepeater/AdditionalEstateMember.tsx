@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Controller, useFormContext, useWatch } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import {
@@ -7,7 +8,7 @@ import {
   PhoneInputController,
   SelectController,
 } from '@island.is/shared/form-fields'
-import * as kennitala from 'kennitala'
+import * as nationalId from 'kennitala'
 import {
   Box,
   GridColumn,
@@ -16,13 +17,12 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
-import { EstateTypes, YES } from '../../lib/constants'
+import { EstateTypes, YES, SPOUSE } from '../../lib/constants'
 import intervalToDuration from 'date-fns/intervalToDuration'
 import { GenericFormField, Application } from '@island.is/application/types'
 import { ErrorValue, EstateMember } from '../../types'
 import { hasYes } from '@island.is/application/core'
 import { LookupPerson } from '../LookupPerson'
-import { useEffect } from 'react'
 
 export const AdditionalEstateMember = ({
   field,
@@ -56,8 +56,13 @@ export const AdditionalEstateMember = ({
   const phoneField = `${fieldIndex}.phone`
   const emailField = `${fieldIndex}.email`
 
+  // Advocate
   const advocatePhone = `${fieldIndex}.advocate.phone`
   const advocateEmail = `${fieldIndex}.advocate.email`
+
+  // Advocate 2
+  const advocate2Phone = `${fieldIndex}.advocate2.phone`
+  const advocate2Email = `${fieldIndex}.advocate2.email`
 
   const selectedEstate = application.answers.selectedEstate
 
@@ -66,10 +71,30 @@ export const AdditionalEstateMember = ({
     defaultValue: hasYes(field.foreignCitizenship) ? [YES] : '',
   })
 
+  const relation = useWatch({
+    name: relationField,
+    defaultValue: field.relation,
+  })
+
+  const allEstateMembers = useWatch({
+    name: 'estate.estateMembers',
+  })
+
   const { control, setValue, clearErrors, getValues } = useFormContext()
 
   const values = getValues()
   const currentEstateMember = values?.estate?.estateMembers?.[index]
+
+  // Check if there's already a spouse in the heirs list (excluding the current member)
+  const hasExistingSpouse = allEstateMembers?.some(
+    (member: EstateMember, memberIndex: number) =>
+      memberIndex !== index && member.enabled && member.relation === SPOUSE,
+  )
+
+  // Filter out SPOUSE from relation options if there's already a spouse
+  const filteredRelationOptions = hasExistingSpouse
+    ? relationOptions.filter((option) => option.value !== SPOUSE)
+    : relationOptions
 
   const hasForeignCitizenship =
     currentEstateMember?.foreignCitizenship?.[0] === YES
@@ -79,19 +104,42 @@ export const AdditionalEstateMember = ({
     hasForeignCitizenship && birthDate
       ? intervalToDuration({ start: new Date(birthDate), end: new Date() })
           ?.years
-      : kennitala.info(currentEstateMember.nationalId)?.age
+      : nationalId.info(currentEstateMember.nationalId)?.age
 
   const hideContactInfo =
-    kennitala.isPerson(currentEstateMember.nationalId) &&
+    nationalId.isPerson(currentEstateMember.nationalId) &&
     memberAge !== undefined &&
     memberAge < 18
+
+  const requiresAdvocate = memberAge !== undefined && memberAge < 18
 
   useEffect(() => {
     clearErrors(nameField)
     clearErrors(relationField)
     clearErrors(dateOfBirthField)
     clearErrors(`${fieldIndex}.nationalId`)
-  }, [foreignCitizenship])
+  }, [
+    foreignCitizenship,
+    clearErrors,
+    nameField,
+    relationField,
+    dateOfBirthField,
+    fieldIndex,
+  ])
+
+  // Clear relationWithApplicant when relation is changed to SPOUSE
+  useEffect(() => {
+    if (relation === SPOUSE && currentEstateMember?.relationWithApplicant) {
+      setValue(relationWithApplicantField, '')
+      clearErrors(relationWithApplicantField)
+    }
+  }, [
+    relation,
+    currentEstateMember?.relationWithApplicant,
+    setValue,
+    clearErrors,
+    relationWithApplicantField,
+  ])
 
   return (
     <Box position="relative" key={field.id} marginTop={7}>
@@ -179,28 +227,28 @@ export const AdditionalEstateMember = ({
             name={relationField}
             label={formatMessage(m.inheritanceRelationLabel)}
             defaultValue={field.relation}
-            options={relationOptions}
+            options={filteredRelationOptions}
             error={error?.relation}
             backgroundColor="blue"
             required={!field.initial}
           />
         </GridColumn>
-        {application.answers.selectedEstate ===
-          EstateTypes.permitForUndividedEstate && (
-          <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-            <SelectController
-              key={relationWithApplicantField}
-              id={relationWithApplicantField}
-              name={relationWithApplicantField}
-              label={formatMessage(m.inheritanceRelationWithApplicantLabel)}
-              defaultValue={field.relationWithApplicant}
-              options={relationWithApplicantOptions}
-              error={error?.relationWithApplicant}
-              backgroundColor="blue"
-              required={!field.initial}
-            />
-          </GridColumn>
-        )}
+        {selectedEstate === EstateTypes.permitForUndividedEstate &&
+          relation !== SPOUSE && (
+            <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+              <SelectController
+                key={relationWithApplicantField}
+                id={relationWithApplicantField}
+                name={relationWithApplicantField}
+                label={formatMessage(m.inheritanceRelationWithApplicantLabel)}
+                defaultValue={field.relationWithApplicant}
+                options={relationWithApplicantOptions}
+                error={error?.relationWithApplicant}
+                backgroundColor="blue"
+                required={!field.initial}
+              />
+            </GridColumn>
+          )}
         {!hideContactInfo && (
           <>
             <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
@@ -228,10 +276,8 @@ export const AdditionalEstateMember = ({
         )}
       </GridRow>
       {/* ADVOCATE */}
-      {selectedEstate !== EstateTypes.divisionOfEstateByHeirs &&
-        (currentEstateMember?.nationalId || hasForeignCitizenship) &&
-        memberAge !== undefined &&
-        memberAge < 18 && (
+      {(currentEstateMember?.nationalId || hasForeignCitizenship) &&
+        requiresAdvocate && (
           <Box
             marginTop={2}
             marginBottom={2}
@@ -257,11 +303,7 @@ export const AdditionalEstateMember = ({
                   field={{
                     id: `${fieldIndex}.advocate`,
                     props: {
-                      alertWhenUnder18:
-                        selectedEstate !==
-                          EstateTypes.divisionOfEstateByHeirs &&
-                        memberAge !== undefined &&
-                        memberAge < 18,
+                      alertWhenUnder18: requiresAdvocate,
                     },
                   }}
                   error={error}
@@ -292,6 +334,59 @@ export const AdditionalEstateMember = ({
             </GridRow>
           </Box>
         )}
+      {/* ADVOCATE 2 */}
+      {selectedEstate === EstateTypes.divisionOfEstateByHeirs &&
+        (currentEstateMember?.nationalId || hasForeignCitizenship) &&
+        requiresAdvocate && (
+          <Box
+            marginTop={2}
+            marginBottom={2}
+            paddingY={5}
+            paddingX={7}
+            borderRadius="large"
+            border="standard"
+          >
+            <GridRow>
+              <GridColumn span={['1/1']} paddingBottom={2}>
+                <Text variant="h4">
+                  {formatMessage(m.inheritanceAdvocateLabel)}
+                </Text>
+              </GridColumn>
+              <GridColumn span={['1/1']} paddingBottom={2}>
+                <LookupPerson
+                  nested
+                  field={{
+                    id: `${fieldIndex}.advocate2`,
+                    props: {
+                      requiredNationalId: false,
+                    },
+                  }}
+                  message={formatMessage(m.inheritanceUnder18ErrorAdvocate)}
+                  error={error}
+                />
+              </GridColumn>
+              <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                <PhoneInputController
+                  id={advocate2Phone}
+                  name={advocate2Phone}
+                  label={formatMessage(m.phone)}
+                  backgroundColor="blue"
+                  size="sm"
+                />
+              </GridColumn>
+              <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                <InputController
+                  id={advocate2Email}
+                  name={advocate2Email}
+                  label={formatMessage(m.email)}
+                  backgroundColor="blue"
+                  size="sm"
+                />
+              </GridColumn>
+            </GridRow>
+          </Box>
+        )}
+
       <GridRow>
         <GridColumn
           span={

@@ -1,4 +1,4 @@
-import { ObjectType, Field, InputType } from '@nestjs/graphql'
+import { Field, InputType, ObjectType } from '@nestjs/graphql'
 
 @ObjectType('HealthDirectorateOrganDonationOrgan')
 export class Organ {

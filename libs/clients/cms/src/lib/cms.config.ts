@@ -19,12 +19,12 @@ export const CmsConfig = defineConfig({
       'https://graphql.contentful.com/content/v1/spaces/8k0h54kbe6bj/environments/master',
     redis: {
       nodes: env.requiredJSON('REDIS_URL_NODE_01', [
-        'localhost:7000',
-        'localhost:7001',
-        'localhost:7002',
-        'localhost:7003',
-        'localhost:7004',
-        'localhost:7005',
+        'localhost:7010',
+        'localhost:7011',
+        'localhost:7012',
+        'localhost:7013',
+        'localhost:7014',
+        'localhost:7015',
       ]),
       ssl: env.requiredJSON('REDIS_USE_SSL', false),
     },

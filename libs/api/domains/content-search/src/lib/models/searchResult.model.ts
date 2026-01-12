@@ -5,7 +5,6 @@ import {
   AnchorPage,
   LifeEventPage,
   News,
-  AdgerdirPage,
   SubArticle,
   OrganizationSubpage,
   OrganizationPage,
@@ -14,6 +13,7 @@ import {
   ProjectPage,
   Manual,
   ManualChapterItem,
+  OrganizationParentSubpage,
 } from '@island.is/cms'
 
 import { TagCount } from './tagCount'
@@ -26,7 +26,6 @@ const Items = createUnionType({
     AnchorPage,
     LifeEventPage,
     News,
-    AdgerdirPage,
     SubArticle,
     OrganizationSubpage,
     OrganizationPage,
@@ -35,6 +34,7 @@ const Items = createUnionType({
     ProjectPage,
     Manual,
     ManualChapterItem,
+    OrganizationParentSubpage,
   ], // add new return types here
   resolveType: (document) => document.typename, // typename is appended to request on mapping
 })

@@ -9,11 +9,10 @@ import {
   defaultMonths,
   daysInMonth,
 } from '../../config'
-import { YES } from '../../constants'
 import { useEffectOnce } from 'react-use'
+import { YES } from '@island.is/application/core'
 
 const GiveDaysBoxChart: FC<React.PropsWithChildren<FieldBaseProps>> = ({
-  field,
   application,
 }) => {
   const { setValue, watch } = useFormContext()

@@ -62,6 +62,7 @@ interface NoDataProps extends ProblemBaseProps {
 }
 
 type ProblemProps = InternalServiceErrorProps | NotFoundProps | NoDataProps
+
 export const Problem = ({
   type = ProblemTypes.internalServiceError,
   size,
@@ -113,7 +114,7 @@ export const Problem = ({
           return (
             <ThirdPartyServiceError
               organizationSlug={organizationSlug}
-              size={size ?? 'small'}
+              size={size ?? 'large'}
               dataTestId={dataTestId}
               expand={expand}
             />

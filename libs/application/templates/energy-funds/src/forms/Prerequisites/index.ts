@@ -15,12 +15,11 @@ import {
 import { confirmation } from '../../lib/messages/confirmation'
 import { information } from '../../lib/messages/information'
 import { grant } from '../../lib/messages/grant'
-import { Logo } from '../../assets/Logo'
+import { TheEnergyAgencyLogo } from '@island.is/application/assets/institution-logos'
 
 export const Prerequisites: Form = buildForm({
   id: 'PrerequisitesForm',
-  title: '',
-  logo: Logo,
+  logo: TheEnergyAgencyLogo,
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
@@ -37,7 +36,6 @@ export const Prerequisites: Form = buildForm({
           submitField: buildSubmitField({
             id: 'submit',
             placement: 'footer',
-            title: '',
             refetchApplicationAfterSubmit: true,
             actions: [
               {

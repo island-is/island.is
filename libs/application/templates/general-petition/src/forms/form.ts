@@ -24,15 +24,13 @@ import { m } from '../lib/messages'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
 import { Application } from '@island.is/application/types'
-import { UserProfile } from '@island.is/api/schema'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
-import { parse } from 'libphonenumber-js'
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { getExcludedDates } from '../lib/generalPetitionUtils'
 import addMonths from 'date-fns/addMonths'
 
 export const form: Form = buildForm({
   id: 'GeneralPetitionForm',
-  title: '',
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
@@ -99,7 +97,6 @@ export const form: Form = buildForm({
             //fake field to trigger rerender on date switch
             buildDescriptionField({
               id: 'fake_helper_field',
-              title: '',
               condition: (answers) =>
                 !!getValueViaPath(answers, 'dates.dateFrom'),
             }),
@@ -120,10 +117,8 @@ export const form: Form = buildForm({
               backgroundColor: 'white',
               minDate: new Date(),
               maxDate: ({ answers }) => {
-                const dateFrom = getValueViaPath(
-                  answers,
-                  'dates.dateFrom',
-                ) as string
+                const dateFrom =
+                  getValueViaPath<string>(answers, 'dates.dateFrom') ?? ''
                 return addMonths(new Date(dateFrom), 3)
               },
               excludeDates: getExcludedDates(),
@@ -141,11 +136,10 @@ export const form: Form = buildForm({
               backgroundColor: 'white',
               defaultValue: (application: Application) => {
                 const phone =
-                  (
-                    application.externalData.userProfile?.data as {
-                      mobilePhoneNumber?: string
-                    }
-                  )?.mobilePhoneNumber ?? ''
+                  getValueViaPath<string>(
+                    application.externalData,
+                    'userProfile.data.mobilePhoneNumber',
+                  ) ?? ''
 
                 return phone
               },
@@ -156,8 +150,11 @@ export const form: Form = buildForm({
               width: 'half',
               backgroundColor: 'white',
               defaultValue: ({ externalData }: Application) => {
-                const data = externalData.userProfile?.data as UserProfile
-                return data?.email ?? ''
+                const email = getValueViaPath<string>(
+                  externalData,
+                  'userProfile.data.email',
+                )
+                return email ?? ''
               },
             }),
           ],
@@ -183,22 +180,26 @@ export const form: Form = buildForm({
             buildKeyValueField({
               label: m.name,
               value: ({ externalData }) =>
-                (
-                  externalData.nationalRegistry?.data as {
-                    fullName?: string
-                  }
-                )?.fullName,
+                getValueViaPath<string>(
+                  externalData,
+                  'nationalRegistry.data.fullName',
+                ),
             }),
             buildKeyValueField({
               label: m.phone,
               value: ({ answers }) => {
-                const parsedPhoneNumber = parse(answers.phone as string)
-                return formatPhoneNumber(parsedPhoneNumber.phone as string)
+                const parsedPhoneNumber = parsePhoneNumberFromString(
+                  getValueViaPath<string>(answers, 'phone') ?? '',
+                )
+                return formatPhoneNumber(
+                  parsedPhoneNumber?.nationalNumber?.toString() || '',
+                )
               },
             }),
             buildKeyValueField({
               label: m.email,
-              value: ({ answers }) => answers.email as string,
+              value: ({ answers }) =>
+                getValueViaPath<string>(answers, 'email') ?? '',
             }),
             buildDividerField({}),
             buildDescriptionField({
@@ -208,17 +209,21 @@ export const form: Form = buildForm({
             }),
             buildKeyValueField({
               label: m.listName,
-              value: ({ answers }) => answers.listName as string,
+              value: ({ answers }) =>
+                getValueViaPath<string>(answers, 'listName') ?? '',
             }),
             buildKeyValueField({
               label: m.aboutList,
-              value: ({ answers }) => answers.aboutList as string,
+              value: ({ answers }) =>
+                getValueViaPath<string>(answers, 'aboutList') ?? '',
             }),
             buildKeyValueField({
               label: m.listPeriod,
               value: ({ answers }) =>
                 format(
-                  new Date((answers.dates as any).dateFrom as string),
+                  new Date(
+                    getValueViaPath<string>(answers, 'dates.dateFrom') ?? '',
+                  ),
                   'dd. MMMM yyyy',
                   {
                     locale: is,
@@ -226,7 +231,9 @@ export const form: Form = buildForm({
                 ) +
                 ' - ' +
                 format(
-                  new Date((answers.dates as any).dateTil as string),
+                  new Date(
+                    getValueViaPath<string>(answers, 'dates.dateTil') ?? '',
+                  ),
                   'dd. MMMM yyyy',
                   {
                     locale: is,
@@ -235,7 +242,6 @@ export const form: Form = buildForm({
             }),
             buildSubmitField({
               id: 'createPetition.submit',
-              title: '',
               refetchApplicationAfterSubmit: true,
               actions: [
                 {

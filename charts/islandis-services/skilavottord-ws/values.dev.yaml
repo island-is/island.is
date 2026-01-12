@@ -25,7 +25,7 @@ env:
   DB_USER: 'skilavottord'
   IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
   LOG_LEVEL: 'info'
-  NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
+  NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
   SERVERSIDE_FEATURES_ON: ''
 grantNamespaces:
   - 'application-system'
@@ -83,7 +83,10 @@ initContainer:
     DB_PASS: '/k8s/skilavottord/DB_PASSWORD'
 namespace: 'skilavottord'
 podDisruptionBudget:
-  maxUnavailable: 1
+  minAvailable: 1
+  unhealthyPodEvictionPolicy: 'IfHealthyBudget'
+podSecurityContext:
+  fsGroup: 65534
 pvcs: []
 replicaCount:
   default: 1
@@ -112,3 +115,8 @@ secrets:
 securityContext:
   allowPrivilegeEscalation: false
   privileged: false
+serviceAccount:
+  annotations:
+    eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/skilavottord-ws'
+  create: true
+  name: 'skilavottord-ws'

@@ -1,5 +1,5 @@
-import { getValueViaPath } from '@island.is/application/core'
-import { Application, NO } from '@island.is/application/types'
+import { getValueViaPath, NO } from '@island.is/application/core'
+import { Application } from '@island.is/application/types'
 import type { DistributiveOmit } from '@island.is/shared/types'
 
 import {

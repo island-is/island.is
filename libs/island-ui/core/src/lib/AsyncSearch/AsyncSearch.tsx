@@ -2,8 +2,6 @@ import * as inputStyles from '../Input/Input.css'
 import * as styles from './AsyncSearch.css'
 
 import Downshift, { DownshiftProps } from 'downshift'
-import { Input, InputProps } from './shared/Input/Input'
-import { Menu, MenuProps } from './shared/Menu/Menu'
 import React, {
   ButtonHTMLAttributes,
   HTMLProps,
@@ -14,18 +12,20 @@ import React, {
   useContext,
   useState,
 } from 'react'
+import { Input, InputProps } from './shared/Input/Input'
+import { Menu, MenuProps } from './shared/Menu/Menu'
 
-import { ColorSchemeContext } from '../context'
-import { ControllerStateAndHelpers } from 'downshift/typings'
-import { ErrorMessage } from '../Input/ErrorMessage'
-import { Icon } from '../IconRC/Icon'
-import { Item } from './shared/Item/Item'
-import { Label } from './shared/Label/Label'
+import { helperStyles } from '@island.is/island-ui/theme'
 import { TestSupport } from '@island.is/island-ui/utils'
 import cn from 'classnames'
-import { helperStyles } from '@island.is/island-ui/theme'
+import { ControllerStateAndHelpers } from 'downshift/typings'
+import { ColorSchemeContext } from '../context'
+import { Icon } from '../IconRC/Icon'
+import { ErrorMessage } from '../Input/ErrorMessage'
+import { Item } from './shared/Item/Item'
+import { Label } from './shared/Label/Label'
 
-export type AsyncSearchSizes = 'medium' | 'large'
+export type AsyncSearchSizes = 'medium' | 'large' | 'semi-large'
 
 export type ItemCmpProps = {
   active?: boolean
@@ -44,15 +44,18 @@ export type AsyncSearchOption = {
 export interface AsyncSearchProps {
   id?: string
   label?: string
+  ariaLabel?: string
   placeholder?: string
   options: AsyncSearchOption[]
   colored?: boolean
+  showDividerIfActive?: boolean
   filter?: boolean | ((x: AsyncSearchOption) => boolean)
   inputValue?: string
   initialInputValue?: string
   size?: AsyncSearchSizes
   loading?: boolean
   closeMenuOnSubmit?: boolean
+  openMenuOnFocus?: boolean
   required?: boolean
   errorMessage?: string
   hasError?: boolean
@@ -70,6 +73,7 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
     {
       id = 'asyncsearch-id',
       label,
+      ariaLabel,
       placeholder,
       size = 'medium',
       colored,
@@ -83,9 +87,11 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
       white,
       required,
       closeMenuOnSubmit,
+      openMenuOnFocus,
       onChange,
       onSubmit,
       onInputValueChange,
+      showDividerIfActive,
       ...props
     },
     ref,
@@ -119,6 +125,7 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
         itemToString={(item: AsyncSearchOption | null) =>
           item ? item.label : ''
         }
+        inputValue={inputValue}
         {...props}
       >
         {(downshiftProps: ControllerStateAndHelpers<AsyncSearchOption>) => {
@@ -127,6 +134,7 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
             getItemProps,
             getLabelProps,
             getMenuProps,
+            openMenu,
             getToggleButtonProps,
             closeMenu,
             isOpen,
@@ -144,13 +152,14 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
             filteredOptions.map((item, index) => (
               <Item
                 index={index}
+                key={item.value}
                 highlightedIndex={highlightedIndex}
                 isActive={highlightedIndex === index}
+                showDividerIfActive={showDividerIfActive}
                 colored={colored}
-                size={size}
+                size={size === 'semi-large' ? 'medium' : size}
                 item={item}
                 {...getItemProps({
-                  key: item.value,
                   index,
                   item,
                   isSelected: options.includes(item),
@@ -181,6 +190,8 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
             inputColor = 'blueberry'
           } else if (colorScheme === 'dark') {
             inputColor = 'dark'
+          } else if (colorScheme === 'blue') {
+            inputColor = 'blue'
           }
 
           return (
@@ -196,7 +207,12 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
               inputProps={{
                 ...getInputProps({
                   value: inputValue,
-                  onFocus,
+                  onFocus: () => {
+                    onFocus()
+                    if (openMenuOnFocus) {
+                      openMenu()
+                    }
+                  },
                   onBlur,
                   ref,
                   spellCheck: true,
@@ -212,6 +228,7 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
               buttonProps={{
                 onFocus,
                 onBlur,
+                'aria-label': ariaLabel,
                 ...(onSubmit
                   ? {
                       onClick: () => {
@@ -328,6 +345,8 @@ export const AsyncSearchInput = forwardRef<
 
     const darkColorScheme = skipContext ? false : colorSchemeContext === 'dark'
 
+    const blueColorScheme = skipContext ? false : colorSchemeContext === 'blue'
+
     const iconColor = getIconColor(
       whiteColorScheme,
       blueberryColorScheme,
@@ -344,6 +363,7 @@ export const AsyncSearchInput = forwardRef<
       inputColor = 'dark'
     }
 
+    const normalizedSize = size === 'semi-large' ? 'medium' : size
     return (
       <>
         <div
@@ -357,27 +377,35 @@ export const AsyncSearchInput = forwardRef<
         >
           <Input
             {...inputProps}
+            colored={inputProps.colored || blueColorScheme}
             data-testid={dataTestId}
             color={inputColor}
             isOpen={isOpen}
             ref={ref}
             hasError={hasError}
+            placeholder={value ? undefined : inputProps.placeholder}
           />
           {!loading ? (
             <button
-              className={cn(styles.icon, styles.iconSizes[size], {
+              className={cn(styles.icon, styles.iconSizes[normalizedSize], {
                 [styles.transparentBackground]:
-                  whiteColorScheme || blueberryColorScheme || darkColorScheme,
+                  whiteColorScheme ||
+                  blueberryColorScheme ||
+                  darkColorScheme ||
+                  blueColorScheme,
                 [styles.focusable]: value,
               })}
               tabIndex={value ? 0 : -1}
               {...buttonProps}
             >
-              <Icon size={size} icon="search" color={iconColor} />
+              <Icon size={normalizedSize} icon={'search'} color={iconColor} />
             </button>
           ) : (
             <span
-              className={cn(styles.loadingIcon, styles.loadingIconSizes[size])}
+              className={cn(
+                styles.loadingIcon,
+                styles.loadingIconSizes[normalizedSize],
+              )}
               aria-hidden="false"
               aria-label="Loading"
             >
@@ -403,7 +431,10 @@ export const AsyncSearchInput = forwardRef<
               {inputProps.placeholder}
             </label>
           )}
-          <Menu {...{ isOpen, shouldShowItems: isOpen, ...menuProps }}>
+          <Menu
+            colorScheme={blueColorScheme ? 'blue' : undefined}
+            {...{ isOpen, shouldShowItems: isOpen, ...menuProps }}
+          >
             {children}
           </Menu>
         </div>

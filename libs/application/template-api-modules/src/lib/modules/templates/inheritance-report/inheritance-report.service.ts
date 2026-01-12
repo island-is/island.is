@@ -6,7 +6,7 @@ import {
   PersonType,
   SyslumennService,
 } from '@island.is/clients/syslumenn'
-import { getFakeData } from './utils'
+import { getFakeData, roundMonetaryFieldsDeep, stringifyObject } from './utils'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
@@ -18,8 +18,10 @@ import { infer as zinfer } from 'zod'
 import { inheritanceReportSchema } from '@island.is/application/templates/inheritance-report'
 import type { Logger } from '@island.is/logging'
 import { expandAnswers } from './utils/mappers'
-import { NationalRegistryXRoadService } from '@island.is/api/domains/national-registry-x-road'
+import { NationalRegistryV3Service } from '../../shared/api/national-registry-v3/national-registry-v3.service'
 import { S3Service } from '@island.is/nest/aws'
+import { TemplateApiError } from '@island.is/nest/problem'
+import { coreErrorMessages } from '@island.is/application/core'
 
 type InheritanceSchema = zinfer<typeof inheritanceReportSchema>
 
@@ -28,26 +30,13 @@ export class InheritanceReportService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly syslumennService: SyslumennService,
-    private readonly nationalRegistryService: NationalRegistryXRoadService,
+    private readonly nationalRegistryService: NationalRegistryV3Service,
     private readonly s3Service: S3Service,
   ) {
     super(ApplicationTypes.INHERITANCE_REPORT)
   }
 
-  stringifyObject(obj: Record<string, unknown>): Record<string, string> {
-    const result: Record<string, string> = {}
-    for (const key in obj) {
-      if (typeof obj[key] === 'string') {
-        result[key] = obj[key] as string
-      } else {
-        result[key] = JSON.stringify(obj[key])
-      }
-    }
-
-    return result
-  }
-
-  async syslumennOnEntry({ application, auth }: TemplateApiModuleActionProps) {
+  async syslumennOnEntry({ application }: TemplateApiModuleActionProps) {
     const [relationOptions, inheritanceReportInfos] = await Promise.all([
       this.syslumennService.getEstateRelations(),
       // Get estate info from syslumenn or fakedata depending on application.applicant
@@ -72,9 +61,26 @@ export class InheritanceReportService extends BaseTemplateApiService {
               inheritanceReportInfo.inheritanceTax = inheritanceTax
               resolve()
             })
+            .catch((e) => {
+              this.logger.warn(
+                '[inheritance-report]: Failed to fetch inheritance tax',
+                e,
+              )
+            })
         })
       }),
     )
+
+    if (!inheritanceReportInfos.length) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.failedDataProviderSubmit,
+          summary:
+            coreErrorMessages.errorDataProviderEstateValidationNothingFoundSummary,
+        },
+        400,
+      )
+    }
 
     return {
       success: true,
@@ -83,10 +89,7 @@ export class InheritanceReportService extends BaseTemplateApiService {
     }
   }
 
-  async completeApplication({
-    application,
-    auth,
-  }: TemplateApiModuleActionProps) {
+  async completeApplication({ application }: TemplateApiModuleActionProps) {
     const nationalRegistryData = application.externalData.nationalRegistry
       ?.data as NationalRegistryIndividual
 
@@ -104,7 +107,12 @@ export class InheritanceReportService extends BaseTemplateApiService {
       type: PersonType.AnnouncerOfDeathCertificate,
     }
 
-    const uploadData = this.stringifyObject(expandAnswers(answers))
+    const expanded = expandAnswers(answers)
+    const roundedExpanded = roundMonetaryFieldsDeep(expanded) as Record<
+      string,
+      unknown
+    >
+    const uploadData = stringifyObject(roundedExpanded)
 
     const uploadDataName = 'erfdafjarskysla1.0'
     const uploadDataId = 'erfdafjarskysla1.0'
@@ -175,8 +183,8 @@ export class InheritanceReportService extends BaseTemplateApiService {
     return { success: result.success, id: result.caseNumber }
   }
 
-  async maritalStatus({ auth }: TemplateApiModuleActionProps) {
-    const spouse = await this.nationalRegistryService.getSpouse(auth.nationalId)
+  async maritalStatus(props: TemplateApiModuleActionProps) {
+    const spouse = await this.nationalRegistryService.getSpouse(props)
     return { ...spouse, fullName: spouse?.name }
   }
 

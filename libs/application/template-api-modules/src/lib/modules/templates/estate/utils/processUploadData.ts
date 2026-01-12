@@ -35,10 +35,14 @@ export const generateRawUploadData = (
   externalData: EstateSchema['estate'],
   application: ApplicationWithAttachments,
 ) => {
+  // Use registrant data if provided (for permitForUndividedEstate),
+  // otherwise fall back to finding relation in estateMembers
   const relation =
+    answers.registrant?.relation ??
     externalData?.estateMembers?.find(
       (member) => member.nationalId === application.applicant,
-    )?.relation ?? 'Óþekkt'
+    )?.relation ??
+    'Óþekkt'
 
   const processedAssets = filterAndRemoveRepeaterMetadata<
     EstateSchema['estate']['assets']
@@ -56,6 +60,26 @@ export const generateRawUploadData = (
     EstateSchema['estate']['guns']
   >(answers?.estate?.guns ?? [])
 
+  const processedClaims = filterAndRemoveRepeaterMetadata<
+    EstateSchema['estate']['claims']
+  >(answers?.estate?.claims ?? [])
+
+  const processedBankAccounts = filterAndRemoveRepeaterMetadata<
+    EstateSchema['estate']['bankAccounts']
+  >(answers?.estate?.bankAccounts ?? [])
+
+  const processedDebts = filterAndRemoveRepeaterMetadata<
+    NonNullable<EstateSchema['debts']>['data']
+  >(answers?.debts?.data ?? [])
+
+  const processedOtherAssets = filterAndRemoveRepeaterMetadata<
+    EstateSchema['estate']['otherAssets']
+  >(answers?.estate?.otherAssets ?? [])
+
+  const processedStocks = filterAndRemoveRepeaterMetadata<
+    EstateSchema['estate']['stocks']
+  >(answers?.estate?.stocks ?? [])
+
   const uploadData: UploadData = {
     deceased: {
       name: externalData.nameOfDeceased ?? '',
@@ -66,6 +90,9 @@ export const generateRawUploadData = (
     districtCommissionerHasWill: trueOrHasYes(
       answers.estate?.testament?.wills ?? 'false',
     ),
+    knowledgeOfOtherWills: trueOrHasYes(
+      answers.estate?.testament?.knowledgeOfOtherWills ?? 'false',
+    ),
     settlement: trueOrHasYes(answers.estate?.testament?.agreement ?? 'false'),
     dividedEstate: trueOrHasYes(answers.estate?.testament?.dividedEstate ?? ''),
     remarksOnTestament: answers.estate?.testament?.additionalInfo ?? '',
@@ -73,28 +100,28 @@ export const generateRawUploadData = (
     applicationType: answers.selectedEstate,
     caseNumber: externalData?.caseNumber ?? '',
     assets: expandAssetFrames(processedAssets),
-    claims: expandClaims(answers?.claims ?? []),
-    bankAccounts: expandBankAccounts(answers.bankAccounts ?? []),
-    debts: expandDebts(answers.debts ?? []),
+    claims: expandClaims(processedClaims),
+    bankAccounts: expandBankAccounts(processedBankAccounts),
+    debts: expandDebts(processedDebts),
     estateMembers: expandEstateMembers(processedEstateMembers),
     inventory: {
-      info: answers.inventory?.info ?? '',
-      value: answers.inventory?.value ?? '',
+      info: answers.estate?.inventory?.info ?? '',
+      value: answers.estate?.inventory?.value ?? '',
     },
     moneyAndDeposit: {
-      info: answers.moneyAndDeposit?.info ?? '',
-      value: answers.moneyAndDeposit?.value ?? '',
+      info: answers.estate?.moneyAndDeposit?.info ?? '',
+      value: answers.estate?.moneyAndDeposit?.value ?? '',
     },
     notifier: {
-      email: answers.applicant.email ?? '',
-      name: answers.applicant.name,
-      phoneNumber: answers.applicant.phone,
+      email: answers.registrant?.email ?? answers.applicant.email ?? '',
+      name: answers.registrant?.name ?? answers.applicant.name,
+      phoneNumber: answers.registrant?.phone ?? answers.applicant.phone,
       relation: relation ?? '',
-      ssn: answers.applicant.nationalId,
+      ssn: answers.registrant?.nationalId ?? answers.applicant.nationalId,
       autonomous: trueOrHasYes(answers.applicant.autonomous ?? 'false'),
     },
-    otherAssets: expandOtherAssets(answers.otherAssets ?? []),
-    stocks: expandStocks(answers.stocks ?? []),
+    otherAssets: expandOtherAssets(processedOtherAssets),
+    stocks: expandStocks(processedStocks),
     vehicles: expandAssetFrames(processedVehicles),
     estateWithoutAssetsInfo: {
       estateAssetsExist: trueOrHasYes(
@@ -131,6 +158,7 @@ export const generateRawUploadData = (
             selection: 'false',
           },
         }),
+    additionalComments: answers.additionalComments ?? '',
   }
 
   return uploadData

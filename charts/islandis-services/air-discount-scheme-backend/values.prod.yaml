@@ -27,15 +27,15 @@ env:
   IDENTITY_SERVER_CLIENT_ID: '@vegagerdin.is/clients/air-discount-scheme'
   IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
   LOG_LEVEL: 'info'
-  NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
-  REDIS_URL_NODE_01: 'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379'
+  NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
+  REDIS_URL_NODE_01: 'clustercfg.ads-valkey-cluster-group.whakos.euw1.cache.amazonaws.com:6379'
   SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   XROAD_BASE_PATH: 'http://securityserver.island.is'
   XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.island.is/r1/IS'
   XROAD_CLIENT_ID: 'IS/GOV/5501692829/island-is-client'
   XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
-  XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS/GOV/6503760649/SKRA-Protected/Einstaklingar-v1'
-  XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1'
+  XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Einstaklingar-v1'
+  XROAD_TJODSKRA_API_PATH: '/SKRA-Cloud-Protected/Einstaklingar-v1'
   XROAD_TJODSKRA_MEMBER_CODE: '6503760649'
   XROAD_TLS_BASE_PATH: 'https://securityserver.island.is'
   XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
@@ -96,7 +96,10 @@ initContainer:
     DB_PASS: '/k8s/air-discount-scheme-backend/DB_PASSWORD'
 namespace: 'air-discount-scheme'
 podDisruptionBudget:
-  maxUnavailable: 1
+  minAvailable: 1
+  unhealthyPodEvictionPolicy: 'IfHealthyBudget'
+podSecurityContext:
+  fsGroup: 65534
 pvcs: []
 replicaCount:
   default: 2
@@ -123,3 +126,8 @@ secrets:
 securityContext:
   allowPrivilegeEscalation: false
   privileged: false
+serviceAccount:
+  annotations:
+    eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/air-discount-scheme-backend'
+  create: true
+  name: 'air-discount-scheme-backend'

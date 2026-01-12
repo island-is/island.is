@@ -1,6 +1,0 @@
-export { DateOfAccident } from './DateOfAccident'
-export { FormOverview } from './FormOverview'
-export { HiddenInformation } from './HiddenInformation'
-export { ApplicationStatus } from './ApplicationStatus'
-export { FormOverviewInReview } from './FormOverviewInReview'
-export { ProxyDocument } from './ProxyDocument'

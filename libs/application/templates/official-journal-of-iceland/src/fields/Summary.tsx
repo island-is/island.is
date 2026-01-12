@@ -20,7 +20,7 @@ import { Routes } from '../lib/constants'
 import {
   advertValidationSchema,
   publishingValidationSchema,
-  signatureValidationSchema,
+  signatureValidator,
 } from '../lib/dataSchema'
 import { advert, error, publishing, summary } from '../lib/messages'
 import { signatures } from '../lib/messages/signatures'
@@ -49,10 +49,9 @@ export const Summary = ({
     currentApplication.answers,
   )
 
-  const signatureValidationCheck = signatureValidationSchema.safeParse({
-    signatures: currentApplication.answers.signatures,
-    misc: currentApplication.answers.misc,
-  })
+  const signatureValidationCheck = signatureValidator(
+    application.answers.misc?.signatureType ?? 'regular',
+  ).safeParse(currentApplication.answers.signature)
 
   const publishingCheck = publishingValidationSchema.safeParse(
     currentApplication.answers.advert,
@@ -176,7 +175,7 @@ export const Summary = ({
           {!publishingCheck.success && (
             <AlertMessage
               type="warning"
-              title={f(error.missingFieldsTitle)}
+              title={f(error.missingFieldsAny)}
               message={
                 <Stack space={2}>
                   <BulletList color="black">

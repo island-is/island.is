@@ -1,10 +1,31 @@
+// ATTENTION -> When adding or changing paths, please always make sure to redirect old paths. The app is using links to navigate
+const basicInformation = '/heilsa/grunnupplysingar'
 export enum HealthPaths {
   HealthRoot = '/heilsa',
 
-  HealthOverview = '/heilsa/yfirlit',
+  HealthBasicOld = '/heilsa/yfirlit',
+  HealthBasicInformation = `${basicInformation}`,
+  HealthOverview = `${basicInformation}/yfirlit`,
 
-  HealthOrganDonation = '/heilsa/liffaeragjof',
-  HealthOrganDonationRegistration = '/heilsa/liffaeragjof/skraning',
+  HealthDentists = `${basicInformation}/tannlaeknar`,
+  HealthDentistRegistration = `${basicInformation}/tannlaeknar/skraning`,
+
+  HealthOrganDonation = `${basicInformation}/liffaeragjof`,
+  HealthOrganDonationRegistration = `${basicInformation}/liffaeragjof/skraning`,
+
+  HealthInsurance = `${basicInformation}/sjukratryggingar`,
+
+  HealthCenter = `${basicInformation}/heilsugaesla`,
+  HealthCenterRegistration = `${basicInformation}/heilsugaesla/skraning`,
+
+  HealthDentistsOld = '/heilsa/tannlaeknar',
+  HealthDentistRegistrationOld = '/heilsa/tannlaeknar/skraning',
+
+  HealthOrganDonationOld = '/heilsa/liffaeragjof',
+  HealthOrganDonationRegistrationOld = '/heilsa/liffaeragjof/skraning',
+
+  HealthCenterOld = '/heilsa/heilsugaesla',
+  HealthCenterRegistrationOld = '/heilsa/heilsugaesla/skraning',
 
   HealthTherapies = '/heilsa/thjalfun',
   HealthTherapiesPhysical = '/heilsa/thjalfun/sjukrathjalfun',
@@ -14,11 +35,9 @@ export enum HealthPaths {
   HealthPayments = '/heilsa/greidslur',
   HealthPaymentParticipation = '/heilsa/greidslur/greidsluthatttaka',
   HealthPaymentOverview = '/heilsa/greidslur/greidsluyfirlit',
+  HealthPaymentRights = '/heilsa/greidslur/rettindi',
 
   HealthAidsAndNutrition = '/heilsa/hjalpartaeki-og-naering',
-
-  HealthDentists = '/heilsa/tannlaeknar',
-  HealthDentistRegistration = '/heilsa/tannlaeknar/skraning',
 
   HealthMedicine = '/heilsa/lyf',
   HealthMedicinePaymentParticipation = '/heilsa/lyf/greidsluthatttaka',
@@ -30,11 +49,27 @@ export enum HealthPaths {
   HealthMedicinePrescriptionOverview = '/heilsa/lyf/lyfjaavisanir/yfirlit',
   HealthMedicinePrescriptionHistory = '/heilsa/lyf/lyfjasaga',
   HealthMedicineDelegation = '/heilsa/lyf/lyfjaumbod',
-
-  HealthCenter = '/heilsa/heilsugaesla',
-  HealthCenterRegistration = '/heilsa/heilsugaesla/skraning',
+  HealthMedicineDelegationDetail = '/heilsa/lyf/lyfjaumbod/:id',
+  HealthMedicineDelegationAdd = '/heilsa/lyf/lyfjaumbod/nytt-lyfjaumbod',
 
   HealthVaccinations = '/heilsa/bolusetningar',
   HealthVaccinationsGeneral = '/heilsa/bolusetningar/almennar',
   HealthVaccinationsOther = '/heilsa/bolusetningar/adrar',
+
+  HealthBloodtype = '/heilsa/blodflokkur',
+
+  HealthReferrals = '/heilsa/tilvisanir',
+  HealthReferralsDetail = '/heilsa/tilvisanir/:id',
+
+  HealthWaitlists = '/heilsa/bidlistar',
+  HealthWaitlistsDetail = '/heilsa/bidlistar/:id',
+
+  HealthPatientData = '/heilsa/sjukraskra',
+  HealthPatientDataOverview = '/heilsa/sjukraskra/yfirlit',
+  HealthPatientDataPermits = '/heilsa/sjukraskra/heimildir',
+  HealthPatientDataPermitsDetail = '/heilsa/sjukraskra/heimildir/:id',
+  HealthPatientDataPermitsAdd = '/heilsa/sjukraskra/heimildir/ny-heimild',
+
+  HealthAppointments = '/heilsa/timabokanir',
+  HealthAppointmentDetail = '/heilsa/timabokanir/:id',
 }

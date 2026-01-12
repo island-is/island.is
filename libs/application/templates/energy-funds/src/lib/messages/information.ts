@@ -160,27 +160,27 @@ export const information = {
         description: 'Checkbox checkable tag label',
       },
       findPlatePlaceholder: {
-        id: 'ta.tvo.application:information.labels.pickVehicle.findPlatePlaceholder',
+        id: 'ef.application:information.labels.pickVehicle.findPlatePlaceholder',
         defaultMessage: 'Sláðu inn plötunúmer',
         description: 'Pick vehicle find plate placeholder',
       },
       findButton: {
-        id: 'ta.tvo.application:information.labels.pickVehicle.findButton',
+        id: 'ef.application:information.labels.pickVehicle.findButton',
         defaultMessage: 'Leita',
         description: 'Pick vehicle find button',
       },
       notFoundTitle: {
-        id: 'ta.tvo.application:information.labels.pickVehicle.notFoundTitle',
+        id: 'ef.application:information.labels.pickVehicle.notFoundTitle',
         defaultMessage: 'Eitthvað fór úrskeiðis',
         description: 'vehicle not found',
       },
       notFoundMessage: {
-        id: 'ta.tvo.application:information.labels.pickVehicle.notFoundMessage',
+        id: 'ef.application:information.labels.pickVehicle.notFoundMessage',
         defaultMessage: 'Ökutæki með plötunúmerið {plate} fannst ekki',
         description: 'vehicle not found message',
       },
       hasErrorTitle: {
-        id: 'ta.tvo.application:information.labels.pickVehicle.hasErrorTitle',
+        id: 'ef.application:information.labels.pickVehicle.hasErrorTitle',
         defaultMessage: 'Ekki er hægt að selja þessa bifreið vegna:',
         description: 'Pick vehicle has an error title',
       },

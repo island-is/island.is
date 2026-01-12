@@ -334,8 +334,8 @@
         "type": "oauth2",
         "flows": {
           "authorizationCode": {
-            "authorizationUrl": "https://identity-server.dev01.devland.is//connect/authorize",
-            "tokenUrl": "https://identity-server.dev01.devland.is//connect/token",
+            "authorizationUrl": "https://identity-server.dev01.devland.is/connect/authorize",
+            "tokenUrl": "https://identity-server.dev01.devland.is/connect/token",
             "scopes": {
               "@ver.is/rettindaskra": "Sækir OpenId, Profile og claimið sem þarf"
             }

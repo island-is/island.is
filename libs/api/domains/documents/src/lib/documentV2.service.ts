@@ -1,96 +1,56 @@
-import { Inject, Injectable } from '@nestjs/common'
+import type { User } from '@island.is/auth-nest-tools'
 import {
   DocumentsClientV2Service,
   MessageAction,
 } from '@island.is/clients/documents-v2'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
+import type { ConfigType } from '@island.is/nest/config'
+import { DownloadServiceConfig } from '@island.is/nest/config'
+import type { Locale } from '@island.is/shared/types'
+import { AuthDelegationType } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
-import { Category } from './models/v2/category.model'
+import { Inject, Injectable } from '@nestjs/common'
+import differenceInYears from 'date-fns/differenceInYears'
+import { HEALTH_CATEGORY_ID, LAW_AND_ORDER_CATEGORY_ID } from './document.types'
+import { getBirthday } from './helpers/getBirthday'
+import { Action } from './models/v2/actions.model'
 import { MailAction } from './models/v2/bulkMailAction.input'
+import { Category } from './models/v2/category.model'
 import {
-  PaginatedDocuments,
   Document,
   DocumentPageNumber,
-  Action,
+  PaginatedDocuments,
 } from './models/v2/document.model'
-import type { ConfigType } from '@island.is/nest/config'
-import { DocumentsInput } from './models/v2/documents.input'
-import { PaperMailPreferences } from './models/v2/paperMailPreferences.model'
-import { Sender } from './models/v2/sender.model'
 import { FileType } from './models/v2/documentContent.model'
-import { HEALTH_CATEGORY_ID, LAW_AND_ORDER_CATEGORY_ID } from './document.types'
-import { Type } from './models/v2/type.model'
-import { DownloadServiceConfig } from '@island.is/nest/config'
+import { DocumentsInput } from './models/v2/documents.input'
 import { DocumentV2MarkAllMailAsRead } from './models/v2/markAllMailAsRead.model'
-import type { User } from '@island.is/auth-nest-tools'
-import { AuthDelegationType } from '@island.is/shared/types'
-import { getBirthday } from './helpers/getBirthday'
-import differceInYears from 'date-fns/differenceInYears'
-import type { Locale } from '@island.is/shared/types'
+import { PaperMailPreferences } from './models/v2/paperMailPreferences.model'
+import { ReplyInput } from './models/v2/reply.input'
+import { Reply } from './models/v2/reply.model'
+import { Sender } from './models/v2/sender.model'
+import { Type } from './models/v2/type.model'
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 
 const LOG_CATEGORY = 'documents-api-v2'
+
 @Injectable()
 export class DocumentServiceV2 {
   constructor(
-    private documentService: DocumentsClientV2Service,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+    private readonly featureService: FeatureFlagService,
+    private documentService: DocumentsClientV2Service,
     @Inject(DownloadServiceConfig.KEY)
     private downloadServiceConfig: ConfigType<typeof DownloadServiceConfig>,
   ) {}
 
   async findDocumentById(
-    nationalId: string,
-    documentId: string,
-  ): Promise<Document | null> {
-    const document = await this.documentService.getCustomersDocument(
-      nationalId,
-      documentId,
-    )
-
-    if (!document) {
-      return null // Null document logged in clients-documents-v2
-    }
-
-    let type: FileType
-    switch (document.fileType) {
-      case 'html':
-        type = FileType.HTML
-        break
-      case 'pdf':
-        type = FileType.PDF
-        break
-      case 'url':
-        type = FileType.URL
-        break
-      default:
-        type = FileType.UNKNOWN
-    }
-
-    return {
-      ...document,
-      publicationDate: document.date,
-      id: documentId,
-      name: document.fileName,
-      downloadUrl: `${this.downloadServiceConfig.baseUrl}/download/v1/electronic-documents/${documentId}`,
-      sender: {
-        id: document.senderNationalId,
-        name: document.senderName,
-      },
-      content: {
-        type,
-        value: document.content,
-      },
-    }
-  }
-
-  async findDocumentByIdV3(
-    nationalId: string,
+    user: User,
     documentId: string,
     locale?: Locale,
     includeDocument?: boolean,
   ): Promise<Document | null> {
     const document = await this.documentService.getCustomersDocument(
-      nationalId,
+      user.nationalId,
       documentId,
       locale,
       includeDocument,
@@ -99,6 +59,12 @@ export class DocumentServiceV2 {
     if (!document) {
       return null // Null document logged in clients-documents-v2
     }
+
+    const use2Way = await this.featureService.getValue(
+      Features.isServicePortal2WayMailboxEnabled,
+      false,
+      user,
+    )
 
     let type: FileType
     switch (document.fileType) {
@@ -118,6 +84,7 @@ export class DocumentServiceV2 {
     let confirmation = document.actions?.find(
       (action) => action.type === 'confirmation',
     )
+
     if (
       !isDefined(confirmation?.title) ||
       confirmation?.title === '' ||
@@ -132,11 +99,25 @@ export class DocumentServiceV2 {
     const actions = document.actions?.filter(
       (action) => action.type !== 'alert' && action.type !== 'confirmation',
     )
-    if (document.urgent)
-      this.logger.info('Urgent document fetched', {
-        documentId: documentId,
-        includeDocument,
-      })
+
+    const ticket = use2Way
+      ? {
+          id: document.ticket?.id?.toString(),
+          authorId: document.ticket?.authorId?.toString(),
+          createdDate: document.ticket?.createdAt,
+          updatedDate: document.ticket?.updatedAt,
+          status: document.ticket?.status,
+          subject: document.ticket?.subject,
+          comments: document.ticket?.comments?.map((c) => ({
+            id: c.id?.toString(),
+            body: c.body,
+            createdDate: c.createdAt,
+            authorId: c.authorId?.toString(),
+            author: c.author,
+            isZendeskAgent: c.isAgent,
+          })),
+        }
+      : null
 
     return {
       ...document,
@@ -158,6 +139,11 @@ export class DocumentServiceV2 {
       actions: this.actionMapper(documentId, actions),
       confirmation: confirmation,
       alert: alert,
+      replyable: use2Way ? document.replyable : false,
+      closedForMoreReplies: use2Way
+        ? ticket?.status?.toLowerCase() === 'closed'
+        : null,
+      ticket: ticket,
     }
   }
 
@@ -165,25 +151,38 @@ export class DocumentServiceV2 {
     user: User,
     input: DocumentsInput,
   ): Promise<PaginatedDocuments> {
-    //If a delegated user is viewing the mailbox, do not return any health related data
+    //If a delegated user is viewing the mailbox, do not return any health or law and order related data
     //Category is now "1,2,3,...,n"
     const { categoryIds, ...restOfInput } = input
     let mutableCategoryIds = categoryIds ?? []
-    if (!mutableCategoryIds.length) {
-      const filteredCategories = await this.getCategories(user)
-      if (isDefined(filteredCategories)) {
-        mutableCategoryIds = filteredCategories.map((c) => c.id)
+
+    const hiddenCategoryIds = this.getHiddenCategoriesIDs(user)
+    const displayAllCategories =
+      !mutableCategoryIds.length && !hiddenCategoryIds.length
+    // if categories input ids is empty and hidden cat ids is empty we dont need to filter categories
+    if (!displayAllCategories) {
+      const filteredCategories = await this.getCategories(
+        user,
+        hiddenCategoryIds,
+      )
+
+      if (!mutableCategoryIds.length) {
+        if (isDefined(filteredCategories)) {
+          mutableCategoryIds = filteredCategories.map((c) => c.id)
+        }
       }
-    }
-    // If categoryIds are provided, filter out correct data
-    else {
-      const hiddenCategoryIds = this.getHiddenCategoriesIDs(user)
-      mutableCategoryIds.filter((c) => !hiddenCategoryIds.includes(c))
+      // If categoryIds are provided, filter out correct data
+      else {
+        mutableCategoryIds = mutableCategoryIds.filter(
+          (c) => !hiddenCategoryIds.includes(c),
+        )
+      }
     }
 
     const documents = await this.documentService.getDocumentList({
       ...restOfInput,
-      categoryId: mutableCategoryIds.join(),
+      categoryId: displayAllCategories ? undefined : mutableCategoryIds.join(),
+      hiddenCategoryIds: hiddenCategoryIds.join(),
       nationalId: user.nationalId,
     })
 
@@ -193,71 +192,11 @@ export class DocumentServiceV2 {
         totalCount: documents?.totalCount,
       })
     }
-
-    const documentData: Array<Document> =
-      documents?.documents
-        .map((d) => {
-          if (!d) {
-            return null
-          }
-
-          return {
-            ...d,
-            id: d.id,
-            downloadUrl: `${this.downloadServiceConfig.baseUrl}/download/v1/electronic-documents/${d.id}`,
-            sender: {
-              name: d.senderName,
-              id: d.senderNationalId,
-            },
-          }
-        })
-        .filter(isDefined) ?? []
-
-    return {
-      data: documentData,
-      totalCount: documents?.totalCount ?? 0,
-      unreadCount: documents?.unreadCount,
-      pageInfo: {
-        hasNextPage: false,
-      },
-    }
-  }
-
-  async listDocumentsV3(
-    user: User,
-    input: DocumentsInput,
-  ): Promise<PaginatedDocuments> {
-    //If a delegated user is viewing the mailbox, do not return any health related data
-    //Category is now "1,2,3,...,n"
-    const { categoryIds, ...restOfInput } = input
-    // If no categoryIds are provided, get all categories
-    let mutableCategoryIds = categoryIds ?? []
-
-    if (!mutableCategoryIds.length) {
-      const filteredCategories = await this.getCategories(user)
-      if (isDefined(filteredCategories)) {
-        mutableCategoryIds = filteredCategories.map((c) => c.id)
-      }
-    }
-    // If categoryIds are provided, filter out correct data
-    else {
-      const hiddenCategoryIds = this.getHiddenCategoriesIDs(user)
-      mutableCategoryIds.filter((c) => !hiddenCategoryIds.includes(c))
-    }
-
-    const documents = await this.documentService.getDocumentList({
-      ...restOfInput,
-      categoryId: mutableCategoryIds.join(),
-      hiddenCategoryIds: this.getHiddenCategoriesIDs(user).join(),
-      nationalId: user.nationalId,
-    })
-
-    if (typeof documents?.totalCount !== 'number') {
-      this.logger.warn('Document total count unavailable', {
-        category: LOG_CATEGORY,
-        totalCount: documents?.totalCount,
-      })
-    }
+    const use2Way = await this.featureService.getValue(
+      Features.isServicePortal2WayMailboxEnabled,
+      false,
+      user,
+    )
     const documentData: Array<Document> =
       documents?.documents
         .map((d) => {
@@ -274,6 +213,8 @@ export class DocumentServiceV2 {
               id: d.senderNationalId,
             },
             isUrgent: d.urgent,
+            replyable: use2Way ? d.replyable : false,
+            ticket: undefined,
           }
         })
         .filter(isDefined) ?? []
@@ -288,15 +229,27 @@ export class DocumentServiceV2 {
     }
   }
 
-  async getCategories(user: User): Promise<Array<Category> | null> {
-    const categories = await this.documentService.getCustomersCategories(
-      user.nationalId,
-    )
+  async getCategories(
+    user: User,
+    hiddenCategoryIds?: string[],
+  ): Promise<Array<Category> | null> {
+    let categories
 
-    const filterOutIds = this.getHiddenCategoriesIDs(user) ?? []
+    try {
+      categories = await this.documentService.getCustomersCategories(
+        user.nationalId,
+      )
+    } catch (error) {
+      this.logger.warn('Error fetching document categories', {
+        category: LOG_CATEGORY,
+        error: error,
+      })
+    }
 
+    const filterOutIds =
+      hiddenCategoryIds ?? this.getHiddenCategoriesIDs(user) ?? []
     const filteredCategories =
-      categories.categories
+      categories?.categories
         ?.map((c) => {
           if (
             !c.id ||
@@ -479,12 +432,41 @@ export class DocumentServiceV2 {
         return this.documentService.bookmarkMail(nationalId, documentId)
       case MailAction.UNBOOKMARK:
         return this.documentService.unbookmarkMail(nationalId, documentId)
+      case MailAction.READ:
+        return this.documentService.batchReadMail(nationalId, [documentId])
       default:
         this.logger.error('Invalid single document action', {
           action,
           category: LOG_CATEGORY,
         })
         throw new Error('Invalid single document action')
+    }
+  }
+
+  async postReply(user: User, input: ReplyInput): Promise<Reply | null> {
+    try {
+      const res = await this.documentService.postTicket(
+        user.nationalId,
+        input.documentId,
+        {
+          body: input.body,
+          subject: input.subject,
+          requesterEmail: input.requesterEmail,
+          requesterName: input.requesterName,
+        },
+      )
+      // if no ticket id is returned we handle error client side
+      if (!res.ticketId) {
+        return null
+      }
+      return { id: res.ticketId?.toString(), email: res.reqeusterEmail }
+    } catch (error) {
+      this.logger.error('Failed to post reply', {
+        category: LOG_CATEGORY,
+        error: error,
+        documentId: input.documentId,
+      })
+      return null
     }
   }
 
@@ -533,26 +515,38 @@ export class DocumentServiceV2 {
   }
 
   private getHiddenCategoriesIDs = (user: User) => {
-    const isDelegated = isDefined(user.delegationType)
-    if (!isDelegated) return []
+    try {
+      const isDelegated = isDefined(user.delegationType)
+      if (!isDelegated) return []
 
-    const isLegalGuardian = user.delegationType?.includes(
-      AuthDelegationType.LegalGuardian,
-    )
-    const birthdate = getBirthday(user.nationalId)
-    const childAgeIs16OrOlder = birthdate
-      ? differceInYears(new Date(), birthdate) > 15
-      : false
+      const isLegalGuardian = user.delegationType?.includes(
+        AuthDelegationType.LegalGuardian,
+      )
+      const birthdate = getBirthday(user.nationalId)
+      const childAgeIs16OrOlder = birthdate
+        ? differenceInYears(new Date(), birthdate) > 15
+        : false
 
-    // Hide health data if user is a legal guardian and child is 16 or older
-    const hideHealthData = isLegalGuardian && childAgeIs16OrOlder
-    // Hide law and order data if user is delegated
-    // commented out until we have correct category for law and order files
-    const hideLawAndOrderData = isDelegated
-
-    return [
-      ...(hideHealthData ? [HEALTH_CATEGORY_ID] : []),
-      ...(hideLawAndOrderData ? [LAW_AND_ORDER_CATEGORY_ID] : []),
-    ]
+      // Hide health data if user is a legal guardian and child is 16 or older
+      const hideHealthData = isLegalGuardian && childAgeIs16OrOlder
+      // Hide law and order data if user is delegated
+      const hideLawAndOrderData = isDelegated
+      this.logger.debug('Should hide document categories', {
+        hideHealthData,
+        hideLawAndOrderData,
+        isLegalGuardian,
+        childAgeIs16OrOlder,
+      })
+      return [
+        ...(hideHealthData ? [HEALTH_CATEGORY_ID] : []),
+        ...(hideLawAndOrderData ? [LAW_AND_ORDER_CATEGORY_ID] : []),
+      ]
+    } catch (error) {
+      this.logger.warn('Error fetching hidden categories', {
+        category: LOG_CATEGORY,
+        error: error,
+      })
+      return []
+    }
   }
 }

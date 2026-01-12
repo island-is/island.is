@@ -8,7 +8,7 @@ import { information, overview, review } from '../../../lib/messages'
 import { States } from '../../../lib/constants'
 import { ReviewGroup } from '../../ReviewGroup'
 import { ReviewScreenProps } from '../../../shared'
-import { formatPhoneNumber, canReviewerApprove } from '../../../utils'
+import { formatPhoneNumber, hasReviewerApproved } from '../../../utils'
 import kennitala from 'kennitala'
 
 export const BuyerSection: FC<
@@ -30,7 +30,7 @@ export const BuyerSection: FC<
     <ReviewGroup
       editMessage={
         isBuyer &&
-        canReviewerApprove(reviewerNationalId, answers) &&
+        !hasReviewerApproved(answers, reviewerNationalId) &&
         application.state !== States.COMPLETED
           ? formatMessage(overview.labels.addCoOwnerAndOperatorButton)
           : undefined
@@ -48,7 +48,6 @@ export const BuyerSection: FC<
           <Text>
             {kennitala.format(
               getValueViaPath(answers, 'buyer.nationalId', '') as string,
-              '-',
             )}
           </Text>
           <Text>{getValueViaPath(answers, 'buyer.email', '') as string}</Text>

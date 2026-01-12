@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { BaseTemplateApiService } from '../../base-template-api.service'
-import { ApplicationTypes, YES } from '@island.is/application/types'
+import { ApplicationTypes } from '@island.is/application/types'
 import { TemplateApiModuleActionProps } from '../../../types'
 
 import {
@@ -26,6 +26,7 @@ import {
 import { Fasteign, FasteignirApi } from '@island.is/clients/assets'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
+import { YES } from '@island.is/application/core'
 
 type CheckResidence = {
   residenceHistory: ResidenceEntryDto
@@ -80,8 +81,7 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
     const confirmsLoanTakeover =
       answers.confirmLoanTakeover?.includes(YES) ?? false
     const hasLoanFromOtherProvider =
-      answers.loanProviders.loans?.findIndex((x) => !!x.otherProvider) !== -1 ??
-      false
+      answers.loanProviders.loans?.some((x) => x.otherProvider) ?? false
     const noLoanCheckbox =
       answers.loanProviders.hasNoLoans?.includes(YES) ?? false
     const hasNoLoans =

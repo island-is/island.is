@@ -20,7 +20,7 @@ name: 'services-auth-delegation-api'
 enabled: true
 env:
   CODE_OWNER: 'aranja'
-  COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
+  COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com:6379"]'
   COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10006/Skatturinn/ft-v1'
   DB_HOST: 'postgres-applications.internal'
   DB_NAME: 'servicesauth'
@@ -33,20 +33,20 @@ env:
   NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
   NATIONAL_REGISTRY_B2C_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1'
   NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitydev.onmicrosoft.com/midlun/.default'
-  NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
+  NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
   SERVERSIDE_FEATURES_ON: ''
   SYSLUMENN_HOST: 'https://api.syslumenn.is/staging'
   SYSLUMENN_TIMEOUT: '3000'
-  USER_NOTIFICATION_API_URL: 'http://web-user-notification.user-notification.svc.cluster.local'
+  USER_NOTIFICATION_API_URL: 'https://user-notification.internal.dev01.devland.is'
   XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
   XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
   XROAD_CLIENT_ID: 'IS-DEV/GOV/10000/island-is-client'
   XROAD_NATIONAL_REGISTRY_ACTOR_TOKEN: 'true'
-  XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
-  XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1'
+  XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com:6379"]'
+  XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Einstaklingar-v1'
   XROAD_RSK_PROCURING_ACTOR_TOKEN: 'true'
   XROAD_RSK_PROCURING_PATH: 'IS-DEV/GOV/10006/Skatturinn/relationships-v1'
-  XROAD_RSK_PROCURING_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
+  XROAD_RSK_PROCURING_REDIS_NODES: '["clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com:6379"]'
   XROAD_TLS_BASE_PATH: 'https://securityserver.dev01.devland.is'
   XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
   ZENDESK_CONTACT_FORM_SUBDOMAIN: 'digitaliceland'
@@ -55,6 +55,7 @@ grantNamespaces:
   - 'islandis'
   - 'service-portal'
   - 'user-notification-worker'
+  - 'user-notification-birthday-worker'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:
@@ -71,8 +72,8 @@ hpa:
       cpuAverageUtilization: 90
       nginxRequestsIrate: 5
     replicas:
-      max: 10
-      min: 2
+      max: 3
+      min: 1
 image:
   repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-delegation-api'
 ingress:
@@ -81,17 +82,20 @@ ingress:
       kubernetes.io/ingress.class: 'nginx-internal-alb'
       nginx.ingress.kubernetes.io/service-upstream: 'true'
     hosts:
-      - host: 'auth-delegation-api.internal.dev01.devland.is'
+      - host: 'auth-delegation-api.internal.identity-server.dev01.devland.is'
         paths:
           - '/'
 namespace: 'identity-server-delegation'
 podDisruptionBudget:
-  maxUnavailable: 1
+  minAvailable: 1
+  unhealthyPodEvictionPolicy: 'IfHealthyBudget'
+podSecurityContext:
+  fsGroup: 65534
 pvcs: []
 replicaCount:
-  default: 2
-  max: 10
-  min: 2
+  default: 1
+  max: 3
+  min: 1
 resources:
   limits:
     cpu: '400m'
@@ -113,3 +117,8 @@ secrets:
 securityContext:
   allowPrivilegeEscalation: false
   privileged: false
+serviceAccount:
+  annotations:
+    eks.amazonaws.com/role-arn: 'arn:aws:iam::324037283794:role/auth-delegation-api'
+  create: true
+  name: 'auth-delegation-api'

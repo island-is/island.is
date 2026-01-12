@@ -5,6 +5,7 @@ import {
   buildAlertMessageField,
   buildDescriptionField,
   YES,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { hasNoDrivingLicenseInOtherCountry } from '../../lib/utils'
@@ -27,13 +28,11 @@ export const subSectionHealthDeclaration = buildSubSection({
       children: [
         buildDescriptionField({
           id: 'healthDeclarationDescription',
-          title: '',
           description: m.healthDeclarationSubTitle,
           marginBottom: 2,
         }),
         buildCustomField({
           id: 'remarks',
-          title: '',
           component: 'HealthRemarks',
           condition: (answers, externalData) =>
             hasHealthRemarks(externalData) && answers.applicationFor !== BE,
@@ -141,24 +140,25 @@ export const subSectionHealthDeclaration = buildSubSection({
         ),
         buildAlertMessageField({
           id: 'healthDeclaration.contactGlassesMismatch',
-          title: '',
           message: m.alertHealthDeclarationGlassesMismatch,
           alertType: 'warning',
           condition: (answers) =>
             answers.applicationFor !== BE &&
-            (answers.healthDeclaration as any)?.contactGlassesMismatch,
+            getValueViaPath(
+              answers,
+              'healthDeclaration.contactGlassesMismatch',
+            ) === true,
         }),
         //TODO: Remove when RLS/SGS supports health certificate in BE license
         buildDescriptionField({
           id: 'healthDeclarationValidForBELicense',
-          title: '',
         }),
         buildAlertMessageField({
           id: 'healthDeclaration.BE',
-          title: '',
           message: m.beLicenseHealthDeclarationRequiresHealthCertificate,
           alertType: 'warning',
           condition: (answers, externalData) =>
+            answers.applicationFor === BE &&
             needsHealthCertificateCondition(YES)(answers, externalData),
         }),
       ],
@@ -166,11 +166,11 @@ export const subSectionHealthDeclaration = buildSubSection({
     buildMultiField({
       id: 'healthDeclarationAge65',
       title: m.healthDeclarationMultiFieldTitle,
+      description: m.healthDeclarationMultiField65Description,
       condition: (answers) => answers.applicationFor === B_FULL_RENEWAL_65,
       children: [
         buildDescriptionField({
           id: 'healthDeclarationDescription65',
-          title: '',
           description: m.healthDeclarationMultiField65Description,
         }),
       ],

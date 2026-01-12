@@ -14,7 +14,7 @@ auth-admin-web:
     LOG_LEVEL: 'info'
     NEXTAUTH_URL: 'https://identity-server.dev01.devland.is/admin/api/auth'
     NEXT_PUBLIC_BACKEND_URL: '/backend'
-    NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-external'
@@ -36,8 +36,8 @@ auth-admin-web:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 10
-        min: 2
+        max: 3
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/auth-admin-web'
   ingress:
@@ -55,13 +55,16 @@ auth-admin-web:
             - '/admin'
   namespace: 'identity-server-admin'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
+  podSecurityContext:
+    fsGroup: 65534
   progressDeadlineSeconds: 1200
   pvcs: []
   replicaCount:
-    default: 2
-    max: 10
-    min: 2
+    default: 1
+    max: 3
+    min: 1
   resources:
     limits:
       cpu: '400m'
@@ -75,6 +78,11 @@ auth-admin-web:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::324037283794:role/auth-admin-web'
+    create: true
+    name: 'auth-admin-web'
 global:
   env:
     AUDIT_GROUP_NAME: '/identity-server/audit-log'
@@ -90,13 +98,14 @@ identity-server:
   annotations:
     ad.datadoghq.com/identity-server.check_names: '["openmetrics"]'
     ad.datadoghq.com/identity-server.init_configs: '[{}]'
-    ad.datadoghq.com/identity-server.instances: '[{"prometheus_url": "http://%%host%%:5003/metrics","namespace": "identity-server","metrics":["*"]}]'
+    ad.datadoghq.com/identity-server.instances: '[{"prometheus_url": "http://%%host%%:5003/metrics","namespace": "identity-server","metrics":["identityserver_*"]}]'
     ad.datadoghq.com/identity-server.logs: '[{"service": "identity-server", "source": "csharp"}]'
   enabled: true
   env:
     ASPNETCORE_URLS: 'http://*:5000'
     AWS__CloudWatch__AuditLogGroup: '/identity-server/audit-log'
     AWS__SystemsManager__ParameterStore__DataProtectionPrefix: '/k8s/identity-server/DataProtectionSecret'
+    ActorUserProfileApiSettings__BaseAddress: 'https://service-portal-api.internal.dev01.devland.is'
     Application__AllowedRedirectUris: 'https://beta.dev01.devland.is/minarsidur,https://beta.dev01.devland.is/umsoknir,http://localhost:4200/minarsidur,http://localhost:4242/umsoknir'
     Application__MinCompletionPortThreads: '10'
     AudkenniSettings__Retries: '24'
@@ -109,20 +118,21 @@ identity-server:
     DD_INTEGRATIONS: '/opt/datadog/integrations.json'
     DD_TRACE_DEBUG: 'true'
     Datadog__Metrics__Port: '5003'
+    EmailsApiSettings__BaseAddress: 'https://service-portal-api.internal.dev01.devland.is'
     IdentityServer__ConsentsScope: '@island.is/auth/consents'
     IdentityServer__EnableFakeLogin: 'true'
     IdentityServer__EnableFeatureDeploymentWildcards: 'true'
     IdentityServer__KeyManagement__Enabled: 'true'
     IdentityServer__SigningCertificate__Path: '/etc/config/ids-signing.pfx'
     LOG_LEVEL: 'info'
-    MeUserProfileApiSettings__BaseAddress: 'http://web-service-portal-api.service-portal.svc.cluster.local'
-    NODE_OPTIONS: '--max-old-space-size=1843 -r dd-trace/init'
-    PersistenceSettings__BaseAddress: 'http://web-services-auth-ids-api'
+    MeUserProfileApiSettings__BaseAddress: 'https://service-portal-api.internal.dev01.devland.is'
+    NODE_OPTIONS: '--max-old-space-size=1843 --enable-source-maps -r dd-trace/init'
+    PersistenceSettings__BaseAddress: 'http://services-auth-ids-api'
     PersistenceSettings__DelegationsCacheEnabled: 'false'
-    RedisSettings__Address: 'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com'
+    RedisSettings__Address: 'clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com'
     RedisSettings__Port: '6379'
     SERVERSIDE_FEATURES_ON: ''
-    SessionsApiSettings__BaseAddress: 'http://web-services-sessions.services-sessions.svc.cluster.local'
+    SessionsApiSettings__BaseAddress: 'https://sessions-api.internal.dev01.devland.is'
   files:
     - 'ids-signing.pfx'
   grantNamespaces:
@@ -165,7 +175,8 @@ identity-server:
             - '/'
   namespace: 'identity-server'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
   pvcs:
@@ -191,8 +202,7 @@ identity-server:
     AudkenniSettings__ClientSecret: '/k8s/identity-server/AudkenniClientSecret'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     ContentfulSettings__AccessToken: '/k8s/identity-server/CONTENTFUL_ACCESS_TOKEN'
-    Datadog__RUM__ApplicationId: '/k8s/ids/DD_RUM_APPLICATION_ID'
-    Datadog__RUM__ClientToken: '/k8s/ids/DD_RUM_CLIENT_TOKEN'
+    Datadog__ClientLogs__Token: '/k8s/identity-server/DD_LOGS_CLIENT_TOKEN'
     FeatureFlags__ConfigCatSdkKey: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     IdentityServer__FakePersons: '/k8s/identity-server/FakePersons'
     IdentityServer__LicenseKey: '/k8s/identity-server/LicenseKey'
@@ -208,7 +218,7 @@ identity-server:
     targetPort: 5000
   serviceAccount:
     annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/identity-server'
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::324037283794:role/identity-server'
     create: true
     name: 'identity-server'
 namespaces:
@@ -222,7 +232,7 @@ services-auth-admin-api:
   enabled: true
   env:
     CODE_OWNER: 'aranja'
-    COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
+    COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com:6379"]'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10006/Skatturinn/ft-v1'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'servicesauth'
@@ -236,7 +246,7 @@ services-auth-admin-api:
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1'
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitydev.onmicrosoft.com/midlun/.default'
-    NODE_OPTIONS: '--max-old-space-size=691 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=691 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
     SYSLUMENN_HOST: 'https://api.syslumenn.is/staging'
     SYSLUMENN_TIMEOUT: '3000'
@@ -244,11 +254,11 @@ services-auth-admin-api:
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
     XROAD_CLIENT_ID: 'IS-DEV/GOV/10000/island-is-client'
     XROAD_NATIONAL_REGISTRY_ACTOR_TOKEN: 'true'
-    XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
-    XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1'
+    XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com:6379"]'
+    XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Einstaklingar-v1'
     XROAD_RSK_PROCURING_ACTOR_TOKEN: 'true'
     XROAD_RSK_PROCURING_PATH: 'IS-DEV/GOV/10006/Skatturinn/relationships-v1'
-    XROAD_RSK_PROCURING_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
+    XROAD_RSK_PROCURING_REDIS_NODES: '["clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com:6379"]'
     XROAD_TLS_BASE_PATH: 'https://securityserver.dev01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
     ZENDESK_CONTACT_FORM_SUBDOMAIN: 'digitaliceland'
@@ -272,8 +282,8 @@ services-auth-admin-api:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 10
-        min: 2
+        max: 3
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-admin-api'
   ingress:
@@ -288,12 +298,15 @@ services-auth-admin-api:
             - '/backend'
   namespace: 'identity-server-admin'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 2
-    max: 10
-    min: 2
+    default: 1
+    max: 3
+    min: 1
   resources:
     limits:
       cpu: '400m'
@@ -308,19 +321,29 @@ services-auth-admin-api:
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET'
     NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/services-auth/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
     NATIONAL_REGISTRY_IDS_CLIENT_SECRET: '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET'
+    NOVA_PASSWORD: '/k8s/services-auth/NOVA_PASSWORD'
+    NOVA_URL: '/k8s/services-auth/NOVA_URL'
+    NOVA_USERNAME: '/k8s/services-auth/NOVA_USERNAME'
     SYSLUMENN_PASSWORD: '/k8s/services-auth/SYSLUMENN_PASSWORD'
     SYSLUMENN_USERNAME: '/k8s/services-auth/SYSLUMENN_USERNAME'
     ZENDESK_CONTACT_FORM_EMAIL: '/k8s/api/ZENDESK_CONTACT_FORM_EMAIL'
     ZENDESK_CONTACT_FORM_TOKEN: '/k8s/api/ZENDESK_CONTACT_FORM_TOKEN'
+    ZENDESK_WEBHOOK_SECRET_DELETE_GENERAL_MANDATE: '/k8s/services-auth/ZENDESK_WEBHOOK_SECRET_DELETE_GENERAL_MANDATE'
     ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE: '/k8s/services-auth/ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE'
+    ZENDESK_WEBHOOK_SECRET_IDENTITY_CONFIRMATION: '/k8s/services-auth/ZENDESK_WEBHOOK_SECRET_IDENTITY_CONFIRMATION'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::324037283794:role/services-auth-admin-api'
+    create: true
+    name: 'services-auth-admin-api'
 services-auth-delegation-api:
   enabled: true
   env:
     CODE_OWNER: 'aranja'
-    COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
+    COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com:6379"]'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10006/Skatturinn/ft-v1'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'servicesauth'
@@ -333,20 +356,20 @@ services-auth-delegation-api:
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1'
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitydev.onmicrosoft.com/midlun/.default'
-    NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
     SYSLUMENN_HOST: 'https://api.syslumenn.is/staging'
     SYSLUMENN_TIMEOUT: '3000'
-    USER_NOTIFICATION_API_URL: 'http://web-user-notification.user-notification.svc.cluster.local'
+    USER_NOTIFICATION_API_URL: 'https://user-notification.internal.dev01.devland.is'
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
     XROAD_CLIENT_ID: 'IS-DEV/GOV/10000/island-is-client'
     XROAD_NATIONAL_REGISTRY_ACTOR_TOKEN: 'true'
-    XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
-    XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1'
+    XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com:6379"]'
+    XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Einstaklingar-v1'
     XROAD_RSK_PROCURING_ACTOR_TOKEN: 'true'
     XROAD_RSK_PROCURING_PATH: 'IS-DEV/GOV/10006/Skatturinn/relationships-v1'
-    XROAD_RSK_PROCURING_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
+    XROAD_RSK_PROCURING_REDIS_NODES: '["clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com:6379"]'
     XROAD_TLS_BASE_PATH: 'https://securityserver.dev01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
     ZENDESK_CONTACT_FORM_SUBDOMAIN: 'digitaliceland'
@@ -355,6 +378,7 @@ services-auth-delegation-api:
     - 'islandis'
     - 'service-portal'
     - 'user-notification-worker'
+    - 'user-notification-birthday-worker'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -371,8 +395,8 @@ services-auth-delegation-api:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 10
-        min: 2
+        max: 3
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-delegation-api'
   ingress:
@@ -381,17 +405,20 @@ services-auth-delegation-api:
         kubernetes.io/ingress.class: 'nginx-internal-alb'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
-        - host: 'auth-delegation-api.internal.dev01.devland.is'
+        - host: 'auth-delegation-api.internal.identity-server.dev01.devland.is'
           paths:
             - '/'
   namespace: 'identity-server-delegation'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 2
-    max: 10
-    min: 2
+    default: 1
+    max: 3
+    min: 1
   resources:
     limits:
       cpu: '400m'
@@ -413,12 +440,17 @@ services-auth-delegation-api:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::324037283794:role/auth-delegation-api'
+    create: true
+    name: 'auth-delegation-api'
 services-auth-ids-api:
   enabled: true
   env:
     ALSO_USE_FAKE_USER_API: 'true'
     CODE_OWNER: 'aranja'
-    COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
+    COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com:6379"]'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10006/Skatturinn/ft-v1'
     DB_EXTENSIONS: 'uuid-ossp'
     DB_HOST: 'postgres-applications.internal'
@@ -432,7 +464,7 @@ services-auth-ids-api:
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1'
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitydev.onmicrosoft.com/midlun/.default'
-    NODE_OPTIONS: '--max-old-space-size=691 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=691 --enable-source-maps -r dd-trace/init'
     NOVA_ACCEPT_UNAUTHORIZED: 'true'
     PASSKEY_CORE_ALLOWED_ORIGINS: '["https://island.is","android:apk-key-hash:JgPeo_F6KYk-ngRa26tO2SsAtMiTBQCc7WtSgN-jRX0","android:apk-key-hash:EsLTUu5kaY7XPmMl2f7nbq4amu-PNzdYu3FecNf90wU"]'
     PASSKEY_CORE_CHALLENGE_TTL_MS: '120000'
@@ -440,20 +472,20 @@ services-auth-ids-api:
     PASSKEY_CORE_RP_ID: 'island.is'
     PASSKEY_CORE_RP_NAME: 'Island.is'
     PUBLIC_URL: 'https://identity-server.dev01.devland.is/api'
-    REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
+    REDIS_NODES: '["clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com:6379"]'
     SERVERSIDE_FEATURES_ON: ''
     SYSLUMENN_HOST: 'https://api.syslumenn.is/staging'
     SYSLUMENN_TIMEOUT: '3000'
     USER_PROFILE_CLIENT_SCOPE: '["@island.is/user-profile:read"]'
-    USER_PROFILE_CLIENT_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
+    USER_PROFILE_CLIENT_URL: 'https://service-portal-api.internal.dev01.devland.is'
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
     XROAD_CLIENT_ID: 'IS-DEV/GOV/10000/island-is-client'
-    XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
-    XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1'
+    XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com:6379"]'
+    XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Einstaklingar-v1'
     XROAD_RSK_PROCURING_PATH: 'IS-DEV/GOV/10006/Skatturinn/relationships-v1'
-    XROAD_RSK_PROCURING_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
-    XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1'
+    XROAD_RSK_PROCURING_REDIS_NODES: '["clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com:6379"]'
+    XROAD_TJODSKRA_API_PATH: '/SKRA-Cloud-Protected/Einstaklingar-v1'
     XROAD_TJODSKRA_MEMBER_CODE: '10001'
     XROAD_TLS_BASE_PATH: 'https://securityserver.dev01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
@@ -478,8 +510,8 @@ services-auth-ids-api:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 15
-        min: 2
+        max: 3
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-ids-api'
   initContainer:
@@ -521,12 +553,15 @@ services-auth-ids-api:
       DB_PASS: '/k8s/servicesauth/DB_PASSWORD'
   namespace: 'identity-server'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 2
-    max: 15
-    min: 2
+    default: 1
+    max: 3
+    min: 1
   resources:
     limits:
       cpu: '800m'
@@ -550,9 +585,14 @@ services-auth-ids-api:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::324037283794:role/services-auth-ids-api'
+    create: true
+    name: 'services-auth-ids-api'
 services-auth-ids-api-cleanup:
   args:
-    - 'main.js'
+    - 'main.cjs'
     - '--job=cleanup'
   command:
     - 'node'
@@ -564,7 +604,7 @@ services-auth-ids-api-cleanup:
     DB_USER: 'servicesauth'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=921 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=921 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-external'
@@ -593,7 +633,10 @@ services-auth-ids-api-cleanup:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-ids-api'
   namespace: 'identity-server'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 1
@@ -613,10 +656,15 @@ services-auth-ids-api-cleanup:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::324037283794:role/services-auth-ids-api-cleanup'
+    create: true
+    name: 'services-auth-ids-api-cleanup'
 services-auth-personal-representative:
   enabled: true
   env:
-    COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
+    COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com:6379"]'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10006/Skatturinn/ft-v1'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'servicesauth'
@@ -629,7 +677,7 @@ services-auth-personal-representative:
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1'
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitydev.onmicrosoft.com/midlun/.default'
-    NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
     SYSLUMENN_HOST: 'https://api.syslumenn.is/staging'
     SYSLUMENN_TIMEOUT: '3000'
@@ -637,11 +685,11 @@ services-auth-personal-representative:
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
     XROAD_CLIENT_ID: 'IS-DEV/GOV/10000/island-is-client'
     XROAD_NATIONAL_REGISTRY_ACTOR_TOKEN: 'true'
-    XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
-    XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1'
+    XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com:6379"]'
+    XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Einstaklingar-v1'
     XROAD_RSK_PROCURING_ACTOR_TOKEN: 'true'
     XROAD_RSK_PROCURING_PATH: 'IS-DEV/GOV/10006/Skatturinn/relationships-v1'
-    XROAD_RSK_PROCURING_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
+    XROAD_RSK_PROCURING_REDIS_NODES: '["clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com:6379"]'
     XROAD_TLS_BASE_PATH: 'https://securityserver.dev01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
     ZENDESK_CONTACT_FORM_SUBDOMAIN: 'digitaliceland'
@@ -662,8 +710,8 @@ services-auth-personal-representative:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 10
-        min: 2
+        max: 3
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-personal-representative'
   ingress:
@@ -677,12 +725,15 @@ services-auth-personal-representative:
             - '/'
   namespace: 'personal-representative'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 2
-    max: 10
-    min: 2
+    default: 1
+    max: 3
+    min: 1
   resources:
     limits:
       cpu: '400m'
@@ -703,6 +754,11 @@ services-auth-personal-representative:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::324037283794:role/services-auth-personal-representative'
+    create: true
+    name: 'services-auth-personal-representative'
 services-auth-personal-representative-public:
   enabled: true
   env:
@@ -712,7 +768,7 @@ services-auth-personal-representative-public:
     DB_USER: 'servicesauth'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
   grantNamespacesEnabled: false
@@ -731,8 +787,8 @@ services-auth-personal-representative-public:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 10
-        min: 2
+        max: 3
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-personal-representative-public'
   ingress:
@@ -746,12 +802,15 @@ services-auth-personal-representative-public:
             - '/'
   namespace: 'personal-representative'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 2
-    max: 10
-    min: 2
+    default: 1
+    max: 3
+    min: 1
   resources:
     limits:
       cpu: '400m'
@@ -765,11 +824,16 @@ services-auth-personal-representative-public:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::324037283794:role/services-auth-personal-representative-public'
+    create: true
+    name: 'services-auth-personal-representative-public'
 services-auth-public-api:
   enabled: true
   env:
     CODE_OWNER: 'aranja'
-    COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
+    COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com:6379"]'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10006/Skatturinn/ft-v1'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'servicesauth'
@@ -782,13 +846,13 @@ services-auth-public-api:
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1'
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitydev.onmicrosoft.com/midlun/.default'
-    NODE_OPTIONS: '--max-old-space-size=345 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=345 --enable-source-maps -r dd-trace/init'
     PASSKEY_CORE_ALLOWED_ORIGINS: '["https://island.is","android:apk-key-hash:JgPeo_F6KYk-ngRa26tO2SsAtMiTBQCc7WtSgN-jRX0","android:apk-key-hash:EsLTUu5kaY7XPmMl2f7nbq4amu-PNzdYu3FecNf90wU"]'
     PASSKEY_CORE_CHALLENGE_TTL_MS: '120000'
     PASSKEY_CORE_RP_ID: 'island.is'
     PASSKEY_CORE_RP_NAME: 'Island.is'
     PUBLIC_URL: 'https://identity-server.dev01.devland.is/api'
-    REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
+    REDIS_NODES: '["clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com:6379"]'
     SERVERSIDE_FEATURES_ON: ''
     SYSLUMENN_HOST: 'https://api.syslumenn.is/staging'
     SYSLUMENN_TIMEOUT: '3000'
@@ -796,12 +860,12 @@ services-auth-public-api:
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
     XROAD_CLIENT_ID: 'IS-DEV/GOV/10000/island-is-client'
     XROAD_NATIONAL_REGISTRY_ACTOR_TOKEN: 'true'
-    XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
-    XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1'
+    XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com:6379"]'
+    XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Einstaklingar-v1'
     XROAD_RSK_PROCURING_ACTOR_TOKEN: 'true'
     XROAD_RSK_PROCURING_PATH: 'IS-DEV/GOV/10006/Skatturinn/relationships-v1'
-    XROAD_RSK_PROCURING_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
-    XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1'
+    XROAD_RSK_PROCURING_REDIS_NODES: '["clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com:6379"]'
+    XROAD_TJODSKRA_API_PATH: '/SKRA-Cloud-Protected/Einstaklingar-v1'
     XROAD_TJODSKRA_MEMBER_CODE: '10001'
     XROAD_TLS_BASE_PATH: 'https://securityserver.dev01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
@@ -826,8 +890,8 @@ services-auth-public-api:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 10
-        min: 2
+        max: 3
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-public-api'
   ingress:
@@ -841,16 +905,20 @@ services-auth-public-api:
         nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'identity-server.dev01.devland.is'
+          pathTypeOverride: 'ImplementationSpecific'
           paths:
             - '/api(/|$)(.*)'
   namespace: 'identity-server-admin'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 2
-    max: 10
-    min: 2
+    default: 1
+    max: 3
+    min: 1
   resources:
     limits:
       cpu: '400m'
@@ -872,3 +940,8 @@ services-auth-public-api:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::324037283794:role/services-auth-public-api'
+    create: true
+    name: 'services-auth-public-api'

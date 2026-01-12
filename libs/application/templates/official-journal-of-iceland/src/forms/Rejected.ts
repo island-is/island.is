@@ -57,7 +57,6 @@ export const Rejected: Form = buildForm({
       children: [
         buildCustomField({
           id: 'rejected',
-          title: '',
           component: 'RejectScreen',
         }),
       ],

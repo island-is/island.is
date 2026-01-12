@@ -1,10 +1,10 @@
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, YES } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import {
   ApplicationEligibility,
   ApplicationEligibilityRequirement,
   RequirementKey,
-} from '../../types/schema'
+} from '@island.is/api/schema'
 import { useQuery, gql } from '@apollo/client'
 import {
   B_FULL,
@@ -16,7 +16,6 @@ import {
   DrivingLicenseFakeData,
   otherLicenseCategories,
   remarksCannotRenew65,
-  YES,
 } from '../../lib/constants'
 import { fakeEligibility } from './fakeEligibility'
 import { DrivingLicense } from '../../lib/types'
@@ -152,12 +151,12 @@ export const useEligibility = (
         requirements: [
           ...eligibility,
           {
-            key: RequirementKey.BeRequiresHealthCertificate,
+            key: RequirementKey.beRequiresHealthCertificate,
             requirementMet:
               !hasGlasses && !hasOtherCategoryOrHealthRemarks(currentLicense),
           },
           {
-            key: RequirementKey.HasNoPhoto,
+            key: RequirementKey.hasNoPhoto,
             requirementMet: hasQualityPhoto,
           },
         ],
@@ -186,7 +185,7 @@ export const useEligibility = (
       ...(hasExtendedLicense
         ? [
             {
-              key: RequirementKey.NoExtendedDrivingLicense,
+              key: RequirementKey.noExtendedDrivingLicense,
               requirementMet: false,
             },
           ]

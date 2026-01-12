@@ -15,7 +15,7 @@ import {
   VerifyInputData,
 } from '../../../licenseClient.type'
 import { createPkPassDataInput, nationalIdIndex } from '../firearmLicenseMapper'
-import { BaseLicenseUpdateClient } from '../../baseLicenseUpdateClient'
+import { BaseLicenseUpdateClient } from '../../base/baseLicenseUpdateClient'
 import { mapNationalId } from '../firearmLicenseMapper'
 import type { ConfigType } from '@island.is/nest/config'
 import { FirearmDigitalLicenseClientConfig } from '../firearmLicenseClient.config'
@@ -24,6 +24,7 @@ import { FirearmDigitalLicenseClientConfig } from '../firearmLicenseClient.confi
 const LOG_CATEGORY = 'firearmlicense-service'
 
 @Injectable()
+/** @deprecated */
 export class FirearmLicenseUpdateClient extends BaseLicenseUpdateClient {
   constructor(
     @Inject(LOGGER_PROVIDER) protected logger: Logger,

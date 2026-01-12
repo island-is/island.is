@@ -19,6 +19,8 @@ import {
   buildImageField,
   buildCheckboxField,
   buildHiddenInput,
+  YES,
+  NO,
 } from '@island.is/application/core'
 import {
   Form,
@@ -32,12 +34,10 @@ import { Individual } from '../types'
 import { m } from '../lib/messages'
 import {
   DistrictCommissionerAgencies,
-  NO,
-  YES,
   CeremonyPlaces,
   Religion,
 } from '../lib/constants'
-import { UserProfile } from '../types/schema'
+import { UserProfile } from '@island.is/api/schema'
 import { fakeDataSection } from './fakeDataSection'
 import { dataCollection } from './sharedSections/dataCollection'
 import { removeCountryCode } from '@island.is/application/ui-components'
@@ -46,7 +46,6 @@ import DigitalServices from '../assets/DigitalServices'
 export const getApplication = ({ allowFakeData = false }): Form => {
   return buildForm({
     id: 'MarriageConditionsApplicationDraftForm',
-    title: '',
     mode: FormModes.DRAFT,
     renderLastScreenButton: true,
     renderLastScreenBackButton: true,
@@ -62,8 +61,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
             description: m.introSectionDescription,
             children: [
               buildDescriptionField({
-                id: 'space',
-                title: '',
+                id: 'introSpace',
               }),
             ],
           }),
@@ -168,7 +166,6 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                   }),
                   buildNationalIdWithNameField({
                     id: 'spouse.person',
-                    title: '',
                     required: true,
                     minAgePerson: 18,
                   }),
@@ -201,7 +198,6 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                   }),
                   buildDescriptionField({
                     id: 'info',
-                    title: '',
                     space: 'gutter',
                     description: m.informationAlertMessage,
                   }),
@@ -254,9 +250,8 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     },
                   }),
                   buildDescriptionField({
-                    id: 'space',
+                    id: 'statusSpace',
                     space: 'containerGutter',
-                    title: '',
                   }),
                 ],
               }),
@@ -287,7 +282,6 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                   buildDescriptionField({
                     id: 'ceremonyPeriodDescription',
                     space: 'gutter',
-                    title: '',
                     description: m.ceremonyPeriodDescription,
                     condition: (answers) =>
                       getValueViaPath(answers, 'ceremony.hasDate') === NO,
@@ -332,9 +326,12 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                       getValueViaPath(answers, 'ceremony.hasDate') === YES,
                   }),
                   buildDescriptionField({
-                    id: 'space',
-                    space: 'containerGutter',
-                    title: '',
+                    id: 'dateSpace',
+                    space: 'gutter',
+                  }),
+                  buildDescriptionField({
+                    id: 'dateSpace1',
+                    space: 'gutter',
                   }),
                   buildRadioField({
                     id: 'ceremony.place.ceremonyPlace',
@@ -421,7 +418,6 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                   }),
                   buildNationalIdWithNameField({
                     id: 'witness1.person',
-                    title: '',
                     required: true,
                     minAgePerson: 18,
                   }),
@@ -460,7 +456,6 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                   }),
                   buildNationalIdWithNameField({
                     id: 'witness2.person',
-                    title: '',
                     required: true,
                     minAgePerson: 18,
                   }),
@@ -520,14 +515,12 @@ export const getApplication = ({ allowFakeData = false }): Form => {
             children: [
               buildImageField({
                 id: 'image',
-                title: '',
                 image: DigitalServices,
                 imageWidth: '50%',
                 imagePosition: 'center',
               }),
               buildDescriptionField({
-                id: 'space',
-                title: '',
+                id: 'imageSpace',
                 space: 'gutter',
               }),
               buildAlertMessageField({
@@ -538,7 +531,6 @@ export const getApplication = ({ allowFakeData = false }): Form => {
               }),
               buildCheckboxField({
                 id: 'applicantConfirmMissingInfo',
-                title: '',
                 large: true,
                 defaultValue: [],
                 options: [
@@ -563,12 +555,10 @@ export const getApplication = ({ allowFakeData = false }): Form => {
             children: [
               buildCustomField({
                 id: 'overview',
-                title: '',
                 component: 'ApplicationOverview',
               }),
               buildSubmitField({
                 id: 'submitApplication',
-                title: '',
                 placement: 'footer',
                 refetchApplicationAfterSubmit: true,
                 actions: [

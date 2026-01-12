@@ -19,14 +19,14 @@ global:
 name: 'xroad-collector'
 args:
   - '--no-experimental-fetch'
-  - 'main.js'
+  - 'main.cjs'
 command:
   - 'node'
 enabled: true
 env:
   ELASTIC_NODE: 'https://vpc-search-q6hdtjcdlhkffyxvrnmzfwphuq.eu-west-1.es.amazonaws.com'
   LOG_LEVEL: 'info'
-  NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
+  NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
   NODE_TLS_REJECT_UNAUTHORIZED: '0'
   SERVERSIDE_FEATURES_ON: ''
   XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
@@ -57,7 +57,8 @@ image:
   repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-xroad-collector'
 namespace: 'xroad-collector'
 podDisruptionBudget:
-  maxUnavailable: 1
+  minAvailable: 1
+  unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534
 pvcs: []

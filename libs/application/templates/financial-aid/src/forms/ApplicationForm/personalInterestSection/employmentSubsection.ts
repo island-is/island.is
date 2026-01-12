@@ -19,7 +19,6 @@ export const employmentSubsection = buildSubSection({
       children: [
         buildRadioField({
           id: 'employment.type',
-          title: '',
           options: employmentOptions,
           marginBottom: 2,
         }),

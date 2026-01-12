@@ -12,22 +12,15 @@ import {
   mapGenericOverviewPage,
 } from './models/genericOverviewPage.model'
 import { News, mapNews } from './models/news.model'
-import {
-  AdgerdirFrontpage,
-  mapAdgerdirFrontpage,
-} from './models/adgerdirFrontpage.model'
-import { AdgerdirPages } from './models/adgerdirPages.model'
-import { AdgerdirPage, mapAdgerdirPage } from './models/adgerdirPage.model'
+
 import { GetContentSlugInput } from './dto/getContentSlug.input'
 import { GetGenericPageInput } from './dto/getGenericPage.input'
 import { GetGenericOverviewPageInput } from './dto/getGenericOverviewPage.input'
 import { Namespace, mapNamespace } from './models/namespace.model'
 import { Menu, mapMenu } from './models/menu.model'
 import { AnchorPage, mapAnchorPage } from './models/anchorPage.model'
-import { AdgerdirTags } from './models/adgerdirTags.model'
 import { Organization } from './models/organization.model'
 import { Organizations } from './models/organizations.model'
-import { mapAdgerdirTag } from './models/adgerdirTag.model'
 import { mapOrganization } from './models/organization.model'
 import { OrganizationTags } from './models/organizationTags.model'
 import { mapOrganizationTag } from './models/organizationTag.model'
@@ -59,7 +52,7 @@ import {
 } from './models/openDataSubpage.model'
 import { GetOpenDataSubpageInput } from './dto/getOpenDataSubpage.input'
 import { mapProjectPage, ProjectPage } from './models/projectPage.model'
-import { IProjectPage } from './generated/contentfulTypes'
+import { ICourseListPage, IProjectPage } from './generated/contentfulTypes'
 import { GetSupportQNAsInput } from './dto/getSupportQNAs.input'
 import { mapSupportQNA, SupportQNA } from './models/supportQNA.model'
 import { GetSupportCategoryInput } from './dto/getSupportCategory.input'
@@ -97,7 +90,26 @@ import {
   OrganizationPageStandaloneSitemapLevel2,
 } from './models/organizationPageStandaloneSitemap.model'
 import { SitemapTree, SitemapTreeNodeType } from '@island.is/shared/types'
-import { getOrganizationPageUrlPrefix } from '@island.is/shared/utils'
+import {
+  getOrganizationPageUrlPrefix,
+  sortAlpha,
+} from '@island.is/shared/utils'
+import { NewsList } from './models/newsList.model'
+import { GetCmsNewsInput } from './dto/getNews.input'
+import {
+  GetBloodDonationRestrictionDetailsInput,
+  GetBloodDonationRestrictionsInput,
+} from './dto/getBloodDonationRestrictions.input'
+import {
+  BloodDonationRestrictionList,
+  mapBloodDonationRestrictionDetails,
+  mapBloodDonationRestrictionListItem,
+} from './models/bloodDonationRestriction.model'
+import { GetCourseByIdInput } from './dto/getCourseById.input'
+import { CourseDetails, mapCourse } from './models/course.model'
+import { GetCourseListPageByIdInput } from './dto/getCourseListPageById.input'
+import { mapCourseListPage } from './models/courseListPage.model'
+import { GetCourseSelectOptionsInput } from './dto/getCourseSelectOptions.input'
 
 const errorHandler = (name: string) => {
   return (error: Error) => {
@@ -146,39 +158,6 @@ const ArticleFields = (
 @Injectable()
 export class CmsContentfulService {
   constructor(private contentfulRepository: ContentfulRepository) {}
-
-  async getAdgerdirFrontpage(lang = 'is-IS'): Promise<AdgerdirFrontpage> {
-    const params = {
-      ['content_type']: 'vidspyrna-frontpage',
-      include: 10,
-    }
-
-    const result = await this.contentfulRepository
-      .getLocalizedEntries<types.IVidspyrnaFrontpageFields>(lang, params)
-      .catch(errorHandler('getVidspyrnaFrontpage'))
-
-    return (
-      (result.items as types.IVidspyrnaFrontpage[]).map(
-        mapAdgerdirFrontpage,
-      )[0] ?? null
-    )
-  }
-
-  async getAdgerdirPages(lang = 'is-IS'): Promise<AdgerdirPages> {
-    const params = {
-      ['content_type']: 'vidspyrnaPage',
-      include: 10,
-      limit: 100,
-    }
-
-    const result = await this.contentfulRepository
-      .getLocalizedEntries<types.IVidspyrnaPageFields>(lang, params)
-      .catch(errorHandler('getAdgerdirPages'))
-
-    return {
-      items: (result.items as types.IVidspyrnaPage[]).map(mapAdgerdirPage),
-    }
-  }
 
   async getOrganizations(input: GetOrganizationsInput): Promise<Organizations> {
     const organizationTitles = input?.organizationTitles && {
@@ -244,12 +223,13 @@ export class CmsContentfulService {
 
   async getOrganizationTitles(
     organizationKeys: string[],
+    searchByField: keyof types.IOrganizationFields,
     locale?: 'en' | 'is',
   ): Promise<Array<string | null>> {
     const params = {
       ['content_type']: 'organization',
-      select: 'fields.title,fields.referenceIdentifier',
-      'fields.referenceIdentifier[in]': organizationKeys.join(','),
+      select: `fields.title,fields.${searchByField}`,
+      [`fields.${searchByField}[in]`]: organizationKeys.join(','),
     }
 
     const result = await this.contentfulRepository
@@ -261,7 +241,7 @@ export class CmsContentfulService {
         return null
       } else {
         const organization = result.items.find(
-          (item) => item.fields.referenceIdentifier === key,
+          (item) => item.fields[searchByField] === key,
         )
 
         const title = organization?.fields.title || organization?.fields.title
@@ -300,22 +280,6 @@ export class CmsContentfulService {
     })
   }
 
-  async getAdgerdirTags(lang = 'is-IS'): Promise<AdgerdirTags> {
-    const params = {
-      ['content_type']: 'vidspyrnaTag',
-      include: 10,
-      limit: 100,
-    }
-
-    const result = await this.contentfulRepository
-      .getLocalizedEntries<types.IVidspyrnaTagFields>(lang, params)
-      .catch(errorHandler('getAdgerdirTags'))
-
-    return {
-      items: (result.items as types.IVidspyrnaTag[]).map(mapAdgerdirTag),
-    }
-  }
-
   async getOrganizationTags(lang = 'is-IS'): Promise<OrganizationTags> {
     const params = {
       ['content_type']: 'organizationTag',
@@ -330,22 +294,6 @@ export class CmsContentfulService {
     return {
       items: (result.items as types.IOrganizationTag[]).map(mapOrganizationTag),
     }
-  }
-
-  async getAdgerdirPage(slug: string, lang: string): Promise<AdgerdirPage> {
-    const params = {
-      ['content_type']: 'vidspyrnaPage',
-      include: 10,
-      'fields.slug': slug,
-    }
-
-    const result = await this.contentfulRepository
-      .getLocalizedEntries<types.IVidspyrnaPageFields>(lang, params)
-      .catch(errorHandler('getAdgerdirPage'))
-
-    return (
-      (result.items as types.IVidspyrnaPage[]).map(mapAdgerdirPage)[0] ?? null
-    )
   }
 
   private async getOrganizationBy(
@@ -402,6 +350,22 @@ export class CmsContentfulService {
     return this.getOrganizationBy('kennitala', nationalId, lang, true)
   }
 
+  async getOrganizationByEntryId(
+    entryId: string,
+  ): Promise<Organization | null> {
+    const params = {
+      ['content_type']: 'organization',
+      include: 5,
+      limit: 1,
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntry<types.IOrganizationFields>(entryId, null, params)
+      .catch(errorHandler('getOrganizationByEntryId'))
+
+    return result ? mapOrganization(result as types.IOrganization) : null
+  }
+
   async getOrganizationPage(
     slug: string,
     lang: string,
@@ -434,6 +398,28 @@ export class CmsContentfulService {
       'fields.slug': slug,
       'fields.organizationPage.sys.contentType.sys.id': 'organizationPage',
       'fields.organizationPage.fields.slug': organizationSlug,
+      'fields.organizationParentSubpage[exists]': false,
+      limit: 1,
+    }
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IOrganizationSubpageFields>(lang, params)
+      .catch(errorHandler('getOrganizationSubpage'))
+
+    return (
+      (result.items as types.IOrganizationSubpage[]).map(
+        mapOrganizationSubpage,
+      )[0] ?? null
+    )
+  }
+
+  async getOrganizationSubpageById(
+    id: string,
+    lang: string,
+  ): Promise<OrganizationSubpage> {
+    const params = {
+      ['content_type']: 'organizationSubpage',
+      include: 5,
+      'sys.id': id,
       limit: 1,
     }
     const result = await this.contentfulRepository
@@ -578,7 +564,7 @@ export class CmsContentfulService {
       ['content_type']: 'article',
       'sys.id[in]': articles.map((a) => a.sys.id).join(','),
       select: ArticleFields,
-      include: 10,
+      include: 5,
     }
 
     const relatedResult = await this.contentfulRepository
@@ -590,7 +576,7 @@ export class CmsContentfulService {
     return sortBy(results, (a) => sortedIds.indexOf(a.id))
   }
 
-  async getNews(lang: string, slug: string): Promise<News | null> {
+  async getSingleNewsItem(lang: string, slug: string): Promise<News | null> {
     const params = {
       ['content_type']: 'news',
       include: 5,
@@ -603,6 +589,34 @@ export class CmsContentfulService {
       .catch(errorHandler('getNews'))
 
     return (result.items as types.INews[]).map(mapNews)[0] ?? null
+  }
+
+  async getNews(input: GetCmsNewsInput): Promise<NewsList> {
+    const size = input.size ?? 10
+    const page = input.page ?? 1
+
+    const orderPrefix = input.order === 'asc' ? '' : '-'
+
+    const params = {
+      ['content_type']: 'news',
+      include: 5,
+      limit: size,
+      skip: (page - 1) * size,
+      'fields.organization.sys.contentType.sys.id': 'organization',
+      'fields.organization.fields.slug': input.organization,
+      order: `${orderPrefix}fields.date,${orderPrefix}fields.initialPublishDate,${orderPrefix}sys.firstPublishedAt`,
+      'fields.title[exists]': true,
+      'fields.slug[exists]': true,
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.INewsFields>(input.lang, params)
+      .catch(errorHandler('getNews'))
+
+    return {
+      items: ((result.items as types.INews[]) ?? []).map(mapNews),
+      total: result.total,
+    }
   }
 
   async getGrant(lang: string, id: string): Promise<Grant | null> {
@@ -1155,6 +1169,52 @@ export class CmsContentfulService {
     return (result.items as types.IGenericTag[]).map(mapGenericTag)
   }
 
+  async getBloodDonationRestrictions(
+    input: GetBloodDonationRestrictionsInput,
+  ): Promise<BloodDonationRestrictionList> {
+    const itemsPerPage = 10
+    const currentPage = input.page ?? 1
+
+    const response = await this.contentfulRepository.getLocalizedEntries(
+      input.lang,
+      {
+        content_type: 'bloodDonationRestriction',
+        limit: itemsPerPage,
+        skip: (currentPage - 1) * itemsPerPage,
+        'fields.title[exists]': true,
+      },
+    )
+
+    return {
+      total: response.total,
+      items: (response.items as types.IBloodDonationRestriction[]).map(
+        mapBloodDonationRestrictionListItem,
+      ),
+      input,
+    }
+  }
+
+  async getBloodDonationRestrictionDetails(
+    input: GetBloodDonationRestrictionDetailsInput,
+  ) {
+    const response = await this.contentfulRepository.getLocalizedEntries(
+      input.lang,
+      {
+        content_type: 'bloodDonationRestriction',
+        'sys.id': input.id,
+        limit: 1,
+      },
+    )
+
+    if (response.items.length === 0) {
+      return null
+    }
+
+    return mapBloodDonationRestrictionDetails(
+      response.items[0] as types.IBloodDonationRestriction,
+    )
+  }
+
   async getOrganizationParentSubpage(input: GetOrganizationParentSubpageInput) {
     const params = {
       content_type: 'organizationParentSubpage',
@@ -1424,5 +1484,187 @@ export class CmsContentfulService {
     })
 
     return result
+  }
+
+  async getOrganizationNavigationPages(
+    entryIdsObject: {
+      parentSubpageEntryIds: string[]
+      organizationSubpageEntryIds: string[]
+      entryIds: string[]
+    },
+    lang: string,
+  ) {
+    if (
+      entryIdsObject.parentSubpageEntryIds.length === 0 &&
+      entryIdsObject.organizationSubpageEntryIds.length === 0 &&
+      entryIdsObject.entryIds.length === 0
+    )
+      return []
+
+    const fieldSelect =
+      'fields.title,fields.shortTitle,fields.shortDescription,fields.slug,sys'
+
+    const [parentSubpageResponse, organizationSubpageResponse, entryResponse] =
+      await Promise.allSettled([
+        this.contentfulRepository.getLocalizedEntries(
+          lang,
+          {
+            'sys.id[in]': entryIdsObject.parentSubpageEntryIds.join(','),
+            content_type: 'organizationParentSubpage',
+            limit: 1000,
+            select: fieldSelect,
+          },
+          1,
+        ),
+        this.contentfulRepository.getLocalizedEntries(
+          lang,
+          {
+            'sys.id[in]': entryIdsObject.organizationSubpageEntryIds.join(','),
+            content_type: 'organizationSubpage',
+            limit: 1000,
+            select: fieldSelect,
+          },
+          1,
+        ),
+        this.contentfulRepository.getLocalizedEntries(
+          lang,
+          {
+            'sys.id[in]': entryIdsObject.entryIds.join(','),
+            limit: 1000,
+          },
+          1,
+        ),
+      ])
+
+    const items = []
+
+    if (parentSubpageResponse.status === 'fulfilled')
+      items.push(...parentSubpageResponse.value.items)
+    else
+      errorHandler('getOrganizationNavigationPages.parentSubpageResponse')(
+        parentSubpageResponse.reason,
+      )
+
+    if (organizationSubpageResponse.status === 'fulfilled')
+      items.push(...organizationSubpageResponse.value.items)
+    else
+      errorHandler(
+        'getOrganizationNavigationPages.organizationSubpageResponse',
+      )(organizationSubpageResponse.reason)
+
+    if (entryResponse.status === 'fulfilled')
+      for (const item of entryResponse.value.items) {
+        const isValidPageType =
+          item.sys.contentType.sys.id === 'organizationParentSubpage' ||
+          item.sys.contentType.sys.id === 'organizationSubpage'
+        if (!isValidPageType) continue
+        items.push(item)
+      }
+    else
+      errorHandler('getOrganizationNavigationPages.entryResponse')(
+        entryResponse.reason,
+      )
+
+    return items
+  }
+
+  async getCourseById(
+    input: GetCourseByIdInput,
+  ): Promise<CourseDetails | null> {
+    const params = {
+      content_type: 'course',
+      limit: 1,
+      include: 4,
+    }
+
+    const [isResponse, enResponse] = await Promise.all([
+      this.contentfulRepository.getLocalizedEntry<types.ICourseFields>(
+        input.id,
+        'is',
+        { ...params, include: input.lang === 'is' ? 4 : 0 },
+      ),
+      this.contentfulRepository.getLocalizedEntry<types.ICourseFields>(
+        input.id,
+        'en',
+        { ...params, include: input.lang === 'en' ? 4 : 0 },
+      ),
+    ])
+
+    const response = input.lang === 'is' ? isResponse : enResponse
+
+    if (response?.sys?.contentType?.sys?.id !== 'course') {
+      return null
+    }
+
+    const mappedCourse = mapCourse(response as types.ICourse)
+
+    // Filter out instances that are in the past
+    const today = new Date()
+    mappedCourse.instances = mappedCourse.instances.filter(
+      (instance) =>
+        Boolean(instance.startDate) && new Date(instance.startDate) > today,
+    )
+
+    // Sort instances in ascending start date order
+    mappedCourse.instances.sort(
+      (a, b) =>
+        new Date(a.startDate).getTime() - new Date(b.startDate).getTime(),
+    )
+
+    return {
+      course: mappedCourse,
+      activeLocales: {
+        is: Boolean(isResponse?.fields?.title),
+        en: Boolean(enResponse?.fields?.title),
+      },
+    }
+  }
+
+  async getCourseListPageById(input: GetCourseListPageByIdInput) {
+    const params = {
+      content_type: 'courseListPage',
+      limit: 1,
+      include: 0,
+    }
+
+    const response =
+      await this.contentfulRepository.getLocalizedEntry<types.ICourseListPageFields>(
+        input.id,
+        input.lang,
+        params,
+      )
+
+    if (response?.sys?.contentType?.sys?.id !== 'courseListPage') {
+      return null
+    }
+
+    return mapCourseListPage(response as ICourseListPage)
+  }
+
+  async getCourseSelectOptions(input: GetCourseSelectOptionsInput) {
+    const params = {
+      content_type: 'course',
+      limit: 1000,
+      include: 0,
+      select: 'fields.title,sys',
+      'fields.organization.sys.contentType.sys.id': 'organization',
+      'fields.organization.fields.slug': input.organizationSlug,
+    }
+
+    const response =
+      await this.contentfulRepository.getLocalizedEntries<types.ICourseFields>(
+        input.lang,
+        params,
+        0,
+      )
+
+    const items = response.items.map((item) => ({
+      id: item.sys.id,
+      title: item.fields.title,
+    }))
+
+    items.sort(sortAlpha('title'))
+
+    return { items, total: response.total, input }
   }
 }

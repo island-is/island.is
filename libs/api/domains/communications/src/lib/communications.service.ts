@@ -153,7 +153,7 @@ export class CommunicationsService {
   async sendFormResponse(input: GenericFormInput): Promise<boolean> {
     const form = await this.cmsContentfulService.getForm({
       id: input.id,
-      lang: 'is-IS',
+      lang: input.lang === 'en' ? 'en' : 'is-IS',
     })
     if (!form) {
       return false
@@ -214,6 +214,12 @@ export class CommunicationsService {
       }) ?? [],
     )
 
+    let subject = `Island.is form: ${form.title}`
+
+    if (form.emailSubject?.trim()) {
+      subject = form.emailSubject.trim()
+    }
+
     const emailOptions = {
       from: {
         name: input.name,
@@ -224,7 +230,7 @@ export class CommunicationsService {
         address: input.email,
       },
       to: recipient,
-      subject: `Island.is form: ${form.title}`,
+      subject,
       text: input.message,
       attachments,
     }

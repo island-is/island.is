@@ -8,7 +8,6 @@ import {
   Application,
   DefaultEvents,
   defineTemplateApi,
-  PendingAction,
   InstitutionNationalIds,
 } from '@island.is/application/types'
 import {
@@ -17,6 +16,7 @@ import {
   EphemeralStateLifeCycle,
   coreHistoryMessages,
   corePendingActionMessages,
+  getReviewStatePendingAction,
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
 import { ApiActions, OperatorInformation, UserInformation } from '../shared'
@@ -28,18 +28,20 @@ import {
   CurrentVehiclesApi,
   MockableSamgongustofaPaymentCatalogApi,
 } from '../dataProviders'
-import { application as applicationMessage } from './messages'
+import { application as applicationMessage, information } from './messages'
 import { assign } from 'xstate'
 import set from 'lodash/set'
 import {
-  canReviewerApprove,
   isRemovingOperatorOnly,
   getChargeItems,
   getExtraData,
+  getReviewerRole,
+  getReviewers,
 } from '../utils'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScope } from '@island.is/auth/scopes'
 import { buildPaymentState } from '@island.is/application/utils'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const pruneInDaysAtMidnight = (application: Application, days: number) => {
   const date = new Date(application.created)
@@ -61,26 +63,6 @@ const determineMessageFromApplicationAnswers = (application: Application) => {
   }
 }
 
-const reviewStatePendingAction = (
-  application: Application,
-  role: string,
-  nationalId: string,
-): PendingAction => {
-  if (nationalId && canReviewerApprove(nationalId, application.answers)) {
-    return {
-      title: corePendingActionMessages.waitingForReviewTitle,
-      content: corePendingActionMessages.youNeedToReviewDescription,
-      displayStatus: 'warning',
-    }
-  } else {
-    return {
-      title: corePendingActionMessages.waitingForReviewTitle,
-      content: corePendingActionMessages.waitingForReviewDescription,
-      displayStatus: 'info',
-    }
-  }
-}
-
 const template: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
@@ -88,6 +70,7 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.CHANGE_OPERATOR_OF_VEHICLE,
   name: determineMessageFromApplicationAnswers,
+  codeOwner: CodeOwners.Origo,
   institution: applicationMessage.institutionName,
   translationNamespaces: [
     ApplicationConfigurations.ChangeOperatorOfVehicle.translation,
@@ -102,6 +85,19 @@ const template: ApplicationTemplate<
     },
   ],
   requiredScopes: [ApiScope.samgongustofaVehicles],
+  adminDataConfig: {
+    answers: [
+      {
+        key: 'pickVehicle.plate',
+        isListed: true,
+        label: information.labels.pickVehicle.vehicle,
+      },
+      { key: 'ownerCoOwner.$.nationalId', isListed: false },
+      { key: 'ownerCoOwner.$.approved', isListed: false },
+      { key: 'operators.$.nationalId', isListed: false },
+      { key: 'operators.$.approved', isListed: false },
+    ],
+  },
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {
@@ -187,18 +183,52 @@ const template: ApplicationTemplate<
             historyLogs: [
               {
                 onEvent: DefaultEvents.APPROVE,
-                logMessage: applicationMessage.historyLogApprovedByReviewer,
+                logMessage: (application, subjectNationalId) => {
+                  if (!subjectNationalId)
+                    return coreHistoryMessages.applicationApprovedBy
+
+                  const role = getReviewerRole(
+                    application.answers,
+                    subjectNationalId,
+                  )
+                  if (role === 'ownerCoOwner')
+                    return applicationMessage.historyLogApprovedByCoOwner
+                  else if (role === 'operators')
+                    return applicationMessage.historyLogApprovedByNewOperator
+                  return coreHistoryMessages.applicationApprovedBy
+                },
+                includeSubjectAndActor: true,
               },
               {
                 onEvent: DefaultEvents.REJECT,
-                logMessage: coreHistoryMessages.applicationRejected,
+                logMessage: (application, subjectNationalId) => {
+                  if (!subjectNationalId)
+                    return coreHistoryMessages.applicationRejected
+
+                  const role = getReviewerRole(
+                    application.answers,
+                    subjectNationalId,
+                  )
+                  if (role === 'ownerCoOwner')
+                    return applicationMessage.historyLogRejectedByCoOwner
+                  else if (role === 'operators')
+                    return applicationMessage.historyLogRejectedByNewOperator
+                  return coreHistoryMessages.applicationRejected
+                },
+                includeSubjectAndActor: true,
               },
               {
                 onEvent: DefaultEvents.SUBMIT,
                 logMessage: coreHistoryMessages.applicationApproved,
               },
             ],
-            pendingAction: reviewStatePendingAction,
+            pendingAction: (application, _role, nationalId) => {
+              return getReviewStatePendingAction(
+                nationalId,
+                getReviewers(application.answers),
+                true,
+              )
+            },
           },
           lifecycle: {
             shouldBeListed: true,

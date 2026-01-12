@@ -1,11 +1,9 @@
 import {
   buildMultiField,
-  buildDescriptionField,
   buildSection,
   buildRadioField,
-  buildSelectField,
 } from '@island.is/application/core'
-import { DistrictCommissionerAgencies, Routes } from '../../../lib/constants'
+import { Routes } from '../../../lib/constants'
 import { priceList } from '../../../lib/messages/priceList'
 import { checkForDiscount, formatIsk, getPriceList } from '../../../utils'
 import { Application } from '@island.is/application/types'

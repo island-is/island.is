@@ -1,128 +1,158 @@
 import { FC, useEffect } from 'react'
-import { useFieldArray, useFormContext } from 'react-hook-form'
+import { useFieldArray, useFormContext, Controller } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { FieldBaseProps } from '@island.is/application/types'
-import {
-  Box,
-  GridColumn,
-  GridRow,
-  Button,
-  ProfileCard,
-} from '@island.is/island-ui/core'
-import { Answers, AssetFormField } from '../../types'
+import { Box, GridColumn, GridRow, Button } from '@island.is/island-ui/core'
+import { AssetFormField, ErrorValue } from '../../types'
 
 import { m } from '../../lib/messages'
-import { EstateAsset } from '@island.is/clients/syslumenn'
 import { AdditionalVehicle } from './AdditionalVehicle'
 import { InputController } from '@island.is/shared/form-fields'
 import { getEstateDataFromApplication } from '../../lib/utils'
+import { RepeaterTotal } from '../RepeaterTotal'
+import { useRepeaterTotal } from '../../hooks/useRepeaterTotal'
 
-export const VehicleRepeater: FC<
-  React.PropsWithChildren<FieldBaseProps<Answers>>
-> = ({ application, field, errors }) => {
-  const error = (errors as any)?.estate?.vehicles
+export const VehicleRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+  field,
+  errors,
+}) => {
+  const error = (errors as ErrorValue)?.estate?.vehicles
   const { id } = field
   const { formatMessage } = useLocale()
   const { fields, append, remove, update, replace } = useFieldArray({
     name: id,
   })
 
-  const { clearErrors } = useFormContext()
+  const { clearErrors, getValues, control } = useFormContext()
 
-  const estateData = getEstateDataFromApplication(application)
+  const { total, calculateTotal } = useRepeaterTotal(
+    id,
+    getValues,
+    fields,
+    (field: AssetFormField) => field.marketValue,
+  )
 
   useEffect(() => {
+    const estateData = getEstateDataFromApplication(application)
     if (fields.length === 0 && estateData.estate?.vehicles) {
       replace(estateData.estate.vehicles)
     }
-  }, [])
+  }, [application, fields.length, replace])
 
   const handleAddProperty = () =>
     append({
       share: 1,
-      assetNumber: undefined,
-      description: undefined,
-      marketValue: undefined,
+      assetNumber: '',
+      description: '',
+      marketValue: '',
       initial: false,
       enabled: true,
     })
   const handleRemoveProperty = (index: number) => remove(index)
 
+  const handleToggleEnabled = (vehicle: AssetFormField, index: number) => {
+    const updatedVehicle = {
+      ...vehicle,
+      enabled: !vehicle.enabled,
+    }
+    update(index, updatedVehicle)
+    clearErrors(`${id}[${index}].marketValue`)
+    calculateTotal()
+  }
+
   return (
     <Box marginTop={2}>
-      <GridRow>
-        {fields.length > 0 &&
-          fields.map((vehicle: AssetFormField, index) => {
-            const fieldError = error && error[index] ? error[index] : null
-            if (!vehicle.initial) {
-              return null
-            }
-            return (
-              <GridColumn
-                span={['12/12', '12/12', '6/12']}
-                paddingBottom={3}
-                key={vehicle.id}
+      {fields.map((vehicle: AssetFormField, index) => {
+        const fieldIndex = `${id}[${index}]`
+        const fieldError = error && error[index] ? error[index] : null
+
+        // Render additional (user-added) vehicles with the existing component
+        if (!vehicle.initial) {
+          return (
+            <AdditionalVehicle
+              key={vehicle.id}
+              field={vehicle}
+              fieldName={id}
+              remove={handleRemoveProperty}
+              index={index}
+              error={fieldError}
+              calculateTotal={calculateTotal}
+            />
+          )
+        }
+
+        // Render initial (prefilled) vehicles with the same layout style as inheritance-report
+        return (
+          <Box position="relative" key={vehicle.id} marginTop={4}>
+            <Controller
+              name={`${fieldIndex}.initial`}
+              control={control}
+              defaultValue={vehicle.initial}
+              render={() => <input type="hidden" />}
+            />
+            <Controller
+              name={`${fieldIndex}.enabled`}
+              control={control}
+              defaultValue={vehicle.enabled}
+              render={() => <input type="hidden" />}
+            />
+            <Box display="flex" justifyContent="flexEnd" marginBottom={2}>
+              <Button
+                variant="text"
+                size="small"
+                icon={vehicle.enabled ? 'remove' : 'add'}
+                onClick={() => handleToggleEnabled(vehicle, index)}
               >
-                <ProfileCard
+                {vehicle.enabled
+                  ? formatMessage(m.disable)
+                  : formatMessage(m.activate)}
+              </Button>
+            </Box>
+            <GridRow>
+              <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                <InputController
+                  id={`${fieldIndex}.assetNumber`}
+                  name={`${fieldIndex}.assetNumber`}
+                  label={formatMessage(m.propertyNumberVehicle)}
+                  backgroundColor="blue"
+                  defaultValue={vehicle.assetNumber}
+                  readOnly
                   disabled={!vehicle.enabled}
-                  title={vehicle?.description ?? vehicle?.assetNumber ?? ''}
-                  description={[
-                    `${formatMessage(m.propertyNumber)}: ${
-                      vehicle.assetNumber
-                    }`,
-                    <Box marginTop={1} as="span">
-                      <Button
-                        variant="text"
-                        icon={vehicle.enabled ? 'remove' : 'add'}
-                        size="small"
-                        iconType="outline"
-                        onClick={() => {
-                          const updatedVehicle = {
-                            ...vehicle,
-                            enabled: !vehicle.enabled,
-                          }
-                          update(index, updatedVehicle)
-                          clearErrors(`${id}[${index}].marketValue`)
-                        }}
-                      >
-                        {vehicle.enabled
-                          ? formatMessage(m.inheritanceDisableMember)
-                          : formatMessage(m.inheritanceEnableMember)}
-                      </Button>
-                    </Box>,
-                  ]}
+                  error={fieldError?.assetNumber}
                 />
-                <Box marginTop={2}>
-                  <InputController
-                    id={`${id}[${index}].marketValue`}
-                    name={`${id}[${index}].marketValue`}
-                    label={formatMessage(m.marketValueTitle)}
-                    disabled={!vehicle.enabled}
-                    backgroundColor="blue"
-                    placeholder="0 kr."
-                    defaultValue={vehicle.marketValue}
-                    error={fieldError?.marketValue}
-                    currency
-                    size="sm"
-                    required
-                  />
-                </Box>
               </GridColumn>
-            )
-          })}
-      </GridRow>
-      {fields.map((field: AssetFormField, index: number) => (
-        <Box key={field.id} hidden={field.initial}>
-          <AdditionalVehicle
-            field={field}
-            fieldName={id}
-            remove={handleRemoveProperty}
-            index={index}
-            error={error && error[index] ? error[index] : null}
-          />
-        </Box>
-      ))}
-      <Box marginTop={1}>
+              <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                <InputController
+                  id={`${fieldIndex}.description`}
+                  name={`${fieldIndex}.description`}
+                  label={formatMessage(m.vehicleNameLabel)}
+                  defaultValue={vehicle.description}
+                  readOnly
+                  disabled={!vehicle.enabled}
+                  error={fieldError?.description}
+                />
+              </GridColumn>
+              <GridColumn span={['1/1', '1/2']}>
+                <InputController
+                  id={`${fieldIndex}.marketValue`}
+                  name={`${fieldIndex}.marketValue`}
+                  label={formatMessage(m.marketValueTitle)}
+                  placeholder="0 kr."
+                  defaultValue={vehicle.marketValue}
+                  error={fieldError?.marketValue}
+                  currency
+                  backgroundColor="blue"
+                  disabled={!vehicle.enabled}
+                  required
+                  onChange={() => calculateTotal()}
+                />
+              </GridColumn>
+            </GridRow>
+          </Box>
+        )
+      })}
+      <Box marginTop={2}>
         <Button
           variant="text"
           icon="add"
@@ -133,6 +163,7 @@ export const VehicleRepeater: FC<
           {formatMessage(m.addVehicle)}
         </Button>
       </Box>
+      <RepeaterTotal id={id} total={total} show={!!fields.length} />
     </Box>
   )
 }

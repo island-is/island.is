@@ -8,10 +8,11 @@ import addMonths from 'date-fns/addMonths'
 import format from 'date-fns/format'
 
 import { minimumPeriodStartBeforeExpectedDateOfBirth } from '../config'
-import { MANUAL, ParentalRelations, YES } from '../constants'
+import { MANUAL, ParentalRelations } from '../constants'
 import { answerValidators } from './answerValidators'
 import { errorMessages } from './messages'
-import { NO, StartDateOptions, AnswerValidationConstants } from '../constants'
+import { StartDateOptions, AnswerValidationConstants } from '../constants'
+import { NO, YES } from '@island.is/application/core'
 
 const { VALIDATE_LATEST_PERIOD } = AnswerValidationConstants
 
@@ -49,7 +50,7 @@ const createBaseApplication = (): Application => ({
   id: '',
   modified: new Date(),
   state: '',
-  typeId: ApplicationTypes.EXAMPLE,
+  typeId: ApplicationTypes.EXAMPLE_COMMON_ACTIONS,
   status: ApplicationStatus.IN_PROGRESS,
 })
 
@@ -139,7 +140,7 @@ describe('answerValidators', () => {
 
       const appAnswers = {
         ...application.answers,
-        multipleBirthsRequestDays: 90,
+        multipleBirthsRequestDays: 180,
         multipleBirths: {
           hasMultipleBirths: YES,
           multipleBirths: 2,

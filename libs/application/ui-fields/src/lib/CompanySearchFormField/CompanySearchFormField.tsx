@@ -2,18 +2,18 @@ import {
   CompanySearchField,
   FieldBaseProps,
 } from '@island.is/application/types'
-import React, { FC } from 'react'
+import React, { FC, useState } from 'react'
 import {
   buildFieldRequired,
   formatText,
   formatTextWithLocale,
-  getValueViaPath,
 } from '@island.is/application/core'
 
 import { Box } from '@island.is/island-ui/core'
 import { CompanySearchController } from '@island.is/application/ui-components'
 import { useLocale } from '@island.is/localization'
 import { Locale } from '@island.is/shared/types'
+import { useFormContext } from 'react-hook-form'
 
 interface Props extends FieldBaseProps {
   field: CompanySearchField
@@ -26,7 +26,7 @@ export const CompanySearchFormField: FC<React.PropsWithChildren<Props>> = ({
 }) => {
   const {
     id,
-    title,
+    title = '',
     placeholder,
     setLabelToDataSchema = true,
     shouldIncludeIsatNumber,
@@ -36,29 +36,21 @@ export const CompanySearchFormField: FC<React.PropsWithChildren<Props>> = ({
     marginBottom,
   } = field
   const { formatMessage, lang: locale } = useLocale()
+  const { getValues } = useFormContext()
 
-  const searchField = getValueViaPath(application.answers, id, {
-    nationalId: '',
-    label: '',
-  })
-  const defaultAnswer = {
-    value: searchField?.nationalId ?? '',
-    label: searchField?.label ?? '',
-  }
-  const initialValue = (application.answers[id] || { ...defaultAnswer }) as {
-    value: string
-    label: string
-  }
+  const storedValue = getValues(id)
+  const [searchTerm, setSearchTerm] = useState(storedValue?.label ?? '')
 
   return (
     <Box marginTop={marginTop} marginBottom={marginBottom}>
       <CompanySearchController
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
         required={buildFieldRequired(application, required)}
         checkIfEmployerIsOnForbiddenList={checkIfEmployerIsOnForbiddenList}
         shouldIncludeIsatNumber={shouldIncludeIsatNumber}
         id={id}
         error={error}
-        defaultValue={initialValue}
         name={id}
         label={formatTextWithLocale(
           title,
@@ -71,7 +63,6 @@ export const CompanySearchFormField: FC<React.PropsWithChildren<Props>> = ({
             ? formatText(placeholder as string, application, formatMessage)
             : undefined
         }
-        initialInputValue={initialValue.label}
         colored
         setLabelToDataSchema={setLabelToDataSchema}
       />

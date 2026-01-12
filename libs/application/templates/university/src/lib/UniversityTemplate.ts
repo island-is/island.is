@@ -27,6 +27,7 @@ import {
   ProgramApi,
   InnaApi,
 } from '../dataProviders'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -35,8 +36,9 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.UNIVERSITY,
   name: applicationMessage.name,
+  codeOwner: CodeOwners.Origo,
   institution: applicationMessage.institutionName,
-  translationNamespaces: [ApplicationConfigurations.University.translation],
+  translationNamespaces: ApplicationConfigurations.University.translation,
   initialQueryParameter: 'program',
   dataSchema: UniversitySchema,
   featureFlag: Features.university,

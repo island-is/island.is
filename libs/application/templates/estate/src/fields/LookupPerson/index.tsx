@@ -17,20 +17,7 @@ import {
   Query,
 } from '@island.is/api/schema'
 import { DECEASED_IDENITY_QUERY, IDENTITY_QUERY } from '../../graphql'
-
-type LookupProps = {
-  field: {
-    id: string
-    props?: {
-      requiredNationalId?: boolean
-      alertWhenUnder18?: boolean
-      useDeceasedRegistry?: boolean
-    }
-  }
-  nested?: boolean
-  message?: string
-  error: Record<string, string> | any
-}
+import { LookupProps } from '../../types'
 
 export const LookupPerson: FC<React.PropsWithChildren<LookupProps>> = ({
   field,

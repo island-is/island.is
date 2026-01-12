@@ -126,9 +126,9 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
     infoSubSectionDescription: {
       id: 'sia.application:applicant.info.sub.section.description#markdown',
       defaultMessage:
-        'Vinsamlegast farið yfir netfang og símanúmer til að tryggja að þær upplýsingar séu réttar. Netfangi er breytt með því að fara inn á Mínar síður á Ísland.is. Athugið að ef að aðrar upplýsingar eru ekki réttar þarf að breyta þeim í þjóðskrá.',
+        'Vinsamlegast farið yfir netfang og símanúmer til að tryggja að þær upplýsingar séu réttar. Netfangi er breytt hér. Athugið að ef að aðrar upplýsingar eru ekki réttar þarft þú að breyta þeim í Þjóðskrá.',
       description:
-        'Please review the email address and phone number to ensure that the information is correct. Email address can be changed by logging into My pages at Ísland.is. Note that if the following information is not correct, it must be changed at Registers Iceland.',
+        'Please review the email address and phone number to ensure that the information is correct. Email address can be changed here. Note that if any other information is not correct, you must have it changed at Registers Iceland.',
     },
     applicantEmail: {
       id: 'sia.application:info.applicant.email',
@@ -159,6 +159,11 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
       id: 'sia.application:info.applicant.address',
       defaultMessage: 'Póstfang',
       description: 'Postal address',
+    },
+    applicantApartmentNumber: {
+      id: 'sia.application:info.applicant.apartment.number',
+      defaultMessage: 'Íbúðarnúmer',
+      description: 'Apartment number',
     },
     applicantPostalcode: {
       id: 'sia.application:info.applicant.postalcode',
@@ -323,6 +328,11 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
       defaultMessage: 'Heimili banka',
       description: 'Bank address',
     },
+    personalAllowancePlaceholder: {
+      id: 'sia.application:payment.personal.allowance.placeholder',
+      defaultMessage: '1%',
+      description: '1%',
+    },
     currency: {
       id: 'sia.application:payment.currency',
       defaultMessage: 'Mynt',
@@ -461,6 +471,133 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
     },
   }),
 
+  incomePlanInstructions: defineMessages({
+    title: {
+      id: 'sia.application:income.plan.instructions.title',
+      defaultMessage: 'Leiðbeiningar um skráningu tekjuáætlunar',
+      description: 'Instructions on filling out your income plan',
+    },
+    instructions: {
+      id: 'sia.application:income.plan.instructions#markdown',
+      defaultMessage:
+        '\n* Á næstu síðu er að finna tillögu að tekjuáætlun. Þar getur þú breytt upphæðum og bætt við tekjum.\n* Skrá skal heildartekjur fyrir skatt í tekjuáætlun.\n* Fjármagnstekjur eru sameignlegar hjá hjónum/sambúðarfólki og skal skrá heildar fjármagnstekjur hjóna/sambúðarfólks í tekjuáætlun.\n* Ef maki er á lífeyri verða greiðslur hans einnig endurreiknaðar ef fjármagnstekjum er breytt.\n* Heimilt er að skrá atvinnutekjur á þá mánuði sem þeirra er aflað. Reiknast þá þær atvinnutekjur eingöngu í þeim mánuði. Vakin er athygli á að það þarf að haka sérstaklega við þann kost að óska eftir mánaðarskiptingu atvinnutekna í tekjuáætlun.\n* Laun / lífeyrisgreiðslur skal skrá í þeim gjaldmiðli sem þau eru greidd.\n* Það er á ábyrgð umsækjanda að tekjuáætlun sé rétt og að nauðsynlegar upplýsingar liggi fyrir til að hægt sé að ákvarða réttar greiðslur.',
+      description:
+        '\n* On the next page you will find your proposed income plan. There you can edit amounts and add income categories.\n* You must submit your total pre-tax income in your income plan.\n* For couples, their total income must be recorded in the income plan, as their income is considered shared.\n* If a spouse is receiving disability, his or her benefits will also be recalculated if there is a change in income.\n* Income may be recorded in the month in which it is earned. The income is then calculated only for that month. Attention, it is necessary to select the option of requesting a monthly distribution of income in the income plan.\n* Salary / pension payments must be recorded in the currency in which they are paid.\n* It is the responsibility of the applicant that the income plan is correct and that the necessary information for determining the correct payments is available.',
+    },
+  }),
+
+  incomePlan: defineMessages({
+    subSectionTitle: {
+      id: 'sia.application:income.plan.sub.section.title',
+      defaultMessage: 'Tekjuáætlun',
+      description: 'Income Plan',
+    },
+    description: {
+      id: 'sia.application:income.plan.description#markdown',
+      defaultMessage:
+        'Hér setur þú inn þær tekjur sem þú munt hafa árið {incomePlanYear} samhliða greiðslum frá Tryggingastofnun. Til þess að auðvelda skráningu þá sýnum við 5 algengustu tekjutegundir síðustu ára hér fyrir neðan. Hægt er að eyða út tekjutegundum eða breyta þeim eftir því sem við á. Upphæðir sem settar eru inn þurfa að vera fyrir skatt. Athygli er vakin á því að hjá hjónum og sambúðarfólki þarf að setja inn samanlagðar fjármagnstekjur beggja aðila. Mikilvægt er að fjárhæðir í tekjuáætlun endurspegli sem best raunveruleikann, til að tryggja skilvirka  úrvinnslu.',
+      description:
+        'Below you can enter your proposed income for the year {incomePlanYear} along with payments from the Social Insurance Administration. To simplify the registration process we have provided the top 5 registered income types from the last few years below. You can delete or change income types as needed. Please enter your pre-tax income. Note that couples must supply the combined income for both parties. It is important that the amounts in the income plan reflect reality as best as possible, in order to ensure efficient processing.',
+    },
+    registerIncome: {
+      id: 'sia.application:income.plan.register.income',
+      defaultMessage: 'Skráning tekna',
+      description: 'Income registration',
+    },
+    addIncome: {
+      id: 'sia.application:income.plan.add.income',
+      defaultMessage: 'Bæta við tekjum',
+      description: 'Add income',
+    },
+    saveIncome: {
+      id: 'sia.application:income.plan.save.income',
+      defaultMessage: 'Skrá tekjur',
+      description: 'Save income',
+    },
+    removeIncome: {
+      id: 'sia.application:income.plan.remove.income',
+      defaultMessage: 'Eyða tekjum',
+      description: 'Remove income',
+    },
+    editIncome: {
+      id: 'sia.application:income.plan.edit.income',
+      defaultMessage: 'Breyta tekjum',
+      description: 'Edit income',
+    },
+    incomeCategory: {
+      id: 'sia.application:income.plan.income.category',
+      defaultMessage: 'Tekjuflokkur',
+      description: 'Income category',
+    },
+    selectIncomeCategory: {
+      id: 'sia.application:income.plan.select.income.category',
+      defaultMessage: 'Veldu tekjuflokk',
+      description: 'Select income category',
+    },
+    incomeType: {
+      id: 'sia.application:income.plan.income.type',
+      defaultMessage: 'Tekjutegund',
+      description: 'Income type',
+    },
+    selectIncomeType: {
+      id: 'sia.application:income.plan.select.income.type',
+      defaultMessage: 'Veldu tekjutegund',
+      description: 'Select income type',
+    },
+    annualIncome: {
+      id: 'sia.application:income.plan.annual.income',
+      defaultMessage: 'Árstekjur',
+      description: 'Annual income',
+    },
+    monthlyIncome: {
+      id: 'sia.application:income.plan.yearly.income',
+      defaultMessage: 'Mánaðartekjur',
+      description: 'Monthly income',
+    },
+    incomePerYear: {
+      id: 'sia.application:income.plan.income.per.year',
+      defaultMessage: 'Tekjur á ári',
+      description: 'Income per year',
+    },
+    foreignIncomePerYear: {
+      id: 'sia.application:income.plan.foreign.income.per.year',
+      defaultMessage: 'Erlendar tekjur á ári',
+      description: 'Foreign income per year',
+    },
+    equalIncomePerMonth: {
+      id: 'sia.application:income.plan.equal.income.per.month',
+      defaultMessage: 'Jafnar tekjur á mánuði',
+      description: 'Equal income per month',
+    },
+    equalForeignIncomePerMonth: {
+      id: 'sia.application:income.plan.equal.foreign.income.per.month',
+      defaultMessage: 'Erlendar tekjur á mánuði',
+      description: 'Foreign income per month',
+    },
+    monthlyDistributionOfIncome: {
+      id: 'sia.application:income.plan.monthly.distribution.of.income',
+      defaultMessage: 'Óska eftir mánaðarskiptingu atvinnutekna',
+      description: 'Request a monthly distribution of salary',
+    },
+    monthlyDistributionOfIncomeTooltip: {
+      id: 'sia.application:income.plan.monthly.distribution.of.income.tooltip',
+      defaultMessage:
+        'Atvinnutekjur hafa einungis áhrif á lífeyrisgreiðslur þess mánaðar sem atvinnutekna er aflað.',
+      description:
+        'Income only affects the pension payments for the month in which income is earned.',
+    },
+    currency: {
+      id: 'sia.application:income.plan.currency',
+      defaultMessage: 'Gjaldmiðill',
+      description: 'Currency',
+    },
+    selectCurrency: {
+      id: 'sia.application:income.plan.select.currency',
+      defaultMessage: 'Veldu gjaldmiðil',
+      description: 'Select currency',
+    },
+  }),
+
   confirm: defineMessages({
     overviewTitle: {
       id: 'sia.application:confirm.overview.title',
@@ -580,6 +717,11 @@ export const errorMessages = defineMessages({
     defaultMessage: 'Ógilt bankanúmer. Þarf að vera á forminu: 0000-11-222222',
     description: 'Invalid bank account. Has to be formatted: 0000-11-222222',
   },
+  bankAccountType: {
+    id: 'sia.application:error.bankAccountType',
+    defaultMessage: 'Nauðsynlegt er að velja tegund reiknings',
+    description: 'You must choose a bank account type',
+  },
   period: {
     id: 'sia.application:error.period',
     defaultMessage: 'Ógildur mánuður.',
@@ -600,10 +742,30 @@ export const errorMessages = defineMessages({
     defaultMessage: 'Þú þarft að hlaða upp viðhenginu til að halda áfram.',
     description: 'You must upload an attachment to continue.',
   },
+  personalAllowanceUse: {
+    id: 'sia.application:personal.allowance.use',
+    defaultMessage: 'Nauðsynlegt er að velja hvort nýta skal persónuafslátt',
+    description: 'You must choose whether to use your personal allowance',
+  },
   personalAllowance: {
     id: 'sia.application:personal.allowance',
     defaultMessage: 'Persónuafsláttur verður að vera milli 1 og 100',
     description: 'Personal tax-free allowance must be between 1 and 100',
+  },
+  incomePlanMonthsRequired: {
+    id: 'sia.application:error.income.plan.months.required',
+    defaultMessage: 'Nauðsynlegt er að bæta við tekjum fyrir a.m.k einn mánuð',
+    description: 'You must add income for at least one month',
+  },
+  incomePlanRequired: {
+    id: 'sia.application:error.income.plan.required',
+    defaultMessage: 'Nauðsynlegt er að bæta við a.m.k einni tekjutegund',
+    description: 'You must add at least one income type',
+  },
+  selfAssessmentQuestionRequired: {
+    id: 'sia.application:error.self.assessment.questionnaire.required',
+    defaultMessage: 'Þú átt eftir að fylla út í reit á þessari síðu',
+    description: 'You have to fill in a field on this page.',
   },
 })
 
@@ -653,6 +815,11 @@ export const statesMessages = defineMessages({
     defaultMessage: 'Umsókn hafnað',
     description: 'Application rejected',
   },
+  applicationDismissed: {
+    id: 'sia.application:applicationDismissed',
+    defaultMessage: 'Umsókn vísað frá',
+    description: 'Application dismissed',
+  },
   applicationApproved: {
     id: 'sia.application:applicationApproved',
     defaultMessage: 'Tryggingastofnun hefur samþykkt umsóknina',
@@ -683,5 +850,10 @@ export const statesMessages = defineMessages({
     id: 'sia.application:in.progress.tag',
     defaultMessage: 'Í vinnslu hjá þér',
     description: 'In progress with you',
+  },
+  dismissedTag: {
+    id: 'sia.application:dismissed.tag',
+    defaultMessage: 'Vísað frá',
+    description: 'Dismissed',
   },
 })

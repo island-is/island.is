@@ -5,7 +5,7 @@ import { InformationSection } from './InformationSection'
 import { PersonalSection } from './PersonalSection'
 import { ReviewSection } from './ReviewSection'
 import { ChildrenSupportingDocumentsSection } from './ChildrenSupportingDocuments'
-import { Logo } from '../../assets/Logo'
+import { MinistryForForeignAffairsLogo } from '@island.is/application/assets/institution-logos'
 import { MAX_CNT_APPLICANTS } from '../../shared'
 import { SupportingDocumentsSection } from './SupportingDocumentsSection'
 import { buildFormPaymentChargeOverviewSection } from '@island.is/application/ui-forms'
@@ -19,8 +19,7 @@ const buildSupportingDocumentsSections = (): Section[] => {
 
 export const CitizenshipForm: Form = buildForm({
   id: 'CitizenshipFormDraft',
-  title: '',
-  logo: Logo,
+  logo: MinistryForForeignAffairsLogo,
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,

@@ -17,6 +17,8 @@ export interface PdfViewerProps {
   scale?: number
   autoWidth?: boolean
   errorComponent?: ReactNode
+  onLoadingError?: (error: Error) => void
+  onLoadingSuccess?: () => void
 }
 interface PdfProps {
   numPages: number
@@ -36,6 +38,8 @@ export const PdfViewer: FC<React.PropsWithChildren<PdfViewerProps>> = ({
   scale = 1,
   autoWidth = true,
   errorComponent,
+  onLoadingError,
+  onLoadingSuccess,
 }) => {
   const [numPages, setNumPages] = useState(0)
   const [pageNumber, setPageNumber] = useState(1)
@@ -60,12 +64,13 @@ export const PdfViewer: FC<React.PropsWithChildren<PdfViewerProps>> = ({
 
   const onDocumentLoadSuccess = ({ numPages }: PdfProps) => {
     setNumPages(numPages)
+    onLoadingSuccess && onLoadingSuccess()
   }
 
   const loadingView = () => {
     return (
       <Box height="full" display="flex" justifyContent="center">
-        <LoadingDots large />
+        <LoadingDots size="large" />
       </Box>
     )
   }
@@ -83,6 +88,7 @@ export const PdfViewer: FC<React.PropsWithChildren<PdfViewerProps>> = ({
           className={cn(styles.pdfViewer, { [styles.pdfSvgPage]: autoWidth })}
           loading={() => loadingView()}
           error={errorComponent ?? pdfError}
+          onLoadError={onLoadingError}
           externalLinkTarget="_blank"
         >
           {showAllPages ? (

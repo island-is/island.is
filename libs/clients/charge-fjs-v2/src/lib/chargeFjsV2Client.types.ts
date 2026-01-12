@@ -15,6 +15,11 @@ export interface Charge {
   extraData?: Array<ExtraData>
 }
 
+export type ChargeToValidate = Omit<
+  Charge,
+  'immediateProcess' | 'returnUrl' | 'payInfo'
+>
+
 export interface ChargeResponse {
   user4: string
   receptionID: string
@@ -63,4 +68,11 @@ export interface CatalogItem {
 export enum PayInfoPaymentMeansEnum {
   Kreditkort = 'Kreditkort',
   Debetkort = 'Debetkort',
+}
+export interface PayeeInfo {
+  nationalId: string
+  name: string
+  address: string
+  zip: string
+  city: string
 }

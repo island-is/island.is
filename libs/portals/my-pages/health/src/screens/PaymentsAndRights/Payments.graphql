@@ -1,0 +1,120 @@
+query getCopaymentStatus {
+  rightsPortalCopaymentStatus {
+    insuranceStatus {
+      display
+      code
+    }
+    maximumMonthlyPayment
+    maximumPayment
+    basePayment
+  }
+}
+
+query getCopaymentPeriods($input: RightsPortalCopaymentPeriodInput!) {
+  rightsPortalCopaymentPeriods(input: $input) {
+    items {
+      id
+      status {
+        display
+        code
+      }
+      maximumPayment
+      monthPayment
+      overpaid
+      repaid
+      month
+    }
+    errors {
+      status
+    }
+  }
+}
+
+query getCopaymentBills($input: RightsPortalCopaymentBillsInput!) {
+  rightsPortalCopaymentBills(input: $input) {
+    items {
+      id
+      serviceType
+      date
+      totalAmount
+      insuranceAmount
+      ownAmount
+      overpaid
+    }
+    errors {
+      status
+    }
+  }
+}
+
+query getPaymentOverviewServiceTypes {
+  rightsPortalPaymentOverviewServiceTypes {
+    items {
+      code
+      name
+    }
+    errors {
+      status
+    }
+  }
+}
+
+query getPaymentOverview($input: RightsPortalPaymentOverviewInput!) {
+  rightsPortalPaymentOverview(input: $input) {
+    items {
+      credit
+      debt
+      bills {
+        date
+        serviceType {
+          code
+          name
+        }
+        totalAmount
+        insuranceAmount
+        documentId
+        downloadUrl
+      }
+    }
+    errors {
+      status
+    }
+  }
+}
+
+query getPaymentOverviewDocument(
+  $input: RightsPortalPaymentOverviewDocumentInput!
+) {
+  rightsPortalPaymentOverviewDocument(input: $input) {
+    items {
+      contentType
+      fileName
+      data
+    }
+    errors {
+      status
+    }
+  }
+}
+
+query getInsuranceOverview {
+  rightsPortalInsuranceOverview {
+    isInsured
+    explanation
+    from
+    status {
+      display
+      code
+    }
+    maximumPayment
+    ehicCardExpiryDate
+  }
+}
+
+query getInsuranceConfirmation {
+  rightsPortalInsuranceConfirmation {
+    fileName
+    contentType
+    data
+  }
+}

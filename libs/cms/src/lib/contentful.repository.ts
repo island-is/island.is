@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common'
 import {
   createClient,
   EntryCollection,
+  Entry,
   ContentfulClientApi,
   ClientLogLevel,
 } from 'contentful'
@@ -90,6 +91,23 @@ export class ContentfulRepository {
     return this.getClient().getEntries({
       locale: validLocales.includes(code) ? code : 'is-IS',
       include,
+      ...query,
+    })
+  }
+
+  async getLocalizedEntry<Fields>(
+    id: string,
+    languageCode: undefined | null | string,
+    query: ContentfulQuery,
+  ): Promise<Entry<Fields>> {
+    let code = languageCode ?? 'is-IS'
+
+    if (localeMap[code]) {
+      code = localeMap[code]
+    }
+
+    return this.getClient().getEntry(id, {
+      locale: validLocales.includes(code) ? code : 'is-IS',
       ...query,
     })
   }

@@ -22,6 +22,7 @@ import {
   Result,
   VerifyPkPassResult,
 } from '../../../licenseClient.type'
+import { GeneralLicenseVerifyExtraData } from '../../base'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'disability-license-service'
@@ -73,11 +74,6 @@ export class DisabilityLicenseClient
           message: 'Service failure',
           data: JSON.stringify(e.body),
         }
-        this.logger.warn('Expected 200 status', {
-          status: e.status,
-          statusText: e.statusText,
-          category: LOG_CATEGORY,
-        })
       } else {
         const unknownError = e as Error
         error = {
@@ -85,11 +81,6 @@ export class DisabilityLicenseClient
           message: 'Unknown error',
           data: JSON.stringify(unknownError),
         }
-        this.logger.warn('Unable to query data', {
-          status: e.status,
-          statusText: e.statusText,
-          category: LOG_CATEGORY,
-        })
       }
 
       return {
@@ -265,6 +256,22 @@ export class DisabilityLicenseClient
       data: {
         valid: result.data.valid,
       },
+    }
+  }
+
+  async verifyExtraData(user: User): Promise<GeneralLicenseVerifyExtraData> {
+    const license = await this.fetchLicense(user)
+    if (!license.ok || !license.data) {
+      throw new Error('No license found')
+    }
+
+    if (!license.data.nafn) {
+      throw new Error('No name found')
+    }
+
+    return {
+      nationalId: license.data.kennitala ?? '',
+      name: license.data.nafn,
     }
   }
 }

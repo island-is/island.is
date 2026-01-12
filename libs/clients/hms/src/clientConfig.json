@@ -1,0 +1,419 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Fasteignir",
+    "version": "1.0"
+  },
+  "paths": {
+    "/api/adalmatseining/byFasteignNr": {
+      "get": {
+        "tags": ["Adalmatseining"],
+        "parameters": [
+          {
+            "name": "fasteignNr",
+            "in": "query",
+            "description": "Fasteignanumer",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "description": "Fasteignanumer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Adalmatseining"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/fasteign/byStadfangNr": {
+      "get": {
+        "tags": ["Fasteign"],
+        "parameters": [
+          {
+            "name": "stadfangNr",
+            "in": "query",
+            "description": "Stadfanganumer",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "description": "Stadfanganumer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Fasteign"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/health/running": {
+      "get": {
+        "tags": ["Health"],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/stadfang/search": {
+      "get": {
+        "tags": ["Stadfang"],
+        "parameters": [
+          {
+            "name": "partialStadfang",
+            "in": "query",
+            "description": "Fasteignanumer or a search string for stadfang.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Fasteignanumer or a search string for stadfang."
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Stadfang"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Adalmatseining": {
+        "type": "object",
+        "properties": {
+          "fastnum": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "fasteign_nr": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "fasteignamat": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "lhlmat": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "notkun_texti": {
+            "type": "string",
+            "nullable": true
+          },
+          "stadfang_nr": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "stadfang_birting": {
+            "type": "string",
+            "nullable": true
+          },
+          "merking": {
+            "type": "string",
+            "nullable": true
+          },
+          "matseiningar": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Matseining"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Fasteign": {
+        "type": "object",
+        "properties": {
+          "fasteign_nr": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "landeign_nr": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "stadfang_nr": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "stadfang_birting": {
+            "type": "string",
+            "nullable": true
+          },
+          "postnumer": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sveitarfelag_nafn": {
+            "type": "string",
+            "nullable": true
+          },
+          "sveitarfelag_nr": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sveitarfelag_nr_birting": {
+            "type": "string",
+            "nullable": true
+          },
+          "merking": {
+            "type": "string",
+            "nullable": true
+          },
+          "notkun_texti": {
+            "type": "string",
+            "nullable": true
+          },
+          "einflm": {
+            "type": "number",
+            "format": "float",
+            "nullable": true
+          },
+          "eining": {
+            "type": "string",
+            "nullable": true
+          },
+          "fasteignamat": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "lhlmat": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Matseining": {
+        "type": "object",
+        "properties": {
+          "fnum": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "fasteignamat": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "fastnum": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "matsstig": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "byggingarstig": {
+            "type": "string",
+            "nullable": true
+          },
+          "notkun_texti": {
+            "type": "string",
+            "nullable": true
+          },
+          "merking": {
+            "type": "string",
+            "nullable": true
+          },
+          "stadfang_nr": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "stadfang_birting": {
+            "type": "string",
+            "nullable": true
+          },
+          "brunabotamat": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "eining": {
+            "type": "string",
+            "nullable": true
+          },
+          "einflm": {
+            "type": "number",
+            "format": "float",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Stadfang": {
+        "type": "object",
+        "properties": {
+          "stadfang_nr": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "stadfang_birting": {
+            "type": "string",
+            "nullable": true
+          },
+          "sveitarfelag_nafn": {
+            "type": "string",
+            "nullable": true
+          },
+          "sveitarfelag_nr": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sveitarfelag_nr_birting": {
+            "type": "string",
+            "nullable": true
+          },
+          "postnumer": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "landeign_nr": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "stadvisir": {
+            "type": "string",
+            "nullable": true
+          },
+          "stadgreinir_birting": {
+            "type": "string",
+            "nullable": true
+          },
+          "stadgreinir_nr": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "stadgreinir_bokst": {
+            "type": "string",
+            "nullable": true
+          },
+          "stadgreinir_serheiti": {
+            "type": "string",
+            "nullable": true
+          },
+          "fjoldi_tengdra_fasteigna": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}

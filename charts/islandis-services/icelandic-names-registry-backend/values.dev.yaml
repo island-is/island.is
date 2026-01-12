@@ -25,7 +25,7 @@ env:
   DB_USER: 'icelandic_names_registry_backend'
   IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
   LOG_LEVEL: 'info'
-  NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
+  NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
   SERVERSIDE_FEATURES_ON: ''
 grantNamespaces:
   - 'islandis'
@@ -87,7 +87,10 @@ initContainer:
     DB_PASS: '/k8s/icelandic-names-registry-backend/DB_PASSWORD'
 namespace: 'icelandic-names-registry'
 podDisruptionBudget:
-  maxUnavailable: 1
+  minAvailable: 1
+  unhealthyPodEvictionPolicy: 'IfHealthyBudget'
+podSecurityContext:
+  fsGroup: 65534
 pvcs: []
 replicaCount:
   default: 1
@@ -106,3 +109,8 @@ secrets:
 securityContext:
   allowPrivilegeEscalation: false
   privileged: false
+serviceAccount:
+  annotations:
+    eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/icelandic-names-registry'
+  create: true
+  name: 'icelandic-names-registry'

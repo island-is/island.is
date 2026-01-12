@@ -10,7 +10,6 @@ import { getChosenApplicant, hasSecondGuardian } from '../utils'
 
 export const Approved: Form = buildForm({
   id: 'Approved',
-  title: '',
   mode: FormModes.APPROVED,
   children: [
     buildFormConclusionSection({
@@ -39,7 +38,6 @@ export const Approved: Form = buildForm({
     }),
     buildAlertMessageField({
       id: 'uiForms.conclusionAlertInfo1',
-      title: '',
       alertType: 'info',
       message: reviewConfirmation.general.infoMessageText1,
       marginBottom: 0,
@@ -64,7 +62,6 @@ export const Approved: Form = buildForm({
     }),
     buildAlertMessageField({
       id: 'uiForms.conclusionAlertInfo2',
-      title: '',
       alertType: 'info',
       message: reviewConfirmation.general.infoMessageText2,
       condition: (formValue, externalData) => {

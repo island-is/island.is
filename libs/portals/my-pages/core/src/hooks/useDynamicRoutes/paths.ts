@@ -5,6 +5,7 @@ export enum DynamicPaths {
   FinancePaymentsSchedule = '/fjarmal/greidslur/greidsluaetlanir',
   FinanceTransactions = '/fjarmal/faerslur/flokkar',
   FinanceTransactionPeriods = '/fjarmal/faerslur/timabil',
+  FinanceTransactionVehicleMileage = '/fjarmal/faerslur/kilometragjald',
 
   EducationDrivingLessons = '/menntun/okunam',
 }

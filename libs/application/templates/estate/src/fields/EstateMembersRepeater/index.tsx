@@ -11,8 +11,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
-import * as kennitala from 'kennitala'
-import { Answers, EstateMember } from '../../types'
+import { ErrorValue, EstateMember } from '../../types'
 import { AdditionalEstateMember } from './AdditionalEstateMember'
 import { getValueViaPath } from '@island.is/application/core'
 import {
@@ -21,14 +20,14 @@ import {
   PhoneInputController,
   SelectController,
 } from '@island.is/shared/form-fields'
-import { format as formatNationalId } from 'kennitala'
+import { format as formatNationalId, info as nationalIdInfo } from 'kennitala'
 import {
   EstateTypes,
-  NO,
   YES,
   heirAgeValidation,
   missingHeirUndividedEstateValidation,
   missingSpouseUndividedEstateValidation,
+  multipleSpousesValidation,
   relationWithApplicant,
   SPOUSE,
 } from '../../lib/constants'
@@ -36,7 +35,7 @@ import intervalToDuration from 'date-fns/intervalToDuration'
 import { getEstateDataFromApplication } from '../../lib/utils'
 
 export const EstateMembersRepeater: FC<
-  React.PropsWithChildren<FieldBaseProps<Answers>>
+  React.PropsWithChildren<FieldBaseProps>
 > = ({ application, field, errors, setBeforeSubmitCallback }) => {
   const { id } = field
   const { formatMessage } = useLocale()
@@ -55,7 +54,7 @@ export const EstateMembersRepeater: FC<
         hasForeignCitizenship && birthDate
           ? intervalToDuration({ start: new Date(birthDate), end: new Date() })
               ?.years
-          : kennitala.info(member.nationalId)?.age
+          : nationalIdInfo(member.nationalId)?.age
       return (
         (memberAge ?? 0) < 18 &&
         (member?.nationalId || birthDate) &&
@@ -67,7 +66,7 @@ export const EstateMembersRepeater: FC<
   const hasEstateMemberUnder18withoutRep = values.estate?.estateMembers?.some(
     (member: EstateMember) => {
       const advocateAge =
-        member.advocate && kennitala.info(member.advocate.nationalId)?.age
+        member.advocate && nationalIdInfo(member.advocate.nationalId)?.age
       return (
         hasEstateMemberUnder18 &&
         member?.advocate?.nationalId &&
@@ -88,6 +87,12 @@ export const EstateMembersRepeater: FC<
     !values.estate?.estateMembers?.some(
       (member: EstateMember) => member.enabled && member.relation === SPOUSE,
     )
+
+  const hasMultipleSpouses =
+    selectedEstate === EstateTypes.permitForUndividedEstate &&
+    values.estate?.estateMembers?.filter(
+      (member: EstateMember) => member.enabled && member.relation === SPOUSE,
+    ).length > 1
 
   setBeforeSubmitCallback &&
     setBeforeSubmitCallback(async () => {
@@ -125,6 +130,13 @@ export const EstateMembersRepeater: FC<
         return [false, 'missing spouse for undivided estate']
       }
 
+      if (hasMultipleSpouses) {
+        setError(multipleSpousesValidation, {
+          type: 'custom',
+        })
+        return [false, 'multiple spouses in heirs list']
+      }
+
       return [true, null]
     })
 
@@ -145,14 +157,14 @@ export const EstateMembersRepeater: FC<
       value: relation,
       label: relation,
     })) || []
-  const error = (errors as any)?.estate?.estateMembers
+  const error = (errors as ErrorValue)?.estate?.estateMembers
 
   const handleAddMember = () =>
     append({
-      nationalId: undefined,
+      nationalId: '',
       initial: false,
       enabled: true,
-      name: undefined,
+      name: '',
     })
 
   useEffect(() => {
@@ -168,12 +180,21 @@ export const EstateMembersRepeater: FC<
     if (!missingHeirsForUndividedEstate) {
       clearErrors(missingHeirUndividedEstateValidation)
     }
+    if (!missingSpouseForUndividedEstate) {
+      clearErrors(missingSpouseUndividedEstateValidation)
+    }
+    if (!hasMultipleSpouses) {
+      clearErrors(multipleSpousesValidation)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     fields,
     hasEstateMemberUnder18withoutRep,
     hasEstateMemberUnder18,
     clearErrors,
     missingHeirsForUndividedEstate,
+    missingSpouseForUndividedEstate,
+    hasMultipleSpouses,
   ])
 
   useEffect(() => {
@@ -183,6 +204,7 @@ export const EstateMembersRepeater: FC<
       // so now using "replace" instead, for the initial setup
       replace(estateData.estate.estateMembers)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
@@ -205,7 +227,7 @@ export const EstateMembersRepeater: FC<
         }
         return [
           ...acc,
-          <Box marginTop={index > 0 ? 7 : 0} key={index}>
+          <Box marginTop={index > 0 ? 7 : 0} key={member.id}>
             <Box display="flex" justifyContent="spaceBetween" marginBottom={3}>
               <Text
                 color={member.enabled ? 'currentColor' : 'dark300'}
@@ -226,6 +248,7 @@ export const EstateMembersRepeater: FC<
                     update(index, updatedMember)
                     clearErrors(`${id}[${index}].phone`)
                     clearErrors(`${id}[${index}].email`)
+                    clearErrors(`${id}[${index}].nationalId`)
                     clearErrors(`${id}[${index}].advocate.phone`)
                     clearErrors(`${id}[${index}].advocate.email`)
                   }}
@@ -245,6 +268,7 @@ export const EstateMembersRepeater: FC<
                   defaultValue={formatNationalId(member.nationalId || '')}
                   backgroundColor="white"
                   disabled={!member.enabled}
+                  readOnly
                   format={'######-####'}
                   error={error && error[index] && error[index].nationalId}
                 />
@@ -271,8 +295,7 @@ export const EstateMembersRepeater: FC<
                   disabled={!member.enabled}
                 />
               </GridColumn>
-              {application.answers.selectedEstate ===
-                EstateTypes.permitForUndividedEstate &&
+              {selectedEstate === EstateTypes.permitForUndividedEstate &&
                 member.relation !== SPOUSE && (
                   <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
                     <SelectController
@@ -423,7 +446,7 @@ export const EstateMembersRepeater: FC<
       }, [] as JSX.Element[])}
       {fields.map((member: GenericFormField<EstateMember>, index) => {
         return (
-          <Box>
+          <Box key={member.id}>
             {!member.initial && (
               <AdditionalEstateMember
                 application={application}
@@ -475,6 +498,13 @@ export const EstateMembersRepeater: FC<
             errorMessage={formatMessage(
               m.missingSpouseUndividedEstateValidation,
             )}
+          />
+        </Box>
+      )}
+      {!!errors?.[multipleSpousesValidation] && (
+        <Box marginTop={4}>
+          <InputError
+            errorMessage={formatMessage(m.multipleSpousesValidation)}
           />
         </Box>
       )}

@@ -18,15 +18,11 @@ import { useFieldArray } from 'react-hook-form'
 import * as styles from './CommissionFieldRepeater.css'
 import { info } from '../../lib/messages'
 import { Locale } from '@island.is/shared/types'
-type PersonField = {
-  name: string
-  nationalId: string
-}
 
 export const CommissionFieldRepeater: FC<
   React.PropsWithChildren<FieldBaseProps>
 > = ({ application, errors, field }) => {
-  const { id, title } = field
+  const { id, title = '' } = field
   const { formatMessage, lang: locale } = useLocale()
   const { fields, append, remove } = useFieldArray({ name: id })
 

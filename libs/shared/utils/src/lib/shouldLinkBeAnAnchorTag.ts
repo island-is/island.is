@@ -4,4 +4,5 @@ import { ProjectBasePath } from '@island.is/shared/constants'
  * then the link should be an anchor tag instead of a nextlink for example
  * */
 export const shouldLinkBeAnAnchorTag = (path: string) =>
-  Object.values(ProjectBasePath).some((basePath) => path.includes(basePath))
+  Object.values(ProjectBasePath).some((basePath) => path.includes(basePath)) ||
+  path.startsWith('/rss.xml')

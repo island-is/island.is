@@ -1,6 +1,6 @@
 import * as z from 'zod'
 import { m } from './messages'
-import { EstateTypes, YES, NO } from './constants'
+import { EstateTypes, YES, NO, SPOUSE } from './constants'
 import * as kennitala from 'kennitala'
 import {
   customZodError,
@@ -54,6 +54,12 @@ const asset = z
   .array()
   .optional()
 
+export type Files = {
+  name: string
+  key: string
+  url: string | undefined
+}
+
 const fileSchema = z.object({
   name: z.string(),
   key: z.string(),
@@ -82,6 +88,20 @@ export const estateSchema = z.object({
       }),
   }),
 
+  // Registrant (for "Seta í óskiptu búi")
+  registrant: z
+    .object({
+      name: z.string(),
+      nationalId: z.string(),
+      phone: z.string().refine((v) => isValidPhoneNumber(v), {
+        params: m.errorPhoneNumber,
+      }),
+      email: customZodError(z.string().email(), m.errorEmail),
+      address: z.string(),
+      relation: customZodError(z.string().min(1), m.errorRelation),
+    })
+    .optional(),
+
   selectedEstate: z.enum([
     EstateTypes.officialDivision,
     EstateTypes.estateWithoutAssets,
@@ -91,8 +111,20 @@ export const estateSchema = z.object({
 
   estateInfoSelection: z.string().min(1),
 
+  // Undivided estate reminder screen
+  reminderInfo: z.object({
+    assetsAndDebtsCheckbox: z.array(z.enum([YES])).length(1),
+    attachmentsCheckbox: z.array(z.enum([YES])).length(1),
+  }),
+
   // Eignir
   estate: z.object({
+    inventory: z
+      .object({
+        info: z.string(),
+        value: z.string(),
+      })
+      .optional(),
     estateMembers: z
       .object({
         name: z.string(),
@@ -118,10 +150,19 @@ export const estateSchema = z.object({
             email: z.string(),
           })
           .optional(),
+        // Málsvari 2
+        advocate2: z
+          .object({
+            name: z.string(),
+            nationalId: z.string(),
+            phone: z.string(),
+            email: z.string(),
+          })
+          .optional(),
       })
       .refine(
-        ({ foreignCitizenship, nationalId }) => {
-          return !foreignCitizenship?.length
+        ({ foreignCitizenship, nationalId, enabled }) => {
+          return enabled && !foreignCitizenship?.length
             ? nationalId && kennitala.isValid(nationalId)
             : true
         },
@@ -130,7 +171,7 @@ export const estateSchema = z.object({
         },
       )
 
-      /* Validating email and phone of member depending on whether the field is 
+      /* Validating email and phone of member depending on whether the field is
           enabled and whether member has advocate */
       .refine(
         ({ enabled, advocate, phone, noContactInfo }) => {
@@ -171,13 +212,240 @@ export const estateSchema = z.object({
         },
       )
       .array()
+      .refine(
+        (members) => {
+          // Check for multiple spouses - only allowed one spouse in heirs list
+          const spouseCount = members?.filter(
+            (member) => member.enabled && member.relation === SPOUSE,
+          ).length
+          return spouseCount <= 1
+        },
+        {
+          message: 'Only one spouse is allowed in the heirs list',
+        },
+      )
       .optional(),
     assets: asset,
     flyers: asset,
     vehicles: asset,
     ships: asset,
     guns: asset,
-    knowledgeOfOtherWills: z.enum([YES, NO]).optional(),
+    bankAccounts: z
+      .object({
+        accountNumber: z.string(),
+        accruedInterest: z.string(),
+        balance: z.string(),
+        foreignBankAccount: z.array(z.enum([YES])).optional(),
+        initial: z.boolean(),
+        enabled: z.boolean(),
+      })
+      .refine(
+        ({ enabled, accountNumber, balance, accruedInterest }) => {
+          if (!enabled) return true
+
+          const errors: string[] = []
+          if (!accountNumber || accountNumber === '')
+            errors.push('accountNumber')
+          if (!isValidString(balance)) errors.push('balance')
+          if (!isValidString(accruedInterest)) errors.push('accruedInterest')
+
+          return errors.length === 0
+        },
+        ({ enabled, accountNumber, balance, accruedInterest }) => {
+          if (!enabled) return { message: 'Valid' }
+
+          const errors: string[] = []
+          if (!accountNumber || accountNumber === '')
+            errors.push('accountNumber')
+          if (!isValidString(balance)) errors.push('balance')
+          if (!isValidString(accruedInterest)) errors.push('accruedInterest')
+
+          return {
+            path: errors.length === 1 ? [errors[0]] : ['accountNumber'],
+          }
+        },
+      )
+      .array()
+      .optional(),
+    claims: z
+      .object({
+        publisher: z.string(),
+        value: z.string(),
+        nationalId: z.string().optional(),
+        initial: z.boolean(),
+        enabled: z.boolean(),
+      })
+      .refine(
+        ({ enabled, publisher, value }) => {
+          return enabled && (publisher !== '' || value !== '')
+            ? isValidString(value)
+            : true
+        },
+        {
+          path: ['value'],
+        },
+      )
+      .refine(
+        ({ enabled, publisher, value }) => {
+          return enabled && (value !== '' || publisher !== '')
+            ? isValidString(publisher)
+            : true
+        },
+        {
+          path: ['publisher'],
+        },
+      )
+      .refine(
+        ({ enabled, nationalId }) => {
+          return enabled && nationalId && nationalId !== ''
+            ? kennitala.isValid(nationalId)
+            : true
+        },
+        {
+          path: ['nationalId'],
+        },
+      )
+      .array()
+      .optional(),
+    stocks: z
+      .object({
+        organization: z.string(),
+        nationalId: z.string().optional(),
+        faceValue: z.string(),
+        rateOfExchange: z.string(),
+        value: z.string().optional(),
+        initial: z.boolean(),
+        enabled: z.boolean(),
+      })
+      .refine(
+        ({ enabled, organization, faceValue, rateOfExchange }) => {
+          return enabled &&
+            (organization !== '' || faceValue !== '' || rateOfExchange !== '')
+            ? isValidString(organization)
+            : true
+        },
+        {
+          path: ['organization'],
+        },
+      )
+      .refine(
+        ({ enabled, organization, faceValue, rateOfExchange }) => {
+          return enabled && (organization !== '' || rateOfExchange !== '')
+            ? isNumericalString(faceValue)
+            : true
+        },
+        {
+          path: ['faceValue'],
+        },
+      )
+      .refine(
+        ({ enabled, organization, faceValue, rateOfExchange }) => {
+          return enabled && (organization !== '' || faceValue !== '')
+            ? isNumericalString(rateOfExchange)
+            : true
+        },
+        {
+          path: ['rateOfExchange'],
+        },
+      )
+      .refine(
+        ({ enabled, nationalId }) => {
+          return enabled && nationalId && nationalId !== ''
+            ? kennitala.isValid(nationalId)
+            : true
+        },
+        {
+          path: ['nationalId'],
+        },
+      )
+      .array()
+      .optional(),
+    moneyAndDeposit: z
+      .object({
+        info: z.string(),
+        value: z.string(),
+      })
+      .refine(
+        ({ info, value }) => {
+          return info !== '' ? value !== '' : true
+        },
+        {
+          path: ['value'],
+        },
+      )
+      .refine(
+        ({ info, value }) => {
+          return value !== '' ? isValidString(info) : true
+        },
+        {
+          path: ['info'],
+        },
+      )
+      .optional(),
+    otherAssets: z
+      .object({
+        description: z.string(),
+        value: z.string(),
+        initial: z.boolean(),
+        enabled: z.boolean(),
+      })
+      .refine(
+        ({ enabled, description }) => {
+          return enabled ? isValidString(description) : true
+        },
+        {
+          path: ['description'],
+        },
+      )
+      .refine(
+        ({ enabled, value }) => {
+          return enabled ? isNumericalString(value) : true
+        },
+        {
+          path: ['value'],
+        },
+      )
+      .array()
+      .optional(),
+    otherDebts: z
+      .object({
+        loanIdentity: z.string().optional(),
+        balance: z.string(),
+        debtType: z.string(),
+        creditorName: z.string(),
+        nationalId: z.string().optional(),
+        initial: z.boolean(),
+        enabled: z.boolean(),
+      })
+      .refine(
+        ({ enabled, balance }) => {
+          return enabled ? isNumericalString(balance) : true
+        },
+        {
+          path: ['balance'],
+        },
+      )
+      .refine(
+        ({ enabled, creditorName }) => {
+          return enabled ? isValidString(creditorName) : true
+        },
+        {
+          path: ['creditorName'],
+        },
+      )
+      .refine(
+        ({ enabled, nationalId }) => {
+          return enabled && nationalId && nationalId !== ''
+            ? kennitala.isValid(nationalId)
+            : true
+        },
+        {
+          params: m.errorNationalIdIncorrect,
+          path: ['nationalId'],
+        },
+      )
+      .array()
+      .optional(),
     addressOfDeceased: z.string().optional(),
     caseNumber: z.string().min(1).optional(),
     dateOfDeath: z.date().optional(),
@@ -187,6 +455,7 @@ export const estateSchema = z.object({
     testament: z
       .object({
         wills: z.enum([YES, NO]),
+        knowledgeOfOtherWills: z.enum([YES, NO]),
         agreement: z.enum([YES, NO]),
         dividedEstate: z.enum([YES, NO]).optional(),
         additionalInfo: z.string().optional(),
@@ -232,74 +501,13 @@ export const estateSchema = z.object({
     )
     .refine(
       ({ info, value }) => {
-        return value !== '' ? isValidString(info) : true
+        // Allow value of '0' without requiring info
+        return value !== '' && value !== '0' ? isValidString(info) : true
       },
       {
         path: ['info'],
       },
     )
-    .optional(),
-
-  // is: Innistæður í bönkum
-  bankAccounts: z
-    .object({
-      accountNumber: z.string(),
-      balance: z.string(),
-      total: z.number().optional(),
-    })
-    .refine(
-      ({ accountNumber, balance }) => {
-        return accountNumber !== '' ? isValidString(balance) : true
-      },
-      {
-        path: ['balance'],
-      },
-    )
-    .refine(
-      ({ accountNumber, balance }) => {
-        return balance !== '' ? accountNumber !== '' : true
-      },
-      {
-        path: ['accountNumber'],
-      },
-    )
-    .array()
-    .optional(),
-
-  // is: Verðbréf og kröfur
-  claims: z
-    .object({
-      publisher: z.string(),
-      value: z.string(),
-      nationalId: z.string().optional(),
-    })
-    .refine(
-      ({ publisher, value }) => {
-        return publisher !== '' ? isValidString(value) : true
-      },
-      {
-        path: ['value'],
-      },
-    )
-    .refine(
-      ({ publisher, value }) => {
-        return value !== '' ? isValidString(publisher) : true
-      },
-      {
-        path: ['publisher'],
-      },
-    )
-    .refine(
-      ({ nationalId }) => {
-        return nationalId && nationalId !== ''
-          ? kennitala.isValid(nationalId)
-          : true
-      },
-      {
-        path: ['nationalId'],
-      },
-    )
-    .array()
     .optional(),
 
   // is: Hlutabréf
@@ -408,53 +616,53 @@ export const estateSchema = z.object({
   // is: Skuldir
   debts: z
     .object({
-      creditorName: z.string().optional(),
-      nationalId: z.string().optional(),
-      balance: z.string().optional(),
-      loanIdentity: z.string().optional(),
+      data: z
+        .object({
+          creditorName: z.string().optional(),
+          nationalId: z.string().optional(),
+          balance: z.string().optional(),
+          loanIdentity: z.string().optional(),
+          debtType: z.string().optional(),
+          initial: z.boolean().optional(),
+          enabled: z.boolean().optional(),
+        })
+        .refine(
+          ({ nationalId }) => {
+            return nationalId === ''
+              ? true
+              : nationalId && kennitala.isValid(nationalId)
+          },
+          {
+            params: m.errorNationalIdIncorrect,
+            path: ['nationalId'],
+          },
+        )
+        .refine(
+          ({ creditorName, nationalId, balance, loanIdentity }) => {
+            return nationalId !== '' ||
+              creditorName !== '' ||
+              loanIdentity !== ''
+              ? isValidString(balance)
+              : true
+          },
+          {
+            path: ['balance'],
+          },
+        )
+        .refine(
+          ({ creditorName, nationalId, balance, loanIdentity }) => {
+            return nationalId !== '' || balance !== '' || loanIdentity !== ''
+              ? isValidString(creditorName)
+              : true
+          },
+          {
+            path: ['creditorName'],
+          },
+        )
+        .array()
+        .optional(),
+      total: z.string().optional(),
     })
-    .refine(
-      ({ nationalId }) => {
-        return nationalId === ''
-          ? true
-          : nationalId && kennitala.isValid(nationalId)
-      },
-      {
-        params: m.errorNationalIdIncorrect,
-        path: ['nationalId'],
-      },
-    )
-    .refine(
-      ({ creditorName, nationalId, balance, loanIdentity }) => {
-        return nationalId !== '' || creditorName !== '' || balance !== ''
-          ? isValidString(loanIdentity)
-          : true
-      },
-      {
-        path: ['loanIdentity'],
-      },
-    )
-    .refine(
-      ({ creditorName, nationalId, balance, loanIdentity }) => {
-        return nationalId !== '' || creditorName !== '' || loanIdentity !== ''
-          ? isValidString(balance)
-          : true
-      },
-      {
-        path: ['balance'],
-      },
-    )
-    .refine(
-      ({ creditorName, nationalId, balance, loanIdentity }) => {
-        return nationalId !== '' || balance !== '' || loanIdentity !== ''
-          ? isValidString(creditorName)
-          : true
-      },
-      {
-        path: ['creditorName'],
-      },
-    )
-    .array()
     .optional(),
   acceptDebts: z.array(z.enum([YES, NO])).nonempty(),
 
@@ -513,6 +721,8 @@ export const estateSchema = z.object({
       file: z.array(fileSchema),
     }),
   }),
+
+  additionalComments: z.string().max(1800).optional(),
 
   // is: Eignalaust bú
   estateWithoutAssets: z

@@ -31,7 +31,7 @@ type PaymentInfoProps = {
 
 export const PaymentInfo: FC<
   React.PropsWithChildren<FieldBaseProps> & PaymentInfoProps
-> = ({ field, application }) => {
+> = ({ application }) => {
   const { formatMessage } = useLocale()
 
   // Get Payment Catalog
@@ -40,10 +40,10 @@ export const PaymentInfo: FC<
 
   // Get Charge Codes
   const birthCertCode = paymentCatalog?.find(
-    (payment) => payment.chargeItemCode === 'AY153',
+    (payment) => payment.chargeItemCode === 'AY171',
   )
   const maritalCertCode = paymentCatalog?.find(
-    (payment) => payment.chargeItemCode === 'AY154',
+    (payment) => payment.chargeItemCode === 'AY172',
   )
 
   const surveyCertCode = paymentCatalog?.find(

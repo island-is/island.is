@@ -4,21 +4,19 @@ import {
   buildSection,
 } from '@island.is/application/core'
 import { Form } from '@island.is/application/types'
-import Logo from '../assets/Logo'
+import { TheIcelandicRecyclingFundLogo } from '@island.is/application/assets/institution-logos'
 import { inReviewFormMessages } from '../lib/messages'
 
 export const InReview: Form = buildForm({
   id: 'VehiclesInReview',
   title: inReviewFormMessages.formTitle,
-  logo: Logo,
+  logo: TheIcelandicRecyclingFundLogo,
   children: [
     buildSection({
       id: 'review',
-      title: '',
       children: [
         buildCustomField({
           id: 'InReview',
-          title: '',
           component: 'Review',
         }),
       ],

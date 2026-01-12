@@ -5,3 +5,4 @@
  * '@island.is/logging' that's only working on the server side.
  */
 export { createXRoadAPIPath, XRoadMemberClass } from './lib/createXRoadAPIPath'
+export { retry } from './lib/retry'

@@ -1,0 +1,129 @@
+query DocumentsV3($input: DocumentsV2DocumentsInput!) {
+  documentsV2(input: $input) {
+    data {
+      id
+      name
+      categoryId
+      publicationDate
+      documentDate
+      subject
+      replyable
+      sender {
+        id
+        name
+        logoUrl
+      }
+      opened
+      bookmarked
+      archived
+      downloadUrl
+      content {
+        type
+        value
+      }
+      isUrgent
+      confirmation {
+        title
+        data
+      }
+    }
+    totalCount
+    unreadCount
+    categories {
+      id
+      name
+    }
+    senders {
+      id
+      name
+      logoUrl
+    }
+  }
+}
+
+query GetDocumentInboxLineV3($input: DocumentInput!, $locale: String) {
+  documentV2(input: $input, locale: $locale) {
+    content {
+      type
+      value
+    }
+    actions {
+      type
+      title
+      data
+      icon
+    }
+    confirmation {
+      title
+      data
+    }
+    alert {
+      title
+      data
+    }
+    replyable
+    closedForMoreReplies
+    ticket {
+      id
+      authorId
+      createdDate
+      updatedDate
+      subject
+      status
+      authorId
+      comments {
+        id
+        authorId
+        author
+        body
+        createdDate
+        isZendeskAgent
+      }
+    }
+  }
+}
+
+query GetDocumentTicket($input: DocumentInput!, $locale: String) {
+  documentV2(input: $input, locale: $locale) {
+    replyable
+    ticket {
+      id
+      authorId
+      createdDate
+      updatedDate
+      subject
+      status
+      authorId
+      comments {
+        id
+        authorId
+        author
+        body
+        createdDate
+        isZendeskAgent
+      }
+    }
+  }
+}
+
+query GetDocumentInboxLineV2($input: DocumentInput!) {
+  documentV2(input: $input) {
+    content {
+      type
+      value
+    }
+  }
+}
+
+query DocumentConfirmActions($input: DocumentConfirmActionsInput!) {
+  documentV2ConfirmActions(input: $input) {
+    id
+    confirmed
+  }
+}
+
+mutation MailActionV2($input: DocumentsV2MailActionInput!) {
+  postMailActionV2(input: $input) {
+    success
+  }
+}

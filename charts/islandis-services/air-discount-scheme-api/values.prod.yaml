@@ -20,12 +20,12 @@ name: 'air-discount-scheme-api'
 enabled: true
 env:
   AUTH_AUDIENCE: 'loftbru.island.is'
-  BACKEND_URL: 'http://web-air-discount-scheme-backend'
+  BACKEND_URL: 'http://air-discount-scheme-backend'
   CONTENTFUL_HOST: 'cdn.contentful.com'
   ELASTIC_NODE: 'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com'
   IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
   LOG_LEVEL: 'info'
-  NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
+  NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
   SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
 grantNamespaces:
   - 'nginx-ingress-external'
@@ -61,7 +61,8 @@ ingress:
           - '/api/graphql'
 namespace: 'air-discount-scheme'
 podDisruptionBudget:
-  maxUnavailable: 1
+  minAvailable: 1
+  unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534
 pvcs: []

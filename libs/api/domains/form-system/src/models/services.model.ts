@@ -1,5 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { ListItem } from './inputSettings.model'
+import { ListItem } from './listItem.model'
 
 @ObjectType('FormSystemList')
 export class List {
@@ -7,5 +7,5 @@ export class List {
   listType?: string
 
   @Field(() => [ListItem], { nullable: 'itemsAndList' })
-  listi?: ListItem[]
+  list?: ListItem[]
 }

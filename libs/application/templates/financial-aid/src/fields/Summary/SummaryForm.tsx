@@ -1,7 +1,12 @@
 import React, { useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Text, Box, AlertMessage, UploadFile } from '@island.is/island-ui/core'
+import {
+  Text,
+  Box,
+  AlertMessage,
+  UploadFileDeprecated,
+} from '@island.is/island-ui/core'
 import {
   getNextPeriod,
   estimatedBreakDown,
@@ -58,7 +63,7 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
     externalData.municipality.data?.childrenAid !== ChildrenAid.NOTDEFINED
 
   const findFilesRouteFrom = (
-    childrenFiles: UploadFile[],
+    childrenFiles: UploadFileDeprecated[],
     income: ApproveOptions,
   ) => {
     if (childrenFiles?.length > 0) {

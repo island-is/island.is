@@ -8,7 +8,6 @@ import { EstateTypes, YES } from '../../lib/constants'
 export const overviewConfirmAction = [
   buildCheckboxField({
     id: 'confirmAction',
-    title: '',
     backgroundColor: 'blue',
     defaultValue: [],
     condition: (answers) =>
@@ -45,7 +44,6 @@ export const overviewConfirmAction = [
   }),
   buildCheckboxField({
     id: 'confirmActionAssetsAndDebt',
-    title: '',
     backgroundColor: 'blue',
     defaultValue: [],
     condition: (answers) => {
@@ -73,7 +71,6 @@ export const overviewConfirmAction = [
   }),
   buildCheckboxField({
     id: 'confirmActionUndividedEstate',
-    title: '',
     backgroundColor: 'blue',
     defaultValue: [],
     condition: (answers) =>

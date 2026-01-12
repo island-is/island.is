@@ -1,5 +1,6 @@
 import {
   AlertMessage,
+  Box,
   Button,
   Table as T,
   Tag,
@@ -16,6 +17,8 @@ import { SortableData, SortableTableProps } from './types'
 import { useSortableData } from './useSortableData'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
+import React from 'react'
+import { EmptyTable } from '../EmptyTable/EmptyTable'
 
 /**
  * SortableTable component renders a table that can be sorted and is responsive to different screen sizes.
@@ -35,6 +38,7 @@ import { theme } from '@island.is/island-ui/theme'
  * @param {string} [props.inner] - Inner content for the table.
  * @param {string} [props.align] - Alignment for the table headers and data.
  * @param {number} [props.ellipsisLength] - Length for ellipsis in table data.
+ * @param {string} [props.emptyTableMessage] - Message to display when the table is empty.
  *
  * @returns {JSX.Element} The rendered SortableTable component.
  *
@@ -53,6 +57,7 @@ import { theme } from '@island.is/island-ui/theme'
  *   inner="Some inner content"
  *   align="left"
  *   ellipsisLength={20}
+ *   emptyTableMessage="No data available"
  * />
  *
  * @remarks
@@ -65,17 +70,24 @@ import { theme } from '@island.is/island-ui/theme'
 export const SortableTable = (props: SortableTableProps) => {
   const { items, requestSort, sortConfig } = useSortableData<SortableData>(
     props.items,
-    { direction: 'ascending', key: props.defaultSortByKey },
+    {
+      direction: props.sortBy ?? 'ascending',
+      key: props.defaultSortByKey,
+    },
   )
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
   const [headerSorted, setHeaderSorted] = useState<string[]>([])
 
   useEffect(() => {
-    const headerItems = props.items
-      .map(({ id, tag, lastNode, ...restItems }) => Object.keys(restItems))
-      .flat()
-      .filter((value, index, self) => self.indexOf(value) === index)
+    const headerItems = Array.from(
+      new Set(
+        props.items.flatMap(
+          ({ id, tag, lastNode, onExpandCallback, ...restItems }) =>
+            Object.keys(restItems),
+        ),
+      ),
+    )
 
     // If expandable, remove the last item and add an empty string at the beginning
     if (props.expandable) {
@@ -104,6 +116,7 @@ export const SortableTable = (props: SortableTableProps) => {
       )}
       {isMobile ? (
         <MobileTable
+          loading={props.tableLoading}
           inner={props.inner}
           header={props.title ?? ''}
           rows={items.map((item) => {
@@ -114,6 +127,7 @@ export const SortableTable = (props: SortableTableProps) => {
               lastNode,
               children,
               subTitleFirstCol,
+              onExpandCallback,
               ...itemObject
             } = item
             // Remove the key that matches the "mobileTitleKey"
@@ -125,6 +139,7 @@ export const SortableTable = (props: SortableTableProps) => {
               title: props.mobileTitleKey
                 ? item[props.mobileTitleKey]
                 : undefined,
+              onExpandCallback,
               data: valueItems
                 .map((valueItem, valueIndex) => {
                   if (
@@ -135,7 +150,11 @@ export const SortableTable = (props: SortableTableProps) => {
                     return {
                       title: valueItem ?? '',
                       content: (
-                        <Tag variant={tag} outlined={props.tagOutlined}>
+                        <Tag
+                          variant={tag}
+                          outlined={props.tagOutlined}
+                          disabled
+                        >
                           {valueItem}
                         </Tag>
                       ),
@@ -221,41 +240,58 @@ export const SortableTable = (props: SortableTableProps) => {
             </T.Head>
           )}
           <T.Body>
-            {items.map((item) => (
-              <TableRow
-                key={item.id}
-                item={item}
-                tagOutlined={props.tagOutlined}
-                expandable={props.expandable}
-                onExpandCallback={item.onExpandCallback}
-                align={props.align ?? 'left'}
-                ellipsisLength={props.ellipsisLength}
-              />
-            ))}
-            {props.footer && (
-              <T.Row>
-                <T.Data
-                  text={{ fontWeight: 'semiBold' }}
-                  borderColor="white"
-                  key="footer-empty"
-                  unselectable="on"
-                >
-                  {/* Empty cell at index 0 */}
-                </T.Data>
-                {Object.values(props.footer).map((valueItem) => (
-                  <T.Data
-                    text={{ fontWeight: 'semiBold' }}
-                    borderColor="white"
-                    key={`footer-${valueItem}`}
-                  >
-                    {valueItem}
-                  </T.Data>
-                ))}
-              </T.Row>
+            {items.length > 0 ? (
+              items.map((item) => (
+                <TableRow
+                  key={item.id}
+                  item={item}
+                  tagOutlined={props.tagOutlined}
+                  expandable={props.expandable}
+                  onExpandCallback={item.onExpandCallback}
+                  align={props.align ?? 'left'}
+                  ellipsisLength={props.ellipsisLength}
+                />
+              ))
+            ) : (
+              <Box background="blue100" padding={3}>
+                <Box background="white">
+                  <EmptyTable
+                    message={props.emptyTableMessage}
+                    background="white"
+                    loading={props.tableLoading}
+                  />
+                </Box>
+              </Box>
             )}
+            {props.footer
+              ? !React.isValidElement(props.footer) && (
+                  <T.Row>
+                    <T.Data
+                      text={{ fontWeight: 'semiBold' }}
+                      borderColor="white"
+                      key="footer-empty"
+                      unselectable="on"
+                    >
+                      {/* Empty cell at index 0 */}
+                    </T.Data>
+                    {Object.values(props.footer).map((valueItem) => (
+                      <T.Data
+                        text={{ fontWeight: 'semiBold' }}
+                        borderColor="white"
+                        key={`footer-${valueItem}`}
+                      >
+                        {valueItem}
+                      </T.Data>
+                    ))}
+                  </T.Row>
+                )
+              : null}
           </T.Body>
         </T.Table>
       )}
+      {props.footer && React.isValidElement(props.footer)
+        ? props.footer
+        : undefined}
     </>
   )
 }

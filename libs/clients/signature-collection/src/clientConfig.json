@@ -1,5 +1,5 @@
 {
-  "openapi": "3.0.1",
+  "openapi": "3.0.4",
   "info": { "title": "MedmaeliRestAPI", "version": "1.0" },
   "paths": {
     "/Admin/Frambod": {
@@ -52,45 +52,14 @@
         }
       }
     },
-    "/Admin/Medmaeli/{ID}": {
-      "delete": {
+    "/Admin/Frambod/{ID}/Info": {
+      "get": {
         "tags": ["Admin"],
         "parameters": [
           {
             "name": "ID",
             "in": "path",
             "required": true,
-            "schema": { "type": "integer", "format": "int32" }
-          }
-        ],
-        "responses": {
-          "200": { "description": "OK" },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": { "schema": { "type": "string" } }
-            }
-          }
-        }
-      }
-    },
-    "/Admin/Medmaeli/{ID}/UpdateBls": {
-      "patch": {
-        "tags": ["Admin"],
-        "summary": "Uppfærir blaðsíðunúmer skriflegs meðmælis",
-        "description": "Aðeins m0gulegt fyrir skrifleg meðmæli",
-        "parameters": [
-          {
-            "name": "ID",
-            "in": "path",
-            "description": "ID meðmælis sem á að uppfæra",
-            "required": true,
-            "schema": { "type": "integer", "format": "int32" }
-          },
-          {
-            "name": "blsNr",
-            "in": "query",
-            "description": "Nýtt blaðsíðutal",
             "schema": { "type": "integer", "format": "int32" }
           }
         ],
@@ -99,7 +68,7 @@
             "description": "OK",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/MedmaeliBaseDTO" }
+                "schema": { "$ref": "#/components/schemas/FrambodInfoDTO" }
               }
             }
           },
@@ -110,6 +79,156 @@
             }
           }
         }
+      }
+    },
+    "/Admin/Kosning/{ID}/EinsInfo/{Kennitala}": {
+      "get": {
+        "tags": ["Admin"],
+        "parameters": [
+          {
+            "name": "ID",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "Kennitala",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EinstaklingurKosningInfoDTO"
+                }
+              }
+            }
+          },
+          "204": { "description": "No Content" },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/Admin/Kosning/{ID}/SveitSofnun": {
+      "post": {
+        "tags": ["Admin"],
+        "parameters": [
+          {
+            "name": "ID",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "sveitarfelagID",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/MedmaelasofnunDTO" }
+              }
+            }
+          },
+          "204": { "description": "No Content" },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/Admin/Listabokstafur": {
+      "post": {
+        "tags": ["Admin"],
+        "summary": "Aðgerðin bætir við nýrri listabókstafsskráningu fyrir gefna meðmælasöfnun og kennitölu.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateListabokstafurRequestDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListabokstafurBaseDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/Admin/SveitarfelagInfo": {
+      "get": {
+        "tags": ["Admin"],
+        "parameters": [
+          {
+            "name": "sveitarfelagID",
+            "in": "query",
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          { "name": "kennitala", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/SveitInfoDTO" }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Admin"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/SveitInfoRequestDTO" }
+            }
+          }
+        },
+        "responses": { "200": { "description": "OK" } }
       }
     },
     "/Admin/Medmaelalisti": {
@@ -213,7 +332,7 @@
       "patch": {
         "tags": ["Admin"],
         "summary": "Merkir að úrvinnslu sé lokið á ákveðnum meðmælalista.",
-        "description": "Merkir að úrvinnslu sé lokið á ákveðnum meðmælalista þ.e. að lista hafi verið skilað inn og öll skrifleg meðmæli lesin inn.\r\nHægt að opna aftur fyrir úrvinnslu.",
+        "description": "Merkir að úrvinnslu sé lokið á ákveðnum meðmælalista þ.e. að lista hafi verið skilað inn og öll skrifleg meðmæli lesin inn.\nHægt að opna aftur fyrir úrvinnslu.",
         "parameters": [
           {
             "name": "ID",
@@ -374,6 +493,40 @@
         }
       }
     },
+    "/Admin/Medmaelasofnun": {
+      "post": {
+        "tags": ["Admin"],
+        "summary": "Býr til nýja meðmælasöfnun",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSofnunRequestDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/MedmaelasofnunDTO" }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
     "/Admin/Medmaelasofnun/{ID}/EinsInfo/{Kennitala}": {
       "get": {
         "tags": ["Admin"],
@@ -402,6 +555,45 @@
               }
             }
           },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/Admin/Medmaelasofnun/{ID}/ExtendTime": {
+      "patch": {
+        "tags": ["Admin"],
+        "summary": "Framlengir gefna meðmælasöfnun",
+        "description": "",
+        "parameters": [
+          {
+            "name": "ID",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "newEndDate",
+            "in": "query",
+            "description": "Ný lokadagsetning",
+            "schema": { "type": "string", "format": "date-time" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/MedmaelasofnunDTO" }
+              }
+            }
+          },
+          "204": { "description": "No Content" },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -453,7 +645,7 @@
       "patch": {
         "tags": ["Admin"],
         "summary": "Merkir að allri úrvinnslu fyrri fasa meðmælasöfnunar sé lokið.",
-        "description": "Merkir að allri úrvinnslu fyrri fasa meðmælasöfnunar sé lokið.\r\nEkki hægt að framkvæma nema ef allir meðmælalistar söfnunarinnar hafi verið merktir úrvinnslu lokið.\r\nEftir að aðgerð hefur verið framkvæmd opnast fyrir framlengingarfasa.\r\nEinkvæm aðgerð.",
+        "description": "Merkir að allri úrvinnslu fyrri fasa meðmælasöfnunar sé lokið.\nEkki hægt að framkvæma nema ef allir meðmælalistar söfnunarinnar hafi verið merktir úrvinnslu lokið.\nEftir að aðgerð hefur verið framkvæmd opnast fyrir framlengingarfasa.\nEinkvæm aðgerð.",
         "parameters": [
           {
             "name": "ID",
@@ -525,12 +717,82 @@
         }
       }
     },
+    "/Admin/Medmaeli/{ID}": {
+      "delete": {
+        "tags": ["Admin"],
+        "parameters": [
+          {
+            "name": "ID",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "OK" },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/Admin/Medmaeli/{ID}/UpdateBls": {
+      "patch": {
+        "tags": ["Admin"],
+        "summary": "Uppfærir blaðsíðunúmer skriflegs meðmælis",
+        "description": "Aðeins m0gulegt fyrir skrifleg meðmæli",
+        "parameters": [
+          {
+            "name": "ID",
+            "in": "path",
+            "description": "ID meðmælis sem á að uppfæra",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "blsNr",
+            "in": "query",
+            "description": "Nýtt blaðsíðutal",
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/MedmaeliBaseDTO" }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
     "/Frambod": {
       "get": {
         "tags": ["Frambod"],
         "parameters": [
           {
             "name": "sofnunID",
+            "in": "query",
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "kosningID",
+            "in": "query",
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "svaediID",
             "in": "query",
             "schema": { "type": "integer", "format": "int32" }
           }
@@ -631,6 +893,35 @@
         }
       }
     },
+    "/Frambod/{ID}/Info": {
+      "get": {
+        "tags": ["Frambod"],
+        "parameters": [
+          {
+            "name": "ID",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/FrambodInfoDTO" }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
     "/Frambod/{ID}/Medmaelalistar": {
       "get": {
         "tags": ["Frambod"],
@@ -651,66 +942,6 @@
                   "type": "array",
                   "items": { "$ref": "#/components/schemas/MedmaelalistiDTO" }
                 }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": { "schema": { "type": "string" } }
-            }
-          }
-        }
-      }
-    },
-    "/Frambod/{ID}/RemoveFrambodUser": {
-      "post": {
-        "tags": ["Frambod"],
-        "summary": "GAMALT. Nota DELETE /Frambod/{ID}.",
-        "parameters": [
-          {
-            "name": "ID",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "integer", "format": "int32" }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/FrambodBaseDTO" }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": { "schema": { "type": "string" } }
-            }
-          }
-        }
-      }
-    },
-    "/Frambod/{ID}/RemoveFrambodAdmin": {
-      "post": {
-        "tags": ["Frambod"],
-        "summary": "GAMALT. Nota DELETE /Admin/Frambod/{ID}.",
-        "parameters": [
-          {
-            "name": "ID",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "integer", "format": "int32" }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/FrambodBaseDTO" }
               }
             }
           },
@@ -799,6 +1030,37 @@
     "/Kosning": {
       "get": {
         "tags": ["Kosning"],
+        "summary": "Skilar lista af kosningum",
+        "parameters": [
+          {
+            "name": "isMedmaelakosning",
+            "in": "query",
+            "description": "True: Skilar kosningum af tegund sem hafa meðmælasafnanir. False: Skilar kosningum af tegund sem hafa EKKI meðmælasafnanir",
+            "schema": {
+              "type": "boolean",
+              "description": "True: Skilar kosningum af tegund sem hafa meðmælasafnanir. False: Skilar kosningum af tegund sem hafa EKKI meðmælasafnanir"
+            }
+          },
+          {
+            "name": "hasSofnun",
+            "in": "query",
+            "description": "True: A.m.k. ein söfnun hefur verið skilgreind. False: Engin söfnun hefur verið skilgreind",
+            "schema": {
+              "type": "boolean",
+              "description": "True: A.m.k. ein söfnun hefur verið skilgreind. False: Engin söfnun hefur verið skilgreind"
+            }
+          },
+          {
+            "name": "onlyActive",
+            "in": "query",
+            "description": "True: Skilar aðeins þeim kosningum þar sem kjördagur er ekki liðinn",
+            "schema": {
+              "type": "boolean",
+              "description": "True: Skilar aðeins þeim kosningum þar sem kjördagur er ekki liðinn",
+              "default": false
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -806,7 +1068,7 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/KosningDTO" }
+                  "items": { "$ref": "#/components/schemas/KosningBaseDTO" }
                 }
               }
             }
@@ -850,7 +1112,7 @@
         }
       }
     },
-    "/Kosning/{ID}/Sofnun": {
+    "/Kosning/{ID}/Svaedi": {
       "get": {
         "tags": ["Kosning"],
         "parameters": [
@@ -867,7 +1129,8 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MedmaelasofnunExtendedDTO"
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/SvaediDTO" }
                 }
               }
             }
@@ -882,8 +1145,76 @@
         }
       }
     },
-    "/Kosning/{ID}/Sofnun/New": {
-      "post": {
+    "/Kosning/{ID}/SvaediSofnun": {
+      "get": {
+        "tags": ["Kosning"],
+        "parameters": [
+          {
+            "name": "ID",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/SvaediDTO" }
+                }
+              }
+            }
+          },
+          "204": { "description": "No Content" },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/Kosning/{ID}/SofnunList": {
+      "get": {
+        "tags": ["Kosning"],
+        "parameters": [
+          {
+            "name": "ID",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MedmaelasofnunExtendedDTO"
+                  }
+                }
+              }
+            }
+          },
+          "204": { "description": "No Content" },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/Kosning/{ID}/EinsInfo/{Kennitala}": {
+      "get": {
         "tags": ["Kosning"],
         "parameters": [
           {
@@ -893,14 +1224,10 @@
             "schema": { "type": "integer", "format": "int32" }
           },
           {
-            "name": "startDate",
-            "in": "query",
-            "schema": { "type": "string", "format": "date-time" }
-          },
-          {
-            "name": "endDate",
-            "in": "query",
-            "schema": { "type": "string", "format": "date-time" }
+            "name": "Kennitala",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -908,10 +1235,13 @@
             "description": "OK",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/MedmaelasofnunDTO" }
+                "schema": {
+                  "$ref": "#/components/schemas/EinstaklingurKosningInfoDTO"
+                }
               }
             }
           },
+          "204": { "description": "No Content" },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -932,6 +1262,11 @@
           },
           {
             "name": "sofnunID",
+            "in": "query",
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "kosningID",
             "in": "query",
             "schema": { "type": "integer", "format": "int32" }
           },
@@ -970,74 +1305,6 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/MedmaelalistarRequestDTO"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": { "$ref": "#/components/schemas/MedmaelalistiDTO" }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": { "schema": { "type": "string" } }
-            }
-          }
-        }
-      }
-    },
-    "/Medmaelalistar/AddListar": {
-      "post": {
-        "tags": ["Medmaelalistar"],
-        "summary": "GAMALT. Nota POST /Frambod til að stofna framboð.\r\nNota POST /Medmaelalistar til að bæta listum við þegar stofnað framboð.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/MedmaelalistiRequestDTO"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": { "$ref": "#/components/schemas/MedmaelalistiDTO" }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": { "schema": { "type": "string" } }
-            }
-          }
-        }
-      }
-    },
-    "/Medmaelalistar/AddListarAdmin": {
-      "post": {
-        "tags": ["Medmaelalistar"],
-        "summary": "GAMALT. Nota POST /Admin/Frambod til að stofna framboð.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/MedmaelalistiRequestDTO"
               }
             }
           }
@@ -1249,231 +1516,20 @@
         }
       }
     },
-    "/Medmaelalistar/{ID}/AddMedmaeli": {
-      "post": {
-        "tags": ["Medmaelalistar"],
-        "summary": "GAMALT. Nota POST /Medmaelalistar/{ID}/Medmaeli til að bæta við meðmæli.",
-        "parameters": [
-          {
-            "name": "ID",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "integer", "format": "int32" }
-          },
-          { "name": "kennitala", "in": "query", "schema": { "type": "string" } }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/MedmaeliBaseDTO" }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": { "schema": { "type": "string" } }
-            }
-          }
-        }
-      }
-    },
-    "/Medmaelalistar/{ID}/AddMedmaeliBulk": {
-      "post": {
-        "tags": ["Medmaelalistar"],
-        "summary": "GAMALT. Fyrir framboð: Nota POST /Medmaelalistar/{ID}/Medmaeli/Bulk til að bæta við skriflegum meðmælum.\r\nFyrir admin: Nota POST /Admin/Medmaelalistar/{ID}/Medmaeli/Bulk til að bæta við skriflegum meðmælum.",
-        "parameters": [
-          {
-            "name": "ID",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "integer", "format": "int32" }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/MedmaeliBulkRequestDTO"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MedmaeliBulkResponseDTO"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": { "schema": { "type": "string" } }
-            }
-          }
-        }
-      }
-    },
-    "/Medmaelalistar/{ID}/ExtendTime": {
-      "patch": {
-        "tags": ["Medmaelalistar"],
-        "summary": "GAMALT. Nota PATCH /Admin/Medmaelalistar/{ID}/ExtendTime til að framlengja meðmælalista.",
-        "parameters": [
-          {
-            "name": "ID",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "integer", "format": "int32" }
-          },
-          {
-            "name": "newEndDate",
-            "in": "query",
-            "schema": { "type": "string", "format": "date-time" }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MedmaelalistiBaseDTO"
-                }
-              }
-            }
-          },
-          "204": { "description": "No Content" },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": { "schema": { "type": "string" } }
-            }
-          }
-        }
-      }
-    },
-    "/Medmaelalistar/{ID}/ToggleList": {
-      "patch": {
-        "tags": ["Medmaelalistar"],
-        "summary": "GAMALT. Nota PATCH /Admin/Medmaelalistar/{ID}/ToggleList.",
-        "parameters": [
-          {
-            "name": "ID",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "integer", "format": "int32" }
-          },
-          {
-            "name": "shouldToggle",
-            "in": "query",
-            "schema": { "type": "boolean", "default": true }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MedmaelalistiBaseDTO"
-                }
-              }
-            }
-          },
-          "204": { "description": "No Content" },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": { "schema": { "type": "string" } }
-            }
-          }
-        }
-      }
-    },
-    "/Medmaelalistar/{ID}/Compare": {
-      "post": {
-        "tags": ["Medmaelalistar"],
-        "summary": "GAMALT. Nota POST /Admin/Medmaelalistar/{ID}/Compare.",
-        "parameters": [
-          {
-            "name": "ID",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "integer", "format": "int32" }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": { "type": "array", "items": { "type": "string" } }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": { "$ref": "#/components/schemas/MedmaeliDTO" }
-                }
-              }
-            }
-          },
-          "204": { "description": "No Content" },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": { "schema": { "type": "string" } }
-            }
-          }
-        }
-      }
-    },
-    "/Medmaelalistar/{ID}/RemoveMedmaelalistiUser": {
-      "post": {
-        "tags": ["Medmaelalistar"],
-        "summary": "GAMALT. Fyrir framboð: Nota DELETE /Medmaelalistar/{ID}.\r\nFyrir admin: Nota DELETE /Admin/Medmaelalistar/{ID}.",
-        "parameters": [
-          {
-            "name": "ID",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "integer", "format": "int32" }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MedmaelalistiBaseDTO"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": { "schema": { "type": "string" } }
-            }
-          }
-        }
-      }
-    },
     "/Medmaelasofnun": {
       "get": {
         "tags": ["Medmaelasofnun"],
         "parameters": [
+          {
+            "name": "kosningID",
+            "in": "query",
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "svaediID",
+            "in": "query",
+            "schema": { "type": "integer", "format": "int32" }
+          },
           {
             "name": "includeInactive",
             "in": "query",
@@ -1490,36 +1546,6 @@
                   "items": {
                     "$ref": "#/components/schemas/MedmaelasofnunExtendedDTO"
                   }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": { "schema": { "type": "string" } }
-            }
-          }
-        }
-      }
-    },
-    "/Medmaelasofnun/Medmaelasofnun": {
-      "get": {
-        "tags": ["Medmaelasofnun"],
-        "parameters": [
-          {
-            "name": "includeInactive",
-            "in": "query",
-            "schema": { "type": "boolean", "default": false }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MedmaelasofnunInfoDTO"
                 }
               }
             }
@@ -1583,7 +1609,9 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/ListabokstafurDTO" }
+                  "items": {
+                    "$ref": "#/components/schemas/ListabokstafurBaseDTO"
+                  }
                 }
               }
             }
@@ -1701,116 +1729,6 @@
         }
       }
     },
-    "/Medmaelasofnun/{ID}/EinsInfoAdmin/{Kennitala}": {
-      "get": {
-        "tags": ["Medmaelasofnun"],
-        "summary": "GAMALT. Nota GET /Admin/Medmaelasofnun/{ID}/EinsInfo/{Kennitala}.",
-        "parameters": [
-          {
-            "name": "ID",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "integer", "format": "int32" }
-          },
-          {
-            "name": "Kennitala",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "string" }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/EinstaklingurKosningInfoDTO"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": { "schema": { "type": "string" } }
-            }
-          }
-        }
-      }
-    },
-    "/Medmaelasofnun/{ID}/ToggleSofnun": {
-      "post": {
-        "tags": ["Medmaelasofnun"],
-        "summary": "GAMALT. Nota PATCH /Admin/Medmaelasofnun/{ID}/ToggleSofnun.",
-        "parameters": [
-          {
-            "name": "ID",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "integer", "format": "int32" }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/MedmaelasofnunDTO" }
-              }
-            }
-          },
-          "204": { "description": "No Content" },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": { "schema": { "type": "string" } }
-            }
-          }
-        }
-      }
-    },
-    "/Medmaelasofnun/{ID}/Compare": {
-      "post": {
-        "tags": ["Medmaelasofnun"],
-        "summary": "GAMALT. Nota POST /Admin/Medmaelasofnun/{ID}/Compare.",
-        "parameters": [
-          {
-            "name": "ID",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "integer", "format": "int32" }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": { "type": "array", "items": { "type": "string" } }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": { "$ref": "#/components/schemas/MedmaeliDTO" }
-                }
-              }
-            }
-          },
-          "204": { "description": "No Content" },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": { "schema": { "type": "string" } }
-            }
-          }
-        }
-      }
-    },
     "/Medmaeli/{Kennitala}/Medmaeli": {
       "get": {
         "tags": ["Medmaeli"],
@@ -1836,66 +1754,6 @@
                   "type": "array",
                   "items": { "$ref": "#/components/schemas/MedmaeliDTO" }
                 }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": { "schema": { "type": "string" } }
-            }
-          }
-        }
-      }
-    },
-    "/Medmaeli/{ID}/RemoveMedmaeliUser": {
-      "post": {
-        "tags": ["Medmaeli"],
-        "summary": "GAMALT. Nota DELETE /Medmaeli/{ID}",
-        "parameters": [
-          {
-            "name": "ID",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "integer", "format": "int32" }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/MedmaeliBaseDTO" }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": { "schema": { "type": "string" } }
-            }
-          }
-        }
-      }
-    },
-    "/Medmaeli/{ID}/RemoveMedmaeliAdmin": {
-      "post": {
-        "tags": ["Medmaeli"],
-        "summary": "GAMALT. Nota DELETE Admin/Medmaeli/{ID}",
-        "parameters": [
-          {
-            "name": "ID",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "integer", "format": "int32" }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/MedmaeliBaseDTO" }
               }
             }
           },
@@ -2050,6 +1908,37 @@
   },
   "components": {
     "schemas": {
+      "CreateListabokstafurRequestDTO": {
+        "required": [
+          "frambodNafn",
+          "kennitala",
+          "listabokstafur",
+          "medmaelasofnunID"
+        ],
+        "type": "object",
+        "properties": {
+          "kennitala": { "type": "string" },
+          "frambodNafn": { "type": "string" },
+          "listabokstafur": { "type": "string" },
+          "medmaelasofnunID": { "type": "integer", "format": "int32" }
+        },
+        "additionalProperties": false
+      },
+      "CreateSofnunRequestDTO": {
+        "required": ["fra", "kosningID", "til"],
+        "type": "object",
+        "properties": {
+          "kosningID": { "type": "integer", "format": "int32" },
+          "fra": { "type": "string", "format": "date-time" },
+          "til": { "type": "string", "format": "date-time" },
+          "svaediIDList": {
+            "type": "array",
+            "items": { "type": "integer", "format": "int32" },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "EinstaklingurKosningInfoDTO": {
         "required": ["kennitala", "kosningNafn", "nafn"],
         "type": "object",
@@ -2066,6 +1955,9 @@
             "$ref": "#/components/schemas/EinstaklingurMaFrambodInfo"
           },
           "svaedi": { "$ref": "#/components/schemas/SvaediDTO" },
+          "medmaelasofnun": {
+            "$ref": "#/components/schemas/MedmaelasofnunBaseDTO"
+          },
           "medmaeli": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/MedmaeliDTO" }
@@ -2089,6 +1981,7 @@
           "medListabokstaf": { "type": "boolean" },
           "aldur": { "type": "boolean" },
           "rikisfang": { "type": "boolean" },
+          "buseta": { "type": "boolean" },
           "maFrambod": { "type": "boolean", "readOnly": true }
         },
         "additionalProperties": false
@@ -2106,8 +1999,19 @@
         },
         "additionalProperties": false
       },
+      "FrambodAbyrgdaradiliDTO": {
+        "type": "object",
+        "properties": {
+          "nafn": { "type": "string" },
+          "faedingardagur": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "FrambodBaseDTO": {
-        "required": ["kennitala", "nafn"],
         "type": "object",
         "properties": {
           "id": { "type": "integer", "format": "int32" },
@@ -2116,12 +2020,18 @@
           "listabokstafur": { "type": "string", "nullable": true },
           "simi": { "type": "string", "nullable": true },
           "netfang": { "type": "string", "nullable": true },
-          "medmaelasofnunID": { "type": "integer", "format": "int32" }
+          "medmaelasofnunID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "abyrgdaradili": {
+            "$ref": "#/components/schemas/FrambodAbyrgdaradiliDTO"
+          }
         },
         "additionalProperties": false
       },
       "FrambodDTO": {
-        "required": ["kennitala", "nafn"],
         "type": "object",
         "properties": {
           "id": { "type": "integer", "format": "int32" },
@@ -2130,13 +2040,53 @@
           "listabokstafur": { "type": "string", "nullable": true },
           "simi": { "type": "string", "nullable": true },
           "netfang": { "type": "string", "nullable": true },
-          "medmaelasofnunID": { "type": "integer", "format": "int32" },
+          "medmaelasofnunID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "abyrgdaradili": {
+            "$ref": "#/components/schemas/FrambodAbyrgdaradiliDTO"
+          },
+          "opnirListar": { "type": "boolean" },
           "medmaelasofnun": {
             "$ref": "#/components/schemas/MedmaelasofnunBaseDTO"
           },
           "umbodList": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/UmbodBaseDTO" }
+          }
+        },
+        "additionalProperties": false
+      },
+      "FrambodInfoDTO": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int32" },
+          "nafn": { "type": "string" },
+          "kennitala": { "type": "string" },
+          "listabokstafur": { "type": "string", "nullable": true },
+          "simi": { "type": "string", "nullable": true },
+          "netfang": { "type": "string", "nullable": true },
+          "medmaelasofnunID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "abyrgdaradili": {
+            "$ref": "#/components/schemas/FrambodAbyrgdaradiliDTO"
+          },
+          "opnirListar": { "type": "boolean" },
+          "medmaelasofnun": {
+            "$ref": "#/components/schemas/MedmaelasofnunBaseDTO"
+          },
+          "umbodList": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/UmbodBaseDTO" }
+          },
+          "medmaelalistar": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/MedmaelalistiExtendedDTO" }
           }
         },
         "additionalProperties": false
@@ -2155,6 +2105,7 @@
         "properties": {
           "sofnunID": { "type": "integer", "format": "int32" },
           "kennitala": { "type": "string" },
+          "frambodNafn": { "type": "string", "nullable": true },
           "simi": { "type": "string" },
           "netfang": { "type": "string" },
           "medmaelalistar": {
@@ -2165,7 +2116,6 @@
         "additionalProperties": false
       },
       "KosningBaseDTO": {
-        "required": ["kosningTegund", "kosningTegundNr", "nafn"],
         "type": "object",
         "properties": {
           "id": { "type": "integer", "format": "int32" },
@@ -2187,7 +2137,6 @@
         "additionalProperties": false
       },
       "KosningDTO": {
-        "required": ["kosningTegund", "kosningTegundNr", "nafn"],
         "type": "object",
         "properties": {
           "id": { "type": "integer", "format": "int32" },
@@ -2205,27 +2154,19 @@
             "format": "date-time",
             "nullable": true
           },
-          "medmaelasofnun": {
-            "$ref": "#/components/schemas/MedmaelasofnunBaseDTO"
+          "medmaelasofnunList": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/MedmaelasofnunBaseDTO" }
           }
         },
         "additionalProperties": false
       },
       "ListabokstafurBaseDTO": {
-        "required": ["frambodNafn", "stafur"],
         "type": "object",
         "properties": {
+          "kennitala": { "type": "string" },
           "frambodNafn": { "type": "string" },
-          "stafur": { "type": "string" }
-        },
-        "additionalProperties": false
-      },
-      "ListabokstafurDTO": {
-        "required": ["frambodNafn", "stafur"],
-        "type": "object",
-        "properties": {
-          "frambodNafn": { "type": "string" },
-          "stafur": { "type": "string" }
+          "listabokstafur": { "type": "string" }
         },
         "additionalProperties": false
       },
@@ -2241,10 +2182,11 @@
         "additionalProperties": false
       },
       "MedmaelalistiBaseDTO": {
-        "required": ["frambodNafn", "listiNafn"],
         "type": "object",
         "properties": {
           "id": { "type": "integer", "format": "int32" },
+          "medmaelasofnunID": { "type": "integer", "format": "int32" },
+          "frambodID": { "type": "integer", "format": "int32" },
           "frambodNafn": { "type": "string" },
           "listiNafn": { "type": "string" },
           "frambodSimi": { "type": "string", "nullable": true },
@@ -2258,10 +2200,11 @@
         "additionalProperties": false
       },
       "MedmaelalistiDTO": {
-        "required": ["frambodNafn", "listiNafn"],
         "type": "object",
         "properties": {
           "id": { "type": "integer", "format": "int32" },
+          "medmaelasofnunID": { "type": "integer", "format": "int32" },
+          "frambodID": { "type": "integer", "format": "int32" },
           "frambodNafn": { "type": "string" },
           "listiNafn": { "type": "string" },
           "frambodSimi": { "type": "string", "nullable": true },
@@ -2280,10 +2223,11 @@
         "additionalProperties": false
       },
       "MedmaelalistiExtendedDTO": {
-        "required": ["frambodNafn", "listiNafn"],
         "type": "object",
         "properties": {
           "id": { "type": "integer", "format": "int32" },
+          "medmaelasofnunID": { "type": "integer", "format": "int32" },
+          "frambodID": { "type": "integer", "format": "int32" },
           "frambodNafn": { "type": "string" },
           "listiNafn": { "type": "string" },
           "frambodSimi": { "type": "string", "nullable": true },
@@ -2303,22 +2247,7 @@
         },
         "additionalProperties": false
       },
-      "MedmaelalistiRequestDTO": {
-        "type": "object",
-        "properties": {
-          "sofnunID": { "type": "integer", "format": "int32" },
-          "kennitala": { "type": "string" },
-          "simi": { "type": "string" },
-          "netfang": { "type": "string" },
-          "medmaelalistar": {
-            "type": "array",
-            "items": { "$ref": "#/components/schemas/FrambodListarRequestDTO" }
-          }
-        },
-        "additionalProperties": false
-      },
       "MedmaelasofnunBaseDTO": {
-        "required": ["kosningNafn", "kosningTegund"],
         "type": "object",
         "properties": {
           "id": { "type": "integer", "format": "int32" },
@@ -2333,7 +2262,6 @@
         "additionalProperties": false
       },
       "MedmaelasofnunDTO": {
-        "required": ["kosningNafn", "kosningTegund"],
         "type": "object",
         "properties": {
           "id": { "type": "integer", "format": "int32" },
@@ -2351,7 +2279,6 @@
         "additionalProperties": false
       },
       "MedmaelasofnunExtendedDTO": {
-        "required": ["kosningNafn", "kosningTegund"],
         "type": "object",
         "properties": {
           "id": { "type": "integer", "format": "int32" },
@@ -2367,7 +2294,7 @@
           "kosning": { "$ref": "#/components/schemas/KosningBaseDTO" },
           "frambodList": {
             "type": "array",
-            "items": { "$ref": "#/components/schemas/FrambodBaseDTO" }
+            "items": { "$ref": "#/components/schemas/FrambodDTO" }
           },
           "listabokstafir": {
             "type": "array",
@@ -2380,36 +2307,15 @@
         },
         "additionalProperties": false
       },
-      "MedmaelasofnunInfoDTO": {
-        "type": "object",
-        "properties": {
-          "althingiskosningar": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/MedmaelasofnunExtendedDTO"
-            }
-          },
-          "forsetakosningar": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/MedmaelasofnunExtendedDTO"
-            }
-          },
-          "sveitarstjornarkosningar": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/MedmaelasofnunExtendedDTO"
-            }
-          }
-        },
-        "additionalProperties": false
-      },
       "MedmaeliBaseDTO": {
-        "required": ["kennitala"],
         "type": "object",
         "properties": {
           "id": { "type": "integer", "format": "int32" },
-          "medmaelalistiID": { "type": "integer", "format": "int32" },
+          "medmaelalistiID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
           "kennitala": { "type": "string" },
           "nafn": { "type": "string", "nullable": true },
           "heimilisfang": { "type": "string", "nullable": true },
@@ -2464,11 +2370,14 @@
         "additionalProperties": false
       },
       "MedmaeliDTO": {
-        "required": ["kennitala"],
         "type": "object",
         "properties": {
           "id": { "type": "integer", "format": "int32" },
-          "medmaelalistiID": { "type": "integer", "format": "int32" },
+          "medmaelalistiID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
           "kennitala": { "type": "string" },
           "nafn": { "type": "string", "nullable": true },
           "heimilisfang": { "type": "string", "nullable": true },
@@ -2482,7 +2391,6 @@
         "additionalProperties": false
       },
       "SvaediDTO": {
-        "required": ["nafn", "nr", "svaediTegundLysing"],
         "type": "object",
         "properties": {
           "id": { "type": "integer", "format": "int32" },
@@ -2496,7 +2404,6 @@
         "additionalProperties": false
       },
       "SvaediExtendedDTO": {
-        "required": ["nafn", "nr", "svaediTegundLysing"],
         "type": "object",
         "properties": {
           "id": { "type": "integer", "format": "int32" },
@@ -2513,6 +2420,27 @@
         },
         "additionalProperties": false
       },
+      "SveitInfoDTO": {
+        "required": ["sveitarfelagID"],
+        "type": "object",
+        "properties": {
+          "sveitarfelagID": { "type": "integer", "format": "int32" },
+          "kennitala": { "type": "string" },
+          "postfang": { "type": "string", "nullable": true },
+          "sveitarfelagNafn": { "type": "string" }
+        },
+        "additionalProperties": false
+      },
+      "SveitInfoRequestDTO": {
+        "required": ["sveitarfelagID"],
+        "type": "object",
+        "properties": {
+          "sveitarfelagID": { "type": "integer", "format": "int32" },
+          "kennitala": { "type": "string" },
+          "postfang": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
       "TegundDTO": {
         "type": "object",
         "properties": {
@@ -2523,7 +2451,6 @@
         "additionalProperties": false
       },
       "UmbodBaseDTO": {
-        "required": ["kennitala"],
         "type": "object",
         "properties": {
           "id": { "type": "integer", "format": "int32" },
@@ -2536,7 +2463,11 @@
             "format": "int32",
             "nullable": true
           },
-          "frambodID": { "type": "integer", "format": "int32" },
+          "frambodID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
           "tegundUmbods": { "$ref": "#/components/schemas/TegundDTO" }
         },
         "additionalProperties": false

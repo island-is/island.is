@@ -5,7 +5,7 @@ import {
   buildSubmitField,
 } from '@island.is/application/core'
 import { DefaultEvents, Form } from '@island.is/application/types'
-import Logo from '../assets/Logo'
+import { DirectorateOfLabourLogo } from '@island.is/application/assets/institution-logos'
 import { parentalLeaveFormMessages } from '../lib/messages'
 import { getApplicationExternalData } from '../lib/parentalLeaveUtils'
 
@@ -13,12 +13,11 @@ export const ResidenceGrantNoBirthDate: Form = buildForm({
   id: 'residenceGrantApplicationNoBirthDate',
   title:
     parentalLeaveFormMessages.residenceGrantMessage.residenceGrantClosedTitle,
-  logo: Logo,
+  logo: DirectorateOfLabourLogo,
   renderLastScreenButton: true,
   children: [
     buildSection({
       id: 'residenceGrantApplicationNoBirthDate.section',
-      title: '',
       children: [
         buildMultiField({
           title: (application) => {
@@ -46,7 +45,6 @@ export const ResidenceGrantNoBirthDate: Form = buildForm({
             buildSubmitField({
               id: 'residenceGrantApplicationNoBirthDate.reject',
               placement: 'footer',
-              title: '',
               refetchApplicationAfterSubmit: true,
               actions: [
                 {

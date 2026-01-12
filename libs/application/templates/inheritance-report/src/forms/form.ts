@@ -16,7 +16,6 @@ import { prePaidApplicant } from './sections/prepaidInheritance/applicant'
 
 export const prepaidInheritanceForm: Form = buildForm({
   id: 'prePaidInheritanceReport',
-  title: '',
   mode: FormModes.DRAFT,
   renderLastScreenBackButton: true,
   renderLastScreenButton: true,
@@ -32,7 +31,6 @@ export const prepaidInheritanceForm: Form = buildForm({
 
 export const estateInheritanceForm: Form = buildForm({
   id: 'inheritanceReport',
-  title: '',
   mode: FormModes.DRAFT,
   renderLastScreenBackButton: true,
   renderLastScreenButton: true,

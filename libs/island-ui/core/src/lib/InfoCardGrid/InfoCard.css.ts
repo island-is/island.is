@@ -1,9 +1,14 @@
-import { theme } from '@island.is/island-ui/theme'
+import { theme, themeUtils } from '@island.is/island-ui/theme'
 import { globalStyle, style } from '@vanilla-extract/css'
 
 const gridContainerBase = {
   display: 'grid',
-  gap: theme.spacing[3],
+  gap: theme.spacing[2],
+  ...themeUtils.responsiveStyle({
+    md: {
+      gap: theme.spacing[3],
+    },
+  }),
   justifyContent: 'stretch',
 }
 

@@ -1,0 +1,799 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "SGS - Leyfur",
+    "description": "Vefþjónusta fyrir undanþágu og leyfisveitinga kerfi Samgöngustofu -  -  - ea69caf4f0664514770f2a5b58f5d5978f7df5b2-20250924.1",
+    "contact": {
+      "name": "Samgöngustofa",
+      "email": "tolvuhjalp@samgongustofa.is"
+    },
+    "version": "v1"
+  },
+  "servers": [{ "url": "/Leyfur" }],
+  "paths": {
+    "/applications/rules": {
+      "get": {
+        "tags": ["PermitApplication"],
+        "summary": "Returns rules for application.",
+        "description": "Measurement limitations and measurements that will trigger police escort.",
+        "parameters": [
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "schema": { "type": "string", "default": "1.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "schema": { "type": "string", "default": "1.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ApplicationRulesDto" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApplicationRulesDto" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ApplicationRulesDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/applications/vehicles/{permno}/status": {
+      "get": {
+        "tags": ["PermitApplication"],
+        "summary": "Checks the status of a vehicle and if it is inspected.",
+        "description": "To use the vehicle in an application, it has to be both in order and inspected.\r\n</br> \r\nThe same checks are done upon posting a route application. \r\n</br><h3>Errors</h3>\r\n\r\nErrors are returned as problem details where the title is an error code \r\n</br>\r\n```json\r\n{\r\n    \"title\": \"VEHICLE_NOT_FOUND\",\r\n    \"status\": 404,\r\n    \"detail\": \"Vehicle not found DZM435\"\r\n}\r\n```\r\nPossible error codes for <b>400</b>\r\n</br><ul><li><b>VEHICLE_NOT_IN_ALLOWED_GROUP</b> - When vehicle is not in an allowed vehicle group</li><li><b>VEHICLE_NOT_IN_ALLOWED_USE_GROUP</b> - When vehicle is not in an allowed use group</li><li><b>VEHICLE_NOT_TRAILER</b> - When looking up trailer however non trailer permno was provided</li><li><b>VEHICLE_SHOULD_NOT_BE_TRAILER</b> - When looking up vehicle, however a trailer permno was provided  </li></ul>\r\n            \r\nPossible error codes for <b>404</b>\r\n</br><ul><li><b>VEHICLE_NOT_FOUND</b> - No vehicle found</li></ul>",
+        "parameters": [
+          {
+            "name": "permno",
+            "in": "path",
+            "description": "Permno of vehicle",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "shouldBeTrailer",
+            "in": "query",
+            "description": "Looking up a vehicle that should be a trailer",
+            "schema": { "type": "boolean", "default": false }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "schema": { "type": "string", "default": "1.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "schema": { "type": "string", "default": "1.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/VehicleCheckDto" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/VehicleCheckDto" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/VehicleCheckDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/applications/route": {
+      "post": {
+        "tags": ["PermitApplication"],
+        "summary": "For submitting a Route application",
+        "description": "When submitting a Route application various errors can come up \r\n</br><h3>Errors</h3>\r\n\r\nErrors are returned as problem details where the title is an error code example:  \r\n</br>\r\n```json\r\n{\r\n    \"title\": \"VEHICLE_NOT_FOUND\",\r\n    \"status\": 404,\r\n    \"detail\": \"Vehicle not found DZM435\"\r\n}\r\n```\r\n\r\n\r\nWhen payload validation errors are returned the problem details contains an error object example: \r\n</br>\r\n```json\r\n{\r\n    \"title\": \"VALIDATION_ERROR\",\r\n    \"status\": 400,\r\n    \"detail\": \"One or more validation errors occured\",\r\n    \"errors\": {\r\n        \"CombinedVehicleLengthToSpacing\": [\r\n        \"The sum of all spacing values (vehicle spacing, dolly axle spacing, and vehicle axle spacing) must not exceed the combined vehicle length.\"\r\n         ]\r\n    }\r\n}\r\n```\r\n\r\nPossible error codes for <b>400</b>\r\n</br><ul><li><b>VEHICLE_NOT_IN_ALLOWED_GROUP</b> - When vehicle is not in an allowed vehicle group</li><li><b>VEHICLE_NOT_IN_ALLOWED_USE_GROUP</b> - When vehicle is not in an allowed use group</li><li><b>VEHICLE_CANT_BE_TRAILER</b> - In a single vehicle application the vehicle cant be a trailer</li><li><b>VEHICLES_COMBINATION_NOT_ALLOWED</b> - When vehicles are more than 1 they must contain 1 trailer and one vehicle in an allowed group</li><li><b>VEHICLE_OUT_OF_ORDER</b> - A vehicle in the application is out of order</li><li><b>VEHICLE_NOT_INSPECTED</b> - A vehicle in the application is not inspected</li><li><b>AXLE_SPACING_INCORRECT</b> - Axle spacing provided does not match vehicle axlecount </li><li><b>VALIDATION_ERROR</b> - Payload not passing validation </li></ul>\r\n            \r\nPossible error codes for <b>404</b>\r\n</br><ul><li><b>VEHICLE_NOT_FOUND</b> - No vehicle found</li></ul>\r\n</br><h3>Special rules</h3><ul><li>In a an application with a haul unit that has a single vehicle, adding dollies is not allowed</li><li>Vehicle,axle and dolly spacing is only required if exceptionFor has WEIGHT</li><li>If dolly is selected then a vehicle is added with vehicleType DOLLY and axle spacing is added if it is a double dolly</li><li>If date range exceeds 31 days then the application is handled as a long term application else it is short term</li></ul><h3>Long term applications</h3><ul><li>Can not require police escort</li><li>Can not contain DOLLY</li><li>Do not contain origin and destination</li><li>Desired route is optional</li></ul><h3>Short term applications</h3><ul><li>Can only include one cargo, one haul unit and one cargo assignment</li><li>Can not contain areas</li></ul>",
+        "parameters": [
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "schema": { "type": "string", "default": "1.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "schema": { "type": "string", "default": "1.0" }
+          }
+        ],
+        "requestBody": {
+          "description": "Route application model",
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RouteApplicationAddModel"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RouteApplicationAddModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RouteApplicationAddModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RouteApplicationAddModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ApplicationDto" }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ApplicationDto" }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ApplicationDto" }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ApplicationDto": {
+        "type": "object",
+        "properties": {
+          "applicationID": {
+            "type": "number",
+            "description": "Application Id",
+            "format": "int32",
+            "nullable": true
+          },
+          "externalID": {
+            "type": "string",
+            "description": "ExternalID from Island.is",
+            "nullable": true
+          },
+          "userID": {
+            "type": "number",
+            "description": "User Id",
+            "format": "int32",
+            "nullable": true
+          },
+          "firstName": {
+            "type": "string",
+            "description": "Applicant first name",
+            "nullable": true
+          },
+          "lastName": {
+            "type": "string",
+            "description": "Applicant last name",
+            "nullable": true
+          },
+          "ssn": {
+            "type": "string",
+            "description": "Applicant ssn",
+            "nullable": true
+          },
+          "guarantorID": {
+            "type": "number",
+            "description": "Guarantor id",
+            "format": "int32",
+            "nullable": true
+          },
+          "status": { "$ref": "#/components/schemas/ApplicationStatus" },
+          "type": { "$ref": "#/components/schemas/ApplicationType" },
+          "createdAt": {
+            "type": "string",
+            "description": "Timestamp of creation",
+            "nullable": true
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "Update timestamp",
+            "nullable": true
+          },
+          "updatedBy": {
+            "type": "number",
+            "description": "Id of user that updated application",
+            "format": "int32",
+            "nullable": true
+          },
+          "paid": {
+            "type": "boolean",
+            "description": "Indicates if application is paid for"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Application dto"
+      },
+      "ApplicationRole": {
+        "type": "object",
+        "properties": {
+          "ssn": { "type": "string", "description": "SSN", "nullable": true },
+          "firstName": {
+            "type": "string",
+            "description": "Applicant first name",
+            "nullable": true
+          },
+          "lastName": {
+            "type": "string",
+            "description": "Applicant last name",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "description": "Applicant email",
+            "nullable": true
+          },
+          "phone": {
+            "type": "string",
+            "description": "Applicant phone",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Roles of application"
+      },
+      "ApplicationRulesDto": {
+        "type": "object",
+        "properties": {
+          "policeEscort": { "$ref": "#/components/schemas/PoliceEscortRules" },
+          "measurementLimitations": {
+            "$ref": "#/components/schemas/MeasurementLimitations"
+          },
+          "longTermMeasurementLimitations": {
+            "$ref": "#/components/schemas/MeasurementLimitations"
+          },
+          "areas": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Available areas",
+            "nullable": true,
+            "readOnly": true
+          },
+          "vehicleTypes": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Vehicle types",
+            "nullable": true,
+            "readOnly": true
+          },
+          "exceptionTypes": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Exception types;",
+            "nullable": true,
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Application rules dto"
+      },
+      "ApplicationStatus": {
+        "enum": [
+          "RECEIVED",
+          "INPROGRESS",
+          "CALCULATIONS",
+          "IRCA",
+          "IRCA_APPROVED",
+          "IRCA_REJECTED",
+          "APPROVED",
+          "REJECTED"
+        ],
+        "type": "string",
+        "description": "Application status"
+      },
+      "ApplicationType": {
+        "enum": ["ROUTE", "TRANSPORTER"],
+        "type": "string",
+        "description": "Types of application"
+      },
+      "Area": {
+        "enum": [
+          "SOUTH_WEST",
+          "WESTFJORDS_NORTH",
+          "WESTFJORDS_SOUTH",
+          "NORTH_WEST",
+          "NORTH_EAST",
+          "EAST",
+          "OTHER"
+        ],
+        "type": "string"
+      },
+      "CargoAssignmentModel": {
+        "type": "object",
+        "properties": {
+          "exceptionFor": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ExceptionType" },
+            "description": "Exception for what measurement",
+            "nullable": true
+          },
+          "cargoCode": {
+            "type": "string",
+            "description": "Cargo code",
+            "nullable": true
+          },
+          "combinedVehicleLength": {
+            "type": "number",
+            "description": "Combined vehicle length",
+            "format": "double"
+          },
+          "width": {
+            "type": "number",
+            "description": "Cargo width",
+            "format": "double"
+          },
+          "height": {
+            "type": "number",
+            "description": "Cargo height",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Cargo assignment model"
+      },
+      "CargoModel": {
+        "required": ["code", "length", "name", "weight"],
+        "type": "object",
+        "properties": {
+          "name": {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string",
+            "description": "Cargo"
+          },
+          "code": {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string",
+            "description": "Cargo code"
+          },
+          "length": {
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "type": "number",
+            "description": "Cargo length",
+            "format": "double"
+          },
+          "weight": {
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "type": "number",
+            "description": "Cargo weight",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Cargo model"
+      },
+      "DocumentModel": {
+        "required": ["documentContent", "documentName"],
+        "type": "object",
+        "properties": {
+          "documentName": {
+            "minLength": 1,
+            "type": "string",
+            "description": "Document name"
+          },
+          "documentContent": {
+            "minLength": 1,
+            "type": "string",
+            "description": "Document content"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Document model"
+      },
+      "ExceptionType": {
+        "enum": ["LENGTH", "WIDTH", "HEIGHT", "WEIGHT"],
+        "type": "string"
+      },
+      "HaulUnitModel": {
+        "type": "object",
+        "properties": {
+          "vehicles": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/VehicleModel" },
+            "description": "Vehicles",
+            "nullable": true
+          },
+          "vehicleSpacing": {
+            "type": "array",
+            "items": { "type": "number", "format": "double" },
+            "description": "Spacing between vehicles",
+            "nullable": true
+          },
+          "cargoAssignments": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/CargoAssignmentModel" },
+            "description": "Cargo assignments",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Model for haul unit"
+      },
+      "MeasurementLimitations": {
+        "type": "object",
+        "properties": {
+          "maxHeight": {
+            "type": "number",
+            "description": "Height allowed",
+            "format": "double"
+          },
+          "maxWidth": {
+            "type": "number",
+            "description": "Width",
+            "format": "double"
+          },
+          "maxLength": {
+            "type": "number",
+            "description": "Length",
+            "format": "double"
+          },
+          "maxWeight": {
+            "type": "number",
+            "description": "Weight",
+            "format": "double"
+          },
+          "maxCombinedLengthOfVehicles": {
+            "type": "number",
+            "description": "Max combined length of vehicles",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Configured values for max cargo"
+      },
+      "PoliceEscortRules": {
+        "type": "object",
+        "properties": {
+          "height": {
+            "type": "number",
+            "description": "Height allowed",
+            "format": "double"
+          },
+          "width": {
+            "type": "number",
+            "description": "Width",
+            "format": "double"
+          },
+          "length": {
+            "type": "number",
+            "description": "Length",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Contains rules defined for police escorts"
+      },
+      "ProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "string", "nullable": true },
+          "title": { "type": "string", "nullable": true },
+          "status": { "type": "number", "format": "int32", "nullable": true },
+          "detail": { "type": "string", "nullable": true },
+          "instance": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "RouteApplicationAddModel": {
+        "required": ["applicant", "cargoes", "dateFrom", "dateTo", "haulUnits"],
+        "type": "object",
+        "properties": {
+          "applicant": { "$ref": "#/components/schemas/ApplicationRole" },
+          "guarantor": { "$ref": "#/components/schemas/ApplicationRole" },
+          "transporter": { "$ref": "#/components/schemas/Transporter" },
+          "origin": {
+            "type": "string",
+            "description": "Route origin",
+            "nullable": true
+          },
+          "destination": {
+            "type": "string",
+            "description": "Route destination",
+            "nullable": true
+          },
+          "desiredRoute": {
+            "type": "string",
+            "description": "Desired route",
+            "nullable": true
+          },
+          "dateFrom": {
+            "minLength": 1,
+            "type": "string",
+            "description": "Application valid from",
+            "format": "date-time"
+          },
+          "dateTo": {
+            "minLength": 1,
+            "type": "string",
+            "description": "Application valid to",
+            "format": "date-time"
+          },
+          "comment": {
+            "type": "string",
+            "description": "Comment",
+            "nullable": true
+          },
+          "documents": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/DocumentModel" },
+            "description": "Documents  int application",
+            "nullable": true
+          },
+          "externalID": {
+            "maxLength": 50,
+            "type": "string",
+            "description": "External id from Island.is",
+            "nullable": true
+          },
+          "cargoes": {
+            "minItems": 1,
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/CargoModel" },
+            "description": "Cargoes"
+          },
+          "haulUnits": {
+            "minItems": 1,
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/HaulUnitModel" },
+            "description": "Haul units"
+          },
+          "areas": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Area" },
+            "description": "Areas",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Model for adding route application"
+      },
+      "Transporter": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of transporter",
+            "nullable": true
+          },
+          "ssn": {
+            "type": "string",
+            "description": "Transporter ssn",
+            "nullable": true
+          },
+          "phone": {
+            "type": "string",
+            "description": "Transporter phone",
+            "nullable": true
+          },
+          "address": {
+            "type": "string",
+            "description": "Transporter address",
+            "nullable": true
+          },
+          "city": { "type": "string", "description": "City", "nullable": true },
+          "postalCode": {
+            "type": "string",
+            "description": "Postal code of the transporter",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "description": "Transporter email",
+            "nullable": true
+          },
+          "fullAddress": {
+            "type": "string",
+            "description": "Full address combining the address, postal code, and city",
+            "nullable": true,
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Represents a transporter with relevant information such as name,\r\ncontact details, and address."
+      },
+      "VehicleCheckDto": {
+        "type": "object",
+        "properties": {
+          "permno": {
+            "type": "string",
+            "description": "Permno",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "description": "Vehicle status",
+            "nullable": true
+          },
+          "inspected": { "type": "boolean", "description": "Is inspected" },
+          "isInOrder": {
+            "type": "boolean",
+            "description": "Is in order based on valu 'Í lagi'"
+          },
+          "axleNo": {
+            "type": "number",
+            "description": "Nr of axles",
+            "format": "int16",
+            "nullable": true
+          },
+          "color": {
+            "type": "string",
+            "description": "Color of car",
+            "nullable": true
+          },
+          "make": {
+            "type": "string",
+            "description": "Make of car",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Vehicle check dto"
+      },
+      "VehicleModel": {
+        "type": "object",
+        "properties": {
+          "permno": {
+            "type": "string",
+            "description": "Vehicle Permno",
+            "nullable": true
+          },
+          "vehicleType": { "$ref": "#/components/schemas/VehicleType" },
+          "axleSpacing": {
+            "type": "array",
+            "items": { "type": "number", "format": "double" },
+            "description": "Spacing between axles",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "VehicleModel"
+      },
+      "VehicleType": { "enum": ["CAR", "TRAILER", "DOLLY"], "type": "string" }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "apiKey",
+        "description": "Enter 'Bearer' [space] and then your valid token in the text input below.\r\n\r\nExample: \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\"",
+        "name": "Authorization",
+        "in": "header"
+      }
+    }
+  },
+  "security": [{ "Bearer": [] }]
+}

@@ -21,6 +21,7 @@ import { AuthDelegationType } from '@island.is/shared/types'
 import { Actions } from '../shared'
 import { DataSchema } from './dataSchema'
 import { carRecyclingMessages, statesMessages } from './messages'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const enum States {
   PREREQUISITES = 'prerequisites',
@@ -45,6 +46,7 @@ const CarRecyclingTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.CAR_RECYCLING,
   name: carRecyclingMessages.shared.applicationName,
+  codeOwner: CodeOwners.Deloitte,
   institution: carRecyclingMessages.shared.institution,
   translationNamespaces: [ApplicationConfigurations.CarRecycling.translation],
   dataSchema: DataSchema,
@@ -52,6 +54,9 @@ const CarRecyclingTemplate: ApplicationTemplate<
     { type: AuthDelegationType.ProcurationHolder },
     {
       type: AuthDelegationType.Custom,
+    },
+    {
+      type: AuthDelegationType.GeneralMandate,
     },
   ],
   allowMultipleApplicationsInDraft: true,

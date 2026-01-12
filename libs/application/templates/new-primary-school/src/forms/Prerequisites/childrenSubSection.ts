@@ -6,31 +6,32 @@ import {
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
 import { format as formatKennitala } from 'kennitala'
-import { newPrimarySchoolMessages } from '../../lib/messages'
-import { getApplicationExternalData } from '../../lib/newPrimarySchoolUtils'
+import { prerequisitesMessages } from '../../lib/messages'
+import { getApplicationExternalData } from '../../utils/newPrimarySchoolUtils'
 
 export const childrenSubSection = buildSubSection({
   id: 'childrenSubSection',
-  title: newPrimarySchoolMessages.pre.childrenSubSectionTitle,
+  title: prerequisitesMessages.children.subSectionTitle,
   children: [
     buildMultiField({
       id: 'childrenMultiField',
-      title: newPrimarySchoolMessages.pre.childrenSubSectionTitle,
-      description: newPrimarySchoolMessages.pre.childrenDescription,
+      title: prerequisitesMessages.children.subSectionTitle,
+      description: prerequisitesMessages.children.description,
       children: [
         buildRadioField({
           id: 'childNationalId',
-          title: newPrimarySchoolMessages.pre.childrenRadioTitle,
+          title: prerequisitesMessages.children.radioTitle,
           options: (application) => {
             const { children } = getApplicationExternalData(
               application.externalData,
             )
 
-            return children.map((child) => {
+            return children.map((child, index) => {
               return {
                 value: child.nationalId,
                 label: child.fullName,
                 subLabel: formatKennitala(child.nationalId),
+                dataTestId: `child-${index}`,
               }
             })
           },
@@ -39,12 +40,11 @@ export const childrenSubSection = buildSubSection({
         buildSubmitField({
           id: 'submit',
           placement: 'footer',
-          title: '',
           refetchApplicationAfterSubmit: true,
           actions: [
             {
               event: DefaultEvents.SUBMIT,
-              name: newPrimarySchoolMessages.pre.startApplication,
+              name: prerequisitesMessages.children.startApplication,
               type: 'primary',
             },
           ],

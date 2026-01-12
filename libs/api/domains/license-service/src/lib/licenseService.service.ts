@@ -48,6 +48,9 @@ import {
   TOKEN_EXPIRED_ERROR,
 } from '@island.is/services/license'
 import { UserAgent } from '@island.is/nest/core'
+import { ProblemError } from '@island.is/nest/problem'
+import { ProblemType } from '@island.is/shared/problem'
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 
 const LOG_CATEGORY = 'license-service'
 
@@ -71,6 +74,7 @@ export class LicenseService {
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly barcodeService: BarcodeService,
     private readonly licenseClient: LicenseClientService,
+    private readonly featureService: FeatureFlagService,
     @Inject(LICENSE_MAPPER_FACTORY)
     private readonly licenseMapperFactory: (
       type: GenericLicenseType,
@@ -157,6 +161,7 @@ export class LicenseService {
     }
 
     const mappedLicenseType = this.mapLicenseType(licenseTypeDefinition.type)
+
     const client = await this.getClient(mappedLicenseType)
 
     const licensesFetchResponse = await client.getLicenses(user)
@@ -292,105 +297,6 @@ export class LicenseService {
     return client
   }
 
-  async generatePkPassUrl(
-    user: User,
-    licenseType: GenericLicenseType,
-  ): Promise<string> {
-    const mappedLicenseType = this.mapLicenseType(licenseType)
-    const client = await this.getClient(mappedLicenseType)
-
-    if (!client.clientSupportsPkPass) {
-      this.logger.warn('client does not support pkpass', {
-        category: LOG_CATEGORY,
-        type: licenseType,
-      })
-      throw new BadRequestException(
-        `License client does not support pkpass, type: ${licenseType}`,
-      )
-    }
-
-    if (!client.getPkPassUrl) {
-      this.logger.error('License client has no getPkPassUrl implementation', {
-        category: LOG_CATEGORY,
-        type: licenseType,
-      })
-      throw new BadRequestException(
-        `License client has no getPkPassUrl implementation, type: ${licenseType}`,
-      )
-    }
-
-    if (!client.clientSupportsPkPass) {
-      this.logger.warn('client does not support pkpass', {
-        category: LOG_CATEGORY,
-        type: licenseType,
-      })
-      throw new BadRequestException(
-        `License client does not support pkpass, type: ${licenseType}`,
-      )
-    }
-
-    if (!client.getPkPassUrl) {
-      this.logger.error('License client has no getPkPassUrl implementation', {
-        category: LOG_CATEGORY,
-        type: licenseType,
-      })
-      throw new BadRequestException(
-        `License client has no getPkPassUrl implementation, type: ${licenseType}`,
-      )
-    }
-
-    const pkPassRes = await client.getPkPassUrl(user)
-
-    if (pkPassRes.ok) {
-      return pkPassRes.data
-    }
-
-    throw new InternalServerErrorException(
-      `Unable to get pkpass for ${licenseType} for user`,
-    )
-  }
-
-  async generatePkPassQRCode(
-    user: User,
-    licenseType: GenericLicenseType,
-  ): Promise<string> {
-    const mappedLicenseType = this.mapLicenseType(licenseType)
-    const client = await this.getClient(mappedLicenseType)
-
-    if (!client.clientSupportsPkPass) {
-      this.logger.warn('client does not support pkpass', {
-        category: LOG_CATEGORY,
-        type: licenseType,
-      })
-      throw new BadRequestException(
-        `License client does not support pkpass, type: ${licenseType}`,
-      )
-    }
-
-    if (!client.getPkPassQRCode) {
-      this.logger.error(
-        'License client has no getPkPassQRCode implementation',
-        {
-          category: LOG_CATEGORY,
-          type: licenseType,
-        },
-      )
-      throw new BadRequestException(
-        `License client has no getPkPassQRCode implementation, type: ${licenseType}`,
-      )
-    }
-
-    const pkPassRes = await client.getPkPassQRCode(user)
-
-    if (pkPassRes.ok) {
-      return pkPassRes.data
-    }
-
-    throw new InternalServerErrorException(
-      `Unable to get pkpass for ${licenseType} for user`,
-    )
-  }
-
   async verifyPkPassDeprecated(data: string): Promise<PkPassVerification> {
     if (!data) {
       this.logger.warn('Missing input data for pkpass verification', {
@@ -469,6 +375,34 @@ export class LicenseService {
     )
   }
 
+  getBarcodeSessionKey(licenseType: LicenseType, sub: string) {
+    return `${licenseType}-${sub}`
+  }
+
+  async checkBarcodeSession(
+    barcodeSessionKey: string | undefined,
+    user: User,
+    licenseType: LicenseType,
+  ) {
+    if (barcodeSessionKey) {
+      const activeBarcodeSession = await this.barcodeService.getSessionCache(
+        barcodeSessionKey,
+      )
+
+      if (activeBarcodeSession && activeBarcodeSession !== user.sid) {
+        // If the user has an active session for the license type, we should not create a new barcode
+        this.logger.info('User has an active session for license', {
+          licenseType,
+        })
+
+        throw new ProblemError({
+          type: ProblemType.BAD_SESSION,
+          title: `User has an active session for license type: ${licenseType}`,
+        })
+      }
+    }
+  }
+
   async createBarcode(
     user: User,
     genericUserLicense: GenericUserLicense,
@@ -477,6 +411,12 @@ export class LicenseService {
     const genericUserLicenseType = genericUserLicense.license.type
     const licenseType = this.mapLicenseType(genericUserLicenseType)
     const client = await this.getClient<typeof licenseType>(licenseType)
+
+    const barcodeSessionKey = user.sub
+      ? this.getBarcodeSessionKey(licenseType, user.sub)
+      : undefined
+
+    await this.checkBarcodeSession(barcodeSessionKey, user, licenseType)
 
     if (
       genericUserLicense.license.pkpassStatus !==
@@ -518,6 +458,9 @@ export class LicenseService {
         licenseType,
         extraData,
       }),
+      barcodeSessionKey &&
+        user.sid &&
+        this.barcodeService.setSessionCache(barcodeSessionKey, user.sid),
     ])
 
     return tokenPayload
@@ -588,6 +531,27 @@ export class LicenseService {
     if (isJWT(data)) {
       // Verify the barcode data as a token, e.g. new barcode format
       const tokenData = await this.getDataFromToken(data)
+
+      const isLicenseScannerDisabled =
+        await this.featureService.getValue<boolean>(
+          Features.isLicenseScannerDisabled,
+          false,
+        )
+
+      // If license scanner is disabled, we still allow drivers license to be verified, for now
+      if (isLicenseScannerDisabled) {
+        if (
+          'licenseType' in tokenData &&
+          tokenData.licenseType !== GenericLicenseType.DriversLicense
+        ) {
+          return {
+            barcodeType: VerifyLicenseBarcodeType.V2,
+            licenseType: tokenData.licenseType,
+            valid: false,
+            error: VerifyLicenseBarcodeError.ERROR,
+          }
+        }
+      }
 
       return {
         barcodeType: VerifyLicenseBarcodeType.V2,

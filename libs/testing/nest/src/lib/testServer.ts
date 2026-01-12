@@ -2,6 +2,8 @@ import { ValidationPipe, INestApplication, Type } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import { TestingModuleBuilder } from '@nestjs/testing/testing-module.builder'
 
+// Intentional circular dependency as infra-nest-server has tests which use this function.
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { InfraModule, HealthCheckOptions } from '@island.is/infra-nest-server'
 
 import cookieParser from 'cookie-parser'

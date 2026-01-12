@@ -1,4 +1,4 @@
-import { Box, Inline, Link, Stack, Text } from '@island.is/island-ui/core'
+import { Box, Stack } from '@island.is/island-ui/core'
 import React, { FC } from 'react'
 import { formatText, getValueViaPath } from '@island.is/application/core'
 

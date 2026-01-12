@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import {
   Box,
-  Button,
   Checkbox,
+  DropdownMenu,
   Filter,
   Input,
   Pagination,
@@ -12,9 +12,9 @@ import {
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
-  FootNote,
   formSubmit,
-  IntroHeader,
+  IntroWrapper,
+  LinkButton,
   m,
   SAMGONGUSTOFA_SLUG,
 } from '@island.is/portals/my-pages/core'
@@ -25,15 +25,11 @@ import {
   urls,
   vehicleMessage,
 } from '../../lib/messages'
-import DropdownExport from '../../components/DropdownExport/DropdownExport'
 
 import { useGetUsersVehiclesV2LazyQuery } from './Overview.generated'
-import { useGetExcelVehiclesLazyQuery } from '../../utils/VehicleExcel.generated'
-import { exportVehicleOwnedDocument } from '../../utils/vehicleOwnedMapper'
 import useDebounce from 'react-use/lib/useDebounce'
-import { VehiclesDetail } from '@island.is/api/schema'
 import { Problem } from '@island.is/react-spa/shared'
-import { useUserInfo } from '@island.is/react-spa/bff'
+import { isDefined } from '@island.is/shared/utils'
 
 const defaultFilterValues = {
   searchQuery: '',
@@ -46,26 +42,15 @@ type FilterValues = {
 
 const VehiclesOverview = () => {
   useNamespaces('sp.vehicles')
-  const userInfo = useUserInfo()
   const { formatMessage } = useLocale()
   const [page, setPage] = useState(1)
   const [searchLoading, setSearchLoading] = useState(false)
-
-  const [downloadExcel, setDownloadExcel] = useState(false)
-  const [vehicleData, setVehicleData] = useState<
-    Array<VehiclesDetail> | undefined | null
-  >(null)
 
   const [filterValue, setFilterValue] =
     useState<FilterValues>(defaultFilterValues)
 
   const [GetUsersVehiclesLazyQuery, { loading, error, ...usersVehicleQuery }] =
     useGetUsersVehiclesV2LazyQuery()
-
-  const [
-    GetExcelVehiclesLazyQuery,
-    { loading: excelLoading, error: excelError, ...usersExcelVehicleQuery },
-  ] = useGetExcelVehiclesLazyQuery()
 
   useEffect(() => {
     GetUsersVehiclesLazyQuery({
@@ -76,6 +61,7 @@ const VehiclesOverview = () => {
         },
       },
     })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useDebounce(
@@ -98,111 +84,65 @@ const VehiclesOverview = () => {
     [filterValue.onlyMileageRequiredVehicles, filterValue.searchQuery, page],
   )
 
-  useEffect(() => {
-    if (downloadExcel) {
-      GetExcelVehiclesLazyQuery().then((data) =>
-        setVehicleData(data.data?.getExcelVehicles?.vehicles),
-      )
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [downloadExcel])
-
-  useEffect(() => {
-    if (downloadExcel && vehicleData) {
-      exportVehicleOwnedDocument(
-        usersExcelVehicleQuery.data?.getExcelVehicles?.vehicles ?? [],
-        formatMessage(messages.myCarsFiles),
-        userInfo.profile.name,
-        userInfo.profile.nationalId,
-      )
-      setDownloadExcel(false)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [vehicleData])
   const vehicles = usersVehicleQuery.data?.vehiclesListV2
 
-  const ownershipPdf =
-    usersVehicleQuery.data?.vehiclesListV2?.downloadServiceURL
+  const ownershipLinks =
+    usersVehicleQuery.data?.vehiclesListV2?.downloadServiceUrls
   const filteredVehicles = vehicles?.vehicleList ?? []
 
   return (
-    <>
-      <IntroHeader
-        title={messages.title}
-        intro={messages.intro}
-        serviceProviderSlug={SAMGONGUSTOFA_SLUG}
-        serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
-      />
-
-      {error && !loading && <Problem error={error} noBorder={false} />}
-      {((!loading && !error && filteredVehicles.length > 0) ||
-        searchLoading) && (
-        <Box marginBottom={3} display="flex" flexWrap="wrap">
-          {(ownershipPdf || searchLoading) && (
-            <Box marginRight={2} marginBottom={[1]}>
-              <DropdownExport
-                onGetPDF={() => formSubmit(`${ownershipPdf}`)}
-                onGetExcel={() => setDownloadExcel(true)}
-              />
-            </Box>
-          )}
-          <Box paddingRight={2} marginBottom={[1]}>
-            <a
-              href={formatMessage(urls.ownerChange)}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Button
-                as="span"
-                unfocusable
-                colorScheme="default"
+    <IntroWrapper
+      title={messages.title}
+      intro={messages.intro}
+      serviceProviderSlug={SAMGONGUSTOFA_SLUG}
+      serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
+      buttonGroup={
+        (!loading && !error && filteredVehicles.length > 0) || searchLoading
+          ? [
+              ownershipLinks ? (
+                <DropdownMenu
+                  key="dropdown-menu"
+                  icon="ellipsisHorizontal"
+                  menuLabel={formatMessage(messages.myCarsFiles)}
+                  items={[
+                    {
+                      onClick: () => formSubmit(ownershipLinks.pdf),
+                      title: formatMessage(messages.myCarsFilesPDF),
+                    },
+                    {
+                      onClick: () => formSubmit(ownershipLinks.excel),
+                      title: formatMessage(messages.myCarsFilesExcel),
+                    },
+                  ]}
+                  title={formatMessage(messages.myCarsFiles)}
+                />
+              ) : undefined,
+              <LinkButton
+                key="owner-change"
+                to={formatMessage(urls.ownerChange)}
+                text={formatMessage(messages.changeOfOwnership)}
                 icon="open"
-                iconType="outline"
-                size="default"
                 variant="utility"
-              >
-                {formatMessage(messages.changeOfOwnership)}
-              </Button>
-            </a>
-          </Box>
-          <Box marginRight={2} marginBottom={[1]}>
-            <a
-              href={formatMessage(urls.recycleCar)}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Button
-                as="span"
-                unfocusable
-                variant="utility"
-                size="small"
+              />,
+              <LinkButton
+                key="recycle-car"
+                to={formatMessage(urls.recycleCar)}
+                text={formatMessage(messages.recycleCar)}
                 icon="reader"
-                iconType="outline"
-              >
-                {formatMessage(messages.recycleCar)}
-              </Button>
-            </a>
-          </Box>
-          <Box marginBottom={[1]}>
-            <a
-              href={formatMessage(urls.hideName)}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Button
-                as="span"
-                unfocusable
                 variant="utility"
-                size="small"
+              />,
+              <LinkButton
+                key="hide-name"
+                to={formatMessage(urls.hideName)}
+                text={formatMessage(messages.vehicleNameSecret)}
                 icon="eyeOff"
-                iconType="outline"
-              >
-                {formatMessage(messages.vehicleNameSecret)}
-              </Button>
-            </a>
-          </Box>
-        </Box>
-      )}
+                variant="utility"
+              />,
+            ].filter(isDefined)
+          : []
+      }
+    >
+      {error && !loading && <Problem error={error} noBorder={false} />}
       <Stack space={2}>
         {((!loading && !error) || searchLoading) && (
           <Box marginBottom={1}>
@@ -309,9 +249,7 @@ const VehiclesOverview = () => {
           />
         )}
       </Stack>
-
-      <FootNote serviceProviderSlug={SAMGONGUSTOFA_SLUG} />
-    </>
+    </IntroWrapper>
   )
 }
 export default VehiclesOverview

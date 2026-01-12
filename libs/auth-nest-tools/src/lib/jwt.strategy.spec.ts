@@ -24,6 +24,8 @@ describe('JwtStrategy#validate', () => {
 
     fakePayload = {
       nationalId: '1234567890',
+      sub: 'sub',
+      sid: 'sid',
       scope: ['test-scope-1'],
       client_id: 'test-client',
       delegationType: [AuthDelegationType.Custom],

@@ -29,7 +29,7 @@ describe('Basic serialization', () => {
     })
     .serviceAccount()
     .command('node')
-    .args('main.js')
+    .args('main.cjs')
     .resources({
       requests: { memory: '1MB', cpu: '100m' },
       limits: { memory: '512MB', cpu: '500m' },
@@ -69,7 +69,7 @@ describe('Basic serialization', () => {
 
   it('command and args', () => {
     expect(result.serviceDef[0].command).toStrictEqual(['node'])
-    expect(result.serviceDef[0].args).toStrictEqual(['main.js'])
+    expect(result.serviceDef[0].args).toStrictEqual(['main.cjs'])
   })
   it('network policies', () => {
     expect(result.serviceDef[0].grantNamespaces).toStrictEqual([])
@@ -103,7 +103,8 @@ describe('Basic serialization', () => {
       DB_NAME: 'api',
       DB_HOST: 'a',
       DB_REPLICAS_HOST: 'a',
-      NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init',
+      NODE_OPTIONS:
+        '--max-old-space-size=460 --enable-source-maps -r dd-trace/init',
       SERVERSIDE_FEATURES_ON: '',
       LOG_LEVEL: 'info',
     })

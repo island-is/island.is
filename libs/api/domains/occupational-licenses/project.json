@@ -4,19 +4,22 @@
   "sourceRoot": "libs/api/domains/occupational-licenses/src",
   "projectType": "library",
   "tags": ["lib:api", "scope:api"],
-  "generators": {},
   "targets": {
     "lint": {
       "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "libs/api/domains/occupational-licenses/jest.config.js"
-      },
-      "outputs": [
-        "{workspaceRoot}/coverage/libs/api/domains/occupational-licenses"
-      ]
+        "jestConfig": "libs/api/domains/occupational-licenses/jest.config.ts"
+      }
+    },
+    "extract-strings": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/api/domains/occupational-licenses/src/lib/messages.ts'"
+      }
     }
   }
 }

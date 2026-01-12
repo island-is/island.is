@@ -46,8 +46,8 @@ export const DetailedInfoCard = ({
     }
 
     return (
-      <Box style={{ flex: '0 0 40px' }}>
-        <img height={40} src={logo} alt={logoAlt} />
+      <Box style={{ flex: '0 0 48px' }}>
+        <img height={48} src={logo} alt={logoAlt} />
       </Box>
     )
   }
@@ -114,12 +114,7 @@ export const DetailedInfoCard = ({
 
   const renderHeader = () => {
     return (
-      <Box
-        display="flex"
-        flexDirection="row"
-        justifyContent="spaceBetween"
-        marginBottom={3}
-      >
+      <Box display="flex" flexDirection="row" justifyContent="spaceBetween">
         {subEyebrow ? (
           <Box>
             <Text fontWeight="semiBold" variant="eyebrow" color={eyebrowColor}>
@@ -160,7 +155,7 @@ export const DetailedInfoCard = ({
       )
     }
     return (
-      <>
+      <Box marginTop={2}>
         <Text variant="h3" color="blue400">
           {title}
         </Text>
@@ -172,7 +167,7 @@ export const DetailedInfoCard = ({
           </Box>
         )}
         {renderDetails()}
-      </>
+      </Box>
     )
   }
 

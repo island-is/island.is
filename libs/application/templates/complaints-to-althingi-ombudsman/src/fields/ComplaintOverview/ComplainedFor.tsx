@@ -124,16 +124,16 @@ export const ComplainedFor: FC<React.PropsWithChildren<Props>> = ({
               </GridColumn>
             )}
           </GridRow>
-          {complainedFor.email && (
-            <GridRow>
-              <GridColumn span="9/12">
+          <GridRow>
+            {complainedFor.email && (
+              <GridColumn span={['9/12', '9/12', '9/12', '5/12']}>
                 <ValueLine
                   value={complainedFor.email}
                   label={complainedForMessages.labels.email}
                 />
               </GridColumn>
-            </GridRow>
-          )}
+            )}
+          </GridRow>
         </ReviewGroup>
       )}
     </>

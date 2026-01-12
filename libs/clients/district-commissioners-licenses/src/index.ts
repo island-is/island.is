@@ -3,3 +3,5 @@ export { DistrictCommissionersLicensesService } from './lib/districtCommissioner
 export { RettindiFyrirIslandIsApi } from '../gen/fetch'
 export { DistrictCommissionersLicensesClientConfig } from './lib/districtCommissionersLicenses.config'
 export { DistrictCommissionersLicenseStatus } from './lib/districtCommissionersLicenses.types'
+export { DistrictCommissionersLicenseDto } from './lib/dto/districtCommissionersLicenseDto'
+export { DistrictCommissionersLicenseInfoDto } from './lib/dto/districtCommissionersLicenseInfoDto'

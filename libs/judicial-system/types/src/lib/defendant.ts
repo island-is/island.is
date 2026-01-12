@@ -22,12 +22,6 @@ export enum DefendantPlea {
   NO_PLEA = 'NO_PLEA',
 }
 
-export enum ServiceRequirement {
-  REQUIRED = 'REQUIRED',
-  NOT_REQUIRED = 'NOT_REQUIRED',
-  NOT_APPLICABLE = 'NOT_APPLICABLE',
-}
-
 export enum ServiceStatus {
   ELECTRONICALLY = 'ELECTRONICALLY', // Via digital mailbox on island.is
   DEFENDER = 'DEFENDER', // Via a person's defender
@@ -36,12 +30,22 @@ export enum ServiceStatus {
   EXPIRED = 'EXPIRED', // If a subpoena expires
 }
 
+export enum VerdictServiceStatus {
+  ELECTRONICALLY = ServiceStatus.ELECTRONICALLY,
+  DEFENDER = ServiceStatus.DEFENDER,
+  IN_PERSON = ServiceStatus.IN_PERSON,
+  FAILED = ServiceStatus.FAILED,
+  LEGAL_PAPER = 'LEGAL_PAPER',
+  NOT_APPLICABLE = 'NOT_APPLICABLE', // ONLY used for old verdicts prior to delivering verdicts automatically to the police
+}
+
 export enum PunishmentType {
   IMPRISONMENT = 'IMPRISONMENT',
   PROBATION = 'PROBATION',
   FINE = 'FINE',
   INDICTMENT_RULING_DECISION_FINE = 'INDICTMENT_RULING_DECISION_FINE',
   SIGNED_FINE_INVITATION = 'SIGNED_FINE_INVITATION',
+  OTHER = 'OTHER',
 }
 
 export const successfulServiceStatus: string[] = [

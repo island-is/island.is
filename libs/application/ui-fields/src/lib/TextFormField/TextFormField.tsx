@@ -1,9 +1,8 @@
 import React, { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
-
 import {
+  buildFieldReadOnly,
   buildFieldRequired,
-  formatText,
   formatTextWithLocale,
 } from '@island.is/application/core'
 import { FieldBaseProps, TextField } from '@island.is/application/types'
@@ -31,17 +30,19 @@ export const TextFormField: FC<React.PropsWithChildren<Props>> = ({
   const {
     id,
     disabled,
-    title,
+    title = '',
     description,
     placeholder,
     backgroundColor,
     format,
     variant = 'text',
+    thousandSeparator,
     suffix,
     rows,
     required,
     readOnly,
     maxLength,
+    showMaxLength,
     dataTestId,
     rightAlign,
     max,
@@ -49,11 +50,16 @@ export const TextFormField: FC<React.PropsWithChildren<Props>> = ({
     step,
     marginBottom,
     marginTop,
+    tooltip,
     onChange = () => undefined,
     clearOnChange,
+    clearOnChangeDefaultValue,
+    setOnChange,
+    allowNegative,
   } = field
-  const { clearErrors } = useFormContext()
+  const { clearErrors, watch } = useFormContext()
   const { formatMessage, lang: locale } = useLocale()
+  const value = watch(id)
 
   return (
     <Box marginTop={marginTop} marginBottom={marginBottom}>
@@ -70,8 +76,15 @@ export const TextFormField: FC<React.PropsWithChildren<Props>> = ({
 
       <Box paddingTop={2}>
         <InputController
+          tooltip={formatTextWithLocale(
+            tooltip || '',
+            application,
+            locale as Locale,
+            formatMessage,
+          )}
           disabled={disabled}
-          readOnly={readOnly}
+          readOnly={buildFieldReadOnly(application, readOnly)}
+          allowNegative={allowNegative}
           id={id}
           dataTestId={dataTestId}
           placeholder={formatTextWithLocale(
@@ -82,12 +95,18 @@ export const TextFormField: FC<React.PropsWithChildren<Props>> = ({
           )}
           label={
             showFieldName
-              ? formatTextWithLocale(
+              ? `${formatTextWithLocale(
                   title,
                   application,
                   locale as Locale,
                   formatMessage,
-                )
+                )} ${
+                  maxLength && showMaxLength
+                    ? `(${
+                        value && value?.length ? value.length : 0
+                      }/${maxLength})`
+                    : ''
+                }`
               : undefined
           }
           autoFocus={autoFocus}
@@ -101,12 +120,21 @@ export const TextFormField: FC<React.PropsWithChildren<Props>> = ({
           maxLength={maxLength}
           textarea={variant === 'textarea'}
           currency={variant === 'currency'}
+          thousandSeparator={thousandSeparator}
           type={
             variant !== 'textarea' && variant !== 'currency' ? variant : 'text'
           }
           format={format}
-          suffix={suffix}
-          defaultValue={getDefaultValue(field, application)}
+          suffix={
+            suffix &&
+            formatTextWithLocale(
+              suffix,
+              application,
+              locale as Locale,
+              formatMessage,
+            )
+          }
+          defaultValue={getDefaultValue(field, application, locale)}
           backgroundColor={backgroundColor}
           rows={rows}
           required={buildFieldRequired(application, required)}
@@ -115,6 +143,13 @@ export const TextFormField: FC<React.PropsWithChildren<Props>> = ({
           min={min}
           step={step}
           clearOnChange={clearOnChange}
+          clearOnChangeDefaultValue={clearOnChangeDefaultValue}
+          setOnChange={
+            typeof setOnChange === 'function'
+              ? async (optionValue) =>
+                  await setOnChange(optionValue, application)
+              : setOnChange
+          }
         />
       </Box>
     </Box>

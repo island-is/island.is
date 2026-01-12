@@ -11,12 +11,11 @@ import {
   review,
   conclusion,
 } from '../lib/messages'
-import { Logo } from '../assets/Logo'
+import { TransportAuthorityLogo } from '@island.is/application/assets/institution-logos'
 
 export const ReviewSellerForm: Form = buildForm({
   id: 'ReviewSellerForm',
-  title: '',
-  logo: Logo,
+  logo: TransportAuthorityLogo,
   mode: FormModes.IN_PROGRESS,
   children: [
     buildSection({
@@ -46,7 +45,6 @@ export const ReviewSellerForm: Form = buildForm({
         buildCustomField({
           component: 'Conclusion',
           id: 'conslusion',
-          title: '',
           description: '',
         }),
       ],

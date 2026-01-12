@@ -26,14 +26,14 @@ env:
   AUTH_IDS_CLIENT_ID: '@rettarvorslugatt.island.is/web'
   AUTH_IDS_LOGOUT_REDIRECT_URI: 'https://rettarvorslugatt.island.is'
   AUTH_IDS_REDIRECT_URI: 'https://rettarvorslugatt.island.is/api/auth/callback/identity-server'
-  AUTH_IDS_SCOPE: 'openid profile'
+  AUTH_IDS_SCOPE: 'openid profile offline_access'
   BACKEND_URL: 'http://web-judicial-system-backend'
   CONTENTFUL_ENVIRONMENT: 'master'
   CONTENTFUL_HOST: 'cdn.contentful.com'
   HIDDEN_FEATURES: ''
   IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
   LOG_LEVEL: 'info'
-  NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
+  NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
   SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
 grantNamespaces:
   - 'nginx-ingress-external'
@@ -74,7 +74,8 @@ ingress:
           - '/api/defender'
 namespace: 'judicial-system'
 podDisruptionBudget:
-  maxUnavailable: 1
+  minAvailable: 1
+  unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534
 pvcs: []

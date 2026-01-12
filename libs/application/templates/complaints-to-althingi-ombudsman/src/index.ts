@@ -5,6 +5,7 @@ export {
   ComplainedForTypes,
   ComplaineeTypes,
   OmbudsmanComplaintTypeEnum,
+  GenderAnswerOptions,
 } from './shared'
 export const getDataProviders = () => import('./dataProviders/')
 export const getFields = () => import('./fields')

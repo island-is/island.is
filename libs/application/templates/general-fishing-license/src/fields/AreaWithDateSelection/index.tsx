@@ -14,7 +14,7 @@ import {
   AREA_FIELD_ID,
   DATE_FIELD_ID,
 } from '../../utils/fields'
-import { FishingLicenseListOptions } from '../../types/schema'
+import { FishingLicenseListOptions } from '@island.is/api/schema'
 
 export const AreaWithDateSelection: FC<
   React.PropsWithChildren<FieldBaseProps>
@@ -97,13 +97,10 @@ export const AreaWithDateSelection: FC<
           required
           error={errors && getErrorViaPath(errors, AREA_FIELD_ID)}
           defaultValue={''}
-          options={licenseAreas?.map(
-            (o) =>
-              ({
-                label: o.description || '',
-                value: o.key || '',
-              } || []),
-          )}
+          options={licenseAreas?.map((o) => ({
+            label: o.description || '',
+            value: o.key || '',
+          }))}
         />
       </Box>
       <Box marginTop={3}>

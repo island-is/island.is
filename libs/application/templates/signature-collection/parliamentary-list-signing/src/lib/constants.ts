@@ -11,11 +11,6 @@ export enum Roles {
   APPLICANT = 'applicant',
 }
 
-export type SubmitResponse = {
-  success: boolean
-  orderId?: string[]
-}
-
 export enum ApiActions {
   submitApplication = 'signList',
 }

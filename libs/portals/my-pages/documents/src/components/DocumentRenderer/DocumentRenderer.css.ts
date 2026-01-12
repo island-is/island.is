@@ -37,7 +37,7 @@ export const htmlDoc = style({})
 
 export const pdfPage = style({
   background: theme.color.blue100,
-  padding: theme.spacing[2],
+  padding: theme.spacing[1],
   border: `1px solid ${theme.color.blue200}`,
   borderTop: 0,
 })
@@ -57,4 +57,57 @@ globalStyle(`${pdfAction} + button`, {
 
 globalStyle(`${htmlDoc} a`, {
   color: theme.color.blue400,
+})
+
+globalStyle(`${htmlDoc} ul`, {
+  listStyleType: 'disc',
+  paddingLeft: theme.spacing[3],
+  marginTop: theme.spacing[2],
+  marginBottom: theme.spacing[2],
+})
+
+globalStyle(`${htmlDoc} ol`, {
+  listStyleType: 'decimal',
+  paddingLeft: theme.spacing[3],
+  marginTop: theme.spacing[2],
+  marginBottom: theme.spacing[2],
+})
+
+globalStyle(`${htmlDoc} li`, {
+  marginBottom: theme.spacing[1],
+})
+
+globalStyle(`${htmlDoc} p`, {
+  fontSize: theme.typography.baseFontSize,
+  lineHeight: theme.typography.baseLineHeight,
+  marginBottom: theme.spacing[2],
+})
+export const reveal = style({
+  position: 'absolute',
+  bottom: 20,
+  right: 20,
+  padding: 10,
+  background: theme.color.dark400,
+  color: theme.color.white,
+  borderRadius: theme.border.radius.large,
+  opacity: 0,
+  borderWidth: 1,
+  outline: 0,
+  textDecoration: 'none',
+  borderStyle: 'solid',
+  borderColor: theme.color.blue200,
+  overflow: 'hidden',
+  zIndex: 1,
+  '@media': {
+    [`screen and (max-width: 991px)`]: {
+      borderRadius: 0,
+      border: 'none',
+    },
+  },
+  transition: 'transform 150ms ease',
+  transform: `translateY(calc(100% + 20px))`,
+  ':focus-within': {
+    transform: `translateY(0)`,
+    opacity: 1,
+  },
 })

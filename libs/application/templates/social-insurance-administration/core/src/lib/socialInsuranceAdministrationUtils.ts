@@ -1,8 +1,9 @@
+import { NO, YES } from '@island.is/application/core'
+import { Option } from '@island.is/application/types'
 import isEmpty from 'lodash/isEmpty'
-import { BankInfo, PaymentInfo } from '../types'
+import { BankInfo, CategorizedIncomeTypes, PaymentInfo } from '../types'
 import { BankAccountType, TaxLevelOptions } from './constants'
 import { socialInsuranceAdministrationMessage } from './messages'
-import { Option, YES, NO } from '@island.is/application/types'
 
 export const formatBankInfo = (bankInfo: string) => {
   const formattedBankInfo = bankInfo.replace(/[^0-9]/g, '')
@@ -13,12 +14,24 @@ export const formatBankInfo = (bankInfo: string) => {
   return bankInfo
 }
 
-export const getBankIsk = (bankInfo: BankInfo) => {
-  return !isEmpty(bankInfo) &&
-    bankInfo.bank &&
-    bankInfo.ledger &&
-    bankInfo.accountNumber
-    ? bankInfo.bank + bankInfo.ledger + bankInfo.accountNumber
+export const formatBankAccount = (bankInfo?: PaymentInfo) => {
+  return !isEmpty(bankInfo)
+    ? `${bankInfo.bankNumber ?? ''}-${bankInfo.ledger ?? ''}-${
+        bankInfo.accountNumber ?? ''
+      }`
+    : ''
+}
+
+export const getBankIsk = (bankInfo?: BankInfo | PaymentInfo) => {
+  if (isEmpty(bankInfo)) {
+    return ''
+  }
+
+  // 'bankNumber' is used in BankAccountFormField
+  const bank = 'bankNumber' in bankInfo ? bankInfo.bankNumber : bankInfo.bank
+
+  return bank && bankInfo.ledger && bankInfo.accountNumber
+    ? bank + bankInfo.ledger + bankInfo.accountNumber
     : ''
 }
 
@@ -64,12 +77,17 @@ export const formatBank = (bankInfo: string) => {
 // We should only send bank account to TR if applicant is registering
 // new one or changing.
 export const shouldNotUpdateBankAccount = (
-  bankInfo: BankInfo,
-  paymentInfo: PaymentInfo,
+  bankInfo?: BankInfo,
+  paymentInfo?: PaymentInfo,
 ) => {
+  if (!paymentInfo) {
+    return false
+  }
+
   const {
     bankAccountType,
     bank,
+    bankNumber,
     iban,
     swift,
     bankName,
@@ -86,7 +104,12 @@ export const shouldNotUpdateBankAccount = (
       bankInfo.currency === currency
     )
   } else {
-    return getBankIsk(bankInfo) === bank ?? false
+    // used in BankAccountFormField
+    if (bankNumber) {
+      return getBankIsk(bankInfo) === getBankIsk(paymentInfo)
+    }
+
+    return getBankIsk(bankInfo) === bank
   }
 }
 
@@ -160,4 +183,46 @@ export const getTaxLevelOption = (option: TaxLevelOptions) => {
     default:
       return socialInsuranceAdministrationMessage.payment.taxIncomeLevel
   }
+}
+
+export const getOneInstanceOfCategory = (
+  categories: CategorizedIncomeTypes[],
+) => {
+  return [
+    ...new Map(
+      categories.map((category) => [category.categoryName, category]),
+    ).values(),
+  ]
+}
+
+export const getCategoriesOptions = (
+  categorizedIncomeTypes: CategorizedIncomeTypes[],
+) => {
+  const categories = getOneInstanceOfCategory(categorizedIncomeTypes)
+
+  return (
+    categories &&
+    categories.map((item) => {
+      return {
+        value: item.categoryName || '',
+        label: item.categoryName || '',
+      }
+    })
+  )
+}
+
+export const getTypesOptions = (
+  categorizedIncomeTypes: CategorizedIncomeTypes[],
+  categoryName: string | undefined,
+) => {
+  if (categoryName === undefined) return []
+
+  return categorizedIncomeTypes
+    .filter((item) => item.categoryName === categoryName)
+    .map((item) => {
+      return {
+        value: item.incomeTypeName || '',
+        label: item.incomeTypeName || '',
+      }
+    })
 }

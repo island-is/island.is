@@ -10,6 +10,8 @@ import {
   buildSubSection,
   buildRadioField,
   buildPhoneField,
+  YES,
+  NO,
 } from '@island.is/application/core'
 import {
   Form,
@@ -17,10 +19,9 @@ import {
   IdentityApi,
   UserProfileApi,
 } from '@island.is/application/types'
-import { Logo } from '../assets'
+import { DebtCollectorLogo } from '@island.is/application/assets/institution-logos'
 import { application, info, section, externalData } from '../lib/messages'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
-import { NO, YES } from '../shared/constants'
 import { PaymentPlanExternalData } from '../types'
 import { Application } from '@island.is/api/schema'
 import { isApplicantCompany, isApplicantPerson } from '../lib/paymentPlanUtils'
@@ -31,7 +32,7 @@ const shouldRenderMockDataSubSection = !isRunningOnEnvironment('production')
 export const PrerequisitesForm: Form = buildForm({
   id: 'PrerequisitesForm',
   title: application.name,
-  logo: Logo,
+  logo: DebtCollectorLogo,
   mode: FormModes.NOT_STARTED,
   children: [
     buildSection({
@@ -220,7 +221,6 @@ export const PrerequisitesForm: Form = buildForm({
         }),
         buildDescriptionField({
           id: 'unused',
-          title: '',
           description: '',
         }),
       ],

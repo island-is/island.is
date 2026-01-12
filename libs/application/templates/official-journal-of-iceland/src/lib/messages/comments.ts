@@ -41,6 +41,18 @@ export const comments = {
       description: 'Post comment failed message',
     },
   }),
+  heading: defineMessages({
+    externalComment: {
+      id: 'ojoi.application:comments.heading.externalComment',
+      defaultMessage: 'skráir skilaboð',
+      description: 'External comment',
+    },
+    applicationComment: {
+      id: 'ojoi.application:comments.heading.applicationComment',
+      defaultMessage: 'gerir athugasemd',
+      description: 'Application comment',
+    },
+  }),
   unknownUser: defineMessages({
     name: {
       id: 'ojoi.application:comments.unknownUser.name',

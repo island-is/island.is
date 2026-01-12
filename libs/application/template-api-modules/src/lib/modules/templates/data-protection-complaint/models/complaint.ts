@@ -1,8 +1,5 @@
-import {
-  NO,
-  OnBehalf,
-  YES,
-} from '@island.is/application/templates/data-protection-complaint'
+import { NO, YES } from '@island.is/application/core'
+import { OnBehalf } from '@island.is/application/templates/data-protection-complaint'
 
 export interface ComplaintPDF {
   applicantInfo: {

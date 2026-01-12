@@ -7,6 +7,7 @@ import {
   AdminStagingApi,
   AuthAdminApiClientConfig,
   AuthAdminApiClientModule,
+  ClientSso,
   ClientType,
   RefreshTokenExpiration,
 } from '@island.is/clients/auth/admin-api'
@@ -56,6 +57,7 @@ const baseResponse: AdminClientDto = {
   accessTokenLifetime: 3600,
   customClaims: [{ type: 'string', value: 'test' }],
   singleSession: false,
+  sso: ClientSso.enabled,
 }
 
 const secretResponse: ClientSecret = {
@@ -158,7 +160,7 @@ describe('ClientsService', () => {
       await app.cleanUp()
     })
 
-    it('should create application in all environments', async function () {
+    it('should create application in all environments', async () => {
       const createClientsInput: CreateClientInput = {
         clientId: 'test-application-id',
         clientType: CreateClientType.web,
@@ -169,6 +171,7 @@ describe('ClientsService', () => {
         ],
         displayName: 'Test Application',
         tenantId: 'test-tenant-id',
+        sso: ClientSso.enabled,
       }
 
       const response = await clientsService.createClient(
@@ -194,13 +197,14 @@ describe('ClientsService', () => {
       ])
     })
 
-    it('should only create application in development', async function () {
+    it('should only create application in development', async () => {
       const createClientsInput: CreateClientInput = {
         clientId: 'test-application-id',
         clientType: CreateClientType.web,
         environments: [Environment.Development],
         displayName: 'Test Application',
         tenantId: 'test-tenant-id',
+        sso: ClientSso.enabled,
       }
 
       const response = await clientsService.createClient(
@@ -220,6 +224,7 @@ describe('ClientsService', () => {
           clientType: CreateClientType.web,
           clientName: 'Test Application',
           contactEmail: 'test@test.is',
+          sso: ClientSso.enabled,
         },
         tenantId: 'test-tenant-id',
       })
@@ -232,7 +237,7 @@ describe('ClientsService', () => {
       ])
     })
 
-    it('should publish the client from Staging to Development', async function () {
+    it('should publish the client from Staging to Development', async () => {
       const publishClientInput: PublishClientInput = {
         clientId: 'test-client-id',
         tenantId: 'test-tenant-id',
@@ -268,7 +273,7 @@ describe('ClientsService', () => {
       })
     })
 
-    it('should throw an error because no value was provided', async function () {
+    it('should throw an error because no value was provided', async () => {
       const patchClientsInput: PatchClientInput = {
         clientId: 'test-application-id',
         tenantId: 'test-tenant-id',
@@ -288,7 +293,7 @@ describe('ClientsService', () => {
       await expect(actPromise).rejects.toThrow('Nothing provided to update')
     })
 
-    it('should update the postLogoutRedirectUris for all environments', async function () {
+    it('should update the postLogoutRedirectUris for all environments', async () => {
       const patchClientsInput: PatchClientInput = {
         clientId: 'test-application-id',
         tenantId: 'test-tenant-id',
@@ -348,7 +353,7 @@ describe('ClientsService', () => {
       ])
     })
 
-    it('should update the postLogoutRedirectUris for all Development only', async function () {
+    it('should update the postLogoutRedirectUris for all Development only', async () => {
       const patchClientsInput: PatchClientInput = {
         clientId: 'test-application-id',
         tenantId: 'test-tenant-id',
@@ -384,7 +389,7 @@ describe('ClientsService', () => {
       ])
     })
 
-    it('should only rotate secret in a single target environment', async function () {
+    it('should only rotate secret in a single target environment', async () => {
       // Arrange
       const rotateSecretInput: RotateSecretInput = {
         clientId: 'test-application-id',
@@ -414,7 +419,7 @@ describe('ClientsService', () => {
       })
     })
 
-    it('should revoke old secrets and create new secret in a single environment', async function () {
+    it('should revoke old secrets and create new secret in a single environment', async () => {
       // Arrange
       const rotateSecretInput: RotateSecretInput = {
         clientId: 'test-application-id',

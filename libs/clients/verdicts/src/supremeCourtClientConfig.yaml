@@ -1,0 +1,550 @@
+openapi: 3.0.0
+info:
+  title: Verdicts API
+  version: 2.0.0
+  description: API for accessing court verdicts and related data
+servers:
+  - url: https://dom-haestirettur.eu.ngrok.io
+    description: Development server
+
+components:
+  schemas:
+    Error:
+      title: Generic Error Object
+      type: object
+      readOnly: true
+      properties:
+        messages:
+          type: string
+
+    DetailedVerdictData:
+      type: object
+      properties:
+        id:
+          type: string
+        court:
+          type: string
+        caseId:
+          type: string
+        caseNumber:
+          type: string
+        caseType:
+          type: string
+        title:
+          type: string
+        presentings:
+          type: string
+          nullable: true
+        verdictHtml:
+          type: string
+          nullable: true
+        verdictDate:
+          type: string
+          format: date-time
+          nullable: true
+        publishDate:
+          type: string
+          format: date-time
+          nullable: true
+        status:
+          type: string
+          nullable: false
+        closedSession:
+          type: boolean
+        hearingTime:
+          type: string
+        courtroom:
+          type: string
+        keywords:
+          type: array
+          items:
+            type: string
+        lawCitations:
+          type: array
+          items:
+            type: string
+        judges:
+          type: array
+          items:
+            $ref: '#/components/schemas/JuryJudge'
+    Lawyer:
+      type: object
+      properties:
+        name:
+          type: string
+        title:
+          type: string
+        kennitala:
+          type: string
+        email:
+          type: string
+        company:
+          type: string
+        address:
+          type: string
+        postCode:
+          type: string
+        city:
+          type: string
+        location:
+          type: string
+    JuryJudge:
+      type: object
+      properties:
+        isPresident:
+          type: boolean
+        isDeputy:
+          type: boolean
+        name:
+          type: string
+        title:
+          type: string
+
+    KeywordInfo:
+      type: object
+      properties:
+        label:
+          type: string
+
+    CaseTypeInfo:
+      type: object
+      properties:
+        label:
+          type: string
+
+    VerdictSearchRequest:
+      type: object
+      properties:
+        searchTerm:
+          type: string
+          description: Text to search for in verdict content
+        orderBy:
+          type: string
+          description: Field to order results by, with optional direction (e.g., 'caseNumber DESC')
+        caseTypes:
+          type: array
+          items:
+            type: string
+          description: Filter by case types
+        keywords:
+          type: array
+          items:
+            type: string
+          description: Filter by keywords
+        laws:
+          type: array
+          items:
+            type: string
+          description: Filter by law citations
+        title:
+          type: string
+          description: Filter by title
+        caseNumber:
+          type: string
+          description: Filter by case number
+        caseContact:
+          type: string
+          description: Filter by case contact
+        dateFrom:
+          type: string
+          format: date
+          description: Filter for verdicts on or after this date (format YYYY-MM-DD)
+        dateTo:
+          type: string
+          format: date
+          description: Filter for verdicts on or before this date (format YYYY-MM-DD)
+        page:
+          type: integer
+          default: 1
+          description: Page number for pagination
+        limit:
+          type: integer
+          default: 10
+          description: Results per page
+
+    AgendaSearchRequest:
+      type: object
+      properties:
+        lawyer:
+          type: string
+        dateFrom:
+          type: string
+          format: date
+          description: Filter for verdicts on or after this date (format YYYY-MM-DD)
+        dateTo:
+          type: string
+          format: date
+          description: Filter for verdicts on or before this date (format YYYY-MM-DD)
+        orderBy:
+          type: string
+          description: Field to order results by, with optional direction (e.g., 'caseNumber DESC')
+        page:
+          type: integer
+          default: 1
+          description: Page number for pagination
+        limit:
+          type: integer
+          default: 10
+          description: Results per page
+
+  responses:
+    InputError:
+      description: Input error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Requested resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    InternalError:
+      description: Unknown internal error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+paths:
+  /api/v2/Verdict/getKeywords:
+    get:
+      summary: Get all keywords
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/KeywordInfo'
+                  succeeded:
+                    type: boolean
+                  returnCode:
+                    type: integer
+                  message:
+                    type: string
+  /api/v2/Verdict/getCaseTypes:
+    get:
+      summary: Get all case types
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CaseTypeInfo'
+                  succeeded:
+                    type: boolean
+                  returnCode:
+                    type: integer
+                  message:
+                    type: string
+  /api/v2/Verdict/{id}:
+    get:
+      summary: Get a specific verdict by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  item:
+                    $ref: '#/components/schemas/DetailedVerdictData'
+                  succeeded:
+                    type: boolean
+                  returnCode:
+                    type: integer
+                  message:
+                    type: string
+
+  /api/v2/Verdict/getVerdicts:
+    post:
+      summary: Search and retrieve verdicts with filters
+      description: Retrieve verdicts with optional filters including text search, dates, case types, and more
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerdictSearchRequest'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/DetailedVerdictData'
+                  total:
+                    type: string
+                  currentPage:
+                    type: integer
+                  itemsPerPage:
+                    type: integer
+                  succeeded:
+                    type: boolean
+                  returnCode:
+                    type: integer
+                  message:
+                    type: string
+
+  /api/v2/Verdict/getAgenda/{id}:
+    get:
+      summary: Get a specific agenda by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  item:
+                    $ref: '#/components/schemas/DetailedVerdictData'
+                  succeeded:
+                    type: boolean
+                  returnCode:
+                    type: integer
+                  message:
+                    type: string
+
+  /api/v2/Verdict/getAgendas:
+    post:
+      summary: Search and retrieve agendas with filters
+      description: Retrieve agendas with optional date filters
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgendaSearchRequest'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/DetailedVerdictData'
+                  total:
+                    type: string
+                  currentPage:
+                    type: integer
+                  itemsPerPage:
+                    type: integer
+                  succeeded:
+                    type: boolean
+                  returnCode:
+                    type: integer
+                  message:
+                    type: string
+
+  /api/v2/Verdict/getDetermination/{id}:
+    get:
+      summary: Get a specific determination by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  item:
+                    $ref: '#/components/schemas/DetailedVerdictData'
+                  succeeded:
+                    type: boolean
+                  returnCode:
+                    type: integer
+                  message:
+                    type: string
+
+  /api/v2/Verdict/getDeterminations:
+    get:
+      summary: Get all determinations
+      parameters:
+        - name: orderBy
+          in: query
+          schema:
+            type: string
+          description: "Field and order (e.g., 'publishDate DESC')"
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/DetailedVerdictData'
+                  total:
+                    type: integer
+                  currentPage:
+                    type: integer
+                  itemsPerPage:
+                    type: integer
+                  succeeded:
+                    type: boolean
+                  returnCode:
+                    type: integer
+                  message:
+                    type: string
+  /api/v2/Verdict/getAppeal/{id}:
+    get:
+      summary: Get a specific appeal by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  item:
+                    $ref: '#/components/schemas/DetailedVerdictData'
+                  succeeded:
+                    type: boolean
+                  returnCode:
+                    type: integer
+                  message:
+                    type: string
+
+  /api/v2/Verdict/getAppeals:
+    get:
+      summary: Get all appeals
+      parameters:
+        - name: orderBy
+          in: query
+          schema:
+            type: string
+          description: "Field and order (e.g., 'publishDate DESC')"
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/DetailedVerdictData'
+                  total:
+                    type: integer
+                  currentPage:
+                    type: integer
+                  itemsPerPage:
+                    type: integer
+                  succeeded:
+                    type: boolean
+                  returnCode:
+                    type: integer
+                  message:
+                    type: string
+
+  /api/v2/Verdict/getLawyers:
+    get:
+      summary: Get all lawyers
+      parameters:
+        - name: orderBy
+          in: query
+          schema:
+            type: string
+          description: "Field and order (e.g., 'publishDate DESC')"
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Lawyer'
+                  total:
+                    type: integer
+                  currentPage:
+                    type: integer
+                  itemsPerPage:
+                    type: integer
+                  succeeded:
+                    type: boolean
+                  returnCode:
+                    type: integer
+                  message:
+                    type: string

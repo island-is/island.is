@@ -7,25 +7,16 @@ import {
   buildSection,
   buildTextField,
   getValueViaPath,
+  YES,
 } from '@island.is/application/core'
-import {
-  IdentityDocumentChild,
-  PersonalInfo,
-  Routes,
-} from '../../../lib/constants'
+import { Routes } from '../../../lib/constants'
 import { applicantInformation } from '../../../lib/messages'
 import {
   Application,
   NationalRegistryIndividual,
   UserProfile,
-  YES,
 } from '@island.is/application/types'
-import {
-  getChosenApplicant,
-  hasSecondGuardian,
-  getChildPassport,
-  isChild,
-} from '../../../utils'
+import { hasSecondGuardian, getChildPassport, isChild } from '../../../utils'
 import {} from '../../../utils/hasSecondGuardian'
 
 export const ApplicanInformationSubSection = buildSection({

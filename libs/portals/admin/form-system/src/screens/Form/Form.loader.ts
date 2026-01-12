@@ -1,73 +1,38 @@
 import type { WrappedLoaderFn } from '@island.is/portals/core'
 import { FormSystemFormResponse } from '@island.is/api/schema'
-
-import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import {
-  FormSystemGetFormDocument,
-  FormSystemGetFormQuery,
-} from './Form.generated'
-import {
-  FormSystemGetInputQuery,
-  FormSystemGetInputDocument,
-} from './GetInput.generated'
+  FormLoaderResponse,
+  GET_FORM,
+  LoaderResponse,
+} from '@island.is/form-system/graphql'
+import { removeTypename } from '../../lib/utils/removeTypename'
 
-export interface FormLoaderResponse {
-  formBuilder: FormSystemFormResponse
-  client: ApolloClient<NormalizedCacheObject>
+interface FormLoaderQueryResponse {
+  formSystemForm: FormSystemFormResponse
 }
 
 export const formLoader: WrappedLoaderFn = ({ client }) => {
-  return async ({ params }): Promise<FormLoaderResponse> => {
+  return async ({ params }): Promise<LoaderResponse> => {
     if (!params.formId) {
       throw new Error('FormId not provided in parameters')
     }
-    const { data: formData, error: formError } =
-      await client.query<FormSystemGetFormQuery>({
-        query: FormSystemGetFormDocument,
-        fetchPolicy: 'network-only',
+
+    try {
+      const { data, loading } = await client.query<FormLoaderQueryResponse>({
+        query: GET_FORM,
         variables: {
           input: {
-            id: Number(params.formId),
+            id: params.formId,
           },
         },
+        fetchPolicy: 'no-cache',
       })
-    if (formError) {
-      throw formError
-    }
-    if (!formData) {
-      throw new Error(`No form data found for ${params.formId}`)
-    }
-
-    //Inputs had null values thus I need to fetch them again for some reason...
-    const formBuilder = formData.formSystemGetForm
-    const updatedInputs = formBuilder.form?.inputsList?.length
-      ? await Promise.all(
-          formBuilder.form.inputsList.map(async (input) => {
-            const { data: updatedInput, error: inputError } =
-              await client.query<FormSystemGetInputQuery>({
-                query: FormSystemGetInputDocument,
-                fetchPolicy: 'network-only',
-                variables: {
-                  input: {
-                    id: Number(input?.id),
-                  },
-                },
-              })
-            return updatedInput?.formSystemGetInput
-          }),
-        )
-      : []
-    const updatedFormBuilder = {
-      ...formBuilder,
-      form: {
-        ...formBuilder.form,
-        inputsList: updatedInputs,
-      },
-    }
-
-    return {
-      formBuilder: updatedFormBuilder as FormSystemFormResponse,
-      client,
+      if (!loading && !data) {
+        throw new Error('No form data found')
+      }
+      return removeTypename(data.formSystemForm) as FormLoaderResponse
+    } catch (error) {
+      throw new Error(`Failed to load form: ${error.message}`)
     }
   }
 }

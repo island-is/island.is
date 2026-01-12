@@ -1,8 +1,10 @@
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { getValueViaPath } from '@island.is/application/core'
-import { NationalRegistryIndividual } from '@island.is/application/types'
+import {
+  ExternalData,
+  NationalRegistryIndividual,
+} from '@island.is/application/types'
 import { IdentityDocument, IdentityDocumentChild } from '../lib/constants'
-import { FormValue } from '@island.is/application/types'
 
 export * from './getChosenApplicant'
 export * from './hasSecondGuardian'
@@ -19,38 +21,34 @@ export const formatPhoneNumber = (phoneNumber: string): string => {
   return phone?.formatNational() || phoneNumber
 }
 
-export const hasReviewerApproved = (answers: FormValue): string =>
-  getValueViaPath(answers, 'secondGuardianInformation.approved', '') as string
-
-export const getCombinedApplicantInformation = (externalData: any) => {
-  const applicantName = getValueViaPath(
+export const getCombinedApplicantInformation = (externalData: ExternalData) => {
+  const applicantName = getValueViaPath<string>(
     externalData,
     'nationalRegistry.data.fullName',
     '',
-  ) as string
+  )
 
-  const applicantNationalRegistry = getValueViaPath(
+  const applicantNationalRegistry = getValueViaPath<NationalRegistryIndividual>(
     externalData,
     'nationalRegistry.data',
-    {},
-  ) as NationalRegistryIndividual
+  )
 
-  const applicantPassport = getValueViaPath(
+  const applicantPassport = getValueViaPath<IdentityDocument>(
     externalData,
     'identityDocument.data.userPassport',
-    undefined,
-  ) as IdentityDocument | undefined
+  )
 
-  const applicantChildren = getValueViaPath(
+  const applicantChildren = getValueViaPath<Array<IdentityDocumentChild>>(
     externalData,
     'identityDocument.data.childPassports',
     [],
-  ) as Array<IdentityDocumentChild>
+  )
 
   return {
     name: applicantName,
-    age: applicantNationalRegistry.age,
-    nationalId: applicantNationalRegistry.nationalId,
+    age: applicantNationalRegistry?.age,
+    nationalId: applicantNationalRegistry?.nationalId,
+    citizenship: applicantNationalRegistry?.citizenship,
     passport: applicantPassport,
     children: applicantChildren,
   }

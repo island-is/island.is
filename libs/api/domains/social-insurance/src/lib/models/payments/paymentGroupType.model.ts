@@ -3,7 +3,7 @@ import { registerEnumType } from '@nestjs/graphql'
 export enum PaymentGroupType {
   SUBTRACTION = 'subtraction',
   PAYMENTS = 'payments',
-  PAYED = 'payed',
+  PAID = 'paid',
   DEBT = 'debt',
   UNKNOWN = 'unknown',
 }
@@ -18,7 +18,7 @@ export const mapToPaymentGroupType = (groupId?: number) => {
     case 20:
       return PaymentGroupType.SUBTRACTION
     case 30:
-      return PaymentGroupType.PAYED
+      return PaymentGroupType.PAID
     default:
       return PaymentGroupType.PAYMENTS
   }

@@ -8,7 +8,11 @@ import {
 } from '@island.is/clients/icelandic-government-institution-vacancies'
 import { CacheControl, CacheControlOptions } from '@island.is/nest/graphql'
 import { CACHE_CONTROL_MAX_AGE } from '@island.is/shared/constants'
-import { CmsContentfulService, CmsElasticsearchService } from '@island.is/cms'
+import {
+  CmsContentfulService,
+  CmsElasticsearchService,
+  Vacancy,
+} from '@island.is/cms'
 import { IcelandicGovernmentInstitutionVacanciesInput } from './dto/icelandicGovernmentInstitutionVacancies.input'
 import { IcelandicGovernmentInstitutionVacanciesResponse } from './dto/icelandicGovernmentInstitutionVacanciesResponse'
 import { IcelandicGovernmentInstitutionVacancyByIdInput } from './dto/icelandicGovernmentInstitutionVacancyById.input'
@@ -44,6 +48,7 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
   private async getVacanciesFromExternalSystem(
     input: IcelandicGovernmentInstitutionVacanciesInput,
   ) {
+    let errorOccurred = false
     let vacancies: DefaultApiVacanciesListItem[] = []
 
     try {
@@ -53,6 +58,7 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
         stofnun: input.institution,
       })) as DefaultApiVacanciesListItem[]
     } catch (error) {
+      errorOccurred = true
       if (error instanceof FetchError) {
         this.logger.error(
           'Fetch error occurred when getting vacancies from xroad',
@@ -128,14 +134,26 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
       }
     }
 
-    return mappedVacancies
+    return { vacancies: mappedVacancies, errorOccurred }
   }
 
   private async getVacanciesFromCms() {
-    const vacanciesFromCms = await this.cmsElasticService.getVacancies(
-      getElasticsearchIndex(defaultLang),
-    )
-    return vacanciesFromCms.map(mapVacancyListItemFromCms)
+    let errorOccurred = false
+    let vacanciesFromCms: Vacancy[] = []
+
+    try {
+      vacanciesFromCms = await this.cmsElasticService.getVacancies(
+        getElasticsearchIndex(defaultLang),
+      )
+    } catch (error) {
+      errorOccurred = true
+      this.logger.error(error)
+    }
+
+    return {
+      vacancies: vacanciesFromCms.map(mapVacancyListItemFromCms),
+      errorOccurred,
+    }
   }
 
   @CacheControl({ maxAge: 600 })
@@ -143,15 +161,19 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
   async icelandicGovernmentInstitutionVacancies(
     @Args('input') input: IcelandicGovernmentInstitutionVacanciesInput,
   ): Promise<IcelandicGovernmentInstitutionVacanciesResponse> {
-    const vacanciesFromExternalSystem =
-      await this.getVacanciesFromExternalSystem(input)
-    const vacanciesFromCms = await this.getVacanciesFromCms()
+    const {
+      vacancies: vacanciesFromExternalSystem,
+      errorOccurred: externalSystemErrorOccurred,
+    } = await this.getVacanciesFromExternalSystem(input)
+    const { vacancies: vacanciesFromCms, errorOccurred: cmsErrorOccurred } =
+      await this.getVacanciesFromCms()
 
     const allVacancies = vacanciesFromExternalSystem.concat(vacanciesFromCms)
     sortVacancyList(allVacancies)
 
     return {
       vacancies: allVacancies,
+      fetchErrorOccurred: externalSystemErrorOccurred || cmsErrorOccurred,
     }
   }
 

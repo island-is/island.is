@@ -1,4 +1,5 @@
 import {
+  AddCommentCommand,
   CustomersApi,
   CustomersListDocumentsOrderEnum,
   CustomersListDocumentsSortByEnum,
@@ -31,16 +32,22 @@ export class DocumentsClientV2Service {
      * @param input List input object. Example: { dateFrom: undefined, nationalId: '123' }
      * @returns List object sanitized of unnecessary values. Example: { nationalId: '123' }
      */
-
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const sanitizeObject = function <T extends { [key: string]: any }>(
       obj: T,
     ): T {
       const sanitizedObj = {} as T
+
       for (const key in obj) {
-        if (obj[key] || key === 'opened') {
+        // Include "opened" when false since it's a meaningful falsy value
+        if (obj[key] || (key === 'opened' && obj[key] === false)) {
+          if (Array.isArray(obj[key]) && obj[key].length === 0) {
+            continue
+          }
           sanitizedObj[key] = obj[key]
         }
       }
+
       return sanitizedObj
     }
 
@@ -55,6 +62,7 @@ export class DocumentsClientV2Service {
 
     const inputObject = sanitizeObject({
       ...input,
+      categoryId: input.categoryId === '' ? undefined : input.categoryId,
       kennitala: input.nationalId,
       page: input.page ?? 1,
       senderKennitala:
@@ -70,7 +78,6 @@ export class DocumentsClientV2Service {
     })
 
     const documents = await this.api.customersListDocuments(inputObject)
-
     if (!documents.totalCount) {
       return null
     }
@@ -149,10 +156,7 @@ export class DocumentsClientV2Service {
   updatePaperMailPreference(nationalId: string, wantsPaper: boolean) {
     return this.api.customersUpdatePaperMailPreference({
       kennitala: nationalId,
-      paperMail: {
-        kennitala: nationalId,
-        wantsPaper: wantsPaper,
-      },
+      paperMail: { kennitala: nationalId, wantsPaper },
     })
   }
   async markAllMailAsRead(nationalId: string) {
@@ -245,5 +249,19 @@ export class DocumentsClientV2Service {
       success: true,
       ids: documentIds,
     }
+  }
+
+  async postTicket(
+    nationalId: string,
+    documentId: string,
+    input: AddCommentCommand,
+  ) {
+    return await this.api.apiMailV1CustomersKennitalaMessagesMessageIdCommentsPost(
+      {
+        addCommentCommand: input,
+        kennitala: nationalId,
+        messageId: documentId,
+      },
+    )
   }
 }

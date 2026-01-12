@@ -24,8 +24,25 @@ export enum CaseFileCategory {
   DEFENDANT_APPEAL_STATEMENT_CASE_FILE = 'DEFENDANT_APPEAL_STATEMENT_CASE_FILE', // Verjandi: Fylgigögn greinargerðar
   PROSECUTOR_APPEAL_CASE_FILE = 'PROSECUTOR_APPEAL_CASE_FILE', // Sækjandi: Viðbótargögn við kæru til Landsréttar
   DEFENDANT_APPEAL_CASE_FILE = 'DEFENDANT_APPEAL_CASE_FILE', // Verjandi: Viðbótargögn við kæru til Landsréttar
+  INDEPENDENT_DEFENDANT_CASE_FILE = 'INDEPENDENT_DEFENDANT_CASE_FILE', // Varnaraðili: Innsend gögn í dómssal
+  CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE = 'CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE', // Lögmaður: Innsend gögn í dómssal
+  CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE = 'CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE', // Réttargæslumaður: Innsend gögn í dómssal
   APPEAL_COURT_RECORD = 'APPEAL_COURT_RECORD',
   APPEAL_RULING = 'APPEAL_RULING',
   CIVIL_CLAIM = 'CIVIL_CLAIM',
   SENT_TO_PRISON_ADMIN_FILE = 'SENT_TO_PRISON_ADMIN_FILE',
+  COURT_INDICTMENT_RULING_ORDER = 'COURT_INDICTMENT_RULING_ORDER', // dómari: úrskurðarskjal undir rekstri máls
+}
+
+// MD5 was used as file hashing algorithm until (TODO: add date) but was updated to SHA256 to avoid the probability
+// of hash collision between files in our system. Since we still store MD5 alg types with each file hash
+// in the db for historical purposes, we support both types here.
+export enum HashAlgorithm {
+  MD5 = 'MD5',
+  SHA256 = 'SHA256',
+}
+
+export enum PoliceFileTypeCode {
+  SUBPOENA = 'BRTNG',
+  VERDICT = 'BRTNG_DOMUR',
 }

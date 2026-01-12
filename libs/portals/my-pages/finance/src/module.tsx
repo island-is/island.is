@@ -4,8 +4,12 @@ import { m } from '@island.is/portals/my-pages/core'
 import { PortalModule } from '@island.is/portals/core'
 import { FinancePaths } from './lib/paths'
 import { Navigate } from 'react-router-dom'
-import { financeRoutesLoader } from './screens/FinanceRoutes.loader'
+import {
+  financeDomainLoader,
+  financeRoutesLoader,
+} from './screens/FinanceRoutes.loader'
 import { redirects } from './financeRedirects'
+import FinanceTransactionsVehicleMileage from './screens/FinanceTransactionsVehicleMileage'
 
 const FinanceStatus = lazy(() => import('./screens/FinanceStatus'))
 const FinanceBills = lazy(() => import('./screens/FinanceBills'))
@@ -42,17 +46,27 @@ export const financeModule: PortalModule = {
       path: FinancePaths.FinanceStatus,
       enabled: userInfo.scopes.includes(ApiScope.financeOverview),
       element: <FinanceStatus />,
+      loader: financeDomainLoader({ userInfo, ...rest }),
     },
     {
       name: m.financeBills,
       path: FinancePaths.FinancePaymentsBills,
       enabled: userInfo.scopes.includes(ApiScope.financeOverview),
       element: <FinanceBills />,
+      loader: financeDomainLoader({ userInfo, ...rest }),
     },
     {
       name: m.financeTransactionsCategories,
       path: FinancePaths.FinanceTransactionCategories,
       element: <FinanceTransactionsCategories />,
+      enabled: userInfo.scopes.includes(ApiScope.financeOverview),
+      dynamic: true,
+      loader: financeRoutesLoader({ userInfo, ...rest }),
+    },
+    {
+      name: m.financeTransactionsVehiclesMileage,
+      path: FinancePaths.FinanceTransactionVehicleMileage,
+      element: <FinanceTransactionsVehicleMileage />,
       enabled: userInfo.scopes.includes(ApiScope.financeOverview),
       dynamic: true,
       loader: financeRoutesLoader({ userInfo, ...rest }),
@@ -84,7 +98,7 @@ export const financeModule: PortalModule = {
     },
     {
       name: m.financeSchedules,
-      path: FinancePaths.FinancePaymentsSchedule,
+      path: FinancePaths.FinancePaymentsSchedule, //
       enabled: userInfo.scopes.includes(ApiScope.financeSchedule),
       element: <FinanceSchedule />,
       dynamic: true,
@@ -95,14 +109,12 @@ export const financeModule: PortalModule = {
       path: FinancePaths.FinancePaymentsHousingBenefits,
       enabled: userInfo.scopes.includes(ApiScope.financeOverview),
       element: <FinanceHousingBenefits />,
-      key: 'HousingBenefits',
     },
     {
       name: m.financeLoans,
       path: FinancePaths.FinanceLoans,
       enabled: userInfo.scopes.includes(ApiScope.financeOverview),
       element: <FinanceLoans />,
-      key: 'FinanceHmsLoans',
     },
     ...redirects,
   ],

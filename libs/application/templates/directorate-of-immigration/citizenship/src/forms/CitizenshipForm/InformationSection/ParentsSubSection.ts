@@ -2,11 +2,9 @@ import {
   buildMultiField,
   buildSubSection,
   buildCustomField,
-  getValueViaPath,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
 import { Routes } from '../../../lib/constants'
-import { ApplicantInformation } from '../../../shared'
 
 export const ParentsSubSection = buildSubSection({
   id: Routes.PARENTINFORMATION,
@@ -45,7 +43,6 @@ export const ParentsSubSection = buildSubSection({
       children: [
         buildCustomField({
           id: 'parentInformation',
-          title: '',
           description: '',
           component: 'Parents',
         }),

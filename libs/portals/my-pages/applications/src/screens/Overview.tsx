@@ -2,7 +2,6 @@ import { useState } from 'react'
 import {
   APPLICATION_SERVICE_PROVIDER_SLUG,
   ActionCardLoader,
-  EmptyState,
   FootNote,
   IntroHeader,
   m as coreMessage,
@@ -15,7 +14,7 @@ import {
   Select,
 } from '@island.is/island-ui/core'
 import {
-  useApplications,
+  useApplicationCards,
   useGetOrganizationsQuery,
 } from '@island.is/portals/my-pages/graphql'
 import { useLocale, useNamespaces } from '@island.is/localization'
@@ -32,7 +31,7 @@ import {
   InstitutionOption,
 } from '../shared/types'
 import { ApplicationGroup } from '../components/ApplicationGroup'
-import { Application } from '@island.is/application/types'
+import { Application, ApplicationCard } from '@island.is/application/types'
 import { Problem } from '@island.is/react-spa/shared'
 
 const defaultInstitution: InstitutionOption = {
@@ -46,10 +45,14 @@ const defaultFilterValues: FilterValues = {
 }
 
 const Overview = () => {
-  useNamespaces('sp.applications')
-  useNamespaces('application.system')
+  useNamespaces(['sp.applications', 'application.system'])
   const { formatMessage, locale } = useLocale()
-  const { data: applications, loading, error, refetch } = useApplications()
+  const {
+    data: applicationCards,
+    loading,
+    error,
+    refetch,
+  } = useApplicationCards()
   const location = useLocation()
   const statusToShow = mapLinkToStatus(location.pathname)
   let focusedApplication: Application | undefined
@@ -85,19 +88,20 @@ const Overview = () => {
 
   const institutions = getInstitutions(
     defaultInstitution,
-    applications,
+    applicationCards,
     organizations,
   )
 
-  if (applications && location.hash) {
-    focusedApplication = applications.find(
-      (item: Application) => item.id === location.hash.slice(1),
+  if (applicationCards && location.hash) {
+    focusedApplication = applicationCards.find(
+      (item: Application & ApplicationCard) =>
+        item.id === location.hash.slice(1),
     )
   }
 
   const applicationsSortedByStatus = getFilteredApplicationsByStatus(
     filterValue,
-    applications,
+    applicationCards,
     focusedApplication?.id,
   )
 
@@ -131,7 +135,7 @@ const Overview = () => {
   }
 
   const noApplications =
-    (applications.length === 0 && !focusedApplication) ||
+    (applicationCards.length === 0 && !focusedApplication) ||
     (statusToShow === ApplicationOverViewStatus.incomplete &&
       applicationsSortedByStatus.incomplete.length === 0) ||
     (statusToShow === ApplicationOverViewStatus.inProgress &&
@@ -147,14 +151,14 @@ const Overview = () => {
         serviceProviderSlug={APPLICATION_SERVICE_PROVIDER_SLUG}
       />
       {(loading || loadingOrg || !orgData) && <ActionCardLoader repeat={3} />}
-      {(error || (!loading && !applications)) && (
+      {(error || (!loading && !applicationCards)) && (
         <Problem error={error} noBorder={false} />
       )}
-      {applications &&
-        applications.length > 0 &&
+      {applicationCards &&
+        applicationCards.length > 0 &&
         orgData &&
-        !loading &&
         !loadingOrg &&
+        !loading &&
         !error && (
           <>
             <Box paddingBottom={[3, 5]}>

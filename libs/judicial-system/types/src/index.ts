@@ -5,13 +5,41 @@ export {
   DefenderChoice,
   SubpoenaType,
   DefendantPlea,
-  ServiceRequirement,
   ServiceStatus,
+  VerdictServiceStatus,
   PunishmentType,
   isSuccessfulServiceStatus,
   isFailedServiceStatus,
 } from './lib/defendant'
-export { InstitutionType } from './lib/institution'
+
+export {
+  ServiceRequirement,
+  VerdictAppealDecision,
+  InformationForDefendant,
+  informationForDefendantMap,
+  mapPoliceVerdictDeliveryStatus,
+} from './lib/verdict'
+
+export { CourtSessionStringType } from './lib/courtSessionString'
+export {
+  isSubpoenaInfoChanged,
+  isVerdictInfoChanged,
+  DocumentDeliverySupplementCode,
+  DocumentDeliveryMethod,
+  getServiceDateFromSupplements,
+} from './lib/policeDocument'
+export type {
+  SubpoenaPoliceDocumentInfo,
+  VerdictPoliceDocumentInfo,
+} from './lib/policeDocument'
+
+export {
+  InstitutionType,
+  prosecutorsOfficeTypes,
+  isProsecutorsOffice,
+} from './lib/institution'
+export type { Institution } from './lib/institution'
+
 export {
   CaseNotificationType,
   SubpoenaNotificationType,
@@ -24,24 +52,35 @@ export {
   EventNotificationType,
   notificationTypes,
 } from './lib/notification'
-export type { Institution } from './lib/institution'
+
 export {
   EventType,
   eventTypes,
   DefendantEventType,
   defendantEventTypes,
 } from './lib/eventLog'
+
 export { DateType, dateTypes } from './lib/dateLog'
+
 export { StringType, stringTypes } from './lib/caseString'
 
-export { CaseFileState, CaseFileCategory } from './lib/file'
+export {
+  CaseFileState,
+  CaseFileCategory,
+  HashAlgorithm,
+  PoliceFileTypeCode,
+} from './lib/file'
 
 export {
   UserRole,
+  DefenderSubRole,
   prosecutionRoles,
   isProsecutionUser,
-  publicProsecutorRoles,
-  isPublicProsecutorUser,
+  isProsecutorUser,
+  isProsecutorRepresentativeUser,
+  getContactInformation,
+  publicProsecutionOfficeRoles,
+  isPublicProsecutionOfficeUser,
   districtCourtRoles,
   isDistrictCourtUser,
   courtOfAppealsRoles,
@@ -54,16 +93,24 @@ export {
   isAdminUser,
   isCoreUser,
   isPrisonAdminUser,
-  isPublicProsecutor,
+  isPublicProsecutionUser,
+  getAdminUserInstitutionScope,
+  getAdminUserInstitutionUserRoles,
 } from './lib/user'
-export type { User } from './lib/user'
+export type { User, UserDescriptor, InstitutionUser } from './lib/user'
+
+export { DataGroups } from './lib/statistics'
 
 export {
   CaseOrigin,
   CaseType,
   IndictmentSubtype,
+  deprecatedIndictmentSubtypes,
   CaseState,
   IndictmentCaseState,
+  IndictmentCaseSubtypes,
+  type Subtype,
+  courtSubtypes,
   CaseAppealState,
   RequestCaseState,
   CaseTransition,
@@ -76,6 +123,7 @@ export {
   CaseAppealRulingDecision,
   CaseIndictmentRulingDecision,
   RequestSharedWithDefender,
+  RequestSharedWhen,
   SessionArrangements,
   indictmentCases,
   restrictionCases,
@@ -87,11 +135,11 @@ export {
   isInvestigationCase,
   isRequestCase,
   isAcceptingCaseDecision,
-  isTrafficViolationCase,
   completedRequestCaseStates,
   completedIndictmentCaseStates,
   completedCaseStates,
   isCompletedCase,
+  isRulingOrDismissalCase,
   hasIndictmentCaseBeenSubmittedToCourt,
   getStatementDeadline,
   isIndictmentCaseState,
@@ -102,11 +150,17 @@ export {
   courtSessionTypeNames,
 } from './lib/case'
 
+export { getIndictmentVerdictAppealDeadlineStatus } from './lib/indictmentCase'
+export type { VerdictInfo } from './lib/indictmentCase'
+
 export {
-  getIndictmentVerdictAppealDeadlineStatus,
+  getDefendantServiceDate,
+  getIndictmentAppealDeadline,
+  getAppealDeadlineDate,
+  hasDatePassed,
+  hasTimestamp,
   VERDICT_APPEAL_WINDOW_DAYS,
-  FINE_APPEAL_WINDOW_DAYS,
-} from './lib/indictmentCase'
+} from './lib/dates'
 
 export type {
   CrimeScene,
@@ -116,12 +170,36 @@ export type {
 
 export {
   IndictmentCountOffense,
-  Substance,
   offenseSubstances,
+  isTrafficViolationIndictmentCount,
+  getIndictmentCountCompare,
 } from './lib/indictmentCount'
-
-export { type Lawyer, mapToLawyer } from './lib/lawyer'
-
 export type { SubstanceMap } from './lib/indictmentCount'
 
-export type { CourtDocument } from './lib/courtDocument'
+export { Substance } from './lib/substances'
+
+export {
+  type Lawyer,
+  mapToLawyer,
+  type LawyerFull,
+  type LawyerRegistry,
+  LawyerType,
+} from './lib/lawyer'
+
+export { type CourtDocument } from './lib/courtDocument'
+
+export {
+  CourtSessionClosedLegalBasis,
+  CourtSessionRulingType,
+  CourtDocumentType,
+  hasGeneratedCourtRecordPdf,
+} from './lib/courtSession'
+
+export { type CaseTableColumnKey } from './lib/tables/caseTableColumnTypes'
+export { getCaseTableType, caseTables } from './lib/tables/caseTable'
+export {
+  CaseActionType,
+  ContextMenuCaseActionType,
+  CaseTableType,
+} from './lib/tables/caseTableTypes'
+export { getCaseTableGroups } from './lib/tables/caseTableGroup'

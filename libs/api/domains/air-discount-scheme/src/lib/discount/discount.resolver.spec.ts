@@ -9,6 +9,7 @@ import {
 } from '@island.is/air-discount-scheme/types'
 import { ApiScope } from '@island.is/auth/scopes'
 import { Discount } from '../models/discount.model'
+import { FeatureFlagService } from '@island.is/nest/feature-flags'
 type DiscountWithTUser = Discount & { user: TUser }
 
 describe('ApiDomains: DiscountResolver', () => {
@@ -108,6 +109,12 @@ describe('ApiDomains: DiscountResolver', () => {
               }
               return userRelationsResponse
             }),
+          }),
+        },
+        {
+          provide: FeatureFlagService,
+          useFactory: () => ({
+            getValue: jest.fn().mockResolvedValue(false),
           }),
         },
       ],

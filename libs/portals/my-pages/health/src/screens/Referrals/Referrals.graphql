@@ -1,0 +1,40 @@
+fragment Referral on HealthDirectorateReferral {
+  id
+  serviceName
+  validUntilDate
+  stateDisplay
+}
+
+query GetReferrals($locale: String) {
+  healthDirectorateReferrals(locale: $locale) {
+    referrals {
+      ...Referral
+    }
+  }
+}
+
+query GetReferralsDetail(
+  $locale: String
+  $input: HealthDirectorateReferralInput!
+) {
+  healthDirectorateReferral(locale: $locale, input: $input) {
+    data {
+      ...Referral
+      createdDate
+      reason
+      diagnoses
+      fromContactInfo {
+        name
+        profession
+        department
+        institute
+      }
+      toContactInfo {
+        name
+        profession
+        department
+        institute
+      }
+    }
+  }
+}

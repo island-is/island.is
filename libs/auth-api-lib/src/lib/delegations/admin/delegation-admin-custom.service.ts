@@ -25,7 +25,11 @@ import { DelegationScopeService } from '../delegation-scope.service'
 import { CreatePaperDelegationDto } from '../dto/create-paper-delegation.dto'
 import { DelegationDTO } from '../dto/delegation.dto'
 import { NamesService } from '../names.service'
-import { DELEGATION_TAG, ZENDESK_CUSTOM_FIELDS } from '../constants/zendesk'
+import {
+  DELEGATION_REVOKE_TAG,
+  DELEGATION_TAG,
+  ZENDESK_CUSTOM_FIELDS,
+} from '../constants/zendesk'
 import { DelegationDelegationType } from '../models/delegation-delegation-type.model'
 import { DelegationsIncomingCustomService } from '../delegations-incoming-custom.service'
 import { DelegationValidity } from '../types/delegationValidity'
@@ -192,7 +196,58 @@ export class DelegationAdminCustomService {
       createdBy: createdByNationalId,
     })
 
+    void this.delegationIndexService.indexGeneralMandateDelegations(
+      toNationalId,
+    )
+
     return resp.toDTO(AuthDelegationType.GeneralMandate)
+  }
+
+  async deleteDelegationByZendeskId(zendeskId: string): Promise<boolean> {
+    console.log('deleteDelegationByZendeskId', zendeskId)
+    const zendeskCase = await this.zendeskService.getTicket(zendeskId)
+
+    const { fromReferenceId: fromNationalId, toReferenceId: toNationalId } =
+      this.getZendeskCustomFields(zendeskCase)
+
+    this.validatePersonsNationalIds(toNationalId, fromNationalId)
+
+    if (!zendeskCase.tags.includes(DELEGATION_REVOKE_TAG)) {
+      throw new BadRequestException({
+        message: 'Zendesk case is missing required tag',
+        error: ErrorCodes.ZENDESK_TAG_MISSING,
+      })
+    }
+
+    if (zendeskCase.status !== TicketStatus.Solved) {
+      throw new BadRequestException({
+        message: 'Zendesk case is not solved',
+        error: ErrorCodes.ZENDESK_STATUS,
+      })
+    }
+
+    const delegation = await this.delegationModel.findOne({
+      where: {
+        fromNationalId,
+        toNationalId,
+      },
+    })
+
+    if (!delegation) {
+      throw new NoContentException()
+    }
+
+    const count = await this.delegationModel.destroy({
+      where: {
+        id: delegation.id,
+      },
+    })
+
+    void this.delegationIndexService.indexGeneralMandateDelegations(
+      toNationalId,
+    )
+
+    return count > 0
   }
 
   async createDelegation(

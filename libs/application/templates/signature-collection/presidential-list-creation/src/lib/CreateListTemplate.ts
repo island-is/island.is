@@ -6,22 +6,19 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   DefaultEvents,
-  NationalRegistryUserApi,
-  StateLifeCycle,
-  UserProfileApi,
   defineTemplateApi,
+  NationalRegistryV3UserApi,
+  UserProfileApi,
 } from '@island.is/application/types'
 import { ApiActions, Events, Roles, States } from './constants'
 import { dataSchema } from './dataSchema'
 import { m } from './messages'
-import { EphemeralStateLifeCycle } from '@island.is/application/core'
-import { OwnerRequirementsApi, CurrentCollectionApi } from '../dataProviders'
-
-const WeekLifeCycle: StateLifeCycle = {
-  shouldBeListed: false,
-  shouldBePruned: true,
-  whenToPrune: 1000 * 3600 * 24 * 7,
-}
+import {
+  EphemeralStateLifeCycle,
+  pruneAfterDays,
+} from '@island.is/application/core'
+import { OwnerRequirementsApi, LatestCollectionApi } from '../dataProviders'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const CreateListTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -30,6 +27,7 @@ const CreateListTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.PRESIDENTIAL_LIST_CREATION,
   name: m.applicationName,
+  codeOwner: CodeOwners.Juni,
   institution: m.institution,
   dataSchema,
   stateMachineConfig: {
@@ -59,10 +57,10 @@ const CreateListTemplate: ApplicationTemplate<
               read: 'all',
               delete: true,
               api: [
-                NationalRegistryUserApi,
+                NationalRegistryV3UserApi,
                 UserProfileApi,
                 OwnerRequirementsApi,
-                CurrentCollectionApi,
+                LatestCollectionApi,
               ],
             },
           ],
@@ -77,7 +75,7 @@ const CreateListTemplate: ApplicationTemplate<
         meta: {
           name: m.applicationName.defaultMessage,
           status: 'draft',
-          lifecycle: WeekLifeCycle,
+          lifecycle: pruneAfterDays(7),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -114,7 +112,7 @@ const CreateListTemplate: ApplicationTemplate<
           name: 'Done',
           status: 'completed',
           progress: 1,
-          lifecycle: WeekLifeCycle,
+          lifecycle: pruneAfterDays(30),
           onEntry: defineTemplateApi({
             action: ApiActions.submitApplication,
             shouldPersistToExternalData: true,

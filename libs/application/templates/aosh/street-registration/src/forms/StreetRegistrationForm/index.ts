@@ -1,7 +1,7 @@
 import { buildForm, buildSection } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { informationSection } from './InformationSection'
-import { Logo } from '../../assets/Logo'
+import { AoshLogo } from '@island.is/application/assets/institution-logos'
 import {
   buildFormConclusionSection,
   buildFormPaymentChargeOverviewSection,
@@ -11,8 +11,7 @@ import { getChargeItems } from '../../utils'
 
 export const StreetRegistrationForm: Form = buildForm({
   id: 'StreetRegistrationFormDraft',
-  title: '',
-  logo: Logo,
+  logo: AoshLogo,
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,

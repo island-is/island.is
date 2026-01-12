@@ -12,7 +12,7 @@ import {
 } from '@island.is/application/core'
 import { Form, FormModes, DefaultEvents } from '@island.is/application/types'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
-import { Logo } from '../assets/Logo'
+import { MinistryOfFinanceAndLocalAffairsLogo } from '@island.is/application/assets/institution-logos'
 import {
   section,
   application,
@@ -32,7 +32,7 @@ export const FundingGovernmentProjectsForm: Form = buildForm({
   id: 'FundingGovernmentProjectsForm',
   title: application.name,
   mode: FormModes.DRAFT,
-  logo: Logo,
+  logo: MinistryOfFinanceAndLocalAffairsLogo,
   children: [
     buildSection({
       id: 'informationAboutInstitution',
@@ -123,7 +123,6 @@ export const FundingGovernmentProjectsForm: Form = buildForm({
             }),
             buildSliderField({
               id: 'project.refundableYears',
-              title: '',
               label: {
                 singular: shared.yearSingular,
                 plural: shared.yearPlural,
@@ -159,7 +158,6 @@ export const FundingGovernmentProjectsForm: Form = buildForm({
             ),
             buildFileUploadField({
               id: 'project.attachments',
-              title: '',
               introduction: '',
               maxSize: FILE_SIZE_LIMIT,
               uploadHeader: project.labels.attachmentsUploadHeader,
@@ -187,7 +185,6 @@ export const FundingGovernmentProjectsForm: Form = buildForm({
             }),
             buildSubmitField({
               id: 'overview.submitField',
-              title: '',
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,

@@ -1,5 +1,6 @@
 import {
   Application,
+  ApplicationConfigurations,
   ApplicationContext,
   ApplicationRole,
   ApplicationStateSchema,
@@ -12,6 +13,7 @@ import { DefaultStateLifeCycle } from '@island.is/application/core'
 
 import { institutionApplicationMessages as m } from './messages'
 import { dataSchema } from './dataSchema'
+import { CodeOwners } from '@island.is/shared/constants'
 
 type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.ABORT }
 
@@ -24,7 +26,7 @@ enum Roles {
   APPLICANT = 'applicant',
 }
 
-enum TEMPLATE_API_ACTIONS {
+enum TemplateApiActions {
   // Has to match name of action in template API module
   // (will be refactored when state machine is a part of API module)
   sendApplication = 'sendApplication',
@@ -36,8 +38,11 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.INSTITUTION_COLLABORATION,
   name: m.application.applicationName,
+  codeOwner: CodeOwners.NordaApplications,
   institution: m.application.institutionName,
   dataSchema,
+  translationNamespaces:
+    ApplicationConfigurations.InstitutionCollaboration.translation,
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {
@@ -89,7 +94,7 @@ const template: ApplicationTemplate<
             },
           ],
           onEntry: defineTemplateApi({
-            action: TEMPLATE_API_ACTIONS.sendApplication,
+            action: TemplateApiActions.sendApplication,
           }),
         },
       },

@@ -1,6 +1,18 @@
 import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
+  documentProvidersNoData: {
+    id: 'portals-admin.document-provider:document-providers-no-data',
+    defaultMessage: 'Engin gögn...',
+  },
+  statisticsBoxBenefit: {
+    id: 'portals-admin.document-provider:statistics-box-benefit',
+    defaultMessage: 'Ávinningur',
+  },
+  statisticsBoxBenefitInCrowns: {
+    id: 'portals-admin.document-provider:statistics-box-benefit-in-crowns',
+    defaultMessage: 'Ávinningur í krónum',
+  },
   // navigation
   rootName: {
     id: 'portals-admin.document-provider:title',
@@ -90,6 +102,16 @@ export const m = defineMessages({
     defaultMessage: 'Skoða tölfræði',
   },
 
+  //Charts
+  sentFilesAndErrors: {
+    id: 'portals-admin.document-provider:sent-files-and-errors',
+    defaultMessage: 'Skjöl afhend og villur',
+  },
+  sentErrors: {
+    id: 'portals-admin.document-provider:sent-errors',
+    defaultMessage: 'Villur',
+  },
+
   //DocumentProviders
   documentProvidersTitle: {
     id: 'portals-admin.document-provider:document-providers-title',
@@ -97,8 +119,7 @@ export const m = defineMessages({
   },
   documentProvidersDescription: {
     id: 'portals-admin.document-provider:document-providers-description',
-    defaultMessage:
-      'Hér getur þú fundið alla þá skjalaveitur sem nota pósthólf á island.is',
+    defaultMessage: 'Ítarlegar upplýsingar um skjalaveitur',
   },
   documentProvidersSearchPlaceholder: {
     id: 'portals-admin.document-provider:document-providers-search-placeholder',
@@ -195,6 +216,7 @@ export const m = defineMessages({
     id: 'portals-admin.document-provider:document-providers-single-institution-phonenumber-label',
     defaultMessage: 'Símanúmer',
   },
+
   SingleProviderInstitutionPhonenumberPlaceholder: {
     id: 'portals-admin.document-provider:document-providers-single-institution-phonenumber-placeholder',
     defaultMessage: 'Símanúmer',
@@ -223,6 +245,14 @@ export const m = defineMessages({
     id: 'portals-admin.document-provider:document-providers-single-institution-address-error',
     defaultMessage: 'Heimilisfang er skilyrt',
   },
+  SingleProviderInstitutionZendeskIdLabel: {
+    id: 'portals-admin.document-provider:document-providers-single-institution-zendeskid-label',
+    defaultMessage: 'Zendesk ID',
+  },
+  SingleProviderInstitutionZendeskIdPlaceholder: {
+    id: 'portals-admin.document-provider:document-providers-single-institution-zendeskid-placeholder',
+    defaultMessage: 'Zendesk ID',
+  },
   SingleProviderUpdateInformationError: {
     id: 'portals-admin.document-provider:document-providers-single-update-information-error',
     defaultMessage: 'Ekki tókst að uppfæra upplýsingar',
@@ -231,7 +261,6 @@ export const m = defineMessages({
     id: 'portals-admin.document-provider:document-providers-single-update-information-success',
     defaultMessage: 'Upplýsingar uppfærðar!',
   },
-
   //DocumentProvidersSingleResponsibleContact
   SingleProviderResponsibleContactHeading: {
     id: 'portals-admin.document-provider:document-providers-single-responsible-contact-heading',
@@ -729,6 +758,10 @@ export const m = defineMessages({
     id: 'portals-admin.document-provider:statistics-search-placeholder',
     defaultMessage: 'Leitaðu eftir skjalaveitanda',
   },
+  statisticsDescription6months: {
+    id: 'portals-admin.document-provider:statistics-description-6-months',
+    defaultMessage: 'Hér er tölfræði síðustu 6 mánuða',
+  },
 
   //Statistics boxes
   statisticsBoxOrganisationsCount: {
@@ -742,6 +775,22 @@ export const m = defineMessages({
   statisticsBoxOpenedDocuments: {
     id: 'portals-admin.document-provider:statistics-box-opened-documents',
     defaultMessage: 'Opnuð skjöl',
+  },
+  statisticsBoxUnopenedDocuments: {
+    id: 'portals-admin.document-provider:statistics-box-unopened-documents',
+    defaultMessage: 'Óopnuð skjöl',
+  },
+  openedDocuments: {
+    id: 'portals-admin.document-provider:opened-documents',
+    defaultMessage: 'Opnuð skjöl',
+  },
+  documentProvidersList: {
+    id: 'portals-admin.document-provider:document-providers-list',
+    defaultMessage: 'Skjalaveitendur',
+  },
+  links: {
+    id: 'portals-admin.document-provider:links',
+    defaultMessage: 'Links',
   },
   statisticsBoxNotifications: {
     id: 'portals-admin.document-provider:statistics-box-notifications',
@@ -758,6 +807,10 @@ export const m = defineMessages({
   statisticsBoxNetworkError: {
     id: 'portals-admin.document-provider:statistics-box-network-error',
     defaultMessage: 'Ekki tókst að sækja tölfræði',
+  },
+  statisticsBoxFailures: {
+    id: 'portals-admin.document-provider:failures',
+    defaultMessage: 'Mistök við afhendingu',
   },
 
   // Paper
@@ -803,6 +856,10 @@ export const m = defineMessages({
   catAndTypeName: {
     id: 'portals-admin.document-provider:category-types-name',
     defaultMessage: 'Flokkar og Tegundir',
+  },
+  providersList: {
+    id: 'portals-admin.document-provider:providers-list',
+    defaultMessage: 'Skjalaveitendur',
   },
   catAndTypeTitle: {
     id: 'portals-admin.document-provider:category-types-title',

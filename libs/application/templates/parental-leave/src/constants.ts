@@ -2,8 +2,6 @@ import { DefaultEvents } from '@island.is/application/types'
 import { MessageDescriptor } from 'react-intl'
 import { parentalLeaveFormMessages } from './lib/messages'
 
-export const YES = 'yes'
-export const NO = 'no'
 export const MANUAL = 'manual'
 export const SPOUSE = 'spouse'
 export const SINGLE = 'single'
@@ -40,7 +38,7 @@ export type Events =
 export enum Roles {
   APPLICANT = 'applicant',
   ASSIGNEE = 'assignee',
-  ORGINISATION_REVIEWER = 'vmst',
+  ORGANISATION_REVIEWER = 'vmst',
 }
 
 export enum UnEmployedBenefitTypes {
@@ -73,6 +71,7 @@ export enum ApiModuleActions {
    */
   setVMSTPeriods = 'setVMSTPeriods',
   setApplicationRights = 'setApplicationRights',
+  setOtherParent = 'setOtherParent',
 }
 
 export enum StartDateOptions {

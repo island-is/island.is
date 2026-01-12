@@ -39,14 +39,50 @@ export const additionalSupportForTheElderyFormMessage: MessageDir = {
         'Veldu tímabil sem þú vilt byrja að fá greiddan félagslegan viðbótastuðning. Hægt er að sækja um fyrir þrjá mánuði aftur í tímann.',
       description: `english translation`,
     },
-  }),
-
-  fileUpload: defineMessages({
-    additionalFileDescription: {
-      id: 'asfte.application:fileUpload.additionalFile.description',
+    instructionsShortTitle: {
+      id: 'asfte.application:info.instructions.shortTitle',
+      defaultMessage: 'Upplýsingar',
+      description: 'Information',
+    },
+    instructionsTitle: {
+      id: 'asfte.application:info.instructions.title',
+      defaultMessage: 'Upplýsingar til umsækjanda',
+      description: 'Information for applicant',
+    },
+    instructionsDescription: {
+      id: 'asfte.application:info.instructions.description#markdown',
       defaultMessage:
-        'Hér getur þú skilað viðbótargögnum til Tryggingastofnunar. Til dæmis dvalarleyfi frá útlendingastofnun (skila þarf inn báðum hliðum dvalarleyfis).',
-      description: 'english description',
+        '* Það sem þú þarft að gera til þess að þessi umsókn taki gildi: Mæta í þjónustumiðstöð/umboð og framvísa gildu persónuskilríki (ökuskírteini, nafnskírteini eða vegabréf) innan við 30 daga frá því að þú sendir inn þessa umsókn.\n* Það sem þú þarft að gera til þess að viðhalda réttinum til félagslegs viðbótarstuðnings: Mæta árlega í þjónustumiðstöð/umboð og framvísa gildu persónuskilríki (ökuskírteini, nafnskírteini eða vegabréf).\n* Til að halda áfram og ljúka umsókninni þarftu að merkja við að þú hafir lesið og skilið þessa skilmála.',
+      description: 'Information on conditions regarding asfte application',
+    },
+    instructionsCheckbox: {
+      id: 'asfte.application:info.instructions.checkbox',
+      defaultMessage: 'Ég staðfesti að ég hef lesið ofangreindar upplýsingar.',
+      description: 'I confirm that I have read the above information.',
+    },
+    higherPaymentsTitle: {
+      id: 'asfte.application:info.higher.payments.title',
+      defaultMessage: 'Vilt þú sækja um hærri greiðslur?',
+      description: 'Would you like to apply for higher payments?',
+    },
+    higherPaymentsDescription: {
+      id: 'asfte.application:info.higher.payments.description',
+      defaultMessage:
+        'Þeir sem búa einir og deila ekki eldunar- eða salernisaðstöðu með öðrum geta átt rétt á hærri greiðslum. Samkvæmt Þjóðskrá býrð þú ein/n. Vilt þú sækja um?',
+      description:
+        'Those who live alone and do not share cooking or bathroom facilities with others may be entitled to higher payments. According to Registers Iceland you live alone. Would you like to apply?',
+    },
+    higherPaymentsCohabTitle: {
+      id: 'asfte.application:info.higher.payments.cohab.title',
+      defaultMessage: 'Hærri greiðslur fyrir þá sem búa einir',
+      description: 'Higher payments for those who live alone',
+    },
+    higherPaymentsCohabDescription: {
+      id: 'asfte.application:info.higher.payments.cohab.description',
+      defaultMessage:
+        'Þeir sem búa einir og deila ekki eldunar- eða salernisaðstöðu með öðrum geta átt rétt á hærri greiðslum. Samkvæmt Þjóðskrá býrð þú ekki ein/n. Breytist aðstæður þínar getur þú sótt aftur um félagslegan viðbótarstuðning með hærri greiðslum, eftir að þú hefur uppfært skráningu þína í Þjóðskrá.',
+      description:
+        'Those who live alone and do not share cooking or bathroom facilities with others may be entitled to higher payments. According to Registers Iceland you do not live alone. Should your circumstances change, you can re-apply for additional support for the elderly and receive higher payments, after you have changed your cohabitation information at Registers Iceland.',
     },
   }),
 
@@ -80,5 +116,19 @@ export const statesMessages = defineMessages({
       'Umsókn vegna félagsleg viðbótarstuðnings við aldraða hefur verið samþykkt',
     description:
       'The application for additional support for the elderly has been approved',
+  },
+  asfteDismissed: {
+    id: 'asfte.application:application.dismissed',
+    defaultMessage:
+      'Tryggingastofnun hefur vísað umsókn þinni um félagslegan viðbótarstuðning frá',
+    description:
+      'Tryggingastofnun has dismissed your additional support for the elderly application',
+  },
+  asfteDismissedDescription: {
+    id: 'asfte.application:application.dismissed.description',
+    defaultMessage:
+      'Umsókn þinni um félagslegan viðbótarstuðning hefur verið vísað frá',
+    description:
+      'Your additional support for the elderly application has been dimissed',
   },
 })

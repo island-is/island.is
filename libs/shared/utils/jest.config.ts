@@ -4,6 +4,7 @@ export default {
   preset: './jest.preset.js',
   rootDir: '../../..',
   roots: [__dirname],
+  detectLeaks: false,
   globals: {},
   transform: {
     '^.+\\.[tj]sx?$': [

@@ -74,22 +74,28 @@ export const InvolvedPartyScreen = ({
       loading={loading}
     >
       <Box>
-        <Stack space={2}>
-          {involvedParties?.length === 0 && (
-            <AlertMessage
-              type="warning"
-              title={f(involvedParty.errors.noDataTitle)}
-              message={f(involvedParty.errors.noDataMessage)}
-            />
-          )}
-          {!!error && (
-            <AlertMessage
-              type="error"
-              title={f(involvedParty.errors.title)}
-              message={f(involvedParty.errors.message)}
-            />
-          )}
-        </Stack>
+        <Box marginBottom={2}>
+          <Stack space={2}>
+            {involvedParties?.length === 0 && (
+              <AlertMessage
+                type="warning"
+                title={f(involvedParty.errors.noDataTitle)}
+                message={f(involvedParty.errors.noDataMessage)}
+              />
+            )}
+            {!!error && (
+              <AlertMessage
+                type="error"
+                title={f(involvedParty.errors.title)}
+                message={
+                  error.graphQLErrors?.[0].message === 'Forbidden'
+                    ? f(involvedParty.errors.messageForbidden)
+                    : f(involvedParty.errors.message)
+                }
+              />
+            )}
+          </Stack>
+        </Box>
         <OJOISelectController
           width="half"
           disabled={disableSelect}

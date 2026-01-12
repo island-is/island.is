@@ -4,9 +4,14 @@ import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { overview } from '../../lib/messages'
 import { SecondarySchoolAnswers } from '../..'
-import { getTranslatedProgram, Routes, States } from '../../utils'
+import {
+  getTranslatedProgram,
+  Routes,
+  checkIsEditable,
+  checkUseAnswersCopy,
+} from '../../utils'
 import { ReviewGroup } from '../../components/ReviewGroup'
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, YES } from '@island.is/application/core'
 
 export const SchoolSelectionOverview: FC<FieldBaseProps> = ({
   application,
@@ -14,102 +19,140 @@ export const SchoolSelectionOverview: FC<FieldBaseProps> = ({
 }) => {
   const { formatMessage, lang } = useLocale()
 
+  const useAnswersCopy = checkUseAnswersCopy(application)
+  const copyPrefix = useAnswersCopy ? 'copy.' : ''
+
   const selection = getValueViaPath<SecondarySchoolAnswers['selection']>(
     application.answers,
-    'selection',
+    copyPrefix + 'selection',
   )
 
   const onClick = (page: string) => {
     if (goToScreen) goToScreen(page)
   }
 
+  const isEditable = checkIsEditable(application.state)
+
   return (
     <ReviewGroup
       handleClick={() => onClick(Routes.SCHOOL)}
       editMessage={formatMessage(overview.general.editMessage)}
       title={formatMessage(overview.selection.subtitle)}
-      isEditable={application.state === States.DRAFT}
+      isEditable={isEditable}
     >
       <Box>
         <GridRow>
           {/* First selection */}
-          <GridColumn span={selection?.second?.include ? '1/2' : '1/1'}>
-            {selection?.second?.include && (
+          <GridColumn span={selection?.[1]?.school?.id ? '1/2' : '1/1'}>
+            {!!selection?.[1]?.school?.id && (
               <Text variant="h5">
                 {formatMessage(overview.selection.firstSubtitle)}
               </Text>
             )}
-            <Text>{selection?.first?.school?.name}</Text>
+            <Text>{selection?.[0]?.school?.name}</Text>
             <Text>
               {formatMessage(overview.selection.firstProgramLabel)}:{' '}
-              {getTranslatedProgram(lang, selection?.first?.firstProgram)}
+              {getTranslatedProgram(lang, selection?.[0]?.firstProgram)}
             </Text>
-            {!!selection?.first?.secondProgram?.include && (
+            {!!selection?.[0]?.secondProgram?.id && (
               <Text>
                 {formatMessage(overview.selection.secondProgramLabel)}:{' '}
-                {getTranslatedProgram(lang, selection?.first?.secondProgram)}
+                {getTranslatedProgram(lang, selection?.[0]?.secondProgram)}
               </Text>
             )}
-            {!!selection?.first?.thirdLanguage?.code && (
-              <Text>{selection?.first?.thirdLanguage?.name}</Text>
+            {!!selection?.[0]?.thirdLanguage?.code && (
+              <Text>
+                {formatMessage(overview.selection.thirdLanguageLabel)}:{' '}
+                {selection?.[0]?.thirdLanguage?.name}
+              </Text>
             )}
-            {!!selection?.first?.nordicLanguage?.code && (
-              <Text>{selection?.first?.nordicLanguage?.name}</Text>
+            {!!selection?.[0]?.nordicLanguage?.code && (
+              <Text>
+                {formatMessage(overview.selection.nordicLanguageLabel)}:{' '}
+                {selection?.[0]?.nordicLanguage?.name}
+              </Text>
+            )}
+            {!!selection?.[0]?.requestDormitory?.includes(YES) && (
+              <Text>
+                {formatMessage(overview.selection.requestDormitoryLabel)}:{' '}
+                {formatMessage(overview.selection.yesValue)}
+              </Text>
             )}
           </GridColumn>
 
           {/* Second selection */}
-          {selection?.second?.include && (
+          {!!selection?.[1]?.school?.id && (
             <GridColumn span="1/2">
               <Text variant="h5">
                 {formatMessage(overview.selection.secondSubtitle)}
               </Text>
-              <Text>{selection?.second?.school?.name}</Text>
+              <Text>{selection?.[1]?.school?.name}</Text>
               <Text>
                 {formatMessage(overview.selection.firstProgramLabel)}:{' '}
-                {getTranslatedProgram(lang, selection?.second?.firstProgram)}
+                {getTranslatedProgram(lang, selection?.[1]?.firstProgram)}
               </Text>
-              {!!selection?.second?.secondProgram?.include && (
+              {!!selection?.[1]?.secondProgram?.id && (
                 <Text>
                   {formatMessage(overview.selection.secondProgramLabel)}:{' '}
-                  {getTranslatedProgram(lang, selection?.second?.secondProgram)}
+                  {getTranslatedProgram(lang, selection?.[1]?.secondProgram)}
                 </Text>
               )}
-              {!!selection?.second?.thirdLanguage?.code && (
-                <Text>{selection?.second?.thirdLanguage?.name}</Text>
+              {!!selection?.[1]?.thirdLanguage?.code && (
+                <Text>
+                  {formatMessage(overview.selection.thirdLanguageLabel)}:{' '}
+                  {selection?.[1]?.thirdLanguage?.name}
+                </Text>
               )}{' '}
-              {!!selection?.second?.nordicLanguage?.code && (
-                <Text>{selection?.second?.nordicLanguage?.name}</Text>
+              {!!selection?.[1]?.nordicLanguage?.code && (
+                <Text>
+                  {formatMessage(overview.selection.nordicLanguageLabel)}:{' '}
+                  {selection?.[1]?.nordicLanguage?.name}
+                </Text>
+              )}
+              {!!selection?.[1]?.requestDormitory?.includes(YES) && (
+                <Text>
+                  {formatMessage(overview.selection.requestDormitoryLabel)}:{' '}
+                  {formatMessage(overview.selection.yesValue)}
+                </Text>
               )}
             </GridColumn>
           )}
 
           {/* Third selection */}
-          {selection?.third?.include && (
+          {!!selection?.[2]?.school?.id && (
             <Box marginTop={2}>
               <GridColumn span="1/2">
                 <Text variant="h5">
                   {formatMessage(overview.selection.thirdSubtitle)}
                 </Text>
-                <Text>{selection?.third?.school?.name}</Text>
+                <Text>{selection?.[2]?.school?.name}</Text>
                 <Text>
                   {formatMessage(overview.selection.firstProgramLabel)}:{' '}
-                  {getTranslatedProgram(lang, selection?.third?.firstProgram)}
+                  {getTranslatedProgram(lang, selection?.[2]?.firstProgram)}
                 </Text>
-                {!!selection?.third?.secondProgram?.include && (
+                {!!selection?.[2]?.secondProgram?.id && (
                   <Text>
                     {formatMessage(overview.selection.secondProgramLabel)}:{' '}
-                    {getTranslatedProgram(
-                      lang,
-                      selection?.third?.secondProgram,
-                    )}
+                    {getTranslatedProgram(lang, selection?.[2]?.secondProgram)}
                   </Text>
                 )}
-                {!!selection?.third?.thirdLanguage?.code && (
-                  <Text>{selection?.third?.thirdLanguage?.name}</Text>
+                {!!selection?.[2]?.thirdLanguage?.code && (
+                  <Text>
+                    {formatMessage(overview.selection.thirdLanguageLabel)}:{' '}
+                    {selection?.[2]?.thirdLanguage?.name}
+                  </Text>
                 )}
-                {!!selection?.third?.nordicLanguage?.code && (
-                  <Text>{selection?.third?.nordicLanguage?.name}</Text>
+                {!!selection?.[2]?.nordicLanguage?.code && (
+                  <Text>
+                    {formatMessage(overview.selection.nordicLanguageLabel)}:{' '}
+                    {selection?.[2]?.nordicLanguage?.name}
+                  </Text>
+                )}
+                {!!selection?.[2]?.requestDormitory?.includes(YES) && (
+                  <Text>
+                    {formatMessage(overview.selection.requestDormitoryLabel)}:{' '}
+                    {formatMessage(overview.selection.yesValue)}
+                  </Text>
                 )}
               </GridColumn>
               <GridColumn span="1/2"></GridColumn>

@@ -1,6 +1,5 @@
 import React, { FC, useEffect, useState } from 'react'
 import { useMutation } from '@apollo/client'
-import { formatText } from '@island.is/application/core'
 import {
   CustomField,
   FieldBaseProps,
@@ -57,14 +56,10 @@ export const SubmitAndDecline: FC<React.PropsWithChildren<Props>> = ({
   if (submitError) {
     return (
       <Box>
-        <Text variant="h3">
-          {formatText(m.submitErrorTitle, application, formatMessage)}
-        </Text>
-        <Text marginBottom="p2">
-          {formatText(m.submitErrorMessage, application, formatMessage)}
-        </Text>
+        <Text variant="h3">{formatMessage(m.submitErrorTitle)}</Text>
+        <Text marginBottom="p2">{formatMessage(m.submitErrorMessage)}</Text>
         <Button onClick={() => refetch?.()}>
-          {formatText(m.submitErrorButtonCaption, application, formatMessage)}
+          {formatMessage(m.submitErrorButtonCaption)}
         </Button>
       </Box>
     )
@@ -74,7 +69,7 @@ export const SubmitAndDecline: FC<React.PropsWithChildren<Props>> = ({
     <>
       {error && { error }}
       <Box height="full">
-        <LoadingDots large />
+        <LoadingDots size="large" />
       </Box>
     </>
   )

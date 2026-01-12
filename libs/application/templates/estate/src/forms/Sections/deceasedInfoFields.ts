@@ -1,22 +1,13 @@
 import {
   buildDescriptionField,
-  buildDividerField,
   buildKeyValueField,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import format from 'date-fns/format'
-import { format as formatKennitala } from 'kennitala'
+import { format as formatNationalId } from 'kennitala'
 import { getEstateDataFromApplication, isEstateInfo } from '../../lib/utils'
 
 export const deceasedInfoFields = [
-  buildDividerField({}),
-  buildDescriptionField({
-    id: 'deceasedHeader',
-    title: m.theDeceased,
-    titleVariant: 'h3',
-    marginBottom: 2,
-    space: 'gutter',
-  }),
   buildKeyValueField({
     label: m.nameOfTheDeceased,
     value: (application) => {
@@ -30,7 +21,7 @@ export const deceasedInfoFields = [
     value: (application) => {
       const data = getEstateDataFromApplication(application)
       return isEstateInfo(data)
-        ? formatKennitala(data.estate.nationalIdOfDeceased)
+        ? formatNationalId(data.estate.nationalIdOfDeceased)
         : ''
     },
     width: 'half',
@@ -38,7 +29,6 @@ export const deceasedInfoFields = [
   buildDescriptionField({
     id: 'spaceDeceased',
     space: 'gutter',
-    title: '',
   }),
   buildKeyValueField({
     label: m.address,
@@ -57,5 +47,9 @@ export const deceasedInfoFields = [
         : m.deathDateNotRegistered
     },
     width: 'half',
+  }),
+  buildDescriptionField({
+    id: 'spaceDeceased2',
+    space: 'gutter',
   }),
 ]

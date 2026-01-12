@@ -22,10 +22,15 @@ import {
 } from '@island.is/clients/health-directorate'
 import { TemplateApiError } from '@island.is/nest/problem'
 import {
-  StudentTrackDto,
   UniversityCareersClientService,
   UniversityId,
 } from '@island.is/clients/university-careers'
+import { InnaClientService } from '@island.is/clients/inna'
+import {
+  mapSecondarySchoolStudentTrack,
+  mapUniversityStudentTracks,
+  StudentGraduations,
+} from './healthcare-Work-permit.utils'
 
 const getFoundationProgram = (
   professionId: string,
@@ -38,8 +43,8 @@ const getFoundationProgram = (
 
 const getCareerFoundationProgram = (
   foundationProgram: NamsUpplysingar,
-  relevantCareerFoundationPrograms: StudentTrackDto[],
-): StudentTrackDto | undefined => {
+  relevantCareerFoundationPrograms: StudentGraduations[],
+): StudentGraduations | undefined => {
   return relevantCareerFoundationPrograms.find(
     (program) => program.programId === foundationProgram?.shortId,
   )
@@ -51,6 +56,7 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly healthDirectorateClientService: HealthDirectorateClientService,
     private readonly universityCareersClientService: UniversityCareersClientService,
+    private readonly innaService: InnaClientService,
   ) {
     super(ApplicationTypes.HEALTHCARE_WORK_PERMIT)
   }
@@ -81,23 +87,29 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
   async processPermits({
     auth,
   }: TemplateApiModuleActionProps): Promise<PermitProgram[]> {
-    const [licenses, programs, careerProgramsUNAK, careerProgramsHI] =
-      await Promise.all([
-        this.healthDirectorateClientService.getHealthCareLicensesForWorkPermit(
-          auth,
-        ),
-        this.healthDirectorateClientService.getHealthCareWorkPermitEducationInfo(
-          auth,
-        ),
-        this.universityCareersClientService.getStudentTrackHistory(
-          auth,
-          UniversityId.UNIVERSITY_OF_AKUREYRI,
-        ),
-        this.universityCareersClientService.getStudentTrackHistory(
-          auth,
-          UniversityId.UNIVERSITY_OF_ICELAND,
-        ),
-      ])
+    const [
+      licenses,
+      programs,
+      careerProgramsUNAKRaw,
+      careerProgramsHIRaw,
+      innaDiplomas,
+    ] = await Promise.all([
+      this.healthDirectorateClientService.getHealthCareLicensesForWorkPermit(
+        auth,
+      ),
+      this.healthDirectorateClientService.getHealthCareWorkPermitEducationInfo(
+        auth,
+      ),
+      this.universityCareersClientService.getStudentTrackHistory(
+        auth,
+        UniversityId.UNIVERSITY_OF_AKUREYRI,
+      ),
+      this.universityCareersClientService.getStudentTrackHistory(
+        auth,
+        UniversityId.UNIVERSITY_OF_ICELAND,
+      ),
+      this.innaService.getDiplomas(auth),
+    ])
 
     if (!programs) {
       throw new TemplateApiError(
@@ -118,7 +130,14 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
       )
     }
 
-    const careerPrograms = careerProgramsHI?.concat(careerProgramsUNAK ?? [])
+    const secondarySchoolCareerPrograms =
+      mapSecondarySchoolStudentTrack(innaDiplomas)
+    const careerProgramsHI = mapUniversityStudentTracks(careerProgramsHIRaw)
+    const careerProgramsUNAK = mapUniversityStudentTracks(careerProgramsUNAKRaw)
+    const careerPrograms = (careerProgramsHI ?? [])
+      .concat(careerProgramsUNAK ?? [])
+      .concat(secondarySchoolCareerPrograms ?? [])
+
     if (!careerPrograms || careerPrograms?.length < 1) {
       throw new TemplateApiError(
         {
@@ -142,7 +161,7 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
       return program.dataOrder === 1 && program.noOfData === 2
     })
 
-    // Splitting up programs from Embætti Landlæknis into those that give permits and those that server as foundation
+    // Splitting up programs from Embætti Landlæknis into those that give permits and those that serve as foundation
     // for other permits. For easy lookup
     const validPermitIds = new Set(
       permitValidPrograms?.map((item) => item.shortId),
@@ -162,7 +181,7 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
 
     const programsToBeDisplayed =
       relevantCareerPermitPrograms?.map((program) => {
-        const { programId, studyProgram, graduationDate, institution } = program
+        const { programId, studyProgram, graduationDate, schoolName } = program
 
         // Find the education program for this career program
         const currentPermitProgram = permitValidPrograms?.find(
@@ -182,7 +201,7 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
           error: true,
           mainProgram: {
             educationId: currentPermitProgram?.educationId,
-            school: institution?.displayName,
+            school: schoolName,
             graduationDate,
           },
         }
@@ -213,7 +232,7 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
             ...base,
             foundationProgram: {
               educationId: currentFoundationProgram?.educationId,
-              school: currentFoundationCareerProgram?.institution?.displayName,
+              school: currentFoundationCareerProgram?.schoolName,
               graduationDate: currentFoundationCareerProgram?.graduationDate,
             },
           }
@@ -249,7 +268,7 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
         }
         let error = true
         let errorMsg: string | Message = ''
-        // This program give permit on its own.
+        // This program gives permit on its own.
         if (!graduationDate || !currentPermitProgram?.educationValidFrom) {
           error = true
           errorMsg = information.labels.selectWorkPermit.restrictionDataError
@@ -316,7 +335,7 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
     }
 
     const isPayment: { fulfilled: boolean } | undefined =
-      await this.sharedTemplateAPIService.getPaymentStatus(auth, application.id)
+      await this.sharedTemplateAPIService.getPaymentStatus(application.id)
 
     if (!isPayment?.fulfilled) {
       throw new Error(

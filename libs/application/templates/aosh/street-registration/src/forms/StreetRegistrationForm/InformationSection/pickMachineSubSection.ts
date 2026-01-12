@@ -48,7 +48,6 @@ export const pickMachineSubSection = buildSubSection({
       children: [
         buildRadioField({
           id: 'machine.id',
-          title: '',
           condition: (_, externalData) => {
             const machines = getValueViaPath(
               externalData,
@@ -90,7 +89,7 @@ export const pickMachineSubSection = buildSubSection({
           },
         }),
         buildCustomField({
-          id: 'pickMachine',
+          id: 'machine',
           condition: (_, externalData) => {
             const machines = getValueViaPath(
               externalData,

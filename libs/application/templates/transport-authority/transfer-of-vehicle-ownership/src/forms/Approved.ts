@@ -5,12 +5,11 @@ import {
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { information, externalData, payment, review } from '../lib/messages'
-import { Logo } from '../assets/Logo'
+import { TransportAuthorityLogo } from '@island.is/application/assets/institution-logos'
 
 export const Approved: Form = buildForm({
   id: 'ApprovedApplicationForm',
-  title: '',
-  logo: Logo,
+  logo: TransportAuthorityLogo,
   mode: FormModes.COMPLETED,
   children: [
     buildSection({
@@ -40,7 +39,6 @@ export const Approved: Form = buildForm({
         buildCustomField({
           component: 'Review',
           id: 'review',
-          title: '',
           description: '',
         }),
       ],

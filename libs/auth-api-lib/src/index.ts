@@ -159,6 +159,14 @@ export * from './lib/grant-type/grant-type.service'
 export * from './lib/grant-type/dto/grant-type.dto'
 export * from './lib/grant-type/models/grant-type.model'
 
+// Identity Confirmation Module
+export * from './lib/identity-confirmation/identity-confirmation.module'
+export * from './lib/identity-confirmation/identity-confirmation.service'
+export * from './lib/identity-confirmation/dto/IdentityConfirmationInput.dto'
+export * from './lib/identity-confirmation/models/Identity-Confirmation.model'
+export * from './lib/identity-confirmation/dto/identity-confirmation-dto.dto'
+export * from './lib/identity-confirmation/types/identity-confirmation-type'
+
 // Personal Representative Module
 export * from './lib/personal-representative/personal-representative.module'
 export * from './lib/personal-representative/services/personalRepresentative.service'

@@ -1,8 +1,9 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
-import { YES } from '@island.is/application/types'
 import { EMPLOYMENT_STATUS } from '../shared/constants'
 import { isValid24HFormatTime, isValidPhoneNumber } from '../utils'
+import { YES } from '@island.is/application/core'
+import { information } from './messages/information'
 
 const option = z.object({
   value: z.string(),
@@ -19,7 +20,7 @@ const accidentSchema = z
     accidentLocationParentGroup: option.optional(),
     didAoshCome: z.string(),
     didPoliceCome: z.string(),
-    exactLocation: z.string(),
+    exactLocation: z.string().min(1).max(100),
     municipality: z.string(),
     date: z.string(),
     time: TimeWithRefine,
@@ -60,14 +61,38 @@ const basicCompanySchema = z.object({
   postnumber: z.string(),
 })
 
-const companySchema = z.object({
-  addressOfBranch: z.string().optional(),
-  nameOfBranch: z.string().optional(),
-  postnumberOfBranch: z.string().optional().nullable(),
-  industryClassification: z.string().optional(),
-  email: z.string().email(),
-  phonenumber: z.string().refine((v) => isValidPhoneNumber(v)),
-})
+const companySchema = z
+  .object({
+    addressOfBranch: z.string().optional(),
+    nameOfBranch: z.string().min(1),
+    postnumberOfBranch: z.string().optional().nullable(),
+    industryClassification: z.string().optional(),
+    email: z.string().email(),
+    phonenumber: z.string().refine((v) => isValidPhoneNumber(v)),
+  })
+  .superRefine((data, ctx) => {
+    // Validating that both address/postnumber are input or neither
+    const hasAddress =
+      data.addressOfBranch && data.addressOfBranch.trim() !== ''
+    const hasPostnumber = data.postnumberOfBranch
+
+    if (hasAddress || hasPostnumber) {
+      if (!hasAddress) {
+        ctx.addIssue({
+          path: ['addressOfBranch'],
+          params: information.labels.company.branchAddressError,
+          code: z.ZodIssueCode.custom,
+        })
+      }
+      if (!hasPostnumber) {
+        ctx.addIssue({
+          path: ['postnumberOfBranch'],
+          params: information.labels.company.branchPostnumberError,
+          code: z.ZodIssueCode.custom,
+        })
+      }
+    }
+  })
 
 const employeeSchema = z
   .object({
@@ -195,18 +220,22 @@ const companyLaborProtectionSchema = z.object({
 const projectPurchaseSchema = z
   .object({
     radio: z.string(),
-    nationalId: z.string().optional(),
-    name: z.string().optional(),
-  })
-  .refine((data) => data.radio !== YES || (data.name && data.name.length > 0), {
-    path: ['name'],
+    contractor: z
+      .object({
+        nationalId: z.string().optional(),
+        name: z.string().optional(),
+      })
+      .optional(),
   })
   .refine(
-    (data) =>
-      data.radio !== YES ||
-      (data.nationalId && kennitala.isValid(data.nationalId)),
+    (data) => {
+      return (
+        data.radio !== YES ||
+        (data.contractor?.nationalId && data.contractor.name)
+      )
+    },
     {
-      path: ['nationalId'],
+      path: [''],
     },
   )
 

@@ -18,9 +18,9 @@ import * as m from '../lib/messages'
 import { Routes } from '../lib/constants'
 import {
   CurrentApplicationApi,
-  NationalRegistryUserApi,
-  NationalRegistrySpouseApi,
-  ChildrenCustodyInformationApi,
+  NationalRegistryV3UserApi,
+  NationalRegistryV3SpouseApi,
+  ChildrenCustodyInformationApiV3,
   MunicipalityApi,
   TaxDataApi,
 } from '../dataProviders'
@@ -48,28 +48,24 @@ export const Prerequisites: Form = buildForm({
           checkboxLabel: m.externalData.general.checkboxLabel,
           dataProviders: [
             buildDataProviderItem({
-              provider: NationalRegistryUserApi,
+              provider: NationalRegistryV3UserApi,
               title: m.externalData.applicant.title,
               subTitle: m.externalData.applicant.subTitle,
             }),
             buildDataProviderItem({
-              provider: NationalRegistrySpouseApi,
-              title: '',
+              provider: NationalRegistryV3SpouseApi,
               subTitle: '',
             }),
             buildDataProviderItem({
-              provider: ChildrenCustodyInformationApi,
-              title: '',
+              provider: ChildrenCustodyInformationApiV3,
               subTitle: '',
             }),
             buildDataProviderItem({
               provider: MunicipalityApi,
-              title: '',
               subTitle: '',
             }),
             buildDataProviderItem({
               provider: CurrentApplicationApi,
-              title: '',
               subTitle: '',
             }),
             buildDataProviderItem({
@@ -80,7 +76,6 @@ export const Prerequisites: Form = buildForm({
             buildDataProviderItem({
               id: 'moreTaxInfo',
               type: undefined,
-              title: '',
               subTitle: m.externalData.taxData.process,
             }),
           ],
@@ -102,7 +97,6 @@ export const Prerequisites: Form = buildForm({
             }),
             buildSubmitField({
               id: 'toDraft',
-              title: '',
               refetchApplicationAfterSubmit: true,
               actions: [
                 {
@@ -117,7 +111,6 @@ export const Prerequisites: Form = buildForm({
         // This is here to be able to show submit button on former screen :( :( :(
         buildMultiField({
           id: '',
-          title: '',
           children: [],
         }),
       ],

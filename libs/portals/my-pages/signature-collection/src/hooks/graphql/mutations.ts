@@ -6,6 +6,7 @@ export const cancelCollectionMutation = gql`
   ) {
     signatureCollectionCancel(input: $input) {
       success
+      reasons
     }
   }
 `
@@ -20,9 +21,9 @@ export const unSignList = gql`
 `
 export const addConstituency = gql`
   mutation SignatureCollectionAddAreas(
-    $inputAdd: SignatureCollectionAddListsInput!
+    $input: SignatureCollectionAddListsInput!
   ) {
-    signatureCollectionAddAreas(input: $inputAdd) {
+    signatureCollectionAddAreas(input: $input) {
       success
       reasons
     }
@@ -45,6 +46,7 @@ export const updatePaperSignaturePageNumber = gql`
   ) {
     signatureCollectionUpdatePaperSignaturePageNumber(input: $input) {
       success
+      reasons
     }
   }
 `

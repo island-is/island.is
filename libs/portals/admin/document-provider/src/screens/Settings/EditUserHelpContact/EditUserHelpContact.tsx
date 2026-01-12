@@ -7,7 +7,7 @@ import { useGetOrganisation } from '../../../shared/useGetOrganisation'
 import { SettingsFormsLoader } from '../../../components/SettingsFormsLoader'
 import { PortalModuleComponent } from '@island.is/portals/core'
 
-const EditUserHelpContact: PortalModuleComponent = ({ userInfo }) => {
+const EditUserHelpContact: PortalModuleComponent = () => {
   const { formatMessage } = useLocale()
   const { organisation } = useGetOrganisation('123456-0000')
 

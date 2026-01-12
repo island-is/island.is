@@ -7,10 +7,10 @@ import { UseGuards } from '@nestjs/common'
 import { Parent, ResolveField, Resolver } from '@nestjs/graphql'
 import { GenericLicenseProvider } from '../dto/GenericLicenseProvider.dto'
 import {
-  type OrganizationLogoByReferenceIdDataLoader,
-  OrganizationLogoByReferenceIdLoader,
-  type OrganizationTitleByReferenceIdDataLoader,
-  OrganizationTitleByReferenceIdLoader,
+  type OrganizationLogoByEntryIdDataLoader,
+  type OrganizationTitleByEntryIdDataLoader,
+  OrganizationTitleByEntryIdLoader,
+  OrganizationLogoByEntryIdLoader,
 } from '@island.is/cms'
 import { Loader } from '@island.is/nest/dataloader'
 
@@ -25,15 +25,16 @@ export class LicenseProviderResolver {
   })
   async resolveProviderName(
     @Parent() license: GenericLicenseProvider,
-    @Loader(OrganizationTitleByReferenceIdLoader)
-    organizationTitleLoader: OrganizationTitleByReferenceIdDataLoader,
+    @Loader(OrganizationTitleByEntryIdLoader)
+    organizationTitleLoader: OrganizationTitleByEntryIdDataLoader,
   ): Promise<string | undefined> {
-    const { referenceId } = license
-    if (!referenceId) {
+    const { entryId } = license
+    if (!entryId) {
       return
     }
 
-    const title: string | null = await organizationTitleLoader.load(referenceId)
+    const title = await organizationTitleLoader.load(entryId)
+
     return title ?? undefined
   }
 
@@ -42,15 +43,15 @@ export class LicenseProviderResolver {
   })
   async resolveProviderLogo(
     @Parent() license: GenericLicenseProvider,
-    @Loader(OrganizationLogoByReferenceIdLoader)
-    organizationLogoLoader: OrganizationLogoByReferenceIdDataLoader,
+    @Loader(OrganizationLogoByEntryIdLoader)
+    organizationLogoLoader: OrganizationLogoByEntryIdDataLoader,
   ): Promise<string | undefined> {
-    const { referenceId } = license
-    if (!referenceId) {
+    const { entryId } = license
+    if (!entryId) {
       return
     }
 
-    const logo = await organizationLogoLoader.load(referenceId)
+    const logo = await organizationLogoLoader.load(entryId)
 
     return logo ?? undefined
   }

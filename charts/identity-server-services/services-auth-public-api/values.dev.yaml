@@ -20,7 +20,7 @@ name: 'services-auth-public-api'
 enabled: true
 env:
   CODE_OWNER: 'aranja'
-  COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
+  COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com:6379"]'
   COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10006/Skatturinn/ft-v1'
   DB_HOST: 'postgres-applications.internal'
   DB_NAME: 'servicesauth'
@@ -33,13 +33,13 @@ env:
   NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
   NATIONAL_REGISTRY_B2C_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1'
   NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitydev.onmicrosoft.com/midlun/.default'
-  NODE_OPTIONS: '--max-old-space-size=345 -r dd-trace/init'
+  NODE_OPTIONS: '--max-old-space-size=345 --enable-source-maps -r dd-trace/init'
   PASSKEY_CORE_ALLOWED_ORIGINS: '["https://island.is","android:apk-key-hash:JgPeo_F6KYk-ngRa26tO2SsAtMiTBQCc7WtSgN-jRX0","android:apk-key-hash:EsLTUu5kaY7XPmMl2f7nbq4amu-PNzdYu3FecNf90wU"]'
   PASSKEY_CORE_CHALLENGE_TTL_MS: '120000'
   PASSKEY_CORE_RP_ID: 'island.is'
   PASSKEY_CORE_RP_NAME: 'Island.is'
   PUBLIC_URL: 'https://identity-server.dev01.devland.is/api'
-  REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
+  REDIS_NODES: '["clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com:6379"]'
   SERVERSIDE_FEATURES_ON: ''
   SYSLUMENN_HOST: 'https://api.syslumenn.is/staging'
   SYSLUMENN_TIMEOUT: '3000'
@@ -47,12 +47,12 @@ env:
   XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
   XROAD_CLIENT_ID: 'IS-DEV/GOV/10000/island-is-client'
   XROAD_NATIONAL_REGISTRY_ACTOR_TOKEN: 'true'
-  XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
-  XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1'
+  XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com:6379"]'
+  XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Einstaklingar-v1'
   XROAD_RSK_PROCURING_ACTOR_TOKEN: 'true'
   XROAD_RSK_PROCURING_PATH: 'IS-DEV/GOV/10006/Skatturinn/relationships-v1'
-  XROAD_RSK_PROCURING_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
-  XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1'
+  XROAD_RSK_PROCURING_REDIS_NODES: '["clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com:6379"]'
+  XROAD_TJODSKRA_API_PATH: '/SKRA-Cloud-Protected/Einstaklingar-v1'
   XROAD_TJODSKRA_MEMBER_CODE: '10001'
   XROAD_TLS_BASE_PATH: 'https://securityserver.dev01.devland.is'
   XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
@@ -77,8 +77,8 @@ hpa:
       cpuAverageUtilization: 90
       nginxRequestsIrate: 5
     replicas:
-      max: 10
-      min: 2
+      max: 3
+      min: 1
 image:
   repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-public-api'
 ingress:
@@ -92,16 +92,20 @@ ingress:
       nginx.ingress.kubernetes.io/service-upstream: 'true'
     hosts:
       - host: 'identity-server.dev01.devland.is'
+        pathTypeOverride: 'ImplementationSpecific'
         paths:
           - '/api(/|$)(.*)'
 namespace: 'identity-server-admin'
 podDisruptionBudget:
-  maxUnavailable: 1
+  minAvailable: 1
+  unhealthyPodEvictionPolicy: 'IfHealthyBudget'
+podSecurityContext:
+  fsGroup: 65534
 pvcs: []
 replicaCount:
-  default: 2
-  max: 10
-  min: 2
+  default: 1
+  max: 3
+  min: 1
 resources:
   limits:
     cpu: '400m'
@@ -123,3 +127,8 @@ secrets:
 securityContext:
   allowPrivilegeEscalation: false
   privileged: false
+serviceAccount:
+  annotations:
+    eks.amazonaws.com/role-arn: 'arn:aws:iam::324037283794:role/services-auth-public-api'
+  create: true
+  name: 'services-auth-public-api'

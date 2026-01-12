@@ -21,13 +21,10 @@ import { VehicleBulkMileageSaveButton } from './VehicleBulkMileageSaveButton'
 import { InputController } from '@island.is/shared/form-fields'
 import * as styles from './VehicleBulkMileage.css'
 import { displayWithUnit } from '../../utils/displayWithUnit'
-import { isReadDateToday } from '../../utils/readDate'
 import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import format from 'date-fns/format'
 import { VehicleBulkMileageSubData } from './VehicleBulkMileageSubData'
 import { Features, useFeatureFlagClient } from '@island.is/react/feature-flags'
-
-const ORIGIN_CODE = 'ISLAND.IS'
 
 type MutationStatus =
   | 'initial'
@@ -39,10 +36,17 @@ type MutationStatus =
 
 interface Props {
   vehicle: VehicleType
+  onMileageUpdateCallback?: () => void
 }
-export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
+export const VehicleBulkMileageRow = ({
+  vehicle,
+  onMileageUpdateCallback,
+}: Props) => {
   const { formatMessage } = useLocale()
   const [postError, setPostError] = useState<string | null>(null)
+  const [localInternalId, setLocalInternalId] = useState<number>()
+  const [localMileage, setLocalMileage] = useState<number>()
+  const [localDate, setLocalDate] = useState<Date>()
   const [postStatus, setPostStatus] = useState<MutationStatus>('initial')
 
   const [showSubdata, setShowSubdata] = useState<boolean>(false)
@@ -74,24 +78,37 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
 
   const [putAction] = usePutSingleVehicleMileageMutation({
     onError: () => handleMutationResponse(true),
-    onCompleted: ({ vehicleMileagePutV2: data }) =>
+    onCompleted: ({ vehicleMileagePutV2: data }) => {
+      if (data?.__typename === 'VehicleMileagePutModel' && data.internalId) {
+        const internalId = parseInt(data.internalId, 10)
+        setLocalInternalId(internalId)
+        setLocalMileage(data.mileageNumber ?? undefined)
+      }
       handleMutationResponse(
         data?.__typename === 'VehiclesMileageUpdateError',
         data?.__typename === 'VehiclesMileageUpdateError'
           ? data?.message ?? formatMessage(m.errorTitle)
           : undefined,
-      ),
+      )
+    },
   })
 
   const [postAction] = usePostSingleVehicleMileageMutation({
     onError: () => handleMutationResponse(true),
-    onCompleted: ({ vehicleMileagePostV2: data }) =>
+    onCompleted: ({ vehicleMileagePostV2: data }) => {
+      if (data?.__typename === 'VehicleMileageDetail' && data.internalId) {
+        const internalId = parseInt(data.internalId, 10)
+        setLocalInternalId(internalId)
+        setLocalMileage(data.mileageNumber ?? undefined)
+        setLocalDate(data.readDate ? new Date(data.readDate) : undefined)
+      }
       handleMutationResponse(
         data?.__typename === 'VehiclesMileageUpdateError',
         data?.__typename === 'VehiclesMileageUpdateError'
           ? data?.message ?? formatMessage(m.errorTitle)
           : undefined,
-      ),
+      )
+    },
   })
 
   const [executeMileageQuery, { data: mileageData, refetch: mileageRefetch }] =
@@ -104,6 +121,7 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
     getValues,
     formState: { errors },
     trigger,
+    reset,
   } = useFormContext()
 
   const handleMutationResponse = (isError: boolean, message?: string) =>
@@ -140,9 +158,13 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
     setTimeout(() => {
       if (postStatus === 'success') {
         registrationsRefetch()
+        if (onMileageUpdateCallback) {
+          onMileageUpdateCallback()
+        }
+        reset()
       }
     }, 500)
-  }, [postStatus, registrationsRefetch])
+  }, [onMileageUpdateCallback, postStatus, registrationsRefetch, reset])
 
   useEffect(() => {
     switch (postStatus) {
@@ -182,7 +204,11 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
   }
 
   const onInputChange = () => {
-    if (postStatus === 'error' || postStatus === 'validation-error') {
+    if (
+      postStatus === 'error' ||
+      postStatus === 'validation-error' ||
+      postStatus === 'success'
+    ) {
       updateStatusAndMessage('initial')
     }
   }
@@ -200,7 +226,17 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
   const postToServer = useCallback(async () => {
     const formValue = await getValueFromForm(vehicle.vehicleId)
     if (formValue) {
-      if (
+      if (localInternalId) {
+        putAction({
+          variables: {
+            input: {
+              internalId: localInternalId,
+              permno: vehicle.vehicleId,
+              mileageNumber: formValue,
+            },
+          },
+        })
+      } else if (
         mileageData?.vehicleMileageDetails?.editing &&
         mileageData.vehicleMileageDetails?.data?.[0]?.internalId
       ) {
@@ -228,7 +264,7 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
         })
       }
     }
-  }, [mileageData?.vehicleMileageDetails, vehicle.vehicleId])
+  }, [mileageData?.vehicleMileageDetails, vehicle.vehicleId, localInternalId])
 
   const nestedTable = useMemo(() => {
     if (!data?.vehiclesMileageRegistrationHistory) {
@@ -250,6 +286,9 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
     return tableData
   }, [data?.vehiclesMileageRegistrationHistory])
 
+  const displayDate = localDate ?? vehicle.lastMileageRegistration?.date
+  const displayMileage =
+    localMileage ?? vehicle.lastMileageRegistration?.mileage
   return (
     <ExpandRow
       key={`bulk-mileage-vehicle-row-${vehicle.vehicleId}`}
@@ -264,17 +303,11 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
           ),
         },
         {
-          value: vehicle.lastMileageRegistration?.date
-            ? format(vehicle.lastMileageRegistration?.date, 'dd.MM.yyyy')
-            : '-',
+          value: displayDate ? format(displayDate, 'dd.MM.yyyy') : '-',
         },
         {
-          value: vehicle.lastMileageRegistration?.mileage
-            ? displayWithUnit(
-                vehicle.lastMileageRegistration.mileage,
-                'km',
-                true,
-              )
+          value: displayMileage
+            ? displayWithUnit(displayMileage, 'km', true)
             : '-',
         },
         {
@@ -299,61 +332,6 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
                   postError ? `${vehicle.vehicleId}-error` : undefined
                 }
                 rules={{
-                  validate: {
-                    userHasPostAccess: () => {
-                      if (
-                        mileageData?.vehicleMileageDetails
-                          ?.canUserRegisterVehicleMileage
-                      ) {
-                        return true
-                      }
-                      return formatMessage(
-                        vehicleMessage.mileageYouAreNotAllowed,
-                      )
-                    },
-                    readDate: () => {
-                      if (
-                        !mileageData?.vehicleMileageDetails?.editing &&
-                        !mileageData?.vehicleMileageDetails?.canRegisterMileage
-                      ) {
-                        return formatMessage(
-                          vehicleMessage.mileageAlreadyRegistered,
-                        )
-                      }
-                      return true
-                    },
-                    value: (value: number) => {
-                      // Input number must be higher than the highest known mileage registration value
-                      if (mileageData?.vehicleMileageDetails?.data) {
-                        // If we're in editing mode, we want to find the highest confirmed registered number, ignoring all Island.is registrations from today.
-                        const confirmedRegistrations =
-                          mileageData.vehicleMileageDetails.data.filter(
-                            (item) => {
-                              if (item.readDate) {
-                                const isIslandIsReadingToday =
-                                  item.originCode === ORIGIN_CODE &&
-                                  isReadDateToday(new Date(item.readDate))
-                                return !isIslandIsReadingToday
-                              }
-                              return true
-                            },
-                          )
-
-                        const detailArray = mileageData.vehicleMileageDetails
-                          .editing
-                          ? confirmedRegistrations
-                          : mileageData.vehicleMileageDetails.data
-
-                        const latestRegistration =
-                          detailArray[0].mileageNumber ?? 0
-                        if (latestRegistration > value) {
-                          return formatMessage(
-                            vehicleMessage.mileageInputTooLow,
-                          )
-                        }
-                      }
-                    },
-                  },
                   required: {
                     value: true,
                     message: formatMessage(
@@ -409,6 +387,7 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
           <VehicleBulkMileageSubData
             vehicleId={vehicle.vehicleId}
             data={data?.vehiclesMileageRegistrationHistory}
+            co2={vehicle.co2}
             loading={loading}
           />
         ) : (

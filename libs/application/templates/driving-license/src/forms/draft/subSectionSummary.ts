@@ -7,11 +7,12 @@ import {
   buildDividerField,
   buildSubSection,
   getValueViaPath,
+  YES,
 } from '@island.is/application/core'
 import { DefaultEvents, StaticText } from '@island.is/application/types'
-import { NationalRegistryUser, TeacherV4 } from '../../types/schema'
+import { NationalRegistryUser, TeacherV4 } from '@island.is/api/schema'
 import { m } from '../../lib/messages'
-import { format as formatKennitala } from 'kennitala'
+import { format as formatNationalId } from 'kennitala'
 import { StudentAssessment } from '@island.is/api/schema'
 import {
   B_FULL,
@@ -20,7 +21,6 @@ import {
   BE,
   CHARGE_ITEM_CODES,
   DELIVERY_FEE,
-  YES,
 } from '../../lib/constants'
 import {
   hasNoDrivingLicenseInOtherCountry,
@@ -41,19 +41,6 @@ export const subSectionSummary = buildSubSection({
       space: 2,
       description: m.overviewMultiFieldDescription,
       children: [
-        buildSubmitField({
-          id: 'submit',
-          placement: 'footer',
-          title: m.orderDrivingLicense,
-          refetchApplicationAfterSubmit: true,
-          actions: [
-            {
-              event: DefaultEvents.PAYMENT,
-              name: m.continue,
-              type: 'primary',
-            },
-          ],
-        }),
         buildKeyValueField({
           label: m.overviewSubType,
           value: ({ answers: { applicationFor } }) =>
@@ -69,15 +56,19 @@ export const subSectionSummary = buildSubSection({
         buildKeyValueField({
           label: m.overviewName,
           width: 'half',
-          value: ({ externalData: { nationalRegistry } }) =>
-            (nationalRegistry.data as NationalRegistryUser).fullName,
+          value: ({ externalData }) =>
+            getValueViaPath(externalData, 'nationalRegistry.data.fullName') ??
+            '',
         }),
         buildKeyValueField({
           label: m.overviewNationalId,
           width: 'half',
-          value: ({ externalData: { nationalRegistry } }) =>
-            formatKennitala(
-              (nationalRegistry.data as NationalRegistryUser).nationalId,
+          value: ({ externalData }) =>
+            formatNationalId(
+              getValueViaPath(
+                externalData,
+                'nationalRegistry.data.nationalId',
+              ) ?? '',
             ),
         }),
         buildKeyValueField({
@@ -122,11 +113,11 @@ export const subSectionSummary = buildSubSection({
             answers,
           }) => {
             if (answers.applicationFor === B_TEMP) {
-              const teacher = (data as TeacherV4[]).find(
+              const teacher = (data as TeacherV4[])?.find(
                 ({ nationalId }) =>
                   getValueViaPath(answers, 'drivingInstructor') === nationalId,
               )
-              return teacher?.name
+              return teacher?.name ?? ''
             }
             return (drivingAssessment.data as StudentAssessment).teacherName
           },
@@ -143,7 +134,6 @@ export const subSectionSummary = buildSubSection({
         }),
         buildCheckboxField({
           id: 'certificate',
-          title: '',
           large: false,
           backgroundColor: 'white',
           defaultValue: [],
@@ -159,7 +149,8 @@ export const subSectionSummary = buildSubSection({
         buildKeyValueField({
           label: m.pickupLocationTitle,
           value: ({ answers }) => {
-            return answers.pickup === Pickup.POST
+            return getValueViaPath(answers, 'delivery.deliveryMethod') ===
+              Pickup.POST
               ? m.overviewPickupPost
               : m.overviewPickupDistrict
           },
@@ -167,9 +158,12 @@ export const subSectionSummary = buildSubSection({
         }),
         buildDividerField({}),
         buildKeyValueField({
-          label: m.overviewPaymentCharge,
-          value: (application) => {
-            const items = application.externalData.payment.data as {
+          label: ({ answers }) =>
+            getValueViaPath(answers, 'delivery.deliveryMethod') === Pickup.POST
+              ? m.overviewPaymentChargeWithDelivery
+              : m.overviewPaymentCharge,
+          value: ({ answers, externalData }) => {
+            const items = externalData.payment.data as {
               priceAmount: number
               chargeItemCode: string
             }[]
@@ -177,15 +171,18 @@ export const subSectionSummary = buildSubSection({
             const DEFAULT_ITEM_CODE = CHARGE_ITEM_CODES[B_FULL]
 
             const targetCode =
-              typeof application.answers.applicationFor === 'string'
-                ? CHARGE_ITEM_CODES[application.answers.applicationFor]
-                  ? CHARGE_ITEM_CODES[application.answers.applicationFor]
+              typeof answers.applicationFor === 'string'
+                ? CHARGE_ITEM_CODES[answers.applicationFor]
+                  ? CHARGE_ITEM_CODES[answers.applicationFor]
                   : DEFAULT_ITEM_CODE
                 : DEFAULT_ITEM_CODE
 
             let pickupItem = null
 
-            if (application.answers.pickup === Pickup.POST) {
+            if (
+              (answers.delivery as { deliveryMethod: string })
+                .deliveryMethod === Pickup.POST
+            ) {
               pickupItem = items.find(
                 ({ chargeItemCode }) =>
                   chargeItemCode === CHARGE_ITEM_CODES[DELIVERY_FEE],
@@ -204,6 +201,19 @@ export const subSectionSummary = buildSubSection({
             return (total?.toLocaleString('is-IS') + ' kr.') as StaticText
           },
           width: 'full',
+        }),
+        buildSubmitField({
+          id: 'submit',
+          placement: 'footer',
+          title: m.orderDrivingLicense,
+          refetchApplicationAfterSubmit: true,
+          actions: [
+            {
+              event: DefaultEvents.PAYMENT,
+              name: m.continue,
+              type: 'primary',
+            },
+          ],
         }),
       ],
     }),

@@ -27,11 +27,13 @@ env:
   IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/regulations-admin-api'
   IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
   LOG_LEVEL: 'info'
+  NATIONAL_REGISTRY_B2C_APPLICATION_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/MidlunUmsoknir-v1'
+  NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraidentitydev.onmicrosoft.com/midlunumsoknir/.default'
   NATIONAL_REGISTRY_B2C_CLIENT_ID: 'b464afdd-056b-406d-b650-6d41733cfeb7'
   NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
   NATIONAL_REGISTRY_B2C_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1'
   NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitydev.onmicrosoft.com/midlun/.default'
-  NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
+  NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
   SERVERSIDE_FEATURES_ON: ''
   XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
   XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
@@ -86,7 +88,10 @@ initContainer:
     DB_PASS: '/k8s/regulations-admin-backend/DB_PASSWORD'
 namespace: 'regulations-admin'
 podDisruptionBudget:
-  maxUnavailable: 1
+  minAvailable: 1
+  unhealthyPodEvictionPolicy: 'IfHealthyBudget'
+podSecurityContext:
+  fsGroup: 65534
 pvcs: []
 replicaCount:
   default: 1
@@ -111,3 +116,8 @@ secrets:
 securityContext:
   allowPrivilegeEscalation: false
   privileged: false
+serviceAccount:
+  annotations:
+    eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/regulations-admin-backend'
+  create: true
+  name: 'regulations-admin-backend'

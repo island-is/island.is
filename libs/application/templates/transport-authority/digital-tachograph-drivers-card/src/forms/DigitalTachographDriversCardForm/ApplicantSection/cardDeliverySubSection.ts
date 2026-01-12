@@ -21,9 +21,8 @@ export const cardDeliverySubSection = buildSubSection({
           titleVariant: 'h5',
         }),
         buildCustomField({
-          id: 'pickDeliveryMethod',
+          id: 'cardDelivery',
           component: 'PickDeliveryMethod',
-          title: '',
         }),
       ],
     }),

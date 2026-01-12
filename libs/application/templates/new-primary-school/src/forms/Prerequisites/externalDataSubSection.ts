@@ -7,38 +7,42 @@ import {
   NationalRegistryUserApi,
   UserProfileApi,
 } from '@island.is/application/types'
-import { ChildrenApi } from '../../dataProviders'
-import { newPrimarySchoolMessages } from '../../lib/messages'
+import { ChildrenApi, SchoolsApi } from '../../dataProviders'
+import { prerequisitesMessages } from '../../lib/messages'
 
 export const externalDataSubSection = buildSubSection({
   id: 'externalDataSubSection',
-  title: newPrimarySchoolMessages.pre.externalDataSubSection,
+  title: prerequisitesMessages.externalData.subSectionTitle,
   children: [
     buildExternalDataProvider({
       id: 'approveExternalData',
-      title: newPrimarySchoolMessages.pre.externalDataSubSection,
-      subTitle: newPrimarySchoolMessages.pre.externalDataDescription,
-      checkboxLabel: newPrimarySchoolMessages.pre.checkboxProvider,
+      title: prerequisitesMessages.externalData.subSectionTitle,
+      subTitle: prerequisitesMessages.externalData.description,
+      checkboxLabel: prerequisitesMessages.externalData.checkboxProvider,
       dataProviders: [
         buildDataProviderItem({
           provider: NationalRegistryUserApi,
-          title: newPrimarySchoolMessages.pre.nationalRegistryInformationTitle,
+          title:
+            prerequisitesMessages.externalData.nationalRegistryInformationTitle,
           subTitle:
-            newPrimarySchoolMessages.pre.nationalRegistryInformationSubTitle,
+            prerequisitesMessages.externalData
+              .nationalRegistryInformationSubTitle,
         }),
         buildDataProviderItem({
           provider: ChildrenApi,
-          title: '',
-          subTitle: '',
         }),
         buildDataProviderItem({
           provider: UserProfileApi,
-          title: newPrimarySchoolMessages.pre.userProfileInformationTitle,
-          subTitle: newPrimarySchoolMessages.pre.userProfileInformationSubTitle,
+          title: prerequisitesMessages.externalData.userProfileInformationTitle,
+          subTitle:
+            prerequisitesMessages.externalData.userProfileInformationSubTitle,
         }),
         buildDataProviderItem({
-          title: newPrimarySchoolMessages.pre.childInformationTitle,
-          subTitle: newPrimarySchoolMessages.pre.childInformationSubTitle,
+          title: prerequisitesMessages.externalData.childInformationTitle,
+          subTitle: prerequisitesMessages.externalData.childInformationSubTitle,
+        }),
+        buildDataProviderItem({
+          provider: SchoolsApi,
         }),
       ],
     }),

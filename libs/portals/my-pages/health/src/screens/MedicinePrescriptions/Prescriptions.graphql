@@ -1,0 +1,55 @@
+query GetMedicinePrescriptions($locale: String) {
+  healthDirectoratePrescriptions(locale: $locale) {
+    prescriptions {
+      id
+      name
+      strength
+      type
+      form
+      url
+      quantity
+      prescriberName
+      issueDate
+      expiryDate
+      category
+      dosageInstructions
+      indication
+      totalPrescribedAmount
+      isRenewable
+      renewalBlockedReason
+      renewalStatus
+      renewResponseMessage
+      amountRemaining
+      medCardDrugId
+      dispensations {
+        id
+        pharmacy
+        date
+        name
+        count
+        strength
+        itemId
+        amount
+      }
+    }
+  }
+}
+
+query getPrescriptionDocuments($input: MedicinePrescriptionDocumentsInput!) {
+  healthDirectoratePrescriptionDocuments(input: $input) {
+    documents {
+      id
+      name
+      url
+    }
+    id
+  }
+}
+
+mutation postPrescriptionRenewal($input: HealthDirectorateRenewalInput!) {
+  healthDirectoratePrescriptionRenewal(input: $input) {
+    prescriptions {
+      id
+    }
+  }
+}

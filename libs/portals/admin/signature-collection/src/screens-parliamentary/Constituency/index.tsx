@@ -6,98 +6,31 @@ import {
   ActionCard,
   Box,
   Breadcrumbs,
-  DialogPrompt,
-  Icon,
-  Tag,
   GridColumn,
   GridContainer,
   GridRow,
   Stack,
   Text,
-  toast,
-  TagVariant,
+  Divider,
 } from '@island.is/island-ui/core'
-import {
-  useLoaderData,
-  useNavigate,
-  useParams,
-  useRevalidator,
-} from 'react-router-dom'
+import { useLoaderData, useNavigate, useParams } from 'react-router-dom'
 import { SignatureCollectionPaths } from '../../lib/paths'
 import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
-import CreateCollection from '../../shared-components/createCollection'
 import format from 'date-fns/format'
-import electionsCommitteeLogo from '../../../assets/electionsCommittee.svg'
+import { getTagConfig } from '../../lib/utils'
+import ActionDrawer from '../../shared-components/actionDrawer'
+import { Actions } from '../../shared-components/actionDrawer/ListActions'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
-import { useSignatureCollectionAdminRemoveListMutation } from './removeList.generated'
-import { useSignatureCollectionAdminRemoveCandidateMutation } from './removeCandidate.generated'
-import { SignatureCollectionList } from '@island.is/api/schema'
+import EmptyState from '../../shared-components/emptyState'
 
-export const Constituency = ({
-  allowedToProcess,
-}: {
-  allowedToProcess: boolean
-}) => {
+export const Constituency = () => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
-  const { revalidate } = useRevalidator()
-
-  const { collection, allLists } = useLoaderData() as ListsLoaderReturn
-  const { constituencyName } = useParams() as { constituencyName: string }
-
+  const { allLists } = useLoaderData() as ListsLoaderReturn
+  const { constituencyName = '' } = useParams<{ constituencyName: string }>()
   const constituencyLists = allLists.filter(
     (list) => list.area.name === constituencyName,
   )
-
-  const areaId = collection.areas.find((a) => a.name === constituencyName)?.id
-
-  const countCandidatesLists = (allLists: SignatureCollectionList[]) => {
-    return allLists?.reduce((acc: any, list: SignatureCollectionList) => {
-      acc[list.candidate.id] = (acc[list.candidate.id] || 0) + 1
-      return acc
-    }, {})
-  }
-
-  const candidatesListCount = countCandidatesLists(allLists)
-
-  const [removeList] = useSignatureCollectionAdminRemoveListMutation({
-    onCompleted: () => {
-      toast.success(formatMessage(m.cancelCollectionModalToastSuccess))
-      revalidate()
-    },
-    onError: () => {
-      toast.error(formatMessage(m.cancelCollectionModalToastError))
-    },
-  })
-
-  const [removeCandidate] = useSignatureCollectionAdminRemoveCandidateMutation()
-
-  const getTagConfig = (list: SignatureCollectionList) => {
-    // Lista læst
-    if (!list.active && !list.reviewed) {
-      return {
-        label: formatMessage(m.listLocked),
-        variant: 'blueberry' as TagVariant,
-        outlined: false,
-      }
-    }
-
-    // Úrvinnslu lokið
-    if (!list.active && list.reviewed) {
-      return {
-        label: formatMessage(m.confirmListReviewed),
-        variant: 'mint' as TagVariant,
-        outlined: false,
-      }
-    }
-
-    // Söfnun í gangi
-    return {
-      label: formatMessage(m.listOpen),
-      variant: 'blue' as TagVariant,
-      outlined: false,
-    }
-  }
 
   return (
     <GridContainer>
@@ -138,139 +71,67 @@ export const Constituency = ({
             }
             imgPosition="right"
             imgHiddenBelow="sm"
-            img={
-              allowedToProcess ? electionsCommitteeLogo : nationalRegistryLogo
+            img={nationalRegistryLogo}
+            buttonGroup={
+              <ActionDrawer
+                allowedActions={[
+                  Actions.DownloadReports,
+                  Actions.CreateCollection,
+                ]}
+              />
             }
+            marginBottom={3}
           />
-          <GridRow>
-            <GridColumn span={'12/12'}>
-              <Box
-                marginBottom={3}
-                display="flex"
-                justifyContent="spaceBetween"
-                alignItems="flexEnd"
-              >
-                <Text variant="eyebrow">
-                  {formatMessage(m.totalListResults) +
-                    ': ' +
-                    constituencyLists.length}
-                </Text>
-                <CreateCollection
-                  collectionId={collection?.id}
-                  areaId={areaId}
-                />
-              </Box>
-              <Stack space={3}>
-                {constituencyLists.map((list) => (
-                  <ActionCard
-                    key={list.id}
-                    date={format(new Date(list.endTime), 'dd.MM.yyyy HH:mm')}
-                    heading={list.candidate.name}
-                    progressMeter={{
-                      currentProgress: list.numberOfSignatures ?? 0,
-                      maxProgress: list.area.min,
-                      withLabel: true,
-                    }}
-                    cta={{
-                      label: formatMessage(m.viewList),
-                      variant: 'text',
-                      onClick: () => {
-                        navigate(
-                          SignatureCollectionPaths.ParliamentaryConstituencyList.replace(
-                            ':constituencyName',
-                            constituencyName,
-                          ).replace(':listId', list.id),
-                        )
-                      },
-                    }}
-                    tag={
-                      allowedToProcess
-                        ? {
-                            ...getTagConfig(list),
-                            renderTag: (cld) => (
-                              <Box
-                                display="flex"
-                                alignItems="center"
-                                columnGap={1}
-                              >
-                                {cld}
-                                <DialogPrompt
-                                  baseId="cancel_collection_dialog"
-                                  title={
-                                    formatMessage(m.cancelCollectionButton) +
-                                    ' - ' +
-                                    list.area?.name
-                                  }
-                                  description={
-                                    candidatesListCount[list.candidate.id] === 1
-                                      ? formatMessage(
-                                          m.cancelCollectionModalMessageLastList,
-                                        )
-                                      : formatMessage(
-                                          m.cancelCollectionModalMessage,
-                                        )
-                                  }
-                                  ariaLabel="delete"
-                                  disclosureElement={
-                                    <Tag outlined variant="red">
-                                      <Box display="flex" alignItems="center">
-                                        <Icon
-                                          icon="trash"
-                                          size="small"
-                                          type="outline"
-                                        />
-                                      </Box>
-                                    </Tag>
-                                  }
-                                  onConfirm={() => {
-                                    removeList({
-                                      variables: {
-                                        input: {
-                                          listId: list.id,
-                                        },
-                                      },
-                                    })
-
-                                    if (
-                                      candidatesListCount[list.candidate.id] ===
-                                      1
-                                    ) {
-                                      removeCandidate({
-                                        variables: {
-                                          input: {
-                                            candidateId: list.candidate.id,
-                                          },
-                                        },
-                                      })
-                                    }
-                                  }}
-                                  buttonTextConfirm={
-                                    candidatesListCount[list.candidate.id] === 1
-                                      ? formatMessage(
-                                          m.cancelCollectionAndCandidateModalConfirmButton,
-                                        )
-                                      : formatMessage(
-                                          m.cancelCollectionModalConfirmButton,
-                                        )
-                                  }
-                                  buttonPropsConfirm={{
-                                    variant: 'primary',
-                                    colorScheme: 'destructive',
-                                  }}
-                                  buttonTextCancel={formatMessage(
-                                    m.cancelCollectionModalCancelButton,
-                                  )}
-                                />
-                              </Box>
-                            ),
-                          }
-                        : undefined
-                    }
-                  />
-                ))}
-              </Stack>
-            </GridColumn>
-          </GridRow>
+          <Divider />
+          <Box marginTop={9} />
+          {constituencyLists.length === 0 ? (
+            <EmptyState
+              title={formatMessage(m.noLists) + ' í ' + constituencyName}
+              description={formatMessage(m.noListsDescription)}
+            />
+          ) : (
+            <GridRow>
+              <GridColumn span="12/12">
+                <Box display="flex" justifyContent="flexEnd">
+                  <Text variant="eyebrow" marginBottom={3}>
+                    {`${formatMessage(m.totalListsPerConstituency)}: ${
+                      constituencyLists.length
+                    }`}
+                  </Text>
+                </Box>
+                <Stack space={3}>
+                  {constituencyLists.map((list) => (
+                    <ActionCard
+                      key={list.id}
+                      eyebrow={`${formatMessage(m.listEndTime)}: ${format(
+                        new Date(list.endTime),
+                        'dd.MM.yyyy',
+                      )}`}
+                      heading={list.candidate.name}
+                      progressMeter={{
+                        currentProgress: list.numberOfSignatures ?? 0,
+                        maxProgress: list.area.min,
+                        withLabel: true,
+                      }}
+                      cta={{
+                        label: formatMessage(m.viewList),
+                        variant: 'text',
+                        onClick: () => {
+                          navigate(
+                            SignatureCollectionPaths.ParliamentaryConstituencyList.replace(
+                              ':constituencyName',
+                              constituencyName,
+                            ).replace(':listId', list.id),
+                          )
+                        },
+                      }}
+                      tag={getTagConfig(list)}
+                    />
+                  ))}
+                </Stack>
+              </GridColumn>
+            </GridRow>
+          )}
         </GridColumn>
       </GridRow>
     </GridContainer>

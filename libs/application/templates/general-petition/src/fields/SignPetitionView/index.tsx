@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from 'react'
-import { FieldBaseProps, YES } from '@island.is/application/types'
+import { FieldBaseProps } from '@island.is/application/types'
 import {
   Text,
   Box,
@@ -17,18 +17,22 @@ import { useMutation, useQuery } from '@apollo/client'
 import { useHasSigned, useGetSinglePetitionList } from '../../hooks'
 import { GetFullName, EndorseList } from '../../graphql'
 import format from 'date-fns/format'
-import { EndorsementList } from '../../types/schema'
+import { EndorsementList } from '@island.is/api/schema'
 import Skeleton from './Skeleton'
 import Illustration from '../../assets/Illustration'
 import { Markdown } from '@island.is/shared/components'
+import { getValueViaPath, YES } from '@island.is/application/core'
 
 const SignPetitionView: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
 }) => {
   const { formatMessage } = useLocale()
 
-  const listId = (application.externalData?.createEndorsementList.data as any)
-    .id
+  const listId =
+    getValueViaPath<string>(
+      application.externalData,
+      'createEndorsementList.data.id',
+    ) ?? ''
   const [acceptTerms, setAcceptTerms] = useState(false)
   const [showName, setShowName] = useState(true)
 

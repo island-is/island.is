@@ -4,21 +4,19 @@ import {
   buildSection,
 } from '@island.is/application/core'
 import { Form } from '@island.is/application/types'
-import Logo from '../assets/Logo'
+import { DirectorateOfLabourLogo } from '@island.is/application/assets/institution-logos'
 import { inReviewFormMessages } from '../lib/messages'
 
 export const InReview: Form = buildForm({
   id: 'ParentalLeaveInReview',
   title: inReviewFormMessages.formTitle,
-  logo: Logo,
+  logo: DirectorateOfLabourLogo,
   children: [
     buildSection({
       id: 'review',
-      title: '',
       children: [
         buildCustomField({
           id: 'InReviewSteps',
-          title: '',
           component: 'InReviewSteps',
         }),
       ],

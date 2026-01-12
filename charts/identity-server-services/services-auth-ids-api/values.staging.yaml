@@ -31,11 +31,11 @@ env:
   IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api'
   IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
   LOG_LEVEL: 'info'
-  NATIONAL_REGISTRY_B2C_CLIENT_ID: '6cf94113-d326-4e4d-b97c-1fea12d2f5e1'
-  NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
-  NATIONAL_REGISTRY_B2C_PATH: 'IS-TEST/GOV/10001/SKRA-Cloud-Protected/Midlun-v1'
-  NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitydev.onmicrosoft.com/midlun/.default'
-  NODE_OPTIONS: '--max-old-space-size=691 -r dd-trace/init'
+  NATIONAL_REGISTRY_B2C_CLIENT_ID: '19e7d60e-920e-4a6f-a125-25ea283ee1a4'
+  NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitystaging.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
+  NATIONAL_REGISTRY_B2C_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
+  NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitystaging.onmicrosoft.com/midlun/.default'
+  NODE_OPTIONS: '--max-old-space-size=691 --enable-source-maps -r dd-trace/init'
   NOVA_ACCEPT_UNAUTHORIZED: 'false'
   PASSKEY_CORE_ALLOWED_ORIGINS: '["https://island.is","android:apk-key-hash:JgPeo_F6KYk-ngRa26tO2SsAtMiTBQCc7WtSgN-jRX0","android:apk-key-hash:EsLTUu5kaY7XPmMl2f7nbq4amu-PNzdYu3FecNf90wU"]'
   PASSKEY_CORE_CHALLENGE_TTL_MS: '120000'
@@ -48,15 +48,15 @@ env:
   SYSLUMENN_HOST: 'https://api.syslumenn.is/staging'
   SYSLUMENN_TIMEOUT: '3000'
   USER_PROFILE_CLIENT_SCOPE: '["@island.is/user-profile:read"]'
-  USER_PROFILE_CLIENT_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
+  USER_PROFILE_CLIENT_URL: 'http://service-portal-api.service-portal.svc.cluster.local'
   XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
   XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
   XROAD_CLIENT_ID: 'IS-TEST/GOV/5501692829/island-is-client'
   XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
-  XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1'
+  XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Einstaklingar-v1'
   XROAD_RSK_PROCURING_PATH: 'IS-TEST/GOV/5402696029/Skatturinn/relationships-v1'
   XROAD_RSK_PROCURING_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
-  XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1'
+  XROAD_TJODSKRA_API_PATH: '/SKRA-Cloud-Protected/Einstaklingar-v1'
   XROAD_TJODSKRA_MEMBER_CODE: '6503760649'
   XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
   XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
@@ -124,7 +124,10 @@ initContainer:
     DB_PASS: '/k8s/servicesauth/DB_PASSWORD'
 namespace: 'identity-server'
 podDisruptionBudget:
-  maxUnavailable: 1
+  minAvailable: 1
+  unhealthyPodEvictionPolicy: 'IfHealthyBudget'
+podSecurityContext:
+  fsGroup: 65534
 pvcs: []
 replicaCount:
   default: 1
@@ -153,3 +156,8 @@ secrets:
 securityContext:
   allowPrivilegeEscalation: false
   privileged: false
+serviceAccount:
+  annotations:
+    eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/services-auth-ids-api'
+  create: true
+  name: 'services-auth-ids-api'

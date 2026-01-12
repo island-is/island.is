@@ -3,13 +3,10 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/smart-solutions-v2/src",
   "projectType": "library",
+  "tags": ["lib:client", "scope:client"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["libs/clients/smart-solutions-v2/**/*.ts"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
@@ -17,12 +14,6 @@
       "options": {
         "jestConfig": "libs/clients/smart-solutions-v2/jest.config.ts",
         "passWithNoTests": true
-      },
-      "configurations": {
-        "ci": {
-          "ci": true,
-          "codeCoverage": true
-        }
       }
     },
     "update-openapi-document": {
@@ -36,12 +27,11 @@
     "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
-        "output": "libs/clients/smart-solutions-v2/src/**/*.generated.ts",
         "commands": [
           "graphql-codegen --config libs/clients/smart-solutions-v2/codegen.yml"
         ]
-      }
+      },
+      "outputs": ["{projectRoot}/gen/schema.ts"]
     }
-  },
-  "tags": ["lib:client", "scope:client"]
+  }
 }

@@ -18,8 +18,8 @@ import {
 } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import intervalToDuration from 'date-fns/intervalToDuration'
-import { GenericFormField, YES } from '@island.is/application/types'
-import { hasYes } from '@island.is/application/core'
+import { GenericFormField } from '@island.is/application/types'
+import { hasYes, YES } from '@island.is/application/core'
 import { Fragment, useEffect, useMemo } from 'react'
 import { EstateMember } from '../../types'
 import {
@@ -261,6 +261,14 @@ export const AdditionalHeir = ({
                     )}
                     onSelect={() => {
                       clearErrors()
+                      // Recalculate values when relation changes (affects tax calculations)
+                      const currentPercentage =
+                        currentHeir?.heirsPercentage ?? 0
+                      updateValues(
+                        fieldIndex,
+                        parseFloat(currentPercentage),
+                        index,
+                      )
                     }}
                     defaultValue={currentHeir?.relation ?? ''}
                     options={relationOptions}
@@ -277,7 +285,7 @@ export const AdditionalHeir = ({
                     disabled={isDisabledField}
                     label={formatMessage(customField.title)}
                     onAfterChange={(val) => {
-                      updateValues(fieldIndex, val, customFieldIndex)
+                      updateValues(fieldIndex, val, index)
                     }}
                     hasError={!!error?.heirsPercentage}
                     required

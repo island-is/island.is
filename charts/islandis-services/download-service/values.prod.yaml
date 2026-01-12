@@ -22,8 +22,8 @@ env:
   IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/download-service'
   IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
   LOG_LEVEL: 'info'
-  NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
-  REGULATIONS_ADMIN_URL: 'http://web-regulations-admin-backend.regulations-admin.svc.cluster.local'
+  NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
+  REGULATIONS_ADMIN_URL: 'http://regulations-admin-backend.regulations-admin.svc.cluster.local'
   SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   XROAD_AGRICULTURAL_UNIVERSITY_OF_ICELAND_PATH: 'IS/EDU/4112043590/LBHI-Protected/brautskraning-v1'
   XROAD_BASE_PATH: 'http://securityserver.island.is'
@@ -84,7 +84,10 @@ ingress:
           - '/download'
 namespace: 'download-service'
 podDisruptionBudget:
-  maxUnavailable: 1
+  minAvailable: 1
+  unhealthyPodEvictionPolicy: 'IfHealthyBudget'
+podSecurityContext:
+  fsGroup: 65534
 pvcs: []
 replicaCount:
   default: 3
@@ -115,3 +118,8 @@ secrets:
 securityContext:
   allowPrivilegeEscalation: false
   privileged: false
+serviceAccount:
+  annotations:
+    eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/download-service'
+  create: true
+  name: 'download-service'

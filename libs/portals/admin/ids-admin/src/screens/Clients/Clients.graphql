@@ -9,6 +9,7 @@ query GetClients($input: AuthAdminClientsInput!) {
         id
         environment
         clientId
+        sso
         displayName {
           locale
           value

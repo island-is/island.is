@@ -11,98 +11,104 @@ import {
 } from '@island.is/application/core'
 import { userInformation } from '../../../lib/messages'
 import { Application } from '@island.is/application/types'
-import { getParent, getHasParent, Routes } from '../../../utils'
+import {
+  checkHasAnyCustodians,
+  getCustodian,
+  getHasCustodian,
+  Routes,
+} from '../../../utils'
 
 export const custodianSubSection = buildSubSection({
   id: 'custodianSubSection',
   title: (application) =>
-    getHasParent(application.externalData, 0)
+    checkHasAnyCustodians(application.externalData)
       ? userInformation.custodian.subSectionTitle
       : userInformation.otherContact.subSectionTitle,
   children: [
     buildMultiField({
       id: Routes.CUSTODIAN,
       title: (application) =>
-        getHasParent(application.externalData, 0)
+        checkHasAnyCustodians(application.externalData)
           ? userInformation.custodian.pageTitle
           : userInformation.otherContact.pageTitle,
       description: (application) =>
-        getHasParent(application.externalData, 0)
+        checkHasAnyCustodians(application.externalData)
           ? ''
           : userInformation.otherContact.description,
       children: [
+        // Custodians
         // Custodian 1
         buildDescriptionField({
           id: 'custodianInfo1.subtitle',
           title: userInformation.custodian.subtitle1,
           titleVariant: 'h5',
           space: 3,
-          condition: (_, externalData) => getHasParent(externalData, 0),
+          condition: (_, externalData) => getHasCustodian(externalData, 0),
         }),
         buildTextField({
-          id: 'custodians[0].name',
+          id: 'custodians[0].person.name',
           title: userInformation.custodian.name,
           backgroundColor: 'blue',
           width: 'half',
           readOnly: true,
-          condition: (_, externalData) => getHasParent(externalData, 0),
+          condition: (_, externalData) => getHasCustodian(externalData, 0),
           defaultValue: (application: Application) => {
-            const parent = getParent(application.externalData, 0)
-            return `${parent?.givenName} ${parent?.familyName}`
+            const parent = getCustodian(application.externalData, 0)
+            return `${parent?.name}`
           },
         }),
         buildTextField({
-          id: 'custodians[0].nationalId',
+          id: 'custodians[0].person.nationalId',
           title: userInformation.custodian.nationalId,
           backgroundColor: 'blue',
           width: 'half',
           readOnly: true,
           format: '######-####',
-          condition: (_, externalData) => getHasParent(externalData, 0),
+          condition: (_, externalData) => getHasCustodian(externalData, 0),
           defaultValue: (application: Application) => {
-            const parent = getParent(application.externalData, 0)
+            const parent = getCustodian(application.externalData, 0)
             return `${parent?.nationalId}`
           },
         }),
         buildTextField({
-          id: 'custodians[0].address',
+          id: 'custodians[0].legalDomicile.address',
           title: userInformation.custodian.address,
           backgroundColor: 'blue',
           width: 'half',
           readOnly: true,
-          condition: (_, externalData) => getHasParent(externalData, 0),
+          condition: (_, externalData) => getHasCustodian(externalData, 0),
           defaultValue: (application: Application) => {
-            const parent = getParent(application.externalData, 0)
+            const parent = getCustodian(application.externalData, 0)
             return `${parent?.legalDomicile?.streetAddress}`
           },
         }),
         buildTextField({
-          id: 'custodians[0].postalCodeAndCity',
+          id: 'custodians[0].legalDomicile.postalCodeAndCity',
           title: userInformation.custodian.postalCodeAndCity,
           backgroundColor: 'blue',
           width: 'half',
           readOnly: true,
-          condition: (_, externalData) => getHasParent(externalData, 0),
+          condition: (_, externalData) => getHasCustodian(externalData, 0),
           defaultValue: (application: Application) => {
-            const parent = getParent(application.externalData, 0)
+            const parent = getCustodian(application.externalData, 0)
             return `${parent?.legalDomicile?.postalCode} ${parent?.legalDomicile?.locality}`
           },
         }),
         buildPhoneField({
-          id: 'custodians[0].phone',
+          id: 'custodians[0].person.phone',
           title: userInformation.custodian.phone,
           width: 'half',
           required: true,
-          condition: (_, externalData) => getHasParent(externalData, 0),
+          condition: (_, externalData) => getHasCustodian(externalData, 0),
         }),
         buildTextField({
-          id: 'custodians[0].email',
+          id: 'custodians[0].person.email',
           title: userInformation.custodian.email,
           backgroundColor: 'blue',
           width: 'half',
           variant: 'email',
           required: true,
-          condition: (_, externalData) => getHasParent(externalData, 0),
+          condition: (_, externalData) => getHasCustodian(externalData, 0),
         }),
 
         // Custodian 2
@@ -111,98 +117,106 @@ export const custodianSubSection = buildSubSection({
           title: userInformation.custodian.subtitle2,
           titleVariant: 'h5',
           space: 3,
-          condition: (_, externalData) => getHasParent(externalData, 1),
+          condition: (_, externalData) => getHasCustodian(externalData, 1),
         }),
         buildTextField({
-          id: 'custodians[1].name',
+          id: 'custodians[1].person.name',
           title: userInformation.custodian.name,
           backgroundColor: 'blue',
           width: 'half',
           readOnly: true,
-          condition: (_, externalData) => getHasParent(externalData, 1),
+          condition: (_, externalData) => getHasCustodian(externalData, 1),
           defaultValue: (application: Application) => {
-            const parent = getParent(application.externalData, 1)
-            return `${parent?.givenName} ${parent?.familyName}`
+            const parent = getCustodian(application.externalData, 1)
+            return `${parent?.name}`
           },
         }),
         buildTextField({
-          id: 'custodians[1].nationalId',
+          id: 'custodians[1].person.nationalId',
           title: userInformation.custodian.nationalId,
           backgroundColor: 'blue',
           width: 'half',
           readOnly: true,
           format: '######-####',
-          condition: (_, externalData) => getHasParent(externalData, 1),
+          condition: (_, externalData) => getHasCustodian(externalData, 1),
           defaultValue: (application: Application) => {
-            const parent = getParent(application.externalData, 1)
+            const parent = getCustodian(application.externalData, 1)
             return `${parent?.nationalId}`
           },
         }),
         buildTextField({
-          id: 'custodians[1].address',
+          id: 'custodians[1].legalDomicile.address',
           title: userInformation.custodian.address,
           backgroundColor: 'blue',
           width: 'half',
           readOnly: true,
-          condition: (_, externalData) => getHasParent(externalData, 1),
+          condition: (_, externalData) => getHasCustodian(externalData, 1),
           defaultValue: (application: Application) => {
-            const parent = getParent(application.externalData, 1)
+            const parent = getCustodian(application.externalData, 1)
             return `${parent?.legalDomicile?.streetAddress}`
           },
         }),
         buildTextField({
-          id: 'custodians[1].postalCodeAndCity',
+          id: 'custodians[1].legalDomicile.postalCodeAndCity',
           title: userInformation.custodian.postalCodeAndCity,
           backgroundColor: 'blue',
           width: 'half',
           readOnly: true,
-          condition: (_, externalData) => getHasParent(externalData, 1),
+          condition: (_, externalData) => getHasCustodian(externalData, 1),
           defaultValue: (application: Application) => {
-            const parent = getParent(application.externalData, 1)
+            const parent = getCustodian(application.externalData, 1)
             return `${parent?.legalDomicile?.postalCode} ${parent?.legalDomicile?.locality}`
           },
         }),
         buildPhoneField({
-          id: 'custodians[1].phone',
+          id: 'custodians[1].person.phone',
           title: userInformation.custodian.phone,
           width: 'half',
           required: true,
-          condition: (_, externalData) => getHasParent(externalData, 1),
+          condition: (_, externalData) => getHasCustodian(externalData, 1),
         }),
         buildTextField({
-          id: 'custodians[1].email',
+          id: 'custodians[1].person.email',
           title: userInformation.custodian.email,
           backgroundColor: 'blue',
           width: 'half',
           variant: 'email',
           required: true,
-          condition: (_, externalData) => getHasParent(externalData, 1),
+          condition: (_, externalData) => getHasCustodian(externalData, 1),
         }),
 
-        // Other contact
+        // Main other contact
         buildHiddenInput({
-          id: 'mainOtherContact.required',
+          id: 'mainOtherContact.applicantNationalId',
           defaultValue: (application: Application) => {
-            return getHasParent(application.externalData, 0) ? false : true
+            return application.applicant
+          },
+        }),
+        buildHiddenInput({
+          id: 'mainOtherContact.include',
+          defaultValue: (application: Application) => {
+            return !checkHasAnyCustodians(application.externalData)
           },
         }),
         buildNationalIdWithNameField({
-          id: 'mainOtherContact',
-          title: '',
-          required: true,
+          id: 'mainOtherContact.person',
+          required: false,
           showPhoneField: true,
           showEmailField: true,
-          phoneRequired: true,
-          emailRequired: true,
+          phoneRequired: false,
+          emailRequired: false,
           phoneLabel: userInformation.otherContact.phone,
           emailLabel: userInformation.otherContact.email,
+          clearOnChange: ['mainOtherContact.person.name'],
           condition: (answers) => {
             return (
-              getValueViaPath<boolean>(answers, 'mainOtherContact.required') ||
+              getValueViaPath<boolean>(answers, 'mainOtherContact.include') ||
               false
             )
           },
         }),
+
+        // Other contacts
         buildFieldsRepeaterField({
           id: 'otherContacts',
           title: userInformation.otherContact.subtitle,
@@ -216,20 +230,19 @@ export const custodianSubSection = buildSubSection({
             person: {
               component: 'nationalIdWithName',
               required: true,
+              showPhoneField: true,
+              phoneLabel: userInformation.otherContact.phone,
+              phoneRequired: true,
+              showEmailField: true,
+              emailLabel: userInformation.otherContact.email,
+              emailRequired: true,
+              clearOnChange: (index) => [`otherContacts[${index}].person.name`],
             },
-            phone: {
-              component: 'phone',
-              label: userInformation.otherContact.phone,
-              enableCountrySelector: true,
-              required: true,
-              width: 'half',
-            },
-            email: {
-              component: 'input',
-              label: userInformation.otherContact.email,
-              type: 'email',
-              required: true,
-              width: 'half',
+            applicantNationalId: {
+              component: 'hiddenInput',
+              defaultValue: (application: Application) => {
+                return application.applicant
+              },
             },
           },
         }),

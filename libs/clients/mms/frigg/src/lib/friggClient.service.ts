@@ -1,11 +1,12 @@
 import { Auth, AuthMiddleware, type User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
 import {
-  FormDto,
+  FormSubmitSuccessModel,
   FriggApi,
+  GetOrganizationsByTypeRequest,
   KeyOption,
   OrganizationModel,
-  FormSubmitSuccessModel,
+  RegistrationApplicationInput,
   UserModel,
 } from '../../gen/fetch'
 
@@ -25,17 +26,53 @@ export class FriggClientService {
     })
   }
 
-  async getAllSchoolsByMunicipality(user: User): Promise<OrganizationModel[]> {
-    return await this.friggApiWithAuth(user).getAllSchoolsByMunicipality()
+  async getOrganizationsByType(
+    user: User,
+    input?: GetOrganizationsByTypeRequest,
+  ): Promise<OrganizationModel[]> {
+    return await this.friggApiWithAuth(user).getOrganizationsByType({
+      type: input?.type,
+      municipalityCode: input?.municipalityCode,
+      gradeLevels: input?.gradeLevels,
+      limit: 1000, // Frigg is restricting to 100 by default
+    })
   }
 
-  async getUserById(user: User, childNationalId: string): Promise<UserModel> {
-    return await this.friggApiWithAuth(user).getUserBySourcedId({
+  async getUserById(
+    user: User,
+    childNationalId: string,
+  ): Promise<UserModel | { nationalId: string }> {
+    try {
+      return await this.friggApiWithAuth(user).getUserBySourcedId({
+        nationalId: childNationalId,
+      })
+    } catch (error) {
+      // If the student is not found in Frigg
+      if (
+        error?.status === 404 &&
+        error?.body?.message === 'Student not found'
+      ) {
+        return { nationalId: childNationalId }
+      }
+      throw error
+    }
+  }
+
+  async getPreferredSchool(
+    user: User,
+    childNationalId: string,
+  ): Promise<OrganizationModel> {
+    return await this.friggApiWithAuth(user).getPreferredSchools({
       nationalId: childNationalId,
     })
   }
 
-  sendApplication(user: User, form: FormDto): Promise<FormSubmitSuccessModel> {
-    return this.friggApiWithAuth(user).submitForm({ formDto: form })
+  sendApplication(
+    user: User,
+    form: RegistrationApplicationInput,
+  ): Promise<FormSubmitSuccessModel> {
+    return this.friggApiWithAuth(user).submitForm({
+      registrationApplicationInput: form,
+    })
   }
 }

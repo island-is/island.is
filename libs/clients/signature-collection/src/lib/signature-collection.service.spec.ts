@@ -8,13 +8,32 @@ import {
   MedmaelasofnunExtendedDTO,
   EinstaklingurKosningInfoDTO,
   FrambodDTO,
+  KosningApi,
 } from '../../gen/fetch'
 import { SignatureCollectionSharedClientService } from './signature-collection-shared.service'
 import { Test, TestingModule } from '@nestjs/testing'
 import { CreateListInput } from './signature-collection.types'
 import { User } from '@island.is/auth-nest-tools'
 import { LoggingModule } from '@island.is/logging'
-import { CollectionType } from './types/collection.dto'
+import {
+  CollectionType,
+  getNumberFromCollectionType,
+} from './types/collection.dto'
+
+const svaedi = [
+  {
+    id: 123,
+    nafn: 'Svæði',
+    svaediTegundLysing: 'Lýsing',
+    nr: '1',
+  },
+  {
+    id: 321,
+    nafn: 'Svæði',
+    svaediTegundLysing: 'Lýsing',
+    nr: '1',
+  },
+]
 
 const user: User = {
   nationalId: '0101302399',
@@ -33,11 +52,12 @@ const sofnun: MedmaelasofnunExtendedDTO[] = [
       id: 123,
       erMedmaelakosning: true,
       kosningTegund: 'Forsetakosning',
-      kosningTegundNr: CollectionType.Presidential,
+      kosningTegundNr: getNumberFromCollectionType(CollectionType.Presidential),
       nafn: 'Gervikosning',
     },
     kosningTegund: 'Forsetakosning',
     kosningNafn: 'Gervikosning',
+    kosningID: 112233,
   },
 ]
 const sofnunUser: EinstaklingurKosningInfoDTO = {
@@ -56,12 +76,14 @@ describe('MyService', () => {
   let sofnunApi: MedmaelasofnunApi
   let medmaeliApi: MedmaeliApi
   let frambodApi: FrambodApi
+  let kosningApi: KosningApi
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         SignatureCollectionClientService,
         MedmaelalistarApi,
         MedmaelasofnunApi,
+        KosningApi,
         MedmaeliApi,
         FrambodApi,
         SignatureCollectionSharedClientService,
@@ -75,6 +97,15 @@ describe('MyService', () => {
     sofnunApi = module.get<MedmaelasofnunApi>(MedmaelasofnunApi)
     medmaeliApi = module.get<MedmaeliApi>(MedmaeliApi)
     frambodApi = module.get<FrambodApi>(FrambodApi)
+    kosningApi = module.get<KosningApi>(KosningApi)
+
+    jest
+      .spyOn(kosningApi, 'kosningIDSvaediSofnunGet')
+      .mockReturnValue(Promise.resolve(svaedi))
+
+    jest
+      .spyOn(kosningApi, 'kosningIDSvaediGet')
+      .mockReturnValue(Promise.resolve(svaedi))
   })
 
   it('should be defined', () => {
@@ -222,6 +253,17 @@ describe('MyService', () => {
           svaediID === 123 ? lists.filter((l) => l.svaedi?.id === 123) : lists,
         ),
       )
+    jest.spyOn(kosningApi, 'kosningGet').mockReturnValue(
+      Promise.resolve([
+        {
+          id: 123,
+          kosningTegund: 'Forsetakosning',
+          kosningTegundNr: 2,
+          nafn: 'bbbb',
+        },
+      ]),
+    )
+
     // Act
     const all = await service.getLists({})
     const allArea = await service.getLists({ areaId: '123' })
@@ -237,6 +279,7 @@ describe('MyService', () => {
   it('createLists should create lists', async () => {
     // Arrange
     const input: CreateListInput = {
+      collectionType: CollectionType.Presidential,
       collectionId: '123',
       owner: {
         email: 'jon@jonsson.is',
@@ -268,11 +311,67 @@ describe('MyService', () => {
       .mockReturnValueOnce(Promise.resolve(candidacy))
     jest
       .spyOn(service, 'getApiWithAuth')
-      .mockReturnValueOnce(sofnunApi)
-      .mockReturnValueOnce(frambodApi)
+      .mockImplementation((api, _) =>
+        api instanceof MedmaelasofnunApi
+          ? sofnunApi
+          : api instanceof KosningApi
+          ? kosningApi
+          : frambodApi,
+      )
     jest
-      .spyOn(sofnunApi, 'medmaelasofnunIDEinsInfoKennitalaGet')
+      .spyOn(kosningApi, 'kosningIDEinsInfoKennitalaGet')
       .mockReturnValue(Promise.resolve(sofnunUser))
+    jest.spyOn(kosningApi, 'kosningGet').mockReturnValue(
+      Promise.resolve([
+        {
+          id: 124,
+          kosningTegund: 'Forsetakosning',
+          kosningTegundNr: 2,
+          nafn: 'bbbb',
+        },
+        {
+          id: 123,
+          kosningTegund: 'Alþingiskosningar',
+          kosningTegundNr: 1,
+          nafn: 'aaaa',
+        },
+      ]),
+    )
+    jest.spyOn(kosningApi, 'kosningIDSofnunListGet').mockReturnValue(
+      Promise.resolve([
+        {
+          kosningNafn: 'bbbb',
+          kosningTegund: 'Forsetakosning',
+          kosningTegundNr: 2,
+          id: 124,
+          sofnunStart: new Date(0),
+          sofnunEnd: new Date(3999_999_999_999),
+          svaedi: [],
+          kosning: {
+            erMedmaelakosning: true,
+            nafn: 'bbbb',
+            kosningTegund: 'Forsetakosning',
+            kosningTegundNr: 2,
+          },
+        },
+        {
+          id: 123,
+          kosningTegund: 'Alþingiskosningar',
+          kosningTegundNr: 1,
+          kosningNafn: 'aaaa',
+          sofnunStart: new Date(0),
+          sofnunEnd: new Date(3999_999_999_999),
+          svaedi: [],
+          erMedmaelaKosning: true,
+          kosning: {
+            erMedmaelakosning: true,
+            nafn: 'aaaa',
+            kosningTegund: 'Alþingiskosningar',
+            kosningTegundNr: 1,
+          },
+        },
+      ]),
+    )
 
     // Act
     const result = await service.createLists(input, user)
@@ -289,27 +388,91 @@ describe('MyService', () => {
       .spyOn(sofnunApi, 'medmaelasofnunGet')
       .mockReturnValue(Promise.resolve(sofnun))
     jest
-      .spyOn(sofnunApi, 'medmaelasofnunIDEinsInfoKennitalaGet')
-      .mockReturnValue(Promise.resolve(sofnunUser))
-    jest
       .spyOn(service, 'getApiWithAuth')
       .mockImplementation((api, _) =>
-        api instanceof MedmaelasofnunApi ? sofnunApi : frambodApi,
+        api instanceof MedmaelasofnunApi
+          ? sofnunApi
+          : api instanceof KosningApi
+          ? kosningApi
+          : frambodApi,
       )
+    jest
+      .spyOn(kosningApi, 'kosningIDEinsInfoKennitalaGet')
+      .mockReturnValue(Promise.resolve(sofnunUser))
     jest
       .spyOn(frambodApi, 'frambodIDDelete')
       .mockImplementation(() => Promise.resolve())
+    jest.spyOn(kosningApi, 'kosningGet').mockReturnValue(
+      Promise.resolve([
+        {
+          id: 124,
+          kosningTegund: 'Forsetakosning',
+          kosningTegundNr: 2,
+          nafn: 'bbbb',
+        },
+        {
+          id: 123,
+          kosningTegund: 'Alþingiskosningar',
+          kosningTegundNr: 1,
+          nafn: 'aaaa',
+        },
+      ]),
+    )
+    jest.spyOn(kosningApi, 'kosningIDSofnunListGet').mockReturnValue(
+      Promise.resolve([
+        {
+          kosningNafn: 'bbbb',
+          kosningTegund: 'Forsetakosning',
+          kosningTegundNr: 2,
+          id: 124,
+          sofnunStart: new Date(0),
+          sofnunEnd: new Date(3999_999_999_999),
+          svaedi: [],
+          kosning: {
+            erMedmaelakosning: true,
+            nafn: 'bbbb',
+            kosningTegund: 'Forsetakosning',
+            kosningTegundNr: 2,
+          },
+        },
+        {
+          id: 123,
+          kosningTegund: 'Alþingiskosningar',
+          kosningTegundNr: 1,
+          kosningNafn: 'aaaa',
+          sofnunStart: new Date(0),
+          sofnunEnd: new Date(3999_999_999_999),
+          svaedi: [],
+          erMedmaelaKosning: true,
+          kosning: {
+            erMedmaelakosning: true,
+            nafn: 'aaaa',
+            kosningTegund: 'Alþingiskosningar',
+            kosningTegundNr: 1,
+          },
+        },
+      ]),
+    )
+
     // Act
     const notOwner = await service.removeLists(
-      { collectionId: '', listIds: [''] },
+      {
+        collectionId: '',
+        listIds: [''],
+        collectionType: CollectionType.Presidential,
+      },
       { ...user, nationalId: '1234567910' },
     )
     const notOpen = await service.removeLists(
-      { collectionId: '', listIds: [''] },
+      {
+        collectionId: '',
+        listIds: [''],
+        collectionType: CollectionType.Presidential,
+      },
       user,
     )
     const presidentialResult = await service.removeLists(
-      { collectionId: '123' },
+      { collectionId: '123', collectionType: CollectionType.Presidential },
       user,
     )
     // Assert
@@ -330,7 +493,18 @@ describe('MyService', () => {
       .spyOn(sofnunApi, 'medmaelasofnunGet')
       .mockReturnValue(Promise.resolve(sofnun))
     jest
-      .spyOn(sofnunApi, 'medmaelasofnunIDEinsInfoKennitalaGet')
+      .spyOn(service, 'getApiWithAuth')
+      .mockImplementation((api, _) =>
+        api instanceof MedmaelasofnunApi
+          ? sofnunApi
+          : api instanceof FrambodApi
+          ? frambodApi
+          : api instanceof KosningApi
+          ? kosningApi
+          : listarApi,
+      )
+    jest
+      .spyOn(kosningApi, 'kosningIDEinsInfoKennitalaGet')
       .mockReturnValueOnce(
         Promise.resolve({
           ...sofnunUser,
@@ -338,15 +512,6 @@ describe('MyService', () => {
         }),
       )
       .mockReturnValue(Promise.resolve(sofnunUser))
-    jest
-      .spyOn(service, 'getApiWithAuth')
-      .mockImplementation((api, _) =>
-        api instanceof MedmaelasofnunApi
-          ? sofnunApi
-          : api instanceof FrambodApi
-          ? frambodApi
-          : listarApi,
-      )
     jest.spyOn(listarApi, 'medmaelalistarIDMedmaeliPost').mockReturnValue(
       Promise.resolve({
         kennitala: '0101302399',
@@ -355,9 +520,70 @@ describe('MyService', () => {
         medmaelalistiID: 888,
       }),
     )
+
+    jest.spyOn(kosningApi, 'kosningGet').mockReturnValue(
+      Promise.resolve([
+        {
+          id: 1234,
+          kosningTegund: 'Forsetakosning',
+          kosningTegundNr: 2,
+          nafn: 'bbbb',
+        },
+        {
+          id: 123,
+          kosningTegund: 'Alþingiskosningar',
+          kosningTegundNr: 1,
+          nafn: 'aaaa',
+        },
+      ]),
+    )
+
+    jest.spyOn(kosningApi, 'kosningIDSofnunListGet').mockReturnValue(
+      Promise.resolve([
+        {
+          kosningNafn: 'bbbb',
+          kosningTegund: 'Forsetakosning',
+          kosningTegundNr: 2,
+          id: 124,
+          sofnunStart: new Date(0),
+          sofnunEnd: new Date(3999_999_999_999),
+          svaedi: [],
+          kosning: {
+            erMedmaelakosning: true,
+            nafn: 'bbbb',
+            kosningTegund: 'Forsetakosning',
+            kosningTegundNr: 2,
+          },
+        },
+        {
+          id: 123,
+          kosningTegund: 'Alþingiskosningar',
+          kosningTegundNr: 1,
+          kosningNafn: 'aaaa',
+          sofnunStart: new Date(0),
+          sofnunEnd: new Date(3999_999_999_999),
+          svaedi: [],
+          erMedmaelaKosning: true,
+          kosning: {
+            erMedmaelakosning: true,
+            nafn: 'aaaa',
+            kosningTegund: 'Alþingiskosningar',
+            kosningTegundNr: 1,
+          },
+        },
+      ]),
+    )
     // Act
-    const alreadySigned = service.signList('123123', user)
-    const success = await service.signList('123123', user)
+    const alreadySigned = service.signList(
+      '124',
+      CollectionType.Presidential,
+      user,
+    )
+    const success = await service.signList(
+      '124',
+      CollectionType.Presidential,
+      user,
+    )
     // Assert
     expect(alreadySigned).rejects.toThrow('User has already signed a list')
     expect(success).toMatchObject({
@@ -373,34 +599,96 @@ describe('MyService', () => {
     jest
       .spyOn(service, 'getApiWithAuth')
       .mockImplementation((api, _) =>
-        api instanceof MedmaeliApi ? medmaeliApi : sofnunApi,
+        api instanceof MedmaeliApi
+          ? medmaeliApi
+          : api instanceof MedmaelasofnunApi
+          ? sofnunApi
+          : kosningApi,
       )
     jest
       .spyOn(sofnunApi, 'medmaelasofnunGet')
       .mockReturnValue(Promise.resolve(sofnun))
-    jest
-      .spyOn(sofnunApi, 'medmaelasofnunIDEinsInfoKennitalaGet')
-      .mockReturnValue(
-        Promise.resolve({
-          ...sofnunUser,
-          medmaeli: [
-            {
-              id: 111,
-              medmaeliTegundNr: 1,
-              medmaelalistiID: 999,
-              kennitala: '0101302399',
-            },
-          ],
-        }),
-      )
+    jest.spyOn(kosningApi, 'kosningIDEinsInfoKennitalaGet').mockReturnValue(
+      Promise.resolve({
+        ...sofnunUser,
+        medmaeli: [
+          {
+            id: 111,
+            medmaeliTegundNr: 1,
+            medmaelalistiID: 999,
+            kennitala: '0101302399',
+          },
+        ],
+      }),
+    )
     jest.spyOn(medmaeliApi, 'medmaeliIDDelete').mockReturnValue(
       Promise.resolve({
         kennitala: '0101302399',
       }),
     )
+    jest.spyOn(kosningApi, 'kosningGet').mockReturnValue(
+      Promise.resolve([
+        {
+          id: 124,
+          kosningTegund: 'Forsetakosning',
+          kosningTegundNr: 2,
+          nafn: 'bbbb',
+        },
+        {
+          id: 123,
+          kosningTegund: 'Alþingiskosningar',
+          kosningTegundNr: 1,
+          nafn: 'aaaa',
+        },
+      ]),
+    )
+    jest.spyOn(kosningApi, 'kosningIDSofnunListGet').mockReturnValue(
+      Promise.resolve([
+        {
+          kosningNafn: 'bbbb',
+          kosningTegund: 'Forsetakosning',
+          kosningTegundNr: 2,
+          id: 124,
+          sofnunStart: new Date(0),
+          sofnunEnd: new Date(3999_999_999_999),
+          svaedi: [],
+          kosning: {
+            erMedmaelakosning: true,
+            nafn: 'bbbb',
+            kosningTegund: 'Forsetakosning',
+            kosningTegundNr: 2,
+          },
+        },
+        {
+          id: 123,
+          kosningTegund: 'Alþingiskosningar',
+          kosningTegundNr: 1,
+          kosningNafn: 'aaaa',
+          sofnunStart: new Date(0),
+          sofnunEnd: new Date(3999_999_999_999),
+          svaedi: [],
+          erMedmaelaKosning: true,
+          kosning: {
+            erMedmaelakosning: true,
+            nafn: 'aaaa',
+            kosningTegund: 'Alþingiskosningar',
+            kosningTegundNr: 1,
+          },
+        },
+      ]),
+    )
+
     // Act
-    const noSignature = await service.unsignList('', user)
-    const success = await service.unsignList('999', user)
+    const noSignature = await service.unsignList(
+      '',
+      CollectionType.Presidential,
+      user,
+    )
+    const success = await service.unsignList(
+      '999',
+      CollectionType.Presidential,
+      user,
+    )
     // Assert
     expect(noSignature).toEqual({
       success: false,

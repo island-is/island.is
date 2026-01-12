@@ -8,7 +8,6 @@ import { ReviewSection } from '../Review'
 
 export const UniversityForm: Form = buildForm({
   id: 'UniversityFormDraft',
-  title: '',
   // logo: Logo,
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,

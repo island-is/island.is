@@ -100,6 +100,11 @@ export const fishingLicense = {
       defaultMessage: 'Krabbaveiðileyfi',
       description: 'Crustaceans',
     },
+    urchin: {
+      id: 'gfl.application:shipSelection.labels.urchin',
+      defaultMessage: 'Ígulkeraveiðileyfi',
+      description: 'Ígulkerjaveiðileyfi',
+    },
     unknown: {
       id: 'gfl.application:shipSelection.labels.notSpecified',
       defaultMessage: 'Ekki tilgreint',

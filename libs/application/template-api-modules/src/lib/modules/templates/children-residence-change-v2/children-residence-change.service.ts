@@ -126,10 +126,6 @@ export class ChildrenResidenceChangeServiceV2 extends BaseTemplateApiService {
           : durationType,
     }
 
-    if (!childResidenceInfo.future?.address?.postalCode) {
-      throw new Error('Future residence postal code was not found')
-    }
-
     // Validate phone numbers of parents before sending to syslumenn
     if (!isValidNumberForRegion(parentA.phoneNumber ?? '', 'IS')) {
       throw new Error('Parent A phone number is not valid')
@@ -140,7 +136,7 @@ export class ChildrenResidenceChangeServiceV2 extends BaseTemplateApiService {
     }
 
     const syslumennData = syslumennDataFromPostalCode(
-      childResidenceInfo.future.address.postalCode,
+      childResidenceInfo.future?.address?.postalCode ?? '101',
     )
 
     const uploadDataName = 'Samningur Forsjá Og Meðlag'

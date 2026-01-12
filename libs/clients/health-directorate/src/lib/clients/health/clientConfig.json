@@ -1,0 +1,4431 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/v1/me/waiting-lists": {
+      "get": {
+        "description": "Get user's status in the waiting lists",
+        "operationId": "MeWaitingListController_getWaitingListEntries_v1",
+        "parameters": [
+          {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "description": "The locale to use for the response",
+            "schema": {
+              "$ref": "#/components/schemas/Locale"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WaitingListEntryDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Waiting lists"]
+      }
+    },
+    "/v1/me/referrals": {
+      "get": {
+        "description": "Get user's referrals",
+        "operationId": "MeReferralController_getReferrals_v1",
+        "parameters": [
+          {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "description": "The locale to use for the response",
+            "schema": {
+              "$ref": "#/components/schemas/Locale"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "description": "The statuses to filter by",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "array"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReferralDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Referrals"]
+      }
+    },
+    "/v1/me/prescriptions": {
+      "get": {
+        "description": "Get user's active prescriptions",
+        "operationId": "MePrescriptionController_getPrescriptions_v1",
+        "parameters": [
+          {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "description": "The locale to use for the response",
+            "schema": {
+              "$ref": "#/components/schemas/Locale"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PrescribedItemDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Prescriptions"]
+      }
+    },
+    "/v1/me/prescriptions/documents/{productId}": {
+      "get": {
+        "description": "Get documents for product",
+        "operationId": "MePrescriptionController_getPrescribedItemDocuments_v1",
+        "parameters": [
+          {
+            "name": "productId",
+            "required": true,
+            "in": "path",
+            "description": "The product id (Norrænt vörumerki)",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProductDocumentDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Prescriptions"]
+      }
+    },
+    "/v1/me/prescriptions/{id}/renew": {
+      "post": {
+        "description": "Renew a user's prescription",
+        "operationId": "MePrescriptionController_renewPrescription_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The prescription id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PrescriptionRenewalRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Prescriptions"]
+      }
+    },
+    "/v1/me/prescriptions/dispensations": {
+      "get": {
+        "description": "Get user's dispensation history",
+        "operationId": "MePrescriptionDispensationController_getGroupedDispensations_v1",
+        "parameters": [
+          {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "description": "The locale to use for the response",
+            "schema": {
+              "$ref": "#/components/schemas/Locale"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DispensationHistoryDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Prescriptions"]
+      }
+    },
+    "/v1/me/prescriptions/dispensations/{atcCode}": {
+      "get": {
+        "description": "Get user's dispensations for a specific ATC code",
+        "operationId": "MePrescriptionDispensationController_getDispensationsForAtcCode_v1",
+        "parameters": [
+          {
+            "name": "atcCode",
+            "required": true,
+            "in": "path",
+            "description": "The ATC code to fetch dispensations for",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "description": "The locale to use for the response",
+            "schema": {
+              "$ref": "#/components/schemas/Locale"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DispensationHistoryItemDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Prescriptions"]
+      }
+    },
+    "/v1/me/prescriptions/commissions": {
+      "get": {
+        "description": "Get user's prescription commissions",
+        "operationId": "MePrescriptionCommissionController_getPrescriptionCommissions_v1",
+        "parameters": [
+          {
+            "name": "status",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PrescriptionCommissionDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Prescriptions"]
+      },
+      "put": {
+        "description": "Create or update a prescription commission",
+        "operationId": "MePrescriptionCommissionController_createOrUpdatePrescriptionCommission_v1",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateOrUpdatePrescriptionCommissionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Prescriptions"]
+      }
+    },
+    "/system/alive": {
+      "get": {
+        "operationId": "SystemController_alive",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "The Health Check is successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "ok"
+                    },
+                    "info": {
+                      "type": "object",
+                      "example": {
+                        "database": {
+                          "status": "up"
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": ["status"],
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      },
+                      "nullable": true
+                    },
+                    "error": {
+                      "type": "object",
+                      "example": {},
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": ["status"],
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      },
+                      "nullable": true
+                    },
+                    "details": {
+                      "type": "object",
+                      "example": {
+                        "database": {
+                          "status": "up"
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": ["status"],
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The Health Check is not successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "error"
+                    },
+                    "info": {
+                      "type": "object",
+                      "example": {
+                        "database": {
+                          "status": "up"
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": ["status"],
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      },
+                      "nullable": true
+                    },
+                    "error": {
+                      "type": "object",
+                      "example": {
+                        "redis": {
+                          "status": "down",
+                          "message": "Could not connect"
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": ["status"],
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      },
+                      "nullable": true
+                    },
+                    "details": {
+                      "type": "object",
+                      "example": {
+                        "database": {
+                          "status": "up"
+                        },
+                        "redis": {
+                          "status": "down",
+                          "message": "Could not connect"
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": ["status"],
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["System"]
+      }
+    },
+    "/system/ready": {
+      "get": {
+        "operationId": "SystemController_ready",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "The Health Check is successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "ok"
+                    },
+                    "info": {
+                      "type": "object",
+                      "example": {
+                        "database": {
+                          "status": "up"
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": ["status"],
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      },
+                      "nullable": true
+                    },
+                    "error": {
+                      "type": "object",
+                      "example": {},
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": ["status"],
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      },
+                      "nullable": true
+                    },
+                    "details": {
+                      "type": "object",
+                      "example": {
+                        "database": {
+                          "status": "up"
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": ["status"],
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The Health Check is not successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "error"
+                    },
+                    "info": {
+                      "type": "object",
+                      "example": {
+                        "database": {
+                          "status": "up"
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": ["status"],
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      },
+                      "nullable": true
+                    },
+                    "error": {
+                      "type": "object",
+                      "example": {
+                        "redis": {
+                          "status": "down",
+                          "message": "Could not connect"
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": ["status"],
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      },
+                      "nullable": true
+                    },
+                    "details": {
+                      "type": "object",
+                      "example": {
+                        "database": {
+                          "status": "up"
+                        },
+                        "redis": {
+                          "status": "down",
+                          "message": "Could not connect"
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": ["status"],
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["System"]
+      }
+    },
+    "/system/metrics": {
+      "get": {
+        "operationId": "SystemController_metrics",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": ["System"]
+      }
+    },
+    "/version": {
+      "get": {
+        "operationId": "VersionController_version",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": ["Version"]
+      }
+    },
+    "/v1/donation-exceptions": {
+      "get": {
+        "description": "Gets a list of organs that can be omitted from an donation-exception donation",
+        "operationId": "DonationExceptionController_getOrgans_v1",
+        "parameters": [
+          {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "description": "The locale to use for the response",
+            "schema": {
+              "$ref": "#/components/schemas/Locale"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrganDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Organ donation"]
+      }
+    },
+    "/v1/me/organ-donor-status": {
+      "get": {
+        "description": "Get user's donation-exception donor status",
+        "operationId": "MeDonorStatusController_getOrganDonorStatus_v1",
+        "parameters": [
+          {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "description": "The locale to use for the response",
+            "schema": {
+              "$ref": "#/components/schemas/Locale"
+            }
+          },
+          {
+            "name": "ip",
+            "required": false,
+            "in": "query",
+            "description": "The IP address of the user",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganDonorDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Organ donation"]
+      },
+      "post": {
+        "description": "Update user's donation-exception donor status",
+        "operationId": "MeDonorStatusController_updateOrganDonorStatus_v1",
+        "parameters": [
+          {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "description": "The locale to use for the response",
+            "schema": {
+              "$ref": "#/components/schemas/Locale"
+            }
+          },
+          {
+            "name": "ip",
+            "required": false,
+            "in": "query",
+            "description": "The IP address of the user",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateOrganDonorDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Organ donation"]
+      }
+    },
+    "/v1/me/questionnaires": {
+      "get": {
+        "description": "Get all questionnaires for a user",
+        "operationId": "QuestionnaireController_getAllQuestionnaires_v1",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/QuestionnaireBaseDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Questionnaire"]
+      }
+    },
+    "/v1/me/questionnaires/{id}": {
+      "get": {
+        "description": "Get questionnaire details",
+        "operationId": "QuestionnaireController_getQuestionnaireDetail_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Questionnaire id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionnaireDetailDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Questionnaire"]
+      },
+      "post": {
+        "description": "Submit a questionnaire",
+        "operationId": "QuestionnaireController_submitQuestionnaire_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Questionnaire id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitQuestionnaireDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InvalidSubmissionDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Questionnaire"]
+      }
+    },
+    "/v1/me/questionnaires/{id}/submissions/{submissionId}": {
+      "get": {
+        "description": "Get a questionnaire submission",
+        "operationId": "QuestionnaireController_getQuestionnaireSubmission_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Questionnaire id",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "submissionId",
+            "required": true,
+            "in": "path",
+            "description": "Submission id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionnaireSubmissionDetailDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Questionnaire"]
+      }
+    },
+    "/v1/me/allergies": {
+      "get": {
+        "description": "Get user's allergies",
+        "operationId": "MeAllergyController_getAllergies_v1",
+        "parameters": [
+          {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "description": "The locale to use for the response",
+            "schema": {
+              "$ref": "#/components/schemas/Locale"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AllergyDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Allergies"]
+      }
+    },
+    "/v1/me/appointments": {
+      "get": {
+        "description": "Get user's appointments",
+        "operationId": "MeAppointmentController_getPatientAppointments_v1",
+        "parameters": [
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "description": "Filter appointments by status. Can include multiple statuses (comma-separated).",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/AppointmentStatus"
+              }
+            }
+          },
+          {
+            "name": "fromStartTime",
+            "required": false,
+            "in": "query",
+            "description": "Filter appointments to only include those starting at or after this time.",
+            "schema": {
+              "format": "date-time",
+              "example": "2024-01-15T10:30:00.000Z",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AppointmentDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Appointments"]
+      }
+    },
+    "/v1/me/consents/eu/countries": {
+      "get": {
+        "description": "Get countries that can receive health care data from Iceland",
+        "operationId": "MePatientConcentEuController_getCountries_v1",
+        "parameters": [
+          {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "description": "The locale to use for the response",
+            "schema": {
+              "$ref": "#/components/schemas/Locale"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConsentCountryDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Patient consent"]
+      }
+    },
+    "/v1/me/consents/eu": {
+      "get": {
+        "description": "Get user's EU patient consents",
+        "operationId": "MePatientConcentEuController_getEuPatientConsentForPatient_v1",
+        "parameters": [
+          {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "description": "The locale to use for the response",
+            "schema": {
+              "$ref": "#/components/schemas/Locale"
+            }
+          },
+          {
+            "name": "validFrom",
+            "required": false,
+            "in": "query",
+            "description": "The valid from date to filter the consents (ISO 8601 format, supports both date and date-time)",
+            "schema": {
+              "format": "date-time",
+              "example": "2024-01-15T00:00:00.000Z",
+              "type": "string"
+            }
+          },
+          {
+            "name": "validTo",
+            "required": false,
+            "in": "query",
+            "description": "The valid to date to filter the consents (ISO 8601 format, supports both date and date-time)",
+            "schema": {
+              "format": "date-time",
+              "example": "2024-12-31T23:59:59.999Z",
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "description": "The statuses to filter the consents (comma-separated)",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/EuPatientConsentStatus"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EuPatientConsentDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Patient consent"]
+      },
+      "post": {
+        "description": "Create a new EU patient consent for a patient",
+        "operationId": "MePatientConcentEuController_createEuPatientConsentForPatient_v1",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateEuPatientConsentDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Patient consent"]
+      }
+    },
+    "/v1/me/consents/eu/{id}": {
+      "get": {
+        "description": "Get a EU patient consent for a patient",
+        "operationId": "MePatientConcentEuController_getEuPatientConsent_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The id of the EU patient consent to get",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "description": "The locale to use for the response",
+            "schema": {
+              "$ref": "#/components/schemas/Locale"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EuPatientConsentDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Patient consent"]
+      }
+    },
+    "/v1/me/consents/eu/{id}/deactivate": {
+      "put": {
+        "description": "Deactivate a EU patient consent for a patient",
+        "operationId": "MePatientConcentEuController_deactivateEuPatientConsentForPatient_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The id of the EU patient consent to deactivate",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Patient consent"]
+      }
+    }
+  },
+  "info": {
+    "title": "Health service",
+    "description": "",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "securitySchemes": {
+      "oauth2": {
+        "type": "oauth2",
+        "flows": {
+          "authorizationCode": {
+            "authorizationUrl": "https://identity-server.dev01.devland.is/connect/authorize",
+            "tokenUrl": "https://identity-server.dev01.devland.is/connect/token",
+            "scopes": {
+              "openid": "Default openid scope",
+              "@landlaeknir.is/health": "Scope for accessing health data for the authenticated user"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "Locale": {
+        "type": "string",
+        "enum": ["en", "is"]
+      },
+      "WaitingListEntryDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "waitBeganDate": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "lastUpdated": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "statusId": {
+            "type": "number"
+          },
+          "statusDisplay": {
+            "type": "string"
+          },
+          "organizationName": {
+            "type": "string"
+          }
+        },
+        "required": ["id"]
+      },
+      "HttpProblemResponse": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "object",
+            "description": "A URI reference that identifies the problem type"
+          },
+          "title": {
+            "type": "string",
+            "description": "A short, human-readable summary of the problem type"
+          },
+          "status": {
+            "type": "number",
+            "description": "The HTTP status code"
+          },
+          "detail": {
+            "type": "string",
+            "description": "A human-readable explanation specific to this occurrence of the problem"
+          },
+          "instance": {
+            "type": "string",
+            "description": "A URI reference that identifies the specific occurrence of the problem."
+          }
+        },
+        "required": ["type", "title"]
+      },
+      "ReferralContactInfoDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "profession": {
+            "type": "string"
+          },
+          "department": {
+            "type": "string"
+          },
+          "institute": {
+            "type": "string"
+          }
+        },
+        "required": ["name"]
+      },
+      "ReferralDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "serviceType": {
+            "type": "string"
+          },
+          "serviceName": {
+            "type": "string"
+          },
+          "createdDate": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "validUntilDate": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "closedDate": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "statusValue": {
+            "type": "number"
+          },
+          "statusDisplay": {
+            "type": "string"
+          },
+          "assignedProviderId": {
+            "type": "string"
+          },
+          "fromInstitute": {
+            "type": "string"
+          },
+          "toInstitute": {
+            "type": "string"
+          },
+          "reasonForReferral": {
+            "type": "string"
+          },
+          "diagnoses": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "outcome": {
+            "type": "string"
+          },
+          "fromContactInfo": {
+            "$ref": "#/components/schemas/ReferralContactInfoDto"
+          },
+          "toContactInfo": {
+            "$ref": "#/components/schemas/ReferralContactInfoDto"
+          }
+        },
+        "required": ["id", "serviceType", "fromContactInfo"]
+      },
+      "ProductDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "description": "Based on the ATC classification"
+          },
+          "form": {
+            "type": "string"
+          },
+          "strength": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "number",
+            "description": "Product quantity per package"
+          },
+          "atcCode": {
+            "type": "string"
+          }
+        },
+        "required": ["id"]
+      },
+      "PrescriberDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": ["id"]
+      },
+      "MedCardDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "category": {
+            "type": "number"
+          }
+        },
+        "required": ["id", "category"]
+      },
+      "PrimaryCareClinicDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": ["name"]
+      },
+      "PrescriptionRenewalBlockedReason": {
+        "type": "string",
+        "enum": [
+          "pendingRequest",
+          "rejectedRequest",
+          "alreadyRequested",
+          "notFullyDispensed",
+          "isRegiment",
+          "drugNotOnMedCard",
+          "noPrimaryCareClinic",
+          "moreRecentPrescriptionExists"
+        ]
+      },
+      "PrescriptionRenewalStatus": {
+        "type": "number",
+        "enum": [0, 1, 2, 3]
+      },
+      "RenewalDto": {
+        "type": "object",
+        "properties": {
+          "isRenewable": {
+            "type": "boolean"
+          },
+          "blockedReason": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PrescriptionRenewalBlockedReason"
+              }
+            ]
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PrescriptionRenewalStatus"
+              }
+            ]
+          },
+          "responseMessage": {
+            "type": "string"
+          }
+        },
+        "required": ["isRenewable"]
+      },
+      "PrescribedItemCategory": {
+        "type": "string",
+        "enum": ["regular", "pn", "regiment", "owner", "unknown"]
+      },
+      "DispensedItemDto": {
+        "type": "object",
+        "properties": {
+          "productId": {
+            "type": "string"
+          },
+          "productName": {
+            "type": "string"
+          },
+          "productStrength": {
+            "type": "string"
+          },
+          "prouctQuantity": {
+            "type": "number",
+            "description": "Product quantity per package"
+          },
+          "dispensedAmount": {
+            "type": "number"
+          },
+          "dispensedAmountDisplay": {
+            "type": "string"
+          }
+        },
+        "required": ["productId"]
+      },
+      "DispensationDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "dispensingAgentId": {
+            "type": "number"
+          },
+          "dispensingAgentName": {
+            "type": "string"
+          },
+          "dispensationDate": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "dispensedItems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DispensedItemDto"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "dispensingAgentId",
+          "dispensationDate",
+          "dispensedItems"
+        ]
+      },
+      "PrescribedItemDto": {
+        "type": "object",
+        "properties": {
+          "prescribedItemId": {
+            "type": "number"
+          },
+          "prescriptionId": {
+            "type": "number"
+          },
+          "issueDate": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "expiryDate": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "nextDispensationDate": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "product": {
+            "$ref": "#/components/schemas/ProductDto"
+          },
+          "prescriber": {
+            "$ref": "#/components/schemas/PrescriberDto"
+          },
+          "medCard": {
+            "$ref": "#/components/schemas/MedCardDto"
+          },
+          "primaryCareClinic": {
+            "$ref": "#/components/schemas/PrimaryCareClinicDto"
+          },
+          "renewal": {
+            "$ref": "#/components/schemas/RenewalDto"
+          },
+          "numberOfPackages": {
+            "type": "number"
+          },
+          "dosageInstructions": {
+            "type": "string"
+          },
+          "indication": {
+            "type": "string"
+          },
+          "totalPrescribedAmount": {
+            "type": "number"
+          },
+          "totalDispensedAmount": {
+            "type": "number"
+          },
+          "prescribedAmountDisplay": {
+            "type": "string"
+          },
+          "category": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PrescribedItemCategory"
+              }
+            ]
+          },
+          "isRegiment": {
+            "type": "boolean"
+          },
+          "amountRemaining": {
+            "type": "number"
+          },
+          "amountRemainingDisplay": {
+            "type": "string"
+          },
+          "percentageRemaining": {
+            "type": "number"
+          },
+          "isFullyDispensed": {
+            "type": "boolean"
+          },
+          "dispensations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DispensationDto"
+            }
+          }
+        },
+        "required": [
+          "prescribedItemId",
+          "prescriptionId",
+          "issueDate",
+          "expiryDate",
+          "product",
+          "prescriber",
+          "renewal",
+          "isFullyDispensed",
+          "dispensations"
+        ]
+      },
+      "ProductDocumentDto": {
+        "type": "object",
+        "properties": {
+          "typeId": {
+            "type": "number"
+          },
+          "path": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": ["typeId", "path", "name"]
+      },
+      "PrescriptionRenewalRequestDto": {
+        "type": "object",
+        "properties": {
+          "prescribedItemId": {
+            "type": "number"
+          },
+          "medCardDrugId": {
+            "type": "string"
+          },
+          "medCardDrugCategory": {
+            "type": "number"
+          }
+        },
+        "required": ["prescribedItemId", "medCardDrugId", "medCardDrugCategory"]
+      },
+      "DispensationHistoryProductDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "strength": {
+            "type": "string"
+          },
+          "atcCode": {
+            "type": "string"
+          }
+        },
+        "required": ["id"]
+      },
+      "DispensationHistoryItemProductDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "description": "Based on the ATC classification"
+          },
+          "strength": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "number",
+            "description": "Product quantity per package"
+          },
+          "unit": {
+            "type": "string"
+          }
+        },
+        "required": ["id"]
+      },
+      "DispensationHistoryItemDto": {
+        "type": "object",
+        "properties": {
+          "dispensingAgentId": {
+            "type": "number"
+          },
+          "dispensingAgentName": {
+            "type": "string"
+          },
+          "dispensationDate": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "product": {
+            "$ref": "#/components/schemas/DispensationHistoryItemProductDto"
+          },
+          "indication": {
+            "type": "string"
+          },
+          "dosageInstructions": {
+            "type": "string"
+          },
+          "issueDate": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "prescriberName": {
+            "type": "string"
+          },
+          "expirationDate": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "isExpired": {
+            "type": "boolean"
+          },
+          "prescribedAmountDisplay": {
+            "type": "string"
+          },
+          "dispensedAmountDisplay": {
+            "type": "string"
+          }
+        },
+        "required": ["product", "prescriberName", "isExpired"]
+      },
+      "DispensationHistoryDto": {
+        "type": "object",
+        "properties": {
+          "product": {
+            "$ref": "#/components/schemas/DispensationHistoryProductDto"
+          },
+          "indication": {
+            "type": "string"
+          },
+          "lastDispensationDate": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "dispensationCount": {
+            "type": "number"
+          },
+          "dispensations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DispensationHistoryItemDto"
+            }
+          }
+        },
+        "required": ["product", "dispensationCount", "dispensations"]
+      },
+      "CommissionType": {
+        "type": "number",
+        "enum": [0, 1],
+        "description": "The type of commission. 0 is deliver, 1 is deliver and information."
+      },
+      "PrescriptionCommissionStatus": {
+        "type": "string",
+        "enum": ["active", "inactive", "expired", "pending"],
+        "description": "Status of the commission."
+      },
+      "UserType": {
+        "type": "number",
+        "enum": [0, 1, 2, 3],
+        "description": "The type of user that registered the commission. 0 is parent, 1 is person, 2 is doctor, 3 is pharmacist."
+      },
+      "PrescriptionCommissionDto": {
+        "type": "object",
+        "properties": {
+          "toNationalId": {
+            "type": "string",
+            "description": "The national ID of the person receiving the commission"
+          },
+          "toName": {
+            "type": "string",
+            "description": "The name of the person receiving the commission"
+          },
+          "commissionType": {
+            "description": "The type of commission. 0 is deliver, 1 is deliver and information.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CommissionType"
+              }
+            ]
+          },
+          "validFrom": {
+            "format": "date-time",
+            "type": "string",
+            "description": "The start date and time the commission becomes valid. If not defined, the commission is instantly valid."
+          },
+          "validTo": {
+            "format": "date-time",
+            "type": "string",
+            "description": "The end date and time the commission is valid until. If not defined, the commission is valid until canceled."
+          },
+          "status": {
+            "description": "Status of the commission.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PrescriptionCommissionStatus"
+              }
+            ]
+          },
+          "comment": {
+            "type": "string",
+            "description": "Explanation of commission change. If commission is made inactive, an explanation should be included."
+          },
+          "userType": {
+            "description": "The type of user that registered the commission. 0 is parent, 1 is person, 2 is doctor, 3 is pharmacist.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UserType"
+              }
+            ]
+          }
+        },
+        "required": [
+          "toNationalId",
+          "toName",
+          "commissionType",
+          "status",
+          "userType"
+        ]
+      },
+      "CreateOrUpdatePrescriptionCommissionDto": {
+        "type": "object",
+        "properties": {
+          "toNationalId": {
+            "type": "string",
+            "description": "The national ID of the person receiving the commission"
+          },
+          "commissionType": {
+            "description": "The type of commission. 0 is deliver, 1 is deliver and information.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CommissionType"
+              }
+            ]
+          },
+          "validFrom": {
+            "type": "string",
+            "description": "The start date and time the commission becomes valid."
+          },
+          "validTo": {
+            "type": "string",
+            "description": "The end date and time the commission is valid until."
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "Whether the commission is active."
+          }
+        },
+        "required": ["toNationalId", "commissionType"]
+      },
+      "OrganDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": ["id", "name"]
+      },
+      "OrganDonorDto": {
+        "type": "object",
+        "properties": {
+          "isDonor": {
+            "type": "boolean"
+          },
+          "exceptions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrganDto"
+            }
+          },
+          "exceptionComment": {
+            "type": "string"
+          },
+          "registrationDate": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "isMinor": {
+            "type": "boolean"
+          },
+          "isTemporaryResident": {
+            "type": "boolean"
+          }
+        },
+        "required": ["isDonor", "exceptions"]
+      },
+      "UpdateOrganDonorDto": {
+        "type": "object",
+        "properties": {
+          "isDonor": {
+            "type": "boolean"
+          },
+          "exceptions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "exceptionComment": {
+            "type": "string"
+          }
+        },
+        "required": ["isDonor"]
+      },
+      "QuestionnaireBaseDto": {
+        "type": "object",
+        "properties": {
+          "questionnaireId": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdDate": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "expiryDate": {
+            "format": "date-time",
+            "type": "string",
+            "nullable": true
+          },
+          "numRepliesAllowed": {
+            "type": "number",
+            "default": 1
+          },
+          "numSubmissions": {
+            "type": "number",
+            "default": 0
+          },
+          "lastSubmitted": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "hasDraft": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "questionnaireId",
+          "numRepliesAllowed",
+          "numSubmissions",
+          "hasDraft"
+        ]
+      },
+      "QuestionType": {
+        "type": "string",
+        "enum": [
+          "string",
+          "bool",
+          "date",
+          "number",
+          "list",
+          "table",
+          "attachment",
+          "text"
+        ]
+      },
+      "BaseQuestionDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/QuestionType"
+              }
+            ]
+          },
+          "label": {
+            "type": "string"
+          },
+          "htmlLabel": {
+            "type": "string",
+            "description": "used if label needs to use some html tags like, <b>, <u>. This replaces the label property."
+          },
+          "hint": {
+            "type": "string"
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "active": {
+            "type": "boolean",
+            "default": true,
+            "description": "If false, the question is not shown, used to deprecate questions"
+          },
+          "visible": {
+            "type": "boolean",
+            "default": true,
+            "description": "If false, the question is not shown unless it is triggered"
+          }
+        },
+        "required": ["id", "type", "label", "required"]
+      },
+      "StringQuestionDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/QuestionType"
+              }
+            ]
+          },
+          "label": {
+            "type": "string"
+          },
+          "htmlLabel": {
+            "type": "string",
+            "description": "used if label needs to use some html tags like, <b>, <u>. This replaces the label property."
+          },
+          "hint": {
+            "type": "string"
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "active": {
+            "type": "boolean",
+            "default": true,
+            "description": "If false, the question is not shown, used to deprecate questions"
+          },
+          "visible": {
+            "type": "boolean",
+            "default": true,
+            "description": "If false, the question is not shown unless it is triggered"
+          },
+          "maxLength": {
+            "type": "number"
+          },
+          "multiline": {
+            "type": "boolean"
+          },
+          "default": {
+            "type": "string"
+          }
+        },
+        "required": ["id", "type", "label", "required"]
+      },
+      "BooleanQuestionDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/QuestionType"
+              }
+            ]
+          },
+          "label": {
+            "type": "string"
+          },
+          "htmlLabel": {
+            "type": "string",
+            "description": "used if label needs to use some html tags like, <b>, <u>. This replaces the label property."
+          },
+          "hint": {
+            "type": "string"
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "active": {
+            "type": "boolean",
+            "default": true,
+            "description": "If false, the question is not shown, used to deprecate questions"
+          },
+          "visible": {
+            "type": "boolean",
+            "default": true,
+            "description": "If false, the question is not shown unless it is triggered"
+          },
+          "default": {
+            "type": "boolean"
+          }
+        },
+        "required": ["id", "type", "label", "required"]
+      },
+      "DateQuestionDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/QuestionType"
+              }
+            ]
+          },
+          "label": {
+            "type": "string"
+          },
+          "htmlLabel": {
+            "type": "string",
+            "description": "used if label needs to use some html tags like, <b>, <u>. This replaces the label property."
+          },
+          "hint": {
+            "type": "string"
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "active": {
+            "type": "boolean",
+            "default": true,
+            "description": "If false, the question is not shown, used to deprecate questions"
+          },
+          "visible": {
+            "type": "boolean",
+            "default": true,
+            "description": "If false, the question is not shown unless it is triggered"
+          },
+          "default": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": ["id", "type", "label", "required"]
+      },
+      "NumberQuestionDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/QuestionType"
+              }
+            ]
+          },
+          "label": {
+            "type": "string"
+          },
+          "htmlLabel": {
+            "type": "string",
+            "description": "used if label needs to use some html tags like, <b>, <u>. This replaces the label property."
+          },
+          "hint": {
+            "type": "string"
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "active": {
+            "type": "boolean",
+            "default": true,
+            "description": "If false, the question is not shown, used to deprecate questions"
+          },
+          "visible": {
+            "type": "boolean",
+            "default": true,
+            "description": "If false, the question is not shown unless it is triggered"
+          },
+          "default": {
+            "type": "number"
+          },
+          "min": {
+            "type": "number"
+          },
+          "max": {
+            "type": "number"
+          },
+          "minDescription": {
+            "type": "string"
+          },
+          "maxDescription": {
+            "type": "string"
+          },
+          "decimals": {
+            "type": "boolean"
+          },
+          "displayClass": {
+            "type": "string"
+          }
+        },
+        "required": ["id", "type", "label", "required"]
+      },
+      "ListQuestionDisplayClass": {
+        "type": "string",
+        "enum": ["slider", "grid"]
+      },
+      "ListQuestionDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/QuestionType"
+              }
+            ]
+          },
+          "label": {
+            "type": "string"
+          },
+          "htmlLabel": {
+            "type": "string",
+            "description": "used if label needs to use some html tags like, <b>, <u>. This replaces the label property."
+          },
+          "hint": {
+            "type": "string"
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "active": {
+            "type": "boolean",
+            "default": true,
+            "description": "If false, the question is not shown, used to deprecate questions"
+          },
+          "visible": {
+            "type": "boolean",
+            "default": true,
+            "description": "If false, the question is not shown unless it is triggered"
+          },
+          "minSelections": {
+            "type": "number"
+          },
+          "maxSelections": {
+            "type": "number"
+          },
+          "multiselect": {
+            "type": "boolean",
+            "description": "Will be deprecated in the future, use minSelections and maxSelections instead if provided"
+          },
+          "displayClass": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ListQuestionDisplayClass"
+              }
+            ]
+          },
+          "values": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "label": {
+                  "type": "string"
+                },
+                "active": {
+                  "type": "boolean"
+                }
+              },
+              "required": ["id", "label"]
+            }
+          }
+        },
+        "required": ["id", "type", "label", "required", "values"]
+      },
+      "AttachmentQuestionDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/QuestionType"
+              }
+            ]
+          },
+          "label": {
+            "type": "string"
+          },
+          "htmlLabel": {
+            "type": "string",
+            "description": "used if label needs to use some html tags like, <b>, <u>. This replaces the label property."
+          },
+          "hint": {
+            "type": "string"
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "active": {
+            "type": "boolean",
+            "default": true,
+            "description": "If false, the question is not shown, used to deprecate questions"
+          },
+          "visible": {
+            "type": "boolean",
+            "default": true,
+            "description": "If false, the question is not shown unless it is triggered"
+          },
+          "fileTypes": {
+            "type": "string"
+          }
+        },
+        "required": ["id", "type", "label", "required"]
+      },
+      "TableQuestionDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/QuestionType"
+              }
+            ]
+          },
+          "label": {
+            "type": "string"
+          },
+          "htmlLabel": {
+            "type": "string",
+            "description": "used if label needs to use some html tags like, <b>, <u>. This replaces the label property."
+          },
+          "hint": {
+            "type": "string"
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "active": {
+            "type": "boolean",
+            "default": true,
+            "description": "If false, the question is not shown, used to deprecate questions"
+          },
+          "visible": {
+            "type": "boolean",
+            "default": true,
+            "description": "If false, the question is not shown unless it is triggered"
+          },
+          "numRows": {
+            "type": "number",
+            "default": 1
+          },
+          "maxRows": {
+            "type": "number"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/BooleanQuestionDto"
+                },
+                {
+                  "$ref": "#/components/schemas/StringQuestionDto"
+                },
+                {
+                  "$ref": "#/components/schemas/DateQuestionDto"
+                },
+                {
+                  "$ref": "#/components/schemas/NumberQuestionDto"
+                },
+                {
+                  "$ref": "#/components/schemas/ListQuestionDto"
+                },
+                {
+                  "$ref": "#/components/schemas/AttachmentQuestionDto"
+                }
+              ]
+            }
+          }
+        },
+        "required": ["id", "type", "label", "required"]
+      },
+      "QuestionTriggerItemDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "value": {
+            "type": "boolean"
+          },
+          "attribute": {
+            "type": "string"
+          }
+        },
+        "required": ["id", "value", "attribute"]
+      },
+      "BooleanTriggerDto": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "triggerId": {
+            "type": "string"
+          },
+          "targetId": {
+            "type": "string"
+          },
+          "visible": {
+            "type": "boolean"
+          },
+          "value": {
+            "type": "boolean"
+          }
+        },
+        "required": ["type", "triggerId", "targetId", "visible"]
+      },
+      "NumberTriggerDto": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "triggerId": {
+            "type": "string"
+          },
+          "targetId": {
+            "type": "string"
+          },
+          "visible": {
+            "type": "boolean"
+          },
+          "equals": {
+            "type": "number"
+          },
+          "lessThan": {
+            "type": "number"
+          },
+          "greaterThan": {
+            "type": "number"
+          },
+          "inRange": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          },
+          "contains": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          }
+        },
+        "required": ["type", "triggerId", "targetId", "visible"]
+      },
+      "ListTriggerDto": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "triggerId": {
+            "type": "string"
+          },
+          "targetId": {
+            "type": "string"
+          },
+          "visible": {
+            "type": "boolean"
+          },
+          "equals": {
+            "type": "string"
+          },
+          "contains": {
+            "description": "comma seperated list, e.g. \"1,5,8\" trigger runs when one value is selected",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "containsAll": {
+            "description": "comma seperated list, e.g. \"1,5,8\" trigger runs when all values are selected",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": ["type", "triggerId", "targetId", "visible"]
+      },
+      "AttachmentReplyDto": {
+        "type": "object",
+        "properties": {
+          "questionId": {
+            "type": "string"
+          },
+          "answer": {
+            "type": "string"
+          }
+        },
+        "required": ["questionId", "answer"]
+      },
+      "BooleanReplyDto": {
+        "type": "object",
+        "properties": {
+          "questionId": {
+            "type": "string"
+          },
+          "answer": {
+            "type": "boolean"
+          }
+        },
+        "required": ["questionId", "answer"]
+      },
+      "DateReplyDto": {
+        "type": "object",
+        "properties": {
+          "questionId": {
+            "type": "string"
+          },
+          "answer": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+          }
+        },
+        "required": ["questionId", "answer"]
+      },
+      "ListReplyDto": {
+        "type": "object",
+        "properties": {
+          "questionId": {
+            "type": "string"
+          },
+          "values": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "answer": {
+                  "type": "string"
+                }
+              },
+              "required": ["id", "answer"]
+            }
+          }
+        },
+        "required": ["questionId", "values"]
+      },
+      "NumberReplyDto": {
+        "type": "object",
+        "properties": {
+          "questionId": {
+            "type": "string"
+          },
+          "answer": {
+            "type": "number"
+          }
+        },
+        "required": ["questionId", "answer"]
+      },
+      "StringReplyDto": {
+        "type": "object",
+        "properties": {
+          "questionId": {
+            "type": "string"
+          },
+          "answer": {
+            "type": "string"
+          }
+        },
+        "required": ["questionId", "answer"]
+      },
+      "TableReplyDto": {
+        "type": "object",
+        "properties": {
+          "questionId": {
+            "type": "string"
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "questionId": {
+                        "type": "string"
+                      },
+                      "answer": {
+                        "type": "string"
+                      }
+                    },
+                    "required": ["questionId", "answer"]
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "questionId": {
+                        "type": "string"
+                      },
+                      "answer": {
+                        "type": "number"
+                      }
+                    },
+                    "required": ["questionId", "answer"]
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "questionId": {
+                        "type": "string"
+                      },
+                      "answer": {
+                        "type": "boolean"
+                      }
+                    },
+                    "required": ["questionId", "answer"]
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "questionId": {
+                        "type": "string"
+                      },
+                      "answer": {
+                        "type": "string",
+                        "format": "date-time",
+                        "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+                      }
+                    },
+                    "required": ["questionId", "answer"]
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "questionId": {
+                        "type": "string"
+                      },
+                      "answer": {
+                        "type": "string"
+                      }
+                    },
+                    "required": ["questionId", "answer"]
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "questionId": {
+                        "type": "string"
+                      },
+                      "values": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "answer": {
+                              "type": "string"
+                            }
+                          },
+                          "required": ["id", "answer"]
+                        }
+                      }
+                    },
+                    "required": ["questionId", "values"]
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "required": ["questionId", "rows"]
+      },
+      "QuestionnaireSubmissionBaseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "questionnaireId": {
+            "type": "string"
+          },
+          "isDraft": {
+            "type": "boolean"
+          },
+          "createdDate": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "lastUpdatedDate": {
+            "format": "date-time",
+            "type": "string",
+            "nullable": true
+          },
+          "submittedDate": {
+            "format": "date-time",
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": ["id", "questionnaireId", "isDraft", "createdDate"]
+      },
+      "QuestionGroupDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "hint": {
+            "type": "string"
+          },
+          "visible": {
+            "type": "boolean"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/BooleanQuestionDto"
+                },
+                {
+                  "$ref": "#/components/schemas/StringQuestionDto"
+                },
+                {
+                  "$ref": "#/components/schemas/DateQuestionDto"
+                },
+                {
+                  "$ref": "#/components/schemas/NumberQuestionDto"
+                },
+                {
+                  "$ref": "#/components/schemas/ListQuestionDto"
+                },
+                {
+                  "$ref": "#/components/schemas/AttachmentQuestionDto"
+                },
+                {
+                  "$ref": "#/components/schemas/TableQuestionDto"
+                }
+              ]
+            }
+          }
+        },
+        "required": ["items"]
+      },
+      "QuestionnaireDetailDto": {
+        "type": "object",
+        "properties": {
+          "questionnaireId": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdDate": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "expiryDate": {
+            "format": "date-time",
+            "type": "string",
+            "nullable": true
+          },
+          "numRepliesAllowed": {
+            "type": "number",
+            "default": 1
+          },
+          "numSubmissions": {
+            "type": "number",
+            "default": 0
+          },
+          "lastSubmitted": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "hasDraft": {
+            "type": "boolean"
+          },
+          "hint": {
+            "type": "string",
+            "nullable": true
+          },
+          "daysBetweenReplies": {
+            "type": "number",
+            "default": 0
+          },
+          "canSubmit": {
+            "type": "boolean",
+            "description": "Boolean field to check if the questionnaire can be submitted"
+          },
+          "submissions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/QuestionnaireSubmissionBaseDto"
+            }
+          },
+          "groups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/QuestionGroupDto"
+            }
+          },
+          "triggers": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/NumberTriggerDto"
+                  },
+                  {
+                    "$ref": "#/components/schemas/ListTriggerDto"
+                  },
+                  {
+                    "$ref": "#/components/schemas/BooleanTriggerDto"
+                  }
+                ]
+              }
+            }
+          },
+          "replies": {
+            "type": "array",
+            "description": "Draft replies for the questionnaire",
+            "items": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/AttachmentReplyDto"
+                },
+                {
+                  "$ref": "#/components/schemas/BooleanReplyDto"
+                },
+                {
+                  "$ref": "#/components/schemas/DateReplyDto"
+                },
+                {
+                  "$ref": "#/components/schemas/ListReplyDto"
+                },
+                {
+                  "$ref": "#/components/schemas/NumberReplyDto"
+                },
+                {
+                  "$ref": "#/components/schemas/StringReplyDto"
+                },
+                {
+                  "$ref": "#/components/schemas/TableReplyDto"
+                }
+              ]
+            }
+          }
+        },
+        "required": [
+          "questionnaireId",
+          "numRepliesAllowed",
+          "numSubmissions",
+          "hasDraft",
+          "daysBetweenReplies",
+          "canSubmit",
+          "submissions",
+          "groups",
+          "triggers"
+        ]
+      },
+      "SubmitQuestionnaireDto": {
+        "type": "object",
+        "properties": {
+          "replies": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "questionId": {
+                      "type": "string"
+                    },
+                    "answer": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["questionId", "answer"]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "questionId": {
+                      "type": "string"
+                    },
+                    "answer": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": ["questionId", "answer"]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "questionId": {
+                      "type": "string"
+                    },
+                    "answer": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+                    }
+                  },
+                  "required": ["questionId", "answer"]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "questionId": {
+                      "type": "string"
+                    },
+                    "answer": {
+                      "type": "number"
+                    }
+                  },
+                  "required": ["questionId", "answer"]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "questionId": {
+                      "type": "string"
+                    },
+                    "answer": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["questionId", "answer"]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "questionId": {
+                      "type": "string"
+                    },
+                    "values": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "answer": {
+                            "type": "string"
+                          }
+                        },
+                        "required": ["id", "answer"]
+                      }
+                    }
+                  },
+                  "required": ["questionId", "values"]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "questionId": {
+                      "type": "string"
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "array",
+                        "items": {
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "questionId": {
+                                  "type": "string"
+                                },
+                                "answer": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": ["questionId", "answer"]
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "questionId": {
+                                  "type": "string"
+                                },
+                                "answer": {
+                                  "type": "number"
+                                }
+                              },
+                              "required": ["questionId", "answer"]
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "questionId": {
+                                  "type": "string"
+                                },
+                                "answer": {
+                                  "type": "boolean"
+                                }
+                              },
+                              "required": ["questionId", "answer"]
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "questionId": {
+                                  "type": "string"
+                                },
+                                "answer": {
+                                  "type": "string",
+                                  "format": "date-time",
+                                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+                                }
+                              },
+                              "required": ["questionId", "answer"]
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "questionId": {
+                                  "type": "string"
+                                },
+                                "answer": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": ["questionId", "answer"]
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "questionId": {
+                                  "type": "string"
+                                },
+                                "values": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "id": {
+                                        "type": "string"
+                                      },
+                                      "answer": {
+                                        "type": "string"
+                                      }
+                                    },
+                                    "required": ["id", "answer"]
+                                  }
+                                }
+                              },
+                              "required": ["questionId", "values"]
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "required": ["questionId", "rows"]
+                }
+              ]
+            }
+          },
+          "isDraft": {
+            "type": "boolean"
+          }
+        },
+        "required": ["replies", "isDraft"]
+      },
+      "InvalidSubmissionDto": {
+        "type": "object",
+        "properties": {
+          "errorMessage": {
+            "type": "object",
+            "properties": {
+              "questionId": {
+                "type": "string"
+              },
+              "rowNum": {
+                "type": "number"
+              },
+              "rowQuestionId": {
+                "type": "string"
+              },
+              "errorCode": {
+                "type": "string"
+              },
+              "errorMessage": {
+                "type": "string"
+              }
+            },
+            "required": ["questionId", "errorCode", "errorMessage"]
+          }
+        }
+      },
+      "QuestionnaireSubmissionDetailDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "canSubmit": {
+            "type": "boolean",
+            "description": "Boolean field to check if the questionnaire can be submitted"
+          },
+          "groups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/QuestionGroupDto"
+            }
+          },
+          "replies": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/AttachmentReplyDto"
+                },
+                {
+                  "$ref": "#/components/schemas/BooleanReplyDto"
+                },
+                {
+                  "$ref": "#/components/schemas/DateReplyDto"
+                },
+                {
+                  "$ref": "#/components/schemas/ListReplyDto"
+                },
+                {
+                  "$ref": "#/components/schemas/NumberReplyDto"
+                },
+                {
+                  "$ref": "#/components/schemas/StringReplyDto"
+                },
+                {
+                  "$ref": "#/components/schemas/TableReplyDto"
+                }
+              ]
+            },
+            "description": "Draft replies for the questionnaire"
+          },
+          "submission": {
+            "$ref": "#/components/schemas/QuestionnaireSubmissionBaseDto"
+          }
+        },
+        "required": ["canSubmit", "groups", "submission"]
+      },
+      "AllergyClinicalStatus": {
+        "type": "string",
+        "enum": ["active", "inactive", "resolved"]
+      },
+      "AllergyVerificationStatus": {
+        "type": "string",
+        "enum": [
+          "confirmed",
+          "unconfirmed",
+          "presumed",
+          "refuted",
+          "entered-in-error"
+        ]
+      },
+      "AllergyCriticality": {
+        "type": "string",
+        "enum": ["low", "high", "unable-to-assess"]
+      },
+      "AllergyDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "allergen": {
+            "type": "string"
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "clinicalStatus": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AllergyClinicalStatus"
+              }
+            ]
+          },
+          "clinicalStatusDisplay": {
+            "type": "string"
+          },
+          "verificationStatus": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AllergyVerificationStatus"
+              }
+            ]
+          },
+          "verificationStatusDisplay": {
+            "type": "string"
+          },
+          "criticality": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AllergyCriticality"
+              }
+            ]
+          },
+          "criticalityDisplay": {
+            "type": "string"
+          },
+          "note": {
+            "type": "string"
+          },
+          "recordedDate": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "allergen",
+          "categories",
+          "clinicalStatus",
+          "clinicalStatusDisplay",
+          "recordedDate"
+        ]
+      },
+      "AppointmentStatus": {
+        "type": "string",
+        "enum": [
+          "booked",
+          "pending",
+          "proposed",
+          "cancelled",
+          "fulfilled",
+          "arrived",
+          "noshow",
+          "entered-in-error",
+          "checked-in",
+          "waitlist",
+          "deleted"
+        ]
+      },
+      "AppointmentLocationDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "organization": {
+            "type": "string",
+            "description": "The organization the location belongs to"
+          },
+          "address": {
+            "type": "string",
+            "description": "Street name, number, direction & P.O. Box etc."
+          },
+          "directions": {
+            "type": "string",
+            "description": "The directions to the location"
+          },
+          "city": {
+            "type": "string",
+            "description": "The city of the address"
+          },
+          "postalCode": {
+            "type": "string",
+            "description": "The postal code of the address"
+          },
+          "country": {
+            "type": "string",
+            "description": "The country of the address"
+          },
+          "latitude": {
+            "type": "number",
+            "description": "The latitude of the location"
+          },
+          "longitude": {
+            "type": "number",
+            "description": "The longitude of the location"
+          }
+        },
+        "required": ["name", "address"]
+      },
+      "AppointmentDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "startTime": {
+            "format": "date-time",
+            "type": "string",
+            "description": "The start time of the appointment"
+          },
+          "endTime": {
+            "format": "date-time",
+            "type": "string",
+            "description": "The end time of the appointment"
+          },
+          "duration": {
+            "type": "number",
+            "description": "The duration of the appointment"
+          },
+          "status": {
+            "type": "string",
+            "description": "The status of the appointment"
+          },
+          "description": {
+            "type": "string",
+            "description": "The brief description of the appointment"
+          },
+          "patientInstruction": {
+            "type": "string",
+            "description": "Patient facing information about the Appointment"
+          },
+          "location": {
+            "$ref": "#/components/schemas/AppointmentLocationDto"
+          },
+          "practitioners": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": ["id", "status", "practitioners"]
+      },
+      "ConsentCountryDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          }
+        },
+        "required": ["name", "code"]
+      },
+      "EuPatientConsentStatus": {
+        "type": "string",
+        "enum": ["active", "inactive", "expired", "pending"]
+      },
+      "EuPatientConsentDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "validFrom": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "validTo": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/EuPatientConsentStatus"
+              }
+            ]
+          },
+          "codes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "countries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ConsentCountryDto"
+            }
+          }
+        },
+        "required": ["status", "codes", "countries"]
+      },
+      "CreateEuPatientConsentDto": {
+        "type": "object",
+        "properties": {
+          "validFrom": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO 8601 date string",
+            "example": "2024-06-01T00:00:00.000Z"
+          },
+          "validTo": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO 8601 date string",
+            "example": "2024-06-01T00:00:00.000Z"
+          },
+          "codes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "countryCodes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": ["codes", "countryCodes"]
+      }
+    }
+  }
+}

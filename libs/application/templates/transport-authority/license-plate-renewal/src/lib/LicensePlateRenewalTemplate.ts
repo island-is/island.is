@@ -32,6 +32,7 @@ import { ApiScope } from '@island.is/auth/scopes'
 import { buildPaymentState } from '@island.is/application/utils'
 import { getChargeItems, getExtraData } from '../utils'
 import { isPaymentRequired } from '../utils/isPaymentRequired'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const determineMessageFromApplicationAnswers = (application: Application) => {
   const regno = getValueViaPath(
@@ -52,10 +53,10 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.LICENSE_PLATE_RENEWAL,
   name: determineMessageFromApplicationAnswers,
+  codeOwner: CodeOwners.Origo,
   institution: applicationMessage.institutionName,
-  translationNamespaces: [
+  translationNamespaces:
     ApplicationConfigurations.LicensePlateRenewal.translation,
-  ],
   dataSchema: LicensePlateRenewalSchema,
   allowedDelegations: [
     {

@@ -21,7 +21,7 @@ enabled: true
 env:
   BASEPATH: '/minarsidur'
   LOG_LEVEL: 'info'
-  NODE_OPTIONS: '--max-old-space-size=230'
+  NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps'
   SERVERSIDE_FEATURES_ON: ''
   SI_PUBLIC_ENVIRONMENT: 'staging'
 grantNamespaces:
@@ -63,7 +63,10 @@ ingress:
           - '/minarsidur'
 namespace: 'service-portal'
 podDisruptionBudget:
-  maxUnavailable: 1
+  minAvailable: 1
+  unhealthyPodEvictionPolicy: 'IfHealthyBudget'
+podSecurityContext:
+  fsGroup: 65534
 pvcs: []
 replicaCount:
   default: 1
@@ -79,8 +82,12 @@ resources:
 secrets:
   CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
   SI_PUBLIC_CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-  SI_PUBLIC_DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID'
-  SI_PUBLIC_DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN'
+  SI_PUBLIC_DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN'
 securityContext:
   allowPrivilegeEscalation: false
   privileged: false
+serviceAccount:
+  annotations:
+    eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/service-portal'
+  create: true
+  name: 'service-portal'

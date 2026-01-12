@@ -121,7 +121,6 @@ export const cardTypeSection = buildSection({
           space: 3,
         }),
         buildRadioField({
-          title: '',
           id: 'cardTypeSelection.cardType',
           condition: (_, externalData) => !newestCardExists(externalData),
           options: [
@@ -136,7 +135,6 @@ export const cardTypeSection = buildSection({
         }),
         // Note: This case might never happen, since we dont get drivers card from the API if already expired
         buildRadioField({
-          title: '',
           id: 'cardTypeSelection.cardType',
           condition: (_, externalData) =>
             newestCardExists(externalData) && newestCardIsExpired(externalData),
@@ -151,7 +149,6 @@ export const cardTypeSection = buildSection({
           largeButtons: true,
         }),
         buildRadioField({
-          title: '',
           id: 'cardTypeSelection.cardType',
           condition: (_, externalData) =>
             newestCardExists(externalData) &&
@@ -179,7 +176,6 @@ export const cardTypeSection = buildSection({
           largeButtons: true,
         }),
         buildRadioField({
-          title: '',
           id: 'cardTypeSelection.cardType',
           condition: (_, externalData) =>
             newestCardExists(externalData) &&
@@ -202,7 +198,6 @@ export const cardTypeSection = buildSection({
           largeButtons: true,
         }),
         buildRadioField({
-          title: '',
           id: 'cardTypeSelection.cardType',
           condition: (_, externalData) =>
             newestCardExists(externalData) &&

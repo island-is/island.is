@@ -16,10 +16,11 @@ import { ApplicationPayment } from './application.model'
 import { AttachmentPresignedUrlInput } from './dto/AttachmentPresignedUrl.input'
 import { DeleteApplicationInput } from './dto/deleteApplication.input'
 import {
-  ApplicationApplicationsAdminInput,
-  ApplicationApplicationsAdminStatisticsInput,
-  ApplicationApplicationsInstitutionAdminInput,
-} from './application-admin/dto/applications-applications-admin-input'
+  ApplicationsSuperAdminFilters,
+  ApplicationsAdminStatisticsInput,
+  ApplicationsAdminFilters,
+  ApplicationTypesInstitutionAdminInput,
+} from './application-admin/dto/applications-admin-inputs'
 
 @Injectable()
 export class ApplicationService {
@@ -80,35 +81,62 @@ export class ApplicationService {
     )
   }
 
-  async findAllAdmin(
+  async findAllSuperAdmin(
     user: User,
     locale: Locale,
-    input: ApplicationApplicationsAdminInput,
+    filters: ApplicationsSuperAdminFilters,
   ) {
-    return this.applicationApiWithAuth(user).adminControllerFindAllAdmin({
-      nationalId: input.nationalId,
+    return this.applicationApiWithAuth(user).adminControllerFindAllSuperAdmin({
+      count: filters.count,
+      page: filters.page,
+      applicantNationalId: filters.applicantNationalId,
       locale,
-      typeId: input.typeId?.join(','),
-      status: input.status?.join(','),
+      status: filters.status?.join(','),
+      from: filters.from,
+      to: filters.to,
+      typeIdValue: filters.typeIdValue,
+      searchStr: filters.searchStr,
     })
   }
 
   async findAllInstitutionAdmin(
     user: User,
     locale: Locale,
-    input: ApplicationApplicationsInstitutionAdminInput,
+    filters: ApplicationsAdminFilters,
   ) {
     return this.applicationApiWithAuth(
       user,
     ).adminControllerFindAllInstitutionAdmin({
-      nationalId: input.nationalId,
-      page: input.page,
-      count: input.count,
+      page: filters.page,
+      count: filters.count,
       locale,
-      status: input.status?.join(','),
-      applicantNationalId: input.applicantNationalId,
-      from: input.from,
-      to: input.to,
+      status: filters.status?.join(','),
+      applicantNationalId: filters.applicantNationalId,
+      from: filters.from,
+      to: filters.to,
+      typeIdValue: filters.typeIdValue,
+      searchStr: filters.searchStr,
+    })
+  }
+
+  async findAllApplicationTypesInstitutionAdmin(
+    user: User,
+    locale: Locale,
+    input: ApplicationTypesInstitutionAdminInput,
+  ) {
+    return this.applicationApiWithAuth(
+      user,
+    ).adminControllerGetApplicationTypesInstitutionAdmin({
+      nationalId: input.nationalId,
+      locale,
+    })
+  }
+
+  async findAllApplicationTypesSuperAdmin(user: User, locale: Locale) {
+    return this.applicationApiWithAuth(
+      user,
+    ).adminControllerGetApplicationTypesSuperAdmin({
+      locale,
     })
   }
 
@@ -118,14 +146,28 @@ export class ApplicationService {
     })
   }
 
-  async getApplicationCountByTypeIdAndStatus(
+  async getSuperAdminApplicationCountByTypeIdAndStatus(
     user: User,
-    locale: Locale,
-    input: ApplicationApplicationsAdminStatisticsInput,
+    input: ApplicationsAdminStatisticsInput,
   ) {
     return this.applicationApiWithAuth(
       user,
-    ).adminControllerGetCountByTypeIdAndStatus(input)
+    ).adminControllerGetSuperAdminCountByTypeIdAndStatus(input)
+  }
+
+  async getInstitutionApplicationCountByTypeIdAndStatus(
+    user: User,
+    input: ApplicationsAdminStatisticsInput,
+  ) {
+    return this.applicationApiWithAuth(
+      user,
+    ).adminControllerGetInstitutionCountByTypeIdAndStatus(input)
+  }
+
+  async getApplicationInstitutions(user: User) {
+    return this.applicationApiWithAuth(
+      user,
+    ).adminControllerGetInstitutionsSuperAdminRaw({})
   }
 
   async update(input: UpdateApplicationInput, auth: Auth, locale: Locale) {

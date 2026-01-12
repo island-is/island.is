@@ -16,14 +16,14 @@ import {
   Form,
   FormModes,
   DefaultEvents,
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   UserProfileApi,
   ExistingApplicationApi,
   Application,
 } from '@island.is/application/types'
 import { m } from '../../lib/messages'
 import { RoleConfirmationEnum } from '../../types'
-import CoatOfArms from '../../assets/CoatOfArms'
+import { CoatOfArms } from '@island.is/application/assets/institution-logos'
 import { sectionExistingApplication } from './sectionExistingApplication'
 import kennitala from 'kennitala'
 import format from 'date-fns/format'
@@ -50,7 +50,7 @@ export const prerequisite = (): Form => {
             checkboxLabel: m.dataCollectionCheckboxLabel,
             dataProviders: [
               buildDataProviderItem({
-                provider: NationalRegistryUserApi,
+                provider: NationalRegistryV3UserApi,
                 title: m.dataCollectionNationalRegistryTitle,
                 subTitle: m.dataCollectionNationalRegistrySubtitle,
               }),
@@ -123,13 +123,11 @@ export const prerequisite = (): Form => {
                 colSpan: ['1/1', '1/1', '1/3'],
               }),
               buildDescriptionField({
-                title: '',
                 space: 'containerGutter',
                 description: m.roleConfirmationDescription,
                 id: 'roleConfirmationDescription',
               }),
               buildDescriptionField({
-                title: '',
                 space: 2,
                 marginBottom: 'gutter',
                 description: m.roleConfirmationNotice,
@@ -137,7 +135,6 @@ export const prerequisite = (): Form => {
               }),
               buildRadioField({
                 id: 'pickRole.roleConfirmation',
-                title: '',
                 options: [
                   {
                     value: RoleConfirmationEnum.CONTINUE,
@@ -179,7 +176,6 @@ export const prerequisite = (): Form => {
               }),
               buildDescriptionField({
                 id: 'delegateRoleDisclaimer',
-                title: '',
                 description: m.delegateRoleDisclaimer,
                 condition: (answers) =>
                   getValueViaPath(answers, 'pickRole.roleConfirmation') ===
@@ -187,7 +183,6 @@ export const prerequisite = (): Form => {
               }),
               buildNationalIdWithNameField({
                 id: 'pickRole.electPerson',
-                title: '',
                 condition: (answers) =>
                   getValueViaPath(answers, 'pickRole.roleConfirmation') ===
                   RoleConfirmationEnum.DELEGATE,

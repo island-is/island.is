@@ -1,25 +1,15 @@
 import addDays from 'date-fns/addDays'
 import addYears from 'date-fns/addYears'
+import startOfDay from 'date-fns/startOfDay'
 import { z } from 'zod'
-import {
-  additionSchema,
-  baseEntitySchema,
-  committeeSignatureSchema,
-  memberItemSchema,
-  partialSchema,
-  regularSignatureItemSchema,
-  regularSignatureSchema,
-} from './dataSchema'
+import { additionSchema, baseEntitySchema } from './dataSchema'
 import { getValueViaPath } from '@island.is/application/core'
-import { InputFields, OJOIApplication, RequiredInputFieldsNames } from './types'
-import { HTMLText } from '@island.is/regulations-tools/types'
-import format from 'date-fns/format'
-import is from 'date-fns/locale/is'
-import { SignatureTypes, OJOI_DF, FAST_TRACK_DAYS } from './constants'
+import { RequiredInputFieldsNames } from './types'
+import { FAST_TRACK_DAYS, MINIMUM_WEEKDAYS } from './constants'
 import { MessageDescriptor } from 'react-intl'
 import { v4 as uuid } from 'uuid'
-import Hypher from 'hypher'
-import { hyphenateText } from '@island.is/island-ui/core'
+import { getHolidays, Holiday } from 'fridagar'
+import { toISODate } from '@island.is/regulations'
 
 export const countDaysAgo = (date: Date) => {
   const now = new Date()
@@ -33,7 +23,60 @@ const isWeekday = (date: Date) => {
   return day !== 0 && day !== 6
 }
 
-export const getWeekendDates = (
+type IsHolidayMap = Record<string, true | undefined>
+const holidayCache: Record<number, IsHolidayMap | undefined> = {}
+
+const getHolidayMap = (year: number): IsHolidayMap => {
+  let yearHolidays = holidayCache[year]
+  if (!yearHolidays) {
+    const holidayMap: IsHolidayMap = {}
+    getHolidays(year).forEach((holiday) => {
+      holidayMap[toISODate(holiday.date)] = true
+    })
+    yearHolidays = holidayCache[year] = holidayMap
+  }
+  return yearHolidays
+}
+
+const isWorkday = (date: Date): boolean => {
+  const wDay = date.getDay()
+  if (wDay === 0 || wDay === 6) {
+    return false
+  }
+  const holidays = getHolidayMap(date.getFullYear())
+  return holidays[toISODate(date)] !== true
+}
+const getNextWorkday = (date: Date) => {
+  // Returns the next workday.
+  let nextDay = date
+  let iterations = 0
+  const MAX_ITERATIONS = 30 // Prevent infinite loop
+  while (!isWorkday(nextDay) && iterations < MAX_ITERATIONS) {
+    nextDay = addDays(nextDay, 1)
+    iterations++
+  }
+  return nextDay
+}
+
+export const isDateNotBeforeToday = (dateStr: string) => {
+  const today = new Date()
+  today.setHours(0, 0, 0, 0) // start of the day
+  const date = new Date(dateStr)
+  return date >= today
+}
+
+const addWorkDays = (date: Date, days: number) => {
+  let result = new Date(date)
+  while (days > 0) {
+    result = addDays(result, 1)
+    if (isWorkday(result)) {
+      days--
+    }
+  }
+  return result
+}
+
+const getWeekendDates = (
   startDate = new Date(),
   endDate = addYears(new Date(), 1),
 ) => {
@@ -48,22 +91,35 @@ export const getWeekendDates = (
   return weekdays
 }
 
-export const addWeekdays = (date: Date, days: number) => {
-  let result = new Date(date)
-  while (days > 0) {
-    result = addDays(result, 1)
-    if (isWeekday(result)) {
-      days--
-    }
-  }
-  return result
+const getDateString = (date: Date) => {
+  return date.toISOString().split('T')[0]
 }
 
-export const getNextAvailableDate = (date: Date): Date => {
-  if (isWeekday(date)) {
-    return date
+// Get default date, but push it to the next workday if it is a weekend or holiday
+export const getDefaultDate = (requestedDate?: string) => {
+  if (!requestedDate) {
+    const date = getNextWorkday(addWorkDays(new Date(), MINIMUM_WEEKDAYS))
+    return getDateString(date)
   }
-  return getNextAvailableDate(addDays(date, 1))
+  const date = new Date(requestedDate)
+  return getDateString(getNextWorkday(date))
+}
+
+export const getExcludedDates = (
+  startDate = new Date(),
+  endDate = addYears(new Date(), 1),
+) => {
+  const currentYear = startDate.getFullYear()
+  const endYear = endDate.getFullYear()
+  let holidays: Holiday[] = []
+  for (let year = currentYear; year <= endYear; year++) {
+    holidays = [...holidays, ...getHolidays(year)]
+  }
+  const weekendDates = getWeekendDates(startDate, endDate)
+
+  return [
+    ...new Set([...weekendDates, ...holidays.map((holiday) => holiday.date)]),
+  ]
 }
 
 export const getEmptyMember = () => ({
@@ -74,64 +130,20 @@ export const getEmptyMember = () => ({
   below: '',
 })
 
+export enum TitlePrefix {
+  Appendix = 'Viðauki',
+  Attachment = 'Fylgiskjal',
+}
+
 export const getAddition = (
+  titlePrefix: TitlePrefix,
   index: number,
-  roman = true,
 ): z.infer<typeof additionSchema>[number] => ({
   id: uuid(),
-  title: roman ? `Viðauki ${convertNumberToRoman(index)}` : `Viðauki ${index}`,
+  title: `${titlePrefix} ${index}`,
   content: '',
   type: 'html',
 })
-
-export const getRegularSignature = (
-  signatureCount: number,
-  memberCount: number,
-) =>
-  Array.from({ length: signatureCount }).map(() => ({
-    institution: '',
-    date: '',
-    members: Array.from({ length: memberCount }).map(() => getEmptyMember()),
-    html: '',
-  }))
-
-export const getCommitteeSignature = (
-  memberCount: number,
-): z.infer<typeof committeeSignatureSchema> => ({
-  institution: '',
-  date: '',
-  chairman: getEmptyMember(),
-  members: Array.from({ length: memberCount }).map(() => getEmptyMember()),
-  html: '',
-})
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const getSignatureDefaultValues = (signature: any, index?: number) => {
-  if (signature === undefined) {
-    return { institution: '', date: '' }
-  }
-
-  const isRegularSignature = regularSignatureSchema.safeParse(signature)
-
-  if (isRegularSignature.success) {
-    if (index === undefined) {
-      return { institution: '', date: '' }
-    }
-
-    const { data } = isRegularSignature
-
-    if (data === undefined) {
-      return { institution: '', date: '' }
-    }
-
-    return {
-      institution: data[index].institution,
-      date: data[index].date,
-    }
-  }
-
-  return { institution: signature.institution, date: signature.date }
-}
 
 export const isBaseEntity = (
   entity: unknown,
@@ -143,215 +155,12 @@ export const isAddition = (
 ): addition is z.infer<typeof additionSchema> =>
   additionSchema.safeParse(addition).success
 
-export const isRegularSignature = (
-  any: unknown,
-): any is z.infer<typeof regularSignatureSchema> =>
-  regularSignatureSchema.safeParse(any).success
-
-export const isCommitteeSignature = (
-  any: unknown,
-): any is z.infer<typeof committeeSignatureSchema> =>
-  committeeSignatureSchema.safeParse(any).success
-
-export const getCommitteeAnswers = (answers: OJOIApplication['answers']) => {
-  const currentAnswers = structuredClone(answers)
-  const signature = getValueViaPath(
-    currentAnswers,
-    InputFields.signature.committee,
-  )
-
-  if (isCommitteeSignature(signature)) {
-    return {
-      currentAnswers,
-      signature,
-    }
-  }
-
-  return {
-    currentAnswers,
-    signature: null,
-  }
-}
-
-export const getRegularAnswers = (answers: OJOIApplication['answers']) => {
-  const currentAnswers = structuredClone(answers)
-  const signature = getValueViaPath(
-    currentAnswers,
-    InputFields.signature.regular,
-  )
-
-  if (isRegularSignature(signature)) {
-    return {
-      currentAnswers,
-      signature,
-    }
-  }
-
-  return {
-    currentAnswers,
-    signature: null,
-  }
-}
-const hyphenate = (text = '') =>
-  hyphenateText(text, { locale: 'is', minLeft: 4, minRight: 4 })
-
-const getMembersMarkup = (member: z.infer<typeof memberItemSchema>) => {
-  if (!member.name) return ''
-
-  const styleObject = {
-    marginBottom: member.below ? '0' : '1.5em',
-  }
-
-  const name = hyphenate(member.name)
-  const above = hyphenate(member.above)
-  const after = hyphenate(member.after)
-  const below = hyphenate(member.below)
-
-  const aboveMarkup = above
-    ? `<p style="margin-bottom: 0;" align="center">${above}</p>`
-    : ''
-  const afterMarkup = after ? ` ${after}` : ''
-  const belowMarkup = below ? `<p align="center">${below}</p>` : ''
-
-  return `
-    <div class="signature__member" style="margin-bottom: 1.5em;">
-      ${aboveMarkup}
-      <p style="margin-bottom: ${styleObject.marginBottom}" align="center"><strong>${name}</strong>${afterMarkup}</p>
-      ${belowMarkup}
-    </div>
-  `
-}
-
-const signatureTemplate = (
-  signatures: z.infer<typeof regularSignatureSchema>,
-  additionalSignature?: string,
-  chairman?: z.infer<typeof memberItemSchema>,
-) => {
-  const markup = signatures
-    ?.map((signature) => {
-      const membersCount = signature?.members?.length || 0
-
-      const styleObject = {
-        display: membersCount > 1 ? 'grid' : 'block',
-        gridTemplateColumns:
-          membersCount === 1
-            ? '1fr'
-            : membersCount === 3
-            ? '1fr 1fr 1fr'
-            : '1fr 1fr',
-      }
-
-      const date = signature.date
-        ? format(new Date(signature.date), OJOI_DF, { locale: is })
-        : ''
-
-      const chairmanMarkup = chairman
-        ? `<div style="margin-bottom: 1.5em;">${getMembersMarkup(
-            chairman,
-          )}</div>`
-        : ''
-
-      const membersMarkup = signature.members
-        ?.map((member) => getMembersMarkup(member))
-        .join('')
-
-      return `
-  <div class="signature">
-    <p align="center"><em>${signature.institution} <span class="signature__date">${date}</span></em></p>
-    ${chairmanMarkup}
-    <div style="margin-bottom: 1.5em; display: ${styleObject.display}; grid-template-columns: ${styleObject.gridTemplateColumns};" class="signature__content">
-    ${membersMarkup}
-    </div>
-  </div>
-  `
-    })
-    .join('')
-
-  const additionalMarkup = additionalSignature
-    ? `<p style="font-size: 16px;" align="right"><em>${hyphenate(
-        additionalSignature,
-      )}</em></p>`
-    : ''
-
-  return `${markup}${additionalMarkup}` as HTMLText
-}
-
-export const getSignaturesMarkup = ({
-  signatures,
-  type,
-}: {
-  signatures: z.infer<typeof partialSchema>['signatures']
-  type: SignatureTypes
-}): HTMLText => {
-  if (signatures === undefined) {
-    return ''
-  }
-
-  if (
-    type === SignatureTypes.REGULAR &&
-    isRegularSignature(signatures.regular)
-  ) {
-    return signatureTemplate(
-      signatures.regular,
-      signatures.additionalSignature?.regular,
-    )
-  }
-
-  if (
-    type === SignatureTypes.COMMITTEE &&
-    isCommitteeSignature(signatures.committee)
-  ) {
-    return signatureTemplate(
-      [signatures.committee],
-      signatures.additionalSignature?.committee,
-      signatures.committee.chairman,
-    )
-  }
-
-  return ''
-}
-
-export const getAdvertMarkup = ({
-  type,
-  title,
-  html,
-}: {
-  type?: string
-  title?: string
-  html?: string
-}) => {
-  const typeMarkup = type
-    ? `<p align="center" style="margin-bottom: 0;">${type.toUpperCase()}</p>`
-    : ''
-  const titleMarkup = title
-    ? `<p align="center"><strong>${title}</strong></p>`
-    : ''
-
-  const htmlMarkup = html ? html : ''
-
-  return `
-    <div class="advert">
-      ${typeMarkup}
-      ${titleMarkup}
-      ${htmlMarkup}
-    </div>
-  ` as HTMLText
-}
-
 export const parseZodIssue = (issue: z.ZodCustomIssue) => {
   const path = issue.path.join('.')
   return {
     name: getValueViaPath(RequiredInputFieldsNames, path) as string,
     message: issue?.params as MessageDescriptor,
   }
-}
-
-export const getSingleSignatureMarkup = (
-  signature: z.infer<typeof regularSignatureItemSchema>,
-  additionalSignature?: string,
-  chairman?: z.infer<typeof memberItemSchema>,
-) => {
-  return signatureTemplate([signature], additionalSignature, chairman)
 }
 
 export const getFastTrack = (date?: Date) => {
@@ -362,11 +171,15 @@ export const getFastTrack = (date?: Date) => {
       now,
     }
 
-  const diff = date.getTime() - now.getTime()
-  const diffDays = diff / (1000 * 3600 * 24)
+  const fastTrackCutoffDate = startOfDay(
+    getNextWorkday(addWorkDays(new Date(), FAST_TRACK_DAYS)),
+  )
+
+  const compareDate = startOfDay(date)
+
   let fastTrack = false
 
-  if (diffDays <= FAST_TRACK_DAYS) {
+  if (fastTrackCutoffDate.getTime() > compareDate.getTime()) {
     fastTrack = true
   }
   return {
@@ -397,4 +210,12 @@ export const cleanTypename = (obj: {
 }) => {
   const { __typename: _, ...rest } = obj
   return rest
+}
+
+export const capitalizeText = (text?: string | null): string => {
+  if (!text) {
+    return ''
+  }
+
+  return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase()
 }

@@ -4,6 +4,7 @@ import { BffInfo, Context, PortalKeys } from './types/input-types'
 import {
   adminPortalScopes,
   applicationSystemScopes,
+  formSystemScopes,
   servicePortalScopes,
 } from '../../../libs/auth/scopes/src/index'
 
@@ -21,6 +22,7 @@ export const getScopes = (key: PortalKeys) => {
       const combinedScopes = new Set([
         ...servicePortalScopes,
         ...applicationSystemScopes,
+        ...formSystemScopes,
       ])
 
       return [...combinedScopes]
@@ -58,7 +60,7 @@ export const bffConfig = ({
 
   const getRedirectUris = (baseUrl: string, key: PortalKeys) => [
     `${baseUrl}/${key}`,
-    ...(key === MINAR_SIDUR ? [`${baseUrl}/umsoknir`] : []),
+    ...(key === MINAR_SIDUR ? [`${baseUrl}/umsoknir`, `${baseUrl}/form`] : []),
   ]
 
   return {
@@ -89,7 +91,9 @@ export const bffConfig = ({
         local: json([
           `http://localhost:4200/${key}`,
           // This is a special case for minarsidur, since it serves two applications
-          ...(key === MINAR_SIDUR ? ['http://localhost:4242/umsoknir'] : []),
+          ...(key === MINAR_SIDUR
+            ? ['http://localhost:4242/umsoknir', 'http://localhost:4242/form']
+            : []),
         ]),
         dev: ref((ctx) => json(getRedirectUris(getBaseUrl(ctx), key))),
         staging: ref((ctx) => json(getRedirectUris(getBaseUrl(ctx), key))),

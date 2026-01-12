@@ -19,5 +19,3 @@ export const TYPE_OF_OPERATION = [
   'Engin  starfsemi',
   'Ótilgreind  starfsemi',
 ]
-
-export const YES = 'yes'

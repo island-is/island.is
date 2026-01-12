@@ -1,17 +1,15 @@
-import { buildForm } from '@island.is/application/core'
+import { buildForm, YES } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
-import { B_FULL_RENEWAL_65, B_TEMP, BE, YES } from '../lib/constants'
+import { B_FULL_RENEWAL_65, B_TEMP, BE } from '../lib/constants'
 import { needsHealthCertificateCondition } from '../lib/utils'
 
 export const done: Form = buildForm({
   id: 'done',
-  title: '',
   mode: FormModes.COMPLETED,
   children: [
     buildFormConclusionSection({
-      sectionTitle: '',
       multiFieldTitle: m.applicationDone,
       alertTitle: m.applicationDone,
       alertMessage: ({ answers }) =>

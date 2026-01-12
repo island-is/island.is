@@ -7,16 +7,16 @@ import {
 import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
 import {
-  UserProfileApi,
-  SyslumadurPaymentCatalogApi,
   CriminalRecordApi,
+  IdentityApi,
+  MockableSyslumadurPaymentCatalogApi,
+  SyslumadurPaymentCatalogApi,
 } from '../dataProviders'
 import { buildFormPaymentChargeOverviewSection } from '@island.is/application/ui-forms'
 import { getChargeItems } from '../utils'
 
 export const CriminalRecordForm: Form = buildForm({
   id: 'CriminalRecordFormDraft',
-  title: '',
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   children: [
@@ -31,18 +31,18 @@ export const CriminalRecordForm: Form = buildForm({
           checkboxLabel: m.externalDataAgreement,
           dataProviders: [
             buildDataProviderItem({
-              provider: UserProfileApi,
-              title: m.userProfileInformationTitle,
-              subTitle: m.userProfileInformationSubTitle,
-            }),
-            buildDataProviderItem({
               provider: CriminalRecordApi,
               title: m.criminalRecordInformationTitle,
               subTitle: m.criminalRecordInformationSubTitle,
             }),
             buildDataProviderItem({
               provider: SyslumadurPaymentCatalogApi,
-              title: '',
+            }),
+            buildDataProviderItem({
+              provider: MockableSyslumadurPaymentCatalogApi,
+            }),
+            buildDataProviderItem({
+              provider: IdentityApi,
             }),
           ],
         }),

@@ -8,22 +8,19 @@ import {
   ApplicationTypes,
   DefaultEvents,
   defineTemplateApi,
-  NationalRegistryUserApi,
-  StateLifeCycle,
+  NationalRegistryV3UserApi,
   UserProfileApi,
 } from '@island.is/application/types'
 import { ApiActions, Events, Roles, States } from './constants'
 import { dataSchema } from './dataSchema'
 import { m } from './messages'
-import { EphemeralStateLifeCycle } from '@island.is/application/core'
+import {
+  EphemeralStateLifeCycle,
+  pruneAfterDays,
+} from '@island.is/application/core'
 import { Features } from '@island.is/feature-flags'
-import { CanSignApi, CurrentCollectionApi, GetListApi } from '../dataProviders'
-
-const WeekLifeCycle: StateLifeCycle = {
-  shouldBeListed: false,
-  shouldBePruned: true,
-  whenToPrune: 1000 * 3600 * 24 * 7,
-}
+import { CanSignApi, GetListApi } from '../dataProviders'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const signListTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -32,6 +29,7 @@ const signListTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.PARLIAMENTARY_LIST_SIGNING,
   name: m.applicationName,
+  codeOwner: CodeOwners.Juni,
   institution: m.institution,
   initialQueryParameter: 'candidate',
   featureFlag: Features.ParliamentaryElectionApplication,
@@ -40,6 +38,7 @@ const signListTemplate: ApplicationTemplate<
     ApplicationConfigurations[ApplicationTypes.PARLIAMENTARY_LIST_SIGNING]
       .translation,
   ],
+  allowMultipleApplicationsInDraft: false,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -67,9 +66,8 @@ const signListTemplate: ApplicationTemplate<
               read: 'all',
               delete: true,
               api: [
-                NationalRegistryUserApi,
+                NationalRegistryV3UserApi,
                 UserProfileApi,
-                CurrentCollectionApi,
                 CanSignApi,
                 GetListApi,
               ],
@@ -86,7 +84,7 @@ const signListTemplate: ApplicationTemplate<
         meta: {
           name: m.applicationName.defaultMessage,
           status: 'draft',
-          lifecycle: WeekLifeCycle,
+          lifecycle: pruneAfterDays(7),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -123,7 +121,7 @@ const signListTemplate: ApplicationTemplate<
           name: 'Done',
           status: 'completed',
           progress: 1,
-          lifecycle: WeekLifeCycle,
+          lifecycle: pruneAfterDays(30),
           onEntry: defineTemplateApi({
             action: ApiActions.submitApplication,
             shouldPersistToExternalData: true,

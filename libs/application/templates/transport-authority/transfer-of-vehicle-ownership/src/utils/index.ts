@@ -5,6 +5,7 @@ import {
 } from '@island.is/application/types'
 import { ChargeItemCode } from '@island.is/shared/constants'
 import { TransferOfVehicleOwnershipAnswers } from '..'
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
 export const formatIsk = (value: number): string =>
   value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
@@ -12,15 +13,18 @@ export const formatIsk = (value: number): string =>
 export const formatMileage = (value: number): string =>
   value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
 
-export const formatPhoneNumber = (value: string): string =>
-  value.length === 7 ? value.substr(0, 3) + '-' + value.substr(3, 6) : value
+export const formatPhoneNumber = (phoneNumber: string | undefined): string => {
+  if (!phoneNumber) return ''
+  const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
+  return phone?.formatNational() || phoneNumber
+}
 
 export { getSelectedVehicle } from './getSelectedVehicle'
 export { getReviewSteps } from './getReviewSteps'
-export { canReviewerApprove, canReviewerReApprove } from './canReviewerApprove'
 export { getApproveAnswers } from './getApproveAnswers'
 export { isLastReviewer } from './isLastReviewer'
 export { getRejecter } from './getRejecter'
+export * from './getReviewers'
 
 export const getChargeItems = (): Array<BasicChargeItem> => {
   return [

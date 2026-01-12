@@ -27,6 +27,8 @@ import {
   MyPlateOwnershipChecksByRegno,
   PlateAvailability,
   PlateOrderValidation,
+  BasicVehicleInformation,
+  ExemptionValidation,
 } from './models'
 import { CoOwnerChangeAnswers } from './dto/coOwnerChangeAnswers.input'
 
@@ -156,5 +158,52 @@ export class MainResolver {
   @Query(() => PlateAvailability)
   async plateAvailable(@Args('input') input: PlateAvailabilityInput) {
     return this.transportAuthorityApi.getPlateAvailability(input.regno)
+  }
+
+  @Scopes(ApiScope.samgongustofaVehicles)
+  @Query(() => BasicVehicleInformation, {
+    name: 'myVehicleBasicInfoByPermno',
+    nullable: true,
+  })
+  async getMyBasicVehicleInfoByPermno(
+    @Args('permno', { type: () => String }) permno: string,
+    @CurrentUser() user: User,
+  ) {
+    return await this.transportAuthorityApi.getMyBasicVehicleInfoByPermno(
+      user,
+      permno,
+    )
+  }
+
+  @Scopes(ApiScope.samgongustofaVehicles)
+  @Query(() => BasicVehicleInformation, {
+    name: 'vehicleBasicInfoByPermno',
+    nullable: true,
+  })
+  async getBasicVehicleInfoByPermno(
+    @Args('permno', { type: () => String }) permno: string,
+    @CurrentUser() user: User,
+  ) {
+    return await this.transportAuthorityApi.getBasicVehicleInfoByPermno(
+      user,
+      permno,
+    )
+  }
+
+  @Scopes(ApiScope.samgongustofaVehicles)
+  @Query(() => ExemptionValidation, {
+    name: 'vehicleExemptionValidation',
+    nullable: true,
+  })
+  async getVehicleExemptionValidation(
+    @Args('permno', { type: () => String }) permno: string,
+    @Args('isTrailer', { type: () => Boolean }) isTrailer: boolean,
+    @CurrentUser() user: User,
+  ) {
+    return await this.transportAuthorityApi.getVehicleExemptionValidation(
+      user,
+      permno,
+      isTrailer,
+    )
   }
 }

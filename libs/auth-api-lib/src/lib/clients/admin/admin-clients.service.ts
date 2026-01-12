@@ -21,6 +21,7 @@ import { Domain } from '../../resources/models/domain.model'
 import { TranslatedValueDto } from '../../translation/dto/translated-value.dto'
 import { TranslationService } from '../../translation/translation.service'
 import {
+  ClientSso,
   ClientType,
   GrantTypeEnum,
   RefreshTokenExpiration,
@@ -60,6 +61,7 @@ export const clientBaseAttributes: Partial<Client> = {
   requirePkce: true,
   slidingRefreshTokenLifetime: 20 * 60, // 20 minutes
   updateAccessTokenClaimsOnRefresh: true,
+  sso: ClientSso.Enabled,
 }
 
 @Injectable()
@@ -546,6 +548,7 @@ export class AdminClientsService {
     return {
       clientId: client.clientId,
       clientType: client.clientType,
+      sso: client.sso,
       tenantId: client.domainName ?? '',
       displayName: this.adminTranslationService.createTranslatedValueDTOs({
         key: 'clientName',

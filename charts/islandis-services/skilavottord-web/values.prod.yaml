@@ -19,10 +19,10 @@ global:
 name: 'skilavottord-web'
 enabled: true
 env:
-  API_URL: 'http://web-skilavottord-ws'
+  API_URL: 'http://skilavottord-ws'
   ENVIRONMENT: 'prod'
   LOG_LEVEL: 'info'
-  NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
+  NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
   SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
 grantNamespaces:
   - 'nginx-ingress-external'
@@ -62,7 +62,10 @@ ingress:
           - '/app/skilavottord/'
 namespace: 'skilavottord'
 podDisruptionBudget:
-  maxUnavailable: 1
+  minAvailable: 1
+  unhealthyPodEvictionPolicy: 'IfHealthyBudget'
+podSecurityContext:
+  fsGroup: 65534
 pvcs: []
 replicaCount:
   default: 2
@@ -77,8 +80,7 @@ resources:
     memory: '256Mi'
 secrets:
   CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-  DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID'
-  DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN'
+  DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN'
   IDENTITY_SERVER_DOMAIN: '/k8s/skilavottord/web/IDENTITY_SERVER_DOMAIN'
   IDENTITY_SERVER_LOGOUT_REDIRECT_URL: '/k8s/skilavottord/web/IDENTITY_SERVER_LOGOUT_REDIRECT_URL'
   NEXTAUTH_URL: '/k8s/skilavottord/web/NEXTAUTH_URL'
@@ -86,3 +88,8 @@ secrets:
 securityContext:
   allowPrivilegeEscalation: false
   privileged: false
+serviceAccount:
+  annotations:
+    eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/skilavottord-web'
+  create: true
+  name: 'skilavottord-web'

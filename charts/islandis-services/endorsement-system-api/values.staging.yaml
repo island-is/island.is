@@ -20,7 +20,7 @@ name: 'endorsement-system-api'
 args:
   - '--tls-min-v1.0'
   - '--no-experimental-fetch'
-  - 'main.js'
+  - 'main.cjs'
 command:
   - 'node'
 enabled: true
@@ -37,18 +37,20 @@ env:
   IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/endorsement'
   IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
   LOG_LEVEL: 'info'
+  NATIONAL_REGISTRY_B2C_APPLICATION_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/MidlunUmsoknir-v1'
+  NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraidentitystaging.onmicrosoft.com/midlunumsoknir/.default'
   NATIONAL_REGISTRY_B2C_CLIENT_ID: 'ca128c23-b43c-443d-bade-ec5a146a933f'
-  NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
+  NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitystaging.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
   NATIONAL_REGISTRY_B2C_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
   NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitystaging.onmicrosoft.com/midlun/.default'
-  NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
+  NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
   SERVERSIDE_FEATURES_ON: ''
   XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
   XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
   XROAD_CLIENT_ID: 'IS-TEST/GOV/5501692829/island-is-client'
   XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
-  XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1'
-  XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1'
+  XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Einstaklingar-v1'
+  XROAD_TJODSKRA_API_PATH: '/SKRA-Cloud-Protected/Einstaklingar-v1'
   XROAD_TJODSKRA_MEMBER_CODE: '6503760649'
   XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
   XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
@@ -100,7 +102,8 @@ initContainer:
     DB_PASS: '/k8s/services-endorsements-api/DB_PASSWORD'
 namespace: 'endorsement-system'
 podDisruptionBudget:
-  maxUnavailable: 1
+  minAvailable: 1
+  unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534
 pvcs: []

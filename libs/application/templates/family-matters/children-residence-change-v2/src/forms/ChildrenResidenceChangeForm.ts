@@ -10,7 +10,7 @@ import {
   buildAlertMessageField,
 } from '@island.is/application/core'
 import { Form, FormModes, DefaultEvents } from '@island.is/application/types'
-import Logo from '@island.is/application/templates/family-matters-core/assets/Logo'
+import { DistrictCommissionersLogo } from '@island.is/application/assets/institution-logos'
 import { selectDurationInputs } from '../fields/Duration'
 import { confirmContractIds } from '../fields/Overview'
 import { contactInfoIds } from '../fields/ContactInfo'
@@ -20,7 +20,7 @@ import { Answers } from '../types'
 export const ChildrenResidenceChangeForm: Form = buildForm({
   id: 'ChildrenResidenceChangeFormDraft',
   title: m.application.name,
-  logo: Logo,
+  logo: DistrictCommissionersLogo,
   mode: FormModes.DRAFT,
   children: [
     buildSection({
@@ -89,7 +89,6 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
               children: [
                 buildRadioField({
                   id: 'selectChildSupportPayment',
-                  title: '',
                   backgroundColor: 'white',
                   required: true,
                   options: [
@@ -109,7 +108,6 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
                 }),
                 buildAlertMessageField({
                   id: 'alert',
-                  title: '',
                   message: m.childSupportPayments.general.alert,
                   alertType: 'info',
                   condition: (values) =>
@@ -118,7 +116,6 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
                 }),
                 buildDescriptionField({
                   id: 'infoText',
-                  title: '',
                   space: 2,
                   description: m.childSupportPayments.general.infoText,
                 }),
@@ -184,7 +181,6 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
             }),
             buildSubmitField({
               id: 'assign',
-              title: '',
               actions: [
                 {
                   event: DefaultEvents.ASSIGN,

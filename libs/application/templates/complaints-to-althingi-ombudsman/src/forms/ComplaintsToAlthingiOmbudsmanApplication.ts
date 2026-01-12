@@ -9,9 +9,12 @@ import {
   buildPhoneField,
   buildRadioField,
   buildSection,
+  buildSelectField,
   buildSubmitField,
   buildSubSection,
   buildTextField,
+  NO,
+  YES,
 } from '@island.is/application/core'
 import {
   Application,
@@ -19,15 +22,13 @@ import {
   Form,
   FormModes,
   FormValue,
-  NO,
-  YES,
 } from '@island.is/application/types'
 import {
   applicantInformationMultiField,
   buildFormConclusionSection,
 } from '@island.is/application/ui-forms'
 
-import Logo from '../assets/Logo'
+import { AlthingiOmbudsmanLogo } from '@island.is/application/assets/institution-logos'
 import {
   complainedFor,
   complainee,
@@ -51,17 +52,19 @@ import {
   UPLOAD_ACCEPT,
 } from '../shared/constants'
 import {
+  genderOptions,
   getComplaintType,
   isDecisionDateOlderThanYear,
   isGovernmentComplainee,
   isPreviousOmbudsmanComplaint,
 } from '../utils'
+import { gender } from '../lib/messages/gender'
 
 export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
   id: 'ComplaintsToAlthingiOmbudsmanDraftForm',
   title: applicationMessage.general.name,
   mode: FormModes.DRAFT,
-  logo: Logo,
+  logo: AlthingiOmbudsmanLogo,
   children: [
     buildSection({
       id: 'information',
@@ -79,7 +82,6 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
           children: [
             buildRadioField({
               id: 'complainedFor.decision',
-              title: '',
               options: [
                 {
                   value: ComplainedForTypes.MYSELF,
@@ -176,7 +178,6 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
             }),
             buildFileUploadField({
               id: 'complainedForInformation.powerOfAttorney',
-              title: '',
               introduction: '',
               uploadHeader: attachments.uploadHeader,
               uploadDescription: attachments.uploadDescription,
@@ -201,7 +202,6 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
               children: [
                 buildRadioField({
                   id: 'complainee.type',
-                  title: '',
                   largeButtons: true,
                   options: [
                     {
@@ -228,7 +228,6 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
               children: [
                 buildRadioField({
                   id: 'complaintType',
-                  title: '',
                   options: [
                     {
                       label: complaintInformation.decisionLabel,
@@ -329,7 +328,6 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
           children: [
             buildRadioField({
               id: 'preexistingComplaint',
-              title: '',
               width: 'half',
               options: [
                 { value: YES, label: shared.general.yes },
@@ -368,7 +366,6 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
           children: [
             buildRadioField({
               id: 'courtActionAnswer',
-              title: '',
               width: 'half',
               options: [
                 { value: YES, label: shared.general.yes },
@@ -398,7 +395,6 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
           children: [
             buildRadioField({
               id: 'previousOmbudsmanComplaint.Answer',
-              title: '',
               width: 'half',
               options: [
                 { value: YES, label: shared.general.yes },
@@ -436,6 +432,29 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
       ],
     }),
     buildSection({
+      id: 'gender',
+      title: gender.general.title,
+      children: [
+        buildMultiField({
+          id: 'section.gender',
+          title: gender.general.title,
+          children: [
+            buildSelectField({
+              id: 'genderAnswer',
+              title: gender.general.gender,
+              options: genderOptions,
+              required: true,
+            }),
+            buildAlertMessageField({
+              id: 'genderJustification',
+              message: gender.general.genderJustification,
+              alertType: 'info',
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
       id: 'section.overview',
       title: section.complaintOverview,
       children: [
@@ -454,7 +473,6 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
             ),
             buildSubmitField({
               id: 'overview.submit',
-              title: '',
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,

@@ -1,12 +1,4 @@
-import {
-  Args,
-  Context,
-  Mutation,
-  Parent,
-  Query,
-  ResolveField,
-  Resolver,
-} from '@nestjs/graphql'
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { Inject, UseGuards } from '@nestjs/common'
 import {
   IdsUserGuard,
@@ -28,19 +20,14 @@ import {
   PostVehicleMileageInput,
   PutVehicleMileageInput,
 } from '../dto/postVehicleMileageInput'
-import {
-  FeatureFlagGuard,
-  FeatureFlag,
-  Features,
-} from '@island.is/nest/feature-flags'
 import { mileageDetailConstructor } from '../utils/helpers'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { VehicleMileagePostResponse } from '../models/v3/postVehicleMileageResponse.model'
 import { VehiclesMileageUpdateError } from '../models/v3/vehicleMileageResponseError.model'
 import { VehicleMileagePutResponse } from '../models/v3/putVehicleMileageResponse.model'
+import { ISLAND_IS_ORIGIN_CODE } from '../constants'
 
-@UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
-@FeatureFlag(Features.servicePortalVehicleMileagePageEnabled)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver(() => VehicleMileageOverview)
 @Audit({ namespace: '@island.is/api/vehicles' })
 @Scopes(ApiScope.vehicles)
@@ -92,6 +79,7 @@ export class VehiclesMileageResolver {
   ) {
     const res = await this.vehiclesService.putMileageReading(user, {
       ...input,
+      originCode: ISLAND_IS_ORIGIN_CODE,
       mileage: Number(input.mileage ?? input.mileageNumber),
     })
 
@@ -99,7 +87,12 @@ export class VehiclesMileageResolver {
       return
     }
 
-    return mileageDetailConstructor(res)
+    return mileageDetailConstructor({
+      ...input,
+      originCode: ISLAND_IS_ORIGIN_CODE,
+      mileage: Number(input.mileage ?? input.mileageNumber),
+      internalId: res.internalId,
+    })
   }
 
   @Mutation(() => VehicleMileagePostResponse, {
@@ -132,51 +125,10 @@ export class VehiclesMileageResolver {
     @Args('input') input: PutVehicleMileageInput,
     @CurrentUser() user: User,
   ) {
-    const res = await this.vehiclesService.putMileageReadingV2(user, {
+    return this.vehiclesService.putMileageReadingV2(user, {
       ...input,
+      originCode: ISLAND_IS_ORIGIN_CODE,
       mileage: Number(input.mileage ?? input.mileageNumber),
-    })
-
-    if (!res || res instanceof VehiclesMileageUpdateError) {
-      return res
-    }
-
-    return mileageDetailConstructor(res)
-  }
-
-  @ResolveField('canRegisterMileage', () => Boolean, {
-    nullable: true,
-  })
-  resolveCanRegisterMileage(
-    @Context('req') { user }: { user: User },
-    @Parent() overview: VehicleMileageOverview,
-  ): Promise<boolean> {
-    return this.vehiclesService.canRegisterMileage(user, {
-      permno: overview.permno ?? '',
-    })
-  }
-
-  @ResolveField('requiresMileageRegistration', () => Boolean, {
-    nullable: true,
-  })
-  resolveRequiresMileageRegistration(
-    @Context('req') { user }: { user: User },
-    @Parent() overview: VehicleMileageOverview,
-  ): Promise<boolean> {
-    return this.vehiclesService.requiresMileageRegistration(user, {
-      permno: overview?.permno ?? '',
-    })
-  }
-
-  @ResolveField('canUserRegisterVehicleMileage', () => Boolean, {
-    nullable: true,
-  })
-  resolveCanUserRegisterMileage(
-    @Context('req') { user }: { user: User },
-    @Parent() overview: VehicleMileageOverview,
-  ): Promise<boolean> {
-    return this.vehiclesService.canUserRegisterMileage(user, {
-      permno: overview?.permno ?? '',
     })
   }
 }

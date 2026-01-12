@@ -5,8 +5,7 @@ import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
 import {
   Collection,
-  CreateParliamentaryCandidacyInput,
-  MandateType,
+  ReasonKey,
   SignatureCollectionClientService,
 } from '@island.is/clients/signature-collection'
 import { errorMessages } from '@island.is/application/templates/signature-collection/parliamentary-list-creation'
@@ -15,38 +14,70 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { CollectionType } from '@island.is/clients/signature-collection'
 import { CreateListSchema } from '@island.is/application/templates/signature-collection/parliamentary-list-creation'
-import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
+import { NationalRegistryV3Service } from '../../../shared/api/national-registry-v3/national-registry-v3.service'
 import { isCompany } from 'kennitala'
 import { coreErrorMessages } from '@island.is/application/core'
 import { generateApplicationSubmittedEmail } from './emailGenerators'
 import { AuthDelegationType } from '@island.is/shared/types'
+import { getCollectionTypeFromApplicationType } from '../shared/utils'
+import { ProviderErrorReason } from '@island.is/shared/problem'
 @Injectable()
 export class ParliamentaryListCreationService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private signatureCollectionClientService: SignatureCollectionClientService,
-    private nationalRegisryClientService: NationalRegistryClientService,
+    private nationalRegistryV3Service: NationalRegistryV3Service,
   ) {
     super(ApplicationTypes.PARLIAMENTARY_LIST_CREATION)
   }
-
+  private collectionType = getCollectionTypeFromApplicationType(
+    ApplicationTypes.PARLIAMENTARY_LIST_CREATION,
+  )
   async candidate({ auth }: TemplateApiModuleActionProps) {
     const candidate = await this.signatureCollectionClientService.getSignee(
       auth,
+      this.collectionType,
     )
 
     if (!candidate.hasPartyBallotLetter) {
       throw new TemplateApiError(errorMessages.partyBallotLetter, 405)
+    }
+    if (!candidate.canCreate) {
+      if (!candidate.canCreateInfo) {
+        // canCreateInfo will always be defined if canCreate is false but we need to check for typescript
+        throw new TemplateApiError(errorMessages.deniedByService, 400)
+      }
+      const errors: ProviderErrorReason[] = candidate.canCreateInfo?.map(
+        (key) => {
+          switch (key) {
+            case ReasonKey.UnderAge:
+              return errorMessages.age
+            case ReasonKey.NoCitizenship:
+              return errorMessages.citizenship
+            case ReasonKey.NotISResidency:
+              return errorMessages.residency
+            case ReasonKey.CollectionNotOpen:
+              return errorMessages.active
+            case ReasonKey.AlreadyOwner:
+              return errorMessages.owner
+            default:
+              return errorMessages.deniedByService
+          }
+        },
+      )
+      throw new TemplateApiError(errors, 405)
     }
 
     return candidate
   }
 
   async parliamentaryCollection({ auth }: TemplateApiModuleActionProps) {
-    const currentCollection =
-      await this.signatureCollectionClientService.currentCollection()
-    if (currentCollection.collectionType !== CollectionType.Parliamentary) {
+    const latestCollection =
+      await this.signatureCollectionClientService.getLatestCollectionForType(
+        this.collectionType,
+      )
+    if (latestCollection.collectionType !== CollectionType.Parliamentary) {
       throw new TemplateApiError(
         errorMessages.currentCollectionNotParliamentary,
         405,
@@ -55,14 +86,14 @@ export class ParliamentaryListCreationService extends BaseTemplateApiService {
     // Candidates are stored on user national id never the actors so should be able to check just the auth national id
 
     if (
-      currentCollection.candidates.some(
+      latestCollection.candidates.some(
         (c) => c.nationalId.replace('-', '') === auth.nationalId,
       )
     ) {
       throw new TemplateApiError(errorMessages.alreadyCandidate, 412)
     }
 
-    return currentCollection
+    return latestCollection
   }
 
   async parliamentaryIdentity({ auth }: TemplateApiModuleActionProps) {
@@ -70,8 +101,9 @@ export class ParliamentaryListCreationService extends BaseTemplateApiService {
       ? auth.actor?.nationalId ?? auth.nationalId
       : auth.nationalId
 
-    const identity = await this.nationalRegisryClientService.getIndividual(
+    const identity = await this.nationalRegistryV3Service.getIndividual(
       contactNationalId,
+      auth,
     )
 
     if (!identity) {
@@ -98,40 +130,14 @@ export class ParliamentaryListCreationService extends BaseTemplateApiService {
     const parliamentaryCollection = application.externalData
       .parliamentaryCollection.data as Collection
 
-    const input: CreateParliamentaryCandidacyInput = {
+    const input = {
+      collectionType: this.collectionType,
       owner: {
         ...answers.applicant,
         nationalId: application?.applicantActors?.[0]
           ? application.applicant
           : answers.applicant.nationalId,
       },
-      agents: (answers.managers ?? [])
-        .map((manager) => ({
-          nationalId: manager.manager.nationalId,
-          phoneNumber: '',
-          mandateType: MandateType.Guarantor,
-          email: '',
-          areas: answers.constituency.map((constituency) => {
-            const [id, _name] = constituency.split('|')
-            return {
-              areaId: id,
-            }
-          }),
-        }))
-        .concat(
-          (answers.supervisors ?? []).map((supervisor) => ({
-            nationalId: supervisor.supervisor.nationalId,
-            phoneNumber: '',
-            mandateType: MandateType.Administrator,
-            email: '',
-            areas: supervisor.constituency.map((constituency) => {
-              const [id, _name] = constituency.split('|')
-              return {
-                areaId: id,
-              }
-            }),
-          })),
-        ),
       collectionId: parliamentaryCollection.id,
       areas: answers.constituency.map((constituency) => {
         const [id, _name] = constituency.split('|')

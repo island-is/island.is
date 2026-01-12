@@ -19,6 +19,7 @@ import { PaymentPlanPrerequisitesApi } from '../dataProviders'
 import { PublicDebtPaymentPlanSchema } from './dataSchema'
 import { application, conclusion } from './messages'
 import { AuthDelegationType } from '@island.is/shared/types'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const States = {
   draft: 'draft',
@@ -26,7 +27,7 @@ const States = {
   closed: 'closed',
   prerequisites: 'prerequisites',
 }
-export enum API_MODULE_ACTIONS {
+export enum ApiModuleActions {
   sendApplication = 'sendApplication',
 }
 
@@ -46,11 +47,11 @@ const PublicDebtPaymentPlanTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.PUBLIC_DEBT_PAYMENT_PLAN,
   name: application.name,
+  codeOwner: CodeOwners.NordaApplications,
   institution: application.institutionName,
   allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],
-  translationNamespaces: [
+  translationNamespaces:
     ApplicationConfigurations.PublicDebtPaymentPlan.translation,
-  ],
   dataSchema: PublicDebtPaymentPlanSchema,
   stateMachineConfig: {
     initial: States.prerequisites,
@@ -172,7 +173,7 @@ const PublicDebtPaymentPlanTemplate: ApplicationTemplate<
             },
           },
           onEntry: defineTemplateApi({
-            action: API_MODULE_ACTIONS.sendApplication,
+            action: ApiModuleActions.sendApplication,
           }),
           progress: 1,
           lifecycle: {

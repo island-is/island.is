@@ -16,7 +16,14 @@ export const SubmitFormField: FC<React.PropsWithChildren<Props>> = ({
   field,
   error,
 }) => {
-  const { id, title, actions, placement, marginTop = 4, marginBottom } = field
+  const {
+    id,
+    title = '',
+    actions,
+    placement,
+    marginTop = 4,
+    marginBottom,
+  } = field
   const { formatMessage, lang: locale } = useLocale()
   const actionsAsOptions = useMemo(() => {
     return actions.map((a) => {
@@ -26,7 +33,7 @@ export const SubmitFormField: FC<React.PropsWithChildren<Props>> = ({
         value: a.event as string,
       }
     })
-  }, [actions, formatMessage])
+  }, [actions, application, formatMessage])
 
   if (placement === 'footer') {
     return null

@@ -91,7 +91,6 @@ export const UserInformationSubSection = buildSubSection({
         }),
         buildAlertMessageField({
           id: 'userInformation.alert',
-          title: '',
           alertType: 'info',
           doesNotRequireAnswer: true,
           message: personal.labels.userInformation.alertMessage,

@@ -36,7 +36,7 @@ export const MessageWithLinkButtonFormField: FC<
         marginY={2}
       >
         <Box paddingRight={[0, 0, 4]} style={{ overflowWrap: 'anywhere' }}>
-          <Text variant="small">
+          <Text variant="small" color={field.messageColor}>
             {formatText(field.message, application, formatMessage)}
           </Text>
         </Box>

@@ -6,6 +6,7 @@ import {
   TabNavigation,
 } from '@island.is/portals/my-pages/core'
 import { messages as m } from '../../../lib/messages'
+import { m as coreMessages } from '@island.is/portals/my-pages/core'
 import { healthNavigation } from '../../../lib/navigation'
 import { SECTION_GAP } from '../../../utils/constants'
 
@@ -19,12 +20,12 @@ export const MedicinePaymentParticipationWrapper = ({
   const { formatMessage } = useLocale()
 
   const medicineChildren = healthNavigation.children?.find(
-    (itm) => itm.name === m.medicineTitle,
+    (itm) => itm.name === coreMessages.medicine,
   )
 
   const paymentParticipationChildren =
     medicineChildren?.children?.find(
-      (item) => item.name === m.medicinePaymentParticipation,
+      (item) => item.name === coreMessages.medicinePaymentParticipation,
     )?.children ?? []
 
   return (
@@ -33,6 +34,7 @@ export const MedicinePaymentParticipationWrapper = ({
       intro={formatMessage(m.medicineTitleIntro)}
       serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
       serviceProviderTooltip={formatMessage(m.healthTooltip)}
+      childrenWidthFull
     >
       <Hidden print={true}>
         <TabNavigation

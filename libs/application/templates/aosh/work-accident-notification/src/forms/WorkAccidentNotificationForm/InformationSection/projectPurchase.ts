@@ -1,13 +1,15 @@
 import {
   buildAlertMessageField,
   buildMultiField,
+  buildNationalIdWithNameField,
   buildRadioField,
   buildSubSection,
-  buildTextField,
   getValueViaPath,
+  YES,
+  NO,
 } from '@island.is/application/core'
 import { information, shared } from '../../../lib/messages'
-import { FormValue, NO, YES } from '@island.is/application/types'
+import { FormValue } from '@island.is/application/types'
 
 export const projectPurchaseSection = buildSubSection({
   id: 'projectPurchaseSection',
@@ -20,7 +22,6 @@ export const projectPurchaseSection = buildSubSection({
       children: [
         buildAlertMessageField({
           id: 'projectPurchase.alertMessage',
-          title: '',
           message: information.labels.projectPurchase.alertMessage,
           alertType: 'info',
           doesNotRequireAnswer: true,
@@ -40,25 +41,17 @@ export const projectPurchaseSection = buildSubSection({
               label: shared.options.no,
             },
           ],
+          clearOnChange: [
+            'projectPurchase.contractor.name',
+            'projectPurchase.contractor.nationalId',
+          ],
         }),
-        buildTextField({
-          id: 'projectPurchase.nationalId',
-          title: information.labels.company.nationalId,
-          backgroundColor: 'blue',
-          width: 'half',
+        buildNationalIdWithNameField({
+          id: 'projectPurchase.contractor',
+          width: 'full',
           required: true,
-          format: '######-####',
-          doesNotRequireAnswer: true,
-          condition: (answer: FormValue) =>
-            getValueViaPath(answer, 'projectPurchase.radio') === YES,
-        }),
-        buildTextField({
-          id: 'projectPurchase.name',
-          title: information.labels.projectPurchase.name,
-          backgroundColor: 'blue',
-          width: 'half',
-          required: true,
-          doesNotRequireAnswer: true,
+          searchCompanies: true,
+          searchPersons: true,
           condition: (answer: FormValue) =>
             getValueViaPath(answer, 'projectPurchase.radio') === YES,
         }),

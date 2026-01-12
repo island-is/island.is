@@ -1,0 +1,15 @@
+mutation UpdateActorProfileEmailWithoutActor(
+  $input: UpdateActorProfileEmailInput!
+  $fromNationalId: String!
+) {
+  updateActorProfileEmailWithoutActor(
+    input: $input
+    fromNationalId: $fromNationalId
+  ) {
+    emailsId
+    email
+    emailStatus
+    emailNotifications
+    nationalId
+  }
+}

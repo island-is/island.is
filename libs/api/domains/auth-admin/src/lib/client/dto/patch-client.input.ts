@@ -5,6 +5,7 @@ import { Environment } from '@island.is/shared/types'
 import { TranslatedValue } from '../../models/translated-value.model'
 import { ClientClaim } from '../models/client-claim.model'
 import { RefreshTokenExpiration } from '../../models/refreshTokenExpiration.enum'
+import { ClientSso } from '../../models/client-sso.enum'
 
 @InputType('AuthAdminPatchClientInput')
 export class PatchClientInput {
@@ -101,4 +102,7 @@ export class PatchClientInput {
 
   @Field(() => [String], { nullable: true })
   removedScopes?: string[]
+
+  @Field(() => ClientSso, { nullable: true })
+  sso?: ClientSso
 }

@@ -19,7 +19,7 @@ global:
 name: 'user-notification-cleanup-worker'
 args:
   - '--no-experimental-fetch'
-  - 'main.js'
+  - 'main.cjs'
   - '--job=cleanup'
 command:
   - 'node'
@@ -31,7 +31,7 @@ env:
   DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
   DB_USER: 'user_notification'
   LOG_LEVEL: 'info'
-  NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
+  NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
   SERVERSIDE_FEATURES_ON: ''
 grantNamespaces:
   - 'nginx-ingress-internal'
@@ -83,7 +83,8 @@ initContainer:
     DB_PASS: '/k8s/user-notification/DB_PASSWORD'
 namespace: 'user-notification'
 podDisruptionBudget:
-  maxUnavailable: 1
+  minAvailable: 1
+  unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534
 pvcs: []

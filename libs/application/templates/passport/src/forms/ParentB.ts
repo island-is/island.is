@@ -6,7 +6,6 @@ import {
   buildMultiField,
   buildSection,
   buildSubmitField,
-  buildTitleField,
   getValueViaPath,
 } from '@island.is/application/core'
 import {
@@ -105,7 +104,6 @@ export const ParentB: Form = buildForm({
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
-              title: '',
               refetchApplicationAfterSubmit: true,
               actions: [
                 {

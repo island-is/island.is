@@ -1,5 +1,4 @@
 import {
-  buildCustomField,
   buildDescriptionField,
   buildDividerField,
   buildKeyValueField,
@@ -8,7 +7,7 @@ import {
 import { m } from '../../lib/messages'
 import { format as formatNationalId } from 'kennitala'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
-import { parse } from 'libphonenumber-js'
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
 export const representativeOverview = [
   buildDividerField({}),
@@ -38,7 +37,6 @@ export const representativeOverview = [
   }),
   buildDescriptionField({
     id: 'spaceRepresentative',
-    title: '',
     space: 'gutter',
     condition: (answers) =>
       !!getValueViaPath<string>(answers, 'representative.nationalId'),
@@ -47,10 +45,12 @@ export const representativeOverview = [
     width: 'half',
     label: m.phone,
     value: ({ answers }) => {
-      const parsedPhoneNumber = parse(
+      const parsedPhoneNumber = parsePhoneNumberFromString(
         getValueViaPath<string>(answers, 'representative.phone') ?? '',
       )
-      return formatPhoneNumber((parsedPhoneNumber.phone as string) || '')
+      return formatPhoneNumber(
+        parsedPhoneNumber?.nationalNumber?.toString() || '',
+      )
     },
     condition: (answers) =>
       !!getValueViaPath<string>(answers, 'representative.phone'),
@@ -65,7 +65,6 @@ export const representativeOverview = [
   }),
   buildDescriptionField({
     id: 'representativeNotFilledOut',
-    title: '',
     description: m.notFilledOutItalic,
     condition: (answers) =>
       !getValueViaPath<string>(answers, 'representative.nationalId'),

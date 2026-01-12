@@ -162,7 +162,9 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
     }
   }, [distributionData, entry, setValue])
 
-  const handleSelectPaymentMode = (mode: any) => {
+  const handleSelectPaymentMode = (mode: string) => {
+    if (mode !== 'amount' && mode !== 'months') return
+
     setPaymentMode(mode)
   }
 

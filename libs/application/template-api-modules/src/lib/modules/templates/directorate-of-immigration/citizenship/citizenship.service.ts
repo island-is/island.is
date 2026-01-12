@@ -9,7 +9,8 @@ import {
   ApplicationWithAttachments,
   NationalRegistryBirthplace,
   NationalRegistryIndividual,
-  NationalRegistrySpouse,
+  NationalRegistryResidenceHistory,
+  NationalRegistrySpouseV3,
 } from '@island.is/application/types'
 import { TemplateApiError } from '@island.is/nest/problem'
 import {
@@ -28,6 +29,7 @@ import { NationalRegistryClientService } from '@island.is/clients/national-regis
 import { YES } from '@island.is/application/core'
 import { Auth } from '@island.is/auth-nest-tools'
 import { ApplicantInformation } from './types'
+import { NationalRegistryV3ApplicationsClientService } from '@island.is/clients/national-registry-v3-applications'
 
 @Injectable()
 export class CitizenshipService extends BaseTemplateApiService {
@@ -36,6 +38,7 @@ export class CitizenshipService extends BaseTemplateApiService {
     private readonly attachmentService: AttachmentS3Service,
     private readonly directorateOfImmigrationClient: DirectorateOfImmigrationClient,
     private readonly nationalRegistryApi: NationalRegistryClientService,
+    private readonly nationalRegistryV3Api: NationalRegistryV3ApplicationsClientService,
   ) {
     super(ApplicationTypes.CITIZENSHIP)
   }
@@ -129,9 +132,13 @@ export class CitizenshipService extends BaseTemplateApiService {
     auth,
   }: TemplateApiModuleActionProps): Promise<Date | null> {
     // get residence history
-    const residenceHistory = await this.nationalRegistryApi.getResidenceHistory(
-      auth.nationalId,
-    )
+    const residenceHistory: NationalRegistryResidenceHistory[] | null =
+      await this.nationalRegistryV3Api.getResidenceHistory(
+        auth.nationalId,
+        auth,
+      )
+
+    if (!residenceHistory) return null
 
     // sort residence history so newest items are first, and if two items have the same date,
     // then the Iceland item will be first
@@ -158,16 +165,6 @@ export class CitizenshipService extends BaseTemplateApiService {
         break
       }
     }
-
-    // if (!lastChangeDate) {
-    //   throw new TemplateApiError(
-    //     {
-    //       title: errorMessages.residenceInIcelandLastChangeDateMissing,
-    //       summary: errorMessages.residenceInIcelandLastChangeDateMissing,
-    //     },
-    //     404,
-    //   )
-    // }
 
     return lastChangeDate
   }
@@ -210,7 +207,7 @@ export class CitizenshipService extends BaseTemplateApiService {
     }
 
     const isPayment: { fulfilled: boolean } | undefined =
-      await this.sharedTemplateAPIService.getPaymentStatus(auth, application.id)
+      await this.sharedTemplateAPIService.getPaymentStatus(application.id)
 
     if (!isPayment?.fulfilled) {
       throw new Error(
@@ -228,7 +225,7 @@ export class CitizenshipService extends BaseTemplateApiService {
     const nationalRegistryBirthplace = application.externalData.birthplace
       ?.data as NationalRegistryBirthplace | undefined
     const spouseDetails = application.externalData.spouseDetails?.data as
-      | NationalRegistrySpouse
+      | NationalRegistrySpouseV3
       | undefined
     const childrenCustodyInformation = application.externalData
       .childrenCustodyInformation?.data as
@@ -331,16 +328,16 @@ export class CitizenshipService extends BaseTemplateApiService {
         citizenshipCode: individual?.citizenship?.code,
         residenceInIcelandLastChangeDate: residenceInIcelandLastChangeDate,
         birthCountry: nationalRegistryBirthplace?.municipalityName,
-        maritalStatus: individual?.maritalTitle?.description || '',
+        maritalStatus:
+          spouseDetails?.maritalDescription ||
+          individual?.maritalTitle?.description ||
+          '',
         dateOfMaritalStatus: spouseDetails?.lastModified,
         spouse: spouseDetails?.nationalId
           ? {
               nationalId: spouseDetails.nationalId,
               name: spouseDetails.name,
-              birthCountry: spouseDetails.birthplace?.location,
               citizenshipCode: spouseDetails.citizenship?.code,
-              address: spouseDetails.address?.streetAddress,
-              reasonDifferentAddress: answers.maritalStatus?.explanation,
             }
           : undefined,
         parents: filteredParents || [],
@@ -402,25 +399,31 @@ export class CitizenshipService extends BaseTemplateApiService {
           })) || [],
         ),
         childrenSupportingDocuments: await Promise.all(
-          answers.childrenSupportingDocuments?.map(async (d) => ({
-            nationalId: d.nationalId,
-            birthCertificate: await this.getUrlForAttachment(
-              application,
-              d.birthCertificate,
-            ),
-            writtenConsentFromChild: await this.getUrlForAttachment(
-              application,
-              d.writtenConsentFromChild,
-            ),
-            writtenConsentFromOtherParent: await this.getUrlForAttachment(
-              application,
-              d.writtenConsentFromOtherParent,
-            ),
-            custodyDocuments: await this.getUrlForAttachment(
-              application,
-              d.custodyDocuments,
-            ),
-          })) || [],
+          answers.childrenSupportingDocuments
+            ?.filter((x) => !!x)
+            .map(async (d) => ({
+              nationalId: d?.nationalId || '',
+              birthCertificate:
+                (await this.getUrlForAttachment(
+                  application,
+                  d?.birthCertificate,
+                )) || '',
+              writtenConsentFromChild:
+                (await this.getUrlForAttachment(
+                  application,
+                  d?.writtenConsentFromChild,
+                )) || '',
+              writtenConsentFromOtherParent:
+                (await this.getUrlForAttachment(
+                  application,
+                  d?.writtenConsentFromOtherParent,
+                )) || '',
+              custodyDocuments:
+                (await this.getUrlForAttachment(
+                  application,
+                  d?.custodyDocuments,
+                )) || '',
+            })) || [],
         ),
       },
     )

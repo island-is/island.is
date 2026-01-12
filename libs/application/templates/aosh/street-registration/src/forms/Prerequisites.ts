@@ -1,13 +1,12 @@
 import { buildForm, buildSection } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { prerequisitesSection } from './StreetRegistrationForm/prerequisitesSection'
-import { Logo } from '../assets/Logo'
+import { AoshLogo } from '@island.is/application/assets/institution-logos'
 import { conclusion, information } from '../lib/messages'
 
 export const PrerequisitesForm: Form = buildForm({
   id: 'PrerequisitesForm',
-  title: '',
-  logo: Logo,
+  logo: AoshLogo,
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,

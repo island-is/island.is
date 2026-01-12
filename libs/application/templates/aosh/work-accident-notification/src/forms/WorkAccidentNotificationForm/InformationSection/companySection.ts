@@ -15,8 +15,6 @@ import {
   PostCodeDto,
   SizeOfTheEnterpriseDto,
 } from '@island.is/clients/work-accident-ver'
-import { FormValue } from '@island.is/application/types'
-import { isCompany } from '../../../utils'
 
 export const companySection = buildSubSection({
   id: 'company',
@@ -95,14 +93,20 @@ export const companySection = buildSubSection({
           width: 'half',
           readOnly: true,
           defaultValue: (application: Application) => {
-            const postalCode = getValueViaPath<string>(
+            let postalCode = getValueViaPath<string>(
               application.externalData,
               'identity.data.address.postalCode',
             )
-            const city = getValueViaPath<string>(
+            let city = getValueViaPath<string>(
               application.externalData,
               'identity.data.address.city',
             )
+
+            if (!postalCode) {
+              postalCode = '999'
+              city = 'Óskráð/Útlönd'
+            }
+            if (!city) city = 'Óskráð/Útlönd'
 
             return `${postalCode} - ${city}`
           },
@@ -137,7 +141,6 @@ export const companySection = buildSubSection({
         }),
         buildAlertMessageField({
           id: 'company.alertMessageField.emailAndPhone',
-          title: '',
           message: information.labels.company.emailAndPhoneAlertMessage,
           alertType: 'info',
           marginBottom: 0,
@@ -169,20 +172,18 @@ export const companySection = buildSubSection({
         }),
         buildAlertMessageField({
           id: 'company.alertMessageField',
-          title: '',
           message: information.labels.company.alertMessage,
           alertType: 'info',
           doesNotRequireAnswer: true,
           marginBottom: 0,
-          condition: (_, externalData) => isCompany(externalData),
         }),
         buildTextField({
           id: 'companyInformation.nameOfBranch',
           title: information.labels.company.nameOfBranch,
           backgroundColor: 'blue',
           width: 'half',
-          defaultValue: (application: Application) => '',
-          condition: (_, externalData) => isCompany(externalData),
+          required: true,
+          defaultValue: (_application: Application) => '',
         }),
         buildTextField({
           id: 'companyInformation.addressOfBranch',
@@ -190,15 +191,16 @@ export const companySection = buildSubSection({
           backgroundColor: 'blue',
           width: 'half',
           doesNotRequireAnswer: true,
-          defaultValue: (application: Application) => '',
-          condition: (_, externalData) => isCompany(externalData),
+          defaultValue: (_application: Application) => '',
+          maxLength: 21,
         }),
         buildSelectField({
           id: 'companyInformation.postnumberOfBranch',
           title: information.labels.company.postNumberAndTownOfBranch,
           width: 'half',
           doesNotRequireAnswer: true,
-          condition: (_, externalData) => isCompany(externalData),
+          defaultValue: '',
+          isClearable: true,
           options: (application) => {
             const postCodes =
               getValueViaPath<PostCodeDto[]>(

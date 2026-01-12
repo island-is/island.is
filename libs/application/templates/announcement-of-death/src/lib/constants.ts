@@ -1,3 +1,4 @@
+import { YesOrNo } from '@island.is/application/core'
 import { DefaultEvents, StateLifeCycle } from '@island.is/application/types'
 
 export type Events =
@@ -14,11 +15,6 @@ export enum States {
 export enum Roles {
   APPLICANT = 'applicant',
 }
-
-export const YES = 'yes'
-export const NO = 'no'
-
-type YesOrNo = 'yes' | 'no'
 
 export interface AnnouncementOfDeathFakeData {
   useFakeData?: YesOrNo
@@ -41,3 +37,6 @@ export const DayLifeCycle: StateLifeCycle = {
   shouldBePruned: true,
   whenToPrune: 1000 * 3600 * 24,
 }
+
+export const willValidation = 'willValidation'
+export const filesValidation = 'filesValidation'

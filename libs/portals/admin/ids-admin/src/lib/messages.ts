@@ -307,6 +307,9 @@ export const m = defineMessages({
     defaultMessage:
       'Configure custom claims (hard-coded) in access tokens created for this application. Each line should have the form claimName=value. Claim names automatically prefixed with "client_" to avoid collisions. Claim values are always stored as strings.',
   },
+  ssoDescription: {
+    id: 'ap.ids-admin:sso-description',
+  },
   logoutUrl: {
     id: 'ap.ids-admin:logout-url',
     defaultMessage: 'Logout URL',
@@ -351,7 +354,7 @@ export const m = defineMessages({
   },
   lifetime: {
     id: 'ap.ids-admin:life-time',
-    defaultMessage: 'Refresh token lifecycle',
+    defaultMessage: 'Session lifecycle',
   },
   lifeTimeDescription: {
     id: 'ap.ids-admin:life-time-description',
@@ -475,6 +478,15 @@ export const m = defineMessages({
   supportsTokenExchange: {
     id: 'ap.ids-admin:supports-token-exchange',
     defaultMessage: 'Supports token exchange grant',
+  },
+  allowSSO: {
+    id: 'ap.ids-admin:allow-sso',
+    defaultMessage: 'Allow single sign-on (SSO)',
+  },
+  allowSSODescription: {
+    id: 'ap.ids-admin:allow-sso-description',
+    defaultMessage:
+      'Allow users to sign in with the same session on other applications using the island.is authentication service.',
   },
   singleSession: {
     id: 'ap.ids-admin:single-session',

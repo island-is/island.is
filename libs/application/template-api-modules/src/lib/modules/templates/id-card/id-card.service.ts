@@ -154,7 +154,7 @@ export class IdCardService extends BaseTemplateApiService {
     return deliveryAddresses
   }
 
-  async assignParentB({ application, auth }: TemplateApiModuleActionProps) {
+  async assignParentB({ application }: TemplateApiModuleActionProps) {
     // 1. Validate payment
 
     // 1a. Make sure a paymentUrl was created
@@ -169,7 +169,7 @@ export class IdCardService extends BaseTemplateApiService {
 
     // 1b. Make sure payment is fulfilled (has been paid)
     const payment: { fulfilled: boolean } | undefined =
-      await this.sharedTemplateAPIService.getPaymentStatus(auth, application.id)
+      await this.sharedTemplateAPIService.getPaymentStatus(application.id)
     if (!payment?.fulfilled) {
       throw new Error(
         'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
@@ -258,7 +258,7 @@ export class IdCardService extends BaseTemplateApiService {
 
     // 1b. Make sure payment is fulfilled (has been paid)
     const payment: { fulfilled: boolean } | undefined =
-      await this.sharedTemplateAPIService.getPaymentStatus(auth, application.id)
+      await this.sharedTemplateAPIService.getPaymentStatus(application.id)
     if (!payment?.fulfilled) {
       throw new Error(
         'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
@@ -346,18 +346,20 @@ export class IdCardService extends BaseTemplateApiService {
         }
       : undefined
     // Email to parent A
-    await this.sharedTemplateAPIService
-      .sendEmail(
-        (props) => generateApplicationSubmittedEmail(props, parentA),
-        application,
-      )
-      .catch((e) => {
-        this.logger.error(
-          `Error sending email about submission for parentA, applicationID: ${application.id}`,
-          e,
+    if (parentA?.email) {
+      await this.sharedTemplateAPIService
+        .sendEmail(
+          (props) => generateApplicationSubmittedEmail(props, parentA),
+          application,
         )
-      })
-    if (parentB) {
+        .catch((e) => {
+          this.logger.error(
+            `Error sending email about submission for parentA, applicationID: ${application.id}`,
+            e,
+          )
+        })
+    }
+    if (parentB?.email) {
       // Email to parent B
       await this.sharedTemplateAPIService
         .sendEmail(

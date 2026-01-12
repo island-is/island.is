@@ -14,15 +14,15 @@ export const SchoolsApi = defineTemplateApi({
   namespace: 'SecondarySchool',
 })
 
-export const NationalRegistryParentsApi = defineTemplateApi({
-  action: 'getParents',
-  externalDataId: 'nationalRegistryParents',
+export const NationalRegistryCustodiansApi = defineTemplateApi({
+  action: 'getCustodians',
+  externalDataId: 'nationalRegistryCustodians',
   namespace: 'NationalRegistry',
 })
 
 export const UserProfileApiWithValidation = UserProfileApi.configure({
   params: {
-    validatePhoneNumber: true,
-    validateEmail: true,
+    validatePhoneNumberIfNotActor: true,
+    validateEmailIfNotActor: true,
   },
 })

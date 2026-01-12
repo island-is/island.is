@@ -16,6 +16,12 @@ export const error = defineMessages({
     defaultMessage: 'Vinsamlegast fylltu út afgreiðslutíma.',
     description: 'Error message when a value is invalid.',
   },
+  hoursFormat: {
+    id: 'ol.application:error.hoursFormat',
+    defaultMessage: 'Verður að fylla út og vera á milli 00:00 - 23:59',
+    description:
+      'Error message when 24h time values are not filled out or not between 00:00 and 23:59',
+  },
   debug: {
     id: 'ol.application:error.debug',
     defaultMessage: 'DEBUG',

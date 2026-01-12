@@ -11,11 +11,12 @@ import { m } from '../messages'
 import { GenericUserLicenseAlert } from '../dto/GenericUserLicenseAlert.dto'
 import { GenericUserLicenseMetaLinks } from '../dto/GenericUserLicenseMetaLinks.dto'
 import { GenericUserLicenseMetaTag } from '../dto/GenericUserLicenseMetaTag.dto'
-import { capitalize, capitalizeEveryWord } from '../utils/capitalize'
+import { capitalizeEveryWord } from '../utils/capitalize'
 import { Payload } from '../dto/Payload.dto'
 import { formatDate } from '../utils'
 import {
   AlertType,
+  ExpiryStatus,
   GenericLicenseDataFieldType,
   GenericLicenseMappedPayloadResponse,
   GenericLicenseMapper,
@@ -82,11 +83,19 @@ export class PassportMapper implements GenericLicenseMapper {
             return {
               licenseName: formatMessage(m.passport),
               type: 'user' as const,
-              payload: this.mapDocument(t, formatMessage),
+              payload: this.mapDocument(
+                t,
+                formatMessage,
+                formatMessage(m.passport),
+              ),
             }
           }
         })
         .flat()
+
+    if (mappedLicenses.findIndex((ml) => ml.type === 'user') < 0) {
+      mappedLicenses.push(emptyPassport)
+    }
 
     return mappedLicenses
   }
@@ -97,7 +106,9 @@ export class PassportMapper implements GenericLicenseMapper {
   ): Array<Payload> {
     if (document.passports?.length) {
       return (
-        document.passports?.map((p) => this.mapDocument(p, formatMessage)) ?? []
+        document.passports?.map((p) =>
+          this.mapDocument(p, formatMessage, document.childName ?? undefined),
+        ) ?? []
       )
     }
 
@@ -120,9 +131,10 @@ export class PassportMapper implements GenericLicenseMapper {
   private mapDocument(
     document: IdentityDocument,
     formatMessage: FormatMessage,
+    licenseName?: string,
   ): Payload {
-    const isExpired = document.expiryStatus === 'EXPIRED'
-    const isLost = document.expiryStatus === 'LOST'
+    const isExpired = document.expiryStatus?.toLowerCase() === 'expired'
+    const isLost = document.expiryStatus?.toLowerCase() === 'lost'
     const isExpiring = document.expiresWithinNoticeTime
     const isInvalid = document.status
       ? document.status.toLowerCase() === 'invalid'
@@ -134,6 +146,10 @@ export class PassportMapper implements GenericLicenseMapper {
         : isExpiring
         ? formatMessage(m.expiresWithin, {
             arg: formatMessage(m.sixMonths),
+          })
+        : document.expirationDate
+        ? formatMessage(m.validUntil, {
+            arg: formatDate(new Date(document.expirationDate)),
           })
         : formatMessage(m.valid),
       color: isInvalid || isExpiring ? 'red' : 'blue',
@@ -165,6 +181,11 @@ export class PassportMapper implements GenericLicenseMapper {
             type: GenericLicenseDataFieldType.Value,
             label: formatMessage(m.number),
             value: document.numberWithType,
+            link: {
+              label: formatMessage(m.copy),
+              value: document.numberWithType,
+              type: GenericUserLicenseMetaLinksType.Copy,
+            },
           }
         : null,
       document.issuingDate
@@ -201,6 +222,11 @@ export class PassportMapper implements GenericLicenseMapper {
                 : formatMessage(m.otherGender),
           }
         : null,
+      {
+        type: GenericLicenseDataFieldType.Value,
+        label: formatMessage(m.publisher),
+        value: 'Þjóðskrá',
+      },
     ].filter(isDefined)
 
     const alert: GenericUserLicenseAlert | undefined =
@@ -244,13 +270,21 @@ export class PassportMapper implements GenericLicenseMapper {
       rawData: JSON.stringify(document),
       metadata: {
         links,
-        licenseNumber: document.number?.toString() ?? '',
+        licenseNumber: document.numberWithType?.toString() ?? '',
         licenseId: document.number?.toString(),
+        expiryStatus:
+          document.expiryStatus === 'EXPIRED'
+            ? ExpiryStatus.EXPIRED
+            : document.expiresWithinNoticeTime
+            ? ExpiryStatus.EXPIRING
+            : document.expiryStatus === 'LOST'
+            ? ExpiryStatus.UNKNOWN
+            : ExpiryStatus.ACTIVE,
         expired: isExpired,
         expireDate: document.expirationDate?.toISOString() ?? undefined,
         displayTag,
-        name: document.verboseType ?? undefined,
-        title: document.verboseType ?? undefined,
+        name: licenseName ?? document.verboseType ?? undefined,
+        title: formatMessage(m.passport) ?? undefined,
         subtitle: formatMessage(m.passportNumberDisplay, {
           arg:
             document.subType && document.number

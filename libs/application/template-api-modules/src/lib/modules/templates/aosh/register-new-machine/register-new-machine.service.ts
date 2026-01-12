@@ -60,7 +60,7 @@ export class RegisterNewMachineTemplateService extends BaseTemplateApiService {
     application,
     auth,
   }: TemplateApiModuleActionProps): Promise<void> {
-    const answers = application.answers as unknown as NewMachineAnswers
+    const answers = application.answers as NewMachineAnswers
     const techInfo = {} as { [key: string]: string | boolean | undefined }
 
     answers.techInfo.forEach(({ variableName, value }) => {

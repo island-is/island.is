@@ -26,7 +26,6 @@ export const sectionAdvancedLicenseSelection = buildSubSection({
       children: [
         buildCustomField({
           id: 'advancedLicense',
-          title: '',
           component: 'AdvancedLicenseSelection',
         }),
       ],

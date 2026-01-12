@@ -86,7 +86,7 @@ const Sessions = () => {
       refetch({
         ...getQueryVariables(
           nextCursor,
-          kennitala.format(searchNationalId, ''),
+          kennitala.format(searchNationalId, false),
           filterDates.fromDate,
           filterDates.toDate,
         ),
@@ -107,7 +107,7 @@ const Sessions = () => {
     refetch({
       ...getQueryVariables(
         '',
-        kennitala.format(searchNationalId, ''),
+        kennitala.format(searchNationalId, false),
         type === 'clear'
           ? initialDates.fromDate
           : type === 'from'
@@ -141,7 +141,7 @@ const Sessions = () => {
       refetch({
         ...getQueryVariables(
           '',
-          kennitala.format(value, ''),
+          kennitala.format(value, false),
           filterDates.fromDate,
           filterDates.toDate,
         ),
@@ -203,7 +203,7 @@ const Sessions = () => {
               display={'flex'}
               justifyContent={'center'}
             >
-              {customLoading && <LoadingDots large />}
+              {customLoading && <LoadingDots size="large" />}
             </Box>
           }
         >

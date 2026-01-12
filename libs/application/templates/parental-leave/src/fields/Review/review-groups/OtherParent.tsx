@@ -7,22 +7,18 @@ import {
 import { GridColumn, GridRow, Stack } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { format as formatKennitala } from 'kennitala'
-import {
-  MANUAL,
-  NO,
-  ParentalRelations,
-  SINGLE,
-  SPOUSE,
-} from '../../../constants'
+import { MANUAL, ParentalRelations, SINGLE, SPOUSE } from '../../../constants'
 import { parentalLeaveFormMessages } from '../../../lib/messages'
 import {
   getApplicationAnswers,
+  getApplicationExternalData,
   getOtherParentId,
   getOtherParentName,
   getSelectedChild,
   requiresOtherParentApproval,
 } from '../../../lib/parentalLeaveUtils'
 import { ReviewGroupProps } from './props'
+import { NO } from '@island.is/application/core'
 
 export const OtherParent = ({
   application,
@@ -32,6 +28,9 @@ export const OtherParent = ({
   const { formatMessage } = useLocale()
   const { otherParent, otherParentEmail, otherParentPhoneNumber } =
     getApplicationAnswers(application.answers)
+  const { VMSTOtherParent } = getApplicationExternalData(
+    application.externalData,
+  )
 
   const selectedChild = getSelectedChild(
     application.answers,
@@ -57,22 +56,27 @@ export const OtherParent = ({
       }
     >
       <Stack space={2}>
-        {(otherParent === NO || otherParent === SINGLE) && (
-          <RadioValue
-            label={formatMessage(
-              parentalLeaveFormMessages.shared.otherParentTitle,
-            )}
-            value={NO}
-          />
-        )}
-        {(otherParent === SPOUSE || otherParent === MANUAL) && (
+        {(otherParent === NO || otherParent === SINGLE) &&
+          !VMSTOtherParent.otherParentId && (
+            <RadioValue
+              label={formatMessage(
+                parentalLeaveFormMessages.shared.otherParentTitle,
+              )}
+              value={NO}
+            />
+          )}
+        {(otherParent === SPOUSE ||
+          otherParent === MANUAL ||
+          VMSTOtherParent.otherParentId) && (
           <GridRow rowGap={2}>
             <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
               <DataValue
                 label={formatMessage(
                   parentalLeaveFormMessages.shared.otherParentName,
                 )}
-                value={otherParentName}
+                value={
+                  VMSTOtherParent?.otherParentName ?? otherParentName ?? ''
+                }
               />
             </GridColumn>
             <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
@@ -81,7 +85,11 @@ export const OtherParent = ({
                   parentalLeaveFormMessages.shared.otherParentID,
                 )}
                 value={
-                  otherParentId ? formatKennitala(otherParentId) : otherParentId
+                  VMSTOtherParent?.otherParentId
+                    ? formatKennitala(VMSTOtherParent.otherParentId)
+                    : otherParentId
+                    ? formatKennitala(otherParentId)
+                    : ''
                 }
               />
             </GridColumn>
@@ -94,7 +102,7 @@ export const OtherParent = ({
                 label={formatMessage(
                   parentalLeaveFormMessages.shared.otherParentEmailSubSection,
                 )}
-                value={otherParentEmail}
+                value={otherParentEmail ?? ''}
               />
             </GridColumn>
             {otherParentPhoneNumber && (
@@ -104,7 +112,7 @@ export const OtherParent = ({
                     parentalLeaveFormMessages.shared
                       .otherParentPhoneNumberSubSection,
                   )}
-                  value={formatPhoneNumber(otherParentPhoneNumber)}
+                  value={formatPhoneNumber(otherParentPhoneNumber) ?? ''}
                 />
               </GridColumn>
             )}

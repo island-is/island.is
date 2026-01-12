@@ -1,12 +1,11 @@
 import { VehicleListed } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC } from 'react'
 import { formatDate } from '@island.is/portals/my-pages/core'
 import differenceInMonths from 'date-fns/differenceInMonths'
 import { messages, vehicleMessage } from '../lib/messages'
 import { ActionCard } from '@island.is/portals/my-pages/core'
 import { AssetsPaths } from '../lib/paths'
-import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 
 interface Props {
   vehicle: VehicleListed
@@ -16,23 +15,6 @@ export const VehicleCard: FC<React.PropsWithChildren<Props>> = ({
   vehicle,
 }) => {
   const { formatMessage } = useLocale()
-
-  // Remove flag functionality once feature goes live.
-  const [enabledMileageFlag, setEnabledMileageFlag] = useState<boolean>(false)
-  const featureFlagClient = useFeatureFlagClient()
-  useEffect(() => {
-    const isFlagEnabled = async () => {
-      const ffEnabled = await featureFlagClient.getValue(
-        `isServicePortalVehicleMileagePageEnabled`,
-        false,
-      )
-      if (ffEnabled) {
-        setEnabledMileageFlag(ffEnabled as boolean)
-      }
-    }
-    isFlagEnabled()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   if (!vehicle) {
     return null
@@ -44,6 +26,7 @@ export const VehicleCard: FC<React.PropsWithChildren<Props>> = ({
   const text = vehicle.colorName ? vehicle.colorName + ' - ' + plate : plate
 
   return (
+    //TODO: Replace with Island UI Card, decide if we should add secondaryTag or find another solution
     <ActionCard
       heading={heading}
       text={text}
@@ -65,7 +48,7 @@ export const VehicleCard: FC<React.PropsWithChildren<Props>> = ({
           : undefined
       }
       secondaryTag={
-        vehicle.requiresMileageRegistration && enabledMileageFlag
+        vehicle.requiresMileageRegistration
           ? {
               label: formatMessage(vehicleMessage.mileageTagText),
               variant: 'warn',

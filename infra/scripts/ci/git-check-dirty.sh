@@ -1,4 +1,12 @@
 #!/bin/bash
+# git-check-dirty.sh
+# This script checks for changes in a specified file or directory, commits them using a specified user, and pushes the changes to the repository.
+#
+# Usage: ./git-check-dirty.sh <relative_path> <action> [owner]
+# <relative_path>: The relative path to the file or directory to check for changes.
+# <action>: A description of the action being performed, used in the commit message.
+# [owner]: Optional. The user to commit as. Defaults to "github actions". Options are "github actions" or "dirtybot".
+
 set -euxo pipefail
 
 DIR="$(git rev-parse --show-toplevel)"
@@ -17,20 +25,26 @@ commit_as_dirty_bot() {
   git config user.email 'builders@andes.is'
 }
 
+# Check for changes in the specified path, and commit if any
 if [[ $(git diff --stat "$abs_path") != '' ]]; then
-  echo "changes found in $rel_path that will be commited"
+  echo "Changes found in $rel_path that will be committed"
   git diff "$abs_path"
   git add "$abs_path"
-  if [ "$owner" == "github actions" ]; then
+  # Determine which user to commit as
+  case "$owner" in
+  "github actions")
     commit_as_github_actions
-  elif [ "$owner" == "dirtybot" ]; then
+    ;;
+  "dirtybot")
     commit_as_dirty_bot
-  else
+    ;;
+  *)
     echo "Error: Unknown owner!"
     exit 1
-  fi
+    ;;
+  esac
   git commit -m "chore: $action update dirty files"
   git push
 else
-  echo "found no unstaged files from $action, nothing to commit"
+  echo "Found no unstaged files from $action, nothing to commit"
 fi

@@ -2,7 +2,12 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { useMutation } from '@apollo/client'
 
-import { UploadFile, Box, Icon, Text } from '@island.is/island-ui/core'
+import {
+  UploadFileDeprecated,
+  Box,
+  Icon,
+  Text,
+} from '@island.is/island-ui/core'
 import { encodeFilenames } from '../../lib/utils'
 import { CreateSignedUrlMutation } from '../../lib/hooks/useFileUpload'
 import * as styles from '../Shared.css'
@@ -13,10 +18,10 @@ import { summaryForm } from '../../lib/messages'
 interface Props {
   goToScreen?: (id: string) => void
   route: Routes
-  personalTaxReturn?: UploadFile | null
-  taxFiles: UploadFile[]
-  incomeFiles: UploadFile[]
-  childrenFiles: UploadFile[]
+  personalTaxReturn?: UploadFileDeprecated | null
+  taxFiles: UploadFileDeprecated[]
+  incomeFiles: UploadFileDeprecated[]
+  childrenFiles: UploadFileDeprecated[]
   applicationId: string
 }
 
@@ -45,7 +50,7 @@ const Files = ({
         {formatMessage(summaryForm.formInfo.filesTitle)}
       </Text>
       {allFiles &&
-        allFiles.map((file: UploadFile, index: number) => {
+        allFiles.map((file: UploadFileDeprecated, index: number) => {
           if (file) {
             return (
               <a

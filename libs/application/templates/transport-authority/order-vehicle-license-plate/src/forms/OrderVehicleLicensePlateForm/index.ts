@@ -4,12 +4,11 @@ import { confirmation } from '../../lib/messages'
 import { informationSection } from './InformationSection'
 import { prerequisitesSection } from './prerequisitesSection'
 import { paymentSection } from './paymentSection'
-import { Logo } from '../../assets/Logo'
+import { TransportAuthorityLogo } from '@island.is/application/assets/institution-logos'
 
 export const OrderVehicleLicensePlateForm: Form = buildForm({
   id: 'OrderVehicleLicensePlateFormDraft',
-  title: '',
-  logo: Logo,
+  logo: TransportAuthorityLogo,
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,

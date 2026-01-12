@@ -17,7 +17,6 @@ export const fishingLicenseSection = buildSection({
       children: [
         buildCustomField({
           id: 'fishingLicense',
-          title: '',
           doesNotRequireAnswer: true,
           component: 'FishingLicense',
         }),

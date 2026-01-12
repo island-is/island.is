@@ -1,0 +1,37 @@
+{
+  "name": "clients-transport-authority-exemption-for-transportation",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/clients/transport-authority/exemption-for-transportation/src",
+  "projectType": "library",
+  "tags": ["lib:client", "scope:client"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "libs/clients/transport-authority/exemption-for-transportation/jest.config.ts"
+      }
+    },
+    "update-openapi-document": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" http://localhost:8081/r1/IS-DEV/GOV/10017/Samgongustofa-Protected/getOpenAPI?serviceCode=Leyfur-V1 -H 'Accept: application/json' > src/clientConfig.json",
+          "cat <<< $(jq '.components.schemas.ProblemDetails.additionalProperties = false' src/clientConfig.json) > src/clientConfig.json"
+        ],
+        "parallel": false,
+        "cwd": "libs/clients/transport-authority/exemption-for-transportation"
+      }
+    },
+    "codegen/backend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn openapi-generator -o libs/clients/transport-authority/exemption-for-transportation/gen/fetch -i libs/clients/transport-authority/exemption-for-transportation/src/clientConfig.json"
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
+    }
+  }
+}

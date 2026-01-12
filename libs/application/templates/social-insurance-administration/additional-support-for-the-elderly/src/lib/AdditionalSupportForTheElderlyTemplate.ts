@@ -26,15 +26,14 @@ import {
 
 import {
   SocialInsuranceAdministrationApplicantApi,
-  SocialInsuranceAdministrationCurrenciesApi,
   SocialInsuranceAdministrationIsApplicantEligibleApi,
+  NationalRegistryCohabitantsApi,
 } from '../dataProviders'
 import {
   Actions,
   Events,
   Roles,
   States,
-  BankAccountType,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import {
   additionalSupportForTheElderyFormMessage,
@@ -49,6 +48,7 @@ import {
   getApplicationAnswers,
   isEligible,
 } from './additionalSupportForTheElderlyUtils'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -57,6 +57,7 @@ const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.ADDITIONAL_SUPPORT_FOR_THE_ELDERLY,
   name: additionalSupportForTheElderyFormMessage.shared.applicationTitle,
+  codeOwner: CodeOwners.Deloitte,
   institution: socialInsuranceAdministrationMessage.shared.institution,
   translationNamespaces:
     ApplicationConfigurations.AdditionalSupportForTheElderly.translation,
@@ -87,13 +88,13 @@ const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
               write: 'all',
               api: [
                 NationalRegistryUserApi,
+                NationalRegistryCohabitantsApi,
                 UserProfileApi.configure({
                   params: {
                     validateEmail: true,
                   },
                 }),
                 SocialInsuranceAdministrationApplicantApi,
-                SocialInsuranceAdministrationCurrenciesApi,
                 SocialInsuranceAdministrationIsApplicantEligibleApi,
               ],
               delete: true,
@@ -114,7 +115,7 @@ const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
-        exit: ['clearBankAccountInfo', 'clearTemp', 'restoreAnswersFromTemp'],
+        exit: ['clearTemp', 'restoreAnswersFromTemp'],
         meta: {
           name: States.DRAFT,
           status: 'draft',
@@ -212,6 +213,10 @@ const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
           INREVIEW: {
             target: States.TRYGGINGASTOFNUN_IN_REVIEW,
           },
+          ADDITIONALDOCUMENTSREQUIRED: {
+            target: States.ADDITIONAL_DOCUMENTS_REQUIRED,
+          },
+          DISMISS: { target: States.DISMISSED },
         },
       },
       [States.TRYGGINGASTOFNUN_IN_REVIEW]: {
@@ -259,6 +264,7 @@ const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
           ADDITIONALDOCUMENTSREQUIRED: {
             target: States.ADDITIONAL_DOCUMENTS_REQUIRED,
           },
+          DISMISS: { target: States.DISMISSED },
         },
       },
       [States.ADDITIONAL_DOCUMENTS_REQUIRED]: {
@@ -308,6 +314,7 @@ const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
         },
         on: {
           SUBMIT: [{ target: States.TRYGGINGASTOFNUN_IN_REVIEW }],
+          DISMISS: { target: States.DISMISSED },
         },
       },
       [States.APPROVED]: {
@@ -350,6 +357,39 @@ const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
                 // TODO: Þurfum mögulega að breyta þessu þegar við vitum hvernig TR gerir stöðubreytingar
                 onEvent: States.REJECTED,
                 logMessage: coreSIAStatesMessages.applicationRejected,
+              },
+            ],
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              read: 'all',
+            },
+          ],
+        },
+      },
+      [States.DISMISSED]: {
+        meta: {
+          name: States.DISMISSED,
+          status: 'rejected',
+          lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            tag: {
+              label: coreSIAStatesMessages.dismissedTag,
+            },
+            pendingAction: {
+              title: statesMessages.asfteDismissed,
+              content: statesMessages.asfteDismissedDescription,
+              displayStatus: 'error',
+            },
+            historyLogs: [
+              {
+                onEvent: States.DISMISSED,
+                logMessage: statesMessages.asfteDismissed,
               },
             ],
           },
@@ -461,24 +501,6 @@ const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
             mergedAdditionalDocumentRequired,
           )
           unset(answers, 'fileUploadAdditionalFilesRequired')
-        }
-
-        return context
-      }),
-      clearBankAccountInfo: assign((context) => {
-        const { application } = context
-        const { bankAccountType } = getApplicationAnswers(application.answers)
-
-        if (bankAccountType === BankAccountType.ICELANDIC) {
-          unset(application.answers, 'paymentInfo.iban')
-          unset(application.answers, 'paymentInfo.swift')
-          unset(application.answers, 'paymentInfo.bankName')
-          unset(application.answers, 'paymentInfo.bankAddress')
-          unset(application.answers, 'paymentInfo.currency')
-        }
-
-        if (bankAccountType === BankAccountType.FOREIGN) {
-          unset(application.answers, 'paymentInfo.bank')
         }
 
         return context

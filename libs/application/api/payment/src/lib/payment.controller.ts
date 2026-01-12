@@ -13,16 +13,12 @@ import {
   ApiOkResponse,
   ApiBearerAuth,
 } from '@nestjs/swagger'
-import type { User } from '@island.is/auth-nest-tools'
-import {
-  IdsUserGuard,
-  ScopesGuard,
-  Scopes,
-  CurrentUser,
-} from '@island.is/auth-nest-tools'
+import { IdsUserGuard, ScopesGuard, Scopes } from '@island.is/auth-nest-tools'
 import { ApplicationScope } from '@island.is/auth/scopes'
 import { PaymentService } from './payment.service'
 import { PaymentStatusResponseDto } from './dto/paymentStatusResponse.dto'
+import { CodeOwner } from '@island.is/nest/core'
+import { CodeOwners } from '@island.is/shared/constants'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('payments')
@@ -32,6 +28,7 @@ import { PaymentStatusResponseDto } from './dto/paymentStatusResponse.dto'
   description: 'Front-end language selected',
 })
 @Controller()
+@CodeOwner(CodeOwners.NordaApplications)
 export class PaymentController {
   constructor(private readonly paymentService: PaymentService) {}
 
@@ -45,9 +42,8 @@ export class PaymentController {
     description: 'The id of the application check if it is paid.',
   })
   async getPaymentStatus(
-    @CurrentUser() user: User,
     @Param('applicationId', new ParseUUIDPipe()) applicationId: string,
   ): Promise<PaymentStatusResponseDto> {
-    return await this.paymentService.getStatus(user, applicationId)
+    return await this.paymentService.getStatus(applicationId)
   }
 }

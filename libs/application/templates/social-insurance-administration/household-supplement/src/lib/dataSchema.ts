@@ -1,16 +1,10 @@
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
-import { HouseholdSupplementHousing } from './constants'
 import addMonths from 'date-fns/addMonths'
 import addYears from 'date-fns/addYears'
-import {
-  formatBankInfo,
-  validIBAN,
-  validSWIFT,
-} from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
-import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
+import { formatBankInfo } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import { errorMessages } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
-import { NO, YES } from '@island.is/application/types'
+import { NO, YES } from '@island.is/application/core'
 
 const isValidPhoneNumber = (phoneNumber: string) => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
@@ -41,62 +35,15 @@ export const dataSchema = z.object({
   }),
   paymentInfo: z
     .object({
-      bankAccountType: z.enum([
-        BankAccountType.ICELANDIC,
-        BankAccountType.FOREIGN,
-      ]),
       bank: z.string(),
-      bankAddress: z.string(),
-      bankName: z.string(),
-      currency: z.string(),
-      iban: z.string(),
-      swift: z.string(),
     })
     .partial()
     .refine(
-      ({ bank, bankAccountType }) => {
-        if (bankAccountType === BankAccountType.ICELANDIC) {
-          const bankAccount = formatBankInfo(bank ?? '')
-          return bankAccount.length === 12 // 4 (bank) + 2 (ledger) + 6 (number)
-        }
-        return true
+      ({ bank }) => {
+        const bankAccount = formatBankInfo(bank ?? '')
+        return bankAccount.length === 12 // 4 (bank) + 2 (ledger) + 6 (number)
       },
       { params: errorMessages.bank, path: ['bank'] },
-    )
-    .refine(
-      ({ iban, bankAccountType }) => {
-        if (bankAccountType === BankAccountType.FOREIGN) {
-          const formattedIBAN = iban?.replace(/[\s]+/g, '')
-          return formattedIBAN ? validIBAN(formattedIBAN) : false
-        }
-        return true
-      },
-      { params: errorMessages.iban, path: ['iban'] },
-    )
-    .refine(
-      ({ swift, bankAccountType }) => {
-        if (bankAccountType === BankAccountType.FOREIGN) {
-          const formattedSWIFT = swift?.replace(/[\s]+/g, '')
-          return formattedSWIFT ? validSWIFT(formattedSWIFT) : false
-        }
-        return true
-      },
-      { params: errorMessages.swift, path: ['swift'] },
-    )
-    .refine(
-      ({ bankName, bankAccountType }) =>
-        bankAccountType === BankAccountType.FOREIGN ? !!bankName : true,
-      { path: ['bankName'] },
-    )
-    .refine(
-      ({ bankAddress, bankAccountType }) =>
-        bankAccountType === BankAccountType.FOREIGN ? !!bankAddress : true,
-      { path: ['bankAddress'] },
-    )
-    .refine(
-      ({ currency, bankAccountType }) =>
-        bankAccountType === BankAccountType.FOREIGN ? !!currency : true,
-      { path: ['currency'] },
     ),
   fileUploadAdditionalFilesRequired: z.object({
     additionalDocumentsRequired: z
@@ -106,10 +53,6 @@ export const dataSchema = z.object({
       }),
   }),
   householdSupplement: z.object({
-    housing: z.enum([
-      HouseholdSupplementHousing.HOUSEOWNER,
-      HouseholdSupplementHousing.RENTER,
-    ]),
     children: z.enum([YES, NO]),
   }),
   period: z

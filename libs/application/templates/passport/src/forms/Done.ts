@@ -10,7 +10,6 @@ import { m } from '../lib/messages'
 
 export const Done: Form = buildForm({
   id: 'PassportApplicationComplete',
-  title: '',
   mode: FormModes.COMPLETED,
   children: [
     buildMultiField({
@@ -33,7 +32,6 @@ export const Done: Form = buildForm({
         }),
         buildDescriptionField({
           id: 'nextStepsDescription',
-          title: '',
           description: (application: Application) =>
             (application.answers.passport as Passport)?.userPassport !== ''
               ? m.applicationCompleteNextStepsDescriptionPersonalApplication

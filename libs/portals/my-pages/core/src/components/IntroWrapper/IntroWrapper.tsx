@@ -25,6 +25,7 @@ type BaseProps = {
   img?: string
   isSubheading?: boolean
   children?: React.ReactNode
+  childrenWidthFull?: boolean
   buttonGroup?: Array<React.ReactNode>
   serviceProviderSlug?: OrganizationSlugType
   serviceProviderTooltip?: string
@@ -49,7 +50,7 @@ interface WithIntroProps extends BaseProps {
 export type IntroWrapperProps = WithIntroComponentProps | WithIntroProps
 
 export const IntroWrapper = (props: IntroWrapperProps) => {
-  const { marginBottom } = props
+  const { marginBottom, childrenWidthFull = false } = props
   const { formatMessage } = useLocale()
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
@@ -69,7 +70,7 @@ export const IntroWrapper = (props: IntroWrapperProps) => {
 
   return (
     <Box>
-      <GridRow marginBottom={marginBottom ?? 4}>
+      <GridRow marginBottom={props.buttonGroup ? 0 : marginBottom ?? 4}>
         <GridColumn span={props.span ? props.span : columnSpan}>
           {props.loading ? (
             <Stack space={2}>
@@ -89,35 +90,57 @@ export const IntroWrapper = (props: IntroWrapperProps) => {
               {props.introComponent && (
                 <Box paddingTop={1}>{props.introComponent}</Box>
               )}
-              <Box marginTop={4}>
-                <Inline space={2}>{props.buttonGroup}</Inline>
-              </Box>
             </>
           )}
         </GridColumn>
-        {!isMobile && props.serviceProviderSlug && organization?.link && (
+        {!isMobile && (
           <GridColumn span={'2/8'} offset={isTablet ? '0' : '1/8'}>
-            <InstitutionPanel
-              loading={loading}
-              linkHref={organization.link ?? ''}
-              linkLabel={
-                organization.title
-                  ? formatMessage(m.readMoreAbout, {
-                      arg: organization.title,
-                    })
-                  : ''
-              }
-              img={organization.logo?.url ?? ''}
-              imgContainerDisplay={isMobile ? 'block' : 'flex'}
-              isSvg={organization.logo?.contentType === 'image/svg+xml'}
-              tooltipText={props.serviceProviderTooltip}
-              backgroundColor={props.backgroundColor}
-              tooltipVariant={props.tooltipVariant ?? 'light'}
-            />
+            {props.img && (
+              <Box
+                alt=""
+                component="img"
+                src={props.img}
+                width="full"
+                height="full"
+                marginRight={0}
+              />
+            )}
+            {props.serviceProviderSlug && organization?.link && (
+              <InstitutionPanel
+                loading={loading}
+                linkHref={organization.link ?? ''}
+                linkLabel={
+                  organization.title
+                    ? formatMessage(m.readMoreAbout, {
+                        arg: organization.title,
+                      })
+                    : ''
+                }
+                img={organization.logo?.url ?? ''}
+                imgContainerDisplay={isMobile ? 'block' : 'flex'}
+                isSvg={organization.logo?.contentType === 'image/svg+xml'}
+                tooltipText={props.serviceProviderTooltip}
+                backgroundColor={props.backgroundColor}
+                tooltipVariant={props.tooltipVariant ?? 'light'}
+              />
+            )}
           </GridColumn>
         )}
       </GridRow>
-      {props.children}
+      {!props.loading && props.buttonGroup && (
+        <GridRow marginBottom={marginBottom ?? 4}>
+          <GridColumn>
+            <Box marginTop={4}>
+              <Inline space={2}>{props.buttonGroup}</Inline>
+            </Box>
+          </GridColumn>
+        </GridRow>
+      )}
+      <GridRow>
+        <GridColumn span={childrenWidthFull || isMobile ? '12/12' : '10/12'}>
+          {props.children}
+        </GridColumn>
+      </GridRow>
       <FootNote serviceProviderSlug={props.serviceProviderSlug} />
     </Box>
   )

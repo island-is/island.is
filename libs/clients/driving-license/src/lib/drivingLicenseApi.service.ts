@@ -17,7 +17,11 @@ import {
   Remark,
 } from './drivingLicenseApi.types'
 import { handleCreateResponse } from './utils/handleCreateResponse'
-import { PracticePermitDto, DriverLicenseWithoutImagesDto } from '../v5'
+import {
+  PracticePermitDto,
+  DriverLicenseWithoutImagesDto,
+  ImagesFromThjodskraDto,
+} from '../v5'
 
 @Injectable()
 export class DrivingLicenseApi {
@@ -26,6 +30,7 @@ export class DrivingLicenseApi {
     private readonly v5: v5.ApiV5,
     private readonly applicationV5: v5.ApplicationApiV5,
     private readonly v5CodeTable: v5.CodeTableV5,
+    private readonly imageApiV5: v5.ImageApiV5,
   ) {}
 
   public async postTemporaryLicenseWithHealthDeclaratio(input: {
@@ -150,9 +155,7 @@ export class DrivingLicenseApi {
             (remark) =>
               !!remark.heiti &&
               licenseRemarks.some((lremark) =>
-                lremark.description.includes(
-                  remark.nr || ('' && !remark.athugasemd),
-                ),
+                lremark.description.includes(remark.nr || ''),
               ),
           )
           .map((remark) => ({
@@ -477,7 +480,7 @@ export class DrivingLicenseApi {
     willBringHealthCertificate: boolean
     willBringQualityPhoto: boolean
     jurisdictionId: number
-    sendLicenseInMail: boolean
+    sendLicenseInMail: number
     sendLicenseToAddress: string
     category: string
   }): Promise<boolean> {
@@ -493,7 +496,7 @@ export class DrivingLicenseApi {
             : 0,
           personIdNumber: params.nationalIdApplicant,
           bringsNewPhoto: params.willBringQualityPhoto ? 1 : 0,
-          sendLicenseInMail: params.sendLicenseInMail ? 1 : 0,
+          sendLicenseInMail: params.sendLicenseInMail,
           sendToAddress: params.sendLicenseToAddress,
         },
       })
@@ -585,8 +588,16 @@ export class DrivingLicenseApi {
     token: string
     districtId: number
     stolenOrLost: boolean
+    pickUpLicense: boolean
+    imageBiometricsId: string | null
   }): Promise<number> {
-    const { districtId, token, stolenOrLost } = params
+    const {
+      districtId,
+      token,
+      stolenOrLost,
+      pickUpLicense,
+      imageBiometricsId,
+    } = params
     return await this.v5.apiDrivinglicenseV5ApplicationsNewCollaborativePost({
       apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
       apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
@@ -595,6 +606,8 @@ export class DrivingLicenseApi {
         districtId,
         licenseStolenOrLost: stolenOrLost,
         userId: v5.DRIVING_LICENSE_API_USER_ID,
+        pickUpLicense,
+        imageBiometricsId,
       },
     })
   }
@@ -643,6 +656,32 @@ export class DrivingLicenseApi {
     return {
       data: image,
     }
+  }
+
+  async getHasQualityScannedPhoto(params: { token: string }): Promise<boolean> {
+    const res =
+      await this.imageApiV5.apiImagecontrollerV5HasqualityscannedphotoGet({
+        apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
+        apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+        jwttoken: params.token.replace('Bearer ', ''),
+      })
+
+    return res > 0
+  }
+
+  async getAllPhotosFromThjodskra(params: {
+    token: string
+  }): Promise<ImagesFromThjodskraDto> {
+    const res =
+      await this.imageApiV5.apiImagecontrollerV5FromnationalregistryWithagerestrictionGet(
+        {
+          apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
+          apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+          jwttoken: params.token.replace('Bearer ', ''),
+        },
+      )
+
+    return res
   }
 
   async getAllDriverLicenses(

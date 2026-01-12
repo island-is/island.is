@@ -6,10 +6,12 @@ import {
   buildSubSection,
   getValueViaPath,
   buildDescriptionField,
+  YES,
+  NO,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { HasQualityPhotoData } from '../../lib/types'
-import { B_FULL, NO, YES, B_FULL_RENEWAL_65 } from '../../lib/constants'
+import { B_FULL, B_FULL_RENEWAL_65 } from '../../lib/constants'
 import {
   hasNoDrivingLicenseInOtherCountry,
   isApplicationForCondition,
@@ -41,7 +43,6 @@ export const subSectionQualityPhoto = buildSubSection({
         }),
         buildRadioField({
           id: 'willBringQualityPhoto',
-          title: '',
           disabled: false,
           options: [
             { value: NO, label: m.qualityPhotoNoAcknowledgement },
@@ -50,7 +51,6 @@ export const subSectionQualityPhoto = buildSubSection({
         }),
         buildDescriptionField({
           id: 'photodesc',
-          title: '',
           description: m.qualityPhotoInstructionBullets,
           condition: (answers) =>
             getValueViaPath(answers, 'willBringQualityPhoto') === YES,
@@ -74,17 +74,14 @@ export const subSectionQualityPhoto = buildSubSection({
         }),
         buildDescriptionField({
           id: 'photodesc',
-          title: '',
           description: m.qualityPhotoInstructionBullets,
         }),
         buildDescriptionField({
           id: 'space',
-          title: '',
           space: 'containerGutter',
         }),
         buildCheckboxField({
           id: 'willBringQualityPhoto',
-          title: '',
           options: [
             {
               value: YES,

@@ -39,6 +39,7 @@ export type OutputPersistentVolumeClaim = {
 }
 export type ContainerEnvironmentVariables = { [name: string]: string }
 export type ContainerSecrets = { [name: string]: string }
+export type IngressClass = 'nginx-internal-alb' | 'nginx-external-alb'
 
 export interface HelmService {
   replicaCount?: {
@@ -94,9 +95,11 @@ export interface HelmService {
 
   ingress?: {
     [name: string]: {
+      ingressClassName?: IngressClass
       annotations: {
         [anntName: string]: string
       }
+      pathTypeOverride?: 'Exact' | 'Prefix' | 'ImplementationSpecific'
       hosts: { host: string; paths: string[] }[]
     }
   }
@@ -146,7 +149,11 @@ export interface LocalrunService {
 export interface FeatureKubeJob {
   apiVersion: 'batch/v1'
   kind: 'Job'
-  metadata: { name: string; labels?: { [name: string]: string } }
+  metadata: {
+    name: string
+    labels?: { [name: string]: string }
+    annotations?: { [name: string]: string }
+  }
   spec: {
     template: {
       spec: {

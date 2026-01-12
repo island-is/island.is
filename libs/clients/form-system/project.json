@@ -3,9 +3,12 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/form-system/src",
   "projectType": "library",
+  "schema": "libs/clients/form-system/gen/fetch/api.graphql",
+  "tags": ["lib:client", "scope:client"],
+  "implicitDependencies": ["services-form-system-api"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["libs/clients/form-system/**/*.ts"]
@@ -28,17 +31,9 @@
     "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn openapi-generator -o libs/clients/form-system/gen/fetch -i libs/clients/form-system/src/clientConfig.json"
+        "command": "yarn openapi-generator -o libs/clients/form-system/gen/fetch -i apps/services/form-system/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
       },
       "outputs": ["{projectRoot}/gen/fetch"]
-    },
-    "update-openapi-document": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "curl https://profun.island.is/umsoknarkerfi/swagger/v1/swagger.json > libs/clients/form-system/src/clientConfig.json"
-      }
     }
-  },
-  "schema": "libs/client/form-system/gen/fetch/api.graphql",
-  "tags": ["lib:client", "scope:client"]
+  }
 }

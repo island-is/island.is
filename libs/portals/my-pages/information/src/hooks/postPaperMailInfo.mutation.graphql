@@ -1,0 +1,6 @@
+mutation PostPaperMailInfo($input: PostRequestPaperInput!) {
+  postPaperMailInfo(input: $input) {
+    wantsPaper
+    nationalId
+  }
+}

@@ -30,13 +30,13 @@ env:
   BFF_LOGOUT_REDIRECT_URI: 'https://beta.dev01.devland.is'
   BFF_NAME: 'stjornbord'
   BFF_PAR_SUPPORT_ENABLED: 'false'
-  BFF_PROXY_API_ENDPOINT: 'http://web-api.islandis.svc.cluster.local/api/graphql'
+  BFF_PROXY_API_ENDPOINT: 'http://api.islandis.svc.cluster.local/api/graphql'
   CODE_OWNER: 'core'
   IDENTITY_SERVER_CLIENT_ID: '@admin.island.is/bff-stjornbord'
-  IDENTITY_SERVER_CLIENT_SCOPES: '["@admin.island.is/delegations","@admin.island.is/ads","@admin.island.is/regulations","@admin.island.is/regulations:manage","@admin.island.is/icelandic-names-registry","@admin.island.is/application-system:admin","@admin.island.is/application-system:institution","@admin.island.is/document-provider","@admin.island.is/auth","@admin.island.is/auth:admin","@admin.island.is/petitions","@admin.island.is/service-desk","@admin.island.is/ads:explicit","@admin.island.is/signature-collection:manage","@admin.island.is/signature-collection:process","@admin.island.is/form-system","@admin.island.is/form-system:admin","@admin.island.is/delegation-system","@admin.island.is/delegation-system:admin"]'
+  IDENTITY_SERVER_CLIENT_SCOPES: '["@admin.island.is/delegations","@admin.island.is/ads","@admin.island.is/regulations","@admin.island.is/regulations:manage","@admin.island.is/icelandic-names-registry","@admin.island.is/application-system:admin","@admin.island.is/application-system:institution","@admin.island.is/document-provider","@admin.island.is/document-provider:institution","@admin.island.is/auth","@admin.island.is/auth:admin","@admin.island.is/petitions","@admin.island.is/service-desk","@admin.island.is/ads:explicit","@admin.island.is/signature-collection:manage","@admin.island.is/signature-collection:process","@admin.island.is/signature-collection:municipality","@admin.island.is/form-system","@admin.island.is/form-system:admin","@admin.island.is/delegation-system","@admin.island.is/delegation-system:admin","@admin.island.is/payments"]'
   IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
   LOG_LEVEL: 'info'
-  NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
+  NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
   REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
   SERVERSIDE_FEATURES_ON: ''
 grantNamespaces:
@@ -58,8 +58,8 @@ hpa:
       cpuAverageUtilization: 90
       nginxRequestsIrate: 5
     replicas:
-      max: 10
-      min: 2
+      max: 3
+      min: 1
 image:
   repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-bff'
 ingress:
@@ -76,14 +76,15 @@ ingress:
           - '/stjornbord/bff'
 namespace: 'portals-admin'
 podDisruptionBudget:
-  maxUnavailable: 1
+  minAvailable: 1
+  unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534
 pvcs: []
 replicaCount:
-  default: 2
-  max: 10
-  min: 2
+  default: 1
+  max: 3
+  min: 1
 resources:
   limits:
     cpu: '400m'

@@ -10,11 +10,11 @@ import MortgageCertificateTemplate from './mortgageCertificateTemplate'
 
 const MOCK_APPLICANT_NATIONAL_ID = '0101010101'
 
-function buildApplication(
+const buildApplication = (
   data: {
     state?: string
   } = {},
-): Application {
+): Application => {
   const { state = States.DRAFT } = data
 
   return {

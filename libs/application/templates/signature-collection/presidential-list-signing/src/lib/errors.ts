@@ -9,19 +9,19 @@ export const errorMessages = {
     },
     summary: {
       id: 'sls.application:error.age.summary',
-      defaultMessage: '18 ára aldursmark er ekki náð',
+      defaultMessage: '18 ára aldursmarki er ekki náð',
       description: '',
     },
   }),
   citizenship: defineMessages({
     title: {
       id: 'sls.application:error.citizenship.title',
-      defaultMessage: 'Ekki með íslenkst ríkisfang',
+      defaultMessage: 'Ekki með íslenskt ríkisfang',
       description: '',
     },
     summary: {
-      id: 'sls.application:error.citizenship.summary',
-      defaultMessage: 'Þú þarft að vera með íslenkst ríkisfang',
+      id: 'sls.application:error.citizenship.summary#markdown',
+      defaultMessage: 'Þú þarft að vera með íslenskt ríkisfang',
       description: '',
     },
   }),
@@ -41,12 +41,12 @@ export const errorMessages = {
   residency: defineMessages({
     title: {
       id: 'sls.application:error.residency.title',
-      defaultMessage: 'Ekki með búsetu á Íslandi',
+      defaultMessage: 'Ekki með lögheimili á Íslandi',
       description: '',
     },
     summary: {
       id: 'sls.application:error.residency.summary',
-      defaultMessage: 'Skilyrði um búsetu á Íslandi eru ekki uppfyllt',
+      defaultMessage: 'Skilyrði um lögheimili á Íslandi eru ekki uppfyllt',
       description: '',
     },
   }),
@@ -82,7 +82,7 @@ export const errorMessages = {
     },
     summary: {
       id: 'sls.application:error.signer.summary#markdown',
-      defaultMessage: 'Hægt er að draga meðmæli tilbaka inni á Mínum Síðum.',
+      defaultMessage: 'Hægt er að draga meðmæli til baka inni á Mínum Síðum.',
       description: '',
     },
   }),
@@ -119,6 +119,30 @@ export const errorMessages = {
     summary: {
       id: 'sls.application:error.submitFailure.summary',
       defaultMessage: 'Ekki er hægt að stofna söfnun meðmæla.',
+      description: '',
+    },
+  }),
+  candidateNotFound: defineMessages({
+    title: {
+      id: 'sls.application:error.candidateNotFound.title',
+      defaultMessage: 'Framboð finnst ekki',
+      description: '',
+    },
+    summary: {
+      id: 'sls.application:error.candidateNotFound.summary',
+      defaultMessage: 'Ekki er hægt að mæla með framboði.',
+      description: '',
+    },
+  }),
+  candidateListActive: defineMessages({
+    title: {
+      id: 'sls.application:error.candidateListActive.title',
+      defaultMessage: 'Framboð er ekki með virka söfnun í þínum landsfjórðungi',
+      description: '',
+    },
+    summary: {
+      id: 'sls.application:error.active.summary',
+      defaultMessage: 'Ekki er hægt að mæla með framboði.',
       description: '',
     },
   }),

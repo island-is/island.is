@@ -3,13 +3,10 @@ import {
   buildMultiField,
   buildTextField,
   buildDateField,
+  getValueViaPath,
 } from '@island.is/application/core'
-import {
-  Application,
-  NationalRegistryIndividual,
-} from '@island.is/application/types'
+import { Address, Application } from '@island.is/application/types'
 import { format as formatNationalId } from 'kennitala'
-import { UserProfile } from '../../types/schema'
 import { m } from '../../lib/messages'
 
 export const sectionInformationActor = buildSection({
@@ -28,9 +25,11 @@ export const sectionInformationActor = buildSection({
           backgroundColor: 'white',
           disabled: true,
           defaultValue: (application: Application) => {
-            const nationalRegistry = application.externalData.nationalRegistry
-              .data as NationalRegistryIndividual
-            return nationalRegistry.fullName
+            const fullName = getValueViaPath<string>(
+              application.externalData,
+              'nationalRegistry.data.fullName',
+            )
+            return fullName
           },
         }),
         buildTextField({
@@ -49,9 +48,11 @@ export const sectionInformationActor = buildSection({
           backgroundColor: 'white',
           disabled: true,
           defaultValue: (application: Application) => {
-            const nationalRegistry = application.externalData.nationalRegistry
-              .data as NationalRegistryIndividual
-            return nationalRegistry?.address?.streetAddress
+            const streetAddress = getValueViaPath<string>(
+              application.externalData,
+              'nationalRegistry.data.address.streetAddress',
+            )
+            return streetAddress
           },
         }),
         buildTextField({
@@ -61,13 +62,11 @@ export const sectionInformationActor = buildSection({
           backgroundColor: 'white',
           disabled: true,
           defaultValue: (application: Application) => {
-            const nationalRegistry = application.externalData.nationalRegistry
-              .data as NationalRegistryIndividual
-            return (
-              nationalRegistry?.address?.postalCode +
-              ', ' +
-              nationalRegistry?.address?.locality
+            const address = getValueViaPath<Address>(
+              application.externalData,
+              'nationalRegistry.data.address',
             )
+            return `${address?.postalCode}, ${address?.locality}`
           },
         }),
         buildTextField({
@@ -77,9 +76,11 @@ export const sectionInformationActor = buildSection({
           width: 'half',
           backgroundColor: 'blue',
           defaultValue: (application: Application) => {
-            const data = application.externalData.userProfile
-              .data as UserProfile
-            return data.email
+            const email = getValueViaPath<string>(
+              application.externalData,
+              'userProfile.data.email',
+            )
+            return email
           },
         }),
         buildTextField({
@@ -89,9 +90,11 @@ export const sectionInformationActor = buildSection({
           width: 'half',
           backgroundColor: 'blue',
           defaultValue: (application: Application) => {
-            const data = application.externalData.userProfile
-              .data as UserProfile
-            return data.mobilePhoneNumber
+            const phone = getValueViaPath<string>(
+              application.externalData,
+              'userProfile.data.mobilePhoneNumber',
+            )
+            return phone
           },
         }),
         buildDateField({
@@ -101,8 +104,11 @@ export const sectionInformationActor = buildSection({
           backgroundColor: 'white',
           disabled: true,
           defaultValue: (application: Application) => {
-            const data = application.externalData.doctorsNote.data as any
-            return data?.expirationDate
+            const expirationDate = getValueViaPath<string>(
+              application.externalData,
+              'doctorsNote.data.expirationDate',
+            )
+            return expirationDate
           },
         }),
       ],

@@ -1,0 +1,62 @@
+import { YesOrNoEnum } from '@island.is/application/core'
+import { z } from 'zod'
+
+export const lastJobSchema = z.object({
+  employer: z
+    .object({
+      nationalId: z.string().optional(),
+      name: z.string().optional(),
+    })
+    .optional(),
+  nationalIdWithName: z.string().optional(),
+  title: z.string().optional(),
+  percentage: z.string().optional(),
+  startDate: z.string().optional(),
+  endDate: z.string().optional(),
+})
+
+export const employmentHistorySchema = z
+  .object({
+    isIndependent: z
+      .nativeEnum(YesOrNoEnum)
+      .refine((v) => Object.values(YesOrNoEnum).includes(v)),
+    independentOwnSsn: z.nativeEnum(YesOrNoEnum).optional(),
+    lastJobs: z.array(lastJobSchema).optional(),
+    currentJobs: z.array(lastJobSchema).optional(),
+    hasWorkedEes: z.nativeEnum(YesOrNoEnum).optional(),
+  })
+  .superRefine((data, ctx) => {
+    data.lastJobs?.forEach((job, index) => {
+      //So nationalId is not a valid job choice
+      if (!job.nationalIdWithName) {
+        ctx.addIssue({
+          path: ['lastJobs', index, 'nationalIdWithName'],
+          code: z.ZodIssueCode.custom,
+        })
+      }
+      if (!job.percentage) {
+        ctx.addIssue({
+          path: ['lastJobs', index, 'percentage'],
+          code: z.ZodIssueCode.custom,
+        })
+      }
+      if (!job.startDate) {
+        ctx.addIssue({
+          path: ['lastJobs', index, 'startDate'],
+          code: z.ZodIssueCode.custom,
+        })
+      }
+      if (!job.endDate) {
+        ctx.addIssue({
+          path: ['lastJobs', index, 'endDate'],
+          code: z.ZodIssueCode.custom,
+        })
+      }
+      if (job.nationalIdWithName === '-' && !job.employer?.nationalId) {
+        ctx.addIssue({
+          path: ['lastJobs', index, 'employer'],
+          code: z.ZodIssueCode.custom,
+        })
+      }
+    })
+  })

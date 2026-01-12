@@ -1,7 +1,7 @@
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import { BaseTemplateApiService } from '../../base-template-api.service'
-import { ApplicationTypes, YES } from '@island.is/application/types'
+import { ApplicationTypes } from '@island.is/application/types'
 import { TemplateApiModuleActionProps } from '../../../types'
 import {
   Adilar,
@@ -11,6 +11,7 @@ import {
 } from '@island.is/clients/workpoint/arborg'
 import { HomeSupportAnswers } from '@island.is/application/templates/home-support'
 import { uuid } from 'uuidv4'
+import { YES } from '@island.is/application/core'
 
 @Injectable()
 export class HomeSupportService extends BaseTemplateApiService {

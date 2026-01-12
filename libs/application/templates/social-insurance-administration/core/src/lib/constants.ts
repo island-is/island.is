@@ -18,6 +18,9 @@ export enum Roles {
 
 export enum States {
   PREREQUISITES = 'prerequisites',
+
+  NOT_ELIGIBLE = 'notEligible',
+
   DRAFT = 'draft',
 
   TRYGGINGASTOFNUN_SUBMITTED = 'tryggingastofnunSubmitted', // NYSKRAD = 91
@@ -25,6 +28,7 @@ export enum States {
 
   ADDITIONAL_DOCUMENTS_REQUIRED = 'additionalDocumentsRequired', // I_BID_GOGN_VANTAR = 1617
 
+  DISMISSED = 'dismissed', // VÍSAÐ FRÁ
   REJECTED = 'rejected', // SYNJAD = 1281
   APPROVED = 'approved', // AFGREIDD = 563
   COMPLETED = 'completed',
@@ -34,7 +38,7 @@ export enum OAPEvents {
   ADDITIONALDOCUMENTSREQUIRED = 'ADDITIONALDOCUMENTSREQUIRED',
   INREVIEW = 'INREVIEW',
   PENDING = 'PENDING',
-  DISMISSED = 'DISMISSED',
+  DISMISS = 'DISMISS',
 }
 
 export type Events =
@@ -44,6 +48,7 @@ export type Events =
   | { type: DefaultEvents.REJECT }
   | { type: OAPEvents.ADDITIONALDOCUMENTSREQUIRED } // Ex: TR ask for more documents
   | { type: OAPEvents.INREVIEW } // Ex: TR's employee start review application
+  | { type: OAPEvents.DISMISS } // EX: TR's employee dismisses the application
   | { type: DefaultEvents.ABORT }
 
 export const FILE_SIZE_LIMIT = 5000000 // 5MB
@@ -116,3 +121,83 @@ export const fileUploadSharedProps = {
     socialInsuranceAdministrationMessage.fileUpload.attachmentButton,
   uploadMultiple: true,
 }
+
+const married = 'Gift/ur'
+
+export const maritalStatuses: {
+  [key: string]: string
+} = {
+  '1': 'Ógift/ur',
+  '3': married,
+  '4': 'Ekkja/Ekkill',
+  '5': 'Skilin/nn/ð að borði og sæng',
+  '6': 'Fráskilin/nn/ð',
+  '7': married,
+  '8': married,
+  '9': 'Óupplýst',
+  '0': married,
+  L: married,
+}
+
+export const FOREIGN_BASIC_PENSION = 'Erlendur grunnlífeyrir'
+export const FOREIGN_PENSION = 'Erlendur lífeyrir'
+export const FOREIGN_INCOME = 'Erlendar tekjur'
+export const INTEREST_ON_DEPOSITS_IN_FOREIGN_BANKS =
+  'Vextir af innstæðum í erlendum bönkum'
+export const DIVIDENDS_IN_FOREIGN_BANKS =
+  'Arður af hlutabréfa eign í erlendum bönkum'
+export const ISK = 'IKR'
+export const INCOME = 'Atvinnutekjur'
+
+export enum RatioType {
+  YEARLY = 'yearly',
+  MONTHLY = 'monthly',
+}
+
+export enum OptionsValueEnum {
+  NONE = 'NONE',
+  LITTLE = 'LITTLE',
+  MODERATE = 'MODERATE',
+  SEVERE = 'SEVERE',
+  EXTREME = 'EXTREME',
+  NOT_APPLICABLE = 'NOT_APPLICABLE',
+  REFUSE_TO_ANSWER = 'REFUSE_TO_ANSWER',
+}
+
+export const defaultIncomeTypes = [
+  {
+    income: 'yearly',
+    currency: 'IKR',
+    incomeType: 'Lífeyrissjóður',
+    incomePerYear: '0',
+    incomeCategory: 'Lífeyrissjóðstekjur',
+  },
+  {
+    income: 'yearly',
+    currency: 'IKR',
+    incomeType: 'Laun',
+    incomePerYear: '0',
+    incomeCategory: 'Atvinnutekjur',
+  },
+  {
+    income: 'yearly',
+    currency: 'IKR',
+    incomeType: 'Vextir af innistæðum',
+    incomePerYear: '0',
+    incomeCategory: 'Fjármagnstekjur',
+  },
+  {
+    income: 'yearly',
+    currency: 'EUR',
+    incomeType: 'Erlendur lífeyrir',
+    incomePerYear: '0',
+    incomeCategory: 'Lífeyrissjóðstekjur',
+  },
+  {
+    income: 'yearly',
+    currency: 'IKR',
+    incomeType: 'Vextir af verðbréfum',
+    incomePerYear: '0',
+    incomeCategory: 'Fjármagnstekjur',
+  },
+]

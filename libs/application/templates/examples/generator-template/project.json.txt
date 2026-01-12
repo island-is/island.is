@@ -1,0 +1,25 @@
+{
+  "name": "--KEBAB-CASE-TEMPLATE--",
+  "$schema": "--IS-NESTED--../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/application/templates/--KEBAB-CASE-TEMPLATE--/src",
+  "projectType": "library",
+  "tags": ["scope:application-system", "lib:application-system"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "libs/application/templates/--KEBAB-CASE-TEMPLATE--/jest.config.ts"
+      }
+    },
+    "extract-strings": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/--KEBAB-CASE-TEMPLATE--/src/lib/messages.ts"
+      }
+    }
+  }
+}

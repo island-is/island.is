@@ -4,13 +4,12 @@ import {
   buildImageField,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
-import CoatOfArms from '../assets/CoatOfArms'
+import { CoatOfArms } from '@island.is/application/assets/institution-logos'
 import { m } from '../lib/messages'
 import AOD from '../assets/AOD'
 
 export const delegated: Form = buildForm({
   id: 'delegated',
-  title: '',
   mode: FormModes.IN_PROGRESS,
   logo: CoatOfArms,
   renderLastScreenButton: true,
@@ -23,7 +22,6 @@ export const delegated: Form = buildForm({
       children: [
         buildImageField({
           id: 'completeStepImage',
-          title: '',
           image: AOD,
           imagePosition: 'center',
         }),

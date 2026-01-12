@@ -12,6 +12,7 @@ import { m } from '../../lib/messages'
 import { PaymentGroupTable } from '../../components'
 import { useGetPreviousPaymentsQuery } from './PaymentPlan.generated'
 
+// Greiðsluáætlun
 const PaymentPlan = () => {
   useNamespaces('sp.social-insurance-maintenance')
   const { formatMessage } = useLocale()
@@ -29,6 +30,7 @@ const PaymentPlan = () => {
         serviceProviderTooltip={formatMessage(
           coreMessages.socialInsuranceTooltip,
         )}
+        childrenWidthFull
       >
         {error && !loading ? (
           <Problem error={error} noBorder={false} />
@@ -83,6 +85,7 @@ const PaymentPlan = () => {
                     <LinkButton
                       to={formatMessage(m.maintenanceFooterLinkUrl)}
                       text={str ?? ''}
+                      variant="text"
                     />
                   ),
                 })}

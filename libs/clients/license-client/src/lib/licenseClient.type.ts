@@ -5,15 +5,22 @@ import { OrorkuSkirteini } from '@island.is/clients/disability-license'
 import { DriverLicenseDto } from '@island.is/clients/driving-license'
 import { BasicCardInfoDTO } from '@island.is/clients/icelandic-health-insurance/rights-portal'
 import { Staediskortamal } from '@island.is/clients/p-card'
-import { Locale } from '@island.is/shared/types'
-import { FlattenedAdrDto } from './clients/adr-license-client'
-import { FirearmLicenseDto } from './clients/firearm-license-client'
-import { DrivingLicenseVerifyExtraData } from './clients/driving-license-client'
-import { HuntingLicenseDto } from '@island.is/clients/hunting-license'
 import {
   IdentityDocument,
   IdentityDocumentChild,
 } from '@island.is/clients/passports'
+import { Locale } from '@island.is/shared/types'
+import { FlattenedAdrDto } from './clients/adr-license-client'
+import { GeneralLicenseVerifyExtraData } from './clients/base'
+import { DrivingLicenseVerifyExtraData } from './clients/driving-license-client'
+import {
+  FirearmLicenseDto,
+  FirearmLicenseVerifyExtraData,
+} from './clients/firearm-license-client'
+import {
+  HuntingLicenseDto,
+  HuntingLicenseVerifyExtraData,
+} from './clients/hunting-license-client'
 
 export type LicenseLabelsObject = {
   [x: string]: string
@@ -28,6 +35,7 @@ export enum LicenseType {
   PCard = 'PCard',
   Ehic = 'Ehic',
   Passport = 'Passport',
+  IdentityDocument = 'IdentityDocument',
   HuntingLicense = 'HuntingLicense',
 }
 
@@ -41,18 +49,20 @@ export interface LicenseResults {
   [LicenseType.MachineLicense]: VinnuvelaDto
   [LicenseType.PCard]: Staediskortamal
   [LicenseType.Passport]: IdentityDocument | IdentityDocumentChild
+  [LicenseType.IdentityDocument]: IdentityDocument | IdentityDocumentChild
 }
 
 export interface VerifyExtraDataResult {
-  [LicenseType.AdrLicense]: void
-  [LicenseType.DisabilityLicense]: void
+  [LicenseType.AdrLicense]: GeneralLicenseVerifyExtraData
+  [LicenseType.DisabilityLicense]: GeneralLicenseVerifyExtraData
   [LicenseType.DrivingLicense]: DrivingLicenseVerifyExtraData
-  [LicenseType.HuntingLicense]: void
+  [LicenseType.HuntingLicense]: HuntingLicenseVerifyExtraData
   [LicenseType.Ehic]: void
-  [LicenseType.FirearmLicense]: void
-  [LicenseType.MachineLicense]: void
+  [LicenseType.FirearmLicense]: FirearmLicenseVerifyExtraData
+  [LicenseType.MachineLicense]: GeneralLicenseVerifyExtraData
   [LicenseType.PCard]: void
   [LicenseType.Passport]: void
+  [LicenseType.IdentityDocument]: void
 }
 
 export type PkPassVerificationData = {
@@ -65,6 +75,7 @@ export type PkPassVerificationData = {
   [LicenseType.MachineLicense]: void
   [LicenseType.PCard]: void
   [LicenseType.Passport]: void
+  [LicenseType.IdentityDocument]: void
 }
 
 export type LicenseResult<T extends LicenseType> = T extends LicenseType
@@ -130,6 +141,51 @@ export type PassVerificationData = {
   }
 }
 
+export type PassData = {
+  distributionUrl: string
+  deliveryPageUrl: string
+  distributionQRCode: string
+  id: string
+  expirationDate?: string
+  whenCreated: string
+  whenModified: string
+  inputFieldValues?: Array<{
+    id: string
+    identifier: string
+    value?: string
+  }>
+}
+
+export type PassRevocationData = {
+  success: boolean
+}
+
+export type PassDataInput = {
+  expirationDate?: string
+  expirationDateWithoutTime?: string
+  expirationTime?: string
+  passTemplateId?: string
+  id?: string
+  inputFieldValues?: Array<{
+    id?: string
+    identifier?: string
+    passInputFieldId?: string
+    value?: string
+  }>
+  thumbnail?: {
+    description?: string
+    filename?: string
+    height?: number
+    id?: string
+    imageBase64String?: string
+    originalUrl?: string
+    title?: string
+    url?: string
+    width?: number
+  }
+  validFrom?: string
+}
+
 export type Result<ResultType, ErrorType = ServiceError> =
   | {
       ok: true
@@ -185,13 +241,25 @@ export interface LicenseClient<Type extends LicenseType> {
     payload: unknown,
     user?: User,
   ) => Promise<LicensePkPassAvailability>
-  getPkPassUrl?: (user: User, locale?: Locale) => Promise<Result<string>>
-  getPkPassQRCode?: (user: User, locale?: Locale) => Promise<Result<string>>
+  getPkPassUrl?: (
+    user: User,
+    locale?: Locale,
+    version?: 'v1' | 'v2',
+  ) => Promise<Result<string>>
+  getPkPassQRCode?: (
+    user: User,
+    locale?: Locale,
+    version?: 'v1' | 'v2',
+  ) => Promise<Result<string>>
   verifyPkPassDeprecated?: (data: string) => Promise<Result<PkPassVerification>>
-  verifyPkPass?: (data: string) => Promise<Result<VerifyPkPassResult<Type>>>
+  verifyPkPass?: (
+    data: string,
+    version?: 'v1' | 'v2',
+  ) => Promise<Result<VerifyPkPassResult<Type>>>
   verifyExtraData?: (input: User) => Promise<LicenseVerifyExtraDataResult<Type>>
 }
 
 export const LICENSE_CLIENT_FACTORY = 'license-client-factory'
 export const LICENSE_UPDATE_CLIENT_FACTORY = 'license-client-factory'
+export const LICENSE_UPDATE_CLIENT_FACTORY_V2 = 'license-client-factory-v2'
 export const CONFIG_PROVIDER = 'config_provider'

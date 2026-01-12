@@ -1,5 +1,6 @@
+import { NO, YES } from '@island.is/application/core'
 import { complaint, info, sharedFields } from '../lib/messages'
-import { NO, OnBehalf, SubjectOfComplaint, YES } from './constants'
+import { OnBehalf, SubjectOfComplaint } from './constants'
 
 export const onBehalfValueLabelMapper = {
   [OnBehalf.MYSELF]: info.labels.myself,

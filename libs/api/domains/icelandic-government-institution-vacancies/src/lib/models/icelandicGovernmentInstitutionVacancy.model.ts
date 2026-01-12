@@ -44,6 +44,9 @@ class IcelandicGovernmentInstitutionVacancyListItemBase {
 
   @Field({ nullable: true })
   logoUrl?: string
+
+  @Field({ nullable: true })
+  address?: string
 }
 
 @ObjectType()
@@ -62,6 +65,9 @@ export class IcelandicGovernmentInstitutionVacancyContact {
 
   @Field({ nullable: true })
   phone?: string
+
+  @Field({ nullable: true })
+  jobTitle?: string
 }
 
 @ObjectType()

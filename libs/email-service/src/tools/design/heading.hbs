@@ -1,10 +1,13 @@
-{{#> center}}
-  {{#if eyebrow}}
-    <h2 class="heading heading-eyebrow text-{{ternary align align 'center'}}">
-      {{{eyebrow}}}
-    </h2>
-  {{/if}}
-  <h1 class="heading text-{{ternary align align 'center'}} size-{{ternary small 'small' 'normal'}}">
-    {{{copy}}}
-  </h1>
-{{/center}}
+{{#if (eq align "left")}}
+  {{#> left}}
+    {{> headingblock align="left" eyebrow=eyebrow copy=copy small=small}}
+  {{/left}}
+{{else if (eq align "right")}}
+  {{#> right}}
+    {{> headingblock align="right" eyebrow=eyebrow copy=copy small=small}}
+  {{/right}}
+{{else}}
+  {{#> center}}
+    {{> headingblock align="center" eyebrow=eyebrow copy=copy small=small}}
+  {{/center}}
+{{/if}}

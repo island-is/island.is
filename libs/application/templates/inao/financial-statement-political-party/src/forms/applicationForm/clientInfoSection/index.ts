@@ -21,12 +21,10 @@ export const clientInfoSection = buildSection({
       children: [
         buildDescriptionField({
           id: ABOUTIDS.operatingYear,
-          title: '',
         }),
         buildCustomField({
           id: 'OperatingYear',
           childInputIds: [ABOUTIDS.operatingYear],
-          title: '',
           component: 'OperatingYear',
         }),
         buildTextField({
@@ -50,11 +48,9 @@ export const clientInfoSection = buildSection({
         }),
         buildDescriptionField({
           id: ABOUTIDS.powerOfAttorneyName,
-          title: '',
         }),
         buildCustomField({
           id: 'powerOfAttorney',
-          title: '',
           component: 'PowerOfAttorneyFields',
           childInputIds: [
             ABOUTIDS.powerOfAttorneyNationalId,

@@ -19,9 +19,9 @@ import {
   States as ApplicationStates,
   StartDateOptions,
   States,
-  YES,
 } from '../../constants'
 import { useRemainingRights } from '../../hooks/useRemainingRights'
+import { YES } from '@island.is/application/core'
 
 const InReviewSteps: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
   const { application, field, refetch, errors } = props
@@ -37,7 +37,7 @@ const InReviewSteps: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
   )
   const { formatMessage } = useLocale()
 
-  const dob = getExpectedDateOfBirthOrAdoptionDateOrBirthDate(application, true)
+  const dob = getExpectedDateOfBirthOrAdoptionDateOrBirthDate(application)
   const dobDate = dob ? new Date(dob) : null
 
   const canBeEdited =

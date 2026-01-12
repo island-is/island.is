@@ -1,12 +1,15 @@
-import { Answer, NO, YES, YesOrNo } from '@island.is/application/types'
-import { shared } from './lib/messages'
+import { Answer } from '@island.is/application/types'
+import { gender, shared } from './lib/messages'
 import {
   ComplainedForTypes,
   ComplaineeTypes,
+  GenderAnswerOptions,
   OmbudsmanComplaintTypeEnum,
 } from './shared/constants'
 import { complainedFor } from './lib/messages'
 import format from 'date-fns/format'
+import { NO, YES, YesOrNo } from '@island.is/application/core'
+import { MessageDescriptor } from 'react-intl'
 
 export const isGovernmentComplainee = (answers: Answer) => {
   return (
@@ -60,4 +63,34 @@ export const yesNoMessageMapper = {
 export const mapComplainedForToMessage = {
   [ComplainedForTypes.MYSELF]: complainedFor.decision.myselfLabel,
   [ComplainedForTypes.SOMEONEELSE]: complainedFor.decision.someoneelseLabel,
+}
+
+export const genderOptions = [
+  {
+    label: gender.general.genderOptionFemale,
+    value: GenderAnswerOptions.FEMALE,
+  },
+  {
+    label: gender.general.genderOptionMale,
+    value: GenderAnswerOptions.MALE,
+  },
+  {
+    label: gender.general.genderOptionNonbinary,
+    value: GenderAnswerOptions.NONBINARY,
+  },
+  {
+    label: gender.general.genderOptionOther,
+    value: GenderAnswerOptions.OTHER,
+  },
+  {
+    label: gender.general.genderOptionDeclinedToAnswer,
+    value: GenderAnswerOptions.DECLINED,
+  },
+]
+
+export const getGenderLabel = (
+  option: GenderAnswerOptions,
+): MessageDescriptor => {
+  const found = genderOptions.find((item) => item.value === option)
+  return found?.label ?? gender.general.genderOptionDeclinedToAnswer
 }

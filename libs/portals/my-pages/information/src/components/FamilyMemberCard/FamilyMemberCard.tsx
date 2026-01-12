@@ -81,6 +81,7 @@ export const FamilyMemberCard: FC<
       : InformationPaths.UserInfo
   }
   return (
+    //TODO: Replace with Island UI Card when it supports images
     <ActionCard
       image={{ type: 'avatar' }}
       translateLabel="no"
@@ -97,11 +98,17 @@ export const FamilyMemberCard: FC<
               variant: 'purple',
             }
       }
-      cta={{
-        label: formatMessage(spmm.seeInfo),
-        variant: 'text',
-        url: getUrl(),
-      }}
+      cta={
+        familyRelation === 'bio-child'
+          ? {
+              label: '',
+            }
+          : {
+              label: formatMessage(spmm.seeInfo),
+              variant: 'text',
+              url: getUrl(),
+            }
+      }
     />
   )
 }

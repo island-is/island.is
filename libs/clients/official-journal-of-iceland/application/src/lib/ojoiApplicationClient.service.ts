@@ -4,7 +4,6 @@ import {
   GetCommentsRequest,
   PostCommentRequest,
   PostApplicationRequest,
-  GetCaseCommentsResponse,
   GetPriceRequest,
   CasePriceResponse,
   GetPdfUrlResponse,
@@ -20,11 +19,16 @@ import {
   GetApplicationCaseResponse,
   GetPdfRespone,
   GetSignaturesForInvolvedPartyRequest,
-  Signature,
+  GetApplicationAdvertTemplateRequest,
+  GetComments,
+  GetSignature,
 } from '../../gen/fetch'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
+import { AdvertTemplateType } from './dtos/advertTemplateTypes.dto'
+import { mapTemplateEnumToLiteral } from './utils'
+import { AdvertTemplate } from './dtos/advertTemplate.dto'
 
 const LOG_CATEGORY = 'official-journal-of-iceland-application-client-service'
 
@@ -43,7 +47,7 @@ export class OfficialJournalOfIcelandApplicationClientService {
   async getComments(
     params: GetCommentsRequest,
     auth: Auth,
-  ): Promise<GetCaseCommentsResponse> {
+  ): Promise<GetComments> {
     try {
       return await this.ojoiApplicationApiWithAuth(auth).getComments(params)
     } catch (error) {
@@ -173,6 +177,33 @@ export class OfficialJournalOfIcelandApplicationClientService {
     )
   }
 
+  getApplicationAdvertTemplate = async (
+    params: GetApplicationAdvertTemplateRequest,
+    auth: Auth,
+  ): Promise<AdvertTemplate> => {
+    const template = await this.ojoiApplicationApiWithAuth(
+      auth,
+    ).getApplicationAdvertTemplate(params)
+
+    return {
+      type: mapTemplateEnumToLiteral(template.type),
+      html: template.html,
+    }
+  }
+
+  getApplicationAdvertTemplateTypes = async (
+    auth: Auth,
+  ): Promise<AdvertTemplateType[]> => {
+    const advertTemplates = await this.ojoiApplicationApiWithAuth(
+      auth,
+    ).getApplicationAdvertTemplates()
+
+    return advertTemplates.map((template) => ({
+      type: mapTemplateEnumToLiteral(template.slug),
+      title: template.title,
+    }))
+  }
+
   async getUserInvolvedParties(params: GetInvolvedPartiesRequest, auth: Auth) {
     try {
       const data = await this.ojoiApplicationApiWithAuth(
@@ -186,6 +217,19 @@ export class OfficialJournalOfIcelandApplicationClientService {
         category: LOG_CATEGORY,
       })
 
+      throw error
+    }
+  }
+
+  async getMyUserInfo(auth: Auth) {
+    try {
+      const data = await this.ojoiApplicationApiWithAuth(auth).getMyUserInfo()
+      return data
+    } catch (error) {
+      this.logger.warn('Failed to get my user info', {
+        error,
+        category: LOG_CATEGORY,
+      })
       throw error
     }
   }
@@ -212,7 +256,7 @@ export class OfficialJournalOfIcelandApplicationClientService {
   async getSignaturesForInvolvedParty(
     params: GetSignaturesForInvolvedPartyRequest,
     auth: Auth,
-  ): Promise<Signature> {
+  ): Promise<GetSignature> {
     try {
       return await this.ojoiApplicationApiWithAuth(
         auth,

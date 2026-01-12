@@ -1,8 +1,8 @@
 {
-  "openapi": "3.0.1",
+  "openapi": "3.0.4",
   "info": {
     "title": "SamgÃ¶ngustofa",
-    "description": "Leitar eftir Ã¶kutÃ¦kjum Ãºt frÃ¡ fastanÃºmeri, skrï¿½ningarnÃºmeri eÃ°a verksmiÃ°junÃºmeri - Release-46 : 20241106.1",
+    "description": "Leitar eftir Ã¶kutÃ¦kjum Ãºt frÃ¡ fastanÃºmeri, skrÃ¡ningarnÃºmeri eÃ°a verksmiÃ°junÃºmeri - Release-69 : 20251230.1",
     "contact": {
       "name": "Samgongustofa",
       "url": "https://www.samgongustofa.is/",
@@ -24,6 +24,38 @@
     }
   ],
   "paths": {
+    "/OwnershipReportExcel": {
+      "get": {
+        "tags": ["Excel"],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "OAuth2": ["OAuth2"]
+          }
+        ]
+      }
+    },
     "/VehicleReportPdf": {
       "get": {
         "tags": ["Pdf"],
@@ -45,8 +77,17 @@
                   "type": "string",
                   "format": "binary"
                 }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
               }
             }
+          },
+          "500": {
+            "description": "Internal Server Error"
           },
           "401": {
             "description": "Unauthorized"
@@ -65,15 +106,6 @@
     "/OwnershipReportPdf": {
       "get": {
         "tags": ["Pdf"],
-        "parameters": [
-          {
-            "name": "ssn",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -83,8 +115,17 @@
                   "type": "string",
                   "format": "binary"
                 }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
               }
             }
+          },
+          "500": {
+            "description": "Internal Server Error"
           },
           "401": {
             "description": "Unauthorized"
@@ -768,6 +809,22 @@
               "type": "boolean",
               "default": false
             }
+          },
+          {
+            "name": "onlyMileageRegisterableVehicles",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "includeNextMainInspectionDate",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": true
+            }
           }
         ],
         "responses": {
@@ -868,10 +925,18 @@
         "tags": ["VehicleSearch"],
         "parameters": [
           {
-            "name": "ssn",
+            "name": "afterPermno",
             "in": "query",
             "schema": {
               "type": "string"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
             }
           }
         ],
@@ -882,6 +947,51 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/OwnershipReportDataDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "OAuth2": ["OAuth2"]
+          }
+        ]
+      }
+    },
+    "/ElectricVehicleOwnershipData": {
+      "get": {
+        "tags": ["VehicleSearch"],
+        "parameters": [
+          {
+            "name": "vehicleThreshold",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ElectricVehicleOwnershipDto"
+                  }
                 }
               }
             }
@@ -1701,6 +1811,11 @@
             "type": "string",
             "nullable": true
           },
+          "latestMileageRegistration": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
           "nextAvailableMileageReadDate": {
             "type": "string",
             "format": "date",
@@ -1710,7 +1825,14 @@
             "type": "boolean",
             "nullable": true
           },
+          "availableMileageRegistration": {
+            "type": "boolean"
+          },
           "canRegisterMileage": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "vehicleHasMilesOdometer": {
             "type": "boolean",
             "nullable": true
           },
@@ -2890,6 +3012,10 @@
           "type": {
             "type": "string",
             "nullable": true
+          },
+          "explanation": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -2953,6 +3079,10 @@
             "type": "string",
             "nullable": true
           },
+          "useGroupCode": {
+            "type": "string",
+            "nullable": true
+          },
           "make": {
             "type": "string",
             "nullable": true
@@ -2999,6 +3129,31 @@
           },
           "role": {
             "type": "string",
+            "nullable": true
+          },
+          "mainOperator": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "ownerLegalEntity": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "vin": {
+            "type": "string",
+            "nullable": true
+          },
+          "eugroup": {
+            "type": "string",
+            "nullable": true
+          },
+          "fuel": {
+            "type": "string",
+            "nullable": true
+          },
+          "co2": {
+            "type": "number",
+            "format": "double",
             "nullable": true
           },
           "make": {
@@ -3061,6 +3216,14 @@
             "type": "string",
             "format": "date-time",
             "nullable": true
+          },
+          "availableMileageRegistration": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "vehicleHasMilesOdometer": {
+            "type": "boolean",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -3088,6 +3251,40 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/CurrentVehiclesWithMilageAndNextInspDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ElectricVehicleDetails": {
+        "type": "object",
+        "properties": {
+          "permno": {
+            "type": "string",
+            "nullable": true
+          },
+          "make": {
+            "type": "string",
+            "nullable": true
+          },
+          "color": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ElectricVehicleOwnershipDto": {
+        "type": "object",
+        "properties": {
+          "ownsElectricVehicle": {
+            "type": "boolean"
+          },
+          "electricVehicles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ElectricVehicleDetails"
             },
             "nullable": true
           }
@@ -3139,19 +3336,102 @@
       "OwnershipReportDataDto": {
         "type": "object",
         "properties": {
-          "name": {
+          "persidno": {
             "type": "string",
             "nullable": true
           },
-          "persidno": {
+          "fullname": {
             "type": "string",
             "nullable": true
           },
           "vehicles": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/BasicVehicleInformationDto"
+              "$ref": "#/components/schemas/OwnershipReportVehicleDto"
             },
+            "nullable": true
+          },
+          "nextCursor": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OwnershipReportVehicleDto": {
+        "type": "object",
+        "properties": {
+          "permno": {
+            "type": "string",
+            "nullable": true
+          },
+          "regno": {
+            "type": "string",
+            "nullable": true
+          },
+          "make": {
+            "type": "string",
+            "nullable": true
+          },
+          "firstregdate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "deRegDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ownregdate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ownerPersidno": {
+            "type": "string",
+            "nullable": true
+          },
+          "ownerFullname": {
+            "type": "string",
+            "nullable": true
+          },
+          "role": {
+            "type": "string",
+            "nullable": true
+          },
+          "mainOper": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "operSerno": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "hasCoOwner": {
+            "type": "boolean"
+          },
+          "lastInspectionDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "lastInspectionResult": {
+            "type": "string",
+            "nullable": true
+          },
+          "lastInspectionType": {
+            "type": "string",
+            "nullable": true
+          },
+          "vehicleStatus": {
+            "type": "string",
+            "nullable": true
+          },
+          "nextMainInspection": {
+            "type": "string",
+            "format": "date-time",
             "nullable": true
           }
         },
@@ -3555,6 +3835,17 @@
             "nullable": true
           },
           "vehicleRegistrationCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "outOfUse": {
+            "type": "boolean"
+          },
+          "vehicleStatus": {
+            "type": "string",
+            "nullable": true
+          },
+          "plateStatus": {
             "type": "string",
             "nullable": true
           }

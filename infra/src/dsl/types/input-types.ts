@@ -156,6 +156,7 @@ export interface Ingress {
   host: {
     [env in OpsEnv]: string | string[]
   }
+  pathTypeOverride?: 'Exact' | 'Prefix' | 'ImplementationSpecific'
   paths: string[]
   public?: boolean
   extraAnnotations?: Partial<{
@@ -167,6 +168,7 @@ export interface IngressForEnv {
   host: string | string[]
   paths: string[]
   public?: boolean
+  pathTypeOverride?: 'Exact' | 'Prefix' | 'ImplementationSpecific'
   serviceUpstream?: boolean
   extraAnnotations?: { [idx: string]: string | null }
 }
@@ -174,6 +176,7 @@ export interface IngressForEnv {
 export type PodDisruptionBudget = {
   minAvailable?: number
   maxUnavailable?: number
+  unhealthyPodEvictionPolicy?: 'IfHealthyBudget' | 'AlwaysAllow'
 }
 export type PersistentVolumeClaim = {
   name?: string
@@ -208,6 +211,7 @@ export type ReplicaCount = {
    * For more info, see this - https://prometheus.io/docs/prometheus/latest/querying/functions/#irate
    */
   scalingMagicNumber?: number
+  cpuAverageUtilization?: number
 }
 
 type Container = {

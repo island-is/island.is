@@ -36,6 +36,7 @@ import {
 } from '../dataProviders'
 import { buildPaymentState } from '@island.is/application/utils'
 import { getChargeItems } from '../utils'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -44,6 +45,7 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.CITIZENSHIP,
   name: applicationMessage.name,
+  codeOwner: CodeOwners.Origo,
   institution: applicationMessage.institutionName,
   translationNamespaces: ApplicationConfigurations.Citizenship.translation,
   dataSchema: CitizenshipSchema,

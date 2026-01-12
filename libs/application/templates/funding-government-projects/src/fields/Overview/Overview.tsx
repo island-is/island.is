@@ -1,8 +1,7 @@
 import { MessageDescriptor } from '@formatjs/intl'
-import { Application, FieldBaseProps } from '@island.is/application/types'
+import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Divider, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import React from 'react'
 import { project, informationAboutInstitution } from '../../lib/messages'
 import { FundingGovernmentProjects } from '../../lib/dataSchema'
 
@@ -48,7 +47,7 @@ export const Overview = ({ application }: FieldBaseProps) => {
         return (
           <Box paddingBottom={3}>
             <Text marginBottom={1} variant="h5" key={`contact-${index}`}>
-              {`${formatMessage(informationAboutInstitution.labels.contact)} 
+              {`${formatMessage(informationAboutInstitution.labels.contact)}
               ${index + 1}`}
             </Text>
             <Box marginBottom={3} key={`box-${index}`}>

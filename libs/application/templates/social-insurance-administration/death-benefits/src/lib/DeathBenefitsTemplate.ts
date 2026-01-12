@@ -48,6 +48,7 @@ import {
   SocialInsuranceAdministrationSpousalInfo,
 } from '../dataProviders'
 import { getApplicationAnswers, isEligible } from './deathBenefitsUtils'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const DeathBenefitsTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -56,6 +57,7 @@ const DeathBenefitsTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.DEATH_BENEFITS,
   name: deathBenefitsFormMessage.shared.applicationTitle,
+  codeOwner: CodeOwners.Deloitte,
   institution: socialInsuranceAdministrationMessage.shared.institution,
   translationNamespaces: ApplicationConfigurations.DeathBenefits.translation,
   dataSchema,
@@ -220,6 +222,10 @@ const DeathBenefitsTemplate: ApplicationTemplate<
           INREVIEW: {
             target: States.TRYGGINGASTOFNUN_IN_REVIEW,
           },
+          ADDITIONALDOCUMENTSREQUIRED: {
+            target: States.ADDITIONAL_DOCUMENTS_REQUIRED,
+          },
+          DISMISS: { target: States.DISMISSED },
         },
       },
       [States.TRYGGINGASTOFNUN_IN_REVIEW]: {
@@ -267,6 +273,7 @@ const DeathBenefitsTemplate: ApplicationTemplate<
           ADDITIONALDOCUMENTSREQUIRED: {
             target: States.ADDITIONAL_DOCUMENTS_REQUIRED,
           },
+          DISMISS: { target: States.DISMISSED },
         },
       },
       [States.ADDITIONAL_DOCUMENTS_REQUIRED]: {
@@ -316,6 +323,7 @@ const DeathBenefitsTemplate: ApplicationTemplate<
         },
         on: {
           SUBMIT: [{ target: States.TRYGGINGASTOFNUN_IN_REVIEW }],
+          DISMISS: { target: States.DISMISSED },
         },
       },
       [States.APPROVED]: {
@@ -361,6 +369,39 @@ const DeathBenefitsTemplate: ApplicationTemplate<
             ],
           },
           lifecycle: DefaultStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              read: 'all',
+            },
+          ],
+        },
+      },
+      [States.DISMISSED]: {
+        meta: {
+          name: States.DISMISSED,
+          status: 'rejected',
+          lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            tag: {
+              label: coreSIAStatesMessages.dismissedTag,
+            },
+            pendingAction: {
+              title: statesMessages.deathBenefitsDismissed,
+              content: statesMessages.deathBenefitsDismissedDescription,
+              displayStatus: 'error',
+            },
+            historyLogs: [
+              {
+                onEvent: States.DISMISSED,
+                logMessage: statesMessages.deathBenefitsDismissed,
+              },
+            ],
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -505,17 +546,19 @@ const DeathBenefitsTemplate: ApplicationTemplate<
         const { additionalAttachmentsRequired, additionalAttachments } =
           getApplicationAnswers(answers)
 
-        const mergedAdditionalDocumentRequired = [
-          ...additionalAttachments,
-          ...additionalAttachmentsRequired,
-        ]
+        if (additionalAttachmentsRequired) {
+          const mergedAdditionalDocumentRequired = [
+            ...additionalAttachments,
+            ...additionalAttachmentsRequired,
+          ]
 
-        set(
-          answers,
-          'fileUploadAdditionalFiles.additionalDocuments',
-          mergedAdditionalDocumentRequired,
-        )
-        unset(answers, 'fileUploadAdditionalFilesRequired')
+          set(
+            answers,
+            'fileUploadAdditionalFiles.additionalDocuments',
+            mergedAdditionalDocumentRequired,
+          )
+          unset(answers, 'fileUploadAdditionalFilesRequired')
+        }
 
         return context
       }),

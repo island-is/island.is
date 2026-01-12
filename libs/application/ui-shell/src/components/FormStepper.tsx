@@ -59,7 +59,7 @@ const FormStepper = ({
         const isChildActive =
           isParentActive && currentScreen.subSectionIndex === i
         const childText = formatTextWithLocale(
-          child.title,
+          child.title ?? '',
           application,
           locale as Locale,
           formatMessage,
@@ -98,7 +98,7 @@ const FormStepper = ({
           stepperTitle,
           ...sections.map((section, i) => {
             const sectionTitle = formatTextWithLocale(
-              section.title,
+              section.title ?? '',
               application,
               locale as Locale,
               formatMessage,

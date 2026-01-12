@@ -5,17 +5,17 @@ import {
   buildMultiField,
   buildSubmitField,
   buildSubSection,
+  YesOrNoEnum,
 } from '@island.is/application/core'
 import { Form, FormModes, DefaultEvents } from '@island.is/application/types'
-import Logo from '@island.is/application/templates/family-matters-core/assets/Logo'
+import { DistrictCommissionersLogo } from '@island.is/application/assets/institution-logos'
 import { contactInfoParentBIds } from '../fields/ContactInfoParentB'
-import { ApproveContract } from '../lib/dataSchema'
 import * as m from '../lib/messages'
 
 export const ParentBForm: Form = buildForm({
   id: 'ParentBForm',
   title: m.application.name,
-  logo: Logo,
+  logo: DistrictCommissionersLogo,
   mode: FormModes.IN_PROGRESS,
   children: [
     buildSection({
@@ -30,7 +30,7 @@ export const ParentBForm: Form = buildForm({
       ],
     }),
     buildSection({
-      condition: (answers) => answers.acceptContract === ApproveContract.Yes,
+      condition: (answers) => answers.acceptContract === YesOrNoEnum.YES,
       id: 'termsParentB',
       title: m.section.effect,
       children: [
@@ -59,7 +59,7 @@ export const ParentBForm: Form = buildForm({
       ],
     }),
     buildSection({
-      condition: (answers) => answers.acceptContract === ApproveContract.Yes,
+      condition: (answers) => answers.acceptContract === YesOrNoEnum.YES,
       id: 'contact',
       title: m.contactInfo.general.sectionTitle,
       children: [
@@ -72,7 +72,7 @@ export const ParentBForm: Form = buildForm({
       ],
     }),
     buildSection({
-      condition: (answers) => answers.acceptContract === ApproveContract.Yes,
+      condition: (answers) => answers.acceptContract === YesOrNoEnum.YES,
       id: 'residenceChangeOverview',
       title: m.section.overview,
       children: [
@@ -87,7 +87,6 @@ export const ParentBForm: Form = buildForm({
             }),
             buildSubmitField({
               id: 'submit',
-              title: '',
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
@@ -101,7 +100,7 @@ export const ParentBForm: Form = buildForm({
       ],
     }),
     buildSection({
-      condition: (answers) => answers.acceptContract === ApproveContract.Yes,
+      condition: (answers) => answers.acceptContract === YesOrNoEnum.YES,
       id: 'submitted',
       title: m.section.received,
       children: [
@@ -113,7 +112,7 @@ export const ParentBForm: Form = buildForm({
       ],
     }),
     buildSection({
-      condition: (answers) => answers.acceptContract === ApproveContract.No,
+      condition: (answers) => answers.acceptContract === YesOrNoEnum.NO,
       id: 'rejectContract',
       title: m.rejectContract.general.sectionTitle,
       children: [
@@ -128,7 +127,6 @@ export const ParentBForm: Form = buildForm({
             }),
             buildSubmitField({
               id: 'reject',
-              title: '',
               actions: [
                 {
                   event: DefaultEvents.REJECT,
@@ -142,7 +140,7 @@ export const ParentBForm: Form = buildForm({
       ],
     }),
     buildSection({
-      condition: (answers) => answers.acceptContract === ApproveContract.No,
+      condition: (answers) => answers.acceptContract === YesOrNoEnum.NO,
       id: 'contractRejected',
       title: m.contractRejected.general.sectionTitle.confirmed,
       children: [

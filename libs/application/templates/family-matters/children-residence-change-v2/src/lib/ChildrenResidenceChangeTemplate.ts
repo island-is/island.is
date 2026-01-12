@@ -17,8 +17,8 @@ import { CRCApplication } from '../types'
 import { Roles, ApplicationStates } from './constants'
 import { application, stateDescriptions, history } from './messages'
 import {
-  ChildrenCustodyInformationApi,
-  NationalRegistryUserApi,
+  ChildrenCustodyInformationApiV3,
+  NationalRegistryV3UserApi,
   UserProfileApi,
 } from '../dataProviders'
 import {
@@ -29,6 +29,7 @@ import {
 } from '@island.is/application/core'
 import set from 'lodash/set'
 import { Features } from '@island.is/feature-flags'
+import { CodeOwners } from '@island.is/shared/constants'
 
 type Events =
   | { type: DefaultEvents.ASSIGN }
@@ -56,6 +57,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.CHILDREN_RESIDENCE_CHANGE_V2,
   name: application.name,
+  codeOwner: CodeOwners.NordaApplications,
   dataSchema,
   translationNamespaces: [configuration.translation],
   featureFlag: Features.childrenResidenceChangeV2,
@@ -90,13 +92,13 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
               delete: true,
               write: 'all',
               api: [
-                ChildrenCustodyInformationApi.configure({
+                ChildrenCustodyInformationApiV3.configure({
                   params: {
                     validateHasChildren: true,
                     validateHasJointCustody: true,
                   },
                 }),
-                NationalRegistryUserApi,
+                NationalRegistryV3UserApi,
                 UserProfileApi,
               ],
             },
@@ -152,8 +154,8 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
                   'confirmContract',
                 ],
                 externalData: [
-                  NationalRegistryUserApi.externalDataId,
-                  ChildrenCustodyInformationApi.externalDataId,
+                  NationalRegistryV3UserApi.externalDataId,
+                  ChildrenCustodyInformationApiV3.externalDataId,
                   UserProfileApi.externalDataId,
                 ],
               },
@@ -178,10 +180,12 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
               {
                 onEvent: DefaultEvents.SUBMIT,
                 logMessage: history.general.onCounterPartyApprove,
+                includeSubjectAndActor: true,
               },
               {
                 onEvent: DefaultEvents.REJECT,
                 logMessage: history.general.onCounterPartyReject,
+                includeSubjectAndActor: true,
               },
             ],
             pendingAction: (_, role) =>

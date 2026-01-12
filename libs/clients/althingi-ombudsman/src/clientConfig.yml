@@ -523,6 +523,8 @@ definitions:
         type: string
       primary:
         type: string
+      gender:
+        type: string
   DocumentInfo:
     type: object
     properties:

@@ -1,6 +1,5 @@
 import isNumber from 'lodash/isNumber'
 import { useParams } from 'react-router-dom'
-import { useEffect, useState } from 'react'
 import {
   VehiclesCurrentOwnerInfo,
   VehiclesOperator,
@@ -47,7 +46,6 @@ import AxleTable from '../../components/DetailTable/AxleTable'
 import Dropdown from '../../components/Dropdown/Dropdown'
 import { useGetUsersVehiclesDetailQuery } from './VehicleDetail.generated'
 import { AssetsPaths } from '../../lib/paths'
-import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 
 type UseParams = {
   id: string
@@ -57,23 +55,6 @@ const VehicleDetail = () => {
   useNamespaces('sp.vehicles')
   const { formatMessage, lang } = useLocale()
   const { id } = useParams() as UseParams
-
-  // Remove flag functionality once feature goes live.
-  const [enabledMileageFlag, setEnabledMileageFlag] = useState<boolean>(false)
-  const featureFlagClient = useFeatureFlagClient()
-  useEffect(() => {
-    const isFlagEnabled = async () => {
-      const ffEnabled = await featureFlagClient.getValue(
-        `isServicePortalVehicleMileagePageEnabled`,
-        false,
-      )
-      if (ffEnabled) {
-        setEnabledMileageFlag(ffEnabled as boolean)
-      }
-    }
-    isFlagEnabled()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   const { data, loading, error } = useGetUsersVehiclesDetailQuery({
     variables: {
@@ -174,8 +155,7 @@ const VehicleDetail = () => {
   }
 
   const reqMileageReg =
-    data?.vehiclesDetail?.mainInfo?.requiresMileageRegistration &&
-    enabledMileageFlag
+    data?.vehiclesDetail?.mainInfo?.availableMileageRegistration
 
   return (
     <>
@@ -381,7 +361,7 @@ const VehicleDetail = () => {
             <UserInfoLine
               label={formatMessage(messages.lastKnownOdometerStatus)}
               content={displayWithUnit(
-                data.vehiclesDetail.lastMileage?.mileageNumber,
+                data.vehiclesDetail.latestMileageRegistration,
                 'km',
                 true,
               )}

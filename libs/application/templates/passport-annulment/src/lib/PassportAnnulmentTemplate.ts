@@ -1,5 +1,6 @@
 import {
   Application,
+  ApplicationConfigurations,
   ApplicationContext,
   ApplicationRole,
   ApplicationStateSchema,
@@ -21,6 +22,7 @@ import {
   twoDays,
 } from './constants'
 import { dataSchema } from './dataSchema'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const pruneAfter = (time: number) => {
   return {
@@ -37,7 +39,10 @@ const PassportAnnulmentTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.PASSPORT_ANNULMENT,
   name: m.formName.defaultMessage,
+  codeOwner: CodeOwners.Juni,
   featureFlag: Features.passportAnnulmentApplication,
+  translationNamespaces:
+    ApplicationConfigurations.PassportAnnulment.translation,
   dataSchema,
   stateMachineConfig: {
     initial: States.DRAFT,

@@ -4,9 +4,11 @@ import {
   buildRadioField,
   buildSubSection,
   getValueViaPath,
+  NO,
+  YES,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import { B_TEMP, NO, YES } from '../../lib/constants'
+import { B_TEMP } from '../../lib/constants'
 
 import { isApplicationForCondition } from '../../lib/utils'
 
@@ -23,7 +25,6 @@ export const subSectionOtherCountry = buildSubSection({
         buildRadioField({
           id: 'otherCountry.drivingLicenseInOtherCountry',
           backgroundColor: 'white',
-          title: '',
           width: 'half',
           largeButtons: true,
           options: [
@@ -40,7 +41,6 @@ export const subSectionOtherCountry = buildSubSection({
         buildCheckboxField({
           id: 'otherCountry.drivingLicenseDeprivedOrRestrictedInOtherCountry',
           backgroundColor: 'white',
-          title: '',
           condition: (answers) =>
             getValueViaPath(
               answers,

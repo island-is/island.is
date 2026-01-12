@@ -59,33 +59,47 @@ export class OrganizationSubpage {
 
   @CacheField(() => EmbeddedVideo, { nullable: true })
   signLanguageVideo?: EmbeddedVideo | null
+
+  @CacheField(() => [SliceUnion], { nullable: true })
+  bottomSlices?: Array<typeof SliceUnion | null>
 }
 
 export const mapOrganizationSubpage = ({
   fields,
   sys,
-}: IOrganizationSubpage): SystemMetadata<OrganizationSubpage> => ({
-  typename: 'OrganizationSubpage',
-  id: sys.id,
-  title: fields.title ?? '',
-  shortTitle: fields.shortTitle || fields.title,
-  slug: (fields.slug ?? '').trim(),
-  url: [fields.organizationPage?.fields?.slug ?? '', fields.slug ?? ''],
-  intro: fields.intro ?? '',
-  description:
-    fields.description && fields.sliceCustomRenderer !== 'SliceTableOfContents'
-      ? mapDocument(fields.description, sys.id + ':content')
-      : [],
-  links: (fields.links ?? []).map(mapLink),
-  slices: (fields.slices ?? []).map(safelyMapSliceUnion).filter(Boolean),
-  showTableOfContents: fields.showTableOfContents ?? false,
-  sliceCustomRenderer: fields.sliceCustomRenderer ?? '',
-  sliceExtraText: fields.sliceExtraText ?? '',
-  organizationPage: fields.organizationPage
-    ? mapOrganizationPage(fields.organizationPage)
-    : null,
-  featuredImage: fields.featuredImage ? mapImage(fields.featuredImage) : null,
-  signLanguageVideo: fields.signLanguageVideo
-    ? mapEmbeddedVideo(fields.signLanguageVideo)
-    : null,
-})
+}: IOrganizationSubpage): SystemMetadata<OrganizationSubpage> => {
+  const url = [fields.organizationPage?.fields?.slug ?? '']
+  if (fields.organizationParentSubpage?.fields?.slug) {
+    url.push(fields.organizationParentSubpage.fields.slug)
+  }
+  url.push(fields.slug ?? '')
+  return {
+    typename: 'OrganizationSubpage',
+    id: sys.id,
+    title: fields.title ?? '',
+    shortTitle: fields.shortTitle || fields.title,
+    slug: (fields.slug ?? '').trim(),
+    url,
+    intro: fields.intro ?? '',
+    description:
+      fields.description &&
+      fields.sliceCustomRenderer !== 'SliceTableOfContents'
+        ? mapDocument(fields.description, sys.id + ':content')
+        : [],
+    links: (fields.links ?? []).map(mapLink),
+    slices: (fields.slices ?? []).map(safelyMapSliceUnion).filter(Boolean),
+    showTableOfContents: fields.showTableOfContents ?? false,
+    sliceCustomRenderer: fields.sliceCustomRenderer ?? '',
+    sliceExtraText: fields.sliceExtraText ?? '',
+    organizationPage: fields.organizationPage
+      ? mapOrganizationPage(fields.organizationPage)
+      : null,
+    featuredImage: fields.featuredImage ? mapImage(fields.featuredImage) : null,
+    signLanguageVideo: fields.signLanguageVideo
+      ? mapEmbeddedVideo(fields.signLanguageVideo)
+      : null,
+    bottomSlices: (fields.bottomSlices ?? [])
+      .map(safelyMapSliceUnion)
+      .filter(Boolean),
+  }
+}

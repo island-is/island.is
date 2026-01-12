@@ -14,6 +14,8 @@ import { getTextStyles } from '../Text/Text'
 
 import * as styles from './DropdownMenu.css'
 import { useMenuHoverProps } from './useMenuHoverProps'
+import { Icon } from '../IconRC/Icon'
+import { Box } from '../Box/Box'
 
 export interface DropdownMenuProps {
   /**
@@ -25,6 +27,8 @@ export interface DropdownMenuProps {
     onClick?: (event: MouseEvent<HTMLElement>, menu: MenuStateReturn) => void
     title: string
     noStyle?: boolean
+    icon?: ButtonProps['icon']
+    iconType?: ButtonProps['iconType']
     render?: (
       element: ReactElement,
       index: number,
@@ -44,6 +48,8 @@ export interface DropdownMenuProps {
   menuClassName?: string
   fixed?: boolean
   openOnHover?: boolean
+  loading?: boolean
+  disabled?: boolean
 }
 
 export const DropdownMenu = ({
@@ -52,6 +58,8 @@ export const DropdownMenu = ({
   title,
   icon,
   iconType,
+  loading,
+  disabled,
   disclosure,
   menuClassName,
   fixed = false,
@@ -88,7 +96,9 @@ export const DropdownMenu = ({
     <>
       {disclosure ? (
         <MenuButton {...menu} {...disclosure.props} {...hoverProps}>
-          {(disclosureProps) => React.cloneElement(disclosure, disclosureProps)}
+          {(disclosureProps: any) =>
+            React.cloneElement(disclosure, disclosureProps)
+          }
         </MenuButton>
       ) : (
         <MenuButton
@@ -96,6 +106,8 @@ export const DropdownMenu = ({
           variant="utility"
           icon={icon}
           iconType={iconType}
+          loading={loading}
+          disabled={disabled}
           {...menu}
           {...hoverProps}
         >
@@ -134,7 +146,32 @@ export const DropdownMenu = ({
               }}
               className={cn({ [classNames]: !item.noStyle })}
             >
-              {item.title}
+              {item.icon ? (
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  width="full"
+                  marginRight={2}
+                >
+                  <Box
+                    marginX={2}
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                  >
+                    <Icon
+                      icon={item.icon}
+                      type={item.iconType}
+                      size="small"
+                      color="blue400"
+                    />
+                  </Box>
+
+                  {item.title}
+                </Box>
+              ) : (
+                item.title
+              )}
             </MenuItem>,
             index,
             classNames,

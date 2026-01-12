@@ -20,6 +20,11 @@ export enum ClientType {
   spa = 'spa',
 }
 
+export enum ClientSso {
+  Disabled = 'disabled',
+  Enabled = 'enabled',
+}
+
 export enum RefreshTokenExpiration {
   /** when refreshing the token, the lifetime of the refresh token will be renewed (by the amount specified in Client.SlidingRefreshTokenLifetime). The lifetime will not exceed Client.AbsoluteRefreshTokenLifetime. */
   Sliding = 'Sliding',

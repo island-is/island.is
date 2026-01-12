@@ -1,5 +1,7 @@
 export interface Student {
+  hasActiveApplication: boolean
   isFreshman: boolean
+  externalIds: string[]
 }
 
 export interface Language {
@@ -22,6 +24,7 @@ export interface Program {
   nameIs: string
   nameEn: string
   registrationEndDate: Date
+  isSpecialNeedsProgram: boolean
 }
 
 export interface ApplicationContact {
@@ -55,8 +58,11 @@ export interface ApplicationAttachment {
 }
 
 export interface Application {
+  externalId?: string
+  id: string
   nationalId: string
   name: string
+  genderCode?: string
   phone: string
   email: string
   address: string

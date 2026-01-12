@@ -50,6 +50,9 @@ import {
   ILatestGenericListItems,
   IFeaturedLinks,
   IGrantCardsList,
+  IOrganizationParentSubpageList,
+  IIntroLinkImage,
+  IFeaturedGenericListItems,
 } from '../generated/contentfulTypes'
 import { Image, mapImage } from '../models/image.model'
 import { Asset, mapAsset } from '../models/asset.model'
@@ -152,6 +155,18 @@ import {
   GrantCardsList,
   mapGrantCardsList,
 } from '../models/grantCardsList.model'
+import {
+  OrganizationParentSubpageList,
+  mapOrganizationParentSubpageList,
+} from '../models/organizationParentSubpageList.model'
+import {
+  IntroLinkImage,
+  mapIntroLinkImage,
+} from '../models/introLinkImage.model'
+import {
+  FeaturedGenericListItems,
+  mapFeaturedGenericListItems,
+} from '../models/featuredGenericListItems.model'
 
 export type SliceTypes =
   | ITimeline
@@ -201,6 +216,9 @@ export type SliceTypes =
   | IGrantCardsList
   | ILatestGenericListItems
   | IFeaturedLinks
+  | IOrganizationParentSubpageList
+  | IIntroLinkImage
+  | IFeaturedGenericListItems
 
 export const SliceUnion = createUnionType({
   name: 'Slice',
@@ -255,6 +273,9 @@ export const SliceUnion = createUnionType({
     LatestGenericListItems,
     FeaturedLinks,
     GrantCardsList,
+    OrganizationParentSubpageList,
+    IntroLinkImage,
+    FeaturedGenericListItems,
   ],
   resolveType: (document) => document.typename, // typename is appended to request on indexing
 })
@@ -356,6 +377,14 @@ export const mapSliceUnion = (slice: SliceTypes): typeof SliceUnion => {
       return mapFeaturedLinks(slice as IFeaturedLinks)
     case 'grantCardsList':
       return mapGrantCardsList(slice as IGrantCardsList)
+    case 'organizationParentSubpageList':
+      return mapOrganizationParentSubpageList(
+        slice as IOrganizationParentSubpageList,
+      )
+    case 'introLinkImage':
+      return mapIntroLinkImage(slice as IIntroLinkImage)
+    case 'featuredGenericListItems':
+      return mapFeaturedGenericListItems(slice as IFeaturedGenericListItems)
     default:
       throw new ApolloError(`Can not convert to slice: ${contentType}`)
   }

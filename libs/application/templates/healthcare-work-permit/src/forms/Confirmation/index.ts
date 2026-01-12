@@ -10,12 +10,11 @@ import {
   payment,
   personal,
 } from '../../lib/messages'
-import { Logo } from '../../assets/Logo'
+import { DirectorateOfHealthLogo } from '@island.is/application/assets/institution-logos'
 
 export const Confirmation: Form = buildForm({
   id: 'ConfirmationForm',
-  title: '',
-  logo: Logo,
+  logo: DirectorateOfHealthLogo,
   mode: FormModes.COMPLETED,
   children: [
     buildSection({
@@ -46,7 +45,6 @@ export const Confirmation: Form = buildForm({
     buildCustomField({
       component: 'CustomFormConclusionSectionField',
       id: 'custom.conclusionSection',
-      title: '',
       description: '',
     }),
   ],

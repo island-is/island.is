@@ -18,8 +18,8 @@ import {
   getMultipleBirthRequestDays,
 } from '../../lib/parentalLeaveUtils'
 import { maxDaysToGiveOrReceive } from '../../config'
-import { YES, NO, TransferRightsOption } from '../../constants'
-import { YesOrNo } from '../../types'
+import { TransferRightsOption } from '../../constants'
+import { NO, YES, YesOrNo } from '@island.is/application/core'
 
 const getDefaultValue = (
   isRequestingRights: YesOrNo,

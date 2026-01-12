@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text, Box, UploadFile } from '@island.is/island-ui/core'
+import { Text, Box, UploadFileDeprecated } from '@island.is/island-ui/core'
 
 import cn from 'classnames'
 import format from 'date-fns/format'
@@ -21,7 +21,7 @@ import * as styles from './FileList.css'
 
 interface Props {
   className?: string
-  files?: UploadFile[] | ApplicationFile[]
+  files?: UploadFileDeprecated[] | ApplicationFile[]
 }
 
 const FileList = ({ className, files }: Props) => {
@@ -43,44 +43,46 @@ const FileList = ({ className, files }: Props) => {
   return (
     <Box className={cn({ [`${className}`]: true })} marginBottom={2}>
       <>
-        {files.map((item: UploadFile | ApplicationFile, index: number) => {
-          return (
-            <button
-              className={cn({
-                [`${styles.filesLink}`]: true,
-                [styles.hoverState]: item.id,
-              })}
-              key={'file-' + index}
-              onClick={() => {
-                if (item.id === undefined) {
-                  return
-                }
-                openFile({ variables: { input: { id: item.id } } })
-              }}
-            >
-              <div className={styles.container}>
-                <div className={styles.type}>
-                  <Text color="dark300" fontWeight="semiBold" variant="small">
-                    {getFileType(item.name)}
-                  </Text>
-                </div>
-                <div className={styles.name}>
-                  <Text variant="small">{item.name}</Text>
-                </div>
-                <Text variant="small">{`Skjal • ${getFileSizeInKilo(
-                  item,
-                )} KB`}</Text>
-                {'created' in item && (
-                  <div className={styles.date}>
-                    <Text variant="small">
-                      {format(new Date(item.created), 'dd.MM.y  · kk:mm')}
+        {files.map(
+          (item: UploadFileDeprecated | ApplicationFile, index: number) => {
+            return (
+              <button
+                className={cn({
+                  [`${styles.filesLink}`]: true,
+                  [styles.hoverState]: item.id,
+                })}
+                key={'file-' + index}
+                onClick={() => {
+                  if (item.id === undefined) {
+                    return
+                  }
+                  openFile({ variables: { input: { id: item.id } } })
+                }}
+              >
+                <div className={styles.container}>
+                  <div className={styles.type}>
+                    <Text color="dark300" fontWeight="semiBold" variant="small">
+                      {getFileType(item.name)}
                     </Text>
                   </div>
-                )}
-              </div>
-            </button>
-          )
-        })}
+                  <div className={styles.name}>
+                    <Text variant="small">{item.name}</Text>
+                  </div>
+                  <Text variant="small">{`Skjal • ${getFileSizeInKilo(
+                    item,
+                  )} KB`}</Text>
+                  {'created' in item && (
+                    <div className={styles.date}>
+                      <Text variant="small">
+                        {format(new Date(item.created), 'dd.MM.y  · kk:mm')}
+                      </Text>
+                    </div>
+                  )}
+                </div>
+              </button>
+            )
+          },
+        )}
       </>
     </Box>
   )

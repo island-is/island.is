@@ -1,18 +1,11 @@
-import {
-  buildFileUploadField,
-  buildSection,
-  getValueViaPath,
-} from '@island.is/application/core'
-import { m } from '../../../lib/utils/messages'
-import { LESS } from '../../../lib/utils/constants'
+import { buildFileUploadField, buildSection } from '@island.is/application/core'
+import { m } from '../../../lib/messages'
+import { isGreaterThanIncomeLimit } from '../../../utils/conditions'
 
 export const documentsSection = buildSection({
   id: 'documents',
   title: m.financialStatement,
-  condition: (answers, _externalData) => {
-    const incomeLimit = getValueViaPath(answers, 'election.incomeLimit')
-    return incomeLimit !== LESS
-  },
+  condition: isGreaterThanIncomeLimit,
   children: [
     buildFileUploadField({
       id: 'attachments.file',

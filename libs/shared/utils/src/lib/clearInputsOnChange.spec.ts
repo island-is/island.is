@@ -11,9 +11,24 @@ describe('clearInputsOnChange', () => {
 
     // Assert
     expect(setValue).toHaveBeenCalledTimes(3)
-    expect(setValue).toHaveBeenCalledWith('field1', null)
-    expect(setValue).toHaveBeenCalledWith('field2', null)
-    expect(setValue).toHaveBeenCalledWith('field3', null)
+    expect(setValue).toHaveBeenCalledWith('field1', '')
+    expect(setValue).toHaveBeenCalledWith('field2', '')
+    expect(setValue).toHaveBeenCalledWith('field3', '')
+  })
+
+  it('should use provided defaultValue when specified', () => {
+    // Arrange
+    const clearOnChange = ['field1', 'field2']
+    const setValue = jest.fn()
+    const defaultValue = 'reset'
+
+    // Act
+    clearInputsOnChange(clearOnChange, setValue, defaultValue)
+
+    // Assert
+    expect(setValue).toHaveBeenCalledTimes(2)
+    expect(setValue).toHaveBeenCalledWith('field1', defaultValue)
+    expect(setValue).toHaveBeenCalledWith('field2', defaultValue)
   })
 
   it('should handle empty array of fields', () => {

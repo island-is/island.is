@@ -1,5 +1,10 @@
 import { useQuery } from '@apollo/client'
-import { coreErrorMessages } from '@island.is/application/core'
+import { coreErrorMessages, YES } from '@island.is/application/core'
+import {
+  INCOME,
+  MONTHS,
+  RatioType,
+} from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { FieldBaseProps } from '@island.is/application/types'
 import { formatCurrency } from '@island.is/application/ui-components'
@@ -12,16 +17,14 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React, { FC, useEffect } from 'react'
+import { useFormContext } from 'react-hook-form'
 import { TemporaryCalculationQuery } from '../../graphql/queries'
-import { INCOME, RatioType, YES } from '../../lib/constants'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
 } from '../../lib/incomePlanUtils'
 import { incomePlanFormMessage } from '../../lib/messages'
-import { SocialInsuranceTemporaryCalculation } from '../../types/schema'
-import { MONTHS } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
-import { useFormContext } from 'react-hook-form'
+import { SocialInsuranceTemporaryCalculation } from '@island.is/api/schema'
 
 export const TemporaryCalculationTable: FC<
   React.PropsWithChildren<FieldBaseProps>

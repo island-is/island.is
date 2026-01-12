@@ -12,7 +12,6 @@ export const MuncipalityNotRegistered: Form = buildForm({
     const logo = createElement(Logo, { application })
     return () => logo
   },
-  title: '',
   children: [
     buildCustomField({
       id: Routes.SERVICECENTER,

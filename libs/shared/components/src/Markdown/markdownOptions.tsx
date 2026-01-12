@@ -1,7 +1,7 @@
 import {
   Bullet,
   BulletList,
-  Link,
+  LinkV2,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
@@ -40,7 +40,7 @@ const getMarkdownOverrides = (
     },
     li: Bullet,
     a: {
-      component: Link,
+      component: LinkV2,
       props: {
         color: 'blue400',
         underline: 'small',

@@ -10,7 +10,6 @@ export const HealthTable = ({
   footerText,
   headerData,
   rowData,
-  noDataMessage,
 }: DetailTable) => {
   return (
     <Box padding={3} background="blue100">
@@ -35,7 +34,11 @@ export const HealthTable = ({
                 {row.map((item, ii) => (
                   <T.Data key={ii}>
                     {item.type === 'link' && item.url ? (
-                      <LinkButton to={item.url} text={item.value} />
+                      <LinkButton
+                        to={item.url}
+                        text={item.value}
+                        variant="text"
+                      />
                     ) : (
                       <Text variant="small" as="span">
                         {item.value}

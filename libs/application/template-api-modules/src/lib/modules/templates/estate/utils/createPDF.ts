@@ -2,6 +2,7 @@ import { UploadData } from '../types'
 import PDFDocument from 'pdfkit'
 import getStream from 'get-stream'
 import { EstateTypes } from '../consts'
+import { PassThrough } from 'stream'
 
 const someValueIsSet = (object: Record<string, unknown>) => {
   return Object.values(object).some((value) => value !== undefined)
@@ -359,9 +360,10 @@ export const transformUploadDataToPDFStream = async (
     .moveDown()
     .text(`Kenninúmer umsóknar hjá sýslumanni: ${data.caseNumber}`)
 
+  const stream = new PassThrough()
+  doc.pipe(stream)
   doc.end()
-
-  return await getStream.buffer(doc)
+  return await getStream.buffer(stream)
 }
 
 const fieldWithValue = (

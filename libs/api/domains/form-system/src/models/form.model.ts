@@ -1,70 +1,140 @@
-import { Field, ID, Int, ObjectType } from '@nestjs/graphql'
-import { LanguageType } from './global.model'
-import { Group } from './group.model'
-import { Input } from './input.model'
-import { Step } from './step.model'
-import { Organization } from './organization.model'
-import { DocumentType } from './documentType.model'
-import graphqlTypeJson from 'graphql-type-json'
-import { FormApplicantType } from './formApplicantType.model'
+import { Field, Int, ObjectType } from '@nestjs/graphql'
+import {
+  FormCertificationType,
+  FormCertificationTypeDto,
+} from './certification.model'
+import { CompletedSectionInfo } from './completedSectionInfo'
+import { Field as FieldModel } from './field.model'
+import { FieldType } from './fieldType.model'
+import { FormApplicant } from './formApplicant.model'
+import { LanguageType } from './languageType.model'
+import { ListType } from './listItem.model'
+import { Option } from './option.model'
+import { Screen as ScreenModel } from './screen.model'
+import { Section } from './section.model'
 
-export type Dependencies = {
-  [key: string]: string[]
+@ObjectType('FormSystemDependency')
+export class Dependency {
+  @Field(() => String, { nullable: true })
+  parentProp?: string
+
+  @Field(() => [String], { nullable: 'itemsAndList' })
+  childProps?: string[]
+
+  @Field(() => Boolean, { nullable: true })
+  isSelected?: boolean
 }
 
 @ObjectType('FormSystemForm')
 export class Form {
-  @Field(() => Int, { nullable: true })
-  id?: number
+  @Field(() => String)
+  id!: string
+
+  @Field(() => String, { nullable: true })
+  organizationId?: string
+
+  @Field(() => String, { nullable: true })
+  organizationNationalId?: string
+
+  @Field(() => String, { nullable: true })
+  organizationTitle?: string
+
+  @Field(() => String, { nullable: true })
+  organizationTitleEn?: string
 
   @Field(() => LanguageType, { nullable: true })
-  name?: LanguageType
-
-  @Field(() => Organization, { nullable: true })
-  organization?: Organization
+  organizationDisplayName?: LanguageType
 
   @Field(() => Date, { nullable: true })
-  created?: Date
+  invalidationDate?: Date
 
-  @Field(() => Date, { nullable: true })
-  lastChanged?: Date
+  @Field(() => String, { nullable: true })
+  submissionServiceUrl?: string
 
-  @Field(() => Date, { nullable: true })
-  invalidationDate?: Date | null
-
-  @Field(() => graphqlTypeJson, { nullable: true })
-  dependencies?: { [key: string]: string[] } | null
-
-  @Field(() => [DocumentType], { nullable: 'itemsAndList' })
-  documentTypes?: DocumentType[] | null
-
-  @Field(() => [FormApplicantType], { nullable: 'itemsAndList' })
-  formApplicantTypes?: FormApplicantType[] | null
-
-  @Field(() => LanguageType, { nullable: true })
-  completedMessage?: LanguageType
+  @Field(() => String, { nullable: true })
+  validationServiceUrl?: string
 
   @Field(() => Boolean, { nullable: true })
-  isTranslated?: boolean | null
+  hasPayment?: boolean
 
   @Field(() => Boolean, { nullable: true })
-  stopProgressOnValidatingStep?: boolean | null
+  beenPublished?: boolean
 
   @Field(() => Int, { nullable: true })
-  applicationsDaysToRemove?: number
+  derivedFrom?: number
 
-  @Field(() => [Step], { nullable: 'itemsAndList' })
-  steps?: Step[] | null
+  @Field(() => LanguageType)
+  name!: LanguageType
 
-  @Field(() => [Step], { nullable: 'itemsAndList' })
-  stepsList?: Step[] | null
+  @Field(() => String, { nullable: true })
+  slug?: string
 
-  @Field(() => [Group], { nullable: 'itemsAndList' })
-  groupsList?: Group[] | null
+  @Field(() => Date)
+  created!: Date
 
-  @Field(() => [Input], { nullable: 'itemsAndList' })
-  inputsList?: Input[] | null
+  @Field(() => Date)
+  modified!: Date
 
-  @Field(() => ID, { nullable: true })
-  guid?: string
+  @Field(() => Boolean)
+  isTranslated!: boolean
+
+  @Field(() => Int)
+  daysUntilApplicationPrune!: number
+
+  @Field(() => Boolean)
+  allowProceedOnValidationFail!: boolean
+
+  @Field(() => Boolean)
+  hasSummaryScreen!: boolean
+
+  @Field(() => CompletedSectionInfo, { nullable: true })
+  completedSectionInfo?: CompletedSectionInfo
+
+  @Field(() => [FormCertificationTypeDto], { nullable: 'itemsAndList' })
+  certificationTypes?: FormCertificationTypeDto[]
+
+  @Field(() => [FormApplicant], { nullable: 'itemsAndList' })
+  applicantTypes?: FormApplicant[]
+
+  @Field(() => [Section], { nullable: 'itemsAndList' })
+  sections?: Section[]
+
+  @Field(() => [ScreenModel], { nullable: 'itemsAndList' })
+  screens?: ScreenModel[]
+
+  @Field(() => [FieldModel], { nullable: 'itemsAndList' })
+  fields?: FieldModel[]
+
+  @Field(() => [Dependency], { nullable: 'itemsAndList' })
+  dependencies?: Dependency[]
+
+  @Field(() => String)
+  status!: string
+}
+
+@ObjectType('FormSystemFormResponse')
+export class FormResponse {
+  @Field(() => Form, { nullable: true })
+  form?: Form
+
+  @Field(() => [FieldType], { nullable: 'itemsAndList' })
+  fieldTypes?: FieldType[]
+
+  @Field(() => [FormCertificationType], { nullable: 'itemsAndList' })
+  certificationTypes?: FormCertificationType[]
+
+  @Field(() => [FormApplicant], { nullable: 'itemsAndList' })
+  applicantTypes?: FormApplicant[]
+
+  @Field(() => [ListType], { nullable: 'itemsAndList' })
+  listTypes?: ListType[]
+
+  @Field(() => [Form], { nullable: 'itemsAndList' })
+  forms?: Form[]
+
+  @Field(() => [String], { nullable: 'itemsAndList' })
+  submissionUrls?: string[]
+
+  @Field(() => [Option], { nullable: 'itemsAndList' })
+  organizations?: Option[]
 }

@@ -1,7 +1,7 @@
 import { buildForm } from '@island.is/application/core'
 import { Form, FormModes, Section } from '@island.is/application/types'
 import { informationSection } from './InformationSection'
-import { Logo } from '../../assets/Logo'
+import { AoshLogo } from '@island.is/application/assets/institution-logos'
 
 import { accidentSection } from './AccidentSection'
 import { EmployeeAndAccidentInformationSection } from '../RepeatableSection'
@@ -19,8 +19,7 @@ const buildRepeatableSections = (): Section[] => {
 
 export const WorkAccidentNotificationForm: Form = buildForm({
   id: 'WorkAccidentNotificationFormsDraft',
-  title: '',
-  logo: Logo,
+  logo: AoshLogo,
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: false,

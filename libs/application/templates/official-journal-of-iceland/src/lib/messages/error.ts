@@ -1,6 +1,11 @@
 import { defineMessages } from 'react-intl'
 
 export const error = defineMessages({
+  missingSignature: {
+    id: 'ojoi.application:error.missingSignature',
+    defaultMessage: 'Undirritun vantar',
+    description: 'Error message when signature is missing',
+  },
   fetchCommentsFailedTitle: {
     id: 'ojoi.application:error.fetchCommentsFailedTitle',
     defaultMessage: 'Ekki tókst að sækja athugasemdir',
@@ -60,6 +65,11 @@ export const error = defineMessages({
   missingFieldsTitle: {
     id: 'ojoi.application:error.missingFieldsTitle',
     defaultMessage: 'Fylla þarf út eftirfarandi reiti í {x}',
+    description: 'Error message when fields are missing',
+  },
+  missingFieldsAny: {
+    id: 'ojoi.application:error.missingFieldsAny',
+    defaultMessage: 'Fylla þarf út eftirfarandi reiti',
     description: 'Error message when fields are missing',
   },
   missingSignatureFieldsMessage: {
@@ -131,6 +141,11 @@ export const error = defineMessages({
     id: 'ojoi.application:error.missingRequestedDate',
     defaultMessage: 'Útgáfudagsetning má ekki vera tóm',
     description: 'Error message when requested date is missing',
+  },
+  dateBeforeToday: {
+    id: 'ojoi.application:error.dateBeforeToday',
+    defaultMessage: 'Þessi birtingardagsetning er ekki leyfileg',
+    description: 'Error message when requested date is not valid',
   },
   applicationValidationError: {
     id: 'ojoi.application:error.applicationValidationError',

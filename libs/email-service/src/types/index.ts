@@ -9,6 +9,7 @@ export interface ImageComponent {
   context: {
     src: string
     alt: string
+    removeFixedHeight?: boolean
   }
 }
 

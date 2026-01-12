@@ -1,4 +1,4 @@
-import { Args, Query, Resolver } from '@nestjs/graphql'
+import { Args, Directive, Query, Resolver } from '@nestjs/graphql'
 import { Inject, UseGuards } from '@nestjs/common'
 import { CacheControl, CacheControlOptions } from '@island.is/nest/graphql'
 import {
@@ -16,7 +16,7 @@ import { DownloadServiceConfig } from '@island.is/nest/config'
 import type { ConfigType } from '@island.is/nest/config'
 import { VehiclesList, VehiclesListV2 } from '../models/usersVehicles.model'
 import { GetVehicleDetailInput } from '../dto/getVehicleDetailInput'
-import { VehiclesDetail, VehiclesExcel } from '../models/getVehicleDetail.model'
+import { VehiclesDetail } from '../models/getVehicleDetail.model'
 import { VehiclesVehicleSearch } from '../models/getVehicleSearch.model'
 import { GetPublicVehicleSearchInput } from '../dto/getPublicVehicleSearchInput'
 import { VehiclesPublicVehicleSearch } from '../models/getPublicVehicleSearch.model'
@@ -42,7 +42,14 @@ export class VehiclesResolver {
   ) {}
 
   @Scopes(ApiScope.vehicles)
-  @Query(() => VehiclesList, { name: 'vehiclesList', nullable: true })
+  @Directive(
+    '@deprecated(reason: "Too slow. Use VehiclesListV2 when possible.")',
+  )
+  @Query(() => VehiclesList, {
+    name: 'vehiclesList',
+    nullable: true,
+    deprecationReason: 'Too slow. Use VehiclesListV2 when possible.',
+  })
   @Audit()
   async getVehicleList(
     @CurrentUser() user: User,
@@ -50,7 +57,6 @@ export class VehiclesResolver {
   ) {
     if (input) {
       const res = await this.vehiclesService.getVehiclesForUser(user, input)
-      const downloadServiceURL = `${this.downloadServiceConfig.baseUrl}/download/v1/vehicles/ownership/${user.nationalId}`
       return {
         vehicleList: res.data,
         paging: {
@@ -59,7 +65,12 @@ export class VehiclesResolver {
           totalPages: res.totalPages,
           totalRecords: res.totalRecords,
         },
-        downloadServiceURL: !input?.type ? downloadServiceURL : null,
+        downloadServiceUrls: !input?.type
+          ? {
+              excel: `${this.downloadServiceConfig.baseUrl}/download/v1/vehicles/ownership/excel`,
+              pdf: `${this.downloadServiceConfig.baseUrl}/download/v1/vehicles/ownership/pdf`,
+            }
+          : null,
       }
     } else {
       const res = await this.vehiclesService.getVehiclesForUserOldService(
@@ -67,7 +78,7 @@ export class VehiclesResolver {
         false,
         false,
       )
-      const downloadServiceURL = `${this.downloadServiceConfig.baseUrl}/download/v1/vehicles/ownership/${user.nationalId}`
+      const downloadServiceURL = `${this.downloadServiceConfig.baseUrl}/download/v1/vehicles/ownership`
       return { ...res?.data, downloadServiceURL }
     }
   }
@@ -80,7 +91,6 @@ export class VehiclesResolver {
     @Args('input', { nullable: true }) input: GetVehiclesListV2Input,
   ) {
     const res = await this.vehiclesService.getVehiclesListV2(user, input)
-    const downloadServiceURL = `${this.downloadServiceConfig.baseUrl}/download/v1/vehicles/ownership/${user.nationalId}`
     return {
       vehicleList: res.data?.map((vehicle) => {
         return {
@@ -88,7 +98,10 @@ export class VehiclesResolver {
           canRegisterMileage: vehicle.canRegisterMilage,
         }
       }),
-      downloadServiceURL,
+      downloadServiceUrls: {
+        excel: `${this.downloadServiceConfig.baseUrl}/download/v1/vehicles/ownership/excel`,
+        pdf: `${this.downloadServiceConfig.baseUrl}/download/v1/vehicles/ownership/pdf/`,
+      },
       paging: {
         pageNumber: res.pageNumber,
         pageSize: res.pageSize,
@@ -96,13 +109,6 @@ export class VehiclesResolver {
         totalRecords: res.totalRecords,
       },
     }
-  }
-
-  @Scopes(ApiScope.vehicles)
-  @Query(() => VehiclesExcel, { name: 'getExcelVehicles', nullable: true })
-  async getExcelVehicles(@CurrentUser() user: User) {
-    const res = await this.vehiclesService.getExcelVehiclesForUser(user)
-    return { ...res }
   }
 
   @Scopes(ApiScope.vehicles, ApiScope.samgongustofaVehicles)

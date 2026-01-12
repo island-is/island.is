@@ -1,4 +1,7 @@
-import { UploadFile, UploadFileStatus } from '@island.is/island-ui/core'
+import {
+  UploadFileDeprecated,
+  UploadFileStatusDeprecated,
+} from '@island.is/island-ui/core'
 
 enum ActionTypes {
   add = 'add',
@@ -7,15 +10,19 @@ enum ActionTypes {
 }
 
 type FileUploadActions =
-  | { type: 'add'; payload: { newFiles: UploadFile[] } }
-  | { type: 'remove'; payload: { fileToRemove: UploadFile } }
+  | { type: 'add'; payload: { newFiles: UploadFileDeprecated[] } }
+  | { type: 'remove'; payload: { fileToRemove: UploadFileDeprecated } }
   | {
       type: 'update'
-      payload: { file: UploadFile; status: UploadFileStatus; percent: number }
+      payload: {
+        file: UploadFileDeprecated
+        status: UploadFileStatusDeprecated
+        percent: number
+      }
     }
 
 export const fileUploadReducer = (
-  state: UploadFile[],
+  state: UploadFileDeprecated[],
   action: FileUploadActions,
 ) => {
   switch (action.type) {
@@ -29,7 +36,7 @@ export const fileUploadReducer = (
 
     case ActionTypes.update:
       return [
-        ...state.map((file: UploadFile) => {
+        ...state.map((file: UploadFileDeprecated) => {
           if (file.name === action.payload.file.name) {
             file.status = action.payload.status
             file.percent = action.payload.percent

@@ -1,64 +1,49 @@
-import React, { FC, useState, useEffect, useRef } from 'react'
-import cn from 'classnames'
+import { Box, Text } from '@island.is/island-ui/core'
 import * as styles from './Image.css'
-import { useMountedState } from 'react-use'
 
 export interface ImageProps {
   url: string
-  title?: string
-  thumbnail: string
-  // NB: width and height is used for calculating ratio of the image - the
-  // element rendered will take up all available horizontal space
+  description?: string | null
+  caption?: string
   width: number
   height: number
 }
 
-const useImageLoader = (url: string): boolean => {
-  const isMounted = useMountedState()
-  const [loaded, setLoaded] = useState(false)
-
-  useEffect(() => {
-    const img = new window.Image(100)
-    img.onload = img.onerror = () => {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore make web strict
-      if (isMounted) {
-        setLoaded(true)
-      }
-    }
-    img.src = url
-  }, [url])
-
-  return loaded
-}
-
-export const Image: FC<React.PropsWithChildren<ImageProps>> = ({
+export const Image = ({
   url,
-  title,
-  thumbnail = url + '?w=50',
+  description,
+  caption,
   width,
   height,
-}) => {
-  const imageLoaded = useImageLoader(url)
-
+}: ImageProps) => {
+  if (!url) return null
   return (
-    <div
-      className={styles.container}
-      style={{ paddingTop: (height / width) * 100 + '%' }}
+    <Box
+      display="flex"
+      height="full"
+      justifyContent="center"
+      alignItems="center"
+      flexDirection={'column'}
     >
       <img
-        src={thumbnail}
-        alt=""
-        className={cn(styles.image, styles.thumbnail, {
-          [styles.hide]: imageLoaded,
-        })}
+        src={`${url}?w=1000&fm=webp&q=75`}
+        srcSet={`
+            ${url}?w=1000&fm=webp&q=75 1x,
+            ${url}?w=1500&fm=webp&q=75 2x,
+            ${url}?w=2000&fm=webp&q=75 3x
+          `}
+        alt={description || ''}
+        height={height}
+        width={width}
+        loading="lazy"
+        className={styles.image}
       />
-      <img
-        src={url}
-        alt={title}
-        className={cn(styles.image, { [styles.show]: imageLoaded })}
-      />
-    </div>
+      {caption && (
+        <Text variant="small" fontWeight="light" marginTop={1}>
+          {caption}
+        </Text>
+      )}
+    </Box>
   )
 }
 

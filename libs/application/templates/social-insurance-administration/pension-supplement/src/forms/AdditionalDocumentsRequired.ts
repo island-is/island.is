@@ -7,14 +7,14 @@ import {
 } from '@island.is/application/core'
 import { Form, FormModes, DefaultEvents } from '@island.is/application/types'
 import { pensionSupplementFormMessage } from '../lib/messages'
-import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
+import { SocialInsuranceAdministrationLogo } from '@island.is/application/assets/institution-logos'
 import { fileUploadSharedProps } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 
 export const AdditionalDocumentsRequired: Form = buildForm({
   id: 'PensionSupplementInReviewUpload',
   title: pensionSupplementFormMessage.shared.applicationTitle,
-  logo: Logo,
+  logo: SocialInsuranceAdministrationLogo,
   mode: FormModes.IN_PROGRESS,
   renderLastScreenBackButton: true,
   renderLastScreenButton: true,
@@ -36,7 +36,6 @@ export const AdditionalDocumentsRequired: Form = buildForm({
           children: [
             buildFileUploadField({
               id: 'fileUploadAdditionalFilesRequired.additionalDocumentsRequired',
-              title: '',
               ...fileUploadSharedProps,
             }),
             buildSubmitField({

@@ -34,13 +34,12 @@ import {
   useGetCustomerChargeTypeQuery,
   useGetCustomerRecordsLazyQuery,
 } from './FinanceTransactions.generated'
-import {
-  CustomerChargeType,
-  CustomerRecords,
-} from './FinanceTransactionsData.types'
+import { useFinanceSwapHook } from '../../utils/financeSwapHook'
+import { CustomerChargeType, CustomerRecords } from '../../lib/types'
 
 const FinanceTransactions = () => {
   useNamespaces('sp.finance-transactions')
+  useFinanceSwapHook()
   const { formatMessage } = useLocale()
   const backInTheDay = sub(new Date(), {
     months: 3,
@@ -191,27 +190,21 @@ const FinanceTransactions = () => {
                           flexDirection="column"
                         >
                           <DatePicker
-                            label={formatMessage(m.datepickerFromLabel)}
-                            placeholderText={formatMessage(m.datepickLabel)}
+                            label={formatMessage(m.datepickPeriod)}
+                            placeholderText={formatMessage(
+                              m.datepickPeriodLabel,
+                            )}
                             locale="is"
                             backgroundColor="blue"
                             size="xs"
-                            handleChange={(d) => setFromDate(d)}
+                            handleChange={(d, e) => {
+                              setFromDate(d)
+                              setToDate(e)
+                            }}
                             selected={fromDate}
                             appearInline
+                            range
                           />
-                          <Box marginTop={3}>
-                            <DatePicker
-                              label={formatMessage(m.datepickerToLabel)}
-                              placeholderText={formatMessage(m.datepickLabel)}
-                              locale="is"
-                              backgroundColor="blue"
-                              size="xs"
-                              handleChange={(d) => setToDate(d)}
-                              selected={toDate}
-                              appearInline
-                            />
-                          </Box>
                         </Box>
                       </AccordionItem>
                     </Accordion>

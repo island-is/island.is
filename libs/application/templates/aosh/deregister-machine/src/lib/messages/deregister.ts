@@ -1,6 +1,5 @@
 import { defineMessages } from 'react-intl'
 
-const linebreak = '\n\n'
 export const deregister = {
   general: defineMessages({
     title: {

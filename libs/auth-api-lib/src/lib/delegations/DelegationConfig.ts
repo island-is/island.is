@@ -94,6 +94,14 @@ export const DelegationConfig = defineConfig<z.infer<typeof schema>>({
           AuthDelegationType.Custom,
         ],
       },
+      {
+        // This scope is not in use in our repo hence plain string instead of enum.
+        scopeName: '@sass.is/urgangstorg-sveitarfelag',
+        onlyForDelegationType: [
+          AuthDelegationType.ProcurationHolder,
+          AuthDelegationType.Custom,
+        ],
+      },
     ],
     userInfoUrl:
       env.required(

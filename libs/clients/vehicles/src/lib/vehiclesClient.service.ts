@@ -1,75 +1,84 @@
+import { Injectable } from '@nestjs/common'
+import { ExcelApi, PdfApi, VehicleSearchApi } from '../../gen/fetch'
+import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import {
-  Configuration,
-  PublicVehicleSearchApi,
-  VehicleSearchApi,
-} from '../../gen/fetch'
-import { Provider } from '@nestjs/common'
-import {
-  ConfigType,
-  XRoadConfig,
-  LazyDuringDevScope,
-  IdsClientConfig,
-} from '@island.is/nest/config'
-import { VehiclesClientConfig } from './vehiclesClient.config'
-import { createEnhancedFetch } from '@island.is/clients/middlewares'
+  VehiclesResponseDto,
+  mapVehicleResponseDto,
+} from './dtos/vehiclesResponse.dto'
+import { GetVehiclesInput } from './input/getVehicles.input'
+import { VehicleHistoryInput } from './input/vehicleHistory.input'
+import { mapVehicleDataToNestedArray } from './dtos/tableData.dto'
 
-export const VehiclesApiProvider: Provider<VehicleSearchApi> = {
-  provide: VehicleSearchApi,
-  scope: LazyDuringDevScope,
-  useFactory: (
-    xroadConfig: ConfigType<typeof XRoadConfig>,
-    config: ConfigType<typeof VehiclesClientConfig>,
-    idsClientConfig: ConfigType<typeof IdsClientConfig>,
-  ) =>
-    new VehicleSearchApi(
-      new Configuration({
-        fetchApi: createEnhancedFetch({
-          name: 'clients-vehicles',
-          organizationSlug: 'samgongustofa',
-          timeout: config.fetch.timeout,
-          autoAuth: idsClientConfig.isConfigured
-            ? {
-                mode: 'tokenExchange',
-                issuer: idsClientConfig.issuer,
-                clientId: idsClientConfig.clientId,
-                clientSecret: idsClientConfig.clientSecret,
-                scope: config.scope,
-              }
-            : undefined,
-        }),
+@Injectable()
+export class VehiclesClientService {
+  constructor(
+    private readonly vehiclesSearchApi: VehicleSearchApi,
+    private readonly excelApi: ExcelApi,
+    private readonly pdfApi: PdfApi,
+  ) {}
 
-        basePath: `${xroadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
-        headers: {
-          'X-Road-Client': xroadConfig.xRoadClient,
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-      }),
-    ),
+  private vehiclesApiWithAuth = (user: User) =>
+    this.vehiclesSearchApi.withMiddleware(new AuthMiddleware(user as Auth))
 
-  inject: [XRoadConfig.KEY, VehiclesClientConfig.KEY, IdsClientConfig.KEY],
-}
+  private excelApiWithAuth = (user: User) =>
+    this.excelApi.withMiddleware(new AuthMiddleware(user as Auth))
 
-export const PublicVehiclesApiProvider: Provider<PublicVehicleSearchApi> = {
-  provide: PublicVehicleSearchApi,
-  scope: LazyDuringDevScope,
-  useFactory: (
-    xroadConfig: ConfigType<typeof XRoadConfig>,
-    config: ConfigType<typeof VehiclesClientConfig>,
-  ) =>
-    new PublicVehicleSearchApi(
-      new Configuration({
-        fetchApi: createEnhancedFetch({
-          name: 'clients-vehicles',
-          timeout: config.fetch.timeout,
-        }),
-        basePath: `${xroadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
-        headers: {
-          'X-Road-Client': xroadConfig.xRoadClient,
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-      }),
-    ),
-  inject: [XRoadConfig.KEY, VehiclesClientConfig.KEY],
+  private pdfApiWithAuth = (user: User) =>
+    this.pdfApi.withMiddleware(new AuthMiddleware(user as Auth))
+
+  getVehicles = async (
+    user: User,
+    input: GetVehiclesInput,
+  ): Promise<VehiclesResponseDto | null> => {
+    const res = await this.vehiclesApiWithAuth(
+      user,
+    ).currentvehicleswithmileageandinspGet({
+      page: input.page,
+      pageSize: input.pageSize,
+      includeNextMainInspectionDate: input.includeNextMainInspectionDate,
+      onlyMileageRegisterableVehicles: input.onlyMileageRegisterableVehicles,
+      onlyMileageRequiredVehicles: input.onlyMileageRequiredVehicles,
+      permno: input.query
+        ? input.query.length < 5
+          ? `${input.query}*`
+          : `${input.query}`
+        : undefined,
+    })
+
+    return mapVehicleResponseDto(res)
+  }
+
+  getVehiclesUnknownArray = async (
+    user: User,
+    input: GetVehiclesInput,
+  ): Promise<unknown[][] | null> => {
+    const res = await this.vehiclesApiWithAuth(
+      user,
+    ).currentvehicleswithmileageandinspGet({
+      page: input.page,
+      pageSize: input.pageSize,
+      includeNextMainInspectionDate: input.includeNextMainInspectionDate,
+      onlyMileageRegisterableVehicles: input.onlyMileageRegisterableVehicles,
+      onlyMileageRequiredVehicles: input.onlyMileageRequiredVehicles,
+      permno: input.query
+        ? input.query.length < 5
+          ? `${input.query}*`
+          : `${input.query}`
+        : undefined,
+    })
+
+    return mapVehicleDataToNestedArray(res)
+  }
+
+  vehicleReport = async (
+    user: User,
+    { vehicleId }: VehicleHistoryInput,
+  ): Promise<Blob> =>
+    this.pdfApiWithAuth(user).vehicleReportPdfGet({ permno: vehicleId })
+
+  ownershipReportExcel = async (user: User): Promise<Blob> =>
+    this.excelApiWithAuth(user).ownershipReportExcelGet()
+
+  ownershipReportPdf = (user: User): Promise<Blob> =>
+    this.pdfApiWithAuth(user).ownershipReportPdfGet()
 }

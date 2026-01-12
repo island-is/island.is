@@ -16,20 +16,16 @@ export const friggOptionsQuery = gql`
   }
 `
 
-export const friggSchoolsByMunicipalityQuery = gql`
-  query FriggSchoolsByMunicipality {
-    friggSchoolsByMunicipality {
+export const friggOrganizationsByTypeQuery = gql`
+  query FriggOrganizationsByType($input: EducationFriggOrganizationInput) {
+    friggOrganizationsByType(input: $input) {
       id
-      nationalId
+      unitId
       name
       type
-      children {
-        id
-        nationalId
-        name
-        type
-        gradeLevels
-      }
+      subType
+      sector
+      gradeLevels
     }
   }
 `

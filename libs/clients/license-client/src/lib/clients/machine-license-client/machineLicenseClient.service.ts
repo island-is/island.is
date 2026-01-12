@@ -1,31 +1,30 @@
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import { Inject, Injectable } from '@nestjs/common'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import {
   VinnuvelaApi,
   VinnuvelaDto,
 } from '@island.is/clients/adr-and-machine-license'
-import {
-  createPkPassDataInput,
-  findLatestExpirationDate,
-} from './machineLicenseMapper'
 import { FetchError } from '@island.is/clients/middlewares'
-import {
-  Pass,
-  PassDataInput,
-  SmartSolutionsApi,
-} from '@island.is/clients/smartsolutions'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Locale } from '@island.is/shared/types'
+import { Inject, Injectable } from '@nestjs/common'
+import compareAsc from 'date-fns/compareAsc'
+import { PkPassService } from '../../helpers/pk-pass-service/pkPass.service'
 import {
   LicenseClient,
   LicensePkPassAvailability,
   LicenseType,
+  PassData,
+  PassDataInput,
   PkPassVerificationInputData,
   Result,
   VerifyPkPassResult,
 } from '../../licenseClient.type'
-import compareAsc from 'date-fns/compareAsc'
+import {
+  createPkPassDataInput,
+  findLatestExpirationDate,
+} from './machineLicenseMapper'
+import { GeneralLicenseVerifyExtraData } from '../base'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'machinelicense-service'
@@ -37,7 +36,7 @@ export class MachineLicenseClient
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private machineApi: VinnuvelaApi,
-    private smartApi: SmartSolutionsApi,
+    private passService: PkPassService,
   ) {}
 
   clientSupportsPkPass = true
@@ -82,11 +81,6 @@ export class MachineLicenseClient
             message: 'Service failure',
             data: JSON.stringify(e.body),
           }
-          this.logger.warn('Expected 200 or 404 status', {
-            status: e.status,
-            statusText: e.statusText,
-            category: LOG_CATEGORY,
-          })
         }
       } else {
         const unknownError = e as Error
@@ -95,11 +89,6 @@ export class MachineLicenseClient
           message: 'Unknown error',
           data: JSON.stringify(unknownError),
         }
-        this.logger.warn('Unable to query data', {
-          status: e.status,
-          statusText: e.statusText,
-          category: LOG_CATEGORY,
-        })
       }
 
       return {
@@ -161,11 +150,15 @@ export class MachineLicenseClient
     if (!inputValues) return null
     return {
       inputFieldValues: inputValues,
-      expirationDate: findLatestExpirationDate(license.data),
+      expirationDate: findLatestExpirationDate(license.data) ?? undefined,
     }
   }
 
-  async getPkPass(user: User, locale: Locale = 'is'): Promise<Result<Pass>> {
+  async getPkPass(
+    user: User,
+    locale: Locale = 'is',
+    version?: 'v1' | 'v2',
+  ): Promise<Result<PassData>> {
     const license = await this.fetchLicense(user)
     if (!license.ok || !license.data) {
       this.logger.info(
@@ -205,13 +198,22 @@ export class MachineLicenseClient
       }
     }
 
-    const pass = await this.smartApi.generatePkPass(payload)
+    const pass = await this.passService.generatePkPass(
+      payload,
+      undefined,
+      undefined,
+      version,
+    )
 
     return pass
   }
 
-  async getPkPassQRCode(user: User, locale?: Locale): Promise<Result<string>> {
-    const res = await this.getPkPass(user, locale)
+  async getPkPassQRCode(
+    user: User,
+    locale?: Locale,
+    version?: 'v1' | 'v2',
+  ): Promise<Result<string>> {
+    const res = await this.getPkPass(user, locale, version)
 
     if (!res.ok) {
       return res
@@ -238,8 +240,12 @@ export class MachineLicenseClient
     }
   }
 
-  async getPkPassUrl(user: User, locale?: Locale): Promise<Result<string>> {
-    const res = await this.getPkPass(user, locale)
+  async getPkPassUrl(
+    user: User,
+    locale?: Locale,
+    version?: 'v1' | 'v2',
+  ): Promise<Result<string>> {
+    const res = await this.getPkPass(user, locale, version)
 
     if (!res.ok) {
       return res
@@ -268,9 +274,14 @@ export class MachineLicenseClient
 
   async verifyPkPass(
     data: string,
+    version?: 'v1' | 'v2',
   ): Promise<Result<VerifyPkPassResult<LicenseType.MachineLicense>>> {
     const { code, date } = JSON.parse(data) as PkPassVerificationInputData
-    const result = await this.smartApi.verifyPkPass({ code, date })
+    const result = await this.passService.verifyPkPass(
+      { code, date },
+      undefined,
+      version,
+    )
 
     if (!result.ok) {
       return result
@@ -287,6 +298,21 @@ export class MachineLicenseClient
       data: {
         valid: result.data.valid,
       },
+    }
+  }
+
+  async verifyExtraData(user: User): Promise<GeneralLicenseVerifyExtraData> {
+    const license = await this.fetchLicense(user)
+    if (!license.ok || !license.data) {
+      throw new Error('No license found')
+    }
+    if (!license.data.fulltNafn) {
+      throw new Error('No name found')
+    }
+
+    return {
+      nationalId: license.data.kennitala ?? '',
+      name: license.data.fulltNafn,
     }
   }
 }

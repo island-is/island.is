@@ -3,13 +3,12 @@ import {
   buildForm,
   buildSection,
 } from '@island.is/application/core'
-import Logo from '../../components/Logo'
+import { InaoLogo } from '@island.is/application/assets/institution-logos'
 import { m } from '../../lib/messages'
 
 export const notAllowedForm = buildForm({
   id: 'notAllowedForm',
-  title: '',
-  logo: Logo,
+  logo: InaoLogo,
   children: [
     buildSection({
       id: 'notAllowedSection',

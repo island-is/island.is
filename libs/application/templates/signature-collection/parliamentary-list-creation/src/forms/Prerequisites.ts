@@ -5,7 +5,7 @@ import {
   buildSubmitField,
   buildSection,
   buildMultiField,
-  buildDescriptionField,
+  buildImageField,
 } from '@island.is/application/core'
 import {
   DefaultEvents,
@@ -15,34 +15,36 @@ import {
 } from '@island.is/application/types'
 
 import { m } from '../lib/messages'
-import Logo from '../../assets/Logo'
 import {
   ParliamentaryCollectionApi,
-  CandidateApi,
   ParliamentaryIdentityApi,
   IsDelegatedToCompanyApi,
+  CandidateApi,
 } from '../dataProviders'
+import DigitalServices from '@island.is/application/templates/signature-collection/assets/DigitalServices'
+import { NationalRegistryLogo } from '@island.is/application/assets/institution-logos'
 
 export const Prerequisites: Form = buildForm({
   id: 'CreateListPrerequisites',
-  title: '',
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
-  logo: Logo,
+  logo: NationalRegistryLogo,
   children: [
     buildSection({
       id: 'intro',
-      title: m.intro,
       children: [
         buildMultiField({
           id: 'intro',
           title: m.introTitle,
           description: m.introDescription,
           children: [
-            buildDescriptionField({
-              id: 'introText',
-              title: '',
+            buildImageField({
+              id: 'doneImage',
+              image: DigitalServices,
+              imageWidth: 'auto',
+              imagePosition: 'center',
+              marginTop: 'gutter',
             }),
           ],
         }),
@@ -50,7 +52,6 @@ export const Prerequisites: Form = buildForm({
     }),
     buildSection({
       id: 'approveExternalData',
-      title: m.dataCollection,
       children: [
         buildExternalDataProvider({
           id: 'approveExternalData',
@@ -60,7 +61,6 @@ export const Prerequisites: Form = buildForm({
           submitField: buildSubmitField({
             id: 'submit',
             placement: 'footer',
-            title: '',
             refetchApplicationAfterSubmit: true,
             actions: [
               {
@@ -78,47 +78,19 @@ export const Prerequisites: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: ParliamentaryCollectionApi,
-              title: '',
-              subTitle: '',
             }),
             buildDataProviderItem({
               provider: ParliamentaryIdentityApi,
-              title: '',
-              subTitle: '',
             }),
             buildDataProviderItem({
               provider: CandidateApi,
-              title: '',
-              subTitle: '',
             }),
             buildDataProviderItem({
               provider: IsDelegatedToCompanyApi,
-              title: '',
-              subTitle: '',
             }),
           ],
         }),
       ],
-    }),
-    buildSection({
-      id: 'screen3',
-      title: m.information,
-      children: [],
-    }),
-    buildSection({
-      id: 'screen4',
-      title: m.constituency,
-      children: [],
-    }),
-    buildSection({
-      id: 'screen6',
-      title: m.overview,
-      children: [],
-    }),
-    buildSection({
-      id: 'screen7',
-      title: m.listCreated,
-      children: [],
     }),
   ],
 })

@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.0",
   "paths": {
-    "/forms": {
+    "/forms/registrations": {
       "post": {
         "operationId": "submitForm",
         "parameters": [],
@@ -9,7 +9,9 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/FormDto" }
+              "schema": {
+                "$ref": "#/components/schemas/RegistrationApplicationInput"
+              }
             }
           }
         },
@@ -25,15 +27,14 @@
             }
           }
         },
-        "tags": ["Frigg"],
-        "security": [{ "bearer": [] }]
+        "security": [{ "bearer": [] }],
+        "tags": ["Frigg"]
       }
     },
     "/forms/types": {
       "get": {
-        "operationId": "getFormTypes",
-        "summary": "Get list of types of forms",
         "description": "Get types.",
+        "operationId": "getFormTypes",
         "parameters": [],
         "responses": {
           "200": {
@@ -45,24 +46,18 @@
             }
           }
         },
-        "tags": ["Frigg"],
-        "security": [{ "bearer": [] }]
+        "security": [{ "bearer": [] }],
+        "summary": "Get list of types of forms",
+        "tags": ["Frigg"]
       }
     },
-    "/forms/reviews/{reviewId}/{action}": {
-      "post": {
-        "operationId": "updateReview",
-        "summary": "Review form",
-        "description": "Review form.",
+    "/forms/{id}/status": {
+      "get": {
+        "description": "Get statuses.",
+        "operationId": "getFormStatuses",
         "parameters": [
           {
-            "name": "reviewId",
-            "required": true,
-            "in": "path",
-            "schema": { "type": "string" }
-          },
-          {
-            "name": "action",
+            "name": "id",
             "required": true,
             "in": "path",
             "schema": { "type": "string" }
@@ -73,20 +68,20 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/SuccessModel" }
+                "schema": { "type": "array", "items": { "type": "string" } }
               }
             }
           }
         },
-        "tags": ["Frigg"],
-        "security": [{ "bearer": [] }]
+        "security": [{ "bearer": [] }],
+        "summary": "Get status of an application",
+        "tags": ["Frigg"]
       }
     },
     "/key-options": {
       "get": {
-        "operationId": "getAllKeyOptions",
-        "summary": "Get all key options.",
         "description": "Get all key options, can be filtered by type. If type input is not valid, all key options will be returned.",
+        "operationId": "getAllKeyOptions",
         "parameters": [
           {
             "name": "type",
@@ -109,14 +104,14 @@
             }
           }
         },
+        "summary": "Get all key options.",
         "tags": ["Frigg"]
       }
     },
     "/key-options/types": {
       "get": {
-        "operationId": "getKeyOptionsTypes",
-        "summary": "Get list of types of key options",
         "description": "Get types.",
+        "operationId": "getKeyOptionsTypes",
         "parameters": [],
         "responses": {
           "200": {
@@ -128,6 +123,7 @@
             }
           }
         },
+        "summary": "Get list of types of key options",
         "tags": ["Frigg"]
       }
     },
@@ -139,12 +135,72 @@
         "tags": ["Utils"]
       }
     },
-    "/schools": {
+    "/organizations": {
       "get": {
-        "operationId": "getAllSchoolsByMunicipality",
-        "summary": "Get all schools.",
-        "description": "Returns a paginated collection of schools.",
-        "parameters": [],
+        "description": "Returns a paginated collection of organizations. Can be filtered by organization type.",
+        "operationId": "getOrganizationsByType",
+        "parameters": [
+          {
+            "name": "type",
+            "required": false,
+            "in": "query",
+            "description": "Filter by organization type",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "childCare",
+                "municipality",
+                "national",
+                "privateOwner",
+                "school"
+              ]
+            }
+          },
+          {
+            "name": "municipalityCode",
+            "required": false,
+            "in": "query",
+            "description": "Search by municipality code",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "gradeLevels",
+            "required": false,
+            "in": "query",
+            "description": "Comma-separated grade levels (e.g. gradeLevels=01,02,03)",
+            "style": "form",
+            "explode": false,
+            "schema": { "type": "array", "items": { "type": "string" } }
+          },
+          {
+            "name": "sort",
+            "required": false,
+            "in": "query",
+            "description": "Identifies the sort criteria to be used for the records in the response message. Use with the orderBy parameter. The sort order should follow the [UNICODE, 16] standard.",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "orderBy",
+            "required": false,
+            "in": "query",
+            "description": "The form of ordering for response to the sorted request i.e. ascending (asc) or descending (desc). The sort order should follow the [UNICODE, 16] standard.",
+            "schema": { "type": "string", "enum": ["asc", "desc"] }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "To define the download segmentation value i.e. the maximum number of records to be contained in the response.",
+            "schema": { "default": 100, "type": "number", "minimum": 1 }
+          },
+          {
+            "name": "offset",
+            "required": false,
+            "in": "query",
+            "description": "The number of the first record to be supplied in the segmented response message.",
+            "schema": { "default": 0, "type": "number", "minimum": 0 }
+          }
+        ],
         "responses": {
           "200": {
             "description": "",
@@ -156,16 +212,26 @@
                 }
               }
             }
+          },
+          "default": {
+            "headers": {
+              "x-total-count": {
+                "description": "The total number of resources that are available to be returned",
+                "schema": { "type": "integer" }
+              }
+            },
+            "description": ""
           }
         },
+        "security": [{ "bearer": [] }],
+        "summary": "Get all organizations.",
         "tags": ["Frigg"]
       }
     },
     "/students/{nationalId}": {
       "get": {
-        "operationId": "getUserBySourcedId",
-        "summary": "Get user by nationalId",
         "description": "Get user by Id.",
+        "operationId": "getUserBySourcedId",
         "parameters": [
           {
             "name": "nationalId",
@@ -184,8 +250,36 @@
             }
           }
         },
-        "tags": ["Frigg"],
-        "security": [{ "bearer": [] }]
+        "security": [{ "bearer": [] }],
+        "summary": "Get user by nationalId",
+        "tags": ["Frigg"]
+      }
+    },
+    "/students/{nationalId}/preferred-schools": {
+      "get": {
+        "description": "Returns a collection of schools.",
+        "operationId": "getPreferredSchools",
+        "parameters": [
+          {
+            "name": "nationalId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/OrganizationModel" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "Get preferred schools for child.",
+        "tags": ["Frigg"]
       }
     }
   },
@@ -207,121 +301,277 @@
       }
     },
     "schemas": {
-      "AddressDto": {
+      "ApplicantInput": {
         "type": "object",
         "properties": {
-          "address": { "type": "string" },
-          "postCode": { "type": "string" }
-        },
-        "required": ["address", "postCode"]
-      },
-      "UserDto": {
-        "type": "object",
-        "properties": {
-          "name": { "type": "string" },
           "nationalId": { "type": "string" },
           "preferredName": { "type": "string" },
-          "pronouns": { "type": "array", "items": { "type": "string" } },
-          "domicile": { "$ref": "#/components/schemas/AddressDto" },
-          "residence": { "$ref": "#/components/schemas/AddressDto" }
+          "pronounIds": {
+            "description": "IDs of preferred pronouns",
+            "example": [
+              "7aa85320-0dad-4eb1-8e02-a70a8acbbdaa",
+              " c41321d9-6e41-46ec-bb8f-f71bddd2d8c5"
+            ],
+            "type": "array",
+            "items": { "type": "string" }
+          }
         },
-        "required": ["name", "nationalId"]
+        "required": ["nationalId"]
       },
-      "AgentDto": {
+      "GuardianInput": {
         "type": "object",
         "properties": {
-          "name": { "type": "string" },
           "nationalId": { "type": "string" },
           "preferredName": { "type": "string" },
-          "pronouns": { "type": "array", "items": { "type": "string" } },
-          "domicile": { "$ref": "#/components/schemas/AddressDto" },
+          "pronounIds": {
+            "description": "IDs of preferred pronouns",
+            "example": [
+              "7aa85320-0dad-4eb1-8e02-a70a8acbbdaa",
+              " c41321d9-6e41-46ec-bb8f-f71bddd2d8c5"
+            ],
+            "type": "array",
+            "items": { "type": "string" }
+          },
           "email": { "type": "string", "example": "name@frigg.is" },
           "phone": { "type": "string" },
-          "role": {
+          "preferredLanguage": {
+            "type": "string",
+            "description": "The preferred language of the agent, should be a valid code."
+          },
+          "requiresInterpreter": {
+            "type": "boolean",
+            "description": "If the agent requires an interpreter for communication."
+          }
+        },
+        "required": ["nationalId"]
+      },
+      "EmergencyContactInput": {
+        "type": "object",
+        "properties": {
+          "nationalId": { "type": "string" },
+          "preferredName": { "type": "string" },
+          "pronounIds": {
+            "description": "IDs of preferred pronouns",
+            "example": [
+              "7aa85320-0dad-4eb1-8e02-a70a8acbbdaa",
+              " c41321d9-6e41-46ec-bb8f-f71bddd2d8c5"
+            ],
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "email": { "type": "string", "example": "name@frigg.is" },
+          "phone": { "type": "string" },
+          "preferredLanguage": {
+            "type": "string",
+            "description": "The preferred language of the agent, should be a valid code."
+          },
+          "requiresInterpreter": {
+            "type": "boolean",
+            "description": "If the agent requires an interpreter for communication."
+          },
+          "relationTypeId": {
             "type": "string",
             "description": "Agents connection to the student, strings can be found under key option type \"relation\""
           }
         },
-        "required": ["name", "nationalId", "role"]
+        "required": ["nationalId"]
       },
-      "RegistrationDto": {
+      "HealthInput": {
         "type": "object",
         "properties": {
-          "preRegisteredId": {
-            "type": "string",
-            "description": "If a user has an open ongoing registration, for exaple first year students submit the id here"
+          "foodAllergiesOrIntoleranceIds": {
+            "description": "IDs of food allergies or intolerances from the predefined list",
+            "example": [
+              "0eba84ab-55aa-4fdd-b492-55a095ae1eaf",
+              "e3fb8ab3-baae-4cb3-8b74-774af110d84c"
+            ],
+            "type": "array",
+            "items": { "type": "string" }
           },
-          "defaultOrg": {
+          "allergiesIds": {
+            "description": "IDs of allergies from the predefined list",
+            "example": [
+              "0eba84ab-55aa-4fdd-b492-55a095ae1eaf",
+              "e3fb8ab3-baae-4cb3-8b74-774af110d84c"
+            ],
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "usesEpipen": { "type": "boolean" },
+          "hasConfirmedMedicalDiagnoses": { "type": "boolean" },
+          "requestsMedicationAdministration": { "type": "boolean" }
+        }
+      },
+      "CaseWorkerInput": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "email": { "type": "string" },
+          "phone": { "type": "string" },
+          "type": {
+            "type": "string",
+            "enum": ["caseManager", "supportManager"]
+          }
+        },
+        "required": ["name", "email", "type"]
+      },
+      "SocialInput": {
+        "type": "object",
+        "properties": {
+          "hasHadSupport": { "type": "boolean" },
+          "hasDiagnoses": { "type": "boolean" },
+          "hasIntegratedServices": { "type": "boolean" },
+          "caseWorkers": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/CaseWorkerInput" }
+          },
+          "previousSocialServices": {
+            "description": "List of ids of the social services the applicant has received in the past",
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "ongoingSocialServices": {
+            "description": "List of ids of the social services the applicant is currently receiving",
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "previousChildProtectionCase": {
+            "type": "boolean",
+            "description": "List of ids of the social services the applicant has received in the past"
+          },
+          "openChildProtectionCase": {
+            "type": "boolean",
+            "description": "List of ids of the social services the applicant has received in the past"
+          }
+        }
+      },
+      "LanguageInput": {
+        "type": "object",
+        "properties": {
+          "languageEnvironmentId": { "type": "string" },
+          "preferredLanguage": { "type": "string" },
+          "signLanguage": { "type": "boolean" },
+          "languages": { "type": "array", "items": { "type": "string" } }
+        }
+      },
+      "PayerInput": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "nationalId": { "type": "string" }
+        },
+        "required": ["name", "nationalId"]
+      },
+      "ConsentInput": {
+        "type": "object",
+        "properties": {
+          "fieldInspection": { "type": "boolean" },
+          "additionalDataProvisioning": { "type": "boolean" },
+          "outsideSpecialist": { "type": "boolean" },
+          "childViewOnApplication": { "type": "boolean" }
+        }
+      },
+      "RegistrationInput": {
+        "type": "object",
+        "properties": {
+          "applicant": { "$ref": "#/components/schemas/ApplicantInput" },
+          "guardians": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/GuardianInput" }
+          },
+          "siblings": {
+            "description": "national IDs of siblings",
+            "example": ["1234567890", "2345678901"],
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "emergencyContacts": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/EmergencyContactInput" }
+          },
+          "health": { "$ref": "#/components/schemas/HealthInput" },
+          "social": { "$ref": "#/components/schemas/SocialInput" },
+          "language": { "$ref": "#/components/schemas/LanguageInput" },
+          "defaultOrganizationId": {
             "type": "string",
             "description": "The school a student should or does belong to, pre registered school or current school"
           },
-          "selectedOrg": {
+          "selectedOrganizationId": {
             "type": "string",
             "description": "The school selected for a student in the application process"
           },
-          "requestingMeeting": { "type": "boolean", "default": false },
-          "expectedStartDate": { "format": "date-time", "type": "string" },
-          "reason": { "type": "string" },
-          "movingAbroadCountry": { "type": "string" },
-          "newDomicile": { "$ref": "#/components/schemas/AddressDto" }
-        },
-        "required": ["defaultOrg", "reason"]
-      },
-      "HealthDto": {
-        "type": "object",
-        "properties": {
-          "usesEpipen": { "type": "boolean", "default": false },
-          "allergies": { "type": "array", "items": { "type": "string" } },
-          "intolerances": { "type": "array", "items": { "type": "string" } }
-        }
-      },
-      "SocialDto": {
-        "type": "object",
-        "properties": {
-          "hasHadSupport": { "type": "boolean", "default": false },
-          "hasDiagnoses": { "type": "boolean", "default": false }
-        }
-      },
-      "LanguageDto": {
-        "type": "object",
-        "properties": {
-          "nativeLanguage": { "type": "string" },
-          "noIcelandic": { "type": "boolean" },
-          "otherLanguages": { "type": "array", "items": { "type": "string" } }
-        },
-        "required": ["nativeLanguage", "noIcelandic"]
-      },
-      "FormDto": {
-        "type": "object",
-        "properties": {
-          "type": { "type": "string", "enum": ["registration"] },
-          "user": { "$ref": "#/components/schemas/UserDto" },
-          "agents": {
+          "alternativeOrganizationIds": {
+            "description": "The alternative schools for a student in the application process",
+            "example": ["ec0ef194-0b74-4a91-adf1-a77f6a262097"],
             "type": "array",
-            "items": { "$ref": "#/components/schemas/AgentDto" }
+            "items": { "type": "string" }
           },
-          "registration": { "$ref": "#/components/schemas/RegistrationDto" },
-          "health": { "$ref": "#/components/schemas/HealthDto" },
-          "social": { "$ref": "#/components/schemas/SocialDto" },
-          "language": { "$ref": "#/components/schemas/LanguageDto" }
+          "requestingMeeting": { "type": "boolean" },
+          "expectedStartDate": { "format": "date-time", "type": "string" },
+          "expectedEndDate": { "format": "date-time", "type": "string" },
+          "payer": { "$ref": "#/components/schemas/PayerInput" },
+          "reasonId": {
+            "type": "string",
+            "description": "Reason ID for application",
+            "example": "ec0ef194-0b74-4a91-adf1-a77f6a262097"
+          },
+          "visitedAndResearched": { "type": "boolean" },
+          "terms": { "type": "boolean" },
+          "childCircumstances": { "$ref": "#/components/schemas/ConsentInput" }
         },
-        "required": ["type", "user"]
+        "required": ["applicant", "selectedOrganizationId"]
+      },
+      "RegistrationApplicationInput": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The unique ID in island.is of the application being submitted"
+          },
+          "registration": { "$ref": "#/components/schemas/RegistrationInput" },
+          "applicationType": {
+            "type": "string",
+            "enum": ["enrollment", "transfer", "continuation"],
+            "description": "Type of application"
+          },
+          "additionalRequesters": {
+            "description": "national IDs of additional requesters",
+            "example": ["1234567890", "2345678901"],
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "approvalRequester": {
+            "type": "string",
+            "description": "national ID of the approval requester"
+          },
+          "files": {
+            "description": "Files",
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "fileUploadType": {
+            "type": "string",
+            "enum": ["attachments", "physical", "attachmentsAndPhysical"],
+            "description": "File upload type"
+          }
+        },
+        "required": [
+          "id",
+          "registration",
+          "applicationType",
+          "approvalRequester"
+        ]
       },
       "FormSubmitSuccessModel": {
         "type": "object",
         "properties": {
-          "formId": { "type": "string", "description": "Id of form created" },
-          "reviewId": { "type": "string", "description": "Id of review" },
-          "status": { "type": "string", "description": "Status of form" }
+          "applicationId": {
+            "type": "string",
+            "description": "Id of form created"
+          },
+          "state": { "type": "string", "description": "Status of form" }
         },
-        "required": ["formId", "reviewId", "status"]
-      },
-      "SuccessModel": {
-        "type": "object",
-        "properties": {
-          "success": { "type": "boolean", "description": "Submission response" }
-        },
-        "required": ["success"]
+        "required": ["applicationId", "state"]
       },
       "Value": {
         "type": "object",
@@ -376,117 +626,305 @@
         "type": "object",
         "properties": {
           "id": { "type": "string" },
-          "street": { "type": "string" },
-          "municipality": { "type": "object", "nullable": true },
-          "zip": { "type": "string" },
-          "country": { "type": "object", "nullable": true }
+          "address": { "type": "string" },
+          "municipality": { "type": "string", "nullable": true },
+          "postCode": { "type": "string" },
+          "country": { "type": "string", "nullable": true },
+          "houseNumber": { "type": "number", "nullable": true },
+          "streetNumber": { "type": "number", "nullable": true },
+          "apartmentNumber": { "type": "number", "nullable": true },
+          "municipalityId": { "type": "string", "nullable": true }
         },
-        "required": ["id", "street", "municipality", "zip", "country"]
+        "required": [
+          "id",
+          "address",
+          "municipality",
+          "postCode",
+          "country",
+          "houseNumber",
+          "streetNumber",
+          "apartmentNumber",
+          "municipalityId"
+        ]
+      },
+      "ApplicationFeatureModel": {
+        "type": "object",
+        "properties": { "key": { "type": "string" } },
+        "required": ["key"]
+      },
+      "ApplicationFeatureConfig": {
+        "type": "object",
+        "properties": {
+          "applicationType": {
+            "type": "string",
+            "enum": ["enrollment", "transfer", "continuation"]
+          },
+          "applicationFeatures": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ApplicationFeatureModel" }
+          }
+        },
+        "required": ["applicationType", "applicationFeatures"]
+      },
+      "ApplicationSettings": {
+        "type": "object",
+        "properties": {
+          "applicationConfigs": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ApplicationFeatureConfig" }
+          }
+        },
+        "required": ["applicationConfigs"]
       },
       "OrganizationModel": {
         "type": "object",
         "properties": {
           "id": { "type": "string" },
-          "nationalId": { "type": "string" },
           "name": { "type": "string" },
           "type": {
             "type": "string",
-            "enum": ["municipality", "national", "school"]
+            "enum": [
+              "childCare",
+              "municipality",
+              "national",
+              "privateOwner",
+              "school"
+            ]
+          },
+          "subType": {
+            "type": "string",
+            "enum": [
+              "specialEducationBehaviorDepartment",
+              "specialEducationBehaviorSchool",
+              "specialEducationDisabilityDepartment",
+              "specialEducationDisabilitySchool",
+              "internationalSchool",
+              "generalSchool"
+            ],
+            "nullable": true
+          },
+          "sector": {
+            "type": "string",
+            "enum": ["public", "private"],
+            "nullable": true
           },
           "gradeLevels": { "type": "array", "items": { "type": "string" } },
-          "address": {
+          "address": { "$ref": "#/components/schemas/AddressModel" },
+          "unitId": { "type": "string", "nullable": true },
+          "settings": {
             "nullable": true,
-            "allOf": [{ "$ref": "#/components/schemas/AddressModel" }]
-          },
-          "parent": {
-            "nullable": true,
-            "default": null,
-            "allOf": [{ "$ref": "#/components/schemas/OrganizationModel" }]
-          },
-          "children": {
-            "nullable": true,
-            "default": [],
-            "type": "array",
-            "items": { "$ref": "#/components/schemas/OrganizationModel" }
+            "allOf": [{ "$ref": "#/components/schemas/ApplicationSettings" }]
           }
         },
         "required": [
           "id",
-          "nationalId",
           "name",
           "type",
+          "subType",
+          "sector",
           "gradeLevels",
-          "address",
-          "parent",
-          "children"
+          "unitId",
+          "settings"
         ]
       },
-      "MembershipOrganizationModel": {
+      "HealthProfileModel": {
         "type": "object",
         "properties": {
           "id": { "type": "string" },
-          "nationalId": { "type": "string" },
+          "userId": { "type": "string" },
+          "allergies": { "type": "array", "items": { "type": "string" } },
+          "foodAllergiesOrIntolerances": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "usesEpipen": { "type": "boolean" },
+          "hasConfirmedMedicalDiagnoses": { "type": "boolean" },
+          "requestsMedicationAdministration": { "type": "boolean" }
+        },
+        "required": [
+          "id",
+          "userId",
+          "allergies",
+          "foodAllergiesOrIntolerances",
+          "usesEpipen",
+          "hasConfirmedMedicalDiagnoses",
+          "requestsMedicationAdministration"
+        ]
+      },
+      "CaseWorkerModel": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "email": { "type": "string" },
+          "phone": { "type": "string" },
+          "type": {
+            "type": "string",
+            "enum": ["caseManager", "supportManager"]
+          }
+        },
+        "required": ["id", "name", "email", "phone", "type"]
+      },
+      "SocialProfileModel": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "userId": { "type": "string" },
+          "hasDiagnoses": { "type": "boolean", "default": false },
+          "hasIntegratedServices": { "type": "boolean", "default": false },
+          "caseWorkers": {
+            "nullable": true,
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/CaseWorkerModel" }
+          },
+          "hasHadSupport": { "type": "boolean", "default": false }
+        },
+        "required": [
+          "id",
+          "userId",
+          "hasDiagnoses",
+          "hasIntegratedServices",
+          "caseWorkers",
+          "hasHadSupport"
+        ]
+      },
+      "LanguageProfileModel": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "userId": { "type": "string" },
+          "languageEnvironment": { "type": "string" },
+          "preferredLanguage": { "type": "string" },
+          "signLanguage": { "type": "boolean" },
+          "languages": { "type": "array", "items": { "type": "string" } }
+        },
+        "required": [
+          "id",
+          "userId",
+          "languageEnvironment",
+          "preferredLanguage",
+          "signLanguage",
+          "languages"
+        ]
+      },
+      "AffiliationOrganizationModel": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "nationalId": { "type": "string", "nullable": true },
           "name": { "type": "string" },
           "type": {
             "type": "string",
-            "enum": ["municipality", "national", "school"]
+            "enum": [
+              "childCare",
+              "municipality",
+              "national",
+              "privateOwner",
+              "school"
+            ]
+          },
+          "subType": {
+            "type": "string",
+            "enum": [
+              "specialEducationBehaviorDepartment",
+              "specialEducationBehaviorSchool",
+              "specialEducationDisabilityDepartment",
+              "specialEducationDisabilitySchool",
+              "internationalSchool",
+              "generalSchool"
+            ],
+            "nullable": true
+          },
+          "sector": {
+            "type": "string",
+            "enum": ["public", "private"],
+            "nullable": true
           }
         },
-        "required": ["id", "nationalId", "name", "type"]
+        "required": ["id", "nationalId", "name", "type", "subType", "sector"]
       },
-      "MembershipModel": {
+      "AffiliationModel": {
         "type": "object",
         "properties": {
           "id": { "type": "string" },
           "role": {
             "type": "string",
             "enum": [
-              "admin",
+              "aide",
+              "counselor",
               "guardian",
-              "parent",
+              "member",
               "principal",
-              "relative",
               "student",
               "teacher"
             ]
           },
+          "classificationId": { "type": "string" },
           "beginDate": { "format": "date-time", "type": "string" },
           "endDate": {
             "format": "date-time",
             "type": "string",
             "nullable": true
           },
+          "email": { "type": "string", "nullable": true },
+          "phone": { "type": "string", "nullable": true },
           "organization": {
             "nullable": true,
             "allOf": [
-              { "$ref": "#/components/schemas/MembershipOrganizationModel" }
+              { "$ref": "#/components/schemas/AffiliationOrganizationModel" }
             ]
           }
         },
-        "required": ["id", "role", "beginDate", "endDate", "organization"]
+        "required": [
+          "id",
+          "role",
+          "classificationId",
+          "beginDate",
+          "endDate",
+          "organization"
+        ]
       },
       "AgentModel": {
         "type": "object",
         "properties": {
           "id": { "type": "string" },
-          "nationalId": { "type": "string" },
           "name": { "type": "string" },
-          "phone": { "type": "string" },
-          "email": { "type": "string" },
-          "role": { "type": "string" },
+          "nationalId": { "type": "string" },
+          "preferredName": { "type": "string", "nullable": true },
+          "nationality": { "type": "string", "nullable": true },
+          "pronouns": {
+            "nullable": true,
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "type": {
+            "type": "string",
+            "enum": ["emergencyContact", "guardian", "sibling"]
+          },
+          "relationTypeId": { "type": "string", "nullable": true },
+          "phone": { "type": "string", "nullable": true },
+          "email": { "type": "object" },
           "domicile": {
             "nullable": true,
             "allOf": [{ "$ref": "#/components/schemas/AddressModel" }]
-          }
+          },
+          "requiresInterpreter": { "type": "boolean", "default": false },
+          "preferredLanguage": { "type": "string", "nullable": true }
         },
         "required": [
           "id",
-          "nationalId",
           "name",
+          "nationalId",
+          "preferredName",
+          "nationality",
+          "pronouns",
+          "type",
+          "relationTypeId",
           "phone",
           "email",
-          "role",
-          "domicile"
+          "domicile",
+          "requiresInterpreter",
+          "preferredLanguage"
         ]
       },
       "UserModel": {
@@ -494,11 +932,16 @@
         "properties": {
           "id": { "type": "string" },
           "nationalId": { "type": "string" },
+          "nationalIdType": {
+            "type": "string",
+            "enum": ["unknown", "individual", "system"]
+          },
           "name": { "type": "string" },
-          "preferredName": { "type": "object", "nullable": true },
+          "nationality": { "type": "string", "nullable": true },
+          "preferredName": { "type": "string", "nullable": true },
           "pronouns": { "type": "array", "items": { "type": "string" } },
           "gradeLevel": { "type": "string" },
-          "email": { "type": "object", "nullable": true },
+          "email": { "type": "string", "nullable": true },
           "domicile": {
             "nullable": true,
             "allOf": [{ "$ref": "#/components/schemas/AddressModel" }]
@@ -507,31 +950,52 @@
             "nullable": true,
             "allOf": [{ "$ref": "#/components/schemas/AddressModel" }]
           },
-          "primaryOrgId": { "type": "object" },
-          "memberships": {
+          "healthProfile": {
+            "nullable": true,
+            "allOf": [{ "$ref": "#/components/schemas/HealthProfileModel" }]
+          },
+          "socialProfile": {
+            "nullable": true,
+            "allOf": [{ "$ref": "#/components/schemas/SocialProfileModel" }]
+          },
+          "languageProfile": {
+            "nullable": true,
+            "allOf": [{ "$ref": "#/components/schemas/LanguageProfileModel" }]
+          },
+          "primaryOrgId": { "type": "string", "nullable": true },
+          "affiliations": {
             "nullable": true,
             "type": "array",
-            "items": { "$ref": "#/components/schemas/MembershipModel" }
+            "items": { "$ref": "#/components/schemas/AffiliationModel" }
           },
           "agents": {
             "nullable": true,
             "type": "array",
             "items": { "$ref": "#/components/schemas/AgentModel" }
-          }
+          },
+          "phone": { "type": "string", "nullable": true },
+          "mobile": { "type": "string", "nullable": true }
         },
         "required": [
           "id",
           "nationalId",
+          "nationalIdType",
           "name",
+          "nationality",
           "preferredName",
           "pronouns",
           "gradeLevel",
           "email",
           "domicile",
           "residence",
+          "healthProfile",
+          "socialProfile",
+          "languageProfile",
           "primaryOrgId",
-          "memberships",
-          "agents"
+          "affiliations",
+          "agents",
+          "phone",
+          "mobile"
         ]
       }
     }

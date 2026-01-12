@@ -1,4 +1,4 @@
-import { style } from '@vanilla-extract/css'
+import { globalStyle, style } from '@vanilla-extract/css'
 import { spacing, theme, themeUtils } from '@island.is/island-ui/theme'
 import { StyleWithSelectors } from '@vanilla-extract/css/dist/declarations/src/types'
 
@@ -23,6 +23,7 @@ const dropdownBase: StyleWithSelectors = {
   left: spacing[0],
   borderRadius: 'unset',
   maxHeight: `calc(100vh - ${theme.headerHeight.small}px)`,
+  height: '100vh',
 }
 
 const dropdownBaseMD: StyleWithSelectors = {
@@ -30,6 +31,7 @@ const dropdownBaseMD: StyleWithSelectors = {
   width: 358,
   borderRadius: theme.border.radius.large,
   filter: 'drop-shadow(0px 4px 70px rgba(0, 97, 255, 0.1))',
+  height: 'auto',
 }
 
 export const dropdown = style({
@@ -56,8 +58,6 @@ export const fullScreen = style({
 
 export const wrapper = style({
   maxHeight: `calc(100vh - ${spacing[12]}px)`,
-  overflowY: 'auto',
-  overflowX: 'hidden',
 })
 
 export const closeButton = style({
@@ -80,7 +80,7 @@ export const closeButton = style({
   transition: 'background-color 250ms, border-color 250ms',
 
   ':hover': {
-    backgroundColor: theme.color.dark100,
+    backgroundColor: theme.color.blue100,
   },
 
   ':focus': {
@@ -88,6 +88,11 @@ export const closeButton = style({
     borderColor: theme.color.mint200,
   },
 })
+
+globalStyle(`${closeButton}:hover > svg`, {
+  color: theme.color.blue400,
+})
+
 export const hr = style({
   marginTop: theme.spacing[2],
   marginBottom: theme.spacing[2],
@@ -126,13 +131,22 @@ export const resetButtonPadding = style({
 })
 
 export const delegationName = style({
-  fontSize: '14px',
+  fontSize: '16px',
   lineHeight: '20px',
-  ...themeUtils.responsiveStyle({
-    md: {
-      fontSize: '16px',
-    },
-  }),
+
+  ':hover': {
+    textDecoration: 'none',
+  },
+})
+
+export const actorText = style({
+  whiteSpace: 'nowrap',
+  overflowX: 'hidden',
+})
+
+export const textWrapper = style({
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
 })
 
 export const actorName = style({
@@ -146,8 +160,10 @@ export const breakWord = style({
 })
 
 export const dropdownItem = style({
+  zIndex: theme.zIndex.above,
+  width: 'fit-content',
   ':hover': {
-    textDecoration: 'underline',
+    color: theme.color.blue400,
   },
 })
 
@@ -170,4 +186,8 @@ export const userDelegationsText = style({
 export const userTopicCardBox = style({
   height: 64,
   textAlign: 'left',
+})
+
+globalStyle(`${userTopicCardBox}:hover > ${userDelegationsText}`, {
+  color: theme.color.blue400,
 })

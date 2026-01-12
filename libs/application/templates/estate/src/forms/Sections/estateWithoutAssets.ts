@@ -15,13 +15,12 @@ export const estateWithoutAssets = buildSection({
     buildMultiField({
       id: 'estateAssetsExist',
       title: m.doAssetsExist,
-      description: '',
       children: [
         buildRadioField({
           id: 'estateWithoutAssets.estateAssetsExist',
           title: m.doAssetsExistSelect,
           width: 'half',
-          largeButtons: false,
+          largeButtons: true,
           options: [
             { label: JA, value: YES },
             { label: NEI, value: NO },
@@ -31,7 +30,7 @@ export const estateWithoutAssets = buildSection({
           id: 'estateWithoutAssets.estateDebtsExist',
           title: m.doDebtsExist,
           width: 'half',
-          largeButtons: false,
+          largeButtons: true,
           space: 'containerGutter',
           options: [
             { label: JA, value: YES },
@@ -45,12 +44,10 @@ export const estateWithoutAssets = buildSection({
         }),
         buildDescriptionField({
           id: 'spaceNoAssets',
-          title: '',
           space: 'containerGutter',
         }),
         buildDescriptionField({
           id: 'helper',
-          title: '',
           condition: (answers) =>
             getValueViaPath(
               answers,

@@ -1,8 +1,8 @@
 {
-  "openapi": "3.0.1",
+  "openapi": "3.0.4",
   "info": {
     "title": "SGS Rest API",
-    "description": "Mileage reading API developed in .Net8.0 - Release-21 : 20241105.1",
+    "description": "Mileage reading API developed in .Net8.0 - Release-32 : 20251218.1",
     "contact": {
       "name": "Samgöngustofa",
       "email": "tolvuhjalp@samgongustofa.is"
@@ -14,6 +14,7 @@
     "/authenticate": {
       "post": {
         "tags": ["Authentication"],
+        "summary": "Authentication for Domain user",
         "parameters": [
           {
             "name": "api-version",
@@ -29,6 +30,7 @@
           }
         ],
         "requestBody": {
+          "description": "",
           "content": {
             "application/json-patch+json": {
               "schema": { "$ref": "#/components/schemas/AuthenticateModel" }
@@ -98,6 +100,7 @@
     "/": {
       "post": {
         "tags": ["MileageReading"],
+        "summary": "Post mileage reading",
         "parameters": [
           {
             "name": "api-version",
@@ -113,6 +116,7 @@
           }
         ],
         "requestBody": {
+          "description": "Mileage reading model",
           "content": {
             "application/json-patch+json": {
               "schema": {
@@ -156,9 +160,7 @@
             "description": "Created",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PostMileageReadingModel"
-                }
+                "schema": { "$ref": "#/components/schemas/MileageReadingDto" }
               }
             }
           },
@@ -190,6 +192,7 @@
       },
       "put": {
         "tags": ["MileageReading"],
+        "summary": "Updates mileage reading",
         "parameters": [
           {
             "name": "api-version",
@@ -205,6 +208,7 @@
           }
         ],
         "requestBody": {
+          "description": "Mileage reading model",
           "content": {
             "application/json-patch+json": {
               "schema": {
@@ -250,11 +254,89 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/MileageReadingDto" }
+                  "items": { "$ref": "#/components/schemas/ReturnTypeMessage" }
                 }
               }
             }
           },
+          "204": { "description": "No Content" },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["MileageReading"],
+        "summary": "Deletes a mileage reading without error checks.",
+        "parameters": [
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "schema": { "type": "string", "default": "1.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "schema": { "type": "string", "default": "1.0" }
+          }
+        ],
+        "requestBody": {
+          "description": "The details of the mileage reading to delete.",
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteMileageReadingNoErrorCheckModel"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteMileageReadingNoErrorCheckModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteMileageReadingNoErrorCheckModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteMileageReadingNoErrorCheckModel"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteMileageReadingNoErrorCheckModel"
+              }
+            },
+            "text/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteMileageReadingNoErrorCheckModel"
+              }
+            },
+            "application/*+xml": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteMileageReadingNoErrorCheckModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": { "description": "No Content" },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -277,13 +359,21 @@
     "/{permno}": {
       "get": {
         "tags": ["MileageReading"],
+        "summary": "Populate all mileage readings for a vehicle",
         "operationId": "GetMileageReading",
         "parameters": [
           {
             "name": "permno",
             "in": "path",
+            "description": "Vehicle permanent number",
             "required": true,
             "schema": { "type": "string" }
+          },
+          {
+            "name": "includeDeleted",
+            "in": "query",
+            "description": "Include deleted records",
+            "schema": { "type": "boolean", "default": true }
           },
           {
             "name": "api-version",
@@ -329,13 +419,76 @@
         }
       }
     },
-    "/nextavailablemileageregistration/{permno}": {
+    "/{permno}/internalid/{internalId}": {
       "get": {
         "tags": ["MileageReading"],
+        "summary": "Retrieves a mileage reading by vehicle permno and internal ID",
+        "operationId": "GetMileageReadingWithInternalId",
         "parameters": [
           {
             "name": "permno",
             "in": "path",
+            "description": "The vehicle's permanent number",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "internalId",
+            "in": "path",
+            "description": "The internal ID of the mileage reading",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "schema": { "type": "string", "default": "1.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "schema": { "type": "string", "default": "1.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/MileageReadingDto" }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/nextavailablemileageregistration/{permno}": {
+      "get": {
+        "tags": ["MileageReading"],
+        "summary": "Get next available mileage registration",
+        "parameters": [
+          {
+            "name": "permno",
+            "in": "path",
+            "description": "Vehicle permanent number",
             "required": true,
             "schema": { "type": "string" }
           },
@@ -381,10 +534,12 @@
     "/canregistermileage/{permno}": {
       "get": {
         "tags": ["MileageReading"],
+        "summary": "Can vehicle register mileage",
         "parameters": [
           {
             "name": "permno",
             "in": "path",
+            "description": "Vehicle permanent number",
             "required": true,
             "schema": { "type": "string" }
           },
@@ -430,10 +585,12 @@
     "/requiresmileageregistration/{permno}": {
       "get": {
         "tags": ["MileageReading"],
+        "summary": "Is vehicle required to register mileage",
         "parameters": [
           {
             "name": "permno",
             "in": "path",
+            "description": "Vehicle permanent number",
             "required": true,
             "schema": { "type": "string" }
           },
@@ -479,6 +636,7 @@
     "/requestbulkmileagereading": {
       "post": {
         "tags": ["MileageReading"],
+        "summary": "Request a bulk mileage reading, only to be used by Island.is",
         "parameters": [
           {
             "name": "api-version",
@@ -494,6 +652,7 @@
           }
         ],
         "requestBody": {
+          "description": "Post model",
           "content": {
             "application/json-patch+json": {
               "schema": {
@@ -559,8 +718,14 @@
     "/getbulkmileagereadingrequests": {
       "get": {
         "tags": ["MileageReading"],
+        "summary": "Populate all mileage readings for a vehicle",
         "parameters": [
-          { "name": "persidno", "in": "query", "schema": { "type": "string" } },
+          {
+            "name": "persidno",
+            "in": "query",
+            "description": "Vehicle permanent number",
+            "schema": { "type": "string" }
+          },
           {
             "name": "api-version",
             "in": "header",
@@ -618,10 +783,12 @@
     "/getbulkmileagereadingrequestdetails/{guid}": {
       "get": {
         "tags": ["MileageReading"],
+        "summary": "Populate all mileage readings for a vehicle",
         "parameters": [
           {
             "name": "guid",
             "in": "path",
+            "description": "Guid of bulk request",
             "required": true,
             "schema": { "type": "string" }
           },
@@ -682,10 +849,12 @@
     "/getbulkmileagereadingrequeststatus/{guid}": {
       "get": {
         "tags": ["MileageReading"],
+        "summary": "Get status of bulk mileage request by guid",
         "parameters": [
           {
             "name": "guid",
             "in": "path",
+            "description": "Guid",
             "required": true,
             "schema": { "type": "string" }
           },
@@ -731,6 +900,53 @@
           },
           "404": {
             "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/setvehicleodometerasmiles/{permno}": {
+      "post": {
+        "tags": ["MileageReading"],
+        "summary": "Post mileage reading",
+        "operationId": "SetVehicleOdometerAsMiles",
+        "parameters": [
+          {
+            "name": "permno",
+            "in": "path",
+            "description": "Vehicle permanent number",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "schema": { "type": "string", "default": "1.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "schema": { "type": "string", "default": "1.0" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "OK" },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/ProblemDetails" }
@@ -795,7 +1011,8 @@
           "warningSerial": {
             "type": "integer",
             "description": "Warning serial",
-            "format": "int32"
+            "format": "int32",
+            "nullable": true
           },
           "errorText": {
             "type": "string",
@@ -844,7 +1061,7 @@
           },
           "dateFinished": {
             "type": "string",
-            "description": "When dd bulk request finish",
+            "description": "When did bulk request finish",
             "format": "date-time",
             "nullable": true
           }
@@ -853,6 +1070,7 @@
         "description": "Dto for bulk mileage reading requests"
       },
       "BulkMileageReadingRequestResultDto": {
+        "required": ["guid"],
         "type": "object",
         "properties": {
           "guid": {
@@ -906,7 +1124,35 @@
         "additionalProperties": false,
         "description": "Dto for status of bulk mileage reading request"
       },
+      "DeleteMileageReadingNoErrorCheckModel": {
+        "required": ["permno"],
+        "type": "object",
+        "properties": {
+          "permno": {
+            "maxLength": 5,
+            "minLength": 5,
+            "pattern": "^[ABCDEFGHIJKLMNOPRSTUVXYZÞÖ][ABCDEFGHIJKLMNOPRSTUVXYZÞÖ][ABCDEFGHIJKLMNOPRSTUVXYZÞÖ0-9][0-9][0-9]$",
+            "type": "string",
+            "description": "Vehicle permno."
+          },
+          "internalId": {
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "type": "integer",
+            "description": "Internal record identifier for the mileage reading.",
+            "format": "int32"
+          },
+          "reportingPersidno": {
+            "type": "string",
+            "description": "Identifier for the reporting person.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Model for deleting a mileage reading without error checks."
+      },
       "MileageReadingDto": {
+        "required": ["operation", "originCode", "permno"],
         "type": "object",
         "properties": {
           "permno": {
@@ -922,8 +1168,7 @@
           "readDate": {
             "type": "string",
             "description": "Date of mileage reading",
-            "format": "date-time",
-            "nullable": true
+            "format": "date-time"
           },
           "originCode": {
             "type": "string",
@@ -942,7 +1187,7 @@
           },
           "reportingPersidno": {
             "type": "string",
-            "description": "If user registering this mileage is not owner/operator, the owner/operator social security number should be in here",
+            "description": "If not owner/operator, the owner/operator social security number",
             "nullable": true
           },
           "transactionDate": {
@@ -956,14 +1201,20 @@
         "description": "Mileage data transfer object"
       },
       "MileageReadingModel": {
+        "required": ["mileage", "permno"],
         "type": "object",
         "properties": {
           "permno": {
+            "maxLength": 5,
+            "minLength": 5,
+            "pattern": "^[ABCDEFGHIJKLMNOPRSTUVXYZÞÖ][ABCDEFGHIJKLMNOPRSTUVXYZÞÖ][ABCDEFGHIJKLMNOPRSTUVXYZÞÖ0-9][0-9][0-9]$",
             "type": "string",
-            "description": "Vehicle permno",
-            "nullable": true
+            "description": "Vehicle permno"
           },
           "mileage": {
+            "maximum": 999999999,
+            "minimum": 0,
+            "exclusiveMinimum": true,
             "type": "integer",
             "description": "Milegae",
             "format": "int32"
@@ -973,30 +1224,33 @@
         "description": "One mileage entity"
       },
       "PostBulkMileageReadingModel": {
+        "required": ["mileageData", "originCode"],
         "type": "object",
         "properties": {
           "originCode": {
+            "maxLength": 10,
+            "minLength": 1,
             "type": "string",
-            "description": "Origin code of reading",
-            "nullable": true
+            "description": "Origin code of reading"
           },
           "mileageData": {
+            "minItems": 1,
             "type": "array",
             "items": { "$ref": "#/components/schemas/MileageReadingModel" },
-            "description": "Mileage reading data",
-            "nullable": true
+            "description": "Mileage reading data"
           }
         },
         "additionalProperties": false,
         "description": "Bulk mileage reading model"
       },
       "PostMileageReadingModel": {
-        "required": ["mileage", "originCode", "permno"],
+        "required": ["originCode", "permno"],
         "type": "object",
         "properties": {
           "permno": {
             "maxLength": 5,
             "minLength": 5,
+            "pattern": "^[ABCDEFGHIJKLMNOPRSTUVXYZÞÖ][ABCDEFGHIJKLMNOPRSTUVXYZÞÖ][ABCDEFGHIJKLMNOPRSTUVXYZÞÖ0-9][0-9][0-9]$",
             "type": "string",
             "description": "Vehicle permanent number"
           },
@@ -1014,7 +1268,7 @@
             "description": "Where does reading come from"
           },
           "mileage": {
-            "maximum": 9999999,
+            "maximum": 999999999,
             "minimum": 0,
             "exclusiveMinimum": true,
             "type": "integer",
@@ -1051,33 +1305,56 @@
         "additionalProperties": false
       },
       "PutMileageReadingModel": {
-        "required": ["internalId", "mileage", "permno"],
+        "required": ["originCode", "permno"],
         "type": "object",
         "properties": {
           "permno": {
             "maxLength": 5,
             "minLength": 5,
+            "pattern": "^[ABCDEFGHIJKLMNOPRSTUVXYZÞÖ][ABCDEFGHIJKLMNOPRSTUVXYZÞÖ][ABCDEFGHIJKLMNOPRSTUVXYZÞÖ0-9][0-9][0-9]$",
             "type": "string",
             "description": "Vehicle permanent number"
           },
+          "readDate": {
+            "type": "string",
+            "description": "Date of mileage reading, is always sysdate",
+            "format": "date-time",
+            "nullable": true,
+            "readOnly": true
+          },
           "internalId": {
+            "minimum": 0,
+            "exclusiveMinimum": true,
             "type": "integer",
             "description": "Internal id",
             "format": "int32"
           },
           "mileage": {
-            "maximum": 9999999,
+            "maximum": 999999999,
             "minimum": 0,
             "exclusiveMinimum": true,
             "type": "integer",
             "description": "Mileage reading",
             "format": "int32"
+          },
+          "operation": {
+            "type": "string",
+            "description": "Operation (I,U,D), is always U for Update",
+            "nullable": true,
+            "readOnly": true
+          },
+          "originCode": {
+            "maxLength": 10,
+            "minLength": 1,
+            "type": "string",
+            "description": "Origin code, see /codetables/mileagereadingorigin"
           }
         },
         "additionalProperties": false,
-        "description": "Model to post mileage reading"
+        "description": "Model to correct mileage reading"
       },
       "ReturnTypeMessage": {
+        "required": ["errorMess", "warnSever"],
         "type": "object",
         "properties": {
           "lookupNo": {

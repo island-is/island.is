@@ -11,7 +11,7 @@ import {
   Application,
   DefaultEvents,
   defineTemplateApi,
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   UserProfileApi,
   ExistingApplicationApi,
   ApplicationConfigurations,
@@ -28,6 +28,7 @@ import { m } from '../lib/messages'
 import { ApiActions } from './constants'
 import { DeathNoticeApi } from '../dataProviders'
 import { determineMessageFromApplicationAnswers } from './utils'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const configuration =
   ApplicationConfigurations[ApplicationTypes.ANNOUNCEMENT_OF_DEATH]
@@ -38,6 +39,7 @@ const AnnouncementOfDeathTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.ANNOUNCEMENT_OF_DEATH,
   name: determineMessageFromApplicationAnswers,
+  codeOwner: CodeOwners.Juni,
   institution: m.applicationInstitution,
   dataSchema: dataSchema,
   translationNamespaces: [configuration.translation],
@@ -76,7 +78,7 @@ const AnnouncementOfDeathTemplate: ApplicationTemplate<
               delete: true,
               api: [
                 DeathNoticeApi,
-                NationalRegistryUserApi,
+                NationalRegistryV3UserApi,
                 UserProfileApi,
                 ExistingApplicationApi.configure({
                   params: {

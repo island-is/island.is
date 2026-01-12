@@ -18,12 +18,10 @@ export const approvePrivateDivisionSubmission = buildSection({
       children: [
         buildDescriptionField({
           id: 'spaceSubmission',
-          title: '',
           space: 'containerGutter',
         }),
         buildCheckboxField({
           id: 'confirmAction',
-          title: '',
           large: true,
           backgroundColor: 'blue',
           defaultValue: [],

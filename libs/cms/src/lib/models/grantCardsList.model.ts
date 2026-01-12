@@ -1,4 +1,4 @@
-import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql'
+import { Field, ObjectType, ID, registerEnumType, Int } from '@nestjs/graphql'
 
 import { IGrantCardsList } from '../generated/contentfulTypes'
 import { CacheField } from '@island.is/nest/graphql'
@@ -23,6 +23,9 @@ export class GrantCardsList {
   @Field()
   title!: string
 
+  @Field()
+  alwaysDisplayResultsAsCards!: boolean
+
   @Field({ nullable: true })
   displayTitle?: boolean
 
@@ -31,6 +34,12 @@ export class GrantCardsList {
 
   @CacheField(() => GraphQLJSONObject)
   namespace?: typeof GraphQLJSONObject
+
+  @Field(() => Int, { nullable: true })
+  maxNumberOfCards?: number
+
+  @CacheField(() => CardSorting, { nullable: true })
+  sorting?: CardSorting
 }
 
 export const mapGrantCardsList = ({
@@ -42,6 +51,16 @@ export const mapGrantCardsList = ({
     id: sys.id,
     title: fields.grantCardListTitle,
     displayTitle: fields.grantCardsListDisplayTitle,
+    maxNumberOfCards: fields.grantCardsListMaxNumberOfCards,
+    //returns false if and only if the field is false
+    alwaysDisplayResultsAsCards: !(
+      fields.grantCardsAlwaysDisplayResultsAsCards === false
+    ),
+    sorting:
+      fields.grantCardsListSorting &&
+      fields.grantCardsListSorting === 'Alphabetical'
+        ? CardSorting.ALPHABETICAL
+        : CardSorting.MOST_RECENTLY_UPDATED_FIRST,
     resolvedGrantsList: {
       lang:
         sys.locale === 'is-IS'

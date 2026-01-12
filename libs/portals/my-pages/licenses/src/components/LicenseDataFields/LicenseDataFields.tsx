@@ -3,6 +3,7 @@ import {
   GenericLicenseDataFieldType,
   GenericUserLicenseDataFieldTagColor,
   GenericUserLicenseDataFieldTagType,
+  GenericUserLicenseMetaLinksType,
 } from '@island.is/api/schema'
 import {
   Box,
@@ -12,9 +13,10 @@ import {
   Table as T,
   Pagination,
 } from '@island.is/island-ui/core'
-import { UserInfoLine } from '@island.is/portals/my-pages/core'
+import { InfoLine, UserInfoLine } from '@island.is/portals/my-pages/core'
 import { useMemo, useState } from 'react'
 import ExpandableLine from '../ExpandableLine/ExpandableLine'
+import copyToClipboard from 'copy-to-clipboard'
 
 const getTagColor = (
   color: GenericUserLicenseDataFieldTagColor,
@@ -43,26 +45,49 @@ export const LicenseDataFields = ({
   const mappedFields = useMemo(() => {
     return fields.map((field, i) => {
       if (field.hideFromServicePortal) return undefined
+
       return (
         <Box key={`data-field-${i}`}>
           {field.type === GenericLicenseDataFieldType.Value && (
             <>
-              <UserInfoLine
-                title={field.name ?? ''}
+              <InfoLine
                 label={field.label ?? ''}
-                editLink={
-                  field.link
+                button={
+                  field.link?.type ===
+                    GenericUserLicenseMetaLinksType.External &&
+                  field.link?.value
                     ? {
-                        url: field.link.value ?? '',
-                        title: field.link.label ?? undefined,
+                        type: 'link',
+                        icon: 'link',
+                        label: field.link.label ?? undefined,
+                        to: field.link.value,
                       }
-                    : undefined
+                    : field.link?.type ===
+                        GenericUserLicenseMetaLinksType.Download &&
+                      field.link.value
+                    ? {
+                        type: 'link',
+                        icon: 'download',
+                        label: field.link.label ?? undefined,
+                        to: field.link.value,
+                      }
+                    : /*: field.link?.type ===
+                        GenericUserLicenseMetaLinksType.Copy &&
+                      field.link?.value
+                    ? {
+                        type: 'action',
+                        icon: 'copy',
+                        label: field.link.label ?? undefined,
+                        action: () => copyToClipboard(field.link?.value ?? ''),
+                        variant: 'utility',
+                      } */
+                      undefined
                 }
                 renderContent={
                   field.value
                     ? () => (
                         <Box display="flex" alignItems="center">
-                          <Text>{field.value}</Text>
+                          <Text whiteSpace="preLine">{field.value}</Text>
                           <Box
                             marginLeft={2}
                             display="flex"

@@ -30,7 +30,11 @@ export class SecondarySchoolClient {
 
   async getStudentInfo(auth: User): Promise<Student> {
     const studentInfo = await this.studentsApiWithAuth(auth).v1StudentsInfoGet()
-    return { isFreshman: studentInfo?.isFreshman || false }
+    return {
+      hasActiveApplication: studentInfo?.hasActiveApplication || false,
+      isFreshman: studentInfo?.isFreshman || false,
+      externalIds: studentInfo?.applications || [],
+    }
   }
 
   async getSchools(auth: User): Promise<SecondarySchool[]> {
@@ -75,28 +79,51 @@ export class SecondarySchoolClient {
     return res.map((program) => ({
       id: program.id || '',
       nameIs: `${program.title || ''} - ${program.code}`,
-      nameEn: `${program.titleEnglish || ''} - ${program.code}`,
+      nameEn: `${program.titleEnglish || program.title || ''} - ${
+        program.code
+      }`,
       registrationEndDate: program.registryEndDate || new Date(),
+      isSpecialNeedsProgram: program.isSpecialNeedsProgramme || false,
     }))
   }
 
-  async validateCanCreate(auth: User): Promise<boolean> {
-    const studentInfo = await this.studentsApiWithAuth(auth).v1StudentsInfoGet()
-    return !studentInfo?.hasActiveApplication
+  async delete(auth: User, applicationId: string): Promise<void> {
+    return this.applicationsApiWithAuth(
+      auth,
+    ).v1ApplicationsIslandIsApplicationIdDelete({
+      islandIsApplicationId: applicationId,
+    })
   }
 
-  async delete(auth: User, externalId: string): Promise<void> {
-    return this.applicationsApiWithAuth(auth).v1ApplicationsApplicationIdDelete(
-      {
-        applicationId: externalId,
-      },
-    )
+  async getExternalId(
+    auth: User,
+    applicationId: string,
+  ): Promise<string | undefined> {
+    let externalId: string | undefined
+
+    try {
+      externalId = await this.applicationsApiWithAuth(
+        auth,
+      ).v1ApplicationsIslandIsApplicationIdIdGet({
+        islandIsApplicationId: applicationId,
+      })
+    } catch (e) {
+      if (e.response?.status !== 404) {
+        // Rethrow if the error isn't due to the application not existing
+        throw e
+      }
+    }
+
+    // clean externalId and remove double quotes that is added by the openapi generator (bug in generator)
+    return externalId?.replace(/['"]+/g, '')
   }
 
-  async create(auth: User, application: Application): Promise<string> {
+  async createOrUpdate(auth: User, application: Application): Promise<string> {
     const applicationBaseDto = {
+      islandIsApplicationId: application.id,
       applicantNationalId: application.nationalId,
       applicantName: application.name,
+      applicantGender: application.genderCode,
       isFreshman: application.isFreshman,
       phoneNumber: application.phone,
       email: application.email,
@@ -113,10 +140,10 @@ export class SecondarySchoolClient {
       })),
       speakingLanguage: application.nativeLanguageCode,
       otherInformation: application.otherDescription,
-      applicationChoices: application.schools.map((school) => ({
+      schoolChoices: application.schools.map((school) => ({
         priority: school.priority,
         schoolId: school.schoolId,
-        programmeChoice: school.programs.map((program) => ({
+        programmeChoices: school.programs.map((program) => ({
           priority: program.priority,
           programmeId: program.programId,
         })),
@@ -127,18 +154,36 @@ export class SecondarySchoolClient {
       attachments: application.attachments,
     }
 
-    try {
-      const result = await this.applicationsApiWithAuth(
-        auth,
-      ).v1ApplicationsPost({
-        applicationBaseDto,
-      })
-      if (!result.id) {
-        throw new Error('Application creation failed: No ID returned')
+    if (application.externalId) {
+      try {
+        await this.applicationsApiWithAuth(
+          auth,
+        ).v1ApplicationsIslandIsApplicationIdPut({
+          islandIsApplicationId: application.id,
+          applicationBaseDto,
+        })
+
+        return application.externalId
+      } catch (error) {
+        throw new Error(`Failed to update application: ${error.message}`)
       }
-      return result.id
-    } catch (error) {
-      throw new Error(`Failed to create application: ${error.message}`)
+    } else {
+      try {
+        const result = await this.applicationsApiWithAuth(
+          auth,
+        ).v1ApplicationsPost({
+          applicationBaseDto,
+        })
+
+        if (!result.id) {
+          throw new Error('Application creation failed: No ID returned')
+        }
+
+        // Return external ID
+        return result.id
+      } catch (error) {
+        throw new Error(`Failed to create application: ${error.message}`)
+      }
     }
   }
 }

@@ -22,7 +22,7 @@ import {
   Schema,
   BeforeSubmitCallback,
   Section,
-  FormText,
+  SetBeforeSubmitCallbackOptions,
 } from '@island.is/application/types'
 import {
   Box,
@@ -44,7 +44,6 @@ import {
   ProblemType,
 } from '@island.is/shared/problem'
 import { handleServerError } from '@island.is/application/ui-components'
-
 import { FormScreen, ResolverContext } from '../types'
 import FormMultiField from './FormMultiField'
 import FormField from './FormField'
@@ -54,8 +53,9 @@ import FormExternalDataProvider from './FormExternalDataProvider'
 import { extractAnswersToSubmitFromScreen, findSubmitField } from '../utils'
 import ScreenFooter from './ScreenFooter'
 import RefetchContext from '../context/RefetchContext'
-import { MessageDescriptor } from 'react-intl'
 import { Locale } from '@island.is/shared/types'
+import { useUserInfo } from '@island.is/react-spa/bff'
+import { uuid } from 'uuidv4'
 
 type ScreenProps = {
   activeScreenIndex: number
@@ -153,16 +153,67 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
     reset,
   } = hookFormData
 
-  const submitField = useMemo(() => findSubmitField(screen), [screen])
+  const user = useUserInfo()
+
+  const submitField = useMemo(() => {
+    const foundSubmitField = findSubmitField(screen)
+
+    if (!foundSubmitField) {
+      return undefined
+    }
+
+    const submitFieldCondition = foundSubmitField
+      ?.map((field) => {
+        if (typeof field.condition === 'function') {
+          return field.condition(formValue, externalData, user)
+            ? field
+            : undefined
+        }
+        return field
+      })
+      .filter(Boolean)
+    return submitFieldCondition.length > 0 ? submitFieldCondition[0] : undefined
+  }, [formValue, externalData, screen, user])
 
   const [beforeSubmitError, setBeforeSubmitError] = useState({})
   const beforeSubmitCallback = useRef<BeforeSubmitCallback | null>(null)
+  const beforeSubmitCallbacksMap = useRef<Map<string, BeforeSubmitCallback>>(
+    new Map(),
+  )
 
   const setBeforeSubmitCallback = useCallback(
-    (callback: BeforeSubmitCallback | null) => {
-      beforeSubmitCallback.current = callback
+    (
+      callback: BeforeSubmitCallback | null,
+      options?: SetBeforeSubmitCallbackOptions,
+    ) => {
+      // Unique ID for this callback to prevent registering the same callback when using multiple
+      const id = options?.customCallbackId ?? uuid()
+
+      // If null is passed, clear the current beforeSubmit callback
+      if (callback === null) {
+        beforeSubmitCallbacksMap.current.clear()
+        beforeSubmitCallback.current = null
+        return
+      }
+
+      if (!options?.allowMultiple) {
+        // Replace all existing callbacks with just this one
+        beforeSubmitCallbacksMap.current = new Map([[id, callback]])
+      } else {
+        // Deduplicate by id
+        beforeSubmitCallbacksMap.current.set(id, callback)
+      }
+
+      // Rebuild a single composed callback from all callbacks in the map
+      beforeSubmitCallback.current = async (event) => {
+        for (const [_id, cb] of beforeSubmitCallbacksMap.current.entries()) {
+          const [ok, message] = await cb(event)
+          if (!ok) return [ok, message]
+        }
+        return [true, null]
+      }
     },
-    [beforeSubmitCallback],
+    [beforeSubmitCallback], // Only re-create this function if the ref changes
   )
 
   const parsedUpdateApplicationError = getServerValidationErrors(
@@ -188,8 +239,27 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
     setIsSubmitting(true)
     setBeforeSubmitError({})
 
+    let event: string | undefined
+    if (submitField !== undefined) {
+      const finalAnswers = { ...formValue, ...data }
+      if (submitField.placement === 'screen') {
+        event = (finalAnswers[submitField.id] as string) ?? 'SUBMIT'
+      } else {
+        if (submitField.actions.length === 1) {
+          const actionEvent = submitField.actions[0].event
+          event =
+            typeof actionEvent === 'object' ? actionEvent.type : actionEvent
+        } else {
+          const nativeEvent = e?.nativeEvent as { submitter: { id: string } }
+          event = nativeEvent?.submitter?.id ?? 'SUBMIT'
+        }
+      }
+    }
+
     if (typeof beforeSubmitCallback.current === 'function') {
-      const [canContinue, possibleError] = await beforeSubmitCallback.current()
+      const [canContinue, possibleError] = await beforeSubmitCallback.current(
+        event,
+      )
 
       if (!canContinue) {
         setIsSubmitting(false)
@@ -203,19 +273,6 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
 
     if (submitField !== undefined) {
       const finalAnswers = { ...formValue, ...data }
-      let event: string
-      if (submitField.placement === 'screen') {
-        event = (finalAnswers[submitField.id] as string) ?? 'SUBMIT'
-      } else {
-        if (submitField.actions.length === 1) {
-          const actionEvent = submitField.actions[0].event
-          event =
-            typeof actionEvent === 'object' ? actionEvent.type : actionEvent
-        } else {
-          const nativeEvent = e?.nativeEvent as { submitter: { id: string } }
-          event = nativeEvent?.submitter?.id ?? 'SUBMIT'
-        }
-      }
 
       response = await submitApplication({
         variables: {
@@ -230,7 +287,11 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
       if (response?.data) {
         addExternalData(response.data?.submitApplication.externalData)
 
-        if (submitField.refetchApplicationAfterSubmit) {
+        if (
+          submitField.refetchApplicationAfterSubmit === true ||
+          (typeof submitField.refetchApplicationAfterSubmit === 'function' &&
+            submitField.refetchApplicationAfterSubmit(event))
+        ) {
           refetch()
         }
       }
@@ -349,7 +410,7 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
             {...(shouldCreateTopLevelRegion ? { id: screen.id } : {})}
           >
             {formatTextWithLocale(
-              screen.title,
+              screen.title ?? '',
               application,
               locale as Locale,
               formatMessage,

@@ -1,7 +1,6 @@
 import InheritanceReportTemplate from './lib/InheritanceReportTemplate'
-import { inheritanceReportSchema } from './lib/dataSchema'
-
 export const getFields = () => import('./fields')
 
+export { inheritanceReportSchema } from './lib/dataSchema'
+export { DebtTypes } from './types'
 export default InheritanceReportTemplate
-export { inheritanceReportSchema }

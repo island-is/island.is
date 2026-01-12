@@ -18,12 +18,13 @@ global:
       NPM_CONFIG_UPDATE_NOTIFIER: 'false'
 name: 'application-system-api'
 args:
-  - 'main.js'
+  - 'main.cjs'
 command:
   - 'node'
 enabled: true
 env:
   APPLICATION_ATTACHMENT_BUCKET: 'island-is-dev-storage-application-system'
+  APPLICATION_SYSTEM_BULL_PREFIX: 'application_system_api_bull_module'
   AUTH_PUBLIC_API_URL: 'https://identity-server.dev01.devland.is/api'
   CLIENT_LOCATION_ORIGIN: 'https://beta.dev01.devland.is/umsoknir'
   CODE_OWNER: 'norda-applications'
@@ -37,7 +38,7 @@ env:
   DB_USER: 'application_system_api'
   EHIC_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10007/SJUKRA-Protected/ehic'
   EMAIL_REGION: 'eu-west-1'
-  ENDORSEMENTS_API_BASE_PATH: 'http://web-endorsement-system-api.endorsement-system.svc.cluster.local'
+  ENDORSEMENTS_API_BASE_PATH: 'http://endorsement-system-api.endorsement-system.svc.cluster.local'
   FILE_SERVICE_PRESIGN_BUCKET: 'island-is-dev-fs-presign-bucket'
   FILE_STORAGE_UPLOAD_BUCKET: 'island-is-dev-upload-api'
   FINANCIAL_STATEMENTS_INAO_BASE_PATH: 'https://dev-re.crm4.dynamics.com/api/data/v9.1'
@@ -47,32 +48,40 @@ env:
   FISHING_LICENSE_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10012/Fiskistofa-Protected/veidileyfi-v1'
   FUNDING_GOVERNMENT_PROJECTS_APPLICATION_RECIPIENT_EMAIL_ADDRESS: 'gunnar.ingi@fjr.is'
   FUNDING_GOVERNMENT_PROJECTS_APPLICATION_RECIPIENT_NAME: 'Gunnar Ingi'
-  GRAPHQL_API_URL: 'http://web-api.islandis.svc.cluster.local'
+  GRAPHQL_API_URL: 'http://api.islandis.svc.cluster.local'
+  HH_COURSES_ZENDESK_SUBJECT: '[TEST] Skráning á námskeið - Heilsugæsla höfuðborgarsvæðisins'
+  HMS_CONTRACTS_AUTH_CLIENT_ID: 'e2411f5c-436a-4c17-aa14-eab9c225bc06'
+  HMS_CONTRACTS_AUTH_TENANT_ID: 'c7256472-2622-417e-8955-a54eeb0a110e'
+  HMS_CONTRACTS_AUTH_TOKEN_ENDPOINT: 'https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/token'
   IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/application-system'
   IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
   INSTITUTION_APPLICATION_RECIPIENT_EMAIL_ADDRESS: 'gunnar.ingi@fjr.is'
   INSTITUTION_APPLICATION_RECIPIENT_NAME: 'Gunnar Ingi'
-  ISLYKILL_CERT: '/etc/config/islyklar.p12'
   LOGIN_SERVICE_APPLICATION_RECIPIENT_EMAIL_ADDRESS: 'gunnar.ingi@fjr.is'
   LOGIN_SERVICE_APPLICATION_RECIPIENT_NAME: 'Gunnar Ingi'
   LOG_LEVEL: 'info'
+  NATIONAL_REGISTRY_B2C_APPLICATION_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/MidlunUmsoknir-v1'
+  NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraidentitydev.onmicrosoft.com/midlunumsoknir/.default'
   NATIONAL_REGISTRY_B2C_CLIENT_ID: 'b464afdd-056b-406d-b650-6d41733cfeb7'
   NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
   NATIONAL_REGISTRY_B2C_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1'
   NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitydev.onmicrosoft.com/midlun/.default'
-  NODE_OPTIONS: '--max-old-space-size=921 -r dd-trace/init'
+  NODE_OPTIONS: '--max-old-space-size=921 --enable-source-maps -r dd-trace/init'
   NOVA_ACCEPT_UNAUTHORIZED: 'true'
   NOVA_USERNAME: 'IslandIs_User_Development'
-  RECYCLING_FUND_GQL_BASE_PATH: 'http://web-skilavottord-ws.skilavottord.svc.cluster.local/app/skilavottord/api/graphql'
+  PAYMENTS_API_URL: 'http://services-payments.services-payments.svc.cluster.local'
+  PAYMENT_API_CALLBACK_URL: 'http://application-system-api.application-system.svc.cluster.local'
+  RECYCLING_FUND_GQL_BASE_PATH: 'http://skilavottord-ws.skilavottord.svc.cluster.local/app/skilavottord/api/graphql'
   REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
   SERVERSIDE_FEATURES_ON: ''
-  SERVICE_DOCUMENTS_BASEPATH: 'http://web-services-documents.services-documents.svc.cluster.local'
-  SERVICE_USER_PROFILE_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
-  UNIVERSITY_GATEWAY_API_URL: 'http://web-services-university-gateway.services-university-gateway.svc.cluster.local'
-  USER_NOTIFICATION_API_URL: 'http://web-user-notification.user-notification.svc.cluster.local'
+  SERVICE_DOCUMENTS_BASEPATH: 'http://services-documents.services-documents.svc.cluster.local'
+  SERVICE_USER_PROFILE_URL: 'http://service-portal-api.service-portal.svc.cluster.local'
+  UNIVERSITY_GATEWAY_API_URL: 'http://services-university-gateway.services-university-gateway.svc.cluster.local'
+  USER_NOTIFICATION_API_URL: 'http://user-notification.user-notification.svc.cluster.local'
+  VMST_UNEMPLOYMENT_XROAD_PATH: 'IS-DEV/GOV/10003/VMST-Protected/XRoadDev-v1'
   WORKPOINT_ARBORG_SERVICE_PATH: 'IS-DEV/MUN/10036/Arborg-Protected/tengill-application-v1'
   XROAD_AGRICULTURAL_UNIVERSITY_OF_ICELAND_PATH: 'IS-DEV/EDU/10056/LBHI-Protected/brautskraning-v1'
-  XROAD_ALTHINGI_OMBUDSMAN_SERVICE_PATH: 'IS-DEV/GOV/10047/UA-Protected/kvortun-v1/'
+  XROAD_ALTHINGI_OMBUDSMAN_SERVICE_PATH: 'IS-DEV/GOV/10047/UA-Protected/kvortun-v1'
   XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
   XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
   XROAD_BIFROST_UNIVERSITY_PATH: 'IS-DEV/EDU/10057/Bifrost-Protected/brautskraning-v1'
@@ -88,23 +97,31 @@ env:
   XROAD_DRIVING_LICENSE_V4_PATH: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/Okuskirteini-v4'
   XROAD_DRIVING_LICENSE_V5_PATH: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/Okuskirteini-v5'
   XROAD_ENERGY_FUNDS_PATH: 'IS-DEV/GOV/10021/FJS-Public/ElectricCarSubSidyService_v1'
+  XROAD_EXEMPTION_FOR_TRANSPORTATION_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Leyfur-V1'
   XROAD_FINANCES_PATH: 'IS-DEV/GOV/10021/FJS-Public/financeIsland'
   XROAD_FINANCES_V2_PATH: 'IS-DEV/GOV/10021/FJS-Public/financeServicesFJS_v2'
   XROAD_FINANCIAL_AID_BACKEND_PATH: 'IS-DEV/MUN/10023/samband-sveitarfelaga/financial-aid-backend'
+  XROAD_FJS_BANKINFO_PATH: 'IS-DEV/GOV/10021/FJS-Public/TBRBankMgrService_v1'
+  XROAD_HEALTH_DIRECTORATE_HEALTH_PATH: 'IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/health-service-v1'
   XROAD_HEALTH_DIRECTORATE_ORGAN_DONATION_PATH: 'IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/organ-donation-v1'
   XROAD_HEALTH_DIRECTORATE_PATH: 'IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/landlaeknir'
   XROAD_HEALTH_DIRECTORATE_VACCINATION_PATH: 'IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/vaccination-v1'
   XROAD_HEALTH_INSURANCE_ID: 'IS-DEV/GOV/10007/SJUKRA-Protected'
   XROAD_HEALTH_INSURANCE_MY_PAGES_PATH: 'IS-DEV/GOV/10007/SJUKRA-Protected/minarsidur'
   XROAD_HEALTH_INSURANCE_WSDLURL: 'https://test-huld.sjukra.is/islandrg?wsdl'
+  XROAD_HMS_APPLICATION_SYSTEM_CLIENT_HEADER: 'IS-DEV/GOV/10000/island-is-client'
+  XROAD_HMS_APPLICATION_SYSTEM_PATH: 'IS-DEV/GOV/10033/HMS-Protected/formbuilder-v1'
   XROAD_HMS_HOUSING_BENEFITS_PATH: 'IS-DEV/GOV/10033/HMS-Protected/husbot-v1'
   XROAD_HMS_LOANS_PATH: 'IS-DEV/GOV/10033/HMS-Protected/libra-v1'
+  XROAD_HMS_RENTAL_SERVICE_CLIENT_HEADER: 'IS-DEV/GOV/10000/island-is-client'
+  XROAD_HMS_RENTAL_SERVICE_PATH: 'IS-DEV/GOV/10033/HMS-Protected/Leigusamningar-v1'
   XROAD_HOLAR_UNIVERSITY_PATH: 'IS-DEV/EDU/10055/Holar-Protected/brautskraning-v1'
   XROAD_ICELAND_UNIVERSITY_OF_THE_ARTS_PATH: 'IS-DEV/EDU/10049/LHI-Protected/brautskraning-v1'
   XROAD_INNA_PATH: 'IS-DEV/GOV/10066/MMS-Protected/inna-v1'
-  XROAD_MMS_FRIGG_PATH: 'IS-DEV/GOV/10066/MMS-Protected/frigg-form-service'
+  XROAD_LEGAL_GAZETTE_PATH: 'IS-DEV/GOV/10014/DMR-Protected/legal-gazette-api'
+  XROAD_MMS_FRIGG_PATH: 'IS-DEV/GOV/10066/MMS-Protected/frigg-form-api'
   XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
-  XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1'
+  XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Einstaklingar-v1'
   XROAD_OFFICIAL_JOURNAL_APPLICATION_PATH: 'IS-DEV/GOV/10014/DMR-Protected/official-journal-application'
   XROAD_OFFICIAL_JOURNAL_PATH: 'IS-DEV/GOV/10014/DMR-Protected/official-journal'
   XROAD_PASSPORT_LICENSE_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Forskraning-V1'
@@ -112,14 +129,18 @@ env:
   XROAD_PAYMENT_BASE_CALLBACK_URL: 'XROAD:/IS-DEV/GOV/10000/island-is/application-callback-v2/application-payment/'
   XROAD_PAYMENT_PROVIDER_ID: 'IS-DEV/GOV/10021/FJS-Public'
   XROAD_PAYMENT_SCHEDULE_PATH: 'IS-DEV/GOV/10021/FJS-Public/paymentSchedule_v1'
+  XROAD_PRACTICAL_EXAMS_PATH: 'IS-DEV/GOV/10013/Vinnueftirlitid-Protected/verkleg-prof-token'
   XROAD_PROPERTIES_SERVICE_V2_PATH: 'IS-DEV/GOV/10033/HMS-Protected/Fasteignir-v1'
+  XROAD_RSK_RENTAL_RATE_PATH: 'IS-DEV/GOV/10006/Skatturinn/rentaldayrate-v1'
   XROAD_SECONDARY_SCHOOL_PATH: 'IS-DEV/GOV/10066/MMS-Protected/umsoknagatt'
+  XROAD_SEMINARS_VER_PATH: 'IS-DEV/GOV/10013/Vinnueftirlitid-Protected/namskeid'
   XROAD_SIGNATURE_COLLECTION_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Medmaeli-v1'
-  XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1'
+  XROAD_TJODSKRA_API_PATH: '/SKRA-Cloud-Protected/Einstaklingar-v1'
   XROAD_TJODSKRA_MEMBER_CODE: '10001'
   XROAD_TLS_BASE_PATH: 'https://securityserver.dev01.devland.is'
   XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
   XROAD_TR_PATH: 'IS-DEV/GOV/10008/TR-Protected/external-v1'
+  XROAD_TR_PATH_V2: 'IS-DEV/GOV/10008/TR-Protected/external-v2'
   XROAD_UNIVERSITY_OF_AKUREYRI_PATH: 'IS-DEV/EDU/10054/UNAK-Protected/brautskraning-v1'
   XROAD_UNIVERSITY_OF_ICELAND_PATH: 'IS-DEV/EDU/10010/HI-Protected/brautskraning-v1'
   XROAD_VEHICLES_MILEAGE_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Mileagereading-V1'
@@ -136,9 +157,9 @@ env:
   XROAD_VMST_MEMBER_CODE: '10003'
   XROAD_WORK_ACCIDENT_PATH: 'IS-DEV/GOV/10013/Vinnueftirlitid-Protected/slysaskraning-token'
   XROAD_WORK_MACHINE_LICENSE_PATH: 'IS-DEV/GOV/10013/Vinnueftirlitid-Protected/vinnuvelar-token'
-files:
-  - 'islyklar.p12'
+  ZENDESK_CONTACT_FORM_SUBDOMAIN: 'digitaliceland'
 grantNamespaces:
+  - 'services-payments'
   - 'nginx-ingress-internal'
   - 'islandis'
 grantNamespacesEnabled: true
@@ -157,8 +178,8 @@ hpa:
       cpuAverageUtilization: 90
       nginxRequestsIrate: 5
     replicas:
-      max: 60
-      min: 2
+      max: 3
+      min: 1
 image:
   repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api'
 ingress:
@@ -202,14 +223,15 @@ initContainer:
     DB_PASS: '/k8s/application-system-api/DB_PASSWORD'
 namespace: 'application-system'
 podDisruptionBudget:
-  maxUnavailable: 1
+  minAvailable: 1
+  unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534
 pvcs: []
 replicaCount:
-  default: 2
-  max: 60
-  min: 2
+  default: 1
+  max: 3
+  min: 1
 resources:
   limits:
     cpu: '600m'
@@ -241,9 +263,8 @@ secrets:
   EMAIL_REPLY_TO_NAME: '/k8s/application-system/api/EMAIL_REPLY_TO_NAME'
   FINANCIAL_STATEMENTS_INAO_CLIENT_ID: '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_ID'
   FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET: '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET'
+  HMS_CONTRACTS_AUTH_CLIENT_SECRET: '/k8s/application-system-api/HMS_CONTRACTS_AUTH_CLIENT_SECRET'
   IDENTITY_SERVER_CLIENT_SECRET: '/k8s/application-system/api/IDENTITY_SERVER_CLIENT_SECRET'
-  ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH'
-  ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE'
   NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
   NOVA_PASSWORD: '/k8s/application-system/api/NOVA_PASSWORD'
   NOVA_URL: '/k8s/application-system-api/NOVA_URL'
@@ -260,6 +281,10 @@ secrets:
   XROAD_PAYMENT_USER: '/k8s/application-system-api/PAYMENT_USER'
   XROAD_PROPERTIES_CLIENT_SECRET: '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET'
   XROAD_VMST_API_KEY: '/k8s/vmst-client/VMST_API_KEY'
+  XROAD_VMST_UNEMPLOYMENT_PASSWORD: '/k8s/xroad/XROAD_VMST_UNEMPLOYMENT_PASSWORD'
+  XROAD_VMST_UNEMPLOYMENT_USERNAME: '/k8s/xroad/XROAD_VMST_UNEMPLOYMENT_USERNAME'
+  ZENDESK_CONTACT_FORM_EMAIL: '/k8s/api/ZENDESK_CONTACT_FORM_EMAIL'
+  ZENDESK_CONTACT_FORM_TOKEN: '/k8s/api/ZENDESK_CONTACT_FORM_TOKEN'
 securityContext:
   allowPrivilegeEscalation: false
   privileged: false

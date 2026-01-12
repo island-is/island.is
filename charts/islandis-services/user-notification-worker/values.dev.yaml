@@ -19,13 +19,13 @@ global:
 name: 'user-notification-worker'
 args:
   - '--no-experimental-fetch'
-  - 'main.js'
+  - 'main.cjs'
   - '--job=worker'
 command:
   - 'node'
 enabled: true
 env:
-  AUTH_DELEGATION_API_URL: 'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local'
+  AUTH_DELEGATION_API_URL: 'https://auth-delegation-api.internal.identity-server.dev01.devland.is'
   AUTH_DELEGATION_MACHINE_CLIENT_SCOPE: '["@island.is/auth/delegations/index:system"]'
   CODE_OWNER: 'juni'
   COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
@@ -41,17 +41,19 @@ env:
   IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
   LOG_LEVEL: 'info'
   MAIN_QUEUE_NAME: 'user-notification'
+  NATIONAL_REGISTRY_B2C_APPLICATION_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/MidlunUmsoknir-v1'
+  NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraidentitydev.onmicrosoft.com/midlunumsoknir/.default'
   NATIONAL_REGISTRY_B2C_CLIENT_ID: 'b464afdd-056b-406d-b650-6d41733cfeb7'
   NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
   NATIONAL_REGISTRY_B2C_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1'
   NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitydev.onmicrosoft.com/midlun/.default'
-  NODE_OPTIONS: '--max-old-space-size=345 -r dd-trace/init'
+  NODE_OPTIONS: '--max-old-space-size=345 --enable-source-maps -r dd-trace/init'
   REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
   REDIS_USE_SSL: 'true'
   SERVERSIDE_FEATURES_ON: ''
   SERVICE_PORTAL_BFF_LOGIN_URL: 'https://beta.dev01.devland.is/bff/login'
   SERVICE_PORTAL_CLICK_ACTION_URL: 'https://island.is/minarsidur'
-  USER_PROFILE_CLIENT_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
+  USER_PROFILE_CLIENT_URL: 'http://service-portal-api.service-portal.svc.cluster.local'
   XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
   XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
   XROAD_CLIENT_ID: 'IS-DEV/GOV/10000/island-is-client'
@@ -78,7 +80,7 @@ hpa:
       cpuAverageUtilization: 90
       nginxRequestsIrate: 5
     replicas:
-      max: 2
+      max: 3
       min: 1
 image:
   repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
@@ -107,13 +109,14 @@ initContainer:
     DB_PASS: '/k8s/user-notification/DB_PASSWORD'
 namespace: 'user-notification'
 podDisruptionBudget:
-  maxUnavailable: 1
+  minAvailable: 1
+  unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534
 pvcs: []
 replicaCount:
   default: 1
-  max: 2
+  max: 3
   min: 1
 resources:
   limits:

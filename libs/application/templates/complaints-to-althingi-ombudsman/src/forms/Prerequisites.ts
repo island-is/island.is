@@ -9,17 +9,17 @@ import {
 import {
   Form,
   FormModes,
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   UserProfileApi,
 } from '@island.is/application/types'
 import { application, dataProvider, section } from '../lib/messages'
-import Logo from '../assets/Logo'
+import { AlthingiOmbudsmanLogo } from '@island.is/application/assets/institution-logos'
 
 export const Prerequisites: Form = buildForm({
   id: 'ComplaintToAlthinigOmbudsmanPrerequisites',
   title: application.general.name,
   mode: FormModes.DRAFT,
-  logo: Logo,
+  logo: AlthingiOmbudsmanLogo,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
   children: [
@@ -35,7 +35,6 @@ export const Prerequisites: Form = buildForm({
           submitField: buildSubmitField({
             id: 'submit',
             placement: 'footer',
-            title: '',
             refetchApplicationAfterSubmit: true,
             actions: [
               {
@@ -47,7 +46,7 @@ export const Prerequisites: Form = buildForm({
           }),
           dataProviders: [
             buildDataProviderItem({
-              provider: NationalRegistryUserApi,
+              provider: NationalRegistryV3UserApi,
               title: dataProvider.nationalRegistryTitle,
               subTitle: dataProvider.nationalRegistrySubTitle,
             }),

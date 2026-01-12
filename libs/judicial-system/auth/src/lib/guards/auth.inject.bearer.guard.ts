@@ -7,16 +7,11 @@ import {
 } from '@nestjs/common'
 import { AuthGuard } from '@nestjs/passport'
 
-import type { User } from '@island.is/judicial-system/types'
-
+import { AuthUser } from '../auth.types'
 import { cookieExtractor } from '../cookieExtractor'
 
 @Injectable()
 export class JwtInjectBearerAuthGuard extends AuthGuard('jwt') {
-  constructor(private readonly allowNonUsers = false) {
-    super()
-  }
-
   canActivate(context: ExecutionContext) {
     const req = context.switchToHttp().getRequest()
 
@@ -37,8 +32,8 @@ export class JwtInjectBearerAuthGuard extends AuthGuard('jwt') {
     return super.canActivate(context)
   }
 
-  handleRequest<TUser extends User>(err: Error, user: TUser): TUser {
-    if (err || !user || (!user.id && !this.allowNonUsers)) {
+  handleRequest<TUser extends AuthUser>(err: Error, user?: TUser): TUser {
+    if (err || !user?.currentUser) {
       throw new UnauthorizedException(err?.message ?? 'Unauthorized')
     }
 

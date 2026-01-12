@@ -16,6 +16,7 @@ import { useLocale } from '@island.is/localization'
 
 import { getDefaultValue } from '../../getDefaultValue'
 import { Locale } from '@island.is/shared/types'
+import { useFormContext } from 'react-hook-form'
 
 interface Props extends FieldBaseProps {
   field: SelectField
@@ -28,7 +29,7 @@ export const SelectFormField: FC<React.PropsWithChildren<Props>> = ({
 }) => {
   const {
     id,
-    title,
+    title = '',
     description,
     options,
     placeholder,
@@ -40,14 +41,27 @@ export const SelectFormField: FC<React.PropsWithChildren<Props>> = ({
     marginTop,
     marginBottom,
     clearOnChange,
+    clearOnChangeDefaultValue,
+    setOnChange,
     isClearable,
   } = field
   const { formatMessage, lang: locale } = useLocale()
+  const { getValues } = useFormContext()
+  const values = getValues()
 
-  const finalOptions = useMemo(
-    () => buildFieldOptions(options, application, field, locale),
-    [options, application, field, locale],
-  )
+  const updatedApplication = useMemo(() => {
+    return {
+      ...application,
+      answers: {
+        ...application.answers,
+        ...values,
+      },
+    }
+  }, [application, values])
+
+  const finalOptions = useMemo(() => {
+    return buildFieldOptions(options, updatedApplication, field, locale)
+  }, [options, updatedApplication, field, locale])
 
   return (
     <Box marginTop={marginTop} marginBottom={marginBottom}>
@@ -67,7 +81,7 @@ export const SelectFormField: FC<React.PropsWithChildren<Props>> = ({
           required={buildFieldRequired(application, required)}
           defaultValue={
             (getValueViaPath(application.answers, id) ??
-              getDefaultValue(field, application)) ||
+              getDefaultValue(field, application, locale)) ||
             (required ? '' : undefined)
           }
           label={formatTextWithLocale(
@@ -99,6 +113,13 @@ export const SelectFormField: FC<React.PropsWithChildren<Props>> = ({
           // @ts-ignore make web strict
           onSelect={onSelect}
           clearOnChange={clearOnChange}
+          clearOnChangeDefaultValue={clearOnChangeDefaultValue}
+          setOnChange={
+            typeof setOnChange === 'function'
+              ? async (optionValue) =>
+                  await setOnChange(optionValue, updatedApplication)
+              : setOnChange
+          }
           isClearable={isClearable}
         />
       </Box>

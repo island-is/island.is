@@ -21,7 +21,7 @@ import {
 import { getAllCountryCodes } from '@island.is/shared/utils'
 import { getMaxDate, getMinDate } from '../../../utils'
 import { EMPLOYMENT_STATUS } from '../../../shared/constants'
-import { FormValue } from '@island.is/application/types'
+import { Application, FormValue } from '@island.is/application/types'
 import { BffUser } from '@island.is/shared/types'
 
 export const employeeSubSection = (index: number) =>
@@ -114,13 +114,26 @@ export const employeeSubSection = (index: number) =>
             title: employee.employee.nationality,
             width: 'half',
             options: () => {
-              const countries = getAllCountryCodes()
-              return countries.map((country) => {
-                return {
+              const iceland = {
+                name: 'Iceland',
+                name_is: 'Ísland',
+                format: '###-####',
+                flag: '🇮🇸',
+                code: 'IS',
+                dial_code: '+354',
+              }
+
+              const countries = getAllCountryCodes().filter(
+                (country) => country.code !== 'IS',
+              )
+
+              return [
+                { label: iceland.name_is || iceland.name, value: iceland.code },
+                ...countries.map((country) => ({
                   label: country.name_is || country.name,
                   value: country.code,
-                }
-              })
+                })),
+              ]
             },
             required: true,
           }),
@@ -136,9 +149,18 @@ export const employeeSubSection = (index: number) =>
             width: 'half',
             required: true,
             title: employee.employee.startDate,
-            maxDate: new Date(),
-            minYear: 1940,
-            maxYear: new Date().getFullYear(),
+            maxDate: (application: Application) => {
+              const dateOfAccident = getValueViaPath<string>(
+                application.answers,
+                'accident.date',
+              )
+
+              if (!dateOfAccident) return new Date()
+
+              const [year, month, day] = dateOfAccident.split('-').map(Number)
+              return new Date(year, month - 1, day)
+            },
+            minDate: new Date(1940, 1, 1),
           }),
           buildSelectField({
             id: `employee[${index}].employmentTime`,
@@ -187,7 +209,6 @@ export const employeeSubSection = (index: number) =>
           }),
           buildAlertMessageField({
             id: 'employee.startTimeAlert',
-            title: '',
             message: employee.employee.startTimeAlert,
             alertType: 'info',
             marginBottom: 0,

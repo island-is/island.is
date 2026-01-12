@@ -1,34 +1,24 @@
-import { Button, ButtonProps, Icon } from '@island.is/island-ui/core'
+import { Button, ButtonProps, ButtonTypes } from '@island.is/island-ui/core'
 import { isExternalLink } from '../../utils/isExternalLink'
 import LinkResolver from '../LinkResolver/LinkResolver'
 import * as styles from './LinkButton.css'
 
-interface SharedProps {
+interface Props {
   to: string
   text: string
+  icon?: ButtonProps['icon']
   size?: ButtonProps['size']
   disabled?: ButtonProps['disabled']
   skipOutboundTrack?: boolean
 }
 
-type Props = {
-  variant?: 'primary' | 'ghost' | 'utility' | 'text'
-  icon?: ButtonProps['icon']
-}
+type LinkButtonProps = Props & ButtonTypes
 
-type LinkButtonProps = SharedProps & Props
-
-export const LinkButton = ({
-  variant = 'text',
-  size,
-  to,
-  text,
-  icon,
-  disabled,
-  skipOutboundTrack,
-}: LinkButtonProps) => {
+export const LinkButton = (props: LinkButtonProps) => {
+  const { size, to, text, icon, disabled, skipOutboundTrack, ...rest } = props
   const isExternal = isExternalLink(to)
-  if (variant === 'text') {
+
+  if (rest.variant === 'text') {
     return disabled ? (
       <Button
         size={size ?? 'small'}
@@ -36,6 +26,7 @@ export const LinkButton = ({
         disabled
         icon={isExternal ? 'open' : undefined}
         iconType={isExternal ? 'outline' : undefined}
+        {...rest}
       >
         {text}
       </Button>
@@ -52,6 +43,7 @@ export const LinkButton = ({
           unfocusable
           icon={isExternal ? 'open' : icon ?? undefined}
           iconType={isExternal ? 'outline' : undefined}
+          {...rest}
         >
           {text}
         </Button>
@@ -60,13 +52,12 @@ export const LinkButton = ({
   }
   return disabled ? (
     <Button
-      colorScheme="default"
       icon={icon}
       iconType="outline"
       size={size ?? 'default'}
       disabled
-      variant={variant ?? 'utility'}
       unfocusable
+      {...rest}
     >
       {text}
     </Button>
@@ -77,14 +68,13 @@ export const LinkButton = ({
       href={to}
     >
       <Button
-        colorScheme="default"
         icon={icon}
         iconType="outline"
         size={size ?? 'default'}
         type="text"
         as="span"
-        variant={variant ?? 'utility'}
         unfocusable
+        {...rest}
       >
         {text}
       </Button>

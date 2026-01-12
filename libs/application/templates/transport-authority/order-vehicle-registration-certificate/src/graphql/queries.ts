@@ -11,21 +11,13 @@ export const GET_VEHICLE_INFORMATION = `
     }
   }
 `
-export const GET_VEHICLE_OWNERCHANGE_CHECKS_BY_PERMNO = `
-  query GetVehicleOwnerchangeChecksByPermno($permno: String!) {
-    vehicleOwnerchangeChecksByPermno(permno: $permno) {
-      isDebtLess
-      validationErrorMessages {
-        errorNo
-        defaultMessage
-      }
-      basicVehicleInformation {
-        permno
-        make
-        color
-        role
-        requireMileage
-      }
+
+export const GET_VEHICLE_BASIC_INFO_BY_PERMNO = `
+  query GetMyVehicleBasicInfoByPermno($permno: String!) {
+    myVehicleBasicInfoByPermno(permno: $permno) {
+      permno
+      make
+      color
     }
   } 
 `

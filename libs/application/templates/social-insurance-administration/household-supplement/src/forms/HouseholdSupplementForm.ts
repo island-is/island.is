@@ -1,4 +1,5 @@
 import {
+  YES,
   buildAlertMessageField,
   buildCustomField,
   buildDescriptionField,
@@ -14,38 +15,31 @@ import {
   buildSubmitField,
   buildTextField,
 } from '@island.is/application/core'
-import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
+import { SocialInsuranceAdministrationLogo } from '@island.is/application/assets/institution-logos'
 import {
-  BankAccountType,
   fileUploadSharedProps,
+  maritalStatuses,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import {
-  friendlyFormatIBAN,
-  friendlyFormatSWIFT,
   getBankIsk,
-  getCurrencies,
   getYesNoOptions,
-  typeOfBankInfo,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import {
   Application,
   DefaultEvents,
   Form,
   FormModes,
-  FormValue,
   NationalRegistrySpouse,
-  YES,
 } from '@island.is/application/types'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import * as kennitala from 'kennitala'
-import isEmpty from 'lodash/isEmpty'
-import { HouseholdSupplementHousing, maritalStatuses } from '../lib/constants'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
   getAvailableMonths,
   getAvailableYears,
+  isExistsCohabitantBetween18and25,
   isExistsCohabitantOlderThan25,
 } from '../lib/householdSupplementUtils'
 import { householdSupplementFormMessage } from '../lib/messages'
@@ -53,7 +47,7 @@ import { householdSupplementFormMessage } from '../lib/messages'
 export const HouseholdSupplementForm: Form = buildForm({
   id: 'HouseholdSupplementDraft',
   title: socialInsuranceAdministrationMessage.shared.formTitle,
-  logo: Logo,
+  logo: SocialInsuranceAdministrationLogo,
   mode: FormModes.DRAFT,
   children: [
     buildSection({
@@ -257,56 +251,10 @@ export const HouseholdSupplementForm: Form = buildForm({
                 buildAlertMessageField({
                   id: 'paymentInfo.alertMessage',
                   title: socialInsuranceAdministrationMessage.shared.alertTitle,
-                  message: (application: Application) => {
-                    const { bankAccountType } = getApplicationAnswers(
-                      application.answers,
-                    )
-                    const { bankInfo } = getApplicationExternalData(
-                      application.externalData,
-                    )
-
-                    const type =
-                      bankAccountType ??
-                      typeOfBankInfo(bankInfo, bankAccountType)
-
-                    return type === BankAccountType.ICELANDIC
-                      ? socialInsuranceAdministrationMessage.payment
-                          .alertMessage
-                      : socialInsuranceAdministrationMessage.payment
-                          .alertMessageForeign
-                  },
+                  message:
+                    socialInsuranceAdministrationMessage.payment.alertMessage,
                   doesNotRequireAnswer: true,
                   alertType: 'info',
-                }),
-                buildRadioField({
-                  id: 'paymentInfo.bankAccountType',
-                  title: '',
-                  defaultValue: (application: Application) => {
-                    const { bankAccountType } = getApplicationAnswers(
-                      application.answers,
-                    )
-                    const { bankInfo } = getApplicationExternalData(
-                      application.externalData,
-                    )
-
-                    return typeOfBankInfo(bankInfo, bankAccountType)
-                  },
-                  options: [
-                    {
-                      label:
-                        socialInsuranceAdministrationMessage.payment
-                          .icelandicBankAccount,
-                      value: BankAccountType.ICELANDIC,
-                    },
-                    {
-                      label:
-                        socialInsuranceAdministrationMessage.payment
-                          .foreignBankAccount,
-                      value: BankAccountType.FOREIGN,
-                    },
-                  ],
-                  largeButtons: false,
-                  required: true,
                 }),
                 buildTextField({
                   id: 'paymentInfo.bank',
@@ -319,130 +267,6 @@ export const HouseholdSupplementForm: Form = buildForm({
                     )
                     return getBankIsk(bankInfo)
                   },
-                  condition: (formValue: FormValue, externalData) => {
-                    const { bankAccountType } = getApplicationAnswers(formValue)
-                    const { bankInfo } =
-                      getApplicationExternalData(externalData)
-
-                    const radio =
-                      bankAccountType ??
-                      typeOfBankInfo(bankInfo, bankAccountType)
-                    return radio === BankAccountType.ICELANDIC
-                  },
-                }),
-                buildTextField({
-                  id: 'paymentInfo.iban',
-                  title: socialInsuranceAdministrationMessage.payment.iban,
-                  placeholder: 'AB00 XXXX XXXX XXXX XXXX XX',
-                  defaultValue: (application: Application) => {
-                    const { bankInfo } = getApplicationExternalData(
-                      application.externalData,
-                    )
-                    return friendlyFormatIBAN(bankInfo.iban)
-                  },
-                  condition: (formValue: FormValue, externalData) => {
-                    const { bankAccountType } = getApplicationAnswers(formValue)
-                    const { bankInfo } =
-                      getApplicationExternalData(externalData)
-
-                    const radio =
-                      bankAccountType ??
-                      typeOfBankInfo(bankInfo, bankAccountType)
-                    return radio === BankAccountType.FOREIGN
-                  },
-                }),
-                buildTextField({
-                  id: 'paymentInfo.swift',
-                  title: socialInsuranceAdministrationMessage.payment.swift,
-                  placeholder: 'AAAA BB CC XXX',
-                  width: 'half',
-                  defaultValue: (application: Application) => {
-                    const { bankInfo } = getApplicationExternalData(
-                      application.externalData,
-                    )
-                    return friendlyFormatSWIFT(bankInfo.swift)
-                  },
-                  condition: (formValue: FormValue, externalData) => {
-                    const { bankAccountType } = getApplicationAnswers(formValue)
-                    const { bankInfo } =
-                      getApplicationExternalData(externalData)
-
-                    const radio =
-                      bankAccountType ??
-                      typeOfBankInfo(bankInfo, bankAccountType)
-                    return radio === BankAccountType.FOREIGN
-                  },
-                }),
-                buildSelectField({
-                  id: 'paymentInfo.currency',
-                  title: socialInsuranceAdministrationMessage.payment.currency,
-                  width: 'half',
-                  placeholder:
-                    socialInsuranceAdministrationMessage.payment.selectCurrency,
-                  options: ({ externalData }: Application) => {
-                    const { currencies } =
-                      getApplicationExternalData(externalData)
-                    return getCurrencies(currencies)
-                  },
-                  defaultValue: (application: Application) => {
-                    const { bankInfo } = getApplicationExternalData(
-                      application.externalData,
-                    )
-                    return !isEmpty(bankInfo) ? bankInfo.currency : ''
-                  },
-                  condition: (formValue: FormValue, externalData) => {
-                    const { bankAccountType } = getApplicationAnswers(formValue)
-                    const { bankInfo } =
-                      getApplicationExternalData(externalData)
-
-                    const radio =
-                      bankAccountType ??
-                      typeOfBankInfo(bankInfo, bankAccountType)
-                    return radio === BankAccountType.FOREIGN
-                  },
-                }),
-                buildTextField({
-                  id: 'paymentInfo.bankName',
-                  title: socialInsuranceAdministrationMessage.payment.bankName,
-                  width: 'half',
-                  defaultValue: (application: Application) => {
-                    const { bankInfo } = getApplicationExternalData(
-                      application.externalData,
-                    )
-                    return !isEmpty(bankInfo) ? bankInfo.foreignBankName : ''
-                  },
-                  condition: (formValue: FormValue, externalData) => {
-                    const { bankAccountType } = getApplicationAnswers(formValue)
-                    const { bankInfo } =
-                      getApplicationExternalData(externalData)
-
-                    const radio =
-                      bankAccountType ??
-                      typeOfBankInfo(bankInfo, bankAccountType)
-                    return radio === BankAccountType.FOREIGN
-                  },
-                }),
-                buildTextField({
-                  id: 'paymentInfo.bankAddress',
-                  title:
-                    socialInsuranceAdministrationMessage.payment.bankAddress,
-                  width: 'half',
-                  defaultValue: (application: Application) => {
-                    const { bankInfo } = getApplicationExternalData(
-                      application.externalData,
-                    )
-                    return !isEmpty(bankInfo) ? bankInfo.foreignBankAddress : ''
-                  },
-                  condition: (formValue: FormValue, externalData) => {
-                    const { bankAccountType } = getApplicationAnswers(formValue)
-                    const { bankInfo } =
-                      getApplicationExternalData(externalData)
-
-                    const radio =
-                      bankAccountType ??
-                      typeOfBankInfo(bankInfo, bankAccountType)
-                    return radio === BankAccountType.FOREIGN
-                  },
                 }),
               ],
             }),
@@ -453,6 +277,9 @@ export const HouseholdSupplementForm: Form = buildForm({
     buildSection({
       id: 'householdSupplementSection',
       title: householdSupplementFormMessage.shared.householdSupplement,
+      condition: (_, externalData) => {
+        return isExistsCohabitantBetween18and25(externalData)
+      },
       children: [
         buildMultiField({
           id: 'householdSupplement',
@@ -473,27 +300,6 @@ export const HouseholdSupplementForm: Form = buildForm({
               condition: (_, externalData) => {
                 return isExistsCohabitantOlderThan25(externalData)
               },
-            }),
-            buildRadioField({
-              id: 'householdSupplement.housing',
-              title:
-                householdSupplementFormMessage.info.householdSupplementHousing,
-              options: [
-                {
-                  value: HouseholdSupplementHousing.HOUSEOWNER,
-                  label:
-                    householdSupplementFormMessage.info
-                      .householdSupplementHousingOwner,
-                },
-                {
-                  value: HouseholdSupplementHousing.RENTER,
-                  label:
-                    householdSupplementFormMessage.info
-                      .householdSupplementHousingRenter,
-                },
-              ],
-              width: 'half',
-              required: true,
             }),
             buildRadioField({
               id: 'householdSupplement.children',
@@ -558,37 +364,10 @@ export const HouseholdSupplementForm: Form = buildForm({
       id: 'fileUpload',
       title: socialInsuranceAdministrationMessage.fileUpload.title,
       condition: (answers) => {
-        const { householdSupplementHousing, householdSupplementChildren } =
-          getApplicationAnswers(answers)
-        return (
-          householdSupplementHousing === HouseholdSupplementHousing.RENTER ||
-          householdSupplementChildren === YES
-        )
+        const { householdSupplementChildren } = getApplicationAnswers(answers)
+        return householdSupplementChildren === YES
       },
       children: [
-        buildSubSection({
-          id: 'fileUploadLeaseAgreement',
-          title: householdSupplementFormMessage.fileUpload.leaseAgreementTitle,
-          condition: (answers) => {
-            const { householdSupplementHousing } =
-              getApplicationAnswers(answers)
-            return (
-              householdSupplementHousing === HouseholdSupplementHousing.RENTER
-            )
-          },
-          children: [
-            buildFileUploadField({
-              id: 'fileUpload.leaseAgreement',
-              title:
-                householdSupplementFormMessage.fileUpload.leaseAgreementTitle,
-              description:
-                householdSupplementFormMessage.fileUpload.leaseAgreement,
-              introduction:
-                householdSupplementFormMessage.fileUpload.leaseAgreement,
-              ...fileUploadSharedProps,
-            }),
-          ],
-        }),
         buildSubSection({
           id: 'fileUploadSchoolConfirmation',
           title:
@@ -619,26 +398,6 @@ export const HouseholdSupplementForm: Form = buildForm({
       title: socialInsuranceAdministrationMessage.additionalInfo.section,
       children: [
         buildSubSection({
-          id: 'fileUploadAdditionalFiles',
-          title:
-            socialInsuranceAdministrationMessage.fileUpload.additionalFileTitle,
-          children: [
-            buildFileUploadField({
-              id: 'fileUploadAdditionalFiles.additionalDocuments',
-              title:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .additionalFileTitle,
-              description:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .additionalFileDescription,
-              introduction:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .additionalFileDescription,
-              ...fileUploadSharedProps,
-            }),
-          ],
-        }),
-        buildSubSection({
           id: 'commentSection',
           title:
             socialInsuranceAdministrationMessage.additionalInfo.commentSection,
@@ -667,7 +426,6 @@ export const HouseholdSupplementForm: Form = buildForm({
       children: [
         buildMultiField({
           id: 'confirm',
-          title: '',
           description: '',
           children: [
             buildCustomField(

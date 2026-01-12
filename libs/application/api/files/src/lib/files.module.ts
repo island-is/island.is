@@ -1,4 +1,4 @@
-import { DynamicModule, Module } from '@nestjs/common'
+import { Module } from '@nestjs/common'
 import { BullModule as NestBullModule } from '@nestjs/bull'
 import { createRedisCluster } from '@island.is/cache'
 import { SigningModule } from '@island.is/dokobit-signing'
@@ -29,14 +29,18 @@ export const createBullModule = () => {
   if (process.env.INIT_SCHEMA === 'true') {
     return NestBullModule.registerQueueAsync()
   } else {
-    const bullModuleName = 'application_system_api_bull_module'
     return NestBullModule.registerQueueAsync({
       name: 'upload',
       useFactory: (config: ConfigType<typeof ApplicationFilesConfig>) => ({
-        prefix: `{${bullModuleName}}`,
+        prefix: `{${config.bullModuleName}}`,
+        defaultJobOptions: {
+          removeOnComplete: { age: 5 * 60 },
+          removeOnFail: { age: 14 * 24 * 60 * 60 }, // 2 weeks
+        },
         createClient: () =>
+          // Type assertion needed due to Bull's Redis client interface requirements
           createRedisCluster({
-            name: bullModuleName,
+            name: config.bullModuleName,
             ssl: config.redis.ssl,
             nodes: config.redis.nodes,
             noPrefix: true,

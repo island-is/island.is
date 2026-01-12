@@ -20,6 +20,14 @@ import { isDefined } from '@island.is/shared/utils'
 import format from 'date-fns/format'
 import { handle404 } from '@island.is/clients/middlewares'
 import { logger } from '@island.is/logging'
+import type { Locale } from '@island.is/shared/types'
+
+const getValueByLocale = (
+  locale: Locale,
+  { is, en }: { is: string; en?: string },
+): string => {
+  return locale === 'en' && en ? en : is
+}
 
 @Injectable()
 export class HealthDirectorateClientService {
@@ -45,6 +53,7 @@ export class HealthDirectorateClientService {
 
   public async getHealthDirectorateLicenseToPractice(
     auth: User,
+    locale: Locale,
   ): Promise<Array<HealthDirectorateLicenseToPractice> | null> {
     const licenses = await this.starfsleyfiAMinumSidumApiWithAuth(auth)
       .starfsleyfiAMinumSidumGet()
@@ -96,8 +105,14 @@ export class HealthDirectorateClientService {
             legalEntityId: l.logadiliID,
             licenseHolderNationalId: l.kennitala,
             licenseHolderName: l.nafn,
-            profession: l.starfsstett,
-            practice: l.leyfi,
+            profession: getValueByLocale(locale, {
+              is: l.starfsstett,
+              en: l.starfsstettEn ?? undefined,
+            }),
+            practice: getValueByLocale(locale, {
+              is: l.leyfi,
+              en: l.leyfiEn ?? undefined,
+            }),
             licenseNumber: l.leyfisnumer,
             validFrom: l.gildirFra,
             validTo: l.gildirTIl ?? undefined,

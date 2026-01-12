@@ -51,7 +51,7 @@ export class NotificationsResolver {
         this.service.getNotification(id, locale, user),
       )
     } catch (e) {
-      this.logger.error('failed to get notification by id', {
+      this.logger.info('failed to get notification by id', {
         id,
         locale,
         category: LOG_CATEGORY,
@@ -83,7 +83,7 @@ export class NotificationsResolver {
     try {
       result = await this.service.markAllNotificationsAsSeen(user)
     } catch (e) {
-      this.logger.error('failed to mark all notifications as seen', {
+      this.logger.info('failed to mark all notifications as seen', {
         category: LOG_CATEGORY,
         error: e,
       })
@@ -104,7 +104,7 @@ export class NotificationsResolver {
     try {
       result = await this.service.markAllNotificationsAsRead(user)
     } catch (e) {
-      this.logger.error('failed to mark all notifications as read', {
+      this.logger.info('failed to mark all notifications as read', {
         category: LOG_CATEGORY,
         error: e,
       })
@@ -138,7 +138,7 @@ export class NotificationsResolver {
         this.service.markNotificationAsRead(id, locale, user),
       )
     } catch (e) {
-      this.logger.error('failed to mark notification as read', {
+      this.logger.info('failed to mark notification as read', {
         id,
         locale,
         category: LOG_CATEGORY,

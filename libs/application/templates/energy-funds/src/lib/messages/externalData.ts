@@ -36,7 +36,8 @@ export const externalData = {
     },
     subTitle: {
       id: 'ef.application:externalData.nationalRegistry.subTitle',
-      defaultMessage: 'Hér sækjum við nafn, kennitölu og heimilisfang',
+      defaultMessage:
+        'Til þess að auðvelda fyrir sækjum við persónuupplýsingar úr Þjóðskrá til þess að fylla út umsóknina',
       description: 'National Registry sub title',
     },
   }),

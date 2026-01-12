@@ -29,15 +29,14 @@ export const estateDebts = buildSection({
     buildMultiField({
       id: 'debts',
       title: m.debtsTitle,
-      description: (application) =>
-        application.answers.selectedEstate === EstateTypes.estateWithoutAssets
+      description: ({ answers }) =>
+        answers.selectedEstate === EstateTypes.estateWithoutAssets
           ? /* EIGNALAUST DÁNARBU */
             m.debtsDescriptionEstateWithoutAssets
-          : application.answers.selectedEstate === EstateTypes.officialDivision
+          : answers.selectedEstate === EstateTypes.officialDivision
           ? /* OPINBER SKIPTI */
             m.debtsDescriptionOfficialDivision
-          : application.answers.selectedEstate ===
-            EstateTypes.permitForUndividedEstate
+          : answers.selectedEstate === EstateTypes.permitForUndividedEstate
           ? /* SETA Í ÓSKIPTU BÚI */
             m.debtsDescriptionUndividedEstate
           : /* EINKASKIPTI */
@@ -45,33 +44,51 @@ export const estateDebts = buildSection({
       children: [
         buildCustomField(
           {
-            title: '',
-            id: 'debts',
-            component: 'TextFieldsRepeater',
+            id: 'debts.data',
+            component: 'DebtsRepeater',
           },
           {
             fields: [
               {
-                title: m.debtsCreditorName,
-                id: 'creditorName',
+                title: m.debtsCreditorType,
+                id: 'debtType',
+                placeholder: m.debtsCreditorType,
               },
               {
                 title: m.debtsNationalId,
                 id: 'nationalId',
                 format: '######-####',
+                required: false,
+              },
+              {
+                title: m.debtsCreditorName,
+                id: 'creditorName',
+                required: true,
               },
               {
                 title: m.debtsLoanIdentity,
                 id: 'loanIdentity',
+                required: false,
               },
               {
                 title: m.debtsBalance,
                 id: 'balance',
                 currency: true,
+                required: true,
               },
             ],
             repeaterButtonText: m.debtsRepeaterButton,
-            repeaterHeaderText: m.debtsCreditorHeader,
+            sumField: 'balance',
+            fromExternalData: 'otherDebts',
+            selections: [
+              { value: 'Duties', label: m.debtsTypeDuties },
+              { value: 'OtherDebts', label: m.debtsTypeOther },
+              { value: 'PropertyFees', label: m.debtsTypePropertyFees },
+              { value: 'InsuranceCompany', label: m.debtsTypeInsurance },
+              { value: 'Loan', label: m.debtsTypeLoan },
+              { value: 'CreditCard', label: m.debtsTypeCreditCard },
+              { value: 'Overdraft', label: m.debtsTypeOverdraft },
+            ],
           },
         ),
       ],

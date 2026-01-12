@@ -36,6 +36,9 @@ import { JourneymanLicencesResponse } from './models/journeymanLicence'
 import { ProfessionRightsResponse } from './models/professionRights'
 import { ManyPropertyDetail } from './models/manyPropertyDetail'
 import { GetElectronicIDInput } from './dto/getElectronicID.input'
+import { BurningPermitsResponse } from './models/burningPermits'
+import { ReligiousOrganizationsResponse } from './models/religiousOrganizations'
+import { DrivingInstructorsResponse } from './models/drivingInstructors'
 
 const cacheTime = process.env.CACHE_TIME || 300
 
@@ -217,9 +220,30 @@ export class SyslumennResolver {
   async getSyslumennElectronicIDStatus(
     @Args('input') input: GetElectronicIDInput,
   ): Promise<boolean> {
-    return this.syslumennService.hasElectronicID(
-      input.nationalId,
-      input.phoneNumber,
-    )
+    return this.syslumennService.hasElectronicID(input.nationalId)
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => BurningPermitsResponse)
+  @BypassAuth()
+  async getBurningPermits(): Promise<BurningPermitsResponse> {
+    const burningPermits = await this.syslumennService.getBurningPermits()
+    return { list: burningPermits }
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => ReligiousOrganizationsResponse)
+  @BypassAuth()
+  async getReligiousOrganizations(): Promise<ReligiousOrganizationsResponse> {
+    const items = await this.syslumennService.getReligiousOrganizations()
+    return { list: items }
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => DrivingInstructorsResponse)
+  @BypassAuth()
+  async getSyslumennDrivingInstructors(): Promise<DrivingInstructorsResponse> {
+    const items = await this.syslumennService.getDrivingInstructors()
+    return { list: items }
   }
 }

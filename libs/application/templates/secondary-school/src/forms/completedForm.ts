@@ -8,17 +8,17 @@ import {
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { conclusion } from '../lib/messages'
-import { Logo } from '../assets/Logo'
+import { MmsLogo } from '@island.is/application/assets/institution-logos'
 
 export const Completed: Form = buildForm({
-  id: 'ConclusionForm',
-  title: '',
-  logo: Logo,
+  id: 'CompletedForm',
+  logo: MmsLogo,
   mode: FormModes.COMPLETED,
   children: [
     buildSection({
       id: 'conclusionSection',
-      title: conclusion.general.sectionTitle,
+      title: '',
+      tabTitle: conclusion.overview.sectionTitle,
       children: [
         buildMultiField({
           id: 'conclusionMultiField',
@@ -27,12 +27,11 @@ export const Completed: Form = buildForm({
             buildCustomField({
               component: 'Overview',
               id: 'conclusion',
-              title: '',
               description: '',
             }),
+            // TODO Need to add result from MMS here when design and API are ready
             buildMessageWithLinkButtonField({
               id: 'conclusionBottomLink',
-              title: '',
               url: '/minarsidur/umsoknir',
               buttonTitle: coreMessages.openServicePortalButtonTitle,
               message: coreMessages.openServicePortalMessageText,

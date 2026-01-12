@@ -44,7 +44,7 @@ export const AdditionalOwnersOverview = ({
       <Box marginBottom={3}>
         <Text variant="h3" marginBottom={3}>
           {formatTextWithLocale(
-            field.title,
+            field.title ?? '',
             application,
             locale as Locale,
             formatMessage,

@@ -6,4 +6,7 @@ import { Field, InputType, ID } from '@nestjs/graphql'
 export class OJOIAIdInput {
   @Field(() => ID)
   id!: string
+
+  @Field(() => Boolean, { defaultValue: true })
+  showDate?: boolean
 }

@@ -14,6 +14,9 @@ import {
   LatestEventsSliceResolver,
   TeamListResolver,
   LatestGenericListItemsResolver,
+  IntroLinkImageResolver,
+  GenericListResolver,
+  FeaturedGenericListItemsResolver,
 } from './cms.resolver'
 import { CmsContentfulService } from './cms.contentful.service'
 import { ContentfulRepository } from './contentful.repository'
@@ -28,6 +31,11 @@ import { PowerBiService } from './powerbi.service'
 import { PowerBiConfig } from './powerbi.config'
 import { OrganizationLinkEnByReferenceIdLoader } from './loaders/organizationLinkEnByKey.loader'
 import { OrganizationTitleEnByReferenceIdLoader } from './loaders/organizationTitleEnByKey.loader'
+import { OrganizationTitleByNationalIdLoader } from './loaders/organizationTitleByNationalId.loader'
+import { OrganizationTitleEnByNationalIdLoader } from './loaders/organizationTitleEnByNationalId.loader'
+import { OrganizationLogoByEntryIdLoader } from './loaders/organizationLogoByEntryId.loader'
+import { OrganizationTitleByEntryIdLoader } from './loaders/organizationTitleByEntryId.loader'
+import { OrganizationPageResolver } from './organizationPage.resolver'
 
 @Module({
   imports: [HttpModule, TerminusModule, PowerBiConfig.registerOptional()],
@@ -51,11 +59,19 @@ import { OrganizationTitleEnByReferenceIdLoader } from './loaders/organizationTi
     OrganizationLinkEnByReferenceIdLoader,
     OrganizationTitleByReferenceIdLoader,
     OrganizationTitleEnByReferenceIdLoader,
+    OrganizationTitleByNationalIdLoader,
+    OrganizationTitleEnByNationalIdLoader,
+    OrganizationTitleByEntryIdLoader,
+    OrganizationLogoByEntryIdLoader,
     PowerBiService,
     PowerBiSliceResolver,
     LatestEventsSliceResolver,
     TeamListResolver,
     LatestGenericListItemsResolver,
+    IntroLinkImageResolver,
+    GenericListResolver,
+    FeaturedGenericListItemsResolver,
+    OrganizationPageResolver,
   ],
   exports: [
     ContentfulRepository,
@@ -67,6 +83,10 @@ import { OrganizationTitleEnByReferenceIdLoader } from './loaders/organizationTi
     OrganizationLinkByReferenceIdLoader,
     OrganizationLinkEnByReferenceIdLoader,
     OrganizationTitleByReferenceIdLoader,
+    OrganizationTitleByNationalIdLoader,
+    OrganizationTitleEnByNationalIdLoader,
+    OrganizationTitleByEntryIdLoader,
+    OrganizationLogoByEntryIdLoader,
     CmsElasticsearchService,
   ],
 })

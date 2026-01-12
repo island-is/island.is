@@ -3,13 +3,13 @@ import {
   RegName,
   Regulation,
   RegulationType,
-} from '@island.is/regulations-tools/types'
-import { HTMLDump } from '@island.is/regulations-tools/html'
+} from '@dmr.is/regulations-tools/types'
+import { HTMLDump } from '@dmr.is/regulations-tools/html'
 import {
   getTexts,
   prettyName,
   formatdate,
-} from '@island.is/regulations-tools/utils'
+} from '@dmr.is/regulations-tools/utils'
 import * as s from './Impacts.css'
 import * as ed from '../Editor.css'
 import { RegulationDraftTypes } from '../../types'

@@ -1,15 +1,30 @@
-import { MembershipOrganizationType, MembershipRole } from './lib/constants'
+import { NO, YES } from '@island.is/application/core'
+import {
+  AffiliationRole,
+  AgentType,
+  ApplicationFeatureConfigType,
+  CaseWorkerInputTypeEnum,
+  OrganizationSector,
+  OrganizationSubType,
+  OrganizationType,
+} from './utils/constants'
 
-export interface ContactsRow {
-  fullName: string
+export type YesOrNoOrEmpty = typeof YES | typeof NO | ''
+
+export interface RelativesRow {
+  nationalIdWithName: {
+    name: string
+    nationalId: string
+  }
   phoneNumber: string
-  nationalId: string
   relation: string
 }
 
 export interface SiblingsRow {
-  fullName: string
-  nationalId: string
+  nationalIdWithName: {
+    name: string
+    nationalId: string
+  }
 }
 
 export type Child = {
@@ -31,11 +46,12 @@ export type ChildInformation = {
   }
   preferredName: string
   pronouns: string[]
-  differentPlaceOfResidence: string
-  placeOfResidence?: {
-    streetAddress: string
-    postalCode: string
-  }
+  usePronounAndPreferredName?: string[]
+}
+
+export type SelectOption = {
+  label: string
+  value: string
 }
 
 export type Person = {
@@ -49,61 +65,148 @@ export type Person = {
     postalCode: string
     city: string
   }
+  requiresInterpreter: string[]
+  preferredLanguage?: string
 }
 
-export type Parents = {
-  parent1: Person
-  parent2: Person
-}
-
-export type SelectOption = {
-  label: string
-  value: string
-}
-
-export type Agent = {
-  id: string
+export type AgentModel = {
   name: string
-  role: string
-  email: string
-  phone: string
   nationalId: string
+  preferredName: string | null
+  nationality: string | null
+  pronouns: string[] | null
+  type: AgentType
+  relationTypeId: string | null
+  phone: string
+  email: string
+  domicile: AddressModel | null
+  requiresInterpreter: boolean
+  preferredLanguage: string | null
 }
 
-export type Membership = {
+export type Affiliation = {
   id: string
-  role: MembershipRole
+  role: AffiliationRole
+  classificationId: string
   beginDate: Date
   endDate: Date | null
-  organization?: MembershipOrganization
+  email: string
+  phone: string
+  organization: AffiliationOrganization | null
 }
 
-export type MembershipOrganization = {
+export type ApplicationFeatureModel = {
+  key: string
+}
+
+export type ApplicationFeatureConfig = {
+  applicationType: ApplicationFeatureConfigType
+  applicationFeatures: ApplicationFeatureModel[]
+}
+
+export type ApplicationSettings = {
+  applicationConfigs: ApplicationFeatureConfig[]
+}
+
+export type AffiliationOrganization = {
   id: string
-  nationalId: string
+  nationalId: string | null
   name: string
-  type: MembershipOrganizationType
+  type: OrganizationType
+  subType: OrganizationSubType
+  sector: OrganizationSector
 }
 
 export type AddressModel = {
   id: string
-  street: string
-  municipality?: string // Is set as object in MMS data
-  zip: string
-  country?: string // Is set as object in MMS data
+  address: string
+  municipality: string | null
+  postCode: string
+  country: string | null
+  houseNumber: number | null
+  streetNumber: number | null
+  apartmentNumber: number | null
+  municipalityId: string | null
+}
+
+export type HealthProfileModel = {
+  id: string
+  userId: string
+  allergies: string[]
+  foodAllergiesOrIntolerances: string[]
+  usesEpipen: boolean
+  hasConfirmedMedicalDiagnoses: boolean
+  requestsMedicationAdministration: boolean
+}
+
+export type CaseWorker = {
+  id: string
+  name: string
+  email: string
+  phone: string
+  type: CaseWorkerInputTypeEnum
+}
+
+export type SocialProfile = {
+  id: string
+  userId: string
+  hasDiagnoses: boolean
+  hasIntegratedServices: boolean
+  caseWorkers: CaseWorker[] | null
+  hasHadSupport: boolean
+}
+
+export type LanguageProfile = {
+  id: string
+  userId: string
+  languageEnvironment: string
+  signLanguage: boolean
+  preferredLanguage: string
+  languages: string[]
 }
 
 export type FriggChildInformation = {
   id: string
-  name: string
-  email: string
-  agents: Agent[]
-  pronouns: string[]
   nationalId: string
-  gradeLevel: string
-  memberships: Membership[]
-  primaryOrgId: string
+  name: string
+  nationality: string | null
   preferredName: string | null
-  domicile: AddressModel
-  residence: AddressModel
+  pronouns: string[]
+  gradeLevel: string
+  email: string | null
+  domicile: AddressModel | null
+  residence: AddressModel | null
+  healthProfile: HealthProfileModel | null
+  primaryOrgId: string
+  affiliations: Affiliation[] | null
+  agents: AgentModel[] | null
+  preferredLanguage: string | null
+  phone: string
+  mobile: string
+  socialProfile: SocialProfile | null
+  languageProfile: LanguageProfile | null
+}
+
+export type CurrentSchool = {
+  name?: string
+  grade?: string
+  school?: string
+  municipality?: string
+}
+
+export type FileType = {
+  key: string
+  name: string
+}
+
+export type Organization = {
+  id: string
+  name: string
+  type: OrganizationType
+  subType: OrganizationSubType
+  sector: OrganizationSector
+  gradeLevels: string[]
+  address?: AddressModel
+  unitId: string | null
+  settings: ApplicationSettings | null
 }

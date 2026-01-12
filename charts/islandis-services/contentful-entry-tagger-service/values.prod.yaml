@@ -20,7 +20,7 @@ name: 'contentful-entry-tagger-service'
 enabled: true
 env:
   LOG_LEVEL: 'info'
-  NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
+  NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
   SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
 grantNamespaces: []
 grantNamespacesEnabled: false
@@ -49,12 +49,13 @@ ingress:
       kubernetes.io/ingress.class: 'nginx-external-alb'
       nginx.ingress.kubernetes.io/service-upstream: 'true'
     hosts:
-      - host: 'contentful-entry-tagger-service.devland.is'
+      - host: 'contentful-entry-tagger-service.island.is'
         paths:
           - '/'
 namespace: 'contentful-entry-tagger'
 podDisruptionBudget:
-  maxUnavailable: 1
+  minAvailable: 1
+  unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534
 pvcs: []

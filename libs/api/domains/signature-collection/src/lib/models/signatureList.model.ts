@@ -1,7 +1,10 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql'
 import { SignatureCollectionCandidate } from './candidate.model'
 import { SignatureCollectionArea } from './area.model'
 import { SignatureCollectionCollector } from './collector.model'
+import { CollectionType } from '@island.is/clients/signature-collection'
+
+registerEnumType(CollectionType, { name: 'SignatureCollectionCollectionType' })
 
 @ObjectType()
 export class SignatureCollectionOwnedList {
@@ -49,6 +52,9 @@ export class SignatureCollectionListBase {
 
   @Field()
   reviewed!: boolean
+
+  @Field(() => CollectionType)
+  collectionType!: CollectionType
 }
 
 @ObjectType()
@@ -61,7 +67,7 @@ export class SignatureCollectionList extends SignatureCollectionListBase {
 }
 
 @ObjectType()
-export class SignatureCollectionSignedList extends SignatureCollectionListBase {
+export class SignatureCollectionSignedList extends SignatureCollectionList {
   @Field(() => Date)
   signedDate!: Date
 

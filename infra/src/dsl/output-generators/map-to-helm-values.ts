@@ -48,6 +48,7 @@ const serializeService: SerializeMethod<HelmService> = async (
   } = serviceDef
   const hackListForNonExistentTracer = [
     'application-system-form',
+    'form-system-web',
     'github-actions-cache',
     'portals-admin',
     'service-portal',
@@ -67,12 +68,13 @@ const serializeService: SerializeMethod<HelmService> = async (
       SERVERSIDE_FEATURES_ON: env1.featuresOn.join(','),
       NODE_OPTIONS: `--max-old-space-size=${getScaledValue(
         serviceDef.resources.limits.memory,
-      )}`,
+      )} --enable-source-maps`,
       LOG_LEVEL: 'info',
     },
     secrets: {},
     podDisruptionBudget: serviceDef.podDisruptionBudget ?? {
-      maxUnavailable: 1,
+      unhealthyPodEvictionPolicy: 'IfHealthyBudget',
+      minAvailable: 1,
     },
     healthCheck: {
       liveness: {
@@ -109,7 +111,10 @@ const serializeService: SerializeMethod<HelmService> = async (
   result.resources = serviceDef.resources
 
   // replicas
-  if (env1.type == 'staging' && service.name.indexOf('search-indexer') == -1) {
+  if (
+    (env1.type == 'staging' || env1.type == 'dev') &&
+    service.name.indexOf('search-indexer') == -1
+  ) {
     result.replicaCount = {
       min: 1,
       max: 3,
@@ -138,7 +143,8 @@ const serializeService: SerializeMethod<HelmService> = async (
         max: result.replicaCount.max,
       },
       metric: {
-        cpuAverageUtilization: 90,
+        cpuAverageUtilization:
+          serviceDef.replicaCount?.cpuAverageUtilization || 90,
       },
     },
   }
@@ -285,7 +291,7 @@ export const getPostgresExtensions = (extensions: string[] | undefined) =>
   extensions ? extensions.join(',') : ''
 
 export const resolveDbHost = (
-  service: ServiceDefinitionForEnv,
+  _service: ServiceDefinitionForEnv,
   env: EnvironmentConfig,
   host?: string,
 ) => {
@@ -318,7 +324,7 @@ const getPostgresInfoForFeature = (feature: string, postgres: PostgresInfo) => {
 
 function serializePostgres(
   serviceDef: ServiceDefinitionForEnv,
-  deployment: ReferenceResolver,
+  _deployment: ReferenceResolver,
   envConf: EnvironmentConfig,
   service: ServiceDefinitionForEnv,
   postgres: PostgresInfoForEnv,
@@ -348,10 +354,10 @@ function serializePostgres(
 }
 
 function serializeIngress(
-  serviceDef: ServiceDefinitionForEnv,
+  _serviceDef: ServiceDefinitionForEnv,
   ingressConf: IngressForEnv,
   env: EnvironmentConfig,
-) {
+): NonNullable<HelmService['ingress']>[string] {
   const hosts = (
     typeof ingressConf.host === 'string' ? [ingressConf.host] : ingressConf.host
   ).map((host) =>
@@ -360,18 +366,21 @@ function serializeIngress(
       : internalHostFullName(host, env),
   )
 
+  const className =
+    ingressConf.public ?? true ? 'nginx-external-alb' : 'nginx-internal-alb'
+  const pathTypeOverride = ingressConf.pathTypeOverride
+    ? { pathTypeOverride: ingressConf.pathTypeOverride }
+    : null
   return {
     annotations: {
+      'kubernetes.io/ingress.class': className,
       'nginx.ingress.kubernetes.io/service-upstream':
         ingressConf.serviceUpstream ?? true ? 'true' : 'false',
-      'kubernetes.io/ingress.class':
-        ingressConf.public ?? true
-          ? 'nginx-external-alb'
-          : 'nginx-internal-alb',
       ...ingressConf.extraAnnotations,
     },
     hosts: hosts.map((host) => ({
       host: host,
+      ...pathTypeOverride,
       paths: ingressConf.paths,
     })),
   }
@@ -520,7 +529,7 @@ function getFeatureDeploymentNamespace(env: EnvironmentConfig) {
 export const HelmOutput: OutputFormat<HelmService> = {
   featureDeployment(s: ServiceDefinition, env): void {
     // Set feature-deployment prefix for URLs
-    Object.entries(s.ingress).forEach(([name, ingress]) => {
+    Object.values(s.ingress).forEach((ingress) => {
       if (!Array.isArray(ingress.host.dev)) {
         ingress.host.dev = [ingress.host.dev]
       }
@@ -548,7 +557,7 @@ export const HelmOutput: OutputFormat<HelmService> = {
     service: ServiceDefinitionForEnv,
     deployment: ReferenceResolver,
     env: EnvironmentConfig,
-    featureDeployment?: string,
+    _featureDeployment?: string,
   ): Promise<SerializeSuccess<HelmService> | SerializeErrors> {
     return serializeService(service, deployment, env)
   },

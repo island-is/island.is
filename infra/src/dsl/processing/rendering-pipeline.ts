@@ -79,6 +79,7 @@ export async function generateOutput<T extends ServiceOutputType>({
 
   logger.debug('Serializing services', {
     numberOfServices: preparedServices.length,
+    services: preparedServices.map((s) => s.name),
     env: env,
   })
   return preparedServices.reduce(async (acc, s) => {

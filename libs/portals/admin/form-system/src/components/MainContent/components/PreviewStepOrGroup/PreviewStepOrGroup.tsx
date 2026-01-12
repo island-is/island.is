@@ -1,9 +1,9 @@
-import { Dispatch, SetStateAction, useContext, useEffect } from 'react'
+import { FormSystemField, FormSystemScreen } from '@island.is/api/schema'
 import { Box, Button, Text } from '@island.is/island-ui/core'
+import { Dispatch, SetStateAction, useContext, useEffect } from 'react'
 import { ControlContext } from '../../../../context/ControlContext'
-import { FormSystemGroup, FormSystemInput } from '@island.is/api/schema'
 import { NavbarSelectStatus } from '../../../../lib/utils/interfaces'
-import { Preview } from '../Preview/Preveiw'
+import { Preview } from '../Preview/Preview'
 import { MultiSet } from './components/MultiSet'
 
 interface Props {
@@ -13,7 +13,7 @@ interface Props {
 export const PreviewStepOrGroup = ({ setOpenPreview }: Props) => {
   const { control, setSelectStatus } = useContext(ControlContext)
   const { activeItem, form } = control
-  const { groupsList: groups, inputsList: inputs } = form
+  const { screens, fields } = form
   const { type } = activeItem
 
   useEffect(() => {
@@ -27,42 +27,52 @@ export const PreviewStepOrGroup = ({ setOpenPreview }: Props) => {
       background="blue100"
       padding={2}
     >
-      {type === 'Step' && (
+      {type === 'Section' && (
         <>
           <Box marginBottom={2}>
             <Text variant="h2">{activeItem?.data?.name?.is}</Text>
           </Box>
-          {groups
-            ?.filter((g) => g?.stepGuid === activeItem?.data?.guid)
-            .map((g) => (
-              <Box key={g?.guid} marginBottom={2}>
+          {screens
+            ?.filter((screen) => screen?.sectionId === activeItem?.data?.id)
+            .map((screen) => (
+              <Box key={screen?.id} marginBottom={2}>
                 <Box marginBottom={1}>
-                  <Text variant="h3">{g?.name?.is}</Text>
+                  <Text variant="h3">{screen?.name?.is}</Text>
                 </Box>
-                {g?.multiSet !== 0 ? (
-                  <MultiSet group={g as FormSystemGroup} />
+                {screen?.multiset !== 0 ? (
+                  <MultiSet screen={screen as FormSystemScreen} />
                 ) : (
-                  inputs
-                    ?.filter((i) => i?.groupGuid === g?.guid)
-                    .map((i) => (
-                      <Preview key={i?.guid} data={i as FormSystemInput} />
+                  fields
+                    ?.filter((field) => field?.screenId === screen?.id)
+                    .map((field) => (
+                      <Preview
+                        key={field?.id}
+                        data={field as FormSystemField}
+                        screenOrSection={true}
+                      />
                     ))
                 )}
               </Box>
             ))}
         </>
       )}
-      {type === 'Group' && (
+      {type === 'Screen' && (
         <div>
           <div>
             <Text variant="h2">{activeItem?.data?.name?.is}</Text>
           </div>
-          {(activeItem.data as FormSystemGroup).multiSet !== 0 ? (
-            <MultiSet group={activeItem.data as FormSystemGroup} />
+          {(activeItem.data as FormSystemScreen).multiset !== 0 ? (
+            <MultiSet screen={activeItem.data as FormSystemScreen} />
           ) : (
-            inputs
-              ?.filter((i) => i?.groupGuid === activeItem?.data?.guid)
-              .map((i) => <Preview key={i?.guid} data={i as FormSystemInput} />)
+            fields
+              ?.filter((field) => field?.screenId === activeItem?.data?.id)
+              .map((field) => (
+                <Preview
+                  key={field?.id}
+                  data={field as FormSystemField}
+                  screenOrSection={true}
+                />
+              ))
           )}
         </div>
       )}
@@ -73,7 +83,7 @@ export const PreviewStepOrGroup = ({ setOpenPreview }: Props) => {
             setOpenPreview(false)
           }}
         >
-          exit
+          Loka
         </Button>
       </Box>
     </Box>

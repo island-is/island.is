@@ -1,7 +1,7 @@
 import {
   IncomePlanStatus,
-  TrWebCommonsExternalPortalsApiModelsIncomePlanIncomePlanDto,
-  TrWebCommonsExternalPortalsApiModelsIncomePlanIncomeTypeLine,
+  TrWebContractsExternalDigitalIcelandIncomePlanIncomePlanDto,
+  TrWebContractsExternalDigitalIcelandIncomePlanIncomeTypeLine,
 } from '../..'
 
 export interface IncomePlanDto {
@@ -9,11 +9,11 @@ export interface IncomePlanDto {
   registrationDate?: Date
   status?: IncomePlanStatus
   origin?: string
-  incomeTypeLines?: Array<TrWebCommonsExternalPortalsApiModelsIncomePlanIncomeTypeLine>
+  incomeTypeLines?: Array<TrWebContractsExternalDigitalIcelandIncomePlanIncomeTypeLine>
 }
 
 export const mapIncomePlanDto = (
-  data: TrWebCommonsExternalPortalsApiModelsIncomePlanIncomePlanDto,
+  data: TrWebContractsExternalDigitalIcelandIncomePlanIncomePlanDto,
 ): IncomePlanDto | undefined => ({
   year: data.year ?? undefined,
   registrationDate: data.registrationDate ?? undefined,

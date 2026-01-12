@@ -2,9 +2,9 @@ import {
   buildCustomField,
   buildSubSection,
   getValueViaPath,
+  YES,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import { YES } from '../../lib/constants'
 
 export const subSectionOtherCountryDirections = buildSubSection({
   id: 'otherCountrySelected',

@@ -1,32 +1,30 @@
-import { Field, ObjectType, registerEnumType } from '@nestjs/graphql'
+import { Field, ObjectType } from '@nestjs/graphql'
+import {
+  GetOrganizationsByTypeTypeEnum,
+  OrganizationModelSectorEnum,
+  OrganizationModelSubTypeEnum,
+} from './organization.enum'
 
-export enum OrganizationModelTypeEnum {
-  Municipality = 'municipality',
-  National = 'national',
-  School = 'school',
-}
-
-registerEnumType(OrganizationModelTypeEnum, {
-  name: 'OrganizationModelTypeEnum',
-})
-
-@ObjectType('EducationFriggOrganizationModel')
-export class FriggOrganizationModel {
+@ObjectType('EducationFriggOrganization')
+export class FriggOrganization {
   @Field()
   id!: string
 
   @Field()
-  nationalId!: string
-
-  @Field()
   name!: string
 
-  @Field(() => OrganizationModelTypeEnum)
-  type!: OrganizationModelTypeEnum
+  @Field(() => GetOrganizationsByTypeTypeEnum)
+  type!: GetOrganizationsByTypeTypeEnum
+
+  @Field(() => OrganizationModelSubTypeEnum, { nullable: true })
+  subType?: OrganizationModelSubTypeEnum
+
+  @Field(() => OrganizationModelSectorEnum, { nullable: true })
+  sector?: OrganizationModelSectorEnum
 
   @Field(() => [String], { nullable: true })
   gradeLevels?: string[]
 
-  @Field(() => [FriggOrganizationModel], { nullable: true })
-  children?: FriggOrganizationModel[]
+  @Field({ nullable: true })
+  unitId?: string
 }

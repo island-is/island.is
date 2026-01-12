@@ -3,14 +3,13 @@ import { Form, FormModes } from '@island.is/application/types'
 import { confirmation, externalData, payment } from '../../lib/messages'
 import { PersonalSection } from './personalSection'
 import { SelectLicenseSection } from './selectLicenseSection'
-import { Logo } from '../../assets/Logo'
+import { DirectorateOfHealthLogo } from '@island.is/application/assets/institution-logos'
 import { buildFormPaymentChargeOverviewSection } from '@island.is/application/ui-forms'
 import { getChargeItemsWithExtraLabel } from '../../utils'
 
 export const HealthcareLicenseCertificateForm: Form = buildForm({
   id: 'HealthcareLicenseCertificateForm',
-  title: '',
-  logo: Logo,
+  logo: DirectorateOfHealthLogo,
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,

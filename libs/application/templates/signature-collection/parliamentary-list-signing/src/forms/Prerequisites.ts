@@ -5,40 +5,41 @@ import {
   buildSubmitField,
   buildSection,
   buildMultiField,
-  buildDescriptionField,
+  buildImageField,
 } from '@island.is/application/core'
 import {
   DefaultEvents,
   Form,
   FormModes,
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   UserProfileApi,
 } from '@island.is/application/types'
-
 import { m } from '../lib/messages'
-import Logo from '../../assets/Logo'
 import { CanSignApi, GetListApi } from '../dataProviders'
+import DigitalServices from '@island.is/application/templates/signature-collection/assets/DigitalServices'
+import { NationalRegistryLogo } from '@island.is/application/assets/institution-logos'
 
 export const Prerequisites: Form = buildForm({
   id: 'SignListPrerequisites',
-  title: '',
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
-  logo: Logo,
+  logo: NationalRegistryLogo,
   children: [
     buildSection({
       id: 'intro',
-      title: m.intro,
       children: [
         buildMultiField({
           id: 'intro',
           title: m.introTitle,
           description: m.introDescription,
           children: [
-            buildDescriptionField({
-              id: 'introText',
-              title: '',
+            buildImageField({
+              id: 'doneImage',
+              image: DigitalServices,
+              imageWidth: 'auto',
+              imagePosition: 'center',
+              marginTop: 'gutter',
             }),
           ],
         }),
@@ -46,7 +47,6 @@ export const Prerequisites: Form = buildForm({
     }),
     buildSection({
       id: 'approveExternalData',
-      title: m.dataCollection,
       children: [
         buildExternalDataProvider({
           id: 'approveExternalData',
@@ -56,7 +56,6 @@ export const Prerequisites: Form = buildForm({
           submitField: buildSubmitField({
             id: 'submit',
             placement: 'footer',
-            title: '',
             refetchApplicationAfterSubmit: true,
             actions: [
               {
@@ -73,33 +72,19 @@ export const Prerequisites: Form = buildForm({
               subTitle: m.userProfileProviderSubtitle,
             }),
             buildDataProviderItem({
-              provider: NationalRegistryUserApi,
+              provider: NationalRegistryV3UserApi,
               title: m.nationalRegistryProviderTitle,
               subTitle: m.nationalRegistryProviderSubtitle,
             }),
             buildDataProviderItem({
               provider: CanSignApi,
-              title: '',
-              subTitle: '',
             }),
             buildDataProviderItem({
               provider: GetListApi,
-              title: '',
-              subTitle: '',
             }),
           ],
         }),
       ],
-    }),
-    buildSection({
-      id: 'screen3',
-      title: m.information,
-      children: [],
-    }),
-    buildSection({
-      id: 'screen7',
-      title: m.listSigned,
-      children: [],
     }),
   ],
 })

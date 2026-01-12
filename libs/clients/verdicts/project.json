@@ -1,0 +1,46 @@
+{
+  "name": "clients-verdicts",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/clients/verdicts/src",
+  "projectType": "library",
+  "tags": ["lib:nest", "scope:nest"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "libs/clients/verdicts/jest.config.ts"
+      }
+    },
+    "update-openapi-document": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "curl https://foris.gopro.net/domssm/services/swagger/docs/v1 > src/goproClientConfig.json",
+          "prettier --write src/goproClientConfig.json",
+          "curl https://dom-haestirettur.eu.ngrok.io/api/v2/docs.yaml > src/supremeCourtClientConfig.yaml",
+          "prettier --write src/supremeCourtClientConfig.yaml"
+        ],
+        "parallel": false,
+        "cwd": "libs/clients/verdicts"
+      }
+    },
+    "codegen/backend-client": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "commands": [
+          "yarn openapi-generator -o libs/clients/verdicts/gen/fetch/gopro -i libs/clients/verdicts/src/goproClientConfig.json --skip-validate-spec",
+          "yarn openapi-generator -o libs/clients/verdicts/gen/fetch/supreme-court -i libs/clients/verdicts/src/supremeCourtClientConfig.yaml"
+        ]
+      },
+      "outputs": [
+        "{projectRoot}/gen/fetch/gopro",
+        "{projectRoot}/gen/fetch/supreme-court"
+      ]
+    }
+  }
+}

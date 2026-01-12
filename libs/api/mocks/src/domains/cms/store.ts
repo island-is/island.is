@@ -11,6 +11,7 @@ import {
   articleSubgroup,
   genericPage,
   frontpage as createFrontpage,
+  organization,
 } from './factories'
 import orderBy from 'lodash/orderBy'
 import { Article } from '../../types'
@@ -65,6 +66,8 @@ export const store = createStore(() => {
 
   const genericPages = [genericPage({ title: 'Loftbrú', slug: 'loftbru' })]
 
+  const organizations = { items: organization.list(5) }
+
   return {
     frontpage,
     anchorPages,
@@ -76,5 +79,6 @@ export const store = createStore(() => {
     articles,
     articleCategories,
     genericPages,
+    organizations,
   }
 })

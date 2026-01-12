@@ -17,6 +17,7 @@ import {
 } from '@island.is/application/types'
 import { buildForm } from './formBuilders'
 import { DefaultStateLifeCycle } from './constants'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const createMockApplication = (
   data: {
@@ -31,7 +32,7 @@ const createMockApplication = (
   applicantActors: [],
   state: data.state || 'draft',
   applicant: '111111-3000',
-  typeId: data.typeId || ApplicationTypes.EXAMPLE,
+  typeId: data.typeId || ApplicationTypes.EXAMPLE_COMMON_ACTIONS,
   modified: new Date(),
   created: new Date(),
   answers: data.answers || {},
@@ -49,8 +50,9 @@ const createTestApplicationTemplate = (): ApplicationTemplate<
   mapUserToRole(): ApplicationRole {
     return 'applicant'
   },
-  type: ApplicationTypes.EXAMPLE,
+  type: ApplicationTypes.EXAMPLE_COMMON_ACTIONS,
   name: 'Test application',
+  codeOwner: CodeOwners.NordaApplications,
   dataSchema: z.object({
     person: z.object({
       age: z.number().min(18),

@@ -167,5 +167,10 @@ export const shipSelection = {
       defaultMessage: 'Krabbaveiðileyfi',
       description: 'Crustaceans',
     },
+    urchin: {
+      id: 'gfl.application:shipSelection.tags.urchin',
+      defaultMessage: 'Ígulkerjaveiðileyfi',
+      description: 'Ígulkerjaveiðileyfi',
+    },
   }),
 }

@@ -13,11 +13,11 @@ import { AnchorPageSyncService } from './importers/anchorPage.service'
 import { LifeEventPageSyncService } from './importers/lifeEventPage.service'
 import { ArticleCategorySyncService } from './importers/articleCategory.service'
 import { NewsSyncService } from './importers/news.service'
-import { AdgerdirPageSyncService } from './importers/adgerdirPage'
 import { MenuSyncService } from './importers/menu.service'
 import { GroupedMenuSyncService } from './importers/groupedMenu.service'
 import { OrganizationPageSyncService } from './importers/organizationPage.service'
 import { OrganizationSubpageSyncService } from './importers/organizationSubpage.service'
+import { OrganizationParentSubpageSyncService } from './importers/organizationParentSubpage.service'
 import { FrontpageSyncService } from './importers/frontpage.service'
 import { SubArticleSyncService } from './importers/subArticle.service'
 import { SupportQNASyncService } from './importers/supportQNA.service'
@@ -34,6 +34,8 @@ import { GenericListItemSyncService } from './importers/genericListItem.service'
 import { TeamListSyncService } from './importers/teamList.service'
 import { MappingService } from './mapping.service'
 import { GrantsSyncService } from './importers/grants.service'
+import { BloodDonationRestrictionSyncService } from './importers/bloodDonationRestriction.service'
+import { CourseSyncService } from './importers/course.service'
 
 @Module({
   imports: [
@@ -53,12 +55,12 @@ import { GrantsSyncService } from './importers/grants.service'
     LifeEventPageSyncService,
     ArticleCategorySyncService,
     NewsSyncService,
-    AdgerdirPageSyncService,
     MenuSyncService,
     GrantsSyncService,
     GroupedMenuSyncService,
     OrganizationPageSyncService,
     OrganizationSubpageSyncService,
+    OrganizationParentSubpageSyncService,
     ProjectPageSyncService,
     FrontpageSyncService,
     SupportQNASyncService,
@@ -72,6 +74,8 @@ import { GrantsSyncService } from './importers/grants.service'
     CustomPageSyncService,
     GenericListItemSyncService,
     TeamListSyncService,
+    BloodDonationRestrictionSyncService,
+    CourseSyncService,
     MappingService,
   ],
   exports: [CmsSyncService],

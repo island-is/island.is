@@ -19,7 +19,7 @@ global:
 name: 'consultation-portal'
 enabled: true
 env:
-  API_URL: 'http://web-api.islandis.svc.cluster.local'
+  API_URL: 'http://api.islandis.svc.cluster.local'
   BACKEND_DL_URL: 'https://samradapi.island.is/api/Documents/'
   BASEPATH: '/consultation-portal'
   CODE_OWNER: 'Advania'
@@ -27,7 +27,7 @@ env:
   IDENTITY_SERVER_ISSUER_DOMAIN: 'innskra.island.is'
   LOG_LEVEL: 'info'
   NEXTAUTH_URL: 'https://island.is/samradsgatt/api/auth'
-  NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
+  NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
   SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
 grantNamespaces: []
 grantNamespacesEnabled: false
@@ -66,7 +66,10 @@ ingress:
           - '/samradsgatt'
 namespace: 'consultation-portal'
 podDisruptionBudget:
-  maxUnavailable: 1
+  minAvailable: 1
+  unhealthyPodEvictionPolicy: 'IfHealthyBudget'
+podSecurityContext:
+  fsGroup: 65534
 pvcs: []
 replicaCount:
   default: 2
@@ -81,9 +84,13 @@ resources:
     memory: '256Mi'
 secrets:
   CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-  DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID'
-  DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN'
+  DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN'
   IDENTITY_SERVER_SECRET: '/k8s/consultation-portal/IDENTITY_SERVER_SECRET'
 securityContext:
   allowPrivilegeEscalation: false
   privileged: false
+serviceAccount:
+  annotations:
+    eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/consultation-portal'
+  create: true
+  name: 'consultation-portal'

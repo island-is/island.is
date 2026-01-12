@@ -1,17 +1,21 @@
+import { BankInfo, PaymentInfo } from '../types'
 import { BankAccountType } from './constants'
 import {
+  formatBankAccount,
+  formatBank,
+  formatBankInfo,
+  friendlyFormatIBAN,
   friendlyFormatSWIFT,
   getBankIsk,
-  friendlyFormatIBAN,
-  validIBAN,
-  validSWIFT,
+  getCategoriesOptions,
+  getCurrencies,
+  getOneInstanceOfCategory,
+  getTypesOptions,
   shouldNotUpdateBankAccount,
   typeOfBankInfo,
-  formatBankInfo,
-  formatBank,
-  getCurrencies,
+  validIBAN,
+  validSWIFT,
 } from './socialInsuranceAdministrationUtils'
-import { BankInfo, PaymentInfo } from '../types'
 
 describe('formatBankInfo', () => {
   it('format bank info', () => {
@@ -19,6 +23,18 @@ describe('formatBankInfo', () => {
     const formattedBank = formatBankInfo(bankInfo)
 
     expect('222200123456').toEqual(formattedBank)
+  })
+})
+
+describe('formatBankAccount', () => {
+  it('format bank account to string', () => {
+    const bankInfo: PaymentInfo = {
+      bankNumber: '2222',
+      ledger: '00',
+      accountNumber: '123456',
+    }
+    const bankInfoString = formatBankAccount(bankInfo)
+    expect('2222-00-123456').toEqual(bankInfoString)
   })
 })
 
@@ -196,6 +212,38 @@ describe('shouldNotUpdateBankAccount', () => {
 
     expect(false).toEqual(res)
   })
+
+  it('should return true if bank account returned from TR is not changed (BankAccountFormField)', () => {
+    const bankInfo: BankInfo = {
+      bank: '2222',
+      ledger: '00',
+      accountNumber: '123456',
+    }
+    const paymentInfo: PaymentInfo = {
+      bankNumber: '2222',
+      ledger: '00',
+      accountNumber: '123456',
+    }
+    const res = shouldNotUpdateBankAccount(bankInfo, paymentInfo)
+
+    expect(true).toEqual(res)
+  })
+
+  it('should return false if bank account returned from TR is changed (BankAccountFormField)', () => {
+    const bankInfo: BankInfo = {
+      bank: '2222',
+      ledger: '00',
+      accountNumber: '123456',
+    }
+    const paymentInfo: PaymentInfo = {
+      bankNumber: '2222',
+      ledger: '00',
+      accountNumber: '000000',
+    }
+    const res = shouldNotUpdateBankAccount(bankInfo, paymentInfo)
+
+    expect(false).toEqual(res)
+  })
 })
 
 describe('getCurrencies', () => {
@@ -259,5 +307,79 @@ describe('typeOfBankInfo', () => {
     const res = typeOfBankInfo(bankInfo, bankAccountType)
 
     expect('foreign').toEqual(res)
+  })
+})
+
+describe('getCategoriesOptions', () => {
+  it('should return income type categories', () => {
+    const categorizedIncomeTypes = [
+      {
+        categoryNumber: 1,
+        categoryName: 'Atvinnutekjur',
+        categoryCode: 'ATV01',
+        incomeTypeNumber: 101,
+        incomeTypeName: 'Laun',
+        incomeTypeCode: 'IPC01',
+      },
+      {
+        categoryNumber: 2,
+        categoryName: 'Fjármagnstekjur',
+        categoryCode: 'FJT01',
+        incomeTypeNumber: 201,
+        incomeTypeName: 'Atvinnuleysisbætur',
+        incomeTypeCode: 'IPC02',
+      },
+    ]
+
+    const categories = getOneInstanceOfCategory(categorizedIncomeTypes)
+
+    const res = getCategoriesOptions(categorizedIncomeTypes)
+
+    const expected =
+      categories &&
+      categories.map((item) => {
+        return {
+          value: item.categoryName || '',
+          label: item.categoryName || '',
+        }
+      })
+
+    expect(res).toEqual(expected)
+  })
+})
+
+describe('getTypesOptions', () => {
+  it('should return income type', () => {
+    const categorizedIncomeTypes = [
+      {
+        categoryNumber: 1,
+        categoryName: 'Atvinnutekjur',
+        categoryCode: 'ATV01',
+        incomeTypeNumber: 101,
+        incomeTypeName: 'Laun',
+        incomeTypeCode: 'IPC01',
+      },
+      {
+        categoryNumber: 2,
+        categoryName: 'Fjármagnstekjur',
+        categoryCode: 'FJT01',
+        incomeTypeNumber: 201,
+        incomeTypeName: 'Atvinnuleysisbætur',
+        incomeTypeCode: 'IPC02',
+      },
+    ]
+    const categoryName = 'Atvinnutekjur'
+
+    const res = getTypesOptions(categorizedIncomeTypes, categoryName)
+    const expected = categorizedIncomeTypes
+      .filter((item) => item.categoryName === categoryName)
+      .map((item) => {
+        return {
+          value: item.incomeTypeName || '',
+          label: item.incomeTypeName || '',
+        }
+      })
+
+    expect(res).toEqual(expected)
   })
 })

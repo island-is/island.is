@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import cn from 'classnames'
 import { useLocale } from '@island.is/localization'
-import { formatText, coreMessages } from '@island.is/application/core'
+import { coreMessages } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import { Box, Icon, Tag, Text } from '@island.is/island-ui/core'
 import { MessageDescriptor } from '@formatjs/intl'
@@ -21,7 +21,6 @@ type WarningSectionProps = {
 }
 
 const WarningSection: FC<React.PropsWithChildren<WarningSectionProps>> = ({
-  application,
   step: { description, title },
 }) => {
   const { formatMessage } = useLocale()
@@ -54,20 +53,14 @@ const WarningSection: FC<React.PropsWithChildren<WarningSectionProps>> = ({
         justifyContent="spaceBetween"
       >
         <Box marginTop={[1, 0, 0]} paddingRight={[0, 1, 1]}>
-          <Text variant="h3">
-            {formatText(title, application, formatMessage)}
-          </Text>
+          <Text variant="h3">{formatMessage(title)}</Text>
           <Text marginTop={1} variant="default">
-            {formatText(description, application, formatMessage)}
+            {formatMessage(description)}
           </Text>
         </Box>
         <Box pointerEvents="none">
           <Tag variant="red">
-            {formatText(
-              coreMessages.tagsRequiresAction,
-              application,
-              formatMessage,
-            )}
+            {formatMessage(coreMessages.tagsRequiresAction)}
           </Tag>
         </Box>
       </Box>

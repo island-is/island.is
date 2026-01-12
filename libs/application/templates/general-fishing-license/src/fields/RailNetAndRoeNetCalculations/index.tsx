@@ -5,7 +5,7 @@ import { useLocale } from '@island.is/localization'
 import { fishingLicenseFurtherInformation } from '../../lib/messages'
 import { InputController } from '@island.is/shared/form-fields'
 import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 import {
   calculateTotalRailNet,
   MAXIMUM_TOTAL_RAIL_NET_LENGTH,

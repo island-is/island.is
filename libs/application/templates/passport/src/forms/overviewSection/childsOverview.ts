@@ -45,7 +45,6 @@ export const childsOverview = buildMultiField({
     }),
     buildDescriptionField({
       id: 'overviewChild.space1',
-      title: '',
       space: 'gutter',
     }),
     buildDividerField({}),
@@ -76,7 +75,6 @@ export const childsOverview = buildMultiField({
     }),
     buildDescriptionField({
       id: 'overviewChild.space2',
-      title: '',
       space: 'gutter',
     }),
     buildKeyValueField({
@@ -101,7 +99,6 @@ export const childsOverview = buildMultiField({
     }),
     buildDescriptionField({
       id: 'overviewChild.space3',
-      title: '',
       space: 'gutter',
     }),
     buildDividerField({}),
@@ -140,7 +137,6 @@ export const childsOverview = buildMultiField({
     }),
     buildDescriptionField({
       id: 'overviewChild.space4',
-      title: '',
       space: 'gutter',
       condition: (answers, externalData) =>
         hasSecondGuardian(answers, externalData),
@@ -171,7 +167,6 @@ export const childsOverview = buildMultiField({
     }),
     buildDescriptionField({
       id: 'overviewChild.space5',
-      title: '',
       space: 'gutter',
       condition: (answers, externalData) =>
         hasSecondGuardian(answers, externalData),

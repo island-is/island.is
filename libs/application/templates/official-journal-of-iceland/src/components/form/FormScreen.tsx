@@ -2,10 +2,9 @@ import {
   AlertMessage,
   AlertMessageProps,
   Box,
-  Bullet,
-  BulletList,
   Button,
   Inline,
+  LinkV2,
   SkeletonLoader,
   Text,
 } from '@island.is/island-ui/core'
@@ -23,6 +22,7 @@ type WarningProps = {
 type Props = {
   title?: string
   intro?: React.ReactNode
+  description?: React.ReactNode
   button?: React.ReactNode
   warning?: WarningProps
   children?: React.ReactNode
@@ -33,6 +33,7 @@ type Props = {
 export const FormScreen = ({
   title,
   intro,
+  description,
   button,
   children,
   warning,
@@ -46,6 +47,11 @@ export const FormScreen = ({
     : formatMessage(general.warningTitle)
 
   if (!title && !intro && !children) return null
+
+  const path = window.location.origin
+  const helpHref = path.includes('localhost')
+    ? `http://localhost:4200/stjornartidindi/leidbeiningar`
+    : `${path}/stjornartidindi/leidbeiningar`
 
   return (
     <>
@@ -109,6 +115,11 @@ export const FormScreen = ({
             {intro && <Text>{intro}</Text>}
           </Box>
         )}
+        {description && (
+          <Box marginBottom={4} className={styles.contentWrapper}>
+            {description}
+          </Box>
+        )}
         {warning && (
           <Box>
             <AlertMessage
@@ -127,7 +138,16 @@ export const FormScreen = ({
           space={2}
         />
       ) : (
-        <Box className={styles.childrenWrapper}>{children}</Box>
+        <Box>
+          <Box className={styles.childrenWrapper}>{children}</Box>
+          <Box paddingTop={1}>
+            <LinkV2 href={helpHref}>
+              <Button variant="text" size="small" icon="arrowForward">
+                Skoða hjálparsíðu
+              </Button>
+            </LinkV2>
+          </Box>
+        </Box>
       )}
     </>
   )

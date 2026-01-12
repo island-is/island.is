@@ -6,9 +6,11 @@ import {
   buildRadioField,
   buildSelectField,
   buildAlertMessageField,
+  NO,
+  YES,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
-import { FormValue, NO, YES } from '@island.is/application/types'
+import { FormValue } from '@island.is/application/types'
 import { hasOperator } from '../../../utils/hasOperator'
 import { postalCodes } from '@island.is/shared/utils'
 import { doOwnerAndOperatorHaveSameNationalId } from '../../../utils'

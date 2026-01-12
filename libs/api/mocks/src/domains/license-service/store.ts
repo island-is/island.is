@@ -13,7 +13,11 @@ export const store = createStore(() => {
     )
   }
 
-  const getLicenses = () => {
+  const getLicenses = ({
+    includePassport = false,
+  }: {
+    includePassport?: boolean
+  }) => {
     if (!licenses.length) {
       licenses = genericUserLicenses([
         'DriversLicense',
@@ -21,6 +25,11 @@ export const store = createStore(() => {
         'AdrLicense',
         'MachineLicense',
         'DisabilityLicense',
+        'Ehic',
+        'PCard',
+        'HuntingLicense',
+        'IdentityDocument',
+        ...(includePassport ? ['Passport'] : []),
       ])
     }
     return licenses

@@ -13,8 +13,9 @@ import { useLocale } from '@island.is/localization'
 import { FC, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { RadioController } from '@island.is/shared/form-fields'
-import { PlateOwnership, VehicleDetails } from './VehicleDetails'
+import { PlateOwnership, VehicleDetails } from './types'
 import { MessageDescriptor } from 'react-intl'
+import { getItemAtIndex } from './utils'
 
 interface Option {
   value: string
@@ -31,18 +32,19 @@ export const VehicleRadioFormField: FC<React.PropsWithChildren<Props>> = ({
   field,
   errors,
   clearOnChange,
+  clearOnChangeDefaultValue,
 }) => {
   const { formatMessage, formatDateFns } = useLocale()
   const { setValue } = useFormContext()
 
-  let answersSelectedValueKey: string | undefined
-  let radioControllerId = field.id
+  let answersSelectedValueKey = field.id
+  let answersSelectedIndexKey = field.id
   if (field.itemType === 'VEHICLE') {
     answersSelectedValueKey = `${field.id}.plate`
-    radioControllerId = `${field.id}.vehicle`
+    answersSelectedIndexKey = `${field.id}.vehicle`
   } else if (field.itemType === 'PLATE') {
     answersSelectedValueKey = `${field.id}.regno`
-    radioControllerId = `${field.id}.value`
+    answersSelectedIndexKey = `${field.id}.value`
   }
 
   const [selectedValue, setSelectedValue] = useState<string | undefined>(
@@ -52,28 +54,27 @@ export const VehicleRadioFormField: FC<React.PropsWithChildren<Props>> = ({
 
   const onRadioControllerSelect = (s: string) => {
     if (field.itemType === 'VEHICLE') {
-      const currentVehicleList = field.itemList as VehicleDetails[]
-      const currentVehicle = currentVehicleList?.[parseInt(s, 10)]
-      const permno = currentVehicle?.permno || ''
+      const vehicle = getItemAtIndex(field.itemList as VehicleDetails[], s)
+      const permno = vehicle?.permno || ''
 
       setSelectedValue(permno)
 
       setValue(`${field.id}.plate`, permno)
-      setValue(`${field.id}.type`, currentVehicle?.make)
-      setValue(`${field.id}.color`, currentVehicle?.color || undefined)
+      setValue(`${field.id}.type`, vehicle?.make)
+      setValue(`${field.id}.color`, vehicle?.color || undefined)
+      setValue(
+        `${field.id}.vehicleHasMilesOdometer`,
+        vehicle?.vehicleHasMilesOdometer,
+      )
 
-      setValue('vehicleMileage.requireMileage', currentVehicle?.requireMileage)
-      setValue('vehicleMileage.mileageReading', currentVehicle?.mileageReading)
-
-      setValue('plateSize.frontPlateSize', [])
-      setValue('plateSize.rearPlateSize', [])
+      setValue('vehicleMileage.requireMileage', vehicle?.requireMileage)
+      setValue('vehicleMileage.mileageReading', vehicle?.mileageReading)
 
       if (permno) setValue('vehicleInfo.plate', permno)
-      if (permno) setValue('vehicleInfo.type', currentVehicle?.make)
+      if (permno) setValue('vehicleInfo.type', vehicle?.make)
     } else if (field.itemType === 'PLATE') {
-      const currentPlateList = field.itemList as PlateOwnership[]
-      const currentPlate = currentPlateList?.[parseInt(s, 10)]
-      const regno = currentPlate?.regno
+      const plate = getItemAtIndex(field.itemList as PlateOwnership[], s)
+      const regno = plate?.regno
 
       setSelectedValue(regno)
 
@@ -81,13 +82,15 @@ export const VehicleRadioFormField: FC<React.PropsWithChildren<Props>> = ({
     }
   }
 
-  const vehicleOptions = (vehicles: VehicleDetails[]) => {
-    const options: Option[] = []
-
+  const options: Option[] = []
+  if (field.itemType === 'VEHICLE') {
+    const vehicles = field.itemList as VehicleDetails[]
     for (const [index, vehicle] of vehicles.entries()) {
-      const hasError = !!vehicle.validationErrorMessages?.length
+      const hasValidationError =
+        field.shouldValidateErrorMessages &&
+        !!vehicle.validationErrorMessages?.length
       const hasDebtError = field.shouldValidateDebtStatus && !vehicle.isDebtLess
-      const disabled = hasError || hasDebtError
+      const disabled = hasValidationError || hasDebtError
 
       options.push({
         value: `${index}`,
@@ -116,18 +119,17 @@ export const VehicleRadioFormField: FC<React.PropsWithChildren<Props>> = ({
                   message={
                     <Box>
                       <BulletList>
-                        {field.shouldValidateDebtStatus &&
-                          !vehicle.isDebtLess && (
-                            <Bullet>
-                              {field.debtStatusErrorMessage &&
-                                formatText(
-                                  field.debtStatusErrorMessage,
-                                  application,
-                                  formatMessage,
-                                )}
-                            </Bullet>
-                          )}
-                        {!!vehicle.validationErrorMessages?.length &&
+                        {hasDebtError && (
+                          <Bullet>
+                            {field.debtStatusErrorMessage &&
+                              formatText(
+                                field.debtStatusErrorMessage,
+                                application,
+                                formatMessage,
+                              )}
+                          </Bullet>
+                        )}
+                        {hasValidationError &&
                           vehicle.validationErrorMessages?.map((error) => {
                             const message =
                               field.validationErrorMessages &&
@@ -165,17 +167,15 @@ export const VehicleRadioFormField: FC<React.PropsWithChildren<Props>> = ({
         disabled: disabled,
       })
     }
-    return options
-  }
-
-  const plateOptions = (plates: PlateOwnership[]) => {
-    const options: Option[] = []
-
+  } else if (field.itemType === 'PLATE') {
+    const plates = field.itemList as PlateOwnership[]
     for (const [index, plate] of plates.entries()) {
-      const hasError = !!plate.validationErrorMessages?.length
+      const hasValidationError =
+        field.shouldValidateErrorMessages &&
+        !!plate.validationErrorMessages?.length
       const canRenew =
         !field.shouldValidateRenewal || field.validateRenewal?.(plate)
-      const disabled = hasError || !canRenew
+      const disabled = hasValidationError || !canRenew
 
       options.push({
         value: `${index}`,
@@ -198,7 +198,7 @@ export const VehicleRadioFormField: FC<React.PropsWithChildren<Props>> = ({
                   })}
               </Tag>
             </Box>
-            {hasError && (
+            {hasValidationError && (
               <Box marginTop={2}>
                 <AlertMessage
                   type="error"
@@ -252,25 +252,18 @@ export const VehicleRadioFormField: FC<React.PropsWithChildren<Props>> = ({
         disabled: disabled,
       })
     }
-    return options
-  }
-
-  let options: Option[] = []
-  if (field.itemType === 'VEHICLE') {
-    options = vehicleOptions(field.itemList as VehicleDetails[])
-  } else if (field.itemType === 'PLATE') {
-    options = plateOptions(field.itemList as PlateOwnership[])
   }
 
   return (
     <Box marginTop={field.marginTop} marginBottom={field.marginBottom}>
       <RadioController
-        id={radioControllerId}
+        id={answersSelectedIndexKey}
         largeButtons
         backgroundColor="blue"
         onSelect={onRadioControllerSelect}
         options={options}
         clearOnChange={clearOnChange}
+        clearOnChangeDefaultValue={clearOnChangeDefaultValue}
       />
 
       {!selectedValue?.length && !!errors?.[field.id] && (

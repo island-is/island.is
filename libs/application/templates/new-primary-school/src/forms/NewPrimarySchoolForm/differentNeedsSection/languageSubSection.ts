@@ -1,125 +1,168 @@
 import {
-  buildCheckboxField,
+  buildCustomField,
   buildDescriptionField,
-  buildHiddenInput,
+  buildFieldsRepeaterField,
   buildMultiField,
   buildRadioField,
   buildSelectField,
   buildSubSection,
+  NO,
+  YES,
 } from '@island.is/application/core'
-import { NO, YES } from '@island.is/application/types'
 import { getAllLanguageCodes } from '@island.is/shared/utils'
-import { newPrimarySchoolMessages } from '../../../lib/messages'
-import { getApplicationAnswers } from '../../../lib/newPrimarySchoolUtils'
+import { differentNeedsMessages, sharedMessages } from '../../../lib/messages'
+import {
+  hasForeignLanguages,
+  showPreferredLanguageFields,
+} from '../../../utils/conditionUtils'
+import {
+  LanguageEnvironmentOptions,
+  OptionsType,
+} from '../../../utils/constants'
+import { getApplicationAnswers } from '../../../utils/newPrimarySchoolUtils'
 
 export const languageSubSection = buildSubSection({
   id: 'languageSubSection',
-  title: newPrimarySchoolMessages.differentNeeds.languageSubSectionTitle,
+  title: sharedMessages.language,
   children: [
     buildMultiField({
       id: 'languages',
-      title: newPrimarySchoolMessages.differentNeeds.languageTitle,
-      description: newPrimarySchoolMessages.differentNeeds.languageDescription,
+      title: differentNeedsMessages.language.title,
+      description: differentNeedsMessages.language.description,
       children: [
         buildDescriptionField({
-          id: 'languages.nativeLanguage.title',
-          title: newPrimarySchoolMessages.differentNeeds.childNativeLanguage,
+          id: 'languages.languageEnvironment.title',
+          title: differentNeedsMessages.language.languageEnvironmentTitle,
           titleVariant: 'h4',
+          space: 0,
         }),
-        buildSelectField({
-          id: 'languages.nativeLanguage',
-          dataTestId: 'languages-native-language',
-          title:
-            newPrimarySchoolMessages.differentNeeds.languageSubSectionTitle,
-          placeholder:
-            newPrimarySchoolMessages.differentNeeds.languagePlaceholder,
-          options: () => {
-            const languages = getAllLanguageCodes()
-            return languages.map((language) => {
-              return {
-                label: language.name,
-                value: language.code,
-              }
-            })
+        buildCustomField(
+          {
+            id: 'languages.languageEnvironment',
+            title: differentNeedsMessages.language.languageEnvironment,
+            component: 'FriggOptionsAsyncSelectField',
+          },
+          {
+            optionsType: OptionsType.LANGUAGE_ENVIRONMENT,
+            placeholder:
+              differentNeedsMessages.language.languageEnvironmentPlaceholder,
+            useIdAndKey: true,
+          },
+        ),
+        buildDescriptionField({
+          id: 'languages.selectedLanguages.title',
+          title: sharedMessages.language,
+          description:
+            differentNeedsMessages.language.selectedLanguagesDescription,
+          titleVariant: 'h4',
+          space: 4,
+          condition: (answers) => hasForeignLanguages(answers),
+        }),
+        buildFieldsRepeaterField({
+          id: 'languages.selectedLanguages',
+          formTitleNumbering: 'none',
+          addItemButtonText: differentNeedsMessages.language.addLanguage,
+          removeItemButtonText: differentNeedsMessages.language.removeLanguage,
+          minRows: (answers) => {
+            const { languageEnvironment } = getApplicationAnswers(answers)
+
+            return languageEnvironment ===
+              LanguageEnvironmentOptions.ONLY_OTHER_THAN_ICELANDIC
+              ? 1
+              : 2
+          },
+          maxRows: 4,
+          marginTop: 0,
+          condition: (answers) => hasForeignLanguages(answers),
+          fields: {
+            code: {
+              component: 'select',
+              label: (index) => ({
+                ...differentNeedsMessages.language.languageSelectionTitle,
+                values: { index: index + 1 },
+              }),
+              placeholder: sharedMessages.languagePlaceholder,
+              width: 'full',
+              options: (application) => {
+                const { languageEnvironment } = getApplicationAnswers(
+                  application.answers,
+                )
+
+                const languages = getAllLanguageCodes()
+                return languages
+                  .filter((language) => {
+                    if (
+                      language.code === 'is' &&
+                      languageEnvironment ===
+                        LanguageEnvironmentOptions.ONLY_OTHER_THAN_ICELANDIC
+                    ) {
+                      return false
+                    }
+                    return true
+                  })
+                  .map((language) => ({
+                    label: language.name,
+                    value: language.code,
+                  }))
+              },
+            },
           },
         }),
+        buildDescriptionField({
+          id: 'languages.preferredLanguage.title',
+          title: differentNeedsMessages.language.preferredLanguageTitle,
+          titleVariant: 'h4',
+          space: 4,
+          condition: (answers) => showPreferredLanguageFields(answers),
+        }),
+        buildSelectField({
+          id: 'languages.preferredLanguage',
+          title: sharedMessages.language,
+          placeholder: sharedMessages.languagePlaceholder,
+          options: (application) => {
+            const { selectedLanguages } = getApplicationAnswers(
+              application.answers,
+            )
+
+            if (!selectedLanguages?.length) return []
+
+            return getAllLanguageCodes()
+              .filter((language) => {
+                return selectedLanguages.some(
+                  (lang) => lang?.code === language.code,
+                )
+              })
+              .map((language) => {
+                return {
+                  label: language.name,
+                  value: language.code,
+                }
+              })
+          },
+          condition: (answers) => showPreferredLanguageFields(answers),
+        }),
         buildRadioField({
-          id: 'languages.otherLanguagesSpokenDaily',
-          title:
-            newPrimarySchoolMessages.differentNeeds.otherLanguagesSpokenDaily,
+          id: 'languages.signLanguage',
+          title: differentNeedsMessages.language.signLanguage,
           width: 'half',
           required: true,
           space: 4,
+          defaultValue: NO,
           options: [
             {
-              label: newPrimarySchoolMessages.shared.yes,
-              dataTestId: 'other-languages',
+              label: sharedMessages.yes,
+              dataTestId: 'sign-language',
               value: YES,
             },
             {
-              label: newPrimarySchoolMessages.shared.no,
-              dataTestId: 'no-other-languages',
+              label: sharedMessages.no,
+              dataTestId: 'no-sign-language',
               value: NO,
             },
           ],
-        }),
-        buildSelectField({
-          id: 'languages.otherLanguages',
-          dataTestId: 'languages-other-languages',
-          title:
-            newPrimarySchoolMessages.differentNeeds.languageSubSectionTitle,
-          placeholder:
-            newPrimarySchoolMessages.differentNeeds.languagePlaceholder,
-          options: () => {
-            const languages = getAllLanguageCodes()
-            return languages.map((language) => {
-              return {
-                label: language.name,
-                value: language.code,
-              }
-            })
-          },
-          isMulti: true,
           condition: (answers) => {
-            const { otherLanguagesSpokenDaily } = getApplicationAnswers(answers)
-
-            return otherLanguagesSpokenDaily === YES
-          },
-        }),
-        buildCheckboxField({
-          id: 'languages.icelandicNotSpokenAroundChild',
-          title: '',
-          options: (application) => {
-            const { nativeLanguage, otherLanguages } = getApplicationAnswers(
-              application.answers,
-            )
-            const icelandicSelected =
-              nativeLanguage === 'is' || otherLanguages?.includes('is')
-
-            return [
-              {
-                label:
-                  newPrimarySchoolMessages.differentNeeds
-                    .icelandicNotSpokenAroundChild,
-                value: icelandicSelected ? NO : YES,
-                disabled: icelandicSelected,
-              },
-            ]
-          },
-          condition: (answers) => {
-            const { otherLanguagesSpokenDaily } = getApplicationAnswers(answers)
-
-            return otherLanguagesSpokenDaily === YES
-          },
-        }),
-        buildHiddenInput({
-          // Needed to trigger an update on options in the checkbox above
-          id: 'languages.icelandicSelectedHiddenInput',
-          condition: (answers) => {
-            const { nativeLanguage, otherLanguages } =
-              getApplicationAnswers(answers)
-
-            return nativeLanguage === 'is' || otherLanguages?.includes('is')
+            const { languageEnvironment } = getApplicationAnswers(answers)
+            return !!languageEnvironment
           },
         }),
       ],

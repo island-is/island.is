@@ -28,10 +28,13 @@ import {
   VehicleOperatorChangeChecksByPermno,
   VehiclePlateOrderChecksByPermno,
   PlateOrderValidation,
+  BasicVehicleInformation,
+  ExemptionValidation,
 } from './graphql/models'
 import { ApolloError } from 'apollo-server-express'
 import { CoOwnerChangeAnswers } from './graphql/dto/coOwnerChangeAnswers.input'
 import { MileageReadingApi } from '@island.is/clients/vehicles-mileage'
+import { ExemptionForTransportationClient } from '@island.is/clients/transport-authority/exemption-for-transportation'
 
 @Injectable()
 export class TransportAuthorityApi {
@@ -41,6 +44,7 @@ export class TransportAuthorityApi {
     private readonly vehicleOperatorsClient: VehicleOperatorsClient,
     private readonly vehiclePlateOrderingClient: VehiclePlateOrderingClient,
     private readonly vehiclePlateRenewalClient: VehiclePlateRenewalClient,
+    private readonly exemptionForTransportationClient: ExemptionForTransportationClient,
     private readonly vehicleServiceFjsV1Client: VehicleServiceFjsV1Client,
     private readonly vehiclesApi: VehicleSearchApi,
     private readonly mileageReadingApi: MileageReadingApi,
@@ -84,12 +88,21 @@ export class TransportAuthorityApi {
 
     const vehicle = result.data[0]
 
+    return { vehicle }
+  }
+
+  private async fetchVehicleDataAndMileageForOwnerCoOwner(
+    auth: User,
+    permno: string,
+  ) {
+    const vehicle = await this.fetchVehicleDataForOwnerCoOwner(auth, permno)
+
     // Get mileage reading
     const mileageReadings = await this.mileageReadingApiWithAuth(
       auth,
     ).getMileageReading({ permno: permno })
 
-    return { vehicle, mileageReadings }
+    return { ...vehicle, mileageReadings }
   }
 
   async getVehicleOwnerchangeChecksByPermno(
@@ -99,7 +112,7 @@ export class TransportAuthorityApi {
     // Make sure user is only fetching information for vehicles where he is either owner or co-owner
     // (mainly debt status info that is sensitive)
     const { vehicle, mileageReadings } =
-      await this.fetchVehicleDataForOwnerCoOwner(auth, permno)
+      await this.fetchVehicleDataAndMileageForOwnerCoOwner(auth, permno)
 
     // Get debt status
     const debtStatus =
@@ -260,7 +273,7 @@ export class TransportAuthorityApi {
     // Make sure user is only fetching information for vehicles where he is either owner or co-owner
     // (mainly debt status info that is sensitive)
     const { vehicle, mileageReadings } =
-      await this.fetchVehicleDataForOwnerCoOwner(auth, permno)
+      await this.fetchVehicleDataAndMileageForOwnerCoOwner(auth, permno)
 
     // Get debt status
     const debtStatus =
@@ -424,5 +437,60 @@ export class TransportAuthorityApi {
 
   async getPlateAvailability(regno: string) {
     return this.vehiclePlateRenewalClient.getPlateAvailability(regno)
+  }
+
+  async getMyBasicVehicleInfoByPermno(
+    auth: User,
+    permno: string,
+  ): Promise<BasicVehicleInformation | null | ApolloError> {
+    const { vehicle } = await this.fetchVehicleDataForOwnerCoOwner(auth, permno)
+
+    return {
+      permno: vehicle.permno,
+      // Note: subModel (vehcom+speccom) has already been added to this field
+      make: vehicle.make,
+      color: vehicle.colorName,
+    }
+  }
+
+  async getBasicVehicleInfoByPermno(
+    auth: User,
+    permno: string,
+  ): Promise<BasicVehicleInformation | null> {
+    try {
+      const vehicle = await this.vehiclesApiWithAuth(
+        auth,
+      ).basicVehicleInformationGet({
+        clientPersidno: auth.nationalId,
+        permno: permno,
+      })
+
+      const model = vehicle.make
+      const subModel = vehicle.vehcom ?? ''
+
+      return {
+        permno: vehicle.permno,
+        make: `${model} ${subModel}`,
+        color: vehicle.color,
+        numberOfAxles: vehicle.technical?.axle?.axleno || 0,
+        vehicleHasMilesOdometer: vehicle.vehicleHasMilesOdometer
+          ? vehicle.vehicleHasMilesOdometer
+          : false,
+      }
+    } catch (e) {
+      return null
+    }
+  }
+
+  async getVehicleExemptionValidation(
+    auth: User,
+    permno: string,
+    isTrailer: boolean,
+  ): Promise<ExemptionValidation | null> {
+    return await this.exemptionForTransportationClient.validateForExemption(
+      auth,
+      permno,
+      isTrailer,
+    )
   }
 }

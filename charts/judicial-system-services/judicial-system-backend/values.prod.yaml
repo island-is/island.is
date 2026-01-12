@@ -19,6 +19,9 @@ global:
 name: 'judicial-system-backend'
 enabled: true
 env:
+  AUDIT_TRAIL_GROUP_NAME: 'k8s/judicial-system/audit-log'
+  AUDIT_TRAIL_REGION: 'eu-west-1'
+  AUDIT_TRAIL_USE_GENERIC_LOGGER: 'false'
   BLOCKED_API_INTEGRATION: ''
   CLIENT_URL: 'https://rettarvorslugatt.island.is'
   CONTENTFUL_ENVIRONMENT: 'master'
@@ -30,7 +33,7 @@ env:
   DOKOBIT_URL: 'https://ws.dokobit.com'
   EMAIL_REGION: 'eu-west-1'
   LOG_LEVEL: 'info'
-  NODE_OPTIONS: '--max-old-space-size=921 -r dd-trace/init'
+  NODE_OPTIONS: '--max-old-space-size=921 --enable-source-maps -r dd-trace/init'
   NOVA_ACCEPT_UNAUTHORIZED: 'false'
   S3_BUCKET: 'island-is-prod-upload-judicial-system'
   S3_REGION: 'eu-west-1'
@@ -46,6 +49,8 @@ env:
   XROAD_CLIENT_ID: 'IS/GOV/5804170510/Rettarvorslugatt-Client'
   XROAD_COURT_API_PATH: '/Domstolasyslan/JusticePortal-v1'
   XROAD_COURT_MEMBER_CODE: '4707171140'
+  XROAD_DMR_CRIMINAL_RECORD_API_PATH: '/DMR-Protected/sakaskra'
+  XROAD_DMR_MEMBER_CODE: '5804170510'
   XROAD_POLICE_API_PATH: '/Logreglan-Private/rettarvarsla-v1'
   XROAD_POLICE_MEMBER_CODE: '5309672079'
   XROAD_TLS_BASE_PATH: 'https://securityserver.island.is'
@@ -97,7 +102,8 @@ initContainer:
     DB_PASS: '/k8s/judicial-system/DB_PASSWORD'
 namespace: 'judicial-system'
 podDisruptionBudget:
-  maxUnavailable: 1
+  minAvailable: 1
+  unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534
 pvcs: []
@@ -122,6 +128,7 @@ secrets:
   COURTS_ASSISTANT_MOBILE_NUMBERS: '/k8s/judicial-system/COURTS_ASSISTANT_MOBILE_NUMBERS'
   COURTS_EMAILS: '/k8s/judicial-system/COURTS_EMAILS'
   COURTS_MOBILE_NUMBERS: '/k8s/judicial-system/COURTS_MOBILE_NUMBERS'
+  COURT_OF_APPEALS_ASSISTANT_EMAILS: '/k8s/judicial-system/COURT_OF_APPEALS_ASSISTANT_EMAILS'
   COURT_ROBOT_CLIENT_ID: '/k8s/judicial-system/COURT_ROBOT_CLIENT_ID'
   COURT_ROBOT_CLIENT_SECRET: '/k8s/judicial-system/COURT_ROBOT_CLIENT_SECRET'
   COURT_ROBOT_EMAIL: '/k8s/judicial-system/COURT_ROBOT_EMAIL'
@@ -135,6 +142,7 @@ secrets:
   EMAIL_REPLY_TO_NAME: '/k8s/judicial-system/EMAIL_REPLY_TO_NAME'
   ERROR_EVENT_URL: '/k8s/judicial-system/ERROR_EVENT_URL'
   EVENT_URL: '/k8s/judicial-system/EVENT_URL'
+  LAWYERS_ICELAND_API_KEY: '/k8s/judicial-system/LAWYERS_ICELAND_API_KEY'
   NOVA_PASSWORD: '/k8s/judicial-system/NOVA_PASSWORD'
   NOVA_URL: '/k8s/judicial-system/NOVA_URL'
   NOVA_USERNAME: '/k8s/judicial-system/NOVA_USERNAME'

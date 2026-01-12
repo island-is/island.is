@@ -11,13 +11,13 @@ import {
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 
-import Logo from '../assets/Logo'
+import { DirectorateOfLabourLogo } from '@island.is/application/assets/institution-logos'
 import { employerFormMessages } from '../lib/messages'
 
 export const EmployerApproveEdits: Form = buildForm({
   id: 'EmployerApprovEditsParentalLeave',
   title: employerFormMessages.formTitle,
-  logo: Logo,
+  logo: DirectorateOfLabourLogo,
   mode: FormModes.IN_PROGRESS,
   children: [
     buildSection({
@@ -61,7 +61,6 @@ export const EmployerApproveEdits: Form = buildForm({
                 ),
                 buildCustomField({
                   id: 'unionAndPensionInfo',
-                  title: '',
                   component: 'EmployerApprovalExtraInformation',
                 }),
                 // buildDescriptionField({

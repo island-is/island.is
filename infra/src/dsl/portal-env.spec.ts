@@ -57,7 +57,7 @@ describe('BFF PortalEnv serialization', () => {
       globalPrefix: '/stjornbord/bff',
     })
     .command('node')
-    .args('main.js')
+    .args('main.cjs')
     .readiness(`/${key}/bff/health/check`)
     .liveness(`/${key}/bff/liveness`)
     .replicaCount({
@@ -123,7 +123,7 @@ describe('BFF PortalEnv serialization', () => {
 
   it('command and args', () => {
     expect(result.serviceDef[0].command).toStrictEqual(['node'])
-    expect(result.serviceDef[0].args).toStrictEqual(['main.js'])
+    expect(result.serviceDef[0].args).toStrictEqual(['main.cjs'])
   })
   it('network policies', () => {
     expect(result.serviceDef[0].grantNamespaces).toStrictEqual([])
@@ -144,9 +144,9 @@ describe('BFF PortalEnv serialization', () => {
   })
   it('replica count', () => {
     expect(result.serviceDef[0].replicaCount).toStrictEqual({
-      min: 2,
+      min: 1,
       max: 3,
-      default: 2,
+      default: 1,
     })
   })
 
@@ -171,7 +171,8 @@ describe('BFF PortalEnv serialization', () => {
         ONE_HOUR_IN_MS - FIVE_SECONDS_IN_MS
       ).toString(),
       BFF_LOGIN_ATTEMPT_TTL_MS: ONE_WEEK_IN_MS.toString(),
-      NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init',
+      NODE_OPTIONS:
+        '--max-old-space-size=460 --enable-source-maps -r dd-trace/init',
       SERVERSIDE_FEATURES_ON: '',
       LOG_LEVEL: 'info',
       REDIS_URL_NODE_01: 'b',
@@ -232,9 +233,9 @@ describe('Env definition defaults', () => {
   })
   it('replica max count', () => {
     expect(result.serviceDef[0].replicaCount).toStrictEqual({
-      min: 2,
+      min: 1,
       max: 3,
-      default: 2,
+      default: 1,
     })
   })
 })

@@ -1,18 +1,16 @@
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import { Inject, Injectable } from '@nestjs/common'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
-import { createPkPassDataInput } from './adrLicenseClientMapper'
 import { AdrApi, AdrDto } from '@island.is/clients/adr-and-machine-license'
+import { FetchError } from '@island.is/clients/middlewares'
 import {
   Pass,
   PassDataInput,
   SmartSolutionsApi,
 } from '@island.is/clients/smartsolutions'
-import { format } from 'kennitala'
-import { FetchError } from '@island.is/clients/middlewares'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import { Inject, Injectable } from '@nestjs/common'
 import compareAsc from 'date-fns/compareAsc'
-import { parseAdrLicenseResponse } from './adrLicenseClientMapper'
+import { format } from 'kennitala'
 import {
   LicenseClient,
   LicensePkPassAvailability,
@@ -22,6 +20,11 @@ import {
   VerifyPkPassResult,
 } from '../../licenseClient.type'
 import { FlattenedAdrDto } from './adrLicenseClient.type'
+import {
+  createPkPassDataInput,
+  parseAdrLicenseResponse,
+} from './adrLicenseClientMapper'
+import { GeneralLicenseVerifyExtraData } from '../base'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'adrlicense-service'
@@ -73,11 +76,6 @@ export class AdrLicenseClient implements LicenseClient<LicenseType.AdrLicense> {
             message: 'Service failure',
             data: JSON.stringify(e.body),
           }
-          this.logger.warn('Expected 200 or 404 status', {
-            status: e.status,
-            statusText: e.statusText,
-            category: LOG_CATEGORY,
-          })
         }
       } else {
         const unknownError = e as Error
@@ -86,11 +84,6 @@ export class AdrLicenseClient implements LicenseClient<LicenseType.AdrLicense> {
           message: 'Unknown error',
           data: JSON.stringify(unknownError),
         }
-        this.logger.warn('Unable to query data', {
-          status: e.status,
-          statusText: e.statusText,
-          category: LOG_CATEGORY,
-        })
       }
 
       return {
@@ -279,6 +272,23 @@ export class AdrLicenseClient implements LicenseClient<LicenseType.AdrLicense> {
       data: {
         valid: result.data.valid,
       },
+    }
+  }
+
+  async verifyExtraData(user: User): Promise<GeneralLicenseVerifyExtraData> {
+    const res = await this.fetchLicense(user)
+
+    if (!res.ok) {
+      throw new Error(res.error.message)
+    } else if (!res.data) {
+      throw new Error('No license found')
+    } else if (!res.data.fulltNafn) {
+      throw new Error('No name found')
+    }
+
+    return {
+      nationalId: res.data.kennitala ?? '',
+      name: res.data.fulltNafn,
     }
   }
 }

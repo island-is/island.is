@@ -11,13 +11,13 @@ import {
   Application,
   DefaultEvents,
   defineTemplateApi,
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   UserProfileApi,
   DistrictsApi,
   InstitutionNationalIds,
   ApplicationConfigurations,
 } from '@island.is/application/types'
-import { assign, StateNodeConfig } from 'xstate'
+import { assign } from 'xstate'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import {
   getApplicationFeatureFlags,
@@ -35,8 +35,8 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { buildPaymentState } from '@island.is/application/utils'
-import { number } from 'zod'
 import { PaymentForm } from '@island.is/application/ui-forms'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const pruneAfter = (time: number) => {
   return {
@@ -56,6 +56,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.MARRIAGE_CONDITIONS,
   name: m.applicationTitle,
+  codeOwner: CodeOwners.Juni,
   dataSchema: dataSchema,
   translationNamespaces: [configuration.translation],
   stateMachineConfig: {
@@ -92,7 +93,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
               ],
               write: 'all',
               api: [
-                NationalRegistryUserApi,
+                NationalRegistryV3UserApi,
                 UserProfileApi,
                 DistrictsApi,
                 MaritalStatusApi,
@@ -156,7 +157,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
               ],
               write: 'all',
               api: [
-                NationalRegistryUserApi,
+                NationalRegistryV3UserApi,
                 UserProfileApi,
                 DistrictsApi,
                 MaritalStatusApi,
@@ -172,6 +173,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
               {
                 logMessage: m.confirmedBySpouse2,
                 onEvent: DefaultEvents.PAYMENT,
+                includeSubjectAndActor: true,
               },
             ],
             pendingAction: {
@@ -195,12 +197,6 @@ const MarriageConditionsTemplate: ApplicationTemplate<
             },
           },
         ],
-        onExit: [
-          defineTemplateApi({
-            action: ApiActions.submitApplication,
-            triggerEvent: DefaultEvents.SUBMIT,
-          }),
-        ],
         chargeItems: (application) => {
           const paymentCodes = []
           paymentCodes.push(
@@ -208,20 +204,19 @@ const MarriageConditionsTemplate: ApplicationTemplate<
               application.answers,
               'applicant.hasBirthCertificate',
             )
-              ? []
-              : { code: 'AY153', quantity: 1 },
+              ? { code: 'AY171', quantity: 1 }
+              : [],
           )
           paymentCodes.push(
             getValueViaPath<boolean>(
               application.externalData,
               'birthCertificate.data.hasBirthCertificate',
             )
-              ? []
-              : { code: 'AY153', quantity: 1 },
+              ? { code: 'AY171', quantity: 1 }
+              : [],
           )
           paymentCodes.push({ code: 'AY128', quantity: 1 }) // Survey
-          // paymentCodes.push('AY129') // Marriage conditions
-          paymentCodes.push({ code: 'AY154', quantity: 2 }) // Marital status
+          paymentCodes.push({ code: 'AY172', quantity: 2 }) // Marital status
 
           return paymentCodes.flat()
         },
@@ -233,6 +228,9 @@ const MarriageConditionsTemplate: ApplicationTemplate<
           status: 'completed',
           progress: 1,
           lifecycle: pruneAfter(sixtyDays),
+          onEntry: defineTemplateApi({
+            action: ApiActions.submitApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,

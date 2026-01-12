@@ -7,23 +7,22 @@ import {
   buildSection,
   buildSubmitField,
   coreMessages,
-  getValueViaPath,
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
-import { conclusion } from '../lib/messages'
-import { Logo } from '../assets/Logo'
-import { ApplicationType } from '../utils'
+import { conclusion, overview } from '../lib/messages'
+import { MmsLogo } from '@island.is/application/assets/institution-logos'
+import { applicationDataHasBeenPruned, checkIsFreshman } from '../utils'
 
 export const Submitted: Form = buildForm({
-  id: 'ConclusionForm',
-  title: '',
-  logo: Logo,
+  id: 'SubmittedForm',
+  logo: MmsLogo,
   mode: FormModes.IN_PROGRESS,
   renderLastScreenButton: true,
   children: [
     buildSection({
       id: 'conclusionSection',
-      title: conclusion.general.sectionTitle,
+      title: '',
+      tabTitle: conclusion.overview.sectionTitle,
       children: [
         buildMultiField({
           id: 'conclusionMultiField',
@@ -36,10 +35,8 @@ export const Submitted: Form = buildForm({
               message: conclusion.overview.alertMessageFreshman,
               condition: (answers) => {
                 return (
-                  getValueViaPath<ApplicationType>(
-                    answers,
-                    'applicationType.value',
-                  ) === ApplicationType.FRESHMAN
+                  !applicationDataHasBeenPruned(answers) &&
+                  checkIsFreshman(answers)
                 )
               },
             }),
@@ -50,22 +47,18 @@ export const Submitted: Form = buildForm({
               message: conclusion.overview.alertMessageGeneral,
               condition: (answers) => {
                 return (
-                  getValueViaPath<ApplicationType>(
-                    answers,
-                    'applicationType.value',
-                  ) !== ApplicationType.FRESHMAN
+                  !applicationDataHasBeenPruned(answers) &&
+                  !checkIsFreshman(answers)
                 )
               },
             }),
             buildCustomField({
               component: 'Overview',
               id: 'conclusion',
-              title: '',
               description: '',
             }),
             buildMessageWithLinkButtonField({
               id: 'conclusionBottomLink',
-              title: '',
               url: '/minarsidur/umsoknir',
               buttonTitle: coreMessages.openServicePortalButtonTitle,
               message: coreMessages.openServicePortalMessageText,
@@ -73,15 +66,20 @@ export const Submitted: Form = buildForm({
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
-              title: '',
               refetchApplicationAfterSubmit: true,
+              condition: (answers) => !applicationDataHasBeenPruned(answers),
               actions: [
                 {
                   event: DefaultEvents.EDIT,
-                  name: conclusion.overview.editButton,
-                  type: 'signSubtle',
+                  name: overview.buttons.edit,
+                  type: 'signGhost',
                 },
               ],
+            }),
+            buildCustomField({
+              component: 'HandleBeforeSubmitInSubmitted',
+              id: 'handleBeforeSubmitInSubmitted',
+              description: '',
             }),
           ],
         }),

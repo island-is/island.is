@@ -87,3 +87,25 @@ export const employmentOptions = [
     label: m.employmentForm.employment.other,
   },
 ]
+
+export const incomeOptions = [
+  {
+    value: ApproveOptions.Yes,
+    label: m.incomeForm.options.yes,
+  },
+  {
+    value: ApproveOptions.No,
+    label: m.incomeForm.options.no,
+  },
+]
+
+export const personalTaxCreditOptions = [
+  {
+    value: ApproveOptions.Yes,
+    label: m.personalTaxCreditForm.radioChoices.useTaxCredit,
+  },
+  {
+    value: ApproveOptions.No,
+    label: m.personalTaxCreditForm.radioChoices.wontUseTaxCredit,
+  },
+]

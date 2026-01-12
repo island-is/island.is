@@ -15,8 +15,8 @@ import {
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import { getApplicationAnswers } from '../../../lib/deathBenefitsUtils'
 import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
-import { YES } from '@island.is/application/types'
 import { deathBenefitsFormMessage } from '../../../lib/messages'
+import { YES } from '@island.is/application/core'
 
 export const PaymentInformation = ({
   application,

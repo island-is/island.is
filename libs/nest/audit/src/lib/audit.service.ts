@@ -55,7 +55,7 @@ export class AuditService {
           new WinstonCloudWatch({
             name: 'CloudWatch',
             logGroupName: options.groupName,
-            messageFormatter: (info: TransformableInfo) => {
+            messageFormatter: (info: any) => {
               // Flatten message to avoid top level object with "level" and "message".
               return JSON.stringify(info.message)
             },

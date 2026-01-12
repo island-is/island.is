@@ -1,4 +1,5 @@
-import { ApplicationTemplateHelper } from '@island.is/application/core'
+import { ApplicationTemplateHelper, YES } from '@island.is/application/core'
+import { RatioType } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import {
   Application,
   ApplicationStatus,
@@ -8,7 +9,6 @@ import {
   FormValue,
 } from '@island.is/application/types'
 import IncomePlanTemplate from './IncomePlanTemplate'
-import { RatioType, YES } from './constants'
 
 const buildApplication = (data: {
   answers?: FormValue

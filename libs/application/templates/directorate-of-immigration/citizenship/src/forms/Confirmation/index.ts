@@ -8,13 +8,12 @@ import {
   personal,
   supportingDocuments,
 } from '../../lib/messages'
-import { Logo } from '../../assets/Logo'
+import { MinistryForForeignAffairsLogo } from '@island.is/application/assets/institution-logos'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 
 export const Confirmation: Form = buildForm({
   id: 'ConfirmationForm',
-  title: '',
-  logo: Logo,
+  logo: MinistryForForeignAffairsLogo,
   mode: FormModes.COMPLETED,
   children: [
     buildSection({

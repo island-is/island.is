@@ -15,6 +15,7 @@ import {
 } from '@island.is/application/types'
 import { FundingGovernmentProjectsSchema } from './dataSchema'
 import { application } from './messages'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const States = {
   draft: 'draft',
@@ -29,7 +30,7 @@ enum Roles {
   APPLICANT = 'applicant',
 }
 
-enum TEMPLATE_API_ACTIONS {
+enum TemplateApiActions {
   // Has to match name of action in template API module
   // (will be refactored when state machine is a part of API module)
   sendApplication = 'sendApplication',
@@ -42,10 +43,10 @@ const FundingGovernmentProjectsTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.FUNDING_GOVERNMENT_PROJECTS,
   name: application.name,
+  codeOwner: CodeOwners.NordaApplications,
   institution: application.institutionName,
-  translationNamespaces: [
+  translationNamespaces:
     ApplicationConfigurations.FundingGovernmentProjects.translation,
-  ],
   dataSchema: FundingGovernmentProjectsSchema,
   stateMachineConfig: {
     initial: States.draft,
@@ -93,7 +94,7 @@ const FundingGovernmentProjectsTemplate: ApplicationTemplate<
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
           onEntry: defineTemplateApi({
-            action: TEMPLATE_API_ACTIONS.sendApplication,
+            action: TemplateApiActions.sendApplication,
           }),
           roles: [
             {

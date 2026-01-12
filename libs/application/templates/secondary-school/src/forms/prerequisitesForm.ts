@@ -6,10 +6,10 @@ import {
   buildSubmitField,
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
-import { Logo } from '../assets/Logo'
+import { MmsLogo } from '@island.is/application/assets/institution-logos'
 import { externalData } from '../lib/messages'
 import {
-  NationalRegistryParentsApi,
+  NationalRegistryCustodiansApi,
   NationalRegistryUserApi,
   SchoolsApi,
   StudentInfoApi,
@@ -18,15 +18,15 @@ import {
 
 export const Prerequisites: Form = buildForm({
   id: 'PrerequisitesForm',
-  title: '',
-  logo: Logo,
+  logo: MmsLogo,
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
   children: [
     buildSection({
       id: 'externalData',
-      title: externalData.dataProvider.sectionTitle,
+      title: '',
+      tabTitle: externalData.dataProvider.sectionTitle,
       children: [
         buildExternalDataProvider({
           title: externalData.dataProvider.pageTitle,
@@ -36,7 +36,6 @@ export const Prerequisites: Form = buildForm({
           submitField: buildSubmitField({
             id: 'submit',
             placement: 'footer',
-            title: '',
             refetchApplicationAfterSubmit: true,
             actions: [
               {
@@ -53,7 +52,7 @@ export const Prerequisites: Form = buildForm({
               subTitle: externalData.nationalRegistry.subTitle,
             }),
             buildDataProviderItem({
-              provider: NationalRegistryParentsApi,
+              provider: NationalRegistryCustodiansApi,
               title: '',
             }),
             buildDataProviderItem({

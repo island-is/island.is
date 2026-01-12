@@ -1,0 +1,6 @@
+query PdfRenderer($input: DocumentPdfRendererInput!) {
+  documentV2PdfRenderer(input: $input) {
+    id
+    success
+  }
+}

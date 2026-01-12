@@ -27,11 +27,10 @@ import {
   SyslumadurPaymentCatalogApi,
 } from '../dataProviders'
 import { AuthDelegationType } from '@island.is/shared/types'
-import {
-  coreHistoryMessages,
-  getValueViaPath,
-} from '@island.is/application/core'
+import { coreHistoryMessages } from '@island.is/application/core'
 import { buildPaymentState } from '@island.is/application/utils'
+import { CodeOwners } from '@island.is/shared/constants'
+import { getChargeItemCode } from './utils'
 
 const oneDay = 24 * 3600 * 1000
 const thirtyDays = 24 * 3600 * 1000 * 30
@@ -45,10 +44,7 @@ const pruneAfter = (time: number) => {
 }
 
 const getCodes = (application: Application): BasicChargeItem[] => {
-  const chargeItemCode = getValueViaPath<string>(
-    application.answers,
-    'chargeItemCode',
-  )
+  const chargeItemCode = getChargeItemCode(application.answers)
   if (!chargeItemCode) {
     throw new Error('chargeItemCode missing in request')
   }
@@ -66,6 +62,7 @@ const OperatingLicenseTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.OPERATING_LICENSE,
   name: m.formName.defaultMessage,
+  codeOwner: CodeOwners.Juni,
   institution: m.institution,
   allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],
   dataSchema,

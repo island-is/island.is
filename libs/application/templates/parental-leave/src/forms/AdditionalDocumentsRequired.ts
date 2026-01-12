@@ -6,7 +6,7 @@ import {
   buildSubmitField,
 } from '@island.is/application/core'
 import { Form, FormModes, DefaultEvents } from '@island.is/application/types'
-import Logo from '../assets/Logo'
+import { DirectorateOfLabourLogo } from '@island.is/application/assets/institution-logos'
 import { FILE_SIZE_LIMIT } from '../constants'
 import {
   inReviewFormMessages,
@@ -16,7 +16,7 @@ import {
 export const AdditionalDocumentsRequired: Form = buildForm({
   id: 'ParentalLeaveInReviewUpload',
   title: inReviewFormMessages.formTitle,
-  logo: Logo,
+  logo: DirectorateOfLabourLogo,
   mode: FormModes.IN_PROGRESS,
   renderLastScreenBackButton: true,
   renderLastScreenButton: true,
@@ -32,7 +32,6 @@ export const AdditionalDocumentsRequired: Form = buildForm({
           children: [
             buildFileUploadField({
               id: 'fileUpload.additionalDocuments',
-              title: '',
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
                 parentalLeaveFormMessages.fileUpload.attachmentMaxSizeError,

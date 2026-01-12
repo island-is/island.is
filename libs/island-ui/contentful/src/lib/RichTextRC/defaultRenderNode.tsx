@@ -11,6 +11,7 @@ import {
 } from '@island.is/island-ui/core'
 import { getOrganizationPageUrlPrefix } from '@island.is/shared/utils'
 import Hyperlink from '../Hyperlink/Hyperlink'
+import AssetLink from '../AssetLink/AssetLink'
 import * as styles from './RichText.css'
 
 const defaultHeaderMargins: {
@@ -167,12 +168,30 @@ export const defaultRenderNodeObject: RenderNode = {
   [BLOCKS.TABLE_CELL]: (_node, children) => <T.Data>{children}</T.Data>,
   [BLOCKS.EMBEDDED_ASSET]: (node) => {
     const url = node?.data?.target?.fields?.file?.url
-    const title = node?.data?.target?.fields
-    return (
-      <Box marginTop={url ? 5 : 0}>
-        <img src={url} alt={title} />
-      </Box>
-    )
+    const title = node?.data?.target?.fields?.title
+    const description = node?.data?.target?.fields?.description
+
+    const contentType = node?.data?.target?.fields?.file?.contentType
+
+    const secureUrl = url?.startsWith('//') ? `https:${url}` : url
+
+    if (!contentType || contentType.startsWith('image/')) {
+      return (
+        <Box marginTop={url ? 5 : 0}>
+          <img src={secureUrl} alt={description || ''} loading="lazy" />
+        </Box>
+      )
+    }
+
+    if (url && title) {
+      return (
+        <Box marginTop={5}>
+          <AssetLink title={title} url={secureUrl} />
+        </Box>
+      )
+    }
+
+    return null
   },
   [INLINES.EMBEDDED_ENTRY]: (node) => {
     // In case something other than the price content type is inline embedded we ignore it
@@ -268,16 +287,66 @@ export const defaultRenderNodeObject: RenderNode = {
           </Hyperlink>
         ) : null
       }
-      case 'organizationSubpage': {
-        const prefix = getOrganizationPageUrlPrefix(entry?.sys?.locale)
-        return entry?.fields?.slug &&
-          entry.fields.organizationPage?.fields?.slug ? (
+      case 'organizationParentSubpage': {
+        if (
+          !entry?.fields?.slug ||
+          !entry.fields.organizationPage?.fields?.slug
+        ) {
+          return null
+        }
+        const prefix = getOrganizationPageUrlPrefix(entry.sys?.locale)
+        return (
           <Hyperlink
             href={`/${prefix}/${entry.fields.organizationPage.fields.slug}/${entry.fields.slug}`}
           >
             {children}
           </Hyperlink>
-        ) : null
+        )
+      }
+      case 'organizationSubpage': {
+        if (
+          !entry?.fields?.slug ||
+          !entry.fields.organizationPage?.fields?.slug
+        ) {
+          return null
+        }
+        const prefix = getOrganizationPageUrlPrefix(entry.sys?.locale)
+        if (entry.fields.organizationParentSubpage?.fields?.slug) {
+          return (
+            <Hyperlink
+              href={`/${prefix}/${entry.fields.organizationPage.fields.slug}/${entry.fields.organizationParentSubpage.fields.slug}/${entry.fields.slug}`}
+            >
+              {children}
+            </Hyperlink>
+          )
+        }
+        return (
+          <Hyperlink
+            href={`/${prefix}/${entry.fields.organizationPage.fields.slug}/${entry.fields.slug}`}
+          >
+            {children}
+          </Hyperlink>
+        )
+      }
+      case 'bloodDonationRestriction': {
+        const isEnglishLocale = entry?.sys?.locale?.startsWith('en')
+        const prefix = getOrganizationPageUrlPrefix(entry?.sys?.locale)
+        const organizationPageSlug = isEnglishLocale
+          ? 'icelandic-blood-bank'
+          : 'blodbankinn'
+        const slug = isEnglishLocale ? 'affecting-factors' : 'ahrif-a-blodgjof'
+
+        const id = entry?.sys?.id
+
+        if (!id) {
+          return null
+        }
+
+        return (
+          <Hyperlink href={`/${prefix}/${organizationPageSlug}/${slug}/${id}`}>
+            {children}
+          </Hyperlink>
+        )
       }
       default:
         return null

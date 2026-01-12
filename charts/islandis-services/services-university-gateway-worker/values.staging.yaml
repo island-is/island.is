@@ -18,7 +18,7 @@ global:
       NPM_CONFIG_UPDATE_NOTIFIER: 'false'
 name: 'services-university-gateway-worker'
 args:
-  - 'main.js'
+  - 'main.cjs'
   - '--job'
   - 'worker'
 command:
@@ -33,7 +33,7 @@ env:
   IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/university-gateway'
   IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
   LOG_LEVEL: 'info'
-  NODE_OPTIONS: '--max-old-space-size=345 -r dd-trace/init'
+  NODE_OPTIONS: '--max-old-space-size=345 --enable-source-maps -r dd-trace/init'
   REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
   SERVERSIDE_FEATURES_ON: ''
   XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
@@ -74,7 +74,8 @@ image:
   repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-university-gateway'
 namespace: 'services-university-gateway'
 podDisruptionBudget:
-  maxUnavailable: 1
+  minAvailable: 1
+  unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534
 pvcs: []

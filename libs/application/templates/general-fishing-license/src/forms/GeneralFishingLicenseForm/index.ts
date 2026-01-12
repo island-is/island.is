@@ -1,6 +1,6 @@
 import { buildForm, buildSection } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
-import { Logo } from '../../assets'
+import { DirectorateOfFisheriesLogo } from '@island.is/application/assets/institution-logos'
 import { shipSelectionSection } from './shipSelectionSection'
 import { fishingLicenseSection } from './fishingLicenseSection'
 import { fishingLicenseFurtherInfoSection } from './fishingLicenseFurtherInfoSection'
@@ -11,8 +11,7 @@ import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 
 export const GeneralFishingLicenseForm: Form = buildForm({
   id: 'GeneralFishingLicenseForm',
-  title: '',
-  logo: Logo,
+  logo: DirectorateOfFisheriesLogo,
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,

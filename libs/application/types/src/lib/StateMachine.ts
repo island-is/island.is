@@ -8,11 +8,7 @@ import {
 import { AnyEventObject, MachineOptions, StateMachine } from 'xstate/lib/types'
 
 import { FormLoader, FormText, StaticText } from './Form'
-import {
-  Application,
-  ActionCardTag,
-  ApplicationWithAttachments,
-} from './Application'
+import { Application, ActionCardTag } from './Application'
 import { Condition } from './Condition'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { TemplateApi } from './template-api/TemplateApi'
@@ -57,7 +53,7 @@ export interface ApplicationContext {
 export type CallToAction<T extends EventObject = AnyEventObject> = {
   event: Event<T> | string
   name: FormText
-  type: 'primary' | 'subtle' | 'reject' | 'sign' | 'signSubtle'
+  type: 'primary' | 'subtle' | 'reject' | 'sign' | 'signGhost' | 'rejectGhost'
   condition?: Condition
 } & TestSupport
 
@@ -90,7 +86,15 @@ export type PendingAction = {
 
 export type HistoryEventMessage<T extends EventObject = AnyEventObject> = {
   onEvent: Event<T> | string
-  logMessage: StaticText
+  logMessage:
+    | StaticText
+    | ((application: Application, subjectNationalId?: string) => StaticText)
+  /**
+   * Whether subject and actor should be added to history log
+   */
+  includeSubjectAndActor?:
+    | boolean
+    | ((role: ApplicationRole, nationalId: string, isAdmin: boolean) => boolean)
 }
 
 export interface ApplicationStateMeta<
@@ -125,6 +129,7 @@ export interface ApplicationStateMeta<
           application: Application,
           role: ApplicationRole,
           nationalId: string,
+          isAdmin: boolean,
         ) => PendingAction)
     /** @deprecated is generated from status of current state */
     tag?: { label?: StaticText; variant?: ActionCardTag }

@@ -1,3 +1,4 @@
+import { YesOrNo } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
 
 export enum ApiActions {
@@ -193,11 +194,7 @@ export enum States {
   PREREQUISITES = 'prerequisites',
 }
 
-export const YES = 'yes'
-export const NO = 'no'
-
 type FakeCurrentLicense = 'none' | 'temp' | 'full' | 'BE'
-type YesOrNo = 'yes' | 'no'
 
 export interface DrivingLicenseFakeData {
   useFakeData?: YesOrNo

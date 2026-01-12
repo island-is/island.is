@@ -1563,6 +1563,12 @@ export const m = defineMessages({
       'Ekki er hægt að halda áfram með umsókn þar sem aðili undir 18 er skráður án málssvara yfir lögaldri',
     description: '',
   },
+  heirNationalIdValidation: {
+    id: 'ir.application:heirNationalIdValidation',
+    defaultMessage:
+      'Ekki er hægt að halda áfram með umsókn þar sem erfingi má ekki vera sá sami og arfleifandi',
+    description: '',
+  },
   advocate: {
     id: 'ir.application:advocate',
     defaultMessage: 'Forsjáraðili',

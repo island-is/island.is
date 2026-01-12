@@ -2,12 +2,13 @@ import {
   buildDescriptionField,
   buildMultiField,
   buildRadioField,
-  buildSelectField,
   buildSubSection,
   buildTextField,
   getValueViaPath,
+  NO,
+  YES,
 } from '@island.is/application/core'
-import { DrivingLicenseFakeData, NO, YES } from '../../lib/constants'
+import { DrivingLicenseFakeData } from '../../lib/constants'
 import { allowFakeCondition } from '../../lib/utils'
 
 export const sectionFakeData = buildSubSection({
@@ -39,7 +40,6 @@ export const sectionFakeData = buildSubSection({
         }),
         buildRadioField({
           id: 'fakeData.useFakeData',
-          title: '',
           width: 'half',
           options: [
             {

@@ -6,7 +6,6 @@ import {
   AlertMessage,
   SkeletonLoader,
 } from '@island.is/island-ui/core'
-import { formatText } from '@island.is/application/core'
 import { Application, FieldBaseProps } from '@island.is/application/types'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
@@ -18,7 +17,6 @@ interface QualityPhotoData {
 
 const Photo: FC<React.PropsWithChildren<QualityPhotoData>> = ({
   qualityPhoto,
-  application,
 }: QualityPhotoData) => {
   const { formatMessage } = useLocale()
 
@@ -29,7 +27,7 @@ const Photo: FC<React.PropsWithChildren<QualityPhotoData>> = ({
   const src = qualityPhoto
   return (
     <img
-      alt={formatText(m.qualityPhotoAltText, application, formatMessage) || ''}
+      alt={formatMessage(m.qualityPhotoAltText) || ''}
       src={src}
       id="myimage"
     />
@@ -50,9 +48,7 @@ const QualityPhoto: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         <SkeletonLoader height={242} width={191} />
       ) : qualityPhoto ? (
         <Box>
-          <Text>
-            {formatText(m.qualityPhotoSubTitle, application, formatMessage)}
-          </Text>
+          <Text>{formatMessage(m.qualityPhotoSubTitle)}</Text>
           <Box marginTop={4} style={{ width: '191px', height: '242px' }}>
             {img}
           </Box>
@@ -60,16 +56,8 @@ const QualityPhoto: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       ) : (
         <AlertMessage
           type="warning"
-          title={formatText(
-            m.qualityPhotoWarningTitle,
-            application,
-            formatMessage,
-          )}
-          message={formatText(
-            m.qualityPhotoWarningDescription,
-            application,
-            formatMessage,
-          )}
+          title={formatMessage(m.qualityPhotoWarningTitle)}
+          message={formatMessage(m.qualityPhotoWarningDescription)}
         />
       )}
     </Box>

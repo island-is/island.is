@@ -6,10 +6,8 @@ import { PassportStrategy } from '@nestjs/passport'
 
 import { type ConfigType } from '@island.is/nest/config'
 
-import { type User } from '@island.is/judicial-system/types'
-
 import { sharedAuthModuleConfig } from './auth.config'
-import { Credentials } from './auth.types'
+import { AuthUser, Credentials } from './auth.types'
 import { cookieExtractor } from './cookieExtractor'
 
 @Injectable()
@@ -25,11 +23,14 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     })
   }
 
-  validate(req: Request, { csrfToken, user }: Credentials): User | undefined {
+  validate(
+    req: Request,
+    { currentUserNationalId, currentUser, csrfToken }: Credentials,
+  ): AuthUser | undefined {
     if (csrfToken && `Bearer ${csrfToken}` !== req.headers['authorization']) {
       return undefined
     }
 
-    return user
+    return { currentUserNationalId, currentUser }
   }
 }

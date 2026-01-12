@@ -1,6 +1,7 @@
 import {
   buildDescriptionField,
   buildForm,
+  buildHiddenInput,
   buildMultiField,
   buildRadioField,
   buildSection,
@@ -11,39 +12,28 @@ import {
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { Application, SignatureCollectionList } from '@island.is/api/schema'
 import { format as formatNationalId } from 'kennitala'
-import Logo from '../../assets/Logo'
-
+import { NationalRegistryLogo } from '@island.is/application/assets/institution-logos'
 import { m } from '../lib/messages'
 
 export const Draft: Form = buildForm({
   id: 'ParliamentaryListSigningDraft',
-  title: '',
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
-  renderLastScreenBackButton: false,
-  logo: Logo,
+  renderLastScreenBackButton: true,
+  logo: NationalRegistryLogo,
   children: [
-    buildSection({
-      id: 'screen1',
-      title: m.intro,
-      children: [],
-    }),
-    buildSection({
-      id: 'screen2',
-      title: m.dataCollection,
-      children: [],
-    }),
-    /* section used for testing purposes */
     buildSection({
       id: 'selectCandidateSection',
       title: m.selectCandidate,
-      condition: (_, externalData) => {
-        const lists = getValueViaPath(
-          externalData,
-          'getList.data',
-          [],
-        ) as SignatureCollectionList[]
-        return lists.length > 1
+      condition: (answers, externalData) => {
+        const lists =
+          getValueViaPath<SignatureCollectionList[]>(
+            externalData,
+            'getList.data',
+          ) || []
+        const initialQuery = getValueViaPath(answers, 'initialQuery')
+
+        return lists.length > 0 && !initialQuery
       },
       children: [
         buildMultiField({
@@ -53,15 +43,14 @@ export const Draft: Form = buildForm({
           children: [
             buildRadioField({
               id: 'listId',
-              title: '',
-              defaultValue: '',
               required: true,
-              options: ({
-                externalData: {
-                  getList: { data },
-                },
-              }) => {
-                return (data as SignatureCollectionList[]).map((list) => ({
+              options: ({ externalData }) => {
+                const data =
+                  getValueViaPath<SignatureCollectionList[]>(
+                    externalData,
+                    'getList.data',
+                  ) || []
+                return data?.map((list) => ({
                   value: list.id,
                   label: list.candidate.name,
                   disabled:
@@ -86,7 +75,6 @@ export const Draft: Form = buildForm({
         }),
       ],
     }),
-    /* ------------------------------- */
     buildSection({
       id: 'signListInformationSection',
       title: m.information,
@@ -101,18 +89,39 @@ export const Draft: Form = buildForm({
               title: m.listHeader,
               titleVariant: 'h3',
             }),
+            buildHiddenInput({
+              id: 'listId',
+              defaultValue: ({ answers, externalData }: Application) => {
+                const lists =
+                  getValueViaPath<SignatureCollectionList[]>(
+                    externalData,
+                    'getList.data',
+                  ) || []
 
+                const initialQuery = getValueViaPath(
+                  answers,
+                  'initialQuery',
+                  '',
+                )
+
+                return lists.find((list) =>
+                  initialQuery
+                    ? list.candidate.id === initialQuery
+                    : list.id === answers.listId,
+                )?.id
+              },
+            }),
             buildTextField({
               id: 'list.name',
               title: m.listName,
               width: 'half',
               readOnly: true,
               defaultValue: ({ answers, externalData }: Application) => {
-                const lists = getValueViaPath(
-                  externalData,
-                  'getList.data',
-                  [],
-                ) as SignatureCollectionList[]
+                const lists =
+                  getValueViaPath<SignatureCollectionList[]>(
+                    externalData,
+                    'getList.data',
+                  ) || []
 
                 const initialQuery = getValueViaPath(
                   answers,
@@ -133,11 +142,11 @@ export const Draft: Form = buildForm({
               width: 'half',
               readOnly: true,
               defaultValue: ({ answers, externalData }: Application) => {
-                const lists = getValueViaPath(
-                  externalData,
-                  'getList.data',
-                  [],
-                ) as SignatureCollectionList[]
+                const lists =
+                  getValueViaPath<SignatureCollectionList[]>(
+                    externalData,
+                    'getList.data',
+                  ) || []
 
                 const initialQuery = getValueViaPath(
                   answers,
@@ -190,12 +199,6 @@ export const Draft: Form = buildForm({
           ],
         }),
       ],
-    }),
-    /* Section setup for the stepper */
-    buildSection({
-      id: 'done',
-      title: m.listSigned,
-      children: [],
     }),
   ],
 })

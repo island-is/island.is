@@ -1,27 +1,33 @@
 import { MappedData } from '@island.is/content-search-indexer/types'
 import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
-import { Entry } from 'contentful'
 import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
-import { ILink, IGenericListItem } from '../../generated/contentfulTypes'
+import { IGenericListItem } from '../../generated/contentfulTypes'
 import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
 import { mapGenericListItem } from '../../models/genericListItem.model'
-import {
-  extractChildEntryIds,
-  extractStringsFromObject,
-  pruneNonSearchableSliceUnionFields,
-} from './utils'
+import { extractChildEntryIds } from './utils'
 
 @Injectable()
 export class GenericListItemSyncService
   implements CmsSyncProvider<IGenericListItem>
 {
-  processSyncData(entries: processSyncDataInput<ILink>) {
-    return entries.filter(
-      (entry: Entry<any>): entry is IGenericListItem =>
-        entry.sys.contentType.sys.id === 'genericListItem' &&
-        entry.fields.title,
-    )
+  processSyncData(entries: processSyncDataInput<IGenericListItem>) {
+    const entriesToUpdate: IGenericListItem[] = []
+    const entriesToDelete: string[] = []
+
+    for (const entry of entries) {
+      if (entry?.sys?.contentType?.sys?.id !== 'genericListItem') continue
+      if (!entry.fields.title) {
+        entriesToDelete.push(entry.sys.id)
+      } else {
+        entriesToUpdate.push(entry as IGenericListItem)
+      }
+    }
+
+    return {
+      entriesToUpdate,
+      entriesToDelete,
+    }
   }
 
   doMapping(entries: IGenericListItem[]) {
@@ -41,13 +47,9 @@ export class GenericListItemSyncService
               documentToPlainTextString(entry.fields.cardIntro),
             )
           }
-          if (mapped.content) {
+          if (entry.fields.content) {
             contentSections.push(
-              extractStringsFromObject(
-                mapped.content.map(pruneNonSearchableSliceUnionFields),
-                100,
-                2,
-              ),
+              documentToPlainTextString(entry.fields.content),
             )
           }
 

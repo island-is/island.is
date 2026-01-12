@@ -116,4 +116,108 @@ export const messages = defineMessages({
     id: 'sp.documents:search-label',
     defaultMessage: 'Leita',
   },
+  caseNumber: {
+    id: 'sp.documents:case-number',
+    defaultMessage: 'Málsnúmer:',
+  },
+  caseNumberShort: {
+    id: 'sp.documents:case-number-short',
+    defaultMessage: 'Málsnr.',
+  },
+  sentToEmail: {
+    id: 'sp.documents:sent-to-email',
+    defaultMessage: 'Sent á tölvupóstfang',
+  },
+  message: {
+    id: 'sp.documents:message',
+    defaultMessage: 'Skilaboð',
+  },
+  from: {
+    id: 'sp.documents:from',
+    defaultMessage: 'Frá',
+  },
+  fromWithArgs: {
+    id: 'sp.documents:from-with-args',
+    defaultMessage: 'Frá: {senderName}',
+  },
+  toWithArgs: {
+    id: 'sp.documents:to-with-args',
+    defaultMessage: 'Til: {receiverName}',
+  },
+  titleWord: {
+    id: 'sp.documents:title-word',
+    defaultMessage: 'Titill',
+  },
+  pleaseRegisterEmail: {
+    id: 'sp.documents:please-register-email',
+    defaultMessage: 'Vinsamlegast skráðu tölvupóstfang',
+  },
+  showAllRepliesWithArgs: {
+    id: 'sp.documents:show-all-replies-with-args',
+    defaultMessage: 'Sýna öll samskipti ({repliesLength})',
+  },
+  zoomIn: {
+    id: 'sp.documents:zoom-in',
+    defaultMessage: 'Auka þysjunarstig í {arg} ',
+  },
+  zoomOut: {
+    id: 'sp.documents:zoom-out',
+    defaultMessage: 'Minnka þysjunarstig í {arg} ',
+  },
+  currentZoomLevel: {
+    id: 'sp.documents:current-zoom-level',
+    defaultMessage: 'Núverandi þysjustig',
+  },
+  openExpandedModal: {
+    id: 'sp.documents:expand-expanded-modal',
+    defaultMessage: 'Opna módal með stækkuðu skjali ',
+  },
+  closeExpandedModal: {
+    id: 'sp.documents:close',
+    defaultMessage: 'Loka módal með stækkuðu skjali',
+  },
+  replySent: {
+    id: 'sp.documents:reply-sent',
+    defaultMessage:
+      'Skilaboðin eru móttekin og mál hefur verið stofnað. Þú getur haldið áfram samskiptunum hér eða í gegnum þitt persónulega netfang {email}. Málsnúmerið er: {caseNumber}',
+  },
+  sendMessage: {
+    id: 'sp.documents:send-message',
+    defaultMessage: 'Svara',
+  },
+  closedForReplies: {
+    id: 'sp.documents:closed-for-replies',
+    defaultMessage:
+      'Ekki er hægt að svara þessum skilaboðum því sendandi hefur lokað fyrir frekari svör í þessu samtali.',
+  },
+  replySentError: {
+    id: 'sp.documents:reply-sent-error',
+    defaultMessage:
+      'Ekki tókst að senda skilaboð, vinsamlegast reynið aftur síðar.',
+  },
+  replySentShort: {
+    id: 'sp.documents:reply-sent',
+    defaultMessage: 'Skilaboð send',
+  },
+  replyCannotBeEmpty: {
+    id: 'sp.documents:reply-cannot-be-empty',
+    defaultMessage: 'Skilaboð mega ekki vera tóm',
+  },
+  replyCannotBeMore: {
+    id: 'sp.documents:reply-cannot-be-more-than-500',
+    defaultMessage: 'Skilaboð mega ekki vera meira en 500 stafir',
+  },
+  messagesHere: {
+    id: 'sp.documents:messages-here',
+    defaultMessage: 'Skilaboð hér',
+  },
+  replyEmailTooltip: {
+    id: 'sp.documents:reply-email-tooltip',
+    defaultMessage: 'Netfang sem er skráð í Mínar stillingar. ',
+  },
+  emailMissing: {
+    id: 'sp.documents:email-missing',
+    defaultMessage:
+      'Nauðsynlegt er að hafa netfang skráð til að senda skilaboðin',
+  },
 })

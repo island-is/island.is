@@ -1,121 +1,75 @@
 import {
-  buildAlertMessageField,
   buildCustomField,
   buildMultiField,
-  buildSelectField,
   buildSubSection,
-  buildTextField,
 } from '@island.is/application/core'
-import { getAllCountryCodes } from '@island.is/shared/utils'
+import { Application } from '@island.is/application/types'
+import { primarySchoolMessages } from '../../../lib/messages'
 import {
-  OptionsType,
-  ReasonForApplicationOptions,
-} from '../../../lib/constants'
-import { newPrimarySchoolMessages } from '../../../lib/messages'
-import { getApplicationAnswers } from '../../../lib/newPrimarySchoolUtils'
+  hasSpecialEducationSubType,
+  shouldShowReasonForApplicationPage,
+} from '../../../utils/conditionUtils'
+import {
+  ApplicationType,
+  OrganizationSector,
+  OrganizationSubType,
+} from '../../../utils/constants'
+import {
+  getApplicationAnswers,
+  getReasonOptionsType,
+  getSelectedSchoolSector,
+  getSelectedSchoolSubType,
+} from '../../../utils/newPrimarySchoolUtils'
 
 export const reasonForApplicationSubSection = buildSubSection({
   id: 'reasonForApplicationSubSection',
-  title:
-    newPrimarySchoolMessages.primarySchool.reasonForApplicationSubSectionTitle,
+  title: primarySchoolMessages.reasonForApplication.subSectionTitle,
+  condition: (answers, externalData) =>
+    shouldShowReasonForApplicationPage(answers) &&
+    !hasSpecialEducationSubType(answers, externalData),
   children: [
     buildMultiField({
       id: 'reasonForApplication',
-      title:
-        newPrimarySchoolMessages.primarySchool
-          .reasonForApplicationSubSectionTitle,
-      description:
-        newPrimarySchoolMessages.primarySchool.reasonForApplicationDescription,
+      title: primarySchoolMessages.reasonForApplication.subSectionTitle,
+      description: (application) => {
+        const { applicationType } = getApplicationAnswers(application.answers)
+        const selectedSchoolSector = getSelectedSchoolSector(
+          application.answers,
+          application.externalData,
+        )
+        const selectedSchoolSubType = getSelectedSchoolSubType(
+          application.answers,
+          application.externalData,
+        )
+
+        if (
+          applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL &&
+          selectedSchoolSector === OrganizationSector.PUBLIC &&
+          selectedSchoolSubType === OrganizationSubType.GENERAL_SCHOOL
+        ) {
+          return primarySchoolMessages.reasonForApplication
+            .enrollmentDescription
+        }
+
+        return primarySchoolMessages.reasonForApplication.description
+      },
       children: [
         buildCustomField(
           {
             id: 'reasonForApplication.reason',
-            title:
-              newPrimarySchoolMessages.primarySchool
-                .reasonForApplicationSubSectionTitle,
+            title: primarySchoolMessages.reasonForApplication.subSectionTitle,
             component: 'FriggOptionsAsyncSelectField',
-            dataTestId: 'reason-for-application',
           },
           {
-            optionsType: OptionsType.REASON,
-            placeholder:
-              newPrimarySchoolMessages.primarySchool
-                .reasonForApplicationPlaceholder,
+            optionsType: (application: Application) =>
+              getReasonOptionsType(
+                application.answers,
+                application.externalData,
+              ),
+            placeholder: primarySchoolMessages.reasonForApplication.placeholder,
+            useIdAndKey: true,
           },
         ),
-        buildSelectField({
-          id: 'reasonForApplication.movingAbroad.country',
-          dataTestId: 'reason-for-application-country',
-          title: newPrimarySchoolMessages.primarySchool.country,
-          placeholder:
-            newPrimarySchoolMessages.primarySchool.countryPlaceholder,
-          options: () => {
-            const countries = getAllCountryCodes()
-            return countries.map((country) => {
-              return {
-                label: country.name_is || country.name,
-                value: country.code,
-              }
-            })
-          },
-          condition: (answers) => {
-            const { reasonForApplication } = getApplicationAnswers(answers)
-
-            return (
-              reasonForApplication === ReasonForApplicationOptions.MOVING_ABROAD
-            )
-          },
-        }),
-        buildTextField({
-          id: 'reasonForApplication.transferOfLegalDomicile.streetAddress',
-          title: newPrimarySchoolMessages.shared.address,
-          width: 'half',
-          required: true,
-          condition: (answers) => {
-            const { reasonForApplication } = getApplicationAnswers(answers)
-
-            return (
-              reasonForApplication ===
-              ReasonForApplicationOptions.MOVING_MUNICIPALITY
-            )
-          },
-        }),
-        buildTextField({
-          id: 'reasonForApplication.transferOfLegalDomicile.postalCode',
-          title: newPrimarySchoolMessages.shared.postalCode,
-          width: 'half',
-          required: true,
-          format: '###',
-          condition: (answers) => {
-            const { reasonForApplication } = getApplicationAnswers(answers)
-
-            return (
-              reasonForApplication ===
-              ReasonForApplicationOptions.MOVING_MUNICIPALITY
-            )
-          },
-        }),
-        buildAlertMessageField({
-          id: 'reasonForApplication.info',
-          title: newPrimarySchoolMessages.shared.alertTitle,
-          message:
-            newPrimarySchoolMessages.primarySchool
-              .registerNewDomicileAlertMessage,
-          doesNotRequireAnswer: true,
-          alertType: 'info',
-          condition: (answers) => {
-            const { reasonForApplication, reasonForApplicationCountry } =
-              getApplicationAnswers(answers)
-
-            return (
-              reasonForApplication ===
-                ReasonForApplicationOptions.MOVING_MUNICIPALITY ||
-              (reasonForApplication ===
-                ReasonForApplicationOptions.MOVING_ABROAD &&
-                reasonForApplicationCountry !== undefined)
-            )
-          },
-        }),
       ],
     }),
   ],

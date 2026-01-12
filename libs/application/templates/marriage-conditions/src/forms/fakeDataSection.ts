@@ -4,10 +4,11 @@ import {
   buildDescriptionField,
   buildRadioField,
   buildSelectField,
+  YES,
+  NO,
 } from '@island.is/application/core'
-import { NO, YES } from '../lib/constants'
 import { allowFakeCondition } from '../lib/utils'
-import { NationalRegistryMaritalStatus as MaritalStatus } from '../types/schema'
+import { NationalRegistryMaritalStatus as MaritalStatus } from '@island.is/api/schema'
 
 export const fakeDataSection = buildSection({
   id: 'fakeDataSection',
@@ -32,13 +33,12 @@ export const fakeDataSection = buildSection({
                     til að hægt sé að prófa ferlið.
                     \n\n
                     **Athugið einnig, gervimenn 3019 og 2399 teljast hafa fæðingarvottorð,
-                    aðrir gervimenn ekki. Gervigögn fyrir rafræn skilríki, öll símanúmer sem enda á 
+                    aðrir gervimenn ekki. Gervigögn fyrir rafræn skilríki, öll símanúmer sem enda á
                     9 komast í gegn.**
                   `.replace(/\s{1,}/g, ' '),
         }),
         buildRadioField({
           id: 'fakeData.useFakeData',
-          title: '',
           width: 'half',
           options: [
             {
@@ -58,28 +58,29 @@ export const fakeDataSection = buildSection({
           width: 'half',
           condition: allowFakeCondition(YES),
           options: [
-            { value: '1', label: MaritalStatus.Unmarried },
-            { value: '3', label: MaritalStatus.Married },
-            { value: '4', label: MaritalStatus.Widowed },
-            { value: '5', label: MaritalStatus.Separated },
-            { value: '6', label: MaritalStatus.Divorced },
+            { value: '1', label: MaritalStatus.UNMARRIED },
+            { value: '3', label: MaritalStatus.MARRIED },
+            { value: '4', label: MaritalStatus.WIDOWED },
+            { value: '5', label: MaritalStatus.SEPARATED },
+            { value: '6', label: MaritalStatus.DIVORCED },
             {
               value: '7',
-              label: MaritalStatus.MarriedLivingSeparately,
+              label: MaritalStatus.MARRIED_LIVING_SEPARATELY,
             },
             {
               value: '8',
-              label: MaritalStatus.MarriedToForeignLawPerson,
+              label: MaritalStatus.MARRIED_TO_FOREIGN_LAW_PERSON,
             },
-            { value: '9', label: MaritalStatus.Unknown },
+            { value: '9', label: MaritalStatus.UNKNOWN },
             {
               value: '0',
-              label: MaritalStatus.ForeignResidenceMarriedToUnregisteredPerson,
+              label:
+                MaritalStatus.FOREIGN_RESIDENCE_MARRIED_TO_UNREGISTERED_PERSON,
             },
             {
               value: 'L',
               label:
-                MaritalStatus.IcelandicResidenceMarriedToUnregisteredPerson,
+                MaritalStatus.ICELANDIC_RESIDENCE_MARRIED_TO_UNREGISTERED_PERSON,
             },
           ],
         }),

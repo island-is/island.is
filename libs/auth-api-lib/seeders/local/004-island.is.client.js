@@ -10,7 +10,7 @@ const api_resource = {
 
 const api_resources = [api_resource]
 
-const api_scope = {
+const api_scope_applications_read = {
   enabled: true,
   name: '@island.is/applications:read',
   display_name: 'Read applications',
@@ -27,12 +27,29 @@ const api_scope = {
   domain_name: '@island.is',
 }
 
-const api_scopes = [api_scope]
+const api_scope_documents = {
+  enabled: true,
+  name: '@island.is/documents',
+  display_name: 'Documents',
+  description: null,
+  show_in_discovery_document: false,
+  required: false,
+  emphasize: false,
+  grant_to_legal_guardians: true,
+  grant_to_procuring_holders: true,
+  allow_explicit_delegation_grant: true,
+  also_for_delegated_user: false,
+  automatic_delegation_grant: false,
+  is_access_controlled: false,
+  domain_name: '@island.is',
+}
+
+const api_scopes = [api_scope_applications_read, api_scope_documents]
 
 const api_resource_scopes = [
   {
     api_resource_name: api_resource.name,
-    scope_name: api_scope.name,
+    scope_name: api_scope_applications_read.name,
   },
 ]
 
@@ -94,7 +111,11 @@ const client_allowed_scopes = [
   },
   {
     client_id: client.client_id,
-    scope_name: api_scope.name,
+    scope_name: api_scope_applications_read.name,
+  },
+  {
+    client_id: client.client_id,
+    scope_name: api_scope_documents.name,
   },
 ]
 
@@ -193,7 +214,7 @@ module.exports = {
       throw err
     }
 
-    transaction.commit()
+    await transaction.commit()
   },
 
   down: async (queryInterface, Sequelize) => {

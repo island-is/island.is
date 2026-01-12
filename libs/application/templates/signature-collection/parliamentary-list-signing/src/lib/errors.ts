@@ -9,7 +9,7 @@ export const errorMessages = {
     },
     summary: {
       id: 'pls.application:error.age.summary',
-      defaultMessage: '18 ára aldursmark er ekki náð',
+      defaultMessage: '18 ára aldursmarki er ekki náð',
       description: '',
     },
   }),
@@ -41,12 +41,12 @@ export const errorMessages = {
   residency: defineMessages({
     title: {
       id: 'pls.application:error.residency.title',
-      defaultMessage: 'Ekki með búsetu á Íslandi',
+      defaultMessage: 'Ekki með lögheimili á Íslandi',
       description: '',
     },
     summary: {
       id: 'pls.application:error.residency.summary',
-      defaultMessage: 'Skilyrði um búsetu á Íslandi eru ekki uppfyllt',
+      defaultMessage: 'Skilyrði um lögheimili á Íslandi eru ekki uppfyllt',
       description: '',
     },
   }),
@@ -82,7 +82,7 @@ export const errorMessages = {
     },
     summary: {
       id: 'pls.application:error.signer.summary#markdown',
-      defaultMessage: 'Hægt er að draga meðmæli tilbaka inni á Mínum Síðum.',
+      defaultMessage: 'Hægt er að draga meðmæli til baka inni á Mínum Síðum.',
       description: '',
     },
   }),
@@ -133,6 +133,30 @@ export const errorMessages = {
       id: 'pls.application:error.singeeNotFound.summary',
       defaultMessage:
         'Hægt er að hafa samband við Þjóðskrá fyrir nánari upplýsingar.',
+      description: '',
+    },
+  }),
+  candidateNotFound: defineMessages({
+    title: {
+      id: 'pls.application:error.candidateNotFound.title',
+      defaultMessage: 'Framboð finnst ekki',
+      description: '',
+    },
+    summary: {
+      id: 'pls.application:error.candidateNotFound.summary',
+      defaultMessage: 'Ekki er hægt að mæla með framboði.',
+      description: '',
+    },
+  }),
+  candidateListActive: defineMessages({
+    title: {
+      id: 'pls.application:error.candidateListActive.title',
+      defaultMessage: 'Framboð er ekki með virka söfnun í þínu kjördæmi',
+      description: '',
+    },
+    summary: {
+      id: 'pls.application:error.active.summary',
+      defaultMessage: 'Ekki er hægt að mæla með framboði.',
       description: '',
     },
   }),

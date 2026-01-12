@@ -1,7 +1,7 @@
-import addDays from 'date-fns/addDays'
-
 import {
+  NO,
   NO_ANSWER,
+  YES,
   buildCustomField,
   buildDateField,
   buildFileUploadField,
@@ -23,21 +23,19 @@ import {
 } from '@island.is/application/types'
 import {
   FILE_SIZE_LIMIT,
-  NO,
   PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
   PARENTAL_LEAVE,
   StartDateOptions,
-  YES,
 } from '../constants'
-import Logo from '../assets/Logo'
-import { minPeriodDays } from '../config'
+import { DirectorateOfLabourLogo } from '@island.is/application/assets/institution-logos'
 import { parentalLeaveFormMessages } from '../lib/messages'
 import {
   getAllPeriodDates,
   getApplicationAnswers,
   getConclusionScreenSteps,
   getLeavePlanTitle,
+  getMinimumEndDate,
   getMinimumStartDate,
   getPeriodSectionTitle,
 } from '../lib/parentalLeaveUtils'
@@ -51,7 +49,7 @@ import { useLocale } from '@island.is/localization'
 export const EditOrAddEmployersAndPeriods: Form = buildForm({
   id: 'ParentalLeaveEditOrAddEmployersAndPeriods',
   title: parentalLeaveFormMessages.shared.formEditTitle,
-  logo: Logo,
+  logo: DirectorateOfLabourLogo,
   mode: FormModes.DRAFT,
   children: [
     buildSection({
@@ -167,18 +165,7 @@ export const EditOrAddEmployersAndPeriods: Form = buildForm({
                     },
                   },
                   {
-                    minDate: (application: Application) => {
-                      const { rawPeriods } = getApplicationAnswers(
-                        application.answers,
-                      )
-                      const latestStartDate =
-                        rawPeriods[rawPeriods.length - 1]?.startDate
-
-                      return addDays(
-                        new Date(latestStartDate),
-                        minPeriodDays - 1,
-                      )
-                    },
+                    minDate: getMinimumEndDate,
                     excludeDates: (application: Application) => {
                       const { periods } = getApplicationAnswers(
                         application.answers,
@@ -381,17 +368,14 @@ export const EditOrAddEmployersAndPeriods: Form = buildForm({
       children: [
         buildMultiField({
           id: 'confirmation',
-          title: '',
           children: [
             buildCustomField({
               id: 'confirmationScreen',
-              title: '',
               component: 'EditOrAddEmployersAndPeriodsReview',
             }),
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
-              title: '',
               actions: [
                 {
                   event: DefaultEvents.ABORT,

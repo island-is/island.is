@@ -4,6 +4,11 @@ import { DbClient } from './types'
 import { safeBulkInsert } from './safeBulkInsert'
 import { getDelegationTypes } from './createScope'
 
+interface TranslatedText {
+  en: string
+  is: string
+}
+
 type GrantType =
   | 'authorization_code'
   | 'client_credentials'
@@ -17,13 +22,15 @@ interface ClientOptions {
 
   /**
    * Public name of the client. Will be shown to the user when they are authenticating.
+   * Can be a string (for Icelandic only) or an object with 'en' and 'is' properties for translations.
    */
-  displayName: string
+  displayName: string | TranslatedText
 
   /**
    * Describes the purpose of the client. Not shown to the user.
+   * Can be a string (for Icelandic only) or an object with 'en' and 'is' properties for translations.
    */
-  description: string
+  description: string | TranslatedText
 
   /**
    * Should be `spa` for front-end web apps, `web` for websites that have a cookie based  authentication through a backend, `native` for mobile apps and `machine` for backend clients.
@@ -64,8 +71,14 @@ interface ClientOptions {
 
 const getClientFields = (options: ClientOptions): DbClient => ({
   client_id: options.clientId,
-  client_name: options.displayName,
-  description: options.description,
+  client_name:
+    typeof options.displayName === 'string'
+      ? options.displayName
+      : options.displayName.is,
+  description:
+    typeof options.description === 'string'
+      ? options.description
+      : options.description.is,
   client_type: options.clientType,
   require_client_secret:
     options.clientType === 'web' || options.clientType === 'machine',
@@ -130,6 +143,59 @@ export const createClient =
       [client],
       () => `creating client "${client.client_id}"`,
     )
+
+    // Store translations if TranslatedText objects are provided
+    const translations = []
+
+    if (typeof options.displayName !== 'string') {
+      // Add English translation for client_name
+      translations.push({
+        language: 'en',
+        class_name: 'client',
+        key: client.client_id,
+        property: 'clientName',
+        value: options.displayName.en,
+      })
+
+      // Add Icelandic translation for client_name
+      translations.push({
+        language: 'is',
+        class_name: 'client',
+        key: client.client_id,
+        property: 'clientName',
+        value: options.displayName.is,
+      })
+    }
+
+    if (typeof options.description !== 'string') {
+      // Add English translation for description
+      translations.push({
+        language: 'en',
+        class_name: 'client',
+        key: client.client_id,
+        property: 'description',
+        value: options.description.en,
+      })
+
+      // Add Icelandic translation for description
+      translations.push({
+        language: 'is',
+        class_name: 'client',
+        key: client.client_id,
+        property: 'description',
+        value: options.description.is,
+      })
+    }
+
+    if (translations.length > 0) {
+      await safeBulkInsert(
+        queryInterface,
+        'translation',
+        translations,
+        ({ language, property }) =>
+          `creating ${language} translation for ${client.client_id}.${property}`,
+      )
+    }
 
     const delegationTypes = getDelegationTypes({
       legalGuardians: options.supportDelegations,

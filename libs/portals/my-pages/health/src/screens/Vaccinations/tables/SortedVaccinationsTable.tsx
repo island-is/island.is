@@ -7,8 +7,10 @@ import {
   SortableTable,
   formatDate,
 } from '@island.is/portals/my-pages/core'
+import { Markdown } from '@island.is/shared/components'
 import { messages } from '../../../lib/messages'
 import { tagSelector } from '../../../utils/tagSelector'
+import * as styles from '../tables/VaccinationsTable.css'
 
 interface Props {
   data?: Array<HealthDirectorateVaccination>
@@ -29,7 +31,7 @@ export const SortedVaccinationsTable = ({ data }: Props) => {
           status: formatMessage(messages.status),
         }}
         expandable
-        defaultSortByKey="status"
+        defaultSortByKey="vaccine"
         mobileTitleKey="vaccine"
         align="left"
         tagOutlined
@@ -40,53 +42,83 @@ export const SortedVaccinationsTable = ({ data }: Props) => {
             date: formatDate(item?.lastVaccinationDate) ?? '',
             status: item?.statusName ?? '',
             tag: tagSelector(item?.status ?? undefined),
-            children:
-              item.vaccinationsInfo && item.vaccinationsInfo.length > 0 ? (
-                <SortableTable
-                  labels={{
-                    nr: formatMessage(messages.vaccinesTableHeaderNr),
-                    date: formatMessage(messages.vaccinesTableHeaderDate),
-                    age: formatMessage(messages.vaccinesTableHeaderAge),
-                    vaccine: formatMessage(messages.vaccinesTableHeaderVaccine),
-                    location: formatMessage(
-                      messages.vaccinesTableHeaderLocation,
-                    ),
-                  }}
-                  align="left"
-                  defaultSortByKey="nr"
-                  inner
-                  items={
-                    item.vaccinationsInfo?.map((vaccination, x) => ({
-                      id: vaccination?.id.toString() ?? `${x}`,
-                      nr: (x + 1).toString(),
-                      date: new Date(vaccination.date).toLocaleDateString(
-                        'is-IS',
+            children: (
+              <Box
+                padding={[0, 0, 0, 3]}
+                background={['transparent', 'transparent', 'blue100']}
+              >
+                <Box background="white">
+                  <SortableTable
+                    labels={{
+                      nr: formatMessage(messages.vaccinesTableHeaderNr),
+                      date: formatMessage(messages.vaccinesTableHeaderDate),
+                      age: formatMessage(messages.vaccinesTableHeaderAge),
+                      vaccine: formatMessage(
+                        messages.vaccinesTableHeaderVaccine,
                       ),
-                      age: [
-                        vaccination.age?.years,
-                        vaccination.age?.years
-                          ? formatMessage(messages.years)
-                          : undefined,
-                        vaccination.age?.months,
-                        formatMessage(messages.months),
-                      ]
-                        .filter(Boolean)
-                        .join(' '),
-                      vaccine: vaccination.url ? (
-                        <LinkButton
-                          icon={undefined}
-                          size="small"
-                          to={vaccination.url ?? '/'}
-                          text={vaccination.name ?? ''}
-                        />
-                      ) : (
-                        vaccination.name ?? ''
+                      location: formatMessage(
+                        messages.vaccinesTableHeaderLocation,
                       ),
-                      location: vaccination.location ?? '',
-                    })) ?? []
-                  }
-                />
-              ) : null,
+                    }}
+                    align="left"
+                    defaultSortByKey="nr"
+                    inner
+                    emptyTableMessage={formatMessage(
+                      messages.noVaccinesRegistered,
+                    )}
+                    items={
+                      item.vaccinationsInfo?.map((vaccination, x) => ({
+                        id: vaccination?.id.toString() ?? `${x}`,
+                        nr: (x + 1).toString(),
+                        date: new Date(vaccination.date).toLocaleDateString(
+                          'is-IS',
+                        ),
+                        age: [
+                          vaccination.age?.years,
+                          vaccination.age?.years
+                            ? formatMessage(messages.years)
+                            : undefined,
+                          vaccination.age?.months,
+                          formatMessage(messages.months),
+                        ]
+                          .filter(Boolean)
+                          .join(' '),
+                        vaccine: vaccination.url ? (
+                          <LinkButton
+                            icon={undefined}
+                            size="small"
+                            to={vaccination.url ?? '/'}
+                            text={vaccination.name ?? ''}
+                            variant="text"
+                          />
+                        ) : (
+                          vaccination.name ?? ''
+                        ),
+                        location: vaccination.location ?? '',
+                      })) ?? []
+                    }
+                    footer={
+                      item.comments && item.comments.length > 0 ? (
+                        <Box
+                          width="full"
+                          paddingY={2}
+                          paddingX={5}
+                          background="blue100"
+                        >
+                          <ul color="black">
+                            {item.comments?.map((item, i) => (
+                              <li key={i} className={styles.footerList}>
+                                <Markdown>{item}</Markdown>
+                              </li>
+                            ))}
+                          </ul>
+                        </Box>
+                      ) : undefined
+                    }
+                  />
+                </Box>
+              </Box>
+            ),
           })) ?? []
         }
       />

@@ -1,6 +1,6 @@
 import {
-  ApplicantApi,
   ApplicationApi,
+  ApplicantApi,
   DocumentsApi,
   GeneralApi,
   IncomePlanApi,
@@ -8,7 +8,9 @@ import {
   PensionCalculatorApi,
   DeathBenefitsApi,
   TestApi,
-} from '../../gen/fetch'
+  MedicalDocumentsApi,
+  QuestionnairesApi,
+} from '../../gen/fetch/v1'
 
 export type Scope =
   | '@tr.is/umsaekjandi:read'
@@ -20,6 +22,8 @@ export type Scope =
   | '@tr.is/almennt:read'
   | '@tr.is/fylgiskjol:write'
   | '@tr.is/danarbaetur:read'
+  | '@tr.is/sjukraogendurhaefingargreidslur:read'
+  | '@tr.is/ororkulifeyrir:read'
 
 export type Api =
   | typeof ApplicationApi
@@ -32,8 +36,12 @@ export type Api =
   | typeof PensionCalculatorApi
   | typeof DeathBenefitsApi
   | typeof TestApi
+  | typeof MedicalDocumentsApi
+  | typeof QuestionnairesApi
 
 export class ApplicationWriteApi extends ApplicationApi {}
+export class MedicalDocumentApiForDisabilityPension extends MedicalDocumentsApi {}
+export class QuestionnairesApiForDisabilityPension extends QuestionnairesApi {}
 
 export interface Period {
   year: number
@@ -92,6 +100,7 @@ export interface Months {
 
 export interface IncomePlanInfo {
   incomeYear: number
+  distributeIncomeByMonth: boolean
   incomeTypes: Array<IncomeTypes>
 }
 
@@ -123,7 +132,6 @@ export enum DocumentTypeEnum {
   RETIREMENT = 'retirement',
   SAILOR = 'sailor',
   SELF_EMPLOYED = 'selfEmployed',
-  RENTAL_AGREEMENT = 'rentalAgreement',
   SCHOOL_CONFIRMATION = 'schoolConfirmation',
   ASSISTED_CARE_AT_HOME = 'assistedCareAtHome',
   PURCHASE_OF_HEARING_AIDS = 'purchaseOfHearingAids',
@@ -136,3 +144,65 @@ export enum DocumentTypeEnum {
 }
 
 export type IncomePlanStatus = 'Accepted' | 'Cancelled' | 'InProgress'
+
+export interface ForeignPayment {
+  countryName: string
+  countryCode: string
+  foreignNationalId: string
+}
+
+export interface Occupation {
+  isSelfEmployed?: boolean
+  isStudying: boolean
+  educationalInstitution?: string
+  isPartTimeEmployed: boolean
+  calculatedRemunerationDate?: string
+  currentSemesterEcts?: string
+  receivesForeignPayments?: boolean
+  foreignPayments?: ForeignPayment[]
+}
+
+export interface EmployeeSickPay {
+  hasUtilizedEmployeeSickPayRights: number | null
+  employeeSickPayEndDate?: string
+}
+
+export interface UnionSickPay {
+  hasUtilizedUnionSickPayRights: number | null
+  unionNationalId?: string
+  unionName?: string
+  unionSickPayEndDate?: string
+}
+
+export interface Answer {
+  questionId: string
+  answer: string | null
+}
+export interface SelfAssessment {
+  hadAssistance: boolean
+  answers: Answer[]
+}
+
+export interface EmploymentStatus {
+  employmentStatus: string
+  explanation: string | null
+}
+
+export interface PreQuestionnaire {
+  highestEducation: string
+  employmentStatuses: EmploymentStatus[]
+  lastProfession?: string
+  lastProfessionDescription?: string
+  lastActivityOfProfession?: string
+  lastActivityOfProfessionDescription?: string
+  lastProfessionYear?: number
+  disabilityReason: string
+  hasParticipatedInRehabilitationBefore: boolean
+  rehabilitationDetails?: string
+  previousRehabilitationSuccessful?: boolean
+  additionalRehabilitationInformation?: string
+}
+
+const APPLICATION_TYPES = ['ORORKA'] as const
+
+export type ApplicationType = typeof APPLICATION_TYPES[number]

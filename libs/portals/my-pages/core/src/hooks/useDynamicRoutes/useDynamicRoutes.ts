@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
 import { gql } from '@apollo/client'
 import { useQuery } from '@apollo/client'
-import { Query } from '@island.is/api/schema'
+import { Query, QueryGetNamespaceArgs } from '@island.is/api/schema'
 import uniq from 'lodash/uniq'
 import { PortalNavigationItem, useNavigation } from '@island.is/portals/core'
 import { DynamicPaths } from './paths'
+import { orderRoutes } from '../../utils/orderRoutes'
 
 export const GET_TAPS_QUERY = gql`
   query GetTapsQuery {
@@ -23,6 +24,14 @@ export const GET_DRIVING_LICENSE_BOOK_QUERY = gql`
       book {
         id
       }
+    }
+  }
+`
+
+export const GET_NAMESPACE_QUERY = gql`
+  query GetNamespace($input: GetNamespaceInput!) {
+    getNamespace(input: $input) {
+      fields
     }
   }
 `
@@ -51,6 +60,7 @@ export const useDynamicRoutes = () => {
     if (tabData?.RecordsTap) {
       dynamicPathArray.push(DynamicPaths.FinanceTransactions)
       dynamicPathArray.push(DynamicPaths.FinanceTransactionPeriods)
+      dynamicPathArray.push(DynamicPaths.FinanceTransactionVehicleMileage)
     }
     if (tabData?.employeeClaimsTap) {
       dynamicPathArray.push(DynamicPaths.FinanceEmployeeClaims)
@@ -81,7 +91,18 @@ export const useDynamicRoutes = () => {
 
 export const useDynamicRoutesWithNavigation = (nav: PortalNavigationItem) => {
   const { activeDynamicRoutes } = useDynamicRoutes()
-  const navigation = useNavigation(nav, activeDynamicRoutes)
+  const { data } = useQuery<Query, QueryGetNamespaceArgs>(GET_NAMESPACE_QUERY, {
+    variables: {
+      input: {
+        namespace: 'Mínar síður Ísland.is',
+        lang: 'is-IS', // No translation needed.
+      },
+    },
+  })
+
+  const sortedNavigation = orderRoutes(nav, data?.getNamespace?.fields)
+
+  const navigation = useNavigation(sortedNavigation, activeDynamicRoutes)
 
   return navigation
 }

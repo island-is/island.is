@@ -1,18 +1,17 @@
 import { lazy } from 'react'
 import { AdminPortalScope } from '@island.is/auth/scopes'
-import { m } from './lib/messages'
 import { PortalModule } from '@island.is/portals/core'
 import { FormSystemPaths } from './lib/paths'
 import { formsLoader } from './screens/Forms/Forms.loader'
 import { formLoader } from './screens/Form/Form.loader'
-
-const Forms = lazy(() => import('./screens/Forms/Forms'))
+import { m } from '@island.is/form-system/ui'
 
 const Form = lazy(() => import('./screens/Form/Form'))
+const Forms = lazy(() => import('./screens/Forms/Forms'))
 
 const allowedScopes: string[] = [
   AdminPortalScope.formSystem,
-  AdminPortalScope.formSystemSuperUser,
+  AdminPortalScope.formSystemAdmin,
 ]
 
 export const formSystemModule: PortalModule = {

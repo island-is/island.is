@@ -10,14 +10,13 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
-import Logo from '../assets/Logo'
+import { DistrictCommissionersLogo } from '@island.is/application/assets/institution-logos'
 import { confirmation, externalData, payment, property } from '../lib/messages'
 import { SelectedProperty } from '../shared'
 
 export const Approved: Form = buildForm({
   id: 'ApprovedApplicationForm',
-  title: '',
-  logo: Logo,
+  logo: DistrictCommissionersLogo,
   mode: FormModes.COMPLETED,
   children: [
     buildSection({
@@ -53,7 +52,6 @@ export const Approved: Form = buildForm({
             }),
             buildPdfLinkButtonField({
               id: 'confirmationPdfLinkButtonField',
-              title: '',
               verificationDescription: '',
               verificationLinkTitle: '',
               verificationLinkUrl: '',
@@ -91,12 +89,10 @@ export const Approved: Form = buildForm({
             buildCustomField({
               component: 'ConfirmationField',
               id: 'confirmationField',
-              title: '',
               description: '',
             }),
             buildMessageWithLinkButtonField({
               id: 'uiForms.conclusionBottomLink',
-              title: '',
               url: '/minarsidur/umsoknir',
               buttonTitle: coreMessages.openServicePortalButtonTitle,
               message: coreMessages.openServicePortalMessageText,

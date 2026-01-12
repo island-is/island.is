@@ -1,5 +1,9 @@
-import { OfficialJournalOfIcelandApplicationClientService } from '@island.is/clients/official-journal-of-iceland/application'
-import { Inject, Injectable } from '@nestjs/common'
+import {
+  CaseActionEnum,
+  GetApplicationAdvertTemplateAdvertTypeEnum,
+  OfficialJournalOfIcelandApplicationClientService,
+} from '@island.is/clients/official-journal-of-iceland/application'
+import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { PostCommentInput } from '../models/postComment.input'
 import { PostApplicationInput } from '../models/postApplication.input'
 import { GetCommentsInput } from '../models/getComments.input'
@@ -10,7 +14,8 @@ import {
   mapAttachmentType,
   mapGetAttachmentType,
   mapPresignedUrlType,
-  safeEnumMapper,
+  mapTemplateTypeEnumToLiteral,
+  mapTemplateTypeLiteralToEnum,
 } from './mappers'
 import { AddApplicationAttachmentResponse } from '../models/addApplicationAttachment.response'
 import { GetApplicationAttachmentInput } from '../models/getApplicationAttachment.input'
@@ -20,14 +25,24 @@ import type { Logger } from '@island.is/logging'
 import { User } from '@island.is/auth-nest-tools'
 import { GetUserInvolvedPartiesInput } from '../models/getUserInvolvedParties.input'
 import {
+  CommentActionEnum,
   CommentDirection,
   GetCommentsResponse,
 } from '../models/getComments.response'
 import { OJOIAApplicationCaseResponse } from '../models/applicationCase.response'
 import { GetPdfResponse } from '../models/getPdf.response'
 import { OJOIAIdInput } from '../models/id.input'
+import { OJOIApplicationAdvertTemplateTypesResponse } from '../models/applicationAdvertTemplateTypes.response'
 import { GetInvolvedPartySignaturesInput } from '../models/getInvolvedPartySignatures.input'
-import { InvolvedPartySignatures } from '../models/getInvolvedPartySignatures.response'
+import {
+  GetInvolvedPartySignature,
+  InvolvedPartySignatures,
+  SignatureType,
+} from '../models/getInvolvedPartySignatures.response'
+import { GetAdvertTemplateInput } from '../models/getAdvertTemplate.input'
+import { OJOIApplicationAdvertTemplateResponse } from '../models/applicationAdvertTemplate.response'
+import { isDefined } from '@island.is/shared/utils'
+import { convertDateToDaysAgo } from './utils'
 
 const LOG_CATEGORY = 'official-journal-of-iceland-application'
 
@@ -49,18 +64,24 @@ export class OfficialJournalOfIcelandApplicationService {
     )
 
     const mapped = incomingComments.comments.map((c) => {
-      const directonEnum =
-        safeEnumMapper(c.direction, CommentDirection) ??
-        CommentDirection.RECEIVED
+      const direction =
+        c.action === CaseActionEnum.EXTERNALCOMMENT
+          ? CommentDirection.RECEIVED
+          : CommentDirection.SENT
+
+      const action =
+        c.action === CaseActionEnum.APPLICATIONCOMMENT
+          ? CommentActionEnum.APPLICATION
+          : CommentActionEnum.EXTERNAL
 
       return {
         id: c.id,
-        age: c.age,
-        direction: directonEnum,
-        title: c.title,
+        age: convertDateToDaysAgo(c.created),
+        direction: direction,
+        action: action,
         comment: c.comment,
-        creator: c.creator,
-        receiver: c.receiver,
+        creator: c.creator.title,
+        receiver: c.receiver?.title ?? null,
       }
     })
 
@@ -75,6 +96,7 @@ export class OfficialJournalOfIcelandApplicationService {
         id: input.id,
         postApplicationComment: {
           comment: input.comment,
+          applicationUserName: input.applicationUserName,
         },
       },
       user,
@@ -208,9 +230,14 @@ export class OfficialJournalOfIcelandApplicationService {
     return this.ojoiApplicationService.getUserInvolvedParties(
       {
         id: input.applicationId,
+        partyName: input.partyName,
       },
       user,
     )
+  }
+
+  async getMyUserInfo(user: User) {
+    return this.ojoiApplicationService.getMyUserInfo(user)
   }
 
   async getApplicationCase(
@@ -238,6 +265,7 @@ export class OfficialJournalOfIcelandApplicationService {
       html: applicationCase.html,
       status: title,
       communicationStatus: applicationCase.communicationStatus.title,
+      expectedPublishDate: applicationCase.expectedPublishDate,
     }
 
     return mapped
@@ -248,6 +276,7 @@ export class OfficialJournalOfIcelandApplicationService {
       const data = await this.ojoiApplicationService.getPdf(
         {
           id: input.id,
+          showDate: input.showDate,
         },
         user,
       )
@@ -266,10 +295,51 @@ export class OfficialJournalOfIcelandApplicationService {
     }
   }
 
+  async getAdvertTemplate(
+    input: GetAdvertTemplateInput,
+    user: User,
+  ): Promise<OJOIApplicationAdvertTemplateResponse> {
+    const advertType = mapTemplateTypeEnumToLiteral(
+      input.type,
+    ) as GetApplicationAdvertTemplateAdvertTypeEnum
+
+    if (!advertType) {
+      //Shouldn't happen
+      this.logger.error('Invalid advert type supplied', {
+        category: LOG_CATEGORY,
+        applicationId: input.type,
+      })
+      throw new BadRequestException('Invalid advert type')
+    }
+
+    const data = await this.ojoiApplicationService.getApplicationAdvertTemplate(
+      { advertType },
+      user,
+    )
+    return {
+      html: data.html,
+      type: mapTemplateTypeLiteralToEnum(data.type),
+    }
+  }
+
+  async getAdvertTemplateTypes(
+    user: User,
+  ): Promise<OJOIApplicationAdvertTemplateTypesResponse> {
+    const templateTypes =
+      await this.ojoiApplicationService.getApplicationAdvertTemplateTypes(user)
+
+    return {
+      types: templateTypes.map(({ title, type }) => ({
+        title,
+        type: mapTemplateTypeLiteralToEnum(type),
+      })),
+    }
+  }
+
   async getInvolvedPartySignatures(
     input: GetInvolvedPartySignaturesInput,
     user: User,
-  ): Promise<InvolvedPartySignatures> {
+  ): Promise<GetInvolvedPartySignature> {
     try {
       const data =
         await this.ojoiApplicationService.getSignaturesForInvolvedParty(
@@ -277,24 +347,40 @@ export class OfficialJournalOfIcelandApplicationService {
           user,
         )
 
-      return {
-        ...data,
-        members: data.members.map((member) => ({
-          name: member.text ?? undefined,
-          above: member.textAbove ?? undefined,
-          before: member.textBefore ?? undefined,
-          below: member.textBelow ?? undefined,
-          after: member.textAfter ?? undefined,
-        })),
-        ...(data?.chairman && {
-          chairman: {
-            name: data.chairman.text ?? undefined,
-            above: data.chairman.textAbove ?? undefined,
-            before: data.chairman.textBefore ?? undefined,
-            below: data.chairman.textBelow ?? undefined,
-            after: data.chairman.textAfter ?? undefined,
-          },
+      const type = data.signature.records.some((record) =>
+        isDefined(record.chairman),
+      )
+        ? SignatureType.Committee
+        : SignatureType.Regular
+
+      const records: InvolvedPartySignatures[] = data.signature.records.map(
+        (record) => ({
+          id: record.id,
+          signatureDate: record.signatureDate,
+          institution: record.institution,
+          additionalSignature: record.additional ?? '',
+          members: record.members.map((member) => ({
+            name: member.name,
+            above: member.textAbove ?? '',
+            below: member.textBelow ?? '',
+            after: member.textAfter ?? '',
+            before: member.textBefore ?? '',
+          })),
+          chairman: record.chairman
+            ? {
+                name: record.chairman.name,
+                above: record.chairman.textAbove ?? '',
+                below: record.chairman.textBelow ?? '',
+                after: record.chairman.textAfter ?? '',
+                before: record.chairman.textBefore ?? '',
+              }
+            : undefined,
         }),
+      )
+
+      return {
+        type: type,
+        records: records,
       }
     } catch (error) {
       this.logger.error('Failed to get signatures for involved party', {

@@ -8,12 +8,11 @@ import { conclusion } from '../../lib/messages'
 import { externalDataSection } from './externalDataSection'
 import { informationSection } from './InformationSection'
 import { paymentSection } from './paymentSection'
-import { Logo } from '../../assets/Logo'
+import { TransportAuthorityLogo } from '@island.is/application/assets/institution-logos'
 
 export const ChangeCoOwnerOfVehicleForm: Form = buildForm({
   id: 'ChangeCoOwnerOfVehicleFormDraft',
-  title: '',
-  logo: Logo,
+  logo: TransportAuthorityLogo,
   mode: FormModes.DRAFT,
   children: [
     externalDataSection,
@@ -26,7 +25,6 @@ export const ChangeCoOwnerOfVehicleForm: Form = buildForm({
         // Only to have submit button visible
         buildTextField({
           id: 'tmp',
-          title: '',
           description: '',
         }),
       ],

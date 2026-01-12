@@ -1,7 +1,8 @@
 import {
   buildAlertMessageField,
+  buildCheckboxField,
   buildCustomField,
-  buildFileUploadField,
+  buildDescriptionField,
   buildForm,
   buildHiddenInputWithWatchedValue,
   buildMultiField,
@@ -11,48 +12,39 @@ import {
   buildSubmitField,
   buildSubSection,
   buildTextField,
+  YES,
 } from '@island.is/application/core'
-import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
-import {
-  BankAccountType,
-  fileUploadSharedProps,
-  TaxLevelOptions,
-} from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
+import { SocialInsuranceAdministrationLogo } from '@island.is/application/assets/institution-logos'
+import { TaxLevelOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import {
-  friendlyFormatIBAN,
-  friendlyFormatSWIFT,
   getBankIsk,
-  getCurrencies,
   getTaxOptions,
   getYesNoOptions,
-  typeOfBankInfo,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import {
   Application,
   DefaultEvents,
   Form,
   FormModes,
-  FormValue,
-  YES,
 } from '@island.is/application/types'
 import {
   applicantInformationMultiField,
   buildFormConclusionSection,
 } from '@island.is/application/ui-forms'
-import isEmpty from 'lodash/isEmpty'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
   getAvailableMonths,
   getAvailableYears,
+  hasNoCohabitants,
 } from '../lib/additionalSupportForTheElderlyUtils'
 import { additionalSupportForTheElderyFormMessage } from '../lib/messages'
 
 export const AdditionalSupportForTheElderlyForm: Form = buildForm({
   id: 'AdditionalSupportForTheElderlyDraft',
   title: socialInsuranceAdministrationMessage.shared.formTitle,
-  logo: Logo,
+  logo: SocialInsuranceAdministrationLogo,
   mode: FormModes.DRAFT,
   children: [
     buildSection({
@@ -84,56 +76,10 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
                 buildAlertMessageField({
                   id: 'paymentInfo.alertMessage',
                   title: socialInsuranceAdministrationMessage.shared.alertTitle,
-                  message: (application: Application) => {
-                    const { bankAccountType } = getApplicationAnswers(
-                      application.answers,
-                    )
-                    const { bankInfo } = getApplicationExternalData(
-                      application.externalData,
-                    )
-
-                    const type =
-                      bankAccountType ??
-                      typeOfBankInfo(bankInfo, bankAccountType)
-
-                    return type === BankAccountType.ICELANDIC
-                      ? socialInsuranceAdministrationMessage.payment
-                          .alertMessage
-                      : socialInsuranceAdministrationMessage.payment
-                          .alertMessageForeign
-                  },
+                  message:
+                    socialInsuranceAdministrationMessage.payment.alertMessage,
                   doesNotRequireAnswer: true,
                   alertType: 'info',
-                }),
-                buildRadioField({
-                  id: 'paymentInfo.bankAccountType',
-                  title: '',
-                  defaultValue: (application: Application) => {
-                    const { bankAccountType } = getApplicationAnswers(
-                      application.answers,
-                    )
-                    const { bankInfo } = getApplicationExternalData(
-                      application.externalData,
-                    )
-
-                    return typeOfBankInfo(bankInfo, bankAccountType)
-                  },
-                  options: [
-                    {
-                      label:
-                        socialInsuranceAdministrationMessage.payment
-                          .icelandicBankAccount,
-                      value: BankAccountType.ICELANDIC,
-                    },
-                    {
-                      label:
-                        socialInsuranceAdministrationMessage.payment
-                          .foreignBankAccount,
-                      value: BankAccountType.FOREIGN,
-                    },
-                  ],
-                  largeButtons: false,
-                  required: true,
                 }),
                 buildTextField({
                   id: 'paymentInfo.bank',
@@ -145,130 +91,6 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
                       application.externalData,
                     )
                     return getBankIsk(bankInfo)
-                  },
-                  condition: (formValue: FormValue, externalData) => {
-                    const { bankAccountType } = getApplicationAnswers(formValue)
-                    const { bankInfo } =
-                      getApplicationExternalData(externalData)
-
-                    const radio =
-                      bankAccountType ??
-                      typeOfBankInfo(bankInfo, bankAccountType)
-                    return radio === BankAccountType.ICELANDIC
-                  },
-                }),
-                buildTextField({
-                  id: 'paymentInfo.iban',
-                  title: socialInsuranceAdministrationMessage.payment.iban,
-                  placeholder: 'AB00 XXXX XXXX XXXX XXXX XX',
-                  defaultValue: (application: Application) => {
-                    const { bankInfo } = getApplicationExternalData(
-                      application.externalData,
-                    )
-                    return friendlyFormatIBAN(bankInfo.iban)
-                  },
-                  condition: (formValue: FormValue, externalData) => {
-                    const { bankAccountType } = getApplicationAnswers(formValue)
-                    const { bankInfo } =
-                      getApplicationExternalData(externalData)
-
-                    const radio =
-                      bankAccountType ??
-                      typeOfBankInfo(bankInfo, bankAccountType)
-                    return radio === BankAccountType.FOREIGN
-                  },
-                }),
-                buildTextField({
-                  id: 'paymentInfo.swift',
-                  title: socialInsuranceAdministrationMessage.payment.swift,
-                  placeholder: 'AAAA BB CC XXX',
-                  width: 'half',
-                  defaultValue: (application: Application) => {
-                    const { bankInfo } = getApplicationExternalData(
-                      application.externalData,
-                    )
-                    return friendlyFormatSWIFT(bankInfo.swift)
-                  },
-                  condition: (formValue: FormValue, externalData) => {
-                    const { bankAccountType } = getApplicationAnswers(formValue)
-                    const { bankInfo } =
-                      getApplicationExternalData(externalData)
-
-                    const radio =
-                      bankAccountType ??
-                      typeOfBankInfo(bankInfo, bankAccountType)
-                    return radio === BankAccountType.FOREIGN
-                  },
-                }),
-                buildSelectField({
-                  id: 'paymentInfo.currency',
-                  title: socialInsuranceAdministrationMessage.payment.currency,
-                  width: 'half',
-                  placeholder:
-                    socialInsuranceAdministrationMessage.payment.selectCurrency,
-                  options: ({ externalData }: Application) => {
-                    const { currencies } =
-                      getApplicationExternalData(externalData)
-                    return getCurrencies(currencies)
-                  },
-                  defaultValue: (application: Application) => {
-                    const { bankInfo } = getApplicationExternalData(
-                      application.externalData,
-                    )
-                    return !isEmpty(bankInfo) ? bankInfo.currency : ''
-                  },
-                  condition: (formValue: FormValue, externalData) => {
-                    const { bankAccountType } = getApplicationAnswers(formValue)
-                    const { bankInfo } =
-                      getApplicationExternalData(externalData)
-
-                    const radio =
-                      bankAccountType ??
-                      typeOfBankInfo(bankInfo, bankAccountType)
-                    return radio === BankAccountType.FOREIGN
-                  },
-                }),
-                buildTextField({
-                  id: 'paymentInfo.bankName',
-                  title: socialInsuranceAdministrationMessage.payment.bankName,
-                  width: 'half',
-                  defaultValue: (application: Application) => {
-                    const { bankInfo } = getApplicationExternalData(
-                      application.externalData,
-                    )
-                    return !isEmpty(bankInfo) ? bankInfo.foreignBankName : ''
-                  },
-                  condition: (formValue: FormValue, externalData) => {
-                    const { bankAccountType } = getApplicationAnswers(formValue)
-                    const { bankInfo } =
-                      getApplicationExternalData(externalData)
-
-                    const radio =
-                      bankAccountType ??
-                      typeOfBankInfo(bankInfo, bankAccountType)
-                    return radio === BankAccountType.FOREIGN
-                  },
-                }),
-                buildTextField({
-                  id: 'paymentInfo.bankAddress',
-                  title:
-                    socialInsuranceAdministrationMessage.payment.bankAddress,
-                  width: 'half',
-                  defaultValue: (application: Application) => {
-                    const { bankInfo } = getApplicationExternalData(
-                      application.externalData,
-                    )
-                    return !isEmpty(bankInfo) ? bankInfo.foreignBankAddress : ''
-                  },
-                  condition: (formValue: FormValue, externalData) => {
-                    const { bankAccountType } = getApplicationAnswers(formValue)
-                    const { bankInfo } =
-                      getApplicationExternalData(externalData)
-
-                    const radio =
-                      bankAccountType ??
-                      typeOfBankInfo(bankInfo, bankAccountType)
-                    return radio === BankAccountType.FOREIGN
                   },
                 }),
                 buildRadioField({
@@ -377,29 +199,49 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'additionalInformation',
-      title: socialInsuranceAdministrationMessage.additionalInfo.section,
+      id: 'higherPayments',
+      title:
+        additionalSupportForTheElderyFormMessage.info.higherPaymentsCohabTitle,
       children: [
-        buildSubSection({
-          id: 'fileUploadAdditionalFiles',
-          title:
-            socialInsuranceAdministrationMessage.fileUpload.additionalFileTitle,
+        buildMultiField({
+          id: 'higherPayments',
+          title: (application: Application) => {
+            return hasNoCohabitants(application)
+              ? additionalSupportForTheElderyFormMessage.info
+                  .higherPaymentsTitle
+              : additionalSupportForTheElderyFormMessage.info
+                  .higherPaymentsCohabTitle
+          },
+          description: (application: Application) => {
+            return hasNoCohabitants(application)
+              ? additionalSupportForTheElderyFormMessage.info
+                  .higherPaymentsDescription
+              : additionalSupportForTheElderyFormMessage.info
+                  .higherPaymentsCohabDescription
+          },
           children: [
-            buildFileUploadField({
-              id: 'fileUploadAdditionalFiles.additionalDocuments',
-              title:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .additionalFileTitle,
-              description:
-                additionalSupportForTheElderyFormMessage.fileUpload
-                  .additionalFileDescription,
-              introduction:
-                additionalSupportForTheElderyFormMessage.fileUpload
-                  .additionalFileDescription,
-              ...fileUploadSharedProps,
+            buildRadioField({
+              id: 'higherPayments.question',
+              options: getYesNoOptions(),
+              width: 'half',
+              condition: (_, externalData) => {
+                return hasNoCohabitants({ externalData } as Application)
+              },
+            }),
+            buildDescriptionField({
+              id: 'higherPayments.text',
+              condition: (_, externalData) => {
+                return !hasNoCohabitants({ externalData } as Application)
+              },
             }),
           ],
         }),
+      ],
+    }),
+    buildSection({
+      id: 'additionalInformation',
+      title: socialInsuranceAdministrationMessage.additionalInfo.section,
+      children: [
         buildSubSection({
           id: 'commentSection',
           title:
@@ -421,6 +263,31 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
             }),
           ],
         }),
+        buildSubSection({
+          id: 'asfteInstructions',
+          title:
+            additionalSupportForTheElderyFormMessage.info
+              .instructionsShortTitle,
+          children: [
+            buildCheckboxField({
+              id: 'infoCheckbox',
+              title:
+                additionalSupportForTheElderyFormMessage.info.instructionsTitle,
+              description:
+                additionalSupportForTheElderyFormMessage.info
+                  .instructionsDescription,
+              required: true,
+              options: [
+                {
+                  label:
+                    additionalSupportForTheElderyFormMessage.info
+                      .instructionsCheckbox,
+                  value: YES,
+                },
+              ],
+            }),
+          ],
+        }),
       ],
     }),
     buildSection({
@@ -429,7 +296,6 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
       children: [
         buildMultiField({
           id: 'confirm',
-          title: '',
           description: '',
           children: [
             buildCustomField(
@@ -484,7 +350,7 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
         additionalSupportForTheElderyFormMessage.conclusionScreen.bulletList,
       expandableIntro:
         additionalSupportForTheElderyFormMessage.conclusionScreen.nextStepsText,
-      bottomButtonLink: 'https://minarsidur.tr.is/forsendur/tekjuaetlun',
+      bottomButtonLink: 'https://island.is/umsoknir/tekjuaaetlun',
       bottomButtonLabel:
         socialInsuranceAdministrationMessage.conclusionScreen
           .incomePlanCardLabel,

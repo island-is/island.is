@@ -4,11 +4,7 @@ import { useLocale } from '@island.is/localization'
 import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
 import { Application, StaticText } from '@island.is/application/types'
 import { gql, useLazyQuery } from '@apollo/client'
-import {
-  IdentityInput,
-  Query,
-  RskCompanyInfoInput,
-} from '@island.is/api/schema'
+import { IdentityInput, Query } from '@island.is/api/schema'
 import {
   InputController,
   PhoneInputController,
@@ -16,13 +12,15 @@ import {
 import { useFormContext } from 'react-hook-form'
 import * as kennitala from 'kennitala'
 import debounce from 'lodash/debounce'
-import { COMPANY_IDENTITY_QUERY, IDENTITY_QUERY } from './graphql/queries'
+import { IDENTITY_QUERY } from './graphql/queries'
+import { setInputsOnChange } from '@island.is/shared/utils'
 
 interface NationalIdWithNameProps {
   id: string
   application: Application
   disabled?: boolean
   required?: boolean
+  readOnly?: boolean
   customId?: string
   customNationalIdLabel?: StaticText
   customNameLabel?: StaticText
@@ -44,6 +42,17 @@ interface NationalIdWithNameProps {
   showEmailField?: boolean
   error?: string
   clearOnChange?: string[]
+  clearOnChangeDefaultValue?:
+    | string
+    | string[]
+    | boolean
+    | boolean[]
+    | number
+    | number[]
+    | undefined
+  setOnChange?:
+    | { key: string; value: any }[]
+    | ((value: string | undefined) => Promise<{ key: string; value: any }[]>)
 }
 
 export const NationalIdWithName: FC<
@@ -53,10 +62,11 @@ export const NationalIdWithName: FC<
   application,
   disabled,
   required,
+  readOnly,
   customId = '',
   customNationalIdLabel = '',
-  phoneLabel = '',
-  emailLabel = '',
+  phoneLabel = undefined,
+  emailLabel = undefined,
   phoneRequired = false,
   emailRequired = false,
   customNameLabel = '',
@@ -74,7 +84,11 @@ export const NationalIdWithName: FC<
   showEmailField = false,
   error,
   clearOnChange,
+  clearOnChangeDefaultValue,
+  setOnChange,
 }) => {
+  const [invalidNationalId, setInvalidNationalId] = useState(false)
+
   const fieldId = customId.length > 0 ? customId : id
   const nameField = `${fieldId}.name`
   const nationalIdField = `${fieldId}.nationalId`
@@ -82,10 +96,10 @@ export const NationalIdWithName: FC<
   const phoneField = `${fieldId}.phone`
 
   const { formatMessage } = useLocale()
-  const { setValue } = useFormContext()
-  const [nationalIdInput, setNationalIdInput] = useState('')
-  const [personName, setPersonName] = useState('')
-  const [companyName, setCompanyName] = useState('')
+  const { setValue, getValues } = useFormContext()
+  const [nationalIdInput, setNationalIdInput] = useState(
+    getValues(nationalIdField) || '',
+  )
 
   const getFieldErrorString = (
     error: unknown,
@@ -121,6 +135,26 @@ export const NationalIdWithName: FC<
     nationalIdFieldErrors = getFieldErrorString(error, 'nationalId')
   }
 
+  const getNameFieldErrorMessage = () => {
+    if (!nationalIdInput) return
+    if (nationalIdInput.length !== 10) return
+
+    const notFoundMessage = formatMessage(
+      coreErrorMessages.nationalRegistryNameNotFoundForNationalId,
+    )
+
+    // Invalid national ID or mismatch with allowed search modes
+    if (invalidNationalId) return notFoundMessage
+
+    const queryFailed = queryError || data?.identity === null
+    const nameError = getFieldErrorString(error, 'name')
+
+    if (queryFailed) return notFoundMessage
+    if (nameError && !data?.identity) return nameError
+
+    return undefined
+  }
+
   // get default values
   const defaultNationalId = nationalIdDefaultValue
     ? nationalIdDefaultValue
@@ -144,73 +178,62 @@ export const NationalIdWithName: FC<
       {
         onCompleted: (data) => {
           onNameChange && onNameChange(data.identity?.name ?? '')
-          setPersonName(data.identity?.name ?? '')
+          if (data.identity?.name) {
+            setValue(nameField, data.identity?.name)
+          } else {
+            setValue(nameField, '')
+          }
         },
       },
     )
 
-  // query to get company name by national id
-  const [
-    getCompanyIdentity,
-    {
-      data: companyData,
-      loading: companyQueryLoading,
-      error: companyQueryError,
-    },
-  ] = useLazyQuery<Query, { input: RskCompanyInfoInput }>(
-    gql`
-      ${COMPANY_IDENTITY_QUERY}
-    `,
-    {
-      onCompleted: (companyData) => {
-        onNameChange &&
-          onNameChange(companyData.companyRegistryCompany?.name ?? '')
-        setCompanyName(companyData.companyRegistryCompany?.name ?? '')
-      },
-    },
-  )
-
   // fetch and update name when user has entered a valid national id
   useEffect(() => {
-    if (nationalIdInput.length === 10 && kennitala.isValid(nationalIdInput)) {
-      {
-        searchPersons &&
-          getIdentity({
-            variables: {
-              input: {
-                nationalId: nationalIdInput,
-              },
-            },
-          })
-      }
-
-      {
-        searchCompanies &&
-          getCompanyIdentity({
-            variables: {
-              input: {
-                nationalId: nationalIdInput,
-              },
-            },
-          })
-      }
+    if (!nationalIdInput) {
+      return
     }
+    if (nationalIdInput.length !== 10) {
+      // Clear name field whenever national id is not complete
+      // avoids name lingering from previous valid national ids
+      setValue(nameField, '')
+      return
+    }
+
+    if (!kennitala.isValid(nationalIdInput)) {
+      setValue(nameField, '')
+      setInvalidNationalId(true)
+      return
+    }
+
+    const isPerson = kennitala.isPerson(nationalIdInput)
+
+    // Check if the search mode matches the provided nationalId
+    const searchModeMismatch =
+      ((searchPersons && !isPerson) || (searchCompanies && isPerson)) &&
+      !(searchPersons && searchCompanies)
+
+    // Prevent search if the provided nationalId does not match the searchMode
+    if (searchModeMismatch) {
+      setValue(nameField, '')
+      // This results in an error shown provided by 'getNameFieldErrorMessage' func
+      setInvalidNationalId(true)
+      return
+    }
+
+    setInvalidNationalId(false)
+
+    // Identity returns both companies and individuals
+    getIdentity({
+      variables: { input: { nationalId: nationalIdInput } },
+    })
   }, [
     nationalIdInput,
     getIdentity,
-    getCompanyIdentity,
     searchPersons,
     searchCompanies,
+    setValue,
+    nameField,
   ])
-
-  useEffect(() => {
-    const nameInAnswers = getValueViaPath(application.answers, nameField)
-    if (personName && nameInAnswers !== personName) {
-      setValue(nameField, personName)
-    } else if (companyName && nameInAnswers !== companyName) {
-      setValue(nameField, companyName)
-    }
-  }, [personName, companyName, setValue, nameField, application.answers])
 
   return (
     <>
@@ -226,16 +249,26 @@ export const NationalIdWithName: FC<
             defaultValue={defaultNationalId}
             format="######-####"
             required={required}
+            readOnly={readOnly}
             backgroundColor="blue"
-            onChange={debounce((v) => {
+            onChange={debounce(async (v) => {
               setNationalIdInput(v.target.value.replace(/\W/g, ''))
               onNationalIdChange &&
                 onNationalIdChange(v.target.value.replace(/\W/g, ''))
+              if (setOnChange) {
+                setInputsOnChange(
+                  typeof setOnChange === 'function'
+                    ? await setOnChange(v.target.value.replace(/\W/g, ''))
+                    : setOnChange,
+                  setValue,
+                )
+              }
             })}
-            loading={searchPersons ? queryLoading : companyQueryLoading}
+            loading={queryLoading}
             error={nationalIdFieldErrors}
             disabled={disabled}
             clearOnChange={clearOnChange}
+            clearOnChangeDefaultValue={clearOnChangeDefaultValue}
           />
         </GridColumn>
         <GridColumn span={['1/1', '1/1', '1/1', '1/2']} paddingTop={2}>
@@ -247,58 +280,49 @@ export const NationalIdWithName: FC<
                 ? formatMessage(customNameLabel)
                 : formatMessage(coreErrorMessages.nationalRegistryName)
             }
-            required={required}
-            error={
-              searchPersons
-                ? queryError || data?.identity === null
-                  ? formatMessage(
-                      coreErrorMessages.nationalRegistryNameNotFoundForNationalId,
-                    )
-                  : getFieldErrorString(error, 'name') && !data
-                  ? getFieldErrorString(error, 'name')
-                  : undefined
-                : searchCompanies
-                ? companyQueryError ||
-                  companyData?.companyRegistryCompany === null
-                  ? formatMessage(
-                      coreErrorMessages.nationalRegistryNameNotFoundForNationalId,
-                    )
-                  : getFieldErrorString(error, 'name') && !companyData
-                  ? getFieldErrorString(error, 'name')
-                  : undefined
-                : undefined
-            }
+            required={disabled ? required : false}
+            error={getNameFieldErrorMessage()}
             disabled={disabled}
-            readOnly={!disabled}
+            readOnly={!disabled || readOnly}
           />
         </GridColumn>
       </GridRow>
       {(showPhoneField || showEmailField) && (
         <GridRow>
           {showPhoneField && (
-            <GridColumn span={['1/1', '1/1', '1/1', '1/2']} paddingTop={2}>
+            <GridColumn span={['1/1', '1/1', '1/1', '1/2']} paddingTop={3}>
               <PhoneInputController
                 id={phoneField}
-                label={formatMessage(phoneLabel)}
+                label={
+                  phoneLabel
+                    ? formatMessage(phoneLabel)
+                    : formatMessage(coreErrorMessages.nationalRegistryPhone)
+                }
                 defaultValue={defaultPhone}
                 required={phoneRequired}
                 backgroundColor="blue"
                 error={getFieldErrorString(error, 'phone')}
                 disabled={disabled}
+                readOnly={readOnly}
               />
             </GridColumn>
           )}
           {showEmailField && (
-            <GridColumn span={['1/1', '1/1', '1/1', '1/2']} paddingTop={2}>
+            <GridColumn span={['1/1', '1/1', '1/1', '1/2']} paddingTop={3}>
               <InputController
                 id={emailField}
-                label={formatMessage(emailLabel)}
+                label={
+                  emailLabel
+                    ? formatMessage(emailLabel)
+                    : formatMessage(coreErrorMessages.nationalRegistryEmail)
+                }
                 defaultValue={defaultEmail}
                 type="email"
                 required={emailRequired}
                 backgroundColor="blue"
                 error={getFieldErrorString(error, 'email')}
                 disabled={disabled}
+                readOnly={readOnly}
               />
             </GridColumn>
           )}

@@ -30,7 +30,7 @@ env:
   ELASTIC_NODE: 'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com'
   ENVIRONMENT: 'dev'
   LOG_LEVEL: 'info'
-  NODE_OPTIONS: '--max-old-space-size=3686 -r dd-trace/init'
+  NODE_OPTIONS: '--max-old-space-size=3686 --enable-source-maps -r dd-trace/init'
   SERVERSIDE_FEATURES_ON: ''
 grantNamespaces: []
 grantNamespacesEnabled: false
@@ -120,7 +120,8 @@ initContainer:
     CONTENTFUL_ACCESS_TOKEN: '/k8s/search-indexer/CONTENTFUL_ACCESS_TOKEN'
 namespace: 'search-indexer'
 podDisruptionBudget:
-  maxUnavailable: 1
+  minAvailable: 1
+  unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534
 progressDeadlineSeconds: 1500

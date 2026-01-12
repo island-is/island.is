@@ -3,10 +3,11 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/templates/new-primary-school/src",
   "projectType": "library",
+  "tags": ["scope:application-system", "lib:application-system"],
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "options": {
         "lintFilePatterns": [
           "libs/application/templates/new-primary-school/**/*.{ts,tsx,js,jsx}"
@@ -26,15 +27,8 @@
     "extract-strings": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/new-primary-school/src/lib/messages.ts"
-      }
-    },
-    "codegen/frontend-client": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "graphql-codegen --config libs/application/templates/new-primary-school/codegen.yml"
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/new-primary-school/src/**/*.{js,ts,tsx}'"
       }
     }
-  },
-  "tags": ["scope:application-system", "lib:application-system"]
+  }
 }

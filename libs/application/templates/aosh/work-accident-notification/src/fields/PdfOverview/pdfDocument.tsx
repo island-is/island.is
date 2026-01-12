@@ -1,11 +1,4 @@
-import {
-  Page,
-  Text,
-  Document,
-  View,
-  StyleSheet,
-  Svg,
-} from '@react-pdf/renderer'
+import { Page, Text, Document, View, StyleSheet } from '@react-pdf/renderer'
 import {
   accident,
   information,

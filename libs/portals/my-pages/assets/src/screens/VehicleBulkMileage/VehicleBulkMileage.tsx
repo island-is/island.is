@@ -1,11 +1,11 @@
 import {
   Stack,
   Box,
-  Filter,
-  FilterInput,
-  Checkbox,
   Pagination,
   Text,
+  Input,
+  GridColumn,
+  GridRow,
 } from '@island.is/island-ui/core'
 import debounce from 'lodash/debounce'
 import { debounceTime } from '@island.is/shared/constants'
@@ -18,7 +18,7 @@ import {
 } from '@island.is/portals/my-pages/core'
 import { vehicleMessage as messages, vehicleMessage } from '../../lib/messages'
 import * as styles from './VehicleBulkMileage.css'
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, useCallback } from 'react'
 import VehicleBulkMileageTable from './VehicleBulkMileageTable'
 import { VehicleType } from './types'
 import { FormProvider, useForm } from 'react-hook-form'
@@ -26,6 +26,7 @@ import { useVehiclesListLazyQuery } from './VehicleBulkMileage.generated'
 import { isDefined } from '@island.is/shared/utils'
 import { AssetsPaths } from '../../lib/paths'
 import { Problem } from '@island.is/react-spa/shared'
+import { useLoaderData } from 'react-router-dom'
 
 interface FormData {
   [key: string]: number
@@ -33,29 +34,63 @@ interface FormData {
 
 const VehicleBulkMileage = () => {
   useNamespaces('sp.vehicles')
+  const isAllowedBulkMileageUpload: boolean = useLoaderData() as boolean
   const { formatMessage } = useLocale()
   const [vehicles, setVehicles] = useState<Array<VehicleType>>([])
   const [page, setPage] = useState<number>(1)
   const [totalPages, setTotalPages] = useState<number>(1)
   const [search, setSearch] = useState<string>()
-  const [filterValue, setFilterValue] = useState<boolean>(false)
-  const [displayFilters, setDisplayFilters] = useState<boolean>(false)
-
-  const [vehicleListQuery, { data, loading, error, called }] =
+  const [vehicleListQuery, { data, loading, error, refetch }] =
     useVehiclesListLazyQuery()
 
   useEffect(() => {
-    vehicleListQuery({
-      variables: {
-        input: {
-          page,
-          pageSize: 10,
-          query: undefined,
-        },
+    if (!data) return
+
+    const vehicles: Array<VehicleType> =
+      data?.vehiclesListV3?.vehicleList
+        ?.map((v) => {
+          if (!v.make) {
+            return null
+          }
+
+          const lastMileageRegistration =
+            v.mileageDetails?.lastMileageRegistration &&
+            v.mileageDetails.lastMileageRegistration.date &&
+            v.mileageDetails.lastMileageRegistration.mileage &&
+            v.mileageDetails.lastMileageRegistration.originCode
+              ? {
+                  date: new Date(v.mileageDetails.lastMileageRegistration.date),
+                  mileage: v.mileageDetails.lastMileageRegistration.mileage,
+                  origin: v.mileageDetails.lastMileageRegistration.originCode,
+                  internalId:
+                    v.mileageDetails.lastMileageRegistration.internalId ??
+                    undefined,
+                }
+              : undefined
+
+          return {
+            vehicleId: v.vehicleId,
+            vehicleType: v.make,
+            lastMileageRegistration,
+            co2: v.co2 ?? undefined,
+          }
+        })
+        .filter(isDefined) ?? []
+    setVehicles(vehicles)
+    setTotalPages(data?.vehiclesListV3?.totalPages || 1)
+  }, [data])
+
+  const onMileageUpdate = useCallback(() => {
+    refetch({
+      input: {
+        page,
+        pageSize: 10,
+        query: search ?? undefined,
+        filterOnlyVehiclesUserCanRegisterMileage: true,
+        includeNextMainInspectionDate: false,
       },
     })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [refetch, page, search])
 
   const debouncedQuery = useMemo(() => {
     return debounce(() => {
@@ -65,48 +100,14 @@ const VehicleBulkMileage = () => {
             page,
             pageSize: 10,
             query: search ?? undefined,
-            filterOnlyRequiredMileageRegistration: filterValue,
+            filterOnlyVehiclesUserCanRegisterMileage: true,
+            includeNextMainInspectionDate: false,
           },
         },
-      }).then((res) => {
-        const vehicles: Array<VehicleType> =
-          res.data?.vehiclesListV3?.data
-            ?.map((v) => {
-              if (!v.type) {
-                return null
-              }
-
-              const lastMileageRegistration =
-                v.mileageDetails?.lastMileageRegistration &&
-                v.mileageDetails.lastMileageRegistration.date &&
-                v.mileageDetails.lastMileageRegistration.mileage &&
-                v.mileageDetails.lastMileageRegistration.originCode
-                  ? {
-                      date: new Date(
-                        v.mileageDetails.lastMileageRegistration.date,
-                      ),
-                      mileage: v.mileageDetails.lastMileageRegistration.mileage,
-                      origin:
-                        v.mileageDetails.lastMileageRegistration.originCode,
-                      internalId:
-                        v.mileageDetails.lastMileageRegistration.internalId ??
-                        undefined,
-                    }
-                  : undefined
-
-              return {
-                vehicleId: v.vehicleId,
-                vehicleType: v.type,
-                lastMileageRegistration,
-              }
-            })
-            .filter(isDefined) ?? []
-        setVehicles(vehicles)
-        setTotalPages(res?.data?.vehiclesListV3?.totalPages || 1)
       })
     }, debounceTime.search)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [search, filterValue, page])
+  }, [search, page])
 
   useEffect(() => {
     debouncedQuery()
@@ -117,11 +118,16 @@ const VehicleBulkMileage = () => {
 
   const methods = useForm<FormData>()
 
-  useEffect(() => {
-    if (!displayFilters) {
-      setDisplayFilters((data?.vehiclesListV3?.totalRecords ?? 0) > 10)
-    }
-  }, [data, displayFilters])
+  const buttons = [
+    <LinkButton
+      key="finance"
+      to={AssetsPaths.LinkFinanceTransactionVehicleMileage}
+      text={formatMessage(vehicleMessage.financeMileageLink)}
+      icon="arrowForward"
+      variant="utility"
+      colorScheme="white"
+    />,
+  ]
 
   return (
     <Stack space={2}>
@@ -148,9 +154,11 @@ const VehicleBulkMileage = () => {
           }
           serviceProviderSlug={SAMGONGUSTOFA_SLUG}
           serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
+          childrenWidthFull
           buttonGroup={
-            displayFilters
+            isAllowedBulkMileageUpload
               ? [
+                  ...buttons,
                   <LinkButton
                     key="upload"
                     to={AssetsPaths.AssetsVehiclesBulkMileageUpload}
@@ -166,57 +174,40 @@ const VehicleBulkMileage = () => {
                     variant="utility"
                   />,
                 ]
-              : undefined
+              : buttons
           }
         >
-          {displayFilters && (
+          {isAllowedBulkMileageUpload && (
             <Box marginBottom={2}>
-              <Filter
-                labelClear={formatMessage(m.clearFilter)}
-                labelClearAll={formatMessage(m.clearAllFilters)}
-                labelOpen={formatMessage(m.openFilter)}
-                labelClose={formatMessage(m.closeFilter)}
-                variant="popover"
-                onFilterClear={() => {
-                  setFilterValue(false)
-                }}
-                align="left"
-                reverse
-                filterInput={
-                  <FilterInput
+              <GridRow>
+                <GridColumn span="4/12">
+                  <Input
+                    icon={{ name: 'search' }}
                     backgroundColor="blue"
+                    size="xs"
                     value={search ?? ''}
                     onChange={(search) => {
                       if (page !== 1) {
                         setPage(1)
                       }
-                      setSearch(search)
+                      setSearch(search.target.value)
                     }}
+                    label={formatMessage(m.searchLabel)}
                     name={formatMessage(m.searchLabel)}
                     placeholder={formatMessage(vehicleMessage.searchForPlate)}
                   />
-                }
-              >
-                <Box padding={4}>
-                  <Text variant="eyebrow" as="p" paddingBottom={2}>
-                    {formatMessage(m.filterBy)}
-                  </Text>
-                  <Checkbox
-                    name="onlyMileageRequiredVehicles"
-                    label={formatMessage(
-                      vehicleMessage.vehiclesRequireMileageRegistration,
-                    )}
-                    checked={filterValue}
-                    onChange={() => setFilterValue(!filterValue)}
-                  />
-                </Box>
-              </Filter>
+                </GridColumn>
+              </GridRow>
             </Box>
           )}
           <Stack space={4}>
             {error && !loading && <Problem error={error} noBorder={false} />}
             {!error && (
-              <VehicleBulkMileageTable loading={loading} vehicles={vehicles} />
+              <VehicleBulkMileageTable
+                loading={loading}
+                vehicles={vehicles}
+                onMileageUpdateCallback={onMileageUpdate}
+              />
             )}
 
             {totalPages > 1 && (
