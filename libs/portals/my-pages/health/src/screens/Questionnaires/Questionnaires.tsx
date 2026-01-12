@@ -270,16 +270,21 @@ const Questionnaires: FC = () => {
             />
           </Box>
         )}
-        {dataLength > 0 && filteredData?.length === 0 && !showExpired && (
-          <Problem
-            type="no_data"
-            noBorder={false}
-            title={formatMessage(messages.noData)}
-            message={formatMessage(messages.noActiveQuestionnairesRegistered)}
-            imgSrc="./assets/images/empty_flower.svg"
-            imgAlt=""
-          />
-        )}
+        {dataLength > 0 &&
+          filterValues.searchQuery.length === 0 &&
+          filterValues.status.length === 0 &&
+          filterValues.organization.length === 0 &&
+          filteredData?.length === 0 &&
+          !showExpired && (
+            <Problem
+              type="no_data"
+              noBorder={false}
+              title={formatMessage(messages.noData)}
+              message={formatMessage(messages.noActiveQuestionnairesRegistered)}
+              imgSrc="./assets/images/empty_flower.svg"
+              imgAlt=""
+            />
+          )}
         <Stack space={3}>
           {filteredData?.map((questionnaire) => {
             const status = questionnaire.status
