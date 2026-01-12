@@ -325,6 +325,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
                   dateOnly
                 />
                 <Button
+                  dataTestId="button-defendant-service-date"
                   onClick={() => handleSetDate('serviceDate')}
                   disabled={!dates.serviceDate}
                 >

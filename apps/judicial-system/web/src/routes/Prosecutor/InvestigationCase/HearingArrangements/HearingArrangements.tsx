@@ -34,6 +34,7 @@ import {
   formatDateForServer,
   useCase,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/utils'
 import { isHearingArrangementsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 
 import {
@@ -79,10 +80,10 @@ const HearingArrangements = () => {
         if (
           (workingCase.state !== CaseState.NEW &&
             workingCase.state !== CaseState.DRAFT) ||
-          // TODO: Ignore failed notifications
-          workingCase.notifications?.find(
-            (notification) => notification.type === NotificationType.HEADS_UP,
-          )
+          hasSentNotification(
+            NotificationType.HEADS_UP,
+            workingCase.notifications,
+          ).hasSent
         ) {
           router.push(`${destination}/${workingCase.id}`)
         } else {
