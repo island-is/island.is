@@ -341,32 +341,7 @@ const Subpoena: FC = () => {
                   ? toggleNewAlternativeService(defendant)
                   : undefined,
                 onUpdate: handleDefendantUpdates,
-                children: isArraignmentScheduled ? (
-                  <Button
-                    variant="text"
-                    icon="reload"
-                    disabled={
-                      newSubpoenas.includes(defendant.id) ||
-                      workingCase.state === CaseState.CORRECTING
-                    }
-                    onClick={() => {
-                      setNewSubpoenas((previous) => [...previous, defendant.id])
-                      // Clear any alternative service for the defendant
-                      toggleNewAlternativeService(defendant)()
-                      setIsArraignmentScheduled(false)
-                      updateDefendantState(
-                        {
-                          defendantId: defendant.id,
-                          caseId: workingCase.id,
-                          isAlternativeService: false,
-                        },
-                        setWorkingCase,
-                      )
-                    }}
-                  >
-                    {formatMessage(strings.newSubpoenaButtonText)}
-                  </Button>
-                ) : newSubpoenas.includes(defendant.id) ? (
+                children: newSubpoenas.includes(defendant.id) ? (
                   <Button
                     variant="text"
                     colorScheme="destructive"
@@ -389,6 +364,26 @@ const Subpoena: FC = () => {
                     }}
                   >
                     Hætta við
+                  </Button>
+                ) : isArraignmentScheduled ? (
+                  <Button
+                    variant="text"
+                    icon="reload"
+                    disabled={workingCase.state === CaseState.CORRECTING}
+                    onClick={() => {
+                      setNewSubpoenas((previous) => [...previous, defendant.id])
+                      toggleNewAlternativeService(defendant)()
+                      updateDefendantState(
+                        {
+                          defendantId: defendant.id,
+                          caseId: workingCase.id,
+                          isAlternativeService: false,
+                        },
+                        setWorkingCase,
+                      )
+                    }}
+                  >
+                    {formatMessage(strings.newSubpoenaButtonText)}
                   </Button>
                 ) : null,
               }))}
