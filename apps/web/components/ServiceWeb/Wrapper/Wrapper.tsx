@@ -172,7 +172,7 @@ export const Wrapper: FC<React.PropsWithChildren<WrapperProps>> = ({
         webChat={webChatData?.getWebChat}
         renderFallback={() => {
           if (
-            organization?.id in watsonConfig[activeLocale] &&
+            organization?.id &&
             watsonConfig[activeLocale]?.[organization.id]
           ) {
             return (
