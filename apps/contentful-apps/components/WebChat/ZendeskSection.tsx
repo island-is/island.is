@@ -1,4 +1,4 @@
-import { SetStateAction } from 'react'
+import { SetStateAction, useMemo } from 'react'
 import type { FieldExtensionSDK } from '@contentful/app-sdk'
 import { Flex, FormControl, TextInput } from '@contentful/f36-components'
 
@@ -11,7 +11,10 @@ interface SectionProps {
 }
 
 export const ZendeskSection = ({ sdk, value, updateValue }: SectionProps) => {
-  const sortedLocales = sdk.locales.available.sort((a, b) => b.localeCompare(a))
+  const sortedLocales = useMemo(
+    () => [...sdk.locales.available].sort((a, b) => b.localeCompare(a)),
+    [sdk.locales.available],
+  )
   return (
     <Flex flexDirection="column">
       {sortedLocales.map((locale) => {
@@ -24,14 +27,16 @@ export const ZendeskSection = ({ sdk, value, updateValue }: SectionProps) => {
               <Flex flexDirection="column" paddingLeft="spacingM">
                 <FormControl.Label>Zendesk Snippet URL</FormControl.Label>
                 <TextInput
-                  value={value[WebChatType.Zendesk]?.[locale]?.snippetUrl}
+                  value={
+                    value?.[locale]?.[WebChatType.Zendesk]?.snippetUrl ?? ''
+                  }
                   onChange={(event) => {
                     updateValue((previousValue) => ({
                       ...previousValue,
-                      [WebChatType.Zendesk]: {
-                        ...previousValue[WebChatType.Zendesk],
-                        [locale]: {
-                          ...previousValue[WebChatType.Zendesk]?.[locale],
+                      [locale]: {
+                        ...previousValue?.[locale],
+                        [WebChatType.Zendesk]: {
+                          ...previousValue?.[locale]?.[WebChatType.Zendesk],
                           snippetUrl: event.target.value,
                         },
                       },

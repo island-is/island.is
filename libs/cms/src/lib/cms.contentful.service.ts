@@ -1692,14 +1692,12 @@ export class CmsContentfulService {
     const params = {
       content_type: 'webChat',
       'fields.displayLocations.sys.id[in]': input.displayLocationIds.join(','),
+      limit: 100,
     }
 
-    const response =
-      await this.contentfulRepository.getLocalizedEntries<types.IWebChatFields>(
-        input.lang,
-        params,
-        1,
-      )
+    const response = await this.contentfulRepository
+      .getLocalizedEntries<types.IWebChatFields>(input.lang, params, 1)
+      .catch(errorHandler('getWebChat'))
 
     const bestMatch = this.findBestWebChatMatch(response)
     if (!bestMatch) return null

@@ -106,6 +106,7 @@ export const Wrapper: FC<React.PropsWithChildren<WrapperProps>> = ({
   const { data: webChatData } = useQuery<GetWebChatQuery, QueryGetWebChatArgs>(
     GET_WEB_CHAT,
     {
+      skip: !organization?.id,
       variables: {
         input: {
           displayLocationIds: [organization?.id],

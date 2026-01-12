@@ -821,19 +821,12 @@ export const OrganizationChatPanel = ({
   organizationId,
 }: {
   organizationId: string | undefined
-  pushUp?: boolean
 }) => {
   if (!organizationId) return null
   return <OrganizationChat organizationId={organizationId} />
 }
 
-const OrganizationChat = ({
-  organizationId,
-  pushUp,
-}: {
-  organizationId: string
-  pushUp?: boolean
-}) => {
+const OrganizationChat = ({ organizationId }: { organizationId: string }) => {
   const { activeLocale } = useI18n()
 
   const { data } = useQuery<GetWebChatQuery, QueryGetWebChatArgs>(
@@ -853,16 +846,11 @@ const OrganizationChat = ({
   return (
     <WebChat
       webChat={data.getWebChat}
-      pushUp={pushUp}
       renderFallback={() => {
-        if (organizationId in watsonConfig[activeLocale]) {
+        if (organizationId in watsonConfig[activeLocale])
           return (
-            <WatsonChatPanel
-              {...watsonConfig[activeLocale][organizationId]}
-              pushUp={pushUp}
-            />
+            <WatsonChatPanel {...watsonConfig[activeLocale][organizationId]} />
           )
-        }
         return null
       }}
     />

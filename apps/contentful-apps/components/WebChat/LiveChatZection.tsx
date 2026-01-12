@@ -1,4 +1,4 @@
-import { SetStateAction } from 'react'
+import { SetStateAction, useMemo } from 'react'
 import type { FieldExtensionSDK } from '@contentful/app-sdk'
 import {
   Flex,
@@ -17,7 +17,10 @@ interface SectionProps {
 }
 
 export const LiveChatSection = ({ sdk, value, updateValue }: SectionProps) => {
-  const sortedLocales = sdk.locales.available.sort((a, b) => b.localeCompare(a))
+  const sortedLocales = useMemo(
+    () => [...sdk.locales.available].sort((a, b) => b.localeCompare(a)),
+    [sdk.locales.available],
+  )
   return (
     <Flex flexDirection="column">
       {sortedLocales.map((locale) => {
@@ -36,14 +39,16 @@ export const LiveChatSection = ({ sdk, value, updateValue }: SectionProps) => {
                 <Flex flexDirection="column">
                   <FormControl.Label>License</FormControl.Label>
                   <TextInput
-                    value={value[WebChatType.LiveChat]?.[locale]?.license}
+                    value={
+                      value?.[locale]?.[WebChatType.LiveChat]?.license ?? ''
+                    }
                     onChange={(event) => {
                       updateValue((previousValue) => ({
                         ...previousValue,
-                        [WebChatType.LiveChat]: {
-                          ...previousValue[WebChatType.LiveChat],
-                          [locale]: {
-                            ...previousValue[WebChatType.LiveChat]?.[locale],
+                        [locale]: {
+                          ...previousValue?.[locale],
+                          [WebChatType.LiveChat]: {
+                            ...previousValue?.[locale]?.[WebChatType.LiveChat],
                             license: event.target.value,
                           },
                         },
@@ -54,14 +59,16 @@ export const LiveChatSection = ({ sdk, value, updateValue }: SectionProps) => {
                 <Flex flexDirection="column">
                   <FormControl.Label>Version</FormControl.Label>
                   <TextInput
-                    value={value[WebChatType.LiveChat]?.[locale]?.version}
+                    value={
+                      value?.[locale]?.[WebChatType.LiveChat]?.version ?? ''
+                    }
                     onChange={(event) => {
                       updateValue((previousValue) => ({
                         ...previousValue,
-                        [WebChatType.LiveChat]: {
-                          ...previousValue[WebChatType.LiveChat],
-                          [locale]: {
-                            ...previousValue[WebChatType.LiveChat]?.[locale],
+                        [locale]: {
+                          ...previousValue?.[locale],
+                          [WebChatType.LiveChat]: {
+                            ...previousValue?.[locale]?.[WebChatType.LiveChat],
                             version: event.target.value,
                           },
                         },
@@ -72,14 +79,14 @@ export const LiveChatSection = ({ sdk, value, updateValue }: SectionProps) => {
                 <Flex flexDirection="column">
                   <FormControl.Label>Group</FormControl.Label>
                   <TextInput
-                    value={value[WebChatType.LiveChat]?.[locale]?.group}
+                    value={value?.[locale]?.[WebChatType.LiveChat]?.group ?? ''}
                     onChange={(event) => {
                       updateValue((previousValue) => ({
                         ...previousValue,
-                        [WebChatType.LiveChat]: {
-                          ...previousValue[WebChatType.LiveChat],
-                          [locale]: {
-                            ...previousValue[WebChatType.LiveChat]?.[locale],
+                        [locale]: {
+                          ...previousValue?.[locale],
+                          [WebChatType.LiveChat]: {
+                            ...previousValue?.[locale]?.[WebChatType.LiveChat],
                             group: event.target.value,
                           },
                         },
@@ -90,10 +97,56 @@ export const LiveChatSection = ({ sdk, value, updateValue }: SectionProps) => {
                 <Flex flexDirection="column">
                   <FormControl.Label>Show Launcher</FormControl.Label>
                   <Stack flexDirection="row" spacing="spacingS">
-                    <Radio name="showLauncher" id="showLauncherYes" value="Yes">
+                    <Radio
+                      isChecked={
+                        value?.[locale]?.[WebChatType.LiveChat]?.showLauncher ??
+                        false
+                      }
+                      name={`${WebChatType.LiveChat}-${locale}-showLauncher`}
+                      id={`${WebChatType.LiveChat}-${locale}-showLauncher-yes`}
+                      value="Yes"
+                      onChange={() => {
+                        updateValue((previousValue) => ({
+                          ...previousValue,
+                          [locale]: {
+                            ...previousValue?.[locale],
+                            [WebChatType.LiveChat]: {
+                              ...previousValue?.[locale]?.[
+                                WebChatType.LiveChat
+                              ],
+                              showLauncher: true,
+                            },
+                          },
+                        }))
+                      }}
+                    >
                       Yes
                     </Radio>
-                    <Radio name="showLauncher" id="showLauncherNo" value="No">
+                    <Radio
+                      isChecked={
+                        !(
+                          value?.[locale]?.[WebChatType.LiveChat]
+                            ?.showLauncher ?? false
+                        )
+                      }
+                      name={`${WebChatType.LiveChat}-${locale}-showLauncher`}
+                      id={`${WebChatType.LiveChat}-${locale}-showLauncher-no`}
+                      value="No"
+                      onChange={() => {
+                        updateValue((previousValue) => ({
+                          ...previousValue,
+                          [locale]: {
+                            ...previousValue?.[locale],
+                            [WebChatType.LiveChat]: {
+                              ...previousValue?.[locale]?.[
+                                WebChatType.LiveChat
+                              ],
+                              showLauncher: false,
+                            },
+                          },
+                        }))
+                      }}
+                    >
                       No
                     </Radio>
                   </Stack>

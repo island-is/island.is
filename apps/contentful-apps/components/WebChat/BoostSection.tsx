@@ -1,4 +1,4 @@
-import { SetStateAction } from 'react'
+import { SetStateAction, useMemo } from 'react'
 import type { FieldExtensionSDK } from '@contentful/app-sdk'
 import { Flex, FormControl, TextInput } from '@contentful/f36-components'
 
@@ -11,7 +11,10 @@ interface SectionProps {
 }
 
 export const BoostSection = ({ sdk, value, updateValue }: SectionProps) => {
-  const sortedLocales = sdk.locales.available.sort((a, b) => b.localeCompare(a))
+  const sortedLocales = useMemo(
+    () => [...sdk.locales.available].sort((a, b) => b.localeCompare(a)),
+    [sdk.locales.available],
+  )
   return (
     <Flex flexDirection="column">
       {sortedLocales.map((locale) => {
@@ -29,14 +32,14 @@ export const BoostSection = ({ sdk, value, updateValue }: SectionProps) => {
                 <Flex flexDirection="column">
                   <FormControl.Label>ID</FormControl.Label>
                   <TextInput
-                    value={value[WebChatType.Boost]?.[locale]?.id}
+                    value={value?.[locale]?.[WebChatType.Boost]?.id ?? ''}
                     onChange={(event) => {
                       updateValue((previousValue) => ({
                         ...previousValue,
-                        [WebChatType.Boost]: {
-                          ...previousValue[WebChatType.Boost],
-                          [locale]: {
-                            ...previousValue[WebChatType.Boost]?.[locale],
+                        [locale]: {
+                          ...previousValue?.[locale],
+                          [WebChatType.Boost]: {
+                            ...previousValue?.[locale]?.[WebChatType.Boost],
                             id: event.target.value,
                           },
                         },
@@ -47,14 +50,17 @@ export const BoostSection = ({ sdk, value, updateValue }: SectionProps) => {
                 <Flex flexDirection="column">
                   <FormControl.Label>Conversation Key</FormControl.Label>
                   <TextInput
-                    value={value[WebChatType.Boost]?.[locale]?.conversationKey}
+                    value={
+                      value?.[locale]?.[WebChatType.Boost]?.conversationKey ??
+                      ''
+                    }
                     onChange={(event) => {
                       updateValue((previousValue) => ({
                         ...previousValue,
-                        [WebChatType.Boost]: {
-                          ...previousValue[WebChatType.Boost],
-                          [locale]: {
-                            ...previousValue[WebChatType.Boost]?.[locale],
+                        [locale]: {
+                          ...previousValue?.[locale],
+                          [WebChatType.Boost]: {
+                            ...previousValue?.[locale]?.[WebChatType.Boost],
                             conversationKey: event.target.value,
                           },
                         },
@@ -65,14 +71,14 @@ export const BoostSection = ({ sdk, value, updateValue }: SectionProps) => {
                 <Flex flexDirection="column">
                   <FormControl.Label>URL</FormControl.Label>
                   <TextInput
-                    value={value[WebChatType.Boost]?.[locale]?.url}
+                    value={value?.[locale]?.[WebChatType.Boost]?.url ?? ''}
                     onChange={(event) => {
                       updateValue((previousValue) => ({
                         ...previousValue,
-                        [WebChatType.Boost]: {
-                          ...previousValue[WebChatType.Boost],
-                          [locale]: {
-                            ...previousValue[WebChatType.Boost]?.[locale],
+                        [locale]: {
+                          ...previousValue?.[locale],
+                          [WebChatType.Boost]: {
+                            ...previousValue?.[locale]?.[WebChatType.Boost],
                             url: event.target.value,
                           },
                         },

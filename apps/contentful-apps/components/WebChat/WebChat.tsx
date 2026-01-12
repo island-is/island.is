@@ -48,7 +48,6 @@ const WebChatConfigurationField = () => {
           <Select.Option value={WebChatType.Boost}>Boost</Select.Option>
           <Select.Option value={WebChatType.LiveChat}>LiveChat</Select.Option>
           <Select.Option value={WebChatType.Zendesk}>Zendesk</Select.Option>
-          <Select.Option value={WebChatType.WatsonIBM}>WatsonIBM</Select.Option>
         </Select>
       </FormControl>
 

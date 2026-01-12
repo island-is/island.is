@@ -17,21 +17,16 @@ const WebChat = ({ webChat, pushUp, renderFallback }: WebChatProps) => {
 
   const webChatType = webChat.webChatConfiguration?.type
 
-  if (
-    webChatType === 'zendesk' &&
-    webChat.webChatConfiguration.zendesk?.snippetUrl
-  )
-    return (
-      <ZendeskChatPanel
-        snippetUrl={webChat.webChatConfiguration.zendesk?.snippetUrl}
-        pushUp={pushUp}
-      />
-    )
+  if (webChatType === 'zendesk') {
+    const snippetUrl = webChat.webChatConfiguration.zendesk?.snippetUrl
+    if (!snippetUrl) return renderFallback?.() ?? null
+    return <ZendeskChatPanel snippetUrl={snippetUrl} pushUp={pushUp} />
+  }
 
   if (webChatType === 'livechat') {
     const { license, version, group, showLauncher } =
       webChat.webChatConfiguration.livechat ?? {}
-    if (!license || !version) return null
+    if (!license || !version) return renderFallback?.() ?? null
     return (
       <LiveChatIncChatPanel
         license={license}
@@ -46,7 +41,7 @@ const WebChat = ({ webChat, pushUp, renderFallback }: WebChatProps) => {
   if (webChatType === 'boost') {
     const { id, conversationKey, url } =
       webChat.webChatConfiguration.boost ?? {}
-    if (!id || !conversationKey || !url) return null
+    if (!id || !conversationKey || !url) return renderFallback?.() ?? null
     return (
       <BoostChatPanel
         id={id}
@@ -57,7 +52,7 @@ const WebChat = ({ webChat, pushUp, renderFallback }: WebChatProps) => {
     )
   }
 
-  return null
+  return renderFallback?.() ?? null
 }
 
 export default WebChat
