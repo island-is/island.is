@@ -140,7 +140,7 @@ const userSeeds = `[
 		"title": "Skrifstofa Ríkissaksóknara",
 		"email": "testskrifstofariksak@dummy.dd",
 		"active": true,
-		"institution_id": "8f9e2f6d-6a00-4a5e-b39b-95fd110d762e",
+		"institution_id": "8f9e2f6d-6a00-4a5e-b39b-95fd110d762e"
 	},
 	{
 		"id": "1599448b-5ec4-4232-8796-7ec6bfbde0a1",
