@@ -65,9 +65,7 @@ const ReceptionAndAssignment = () => {
             marginBottom={index === workingCase.defendants?.length ? 0 : 1}
           >
             {formatMessage(strings.defendantPleaAlertMessage, {
-              defendantGender: workingCase.defendants
-                ? defendant.gender
-                : Gender.MALE,
+              defendantGender: defendant.gender ?? Gender.MALE,
               nameAndPlea: getDefendantPleaText(
                 defendant.name,
                 defendant.defendantPlea,

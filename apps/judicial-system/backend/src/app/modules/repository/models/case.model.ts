@@ -1182,4 +1182,12 @@ export class Case extends Model {
   @HasMany(() => Case, 'splitCaseId')
   @ApiPropertyOptional({ type: () => Case })
   splitCases?: Case[]
+
+  /**********
+   * The defendant national id provided by the police system
+   * Only used if the case was created from the police system
+   **********/
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  policeDefendantNationalId?: string
 }

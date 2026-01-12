@@ -195,11 +195,7 @@ const Defendant = () => {
                         setWorkingCase={setWorkingCase}
                         onDelete={
                           workingCase.defendants &&
-                          workingCase.defendants.length > 1 &&
-                          !(
-                            workingCase.origin === CaseOrigin.LOKE &&
-                            index === 0
-                          )
+                          workingCase.defendants.length > 1
                             ? handleDeleteDefendant
                             : undefined
                         }
