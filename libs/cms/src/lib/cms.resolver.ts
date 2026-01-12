@@ -169,6 +169,8 @@ import { GetCourseByIdInput } from './dto/getCourseById.input'
 import { GetCourseListPageByIdInput } from './dto/getCourseListPageById.input'
 import { CourseListPage } from './models/courseListPage.model'
 import { GetCourseSelectOptionsInput } from './dto/getCourseSelectOptions.input'
+import { WebChat } from './models/webChat.model'
+import { GetWebChatInput } from './dto/getWebChat.input'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -847,11 +849,18 @@ export class CmsResolver {
     return this.cmsContentfulService.getCourseListPageById(input)
   }
 
+  @CacheControl(defaultCache)
   @Query(() => CourseSelectOptionsResponse)
   getCourseSelectOptions(
     @Args('input') input: GetCourseSelectOptionsInput,
   ): Promise<CourseSelectOptionsResponse> {
     return this.cmsContentfulService.getCourseSelectOptions(input)
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => WebChat, { nullable: true })
+  getWebChat(@Args('input') input: GetWebChatInput): Promise<WebChat | null> {
+    return this.cmsContentfulService.getWebChat(input)
   }
 }
 
