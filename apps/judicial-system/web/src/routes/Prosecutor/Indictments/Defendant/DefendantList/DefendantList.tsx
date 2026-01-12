@@ -1,7 +1,7 @@
 import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence, motion } from 'motion/react'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { Box, Button } from '@island.is/island-ui/core'
 import {

@@ -289,4 +289,91 @@ test.describe.serial('Indictment tests', () => {
     await page.getByTestId('continueButton').click()
     await page.getByTestId('modalPrimaryButton').click()
   })
+
+  test('public prosecutor office should assign a reviewer to an indictment', async ({
+    publicProsecutorOfficePage,
+  }) => {
+    const page = publicProsecutorOfficePage
+    const today = getDaysFromNow()
+
+    // Case list for new cases
+    await page.goto('/malalistar/ny-sakamal')
+    await expect(page).toHaveURL('/malalistar/ny-sakamal')
+    await page.getByText(accusedName).click()
+
+    // Indictment overview
+
+    // Note: this is not a standard UX path since all cases should be served and updated via external sources
+    await page.locator('input[id=defendantServiceDate]').fill(today)
+    await page.keyboard.press('Escape')
+
+    await Promise.all([
+      page.getByTestId('button-defendant-service-date').click(),
+      verifyRequestCompletion(page, '/api/graphql', 'UpdateVerdict'),
+    ])
+
+    await page.getByText('Veldu saksóknara').click()
+    await page
+      .getByTestId('select-reviewer')
+      .getByText('Test Ríkissaksóknari')
+      .last()
+      .click()
+
+    await Promise.all([
+      page.getByTestId('continueButton').click(),
+      verifyRequestCompletion(page, '/api/graphql', 'UpdateCase'),
+    ])
+    await page.getByTestId('modalSecondaryButton').click()
+
+    // Case list for assigned cases
+    await page.goto('/malalistar/sakamal-i-yfirlestri')
+    await expect(page).toHaveURL('/malalistar/sakamal-i-yfirlestri')
+    await expect(page.getByText(accusedName)).toHaveCount(1)
+  })
+
+  test('public prosecutor should receive and review indictment', async ({
+    publicProsecutorPage,
+  }) => {
+    const page = publicProsecutorPage
+
+    // Case list for cases in review
+    await page.goto('/malalistar/sakamal-til-yfirlestrar')
+    await expect(page).toHaveURL('/malalistar/sakamal-til-yfirlestrar')
+    await page.getByText(accusedName).click()
+
+    await page.getByText('Una héraðsdómi').click()
+    await page.getByTestId('continueButton').click()
+    await Promise.all([
+      page.getByTestId('modalPrimaryButton').click(),
+      verifyRequestCompletion(page, '/api/graphql', 'UpdateCase'),
+    ])
+
+    // Case list for reviewed cases
+    await page.goto('/malalistar/yfirlesin-sakamal')
+    await expect(page).toHaveURL('/malalistar/yfirlesin-sakamal')
+    await expect(page.getByText(accusedName)).toHaveCount(1)
+  })
+
+  test('public prosecutor office should deliver indictment to prison', async ({
+    publicProsecutorOfficePage,
+  }) => {
+    const page = publicProsecutorOfficePage
+
+    // Case list for cases already reviewed
+    await page.goto('/malalistar/yfirlesin-sakamal')
+    await expect(page).toHaveURL('/malalistar/yfirlesin-sakamal')
+    await page.getByText(accusedName).click()
+
+    await page.getByTestId('button-send-case-to-prison-admin').click()
+    await page.getByTestId('continueButton').click()
+    await Promise.all([
+      page.getByTestId('modalPrimaryButton').click(),
+      verifyRequestCompletion(page, '/api/graphql', 'UpdateDefendant'),
+    ])
+
+    // Case list for defendants sent to prison
+    await page.goto('/malalistar/sakamal-i-fullnustu')
+    await expect(page).toHaveURL('/malalistar/sakamal-i-fullnustu')
+    await expect(page.getByText(accusedName)).toHaveCount(1)
+  })
 })

@@ -4,7 +4,7 @@ import {
   buildSection,
 } from '@island.is/application/core'
 import {
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   UserProfileApi,
   DistrictsApi,
   QualityPhotoApi,
@@ -29,7 +29,7 @@ export const sectionDataProviders = buildSection({
           subTitle: m.dataCollectionDoctorsNoteSubtitle,
         }),
         buildDataProviderItem({
-          provider: NationalRegistryUserApi,
+          provider: NationalRegistryV3UserApi,
           title: m.dataCollectionNationalRegistryTitle,
           subTitle: m.dataCollectionNationalRegistrySubtitle,
         }),

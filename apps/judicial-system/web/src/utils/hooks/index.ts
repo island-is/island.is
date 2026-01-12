@@ -26,6 +26,7 @@ export { default as useDefendants } from './useDefendants'
 export { default as useVictim } from './useVictim'
 export {
   type UpdateIndictmentCount,
+  type UpdateIndictmentCountState,
   default as useIndictmentCounts,
 } from './useIndictmentCounts'
 export { default as useSections } from './useSections'

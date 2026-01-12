@@ -1,5 +1,5 @@
 import format from 'date-fns/format'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { formatCaseType } from '@island.is/judicial-system/formatters'
 import {

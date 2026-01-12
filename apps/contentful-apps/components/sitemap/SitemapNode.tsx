@@ -175,9 +175,7 @@ const PageTooltip = ({
       <Popover.Content>
         <div className={styles.tooltipContent}>
           <Text fontWeight="fontWeightDemiBold">
-            {type === 'showOnlyPrimaryLocation'
-              ? 'This entry points to:'
-              : `${nodePaths.length} other entries point to this entry:`}
+            This entry is duplicated in the sitemap:
           </Text>
           {nodePaths.map((nodePath) => {
             const path = nodePath.path.join(' / ')
