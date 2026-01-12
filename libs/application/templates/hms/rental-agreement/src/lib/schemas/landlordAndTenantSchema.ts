@@ -2,7 +2,7 @@ import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import * as m from '../messages'
 import { EMAIL_REGEX, YES } from '@island.is/application/core'
-import { isValidMobileNumber, isValidPhoneNumber } from '../../utils/utils'
+import { isValidMobileNumber } from '../../utils/utils'
 import { ApplicantsRole } from '../../utils/enums'
 
 export const isValidEmail = (value: string) => EMAIL_REGEX.test(value)
@@ -28,9 +28,6 @@ const personInfoSchema = z.object({
     .optional()
     .refine((x) => !!x && x.trim().length > 0, {
       params: m.landlordAndTenantDetails.phoneNumberEmptyError,
-    })
-    .refine((x) => x && isValidPhoneNumber(x), {
-      params: m.landlordAndTenantDetails.phoneNumberInvalidError,
     })
     .refine((x) => x && isValidMobileNumber(x), {
       params: m.landlordAndTenantDetails.phoneNumberMobileError,
@@ -73,9 +70,6 @@ const landLordInfoSchema = z.object({
     .optional()
     .refine((x) => !!x && x.trim().length > 0, {
       params: m.landlordAndTenantDetails.phoneNumberEmptyError,
-    })
-    .refine((x) => x && isValidPhoneNumber(x), {
-      params: m.landlordAndTenantDetails.phoneNumberInvalidError,
     })
     .refine((x) => x && isValidMobileNumber(x), {
       params: m.landlordAndTenantDetails.phoneNumberMobileError,

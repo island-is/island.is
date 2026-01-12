@@ -18,9 +18,9 @@ import * as m from '../lib/messages'
 import { Routes } from '../lib/constants'
 import {
   CurrentApplicationApi,
-  NationalRegistryUserApi,
-  NationalRegistrySpouseApi,
-  ChildrenCustodyInformationApi,
+  NationalRegistryV3UserApi,
+  NationalRegistryV3SpouseApi,
+  ChildrenCustodyInformationApiV3,
   MunicipalityApi,
   TaxDataApi,
 } from '../dataProviders'
@@ -48,16 +48,16 @@ export const Prerequisites: Form = buildForm({
           checkboxLabel: m.externalData.general.checkboxLabel,
           dataProviders: [
             buildDataProviderItem({
-              provider: NationalRegistryUserApi,
+              provider: NationalRegistryV3UserApi,
               title: m.externalData.applicant.title,
               subTitle: m.externalData.applicant.subTitle,
             }),
             buildDataProviderItem({
-              provider: NationalRegistrySpouseApi,
+              provider: NationalRegistryV3SpouseApi,
               subTitle: '',
             }),
             buildDataProviderItem({
-              provider: ChildrenCustodyInformationApi,
+              provider: ChildrenCustodyInformationApiV3,
               subTitle: '',
             }),
             buildDataProviderItem({

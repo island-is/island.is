@@ -48,15 +48,8 @@ export const FormProvider: React.FC<{
     screens: [],
   })
 
-  const {
-    fieldTypes,
-    listTypes,
-    certificationTypes,
-    applicantTypes,
-    submitUrls,
-    validationUrls,
-    form,
-  } = formBuilder
+  const { fieldTypes, listTypes, certificationTypes, applicantTypes, form } =
+    formBuilder
   const initialControl: ControlState = {
     activeItem: {
       type: 'Section',
@@ -81,6 +74,10 @@ export const FormProvider: React.FC<{
   const [updateForm] = useMutation(UPDATE_FORM)
   const [getGoogleTranslation] = useMutation(GET_GOOGLE_TRANSLATION)
   const [selectedUrls, setSelectedUrls] = useState<string[]>([])
+  const [submissionUrlInput, setSubmissionUrlInput] = useState<string>('')
+  const [submissionUrls, setSubmissionUrls] = useState<string[]>(
+    formBuilder.submissionUrls ? (formBuilder.submissionUrls as string[]) : [],
+  )
 
   const getTranslation = async (text: string): Promise<GoogleTranslation> => {
     try {
@@ -146,8 +143,10 @@ export const FormProvider: React.FC<{
       certificationTypes,
       fieldTypes,
       listTypes,
-      submitUrls,
-      validationUrls,
+      submissionUrls,
+      setSubmissionUrls,
+      submissionUrlInput,
+      setSubmissionUrlInput,
       setInSettings,
       inSettings,
       updateActiveItem,
@@ -173,6 +172,7 @@ export const FormProvider: React.FC<{
       selectStatus,
       selectedUrls,
       openComponents,
+      submissionUrlInput,
     ],
   )
   useEffect(() => {

@@ -126,7 +126,6 @@ export const PhoneInput = forwardRef(
       textarea,
       size = 'md',
       fixedFocusState,
-      autoExpand,
       loading,
       allowedCountryCodes,
       disableDropdown,

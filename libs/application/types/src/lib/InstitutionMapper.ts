@@ -1,7 +1,9 @@
 import { ApplicationTypes } from './ApplicationTypes'
-import { InstitutionTypes } from './InstitutionTypes'
-import { InstitutionContentfulIds } from './InstitutionContentfulIds'
-import { InstitutionNationalIds } from './InstitutionNationalIds'
+import {
+  InstitutionContentfulIds,
+  InstitutionNationalIds,
+  InstitutionTypes,
+} from './Institution'
 
 export const institutionMapper = {
   [ApplicationTypes.EXAMPLE_AUTH_DELEGATION]: {
@@ -493,5 +495,15 @@ export const institutionMapper = {
     nationalId: InstitutionNationalIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
     slug: InstitutionTypes.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
     contentfulId: InstitutionContentfulIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
+  },
+  [ApplicationTypes.MILE_CAR]: {
+    nationalId: InstitutionNationalIds.SAMGONGUSTOFA,
+    slug: InstitutionTypes.SAMGONGUSTOFA,
+    contentfulId: InstitutionContentfulIds.SAMGONGUSTOFA,
+  },
+  [ApplicationTypes.HEILSUGAESLA_HOFUDBORDARSVAEDISINS_NAMSKEID]: {
+    nationalId: InstitutionNationalIds.HEILSUGAESLA_HOFUDBORDARSVAEDISINS,
+    slug: InstitutionTypes.HEILSUGAESLA_HOFUDBORDARSVAEDISINS,
+    contentfulId: InstitutionContentfulIds.HEILSUGAESLA_HOFUDBORDARSVAEDISINS,
   },
 }

@@ -50,20 +50,19 @@ export const ZendeskChatPanel = ({
     }
 
     const existingScript = document.getElementById(SCRIPT_ID)
+    if (existingScript) existingScript.remove()
 
-    if (!existingScript) {
-      setIsLoading(true)
-      const script = document.createElement('script')
-      script.id = SCRIPT_ID
-      script.src = snippetUrl
-      script.async = true
-      document.body.appendChild(script)
-      script.onload = setup
-      script.onerror = (error) => {
-        console.error(error)
-        setIsLoading(false)
-      }
-    } else setup()
+    setIsLoading(true)
+    const script = document.createElement('script')
+    script.id = SCRIPT_ID
+    script.src = snippetUrl
+    script.async = true
+    document.body.appendChild(script)
+    script.onload = setup
+    script.onerror = (error) => {
+      console.error(error)
+      setIsLoading(false)
+    }
   }, [activeLocale, snippetUrl])
 
   useEffect(

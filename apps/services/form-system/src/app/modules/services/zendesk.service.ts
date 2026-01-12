@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common'
 import { ApplicationDto } from '../applications/models/dto/application.dto'
-import { OrganizationUrl } from '../organizationUrls/models/organizationUrl.model'
 import {
   createEnhancedFetch,
   EnhancedFetchAPI,
@@ -9,6 +8,7 @@ import { FieldTypesEnum, SectionTypes } from '@island.is/form-system/shared'
 import { ValueType } from '../../dataTypes/valueTypes/valueType.model'
 import { getLanguageTypeForValueTypeAttribute } from '../../dataTypes/valueTypes/valueType.helper'
 import { CustomField } from './models/zendeskCustomField.dto'
+import { environment } from '../../../environments'
 
 @Injectable()
 export class ZendeskService {
@@ -33,16 +33,17 @@ export class ZendeskService {
     })
   }
 
-  async sendToZendesk(
-    applicationDto: ApplicationDto,
-    url: OrganizationUrl,
-  ): Promise<boolean> {
+  async sendToZendesk(applicationDto: ApplicationDto): Promise<boolean> {
     const contactEmail = 'stafraentisland@gmail.com'
     const username = `${contactEmail}/token`
     const tenantId =
-      url.isTest === true ? this.SANDBOX_TENANT_ID : this.PROD_TENANT_ID
+      applicationDto.isTest === true || environment.production === false
+        ? this.SANDBOX_TENANT_ID
+        : this.PROD_TENANT_ID
     const apiKey =
-      url.isTest === true ? this.SANDBOX_API_KEY : this.PROD_API_KEY
+      applicationDto.isTest === true || environment.production === false
+        ? this.SANDBOX_API_KEY
+        : this.PROD_API_KEY
     if (!tenantId || !apiKey) {
       throw new Error('Zendesk tenant id or API key not configured')
     }

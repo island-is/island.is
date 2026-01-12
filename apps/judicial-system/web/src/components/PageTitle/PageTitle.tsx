@@ -11,34 +11,36 @@ import {
 } from '@island.is/island-ui/core'
 import {
   isCompletedCase,
-  isDistrictCourtUser,
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
+import {
+  CaseListEntry,
+  CaseState,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { CaseListEntry } from '../../graphql/schema'
 import { FormContext } from '../FormProvider/FormProvider'
 import TagCaseState from '../Tags/TagCaseState/TagCaseState'
-import { UserContext } from '../UserProvider/UserProvider'
+import { mapIndictmentRulingDecisionToTagVariant } from '../Tags/TagCaseState/TagCaseState.logic'
 
 interface Props {
   marginBottom?: ResponsiveProp<Space>
   previousUrl?: string
+  includeTag?: boolean
 }
 
 const PageTitle: FC<PropsWithChildren<Props>> = (props) => {
-  const { marginBottom, previousUrl, children } = props
+  const { marginBottom, previousUrl, children, includeTag = false } = props
   const { workingCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
   const router = useRouter()
-  const { user } = useContext(UserContext)
 
-  const showCaseStateTag =
-    isIndictmentCase(workingCase.type) &&
-    workingCase.indictmentRulingDecision &&
-    !isDistrictCourtUser(user)
-      ? isCompletedCase(workingCase.state)
-      : true
+  const showRulingDecisionTag =
+    includeTag ||
+    (isIndictmentCase(workingCase.type) &&
+      workingCase.indictmentRulingDecision &&
+      isCompletedCase(workingCase.state) &&
+      workingCase.state !== CaseState.CORRECTING)
 
   return (
     <Box
@@ -62,8 +64,11 @@ const PageTitle: FC<PropsWithChildren<Props>> = (props) => {
           {children}
         </Text>
       </Box>
-      {showCaseStateTag && (
-        <TagCaseState theCase={workingCase as CaseListEntry} />
+      {showRulingDecisionTag && (
+        <TagCaseState
+          theCase={workingCase as CaseListEntry}
+          customMapCaseStateToTag={mapIndictmentRulingDecisionToTagVariant}
+        />
       )}
     </Box>
   )

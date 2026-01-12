@@ -460,7 +460,7 @@ export class StatisticsService {
     cases: Case[],
   ): Omit<IndictmentCaseStatistics, 'minDate'> {
     const inProgressCount = cases.filter(
-      (caseItem) => caseItem.state !== CaseState.COMPLETED,
+      (caseItem) => !isCompletedCase(caseItem.state),
     ).length
 
     const rulingCount = cases.filter(
@@ -626,8 +626,10 @@ export class StatisticsService {
             },
             {
               model: Verdict,
-              as: 'verdict',
+              as: 'verdicts',
               required: false,
+              order: [['created', 'DESC']],
+              separate: true,
             },
           ],
           separate: true,

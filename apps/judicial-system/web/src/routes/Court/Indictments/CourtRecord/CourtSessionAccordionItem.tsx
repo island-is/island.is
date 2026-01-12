@@ -767,7 +767,6 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                     name="courtStartDate"
                     datepickerLabel="Dagsetning þingfestingar"
                     timeLabel="Þinghald hófst (kk:mm)"
-                    maxDate={new Date()}
                     selectedDate={
                       courtSession.startDate ??
                       workingCase.courtDate?.date ??
@@ -966,7 +965,6 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                 }}
                 textarea
                 rows={7}
-                autoExpand={{ on: true, maxHeight: 300 }}
                 disabled={courtSession.isConfirmed || false}
               />
               <MultipleValueList
@@ -1448,7 +1446,6 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                   hasError={entriesErrorMessage !== ''}
                   errorMessage={entriesErrorMessage}
                   rows={15}
-                  autoExpand={{ on: true, maxHeight: 300 }}
                   disabled={courtSession.isConfirmed || false}
                   textarea
                   required
@@ -1461,7 +1458,8 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                 />
                 <BlueBox className={styles.grid}>
                   <RadioButton
-                    name={`result_no-${courtSession.id}`}
+                    name="result_verdict"
+                    id={`result_no-${courtSession.id}`}
                     label="Nei"
                     backgroundColor="white"
                     checked={
@@ -1482,7 +1480,8 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                     large
                   />
                   <RadioButton
-                    name={`result_verdict-${courtSession.id}`}
+                    name="result_verdict"
+                    id={`result_verdict-${courtSession.id}`}
                     label="Dómur kveðinn upp"
                     backgroundColor="white"
                     checked={
@@ -1500,7 +1499,8 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                     large
                   />
                   <RadioButton
-                    name={`result_ruling-${courtSession.id}`}
+                    name="result_verdict"
+                    id={`result_ruling-${courtSession.id}`}
                     label="Úrskurður kveðinn upp"
                     backgroundColor="white"
                     checked={
@@ -1569,7 +1569,6 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                       hasError={rulingErrorMessage !== ''}
                       errorMessage={rulingErrorMessage}
                       rows={15}
-                      autoExpand={{ on: true, maxHeight: 300 }}
                       disabled={courtSession.isConfirmed || false}
                       textarea
                       required
@@ -1596,7 +1595,6 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                         )
                       }
                       rows={15}
-                      autoExpand={{ on: true, maxHeight: 300 }}
                       disabled={courtSession.isConfirmed || false}
                       textarea
                     />

@@ -44,7 +44,6 @@ interface DeleteVerdictOptions {
 }
 
 interface UpdateVerdict {
-  caseId?: string
   externalPoliceDocumentId?: string
   serviceStatus?: VerdictServiceStatus
   serviceRequirement?: ServiceRequirement

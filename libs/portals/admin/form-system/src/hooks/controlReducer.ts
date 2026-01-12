@@ -174,12 +174,14 @@ type ChangeActions =
       }
     }
   | {
-      type: 'UPDATE_APPLICANT_TYPES'
-      payload: { newValue: FormSystemFormApplicant[] }
+      type: 'CHANGE_SUBMISSION_URL'
+      payload: {
+        value: string
+      }
     }
   | {
-      type: 'UPDATE_FORM_URLS'
-      payload: { newValue: string[] }
+      type: 'UPDATE_APPLICANT_TYPES'
+      payload: { newValue: FormSystemFormApplicant[] }
     }
 
 type InputSettingsActions =
@@ -219,12 +221,6 @@ type InputSettingsActions =
           | 'zendeskCustomFieldId'
         value: boolean | string
         update: (updatedActiveItem?: ActiveItem) => void
-      }
-    }
-  | {
-      type: 'SET_IS_ZENDESK_ENABLED'
-      payload: {
-        value: boolean
       }
     }
   | {
@@ -739,21 +735,23 @@ export const controlReducer = (
       action.payload.update({ ...updatedState.form })
       return updatedState
     }
+    case 'CHANGE_SUBMISSION_URL': {
+      const updatedState = {
+        ...state,
+        form: {
+          ...form,
+          submissionServiceUrl: action.payload.value,
+        },
+      }
+      // action.payload.update({ ...updatedState.form })
+      return updatedState
+    }
     case 'UPDATE_APPLICANT_TYPES': {
       return {
         ...state,
         form: {
           ...form,
           applicantTypes: action.payload.newValue,
-        },
-      }
-    }
-    case 'UPDATE_FORM_URLS': {
-      return {
-        ...state,
-        form: {
-          ...form,
-          urls: action.payload.newValue,
         },
       }
     }
@@ -987,16 +985,6 @@ export const controlReducer = (
         form: {
           ...form,
           fields: fields?.map((i) => (i?.id === field.id ? newField : i)),
-        },
-      }
-    }
-    case 'SET_IS_ZENDESK_ENABLED': {
-      const { value } = action.payload
-      return {
-        ...state,
-        form: {
-          ...form,
-          isZendeskEnabled: value,
         },
       }
     }

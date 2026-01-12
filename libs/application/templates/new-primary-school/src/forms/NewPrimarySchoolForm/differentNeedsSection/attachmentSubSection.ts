@@ -4,27 +4,27 @@ import {
   buildRadioField,
   buildSubSection,
 } from '@island.is/application/core'
+import { differentNeedsMessages } from '../../../lib/messages'
+import { shouldShowPage } from '../../../utils/conditionUtils'
 import {
+  ApplicationFeatureKey,
   AttachmentOptions,
   FILE_SIZE_LIMIT,
   UPLOAD_ACCEPT,
 } from '../../../utils/constants'
-import { newPrimarySchoolMessages } from '../../../lib/messages'
-import { canHaveAttachments } from '../../../utils/conditionUtils'
 
 export const attachmentSubSection = buildSubSection({
   id: 'attachmentSubSection',
-  title: newPrimarySchoolMessages.differentNeeds.attachmentsSubSectionTitle,
+  title: differentNeedsMessages.attachments.subSectionTitle,
   // show attachment page only if feature is enabled (only enabled for Special School and
   // Special Department) and application type is not continuing enrollment
-  condition: (answer, externalData) => canHaveAttachments(answer, externalData),
+  condition: (answers, externalData) =>
+    shouldShowPage(answers, externalData, ApplicationFeatureKey.ATTACHMENTS),
   children: [
     buildMultiField({
       id: 'attachments',
-      title: newPrimarySchoolMessages.differentNeeds.attachmentsSubSectionTitle,
-      description:
-        newPrimarySchoolMessages.differentNeeds
-          .attachmentsSubSectionDescription,
+      title: differentNeedsMessages.attachments.subSectionTitle,
+      description: differentNeedsMessages.attachments.description,
       children: [
         buildRadioField({
           id: 'attachments.answer',
@@ -33,36 +33,32 @@ export const attachmentSubSection = buildSubSection({
             {
               value: AttachmentOptions.ATTACHMENTS,
               label:
-                newPrimarySchoolMessages.differentNeeds
-                  .electronicAttachmentOption,
-            },
-            {
-              value: AttachmentOptions.PHYSICAL,
-              label:
-                newPrimarySchoolMessages.differentNeeds.paperAttachmentOption,
+                differentNeedsMessages.attachments.electronicAttachmentOption,
             },
             {
               value: AttachmentOptions.ATTACHMENTS_AND_PHYSICAL,
               label:
-                newPrimarySchoolMessages.differentNeeds
+                differentNeedsMessages.attachments
                   .electronicAndPaperAttachmentOption,
+            },
+            {
+              value: AttachmentOptions.PHYSICAL,
+              label: differentNeedsMessages.attachments.paperAttachmentOption,
             },
           ],
         }),
         buildFileUploadField({
           id: 'attachments.files',
-          title:
-            newPrimarySchoolMessages.differentNeeds.attachmentsSubSectionTitle,
+          title: differentNeedsMessages.attachments.subSectionTitle,
           maxSize: FILE_SIZE_LIMIT,
           maxSizeErrorText:
-            newPrimarySchoolMessages.differentNeeds.attachmentMaxSizeError,
+            differentNeedsMessages.attachments.attachmentMaxSizeError,
           uploadAccept: UPLOAD_ACCEPT,
-          uploadHeader:
-            newPrimarySchoolMessages.differentNeeds.attachmentHeader,
+          uploadHeader: differentNeedsMessages.attachments.attachmentHeader,
           uploadDescription:
-            newPrimarySchoolMessages.differentNeeds.attachmentDescription,
+            differentNeedsMessages.attachments.attachmentDescription,
           uploadButtonLabel:
-            newPrimarySchoolMessages.differentNeeds.attachmentButton,
+            differentNeedsMessages.attachments.attachmentButton,
           uploadMultiple: true,
           marginTop: 3,
         }),

@@ -8,10 +8,11 @@ import * as styles from './PatientDataPermit.css'
 interface TermsProps {
   onClick?: () => void
   goBack?: () => void
+  loading?: boolean
 }
 
 // Permit approval step
-const Terms: React.FC<TermsProps> = ({ onClick, goBack }) => {
+const Terms: React.FC<TermsProps> = ({ onClick, goBack, loading }) => {
   const { formatMessage } = useLocale()
 
   const [modalOpen, setModalOpen] = useState<boolean>(false)
@@ -71,10 +72,11 @@ const Terms: React.FC<TermsProps> = ({ onClick, goBack }) => {
           <Button
             fluid
             size="small"
-            disabled={!accepted}
+            disabled={!accepted || loading}
             onClick={() => {
               onClick && onClick()
             }}
+            loading={loading}
           >
             {formatMessage(messages.forward)}
           </Button>

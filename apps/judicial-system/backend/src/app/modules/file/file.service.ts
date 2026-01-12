@@ -1,7 +1,7 @@
 import { Base64 } from 'js-base64'
 import { Op, Transaction } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import {
   BadRequestException,
@@ -31,10 +31,12 @@ import {
   EventType,
   isCompletedCase,
   isIndictmentCase,
+  isRequestCase,
   type User,
 } from '@island.is/judicial-system/types'
 
 import { createConfirmedPdf, getCaseFileHash } from '../../formatters'
+import { hasConfirmableCaseFileCategories } from '../../formatters/confirmedPdf'
 import { AwsS3Service } from '../aws-s3'
 import { InternalCaseService } from '../case/internalCase.service'
 import { CourtDocumentFolder, CourtService } from '../court'
@@ -87,11 +89,11 @@ export class FileService {
 
     const promisedUpdate = transaction
       ? this.fileModel.update(
-          { state: CaseFileState.DELETED, key: null },
+          { state: CaseFileState.DELETED, isKeyAccessible: false },
           { where: { id: fileId }, transaction },
         )
       : this.fileModel.update(
-          { state: CaseFileState.DELETED, key: null },
+          { state: CaseFileState.DELETED, isKeyAccessible: false },
           { where: { id: fileId } },
         )
 
@@ -113,10 +115,6 @@ export class FileService {
   ): Promise<boolean> {
     this.logger.debug(`Attempting to delete file ${file.key} from AWS S3`)
 
-    if (!file.key) {
-      return true
-    }
-
     return this.awsS3Service
       .deleteObject(theCase.type, file.key)
       .catch((reason) => {
@@ -136,6 +134,7 @@ export class FileService {
     switch (file.category) {
       case CaseFileCategory.COURT_RECORD:
       case CaseFileCategory.RULING:
+      case CaseFileCategory.COURT_INDICTMENT_RULING_ORDER:
         courtDocumentFolder = CourtDocumentFolder.COURT_DOCUMENTS
         break
       case CaseFileCategory.CASE_FILE:
@@ -170,25 +169,45 @@ export class FileService {
     file: CaseFile,
     pdf: Buffer,
   ): Promise<string | undefined> {
-    if (
-      !theCase.rulingDate ||
-      (file.category !== CaseFileCategory.RULING &&
-        file.category !== CaseFileCategory.COURT_RECORD)
-    ) {
-      return undefined // This should never happen
+    if (!hasConfirmableCaseFileCategories(file.category)) {
+      return undefined
+    }
+    const hasRulingDateConfirmation =
+      theCase.rulingDate &&
+      (file.category === CaseFileCategory.RULING ||
+        file.category === CaseFileCategory.COURT_RECORD)
+    const hasRulingOrderConfirmation =
+      file.submissionDate &&
+      file.category === CaseFileCategory.COURT_INDICTMENT_RULING_ORDER
+    if (!hasRulingDateConfirmation && !hasRulingOrderConfirmation) {
+      return undefined
     }
 
-    const completedDate = EventLog.getEventLogDateByEventType(
-      EventType.INDICTMENT_COMPLETED,
-      theCase.eventLogs,
-    )
+    const getConfirmationDate = (): Date | undefined => {
+      if (hasRulingDateConfirmation) {
+        return (
+          EventLog.getEventLogDateByEventType(
+            EventType.INDICTMENT_COMPLETED,
+            theCase.eventLogs,
+          ) ?? theCase.rulingDate
+        )
+      }
+      if (hasRulingOrderConfirmation) {
+        return file.submissionDate
+      }
+      return undefined
+    }
+    const confirmationDate = getConfirmationDate()
+    if (!confirmationDate) {
+      return undefined
+    }
 
     return createConfirmedPdf(
       {
         actor: theCase.judge?.name ?? '',
         title: theCase.judge?.title,
         institution: theCase.judge?.institution?.name ?? '',
-        date: completedDate ?? theCase.rulingDate,
+        date: confirmationDate,
       },
       pdf,
       file.category,
@@ -229,6 +248,13 @@ export class FileService {
       (file.category === CaseFileCategory.RULING ||
         file.category === CaseFileCategory.COURT_RECORD) &&
       isCompletedCase(theCase.state)
+    ) {
+      return true
+    }
+
+    if (
+      file.category === CaseFileCategory.COURT_INDICTMENT_RULING_ORDER &&
+      file.submissionDate
     ) {
       return true
     }
@@ -395,6 +421,7 @@ export class FileService {
         CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
         CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
         CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
+        CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
       ].includes(file.category)
     ) {
       const messages: Message[] = []
@@ -475,7 +502,7 @@ export class FileService {
   }
 
   private async verifyCaseFile(file: CaseFile, theCase: Case) {
-    if (!file.key) {
+    if (!file.isKeyAccessible) {
       throw new NotFoundException(`File ${file.id} does not exist in AWS S3`)
     }
 
@@ -483,7 +510,10 @@ export class FileService {
 
     if (!exists) {
       // Fire and forget, no need to wait for the result
-      this.fileModel.update({ key: null }, { where: { id: file.id } })
+      this.fileModel.update(
+        { isKeyAccessible: false },
+        { where: { id: file.id } },
+      )
 
       throw new NotFoundException(`File ${file.id} does not exist in AWS S3`)
     }
@@ -533,7 +563,7 @@ export class FileService {
   ): Promise<DeleteFileResponse> {
     const success = await this.deleteFileFromDatabase(file.id, transaction)
 
-    if (success) {
+    if (success && isRequestCase(theCase.type)) {
       // Fire and forget, no need to wait for the result
       this.tryDeleteFileFromS3(theCase, file)
     }

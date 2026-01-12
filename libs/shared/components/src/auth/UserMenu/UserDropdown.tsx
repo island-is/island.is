@@ -78,9 +78,8 @@ export const UserDropdown = ({
       <Box
         position="relative"
         background="white"
-        paddingX={3}
+        paddingX={[2, 2, 3]}
         paddingBottom={2}
-        paddingTop={5}
         borderRadius="large"
         display="flex"
         flexDirection="column"

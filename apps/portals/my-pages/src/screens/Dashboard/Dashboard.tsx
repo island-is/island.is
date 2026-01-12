@@ -13,7 +13,9 @@ import {
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
 import {
+  FALLBACK_ORG_LOGO_URL,
   LinkResolver,
+  ORG_LOGO_PARAMS,
   PlausiblePageviewDetail,
   ServicePortalPaths,
   m,
@@ -24,9 +26,8 @@ import {
   DocumentsPaths,
   useDocumentList,
 } from '@island.is/portals/my-pages/documents'
-import { useOrganizations } from '@island.is/portals/my-pages/graphql'
 import { useUserInfo } from '@island.is/react-spa/bff'
-import { getOrganizationLogoUrl, isCompany } from '@island.is/shared/utils'
+import { isCompany } from '@island.is/shared/utils'
 import cn from 'classnames'
 import { useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
@@ -40,7 +41,6 @@ import * as styles from './Dashboard.css'
 export const Dashboard = () => {
   const userInfo = useUserInfo()
 
-  const { data: organizations } = useOrganizations()
   const { formatMessage } = useLocale()
   const { width } = useWindowSize()
   const location = useLocation()
@@ -221,14 +221,9 @@ export const Dashboard = () => {
                     <Box key={doc.id}>
                       <DocumentLine
                         img={
-                          doc?.sender?.name
-                            ? getOrganizationLogoUrl(
-                                doc?.sender?.name,
-                                organizations,
-                                60,
-                                'none',
-                              )
-                            : undefined
+                          doc?.sender?.logoUrl
+                            ? doc.sender.logoUrl.concat(ORG_LOGO_PARAMS)
+                            : FALLBACK_ORG_LOGO_URL
                         }
                         documentLine={doc}
                         active={false}

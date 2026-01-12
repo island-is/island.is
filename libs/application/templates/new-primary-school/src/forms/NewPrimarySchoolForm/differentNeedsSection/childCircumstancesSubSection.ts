@@ -4,14 +4,13 @@ import {
   buildSubSection,
   YES,
 } from '@island.is/application/core'
-import { newPrimarySchoolMessages } from '../../../lib/messages'
+import { differentNeedsMessages } from '../../../lib/messages'
 import { ApplicationFeatureKey } from '../../../utils/constants'
 import { shouldShowPage } from '../../../utils/conditionUtils'
 
 export const childCircumstancesSubSection = buildSubSection({
   id: 'childCircumstancesSubSection',
-  title:
-    newPrimarySchoolMessages.differentNeeds.childCircumstancesSubSectionTitle,
+  title: differentNeedsMessages.childCircumstances.subSectionTitle,
   condition: (answers, externalData) =>
     shouldShowPage(
       answers,
@@ -21,22 +20,18 @@ export const childCircumstancesSubSection = buildSubSection({
   children: [
     buildMultiField({
       id: 'childCircumstances',
-      title:
-        newPrimarySchoolMessages.differentNeeds
-          .childCircumstancesSubSectionTitle,
-      description:
-        newPrimarySchoolMessages.differentNeeds
-          .childCircumstancesSubSectionDescription,
+      title: differentNeedsMessages.childCircumstances.subSectionTitle,
+      description: differentNeedsMessages.childCircumstances.description,
       children: [
         buildCheckboxField({
           id: 'childCircumstances.onSiteObservation',
-          title: newPrimarySchoolMessages.differentNeeds.onSiteObservation,
+          title: differentNeedsMessages.childCircumstances.onSiteObservation,
           marginBottom: 'gutter',
           options: [
             {
               value: YES,
               label:
-                newPrimarySchoolMessages.differentNeeds
+                differentNeedsMessages.childCircumstances
                   .approveOnsiteObservation,
             },
           ],
@@ -44,37 +39,38 @@ export const childCircumstancesSubSection = buildSubSection({
         buildCheckboxField({
           id: 'childCircumstances.onSiteObservationAdditionalInfo',
           title:
-            newPrimarySchoolMessages.differentNeeds
+            differentNeedsMessages.childCircumstances
               .onSiteObservationAdditionalInfo,
           marginBottom: 'gutter',
           options: [
             {
               value: YES,
               label:
-                newPrimarySchoolMessages.differentNeeds
+                differentNeedsMessages.childCircumstances
                   .approveOnSiteObservationAdditionalInfo,
             },
           ],
         }),
         buildCheckboxField({
           id: 'childCircumstances.callInExpert',
-          title: newPrimarySchoolMessages.differentNeeds.callInExpert,
+          title: differentNeedsMessages.childCircumstances.callInExpert,
           marginBottom: 'gutter',
           options: [
             {
               value: YES,
               label:
-                newPrimarySchoolMessages.differentNeeds.approveCallInExpert,
+                differentNeedsMessages.childCircumstances.approveCallInExpert,
             },
           ],
         }),
         buildCheckboxField({
           id: 'childCircumstances.childViews',
-          title: newPrimarySchoolMessages.differentNeeds.childViews,
+          title: differentNeedsMessages.childCircumstances.childViews,
           options: [
             {
               value: YES,
-              label: newPrimarySchoolMessages.differentNeeds.approveChildViews,
+              label:
+                differentNeedsMessages.childCircumstances.approveChildViews,
             },
           ],
         }),

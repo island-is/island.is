@@ -36,6 +36,7 @@ import {
   GaldurDomainModelsSettingsUnemploymentReasonsUnemploymentReasonCatagoryDTO,
   GaldurDomainModelsSettingsUnionsUnionDTO,
 } from '@island.is/clients/vmst-unemployment'
+import { Locale } from '@island.is/shared/types'
 
 export const getStartingLocale = (externalData: ExternalData) => {
   return getValueViaPath<Locale>(externalData, 'startingLocale.data')
@@ -217,6 +218,7 @@ export const getJobCareer = (
   answers: FormValue,
   jobCodes: Array<GaldurDomainModelsSettingsJobCodesJobCodeDTO>,
   externalData: ExternalData,
+  currentUserLocale?: Locale,
 ) => {
   const rskEmploymentList =
     getValueViaPath<
@@ -237,7 +239,11 @@ export const getJobCareer = (
     ) || []
   const previousJobCareer =
     employmentHistory?.lastJobs?.map((job) => {
-      const jobId = jobCodes?.find((x) => x.name === job.title)?.id
+      const jobId = jobCodes?.find((x) =>
+        currentUserLocale === 'is'
+          ? x.name === job.title
+          : x.english === job.title,
+      )?.id
       const employerSSN =
         job.nationalIdWithName && job.nationalIdWithName !== '-'
           ? rskEmploymentList.find((x) => x.ssn === job.nationalIdWithName)?.ssn
@@ -264,7 +270,11 @@ export const getJobCareer = (
       if (currentJob && currentJob.length > 0) {
         workHours = getValueViaPath<string>(currentJob[index], 'workHours', '')
       }
-      const jobId = jobCodes?.find((x) => x.name === job.title)?.id
+      const jobId = jobCodes?.find((x) =>
+        currentUserLocale === 'is'
+          ? x.name === job.title
+          : x.english === job.title,
+      )?.id
       const employerSSN =
         job.nationalIdWithName && job.nationalIdWithName !== '-'
           ? rskEmploymentList.find((x) => x.ssn === job.nationalIdWithName)?.ssn
@@ -447,13 +457,16 @@ export const getEmployerSettlement = (answers: FormValue) => {
   )
   return {
     hasUnpaidVacationTime: vacationInformation?.doYouHaveVacationDays === YES,
-    unpaidVacations: vacationInformation?.vacationDays?.map((vacation) => {
-      return {
-        unpaidVacationDays: parseInt(vacation.amount || ''),
-        unpaidVacationStart: vacation.startDate,
-        unpaidVacationEnd: vacation.endDate,
-      }
-    }),
+    unpaidVacations:
+      vacationInformation?.doYouHaveVacationDays === YES
+        ? vacationInformation?.vacationDays?.map((vacation) => {
+            return {
+              unpaidVacationDays: parseInt(vacation.amount || ''),
+              unpaidVacationStart: vacation.startDate,
+              unpaidVacationEnd: vacation.endDate,
+            }
+          })
+        : [],
     //This is definitely in the wrong place but to hard to fix in Galdur at this moment so it remains here
     resignationEnds:
       currentSituation?.status === EmploymentStatus.EMPLOYED &&

@@ -467,6 +467,11 @@ export const employment = {
         defaultMessage: 'Varstu starfandi á eigin kennitölu ?',
         description: 'Independent own ssn checkbox label',
       },
+      lastJobsRepeaterTitle: {
+        id: 'vmst.ub.application:employment.employmentHistory.labels.lastJobsRepeaterTitle',
+        defaultMessage: 'Fyrri störf',
+        description: 'Last job repeater label',
+      },
       lastJobLabel: {
         id: 'vmst.ub.application:employment.employmentHistory.labels.lastJobLabel',
         defaultMessage:
@@ -503,6 +508,11 @@ export const employment = {
         defaultMessage: 'Bæta við starfi',
         description: 'Add job button label',
       },
+      employerSelectLabel: {
+        id: 'vmst.ub.application:employment.employmentHistory.labels.employerSelectLabel',
+        defaultMessage: 'atvinnurekandi',
+        description: 'employer select label',
+      },
       lastJobs: {
         id: 'vmst.ub.application:employment.employmentHistory.labels.lastJobs',
         defaultMessage: 'Fyrra starf',
@@ -510,7 +520,12 @@ export const employment = {
       },
       lastJobRepeater: {
         id: 'vmst.ub.application:employment.employmentHistory.labels.lastJobRepeater',
-        defaultMessage: 'Starf {value}',
+        defaultMessage: 'Fyrra starf',
+        description: 'Last jobs repeater label',
+      },
+      currentJobRepeater: {
+        id: 'vmst.ub.application:employment.employmentHistory.labels.currentJobRepeater',
+        defaultMessage: 'Núverandi starf',
         description: 'Last jobs repeater label',
       },
       radioEesLabel: {

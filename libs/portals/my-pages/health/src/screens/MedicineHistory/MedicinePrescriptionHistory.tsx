@@ -67,6 +67,7 @@ const MedicinePrescriptionHistory = () => {
       serviceProviderTooltip={formatMessage(
         messages.landlaeknirMedicinePrescriptionsTooltip,
       )}
+      childrenWidthFull
       marginBottom={6}
     >
       {!error && (
@@ -97,12 +98,14 @@ const MedicinePrescriptionHistory = () => {
                   <DispensingContainer
                     backgroundColor="blue"
                     label={formatMessage(messages.dispenseHistory)}
-                    showMedicineName
                     data={(dispensations && dispensations.id === item.atcCode
                       ? dispensations.data
                       : item.dispensations
                     )?.map((subItem, subIndex) => {
                       return {
+                        id:
+                          subItem.id ??
+                          subItem.name + '-' + subIndex.toString(),
                         pharmacy:
                           subItem.agentName ??
                           formatMessage(messages.notRegistered),
@@ -117,7 +120,7 @@ const MedicinePrescriptionHistory = () => {
                         date: subItem.date
                           ? formatDate(new Date(subItem.date))
                           : '',
-
+                        strength: subItem.strength ?? '',
                         medicine:
                           subItem?.name ??
                           item.name ??
@@ -189,7 +192,6 @@ const MedicinePrescriptionHistory = () => {
         <DispensingDetailModal
           id={activeDispensation.id}
           activeDispensation={activeDispensation.activeDispensation}
-          number={activeDispensation.dispensationNumber}
           toggleClose={openModal}
           isVisible={openModal}
           closeModal={() => {

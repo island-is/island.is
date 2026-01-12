@@ -54,9 +54,16 @@ export const Summary = ({ state }: Props) => {
                 <GridRow>
                   <GridColumn span={['12/12', '1/2']}>
                     <Box marginTop={5}>
-                      <Text as="h3" variant="h3" fontWeight="semiBold">
-                        {screen?.name?.[lang] ?? ''}
-                      </Text>
+                      {section.sectionType === SectionTypes.PARTIES ? (
+                        <Text as="h3" variant="h3" fontWeight="semiBold">
+                          {screen?.fields?.[0]?.name?.[lang] ??
+                            screen?.name?.[lang]}
+                        </Text>
+                      ) : (
+                        <Text as="h3" variant="h3" fontWeight="semiBold">
+                          {screen?.name?.[lang] ?? ''}
+                        </Text>
+                      )}
                     </Box>
                   </GridColumn>
                   <GridColumn span={['12/12', '1/2']}>

@@ -1,4 +1,12 @@
-import { newPrimarySchoolMessages } from '@island.is/application/templates/new-primary-school'
+import {
+  applicationTypeMessages,
+  childrenNGuardiansMessages,
+  differentNeedsMessages,
+  overviewMessages,
+  prerequisitesMessages,
+  primarySchoolMessages,
+  sharedMessages,
+} from '@island.is/application/templates/new-primary-school'
 import { conclusionMessages } from '@island.is/application/ui-forms'
 import { test as base, expect, Page } from '@playwright/test'
 import { verifyRequestCompletion } from '../../../../support/api-tools'
@@ -47,7 +55,7 @@ applicationTest.describe('New primary school', () => {
       await applicationTest.step('Agree to data providers', async () => {
         await expect(
           page.getByRole('heading', {
-            name: label(newPrimarySchoolMessages.pre.externalDataSubSection),
+            name: label(prerequisitesMessages.externalData.subSectionTitle),
           }),
         ).toBeVisible()
         await page.getByTestId('agree-to-data-providers').click()
@@ -57,13 +65,13 @@ applicationTest.describe('New primary school', () => {
       await applicationTest.step('Select child', async () => {
         await expect(
           page.getByRole('heading', {
-            name: label(newPrimarySchoolMessages.pre.childrenSubSectionTitle),
+            name: label(prerequisitesMessages.children.subSectionTitle),
           }),
         ).toBeVisible()
         await page.getByTestId('child-0').click()
         await page
           .getByRole('button', {
-            name: label(newPrimarySchoolMessages.pre.startApplication),
+            name: label(prerequisitesMessages.children.startApplication),
           })
           .click()
       })
@@ -71,7 +79,7 @@ applicationTest.describe('New primary school', () => {
       await applicationTest.step('Select application type', async () => {
         await expect(
           page.getByRole('heading', {
-            name: label(newPrimarySchoolMessages.applicationType.sectionTitle),
+            name: label(applicationTypeMessages.sectionTitle),
           }),
         ).toBeVisible()
         await page.getByTestId('new-primary-school').click()
@@ -83,27 +91,20 @@ applicationTest.describe('New primary school', () => {
         async () => {
           await expect(
             page.getByRole('heading', {
-              name: label(
-                newPrimarySchoolMessages.childrenNGuardians
-                  .childInfoSubSectionTitle,
-              ),
+              name: label(childrenNGuardiansMessages.childInfo.subSectionTitle),
             }),
           ).toBeVisible()
           await page
             .getByRole('checkbox', {
               name: label(
-                newPrimarySchoolMessages.childrenNGuardians
-                  .usePronounAndPreferredName,
+                childrenNGuardiansMessages.childInfo.usePronounAndPreferredName,
               ),
             })
             .click()
           await verifyRequestCompletion(page, '/api/graphql', 'FriggOptions')
           await page
             .getByRole('textbox', {
-              name: label(
-                newPrimarySchoolMessages.childrenNGuardians
-                  .childInfoPreferredName,
-              ),
+              name: label(childrenNGuardiansMessages.childInfo.preferredName),
             })
             .fill('Valið Nafn')
           await page.getByTestId('select-childInfo.pronouns').click()
@@ -119,16 +120,13 @@ applicationTest.describe('New primary school', () => {
         async () => {
           await expect(
             page.getByRole('heading', {
-              name: label(
-                newPrimarySchoolMessages.childrenNGuardians
-                  .guardiansSubSectionTitle,
-              ),
+              name: label(childrenNGuardiansMessages.guardians.subSectionTitle),
             }),
           ).toBeVisible()
 
           await expect(
             page.getByText(
-              label(newPrimarySchoolMessages.childrenNGuardians.guardian),
+              label(childrenNGuardiansMessages.guardians.guardian),
             ),
           ).toBeVisible()
           await page.getByTestId('email1').fill('guardian1@test.is')
@@ -137,7 +135,7 @@ applicationTest.describe('New primary school', () => {
           await page
             .getByRole('checkbox', {
               name: label(
-                newPrimarySchoolMessages.childrenNGuardians.requiresInterpreter,
+                childrenNGuardiansMessages.guardians.requiresInterpreter,
               ),
             })
             .first()
@@ -150,7 +148,7 @@ applicationTest.describe('New primary school', () => {
 
           await expect(
             page.getByText(
-              label(newPrimarySchoolMessages.childrenNGuardians.otherGuardian),
+              label(childrenNGuardiansMessages.guardians.otherGuardian),
             ),
           ).toBeVisible()
           await page.getByTestId('email2').fill('guardian2@test.is')
@@ -163,37 +161,30 @@ applicationTest.describe('New primary school', () => {
         await verifyRequestCompletion(page, '/api/graphql', 'FriggOptions')
         await expect(
           page.getByRole('heading', {
-            name: label(
-              newPrimarySchoolMessages.childrenNGuardians.relativesTitle,
-            ),
+            name: label(childrenNGuardiansMessages.relatives.title),
           }),
         ).toBeVisible()
 
         await page
           .getByRole('button', {
-            name: label(
-              newPrimarySchoolMessages.childrenNGuardians.relativesAddRelative,
-            ),
+            name: label(childrenNGuardiansMessages.relatives.addRelative),
           })
           .click()
         await expect(
           page.getByText(
-            label(
-              newPrimarySchoolMessages.childrenNGuardians
-                .relativesRegistrationTitle,
-            ),
+            label(childrenNGuardiansMessages.relatives.registrationTitle),
           ),
         ).toBeVisible()
         await page
-          .getByLabel(label(newPrimarySchoolMessages.shared.nationalId))
+          .getByLabel(label(sharedMessages.nationalId))
           .fill('0101302989')
 
         // Wait for non-empty name
         await expect(
-          page.getByLabel(label(newPrimarySchoolMessages.shared.fullName)),
+          page.getByLabel(label(sharedMessages.fullName)),
         ).not.toBeEmpty()
         await expect(
-          page.getByLabel(label(newPrimarySchoolMessages.shared.fullName)),
+          page.getByLabel(label(sharedMessages.fullName)),
         ).toHaveValue('Gervimaður Ameríka')
 
         await page.getByTestId('relative-phone-number').fill('799-99999')
@@ -202,10 +193,7 @@ applicationTest.describe('New primary school', () => {
         await page.keyboard.press('Enter')
         await page
           .getByRole('button', {
-            name: label(
-              newPrimarySchoolMessages.childrenNGuardians
-                .relativesRegisterRelative,
-            ),
+            name: label(childrenNGuardiansMessages.relatives.registerRelative),
           })
           .click()
         await proceed()
@@ -216,10 +204,7 @@ applicationTest.describe('New primary school', () => {
         async () => {
           await expect(
             page.getByRole('heading', {
-              name: label(
-                newPrimarySchoolMessages.primarySchool
-                  .currentSchoolSubSectionTitle,
-              ),
+              name: label(primarySchoolMessages.currentSchool.subSectionTitle),
             }),
           ).toBeVisible()
           await proceed()
@@ -234,9 +219,7 @@ applicationTest.describe('New primary school', () => {
         )
         await expect(
           page.getByRole('heading', {
-            name: label(
-              newPrimarySchoolMessages.primarySchool.newSchoolSubSectionTitle,
-            ),
+            name: label(primarySchoolMessages.newSchool.subSectionTitle),
           }),
         ).toBeVisible()
 
@@ -255,8 +238,7 @@ applicationTest.describe('New primary school', () => {
         await expect(
           page.getByRole('heading', {
             name: label(
-              newPrimarySchoolMessages.primarySchool
-                .reasonForApplicationSubSectionTitle,
+              primarySchoolMessages.reasonForApplication.subSectionTitle,
             ),
           }),
         ).toBeVisible()
@@ -273,44 +255,37 @@ applicationTest.describe('New primary school', () => {
         async () => {
           await expect(
             page.getByRole('heading', {
-              name: label(newPrimarySchoolMessages.primarySchool.siblingsTitle),
+              name: label(primarySchoolMessages.siblings.title),
             }),
           ).toBeVisible()
 
           await page
             .getByRole('button', {
-              name: label(
-                newPrimarySchoolMessages.primarySchool.siblingsAddRelative,
-              ),
+              name: label(primarySchoolMessages.siblings.addSibling),
             })
             .click()
 
           await expect(
             page.getByText(
-              label(
-                newPrimarySchoolMessages.primarySchool
-                  .siblingsRegistrationTitle,
-              ),
+              label(primarySchoolMessages.siblings.registrationTitle),
             ),
           ).toBeVisible()
 
           await page
-            .getByLabel(label(newPrimarySchoolMessages.shared.nationalId))
+            .getByLabel(label(sharedMessages.nationalId))
             .fill('0101302719')
 
           // Wait for non-empty name
           await expect(
-            page.getByLabel(label(newPrimarySchoolMessages.shared.fullName)),
+            page.getByLabel(label(sharedMessages.fullName)),
           ).not.toBeEmpty()
           await expect(
-            page.getByLabel(label(newPrimarySchoolMessages.shared.fullName)),
+            page.getByLabel(label(sharedMessages.fullName)),
           ).toHaveValue('Gervimaður Evrópa')
 
           await page
             .getByRole('button', {
-              name: label(
-                newPrimarySchoolMessages.primarySchool.siblingsRegisterRelative,
-              ),
+              name: label(primarySchoolMessages.siblings.registerSibling),
             })
             .click()
           await proceed()
@@ -322,9 +297,7 @@ applicationTest.describe('New primary school', () => {
         async () => {
           await expect(
             page.getByRole('heading', {
-              name: label(
-                newPrimarySchoolMessages.primarySchool.startingSchoolTitle,
-              ),
+              name: label(primarySchoolMessages.startingSchool.title),
             }),
           ).toBeVisible()
 
@@ -338,20 +311,19 @@ applicationTest.describe('New primary school', () => {
         await verifyRequestCompletion(page, '/api/graphql', 'FriggOptions')
         await expect(
           page.getByRole('heading', {
-            name: label(newPrimarySchoolMessages.differentNeeds.languageTitle),
+            name: label(differentNeedsMessages.language.title),
           }),
         ).toBeVisible()
 
         await page.getByTestId('select-languages.languageEnvironment').click()
         await page.keyboard.press('ArrowDown')
+        await page.keyboard.press('ArrowDown')
         await page.keyboard.press('Enter')
 
         await expect(
-          page
-            .locator('form')
-            .getByText(label(newPrimarySchoolMessages.shared.language), {
-              exact: true,
-            }),
+          page.locator('form').getByText(label(sharedMessages.language), {
+            exact: true,
+          }),
         ).toBeVisible()
 
         await page
@@ -366,9 +338,7 @@ applicationTest.describe('New primary school', () => {
 
         await page
           .getByRole('button', {
-            name: label(
-              newPrimarySchoolMessages.differentNeeds.addLanguageButton,
-            ),
+            name: label(differentNeedsMessages.language.addLanguage),
           })
           .click()
         await page
@@ -378,9 +348,7 @@ applicationTest.describe('New primary school', () => {
 
         await expect(
           page.getByText(
-            label(
-              newPrimarySchoolMessages.differentNeeds.preferredLanguageTitle,
-            ),
+            label(differentNeedsMessages.language.preferredLanguageTitle),
           ),
         ).toBeVisible()
 
@@ -395,8 +363,7 @@ applicationTest.describe('New primary school', () => {
         await expect(
           page.getByRole('heading', {
             name: label(
-              newPrimarySchoolMessages.differentNeeds
-                .healthProtectionSubSectionTitle,
+              differentNeedsMessages.healthProtection.subSectionTitle,
             ),
           }),
         ).toBeVisible()
@@ -404,7 +371,7 @@ applicationTest.describe('New primary school', () => {
         await page
           .getByRole('checkbox', {
             name: label(
-              newPrimarySchoolMessages.differentNeeds
+              differentNeedsMessages.healthProtection
                 .hasFoodAllergiesOrIntolerances,
             ),
           })
@@ -422,7 +389,7 @@ applicationTest.describe('New primary school', () => {
         await page
           .getByRole('checkbox', {
             name: label(
-              newPrimarySchoolMessages.differentNeeds.hasOtherAllergies,
+              differentNeedsMessages.healthProtection.hasOtherAllergies,
             ),
           })
           .click()
@@ -440,9 +407,7 @@ applicationTest.describe('New primary school', () => {
       await applicationTest.step('Support', async () => {
         await expect(
           page.getByRole('heading', {
-            name: label(
-              newPrimarySchoolMessages.differentNeeds.supportSubSectionTitle,
-            ),
+            name: label(differentNeedsMessages.support.subSectionTitle),
           }),
         ).toBeVisible()
         await page.getByTestId('has-diagnoses').click()
@@ -451,32 +416,24 @@ applicationTest.describe('New primary school', () => {
         await page.getByTestId('has-welfare-contact').click()
         await page
           .getByRole('textbox', {
-            name: label(
-              newPrimarySchoolMessages.differentNeeds.welfareContactName,
-            ),
+            name: label(differentNeedsMessages.support.welfareContactName),
           })
           .fill('Tengiliður Nafnsson')
         await page
           .getByRole('textbox', {
-            name: label(
-              newPrimarySchoolMessages.differentNeeds.welfareContactEmail,
-            ),
+            name: label(differentNeedsMessages.support.welfareContactEmail),
           })
           .fill('tengilidur@test.is')
 
         await page.getByTestId('has-case-manager').click()
         await page
           .getByRole('textbox', {
-            name: label(
-              newPrimarySchoolMessages.differentNeeds.caseManagerName,
-            ),
+            name: label(differentNeedsMessages.support.caseManagerName),
           })
           .fill('Málastjóri Nafnsson')
         await page
           .getByRole('textbox', {
-            name: label(
-              newPrimarySchoolMessages.differentNeeds.caseManagerEmail,
-            ),
+            name: label(differentNeedsMessages.support.caseManagerEmail),
           })
           .fill('malastjori@test.is')
 
@@ -485,8 +442,7 @@ applicationTest.describe('New primary school', () => {
         await page
           .getByRole('checkbox', {
             name: label(
-              newPrimarySchoolMessages.differentNeeds
-                .requestingMeetingDescription,
+              differentNeedsMessages.support.requestingMeetingDescription,
             ),
           })
           .click()
@@ -495,13 +451,11 @@ applicationTest.describe('New primary school', () => {
 
       await applicationTest.step('Submit application', async () => {
         await expect(
-          page
-            .locator('form')
-            .getByText(label(newPrimarySchoolMessages.overview.sectionTitle)),
+          page.locator('form').getByText(label(overviewMessages.sectionTitle)),
         ).toBeVisible()
         await page
           .getByRole('button', {
-            name: label(newPrimarySchoolMessages.overview.submitButton),
+            name: label(overviewMessages.submitButton),
           })
           .click()
       })

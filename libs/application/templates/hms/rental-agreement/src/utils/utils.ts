@@ -13,6 +13,7 @@ import { ApplicantsInfo, BankAccount, PropertyUnit } from '../shared'
 
 import * as m from '../lib/messages'
 import { ApplicantsRole } from './enums'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 export const SPECIALPROVISIONS_DESCRIPTION_MAXLENGTH = 1500
 export const minChangedUnitSize = 3
@@ -54,14 +55,22 @@ export const isValidMeterStatus = (value: string) => {
 
 export const isValidPhoneNumber = (phoneNumber: string) => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
-  return phone && phone.isValid()
+  if (isRunningOnEnvironment('local') || isRunningOnEnvironment('dev')) {
+    return !!phone
+  } else {
+    return phone && phone.isValid()
+  }
 }
 
 export const isValidMobileNumber = (phoneNumber: string) => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
-  return (
-    phone && phone.isValid() && /^[6-8]/.test(String(phone?.nationalNumber))
-  )
+  if (isRunningOnEnvironment('local') || isRunningOnEnvironment('dev')) {
+    return !!phone && /^[06-8]/.test(String(phone?.nationalNumber))
+  } else {
+    return (
+      phone && phone.isValid() && /^[6-8]/.test(String(phone?.nationalNumber))
+    )
+  }
 }
 
 export const formatPhoneNumber = (phoneNumber: string): string => {

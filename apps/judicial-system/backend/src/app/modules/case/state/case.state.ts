@@ -138,6 +138,7 @@ const indictmentCaseStateMachine: Map<
       fromStates: [
         IndictmentCaseState.WAITING_FOR_CANCELLATION,
         IndictmentCaseState.RECEIVED,
+        IndictmentCaseState.CORRECTING,
       ],
       transition: (update: UpdateCase, theCase: Case) => ({
         ...update,
@@ -177,8 +178,8 @@ const indictmentCaseStateMachine: Map<
 
         return {
           ...update,
-          state: CaseState.RECEIVED,
-          rulingDate: null,
+          state: CaseState.CORRECTING,
+          courtRecordHash: null,
         }
       },
     },

@@ -174,7 +174,6 @@ const ChatFeedbackPanel = ({
         </Box>
 
         <Input
-          autoExpand={{ on: true, maxHeight: 300 }}
           textarea
           rows={3}
           size="xs"
@@ -451,7 +450,6 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
         />
       )}
       <ChatBubble
-        variant={namespaceKey === 'samgongustofa' ? 'circle' : 'default'}
         text={n('chatBubbleText', 'Hæ, get ég aðstoðað?')}
         isVisible={true}
         onClick={() => {

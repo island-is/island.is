@@ -10,6 +10,9 @@ export class ReferralContact {
 
   @Field({ nullable: true })
   department?: string
+
+  @Field({ nullable: true })
+  institute?: string
 }
 
 @ObjectType('HealthDirectorateReferral')
@@ -31,6 +34,9 @@ export class Referral {
 
   @Field({ nullable: true })
   reason?: string
+
+  @Field({ nullable: true })
+  diagnoses?: string
 
   @Field({ nullable: true })
   fromContactInfo?: ReferralContact

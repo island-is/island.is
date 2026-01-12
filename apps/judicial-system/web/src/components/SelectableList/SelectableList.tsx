@@ -12,6 +12,7 @@ import {
 
 import { IconAndText } from '../../routes/Prosecutor/components'
 import { selectableList as strings } from './SelectableList.strings'
+import { grid } from '../../utils/styles/recipes.css'
 import * as styles from './SelectableList.css'
 
 interface CTAButtonAttributes {
@@ -113,10 +114,10 @@ const SelectableList: FC<Props> = (props) => {
   }
 
   const validSelectableItems = selectableItems.filter((item) => !item.invalid)
+
   return (
-    <>
+    <div className={grid({ gap: 3 })}>
       <Box
-        marginBottom={3}
         borderColor="blue200"
         borderWidth="standard"
         paddingX={4}
@@ -263,7 +264,7 @@ const SelectableList: FC<Props> = (props) => {
           </Button>
         </Box>
       )}
-    </>
+    </div>
   )
 }
 
