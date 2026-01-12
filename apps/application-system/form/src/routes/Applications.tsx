@@ -81,21 +81,14 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
     },
   )
 
-  const {
-    data: orgData,
-    loading: loadingOrg,
-    error: orgError,
-    refetch: orgRefetch,
-  } = useLocalizedQuery(GET_ORGANIZATIONS, {
-    variables: {
-      input: {
-        lang: 'is',
-      },
+  const { data: orgData, loading: loadingOrg } = useLocalizedQuery(
+    GET_ORGANIZATIONS,
+    {
+      fetchPolicy: 'cache-and-network',
     },
-    fetchPolicy: 'cache-and-network',
-  })
+  )
 
-  const mappedOrganizations = (orgData?.getOrganizations?.items ?? []).map(
+  const mappedOrganizations = (data?.ApplicationSystemCard ?? []).map(
     (card: ApplicationCard) => {
       const org = orgData?.getOrganizations?.items.find(
         (org: Organization) => org.id === card.orgContentfulId,
