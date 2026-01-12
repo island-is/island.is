@@ -25,7 +25,7 @@ import {
 } from '@island.is/application/core'
 
 import {
-  NationalRegistryV3CohabitantsApi,
+  NationalRegistryCohabitantsV3Api,
   SocialInsuranceAdministrationApplicantApi,
   SocialInsuranceAdministrationIsApplicantEligibleApi,
 } from '../dataProviders'
@@ -88,7 +88,7 @@ const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
               write: 'all',
               api: [
                 NationalRegistryV3UserApi,
-                NationalRegistryV3CohabitantsApi,
+                NationalRegistryCohabitantsV3Api,
                 UserProfileApi.configure({
                   params: {
                     validateEmail: true,

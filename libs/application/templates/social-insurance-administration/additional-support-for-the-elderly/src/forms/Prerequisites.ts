@@ -20,7 +20,7 @@ import { SocialInsuranceAdministrationLogo } from '@island.is/application/assets
 import {
   SocialInsuranceAdministrationApplicantApi,
   SocialInsuranceAdministrationIsApplicantEligibleApi,
-  NationalRegistryV3CohabitantsApi,
+  NationalRegistryCohabitantsV3Api,
 } from '../dataProviders'
 import { isEligible } from '../lib/additionalSupportForTheElderlyUtils'
 
@@ -66,7 +66,7 @@ export const PrerequisitesForm: Form = buildForm({
                   .skraInformationSubTitle,
             }),
             buildDataProviderItem({
-              provider: NationalRegistryV3CohabitantsApi,
+              provider: NationalRegistryCohabitantsV3Api,
               title: '',
             }),
             buildDataProviderItem({

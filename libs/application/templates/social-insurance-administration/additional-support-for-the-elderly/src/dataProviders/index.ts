@@ -18,7 +18,7 @@ export const SocialInsuranceAdministrationIsApplicantEligibleApi =
     namespace: 'SocialInsuranceAdministration',
   })
 
-export const NationalRegistryV3CohabitantsApi = defineTemplateApi({
+export const NationalRegistryCohabitantsV3Api = defineTemplateApi({
   action: 'getCohabitants',
   externalDataId: 'nationalRegistryCohabitants',
   namespace: 'NationalRegistryV3',
