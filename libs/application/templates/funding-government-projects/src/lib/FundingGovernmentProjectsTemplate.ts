@@ -16,6 +16,7 @@ import {
 import { FundingGovernmentProjectsSchema } from './dataSchema'
 import { application } from './messages'
 import { CodeOwners } from '@island.is/shared/constants'
+import { Features } from '@island.is/feature-flags'
 
 const States = {
   draft: 'draft',
@@ -45,6 +46,7 @@ const FundingGovernmentProjectsTemplate: ApplicationTemplate<
   name: application.name,
   codeOwner: CodeOwners.NordaApplications,
   institution: application.institutionName,
+  featureFlag: Features.fundingGovernmentProjectsEnabled,
   translationNamespaces:
     ApplicationConfigurations.FundingGovernmentProjects.translation,
   dataSchema: FundingGovernmentProjectsSchema,
