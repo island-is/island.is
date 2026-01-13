@@ -117,6 +117,8 @@ export enum Features {
 
   shouldSendEmailNotificationsToDelegations = 'shouldSendEmailNotificationsToDelegations',
 
+  shouldSendEmailNotificationsToCompanyUserProfiles = 'shouldSendEmailNotificationsToCompanyUserProfiles',
+
   // Single sign on passkeys
   isPasskeyRegistrationEnabled = 'isPasskeyRegistrationEnabled',
   isPasskeyAuthEnabled = 'isPasskeyAuthEnabled',
