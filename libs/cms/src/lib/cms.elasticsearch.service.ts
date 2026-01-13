@@ -1474,6 +1474,31 @@ export class CmsElasticsearchService {
                       },
                     ]
                   : []),
+                ...(input.courseListPageId
+                  ? [
+                      {
+                        nested: {
+                          path: 'tags',
+                          query: {
+                            bool: {
+                              must: [
+                                {
+                                  term: {
+                                    'tags.type': 'courseListPageId',
+                                  },
+                                },
+                                {
+                                  term: {
+                                    'tags.key': input.courseListPageId,
+                                  },
+                                },
+                              ],
+                            },
+                          },
+                        },
+                      },
+                    ]
+                  : []),
               ],
             },
           },
@@ -1606,6 +1631,30 @@ export class CmsElasticsearchService {
                 {
                   term: {
                     'tags.type': 'organization',
+                  },
+                },
+              ],
+            },
+          },
+        },
+      })
+    }
+
+    if (!!input.courseListPageId && input.courseListPageId.length > 0) {
+      must.push({
+        nested: {
+          path: 'tags',
+          query: {
+            bool: {
+              must: [
+                {
+                  term: {
+                    'tags.type': 'courseListPageId',
+                  },
+                },
+                {
+                  term: {
+                    'tags.key': input.courseListPageId,
                   },
                 },
               ],

@@ -9,13 +9,11 @@ import {
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
 import { PortalNavigationItem } from '@island.is/portals/core'
-import { useOrganization } from '@island.is/portals/my-pages/graphql'
 import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useWindowSize } from 'react-use'
-import InstitutionPanel from '../InstitutionPanel/InstitutionPanel'
-import * as styles from './TabNavigation.css'
 import { TabBar } from './TabBar'
+import * as styles from './TabNavigation.css'
 import { TabNavigationInstitutionPanel } from './TabNavigationInstitutionPanel'
 
 interface Props {
@@ -51,6 +49,7 @@ export const TabNavigation: React.FC<Props> = ({ items, pathname, label }) => {
       navigate(id)
     }
   }
+
   const serviceProvider =
     activePath?.activeChild?.serviceProvider ?? activePath.serviceProvider
   const descriptionText =
@@ -78,7 +77,8 @@ export const TabNavigation: React.FC<Props> = ({ items, pathname, label }) => {
       {activePath.path && isMobile && (
         <Box className={styles.select}>
           <Select
-            size="sm"
+            size="xs"
+            backgroundColor="blue"
             name={label}
             label={label}
             onChange={(opt) => tabChangeHandler(opt?.value)}

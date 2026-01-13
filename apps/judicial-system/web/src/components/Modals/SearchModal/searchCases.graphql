@@ -4,6 +4,9 @@ query SearchCases($input: SearchCasesQueryInput!) {
     rows {
       caseId
       caseType
+      policeCaseNumbers
+      courtCaseNumber
+      appealCaseNumber
       matchedField
       matchedValue
       policeCaseNumbers

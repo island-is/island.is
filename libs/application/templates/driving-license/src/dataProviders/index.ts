@@ -5,7 +5,7 @@ import {
   PaymentCatalogApi,
 } from '@island.is/application/types'
 export {
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   HasTeachingRightsApi,
   UserProfileApi,
   CurrentLicenseApi,

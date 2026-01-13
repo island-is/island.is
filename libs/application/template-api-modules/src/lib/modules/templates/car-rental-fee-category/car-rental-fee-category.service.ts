@@ -88,7 +88,7 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
   }: TemplateApiModuleActionProps): Promise<boolean> {
     const data = getValueViaPath<CarCategoryRecord[]>(
       application.answers,
-      'dataToChange.data',
+      'carsToChange',
     )
 
     const rateToChangeTo = getValueViaPath<RateCategory>(
@@ -101,14 +101,12 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
     const tomorrow = new Date(now.setHours(24, 0, 0, 0))
 
     try {
-      if (rateToChangeTo === RateCategory.KMRATE) {
-        await this.rentalsApiWithAuth(
-          auth,
-        ).apiDayRateEntriesEntityIdRegisterPost({
+      if (rateToChangeTo === RateCategory.DAYRATE) {
+        const requestBody = {
           entityId: auth.nationalId,
           dayRateRegistrationModel: {
             skraningaradili:
-              application.applicantActors[0] ?? application.applicant ?? null,
+              application.applicant ?? application.applicantActors[0] ?? null,
             entries:
               data?.map((c) => {
                 return {
@@ -118,16 +116,21 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
                 }
               }) ?? null,
           },
-        })
-        return true
-      } else {
+        }
+        this.logger.warn(
+          'Full body of request to register cars to day rate',
+          requestBody,
+        )
         await this.rentalsApiWithAuth(
           auth,
-        ).apiDayRateEntriesEntityIdDeregisterPost({
+        ).apiDayRateEntriesEntityIdRegisterPost({ ...requestBody })
+        return true
+      } else {
+        const requestBody = {
           entityId: auth.nationalId,
           deregistrationModel: {
             afskraningaradili:
-              application.applicantActors[0] ?? application.applicant ?? null,
+              application.applicant ?? application.applicantActors[0] ?? null,
             entries:
               data?.map((c) => {
                 return {
@@ -137,10 +140,18 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
                 }
               }) ?? null,
           },
-        })
+        }
+        this.logger.warn(
+          'Full body of request to deregister cars from day rate',
+          requestBody,
+        )
+        await this.rentalsApiWithAuth(
+          auth,
+        ).apiDayRateEntriesEntityIdDeregisterPost({ ...requestBody })
         return true
       }
     } catch (error) {
+      this.logger.error('Error posting data to skatturinn', error)
       if (
         error &&
         typeof error === 'object' &&
