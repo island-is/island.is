@@ -860,14 +860,7 @@ export class CmsContentfulService {
       .getLocalizedEntries<types.ILifeEventPageFields>(lang, params)
       .catch(errorHandler('getLifeEvents'))
 
-    return (result.items as types.ILifeEventPage[]).map((item) => {
-      const mapped = mapLifeEventPage(item)
-      // Limit featured links to maximum of 3 to prevent layout breaking
-      if (mapped.featured && mapped.featured.length > 3) {
-        mapped.featured = mapped.featured.slice(0, 3)
-      }
-      return mapped
-    })
+    return (result.items as types.ILifeEventPage[]).map(mapLifeEventPage)
   }
 
   async getLifeEventsInCategory(

@@ -70,7 +70,6 @@ export const CardWithFeaturedItems = ({
   featuredItems,
   buttonTitle,
 }: CardWithFeaturedItemsProps) => {
-  // Limit featured items to maximum of 3 to prevent layout breaking
   const limitedFeaturedItems = featuredItems.slice(0, 3)
 
   return (

@@ -62,20 +62,15 @@ export const GridItems: FC<React.PropsWithChildren<GridItemsProps>> = ({
     const { scrollLeft, scrollWidth, clientWidth } = container
     const maxScroll = scrollWidth - clientWidth
 
-    // Show/hide gradients
     setShowLeftGradient(scrollLeft > 10)
     setShowRightGradient(scrollLeft < maxScroll - 10)
 
-    // Calculate distance from each edge (0-1 range)
-    const distanceFromLeft = Math.min(scrollLeft / 100, 1) // normalize to 0-1 over 100px
+    const distanceFromLeft = Math.min(scrollLeft / 100, 1)
     const distanceFromRight = Math.min((maxScroll - scrollLeft) / 100, 1)
 
-    // Width stays consistent
     setLeftGradientWidth(45 + distanceFromLeft * 90)
     setRightGradientWidth(45 + distanceFromRight * 90)
 
-    // Crossfade opacity: as you approach the end, right fades out and left fades in
-    // Use distanceFromRight for both to create the crossfade effect
     setLeftGradientOpacity(Math.max(0, 1 - distanceFromRight)) // Fades in as you approach end
     setRightGradientOpacity(distanceFromRight) // Fades out as you approach end
   }
@@ -97,8 +92,9 @@ export const GridItems: FC<React.PropsWithChildren<GridItemsProps>> = ({
   const perRow = Math.ceil(count / mobileItemsRows)
 
   if (isMobile) {
-    const horizontalPadding = theme.grid.gutter.mobile * 4 // left (2x) + right (2x)
-    const columnGaps = theme.spacing[2] * (perRow - 1) // gaps between columns
+    const horizontalPadding = theme.grid.gutter.mobile * 4
+    const columnGaps = theme.spacing[2] * (perRow - 1)
+
     style = {
       width: mobileItemWidth * perRow + horizontalPadding + columnGaps,
       gridTemplateColumns: `repeat(${perRow}, ${mobileItemWidth}px)`,
