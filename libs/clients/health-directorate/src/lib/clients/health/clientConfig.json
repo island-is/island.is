@@ -3390,16 +3390,20 @@
             "type": "string"
           },
           "triggerId": {
-            "type": "string"
+            "type": "string",
+            "description": "The id of the question that triggers the trigger"
           },
           "targetId": {
-            "type": "string"
+            "type": "string",
+            "description": "The id of the target question that the trigger is applied to"
           },
           "visible": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Whether the target question is visible"
           },
           "value": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "The value the triggering question must have for the trigger to be applied to the target question"
           }
         },
         "required": ["type", "triggerId", "targetId", "visible"]

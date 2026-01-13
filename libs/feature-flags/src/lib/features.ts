@@ -142,6 +142,10 @@ export enum Features {
 
   isMileCarEnabled = 'isMileCarEnabled',
   isHHCourseApplicationEnabled = 'isHHCourseApplicationEnabled',
+
+  // Questionnaires
+  questionnairesFromEL = 'isQuestionnairesHealthDirectorateClientEnabled',
+  questionnairesFromLSH = 'isQuestionnairesLshClientEnabled',
 }
 
 export enum ServerSideFeature {

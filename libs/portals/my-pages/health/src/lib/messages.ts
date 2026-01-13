@@ -1857,6 +1857,10 @@ export const messages = defineMessages({
     defaultMessage: 'Spurningalistar',
     id: 'sp.health:questionnaires',
   },
+  questionnairesThgf: {
+    defaultMessage: 'Spurningalista',
+    id: 'sp.health:questionnaires-thgf',
+  },
   questionnairesIntro: {
     defaultMessage:
       'Hér getur þú fundið spurningalista sem tengjast heilsu þinni.',

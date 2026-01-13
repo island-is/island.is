@@ -67,16 +67,14 @@ export const Thermometer: FC<ThermometerProps> = ({
     event.preventDefault()
     setIsDragging(true)
 
-    const startY = event.clientY
     const rect = thermometerRef.current?.getBoundingClientRect()
     if (!rect) return
 
     const handlePointerMove = (moveEvent: PointerEvent) => {
-      const deltaY = moveEvent.clientY - startY
-      const newY = getThumbPosition() + deltaY
+      const relativeY = moveEvent.clientY - rect.top
 
       // Convert Y position to value index
-      const segmentIndex = Math.round(newY / segmentHeight)
+      const segmentIndex = Math.round(relativeY / segmentHeight)
       const clampedIndex = Math.max(
         0,
         Math.min(displayValues.length - 1, segmentIndex),
@@ -131,12 +129,17 @@ export const Thermometer: FC<ThermometerProps> = ({
       allValues.push(i.toString())
     }
 
-    // If we have more than 20 values, sample by index
-    if (allValues.length > 20) {
-      const interval = Math.ceil(allValues.length / 20)
-      const sampledValues = allValues.filter(
-        (_, index) => index % interval === 0,
-      )
+    // If we have more than 20 values, sample by value intervals
+    if (allValues.length > 10) {
+      const minNum = parseFloat(min)
+      const maxNum = parseFloat(max)
+      const range = maxNum - minNum
+      const valueInterval = Math.ceil(range / 10)
+
+      const sampledValues = allValues.filter((val) => {
+        const numVal = parseFloat(val)
+        return (numVal - minNum) % valueInterval === 0
+      })
 
       // Ensure the last value is always included
       const lastValue = allValues[allValues.length - 1]
