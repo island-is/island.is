@@ -76,33 +76,29 @@ export const dataSchema = z.object({
         },
       ),
   ),
-  relatives: z
-    .array(
-      z
-        .object({
-          nationalIdWithName: nationalIdWithNameSchema,
-          phoneNumber: phoneNumberSchema,
-          relation: z.string(),
-          applicantNationalId: z.string().optional(),
-          otherGuardianNationalId: z.string().optional(),
-        })
-        .refine(
-          ({
-            nationalIdWithName,
-            applicantNationalId,
-            otherGuardianNationalId,
-          }) =>
-            nationalIdWithName?.nationalId !== applicantNationalId &&
-            nationalIdWithName?.nationalId !== otherGuardianNationalId,
-          {
-            path: ['nationalIdWithName', 'nationalId'],
-            params: errorMessages.relativeSameAsGuardian,
-          },
-        ),
-    )
-    .refine((r) => r === undefined || r.length > 0, {
-      params: errorMessages.relativesRequired,
-    }),
+  relatives: z.array(
+    z
+      .object({
+        nationalIdWithName: nationalIdWithNameSchema,
+        phoneNumber: phoneNumberSchema,
+        relation: z.string(),
+        applicantNationalId: z.string().optional(),
+        otherGuardianNationalId: z.string().optional(),
+      })
+      .refine(
+        ({
+          nationalIdWithName,
+          applicantNationalId,
+          otherGuardianNationalId,
+        }) =>
+          nationalIdWithName?.nationalId !== applicantNationalId &&
+          nationalIdWithName?.nationalId !== otherGuardianNationalId,
+        {
+          path: ['nationalIdWithName', 'nationalId'],
+          params: errorMessages.relativeSameAsGuardian,
+        },
+      ),
+  ),
   currentNursery: z.object({
     municipality: z.string(),
     nursery: z.string(),
