@@ -814,6 +814,9 @@ export interface ICourseFields {
 
   /** Instances */
   instances?: ICourseInstance[] | undefined
+
+  /** Course List Page */
+  courseListPage?: ICourseListPage | undefined
 }
 
 export interface ICourse extends Entry<ICourseFields> {
@@ -869,6 +872,34 @@ export interface ICourseInstance extends Entry<ICourseInstanceFields> {
     contentType: {
       sys: {
         id: 'courseInstance'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface ICourseListPageFields {
+  /** Organization */
+  organization: IOrganization
+
+  /** Internal Title */
+  internalTitle?: string | undefined
+
+  /** Title */
+  title?: string | undefined
+}
+
+export interface ICourseListPage extends Entry<ICourseListPageFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'courseListPage'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -5449,6 +5480,34 @@ export interface IVacancy extends Entry<IVacancyFields> {
     contentType: {
       sys: {
         id: 'vacancy'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IWebChatFields {
+  /** Internal Title */
+  internalTitle: string
+
+  /** Display Locations */
+  displayLocations: (IOrganization | IArticle)[]
+
+  /** Web Chat Configuration */
+  webChatConfiguration?: Record<string, any> | undefined
+}
+
+export interface IWebChat extends Entry<IWebChatFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'webChat'
         linkType: 'ContentType'
         type: 'Link'
       }

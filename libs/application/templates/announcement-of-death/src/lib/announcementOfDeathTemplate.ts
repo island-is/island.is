@@ -11,7 +11,7 @@ import {
   Application,
   DefaultEvents,
   defineTemplateApi,
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   UserProfileApi,
   ExistingApplicationApi,
   ApplicationConfigurations,
@@ -78,7 +78,7 @@ const AnnouncementOfDeathTemplate: ApplicationTemplate<
               delete: true,
               api: [
                 DeathNoticeApi,
-                NationalRegistryUserApi,
+                NationalRegistryV3UserApi,
                 UserProfileApi,
                 ExistingApplicationApi.configure({
                   params: {

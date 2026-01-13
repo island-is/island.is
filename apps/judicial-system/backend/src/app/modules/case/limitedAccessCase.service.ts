@@ -120,6 +120,7 @@ export const attributes: (keyof Case)[] = [
   'isCompletedWithoutRuling',
   'isRegisteredInPrisonSystem',
   'rulingModifiedHistory',
+  'withCourtSessions',
 ]
 
 export interface LimitedAccessUpdateCase

@@ -884,6 +884,10 @@ export const vehicleMessage = defineMessages({
     id: 'sp.vehicles:add-operator',
     defaultMessage: 'Breyta umráðamanni',
   },
+  registerMileCar: {
+    id: 'sp.vehicles:register-mile-car',
+    defaultMessage: 'Skrá ökutæki með mílumæli',
+  },
   renewPrivateRegistration: {
     id: 'sp.vehicles:renew-private-registration',
     defaultMessage: 'Endurnýja einkamerki',
@@ -1497,6 +1501,10 @@ export const urls = defineMessages({
   operator: {
     id: 'sp.vehicles:url-operator',
     defaultMessage: 'https://island.is/umsoknir/umradamadur-okutaekis',
+  },
+  registerMileCar: {
+    id: 'sp.vehicles:url-milecar',
+    defaultMessage: 'https://island.is/umsoknir/skraning-milubila',
   },
   regNumber: {
     id: 'sp.vehicles:url-registration-number',

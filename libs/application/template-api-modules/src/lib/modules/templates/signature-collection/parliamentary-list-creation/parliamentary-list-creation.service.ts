@@ -14,7 +14,7 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { CollectionType } from '@island.is/clients/signature-collection'
 import { CreateListSchema } from '@island.is/application/templates/signature-collection/parliamentary-list-creation'
-import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
+import { NationalRegistryV3Service } from '../../../shared/api/national-registry-v3/national-registry-v3.service'
 import { isCompany } from 'kennitala'
 import { coreErrorMessages } from '@island.is/application/core'
 import { generateApplicationSubmittedEmail } from './emailGenerators'
@@ -27,7 +27,7 @@ export class ParliamentaryListCreationService extends BaseTemplateApiService {
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private signatureCollectionClientService: SignatureCollectionClientService,
-    private nationalRegistryClientService: NationalRegistryClientService,
+    private nationalRegistryV3Service: NationalRegistryV3Service,
   ) {
     super(ApplicationTypes.PARLIAMENTARY_LIST_CREATION)
   }
@@ -101,8 +101,9 @@ export class ParliamentaryListCreationService extends BaseTemplateApiService {
       ? auth.actor?.nationalId ?? auth.nationalId
       : auth.nationalId
 
-    const identity = await this.nationalRegistryClientService.getIndividual(
+    const identity = await this.nationalRegistryV3Service.getIndividual(
       contactNationalId,
+      auth,
     )
 
     if (!identity) {

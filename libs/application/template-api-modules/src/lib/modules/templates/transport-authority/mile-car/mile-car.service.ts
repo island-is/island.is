@@ -37,8 +37,8 @@ export class MileCarService extends BaseTemplateApiService {
       auth,
     ).currentvehicleswithmileageandinspGet({
       showOwned: true,
-      showCoowned: false,
-      showOperated: false,
+      showCoowned: true,
+      showOperated: true,
       page: 1,
       pageSize: 20,
     })
@@ -48,8 +48,8 @@ export class MileCarService extends BaseTemplateApiService {
     if (!totalRecords) {
       throw new TemplateApiError(
         {
-          title: coreErrorMessages.vehiclesEmptyListOwner,
-          summary: coreErrorMessages.vehiclesEmptyListOwner,
+          title: coreErrorMessages.vehiclesEmptyListOwnerOrCoOwner,
+          summary: coreErrorMessages.vehiclesEmptyListOwnerOrCoOwner,
         },
         400,
       )

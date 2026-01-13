@@ -123,6 +123,16 @@ export const m = {
         'Þú verður að fylla út upplýsingar um fyrirtækið ef þú vilt greiða sem fyrirtæki',
       description: 'Error message when company payment information is required',
     },
+    userIsPayingAsIndividualDescription: {
+      id: 'hh.courses.application:payer.userIsPayingAsIndividualDescription',
+      defaultMessage: 'Kvittun verður send í stafræna pósthólfið þitt',
+      description: 'Description of user is paying as individual field',
+    },
+    userIsPayingAsCompanyDescription: {
+      id: 'hh.courses.application:payer.userIsPayingAsCompanyDescription',
+      defaultMessage: 'Kvittun verður send í stafrænt pósthólf fyrirtækisins',
+      description: 'Description of user is paying as company field',
+    },
   }),
   overview: defineMessages({
     sectionTitle: {
