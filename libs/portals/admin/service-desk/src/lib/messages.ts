@@ -159,4 +159,12 @@ export const m = defineMessages({
     id: 'admin-portal.service-desk:no-mobile-phone',
     defaultMessage: 'Ekkert símanúmer skráð',
   },
+  userNotifications: {
+    id: 'admin-portal.service-desk:user-notifications',
+    defaultMessage: 'Á notanda',
+  },
+  actorNotifications: {
+    id: 'admin-portal.service-desk:actor-notifications',
+    defaultMessage: 'Vegna umboðs',
+  },
 })
