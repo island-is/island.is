@@ -1,4 +1,5 @@
 import { createRedisCluster } from '@island.is/cache'
+import { FileStorageConfig, FileStorageModule } from '@island.is/file-storage'
 import { LoggingModule } from '@island.is/logging'
 import { AwsModule } from '@island.is/nest/aws'
 import { BullModule as NestBullModule } from '@nestjs/bull'
@@ -10,12 +11,12 @@ import { FileConfig } from './file.config'
 import { FileController } from './file.controller'
 import { FileService } from './file.service'
 import { UploadProcessor } from './upload.processor'
-import { FileStorageModule } from '@island.is/file-storage'
 
 @Module({
   imports: [
     AwsModule,
     LoggingModule,
+    ConfigModule.forFeature(FileStorageConfig),
     FileStorageModule,
     SequelizeModule.forFeature([Value]),
     ConfigModule.forFeature(FileConfig),
