@@ -129,8 +129,12 @@ export class ApplicationsController {
   })
   @ApiBody({ type: SubmitScreenDto })
   @Put('submitScreen')
-  async saveScreen(@Body() screenDto: SubmitScreenDto): Promise<void> {
-    await this.applicationsService.saveScreen(screenDto)
+  async saveScreen(
+    @Body() screenDto: SubmitScreenDto,
+    @CurrentUser()
+    user: User,
+  ): Promise<void> {
+    await this.applicationsService.saveScreen(screenDto, user)
   }
 
   @ApiOperation({ summary: 'Update application dependencies' })

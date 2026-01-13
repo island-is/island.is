@@ -31,7 +31,7 @@ export class SubmitScreenDto {
   @ApiPropertyOptional({ type: Boolean })
   increment?: boolean
 
-  @ValidateNested()
+  @ValidateNested({ each: true })
   @Type(() => SectionDto)
   @IsArray()
   @IsOptional()

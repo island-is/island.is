@@ -43,7 +43,7 @@ export class SectionDto {
   isCompleted!: boolean
 
   @ApiPropertyOptional({ type: [ScreenDto] })
-  @ValidateNested()
+  @ValidateNested({ each: true })
   @Type(() => ScreenDto)
   @IsOptional()
   screens?: ScreenDto[]

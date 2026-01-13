@@ -2,6 +2,7 @@ import {
   ConflictException,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Sequelize } from 'sequelize-typescript'
@@ -575,6 +576,15 @@ export class ApplicationsService {
     return false
   }
 
+  private async authenticateUser(
+    user: User,
+    application: Application,
+  ): Promise<boolean> {
+    if (!user) return false
+    const loginTypes = await this.getLoginTypes(user)
+    return !this.doesUserMatchApplication(application, user, loginTypes)
+  }
+
   private async getApplicationsByUser(
     applications: Application[],
     user: User,
@@ -727,11 +737,16 @@ export class ApplicationsService {
     return form
   }
 
-  async saveScreen(submitScreenDto: SubmitScreenDto): Promise<void> {
-    const applicationId = submitScreenDto.applicationId
-    const currentScreenId = submitScreenDto.screenId || ''
-    const currentSectionId = submitScreenDto.sectionId || ''
-    const sections = submitScreenDto.sections
+  async saveScreen(
+    submitScreenDto: SubmitScreenDto,
+    user: User,
+  ): Promise<void> {
+    const {
+      applicationId,
+      screenId: currentScreenId = '',
+      sectionId: currentSectionId = '',
+      sections,
+    } = submitScreenDto
     const currentSection = this.getCurrentSection(sections, currentSectionId)
     const currentScreen = this.getCurrentScreen(currentSection, currentScreenId)
 
@@ -740,6 +755,12 @@ export class ApplicationsService {
     if (!application) {
       throw new NotFoundException(
         `Application with id '${applicationId}' not found`,
+      )
+    }
+
+    if (!(await this.authenticateUser(user, application))) {
+      throw new UnauthorizedException(
+        `User is not authorized to access application with id '${applicationId}'`,
       )
     }
 
@@ -794,7 +815,7 @@ export class ApplicationsService {
             completedArray = completedArray.filter(
               (id) => id !== previousSection.id,
             )
-            draftFinishedSteps = draftFinishedSteps - 1
+            draftFinishedSteps = Math.max(0, draftFinishedSteps - 1)
           }
           if (this.doesSectionHaveScreen(previousSection)) {
             const lastScreenOfPreviousSection =
@@ -888,11 +909,19 @@ export class ApplicationsService {
       throw new NotFoundException(`Application with id '${id}' not found`)
     }
 
-    await this.valueModel.destroy({
-      where: { applicationId: id },
-    })
+    await this.sequelize.transaction(async (transaction) => {
+      await this.applicationEventModel.destroy({
+        where: { applicationId: id },
+        transaction,
+      })
 
-    await application.destroy()
+      await this.valueModel.destroy({
+        where: { applicationId: id },
+        transaction,
+      })
+
+      await application.destroy({ transaction })
+    })
   }
 
   private doesSectionHaveScreen(sectionDto: SectionDto): boolean {
