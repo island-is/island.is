@@ -4,7 +4,7 @@ info:
   version: 2.0.0
   description: API for accessing court verdicts and related data
 servers:
-  - url: https://dom-haestirettur.eu.ngrok.io
+  - url: https://umsysla.haestirettur.is
     description: Development server
 
 components:

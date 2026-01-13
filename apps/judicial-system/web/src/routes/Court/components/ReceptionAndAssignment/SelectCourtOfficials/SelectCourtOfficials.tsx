@@ -1,7 +1,7 @@
 import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Box, Select, Tooltip } from '@island.is/island-ui/core'
+import { Select, Tooltip } from '@island.is/island-ui/core'
 import {
   BlueBox,
   FormContext,

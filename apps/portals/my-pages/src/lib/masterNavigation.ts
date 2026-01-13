@@ -6,7 +6,7 @@ import { applicationsNavigation } from '@island.is/portals/my-pages/applications
 import { assetsNavigation } from '@island.is/portals/my-pages/assets'
 import { educationNavigation } from '@island.is/portals/my-pages/education'
 import {
-  companyNavigation,
+  companyInformationNavigation,
   informationNavigation,
 } from '@island.is/portals/my-pages/information'
 import { licenseNavigation } from '@island.is/portals/my-pages/licenses'
@@ -50,9 +50,9 @@ export const MAIN_NAVIGATION: PortalNavigationItem = {
         restrictionsNavigation,
       ],
     },
-    companyNavigation,
     companySignatureCollectionNavigation,
     informationNavigation,
+    companyInformationNavigation,
     socialInsuranceMaintenanceNavigation,
     assetsNavigation,
     financeNavigation,

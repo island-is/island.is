@@ -10,8 +10,8 @@ import {
   DialogPrompt,
   Divider,
   DropdownMenu,
-  Icon,
   GridRow as Row,
+  Stack,
   Text,
 } from '@island.is/island-ui/core'
 import { Dispatch, SetStateAction, useMemo, useState } from 'react'
@@ -19,7 +19,6 @@ import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 import { FormSystemPaths } from '../../../../lib/paths'
 import { StatusTag } from '../../../StatusTag/StatusTag'
-import { TranslationTag } from '../../../TranslationTag/TranslationTag'
 
 interface Props {
   id?: string | null
@@ -33,6 +32,7 @@ interface Props {
   beenPublished?: boolean
   setFormsState: Dispatch<SetStateAction<FormSystemForm[]>>
   status?: string
+  url?: string
 }
 
 const PATH =
@@ -54,16 +54,18 @@ export const TableRow = ({
   id,
   name,
   lastModified,
-  translated,
   setFormsState,
   slug,
   status,
+  url,
 }: Props) => {
   const [isOpen, setIsOpen] = useState(false)
   const navigate = useNavigate()
   const { formatMessage, formatDate } = useIntl()
   const [updateFormStatus] = useMutation(UPDATE_FORM_STATUS)
   const [copyForm] = useMutation(COPY_FORM)
+
+  const handleToggle = () => setIsOpen((prev) => !prev)
 
   const dropdownItems = useMemo(() => {
     const copy = {
@@ -148,11 +150,22 @@ export const TableRow = ({
           })
           setFormsState((prevForms) => {
             const returnedForm = data.updateFormSystemFormStatus.form
+            const publishedSlug = returnedForm?.slug?.replace(
+              /-archived-\d+$/,
+              '',
+            )
 
             return prevForms
               .map((form) =>
                 form.id === id
-                  ? { ...form, status: FormStatus.PUBLISHED }
+                  ? {
+                      ...form,
+                      status: FormStatus.PUBLISHED,
+                      slug:
+                        slug === publishedSlug + '-i-breytingu'
+                          ? publishedSlug
+                          : slug,
+                    }
                   : form,
               )
               .filter((form) => form.id !== returnedForm.id)
@@ -229,7 +242,7 @@ export const TableRow = ({
               setFormsState((prevForms) => {
                 const filtered = prevForms.filter((form) => form.id !== id)
                 const returnedForm = data.updateFormSystemFormStatus.form
-                return returnedForm ? [...filtered, returnedForm] : filtered
+                return returnedForm ? [returnedForm, ...filtered] : filtered
               })
             } catch (error) {
               console.error('Error deleting form:', error)
@@ -268,30 +281,34 @@ export const TableRow = ({
   return (
     <Box
       paddingTop={2}
-      paddingBottom={1}
-      onClick={() => setIsOpen(!isOpen)}
-      style={{ cursor: '' }}
+      onClick={handleToggle}
+      role="button"
+      aria-expanded={isOpen}
+      tabIndex={0}
+      style={{
+        cursor: 'pointer',
+        border: isOpen ? '1px solid #E5E7EB' : 'none',
+        borderRadius: isOpen ? '1px' : 'none',
+      }}
     >
       <Row key={id}>
-        <Column span="5/12">
+        <Column span="7/12">
           <ColumnText text={name ? name : ''} />
         </Column>
         <Column span="2/12">
-          <ColumnText
-            text={formatDate(lastModified ? lastModified : new Date(), {
-              day: 'numeric',
-              month: 'numeric',
-              year: 'numeric',
-            })}
-          />
-        </Column>
-        <Column span="1/12">
-          <Box display="flex">
-            <TranslationTag translated={translated ? translated : false} />
+          <Box display="flex" justifyContent="flexEnd">
+            <Text variant="medium">
+              {formatDate(lastModified ? lastModified : new Date(), {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+              })}
+            </Text>
           </Box>
         </Column>
+
         <Column span="2/12">
-          <Box display="flex">
+          <Box display="flex" justifyContent="center">
             <StatusTag status={status ?? ''} />
           </Box>
         </Column>
@@ -300,27 +317,68 @@ export const TableRow = ({
           <Box display="flex" justifyContent="flexEnd" alignItems="center">
             {(status === FormStatus.IN_DEVELOPMENT ||
               status === FormStatus.PUBLISHED_BEING_CHANGED) && (
-              <Box marginRight={1} onClick={goToForm} cursor="pointer">
-                <Icon icon="pencil" color="blue400" type="filled" />
-              </Box>
-            )}
-            <DropdownMenu
-              menuLabel={`${formatMessage(m.actions)} ${name}`}
-              disclosure={
+              <Box
+                onClick={(e) => {
+                  e.stopPropagation()
+                }}
+              >
                 <Button
-                  icon="ellipsisVertical"
+                  icon="pencil"
                   circle
                   colorScheme="negative"
-                  title={formatMessage(m.actions)}
                   inline
-                  aria-label={`Aðgerðir`}
+                  onClick={goToForm}
                 />
-              }
-              items={dropdownItems}
-            />
+              </Box>
+            )}
+            <Box marginRight={2} onClick={(e) => e.stopPropagation()}>
+              <DropdownMenu
+                menuLabel={`${formatMessage(m.actions)} ${name}`}
+                disclosure={
+                  <Button
+                    icon="ellipsisVertical"
+                    circle
+                    colorScheme="negative"
+                    title={formatMessage(m.actions)}
+                    inline
+                    aria-label={`Aðgerðir`}
+                  />
+                }
+                items={dropdownItems}
+              />
+            </Box>
           </Box>
         </Column>
       </Row>
+
+      {isOpen && (
+        <Box paddingTop={1} paddingBottom={2} paddingLeft={1}>
+          <Stack space={1}>
+            <Row>
+              <Column span="12/12">
+                <Text variant="medium">
+                  <strong>Slug:</strong> {slug}
+                </Text>
+              </Column>
+            </Row>
+            <Row>
+              <Column span="12/12">
+                <Text variant="medium">
+                  <strong>Url:</strong> {url}
+                </Text>
+              </Column>
+            </Row>
+            <Row>
+              <Column span="12/12">
+                <Text variant="medium">
+                  <strong>Id:</strong> {id}
+                </Text>
+              </Column>
+            </Row>
+          </Stack>
+        </Box>
+      )}
+
       <Divider />
     </Box>
   )

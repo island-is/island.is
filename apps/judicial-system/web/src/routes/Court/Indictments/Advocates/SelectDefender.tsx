@@ -201,6 +201,7 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
               defenderNationalId,
               defenderEmail,
               defenderPhoneNumber,
+              caseFilesSharedWithDefender: Boolean(defenderNationalId),
             })
           }
           onEmailChange={(defenderEmail: string | null) =>
@@ -233,7 +234,6 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
             workingCase.state === CaseState.CORRECTING
           }
         />
-
         <Checkbox
           name={`shareFilesWithDefender-${defendant.id}`}
           label={formatMessage(strings.shareFilesWithDefender)}
