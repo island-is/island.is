@@ -315,12 +315,17 @@ export class SubpoenaService {
     })
   }
 
-  async deliverSubpoenaToNationalCommissionersOffice(
-    theCase: Case,
-    defendant: Defendant,
-    subpoena: Subpoena,
-    user: TUser,
-  ): Promise<DeliverResponse> {
+  async deliverSubpoenaToNationalCommissionersOffice({
+    theCase,
+    defendant,
+    subpoena,
+    user,
+  }: {
+    theCase: Case
+    defendant: Defendant
+    subpoena: Subpoena
+    user: TUser
+  }): Promise<DeliverResponse> {
     try {
       const civilClaimPdfs: string[] = []
       const civilClaimFiles =
