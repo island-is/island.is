@@ -34,7 +34,7 @@ export const participantSection = buildSection({
                 'userProfile.data.mobilePhoneNumber',
               ) ?? ''
 
-            if (!name || !nationalId || !email || !phone) return []
+            if (!name || !nationalId || !email || !phone) return undefined
 
             return [
               {
