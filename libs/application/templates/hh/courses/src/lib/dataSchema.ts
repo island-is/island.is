@@ -53,6 +53,18 @@ const nationalIdWithNameSchema = z.object({
 
 const participantSchema = z.object({
   nationalIdWithName: nationalIdWithNameSchema,
+  healthcenter: z.string().optional(),
+})
+
+const userInformationSchema = z.object({
+  name: z.string().min(1),
+  nationalId: z.string().min(1),
+  email: z.string().email(),
+  phone: z
+    .string()
+    .min(1)
+    .refine((v) => isValidPhoneNumber(v)),
+  healthcenter: z.string().min(1),
 })
 
 export const dataSchema = z.object({
@@ -61,6 +73,7 @@ export const dataSchema = z.object({
   courseSelect: z.string().min(1),
   dateSelect: z.string().min(1),
   payment: paymentSchema,
+  userInformation: userInformationSchema,
 })
 
 export type ApplicationAnswers = z.TypeOf<typeof dataSchema>

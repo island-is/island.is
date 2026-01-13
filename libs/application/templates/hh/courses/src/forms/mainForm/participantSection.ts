@@ -17,24 +17,31 @@ export const participantSection = buildSection({
       children: [
         buildTableRepeaterField({
           id: 'participantList',
-          defaultValue: ({ externalData }: Application) => {
-            const name =
-              getValueViaPath(externalData, 'nationalRegistry.data.fullName') ??
-              ''
-            const nationalId =
-              getValueViaPath(
-                externalData,
-                'nationalRegistry.data.nationalId',
-              ) ?? ''
-            const email =
-              getValueViaPath(externalData, 'userProfile.data.email') ?? ''
-            const phone =
-              getValueViaPath(
-                externalData,
-                'userProfile.data.mobilePhoneNumber',
-              ) ?? ''
+          defaultValue: (application: Application) => {
+            const name = getValueViaPath(
+              application.externalData,
+              'nationalRegistry.data.fullName',
+            )
+            const nationalId = getValueViaPath(
+              application.externalData,
+              'nationalRegistry.data.nationalId',
+            )
+            const email = getValueViaPath(
+              application.externalData,
+              'userProfile.data.email',
+            )
+            const phone = getValueViaPath(
+              application.externalData,
+              'userProfile.data.mobilePhoneNumber',
+            )
+            const healthcenter = getValueViaPath(
+              application.externalData,
+              'currentHealthcenter.data.healthCenter.name',
+            )
 
-            if (!name || !nationalId || !email || !phone) return undefined
+            if (!name || !nationalId || !email || !phone || !healthcenter) {
+              return undefined
+            }
 
             return [
               {
@@ -44,6 +51,7 @@ export const participantSection = buildSection({
                   email,
                   phone,
                 },
+                healthcenter,
               },
             ]
           },

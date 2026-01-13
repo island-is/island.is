@@ -17,6 +17,13 @@ export type ApplicationAnswers = {
   participantList: Array<{
     nationalIdWithName: NationalIdWithName
   }>
+  userInformation: {
+    name: string
+    nationalId: string
+    email: string
+    phone: string
+    healthcenter: string
+  }
   courseSelect: string
   dateSelect: string
 }
