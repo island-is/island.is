@@ -11,6 +11,7 @@ export type ZendeskConfiguration = {
   {
     [WebChatType.Zendesk]?: {
       snippetUrl?: string
+      chatBubbleVariant?: 'default' | 'circle'
     }
   }
 >
