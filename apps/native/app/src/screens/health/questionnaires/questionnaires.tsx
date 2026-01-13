@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react'
 import { useIntl } from 'react-intl'
-import { ScrollView, View } from 'react-native'
+import { RefreshControl, SafeAreaView, ScrollView } from 'react-native'
 import {
   Navigation,
   NavigationFunctionComponent,
@@ -9,68 +9,34 @@ import {
 import styled, { useTheme } from 'styled-components/native'
 
 import externalLinkIcon from '../../../assets/icons/external-link.png'
+import {
+  QuestionnaireQuestionnairesOrganizationEnum,
+  QuestionnaireQuestionnairesStatusEnum,
+  useGetQuestionnairesQuery,
+} from '../../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../../hooks/create-navigation-option-hooks'
-import { QuestionnaireCard } from '../../../ui'
+import { useConnectivityIndicator } from '../../../hooks/use-connectivity-indicator'
+import { useLocale } from '../../../hooks/use-locale'
+import {
+  Problem,
+  QuestionnaireCard,
+  type QuestionnaireCardAction,
+  Skeleton,
+} from '../../../ui'
 import { ComponentRegistry } from '../../../utils/component-registry'
+import { createSkeletonArr } from '../../../utils/create-skeleton-arr'
+import type { QuestionnaireDetailParams } from './questionnaire-detail'
+import {
+  getQuestionnaireOrganizationLabelId,
+  getQuestionnaireStatusLabelId,
+} from './questionnaire-utils'
 
-type QuestionnaireStatus = 'answered' | 'unanswered'
-
-type QuestionnaireItem = {
-  id: string
-  organization: string
-  title: string
-  status: QuestionnaireStatus
-  sentDate: string
-  treatment?: string
-  institution?: string
-  sentBy?: string
-  validTo?: string
-  answerUrl?: string
-}
-
-const mockQuestionnaires: QuestionnaireItem[] = [
-  {
-    id: 'dt-1',
-    organization: 'Landspítalinn',
-    title: 'DT - Mat á vanlíðan',
-    status: 'unanswered',
-    sentDate: '2022-06-23T00:00:00.000Z',
-    treatment: 'Krabbameinsmeðferð',
-    institution: 'Krabbameinsdeild, Landspítalinn',
-    sentBy: 'Kristín Skúladóttir, Hjúkrunarfræðingur',
-    validTo: '2026-04-01T00:00:00.000Z',
-    answerUrl: 'https://island.is/minarsidur/heilsa/spurningalistar/dt-1',
-  },
-  {
-    id: 'esas-1',
-    organization: 'Landspítalinn',
-    title: 'ESAS - Mat á einkennum',
-    status: 'answered',
-    sentDate: '2022-06-23T00:00:00.000Z',
-    treatment: 'Eftirlit',
-    institution: 'Göngudeild, Landspítalinn',
-    sentBy: 'Starfsmaður Landspítalans',
-    validTo: '2026-04-01T00:00:00.000Z',
-    answerUrl: 'https://island.is/minarsidur/heilsa/spurningalistar/esas-1',
-  },
-  {
-    id: 'heilsugaesla-1',
-    organization: 'Heilsugæslan',
-    title: 'Spurningalisti þunglyndi',
-    status: 'unanswered',
-    sentDate: '2022-06-23T00:00:00.000Z',
-    treatment: 'Heilsugæsla',
-    institution: 'Heilsugæsla höfuðborgarsvæðisins',
-    sentBy: 'Starfsmaður Heilsugæslunnar',
-    validTo: '2026-04-01T00:00:00.000Z',
-    answerUrl:
-      'https://island.is/minarsidur/heilsa/spurningalistar/heilsugaesla-1',
-  },
-]
-
-const Host = styled(View)`
+const Host = styled(SafeAreaView)`
   flex: 1;
-  margin-horizontal: ${({ theme }) => theme.spacing[2]}px;
+`
+
+const ScrolledView = styled(ScrollView)`
+  padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
 `
 
 const { getNavigationOptions, useNavigationOptions } =
@@ -89,8 +55,77 @@ export const QuestionnairesScreen: NavigationFunctionComponent = ({
 
   const theme = useTheme()
   const intl = useIntl()
+  const locale = useLocale()
 
-  const openDetail = useCallback((questionnaire: QuestionnaireItem) => {
+  const getActionList = useCallback(
+    (
+      status: QuestionnaireQuestionnairesStatusEnum | null | undefined,
+      onOpen: () => void,
+    ): QuestionnaireCardAction[] => {
+      if (!status) {
+        return []
+      }
+
+      const baseAction = {
+        icon: externalLinkIcon,
+        onPress: onOpen,
+      }
+
+      switch (status) {
+        case QuestionnaireQuestionnairesStatusEnum.NotAnswered:
+          return [
+            {
+              ...baseAction,
+              text: intl.formatMessage({
+                id: 'health.questionnaires.action.answer',
+              }),
+            },
+          ]
+        case QuestionnaireQuestionnairesStatusEnum.Answered:
+          return [
+            {
+              ...baseAction,
+              text: intl.formatMessage({
+                id: 'health.questionnaires.action.view-answer',
+              }),
+            },
+          ]
+        case QuestionnaireQuestionnairesStatusEnum.Draft:
+          return [
+            {
+              ...baseAction,
+              text: intl.formatMessage({
+                id: 'health.questionnaires.action.continue-draft',
+              }),
+            },
+            {
+              ...baseAction,
+              text: intl.formatMessage({
+                id: 'health.questionnaires.action.view-answer',
+              }),
+            },
+          ]
+        default:
+          return []
+      }
+    },
+    [intl],
+  )
+
+  const { data, loading, error, refetch } = useGetQuestionnairesQuery({
+    variables: {
+      locale,
+    },
+  })
+
+  const isInitialLoading = loading && !data
+
+  useConnectivityIndicator({
+    componentId,
+    queryResult: [{ data, loading }],
+  })
+
+  const openDetail = useCallback((params: QuestionnaireDetailParams) => {
     Navigation.showModal({
       stack: {
         options: {
@@ -100,7 +135,7 @@ export const QuestionnairesScreen: NavigationFunctionComponent = ({
           {
             component: {
               name: ComponentRegistry.QuestionnaireDetailScreen,
-              passProps: { questionnaire },
+              passProps: params,
             },
           },
         ],
@@ -108,45 +143,74 @@ export const QuestionnairesScreen: NavigationFunctionComponent = ({
     })
   }, [])
 
+  const questionnaires = data?.questionnairesList?.questionnaires ?? []
   return (
     <Host>
-      <ScrollView
+      <ScrolledView
+        refreshControl={
+          <RefreshControl refreshing={loading} onRefresh={refetch} />
+        }
         contentContainerStyle={{
           paddingTop: theme.spacing[3],
           paddingBottom: theme.spacing[4],
           gap: theme.spacing[2],
         }}
       >
-        {mockQuestionnaires.map((item) => (
-          <QuestionnaireCard
-            key={item.id}
-            title={item.title}
-            organization={item.organization}
-            date={new Date(item.sentDate)}
-            status={item.status}
-            statusLabel={intl.formatMessage({
-              id:
-                item.status === 'answered'
-                  ? 'health.questionnaires.status.answered'
-                  : 'health.questionnaires.status.unanswered',
-            })}
-            onPress={() => openDetail(item)}
-            actionList={
-              item.status === 'unanswered'
-                ? [
-                    {
-                      text: intl.formatMessage({
-                        id: 'health.questionnaires.action.answer',
-                      }),
-                      icon: externalLinkIcon,
-                      onPress: () => openDetail(item),
-                    },
-                  ]
-                : []
-            }
-          />
-        ))}
-      </ScrollView>
+        {isInitialLoading ? (
+          <>
+            {createSkeletonArr(4).map((item) => (
+              <Skeleton
+                key={item.id}
+                active
+                backgroundColor={{
+                  dark: theme.shades.dark.shade300,
+                  light: theme.color.blue100,
+                }}
+                overlayColor={{
+                  dark: theme.shades.dark.shade200,
+                  light: theme.color.blue200,
+                }}
+                overlayOpacity={1}
+                height={112}
+                style={{
+                  borderRadius: 8,
+                }}
+              />
+            ))}
+          </>
+        ) : null}
+
+        {!loading && error && questionnaires.length === 0 ? (
+          <Problem error={error} withContainer />
+        ) : null}
+
+        {!loading && !error && questionnaires.length === 0 ? (
+          <Problem type="no_data" withContainer />
+        ) : null}
+
+        {questionnaires.map((item) => {
+          const detailParams: QuestionnaireDetailParams = {
+            id: item.id,
+            organization: item.organization ?? undefined,
+          }
+          const open = () => openDetail(detailParams)
+          return (
+            <QuestionnaireCard
+              key={item.id}
+              title={item.title}
+              organization={intl.formatMessage({
+                id: getQuestionnaireOrganizationLabelId(item.organization),
+              })}
+              date={new Date(item.sentDate)}
+              status={
+                item.status ?? QuestionnaireQuestionnairesStatusEnum.NotAnswered
+              }
+              onPress={open}
+              actionList={getActionList(item.status, open)}
+            />
+          )
+        })}
+      </ScrolledView>
     </Host>
   )
 }

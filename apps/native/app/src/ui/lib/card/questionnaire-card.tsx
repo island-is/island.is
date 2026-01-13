@@ -1,5 +1,5 @@
 import React from 'react'
-import { FormattedDate } from 'react-intl'
+import { FormattedDate, useIntl } from 'react-intl'
 import { Image, ImageSourcePropType, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -10,8 +10,8 @@ import { dynamicColor } from '../../utils/dynamic-color'
 import { Typography } from '../typography/typography'
 import { Tag } from '../tag/tag'
 import { Badge } from '../badge/badge'
-
-export type QuestionnaireStatus = 'answered' | 'unanswered'
+import { QuestionnaireQuestionnairesStatusEnum } from '../../../graphql/types/schema'
+import { getQuestionnaireStatusLabelId } from '../../../screens/health/questionnaires/questionnaire-utils'
 
 export type QuestionnaireCardAction = {
   text: string
@@ -23,8 +23,7 @@ interface QuestionnaireCardProps {
   title: string
   organization: string
   date: Date
-  status: QuestionnaireStatus
-  statusLabel: string
+  status: QuestionnaireQuestionnairesStatusEnum
   onPress?(): void
   actionList?: QuestionnaireCardAction[]
   style?: ViewStyle
@@ -53,14 +52,34 @@ const TopRow = styled.View`
 `
 
 const TitleText = styled(Typography)`
-  flex: 1;
+  flex-shrink: 1;
+  flex-wrap: wrap;
 `
 
 const DateRow = styled.View`
-  flex: 1;
   flex-direction: row;
   align-items: center;
   gap: ${({ theme }) => theme.spacing.smallGutter}px;
+`
+
+const ContentRow = styled.View`
+  flex: 1;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+`
+
+const LeftContent = styled.View`
+  flex: 1;
+  flex-shrink: 1;
+  min-width: 0px;
+`
+
+const RightContent = styled.View`
+  flex-direction: row;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing.smallGutter}px;
+  flex-shrink: 0;
 `
 
 const ActionsContainer = styled.View`
@@ -91,18 +110,31 @@ const ActionContent = styled.View`
   column-gap: ${({ theme }) => theme.spacing[1]}px;
 `
 
+const calculateBadgeVariant = (
+  status: QuestionnaireQuestionnairesStatusEnum,
+) => {
+  switch (status) {
+    case QuestionnaireQuestionnairesStatusEnum.NotAnswered:
+    case QuestionnaireQuestionnairesStatusEnum.Draft:
+      return 'purple'
+    case QuestionnaireQuestionnairesStatusEnum.Expired:
+      return 'red'
+    default:
+      return 'blue'
+  }
+}
+
 export function QuestionnaireCard({
   title,
   organization,
   date,
   status,
-  statusLabel,
   onPress,
   actionList = [],
   style,
 }: QuestionnaireCardProps) {
   const theme = useTheme()
-
+  const intl = useIntl()
   return (
     <Host style={style}>
       <PressableHighlight
@@ -120,15 +152,8 @@ export function QuestionnaireCard({
             </Typography>
           </TopRow>
 
-          <View
-            style={{
-              flex: 1,
-              justifyContent: 'space-between',
-              flexDirection: 'row',
-              alignItems: 'center',
-            }}
-          >
-            <View style={{ gap: theme.spacing[1] }}>
+          <ContentRow>
+            <LeftContent style={{ gap: theme.spacing[1] }}>
               <TitleText variant="heading4">{title}</TitleText>
               <DateRow>
                 <Image
@@ -143,21 +168,22 @@ export function QuestionnaireCard({
                   <FormattedDate value={date} />
                 </Typography>
               </DateRow>
-            </View>
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                gap: theme.spacing[1],
-              }}
-            >
-              <Badge title={statusLabel} outlined={true} variant={'blue'} />
+            </LeftContent>
+            <RightContent>
+              <Badge
+                title={intl.formatMessage({
+                  id: getQuestionnaireStatusLabelId(status),
+                })}
+                outlined={false}
+                fill={true}
+                variant={calculateBadgeVariant(status)}
+              />
               <Image
                 source={chevronForward}
                 style={{ width: 24, height: 24 }}
               />
-            </View>
-          </View>
+            </RightContent>
+          </ContentRow>
         </PressableContent>
       </PressableHighlight>
 
