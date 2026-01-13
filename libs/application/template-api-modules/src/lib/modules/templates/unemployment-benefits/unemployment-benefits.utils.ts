@@ -4,6 +4,7 @@ import { FileResponse } from './types'
 import { getValueViaPath, NO, YES } from '@island.is/application/core'
 import {
   ApplicantInAnswers,
+  CapitalIncomeInAnswers,
   CurrentEmploymentInAnswers,
   CurrentSituationInAnswers,
   EducationInAnswers,
@@ -789,7 +790,7 @@ export const getPensionAndOtherPayments = (
               return {
                 incomeTypeId: payment.subType,
                 estimatedIncome: parseInt(payment.paymentAmount || '1'),
-                privatePensionFundId: payment.pensionFund,
+                privatePensionFundId: payment.privatePensionFund,
               }
             }),
           sicknessBenefitPayments: otherBenefits.payments
@@ -853,10 +854,25 @@ export const getPensionAndOtherPayments = (
         })
       : []
 
+  const capitalIncome = getValueViaPath<CapitalIncomeInAnswers>(
+    answers,
+    'capitalIncome',
+  )
+  const capitalGains =
+    capitalIncome?.otherIncome === YES
+      ? {
+          incomeTypeId: PaymentTypeIds.CAPITAL_GAINT,
+          estimatedIncome: capitalIncome?.capitalIncomeAmount
+            ?.map((x) => parseInt(x?.amount || '0'))
+            .reduce((a, b) => a + b, 0),
+        }
+      : null
+
   return {
     ...otherBenefitsFromAnswers,
-    partTimeJobPayments: partTimeJobPayments,
-    irregularJobPayments: irregularJobPayments,
+    partTimeJobPayments,
+    irregularJobPayments,
+    capitalGains,
   }
 }
 
