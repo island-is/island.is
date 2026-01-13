@@ -145,28 +145,26 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
   }
 
   return (
-    <Box component="section" marginBottom={5}>
+    <Box component="section">
       <BlueBox className={grid({ gap: 2 })}>
-        <>
-          <Box display="flex" justifyContent="spaceBetween">
-            <Text variant="h4">
-              {`${capitalize(
-                formatMessage(core.indictmentDefendant, { gender }),
-              )} ${defendant.name}`}
-            </Text>
-            {defendant.isDefenderChoiceConfirmed && (
-              <IconButton
-                icon="pencil"
-                colorScheme="blue"
-                disabled={workingCase.state === CaseState.CORRECTING}
-                onClick={() => setDisplayModal(true)}
-              />
-            )}
-          </Box>
-          {defendant.requestedDefenderChoice && (
-            <Text variant="small">{`Ósk ákærða um verjanda: ${getRequestedDefenderChoice()}`}</Text>
+        <Box display="flex" justifyContent="spaceBetween">
+          <Text variant="h4">
+            {`${capitalize(
+              formatMessage(core.indictmentDefendant, { gender }),
+            )} ${defendant.name}`}
+          </Text>
+          {defendant.isDefenderChoiceConfirmed && (
+            <IconButton
+              icon="pencil"
+              colorScheme="blue"
+              disabled={workingCase.state === CaseState.CORRECTING}
+              onClick={() => setDisplayModal(true)}
+            />
           )}
-        </>
+        </Box>
+        {defendant.requestedDefenderChoice && (
+          <Text variant="small">{`Ósk ákærða um verjanda: ${getRequestedDefenderChoice()}`}</Text>
+        )}
         <Checkbox
           dataTestId={`defendantWaivesRightToCounsel-${defendant.id}`}
           name={`defendantWaivesRightToCounsel-${defendant.id}`}
