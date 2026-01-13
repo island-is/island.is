@@ -1,4 +1,4 @@
-import { FC, FocusEvent, useContext, useEffect, useState } from 'react'
+import { FC, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
@@ -26,7 +26,11 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  useCase,
+  useDebouncedInput,
+} from '@island.is/judicial-system-web/src/utils/hooks'
+import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { isRegistrationStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { PoliceCaseNumbers, usePoliceCaseNumbers } from '../../components'
@@ -43,6 +47,7 @@ const Registration: FC = () => {
     useContext(FormContext)
 
   const { setAndSendCaseToServer, createCase, isCreatingCase } = useCase()
+  const descriptionInput = useDebouncedInput('description')
 
   const { clientPoliceNumbers, setClientPoliceNumbers } =
     usePoliceCaseNumbers(workingCase)
@@ -58,21 +63,6 @@ const Registration: FC = () => {
       setCaseType(workingCase.type)
     }
   }, [workingCase.id, workingCase.type])
-
-  const handleDescriptionBlur = (
-    evt: FocusEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    setAndSendCaseToServer(
-      [
-        {
-          description: evt.target.value.trim(),
-          force: true,
-        },
-      ],
-      workingCase,
-      setWorkingCase,
-    )
-  }
 
   const handleNavigationTo = async (destination: string) => {
     if (!workingCase.id) {
@@ -100,8 +90,8 @@ const Registration: FC = () => {
       <PageHeader title="Efni kröfu - Réttarvörslugátt" />
       <FormContentContainer>
         <PageTitle>Rannsóknarheimild</PageTitle>
-        <Box marginBottom={10}>
-          <Box component="section" marginBottom={5}>
+        <div className={grid({ gap: 5, marginBottom: 10 })}>
+          <Box component="section">
             <PoliceCaseNumbers
               workingCase={workingCase}
               setWorkingCase={setWorkingCase}
@@ -109,70 +99,63 @@ const Registration: FC = () => {
               setClientPoliceNumbers={setClientPoliceNumbers}
             />
           </Box>
-          <Box component="section" marginBottom={5}>
+          <Box component="section">
             <SectionHeading title="Efni kröfu" />
-            <BlueBox>
-              <Box marginBottom={3}>
-                <Select
-                  name="type"
-                  options={InvestigationCaseTypes}
-                  label="Tegund kröfu"
-                  placeholder="Veldu tegund kröfu"
-                  onChange={(selectedOption) => {
-                    const type = selectedOption?.value
+            <BlueBox className={grid({ gap: 2 })}>
+              <Select
+                name="type"
+                options={InvestigationCaseTypes}
+                label="Tegund kröfu"
+                placeholder="Veldu tegund kröfu"
+                onChange={(selectedOption) => {
+                  const type = selectedOption?.value
 
-                    setCaseType(type)
-                    setAndSendCaseToServer(
-                      [
-                        {
-                          type,
-                          force: true,
-                        },
-                      ],
-                      workingCase,
-                      setWorkingCase,
-                    )
-                  }}
-                  value={
-                    workingCase.id
-                      ? {
-                          value: workingCase.type,
-                          label: capitalize(formatCaseType(workingCase.type)),
-                        }
-                      : undefined
-                  }
-                  formatGroupLabel={() => (
-                    <div
-                      style={{
-                        width: 'calc(100% + 24px)',
-                        height: '3px',
-                        marginLeft: '-12px',
-                        backgroundColor: theme.color.dark300,
-                      }}
-                    />
-                  )}
-                  required
-                />
-              </Box>
+                  setCaseType(type)
+                  setAndSendCaseToServer(
+                    [
+                      {
+                        type,
+                        force: true,
+                      },
+                    ],
+                    workingCase,
+                    setWorkingCase,
+                  )
+                }}
+                value={
+                  workingCase.id
+                    ? {
+                        value: workingCase.type,
+                        label: capitalize(formatCaseType(workingCase.type)),
+                      }
+                    : undefined
+                }
+                formatGroupLabel={() => (
+                  <div
+                    style={{
+                      width: 'calc(100% + 24px)',
+                      height: '3px',
+                      marginLeft: '-12px',
+                      backgroundColor: theme.color.dark300,
+                    }}
+                  />
+                )}
+                required
+              />
               <Input
                 data-testid="description"
                 name="description"
                 label="Efni kröfu"
                 placeholder="Sláðu inn stutta lýsingu á efni kröfu ef við á"
-                value={workingCase.description || ''}
+                value={descriptionInput.value}
+                onChange={(evt) => descriptionInput.onChange(evt.target.value)}
+                onBlur={(evt) => descriptionInput.onBlur(evt.target.value)}
                 autoComplete="off"
-                onChange={(evt) => {
-                  setWorkingCase((prevWorkingCase) => ({
-                    ...prevWorkingCase,
-                    description: evt.target.value,
-                  }))
-                }}
-                onBlur={handleDescriptionBlur}
                 maxLength={255}
               />
             </BlueBox>
           </Box>
-        </Box>
+        </div>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter

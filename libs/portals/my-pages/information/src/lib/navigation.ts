@@ -89,18 +89,6 @@ export const informationNavigation: PortalNavigationItem = {
               navHide: true,
               path: SignatureCollectionPaths.ViewParliamentaryList,
             },
-            {
-              name: m.signatureCollectionLists,
-              navHide: true,
-              path: SignatureCollectionPaths.CompanySignatureCollectionParliamentaryLists,
-              children: [
-                {
-                  name: m.viewSignatureList,
-                  navHide: true,
-                  path: SignatureCollectionPaths.CompanyViewParliamentaryList,
-                },
-              ],
-            },
           ],
         },
         // Presidential
@@ -141,12 +129,45 @@ export const informationNavigation: PortalNavigationItem = {
   ],
 }
 
-export const companyNavigation: PortalNavigationItem = {
-  name: m.companyTitle,
-  searchHide: true,
+export const companyInformationNavigation: PortalNavigationItem = {
+  name: m.companyInfo,
+  description: m.companyDescription,
+  searchTags: [],
   path: InformationPaths.Company,
   icon: {
     icon: 'business',
   },
-  description: m.companyDescription,
+  children: [
+    {
+      name: m.companyData,
+      description: m.companyIntro,
+      path: InformationPaths.Company,
+    },
+    {
+      name: m.companySettings,
+      path: InformationPaths.CompanySettings,
+    },
+    {
+      name: m.notifications,
+      path: InformationPaths.CompanyNotifications,
+    },
+    {
+      name: m.lists,
+      path: InformationPaths.CompanyLists,
+      children: [
+        {
+          name: m.signatureCollectionLists,
+          navHide: true,
+          path: SignatureCollectionPaths.CompanySignatureCollectionParliamentaryLists,
+          children: [
+            {
+              name: m.viewSignatureList,
+              navHide: true,
+              path: SignatureCollectionPaths.CompanyViewParliamentaryList,
+            },
+          ],
+        },
+      ],
+    },
+  ],
 }
