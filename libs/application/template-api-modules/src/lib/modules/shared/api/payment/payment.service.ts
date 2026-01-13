@@ -102,7 +102,8 @@ export class PaymentService extends BaseTemplateApiService {
     params,
     currentUserLocale,
   }: TemplateApiModuleActionProps<CreateChargeParameters>) {
-    const { organizationId, chargeItems, extraData } = params ?? {}
+    const { organizationId, chargeItems, extraData, payerNationalId } =
+      params ?? {}
     const { shouldUseMockPayment } = application.answers
 
     if (shouldUseMockPayment && isRunningOnEnvironment('production')) {
@@ -164,6 +165,11 @@ export class PaymentService extends BaseTemplateApiService {
     const extraDataItems =
       typeof extraData === 'function' ? extraData(application) : extraData ?? []
 
+    const resolvedPayerNationalId =
+      typeof payerNationalId === 'function'
+        ? payerNationalId(application)
+        : payerNationalId
+
     const response = await this.paymentModelService.createCharge(
       auth,
       organizationId,
@@ -171,6 +177,7 @@ export class PaymentService extends BaseTemplateApiService {
       application.id,
       extraDataItems,
       currentUserLocale,
+      resolvedPayerNationalId,
     )
 
     if (!response?.paymentUrl) {
