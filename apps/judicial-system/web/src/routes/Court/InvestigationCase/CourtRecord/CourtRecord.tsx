@@ -2,15 +2,7 @@ import { FC, useCallback, useContext } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import router from 'next/router'
 
-import {
-  Box,
-  GridColumn,
-  GridContainer,
-  GridRow,
-  Input,
-  Text,
-  Tooltip,
-} from '@island.is/island-ui/core'
+import { Box, Input, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
   applyDativeCaseToCourtName,
@@ -35,6 +27,7 @@ import {
   PageLayout,
   PageTitle,
   PdfButton,
+  SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import {
   Case,
@@ -48,6 +41,7 @@ import {
   useDebouncedInput,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import {
   isCourtRecordStepValidIC,
   isNullOrUndefined,
@@ -290,9 +284,9 @@ const CourtRecord: FC = () => {
       <FormContentContainer>
         <PageTitle>{formatMessage(m.sections.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
-        <Box component="section" marginBottom={3}>
-          <BlueBox>
-            <Box marginBottom={3}>
+        <div className={grid({ gap: 5, marginBottom: 10 })}>
+          <Box component="section">
+            <BlueBox className={grid({ gap: 2 })}>
               <DateTime
                 name="courtStartDate"
                 datepickerLabel={formatMessage(
@@ -318,25 +312,27 @@ const CourtRecord: FC = () => {
                 blueBox={false}
                 required
               />
-            </Box>
-            <Input
-              data-testid="courtLocation"
-              name="courtLocation"
-              tooltip={formatMessage(m.sections.courtLocation.tooltip)}
-              label={formatMessage(m.sections.courtLocation.label)}
-              value={courtLocationInput.value || ''}
-              placeholder={formatMessage(m.sections.courtLocation.placeholder)}
-              onChange={(evt) => courtLocationInput.onChange(evt.target.value)}
-              onBlur={(evt) => courtLocationInput.onBlur(evt.target.value)}
-              errorMessage={courtLocationInput.errorMessage}
-              hasError={courtLocationInput.hasError}
-              autoComplete="off"
-              required
-            />
-          </BlueBox>
-        </Box>
-        <Box component="section" marginBottom={8}>
-          <Box marginBottom={3}>
+              <Input
+                data-testid="courtLocation"
+                name="courtLocation"
+                tooltip={formatMessage(m.sections.courtLocation.tooltip)}
+                label={formatMessage(m.sections.courtLocation.label)}
+                value={courtLocationInput.value || ''}
+                placeholder={formatMessage(
+                  m.sections.courtLocation.placeholder,
+                )}
+                onChange={(evt) =>
+                  courtLocationInput.onChange(evt.target.value)
+                }
+                onBlur={(evt) => courtLocationInput.onBlur(evt.target.value)}
+                errorMessage={courtLocationInput.errorMessage}
+                hasError={courtLocationInput.hasError}
+                autoComplete="off"
+                required
+              />
+            </BlueBox>
+          </Box>
+          <Box component="section">
             <HideableText
               text={formatMessage(closedCourt.text)}
               isHidden={workingCase.isClosedCourtHidden}
@@ -355,33 +351,29 @@ const CourtRecord: FC = () => {
               tooltip={formatMessage(closedCourt.tooltip)}
             />
           </Box>
-          <Input
-            data-testid="courtAttendees"
-            name="courtAttendees"
-            label="Mættir eru"
-            placeholder="Skrifa hér..."
-            value={courtAttendeesInput.value ?? ''}
-            onChange={(evt) => courtAttendeesInput.onChange(evt.target.value)}
-            textarea
-            rows={7}
-          />
-        </Box>
-        <Box component="section" marginBottom={8}>
-          <CourtDocuments
-            workingCase={workingCase}
-            setWorkingCase={setWorkingCase}
-          />
-        </Box>
-        <Box component="section" marginBottom={8}>
-          <Box marginBottom={2}>
-            <Text as="h3" variant="h3">
-              {`${formatMessage(m.sections.sessionBookings.title)} `}
-              <Tooltip
-                text={formatMessage(m.sections.sessionBookings.tooltip)}
-              />
-            </Text>
+          <Box component="section">
+            <Input
+              data-testid="courtAttendees"
+              name="courtAttendees"
+              label="Mættir eru"
+              placeholder="Skrifa hér..."
+              value={courtAttendeesInput.value ?? ''}
+              onChange={(evt) => courtAttendeesInput.onChange(evt.target.value)}
+              textarea
+              rows={7}
+            />
           </Box>
-          <Box marginBottom={3}>
+          <Box component="section">
+            <CourtDocuments
+              workingCase={workingCase}
+              setWorkingCase={setWorkingCase}
+            />
+          </Box>
+          <Box component="section">
+            <SectionHeading
+              title={formatMessage(m.sections.sessionBookings.title)}
+              tooltip={formatMessage(m.sections.sessionBookings.tooltip)}
+            />
             <Input
               data-testid="sessionBookings"
               name="sessionBookings"
@@ -401,33 +393,25 @@ const CourtRecord: FC = () => {
               required={sessionBookingValidation.length > 0}
             />
           </Box>
-        </Box>
-        {workingCase.conclusion && (
-          <Box component="section" marginBottom={8}>
-            <Box marginBottom={2}>
-              <Text as="h3" variant="h3">
-                {formatMessage(m.sections.conclusion)}
-              </Text>
+          {workingCase.conclusion && (
+            <Box component="section">
+              <SectionHeading title={formatMessage(m.sections.conclusion)} />
+              <BlueBox>
+                <Text>{workingCase.conclusion}</Text>
+              </BlueBox>
             </Box>
-            <BlueBox>
-              <Text>{workingCase.conclusion}</Text>
-            </BlueBox>
+          )}
+          <Box component="section">
+            <AppealSections
+              workingCase={workingCase}
+              setWorkingCase={setWorkingCase}
+              onChange={handleEndOfSessionBookingsUpdate}
+            />
           </Box>
-        )}
-        <Box component="section" marginBottom={8}>
-          <AppealSections
-            workingCase={workingCase}
-            setWorkingCase={setWorkingCase}
-            onChange={handleEndOfSessionBookingsUpdate}
-          />
-        </Box>
-        <Box component="section" marginBottom={5}>
-          <Box marginBottom={3}>
-            <Text as="h3" variant="h3">
-              {formatMessage(m.sections.endOfSessionBookings.title)}
-            </Text>
-          </Box>
-          <Box marginBottom={5}>
+          <Box component="section">
+            <SectionHeading
+              title={formatMessage(m.sections.endOfSessionBookings.title)}
+            />
             <Input
               data-testid="endOfSessionBookings"
               name="endOfSessionBookings"
@@ -443,60 +427,52 @@ const CourtRecord: FC = () => {
               textarea
             />
           </Box>
-        </Box>
-        <Box marginBottom={5}>
-          <Box marginBottom={2}>
-            <Text as="h3" variant="h3">
-              {formatMessage(m.sections.endOfSessionTitle)}
-            </Text>
+          <Box>
+            <SectionHeading
+              title={formatMessage(m.sections.endOfSessionTitle)}
+            />
+            <BlueBox>
+              <DateTime
+                name="courtEndTime"
+                datepickerLabel={formatMessage(
+                  m.sections.courtEndTime.dateLabel,
+                )}
+                timeLabel={formatMessage(m.sections.courtEndTime.timeLabel)}
+                minDate={
+                  workingCase.courtStartDate
+                    ? new Date(workingCase.courtStartDate)
+                    : undefined
+                }
+                maxDate={new Date()}
+                selectedDate={workingCase.courtEndTime}
+                onChange={(date: Date | undefined, valid: boolean) => {
+                  if (date && valid) {
+                    setAndSendCaseToServer(
+                      [
+                        {
+                          courtEndTime: formatDateForServer(date),
+                          force: true,
+                        },
+                      ],
+                      workingCase,
+                      setWorkingCase,
+                    )
+                  }
+                }}
+                blueBox={false}
+                required
+              />
+            </BlueBox>
           </Box>
-          <BlueBox>
-            <GridContainer>
-              <GridRow>
-                <GridColumn>
-                  <DateTime
-                    name="courtEndTime"
-                    datepickerLabel={formatMessage(
-                      m.sections.courtEndTime.dateLabel,
-                    )}
-                    timeLabel={formatMessage(m.sections.courtEndTime.timeLabel)}
-                    minDate={
-                      workingCase.courtStartDate
-                        ? new Date(workingCase.courtStartDate)
-                        : undefined
-                    }
-                    maxDate={new Date()}
-                    selectedDate={workingCase.courtEndTime}
-                    onChange={(date: Date | undefined, valid: boolean) => {
-                      if (date && valid) {
-                        setAndSendCaseToServer(
-                          [
-                            {
-                              courtEndTime: formatDateForServer(date),
-                              force: true,
-                            },
-                          ],
-                          workingCase,
-                          setWorkingCase,
-                        )
-                      }
-                    }}
-                    blueBox={false}
-                    required
-                  />
-                </GridColumn>
-              </GridRow>
-            </GridContainer>
-          </BlueBox>
-        </Box>
-        <Box marginBottom={10}>
-          <PdfButton
-            caseId={workingCase.id}
-            title={formatMessage(core.pdfButtonRulingShortVersion)}
-            pdfType="courtRecord"
-            elementId={formatMessage(core.pdfButtonRulingShortVersion)}
-          />
-        </Box>
+          <Box>
+            <PdfButton
+              caseId={workingCase.id}
+              title={formatMessage(core.pdfButtonRulingShortVersion)}
+              pdfType="courtRecord"
+              elementId={formatMessage(core.pdfButtonRulingShortVersion)}
+            />
+          </Box>
+        </div>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
