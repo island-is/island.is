@@ -14,7 +14,7 @@ interface Then {
 
 type GivenWhenThen = () => Promise<Then>
 
-describe('InternalSubpoenaController - Deliver subpoena to national commissioners office', () => {
+describe('SubpoenaService - Deliver subpoena to national commissioners office', () => {
   const caseId = uuid()
   const subpoenaId = uuid()
   const defendantId = uuid()
@@ -29,8 +29,7 @@ describe('InternalSubpoenaController - Deliver subpoena to national commissioner
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { pdfService, internalSubpoenaController } =
-      await createTestingSubpoenaModule()
+    const { pdfService, subpoenaService } = await createTestingSubpoenaModule()
 
     mockPdfService = pdfService
     const mockGetSubpoenaPdf = mockPdfService.getSubpoenaPdf as jest.Mock
@@ -39,16 +38,13 @@ describe('InternalSubpoenaController - Deliver subpoena to national commissioner
     givenWhenThen = async (): Promise<Then> => {
       const then = {} as Then
 
-      await internalSubpoenaController
-        .deliverSubpoenaToNationalCommissionersOffice(
-          caseId,
-          defendantId,
-          subpoenaId,
+      await subpoenaService
+        .deliverSubpoenaToNationalCommissionersOffice({
           theCase,
           defendant,
           subpoena,
-          dto,
-        )
+          user: dto.user,
+        })
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 
