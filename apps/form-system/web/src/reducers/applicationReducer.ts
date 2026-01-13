@@ -76,6 +76,7 @@ const getCurrentSectionAndScreen = (sections: FormSystemSection[]) => {
   const currentSectionIndex = sections.findIndex(
     (section) => section.isCompleted === false && section.isHidden === false,
   )
+
   const currentSection = {
     data: sections[currentSectionIndex],
     index: currentSectionIndex,
@@ -134,7 +135,7 @@ export const applicationReducer = (
 ): ApplicationState => {
   switch (action.type) {
     case 'INCREMENT': {
-      const { submitScreen, submitSection, updateDependencies } = action.payload
+      const { submitScreen, updateDependencies } = action.payload
       const { currentSectionData, currentScreenIndex } =
         getIncrementVariables(state)
 
@@ -147,7 +148,7 @@ export const applicationReducer = (
           updateDependencies,
         )
       }
-      return incrementWithoutScreens(state, submitSection)
+      return incrementWithoutScreens(state, submitScreen)
     }
     case 'DECREMENT': {
       const { currentSectionData, currentSectionIndex, currentScreenIndex } =
@@ -162,7 +163,7 @@ export const applicationReducer = (
         )
       }
 
-      return decrementWithoutScreens(state, currentSectionIndex)
+      return decrementWithoutScreens(state, currentSectionIndex, submitScreen)
     }
     case 'INDEX_SCREEN': {
       const { sectionIndex, screenIndex } = action.payload

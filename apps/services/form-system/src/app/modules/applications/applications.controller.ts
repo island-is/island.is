@@ -21,14 +21,10 @@ import {
   ApiTags,
 } from '@nestjs/swagger'
 import { ApplicationsService } from './applications.service'
-import { ApplicationDto } from './models/dto/application.dto'
-import { CreateApplicationDto } from './models/dto/createApplication.dto'
 import { UpdateApplicationDto } from './models/dto/updateApplication.dto'
 import { ApplicationResponseDto } from './models/dto/application.response.dto'
-import { ScreenValidationResponse } from '../../dataTypes/validationResponse.model'
 import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
-import { ScreenDto } from '../screens/models/dto/screen.dto'
 import { SubmitScreenDto } from './models/dto/submitScreen.dto'
 import { MyPagesApplicationResponseDto } from './models/dto/myPagesApplication.response.dto'
 import type { Locale } from '@island.is/shared/types'
@@ -100,19 +96,13 @@ export class ApplicationsController {
     type: ApplicationResponseDto,
   })
   @ApiParam({ name: 'slug', type: String })
-  @ApiBody({ type: CreateApplicationDto })
   @Post(':slug')
   async create(
     @Param('slug') slug: string,
-    @Body() createApplicationDto: CreateApplicationDto,
     @CurrentUser()
     user: User,
   ): Promise<ApplicationResponseDto> {
-    return await this.applicationsService.create(
-      slug,
-      createApplicationDto,
-      user,
-    )
+    return await this.applicationsService.create(slug, user)
   }
 
   @ApiOperation({
@@ -131,6 +121,16 @@ export class ApplicationsController {
     user: User,
   ): Promise<ApplicationResponseDto> {
     return await this.applicationsService.findAllBySlugAndUser(slug, user)
+  }
+
+  @ApiOperation({ summary: 'Save screen data' })
+  @ApiNoContentResponse({
+    description: 'Screen saved successfully',
+  })
+  @ApiBody({ type: SubmitScreenDto })
+  @Put('submitScreen')
+  async saveScreen(@Body() screenDto: SubmitScreenDto): Promise<void> {
+    await this.applicationsService.saveScreen(screenDto)
   }
 
   @ApiOperation({ summary: 'Update application dependencies' })
@@ -155,47 +155,6 @@ export class ApplicationsController {
   @Post('submit/:id')
   async submit(@Param('id') id: string): Promise<void> {
     await this.applicationsService.submit(id)
-  }
-
-  @ApiOperation({ summary: 'validate and save input values of a screen' })
-  @ApiCreatedResponse({
-    description: 'validate and save input values of a screen',
-    type: ScreenValidationResponse,
-  })
-  @ApiParam({ name: 'screenId', type: String })
-  @ApiBody({ type: ApplicationDto })
-  @Post('submitScreen/:screenId')
-  async submitScreen(
-    @Param('screenId') screenId: string,
-    @Body() applicationDto: ApplicationDto,
-  ): Promise<ScreenValidationResponse> {
-    return await this.applicationsService.submitScreen(screenId, applicationDto)
-  }
-
-  @ApiOperation({ summary: 'Save screen data' })
-  @ApiCreatedResponse({
-    description: 'Screen saved successfully',
-    type: ScreenDto,
-  })
-  @ApiBody({ type: SubmitScreenDto })
-  @Put('submitScreen/:screenId')
-  async saveScreen(
-    @Param('screenId') screenId: string,
-    @Body() screenDto: SubmitScreenDto,
-  ): Promise<ScreenDto> {
-    return await this.applicationsService.saveScreen(screenId, screenDto)
-  }
-
-  @ApiOperation({ summary: 'Set section to completed' })
-  @ApiCreatedResponse({
-    description: 'Section set to completed successfully',
-  })
-  @Put('submitSection/:applicationId/:sectionId')
-  async submitSection(
-    @Param('applicationId') applicationId: string,
-    @Param('sectionId') sectionId: string,
-  ): Promise<void> {
-    await this.applicationsService.submitSection(applicationId, sectionId)
   }
 
   @ApiOperation({ summary: 'Delete an application by id' })

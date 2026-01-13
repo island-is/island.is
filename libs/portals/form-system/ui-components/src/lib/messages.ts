@@ -863,8 +863,8 @@ export const m = defineMessages({
   },
   continue: {
     id: 'form.system:continue',
-    defaultMessage: 'Halda áfram',
-    description: 'Continue',
+    defaultMessage: 'Vista og halda áfram',
+    description: 'Save and continue',
   },
   postalCode: {
     id: 'form.system:postal-code',
