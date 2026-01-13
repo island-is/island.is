@@ -219,7 +219,7 @@ export const getJobCareer = (
   answers: FormValue,
   jobCodes: Array<GaldurDomainModelsSettingsJobCodesJobCodeDTO>,
   externalData: ExternalData,
-  currentUserLocale?: Locale,
+  _currentUserLocale?: Locale, //TODOx remove
 ) => {
   const rskEmploymentList =
     getValueViaPath<
