@@ -2,7 +2,6 @@ import {
   ConflictException,
   Injectable,
   NotFoundException,
-  UnauthorizedException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Sequelize } from 'sequelize-typescript'
@@ -728,10 +727,7 @@ export class ApplicationsService {
     return form
   }
 
-  async saveScreen(
-    submitScreenDto: SubmitScreenDto,
-    user: User,
-  ): Promise<void> {
+  async saveScreen(submitScreenDto: SubmitScreenDto): Promise<void> {
     const {
       applicationId,
       screenId: currentScreenId = '',
