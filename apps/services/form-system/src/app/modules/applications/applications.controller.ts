@@ -129,8 +129,12 @@ export class ApplicationsController {
   })
   @ApiBody({ type: SubmitScreenDto })
   @Put('submitScreen')
-  async saveScreen(@Body() screenDto: SubmitScreenDto): Promise<void> {
-    await this.applicationsService.saveScreen(screenDto)
+  async saveScreen(
+    @Body() screenDto: SubmitScreenDto,
+    @CurrentUser()
+    user: User,
+  ): Promise<void> {
+    await this.applicationsService.saveScreen(screenDto, user)
   }
 
   @ApiOperation({ summary: 'Update application dependencies' })
@@ -163,7 +167,11 @@ export class ApplicationsController {
   })
   @ApiParam({ name: 'id', type: String })
   @Delete('deleteApplication/:id')
-  async deleteApplication(@Param('id') id: string): Promise<void> {
-    return await this.applicationsService.deleteApplication(id)
+  async deleteApplication(
+    @Param('id') id: string,
+    @CurrentUser()
+    user: User,
+  ): Promise<void> {
+    return await this.applicationsService.deleteApplication(id, user)
   }
 }

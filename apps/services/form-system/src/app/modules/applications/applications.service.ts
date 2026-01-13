@@ -2,6 +2,7 @@ import {
   ConflictException,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Sequelize } from 'sequelize-typescript'
@@ -727,7 +728,10 @@ export class ApplicationsService {
     return form
   }
 
-  async saveScreen(submitScreenDto: SubmitScreenDto): Promise<void> {
+  async saveScreen(
+    submitScreenDto: SubmitScreenDto,
+    user: User,
+  ): Promise<void> {
     const {
       applicationId,
       screenId: currentScreenId = '',
@@ -742,6 +746,13 @@ export class ApplicationsService {
     if (!application) {
       throw new NotFoundException(
         `Application with id '${applicationId}' not found`,
+      )
+    }
+
+    const loginTypes = await this.getLoginTypes(user)
+    if (!this.doesUserMatchApplication(application, user, loginTypes)) {
+      throw new UnauthorizedException(
+        `User is not authorized to save screen for application '${applicationId}'`,
       )
     }
 
@@ -883,11 +894,18 @@ export class ApplicationsService {
     })
   }
 
-  async deleteApplication(id: string): Promise<void> {
+  async deleteApplication(id: string, user: User): Promise<void> {
     const application = await this.applicationModel.findByPk(id)
 
     if (!application) {
       throw new NotFoundException(`Application with id '${id}' not found`)
+    }
+
+    const loginTypes = await this.getLoginTypes(user)
+    if (!this.doesUserMatchApplication(application, user, loginTypes)) {
+      throw new UnauthorizedException(
+        `User is not authorized to delete application '${id}'`,
+      )
     }
 
     await this.sequelize.transaction(async (transaction) => {
