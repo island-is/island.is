@@ -26,7 +26,7 @@ export const currentNurserySubSection = buildSubSection({
     buildMultiField({
       id: 'currentNursery',
       title: primarySchoolMessages.currentNursery.subSectionTitle,
-      description: primarySchoolMessages.currentNursery.subSectionDescription,
+      description: primarySchoolMessages.currentNursery.description,
       children: [
         buildRadioField({
           id: 'currentNursery.hasCurrentNursery',
@@ -51,6 +51,7 @@ export const currentNurserySubSection = buildSubSection({
           placeholder: sharedMessages.municipalityPlaceholder,
           loadingError: coreErrorMessages.failedDataProvider,
           dataTestId: 'current-nursery-municipality',
+          marginTop: 2,
           loadOptions: async ({ apolloClient }) => {
             const { data } = await apolloClient.query<Query>({
               query: friggOrganizationsByTypeQuery,
@@ -116,15 +117,15 @@ export const currentNurserySubSection = buildSubSection({
           id: 'currentNursery.nurseryAlertMessage',
           title: sharedMessages.alertTitle,
           message: primarySchoolMessages.currentNursery.alertMessage,
+          doesNotRequireAnswer: true,
+          alertType: 'warning',
+          marginTop: 4,
           condition: (answers) => {
             const { currentNursery, hasCurrentNursery } =
               getApplicationAnswers(answers)
 
             return !!currentNursery && hasCurrentNursery === YES
           },
-          doesNotRequireAnswer: true,
-          alertType: 'warning',
-          marginTop: 4,
         }),
       ],
     }),

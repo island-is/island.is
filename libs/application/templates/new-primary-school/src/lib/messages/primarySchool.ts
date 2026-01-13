@@ -125,8 +125,8 @@ export const primarySchoolMessages = {
       defaultMessage: 'Upplýsingar um núverandi leikskóla',
       description: 'Information about current nursery',
     },
-    subSectionDescription: {
-      id: 'nps.application:primarySchool.currentNursery.subSectionDescription',
+    description: {
+      id: 'nps.application:primarySchool.currentNursery.description',
       defaultMessage:
         'Við undirbúning fyrir móttöku barns í grunnskóla er gagnlegt að vita úr hvaða leikskóla barnið kemur. Athugið að engar upplýsingar eru fluttar með sjálfvirkum hætti milli leikskóla og grunnskóla.',
       description:
