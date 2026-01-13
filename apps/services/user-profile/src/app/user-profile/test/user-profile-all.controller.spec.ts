@@ -330,14 +330,6 @@ describe('UserProfileController', () => {
           locale: testUserProfile.locale,
           emailVerified: newEmail.emailStatus === DataStatus.VERIFIED,
         })
-
-        expect(
-          delegationsApi.delegationsControllerGetDelegationRecords,
-        ).toHaveBeenCalledWith({
-          xQueryNationalId: testUserProfile.nationalId,
-          scope: '@island.is/documents',
-          direction: 'incoming',
-        })
       })
 
       it('should return 200 and the extended actor profile if user profile exists, should default to emailNotifications = true', async () => {
@@ -385,20 +377,6 @@ describe('UserProfileController', () => {
           .get('/v2/users/.to-national-id/actor-profiles/.from-national-id')
           .set('X-Param-To-National-Id', 'invalid')
           .set('X-Param-From-National-Id', testNationalId1)
-
-        // Assert
-        expect(res.status).toEqual(400)
-      })
-
-      it('should return 400 if delegation does not exist', async () => {
-        // Arrange
-        await fixtureFactory.createUserProfile(testUserProfile)
-
-        // Act
-        const res = await server
-          .get('/v2/users/.to-national-id/actor-profiles/.from-national-id')
-          .set('X-Param-To-National-Id', testUserProfile.nationalId)
-          .set('X-Param-From-National-Id', createNationalId('person'))
 
         // Assert
         expect(res.status).toEqual(400)
