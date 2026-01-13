@@ -576,15 +576,6 @@ export class ApplicationsService {
     return false
   }
 
-  private async authenticateUser(
-    user: User,
-    application: Application,
-  ): Promise<boolean> {
-    if (!user) return false
-    const loginTypes = await this.getLoginTypes(user)
-    return !this.doesUserMatchApplication(application, user, loginTypes)
-  }
-
   private async getApplicationsByUser(
     applications: Application[],
     user: User,
@@ -755,12 +746,6 @@ export class ApplicationsService {
     if (!application) {
       throw new NotFoundException(
         `Application with id '${applicationId}' not found`,
-      )
-    }
-
-    if (!(await this.authenticateUser(user, application))) {
-      throw new UnauthorizedException(
-        `User is not authorized to access application with id '${applicationId}'`,
       )
     }
 
