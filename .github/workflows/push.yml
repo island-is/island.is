@@ -430,14 +430,22 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.ECR_AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.ECR_AWS_SECRET_ACCESS_KEY }}
 
-      - name: Configure AWS credentials
+      - name: AWS login for setup-yarn
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ env.AWS_REGION }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+
+      - name: AWS login for ECR
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.ECR_AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.ECR_AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-west-1
-      - name: Setup yarn
-        uses: ./.github/actions/setup-yarn
+          aws-region: ${{ env.AWS_REGION }}
 
       - name: Docker build image
         working-directory: infra
