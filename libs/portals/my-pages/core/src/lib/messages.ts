@@ -565,6 +565,14 @@ export const m = defineMessages({
     id: 'service.portal:user-info',
     defaultMessage: 'Mínar upplýsingar',
   },
+  companyInfo: {
+    id: 'service.portal:company-info',
+    defaultMessage: 'Um fyrirtækið',
+  },
+  companyData: {
+    id: 'service.portal:company-data',
+    defaultMessage: 'Gögn úr fyrirtækjaskrá',
+  },
   userInfoDescription: {
     id: 'service.portal:user-info-description',
     defaultMessage: 'Gögn um þig og fjölskylduna þína',
@@ -573,6 +581,11 @@ export const m = defineMessages({
     id: 'service.portal:user-info-intro',
     defaultMessage:
       'Hér eru gögn um þig og fjölskyldu þína sem sótt eru til Þjóðskrár. Með því að smella á skoða upplýsingar er hægt að óska eftir breytingum á þeim upplýsingum.',
+  },
+  companyIntro: {
+    id: 'service.portal:company-intro',
+    defaultMessage:
+      'Hér eru gögn um fyrirtækið sem sótt eru til Fyrirtækjaskrár.',
   },
   detailInfo: {
     id: 'service.portal:detail-info',
@@ -911,6 +924,14 @@ export const m = defineMessages({
     id: 'service.portal:my-settings',
     defaultMessage: 'Mínar stillingar',
   },
+  companySettings: {
+    id: 'service.portal:company-settings',
+    defaultMessage: 'Stillingar',
+  },
+  companySettingsNavigation: {
+    id: 'service.portal:company-settings-navigation',
+    defaultMessage: 'Stillingar fyrirtækis',
+  },
   mySettingsInformation: {
     id: 'service.portal:my-settings-information',
     defaultMessage: 'Upplýsingar',
@@ -1164,6 +1185,18 @@ export const m = defineMessages({
     id: 'service.portal:next-step',
     defaultMessage: 'Næsta skref',
   },
+  lastQuestion: {
+    id: 'service.portal:last-question',
+    defaultMessage: 'Fyrri spurning',
+  },
+  nextQuestion: {
+    id: 'service.portal:next-question',
+    defaultMessage: 'Næsta spurning',
+  },
+  requiredQuestion: {
+    id: 'service.portal:required-question',
+    defaultMessage: 'Þessari spurningu er nauðsynlegt að svara',
+  },
   confirmation: {
     id: 'service.portal:confirmation',
     defaultMessage: 'Staðfesting',
@@ -1237,6 +1270,10 @@ export const m = defineMessages({
   save: {
     id: 'service.portal:save',
     defaultMessage: 'Vista',
+  },
+  saveAsDraft: {
+    id: 'service.portal:save-as-draft',
+    defaultMessage: 'Vista sem drög',
   },
   saved: {
     id: 'service.portal:saved',
@@ -2017,9 +2054,84 @@ export const m = defineMessages({
     id: 'service.portal:copied',
     defaultMessage: 'Afritað!',
   },
+  maxSelections: {
+    id: 'service.portal:max-selections',
+    defaultMessage: 'Hámark {count} valkostir',
+  },
+  questionnaires: {
+    id: 'service.portal:questionnaires',
+    defaultMessage: 'Spurningalistar',
+  },
+  questionnaire: {
+    id: 'service.portal:questionnaire',
+    defaultMessage: 'Spurningalisti',
+  },
+  question: {
+    id: 'service.portal:question',
+    defaultMessage: 'Spurning',
+  },
+  answer: {
+    id: 'service.portal:answer',
+    defaultMessage: 'Svar',
+  },
   forward: {
     id: 'service.portal:forward',
     defaultMessage: 'Áfram',
+  },
+  answersSubmitted: {
+    id: 'service.portal:answers-submitted',
+    defaultMessage: 'Svör móttekin',
+  },
+  answersSubmittedFor: {
+    id: 'service.portal:answers-submitted-for',
+    defaultMessage: 'Svör þín við {arg} hafa verið send.',
+  },
+  rowOf: {
+    id: 'service.portal:row-of',
+    defaultMessage: '{count} af {total} röðum',
+  },
+  addRow: {
+    id: 'service.portal:add-row',
+    defaultMessage: 'Bæta við röð',
+  },
+  add: {
+    id: 'service.portal:add',
+    defaultMessage: 'Bæta við',
+  },
+  maxRowsReached: {
+    id: 'service.portal:max-rows-reached',
+    defaultMessage:
+      'Ekki er hægt að bæta við fleiri röðum. Hámarksfjöldi er {count}.',
+  },
+  deleteRow: {
+    id: 'service.portal:delete-row',
+    defaultMessage: 'Eyða röð',
+  },
+  reviewTitle: {
+    id: 'service.portal:review-title',
+    defaultMessage: 'Lestu yfir svörin og sendu inn',
+  },
+  sendAnswers: {
+    id: 'service.portal:send-answers',
+    defaultMessage: 'Senda svör',
+  },
+  noAnswersIncluded: {
+    id: 'service.portal:no-answers-included',
+    defaultMessage: 'Engin svör hafa verið skráð',
+  },
+  noAnswersIncludedDetail: {
+    id: 'service.portal:no-answers-included-detail',
+    defaultMessage:
+      'Vinsamlegast farðu til baka og fylltu út spurningalistann.',
+  },
+  questionnaireCanceled: {
+    id: 'service.portal:questionnaire-canceled',
+    defaultMessage: 'Hætt við spurningalista',
+  },
+  a11yProgressBarDescription: {
+    id: 'service.portal:a11y-progress-bar-description',
+    defaultMessage:
+      'Notaðu örvatakka til að fara á milli valkosta. Ýttu á Enter eða Space til að velja.',
   },
 })
 

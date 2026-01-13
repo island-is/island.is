@@ -7,6 +7,7 @@ import {
   NO,
   buildNationalIdWithNameField,
   YesOrNoEnum,
+  buildDescriptionField,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 
@@ -37,6 +38,28 @@ export const payerSection = buildSection({
           required: true,
           searchCompanies: true,
           searchPersons: false,
+          condition: (answers) =>
+            getValueViaPath<YesOrNoEnum>(
+              answers,
+              'payment.userIsPayingAsIndividual',
+              YesOrNoEnum.YES,
+            ) === YesOrNoEnum.NO,
+        }),
+        buildDescriptionField({
+          marginTop: 2,
+          id: 'userIsPayingAsIndividualDescription',
+          description: m.payer.userIsPayingAsIndividualDescription,
+          condition: (answers) =>
+            getValueViaPath<YesOrNoEnum>(
+              answers,
+              'payment.userIsPayingAsIndividual',
+              YesOrNoEnum.YES,
+            ) === YesOrNoEnum.YES,
+        }),
+        buildDescriptionField({
+          marginTop: 2,
+          id: 'userIsPayingAsCompanyDescription',
+          description: m.payer.userIsPayingAsCompanyDescription,
           condition: (answers) =>
             getValueViaPath<YesOrNoEnum>(
               answers,

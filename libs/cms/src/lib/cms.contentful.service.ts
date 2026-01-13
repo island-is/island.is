@@ -3,6 +3,7 @@ import { logger } from '@island.is/logging'
 import { ApolloError } from 'apollo-server-express'
 import { Injectable } from '@nestjs/common'
 import sortBy from 'lodash/sortBy'
+import type { EntryCollection } from 'contentful'
 import * as types from './generated/contentfulTypes'
 import { Article, mapArticle } from './models/article.model'
 import { ContentSlug, TextFieldLocales } from './models/contentSlug.model'
@@ -52,7 +53,7 @@ import {
 } from './models/openDataSubpage.model'
 import { GetOpenDataSubpageInput } from './dto/getOpenDataSubpage.input'
 import { mapProjectPage, ProjectPage } from './models/projectPage.model'
-import { IProjectPage } from './generated/contentfulTypes'
+import { ICourseListPage, IProjectPage } from './generated/contentfulTypes'
 import { GetSupportQNAsInput } from './dto/getSupportQNAs.input'
 import { mapSupportQNA, SupportQNA } from './models/supportQNA.model'
 import { GetSupportCategoryInput } from './dto/getSupportCategory.input'
@@ -106,8 +107,12 @@ import {
   mapBloodDonationRestrictionListItem,
 } from './models/bloodDonationRestriction.model'
 import { GetCourseByIdInput } from './dto/getCourseById.input'
-import { mapCourse } from './models/course.model'
+import { CourseDetails, mapCourse } from './models/course.model'
+import { GetCourseListPageByIdInput } from './dto/getCourseListPageById.input'
+import { mapCourseListPage } from './models/courseListPage.model'
 import { GetCourseSelectOptionsInput } from './dto/getCourseSelectOptions.input'
+import { GetWebChatInput } from './dto/getWebChat.input'
+import { mapWebChat, WebChat } from './models/webChat.model'
 
 const errorHandler = (name: string) => {
   return (error: Error) => {
@@ -1566,19 +1571,29 @@ export class CmsContentfulService {
     return items
   }
 
-  async getCourseById(input: GetCourseByIdInput) {
+  async getCourseById(
+    input: GetCourseByIdInput,
+  ): Promise<CourseDetails | null> {
     const params = {
       content_type: 'course',
       limit: 1,
       include: 4,
     }
 
-    const response =
-      await this.contentfulRepository.getLocalizedEntry<types.ICourseFields>(
+    const [isResponse, enResponse] = await Promise.all([
+      this.contentfulRepository.getLocalizedEntry<types.ICourseFields>(
         input.id,
-        input.lang,
-        params,
-      )
+        'is',
+        { ...params, include: input.lang === 'is' ? 4 : 0 },
+      ),
+      this.contentfulRepository.getLocalizedEntry<types.ICourseFields>(
+        input.id,
+        'en',
+        { ...params, include: input.lang === 'en' ? 4 : 0 },
+      ),
+    ])
+
+    const response = input.lang === 'is' ? isResponse : enResponse
 
     if (response?.sys?.contentType?.sys?.id !== 'course') {
       return null
@@ -1599,7 +1614,34 @@ export class CmsContentfulService {
         new Date(a.startDate).getTime() - new Date(b.startDate).getTime(),
     )
 
-    return mappedCourse
+    return {
+      course: mappedCourse,
+      activeLocales: {
+        is: Boolean(isResponse?.fields?.title),
+        en: Boolean(enResponse?.fields?.title),
+      },
+    }
+  }
+
+  async getCourseListPageById(input: GetCourseListPageByIdInput) {
+    const params = {
+      content_type: 'courseListPage',
+      limit: 1,
+      include: 0,
+    }
+
+    const response =
+      await this.contentfulRepository.getLocalizedEntry<types.ICourseListPageFields>(
+        input.id,
+        input.lang,
+        params,
+      )
+
+    if (response?.sys?.contentType?.sys?.id !== 'courseListPage') {
+      return null
+    }
+
+    return mapCourseListPage(response as ICourseListPage)
   }
 
   async getCourseSelectOptions(input: GetCourseSelectOptionsInput) {
@@ -1627,5 +1669,39 @@ export class CmsContentfulService {
     items.sort(sortAlpha('title'))
 
     return { items, total: response.total, input }
+  }
+
+  private findBestWebChatMatch(
+    response: EntryCollection<types.IWebChatFields>,
+  ): types.IWebChat | null {
+    let bestMatch: types.IWebChat | null = null
+
+    for (const item of response.items) {
+      const webChatEntry = item as types.IWebChat
+      for (const location of webChatEntry.fields.displayLocations ?? []) {
+        if (location?.sys?.contentType?.sys?.id !== 'organization')
+          return webChatEntry
+        bestMatch = webChatEntry
+      }
+    }
+
+    return bestMatch
+  }
+
+  async getWebChat(input: GetWebChatInput): Promise<WebChat | null> {
+    const params = {
+      content_type: 'webChat',
+      'fields.displayLocations.sys.id[in]': input.displayLocationIds.join(','),
+      limit: 100,
+    }
+
+    const response = await this.contentfulRepository
+      .getLocalizedEntries<types.IWebChatFields>(input.lang, params, 1)
+      .catch(errorHandler('getWebChat'))
+
+    const bestMatch = this.findBestWebChatMatch(response)
+    if (!bestMatch) return null
+
+    return mapWebChat(bestMatch, input.lang)
   }
 }
