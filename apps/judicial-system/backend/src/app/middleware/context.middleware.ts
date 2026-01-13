@@ -1,6 +1,6 @@
 // request-id.middleware.ts
 import type { NextFunction, Request, Response } from 'express'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { Injectable, NestMiddleware } from '@nestjs/common'
 
