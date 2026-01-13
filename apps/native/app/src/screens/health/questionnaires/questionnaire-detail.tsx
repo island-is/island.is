@@ -1,6 +1,11 @@
 import React, { useCallback, useMemo } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { ScrollView, View } from 'react-native'
+import {
+  ActivityIndicator,
+  RefreshControl,
+  ScrollView,
+  View,
+} from 'react-native'
 import {
   Navigation,
   NavigationFunctionComponent,
@@ -9,9 +14,18 @@ import styled, { useTheme } from 'styled-components/native'
 
 import externalLinkIcon from '../../../assets/icons/external-link.png'
 import eyeOffIcon from '../../../assets/icons/eye-off.png'
+import {
+  QuestionnaireQuestionnairesOrganizationEnum,
+  useGetQuestionnaireQuery,
+} from '../../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../../hooks/create-navigation-option-hooks'
+import { useLocale } from '../../../hooks/use-locale'
 import { useBrowser } from '../../../lib/use-browser'
-import { Button, NavigationBarSheet, Typography } from '../../../ui'
+import { Button, NavigationBarSheet, Problem, Typography } from '../../../ui'
+import {
+  getQuestionnaireOrganizationLabelId,
+  getQuestionnaireStatusLabelId,
+} from './questionnaire-utils'
 
 const Host = styled.View`
   flex: 1;
@@ -41,6 +55,12 @@ const Label = styled(Typography)`
   color: ${({ theme }) => theme.color.dark300};
 `
 
+const RowHeader = styled.View`
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+`
+
 const { getNavigationOptions, useNavigationOptions } =
   createNavigationOptionHooks(() => ({
     topBar: {
@@ -50,49 +70,58 @@ const { getNavigationOptions, useNavigationOptions } =
 
 type QuestionnaireStatus = 'answered' | 'unanswered'
 
-export type QuestionnaireItem = {
+export type QuestionnaireDetailParams = {
   id: string
-  organization: string
-  title: string
-  status: QuestionnaireStatus
-  sentDate: string
-  treatment?: string
-  institution?: string
-  sentBy?: string
-  validTo?: string
-  answerUrl?: string
+  organization?: QuestionnaireQuestionnairesOrganizationEnum
 }
 
 export const QuestionnaireDetailScreen: NavigationFunctionComponent<{
-  questionnaire?: QuestionnaireItem
-}> = ({ componentId, questionnaire }) => {
+  id?: string
+  organization?: QuestionnaireQuestionnairesOrganizationEnum
+}> = ({ componentId, id, organization }) => {
   useNavigationOptions(componentId)
   const theme = useTheme()
   const intl = useIntl()
+  const locale = useLocale()
   const { openBrowser } = useBrowser()
-  const item = questionnaire
+  const shouldSkipQuery = !id
+  const { data, loading, error, refetch } = useGetQuestionnaireQuery({
+    variables: {
+      locale,
+      input: {
+        id: id ?? '',
+        organization: organization ?? undefined,
+      },
+    },
+    skip: shouldSkipQuery,
+  })
 
-  const title = useMemo(() => item?.title ?? '', [item?.title])
+  console.log('data', data)
+
+  const questionnaire = data?.questionnairesDetail ?? null
+  const base = questionnaire?.baseInformation ?? null
+
+  const title = useMemo(() => base?.title ?? '', [base?.title])
 
   const close = useCallback(() => {
     Navigation.dismissModal(componentId)
   }, [componentId])
 
   const onAnswer = useCallback(() => {
-    if (!item?.answerUrl) return
-    openBrowser(item.answerUrl, componentId)
-  }, [componentId, item?.answerUrl, openBrowser])
+    // TODO: wire to questionnaire answering flow (API-driven)
+    return
+  }, [])
 
   const onView = useCallback(() => {
-    if (!item?.answerUrl) return
-    openBrowser(item.answerUrl, componentId)
-  }, [componentId, 'https://www.google.com', openBrowser])
+    // TODO: wire to questionnaire answers view (API-driven)
+    return
+  }, [])
 
   const onHide = useCallback(() => {
     // no-op for now (wired to API later)
   }, [])
 
-  if (!item) {
+  if (!id) {
     return (
       <Host>
         <NavigationBarSheet
@@ -114,16 +143,69 @@ export const QuestionnaireDetailScreen: NavigationFunctionComponent<{
     )
   }
 
+  if (loading && !base) {
+    return (
+      <Host>
+        <NavigationBarSheet
+          componentId={componentId}
+          onClosePress={close}
+          style={{ marginHorizontal: 16 }}
+        />
+        <Content>
+          <View style={{ paddingVertical: theme.spacing[2] }}>
+            <ActivityIndicator />
+          </View>
+        </Content>
+      </Host>
+    )
+  }
+
+  if (!loading && error && !base) {
+    return (
+      <Host>
+        <NavigationBarSheet
+          componentId={componentId}
+          onClosePress={close}
+          style={{ marginHorizontal: 16 }}
+        />
+        <Content>
+          <Problem error={error} withContainer />
+        </Content>
+      </Host>
+    )
+  }
+
+  if (!loading && !error && !base) {
+    return (
+      <Host>
+        <NavigationBarSheet
+          componentId={componentId}
+          onClosePress={close}
+          style={{ marginHorizontal: 16 }}
+        />
+        <Content>
+          <Problem type="no_data" withContainer />
+        </Content>
+      </Host>
+    )
+  }
+
   return (
     <Host>
       <NavigationBarSheet
         componentId={componentId}
         onClosePress={close}
-        title={item.title}
+        title={title}
         style={{ marginHorizontal: 16 }}
       />
 
-      <ScrollView style={{ flex: 1 }} contentInset={{ bottom: 24 }}>
+      <ScrollView
+        style={{ flex: 1 }}
+        contentInset={{ bottom: 24 }}
+        refreshControl={
+          <RefreshControl refreshing={loading} onRefresh={refetch} />
+        }
+      >
         <Content>
           <Typography variant="body">
             <FormattedMessage id="health.questionnaires.detail.description" />
@@ -167,54 +249,42 @@ export const QuestionnaireDetailScreen: NavigationFunctionComponent<{
 
           <View>
             <InfoRow>
-              <Label variant="eyebrow">
-                <FormattedMessage id="health.questionnaires.detail.status" />
-              </Label>
+              <RowHeader>
+                <Label variant="eyebrow">
+                  <FormattedMessage id="health.questionnaires.detail.status" />
+                </Label>
+              </RowHeader>
               <Typography variant="heading4">
                 <FormattedMessage
-                  id={
-                    item.status === 'answered'
-                      ? 'health.questionnaires.status.answered'
-                      : 'health.questionnaires.status.unanswered'
-                  }
+                  id={getQuestionnaireStatusLabelId(base?.status)}
                 />
               </Typography>
             </InfoRow>
 
-            {item.treatment ? (
+            {base?.organization ? (
               <InfoRow>
-                <Label variant="eyebrow">
-                  <FormattedMessage id="health.questionnaires.detail.treatment" />
-                </Label>
-                <Typography variant="heading4">{item.treatment}</Typography>
-              </InfoRow>
-            ) : null}
-
-            {item.institution ? (
-              <InfoRow>
-                <Label variant="eyebrow">
-                  <FormattedMessage id="health.questionnaires.detail.institution" />
-                </Label>
-                <Typography variant="heading4">{item.institution}</Typography>
-              </InfoRow>
-            ) : null}
-
-            {item.sentBy ? (
-              <InfoRow>
-                <Label variant="eyebrow">
-                  <FormattedMessage id="health.questionnaires.detail.sentBy" />
-                </Label>
-                <Typography variant="heading4">{item.sentBy}</Typography>
-              </InfoRow>
-            ) : null}
-
-            {item.validTo ? (
-              <InfoRow>
-                <Label variant="eyebrow">
-                  <FormattedMessage id="health.questionnaires.detail.validTo" />
-                </Label>
+                <RowHeader>
+                  <Label variant="eyebrow">
+                    <FormattedMessage id="health.questionnaires.detail.institution" />
+                  </Label>
+                </RowHeader>
                 <Typography variant="heading4">
-                  {intl.formatDate(item.validTo)}
+                  <FormattedMessage
+                    id={getQuestionnaireOrganizationLabelId(base?.organization)}
+                  />
+                </Typography>
+              </InfoRow>
+            ) : null}
+
+            {base?.sentDate ? (
+              <InfoRow>
+                <RowHeader>
+                  <Label variant="eyebrow">
+                    <FormattedMessage id="health.questionnaires.detail.sentDate" />
+                  </Label>
+                </RowHeader>
+                <Typography variant="heading4">
+                  {intl.formatDate(new Date(base?.sentDate ?? ''))}
                 </Typography>
               </InfoRow>
             ) : null}
