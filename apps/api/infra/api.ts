@@ -458,6 +458,8 @@ export const serviceSetup = (services: {
         '/k8s/api/LANDSPITALI_PAYMENT_NATIONAL_ID_FALLBACK',
       LANDSPITALI_PAYMENT_ORGANISATION_ID:
         '/k8s/api/LANDSPITALI_PAYMENT_ORGANISATION_ID',
+      VERDICTS_SUPREME_COURT_BEARER_TOKEN:
+        '/k8s/api/VERDICTS_SUPREME_COURT_BEARER_TOKEN',
     })
     .xroad(
       AdrAndMachine,
