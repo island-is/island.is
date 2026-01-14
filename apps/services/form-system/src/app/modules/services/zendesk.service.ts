@@ -155,13 +155,35 @@ export class ZendeskService {
     }
   }
 
+  private findLoggedInApplicantJson(
+    applicationDto: ApplicationDto,
+  ): Record<string, any> | undefined {
+    for (const section of applicationDto.sections?.filter(
+      (section) => section.sectionType === SectionTypes.PARTIES,
+    ) ?? []) {
+      for (const screen of section.screens ?? []) {
+        for (const field of screen.fields ?? []) {
+          if (field.fieldType === FieldTypesEnum.APPLICANT) {
+            for (const value of field.values ?? []) {
+              const json = value?.json as Record<string, any> | undefined
+              if (!json) continue
+              const flag = json.isLoggedInUser
+              if (flag === true || flag === 'true') {
+                return json
+              }
+            }
+          }
+        }
+      }
+    }
+    return undefined
+  }
+
   private getNameAndEmail(applicationDto: ApplicationDto): {
     name: string
     email: string
   } {
-    const json = applicationDto?.sections?.find(
-      (section) => section.sectionType === SectionTypes.PARTIES,
-    )?.screens?.[0]?.fields?.[0].values?.[0].json as ValueType
+    const json = this.findLoggedInApplicantJson(applicationDto) ?? {}
     const name = json.name ?? 'Nafn fannst ekki'
     const email = json.email ?? 'Netfang fannst ekki'
     return { name, email }
