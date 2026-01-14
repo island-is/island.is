@@ -806,8 +806,10 @@ export const getPensionAndOtherPayments = (
             )
             .map((payment) => {
               return {
-                incomeTypeId: payment.subType,
+                incomeTypeId: PaymentTypeIds.SICKNESS_PAYMENTS_ID,
                 unionId: payment.union,
+                periodFrom: payment.dateFrom,
+                periodTo: payment.dateTo,
               }
             }),
         }
@@ -867,7 +869,7 @@ export const getPensionAndOtherPayments = (
   const capitalGains =
     capitalIncome?.otherIncome === YES
       ? {
-          incomeTypeId: PaymentTypeIds.CAPITAL_GAINT,
+          incomeTypeId: PaymentTypeIds.CAPITAL_GAINS_ID,
           estimatedIncome: capitalIncome?.capitalIncomeAmount
             ?.map((x) => parseInt(x?.amount || '0'))
             .reduce((a, b) => a + b, 0),
