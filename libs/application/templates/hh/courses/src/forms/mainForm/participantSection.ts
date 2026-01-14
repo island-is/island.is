@@ -2,7 +2,9 @@ import {
   buildMultiField,
   buildSection,
   buildTableRepeaterField,
+  getValueViaPath,
 } from '@island.is/application/core'
+import type { Application } from '@island.is/application/types'
 import { m } from '../../lib/messages'
 
 export const participantSection = buildSection({
@@ -15,6 +17,36 @@ export const participantSection = buildSection({
       children: [
         buildTableRepeaterField({
           id: 'participantList',
+          defaultValue: ({ externalData }: Application) => {
+            const name =
+              getValueViaPath(externalData, 'nationalRegistry.data.fullName') ??
+              ''
+            const nationalId =
+              getValueViaPath(
+                externalData,
+                'nationalRegistry.data.nationalId',
+              ) ?? ''
+            const email =
+              getValueViaPath(externalData, 'userProfile.data.email') ?? ''
+            const phone =
+              getValueViaPath(
+                externalData,
+                'userProfile.data.mobilePhoneNumber',
+              ) ?? ''
+
+            if (!name || !nationalId || !email || !phone) return undefined
+
+            return [
+              {
+                nationalIdWithName: {
+                  name,
+                  nationalId,
+                  email,
+                  phone,
+                },
+              },
+            ]
+          },
           table: {
             rows: ['name', 'nationalId', 'email', 'phone'],
             header: [
