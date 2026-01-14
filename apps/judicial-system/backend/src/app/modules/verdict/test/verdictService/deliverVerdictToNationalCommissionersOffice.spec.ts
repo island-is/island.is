@@ -20,7 +20,7 @@ interface Then {
 
 type GivenWhenThen = () => Promise<Then>
 
-describe('InternalVerdictController - Deliver verdict to national commissioners office', () => {
+describe('VerdictService - Deliver verdict to national commissioners office', () => {
   const caseId = uuid()
   const defendantId = uuid()
   const verdictId = uuid()
@@ -36,7 +36,9 @@ describe('InternalVerdictController - Deliver verdict to national commissioners 
 
   const buffer = Buffer.from('Dómur')
 
-  const verdict = { id: verdictId } as Verdict
+  const verdict = {
+    id: verdictId,
+  } as Verdict
 
   const defendant = { id: defendantId, verdicts: [verdict] } as Defendant
   const theCase = {
@@ -54,29 +56,30 @@ describe('InternalVerdictController - Deliver verdict to national commissioners 
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { internalVerdictController, policeService, fileService } =
-      await createTestingVerdictModule()
+    const {
+      policeService,
+      fileService,
+      verdictService, // target service being tested
+    } = await createTestingVerdictModule()
+
+    mockFileService = fileService
+    const mockGetCaseFileFromS3 = mockFileService.getCaseFileFromS3 as jest.Mock
+    mockGetCaseFileFromS3.mockResolvedValueOnce(buffer)
 
     mockPoliceService = policeService
     const mockCreateDocument = mockPoliceService.createDocument as jest.Mock
     mockCreateDocument.mockRejectedValue(new Error('Some error'))
 
-    mockFileService = fileService
-    const mockGetCaseFileFromS3 = mockFileService.getCaseFileFromS3 as jest.Mock
-    mockGetCaseFileFromS3.mockResolvedValue(buffer)
-
     givenWhenThen = async (): Promise<Then> => {
       const then = {} as Then
 
-      await internalVerdictController
-        .deliverVerdictToNationalCommissionersOffice(
-          caseId,
-          defendantId,
+      await verdictService
+        .deliverVerdictToNationalCommissionersOffice({
           theCase,
           defendant,
           verdict,
-          dto,
-        )
+          user: dto.user,
+        })
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 

@@ -358,12 +358,17 @@ export class VerdictService {
     ]
   }
 
-  async deliverVerdictToNationalCommissionersOffice(
-    theCase: Case,
-    defendant: Defendant,
-    verdict: Verdict,
-    user: TUser,
-  ): Promise<DeliverResponse> {
+  async deliverVerdictToNationalCommissionersOffice({
+    theCase,
+    defendant,
+    verdict,
+    user,
+  }: {
+    theCase: Case
+    defendant: Defendant
+    verdict: Verdict
+    user: TUser
+  }): Promise<DeliverResponse> {
     // check if verdict is already delivered
     if (verdict.externalPoliceDocumentId) {
       return { delivered: true }

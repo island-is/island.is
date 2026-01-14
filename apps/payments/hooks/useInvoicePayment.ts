@@ -5,7 +5,7 @@ import { PaymentError } from '../utils/error/error'
 
 interface UseInvoicePaymentProps {
   paymentFlowId: string | undefined
-  onPaymentSuccess: () => void
+  onPaymentSuccess: (paymentMethod: 'card' | 'invoice') => void
   onPaymentError: (error: PaymentError) => void
 }
 
@@ -38,7 +38,7 @@ export const useInvoicePayment = ({
           CardErrorCode.GenericDecline
         throw new Error(specific)
       }
-      onPaymentSuccess()
+      onPaymentSuccess('invoice')
     } catch (e: unknown) {
       onPaymentError({
         code: (e instanceof Error
