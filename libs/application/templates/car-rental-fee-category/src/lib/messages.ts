@@ -37,7 +37,7 @@ export const m = {
     skatturSubTitle: {
       id: 'rsk.rdr.application:prerequisites.skattur.subtitle',
       defaultMessage:
-        'Upplýsingar frá skattinum - Upplýsingar um gjaldflokksstöðu bifreiða',
+        'Upplýsingar frá Skattinum - Upplýsingar um gjaldflokksstöðu bifreiða',
       description: 'Skatturinn data provider subtitle',
     },
     vehiclesTitle: {
@@ -48,7 +48,7 @@ export const m = {
     vehiclesSubTitle: {
       id: 'rsk.rdr.application:prerequisites.vehicles.subtitle',
       defaultMessage:
-        'Upplýsingar úr ökutækjaskrá - Upplýsingar um þínar bifreiðar og stöðu þeirra',
+        'Upplýsingar úr Ökutækjaskrá - Upplýsingar um þínar bifreiðar og stöðu þeirra',
       description: 'Transport Authority data provider subtitle',
     },
     confirmButton: {
@@ -59,11 +59,6 @@ export const m = {
   }),
 
   notAllowed: defineMessages({
-    sectionTitle: {
-      id: 'rsk.rdr.application:notAllowed.section.title',
-      defaultMessage: '',
-      description: 'Hidden section title when access is not allowed',
-    },
     descriptionTitle: {
       id: 'rsk.rdr.application:notAllowed.title',
       defaultMessage:

@@ -10,7 +10,6 @@ export const notAllowedForm = buildForm({
   children: [
     buildSection({
       id: 'notAllowedSection',
-      title: m.notAllowed.sectionTitle,
       children: [
         buildDescriptionField({
           id: 'notAllowedDescription',
