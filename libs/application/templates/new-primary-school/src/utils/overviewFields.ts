@@ -8,7 +8,7 @@ import {
 import {
   hasSpecialEducationSubType,
   shouldShowPage,
-  shouldShowReasonForApplicationPage,
+  shouldShowReasonForApplicationAndNewSchoolPages,
 } from './conditionUtils'
 import {
   ApplicationFeatureKey,
@@ -135,16 +135,20 @@ export const overviewFields = (editable?: boolean) => {
       backId: editable ? 'reasonForApplication' : undefined,
       loadItems: reasonForApplicationItems,
       condition: (answers, externalData) =>
-        shouldShowReasonForApplicationPage(answers) &&
-        !hasSpecialEducationSubType(answers, externalData),
+        shouldShowReasonForApplicationAndNewSchoolPages(
+          answers,
+          externalData,
+        ) && !hasSpecialEducationSubType(answers, externalData),
     }),
     buildOverviewField({
       id: 'overview.counsellingRegardingApplication',
       backId: editable ? 'counsellingRegardingApplication' : undefined,
       loadItems: counsellingRegardingApplicationItems,
       condition: (answers, externalData) =>
-        shouldShowReasonForApplicationPage(answers) &&
-        hasSpecialEducationSubType(answers, externalData),
+        shouldShowReasonForApplicationAndNewSchoolPages(
+          answers,
+          externalData,
+        ) && hasSpecialEducationSubType(answers, externalData),
     }),
     buildOverviewField({
       id: 'overview.siblings',
