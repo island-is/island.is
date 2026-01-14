@@ -219,7 +219,6 @@ const InputAdvocate: FC<Props> = ({
         onChange={handleEmailChange}
         onBlur={handleEmailBlur}
       />
-
       <InputMask
         component={Input}
         replacement={{ _: /\d/ }}
