@@ -1,4 +1,4 @@
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, YES } from '@island.is/application/core'
 import { ExternalData, FormText, FormValue } from '@island.is/application/types'
 import { overview as overviewMessages } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
@@ -53,16 +53,12 @@ export const useOtherPaymentsAnswers = (
     )
     paymentsList.push(
       `${
-        !subCategory
-          ? locale === 'is'
-            ? `${topCategory?.name}`
-            : `${topCategory?.english || ''} `
-          : ''
-      } ${subCategory?.name}${
-        privatePensionString ? ` - ${privatePensionString}` : ''
-      }${unionString ? ` - ${unionString}` : ''}${
-        pensionFundString ? ` - ${pensionFundString}` : ''
-      }${
+        subCategory?.name ??
+        (locale === 'is' ? topCategory?.name : topCategory?.english) ??
+        ''
+      }${privatePensionString ? ` - ${privatePensionString}` : ''}${
+        unionString ? ` - ${unionString}` : ''
+      }${pensionFundString ? ` - ${pensionFundString}` : ''}${
         paymentAmount
           ? `: ${formatCurrency(parseInt(paymentAmount))} ${formatMessage(
               overviewMessages.labels.payout.paymentPerMonth,
@@ -77,17 +73,19 @@ export const useOtherPaymentsAnswers = (
     answers,
     'capitalIncome',
   )
-
-  const total = capitalIncome?.capitalIncomeAmount
-    ?.map((x) => parseInt(x?.amount || '0'))
-    .reduce((a, b) => a + b, 0)
+  const capitalIncomeTotalAmount =
+    capitalIncome?.otherIncome === YES
+      ? capitalIncome?.capitalIncomeAmount
+          ?.map((x) => parseInt(x?.amount || '0'))
+          .reduce((a, b) => a + b, 0)
+      : null
 
   return [
     ...paymentsList,
-    total
+    capitalIncomeTotalAmount
       ? `${formatMessage(
           overviewMessages.labels.payout.capitalIncome,
-        )}${`: ${formatCurrency(total)} ${formatMessage(
+        )}${`: ${formatCurrency(capitalIncomeTotalAmount)} ${formatMessage(
           overviewMessages.labels.payout.paymentPerMonth,
         )}`}`
       : '',

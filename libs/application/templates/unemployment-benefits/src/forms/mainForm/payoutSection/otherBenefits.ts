@@ -85,6 +85,9 @@ export const otherBenefitsSubSection = buildSubSection({
                       : incomeTypes.english ?? incomeTypes.name) ?? '',
                 }))
               },
+              clearOnChange: (index) => [
+                `otherBenefits.payments[${index}].paymentAmount`,
+              ],
             },
             subType: {
               component: 'select',
