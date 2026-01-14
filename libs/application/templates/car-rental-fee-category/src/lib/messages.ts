@@ -147,7 +147,7 @@ export const m = {
     },
     description: {
       id: 'rsk.rdr.application:single.multi.description',
-      defaultMessage: 'Veldu magnskráningu eða stakskráningu.',
+      defaultMessage: 'Veldu magnskráningu eða staka skráningu.',
       description: 'Single or multi selection description',
     },
     optionMultiLabel: {
