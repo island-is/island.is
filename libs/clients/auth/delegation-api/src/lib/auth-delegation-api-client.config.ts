@@ -16,9 +16,9 @@ export const AuthDelegationApiClientConfig = defineConfig({
         'AUTH_DELEGATION_API_URL',
         'http://localhost:5333',
       ),
-      machineClientScope: env.optionalJSON<string[]>(
-        'AUTH_DELEGATION_MACHINE_CLIENT_SCOPE',
-      ) ?? ['@island.is/auth/delegations/index:system'],
+      machineClientScope:
+        env.optionalJSON<string[]>('AUTH_DELEGATION_MACHINE_CLIENT_SCOPE') ??
+        [],
     }
   },
 })
