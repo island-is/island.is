@@ -214,7 +214,7 @@ export const m = {
   endOfMonth: defineMessages({
     multiTitle: {
       id: 'rsk.rdr.application:end.month.multi.title',
-      defaultMessage: 'Of nálægt lok mánaðar',
+      defaultMessage: 'Of nálægt lokum mánaðar',
       description: 'End of month check title',
     },
     message: {
