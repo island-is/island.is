@@ -321,10 +321,8 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
 
     //jobStatus
     const employmentStatusFromAnswers =
-      getValueViaPath<EmploymentStatus>(
-        answers,
-        'currentSituation.employmentStatus',
-      ) || EmploymentStatus.UNEMPLOYED
+      getValueViaPath<EmploymentStatus>(answers, 'currentSituation.status') ??
+      EmploymentStatus.UNEMPLOYED
     const jobStatus = {
       jobType: EmploymentStatusIds[employmentStatusFromAnswers],
     }
