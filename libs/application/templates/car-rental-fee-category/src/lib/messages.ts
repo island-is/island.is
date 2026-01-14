@@ -177,7 +177,7 @@ export const m = {
   multiUpload: defineMessages({
     sectionTitle: {
       id: 'rsk.rdr.application:multi.upload.section.title',
-      defaultMessage: 'Magn skráning',
+      defaultMessage: 'Magnskráning',
       description: 'Bulk upload section title',
     },
     multiTitle: {
