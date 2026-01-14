@@ -27,17 +27,29 @@ export const participantSection = buildSection({
               'nationalRegistry.data.nationalId',
             )
             const email = getValueViaPath(
-              application.externalData,
+              application.answers,
               'userInformation.email',
             )
             const phone = getValueViaPath(
-              application.externalData,
+              application.answers,
               'userInformation.phone',
             )
             const healthcenter = getValueViaPath(
-              application.externalData,
+              application.answers,
               'userInformation.healthcenter',
             )
+
+            console.log({
+              application,
+            })
+
+            console.log({
+              name,
+              nationalId,
+              email,
+              phone,
+              healthcenter,
+            })
 
             if (!name || !nationalId || !email || !phone || !healthcenter) {
               return undefined
