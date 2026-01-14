@@ -7,17 +7,18 @@ import {
 import { EntryModel } from '@island.is/clients-rental-day-rate'
 import { CurrentVehicleWithMilage } from '../../utils/types'
 import { hasActiveDayRate } from '../../utils/dayRateUtils'
+import { m } from '../../lib/messages'
 
 export const overviewStatistics = buildSection({
   id: 'overviewStatisticsSection',
-  title: 'Yfirlit yfir bifreiðar',
+  title: m.overview.sectionTitle,
   children: [
     buildMultiField({
       id: 'overviewStatisticsMultiField',
-      title: 'Yfirlit yfir bifreiðar',
+      title: m.overview.multiTitle,
       children: [
         buildStaticTableField({
-          header: ['Yfirlit', ''],
+          header: [m.overview.header, ''],
           rows: (application) => {
             const vehicles =
               getValueViaPath<Array<CurrentVehicleWithMilage>>(
@@ -31,16 +32,18 @@ export const overviewStatistics = buildSection({
                 'getCurrentVehiclesRateCategory.data',
               ) ?? []
 
+            console.log('dayRates', rates)
+
             const dayRates =
               rates.filter(
                 (x) => x.dayRateEntries && hasActiveDayRate(x.dayRateEntries),
               ).length ?? 0
 
             return [
-              ['Fjöldi bifreiða á skrá', vehicles.length.toString()],
-              ['Fjöldi bifreiða á daggjaldi', dayRates.toString()],
+              [m.overview.registeredCount, vehicles.length.toString()],
+              [m.overview.dayRateCount, dayRates.toString()],
               [
-                'Fjöldi bifreiða á kílómetragjaldi',
+                m.overview.kmRateCount,
                 (vehicles.length - dayRates).toString(),
               ],
             ]
