@@ -69,10 +69,9 @@ export const realEstateMessages = defineMessages({
       'Villa kom upp í vefþjónustu, vinsamlega reyndu aftur síðar',
     description: 'Real estate search api error',
   },
-    realEstateSelectError: {
+  realEstateSelectError: {
     id: 'ronp.application:realEstate.realEstateSelectError',
-    defaultMessage:
-      'Vinsamlegast veldu fasteign',
+    defaultMessage: 'Vinsamlegast veldu fasteign',
     description: 'Real estate error if user does not choose a real estate',
   },
 })
