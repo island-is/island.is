@@ -2,7 +2,7 @@ import { forwardRef, MouseEvent } from 'react'
 import cn from 'classnames'
 import { Button } from '@ariakit/react/button'
 
-import { Box, Icon, IconMapIcon } from '@island.is/island-ui/core'
+import { Box, Icon, IconMapIcon, Tooltip } from '@island.is/island-ui/core'
 
 import * as styles from './IconButton.css'
 
@@ -11,12 +11,13 @@ interface Props {
   colorScheme: 'blue' | 'red' | 'transparent'
   onClick?: (evt: MouseEvent) => void
   disabled?: boolean
+  tooltipText?: string
 }
 
 const IconButton = forwardRef<HTMLButtonElement, Props>(({ ...props }, ref) => {
-  const { icon, colorScheme, onClick, disabled } = props
+  const { icon, colorScheme, onClick, disabled, tooltipText } = props
 
-  return (
+  const RenderButton = () => (
     <Box
       component={Button}
       ref={ref}
@@ -45,6 +46,16 @@ const IconButton = forwardRef<HTMLButtonElement, Props>(({ ...props }, ref) => {
         size="small"
       />
     </Box>
+  )
+
+  return tooltipText ? (
+    <Tooltip placement="top" text={tooltipText}>
+      <span>
+        <RenderButton />
+      </span>
+    </Tooltip>
+  ) : (
+    <RenderButton />
   )
 })
 
