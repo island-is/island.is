@@ -303,7 +303,6 @@ codemagic.yaml                                                                  
 /libs/clients/icelandic-health-insurance/health-insurance/                                                                   @island-is/norda
 /libs/clients/payment-schedule/                                                                                              @island-is/norda
 /libs/clients/rsk/company-registry                                                                                           @island-is/norda
-/libs/clients/rsk/rental-day-rate                                                                                            @island-is/norda
 
 /libs/api/domains/company-registry                                                                                           @island-is/norda
 /libs/api/domains/financial-statements-inao/                                                                                 @island-is/norda
