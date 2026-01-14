@@ -159,6 +159,17 @@ const Indictment = () => {
     [workingCase.id],
   )
 
+  const getLicencePlateFromPoliceCase = useCallback(
+    (policeCaseNumber: string) => {
+      return policeCaseData?.policeCaseInfo?.find(
+        (policeCase) =>
+          policeCase?.policeCaseNumber === policeCaseNumber &&
+          policeCase.licencePlate,
+      )?.licencePlate
+    },
+    [policeCaseData],
+  )
+
   const getDemands = useCallback(
     (
       trafficViolationOffenses: Set<IndictmentCountOffense>,
@@ -279,15 +290,10 @@ const Indictment = () => {
       indictmentCountUpdate: UpdateIndictmentCount,
       updatedOffenses?: Offense[],
     ) => {
-      if (
-        indictmentCountUpdate.policeCaseNumber &&
-        policeCaseData?.policeCaseInfo
-      ) {
-        const vehicleNumber = policeCaseData.policeCaseInfo?.find(
-          (policeCase) =>
-            policeCase?.policeCaseNumber ===
-            indictmentCountUpdate.policeCaseNumber,
-        )?.licencePlate
+      if (indictmentCountUpdate.policeCaseNumber) {
+        const vehicleNumber = getLicencePlateFromPoliceCase(
+          indictmentCountUpdate.policeCaseNumber,
+        )
 
         if (vehicleNumber)
           indictmentCountUpdate.vehicleRegistrationNumber = vehicleNumber
@@ -341,7 +347,7 @@ const Indictment = () => {
       )
     },
     [
-      policeCaseData?.policeCaseInfo,
+      getLicencePlateFromPoliceCase,
       setSuspensionRequest,
       setWorkingCase,
       updateIndictmentCount,
@@ -385,6 +391,29 @@ const Indictment = () => {
       workingCase.indictmentCounts,
     ],
   )
+
+  useOnceOn(Boolean(policeCaseData), () => {
+    if (policeCaseData) {
+      for (const indictmentCount of workingCase.indictmentCounts || []) {
+        if (
+          !indictmentCount.policeCaseNumber ||
+          indictmentCount.vehicleRegistrationNumber
+        ) {
+          continue
+        }
+
+        const vehicleNumber = getLicencePlateFromPoliceCase(
+          indictmentCount.policeCaseNumber,
+        )
+
+        if (vehicleNumber) {
+          handleUpdateIndictmentCount(indictmentCount.id, {
+            vehicleRegistrationNumber: vehicleNumber,
+          })
+        }
+      }
+    }
+  })
 
   const initialize = useCallback(() => {
     const indictmentCounts = workingCase.indictmentCounts || []
