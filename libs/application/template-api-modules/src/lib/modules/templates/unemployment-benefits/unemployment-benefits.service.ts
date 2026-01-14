@@ -439,7 +439,7 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
     if (!response.success) {
       this.logger.error(
         '[VMST-Unemployment]: Failed to submit application',
-        response.errorMessage,
+        response.errorMessage || response,
       )
       throw new TemplateApiError(
         {
