@@ -11,12 +11,6 @@ export const errorMessages = defineMessages({
     defaultMessage: 'Kennitala þarf að vera gild.',
     description: 'National id must be valid',
   },
-  relativesRequired: {
-    id: 'nps.application:error.relativesRequired',
-    defaultMessage:
-      'Nauðsynlegt er að bæta við að minnsta kosti einum aðstandanda.',
-    description: 'You must add at least one relative',
-  },
   relativeSameAsGuardian: {
     id: 'nps.application:error.relativeSameAsGuardian',
     defaultMessage: 'Aðstandandi má ekki vera forsjáraðili',
