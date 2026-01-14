@@ -193,7 +193,7 @@ export const m = {
     stepsMessage: {
       id: 'rsk.rdr.application:multi.upload.steps',
       defaultMessage:
-        '1. Sæktu sniðmátið \n2. Gerðu viðeigandi breytingar á skjalinu \n3. Hleður upp skjalinu hér að neðan',
+        '1. Sækir sniðmátið \n2. Gerir viðeigandi breytingar á skjalinu \n3. Hleður upp skjalinu hér að neðan',
       description: 'Bulk upload help steps',
     },
   }),
