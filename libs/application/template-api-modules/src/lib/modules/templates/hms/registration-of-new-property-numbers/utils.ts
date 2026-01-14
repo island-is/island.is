@@ -55,10 +55,20 @@ export const getRequestDto = (application: Application): ApplicationDto => {
     answers,
     'realEstate.realEstateOtherComments',
   )
-  const selectedRealEstate = getValueViaPath<Array<Fasteign>>(
+
+  const externalDataProperties = getValueViaPath<Array<Fasteign>>(
     externalData,
     'getProperties.data',
-  )?.find((realEstate) => realEstate.fasteignanumer === selectedRealEstateId)
+  )
+
+  let selectedRealEstate: Fasteign | undefined
+  if (externalDataProperties?.length || 0 > 19) {
+    selectedRealEstate = getValueViaPath<Fasteign>(answers, 'realEstateExtra')
+  } else {
+    selectedRealEstate = externalDataProperties?.find(
+      (realEstate) => realEstate.fasteignanumer === selectedRealEstateId,
+    )
+  }
 
   const contact = getValueViaPath<ContactAnswer>(answers, 'contact')
   const contactIsSameAsApplicant = contact?.isSameAsApplicant?.[0] === YES

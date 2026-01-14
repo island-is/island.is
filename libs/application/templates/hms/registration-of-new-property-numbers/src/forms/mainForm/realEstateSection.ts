@@ -1,6 +1,8 @@
 import {
   buildAlertMessageField,
+  buildCustomField,
   buildDescriptionField,
+  buildHiddenInput,
   buildMultiField,
   buildSection,
   buildSelectField,
@@ -24,6 +26,13 @@ export const realEstateSection = buildSection({
         buildSelectField({
           id: 'realEstate.realEstateName',
           title: realEstateMessages.realEstateLabel,
+          condition: (_, externalData) => {
+            const properties = getValueViaPath<Array<Fasteign>>(
+              externalData,
+              'getProperties.data',
+            )
+            return (properties?.length || 0) > 20 ? true : false
+          },
           options: (application) => {
             const properties = getValueViaPath<Array<Fasteign>>(
               application.externalData,
@@ -42,6 +51,28 @@ export const realEstateSection = buildSection({
                     value: property.fasteignanumer ?? '',
                   }))
               : []
+          },
+        }),
+        buildCustomField({
+          id: 'realEstate.realEstateName',
+          component: 'RealEstateSearch',
+          condition: (_, externalData) => {
+            const properties = getValueViaPath<Array<Fasteign>>(
+              externalData,
+              'getProperties.data',
+            )
+            return (properties?.length || 0) < 19 ? true : false
+          },
+        }),
+        // This hidden input is used to store information needed or submit when fetching graphql info for large customer with 20+ real estates.
+        buildHiddenInput({
+          id: 'realEstateExtra',
+          condition: (_, externalData) => {
+            const properties = getValueViaPath<Array<Fasteign>>(
+              externalData,
+              'getProperties.data',
+            )
+            return (properties?.length || 0) < 19 ? true : false
           },
         }),
         buildDescriptionField({
