@@ -287,7 +287,7 @@ export const differentNeedsMessages = {
     internationalSchoolAlertMessage: {
       id: 'nps.application:differentNeeds.support.internationalSchoolAlertMessage#markdown',
       defaultMessage:
-        'If your application is accepted, the school will ask you to send report cards from the last two years, external standardized test results and special needs documentation.',
+        'Ef umsókn þín er samþykkt mun verða óskað eftir upplýsingum um námsárangur síðustu tveggja ára, stöðluð próf og upplýsingar um aðrar þarfir.',
       description:
         'If your application is accepted, the school will ask you to send report cards from the last two years, external standardized test results and special needs documentation.',
     },
