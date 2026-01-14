@@ -20,6 +20,7 @@ import {
   CaseState,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import { courtOfAppealCaseOverviewHeader as strings } from './CaseOverviewHeader.strings'
 
@@ -46,19 +47,17 @@ const AppealResultAccessed = () => {
     role: UserRole
     date: string
   }) => (
-    <Box marginBottom={2}>
-      <AlertMessage
-        message={formatMessage(strings.appealResultOpenedBy, {
-          userRole: role as UserRole,
-          when: formatDate(date, 'PPPp'),
-        })}
-        type="info"
-      />
-    </Box>
+    <AlertMessage
+      message={formatMessage(strings.appealResultOpenedBy, {
+        userRole: role as UserRole,
+        when: formatDate(date, 'PPPp'),
+      })}
+      type="info"
+    />
   )
 
   return (
-    <Box marginTop={8}>
+    <Box>
       {workingCase.defenceAppealResultAccessDate && (
         <AppealResultAccessedByRole
           role={UserRole.DEFENDER}
@@ -99,78 +98,68 @@ const CaseOverviewHeader: FC<Props> = (props) => {
     workingCase.appealedDate > workingCase.appealDeadline
 
   return (
-    <>
-      <Box marginBottom={5}>
-        <Box marginBottom={3}>
-          <Button
-            variant="text"
-            preTextIcon="arrowBack"
-            onClick={() => router.push(getStandardUserDashboardRoute(user))}
-          >
-            {formatMessage(core.back)}
-          </Button>
-        </Box>
+    <div className={grid({ gap: 5 })}>
+      <Box>
+        <Button
+          variant="text"
+          preTextIcon="arrowBack"
+          onClick={() => router.push(getStandardUserDashboardRoute(user))}
+        >
+          {formatMessage(core.back)}
+        </Button>
       </Box>
-      {!workingCase.appealRulingDecision && wasAppealedAfterDeadline && (
-        <Box marginBottom={2}>
+      <Box className={grid({ gap: 2 })}>
+        {!workingCase.appealRulingDecision && wasAppealedAfterDeadline && (
           <AlertMessage
             message={formatMessage(strings.appealSentAfterDeadline)}
             type="warning"
           />
-        </Box>
-      )}
-      <AppealResultAccessed />
-      {alerts?.map((alert) => (
-        <Box key={alert.message} marginBottom={2}>
+        )}
+        <AppealResultAccessed />
+        {alerts?.map((alert) => (
           <AlertMessage
+            key={alert.message}
             message={alert.message}
             type="warning"
             testid="requestAppealRulingNotToBePublished"
           />
-        </Box>
-      ))}
-      <Box marginTop={5}>
-        <CaseTitleInfoAndTags />
-        <Box marginBottom={5}>
-          {isRestrictionCase(workingCase.type) &&
-            workingCase.decision !==
-              CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN &&
-            workingCase.state === CaseState.ACCEPTED && (
-              <CaseDates workingCase={workingCase} />
-            )}
-        </Box>
-        {workingCase.caseModifiedExplanation && (
-          <Box marginBottom={5}>
-            <AlertMessage
-              type="info"
-              title={formatMessage(m.sections.modifyDatesInfo.title, {
-                caseType: workingCase.type,
-              })}
-              message={
-                <MarkdownWrapper
-                  markdown={workingCase.caseModifiedExplanation}
-                  textProps={{ variant: 'small' }}
-                />
-              }
-            />
-          </Box>
-        )}
-        {workingCase.rulingModifiedHistory && (
-          <Box marginBottom={5}>
-            <AlertMessage
-              type="info"
-              title={formatMessage(m.sections.modifyRulingInfo.title)}
-              message={
-                <MarkdownWrapper
-                  markdown={workingCase.rulingModifiedHistory}
-                  textProps={{ variant: 'small' }}
-                />
-              }
-            />
-          </Box>
-        )}
+        ))}
       </Box>
-    </>
+
+      <CaseTitleInfoAndTags />
+      {isRestrictionCase(workingCase.type) &&
+        workingCase.decision !==
+          CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN &&
+        workingCase.state === CaseState.ACCEPTED && (
+          <CaseDates workingCase={workingCase} />
+        )}
+      {workingCase.caseModifiedExplanation && (
+        <AlertMessage
+          type="info"
+          title={formatMessage(m.sections.modifyDatesInfo.title, {
+            caseType: workingCase.type,
+          })}
+          message={
+            <MarkdownWrapper
+              markdown={workingCase.caseModifiedExplanation}
+              textProps={{ variant: 'small' }}
+            />
+          }
+        />
+      )}
+      {workingCase.rulingModifiedHistory && (
+        <AlertMessage
+          type="info"
+          title={formatMessage(m.sections.modifyRulingInfo.title)}
+          message={
+            <MarkdownWrapper
+              markdown={workingCase.rulingModifiedHistory}
+              textProps={{ variant: 'small' }}
+            />
+          }
+        />
+      )}
+    </div>
   )
 }
 
