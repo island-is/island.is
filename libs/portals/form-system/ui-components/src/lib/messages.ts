@@ -1124,4 +1124,9 @@ export const m = defineMessages({
     defaultMessage: 'Ný slóð fyrir innsendingar',
     description: 'New submission URL',
   },
+  notifications: {
+    id: 'form.system:notifications',
+    defaultMessage: 'Tilkynningar',
+    description: 'Notifications',
+  },
 })
