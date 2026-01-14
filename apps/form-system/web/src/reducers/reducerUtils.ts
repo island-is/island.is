@@ -249,7 +249,6 @@ export const decrement = (
       currentScreenIndex,
     ) === -1
 
-  console.log(`isFirstScreenInSection: ${isFirstScreenInSection}`)
   if (doesSectionHaveScreens && !isFirstScreenInSection) {
     const prevScreenIdx = prevVisibleScreenInSection(
       state.currentSection.data,
@@ -273,8 +272,9 @@ export const decrement = (
       currentSectionIndex,
     )
     if (prevSectionIdx !== -1) {
-      resultSections = completeSection(resultSections, prevSectionIdx, false)
       const prevSection = sections[prevSectionIdx]
+      resultSections = completeSection(resultSections, prevSectionIdx, false)
+      resultCurrentSection = { data: prevSection, index: prevSectionIdx }
 
       if (hasScreens(prevSection) === true) {
         const lastScreenIdx = lastVisibleScreenIndex(prevSection.screens)
@@ -286,6 +286,8 @@ export const decrement = (
                 index: lastScreenIdx,
               }
             : undefined
+      } else {
+        resultCurrentScreen = undefined
       }
     }
   }
