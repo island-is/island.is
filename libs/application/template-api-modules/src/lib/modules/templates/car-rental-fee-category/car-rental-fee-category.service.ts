@@ -158,7 +158,7 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
                 error.detail ??
                 'Invalid input. Possibly vehicles are already registered to the selected rate category. Check the vehicles you are trying to register.',
             },
-            error?.status ?? 500,
+            error?.status
           )
         }
       }

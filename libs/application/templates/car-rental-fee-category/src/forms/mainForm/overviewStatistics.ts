@@ -32,8 +32,6 @@ export const overviewStatistics = buildSection({
                 'getCurrentVehiclesRateCategory.data',
               ) ?? []
 
-            console.log('dayRates', rates)
-
             const dayRates =
               rates.filter(
                 (x) => x.dayRateEntries && hasActiveDayRate(x.dayRateEntries),
