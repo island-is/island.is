@@ -82,6 +82,7 @@ export const m = {
     healthCenterSubTitle: {
       id: 'hh.courses.application:prerequisites.healthCenterSubTitle',
       defaultMessage: 'Upplýsingar um heilsugæslustöð',
+      description: 'Information about the health center',
     },
     userProfileTitle: {
       id: 'hh.courses.application:prerequisites.userProfileTitle',

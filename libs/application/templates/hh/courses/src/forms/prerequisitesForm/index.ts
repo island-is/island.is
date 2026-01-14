@@ -35,14 +35,14 @@ export const Prerequisites = buildForm({
               subTitle: m.prerequisites.nationalRegistrySubTitle,
             }),
             buildDataProviderItem({
-              provider: UserProfileApi,
-              title: m.prerequisites.userProfileTitle,
-              subTitle: m.prerequisites.userProfileSubTitle,
-            }),
-            buildDataProviderItem({
               provider: HealthCenterApi,
               title: m.prerequisites.healthCenterTitle,
               subTitle: m.prerequisites.healthCenterSubTitle,
+            }),
+            buildDataProviderItem({
+              provider: UserProfileApi,
+              title: m.prerequisites.userProfileTitle,
+              subTitle: m.prerequisites.userProfileSubTitle,
             }),
           ],
           submitField: buildSubmitField({
