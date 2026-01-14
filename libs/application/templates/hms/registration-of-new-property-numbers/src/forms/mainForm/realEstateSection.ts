@@ -31,7 +31,7 @@ export const realEstateSection = buildSection({
               externalData,
               'getProperties.data',
             )
-            return (properties?.length || 0) > 20 ? true : false
+            return (properties?.length || 0) < 20 ? true : false
           },
           options: (application) => {
             const properties = getValueViaPath<Array<Fasteign>>(
@@ -61,7 +61,7 @@ export const realEstateSection = buildSection({
               externalData,
               'getProperties.data',
             )
-            return (properties?.length || 0) < 19 ? true : false
+            return (properties?.length || 0) > 19 ? true : false
           },
         }),
         // This hidden input is used to store information needed or submit when fetching graphql info for large customer with 20+ real estates.
@@ -72,7 +72,7 @@ export const realEstateSection = buildSection({
               externalData,
               'getProperties.data',
             )
-            return (properties?.length || 0) < 19 ? true : false
+            return (properties?.length || 0) > 19 ? true : false
           },
         }),
         buildDescriptionField({
