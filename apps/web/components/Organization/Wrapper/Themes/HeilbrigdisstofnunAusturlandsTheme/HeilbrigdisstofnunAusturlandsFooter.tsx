@@ -164,16 +164,25 @@ const HeilbrigdisstofnunAusturlandsFooter = ({
 
             <GridRow align="flexEnd" marginTop={3}>
               <Box marginRight={[4, 4, 12]}>
-                <Inline alignY="center" align="center" space={5}>
+                <Inline alignY="bottom" align="center" space={5}>
+                  <img
+                    src={n(
+                      'hsnGraenSkrefLogo',
+                      'https://images.ctfassets.net/8k0h54kbe6bj/2QMl8Mw50Vj0AjlI6jzENH/cc4792e02ff1b152ede7e892da333669/greenSteps.png',
+                    )}
+                    alt="graen-skref"
+                    width={90}
+                  />
                   <img
                     src={n(
                       'hsaJafnlaunavottunLogo',
-                      'https://images.ctfassets.net/8k0h54kbe6bj/3XqaDYlUePKxXzt0s0xKD0/943595301526876764db84519c3a0366/Rectangle.svg',
+                      'https://images.ctfassets.net/8k0h54kbe6bj/1BAC3UMza6cR48xoMUoaPY/e77514ee2359d5fed0b0ff6060c089e2/Jafnlaunavottun_adalmerki_2025_2028_f_ljosan_grunn.png',
                     )}
                     alt="jafnlaunavottun"
-                    width={74}
-                    height={74}
+                    width={78}
+                    style={{ filter: 'invert(1)' }}
                   />
+
                   <img
                     width={44}
                     height={69}
