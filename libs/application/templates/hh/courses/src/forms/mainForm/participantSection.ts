@@ -39,18 +39,6 @@ export const participantSection = buildSection({
               'userInformation.healthcenter',
             )
 
-            console.log({
-              application,
-            })
-
-            console.log({
-              name,
-              nationalId,
-              email,
-              phone,
-              healthcenter,
-            })
-
             if (!name || !nationalId || !email || !phone || !healthcenter) {
               return undefined
             }
