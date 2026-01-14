@@ -146,7 +146,7 @@ export const mapIcelandicGovernmentInstitutionVacanciesFromExternalSystem =
         })(),
         logoUrl: item.logoUrl ?? undefined,
         locations,
-        address: item.heimilisfang,
+        address: item.address ?? undefined,
         // Display fields
         creationDate: formatDate(item.creationDate),
         updatedDate: formatDate(item.updatedDate),
@@ -248,10 +248,22 @@ export const mapIcelandicGovernmentInstitutionVacancyByIdResponseFromExternalSys
       intro,
       fieldOfWork: vacancy.jobTitle ?? undefined,
       institutionName: vacancy.orgName ?? undefined,
-      institutionReferenceIdentifier:
-        typeof vacancy.orgNr === 'number' && vacancy.orgNr !== null
-          ? String(vacancy.orgNr)
-          : vacancy.orgNr ?? undefined,
+      institutionReferenceIdentifier: (() => {
+        const orgNrStr =
+          typeof vacancy.orgNr === 'number' && vacancy.orgNr !== null
+            ? String(vacancy.orgNr)
+            : vacancy.orgNr ?? undefined
+
+        if (!orgNrStr) {
+          return undefined
+        }
+
+        if (!orgNrStr.startsWith('0') && orgNrStr.length !== 5) {
+          return `0${orgNrStr}`
+        }
+
+        return orgNrStr
+      })(),
       logoUrl: vacancy.logoUrl ?? undefined,
       locations,
       contacts,
