@@ -87,6 +87,11 @@ export const workerSetup = (): ServiceBuilder<typeof workerName> =>
     .redis()
     .db()
     .env({
+      FILE_STORAGE_UPLOAD_BUCKET: {
+        dev: 'island-is-dev-upload-api',
+        staging: 'island-is-staging-upload-api',
+        prod: 'island-is-prod-upload-api',
+      },
       FORM_SYSTEM_BULL_PREFIX,
     })
     .args('main.cjs', '--job', 'worker')
