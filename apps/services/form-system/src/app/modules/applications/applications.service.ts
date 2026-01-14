@@ -741,7 +741,9 @@ export class ApplicationsService {
     const currentSection = this.getCurrentSection(sections, currentSectionId)
     const currentScreen = this.getCurrentScreen(currentSection, currentScreenId)
 
-    const application = await this.applicationModel.findByPk(applicationId)
+    const application = await this.applicationModel.findByPk(applicationId, {
+      include: [{ model: Value, as: 'values' }],
+    })
 
     if (!application) {
       throw new NotFoundException(
@@ -895,7 +897,9 @@ export class ApplicationsService {
   }
 
   async deleteApplication(id: string, user: User): Promise<void> {
-    const application = await this.applicationModel.findByPk(id)
+    const application = await this.applicationModel.findByPk(id, {
+      include: [{ model: Value, as: 'values' }],
+    })
 
     if (!application) {
       throw new NotFoundException(`Application with id '${id}' not found`)

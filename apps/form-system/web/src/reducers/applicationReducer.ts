@@ -11,8 +11,7 @@ import {
 } from '@island.is/form-system/ui'
 import { hasScreens } from '../utils/reducerHelpers'
 import {
-  decrementWithoutScreens,
-  decrementWithScreens,
+  decrement,
   getDecrementVariables,
   getIncrementVariables,
   incrementWithoutScreens,
@@ -151,19 +150,15 @@ export const applicationReducer = (
       return incrementWithoutScreens(state, submitScreen)
     }
     case 'DECREMENT': {
-      const { currentSectionData, currentSectionIndex, currentScreenIndex } =
+      const { currentSectionIndex, currentScreenIndex } =
         getDecrementVariables(state)
       const { submitScreen } = action.payload
-      if (hasScreens(currentSectionData)) {
-        return decrementWithScreens(
-          state,
-          currentSectionIndex,
-          currentScreenIndex,
-          submitScreen,
-        )
-      }
-
-      return decrementWithoutScreens(state, currentSectionIndex, submitScreen)
+      return decrement(
+        state,
+        currentSectionIndex,
+        currentScreenIndex,
+        submitScreen,
+      )
     }
     case 'INDEX_SCREEN': {
       const { sectionIndex, screenIndex } = action.payload

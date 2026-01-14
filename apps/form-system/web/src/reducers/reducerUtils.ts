@@ -50,8 +50,11 @@ export const getDecrementVariables = (state: ApplicationState) => {
   }
 }
 
-const completeSection = (sections: FormSystemSection[], idx: number) =>
-  sections.map((s, i) => (i === idx ? { ...s, isCompleted: true } : s))
+const completeSection = (
+  sections: FormSystemSection[],
+  idx: number,
+  completed = true,
+) => sections.map((s, i) => (i === idx ? { ...s, isCompleted: completed } : s))
 
 export const incrementWithScreens = (
   state: ApplicationState,
@@ -203,7 +206,7 @@ export const incrementWithoutScreens = (
   }
 }
 
-export const decrementWithScreens = (
+export const decrement = (
   state: ApplicationState,
   currentSectionIndex: number,
   currentScreenIndex: number,
@@ -232,88 +235,65 @@ export const decrementWithScreens = (
     console.error('Error decrementing screen:', error)
   })
 
+  let resultSections = state.sections ?? []
+  let resultCurrentScreen = state.currentScreen
+  let resultCurrentSection = state.currentSection
   const sections = state.sections ?? []
-  const section = sections[currentSectionIndex] as FormSystemSection | undefined
+  const doesSectionHaveScreens = hasScreens(
+    state.sections?.[currentSectionIndex],
+  )
+  const isFirstScreenInSection =
+    doesSectionHaveScreens &&
+    prevVisibleScreenInSection(
+      state.currentSection.data,
+      currentScreenIndex,
+    ) === -1
 
-  const prevScreenIdx = prevVisibleScreenInSection(section, currentScreenIndex)
+  console.log(`isFirstScreenInSection: ${isFirstScreenInSection}`)
+  if (doesSectionHaveScreens && !isFirstScreenInSection) {
+    const prevScreenIdx = prevVisibleScreenInSection(
+      state.currentSection.data,
+      currentScreenIndex,
+    )
+    resultCurrentScreen =
+      prevScreenIdx >= 0
+        ? {
+            data: state.currentSection.data.screens![
+              prevScreenIdx
+            ] as FormSystemScreen,
+            index: prevScreenIdx,
+          }
+        : undefined
+  } else if (
+    !doesSectionHaveScreens ||
+    (doesSectionHaveScreens && isFirstScreenInSection)
+  ) {
+    const prevSectionIdx = prevVisibleSectionIndex(
+      sections,
+      currentSectionIndex,
+    )
+    if (prevSectionIdx !== -1) {
+      resultSections = completeSection(resultSections, prevSectionIdx, false)
+      const prevSection = sections[prevSectionIdx]
 
-  if (prevScreenIdx !== -1) {
-    const prevScreen = section!.screens![prevScreenIdx] as FormSystemScreen
-
-    return {
-      ...state,
-      currentScreen: { data: prevScreen, index: prevScreenIdx },
-      errors: [],
+      if (hasScreens(prevSection) === true) {
+        const lastScreenIdx = lastVisibleScreenIndex(prevSection.screens)
+        resultCurrentSection = { data: prevSection, index: prevSectionIdx }
+        resultCurrentScreen =
+          lastScreenIdx >= 0
+            ? {
+                data: prevSection.screens![lastScreenIdx] as FormSystemScreen,
+                index: lastScreenIdx,
+              }
+            : undefined
+      }
     }
   }
-
-  const prevSecIdx = prevVisibleSectionIndex(sections, currentSectionIndex)
-  if (prevSecIdx === -1) {
-    return state
-  }
-
-  const prevSection = sections[prevSecIdx] as FormSystemSection
-  const lastScreenIdx = lastVisibleScreenIndex(prevSection.screens)
-
   return {
     ...state,
-    currentSection: { data: prevSection, index: prevSecIdx },
-    currentScreen:
-      lastScreenIdx >= 0
-        ? {
-            data: prevSection.screens![lastScreenIdx] as FormSystemScreen,
-            index: lastScreenIdx,
-          }
-        : undefined,
-    errors: [],
-  }
-}
-
-export const decrementWithoutScreens = (
-  state: ApplicationState,
-  currentSectionIndex: number,
-  submitScreenMutation: MutationTuple<
-    any,
-    OperationVariables,
-    DefaultContext,
-    ApolloCache<any>
-  >,
-): ApplicationState => {
-  const [submitScreen] = submitScreenMutation
-
-  submitScreen({
-    variables: {
-      input: {
-        submitScreenDto: {
-          applicationId: state.application.id,
-          screenId: state.currentScreen?.data?.id,
-          sectionId: state.currentSection.data.id,
-          increment: false,
-          sections: state.sections,
-        },
-      },
-    },
-  }).catch((error) => {
-    console.error('Error decrementing screen:', error)
-  })
-
-  const sections = state.sections ?? []
-  const prevSecIdx = prevVisibleSectionIndex(sections, currentSectionIndex)
-  if (prevSecIdx === -1) return state
-
-  const prevSection = sections[prevSecIdx] as FormSystemSection
-  const lastScreenIdx = lastVisibleScreenIndex(prevSection.screens)
-
-  return {
-    ...state,
-    currentSection: { data: prevSection, index: prevSecIdx },
-    currentScreen:
-      lastScreenIdx >= 0
-        ? {
-            data: prevSection.screens![lastScreenIdx] as FormSystemScreen,
-            index: lastScreenIdx,
-          }
-        : undefined,
+    currentSection: resultCurrentSection,
+    currentScreen: resultCurrentScreen,
+    sections: resultSections,
     errors: [],
   }
 }
