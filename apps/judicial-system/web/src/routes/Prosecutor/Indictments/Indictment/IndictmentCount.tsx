@@ -336,7 +336,7 @@ export const IndictmentCount: FC<Props> = ({
       ? workingCase.crimeScenes[policeCaseNumber]
       : undefined
 
-    const removingTrafficViolationSubtype =
+    const isRemovingTrafficViolationSubtype =
       indictmentCount.policeCaseNumber &&
       isTrafficViolationIndictmentCount(
         indictmentCount.indictmentCountSubtypes,
@@ -349,7 +349,7 @@ export const IndictmentCount: FC<Props> = ({
           workingCase.indictmentSubtypes[policeCaseNumber],
         ))
 
-    if (removingTrafficViolationSubtype) {
+    if (isRemovingTrafficViolationSubtype) {
       indictmentCountUpdate.vehicleRegistrationNumber = null
       indictmentCountUpdate.recordedSpeed = null
       indictmentCountUpdate.speedLimit = null
