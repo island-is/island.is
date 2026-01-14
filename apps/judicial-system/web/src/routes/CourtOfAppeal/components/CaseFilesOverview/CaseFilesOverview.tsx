@@ -19,7 +19,9 @@ const CaseFilesOverview = () => {
 
   return (
     <>
-      <AppealCaseFilesOverview />
+      <Box marginBottom={6}>
+        <AppealCaseFilesOverview />
+      </Box>
       <Box marginBottom={6}>
         <Text as="h3" variant="h3" marginBottom={3}>
           {formatMessage(strings.courtCaseFilesTitle)}
