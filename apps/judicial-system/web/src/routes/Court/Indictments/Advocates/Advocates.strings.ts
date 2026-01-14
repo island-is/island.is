@@ -63,13 +63,6 @@ export const strings = defineMessages({
     description:
       'Notaður sem texti fyrir réttargæslumann í dómaraflæði í ákærum.',
   },
-  removeCivilClaimantAdvocate: {
-    id: 'judicial.system.core:court_indictments.advocates.remove_civil_claimant_advocate',
-    defaultMessage:
-      'Fjarlægja {defenderIsLawyer, select, true {lögmann} other {réttargæslumann}}',
-    description:
-      'Notaður sem texti fyrir eyða kröfuhafa í dómaraflæði í ákærum.',
-  },
   addCivilClaimantAdvocate: {
     id: 'judicial.system.core:court_indictments.advocates.add_civil_claimant',
     defaultMessage: 'Bæta við lögmanni kröfuhafa',
