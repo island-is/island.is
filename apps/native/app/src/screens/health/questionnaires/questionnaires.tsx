@@ -9,6 +9,7 @@ import {
 import styled, { useTheme } from 'styled-components/native'
 
 import externalLinkIcon from '../../../assets/icons/external-link.png'
+import { getConfig } from '../../../config'
 import {
   QuestionnaireQuestionnairesOrganizationEnum,
   QuestionnaireQuestionnairesStatusEnum,
@@ -17,6 +18,7 @@ import {
 import { createNavigationOptionHooks } from '../../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../../hooks/use-connectivity-indicator'
 import { useLocale } from '../../../hooks/use-locale'
+import { useBrowser } from '../../../lib/use-browser'
 import {
   Problem,
   QuestionnaireCard,
@@ -26,10 +28,7 @@ import {
 import { ComponentRegistry } from '../../../utils/component-registry'
 import { createSkeletonArr } from '../../../utils/create-skeleton-arr'
 import type { QuestionnaireDetailParams } from './questionnaire-detail'
-import {
-  getQuestionnaireOrganizationLabelId,
-  getQuestionnaireStatusLabelId,
-} from './questionnaire-utils'
+import { getQuestionnaireOrganizationLabelId } from './questionnaire-utils'
 
 const Host = styled(SafeAreaView)`
   flex: 1;
@@ -52,6 +51,7 @@ export const QuestionnairesScreen: NavigationFunctionComponent = ({
   componentId,
 }) => {
   useNavigationOptions(componentId)
+  const { openBrowser } = useBrowser()
 
   const theme = useTheme()
   const intl = useIntl()
@@ -60,50 +60,56 @@ export const QuestionnairesScreen: NavigationFunctionComponent = ({
   const getActionList = useCallback(
     (
       status: QuestionnaireQuestionnairesStatusEnum | null | undefined,
-      onOpen: () => void,
+      organization:
+        | QuestionnaireQuestionnairesOrganizationEnum
+        | null
+        | undefined,
+      id: string | null | undefined,
     ): QuestionnaireCardAction[] => {
       if (!status) {
         return []
       }
 
-      const baseAction = {
-        icon: externalLinkIcon,
-        onPress: onOpen,
+      const getactionData = (messageid: string, link: string) => {
+        return {
+          icon: externalLinkIcon,
+          onPress: () => openBrowser(link, componentId),
+          text: intl.formatMessage({ id: messageid }),
+        }
       }
+
+      const answerLink = `${
+        getConfig().baseUrl
+      }/minarsidur/heilsa/spurningalistar/${organization?.toLowerCase()}/${id}/svara`
+      const viewAnswerLink = `${
+        getConfig().baseUrl
+      }/minarsidur/heilsa/spurningalistar/${organization?.toLowerCase()}/${id}/skoda-svor`
+      const continueDraftLink = `${
+        getConfig().baseUrl
+      }/minarsidur/heilsa/spurningalistar/${organization?.toLowerCase()}/${id}/svara`
 
       switch (status) {
         case QuestionnaireQuestionnairesStatusEnum.NotAnswered:
           return [
-            {
-              ...baseAction,
-              text: intl.formatMessage({
-                id: 'health.questionnaires.action.answer',
-              }),
-            },
+            getactionData('health.questionnaires.action.answer', answerLink),
           ]
         case QuestionnaireQuestionnairesStatusEnum.Answered:
           return [
-            {
-              ...baseAction,
-              text: intl.formatMessage({
-                id: 'health.questionnaires.action.view-answer',
-              }),
-            },
+            getactionData(
+              'health.questionnaires.action.view-answer',
+              viewAnswerLink,
+            ),
           ]
         case QuestionnaireQuestionnairesStatusEnum.Draft:
           return [
-            {
-              ...baseAction,
-              text: intl.formatMessage({
-                id: 'health.questionnaires.action.continue-draft',
-              }),
-            },
-            {
-              ...baseAction,
-              text: intl.formatMessage({
-                id: 'health.questionnaires.action.view-answer',
-              }),
-            },
+            getactionData(
+              'health.questionnaires.action.continue-draft',
+              continueDraftLink,
+            ),
+            getactionData(
+              'health.questionnaires.action.view-answer',
+              viewAnswerLink,
+            ),
           ]
         default:
           return []
@@ -206,7 +212,11 @@ export const QuestionnairesScreen: NavigationFunctionComponent = ({
                 item.status ?? QuestionnaireQuestionnairesStatusEnum.NotAnswered
               }
               onPress={open}
-              actionList={getActionList(item.status, open)}
+              actionList={getActionList(
+                item.status,
+                item.organization,
+                item.id,
+              )}
             />
           )
         })}

@@ -16,6 +16,7 @@ import externalLinkIcon from '../../../assets/icons/external-link.png'
 import eyeOffIcon from '../../../assets/icons/eye-off.png'
 import {
   QuestionnaireQuestionnairesOrganizationEnum,
+  QuestionnaireQuestionnairesStatusEnum,
   useGetQuestionnaireQuery,
 } from '../../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../../hooks/create-navigation-option-hooks'
@@ -26,6 +27,7 @@ import {
   getQuestionnaireOrganizationLabelId,
   getQuestionnaireStatusLabelId,
 } from './questionnaire-utils'
+import { getConfig } from '../../../config'
 
 const Host = styled.View`
   flex: 1;
@@ -96,8 +98,6 @@ export const QuestionnaireDetailScreen: NavigationFunctionComponent<{
     skip: shouldSkipQuery,
   })
 
-  console.log('data', data)
-
   const questionnaire = data?.questionnairesDetail ?? null
   const base = questionnaire?.baseInformation ?? null
 
@@ -108,17 +108,23 @@ export const QuestionnaireDetailScreen: NavigationFunctionComponent<{
   }, [componentId])
 
   const onAnswer = useCallback(() => {
-    // TODO: wire to questionnaire answering flow (API-driven)
+    openBrowser(
+      `${
+        getConfig().baseUrl
+      }/minarsidur/heilsa/spurningalistar/${organization?.toLowerCase()}/${id}/svara`,
+      componentId,
+    )
     return
   }, [])
 
   const onView = useCallback(() => {
-    // TODO: wire to questionnaire answers view (API-driven)
+    openBrowser(
+      `${
+        getConfig().baseUrl
+      }/minarsidur/heilsa/spurningalistar/${organization?.toLowerCase()}/${id}/skoda-svor`,
+      componentId,
+    )
     return
-  }, [])
-
-  const onHide = useCallback(() => {
-    // no-op for now (wired to API later)
   }, [])
 
   if (!id) {
@@ -190,6 +196,12 @@ export const QuestionnaireDetailScreen: NavigationFunctionComponent<{
     )
   }
 
+  const isAnswered =
+    base?.status === QuestionnaireQuestionnairesStatusEnum.Answered
+  const isDraft = base?.status === QuestionnaireQuestionnairesStatusEnum.Draft
+  const isNotAnswered =
+    base?.status === QuestionnaireQuestionnairesStatusEnum.NotAnswered
+
   return (
     <Host>
       <NavigationBarSheet
@@ -212,38 +224,33 @@ export const QuestionnaireDetailScreen: NavigationFunctionComponent<{
           </Typography>
           <View>
             <ButtonRow>
-              <Button
-                title={intl.formatMessage({
-                  id: 'health.questionnaires.action.answer',
-                })}
-                onPress={onAnswer}
-                isFilledUtilityButton
-                compactPadding
-                icon={externalLinkIcon}
-                ellipsis
-              />
-              <Button
-                title={intl.formatMessage({
-                  id: 'health.questionnaires.action.view-answer',
-                })}
-                onPress={onView}
-                isUtilityButton
-                isOutlined
-                compactPadding
-                icon={externalLinkIcon}
-                ellipsis
-              />
-              <Button
-                title={intl.formatMessage({
-                  id: 'health.questionnaires.action.hide',
-                })}
-                isOutlined
-                isUtilityButton
-                compactPadding
-                onPress={onHide}
-                icon={eyeOffIcon}
-                ellipsis
-              />
+              {(isNotAnswered || isDraft) && (
+                <Button
+                  title={intl.formatMessage({
+                    id: QuestionnaireQuestionnairesStatusEnum.Draft
+                      ? 'health.questionnaires.action.continue-draft'
+                      : 'health.questionnaires.action.answer',
+                  })}
+                  onPress={onAnswer}
+                  isFilledUtilityButton
+                  compactPadding
+                  icon={externalLinkIcon}
+                  ellipsis
+                />
+              )}
+              {(isAnswered || isDraft) && (
+                <Button
+                  title={intl.formatMessage({
+                    id: 'health.questionnaires.action.view-answer',
+                  })}
+                  onPress={onView}
+                  isUtilityButton
+                  isOutlined
+                  compactPadding
+                  icon={externalLinkIcon}
+                  ellipsis
+                />
+              )}
             </ButtonRow>
           </View>
 
