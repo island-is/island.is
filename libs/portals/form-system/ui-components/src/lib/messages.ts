@@ -863,8 +863,8 @@ export const m = defineMessages({
   },
   continue: {
     id: 'form.system:continue',
-    defaultMessage: 'Halda áfram',
-    description: 'Continue',
+    defaultMessage: 'Vista og halda áfram',
+    description: 'Save and continue',
   },
   postalCode: {
     id: 'form.system:postal-code',
@@ -1123,5 +1123,10 @@ export const m = defineMessages({
     id: 'form.system:new-form-url-button',
     defaultMessage: 'Ný slóð fyrir innsendingar',
     description: 'New submission URL',
+  },
+  notifications: {
+    id: 'form.system:notifications',
+    defaultMessage: 'Tilkynningar',
+    description: 'Notifications',
   },
 })
