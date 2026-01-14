@@ -806,7 +806,7 @@ export const getPensionAndOtherPayments = (
             )
             .map((payment) => {
               return {
-                incomeTypeId: payment.typeOfPayment,
+                incomeTypeId: payment.subType,
                 unionId: payment.union,
               }
             }),
