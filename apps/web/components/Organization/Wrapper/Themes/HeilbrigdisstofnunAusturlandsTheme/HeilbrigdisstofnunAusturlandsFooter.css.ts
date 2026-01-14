@@ -17,6 +17,10 @@ export const gridRow = style({
 
 export const line = style({
   borderTop: '1px solid white',
+  borderBottom: '1px solid white',
+  paddingBottom: '16px',
+  marginTop: '16px',
+  paddingTop: '48px',
 })
 
 export const locationBox = style({

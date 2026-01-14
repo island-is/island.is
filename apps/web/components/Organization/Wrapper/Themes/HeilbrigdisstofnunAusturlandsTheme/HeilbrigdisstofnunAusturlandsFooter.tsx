@@ -37,7 +37,7 @@ const FooterColumn = ({
 }: FooterColumnProps) => {
   if (rows.length <= 0) return null
   return (
-    <GridColumn span={span}>
+    <GridColumn span={span} className={styles.line}>
       {rows.map((item, index) => (
         <Box
           key={`${item?.id}-${index}`}
@@ -145,13 +145,6 @@ const HeilbrigdisstofnunAusturlandsFooter = ({
               </Inline>
             </GridRow>
 
-            <Box
-              borderColor="white"
-              borderTopWidth="standard"
-              marginBottom={3}
-              marginTop={3}
-            />
-
             <GridRow
               className={cn(styles.gridRow, {
                 [styles.offset]: width < theme.breakpoints.lg,
@@ -164,7 +157,7 @@ const HeilbrigdisstofnunAusturlandsFooter = ({
 
             <GridRow align="flexEnd" marginTop={3}>
               <Box marginRight={[4, 4, 12]}>
-                <Inline alignY="bottom" align="center" space={5}>
+                <Inline alignY="center" align="center" space={5}>
                   <img
                     src={n(
                       'hsnGraenSkrefLogo',
@@ -176,11 +169,10 @@ const HeilbrigdisstofnunAusturlandsFooter = ({
                   <img
                     src={n(
                       'hsaJafnlaunavottunLogo',
-                      'https://images.ctfassets.net/8k0h54kbe6bj/1BAC3UMza6cR48xoMUoaPY/e77514ee2359d5fed0b0ff6060c089e2/Jafnlaunavottun_adalmerki_2025_2028_f_ljosan_grunn.png',
+                      'https://images.ctfassets.net/8k0h54kbe6bj/6XsDTU75XBm3T3C2sBjY16/9dd3c2c3751ab048810319d5d48e3704/PNG_Jafnlaunavottun_2025_2028_f_dokkan_grunn.png',
                     )}
                     alt="jafnlaunavottun"
                     width={78}
-                    style={{ filter: 'invert(1)' }}
                   />
 
                   <img
@@ -188,9 +180,9 @@ const HeilbrigdisstofnunAusturlandsFooter = ({
                     height={69}
                     src={n(
                       'hsaJafnvaegisvogLogo',
-                      'https://images.ctfassets.net/8k0h54kbe6bj/3xbTRkA5kja6EnrUTisK8F/332ab7f983bf2f802c4d1b05ec639f4a/vidurkenning_merki_2022_gull-hsu_1.svg',
+                      'https://images.ctfassets.net/8k0h54kbe6bj/6W78mpRwfZ9hmz6JzBB7wb/05c10af5db53615d9d5138e3336b2fbd/vidurkenning_2025_gull.png',
                     )}
-                    alt="international-accreditation-healthcare"
+                    alt="jafnvaegisvog-vidurkenning"
                   />
                 </Inline>
               </Box>
