@@ -5,7 +5,7 @@ import {
   fileToObjectDeprecated,
   InputFileUpload,
 } from '@island.is/island-ui/core'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { FileRejection } from 'react-dropzone'
 import { FieldBaseProps } from '@island.is/application/types'
 import {
@@ -23,6 +23,9 @@ import {
   downloadFile,
   parseFileToCarCategory,
 } from '../../utils/UploadCarCategoryFileUtils'
+import { useMutation } from '@apollo/client'
+import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
+import { useLocale } from '@island.is/localization'
 
 const extensionToType = {
   [fileExtensionWhitelist['.csv']]: 'csv',
@@ -48,6 +51,31 @@ export const UploadCarCategoryFile = ({
   application,
   field,
 }: Props & FieldBaseProps) => {
+  // const { locale } = useLocale()
+  // const [currentRates, setCurrentRates] = useState<EntryModel[] | undefined>()
+  // const [updateExternalData] = useMutation(UPDATE_APPLICATION_EXTERNAL_DATA)
+
+  // useEffect(() => {
+  //   const fetchRates = async () => {
+  //     const res = await updateExternalData({
+  //       variables: {
+  //         input: {
+  //           id: application.id,
+  //           dataProviders: [
+  //             { actionId: 'getCurrentVehiclesRateCategory', order: 0 },
+  //           ],
+  //         },
+  //         locale,
+  //       },
+  //     })
+  //     const rates =
+  //       res?.data?.updateApplicationExternalData?.externalData
+  //         ?.getCurrentVehiclesRateCategory?.data as EntryModel[] | undefined
+  //     if (rates) setCurrentRates(rates)
+  //   }
+  //   fetchRates()
+  // }, [application.id, locale, updateExternalData])
+
   const [uploadedFile, setUploadedFile] = useState<File | null>()
   const [uploadErrorMessage, setUploadErrorMessage] = useState<string | null>(
     null,
