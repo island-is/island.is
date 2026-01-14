@@ -142,6 +142,7 @@ describe('InternalCaseController - Create', () => {
           prosecutorId: userId,
           courtId,
           prosecutorsOfficeId,
+          policeDefendantNationalId: accusedNationalId,
         },
         { transaction },
       )
@@ -268,6 +269,7 @@ describe('InternalCaseController - Create', () => {
           creatingProsecutorId: userId,
           prosecutorsOfficeId,
           withCourtSessions: true,
+          policeDefendantNationalId: accusedNationalId,
         },
         {
           transaction,
@@ -308,6 +310,7 @@ describe('InternalCaseController - Create', () => {
           courtId,
           isHeightenedSecurityLevel: true,
           prosecutorsOfficeId,
+          policeDefendantNationalId: accusedNationalId,
         },
         {
           transaction,
