@@ -157,12 +157,7 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
     const educationInformation = getEducationInformation(answers)
 
     //jobCareer
-    const jobCareer = getJobCareer(
-      answers,
-      jobCodes,
-      externalData,
-      currentUserLocale,
-    )
+    const jobCareer = getJobCareer(answers, jobCodes, externalData)
 
     //drivingLicense
     const licenseInformation = getLicenseInformation(answers)
