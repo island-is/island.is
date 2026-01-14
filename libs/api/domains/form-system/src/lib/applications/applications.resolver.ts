@@ -15,10 +15,8 @@ import {
   GetApplicationInput,
   GetApplicationsInput,
   SubmitScreenInput,
-  SubmitSectionInput,
   UpdateApplicationInput,
 } from '../../dto/application.input'
-import { Screen } from '../../models/screen.model'
 
 @Resolver()
 @UseGuards(IdsUserGuard)
@@ -105,27 +103,16 @@ export class ApplicationsResolver {
     return this.applicationsService.updateApplication(user, input)
   }
 
-  @Mutation(() => Screen, {
+  @Mutation(() => Boolean, {
     name: 'saveFormSystemScreen',
+    nullable: true,
   })
   async saveScreen(
     @Args('input', { type: () => SubmitScreenInput })
     input: SubmitScreenInput,
     @CurrentUser() user: User,
-  ): Promise<Screen> {
-    return this.applicationsService.saveScreen(user, input)
-  }
-
-  @Mutation(() => Boolean, {
-    name: 'submitFormSystemSection',
-    nullable: true,
-  })
-  async submitSection(
-    @Args('input', { type: () => SubmitSectionInput })
-    input: SubmitSectionInput,
-    @CurrentUser() user: User,
   ): Promise<void> {
-    return this.applicationsService.submitSection(user, input)
+    return this.applicationsService.saveScreen(user, input)
   }
 
   @Mutation(() => Boolean, {
