@@ -10,14 +10,14 @@ import {
 } from '@island.is/auth-nest-tools'
 import { HmsService } from '@island.is/clients/hms'
 import { Audit } from '@island.is/nest/audit'
-import { Addresses, PropertyCodeInfo } from './models/hmsSearch.model'
-import { HmsSearchInput } from './dto/hmsSearch.input'
+import { Addresses, PropertyCodeInfo } from '../models/hmsSearch.model'
+import { HmsSearchInput } from '../dto/hmsSearch.input'
 import {
   HmsPropertyCodeInfoInput,
   HmsPropertyInfoInput,
-} from './dto/hmsPropertyInfo.input'
-import { PropertyInfos } from './models/hmsPropertyInfo.model'
-import { HmsPropertyByPropertyCodeInput } from './dto/hmsPropertyByPropertyCode'
+} from '../dto/hmsPropertyInfo.input'
+import { PropertyInfos } from '../models/hmsPropertyInfo.model'
+import { HmsPropertyByPropertyCodeInput } from '../dto/hmsPropertyByPropertyCode'
 import { Fasteign as FasteignAsset } from '@island.is/clients/assets'
 import { GraphQLJSONObject } from 'graphql-type-json'
 

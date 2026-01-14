@@ -1,0 +1,77 @@
+import { Contract } from '../../gen/fetch'
+import { AgreementStatusType, TemporalType } from '../types'
+import { ContractPartyDto, mapContractPartyDto } from './contractParty.dto'
+import {
+  ContractPropertyDto,
+  mapContractPropertyDto,
+} from './contractProperty.dto'
+import { isDefined } from '@island.is/shared/utils'
+
+export interface RentalAgreementDto {
+  id: number
+  status: AgreementStatusType
+  dateFrom?: Date
+  dateTo?: Date
+  contractType: TemporalType
+  signatureDate?: Date
+  receivedDate?: Date
+  contractParty?: ContractPartyDto[]
+  contractProperty?: ContractPropertyDto[]
+}
+
+export const mapRentalAgreementDto = (
+  contract: Contract,
+): RentalAgreementDto | null => {
+  if (!contract.contractId) {
+    return null
+  }
+
+  return {
+    id: contract.contractId,
+    status: mapAgreementStatus(contract.contractStatus ?? undefined),
+    dateFrom: contract.dateFrom ? new Date(contract.dateFrom) : undefined,
+    dateTo: contract.dateTo ? new Date(contract.dateTo) : undefined,
+    contractType:
+      contract.contractType === 'TEMPORARYAGREEMENT'
+        ? 'temporary'
+        : contract.contractType === 'INDEFINITEAGREEMENT'
+        ? 'indefinite'
+        : 'unknown',
+    signatureDate: contract.signatureDate
+      ? new Date(contract.signatureDate)
+      : undefined,
+    receivedDate: contract.receivedDate
+      ? new Date(contract.receivedDate)
+      : undefined,
+    contractParty:
+      contract.contractParty?.map(mapContractPartyDto).filter(isDefined) ??
+      undefined,
+    contractProperty:
+      contract.contractProperty
+        ?.map(mapContractPropertyDto)
+        .filter(isDefined) ?? undefined,
+  }
+}
+
+const mapAgreementStatus = (status?: string): AgreementStatusType => {
+  switch (status) {
+    case 'STATUSVALID':
+      return 'valid'
+    case 'STATUSINVALID':
+      return 'invalid'
+    case 'STATUSEXPIRED':
+      return 'expired'
+    case 'STATUSCANCELLED':
+      return 'cancelled'
+    case 'STATUSTERMINATED':
+      return 'terminated'
+    case 'CANCELLEDREQUESTED':
+      return 'cancellationRequested'
+    case 'PENDINGCANCELLATION':
+      return 'pendingCancellation'
+    case 'PENDINGTERMINATION':
+      return 'pendingTermination'
+    default:
+      return 'unknown'
+  }
+}

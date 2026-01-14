@@ -1,0 +1,20 @@
+query UserContractsOverview {
+  hmsRentalAgreements {
+    data {
+      id
+      status
+      contractType
+      contractProperty {
+        id
+        propertyId
+        streetAndHouseNumber
+        municipality
+        postalCode
+      }
+    }
+    pageInfo {
+      hasNextPage
+    }
+    totalCount
+  }
+}

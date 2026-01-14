@@ -612,3 +612,133 @@ export const emailsMsg = defineMessages({
     defaultMessage: 'Netfang er nú þegar til',
   },
 })
+
+export const contractsMessages = defineMessages({
+  registerRentalAgreement: {
+    id: 'sp.contracts:register-rental-agreement',
+    defaultMessage: 'Skrá leigusamning',
+  },
+  contractsOverviewTitle: {
+    id: 'sp.contracts:contracts-overview-title',
+    defaultMessage: 'Samningar',
+  },
+  contractsOverviewSubtitle: {
+    id: 'sp.contracts:contracts-overview-subtitle',
+    defaultMessage:
+      'Hér finnur þú upplýsingar um þína samninga úr leiguskrá Húsnæðis og Mannvirkjastofnunar.',
+  },
+  headerButton1Text: {
+    id: 'sp.contracts:header-button1-text',
+    defaultMessage: 'Skrá samning',
+  },
+  headerButton1Url: {
+    id: 'sp.contracts:header-button1-url',
+    defaultMessage: '/todo',
+  },
+  detailButton1Text: {
+    id: 'sp.contracts:detail-button1-text',
+    defaultMessage: 'EXAMPLE',
+  },
+  detailButton2Text: {
+    id: 'sp.contracts:detail-button1-url',
+    defaultMessage: 'EXAMPLE URL',
+  },
+  dataStackTitle: {
+    id: 'sp.contracts:data-stack-title',
+    defaultMessage: 'Upplýsingar',
+    description: 'Title for display of data contained in the rental agreement',
+  },
+  agreementNumber: {
+    id: 'sp.contracts:agreement-number',
+    defaultMessage: 'Samningsnúmer',
+  },
+  landlords: {
+    id: 'sp.contracts:landlords',
+    defaultMessage: 'Leigusalar',
+  },
+  tenants: {
+    id: 'sp.contracts:tenants',
+    defaultMessage: 'Leigjendur',
+  },
+  location: {
+    id: 'sp.contracts:location',
+    defaultMessage: 'Staðsetning',
+  },
+  lengthOfRentalAgreement: {
+    id: 'sp.contracts:length-of-rental-agreement',
+    defaultMessage: 'Leigutími',
+  },
+  registrationDate: {
+    id: 'sp.contracts:registration-date',
+    defaultMessage: 'Skráning',
+  },
+  status: {
+    id: 'sp.contracts:status',
+    defaultMessage: 'Staða',
+  },
+  inProgress: {
+    id: 'sp.contracts:in-progress',
+    defaultMessage: 'Í vinnslu',
+  },
+  active: {
+    id: 'sp.contracts:active',
+    defaultMessage: 'Í gildi',
+  },
+  cancelled: {
+    id: 'sp.contracts:cancelled',
+    defaultMessage: 'Rift',
+  },
+  expired: {
+    id: 'sp.contracts:expired',
+    defaultMessage: 'Útrunninn',
+  },
+  unknown: {
+    id: 'sp.contracts:unknown',
+    defaultMessage: 'Óþekkt',
+  },
+  terminated: {
+    id: 'sp.contracts:terminated',
+    defaultMessage: 'Sagt upp',
+  },
+  pendingCancellation: {
+    id: 'sp.contracts:pending-cancellation',
+    defaultMessage: 'Bíður riftunar',
+  },
+  pendingTermination: {
+    id: 'sp.contracts:pending-termination',
+    defaultMessage: 'Bíður uppsagnar',
+  },
+  seeInfo: {
+    id: 'sp.contracts:see-info',
+    defaultMessage: 'Skoða upplýsingar',
+  },
+  recordsFound: {
+    id: 'sp.contracts:records-found',
+    defaultMessage:
+      '{count, plural, one {# samningur fannst} other {# samningar fundust}}',
+  },
+  hideInactiveContracts: {
+    id: 'sp.contracts:hide-inactive-contracts',
+    defaultMessage: 'Fela óvirka samninga',
+  },
+  downloadAsPdf: {
+    id: 'sp.contracts:download-as-pdf',
+    defaultMessage: 'Sækja sem PDF',
+  },
+  terminateRentalAgreement: {
+    id: 'sp.contracts:terminate-rental-agreement',
+    defaultMessage: 'Afskrá leigusamning',
+  },
+  extendRentalAgreement: {
+    id: 'sp.contracts:extend-rental-agreement',
+    defaultMessage: 'Framlengja leigusamning',
+  },
+  indefinite: {
+    id: 'sp.contracts:indefinite',
+    defaultMessage: 'Ótímabundinn',
+  },
+  temporary: {
+    id: 'sp.contracts:temporary',
+    defaultMessage: 'Tímabundinn',
+  },
+})

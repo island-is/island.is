@@ -135,6 +135,18 @@ export const informationNavigation: PortalNavigationItem = {
       ],
     },
     {
+      name: m.contracts,
+      path: InformationPaths.MyContracts,
+      children: [
+        {
+          name: m.contracts,
+          navHide: true,
+          searchHide: true,
+          path: InformationPaths.MyContractsDetail,
+        },
+      ],
+    },
+    {
       name: m.notifications,
       path: InformationPaths.Notifications,
     },

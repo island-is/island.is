@@ -923,6 +923,10 @@ export const m = defineMessages({
     id: 'service.portal:lists',
     defaultMessage: 'Listar',
   },
+  contracts: {
+    id: 'service.portal:contracts',
+    defaultMessage: 'Samningar',
+  },
   delegation: {
     id: 'service.portal:delegation',
     defaultMessage: 'Mín réttindi',
@@ -1618,6 +1622,11 @@ export const m = defineMessages({
     id: 'service.portal:real-estate-tooltip',
     defaultMessage:
       'Húsnæðis- og mannvirkjastofnun hefur umsjón með gögnum um fasteignir.',
+  },
+  rentalAgreementsTooltip: {
+    id: 'service.portal:rental-agreements-tooltip',
+    defaultMessage:
+      'Húsnæðis- og mannvirkjastofnun hefur umsjón með gögnum um leigusamninga.',
   },
   hmsHousingBenefitsTooltip: {
     id: 'service.portal:housing-benefits-tooltip',

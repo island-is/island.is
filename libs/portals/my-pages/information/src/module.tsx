@@ -15,24 +15,37 @@ import { Navigate } from 'react-router-dom'
 import { Features } from '@island.is/react/feature-flags'
 import { parseDelegationTypeFeatureFlagValue } from './utils/parseDelegationTypeFeatureFlagValue'
 
-const UserInfoOverview = lazy(() =>
-  import('./screens/UserInfoOverview/UserInfoOverview'),
+const UserInfoOverview = lazy(
+  () => import('./screens/UserInfo/UserInfoOverview/UserInfoOverview'),
 )
-const UserInfo = lazy(() => import('./screens/UserInfo/UserInfo'))
-const FamilyMemberChildCustody = lazy(() =>
-  import('./screens/ChildCustody/ChildCustody'),
+const UserInfo = lazy(() => import('./screens/UserInfo/UserInfo/UserInfo'))
+const FamilyMemberChildCustody = lazy(
+  () => import('./screens/UserInfo/ChildCustody/ChildCustody'),
 )
-const FamilyMemberBioChild = lazy(() => import('./screens/BioChild/BioChild'))
-const Spouse = lazy(() => import('./screens/Spouse/Spouse'))
+const FamilyMemberBioChild = lazy(
+  () => import('./screens/UserInfo/BioChild/BioChild'),
+)
+const Spouse = lazy(() => import('./screens/UserInfo/Spouse/Spouse'))
 const CompanyInfo = lazy(() => import('./screens/Company/CompanyInfo'))
-const Notifications = lazy(() =>
-  import('./screens/Notifications/Notifications'),
+const Notifications = lazy(
+  () => import('./screens/Notifications/Notifications'),
 )
-const UserProfileSettings = lazy(() =>
-  import('./screens/UserProfile/UserProfile'),
+const UserProfileSettings = lazy(
+  () => import('./screens/UserProfile/UserProfile'),
 )
-const UserNotificationsSettings = lazy(() =>
-  import('./screens/UserNotifications/UserNotifications'),
+const UserNotificationsSettings = lazy(
+  () => import('./screens/UserNotifications/UserNotifications'),
+)
+
+const UserContractsOverview = lazy(
+  () =>
+    import(
+      './screens/UserContracts/UserContractsOverview/UserContractsOverview'
+    ),
+)
+
+const UserContract = lazy(
+  () => import('./screens/UserContracts/Contract/UserContract'),
 )
 
 const sharedRoutes = async (
@@ -101,6 +114,25 @@ export const informationModule: PortalModule = {
         path: InformationPaths.MyInfoRootOverview,
         enabled: scopes.includes(ApiScope.meDetails),
         element: <UserInfoOverview />,
+      },
+
+      {
+        name: m.contracts,
+        path: InformationPaths.MyContracts,
+        enabled: scopes.includes(ApiScope.meDetails),
+        element: <UserContractsOverview />,
+      },
+      {
+        name: m.contracts,
+        path: InformationPaths.MyContractsDetail,
+        enabled: scopes.includes(ApiScope.meDetails),
+        element: <UserContract />,
+      },
+      {
+        name: m.userInfo,
+        path: InformationPaths.UserInfo,
+        enabled: scopes.includes(ApiScope.meDetails),
+        element: <UserInfo />,
       },
       {
         name: m.userInfo,

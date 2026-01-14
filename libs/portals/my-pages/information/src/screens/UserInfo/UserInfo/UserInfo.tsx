@@ -13,12 +13,12 @@ import { checkDelegation } from '@island.is/shared/utils'
 import { info } from 'kennitala'
 import { defineMessage } from 'react-intl'
 
-import { formatAddress, formatNameBreaks } from '../../helpers/formatting'
+import { formatAddress, formatNameBreaks } from '../../../helpers/formatting'
 import {
   natRegGenderMessageDescriptorRecord,
   natRegMaritalStatusMessageDescriptorRecord,
-} from '../../helpers/localizationHelpers'
-import { spmm, urls } from '../../lib/messages'
+} from '../../../helpers/localizationHelpers'
+import { spmm, urls } from '../../../lib/messages'
 import { useNationalRegistryPersonQuery } from './UserInfo.generated'
 
 const SubjectInfo = () => {
