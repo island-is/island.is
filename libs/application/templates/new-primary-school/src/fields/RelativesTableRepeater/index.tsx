@@ -13,8 +13,9 @@ import { format as formatKennitala } from 'kennitala'
 import React, { FC } from 'react'
 import { useFriggOptions } from '../../hooks/useFriggOptions'
 import { childrenNGuardiansMessages, sharedMessages } from '../../lib/messages'
-import { OptionsType } from '../../utils/constants'
+import { AgentType, OptionsType } from '../../utils/constants'
 import {
+  getApplicationExternalData,
   getOtherGuardian,
   getSelectedOptionLabel,
 } from '../../utils/newPrimarySchoolUtils'
@@ -23,6 +24,7 @@ const RelativesTableRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   error,
   field,
   application,
+  setBeforeSubmitCallback,
 }) => {
   const { id, title } = field
 
@@ -34,6 +36,7 @@ const RelativesTableRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     <TableRepeaterFormField
       application={application}
       error={error}
+      setBeforeSubmitCallback={setBeforeSubmitCallback} // Needed to remove deleted rows
       field={{
         type: FieldTypes.TABLE_REPEATER,
         component: FieldComponents.TABLE_REPEATER,
@@ -51,6 +54,22 @@ const RelativesTableRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         marginTop: 0,
         maxRows: 4,
         editField: true,
+        defaultValue: (application: Application) => {
+          const { childInformation } = getApplicationExternalData(
+            application.externalData,
+          )
+
+          return childInformation?.agents
+            ?.filter((agent) => agent.type === AgentType.EmergencyContact)
+            ?.map((agent) => ({
+              nationalIdWithName: {
+                name: agent.name,
+                nationalId: agent.nationalId,
+              },
+              phoneNumber: agent.phone,
+              relation: agent.relationTypeId,
+            }))
+        },
         fields: {
           nationalIdWithName: {
             component: 'nationalIdWithName',
