@@ -1,24 +1,24 @@
 import {
   Box,
   BoxProps,
-  Text,
   GridColumn,
   GridColumnProps,
   GridRow,
+  ResponsiveProp,
   SkeletonLoader,
   Stack,
-  Inline,
+  Text,
 } from '@island.is/island-ui/core'
-import FootNote from '../FootNote/FootNote'
-import { MessageDescriptor } from 'react-intl'
-import { OrganizationSlugType } from '@island.is/shared/constants'
-import { useLocale } from '@island.is/localization'
-import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
+import { useLocale } from '@island.is/localization'
 import { useOrganization } from '@island.is/portals/my-pages/graphql'
-import { ISLANDIS_SLUG } from '../../utils/constants'
-import InstitutionPanel from '../InstitutionPanel/InstitutionPanel'
+import { OrganizationSlugType } from '@island.is/shared/constants'
+import { MessageDescriptor } from 'react-intl'
+import { useWindowSize } from 'react-use'
 import { m } from '../../lib/messages'
+import { ISLANDIS_SLUG } from '../../utils/constants'
+import FootNote from '../FootNote/FootNote'
+import InstitutionPanel from '../InstitutionPanel/InstitutionPanel'
 
 type BaseProps = {
   title: MessageDescriptor | string
@@ -27,6 +27,9 @@ type BaseProps = {
   children?: React.ReactNode
   childrenWidthFull?: boolean
   buttonGroup?: Array<React.ReactNode>
+  buttonGroupAlignment?: ResponsiveProp<
+    'flexStart' | 'flexEnd' | 'spaceBetween'
+  >
   serviceProviderSlug?: OrganizationSlugType
   serviceProviderTooltip?: string
   span?: GridColumnProps['span']
@@ -129,9 +132,22 @@ export const IntroWrapper = (props: IntroWrapperProps) => {
       </GridRow>
       {!props.loading && props.buttonGroup && (
         <GridRow marginBottom={marginBottom ?? 4}>
-          <GridColumn>
-            <Box marginTop={4}>
-              <Inline space={2}>{props.buttonGroup}</Inline>
+          <GridColumn span={['12/12']}>
+            <Box
+              width="full"
+              marginTop={4}
+              display="flex"
+              flexDirection={isMobile ? 'column' : 'row'}
+              alignItems={isMobile ? 'flexStart' : 'flexEnd'}
+              rowGap={isMobile ? 2 : 0}
+              columnGap={2}
+              justifyContent={
+                isMobile
+                  ? 'flexStart'
+                  : props.buttonGroupAlignment ?? 'flexStart'
+              }
+            >
+              {props.buttonGroup}
             </Box>
           </GridColumn>
         </GridRow>

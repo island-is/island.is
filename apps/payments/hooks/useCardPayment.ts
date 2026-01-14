@@ -24,7 +24,7 @@ interface UseCardPaymentProps {
     amount: number
     title: string
   }
-  onPaymentSuccess: () => void
+  onPaymentSuccess: (paymentMethod: 'card' | 'invoice') => void
   onPaymentError: (error: PaymentError) => void
   setThreeDSecureModalActive: (isActive: boolean) => void
 }
@@ -224,7 +224,7 @@ export const useCardPayment = ({
           )
         }
 
-        onPaymentSuccess()
+        onPaymentSuccess('card')
       } catch (e: unknown) {
         isVerifyingRef.current = false
         setThreeDSecureModalActive(false)

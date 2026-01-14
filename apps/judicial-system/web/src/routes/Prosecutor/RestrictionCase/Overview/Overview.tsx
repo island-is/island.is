@@ -38,6 +38,7 @@ import {
   PageTitle,
   PdfButton,
   ProsecutorCaseInfo,
+  SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
@@ -49,9 +50,8 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
+import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { createCaseResentExplanation } from '@island.is/judicial-system-web/src/utils/utils'
-
-import * as styles from './Overview.css'
 
 export const Overview = () => {
   const [modal, setModal] = useState<
@@ -166,136 +166,139 @@ export const Overview = () => {
             caseType: workingCase.type,
           })}
         </PageTitle>
-        <Box marginBottom={5}>
+        <div className={grid({ gap: 5, marginBottom: 10 })}>
           <ProsecutorCaseInfo workingCase={workingCase} />
-        </Box>
-        {workingCase.state === CaseState.RECEIVED &&
-          workingCase.arraignmentDate?.date &&
-          workingCase.court && (
-            <Box component="section" marginBottom={5}>
-              <CaseScheduledCard
-                court={workingCase.court}
-                courtDate={workingCase.arraignmentDate.date}
-                courtRoom={workingCase.arraignmentDate.location}
-              />
-            </Box>
-          )}
-        <Box component="section" marginBottom={5}>
-          <InfoCard
-            sections={[
-              {
-                id: 'defendants-section',
-                items: [defendants({ caseType: workingCase.type })],
-              },
-              {
-                id: 'case-info-section',
-                items: [
-                  policeCaseNumbers,
-                  ...(workingCase.courtCaseNumber ? [courtCaseNumber] : []),
-                  court,
-                  prosecutorsOffice,
-                  ...(workingCase.judge ? [judge] : []),
-                  requestedCourtDate,
-                  ...(workingCase.registrar ? [registrar] : []),
-                  prosecutor(workingCase.type),
-                  parentCaseValidToDate,
-                ],
-                columns: 2,
-              },
-            ]}
-          />
-        </Box>
-        <Box component="section" marginBottom={5} data-testid="demands">
-          <Box marginBottom={2}>
-            <Text as="h3" variant="h3">
-              Dómkröfur
-            </Text>
+          {workingCase.state === CaseState.RECEIVED &&
+            workingCase.arraignmentDate?.date &&
+            workingCase.court && (
+              <Box component="section">
+                <CaseScheduledCard
+                  court={workingCase.court}
+                  courtDate={workingCase.arraignmentDate.date}
+                  courtRoom={workingCase.arraignmentDate.location}
+                />
+              </Box>
+            )}
+          <Box component="section">
+            <InfoCard
+              sections={[
+                {
+                  id: 'defendants-section',
+                  items: [defendants({ caseType: workingCase.type })],
+                },
+                {
+                  id: 'case-info-section',
+                  items: [
+                    policeCaseNumbers,
+                    ...(workingCase.courtCaseNumber ? [courtCaseNumber] : []),
+                    court,
+                    prosecutorsOffice,
+                    ...(workingCase.judge ? [judge] : []),
+                    requestedCourtDate,
+                    ...(workingCase.registrar ? [registrar] : []),
+                    prosecutor(workingCase.type),
+                    parentCaseValidToDate,
+                  ],
+                  columns: 2,
+                },
+              ]}
+            />
           </Box>
-          <Text>{workingCase.demands}</Text>
-        </Box>
-        <Box component="section" marginBottom={7}>
-          <Accordion>
-            <AccordionItem
-              labelVariant="h3"
-              id="id_1"
-              label={formatMessage(lawsBrokenAccordion.heading)}
-            >
-              <Text whiteSpace="breakSpaces">{workingCase.lawsBroken}</Text>
-            </AccordionItem>
-            <AccordionItem
-              labelVariant="h3"
-              id="id_2"
-              label="Lagaákvæði sem krafan er byggð á"
-            >
-              {workingCase.legalProvisions &&
-                workingCase.legalProvisions.map(
-                  (legalProvision: CaseLegalProvisions, index: number) => {
+          <Box component="section" data-testid="demands">
+            <SectionHeading
+              title="Dómkröfur"
+              description={workingCase.demands}
+              marginBottom={0}
+            />
+          </Box>
+          <Box component="section">
+            <Accordion>
+              <AccordionItem
+                labelVariant="h3"
+                id="id_1"
+                label={formatMessage(lawsBrokenAccordion.heading)}
+              >
+                <Text whiteSpace="breakSpaces">{workingCase.lawsBroken}</Text>
+              </AccordionItem>
+              <AccordionItem
+                labelVariant="h3"
+                id="id_2"
+                label="Lagaákvæði sem krafan er byggð á"
+              >
+                {workingCase.legalProvisions &&
+                  workingCase.legalProvisions.map(
+                    (legalProvision: CaseLegalProvisions, index: number) => {
+                      return (
+                        <div key={index}>
+                          <Text>
+                            {formatMessage(laws[legalProvision].title)}
+                          </Text>
+                        </div>
+                      )
+                    },
+                  )}
+                {workingCase.legalBasis && (
+                  <Text>{workingCase.legalBasis}</Text>
+                )}
+              </AccordionItem>
+              <AccordionItem
+                labelVariant="h3"
+                id="id_3"
+                label={formatMessage(restrictionsV2.title, {
+                  caseType: workingCase.type,
+                })}
+              >
+                {formatRequestedCustodyRestrictions(
+                  formatMessage,
+                  workingCase.type,
+                  workingCase.requestedCustodyRestrictions,
+                  workingCase.requestedOtherRestrictions,
+                )
+                  .split('\n')
+                  .map((requestedCustodyRestriction, index) => {
                     return (
                       <div key={index}>
-                        <Text>{formatMessage(laws[legalProvision].title)}</Text>
+                        <Text>{requestedCustodyRestriction}</Text>
                       </div>
                     )
-                  },
+                  })}
+              </AccordionItem>
+              <AccordionItem
+                labelVariant="h3"
+                id="id_4"
+                label="Greinargerð um málsatvik og lagarök"
+              >
+                {workingCase.caseFacts && (
+                  <AccordionListItem title="Málsatvik">
+                    <Text whiteSpace="breakSpaces">
+                      {workingCase.caseFacts}
+                    </Text>
+                  </AccordionListItem>
                 )}
-              {workingCase.legalBasis && <Text>{workingCase.legalBasis}</Text>}
-            </AccordionItem>
-            <AccordionItem
-              labelVariant="h3"
-              id="id_3"
-              label={formatMessage(restrictionsV2.title, {
-                caseType: workingCase.type,
-              })}
-            >
-              {formatRequestedCustodyRestrictions(
-                formatMessage,
-                workingCase.type,
-                workingCase.requestedCustodyRestrictions,
-                workingCase.requestedOtherRestrictions,
-              )
-                .split('\n')
-                .map((requestedCustodyRestriction, index) => {
-                  return (
-                    <div key={index}>
-                      <Text>{requestedCustodyRestriction}</Text>
-                    </div>
-                  )
-                })}
-            </AccordionItem>
-            <AccordionItem
-              labelVariant="h3"
-              id="id_4"
-              label="Greinargerð um málsatvik og lagarök"
-            >
-              {workingCase.caseFacts && (
-                <AccordionListItem title="Málsatvik">
-                  <Text whiteSpace="breakSpaces">{workingCase.caseFacts}</Text>
-                </AccordionListItem>
+                {workingCase.legalArguments && (
+                  <AccordionListItem title="Lagarök">
+                    <Text whiteSpace="breakSpaces">
+                      {workingCase.legalArguments}
+                    </Text>
+                  </AccordionListItem>
+                )}
+              </AccordionItem>
+              <AccordionItem
+                id="id_6"
+                label={`Rannsóknargögn ${`(${caseFiles.length})`}`}
+                labelVariant="h3"
+              >
+                <Box marginY={3}>
+                  <CaseFileList caseId={workingCase.id} files={caseFiles} />
+                </Box>
+              </AccordionItem>
+              {(workingCase.comments ||
+                workingCase.caseFilesComments ||
+                workingCase.caseResentExplanation) && (
+                <CommentsAccordionItem workingCase={workingCase} />
               )}
-              {workingCase.legalArguments && (
-                <AccordionListItem title="Lagarök">
-                  <Text whiteSpace="breakSpaces">
-                    {workingCase.legalArguments}
-                  </Text>
-                </AccordionListItem>
-              )}
-            </AccordionItem>
-            <AccordionItem
-              id="id_6"
-              label={`Rannsóknargögn ${`(${caseFiles.length})`}`}
-              labelVariant="h3"
-            >
-              <Box marginY={3}>
-                <CaseFileList caseId={workingCase.id} files={caseFiles} />
-              </Box>
-            </AccordionItem>
-            {(workingCase.comments ||
-              workingCase.caseFilesComments ||
-              workingCase.caseResentExplanation) && (
-              <CommentsAccordionItem workingCase={workingCase} />
-            )}
-          </Accordion>
-        </Box>
-        <Box className={styles.prosecutorContainer}>
+            </Accordion>
+          </Box>
           <Text variant="h3">
             {workingCase.prosecutor
               ? `${workingCase.prosecutor.name} ${lowercase(
@@ -303,15 +306,15 @@ export const Overview = () => {
                 )}`
               : `${user?.name} ${lowercase(user?.title)}`}
           </Text>
-        </Box>
-        <Box marginBottom={10}>
-          <PdfButton
-            caseId={workingCase.id}
-            title={formatMessage(core.pdfButtonRequest)}
-            pdfType="request"
-            elementId={formatMessage(core.pdfButtonRequest)}
-          />
-        </Box>
+          <div>
+            <PdfButton
+              caseId={workingCase.id}
+              title={formatMessage(core.pdfButtonRequest)}
+              pdfType="request"
+              elementId={formatMessage(core.pdfButtonRequest)}
+            />
+          </div>
+        </div>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter

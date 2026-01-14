@@ -1,8 +1,8 @@
-import { useCallback, useContext, useState } from 'react'
+import { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Box, Input, Text, Tooltip } from '@island.is/island-ui/core'
+import { Box, Input } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import {
@@ -18,6 +18,7 @@ import {
   PageHeader,
   PageLayout,
   PageTitle,
+  SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
@@ -27,14 +28,12 @@ import {
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  validateAndSendToServer,
-  validateAndSet,
-} from '@island.is/judicial-system-web/src/utils/formHelper'
-import {
   useCase,
+  useDebouncedInput,
   useDefendants,
   useInstitution,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { isDefendantStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 
 import {
@@ -44,18 +43,17 @@ import {
 } from '../../components'
 
 export const Defendant = () => {
+  const router = useRouter()
+  const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
-  const [leadInvestigatorErrorMessage, setLeadInvestigatorErrorMessage] =
-    useState<string>('')
-  const { createCase, isCreatingCase, updateCase } = useCase()
+  const { createCase, isCreatingCase } = useCase()
   const { updateDefendant } = useDefendants()
   const { loading: institutionLoading } = useInstitution()
-  const { formatMessage } = useIntl()
   const { clientPoliceNumbers, setClientPoliceNumbers } =
     usePoliceCaseNumbers(workingCase)
-  const router = useRouter()
+  const leadInvestigator = useDebouncedInput('leadInvestigator', ['empty'])
 
   const updateDefendantState = useCallback(
     (update: UpdateDefendantInput) => {
@@ -141,53 +139,42 @@ export const Defendant = () => {
         <>
           <FormContentContainer>
             <PageTitle>{formatMessage(m.heading)}</PageTitle>
-            <Box component="section" marginBottom={5}>
-              <PoliceCaseNumbers
-                workingCase={workingCase}
-                setWorkingCase={setWorkingCase}
-                clientPoliceNumbers={clientPoliceNumbers}
-                setClientPoliceNumbers={setClientPoliceNumbers}
-              />
-            </Box>
-            {workingCase.defendants && (
-              <Box component="section" marginBottom={5}>
-                <Box marginBottom={2}>
-                  <Text as="h3" variant="h3">
-                    {formatMessage(m.sections.accusedInfo.heading)}
-                  </Text>
-                </Box>
-                <DefendantInfo
-                  defendant={workingCase.defendants[0]}
+            <div className={grid({ gap: 5, marginBottom: 10 })}>
+              <Box component="section">
+                <PoliceCaseNumbers
                   workingCase={workingCase}
                   setWorkingCase={setWorkingCase}
-                  onChange={handleUpdateDefendant}
-                  updateDefendantState={updateDefendantState}
-                  nationalIdImmutable={workingCase.origin === CaseOrigin.LOKE}
+                  clientPoliceNumbers={clientPoliceNumbers}
+                  setClientPoliceNumbers={setClientPoliceNumbers}
                 />
               </Box>
-            )}
-            <Box component="section" marginBottom={7}>
-              <DefenderInfo
-                workingCase={workingCase}
-                setWorkingCase={setWorkingCase}
-              />
-            </Box>
-            {workingCase.type !== CaseType.TRAVEL_BAN && (
-              <Box component="section" marginBottom={10}>
-                <Box
-                  display="flex"
-                  justifyContent="spaceBetween"
-                  alignItems="baseline"
-                  marginBottom={2}
-                >
-                  <Text as="h3" variant="h3">
-                    {formatMessage(m.sections.leadInvestigator.heading)}{' '}
-                    <Tooltip
-                      text={formatMessage(m.sections.leadInvestigator.tooltip)}
-                    />
-                  </Text>
+              {workingCase.defendants && workingCase.defendants.length > 0 && (
+                <Box component="section">
+                  <SectionHeading
+                    title={formatMessage(m.sections.accusedInfo.heading)}
+                  />
+                  <DefendantInfo
+                    defendant={workingCase.defendants[0]}
+                    workingCase={workingCase}
+                    setWorkingCase={setWorkingCase}
+                    onChange={handleUpdateDefendant}
+                    updateDefendantState={updateDefendantState}
+                    nationalIdImmutable={workingCase.origin === CaseOrigin.LOKE}
+                  />
                 </Box>
-                <Box marginBottom={2}>
+              )}
+              <Box component="section">
+                <DefenderInfo
+                  workingCase={workingCase}
+                  setWorkingCase={setWorkingCase}
+                />
+              </Box>
+              {workingCase.type !== CaseType.TRAVEL_BAN && (
+                <Box component="section">
+                  <SectionHeading
+                    title={formatMessage(m.sections.leadInvestigator.heading)}
+                    tooltip={formatMessage(m.sections.leadInvestigator.tooltip)}
+                  />
                   <Input
                     data-testid="leadInvestigator"
                     name="leadInvestigator"
@@ -196,34 +183,18 @@ export const Defendant = () => {
                     placeholder={formatMessage(
                       m.sections.leadInvestigator.placeholder,
                     )}
-                    value={workingCase.leadInvestigator || ''}
-                    errorMessage={leadInvestigatorErrorMessage}
-                    hasError={leadInvestigatorErrorMessage !== ''}
-                    onChange={(evt) => {
-                      validateAndSet(
-                        'leadInvestigator',
-                        evt.target.value,
-                        ['empty'],
-                        setWorkingCase,
-                        leadInvestigatorErrorMessage,
-                        setLeadInvestigatorErrorMessage,
-                      )
-                    }}
-                    onBlur={(evt) =>
-                      validateAndSendToServer(
-                        'leadInvestigator',
-                        evt.target.value,
-                        ['empty'],
-                        workingCase,
-                        updateCase,
-                        setLeadInvestigatorErrorMessage,
-                      )
+                    value={leadInvestigator.value}
+                    errorMessage={leadInvestigator.errorMessage}
+                    hasError={leadInvestigator.hasError}
+                    onChange={(evt) =>
+                      leadInvestigator.onChange(evt.target.value)
                     }
+                    onBlur={(evt) => leadInvestigator.onBlur(evt.target.value)}
                     required
                   />
                 </Box>
-              </Box>
-            )}
+              )}
+            </div>
           </FormContentContainer>
           <FormContentContainer isFooter>
             <FormFooter

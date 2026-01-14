@@ -4,6 +4,7 @@ import { FileResponse } from './types'
 import { getValueViaPath, NO, YES } from '@island.is/application/core'
 import {
   ApplicantInAnswers,
+  CapitalIncomeInAnswers,
   CurrentEmploymentInAnswers,
   CurrentSituationInAnswers,
   EducationInAnswers,
@@ -36,6 +37,7 @@ import {
   GaldurDomainModelsSettingsUnemploymentReasonsUnemploymentReasonCatagoryDTO,
   GaldurDomainModelsSettingsUnionsUnionDTO,
 } from '@island.is/clients/vmst-unemployment'
+import { Locale } from '@island.is/shared/types'
 
 export const getStartingLocale = (externalData: ExternalData) => {
   return getValueViaPath<Locale>(externalData, 'startingLocale.data')
@@ -217,6 +219,7 @@ export const getJobCareer = (
   answers: FormValue,
   jobCodes: Array<GaldurDomainModelsSettingsJobCodesJobCodeDTO>,
   externalData: ExternalData,
+  _currentUserLocale?: Locale, //TODOx remove
 ) => {
   const rskEmploymentList =
     getValueViaPath<
@@ -237,7 +240,14 @@ export const getJobCareer = (
     ) || []
   const previousJobCareer =
     employmentHistory?.lastJobs?.map((job) => {
-      const jobId = jobCodes?.find((x) => x.name === job.title)?.id
+      const jobId = jobCodes?.find(
+        (x) =>
+          // TODOx temporary fix until we start saving ID instead of title
+          // currentUserLocale === 'is'
+          //   ? x.name === job.title
+          //   : x.english === job.title,
+          x.name === job.title || x.english === job.title,
+      )?.id
       const employerSSN =
         job.nationalIdWithName && job.nationalIdWithName !== '-'
           ? rskEmploymentList.find((x) => x.ssn === job.nationalIdWithName)?.ssn
@@ -264,7 +274,14 @@ export const getJobCareer = (
       if (currentJob && currentJob.length > 0) {
         workHours = getValueViaPath<string>(currentJob[index], 'workHours', '')
       }
-      const jobId = jobCodes?.find((x) => x.name === job.title)?.id
+      const jobId = jobCodes?.find(
+        (x) =>
+          // TODOx temporary fix until we start saving ID instead of title
+          // currentUserLocale === 'is'
+          //   ? x.name === job.title
+          //   : x.english === job.title,
+          x.name === job.title || x.english === job.title,
+      )?.id
       const employerSSN =
         job.nationalIdWithName && job.nationalIdWithName !== '-'
           ? rskEmploymentList.find((x) => x.ssn === job.nationalIdWithName)?.ssn
@@ -779,7 +796,7 @@ export const getPensionAndOtherPayments = (
               return {
                 incomeTypeId: payment.subType,
                 estimatedIncome: parseInt(payment.paymentAmount || '1'),
-                privatePensionFundId: payment.pensionFund,
+                privatePensionFundId: payment.privatePensionFund,
               }
             }),
           sicknessBenefitPayments: otherBenefits.payments
@@ -789,7 +806,7 @@ export const getPensionAndOtherPayments = (
             )
             .map((payment) => {
               return {
-                incomeTypeId: payment.typeOfPayment,
+                incomeTypeId: payment.subType,
                 unionId: payment.union,
               }
             }),
@@ -843,10 +860,25 @@ export const getPensionAndOtherPayments = (
         })
       : []
 
+  const capitalIncome = getValueViaPath<CapitalIncomeInAnswers>(
+    answers,
+    'capitalIncome',
+  )
+  const capitalGains =
+    capitalIncome?.otherIncome === YES
+      ? {
+          incomeTypeId: PaymentTypeIds.CAPITAL_GAINT,
+          estimatedIncome: capitalIncome?.capitalIncomeAmount
+            ?.map((x) => parseInt(x?.amount || '0'))
+            .reduce((a, b) => a + b, 0),
+        }
+      : null
+
   return {
     ...otherBenefitsFromAnswers,
-    partTimeJobPayments: partTimeJobPayments,
-    irregularJobPayments: irregularJobPayments,
+    partTimeJobPayments,
+    irregularJobPayments,
+    capitalGains,
   }
 }
 

@@ -1,14 +1,15 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { useQuery } from '@apollo/client'
 
+import { theme } from '@island.is/island-ui/theme'
 import { Query, QueryGetNamespaceArgs } from '@island.is/web/graphql/schema'
 import { useNamespaceStrict } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 import { GET_NAMESPACE_QUERY } from '@island.is/web/screens/queries'
 
 import { ChatBubble } from '../ChatBubble'
-import { BoostChatPanelProps } from '../types'
-import { boostChatPanelEndpoints, config } from './config'
+import type { BoostChatPanelProps } from '../types'
+import type { BoostChatPanelConfig } from './types'
 
 declare global {
   interface Window {
@@ -19,15 +20,24 @@ declare global {
   }
 }
 
+const config = {
+  chatPanel: {
+    styling: {
+      primaryColor: theme.color.blue400,
+      fontFamily: 'IBM Plex Sans',
+    },
+  },
+} as BoostChatPanelConfig
+
 export const BoostChatPanel: React.FC<
   React.PropsWithChildren<BoostChatPanelProps>
-> = ({ endpoint, pushUp = false }) => {
+> = ({ id, conversationKey, url, pushUp = false }) => {
   const [showButton, setShowButton] = useState(Boolean(window.boost)) // we show button when chat already loaded
   const { activeLocale } = useI18n()
 
   useEffect(() => {
     // recreate the chat panel if we are on a different endpoint
-    if (window.boostEndpoint !== endpoint) {
+    if (window.boostEndpoint !== id) {
       document.getElementById('boost-script')?.remove()
       const el = document.createElement('script')
       el.addEventListener('load', () => {
@@ -39,25 +49,20 @@ export const BoostChatPanel: React.FC<
               settings: {
                 ...config?.chatPanel?.styling?.settings,
                 conversationId:
-                  window.sessionStorage.getItem(
-                    boostChatPanelEndpoints[endpoint].conversationKey,
-                  ) ?? null,
+                  window.sessionStorage.getItem(conversationKey) ?? null,
               },
             },
           },
         }
 
-        window.boost = window.boostInit(
-          boostChatPanelEndpoints[endpoint].id,
-          settings,
-        )
-        window.boostEndpoint = endpoint
+        window.boost = window.boostInit(id, settings)
+        window.boostEndpoint = id
 
         const onConversationIdChanged = (e: {
           detail: { conversationId: string }
         }) => {
           window.sessionStorage.setItem(
-            boostChatPanelEndpoints[endpoint].conversationKey,
+            conversationKey,
             e.detail.conversationId,
           )
         }
@@ -80,7 +85,7 @@ export const BoostChatPanel: React.FC<
         }
       })
 
-      el.src = boostChatPanelEndpoints[endpoint].url
+      el.src = url
       el.id = 'boost-script'
       document.body.appendChild(el)
     }
@@ -88,7 +93,7 @@ export const BoostChatPanel: React.FC<
     return () => {
       window.boost?.chatPanel?.minimize()
     }
-  }, [activeLocale, endpoint])
+  }, [activeLocale, conversationKey, id, url])
 
   const { data } = useQuery<Query, QueryGetNamespaceArgs>(GET_NAMESPACE_QUERY, {
     variables: {
