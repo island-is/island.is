@@ -49,7 +49,7 @@ const AppealResultAccessed = () => {
   }) => (
     <AlertMessage
       message={formatMessage(strings.appealResultOpenedBy, {
-        userRole: role as UserRole,
+        userRole: role,
         when: formatDate(date, 'PPPp'),
       })}
       type="info"
