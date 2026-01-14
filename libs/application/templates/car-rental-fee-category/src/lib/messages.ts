@@ -163,7 +163,7 @@ export const m = {
     },
     optionSingleLabel: {
       id: 'rsk.rdr.application:single.multi.option.single.label',
-      defaultMessage: 'Skrá staka bíla',
+      defaultMessage: 'Skrá stakann bíl',
       description: 'Single vehicle registration option label',
     },
     optionSingleSubLabel: {
