@@ -11,7 +11,10 @@ import {
   applyDativeCaseToCourtName,
   formatNationalId,
 } from '@island.is/judicial-system/formatters'
-import { getIndictmentCountCompare } from '@island.is/judicial-system/types'
+import {
+  getIndictmentCountCompare,
+  isTrafficViolationIndictmentCount,
+} from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
@@ -290,21 +293,36 @@ const Indictment = () => {
       indictmentCountUpdate: UpdateIndictmentCount,
       updatedOffenses?: Offense[],
     ) => {
-      if (indictmentCountUpdate.policeCaseNumber) {
-        const vehicleNumber = getLicencePlateFromPoliceCase(
-          indictmentCountUpdate.policeCaseNumber,
-        )
-
-        if (vehicleNumber)
-          indictmentCountUpdate.vehicleRegistrationNumber = vehicleNumber
-      }
-
       const prevIndictmentCount = workingCase.indictmentCounts?.find(
         (count) => count.id === indictmentCountId,
       )
 
       if (!prevIndictmentCount) {
         return
+      }
+
+      const policeCaseNumber =
+        indictmentCountUpdate.policeCaseNumber ??
+        prevIndictmentCount.policeCaseNumber ??
+        ''
+      const isTrafficViolation = isTrafficViolationIndictmentCount(
+        indictmentCountUpdate.indictmentCountSubtypes ??
+          prevIndictmentCount.indictmentCountSubtypes,
+        workingCase.indictmentSubtypes[policeCaseNumber],
+      )
+      const updatingPoliceCaseNumber = indictmentCountUpdate.policeCaseNumber
+      const missingVehicleRegistrationNumber =
+        indictmentCountUpdate.vehicleRegistrationNumber === undefined &&
+        !prevIndictmentCount.vehicleRegistrationNumber
+      const lookupLicencePlate =
+        isTrafficViolation &&
+        (updatingPoliceCaseNumber || missingVehicleRegistrationNumber)
+
+      if (lookupLicencePlate) {
+        const vehicleNumber = getLicencePlateFromPoliceCase(policeCaseNumber)
+
+        if (vehicleNumber)
+          indictmentCountUpdate.vehicleRegistrationNumber = vehicleNumber
       }
 
       const returnedIndictmentCount = await updateIndictmentCount(
@@ -354,6 +372,7 @@ const Indictment = () => {
       updateIndictmentCountState,
       workingCase.id,
       workingCase.indictmentCounts,
+      workingCase.indictmentSubtypes,
       workingCase.requestDriversLicenseSuspension,
     ],
   )
@@ -397,6 +416,10 @@ const Indictment = () => {
       for (const indictmentCount of workingCase.indictmentCounts || []) {
         if (
           !indictmentCount.policeCaseNumber ||
+          !isTrafficViolationIndictmentCount(
+            indictmentCount.indictmentCountSubtypes,
+            workingCase.indictmentSubtypes[indictmentCount.policeCaseNumber],
+          ) ||
           indictmentCount.vehicleRegistrationNumber
         ) {
           continue
