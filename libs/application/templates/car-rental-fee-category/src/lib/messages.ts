@@ -62,7 +62,7 @@ export const m = {
     descriptionTitle: {
       id: 'rsk.rdr.application:notAllowed.title',
       defaultMessage:
-        'Aðeins bílaleigu fyrirtæki eða prókúruhafar þeirra hafa aðgang að þessari umsókn',
+        'Aðeins prókúru- og umboðshafar bílaleiga hafa aðgang að þessari umsókn',
       description: 'Not allowed title',
     },
     descriptionText: {
