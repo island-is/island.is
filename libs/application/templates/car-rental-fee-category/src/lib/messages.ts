@@ -238,7 +238,7 @@ export const m = {
     },
     header: {
       id: 'rsk.rdr.application:cars.changes.count.header',
-      defaultMessage: 'Fjöldi bifreiða sem mun reyna breyta',
+      defaultMessage: 'Fjöldi bifreiða til að breyta',
       description: 'Cars changes count table header',
     },
     submitButton: {
