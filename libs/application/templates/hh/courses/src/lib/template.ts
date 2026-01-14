@@ -9,6 +9,7 @@ import {
   FormModes,
   ApplicationConfigurations,
   defineTemplateApi,
+  HealthCenterApi,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 import { CodeOwners } from '@island.is/shared/constants'
@@ -64,7 +65,7 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
-              api: [UserProfileApi, NationalRegistryUserApi],
+              api: [UserProfileApi, NationalRegistryUserApi, HealthCenterApi],
               delete: true,
             },
           ],
