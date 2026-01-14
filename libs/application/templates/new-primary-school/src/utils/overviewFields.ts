@@ -71,6 +71,7 @@ export const overviewFields = (editable?: boolean) => {
       title: childrenNGuardiansMessages.relatives.subSectionTitle,
       backId: editable ? 'relatives' : undefined,
       loadTableData: relativesTable,
+      hideIfEmpty: true,
     }),
     buildOverviewField({
       id: 'overview.currentSchool',
