@@ -50,6 +50,12 @@ export interface WatsonChatPanelProps {
   pushUp?: boolean
 }
 
+export interface ZendeskChatPanelProps {
+  snippetUrl: string
+  pushUp?: boolean
+  chatBubbleVariant?: 'default' | 'circle'
+}
+
 export type WatsonIntegration =
   // Askur
   | 'b1a80e76-da12-4333-8872-936b08246eaa'

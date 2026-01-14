@@ -58,22 +58,6 @@ export const watsonConfig: Record<
           '2e32cba8-7379-44e9-b03e-af1ccdbe5982',
         ),
     },
-    // Digital Drivers license
-    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/fZxwXvRXLTUgfeiQmoR3l
-    fZxwXvRXLTUgfeiQmoR3l: {
-      integrationID: '2e32cba8-7379-44e9-b03e-af1ccdbe5982',
-      region: 'eu-gb',
-      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
-      showLauncher: false,
-      carbonTheme: 'g10',
-      namespaceKey: 'default',
-      onLoad: (instance) =>
-        setupOneScreenWatsonChatBot(
-          instance,
-          'digitaldriverslicense',
-          '2e32cba8-7379-44e9-b03e-af1ccdbe5982',
-        ),
-    },
     // Housing benefits
     // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/6V0J72C464gk9SMjiCbfXy
     '6V0J72C464gk9SMjiCbfXy': {
@@ -122,32 +106,6 @@ export const watsonConfig: Record<
           'eucard',
           'cba41fa0-12fb-4cb5-bd98-66a57cee42e0',
         ),
-    },
-
-    // Kílómetragjald
-    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/4ydMzxTVny5W9nTn6abfZm
-    '4ydMzxTVny5W9nTn6abfZm': {
-      ...defaultWatsonConfig.en,
-      onLoad(instance) {
-        setupOneScreenWatsonChatBot(
-          instance,
-          'kilometragjald',
-          defaultWatsonConfig.en.integrationID,
-        )
-      },
-    },
-
-    // Kaup ríkisins á íbúðarhúsnæði í Grindavík
-    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/2r6181rqgbxScVvCOUb4k8
-    '2r6181rqgbxScVvCOUb4k8': {
-      ...defaultWatsonConfig.en,
-      onLoad(instance) {
-        setupOneScreenWatsonChatBot(
-          instance,
-          'kaupaibudarhusnaedum',
-          defaultWatsonConfig.en.integrationID,
-        )
-      },
     },
   },
   is: {
@@ -385,32 +343,6 @@ export const watsonConfig: Record<
         )
       },
     },
-    // Breytingar á heilsufari eldra fólks
-    '3ZD1FAUtrnGKbSg329YgP8RqqTr5rAZ9G7wKRVNpMX0J': {
-      integrationID: '580730f3-3d88-4c5a-92e6-30e79ea09f24',
-      region: 'eu-gb',
-      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
-      showLauncher: false,
-      carbonTheme: 'g10',
-      namespaceKey: 'default',
-      serviceDesk: {
-        integrationType: 'genesyswebmessenger',
-        genesysMessenger: {
-          scriptURL:
-            'https://apps.mypurecloud.de/genesys-bootstrap/genesys.min.js',
-          deploymentID: 'cbc43df8-d5de-4eeb-bd0c-6503cbffcf6d',
-          environment: 'prod-euc1',
-        },
-        skipConnectAgentCard: true,
-      },
-      onLoad(instance) {
-        setupOneScreenWatsonChatBot(
-          instance,
-          'adeldast',
-          '580730f3-3d88-4c5a-92e6-30e79ea09f24',
-        )
-      },
-    },
 
     // Kílómetragjald
     // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/4ydMzxTVny5W9nTn6abfZm
@@ -420,19 +352,6 @@ export const watsonConfig: Record<
         setupOneScreenWatsonChatBot(
           instance,
           'kilometragjald',
-          defaultWatsonConfig.is.integrationID,
-        )
-      },
-    },
-
-    // Kaup ríkisins á íbúðarhúsnæði í Grindavík
-    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/2r6181rqgbxScVvCOUb4k8
-    '2r6181rqgbxScVvCOUb4k8': {
-      ...defaultWatsonConfig.is,
-      onLoad(instance) {
-        setupOneScreenWatsonChatBot(
-          instance,
-          'kaupaibudarhusnaedum',
           defaultWatsonConfig.is.integrationID,
         )
       },
@@ -472,23 +391,6 @@ export const watsonConfig: Record<
         ),
     },
 
-    // Ökuskírteini
-    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/fZxwXvRXLTUgfeiQmoR3l
-    fZxwXvRXLTUgfeiQmoR3l: {
-      integrationID: 'b1a80e76-da12-4333-8872-936b08246eaa',
-      region: 'eu-gb',
-      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
-      showLauncher: false,
-      carbonTheme: 'g10',
-      namespaceKey: 'default',
-      onLoad: (instance) =>
-        setupOneScreenWatsonChatBot(
-          instance,
-          'stafraentokuskirteini',
-          'b1a80e76-da12-4333-8872-936b08246eaa',
-        ),
-    },
-
     // Íslykill
     // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/3zrd5HMiS59A9UVEoCsAi7
     '3zrd5HMiS59A9UVEoCsAi7': {
@@ -503,136 +405,6 @@ export const watsonConfig: Record<
           instance,
           'islykill',
           'b1a80e76-da12-4333-8872-936b08246eaa',
-        ),
-    },
-
-    // Fæðingarorlof
-    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/59HH2C3hOLYYhFVY4fiX0G
-    '59HH2C3hOLYYhFVY4fiX0G': {
-      integrationID: 'b1a80e76-da12-4333-8872-936b08246eaa',
-      region: 'eu-gb',
-      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
-      showLauncher: false,
-      carbonTheme: 'g10',
-      namespaceKey: 'default',
-      onLoad: (instance) =>
-        setupOneScreenWatsonChatBot(
-          instance,
-          'faedingarorlof',
-          'b1a80e76-da12-4333-8872-936b08246eaa',
-        ),
-    },
-
-    // Um hjónaband
-    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/1ABPqOQMsYrqBu7zyP7itc
-    '1ABPqOQMsYrqBu7zyP7itc': {
-      integrationID: '0c96e8fb-d4dc-420e-97db-18b0f8bb4e3f',
-      region: 'eu-gb',
-      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
-      showLauncher: false,
-      carbonTheme: 'g10',
-      namespaceKey: 'default',
-      onLoad: (instance) =>
-        setupOneScreenWatsonChatBot(
-          instance,
-          'hjonaband',
-          '0c96e8fb-d4dc-420e-97db-18b0f8bb4e3f',
-        ),
-    },
-    // Skilnaður
-    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/73z3JiTrAuOQgPlsVfqD1V
-    '73z3JiTrAuOQgPlsVfqD1V': {
-      integrationID: '0c96e8fb-d4dc-420e-97db-18b0f8bb4e3f',
-      region: 'eu-gb',
-      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
-      showLauncher: false,
-      carbonTheme: 'g10',
-      namespaceKey: 'default',
-      onLoad: (instance) =>
-        setupOneScreenWatsonChatBot(
-          instance,
-          'skilnadur',
-          '0c96e8fb-d4dc-420e-97db-18b0f8bb4e3f',
-        ),
-    },
-    // Endurnýjun ökuskírteina
-    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/1vYhvJKy4TqxkAtPDIhaPx
-    '1vYhvJKy4TqxkAtPDIhaPx': {
-      integrationID: '0c96e8fb-d4dc-420e-97db-18b0f8bb4e3f',
-      region: 'eu-gb',
-      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
-      showLauncher: false,
-      carbonTheme: 'g10',
-      namespaceKey: 'default',
-      onLoad: (instance) =>
-        setupOneScreenWatsonChatBot(
-          instance,
-          'endokuskirteini',
-          '0c96e8fb-d4dc-420e-97db-18b0f8bb4e3f',
-        ),
-    },
-    // Þinglýsing skjala
-    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/2evftN0gIe78zSEYLMB0aX
-    '2evftN0gIe78zSEYLMB0aX': {
-      integrationID: '0c96e8fb-d4dc-420e-97db-18b0f8bb4e3f',
-      region: 'eu-gb',
-      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
-      showLauncher: false,
-      carbonTheme: 'g10',
-      namespaceKey: 'default',
-      onLoad: (instance) =>
-        setupOneScreenWatsonChatBot(
-          instance,
-          'thinglysing',
-          '0c96e8fb-d4dc-420e-97db-18b0f8bb4e3f',
-        ),
-    },
-    // Vegabréf, almennar upplýsingar
-    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/7Egh4yMfC48dDgceeBrWSB
-    '7Egh4yMfC48dDgceeBrWSB': {
-      integrationID: '0c96e8fb-d4dc-420e-97db-18b0f8bb4e3f',
-      region: 'eu-gb',
-      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
-      showLauncher: false,
-      carbonTheme: 'g10',
-      namespaceKey: 'default',
-      onLoad: (instance) =>
-        setupOneScreenWatsonChatBot(
-          instance,
-          'vegabref',
-          '0c96e8fb-d4dc-420e-97db-18b0f8bb4e3f',
-        ),
-    },
-    // Sakavottorð til einstaklinga
-    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/gzKeBtRl57SzRmgUzHR3u
-    gzKeBtRl57SzRmgUzHR3u: {
-      integrationID: '0c96e8fb-d4dc-420e-97db-18b0f8bb4e3f',
-      region: 'eu-gb',
-      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
-      showLauncher: false,
-      carbonTheme: 'g10',
-      namespaceKey: 'default',
-      onLoad: (instance) =>
-        setupOneScreenWatsonChatBot(
-          instance,
-          'sakavottord',
-          '0c96e8fb-d4dc-420e-97db-18b0f8bb4e3f',
-        ),
-    },
-    // Erfðamál, upplýsingar um réttindi og skyldur erfingja
-    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/2YsIiF44ECgUUlPkr9SqOh
-    '2YsIiF44ECgUUlPkr9SqOh': {
-      integrationID: '0c96e8fb-d4dc-420e-97db-18b0f8bb4e3f',
-      region: 'eu-gb',
-      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
-      showLauncher: false,
-      carbonTheme: 'g10',
-      namespaceKey: 'default',
-      onLoad: (instance) =>
-        setupOneScreenWatsonChatBot(
-          instance,
-          'erfdamal',
-          '0c96e8fb-d4dc-420e-97db-18b0f8bb4e3f',
         ),
     },
 

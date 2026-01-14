@@ -1,7 +1,7 @@
 import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Box, Select, Tooltip } from '@island.is/island-ui/core'
+import { Select, Tooltip } from '@island.is/island-ui/core'
 import {
   BlueBox,
   FormContext,
@@ -12,6 +12,7 @@ import {
   useCase,
   useUsers,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import { strings } from './SelectCourtOfficials.strings'
 
@@ -78,21 +79,19 @@ const SelectCourtOfficials = () => {
           <Tooltip text={formatMessage(strings.tooltip)} placement="right" />
         }
       />
-      <BlueBox>
-        <Box marginBottom={2}>
-          <Select
-            name="judge"
-            label={formatMessage(strings.setJudgeLabel)}
-            placeholder={formatMessage(strings.setJudgePlaceholder)}
-            value={defaultJudge}
-            options={judges}
-            onChange={(selectedOption) => setJudge(selectedOption?.value)}
-            required
-            isDisabled={
-              usersLoading || workingCase.state === CaseState.CORRECTING
-            }
-          />
-        </Box>
+      <BlueBox className={grid({ gap: 2 })}>
+        <Select
+          name="judge"
+          label={formatMessage(strings.setJudgeLabel)}
+          placeholder={formatMessage(strings.setJudgePlaceholder)}
+          value={defaultJudge}
+          options={judges}
+          onChange={(selectedOption) => setJudge(selectedOption?.value)}
+          required
+          isDisabled={
+            usersLoading || workingCase.state === CaseState.CORRECTING
+          }
+        />
         <Select
           name="registrar"
           label={formatMessage(strings.setRegistrarLabel)}

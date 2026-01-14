@@ -22,6 +22,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { ProsecutorAndDefendantsEntries } from '@island.is/judicial-system-web/src/components/CaseInfo/CaseInfo'
 import { Gender } from '@island.is/judicial-system-web/src/graphql/schema'
+import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { getDefendantPleaText } from '@island.is/judicial-system-web/src/utils/utils'
 import { isReceptionAndAssignmentStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
@@ -116,20 +117,22 @@ const ReceptionAndAssignment = () => {
           </Box>
         )}
         <PageTitle>{formatMessage(strings.title)}</PageTitle>
-        <Box component="section" marginBottom={5}>
-          <ProsecutorAndDefendantsEntries workingCase={workingCase} />
-        </Box>
-        <Box component="section" marginBottom={6}>
-          <CourtCaseNumber />
-        </Box>
-        <Box component="section" marginBottom={isIndictment ? 6 : 10}>
-          <SelectCourtOfficials />
-        </Box>
-        {isIndictment && (
-          <Box component="section" marginBottom={10}>
-            <ProsecutorSection />
+        <div className={grid({ gap: 5, marginBottom: 10 })}>
+          <Box component="section">
+            <ProsecutorAndDefendantsEntries workingCase={workingCase} />
           </Box>
-        )}
+          <Box component="section">
+            <CourtCaseNumber />
+          </Box>
+          <Box component="section">
+            <SelectCourtOfficials />
+          </Box>
+          {isIndictment && (
+            <Box component="section">
+              <ProsecutorSection />
+            </Box>
+          )}
+        </div>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
