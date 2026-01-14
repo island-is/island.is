@@ -225,7 +225,9 @@ export class ZendeskService {
                     const attribute = getLanguageTypeForValueTypeAttribute(key)
                     if (
                       field.fieldType === FieldTypesEnum.APPLICANT &&
-                      (key === 'delegationType' || key === 'isLoggedInUser')
+                      (key === 'delegationType' ||
+                        key === 'isLoggedInUser' ||
+                        key === 'applicantType')
                     ) {
                       return
                     }
