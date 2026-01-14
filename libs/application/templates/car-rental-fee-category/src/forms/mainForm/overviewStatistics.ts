@@ -42,10 +42,7 @@ export const overviewStatistics = buildSection({
             return [
               [m.overview.registeredCount, vehicles.length.toString()],
               [m.overview.dayRateCount, dayRates.toString()],
-              [
-                m.overview.kmRateCount,
-                (vehicles.length - dayRates).toString(),
-              ],
+              [m.overview.kmRateCount, (vehicles.length - dayRates).toString()],
             ]
           },
         }),

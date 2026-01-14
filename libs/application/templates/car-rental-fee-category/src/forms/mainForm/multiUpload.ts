@@ -13,10 +13,9 @@ import { m } from '../../lib/messages'
 
 export const multiUploadSection = buildSection({
   condition: (answers) => {
-    const uploadSelectionValue = getValueViaPath<string>(
-      answers,
-      'singleOrMultiSelectionRadio',
-    ) ?? UploadSelection.MULTI
+    const uploadSelectionValue =
+      getValueViaPath<string>(answers, 'singleOrMultiSelectionRadio') ??
+      UploadSelection.MULTI
 
     return uploadSelectionValue
       ? uploadSelectionValue === UploadSelection.MULTI

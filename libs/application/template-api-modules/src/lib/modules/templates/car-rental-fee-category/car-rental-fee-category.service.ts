@@ -148,15 +148,14 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
         typeof error === 'object' &&
         ('status' in error || 'detail' in error || 'title' in error)
       ) {
-        // Need to handle 400 errors here, such as if the cars are 
+        // Need to handle 400 errors here, such as if the cars are
         // already registered to the rate category the user tried to change to
-        if(error.status === 400) {
+        if (error.status === 400) {
           throw new TemplateApiError(
             {
               title: error.title ?? 'Bad request',
-              summary: 
-                error.detail 
-                ?? 
+              summary:
+                error.detail ??
                 'Invalid input. Possibly vehicles are already registered to the selected rate category. Check the vehicles you are trying to register.',
             },
             error?.status ?? 500,
