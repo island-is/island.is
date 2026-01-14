@@ -54,6 +54,7 @@ import {
   wasStudyingLastSemester,
 } from './educationInformation'
 import { getEmploymentFromRsk } from './getEmploymenInfo'
+import { getJobInfo } from './getJobCodeOptions'
 
 export const useApplicantOverviewItems = (
   answers: FormValue,
@@ -126,7 +127,7 @@ export const useApplicantOverviewItems = (
 
 export const useEmploymentInformationOverviewItems = (
   answers: FormValue,
-  _externalData: ExternalData,
+  externalData: ExternalData,
 ): Array<KeyValueItem> => {
   const { locale } = useLocale()
   const mainReason =
@@ -136,7 +137,7 @@ export const useEmploymentInformationOverviewItems = (
     ''
   const reasons = getReasonForJobSearchString(
     mainReason,
-    _externalData,
+    externalData,
     locale,
     additionalReason,
   )
@@ -152,14 +153,14 @@ export const useEmploymentInformationOverviewItems = (
     getValueViaPath<string>(answers, 'workingAbility.status') ?? ''
 
   const abilityString = abilityAnswer
-    ? getWorkingAbilityString(abilityAnswer, _externalData, locale)
+    ? getWorkingAbilityString(abilityAnswer, externalData, locale)
     : ''
   const employmentHistory = getValueViaPath<EmploymentHistoryInAnswers>(
     answers,
     'employmentHistory',
   )
 
-  const rskEmploymentList = getEmploymentFromRsk(_externalData)
+  const rskEmploymentList = getEmploymentFromRsk(externalData)
 
   const previousJobInformation = employmentHistory?.lastJobs?.map((job) => {
     const employerName =
@@ -168,7 +169,10 @@ export const useEmploymentInformationOverviewItems = (
             (x) => x.employerSSN === job.nationalIdWithName,
           )?.employer
         : job.employer?.name
-    return `${employerName}: ${job.title}`
+    const jobInfo = getJobInfo(externalData, job.jobCodeId)
+    return `${employerName}: ${
+      locale === 'is' ? jobInfo?.name : jobInfo?.english
+    }`
   })
 
   const currentJobInformation = employmentHistory?.currentJobs?.map((job) => {
@@ -178,7 +182,10 @@ export const useEmploymentInformationOverviewItems = (
             (x) => x.employerSSN === job.nationalIdWithName,
           )?.employer
         : job.employer?.name
-    return `${employerName}: ${job.title}`
+    const jobInfo = getJobInfo(externalData, job.jobCodeId)
+    return `${employerName}: ${
+      locale === 'is' ? jobInfo?.name : jobInfo?.english
+    }`
   })
 
   return [
