@@ -220,7 +220,7 @@ export const m = {
     message: {
       id: 'rsk.rdr.application:end.month.message',
       defaultMessage:
-        'Það er of lítið eftir af mánuðinum til að hægt sé að sækja um. Vinsamlegast reynið aftur eftir mánaðamót.',
+        'Of lítið eftir af mánuðinum til þess að hægt sé að sækja um. Vinsamlegast reynið aftur eftir mánaðamót.',
       description: 'End of month warning message',
     },
   }),
