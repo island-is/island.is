@@ -47,73 +47,73 @@ export class FileService {
       `Queueing copy job for file ${sourceKey} from ${this.config.tempBucket} to ${targetBucket}`,
     )
 
-    try {
-      await Promise.race([
-        this.uploadQueue.add('upload', { fieldId, key: sourceKey, valueId }),
-        new Promise((_, reject) =>
-          setTimeout(
-            () => reject(new Error('Timed out adding job to upload queue')),
-            5000,
-          ),
-        ),
-      ])
-      this.logger.info('✅ Job added to upload queue')
-    } catch (e) {
-      this.logger.error('❌ Failed to add job to upload queue', e)
-      throw e
+    //   try {
+    //     await Promise.race([
+    //       this.uploadQueue.add('upload', { fieldId, key: sourceKey, valueId }),
+    //       new Promise((_, reject) =>
+    //         setTimeout(
+    //           () => reject(new Error('Timed out adding job to upload queue')),
+    //           5000,
+    //         ),
+    //       ),
+    //     ])
+    //     this.logger.info('✅ Job added to upload queue')
+    //   } catch (e) {
+    //     this.logger.error('❌ Failed to add job to upload queue', e)
+    //     throw e
+    //   }
+    // }
+
+    let attempts = 0
+    const key = `${fieldId}/${sourceKey}`
+
+    while (attempts < 5) {
+      const exists = await this.fileExists(sourceKey)
+      this.logger.info(`Starting attempt ${attempts + 1}`)
+      if (exists) {
+        try {
+          const res = await this.fileStorageService.copyObjectFromUploadBucket(
+            sourceKey,
+            targetBucket,
+            key,
+          )
+          this.logger.info(`result: ${res}`)
+          const value = await this.valueModel.findByPk(valueId)
+
+          if (!value) {
+            this.logger.warn(`Value with PK: ${valueId} not found`)
+            return
+          }
+
+          const currentKeys = value.json?.s3Key || []
+          const updatedKeys = [...currentKeys, key]
+
+          value.json = {
+            ...value.json,
+            s3Key: updatedKeys,
+          }
+
+          await value.save()
+
+          this.logger.info(`✅ Updated field ${fieldId} with new S3 key ${key}`)
+          return
+        } catch (error) {
+          this.logger.error(`❌ Copy failed: ${error}`)
+          throw error
+        }
+      }
+
+      attempts++
+      if (!exists) {
+        this.logger.warn(
+          `File ${sourceKey} not found in upload bucket. Retrying in 2 seconds...`,
+        )
+        await new Promise((resolve) => setTimeout(resolve, 2000))
+      }
     }
+
+    this.logger.info(`Upload job added to queue for key ${sourceKey}`)
   }
-
-  //   let attempts = 0
-  //   const key = `${fieldId}/${sourceKey}`
-
-  //   while (attempts < 5) {
-  //     const exists = await this.fileExists(sourceKey)
-  //     this.logger.info(`Starting attempt ${attempts + 1}`)
-  //     if (exists) {
-  //       try {
-  //         const res = await this.fileStorageService.copyObjectFromUploadBucket(
-  //           sourceKey,
-  //           targetBucket,
-  //           key,
-  //         )
-  //         this.logger.info(`result: ${res}`)
-  //         const value = await this.valueModel.findByPk(valueId)
-
-  //         if (!value) {
-  //           this.logger.warn(`Value with PK: ${valueId} not found`)
-  //           return
-  //         }
-
-  //         const currentKeys = value.json?.s3Key || []
-  //         const updatedKeys = [...currentKeys, key]
-
-  //         value.json = {
-  //           ...value.json,
-  //           s3Key: updatedKeys,
-  //         }
-
-  //         await value.save()
-
-  //         this.logger.info(`✅ Updated field ${fieldId} with new S3 key ${key}`)
-  //         return
-  //       } catch (error) {
-  //         this.logger.error(`❌ Copy failed: ${error}`)
-  //         throw error
-  //       }
-  //     }
-
-  //     attempts++
-  //     if (!exists) {
-  //       this.logger.warn(
-  //         `File ${sourceKey} not found in upload bucket. Retrying in 2 seconds...`,
-  //       )
-  //       await new Promise((resolve) => setTimeout(resolve, 2000))
-  //     }
-  //   }
-
-  //   this.logger.info(`Upload job added to queue for key ${sourceKey}`)
-  // }
 
   async deleteFile(key: string, valueId: string): Promise<void> {
     if (!key || !valueId) {
