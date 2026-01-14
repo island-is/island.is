@@ -261,7 +261,7 @@ export const m = {
     },
     description: {
       id: 'rsk.rdr.application:verify.description',
-      defaultMessage: 'Staðfestinga skjár',
+      defaultMessage: 'Staðfestingaskjár',
       description: 'Verify description',
     },
   }),
