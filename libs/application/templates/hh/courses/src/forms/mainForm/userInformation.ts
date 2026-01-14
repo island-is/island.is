@@ -24,60 +24,52 @@ export const userInformation = buildSection({
           title: m.userInformation.name,
           readOnly: true,
           width: 'half',
-          defaultValue: (application: Application) => {
-            return getValueViaPath(
+          defaultValue: (application: Application) =>
+            getValueViaPath(
               application.externalData,
               'nationalRegistry.data.fullName',
-            )
-          },
+            ),
         }),
         buildTextField({
           id: 'userInformation.nationalId',
           title: m.userInformation.nationalId,
           readOnly: true,
           width: 'half',
-          defaultValue: (application: Application) => {
-            return getValueViaPath(
+          defaultValue: (application: Application) =>
+            getValueViaPath(
               application.externalData,
               'nationalRegistry.data.nationalId',
-            )
-          },
+            ),
         }),
         buildTextField({
           id: 'userInformation.email',
           title: m.userInformation.email,
           required: true,
           width: 'half',
-          defaultValue: (application: Application) => {
-            return getValueViaPath(
-              application.externalData,
-              'userProfile.data.email',
-            )
-          },
+          defaultValue: (application: Application) =>
+            getValueViaPath(application.externalData, 'userProfile.data.email'),
         }),
         buildPhoneField({
           id: 'userInformation.phone',
           title: m.userInformation.phone,
           required: true,
           width: 'half',
-          defaultValue: (application: Application) => {
-            return getValueViaPath(
+          defaultValue: (application: Application) =>
+            getValueViaPath(
               application.externalData,
               'userProfile.data.mobilePhoneNumber',
-            )
-          },
+            ),
         }),
         buildAsyncSelectField({
           id: 'userInformation.healthcenter',
           title: m.userInformation.healthcenter,
           required: true,
           loadOptions: loadHealthCenterSelectOptions,
-          defaultValue: (application: Application) => {
-            return getValueViaPath(
+          defaultValue: (application: Application) =>
+            getValueViaPath(
               application.externalData,
               'currentHealthcenter.data.healthCenter.name',
-            )
-          },
+            ),
         }),
       ],
     }),

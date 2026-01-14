@@ -28,15 +28,15 @@ export const participantSection = buildSection({
             )
             const email = getValueViaPath(
               application.externalData,
-              'userProfile.data.email',
+              'userInformation.email',
             )
             const phone = getValueViaPath(
               application.externalData,
-              'userProfile.data.mobilePhoneNumber',
+              'userInformation.phone',
             )
             const healthcenter = getValueViaPath(
               application.externalData,
-              'currentHealthcenter.data.healthCenter.name',
+              'userInformation.healthcenter',
             )
 
             if (!name || !nationalId || !email || !phone || !healthcenter) {
