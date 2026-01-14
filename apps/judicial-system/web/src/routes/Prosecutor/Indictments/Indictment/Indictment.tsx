@@ -314,11 +314,11 @@ const Indictment = () => {
       const missingVehicleRegistrationNumber =
         indictmentCountUpdate.vehicleRegistrationNumber === undefined &&
         !prevIndictmentCount.vehicleRegistrationNumber
-      const lookupLicencePlate =
+      const shouldLookupLicencePlate =
         isTrafficViolation &&
         (updatingPoliceCaseNumber || missingVehicleRegistrationNumber)
 
-      if (lookupLicencePlate) {
+      if (shouldLookupLicencePlate) {
         const vehicleNumber = getLicencePlateFromPoliceCase(policeCaseNumber)
 
         if (vehicleNumber)
