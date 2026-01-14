@@ -269,7 +269,7 @@ export const m = {
   completed: defineMessages({
     alertTitle: {
       id: 'rsk.rdr.application:completed.alert.title',
-      defaultMessage: 'Umsóknin hefur verið skilað',
+      defaultMessage: 'Umsókn hefur verið skilað',
       description: 'Completed alert title',
     },
     alertMessage: {
