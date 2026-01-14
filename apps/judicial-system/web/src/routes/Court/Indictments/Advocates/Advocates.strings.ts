@@ -26,13 +26,6 @@ export const strings = defineMessages({
     description:
       'Notaður sem texti fyrir takka til að staðfesta val á talsmanni í dómaraflæði í ákærum.',
   },
-  changeSpokespersonChoice: {
-    id: 'judicial.system.core:court_indictments.advocates.change_spokesperson_choice',
-    defaultMessage:
-      'Breyta {spokespersonIsLawyer, select, true {lögmanni} other {réttargæslumanni}}',
-    description:
-      'Notaður sem texti fyrir takka til að breyta vali á talsmanni í dómaraflæði í ákærum.',
-  },
   civilClaimants: {
     id: 'judicial.system.core:court_indictments.advocates.civil_claimants',
     defaultMessage: 'Kröfuhafar',
