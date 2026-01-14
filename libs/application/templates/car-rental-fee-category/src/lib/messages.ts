@@ -109,7 +109,7 @@ export const m = {
   categorySelection: defineMessages({
     sectionTitle: {
       id: 'rsk.rdr.application:category.section.title',
-      defaultMessage: 'Gjald tegund',
+      defaultMessage: 'Gjaldtegund',
       description: 'Category selection section title',
     },
     multiTitle: {
