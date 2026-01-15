@@ -30,7 +30,6 @@ export const carsChangesCountSection = buildSection({
         }),
         buildSubmitField({
           id: 'submit',
-          title: m.carsChangesCount.submitButton,
           refetchApplicationAfterSubmit: true,
           actions: [
             {

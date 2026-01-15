@@ -26,7 +26,7 @@ export const m = {
     },
     approvalCheckboxLabel: {
       id: 'rsk.crfc.application:prerequisites.checkbox',
-      defaultMessage: 'Ég skil að ofangreinda upplýsinga verður aflað',
+      defaultMessage: 'Ég skil að ofangreindra upplýsinga verður aflað',
       description: 'Consent checkbox label',
     },
     skatturTitle: {
@@ -119,7 +119,7 @@ export const m = {
     },
     description: {
       id: 'rsk.crfc.application:category.description',
-      defaultMessage: 'Veldur þær breytingar sem þú vilt gera',
+      defaultMessage: 'Veldu þær breytingar sem þú vilt gera',
       description: 'Category selection description',
     },
     optionDayRate: {
@@ -163,7 +163,7 @@ export const m = {
     },
     optionSingleLabel: {
       id: 'rsk.crfc.application:single.multi.option.single.label',
-      defaultMessage: 'Skrá stakann bíl',
+      defaultMessage: 'Skrá stakan bíl',
       description: 'Single vehicle registration option label',
     },
     optionSingleSubLabel: {
@@ -191,9 +191,9 @@ export const m = {
       description: 'Bulk upload description',
     },
     stepsMessage: {
-      id: 'rsk.crfc.application:multi.upload.steps',
+      id: 'rsk.crfc.application:multi.upload.steps#markdown',
       defaultMessage:
-        '1. Sækir sniðmátið \n2. Gerir viðeigandi breytingar á skjalinu \n3. Hleður upp skjalinu hér að neðan',
+        '1. Sækir sniðmátið \n\n2. Gerir viðeigandi breytingar á skjalinu \n\n3. Hleður upp skjalinu hér að neðan',
       description: 'Bulk upload help steps',
     },
   }),
