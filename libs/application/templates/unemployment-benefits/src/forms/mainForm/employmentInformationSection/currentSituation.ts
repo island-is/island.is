@@ -127,7 +127,7 @@ export const currentSituationSubSection = buildSubSection({
                 return nationalIdChosen === '-'
               },
             },
-            title: {
+            jobCodeId: {
               component: 'select',
               label: employmentMessages.employmentHistory.labels.lastJobTitle,
               width: 'half',
