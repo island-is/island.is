@@ -1,7 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common'
 import {
   ApplicationTypes,
-  type ExternalData,
   type ApplicationWithAttachments,
 } from '@island.is/application/types'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
@@ -16,14 +15,16 @@ import type { ApplicationAnswers } from './types'
 const GET_COURSE_BY_ID_QUERY = `
   query GetCourseById($input: GetCourseByIdInput!) {
     getCourseById(input: $input) {
-      id
-      title
-      instances {
+      course {
         id
-        startDate
-        startDateTimeDuration {
-          startTime
-          endTime
+        title
+        instances {
+          id
+          startDate
+          startDateTimeDuration {
+            startTime
+            endTime
+          }
         }
       }
     }
@@ -61,36 +62,14 @@ export class CoursesService extends BaseTemplateApiService {
           'participantList',
         ) ?? []
 
-      const { applicantName, applicantEmail, applicantPhone } =
-        await this.extractApplicantInfo(application.externalData)
+      const { name, email, phone, healthcenter, nationalId } =
+        await this.extractApplicantInfo(application)
 
-      const firstParticipant = participantList.find(
-        (participant) =>
-          Boolean(participant?.nationalIdWithName?.name) &&
-          Boolean(participant?.nationalIdWithName?.email) &&
-          Boolean(participant?.nationalIdWithName?.phone),
-      )
-
-      let name = ''
-      let email = ''
-      let phone = ''
-
-      if (firstParticipant) {
-        name = firstParticipant?.nationalIdWithName?.name ?? ''
-        email = firstParticipant?.nationalIdWithName?.email ?? ''
-        phone = firstParticipant?.nationalIdWithName?.phone ?? ''
-      } else {
-        name = applicantName ?? ''
-        email = applicantEmail ?? ''
-        phone = applicantPhone ?? ''
-      }
-
-      if (!name || !email || !phone)
+      if (!name || !email || !phone || !healthcenter || !nationalId)
         throw new TemplateApiError(
           {
             title: 'No contact information found',
-            summary:
-              'Neither applicant nor participant information is available',
+            summary: 'No contact information found',
           },
           400,
         )
@@ -107,6 +86,11 @@ export class CoursesService extends BaseTemplateApiService {
         course.id,
         course.title,
         courseInstance,
+        nationalId,
+        name,
+        email,
+        phone,
+        healthcenter,
       )
 
       await this.zendeskService.submitTicket({
@@ -162,16 +146,18 @@ export class CoursesService extends BaseTemplateApiService {
     const response = await this.sharedTemplateApiService
       .makeGraphqlQuery<{
         getCourseById: {
-          id: string
-          title: string
-          instances: {
+          course: {
             id: string
-            startDate: string
-            startDateTimeDuration?: {
-              startTime?: string
-              endTime?: string
-            }
-          }[]
+            title: string
+            instances: {
+              id: string
+              startDate: string
+              startDateTimeDuration?: {
+                startTime?: string
+                endTime?: string
+              }
+            }[]
+          }
         }
       }>(authorization, GET_COURSE_BY_ID_QUERY, {
         input: {
@@ -180,7 +166,7 @@ export class CoursesService extends BaseTemplateApiService {
       })
       .then((response) => response.json())
 
-    const course = response.data?.getCourseById
+    const course = response.data?.getCourseById?.course
     const courseInstance = course?.instances.find(
       (instance) => instance.id === courseInstanceId,
     )
@@ -208,24 +194,32 @@ export class CoursesService extends BaseTemplateApiService {
     }
   }
 
-  private async extractApplicantInfo(externalData: ExternalData) {
-    const applicantName = getValueViaPath<string>(
-      externalData,
+  private async extractApplicantInfo(application: ApplicationWithAttachments) {
+    const nationalId = application.applicant
+
+    const name = getValueViaPath<string>(
+      application.externalData,
       'nationalRegistry.data.fullName',
     )
-    const applicantEmail = getValueViaPath<string>(
-      externalData,
-      'userProfile.data.email',
+    const email = getValueViaPath<string>(
+      application.answers,
+      'userInformation.email',
     )
-    const applicantPhone = getValueViaPath<string>(
-      externalData,
-      'userProfile.data.mobilePhoneNumber',
+    const phone = getValueViaPath<string>(
+      application.answers,
+      'userInformation.phone',
+    )
+    const healthcenter = getValueViaPath<string>(
+      application.answers,
+      'userInformation.healthcenter',
     )
 
     return {
-      applicantName,
-      applicantEmail,
-      applicantPhone,
+      nationalId,
+      name,
+      email,
+      phone,
+      healthcenter,
     }
   }
 
@@ -242,6 +236,11 @@ export class CoursesService extends BaseTemplateApiService {
         endTime?: string
       }
     },
+    nationalId: string,
+    name: string,
+    email: string,
+    phone: string,
+    healthcenter: string,
   ): Promise<string> {
     const userIsPayingAsIndividual = getValueViaPath<YesOrNoEnum>(
       application.answers,
@@ -273,7 +272,11 @@ export class CoursesService extends BaseTemplateApiService {
       startDateTimeDuration ?? ''
     }\n`
 
-    message += `Kennitala umsækjanda: ${application.applicant}\n`
+    message += `Kennitala umsækjanda: ${nationalId}\n`
+    message += `Nafn umsækjanda: ${name}\n`
+    message += `Netfang umsækjanda: ${email}\n`
+    message += `Símanúmer umsækjanda: ${phone}\n`
+    message += `Heilsugæslustöð umsækjanda: ${healthcenter}\n`
 
     const payer =
       userIsPayingAsIndividual === YesOrNoEnum.YES

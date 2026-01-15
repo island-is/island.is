@@ -79,6 +79,7 @@ import {
   WatsonAssistantChatModule,
 } from '@island.is/api/domains/watson-assistant-chat'
 import { WorkMachinesModule } from '@island.is/api/domains/work-machines'
+import { QuestionnairesModule } from '@island.is/api/domains/questionnaires'
 import { PracticalExamsModule } from '@island.is/api/domains/practical-exams'
 import { SeminarsModule } from '@island.is/api/domains/seminars-ver'
 import { VmstApplicationsModule } from '@island.is/api/domains/vmst-applications'
@@ -124,7 +125,7 @@ import { ElfurClientConfig } from '@island.is/clients/elfur'
 import { OfficialJournalOfIcelandApplicationClientConfig } from '@island.is/clients/official-journal-of-iceland/application'
 import { HmsLoansClientConfig } from '@island.is/clients/hms-loans'
 import { HousingBenefitCalculatorClientConfig } from '@island.is/clients/housing-benefit-calculator'
-import { IcelandicGovernmentInstitutionVacanciesClientConfig } from '@island.is/clients/icelandic-government-institution-vacancies'
+import { FinancialManagementAuthorityClientConfig } from '@island.is/clients/financial-management-authority'
 import { RightsPortalClientConfig } from '@island.is/clients/icelandic-health-insurance/rights-portal'
 import { InnaClientConfig } from '@island.is/clients/inna'
 import { IntellectualPropertiesClientConfig } from '@island.is/clients/intellectual-properties'
@@ -338,6 +339,7 @@ const environment = getConfig
     OfficialJournalOfIcelandApplicationModule,
     LegalGazetteModule,
     CompanyRegistryModule,
+    QuestionnairesModule,
     IcelandicNamesModule.register({
       backendUrl: environment.icelandicNamesRegistry.backendUrl as string,
     }),
@@ -468,7 +470,7 @@ const environment = getConfig
         WatsonAssistantChatConfig,
         PowerBiConfig,
         AuthIdsApiClientConfig,
-        IcelandicGovernmentInstitutionVacanciesClientConfig,
+        FinancialManagementAuthorityClientConfig,
         RskRelationshipsClientConfig,
         RskRentalDayRateClientConfig,
         AircraftRegistryClientConfig,

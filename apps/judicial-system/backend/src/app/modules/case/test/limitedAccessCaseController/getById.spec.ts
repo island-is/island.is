@@ -1,4 +1,4 @@
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { type User, UserRole } from '@island.is/judicial-system/types'
 

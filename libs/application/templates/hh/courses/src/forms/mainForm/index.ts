@@ -5,12 +5,19 @@ import { participantSection } from './participantSection'
 import { overviewSection } from './overview'
 import { courseSection } from './courseSection'
 import { payerSection } from './payerSection'
+import { userInformation } from './userInformation'
 
 export const MainForm = buildForm({
   id: 'MainForm',
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
-  children: [courseSection, participantSection, payerSection, overviewSection],
+  children: [
+    courseSection,
+    userInformation,
+    participantSection,
+    payerSection,
+    overviewSection,
+  ],
   logo: HeilsugaeslaHofudborgarsvaedisinsLogo,
 })

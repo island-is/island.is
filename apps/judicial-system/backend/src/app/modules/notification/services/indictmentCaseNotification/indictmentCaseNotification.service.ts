@@ -241,6 +241,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
       title,
       location,
     })
+
     return calendarInvite
   }
 
@@ -287,6 +288,52 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
     })
   }
 
+  private sendArraignmentDateEmailNotifications(
+    theCase: Case,
+    user: UserDescriptor,
+    arraignmentDate: DateLog,
+  ) {
+    this.eventService.postEvent('SCHEDULE_ARRAIGNMENT_DATE', theCase)
+
+    const promises: Promise<Recipient>[] = []
+
+    if (theCase.prosecutor) {
+      // PROSECUTOR
+      promises.push(
+        this.sendArraignmentDateEmailNotification({
+          theCase,
+          user,
+          arraignmentDateLog: arraignmentDate,
+          recipientName: theCase.prosecutor.name,
+          recipientEmail: theCase.prosecutor.email,
+        }),
+      )
+    }
+
+    // DEFENDER(s)
+    // get only confirmed defenders on defendants
+    const defenders = _uniqBy(
+      theCase.defendants ?? [],
+      (d: Defendant) => d.defenderEmail,
+    ).filter(({ isDefenderChoiceConfirmed }) => isDefenderChoiceConfirmed)
+
+    defenders.forEach(({ defenderName, defenderEmail }) => {
+      if (defenderName && defenderEmail) {
+        promises.push(
+          this.sendArraignmentDateEmailNotification({
+            theCase,
+            user,
+            arraignmentDateLog: arraignmentDate,
+            recipientName: defenderName,
+            recipientEmail: defenderEmail,
+          }),
+        )
+      }
+    })
+
+    return promises
+  }
+
   private async sendPostponedCourtDateEmailNotification(
     theCase: Case,
     user: UserDescriptor,
@@ -320,55 +367,14 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
     })
   }
 
-  private sendCourtDateEmailNotification(
+  private sendPostponedCourtDateEmailNotifications(
     theCase: Case,
+    courtDate: DateLog,
     user: UserDescriptor,
   ): Promise<Recipient>[] {
-    // check both regular court dates and arraignment date
-    const courtDate = DateLog.courtDate(theCase.dateLogs)
-    const arraignmentDate = DateLog.arraignmentDate(theCase.dateLogs)
+    this.eventService.postEvent('SCHEDULE_COURT_DATE', theCase)
 
     const promises: Promise<Recipient>[] = []
-
-    // get only confirmed defenders on defendants
-    const defenders = _uniqBy(
-      theCase.defendants ?? [],
-      (d: Defendant) => d.defenderEmail,
-    ).filter(({ isDefenderChoiceConfirmed }) => isDefenderChoiceConfirmed)
-
-    if (!courtDate && arraignmentDate) {
-      if (theCase.prosecutor) {
-        // PROSECUTOR
-        promises.push(
-          this.sendArraignmentDateEmailNotification({
-            theCase,
-            user,
-            arraignmentDateLog: arraignmentDate,
-            recipientName: theCase.prosecutor?.name,
-            recipientEmail: theCase.prosecutor?.email,
-          }),
-        )
-      }
-      // DEFENDER(s)
-      defenders.forEach(({ defenderName, defenderEmail }) => {
-        if (defenderName && defenderEmail) {
-          promises.push(
-            this.sendArraignmentDateEmailNotification({
-              theCase,
-              user,
-              arraignmentDateLog: arraignmentDate,
-              recipientName: defenderName,
-              recipientEmail: defenderEmail,
-            }),
-          )
-        }
-      })
-      return promises
-    }
-    if (!courtDate) {
-      return []
-    }
-
     const calendarInvite = this.getCourtDateCalendarInvite(theCase, courtDate)
 
     // PROSECUTOR
@@ -385,6 +391,12 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
     )
 
     // DEFENDER(s)
+    // get only confirmed defenders on defendants
+    const defenders = _uniqBy(
+      theCase.defendants ?? [],
+      (d: Defendant) => d.defenderEmail,
+    ).filter(({ isDefenderChoiceConfirmed }) => isDefenderChoiceConfirmed)
+
     defenders.forEach(({ defenderName, defenderEmail, defenderNationalId }) => {
       if (defenderEmail) {
         promises.push(
@@ -405,7 +417,36 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
         )
       }
     })
+
     return promises
+  }
+
+  private sendCourtDateEmailNotification(
+    theCase: Case,
+    user: UserDescriptor,
+  ): Promise<Recipient>[] {
+    // check both regular court dates and arraignment date
+    const courtDate = DateLog.courtDate(theCase.dateLogs)
+
+    if (courtDate) {
+      return this.sendPostponedCourtDateEmailNotifications(
+        theCase,
+        courtDate,
+        user,
+      )
+    }
+
+    const arraignmentDate = DateLog.arraignmentDate(theCase.dateLogs)
+
+    if (arraignmentDate) {
+      return this.sendArraignmentDateEmailNotifications(
+        theCase,
+        user,
+        arraignmentDate,
+      )
+    }
+
+    return []
   }
 
   private async sendCourtDateNotifications(
@@ -416,7 +457,6 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
       // nothing happens
       return { delivered: true }
     }
-    this.eventService.postEvent('SCHEDULE_COURT_DATE', theCase)
 
     const promises: Promise<Recipient>[] = this.sendCourtDateEmailNotification(
       theCase,
@@ -424,6 +464,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
     )
 
     const recipients = await Promise.all(promises)
+
     const result = await this.recordNotification(
       theCase.id,
       IndictmentCaseNotificationType.COURT_DATE,
@@ -438,6 +479,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
   ): Promise<Recipient>[] {
     const splitCourtCaseNumber = theCase.splitCase?.courtCaseNumber
     const newCourtCaseNumber = theCase.courtCaseNumber
+
     if (!splitCourtCaseNumber || !newCourtCaseNumber) {
       return []
     }
@@ -466,6 +508,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
         )
       }
     }
+
     defenders.forEach(({ defenderName, defenderEmail }) => {
       if (defenderName && defenderEmail) {
         promises.push(
@@ -484,6 +527,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
         )
       }
     })
+
     return promises
   }
 
@@ -498,12 +542,14 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
     ) {
       return { delivered: true }
     }
+
     this.eventService.postEvent('SPLIT', theCase)
 
     const promises: Promise<Recipient>[] =
       this.sendSplitCompletedEmailNotification(theCase)
 
     const recipients = await Promise.all(promises)
+
     const result = await this.recordNotification(
       theCase.id,
       IndictmentCaseNotificationType.INDICTMENT_SPLIT_COMPLETED,
@@ -527,7 +573,6 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
         return this.sendCriminalRecordFilesUploadedNotification(theCase)
       case IndictmentCaseNotificationType.INDICTMENT_SPLIT_COMPLETED:
         return this.sendSplitCompletedNotifications(theCase)
-
       default:
         throw new InternalServerErrorException(
           `Invalid indictment notification type: ${notificationType}`,

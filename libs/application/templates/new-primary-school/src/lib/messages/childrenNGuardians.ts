@@ -94,9 +94,9 @@ export const childrenNGuardiansMessages = {
     description: {
       id: 'nps.application:childrenNGuardians.relatives.description',
       defaultMessage:
-        'Aðstandandi er aðili sem er náinn fjölskyldunni og barni og veitir stuðning þegar svo ber við. Skráðu að minnsta kosti einn aðstandanda sem má hafa samband við ef ekki næst í forsjáraðila barnsins. Þú getur bætt allt að fjórum aðilum. Vinsamlegast látið aðstandendur vita af skráningunni.',
+        'Aðstandandi er aðili sem er náinn fjölskyldunni og barni og veitir stuðning þegar svo ber við. Æskilegt er að skrá a.m.k. einn aðstandanda en einnig er hægt að koma þeim upplýsingum síðar til skólans. Þú getur bætt allt að fjórum aðilum. Vinsamlegast látið aðstandendur vita af skráningunni.',
       description:
-        "A relative is a person who is close to the family and child and provides support when needed. Register at least one relative who can be contacted if the child's guardian cannot be reached. You can add up to four people. Please notify the relatives of the registration.",
+        'A relative is a person who is close to the family and child and provides support when needed. It is preferable to register at least one relative, but that information can also be communicated to the school later. You can add up to four people. Please notify the relatives of the registration.',
     },
     registrationTitle: {
       id: 'nps.application:childrenNGuardians.relatives.registrationTitle',
