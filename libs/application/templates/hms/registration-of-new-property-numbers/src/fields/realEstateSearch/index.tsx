@@ -38,7 +38,6 @@ export const RealEstateSearch: FC<React.PropsWithChildren<FieldBaseProps>> = (
   const debouncedSearch = useMemo(
     () =>
       debounce((value: string) => {
-        console.log('chang')
         setSearchStr(value)
       }, 300),
     [],
@@ -121,6 +120,7 @@ export const RealEstateSearch: FC<React.PropsWithChildren<FieldBaseProps>> = (
           onChange={(e) => debouncedSearch(e.target.value)}
           icon="search"
           inputMode="search"
+          maxLength={10}
         />
       </Box>
       {loading && (
