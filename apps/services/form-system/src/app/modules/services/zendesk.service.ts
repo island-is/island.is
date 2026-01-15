@@ -197,53 +197,99 @@ export class ZendeskService {
         section.sectionType !== SectionTypes.COMPLETED,
     )
 
-    let body = `<p><strong>Tegund:</strong> ${applicationDto.formName?.is}</p>`
-    body += `<p style='margin:0'><strong>Innsend:</strong> ${applicationDto.submittedAt?.toLocaleString(
-      'is-IS',
-    )}</p>`
-    body += `<p style='margin:0'><strong>Númer:</strong> ${
-      applicationDto.id ?? ''
-    }</p>`
-    body += '<br />'
-    if (sections) {
-      sections.forEach((section) => {
-        body += `<h3>${section.name.is}</h3>`
-        section?.screens?.forEach((screen) => {
-          body += `<h4 style='padding-left:10px'>${screen.name.is}</h4>`
-          screen.fields?.forEach((field) => {
-            if (field.fieldSettings?.zendeskIsPrivate === true) {
-              return
-            }
-            body += `<h5 style='margin:0;padding-left:20px'>${field.name.is}${
-              field.isRequired ? '*' : ''
-            }</h5>`
-            field.values?.forEach((value) => {
-              if (value.json && typeof value.json === 'object') {
-                Object.entries(value.json).forEach(([key, val]) => {
-                  val = this.formatValue(val, field.fieldType)
-                  if (value.json && Object.keys(value.json).length > 1) {
-                    const attribute = getLanguageTypeForValueTypeAttribute(key)
-                    if (
-                      field.fieldType === FieldTypesEnum.APPLICANT &&
-                      (key === 'delegationType' ||
-                        key === 'isLoggedInUser' ||
-                        key === 'applicantType')
-                    ) {
-                      return
-                    }
-                    body += `<h6 style='display:inline-block;padding-left:30px'>${attribute.is}:</h6> `
-                    body += `<p style='display:inline-block;margin:0'>${val}</p><br />`
-                  } else {
-                    body += `<p style='padding-left:30px;margin:0'>${val}</p>`
-                  }
-                })
+    const indent = (px: number) => `padding-left:${px}px`
+
+    const p0 = (inner: string, style = '') =>
+      `<p style="margin:0;${style}">${inner}</p>`
+
+    const h = (level: 3 | 4 | 5 | 6, inner: string, style = '') =>
+      `<h${level} style="${style}">${inner}</h${level}>`
+
+    const formatDateIs = (d?: Date) => d?.toLocaleString('is-IS') ?? ''
+
+    const hasNonNullValue = (values?: { json?: unknown }[]) =>
+      values?.some(
+        (v) =>
+          v.json !== null &&
+          v.json !== undefined &&
+          (typeof v.json !== 'object' ||
+            Object.values(v.json).some((val) => val != null)),
+      ) ?? false
+
+    const parts: string[] = []
+
+    // Header
+    parts.push(
+      p0(
+        `<strong>Innsend:</strong> ${formatDateIs(applicationDto.submittedAt)}`,
+      ),
+      p0(`<strong>Númer:</strong> ${applicationDto.id ?? ''}`),
+      '<br />',
+    )
+
+    if (sections?.length) {
+      for (const section of sections) {
+        if (section.isHidden) continue
+
+        parts.push(h(3, section.name.is))
+
+        for (const screen of section.screens ?? []) {
+          if (screen.isHidden) continue
+
+          parts.push(h(4, screen.name.is, indent(10)))
+
+          for (const field of screen.fields ?? []) {
+            if (field.isHidden) continue
+            if (field.fieldSettings?.zendeskIsPrivate) continue
+
+            const requiredMark = field.isRequired ? '*' : ''
+            parts.push(
+              h(5, `${field.name.is}${requiredMark}`, `margin:0;${indent(20)}`),
+            )
+
+            for (const value of field.values ?? []) {
+              const json = value.json
+              if (!json || typeof json !== 'object') continue
+
+              const entries = Object.entries(json)
+              const isMultiAttribute = entries.length > 1
+
+              for (const [key, raw] of entries) {
+                if (
+                  field.fieldType === FieldTypesEnum.APPLICANT &&
+                  (key === 'delegationType' ||
+                    key === 'isLoggedInUser' ||
+                    key === 'applicantType')
+                ) {
+                  continue
+                }
+
+                if (raw == null) continue
+
+                const val = this.formatValue(raw, field.fieldType)
+
+                if (isMultiAttribute) {
+                  const attribute = getLanguageTypeForValueTypeAttribute(key)
+
+                  parts.push(
+                    h(
+                      6,
+                      `${attribute.is}:`,
+                      `display:inline-block;${indent(30)};margin-right:4px`,
+                    ),
+                    `<p style="display:inline-block;margin:0">${val}</p><br />`,
+                  )
+                } else {
+                  parts.push(p0(`${val}`, indent(30)))
+                }
               }
-            })
-          })
-        })
-      })
+            }
+          }
+        }
+      }
     }
-    return body
+
+    return parts.join('')
   }
 
   private getCustomFields(applicationDto: ApplicationDto): CustomField[] {
