@@ -12,11 +12,11 @@ import {
   ApplicationConfigurations,
   ApplicationRole,
   DefaultEvents,
-  NationalRegistryUserApi,
-  NationalRegistrySpouseApi,
   InstitutionNationalIds,
   defineTemplateApi,
   UserProfileApi,
+  NationalRegistryV3UserApi,
+  NationalRegistryV3SpouseApi,
 } from '@island.is/application/types'
 import {
   coreMessages,
@@ -89,8 +89,8 @@ const OldAgePensionTemplate: ApplicationTemplate<
               ],
               write: 'all',
               api: [
-                NationalRegistryUserApi,
-                NationalRegistrySpouseApi,
+                NationalRegistryV3UserApi,
+                NationalRegistryV3SpouseApi,
                 NationalRegistryResidenceHistoryApi,
                 UserProfileApi.configure({
                   params: {

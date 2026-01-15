@@ -72,9 +72,10 @@ describe('InternalCaseController - Deliver signed ruling to police', () => {
       state: caseState,
       policeCaseNumbers: [policeCaseNumber],
       courtCaseNumber,
-      defendants: [{ nationalId: defendantNationalId }],
+      defendants: [{ nationalId: uuid() }],
       validToDate,
       conclusion: caseConclusion,
+      policeDefendantNationalId: defendantNationalId,
     } as Case
     const rulingPdf = 'test ruling'
 

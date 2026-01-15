@@ -12,7 +12,6 @@ import {
   ApplicationsControllerGetApplicationRequest,
   ApplicationsControllerSaveScreenRequest,
   ApplicationsControllerSubmitRequest,
-  ApplicationsControllerSubmitSectionRequest,
   ApplicationsControllerUpdateRequest,
 } from '@island.is/clients/form-system'
 import {
@@ -21,11 +20,9 @@ import {
   GetApplicationInput,
   GetApplicationsInput,
   SubmitScreenInput,
-  SubmitSectionInput,
   UpdateApplicationInput,
 } from '../../dto/application.input'
 import { ApplicationResponse } from '../../models/applications.model'
-import { Screen } from '../../models/screen.model'
 
 @Injectable()
 export class ApplicationsService {
@@ -128,20 +125,9 @@ export class ApplicationsService {
     )
   }
 
-  async saveScreen(auth: User, input: SubmitScreenInput): Promise<Screen> {
-    const response = await this.applicationsApiWithAuth(
-      auth,
-    ).applicationsControllerSaveScreen(
+  async saveScreen(auth: User, input: SubmitScreenInput): Promise<void> {
+    await this.applicationsApiWithAuth(auth).applicationsControllerSaveScreen(
       input as ApplicationsControllerSaveScreenRequest,
-    )
-    return response as Screen
-  }
-
-  async submitSection(auth: User, input: SubmitSectionInput): Promise<void> {
-    await this.applicationsApiWithAuth(
-      auth,
-    ).applicationsControllerSubmitSection(
-      input as ApplicationsControllerSubmitSectionRequest,
     )
   }
 

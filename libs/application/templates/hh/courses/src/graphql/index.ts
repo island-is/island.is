@@ -33,3 +33,14 @@ export const GET_COURSE_BY_ID_QUERY = gql`
     }
   }
 `
+
+export const GET_HEALTHCENTERS_QUERY = gql`
+  query GetHealthCenters {
+    rightsPortalPaginatedHealthCenters {
+      data {
+        id
+        name
+      }
+    }
+  }
+`

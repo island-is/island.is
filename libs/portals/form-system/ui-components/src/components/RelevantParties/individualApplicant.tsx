@@ -76,7 +76,7 @@ export const IndividualApplicant = ({
             defaultValue={getValue(applicant, 'email') ?? ''}
             rules={{
               required: {
-                value: applicant?.isRequired ?? false,
+                value: true,
                 message: formatMessage(m.required),
               },
               pattern: {
@@ -104,7 +104,7 @@ export const IndividualApplicant = ({
                 }}
                 onBlur={field.onBlur}
                 errorMessage={fieldState.error?.message}
-                required={applicant?.isRequired ?? false}
+                required={true}
                 backgroundColor="blue"
               />
             )}
