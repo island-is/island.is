@@ -7,5 +7,5 @@ export const hasTwentyOrMoreProperties = (externalData: ExternalData) => {
     getValueViaPath<Array<Fasteign>>(externalData, 'getProperties.data', []) ||
     []
 
-  return properties.length < 19 ? true : false
+  return properties.length > 19 ? true : false
 }
