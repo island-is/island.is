@@ -18,7 +18,8 @@ export const requiredStudies = z
       .optional(),
     courseOfStudy: z.string().optional(),
     degree: z.string().optional(),
-    units: z.string().min(1),
+    // units: z.string().min(1),
+    units: z.string().optional().nullable(), // TODOx need to change refine where you look at answers in education.typeOfEducation to know whether or not to validate field
     unfinishedStudy: z.array(z.enum([YES])).optional(),
     endDate: z.string().nullish(),
     degreeFile: z.array(FileSchema).nullish(),
