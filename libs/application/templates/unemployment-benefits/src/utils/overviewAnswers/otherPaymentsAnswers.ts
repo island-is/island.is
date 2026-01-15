@@ -51,20 +51,30 @@ export const useOtherPaymentsAnswers = (
       payment.pensionFund || '',
       externalData,
     )
+
+    const categoryNameStringValue =
+      subCategory?.name ??
+      (locale === 'is' ? topCategory?.name : topCategory?.english) ??
+      ''
+    const privatePensionStringValue = privatePensionString
+      ? ` - ${privatePensionString}`
+      : ''
+    const unionStringValue = unionString ? ` - ${unionString}` : ''
+    const pensionFundStringValue = pensionFundString
+      ? ` - ${pensionFundString}`
+      : ''
+    const paymentAmountStringValue = paymentAmount
+      ? `: ${formatCurrency(parseInt(paymentAmount))} ${formatMessage(
+          overviewMessages.labels.payout.paymentPerMonth,
+        )}`
+      : ''
+
     paymentsList.push(
-      `${
-        subCategory?.name ??
-        (locale === 'is' ? topCategory?.name : topCategory?.english) ??
-        ''
-      }${privatePensionString ? ` - ${privatePensionString}` : ''}${
-        unionString ? ` - ${unionString}` : ''
-      }${pensionFundString ? ` - ${pensionFundString}` : ''}${
-        paymentAmount
-          ? `: ${formatCurrency(parseInt(paymentAmount))} ${formatMessage(
-              overviewMessages.labels.payout.paymentPerMonth,
-            )}`
-          : ''
-      }`,
+      categoryNameStringValue +
+        privatePensionStringValue +
+        unionStringValue +
+        pensionFundStringValue +
+        paymentAmountStringValue,
     )
   })
 
