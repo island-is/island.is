@@ -98,7 +98,7 @@ const UserContractsOverview = () => {
           <Stack space={2}>
             {data.hmsRentalAgreements.data
               .map((contract) => {
-                const { id, status, contractType, contractProperty } = contract
+                const { id, status, contractProperty } = contract
                 const address =
                   contractProperty &&
                   contractProperty.streetAndHouseNumber &&
