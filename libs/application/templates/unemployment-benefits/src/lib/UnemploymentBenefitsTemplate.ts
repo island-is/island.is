@@ -38,6 +38,7 @@ const UnemploymentBenefitsTemplate: ApplicationTemplate<
   translationNamespaces:
     ApplicationConfigurations.UnemploymentBenefits.translation,
   dataSchema: UnemploymentBenefitsSchema,
+  allowMultipleApplicationsInDraft: false,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -150,7 +151,6 @@ const UnemploymentBenefitsTemplate: ApplicationTemplate<
                   Promise.resolve(module.completedForm),
                 ),
               read: 'all',
-              delete: true,
             },
           ],
         },

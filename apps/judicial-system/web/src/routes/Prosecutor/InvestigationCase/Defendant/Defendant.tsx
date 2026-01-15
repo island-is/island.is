@@ -33,6 +33,7 @@ import {
   useDefendants,
   useVictim,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { isBusiness } from '@island.is/judicial-system-web/src/utils/utils'
 import { isDefendantStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 
@@ -162,19 +163,16 @@ const Defendant = () => {
       <PageHeader
         title={formatMessage(titles.prosecutor.investigationCases.defendant)}
       />
-
       <FormContentContainer>
-        <Box marginBottom={10}>
-          <PageTitle>{formatMessage(m.heading)}</PageTitle>
-          <Box marginBottom={5}>
-            <ProsecutorCaseInfo
-              workingCase={workingCase}
-              hideDefendants
-              hideCourt
-            />
-          </Box>
-          <Box component="section" marginBottom={5}>
-            <SectionHeading title="Varnaraðili" />
+        <PageTitle>{formatMessage(m.heading)}</PageTitle>
+        <div className={grid({ gap: 5, marginBottom: 10 })}>
+          <ProsecutorCaseInfo
+            workingCase={workingCase}
+            hideDefendants
+            hideCourt
+          />
+          <Box component="section" className={grid({ gap: 3 })}>
+            <SectionHeading title="Varnaraðili" marginBottom={0} />
             <AnimatePresence>
               {workingCase.defendants &&
                 workingCase.defendants.map((defendant, index) => (
@@ -184,36 +182,26 @@ const Defendant = () => {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 10 }}
                   >
-                    <Box
-                      marginBottom={
-                        index - 1 === workingCase.defendants?.length ? 0 : 3
+                    <DefendantInfo
+                      defendant={defendant}
+                      workingCase={workingCase}
+                      setWorkingCase={setWorkingCase}
+                      onDelete={
+                        workingCase.defendants &&
+                        workingCase.defendants.length > 1
+                          ? handleDeleteDefendant
+                          : undefined
                       }
-                    >
-                      <DefendantInfo
-                        defendant={defendant}
-                        workingCase={workingCase}
-                        setWorkingCase={setWorkingCase}
-                        onDelete={
-                          workingCase.defendants &&
-                          workingCase.defendants.length > 1 &&
-                          !(
-                            workingCase.origin === CaseOrigin.LOKE &&
-                            index === 0
-                          )
-                            ? handleDeleteDefendant
-                            : undefined
-                        }
-                        onChange={handleUpdateDefendant}
-                        updateDefendantState={updateDefendantState}
-                        nationalIdImmutable={
-                          workingCase.origin === CaseOrigin.LOKE && index === 0
-                        }
-                      />
-                    </Box>
+                      onChange={handleUpdateDefendant}
+                      updateDefendantState={updateDefendantState}
+                      nationalIdImmutable={
+                        workingCase.origin === CaseOrigin.LOKE && index === 0
+                      }
+                    />
                   </motion.div>
                 ))}
             </AnimatePresence>
-            <Box display="flex" justifyContent="flexEnd" marginTop={3}>
+            <Box display="flex" justifyContent="flexEnd">
               <Button
                 data-testid={addDefendantButtonId}
                 id={addDefendantButtonId}
@@ -244,66 +232,61 @@ const Defendant = () => {
               />
             </motion.section>
           </AnimatePresence>
-        </Box>
-        {workingCase.id &&
-          (workingCase.victims && workingCase.victims?.length === 0 ? (
-            <Box
-              component="section"
-              marginBottom={5}
-              display="flex"
-              justifyContent="flexEnd"
-            >
-              <Button
-                data-testid="addFirstVictimButton"
-                icon="add"
-                variant="ghost"
-                onClick={() =>
-                  createVictimAndSetState(workingCase.id, setWorkingCase)
-                }
-              >
-                Skrá brotaþola
-              </Button>
-            </Box>
-          ) : (
-            <Box component="section" marginBottom={5}>
-              <SectionHeading title="Brotaþoli" />
-              <AnimatePresence>
-                {workingCase.victims?.map((victim) => (
-                  <motion.div
-                    key={victim.id}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 10 }}
-                  >
-                    <VictimInfo
-                      victim={victim}
-                      workingCase={workingCase}
-                      setWorkingCase={setWorkingCase}
-                      onDelete={() =>
-                        deleteVictimAndSetState(
-                          workingCase.id,
-                          victim,
-                          setWorkingCase,
-                        )
-                      }
-                    />
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-              <Box display="flex" justifyContent="flexEnd" marginTop={2}>
+          {workingCase.id &&
+            (workingCase.victims && workingCase.victims?.length === 0 ? (
+              <Box component="section" display="flex" justifyContent="flexEnd">
                 <Button
-                  data-testid="addVictimButton"
-                  variant="ghost"
+                  data-testid="addFirstVictimButton"
                   icon="add"
+                  variant="ghost"
                   onClick={() =>
                     createVictimAndSetState(workingCase.id, setWorkingCase)
                   }
                 >
-                  Bæta við brotaþola
+                  Skrá brotaþola
                 </Button>
               </Box>
-            </Box>
-          ))}
+            ) : (
+              <Box component="section">
+                <SectionHeading title="Brotaþoli" />
+                <AnimatePresence>
+                  {workingCase.victims?.map((victim) => (
+                    <motion.div
+                      key={victim.id}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 10 }}
+                    >
+                      <VictimInfo
+                        victim={victim}
+                        workingCase={workingCase}
+                        setWorkingCase={setWorkingCase}
+                        onDelete={() =>
+                          deleteVictimAndSetState(
+                            workingCase.id,
+                            victim,
+                            setWorkingCase,
+                          )
+                        }
+                      />
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+                <Box display="flex" justifyContent="flexEnd">
+                  <Button
+                    data-testid="addVictimButton"
+                    variant="ghost"
+                    icon="add"
+                    onClick={() =>
+                      createVictimAndSetState(workingCase.id, setWorkingCase)
+                    }
+                  >
+                    Bæta við brotaþola
+                  </Button>
+                </Box>
+              </Box>
+            ))}
+        </div>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
