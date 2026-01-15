@@ -10,7 +10,7 @@ import {
   IdsClientConfig,
   LazyDuringDevScope,
 } from '@island.is/nest/config'
-import { ElfurClientConfig } from './elfur.config'
+import { FinancialManagementAuthorityClientConfig } from './financialManagementAuthorityClient.config'
 
 const apiLedger = [
   {
@@ -35,11 +35,10 @@ export const apiProviders: Array<Provider> = apiLedger.map(
     provide: api,
     scope: LazyDuringDevScope,
     useFactory: (
-      config: ConfigType<typeof ElfurClientConfig>,
-      idsClientConfig: ConfigType<typeof IdsClientConfig>,
+      config: ConfigType<typeof FinancialManagementAuthorityClientConfig>,
     ) => {
-      return new api(apiConfigFactory(scopes, config, idsClientConfig))
+      return new api(apiConfigFactory(scopes, config))
     },
-    inject: [ElfurClientConfig.KEY, IdsClientConfig.KEY],
+    inject: [FinancialManagementAuthorityClientConfig.KEY, IdsClientConfig.KEY],
   }),
 )

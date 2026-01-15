@@ -197,7 +197,6 @@ codemagic.yaml                                                                  
 /libs/api/domains/questionnaires/                                                                                            @island-is/hugsmidjan
 /libs/clients/documents/                                                                                                     @island-is/hugsmidjan
 /libs/clients/documents-v2/                                                                                                  @island-is/hugsmidjan
-/libs/clients/elfur                                                                                                          @island-is/hugsmidjan
 /libs/clients/finance/                                                                                                       @island-is/hugsmidjan
 /libs/clients/finance-v2/                                                                                                    @island-is/hugsmidjan
 /libs/clients/adr-and-machine-license/                                                                                       @island-is/hugsmidjan

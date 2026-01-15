@@ -308,17 +308,6 @@ export const serviceSetup = (services: {
           'https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/token',
         prod: 'https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/token',
       },
-      ELFUR_CLIENT_ID: {
-        dev: '@fjs.is/hugsmidjan',
-        staging: '@fjs.is/hugsmidjan',
-        prod: '@fjs.is/hugsmidjan',
-      },
-      ELFUR_BASE_PATH: {
-        dev: 'https://fjs-cdn-endpoint-elfur-test-hhesbzhxabbwbqen.a03.azurefd.net',
-        staging:
-          'https://fjs-cdn-endpoint-elfur-staging-hhesbzhxabbwbqen.a03.azurefd.net',
-        prod: 'https://fjs-cdn-endpoint-elfur-prod-hhesbzhxabbwbqen.a03.azurefd.net',
-      },
       HMS_CONTRACTS_AUTH_TENANT_ID: {
         dev: 'c7256472-2622-417e-8955-a54eeb0a110e',
         staging: 'c7256472-2622-417e-8955-a54eeb0a110e',
