@@ -46,7 +46,7 @@ export const RealEstateSearch: FC<React.PropsWithChildren<FieldBaseProps>> = (
   const [runQuery, { loading }] = useLazyQuery(searchPropertiesQuery, {
     onCompleted(result) {
       const resProperty = result.hmsPropertyByPropertyCode as Array<Fasteign>
-      if (resProperty.length > 0) {
+      if (resProperty && resProperty.length > 0) {
         setShowSearchError(false)
         setShowApiError(false)
       } else {
