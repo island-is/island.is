@@ -9,7 +9,6 @@ import {
   Box,
   Button,
   Text,
-  toast,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
@@ -23,7 +22,6 @@ import {
 } from '@island.is/judicial-system/types'
 import {
   core,
-  errors,
   signedVerdictOverview as m,
   titles,
 } from '@island.is/judicial-system-web/messages'
@@ -48,9 +46,8 @@ import {
   PoliceRequestAccordionItem,
   ReopenModal,
   RulingAccordionItem,
-  SigningModal,
+  SignatureConfirmationModal,
   UserContext,
-  useRequestRulingSignature,
 } from '@island.is/judicial-system-web/src/components'
 import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
 import {
@@ -61,7 +58,6 @@ import {
   CaseTransition,
   Institution,
   RequestSignatureResponse,
-  SignatureConfirmationResponse,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
@@ -74,8 +70,6 @@ import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.cs
 import CaseDocuments from './Components/CaseDocuments/CaseDocuments'
 import ModifyDatesModal from './Components/ModifyDatesModal/ModifyDatesModal'
 import ShareCase, { InstitutionOption } from './Components/ShareCase/ShareCase'
-import { useCourtRecordSignatureConfirmationLazyQuery } from './courtRecordSignatureConfirmation.generated'
-import { useRequestCourtRecordSignatureMutation } from './requestCourtRecordSignature.generated'
 import { strings } from './SignedVerdictOverview.strings'
 
 interface ModalControls {
@@ -164,6 +158,7 @@ export const getExtensionInfoText = (
 type availableModals =
   | 'NoModal'
   | 'SigningModal'
+  | 'CourtRecordSigningModal'
   | 'ConfirmAppealAfterDeadline'
   | 'ConfirmStatementAfterDeadline'
   | 'AppealReceived'
@@ -208,18 +203,14 @@ export const SignedVerdictOverview: FC = () => {
     setRequestCourtRecordSignatureResponse,
   ] = useState<RequestSignatureResponse>()
 
-  const [
-    courtRecordSignatureConfirmationResponse,
-    setCourtRecordSignatureConfirmationResponse,
-  ] = useState<SignatureConfirmationResponse>()
+  const [isCourtRecordSignatureAudkenni, setIsCourtRecordSignatureAudkenni] =
+    useState<boolean>(false)
 
-  const {
-    requestRulingSignature,
-    requestRulingSignatureResponse,
-    isRequestingRulingSignature,
-  } = useRequestRulingSignature(workingCase.id, () =>
-    setModalVisible('SigningModal'),
-  )
+  const [rulingSignatureResponse, setRulingSignatureResponse] =
+    useState<RequestSignatureResponse>()
+  const [isRulingSignatureAudkenni, setIsRulingSignatureAudkenni] =
+    useState<boolean>(false)
+
   const { user } = useContext(UserContext)
   const router = useRouter()
   const { formatMessage } = useIntl()
@@ -259,51 +250,23 @@ export const SignedVerdictOverview: FC = () => {
     )
   }, [workingCase.type, user])
 
-  const [getCourtRecordSignatureConfirmation] =
-    useCourtRecordSignatureConfirmationLazyQuery({
-      fetchPolicy: 'no-cache',
-      errorPolicy: 'all',
-      onCompleted: (courtRecordSignatureConfirmationData) => {
-        if (
-          courtRecordSignatureConfirmationData?.courtRecordSignatureConfirmation
-        ) {
-          setCourtRecordSignatureConfirmationResponse(
-            courtRecordSignatureConfirmationData.courtRecordSignatureConfirmation as SignatureConfirmationResponse,
-          )
-          refreshCase()
-        } else {
-          setCourtRecordSignatureConfirmationResponse({ documentSigned: false })
-        }
-      },
-      onError: () => {
-        setCourtRecordSignatureConfirmationResponse({ documentSigned: false })
-      },
-    })
+  const handleCourtRecordSignatureRequested = (
+    response: RequestSignatureResponse,
+    isAudkenni: boolean,
+  ) => {
+    setRequestCourtRecordSignatureResponse(response)
+    setIsCourtRecordSignatureAudkenni(isAudkenni)
+    setModalVisible('CourtRecordSigningModal')
+  }
 
-  const [
-    handleRequestCourtRecordSignature,
-    { loading: isRequestingCourtRecordSignature },
-  ] = useRequestCourtRecordSignatureMutation({
-    variables: { input: { caseId: workingCase.id } },
-    onCompleted: (data) => {
-      setRequestCourtRecordSignatureResponse(
-        data.requestCourtRecordSignature as RequestSignatureResponse,
-      )
-      getCourtRecordSignatureConfirmation({
-        variables: {
-          input: {
-            caseId: workingCase.id,
-            documentToken:
-              data.requestCourtRecordSignature?.documentToken || '',
-          },
-        },
-      })
-      return data.requestCourtRecordSignature
-    },
-    onError: () => {
-      toast.error(formatMessage(errors.requestCourtRecordSignature))
-    },
-  })
+  const handleRulingSignatureRequested = (
+    response: RequestSignatureResponse,
+    isAudkenni: boolean,
+  ) => {
+    setRulingSignatureResponse(response)
+    setIsRulingSignatureAudkenni(isAudkenni)
+    setModalVisible('SigningModal')
+  }
 
   const handleNextButtonClick = async () => {
     if (isProsecutionUser(user)) {
@@ -596,14 +559,10 @@ export const SignedVerdictOverview: FC = () => {
               )}
             <AppealCaseFilesOverview />
             <CaseDocuments
-              isRequestingCourtRecordSignature={
-                isRequestingCourtRecordSignature
+              onCourtRecordSignatureRequested={
+                handleCourtRecordSignatureRequested
               }
-              handleRequestCourtRecordSignature={
-                handleRequestCourtRecordSignature
-              }
-              isRequestingRulingSignature={isRequestingRulingSignature}
-              requestRulingSignature={requestRulingSignature}
+              onRulingSignatureRequested={handleRulingSignatureRequested}
             />
 
             {isProsecutionUser(user) &&
@@ -661,69 +620,33 @@ export const SignedVerdictOverview: FC = () => {
             </motion.div>
           )}
         </AnimatePresence>
-        {requestCourtRecordSignatureResponse && (
-          <Modal
-            title={
-              !courtRecordSignatureConfirmationResponse
-                ? formatMessage(
-                    m.sections.courtRecordSignatureModal.titleSigning,
-                  )
-                : courtRecordSignatureConfirmationResponse.documentSigned
-                ? formatMessage(
-                    m.sections.courtRecordSignatureModal.titleSuccess,
-                  )
-                : courtRecordSignatureConfirmationResponse.code === 7023 // User cancelled
-                ? formatMessage(
-                    m.sections.courtRecordSignatureModal.titleCanceled,
-                  )
-                : formatMessage(
-                    m.sections.courtRecordSignatureModal.titleFailure,
-                  )
-            }
-            text={
-              !courtRecordSignatureConfirmationResponse ? (
-                <>
-                  <Box marginBottom={2}>
-                    <Text variant="h2" color="blue400">
-                      {formatMessage(
-                        m.sections.courtRecordSignatureModal.controlCode,
-                        {
-                          controlCode:
-                            requestCourtRecordSignatureResponse?.controlCode,
-                        },
-                      )}
-                    </Text>
-                  </Box>
-                  <Text>
-                    {formatMessage(
-                      m.sections.courtRecordSignatureModal
-                        .controlCodeDisclaimer,
-                    )}
-                  </Text>
-                </>
-              ) : courtRecordSignatureConfirmationResponse.documentSigned ? (
-                formatMessage(m.sections.courtRecordSignatureModal.completed)
-              ) : (
-                formatMessage(m.sections.courtRecordSignatureModal.notCompleted)
-              )
-            }
-            primaryButton={{
-              text: courtRecordSignatureConfirmationResponse
-                ? formatMessage(core.closeModal)
-                : '',
-              onClick: () => {
+        {modalVisible === 'CourtRecordSigningModal' &&
+          requestCourtRecordSignatureResponse && (
+            <SignatureConfirmationModal
+              workingCase={workingCase}
+              signatureResponse={requestCourtRecordSignatureResponse}
+              signatureType="courtRecord"
+              isAudkenni={isCourtRecordSignatureAudkenni}
+              onClose={() => {
                 setRequestCourtRecordSignatureResponse(undefined)
-                setCourtRecordSignatureConfirmationResponse(undefined)
-              },
-            }}
-          />
-        )}
-        {modalVisible === 'SigningModal' && (
-          <SigningModal
+                setIsCourtRecordSignatureAudkenni(false)
+                refreshCase()
+                setModalVisible('NoModal')
+              }}
+              navigateOnClose={false}
+            />
+          )}
+        {modalVisible === 'SigningModal' && rulingSignatureResponse && (
+          <SignatureConfirmationModal
             workingCase={workingCase}
-            requestRulingSignature={requestRulingSignature}
-            requestRulingSignatureResponse={requestRulingSignatureResponse}
+            signatureResponse={rulingSignatureResponse}
+            signatureType="ruling"
+            isAudkenni={
+              rulingSignatureResponse ? isRulingSignatureAudkenni : false
+            }
             onClose={() => {
+              setRulingSignatureResponse(undefined)
+              setIsRulingSignatureAudkenni(false)
               refreshCase()
               setModalVisible('NoModal')
             }}
