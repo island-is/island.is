@@ -53,7 +53,7 @@ export const useOtherPaymentsAnswers = (
     )
 
     const categoryNameStringValue =
-      subCategory?.name ??
+      (locale === 'is' ? subCategory?.name : subCategory?.english) ??
       (locale === 'is' ? topCategory?.name : topCategory?.english) ??
       ''
     const privatePensionStringValue = privatePensionString
