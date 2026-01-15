@@ -927,6 +927,11 @@ export const m = defineMessages({
     id: 'service.portal:contracts',
     defaultMessage: 'Samningar',
   },
+  contractsDescription: {
+    id: 'service.portal:contracts-description',
+    defaultMessage:
+      'Upplýsingar um þá saminga sem þú átt í leiguskrá Húsnæðis- og Mannvirkjastofnunar',
+  },
   delegation: {
     id: 'service.portal:delegation',
     defaultMessage: 'Mín réttindi',
@@ -2291,5 +2296,13 @@ export const searchTagsMessages = defineMessages({
   appointmentBook: {
     id: 'sp.search.tags:appointment-book',
     defaultMessage: 'Bóka',
+  },
+  rentalAgreements: {
+    id: 'sp.search.tags:rental-agreements',
+    defaultMessage: 'Leigusamningar',
+  },
+  rent: {
+    id: 'sp.search.tags:rent',
+    defaultMessage: 'Leiga',
   },
 })

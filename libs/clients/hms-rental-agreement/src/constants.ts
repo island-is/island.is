@@ -1,3 +1,5 @@
+import { AgreementStatusType } from './types'
+
 export const AGREEMENT_STATUSES = [
   'valid',
   'invalid',
@@ -21,3 +23,10 @@ export const PARTY_TYPES = [
 ] as const
 
 export const TEMPORAL_TYPES = ['indefinite', 'temporary', 'unknown'] as const
+
+export const INACTIVE_AGREEMENT_STATUSES: Array<AgreementStatusType> = [
+  'expired',
+  'cancelled',
+  'invalid',
+  'terminated',
+]

@@ -17,18 +17,25 @@ import { Problem } from '@island.is/react-spa/shared'
 import { contractsMessages as cm } from '../../../lib/messages'
 import { useUserContractsOverviewQuery } from './UserContractsOverview.generated'
 import { mapStatusTypeToTag } from '../../../utils/mapStatusTypeToTag'
-import { redirect } from 'react-router-dom'
 import { InformationPaths } from '../../../lib/paths'
 import { isDefined } from '@island.is/shared/utils'
 import { useState } from 'react'
+import { getApplicationsBaseUrl } from '@island.is/portals/core'
+import { useNavigate } from 'react-router-dom'
 
 const UserContractsOverview = () => {
   useNamespaces('sp.contracts')
   const { formatMessage } = useLocale()
 
-  const { data, loading, error } = useUserContractsOverviewQuery()
+  const navigate = useNavigate()
 
   const [hideInactiveContracts, setHideInactiveContracts] = useState(false)
+
+  const { data, loading, error } = useUserContractsOverviewQuery({
+    variables: {
+      hideInactiveContracts: hideInactiveContracts,
+    },
+  })
 
   return (
     <IntroWrapper
@@ -36,9 +43,10 @@ const UserContractsOverview = () => {
       intro={cm.contractsOverviewSubtitle}
       serviceProviderSlug={HMS_SLUG}
       serviceProviderTooltip={formatMessage(m.rentalAgreementsTooltip)}
+      marginBottom={3}
       buttonGroup={[
         <LinkButton
-          to="/"
+          to={`${getApplicationsBaseUrl()}/leigusamningur`}
           text={formatMessage(cm.registerRentalAgreement)}
           icon="document"
           variant="utility"
@@ -46,6 +54,28 @@ const UserContractsOverview = () => {
       ]}
     >
       {error && !loading && <Problem error={error} noBorder={false} />}
+      {!error && (
+        <Box display="flex" justifyContent="spaceBetween" marginTop={3}>
+          <Text variant="medium">
+            {!loading &&
+              formatMessage(cm.recordsFound, {
+                count: data?.hmsRentalAgreements?.totalCount ?? 0,
+              })}
+          </Text>
+          <ToggleSwitchButton
+            aria-controls="contracts-area"
+            onChange={() => {
+              setHideInactiveContracts(!hideInactiveContracts)
+            }}
+            label={
+              <Text variant="medium">
+                {formatMessage(cm.hideInactiveContracts)}
+              </Text>
+            }
+            checked={hideInactiveContracts}
+          />
+        </Box>
+      )}
       {!error && !loading && !data?.hmsRentalAgreements && (
         <Problem
           type="no_data"
@@ -64,72 +94,51 @@ const UserContractsOverview = () => {
       )}
 
       {!error && !loading && data?.hmsRentalAgreements && (
-        <Box>
-          <Box display="flex" justifyContent="spaceBetween" marginTop={6}>
-            <Text>
-              {formatMessage(cm.recordsFound, {
-                count: data.hmsRentalAgreements.totalCount,
-              })}
-            </Text>
-            <Box>
-              <ToggleSwitchButton
-                aria-controls="contracts-area"
-                onChange={() => {
-                  setHideInactiveContracts(!hideInactiveContracts)
-                }}
-                label={formatMessage(cm.hideInactiveContracts)}
-                checked={hideInactiveContracts}
-              />
-            </Box>
-          </Box>
-          <Box id="contracts-area" marginTop={2}>
-            <Stack space={2}>
-              {data.hmsRentalAgreements.data
-                .map((contract) => {
-                  const { id, status, contractType, contractProperty } =
-                    contract
-                  const address =
-                    contractProperty &&
-                    contractProperty.streetAndHouseNumber &&
-                    contractProperty.municipality &&
-                    contractProperty.postalCode
-                      ? `${contractProperty.streetAndHouseNumber}, ${contractProperty.postalCode} ${contractProperty.municipality}`
-                      : undefined
+        <Box id="contracts-area" marginTop={1}>
+          <Stack space={2}>
+            {data.hmsRentalAgreements.data
+              .map((contract) => {
+                const { id, status, contractType, contractProperty } = contract
+                const address =
+                  contractProperty &&
+                  contractProperty.streetAndHouseNumber &&
+                  contractProperty.municipality &&
+                  contractProperty.postalCode
+                    ? `${contractProperty.streetAndHouseNumber}, ${contractProperty.postalCode} ${contractProperty.municipality}`
+                    : undefined
 
-                  const { message, ...restOfTag } = mapStatusTypeToTag(
-                    status,
-                  ) ?? {
-                    message: undefined,
-                  }
+                const { message, ...restOfTag } = mapStatusTypeToTag(
+                  status,
+                ) ?? {
+                  message: undefined,
+                }
 
-                  if (!message || !restOfTag) {
-                    return null
-                  }
-                  return (
-                    <ActionCard
-                      key={id}
-                      text={address}
-                      cta={{
-                        label: formatMessage(cm.seeInfo),
-                        onClick: () =>
-                          redirect(
-                            InformationPaths.MyContractsDetail.replace(
-                              ':id',
-                              id,
-                            ),
-                          ),
-                      }}
-                      subText={contractType ?? undefined}
-                      tag={{
-                        label: formatMessage(message),
-                        ...restOfTag,
-                      }}
-                    />
-                  )
-                })
-                .filter(isDefined)}
-            </Stack>
-          </Box>
+                if (!message || !restOfTag) {
+                  return null
+                }
+                return (
+                  <ActionCard
+                    key={id}
+                    heading={address}
+                    headingVariant="h3"
+                    cta={{
+                      label: formatMessage(cm.seeInfo),
+                      onClick: () =>
+                        navigate(
+                          InformationPaths.MyContractsDetail.replace(':id', id),
+                        ),
+                      variant: 'text',
+                    }}
+                    subText={'TODO'}
+                    tag={{
+                      label: formatMessage(message),
+                      ...restOfTag,
+                    }}
+                  />
+                )
+              })
+              .filter(isDefined)}
+          </Stack>
         </Box>
       )}
     </IntroWrapper>

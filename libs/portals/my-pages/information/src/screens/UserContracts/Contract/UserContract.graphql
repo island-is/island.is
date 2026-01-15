@@ -10,7 +10,7 @@ fragment Party on HmsContractParty {
   }
 }
 
-query UserContract($id: Int!) {
+query UserContract($id: ID!) {
   hmsRentalAgreement(contractId: $id) {
     id
     status

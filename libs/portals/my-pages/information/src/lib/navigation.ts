@@ -136,6 +136,11 @@ export const informationNavigation: PortalNavigationItem = {
     },
     {
       name: m.contracts,
+      description: m.contractsDescription,
+      searchTags: [
+        searchTagsMessages.rent,
+        searchTagsMessages.rentalAgreements,
+      ],
       path: InformationPaths.MyContracts,
       children: [
         {

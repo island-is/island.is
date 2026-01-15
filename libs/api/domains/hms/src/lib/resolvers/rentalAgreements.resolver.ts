@@ -25,8 +25,13 @@ export class RentalAgreementsResolver {
   @Audit()
   async getRentalAgreements(
     @CurrentUser() user: User,
+    @Args('hideInactiveAgreements', { nullable: true })
+    hideInactiveAgreements?: boolean,
   ): Promise<PaginatedRentalAgreementCollection> {
-    const res = await this.service.getRentalAgreements(user)
+    const res = await this.service.getRentalAgreements(
+      user,
+      hideInactiveAgreements,
+    )
     const data = res.map(mapToRentalAgreement)
 
     return {
@@ -45,10 +50,10 @@ export class RentalAgreementsResolver {
   @Audit()
   async getRentalAgreement(
     @CurrentUser() user: User,
-    @Args('contractId', { type: () => ID }) contractId: number,
+    @Args('contractId', { type: () => ID }) contractId: string,
   ): Promise<RentalAgreement | undefined> {
     const data = await this.service
-      .getRentalAgreement(user, contractId)
+      .getRentalAgreement(user, +contractId)
       .catch(handle404)
 
     return data ? mapToRentalAgreement(data) : undefined

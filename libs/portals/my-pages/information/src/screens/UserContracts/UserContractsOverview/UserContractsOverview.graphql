@@ -1,5 +1,5 @@
-query UserContractsOverview {
-  hmsRentalAgreements {
+query UserContractsOverview($hideInactiveContracts: Boolean) {
+  hmsRentalAgreements(hideInactiveAgreements: $hideInactiveContracts) {
     data {
       id
       status

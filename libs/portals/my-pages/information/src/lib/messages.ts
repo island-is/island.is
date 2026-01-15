@@ -627,6 +627,14 @@ export const contractsMessages = defineMessages({
     defaultMessage:
       'Hér finnur þú upplýsingar um þína samninga úr leiguskrá Húsnæðis og Mannvirkjastofnunar.',
   },
+  contractDetailTitleFallback: {
+    id: 'sp.contracts:contract-detail-title-fallback',
+    defaultMessage: 'Samningur',
+  },
+  contractDetailSubtitle: {
+    id: 'sp.contracts:contract-detail-subtitle',
+    defaultMessage: 'Leigusamningur vegna íbúðarhúsnæðis',
+  },
   headerButton1Text: {
     id: 'sp.contracts:header-button1-text',
     defaultMessage: 'Skrá samning',

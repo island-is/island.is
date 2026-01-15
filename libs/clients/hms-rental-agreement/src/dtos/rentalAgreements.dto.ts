@@ -26,15 +26,17 @@ export const mapRentalAgreementDto = (
     return null
   }
 
+  const status = mapAgreementStatus(contract.contractStatus ?? undefined)
+
   return {
     id: contract.contractId,
-    status: mapAgreementStatus(contract.contractStatus ?? undefined),
+    status,
     dateFrom: contract.dateFrom ? new Date(contract.dateFrom) : undefined,
     dateTo: contract.dateTo ? new Date(contract.dateTo) : undefined,
     contractType:
-      contract.contractType === 'TEMPORARYAGREEMENT'
+      contract.contractTypeUseCode === 'TEMPORARYAGREEMENT'
         ? 'temporary'
-        : contract.contractType === 'INDEFINITEAGREEMENT'
+        : contract.contractTypeUseCode === 'INDEFINETEAGREEMENT'
         ? 'indefinite'
         : 'unknown',
     signatureDate: contract.signatureDate

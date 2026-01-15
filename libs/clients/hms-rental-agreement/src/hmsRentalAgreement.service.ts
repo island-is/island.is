@@ -6,6 +6,7 @@ import {
   mapRentalAgreementDto,
   RentalAgreementDto,
 } from './dtos/rentalAgreements.dto'
+import { INACTIVE_AGREEMENT_STATUSES } from './constants'
 
 @Injectable()
 export class HmsRentalAgreementService {
@@ -14,11 +15,19 @@ export class HmsRentalAgreementService {
   private apiWithAuth = (user: User) =>
     this.api.withMiddleware(new AuthMiddleware(user as Auth))
 
-  async getRentalAgreements(user: User): Promise<RentalAgreementDto[]> {
+  async getRentalAgreements(
+    user: User,
+    hideInactiveAgreements = false,
+  ): Promise<RentalAgreementDto[]> {
     const res = await this.apiWithAuth(user).contractKtKtGet({
       kt: user.nationalId,
     })
-    return res.map(mapRentalAgreementDto).filter(isDefined)
+
+    const data = res.map(mapRentalAgreementDto).filter(isDefined)
+    if (hideInactiveAgreements) {
+      return data.filter((d) => INACTIVE_AGREEMENT_STATUSES.includes(d.status))
+    }
+    return data
   }
 
   async getRentalAgreement(
@@ -26,7 +35,6 @@ export class HmsRentalAgreementService {
     id: number,
   ): Promise<RentalAgreementDto | undefined> {
     const agreements = await this.getRentalAgreements(user)
-
     const agreementToReturn: RentalAgreementDto | undefined = agreements.find(
       (agreement) => agreement.id === id,
     )

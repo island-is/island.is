@@ -22,6 +22,7 @@ import {
 } from '@island.is/api/schema'
 import { mapTemporalTypeToMessage } from '../../../utils/mapTemporalTypeToMessage'
 import { generateRentalAgreementAddress } from '../../../utils/mapAddress'
+import { getApplicationsBaseUrl } from '@island.is/portals/core'
 
 const UserContract = () => {
   useNamespaces('sp.contracts')
@@ -31,7 +32,7 @@ const UserContract = () => {
 
   const { data, loading, error } = useUserContractQuery({
     variables: {
-      id: id ? +id : 0,
+      id: id ?? '0',
     },
   })
 
@@ -63,20 +64,25 @@ const UserContract = () => {
 
   return (
     <IntroWrapper
-      title={cm.contractsOverviewTitle}
-      intro={cm.contractsOverviewSubtitle}
+      title={address ?? cm.contractsOverviewTitle}
+      intro={cm.contractDetailSubtitle}
       serviceProviderSlug={HMS_SLUG}
       serviceProviderTooltip={formatMessage(m.rentalAgreementsTooltip)}
       buttonGroup={[
         <Button
           title={formatMessage(cm.downloadAsPdf)}
           icon="download"
+          iconType="outline"
           onClick={() => console.log('download as pdf')}
-        />,
+          variant="utility"
+        >
+          {formatMessage(cm.downloadAsPdf)}
+        </Button>,
         <LinkButton
-          to="/"
+          to={`${getApplicationsBaseUrl()}/uppsogn-eda-riftun-leigusamnings`}
           text={formatMessage(cm.terminateRentalAgreement)}
-          icon="expand"
+          icon="open"
+          variant="utility"
         />,
       ]}
     >
@@ -109,12 +115,16 @@ const UserContract = () => {
             <InfoLine
               loading={loading}
               label={cm.landlords}
-              content={contract?.landlords?.join(', ') ?? undefined}
+              content={
+                contract?.landlords?.map((l) => l.name).join(', ') ?? undefined
+              }
             />
             <InfoLine
               loading={loading}
               label={cm.tenants}
-              content={contract?.tenants?.join(', ') ?? undefined}
+              content={
+                contract?.tenants?.map((l) => l.name).join(', ') ?? undefined
+              }
             />
             <InfoLine loading={loading} label={cm.location} content={address} />
             <InfoLine
