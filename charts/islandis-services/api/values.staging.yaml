@@ -42,8 +42,6 @@ env:
   CONTENTFUL_HOST: 'cdn.contentful.com'
   DOWNLOAD_SERVICE_BASE_PATH: 'https://api.staging01.devland.is'
   ELASTIC_NODE: 'https://vpc-search-q6hdtjcdlhkffyxvrnmzfwphuq.eu-west-1.es.amazonaws.com/'
-  ELFUR_BASE_PATH: 'https://fjs-cdn-endpoint-elfur-staging-hhesbzhxabbwbqen.a03.azurefd.net'
-  ELFUR_CLIENT_ID: '@fjs.is/hugsmidjan'
   ENDORSEMENT_SYSTEM_BASE_API_URL: 'http://endorsement-system-api.endorsement-system.svc.cluster.local'
   ENVIRONMENT: 'staging'
   FILE_DOWNLOAD_BUCKET: 'island-is-staging-download-cache-api'

@@ -757,7 +757,6 @@
       "@island.is/clients/electronic-registration-statistics": [
         "libs/clients/electronic-registration-statistics/src/index.ts"
       ],
-      "@island.is/clients/elfur": ["libs/clients/elfur/src/index.ts"],
       "@island.is/clients/energy-funds": [
         "libs/clients/energy-funds/src/index.ts"
       ],

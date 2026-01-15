@@ -289,8 +289,6 @@ api:
     CONTENTFUL_HOST: 'cdn.contentful.com'
     DOWNLOAD_SERVICE_BASE_PATH: 'https://api.island.is'
     ELASTIC_NODE: 'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com/'
-    ELFUR_BASE_PATH: 'https://fjs-cdn-endpoint-elfur-prod-hhesbzhxabbwbqen.a03.azurefd.net'
-    ELFUR_CLIENT_ID: '@fjs.is/hugsmidjan'
     ENDORSEMENT_SYSTEM_BASE_API_URL: 'http://endorsement-system-api.endorsement-system.svc.cluster.local'
     ENVIRONMENT: 'prod'
     FILE_DOWNLOAD_BUCKET: 'island-is-prod-download-cache-api'
