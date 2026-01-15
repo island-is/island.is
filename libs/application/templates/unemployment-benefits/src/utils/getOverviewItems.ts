@@ -171,7 +171,7 @@ export const useEmploymentInformationOverviewItems = (
         : job.employer?.name
     const jobInfo = getJobInfo(externalData, job.jobCodeId)
     return `${employerName}: ${
-      locale === 'is' ? jobInfo?.name : jobInfo?.english
+      (locale === 'is' ? jobInfo?.name : jobInfo?.english) ?? ''
     }`
   })
 
@@ -184,7 +184,7 @@ export const useEmploymentInformationOverviewItems = (
         : job.employer?.name
     const jobInfo = getJobInfo(externalData, job.jobCodeId)
     return `${employerName}: ${
-      locale === 'is' ? jobInfo?.name : jobInfo?.english
+      (locale === 'is' ? jobInfo?.name : jobInfo?.english) ?? ''
     }`
   })
 
