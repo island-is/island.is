@@ -124,7 +124,12 @@ export const RealEstateSearch: FC<React.PropsWithChildren<FieldBaseProps>> = (
         />
       </Box>
       {loading && (
-        <Box display="flex" justifyContent="center" paddingTop={4}>
+        <Box
+          display="flex"
+          justifyContent="center"
+          paddingTop={2}
+          paddingBottom={2}
+        >
           <LoadingDots size="large" />
         </Box>
       )}
