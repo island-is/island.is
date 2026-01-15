@@ -6,4 +6,4 @@ import { ApiProvider } from './apiProvider'
   providers: [ApiConfig, ApiProvider],
   exports: [ApiProvider],
 })
-export class IcelandicGovernmentInstitutionVacanciesClientModule {}
+export class FinancialManagementAuthorityClientModule {}
