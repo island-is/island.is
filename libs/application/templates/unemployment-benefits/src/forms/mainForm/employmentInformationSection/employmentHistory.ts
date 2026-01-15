@@ -384,6 +384,10 @@ export const employmentHistorySubSection = buildSubSection({
                 employmentMessages.employmentHistory.labels.lastJobStartDate,
               width: 'half',
               required: true,
+              maxDate: (_application, activeField) => {
+                const endDateStr = activeField?.endDate
+                return (endDateStr && new Date(endDateStr)) || undefined
+              },
             },
             endDate: {
               component: 'date',
@@ -391,6 +395,10 @@ export const employmentHistorySubSection = buildSubSection({
               label:
                 employmentMessages.employmentHistory.labels.lastOldJobEndDate,
               width: 'half',
+              minDate: (_application, activeField) => {
+                const startDateStr = activeField?.startDate
+                return (startDateStr && new Date(startDateStr)) || undefined
+              },
               maxDate: new Date(),
             },
           },
