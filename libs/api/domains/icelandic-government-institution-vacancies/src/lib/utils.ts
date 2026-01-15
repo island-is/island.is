@@ -11,14 +11,20 @@ import { VacancyResponseDto } from '@island.is/clients/financial-management-auth
 export const CMS_ID_PREFIX = 'c-'
 export const EXTERNAL_SYSTEM_ID_PREFIX = 'x-'
 
-const formatDate = (date?: Date | null) => {
+const formatDate = (date?: Date | string | null) => {
   if (!date) {
     return undefined
   }
 
-  const day = `${date.getDate()}`.padStart(2, '0')
-  const month = `${date.getMonth() + 1}`.padStart(2, '0')
-  const year = date.getFullYear()
+  const dateObj = typeof date === 'string' ? new Date(date) : date
+
+  if (isNaN(dateObj.getTime())) {
+    return undefined
+  }
+
+  const day = `${dateObj.getDate()}`.padStart(2, '0')
+  const month = `${dateObj.getMonth() + 1}`.padStart(2, '0')
+  const year = dateObj.getFullYear()
 
   return `${day}.${month}.${year}`
 }
@@ -40,26 +46,46 @@ const convertHtmlToContentfulRichText = async (html: string, id?: string) => {
   }
 }
 
-export const sortVacancyList = (
-  vacancyList: IcelandicGovernmentInstitutionVacanciesResponse['vacancies'],
-) => {
+// Internal type for sorting - includes creationDate which is not exposed via GraphQL
+export type VacancyWithCreationDate =
+  IcelandicGovernmentInstitutionVacanciesResponse['vacancies'][number] & {
+    _creationDate?: Date
+  }
+
+const parseDisplayDate = (dateStr: string): Date | null => {
+  const [day, month, year] = dateStr.split('.')
+  if (!day || !month || !year) return null
+  // Note: month - 1 because JavaScript months are 0-indexed
+  return new Date(Number(year), Number(month) - 1, Number(day))
+}
+
+export const sortVacancyList = (vacancyList: VacancyWithCreationDate[]) => {
   vacancyList.sort((a, b) => {
-    if (!a?.applicationDeadlineFrom || !b?.applicationDeadlineFrom) return 0
-
-    const [dayA, monthA, yearA] = a.applicationDeadlineFrom.split('.')
-    if (!dayA || !monthA || !yearA) return 0
-
-    const [dayB, monthB, yearB] = b.applicationDeadlineFrom.split('.')
-    if (!dayB || !monthB || !yearB) return 0
-
-    const dateA = new Date(Number(yearA), Number(monthA), Number(dayA))
-    const dateB = new Date(Number(yearB), Number(monthB), Number(dayB))
-
-    if (dateA < dateB) {
+    // Primary sort: by creationDate descending (newest first)
+    if (a?._creationDate && b?._creationDate) {
+      if (a._creationDate < b._creationDate) return 1
+      if (a._creationDate > b._creationDate) return -1
+    } else if (a?._creationDate && !b?._creationDate) {
+      // Items with creation dates come before items without
+      return -1
+    } else if (!a?._creationDate && b?._creationDate) {
       return 1
     }
-    if (dateA > dateB) {
+
+    // Secondary sort: by applicationDeadlineFrom (publish date) descending
+    // Fallback for items without creation dates or when creation dates are equal
+    if (a?.applicationDeadlineFrom && b?.applicationDeadlineFrom) {
+      const dateA = parseDisplayDate(a.applicationDeadlineFrom)
+      const dateB = parseDisplayDate(b.applicationDeadlineFrom)
+
+      if (dateA && dateB) {
+        if (dateA < dateB) return 1
+        if (dateA > dateB) return -1
+      }
+    } else if (a?.applicationDeadlineFrom && !b?.applicationDeadlineFrom) {
       return -1
+    } else if (!a?.applicationDeadlineFrom && b?.applicationDeadlineFrom) {
+      return 1
     }
 
     return 0
@@ -67,9 +93,8 @@ export const sortVacancyList = (
 }
 
 export const mapIcelandicGovernmentInstitutionVacanciesFromExternalSystem =
-  async (data: VacancyResponseDto[]) => {
-    const mappedData: IcelandicGovernmentInstitutionVacanciesResponse['vacancies'] =
-      []
+  async (data: VacancyResponseDto[]): Promise<VacancyWithCreationDate[]> => {
+    const mappedData: VacancyWithCreationDate[] = []
 
     const introPromises: Promise<string>[] = []
 
@@ -121,6 +146,14 @@ export const mapIcelandicGovernmentInstitutionVacanciesFromExternalSystem =
         })(),
         logoUrl: item.logoUrl ?? undefined,
         locations,
+        address: item.address ?? undefined,
+        // Display fields
+        creationDate: formatDate(item.creationDate),
+        updatedDate: formatDate(item.updatedDate),
+        // Internal field for sorting
+        _creationDate: item.creationDate
+          ? new Date(item.creationDate)
+          : undefined,
       })
     }
 
@@ -215,10 +248,22 @@ export const mapIcelandicGovernmentInstitutionVacancyByIdResponseFromExternalSys
       intro,
       fieldOfWork: vacancy.jobTitle ?? undefined,
       institutionName: vacancy.orgName ?? undefined,
-      institutionReferenceIdentifier:
-        typeof vacancy.orgNr === 'number' && vacancy.orgNr !== null
-          ? String(vacancy.orgNr)
-          : vacancy.orgNr ?? undefined,
+      institutionReferenceIdentifier: (() => {
+        const orgNrStr =
+          typeof vacancy.orgNr === 'number' && vacancy.orgNr !== null
+            ? String(vacancy.orgNr)
+            : vacancy.orgNr ?? undefined
+
+        if (!orgNrStr) {
+          return undefined
+        }
+
+        if (!orgNrStr.startsWith('0') && orgNrStr.length !== 5) {
+          return `0${orgNrStr}`
+        }
+
+        return orgNrStr
+      })(),
       logoUrl: vacancy.logoUrl ?? undefined,
       locations,
       contacts,
@@ -229,6 +274,8 @@ export const mapIcelandicGovernmentInstitutionVacancyByIdResponseFromExternalSys
       description,
       salaryTerms,
       plainTextIntro: documentToPlainTextString(intro.document),
+      creationDate: formatDate(vacancy.creationDate),
+      updatedDate: formatDate(vacancy.updatedDate),
     }
   }
 
@@ -283,12 +330,14 @@ export const mapIcelandicGovernmentInstitutionVacancyByIdResponseFromCms = (
     plainTextIntro: vacancy.intro?.document
       ? documentToPlainTextString(vacancy.intro.document)
       : undefined,
+    creationDate: formatDate(vacancy.createdAt),
+    updatedDate: formatDate(vacancy.updatedAt),
   }
 }
 
 export const mapVacancyListItemFromCms = (
   vacancy: Vacancy,
-): IcelandicGovernmentInstitutionVacanciesResponse['vacancies'][number] => {
+): VacancyWithCreationDate => {
   return {
     id: vacancy.id ? `${CMS_ID_PREFIX}${vacancy.id}` : vacancy.id,
     title: vacancy.title,
@@ -304,5 +353,9 @@ export const mapVacancyListItemFromCms = (
       title: location,
     })),
     logoUrl: vacancy.organization?.logo?.url,
+    creationDate: formatDate(vacancy.createdAt),
+    updatedDate: formatDate(vacancy.updatedAt),
+    // Internal field for sorting
+    _creationDate: vacancy.createdAt ? new Date(vacancy.createdAt) : undefined,
   }
 }

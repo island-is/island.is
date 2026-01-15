@@ -4,9 +4,21 @@ query Case($input: CaseQueryInput!) {
     created
     modified
     type
+    splitCases {
+      id
+      courtCaseNumber
+      defendants {
+        id
+        name
+      }
+    }
+    splitCase {
+      id
+      courtCaseNumber
+    }
     indictmentSubtypes
-    state
     description
+    state
     policeCaseNumbers
     defendants {
       id
@@ -179,6 +191,7 @@ query Case($input: CaseQueryInput!) {
         state
         key
         size
+        isKeyAccessible
       }
     }
     childCase {
@@ -216,6 +229,7 @@ query Case($input: CaseQueryInput!) {
       submittedBy
       submissionDate
       fileRepresentative
+      isKeyAccessible
     }
     isAppealDeadlineExpired
     isAppealGracePeriodExpired
@@ -521,6 +535,7 @@ query Case($input: CaseQueryInput!) {
         userGeneratedFilename
         displayDate
         submittedBy
+        isKeyAccessible
       }
       policeCaseNumbers
       indictmentSubtypes
@@ -559,6 +574,7 @@ query Case($input: CaseQueryInput!) {
     isCompletedWithoutRuling
     caseSentToCourtDate
     indictmentReviewedDate
+    indictmentCompletedDate
     indictmentSentToPublicProsecutorDate
     defenceAppealResultAccessDate
     prosecutionAppealResultAccessDate

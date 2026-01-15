@@ -13,13 +13,18 @@ import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { EstateTypes } from '../lib/constants'
 import { m } from '../lib/messages'
 import { EstateInfo } from '@island.is/clients/syslumenn'
-import { EstateOnEntryApi } from '../dataProviders'
+import {
+  EstateOnEntryApi,
+  SyslumadurPaymentCatalogApi,
+  MockableSyslumadurPaymentCatalogApi,
+} from '../dataProviders'
 
 export const getForm = ({
   allowDivisionOfEstate = false,
   allowEstateWithoutAssets = false,
   allowPermitToPostponeEstateDivision = false,
   allowDivisionOfEstateByHeirs = false,
+  allowEstatePayment = false,
 }): Form =>
   buildForm({
     id: 'PrerequisitesDraft',
@@ -42,6 +47,18 @@ export const getForm = ({
                 id: 'syslumennOnEntry',
                 provider: EstateOnEntryApi,
               }),
+              ...(allowEstatePayment
+                ? [
+                    buildDataProviderItem({
+                      provider: SyslumadurPaymentCatalogApi,
+                      title: '',
+                    }),
+                    buildDataProviderItem({
+                      provider: MockableSyslumadurPaymentCatalogApi,
+                      title: '',
+                    }),
+                  ]
+                : []),
             ],
           }),
           buildMultiField({

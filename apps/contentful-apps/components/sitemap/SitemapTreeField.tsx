@@ -51,6 +51,7 @@ export const SitemapTreeField = () => {
   useEffect(
     () =>
       sdk.field.onValueChanged((value) => {
+        if (!value) return
         _setTree(value)
       }),
     [sdk.field],

@@ -66,6 +66,7 @@ import { CurrentCaseFile } from './guards/caseFile.decorator'
 import { CaseFileExistsGuard } from './guards/caseFileExists.guard'
 import { CreateCivilClaimantCaseFileGuard } from './guards/createCivilClaimantCaseFile.guard'
 import { CreateDefendantCaseFileGuard } from './guards/createDefendantCaseFile.guard'
+import { SplitCaseFileExistsGuard } from './guards/splitCaseFileExists.guard'
 import { ViewCaseFileGuard } from './guards/viewCaseFile.guard'
 import { DeleteFileResponse } from './models/deleteFile.response'
 import { PresignedPost } from './models/presignedPost.model'
@@ -196,10 +197,14 @@ export class FileController {
     )
   }
 
+  // Strictly speaking, only district court users need access to
+  // split case files
+  // However, giving prosecution and appeals court users access
+  // does not pose a security risk
   @UseGuards(
     CaseReadGuard,
     MergedCaseExistsGuard,
-    CaseFileExistsGuard,
+    SplitCaseFileExistsGuard,
     ViewCaseFileGuard,
   )
   @RolesRules(

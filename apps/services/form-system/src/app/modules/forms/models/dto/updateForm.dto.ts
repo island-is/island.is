@@ -41,6 +41,16 @@ export class UpdateFormDto {
   @ApiPropertyOptional({ type: Date })
   invalidationDate?: Date
 
+  @IsString()
+  @IsOptional()
+  @ApiPropertyOptional()
+  submissionServiceUrl?: string
+
+  @IsString()
+  @IsOptional()
+  @ApiPropertyOptional()
+  validationServiceUrl?: string
+
   @IsBoolean()
   @IsOptional()
   @ApiPropertyOptional()

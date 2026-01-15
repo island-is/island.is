@@ -4,7 +4,7 @@ info:
   version: 2.0.0
   description: API for accessing court verdicts and related data
 servers:
-  - url: https://dom-haestirettur.eu.ngrok.io
+  - url: https://umsysla.haestirettur.is
     description: Development server
 
 components:
@@ -175,6 +175,9 @@ components:
           type: string
           format: date
           description: Filter for verdicts on or before this date (format YYYY-MM-DD)
+        orderBy:
+          type: string
+          description: Field to order results by, with optional direction (e.g., 'caseNumber DESC')
         page:
           type: integer
           default: 1

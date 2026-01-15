@@ -11,6 +11,7 @@ import {
   CaseIndictmentRulingDecision,
   CaseOrigin,
   CaseType,
+  courtSubtypes,
   DefendantEventType,
   EventType,
   InstitutionType,
@@ -18,7 +19,6 @@ import {
   VerdictServiceStatus,
 } from '@island.is/judicial-system/types'
 
-import { courtSubtypes } from '../court'
 import { Case, DefendantEventLog, EventLog, Institution } from '../repository'
 import {
   IndictmentCaseEventType,
@@ -411,7 +411,8 @@ const verdictServedToDefendant = (
   return pipe(
     c.defendants ?? [],
     filterMap((defendant) => {
-      const verdict = defendant.verdict
+      // Only the latest verdict is relevant
+      const verdict = defendant.verdicts?.[0]
       if (!verdict || !verdict.serviceDate || !verdict.serviceStatus) {
         return option.none
       }

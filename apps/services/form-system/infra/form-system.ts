@@ -1,10 +1,26 @@
 import {
   CodeOwners,
+  Context,
+  json,
   service,
   ServiceBuilder,
 } from '../../../../infra/src/dsl/dsl'
 
+const REDIS_NODE_CONFIG = {
+  dev: json([
+    'clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com:6379',
+  ]),
+  staging: json([
+    'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
+  ]),
+  prod: json([
+    'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379',
+  ]),
+}
+
 const serviceName = 'services-form-system-api'
+const workerName = `${serviceName}-worker`
+
 export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
   service(serviceName)
     .image(serviceName)
@@ -32,15 +48,7 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
         staging: 'island-is-staging-storage-form-system',
         prod: 'island-is-prod-storage-form-system',
       },
-      REDIS_URL_NODE_01: {
-        dev: JSON.stringify([
-          'localhost:7010',
-          'localhost:7011',
-          'localhost:7012',
-        ]),
-        staging: '/k8s/shared/redis/REDIS_URL_NODE_01',
-        prod: '/k8s/shared/redis/REDIS_URL_NODE_01',
-      },
+      REDIS_URL_NODE_01: REDIS_NODE_CONFIG,
     })
     .secrets({
       FORM_SYSTEM_ZENDESK_TENANT_ID_SANDBOX:
@@ -59,3 +67,36 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
     .liveness('/liveness')
     .readiness('/liveness')
     .grantNamespaces('islandis', 'nginx-ingress-external')
+
+/**
+ * Make sure that each feature deployment has its own bull prefix. Since each
+ * feature deployment has its own database and applications, we don't want bull
+ * jobs to jump between environments.
+ */
+const FORM_SYSTEM_BULL_PREFIX = (ctx: Context) =>
+  ctx.featureDeploymentName
+    ? `form_system_api_bull_module.${ctx.featureDeploymentName}`
+    : 'form_system_api_bull_module'
+
+export const workerSetup = (): ServiceBuilder<typeof workerName> =>
+  service(workerName)
+    .image(serviceName)
+    .namespace(serviceName)
+    .serviceAccount(workerName)
+    .codeOwner(CodeOwners.Advania)
+    .redis()
+    .db()
+    .env({
+      FORM_SYSTEM_BULL_PREFIX,
+    })
+    .args('main.cjs', '--job', 'worker')
+    .command('node')
+    .extraAttributes({
+      dev: { schedule: '*/30 * * * *' },
+      staging: { schedule: '*/30 * * * *' },
+      prod: { schedule: '*/30 * * * *' },
+    })
+    .resources({
+      limits: { cpu: '400m', memory: '768Mi' },
+      requests: { cpu: '150m', memory: '384Mi' },
+    })

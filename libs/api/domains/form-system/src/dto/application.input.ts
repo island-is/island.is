@@ -4,29 +4,22 @@ import { FormCertificationTypeDtoInput } from './certification.input'
 import { CompletedSectionInfoInput } from './completedSectionInfo.input'
 import { DependencyInput } from './form.input'
 import { LanguageTypeInput } from './languageType.input'
-import { ScreenInput } from './screen.input'
 import { SectionInput } from './section.input'
 import { ValueInput } from './value.input'
-
-@InputType('CreateFormSystemApplicationDtoInput')
-export class CreateApplicationDtoInput {
-  @Field(() => Boolean)
-  isTest!: boolean
-}
 
 @InputType('CreateFormSystemApplicationInput')
 export class CreateApplicationInput {
   @Field(() => String, { nullable: true })
   slug?: string
-
-  @Field(() => CreateApplicationDtoInput, { nullable: true })
-  createApplicationDto?: CreateApplicationDtoInput
 }
 
 @InputType('FormSystemApplicationInput')
 export class GetApplicationInput {
   @Field(() => String, { nullable: true })
   id?: string
+
+  @Field(() => String, { nullable: true })
+  slug?: string
 }
 
 @InputType('FormSystemApplicationsInput')
@@ -57,9 +50,6 @@ export class ApplicationEventDtoInput {
 
   @Field(() => String, { nullable: true })
   eventType?: string
-
-  @Field(() => Boolean, { nullable: true })
-  isFileEvent?: boolean
 }
 
 @InputType('FormSystemApplicationDtoInput')
@@ -145,15 +135,21 @@ export class SubmitScreenDtoInput {
   @Field(() => String, { nullable: true })
   applicationId?: string
 
-  @Field(() => ScreenInput, { nullable: true })
-  screenDto?: ScreenInput
+  @Field(() => String, { nullable: true })
+  screenId?: string
+
+  @Field(() => String, { nullable: true })
+  sectionId?: string
+
+  @Field(() => Boolean, { nullable: true })
+  increment?: boolean
+
+  @Field(() => [SectionInput], { nullable: 'itemsAndList' })
+  sections?: SectionInput[]
 }
 
 @InputType('SubmitFormSystemScreenInput')
 export class SubmitScreenInput {
-  @Field(() => String, { nullable: true })
-  screenId?: string
-
   @Field(() => SubmitScreenDtoInput, { nullable: true })
   submitScreenDto?: SubmitScreenDtoInput
 }

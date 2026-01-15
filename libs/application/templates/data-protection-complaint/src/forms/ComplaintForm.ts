@@ -21,7 +21,7 @@ import {
   Form,
   FormModes,
   FormValue,
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   UserProfileApi,
 } from '@island.is/application/types'
 import {
@@ -67,7 +67,7 @@ export const ComplaintForm: Form = buildForm({
           checkboxLabel: externalData.general.checkboxLabel,
           dataProviders: [
             buildDataProviderItem({
-              provider: NationalRegistryUserApi,
+              provider: NationalRegistryV3UserApi,
               title: externalData.labels.nationalRegistryTitle,
               subTitle: externalData.labels.nationalRegistrySubTitle,
             }),

@@ -67,6 +67,6 @@ export const serviceErrors = defineMessages({
   acknowledgementError: {
     id: 'vmst.ub.application:acknowledgementError',
     defaultMessage: 'Vantar samþykki',
-    description: 'Error message when acknoledgement fails',
+    description: 'Error message when acknowledgement fails',
   },
 })

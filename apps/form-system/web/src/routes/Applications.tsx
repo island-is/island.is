@@ -5,11 +5,7 @@ import {
   DELETE_APPLICATION,
   GET_ALL_APPLICATIONS,
 } from '@island.is/form-system/graphql'
-import {
-  ApplicationList,
-  ApplicationLoading,
-  m,
-} from '@island.is/form-system/ui'
+import { ApplicationList, m } from '@island.is/form-system/ui'
 import {
   Box,
   Button,
@@ -18,10 +14,10 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useNamespaces } from '@island.is/localization'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useNavigate, useParams } from 'react-router-dom'
-import { ErrorShell } from '@island.is/application/ui-shell'
+import { ErrorShell } from '../components/ErrorShell/ErrorShell'
 
 interface Params {
   slug?: string
@@ -32,8 +28,8 @@ export const Applications = () => {
   const { slug } = useParams() as Params
   const navigate = useNavigate()
   const [applications, setApplications] = useState<FormSystemApplication[]>([])
-  const [loading, setLoading] = useState<boolean>(true)
   const [loginAllowed, setLoginAllowed] = useState(true)
+  const [isValidSlug, setIsValidSlug] = useState(true)
   const [createApplicationMutation] = useMutation(CREATE_APPLICATION)
 
   const { formatMessage } = useIntl()
@@ -46,13 +42,9 @@ export const Applications = () => {
         variables: {
           input: {
             slug: slug,
-            createApplicationDto: {
-              isTest: true,
-            },
           },
         },
       })
-
       if (app.data?.createFormSystemApplication?.isLoginTypeAllowed === false) {
         setLoginAllowed(false)
       } else if (app.data?.createFormSystemApplication?.application?.id) {
@@ -75,7 +67,10 @@ export const Applications = () => {
           },
         },
       })
-
+      if (!app.data) {
+        setIsValidSlug(false)
+        return null
+      }
       const dto = app.data?.formSystemGetApplications
       if (dto?.isLoginTypeAllowed === false) {
         setLoginAllowed(false)
@@ -88,34 +83,25 @@ export const Applications = () => {
     }
   }, [getApplications, slug])
 
-  const hasInitializedRef = useRef(false)
-
   useEffect(() => {
-    if (hasInitializedRef.current) return
-    hasInitializedRef.current = true
-    let isMounted = true
-
+    let cancelled = false
     const run = async () => {
       const responseDto = await fetchApplications()
-      if (!isMounted || !responseDto) {
-        if (isMounted) {
-          setLoading(false)
-        }
-        return
-      }
-      const apps = responseDto.applications || []
+      if (cancelled) return
+
+      const apps = responseDto?.applications || []
       if (apps.length > 0) {
         setApplications(apps)
-        setLoading(false)
-      } else if (loginAllowed) {
+      } else if (loginAllowed !== false) {
         await createApplication()
-        setLoading(false)
+        if (cancelled) return
       }
     }
+
     run()
 
     return () => {
-      isMounted = false
+      cancelled = true
     }
   }, [slug, createApplication, fetchApplications, loginAllowed])
 
@@ -139,7 +125,15 @@ export const Applications = () => {
     [deleteApplicationMutation],
   )
 
-  if (loading) return <ApplicationLoading />
+  if (!isValidSlug) {
+    return (
+      <ErrorShell
+        title={formatMessage(m.slugNotFound)}
+        subTitle={formatMessage(m.checkUrlPlease)}
+        description=""
+      />
+    )
+  }
 
   if (!loginAllowed) {
     return (

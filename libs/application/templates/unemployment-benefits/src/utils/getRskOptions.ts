@@ -1,8 +1,14 @@
-import { Application } from '@island.is/application/types'
+import { Application, FormatMessage } from '@island.is/application/types'
 import { getEmploymentFromRsk } from './getEmploymenInfo'
 
-export const getRskOptions = (application: Application) => {
-  const employmentList = getEmploymentFromRsk(application.externalData)
+export const getRskOptions = (
+  application: Application,
+  formatMessage?: FormatMessage,
+) => {
+  const employmentList = getEmploymentFromRsk(
+    application.externalData,
+    formatMessage,
+  )
   return employmentList
     .filter((x) => !!x.employerSSN)
     .map((job) => ({

@@ -1,6 +1,5 @@
 import { Sequelize } from 'sequelize-typescript'
 
-import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -23,7 +22,7 @@ import { EventLogService } from '../../event-log'
 import { FileService } from '../../file'
 import { LawyerRegistryService } from '../../lawyer-registry/lawyerRegistry.service'
 import { PoliceService } from '../../police'
-import { Verdict } from '../../repository'
+import { VerdictRepositoryService } from '../../repository'
 import { UserService } from '../../user'
 import { InternalVerdictController } from '../internalVerdict.controller'
 import { VerdictController } from '../verdict.controller'
@@ -40,6 +39,7 @@ jest.mock('../../defendant/defendant.service')
 jest.mock('../../user/user.service')
 jest.mock('../../case/internalCase.service')
 jest.mock('../../lawyer-registry/lawyerRegistry.service')
+jest.mock('../../repository/services/verdictRepository.service')
 
 export const createTestingVerdictModule = async () => {
   const verdictModule = await Test.createTestingModule({
@@ -71,25 +71,14 @@ export const createTestingVerdictModule = async () => {
         },
       },
       { provide: Sequelize, useValue: { transaction: jest.fn() } },
-      {
-        provide: getModelToken(Verdict),
-        useValue: {
-          findOne: jest.fn(),
-          findAll: jest.fn(),
-          create: jest.fn(),
-          update: jest.fn(),
-          destroy: jest.fn(),
-          findByPk: jest.fn(),
-        },
-      },
+      VerdictRepositoryService,
       VerdictService,
       AuditTrailService,
-      { provide: Sequelize, useValue: { transaction: jest.fn() } },
     ],
   }).compile()
 
-  const verdictModel = await verdictModule.resolve<typeof Verdict>(
-    getModelToken(Verdict),
+  const verdictRepositoryService = verdictModule.get<VerdictRepositoryService>(
+    VerdictRepositoryService,
   )
 
   const verdictService = verdictModule.get<VerdictService>(VerdictService)
@@ -114,7 +103,7 @@ export const createTestingVerdictModule = async () => {
     verdictService,
     policeService,
     fileService,
-    verdictModel,
+    verdictRepositoryService,
     sequelize,
   }
 }

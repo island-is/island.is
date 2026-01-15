@@ -4,10 +4,11 @@ import { FormattedMessage } from 'react-intl'
 import { Image, SafeAreaView } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
-import { Typography, Skeleton } from '../../ui'
+import { DISMISSED_KEYS } from '../../constants/dissmissed-keys'
+import { useGetFrontPageImageQuery } from '../../graphql/types/schema'
 import { useAuthStore } from '../../stores/auth-store'
 import { usePreferencesStore } from '../../stores/preferences-store'
-import { useGetFrontPageImageQuery } from '../../graphql/types/schema'
+import { Skeleton, Typography } from '../../ui'
 
 const Host = styled.View`
   margin-bottom: ${({ theme }) => theme.spacing[2]}px;
@@ -84,7 +85,7 @@ export const HelloModule = React.memo(() => {
   }, [image])
 
   // If the onboardingWidget is shown, don't show this module
-  if (!dismissed.includes('onboardingWidget')) {
+  if (!dismissed.includes(DISMISSED_KEYS.ONBOARDING_WIDGET)) {
     return null
   }
 
@@ -105,7 +106,6 @@ export const HelloModule = React.memo(() => {
         >
           {userInfo?.name}
         </Typography>
-
         {graphicWidgetEnabled && imageSrc && (
           <ImageWrapper>
             {loading ? (

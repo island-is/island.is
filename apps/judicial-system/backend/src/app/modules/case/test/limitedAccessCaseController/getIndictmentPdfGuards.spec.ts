@@ -14,8 +14,8 @@ describe('LimitedAccessCaseController - Get indictment pdf guards', () => {
     'getIndictmentPdf',
     [
       JwtAuthUserGuard,
-      RolesGuard,
       CaseExistsGuard,
+      RolesGuard,
       CaseTypeGuard,
       CaseReadGuard,
       MergedCaseExistsGuard,

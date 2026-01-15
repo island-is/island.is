@@ -147,6 +147,7 @@ const Countries: FC<CountriesProps> = ({
                 </Box>
               ))}
           </Box>
+
           <Box
             display="flex"
             justifyContent="spaceBetween"

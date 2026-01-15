@@ -58,15 +58,11 @@ export const useOtherPaymentsAnswers = (
             ? `${topCategory?.name}`
             : `${topCategory?.english || ''} `
           : ''
-      } ${
-        subCategory
-          ? locale === 'is'
-            ? `${subCategory?.name || ''}`
-            : `${subCategory?.english || ''}`
-          : ''
-      }${privatePensionString ? ` - ${privatePensionString}` : ''}${
-        unionString ? ` - ${unionString}` : ''
-      }${pensionFundString ? ` - ${pensionFundString}` : ''}${
+      } ${subCategory?.name}${
+        privatePensionString ? ` - ${privatePensionString}` : ''
+      }${unionString ? ` - ${unionString}` : ''}${
+        pensionFundString ? ` - ${pensionFundString}` : ''
+      }${
         paymentAmount
           ? `: ${formatCurrency(parseInt(paymentAmount))} ${formatMessage(
               overviewMessages.labels.payout.paymentPerMonth,

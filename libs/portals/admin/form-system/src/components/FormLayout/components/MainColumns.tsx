@@ -107,7 +107,6 @@ export const MainContentColumn = () => {
         width="full"
         style={{
           minHeight: '500px',
-          maxHeight: '70vh',
         }}
       >
         <MainContent />

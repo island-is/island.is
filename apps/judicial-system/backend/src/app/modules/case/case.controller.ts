@@ -64,9 +64,13 @@ import {
   prosecutorRule,
   publicProsecutorStaffRule,
 } from '../../guards'
-import { CivilClaimantService } from '../defendant'
+import {
+  CivilClaimantService,
+  CurrentDefendant,
+  DefendantExistsGuard,
+} from '../defendant'
 import { EventService } from '../event'
-import { Case } from '../repository'
+import { Case, Defendant } from '../repository'
 import { UpdateCase } from '../repository'
 import { UserService } from '../user'
 import { CreateCaseDto } from './dto/createCase.dto'
@@ -113,7 +117,7 @@ import { PdfService } from './pdf.service'
 
 @Controller('api')
 @ApiTags('cases')
-@UseGuards(JwtAuthUserGuard, RolesGuard)
+@UseGuards(JwtAuthUserGuard)
 export class CaseController {
   constructor(
     private readonly caseService: CaseService,
@@ -144,6 +148,7 @@ export class CaseController {
     }
   }
 
+  @UseGuards(RolesGuard)
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @UseInterceptors(CaseInterceptor)
   @Post('case')
@@ -161,7 +166,7 @@ export class CaseController {
     return createdCase
   }
 
-  @UseGuards(CaseExistsGuard, CaseWriteGuard)
+  @UseGuards(RolesGuard, CaseExistsGuard, CaseWriteGuard)
   @RolesRules(
     prosecutorUpdateRule,
     prosecutorRepresentativeUpdateRule,
@@ -304,7 +309,7 @@ export class CaseController {
     return this.caseService.update(theCase, update, user) as Promise<Case> // Never returns undefined
   }
 
-  @UseGuards(CaseExistsGuard, CaseWriteGuard, CaseTransitionGuard)
+  @UseGuards(CaseExistsGuard, RolesGuard, CaseWriteGuard, CaseTransitionGuard)
   @RolesRules(
     prosecutorTransitionRule,
     prosecutorRepresentativeTransitionRule,
@@ -344,6 +349,7 @@ export class CaseController {
     return updatedCase ?? theCase
   }
 
+  @UseGuards(RolesGuard)
   @RolesRules(defenderRule)
   @UseInterceptors(CaseListInterceptor)
   @Get('cases')
@@ -358,7 +364,7 @@ export class CaseController {
     return this.caseService.getAll(user)
   }
 
-  @UseGuards(CaseExistsGuard, CaseReadGuard)
+  @UseGuards(RolesGuard, CaseExistsGuard, CaseReadGuard)
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
@@ -379,7 +385,7 @@ export class CaseController {
     return theCase
   }
 
-  @UseGuards(CaseExistsGuard)
+  @UseGuards(RolesGuard, CaseExistsGuard)
   @RolesRules(
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
@@ -408,6 +414,7 @@ export class CaseController {
   }
 
   @UseGuards(
+    RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseReadGuard,
@@ -442,6 +449,7 @@ export class CaseController {
   }
 
   @UseGuards(
+    RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard(indictmentCases),
     CaseReadGuard,
@@ -489,6 +497,7 @@ export class CaseController {
   }
 
   @UseGuards(
+    RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard([
       ...restrictionCases,
@@ -562,6 +571,7 @@ export class CaseController {
   }
 
   @UseGuards(
+    RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseReadGuard,
@@ -594,6 +604,7 @@ export class CaseController {
   }
 
   @UseGuards(
+    RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard([CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY]),
     CaseReadGuard,
@@ -633,6 +644,7 @@ export class CaseController {
   }
 
   @UseGuards(
+    RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard(indictmentCases),
     CaseReadGuard,
@@ -669,7 +681,12 @@ export class CaseController {
     res.end(pdf)
   }
 
-  @UseGuards(CaseExistsGuard, new CaseTypeGuard(indictmentCases), CaseReadGuard)
+  @UseGuards(
+    RolesGuard,
+    CaseExistsGuard,
+    new CaseTypeGuard(indictmentCases),
+    CaseReadGuard,
+  )
   @RolesRules(publicProsecutorStaffRule)
   @Get('case/:caseId/rulingSentToPrisonAdmin')
   @Header('Content-Type', 'application/pdf')
@@ -709,6 +726,7 @@ export class CaseController {
   }
 
   @UseGuards(
+    RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseWriteGuard,
@@ -752,6 +770,7 @@ export class CaseController {
   }
 
   @UseGuards(
+    RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseWriteGuard,
@@ -786,6 +805,7 @@ export class CaseController {
 
   @UseGuards(
     CaseExistsGuard,
+    RolesGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseWriteGuard,
   )
@@ -821,6 +841,7 @@ export class CaseController {
 
   @UseGuards(
     CaseExistsGuard,
+    RolesGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseWriteGuard,
   )
@@ -847,6 +868,7 @@ export class CaseController {
   }
 
   @UseGuards(
+    RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseReadGuard,
@@ -871,12 +893,53 @@ export class CaseController {
 
     const extendedCase = await this.caseService.extend(theCase, user)
 
-    this.eventService.postEvent('EXTEND', extendedCase as Case)
+    this.eventService.postEvent('EXTEND', extendedCase)
 
     return extendedCase
   }
 
-  @UseGuards(CaseExistsGuard, CaseWriteGuard)
+  @UseGuards(
+    RolesGuard,
+    CaseExistsGuard,
+    new CaseTypeGuard(indictmentCases),
+    CaseWriteGuard,
+    DefendantExistsGuard,
+  )
+  @RolesRules(
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+  )
+  @UseInterceptors(CaseInterceptor)
+  @Post('case/:caseId/defendant/:defendantId/split')
+  @ApiCreatedResponse({
+    type: Case,
+    description:
+      'Creates a new case by splitting off a defendant from an existing case',
+  })
+  async splitDefendantFromCase(
+    @Param('caseId') caseId: string,
+    @Param('defendantId') defendantId: string,
+    @CurrentCase() theCase: Case,
+    @CurrentDefendant() theDefendant: Defendant,
+  ): Promise<Case> {
+    this.logger.debug(`Splitting defendant ${defendantId} from case ${caseId}`)
+
+    if (!theCase.defendants || theCase.defendants.length < 2) {
+      throw new BadRequestException(
+        'Cannot split defendant from case with less than two defendants',
+      )
+    }
+
+    const newCase = await this.caseService.splitDefendantFromCase(
+      theCase,
+      theDefendant,
+    )
+
+    return newCase
+  }
+
+  @UseGuards(RolesGuard, CaseExistsGuard, CaseWriteGuard)
   @RolesRules(
     districtCourtJudgeRule,
     districtCourtRegistrarRule,

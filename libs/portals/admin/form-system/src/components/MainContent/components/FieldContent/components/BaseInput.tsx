@@ -1,4 +1,5 @@
 import { FormSystemField } from '@island.is/api/schema'
+import { FieldTypesEnum } from '@island.is/form-system/enums'
 import { m } from '@island.is/form-system/ui'
 import {
   Checkbox,
@@ -14,6 +15,7 @@ import { useIntl } from 'react-intl'
 import { SingleValue } from 'react-select'
 import { ControlContext } from '../../../../../context/ControlContext'
 import { fieldTypesSelectObject } from '../../../../../lib/utils/fieldTypes'
+import { NavbarSelectStatus } from '../../../../../lib/utils/interfaces'
 
 export const BaseInput = () => {
   const {
@@ -24,6 +26,7 @@ export const BaseInput = () => {
     fieldTypes,
     updateActiveItem,
     getTranslation,
+    selectStatus,
   } = useContext(ControlContext)
   const { activeItem } = control
   const currentItem = activeItem.data as FormSystemField
@@ -35,6 +38,26 @@ export const BaseInput = () => {
     ? { value: defaultValue.id ?? '', label: defaultValue.name?.is ?? '' }
     : undefined
   const { formatMessage } = useIntl()
+
+  const renderDescription = () => {
+    if (currentItem.fieldType === FieldTypesEnum.MESSAGE) {
+      return true
+    }
+    if (
+      currentItem.fieldType === FieldTypesEnum.CHECKBOX &&
+      currentItem.fieldSettings?.hasDescription
+    ) {
+      return true
+    }
+    if (
+      currentItem.fieldType === FieldTypesEnum.TEXTBOX &&
+      currentItem.fieldSettings?.hasDescription
+    ) {
+      return true
+    }
+    return false
+  }
+
   return (
     <Stack space={2}>
       <Row>
@@ -47,6 +70,7 @@ export const BaseInput = () => {
             backgroundColor="blue"
             isSearchable
             value={defaultOption}
+            isDisabled={selectStatus === NavbarSelectStatus.NORMAL}
             onChange={(e: SingleValue<Option<string>>) => {
               controlDispatch({
                 type: 'CHANGE_FIELD_TYPE',
@@ -119,77 +143,71 @@ export const BaseInput = () => {
         </Column>
       </Row>
       {/* Description  */}
-      {['MESSAGE'].includes(currentItem?.fieldType ?? '') ||
-        (currentItem?.fieldType === 'CHECKBOX' &&
-          currentItem?.fieldSettings?.hasDescription && (
-            <>
-              <Row>
-                <Column span="10/10">
-                  <Input
-                    label={formatMessage(m.description)}
-                    name="description"
-                    value={currentItem?.description?.is ?? ''}
-                    textarea
-                    backgroundColor="blue"
-                    onFocus={(e) => setFocus(e.target.value)}
-                    onBlur={(e) =>
-                      e.target.value !== focus && updateActiveItem()
-                    }
-                    onChange={(e) =>
-                      controlDispatch({
-                        type: 'CHANGE_DESCRIPTION',
-                        payload: {
-                          lang: 'is',
-                          newValue: e.target.value,
-                        },
-                      })
-                    }
-                  />
-                </Column>
-              </Row>
-              <Row>
-                <Column span="10/10">
-                  <Input
-                    label={formatMessage(m.descriptionEnglish)}
-                    name="description"
-                    value={currentItem?.description?.en ?? ''}
-                    textarea
-                    backgroundColor="blue"
-                    onFocus={async (e) => {
-                      if (
-                        !currentItem?.description?.en &&
-                        currentItem?.description?.is !== ''
-                      ) {
-                        const translation = await getTranslation(
-                          currentItem?.description?.is ?? '',
-                        )
-                        controlDispatch({
-                          type: 'CHANGE_DESCRIPTION',
-                          payload: {
-                            lang: 'en',
-                            newValue: translation.translation,
-                          },
-                        })
-                      }
-                      setFocus(e.target.value)
-                    }}
-                    onBlur={(e) =>
-                      e.target.value !== focus && updateActiveItem()
-                    }
-                    onChange={(e) =>
-                      controlDispatch({
-                        type: 'CHANGE_DESCRIPTION',
-                        payload: {
-                          lang: 'en',
-                          newValue: e.target.value,
-                        },
-                      })
-                    }
-                  />
-                </Column>
-              </Row>
-            </>
-          ))}
+      {renderDescription() && (
+        <>
+          <Row>
+            <Column span="10/10">
+              <Input
+                label={formatMessage(m.description)}
+                name="description"
+                value={currentItem?.description?.is ?? ''}
+                textarea
+                backgroundColor="blue"
+                onFocus={(e) => setFocus(e.target.value)}
+                onBlur={(e) => e.target.value !== focus && updateActiveItem()}
+                onChange={(e) =>
+                  controlDispatch({
+                    type: 'CHANGE_DESCRIPTION',
+                    payload: {
+                      lang: 'is',
+                      newValue: e.target.value,
+                    },
+                  })
+                }
+              />
+            </Column>
+          </Row>
+          <Row>
+            <Column span="10/10">
+              <Input
+                label={formatMessage(m.descriptionEnglish)}
+                name="description"
+                value={currentItem?.description?.en ?? ''}
+                textarea
+                backgroundColor="blue"
+                onFocus={async (e) => {
+                  if (
+                    !currentItem?.description?.en &&
+                    currentItem?.description?.is !== ''
+                  ) {
+                    const translation = await getTranslation(
+                      currentItem?.description?.is ?? '',
+                    )
+                    controlDispatch({
+                      type: 'CHANGE_DESCRIPTION',
+                      payload: {
+                        lang: 'en',
+                        newValue: translation.translation,
+                      },
+                    })
+                  }
+                  setFocus(e.target.value)
+                }}
+                onBlur={(e) => e.target.value !== focus && updateActiveItem()}
+                onChange={(e) =>
+                  controlDispatch({
+                    type: 'CHANGE_DESCRIPTION',
+                    payload: {
+                      lang: 'en',
+                      newValue: e.target.value,
+                    },
+                  })
+                }
+              />
+            </Column>
+          </Row>
+        </>
+      )}
       <Row>
         {/* Required checkbox */}
         <Column span="5/10">

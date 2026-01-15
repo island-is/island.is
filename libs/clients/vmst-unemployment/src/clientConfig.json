@@ -2477,6 +2477,12 @@
                 "$ref": "#/components/schemas/Galdur_Domain_Models_IPS_IPSAnalysis_IPSAdditionalEducationInfoDTO"
               }
             ]
+          },
+          "credits": {
+            "type": "integer",
+            "description": "Nám - Einingar",
+            "format": "int32",
+            "nullable": true
           }
         }
       },
@@ -4265,6 +4271,10 @@
             "nullable": true
           },
           "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "english": {
             "type": "string",
             "nullable": true
           },
@@ -6714,6 +6724,12 @@
             "description": "Viðmiðunardags ef sein heimkoma í U2",
             "format": "",
             "nullable": true
+          },
+          "acknowledgementsId": {
+            "type": "string",
+            "description": "Auðkenni fyrir skilmála staðfestingar umsækjanda",
+            "format": "guid",
+            "nullable": true
           }
         }
       },
@@ -7319,6 +7335,11 @@
           "bankruptcyConfirmation": {
             "type": "boolean",
             "description": "Atvinnuleitandi hefur staðfest að hann framselji Atvinnuleysistryggingasjóði..."
+          },
+          "unemploymentReasonQuestionResponse": {
+            "type": "boolean",
+            "description": "Getur þú lagt fram gögn sem sýna að þú hafir gert tilraun til að leysa málið áður...",
+            "nullable": true
           }
         }
       },
@@ -7600,6 +7621,13 @@
             "items": {
               "type": "integer",
               "format": "int32"
+            }
+          },
+          "genders": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_Genders_GenderDTO"
             }
           },
           "maxCanStartDate": {
@@ -7902,6 +7930,32 @@
                 "type": "string",
                 "format": "guid",
                 "nullable": true
+              },
+              "contentfulQuestionId": {
+                "type": "string",
+                "nullable": true
+              },
+              "contentfulIdOnYes": {
+                "type": "string",
+                "nullable": true
+              },
+              "contentfulIdOnNo": {
+                "type": "string",
+                "nullable": true
+              },
+              "attachmentTypeIdOnYes": {
+                "type": "string",
+                "format": "guid",
+                "nullable": true
+              },
+              "contentfulId": {
+                "type": "string",
+                "nullable": true
+              },
+              "attachmentTypeId": {
+                "type": "string",
+                "format": "guid",
+                "nullable": true
               }
             }
           }
@@ -7924,6 +7978,17 @@
                 }
               }
             }
+          }
+        ]
+      },
+      "Galdur_Domain_Models_Settings_Genders_GenderDTO": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_SettingsBase"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false
           }
         ]
       },
@@ -8348,11 +8413,6 @@
           "monthlyJobSearchAcknowledgement": {
             "type": "string",
             "description": "Staðfesting á atvinnuleit í hverjum mánuði",
-            "nullable": true
-          },
-          "introductoryMeetingAcknowledgement": {
-            "type": "string",
-            "description": "Kynningarfundur – skyldumæting",
             "nullable": true
           }
         }

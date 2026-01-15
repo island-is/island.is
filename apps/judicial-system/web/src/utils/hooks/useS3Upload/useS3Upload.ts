@@ -1,6 +1,6 @@
 import { useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { FileUploadStatus, toast, UploadFile } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
@@ -72,6 +72,7 @@ export interface TUploadFile extends UploadFile {
   submissionDate?: string | null
   fileRepresentative?: string | null
   previewUrl?: string | null
+  isKeyAccessible?: boolean | null
 }
 
 export interface UploadFileState {
@@ -95,6 +96,7 @@ const mapCaseFileToUploadFile = (file: CaseFile): TUploadFile => ({
   userGeneratedFilename: file.userGeneratedFilename,
   submissionDate: file.submissionDate,
   fileRepresentative: file.fileRepresentative,
+  isKeyAccessible: file.isKeyAccessible,
 })
 
 export const useUploadFiles = (files?: CaseFile[] | null) => {
@@ -359,6 +361,7 @@ const useS3Upload = (
         userGeneratedFilename: file.userGeneratedFilename,
         submissionDate: file.submissionDate,
         fileRepresentative: file.fileRepresentative,
+        isKeyAccessible: file.isKeyAccessible,
       }
 
       if (defendantId) {

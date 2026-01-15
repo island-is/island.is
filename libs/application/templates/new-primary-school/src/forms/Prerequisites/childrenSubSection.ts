@@ -6,21 +6,21 @@ import {
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
 import { format as formatKennitala } from 'kennitala'
-import { newPrimarySchoolMessages } from '../../lib/messages'
+import { prerequisitesMessages } from '../../lib/messages'
 import { getApplicationExternalData } from '../../utils/newPrimarySchoolUtils'
 
 export const childrenSubSection = buildSubSection({
   id: 'childrenSubSection',
-  title: newPrimarySchoolMessages.pre.childrenSubSectionTitle,
+  title: prerequisitesMessages.children.subSectionTitle,
   children: [
     buildMultiField({
       id: 'childrenMultiField',
-      title: newPrimarySchoolMessages.pre.childrenSubSectionTitle,
-      description: newPrimarySchoolMessages.pre.childrenDescription,
+      title: prerequisitesMessages.children.subSectionTitle,
+      description: prerequisitesMessages.children.description,
       children: [
         buildRadioField({
           id: 'childNationalId',
-          title: newPrimarySchoolMessages.pre.childrenRadioTitle,
+          title: prerequisitesMessages.children.radioTitle,
           options: (application) => {
             const { children } = getApplicationExternalData(
               application.externalData,
@@ -44,7 +44,7 @@ export const childrenSubSection = buildSubSection({
           actions: [
             {
               event: DefaultEvents.SUBMIT,
-              name: newPrimarySchoolMessages.pre.startApplication,
+              name: prerequisitesMessages.children.startApplication,
               type: 'primary',
             },
           ],

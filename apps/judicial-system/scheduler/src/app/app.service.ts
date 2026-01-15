@@ -89,6 +89,11 @@ export class AppService {
         this.addMessagesForIndictmentsWaitingForConfirmationToQueue(),
     },
     {
+      jobScheduleType: JobScheduleType.WeekdaysAt9,
+      execute: () =>
+        this.addMessagesForPublicProsecutorReviewerAppealDeadlineApproachingReminderToQueue(),
+    },
+    {
       jobScheduleType: JobScheduleType.EveryDayAt2,
       execute: () => this.deliverVerdictServiceCertificateToPolice(),
     },
@@ -101,6 +106,22 @@ export class AppService {
           type: MessageType.NOTIFICATION_DISPATCH,
           body: {
             type: NotificationDispatchType.INDICTMENTS_WAITING_FOR_CONFIRMATION,
+          },
+        },
+      ])
+      .catch((reason) =>
+        // Tolerate failure, but log
+        this.logger.error('Failed to dispatch notifications', { reason }),
+      )
+  }
+
+  private async addMessagesForPublicProsecutorReviewerAppealDeadlineApproachingReminderToQueue() {
+    return this.messageService
+      .sendMessagesToQueue([
+        {
+          type: MessageType.NOTIFICATION_DISPATCH,
+          body: {
+            type: NotificationDispatchType.PUBLIC_PROSECUTOR_VERDICT_APPEAL_DEADLINE_REMINDER,
           },
         },
       ])

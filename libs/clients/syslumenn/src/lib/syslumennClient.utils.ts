@@ -490,8 +490,18 @@ export const mapEstateRegistrant = (
   return {
     applicantEmail: syslaData.tolvuposturSkreningaradila ?? '',
     applicantPhone: syslaData.simiSkraningaradila ?? '',
-    knowledgeOfOtherWills: syslaData.vitneskjaUmAdraErfdaskra ? 'Yes' : 'No',
-    districtCommissionerHasWill: syslaData.erfdaskraIVorsluSyslumanns ?? false,
+    knowledgeOfOtherWills:
+      syslaData.vitneskjaUmAdraErfdaskra !== null &&
+      syslaData.vitneskjaUmAdraErfdaskra !== undefined
+        ? syslaData.vitneskjaUmAdraErfdaskra
+          ? 'Yes'
+          : 'No'
+        : undefined,
+    districtCommissionerHasWill:
+      syslaData.erfdaskraIVorsluSyslumanns !== null &&
+      syslaData.erfdaskraIVorsluSyslumanns !== undefined
+        ? syslaData.erfdaskraIVorsluSyslumanns
+        : undefined,
     assets: syslaData.eignir
       ? syslaData.eignir
           .filter(
@@ -536,7 +546,10 @@ export const mapEstateRegistrant = (
     estateMembers: syslaData.adilarDanarbus
       ? syslaData.adilarDanarbus.map(estateMemberMapper)
       : [],
-    marriageSettlement: syslaData.kaupmaili ?? false,
+    marriageSettlement:
+      syslaData.kaupmaili !== null && syslaData.kaupmaili !== undefined
+        ? syslaData.kaupmaili
+        : undefined,
     office: syslaData.embaetti ?? '',
     caseNumber: syslaData.malsnumer ?? '',
     dateOfDeath: syslaData.danardagur ?? new Date(),
@@ -650,9 +663,23 @@ export const mapEstateInfo = (syslaData: DanarbuUpplRadstofun): EstateInfo => {
     dateOfDeath: syslaData?.danardagur
       ? new Date(syslaData.danardagur)
       : new Date(),
-    districtCommissionerHasWill: Boolean(syslaData?.erfdaskra),
-    knowledgeOfOtherWills: syslaData.erfdakraVitneskja ? 'Yes' : 'No',
-    marriageSettlement: syslaData.kaupmali ?? false,
+    districtCommissionerHasWill:
+      syslaData?.erfdaskra !== null && syslaData?.erfdaskra !== undefined
+        ? syslaData.erfdaskra === 'false'
+          ? false
+          : Boolean(syslaData.erfdaskra)
+        : undefined,
+    knowledgeOfOtherWills:
+      syslaData.erfdakraVitneskja !== null &&
+      syslaData.erfdakraVitneskja !== undefined
+        ? syslaData.erfdakraVitneskja
+          ? 'Yes'
+          : 'No'
+        : undefined,
+    marriageSettlement:
+      syslaData.kaupmali !== null && syslaData.kaupmali !== undefined
+        ? syslaData.kaupmali
+        : undefined,
     nameOfDeceased: syslaData?.nafn ?? '',
     nationalIdOfDeceased: syslaData?.kennitala ?? '',
     availableSettlements: mapAvailableSettlements(syslaData.mogulegSkipti),

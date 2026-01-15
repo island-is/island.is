@@ -34,7 +34,6 @@ import {
 import { getChargeItems } from '../utils/getChargeItems'
 import { conclusion } from './messages'
 import { Features } from '@island.is/feature-flags'
-import { getHistoryLogSentWithSubjectAndActor } from '../utils/getHistorylogText'
 import { Fasteign } from '@island.is/clients/assets'
 
 const determineMessageFromApplicationAnswers = (application: Application) => {
@@ -142,8 +141,9 @@ const template: ApplicationTemplate<
             },
             historyLogs: [
               {
-                logMessage: getHistoryLogSentWithSubjectAndActor,
+                logMessage: coreHistoryMessages.applicationSent,
                 onEvent: DefaultEvents.SUBMIT,
+                includeSubjectAndActor: true,
               },
             ],
           },

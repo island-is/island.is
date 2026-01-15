@@ -9,8 +9,16 @@ import {
 
 import {
   CaseFileCategory,
+  CaseIndictmentRulingDecision,
   DefendantEventType,
   EventType,
+  getIndictmentAppealDeadline,
+  isDefenceUser,
+  isPrisonSystemUser,
+  isProsecutionUser,
+  isRequestCase,
+  ServiceRequirement,
+  User,
   UserRole,
 } from '@island.is/judicial-system/types'
 
@@ -22,9 +30,35 @@ import {
   EventLog,
 } from '../../repository'
 
-export const transformDefendants = (defendants?: Defendant[]) => {
+export const transformDefendants = ({
+  defendants,
+  indictmentRulingDecision,
+  rulingDate,
+}: {
+  defendants?: Defendant[]
+  indictmentRulingDecision?: CaseIndictmentRulingDecision
+  rulingDate?: Date
+}) => {
   return defendants?.map((defendant) => {
-    const { verdict } = defendant
+    // Only the latest verdict is relevant
+    const { verdicts } = defendant
+    const verdict = verdicts?.[0]
+    const isServiceRequired =
+      verdict?.serviceRequirement === ServiceRequirement.REQUIRED
+    const isFine =
+      indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
+
+    const baseDate = isServiceRequired ? verdict.serviceDate : rulingDate
+    const appealDeadlineResult = baseDate
+      ? getIndictmentAppealDeadline({
+          baseDate: new Date(baseDate),
+          isFine,
+        })
+      : undefined
+    const appealDeadline = appealDeadlineResult?.deadlineDate
+    const isAppealDeadlineExpired =
+      appealDeadlineResult?.isDeadlineExpired ?? false
+
     return {
       ...defendant.toJSON(),
       ...(verdict
@@ -39,6 +73,9 @@ export const transformDefendants = (defendants?: Defendant[]) => {
             },
           }
         : {}),
+      verdicts: undefined,
+      verdictAppealDeadline: appealDeadline,
+      isVerdictAppealDeadlineExpired: isAppealDeadlineExpired,
       sentToPrisonAdminDate: defendant.isSentToPrisonAdmin
         ? DefendantEventLog.getEventLogDateByEventType(
             DefendantEventType.SENT_TO_PRISON_ADMIN,
@@ -103,14 +140,22 @@ const transformCaseRepresentatives = (theCase: Case) => {
   ].filter((representative) => !!representative)
 }
 
-const transformCase = (theCase: Case) => {
+const transformCase = (theCase: Case, user?: User) => {
   return {
     ...theCase.toJSON(),
-    defendants: transformDefendants(theCase.defendants),
+    defendants: transformDefendants({
+      defendants: theCase.defendants,
+      indictmentRulingDecision: theCase.indictmentRulingDecision,
+      rulingDate: theCase.rulingDate,
+    }),
+    caseRepresentatives: transformCaseRepresentatives(theCase),
     postponedIndefinitelyExplanation:
       CaseString.postponedIndefinitelyExplanation(theCase.caseStrings),
     civilDemands: CaseString.civilDemands(theCase.caseStrings),
-    penalties: CaseString.penalties(theCase.caseStrings),
+    penalties:
+      user && isProsecutionUser(user)
+        ? CaseString.penalties(theCase.caseStrings)
+        : null,
     caseSentToCourtDate: EventLog.getEventLogDateByEventType(
       [EventType.CASE_SENT_TO_COURT, EventType.INDICTMENT_CONFIRMED],
       theCase.eventLogs,
@@ -142,14 +187,27 @@ const transformCase = (theCase: Case) => {
       EventType.REQUEST_COMPLETED,
       theCase.eventLogs,
     ),
-    caseRepresentatives: transformCaseRepresentatives(theCase),
+    indictmentCompletedDate: EventLog.getEventLogDateByEventType(
+      EventType.INDICTMENT_COMPLETED,
+      theCase.eventLogs,
+    ),
+    eventLogs: undefined,
+    // Defence and prison system users should not see rulingModifiedHistory for request cases
+    rulingModifiedHistory:
+      isRequestCase(theCase.type) &&
+      (isDefenceUser(user) || isPrisonSystemUser(user))
+        ? undefined
+        : theCase.rulingModifiedHistory,
   }
 }
 
 @Injectable()
 export class CaseInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler) {
-    return next.handle().pipe(map(transformCase))
+    const request = context.switchToHttp().getRequest()
+    const user = request.user?.currentUser as User | undefined
+
+    return next.handle().pipe(map((theCase) => transformCase(theCase, user)))
   }
 }
 

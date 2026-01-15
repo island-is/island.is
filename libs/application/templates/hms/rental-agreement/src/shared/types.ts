@@ -132,6 +132,7 @@ export interface ParticipantsSection {
   landlords: ApplicantsInfo[]
   landlordRepresentatives: ApplicantsInfo[]
   tenants: ApplicantsInfo[]
+  signingParties: ApplicantsInfo[]
 }
 
 export interface PropertySection {
@@ -293,6 +294,7 @@ export interface DraftAnswers {
   landlords: DraftPartyContact[]
   landlordRepresentatives: DraftPartyContact[]
   tenants: DraftPartyContact[]
+  signingParties: ApplicantsInfo[]
   units: DraftPropertyUnit[]
   startDate: string
   endDate: string

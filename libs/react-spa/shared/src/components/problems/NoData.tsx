@@ -39,7 +39,7 @@ export const NoData = ({
         alignItems="center"
         justifyContent="center"
         flexDirection={['columnReverse', 'columnReverse', 'row']}
-        columnGap={[2, 4, 8, 8, 20]}
+        columnGap={[2, 4, 8, 8, 12]}
         className={styleContainer(
           noBorder
             ? {

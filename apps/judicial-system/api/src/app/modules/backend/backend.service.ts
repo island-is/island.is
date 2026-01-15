@@ -369,6 +369,14 @@ export class BackendService extends DataSource<{ req: Request }> {
     )
   }
 
+  splitDefendantFromCase(caseId: string, defendantId: string): Promise<Case> {
+    return this.post<unknown, Case>(
+      `case/${caseId}/defendant/${defendantId}/split`,
+      undefined,
+      caseTransformer,
+    )
+  }
+
   createCourtCase(caseId: string): Promise<Case> {
     return this.post<unknown, Case>(
       `case/${caseId}/court`,

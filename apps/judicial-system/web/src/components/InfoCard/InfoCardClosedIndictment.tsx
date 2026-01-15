@@ -51,12 +51,12 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
         {
           id: 'defendants-section',
           items: [
-            defendants(
-              workingCase.type,
+            defendants({
+              caseType: workingCase.type,
               displayAppealExpirationInfo,
               displayVerdictViewDate,
               displaySentToPrisonAdminDate,
-            ),
+            }),
           ],
         },
         ...(workingCase.hasCivilClaims

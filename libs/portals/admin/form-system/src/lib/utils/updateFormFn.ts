@@ -45,6 +45,8 @@ export const updateFormFn = async (
             daysUntilApplicationPrune: newForm.daysUntilApplicationPrune,
             allowProceedOnValidationFail: newForm.allowProceedOnValidationFail,
             hasPayment: newForm.hasPayment,
+            submissionServiceUrl: newForm.submissionServiceUrl,
+            validationServiceUrl: newForm.validationServiceUrl,
             hasSummaryScreen: newForm.hasSummaryScreen,
             completedSectionInfo: {
               title: {
@@ -70,7 +72,7 @@ export const updateFormFn = async (
         },
       },
     })
-    return response.data.formSystemUpdateForm as UpdateFormResponse
+    return response.data.updateFormSystemForm as UpdateFormResponse
   } catch (err) {
     console.error('Error updating form:', err.message)
     throw err

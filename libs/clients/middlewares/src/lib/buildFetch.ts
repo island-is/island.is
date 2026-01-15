@@ -2,7 +2,6 @@ import {
   Request as NodeFetchRequest,
   Headers as NodeFetchHeaders,
 } from 'node-fetch'
-import { Readable } from 'stream'
 import {
   FetchAPI as NodeFetchAPI,
   RequestInit,
@@ -15,14 +14,15 @@ import { EnhancedFetchAPI, AuthSource } from './types'
 /**
  * Converts a globalThis.Request (browser-style Request) to a node-fetch Request.
  *
- * This conversion is necessary because the new generated clients using openapi-ts
- * call enhancedFetch with a globalThis.Request instance. However, node-fetch expects
- * its own Request implementation, so we must translate between the two.
+ * This conversion is necessary because when NODE_OPTIONS=--experimental-fetch is enabled,
+ * the native fetch implementation has a bug where POST/PUT request bodies are stripped.
+ * To work around this, we convert the globalThis.Request to a node-fetch Request and
+ * manually extract and preserve the request body.
  *
- * - If the HTTP method allows a body (i.e., not GET or HEAD) and a body is present,
- *   the body (a web ReadableStream) is converted to a Node.js Readable stream using Readable.fromWeb,
- *   as node-fetch expects a Node.js stream for the body.
- * - Returns a new node-fetch Request instance with the same URL, method, headers, body and redirect policy as the original request.
+ * - For text-based content types (JSON, form data, text), the body is read as a string.
+ * - For binary content (images, files, etc.), the body is converted to a Buffer.
+ * - Returns a new node-fetch Request instance with the same URL, method, headers, body,
+ *   and redirect policy as the original request.
  */
 const toNodeFetchRequest = async (
   globalReq: globalThis.Request,
@@ -31,14 +31,22 @@ const toNodeFetchRequest = async (
   const headers = new NodeFetchHeaders()
   globalReq.headers.forEach((value, key) => headers.set(key, value))
 
-  const globalReqBody = globalReq.body
+  let body: undefined | string | Buffer = undefined
 
-  let body: undefined | Readable = undefined
+  if (globalReq.body) {
+    const contentType = globalReq.headers.get('content-type') || ''
 
-  // If the request is a globalThis.Request, the body will always be a ReadableStream
-  if (globalReqBody instanceof ReadableStream) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    body = Readable.fromWeb(globalReqBody as any)
+    if (
+      contentType.includes('application/json') ||
+      contentType.includes('text/') ||
+      contentType.includes('application/x-www-form-urlencoded')
+    ) {
+      // Text-based content
+      body = await globalReq.text()
+    } else {
+      // Binary content (images, files, etc.)
+      body = Buffer.from(await globalReq.arrayBuffer())
+    }
   }
 
   return new NodeFetchRequest(globalReq.url, {
@@ -51,7 +59,10 @@ const toNodeFetchRequest = async (
   })
 }
 
-export function buildFetch(actualFetch: NodeFetchAPI, authSource?: AuthSource) {
+export const buildFetch = (
+  actualFetch: NodeFetchAPI,
+  authSource?: AuthSource,
+) => {
   let nextMiddleware: MiddlewareAPI = actualFetch
   const result = {
     getFetch(): EnhancedFetchAPI {

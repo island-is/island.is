@@ -16,6 +16,7 @@ import {
   UpdateOrganDonorDto,
   WaitingListEntryDto,
   donationExceptionControllerGetOrgansV1,
+  meAppointmentControllerGetPatientAppointmentsV1,
   meDonorStatusControllerGetOrganDonorStatusV1,
   meDonorStatusControllerUpdateOrganDonorStatusV1,
   mePatientConcentEuControllerCreateEuPatientConsentForPatientV1,
@@ -32,14 +33,26 @@ import {
   mePrescriptionDispensationControllerGetGroupedDispensationsV1,
   meReferralControllerGetReferralsV1,
   meWaitingListControllerGetWaitingListEntriesV1,
+  questionnaireControllerGetAllQuestionnairesV1,
+  questionnaireControllerGetQuestionnaireDetailV1,
+  questionnaireControllerGetQuestionnaireSubmissionV1,
+  questionnaireControllerSubmitQuestionnaireV1,
 } from './gen/fetch'
+
 import {
+  AppointmentDto,
+  AppointmentStatus,
   ConsentCountryDto,
   CreateEuPatientConsentDto,
   CreateOrUpdatePrescriptionCommissionDto,
   EuPatientConsentDto,
+  EuPatientConsentStatus,
   Locale,
   PrescriptionCommissionDto,
+  QuestionnaireBaseDto,
+  QuestionnaireDetailDto,
+  QuestionnaireSubmissionDetailDto,
+  SubmitQuestionnaireDto,
 } from './gen/fetch/types.gen'
 
 @Injectable()
@@ -266,12 +279,121 @@ export class HealthDirectorateHealthService {
     return donationExceptions
   }
 
+  public async getQuestionnaires(
+    auth: Auth,
+    locale: Locale,
+  ): Promise<QuestionnaireBaseDto[] | null> {
+    const questionnaires = await withAuthContext(auth, () =>
+      data(questionnaireControllerGetAllQuestionnairesV1()),
+    )
+
+    if (!questionnaires) {
+      this.logger.debug(`No questionnaires data returned for locale ${locale}`)
+      return null
+    }
+
+    return questionnaires
+  }
+
+  public async getQuestionnaire(
+    auth: Auth,
+    locale: Locale,
+    id: string,
+  ): Promise<QuestionnaireDetailDto | null> {
+    const questionnaire = await withAuthContext(auth, () =>
+      data(
+        questionnaireControllerGetQuestionnaireDetailV1({
+          path: {
+            id: id,
+          },
+        }),
+      ),
+    )
+
+    if (!questionnaire) {
+      this.logger.debug('No questionnaire data returned')
+      return null
+    }
+
+    return questionnaire
+  }
+
+  public async getQuestionnaireAnswered(
+    auth: Auth,
+    locale: Locale,
+    id: string,
+    submissionId: string,
+  ): Promise<QuestionnaireSubmissionDetailDto | null> {
+    try {
+      this.logger.debug(`Fetching answered questionnaire`, { id, submissionId })
+
+      const questionnaires = await withAuthContext(auth, () =>
+        data(
+          questionnaireControllerGetQuestionnaireSubmissionV1({
+            path: {
+              id,
+              submissionId,
+            },
+          }),
+        ),
+      )
+
+      if (!questionnaires) {
+        this.logger.debug('No answered questionnaire data returned', {
+          id,
+          submissionId,
+        })
+        return null
+      }
+
+      // Ensure the response is an array
+      if (!Array.isArray(questionnaires)) {
+        this.logger.warn(
+          'Unexpected response format for getQuestionnaireAnswered',
+        )
+      }
+
+      return questionnaires
+    } catch (error) {
+      this.logger.error(`Error fetching questionnaire answered data`, {
+        id,
+        submissionId,
+        error,
+      })
+      return null
+    }
+  }
+
+  public async submitQuestionnaire(
+    auth: Auth,
+    locale: Locale,
+    id: string,
+    input: SubmitQuestionnaireDto,
+  ): Promise<string | null> {
+    const submission = await withAuthContext(auth, () =>
+      data(
+        questionnaireControllerSubmitQuestionnaireV1({
+          path: {
+            id: id,
+          },
+          body: input,
+        }),
+      ),
+    )
+
+    if (!submission) {
+      this.logger.debug('No questionnaire submission data returned')
+      return null
+    }
+
+    return submission
+  }
+
   /** Medicine Delegation */
 
   public async getMedicineDelegations(
     auth: Auth,
     locale: Locale,
-    active: boolean,
     status: string[],
   ): Promise<Array<PrescriptionCommissionDto> | null> {
     const medicineDelegations = await withAuthContext(auth, () =>
@@ -279,12 +401,10 @@ export class HealthDirectorateHealthService {
         mePrescriptionCommissionControllerGetPrescriptionCommissionsV1({
           query: {
             status: status,
-            active: active,
           },
         }),
       ),
     )
-
     if (!medicineDelegations) {
       return null
     }
@@ -307,10 +427,12 @@ export class HealthDirectorateHealthService {
     )
   }
 
+  /* Patient Data Permits */
+
   public async getPermits(
     auth: Auth,
     locale: Locale,
-    status: string[],
+    status: EuPatientConsentStatus[],
     dateFrom?: Date | undefined,
     dateTo?: Date | undefined,
   ): Promise<EuPatientConsentDto[] | null> {
@@ -388,26 +510,10 @@ export class HealthDirectorateHealthService {
     auth: Auth,
     input: CreateEuPatientConsentDto,
   ): Promise<unknown> {
-    if (!input.validTo || !input.validFrom) {
-      return null
-    }
-    const validFrom = new Date(input.validFrom)
-    const validTo = new Date(input.validTo)
-
-    if (isNaN(validFrom.getTime()) || isNaN(validTo.getTime())) {
-      this.logger.debug('Invalid date values provided to createPermit')
-      return null
-    }
-
     return await withAuthContext(auth, () =>
       data(
         mePatientConcentEuControllerCreateEuPatientConsentForPatientV1({
-          body: {
-            codes: ['PATIENT_SUMMARY'], // hardcoded as it will always be this value
-            countryCodes: input.countryCodes,
-            validFrom: validFrom,
-            validTo: validTo,
-          },
+          body: input,
         }),
       ),
     )
@@ -423,5 +529,27 @@ export class HealthDirectorateHealthService {
         }),
       ),
     )
+  }
+
+  /* Appointments */
+  public async getAppointments(
+    auth: Auth,
+    from?: Date,
+    statuses?: AppointmentStatus[],
+  ): Promise<AppointmentDto[] | null> {
+    const defaultFrom = new Date()
+
+    const appointments = await withAuthContext(auth, () =>
+      data(
+        meAppointmentControllerGetPatientAppointmentsV1({
+          query: {
+            fromStartTime: from ?? defaultFrom,
+            status: statuses,
+          },
+        }),
+      ),
+    )
+
+    return appointments ?? null
   }
 }

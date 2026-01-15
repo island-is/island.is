@@ -1,5 +1,5 @@
 import { Op } from 'sequelize'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import {
   BadRequestException,
@@ -95,8 +95,10 @@ describe('Indictment Case Exists For Defendant Guard', () => {
               },
               {
                 model: Verdict,
-                as: 'verdict',
+                as: 'verdicts',
                 required: false,
+                order: [['created', 'DESC']],
+                separate: true,
               },
             ],
           },

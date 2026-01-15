@@ -1,5 +1,5 @@
 import { HTMLEditor } from '../components/html-editor/HTMLEditor'
-import { HTMLText } from '@island.is/regulations-tools/types'
+import { HTMLText } from '@dmr.is/regulations-tools/types'
 import { useFormContext } from 'react-hook-form'
 import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
 import { LGFieldBaseProps } from '../utils/types'

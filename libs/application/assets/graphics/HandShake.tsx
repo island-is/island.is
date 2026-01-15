@@ -1,4 +1,11 @@
-export const HandShake = () => (
+/*
+ ** Ísland.is graphic that depicts two persons planing something, a clipboard,
+ ** rolled up diploma, a clock and a handshake between two people.
+ */
+
+import React, { FC } from 'react'
+
+export const HandShake: FC<React.PropsWithChildren<unknown>> = () => (
   <svg
     width="742"
     height="263"

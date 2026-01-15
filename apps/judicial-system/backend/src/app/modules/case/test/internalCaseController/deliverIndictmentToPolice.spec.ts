@@ -1,5 +1,5 @@
 import { Base64 } from 'js-base64'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import {
   CaseOrigin,
@@ -88,10 +88,11 @@ describe('InternalCaseController - Deliver indictment to police', () => {
       state: caseState,
       policeCaseNumbers: [policeCaseNumber],
       courtCaseNumber,
-      defendants: [{ nationalId: defendantNationalId }],
+      defendants: [{ nationalId: uuid() }],
       indictmentSubtypes: {
         [policeCaseNumber]: [IndictmentSubtype.TRAFFIC_VIOLATION],
       },
+      policeDefendantNationalId: defendantNationalId,
     } as Case
 
     let then: Then
@@ -148,11 +149,12 @@ describe('InternalCaseController - Deliver indictment to police', () => {
       state: caseState,
       policeCaseNumbers: [policeCaseNumber],
       courtCaseNumber,
-      defendants: [{ nationalId: defendantNationalId }],
+      defendants: [{ nationalId: uuid() }],
       indictmentSubtypes: {
         [policeCaseNumber]: [IndictmentSubtype.TRAFFIC_VIOLATION],
       },
       indictmentHash: uuid(),
+      policeDefendantNationalId: defendantNationalId,
     } as Case
 
     beforeEach(async () => {

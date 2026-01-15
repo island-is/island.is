@@ -61,7 +61,7 @@ import { Application } from '@island.is/application/types'
 import {
   ApplicationDTO,
   DisabilityPensionDto,
-  TrWebCommonsExternalPortalsApiModelsDocumentsDocument as Attachment,
+  TrWebContractsExternalDigitalIcelandDocumentsDocument as Attachment,
   IncomeTypes,
   MedicalAndRehabilitationPaymentsDTO,
   Employer as TrWebEmployer,

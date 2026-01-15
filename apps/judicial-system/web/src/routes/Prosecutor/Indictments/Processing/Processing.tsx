@@ -292,10 +292,7 @@ const Processing: FC = () => {
           </Box>
         )}
         <Box component="section" marginBottom={5}>
-          <CommentsInput
-            workingCase={workingCase}
-            setWorkingCase={setWorkingCase}
-          />
+          <CommentsInput />
         </Box>
         <Box
           component="section"

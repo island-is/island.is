@@ -14,8 +14,8 @@ describe('LimitedAccessCaseController - Get case files record pdf guards', () =>
     'getCaseFilesRecordPdf',
     [
       JwtAuthUserGuard,
-      RolesGuard,
       CaseExistsGuard,
+      RolesGuard,
       CaseTypeGuard,
       CaseReadGuard,
       MergedCaseExistsGuard,

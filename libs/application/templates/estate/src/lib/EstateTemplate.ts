@@ -1,6 +1,4 @@
 import {
-  DefaultStateLifeCycle,
-  EphemeralStateLifeCycle,
   coreHistoryMessages,
   getValueViaPath,
   pruneAfterDays,
@@ -13,11 +11,13 @@ import {
   ApplicationStateSchema,
   Application,
   defineTemplateApi,
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   UserProfileApi,
   DefaultEvents,
   ApplicationConfigurations,
+  InstitutionNationalIds,
 } from '@island.is/application/types'
+import { buildPaymentState } from '@island.is/application/utils'
 import { m } from './messages'
 import { estateSchema } from './dataSchema'
 import {
@@ -28,12 +28,19 @@ import {
   States,
 } from './constants'
 import { FeatureFlagClient } from '@island.is/feature-flags'
-import { EstateApi, EstateOnEntryApi } from '../dataProviders'
+import {
+  EstateApi,
+  EstateOnEntryApi,
+  SyslumadurPaymentCatalogApi,
+  MockableSyslumadurPaymentCatalogApi,
+} from '../dataProviders'
 import {
   getApplicationFeatureFlags,
   EstateFeatureFlags,
 } from './getApplicationFeatureFlags'
 import { CodeOwners } from '@island.is/shared/constants'
+import { getChargeItems } from '../utils/getChargeItems'
+import { getEstateDataFromApplication, isEstateInfo } from './utils'
 
 const configuration = ApplicationConfigurations[ApplicationTypes.ESTATE]
 
@@ -61,7 +68,7 @@ const EstateTemplate: ApplicationTemplate<
           name: '',
           status: 'draft',
           progress: 0,
-          lifecycle: EphemeralStateLifeCycle,
+          lifecycle: pruneAfterDays(60),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -90,12 +97,18 @@ const EstateTemplate: ApplicationTemplate<
                     featureFlags[
                       EstateFeatureFlags.ALLOW_DIVISION_OF_ESTATE_BY_HEIRS
                     ],
+                  allowEstatePayment:
+                    featureFlags[EstateFeatureFlags.ALLOW_ESTATE_PAYMENT],
                 })
               },
               actions: [{ event: 'SUBMIT', name: '', type: 'primary' }],
               write: 'all',
               delete: true,
-              api: [EstateOnEntryApi],
+              api: [
+                EstateOnEntryApi,
+                SyslumadurPaymentCatalogApi,
+                MockableSyslumadurPaymentCatalogApi,
+              ],
             },
           ],
           actionCard: {
@@ -118,7 +131,7 @@ const EstateTemplate: ApplicationTemplate<
           name: '',
           status: 'draft',
           progress: 0.25,
-          lifecycle: pruneAfterDays(14),
+          lifecycle: pruneAfterDays(60),
           roles: [
             {
               id: Roles.APPLICANT_NO_ASSETS,
@@ -129,7 +142,7 @@ const EstateTemplate: ApplicationTemplate<
               actions: [{ event: 'SUBMIT', name: '', type: 'primary' }],
               write: 'all',
               delete: true,
-              api: [NationalRegistryUserApi, UserProfileApi, EstateApi],
+              api: [NationalRegistryV3UserApi, UserProfileApi, EstateApi],
             },
             {
               id: Roles.APPLICANT_OFFICIAL_DIVISION,
@@ -140,7 +153,7 @@ const EstateTemplate: ApplicationTemplate<
               actions: [{ event: 'SUBMIT', name: '', type: 'primary' }],
               write: 'all',
               delete: true,
-              api: [NationalRegistryUserApi, UserProfileApi, EstateApi],
+              api: [NationalRegistryV3UserApi, UserProfileApi, EstateApi],
             },
             {
               id: Roles.APPLICANT_PERMIT_FOR_UNDIVIDED_ESTATE,
@@ -148,10 +161,19 @@ const EstateTemplate: ApplicationTemplate<
                 import('../forms/Forms').then((module) =>
                   Promise.resolve(module.undividedEstateForm),
                 ),
-              actions: [{ event: 'SUBMIT', name: '', type: 'primary' }],
+              actions: [
+                { event: 'SUBMIT', name: '', type: 'primary' },
+                { event: 'PAYMENT', name: '', type: 'primary' },
+              ],
               write: 'all',
               delete: true,
-              api: [NationalRegistryUserApi, UserProfileApi, EstateApi],
+              api: [
+                NationalRegistryV3UserApi,
+                UserProfileApi,
+                EstateApi,
+                SyslumadurPaymentCatalogApi,
+                MockableSyslumadurPaymentCatalogApi,
+              ],
             },
             {
               id: Roles.APPLICANT_DIVISION_OF_ESTATE_BY_HEIRS,
@@ -159,10 +181,19 @@ const EstateTemplate: ApplicationTemplate<
                 import('../forms/Forms').then((module) =>
                   Promise.resolve(module.privateDivisionForm),
                 ),
-              actions: [{ event: 'SUBMIT', name: '', type: 'primary' }],
+              actions: [
+                { event: 'SUBMIT', name: '', type: 'primary' },
+                { event: 'PAYMENT', name: '', type: 'primary' },
+              ],
               write: 'all',
               delete: true,
-              api: [NationalRegistryUserApi, UserProfileApi, EstateApi],
+              api: [
+                NationalRegistryV3UserApi,
+                UserProfileApi,
+                EstateApi,
+                SyslumadurPaymentCatalogApi,
+                MockableSyslumadurPaymentCatalogApi,
+              ],
             },
           ],
           actionCard: {
@@ -178,14 +209,36 @@ const EstateTemplate: ApplicationTemplate<
           [DefaultEvents.SUBMIT]: {
             target: States.done,
           },
+          [DefaultEvents.PAYMENT]: {
+            target: States.payment,
+          },
         },
       },
+      [States.payment]: buildPaymentState({
+        organizationId: InstitutionNationalIds.SYSLUMENN,
+        chargeItems: getChargeItems,
+        submitTarget: States.done,
+        abortTarget: States.draft,
+        lifecycle: {
+          shouldBeListed: true,
+          shouldBePruned: true,
+          whenToPrune: 60 * 24 * 3600 * 1000, // 60 days
+          shouldDeleteChargeIfPaymentFulfilled: true,
+        },
+        payerNationalId: (application) => {
+          const data = getEstateDataFromApplication(application)
+          if (isEstateInfo(data) && data.estate.nationalIdOfDeceased) {
+            return data.estate.nationalIdOfDeceased
+          }
+          return application.applicant
+        },
+      }),
       [States.done]: {
         meta: {
           name: 'Approved',
           status: 'completed',
           progress: 1,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: pruneAfterDays(60),
           onEntry: defineTemplateApi({
             action: ApiActions.completeApplication,
             throwOnError: true,
