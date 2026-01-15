@@ -13,7 +13,6 @@ import {
   useGetDrugPrescriptionsLazyQuery,
   useGetMedicineHistoryLazyQuery,
 } from '../../graphql/types/schema'
-import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { useLocale } from '../../hooks/use-locale'
@@ -21,6 +20,7 @@ import { GeneralCardSkeleton, Problem, TabButtons, Typography } from '../../ui'
 import { CertificateCard } from './components/certificate-card'
 import { MedicineHistoryCard } from './components/medicine-history-card'
 import { PrescriptionCard } from './components/prescription-card'
+import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 
 type ActiveTabData = HealthDirectorateMedicineHistoryItem[] &
   HealthDirectoratePrescription[] &
@@ -268,15 +268,23 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
       >
         <Host>
           <Wrapper>
-            <TabButtons
-              buttons={tabs.map((tab) => ({
-                title: intl.formatMessage({
-                  id: tab.titleId,
-                }),
-              }))}
-              selectedTab={selectedTab}
-              setSelectedTab={handleTabChange}
-            />
+            {isPrescriptionsEnabled ? (
+              <TabButtons
+                buttons={tabs.map((tab) => ({
+                  title: intl.formatMessage({
+                    id: tab.titleId,
+                  }),
+                }))}
+                selectedTab={selectedTab}
+                setSelectedTab={handleTabChange}
+              />
+            ) : (
+              <Typography variant="body">
+                {intl.formatMessage({
+                  id: 'health.prescriptionsAndCertificates.description',
+                })}
+              </Typography>
+            )}
           </Wrapper>
           {activeTab &&
             (activeTabData?.length || activeTab.queryResult.loading) &&
