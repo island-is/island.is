@@ -4,9 +4,7 @@
   "sourceRoot": "apps/application-system/api/src",
   "projectType": "application",
   "prefix": "application-system-api",
-  "tags": [
-    "scope:application-system-api"
-  ],
+  "tags": ["scope:application-system-api"],
   "generators": {},
   "targets": {
     "build": {
@@ -17,9 +15,7 @@
         "tsConfig": "apps/application-system/api/tsconfig.app.json",
         "generatePackageJson": true,
         "esbuildConfig": "tools/esbuild.config.js",
-        "format": [
-          "cjs"
-        ],
+        "format": ["cjs"],
         "assets": [
           {
             "glob": "*",
@@ -119,9 +115,7 @@
           "extractLicenses": true
         }
       },
-      "outputs": [
-        "{options.outputPath}"
-      ]
+      "outputs": ["{options.outputPath}"]
     },
     "serve": {
       "executor": "@nx/js:node",
@@ -138,18 +132,13 @@
         "jestConfig": "apps/application-system/api/jest.config.ts",
         "runInBand": true
       },
-      "outputs": [
-        "{workspaceRoot}/coverage/apps/application-system/api"
-      ]
+      "outputs": ["{workspaceRoot}/coverage/apps/application-system/api"]
     },
     "worker": {
       "executor": "@nx/js:node",
       "options": {
         "buildTarget": "application-system-api:build",
-        "args": [
-          "--job",
-          "worker"
-        ]
+        "args": ["--job", "worker"]
       }
     },
     "dev-services": {
@@ -167,9 +156,7 @@
       "options": {
         "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/application-system/api/tsconfig.app.json apps/application-system/api/src/buildOpenApi.ts"
       },
-      "outputs": [
-        "{projectRoot}/src/openapi.yaml"
-      ]
+      "outputs": ["{projectRoot}/src/openapi.yaml"]
     },
     "migrate": {
       "executor": "nx:run-commands",
