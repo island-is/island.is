@@ -787,7 +787,7 @@ export const getPensionAndOtherPayments = (
             )
             .map((payment) => {
               return {
-                incomeTypeId: PaymentTypeIds.SICKNESS_PAYMENTS_ID,
+                incomeTypeId: payment.subType,
                 unionId: payment.union,
                 periodFrom: payment.dateFrom,
                 periodTo: payment.dateTo,
