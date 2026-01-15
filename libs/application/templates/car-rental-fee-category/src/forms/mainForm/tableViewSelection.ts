@@ -4,24 +4,24 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { UploadSelection } from '../../utils/constants'
+import { m } from '../../lib/messages'
 
 export const tableViewSelectionSection = buildSection({
   condition: (answers) => {
-    const uploadSelectionValue = getValueViaPath<string>(
-      answers,
-      'singleOrMultiSelectionRadio',
-    )
+    const uploadSelectionValue =
+      getValueViaPath<string>(answers, 'singleOrMultiSelectionRadio') ??
+      UploadSelection.MULTI
 
     return uploadSelectionValue
       ? uploadSelectionValue === UploadSelection.SINGLE
       : false
   },
   id: 'tableViewSelectionSection',
-  title: 'Skrá gjald',
+  title: m.tableView.sectionTitle,
   children: [
     buildMultiField({
       id: 'tableViewSelectionMultiField',
-      title: 'Skrá bifreiðar á kílómetragjald eða daggjald',
+      title: m.tableView.multiTitle,
       children: [],
     }),
   ],

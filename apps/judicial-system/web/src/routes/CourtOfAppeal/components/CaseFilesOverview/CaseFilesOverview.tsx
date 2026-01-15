@@ -1,12 +1,13 @@
 import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Box, Text } from '@island.is/island-ui/core'
+import { Text } from '@island.is/island-ui/core'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
   AppealCaseFilesOverview,
   FormContext,
   PdfButton,
+  SectionHeading,
   SignedDocument,
 } from '@island.is/judicial-system-web/src/components'
 
@@ -20,10 +21,11 @@ const CaseFilesOverview = () => {
   return (
     <>
       <AppealCaseFilesOverview />
-      <Box marginBottom={6}>
-        <Text as="h3" variant="h3" marginBottom={3}>
-          {formatMessage(strings.courtCaseFilesTitle)}
-        </Text>
+      <section>
+        <SectionHeading
+          title={formatMessage(strings.courtCaseFilesTitle)}
+          marginBottom={1}
+        />
         <PdfButton
           renderAs="row"
           caseId={workingCase.id}
@@ -54,7 +56,7 @@ const CaseFilesOverview = () => {
             <Text>{formatMessage(strings.unsignedDocument)}</Text>
           )}
         </PdfButton>
-      </Box>
+      </section>
     </>
   )
 }

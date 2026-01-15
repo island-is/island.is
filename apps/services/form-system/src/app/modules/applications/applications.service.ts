@@ -2,6 +2,7 @@ import {
   ConflictException,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Sequelize } from 'sequelize-typescript'
@@ -17,7 +18,6 @@ import { ApplicationMapper } from './models/application.mapper'
 import { Value } from './models/value.model'
 import { ValueTypeFactory } from '../../dataTypes/valueTypes/valueType.factory'
 import { ValueType } from '../../dataTypes/valueTypes/valueType.model'
-import { CreateApplicationDto } from './models/dto/createApplication.dto'
 import { UpdateApplicationDto } from './models/dto/updateApplication.dto'
 import {
   ApplicationStatus,
@@ -29,7 +29,6 @@ import { Organization } from '../organizations/models/organization.model'
 import { ServiceManager } from '../services/service.manager'
 import { ApplicationEvent } from './models/applicationEvent.model'
 import { ApplicationResponseDto } from './models/dto/application.response.dto'
-import { ScreenValidationResponse } from '../../dataTypes/validationResponse.model'
 import { User } from '@island.is/auth-nest-tools'
 import { FormCertificationType } from '../formCertificationTypes/models/formCertificationType.model'
 import { SubmitScreenDto } from './models/dto/submitScreen.dto'
@@ -44,6 +43,7 @@ import { AuthDelegationType } from '@island.is/shared/types'
 import * as kennitala from 'kennitala'
 import type { Locale } from '@island.is/shared/types'
 import { calculatePruneAt } from '../../../utils/calculatePruneAt'
+import { SectionDto } from '../sections/models/dto/section.dto'
 
 @Injectable()
 export class ApplicationsService {
@@ -61,16 +61,9 @@ export class ApplicationsService {
     private readonly applicationMapper: ApplicationMapper,
     private readonly serviceManager: ServiceManager,
     private readonly sequelize: Sequelize,
-    @InjectModel(Screen) private screenModel: typeof Screen,
-    @InjectModel(Field) private fieldModel: typeof Field,
-    @InjectModel(Section) private sectionModel: typeof Section,
   ) {}
 
-  async create(
-    slug: string,
-    createApplicationDto: CreateApplicationDto,
-    user: User,
-  ): Promise<ApplicationResponseDto> {
+  async create(slug: string, user: User): Promise<ApplicationResponseDto> {
     const form: Form = await this.getForm(slug)
 
     if (!form) {
@@ -199,57 +192,6 @@ export class ApplicationsService {
     await application.save()
   }
 
-  async submitScreen(
-    screenId: string,
-    applicationDto: ApplicationDto,
-  ): Promise<ScreenValidationResponse> {
-    const sections = applicationDto.sections
-
-    if (!sections) {
-      throw new NotFoundException(`Sections not found`)
-    }
-    const screenDto = sections
-      .flatMap((section) => section.screens || [])
-      .find((screen) => screen.id === screenId)
-
-    if (!screenDto) {
-      throw new NotFoundException(`Screen with id '${screenId}' not found`)
-    }
-
-    const filteredFields = screenDto.fields?.filter(
-      (field) => field.isHidden === false,
-    )
-    const filteredScreenDto = { ...screenDto, fields: filteredFields }
-
-    filteredScreenDto.fields?.forEach(async (field) => {
-      await this.valueModel.destroy({
-        where: {
-          fieldId: field.id,
-          applicationId: applicationDto.id,
-        },
-      })
-
-      field.values?.forEach(async (value, index) => {
-        await this.valueModel.create({
-          fieldId: field.id,
-          fieldType: field.fieldType,
-          applicationId: applicationDto.id,
-          order: index,
-          json: value.json,
-        } as Value)
-      })
-    })
-
-    // internal validation of the input values of the screen
-    const screenValidationResponse =
-      this.serviceManager.validation(filteredScreenDto)
-
-    // TODO: Send the input values to the service manager for external validation
-
-    // TODO: Check if the section is also completed
-    return screenValidationResponse
-  }
-
   async submit(id: string): Promise<boolean> {
     const application = await this.applicationModel.findByPk(id)
     const form = await this.formModel.findByPk(application?.formId || '')
@@ -265,33 +207,41 @@ export class ApplicationsService {
     }
 
     const applicationResponseDto = await this.getApplication(id, '', null)
+
     if (!applicationResponseDto.application) {
       throw new NotFoundException(`Application DTO with id '${id}' not found.`)
     }
+
     const applicationDto = applicationResponseDto.application
     applicationDto.submittedAt = new Date()
+    applicationDto.status = ApplicationStatus.COMPLETED
+    const applicationEvent = await this.applicationEventModel.create({
+      applicationId: application.id,
+      eventType: ApplicationEvents.APPLICATION_SUBMITTED,
+      eventMessage: {
+        is: 'Umsókn móttekin',
+        en: 'Application submitted',
+      },
+    } as ApplicationEvent)
+    if (!applicationDto.events) {
+      applicationDto.events = []
+    }
+    applicationDto.events.push(applicationEvent)
 
     const success: boolean = await this.serviceManager.send(applicationDto)
 
     if (success) {
-      application.status = ApplicationStatus.COMPLETED
-      application.submittedAt = applicationDto.submittedAt
-      application.pruneAt = calculatePruneAt(form.daysUntilApplicationPrune)
-      await this.sequelize.transaction(async (transaction) => {
-        await application.save({ transaction })
-
-        await this.applicationEventModel.create(
-          {
-            applicationId: application.id,
-            eventType: ApplicationEvents.APPLICATION_SUBMITTED,
-            eventMessage: {
-              is: 'Umsókn móttekin',
-              en: 'Application submitted',
-            },
-          } as ApplicationEvent,
-          { transaction },
-        )
-      })
+      try {
+        application.status = applicationDto.status
+        application.submittedAt = applicationDto.submittedAt
+        application.pruneAt = calculatePruneAt(form.daysUntilApplicationPrune)
+        await application.save()
+      } catch (error) {
+        await applicationEvent.destroy()
+        throw error
+      }
+    } else {
+      await applicationEvent.destroy()
     }
 
     return success
@@ -399,6 +349,7 @@ export class ApplicationsService {
 
     if (user) {
       const loginTypes = await this.getLoginTypes(user)
+
       if (
         !this.isLoginAllowed(loginTypes, allowedLoginTypes) ||
         !this.doesUserMatchApplication(application, user, loginTypes)
@@ -785,34 +736,22 @@ export class ApplicationsService {
     return form
   }
 
-  // eslint-disable-next-line
-  private updateObjectValues<T extends Record<string, any>>(
-    source: T,
-    target: T,
-  ): T {
-    const updated = { ...target } // copy to avoid mutating directly
-    ;(Object.keys(source) as (keyof T)[]).forEach((key) => {
-      updated[key] = source[key]
-    })
-    return updated
-  }
-
   async saveScreen(
-    screenId: string,
     submitScreenDto: SubmitScreenDto,
-  ): Promise<ScreenDto> {
-    const screen = await this.screenModel.findByPk(screenId)
+    user: User,
+  ): Promise<void> {
+    const {
+      applicationId,
+      screenId: currentScreenId = '',
+      sectionId: currentSectionId = '',
+      sections,
+    } = submitScreenDto
+    const currentSection = this.getCurrentSection(sections, currentSectionId)
+    const currentScreen = this.getCurrentScreen(currentSection, currentScreenId)
 
-    if (!screen) {
-      throw new NotFoundException(`Screen with id '${screenId}' not found`)
-    }
-    const { screenDto, applicationId } = submitScreenDto
-
-    if (!screenDto) {
-      throw new NotFoundException(`ScreenDto not found`)
-    }
-
-    const application = await this.applicationModel.findByPk(applicationId)
+    const application = await this.applicationModel.findByPk(applicationId, {
+      include: [{ model: Value, as: 'values' }],
+    })
 
     if (!application) {
       throw new NotFoundException(
@@ -820,135 +759,310 @@ export class ApplicationsService {
       )
     }
 
-    if (screenDto.fields) {
-      for (const field of screenDto.fields) {
-        if (field.values) {
-          for (const value of field.values) {
-            const existingValue = await this.valueModel.findOne({
-              where: {
-                fieldId: field.id,
-                applicationId: applicationId,
-                id: value.id,
-              },
-            })
+    const loginTypes = await this.getLoginTypes(user)
+    if (!this.doesUserMatchApplication(application, user, loginTypes)) {
+      throw new UnauthorizedException(
+        `User is not authorized to save screen for application '${applicationId}'`,
+      )
+    }
 
-            const updatedJson = this.updateObjectValues(
-              value.json || {},
-              existingValue?.json || {},
-            )
+    let completedArray = application.completed || []
+    let draftFinishedSteps = application.draftFinishedSteps || 0
 
-            await this.valueModel.update(
-              { json: updatedJson },
-              {
-                where: {
-                  fieldId: field.id,
-                  applicationId: applicationId,
-                  id: value.id,
-                },
-              },
+    // Going forward or backward in the application
+    if (submitScreenDto.increment === true) {
+      if (this.doesSectionHaveScreen(currentSection)) {
+        if (!completedArray.includes(currentScreenId)) {
+          completedArray = [...completedArray, currentScreenId]
+        }
+        if (this.isLastScreenInSection(currentSection, currentScreenId)) {
+          if (!completedArray.includes(currentSectionId)) {
+            completedArray = [...completedArray, currentSectionId]
+            draftFinishedSteps = draftFinishedSteps + 1
+          }
+        }
+      } else {
+        if (!completedArray.includes(currentSectionId)) {
+          completedArray = [...completedArray, currentSectionId]
+          if (currentSection.sectionType !== SectionTypes.PREMISES) {
+            draftFinishedSteps = draftFinishedSteps + 1
+          }
+        }
+      }
+    } else {
+      if (
+        this.doesSectionHaveScreen(currentSection) &&
+        !this.isFirstScreenInSection(currentSection, currentScreenId)
+      ) {
+        const previousScreen = this.getPreviousScreen(
+          currentSection,
+          currentScreenId,
+        )
+        if (previousScreen && completedArray.includes(previousScreen.id)) {
+          completedArray = completedArray.filter(
+            (id) => id !== previousScreen.id,
+          )
+        }
+      } else if (
+        !this.doesSectionHaveScreen(currentSection) ||
+        (this.doesSectionHaveScreen(currentSection) &&
+          this.isFirstScreenInSection(currentSection, currentScreenId))
+      ) {
+        const previousSection = this.getPreviousSection(
+          sections,
+          currentSectionId,
+        )
+        if (previousSection) {
+          if (completedArray.includes(previousSection.id)) {
+            completedArray = completedArray.filter(
+              (id) => id !== previousSection.id,
             )
+            draftFinishedSteps = Math.max(0, draftFinishedSteps - 1)
+          }
+          if (this.doesSectionHaveScreen(previousSection)) {
+            const lastScreenOfPreviousSection =
+              this.getLastScreenInSection(previousSection)
+            if (
+              lastScreenOfPreviousSection &&
+              completedArray.includes(lastScreenOfPreviousSection.id)
+            ) {
+              completedArray = completedArray.filter(
+                (id) => id !== lastScreenOfPreviousSection.id,
+              )
+            }
           }
         }
       }
     }
 
-    if (!application.completed?.includes(screen.id)) {
-      await application.update({
-        ...application,
-        completed: [...(application.completed ?? []), screen.id],
-      })
-    }
-    const lastScreen = await this.screenModel.findOne({
-      where: { sectionId: screen.sectionId },
-      order: [['displayOrder', 'DESC']],
-    })
-    if (
-      lastScreen &&
-      lastScreen.id === screenId &&
-      !application.completed?.includes(screen.sectionId)
-    ) {
-      await application.update({
-        ...application,
-        completed: [...(application.completed ?? []), screen.sectionId],
-        draftFinishedSteps: application.draftFinishedSteps + 1,
-      })
-      await application.update({
-        ...application,
+    await this.sequelize.transaction(async (transaction) => {
+      application.completed = completedArray
+      application.draftFinishedSteps = draftFinishedSteps
+      await application.save({ transaction })
 
-        draftTotalSteps: await this.calculateDraftTotalSteps(
-          application.formId,
-          application.dependencies || [],
-        ),
-      })
-    }
+      if (submitScreenDto.increment && currentScreen) {
+        const filteredFields = currentScreen.fields?.filter(
+          (field) => field.isHidden === false,
+        )
 
-    const screenResult = await this.screenModel.findByPk(screenId, {
-      include: [{ model: this.fieldModel, include: [this.valueModel] }],
-    })
+        const filteredScreenDto = { ...currentScreen, fields: filteredFields }
+        await Promise.all(
+          (filteredScreenDto.fields ?? []).map(async (field) => {
+            if (field.isPartOfMultiset) {
+              await this.valueModel.destroy({
+                where: {
+                  fieldId: field.id,
+                  applicationId,
+                },
+                transaction,
+              })
 
-    if (!screenResult) {
-      throw new NotFoundException(`Screen with id '${screenId}' not found`)
-    }
-    return screenResult as unknown as ScreenDto
-  }
-
-  async submitSection(applicationId: string, sectionId: string): Promise<void> {
-    const application = await this.applicationModel.findByPk(applicationId)
-
-    if (!application) {
-      throw new NotFoundException(
-        `Application with id '${applicationId}' not found`,
-      )
-    }
-
-    const section = await this.sectionModel.findByPk(sectionId, {
-      include: [
-        {
-          model: Screen,
-          as: 'screens',
-          include: [
-            {
-              model: Field,
-              as: 'fields',
-              include: [this.valueModel],
-            },
-          ],
-        },
-      ],
-    })
-
-    if (!section) {
-      throw new NotFoundException(`Section with id '${sectionId}' not found`)
-    }
-
-    // Mark the section as completed
-    if (!application.completed?.includes(section.id)) {
-      application.completed = [...(application.completed ?? []), section.id]
-      if (section.sectionType !== SectionTypes.PREMISES) {
-        application.draftFinishedSteps += 1
+              await Promise.all(
+                (field.values ?? []).map((value, index) =>
+                  this.valueModel.create(
+                    {
+                      fieldId: field.id,
+                      fieldType: field.fieldType,
+                      applicationId,
+                      order: index,
+                      json: value.json,
+                    } as Value,
+                    { transaction },
+                  ),
+                ),
+              )
+            } else {
+              await Promise.all(
+                (field.values ?? [])
+                  .filter((v) => v?.json !== undefined)
+                  .map((value) =>
+                    this.valueModel.update(
+                      {
+                        // Merge existing jsonb with the new payload as jsonb
+                        // COALESCE guards against "json" being NULL
+                        json: this.sequelize.literal(
+                          `COALESCE("json", '{}'::jsonb) || ${this.sequelize.escape(
+                            JSON.stringify(value.json),
+                          )}::jsonb`,
+                        ),
+                      },
+                      {
+                        where: {
+                          id: value.id,
+                          applicationId,
+                          fieldId: field.id,
+                        },
+                        transaction,
+                      },
+                    ),
+                  ),
+              )
+            }
+          }),
+        )
       }
-    }
-
-    application.draftTotalSteps = await this.calculateDraftTotalSteps(
-      application.formId,
-      application.dependencies || [],
-    )
-
-    await application.save()
+    })
   }
 
-  async deleteApplication(id: string): Promise<void> {
-    const application = await this.applicationModel.findByPk(id)
+  async deleteApplication(id: string, user: User): Promise<void> {
+    const application = await this.applicationModel.findByPk(id, {
+      include: [{ model: Value, as: 'values' }],
+    })
 
     if (!application) {
       throw new NotFoundException(`Application with id '${id}' not found`)
     }
 
-    await this.valueModel.destroy({
-      where: { applicationId: id },
-    })
+    const loginTypes = await this.getLoginTypes(user)
+    if (!this.doesUserMatchApplication(application, user, loginTypes)) {
+      throw new UnauthorizedException(
+        `User is not authorized to delete application '${id}'`,
+      )
+    }
 
-    await application.destroy()
+    await this.sequelize.transaction(async (transaction) => {
+      await this.applicationEventModel.destroy({
+        where: { applicationId: id },
+        transaction,
+      })
+
+      await this.valueModel.destroy({
+        where: { applicationId: id },
+        transaction,
+      })
+
+      await application.destroy({ transaction })
+    })
+  }
+
+  private doesSectionHaveScreen(sectionDto: SectionDto): boolean {
+    return sectionDto.screens !== undefined && sectionDto.screens.length > 0
+  }
+
+  private isLastScreenInSection(
+    sectionDto: SectionDto,
+    screenId: string,
+  ): boolean {
+    const screens = sectionDto.screens ?? []
+    const idx = screens.findIndex((s) => s.id === screenId)
+
+    if (idx === -1) {
+      throw new NotFoundException(
+        `Screen with id '${screenId}' not found in section '${sectionDto.id}'`,
+      )
+    }
+
+    for (let i = idx + 1; i < screens.length; i++) {
+      if (screens[i]?.isHidden === false) {
+        return false
+      }
+    }
+
+    return true
+  }
+
+  private isFirstScreenInSection(
+    sectionDto: SectionDto,
+    screenId: string,
+  ): boolean {
+    const screens = sectionDto.screens ?? []
+    const idx = screens.findIndex((s) => s.id === screenId)
+
+    if (idx === -1) {
+      throw new NotFoundException(
+        `Screen with id '${screenId}' not found in section '${sectionDto.id}'`,
+      )
+    }
+
+    for (let i = 0; i < idx; i++) {
+      if (screens[i]?.isHidden === false) {
+        return false
+      }
+    }
+
+    return true
+  }
+
+  private getCurrentScreen(
+    sectionDto: SectionDto,
+    screenId: string,
+  ): ScreenDto | null {
+    if (screenId === '') {
+      return null
+    }
+    const list = sectionDto.screens ?? []
+    const screenDto = list.find((screen) => screen.id === screenId)
+
+    if (!screenDto) {
+      throw new NotFoundException(
+        `Screen with id '${screenId}' not found in section '${sectionDto.id}'`,
+      )
+    }
+
+    return screenDto
+  }
+
+  private getPreviousScreen(
+    sectionDto: SectionDto,
+    screenId: string,
+  ): ScreenDto | null {
+    const list = sectionDto.screens ?? []
+    const idx = list.findIndex((s) => s.id === screenId)
+    if (idx <= 0) {
+      return null
+    }
+    for (let i = idx - 1; i >= 0; i--) {
+      const screen = list[i]
+      if (screen?.isHidden === false) {
+        return screen
+      }
+    }
+    return null
+  }
+
+  private getCurrentSection(
+    sections: SectionDto[] | undefined,
+    sectionId: string,
+  ): SectionDto {
+    const list = sections ?? []
+    const sectionDto = list.find((section) => section.id === sectionId)
+
+    if (!sectionDto) {
+      throw new NotFoundException(
+        `Section with id '${sectionId}' not found in application`,
+      )
+    }
+
+    return sectionDto
+  }
+
+  private getPreviousSection(
+    sections: SectionDto[] | undefined,
+    sectionId: string,
+  ): SectionDto | null {
+    const list = sections ?? []
+    const idx = list.findIndex((s) => s.id === sectionId)
+    if (idx <= 0) {
+      return null
+    }
+    for (let i = idx - 1; i >= 0; i--) {
+      const section = list[i]
+      if (section?.isHidden === false) {
+        return section
+      }
+    }
+    return null
+  }
+
+  private getLastScreenInSection(sectionDto: SectionDto): ScreenDto | null {
+    const screens = sectionDto.screens ?? []
+    for (let i = screens.length - 1; i >= 0; i--) {
+      const screen = screens[i]
+      if (screen?.isHidden === false) {
+        return screen
+      }
+    }
+    return null
   }
 
   private async calculateDraftTotalSteps(
