@@ -54,7 +54,9 @@ export const RealEstateSearch: FC<React.PropsWithChildren<FieldBaseProps>> = (
         setShowApiError(false)
       }
 
-      setRealEstates(resProperty)
+      if (resProperty) {
+        setRealEstates(resProperty)
+      }
     },
     onError() {
       setShowSearchError(false)
