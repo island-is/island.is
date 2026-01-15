@@ -48,7 +48,10 @@ export const DocAsMainText = ({ applicationId }: { applicationId: string }) => {
         fileList={files}
         accept={['.doc', '.docx']}
         onChange={(f) => {
-          setValue(InputFields.misc.mainTextFilename, f)
+          setValue(
+            InputFields.misc.mainTextFilename,
+            f[0]?.name || 'meginmal.docx',
+          )
           updateApplication({
             ...currentApplication.answers,
             advert: {
