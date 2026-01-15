@@ -187,13 +187,23 @@ export class ZendeskService {
     return { name, email }
   }
 
+  private escapeHtml(str: string): string {
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;')
+  }
+
   private constructBody(applicationDto: ApplicationDto): string {
-    const sections = applicationDto.sections?.filter(
-      (section) =>
-        section.sectionType !== SectionTypes.PREMISES &&
-        section.sectionType !== SectionTypes.SUMMARY &&
-        section.sectionType !== SectionTypes.COMPLETED,
-    )
+    const sections =
+      applicationDto.sections?.filter(
+        (section) =>
+          section.sectionType !== SectionTypes.PREMISES &&
+          section.sectionType !== SectionTypes.SUMMARY &&
+          section.sectionType !== SectionTypes.COMPLETED,
+      ) ?? []
 
     const indent = (px: number) => `padding-left:${px}px`
 
@@ -263,13 +273,15 @@ export class ZendeskService {
                   parts.push(
                     h(
                       6,
-                      `${attribute.is}:`,
+                      `${this.escapeHtml(attribute.is)}:`,
                       `display:inline-block;${indent(30)};margin-right:4px`,
                     ),
-                    `<p style="display:inline-block;margin:0">${val}</p><br />`,
+                    `<p style="display:inline-block;margin:0">${this.escapeHtml(
+                      val,
+                    )}</p><br />`,
                   )
                 } else {
-                  parts.push(p0(`${val}`, indent(30)))
+                  parts.push(p0(`${this.escapeHtml(val)}`, indent(30)))
                 }
               }
             }

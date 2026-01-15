@@ -231,10 +231,15 @@ export class ApplicationsService {
     const success: boolean = await this.serviceManager.send(applicationDto)
 
     if (success) {
-      application.status = applicationDto.status
-      application.submittedAt = applicationDto.submittedAt
-      application.pruneAt = calculatePruneAt(form.daysUntilApplicationPrune)
-      await application.save()
+      try {
+        application.status = applicationDto.status
+        application.submittedAt = applicationDto.submittedAt
+        application.pruneAt = calculatePruneAt(form.daysUntilApplicationPrune)
+        await application.save()
+      } catch (error) {
+        await applicationEvent.destroy()
+        throw error
+      }
     } else {
       await applicationEvent.destroy()
     }
