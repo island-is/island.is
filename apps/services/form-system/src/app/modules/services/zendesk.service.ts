@@ -5,11 +5,10 @@ import {
   EnhancedFetchAPI,
 } from '@island.is/clients/middlewares'
 import { FieldTypesEnum, SectionTypes } from '@island.is/form-system/shared'
-import { ValueType } from '../../dataTypes/valueTypes/valueType.model'
 import { getLanguageTypeForValueTypeAttribute } from '../../dataTypes/valueTypes/valueType.helper'
 import { CustomField } from './models/zendeskCustomField.dto'
 import { environment } from '../../../environments'
-
+import { ValueType } from '../../dataTypes/valueTypes/valueType.model'
 @Injectable()
 export class ZendeskService {
   enhancedFetch: EnhancedFetchAPI
@@ -157,7 +156,7 @@ export class ZendeskService {
 
   private findLoggedInApplicantJson(
     applicationDto: ApplicationDto,
-  ): Record<string, any> | undefined {
+  ): ValueType | undefined {
     for (const section of applicationDto.sections?.filter(
       (section) => section.sectionType === SectionTypes.PARTIES,
     ) ?? []) {
@@ -165,10 +164,9 @@ export class ZendeskService {
         for (const field of screen.fields ?? []) {
           if (field.fieldType === FieldTypesEnum.APPLICANT) {
             for (const value of field.values ?? []) {
-              const json = value?.json as Record<string, any> | undefined
+              const json = value?.json as ValueType | undefined
               if (!json) continue
-              const flag = json.isLoggedInUser
-              if (flag === true || flag === 'true') {
+              if (json.isLoggedInUser === true) {
                 return json
               }
             }
@@ -206,15 +204,6 @@ export class ZendeskService {
       `<h${level} style="${style}">${inner}</h${level}>`
 
     const formatDateIs = (d?: Date) => d?.toLocaleString('is-IS') ?? ''
-
-    const hasNonNullValue = (values?: { json?: unknown }[]) =>
-      values?.some(
-        (v) =>
-          v.json !== null &&
-          v.json !== undefined &&
-          (typeof v.json !== 'object' ||
-            Object.values(v.json).some((val) => val != null)),
-      ) ?? false
 
     const parts: string[] = []
 
