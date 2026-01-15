@@ -76,10 +76,11 @@ describe('InternalCaseController - Deliver appeal to police', () => {
       appealState: CaseAppealState.COMPLETED,
       policeCaseNumbers: [policeCaseNumber],
       courtCaseNumber,
-      defendants: [{ nationalId: defendantNationalId }],
+      defendants: [{ nationalId: uuid() }],
       validToDate,
       conclusion: caseConclusion,
       caseFiles: [caseFile],
+      policeDefendantNationalId: defendantNationalId,
     } as Case
 
     let then: Then

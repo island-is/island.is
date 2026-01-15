@@ -1,4 +1,4 @@
-import { m } from '@island.is/form-system/ui'
+import { InfoButton, m } from '@island.is/form-system/ui'
 import { Box, Breadcrumbs } from '@island.is/island-ui/core'
 import { useContext } from 'react'
 import { useIntl } from 'react-intl'
@@ -13,13 +13,14 @@ export const FormsLayout = () => {
 
   return (
     <>
-      <Box marginBottom={3}>
+      <Box marginBottom={3} display="flex" justifyContent="spaceBetween">
         <Breadcrumbs
           items={[
             { title: 'Ísland.is', href: '/stjornbord' },
             { title: formatMessage(m.rootName) },
           ]}
         />
+        <InfoButton />
       </Box>
       <FormsHeader />
       {location === 'forms' ? (

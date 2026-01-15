@@ -2,7 +2,6 @@ import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Box } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { isInvestigationCase } from '@island.is/judicial-system/types'
@@ -21,6 +20,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
 import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/hooks'
+import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
 import { shouldUseAppealWithdrawnRoutes } from '@island.is/judicial-system-web/src/utils/utils'
 
@@ -70,20 +70,20 @@ const CourtOfAppealOverview = () => {
       >
         <PageHeader title={titleForCase(formatMessage, workingCase)} />
         <FormContentContainer>
-          <CaseOverviewHeader
-            alerts={
-              workingCase.requestAppealRulingNotToBePublished
-                ? [
-                    {
-                      message: formatMessage(
-                        strings.requestAppealRulingNotToBePublished,
-                      ),
-                    },
-                  ]
-                : undefined
-            }
-          />
-          <Box marginBottom={5}>
+          <div className={grid({ gap: 5, marginBottom: 10 })}>
+            <CaseOverviewHeader
+              alerts={
+                workingCase.requestAppealRulingNotToBePublished
+                  ? [
+                      {
+                        message: formatMessage(
+                          strings.requestAppealRulingNotToBePublished,
+                        ),
+                      },
+                    ]
+                  : undefined
+              }
+            />
             <InfoCard
               sections={[
                 {
@@ -116,24 +116,20 @@ const CourtOfAppealOverview = () => {
                 },
               ]}
             />
-          </Box>
-          {user ? (
-            <Box marginBottom={3}>
+            {user ? (
               <CaseFilesAccordionItem
                 workingCase={workingCase}
                 setWorkingCase={setWorkingCase}
                 user={user}
               />
-            </Box>
-          ) : null}
-          <Box marginBottom={6}>
+            ) : null}
             <Conclusion
               title={formatMessage(conclusion.title)}
               conclusionText={workingCase.conclusion}
               judgeName={workingCase.judge?.name}
             />
-          </Box>
-          <CaseFilesOverview />
+            <CaseFilesOverview />
+          </div>
         </FormContentContainer>
         <FormContentContainer isFooter>
           <FormFooter

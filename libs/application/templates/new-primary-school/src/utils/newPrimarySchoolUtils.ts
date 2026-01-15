@@ -362,6 +362,11 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'currentNursery.nursery',
   )
 
+  const hasCurrentNursery = getValueViaPath<YesOrNo>(
+    answers,
+    'currentNursery.hasCurrentNursery',
+  )
+
   const applyForPreferredSchool = getValueViaPath<YesOrNo>(
     answers,
     'school.applyForPreferredSchool',
@@ -474,6 +479,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     alternativeSpecialEducationDepartment,
     currentNurseryMunicipality,
     currentNursery,
+    hasCurrentNursery,
     applyForPreferredSchool,
     currentSchoolId,
     attachmentsFiles,
