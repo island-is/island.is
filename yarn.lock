@@ -21399,14 +21399,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vanilla-extract/next-plugin@npm:2.4.14":
-  version: 2.4.14
-  resolution: "@vanilla-extract/next-plugin@npm:2.4.14"
+"@vanilla-extract/next-plugin@npm:2.0.2":
+  version: 2.0.2
+  resolution: "@vanilla-extract/next-plugin@npm:2.0.2"
   dependencies:
-    "@vanilla-extract/webpack-plugin": "npm:^2.3.22"
+    "@vanilla-extract/webpack-plugin": "npm:^2.1.7"
+    browserslist: "npm:^4.19.1"
   peerDependencies:
-    next: ">=12.1.7"
-  checksum: 10/e4933e4d96d0b1b9e7c75d1b2302c52967128be5dc0e741a928140c49461600a688215eff9e76942db4465b46b1a9778e46bcf271a7c88b883f8304f2ed0500f
+    next: ">=12.0.5"
+  checksum: 10/291a20aeb017736287db8d42e789f49f716bc18138a765b09fc70842f0411215f219f63c0c9e909382111a779bb1804ed1d0a0f504c15a8ac1e8129e7f305b1a
   languageName: node
   linkType: hard
 
@@ -21440,7 +21441,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vanilla-extract/webpack-plugin@npm:^2.3.22":
+"@vanilla-extract/webpack-plugin@npm:^2.1.7":
   version: 2.3.22
   resolution: "@vanilla-extract/webpack-plugin@npm:2.3.22"
   dependencies:
@@ -36086,7 +36087,7 @@ __metadata:
     "@typescript-eslint/parser": "npm:7.18.0"
     "@vanilla-extract/babel-plugin": "npm:1.1.6"
     "@vanilla-extract/css": "npm:1.7.0"
-    "@vanilla-extract/next-plugin": "npm:2.4.14"
+    "@vanilla-extract/next-plugin": "npm:2.0.2"
     "@vanilla-extract/recipes": "npm:0.4.0"
     "@vanilla-extract/webpack-plugin": "npm:2.1.10"
     "@xstate/react": "npm:0.8.1"
