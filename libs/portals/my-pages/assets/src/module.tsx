@@ -6,6 +6,8 @@ import { AssetsPaths } from './lib/paths'
 import { translationLoader } from './screens/Translation.loader'
 import { Navigate } from 'react-router-dom'
 import { redirects } from './assetRedirects'
+import { isAllowedBulkMileageUploadLoader } from './loaders/isAllowedBulkMileageUploadloader'
+import { BulkMileageWrapper } from './wrappers/BulkMileageWrapper'
 
 const IPOverview = lazy(() =>
   import(
@@ -147,25 +149,41 @@ export const assetsModule: PortalModule = {
         name: m.vehiclesBulkMileage,
         path: AssetsPaths.AssetsVehiclesBulkMileage,
         enabled: userInfo.scopes.includes(ApiScope.vehicles),
+        loader: isAllowedBulkMileageUploadLoader({ userInfo, ...rest }),
         element: <VehicleBulkMileage />,
       },
       {
         name: m.vehiclesBulkMileageUpload,
         path: AssetsPaths.AssetsVehiclesBulkMileageUpload,
         enabled: userInfo.scopes.includes(ApiScope.vehicles),
-        element: <VehicleBulkMileageUpload />,
+        loader: isAllowedBulkMileageUploadLoader({ userInfo, ...rest }),
+        element: (
+          <BulkMileageWrapper>
+            <VehicleBulkMileageUpload />
+          </BulkMileageWrapper>
+        ),
       },
       {
         name: m.vehiclesBulkMileageJobOverview,
         path: AssetsPaths.AssetsVehiclesBulkMileageJobOverview,
         enabled: userInfo.scopes.includes(ApiScope.vehicles),
-        element: <VehicleBulkMileageJobOverview />,
+        loader: isAllowedBulkMileageUploadLoader({ userInfo, ...rest }),
+        element: (
+          <BulkMileageWrapper>
+            <VehicleBulkMileageJobOverview />
+          </BulkMileageWrapper>
+        ),
       },
       {
         name: m.vehiclesBulkMileageJobDetail,
         path: AssetsPaths.AssetsVehiclesBulkMileageJobDetail,
         enabled: userInfo.scopes.includes(ApiScope.vehicles),
-        element: <VehicleBulkMileageJobDetail />,
+        loader: isAllowedBulkMileageUploadLoader({ userInfo, ...rest }),
+        element: (
+          <BulkMileageWrapper>
+            <VehicleBulkMileageJobDetail />
+          </BulkMileageWrapper>
+        ),
       },
       {
         name: m.vehiclesLookup,

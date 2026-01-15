@@ -14,7 +14,6 @@ import { CompletedSectionInfo } from '../../../dataTypes/completedSectionInfo.mo
 import { Dependency } from '../../../dataTypes/dependency.model'
 import { LanguageType } from '../../../dataTypes/languageType.model'
 import { FormCertificationType } from '../../formCertificationTypes/models/formCertificationType.model'
-import { FormUrl } from '../../formUrls/models/formUrl.model'
 import { Organization } from '../../organizations/models/organization.model'
 import { Section } from '../../sections/models/section.model'
 
@@ -76,6 +75,20 @@ export class Form extends Model<Form> {
   modified!: CreationOptional<Date>
 
   @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    defaultValue: '',
+  })
+  submissionServiceUrl!: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    defaultValue: '',
+  })
+  validationServiceUrl!: string
+
+  @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
     defaultValue: false,
@@ -100,13 +113,13 @@ export class Form extends Model<Form> {
     type: DataType.INTEGER,
     defaultValue: 30,
   })
-  applicationDaysToRemove!: number
+  daysUntilApplicationPrune!: number
 
   @Column({
     type: DataType.UUID,
     allowNull: true,
   })
-  derivedFrom!: string
+  derivedFrom!: string | null
 
   @Column({
     type: DataType.ENUM,
@@ -143,26 +156,23 @@ export class Form extends Model<Form> {
   completedSectionInfo!: CompletedSectionInfo
 
   @Column({
+    type: DataType.NUMBER,
+    allowNull: false,
+    defaultValue: 0,
+  })
+  draftTotalSteps!: number
+
+  @Column({
     type: DataType.JSON,
     allowNull: true,
   })
   dependencies?: Dependency[]
-
-  @Column({
-    type: DataType.JSONB,
-    allowNull: false,
-    defaultValue: [],
-  })
-  allowedDelegationTypes!: string[]
 
   @HasMany(() => Section)
   sections!: Section[]
 
   @HasMany(() => FormCertificationType)
   formCertificationTypes?: FormCertificationType[]
-
-  @HasMany(() => FormUrl)
-  formUrls?: FormUrl[]
 
   @ForeignKey(() => Organization)
   @Column({

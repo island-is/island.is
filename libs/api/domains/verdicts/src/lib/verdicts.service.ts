@@ -6,6 +6,7 @@ import { VerdictByIdInput } from './dto/verdictById.input'
 import { CourtAgendasResponse } from './dto/courtAgendas.response'
 import { CourtAgendasInput } from './dto/courtAgendas.input'
 import { LawyersResponse } from './dto/lawyers.response'
+import { CaseFilterOptionsResponse } from './dto/caseFilterOptions.response'
 
 @Injectable()
 export class VerdictsService {
@@ -23,6 +24,7 @@ export class VerdictsService {
       dateFrom: input.dateFrom,
       dateTo: input.dateTo,
       laws: input.laws,
+      caseContact: input.caseContact,
     })
     return {
       items: response.items,
@@ -37,12 +39,8 @@ export class VerdictsService {
     return this.verdictsClientService.getSingleVerdictById(input.id)
   }
 
-  async getCaseTypes() {
-    return this.verdictsClientService.getCaseTypes()
-  }
-
-  async getCaseCategories() {
-    return this.verdictsClientService.getCaseCategories()
+  async getCaseFilterOptionsPerCourt(): Promise<CaseFilterOptionsResponse> {
+    return this.verdictsClientService.getCaseFilterOptionsPerCourt()
   }
 
   async getKeywords() {

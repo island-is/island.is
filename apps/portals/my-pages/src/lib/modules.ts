@@ -9,7 +9,10 @@ import { educationCareerModule } from '@island.is/portals/my-pages/education-car
 import { educationStudentAssessmentModule } from '@island.is/portals/my-pages/education-student-assessment'
 import { financeModule } from '@island.is/portals/my-pages/finance'
 import { petitionsModule } from '@island.is/portals/my-pages/petitions'
-import { informationModule } from '@island.is/portals/my-pages/information'
+import {
+  informationModule,
+  companyInformationModule,
+} from '@island.is/portals/my-pages/information'
 import { licensesModule } from '@island.is/portals/my-pages/licenses'
 import { airDiscountModule } from '@island.is/portals/my-pages/air-discount'
 import { delegationsModule } from '@island.is/portals/shared-modules/delegations'
@@ -20,6 +23,7 @@ import { occupationalLicensesModule } from '@island.is/portals/my-pages/occupati
 import { signatureCollectionModule } from '@island.is/portals/my-pages/signature-collection'
 import { socialInsuranceMaintenanceModule } from '@island.is/portals/my-pages/social-insurance-maintenance'
 import { lawAndOrderModule } from '@island.is/portals/my-pages/law-and-order'
+import { mileageRegistrationModule } from '@island.is/portals/my-pages/mileage-registration'
 
 /**
  * NOTE:
@@ -41,7 +45,9 @@ export const modules: PortalModule[] = [
   healthModule,
   indexModule,
   informationModule,
+  companyInformationModule,
   licensesModule,
+  mileageRegistrationModule,
   occupationalLicensesModule,
   restrictionsModule,
   sessionsModule,

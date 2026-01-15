@@ -472,6 +472,8 @@ export const informationForDefendantMap: Map<
         is: 'Leiðbeiningar um endurupptöku útivistarmála',
         en: 'Instructions for reopening of absenteeism cases',
       },
+      detail:
+        'Þegar máli lýkur með útivistardómi getur ákærði ekki áfrýjað niðurstöðunni heldur verður hann að krefjast endurupptöku málsins.',
       description: {
         is: INSTRUCTIONS_ON_REOPENING_OUT_OF_COURT_CASES_DESCRIPTION,
         en: INSTRUCTIONS_ON_REOPENING_OUT_OF_COURT_CASES_DESCRIPTION_EN,

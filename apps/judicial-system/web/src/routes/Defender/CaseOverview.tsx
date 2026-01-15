@@ -155,7 +155,7 @@ export const CaseOverview = () => {
               sections={[
                 {
                   id: 'defendants-section',
-                  items: [defendants(workingCase.type)],
+                  items: [defendants({ caseType: workingCase.type })],
                 },
                 ...(showItem(victims)
                   ? [
@@ -218,7 +218,9 @@ export const CaseOverview = () => {
               />
             </Box>
           )}
-          <AppealCaseFilesOverview />
+          <Box marginBottom={6}>
+            <AppealCaseFilesOverview />
+          </Box>
           {(workingCase.requestSharedWithDefender ===
             RequestSharedWithDefender.READY_FOR_COURT ||
             workingCase.requestSharedWithDefender ===

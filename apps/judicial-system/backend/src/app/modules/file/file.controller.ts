@@ -66,6 +66,7 @@ import { CurrentCaseFile } from './guards/caseFile.decorator'
 import { CaseFileExistsGuard } from './guards/caseFileExists.guard'
 import { CreateCivilClaimantCaseFileGuard } from './guards/createCivilClaimantCaseFile.guard'
 import { CreateDefendantCaseFileGuard } from './guards/createDefendantCaseFile.guard'
+import { SplitCaseFileExistsGuard } from './guards/splitCaseFileExists.guard'
 import { ViewCaseFileGuard } from './guards/viewCaseFile.guard'
 import { DeleteFileResponse } from './models/deleteFile.response'
 import { PresignedPost } from './models/presignedPost.model'
@@ -77,7 +78,7 @@ import { FileService } from './file.service'
 
 @Controller('api/case/:caseId')
 @ApiTags('files')
-@UseGuards(JwtAuthUserGuard)
+@UseGuards(JwtAuthUserGuard, RolesGuard, CaseExistsGuard)
 export class FileController {
   constructor(
     private readonly fileService: FileService,
@@ -85,7 +86,7 @@ export class FileController {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @UseGuards(RolesGuard, CaseExistsGuard, CaseWriteGuard)
+  @UseGuards(CaseWriteGuard)
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
@@ -112,7 +113,7 @@ export class FileController {
     return this.fileService.createPresignedPost(theCase, createPresignedPost)
   }
 
-  @UseGuards(RolesGuard, CaseExistsGuard, CaseWriteGuard)
+  @UseGuards(CaseWriteGuard)
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
@@ -141,13 +142,7 @@ export class FileController {
   }
 
   // TODO: Add tests for this endpoint
-  @UseGuards(
-    RolesGuard,
-    CaseExistsGuard,
-    DefendantExistsGuard,
-    CaseWriteGuard,
-    CreateDefendantCaseFileGuard,
-  )
+  @UseGuards(CaseWriteGuard, DefendantExistsGuard, CreateDefendantCaseFileGuard)
   @RolesRules(publicProsecutorStaffRule)
   @Post('defendant/:defendantId/file')
   @ApiCreatedResponse({
@@ -174,10 +169,8 @@ export class FileController {
 
   // TODO: Add tests for this endpoint
   @UseGuards(
-    RolesGuard,
-    CaseExistsGuard,
-    CivilClaimantExistsGuard,
     CaseWriteGuard,
+    CivilClaimantExistsGuard,
     CreateCivilClaimantCaseFileGuard,
   )
   @RolesRules() // This endpoint is not used by any role at the moment
@@ -204,12 +197,14 @@ export class FileController {
     )
   }
 
+  // Strictly speaking, only district court users need access to
+  // split case files
+  // However, giving prosecution and appeals court users access
+  // does not pose a security risk
   @UseGuards(
-    RolesGuard,
-    CaseExistsGuard,
     CaseReadGuard,
     MergedCaseExistsGuard,
-    CaseFileExistsGuard,
+    SplitCaseFileExistsGuard,
     ViewCaseFileGuard,
   )
   @RolesRules(
@@ -241,7 +236,7 @@ export class FileController {
     return this.fileService.getCaseFileSignedUrl(theCase, caseFile)
   }
 
-  @UseGuards(RolesGuard, CaseExistsGuard, CaseWriteGuard, CaseFileExistsGuard)
+  @UseGuards(CaseWriteGuard, CaseFileExistsGuard)
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
@@ -269,8 +264,6 @@ export class FileController {
   }
 
   @UseGuards(
-    RolesGuard,
-    CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseWriteGuard,
     CaseReceivedGuard,
@@ -299,8 +292,6 @@ export class FileController {
   }
 
   @UseGuards(
-    RolesGuard,
-    CaseExistsGuard,
     new CaseTypeGuard(indictmentCases),
     CaseWriteGuard,
     CaseNotCompletedGuard,
@@ -321,23 +312,14 @@ export class FileController {
     return this.fileService.updateFiles(caseId, updateFiles.files)
   }
 
-  @UseGuards(RolesGuard, CaseExistsGuard, DefendantExistsGuard, CaseWriteGuard)
-  @RolesRules(
-    prosecutorRule,
-    prosecutorRepresentativeRule,
-    districtCourtJudgeRule,
-    districtCourtRegistrarRule,
-    districtCourtAssistantRule,
-    courtOfAppealsJudgeRule,
-    courtOfAppealsRegistrarRule,
-    courtOfAppealsAssistantRule,
-    publicProsecutorStaffRule,
-  )
+  // TODO: Add tests for this endpoint
+  @UseGuards(CaseWriteGuard, DefendantExistsGuard)
+  @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @Post('defendant/:defendantId/criminalRecordFile')
   @ApiCreatedResponse({
     type: UploadCriminalRecordFileResponse,
     description:
-      'Uploads the latest criminal record file for defendant to AWS S3',
+      'Uploads the latest criminal record file for defendant to the national commissioner office',
   })
   async uploadCriminalRecordFile(
     @Param('caseId') caseId: string,

@@ -2,9 +2,9 @@ import { z } from 'zod'
 import {
   applicantInformationSchema,
   capitalIncomeSchema,
-  currentEducationSchema,
   currentJobSchema,
   currentSituationSchema,
+  educationHistorySchema,
   educationSchema,
   employmentHistorySchema,
   familyInformationSchema,
@@ -13,6 +13,7 @@ import {
   otherBenefitsSchema,
   payoutSchema,
   previousEducationSchema,
+  requiredStudies,
   taxDiscountSchema,
   vacationSchema,
 } from '../lib/schemas'
@@ -44,8 +45,10 @@ export type TaxDiscountInAnswers = z.TypeOf<typeof taxDiscountSchema>
 export type VacationInAnswers = z.TypeOf<typeof vacationSchema>
 export type OtherBenefitsInAnswers = z.TypeOf<typeof otherBenefitsSchema>
 export type CapitalIncomeInAnswers = z.TypeOf<typeof capitalIncomeSchema>
-export type EducationHistoryInAnswers = z.TypeOf<typeof previousEducationSchema>
-export type CurrentEducationInAnswers = z.infer<typeof currentEducationSchema>
+export type EducationHistoryInAnswers = z.TypeOf<typeof educationHistorySchema>
+export type RepeatableRequiredEducationInAnswers = z.infer<
+  typeof requiredStudies
+>
 export type EducationInAnswers = z.TypeOf<typeof educationSchema>
 export type PreviousEducationInAnswers = z.TypeOf<
   typeof previousEducationSchema

@@ -11,9 +11,10 @@ import {
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
+import { hasNotificationScopes, UserProfileScope } from '@island.is/auth/scopes'
 import { useAuth, useUserInfo } from '@island.is/react-spa/bff'
 import { sharedMessages, userMessages } from '@island.is/shared/translations'
-import { checkDelegation } from '@island.is/shared/utils'
+import { checkDelegation, isCompany } from '@island.is/shared/utils'
 import cn from 'classnames'
 import { Dispatch, SetStateAction } from 'react'
 import { useWindowSize } from 'react-use'
@@ -53,10 +54,11 @@ export const UserDropdown = ({
   const isDelegation = checkDelegation(user)
   const userName = user.profile.name
   const actorName = actor?.name
-  const isDelegationCompany = user.profile.subjectType === 'legalEntity'
-  const hasAccessToUserProfileInfo = user?.scopes?.includes(
-    '@island.is/documents',
-  )
+  const isDelegationCompany = isCompany(user)
+  const userHasNotificationScopes = hasNotificationScopes(user?.scopes)
+  const hasAccessToUserProfileInfo = isDelegationCompany
+    ? user?.scopes?.includes(UserProfileScope.write)
+    : userHasNotificationScopes
 
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
@@ -76,9 +78,8 @@ export const UserDropdown = ({
       <Box
         position="relative"
         background="white"
-        paddingX={3}
+        paddingX={[2, 2, 3]}
         paddingBottom={2}
-        paddingTop={5}
         borderRadius="large"
         display="flex"
         flexDirection="column"
@@ -145,7 +146,10 @@ export const UserDropdown = ({
               />
 
               {hasAccessToUserProfileInfo && (
-                <UserProfileInfo onClick={() => onClose()} />
+                <UserProfileInfo
+                  onClick={() => onClose()}
+                  isCompany={isDelegationCompany}
+                />
               )}
               <UserDropdownItem
                 text={formatMessage(sharedMessages.logout)}

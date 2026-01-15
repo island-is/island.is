@@ -12,6 +12,7 @@ import {
   fireProtectionsOverview,
   landlordOverview,
   landlordRepresentativeOverview,
+  signatoryOverview,
   otherCostsOverview,
   priceOverview,
   propertyConditionFilesOverview,
@@ -24,6 +25,7 @@ import {
   tenantOverview,
 } from '../../../utils/overviewUtils'
 import {
+  applicantIsCompany,
   securityDepositRequired,
   shouldShowRepresentative,
   singularOrPluralLandlordsTitle,
@@ -65,6 +67,14 @@ export const overviewSection = buildSection({
           id: 'landlordOverview',
           title: singularOrPluralLandlordsTitle,
           items: landlordOverview,
+          backId: Routes.PARTIESINFORMATION,
+        }),
+        // Signatory on behalf of company
+        buildOverviewField({
+          id: 'signatoryOverview',
+          condition: applicantIsCompany,
+          title: m.overview.signatoryHeader,
+          items: signatoryOverview,
           backId: Routes.PARTIESINFORMATION,
         }),
         // Landlord representatives

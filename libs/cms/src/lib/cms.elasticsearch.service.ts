@@ -62,6 +62,10 @@ import { GrantList } from './models/grantList.model'
 import { BloodDonationRestrictionGenericTagList } from './models/bloodDonationRestriction.model'
 import { sortAlpha } from '@island.is/shared/utils'
 import { GetBloodDonationRestrictionsInput } from './dto/getBloodDonationRestrictions.input'
+import {
+  GetCourseCategoriesInput,
+  GetCoursesInput,
+} from './dto/getCourses.input'
 
 @Injectable()
 export class CmsElasticsearchService {
@@ -404,7 +408,18 @@ export class CmsElasticsearchService {
     try {
       const vacancyResponse = await this.elasticService.findById(index, id)
       const response = vacancyResponse.body?._source?.response
-      return response ? JSON.parse(response) : null
+      if (!response) return null
+
+      const vacancy = JSON.parse(response)
+      // Fallback: Use Elasticsearch metadata if vacancy doesn't have createdAt/updatedAt
+      const source = vacancyResponse.body?._source
+      if (vacancy && !vacancy.createdAt && source?.dateCreated) {
+        vacancy.createdAt = source.dateCreated
+      }
+      if (vacancy && !vacancy.updatedAt && source?.dateUpdated) {
+        vacancy.updatedAt = source.dateUpdated
+      }
+      return vacancy
     } catch (error) {
       if (error instanceof ResponseError) {
         if (error?.statusCode === 404) return null
@@ -823,9 +838,18 @@ export class CmsElasticsearchService {
       },
     )
     return vacanciesResponse.hits.hits
-      .map<Vacancy>((response) =>
-        JSON.parse(response._source.response ?? 'null'),
-      )
+      .map<Vacancy>((response) => {
+        const vacancy = JSON.parse(response._source.response ?? 'null')
+        // Fallback: Use Elasticsearch metadata if vacancy doesn't have createdAt/updatedAt
+        // This handles legacy indexed data before these fields were added to the model
+        if (vacancy && !vacancy.createdAt && response._source.dateCreated) {
+          vacancy.createdAt = response._source.dateCreated
+        }
+        if (vacancy && !vacancy.updatedAt && response._source.dateUpdated) {
+          vacancy.updatedAt = response._source.dateUpdated
+        }
+        return vacancy
+      })
       .filter(Boolean)
   }
 
@@ -1455,6 +1479,259 @@ export class CmsElasticsearchService {
     if (queryString.length === 0) {
       sort = [{ 'title.sort': { order: SortDirection.ASC } }]
     }
+
+    const response: ApiResponse<SearchResponse<MappedData>> =
+      await this.elasticService.findByQuery(index, {
+        query: {
+          bool: {
+            must,
+          },
+        },
+        sort,
+        size,
+        from: ((input.page ?? 1) - 1) * size,
+      })
+
+    return {
+      items: response.body.hits.hits
+        .map((item) => JSON.parse(item._source.response ?? 'null'))
+        .filter(Boolean),
+      total: response.body.hits.total.value,
+      input,
+    }
+  }
+
+  async getCourseCategories(index: string, input: GetCourseCategoriesInput) {
+    const response = await this.elasticService.findByQuery(index, {
+      size: 0,
+      aggs: {
+        onlyCourses: {
+          filter: {
+            bool: {
+              must: [
+                {
+                  term: {
+                    type: 'webCourse',
+                  },
+                },
+                ...(input.organizationSlug
+                  ? [
+                      {
+                        nested: {
+                          path: 'tags',
+                          query: {
+                            bool: {
+                              must: [
+                                {
+                                  term: {
+                                    'tags.type': 'organization',
+                                  },
+                                },
+                                {
+                                  term: {
+                                    'tags.key': input.organizationSlug,
+                                  },
+                                },
+                              ],
+                            },
+                          },
+                        },
+                      },
+                    ]
+                  : []),
+                ...(input.courseListPageId
+                  ? [
+                      {
+                        nested: {
+                          path: 'tags',
+                          query: {
+                            bool: {
+                              must: [
+                                {
+                                  term: {
+                                    'tags.type': 'courseListPageId',
+                                  },
+                                },
+                                {
+                                  term: {
+                                    'tags.key': input.courseListPageId,
+                                  },
+                                },
+                              ],
+                            },
+                          },
+                        },
+                      },
+                    ]
+                  : []),
+              ],
+            },
+          },
+          aggs: {
+            uniqueTags: {
+              nested: {
+                path: 'tags',
+              },
+              aggs: {
+                uniqueGenericTags: {
+                  filter: {
+                    term: {
+                      'tags.type': 'genericTag',
+                    },
+                  },
+                  aggs: {
+                    tagKeys: {
+                      terms: {
+                        field: 'tags.key',
+                        size: 1000,
+                      },
+                      aggs: {
+                        tagValues: {
+                          terms: {
+                            field: 'tags.value.keyword',
+                            size: 1,
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    })
+
+    const body = response.body as {
+      aggregations: {
+        onlyCourses: {
+          uniqueTags: {
+            uniqueGenericTags: {
+              tagKeys: {
+                buckets: Array<{
+                  key: string
+                  tagValues: { buckets: Array<{ key: string }> }
+                }>
+              }
+            }
+          }
+        }
+      }
+    }
+
+    const tags =
+      body.aggregations.onlyCourses.uniqueTags.uniqueGenericTags.tagKeys.buckets
+        .filter(
+          (tagResult) =>
+            Boolean(tagResult?.key) &&
+            Boolean(tagResult.tagValues?.buckets?.[0]?.key),
+        )
+        .map((tagResult) => ({
+          key: tagResult.key,
+          value: tagResult.tagValues.buckets[0].key,
+        }))
+
+    tags.sort(sortAlpha('value'))
+
+    return {
+      items: tags.map((tag) => ({
+        key: tag.key,
+        label: tag.value,
+      })),
+    }
+  }
+
+  async getCourseList(index: string, input: GetCoursesInput) {
+    const must: Record<string, unknown>[] = [
+      {
+        term: {
+          type: {
+            value: 'webCourse',
+          },
+        },
+      },
+    ]
+
+    if (!!input.categoryKeys && input.categoryKeys.length > 0) {
+      must.push({
+        nested: {
+          path: 'tags',
+          query: {
+            bool: {
+              should: input.categoryKeys.map((key) => ({
+                bool: {
+                  must: [
+                    {
+                      term: {
+                        'tags.key': key,
+                      },
+                    },
+                    {
+                      term: {
+                        'tags.type': 'genericTag',
+                      },
+                    },
+                  ],
+                },
+              })),
+            },
+          },
+        },
+      })
+    }
+
+    if (!!input.organizationSlug && input.organizationSlug.length > 0) {
+      must.push({
+        nested: {
+          path: 'tags',
+          query: {
+            bool: {
+              must: [
+                {
+                  term: {
+                    'tags.key': input.organizationSlug,
+                  },
+                },
+                {
+                  term: {
+                    'tags.type': 'organization',
+                  },
+                },
+              ],
+            },
+          },
+        },
+      })
+    }
+
+    if (!!input.courseListPageId && input.courseListPageId.length > 0) {
+      must.push({
+        nested: {
+          path: 'tags',
+          query: {
+            bool: {
+              must: [
+                {
+                  term: {
+                    'tags.type': 'courseListPageId',
+                  },
+                },
+                {
+                  term: {
+                    'tags.key': input.courseListPageId,
+                  },
+                },
+              ],
+            },
+          },
+        },
+      })
+    }
+
+    const size = 10
+
+    const sort = [{ 'title.sort': { order: SortDirection.ASC } }]
 
     const response: ApiResponse<SearchResponse<MappedData>> =
       await this.elasticService.findByQuery(index, {

@@ -12,7 +12,7 @@ export const FieldContent = () => {
   const { control, inListBuilder } = useContext(ControlContext)
   const currentItem = control.activeItem.data as FormSystemField
 
-  const hasZendeskSettings = control.form.isZendeskEnabled
+  const hasZendeskSettings = control.form.submissionServiceUrl === 'zendesk'
 
   if (inListBuilder) {
     return <ListBuilder />

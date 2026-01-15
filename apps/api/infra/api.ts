@@ -22,8 +22,8 @@ import {
   HealthDirectorateVaccination,
   HealthDirectorateHealthService,
   HealthInsurance,
+  PoliceCases,
   HousingBenefitCalculator,
-  Hunting,
   IcelandicGovernmentInstitutionVacancies,
   Inna,
   IntellectualProperties,
@@ -53,6 +53,7 @@ import {
   TransportAuthority,
   UniversityCareers,
   Vehicles,
+  NVSPermits,
   VehicleServiceFjsV1,
   VehiclesMileage,
   WorkAccidents,
@@ -62,6 +63,7 @@ import {
   PracticalExams,
   FireCompensation,
   VMSTUnemployment,
+  GoProVerdicts,
 } from '../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (services: {
@@ -395,6 +397,7 @@ export const serviceSetup = (services: {
       FIREARM_LICENSE_FETCH_TIMEOUT: '/k8s/api/FIREARM_LICENSE_FETCH_TIMEOUT',
       DISABILITY_LICENSE_FETCH_TIMEOUT:
         '/k8s/api/DISABILITY_LICENSE_FETCH_TIMEOUT',
+      RLS_CASES_API_KEY: '/k8s/api/RLS_CASES_API_KEY',
       INTELLECTUAL_PROPERTY_API_KEY: '/k8s/api/IP_API_KEY',
       VEHICLES_ALLOW_CO_OWNERS: '/k8s/api/VEHICLES_ALLOW_CO_OWNERS',
       IDENTITY_SERVER_CLIENT_SECRET: '/k8s/api/IDENTITY_SERVER_CLIENT_SECRET',
@@ -455,11 +458,23 @@ export const serviceSetup = (services: {
         '/k8s/api/LANDSPITALI_PAYMENT_NATIONAL_ID_FALLBACK',
       LANDSPITALI_PAYMENT_ORGANISATION_ID:
         '/k8s/api/LANDSPITALI_PAYMENT_ORGANISATION_ID',
+      VERDICTS_SUPREME_COURT_BEARER_TOKEN:
+        '/k8s/api/VERDICTS_SUPREME_COURT_BEARER_TOKEN',
+      FINANCIAL_MANAGEMENT_AUTHORITY_BASE_PATH:
+        '/k8s/api/FINANCIAL_MANAGEMENT_AUTHORITY_BASE_PATH',
+      FINANCIAL_MANAGEMENT_AUTHORITY_CLIENT_ID:
+        '/k8s/api/FINANCIAL_MANAGEMENT_AUTHORITY_CLIENT_ID',
+      FINANCIAL_MANAGEMENT_AUTHORITY_CLIENT_SECRET:
+        '/k8s/api/FINANCIAL_MANAGEMENT_AUTHORITY_CLIENT_SECRET',
+      FINANCIAL_MANAGEMENT_AUTHORITY_SCOPE:
+        '/k8s/api/FINANCIAL_MANAGEMENT_AUTHORITY_SCOPE',
+      FINANCIAL_MANAGEMENT_AUTHORITY_AUTHENTICATION_SERVER:
+        '/k8s/api/FINANCIAL_MANAGEMENT_AUTHORITY_AUTHENTICATION_SERVER',
     })
     .xroad(
       AdrAndMachine,
       JudicialAdministration,
-      Hunting,
+      PoliceCases,
       Firearm,
       Disability,
       Base,
@@ -471,6 +486,7 @@ export const serviceSetup = (services: {
       Labor,
       DrivingLicense,
       Payment,
+      NVSPermits,
       DistrictCommissionersPCard,
       DistrictCommissionersLicenses,
       Finance,
@@ -519,6 +535,7 @@ export const serviceSetup = (services: {
       LSH,
       PracticalExams,
       VMSTUnemployment,
+      GoProVerdicts,
     )
     .ingress({
       primary: {
@@ -539,13 +556,13 @@ export const serviceSetup = (services: {
     })
     .resources({
       limits: { cpu: '1200m', memory: '2500Mi' },
-      requests: { cpu: '800m', memory: '1500Mi' },
+      requests: { cpu: '900m', memory: '2000Mi' },
     })
     .replicaCount({
       default: 3,
       max: 50,
       min: 3,
-      cpuAverageUtilization: 75,
+      cpuAverageUtilization: 70,
     })
     .grantNamespaces(
       'nginx-ingress-external',

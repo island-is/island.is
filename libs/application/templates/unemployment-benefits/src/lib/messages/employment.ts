@@ -1,4 +1,5 @@
 import { defineMessages } from 'react-intl'
+import type { MessageDescriptor } from 'react-intl'
 
 export const employment = {
   general: defineMessages({
@@ -60,6 +61,12 @@ export const employment = {
           '  Samkvæmt lögum um atvinnuleysisbætur getur atvinnuleitandi þurft að sæta biðtíma eftir greiðslum atvinnuleysisbóta eða verið neitað um greiðslur atvinnuleysisbóta hafi hann sagt starfi sínu lausu án gildra ástæðna eða misst starfið vegna ástæðna sem hann sjálfur á sök á. Berist Vinnumálastofnun ekki umbeðin gögn eða skýringar til staðfestingar á ástæðum starfsloka mun ákvörðun verða tekin á grundvelli þeirra upplýsinga sem liggja fyrir.',
         description: 'Information box about reasons for unemployment',
       },
+      healthReasonDescription: {
+        id: 'vmst.ub.application:employment.reasonForJobSearch.labels.healthReasonDescription',
+        defaultMessage:
+          'Vegna þess að þú hættir störfum af heilsufarsástæðum þarftu að skila starfshæfnivottorði frá lækni til að ljúka umsókn þinni um atvinnuleysisbætur. Þú getur þó sent inn umsóknina núna og skilað vottorðinu síðar í gegnum Mínar síður.',
+        description: 'Health reason description',
+      },
       bankruptsyReasonLabel: {
         id: 'vmst.ub.application:employment.reasonForJobSearch.labels.bankruptsyReasonLabel',
         defaultMessage:
@@ -73,9 +80,159 @@ export const employment = {
         description: 'Agreement label checkbox label',
       },
       healthReasonFileLabel: {
-        id: 'vmst.ub.application:employment.reasonForJobSearch.abels.healthReasonFileLabel',
+        id: 'vmst.ub.application:employment.reasonForJobSearch.labels.healthReasonFileLabel',
         defaultMessage: 'Læknisvottorð',
         description: 'Health reason file upload label',
+      },
+      onYesIdOne: {
+        id: 'vmst.ub.application:employment.reasonForJobSearch.labels.onYesIdOne#markdown',
+        defaultMessage: 'Vantar texta',
+        description: 'On yes Id 1 -> from Galdur',
+      },
+      onYesIdTwo: {
+        id: 'vmst.ub.application:employment.reasonForJobSearch.labels.onYesIdTwo#markdown',
+        defaultMessage: 'Vantar texta',
+        description: 'On yes Id 2 -> from Galdur',
+      },
+      onYesIdThree: {
+        id: 'vmst.ub.application:employment.reasonForJobSearch.labels.onYesIdThree#markdown',
+        defaultMessage: 'Vantar texta',
+        description: 'On yes Id 3 -> from Galdur',
+      },
+      onYesIdFour: {
+        id: 'vmst.ub.application:employment.reasonForJobSearch.labels.onYesIdFour#markdown',
+        defaultMessage: 'Vantar texta',
+        description: 'On yes Id 4 -> from Galdur',
+      },
+      onYesIdFive: {
+        id: 'vmst.ub.application:employment.reasonForJobSearch.labels.onYesIdFive#markdown',
+        defaultMessage: 'Vantar texta',
+        description: 'On yes Id 5 -> from Galdur',
+      },
+      onYesIdSix: {
+        id: 'vmst.ub.application:employment.reasonForJobSearch.labels.onYesIdSix#markdown',
+        defaultMessage: 'Vantar texta',
+        description: 'On yes Id 6 -> from Galdur',
+      },
+      onYesIdSeven: {
+        id: 'vmst.ub.application:employment.reasonForJobSearch.labels.onYesIdSeven#markdown',
+        defaultMessage: 'Vantar texta',
+        description: 'On yes Id 7 -> from Galdur',
+      },
+      onYesIdEight: {
+        id: 'vmst.ub.application:employment.reasonForJobSearch.labels.onYesIdEight#markdown',
+        defaultMessage: 'Vantar texta',
+        description: 'On yes Id 8 -> from Galdur',
+      },
+      onYesIdNine: {
+        id: 'vmst.ub.application:employment.reasonForJobSearch.labels.onYesIdNine#markdown',
+        defaultMessage: 'Vantar texta',
+        description: 'On yes Id 9 -> from Galdur',
+      },
+      onYesIdTen: {
+        id: 'vmst.ub.application:employment.reasonForJobSearch.labels.onYesIdTen#markdown',
+        defaultMessage: 'Vantar texta',
+        description: 'On yes Id 10 -> from Galdur',
+      },
+      onYesIdEleven: {
+        id: 'vmst.ub.application:employment.reasonForJobSearch.labels.onYesIdEleven#markdown',
+        defaultMessage: 'Vantar texta',
+        description: 'On yes Id 11 -> from Galdur',
+      },
+      onYesIdTwelve: {
+        id: 'vmst.ub.application:employment.reasonForJobSearch.labels.onYesIdTwelve#markdown',
+        defaultMessage: 'Vantar texta',
+        description: 'On yes Id 12 -> from Galdur',
+      },
+      onYesIdThirteen: {
+        id: 'vmst.ub.application:employment.reasonForJobSearch.labels.onYesIdThirteen#markdown',
+        defaultMessage: 'Vantar texta',
+        description: 'On yes Id 13 -> from Galdur',
+      },
+      onYesIdFourteen: {
+        id: 'vmst.ub.application:employment.reasonForJobSearch.labels.onYesIdFourteen#markdown',
+        defaultMessage: 'Vantar texta',
+        description: 'On yes Id 14 -> from Galdur',
+      },
+      onYesIdFifteen: {
+        id: 'vmst.ub.application:employment.reasonForJobSearch.labels.onYesIdFifteen#markdown',
+        defaultMessage: 'Vantar texta',
+        description: 'On yes Id 15 -> from Galdur',
+      },
+      onNoIdOne: {
+        id: 'vmst.ub.application:employment.reasonForJobSearch.labels.onNoIdOne#markdown',
+        defaultMessage: 'Vantar texta',
+        description: 'On no Id 1 -> from Galdur',
+      },
+      onNoIdTwo: {
+        id: 'vmst.ub.application:employment.reasonForJobSearch.labels.onNoIdTwo#markdown',
+        defaultMessage: 'Vantar texta',
+        description: 'On no Id 2 -> from Galdur',
+      },
+      onNoIdThree: {
+        id: 'vmst.ub.application:employment.reasonForJobSearch.labels.onNoIdThree#markdown',
+        defaultMessage: 'Vantar texta',
+        description: 'On no Id 3 -> from Galdur',
+      },
+      onNoIdFour: {
+        id: 'vmst.ub.application:employment.reasonForJobSearch.labels.onNoIdFour#markdown',
+        defaultMessage: 'Vantar texta',
+        description: 'On no Id 4 -> from Galdur',
+      },
+      onNoIdFive: {
+        id: 'vmst.ub.application:employment.reasonForJobSearch.labels.onNoIdFive#markdown',
+        defaultMessage: 'Vantar texta',
+        description: 'On no Id 5 -> from Galdur',
+      },
+      onNoIdSix: {
+        id: 'vmst.ub.application:employment.reasonForJobSearch.labels.onNoIdSix#markdown',
+        defaultMessage: 'Vantar texta',
+        description: 'On no Id 6 -> from Galdur',
+      },
+      onNoIdSeven: {
+        id: 'vmst.ub.application:employment.reasonForJobSearch.labels.onNoIdSeven#markdown',
+        defaultMessage: 'Vantar texta',
+        description: 'On no Id 7 -> from Galdur',
+      },
+      onNoIdEight: {
+        id: 'vmst.ub.application:employment.reasonForJobSearch.labels.onNoIdEight#markdown',
+        defaultMessage: 'Vantar texta',
+        description: 'On no Id 8 -> from Galdur',
+      },
+      onNoIdNine: {
+        id: 'vmst.ub.application:employment.reasonForJobSearch.labels.onNoIdNine#markdown',
+        defaultMessage: 'Vantar texta',
+        description: 'On no Id 9 -> from Galdur',
+      },
+      onNoIdTen: {
+        id: 'vmst.ub.application:employment.reasonForJobSearch.labels.onNoIdTen#markdown',
+        defaultMessage: 'Vantar texta',
+        description: 'On no Id 10 -> from Galdur',
+      },
+      onNoIdEleven: {
+        id: 'vmst.ub.application:employment.reasonForJobSearch.labels.onNoIdEleven#markdown',
+        defaultMessage: 'Vantar texta',
+        description: 'On no Id 11 -> from Galdur',
+      },
+      onNoIdTwelve: {
+        id: 'vmst.ub.application:employment.reasonForJobSearch.labels.onNoIdTwelve#markdown',
+        defaultMessage: 'Vantar texta',
+        description: 'On no Id 12 -> from Galdur',
+      },
+      onNoIdThirteen: {
+        id: 'vmst.ub.application:employment.reasonForJobSearch.labels.onNoIdThirteen#markdown',
+        defaultMessage: 'Vantar texta',
+        description: 'On no Id 13 -> from Galdur',
+      },
+      onNoIdFourteen: {
+        id: 'vmst.ub.application:employment.reasonForJobSearch.labels.onNoIdFourteen#markdown',
+        defaultMessage: 'Vantar texta',
+        description: 'On no Id 14 -> from Galdur',
+      },
+      onNoIdFifteen: {
+        id: 'vmst.ub.application:employment.reasonForJobSearch.labels.onNoIdFifteen#markdown',
+        defaultMessage: 'Vantar texta',
+        description: 'On no Id 15 -> from Galdur',
       },
     }),
   },
@@ -310,6 +467,11 @@ export const employment = {
         defaultMessage: 'Varstu starfandi á eigin kennitölu ?',
         description: 'Independent own ssn checkbox label',
       },
+      lastJobsRepeaterTitle: {
+        id: 'vmst.ub.application:employment.employmentHistory.labels.lastJobsRepeaterTitle',
+        defaultMessage: 'Fyrri störf',
+        description: 'Last job repeater label',
+      },
       lastJobLabel: {
         id: 'vmst.ub.application:employment.employmentHistory.labels.lastJobLabel',
         defaultMessage:
@@ -346,6 +508,11 @@ export const employment = {
         defaultMessage: 'Bæta við starfi',
         description: 'Add job button label',
       },
+      employerSelectLabel: {
+        id: 'vmst.ub.application:employment.employmentHistory.labels.employerSelectLabel',
+        defaultMessage: 'atvinnurekandi',
+        description: 'employer select label',
+      },
       lastJobs: {
         id: 'vmst.ub.application:employment.employmentHistory.labels.lastJobs',
         defaultMessage: 'Fyrra starf',
@@ -353,7 +520,12 @@ export const employment = {
       },
       lastJobRepeater: {
         id: 'vmst.ub.application:employment.employmentHistory.labels.lastJobRepeater',
-        defaultMessage: 'Starf',
+        defaultMessage: 'Fyrra starf',
+        description: 'Last jobs repeater label',
+      },
+      currentJobRepeater: {
+        id: 'vmst.ub.application:employment.employmentHistory.labels.currentJobRepeater',
+        defaultMessage: 'Núverandi starf',
         description: 'Last jobs repeater label',
       },
       radioEesLabel: {
@@ -414,3 +586,16 @@ export const employment = {
     },
   }),
 }
+
+export const contentfulIdMapReasonsForJobSearch: Record<
+  string,
+  MessageDescriptor
+> = Object.values(employment.reasonForJobSearch.labels).reduce(
+  (acc, descriptor) => {
+    if (descriptor.id) {
+      acc[descriptor.id] = descriptor
+    }
+    return acc
+  },
+  {} as Record<string, MessageDescriptor>,
+)

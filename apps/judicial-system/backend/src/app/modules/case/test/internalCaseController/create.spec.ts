@@ -1,5 +1,5 @@
 import { Transaction } from 'sequelize'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { BadRequestException } from '@nestjs/common'
 
@@ -142,6 +142,7 @@ describe('InternalCaseController - Create', () => {
           prosecutorId: userId,
           courtId,
           prosecutorsOfficeId,
+          policeDefendantNationalId: accusedNationalId,
         },
         { transaction },
       )
@@ -268,6 +269,7 @@ describe('InternalCaseController - Create', () => {
           creatingProsecutorId: userId,
           prosecutorsOfficeId,
           withCourtSessions: true,
+          policeDefendantNationalId: accusedNationalId,
         },
         {
           transaction,
@@ -308,6 +310,7 @@ describe('InternalCaseController - Create', () => {
           courtId,
           isHeightenedSecurityLevel: true,
           prosecutorsOfficeId,
+          policeDefendantNationalId: accusedNationalId,
         },
         {
           transaction,

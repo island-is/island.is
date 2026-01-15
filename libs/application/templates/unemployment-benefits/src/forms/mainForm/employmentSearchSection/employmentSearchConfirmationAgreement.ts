@@ -1,5 +1,6 @@
 import {
   buildCheckboxField,
+  buildCustomField,
   buildMultiField,
   buildSubSection,
   YES,
@@ -33,6 +34,12 @@ export const employmentSearchConfirmationAgreementSubSection = buildSubSection({
               label: applicationMessages.agreeCheckbox,
             },
           ],
+        }),
+        //This is currently the last acknowledgment field in the application, if there is one added after this one, this logic needs to be moved to there and new ackowledgement field added to submit
+        buildCustomField({
+          id: 'employmentSearchConfirmationAgreement.addAcknowledgementFields',
+          component: 'AcknowledgementChecksUpdate',
+          doesNotRequireAnswer: true,
         }),
       ],
     }),

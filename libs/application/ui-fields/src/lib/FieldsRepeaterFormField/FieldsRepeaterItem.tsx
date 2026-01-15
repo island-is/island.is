@@ -19,6 +19,7 @@ import {
   RepeaterItem,
   RepeaterOptionValue,
   VehiclePermnoWithInfoField,
+  StaticText,
 } from '@island.is/application/types'
 import { GridColumn, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -103,6 +104,7 @@ export const Item = ({
     updateValueObj,
     defaultValue,
     clearOnChange,
+    clearOnChangeDefaultValue,
     setOnChange,
     ...props
   } = item
@@ -197,7 +199,7 @@ export const Item = ({
 
   let translatedOptions: any = []
   if (typeof options === 'function') {
-    translatedOptions = options(application, activeValues, lang)
+    translatedOptions = options(application, activeValues, lang, formatMessage)
   } else {
     translatedOptions =
       options?.map((option) => ({
@@ -302,6 +304,13 @@ export const Item = ({
     suffixVal = formatText(item.suffix, application, formatMessage)
   }
 
+  let labelVal: StaticText | undefined
+  if (typeof label === 'function') {
+    labelVal = label(index)
+  } else {
+    labelVal = label
+  }
+
   const setOnChangeFunc =
     setOnChange &&
     (async (optionValue: RepeaterOptionValue) => {
@@ -322,7 +331,8 @@ export const Item = ({
   if (component === 'selectAsync') {
     selectAsyncProps = {
       id: id,
-      title: label,
+      title: labelVal,
+      placeholder: placeholder,
       type: FieldTypes.ASYNC_SELECT,
       component: FieldComponents.ASYNC_SELECT,
       children: undefined,
@@ -343,6 +353,7 @@ export const Item = ({
       defaultValue: defaultVal,
       clearOnChange: clearOnChangeVal,
       setOnChange: setOnChangeFunc,
+      loadingError: item.loadingError,
     }
   }
 
@@ -395,6 +406,7 @@ export const Item = ({
       errorTitle: item.errorTitle,
       fallbackErrorMessage: item.fallbackErrorMessage,
       validationFailedErrorMessage: item.validationFailedErrorMessage,
+      isTrailer: item.isTrailer ?? false,
     }
   }
 
@@ -447,9 +459,9 @@ export const Item = ({
 
   return (
     <GridColumn span={['1/1', '1/1', '1/1', span]}>
-      {component === 'radio' && label && (
+      {component === 'radio' && labelVal && (
         <Text variant="h4" as="h4" id={id + 'title'} marginBottom={3}>
-          {formatText(label, application, formatMessage)}
+          {formatText(labelVal, application, formatMessage)}
         </Text>
       )}
       {component === 'selectAsync' && selectAsyncProps && (
@@ -515,9 +527,7 @@ export const Item = ({
           <Component
             id={id}
             name={id}
-            label={formatMessage(label, {
-              index: index + 1,
-            })}
+            label={formatText(labelVal, application, formatMessage)}
             options={translatedOptions}
             split={width === 'half' ? '1/2' : width === 'third' ? '1/3' : '1/1'}
             error={getFieldError(itemId)}
@@ -537,6 +547,7 @@ export const Item = ({
             large={true}
             placeholder={formatText(placeholder, application, formatMessage)}
             clearOnChange={clearOnChangeVal}
+            clearOnChangeDefaultValue={clearOnChangeDefaultValue}
             setOnChange={setOnChangeFunc}
             {...props}
             {...(component === 'date'

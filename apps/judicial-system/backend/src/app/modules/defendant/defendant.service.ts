@@ -1,12 +1,8 @@
 import { literal, Op, Transaction } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 
-import {
-  Inject,
-  Injectable,
-  InternalServerErrorException,
-} from '@nestjs/common'
-import { InjectConnection, InjectModel } from '@nestjs/sequelize'
+import { Inject, Injectable } from '@nestjs/common'
+import { InjectConnection } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -29,7 +25,12 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { CourtService } from '../court'
-import { Case, Defendant, DefendantEventLog } from '../repository'
+import {
+  Case,
+  Defendant,
+  DefendantEventLogRepositoryService,
+  DefendantRepositoryService,
+} from '../repository'
 import { CreateDefendantDto } from './dto/createDefendant.dto'
 import { InternalUpdateDefendantDto } from './dto/internalUpdateDefendant.dto'
 import { UpdateDefendantDto } from './dto/updateDefendant.dto'
@@ -39,9 +40,8 @@ import { DeliverResponse } from './models/deliver.response'
 export class DefendantService {
   constructor(
     @InjectConnection() private readonly sequelize: Sequelize,
-    @InjectModel(Defendant) private readonly defendantModel: typeof Defendant,
-    @InjectModel(DefendantEventLog)
-    private readonly defendantEventLogModel: typeof DefendantEventLog,
+    private readonly defendantRepositoryService: DefendantRepositoryService,
+    private readonly defendantEventLogRepositoryService: DefendantEventLogRepositoryService,
     private readonly courtService: CourtService,
     private readonly messageService: MessageService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
@@ -206,7 +206,7 @@ export class DefendantService {
     defendantToCreate: CreateDefendantDto,
     transaction: Transaction,
   ): Promise<Defendant> {
-    return this.defendantModel.create(
+    return this.defendantRepositoryService.create(
       { ...defendantToCreate, caseId },
       { transaction },
     )
@@ -217,7 +217,7 @@ export class DefendantService {
     defendantToCreate: CreateDefendantDto,
     user: User,
   ): Promise<Defendant> {
-    const defendant = await this.defendantModel.create({
+    const defendant = await this.defendantRepositoryService.create({
       ...defendantToCreate,
       caseId: theCase.id,
     })
@@ -240,23 +240,9 @@ export class DefendantService {
     update: UpdateDefendantDto,
     transaction?: Transaction,
   ) {
-    const [numberOfAffectedRows, defendants] = await this.defendantModel.update(
-      update,
-      { where: { id: defendantId, caseId }, returning: true, transaction },
-    )
-
-    if (numberOfAffectedRows > 1) {
-      // Tolerate failure, but log error
-      this.logger.error(
-        `Unexpected number of rows (${numberOfAffectedRows}) affected when updating defendant ${defendantId} of case ${caseId}`,
-      )
-    } else if (numberOfAffectedRows < 1) {
-      throw new InternalServerErrorException(
-        `Could not update defendant ${defendantId} of case ${caseId}`,
-      )
-    }
-
-    return defendants[0]
+    return this.defendantRepositoryService.update(caseId, defendantId, update, {
+      transaction,
+    })
   }
 
   private async updateRequestCaseDefendant(
@@ -289,7 +275,7 @@ export class DefendantService {
     },
     transaction?: Transaction,
   ): Promise<void> {
-    await this.defendantEventLogModel.create(event, { transaction })
+    await this.defendantEventLogRepositoryService.create(event, { transaction })
   }
 
   private async updateIndictmentCaseDefendant(
@@ -420,20 +406,7 @@ export class DefendantService {
     defendantId: string,
     user: User,
   ): Promise<boolean> {
-    const numberOfAffectedRows = await this.defendantModel.destroy({
-      where: { id: defendantId, caseId: theCase.id },
-    })
-
-    if (numberOfAffectedRows > 1) {
-      // Tolerate failure, but log error
-      this.logger.error(
-        `Unexpected number of rows (${numberOfAffectedRows}) affected when deleting defendant ${defendantId} of case ${theCase.id}`,
-      )
-    } else if (numberOfAffectedRows < 1) {
-      throw new InternalServerErrorException(
-        `Could not delete defendant ${defendantId} of case ${theCase.id}`,
-      )
-    }
+    await this.defendantRepositoryService.delete(theCase.id, defendantId)
 
     if (theCase.courtCaseNumber) {
       // This should only happen to non-indictment cases.
@@ -459,7 +432,7 @@ export class DefendantService {
       return false
     }
 
-    const defendantsInCustody = await this.defendantModel.findAll({
+    const defendantsInCustody = await this.defendantRepositoryService.findAll({
       include: [
         {
           model: Case,
@@ -480,7 +453,7 @@ export class DefendantService {
   findLatestDefendantByDefenderNationalId(
     nationalId: string,
   ): Promise<Defendant | null> {
-    return this.defendantModel.findOne({
+    return this.defendantRepositoryService.findOne({
       include: [
         {
           model: Case,

@@ -12,6 +12,8 @@ import {
 
 import { IconAndText } from '../../routes/Prosecutor/components'
 import { selectableList as strings } from './SelectableList.strings'
+import { grid } from '../../utils/styles/recipes.css'
+import * as styles from './SelectableList.css'
 
 interface CTAButtonAttributes {
   onClick: (selectedListItems: Item[]) => Promise<void> | void
@@ -112,10 +114,10 @@ const SelectableList: FC<Props> = (props) => {
   }
 
   const validSelectableItems = selectableItems.filter((item) => !item.invalid)
+
   return (
-    <>
+    <div className={grid({ gap: 3 })}>
       <Box
-        marginBottom={3}
         borderColor="blue200"
         borderWidth="standard"
         paddingX={4}
@@ -152,9 +154,9 @@ const SelectableList: FC<Props> = (props) => {
           {isLoading ? (
             <Box
               textAlign="center"
-              paddingY={2}
+              paddingTop={1}
+              paddingBottom={2}
               paddingX={3}
-              marginBottom={2}
               key="loading-dots"
             >
               <LoadingDots />
@@ -184,18 +186,17 @@ const SelectableList: FC<Props> = (props) => {
               />
             </AnimateChildren>
           ) : (
-            <ul>
+            <ul className={styles.grid}>
               {selectableItems.map((item, index) => (
                 <motion.li
                   custom={index}
-                  initial={'hidden'}
-                  animate={'visible'}
+                  initial="hidden"
+                  animate="visible"
                   variants={selectableListItemVariants}
                   key={item.id}
                 >
                   <Box
                     key={item.id}
-                    marginBottom={index === selectableItems.length - 1 ? 0 : 2}
                     paddingX={3}
                     paddingY={2}
                     background={item.invalid ? 'red100' : 'blue100'}
@@ -263,7 +264,7 @@ const SelectableList: FC<Props> = (props) => {
           </Button>
         </Box>
       )}
-    </>
+    </div>
   )
 }
 

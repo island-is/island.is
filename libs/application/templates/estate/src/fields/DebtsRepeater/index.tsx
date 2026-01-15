@@ -130,9 +130,9 @@ export const DebtsRepeater: FC<
               >
                 {repeaterField.initial
                   ? repeaterField.enabled
-                    ? formatMessage(m.inheritanceDisableMember)
-                    : formatMessage(m.inheritanceEnableMember)
-                  : formatMessage(m.inheritanceDeleteMember)}
+                    ? formatMessage(m.disable)
+                    : formatMessage(m.activate)
+                  : formatMessage(m.delete)}
               </Button>
             </Box>
             <GridRow>

@@ -189,6 +189,10 @@ export const is = {
   'home.vehicleModule.summary':
     'Skrá kílómetrastöðu rafmagns- og tengiltvinnbíla',
   'home.vehicleModule.button': 'Mín ökutæki',
+  'homeBanner.vehicleMileage.title': 'Skrá kílómetrastöðu',
+  'homeBanner.vehicleMileage.description':
+    'Skráðu kílómetrastöðu þinna ökutækja',
+  'homeBanner.vehicleMileage.cta': 'Skoða ökutæki',
   'button.seeAll': 'Sjá allt',
 
   // home options
@@ -414,6 +418,7 @@ export const is = {
   'finance.links.payments': 'Greiðslur',
   'finance.links.loans': 'Lán',
   'finance.links.transactions': 'Hreyfingar',
+  'finance.links.status': 'Staða',
 
   // finance detail
   'financeDetail.title': 'Ítarupplýsingar',

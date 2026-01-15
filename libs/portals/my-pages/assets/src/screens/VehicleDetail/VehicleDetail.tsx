@@ -133,6 +133,10 @@ const VehicleDetail = () => {
       title: formatMessage(messages.addOperator),
       href: formatMessage(urls.operator),
     },
+    {
+      title: formatMessage(messages.registerMileCar),
+      href: formatMessage(urls.registerMileCar),
+    },
   ]
 
   if (downloadServiceURL) {

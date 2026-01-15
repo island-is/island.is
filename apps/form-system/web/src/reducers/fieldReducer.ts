@@ -1,5 +1,6 @@
 import { Action, ApplicationState } from '@island.is/form-system/ui'
-import { setError, setFieldValue } from './reducerUtils'
+import { setFieldValue } from './fieldReducerUtils'
+import { setError } from './reducerUtils'
 
 export const fieldReducer = (
   state: ApplicationState,
@@ -66,6 +67,10 @@ export const fieldReducer = (
       }
 
       return setMultipleFieldValues(state, id, value)
+    }
+    case 'SET_FILES': {
+      const { value, id } = action.payload
+      return setFieldValue(state, 's3Key', id, value)
     }
     default:
       return state

@@ -10,6 +10,7 @@ import { IntlConfig, IntlProvider } from 'react-intl'
 import { useWindowSize } from 'react-use'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
+import { useQuery } from '@apollo/client'
 
 import {
   Box,
@@ -33,28 +34,29 @@ import {
 import { theme } from '@island.is/island-ui/theme'
 import { shouldLinkBeAnAnchorTag } from '@island.is/shared/utils'
 import {
-  BoostChatPanel,
-  boostChatPanelEndpoints,
   DefaultHeaderProps,
   Footer as WebFooter,
   HeadWithSocialSharing,
-  LiveChatIncChatPanel,
   OrganizationSearchInput,
   SearchBox,
   SidebarShipSearchInput,
   Sticky,
+  WatsonChatPanel,
+  WebChat,
   Webreader,
 } from '@island.is/web/components'
-import { DefaultHeader, WatsonChatPanel } from '@island.is/web/components'
+import { DefaultHeader } from '@island.is/web/components'
 import {
   SLICE_SPACING,
   STICKY_NAV_MAX_WIDTH_LG,
 } from '@island.is/web/constants'
 import { GlobalContext } from '@island.is/web/context'
 import {
+  GetWebChatQuery,
   Image,
   Organization,
   OrganizationPage,
+  QueryGetWebChatArgs,
 } from '@island.is/web/graphql/schema'
 import {
   useLinkResolver,
@@ -64,6 +66,7 @@ import {
 import { useI18n } from '@island.is/web/i18n'
 import { LayoutProps } from '@island.is/web/layouts/main'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
+import { GET_WEB_CHAT } from '@island.is/web/screens/queries/WebChat'
 import { getBackgroundStyle } from '@island.is/web/utils/organization'
 
 import { LatestNewsCardConnectedComponent } from '../LatestNewsCardConnectedComponent'
@@ -95,7 +98,7 @@ import { UniversityStudiesHeader } from './Themes/UniversityStudiesTheme'
 import UniversityStudiesFooter from './Themes/UniversityStudiesTheme/UniversityStudiesFooter'
 import { UtlendingastofnunFooter } from './Themes/UtlendingastofnunTheme'
 import { VinnueftilitidHeader } from './Themes/VinnueftirlitidTheme'
-import { liveChatIncConfig, watsonConfig } from './config'
+import { watsonConfig } from './config'
 import * as styles from './OrganizationWrapper.css'
 
 interface NavigationData {
@@ -272,16 +275,6 @@ export const OrganizationHeader: React.FC<
           image={n(
             'hsnHeaderImage',
             'https://images.ctfassets.net/8k0h54kbe6bj/4v20729OMrRYkktuaCTWRi/675807c8c848895833c4a6a162f2813a/hsn-header-icon.svg',
-          )}
-        />
-      )
-    case 'hsu':
-      return (
-        <DefaultHeader
-          {...defaultProps}
-          image={n(
-            'hsuHeaderImage',
-            'https://images.ctfassets.net/8k0h54kbe6bj/sSSuQeq3oIx9hOrKRvfzm/447c7e6811c3fa9e9d548ecd4b6d7985/vector-myndir-hsu.svg',
           )}
         />
       )
@@ -644,6 +637,7 @@ export const OrganizationFooter: React.FC<
     case 'hsu':
       OrganizationFooterComponent = (
         <HeilbrigdisstofnunSudurlandsFooter
+          title={organization.title}
           footerItems={organization.footerItems}
           namespace={namespace}
         />
@@ -824,52 +818,43 @@ export const OrganizationFooter: React.FC<
 }
 
 export const OrganizationChatPanel = ({
-  organizationIds,
+  organizationId,
 }: {
-  organizationIds: string[]
-  pushUp?: boolean
+  organizationId: string | undefined
 }) => {
+  if (!organizationId) return null
+  return <OrganizationChat organizationId={organizationId} />
+}
+
+const OrganizationChat = ({ organizationId }: { organizationId: string }) => {
   const { activeLocale } = useI18n()
 
-  const organizationIdWithLiveChat = organizationIds.find((id) => {
-    return id in liveChatIncConfig[activeLocale]
-  })
+  const { data } = useQuery<GetWebChatQuery, QueryGetWebChatArgs>(
+    GET_WEB_CHAT,
+    {
+      variables: {
+        input: {
+          displayLocationIds: [organizationId],
+          lang: activeLocale,
+        },
+      },
+    },
+  )
 
-  if (organizationIdWithLiveChat) {
-    return (
-      <LiveChatIncChatPanel
-        {...liveChatIncConfig[activeLocale][organizationIdWithLiveChat]}
-      />
-    )
-  }
+  if (!data?.getWebChat?.webChatConfiguration) return null
 
-  const organizationIdWithWatson = organizationIds.find((id) => {
-    return id in watsonConfig[activeLocale]
-  })
-
-  if (organizationIdWithWatson) {
-    return (
-      <WatsonChatPanel
-        {...watsonConfig[activeLocale][organizationIdWithWatson]}
-      />
-    )
-  }
-
-  const organizationIdWithBoost = organizationIds.find((id) => {
-    return id in boostChatPanelEndpoints
-  })
-
-  if (organizationIdWithBoost) {
-    return (
-      <BoostChatPanel
-        endpoint={
-          organizationIdWithBoost as keyof typeof boostChatPanelEndpoints
-        }
-      />
-    )
-  }
-
-  return null
+  return (
+    <WebChat
+      webChat={data.getWebChat}
+      renderFallback={() => {
+        if (organizationId in watsonConfig[activeLocale])
+          return (
+            <WatsonChatPanel {...watsonConfig[activeLocale][organizationId]} />
+          )
+        return null
+      }}
+    />
+  )
 }
 
 const SecondaryMenu = ({
@@ -1354,9 +1339,7 @@ export const OrganizationWrapper: React.FC<
       )}
       {n('enableOrganizationChatPanelForOrgPages', true) && (
         <OrganizationChatPanel
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore make web strict
-          organizationIds={[organizationPage?.organization?.id]}
+          organizationId={organizationPage?.organization?.id}
         />
       )}
     </>

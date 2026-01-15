@@ -7,11 +7,11 @@ export enum LicensePaths {
   FirearmLicensesDetail = '/skirteini/rikislogreglustjori/skotvopnaleyfi',
   MachineLicensesDetail = '/skirteini/vinnueftirlitid/vinnuvelarettindi',
   DisabilityLicense = '/skirteini/tryggingastofnun/ororkuskirteini',
-  HuntingLicense = '/skirteini/umhverfisstofnun/veidikort',
+  HuntingLicense = '/skirteini/natturuverndarstofnun/veidikort',
   PCardDetail = '/skirteini/syslumenn/pkort',
   EhicDetail = '/skirteini/sjukratryggingar/ehic',
-
   LicensesPassportDetail = '/skirteini/tjodskra/vegabref/:id',
-  LicensesDetail = '/skirteini/:provider/:type/:id',
-  LicensesDetailV2 = '/skirteini/:type/:id',
+
+  LicensesDetailOld = '/skirteini/:provider/:type/:id',
+  LicensesDetail = '/skirteini/:type/:id',
 }

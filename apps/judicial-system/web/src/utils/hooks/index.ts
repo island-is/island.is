@@ -8,7 +8,6 @@ export {
   default as useS3Upload,
 } from './useS3Upload/useS3Upload'
 export { useGetLawyers } from './useLawyers/useLawyers'
-export { default as useDeb } from './useDeb'
 export { default as useViewport } from './useViewport/useViewport'
 export { default as useOnceOn } from './useOnceOn'
 export {
@@ -27,6 +26,7 @@ export { default as useDefendants } from './useDefendants'
 export { default as useVictim } from './useVictim'
 export {
   type UpdateIndictmentCount,
+  type UpdateIndictmentCountState,
   default as useIndictmentCounts,
 } from './useIndictmentCounts'
 export { default as useSections } from './useSections'
@@ -39,3 +39,4 @@ export { default as useCourtSessions } from './useCourtSessions'
 export { default as useCourtDocuments } from './useCourtDocuments'
 export { default as useUsers } from './useUsers'
 export { default as useFiledCourtDocuments } from './useFiledCourtDocuments'
+export { default as useDebouncedInput } from './useDebouncedInput'

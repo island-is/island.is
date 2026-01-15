@@ -5,11 +5,7 @@ import {
   Stack,
   ToastContainer,
 } from '@island.is/island-ui/core'
-import {
-  Application,
-  ApplicationTypes,
-  institutionMapper,
-} from '@island.is/application/types'
+import { ApplicationCard as ApplicationCardType } from '@island.is/application/types'
 import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 import { Organization } from '@island.is/shared/types'
 import { ApplicationCard } from '../ApplicationCard/ApplicationCard'
@@ -17,8 +13,16 @@ import { ApplicationCard } from '../ApplicationCard/ApplicationCard'
 const pageSize = 5
 
 type ApplicationFields = Pick<
-  Application,
-  'actionCard' | 'id' | 'typeId' | 'status' | 'modified' | 'name' | 'progress'
+  ApplicationCardType,
+  | 'actionCard'
+  | 'id'
+  | 'typeId'
+  | 'status'
+  | 'modified'
+  | 'name'
+  | 'progress'
+  | 'org'
+  | 'orgContentfulId'
 >
 
 interface Props {
@@ -45,12 +49,13 @@ const ApplicationList = ({
     totalPages: Math.ceil(applications.length / pageSize),
   }
 
-  const getLogo = (typeId: ApplicationTypes): string => {
+  const getLogo = (application: ApplicationFields): string => {
     if (!organizations) {
       return ''
     }
-    const institutionSlug = institutionMapper[typeId].slug
-    const institution = organizations.find((x) => x.slug === institutionSlug)
+    const institution = organizations.find(
+      (x) => x.id === application.orgContentfulId,
+    )
     return getOrganizationLogoUrl(
       institution?.title ?? 'stafraent-island',
       organizations,
@@ -76,7 +81,7 @@ const ApplicationList = ({
               key={application.id}
               application={application}
               focused={focus}
-              logo={getLogo(application.typeId)}
+              logo={getLogo(application)}
               onDelete={onApplicationDelete}
               onClick={onClick}
             />

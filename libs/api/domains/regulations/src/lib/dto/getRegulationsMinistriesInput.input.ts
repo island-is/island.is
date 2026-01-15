@@ -1,4 +1,4 @@
-import { MinistrySlug } from '@island.is/regulations-tools/types'
+import { MinistrySlug } from '@dmr.is/regulations-tools/types'
 import { Field, InputType } from '@nestjs/graphql'
 import { IsOptional } from 'class-validator'
 

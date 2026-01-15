@@ -15,7 +15,6 @@ import {
 } from '@island.is/judicial-system/audit-trail'
 import {
   DefenderChoice,
-  EventType,
   isCompletedCase,
 } from '@island.is/judicial-system/types'
 
@@ -210,10 +209,10 @@ export class CaseService {
   ): Promise<VerdictResponse> {
     const caseData = await this.fetchCase(caseId, nationalId)
 
-    const isCaseSentToPublicProsecutor = caseData.eventLogs?.some(
-      (eventLog) =>
-        eventLog.eventType === EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+    const isCaseSentToPublicProsecutor = Boolean(
+      caseData.indictmentSentToPublicProsecutorDate,
     )
+
     // we also have to ensure that the verdict is completed, confirmed and sent to public prosecutor.
     // sent to public prosecutor indicates that the verdict has been delivered to police if that was requested
     if (!isCompletedCase(caseData.state) || !isCaseSentToPublicProsecutor) {

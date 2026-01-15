@@ -29,62 +29,99 @@ const ReferralsDetail: React.FC = () => {
 
   return (
     <IntroWrapper
-      title={formatMessage(messages.referrals)}
-      intro={formatMessage(messages.referralsIntro)}
+      title={referral?.serviceName || formatMessage(messages.referrals)}
+      intro={formatMessage(messages.referralsDetailIntro)}
       serviceProviderSlug={HEALTH_DIRECTORATE_SLUG}
       serviceProviderTooltip={formatMessage(
-        messages.landlaeknirVaccinationsTooltip,
+        messages.landlaeknirReferralTooltip,
       )}
+      loading={loading}
       marginBottom={6}
     >
+      {!loading && !error && referral === null && (
+        <Problem
+          type="not_found"
+          title={formatMessage(messages.referralNotFound)}
+          message={formatMessage(messages.referralNotFoundDetail)}
+          imgSrc="./assets/images/nodata.svg"
+          noBorder={false}
+        />
+      )}
       {error && !loading && <Problem error={error} noBorder={false} />}
       {!error && (
-        <InfoLineStack space={1}>
-          <InfoLine
-            label={formatMessage(messages.referralFor)}
-            content={
-              referral?.serviceName ?? formatMessage(messages.noDataRegistered)
-            }
-            loading={loading}
-          />
+        <InfoLineStack space={1} label={formatMessage(messages.information)}>
           <InfoLine
             label={formatMessage(messages.referralFrom)}
             content={
-              referral?.fromContactInfo?.name ??
+              [
+                referral?.fromContactInfo?.name,
+                referral?.fromContactInfo?.profession,
+              ]
+                .filter(Boolean)
+                .join(', ') || formatMessage(messages.noDataRegistered)
+            }
+            loading={loading}
+          />
+
+          <InfoLine
+            label={formatMessage(messages.publicationPlace)}
+            content={[
+              referral?.fromContactInfo?.department,
+              referral?.fromContactInfo?.institute,
+            ]
+              .filter(Boolean)
+              .join(', ')}
+            loading={loading}
+          />
+          <InfoLine
+            label={messages.publicationDate}
+            content={
+              formatDate(referral?.createdDate) ||
               formatMessage(messages.noDataRegistered)
             }
             loading={loading}
           />
           <InfoLine
-            label={formatMessage(messages.medicineValidTo)}
+            label={messages.vaccinatedStatus}
             content={
-              formatDate(referral?.validUntilDate) ??
+              referral?.stateDisplay || formatMessage(messages.noDataRegistered)
+            }
+            loading={loading}
+          />
+          <InfoLine
+            label={messages.medicineValidTo}
+            content={
+              formatDate(referral?.validUntilDate) ||
               formatMessage(messages.noDataRegistered)
             }
             loading={loading}
           />
           <InfoLine
-            label={formatMessage(messages.vaccinatedStatus)}
+            label={messages.referralTo}
             content={
-              referral?.stateDisplay ?? formatMessage(messages.noDataRegistered)
+              [
+                referral?.toContactInfo?.name,
+                referral?.toContactInfo?.profession,
+              ]
+                .filter(Boolean)
+                .join(', ') || formatMessage(messages.openReferral)
             }
             loading={loading}
           />
           <InfoLine
-            label={formatMessage(messages.recepientUpperCase)}
+            label={messages.reason}
             content={
-              referral?.toContactInfo?.name ??
-              formatMessage(messages.noDataRegistered)
+              referral?.reason || formatMessage(messages.noDataRegistered)
             }
             loading={loading}
           />
-          <InfoLine
-            label={formatMessage(messages.reason)}
-            content={
-              referral?.reason ?? formatMessage(messages.noDataRegistered)
-            }
-            loading={loading}
-          />
+          {referral?.diagnoses && (
+            <InfoLine
+              label={messages.diagnoses}
+              content={referral?.diagnoses}
+              loading={loading}
+            />
+          )}
         </InfoLineStack>
       )}
     </IntroWrapper>

@@ -7,11 +7,6 @@ export const states = defineMessages({
     description:
       'Your application has been submitted to the Social Insurance Administration',
   },
-  applicationApprovedDescription: {
-    id: 'dp.application:applicationApprovedDescription',
-    defaultMessage: 'Umsókn vegna örorkulífeyris hefur verið samþykkt',
-    description: 'The application for disability pension has been approved',
-  },
   applicationDismissed: {
     id: 'dp.application:application.dismissed',
     defaultMessage:

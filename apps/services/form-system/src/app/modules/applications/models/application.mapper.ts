@@ -1,4 +1,3 @@
-import { SectionTypes } from '@island.is/form-system/shared'
 import { Injectable } from '@nestjs/common'
 import { Dependency } from '../../../dataTypes/dependency.model'
 import { FieldDto } from '../../fields/models/dto/field.dto'
@@ -9,6 +8,10 @@ import { SectionDto } from '../../sections/models/dto/section.dto'
 import { Application } from './application.model'
 import { ApplicationDto } from './dto/application.dto'
 import { ValueDto } from './dto/value.dto'
+import { ApplicationStatus, SectionTypes } from '@island.is/form-system/shared'
+import { MyPagesApplicationResponseDto } from './dto/myPagesApplication.response.dto'
+import { Field } from '../../fields/models/field.model'
+import type { Locale } from '@island.is/shared/types'
 
 @Injectable()
 export class ApplicationMapper {
@@ -26,6 +29,8 @@ export class ApplicationMapper {
       modified: application.modified,
       slug: form.slug,
       formName: form.name,
+      submissionServiceUrl: form.submissionServiceUrl,
+      validationServiceUrl: form.validationServiceUrl,
       allowProceedOnValidationFail: form.allowProceedOnValidationFail,
       hasPayment: form.hasPayment,
       hasSummaryScreen: form.hasSummaryScreen,
@@ -66,7 +71,12 @@ export class ApplicationMapper {
               displayOrder: screen.displayOrder,
               multiset: screen.multiset,
               callRuleset: screen.callRuleset,
-              isHidden: this.isHidden(screen.id, application.dependencies),
+              isHidden: this.isHidden(
+                screen.id,
+                application.dependencies,
+                section.sectionType,
+                screen.fields,
+              ),
               isCompleted: this.isCompleted(screen.id, application.completed),
               fields: screen.fields?.map((field) => {
                 return {
@@ -127,7 +137,6 @@ export class ApplicationMapper {
         return {
           created: event.created,
           eventType: event.eventType,
-          isFileEvent: event.isFileEvent,
         }
       }),
       files: application.files?.map((file) => {
@@ -135,13 +144,6 @@ export class ApplicationMapper {
           id: file.id,
           order: file.order,
           json: file.json,
-          events: file.events?.map((event) => {
-            return {
-              created: event.created,
-              eventType: event.eventType,
-              isFileEvent: event.isFileEvent,
-            }
-          }),
         } as ValueDto
       }),
     }
@@ -151,9 +153,15 @@ export class ApplicationMapper {
   private isHidden(
     id: string,
     dependencies: Dependency[] | undefined,
+    sectionType?: string,
+    fields?: Field[],
   ): boolean {
     if (!dependencies) {
       return false
+    }
+
+    if (sectionType === SectionTypes.PARTIES && fields && !fields[0]?.values) {
+      return true
     }
 
     const childProps = dependencies.flatMap(
@@ -181,5 +189,123 @@ export class ApplicationMapper {
     }
 
     return completed?.includes(id)
+  }
+
+  async mapApplicationsToMyPagesApplications(
+    applications: Application[],
+    locale: Locale,
+  ): Promise<MyPagesApplicationResponseDto[]> {
+    if (!applications?.length) {
+      return []
+    }
+
+    const mapped: MyPagesApplicationResponseDto[] = applications.flatMap(
+      (app) => {
+        if (app.status === ApplicationStatus.DRAFT)
+          return [this.draft(app, locale)]
+        if (app.status === ApplicationStatus.COMPLETED)
+          return [this.completed(app, locale)]
+        return [] // flatMap removes these automatically
+      },
+    )
+
+    // Sort newest first (optional)
+    mapped.sort(
+      (a, b) => new Date(b.modified).getTime() - new Date(a.modified).getTime(),
+    )
+
+    return mapped
+  }
+
+  private draft(
+    app: Application,
+    locale: Locale,
+  ): MyPagesApplicationResponseDto {
+    return {
+      id: app.id,
+      created: app.created,
+      modified: app.modified,
+      applicant: app.nationalId,
+      assignees: [],
+      applicantActors: [],
+      state: app.status,
+      actionCard: {
+        title: app.formName,
+        description: '',
+        tag: {
+          label: app.tagLabel,
+          variant: app.tagVariant,
+        },
+        deleteButton: false,
+        pendingAction: {
+          displayStatus: 'displayStatus',
+          title: 'title',
+          content: 'content',
+          button: 'button',
+        },
+        history:
+          app.events?.map((event) => {
+            return {
+              date: event.created,
+              log: event.eventMessage[locale],
+            }
+          }) || [],
+        draftFinishedSteps: app.draftFinishedSteps ?? 0,
+        draftTotalSteps: app.draftTotalSteps ?? 0,
+      },
+      attachments: {},
+      typeId: '',
+      answers: { approveExternalData: true },
+      externalData: {},
+      name: app.formName,
+      status: app.status,
+      pruned: app.pruned,
+      formSystemFormSlug: app.formSlug,
+      formSystemOrgContentfulId: app.orgContentfulId,
+      formSystemOrgSlug: app.orgSlug,
+    } as MyPagesApplicationResponseDto
+  }
+
+  private completed(
+    app: Application,
+    locale: Locale,
+  ): MyPagesApplicationResponseDto {
+    return {
+      id: app.id,
+      created: app.created,
+      modified: app.modified,
+      applicant: app.nationalId,
+      assignees: [],
+      applicantActors: [],
+      state: app.status,
+      actionCard: {
+        title: app.formName,
+        description: '',
+        tag: {
+          label: app.tagLabel,
+          variant: app.tagVariant,
+        },
+        deleteButton: false,
+        history:
+          app.events?.map((event) => {
+            return {
+              date: event.created,
+              log: event.eventMessage[locale],
+            }
+          }) || [],
+        draftFinishedSteps: app.draftFinishedSteps ?? 0,
+        draftTotalSteps: app.draftTotalSteps ?? 0,
+      },
+      attachments: {},
+      typeId: '',
+      answers: { approveExternalData: true },
+      externalData: {},
+      name: app.formName,
+      status: app.status,
+      pruned: app.pruned,
+      formSystemFormSlug: app.formSlug,
+      formSystemOrgContentfulId: app.orgContentfulId,
+      formSystemOrgSlug: app.orgSlug,
+    }
   }
 }

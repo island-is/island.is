@@ -53,6 +53,22 @@ export const formatDateWithTime = (date: string) => {
   }
 }
 
+export const getWeekday = (date: string) => {
+  try {
+    return format(new Date(date), 'iiii')
+  } catch {
+    return date
+  }
+}
+
+export const getTime = (date: string) => {
+  try {
+    return format(new Date(date), 'HH:mm')
+  } catch {
+    return date
+  }
+}
+
 export const icelandLocalTime = (date?: string) => {
   const targetTimeZone = 'Atlantic/Reykjavik'
 

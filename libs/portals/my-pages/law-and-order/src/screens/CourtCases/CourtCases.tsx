@@ -1,22 +1,22 @@
-import { Box, TagVariant } from '@island.is/island-ui/core'
+import { Box, TagVariant, ActionCard } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
-  ActionCard,
   CardLoader,
   DOMSMALARADUNEYTID_SLUG,
-  IntroHeader,
+  IntroWrapper,
   m,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { messages } from '../../lib/messages'
 import { LawAndOrderPaths } from '../../lib/paths'
 import { useGetCourtCasesQuery } from './CourtCases.generated'
+import { useNavigate } from 'react-router-dom'
 
 const CourtCases = () => {
   useNamespaces('sp.law-and-order')
   const { lang } = useLocale()
   const { formatMessage } = useLocale()
-
+  const navigate = useNavigate()
   const { data, loading, error } = useGetCourtCasesQuery({
     variables: {
       locale: lang,
@@ -26,13 +26,12 @@ const CourtCases = () => {
   const cases = data?.lawAndOrderCourtCasesList?.cases
 
   return (
-    <>
-      <IntroHeader
-        title={messages.courtCases}
-        intro={messages.courtCasesDescription}
-        serviceProviderSlug={DOMSMALARADUNEYTID_SLUG}
-        serviceProviderTooltip={formatMessage(m.domsmalaraduneytidTooltip)}
-      />
+    <IntroWrapper
+      title={messages.courtCases}
+      intro={messages.courtCasesDescription}
+      serviceProviderSlug={DOMSMALARADUNEYTID_SLUG}
+      serviceProviderTooltip={formatMessage(m.domsmalaraduneytidTooltip)}
+    >
       {loading && !error && (
         <Box width="full">
           <CardLoader />
@@ -47,7 +46,6 @@ const CourtCases = () => {
         cases.map((x) => (
           <Box marginTop={2}>
             <ActionCard
-              translateLabel="no"
               heading={x.caseNumberTitle ?? ''}
               text={x.type ?? ''}
               tag={{
@@ -58,10 +56,10 @@ const CourtCases = () => {
               cta={{
                 label: formatMessage(messages.seeInfo),
                 variant: 'text',
-                url: LawAndOrderPaths.CourtCaseDetail.replace(
-                  ':id',
-                  x.id ?? '',
-                ),
+                onClick: () =>
+                  navigate(
+                    LawAndOrderPaths.CourtCaseDetail.replace(':id', x.id ?? ''),
+                  ),
               }}
             />
           </Box>
@@ -75,7 +73,7 @@ const CourtCases = () => {
           imgSrc="./assets/images/sofa.svg"
         />
       )}
-    </>
+    </IntroWrapper>
   )
 }
 export default CourtCases

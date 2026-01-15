@@ -31,7 +31,6 @@ const MedicineDelegationDetail = () => {
     variables: {
       locale: lang,
       input: {
-        active: false,
         status: [
           'active',
           'expired',
@@ -88,20 +87,20 @@ const MedicineDelegationDetail = () => {
       loading={loading}
     >
       {!loading && !error && !filteredData && <Problem type="no_data" />}
-      <InfoLineStack label={formatMessage(m.info)} space={1}>
+      <InfoLineStack label={m.info} space={1}>
         <InfoLine
-          label={formatMessage(messages.nameHuman)}
+          label={messages.nameHuman}
           content={filteredData?.name ?? ''}
           loading={loading}
         />
         <InfoLine
           loading={loading}
-          label={formatMessage(m.natreg)}
+          label={m.natreg}
           content={kennitala.format(filteredData?.nationalId ?? '')}
         />
         <InfoLine
           loading={loading}
-          label={formatMessage(messages.status)}
+          label={messages.status}
           content={
             filteredData?.isActive
               ? formatMessage(messages.valid)
@@ -110,7 +109,7 @@ const MedicineDelegationDetail = () => {
         />
         <InfoLine
           loading={loading}
-          label={formatMessage(messages.validityPeriod)}
+          label={messages.validityPeriod}
           content={
             filteredData?.dates?.from && filteredData?.dates?.to
               ? formatDate(filteredData?.dates?.from) +
@@ -122,7 +121,7 @@ const MedicineDelegationDetail = () => {
             filteredData?.isActive
               ? {
                   type: 'action',
-                  label: formatMessage(messages.deleteDelegation),
+                  label: messages.invalidatePermit,
                   action: () => setModalVisible(true),
                   variant: 'text',
                   icon: 'trash',
@@ -132,7 +131,7 @@ const MedicineDelegationDetail = () => {
         />
         <InfoLine
           loading={loading}
-          label={formatMessage(messages.permitValidForShort)}
+          label={messages.permitValidForShort}
           content={
             filteredData?.lookup
               ? formatMessage(messages.pickupMedicineAndLookup)

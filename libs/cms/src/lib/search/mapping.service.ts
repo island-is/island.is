@@ -27,6 +27,7 @@ import type { CmsSyncProvider, processSyncDataInput } from './cmsSync.service'
 import { GrantsSyncService } from './importers/grants.service'
 import { BloodDonationRestrictionSyncService } from './importers/bloodDonationRestriction.service'
 import { OrganizationParentSubpageSyncService } from './importers/organizationParentSubpage.service'
+import { CourseSyncService } from './importers/course.service'
 
 @Injectable()
 export class MappingService {
@@ -59,6 +60,7 @@ export class MappingService {
     private readonly teamListSyncService: TeamListSyncService,
     private readonly bloodDonationRestrictionSyncService: BloodDonationRestrictionSyncService,
     private readonly organizationParentSubpageSyncService: OrganizationParentSubpageSyncService,
+    private readonly courseSyncService: CourseSyncService,
   ) {
     this.contentSyncProviders = [
       this.articleSyncService,
@@ -87,6 +89,7 @@ export class MappingService {
       this.teamListSyncService,
       this.bloodDonationRestrictionSyncService,
       this.organizationParentSubpageSyncService,
+      this.courseSyncService,
     ]
   }
 

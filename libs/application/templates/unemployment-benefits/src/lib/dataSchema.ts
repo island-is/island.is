@@ -101,11 +101,6 @@ export const UnemploymentBenefitsSchema = z.object({
     .refine((v) => v.includes(YES), {
       params: serviceErrors.iUnderstandError,
     }),
-  introductoryMeetingAgreement: z
-    .array(z.string())
-    .refine((v) => v.includes(YES), {
-      params: serviceErrors.iUnderstandError,
-    }),
   unemploymentBenefitsPayoutAgreement: z
     .array(z.string())
     .refine((v) => v.includes(YES), {
@@ -116,6 +111,17 @@ export const UnemploymentBenefitsSchema = z.object({
     .refine((v) => v.includes(YES), {
       params: serviceErrors.iUnderstandError,
     }),
+  acknowledgements: z.object({
+    dataCollectionAcknowledgement: z.string(),
+    notifyChangesAcknowledgement: z.string(),
+    rightsAndObligationsAcknowledgement: z.string(),
+    workAlongsidePaymentsAcknowledgement: z.string(),
+    lossOfBenefitEntitlementAcknowledgement: z.string(),
+    foreignTravelAndWorkAbroadAcknowledgement: z.string(),
+    unemploymentBenefitsPaymentAcknowledgement: z.string(),
+    meetingsAndMeasuresAcknowledgement: z.string(),
+    monthlyJobSearchAcknowledgement: z.string(),
+  }),
 })
 
 export type UnemploymentBenefits = z.TypeOf<typeof UnemploymentBenefitsSchema>

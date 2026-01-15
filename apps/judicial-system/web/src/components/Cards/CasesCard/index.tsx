@@ -1,7 +1,7 @@
 import { FC } from 'react'
 
 import { Box, LinkV2, LoadingDots, Text } from '@island.is/island-ui/core'
-import { CaseTableType } from '@island.is/judicial-system/types'
+import { CaseTableType } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCaseTableQuery } from '@island.is/judicial-system-web/src/routes/Shared/CaseTable/caseTable.generated'
 
 import * as styles from './index.css'
@@ -26,7 +26,7 @@ const TitleWithCounter: FC<Pick<CasesCardProps, 'title' | 'type'>> = (
   const counter = data?.caseTable.rowCount || 0
 
   return (
-    <Text variant="h4" color="blue400" marginBottom={1}>
+    <Text as="span" variant="h4" color="blue400" marginBottom={1}>
       {props.title} (
       {loading || error ? (
         <span className={styles.loadingDots}>

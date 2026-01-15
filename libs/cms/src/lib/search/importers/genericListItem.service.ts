@@ -1,9 +1,8 @@
 import { MappedData } from '@island.is/content-search-indexer/types'
 import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
-import { Entry } from 'contentful'
 import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
-import { ILink, IGenericListItem } from '../../generated/contentfulTypes'
+import { IGenericListItem } from '../../generated/contentfulTypes'
 import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
 import { mapGenericListItem } from '../../models/genericListItem.model'
 import { extractChildEntryIds } from './utils'
@@ -12,15 +11,22 @@ import { extractChildEntryIds } from './utils'
 export class GenericListItemSyncService
   implements CmsSyncProvider<IGenericListItem>
 {
-  processSyncData(entries: processSyncDataInput<ILink>) {
-    const entriesToUpdate = entries.filter(
-      (entry: Entry<any>): entry is IGenericListItem =>
-        entry.sys.contentType.sys.id === 'genericListItem' &&
-        entry.fields.title,
-    )
+  processSyncData(entries: processSyncDataInput<IGenericListItem>) {
+    const entriesToUpdate: IGenericListItem[] = []
+    const entriesToDelete: string[] = []
+
+    for (const entry of entries) {
+      if (entry?.sys?.contentType?.sys?.id !== 'genericListItem') continue
+      if (!entry.fields.title) {
+        entriesToDelete.push(entry.sys.id)
+      } else {
+        entriesToUpdate.push(entry as IGenericListItem)
+      }
+    }
+
     return {
       entriesToUpdate,
-      entriesToDelete: [],
+      entriesToDelete,
     }
   }
 

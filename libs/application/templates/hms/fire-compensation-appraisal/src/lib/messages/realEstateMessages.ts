@@ -44,12 +44,12 @@ export const realEstateMessages = defineMessages({
     description: 'Total fire compensation',
   },
   otherPropertiesTitle: {
-    id: 'hms.fireCompensationAppraisal.confirmRead.otherPropertiesTitle',
+    id: 'fca.application:realEstate.otherPropertiesTitle',
     defaultMessage: 'Aðrar eignir.',
     description: 'Title for other properties section',
   },
   applyingForOtherProperty: {
-    id: 'hms.fireCompensationAppraisal.confirmRead.applyingForOtherProperty',
+    id: 'fca.application:realEstate.applyingForOtherProperty',
     defaultMessage: 'Ég er að sækja um eign sem ég á ekki.',
     description: 'Checkbox label for applying on behalf of property owner',
   },

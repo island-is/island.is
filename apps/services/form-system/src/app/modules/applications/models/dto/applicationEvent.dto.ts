@@ -1,5 +1,5 @@
 import { ApiPropertyOptional } from '@nestjs/swagger'
-import { IsBoolean, IsDate, IsOptional, IsString } from 'class-validator'
+import { IsDate, IsOptional, IsString } from 'class-validator'
 
 export class ApplicationEventDto {
   @IsOptional()
@@ -11,9 +11,4 @@ export class ApplicationEventDto {
   @IsString()
   @ApiPropertyOptional()
   eventType?: string
-
-  @IsOptional()
-  @IsBoolean()
-  @ApiPropertyOptional()
-  isFileEvent?: boolean
 }

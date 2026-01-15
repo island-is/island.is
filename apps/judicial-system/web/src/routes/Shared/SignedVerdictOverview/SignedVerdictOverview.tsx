@@ -69,6 +69,7 @@ import {
   useAppealAlertBanner,
   useCase,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import CaseDocuments from './Components/CaseDocuments/CaseDocuments'
 import ModifyDatesModal from './Components/ModifyDatesModal/ModifyDatesModal'
@@ -443,7 +444,7 @@ export const SignedVerdictOverview: FC = () => {
           })}
         />
         <FormContentContainer>
-          <Box marginBottom={5}>
+          <Box component="section" marginBottom={5}>
             <Box marginBottom={3}>
               <Button
                 variant="text"
@@ -486,8 +487,8 @@ export const SignedVerdictOverview: FC = () => {
               </Box>
             )}
           </Box>
-          {workingCase.caseModifiedExplanation && (
-            <Box marginBottom={5}>
+          <div className={grid({ gap: 5, marginBottom: 10 })}>
+            {workingCase.caseModifiedExplanation && (
               <AlertMessage
                 type="info"
                 title={formatMessage(m.sections.modifyDatesInfo.title, {
@@ -500,10 +501,8 @@ export const SignedVerdictOverview: FC = () => {
                   />
                 }
               />
-            </Box>
-          )}
-          {workingCase.rulingModifiedHistory && (
-            <Box marginBottom={5}>
+            )}
+            {workingCase.rulingModifiedHistory && (
               <AlertMessage
                 type="info"
                 title={formatMessage(m.sections.modifyRulingInfo.title)}
@@ -514,14 +513,12 @@ export const SignedVerdictOverview: FC = () => {
                   />
                 }
               />
-            </Box>
-          )}
-          <Box marginBottom={6}>
+            )}
             <InfoCard
               sections={[
                 {
                   id: 'defendants-section',
-                  items: [defendants(workingCase.type)],
+                  items: [defendants({ caseType: workingCase.type })],
                 },
                 ...(showItem(victims)
                   ? [
@@ -566,10 +563,8 @@ export const SignedVerdictOverview: FC = () => {
                   : []),
               ]}
             />
-          </Box>
-          {!isPrisonSystemUser(user) && (
-            <Box marginBottom={5} data-testid="accordionItems">
-              <Accordion>
+            {!isPrisonSystemUser(user) && (
+              <Accordion data-testid="accordionItems">
                 <PoliceRequestAccordionItem workingCase={workingCase} />
                 <CourtRecordAccordionItem workingCase={workingCase} />
                 <RulingAccordionItem workingCase={workingCase} />
@@ -586,51 +581,47 @@ export const SignedVerdictOverview: FC = () => {
                   <CommentsAccordionItem workingCase={workingCase} />
                 )}
               </Accordion>
-            </Box>
-          )}
-          <Box marginBottom={6}>
+            )}
             <Conclusion
               title={formatMessage(conclusion.title)}
               conclusionText={workingCase.conclusion}
               judgeName={workingCase.judge?.name}
             />
-          </Box>
-          {workingCase.appealState === CaseAppealState.COMPLETED &&
-            workingCase.appealConclusion && (
-              <Box marginBottom={6}>
+            {workingCase.appealState === CaseAppealState.COMPLETED &&
+              workingCase.appealConclusion && (
                 <Conclusion
                   title={formatMessage(conclusion.appealTitle)}
                   conclusionText={workingCase.appealConclusion}
                 />
-              </Box>
-            )}
-          <Box marginBottom={5}>
+              )}
             <AppealCaseFilesOverview />
-          </Box>
-          <CaseDocuments
-            isRequestingCourtRecordSignature={isRequestingCourtRecordSignature}
-            handleRequestCourtRecordSignature={
-              handleRequestCourtRecordSignature
-            }
-            isRequestingRulingSignature={isRequestingRulingSignature}
-            requestRulingSignature={requestRulingSignature}
-          />
+            <CaseDocuments
+              isRequestingCourtRecordSignature={
+                isRequestingCourtRecordSignature
+              }
+              handleRequestCourtRecordSignature={
+                handleRequestCourtRecordSignature
+              }
+              isRequestingRulingSignature={isRequestingRulingSignature}
+              requestRulingSignature={requestRulingSignature}
+            />
 
-          {isProsecutionUser(user) &&
-            user?.institution?.id === workingCase.prosecutorsOffice?.id &&
-            isRestrictionCase(workingCase.type) && (
-              <ShareCase
-                selectedSharingInstitutionOption={
-                  selectedSharingInstitutionOption
-                }
-                setSelectedSharingInstitutionOption={
-                  setSelectedSharingInstitutionOption
-                }
-                shareCaseWithAnotherInstitution={
-                  shareCaseWithAnotherInstitution
-                }
-              />
-            )}
+            {isProsecutionUser(user) &&
+              user?.institution?.id === workingCase.prosecutorsOffice?.id &&
+              isRestrictionCase(workingCase.type) && (
+                <ShareCase
+                  selectedSharingInstitutionOption={
+                    selectedSharingInstitutionOption
+                  }
+                  setSelectedSharingInstitutionOption={
+                    setSelectedSharingInstitutionOption
+                  }
+                  shareCaseWithAnotherInstitution={
+                    shareCaseWithAnotherInstitution
+                  }
+                />
+              )}
+          </div>
         </FormContentContainer>
         <FormContentContainer isFooter>
           <FormFooter

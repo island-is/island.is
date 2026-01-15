@@ -1,16 +1,16 @@
 import { FormSystemField } from '@island.is/api/schema'
 import { Box, Button, Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import { Dispatch } from 'react'
 import { Action } from '../../../lib'
 
 interface Props {
   item: FormSystemField
   dispatch?: Dispatch<Action>
-  lang?: 'is' | 'en'
   hasError?: boolean
 }
 
-export const MessageWithLink = ({ item, lang = 'is' }: Props) => {
+export const MessageWithLink = ({ item }: Props) => {
   const formatUrl = (url: string): string => {
     if (url.startsWith('http://')) {
       url = url.replace('http://', 'https://')
@@ -19,7 +19,7 @@ export const MessageWithLink = ({ item, lang = 'is' }: Props) => {
     }
     return url
   }
-
+  const { lang } = useLocale()
   return (
     <Box
       flexDirection="row"

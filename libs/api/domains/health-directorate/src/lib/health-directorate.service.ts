@@ -1,18 +1,22 @@
 import { Auth } from '@island.is/auth-nest-tools'
 import {
-  HealthDirectorateHealthService,
-  HealthDirectorateOrganDonationService,
+  AppointmentStatus,
+  CreateEuPatientConsentDto,
   HealthDirectorateVaccinationsService,
   OrganDonorDto,
   PrescriptionRenewalRequestDto,
   VaccinationDto,
   organLocale,
+  HealthDirectorateHealthService,
+  HealthDirectorateOrganDonationService,
 } from '@island.is/clients/health-directorate'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import type { Locale } from '@island.is/shared/types'
 import { Inject, Injectable } from '@nestjs/common'
 import isNumber from 'lodash/isNumber'
 import sortBy from 'lodash/sortBy'
+import { PATIENT_PERMIT_CODE } from './constants'
+import { HealthDirectorateAppointmentsInput } from './dto/appointments.input'
 import {
   MedicineDelegationCreateOrDeleteInput,
   MedicineDelegationInput,
@@ -23,6 +27,19 @@ import {
   PermitsInput,
 } from './dto/permit.input'
 import { HealthDirectorateResponse } from './dto/response.dto'
+import {
+  mapAppointmentStatus,
+  mapVaccinationStatus,
+} from './mappers/basicInformationMapper'
+import {
+  mapDelegationStatus,
+  mapDispensationItem,
+  mapPrescriptionCategory,
+  mapPrescriptionRenewalBlockedReason,
+  mapPrescriptionRenewalStatus,
+} from './mappers/medicineMapper'
+import { mapCountryPermitStatus, mapPermit } from './mappers/patientDataMapper'
+import { Appointment, Appointments } from './models/appointments.model'
 import { PermitStatusEnum } from './models/enums'
 import { MedicineDelegations } from './models/medicineDelegation.model'
 import {
@@ -44,15 +61,6 @@ import { HealthDirectorateRenewalInput } from './models/renewal.input'
 import { Vaccination, Vaccinations } from './models/vaccinations.model'
 import { WaitlistDetail } from './models/waitlist.model'
 import { Waitlist, Waitlists } from './models/waitlists.model'
-import {
-  mapDelegationStatus,
-  mapDispensationItem,
-  mapPermit,
-  mapPrescriptionCategory,
-  mapPrescriptionRenewalBlockedReason,
-  mapPrescriptionRenewalStatus,
-  mapVaccinationStatus,
-} from './utils/mappers'
 
 @Injectable()
 export class HealthDirectorateService {
@@ -230,6 +238,7 @@ export class HealthDirectorateService {
           validUntilDate: item.validUntilDate,
           stateDisplay: item.statusDisplay,
           reason: item.reasonForReferral,
+          diagnoses: item.diagnoses?.join(', '),
           fromContactInfo: item.fromContactInfo,
           toContactInfo: item.toContactInfo,
         }
@@ -270,14 +279,15 @@ export class HealthDirectorateService {
     const prescriptions: Array<Prescription> =
       data.map((item) => {
         return {
-          id: item.productId,
-          name: item.productName,
-          type: item.productType,
-          form: item.productForm,
-          url: item.productUrl,
-          quantity: item.productQuantity?.toString(),
-          prescriberName: item.prescriberName,
-          medCardDrugId: item.medCardDrugId,
+          id: item.product.id,
+          name: item.product.name,
+          type: item.product.type,
+          form: item.product.form,
+          strength: item.product.strength,
+          url: item.product.url,
+          quantity: item.product?.quantity?.toString(),
+          prescriberName: item.prescriber.name,
+          medCardDrugId: item.medCard?.id,
           issueDate: item.issueDate,
           expiryDate: item.expiryDate,
           dosageInstructions: item.dosageInstructions,
@@ -286,29 +296,28 @@ export class HealthDirectorateService {
           category: item.category
             ? mapPrescriptionCategory(item.category)
             : undefined,
-          isRenewable: item.isRenewable,
-          renewalBlockedReason: item.renewalBlockedReason
-            ? mapPrescriptionRenewalBlockedReason(item.renewalBlockedReason)
+          isRenewable: item.renewal.isRenewable,
+          renewResponseMessage: item.renewal.responseMessage,
+          renewalBlockedReason: item.renewal.blockedReason
+            ? mapPrescriptionRenewalBlockedReason(item.renewal.blockedReason)
             : undefined,
-          renewalStatus: item.renewalStatus
-            ? mapPrescriptionRenewalStatus(item.renewalStatus)
+          renewalStatus: item.renewal.status
+            ? mapPrescriptionRenewalStatus(item.renewal.status)
             : undefined,
           amountRemaining: item.amountRemainingDisplay,
-          dispensations: item.dispensations.map((item) => {
-            return {
-              id: item.id,
-              agentName: item.dispensingAgentName,
-              date: item.dispensationDate,
-              count: item.dispensedItems.length,
-              items: item.dispensedItems.map((item) => {
-                return {
-                  id: item.productId,
-                  name: item.productName,
-                  strength: item.productStrength,
-                  amount: item.dispensedAmountDisplay,
-                }
-              }),
-            }
+          dispensations: item.dispensations.flatMap((dispensation) => {
+            return dispensation.dispensedItems.map((dispensedItem) => {
+              return {
+                id: dispensation.id,
+                pharmacy: dispensation.dispensingAgentName,
+                date: dispensation.dispensationDate,
+                count: item.dispensations.length,
+                itemId: dispensedItem.productId,
+                name: dispensedItem.productName,
+                strength: dispensedItem.productStrength,
+                amount: dispensedItem.dispensedAmountDisplay,
+              }
+            })
           }),
         }
       }) ?? []
@@ -374,10 +383,10 @@ export class HealthDirectorateService {
     const medicineHistory: Array<MedicineHistoryItem> =
       data.map((item) => {
         return {
-          id: item.productId,
-          name: item.productName,
-          strength: item.productStrength,
-          atcCode: item.productAtcCode,
+          id: item.product.id,
+          name: item.product.name,
+          strength: item.product.strength,
+          atcCode: item.product.atcCode,
           indication: item.indication,
           lastDispensationDate: item.lastDispensationDate,
           dispensationCount: item.dispensationCount,
@@ -417,7 +426,6 @@ export class HealthDirectorateService {
     const medicineDelegations = await this.healthApi.getMedicineDelegations(
       auth,
       locale,
-      input.active,
       input.status.map((status) =>
         status === PermitStatusEnum.awaitingApproval ? 'pending' : status,
       ),
@@ -447,8 +455,7 @@ export class HealthDirectorateService {
         lookup: item.commissionType === 1,
       })),
     }
-
-    return data
+    return { items: sortBy(data.items, 'status') }
   }
 
   async postMedicineDelegation(
@@ -504,9 +511,7 @@ export class HealthDirectorateService {
     const permits = await this.healthApi.getPermits(
       auth,
       locale,
-      input.status.map((status) =>
-        status === PermitStatusEnum.awaitingApproval ? 'pending' : status,
-      ),
+      input.status.map((status) => mapCountryPermitStatus(status)),
     )
 
     if (!permits) {
@@ -514,8 +519,7 @@ export class HealthDirectorateService {
     }
 
     const data: Permit[] = permits.map((item) => mapPermit(item, locale)) ?? []
-    const sorted = sortBy(data, 'status', 'asc')
-    return { data: sorted }
+    return { data: sortBy(data, 'status') }
   }
 
   /* Patient data - Permit Detail */
@@ -554,12 +558,13 @@ export class HealthDirectorateService {
     auth: Auth,
     input: PermitInput,
   ): Promise<PermitReturn | null> {
-    const response = await this.healthApi.createPermit(auth, {
-      codes: input.codes,
+    const mappedInput: CreateEuPatientConsentDto = {
+      codes: [PATIENT_PERMIT_CODE], // Fixed code for patient summary consent
       countryCodes: input.countryCodes,
       validFrom: new Date(input.validFrom),
       validTo: new Date(input.validTo),
-    })
+    }
+    const response = await this.healthApi.createPermit(auth, mappedInput)
     return response ? { status: true } : null
   }
 
@@ -590,5 +595,64 @@ export class HealthDirectorateService {
         medCardDrugId: input.medCardDrugId,
       }
     } else return null
+  }
+
+  /* Appointments */
+  public async getAppointments(
+    auth: Auth,
+    input: HealthDirectorateAppointmentsInput,
+  ): Promise<Appointments | null> {
+    try {
+      const data = await this.healthApi.getAppointments(
+        auth,
+        input.from,
+        input.status
+          ?.map((status) => mapAppointmentStatus(status))
+          .filter((status): status is AppointmentStatus => status !== null),
+      )
+      if (!data) {
+        return null
+      }
+
+      // Sort data by startTime before mapping
+      const sortedData = [...data].sort((a, b) => {
+        if (!a.startTime || !b.startTime) return 0
+        return new Date(a.startTime).getTime() - new Date(b.startTime).getTime()
+      })
+
+      const appointments: Array<Appointment> =
+        sortedData.map((item) => {
+          const data: Appointment = {
+            id: item.id,
+            date: item.startTime?.toISOString(),
+            title: item.description,
+            status: item.status,
+            instruction: item.patientInstruction,
+            duration: item.duration,
+            location: item.location
+              ? {
+                  name: item.location.name,
+                  organization: item.location.organization || '',
+                  address: item.location.address,
+                  directions: item.location.directions || '',
+                  city: item.location.city || '',
+                  postalCode: item.location.postalCode || '',
+                  country: item.location.country || '',
+                  latitude: item.location.latitude || undefined,
+                  longitude: item.location.longitude || undefined,
+                }
+              : undefined,
+            practitioners: item.practitioners || [],
+          }
+          return data
+        }) ?? []
+      return { data: appointments }
+    } catch (error) {
+      this.logger.warn(
+        'Error fetching appointments from Health Directorate API',
+        error,
+      )
+      return null
+    }
   }
 }

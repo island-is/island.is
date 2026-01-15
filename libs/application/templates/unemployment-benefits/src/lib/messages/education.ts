@@ -13,7 +13,7 @@ export const education = {
       description: 'education section page title',
     },
     pageDescription: {
-      id: 'vmst.ub.application:education.general.pageDescription',
+      id: 'vmst.ub.application:education.general.pageDescription#markdown',
       defaultMessage:
         'Einstaklingar í námi eiga yfirleitt ekki rétt á atvinnuleysisbótum. Það eru þó undantekningar á þessu, til dæmis ef nám er 20 einingar eða minna, einstaklingur missir vinnu eftir að önn hefst eða námið er skilgreint sem nám með vinnu.',
       description: 'education section page description',
@@ -24,6 +24,21 @@ export const education = {
       id: 'vmst.ub.application:education.labels.lastTvelveMonthsLabel',
       defaultMessage: 'Hefur þú verið í námi á síðastliðnum 12 mánuðum?',
       description: 'Has been in school for the last 12 months',
+    },
+    currentStudiesDescriptionTitle: {
+      id: 'vmst.ub.application:education.labels.currentStudiesDescriptionTitle',
+      defaultMessage: 'Núverandi nám',
+      description: 'Currently studying description title',
+    },
+    studyingLastSemesterDescriptionTitle: {
+      id: 'vmst.ub.application:education.labels.studyingLastSemesterDescriptionTitle',
+      defaultMessage: 'Nám síðustu annar',
+      description: 'Studying last semester description title',
+    },
+    finishedLastTwelveMonthsDescriptionTitle: {
+      id: 'vmst.ub.application:education.labels.finishedLastTwelveMonthsDescriptionTitle',
+      defaultMessage: 'Námi lokið á síðustu 12 mánuðum',
+      description: 'Studying finished last twelve months description title',
     },
     typeOfEducationLabel: {
       id: 'vmst.ub.application:education.labels.typeOfEducationLabel',
@@ -66,6 +81,11 @@ export const education = {
       defaultMessage: 'Einingafjöldi',
       description: 'School program units label',
     },
+    schoolProgramUnitsLabelPerSemester: {
+      id: 'vmst.ub.application:education.labels.schoolProgramUnitsLabelPerSemester',
+      defaultMessage: 'Einingafjöldi annar',
+      description: 'School program units per semester label',
+    },
     schoolDegreeLabel: {
       id: 'vmst.ub.application:education.labels.schoolDegreeLabel',
       defaultMessage: 'Prófgráða',
@@ -84,13 +104,35 @@ export const education = {
     currentSchoolDegreeInformation: {
       id: 'vmst.ub.application:education.labels.currentSchoolDegreeInformation',
       defaultMessage:
-        'Þú þarft alltaf að skila inn staðfestingu á námi og/eða prófgráðu. Engar áhyggjur þó þú sért ekki með skjalið klárt. Þú getur vel klárað umsóknina og skilað inn skjalinu á Mínum síðum Vinnumálastofnunar síðar.',
-      description: 'School degree file label',
+        'Þú þarft að skila inn staðfestingu á að þú hafið verið í námi á önninni. Engar áhyggjur þó þú sért ekki með skjalið klárt. Þú getur vel klárað umsóknina og skilað inn skjalinu á Mínum síðum Vinnumálastofnunar síðar.',
+      description: 'current education file description',
     },
     currentSchoolDegreeFileNameLabel: {
       id: 'vmst.ub.application:education.labels.schoolDegreeFileNameLabel',
-      defaultMessage: 'Staðfesting á námi/prófgráðu',
-      description: 'School degree file name label',
+      defaultMessage: 'Staðfesting á núverandi námi',
+      description: 'Current education file name label',
+    },
+    lastSemesterSchoolDegreeInformation: {
+      id: 'vmst.ub.application:education.labels.lastSemesterSchoolDegreeInformation',
+      defaultMessage:
+        'Þú þarft að skila inn staðfestingu á námi síðustu annar. Engar áhyggjur þó þú sért ekki með skjalið klárt. Þú getur vel klárað umsóknina og skilað inn skjalinu á Mínum síðum Vinnumálastofnunar síðar.',
+      description: 'last semester confirmation description',
+    },
+    lastSemesterSchoolDegreeFileNameLabel: {
+      id: 'vmst.ub.application:education.labels.lastSemesterSchoolDegreeFileNameLabel',
+      defaultMessage: 'Staðfesting á námi síðustu annar',
+      description: 'last semester confirmation file name label',
+    },
+    graduatedSchoolDegreeInformation: {
+      id: 'vmst.ub.application:education.labels.graduatedSchoolDegreeInformation',
+      defaultMessage:
+        'Hafir þú lokið námi með prófgráðu á síðustu tólf mánuðum kann það að hækka bótarétt þinn og jafngildir þremur mánuðum í 100% starfshlutfalli. Engar áhyggjur þó þú sért ekki með skjalið klárt. Þú getur vel klárað umsóknina og skilað inn skjalinu á Mínum síðum Vinnumálastofnunar síðar.',
+      description: 'graduation confirmation file name label',
+    },
+    graduatedSchoolDegreeFileNameLabel: {
+      id: 'vmst.ub.application:education.labels.graduatedSchoolDegreeFileNameLabel',
+      defaultMessage: 'Staðfesting á prófgráðu',
+      description: 'graduation confirmation file name label',
     },
     lastSemesterQuestion: {
       id: 'vmst.ub.application:education.labels.lastSemesterQuestion',
@@ -123,6 +165,16 @@ export const education = {
       defaultMessage: 'Námslok',
       description: 'End of studies label',
     },
+    sameAsCurrentEducationCheckbox: {
+      id: 'vmst.ub.application:education.labels.sameAsCurrentEducationCheckbox',
+      defaultMessage: 'Sama og núverandi nám',
+      description: 'Same as current education checkbox label',
+    },
+    sameAsLastSemesterEducationCheckbox: {
+      id: 'vmst.ub.application:education.labels.sameAsLastSemesterEducationCheckbox',
+      defaultMessage: 'Sama og nám síðustu annar',
+      description: 'Same as last semester education checkbox label',
+    },
     addItemButtonText: {
       id: 'vmst.ub.application:education.labels.addItemButtonText',
       defaultMessage: 'Bæta við námi',
@@ -130,7 +182,7 @@ export const education = {
     },
     educationHistoryTitle: {
       id: 'vmst.ub.application:education.labels.educationHistoryTitle',
-      defaultMessage: 'Nám {value}',
+      defaultMessage: 'Fyrra nám',
       description: 'Education history title',
     },
   }),

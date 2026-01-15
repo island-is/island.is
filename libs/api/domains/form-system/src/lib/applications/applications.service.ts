@@ -12,7 +12,6 @@ import {
   ApplicationsControllerGetApplicationRequest,
   ApplicationsControllerSaveScreenRequest,
   ApplicationsControllerSubmitRequest,
-  ApplicationsControllerSubmitSectionRequest,
   ApplicationsControllerUpdateRequest,
 } from '@island.is/clients/form-system'
 import {
@@ -21,14 +20,9 @@ import {
   GetApplicationInput,
   GetApplicationsInput,
   SubmitScreenInput,
-  SubmitSectionInput,
   UpdateApplicationInput,
 } from '../../dto/application.input'
-import {
-  Application,
-  ApplicationResponse,
-} from '../../models/applications.model'
-import { Screen } from '../../models/screen.model'
+import { ApplicationResponse } from '../../models/applications.model'
 
 @Injectable()
 export class ApplicationsService {
@@ -56,24 +50,24 @@ export class ApplicationsService {
   async createApplication(
     auth: User,
     input: CreateApplicationInput,
-  ): Promise<Application> {
+  ): Promise<ApplicationResponse> {
     const response = await this.applicationsApiWithAuth(
       auth,
     ).applicationsControllerCreate(input as ApplicationsControllerCreateRequest)
-    return response as Application
+    return response as ApplicationResponse
   }
 
   async getApplication(
     auth: User,
     input: GetApplicationInput,
-  ): Promise<Application> {
+  ): Promise<ApplicationResponse> {
     const response = await this.applicationsApiWithAuth(auth)
       .applicationsControllerGetApplication(
         input as ApplicationsControllerGetApplicationRequest,
       )
       .catch((e) => handle4xx(e, this.handleError, 'failed to get application'))
 
-    return response as Application
+    return response as ApplicationResponse
   }
 
   async getApplications(
@@ -131,20 +125,9 @@ export class ApplicationsService {
     )
   }
 
-  async saveScreen(auth: User, input: SubmitScreenInput): Promise<Screen> {
-    const response = await this.applicationsApiWithAuth(
-      auth,
-    ).applicationsControllerSaveScreen(
+  async saveScreen(auth: User, input: SubmitScreenInput): Promise<void> {
+    await this.applicationsApiWithAuth(auth).applicationsControllerSaveScreen(
       input as ApplicationsControllerSaveScreenRequest,
-    )
-    return response
-  }
-
-  async submitSection(auth: User, input: SubmitSectionInput): Promise<void> {
-    await this.applicationsApiWithAuth(
-      auth,
-    ).applicationsControllerSubmitSection(
-      input as ApplicationsControllerSubmitSectionRequest,
     )
   }
 

@@ -2,6 +2,16 @@ import { defineMessages } from 'react-intl'
 
 export const m = {
   listPage: defineMessages({
+    caseContactAccordionLabel: {
+      id: 'web.verdicts:listPage.caseContactAccordionLabel',
+      defaultMessage: 'Málsaðili',
+      description: 'Label á "Málsaðili" accordion einingu',
+    },
+    caseContactInputLabel: {
+      id: 'web.verdicts:listPage.caseContactInputLabel',
+      defaultMessage: 'Sláðu inn málsaðila',
+      description: 'Label á "Málsaðili" input',
+    },
     showAllDistrictCourts: {
       id: 'web.verdicts:listPage.showAllDistrictCourts',
       defaultMessage: 'Allir héraðsdómstólar',
@@ -210,7 +220,7 @@ export const m = {
       description: 'dómur fannst (eintala)',
     },
   }),
-  verdictPage: {
+  verdictPage: defineMessages({
     heading: {
       id: 'web.verdicts:verdictPage.heading',
       defaultMessage: 'Dómur',
@@ -247,5 +257,5 @@ export const m = {
         'https://images.ctfassets.net/8k0h54kbe6bj/40DkdlOOP8LT7a49ytG0vS/71bdcf876b158e860e27b1d249043798/Frame_25613.svg',
       description: 'Logo efst í HTML dómi',
     },
-  },
+  }),
 }

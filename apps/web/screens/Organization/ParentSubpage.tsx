@@ -59,7 +59,7 @@ const OrganizationParentSubpage: Screen<
   const { activeLocale } = useI18n()
   const { linkResolver } = useLinkResolver()
   const n = useNamespace(namespace)
-  useLocalLinkTypeResolver()
+  useLocalLinkTypeResolver('organizationparentsubpagechild')
   useContentfulId(organizationPage.id, parentSubpage.id, subpage.id)
 
   const showTableOfContents = parentSubpage.childLinks.length > 1

@@ -1,4 +1,4 @@
-import { useCallback, useContext, useMemo, useState } from 'react'
+import { useCallback, useContext, useMemo } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import { applyCase as applyCaseToAddress } from 'beygla/addresses'
 import { applyCase } from 'beygla/strict'
@@ -37,13 +37,9 @@ import {
   PoliceCaseInfo,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  removeTabsValidateAndSet,
-  validateAndSendToServer,
-} from '@island.is/judicial-system-web/src/utils/formHelper'
-import {
   UpdateIndictmentCount,
   useCase,
-  useDeb,
+  useDebouncedInput,
   useIndictmentCounts,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -68,24 +64,25 @@ export const getIndictmentIntroductionAutofill = (
         `\n\n${formatMessage(strings.indictmentIntroductionAutofillCourt, {
           court: applyDativeCaseToCourtName(court?.name || 'héraðsdómi'),
         })}`,
-        `\n\n${defendants.map((defendant) => {
-          return `\n          ${formatMessage(
-            strings.indictmentIntroductionAutofillDefendant,
-            {
-              defendantName: defendant.name
-                ? applyCase('þgf', defendant.name)
-                : 'Ekki skráð',
-              defendantNationalId: defendant.nationalId
-                ? formatNationalId(defendant.nationalId)
-                : 'Ekki skráð',
-            },
-          )}\n          ${
-            defendant.address
-              ? applyCaseToAddress('þgf', defendant.address)
-              : 'Ekki skráð'
-          },`
-        })}
-    `,
+        `\n\n${defendants
+          .map((defendant) => {
+            return `\n          ${formatMessage(
+              strings.indictmentIntroductionAutofillDefendant,
+              {
+                defendantName: defendant.name
+                  ? applyCase('þgf', defendant.name)
+                  : 'Ekki skráð',
+                defendantNationalId: defendant.nationalId
+                  ? formatNationalId(defendant.nationalId)
+                  : 'Ekki skráð',
+              },
+            )}\n          ${
+              defendant.address
+                ? applyCaseToAddress('þgf', defendant.address)
+                : 'Ekki skráð'
+            },`
+          })
+          .join('')}`,
       ]
     : []
 }
@@ -120,20 +117,21 @@ const Indictment = () => {
     isCaseUpToDate,
   } = useContext(FormContext)
 
+  const demandsInput = useDebouncedInput('demands', ['empty'])
+  const civilDemandsInput = useDebouncedInput('civilDemands', ['empty'])
+  const indictmentIntroductionInput = useDebouncedInput(
+    'indictmentIntroduction',
+    ['empty'],
+  )
+
   const { formatMessage } = useIntl()
-  const { updateCase, setAndSendCaseToServer } = useCase()
+  const { setAndSendCaseToServer } = useCase()
   const {
     createIndictmentCount,
     updateIndictmentCount,
     deleteIndictmentCount,
     updateIndictmentCountState,
   } = useIndictmentCounts()
-  const [
-    indictmentIntroductionErrorMessage,
-    setIndictmentIntroductionErrorMessage,
-  ] = useState<string>('')
-  const [demandsErrorMessage, setDemandsErrorMessage] = useState('')
-  const [civilDemandsErrorMessage, setCivilDemandsErrorMessage] = useState('')
 
   const gender = getDefaultDefendantGender(workingCase.defendants)
 
@@ -148,7 +146,9 @@ const Indictment = () => {
     onCompleted: (data) => {
       if (!data.policeCaseInfo) {
         return undefined
-      } else return data as PoliceCaseInfo[]
+      } else {
+        return data as PoliceCaseInfo[]
+      }
     },
   })
 
@@ -158,8 +158,6 @@ const Indictment = () => {
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
     [workingCase.id],
   )
-
-  useDeb(workingCase, ['indictmentIntroduction', 'demands'])
 
   const getDemands = useCallback(
     (
@@ -278,49 +276,57 @@ const Indictment = () => {
   const handleUpdateIndictmentCount = useCallback(
     async (
       indictmentCountId: string,
-      updatedIndictmentCount: UpdateIndictmentCount,
+      indictmentCountUpdate: UpdateIndictmentCount,
       updatedOffenses?: Offense[],
     ) => {
       if (
-        updatedIndictmentCount.policeCaseNumber &&
+        indictmentCountUpdate.policeCaseNumber &&
         policeCaseData?.policeCaseInfo
       ) {
         const vehicleNumber = policeCaseData.policeCaseInfo?.find(
           (policeCase) =>
             policeCase?.policeCaseNumber ===
-            updatedIndictmentCount.policeCaseNumber,
+            indictmentCountUpdate.policeCaseNumber,
         )?.licencePlate
 
         if (vehicleNumber)
-          updatedIndictmentCount.vehicleRegistrationNumber = vehicleNumber
+          indictmentCountUpdate.vehicleRegistrationNumber = vehicleNumber
+      }
+
+      const prevIndictmentCount = workingCase.indictmentCounts?.find(
+        (count) => count.id === indictmentCountId,
+      )
+
+      if (!prevIndictmentCount) {
+        return
       }
 
       const returnedIndictmentCount = await updateIndictmentCount(
         workingCase.id,
         indictmentCountId,
-        updatedIndictmentCount,
+        indictmentCountUpdate,
       )
 
       if (!returnedIndictmentCount) {
         return
       }
 
-      const prevSuspensionOffenses = getSuspensionOffenses(
-        workingCase.indictmentCounts,
-      )
-
-      const newSuspensionOffenses = getSuspensionOffenses(
-        workingCase.indictmentCounts?.map((count) =>
-          count.id === indictmentCountId
-            ? {
-                ...returnedIndictmentCount,
-                offenses: updatedOffenses ?? count.offenses,
-              }
-            : count,
-        ),
-      )
+      const updatedIndictmentCount = {
+        ...returnedIndictmentCount,
+        offenses: updatedOffenses ?? prevIndictmentCount.offenses,
+      }
 
       if (updatedOffenses && updatedOffenses?.length > 0) {
+        const prevSuspensionOffenses = getSuspensionOffenses(
+          workingCase.indictmentCounts,
+        )
+
+        const newSuspensionOffenses = getSuspensionOffenses(
+          workingCase.indictmentCounts?.map((count) =>
+            count.id === indictmentCountId ? updatedIndictmentCount : count,
+          ),
+        )
+
         setSuspensionRequest(
           prevSuspensionOffenses,
           newSuspensionOffenses,
@@ -330,9 +336,8 @@ const Indictment = () => {
 
       updateIndictmentCountState(
         indictmentCountId,
-        returnedIndictmentCount,
+        updatedIndictmentCount,
         setWorkingCase,
-        updatedOffenses,
       )
     },
     [
@@ -451,34 +456,19 @@ const Indictment = () => {
               placeholder={formatMessage(
                 strings.indictmentIntroductionPlaceholder,
               )}
-              value={workingCase.indictmentIntroduction || ''}
-              errorMessage={indictmentIntroductionErrorMessage}
-              hasError={indictmentIntroductionErrorMessage !== ''}
-              onChange={(event) =>
-                removeTabsValidateAndSet(
-                  'indictmentIntroduction',
-                  event.target.value,
-                  ['empty'],
-                  setWorkingCase,
-                  indictmentIntroductionErrorMessage,
-                  setIndictmentIntroductionErrorMessage,
-                )
+              value={indictmentIntroductionInput.value ?? ''}
+              errorMessage={indictmentIntroductionInput.errorMessage}
+              hasError={indictmentIntroductionInput.hasError}
+              onChange={(evt) =>
+                indictmentIntroductionInput.onChange(evt.target.value)
               }
-              onBlur={(event) =>
-                validateAndSendToServer(
-                  'indictmentIntroduction',
-                  event.target.value,
-                  ['empty'],
-                  workingCase,
-                  updateCase,
-                  setIndictmentIntroductionErrorMessage,
-                )
+              onBlur={(evt) =>
+                indictmentIntroductionInput.onBlur(evt.target.value)
               }
               textarea
               required
               autoComplete="off"
               rows={10}
-              autoExpand={{ on: true, maxHeight: 300 }}
             />
           </Box>
           <AnimatePresence>
@@ -550,34 +540,15 @@ const Indictment = () => {
                 name="demands"
                 label={formatMessage(strings.demandsLabel)}
                 placeholder={formatMessage(strings.demandsPlaceholder)}
-                value={workingCase.demands ?? ''}
-                errorMessage={demandsErrorMessage}
-                hasError={demandsErrorMessage !== ''}
-                onChange={(event) =>
-                  removeTabsValidateAndSet(
-                    'demands',
-                    event.target.value,
-                    ['empty'],
-                    setWorkingCase,
-                    demandsErrorMessage,
-                    setDemandsErrorMessage,
-                  )
-                }
-                onBlur={(event) =>
-                  validateAndSendToServer(
-                    'demands',
-                    event.target.value,
-                    ['empty'],
-                    workingCase,
-                    updateCase,
-                    setDemandsErrorMessage,
-                  )
-                }
-                textarea
+                value={demandsInput.value ?? ''}
+                onChange={(evt) => demandsInput.onChange(evt.target.value)}
+                onBlur={(evt) => demandsInput.onBlur(evt.target.value)}
+                errorMessage={demandsInput.errorMessage}
+                hasError={demandsInput.hasError}
                 autoComplete="off"
-                required
                 rows={7}
-                autoExpand={{ on: true, maxHeight: 300 }}
+                textarea
+                required
               />
             </BlueBox>
           </Box>
@@ -590,42 +561,20 @@ const Indictment = () => {
                 name="civilDemands"
                 label={formatMessage(strings.civilDemandsLabel)}
                 placeholder={formatMessage(strings.civilDemandsPlaceholder)}
-                value={workingCase.civilDemands ?? ''}
-                errorMessage={civilDemandsErrorMessage}
-                hasError={civilDemandsErrorMessage !== ''}
-                onChange={(event) =>
-                  removeTabsValidateAndSet(
-                    'civilDemands',
-                    event.target.value,
-                    ['empty'],
-                    setWorkingCase,
-                    civilDemandsErrorMessage,
-                    setCivilDemandsErrorMessage,
-                  )
-                }
-                onBlur={(event) =>
-                  validateAndSendToServer(
-                    'civilDemands',
-                    event.target.value,
-                    ['empty'],
-                    workingCase,
-                    updateCase,
-                    setCivilDemandsErrorMessage,
-                  )
-                }
+                value={civilDemandsInput.value ?? ''}
+                errorMessage={civilDemandsInput.errorMessage}
+                hasError={civilDemandsInput.hasError}
+                onChange={(evt) => civilDemandsInput.onChange(evt.target.value)}
+                onBlur={(evt) => civilDemandsInput.onBlur(evt.target.value)}
                 textarea
                 autoComplete="off"
                 required
                 rows={7}
-                autoExpand={{ on: true, maxHeight: 300 }}
               />
             </Box>
           )}
           <Box component="section">
-            <InputPenalties
-              workingCase={workingCase}
-              setWorkingCase={setWorkingCase}
-            />
+            <InputPenalties />
           </Box>
           <Box marginBottom={10}>
             <PdfButton

@@ -61,34 +61,51 @@ export class UserProfileService extends BaseTemplateApiService {
         throw error
       })
 
-    if (isRunningOnEnvironment('local') && !mobilePhoneNumber && !email) {
-      return {
-        email: 'mockEmail@island.is',
-        mobilePhoneNumber: '9999999',
-      }
-    }
-
     const bankInfoRes =
       await this.bankinfoClientService.getBankAccountsForNationalId(
         auth.nationalId,
       )
 
-    if (bankInfoRes && params?.validateBankInformation) {
-      if (!bankInfoRes?.bankAccountInfo || bankInfoRes.error) {
-        // If individual does not have a valid bank account, then we fail this check
+    if (params?.validateBankInformation) {
+      if (!bankInfoRes) {
         throw new TemplateApiError(
           {
             title: coreErrorMessages.noBankAccountError,
-            summary: coreErrorMessages.noBankAccountError,
+            summary: {
+              ...coreErrorMessages.noBankAccountErrorDescription,
+              values: {
+                link: this.getIDSLink(application),
+              },
+            },
           },
           400,
         )
+      }
+      if (bankInfoRes) {
+        if (!bankInfoRes?.bankAccountInfo || bankInfoRes.error) {
+          // If individual does not have a valid bank account, then we fail this check
+          throw new TemplateApiError(
+            {
+              title: coreErrorMessages.invalidBankAccountError,
+              summary: coreErrorMessages.invalidBankAccountError,
+            },
+            400,
+          )
+        }
       }
     }
 
     const bankInfo = bankInfoRes
       ? formatBankInfo(bankInfoRes.bankAccountInfo)
       : undefined
+
+    if (isRunningOnEnvironment('local') && !mobilePhoneNumber && !email) {
+      return {
+        email: 'mockEmail@island.is',
+        mobilePhoneNumber: '9999999',
+        bankInfo: bankInfo ?? undefined,
+      }
+    }
 
     const isActor = !!auth.actor?.nationalId
     const emailIsInvalid =
@@ -152,19 +169,15 @@ export class UserProfileService extends BaseTemplateApiService {
 
   private getIDSLink(
     application: ApplicationWithAttachments,
-    include: { email?: boolean; phone?: boolean },
+    include?: { email?: boolean; phone?: boolean },
   ) {
     let idsUserProfileLink = ''
-    if (include.email && include.phone) {
-      idsUserProfileLink = '/app/user-profile/'
-    } else if (include.email) {
+    if (include?.email) {
       idsUserProfileLink = '/app/user-profile/email'
-    } else if (include.phone) {
+    } else if (include?.phone) {
       idsUserProfileLink = '/app/user-profile/phone'
-    }
-
-    if (!idsUserProfileLink) {
-      throw new Error('Missing user profile link type')
+    } else {
+      idsUserProfileLink = '/app/user-profile/'
     }
 
     const slug = getSlugFromType(application.typeId)

@@ -16,6 +16,12 @@ export const unboundTerminationMessages = defineMessages({
     defaultMessage: 'Ástæða uppsagnar',
     description: 'Unbound termination select title',
   },
+  reasonMissingError: {
+    id: 'tra.application:unboundTermination.reasonMissingError',
+    defaultMessage:
+      'Ástæðu uppsagnar þarf að gefa upp á samningi sem gerður var eftir 1.september 2024',
+    description: 'Unbound termination reason missing error',
+  },
   dateInfo: {
     id: 'tra.application:unboundTermination.dateInfo',
     defaultMessage:

@@ -14,6 +14,7 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   CaseFileCategory,
   CourtDocumentType,
+  EventType,
   ServiceStatus,
 } from '@island.is/judicial-system/types'
 
@@ -22,6 +23,7 @@ import {
   CourtSession,
   CourtSessionRepositoryService,
   CourtSessionString,
+  EventLog,
 } from '../repository'
 import { CourtSessionStringDto } from './dto/CourtSessionStringDto.dto'
 import { UpdateCourtSessionDto } from './dto/updateCourtSession.dto'
@@ -32,6 +34,8 @@ export class CourtSessionService {
   constructor(
     private readonly courtSessionRepositoryService: CourtSessionRepositoryService,
     private readonly courtDocumentService: CourtDocumentService,
+    // TODO: Move to a repository service - models should only be used in repository services
+    // It would be best to hide the details of the court session model from all but the backend
     @InjectModel(CourtSessionString)
     private readonly courtSessionStringModel: typeof CourtSessionString,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
@@ -48,13 +52,22 @@ export class CourtSessionService {
       return courtSession
     }
 
+    const indictmentConfirmedDate = EventLog.getEventLogDateByEventType(
+      EventType.INDICTMENT_CONFIRMED,
+      theCase.eventLogs,
+    )
+
     // Start with the generated indictment PDF
     await this.courtDocumentService.createInCourtSession(
       theCase.id,
       courtSession.id,
       {
         documentType: CourtDocumentType.GENERATED_DOCUMENT,
-        name: 'Ákæra',
+        name: `Ákæra${
+          indictmentConfirmedDate
+            ? ` ${formatDate(indictmentConfirmedDate)}`
+            : ''
+        }`,
         generatedPdfUri: `/api/case/${theCase.id}/indictment/Ákæra`,
       },
       transaction,

@@ -20,7 +20,7 @@ export enum Roles {
   APPLICANT = 'applicant',
 }
 
-export const UPLOAD_ACCEPT = 'pdf, .doc, .docx, .png, .jpg, .jpeg'
+export const UPLOAD_ACCEPT = '.pdf, .doc, .docx, .png, .jpg, .jpeg'
 
 export const FILE_SIZE_LIMIT = 10000000 // 10MB
 
@@ -31,6 +31,7 @@ export enum PaymentTypeIds {
   INSURANCE_PAYMENTS_TYPE_ID = '40f3f704-668c-4dd2-8a41-87657da9daef', // Greiðslur frá Tryggingastofnun
   REHAB_PENSION_ID = 'b3b47559-87c1-4ebe-a6e9-08d7e532c7e6', // Sjúkra og endurhæfingalífeyrir
   SPOUSE_PENSION = '4bf573f4-51ed-4c1f-882e-08d680850aba', // Makalífeyrir
+  CAPITAL_GAINT = 'B84E57B2-3D8F-45B7-8831-08D680850ABA', // Fjármagnstekjuskattur
 }
 
 export enum LanguageIds {

@@ -112,9 +112,7 @@ export class VehiclesService {
       includeNextMainInspectionDate: input.includeNextMainInspectionDate,
       onlyMileageRegisterableVehicles:
         input.filterOnlyVehiclesUserCanRegisterMileage,
-      //TODO: remove when upload ready
-      onlyMileageRequiredVehicles:
-        input.filterOnlyVehiclesUserCanRegisterMileage,
+      onlyMileageRequiredVehicles: input.filterOnlyMileageRequiredVehicles,
       query: input.query,
     })
 
@@ -453,7 +451,7 @@ export class VehiclesService {
           ...input,
           operation: input.operation ?? null,
           readDate: input.readDate ?? undefined,
-          internalId: input.internalId + 1,
+          internalId: input.internalId ? input.internalId + 1 : undefined,
         }
       }
       return null
@@ -538,7 +536,7 @@ export class VehiclesService {
           ...input,
           operation: input.operation ?? null,
           readDate: input.readDate ?? undefined,
-          internalId: input.internalId + 1,
+          internalId: input.internalId ? input.internalId + 1 : undefined,
         }
       }
 

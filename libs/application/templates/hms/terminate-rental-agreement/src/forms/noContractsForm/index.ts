@@ -6,7 +6,7 @@ import {
 } from '@island.is/application/core'
 import { FormModes } from '@island.is/application/types'
 import { HmsLogo } from '@island.is/application/assets/institution-logos'
-import MovingSearching from '../../assets/MovingSearching'
+import { MovingSearching } from '@island.is/application/assets/graphics'
 import * as m from '../../lib/messages'
 
 export const noContractsForm = buildForm({

@@ -1,8 +1,8 @@
-import { useCallback, useContext, useEffect, useState } from 'react'
+import { useCallback, useContext, useEffect } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
-import { Box, Checkbox, Input, Text, Tooltip } from '@island.is/island-ui/core'
+import { Box, Checkbox, Input, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { icReportForm, titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -15,27 +15,27 @@ import {
   PageLayout,
   PageTitle,
   ProsecutorCaseInfo,
+  SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  removeTabsValidateAndSet,
-  validateAndSendToServer,
-} from '@island.is/judicial-system-web/src/utils/formHelper'
-import { useCase, useDeb } from '@island.is/judicial-system-web/src/utils/hooks'
+  useCase,
+  useDebouncedInput,
+} from '@island.is/judicial-system-web/src/utils/hooks'
+import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { isPoliceReportStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 
 const PoliceReport = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { formatMessage } = useIntl()
-  const [caseFactsEM, setCaseFactsEM] = useState<string>('')
-  const [legalArgumentsEM, setLegalArgumentsEM] = useState<string>('')
   const { updateCase, setAndSendCaseToServer } = useCase()
 
-  useDeb(workingCase, [
-    'caseFacts',
-    'legalArguments',
+  const caseFactsInput = useDebouncedInput('caseFacts', ['empty'])
+  const legalArgumentsInput = useDebouncedInput('legalArguments', ['empty'])
+  const prosecutorOnlySessionRequestInput = useDebouncedInput(
     'prosecutorOnlySessionRequest',
-  ])
+    [],
+  )
 
   useEffect(() => {
     if (
@@ -75,71 +75,36 @@ const PoliceReport = () => {
       />
       <FormContentContainer>
         <PageTitle>{formatMessage(icReportForm.heading)}</PageTitle>
-        <Box marginBottom={5}>
+        <div className={grid({ gap: 5, marginBottom: 10 })}>
           <ProsecutorCaseInfo workingCase={workingCase} />
-        </Box>
-        <Box marginBottom={5}>
           <BlueBox>
             <Text whiteSpace="preLine">{workingCase.demands}</Text>
           </BlueBox>
-        </Box>
-        <Box component="section" marginBottom={5}>
-          <Box marginBottom={2}>
-            <Text as="h3" variant="h3">
-              {formatMessage(icReportForm.caseFacts.heading)}{' '}
-              <Tooltip
-                placement="right"
-                as="span"
-                text={formatMessage(icReportForm.caseFacts.tooltip)}
-              />
-            </Text>
+          <Box component="section">
+            <SectionHeading
+              title={formatMessage(icReportForm.caseFacts.heading)}
+              tooltip={formatMessage(icReportForm.caseFacts.tooltip)}
+            />
+            <Input
+              data-testid="caseFacts"
+              name="caseFacts"
+              label={formatMessage(icReportForm.caseFacts.label)}
+              placeholder={formatMessage(icReportForm.caseFacts.placeholder)}
+              errorMessage={caseFactsInput.errorMessage}
+              hasError={caseFactsInput.hasError}
+              value={caseFactsInput.value}
+              onChange={(evt) => caseFactsInput.onChange(evt.target.value)}
+              onBlur={(evt) => caseFactsInput.onBlur(evt.target.value)}
+              required
+              rows={14}
+              textarea
+            />
           </Box>
-          <Input
-            data-testid="caseFacts"
-            name="caseFacts"
-            label={formatMessage(icReportForm.caseFacts.label)}
-            placeholder={formatMessage(icReportForm.caseFacts.placeholder)}
-            errorMessage={caseFactsEM}
-            hasError={caseFactsEM !== ''}
-            value={workingCase.caseFacts || ''}
-            onChange={(event) =>
-              removeTabsValidateAndSet(
-                'caseFacts',
-                event.target.value,
-                ['empty'],
-                setWorkingCase,
-                caseFactsEM,
-                setCaseFactsEM,
-              )
-            }
-            onBlur={(event) =>
-              validateAndSendToServer(
-                'caseFacts',
-                event.target.value,
-                ['empty'],
-                workingCase,
-                updateCase,
-                setCaseFactsEM,
-              )
-            }
-            required
-            rows={14}
-            autoExpand={{ on: true, maxHeight: 600 }}
-            textarea
-          />
-        </Box>
-        <Box component="section" marginBottom={5}>
-          <Box marginBottom={2}>
-            <Text as="h3" variant="h3">
-              {formatMessage(icReportForm.legalArguments.heading)}{' '}
-              <Tooltip
-                placement="right"
-                as="span"
-                text={formatMessage(icReportForm.legalArguments.tooltip)}
-              />
-            </Text>
-          </Box>
-          <Box marginBottom={5}>
+          <Box component="section">
+            <SectionHeading
+              title={formatMessage(icReportForm.legalArguments.heading)}
+              tooltip={formatMessage(icReportForm.legalArguments.tooltip)}
+            />
             <Input
               data-testid="legalArguments"
               name="legalArguments"
@@ -147,60 +112,39 @@ const PoliceReport = () => {
               placeholder={formatMessage(
                 icReportForm.legalArguments.placeholder,
               )}
-              value={workingCase.legalArguments || ''}
-              errorMessage={legalArgumentsEM}
-              hasError={legalArgumentsEM !== ''}
-              onChange={(event) =>
-                removeTabsValidateAndSet(
-                  'legalArguments',
-                  event.target.value,
-                  ['empty'],
-                  setWorkingCase,
-                  legalArgumentsEM,
-                  setLegalArgumentsEM,
-                )
-              }
-              onBlur={(event) =>
-                validateAndSendToServer(
-                  'legalArguments',
-                  event.target.value,
-                  ['empty'],
-                  workingCase,
-                  updateCase,
-                  setLegalArgumentsEM,
-                )
-              }
+              value={legalArgumentsInput.value}
+              errorMessage={legalArgumentsInput.errorMessage}
+              hasError={legalArgumentsInput.hasError}
+              onChange={(evt) => legalArgumentsInput.onChange(evt.target.value)}
+              onBlur={(evt) => legalArgumentsInput.onBlur(evt.target.value)}
               required
               textarea
               rows={14}
-              autoExpand={{ on: true, maxHeight: 600 }}
             />
           </Box>
-          <Box component="section" marginBottom={5}>
-            <BlueBox>
-              <Box marginBottom={2}>
-                <Checkbox
-                  name="request-prosecutor-only-session"
-                  label={formatMessage(
-                    icReportForm.prosecutorOnly.checkbox.label,
-                  )}
-                  tooltip={formatMessage(
-                    icReportForm.prosecutorOnly.checkbox.tooltip,
-                  )}
-                  checked={Boolean(workingCase.requestProsecutorOnlySession)}
-                  onChange={(evt) => {
-                    setWorkingCase((prevWorkingCase) => ({
-                      ...prevWorkingCase,
-                      requestProsecutorOnlySession: evt.target.checked,
-                    }))
-                    updateCase(workingCase.id, {
-                      requestProsecutorOnlySession: evt.target.checked,
-                    })
-                  }}
-                  filled
-                  large
-                />
-              </Box>
+          <Box component="section">
+            <BlueBox className={grid({ gap: 2 })}>
+              <Checkbox
+                name="request-prosecutor-only-session"
+                label={formatMessage(
+                  icReportForm.prosecutorOnly.checkbox.label,
+                )}
+                tooltip={formatMessage(
+                  icReportForm.prosecutorOnly.checkbox.tooltip,
+                )}
+                checked={Boolean(workingCase.requestProsecutorOnlySession)}
+                onChange={(evt) => {
+                  setWorkingCase((prevWorkingCase) => ({
+                    ...prevWorkingCase,
+                    requestProsecutorOnlySession: evt.target.checked,
+                  }))
+                  updateCase(workingCase.id, {
+                    requestProsecutorOnlySession: evt.target.checked,
+                  })
+                }}
+                filled
+                large
+              />
               <Input
                 name="prosecutor-only-session-request"
                 label={formatMessage(icReportForm.prosecutorOnly.input.label)}
@@ -208,37 +152,19 @@ const PoliceReport = () => {
                   icReportForm.prosecutorOnly.input.placeholder,
                 )}
                 disabled={workingCase.requestProsecutorOnlySession === false}
-                value={workingCase.prosecutorOnlySessionRequest || ''}
-                onChange={(event) =>
-                  removeTabsValidateAndSet(
-                    'prosecutorOnlySessionRequest',
-                    event.target.value,
-                    [],
-                    setWorkingCase,
-                  )
-                }
-                onBlur={(event) =>
-                  validateAndSendToServer(
-                    'prosecutorOnlySessionRequest',
-                    event.target.value,
-                    [],
-                    workingCase,
-                    updateCase,
-                  )
+                value={prosecutorOnlySessionRequestInput.value}
+                onChange={(evt) =>
+                  prosecutorOnlySessionRequestInput.onChange(evt.target.value)
                 }
                 textarea
                 rows={7}
-                autoExpand={{ on: true, maxHeight: 300 }}
               />
             </BlueBox>
           </Box>
-          <Box component="section" marginBottom={10}>
-            <CommentsInput
-              workingCase={workingCase}
-              setWorkingCase={setWorkingCase}
-            />
-          </Box>
-        </Box>
+          <section>
+            <CommentsInput />
+          </section>
+        </div>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter

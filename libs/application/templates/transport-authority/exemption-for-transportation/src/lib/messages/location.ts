@@ -54,6 +54,17 @@ export const location = {
       defaultMessage: 'Póstnúmer og sveitarfélag',
       description: 'Postal code and city to label',
     },
+    directionsSubtitle: {
+      id: 'ta.eft.application:location.shortTerm.directionsSubtitle',
+      defaultMessage: 'Leiðarlýsing',
+      description: 'Location directions subtitle',
+    },
+    directionsDescription: {
+      id: 'ta.eft.application:location.shortTerm.directionsDescription',
+      defaultMessage:
+        'Skrá þarf ítarlega leiðarlýsingu sem inniheldur númer og heiti allra vega á flutningsleið. Leiðarlýsing skal ná yfir alla þá vegi sem ekið er um frá upphafsstað flutningsins og allt til áfangastaðar. Hægt er að notast við gervigreind og kortavefi eins og ja.is eða Google maps til að finna leið og vegnúmer hverju sinni.',
+      description: 'Location directions description',
+    },
     directions: {
       id: 'ta.eft.application:location.shortTerm.directions',
       defaultMessage: 'Leiðarlýsing',
@@ -62,7 +73,7 @@ export const location = {
     directionsPlaceholder: {
       id: 'ta.eft.application:location.shortTerm.directionsPlaceholder',
       defaultMessage:
-        '- Leið 49 til Suðurlandsvegur/Þjóðvegur 1.\n- Taktu afreinina Vík/Hveragerði frá leið 49.\n- Fylgdu Þjóðvegur 1 og Suðurlandsvegur til Eyrarbakkavegur/Eyravegur/leið 34 í Selfoss.\n- Haltu áfram á Eyrarbakkavegur/Eyravegur/Leið 34. Aktu Suðurhólar til Hólastekkur.',
+        'Um Lambhagaveg, nr. 1 Hringveg, nr. 47 Hvalfjarðarveg, nr. 1 Hringveg, nr. 60 Vestfjarðarveg...',
       description: 'Location directions placeholder',
     },
   }),

@@ -29,6 +29,11 @@ export const application = defineMessages({
     description:
       'Description of application state/status when application is submitted',
   },
+  firstSectionStepperTitle: {
+    id: 'vmst.ub.application:firstSectionStepperTitle',
+    defaultMessage: 'Fyrri hluti',
+    description: 'Title of first section stepper',
+  },
   firstSectionTitle: {
     id: 'vmst.ub.application:firstSectionTitle',
     defaultMessage: 'Fyrri hluti: Þinn réttur til atvinnuleysisbóta',
@@ -39,6 +44,11 @@ export const application = defineMessages({
     defaultMessage:
       'Eftirfarandi kafli snýr að því að safna upplýsingum um núverandi eða fyrrverandi stöðu þína á atvinnumarkaði svo hægt sé að reikna út hvort eða hve miklar atvinnuleysisbætur þú hefur rétt á.',
     description: 'Description of first section page',
+  },
+  secondSectionStepperTitle: {
+    id: 'vmst.ub.application:secondSectionStepperTitle',
+    defaultMessage: 'Seinni hluti',
+    description: 'Title of second section stepper',
   },
   secondSectionTitle: {
     id: 'vmst.ub.application:secondSectionTitle',
@@ -91,5 +101,10 @@ export const application = defineMessages({
     defaultMessage:
       'Skoðaðu nánari upplýsingar á upplýsingasíðu Vinnumálastofnunar. Spjallaðu við Ask',
     description: 'Info alert title on confirmation page',
+  },
+  fileUploadGeneralHeader: {
+    id: 'vmst.ub.application:fileUploadGeneralHeader',
+    defaultMessage: 'Viðhengi',
+    description: 'General title for file upload',
   },
 })

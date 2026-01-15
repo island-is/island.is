@@ -7,22 +7,24 @@ export const reasonForJobSearchSchema = z
     mainReason: z.string(),
     additionalReason: z.string().optional(),
     additionalReasonRequired: z.boolean().optional(),
-    additionalReasonTextRequired: z.boolean().optional(),
-    additionalReasonText: z.string().optional(),
     healthReasonRequired: z.boolean().optional(),
     healthReason: z.array(FileSchema).optional(),
     bankruptsyReasonRequired: z.boolean().optional(),
     bankruptsyReason: z.array(z.string()).optional(),
     agreementConfirmation: z.array(z.string()).refine((v) => v.includes(YES)),
+    reasonQuestion: z.string().optional(),
+    reasonQuestionRequired: z.boolean().optional(),
+    extraFileUpload: z.array(FileSchema).optional(),
+    attachmentTypeId: z.string().optional(),
   })
   .refine(
-    ({ additionalReasonText, additionalReasonTextRequired }) => {
-      if (additionalReasonTextRequired === true) {
-        return !!additionalReasonText
+    ({ reasonQuestion, reasonQuestionRequired }) => {
+      if (reasonQuestionRequired === true) {
+        return !!reasonQuestion
       }
       return true
     },
-    { path: ['additionalReasonText'] },
+    { path: ['reasonQuestion'] },
   )
   .refine(
     ({ healthReason, healthReasonRequired }) => {

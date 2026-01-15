@@ -9,7 +9,7 @@ import {
 import {
   DOMSMALARADUNEYTID_SLUG,
   InfoLine,
-  IntroHeader,
+  IntroWrapper,
   LinkResolver,
   m,
   Modal,
@@ -56,23 +56,18 @@ const Subpoena = () => {
   }
 
   return (
-    <>
-      <IntroHeader
-        loading={loading}
-        title={formatMessage(messages.subpoena)}
-        intro={subpoena?.texts?.description ?? ''}
-        serviceProviderSlug={DOMSMALARADUNEYTID_SLUG}
-        serviceProviderTooltip={formatMessage(m.domsmalaraduneytidTooltip)}
-      >
-        {!loading && subpoena?.texts?.confirmation && (
-          <Box marginTop={4}>
-            <AlertMessage
-              type="success"
-              message={subpoena.texts.confirmation}
-            />
-          </Box>
-        )}
-      </IntroHeader>
+    <IntroWrapper
+      loading={loading}
+      title={formatMessage(messages.subpoena)}
+      intro={subpoena?.texts?.description ?? ''}
+      serviceProviderSlug={DOMSMALARADUNEYTID_SLUG}
+      serviceProviderTooltip={formatMessage(m.domsmalaraduneytidTooltip)}
+    >
+      {!loading && subpoena?.texts?.confirmation && (
+        <Box marginTop={4}>
+          <AlertMessage type="success" message={subpoena.texts.confirmation} />
+        </Box>
+      )}
 
       {loading && <SkeletonLoader space={2} repeat={4} height={24} />}
       <Box marginTop={3} display="flex" flexWrap="wrap">
@@ -175,7 +170,7 @@ const Subpoena = () => {
           imgSrc="./assets/images/sofa.svg"
         />
       )}
-    </>
+    </IntroWrapper>
   )
 }
 
