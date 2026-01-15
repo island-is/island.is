@@ -4,7 +4,9 @@
   "sourceRoot": "apps/application-system/api/src",
   "projectType": "application",
   "prefix": "application-system-api",
-  "tags": ["scope:application-system-api"],
+  "tags": [
+    "scope:application-system-api"
+  ],
   "generators": {},
   "targets": {
     "build": {
@@ -15,7 +17,9 @@
         "tsConfig": "apps/application-system/api/tsconfig.app.json",
         "generatePackageJson": true,
         "esbuildConfig": "tools/esbuild.config.js",
-        "format": ["cjs"],
+        "format": [
+          "cjs"
+        ],
         "assets": [
           {
             "glob": "*",
@@ -44,7 +48,7 @@
           },
           {
             "glob": "*",
-            "input": "libs/application/template-api-modules/src/lib/modules/templates/accident-notification/emailGenerators/assets",
+            "input": "libs/application/template-api-modules/src/lib/modules/templates/iceland-health/accident-notification/emailGenerators/assets",
             "output": "./accident-notification-assets"
           },
           {
@@ -54,7 +58,7 @@
           },
           {
             "glob": "*",
-            "input": "libs/application/template-api-modules/src/lib/modules/templates/driving-license-submission/emailGenerators/assets",
+            "input": "libs/application/template-api-modules/src/lib/modules/templates/transport-authority/driving-license-submission/emailGenerators/assets",
             "output": "./driving-license-assets"
           },
           {
@@ -106,11 +110,6 @@
             "glob": "*",
             "input": "libs/application/template-api-modules/src/lib/modules/templates/id-card/emailGenerators/assets",
             "output": "./id-card-assets"
-          },
-          {
-            "glob": "*",
-            "input": "libs/application/template-api-modules/src/lib/modules/templates/hms/registration-of-new-property-numbers/emailGenerators/assets",
-            "output": "./hms/registration-of-new-property-numbers-assets"
           }
         ]
       },
@@ -120,7 +119,9 @@
           "extractLicenses": true
         }
       },
-      "outputs": ["{options.outputPath}"]
+      "outputs": [
+        "{options.outputPath}"
+      ]
     },
     "serve": {
       "executor": "@nx/js:node",
@@ -137,13 +138,18 @@
         "jestConfig": "apps/application-system/api/jest.config.ts",
         "runInBand": true
       },
-      "outputs": ["{workspaceRoot}/coverage/apps/application-system/api"]
+      "outputs": [
+        "{workspaceRoot}/coverage/apps/application-system/api"
+      ]
     },
     "worker": {
       "executor": "@nx/js:node",
       "options": {
         "buildTarget": "application-system-api:build",
-        "args": ["--job", "worker"]
+        "args": [
+          "--job",
+          "worker"
+        ]
       }
     },
     "dev-services": {
@@ -161,7 +167,9 @@
       "options": {
         "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/application-system/api/tsconfig.app.json apps/application-system/api/src/buildOpenApi.ts"
       },
-      "outputs": ["{projectRoot}/src/openapi.yaml"]
+      "outputs": [
+        "{projectRoot}/src/openapi.yaml"
+      ]
     },
     "migrate": {
       "executor": "nx:run-commands",
