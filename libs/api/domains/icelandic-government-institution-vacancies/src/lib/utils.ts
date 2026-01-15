@@ -11,6 +11,10 @@ import { VacancyResponseDto } from '@island.is/clients/financial-management-auth
 export const CMS_ID_PREFIX = 'c-'
 export const EXTERNAL_SYSTEM_ID_PREFIX = 'x-'
 
+// ============================================================================
+// Shared helper functions
+// ============================================================================
+
 const formatDate = (date?: Date | string | null) => {
   if (!date) {
     return undefined
@@ -29,13 +33,16 @@ const formatDate = (date?: Date | string | null) => {
   return `${day}.${month}.${year}`
 }
 
-const convertHtmlToPlainText = async (html: string) => {
+export const convertHtmlToPlainText = async (html: string) => {
   if (!html) return ''
   const contentfulRichText = await convertHtmlToContentfulRichText(html)
   return documentToPlainTextString(contentfulRichText.document)
 }
 
-const convertHtmlToContentfulRichText = async (html: string, id?: string) => {
+export const convertHtmlToContentfulRichText = async (
+  html: string,
+  id?: string,
+) => {
   const sanitizedHtml = sanitizeHtml(html)
   const markdown = NodeHtmlMarkdown.translate(sanitizedHtml)
   const richText = await richTextFromMarkdown(markdown)
@@ -45,6 +52,11 @@ const convertHtmlToContentfulRichText = async (html: string, id?: string) => {
     id,
   }
 }
+
+
+// ============================================================================
+// Sorting and types
+// ============================================================================
 
 // Internal type for sorting - includes creationDate which is not exposed via GraphQL
 export type VacancyWithCreationDate =
@@ -92,7 +104,12 @@ export const sortVacancyList = (vacancyList: VacancyWithCreationDate[]) => {
   })
 }
 
-export const mapIcelandicGovernmentInstitutionVacanciesFromExternalSystem =
+
+// ============================================================================
+// Mappers for new Elfur API client (Financial Management Authority)
+// ============================================================================
+
+export const mapIcelandicGovernmentInstitutionVacanciesFromElfur =
   async (data: VacancyResponseDto[]): Promise<VacancyWithCreationDate[]> => {
     const mappedData: VacancyWithCreationDate[] = []
 
@@ -168,7 +185,7 @@ export const mapIcelandicGovernmentInstitutionVacanciesFromExternalSystem =
     return mappedData
   }
 
-export const mapIcelandicGovernmentInstitutionVacancyByIdResponseFromExternalSystem =
+export const mapIcelandicGovernmentInstitutionVacancyByIdResponseFromElfur =
   async (
     vacancy: VacancyResponseDto,
   ): Promise<IcelandicGovernmentInstitutionVacancyByIdResponse['vacancy']> => {
@@ -278,6 +295,10 @@ export const mapIcelandicGovernmentInstitutionVacancyByIdResponseFromExternalSys
       updatedDate: formatDate(vacancy.updatedDate),
     }
   }
+
+// ============================================================================
+// Mappers for CMS (Contentful)
+// ============================================================================
 
 export const mapRichTextField = (field: Html | null | undefined) => {
   return (

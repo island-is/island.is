@@ -144,6 +144,9 @@ export enum Features {
 
   isMileCarEnabled = 'isMileCarEnabled',
   isHHCourseApplicationEnabled = 'isHHCourseApplicationEnabled',
+
+  // Use new vacancy API client (Financial Management Authority/Elfur) instead of old X-Road client
+  useNewVacancyApi = 'useNewVacancyApi',
 }
 
 export enum ServerSideFeature {
