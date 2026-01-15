@@ -1,5 +1,5 @@
 import { useLayoutEffect, useRef } from 'react'
-import { AlertMessage, Button, Text } from '@island.is/island-ui/core'
+import { AlertMessage, Text } from '@island.is/island-ui/core'
 import { ApplicationAttachmentType } from '../lib/constants'
 import { useFormContext } from 'react-hook-form'
 import { InputFields } from '../lib/types'

@@ -28,6 +28,11 @@ type UpdateApplicationProps = {
   onError?: (error: Error) => void
 }
 
+interface GraphQLProblem {
+  detail?: string
+  stack?: string
+}
+
 export const useApplication = ({ applicationId }: OJOIUseApplicationParams) => {
   const { locale } = useLocale()
   const { setValue } = useFormContext()
@@ -84,7 +89,7 @@ export const useApplication = ({ applicationId }: OJOIUseApplicationParams) => {
       onError: (err) => {
         // if error stack contains PayloadTooLargeError display too large message
         const applicationTooLarge = err.graphQLErrors.some((graphQLError) => {
-          const problem = graphQLError.extensions?.problem as any
+          const problem = graphQLError.extensions?.problem as GraphQLProblem
           return (
             problem?.detail === 'request entity too large' ||
             problem?.stack?.includes('PayloadTooLargeError')
