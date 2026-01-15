@@ -87,9 +87,10 @@ const { getNavigationOptions, useNavigationOptions } =
     },
   }))
 
-export const MedicineDispensationsScreen: NavigationFunctionComponent<
-  Props
-> = ({ componentId, medicine }) => {
+export const MedicineHistoryScreen: NavigationFunctionComponent<Props> = ({
+  componentId,
+  medicine,
+}) => {
   useNavigationOptions(componentId)
   const intl = useIntl()
   const theme = useTheme()
@@ -233,4 +234,4 @@ export const MedicineDispensationsScreen: NavigationFunctionComponent<
   )
 }
 
-MedicineDispensationsScreen.options = getNavigationOptions
+MedicineHistoryScreen.options = getNavigationOptions

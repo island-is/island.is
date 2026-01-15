@@ -21,7 +21,7 @@ type Props = {
   number: number
 }
 
-export const MedicineDispensationDetailScreen: NavigationFunctionComponent<
+export const MedicineHistoryDetailScreen: NavigationFunctionComponent<
   Props
 > = ({ componentId, dispensation, number }) => {
   useNavigationOptions(componentId)

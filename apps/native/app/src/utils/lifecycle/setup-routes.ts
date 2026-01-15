@@ -189,7 +189,7 @@ export function setupRoutes() {
     selectTab(4)
     await Navigation.push(ComponentRegistry.MoreScreen, {
       component: {
-        name: ComponentRegistry.MedicineDispensationsScreen,
+        name: ComponentRegistry.MedicineHistoryScreen,
         passProps,
       },
     })
@@ -201,7 +201,7 @@ export function setupRoutes() {
         children: [
           {
             component: {
-              name: ComponentRegistry.MedicineDispensationDetailScreen,
+              name: ComponentRegistry.MedicineHistoryDetailScreen,
               passProps,
             },
           },

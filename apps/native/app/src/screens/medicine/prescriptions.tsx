@@ -13,13 +13,13 @@ import {
   useGetDrugPrescriptionsLazyQuery,
   useGetMedicineHistoryLazyQuery,
 } from '../../graphql/types/schema'
+import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
-import { useFeatureFlagAsync } from '../../hooks/use-feature-flag-async'
 import { useLocale } from '../../hooks/use-locale'
 import { GeneralCardSkeleton, Problem, TabButtons, Typography } from '../../ui'
 import { CertificateCard } from './components/certificate-card'
-import { MedicineHistoryCard } from './components/medicin-history-card'
+import { MedicineHistoryCard } from './components/medicine-history-card'
 import { PrescriptionCard } from './components/prescription-card'
 
 type ActiveTabData = HealthDirectorateMedicineHistoryItem[] &
@@ -59,9 +59,10 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
   const { mergeOptions } = useNavigation(componentId)
   const locale = useLocale()
 
-  const isPrescriptionsEnabled = useFeatureFlagAsync(
+  const isPrescriptionsEnabled = useFeatureFlag(
     'isPrescriptionsEnabled',
     false,
+    null,
   )
 
   useEffect(() => {
@@ -265,51 +266,32 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
         }
         style={{ flex: 1 }}
       >
-        {isPrescriptionsEnabled ? (
-          <Host>
+        <Host>
+          <Wrapper>
+            <TabButtons
+              buttons={tabs.map((tab) => ({
+                title: intl.formatMessage({
+                  id: tab.titleId,
+                }),
+              }))}
+              selectedTab={selectedTab}
+              setSelectedTab={handleTabChange}
+            />
+          </Wrapper>
+          {activeTab &&
+            (activeTabData?.length || activeTab.queryResult.loading) &&
+            activeTab.renderContent(activeTabData)}
+          {showError && (
             <Wrapper>
-              <TabButtons
-                buttons={tabs.map((tab) => ({
-                  title: intl.formatMessage({
-                    id: tab.titleId,
-                  }),
-                }))}
-                selectedTab={selectedTab}
-                setSelectedTab={handleTabChange}
-              />
+              <Problem error={activeTab?.queryResult.error} />
             </Wrapper>
-            {activeTab &&
-              (activeTabData?.length || activeTab.queryResult.loading) &&
-              activeTab.renderContent(activeTabData)}
-            {showError && (
-              <Wrapper>
-                <Problem error={activeTab?.queryResult.error} />
-              </Wrapper>
-            )}
-            {showNoDataError && (
-              <Wrapper>
-                <Problem type="no_data" />
-              </Wrapper>
-            )}
-          </Host>
-        ) : (
-          <Host>
+          )}
+          {showNoDataError && (
             <Wrapper>
-              <Typography variant="body">
-                {intl.formatMessage({
-                  id: 'health.prescriptionsAndCertificates.description',
-                })}
-              </Typography>
-              {tabs
-                .find((tab) => tab.id === 'drugCertificates')
-                ?.renderContent(
-                  tabs
-                    .find((tab) => tab.id === 'drugCertificates')
-                    ?.getData() as ActiveTabData,
-                )}
+              <Problem type="no_data" />
             </Wrapper>
-          </Host>
-        )}
+          )}
+        </Host>
       </ScrollView>
     </View>
   )
