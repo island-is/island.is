@@ -13,6 +13,7 @@ import { Fasteign } from '@island.is/clients/assets'
 import { realEstateMessages } from '../../lib/messages'
 import { ChargeItemCode } from '@island.is/shared/constants'
 import { PaymentCatalogItem } from '@island.is/application/types'
+import { hasTwentyOrMoreProperties } from '../../utils/hasTwentyOrMoreProperties'
 
 export const realEstateSection = buildSection({
   id: 'realEstateSection',
@@ -27,11 +28,7 @@ export const realEstateSection = buildSection({
           id: 'realEstate.realEstateName',
           title: realEstateMessages.realEstateLabel,
           condition: (_, externalData) => {
-            const properties = getValueViaPath<Array<Fasteign>>(
-              externalData,
-              'getProperties.data',
-            )
-            return (properties?.length || 0) < 20 ? true : false
+            return !hasTwentyOrMoreProperties(externalData)
           },
           options: (application) => {
             const properties = getValueViaPath<Array<Fasteign>>(
@@ -57,22 +54,14 @@ export const realEstateSection = buildSection({
           id: 'realEstate.realEstateName',
           component: 'RealEstateSearch',
           condition: (_, externalData) => {
-            const properties = getValueViaPath<Array<Fasteign>>(
-              externalData,
-              'getProperties.data',
-            )
-            return (properties?.length || 0) > 19 ? true : false
+            return hasTwentyOrMoreProperties(externalData)
           },
         }),
         // This hidden input is used to store information needed or submit when fetching graphql info for large customer with 20+ real estates.
         buildHiddenInput({
           id: 'realEstateExtra',
           condition: (_, externalData) => {
-            const properties = getValueViaPath<Array<Fasteign>>(
-              externalData,
-              'getProperties.data',
-            )
-            return (properties?.length || 0) > 19 ? true : false
+            return hasTwentyOrMoreProperties(externalData)
           },
         }),
         buildDescriptionField({

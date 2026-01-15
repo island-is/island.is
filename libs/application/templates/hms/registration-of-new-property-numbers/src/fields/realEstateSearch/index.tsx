@@ -1,4 +1,4 @@
-import React, { useState, useEffect, FC } from 'react'
+import React, { useState, useEffect, FC, useMemo } from 'react'
 import {
   Box,
   LoadingDots,
@@ -35,9 +35,18 @@ export const RealEstateSearch: FC<React.PropsWithChildren<FieldBaseProps>> = (
   const [showApiError, setShowApiError] = useState(false)
   const [realEstates, setRealEstates] = useState<Array<Fasteign>>([])
 
+  const debouncedSearch = useMemo(
+    () =>
+      debounce((value: string) => {
+        console.log('chang')
+        setSearchStr(value)
+      }, 300),
+    [],
+  )
+
   const [runQuery, { loading }] = useLazyQuery(searchPropertiesQuery, {
     onCompleted(result) {
-      const resProperty = result.searchForAllProperties as Array<Fasteign>
+      const resProperty = result.hmsPropertyByPropertyCode as Array<Fasteign>
       if (resProperty.length > 0) {
         setShowSearchError(false)
         setShowApiError(false)
@@ -109,7 +118,7 @@ export const RealEstateSearch: FC<React.PropsWithChildren<FieldBaseProps>> = (
           )}
           id="realEstateSearch"
           name="realEstateSearch"
-          onChange={debounce((e) => setSearchStr(e.target.value), 300)}
+          onChange={(e) => debouncedSearch(e.target.value)}
           icon="search"
           inputMode="search"
         />

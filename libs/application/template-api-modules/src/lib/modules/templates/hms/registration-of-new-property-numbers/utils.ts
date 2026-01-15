@@ -56,14 +56,13 @@ export const getRequestDto = (application: Application): ApplicationDto => {
     'realEstate.realEstateOtherComments',
   )
 
-  const externalDataProperties = getValueViaPath<Array<Fasteign>>(
-    externalData,
-    'getProperties.data',
-  )
+  const externalDataProperties =
+    getValueViaPath<Array<Fasteign>>(externalData, 'getProperties.data', []) ||
+    []
 
   // If the length is more than 19 we have a large amount of properties that went through the search process and therefore fetch the info from realEstateExtra
   let selectedRealEstate: Fasteign | undefined
-  if (externalDataProperties?.length || 0 > 19) {
+  if (externalDataProperties.length > 19) {
     selectedRealEstate = getValueViaPath<Fasteign>(answers, 'realEstateExtra')
   } else {
     selectedRealEstate = externalDataProperties?.find(
