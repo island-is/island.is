@@ -22,6 +22,7 @@ import { SkatturApi, VehiclesApi } from '../dataProviders'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScope } from '@island.is/auth/scopes'
 import { isCompany } from 'kennitala'
+import { m } from './messages'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -29,9 +30,9 @@ const template: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.CAR_RENTAL_FEE_CATEGORY,
-  name: 'Bílaleigu gjaldflokkar',
+  name: m.application.name,
   codeOwner: CodeOwners.NordaApplications,
-  institution: 'Skatturinn',
+  institution: m.application.institution,
   translationNamespaces:
     ApplicationConfigurations.CarRentalFeeCategory.translation,
   dataSchema,
@@ -40,7 +41,7 @@ const template: ApplicationTemplate<
     states: {
       [States.PREREQUISITES]: {
         meta: {
-          name: 'Skilyrði',
+          name: States.PREREQUISITES,
           progress: 0,
           status: FormModes.DRAFT,
           lifecycle: EphemeralStateLifeCycle,
@@ -77,7 +78,7 @@ const template: ApplicationTemplate<
       },
       [States.DRAFT]: {
         meta: {
-          name: 'Main form',
+          name: States.DRAFT,
           progress: 0.4,
           status: FormModes.DRAFT,
           lifecycle: DefaultStateLifeCycle,
@@ -105,7 +106,7 @@ const template: ApplicationTemplate<
       },
       [States.COMPLETED]: {
         meta: {
-          name: 'Completed form',
+          name: States.COMPLETED,
           progress: 1,
           status: FormModes.COMPLETED,
           lifecycle: DefaultStateLifeCycle,
