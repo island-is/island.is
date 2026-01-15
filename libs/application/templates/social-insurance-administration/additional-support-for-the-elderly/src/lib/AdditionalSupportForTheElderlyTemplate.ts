@@ -2,7 +2,6 @@ import { assign } from 'xstate'
 import unset from 'lodash/unset'
 import set from 'lodash/set'
 import cloneDeep from 'lodash/cloneDeep'
-
 import {
   ApplicationTemplate,
   ApplicationContext,
@@ -12,10 +11,10 @@ import {
   ApplicationConfigurations,
   ApplicationRole,
   DefaultEvents,
-  NationalRegistryUserApi,
   InstitutionNationalIds,
   defineTemplateApi,
   UserProfileApi,
+  NationalRegistryV3UserApi,
 } from '@island.is/application/types'
 import {
   coreMessages,
@@ -23,7 +22,6 @@ import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
-
 import {
   SocialInsuranceAdministrationApplicantApi,
   SocialInsuranceAdministrationIsApplicantEligibleApi,
@@ -87,7 +85,7 @@ const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
               ],
               write: 'all',
               api: [
-                NationalRegistryUserApi,
+                NationalRegistryV3UserApi,
                 NationalRegistryCohabitantsApi,
                 UserProfileApi.configure({
                   params: {
