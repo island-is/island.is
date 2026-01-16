@@ -170,7 +170,9 @@ export const UploadCarCategoryFile = ({
         )
       } else {
         setUploadErrorMessage(
-          `${errorMessages.length} ${formatMessage(m.multiUpload.errorMessageToUser)}`,
+          `${errorMessages.length} ${formatMessage(
+            m.multiUpload.errorMessageToUser,
+          )}`,
         )
       }
 

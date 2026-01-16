@@ -143,13 +143,13 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
       }
     } catch (error) {
       this.logger.error('Error posting data to skatturinn', error)
-    
+
       if (error && typeof error === 'object' && 'status' in error) {
         if (error.status === 400) {
           const bodySummary = this.formatSkatturinnErrorBody(
             (error as { body?: unknown }).body,
           )
-    
+
           throw new TemplateApiError(
             {
               title:
@@ -162,7 +162,7 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
           )
         }
       }
-    
+
       throw new TemplateApiError(
         {
           title: 'Request to skatturinn failed',
@@ -175,7 +175,7 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
 
   private formatSkatturinnErrorBody(body: unknown): string | undefined {
     if (!body || typeof body !== 'object') return undefined
-  
+
     const messages = Object.entries(body as Record<string, unknown>)
       .flatMap(([field, value]) => {
         if (Array.isArray(value)) {
@@ -189,7 +189,7 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
         return []
       })
       .filter((m) => m.length > 0)
-  
+
     return messages.length > 0 ? messages.join('\n') : undefined
   }
 }

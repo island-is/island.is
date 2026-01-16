@@ -229,9 +229,10 @@ export const m = {
     },
     errorMessageToUser: {
       id: 'rsk.crfc.application:multi.upload.error.message.to.user',
-      defaultMessage: 'villur fundust. Hlaða má niður sniðmáti með villum og reynda aftur.',
+      defaultMessage:
+        'villur fundust. Hlaða má niður sniðmáti með villum og reynda aftur.',
       description: 'Error message to user',
-    }
+    },
   }),
 
   tableView: defineMessages({
