@@ -149,9 +149,11 @@ const UserContract = () => {
               loading={loading}
               label={cm.status}
               content={
-                <Tag outlined variant={status?.variant} disabled>
-                  {status?.message ? formatMessage(status?.message) : undefined}
-                </Tag>
+                status?.message ? (
+                  <Tag outlined variant={status.variant} disabled>
+                    {formatMessage(status.message)}
+                  </Tag>
+                ) : undefined
               }
             />
           </InfoLineStack>

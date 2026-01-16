@@ -14,15 +14,15 @@ export const generateRentalAgreementAddress = (
   let str = ''
 
   if (property.streetAndHouseNumber) {
-    str += `${property.streetAndHouseNumber}, `
+    str += `${property.streetAndHouseNumber},`
   }
 
   if (property.postalCode) {
-    str += `${property.postalCode} `
+    str += ` ${property.postalCode}`
   }
 
   if (property.municipality) {
-    str += `${property.municipality}`
+    str += ` ${property.municipality}`
   }
 
   return str

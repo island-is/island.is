@@ -47,6 +47,7 @@ const UserContractsOverview = () => {
       marginBottom={3}
       buttonGroup={[
         <LinkButton
+          key={'register-rental-agreement-button'}
           to={`${getApplicationsBaseUrl()}/leigusamningur`}
           text={formatMessage(cm.registerRentalAgreement)}
           icon="document"
