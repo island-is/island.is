@@ -1,7 +1,7 @@
 import { getSlugFromType } from '@island.is/application/core'
 import {
   errorMessages,
-  // FIRST_GRADE_AGE,
+  FIRST_GRADE_AGE,
   getApplicationAnswers,
   getApplicationExternalData,
   getOtherGuardian,
@@ -61,7 +61,7 @@ export class NewPrimarySchoolService extends BaseTemplateApiService {
 
   async getChildren({ auth }: TemplateApiModuleActionProps) {
     const currentYear = new Date().getFullYear()
-    const firstGradeYear = currentYear - 1 //FIRST_GRADE_AGE // temporary change so that children aged 1 to 16 can apply (not just 6 to 16)
+    const firstGradeYear = currentYear - FIRST_GRADE_AGE
     const tenthGradeYear = currentYear - TENTH_GRADE_AGE
 
     const children =
