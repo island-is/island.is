@@ -40,7 +40,7 @@ export class SitemapGeneratorService {
       for (const article of articles) {
         const slugIs = this.getLocalizedField(article.fields.slug, 'is-IS')
         const slugEn = this.getLocalizedField(article.fields.slug, 'en')
-        
+
         if (slugIs) {
           urls.push({
             loc: `${environment.sitemapBaseUrl}/${slugIs}`,
@@ -64,7 +64,7 @@ export class SitemapGeneratorService {
       for (const newsItem of news) {
         const slugIs = this.getLocalizedField(newsItem.fields.slug, 'is-IS')
         const slugEn = this.getLocalizedField(newsItem.fields.slug, 'en')
-        
+
         if (slugIs) {
           urls.push({
             loc: `${environment.sitemapBaseUrl}/frett/${slugIs}`,
@@ -88,7 +88,7 @@ export class SitemapGeneratorService {
       for (const orgPage of organizationPages) {
         const slugIs = this.getLocalizedField(orgPage.fields.slug, 'is-IS')
         const slugEn = this.getLocalizedField(orgPage.fields.slug, 'en')
-        
+
         if (slugIs) {
           urls.push({
             loc: `${environment.sitemapBaseUrl}/s/${slugIs}`,
@@ -111,8 +111,11 @@ export class SitemapGeneratorService {
       // Generate URLs for anchor pages
       for (const anchorPage of anchorPages) {
         const slugIs = this.getLocalizedField(anchorPage.fields.slug, 'is-IS')
-        const pageTypeIs = this.getLocalizedField(anchorPage.fields.pageType, 'is-IS')
-        
+        const pageTypeIs = this.getLocalizedField(
+          anchorPage.fields.pageType,
+          'is-IS',
+        )
+
         if (slugIs) {
           let path = ''
           if (pageTypeIs === 'Landing page') {
@@ -133,9 +136,12 @@ export class SitemapGeneratorService {
 
       // Generate URLs for life event pages
       for (const lifeEventPage of lifeEventPages) {
-        const slugIs = this.getLocalizedField(lifeEventPage.fields.slug, 'is-IS')
+        const slugIs = this.getLocalizedField(
+          lifeEventPage.fields.slug,
+          'is-IS',
+        )
         const slugEn = this.getLocalizedField(lifeEventPage.fields.slug, 'en')
-        
+
         if (slugIs) {
           urls.push({
             loc: `${environment.sitemapBaseUrl}/${slugIs}`,
@@ -186,15 +192,15 @@ export class SitemapGeneratorService {
     const limit = 1000
 
     while (true) {
-      const result = await this.contentfulRepository.getClient().getEntries<
-        types.IArticleFields
-      >({
-        content_type: 'article',
-        limit,
-        skip,
-        locale: '*',
-        'fields.slug[exists]': true,
-      })
+      const result = await this.contentfulRepository
+        .getClient()
+        .getEntries<types.IArticleFields>({
+          content_type: 'article',
+          limit,
+          skip,
+          locale: '*',
+          'fields.slug[exists]': true,
+        })
 
       allArticles.push(...(result.items as types.IArticle[]))
 
@@ -213,15 +219,15 @@ export class SitemapGeneratorService {
     const limit = 1000
 
     while (true) {
-      const result = await this.contentfulRepository.getClient().getEntries<
-        types.INewsFields
-      >({
-        content_type: 'news',
-        limit,
-        skip,
-        locale: '*',
-        'fields.slug[exists]': true,
-      })
+      const result = await this.contentfulRepository
+        .getClient()
+        .getEntries<types.INewsFields>({
+          content_type: 'news',
+          limit,
+          skip,
+          locale: '*',
+          'fields.slug[exists]': true,
+        })
 
       allNews.push(...(result.items as types.INews[]))
 
@@ -242,15 +248,15 @@ export class SitemapGeneratorService {
     const limit = 1000
 
     while (true) {
-      const result = await this.contentfulRepository.getClient().getEntries<
-        types.IOrganizationPageFields
-      >({
-        content_type: 'organizationPage',
-        limit,
-        skip,
-        locale: '*',
-        'fields.slug[exists]': true,
-      })
+      const result = await this.contentfulRepository
+        .getClient()
+        .getEntries<types.IOrganizationPageFields>({
+          content_type: 'organizationPage',
+          limit,
+          skip,
+          locale: '*',
+          'fields.slug[exists]': true,
+        })
 
       allPages.push(...(result.items as types.IOrganizationPage[]))
 
@@ -269,15 +275,15 @@ export class SitemapGeneratorService {
     const limit = 1000
 
     while (true) {
-      const result = await this.contentfulRepository.getClient().getEntries<
-        types.IAnchorPageFields
-      >({
-        content_type: 'anchorPage',
-        limit,
-        skip,
-        locale: '*',
-        'fields.slug[exists]': true,
-      })
+      const result = await this.contentfulRepository
+        .getClient()
+        .getEntries<types.IAnchorPageFields>({
+          content_type: 'anchorPage',
+          limit,
+          skip,
+          locale: '*',
+          'fields.slug[exists]': true,
+        })
 
       allPages.push(...(result.items as types.IAnchorPage[]))
 
@@ -296,15 +302,15 @@ export class SitemapGeneratorService {
     const limit = 1000
 
     while (true) {
-      const result = await this.contentfulRepository.getClient().getEntries<
-        types.ILifeEventPageFields
-      >({
-        content_type: 'lifeEventPage',
-        limit,
-        skip,
-        locale: '*',
-        'fields.slug[exists]': true,
-      })
+      const result = await this.contentfulRepository
+        .getClient()
+        .getEntries<types.ILifeEventPageFields>({
+          content_type: 'lifeEventPage',
+          limit,
+          skip,
+          locale: '*',
+          'fields.slug[exists]': true,
+        })
 
       allPages.push(...(result.items as types.ILifeEventPage[]))
 
@@ -326,10 +332,14 @@ export class SitemapGeneratorService {
         const changefreq = url.changefreq
           ? `<changefreq>${url.changefreq}</changefreq>`
           : ''
-        const priority = url.priority ? `<priority>${url.priority}</priority>` : ''
+        const priority = url.priority
+          ? `<priority>${url.priority}</priority>`
+          : ''
 
         return `  <url>
-    <loc>${this.escapeXml(url.loc)}</loc>${lastmod ? `\n    ${lastmod}` : ''}${changefreq ? `\n    ${changefreq}` : ''}${priority ? `\n    ${priority}` : ''}
+    <loc>${this.escapeXml(url.loc)}</loc>${lastmod ? `\n    ${lastmod}` : ''}${
+          changefreq ? `\n    ${changefreq}` : ''
+        }${priority ? `\n    ${priority}` : ''}
   </url>`
       })
       .join('\n')
