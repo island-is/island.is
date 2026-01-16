@@ -8,6 +8,10 @@ import {
 } from './dtos/rentalAgreements.dto'
 import { INACTIVE_AGREEMENT_STATUSES } from './constants'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import {
+  ContractDocumentItemDto,
+  mapContractDocumentItemDto,
+} from './dtos/contractDocument'
 
 @Injectable()
 export class HmsRentalAgreementService {
@@ -44,7 +48,7 @@ export class HmsRentalAgreementService {
     )
 
     if (!agreementToReturn) {
-      this.logger.info('Rental agreement not found', {
+      this.logger.warn('Rental agreement not found', {
         id,
       })
       return
@@ -53,22 +57,34 @@ export class HmsRentalAgreementService {
     return agreementToReturn
   }
 
-  /*async getRentalAgreementPdf(user: User, id: number): Promise<Buffer> {
-    const agreement = await this.getRentalAgreement(user, id)
-    if (!agreement) {
-      throw new NotFoundException('Rental agreement not found')
-    }
-
+  async getRentalAgreementPdf(
+    user: User,
+    id: number,
+  ): Promise<Array<ContractDocumentItemDto> | undefined> {
     const res = await this.apiWithAuth(user).contractKtKtWithDocumentsGet({
       kt: user.nationalId,
     })
 
-    const pdfs =
-      res
-        .filter((res) => res.contract?.contractId === id)
-        .flatMap((r) => r.documents)
-        .filter(isDefined) ?? undefined
+    if (!res || res.length === 0) {
+      this.logger.warn('No rental agreements found', {
+        id,
+      })
+      return undefined
+    }
 
-    return res
-  }*/
+    const data = res?.find((res) => res.contract?.contractId === id)
+
+    if (!data) {
+      this.logger.warn('Rental agreement pdf not found', {
+        id,
+      })
+      return undefined
+    }
+
+    const pdfs = data.documents
+      ?.map(mapContractDocumentItemDto)
+      .filter(isDefined)
+
+    return pdfs
+  }
 }
