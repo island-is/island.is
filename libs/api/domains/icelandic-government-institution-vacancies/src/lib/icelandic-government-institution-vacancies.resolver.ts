@@ -329,16 +329,40 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
 
     if (useNewApi) {
       // Use new Elfur API (Financial Management Authority)
-      const item = (await this.elfurApi.v1VacancyGetVacancyGet({
-        vacancyId: id,
-      })) as VacancyResponseDto
-      if (!item) {
+      try {
+        const item = (await this.elfurApi.v1VacancyGetVacancyGet({
+          vacancyId: id,
+        })) as VacancyResponseDto
+        if (!item) {
+          return { vacancy: null }
+        }
+
+        vacancy = await mapIcelandicGovernmentInstitutionVacancyByIdResponseFromElfur(
+          item,
+        )
+      } catch (error) {
+        if (error instanceof FetchError) {
+          this.logger.error(
+            'Fetch error occurred when getting vacancy from the Financial Management Authority',
+            {
+              vacancyId: id,
+              client: 'elfur',
+              message: error.message,
+              statusCode: error.status,
+            },
+          )
+        } else {
+          this.logger.error(
+            'Error occurred when getting vacancy from the Financial Management Authority',
+            {
+              vacancyId: id,
+              client: 'elfur',
+              error,
+            },
+          )
+        }
         return { vacancy: null }
       }
-
-      vacancy = await mapIcelandicGovernmentInstitutionVacancyByIdResponseFromElfur(
-        item,
-      )
     } else {
       // Use old X-Road API
       const numericId = Number(id)
@@ -346,18 +370,42 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
         return { vacancy: null }
       }
 
-      const item = (await this.xRoadApi.vacanciesVacancyIdGet({
-        vacancyId: numericId,
-        accept: VacanciesVacancyIdGetAcceptEnum.Json,
-        language: mapToXRoadDetailLanguageEnum(language),
-      })) as DefaultApiVacancyDetails
-      if (!item?.starfsauglysing) {
+      try {
+        const item = (await this.xRoadApi.vacanciesVacancyIdGet({
+          vacancyId: numericId,
+          accept: VacanciesVacancyIdGetAcceptEnum.Json,
+          language: mapToXRoadDetailLanguageEnum(language),
+        })) as DefaultApiVacancyDetails
+        if (!item?.starfsauglysing) {
+          return { vacancy: null }
+        }
+
+        vacancy = await mapIcelandicGovernmentInstitutionVacancyByIdResponseFromXRoad(
+          item,
+        )
+      } catch (error) {
+        if (error instanceof FetchError) {
+          this.logger.error(
+            'Fetch error occurred when getting vacancy from xroad',
+            {
+              vacancyId: id,
+              client: 'xroad',
+              message: error.message,
+              statusCode: error.status,
+            },
+          )
+        } else {
+          this.logger.error(
+            'Error occurred when getting vacancy from xroad',
+            {
+              vacancyId: id,
+              client: 'xroad',
+              error,
+            },
+          )
+        }
         return { vacancy: null }
       }
-
-      vacancy = await mapIcelandicGovernmentInstitutionVacancyByIdResponseFromXRoad(
-        item,
-      )
     }
 
     // If we have a reference identifier we use that to get the institution/organization title and logo from cms
