@@ -162,18 +162,18 @@ export const employmentHistorySubSection = buildSubSection({
                 return name
               },
             },
-            title: {
+            jobCodeId: {
               component: 'select',
               label: employmentMessages.employmentHistory.labels.lastJobTitle,
               width: 'half',
               required: true,
               options: (application, _activeField, locale) =>
                 getJobCodeOptions(application, locale),
-              readonly: (application, _activeField, index) => {
+              disabled: (application, _activeField, index) => {
                 return hasDataFromCurrentStatusItem(
                   application.answers,
                   index,
-                  'title',
+                  'jobCodeId',
                 )
               },
               defaultValue: (
@@ -201,7 +201,7 @@ export const employmentHistorySubSection = buildSubSection({
                 ) {
                   return ''
                 }
-                return repeaterJobs[index]?.title || ''
+                return repeaterJobs[index]?.jobCodeId || ''
               },
             },
             percentage: {
@@ -360,7 +360,7 @@ export const employmentHistorySubSection = buildSubSection({
                 return nationalIdChosen === '-' || activeField === undefined
               },
             },
-            title: {
+            jobCodeId: {
               component: 'select',
               label: employmentMessages.employmentHistory.labels.lastJobTitle,
               width: 'half',
