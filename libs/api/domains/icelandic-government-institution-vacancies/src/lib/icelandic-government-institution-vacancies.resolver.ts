@@ -168,9 +168,8 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
         }
       }
 
-      mappedVacancies = await mapIcelandicGovernmentInstitutionVacanciesFromElfur(
-        vacancies,
-      )
+      mappedVacancies =
+        await mapIcelandicGovernmentInstitutionVacanciesFromElfur(vacancies)
     } else {
       // Use old X-Road API
       let vacancies: DefaultApiVacanciesListItem[] = []
@@ -199,9 +198,8 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
         }
       }
 
-      mappedVacancies = await mapIcelandicGovernmentInstitutionVacanciesFromXRoad(
-        vacancies,
-      )
+      mappedVacancies =
+        await mapIcelandicGovernmentInstitutionVacanciesFromXRoad(vacancies)
     }
 
     // Extract institution/organization reference identifiers from the vacancies
@@ -337,9 +335,10 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
           return { vacancy: null }
         }
 
-        vacancy = await mapIcelandicGovernmentInstitutionVacancyByIdResponseFromElfur(
-          item,
-        )
+        vacancy =
+          await mapIcelandicGovernmentInstitutionVacancyByIdResponseFromElfur(
+            item,
+          )
       } catch (error) {
         if (error instanceof FetchError) {
           this.logger.error(
@@ -380,9 +379,10 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
           return { vacancy: null }
         }
 
-        vacancy = await mapIcelandicGovernmentInstitutionVacancyByIdResponseFromXRoad(
-          item,
-        )
+        vacancy =
+          await mapIcelandicGovernmentInstitutionVacancyByIdResponseFromXRoad(
+            item,
+          )
       } catch (error) {
         if (error instanceof FetchError) {
           this.logger.error(
@@ -395,14 +395,11 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
             },
           )
         } else {
-          this.logger.error(
-            'Error occurred when getting vacancy from xroad',
-            {
-              vacancyId: id,
-              client: 'xroad',
-              error,
-            },
-          )
+          this.logger.error('Error occurred when getting vacancy from xroad', {
+            vacancyId: id,
+            client: 'xroad',
+            error,
+          })
         }
         return { vacancy: null }
       }

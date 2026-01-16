@@ -53,7 +53,6 @@ export const convertHtmlToContentfulRichText = async (
   }
 }
 
-
 // ============================================================================
 // Sorting and types
 // ============================================================================
@@ -104,86 +103,86 @@ export const sortVacancyList = (vacancyList: VacancyWithCreationDate[]) => {
   })
 }
 
-
 // ============================================================================
 // Mappers for new Elfur API client (Financial Management Authority)
 // ============================================================================
 
-export const mapIcelandicGovernmentInstitutionVacanciesFromElfur =
-  async (data: VacancyResponseDto[]): Promise<VacancyWithCreationDate[]> => {
-    const mappedData: VacancyWithCreationDate[] = []
+export const mapIcelandicGovernmentInstitutionVacanciesFromElfur = async (
+  data: VacancyResponseDto[],
+): Promise<VacancyWithCreationDate[]> => {
+  const mappedData: VacancyWithCreationDate[] = []
 
-    const introPromises: Promise<string>[] = []
+  const introPromises: Promise<string>[] = []
 
-    for (const item of data) {
-      const introHtml = item.introduction ?? ''
-      introPromises.push(convertHtmlToPlainText(introHtml))
+  for (const item of data) {
+    const introHtml = item.introduction ?? ''
+    introPromises.push(convertHtmlToPlainText(introHtml))
 
-      const locations: IcelandicGovernmentInstitutionVacanciesResponse['vacancies'][number]['locations'] =
-        []
+    const locations: IcelandicGovernmentInstitutionVacanciesResponse['vacancies'][number]['locations'] =
+      []
 
-      const locationTitles =
-        item.locations
-          ?.split(',')
-          .map((location) => location.trim())
-          .filter(Boolean) ?? []
+    const locationTitles =
+      item.locations
+        ?.split(',')
+        .map((location) => location.trim())
+        .filter(Boolean) ?? []
 
-      for (const title of locationTitles) {
-        locations.push({
-          postalCode: item.postCode ?? undefined,
-          title,
-        })
-      }
-
-      mappedData.push({
-        id: item.vacancyID
-          ? `${EXTERNAL_SYSTEM_ID_PREFIX}${item.vacancyID}`
-          : undefined,
-        title: item.heading ?? undefined,
-        applicationDeadlineFrom: formatDate(item.publishDate),
-        applicationDeadlineTo: formatDate(item.openTo),
-        intro: '',
-        fieldOfWork: item.jobTitle ?? undefined,
-        institutionName: item.orgName ?? undefined,
-        institutionReferenceIdentifier: (() => {
-          const orgNrStr =
-            typeof item.orgNr === 'number' && item.orgNr !== null
-              ? String(item.orgNr)
-              : item.orgNr ?? undefined
-
-          if (!orgNrStr) {
-            return undefined
-          }
-
-          if (!orgNrStr.startsWith('0') && orgNrStr.length !== 5) {
-            return `0${orgNrStr}`
-          }
-
-          return orgNrStr
-        })(),
-        logoUrl: item.logoUrl ?? undefined,
-        locations,
-        address: item.address ?? undefined,
-        // Display fields
-        creationDate: formatDate(item.creationDate),
-        updatedDate: formatDate(item.updatedDate),
-        // Internal field for sorting
-        _creationDate: item.creationDate
-          ? new Date(item.creationDate)
-          : undefined,
+    for (const title of locationTitles) {
+      locations.push({
+        postalCode: item.postCode ?? undefined,
+        title,
       })
     }
 
-    const intros = await Promise.all(introPromises)
+    mappedData.push({
+      id: item.vacancyID
+        ? `${EXTERNAL_SYSTEM_ID_PREFIX}${item.vacancyID}`
+        : undefined,
+      title: item.heading ?? undefined,
+      applicationDeadlineFrom: formatDate(item.publishDate),
+      applicationDeadlineTo: formatDate(item.openTo),
+      intro: '',
+      fieldOfWork: item.jobTitle ?? undefined,
+      institutionName: item.orgName ?? undefined,
+      institutionReferenceIdentifier: (() => {
+        const orgNrStr =
+          typeof item.orgNr === 'number' && item.orgNr !== null
+            ? String(item.orgNr)
+            : item.orgNr ?? undefined
 
-    for (let i = 0; i < mappedData.length; i += 1) {
-      if (intros[i]) {
-        mappedData[i].intro = intros[i]
-      }
-    }
+        if (!orgNrStr) {
+          return undefined
+        }
 
-    return mappedData
+        if (!orgNrStr.startsWith('0') && orgNrStr.length !== 5) {
+          return `0${orgNrStr}`
+        }
+
+        return orgNrStr
+      })(),
+      logoUrl: item.logoUrl ?? undefined,
+      locations,
+      address: item.address ?? undefined,
+      // Display fields
+      creationDate: formatDate(item.creationDate),
+      updatedDate: formatDate(item.updatedDate),
+      // Internal field for sorting
+      _creationDate: item.creationDate
+        ? new Date(item.creationDate)
+        : undefined,
+    })
   }
+
+  const intros = await Promise.all(introPromises)
+
+  for (let i = 0; i < mappedData.length; i += 1) {
+    if (intros[i]) {
+      mappedData[i].intro = intros[i]
+    }
+  }
+
+  return mappedData
+}
 
 export const mapIcelandicGovernmentInstitutionVacancyByIdResponseFromElfur =
   async (
