@@ -51,8 +51,7 @@ interface Props {
 
 export const UploadCarCategoryFile = ({
   application,
-  field,
-  refetch,
+  field
 }: Props & FieldBaseProps) => {
   const { locale, formatMessage } = useLocale()
   const [updateApplicationExternalData] = useMutation(
@@ -66,18 +65,13 @@ export const UploadCarCategoryFile = ({
     updateExternalDataRef.current = updateApplicationExternalData
   }, [updateApplicationExternalData])
 
-  const refetchRef = useRef<typeof refetch>()
-  useEffect(() => {
-    refetchRef.current = refetch
-  }, [refetch])
-
   useEffect(() => {
     let cancelled = false
 
     if (hasRunRef.current) return
     hasRunRef.current = true
 
-    const run = async () => {
+    const updateExtData = async () => {
       setIsRefreshingRates(true)
       try {
         await updateExternalDataRef.current({
@@ -98,7 +92,7 @@ export const UploadCarCategoryFile = ({
       }
     }
 
-    run()
+    updateExtData()
 
     return () => {
       cancelled = true
