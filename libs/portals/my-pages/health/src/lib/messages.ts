@@ -1906,6 +1906,10 @@ export const messages = defineMessages({
     defaultMessage: 'Svara',
     id: 'sp.health:answer',
   },
+  answerAgain: {
+    defaultMessage: 'Svara aftur',
+    id: 'sp.health:answer-again',
+  },
   questionnaireNotFound: {
     defaultMessage: 'Spurningalisti fannst ekki',
     id: 'sp.health:questionnaire-not-found',

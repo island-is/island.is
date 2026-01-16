@@ -19,6 +19,7 @@ import {
 } from '@island.is/clients/lsh'
 import { IntlService } from '@island.is/cms-translations'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { AnsweredQuestionnaires } from '../models/answeredQuestion.model'
 import { Questionnaire } from '../models/questionnaire.model'
 import {
@@ -33,7 +34,6 @@ import { mapToLshAnswer } from './transform-mappers/lsh/answer/mapToLSHAnswer'
 import { mapLshQuestionnaire } from './transform-mappers/lsh/display/mapQuestionnaire'
 import { NAMESPACE } from './utils/constants'
 import { m } from './utils/messages'
-import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 
 @Injectable()
 export class QuestionnairesService {
@@ -205,7 +205,9 @@ export class QuestionnairesService {
             .filter((answer) => answer !== undefined) ?? [],
       }
 
-      return { data: [submission] }
+      return {
+        data: [submission],
+      }
     } catch (error) {
       return null
     }
@@ -369,7 +371,7 @@ export class QuestionnairesService {
                 organization: QuestionnairesOrganizationEnum.EL,
                 department: undefined,
                 status:
-                  q.numSubmissions > 0 || q.lastSubmitted
+                  q.numSubmitted > 0 || q.lastSubmitted
                     ? QuestionnairesStatusEnum.answered
                     : q.hasDraft
                     ? QuestionnairesStatusEnum.draft
@@ -477,6 +479,7 @@ export class QuestionnairesService {
             description: data.message ?? undefined,
             organization: QuestionnairesOrganizationEnum.EL,
           },
+          lastSubmissionId: data.lastCreatedSubmissionId,
           submissions: data.submissions?.map((sub) => ({
             id: sub.id,
             createdAt: sub.createdDate ?? undefined,
@@ -511,6 +514,7 @@ export class QuestionnairesService {
         description: data.description ?? undefined,
         organization: QuestionnairesOrganizationEnum.LSH,
       },
+      canSubmit: data.answerDateTime ? false : true,
     }
   }
 
