@@ -252,6 +252,7 @@ const Questionnaires: FC = () => {
         </Filter>
       )}
       {!loading &&
+        !error &&
         (data?.questionnairesList === null ||
           data?.questionnairesList?.questionnaires?.length === 0) && (
           <Box marginTop={3}>
