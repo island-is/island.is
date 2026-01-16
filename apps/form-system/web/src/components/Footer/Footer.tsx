@@ -125,7 +125,9 @@ export const Footer = ({ externalDataAgreement }: Props) => {
     dispatch({
       type: 'DECREMENT',
       payload: {
-        submitScreen,
+        submitScreen: submitScreen,
+        submitSection: submitSection,
+        updateDependencies: updateDependencies,
       },
     })
 

@@ -187,7 +187,6 @@ export class ApplicationsService {
     }
 
     application.dependencies = updateApplicationDto.dependencies
-    application.completed = updateApplicationDto.completed
 
     await application.save()
   }
@@ -843,7 +842,7 @@ export class ApplicationsService {
       )
       await application.save({ transaction })
 
-      if (submitScreenDto.increment && currentScreen) {
+      if (currentScreen) {
         const filteredFields = currentScreen.fields?.filter(
           (field) => field.isHidden === false,
         )
