@@ -73,4 +73,7 @@ export class RentalAgreement {
 
   @Field(() => ContractProperty, { nullable: true })
   contractProperty?: ContractProperty
+
+  @Field({ nullable: true })
+  downloadUrl?: string
 }

@@ -29,5 +29,6 @@ query UserContract($id: ID!) {
       municipality
       postalCode
     }
+    downloadUrl
   }
 }

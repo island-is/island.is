@@ -8,6 +8,7 @@ import {
   InfoLineStack,
   InfoLine,
   formatDate,
+  formSubmit,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { contractsMessages as cm } from '../../../lib/messages'
@@ -69,15 +70,22 @@ const UserContract = () => {
       serviceProviderTooltip={formatMessage(m.rentalAgreementsTooltip)}
       buttonGroup={[
         <Button
+          key="download-button"
           title={formatMessage(cm.downloadAsPdf)}
           icon="download"
           iconType="outline"
-          onClick={() => console.log('download as pdf')}
+          disabled={
+            !!error || loading || !data?.hmsRentalAgreement?.downloadUrl
+          }
+          onClick={() =>
+            formSubmit(data?.hmsRentalAgreement?.downloadUrl ?? '')
+          }
           variant="utility"
         >
           {formatMessage(cm.downloadAsPdf)}
         </Button>,
         <LinkButton
+          key="terminate-button"
           to={`${getApplicationsBaseUrl()}/uppsogn-eda-riftun-leigusamnings`}
           text={formatMessage(cm.terminateRentalAgreement)}
           icon="open"

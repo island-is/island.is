@@ -1,5 +1,5 @@
 import { Query, Resolver, Args, ID } from '@nestjs/graphql'
-import { UseGuards } from '@nestjs/common'
+import { Inject, UseGuards } from '@nestjs/common'
 import {
   type User,
   IdsUserGuard,
@@ -17,13 +17,21 @@ import {
   FeatureFlagGuard,
   Features,
 } from '@island.is/nest/feature-flags'
+import { DownloadServiceConfig } from '@island.is/nest/config'
+import { ConfigType } from '@nestjs/config'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Resolver()
 @Audit({ namespace: '@island.is/api/hms' })
 @FeatureFlag(Features.servicePortalMyContractsPageEnabled)
 export class RentalAgreementsResolver {
-  constructor(private service: HmsRentalAgreementService) {}
+  constructor(
+    private service: HmsRentalAgreementService,
+    @Inject(DownloadServiceConfig.KEY)
+    private readonly downloadServiceConfig: ConfigType<
+      typeof DownloadServiceConfig
+    >,
+  ) {}
 
   @Query(() => PaginatedRentalAgreementCollection, {
     name: 'hmsRentalAgreements',
@@ -62,6 +70,15 @@ export class RentalAgreementsResolver {
       .getRentalAgreement(user, +contractId)
       .catch(handle404)
 
-    return data ? mapToRentalAgreement(data) : undefined
+    const contractData = data ? mapToRentalAgreement(data) : undefined
+
+    if (!contractData) {
+      return undefined
+    }
+
+    return {
+      ...contractData,
+      downloadUrl: `${this.downloadServiceConfig.baseUrl}/download/v1/rental-agreements/${contractId}`,
+    }
   }
 }

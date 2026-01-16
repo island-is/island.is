@@ -154,8 +154,8 @@ codemagic.yaml                                                                  
 /libs/clients/municipalities-financial-aid                                                                                   @island-is/kolibri-robin-hood
 
 /libs/clients/hms/                                                                                                           @island-is/norda
-/libs/clients/hms-rental-agreement/                                                                                          @island-is/norda
-/libs/api/domains/hms/                                                                                                       @island-is/norda
+/libs/clients/hms-rental-agreement/                                                                                          @island-is/norda @island-is/hugsmidjan
+/libs/api/domains/hms/                                                                                                       @island-is/norda @island-is/hugsmidjan
 
 /apps/download-service/                                                                                                      @island-is/hugsmidjan
 /apps/portals/my-pages*/                                                                                                     @island-is/hugsmidjan
