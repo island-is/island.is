@@ -1,7 +1,6 @@
-import { Box, Button, Stack, Tag } from '@island.is/island-ui/core'
+import { Box, Button, Tag } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
-  CardLoader,
   IntroWrapper,
   m,
   HMS_SLUG,
