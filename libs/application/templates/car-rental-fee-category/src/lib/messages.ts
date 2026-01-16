@@ -196,6 +196,42 @@ export const m = {
         '1. Sækir sniðmátið \n\n2. Gerir viðeigandi breytingar á skjalinu \n\n3. Hleður upp skjalinu hér að neðan',
       description: 'Bulk upload help steps',
     },
+    templateButton: {
+      id: 'rsk.crfc.application:multi.upload.template.button',
+      defaultMessage: 'Sniðmát',
+      description: 'Download template button label',
+    },
+    uploadTitle: {
+      id: 'rsk.crfc.application:multi.upload.title',
+      defaultMessage: 'Dragðu skjöl hingað til að hlaða upp',
+      description: 'Upload title (no errors)',
+    },
+    uploadTitleError: {
+      id: 'rsk.crfc.application:multi.upload.title.error',
+      defaultMessage:
+        'Dragðu aftur inn skjal hingað til að hlaða upp eftir að lagfæra villur',
+      description: 'Upload title (errors present)',
+    },
+    uploadDescription: {
+      id: 'rsk.crfc.application:multi.upload.description.upload',
+      defaultMessage: 'Tekið er við skjölum með endingum: .csv, .xlsx',
+      description: 'Upload description',
+    },
+    uploadButtonLabel: {
+      id: 'rsk.crfc.application:multi.upload.button.label',
+      defaultMessage: 'Hlaða upp skjali',
+      description: 'Upload button label',
+    },
+    errorTemplateButton: {
+      id: 'rsk.crfc.application:multi.upload.template.error.button',
+      defaultMessage: 'Sniðmát með villum',
+      description: 'Download error template button label',
+    },
+    errorMessageToUser: {
+      id: 'rsk.crfc.application:multi.upload.error.message.to.user',
+      defaultMessage: 'villur fundust. Hlaða má niður sniðmáti með villum og reynda aftur.',
+      description: 'Error message to user',
+    }
   }),
 
   tableView: defineMessages({
