@@ -3,20 +3,18 @@ import {
   buildForm,
   buildSection,
 } from '@island.is/application/core'
+import { m } from '../../lib/messages'
 
 export const notAllowedForm = buildForm({
   id: 'notAllowedForm',
   children: [
     buildSection({
       id: 'notAllowedSection',
-      title: '',
       children: [
         buildDescriptionField({
           id: 'notAllowedDescription',
-          title:
-            'Aðeins bílaleigu fyrirtæki eða prókúruhafar þeirra hafa aðgang að þessari umsókn',
-          description:
-            'Ef þú telur að þú ættir að hafa aðgang að þessari umsókn, vinsamlegast hafðu samband við Skattinn í síma 442 1000',
+          title: m.notAllowed.descriptionTitle,
+          description: m.notAllowed.descriptionText,
         }),
       ],
     }),
