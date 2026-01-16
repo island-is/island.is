@@ -127,9 +127,6 @@ const UserContractsOverview = () => {
                     ? formatMessage(cm.typeNonResidential)
                     : undefined
 
-                if (!message || !restOfTag) {
-                  return null
-                }
                 return (
                   <ActionCard
                     key={id}
@@ -144,10 +141,14 @@ const UserContractsOverview = () => {
                       variant: 'text',
                     }}
                     subText={subText}
-                    tag={{
-                      label: formatMessage(message),
-                      ...restOfTag,
-                    }}
+                    tag={
+                      message && restOfTag
+                        ? {
+                            label: formatMessage(message),
+                            ...restOfTag,
+                          }
+                        : undefined
+                    }
                   />
                 )
               })
