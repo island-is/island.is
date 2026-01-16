@@ -25,7 +25,7 @@ export class HmsRentalAgreementService {
 
     const data = res.map(mapRentalAgreementDto).filter(isDefined)
     if (hideInactiveAgreements) {
-      return data.filter((d) => INACTIVE_AGREEMENT_STATUSES.includes(d.status))
+      return data.filter((d) => !INACTIVE_AGREEMENT_STATUSES.includes(d.status))
     }
     return data
   }
