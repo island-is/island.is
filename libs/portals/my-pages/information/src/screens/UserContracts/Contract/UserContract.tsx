@@ -96,13 +96,6 @@ const UserContract = () => {
           imgSrc="./assets/images/sofa.svg"
         />
       )}
-      {!error && loading && (
-        <Stack space={2}>
-          {[...Array(3)].map((_key, index) => (
-            <CardLoader key={index} />
-          ))}
-        </Stack>
-      )}
 
       {!error && (loading || contract) && (
         <Box>
