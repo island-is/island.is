@@ -51,7 +51,7 @@ interface Props {
 
 export const UploadCarCategoryFile = ({
   application,
-  field
+  field,
 }: Props & FieldBaseProps) => {
   const { locale, formatMessage } = useLocale()
   const [updateApplicationExternalData] = useMutation(
