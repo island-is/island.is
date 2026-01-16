@@ -141,7 +141,11 @@ const Questionnaires: FC = () => {
     >
       {!loading && error && (
         <Box marginTop={3}>
-          <Problem type="internal_service_error" noBorder={false} />
+          <Problem
+            type="internal_service_error"
+            noBorder={false}
+            error={error}
+          />
         </Box>
       )}
       {!loading && !error && (
