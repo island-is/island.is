@@ -750,18 +750,9 @@ export const getApplicationType = (
     return undefined
   }
 
-  // temporary check - need to be fixed before february 2026 after testing phase
-  // is over and rule about enrollment age has been finalized.
-  // if the child is 1 to 6 years old, it's an enrollment application
-  // so the year of birth can be between currentYear - 6 and currentYear - 1
-
   // if the child is a first grader and not currently enrolled in a primary
   // school, set the application type to enrollment in primary school
-  if (
-    yearOfBirth >= firstGradeYear &&
-    yearOfBirth <= currentYear - 1 &&
-    !childInformation?.primaryOrgId
-  ) {
+  if (yearOfBirth === firstGradeYear && !childInformation?.primaryOrgId) {
     return ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
   }
 
