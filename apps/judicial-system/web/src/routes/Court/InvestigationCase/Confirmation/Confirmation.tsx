@@ -48,7 +48,7 @@ type VisibleModal =
   | 'judgeRequestRulingSignatureModal'
   | 'registrarRequestRulingSignatureModal'
   | 'signingMethodSelectionModal'
-  | 'signingModal'
+  | 'signingConfirmationModal'
 
 const Confirmation: FC = () => {
   const router = useRouter()
@@ -253,7 +253,7 @@ const Confirmation: FC = () => {
           onSignatureRequested={(response, isAudkenni) => {
             setRulingSignatureResponse(response)
             setIsRulingSignatureAudkenni(isAudkenni)
-            setModalVisible('signingModal')
+            setModalVisible('signingConfirmationModal')
           }}
         />
       )}
@@ -262,7 +262,7 @@ const Confirmation: FC = () => {
           onContinue={continueToSignedVerdictOverview}
         />
       )}
-      {modalVisible === 'signingModal' && rulingSignatureResponse && (
+      {modalVisible === 'signingConfirmationModal' && rulingSignatureResponse && (
         <SignatureConfirmationModal
           workingCase={workingCase}
           signatureResponse={rulingSignatureResponse}

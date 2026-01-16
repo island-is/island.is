@@ -1,6 +1,5 @@
 import { FC, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { FetchResult } from '@apollo/client'
 
 import { toast } from '@island.is/island-ui/core'
 import { errors as errorMessages } from '@island.is/judicial-system-web/messages'
@@ -9,11 +8,9 @@ import {
   RequestSignatureResponse,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { Modal } from '../..'
-import { useRequestRulingSignatureMutation } from '../SigningModal/requestRulingSignature.generated'
-import { useRequestRulingSignatureAudkenniMutation } from '../SigningModal/requestRulingSignatureAudkenni.generated'
 import { useRequestCourtRecordSignatureMutation } from '@island.is/judicial-system-web/src/routes/Shared/SignedVerdictOverview/requestCourtRecordSignature.generated'
-import { useRequestCourtRecordSignatureAudkenniMutation } from '@island.is/judicial-system-web/src/routes/Shared/SignedVerdictOverview/requestCourtRecordSignatureAudkenni.generated'
+import { Modal } from '../..'
+import { useRequestRulingSignatureMutation } from './requestRulingSignature.generated'
 import { signingMethodSelectionModal as m } from './SigningMethodSelectionModal.strings'
 
 export type SignatureType = 'ruling' | 'courtRecord'
@@ -34,82 +31,58 @@ export const SigningMethodSelectionModal: FC<
   const { formatMessage } = useIntl()
   const [isLoading, setIsLoading] = useState(false)
 
-  // Ruling signature mutations
+  // Ruling signature mutation
   const [requestRulingSignature] = useRequestRulingSignatureMutation({
-    variables: { input: { caseId: workingCase.id } },
     onError: () => {
       toast.error(formatMessage(errorMessages.requestRulingSignature))
       setIsLoading(false)
     },
   })
 
-  const [requestRulingSignatureAudkenni] =
-    useRequestRulingSignatureAudkenniMutation({
-      variables: { input: { caseId: workingCase.id } },
-      onError: () => {
-        toast.error(formatMessage(errorMessages.requestRulingSignature))
-        setIsLoading(false)
-      },
-    })
-
-  // Court record signature mutations
+  // Court record signature mutation
   const [requestCourtRecordSignature] = useRequestCourtRecordSignatureMutation({
-    variables: { input: { caseId: workingCase.id } },
     onError: () => {
       toast.error(formatMessage(errorMessages.requestCourtRecordSignature))
       setIsLoading(false)
     },
   })
 
-  const [requestCourtRecordSignatureAudkenni] =
-    useRequestCourtRecordSignatureAudkenniMutation({
-      variables: { input: { caseId: workingCase.id } },
-      onError: () => {
-        toast.error(formatMessage(errorMessages.requestCourtRecordSignature))
-        setIsLoading(false)
-      },
-    })
-
   const handleMethodSelection = async (isAudkenni: boolean) => {
     setIsLoading(true)
 
     try {
       if (signatureType === 'ruling') {
-        if (isAudkenni) {
-          const result = await requestRulingSignatureAudkenni()
-          const response = result.data?.requestRulingSignatureAudkenni
-          if (response) {
-            onSignatureRequested(response, isAudkenni)
-          } else {
-            setIsLoading(false)
-          }
+        const result = await requestRulingSignature({
+          variables: {
+            input: {
+              caseId: workingCase.id,
+              method: isAudkenni ? 'audkenni' : 'mobile',
+            },
+          },
+        })
+        const response = result.data?.requestRulingSignature
+
+        if (response) {
+          onSignatureRequested(response, isAudkenni)
         } else {
-          const result = await requestRulingSignature()
-          const response = result.data?.requestRulingSignature
-          if (response) {
-            onSignatureRequested(response, isAudkenni)
-          } else {
-            setIsLoading(false)
-          }
+          setIsLoading(false)
         }
       } else {
         // courtRecord
-        if (isAudkenni) {
-          const result = await requestCourtRecordSignatureAudkenni()
-          const response = result.data?.requestCourtRecordSignatureAudkenni
-          if (response) {
-            onSignatureRequested(response, isAudkenni)
-          } else {
-            setIsLoading(false)
-          }
+        const result = await requestCourtRecordSignature({
+          variables: {
+            input: {
+              caseId: workingCase.id,
+              method: isAudkenni ? 'audkenni' : 'mobile',
+            },
+          },
+        })
+        const response = result.data?.requestCourtRecordSignature
+
+        if (response) {
+          onSignatureRequested(response, isAudkenni)
         } else {
-          const result = await requestCourtRecordSignature()
-          const response = result.data?.requestCourtRecordSignature
-          if (response) {
-            onSignatureRequested(response, isAudkenni)
-          } else {
-            setIsLoading(false)
-          }
+          setIsLoading(false)
         }
       }
     } catch (error) {

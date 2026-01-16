@@ -333,12 +333,6 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.post(`case/${caseId}/courtRecord/signature?method=${method}`)
   }
 
-  requestCourtRecordSignatureAudkenni(
-    caseId: string,
-  ): Promise<RequestSignatureResponse> {
-    return this.post(`case/${caseId}/courtRecord/signature/audkenni`)
-  }
-
   getCourtRecordSignatureConfirmation(
     caseId: string,
     documentToken: string,
@@ -370,15 +364,6 @@ export class BackendService extends DataSource<{ req: Request }> {
   ): Promise<SignatureConfirmationResponse> {
     return this.get(
       `case/${caseId}/ruling/signature?documentToken=${documentToken}&method=${method}`,
-    )
-  }
-
-  getRulingSignatureConfirmationAudkenni(
-    caseId: string,
-    documentToken: string,
-  ): Promise<SignatureConfirmationResponse> {
-    return this.get(
-      `case/${caseId}/ruling/signature/audkenni?documentToken=${documentToken}`,
     )
   }
 

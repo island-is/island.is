@@ -1,25 +1,9 @@
-import { FC, ReactNode, useCallback, useContext, useState } from 'react'
-import { IntlShape, useIntl } from 'react-intl'
 import { AnimatePresence, motion } from 'motion/react'
 import { useRouter } from 'next/router'
+import { FC, ReactNode, useCallback, useContext, useState } from 'react'
+import { IntlShape, useIntl } from 'react-intl'
 
-import {
-  Accordion,
-  AlertMessage,
-  Box,
-  Button,
-  Text,
-} from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
-import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
-import {
-  isDistrictCourtUser,
-  isInvestigationCase,
-  isPrisonAdminUser,
-  isPrisonSystemUser,
-  isProsecutionUser,
-  isRestrictionCase,
-} from '@island.is/judicial-system/types'
+import { Accordion, AlertMessage, Box, Button } from '@island.is/island-ui/core'
 import {
   core,
   signedVerdictOverview as m,
@@ -66,6 +50,16 @@ import {
   useCase,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import * as constants from '@island.is/judicial-system/consts'
+import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
+import {
+  isDistrictCourtUser,
+  isInvestigationCase,
+  isPrisonAdminUser,
+  isPrisonSystemUser,
+  isProsecutionUser,
+  isRestrictionCase,
+} from '@island.is/judicial-system/types'
 
 import CaseDocuments from './Components/CaseDocuments/CaseDocuments'
 import ModifyDatesModal from './Components/ModifyDatesModal/ModifyDatesModal'
@@ -157,8 +151,8 @@ export const getExtensionInfoText = (
 
 type availableModals =
   | 'NoModal'
-  | 'SigningModal'
-  | 'CourtRecordSigningModal'
+  | 'SigningConfirmationModal'
+  | 'CourtRecordSigningConfirmationModal'
   | 'ConfirmAppealAfterDeadline'
   | 'ConfirmStatementAfterDeadline'
   | 'AppealReceived'
@@ -256,7 +250,7 @@ export const SignedVerdictOverview: FC = () => {
   ) => {
     setRequestCourtRecordSignatureResponse(response)
     setIsCourtRecordSignatureAudkenni(isAudkenni)
-    setModalVisible('CourtRecordSigningModal')
+    setModalVisible('CourtRecordSigningConfirmationModal')
   }
 
   const handleRulingSignatureRequested = (
@@ -265,7 +259,7 @@ export const SignedVerdictOverview: FC = () => {
   ) => {
     setRulingSignatureResponse(response)
     setIsRulingSignatureAudkenni(isAudkenni)
-    setModalVisible('SigningModal')
+    setModalVisible('SigningConfirmationModal')
   }
 
   const handleNextButtonClick = async () => {
@@ -620,7 +614,7 @@ export const SignedVerdictOverview: FC = () => {
             </motion.div>
           )}
         </AnimatePresence>
-        {modalVisible === 'CourtRecordSigningModal' &&
+        {modalVisible === 'CourtRecordSigningConfirmationModal' &&
           requestCourtRecordSignatureResponse && (
             <SignatureConfirmationModal
               workingCase={workingCase}
@@ -636,23 +630,24 @@ export const SignedVerdictOverview: FC = () => {
               navigateOnClose={false}
             />
           )}
-        {modalVisible === 'SigningModal' && rulingSignatureResponse && (
-          <SignatureConfirmationModal
-            workingCase={workingCase}
-            signatureResponse={rulingSignatureResponse}
-            signatureType="ruling"
-            isAudkenni={
-              rulingSignatureResponse ? isRulingSignatureAudkenni : false
-            }
-            onClose={() => {
-              setRulingSignatureResponse(undefined)
-              setIsRulingSignatureAudkenni(false)
-              refreshCase()
-              setModalVisible('NoModal')
-            }}
-            navigateOnClose={false}
-          />
-        )}
+        {modalVisible === 'SigningConfirmationModal' &&
+          rulingSignatureResponse && (
+            <SignatureConfirmationModal
+              workingCase={workingCase}
+              signatureResponse={rulingSignatureResponse}
+              signatureType="ruling"
+              isAudkenni={
+                rulingSignatureResponse ? isRulingSignatureAudkenni : false
+              }
+              onClose={() => {
+                setRulingSignatureResponse(undefined)
+                setIsRulingSignatureAudkenni(false)
+                refreshCase()
+                setModalVisible('NoModal')
+              }}
+              navigateOnClose={false}
+            />
+          )}
         {isReopeningCase && (
           <ReopenModal onClose={() => setIsReopeningCase(false)} />
         )}

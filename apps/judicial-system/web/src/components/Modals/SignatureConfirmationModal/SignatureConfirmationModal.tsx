@@ -17,11 +17,9 @@ import {
 
 import { Modal } from '../..'
 import MarkdownWrapper from '../../MarkdownWrapper/MarkdownWrapper'
-import { signingModal as signingModalStrings } from '../SigningModal/SigningModal.strings'
-import { useRulingSignatureConfirmationQuery } from '../SigningModal/rulingSignatureConfirmation.generated'
-import { useRulingSignatureConfirmationAudkenniQuery } from '../SigningModal/rulingSignatureConfirmationAudkenni.generated'
+import { signingModal as signingModalStrings } from './SignatureConfirmationModal.strings'
+import { useRulingSignatureConfirmationQuery } from '../SigningMethodSelectionModal/rulingSignatureConfirmation.generated'
 import { useCourtRecordSignatureConfirmationQuery } from '@island.is/judicial-system-web/src/routes/Shared/SignedVerdictOverview/courtRecordSignatureConfirmation.generated'
-import { useCourtRecordSignatureConfirmationAudkenniQuery } from '@island.is/judicial-system-web/src/routes/Shared/SignedVerdictOverview/courtRecordSignatureConfirmationAudkenni.generated'
 
 export type SignatureType = 'ruling' | 'courtRecord'
 
@@ -86,8 +84,6 @@ export const SignatureConfirmationModal: FC<
   const router = useRouter()
   const { formatMessage } = useIntl()
 
-  // Use the appropriate query based on signature type and method
-  // Poll every 2 seconds to check for signature confirmation
   const hasDocumentToken =
     signatureResponse.documentToken &&
     signatureResponse.documentToken.length > 0
@@ -97,21 +93,10 @@ export const SignatureConfirmationModal: FC<
       input: {
         documentToken: signatureResponse.documentToken || '',
         caseId: workingCase.id,
+        method: isAudkenni ? 'audkenni' : 'mobile',
       },
     },
-    skip: signatureType !== 'ruling' || isAudkenni || !hasDocumentToken,
-    fetchPolicy: 'no-cache',
-    errorPolicy: 'all',
-  })
-
-  const rulingAudkenniQuery = useRulingSignatureConfirmationAudkenniQuery({
-    variables: {
-      input: {
-        documentToken: signatureResponse.documentToken || '',
-        caseId: workingCase.id,
-      },
-    },
-    skip: signatureType !== 'ruling' || !isAudkenni || !hasDocumentToken,
+    skip: signatureType !== 'ruling' || !hasDocumentToken,
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
@@ -121,59 +106,25 @@ export const SignatureConfirmationModal: FC<
       input: {
         documentToken: signatureResponse.documentToken || '',
         caseId: workingCase.id,
+        method: isAudkenni ? 'audkenni' : 'mobile',
       },
     },
-    skip: signatureType !== 'courtRecord' || isAudkenni || !hasDocumentToken,
+    skip: signatureType !== 'courtRecord' || !hasDocumentToken,
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
 
-  const courtRecordAudkenniQuery =
-    useCourtRecordSignatureConfirmationAudkenniQuery({
-      variables: {
-        input: {
-          documentToken: signatureResponse.documentToken || '',
-          caseId: workingCase.id,
-        },
-      },
-      skip: signatureType !== 'courtRecord' || !isAudkenni || !hasDocumentToken,
-      fetchPolicy: 'no-cache',
-      errorPolicy: 'all',
-    })
-
   // Get the appropriate data and error based on which query is active
-  const getConfirmationData = () => {
-    if (signatureType === 'ruling') {
-      if (isAudkenni) {
-        return {
-          data: rulingAudkenniQuery.data?.rulingSignatureConfirmationAudkenni,
-          error: rulingAudkenniQuery.error,
-        }
-      } else {
-        return {
+  const { data: confirmationData, error: confirmationError } =
+    signatureType === 'ruling'
+      ? {
           data: rulingQuery.data?.rulingSignatureConfirmation,
           error: rulingQuery.error,
         }
-      }
-    } else {
-      // courtRecord
-      if (isAudkenni) {
-        return {
-          data: courtRecordAudkenniQuery.data
-            ?.courtRecordSignatureConfirmationAudkenni,
-          error: courtRecordAudkenniQuery.error,
-        }
-      } else {
-        return {
+      : {
           data: courtRecordQuery.data?.courtRecordSignatureConfirmation,
           error: courtRecordQuery.error,
         }
-      }
-    }
-  }
-
-  const { data: confirmationData, error: confirmationError } =
-    getConfirmationData()
 
   const signingProgress = getSigningProgress(
     confirmationData,

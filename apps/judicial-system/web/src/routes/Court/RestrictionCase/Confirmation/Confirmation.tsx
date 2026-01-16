@@ -1,14 +1,8 @@
-import { FC, useContext, useEffect, useState } from 'react'
-import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
+import { FC, useContext, useState } from 'react'
+import { useIntl } from 'react-intl'
 
 import { Accordion, Box } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
-import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
-import {
-  isAcceptingCaseDecision,
-  isCompletedCase,
-} from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   Conclusion,
@@ -23,8 +17,8 @@ import {
   PdfButton,
   PoliceRequestAccordionItem,
   RulingAccordionItem,
-  SigningMethodSelectionModal,
   SignatureConfirmationModal,
+  SigningMethodSelectionModal,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
@@ -33,6 +27,12 @@ import {
   RequestSignatureResponse,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import * as constants from '@island.is/judicial-system/consts'
+import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
+import {
+  isAcceptingCaseDecision,
+  isCompletedCase,
+} from '@island.is/judicial-system/types'
 
 import {
   JudgeRequestRulingSignatureModal,
@@ -47,7 +47,7 @@ type VisibleModal =
   | 'judgeRequestRulingSignatureModal'
   | 'registrarRequestRulingSignatureModal'
   | 'signingMethodSelectionModal'
-  | 'signingModal'
+  | 'signingConfirmationModal'
 
 const Confirmation: FC = () => {
   const router = useRouter()
@@ -248,11 +248,11 @@ const Confirmation: FC = () => {
           onSignatureRequested={(response, isAudkenni) => {
             setRulingSignatureResponse(response)
             setIsRulingSignatureAudkenni(isAudkenni)
-            setModalVisible('signingModal')
+            setModalVisible('signingConfirmationModal')
           }}
         />
       )}
-      {modalVisible === 'signingModal' && rulingSignatureResponse && (
+      {modalVisible === 'signingConfirmationModal' && rulingSignatureResponse && (
         <SignatureConfirmationModal
           workingCase={workingCase}
           signatureResponse={rulingSignatureResponse}

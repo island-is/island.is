@@ -83,10 +83,6 @@ export { default as TagCaseState } from './Tags/TagCaseState/TagCaseState'
 export { default as CaseTag } from './Tags/CaseTag'
 export { getIndictmentRulingDecisionTag } from './Tags/utils'
 export {
-  SigningModal,
-  useRequestRulingSignature,
-} from './Modals/SigningModal/SigningModal'
-export {
   SigningMethodSelectionModal,
   type SignatureType,
 } from './Modals/SigningMethodSelectionModal/SigningMethodSelectionModal'
