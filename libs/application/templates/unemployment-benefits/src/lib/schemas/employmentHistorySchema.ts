@@ -9,7 +9,7 @@ export const lastJobSchema = z.object({
     })
     .optional(),
   nationalIdWithName: z.string().optional(),
-  title: z.string().optional(),
+  jobCodeId: z.string().optional(),
   percentage: z.string().optional(),
   startDate: z.string().optional(),
   endDate: z.string().optional(),

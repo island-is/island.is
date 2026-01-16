@@ -44,9 +44,9 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
         prod: 'island-is-prod-upload-api',
       },
       FORM_SYSTEM_BUCKET: {
-        dev: 'island-is-dev-storage-form-system',
-        staging: 'island-is-staging-storage-form-system',
-        prod: 'island-is-prod-storage-form-system',
+        dev: 'island-is-dev-form-system-presign-bucket',
+        staging: 'island-is-staging-form-system-presign-bucket',
+        prod: 'island-is-prod-form-system-presign-bucket',
       },
       REDIS_URL_NODE_01: REDIS_NODE_CONFIG,
     })
