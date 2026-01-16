@@ -1,0 +1,64 @@
+{
+  "name": "services-sitemap-generator",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/services/sitemap-generator/src",
+  "projectType": "application",
+  "prefix": "services-sitemap-generator",
+  "tags": ["scope:nest"],
+  "targets": {
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/services/sitemap-generator",
+        "main": "apps/services/sitemap-generator/src/main.ts",
+        "tsConfig": "apps/services/sitemap-generator/tsconfig.app.json",
+        "generatePackageJson": true,
+        "esbuildConfig": "tools/esbuild.config.js",
+        "format": ["cjs"],
+        "assets": [
+          {
+            "glob": "**/*",
+            "input": "apps/services/sitemap-generator/src/assets",
+            "output": "./assets"
+          }
+        ]
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "fileReplacements": [
+            {
+              "replace": "apps/services/sitemap-generator/src/environments/environment.ts",
+              "with": "apps/services/sitemap-generator/src/environments/environment.prod.ts"
+            }
+          ]
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "options": {
+        "buildTarget": "services-sitemap-generator:build"
+      }
+    },
+    "worker": {
+      "executor": "@nx/js:node",
+      "options": {
+        "buildTarget": "services-sitemap-generator:build",
+        "args": ["--job", "worker"]
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/apps/services/sitemap-generator"],
+      "options": {
+        "jestConfig": "apps/services/sitemap-generator/jest.config.ts"
+      }
+    }
+  }
+}

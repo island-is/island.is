@@ -77,6 +77,7 @@ import { serviceSetup as formSystemApiSetup } from '../../../apps/services/form-
 import { workerSetup as formSystemWorkerSetup } from '../../../apps/services/form-system/infra/form-system'
 import { serviceSetup as formSystemWebSetup } from '../../../apps/form-system/web/infra/form-system-web'
 import { serviceSetup as paymentFlowUpdateHandlerSetup } from '../../../apps/services/payment-flow-update-handler/infra/payment-flow-update-handler'
+import { sitemapGeneratorWorkerSetup } from '../../../apps/services/sitemap-generator/infra/sitemap-generator'
 
 const endorsement = endorsementServiceSetup({})
 
@@ -179,6 +180,8 @@ const userNotificationCleanupWorkerService =
 const userNotificationBirthdayWorkerService =
   userNotificationBirthdayWorkerSetup({ userProfileApi: servicePortalApi })
 
+const sitemapGeneratorWorker = sitemapGeneratorWorkerSetup()
+
 const githubActionsCache = githubActionsCacheSetup()
 
 export const Services: EnvironmentServices = {
@@ -227,6 +230,7 @@ export const Services: EnvironmentServices = {
     paymentFlowUpdateHandlerService,
     formSystemApi,
     formSystemWeb,
+    sitemapGeneratorWorker,
   ],
   staging: [
     appSystemApi,
@@ -271,6 +275,7 @@ export const Services: EnvironmentServices = {
     paymentFlowUpdateHandlerService,
     formSystemApi,
     formSystemWeb,
+    sitemapGeneratorWorker,
   ],
   dev: [
     appSystemApi,
