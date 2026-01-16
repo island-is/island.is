@@ -152,7 +152,9 @@ export class ApplicationTemplateHelper<
     const { initialState } = service.start()
 
     if (!initialState.nextEvents.includes(eventType)) {
-      throw new Error(`${eventType} is invalid for state ${initialState.value}`)
+      throw new Error(
+        `${eventType} is invalid for state ${initialState.value} for application ${this.application.typeId} with id ${this.application.id}`,
+      )
     }
 
     service.send(event)
