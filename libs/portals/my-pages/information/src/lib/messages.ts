@@ -753,4 +753,20 @@ export const contractsMessages = defineMessages({
     id: 'sp.contracts:temporary',
     defaultMessage: 'Tímabundinn',
   },
+  typeIndividualRoom: {
+    id: 'sp.contracts:type-individual-room',
+    defaultMessage: 'Leigusamningur vegna herbergis',
+    description: 'The type of property being rented out',
+  },
+  typeResidential: {
+    id: 'sp.contracts:type-residential',
+    defaultMessage: 'Leigusamningur vegna íbúðarhúsnæðis',
+    description: 'The type of property being rented out',
+  },
+  typeNonResidential: {
+    id: 'sp.contracts:type-non-residential',
+    defaultMessage:
+      'Leigusamningur vegna atvinnuhúsnæðis sem er nýtt til íbúðar',
+    description: 'The type of property being rented out',
+  },
 })

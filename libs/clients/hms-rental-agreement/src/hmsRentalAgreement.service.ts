@@ -45,4 +45,23 @@ export class HmsRentalAgreementService {
 
     return agreementToReturn
   }
+
+  /*async getRentalAgreementPdf(user: User, id: number): Promise<Buffer> {
+    const agreement = await this.getRentalAgreement(user, id)
+    if (!agreement) {
+      throw new NotFoundException('Rental agreement not found')
+    }
+
+    const res = await this.apiWithAuth(user).contractKtKtWithDocumentsGet({
+      kt: user.nationalId,
+    })
+
+    const pdfs =
+      res
+        .filter((res) => res.contract?.contractId === id)
+        .flatMap((r) => r.documents)
+        .filter(isDefined) ?? undefined
+
+    return res
+  }*/
 }

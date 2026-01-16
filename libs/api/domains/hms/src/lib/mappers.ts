@@ -6,11 +6,15 @@ import {
   PartyType as PartyClientType,
   RentalAgreementDto,
   TemporalType as TemporalClientType,
+  RentalPropertyType,
 } from '@island.is/clients/hms-rental-agreement'
 import { LANDLORD_TYPES, TENANT_TYPES } from './constants'
 import { Address } from './models/rentalAgreements/address.model'
 import { ContractParty } from './models/rentalAgreements/contractParty.model'
-import { ContractProperty } from './models/rentalAgreements/contractProperty.model'
+import {
+  ContractProperty,
+  PropertyType,
+} from './models/rentalAgreements/contractProperty.model'
 import {
   AgreementStatusType,
   PartyType,
@@ -47,6 +51,7 @@ const mapContractProperty = (
   return {
     id: propertyDto.id,
     propertyId: propertyDto.propertyId,
+    type: mapPropertyType(propertyDto.type),
     postalCode: propertyDto.postalCode,
     streetAndHouseNumber: propertyDto.streetAndHouseNumber,
     municipality: propertyDto.municipality,
@@ -94,6 +99,19 @@ const mapPartyType = (type: PartyClientType): PartyType => {
       return PartyType.OWNER_TAKEOVER
     default:
       return PartyType.UNKNOWN
+  }
+}
+
+const mapPropertyType = (type: RentalPropertyType): PropertyType => {
+  switch (type) {
+    case 'individualRoom':
+      return PropertyType.INDIVIDUAL_ROOM
+    case 'nonresidential':
+      return PropertyType.NONRESIDENTIAL
+    case 'residential':
+      return PropertyType.RESIDENTIAL
+    default:
+      return PropertyType.UNKNOWN
   }
 }
 

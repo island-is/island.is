@@ -22,6 +22,7 @@ import { isDefined } from '@island.is/shared/utils'
 import { useState } from 'react'
 import { getApplicationsBaseUrl } from '@island.is/portals/core'
 import { useNavigate } from 'react-router-dom'
+import { HmsRentalAgreementPropertyType } from '@island.is/api/schema'
 
 const UserContractsOverview = () => {
   useNamespaces('sp.contracts')
@@ -113,6 +114,18 @@ const UserContractsOverview = () => {
                   message: undefined,
                 }
 
+                const subText =
+                  contractProperty?.type ===
+                  HmsRentalAgreementPropertyType.RESIDENTIAL
+                    ? formatMessage(cm.typeResidential)
+                    : contractProperty?.type ===
+                      HmsRentalAgreementPropertyType.INDIVIDUAL_ROOM
+                    ? formatMessage(cm.typeIndividualRoom)
+                    : contractProperty?.type ===
+                      HmsRentalAgreementPropertyType.NONRESIDENTIAL
+                    ? formatMessage(cm.typeNonResidential)
+                    : undefined
+
                 if (!message || !restOfTag) {
                   return null
                 }
@@ -129,7 +142,7 @@ const UserContractsOverview = () => {
                         ),
                       variant: 'text',
                     }}
-                    subText={'TODO'}
+                    subText={subText}
                     tag={{
                       label: formatMessage(message),
                       ...restOfTag,

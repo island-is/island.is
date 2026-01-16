@@ -23,6 +23,12 @@ export const PARTY_TYPES = [
 ] as const
 
 export const TEMPORAL_TYPES = ['indefinite', 'temporary', 'unknown'] as const
+export const PROPERTY_TYPES = [
+  'individualRoom',
+  'residential',
+  'nonresidential',
+  'unknown',
+] as const
 
 export const INACTIVE_AGREEMENT_STATUSES: Array<AgreementStatusType> = [
   'expired',
