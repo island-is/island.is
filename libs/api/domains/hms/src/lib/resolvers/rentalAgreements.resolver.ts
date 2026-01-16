@@ -12,10 +12,16 @@ import { HmsRentalAgreementService } from '@island.is/clients/hms-rental-agreeme
 import { RentalAgreement } from '../models/rentalAgreements/rentalAgreement.model'
 import { mapToRentalAgreement } from '../mappers'
 import { handle404 } from '@island.is/clients/middlewares'
+import {
+  FeatureFlag,
+  FeatureFlagGuard,
+  Features,
+} from '@island.is/nest/feature-flags'
 
-@UseGuards(IdsUserGuard, ScopesGuard)
+@UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Resolver()
 @Audit({ namespace: '@island.is/api/hms' })
+@FeatureFlag(Features.servicePortalMyContractsPageEnabled)
 export class RentalAgreementsResolver {
   constructor(private service: HmsRentalAgreementService) {}
 
