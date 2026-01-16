@@ -216,8 +216,33 @@ export const decrement = (
     DefaultContext,
     ApolloCache<any>
   >,
+  updateDependenciesMutation: MutationTuple<
+    any,
+    OperationVariables,
+    DefaultContext,
+    ApolloCache<any>
+  >,
 ): ApplicationState => {
   const [submitScreen] = submitScreenMutation
+  const [updateDependencies] = updateDependenciesMutation
+  const errors = state.errors ?? []
+  const isValid = state.isValid ?? true
+
+  if (errors.length > 0 || !isValid) {
+    return { ...state, errors }
+  }
+
+  state.currentScreen = setCurrentScreen(
+    state,
+    currentSectionIndex,
+    currentScreenIndex,
+  ).currentScreen
+
+  state.currentSection = setCurrentScreen(
+    state,
+    currentSectionIndex,
+    currentScreenIndex,
+  ).currentSection
 
   submitScreen({
     variables: {
@@ -234,6 +259,23 @@ export const decrement = (
   }).catch((error) => {
     console.error('Error decrementing screen:', error)
   })
+  if (
+    updateDependencies &&
+    state.currentSection.data.sectionType === SectionTypes.INPUT
+  ) {
+    updateDependencies({
+      variables: {
+        input: {
+          id: state.application.id,
+          updateApplicationDto: {
+            dependencies: state.application.dependencies,
+          },
+        },
+      },
+    }).catch((error) => {
+      console.error('Error updating dependencies:', error)
+    })
+  }
 
   let resultSections = state.sections ?? []
   let resultCurrentScreen = state.currentScreen
