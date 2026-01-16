@@ -17,24 +17,31 @@ export const participantSection = buildSection({
       children: [
         buildTableRepeaterField({
           id: 'participantList',
-          defaultValue: ({ externalData }: Application) => {
-            const name =
-              getValueViaPath(externalData, 'nationalRegistry.data.fullName') ??
-              ''
-            const nationalId =
-              getValueViaPath(
-                externalData,
-                'nationalRegistry.data.nationalId',
-              ) ?? ''
-            const email =
-              getValueViaPath(externalData, 'userProfile.data.email') ?? ''
-            const phone =
-              getValueViaPath(
-                externalData,
-                'userProfile.data.mobilePhoneNumber',
-              ) ?? ''
+          defaultValue: (application: Application) => {
+            const name = getValueViaPath(
+              application.externalData,
+              'nationalRegistry.data.fullName',
+            )
+            const nationalId = getValueViaPath(
+              application.externalData,
+              'nationalRegistry.data.nationalId',
+            )
+            const email = getValueViaPath(
+              application.answers,
+              'userInformation.email',
+            )
+            const phone = getValueViaPath(
+              application.answers,
+              'userInformation.phone',
+            )
+            const healthcenter = getValueViaPath(
+              application.answers,
+              'userInformation.healthcenter',
+            )
 
-            if (!name || !nationalId || !email || !phone) return undefined
+            if (!name || !nationalId || !email || !phone || !healthcenter) {
+              return undefined
+            }
 
             return [
               {
@@ -44,6 +51,7 @@ export const participantSection = buildSection({
                   email,
                   phone,
                 },
+                healthcenter,
               },
             ]
           },

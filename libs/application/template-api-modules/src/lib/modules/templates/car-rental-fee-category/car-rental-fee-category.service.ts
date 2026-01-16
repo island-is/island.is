@@ -74,7 +74,6 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
       ).apiDayRateEntriesEntityIdGet({
         entityId: auth.nationalId,
       })
-      this.logger.info('Current vehicles rate category debug response', resp)
       return resp
     } catch (error) {
       this.logger.error('Error getting current vehicles rate category', error)
@@ -117,10 +116,6 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
               }) ?? null,
           },
         }
-        this.logger.warn(
-          'Full body of request to register cars to day rate',
-          requestBody,
-        )
         await this.rentalsApiWithAuth(
           auth,
         ).apiDayRateEntriesEntityIdRegisterPost({ ...requestBody })
@@ -141,10 +136,6 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
               }) ?? null,
           },
         }
-        this.logger.warn(
-          'Full body of request to deregister cars from day rate',
-          requestBody,
-        )
         await this.rentalsApiWithAuth(
           auth,
         ).apiDayRateEntriesEntityIdDeregisterPost({ ...requestBody })
@@ -157,7 +148,19 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
         typeof error === 'object' &&
         ('status' in error || 'detail' in error || 'title' in error)
       ) {
-        // Maybe do some error handling here, like throw application error
+        // Need to handle 400 errors here, such as if the cars are
+        // already registered to the rate category the user tried to change to
+        if (error.status === 400) {
+          throw new TemplateApiError(
+            {
+              title: error.title ?? 'Bad request',
+              summary:
+                error.detail ??
+                'Invalid input. Possibly vehicles are already registered to the selected rate category. Check the vehicles you are trying to register.',
+            },
+            error?.status,
+          )
+        }
       }
       throw new TemplateApiError(
         {

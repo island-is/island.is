@@ -71,6 +71,7 @@ export const overviewFields = (editable?: boolean) => {
       title: childrenNGuardiansMessages.relatives.subSectionTitle,
       backId: editable ? 'relatives' : undefined,
       loadTableData: relativesTable,
+      hideIfEmpty: true,
     }),
     buildOverviewField({
       id: 'overview.currentSchool',
@@ -98,9 +99,13 @@ export const overviewFields = (editable?: boolean) => {
       backId: editable ? 'currentNursery' : undefined,
       loadItems: currentNurseryItems,
       condition: (answers) => {
-        const { applicationType } = getApplicationAnswers(answers)
+        const { applicationType, hasCurrentNursery } =
+          getApplicationAnswers(answers)
 
-        return applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
+        return (
+          applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL &&
+          hasCurrentNursery === YES
+        )
       },
     }),
     buildOverviewField({
