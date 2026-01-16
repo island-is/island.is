@@ -55,13 +55,14 @@ export const detailDivider = styleVariants({
 export const contentContainer = style({
   display: 'flex',
   flexDirection: 'column',
-  justifyContent: 'space-around',
+  justifyContent: 'space-between',
 })
 
 export const imageContainer = style({
   paddingTop: theme.spacing[1],
   display: 'flex',
   alignItems: 'flex-end',
+  justifyContent: 'center',
   height: '100%',
 })
 

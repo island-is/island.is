@@ -31,6 +31,28 @@ export const healthNavigation: PortalNavigationItem = {
       path: HealthPaths.HealthBasicOld,
     },
     {
+      name: messages.pregnancy,
+      path: HealthPaths.HealthPregnancy,
+      children: [
+        {
+          name: messages.myPregnancy,
+          path: HealthPaths.HealthPregnancyOverview,
+        },
+        {
+          name: messages.communications,
+          path: HealthPaths.HealthPregnancyCommunications,
+        },
+        {
+          name: messages.measurements,
+          path: HealthPaths.HealthPregnancyMeasurements,
+        },
+        {
+          name: messages.files,
+          path: HealthPaths.HealthPregnancyFiles,
+        },
+      ],
+    },
+    {
       name: messages.appointments,
       searchHide: false,
       path: HealthPaths.HealthAppointments,

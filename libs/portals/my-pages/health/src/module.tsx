@@ -137,6 +137,15 @@ const AppointmentDetail = lazy(() =>
   import('./screens/Appointments/AppointmentDetail'),
 )
 
+const Pregnancy = lazy(() => import('./screens/Pregnancy/Pregnancy'))
+const PregnancyCommunications = lazy(() =>
+  import('./screens/Pregnancy/Communications'),
+)
+const PregnancyMeasurements = lazy(() =>
+  import('./screens/Pregnancy/Measurements'),
+)
+const PregnancyFiles = lazy(() => import('./screens/Pregnancy/Files'))
+
 const MEDICINE_LANDLAEKNIR_FLAG = 'HealthMedicineLandlaeknir'
 
 const MEDICINE_DELEGATION_FLAG = 'HealthMedicineDelegation'
@@ -494,6 +503,51 @@ export const healthModule: PortalModule = {
         userInfo.scopes.includes(ApiScope.internal) ||
         userInfo.scopes.includes(ApiScope.health),
       element: <AppointmentDetail />,
+    },
+    {
+      name: hm.pregnancy,
+      path: HealthPaths.HealthPregnancy,
+      key: 'HealthPregnancy',
+      enabled:
+        userInfo.scopes.includes(ApiScope.internal) ||
+        userInfo.scopes.includes(ApiScope.health),
+      element: <Navigate to={HealthPaths.HealthPregnancyOverview} replace />,
+    },
+    {
+      name: hm.pregnancy,
+      path: HealthPaths.HealthPregnancyOverview,
+      key: 'HealthPregnancy',
+      enabled:
+        userInfo.scopes.includes(ApiScope.internal) ||
+        userInfo.scopes.includes(ApiScope.health),
+      element: <Pregnancy />,
+    },
+    {
+      name: hm.communications,
+      path: HealthPaths.HealthPregnancyCommunications,
+      key: 'HealthPregnancy',
+      enabled:
+        userInfo.scopes.includes(ApiScope.internal) ||
+        userInfo.scopes.includes(ApiScope.health),
+      element: <PregnancyCommunications />,
+    },
+    {
+      name: hm.measurements,
+      path: HealthPaths.HealthPregnancyMeasurements,
+      key: 'HealthPregnancy',
+      enabled:
+        userInfo.scopes.includes(ApiScope.internal) ||
+        userInfo.scopes.includes(ApiScope.health),
+      element: <PregnancyMeasurements />,
+    },
+    {
+      name: hm.files,
+      path: HealthPaths.HealthPregnancyFiles,
+      key: 'HealthPregnancy',
+      enabled:
+        userInfo.scopes.includes(ApiScope.internal) ||
+        userInfo.scopes.includes(ApiScope.health),
+      element: <PregnancyFiles />,
     },
   ],
 }

@@ -1817,6 +1817,11 @@ export const messages = defineMessages({
     defaultMessage: 'Meðgangan mín',
     id: 'sp.health:my-pregnancy',
   },
+  myPregnancyIntro: {
+    defaultMessage:
+      'Hér getur þú séð fundið allar upplýsingar sem tengjast meðgöngu þinni og átt í samskiptum við mæðraverndina.',
+    id: 'sp.health:my-pregnancy-intro',
+  },
   noSearchResults: {
     id: 'sp.health:no-search-results',
     defaultMessage: 'Engar niðurstöður fundust',
@@ -2432,5 +2437,62 @@ export const messages = defineMessages({
   argWithMinutes: {
     defaultMessage: '{arg} mínútur',
     id: 'sp.health:arg-with-minutes',
+  },
+  pregnancy: {
+    defaultMessage: 'Meðganga',
+    id: 'sp.health:pregnancy',
+  },
+  communications: {
+    defaultMessage: 'Samskipti',
+    id: 'sp.health:communications',
+  },
+  measurements: {
+    defaultMessage: 'Mælingar',
+    id: 'sp.health:measurements',
+  },
+  files: {
+    defaultMessage: 'Skjöl',
+    id: 'sp.health:files',
+  },
+  myData: {
+    defaultMessage: 'Mín gögn',
+    id: 'sp.health:my-data',
+  },
+  readingMaterialPregnancy: {
+    defaultMessage: 'Lesefni um meðgöngu',
+    id: 'sp.health:reading-material-pregnancy',
+  },
+  readingMaterialPregnancyLink: {
+    defaultMessage:
+      'https://www.heilsuvera.is/efnisflokkar/throskaferlid/medganga/',
+    id: 'sp.health:reading-material-pregnancy-link',
+  },
+  pregnancyLength: {
+    defaultMessage: 'Lengd meðgöngu',
+    id: 'sp.health:pregnancy-length',
+  },
+  dueDatePregnancy: {
+    defaultMessage: 'Væntanlegur fæðingardagur',
+    id: 'sp.health:due-date-pregnancy',
+  },
+  midwife: {
+    defaultMessage: 'Ljósmóðir',
+    id: 'sp.health:midwife',
+  },
+  partner: {
+    defaultMessage: 'Maki',
+    id: 'sp.health:partner',
+  },
+  changedLast: {
+    defaultMessage: 'Síðast breytt: {arg}',
+    id: 'sp.health:changed-last',
+  },
+  infoMaterial: {
+    defaultMessage: 'Fræðsluefni',
+    id: 'sp.health:info-material',
+  },
+  labResults: {
+    defaultMessage: 'Rannsóknarniðurstöður',
+    id: 'sp.health:lab-results',
   },
 })
