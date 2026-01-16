@@ -165,6 +165,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
   const buttonStyle = { flex: 1, minWidth: width * 0.5 - theme.spacing[3] }
   const isVaccinationsEnabled = useFeatureFlag('isVaccinationsEnabled', false)
   const isOrganDonationEnabled = useFeatureFlag('isOrganDonationEnabled', false)
+  const isAppointmentsEnabled = useFeatureFlag('isAppointmentsEnabled', false)
   const scrollY = useRef(new Animated.Value(0)).current
 
   const now = useMemo(() => new Date().toISOString(), [])
@@ -304,6 +305,19 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
               style={buttonStyle}
               ellipsis
               onPress={() => navigateTo('/vaccinations', componentId)}
+            />
+          )}
+          {isAppointmentsEnabled && (
+            <Button
+              title={intl.formatMessage({
+                id: 'health.overview.appointments',
+              })}
+              isOutlined
+              isUtilityButton
+              iconStyle={{ tintColor: theme.color.dark300 }}
+              style={buttonStyle}
+              ellipsis
+              onPress={() => navigateTo('/appointments', componentId)}
             />
           )}
           <Button
