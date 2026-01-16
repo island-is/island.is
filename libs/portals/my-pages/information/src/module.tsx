@@ -10,41 +10,38 @@ import { InformationPaths } from './lib/paths'
 import { SignatureCollectionPaths } from '@island.is/portals/my-pages/signature-collection'
 import { Navigate } from 'react-router-dom'
 
-const UserInfoOverview = lazy(
-  () => import('./screens/UserInfo/UserInfoOverview/UserInfoOverview'),
+const UserInfoOverview = lazy(() =>
+  import('./screens/UserInfo/UserInfoOverview/UserInfoOverview'),
 )
 const UserInfo = lazy(() => import('./screens/UserInfo/UserInfo/UserInfo'))
-const FamilyMemberChildCustody = lazy(
-  () => import('./screens/UserInfo/ChildCustody/ChildCustody'),
+const FamilyMemberChildCustody = lazy(() =>
+  import('./screens/UserInfo/ChildCustody/ChildCustody'),
 )
-const FamilyMemberBioChild = lazy(
-  () => import('./screens/UserInfo/BioChild/BioChild'),
+const FamilyMemberBioChild = lazy(() =>
+  import('./screens/UserInfo/BioChild/BioChild'),
 )
 const Spouse = lazy(() => import('./screens/UserInfo/Spouse/Spouse'))
 const CompanyInfo = lazy(() => import('./screens/Company/CompanyInfo'))
-const Notifications = lazy(
-  () => import('./screens/Notifications/Notifications'),
+const Notifications = lazy(() =>
+  import('./screens/Notifications/Notifications'),
 )
-const UserProfileSettings = lazy(
-  () => import('./screens/UserProfile/UserProfile'),
+const UserProfileSettings = lazy(() =>
+  import('./screens/UserProfile/UserProfile'),
 )
-const UserNotificationsSettings = lazy(
-  () => import('./screens/UserNotifications/UserNotifications'),
-)
-
-const UserContractsOverview = lazy(
-  () =>
-    import(
-      './screens/UserContracts/UserContractsOverview/UserContractsOverview'
-    ),
+const UserNotificationsSettings = lazy(() =>
+  import('./screens/UserNotifications/UserNotifications'),
 )
 
-const UserContract = lazy(
-  () => import('./screens/UserContracts/Contract/UserContract'),
+const UserContractsOverview = lazy(() =>
+  import('./screens/UserContracts/UserContractsOverview/UserContractsOverview'),
 )
 
-const CompanySettings = lazy(
-  () => import('./screens/CompanySettings/CompanySettings'),
+const UserContract = lazy(() =>
+  import('./screens/UserContracts/Contract/UserContract'),
+)
+
+const CompanySettings = lazy(() =>
+  import('./screens/CompanySettings/CompanySettings'),
 )
 
 export const informationModule: PortalModule = {
