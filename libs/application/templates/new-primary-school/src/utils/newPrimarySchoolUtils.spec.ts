@@ -15,7 +15,7 @@ import {
   needsOtherGuardianApproval,
   needsPayerApproval,
   shouldShowPage,
-  shouldShowReasonForApplicationPage,
+  shouldShowReasonForApplicationAndNewSchoolPages,
   showPreferredLanguageFields,
 } from './conditionUtils'
 import {
@@ -401,7 +401,7 @@ describe('shouldShowPage', () => {
       ),
     ).toBe(false)
   })
-  it('Should return true if the application config with application type TRANSFER for the selected school includes key', () => {
+  it('Should return true if the application config with application type TRANSFER for the selected school includes key (decline enrollment in the preferred school)', () => {
     application.answers = {
       applicationType: ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL,
       school: {
@@ -421,7 +421,7 @@ describe('shouldShowPage', () => {
       ),
     ).toBe(true)
   })
-  it('Should return false if the application config with application type TRANSFER for the selected school does not include key', () => {
+  it('Should return false if the application config with application type TRANSFER for the selected school does not include key (decline enrollment in the preferred school)', () => {
     application.answers = {
       applicationType: ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL,
       school: {
@@ -431,6 +431,50 @@ describe('shouldShowPage', () => {
         municipality: '3000',
         school: schoolId,
       },
+    }
+
+    expect(
+      shouldShowPage(
+        application.answers,
+        application.externalData,
+        ApplicationFeatureKey.APPLICANT_INFO,
+      ),
+    ).toBe(false)
+  })
+  it('Should return true if the application config with application type TRANSFER for the selected school includes key (no preferred school found in Frigg)', () => {
+    application.answers = {
+      applicationType: ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL,
+      newSchool: {
+        municipality: '3000',
+        school: schoolId,
+      },
+    }
+    application.externalData.preferredSchool = {
+      data: null,
+      date: new Date(),
+      status: 'success',
+    }
+
+    expect(
+      shouldShowPage(
+        application.answers,
+        application.externalData,
+        ApplicationFeatureKey.PAYMENT_INFO,
+      ),
+    ).toBe(true)
+  })
+  it('Should return false if the application config with application type TRANSFER for the selected school does not include key (no preferred school found in Frigg)', () => {
+    application.answers = {
+      applicationType: ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL,
+      newSchool: {
+        municipality: '3000',
+        school: schoolId,
+      },
+    }
+    application.externalData.preferredSchool = {
+      data: null,
+      date: new Date(),
+      status: 'success',
     }
 
     expect(
@@ -929,12 +973,23 @@ describe('hasSpecialEducationSubType', () => {
   })
 })
 
-describe('shouldShowReasonForApplicationPage', () => {
+describe('shouldShowReasonForApplicationAndNewSchoolPages', () => {
   it('should return true if application type is NEW_PRIMARY_SCHOOL', () => {
     const answers = {
       applicationType: ApplicationType.NEW_PRIMARY_SCHOOL,
     }
-    expect(shouldShowReasonForApplicationPage(answers)).toBe(true)
+    const externalData = {
+      preferredSchool: {
+        data: {
+          id: uuid(),
+        },
+        date: new Date(),
+        status: 'success',
+      },
+    }
+    expect(
+      shouldShowReasonForApplicationAndNewSchoolPages(answers, externalData),
+    ).toBe(true)
   })
 
   it('should return false if application type is ENROLLMENT_IN_PRIMARY_SCHOOL and applyForPreferredSchool is YES', () => {
@@ -942,7 +997,18 @@ describe('shouldShowReasonForApplicationPage', () => {
       applicationType: ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL,
       school: { applyForPreferredSchool: YES },
     }
-    expect(shouldShowReasonForApplicationPage(answers)).toBe(false)
+    const externalData = {
+      preferredSchool: {
+        data: {
+          id: uuid(),
+        },
+        date: new Date(),
+        status: 'success',
+      },
+    }
+    expect(
+      shouldShowReasonForApplicationAndNewSchoolPages(answers, externalData),
+    ).toBe(false)
   })
 
   it('should return true if application type is ENROLLMENT_IN_PRIMARY_SCHOOL and applyForPreferredSchool is NO', () => {
@@ -950,14 +1016,52 @@ describe('shouldShowReasonForApplicationPage', () => {
       applicationType: ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL,
       school: { applyForPreferredSchool: NO },
     }
-    expect(shouldShowReasonForApplicationPage(answers)).toBe(true)
+    const externalData = {
+      preferredSchool: {
+        data: {
+          id: uuid(),
+        },
+        date: new Date(),
+        status: 'success',
+      },
+    }
+    expect(
+      shouldShowReasonForApplicationAndNewSchoolPages(answers, externalData),
+    ).toBe(true)
+  })
+
+  it('should return true if application type is ENROLLMENT_IN_PRIMARY_SCHOOL and preferredSchool is null', () => {
+    const answers = {
+      applicationType: ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL,
+    }
+    const externalData = {
+      preferredSchool: {
+        data: null,
+        date: new Date(),
+        status: 'success',
+      },
+    }
+    expect(
+      shouldShowReasonForApplicationAndNewSchoolPages(answers, externalData),
+    ).toBe(true)
   })
 
   it('should return false if application type is CONTINUING_ENROLLMENT', () => {
     const answers = {
       applicationType: ApplicationType.CONTINUING_ENROLLMENT,
     }
-    expect(shouldShowReasonForApplicationPage(answers)).toBe(false)
+    const externalData = {
+      preferredSchool: {
+        data: {
+          id: uuid(),
+        },
+        date: new Date(),
+        status: 'success',
+      },
+    }
+    expect(
+      shouldShowReasonForApplicationAndNewSchoolPages(answers, externalData),
+    ).toBe(false)
   })
 })
 
