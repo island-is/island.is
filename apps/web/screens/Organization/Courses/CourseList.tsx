@@ -161,7 +161,7 @@ const CourseList: Screen<CourseListProps, CourseListScreenContext> = ({
         items: navList,
       }}
     >
-      <Stack space={0}>
+      <Stack space={1}>
         <Text variant="h1" as="h1">
           {courseListPage?.title || n('courseListPageTitle', 'Námskeið')}
         </Text>
