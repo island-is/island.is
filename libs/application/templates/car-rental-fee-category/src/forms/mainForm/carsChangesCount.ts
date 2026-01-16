@@ -6,17 +6,18 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { CarCategoryRecord } from '../../utils/types'
+import { m } from '../../lib/messages'
 
 export const carsChangesCountSection = buildSection({
   id: 'carsChangesCountSection',
-  title: 'Fjöldi bíla breytt',
+  title: m.carsChangesCount.sectionTitle,
   children: [
     buildMultiField({
       id: 'carsChangesCountMultiField',
-      title: 'Staðfesta breytingar',
+      title: m.carsChangesCount.multiTitle,
       children: [
         buildStaticTableField({
-          header: ['Fjöldi bifreiða breytt'],
+          header: [m.carsChangesCount.header],
           rows: (application) => {
             const data =
               getValueViaPath<CarCategoryRecord[]>(
@@ -29,12 +30,11 @@ export const carsChangesCountSection = buildSection({
         }),
         buildSubmitField({
           id: 'submit',
-          title: 'Submit',
           refetchApplicationAfterSubmit: true,
           actions: [
             {
               event: 'SUBMIT',
-              name: 'Submit',
+              name: m.carsChangesCount.submitButton,
               type: 'primary',
             },
           ],
