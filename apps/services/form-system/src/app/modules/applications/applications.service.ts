@@ -207,33 +207,41 @@ export class ApplicationsService {
     }
 
     const applicationResponseDto = await this.getApplication(id, '', null)
+
     if (!applicationResponseDto.application) {
       throw new NotFoundException(`Application DTO with id '${id}' not found.`)
     }
+
     const applicationDto = applicationResponseDto.application
     applicationDto.submittedAt = new Date()
+    applicationDto.status = ApplicationStatus.COMPLETED
+    const applicationEvent = await this.applicationEventModel.create({
+      applicationId: application.id,
+      eventType: ApplicationEvents.APPLICATION_SUBMITTED,
+      eventMessage: {
+        is: 'Umsókn móttekin',
+        en: 'Application submitted',
+      },
+    } as ApplicationEvent)
+    if (!applicationDto.events) {
+      applicationDto.events = []
+    }
+    applicationDto.events.push(applicationEvent)
 
     const success: boolean = await this.serviceManager.send(applicationDto)
 
     if (success) {
-      application.status = ApplicationStatus.COMPLETED
-      application.submittedAt = applicationDto.submittedAt
-      application.pruneAt = calculatePruneAt(form.daysUntilApplicationPrune)
-      await this.sequelize.transaction(async (transaction) => {
-        await application.save({ transaction })
-
-        await this.applicationEventModel.create(
-          {
-            applicationId: application.id,
-            eventType: ApplicationEvents.APPLICATION_SUBMITTED,
-            eventMessage: {
-              is: 'Umsókn móttekin',
-              en: 'Application submitted',
-            },
-          } as ApplicationEvent,
-          { transaction },
-        )
-      })
+      try {
+        application.status = applicationDto.status
+        application.submittedAt = applicationDto.submittedAt
+        application.pruneAt = calculatePruneAt(form.daysUntilApplicationPrune)
+        await application.save()
+      } catch (error) {
+        await applicationEvent.destroy()
+        throw error
+      }
+    } else {
+      await applicationEvent.destroy()
     }
 
     return success

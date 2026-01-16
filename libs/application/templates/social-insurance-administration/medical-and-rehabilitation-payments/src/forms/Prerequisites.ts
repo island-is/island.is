@@ -10,8 +10,8 @@ import {
   DefaultEvents,
   Form,
   FormModes,
-  NationalRegistrySpouseApi,
-  NationalRegistryUserApi,
+  NationalRegistryV3SpouseApi,
+  NationalRegistryV3UserApi,
   UserProfileApi,
 } from '@island.is/application/types'
 import {
@@ -62,7 +62,7 @@ export const Prerequisites: Form = buildForm({
           }),
           dataProviders: [
             buildDataProviderItem({
-              provider: NationalRegistryUserApi,
+              provider: NationalRegistryV3UserApi,
               title:
                 medicalAndRehabilitationPaymentsFormMessage.pre
                   .skraInformationTitle,
@@ -71,7 +71,7 @@ export const Prerequisites: Form = buildForm({
                   .skraInformationDescription,
             }),
             buildDataProviderItem({
-              provider: NationalRegistrySpouseApi,
+              provider: NationalRegistryV3SpouseApi,
             }),
             buildDataProviderItem({
               provider: UserProfileApi,
