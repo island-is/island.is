@@ -1,6 +1,0 @@
-export * from '../gen/fetch'
-export * from './lib/financialManagementAuthorityClient.module'
-export { FinancialManagementAuthorityClientConfig } from './lib/financialManagementAuthorityClient.config'
-export * from './lib/financialManagementAuthorityClient.service'
-export * from './lib/dtos/index'
-export * from './lib/utils/pageInfo.util'
