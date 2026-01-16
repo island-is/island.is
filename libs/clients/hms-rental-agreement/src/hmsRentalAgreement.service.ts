@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { HomeApi } from '../gen/fetch'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { isDefined } from '@island.is/shared/utils'
@@ -7,10 +7,14 @@ import {
   RentalAgreementDto,
 } from './dtos/rentalAgreements.dto'
 import { INACTIVE_AGREEMENT_STATUSES } from './constants'
+import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 @Injectable()
 export class HmsRentalAgreementService {
-  constructor(private readonly api: HomeApi) {}
+  constructor(
+    private readonly api: HomeApi,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+  ) {}
 
   private apiWithAuth = (user: User) =>
     this.api.withMiddleware(new AuthMiddleware(user as Auth))
@@ -40,7 +44,10 @@ export class HmsRentalAgreementService {
     )
 
     if (!agreementToReturn) {
-      throw new NotFoundException('Rental agreement not found')
+      this.logger.info('Rental agreement not found', {
+        id,
+      })
+      return
     }
 
     return agreementToReturn

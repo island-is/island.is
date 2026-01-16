@@ -13,7 +13,7 @@ import { AuditService } from '@island.is/nest/audit'
 import { HmsRentalAgreementService } from '@island.is/clients/hms-rental-agreement'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(ApiScope.education)
+@Scopes(ApiScope.hms)
 @Controller('rental-agreements')
 export class RentalAgreementsController {
   constructor(
@@ -28,18 +28,26 @@ export class RentalAgreementsController {
     description: 'Get a rental agreement pdf from HMSs',
   })
   async getRentalAgreementPdf(
-    @Param('id') id: number,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    @Param('id') id: string | undefined,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     @CurrentUser() user: User,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     @Res() res: Response,
   ) {
     throw new Error('Not implemented')
-    /*const documentResponse = await this.service.getRentalAgreement(user, id)
+    /*
+    if (!id) {
+      throw new BadRequestException('Missing id')
+    }
+
+    const documentResponse = await this.service.getRentalAgreement(user, +id)
 
     if (documentResponse) {
       this.auditService.audit({
         action: 'getRentalAgreementPdf',
         auth: user,
-        resources: id.toString(),
+        resources: id,
       })
 
       /*
@@ -49,7 +57,7 @@ export class RentalAgreementsController {
       res.header('Content-length', buffer.length.toString())
       res.header(
         'Content-Disposition',
-        `inline; filename=${user.nationalId}-starfsleyfi-${licenceId}.pdf`,
+        `inline; filename=${user.nationalId}-rental-agreement-${id}.pdf`,
       )
       res.header('Content-Type', 'application/pdf')
       res.header('Pragma', 'no-cache')

@@ -639,22 +639,6 @@ export const contractsMessages = defineMessages({
     id: 'sp.contracts:contract-detail-subtitle',
     defaultMessage: 'Leigusamningur vegna íbúðarhúsnæðis',
   },
-  headerButton1Text: {
-    id: 'sp.contracts:header-button1-text',
-    defaultMessage: 'Skrá samning',
-  },
-  headerButton1Url: {
-    id: 'sp.contracts:header-button1-url',
-    defaultMessage: '/todo',
-  },
-  detailButton1Text: {
-    id: 'sp.contracts:detail-button1-text',
-    defaultMessage: 'EXAMPLE',
-  },
-  detailButton2Text: {
-    id: 'sp.contracts:detail-button1-url',
-    defaultMessage: 'EXAMPLE URL',
-  },
   dataStackTitle: {
     id: 'sp.contracts:data-stack-title',
     defaultMessage: 'Upplýsingar',

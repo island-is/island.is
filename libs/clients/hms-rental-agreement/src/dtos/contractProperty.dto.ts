@@ -13,13 +13,16 @@ export interface ContractPropertyDto {
 export const mapContractPropertyDto = (
   data: GeneratedContractProperty,
 ): ContractPropertyDto | null => {
-  if (!data.contractPropertyId || !data.propertyId) {
+  const contractPropertyId = data?.contractPropertyId ?? undefined
+  const propertyId = data?.propertyId ?? undefined
+
+  if (contractPropertyId === undefined || propertyId === undefined) {
     return null
   }
 
   return {
-    id: data.contractPropertyId,
-    propertyId: data.propertyId,
+    id: contractPropertyId,
+    propertyId: propertyId,
     type: mapPropertyType(data.specialTypeCode ?? undefined),
     postalCode: data.postalCode ?? undefined,
     streetAndHouseNumber: data.streetAndHouseNumber ?? undefined,

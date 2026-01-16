@@ -951,7 +951,7 @@ export const m = defineMessages({
   contractsDescription: {
     id: 'service.portal:contracts-description',
     defaultMessage:
-      'Upplýsingar um þá saminga sem þú átt í leiguskrá Húsnæðis- og Mannvirkjastofnunar',
+      'Upplýsingar um þá samninga sem þú átt í leiguskrá Húsnæðis- og Mannvirkjastofnunar',
   },
   delegation: {
     id: 'service.portal:delegation',

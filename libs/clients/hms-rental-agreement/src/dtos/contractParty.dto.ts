@@ -15,11 +15,13 @@ export interface ContractPartyDto {
 export const mapContractPartyDto = (
   data: GeneratedContractParty,
 ): ContractPartyDto | null => {
-  if (!data.contractPartyId || !data.partyTypeUseCode || !data.name) {
+  const contractPartyId = data?.contractPartyId ?? undefined
+
+  if (contractPartyId === undefined || !data.partyTypeUseCode || !data.name) {
     return null
   }
   return {
-    id: data.contractPartyId ?? undefined,
+    id: contractPartyId,
     type: mapPartyType(data.partyTypeUseCode),
     name: data.name ?? undefined,
     nationalId: data.kennitala ?? undefined,
