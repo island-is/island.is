@@ -333,7 +333,7 @@ export class UserProfileService {
 
       // Now lets check if the email is already in the database
       if (isEmailDefined) {
-        // Lets find the primary email and set it it to false
+        // Lets find the primary email
         const primaryEmail = await this.emailModel.findOne({
           where: {
             nationalId,
@@ -344,8 +344,14 @@ export class UserProfileService {
         })
 
         if (primaryEmail) {
-          // Set the primary email to false
-          await primaryEmail.update({ primary: false }, { transaction })
+          // If email is set to empty string, delete the email record
+          // Otherwise, set the primary email to false
+          if (userProfile.email === '') {
+            await primaryEmail.destroy({ transaction })
+          } else {
+            // Set the primary email to false
+            await primaryEmail.update({ primary: false }, { transaction })
+          }
         }
 
         if (isEmailDefined && userProfile.email !== '') {

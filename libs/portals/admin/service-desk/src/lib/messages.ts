@@ -77,10 +77,6 @@ export const m = defineMessages({
     id: 'admin-portal.service-desk:email',
     defaultMessage: 'Netfang',
   },
-  delete: {
-    id: 'admin-portal.service-desk:delete-email',
-    defaultMessage: 'Eyða',
-  },
   phone: {
     id: 'admin-portal.service-desk:phone',
     defaultMessage: 'Símanúmer',
@@ -166,5 +162,13 @@ export const m = defineMessages({
   actorNotifications: {
     id: 'admin-portal.service-desk:actor-notifications',
     defaultMessage: 'Vegna umboðs',
+  },
+  deleteEmailConfirmTitle: {
+    id: 'admin-portal.service-desk:delete-email-confirm-title',
+    defaultMessage: 'Eyða netfangi',
+  },
+  deleteEmailConfirmMessage: {
+    id: 'admin-portal.service-desk:delete-email-confirm-message',
+    defaultMessage: 'Ertu viss um að þú viljir eyða netfangi {email}?',
   },
 })

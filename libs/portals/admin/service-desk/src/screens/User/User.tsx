@@ -13,11 +13,16 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { BackButton } from '@island.is/portals/admin/core'
-import { IntroHeader, formatNationalId } from '@island.is/portals/core'
+import {
+  IntroHeader,
+  formatNationalId,
+  m as coreMessages,
+} from '@island.is/portals/core'
 import { dateFormat } from '@island.is/shared/constants'
 import InfiniteScroll from 'react-infinite-scroller'
 
 import { m } from '../../lib/messages'
+import ConfirmModal from '../../components/ConfirmModal/ConfirmModal'
 import {
   GetAdminNotificationsQuery,
   GetAdminActorNotificationsQuery,
@@ -25,7 +30,7 @@ import {
   useGetAdminActorNotificationsQuery,
 } from './User.generated'
 import { UpdateUserProfileInput } from '@island.is/api/schema'
-import React from 'react'
+import React, { useState } from 'react'
 import { isValidDate } from '@island.is/shared/utils'
 import { useGetAdminNotificationsQuery } from './User.generated'
 import { UserProfileResult } from './User.loader'
@@ -40,6 +45,8 @@ const User = () => {
   const formattedNationalId = formatNationalId(user.nationalId)
   const [updateProfile] = useUpdateUserProfileMutation()
   const { revalidate } = useRevalidator()
+  const [isDeleteEmailModalVisible, setIsDeleteEmailModalVisible] =
+    useState(false)
 
   const {
     data: notifications,
@@ -80,6 +87,11 @@ const User = () => {
     } catch (e) {
       console.error(e)
     }
+  }
+
+  const handleDeleteEmail = async () => {
+    setIsDeleteEmailModalVisible(false)
+    await handleUpdateProfile({ email: '' })
   }
 
   const loadMore = async () => {
@@ -231,17 +243,17 @@ const User = () => {
               heading={formatMessage(m.email)}
               text={user.email ?? ''}
               cta={
-                !user.email || user.emailVerified
+                !user.email
                   ? undefined
                   : {
-                      label: formatMessage(m.delete),
+                      label: formatMessage(coreMessages.buttonDestroy),
                       buttonType: {
                         variant: 'text',
                         colorScheme: 'destructive',
                       },
                       size: 'small',
                       icon: 'trash',
-                      onClick: () => handleUpdateProfile({ email: '' }),
+                      onClick: () => setIsDeleteEmailModalVisible(true),
                     }
               }
               tag={{
@@ -265,7 +277,7 @@ const User = () => {
                 !user.mobilePhoneNumber || user.mobilePhoneNumberVerified
                   ? undefined
                   : {
-                      label: formatMessage(m.delete),
+                      label: formatMessage(coreMessages.buttonDestroy),
                       buttonType: {
                         variant: 'text',
                         colorScheme: 'destructive',
@@ -443,6 +455,18 @@ const User = () => {
           ]}
         />
       </Stack>
+      <ConfirmModal
+        isVisible={isDeleteEmailModalVisible}
+        onConfirm={handleDeleteEmail}
+        onVisibilityChange={(visibility) =>
+          setIsDeleteEmailModalVisible(visibility)
+        }
+        title={formatMessage(m.deleteEmailConfirmTitle)}
+        message={formatMessage(m.deleteEmailConfirmMessage, {
+          email: user.email ?? '',
+        })}
+        confirmMessage={formatMessage(coreMessages.buttonDestroy)}
+      />
     </Stack>
   )
 }
