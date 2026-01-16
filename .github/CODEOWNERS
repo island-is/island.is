@@ -340,7 +340,7 @@ codemagic.yaml                                                                  
 /libs/clients/fiskistofa/                                                                                                    @island-is/stefna
 /libs/clients/syslumenn/                                                                                                     @island-is/stefna @island-is/juni
 /libs/api/domains/watson-assistant-chat/                                                                                     @island-is/stefna
-/libs/api/domains/icelandic-government-institution                                                            @island-is/stefna
+/libs/api/domains/icelandic-government-institution                                                                           @island-is/stefna
 /libs/clients/aircraft-registry/                                                                                             @island-is/stefna
 /libs/api/domains/aircraft-registry/                                                                                         @island-is/stefna
 /libs/api/domains/housing-benefit-calculator/                                                                                @island-is/stefna
