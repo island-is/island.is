@@ -26,6 +26,7 @@ export interface RequestCaseEvent {
   requestDecisionDescriptor?: string
   courtOfAppealDecision?: CaseAppealRulingDecision
   courtOfAppealDecisionDescriptor?: string
+  parentCaseId?: string
 }
 
 // utility functions
@@ -52,6 +53,7 @@ const commonFields = (c: Case) => {
     courtOfAppealDecisionDescriptor: c.appealRulingDecision
       ? getAppealRulingDecisionDescriptor(c.appealRulingDecision)
       : '',
+    parentCaseId: c.parentCaseId,
   }
 }
 

@@ -23,13 +23,7 @@ export class FileService {
   ) {}
 
   async fileExists(key: string): Promise<boolean> {
-    try {
-      const s3Uri = `s3://${this.config.tempBucket}/${key}`
-      return await this.s3Service.fileExists(s3Uri)
-    } catch (error) {
-      this.logger.error(`Error checking existence for ${key}`, error)
-      return false
-    }
+    return await this.fileStorageService.fileExists(key)
   }
 
   async uploadFile(

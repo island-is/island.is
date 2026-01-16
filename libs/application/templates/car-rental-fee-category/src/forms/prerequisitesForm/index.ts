@@ -7,6 +7,7 @@ import {
 } from '@island.is/application/core'
 import { DefaultEvents, FormModes } from '@island.is/application/types'
 import { SkatturApi, VehiclesApi } from '../../dataProviders'
+import { m } from '../../lib/messages'
 
 export const Prerequisites = buildForm({
   id: 'PrerequisitesDraft',
@@ -15,24 +16,22 @@ export const Prerequisites = buildForm({
   children: [
     buildSection({
       id: 'conditions',
-      tabTitle: 'Gagnaöflun',
+      tabTitle: m.prerequisites.tabTitle,
       children: [
         buildExternalDataProvider({
           id: 'approveExternalData',
-          title: 'Gagnaöflun',
-          checkboxLabel: 'Ég skil að ofangreinda upplýsinga verður aflað',
+          title: m.prerequisites.title,
+          checkboxLabel: m.prerequisites.approvalCheckboxLabel,
           dataProviders: [
             buildDataProviderItem({
               provider: SkatturApi, // Skatturinn
-              title: 'Upplýsingar frá Skattinum',
-              subTitle:
-                'Upplýsingar frá skattinum - Upplýsingar um gjaldflokksstöðu bifreiða',
+              title: m.prerequisites.skatturTitle,
+              subTitle: m.prerequisites.skatturSubTitle,
             }),
             buildDataProviderItem({
               provider: VehiclesApi, // Samgöngustofan
-              title: 'Upplýsingar frá Samgöngustofu',
-              subTitle:
-                'Upplýsingar úr ökutækjaskrá - Upplýsingar um þínar bifreiðar og stöðu þeirra',
+              title: m.prerequisites.vehiclesTitle,
+              subTitle: m.prerequisites.vehiclesSubTitle,
             }),
           ],
           submitField: buildSubmitField({
@@ -42,7 +41,7 @@ export const Prerequisites = buildForm({
             actions: [
               {
                 event: DefaultEvents.SUBMIT,
-                name: 'Staðfesta',
+                name: m.prerequisites.confirmButton,
                 type: 'primary',
               },
             ],

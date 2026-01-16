@@ -143,7 +143,7 @@ export const Footer = ({ externalDataAgreement }: Props) => {
           {showBackButton && (
             <Box display="inlineFlex" padding={2} paddingLeft="none">
               <Button
-                icon="arrowBack"
+                preTextIcon="arrowBack"
                 variant="ghost"
                 onClick={handleDecrement}
                 disabled={submitLoading}
