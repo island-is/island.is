@@ -79,6 +79,7 @@ export class DelegationsController {
     scopes: string[],
     @Query('direction') direction = DelegationDirection.OUTGOING,
   ): Promise<PaginatedDelegationRecordDTO> {
+    console.log('here')
     return this.auditService.auditPromise(
       {
         auth,

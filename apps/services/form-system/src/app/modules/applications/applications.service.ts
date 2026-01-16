@@ -363,6 +363,50 @@ export class ApplicationsService {
     return applicationResponseDto
   }
 
+  async findAll(
+    page: number,
+    limit: number,
+    isTest: boolean,
+  ): Promise<ApplicationResponseDto> {
+    const offset = (page - 1) * limit
+    const { count: total, rows: data } =
+      await this.applicationModel.findAndCountAll({
+        where: { isTest: isTest },
+        limit,
+        offset,
+        include: [
+          {
+            model: ApplicationEvent,
+            as: 'events',
+          },
+          {
+            model: Value,
+            as: 'files',
+            where: { fieldType: FieldTypesEnum.FILE },
+          },
+        ],
+        order: [
+          [{ model: ApplicationEvent, as: 'events' }, 'created', 'ASC'],
+          [{ model: Value, as: 'files' }, 'created', 'ASC'],
+        ],
+      })
+
+    const applicationMinimalDtos = await Promise.all(
+      data.map(async (application) => {
+        const form = await this.formModel.findByPk(application.formId)
+        return this.applicationMapper.mapApplicationToApplicationMinimalDto(
+          application,
+          form,
+        )
+      }),
+    )
+
+    const applicationResponseDto = new ApplicationResponseDto()
+    applicationResponseDto.applications = applicationMinimalDtos
+    applicationResponseDto.total = total
+    return applicationResponseDto
+  }
+
   async getApplication(
     applicationId: string,
     slug: string,
