@@ -65,25 +65,12 @@ export const AppointmentsScreen: NavigationFunctionComponent = ({
         HealthDirectorateAppointmentStatus.Cancelled,
       ],
     },
+    fetchPolicy: 'cache-first',
     notifyOnNetworkStatusChange: true,
   })
 
   const appointments =
     appointmentsRes.data?.healthDirectorateAppointments.data ?? []
-
-  useEffect(() => {
-    console.log('[Appointments] Query state:', {
-      loading: appointmentsRes.loading,
-      error: appointmentsRes.error?.message,
-      hasData: !!appointmentsRes.data,
-      appointmentsCount: appointments.length,
-    })
-  }, [
-    appointmentsRes.loading,
-    appointmentsRes.error,
-    appointmentsRes.data,
-    appointments.length,
-  ])
 
   useConnectivityIndicator({
     componentId,
