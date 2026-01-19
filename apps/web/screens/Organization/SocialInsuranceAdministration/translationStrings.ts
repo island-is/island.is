@@ -12,15 +12,16 @@ export const translationStrings = defineMessages({
       'Í reiknivélinni getur þú sett inn mismunandi forsendur og séð hvernig það hefur áhrif á greiðslurnar þínar. Lífeyrir er fyrir flesta grunnlífeyrir frá Tryggingastofnun og viðbótagreiðslur. Ef þú ert með aðrar tekjur en lífeyri frá TR, getur það haft áhrif á réttindin þín.',
     description: 'Upplýsingar efst á fyrstu síðu',
   },
-  typeOfBasePensionPlaceholder: {
-    id: 'web.pensionCalculator:typeOfBasePensionPlaceholder',
-    defaultMessage: 'Veldu tegund greiðslna',
-    description: 'Tegund lífeyris, placeholder',
-  },
   pensionStartIsDelayed: {
     id: 'web.pensionCalculator:pensionStartIsDelayed',
     defaultMessage: 'Þú vilt hefja töku eftir 67 ára aldur',
     description: 'Upplýsingar sem birtast ef þú vilt seinka töku ellilífeyris',
+  },
+  form2025PreviewLabel: {
+    id: 'web.pensionCalculator:form2025PreviewLabel',
+    defaultMessage: 'Eftir 1. september 2025',
+    description:
+      'Valmöguleiki í dropdown fyrir "Allar reiknivélar" ef það á að leyfa eftir 1. sept 2025 preview',
   },
   results2025ImageUrl: {
     id: 'web.pensionCalculator:results2025ImageUrl',
@@ -452,6 +453,11 @@ export const translationStrings = defineMessages({
     defaultMessage: 'Reiknivél lífeyris',
     description: 'Aðal titill',
   },
+  form2025PreviewMainTitle: {
+    id: 'web.pensionCalculator:form2025PreviewMainTitle',
+    defaultMessage: 'Reiknivél örorku- og endurhæfingargreiðslna',
+    description: 'Aðal titill fyrir nýju eftir 1. sept 2025 reiknivél',
+  },
   resultDisclaimer: {
     id: 'web.pensionCalculator:resultDisclaimer',
     defaultMessage:
@@ -620,6 +626,28 @@ export const translationStrings = defineMessages({
       'Þú getur byrjað töku ellilífeyris frá {month} {year}. Þú getur flýtt um 2 ár eða frestað töku ellilífeyris.',
     description:
       'Lýsing fyrir ofan mánuð og ár reit varðandi hvenær notandi vill hefja töku á ellilífeyri',
+  },
+  after1stSeptember2025: {
+    id: 'web.pensionCalculator:after1stSeptember2025',
+    defaultMessage: 'Eftir 1. september 2025',
+    description: 'Eftir 1. september 2025',
+  },
+  after1stSeptember2025IconUrl: {
+    id: 'web.pensionCalculator:after1stSeptember2025IconUrl',
+    defaultMessage:
+      'https://images.ctfassets.net/8k0h54kbe6bj/5RIwKVet87Nm4ycltkzjnX/9c594855a9b2f90dde63766ee87a09ca/58dd40fbf365769d984be22a9b64bc29.png',
+    description:
+      'Mynd vinstra megin við titil "Reiknivél örorku- og endurhæfingargreiðslna eftir 1. september 2025"',
+  },
+  after1stSeptember2025Calculate: {
+    id: 'web.pensionCalculator:after1stSeptember2025Calculate',
+    defaultMessage: 'Reikna',
+    description: 'Reikna',
+  },
+  after1stSeptember2025Description: {
+    id: 'web.pensionCalculator:after1stSeptember2025Description',
+    defaultMessage: 'Sjá útreikning örorkulífeyris í nýju kerfi',
+    description: 'Sjá útreikning örorkulífeyris í nýju kerfi',
   },
   birthMonthLabel: {
     id: 'web.pensionCalculator:birthMonthLabel',
