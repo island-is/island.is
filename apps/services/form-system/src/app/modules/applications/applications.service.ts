@@ -185,7 +185,15 @@ export class ApplicationsService {
       throw new NotFoundException(`Application with id '${id}' not found`)
     }
 
-    application.dependencies = updateApplicationDto.dependencies
+    if (updateApplicationDto.completed) {
+      console.log('updatding completed')
+      application.completed = updateApplicationDto.completed
+    }
+
+    if (updateApplicationDto.dependencies) {
+      console.log('updatding dependencies')
+      application.dependencies = updateApplicationDto.dependencies
+    }
 
     await application.save()
   }

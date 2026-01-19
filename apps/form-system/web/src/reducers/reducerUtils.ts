@@ -342,6 +342,15 @@ export const decrement = (
   }
 }
 
+export const jumpToScreen = (
+  state: ApplicationState,
+  sectionIndex: number,
+  screenIndex: number,
+): ApplicationState => {
+  const completed = state.application.completed || []
+  return state
+}
+
 export const setCurrentScreen = (
   state: ApplicationState,
   sectionIndex: number,
