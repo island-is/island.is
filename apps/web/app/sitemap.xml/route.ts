@@ -1,17 +1,19 @@
 export const revalidate = 3600 // 1 hour
 
 export const GET = async () => {
-    const sitemap = [
-        {
-            icelandicUrl: 'https://island.is',
-            englishUrl: 'https://island.is/en',
-            lastModified: new Date().toISOString(),
-        },
-    ]
+  const sitemap = [
+    {
+      icelandicUrl: 'https://island.is',
+      englishUrl: 'https://island.is/en',
+      lastModified: new Date().toISOString(),
+    },
+  ]
 
-    const xml = `<?xml version="1.0" encoding="UTF-8"?>
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
     <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
-        ${sitemap.map(item => `
+        ${sitemap
+          .map(
+            (item) => `
             <url>
                 <lastmod>${item.lastModified}</lastmod>
                 <loc>${item.icelandicUrl}</loc>
@@ -28,13 +30,14 @@ export const GET = async () => {
                     hreflang="x-default" 
                     href="${item.englishUrl}" />
             </url>
-        `).join('')}
-    </urlset>`;
+        `,
+          )
+          .join('')}
+    </urlset>`
 
-    return new Response(xml, {
-        headers: {
-            'Content-Type': 'application/xml',
-        },
-    })
+  return new Response(xml, {
+    headers: {
+      'Content-Type': 'application/xml',
+    },
+  })
 }
-
