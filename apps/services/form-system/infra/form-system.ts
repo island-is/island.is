@@ -92,6 +92,11 @@ export const workerSetup = (): ServiceBuilder<typeof workerName> =>
         staging: 'island-is-staging-upload-api',
         prod: 'island-is-prod-upload-api',
       },
+      FORM_SYSTEM_BUCKET: {
+        dev: 'island-is-dev-form-system-presign-bucket',
+        staging: 'island-is-staging-form-system-presign-bucket',
+        prod: 'island-is-prod-form-system-presign-bucket',
+      },
       FORM_SYSTEM_BULL_PREFIX,
     })
     .args('main.cjs', '--job', 'worker')
