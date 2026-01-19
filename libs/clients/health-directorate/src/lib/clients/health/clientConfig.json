@@ -1672,7 +1672,7 @@
             "schema": {
               "type": "array",
               "items": {
-                "$ref": "#/components/schemas/AppointmentStatus"
+                "$ref": "#/components/schemas/UserVisibleAppointmentStatuses"
               }
             }
           },
@@ -4255,21 +4255,9 @@
           "recordedDate"
         ]
       },
-      "AppointmentStatus": {
+      "UserVisibleAppointmentStatuses": {
         "type": "string",
-        "enum": [
-          "booked",
-          "pending",
-          "proposed",
-          "cancelled",
-          "fulfilled",
-          "arrived",
-          "noshow",
-          "entered-in-error",
-          "checked-in",
-          "waitlist",
-          "deleted"
-        ]
+        "enum": ["booked", "cancelled", "fulfilled", "arrived", "checked-in"]
       },
       "AppointmentLocationDto": {
         "type": "object",
@@ -4357,7 +4345,15 @@
             }
           }
         },
-        "required": ["id", "status", "practitioners"]
+        "required": [
+          "id",
+          "startTime",
+          "endTime",
+          "duration",
+          "status",
+          "description",
+          "practitioners"
+        ]
       },
       "ConsentCountryDto": {
         "type": "object",
