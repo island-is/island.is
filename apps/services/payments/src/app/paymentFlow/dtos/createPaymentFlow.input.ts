@@ -20,7 +20,6 @@ import {
 } from 'class-validator'
 import { Type } from 'class-transformer'
 import { PaymentMethod } from '../../../types'
-import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 export class ExtraDataItem {
   @IsString()

@@ -303,8 +303,10 @@ export class PaymentService {
             applicationId,
             paymentId: paymentModel.id,
           },
-          returnUrl,
-          cancelUrl,
+          // returnUrl,
+          // cancelUrl,
+          returnUrl: 'https://www.island.is',
+          cancelUrl: 'https://www.island.is',
           redirectToReturnUrlOnSuccess: true,
           extraData,
           chargeItemSubjectId: paymentModel.id.substring(0, 22), // chargeItemSubjectId has maxlength of 22 characters
