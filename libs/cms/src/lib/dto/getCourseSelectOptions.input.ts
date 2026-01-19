@@ -8,5 +8,5 @@ export class GetCourseSelectOptionsInput {
   lang: ElasticsearchIndexLocale = 'is'
 
   @Field(() => String, { nullable: true })
-  organizationSlug?: string
+  organizationId?: string
 }

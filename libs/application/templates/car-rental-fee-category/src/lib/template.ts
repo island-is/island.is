@@ -95,6 +95,7 @@ const template: ApplicationTemplate<
               write: 'all',
               read: 'all',
               delete: true,
+              api: [SkatturApi],
             },
           ],
         },

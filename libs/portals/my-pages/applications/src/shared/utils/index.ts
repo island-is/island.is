@@ -91,12 +91,6 @@ export const mapLinkToStatus = (link: string) => {
   return ApplicationOverViewStatus.all
 }
 
-export const getBaseUrlForm = () => {
-  const path = window.location.origin
-  const isLocalhost = path.includes('localhost')
-  return isLocalhost ? 'http://localhost:4242/umsoknir' : `${path}/umsoknir`
-}
-
 export const getFilteredApplicationsByStatus = (
   filterValue: FilterValues,
   applications: (ApplicationWithInstitution & ApplicationCard)[] = [],

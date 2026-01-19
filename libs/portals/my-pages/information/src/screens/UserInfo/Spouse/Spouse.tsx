@@ -4,14 +4,13 @@ import { useState, useEffect } from 'react'
 import { Divider, Stack } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
-  FootNote,
   formatNationalId,
-  IntroHeader,
+  IntroWrapper,
   m,
   THJODSKRA_SLUG,
   UserInfoLine,
 } from '@island.is/portals/my-pages/core'
-import { spmm } from '../../lib/messages'
+import { spmm } from '../../../lib/messages'
 import { useNationalRegistrySpouseQuery } from './Spouse.generated'
 import { Problem } from '@island.is/react-spa/shared'
 
@@ -36,13 +35,12 @@ const FamilyMember = () => {
   }, [data?.nationalRegistryPerson, formatMessage])
 
   return (
-    <>
-      <IntroHeader
-        title={data?.nationalRegistryPerson?.spouse?.fullName || ''}
-        intro={formatMessage(spmm.spouseIntro)}
-        serviceProviderSlug={THJODSKRA_SLUG}
-        serviceProviderTooltip={formatMessage(m.tjodskraTooltip)}
-      />
+    <IntroWrapper
+      title={data?.nationalRegistryPerson?.spouse?.fullName || ''}
+      intro={formatMessage(spmm.spouseIntro)}
+      serviceProviderSlug={THJODSKRA_SLUG}
+      serviceProviderTooltip={formatMessage(m.tjodskraTooltip)}
+    >
       {error && !loading && <Problem error={error} noBorder={false} />}
       {!error && !loading && !data?.nationalRegistryPerson?.spouse && (
         <Problem
@@ -91,8 +89,7 @@ const FamilyMember = () => {
           <Divider />
         </Stack>
       )}
-      <FootNote serviceProviderSlug={THJODSKRA_SLUG} />
-    </>
+    </IntroWrapper>
   )
 }
 

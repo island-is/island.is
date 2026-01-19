@@ -1,7 +1,7 @@
 import { m } from '@island.is/portals/my-pages/core'
 import { defineMessage } from 'react-intl'
 import { MessageDescriptor } from 'react-intl'
-import { InformationPaths } from '../../lib/paths'
+import { InformationPaths } from '../../../lib/paths'
 
 export type UserInfoItem = {
   heading: MessageDescriptor | string

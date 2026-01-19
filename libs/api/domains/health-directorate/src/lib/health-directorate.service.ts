@@ -1,6 +1,6 @@
 import { Auth } from '@island.is/auth-nest-tools'
 import {
-  AppointmentStatus,
+  UserVisibleAppointmentStatuses,
   CreateEuPatientConsentDto,
   HealthDirectorateVaccinationsService,
   OrganDonorDto,
@@ -608,7 +608,10 @@ export class HealthDirectorateService {
         input.from,
         input.status
           ?.map((status) => mapAppointmentStatus(status))
-          .filter((status): status is AppointmentStatus => status !== null),
+          .filter(
+            (status): status is UserVisibleAppointmentStatuses =>
+              status !== null,
+          ),
       )
       if (!data) {
         return null

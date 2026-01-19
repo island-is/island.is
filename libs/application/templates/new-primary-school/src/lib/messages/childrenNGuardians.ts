@@ -66,13 +66,8 @@ export const childrenNGuardiansMessages = {
     },
     guardian: {
       id: 'nps.application:childrenNGuardians.guardians.guardian',
-      defaultMessage: 'Upplýsingar um forsjáraðila 1',
-      description: 'Information about guardian 1',
-    },
-    otherGuardian: {
-      id: 'nps.application:childrenNGuardians.guardians.otherGuardian',
-      defaultMessage: 'Upplýsingar um forsjáraðila 2',
-      description: 'Information about guardian 2',
+      defaultMessage: 'Upplýsingar um forsjáraðila',
+      description: 'Information about guardian',
     },
     requiresInterpreter: {
       id: 'nps.application:childrenNGuardians.guardians.requiresInterpreter',
