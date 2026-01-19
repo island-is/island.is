@@ -202,18 +202,15 @@ export class ApplicationsService {
         )
       }
 
-      let draftFinishedSteps = application.draftFinishedSteps || 0
+      let draftFinishedSteps = 0
+
       for (const section of form.sections.filter(
         (s) =>
           s.sectionType === SectionTypes.INPUT ||
           s.sectionType === SectionTypes.PARTIES,
       ) || []) {
-        if (section.id && updateApplicationDto.completed.includes(section.id)) {
-          draftFinishedSteps = Math.max(0, draftFinishedSteps - 1)
-          updateApplicationDto.completed =
-            updateApplicationDto.completed.filter(
-              (sectionId) => sectionId !== section.id,
-            )
+        if (section.id && application.completed.includes(section.id)) {
+          draftFinishedSteps = draftFinishedSteps + 1
         }
       }
 

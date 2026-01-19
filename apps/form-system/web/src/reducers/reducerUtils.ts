@@ -366,7 +366,7 @@ export const jumpToScreen = (
     const updatedScreens = Array.isArray(section.screens)
       ? section.screens.map((screen, sIdx) =>
           screen
-            ? idx > sectionIndex || sIdx > screenIndex
+            ? idx > sectionIndex || sIdx >= screenIndex
               ? ({ ...screen, isCompleted: false } as FormSystemScreen)
               : screen
             : null,
@@ -408,7 +408,7 @@ export const jumpToScreen = (
       },
     },
   }).catch((error) => {
-    console.error('Error updating dependencies:', error)
+    console.error('Error updating completed array:', error)
   })
 
   return {
