@@ -948,6 +948,10 @@ export const m = defineMessages({
     id: 'service.portal:contracts',
     defaultMessage: 'Samningar',
   },
+  contract: {
+    id: 'service.portal:contract',
+    defaultMessage: 'Samningur',
+  },
   contractsDescription: {
     id: 'service.portal:contracts-description',
     defaultMessage:

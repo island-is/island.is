@@ -14,6 +14,7 @@ export const exportedApis = [HomeApi].map((Api) => ({
         fetchApi: createEnhancedFetch({
           name: 'clients-hms-rental-agreement',
           organizationSlug: 'hms',
+          timeout: 30000,
           autoAuth: {
             mode: 'token',
             issuer: '',
