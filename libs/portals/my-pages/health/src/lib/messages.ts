@@ -1862,6 +1862,10 @@ export const messages = defineMessages({
     defaultMessage: 'Spurningalistar',
     id: 'sp.health:questionnaires',
   },
+  questionnairesThgf: {
+    defaultMessage: 'Spurningalista',
+    id: 'sp.health:questionnaires-thgf',
+  },
   questionnairesIntro: {
     defaultMessage:
       'Hér getur þú fundið spurningalista sem tengjast heilsu þinni.',
@@ -1906,6 +1910,10 @@ export const messages = defineMessages({
   answer: {
     defaultMessage: 'Svara',
     id: 'sp.health:answer',
+  },
+  answerAgain: {
+    defaultMessage: 'Svara aftur',
+    id: 'sp.health:answer-again',
   },
   questionnaireNotFound: {
     defaultMessage: 'Spurningalisti fannst ekki',
