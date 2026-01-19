@@ -118,10 +118,7 @@ export const employmentHistorySubSection = buildSubSection({
                 [],
               ) ?? []
 
-            const minRows =
-              isOccasionallyEmployed(answers) || isEmployedPartTime(answers)
-                ? currentSituationRepeater.length
-                : 0
+            const minRows = currentSituationRepeater.length || 0
             return minRows
           },
           marginTop: 0,
