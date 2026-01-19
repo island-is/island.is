@@ -186,12 +186,41 @@ export class ApplicationsService {
     }
 
     if (updateApplicationDto.completed) {
-      console.log('updatding completed')
-      application.completed = updateApplicationDto.completed
+      const completedToRemove = updateApplicationDto.completed ?? []
+
+      application.completed = (application.completed ?? []).filter(
+        (completedId) => !completedToRemove.includes(completedId),
+      )
+
+      const form = await this.formModel.findByPk(application.formId, {
+        include: [{ model: Section, as: 'sections' }],
+      })
+
+      if (!form) {
+        throw new NotFoundException(
+          `Form with id '${application.formId}' not found`,
+        )
+      }
+
+      let draftFinishedSteps = application.draftFinishedSteps || 0
+      for (const section of form.sections.filter(
+        (s) =>
+          s.sectionType === SectionTypes.INPUT ||
+          s.sectionType === SectionTypes.PARTIES,
+      ) || []) {
+        if (section.id && updateApplicationDto.completed.includes(section.id)) {
+          draftFinishedSteps = Math.max(0, draftFinishedSteps - 1)
+          updateApplicationDto.completed =
+            updateApplicationDto.completed.filter(
+              (sectionId) => sectionId !== section.id,
+            )
+        }
+      }
+
+      application.draftFinishedSteps = draftFinishedSteps
     }
 
     if (updateApplicationDto.dependencies) {
-      console.log('updatding dependencies')
       application.dependencies = updateApplicationDto.dependencies
     }
 
