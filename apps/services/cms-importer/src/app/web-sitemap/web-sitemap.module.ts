@@ -6,14 +6,14 @@ import { WebSitemapService } from './web-sitemap.service'
 import { CmsRepositoryModule } from '../repositories/cms/cms.module'
 
 @Module({
-    imports: [
-        LoggingModule,
-        CmsRepositoryModule,
-        ConfigModule.forRoot({
-            isGlobal: true,
-            load: [ManagementClientConfig],
-        }),
-    ],
-    providers: [WebSitemapService],
+  imports: [
+    LoggingModule,
+    CmsRepositoryModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [ManagementClientConfig],
+    }),
+  ],
+  providers: [WebSitemapService],
 })
-export class WebSitemapModule { }
+export class WebSitemapModule {}
