@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 import { AnimatePresence } from 'motion/react'
 
-import { Box, Checkbox, Text } from '@island.is/island-ui/core'
+import { Box, Checkbox } from '@island.is/island-ui/core'
 import { informationForDefendantMap } from '@island.is/judicial-system/types'
 import {
   BlueBox,
