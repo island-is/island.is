@@ -29,6 +29,8 @@ export const InputFields = {
     asDocument: 'misc.asDocument',
     titlePrefix: 'misc.titlePrefix',
     asRoman: 'misc.asRoman',
+    mainTextAsFile: 'misc.mainTextAsFile',
+    mainTextFilename: 'misc.mainTextFilename',
   },
 }
 

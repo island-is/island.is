@@ -888,6 +888,9 @@ export interface ICourseListPageFields {
 
   /** Title */
   title?: string | undefined
+
+  /** Content */
+  content?: Document | undefined
 }
 
 export interface ICourseListPage extends Entry<ICourseListPageFields> {
@@ -5568,6 +5571,7 @@ export type CONTENT_TYPE =
   | 'contactUs'
   | 'course'
   | 'courseInstance'
+  | 'courseListPage'
   | 'customPage'
   | 'districts'
   | 'emailSignup'
