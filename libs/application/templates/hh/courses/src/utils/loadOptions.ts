@@ -6,7 +6,10 @@ import type {
   QueryGetCourseByIdArgs,
   QueryGetCourseSelectOptionsArgs,
 } from '@island.is/api/schema'
-import type { AsyncSelectContext } from '@island.is/application/types'
+import {
+  InstitutionContentfulIds,
+  type AsyncSelectContext,
+} from '@island.is/application/types'
 import { sortAlpha } from '@island.is/shared/utils'
 import {
   GET_COURSE_BY_ID_QUERY,
@@ -25,7 +28,8 @@ export const loadCourseSelectOptions = async ({
     variables: {
       input: {
         lang: 'is',
-        organizationSlug: 'hh',
+        organizationId:
+          InstitutionContentfulIds.HEILSUGAESLA_HOFUDBORDARSVAEDISINS,
       },
     },
   })

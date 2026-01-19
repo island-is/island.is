@@ -1650,8 +1650,8 @@ export class CmsContentfulService {
       limit: 1000,
       include: 0,
       select: 'fields.title,sys',
-      'fields.organization.sys.contentType.sys.id': 'organization',
-      'fields.organization.fields.slug': input.organizationSlug,
+      'fields.courseListPage.sys.contentType.sys.id': 'courseListPage',
+      'fields.courseListPage.fields.organization.sys.id': input.organizationId,
     }
 
     const response =
