@@ -180,14 +180,14 @@ export const differentNeedsMessages = {
       description: 'Support',
     },
     description: {
-      id: 'nps.application:differentNeeds.support.description',
+      id: 'nps.application:differentNeeds.support.description#markdown',
       defaultMessage:
-        'Börn eru eins ólík og þau eru mörg. Sum börn þurfa á stuðningi að halda til að líða betur og nýta styrkleika sína sem best. Stuðningur við barn í skólastarfi er veittur af stoðþjónustu skóla og hefur það að markmiðið að tryggja að sérhvert barn fái rétta aðstoð, á réttum tíma, frá réttum aðila. \n\nEf barnið þitt er með greiningu um fötlun, þroskafrávik, langvinn veikindi eða alvarlegan sjúkdóm sem gætu haft áhrif á skólagöngu þess, þá sér núverandi skóli barns um að miðla þeim upplýsingum áfram til þess skóla sem sótt er um í',
+        'Börn eru eins ólík og þau eru mörg. Sum börn þurfa á stuðningi að halda til að líða betur og nýta styrkleika sína sem best. Stuðningur við barn í skólastarfi er veittur af stoðþjónustu skóla og hefur það að markmiðið að tryggja að sérhvert barn fái rétta aðstoð, á réttum tíma, frá réttum aðila. \n\nEf barnið þitt er með greiningu um fötlun, þroskafrávik, langvinn veikindi eða alvarlegan sjúkdóm sem gætu haft áhrif á skólagöngu þess, þá sér núverandi skóli barns um að miðla þeim upplýsingum áfram til þess skóla sem sótt er um í.',
       description:
-        'Children are as diverse as they are numerous. Some need support in order to feel better and make the best use of their strengths. Support for children in school is provided by the schools support services, with the aim of ensuring that every child receives the right assistance, at the right time, from the right professional. \n\nIf your child has a diagnosis of a disability, developmental delay, chronic illness, or serious condition that may impact their schooling, their current school is responsible for passing that information on to the school you are applying to.',
+        'Children are as different as they are many. Some children need support to feel better and make the most of their strengths. Support in school is provided by the school’s support services and aims to ensure that every child receives the right help, at the right time, from the right person. \n\nIf your child has been diagnosed with a disability, developmental delay, chronic illness, or serious medical condition that could affect their schooling, their current school is responsible for passing that information on to the school you are applying to.',
     },
     enrollmentDescription: {
-      id: 'nps.application:differentNeeds.support.enrollmentDescription',
+      id: 'nps.application:differentNeeds.support.enrollmentDescription#markdown',
       defaultMessage:
         'Börn eru eins ólík og þau eru mörg. Sum börn þurfa á stuðningi að halda til að líða betur og nýta styrkleika sína sem best. Stuðningur við barn í skólastarfi er veittur af stoðþjónustu skóla og hefur það að markmiðið að tryggja að sérhvert barn fái rétta aðstoð, á réttum tíma, frá réttum aðila. \n\nEf barnið þitt er með greiningu um fötlun, þroskafrávik, langvinn veikindi eða alvarlegan sjúkdóm sem gætu haft áhrif á skólagöngu þess, þá sér núverandi leikskóli barns um að miðla þeim upplýsingum áfram til þess skóla sem sótt er um í.',
       description:

@@ -55,10 +55,20 @@ export const getRequestDto = (application: Application): ApplicationDto => {
     answers,
     'realEstate.realEstateOtherComments',
   )
-  const selectedRealEstate = getValueViaPath<Array<Fasteign>>(
-    externalData,
-    'getProperties.data',
-  )?.find((realEstate) => realEstate.fasteignanumer === selectedRealEstateId)
+
+  const externalDataProperties =
+    getValueViaPath<Array<Fasteign>>(externalData, 'getProperties.data', []) ||
+    []
+
+  // If the length is more than 19 we have a large amount of properties that went through the search process and therefore fetch the info from realEstateExtra
+  let selectedRealEstate: Fasteign | undefined
+  if (externalDataProperties.length > 19) {
+    selectedRealEstate = getValueViaPath<Fasteign>(answers, 'realEstateExtra')
+  } else {
+    selectedRealEstate = externalDataProperties?.find(
+      (realEstate) => realEstate.fasteignanumer === selectedRealEstateId,
+    )
+  }
 
   const contact = getValueViaPath<ContactAnswer>(answers, 'contact')
   const contactIsSameAsApplicant = contact?.isSameAsApplicant?.[0] === YES

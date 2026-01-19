@@ -58,7 +58,7 @@ When `groups` and `triggers` are present, the mapper treats the input as a **det
 
 When only base information is available (no `groups`/`triggers`), the mapper:
 
-- Fills `baseInformation` and status based on `numSubmissions`.
+- Fills `baseInformation` and status based on `numSubmitted`.
 - Leaves `sections`, `draftAnswers`, `submissions`, `canSubmit`, `expirationDate` as `undefined`.
 
 ### Question-level mapping
