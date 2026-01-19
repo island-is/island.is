@@ -274,6 +274,7 @@ export class CaseTableService {
       rowCount: displayCases.length,
       rows: displayCases.map((c) => ({
         caseId: c.id,
+        defendantId: c.defendants?.[0]?.id,
         isMyCase: isMyCase(c, user),
         actionOnRowClick: getActionOnRowClick(c, user),
         contextMenuActions: getContextMenuActions(c, user),

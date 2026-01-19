@@ -71,6 +71,9 @@ class CaseTableRow {
   @ApiProperty({ type: String, description: 'The row case id' })
   readonly caseId!: string
 
+  @ApiPropertyOptional({ type: String, description: 'The row defendant id' })
+  readonly defendantId?: string
+
   @ApiProperty({
     type: Boolean,
     description: 'Indicates if the case belongs to the current user',

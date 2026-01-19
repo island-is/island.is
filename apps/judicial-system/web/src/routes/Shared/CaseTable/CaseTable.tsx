@@ -123,8 +123,13 @@ const CaseTable: FC = () => {
   const router = useRouter()
   const { user, hasError } = useContext(UserContext)
   const { openCaseInNewTab } = useOpenCaseInNewTab()
-  const { isOpeningCaseId, handleOpenCase, LoadingIndicator, showLoading } =
-    useCaseList()
+  const {
+    isOpeningCaseId,
+    isOpeningDefendantId,
+    handleOpenCase,
+    LoadingIndicator,
+    showLoading,
+  } = useCaseList()
   const [rows, setRows] = useState<CaseTableRow[]>([])
   const [showOnlyMyCases, setShowOnlyMyCases] = useState(false)
 
@@ -181,9 +186,14 @@ const CaseTable: FC = () => {
         case CaseActionType.OPEN_CASE:
         default: // Default to opening the case in a new tab
           return {
-            onClick: () => handleOpenCase(r.caseId),
-            isDisabled: isOpeningCaseId === r.caseId,
-            isLoading: isOpeningCaseId === r.caseId && showLoading,
+            onClick: () => handleOpenCase(r.caseId, false, r.defendantId),
+            isDisabled:
+              isOpeningCaseId === r.caseId &&
+              isOpeningDefendantId === r.defendantId,
+            isLoading:
+              isOpeningCaseId === r.caseId &&
+              isOpeningDefendantId === r.defendantId &&
+              showLoading,
           }
       }
     }
