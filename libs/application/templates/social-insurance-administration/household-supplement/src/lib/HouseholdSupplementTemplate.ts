@@ -12,11 +12,11 @@ import {
   ApplicationConfigurations,
   ApplicationRole,
   DefaultEvents,
-  NationalRegistryUserApi,
   InstitutionNationalIds,
   defineTemplateApi,
-  NationalRegistrySpouseApi,
   UserProfileApi,
+  NationalRegistryV3UserApi,
+  NationalRegistryV3SpouseApi,
 } from '@island.is/application/types'
 import {
   coreMessages,
@@ -82,9 +82,9 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
               ],
               write: 'all',
               api: [
-                NationalRegistryUserApi,
+                NationalRegistryV3UserApi,
                 NationalRegistryCohabitantsApi,
-                NationalRegistrySpouseApi,
+                NationalRegistryV3SpouseApi,
                 UserProfileApi.configure({
                   params: {
                     validateEmail: true,
