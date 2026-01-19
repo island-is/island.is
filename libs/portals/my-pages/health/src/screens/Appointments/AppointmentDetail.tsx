@@ -18,6 +18,7 @@ import { HealthDirectorateAppointmentStatus } from '@island.is/api/schema'
 import { generateGoogleMapsLink } from '../../utils/googleMaps'
 import { mapWeekday } from '../../utils/mappers'
 import { useGetAppointmentsQuery } from './Appointments.generated'
+import { DEFAULT_APPOINTMENTS_STATUS } from '../../utils/constants'
 
 const AppointmentDetail = () => {
   const { formatMessage } = useLocale()
@@ -26,11 +27,7 @@ const AppointmentDetail = () => {
   const { data, loading, error } = useGetAppointmentsQuery({
     variables: {
       from: undefined,
-      status: [
-        HealthDirectorateAppointmentStatus.BOOKED,
-        HealthDirectorateAppointmentStatus.PENDING,
-        HealthDirectorateAppointmentStatus.WAITLIST,
-      ],
+      status: DEFAULT_APPOINTMENTS_STATUS,
     },
   })
 
