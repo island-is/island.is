@@ -47,5 +47,9 @@ export const Display = ({ field }: Props) => {
         ] as React.ElementType)
       : DefaultDisplay
 
-  return <Box paddingTop={5}>{<FieldComponent {...fieldItems} />}</Box>
+  return (
+    <Box paddingLeft={2} marginTop={1}>
+      {<FieldComponent {...fieldItems} />}
+    </Box>
+  )
 }
