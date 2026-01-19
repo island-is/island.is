@@ -16,7 +16,6 @@ import { Application, FormValue } from '@island.is/application/types'
 import {
   isIndependent,
   isEmployed,
-  isOccasionallyEmployed,
   isEmployedPartTime,
   hasDataFromCurrentStatusItem,
   getDefaultFromCurrentStatus,
