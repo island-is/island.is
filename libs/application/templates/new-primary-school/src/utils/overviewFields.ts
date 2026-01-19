@@ -43,10 +43,7 @@ const buildGuardianOverviewFields = (editable?: boolean) =>
   [...Array(MAX_GUARDIANS)].map((_key, index) => {
     return buildOverviewField({
       id: `overview.guardians.${index}`,
-      title: {
-        ...overviewMessages.guardians,
-        values: { index: index + 1 },
-      },
+      title: overviewMessages.guardians,
       backId: editable ? 'guardians' : undefined,
       items: (answers, externalData, userNationalId) =>
         guardiansItems(answers, externalData, userNationalId, index),
