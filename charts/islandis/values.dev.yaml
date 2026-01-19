@@ -3104,6 +3104,8 @@ services-form-system-api-worker:
     DB_NAME: 'services_form_system_api'
     DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
     DB_USER: 'services_form_system_api'
+    FILE_STORAGE_UPLOAD_BUCKET: 'island-is-dev-upload-api'
+    FORM_SYSTEM_BUCKET: 'island-is-dev-form-system-presign-bucket'
     FORM_SYSTEM_BULL_PREFIX: 'form_system_api_bull_module'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=691 --enable-source-maps -r dd-trace/init'
