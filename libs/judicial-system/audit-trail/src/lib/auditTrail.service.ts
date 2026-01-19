@@ -91,6 +91,11 @@ export enum AuditedAction {
   SPLIT_DEFENDANT_FROM_CASE = 'SPLIT_DEFENDANT_FROM_CASE',
 }
 
+export enum AuditedRequestStatus {
+  STARTED = 'STARTED',
+  COMPLETED = 'COMPLETED',
+}
+
 @Injectable()
 export class AuditTrailService {
   constructor(
@@ -199,9 +204,11 @@ export class AuditTrailService {
       res: R,
     ) => Promise<{ [key: string]: string | Date | boolean | undefined | null }>
   }): Promise<R> {
-    const auditDetails = getAuditDetails
-      ? { details: await getAuditDetails(result) }
-      : {}
+    const details = {
+      ...(getAuditDetails ? await getAuditDetails(result) : {}),
+      requestStatus: AuditedRequestStatus.COMPLETED,
+    }
+
     this.writeToTrail({
       userId,
       actionType,
@@ -209,7 +216,7 @@ export class AuditTrailService {
         typeof auditedResult === 'string'
           ? auditedResult
           : auditedResult(result),
-      ...auditDetails,
+      details,
     })
 
     return result
@@ -240,6 +247,7 @@ export class AuditTrailService {
         actionType,
         ids: typeof auditedResult === 'string' ? auditedResult : undefined,
         error: e,
+        details: { requestStatus: AuditedRequestStatus.COMPLETED },
       })
 
       throw e
@@ -268,6 +276,58 @@ export class AuditTrailService {
         userId,
         actionType,
         result: action,
+        auditedResult,
+        getAuditDetails,
+      })
+    }
+  }
+
+  async runAndAuditRequest<R, T>({
+    userId,
+    actionType,
+    action,
+    actionProps,
+    auditedResult,
+    getAuditDetails,
+  }: {
+    userId: string
+    actionType: AuditedAction
+    action: (props: T) => Promise<R> | R
+    actionProps: T
+    auditedResult: string
+    getAuditDetails?: (
+      res?: R,
+    ) => Promise<{ [key: string]: string | Date | boolean | undefined | null }>
+  }): Promise<R> {
+    // write an audit log before executing the target request
+    const details = {
+      ...(getAuditDetails ? await getAuditDetails() : {}),
+      requestStatus: AuditedRequestStatus.STARTED,
+    }
+    this.writeToTrail({
+      userId,
+      actionType,
+      ids: auditedResult,
+      details,
+    })
+
+    // executing the request
+    const result = action(actionProps)
+
+    // write an audit log after executing the target request
+    if (result instanceof Promise) {
+      return await this.auditPromisedResult<R>(
+        userId,
+        actionType,
+        result,
+        auditedResult,
+        getAuditDetails,
+      )
+    } else {
+      return await this.auditResult({
+        userId,
+        actionType,
+        result,
         auditedResult,
         getAuditDetails,
       })

@@ -74,7 +74,6 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
       ).apiDayRateEntriesEntityIdGet({
         entityId: auth.nationalId,
       })
-      this.logger.info('Current vehicles rate category debug response', resp)
       return resp
     } catch (error) {
       this.logger.error('Error getting current vehicles rate category', error)
@@ -88,7 +87,7 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
   }: TemplateApiModuleActionProps): Promise<boolean> {
     const data = getValueViaPath<CarCategoryRecord[]>(
       application.answers,
-      'dataToChange.data',
+      'carsToChange',
     )
 
     const rateToChangeTo = getValueViaPath<RateCategory>(
@@ -101,14 +100,12 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
     const tomorrow = new Date(now.setHours(24, 0, 0, 0))
 
     try {
-      if (rateToChangeTo === RateCategory.KMRATE) {
-        await this.rentalsApiWithAuth(
-          auth,
-        ).apiDayRateEntriesEntityIdRegisterPost({
+      if (rateToChangeTo === RateCategory.DAYRATE) {
+        const requestBody = {
           entityId: auth.nationalId,
           dayRateRegistrationModel: {
             skraningaradili:
-              application.applicantActors[0] ?? application.applicant ?? null,
+              application.applicant ?? application.applicantActors[0] ?? null,
             entries:
               data?.map((c) => {
                 return {
@@ -118,16 +115,17 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
                 }
               }) ?? null,
           },
-        })
-        return true
-      } else {
+        }
         await this.rentalsApiWithAuth(
           auth,
-        ).apiDayRateEntriesEntityIdDeregisterPost({
+        ).apiDayRateEntriesEntityIdRegisterPost({ ...requestBody })
+        return true
+      } else {
+        const requestBody = {
           entityId: auth.nationalId,
           deregistrationModel: {
             afskraningaradili:
-              application.applicantActors[0] ?? application.applicant ?? null,
+              application.applicant ?? application.applicantActors[0] ?? null,
             entries:
               data?.map((c) => {
                 return {
@@ -137,16 +135,32 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
                 }
               }) ?? null,
           },
-        })
+        }
+        await this.rentalsApiWithAuth(
+          auth,
+        ).apiDayRateEntriesEntityIdDeregisterPost({ ...requestBody })
         return true
       }
     } catch (error) {
+      this.logger.error('Error posting data to skatturinn', error)
       if (
         error &&
         typeof error === 'object' &&
         ('status' in error || 'detail' in error || 'title' in error)
       ) {
-        // Maybe do some error handling here, like throw application error
+        // Need to handle 400 errors here, such as if the cars are
+        // already registered to the rate category the user tried to change to
+        if (error.status === 400) {
+          throw new TemplateApiError(
+            {
+              title: error.title ?? 'Bad request',
+              summary:
+                error.detail ??
+                'Invalid input. Possibly vehicles are already registered to the selected rate category. Check the vehicles you are trying to register.',
+            },
+            error?.status,
+          )
+        }
       }
       throw new TemplateApiError(
         {

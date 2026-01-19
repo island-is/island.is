@@ -1,11 +1,6 @@
 import { defineMessages } from 'react-intl'
 
 export const prerequisite = defineMessages({
-  title: {
-    id: 'dp.application:prerequisites.title',
-    defaultMessage: 'Forsendur',
-    description: 'Prerequisites',
-  },
   checkboxLabel: {
     id: 'dp.application:prerequisites.checkboxLabel',
     defaultMessage:

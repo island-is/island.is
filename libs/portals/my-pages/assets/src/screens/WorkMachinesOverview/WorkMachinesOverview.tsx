@@ -11,10 +11,10 @@ import {
   Input,
   Pagination,
   Text,
+  ActionCard,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
-  ActionCard,
   CardLoader,
   formatDate,
   formSubmit,
@@ -29,6 +29,7 @@ import { messages, vehicleMessage } from '../../lib/messages'
 import { AssetsPaths } from '../../lib/paths'
 import { useGetWorkMachinesQuery } from './WorkMachinesOverview.generated'
 import { isDefined } from '@island.is/shared/utils'
+import { useNavigate } from 'react-router-dom'
 
 type FilterValue = {
   label: string
@@ -48,6 +49,7 @@ const DEFAULT_ORDER_BY = 'RegistrationNumber'
 const WorkMachinesOverview = () => {
   useNamespaces('sp.work-machines')
   const { formatMessage, locale } = useLocale()
+  const navigate = useNavigate()
 
   const defaultFilterValues: FilterValues = {
     deregistered: {
@@ -235,13 +237,16 @@ const WorkMachinesOverview = () => {
                 cta={{
                   label: formatMessage(m.seeDetails),
                   variant: 'text',
-                  url:
-                    wm.id && wm.registrationNumber
-                      ? AssetsPaths.AssetsWorkMachinesDetail.replace(
+                  onClick: () => {
+                    if (wm.id && wm.registrationNumber) {
+                      navigate(
+                        AssetsPaths.AssetsWorkMachinesDetail.replace(
                           ':regNumber',
                           wm.registrationNumber,
-                        ).replace(':id', wm.id)
-                      : undefined,
+                        ).replace(':id', wm.id),
+                      )
+                    }
+                  },
                 }}
                 tag={{
                   variant: 'blue',

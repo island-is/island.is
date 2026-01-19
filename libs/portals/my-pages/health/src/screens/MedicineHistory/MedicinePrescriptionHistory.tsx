@@ -67,6 +67,7 @@ const MedicinePrescriptionHistory = () => {
       serviceProviderTooltip={formatMessage(
         messages.landlaeknirMedicinePrescriptionsTooltip,
       )}
+      childrenWidthFull
       marginBottom={6}
     >
       {!error && (

@@ -9,12 +9,19 @@ import { useLocale } from '@island.is/localization'
 import { ApplicationSystemPaths } from '../../lib/paths'
 import type { ApplicationFilters } from '../../types/filters'
 import { StatisticsForm } from '../../components/StatisticsForm/StatisticsForm'
-import { useGetApplicationStatisticsQuery } from '../../queries/overview.generated'
+import {
+  useGetApplicationsInstitutionStatisticsQuery,
+  useGetApplicationsStatisticsQuery,
+} from '../../queries/overview.generated'
 import { useState } from 'react'
 import StatisticsTable from '../../components/StatisticsTable/StatisticsTable'
 import startOfMonth from 'date-fns/startOfMonth'
 
-const Statistics = () => {
+interface StatisticsProps {
+  isSuperAdmin: boolean
+}
+
+const Statistics = ({ isSuperAdmin }: StatisticsProps) => {
   const { formatMessage } = useLocale()
   const [dateInterval, setDateInterval] = useState<
     ApplicationFilters['period']
@@ -45,22 +52,51 @@ const Statistics = () => {
     setDateInterval({ ...dateInterval, ...dateChanging })
   }
 
-  const { data, loading } = useGetApplicationStatisticsQuery({
-    ssr: false,
-    skip: !dateInterval.from || !dateInterval.to,
-    variables: {
-      input: {
-        startDate: getFormattedDate(dateInterval.from),
-        endDate: getFormattedDate(dateInterval.to),
+  const hasSelectedDates = dateInterval.from && dateInterval.to
+
+  const { data: superAdminData, loading: superAdminLoading } =
+    useGetApplicationsStatisticsQuery({
+      ssr: false,
+      skip:
+        !isSuperAdmin || // do NOT run if user is NOT superAdmin
+        !hasSelectedDates,
+      variables: {
+        input: {
+          startDate: getFormattedDate(dateInterval.from),
+          endDate: getFormattedDate(dateInterval.to),
+        },
       },
-    },
-    onCompleted: (q) => {
-      setError(null)
-    },
-    onError: (e) => {
-      setError(e.message)
-    },
-  })
+      onCompleted: () => {
+        setError(null)
+      },
+      onError: (e) => {
+        setError(e.message)
+      },
+    })
+
+  const { data: institutionData, loading: institutionLoading } =
+    useGetApplicationsInstitutionStatisticsQuery({
+      ssr: false,
+      skip:
+        isSuperAdmin || // do NOT run if user IS superAdmin
+        !hasSelectedDates,
+      variables: {
+        input: {
+          startDate: getFormattedDate(dateInterval.from),
+          endDate: getFormattedDate(dateInterval.to),
+        },
+      },
+      onCompleted: () => {
+        setError(null)
+      },
+      onError: (e) => {
+        setError(e.message)
+      },
+    })
+
+  const dataRows = isSuperAdmin
+    ? superAdminData?.applicationApplicationsAdminStatistics
+    : institutionData?.applicationApplicationsInstitutionStatistics
 
   return (
     <Box>
@@ -68,7 +104,7 @@ const Statistics = () => {
         {formatMessage(m.statistics)}
       </Text>
       <StatisticsForm dateInterval={dateInterval} onDateChange={onDateChange} />
-      {loading && (
+      {(superAdminLoading || institutionLoading) && (
         <Box marginTop={[3, 3, 6]}>
           <SkeletonLoader
             height={60}
@@ -78,7 +114,7 @@ const Statistics = () => {
           />
         </Box>
       )}
-      <StatisticsTable data={data} />
+      <StatisticsTable dataRows={dataRows} />
       {error && <Box marginTop={[3, 3, 6]}>{error}</Box>}
     </Box>
   )

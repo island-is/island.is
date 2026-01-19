@@ -62,13 +62,25 @@ export const Footer = ({ externalDataAgreement }: Props) => {
   const enableContinueButton =
     state.currentSection.index === 0 ? externalDataAgreement : true
 
+  const hasVisibleApplicantBeforeCurrentScreen = (): boolean => {
+    const screens = currentSection?.data?.screens
+    const currentIndex = state.currentScreen?.index
+    if (!Array.isArray(screens) || currentIndex == null) return false
+    for (let i = Number(currentIndex) - 1; i >= 0; i--) {
+      const screen = screens[i]
+      if (screen && screen.isHidden === false) {
+        return true
+      }
+    }
+    return false
+  }
+
   const showBackButton =
-    !isCompletedSection &&
-    !(
-      currentSectionType === SectionTypes.PARTIES &&
-      Number(state.currentScreen?.index) === 0
-    ) &&
-    currentSectionType !== SectionTypes.PREMISES
+    (currentSectionType !== SectionTypes.COMPLETED &&
+      currentSectionType !== SectionTypes.PREMISES &&
+      currentSectionType !== SectionTypes.PARTIES) ||
+    (currentSectionType === SectionTypes.PARTIES &&
+      hasVisibleApplicantBeforeCurrentScreen())
 
   const handleIncrement = async () => {
     const isValid = await validate()
@@ -113,7 +125,9 @@ export const Footer = ({ externalDataAgreement }: Props) => {
     dispatch({
       type: 'DECREMENT',
       payload: {
-        submitScreen,
+        submitScreen: submitScreen,
+        submitSection: submitSection,
+        updateDependencies: updateDependencies,
       },
     })
 
@@ -143,7 +157,7 @@ export const Footer = ({ externalDataAgreement }: Props) => {
           {showBackButton && (
             <Box display="inlineFlex" padding={2} paddingLeft="none">
               <Button
-                icon="arrowBack"
+                preTextIcon="arrowBack"
                 variant="ghost"
                 onClick={handleDecrement}
                 disabled={submitLoading}

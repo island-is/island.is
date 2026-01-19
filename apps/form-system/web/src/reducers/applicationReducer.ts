@@ -11,8 +11,7 @@ import {
 } from '@island.is/form-system/ui'
 import { hasScreens } from '../utils/reducerHelpers'
 import {
-  decrementWithoutScreens,
-  decrementWithScreens,
+  decrement,
   getDecrementVariables,
   getIncrementVariables,
   incrementWithoutScreens,
@@ -76,6 +75,7 @@ const getCurrentSectionAndScreen = (sections: FormSystemSection[]) => {
   const currentSectionIndex = sections.findIndex(
     (section) => section.isCompleted === false && section.isHidden === false,
   )
+
   const currentSection = {
     data: sections[currentSectionIndex],
     index: currentSectionIndex,
@@ -134,10 +134,9 @@ export const applicationReducer = (
 ): ApplicationState => {
   switch (action.type) {
     case 'INCREMENT': {
-      const { submitScreen, submitSection, updateDependencies } = action.payload
       const { currentSectionData, currentScreenIndex } =
         getIncrementVariables(state)
-
+      const { submitScreen, updateDependencies } = action.payload
       if (hasScreens(currentSectionData)) {
         return incrementWithScreens(
           state,
@@ -147,22 +146,19 @@ export const applicationReducer = (
           updateDependencies,
         )
       }
-      return incrementWithoutScreens(state, submitSection)
+      return incrementWithoutScreens(state, submitScreen)
     }
     case 'DECREMENT': {
-      const { currentSectionData, currentSectionIndex, currentScreenIndex } =
+      const { currentSectionIndex, currentScreenIndex } =
         getDecrementVariables(state)
-      const { submitScreen } = action.payload
-      if (hasScreens(currentSectionData)) {
-        return decrementWithScreens(
-          state,
-          currentSectionIndex,
-          currentScreenIndex,
-          submitScreen,
-        )
-      }
-
-      return decrementWithoutScreens(state, currentSectionIndex)
+      const { submitScreen, updateDependencies } = action.payload
+      return decrement(
+        state,
+        currentSectionIndex,
+        currentScreenIndex,
+        submitScreen,
+        updateDependencies,
+      )
     }
     case 'INDEX_SCREEN': {
       const { sectionIndex, screenIndex } = action.payload

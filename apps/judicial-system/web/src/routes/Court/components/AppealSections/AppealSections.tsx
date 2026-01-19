@@ -1,7 +1,7 @@
 import { Dispatch, FC, SetStateAction, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Box, Input, RadioButton, Text } from '@island.is/island-ui/core'
+import { Box, Input, RadioButton } from '@island.is/island-ui/core'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
@@ -17,6 +17,7 @@ import {
   useCase,
   useDebouncedInput,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { isNullOrUndefined } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { appealSections as m } from './AppealSections.strings'
@@ -110,18 +111,12 @@ const AppealSections: FC<Props> = ({
   }
   return (
     <>
-      <Box marginBottom={2}>
-        <Text as="h3" variant="h3">
-          {formatMessage(m.titleV2)}
-        </Text>
-      </Box>
-      <Box marginBottom={3}>
-        <Text variant="h4" fontWeight="light">
-          {formatMessage(m.disclaimerV2)}
-        </Text>
-      </Box>
-      {workingCase.defendants && workingCase.defendants.length > 0 && (
-        <Box marginBottom={3}>
+      <SectionHeading
+        title={formatMessage(m.titleV2)}
+        description={formatMessage(m.disclaimerV2)}
+      />
+      <div className={grid({ gap: 3 })}>
+        {workingCase.defendants && workingCase.defendants.length > 0 && (
           <BlueBox>
             <SectionHeading
               title={formatMessage(m.defendantTitleV2)}
@@ -257,9 +252,7 @@ const AppealSections: FC<Props> = ({
               rows={7}
             />
           </BlueBox>
-        </Box>
-      )}
-      <Box marginBottom={5}>
+        )}
         <BlueBox>
           <SectionHeading
             title={formatMessage(m.prosecutorTitleV2)}
@@ -385,7 +378,7 @@ const AppealSections: FC<Props> = ({
             />
           </Box>
         </BlueBox>
-      </Box>
+      </div>
     </>
   )
 }

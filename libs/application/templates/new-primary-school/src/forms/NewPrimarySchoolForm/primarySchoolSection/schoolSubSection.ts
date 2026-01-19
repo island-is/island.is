@@ -5,20 +5,26 @@ import {
   NO,
   YES,
 } from '@island.is/application/core'
-import { ApplicationType } from '../../../utils/constants'
 import { primarySchoolMessages } from '../../../lib/messages'
+import { ApplicationType } from '../../../utils/constants'
 import {
   getApplicationAnswers,
+  getApplicationExternalData,
   getPreferredSchoolName,
 } from '../../../utils/newPrimarySchoolUtils'
 
 export const schoolSubSection = buildSubSection({
   id: 'schoolSubSection',
   title: primarySchoolMessages.school.subSectionTitle,
-  condition: (answers) => {
-    // Only display section if application type is "Enrollment in primary school"
+  condition: (answers, externalData) => {
+    // Only display section if application type is "Enrollment in primary school" and preferred school is not null
     const { applicationType } = getApplicationAnswers(answers)
-    return applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
+    const { preferredSchool } = getApplicationExternalData(externalData)
+
+    return (
+      applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL &&
+      preferredSchool !== null
+    )
   },
   children: [
     buildMultiField({
@@ -29,6 +35,7 @@ export const schoolSubSection = buildSubSection({
         buildRadioField({
           id: 'school.applyForPreferredSchool',
           required: true,
+          space: 0,
           options: (application) => {
             return [
               {

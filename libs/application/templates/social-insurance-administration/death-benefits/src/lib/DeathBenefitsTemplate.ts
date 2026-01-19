@@ -12,13 +12,12 @@ import {
   ApplicationConfigurations,
   ApplicationRole,
   DefaultEvents,
-  NationalRegistryUserApi,
-  NationalRegistrySpouseApi,
   InstitutionNationalIds,
   defineTemplateApi,
   UserProfileApi,
+  NationalRegistryV3SpouseApi,
+  NationalRegistryV3UserApi,
 } from '@island.is/application/types'
-
 import {
   coreMessages,
   pruneAfterDays,
@@ -87,13 +86,13 @@ const DeathBenefitsTemplate: ApplicationTemplate<
               ],
               write: 'all',
               api: [
-                NationalRegistryUserApi,
+                NationalRegistryV3UserApi,
                 UserProfileApi.configure({
                   params: {
                     validateEmail: true,
                   },
                 }),
-                NationalRegistrySpouseApi,
+                NationalRegistryV3SpouseApi,
                 SocialInsuranceAdministrationApplicantApi,
                 SocialInsuranceAdministrationChildrenApi,
                 SocialInsuranceAdministrationCurrenciesApi,

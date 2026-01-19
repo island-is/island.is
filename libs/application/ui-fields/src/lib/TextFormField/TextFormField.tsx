@@ -53,6 +53,7 @@ export const TextFormField: FC<React.PropsWithChildren<Props>> = ({
     tooltip,
     onChange = () => undefined,
     clearOnChange,
+    clearOnChangeDefaultValue,
     setOnChange,
     allowNegative,
   } = field
@@ -142,6 +143,7 @@ export const TextFormField: FC<React.PropsWithChildren<Props>> = ({
           min={min}
           step={step}
           clearOnChange={clearOnChange}
+          clearOnChangeDefaultValue={clearOnChangeDefaultValue}
           setOnChange={
             typeof setOnChange === 'function'
               ? async (optionValue) =>

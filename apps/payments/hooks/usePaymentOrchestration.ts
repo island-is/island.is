@@ -31,13 +31,22 @@ export const usePaymentOrchestration = ({
   const [isThreeDSecureModalActive, setIsThreeDSecureModalActive] =
     useState(false)
 
-  const commonOnPaymentSuccess = useCallback(() => {
-    if (paymentFlow?.redirectToReturnUrlOnSuccess && paymentFlow?.returnUrl) {
-      window.location.assign(paymentFlow.returnUrl)
-    } else {
-      router.reload()
-    }
-  }, [paymentFlow, router])
+  const commonOnPaymentSuccess = useCallback(
+    (paymentMethod: 'card' | 'invoice') => {
+      // For invoice payments, always reload to show the "invoice created" screen
+      if (paymentMethod === 'invoice') {
+        router.reload()
+        return
+      }
+
+      if (paymentFlow?.redirectToReturnUrlOnSuccess && paymentFlow?.returnUrl) {
+        window.location.assign(paymentFlow.returnUrl)
+      } else {
+        router.reload()
+      }
+    },
+    [paymentFlow, router],
+  )
 
   const commonOnPaymentError = useCallback((error: PaymentError) => {
     setPaymentError(error)

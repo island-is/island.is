@@ -11,6 +11,8 @@ export const UserProfileApi = defineTemplateApi({
   namespace: 'UserProfile',
   params: {
     validateBankInformation: true,
+    validateEmail: true,
+    validatePhoneNumber: true,
   },
 })
 

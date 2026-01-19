@@ -70,6 +70,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
   subText,
   eyebrow,
   backgroundColor = 'white',
+  eyebrowColor = eyebrowMap[backgroundColor],
   cta: _cta,
   tag: _tag,
   unavailable: _unavailable,
@@ -83,7 +84,6 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
 
   const bgr = backgroundMap[backgroundColor]
   const color = colorMap[backgroundColor]
-  const eyebrowColor = eyebrowMap[backgroundColor]
   const avatarColors = avatarMap[backgroundColor]
   const borderColor = borderMap[backgroundColor]
 

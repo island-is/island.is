@@ -433,6 +433,7 @@ export class InternalCaseService {
           prosecutorId:
             creator.role === UserRole.PROSECUTOR ? creator.id : undefined,
           prosecutorsOfficeId: creator.institution?.id,
+          policeDefendantNationalId: caseToCreate.accusedNationalId,
         },
         { transaction },
       )
@@ -1112,14 +1113,6 @@ export class InternalCaseService {
   ): Promise<boolean> {
     const originalAncestor = await this.findOriginalAncestor(theCase)
 
-    const defendantNationalIds = theCase.defendants?.reduce<string[]>(
-      (ids, defendant) =>
-        !defendant.noNationalId && defendant.nationalId
-          ? [...ids, defendant.nationalId]
-          : ids,
-      [],
-    )
-
     const validToDate =
       (restrictionCases.includes(theCase.type) &&
         theCase.state === CaseState.ACCEPTED &&
@@ -1135,9 +1128,7 @@ export class InternalCaseService {
         : theCase.state,
       theCase.policeCaseNumbers.length > 0 ? theCase.policeCaseNumbers[0] : '',
       theCase.courtCaseNumber ?? '',
-      defendantNationalIds && defendantNationalIds[0]
-        ? defendantNationalIds[0].replace('-', '')
-        : '',
+      theCase.policeDefendantNationalId ?? '',
       validToDate,
       theCase.conclusion ?? '', // Indictments do not have a conclusion
       courtDocuments,
@@ -1521,7 +1512,7 @@ export class InternalCaseService {
         id: caseId,
         state: { [Op.not]: CaseState.DELETED },
         isArchived: false,
-        // This select only defendants with the given national id, other defendants are not included
+        // This only selects defendants with the given national id, other defendants are not included
         '$defendants.national_id$':
           normalizeAndFormatNationalId(defendantNationalId),
       },
@@ -1538,8 +1529,7 @@ export class InternalCaseService {
     theCase: Case,
     defendantNationalId: string,
   ): Promise<Case> {
-    // TODO: Handle multiple defendants
-    //       Here we should use the defendant with the given national id
+    // The case only includes the relevant defendant, this is safe
     const defendant = theCase.defendants?.[0]
 
     if (!defendant) {

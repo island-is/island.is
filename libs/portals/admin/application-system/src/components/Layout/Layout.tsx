@@ -56,7 +56,7 @@ export const Layout: FC<React.PropsWithChildren<LayoutProps>> = ({
                 {
                   id: 'statistics',
                   label: formatMessage(m.statistics),
-                  content: <Statistics />,
+                  content: <Statistics isSuperAdmin={isSuperAdmin} />,
                 },
               ]}
             />

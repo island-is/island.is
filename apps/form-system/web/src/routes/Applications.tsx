@@ -42,9 +42,6 @@ export const Applications = () => {
         variables: {
           input: {
             slug: slug,
-            createApplicationDto: {
-              isTest: true,
-            },
           },
         },
       })

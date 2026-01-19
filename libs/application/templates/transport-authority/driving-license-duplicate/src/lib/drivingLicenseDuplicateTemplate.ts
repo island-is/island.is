@@ -10,7 +10,7 @@ import {
   CurrentLicenseApi,
   AllPhotosFromThjodskraApi,
   QualityPhotoApi,
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   UserProfileApi,
   JurisdictionApi,
   InstitutionNationalIds,
@@ -150,7 +150,7 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
               api: [
                 CurrentLicenseApi,
                 JurisdictionApi,
-                NationalRegistryUserApi.configure({
+                NationalRegistryV3UserApi.configure({
                   params: {
                     legalDomicileIceland: true,
                   },
