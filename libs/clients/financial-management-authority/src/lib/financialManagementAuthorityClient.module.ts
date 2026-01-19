@@ -1,9 +1,11 @@
 import { Module } from '@nestjs/common'
-import { ApiConfig } from './apiConfig'
-import { ApiProvider } from './apiProvider'
+import { apiProviders } from './providers'
+import { VacancyApi } from '../../gen/fetch'
+import { FinancialManagementAuthorityClientOpenInvoicesService as OpenInvoicesService } from './services/openInvoices.service'
+import { FinancialManagementAuthorityClientEmployeesService as EmployeesService } from './services/employees.service'
 
 @Module({
-  providers: [ApiConfig, ApiProvider],
-  exports: [ApiProvider],
+  providers: [...apiProviders, OpenInvoicesService, EmployeesService],
+  exports: [VacancyApi, OpenInvoicesService, EmployeesService],
 })
 export class FinancialManagementAuthorityClientModule {}

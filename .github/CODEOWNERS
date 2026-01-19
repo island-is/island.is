@@ -199,6 +199,7 @@ codemagic.yaml                                                                  
 /libs/clients/documents-v2/                                                                                                  @island-is/hugsmidjan
 /libs/clients/finance/                                                                                                       @island-is/hugsmidjan
 /libs/clients/finance-v2/                                                                                                    @island-is/hugsmidjan
+/libs/clients/financial-management-authority                                                                                 @island-is/hugsmidjan @island-is/juni
 /libs/clients/adr-and-machine-license/                                                                                       @island-is/hugsmidjan
 /libs/clients/work-machines/                                                                                                 @island-is/hugsmidjan @island-is/origo
 /libs/clients/disability-license/                                                                                            @island-is/hugsmidjan
@@ -339,7 +340,7 @@ codemagic.yaml                                                                  
 /libs/clients/fiskistofa/                                                                                                    @island-is/stefna
 /libs/clients/syslumenn/                                                                                                     @island-is/stefna @island-is/juni
 /libs/api/domains/watson-assistant-chat/                                                                                     @island-is/stefna
-/libs/api/domains/icelandic-government-institution-vacancies/                                                                @island-is/stefna
+/libs/api/domains/icelandic-government/                                                                                      @island-is/stefna
 /libs/clients/aircraft-registry/                                                                                             @island-is/stefna
 /libs/api/domains/aircraft-registry/                                                                                         @island-is/stefna
 /libs/api/domains/housing-benefit-calculator/                                                                                @island-is/stefna
