@@ -42,7 +42,7 @@ export const SubmissionUrls = () => {
         <Box marginTop={4}>
           <Text variant="eyebrow">
             Athugið að á meðan við vinnum að tengingum við ytri kerfi er
-            einungis er í boði að nota tengingar við Zendesk
+            einungis í boði að nota tengingar við Zendesk
           </Text>
           <Input
             label={formatMessage(m.newFormUrlButton)}
