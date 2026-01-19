@@ -1,12 +1,5 @@
 import { HealthDirectorateAppointmentStatus } from '@island.is/api/schema'
-import {
-  Box,
-  Checkbox,
-  DatePicker,
-  Filter,
-  Input,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, DatePicker, Filter, Input } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   HEALTH_DIRECTORATE_SLUG,
@@ -65,19 +58,6 @@ const AppointmentsOverview = () => {
     )
   })()
 
-  const mapLabel = (status: HealthDirectorateAppointmentStatus): string => {
-    switch (status) {
-      case HealthDirectorateAppointmentStatus.PENDING:
-        return formatMessage(messages.appointmentStatusPending)
-      case HealthDirectorateAppointmentStatus.BOOKED:
-        return formatMessage(messages.appointmentStatusBooked)
-      case HealthDirectorateAppointmentStatus.CANCELLED:
-        return formatMessage(messages.appointmentStatusCancelled)
-      default:
-        return status
-    }
-  }
-
   return (
     <IntroWrapper
       title={messages.appointments}
@@ -129,7 +109,8 @@ const AppointmentsOverview = () => {
                   setFilter({ statuses: [], dates: undefined })
                 }
               >
-                <Box
+                {/* Hide until we decide to display more then booked (upcoming) appointments */}
+                {/* <Box
                   display="flex"
                   flexDirection="column"
                   justifyContent="spaceBetween"
@@ -165,13 +146,13 @@ const AppointmentsOverview = () => {
                       />
                     </Box>
                   ))}
-                </Box>
+                </Box> */}
                 <Box
                   display="flex"
                   flexDirection="column"
                   justifyContent="spaceBetween"
                   paddingX={3}
-                  marginBottom={3}
+                  marginY={3}
                 >
                   <Box display="flex" flexDirection="column">
                     <Box>
