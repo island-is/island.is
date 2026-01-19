@@ -36,26 +36,41 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
   async getCurrentVehicles({
     auth,
   }: TemplateApiModuleActionProps): Promise<CurrentVehicleWithMilage[]> {
-    const data = await this.vehiclesApiWithAuth(
-      auth,
-    ).currentvehicleswithmileageandinspGet({
-      showOwned: true,
-      showCoowned: true,
-      showOperated: true,
-      page: 0,
-      pageSize: 100000,
-      onlyMileageRequiredVehicles: false,
-      onlyMileageRegisterableVehicles: false,
-    })
+    const [carsWithMilage, carsWithStatuses] = await Promise.all([
+      this.vehiclesApiWithAuth(auth).currentvehicleswithmileageandinspGet({
+        showOwned: true,
+        showCoowned: true,
+        showOperated: true,
+        page: 0,
+        pageSize: 100000,
+        onlyMileageRequiredVehicles: false,
+        onlyMileageRegisterableVehicles: false,
+      }),
+      this.vehiclesApiWithAuth(auth).currentVehiclesGet({
+        persidNo: auth.nationalId,
+        showOwned: true,
+        showCoowned: true,
+        showOperated: true,
+      }),
+    ])
+
+    const carIsOutOfUseDict = carsWithStatuses.reduce((acc, vehicle) => {
+      if (vehicle.permno) {
+        acc[vehicle.permno] = vehicle.outOfUse ?? false
+      }
+      return acc
+    }, {} as Record<string, boolean>)
 
     return (
-      data.data
+      carsWithMilage.data
         ?.filter(
           (vehicle) =>
-            vehicle.permno !== null &&
-            vehicle.make !== null &&
+            vehicle.permno &&
+            vehicle.make &&
             typeof vehicle.latestMileage === 'number' &&
-            vehicle.latestMileage >= 0,
+            vehicle.latestMileage >= 0 &&
+            vehicle.permno in carIsOutOfUseDict &&
+            !carIsOutOfUseDict[vehicle.permno],
         )
         .map((vehicle) => ({
           permno: vehicle.permno ?? null,
