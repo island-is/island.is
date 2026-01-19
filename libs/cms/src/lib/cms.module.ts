@@ -2,6 +2,7 @@ import { HttpModule } from '@nestjs/axios'
 import { Module } from '@nestjs/common'
 import { TerminusModule } from '@nestjs/terminus'
 import { ElasticService } from '@island.is/content-search-toolkit'
+import { CmsModule as CmsGraphqlClientModule, CmsService as CmsGraphqlService, CmsFetchProvider } from '@island.is/clients/cms'
 import {
   CmsResolver,
   ArticleResolver,
@@ -38,9 +39,11 @@ import { OrganizationTitleByEntryIdLoader } from './loaders/organizationTitleByE
 import { OrganizationPageResolver } from './organizationPage.resolver'
 
 @Module({
-  imports: [HttpModule, TerminusModule, PowerBiConfig.registerOptional()],
+  imports: [HttpModule, TerminusModule, PowerBiConfig.registerOptional(), CmsGraphqlClientModule],
   providers: [
     CmsResolver,
+    CmsGraphqlService,
+    CmsFetchProvider,
     ArticleResolver,
     ElasticService,
     CmsContentfulService,
@@ -75,6 +78,8 @@ import { OrganizationPageResolver } from './organizationPage.resolver'
   ],
   exports: [
     ContentfulRepository,
+    CmsGraphqlService,
+    CmsFetchProvider,
     CmsHealthIndicator,
     CmsContentfulService,
     OrganizationLogoByNationalIdLoader,
@@ -90,4 +95,4 @@ import { OrganizationPageResolver } from './organizationPage.resolver'
     CmsElasticsearchService,
   ],
 })
-export class CmsModule {}
+export class CmsModule { }

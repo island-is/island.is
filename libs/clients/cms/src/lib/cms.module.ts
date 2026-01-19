@@ -6,4 +6,4 @@ import { CmsFetchProvider } from './cms-fetch-provider'
   providers: [CmsFetchProvider, CmsService],
   exports: [CmsService],
 })
-export class CmsModule {}
+export class CmsModule { }

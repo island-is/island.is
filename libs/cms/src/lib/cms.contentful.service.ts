@@ -4,6 +4,8 @@ import { ApolloError } from 'apollo-server-express'
 import { Injectable } from '@nestjs/common'
 import sortBy from 'lodash/sortBy'
 import type { EntryCollection } from 'contentful'
+import { CmsService } from '@island.is/clients/cms'
+
 import * as types from './generated/contentfulTypes'
 import { Article, mapArticle } from './models/article.model'
 import { ContentSlug, TextFieldLocales } from './models/contentSlug.model'
@@ -113,6 +115,10 @@ import { mapCourseListPage } from './models/courseListPage.model'
 import { GetCourseSelectOptionsInput } from './dto/getCourseSelectOptions.input'
 import { GetWebChatInput } from './dto/getWebChat.input'
 import { mapWebChat, WebChat } from './models/webChat.model'
+import { WebSitemap } from './models/web-sitemap.model'
+import gql from 'graphql-tag'
+import { writeFileSync } from 'fs'
+import { GetWebSitemapInput } from './dto/getWebSitemap.input'
 
 const errorHandler = (name: string) => {
   return (error: Error) => {
@@ -160,7 +166,7 @@ const ArticleFields = (
 
 @Injectable()
 export class CmsContentfulService {
-  constructor(private contentfulRepository: ContentfulRepository) {}
+  constructor(private contentfulRepository: ContentfulRepository, private cmsGraphqlService: CmsService) { }
 
   async getOrganizations(input: GetOrganizationsInput): Promise<Organizations> {
     const organizationTitles = input?.organizationTitles && {
@@ -693,12 +699,12 @@ export class CmsContentfulService {
       (result?.fields?.title || result?.fields?.question) &&
       (result?.fields?.slug || result?.fields?.url)
     ) {
-      ;({ slugs, titles, urls } = Object.keys(localeMap).reduce(
+      ; ({ slugs, titles, urls } = Object.keys(localeMap).reduce(
         (obj, k) => {
           obj.slugs[k] = result?.fields?.slug?.[localeMap[k]] ?? ''
           obj.titles[k] =
             (result?.fields?.title ?? result?.fields?.question)?.[
-              localeMap[k]
+            localeMap[k]
             ] ?? ''
 
           if (type === 'subArticle') {
@@ -1278,9 +1284,8 @@ export class CmsContentfulService {
         if (node.type === SitemapTreeNodeType.CATEGORY) {
           return {
             label: node.label,
-            href: `/${getOrganizationPageUrlPrefix(input.lang)}/${
-              input.organizationPageSlug
-            }/${input.categorySlug}/${node.slug}`,
+            href: `/${getOrganizationPageUrlPrefix(input.lang)}/${input.organizationPageSlug
+              }/${input.categorySlug}/${node.slug}`,
             description: node.description,
           }
         }
@@ -1326,9 +1331,8 @@ export class CmsContentfulService {
       }
       for (const node of nodeList) {
         node.label = parentSubpage.fields.title
-        node.href = `/${getOrganizationPageUrlPrefix(input.lang)}/${
-          input.organizationPageSlug
-        }/${parentSubpage.fields.slug}`
+        node.href = `/${getOrganizationPageUrlPrefix(input.lang)}/${input.organizationPageSlug
+          }/${parentSubpage.fields.slug}`
       }
     }
 
@@ -1470,9 +1474,8 @@ export class CmsContentfulService {
 
       for (const node of nodeList) {
         node.label = parentSubpage.fields.title
-        node.href = `/${getOrganizationPageUrlPrefix(input.lang)}/${
-          input.organizationPageSlug
-        }/${parentSubpage.fields.slug}`
+        node.href = `/${getOrganizationPageUrlPrefix(input.lang)}/${input.organizationPageSlug
+          }/${parentSubpage.fields.slug}`
       }
     }
 
@@ -1703,5 +1706,43 @@ export class CmsContentfulService {
     if (!bestMatch) return null
 
     return mapWebChat(bestMatch, input.lang)
+  }
+
+  async getWebSitemap(input: GetWebSitemapInput): Promise<WebSitemap> {
+    console.log({ input })
+    const pageSize = 2;
+    const response = (await this.cmsGraphqlService.fetchData(
+      gql`
+      query getWebSitemap {
+        articleCollection(limit: ${pageSize}, skip: ${(input.page - 1) * pageSize}) {
+          items {
+            slug
+          } 
+        }
+      }
+    `)) as {
+        articleCollection: {
+          items: {
+            slug: string
+          }[]
+        }
+      }
+
+    writeFileSync('web-sitemap.json', JSON.stringify(response, null, 2))
+
+
+    const items: WebSitemap['items'] = [];
+
+    for (const item of response?.articleCollection?.items ?? []) {
+      items.push({
+        icelandicUrl: `/${item.slug}`,
+        englishUrl: `/en/${item.slug}`,
+        lastModified: new Date().toISOString(),
+      })
+    }
+
+    return {
+      items
+    }
   }
 }

@@ -171,6 +171,9 @@ import { CourseListPage } from './models/courseListPage.model'
 import { GetCourseSelectOptionsInput } from './dto/getCourseSelectOptions.input'
 import { WebChat } from './models/webChat.model'
 import { GetWebChatInput } from './dto/getWebChat.input'
+import { WebSitemap } from './models/web-sitemap.model'
+import { GetWebSitemapInput } from './dto/getWebSitemap.input'
+
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -179,7 +182,7 @@ export class CmsResolver {
   constructor(
     private readonly cmsContentfulService: CmsContentfulService,
     private readonly cmsElasticsearchService: CmsElasticsearchService,
-  ) {}
+  ) { }
 
   @CacheControl(defaultCache)
   @Query(() => Namespace, { nullable: true })
@@ -862,12 +865,18 @@ export class CmsResolver {
   getWebChat(@Args('input') input: GetWebChatInput): Promise<WebChat | null> {
     return this.cmsContentfulService.getWebChat(input)
   }
+
+  @CacheControl(defaultCache)
+  @Query(() => WebSitemap)
+  getWebSitemap(@Args('input') input: GetWebSitemapInput): Promise<WebSitemap> {
+    return this.cmsContentfulService.getWebSitemap(input)
+  }
 }
 
 @Resolver(() => LatestNewsSlice)
 @CacheControl(defaultCache)
 export class LatestNewsSliceResolver {
-  constructor(private cmsElasticsearchService: CmsElasticsearchService) {}
+  constructor(private cmsElasticsearchService: CmsElasticsearchService) { }
 
   @CacheControl(defaultCache)
   @ResolveField(() => [News])
@@ -883,7 +892,7 @@ export class LatestNewsSliceResolver {
 @Resolver(() => LatestEventsSlice)
 @CacheControl(defaultCache)
 export class LatestEventsSliceResolver {
-  constructor(private cmsElasticsearchService: CmsElasticsearchService) {}
+  constructor(private cmsElasticsearchService: CmsElasticsearchService) { }
 
   @CacheControl(defaultCache)
   @ResolveField(() => [EventModel])
@@ -902,7 +911,7 @@ export class LatestEventsSliceResolver {
 @Resolver(() => Article)
 @CacheControl(defaultCache)
 export class ArticleResolver {
-  constructor(private cmsContentfulService: CmsContentfulService) {}
+  constructor(private cmsContentfulService: CmsContentfulService) { }
 
   @CacheControl(defaultCache)
   @ResolveField(() => [Article])
@@ -921,7 +930,7 @@ export class ArticleResolver {
 @Resolver(() => FeaturedArticles)
 @CacheControl(defaultCache)
 export class FeaturedArticlesResolver {
-  constructor(private cmsElasticsearchService: CmsElasticsearchService) {}
+  constructor(private cmsElasticsearchService: CmsElasticsearchService) { }
 
   @ResolveField(() => [Article])
   async resolvedArticles(
@@ -940,7 +949,7 @@ export class FeaturedArticlesResolver {
 @Resolver(() => FeaturedSupportQNAs)
 @CacheControl(defaultCache)
 export class FeaturedSupportQNAsResolver {
-  constructor(private cmsElasticsearchService: CmsElasticsearchService) {}
+  constructor(private cmsElasticsearchService: CmsElasticsearchService) { }
 
   @ResolveField(() => [SupportQNA])
   async resolvedSupportQNAs(
@@ -958,7 +967,7 @@ export class FeaturedSupportQNAsResolver {
 
 @Resolver(() => PowerBiSlice)
 export class PowerBiSliceResolver {
-  constructor(private powerBiService: PowerBiService) {}
+  constructor(private powerBiService: PowerBiService) { }
 
   @ResolveField(() => GetPowerBiEmbedPropsFromServerResponse, {
     nullable: true,
@@ -974,7 +983,7 @@ export class GrantCardsListResolver {
   constructor(
     private cmsElasticsearchService: CmsElasticsearchService,
     private cmsContentfulService: CmsContentfulService,
-  ) {}
+  ) { }
 
   @ResolveField(() => GrantList)
   async resolvedGrantsList(
@@ -1016,7 +1025,7 @@ export class FeaturedEventsResolver {
   constructor(
     private cmsElasticsearchService: CmsElasticsearchService,
     private cmsContentfulService: CmsContentfulService,
-  ) {}
+  ) { }
 
   @ResolveField(() => EventList)
   async resolvedEventList(
@@ -1067,7 +1076,7 @@ export class TeamListResolver {
 
 @Resolver(() => LatestGenericListItems)
 export class LatestGenericListItemsResolver {
-  constructor(private cmsElasticsearchService: CmsElasticsearchService) {}
+  constructor(private cmsElasticsearchService: CmsElasticsearchService) { }
 
   @ResolveField(() => GenericListItemResponse, { nullable: true })
   async itemResponse(
@@ -1108,7 +1117,7 @@ export class GenericListResolver {
 
 @Resolver(() => FeaturedGenericListItems)
 export class FeaturedGenericListItemsResolver {
-  constructor(private cmsElasticsearchService: CmsElasticsearchService) {}
+  constructor(private cmsElasticsearchService: CmsElasticsearchService) { }
 
   @ResolveField(() => [GenericListItem])
   async items(

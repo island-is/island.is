@@ -241,8 +241,7 @@ import {
   LandspitaliModule,
   LandspitaliApiModuleConfig,
 } from '@island.is/api/domains/landspitali'
-
-// TODO: Remove this comment
+import { CmsConfig as CmsGraphqlClientConfig, CmsModule as CmsGraphqlClientModule } from '@island.is/clients/cms'
 
 const environment = getConfig
 
@@ -386,6 +385,7 @@ const environment = getConfig
     PracticalExamsModule,
     VmstApplicationsModule,
     LandspitaliModule,
+    CmsGraphqlClientModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
@@ -504,8 +504,9 @@ const environment = getConfig
         VmstUnemploymentClientConfig,
         BankInfoClientConfig,
         LandspitaliApiModuleConfig,
+        CmsGraphqlClientConfig,
       ],
     }),
   ],
 })
-export class AppModule {}
+export class AppModule { }

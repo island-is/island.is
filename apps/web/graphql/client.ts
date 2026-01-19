@@ -2,12 +2,12 @@ import { InMemoryCache, NormalizedCacheObject } from '@apollo/client/cache'
 import { ApolloClient } from '@apollo/client/core'
 
 import { defaultLanguage } from '@island.is/shared/constants'
-import { Locale } from '@island.is/shared/types'
+import type { Locale } from '@island.is/shared/types'
 import { createHttpLink } from '@island.is/web/graphql/httpLink'
 
 import type { ScreenContext } from '../types'
 import possibleTypes from './fragmentTypes.json'
-import { ClientOptions, optionsFromContext, optionsFromWindow } from './options'
+import { type ClientOptions, optionsFromContext, optionsFromWindow } from './options'
 
 const isBrowser: boolean = process.browser
 
