@@ -36,6 +36,7 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
   async getCurrentVehicles({
     auth,
   }: TemplateApiModuleActionProps): Promise<CurrentVehicleWithMilage[]> {
+    try {
     const [carsWithMilage, carsWithStatuses] = await Promise.all([
       this.vehiclesApiWithAuth(auth).currentvehicleswithmileageandinspGet({
         showOwned: true,
@@ -77,7 +78,11 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
           make: vehicle.make ?? null,
           milage: vehicle.latestMileage ?? null,
         })) || []
-    )
+      )
+    } catch (error) {
+      this.logger.error('Error getting vehicles with milage and statuses', error)
+      throw error
+    }
   }
 
   async getCurrentVehiclesRateCategory({
