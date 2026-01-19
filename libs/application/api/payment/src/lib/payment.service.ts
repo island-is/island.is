@@ -277,7 +277,7 @@ export class PaymentService {
     const onUpdateUrl = new URL(this.config.paymentApiCallbackUrl)
     onUpdateUrl.pathname = '/application-payment/api-client-payment-callback'
 
-    const { returnUrl, cancelUrl } = await this.getReturnUrls(applicationId)
+    // const { returnUrl, cancelUrl } = await this.getReturnUrls(applicationId)
 
     const resolvedPayerNationalId =
       payerNationalId && payerNationalId.trim().length > 0
