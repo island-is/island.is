@@ -29,8 +29,8 @@ export const overviewMessages = defineMessages({
   },
   guardians: {
     id: 'nps.application:overview.guardians',
-    defaultMessage: 'Forsjáraðili {index}',
-    description: 'Guardian {index}',
+    defaultMessage: 'Forsjáraðili',
+    description: 'Guardian',
   },
   languageEnvironment: {
     id: 'nps.application:overview.languageEnvironment',
