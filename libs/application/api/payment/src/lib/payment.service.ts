@@ -444,7 +444,9 @@ export class PaymentService {
     returnUrl.search = 'done'
 
     const cancelUrl = new URL(this.config.clientLocationOrigin)
-    cancelUrl.pathname = `umsoknir/${applicationSlug}` // Not including the applicationId to avoid getting forwarded back to the payment screen since the application will be in the payment state
+    // cancelUrl.pathname = `umsoknir/${applicationSlug}` // Not including the applicationId to avoid getting forwarded back to the payment screen since the application will be in the payment state
+    returnUrl.pathname = `umsoknir/${applicationSlug}/${applicationId}`
+    cancelUrl.search = 'cancelled'
 
     return { returnUrl: returnUrl.toString(), cancelUrl: cancelUrl.toString() }
   }
