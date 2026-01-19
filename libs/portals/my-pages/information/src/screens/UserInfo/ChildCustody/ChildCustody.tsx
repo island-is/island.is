@@ -13,7 +13,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { Problem } from '@island.is/react-spa/shared'
 import {
   formatNationalId,
-  IntroHeader,
+  IntroWrapper,
   LinkButton,
   m,
   THJODSKRA_SLUG,
@@ -21,10 +21,10 @@ import {
 } from '@island.is/portals/my-pages/core'
 import { unmaskString } from '@island.is/shared/utils'
 import { useParams } from 'react-router-dom'
-import { TwoColumnUserInfoLine } from '../../components/TwoColumnUserInfoLine/TwoColumnUserInfoLine'
-import { formatNameBreaks } from '../../helpers/formatting'
-import { natRegGenderMessageDescriptorRecord } from '../../helpers/localizationHelpers'
-import { spmm, urls } from '../../lib/messages'
+import { TwoColumnUserInfoLine } from '../../../components/TwoColumnUserInfoLine/TwoColumnUserInfoLine'
+import { formatNameBreaks } from '../../../helpers/formatting'
+import { natRegGenderMessageDescriptorRecord } from '../../../helpers/localizationHelpers'
+import { spmm, urls } from '../../../lib/messages'
 import { useNationalRegistryChildCustodyQuery } from './ChildCustody.generated'
 import { useEffect, useState } from 'react'
 
@@ -79,15 +79,12 @@ const ChildCustody = () => {
   const noChildFound = !loading && !isChildOrChildOfUser && !error
 
   return (
-    <>
-      <IntroHeader
-        hideImgPrint
-        title={child?.fullName ?? ''}
-        intro={formatMessage(spmm.childIntro)}
-        serviceProviderSlug={THJODSKRA_SLUG}
-        serviceProviderTooltip={formatMessage(m.tjodskraTooltip)}
-      />
-
+    <IntroWrapper
+      title={child?.fullName ?? ''}
+      intro={formatMessage(spmm.childIntro)}
+      serviceProviderSlug={THJODSKRA_SLUG}
+      serviceProviderTooltip={formatMessage(m.tjodskraTooltip)}
+    >
       {error && !loading && <Problem error={error} noBorder={false} />}
       {(!baseId || noChildFound) && (
         <Problem
@@ -289,7 +286,7 @@ const ChildCustody = () => {
           </Stack>
         </>
       )}
-    </>
+    </IntroWrapper>
   )
 }
 
