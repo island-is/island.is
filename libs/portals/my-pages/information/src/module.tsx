@@ -67,14 +67,14 @@ export const informationModule: PortalModule = {
         element: <UserInfoOverview />,
       },
       {
-        name: m.contract,
+        name: m.contracts,
         path: InformationPaths.MyContracts,
         enabled: scopes.includes(ApiScope.meDetails),
         key: 'MyContracts',
         element: <UserContractsOverview />,
       },
       {
-        name: m.contracts,
+        name: m.contract,
         path: InformationPaths.MyContractsDetail,
         enabled: scopes.includes(ApiScope.meDetails),
         key: 'MyContracts',
