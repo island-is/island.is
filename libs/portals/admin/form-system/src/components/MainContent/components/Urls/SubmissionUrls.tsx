@@ -40,6 +40,10 @@ export const SubmissionUrls = () => {
 
       {(showInput || submissionUrlInput) && (
         <Box marginTop={4}>
+          <Text variant="eyebrow" color="red400">
+            ATH. Við erum ekki tilbúin með virkni til að senda á aðrar slóðir en
+            Zendesk
+          </Text>
           <Input
             label={formatMessage(m.newFormUrlButton)}
             placeholder="IS/..."
