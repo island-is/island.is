@@ -141,9 +141,16 @@ export const educationHistorySubSection = buildSubSection({
               label: educationMessages.labels.sameAsCurrentEducationCheckbox,
             },
           ],
-          clearOnChange: [
-            `educationHistory.finishedEducation.sameAsAboveEducation`,
-          ],
+          setOnChange: async (_option, application) => {
+            if (showFinishedEducationField(application.answers))
+              return [
+                {
+                  key: 'educationHistory.finishedEducation.sameAsAboveEducation',
+                  value: undefined,
+                },
+              ]
+            return []
+          },
           condition: (answers) =>
             wasStudyingLastSemester(answers) && isCurrentlyStudying(answers),
         }),
