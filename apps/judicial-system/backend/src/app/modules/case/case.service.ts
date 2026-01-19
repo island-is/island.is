@@ -5,6 +5,7 @@ import pick from 'lodash/pick'
 import { Includeable, Op, Transaction } from 'sequelize'
 
 import {
+  BadRequestException,
   forwardRef,
   Inject,
   Injectable,
@@ -2512,7 +2513,9 @@ export class CaseService {
 
     if (method === 'audkenni') {
       if (!user.nationalId) {
-        throw new Error('User national ID is required for Audkenni signing')
+        throw new BadRequestException(
+          'User national ID is required for Audkenni signing',
+        )
       }
 
       return this.signingService
@@ -2639,7 +2642,9 @@ export class CaseService {
 
     if (method === 'audkenni') {
       if (!theCase.judge?.nationalId) {
-        throw new Error('Judge national ID is required for Audkenni signing')
+        throw new BadRequestException(
+          'Judge national ID is required for Audkenni signing',
+        )
       }
 
       return this.signingService
