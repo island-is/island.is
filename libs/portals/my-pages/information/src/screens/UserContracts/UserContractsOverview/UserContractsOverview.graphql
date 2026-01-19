@@ -1,0 +1,21 @@
+query UserContractsOverview($hideInactiveContracts: Boolean) {
+  hmsRentalAgreements(hideInactiveAgreements: $hideInactiveContracts) {
+    data {
+      id
+      status
+      contractType
+      contractProperty {
+        id
+        propertyId
+        type
+        streetAndHouseNumber
+        municipality
+        postalCode
+      }
+    }
+    pageInfo {
+      hasNextPage
+    }
+    totalCount
+  }
+}
