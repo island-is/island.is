@@ -24,7 +24,6 @@ const Appointments: React.FC<Props> = ({ data, showLinkButton }) => {
   const { formatMessage } = useLocale()
   const appointments = data?.data?.data
   const isEmpty = !appointments || appointments?.length === 0
-
   const cards = data?.loading
     ? [{ loading: true, title: '', description: '' }]
     : data?.error
@@ -85,7 +84,7 @@ const Appointments: React.FC<Props> = ({ data, showLinkButton }) => {
         )}
       </Box>
       <InfoCardGrid
-        cards={cards}
+        cards={isEmpty ? [] : cards}
         size={isEmpty ? 'small' : undefined}
         empty={
           isEmpty && !data?.loading

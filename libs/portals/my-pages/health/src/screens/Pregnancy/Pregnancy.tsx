@@ -1,15 +1,52 @@
+import { Button, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   InfoCard,
   InfoCardGrid,
   IntroWrapper,
+  m,
 } from '@island.is/portals/my-pages/core'
+import { Features, useFeatureFlagClient } from '@island.is/react/feature-flags'
+import { useEffect, useState } from 'react'
 import { messages } from '../../lib/messages'
-import { Button } from '@island.is/island-ui/core'
 import { HealthPaths } from '../../lib/paths'
+import { DEFAULT_APPOINTMENTS_STATUS } from '../../utils/constants'
+import Appointments from '../HealthOverview/components/Appointments'
+import { useGetAppointmentsOverviewQuery } from '../HealthOverview/HealthOverview.generated'
 
+import DocumentDisplay from '../Communications/components/DocumentsDisplay/DocumentsDisplay'
 const Pregnancy = () => {
   const { formatMessage } = useLocale()
+  const [showAppointments, setShowAppointments] = useState(false)
+
+  const featureFlagClient = useFeatureFlagClient()
+  useEffect(() => {
+    const isFlagEnabled = async () => {
+      const ffEnabled = await featureFlagClient.getValue(
+        Features.isServicePortalHealthAppointmentsPageEnabled,
+        false,
+      )
+      if (ffEnabled) {
+        setShowAppointments(ffEnabled as boolean)
+      }
+    }
+    isFlagEnabled()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const {
+    data: appointmentsData,
+    loading: appointmentsLoading,
+    error: appointmentsError,
+  } = useGetAppointmentsOverviewQuery({
+    variables: {
+      status: DEFAULT_APPOINTMENTS_STATUS, // Empty will fetch all statuses
+    },
+    skip: !showAppointments,
+  })
+
+  const firstTwoAppointments =
+    appointmentsData?.healthDirectorateAppointments?.data?.slice(0, 2) || []
 
   return (
     <IntroWrapper
@@ -35,7 +72,26 @@ const Pregnancy = () => {
         </Button>,
       ]}
     >
+      {/* My appointments - fetch only pregnancy related time appointments */}
+      {showAppointments && (
+        <Appointments
+          data={{
+            data: { data: firstTwoAppointments },
+            loading: appointmentsLoading,
+            error: !!appointmentsError,
+          }}
+          showLinkButton
+        />
+      )}
+      {/* Display documents for pregnancy -> Fix and display only pregnancy related data */}
+      <Text variant="eyebrow" color="purple400" marginBottom={2}>
+        {formatMessage(m.myInfo)}
+      </Text>
+      <DocumentDisplay />
+      {/* Default shortcuts cards */}
       <InfoCardGrid
+        empty={undefined}
+        error={undefined}
         cards={[
           {
             id: 'pregnancy-questionnaire-card',
@@ -71,6 +127,7 @@ const Pregnancy = () => {
           },
         ]}
       />
+      {/* Pregnancy details */}
       <InfoCard
         size="large"
         variant="detail"
@@ -89,7 +146,7 @@ const Pregnancy = () => {
             value: 'Sigríður Gunnardsóttir',
           },
           {
-            label: formatMessage(messages.partner),
+            label: formatMessage(messages.partner), // optional if registered, hide if not
             value: 'Sighvatur Guðbjartsson',
           },
         ]}

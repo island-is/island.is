@@ -2495,4 +2495,8 @@ export const messages = defineMessages({
     defaultMessage: 'Rannsóknarniðurstöður',
     id: 'sp.health:lab-results',
   },
+  seeAllMessages: {
+    defaultMessage: 'Sjá öll skilaboð',
+    id: 'sp.health:see-all-messages',
+  },
 })
