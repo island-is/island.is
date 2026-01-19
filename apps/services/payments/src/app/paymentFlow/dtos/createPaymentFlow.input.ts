@@ -159,14 +159,14 @@ export class CreatePaymentFlowInput {
     description: 'The url to redirect to on successful payment',
   })
   @IsOptional()
-  @IsUrl({ require_tld: isRunningOnEnvironment('production') })
+  @IsUrl({ require_tld: false })
   returnUrl?: string
 
   @ApiPropertyOptional({
     description: 'The url to redirect to on cancellation',
   })
   @IsOptional()
-  @IsUrl({ require_tld: isRunningOnEnvironment('production') })
+  @IsUrl({ require_tld: false })
   cancelUrl?: string
 
   @IsBoolean()
