@@ -64,4 +64,7 @@ export class Verdict {
 
   @Field(() => Boolean, { nullable: true })
   isDefaultJudgement?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  isDrivingLicenseSuspended?: boolean
 }

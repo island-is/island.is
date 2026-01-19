@@ -14,5 +14,6 @@ query Verdict($input: VerdictQueryInput!) {
     deliveredToDefenderNationalId
     servedBy
     isDefaultJudgement
+    isDrivingLicenseSuspended
   }
 }

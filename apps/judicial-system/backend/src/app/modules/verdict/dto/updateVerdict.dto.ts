@@ -56,4 +56,9 @@ export class UpdateVerdictDto {
   @IsBoolean()
   @ApiPropertyOptional({ type: Boolean })
   isDefaultJudgement?: boolean
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  isDrivingLicenseSuspended?: boolean
 }

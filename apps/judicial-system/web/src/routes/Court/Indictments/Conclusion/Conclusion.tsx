@@ -229,6 +229,8 @@ const Conclusion: FC = () => {
           (item) => ({
             defendantId: item.id,
             isDefaultJudgement: item.verdict?.isDefaultJudgement || false,
+            isDrivingLicenseSuspended:
+              item.verdict?.isDrivingLicenseSuspended || false,
           }),
         )
 
@@ -762,7 +764,8 @@ const Conclusion: FC = () => {
               </Box>
             )}
           {selectedAction === IndictmentDecision.COMPLETING &&
-            selectedDecision === CaseIndictmentRulingDecision.RULING &&
+            (selectedDecision === CaseIndictmentRulingDecision.FINE ||
+              selectedDecision === CaseIndictmentRulingDecision.RULING) &&
             workingCase.defendants &&
             workingCase.defendants?.length > 0 && (
               <Box component="section" className={grid({ gap: 3 })}>
@@ -773,35 +776,43 @@ const Conclusion: FC = () => {
                       variant="h5"
                       marginBottom={0}
                     />
+                    {selectedDecision ===
+                      CaseIndictmentRulingDecision.RULING && (
+                      <Checkbox
+                        id={`default-judgment-${defendant.id}`}
+                        label="Útivistardómur"
+                        checked={defendant.verdict?.isDefaultJudgement || false}
+                        onChange={(evt) =>
+                          updateDefendantVerdictState(
+                            {
+                              caseId: workingCase.id,
+                              defendantId: defendant.id,
+                              isDefaultJudgement: evt.target.checked,
+                            },
+                            setWorkingCase,
+                          )
+                        }
+                        disabled={workingCase.state === CaseState.CORRECTING}
+                        backgroundColor="white"
+                        large
+                        filled
+                      />
+                    )}
                     <Checkbox
-                      id={`default-judgment-${defendant.id}`}
-                      label="Útivistardómur"
-                      checked={defendant.verdict?.isDefaultJudgement || false}
+                      id={`driving-license-revocation-${defendant.id}`}
+                      label="Svipting ökuréttar"
+                      checked={
+                        defendant.verdict?.isDrivingLicenseSuspended || false
+                      }
                       onChange={(evt) =>
                         updateDefendantVerdictState(
                           {
                             caseId: workingCase.id,
                             defendantId: defendant.id,
-                            isDefaultJudgement: evt.target.checked,
+                            isDrivingLicenseSuspended: evt.target.checked,
                           },
                           setWorkingCase,
                         )
-                      }
-                      disabled={workingCase.state === CaseState.CORRECTING}
-                      backgroundColor="white"
-                      large
-                      filled
-                    />
-                    <Checkbox
-                      id={`driving-license-revocation-${defendant.id}`}
-                      label="Svipting ökuréttar"
-                      checked={
-                        false
-                        // defendant.verdict?.isDrivingLicenseRevoked || false
-                      }
-                      onChange={
-                        () => console.log('asd')
-                        // setDefendantsWithDefaultJudgments(selectableItems)
                       }
                       disabled={workingCase.state === CaseState.CORRECTING}
                       backgroundColor="white"

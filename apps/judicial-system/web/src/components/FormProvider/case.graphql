@@ -79,6 +79,7 @@ query Case($input: CaseQueryInput!) {
         deliveredToDefenderNationalId
         servedBy
         isDefaultJudgement
+        isDrivingLicenseSuspended
       }
     }
     defenderName

@@ -38,13 +38,10 @@ export const InformationForDefendant = ({
       <Box>
         <SectionHeading
           title="Upplýsingagjöf til dómfellda"
-          marginBottom={2}
           heading="h4"
+          description="Vinsamlegast hakið við þau atriði sem upplýsa verður dómfellda um við
+          birtingu dómsins."
         />
-        <Text marginBottom={3}>
-          Vinsamlegast hakið við þau atriði sem upplýsa verður dómfellda um við
-          birtingu dómsins.
-        </Text>
         <BlueBox className={grid}>
           {defendantCheckboxes.map((checkbox) => (
             <Checkbox
