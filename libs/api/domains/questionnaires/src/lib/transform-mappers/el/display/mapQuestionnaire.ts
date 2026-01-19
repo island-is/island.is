@@ -6,6 +6,7 @@ import {
   QuestionnaireBaseDto,
   QuestionnaireDetailDto,
 } from '@island.is/clients/health-directorate'
+import { FormatMessage } from '@island.is/cms-translations'
 import { Questionnaire } from '../../../../models/questionnaire.model'
 import {
   QuestionnairesOrganizationEnum,
@@ -14,7 +15,6 @@ import {
 import { mapDraftRepliesToAnswers } from '../draft/mapToDraft'
 import { HealthDirectorateQuestionDto } from '../types'
 import { mapGroupToSection } from './mapSection'
-import { FormatMessage } from '@island.is/cms-translations'
 
 export const mapELQuestionnaire = (
   q: QuestionnaireDetailDto | QuestionnaireBaseDto,
@@ -46,7 +46,7 @@ export const mapELQuestionnaire = (
         ? q.submissions.length > 0
           ? QuestionnairesStatusEnum.answered
           : QuestionnairesStatusEnum.notAnswered
-        : q.numSubmissions > 0
+        : q.numSubmitted > 0
         ? QuestionnairesStatusEnum.answered
         : QuestionnairesStatusEnum.notAnswered,
       description: q.message ?? undefined,
