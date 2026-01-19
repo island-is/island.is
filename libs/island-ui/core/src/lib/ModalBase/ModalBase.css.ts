@@ -27,6 +27,9 @@ export const backdropColor = styleVariants({
   white: {
     backgroundColor: theme.color.white,
   },
+  dark: {
+    backgroundColor: hexToRgba(theme.color.foregroundPrimary, 0.3),
+  },
 })
 
 export const modal = style({

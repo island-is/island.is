@@ -11,6 +11,10 @@ import { VacancyResponseDto } from '@island.is/clients/financial-management-auth
 export const CMS_ID_PREFIX = 'c-'
 export const EXTERNAL_SYSTEM_ID_PREFIX = 'x-'
 
+// ============================================================================
+// Shared helper functions
+// ============================================================================
+
 const formatDate = (date?: Date | string | null) => {
   if (!date) {
     return undefined
@@ -29,13 +33,16 @@ const formatDate = (date?: Date | string | null) => {
   return `${day}.${month}.${year}`
 }
 
-const convertHtmlToPlainText = async (html: string) => {
+export const convertHtmlToPlainText = async (html: string) => {
   if (!html) return ''
   const contentfulRichText = await convertHtmlToContentfulRichText(html)
   return documentToPlainTextString(contentfulRichText.document)
 }
 
-const convertHtmlToContentfulRichText = async (html: string, id?: string) => {
+export const convertHtmlToContentfulRichText = async (
+  html: string,
+  id?: string,
+) => {
   const sanitizedHtml = sanitizeHtml(html)
   const markdown = NodeHtmlMarkdown.translate(sanitizedHtml)
   const richText = await richTextFromMarkdown(markdown)
@@ -45,6 +52,10 @@ const convertHtmlToContentfulRichText = async (html: string, id?: string) => {
     id,
   }
 }
+
+// ============================================================================
+// Sorting and types
+// ============================================================================
 
 // Internal type for sorting - includes creationDate which is not exposed via GraphQL
 export type VacancyWithCreationDate =
@@ -92,83 +103,88 @@ export const sortVacancyList = (vacancyList: VacancyWithCreationDate[]) => {
   })
 }
 
-export const mapIcelandicGovernmentInstitutionVacanciesFromExternalSystem =
-  async (data: VacancyResponseDto[]): Promise<VacancyWithCreationDate[]> => {
-    const mappedData: VacancyWithCreationDate[] = []
+// ============================================================================
+// Mappers for new Elfur API client (Financial Management Authority)
+// ============================================================================
 
-    const introPromises: Promise<string>[] = []
+export const mapIcelandicGovernmentInstitutionVacanciesFromElfur = async (
+  data: VacancyResponseDto[],
+): Promise<VacancyWithCreationDate[]> => {
+  const mappedData: VacancyWithCreationDate[] = []
 
-    for (const item of data) {
-      const introHtml = item.introduction ?? ''
-      introPromises.push(convertHtmlToPlainText(introHtml))
+  const introPromises: Promise<string>[] = []
 
-      const locations: IcelandicGovernmentInstitutionVacanciesResponse['vacancies'][number]['locations'] =
-        []
+  for (const item of data) {
+    const introHtml = item.introduction ?? ''
+    introPromises.push(convertHtmlToPlainText(introHtml))
 
-      const locationTitles =
-        item.locations
-          ?.split(',')
-          .map((location) => location.trim())
-          .filter(Boolean) ?? []
+    const locations: IcelandicGovernmentInstitutionVacanciesResponse['vacancies'][number]['locations'] =
+      []
 
-      for (const title of locationTitles) {
-        locations.push({
-          postalCode: item.postCode ?? undefined,
-          title,
-        })
-      }
+    const locationTitles =
+      item.locations
+        ?.split(',')
+        .map((location) => location.trim())
+        .filter(Boolean) ?? []
 
-      mappedData.push({
-        id: item.vacancyID
-          ? `${EXTERNAL_SYSTEM_ID_PREFIX}${item.vacancyID}`
-          : undefined,
-        title: item.heading ?? undefined,
-        applicationDeadlineFrom: formatDate(item.publishDate),
-        applicationDeadlineTo: formatDate(item.openTo),
-        intro: '',
-        fieldOfWork: item.jobTitle ?? undefined,
-        institutionName: item.orgName ?? undefined,
-        institutionReferenceIdentifier: (() => {
-          const orgNrStr =
-            typeof item.orgNr === 'number' && item.orgNr !== null
-              ? String(item.orgNr)
-              : item.orgNr ?? undefined
-
-          if (!orgNrStr) {
-            return undefined
-          }
-
-          if (!orgNrStr.startsWith('0') && orgNrStr.length !== 5) {
-            return `0${orgNrStr}`
-          }
-
-          return orgNrStr
-        })(),
-        logoUrl: item.logoUrl ?? undefined,
-        locations,
-        address: item.address ?? undefined,
-        // Display fields
-        creationDate: formatDate(item.creationDate),
-        updatedDate: formatDate(item.updatedDate),
-        // Internal field for sorting
-        _creationDate: item.creationDate
-          ? new Date(item.creationDate)
-          : undefined,
+    for (const title of locationTitles) {
+      locations.push({
+        postalCode: item.postCode ?? undefined,
+        title,
       })
     }
 
-    const intros = await Promise.all(introPromises)
+    mappedData.push({
+      id: item.vacancyID
+        ? `${EXTERNAL_SYSTEM_ID_PREFIX}${item.vacancyID}`
+        : undefined,
+      title: item.heading ?? undefined,
+      applicationDeadlineFrom: formatDate(item.publishDate),
+      applicationDeadlineTo: formatDate(item.openTo),
+      intro: '',
+      fieldOfWork: item.jobTitle ?? undefined,
+      institutionName: item.orgName ?? undefined,
+      institutionReferenceIdentifier: (() => {
+        const orgNrStr =
+          typeof item.orgNr === 'number' && item.orgNr !== null
+            ? String(item.orgNr)
+            : item.orgNr ?? undefined
 
-    for (let i = 0; i < mappedData.length; i += 1) {
-      if (intros[i]) {
-        mappedData[i].intro = intros[i]
-      }
-    }
+        if (!orgNrStr) {
+          return undefined
+        }
 
-    return mappedData
+        if (!orgNrStr.startsWith('0') && orgNrStr.length !== 5) {
+          return `0${orgNrStr}`
+        }
+
+        return orgNrStr
+      })(),
+      logoUrl: item.logoUrl ?? undefined,
+      locations,
+      address: item.address ?? undefined,
+      // Display fields
+      creationDate: formatDate(item.creationDate),
+      updatedDate: formatDate(item.updatedDate),
+      // Internal field for sorting
+      _creationDate: item.creationDate
+        ? new Date(item.creationDate)
+        : undefined,
+    })
   }
 
-export const mapIcelandicGovernmentInstitutionVacancyByIdResponseFromExternalSystem =
+  const intros = await Promise.all(introPromises)
+
+  for (let i = 0; i < mappedData.length; i += 1) {
+    if (intros[i]) {
+      mappedData[i].intro = intros[i]
+    }
+  }
+
+  return mappedData
+}
+
+export const mapIcelandicGovernmentInstitutionVacancyByIdResponseFromElfur =
   async (
     vacancy: VacancyResponseDto,
   ): Promise<IcelandicGovernmentInstitutionVacancyByIdResponse['vacancy']> => {
@@ -278,6 +294,10 @@ export const mapIcelandicGovernmentInstitutionVacancyByIdResponseFromExternalSys
       updatedDate: formatDate(vacancy.updatedDate),
     }
   }
+
+// ============================================================================
+// Mappers for CMS (Contentful)
+// ============================================================================
 
 export const mapRichTextField = (field: Html | null | undefined) => {
   return (
