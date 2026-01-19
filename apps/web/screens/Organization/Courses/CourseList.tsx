@@ -3,7 +3,9 @@ import flatten from 'lodash/flatten'
 import { useRouter } from 'next/router'
 import { useLazyQuery } from '@apollo/client'
 
+import type { SliceType } from '@island.is/island-ui/contentful'
 import {
+  Box,
   GridColumn,
   GridContainer,
   GridRow,
@@ -30,6 +32,7 @@ import { useI18n } from '@island.is/web/i18n'
 import { LayoutProps, withMainLayout } from '@island.is/web/layouts/main'
 import type { Screen, ScreenContext } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
+import { webRichText } from '@island.is/web/utils/richText'
 
 import { GET_NAMESPACE_QUERY } from '../../queries'
 import {
@@ -158,10 +161,21 @@ const CourseList: Screen<CourseListProps, CourseListScreenContext> = ({
         items: navList,
       }}
     >
-      <Stack space={0}>
+      <Stack space={1}>
         <Text variant="h1" as="h1">
           {courseListPage?.title || n('courseListPageTitle', 'Námskeið')}
         </Text>
+
+        {courseListPage?.content && courseListPage.content.length > 0 && (
+          <Box marginY={2}>
+            {webRichText(
+              courseListPage.content as SliceType[],
+              undefined,
+              activeLocale,
+            )}
+          </Box>
+        )}
+
         <GenericList
           filterTags={courseCategories.map((category) => ({
             id: category.key,
