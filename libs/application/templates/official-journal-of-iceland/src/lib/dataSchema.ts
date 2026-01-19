@@ -95,6 +95,8 @@ const miscSchema = z
     asDocument: z.boolean().optional(),
     asRoman: z.boolean().optional(),
     titlePrefix: z.nativeEnum(TitlePrefix).optional(),
+    mainTextAsFile: z.boolean().optional(),
+    mainTextFilename: z.string().optional(),
   })
   .partial()
 
