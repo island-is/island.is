@@ -78,9 +78,12 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
             make: vehicle.make ?? null,
             milage: vehicle.latestMileage ?? null,
           })) || []
-        )
+      )
     } catch (error) {
-      this.logger.error('Error getting vehicles with milage and statuses', error)
+      this.logger.error(
+        'Error getting vehicles with milage and statuses',
+        error,
+      )
       throw error
     }
   }
