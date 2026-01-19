@@ -55,3 +55,11 @@ export const fsreBuildingsImportSetup =
       })
       .command('node')
       .args('main.cjs')
+
+export const webSitemapImportSetup =
+  (): ServiceBuilder<'cms-importer-web-sitemap'> =>
+    service('cms-importer-web-sitemap')
+      .image('services-cms-importer')
+      .namespace('cms-importer')
+      .command('node')
+      .args('main.cjs')

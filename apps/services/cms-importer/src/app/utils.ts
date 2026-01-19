@@ -19,6 +19,7 @@ export const processJob = () =>
         'energy-fund-import',
         'grant-import',
         'fsre-buildings-import',
+        'web-sitemap',
       ] as const,
       description: 'Indicate what import application should run',
     })
