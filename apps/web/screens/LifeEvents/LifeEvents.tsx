@@ -80,10 +80,11 @@ const LifeEvents: Screen<Props> = ({ lifeEvents, namespace }) => {
         </GridRow>
       </GridContainer>
       <GridItems
-        mobileItemWidth={215}
-        mobileItemsRows={5}
+        mobileItemWidth={250}
+        mobileItemsRows={4}
         insideGridContainer
         paddingTop={5}
+        showGradients
         paddingBottom={2}
         third
       >
