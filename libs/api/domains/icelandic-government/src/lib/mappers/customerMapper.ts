@@ -1,12 +1,11 @@
 import { CustomersDto } from '@island.is/clients/financial-management-authority'
 import { Customers } from '../models/customers.model'
-import { Entity } from '../models/entity.model'
+import { Customer } from '../models/customer.model'
 
 export const mapCustomers = (data: CustomersDto): Customers => {
-  const customers: Entity[] = data.customers.map((customer) => ({
+  const customers: Customer[] = data.customers.map((customer) => ({
     id: customer.id,
     name: customer.name,
-    //legalId: customer.legalId,
   }))
 
   return {

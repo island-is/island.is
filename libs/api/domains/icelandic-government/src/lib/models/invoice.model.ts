@@ -4,14 +4,14 @@ import { InvoiceItem } from './invoiceItem.model'
 @ObjectType('IcelandicGovernmentInvoice')
 export class Invoice {
   @Field(() => ID)
-  id!: number
+  id!: string
 
   @Field({ description: 'ISO8601' })
   date!: string
 
-  @Field(() => [InvoiceItem])
-  itemization!: InvoiceItem[]
-
   @Field(() => Int)
   totalItemizationAmount!: number
+
+  @Field(() => [InvoiceItem], { nullable: true })
+  itemization!: InvoiceItem[]
 }

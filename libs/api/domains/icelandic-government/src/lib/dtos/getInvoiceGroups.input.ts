@@ -1,16 +1,16 @@
 import { PaginationInput } from '@island.is/nest/pagination'
 import { Field, InputType, Int } from '@nestjs/graphql'
-import { IsDate, IsInt, IsOptional } from 'class-validator'
+import { IsDate, IsOptional } from 'class-validator'
 
-@InputType('IcelandicGovernmentInvoicesInput')
-export class InvoicesInput extends PaginationInput() {
-  @Field(() => Int)
-  @IsInt()
-  supplier!: number
+@InputType('IcelandicGovernmentInvoiceGroupsInput')
+export class InvoiceGroupsInput extends PaginationInput() {
+  @Field(() => [Int], { nullable: true })
+  @IsOptional()
+  suppliers?: number[]
 
-  @Field(() => Int)
-  @IsInt()
-  customer!: number
+  @Field(() => [Int], { nullable: true })
+  @IsOptional()
+  customers?: number[]
 
   @Field({ nullable: true })
   @IsDate()

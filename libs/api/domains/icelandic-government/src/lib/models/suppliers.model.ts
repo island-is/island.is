@@ -1,6 +1,6 @@
 import { ObjectType } from '@nestjs/graphql'
 import { PaginatedResponse } from '@island.is/nest/pagination'
-import { Entity } from './entity.model'
+import { Supplier } from './supplier.model'
 
 @ObjectType('IcelandicGovernmentSuppliers')
-export class Suppliers extends PaginatedResponse(Entity) {}
+export class Suppliers extends PaginatedResponse(Supplier) {}

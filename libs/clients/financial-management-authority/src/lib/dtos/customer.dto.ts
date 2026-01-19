@@ -3,7 +3,6 @@ import { CustomerResponseDto } from '../../../gen/fetch'
 export interface CustomerDto {
   id: number
   name: string
-  //legalId: string
 }
 
 export const mapCustomerDto = (
@@ -16,6 +15,5 @@ export const mapCustomerDto = (
   return {
     id: customer.id,
     name: customer.name,
-    // legalId: customer.legalId,
   }
 }

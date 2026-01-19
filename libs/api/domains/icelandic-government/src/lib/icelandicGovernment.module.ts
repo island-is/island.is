@@ -4,8 +4,8 @@ import { EmployeesResolver } from './resolvers/employees.resolver'
 import { EmployeesService } from './services/employees/employees.service'
 import { MockInvoicesService } from './services/invoices/invoices.service.mock'
 import { InvoicesService } from './services/invoices/invoices.service'
-import { InvoicesResolver } from './resolvers/invoices.resolver'
 import { MockEmployeesService } from './services/employees/employees.service.mock'
+import { InvoiceGroupResolver } from './resolvers/invoiceGroup.resolver'
 
 export interface IcelandicGovernmentModuleConfig {
   useMocks: boolean
@@ -27,7 +27,7 @@ export class IcelandicGovernmentModule {
           useClass: options.useMocks ? MockEmployeesService : EmployeesService,
         },
         EmployeesResolver,
-        InvoicesResolver,
+        InvoiceGroupResolver,
       ],
     }
   }

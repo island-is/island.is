@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common'
 import { type IInvoicesService } from './invoices.service.interface'
-import { Invoices } from '../../models/invoices.model'
 import { InvoicesInput } from '../../dtos/getInvoices.input'
 import { CustomersInput } from '../../dtos/getCustomers.input'
 import { InvoiceTypesInput } from '../../dtos/getInvoiceTypes.input'
@@ -8,24 +7,52 @@ import { SuppliersInput } from '../../dtos/getSuppliers.input'
 import { Customers } from '../../models/customers.model'
 import { InvoiceTypes } from '../../models/invoiceTypes.model'
 import { Suppliers } from '../../models/suppliers.model'
-import { mapInvoices } from '../../mappers/invoiceMapper'
 import { mapCustomers } from '../../mappers/customerMapper'
 import { mapInvoiceTypes } from '../../mappers/invoiceTypeMapper'
 import { mapSuppliers } from '../../mappers/supplierMapper'
-import { FinancialManagementAuthorityClientService } from '@island.is/clients/financial-management-authority'
+import { InvoiceGroups } from '../../models/invoiceGroups.model'
+import { mapInvoiceGroup } from '../../mappers/invoiceGroupMapper'
+import { InvoiceGroupsInput } from '../../dtos/getInvoiceGroups.input'
+import { InvoiceGroupWithInvoices } from '../../models/invoiceGroupWithInvoices.model'
+import { FinancialManagementAuthorityClientOpenInvoicesService } from '@island.is/clients/financial-management-authority'
+import { mapInvoiceGroupWithInvoices } from '../../mappers/invoiceGroupWithInvoices'
 
 @Injectable()
 export class InvoicesService implements IInvoicesService {
-  constructor(private service: FinancialManagementAuthorityClientService) {}
+  constructor(
+    private service: FinancialManagementAuthorityClientOpenInvoicesService,
+  ) {}
 
-  async getOpenInvoices(input?: InvoicesInput): Promise<Invoices | null> {
-    const data = await this.service.getOpenInvoices(input)
+  async getOpenInvoicesGroupWithInvoices(
+    input: InvoicesInput,
+  ): Promise<InvoiceGroupWithInvoices | null> {
+    const data = await this.service.getOpenInvoicesGroupWithInvoices(input)
+    if (!data) {
+      return null
+    }
+
+    return mapInvoiceGroupWithInvoices(data)
+  }
+
+  async getOpenInvoiceGroups(
+    input?: InvoiceGroupsInput,
+  ): Promise<InvoiceGroups | null> {
+    const data = await this.service.getOpenInvoicesGroups(input)
 
     if (!data) {
       return null
     }
 
-    return mapInvoices(data)
+    return {
+      data: data.invoiceGroups.map((group) => mapInvoiceGroup(group)),
+      totalPaymentsCount: data.totalPaymentsCount,
+      totalPaymentsSum: data.totalPaymentsSum,
+      totalCount: data.totalCount,
+      //temp page info
+      pageInfo: {
+        hasNextPage: false,
+      },
+    }
   }
 
   async getCustomers(input?: CustomersInput): Promise<Customers | null> {

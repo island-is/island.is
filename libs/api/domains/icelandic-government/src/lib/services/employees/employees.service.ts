@@ -4,11 +4,13 @@ import { mapEmployee } from '../../mappers/employeeMapper'
 import { isDefined } from '@island.is/shared/utils'
 import type { Locale } from '@island.is/shared/types'
 import { type IEmployeesService } from './employees.service.interface'
-import { FinancialManagementAuthorityClientService } from '@island.is/clients/financial-management-authority'
+import { FinancialManagementAuthorityClientEmployeesService } from '@island.is/clients/financial-management-authority'
 
 @Injectable()
 export class EmployeesService implements IEmployeesService {
-  constructor(private service: FinancialManagementAuthorityClientService) {}
+  constructor(
+    private service: FinancialManagementAuthorityClientEmployeesService,
+  ) {}
 
   async getEmployees(
     organizationId: string,

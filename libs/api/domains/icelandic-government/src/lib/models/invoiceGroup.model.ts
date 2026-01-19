@@ -1,24 +1,23 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { Invoice } from './invoice.model'
-import { Entity } from './entity.model'
+import { Field, ID, Int, ObjectType } from '@nestjs/graphql'
+import { Supplier } from './supplier.model'
+import { Customer } from './customer.model'
 
 @ObjectType('IcelandicGovernmentInvoiceGroup', {
-  description:
-    'Contains every invoice between a unique seller-buyer relationship',
+  description: 'Describes the relationship between a unique seller-buyer',
 })
 export class InvoiceGroup {
   @Field(() => ID)
   id!: string
 
-  @Field(() => Entity)
-  supplier!: Entity
+  @Field(() => Supplier)
+  supplier!: Supplier
 
-  @Field(() => Entity)
-  customer!: Entity
+  @Field(() => Customer)
+  customer!: Customer
 
-  @Field()
-  totalAmount!: number
+  @Field(() => Int)
+  totalPaymentsSum!: number
 
-  @Field(() => [Invoice])
-  invoices?: Array<Invoice>
+  @Field(() => Int)
+  totalPaymentsCount!: number
 }
