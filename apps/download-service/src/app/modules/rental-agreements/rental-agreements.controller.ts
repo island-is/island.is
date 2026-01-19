@@ -46,7 +46,7 @@ export class RentalAgreementsController {
 
     const documentResponse = await this.service.getRentalAgreementPdf(user, +id)
 
-    if (documentResponse) {
+    if (documentResponse && documentResponse.length > 0) {
       this.auditService.audit({
         action: 'getRentalAgreementPdf',
         auth: user,
@@ -63,10 +63,10 @@ export class RentalAgreementsController {
       res.header('Content-Disposition', `attachment; filename=${filename}`)
       res.header('Pragma', 'no-cache')
       res.header('Cache-Control', 'no-cache')
-      res.header('Cache-Control', 'nmax-age=0')
-
+      res.header('Cache-Control', 'max-age=0')
       return res.end(buffer)
     }
-    return res.end()
+    res.status(404)
+    return res.end('Rental agreement not found')
   }
 }

@@ -78,15 +78,17 @@ const UserContractsOverview = () => {
           />
         </Box>
       )}
-      {!error && !loading && !data?.hmsRentalAgreements && (
-        <Problem
-          type="no_data"
-          noBorder={false}
-          title={formatMessage(m.noData)}
-          message={formatMessage(m.noDataFoundDetail)}
-          imgSrc="./assets/images/sofa.svg"
-        />
-      )}
+      {!error &&
+        !loading &&
+        (data?.hmsRentalAgreements?.totalCount ?? 0) === 0 && (
+          <Problem
+            type="no_data"
+            noBorder={false}
+            title={formatMessage(m.noData)}
+            message={formatMessage(m.noDataFoundDetail)}
+            imgSrc="./assets/images/sofa.svg"
+          />
+        )}
       {!error && loading && (
         <Stack space={2}>
           {[...Array(3)].map((_key, index) => (
