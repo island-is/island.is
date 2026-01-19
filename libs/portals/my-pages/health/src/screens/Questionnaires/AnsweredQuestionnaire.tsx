@@ -1,7 +1,7 @@
 import {
-  QuestionnaireAnsweredQuestionnaire,
   QuestionnaireAnswerOptionType,
   QuestionnaireQuestionnairesOrganizationEnum,
+  QuestionnaireSubmissionDetail,
 } from '@island.is/api/schema'
 import {
   Box,
@@ -19,23 +19,25 @@ import {
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { FC, useEffect, useState } from 'react'
-import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { HealthPaths, messages } from '../..'
 import * as styles from './Questionnaires.css'
-import { useGetAnsweredQuestionnaireQuery } from './questionnaires.generated'
+import {
+  useGetAnsweredQuestionnaireQuery,
+  useGetQuestionnaireLazyQuery,
+} from './questionnaires.generated'
 
 const AnsweredQuestionnaire: FC = () => {
-  const { id, org } = useParams<{
+  const { id, org, submissionId } = useParams<{
     id?: string
     org?: string
+    submissionId?: string
   }>()
-  const location = useLocation()
   const navigate = useNavigate()
-  const submissionId = location.state?.submissionId
 
   const { formatMessage, lang } = useLocale()
   const [currentSubmission, setCurrentSubmission] =
-    useState<QuestionnaireAnsweredQuestionnaire>()
+    useState<QuestionnaireSubmissionDetail>()
 
   const organization: QuestionnaireQuestionnairesOrganizationEnum | undefined =
     org === 'el'
@@ -44,7 +46,7 @@ const AnsweredQuestionnaire: FC = () => {
       ? QuestionnaireQuestionnairesOrganizationEnum.LSH
       : QuestionnaireQuestionnairesOrganizationEnum.EL // TODO: Change default value to undefined later
 
-  const { data, loading, error } = useGetAnsweredQuestionnaireQuery({
+  const { data, loading, error, refetch } = useGetAnsweredQuestionnaireQuery({
     skip: !id || !org,
     variables: {
       input: {
@@ -56,21 +58,47 @@ const AnsweredQuestionnaire: FC = () => {
     },
   })
 
-  const hasMoreThanOneSubmission =
-    (data?.getAnsweredQuestionnaire?.data?.length ?? 0) > 1
+  const [getQuestionnaire, { data: questionnaireData }] =
+    useGetQuestionnaireLazyQuery()
+
+  useEffect(() => {
+    // Set current submission from answered questionnaire data
+    const submission = data?.getAnsweredQuestionnaire?.data[0]
+    if (submission) {
+      setCurrentSubmission({
+        id: submission.submissionId ?? '',
+        lastUpdated: submission.date ?? '',
+        isDraft: submission.isDraft ?? false,
+      } as QuestionnaireSubmissionDetail)
+    }
+  }, [data, id, submissionId])
+
+  useEffect(() => {
+    if (organization === QuestionnaireQuestionnairesOrganizationEnum.EL) {
+      getQuestionnaire({
+        variables: {
+          input: { id: id ?? '', organization: organization },
+          locale: lang,
+        },
+      })
+    }
+  }, [getQuestionnaire, id, lang, organization])
 
   const isDraft = currentSubmission?.isDraft
 
-  useEffect(() => {
-    if (!hasMoreThanOneSubmission && data?.getAnsweredQuestionnaire?.data) {
-      setCurrentSubmission(data?.getAnsweredQuestionnaire?.data[0])
-    }
-  }, [hasMoreThanOneSubmission, data?.getAnsweredQuestionnaire?.data])
-
   const handleSubmissionChange = (submissionId: string) => {
-    const selectedSubmission = data?.getAnsweredQuestionnaire?.data?.find(
-      (submission) => submission.id === submissionId,
-    )
+    refetch({
+      input: {
+        id: id ?? '',
+        submissionId: submissionId,
+        organization: organization,
+      },
+      locale: lang,
+    })
+    const selectedSubmission =
+      questionnaireData?.questionnairesDetail?.submissions?.find(
+        (submission) => submission.id === submissionId,
+      )
     setCurrentSubmission(selectedSubmission)
   }
 
@@ -92,34 +120,26 @@ const AnsweredQuestionnaire: FC = () => {
       title={data?.getAnsweredQuestionnaire?.data[0]?.title ?? ''}
       intro={formatMessage(messages.answeredQuestionnaireAnswered)}
       loading={loading}
-      buttonGroupAlignment={'spaceBetween'}
+      buttonGroupAlignment="spaceBetween"
       buttonGroup={[
         <Box key="submission-select-container">
-          <Inline space={2} alignY={'bottom'}>
+          <Inline space={2} alignY="bottom">
             <Box className={styles.select}>
               <Select
-                options={data?.getAnsweredQuestionnaire?.data?.map(
+                options={questionnaireData?.questionnairesDetail?.submissions?.map(
                   (submission) => ({
                     value: submission.id,
-                    label: submission.date
+                    label: submission.lastUpdated
                       ? formatMessage(messages.answeredAt, {
-                          arg: formatDate(submission.date),
+                          arg: formatDate(submission.lastUpdated),
                         })
                       : formatMessage(messages.unknown),
                   }),
                 )}
-                defaultValue={{
-                  label: currentSubmission?.date
-                    ? formatMessage(messages.answeredAt, {
-                        arg: formatDate(currentSubmission.date),
-                      })
-                    : formatMessage(messages.unknown),
-                  value: currentSubmission?.id ?? '',
-                }}
                 value={{
-                  label: currentSubmission?.date
+                  label: currentSubmission?.lastUpdated
                     ? formatMessage(messages.answeredAt, {
-                        arg: formatDate(currentSubmission.date),
+                        arg: formatDate(currentSubmission.lastUpdated),
                       })
                     : formatMessage(messages.unknown),
                   value: currentSubmission?.id ?? '',
@@ -137,7 +157,7 @@ const AnsweredQuestionnaire: FC = () => {
               <Box className={styles.button}>
                 <Button
                   fluid
-                  key={'answer-link'}
+                  key="answer-link"
                   variant="utility"
                   colorScheme="primary"
                   size="small"
@@ -154,7 +174,7 @@ const AnsweredQuestionnaire: FC = () => {
           </Inline>
         </Box>,
         <Button
-          key={'print-button'}
+          key="print-button"
           variant="utility"
           onClick={() => window.print()}
           preTextIcon="print"
@@ -165,7 +185,7 @@ const AnsweredQuestionnaire: FC = () => {
     >
       {loading && !error && (
         <Box marginTop={6}>
-          <SkeletonLoader height={24} width={'full'} repeat={8} space={4} />
+          <SkeletonLoader height={24} width="full" repeat={8} space={4} />
         </Box>
       )}
       {error && !loading && (
@@ -174,14 +194,16 @@ const AnsweredQuestionnaire: FC = () => {
       {data?.getAnsweredQuestionnaire && !loading && !error && (
         <Box marginTop={4}>
           <Answered
-            answers={currentSubmission?.answers?.map((answer) => ({
-              questionId: answer.id,
-              question: answer.label ?? '',
-              answers: answer.values.map((value) => ({
-                value,
-              })),
-              type: QuestionnaireAnswerOptionType.text,
-            }))}
+            answers={data?.getAnsweredQuestionnaire?.data[0]?.answers?.map(
+              (answer) => ({
+                questionId: answer.id,
+                question: answer.label ?? '',
+                answers: answer.values.map((value) => ({
+                  value,
+                })),
+                type: QuestionnaireAnswerOptionType.text,
+              }),
+            )}
           />
         </Box>
       )}
