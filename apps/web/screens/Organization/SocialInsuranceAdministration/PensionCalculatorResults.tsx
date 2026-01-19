@@ -59,7 +59,9 @@ import {
   convertToQueryParams,
   extractSlug,
   getDateOfCalculationsOptions,
+  is2025FormPreviewActive,
   is2025PreviewActive,
+  NEW_SYSTEM_TAKES_PLACE_DATE,
 } from './utils'
 import * as styles from './PensionCalculatorResults.css'
 
@@ -282,23 +284,40 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
   const { formatMessage } = useIntl()
   const { linkResolver } = useLinkResolver()
 
-  const dateOfCalculations =
-    calculationInput.dateOfCalculations ?? dateOfCalculationsOptions?.[0]?.value
-
   const highlightedItems = calculation.highlightedItems ?? []
 
   const highlightedItems2025 = calculation2025.highlightedItems ?? []
 
   const allCalculatorsOptions = useMemo(() => {
-    return [...dateOfCalculationsOptions]
-  }, [dateOfCalculationsOptions])
+    const options = [...dateOfCalculationsOptions]
 
-  const title = formatMessage(translationStrings.mainTitle)
-  const titlePostfix = (
-    allCalculatorsOptions.find((o) => o.value === dateOfCalculations)?.label ??
-    dateOfCalculationsOptions[0]?.label ??
-    ''
-  ).toLowerCase()
+    if (is2025FormPreviewActive(customPageData)) {
+      options.unshift({
+        label: formatMessage(translationStrings.form2025PreviewLabel),
+        value: NEW_SYSTEM_TAKES_PLACE_DATE.toISOString(),
+      })
+    }
+
+    return options
+  }, [customPageData, dateOfCalculationsOptions, formatMessage])
+
+  const isNewSystemActive =
+    is2025FormPreviewActive(customPageData) &&
+    calculationInput.dateOfCalculations ===
+      NEW_SYSTEM_TAKES_PLACE_DATE.toISOString()
+
+  const title = `${formatMessage(
+    isNewSystemActive
+      ? translationStrings.form2025PreviewMainTitle
+      : translationStrings.mainTitle,
+  )}`
+  const titlePostfix = `${(
+    allCalculatorsOptions.find(
+      (o) => o.value === calculationInput.dateOfCalculations,
+    )?.label ?? dateOfCalculationsOptions[0].label
+  ).toLowerCase()}`
+
+  const titleVariant = isNewSystemActive ? 'h2' : 'h1'
 
   const calculationIsPresent =
     typeof calculation.groups?.length === 'number' &&
@@ -312,8 +331,8 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
   const highlighted2025ItemIsPresent =
     highlightedItems2025.length > 0 &&
     is2025PreviewActive(customPageData) &&
-    dateOfCalculations &&
-    new Date(dateOfCalculations).getFullYear() >= 2024
+    calculationInput.dateOfCalculations &&
+    new Date(calculationInput.dateOfCalculations).getFullYear() >= 2024
 
   const isTurnedOff = customPageData?.configJson?.isTurnedOff ?? false
 
@@ -344,8 +363,10 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
                   <Box paddingY={5}>
                     <Stack space={3}>
                       <PensionCalculatorTitle
+                        isNewSystemActive={isNewSystemActive}
                         title={title}
                         titlePostfix={titlePostfix}
+                        titleVariant={titleVariant}
                       />
                       <Text>
                         {formatMessage(translationStrings.isTurnedOff)}
@@ -368,8 +389,10 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
                     <Stack space={5}>
                       <Stack space={2}>
                         <PensionCalculatorTitle
+                          isNewSystemActive={isNewSystemActive}
                           title={title}
                           titlePostfix={titlePostfix}
+                          titleVariant={titleVariant}
                         />
                         <Box className={styles.textMaxWidth}>
                           <Text>
@@ -419,7 +442,7 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
                                   SocialInsurancePensionCalculationBasePensionType.Disability
                                   ? String(
                                       new Date(
-                                        dateOfCalculations ||
+                                        calculationInput.dateOfCalculations ||
                                           new Date().toISOString(),
                                       ).getFullYear(),
                                     )
@@ -634,11 +657,7 @@ PensionCalculatorResults.getProps = async ({
 }) => {
   const calculationInput = convertQueryParametersToCalculationInput(query)
   const slug = extractSlug(locale, customPageData)
-  const dateOfCalculationsOptions = getDateOfCalculationsOptions(
-    customPageData,
-    calculationInput.typeOfBasePension ??
-      SocialInsurancePensionCalculationBasePensionType.Retirement,
-  )
+  const dateOfCalculationsOptions = getDateOfCalculationsOptions(customPageData)
   const [
     {
       data: { getOrganizationPage },
