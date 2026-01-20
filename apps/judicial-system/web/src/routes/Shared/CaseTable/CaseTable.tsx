@@ -125,7 +125,7 @@ const CaseTable: FC = () => {
   const { openCaseInNewTab } = useOpenCaseInNewTab()
   const {
     isOpeningCaseId,
-    isOpeningDefendantId,
+    isOpeningDefendantIds,
     handleOpenCase,
     LoadingIndicator,
     showLoading,
@@ -186,13 +186,19 @@ const CaseTable: FC = () => {
         case CaseActionType.OPEN_CASE:
         default: // Default to opening the case in a new tab
           return {
-            onClick: () => handleOpenCase(r.caseId, false, r.defendantId),
+            onClick: () => handleOpenCase(r.caseId, false, r.defendantIds),
             isDisabled:
               isOpeningCaseId === r.caseId &&
-              isOpeningDefendantId === r.defendantId,
+              (isOpeningDefendantIds?.every((id) =>
+                r.defendantIds?.includes(id),
+              ) ??
+                false),
             isLoading:
               isOpeningCaseId === r.caseId &&
-              isOpeningDefendantId === r.defendantId &&
+              (isOpeningDefendantIds?.every((id) =>
+                r.defendantIds?.includes(id),
+              ) ??
+                false) &&
               showLoading,
           }
       }

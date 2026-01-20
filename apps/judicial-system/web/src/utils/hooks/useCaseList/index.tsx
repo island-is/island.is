@@ -39,9 +39,9 @@ const useCaseList = () => {
   // The id of the case that's about to be opened
   const [clickedCase, setClickedCase] = useState<{
     id: string | null
-    defendantId?: string | null
+    defendantIds?: string[] | null
     showLoading: boolean
-  }>({ id: null, defendantId: null, showLoading: false })
+  }>({ id: null, defendantIds: null, showLoading: false })
   const { user, limitedAccess } = useContext(UserContext)
   const { getCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
@@ -148,7 +148,11 @@ const useCaseList = () => {
   )
 
   const handleOpenCase = useCallback(
-    async (id: string, openInNewTab?: boolean, defendantId?: string | null) => {
+    async (
+      id: string,
+      openInNewTab?: boolean,
+      defendantIds?: string[] | null,
+    ) => {
       const clearTimeouts = () => {
         timeouts.map((timeout) => clearTimeout(timeout))
       }
@@ -156,14 +160,14 @@ const useCaseList = () => {
       clearTimeouts()
 
       if (
-        (clickedCase.id !== id || clickedCase.defendantId !== defendantId) &&
+        (clickedCase.id !== id || clickedCase.defendantIds !== defendantIds) &&
         !openInNewTab
       ) {
-        setClickedCase({ id, defendantId, showLoading: false })
+        setClickedCase({ id, defendantIds, showLoading: false })
 
         timeouts.push(
           setTimeout(
-            () => setClickedCase({ id, defendantId, showLoading: true }),
+            () => setClickedCase({ id, defendantIds, showLoading: true }),
             2000,
           ),
         )
@@ -175,10 +179,10 @@ const useCaseList = () => {
           (caseData) => openCase(caseData, openInNewTab),
           () => {
             setClickedCase((prev) => {
-              if (prev.id === id && prev.defendantId === defendantId) {
+              if (prev.id === id && prev.defendantIds === defendantIds) {
                 clearTimeouts()
 
-                return { id: null, defendantId: null, showLoading: false }
+                return { id: null, defendantIds: null, showLoading: false }
               }
 
               return prev
@@ -191,7 +195,7 @@ const useCaseList = () => {
       if (
         isTransitioningCase ||
         isSendingNotification ||
-        (clickedCase.id === id && clickedCase.defendantId === defendantId) ||
+        (clickedCase.id === id && clickedCase.defendantIds === defendantIds) ||
         limitedAccess === undefined
       ) {
         return
@@ -214,7 +218,7 @@ const useCaseList = () => {
   const LoadingIndicator = () => {
     return (
       <motion.div
-        key={`${clickedCase.id}-${clickedCase.defendantId}-loading`}
+        key={`${clickedCase.id}-${clickedCase.defendantIds}-loading`}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -226,7 +230,7 @@ const useCaseList = () => {
 
   return {
     isOpeningCaseId: clickedCase.id,
-    isOpeningDefendantId: clickedCase.defendantId,
+    isOpeningDefendantIds: clickedCase.defendantIds,
     showLoading: clickedCase.showLoading,
     handleOpenCase,
     LoadingIndicator,

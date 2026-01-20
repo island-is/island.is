@@ -71,8 +71,12 @@ class CaseTableRow {
   @ApiProperty({ type: String, description: 'The row case id' })
   readonly caseId!: string
 
-  @ApiPropertyOptional({ type: String, description: 'The row defendant id' })
-  readonly defendantId?: string
+  @ApiPropertyOptional({
+    type: String,
+    isArray: true,
+    description: 'The row defendant ids',
+  })
+  readonly defendantIds?: string[]
 
   @ApiProperty({
     type: Boolean,

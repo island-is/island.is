@@ -100,8 +100,11 @@ class CaseTableRow {
   @Field(() => String, { description: 'The row case id' })
   readonly caseId!: string
 
-  @Field(() => String, { description: 'The row defendant id', nullable: true })
-  readonly defendantId?: string
+  @Field(() => [String], {
+    description: 'The row defendant ids',
+    nullable: true,
+  })
+  readonly defendantIds?: string[]
 
   @Field(() => Boolean, {
     description: 'Indicates if the case belongs to the current user',

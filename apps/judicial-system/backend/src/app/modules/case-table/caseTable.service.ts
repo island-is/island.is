@@ -44,11 +44,11 @@ type SearchResult = {
     defendantName: string | null
     match: {
       field:
-        | 'policeCaseNumbers'
-        | 'courtCaseNumber'
-        | 'appealCaseNumber'
-        | 'defendantNationalId'
-        | 'defendantName'
+      | 'policeCaseNumbers'
+      | 'courtCaseNumber'
+      | 'appealCaseNumber'
+      | 'defendantNationalId'
+      | 'defendantName'
       value: string
     }
   }[]
@@ -121,11 +121,11 @@ const getIncludes = (caseTableCellKeys: CaseTableColumnKey[], user: TUser) => {
               as: k,
               ...(v.includes
                 ? {
-                    include: Object.entries(v.includes).map(([k, v]) => ({
-                      ...v,
-                      as: k,
-                    })),
-                  }
+                  include: Object.entries(v.includes).map(([k, v]) => ({
+                    ...v,
+                    as: k,
+                  })),
+                }
                 : undefined),
             }),
           ) as Includeable,
@@ -239,7 +239,7 @@ export class CaseTableService {
   constructor(
     @InjectConnection() private readonly sequelize: Sequelize,
     private readonly caseRepositoryService: CaseRepositoryService,
-  ) {}
+  ) { }
 
   async getCaseTableRows(
     type: CaseTableType,
@@ -260,21 +260,21 @@ export class CaseTableService {
     // Display defendants in separate lines for public prosecutors office
     const displayCases: Case[] = isPublicProsecutionOfficeUser(user)
       ? cases.flatMap((c) => {
-          const jsonCase = c.toJSON()
+        const jsonCase = c.toJSON()
 
-          if (c.defendants && c.defendants.length > 0) {
-            return c.defendants.map((d) => ({ ...jsonCase, defendants: [d] }))
-          }
+        if (c.defendants && c.defendants.length > 0) {
+          return c.defendants.map((d) => ({ ...jsonCase, defendants: [d] }))
+        }
 
-          return jsonCase
-        })
+        return jsonCase
+      })
       : cases
 
     return {
       rowCount: displayCases.length,
       rows: displayCases.map((c) => ({
         caseId: c.id,
-        defendantId: c.defendants?.[0]?.id,
+        defendantIds: c.defendants?.map((d) => d.id),
         isMyCase: isMyCase(c, user),
         actionOnRowClick: getActionOnRowClick(c, user),
         contextMenuActions: getContextMenuActions(c, user),
@@ -399,7 +399,7 @@ export class CaseTableService {
         caseId: r.id,
         caseType:
           r.type === CaseType.CUSTODY &&
-          r.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+            r.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
             ? CaseType.TRAVEL_BAN
             : r.type,
         matchedField: r.match.field,
