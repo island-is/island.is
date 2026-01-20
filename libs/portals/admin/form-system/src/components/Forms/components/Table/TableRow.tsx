@@ -270,7 +270,22 @@ export const TableRow = ({
     name,
   ])
 
-  const goToForm = () => {
+  const updateForm = async () => {
+    try {
+      const { data } = await updateFormStatus({
+        variables: {
+          input: {
+            id,
+            updateFormStatusDto: {
+              newStatus: FormStatus.IN_DEVELOPMENT,
+            },
+          },
+        },
+      })
+    } catch (error) {
+      console.error('Error updating form:', error)
+    }
+
     navigate(FormSystemPaths.Form.replace(':formId', String(id)), {
       state: {
         id,
@@ -327,7 +342,7 @@ export const TableRow = ({
                   circle
                   colorScheme="negative"
                   inline
-                  onClick={goToForm}
+                  onClick={updateForm}
                 />
               </Box>
             )}
