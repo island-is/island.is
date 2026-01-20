@@ -3,7 +3,6 @@ import {
   buildMultiField,
   buildSection,
   buildSubmitField,
-  buildPaymentChargeOverviewField,
   getValueViaPath,
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
@@ -15,7 +14,6 @@ import { overviewConfirmAction } from './OverviewSections/confirmAction'
 import { EstateTypes, YES, NO } from '../lib/constants'
 import { deceasedInfoFields } from './Sections/deceasedInfoFields'
 import { representativeOverview } from './OverviewSections/representative'
-import { getChargeItems } from '../utils/getChargeItems'
 
 // Helper to check if payment is enabled for undivided estate
 const isPaymentEnabled = (externalData: Record<string, unknown>): boolean => {
@@ -27,7 +25,7 @@ export const overview = buildSection({
   id: 'overviewEstateDivision',
   title: m.overviewTitle,
   children: [
-    /* Einkaskipti WITH payment enabled */
+    /* Einkaskipti WITH payment enabled - no submit button, navigates to payment section */
     buildMultiField({
       id: 'overviewPrivateDivisionWithPayment',
       title: m.overviewTitle,
@@ -40,26 +38,6 @@ export const overview = buildSection({
         ...overviewAssetsAndDebts,
         ...overviewAttachments,
         ...representativeOverview,
-        buildPaymentChargeOverviewField({
-          id: 'paymentChargeOverview',
-          forPaymentLabel: m.forPayment,
-          totalLabel: m.total,
-          getSelectedChargeItems: (application) =>
-            getChargeItems(application).map((item) => ({
-              chargeItemCode: item.code,
-            })),
-        }),
-        buildSubmitField({
-          id: 'estateDivisionSubmit.payment',
-          refetchApplicationAfterSubmit: true,
-          actions: [
-            {
-              event: DefaultEvents.PAYMENT,
-              name: m.proceedToPayment,
-              type: 'primary',
-            },
-          ],
-        }),
       ],
     }),
 
@@ -91,7 +69,7 @@ export const overview = buildSection({
       ],
     }),
 
-    /* Seta í óskiptu búi WITH payment enabled */
+    /* Seta í óskiptu búi WITH payment enabled - no submit button, navigates to payment section */
     buildMultiField({
       id: 'overviewUndividedEstateWithPayment',
       title: m.overviewTitle,
@@ -105,26 +83,6 @@ export const overview = buildSection({
         ...overviewAssetsAndDebts,
         ...overviewAttachments,
         ...overviewConfirmAction,
-        buildPaymentChargeOverviewField({
-          id: 'paymentChargeOverview',
-          forPaymentLabel: m.forPayment,
-          totalLabel: m.total,
-          getSelectedChargeItems: (application) =>
-            getChargeItems(application).map((item) => ({
-              chargeItemCode: item.code,
-            })),
-        }),
-        buildSubmitField({
-          id: 'estateDivisionSubmit.payment',
-          refetchApplicationAfterSubmit: true,
-          actions: [
-            {
-              event: DefaultEvents.PAYMENT,
-              name: m.proceedToPayment,
-              type: 'primary',
-            },
-          ],
-        }),
       ],
     }),
 

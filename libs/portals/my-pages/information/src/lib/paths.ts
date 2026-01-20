@@ -2,6 +2,8 @@ export enum InformationPaths {
   MyInfoRoot = '/min-gogn',
   MyInfoRootOverview = '/min-gogn/yfirlit',
   SettingsOld = '/stillingar/minar-stillingar/',
+  MyContracts = '/min-gogn/samningar',
+  MyContractsDetail = '/min-gogn/samningar/:id',
   Settings = '/min-gogn/stillingar/',
   SettingsNotifications = '/min-gogn/stillingar/tilkynningar',
   ChildCustody = '/min-gogn/yfirlit/barn/:baseId',

@@ -70,6 +70,9 @@ export class Questionnaire {
   @Field(() => Boolean, { nullable: true })
   canSubmit?: boolean
 
+  @Field(() => String, { nullable: true })
+  lastSubmissionId?: string
+
   @Field(() => [QuestionnaireSubmissionDetail], { nullable: true })
   submissions?: QuestionnaireSubmissionDetail[]
 

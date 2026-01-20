@@ -11,7 +11,10 @@ import {
   applyDativeCaseToCourtName,
   formatNationalId,
 } from '@island.is/judicial-system/formatters'
-import { getIndictmentCountCompare } from '@island.is/judicial-system/types'
+import {
+  getIndictmentCountCompare,
+  isTrafficViolationIndictmentCount,
+} from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
@@ -159,6 +162,17 @@ const Indictment = () => {
     [workingCase.id],
   )
 
+  const getLicencePlateFromPoliceCase = useCallback(
+    (policeCaseNumber: string) => {
+      return policeCaseData?.policeCaseInfo?.find(
+        (policeCase) =>
+          policeCase?.policeCaseNumber === policeCaseNumber &&
+          policeCase.licencePlate,
+      )?.licencePlate
+    },
+    [policeCaseData],
+  )
+
   const getDemands = useCallback(
     (
       trafficViolationOffenses: Set<IndictmentCountOffense>,
@@ -279,26 +293,36 @@ const Indictment = () => {
       indictmentCountUpdate: UpdateIndictmentCount,
       updatedOffenses?: Offense[],
     ) => {
-      if (
-        indictmentCountUpdate.policeCaseNumber &&
-        policeCaseData?.policeCaseInfo
-      ) {
-        const vehicleNumber = policeCaseData.policeCaseInfo?.find(
-          (policeCase) =>
-            policeCase?.policeCaseNumber ===
-            indictmentCountUpdate.policeCaseNumber,
-        )?.licencePlate
-
-        if (vehicleNumber)
-          indictmentCountUpdate.vehicleRegistrationNumber = vehicleNumber
-      }
-
       const prevIndictmentCount = workingCase.indictmentCounts?.find(
         (count) => count.id === indictmentCountId,
       )
 
       if (!prevIndictmentCount) {
         return
+      }
+
+      const policeCaseNumber =
+        indictmentCountUpdate.policeCaseNumber ??
+        prevIndictmentCount.policeCaseNumber ??
+        ''
+      const isTrafficViolation = isTrafficViolationIndictmentCount(
+        indictmentCountUpdate.indictmentCountSubtypes ??
+          prevIndictmentCount.indictmentCountSubtypes,
+        workingCase.indictmentSubtypes[policeCaseNumber],
+      )
+      const updatingPoliceCaseNumber = indictmentCountUpdate.policeCaseNumber
+      const missingVehicleRegistrationNumber =
+        indictmentCountUpdate.vehicleRegistrationNumber === undefined &&
+        !prevIndictmentCount.vehicleRegistrationNumber
+      const shouldLookupLicencePlate =
+        isTrafficViolation &&
+        (updatingPoliceCaseNumber || missingVehicleRegistrationNumber)
+
+      if (shouldLookupLicencePlate) {
+        const vehicleNumber = getLicencePlateFromPoliceCase(policeCaseNumber)
+
+        if (vehicleNumber)
+          indictmentCountUpdate.vehicleRegistrationNumber = vehicleNumber
       }
 
       const returnedIndictmentCount = await updateIndictmentCount(
@@ -341,13 +365,14 @@ const Indictment = () => {
       )
     },
     [
-      policeCaseData?.policeCaseInfo,
+      getLicencePlateFromPoliceCase,
       setSuspensionRequest,
       setWorkingCase,
       updateIndictmentCount,
       updateIndictmentCountState,
       workingCase.id,
       workingCase.indictmentCounts,
+      workingCase.indictmentSubtypes,
       workingCase.requestDriversLicenseSuspension,
     ],
   )
@@ -385,6 +410,33 @@ const Indictment = () => {
       workingCase.indictmentCounts,
     ],
   )
+
+  useOnceOn(Boolean(policeCaseData), () => {
+    if (policeCaseData) {
+      for (const indictmentCount of workingCase.indictmentCounts || []) {
+        if (
+          !indictmentCount.policeCaseNumber ||
+          !isTrafficViolationIndictmentCount(
+            indictmentCount.indictmentCountSubtypes,
+            workingCase.indictmentSubtypes[indictmentCount.policeCaseNumber],
+          ) ||
+          indictmentCount.vehicleRegistrationNumber
+        ) {
+          continue
+        }
+
+        const vehicleNumber = getLicencePlateFromPoliceCase(
+          indictmentCount.policeCaseNumber,
+        )
+
+        if (vehicleNumber) {
+          handleUpdateIndictmentCount(indictmentCount.id, {
+            vehicleRegistrationNumber: vehicleNumber,
+          })
+        }
+      }
+    }
+  })
 
   const initialize = useCallback(() => {
     const indictmentCounts = workingCase.indictmentCounts || []
