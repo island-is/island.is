@@ -2454,6 +2454,10 @@ export const messages = defineMessages({
     defaultMessage: 'Samskipti',
     id: 'sp.health:communications',
   },
+  communicationsPregnancyIntro: {
+    defaultMessage: 'Hér er samskiptagátt milli þín og mæðraverndar.',
+    id: 'sp.health:communications-intro',
+  },
   measurements: {
     defaultMessage: 'Mælingar',
     id: 'sp.health:measurements',

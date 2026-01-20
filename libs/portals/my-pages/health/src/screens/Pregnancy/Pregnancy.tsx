@@ -15,9 +15,11 @@ import Appointments from '../HealthOverview/components/Appointments'
 import { useGetAppointmentsOverviewQuery } from '../HealthOverview/HealthOverview.generated'
 
 import DocumentDisplay from '../Communications/components/DocumentsDisplay/DocumentsDisplay'
+import { useDocumentList } from '@island.is/portals/my-pages/documents'
 const Pregnancy = () => {
   const { formatMessage } = useLocale()
   const [showAppointments, setShowAppointments] = useState(false)
+  const { filteredDocuments, loading } = useDocumentList()
 
   const featureFlagClient = useFeatureFlagClient()
   useEffect(() => {
@@ -72,7 +74,7 @@ const Pregnancy = () => {
         </Button>,
       ]}
     >
-      {/* My appointments - fetch only pregnancy related time appointments */}
+      {/* My appointments - TODO: fetch only pregnancy related time appointments */}
       {showAppointments && (
         <Appointments
           data={{
@@ -83,15 +85,21 @@ const Pregnancy = () => {
           showLinkButton
         />
       )}
-      {/* Display documents for pregnancy -> Fix and display only pregnancy related data */}
+      {/* Display documents for pregnancy - TODO: Fix and display only pregnancy related data */}
       <Text variant="eyebrow" color="purple400" marginBottom={2}>
         {formatMessage(m.myInfo)}
       </Text>
-      <DocumentDisplay />
+      <DocumentDisplay
+        title={formatMessage(messages.communications)}
+        icon="chatbubble"
+        link={HealthPaths.HealthPregnancyCommunications}
+        documents={filteredDocuments}
+        loading={loading}
+      />
       {/* Default shortcuts cards */}
       <InfoCardGrid
-        empty={undefined}
-        error={undefined}
+        empty={undefined} // TODO
+        error={undefined} // TODO
         cards={[
           {
             id: 'pregnancy-questionnaire-card',

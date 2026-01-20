@@ -1,34 +1,23 @@
-import {
-  Box,
-  Button,
-  Icon,
-  SkeletonLoader,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, Button, Icon, IconProps, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import {
-  FALLBACK_ORG_LOGO_URL,
-  LinkResolver,
-  m,
-  ORG_LOGO_PARAMS,
-} from '@island.is/portals/my-pages/core'
-import {
-  DocumentLine,
-  DocumentsPaths,
-  useDocumentList,
-} from '@island.is/portals/my-pages/documents'
+import { LinkResolver, m } from '@island.is/portals/my-pages/core'
+import { DocumentsPaths } from '@island.is/portals/my-pages/documents'
 import cn from 'classnames'
 import { FC } from 'react'
 import * as styles from './DocumentsDisplay.css'
 
-import DocumentsEmpty from '../DocumentsEmpty/DocumentsEmpty'
-import { HealthPaths } from '../../../../lib/paths'
+import { DocumentV2 } from '@island.is/api/schema'
 import { messages } from '../../../../lib/messages'
+import { DocumentsList } from '../DocumentsList/DocumentsList'
 
-const DocumentsDisplay: FC = () => {
+const DocumentsDisplay: FC<{
+  title?: string
+  icon?: IconProps['icon']
+  link?: string
+  documents?: DocumentV2[]
+  loading?: boolean
+}> = ({ title, icon, link, documents, loading }) => {
   const { formatMessage } = useLocale()
-
-  const { filteredDocuments, loading } = useDocumentList()
 
   return (
     <Box
@@ -55,46 +44,19 @@ const DocumentsDisplay: FC = () => {
             alignItems="center"
             className={cn([styles.mailIcon, styles.svgOutline])}
           >
-            <Icon icon="mail" type="outline" color="blue400" />
+            <Icon icon={icon ?? 'mail'} type="outline" color="blue400" />
           </Box>
           <Text as="h2" variant="h4" color="blue400" truncate>
-            {formatMessage(m.documents)}
+            {title ?? formatMessage(m.documents)}
           </Text>
 
           <Box borderRadius="full" />
         </Box>
       </LinkResolver>
-      {loading ? (
-        <Box marginTop={4}>
-          <SkeletonLoader
-            space={2}
-            repeat={6}
-            display="block"
-            width="full"
-            height={65}
-          />
-        </Box>
-      ) : filteredDocuments.length > 0 ? (
-        filteredDocuments.slice(0, 4).map((doc, i) => (
-          <Box key={doc.id}>
-            <DocumentLine
-              img={
-                doc?.sender?.logoUrl
-                  ? doc.sender.logoUrl.concat(ORG_LOGO_PARAMS)
-                  : FALLBACK_ORG_LOGO_URL
-              }
-              documentLine={doc}
-              active={false}
-              asFrame
-              includeTopBorder={i === 0}
-            />
-          </Box>
-        ))
-      ) : (
-        <DocumentsEmpty hasDelegationAccess={false} /> // check delegation access if needed
-      )}
+      <DocumentsList documents={documents} loading={loading} />
+
       <Box textAlign="center" marginBottom={1} printHidden marginY={3}>
-        <LinkResolver href={HealthPaths.HealthPregnancyCommunications}>
+        <LinkResolver href={link ?? DocumentsPaths.ElectronicDocumentsRoot}>
           <Button
             icon="arrowForward"
             iconType="filled"
