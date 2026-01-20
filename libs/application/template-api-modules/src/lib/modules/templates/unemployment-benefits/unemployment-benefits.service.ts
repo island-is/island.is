@@ -69,12 +69,6 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
     super(ApplicationTypes.UNEMPLOYMENT_BENEFITS)
   }
 
-  getStartingLocale({
-    currentUserLocale,
-  }: TemplateApiModuleActionProps): Locale {
-    return currentUserLocale
-  }
-
   async getEmptyApplication({
     auth,
     currentUserLocale,
