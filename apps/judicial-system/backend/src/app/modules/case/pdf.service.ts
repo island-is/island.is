@@ -1,3 +1,5 @@
+import { Transaction } from 'sequelize'
+
 import {
   forwardRef,
   Inject,
@@ -163,6 +165,7 @@ export class PdfService {
   async getCourtRecordPdfForIndictmentCase(
     theCase: Case,
     user: TUser,
+    transaction: Transaction,
   ): Promise<Buffer> {
     let confirmation: Confirmation | undefined = undefined
 
@@ -209,9 +212,11 @@ export class PdfService {
 
       // No need to wait for this to finish
       this.caseRepositoryService
-        .update(theCase.id, {
-          courtRecordHash: JSON.stringify({ hash, hashAlgorithm }),
-        })
+        .update(
+          theCase.id,
+          { courtRecordHash: JSON.stringify({ hash, hashAlgorithm }) },
+          { transaction },
+        )
         .then(() =>
           this.tryUploadPdfToS3(
             theCase,
@@ -273,7 +278,10 @@ export class PdfService {
       })
   }
 
-  async getIndictmentPdf(theCase: Case): Promise<Buffer> {
+  async getIndictmentPdf(
+    theCase: Case,
+    transaction: Transaction,
+  ): Promise<Buffer> {
     let confirmation: Confirmation | undefined = undefined
     const key = `${theCase.splitCaseId ?? theCase.id}/indictment.pdf`
 
@@ -318,9 +326,11 @@ export class PdfService {
 
       // No need to wait for this to finish
       this.caseRepositoryService
-        .update(theCase.id, {
-          indictmentHash: JSON.stringify({ hash, hashAlgorithm }),
-        })
+        .update(
+          theCase.id,
+          { indictmentHash: JSON.stringify({ hash, hashAlgorithm }) },
+          { transaction },
+        )
         .then(() => this.tryUploadPdfToS3(theCase, key, generatedPdf))
     }
 
@@ -355,6 +365,7 @@ export class PdfService {
   async getSubpoenaPdf(
     theCase: Case,
     defendant: Defendant,
+    transaction: Transaction,
     subpoena?: Subpoena,
     arraignmentDate?: Date,
     location?: string,
@@ -406,6 +417,7 @@ export class PdfService {
           subpoena.id,
           subpoenaHash.hash,
           subpoenaHash.hashAlgorithm,
+          transaction,
         )
         .then(() => this.tryUploadPdfToS3(theCase, key, generatedPdf))
     }

@@ -42,8 +42,8 @@ describe('DefendantController - Update', () => {
   } as Defendant
 
   let mockMessageService: MessageService
-  let transaction: Transaction
   let mockDefendantRepositoryService: DefendantRepositoryService
+  let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
@@ -106,7 +106,7 @@ describe('DefendantController - Update', () => {
         caseId,
         defendantId,
         defendantUpdate,
-        { transaction: undefined },
+        { transaction },
       )
       expect(then.result).toBe(updatedDefendant)
       expect(mockMessageService.sendMessagesToQueue).not.toHaveBeenCalled()
