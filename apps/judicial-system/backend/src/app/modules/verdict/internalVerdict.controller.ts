@@ -194,6 +194,7 @@ export class InternalVerdictController {
       updatedVerdict.serviceStatus &&
       updatedVerdict.serviceStatus !== verdict.serviceStatus
     ) {
+      // TODO: check if "suspension" is checked
       if (isSuccessfulVerdictServiceStatus(updatedVerdict.serviceStatus)) {
         this.messageService.sendMessagesToQueue([
           {
