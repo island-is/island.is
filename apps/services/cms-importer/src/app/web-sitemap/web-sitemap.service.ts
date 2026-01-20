@@ -12,7 +12,7 @@ export class WebSitemapService {
     private readonly s3Service: S3Service,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
-  ) { }
+  ) {}
 
   public async run() {
     this.logger.info('Web sitemap worker starting...')
