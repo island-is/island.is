@@ -7,9 +7,13 @@ import uncheckedIcon from '../../assets/icons/checkbox-unchecked.png'
 import { dynamicColor } from '../../utils'
 import { Typography } from '../typography/typography'
 
-const Host = styled.Pressable<{ borderBottom?: boolean, isFullWidth?: boolean }>`
-  flex-direction: ${({ isFullWidth }) => isFullWidth ? 'row': 'row-reverse'};
-  justify-content: ${({ isFullWidth }) => isFullWidth ? 'space-between' : 'flex-end'};
+const Host = styled.Pressable<{
+  borderBottom?: boolean
+  isFullWidth?: boolean
+}>`
+  flex-direction: ${({ isFullWidth }) => (isFullWidth ? 'row' : 'row-reverse')};
+  justify-content: ${({ isFullWidth }) =>
+    isFullWidth ? 'space-between' : 'flex-end'};
   gap: ${({ theme }) => theme.spacing[1]}px;
   align-items: center;
   padding-vertical: ${({ theme }) => theme.spacing[2]}px;

@@ -165,7 +165,9 @@ export const MedicineDelegationFormScreen: NavigationFunctionComponent = ({
       return
     }
 
-    getIdentity({ variables: { input: { nationalId: value.replace('-', '') } } })
+    getIdentity({
+      variables: { input: { nationalId: value.replace('-', '') } },
+    })
   }
 
   const isValid =

@@ -112,13 +112,13 @@ export function InboxFilterScreen({
       topBar: {
         rightButtons: isSelected
           ? [
-            {
-              id: ButtonRegistry.InboxFilterClearButton,
-              text: intl.formatMessage({
-                id: 'inbox.filterClearButton',
-              }),
-            },
-          ]
+              {
+                id: ButtonRegistry.InboxFilterClearButton,
+                text: intl.formatMessage({
+                  id: 'inbox.filterClearButton',
+                }),
+              },
+            ]
           : [],
       },
     })
