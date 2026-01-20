@@ -16,7 +16,6 @@ import { Defendant } from '../../defendant'
 import { Case } from '../models/case.model'
 import {
   getAppealInfo,
-  getIndictmentDefendantsInfo,
   getIndictmentInfo,
   transformCase,
 } from './case.transformer'
@@ -685,8 +684,18 @@ describe('getIndictmentInfo', () => {
     const rulingDate = '2022-06-14T19:50:08.033Z'
 
     const defendants = [
-      { verdict: { serviceDate: '2022-06-15T19:50:08.033Z' } },
-      { verdict: { serviceDate: undefined } },
+      {
+        verdict: {
+          serviceDate: '2022-06-15T19:50:08.033Z',
+          serviceRequirement: ServiceRequirement.REQUIRED,
+        },
+      },
+      {
+        verdict: {
+          serviceDate: undefined,
+          serviceRequirement: ServiceRequirement.REQUIRED,
+        },
+      },
     ] as Defendant[]
 
     const indictmentInfo = getIndictmentInfo({
@@ -776,41 +785,5 @@ describe('getIndictmentInfo', () => {
       indictmentVerdictViewedByAll: true,
       indictmentVerdictAppealDeadlineExpired: true,
     })
-  })
-})
-
-describe('getIndictmentDefendantsInfo', () => {
-  it('should add verdict appeal deadline and expiry for defendants with verdict view date', () => {
-    const defendants = [
-      {
-        verdict: {
-          serviceDate: '2022-06-15T19:50:08.033Z',
-          serviceRequirement: ServiceRequirement.REQUIRED,
-        },
-      },
-      { verdict: { serviceDate: undefined } },
-    ] as Defendant[]
-
-    const theCase = {
-      defendants,
-    } as Case
-
-    const defendantsInfo = getIndictmentDefendantsInfo(theCase)
-
-    expect(defendantsInfo).toEqual([
-      {
-        verdict: {
-          serviceDate: '2022-06-15T19:50:08.033Z',
-          serviceRequirement: ServiceRequirement.REQUIRED,
-        },
-        verdictAppealDeadline: '2022-07-13T23:59:59.999Z',
-        isVerdictAppealDeadlineExpired: true,
-      },
-      {
-        verdict: { serviceDate: undefined },
-        verdictAppealDeadline: undefined,
-        isVerdictAppealDeadlineExpired: false,
-      },
-    ])
   })
 })

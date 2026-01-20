@@ -35,9 +35,24 @@ export const application = defineMessages({
     description:
       'Description of application state/status when application is done',
   },
-  historyLogApprovedByReviewer: {
-    id: 'ta.ccov.application:historyLogApprovedByReviewer',
-    defaultMessage: 'Samþykkt af öllum aðilum',
-    description: 'History log approved by reviewer',
+  historyLogApprovedByOldCoOwner: {
+    id: 'ta.ccov.application:historyLogApprovedByOldCoOwner',
+    defaultMessage: 'Samþykkt af fyrrverandi meðeiganda',
+    description: 'History log when application is approved by old co-owner',
+  },
+  historyLogApprovedByNewCoOwner: {
+    id: 'ta.ccov.application:historyLogApprovedByNewCoOwner',
+    defaultMessage: 'Samþykkt af nýjum meðeiganda',
+    description: 'History log when application is approved by new co-owner',
+  },
+  historyLogRejectedByOldCoOwner: {
+    id: 'ta.ccov.application:historyLogRejectedByOldCoOwner',
+    defaultMessage: 'Hafnað af fyrrverandi meðeiganda',
+    description: 'History log when application is rejected by old co-owner',
+  },
+  historyLogRejectedByNewCoOwner: {
+    id: 'ta.ccov.application:historyLogRejectedByNewCoOwner',
+    defaultMessage: 'Hafnað af nýjum meðeiganda',
+    description: 'History log when application is rejected by new co-owner',
   },
 })

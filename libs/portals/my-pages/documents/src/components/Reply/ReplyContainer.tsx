@@ -17,6 +17,7 @@ import { messages } from '../../utils/messages'
 import ReplyForm from './ReplyForm'
 import ReplyHeader from './ReplyHeader'
 import ReplySent from './ReplySent'
+import { DocumentComment } from '@island.is/api/schema'
 
 const ReplyContainer = () => {
   const { formatMessage } = useLocale()
@@ -25,7 +26,7 @@ const ReplyContainer = () => {
 
   const [sent, setSent] = useState<boolean>(false)
   const [showAllReplies, setShowAllReplies] = useState(true)
-
+  const [isFirstTimeReply, setIsFirstTimeReply] = useState(false)
   const { data, loading, refetch } = useGetDocumentTicketQuery({
     skip: !activeDocument?.id,
     variables: {
@@ -42,12 +43,27 @@ const ReplyContainer = () => {
 
   const { data: userProfile } = useUserProfile()
 
-  const allRepliesData = data?.documentV2?.ticket?.comments ?? []
+  const allRepliesData: DocumentComment[] =
+    data?.documentV2?.ticket?.comments ?? []
   const userEmail = userProfile?.email ?? profile?.email
   const hasEmail = isDefined(userEmail)
   const userName = profile?.name ?? ''
   const replies = replyState?.replies
   const repliesLength = replies?.comments?.length ?? 0
+
+  // Check if user has EVER made any replies in this document thread (historical check)
+  // This looks at all comments in the thread to determine if user has replied before
+  const userHistoricalReplies = allRepliesData.filter(
+    (comment) => !comment.isZendeskAgent,
+  )
+
+  useEffect(() => {
+    if (userHistoricalReplies.length === 0) {
+      setIsFirstTimeReply(true)
+    } else if (userHistoricalReplies.length > 0) {
+      setIsFirstTimeReply(false)
+    }
+  }, [userHistoricalReplies])
 
   const { isMobile } = useIsMobile()
 
@@ -56,12 +72,6 @@ const ReplyContainer = () => {
       setShowAllReplies(false)
     }
   }, [repliesLength, isMobile])
-
-  const successfulSubmit = useCallback(() => {
-    refetch?.()
-    setSent(true)
-    changeReplyState({ replyOpen: false })
-  }, [refetch])
 
   const changeReplyState = useCallback(
     (partial: Partial<ReplyState>) => {
@@ -94,6 +104,13 @@ const ReplyContainer = () => {
     },
     [setReplyState],
   )
+
+  const successfulSubmit = useCallback(() => {
+    setIsFirstTimeReply(false)
+    refetch?.()
+    setSent(true)
+    changeReplyState({ replyOpen: false })
+  }, [refetch, changeReplyState])
 
   const toggleShowAllReplies = useCallback(() => {
     setShowAllReplies((prev) => !prev)
@@ -247,10 +264,14 @@ const ReplyContainer = () => {
           />
           <ReplySent
             body={replyState.sentReply.body ?? ''}
-            intro={formatMessage(messages.replySent, {
-              email: replyState.sentReply.email ?? userEmail ?? '',
-              caseNumber: replyState.sentReply.id ?? '',
-            })}
+            intro={
+              isFirstTimeReply
+                ? formatMessage(messages.replySent, {
+                    email: replyState.sentReply.email ?? userEmail ?? '',
+                    caseNumber: replyState.sentReply.id ?? '',
+                  })
+                : undefined
+            }
           />
         </>
       )}

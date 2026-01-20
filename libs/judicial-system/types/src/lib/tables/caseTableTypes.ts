@@ -38,6 +38,7 @@ export enum CaseTableType {
   PROSECUTION_INDICTMENTS_WAITING_FOR_CONFIRMATION = 'PROSECUTION_INDICTMENTS_WAITING_FOR_CONFIRMATION',
   PROSECUTION_INDICTMENTS_IN_PROGRESS = 'PROSECUTION_INDICTMENTS_IN_PROGRESS',
   PROSECUTION_INDICTMENTS_COMPLETED = 'PROSECUTION_INDICTMENTS_COMPLETED',
+  STATISTICS = 'STATISTICS',
 }
 
 interface CaseTableDescriptor {
@@ -45,6 +46,7 @@ interface CaseTableDescriptor {
   route: string
   title: string
   description: string
+  includeCounter?: boolean
 }
 
 export interface CaseTableGroup {

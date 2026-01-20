@@ -6,14 +6,14 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
-import { Logo } from '../assets/Logo'
+import { AoshLogo } from '@island.is/application/assets/institution-logos'
 import { applicationStatus } from '../lib/messages'
 import { TrainingLicenseOnAWorkMachineAnswers } from '../lib/dataSchema'
 
 export const ApplicantReview: Form = buildForm({
   id: 'ApplicantReview',
   title: '',
-  logo: Logo,
+  logo: AoshLogo,
   mode: FormModes.IN_PROGRESS,
   children: [
     buildSection({

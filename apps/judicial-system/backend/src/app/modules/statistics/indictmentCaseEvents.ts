@@ -11,6 +11,7 @@ import {
   CaseIndictmentRulingDecision,
   CaseOrigin,
   CaseType,
+  courtSubtypes,
   DefendantEventType,
   EventType,
   InstitutionType,
@@ -18,7 +19,6 @@ import {
   VerdictServiceStatus,
 } from '@island.is/judicial-system/types'
 
-import { courtSubtypes } from '../court'
 import { Case, DefendantEventLog, EventLog, Institution } from '../repository'
 import {
   IndictmentCaseEventType,
@@ -56,6 +56,14 @@ const getCaseTypeTranslation = (caseType: CaseType) => {
   return Array.isArray(subtypes) ? subtypes[0] : subtypes
 }
 
+const rulingFields = (c: Case) => {
+  return {
+    rulingDecision: c.indictmentRulingDecision ?? '',
+    rulingDecisionDescriptor: c.indictmentRulingDecision
+      ? getRulingDecisionDescriptor(c.indictmentRulingDecision)
+      : '',
+  }
+}
 const commonFields = (c: Case) => {
   return {
     caseType: c.type,
@@ -99,6 +107,9 @@ const getVerdictServiceStatusDescriptor = (
     }
     case VerdictServiceStatus.DEFENDER: {
       return 'Birt fyrir verjanda'
+    }
+    case VerdictServiceStatus.LEGAL_PAPER: {
+      return 'Birt í Lögbirtingablaðinu'
     }
 
     default: {
@@ -173,6 +184,37 @@ const caseSentToCourt = (c: Case): IndictmentCaseEvent | undefined => {
     institution: c.prosecutorsOffice?.name,
     ...commonFields(c),
   }
+}
+
+// used to aggregate case subtypes without creating complicated post-processing
+// where we assume the the case subtypes are confirmed when a case is sent to court
+const caseSubtypesConfirmed = (c: Case): IndictmentCaseEvent[] | undefined => {
+  const date = EventLog.getEventLogDateByEventType(
+    EventType.INDICTMENT_CONFIRMED,
+    c.eventLogs,
+  )?.toISOString()
+  if (!date) {
+    return undefined
+  }
+
+  const caseIndictmentSubtypes = c.indictmentSubtypes
+  const subtypes =
+    caseIndictmentSubtypes && Array.isArray(c.policeCaseNumbers)
+      ? c.policeCaseNumbers.flatMap(
+          (number) => caseIndictmentSubtypes[number] ?? [],
+        )
+      : []
+
+  return subtypes.map((subtype) => ({
+    id: c.id,
+    event: 'CASE_SUBTYPES_CONFIRMED',
+    eventDescriptor: 'Sakarefni staðfest',
+    date,
+    institution: c.prosecutorsOffice?.name,
+    caseSubtype: subtype,
+    subtypeDescriptor: capitalize(indictmentSubtypes[subtype]),
+    ...commonFields(c),
+  }))
 }
 
 const caseReceivedByCourt = (c: Case): IndictmentCaseEvent | undefined => {
@@ -311,8 +353,7 @@ const caseRulingDecisionConfirmed = (
     date: date.toISOString(),
     institution: c.court?.name,
     ...commonFields(c),
-    rulingDecision: ruling,
-    rulingDecisionDescriptor: getRulingDecisionDescriptor(ruling),
+    ...rulingFields(c),
   }
 }
 
@@ -332,7 +373,36 @@ const caseCompletedAtCourt = (c: Case): IndictmentCaseEvent | undefined => {
     date,
     institution: c.court?.name,
     ...commonFields(c),
+    ...rulingFields(c),
   }
+}
+
+const verdictDeliveredToNationalCommissionersOffice = (
+  c: Case,
+): IndictmentCaseEvent[] | undefined => {
+  return pipe(
+    c.defendants ?? [],
+    filterMap((defendant) => {
+      const verdictDeliveryDate = DefendantEventLog.getEventLogDateByEventType(
+        DefendantEventType.VERDICT_DELIVERED_TO_NATIONAL_COMMISSIONERS_OFFICE,
+        defendant.eventLogs,
+      )
+      if (!verdictDeliveryDate) {
+        return option.none
+      }
+
+      return option.some({
+        id: c.id,
+        defendantId: defendant.id,
+        date: verdictDeliveryDate.toISOString(),
+        event: 'VERDICT_DELIVERED',
+        eventDescriptor: 'Dómur sendur í birtingu',
+        institution: c.court?.name,
+        ...commonFields(c),
+        ...rulingFields(c),
+      })
+    }),
+  )
 }
 
 const verdictServedToDefendant = (
@@ -341,7 +411,8 @@ const verdictServedToDefendant = (
   return pipe(
     c.defendants ?? [],
     filterMap((defendant) => {
-      const verdict = defendant.verdict
+      // Only the latest verdict is relevant
+      const verdict = defendant.verdicts?.[0]
       if (!verdict || !verdict.serviceDate || !verdict.serviceStatus) {
         return option.none
       }
@@ -358,6 +429,7 @@ const verdictServedToDefendant = (
         eventDescriptor: 'Dómur birtur dómfellda',
         institution: c.court?.name,
         ...commonFields(c),
+        ...rulingFields(c),
       })
     }),
   )
@@ -381,6 +453,7 @@ const caseSentToPublicProsecutorOffice = (
     date,
     institution: c.court?.name,
     ...commonFields(c),
+    ...rulingFields(c),
   }
 }
 
@@ -408,6 +481,7 @@ const caseReviewedByPublicProsecutorOffice = (
     date,
     institution: publicProsecutorOffice.name,
     ...commonFields(c),
+    ...rulingFields(c),
   }
 }
 
@@ -440,6 +514,7 @@ const caseSentToPrisonAdmin = (
         eventDescriptor: 'Mál sent til fullnustu',
         institution: publicProsecutorOffice.name,
         ...commonFields(c),
+        ...rulingFields(c),
       })
     }),
   )
@@ -473,40 +548,10 @@ const caseReceivedByPrisonAdmin = (
         eventDescriptor: 'Mál móttekið af fangelsisyfirvöldum',
         institution: prisonAdmin?.name,
         ...commonFields(c),
+        ...rulingFields(c),
       })
     }),
   )
-}
-
-// used to aggregate case subtypes without creating complicated post-processing
-// where we assume the the case subtypes are confirmed when a case is sent to court
-const caseSubtypesConfirmed = (c: Case): IndictmentCaseEvent[] | undefined => {
-  const date = EventLog.getEventLogDateByEventType(
-    EventType.INDICTMENT_CONFIRMED,
-    c.eventLogs,
-  )?.toISOString()
-  if (!date) {
-    return undefined
-  }
-
-  const caseIndictmentSubtypes = c.indictmentSubtypes
-  const subtypes =
-    caseIndictmentSubtypes && Array.isArray(c.policeCaseNumbers)
-      ? c.policeCaseNumbers.flatMap(
-          (number) => caseIndictmentSubtypes[number] ?? [],
-        )
-      : []
-
-  return subtypes.map((subtype) => ({
-    id: c.id,
-    event: 'CASE_SUBTYPES_CONFIRMED',
-    eventDescriptor: 'Sakarefni staðfest',
-    date,
-    institution: c.prosecutorsOffice?.name,
-    caseSubtype: subtype,
-    subtypeDescriptor: capitalize(indictmentSubtypes[subtype]),
-    ...commonFields(c),
-  }))
 }
 
 export const indictmentCaseEventFunctions = [
@@ -518,6 +563,7 @@ export const indictmentCaseEventFunctions = [
   courtDatesScheduled,
   subpoenaServedToDefendant,
   caseRulingDecisionConfirmed,
+  verdictDeliveredToNationalCommissionersOffice,
   verdictServedToDefendant,
   caseCompletedAtCourt,
   caseSentToPublicProsecutorOffice,

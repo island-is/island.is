@@ -1,10 +1,11 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { LanguageType } from '../../../../dataTypes/languageType.model'
-import { ScreenDto } from '../../../screens/models/dto/screen.dto'
-import { FieldDto } from '../../../fields/models/dto/field.dto'
-import { SectionDto } from '../../../sections/models/dto/section.dto'
+import { CompletedSectionInfo } from '../../../../dataTypes/completedSectionInfo.model'
 import { Dependency } from '../../../../dataTypes/dependency.model'
+import { LanguageType } from '../../../../dataTypes/languageType.model'
+import { FieldDto } from '../../../fields/models/dto/field.dto'
 import { FormCertificationTypeDto } from '../../../formCertificationTypes/models/dto/formCertificationType.dto'
+import { ScreenDto } from '../../../screens/models/dto/screen.dto'
+import { SectionDto } from '../../../sections/models/dto/section.dto'
 
 export class FormDto {
   @ApiProperty()
@@ -41,6 +42,12 @@ export class FormDto {
   modified!: Date
 
   @ApiProperty()
+  submissionServiceUrl!: string
+
+  @ApiProperty()
+  validationServiceUrl!: string
+
+  @ApiProperty()
   hasPayment!: boolean
 
   @ApiProperty()
@@ -50,7 +57,7 @@ export class FormDto {
   isTranslated!: boolean
 
   @ApiProperty()
-  applicationDaysToRemove!: number
+  daysUntilApplicationPrune!: number
 
   @ApiProperty()
   derivedFrom!: string
@@ -64,20 +71,14 @@ export class FormDto {
   @ApiProperty()
   hasSummaryScreen!: boolean
 
-  @ApiPropertyOptional()
-  isZendeskEnabled?: boolean
-
-  @ApiPropertyOptional({ type: LanguageType })
-  completedMessage?: LanguageType
+  @ApiProperty({ type: CompletedSectionInfo })
+  completedSectionInfo!: CompletedSectionInfo
 
   @ApiPropertyOptional({ type: [Dependency] })
   dependencies?: Dependency[]
 
   @ApiPropertyOptional({ type: [FormCertificationTypeDto] })
   certificationTypes?: FormCertificationTypeDto[]
-
-  @ApiPropertyOptional({ type: [String] })
-  urls?: string[]
 
   @ApiPropertyOptional({ type: [SectionDto] })
   sections?: SectionDto[]

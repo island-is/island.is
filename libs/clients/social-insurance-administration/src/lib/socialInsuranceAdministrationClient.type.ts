@@ -1,6 +1,6 @@
 import {
-  ApplicantApi,
   ApplicationApi,
+  ApplicantApi,
   DocumentsApi,
   GeneralApi,
   IncomePlanApi,
@@ -10,7 +10,7 @@ import {
   TestApi,
   MedicalDocumentsApi,
   QuestionnairesApi,
-} from '../../gen/fetch'
+} from '../../gen/fetch/v1'
 
 export type Scope =
   | '@tr.is/umsaekjandi:read'
@@ -23,6 +23,7 @@ export type Scope =
   | '@tr.is/fylgiskjol:write'
   | '@tr.is/danarbaetur:read'
   | '@tr.is/sjukraogendurhaefingargreidslur:read'
+  | '@tr.is/ororkulifeyrir:read'
 
 export type Api =
   | typeof ApplicationApi
@@ -39,6 +40,8 @@ export type Api =
   | typeof QuestionnairesApi
 
 export class ApplicationWriteApi extends ApplicationApi {}
+export class MedicalDocumentApiForDisabilityPension extends MedicalDocumentsApi {}
+export class QuestionnairesApiForDisabilityPension extends QuestionnairesApi {}
 
 export interface Period {
   year: number
@@ -199,3 +202,7 @@ export interface PreQuestionnaire {
   previousRehabilitationSuccessful?: boolean
   additionalRehabilitationInformation?: string
 }
+
+const APPLICATION_TYPES = ['ORORKA'] as const
+
+export type ApplicationType = typeof APPLICATION_TYPES[number]

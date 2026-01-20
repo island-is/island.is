@@ -443,6 +443,63 @@
         ]
       }
     },
+    "/api/Okukennaraleyfi/{audkenni}": {
+      "get": {
+        "tags": ["Syslumenn"],
+        "operationId": "Okukennaraleyfi_Get",
+        "parameters": [
+          {
+            "name": "audkenni",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Okukennarar"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTToken": []
+          }
+        ]
+      }
+    },
     "/api/Okutaeki/{fastanumer}/{audkenni}": {
       "get": {
         "tags": ["Syslumenn"],
@@ -4526,6 +4583,24 @@
             "nullable": true
           },
           "starfsstodID": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "Okukennarar": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "nafn": {
+            "type": "string",
+            "nullable": true
+          },
+          "postnumer": {
+            "type": "string",
+            "nullable": true
+          },
+          "sveitafelag": {
             "type": "string",
             "nullable": true
           }

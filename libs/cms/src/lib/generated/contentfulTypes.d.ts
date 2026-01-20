@@ -493,11 +493,14 @@ export interface IBloodDonationRestrictionFields {
   /** Lykilorð */
   keywords?: string | undefined
 
-  /** Nánar um áhrif á blóðgjöf */
+  /** Undantekningar og athugasemdir */
   detailedText?: Document | undefined
 
   /** Flokkur */
   filterTags?: IGenericTag[] | undefined
+
+  /** Gildir frá */
+  effectiveDate?: string | undefined
 }
 
 export interface IBloodDonationRestriction
@@ -786,6 +789,120 @@ export interface IContactUs extends Entry<IContactUsFields> {
     contentType: {
       sys: {
         id: 'contactUs'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface ICourseFields {
+  /** Organization */
+  organization: IOrganization
+
+  /** Title */
+  title: string
+
+  /** Card Intro */
+  cardIntro?: Document | undefined
+
+  /** Description */
+  description?: Document | undefined
+
+  /** Categories */
+  categories?: IGenericTag[] | undefined
+
+  /** Instances */
+  instances?: ICourseInstance[] | undefined
+
+  /** Course List Page */
+  courseListPage?: ICourseListPage | undefined
+}
+
+export interface ICourse extends Entry<ICourseFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'course'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface ICourseInstanceFields {
+  /** Internal Title */
+  internalTitle?: string | undefined
+
+  /** Displayed Title */
+  displayedTitle?: string | undefined
+
+  /** Description */
+  description?: string | undefined
+
+  /** Start Date */
+  startDate: string
+
+  /** Start Date Time Duration */
+  startDateTimeDuration?: Record<string, any> | undefined
+
+  /** Location */
+  location?: string | undefined
+
+  /** Price */
+  price?: IPrice | undefined
+
+  /** Max Registrations */
+  maxRegistrations?: number | undefined
+}
+
+export interface ICourseInstance extends Entry<ICourseInstanceFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'courseInstance'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface ICourseListPageFields {
+  /** Organization */
+  organization: IOrganization
+
+  /** Internal Title */
+  internalTitle?: string | undefined
+
+  /** Title */
+  title?: string | undefined
+
+  /** Content */
+  content?: Document | undefined
+}
+
+export interface ICourseListPage extends Entry<ICourseListPageFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'courseListPage'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -1296,6 +1413,50 @@ export interface IFeaturedEvents extends Entry<IFeaturedEventsFields> {
   }
 }
 
+export interface IFeaturedGenericListItemsFields {
+  /** Internal Title */
+  internalTitle?: string | undefined
+
+  /** Items */
+  items?: IGenericListItem[] | undefined
+
+  /** Organization Page */
+  organizationPage: IOrganizationPage
+
+  /** Organization Subpage */
+  organizationSubpage: IOrganizationSubpage
+
+  /** See more link text */
+  seeMoreLinkText?: string | undefined
+
+  /** Automatically fetch items */
+  automaticallyFetchItems?: boolean | undefined
+
+  /** Generic List */
+  genericList?: IGenericList | undefined
+
+  /** Filter Tags */
+  filterTags?: IGenericTag[] | undefined
+}
+
+export interface IFeaturedGenericListItems
+  extends Entry<IFeaturedGenericListItemsFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'featuredGenericListItems'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IFeaturedLinksFields {
   /** Internal Title */
   internalTitle?: string | undefined
@@ -1476,6 +1637,7 @@ export interface IFormFieldFields {
     | 'file'
     | 'nationalId (kennitala)'
     | 'information'
+    | 'numeric'
 
   /** Required */
   required?: boolean | undefined
@@ -1680,6 +1842,9 @@ export interface IGenericListFields {
 
   /** Show Search Input */
   showSearchInput?: boolean | undefined
+
+  /** Text Search Order */
+  textSearchOrder?: 'Default' | 'Score' | undefined
 }
 
 /** A list of items which can be embedded into rich text */
@@ -4272,6 +4437,19 @@ export interface ISliceConnectedComponentFields {
     | 'Starfsrettindi/ProfessionRights'
     | 'VMST/ParentalLeaveCalculator'
     | 'DigitalIceland/BenefitsOfDigitalProcesses'
+    | 'WHODAS/Calculator'
+    | 'Brennuleyfi/BurningPermitList'
+    | 'DigitalIcelandMailingListThumbnailCard'
+    | 'DigitalIcelandStatistics'
+    | 'Trufelog/Lifsskodunarfelog'
+    | 'Landspitali/MemorialCard'
+    | 'Landspitali/DirectGrants'
+    | 'Police/FineAndSpeedMeasurementCalculator'
+    | 'Personuvernd/SearchInput'
+    | 'Syslumenn/DrivingInstructorList'
+    | 'FSRE/EmployeeList'
+    | 'NewKilometerFee'
+    | 'LatestVerdicts'
     | undefined
 
   /** Localized JSON */
@@ -5312,6 +5490,34 @@ export interface IVacancy extends Entry<IVacancyFields> {
   }
 }
 
+export interface IWebChatFields {
+  /** Internal Title */
+  internalTitle: string
+
+  /** Display Locations */
+  displayLocations: (IOrganization | IArticle)[]
+
+  /** Web Chat Configuration */
+  webChatConfiguration?: Record<string, any> | undefined
+}
+
+export interface IWebChat extends Entry<IWebChatFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'webChat'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export type CONTENT_TYPE =
   | 'accordionSlice'
   | 'alertBanner'
@@ -5330,6 +5536,9 @@ export type CONTENT_TYPE =
   | 'chartComponent'
   | 'chartNumberBox'
   | 'contactUs'
+  | 'course'
+  | 'courseInstance'
+  | 'courseListPage'
   | 'customPage'
   | 'districts'
   | 'emailSignup'
@@ -5343,6 +5552,7 @@ export type CONTENT_TYPE =
   | 'featured'
   | 'featuredArticles'
   | 'featuredEvents'
+  | 'featuredGenericListItems'
   | 'featuredSupportQNAs'
   | 'footerItem'
   | 'form'

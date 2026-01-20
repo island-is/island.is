@@ -7,14 +7,24 @@ import {
   calculatePt,
   Confirmation,
   drawTextWithEllipsisPDFKit,
-  smallFontSize,
+  xsFontSize,
 } from './pdfHelpers'
 import { PDFKitCoatOfArms } from './PDFKitCoatOfArms'
 
 type ConfirmableCaseFileCategories =
   | CaseFileCategory.RULING
   | CaseFileCategory.COURT_RECORD
+  | CaseFileCategory.COURT_INDICTMENT_RULING_ORDER
 
+export const hasConfirmableCaseFileCategories = (
+  category: CaseFileCategory | undefined,
+): category is ConfirmableCaseFileCategories => {
+  return (
+    category === CaseFileCategory.RULING ||
+    category === CaseFileCategory.COURT_RECORD ||
+    category === CaseFileCategory.COURT_INDICTMENT_RULING_ORDER
+  )
+}
 // Colors
 const lightGray = rgb(0.9804, 0.9804, 0.9804)
 const darkGray = rgb(0.7961, 0.7961, 0.7961)
@@ -36,7 +46,7 @@ const createRulingConfirmation = async (
 
   const { height } = doc.getSize()
   const shadowHeight = calculatePt(70)
-  const institutionWidth = calculatePt(160)
+  const institutionWidth = calculatePt(297)
   const confirmedByWidth = institutionWidth + calculatePt(48)
   const shadowWidth = institutionWidth + confirmedByWidth + coatOfArmsWidth
   const titleHeight = calculatePt(24)
@@ -81,21 +91,21 @@ const createRulingConfirmation = async (
   doc.drawText('Réttarvörslugátt', {
     x: titleX,
     y: height - pageMargin - titleHeight + calculatePt(16),
-    size: calculatePt(smallFontSize),
+    size: calculatePt(xsFontSize),
     font: timesRomanBoldFont,
   })
 
   doc.drawText('Rafræn staðfesting', {
     x: 158,
     y: height - pageMargin - titleHeight + calculatePt(16),
-    size: calculatePt(smallFontSize),
+    size: calculatePt(xsFontSize),
     font: timesRomanFont,
   })
 
   doc.drawText(formatDate(confirmation.date) || '', {
     x: shadowWidth - calculatePt(24),
     y: height - pageMargin - titleHeight + calculatePt(16),
-    size: calculatePt(smallFontSize),
+    size: calculatePt(xsFontSize),
     font: timesRomanFont,
   })
 
@@ -113,7 +123,7 @@ const createRulingConfirmation = async (
   doc.drawText('Dómstóll', {
     x: titleX,
     y: height - pageMargin - titleHeight - calculatePt(10),
-    size: calculatePt(smallFontSize),
+    size: calculatePt(xsFontSize),
     font: timesRomanBoldFont,
   })
 
@@ -122,7 +132,7 @@ const createRulingConfirmation = async (
       x: titleX,
       y: height - pageMargin - titleHeight - calculatePt(22),
       font: timesRomanFont,
-      size: calculatePt(smallFontSize),
+      size: calculatePt(xsFontSize),
     })
   }
 
@@ -140,7 +150,7 @@ const createRulingConfirmation = async (
   doc.drawText('Samþykktaraðili', {
     x: titleX + institutionWidth,
     y: height - pageMargin - titleHeight - calculatePt(10),
-    size: calculatePt(smallFontSize),
+    size: calculatePt(xsFontSize),
     font: timesRomanBoldFont,
   })
 
@@ -149,14 +159,14 @@ const createRulingConfirmation = async (
       `${confirmation.actor}${
         confirmation.title ? `, ${lowercase(confirmation.title)}` : ''
       }`,
-      calculatePt(smallFontSize),
+      calculatePt(xsFontSize),
     )
     drawTextWithEllipsisPDFKit(
       doc,
       `${confirmation.actor}${
         confirmation.title ? `, ${lowercase(confirmation.title)}` : ''
       }`,
-      { type: timesRomanFont, size: calculatePt(smallFontSize) },
+      { type: timesRomanFont, size: calculatePt(xsFontSize) },
       titleX + institutionWidth,
       height - pageMargin - titleHeight - calculatePt(22),
       confirmedByWidth - 16,
@@ -218,21 +228,21 @@ const createCourtRecordConfirmation = async (
   doc.drawText('Réttarvörslugátt', {
     x: titleX,
     y: height - pageMargin - titleHeight + calculatePt(16),
-    size: calculatePt(smallFontSize),
+    size: calculatePt(xsFontSize),
     font: timesRomanBoldFont,
   })
 
   doc.drawText('Rafræn staðfesting', {
     x: 158,
     y: height - pageMargin - titleHeight + calculatePt(16),
-    size: calculatePt(smallFontSize),
+    size: calculatePt(xsFontSize),
     font: timesRomanFont,
   })
 
   doc.drawText(formatDate(confirmation.date) || '', {
     x: shadowWidth - calculatePt(24),
     y: height - pageMargin - titleHeight + calculatePt(16),
-    size: calculatePt(smallFontSize),
+    size: calculatePt(xsFontSize),
     font: timesRomanFont,
   })
 
@@ -250,7 +260,7 @@ const createCourtRecordConfirmation = async (
   doc.drawText('Dómstóll', {
     x: titleX,
     y: height - pageMargin - titleHeight - calculatePt(10),
-    size: calculatePt(smallFontSize),
+    size: calculatePt(xsFontSize),
     font: timesRomanBoldFont,
   })
 
@@ -259,7 +269,7 @@ const createCourtRecordConfirmation = async (
       x: titleX,
       y: height - pageMargin - titleHeight - calculatePt(22),
       font: timesRomanFont,
-      size: calculatePt(smallFontSize),
+      size: calculatePt(xsFontSize),
     })
   }
 }
@@ -269,7 +279,7 @@ export const createConfirmedPdf = async (
   pdf: Buffer,
   fileType: ConfirmableCaseFileCategories,
 ) => {
-  const pdfDoc = await PDFDocument.load(pdf)
+  const pdfDoc = await PDFDocument.load(new Uint8Array(pdf))
 
   switch (fileType) {
     case CaseFileCategory.RULING: {
@@ -278,6 +288,10 @@ export const createConfirmedPdf = async (
     }
     case CaseFileCategory.COURT_RECORD: {
       await createCourtRecordConfirmation(confirmation, pdfDoc)
+      break
+    }
+    case CaseFileCategory.COURT_INDICTMENT_RULING_ORDER: {
+      await createRulingConfirmation(confirmation, pdfDoc)
       break
     }
     default: {

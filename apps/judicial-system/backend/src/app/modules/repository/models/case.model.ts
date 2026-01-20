@@ -17,7 +17,6 @@ import type {
   CrimeSceneMap,
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
-import { HashAlgorithm } from '@island.is/judicial-system/types'
 import {
   CaseAppealDecision,
   CaseAppealRulingDecision,
@@ -29,7 +28,7 @@ import {
   CaseOrigin,
   CaseState,
   CaseType,
-  CourtDocument,
+  CourtDocument as TCourtDocument,
   CourtSessionType,
   IndictmentCaseReviewDecision,
   IndictmentDecision,
@@ -41,6 +40,7 @@ import {
 import { CaseFile } from './caseFile.model'
 import { CaseString } from './caseString.model'
 import { CivilClaimant } from './civilClaimant.model'
+import { CourtDocument } from './courtDocument.model'
 import { CourtSession } from './courtSession.model'
 import { DateLog } from './dateLog.model'
 import { Defendant } from './defendant.model'
@@ -452,7 +452,7 @@ export class Case extends Model {
    **********/
   @Column({ type: DataType.ARRAY(DataType.JSON), allowNull: true })
   @ApiPropertyOptional({ type: Object, isArray: true })
-  courtDocuments?: CourtDocument[]
+  courtDocuments?: TCourtDocument[]
 
   /**********
    * Bookings during court session
@@ -760,11 +760,25 @@ export class Case extends Model {
   indictmentCounts?: IndictmentCount[]
 
   /**********
+   * Indicates whether the indictment case should have court sessions
+   ***********/
+  @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: false })
+  @ApiPropertyOptional({ type: Boolean })
+  withCourtSessions!: boolean
+
+  /**********
    * The case's court sessions
    **********/
   @HasMany(() => CourtSession, 'caseId')
   @ApiPropertyOptional({ type: () => CourtSession, isArray: true })
   courtSessions?: CourtSession[]
+
+  /**********
+   * The case's unfiled court documents
+   **********/
+  @HasMany(() => CourtDocument, 'caseId')
+  @ApiPropertyOptional({ type: () => CourtDocument, isArray: true })
+  unfiledCourtDocuments?: CourtDocument[]
 
   /**********
    * Indicates whether the prosecutor requests a drivers license suspension
@@ -1039,22 +1053,20 @@ export class Case extends Model {
   indictmentDecision?: IndictmentDecision
 
   /**********
-   * The hash of the confirmed generated indictment
+   * The hash of the confirmed generated indictment in indictment cases
+   * and the hash algorithm used to create the hash
    **********/
   @Column({ type: DataType.STRING, allowNull: true })
   @ApiPropertyOptional({ type: String })
   indictmentHash?: string
 
   /**********
-   * The hash algorithm of the confirmed generated indictment
+   * The hash of the confirmed generated court record in indictment cases
+   * and the hash algorithm used to create the hash
    **********/
-  @Column({
-    type: DataType.ENUM,
-    allowNull: true,
-    values: Object.values(HashAlgorithm),
-  })
-  @ApiPropertyOptional({ enum: HashAlgorithm })
-  indictmentHashAlgorithm?: HashAlgorithm
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  courtRecordHash?: string
 
   /**********
    * The court session type in indictment cases - example: MAIN_HEARING
@@ -1068,7 +1080,8 @@ export class Case extends Model {
   courtSessionType?: CourtSessionType
 
   /**********
-   * The surrogate key of the case an indictment was merged in to - only used if the has been merged
+   * The surrogate key of the case an indictment was merged into
+   * Only used if the case has been merged
    **********/
   @ForeignKey(() => Case)
   @Column({ type: DataType.UUID, allowNull: true })
@@ -1076,22 +1089,24 @@ export class Case extends Model {
   mergeCaseId?: string
 
   /**********
-   * The case this was merged in to - only used if the case was merged
+   * The case this case was merged into
+   * Only used if the case was merged
    **********/
   @BelongsTo(() => Case, 'mergeCaseId')
   @ApiPropertyOptional({ type: () => Case })
   mergeCase?: Case
 
   /**********
-   * The cases that have been merged in to the current case - only used if the case was merged
+   * The cases that have been merged into this case
+   * Only used if other cases have been merged into this case
    **********/
   @HasMany(() => Case, 'mergeCaseId')
   @ApiPropertyOptional({ type: () => Case })
   mergedCases?: Case[]
 
   /**********
-   * The court case number this case was merged in to - only used if the case was merged
-   * with a case that is not in RVG
+   * The court case number this case was merged into
+   * Only used if the case was merged with a case that is not in RVG
    **********/
   @Column({ type: DataType.STRING, allowNull: true })
   @ApiPropertyOptional({ type: String })
@@ -1142,4 +1157,37 @@ export class Case extends Model {
   @Column({ type: DataType.BOOLEAN, allowNull: true })
   @ApiProperty({ type: Boolean })
   isRegisteredInPrisonSystem?: boolean
+
+  /**********
+   * The surrogate key of the case an indictment was split from
+   * Only used if the case was split from another case
+   **********/
+  @ForeignKey(() => Case)
+  @Column({ type: DataType.UUID, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  splitCaseId?: string
+
+  /**********
+   * The case this case was split from
+   * Only used if the case was split from another case
+   **********/
+  @BelongsTo(() => Case, 'splitCaseId')
+  @ApiPropertyOptional({ type: () => Case })
+  splitCase?: Case
+
+  /**********
+   * The cases that have split from this case
+   * Only used if other cases have been split from this case
+   **********/
+  @HasMany(() => Case, 'splitCaseId')
+  @ApiPropertyOptional({ type: () => Case })
+  splitCases?: Case[]
+
+  /**********
+   * The defendant national id provided by the police system
+   * Only used if the case was created from the police system
+   **********/
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  policeDefendantNationalId?: string
 }

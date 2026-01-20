@@ -1,4 +1,3 @@
-import { HuntingLicenseClientModule } from '@island.is/clients/hunting-license'
 import {
   SmartSolutionsApiClientModule,
   SmartSolutionsConfig,
@@ -7,10 +6,11 @@ import { Module } from '@nestjs/common'
 import { ConfigType } from '@island.is/nest/config'
 import { HuntingDigitalLicenseClientConfig } from './huntingLicenseClient.config'
 import { HuntingLicenseClient } from './huntingLicenseClient.service'
+import { NvsPermitsClientModule } from '@island.is/clients/nvs-permits'
 
 @Module({
   imports: [
-    HuntingLicenseClientModule,
+    NvsPermitsClientModule,
     SmartSolutionsApiClientModule.registerAsync({
       useFactory: (
         config: ConfigType<typeof HuntingDigitalLicenseClientConfig>,

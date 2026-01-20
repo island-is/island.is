@@ -24,6 +24,8 @@ import {
   QueryGetGenericTagsInTagGroupsArgs,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
 import { withMainLayout } from '@island.is/web/layouts/main'
 
@@ -44,6 +46,9 @@ const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
   locale,
   customPageData,
 }) => {
+  useContentfulId(customPageData?.id)
+  useLocalLinkTypeResolver('grantsplaza')
+
   const intl = useIntl()
   const { linkResolver } = useLinkResolver()
 
@@ -107,7 +112,9 @@ const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
           },
           {
             title: formatMessage(m.bullets.technologyDevelopmentFund),
-            href: searchUrl + '?query=tækniþróunar',
+            href: `${searchUrl}?query=${formatMessage(
+              m.bullets.technologyDevelopment,
+            ).toLowerCase()}`,
           },
           {
             title: formatMessage(m.bullets.financing),
@@ -115,7 +122,9 @@ const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
           },
           {
             title: formatMessage(m.bullets.companies),
-            href: searchUrl + '?query=fyrirtæki',
+            href: `${searchUrl}?query=${formatMessage(
+              m.bullets.companies,
+            ).toLowerCase()}`,
           },
         ]}
         breadcrumbs={

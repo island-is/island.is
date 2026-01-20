@@ -1,7 +1,8 @@
 import { gql } from '@apollo/client'
-import { SectionFragment } from './section'
-import { LanguageFields } from './languageFields'
 import { ApplicantTypeDtoFragment } from './applicant'
+import { CompletedSectionInfoFragment } from './completedSectionInfo'
+import { LanguageFields } from './languageFields'
+import { SectionFragment } from './section'
 
 export const ApplicationFragment = gql`
   fragment Application on FormSystemApplication {
@@ -19,6 +20,8 @@ export const ApplicationFragment = gql`
       ...Section
     }
     status
+    draftFinishedSteps
+    draftTotalSteps
     allowProceedOnValidationFail
     hasPayment
     hasSummaryScreen
@@ -37,8 +40,12 @@ export const ApplicationFragment = gql`
       childProps
       isSelected
     }
+    completedSectionInfo {
+      ...CompletedSectionInfo
+    }
   }
   ${ApplicantTypeDtoFragment}
   ${LanguageFields}
   ${SectionFragment}
+  ${CompletedSectionInfoFragment}
 `

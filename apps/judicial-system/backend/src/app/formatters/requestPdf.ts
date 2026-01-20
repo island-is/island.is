@@ -11,12 +11,13 @@ import {
 } from '@island.is/judicial-system/formatters'
 import {
   CaseType,
+  EventType,
   isRestrictionCase,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
 
 import { core, request as m } from '../messages'
-import { Case } from '../modules/repository'
+import { Case, EventLog } from '../modules/repository'
 import { formatLegalProvisions } from './formatters'
 import {
   addCoatOfArms,
@@ -49,7 +50,7 @@ const constructRestrictionRequestPdf = (
     bufferPages: true,
   })
 
-  const sinc: Buffer[] = []
+  const sinc: Uint8Array[] = []
 
   doc.on('data', (chunk) => sinc.push(chunk))
 
@@ -85,7 +86,16 @@ const constructRestrictionRequestPdf = (
   setLineGap(doc, 24)
   addLargeHeading(doc, title, 'Times-Roman')
   setLineGap(doc, 8)
-  addMediumPlusHeading(doc, formatDate(theCase.created, 'PPP') ?? '')
+  addMediumPlusHeading(
+    doc,
+    formatDate(
+      EventLog.getEventLogByEventType(
+        EventType.CASE_SENT_TO_COURT,
+        theCase.eventLogs,
+      )?.created ?? new Date(),
+      'PPP',
+    ) ?? '',
+  )
   setLineGap(doc, 40)
   addMediumPlusHeading(
     doc,
@@ -224,7 +234,7 @@ const constructInvestigationRequestPdf = (
     bufferPages: true,
   })
 
-  const sinc: Buffer[] = []
+  const sinc: Uint8Array[] = []
 
   doc.on('data', (chunk) => sinc.push(chunk))
 
@@ -251,7 +261,17 @@ const constructInvestigationRequestPdf = (
   setLineGap(doc, 24)
   addHugeHeading(doc, title, 'Times-Roman')
   setLineGap(doc, 8)
-  addMediumPlusHeading(doc, formatDate(theCase.created, 'PPP') ?? '')
+
+  addMediumPlusHeading(
+    doc,
+    formatDate(
+      EventLog.getEventLogByEventType(
+        EventType.CASE_SENT_TO_COURT,
+        theCase.eventLogs,
+      )?.created ?? new Date(),
+      'PPP',
+    ) ?? '',
+  )
   setLineGap(doc, 40)
   addMediumPlusHeading(
     doc,

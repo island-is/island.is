@@ -1,4 +1,4 @@
-import { Transaction } from 'sequelize/types'
+import { Transaction } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 
 import { Inject, Injectable } from '@nestjs/common'
@@ -27,6 +27,8 @@ const allowMultiple: EventType[] = [
   EventType.COURT_DATE_SCHEDULED,
   EventType.INDICTMENT_CRIMINAL_RECORD_UPDATED_BY_COURT,
   EventType.REQUEST_COMPLETED,
+  EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+  EventType.INDICTMENT_COMPLETED,
 ]
 
 const allowOnePerUserRole: EventType[] = [EventType.APPEAL_RESULT_ACCESSED]

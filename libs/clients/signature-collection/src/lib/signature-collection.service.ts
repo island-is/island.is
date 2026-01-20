@@ -23,7 +23,12 @@ import { mapCandidate } from './types/candidate.dto'
 import { Slug } from './types/slug.dto'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { SignatureCollectionSharedClientService } from './signature-collection-shared.service'
-import { ListSummary, mapListSummary } from './types/areaSummaryReport.dto'
+import {
+  ListSummary,
+  mapCandidateSummaryReport,
+  mapListSummary,
+  SummaryReport,
+} from './types/summaryReport.dto'
 type Api =
   | MedmaelalistarApi
   | MedmaelasofnunApi
@@ -72,7 +77,7 @@ export class SignatureCollectionClientService {
       this.getApiWithAuth(this.electionsApi, auth),
     )
     if (!list.active) {
-      throw new Error('List is not active')
+      throw new Error('Listi er ekki virkur')
     }
     return list
   }
@@ -274,59 +279,63 @@ export class SignatureCollectionClientService {
     { collectionId, candidateId, areas, collectionType }: AddListsInput,
     auth: User,
   ): Promise<Success> {
-    const {
-      id,
-      isActive,
-      areas: collectionAreas,
-    } = await this.getLatestCollectionForType(collectionType)
+    try {
+      const {
+        id,
+        isActive,
+        areas: collectionAreas,
+      } = await this.getLatestCollectionForType(collectionType)
 
-    // check if collectionId is current collection and current collection is open
-    if (collectionId !== id.toString() || !isActive) {
-      throw new Error('Collection is not open')
-    }
-    // check if user is already owner of lists
-
-    const { canCreate, canCreateInfo, name } = await this.getSignee(
-      auth,
-      collectionType,
-    )
-    if (!canCreate) {
-      // allow parliamentary owners to add more areas to their collection
-      const isPresidential = collectionType === CollectionType.Presidential
-      if (
-        !isPresidential &&
-        !(
-          canCreateInfo?.length === 1 &&
-          canCreateInfo[0] === ReasonKey.AlreadyOwner
-        )
-      ) {
-        return { success: false, reasons: canCreateInfo }
+      // check if collectionId is current collection and current collection is open
+      if (collectionId !== id.toString() || !isActive) {
+        throw new Error('Collection is not open')
       }
+      // check if user is already owner of lists
+
+      const { canCreate, canCreateInfo, name } = await this.getSignee(
+        auth,
+        collectionType,
+      )
+      if (!canCreate) {
+        // allow parliamentary owners to add more areas to their collection
+        const isPresidential = collectionType === CollectionType.Presidential
+        if (
+          !isPresidential &&
+          !(
+            canCreateInfo?.length === 1 &&
+            canCreateInfo[0] === ReasonKey.AlreadyOwner
+          )
+        ) {
+          return { success: false, reasons: canCreateInfo }
+        }
+      }
+
+      const filteredAreas = areas
+        ? collectionAreas.filter((area) =>
+            areas.flatMap((a) => a.areaId).includes(area.id),
+          )
+        : collectionAreas
+
+      const lists = await this.getApiWithAuth(
+        this.listsApi,
+        auth,
+      ).medmaelalistarPost({
+        medmaelalistarRequestDTO: {
+          frambodID: parseInt(candidateId),
+          medmaelalistar: filteredAreas.map((area) => ({
+            svaediID: parseInt(area.id),
+            listiNafn: `${name} - ${area.name}`,
+          })),
+        },
+      })
+
+      if (filteredAreas.length !== lists.length) {
+        throw new Error('Not all lists created')
+      }
+      return { success: true }
+    } catch {
+      return { success: false }
     }
-
-    const filteredAreas = areas
-      ? collectionAreas.filter((area) =>
-          areas.flatMap((a) => a.areaId).includes(area.id),
-        )
-      : collectionAreas
-
-    const lists = await this.getApiWithAuth(
-      this.listsApi,
-      auth,
-    ).medmaelalistarPost({
-      medmaelalistarRequestDTO: {
-        frambodID: parseInt(candidateId),
-        medmaelalistar: filteredAreas.map((area) => ({
-          svaediID: parseInt(area.id),
-          listiNafn: `${name} - ${area.name}`,
-        })),
-      },
-    })
-
-    if (filteredAreas.length !== lists.length) {
-      throw new Error('Not all lists created')
-    }
-    return { success: true }
   }
 
   async signList(
@@ -420,14 +429,24 @@ export class SignatureCollectionClientService {
     },
     auth: User,
   ): Promise<Success> {
-    const { id, isActive } = await this.getLatestCollectionForType(
-      collectionType,
-    )
+    const collection = await this.getLatestCollectionForType(collectionType)
     const { ownedLists, candidate } = await this.getSignee(auth, collectionType)
     const { nationalId } = auth
     if (candidate?.nationalId !== nationalId || !candidate.id) {
       return { success: false, reasons: [ReasonKey.NotOwner] }
     }
+
+    const id =
+      collectionType === CollectionType.LocalGovernmental
+        ? candidate.collectionId
+        : collection.id
+    const isActive =
+      collectionType === CollectionType.LocalGovernmental
+        ? collection.areas.find(
+            (area) => area.collectionId === candidate.collectionId,
+          )?.isActive
+        : collection.isActive
+
     // Lists can only be removed from current collection if it is open
     if (id !== collectionId || !isActive) {
       return { success: false, reasons: [ReasonKey.CollectionNotOpen] }
@@ -437,6 +456,7 @@ export class SignatureCollectionClientService {
       await this.getApiWithAuth(this.candidateApi, auth).frambodIDDelete({
         iD: parseInt(candidate.id),
       })
+
       return { success: true }
     }
     if (!listIds || listIds.length === 0) {
@@ -481,7 +501,6 @@ export class SignatureCollectionClientService {
     auth: User,
   ): Promise<SignedList[] | null> {
     const { signatures } = await this.getSignee(auth, collectionType)
-    const { endTime } = await this.getLatestCollectionForType(collectionType)
     if (!signatures) {
       return null
     }
@@ -495,21 +514,13 @@ export class SignatureCollectionClientService {
           this.getApiWithAuth(this.collectionsApi, auth),
           this.getApiWithAuth(this.electionsApi, auth),
         )
-        const isExtended = list.endTime > endTime
-        const signedThisPeriod = signature.isInitialType === !isExtended
         return {
           signedDate: signature.created,
           isDigital: signature.isDigital,
           pageNumber: signature.pageNumber,
           isValid: signature.valid,
           // TODO: consider extracting this into a helper function, canUnsign(ctype: CollectionType) => bool
-          canUnsign:
-            collectionType === CollectionType.Presidential
-              ? signature.isDigital &&
-                signature.valid &&
-                list.active &&
-                signedThisPeriod
-              : !signature.locked,
+          canUnsign: !signature.locked,
           ...list,
         } as SignedList
       }),
@@ -723,6 +734,23 @@ export class SignatureCollectionClientService {
       return { success: res.bladsidaNr === pageNumber }
     } catch {
       return { success: false }
+    }
+  }
+
+  async getCandidateSummaryReport(
+    auth: Auth,
+    candidateId: string,
+  ): Promise<SummaryReport> {
+    try {
+      const res = await this.getApiWithAuth(
+        this.candidateApi,
+        auth,
+      ).frambodIDInfoGet({
+        iD: parseInt(candidateId, 10),
+      })
+      return mapCandidateSummaryReport(res)
+    } catch {
+      return {} as SummaryReport
     }
   }
 }

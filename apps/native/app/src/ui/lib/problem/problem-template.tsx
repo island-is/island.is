@@ -1,11 +1,18 @@
 import { ReactNode } from 'react'
-import { Image, View } from 'react-native'
-import styled from 'styled-components/native'
+import { Image, Pressable, SafeAreaView, View } from 'react-native'
+import styled, { useTheme } from 'styled-components/native'
 
-import { Typography } from '../typography/typography'
 import { Colors } from '../../utils'
+import { Typography } from '../typography/typography'
+import { useBrowser } from '../../../lib/use-browser'
+import externalLinkIcon from '../../../assets/icons/external-link.png'
 
 type Variant = 'info' | 'error' | 'warning'
+export type DetailLink = {
+  text: string
+  url: string
+  componentId?: string
+}
 
 export type ProblemTemplateBaseProps = {
   variant: Variant
@@ -13,6 +20,7 @@ export type ProblemTemplateBaseProps = {
   message: string | ReactNode
   withContainer?: boolean
   size?: 'small' | 'large'
+  detailLink?: DetailLink
 }
 
 interface WithIconProps extends ProblemTemplateBaseProps {
@@ -75,7 +83,7 @@ const Host = styled.View<{
 }>`
   border-color: ${({ borderColor, theme }) => theme.color[borderColor]};
   border-width: 1px;
-  border-radius: 24px;
+  border-radius: ${({ theme }) => theme.border.radius.large};
 
   justify-content: center;
   align-items: center;
@@ -119,35 +127,69 @@ export const ProblemTemplate = ({
   showIcon,
   tag,
   withContainer,
+  detailLink,
   size = 'large',
 }: ProblemTemplateProps) => {
+  const theme = useTheme()
+  const { openBrowser } = useBrowser()
   const { borderColor, tagColor, tagBackgroundColor } =
     getColorsByVariant(variant)
 
   return (
-    <Host borderColor={borderColor} noContainer={withContainer} size={size}>
-      {tag && (
-        <Tag backgroundColor={tagBackgroundColor}>
-          <TagText variant="eyebrow" color={tagColor}>
-            {tag}
-          </TagText>
-        </Tag>
-      )}
-      {showIcon && <Icon source={getIcon(variant)} />}
-      <Content>
-        <Typography
-          variant={size === 'small' ? 'heading5' : 'heading3'}
-          textAlign="center"
-        >
-          {title}
-        </Typography>
-        <Typography
-          variant={size === 'small' ? 'body3' : 'body'}
-          textAlign="center"
-        >
-          {message}
-        </Typography>
-      </Content>
-    </Host>
+    <SafeAreaView style={{ flex: 1 }}>
+      <Host borderColor={borderColor} noContainer={withContainer} size={size}>
+        {tag && (
+          <Tag backgroundColor={tagBackgroundColor}>
+            <TagText variant="eyebrow" color={tagColor}>
+              {tag}
+            </TagText>
+          </Tag>
+        )}
+        {showIcon && <Icon source={getIcon(variant)} />}
+        <Content>
+          <Typography
+            variant={size === 'small' ? 'heading5' : 'heading3'}
+            textAlign="center"
+          >
+            {title}
+          </Typography>
+          <Typography
+            variant={size === 'small' ? 'body3' : 'body'}
+            textAlign="center"
+          >
+            {message}
+          </Typography>
+          {detailLink && (
+            <Pressable
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: theme.spacing[1],
+                borderBottomWidth: 1,
+                marginTop: theme.spacing[1],
+                borderBottomColor: theme.color.blue400,
+              }}
+              onPress={() => {
+                openBrowser(detailLink.url, detailLink.componentId)
+              }}
+            >
+              <Typography
+                variant="body"
+                color={theme.color.blue400}
+                weight="600"
+              >
+                {detailLink.text}
+              </Typography>
+              <Icon
+                style={{ width: theme.spacing[2], height: theme.spacing[2] }}
+                source={externalLinkIcon}
+              />
+            </Pressable>
+          )}
+        </Content>
+      </Host>
+    </SafeAreaView>
   )
 }

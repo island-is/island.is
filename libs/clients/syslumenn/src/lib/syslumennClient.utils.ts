@@ -31,6 +31,7 @@ import {
   Skip,
   Brennuleyfi,
   TrufelogOgLisskodunarfelogModel,
+  Okukennarar,
 } from '../../gen/fetch'
 import { uuid } from 'uuidv4'
 import {
@@ -78,6 +79,7 @@ import {
   ReligiousOrganization,
   InheritanceReportFuneralAsset,
   FuneralAssetItem,
+  DrivingInstructor,
 } from './syslumennClient.types'
 const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
 
@@ -419,6 +421,52 @@ export const assetMapper = (assetRaw: EignirDanarbus): EstateAsset => {
       assetRaw.eignarhlutfall !== undefined
         ? parseShare(assetRaw.eignarhlutfall)
         : 100,
+    marketValue: assetRaw.verdmaeti ?? '',
+  }
+}
+
+export const stocksAssetMapper = (assetRaw: EignirDanarbus): EstateAsset => {
+  return {
+    description: assetRaw.lysing ?? '',
+    assetNumber: assetRaw.fastanumer ?? '',
+    share:
+      assetRaw.eignarhlutfall !== undefined
+        ? parseShare(assetRaw.eignarhlutfall)
+        : 100,
+    marketValue: assetRaw.verdmaeti ?? '',
+    // Store stocks-specific fields that can be accessed by stocksMapper
+    ...(assetRaw.upphaed && { upphaed: assetRaw.upphaed }),
+    ...(assetRaw.gengiVextir && { gengiVextir: assetRaw.gengiVextir }),
+  }
+}
+
+export const debtsAssetMapper = (
+  assetRaw: EignirDanarbus,
+): EstateAsset & { tegundAngalgs?: number } => {
+  return {
+    description: assetRaw.lysing ?? '',
+    assetNumber: assetRaw.fastanumer ?? '',
+    share:
+      assetRaw.eignarhlutfall !== undefined
+        ? parseShare(assetRaw.eignarhlutfall)
+        : 100,
+    marketValue: assetRaw.verdmaeti ?? '',
+    // Store tegundAngalgs for debt type mapping
+    tegundAngalgs: assetRaw.tegundAngalgs,
+  }
+}
+
+export const bankAccountMapper = (assetRaw: EignirDanarbus): EstateAsset => {
+  return {
+    description: assetRaw.lysing ?? '',
+    assetNumber: assetRaw.fastanumer ?? '',
+    share:
+      assetRaw.eignarhlutfall !== undefined
+        ? parseShare(assetRaw.eignarhlutfall)
+        : 100,
+    marketValue: assetRaw.upphaed ?? '', // Use upphaed (balance) as marketValue for bank accounts
+    // Store exchangeRateOrInterest in a custom property that can be accessed later
+    exchangeRateOrInterest: assetRaw.gengiVextir || '0',
   }
 }
 
@@ -442,8 +490,18 @@ export const mapEstateRegistrant = (
   return {
     applicantEmail: syslaData.tolvuposturSkreningaradila ?? '',
     applicantPhone: syslaData.simiSkraningaradila ?? '',
-    knowledgeOfOtherWills: syslaData.vitneskjaUmAdraErfdaskra ? 'Yes' : 'No',
-    districtCommissionerHasWill: syslaData.erfdaskraIVorsluSyslumanns ?? false,
+    knowledgeOfOtherWills:
+      syslaData.vitneskjaUmAdraErfdaskra !== null &&
+      syslaData.vitneskjaUmAdraErfdaskra !== undefined
+        ? syslaData.vitneskjaUmAdraErfdaskra
+          ? 'Yes'
+          : 'No'
+        : undefined,
+    districtCommissionerHasWill:
+      syslaData.erfdaskraIVorsluSyslumanns !== null &&
+      syslaData.erfdaskraIVorsluSyslumanns !== undefined
+        ? syslaData.erfdaskraIVorsluSyslumanns
+        : undefined,
     assets: syslaData.eignir
       ? syslaData.eignir
           .filter(
@@ -479,11 +537,19 @@ export const mapEstateRegistrant = (
           .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_10)
           .map(assetMapper)
       : [],
+    moneyAndDeposit: syslaData.eignir
+      ? syslaData.eignir
+          .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_9)
+          .map(assetMapper)
+      : [],
     otherAssets: [],
     estateMembers: syslaData.adilarDanarbus
       ? syslaData.adilarDanarbus.map(estateMemberMapper)
       : [],
-    marriageSettlement: syslaData.kaupmaili ?? false,
+    marriageSettlement:
+      syslaData.kaupmaili !== null && syslaData.kaupmaili !== undefined
+        ? syslaData.kaupmaili
+        : undefined,
     office: syslaData.embaetti ?? '',
     caseNumber: syslaData.malsnumer ?? '',
     dateOfDeath: syslaData.danardagur ?? new Date(),
@@ -531,8 +597,64 @@ export const mapEstateInfo = (syslaData: DanarbuUpplRadstofun): EstateInfo => {
           .map(assetMapper)
       : [],
     // TODO: update once implemented in District Commissioner's backend
-    guns: [],
-    otherAssets: [],
+    guns: syslaData.eignir
+      ? syslaData.eignir
+          .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_10)
+          .map(assetMapper)
+      : [],
+    otherAssets: syslaData.eignir
+      ? syslaData.eignir
+          .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_6)
+          .map(assetMapper)
+      : [],
+    bankAccounts: syslaData.eignir
+      ? syslaData.eignir
+          .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_8)
+          .map(bankAccountMapper)
+      : [],
+    claims: syslaData.eignir
+      ? syslaData.eignir
+          .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_11)
+          .map(assetMapper)
+      : [],
+    stocks: syslaData.eignir
+      ? syslaData.eignir
+          .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_7)
+          .map(stocksAssetMapper)
+      : [],
+    moneyAndDeposit: syslaData.eignir
+      ? syslaData.eignir
+          .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_9)
+          .map(assetMapper)
+      : [],
+    otherDebts: syslaData.eignir
+      ? syslaData.eignir
+          .filter(
+            (a) =>
+              a.tegundAngalgs === TegundAndlags.NUMBER_13 || // OpinberGjold
+              a.tegundAngalgs === TegundAndlags.NUMBER_14 || // AdrarSkuldir
+              a.tegundAngalgs === TegundAndlags.NUMBER_17 || // Fasteignagjold
+              a.tegundAngalgs === TegundAndlags.NUMBER_18 || // Tryggingastofnun
+              a.tegundAngalgs === TegundAndlags.NUMBER_19 || // Lan
+              a.tegundAngalgs === TegundAndlags.NUMBER_20 || // Kreditkort
+              a.tegundAngalgs === TegundAndlags.NUMBER_21, // Yfirdrattur
+          )
+          .map((a) => {
+            const debtTypeMap: Record<number, DebtTypes> = {
+              [TegundAndlags.NUMBER_13]: DebtTypes.Duties,
+              [TegundAndlags.NUMBER_14]: DebtTypes.OtherDebts,
+              [TegundAndlags.NUMBER_17]: DebtTypes.PropertyFees,
+              [TegundAndlags.NUMBER_18]: DebtTypes.InsuranceCompany,
+              [TegundAndlags.NUMBER_19]: DebtTypes.Loan,
+              [TegundAndlags.NUMBER_20]: DebtTypes.CreditCard,
+              [TegundAndlags.NUMBER_21]: DebtTypes.Overdraft,
+            }
+            return {
+              ...assetMapper(a),
+              debtType: debtTypeMap[a.tegundAngalgs ?? 0],
+            }
+          })
+      : [],
     estateMembers: syslaData.erfingar
       ? syslaData.erfingar.map(estateMemberMapper)
       : [],
@@ -541,9 +663,23 @@ export const mapEstateInfo = (syslaData: DanarbuUpplRadstofun): EstateInfo => {
     dateOfDeath: syslaData?.danardagur
       ? new Date(syslaData.danardagur)
       : new Date(),
-    districtCommissionerHasWill: Boolean(syslaData?.erfdaskra),
-    knowledgeOfOtherWills: syslaData.erfdakraVitneskja ? 'Yes' : 'No',
-    marriageSettlement: syslaData.kaupmali ?? false,
+    districtCommissionerHasWill:
+      syslaData?.erfdaskra !== null && syslaData?.erfdaskra !== undefined
+        ? syslaData.erfdaskra === 'false'
+          ? false
+          : Boolean(syslaData.erfdaskra)
+        : undefined,
+    knowledgeOfOtherWills:
+      syslaData.erfdakraVitneskja !== null &&
+      syslaData.erfdakraVitneskja !== undefined
+        ? syslaData.erfdakraVitneskja
+          ? 'Yes'
+          : 'No'
+        : undefined,
+    marriageSettlement:
+      syslaData.kaupmali !== null && syslaData.kaupmali !== undefined
+        ? syslaData.kaupmali
+        : undefined,
     nameOfDeceased: syslaData?.nafn ?? '',
     nationalIdOfDeceased: syslaData?.kennitala ?? '',
     availableSettlements: mapAvailableSettlements(syslaData.mogulegSkipti),
@@ -609,6 +745,16 @@ export const mapReligiousOrganization = (
   }
 }
 
+export const mapDrivingInstructor = (
+  instructor: Okukennarar,
+): DrivingInstructor => {
+  return {
+    name: instructor.nafn ?? '',
+    postalCode: instructor.postnumer ?? '',
+    municipality: instructor.sveitafelag ?? '',
+  }
+}
+
 export const mapDepartedToRegistryPerson = (
   departed: ThjodskraSvarSkeyti,
 ): RegistryPerson => {
@@ -648,7 +794,7 @@ const mapInheritanceReportAsset = (
     share: parseShare(eignarhlutfall ?? 100),
     propertyValuation: fasteignamat ?? '',
     amount: upphaed ?? '',
-    exchangeRateOrInterest: gengiVextir ?? '',
+    exchangeRateOrInterest: gengiVextir || '0',
   }
 }
 

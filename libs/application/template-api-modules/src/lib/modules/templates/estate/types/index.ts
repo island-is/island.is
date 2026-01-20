@@ -58,8 +58,9 @@ type AssetFrame = {
 type BankAccount = {
   accountNumber?: string
   balance?: string | number
-  exchangeRateOrInterest?: string | number
+  accruedInterest?: string | number
   accountTotal?: string | number
+  foreignBankAccount?: string[]
 }
 
 type Stock = {
@@ -77,6 +78,7 @@ type Debt = {
   nationalId?: string
   balance?: string | number
   loanIdentity?: string
+  debtType?: string
 }
 
 type OtherAssets = {
@@ -137,9 +139,11 @@ export type UploadData = {
   debts: Debt[]
   representative?: Representative
   districtCommissionerHasWill: string
+  knowledgeOfOtherWills: string
   settlement: string
   remarksOnTestament: string
   dividedEstate: string
   deceasedWithUndividedEstate?: SpouseField
   estateWithoutAssetsInfo: EstateWithoutAssetsInfo
+  additionalComments?: string
 }

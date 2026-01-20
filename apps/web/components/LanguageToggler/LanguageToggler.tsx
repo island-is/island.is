@@ -27,6 +27,10 @@ type LanguageTogglerProps = {
   hideWhenMobile?: boolean
   buttonColorScheme?: ButtonTypes['colorScheme']
   queryParams?: LayoutProps['languageToggleQueryParams']
+  hrefOverride?: {
+    is?: string
+    en?: string
+  }
 }
 
 export const LanguageToggler = ({
@@ -35,11 +39,12 @@ export const LanguageToggler = ({
   dialogId = 'confirm-language-switch-dialog' +
     (!hideWhenMobile ? '-mobile' : ''),
   queryParams,
+  hrefOverride,
 }: LanguageTogglerProps) => {
   const client = useApolloClient()
   const Router = useRouter()
   const [showDialog, setShowDialog] = useState<boolean>(false)
-  const { contentfulIds, resolveLinkTypeLocally, globalNamespace } =
+  const { contentfulIds, resolveLinkTypeLocally, globalNamespace, linkType } =
     useContext(GlobalContext)
   const { activeLocale, locale, t } = useI18n()
   const gn = useNamespace(globalNamespace)
@@ -49,6 +54,12 @@ export const LanguageToggler = ({
   const getOtherLanguagePath = async () => {
     if (showDialog) {
       return null
+    }
+
+    if (hrefOverride) {
+      if (hrefOverride[otherLanguage])
+        return goToOtherLanguagePage(hrefOverride[otherLanguage])
+      return setShowDialog(true)
     }
 
     const pathWithoutQueryParams = Router.asPath.split('?')[0]
@@ -118,16 +129,63 @@ export const LanguageToggler = ({
       activeTranslations = res.data?.getContentSlug?.activeTranslations
     }
 
-    if ((type as string) === 'genericListItem' || resolveLinkTypeLocally) {
+    if (linkType) {
+      type = linkType
+    } else if (
+      (type as string) === 'genericListItem' ||
+      resolveLinkTypeLocally
+    ) {
       const localType = typeResolver(pathWithoutQueryParams)?.type
       if (localType) {
         type = localType
       }
     }
 
+    // Special case for grants since the slug is not sufficient to identify the correct page
+    if ((type as string) === 'grantsplazagrant') {
+      title = {
+        is: 'Styrkur',
+        en: 'Grant',
+      }
+
+      // We need to extract the grant ID from the current path
+      const pathParts = pathWithoutQueryParams.split('/')
+      const grantId = pathParts[pathParts.length - 1]
+      if (grantId) {
+        const queryParamsString = new URLSearchParams(
+          queryParams?.[otherLanguage],
+        ).toString()
+
+        return goToOtherLanguagePage(
+          `${linkResolver('grantsplazagrant', [grantId], otherLanguage).href}${
+            queryParamsString.length > 0 ? '?' + queryParamsString : ''
+          }`,
+        )
+      }
+    }
+
+    // Special case for grants since it's a custom page and doesn't have slugs or title in english
+    if ((type as string) === 'grantsplazasearch') {
+      title = {
+        is: 'Styrkjatorg - Leit',
+        en: 'Grantsplaza - Search',
+      }
+    }
+
+    if ((type as string) === 'grantsplaza') {
+      title = {
+        is: 'Styrkjatorg',
+        en: 'Grantsplaza',
+      }
+
+      return goToOtherLanguagePage(
+        linkResolver('grantsplaza', [], otherLanguage).href,
+      )
+    }
     // Some content models are set up such that a slug is generated from the title
     // Unfortunately, Contentful generates slug for both locales which frequently
     // results in bogus english content. Therefore we check whether the other language has a title as well.
+
     if (
       type &&
       slugs.every((s) => s?.[otherLanguage]) &&

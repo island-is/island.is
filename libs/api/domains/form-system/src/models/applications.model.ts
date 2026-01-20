@@ -1,19 +1,17 @@
-import { Field, ObjectType, Int } from '@nestjs/graphql'
-import { Section } from './section.model'
-import { LanguageType } from './languageType.model'
-import { Dependency } from './form.model'
-import { ValueDto } from './value.model'
-import { FormCertificationTypeDto } from './certification.model'
+import { Field, Int, ObjectType } from '@nestjs/graphql'
 import { FormApplicantTypeDto } from './applicant.model'
+import { FormCertificationTypeDto } from './certification.model'
+import { CompletedSectionInfo } from './completedSectionInfo'
+import { Dependency } from './form.model'
+import { LanguageType } from './languageType.model'
 import { Option } from './option.model'
+import { Section } from './section.model'
+import { ValueDto } from './value.model'
 
 @ObjectType('FormSystemApplicationEventDto')
 export class ApplicationEventDto {
   @Field(() => String, { nullable: true })
   eventType?: string
-
-  @Field(() => Boolean, { nullable: true })
-  isFileEvent?: boolean
 
   @Field(() => Date, { nullable: true })
   created?: Date
@@ -57,6 +55,12 @@ export class Application {
   @Field(() => String, { nullable: true })
   status?: string
 
+  @Field(() => Int, { nullable: true })
+  draftFinishedSteps?: number
+
+  @Field(() => Int, { nullable: true })
+  draftTotalSteps?: number
+
   @Field(() => Boolean, { nullable: true })
   allowProceedOnValidationFail?: boolean
 
@@ -80,6 +84,9 @@ export class Application {
 
   @Field(() => [FormApplicantTypeDto], { nullable: 'itemsAndList' })
   applicantTypes?: FormApplicantTypeDto[]
+
+  @Field(() => CompletedSectionInfo, { nullable: true })
+  completedSectionInfo?: CompletedSectionInfo
 }
 
 @ObjectType('FormSystemApplicationListDto')
@@ -149,4 +156,7 @@ export class ApplicationResponse {
 
   @Field(() => [Option], { nullable: 'itemsAndList' })
   organizations?: Option[]
+
+  @Field(() => Boolean, { nullable: true })
+  isLoginTypeAllowed?: boolean
 }

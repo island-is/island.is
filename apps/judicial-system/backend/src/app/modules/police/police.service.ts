@@ -1,7 +1,7 @@
 import { Agent } from 'https'
 import fetch from 'isomorphic-fetch'
 import { Base64 } from 'js-base64'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 import { z } from 'zod'
 
 import {
@@ -12,6 +12,7 @@ import {
   NotFoundException,
   ServiceUnavailableException,
 } from '@nestjs/common'
+import { InjectModel } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -22,18 +23,26 @@ import {
 } from '@island.is/shared/utils/server'
 
 import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
-import type { User } from '@island.is/judicial-system/types'
+import type {
+  SubpoenaPoliceDocumentInfo,
+  User,
+  VerdictPoliceDocumentInfo,
+} from '@island.is/judicial-system/types'
 import {
   CaseState,
   CaseType,
+  getServiceDateFromSupplements,
+  IndictmentCaseSubtypes,
+  mapPoliceVerdictDeliveryStatus,
   PoliceFileTypeCode,
   ServiceStatus,
+  VerdictServiceStatus,
 } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
 import { AwsS3Service } from '../aws-s3'
 import { EventService } from '../event'
-import { Case, DateLog, Defendant } from '../repository'
+import { Case, DateLog, Defendant, IndictmentSubtype } from '../repository'
 import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
 import { CreateSubpoenaResponse } from './models/createSubpoena.response'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
@@ -53,6 +62,7 @@ export enum PoliceDocumentType {
   RVMV = 'RVMV', // Viðbótargögn verjanda
   RVVS = 'RVVS', // Viðbótargögn sækjanda
   RVFK = 'RVFK', // Fyrirkall
+  RVBD = 'BRTNG_RVBD', // Birtingarvottorð dóms
 }
 
 export interface PoliceDocument {
@@ -135,6 +145,7 @@ export class PoliceService {
     gotuNumer: z.string().nullish(),
     sveitafelag: z.string().nullish(),
     postnumer: z.string().nullish(),
+    artalNrGreinLidur: z.string().nullish(),
   })
   private responseStructure = z.object({
     malsnumer: z.string(),
@@ -154,7 +165,30 @@ export class PoliceService {
     deliveredToLawyer: z.boolean().nullish(),
   })
 
+  private documentStructure = z.object({
+    comment: z.string().nullish(),
+    servedBy: z.string().nullish(),
+    servedAt: z.string().nullish(),
+    delivered: z.boolean().nullish(),
+    deliveredOnPaper: z.boolean().nullish(),
+    deliveredToLawyer: z.boolean().nullish(),
+    defenderNationalId: z.string().nullish(),
+    deliveredOnIslandis: z.boolean().nullish(),
+    deliveredToDefendant: z.boolean().nullish(),
+    deliveryMethod: z.string().nullish(),
+    supplements: z
+      .array(
+        z.object({
+          code: z.string().nullish(),
+          value: z.string().nullish(),
+        }),
+      )
+      .nullish(),
+  })
+
   constructor(
+    @InjectModel(IndictmentSubtype)
+    private readonly indictmentSubtypeModel: typeof IndictmentSubtype,
     @Inject(policeModuleConfig.KEY)
     private readonly config: ConfigType<typeof policeModuleConfig>,
     @Inject(forwardRef(() => EventService))
@@ -350,7 +384,7 @@ export class PoliceService {
   async getSubpoenaStatus(
     policeSubpoenaId: string,
     user?: User,
-  ): Promise<SubpoenaInfo> {
+  ): Promise<SubpoenaPoliceDocumentInfo> {
     return this.fetchPoliceDocumentApi(
       `${this.xRoadPath}/GetSubpoenaStatus?id=${policeSubpoenaId}`,
     )
@@ -448,38 +482,62 @@ export class PoliceService {
             }
           })
 
-          response.malseinings?.forEach(
-            (info: {
-              upprunalegtMalsnumer: string
-              vettvangur?: string
-              brotFra?: string
-              licencePlate?: string
-              gotuHeiti?: string | null
-              gotuNumer?: string | null
-              sveitafelag?: string | null
-            }) => {
-              const policeCaseNumber = info.upprunalegtMalsnumer
+          await Promise.all(
+            (response.malseinings ?? []).map(
+              async (info: {
+                upprunalegtMalsnumer: string
+                vettvangur?: string
+                brotFra?: string
+                licencePlate?: string
+                gotuHeiti?: string | null
+                gotuNumer?: string | null
+                sveitafelag?: string | null
+                artalNrGreinLidur?: string | null
+              }) => {
+                const policeCaseNumber = info.upprunalegtMalsnumer
+                const article = info.artalNrGreinLidur
+                const subtype = await this.getSubtypeByArticle(article)
+                const key = Object.keys(IndictmentCaseSubtypes).find(
+                  (k) =>
+                    IndictmentCaseSubtypes[
+                      k as keyof typeof IndictmentCaseSubtypes
+                    ] === subtype?.offenseType,
+                )
 
-              const place = formatCrimeScenePlace(
-                info.gotuHeiti,
-                info.gotuNumer,
-                info.sveitafelag,
-              )
-              const date = info.brotFra ? new Date(info.brotFra) : undefined
-              const licencePlate = info.licencePlate
+                const place = formatCrimeScenePlace(
+                  info.gotuHeiti,
+                  info.gotuNumer,
+                  info.sveitafelag,
+                )
+                const date = info.brotFra ? new Date(info.brotFra) : undefined
+                const licencePlate = info.licencePlate
 
-              const foundCase = cases.find(
-                (item) => item.policeCaseNumber === policeCaseNumber,
-              )
+                const foundCase = cases.find(
+                  (item) => item.policeCaseNumber === policeCaseNumber,
+                )
 
-              if (!foundCase) {
-                cases.push({ policeCaseNumber, place, date, licencePlate })
-              } else if (date && (!foundCase.date || date > foundCase.date)) {
-                foundCase.place = place
-                foundCase.date = date
-                foundCase.licencePlate = licencePlate
-              }
-            },
+                if (!foundCase) {
+                  cases.push({
+                    policeCaseNumber,
+                    place,
+                    date,
+                    licencePlate,
+                    subtypes: key ? [key] : [],
+                  })
+                } else {
+                  if (date && (!foundCase.date || date > foundCase.date)) {
+                    foundCase.place = place
+                    foundCase.date = date
+                    foundCase.licencePlate = licencePlate
+                    foundCase.subtypes = []
+                  }
+
+                  if (key && !foundCase.subtypes?.includes(key)) {
+                    foundCase.subtypes?.push(key)
+                  }
+                }
+              },
+            ),
           )
 
           return cases
@@ -660,6 +718,9 @@ export class PoliceService {
 
       if (res.ok) {
         const policeResponse = await res.json()
+        this.logger.debug(
+          `Verdict for defendant ${defendantId} with police document id ${policeResponse.id} and file type code ${fileTypeCode} delivered to national commissioners office `,
+        )
         return { externalPoliceDocumentId: policeResponse.id }
       }
     } catch (error) {
@@ -682,6 +743,91 @@ export class PoliceService {
 
       throw error
     }
+  }
+
+  async getVerdictDocumentStatus(
+    policeDocumentId: string,
+    user?: User,
+  ): Promise<VerdictPoliceDocumentInfo> {
+    return this.fetchPoliceDocumentApi(
+      `${this.xRoadPath}/GetDeliveryStatus?id=${policeDocumentId}`,
+    )
+      .then(async (res: Response) => {
+        if (res.ok) {
+          const response: z.infer<typeof this.documentStructure> =
+            await res.json()
+          this.documentStructure.parse(response)
+          const serviceStatus = mapPoliceVerdictDeliveryStatus({
+            delivered: response.delivered ?? false,
+            deliveredOnPaper: response.deliveredOnPaper ?? false,
+            deliveredOnIslandis: response.deliveredOnIslandis ?? false,
+            deliveredToLawyer: response.deliveredToLawyer ?? false,
+            deliveredToDefendant: response.deliveredToDefendant ?? false,
+            deliveryMethod: response.deliveryMethod ?? undefined,
+          })
+
+          const legalPaperServiceDate =
+            serviceStatus === VerdictServiceStatus.LEGAL_PAPER
+              ? getServiceDateFromSupplements(response.supplements ?? undefined)
+              : undefined
+
+          const servedAt =
+            response.servedAt && !Number.isNaN(Date.parse(response.servedAt))
+              ? new Date(response.servedAt)
+              : undefined
+
+          return {
+            serviceStatus: serviceStatus,
+            deliveredToDefenderNationalId:
+              response.defenderNationalId ?? undefined,
+            comment: response.comment ?? undefined,
+            servedBy: response.servedBy ?? undefined,
+            serviceDate: legalPaperServiceDate ?? servedAt,
+          }
+        }
+        const reason = await res.text()
+
+        // The police system does not provide a structured error response.
+        // When a document does not exist, a stack trace is returned.
+        throw new NotFoundException({
+          message: `Document with police document id ${policeDocumentId} does not exist`,
+          detail: reason,
+        })
+      })
+      .catch((reason) => {
+        if (reason instanceof NotFoundException) {
+          throw reason
+        }
+
+        if (reason instanceof ServiceUnavailableException) {
+          // Act as if the document does not exist
+          throw new NotFoundException({
+            ...reason,
+            message: `Police document ${policeDocumentId} does not exist`,
+            detail: reason.message,
+          })
+        }
+
+        this.eventService.postErrorEvent(
+          'Failed to get police document status',
+          {
+            policeDocumentId,
+            actor: user?.name || 'Digital-mailbox',
+            institution: user?.institution?.name,
+          },
+          reason,
+        )
+
+        throw new BadGatewayException({
+          message: `Failed to get police document status ${policeDocumentId}`,
+          detail:
+            reason instanceof Error
+              ? reason.message
+              : typeof reason === 'string'
+              ? reason
+              : JSON.stringify(reason),
+        })
+      })
   }
 
   async createSubpoena(
@@ -803,5 +949,13 @@ export class PoliceService {
 
       return false
     }
+  }
+
+  getSubtypeByArticle(
+    article?: string | null,
+  ): Promise<IndictmentSubtype | null> {
+    return this.indictmentSubtypeModel.findOne({
+      where: { article },
+    })
   }
 }

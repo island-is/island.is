@@ -1,7 +1,6 @@
-import { Box, Button, Text } from '@island.is/island-ui/core'
+import { Box, Button, Text, ActionCard } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
-  ActionCard,
   CardLoader,
   IntroWrapper,
   LinkResolver,
@@ -12,11 +11,13 @@ import { HealthPaths } from '../../lib/paths'
 import { useGetDonorStatusQuery } from './OrganDonation.generated'
 import { NoAccess } from './components/NoAccess'
 import { getOrganText } from './helpers/textMapper'
+import { useNavigate } from 'react-router-dom'
 
 const OrganDonation = () => {
   useNamespaces('sp.health')
 
   const { formatMessage, lang } = useLocale()
+  const navigate = useNavigate()
   const { data, loading, error } = useGetDonorStatusQuery({
     fetchPolicy: 'no-cache',
     variables: {
@@ -85,12 +86,11 @@ const OrganDonation = () => {
               heading={texts.heading}
               text={texts.cardText}
               cta={{
-                url: HealthPaths.HealthOrganDonationRegistration,
+                onClick: () =>
+                  navigate(HealthPaths.HealthOrganDonationRegistration),
                 label: formatMessage(m.changeTake),
-                centered: true,
                 variant: 'text',
               }}
-              loading={loading}
             />
           </Box>
         )}

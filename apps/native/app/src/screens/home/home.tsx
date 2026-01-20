@@ -25,7 +25,7 @@ import {
   preferencesStore,
   usePreferencesStore,
 } from '../../stores/preferences-store'
-import { isAndroid } from '../../utils/devices'
+import { isAndroid, isIosLiquidGlassEnabled } from '../../utils/devices'
 import { needsToUpdateAppVersion } from '../../utils/minimum-app-version'
 import { getRightButtons } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
@@ -59,7 +59,10 @@ import {
 } from './vehicles-module'
 import { INCLUDED_LICENSE_TYPES } from '../wallet-pass/wallet-pass.constants'
 import { useFeatureFlag } from '../../contexts/feature-flag-provider'
-import { GenericLicenseType } from '../../graphql/types/schema'
+import {
+  GenericLicenseType,
+  useGetProfileQuery,
+} from '../../graphql/types/schema'
 import { useLocale } from '../../hooks/use-locale'
 
 interface ListItem {
@@ -71,6 +74,13 @@ const iconInsets = {
   top: Platform.OS === 'ios' && Platform.isPad ? 8 : 16,
   bottom: Platform.OS === 'ios' && Platform.isPad ? 8 : -4,
 }
+
+const iconActive = isIosLiquidGlassEnabled
+  ? require('../../assets/icons/home-icon-active.png')
+  : require('../../assets/icons/tabbar-home-selected.png')
+const iconInactive = isIosLiquidGlassEnabled
+  ? require('../../assets/icons/home-icon-inactive.png')
+  : require('../../assets/icons/tabbar-home.png')
 
 const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks(
@@ -88,8 +98,8 @@ const { useNavigationOptions, getNavigationOptions } =
         textColor: isAndroid
           ? theme.shade.foreground
           : { light: 'black', dark: 'white' },
-        icon: require('../../assets/icons/tabbar-home.png'),
-        selectedIcon: require('../../assets/icons/tabbar-home-selected.png'),
+        icon: iconInactive,
+        selectedIcon: iconActive,
       },
     }),
     {
@@ -114,12 +124,16 @@ const { useNavigationOptions, getNavigationOptions } =
 export const HomeScreen: NavigationFunctionComponent = ({ componentId }) => {
   useNavigationOptions(componentId)
 
-  useAndroidNotificationPermission()
+  const userProfile = useGetProfileQuery({
+    fetchPolicy: 'cache-first',
+  })
+  const { locale: userProfileLocale, documentNotifications } =
+    userProfile.data?.getUserProfile ?? {}
+
+  useAndroidNotificationPermission(documentNotifications)
   const syncToken = useNotificationsStore(({ syncToken }) => syncToken)
   const checkUnseen = useNotificationsStore(({ checkUnseen }) => checkUnseen)
-  const getAndSetLocale = usePreferencesStore(
-    ({ getAndSetLocale }) => getAndSetLocale,
-  )
+  const setLocale = usePreferencesStore(({ setLocale }) => setLocale)
   const isIdentityDocumentEnabled = useFeatureFlag(
     'isIdentityDocumentEnabled',
     false,
@@ -272,11 +286,17 @@ export const HomeScreen: NavigationFunctionComponent = ({ componentId }) => {
     // Sync push tokens and unseen notifications
     syncToken()
     checkUnseen()
-    // Get user locale from server
-    getAndSetLocale()
     // Check if upgrade wall should be shown
     isAppUpdateRequired()
   }, [])
+
+  useEffect(() => {
+    if (!userProfileLocale) {
+      return
+    }
+
+    setLocale(userProfileLocale === 'en' ? 'en-US' : 'is-IS')
+  }, [userProfileLocale, setLocale])
 
   const refetch = useCallback(async () => {
     setRefetching(true)

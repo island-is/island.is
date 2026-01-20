@@ -5,6 +5,14 @@ export const IDENTITY_QUERY = gql`
     identity(input: $input) {
       name
       nationalId
+      givenName
+      familyName
+      address {
+        streetAddress
+        postalCode
+        city
+      }
+      type
     }
   }
 `

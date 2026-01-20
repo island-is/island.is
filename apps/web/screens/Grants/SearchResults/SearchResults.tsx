@@ -27,6 +27,7 @@ import { Locale } from '@island.is/shared/types'
 import { GrantsHeader, GrantWrapper } from '@island.is/web/components'
 import {
   ContentLanguage,
+  CustomPage,
   CustomPageUniqueIdentifier,
   GenericTag,
   GetGrantsInputAvailabilityStatusEnum,
@@ -34,17 +35,22 @@ import {
   Grant,
   GrantList,
   Query,
+  QueryGetCustomSubpageArgs,
   QueryGetGenericTagsInTagGroupsArgs,
   QueryGetGrantsArgs,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
 import { withMainLayout } from '@island.is/web/layouts/main'
+import { CustomNextError } from '@island.is/web/units/errors'
 
 import {
   CustomScreen,
   withCustomPageWrapper,
 } from '../../CustomPage/CustomPageWrapper'
 import SidebarLayout from '../../Layouts/SidebarLayout'
+import { GET_CUSTOM_SUBPAGE_QUERY } from '../../queries/CustomPage'
 import { GET_GENERIC_TAGS_IN_TAG_GROUPS_QUERY } from '../../queries/GenericTag'
 import { GET_GRANTS_QUERY } from '../../queries/Grants'
 import { m } from '../messages'
@@ -55,12 +61,23 @@ import * as styles from './SearchResults.css'
 
 const PAGE_SIZE = 8
 
-const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
+interface GrantsHomeProps {
+  locale: Locale
+  initialGrantList?: GrantList
+  tags?: Array<GenericTag>
+  customPageData?: CustomPage
+  customSubpage?: CustomPage
+}
+
+const GrantsSearchResults: CustomScreen<GrantsHomeProps> = ({
   locale,
   initialGrantList,
   tags,
-  customPageData,
+  customSubpage,
 }) => {
+  useContentfulId(customSubpage?.id)
+  useLocalLinkTypeResolver('grantsplazasearch')
+
   const { formatMessage } = useIntl()
   const { linkResolver } = useLinkResolver()
 
@@ -254,7 +271,7 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
         title={formatMessage(m.home.title)}
         description={formatMessage(m.home.description)}
         featuredImage={
-          customPageData?.ogImage?.url ?? formatMessage(m.home.featuredImage)
+          customSubpage?.ogImage?.url ?? formatMessage(m.home.featuredImage)
         }
         featuredImageAlt={formatMessage(m.home.featuredImageAlt)}
         breadcrumbs={
@@ -402,29 +419,12 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
   )
 }
 
-interface GrantsHomeProps {
-  locale: Locale
-  initialGrantList?: GrantList
-  tags?: Array<GenericTag>
-}
-
-const GrantsSearchResults: CustomScreen<GrantsHomeProps> = ({
-  initialGrantList,
-  tags,
-  customPageData,
+GrantsSearchResults.getProps = async ({
+  apolloClient,
   locale,
+  query,
+  customPageData,
 }) => {
-  return (
-    <GrantsSearchResultsPage
-      initialGrantList={initialGrantList}
-      tags={tags}
-      locale={locale}
-      customPageData={customPageData}
-    />
-  )
-}
-
-GrantsSearchResults.getProps = async ({ apolloClient, locale, query }) => {
   const arrayParser = parseAsArrayOf<string>(parseAsString)
 
   const filterArray = <T,>(array: Array<T> | null | undefined) => {
@@ -445,6 +445,9 @@ GrantsSearchResults.getProps = async ({ apolloClient, locale, query }) => {
     },
     {
       data: { getGenericTagsInTagGroups },
+    },
+    {
+      data: { getCustomSubpage },
     },
   ] = await Promise.all([
     apolloClient.query<Query, QueryGetGrantsArgs>({
@@ -479,7 +482,24 @@ GrantsSearchResults.getProps = async ({ apolloClient, locale, query }) => {
         },
       },
     }),
+    apolloClient.query<Query, QueryGetCustomSubpageArgs>({
+      query: GET_CUSTOM_SUBPAGE_QUERY,
+      variables: {
+        input: {
+          slug:
+            (locale as ContentLanguage) === ContentLanguage.Is
+              ? 'styrkir'
+              : 'grants',
+          parentPageId: customPageData?.id ?? '',
+          lang: locale as ContentLanguage,
+        },
+      },
+    }),
   ])
+
+  if (!getCustomSubpage) {
+    throw new CustomNextError(404, 'Custom subpage not found')
+  }
 
   return {
     initialGrantList: getGrants,
@@ -488,6 +508,8 @@ GrantsSearchResults.getProps = async ({ apolloClient, locale, query }) => {
     themeConfig: {
       footerVersion: 'organization',
     },
+    customPageData: customPageData ?? undefined,
+    customSubpage: getCustomSubpage ?? undefined,
   }
 }
 

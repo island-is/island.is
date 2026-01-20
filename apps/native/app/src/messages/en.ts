@@ -1,6 +1,11 @@
 import { TranslatedMessages } from './index'
 
 export const en: TranslatedMessages = {
+  // General buttons
+  'button.change': 'Change',
+  'button.open': 'Open',
+  'button.moreInfoHere': 'More info here',
+
   // login
   'login.welcomeMessage': 'Log in to the app with electronic ID',
   'login.loginButtonText': 'Login',
@@ -184,6 +189,10 @@ export const en: TranslatedMessages = {
   'home.vehicleModule.summary':
     'Enter mileage of electric and plug-in hybrid vehicles',
   'home.vehicleModule.button': 'My vehicles',
+  'homeBanner.vehicleMileage.title': 'Register mileage',
+  'homeBanner.vehicleMileage.description':
+    'Register the mileage of your vehicles',
+  'homeBanner.vehicleMileage.cta': 'View vehicles',
   'button.seeAll': 'See all',
 
   // home options
@@ -324,6 +333,9 @@ export const en: TranslatedMessages = {
   'licenseDetail.pcard.alert.title': 'Remember the parking card!',
   'licenseDetail.pcard.alert.description':
     'This summary is not valid as a parking card.',
+  'licenseDetail.driversLicense.alert.title': 'Are you traveling abroad?',
+  'licenseDetail.driversLicense.alert.description':
+    'Remember to bring the card since the digital driver license is not valid outside of Iceland.',
   'licenseDetail.ehic.alert.title': 'Remember the card!',
   'licenseDetail.ehic.alert.description':
     'This summary is not valid as a European Health Insurance card.',
@@ -412,6 +424,12 @@ export const en: TranslatedMessages = {
   'profile.finance': 'Finance',
   'profile.airDiscount': 'Air discount',
   'profile.health': 'Health',
+  'profile.moreInfo': 'More on my-pages',
+  'profile.accessControl': 'Access control',
+  'profile.supportPayments': 'Support payments',
+  'profile.education': 'Education',
+  'profile.lawAndOrder': 'Law and order',
+  'profile.occupationalLicenses': 'Occupational licenses',
 
   // vehicles
   'vehicles.screenTitle': 'Vehicles',
@@ -420,6 +438,7 @@ export const en: TranslatedMessages = {
     'Vehicles registered to you will appear here.',
   'vehicles.nextInspectionLabel': 'Next inspection {date}',
   'vehicles.mileageRequired': 'Kilometre fee',
+  'vehicles.registerMileage': 'Register mileage',
 
   // vehicles detail
   'vehicleDetail.regno': 'Registration number',
@@ -469,11 +488,30 @@ export const en: TranslatedMessages = {
   'vehicle.mileage.historyTitle': 'Mileage history',
   'vehicle.mileage.editRecordButton': 'Edit mileage',
 
+  // vehicle links
+  'vehicle.links.ownerLookup': 'Vehicle registry lookup',
+  'vehicle.links.vehicleHistory': 'Vehicle history',
+  'vehicle.links.reportOwnerChange': 'Report change of ownership',
+  'vehicle.links.returnCertificate': 'Return certificate',
+  'vehicle.links.nameConfidentiality':
+    'Name confidentiality in vehicle registry',
+
+  // vehicle dropdown links
+  'vehicle.links.dropdown.orderNumberPlate': 'Order number plate',
+  'vehicle.links.dropdown.orderRegistrationCertificate':
+    'Order registration certificate',
+  'vehicle.links.dropdown.changeCoOwner': 'Change co-owner',
+  'vehicle.links.dropdown.changeOperator': 'Change operator',
+  'vehicle.links.dropdown.vehicleHistoryReport': 'Vehicle history report',
+
   // assets overview
   'assetsOvervies.screenTitle': 'Assets',
   'assetsOverview.emptyListTitle': 'No assets found for the user',
   'assetsOverview.emptyListDescription':
     'Assets registered to you will appear here.',
+
+  // assets links
+  'assets.links.mortgageCertificate': 'Mortgage certificate',
 
   // assets details
   'assetsDetail.propertyNumber': 'Property number',
@@ -501,6 +539,10 @@ export const en: TranslatedMessages = {
   'finance.heading.title': 'Financial standing with the government',
   'finance.heading.subtitle':
     'Here you can see an overview of your debt and/or credit balance with the government.',
+  'finance.links.payments': 'Payments',
+  'finance.links.loans': 'Loans',
+  'finance.links.transactions': 'Transactions',
+  'finance.links.status': 'Status',
 
   // finance detail
   'financeDetail.title': 'Detailed information',
@@ -639,6 +681,9 @@ export const en: TranslatedMessages = {
   'airDiscount.emptyListTitle': 'No benefits',
   'airDiscount.emptyListDescription':
     'Only inhabitants with a legal domicile in rural areas far away from the Capital area and on islands are eligible for a discount with Loftbru. (see map on loftbru.is)',
+  'airDiscount.disabledTitle': 'Loftbru closed',
+  'airDiscount.disabledDescription':
+    'The Loftbrú Air discount codes are not valid at the moment.',
 
   // offline
   'offline.title': 'No internet connection',
@@ -706,6 +751,13 @@ export const en: TranslatedMessages = {
   'health.overview.levelStatusValue': 'Level {level}, you pay {percentage}%',
   'health.overview.medicinePurchaseNoActivePeriodWarning':
     'A new payment period begins with the next medicine purchase',
+  'health.overview.basicInformation': 'Basic information',
+  'health.overview.bloodType': 'Blood group',
+  'health.overview.bloodTypeDescription': 'Your blood group is {bloodType}',
+  'health.overview.noBloodTypeRegistered': 'No blood type registered',
+  'health.overview.dentist': 'Dentist',
+  'health.overview.noDentistRegistered': 'No dentist registered',
+  'health.overview.prescriptions': 'Prescriptions',
 
   // health - vaccinations
   'health.vaccinations.screenTitle': 'Vaccinations',
@@ -736,4 +788,57 @@ export const en: TranslatedMessages = {
     'No organs can be used for transplantation.',
   'health.organDonation.isDonorWithLimitationsDescription':
     'All organs can be used for transplantation except: {limitations}.',
+
+  // health - prescriptions & drug certificates
+  'health.prescriptionsAndCertificates.screenTitle': 'Medication',
+  'health.prescriptionsAndCertificates.validTo': 'Valid to: {date}',
+  'health.prescriptionsAndCertificates.expired': 'Expired',
+  'health.prescriptionsAndCertificates.rejected': 'Rejected',
+  'health.prescriptionsAndCertificates.inProcess': 'In process',
+  'health.prescriptionsAndCertificates.valid': 'Valid',
+  'health.prescriptionsAndCertificates.furtherInformation':
+    'Further information',
+  'health.prescriptionsAndCertificates.status': 'Status',
+  'health.prescriptionsAndCertificates.description':
+    'Doctors request medication certificates for individuals who are issued by the National Health Insurance Fund under certain conditions according to working regulations.',
+
+  'health.drugCertificates.title': 'Medication certificate',
+  'health.drugCertificates.drugName': 'Drug name',
+  'health.drugCertificates.atcCode': 'ATC code',
+  'health.drugCertificates.ingredients': 'Ingredient',
+  'health.drugCertificates.validFrom': 'Valid from',
+  'health.drugCertificates.validUntil': 'Valid to',
+  'health.drugCertificates.nameOfDoctor': 'Name of doctor',
+  'health.drugCertificates.methylDoctors':
+    'Extra doctors registered on license',
+
+  'health.prescriptions.title': 'Prescriptions',
+  'health.prescriptions.description':
+    'Here you can find an overview of your prescriptions and medication certificates.',
+  'health.prescriptions.drug': 'Medication',
+  'health.prescriptions.type': 'Type',
+  'health.prescriptions.indication': 'Medication used for',
+  'health.prescriptions.quantity': 'Prescribed amount',
+  'health.prescriptions.dosageInstructions': 'Dosage instructions',
+  'health.prescriptions.issueDate': 'Issue date',
+  'health.prescriptions.expiresAt': 'Expires at',
+  'health.prescriptions.doctor': 'Doctors',
+  'health.prescriptions.issueInformation': 'Issue information',
+  'health.prescriptions.dispensations': 'Dispensation history',
+  'health.prescriptions.dispensationNumber': 'Dispensation',
+  'health.prescriptions.lastDispensationDate': 'Last dispensed: {date}',
+  'health.prescriptions.dispensationCount': '{count} dispensations',
+  'health.prescriptions.fetchMoreDispensations': 'See more',
+  'health.prescriptions.completedDispensation': '{number}. dispensation',
+  'health.prescriptions.dispensationDetail.title':
+    'Information for {count}. dispensation',
+  'health.prescriptions.history.table.date': 'Date',
+  'health.prescriptions.history.table.dispensery': 'Dispensing point',
+  'health.prescriptions.history.table.drug': 'Medicine',
+  'health.prescriptions.history.table.quantity': 'Quantity',
+  'health.prescriptions.history.table.moreInfo': 'More',
+  'health.medicineHistory.title': 'Medicine history',
+  'health.prescriptions.noDispensations': 'No dispensations recorded',
+  'health.prescriptions.noDispensationsDescription':
+    'If you believe you have data that should appear here, please contact service provider.',
 }

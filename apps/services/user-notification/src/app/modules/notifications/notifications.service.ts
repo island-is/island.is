@@ -12,10 +12,12 @@ import { paginate } from '@island.is/nest/pagination'
 import type { User } from '@island.is/auth-nest-tools'
 import { NoContentException } from '@island.is/nest/problem'
 import { Notification } from './notification.model'
+import { ActorNotification } from './actor-notification.model'
 import { ArgumentDto } from './dto/createHnippNotification.dto'
 import { HnippTemplate } from './dto/hnippTemplate.response'
 import {
   PaginatedNotificationDto,
+  PaginatedActorNotificationDto,
   UpdateNotificationDto,
   RenderedNotificationDto,
   ExtendedPaginationDto,
@@ -30,6 +32,8 @@ import {
   GetTemplates,
   GetOrganizationByNationalId,
 } from '@island.is/clients/cms'
+import { DocumentsScope } from '@island.is/auth/scopes'
+import { Op } from 'sequelize'
 
 /**
  * These are the properties that can be replaced in the template
@@ -52,6 +56,8 @@ export class NotificationsService {
     private readonly logger: Logger,
     @InjectModel(Notification)
     private readonly notificationModel: typeof Notification,
+    @InjectModel(ActorNotification)
+    private readonly actorNotificationModel: typeof ActorNotification,
     private readonly cmsService: CmsService,
   ) {}
 
@@ -67,7 +73,9 @@ export class NotificationsService {
     const res = (await this.cmsService.fetchData(
       GetOrganizationByNationalId,
       queryVariables,
-    )) as any
+    )) as unknown as {
+      organizationCollection: { items: Array<{ title: string }> }
+    }
     const items = res.organizationCollection.items
     if (items.length > 0) {
       const [item] = items
@@ -108,6 +116,7 @@ export class NotificationsService {
         externalBody: formattedTemplate.externalBody,
         internalBody: formattedTemplate.internalBody,
         clickActionUrl: formattedTemplate.clickActionUrl,
+        scope: notification.scope,
         created: notification.created,
         updated: notification.updated,
         read: notification.read,
@@ -125,7 +134,9 @@ export class NotificationsService {
     const res = (await this.cmsService.fetchData(
       GetTemplates,
       queryVariables,
-    )) as any
+    )) as unknown as {
+      hnippTemplateCollection: { items: HnippTemplate[] }
+    }
 
     return res.hnippTemplateCollection.items.map((template: HnippTemplate) => ({
       ...template,
@@ -145,54 +156,61 @@ export class NotificationsService {
     const res = (await this.cmsService.fetchData(
       GetTemplateByTemplateId,
       queryVariables,
-    )) as any
+    )) as unknown as {
+      hnippTemplateCollection: { items: HnippTemplate[] }
+    }
     const items = res.hnippTemplateCollection.items
     if (items.length > 0) {
       const template = items[0]
+
       return { ...template, args: template.args || [] } // Ensure args is an array
     } else {
       throw new NotFoundException(`Template not found for ID: ${templateId}`)
     }
   }
-  /**
-   * Checks if the arguments provided in the request body are valid for the template and checks if the number of arguments match
-   */
-  async validate(templateId: string, args: ArgumentDto[]) {
-    const template = await this.getTemplate(templateId)
 
-    if (!this.validateArgCounts(args, template)) {
+  /**
+   * Validates that all required arguments are provided for the template.
+   * Throws BadRequestException if any required arguments are missing.
+   */
+  validate(template: HnippTemplate, args: ArgumentDto[]): void {
+    const providedKeys = args.map((arg) => arg.key)
+
+    const missingArgs = template.args.filter(
+      (requiredKey) => !providedKeys.includes(requiredKey),
+    )
+    if (missingArgs.length > 0) {
       throw new BadRequestException(
-        `Number of arguments doesn't match, template requires ${template.args.length} arguments but ${args.length} were provided`,
+        `Missing required arguments for template '${
+          template.templateId
+        }': ${missingArgs.join(', ')}. Required args are: ${template.args.join(
+          ', ',
+        )}`,
       )
     }
-
-    const validArgs = this.validateArgs(args, template)
-
-    if (!validArgs.isValid && validArgs.message) {
-      throw new BadRequestException(validArgs.message)
-    }
-  }
-
-  validateArgCounts(args: ArgumentDto[], template: HnippTemplate): boolean {
-    return args.length == template.args.length
   }
 
   /**
-   * Checks if the arguments provided in the request body are valid for the template
+   * Sanitizes arguments by filtering out any that don't exist in the template.
+   * Logs warnings for invalid args and returns only valid ones.
    */
-  validateArgs(args: ArgumentDto[], template: HnippTemplate) {
+  sanitize(template: HnippTemplate, args: ArgumentDto[]): ArgumentDto[] {
+    const validArgs: ArgumentDto[] = []
+
+    // Filter args and log warnings for invalid ones
     for (const arg of args) {
-      if (!template.args.includes(arg.key)) {
-        return {
-          isValid: false,
-          message: `${arg.key} is not a valid argument for template: ${template.templateId}`,
-        }
+      if (template.args.includes(arg.key)) {
+        validArgs.push(arg)
+      } else {
+        this.logger.warn(
+          `Filtering out invalid argument '${arg.key}' for template '${
+            template.templateId
+          }'. Valid args are: ${template.args.join(', ')}`,
+        )
       }
     }
 
-    return {
-      isValid: true,
-    }
+    return validArgs
   }
 
   /**
@@ -266,6 +284,7 @@ export class NotificationsService {
   findMany(
     nationalId: string,
     query: ExtendedPaginationDto,
+    scopes: string[],
   ): Promise<PaginatedNotificationDto> {
     return paginate({
       Model: this.notificationModel,
@@ -274,17 +293,31 @@ export class NotificationsService {
       before: query.before,
       primaryKeyField: 'id',
       orderOption: [['id', 'DESC']],
-      where: { recipient: nationalId },
-      attributes: ['id', 'messageId', 'senderId', 'created', 'updated'],
+      where: {
+        recipient: nationalId,
+        scope: {
+          [Op.in]: scopes || [DocumentsScope.main],
+        },
+      },
+      attributes: [
+        'id',
+        'messageId',
+        'senderId',
+        'scope',
+        'created',
+        'updated',
+      ],
     })
   }
 
   async findManyWithTemplate(
     nationalId: string,
     query: ExtendedPaginationDto,
+    scopes: string[],
   ): Promise<PaginatedNotificationDto> {
     const locale = mapToLocale(query.locale as Locale)
     const templates = await this.getTemplates(locale)
+
     const paginatedListResponse = await paginate({
       Model: this.notificationModel,
       limit: query.limit || 10,
@@ -292,7 +325,12 @@ export class NotificationsService {
       before: query.before,
       primaryKeyField: 'id',
       orderOption: [['id', 'DESC']],
-      where: { recipient: nationalId },
+      where: {
+        recipient: nationalId,
+        scope: {
+          [Op.in]: scopes || [DocumentsScope.main],
+        },
+      },
     })
 
     const formattedNotifications = await Promise.all(
@@ -410,6 +448,61 @@ export class NotificationsService {
       throw new InternalServerErrorException(
         'Error marking all notifications as read',
       )
+    }
+  }
+
+  /**
+   * Finds actor notifications for a specific recipient
+   */
+  async findActorNotifications(
+    recipient: string,
+    query?: ExtendedPaginationDto,
+  ): Promise<PaginatedActorNotificationDto> {
+    const result = await paginate({
+      Model: this.actorNotificationModel,
+      limit: query?.limit || 10,
+      after: query?.after || '',
+      before: query?.before,
+      primaryKeyField: 'id',
+      orderOption: [['id', 'DESC']],
+      where: { recipient },
+      include: [
+        {
+          model: this.notificationModel,
+          as: 'userNotification',
+          attributes: ['messageId', 'recipient', 'scope'],
+          required: true,
+        },
+      ],
+      attributes: [
+        'id',
+        'messageId',
+        'userNotificationId',
+        'recipient',
+        'created',
+      ],
+    })
+
+    // Map results to include fields from joined user_notification
+    const mappedData = result.data.map((item) => {
+      const actorNotification = item as ActorNotification & {
+        userNotification: {
+          messageId: string
+          recipient: string
+          scope: string
+        }
+      }
+      return {
+        ...actorNotification.toJSON(),
+        rootMessageId: actorNotification.userNotification.messageId,
+        onBehalfOfNationalId: actorNotification.userNotification.recipient,
+        scope: actorNotification.userNotification.scope,
+      }
+    })
+
+    return {
+      ...result,
+      data: mappedData,
     }
   }
 }

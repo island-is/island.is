@@ -11,8 +11,17 @@ const Host = styled.View<{ background: boolean }>`
 interface InputRowProps {
   background?: boolean
   children: React.ReactNode
+  testID?: string | undefined
 }
 
-export function InputRow({ children, background = false }: InputRowProps) {
-  return <Host background={background}>{children}</Host>
+export function InputRow({
+  children,
+  testID,
+  background = false,
+}: InputRowProps) {
+  return (
+    <Host background={background} testID={testID}>
+      {children}
+    </Host>
+  )
 }

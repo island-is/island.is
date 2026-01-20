@@ -1,5 +1,5 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import {
   Adalmatseining,
   AdalmatseiningApi,
@@ -10,6 +10,12 @@ import {
   FasteignApi,
   StadfangApi,
 } from '../../gen/fetch'
+import {
+  Fasteign as FasteignAsset,
+  FasteignirApi,
+} from '@island.is/clients/assets'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 @Injectable()
 export class HmsService {
@@ -17,6 +23,9 @@ export class HmsService {
     private readonly stadfangApi: StadfangApi,
     private readonly fasteignApi: FasteignApi,
     private readonly adalmatseiningApi: AdalmatseiningApi,
+    private propertiesApi: FasteignirApi,
+    @Inject(LOGGER_PROVIDER)
+    private readonly logger: Logger,
   ) {}
 
   private apiWithAuth = <T extends BaseAPI>(api: T, user: User): T =>
@@ -186,5 +195,35 @@ export class HmsService {
         `Failed to retrieve property information: ${errorMessage}`,
       )
     }
+  }
+
+  // This is using the relatively new FasteignirApi
+  async hmsPropertyByPropertyCode(
+    auth: User,
+    input: { fasteignNrs?: string[] } = { fasteignNrs: [] },
+  ) {
+    let properties: Array<FasteignAsset> = []
+
+    try {
+      const api = this.propertiesApi.withMiddleware(new AuthMiddleware(auth))
+
+      properties = await Promise.all(
+        input.fasteignNrs?.map((nr) => {
+          return api.fasteignirGetFasteign({
+            fasteignanumer:
+              // fasteignirGetFasteignir returns the fasteignanumer with and "F" in front
+              // but fasteignirGetFasteign throws an error if the fasteignanumer is not only numbers
+              nr?.replace(/\D/g, '') ?? '',
+          })
+        }) ?? [],
+      )
+    } catch (e) {
+      this.logger.error('Failed to fetch properties:', e)
+      const errorMessage =
+        e.response?.data?.message || e.message || 'Unknown error'
+      throw new Error(`Failed to fetch properties: ${errorMessage}`)
+    }
+
+    return properties
   }
 }

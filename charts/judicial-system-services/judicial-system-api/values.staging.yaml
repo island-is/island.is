@@ -30,7 +30,7 @@ env:
   BACKEND_URL: 'http://web-judicial-system-backend'
   CONTENTFUL_ENVIRONMENT: 'test'
   CONTENTFUL_HOST: 'cdn.contentful.com'
-  HIDDEN_FEATURES: 'SERVICE_PORTAL,PUBLIC_PROSECUTOR_VERDICT'
+  HIDDEN_FEATURES: ''
   IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
   LOG_LEVEL: 'info'
   NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
@@ -74,7 +74,8 @@ ingress:
           - '/api/defender'
 namespace: 'judicial-system'
 podDisruptionBudget:
-  maxUnavailable: 1
+  minAvailable: 1
+  unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534
 pvcs: []

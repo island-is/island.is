@@ -32,6 +32,9 @@ export class NotificationSender {
   id?: string
 
   @Field({ nullable: true })
+  title?: string
+
+  @Field({ nullable: true })
   logoUrl?: string
 }
 
@@ -100,8 +103,38 @@ export class AdminNotification {
   @Field(() => NotificationSender)
   sender!: NotificationSender
 
+  @Field()
+  scope!: string
+
   @Field(() => GraphQLISODateTime)
   sent!: Date
+}
+
+@ObjectType()
+export class ActorNotification {
+  @Field(() => Int)
+  id!: number
+
+  @Field()
+  messageId!: string
+
+  @Field()
+  rootMessageId!: string
+
+  @Field(() => Int)
+  userNotificationId!: number
+
+  @Field(() => NotificationRecipient)
+  recipient!: NotificationRecipient
+
+  @Field(() => NotificationRecipient)
+  onBehalfOfNationalId!: NotificationRecipient
+
+  @Field()
+  scope!: string
+
+  @Field(() => GraphQLISODateTime)
+  created!: Date
 }
 
 @InputType()
@@ -119,6 +152,11 @@ export class NotificationsResponse extends PaginatedResponse(Notification) {
 @ObjectType('AdminNotifications')
 export class AdminNotificationsResponse extends PaginatedResponse(
   AdminNotification,
+) {}
+
+@ObjectType('ActorNotifications')
+export class ActorNotificationsResponse extends PaginatedResponse(
+  ActorNotification,
 ) {}
 
 @ObjectType()

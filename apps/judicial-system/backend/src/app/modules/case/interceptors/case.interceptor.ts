@@ -9,8 +9,16 @@ import {
 
 import {
   CaseFileCategory,
+  CaseIndictmentRulingDecision,
   DefendantEventType,
   EventType,
+  getIndictmentAppealDeadline,
+  isDefenceUser,
+  isPrisonSystemUser,
+  isProsecutionUser,
+  isRequestCase,
+  ServiceRequirement,
+  User,
   UserRole,
 } from '@island.is/judicial-system/types'
 
@@ -22,20 +30,64 @@ import {
   EventLog,
 } from '../../repository'
 
-export const transformDefendants = (defendants?: Defendant[]) => {
-  return defendants?.map((defendant) => ({
-    ...defendant.toJSON(),
-    sentToPrisonAdminDate: defendant.isSentToPrisonAdmin
-      ? DefendantEventLog.getEventLogDateByEventType(
-          DefendantEventType.SENT_TO_PRISON_ADMIN,
-          defendant.eventLogs,
-        )
-      : undefined,
-    openedByPrisonAdminDate: DefendantEventLog.getEventLogDateByEventType(
-      DefendantEventType.OPENED_BY_PRISON_ADMIN,
-      defendant.eventLogs,
-    ),
-  }))
+export const transformDefendants = ({
+  defendants,
+  indictmentRulingDecision,
+  rulingDate,
+}: {
+  defendants?: Defendant[]
+  indictmentRulingDecision?: CaseIndictmentRulingDecision
+  rulingDate?: Date
+}) => {
+  return defendants?.map((defendant) => {
+    // Only the latest verdict is relevant
+    const { verdicts } = defendant
+    const verdict = verdicts?.[0]
+    const isServiceRequired =
+      verdict?.serviceRequirement === ServiceRequirement.REQUIRED
+    const isFine =
+      indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
+
+    const baseDate = isServiceRequired ? verdict.serviceDate : rulingDate
+    const appealDeadlineResult = baseDate
+      ? getIndictmentAppealDeadline({
+          baseDate: new Date(baseDate),
+          isFine,
+        })
+      : undefined
+    const appealDeadline = appealDeadlineResult?.deadlineDate
+    const isAppealDeadlineExpired =
+      appealDeadlineResult?.isDeadlineExpired ?? false
+
+    return {
+      ...defendant.toJSON(),
+      ...(verdict
+        ? {
+            verdict: {
+              ...verdict.toJSON(),
+              verdictDeliveredToNationalCommissionersOffice:
+                DefendantEventLog.getEventLogDateByEventType(
+                  DefendantEventType.VERDICT_DELIVERED_TO_NATIONAL_COMMISSIONERS_OFFICE,
+                  defendant.eventLogs,
+                ),
+            },
+          }
+        : {}),
+      verdicts: undefined,
+      verdictAppealDeadline: appealDeadline,
+      isVerdictAppealDeadlineExpired: isAppealDeadlineExpired,
+      sentToPrisonAdminDate: defendant.isSentToPrisonAdmin
+        ? DefendantEventLog.getEventLogDateByEventType(
+            DefendantEventType.SENT_TO_PRISON_ADMIN,
+            defendant.eventLogs,
+          )
+        : undefined,
+      openedByPrisonAdminDate: DefendantEventLog.getEventLogDateByEventType(
+        DefendantEventType.OPENED_BY_PRISON_ADMIN,
+        defendant.eventLogs,
+      ),
+    }
+  })
 }
 
 const transformCaseRepresentatives = (theCase: Case) => {
@@ -66,14 +118,14 @@ const transformCaseRepresentatives = (theCase: Case) => {
   const defendantsAndDefenders = theCase.defendants?.flatMap((defendant) => {
     const defendantAndDefender = [
       {
-        name: defendant.name,
+        name: defendant.name ?? '',
         nationalId: defendant.nationalId,
         caseFileCategory: CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
       },
     ]
     if (defendant.defenderName) {
       defendantAndDefender.push({
-        name: defendant.defenderName,
+        name: defendant.defenderName ?? '',
         nationalId: defendant.defenderNationalId,
         caseFileCategory: CaseFileCategory.DEFENDANT_CASE_FILE,
       })
@@ -88,13 +140,22 @@ const transformCaseRepresentatives = (theCase: Case) => {
   ].filter((representative) => !!representative)
 }
 
-const transformCase = (theCase: Case) => {
+const transformCase = (theCase: Case, user?: User) => {
   return {
     ...theCase.toJSON(),
-    defendants: transformDefendants(theCase.defendants),
+    defendants: transformDefendants({
+      defendants: theCase.defendants,
+      indictmentRulingDecision: theCase.indictmentRulingDecision,
+      rulingDate: theCase.rulingDate,
+    }),
+    caseRepresentatives: transformCaseRepresentatives(theCase),
     postponedIndefinitelyExplanation:
       CaseString.postponedIndefinitelyExplanation(theCase.caseStrings),
     civilDemands: CaseString.civilDemands(theCase.caseStrings),
+    penalties:
+      user && isProsecutionUser(user)
+        ? CaseString.penalties(theCase.caseStrings)
+        : null,
     caseSentToCourtDate: EventLog.getEventLogDateByEventType(
       [EventType.CASE_SENT_TO_COURT, EventType.INDICTMENT_CONFIRMED],
       theCase.eventLogs,
@@ -126,14 +187,27 @@ const transformCase = (theCase: Case) => {
       EventType.REQUEST_COMPLETED,
       theCase.eventLogs,
     ),
-    caseRepresentatives: transformCaseRepresentatives(theCase),
+    indictmentCompletedDate: EventLog.getEventLogDateByEventType(
+      EventType.INDICTMENT_COMPLETED,
+      theCase.eventLogs,
+    ),
+    eventLogs: undefined,
+    // Defence and prison system users should not see rulingModifiedHistory for request cases
+    rulingModifiedHistory:
+      isRequestCase(theCase.type) &&
+      (isDefenceUser(user) || isPrisonSystemUser(user))
+        ? undefined
+        : theCase.rulingModifiedHistory,
   }
 }
 
 @Injectable()
 export class CaseInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler) {
-    return next.handle().pipe(map(transformCase))
+    const request = context.switchToHttp().getRequest()
+    const user = request.user?.currentUser as User | undefined
+
+    return next.handle().pipe(map((theCase) => transformCase(theCase, user)))
   }
 }
 

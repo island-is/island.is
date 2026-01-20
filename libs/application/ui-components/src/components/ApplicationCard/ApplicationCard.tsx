@@ -42,6 +42,14 @@ export type ApplicationCardProps = {
    * Should the card buttons be shown?
    */
   shouldShowCardButtons?: boolean
+  /**
+   * Application slug
+   */
+  slug?: string
+  /**
+   * The path to the application.
+   */
+  applicationPath?: string
 }
 
 export const ApplicationCard = ({

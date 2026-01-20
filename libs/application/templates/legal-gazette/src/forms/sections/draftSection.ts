@@ -7,10 +7,12 @@ import {
   buildTextField,
   buildCustomField,
   buildDateField,
+  buildAsyncSelectField,
 } from '@island.is/application/core'
 import format from 'date-fns/format'
 import { m } from '../../lib/messages'
 import { LGBaseEntity } from '../../utils/types'
+import { LEGAL_GAZETTE_CATEGORIES_QUERY } from '../../graphql'
 
 export const draftSection = buildSection({
   id: 'draft.section',
@@ -25,17 +27,40 @@ export const draftSection = buildSection({
           marginBottom: [2, 3, 4],
         }),
         buildSelectField({
+          id: 'application.typeId',
+          title: m.draft.sections.advert.typeInput,
+          width: 'half',
+          required: true,
+          options: ({ externalData }) => {
+            const types =
+              getValueViaPath<LGBaseEntity[]>(externalData, 'types.data', []) ??
+              []
+
+            return types.map((c) => ({ label: c.title, value: c.id }))
+          },
+        }),
+        buildAsyncSelectField({
           id: 'application.categoryId',
           title: m.draft.sections.advert.categoryInput,
-          options: ({ externalData }) => {
-            const categories =
-              getValueViaPath<LGBaseEntity[]>(
-                externalData,
-                'categories.data',
-                [],
-              ) ?? []
+          width: 'half',
+          updateOnSelect: ['application.typeId'],
+          required: true,
+          loadOptions: async ({ apolloClient, selectedValues }) => {
+            if (!selectedValues || selectedValues.length === 0) return []
 
-            return categories.map((c) => ({ label: c.title, value: c.id }))
+            const { data } = await apolloClient.query({
+              query: LEGAL_GAZETTE_CATEGORIES_QUERY,
+              variables: { input: { typeId: selectedValues[0] } },
+            })
+
+            const options = data.legalGazetteCategories.categories.map(
+              (c: LGBaseEntity) => ({
+                label: c.title,
+                value: c.id,
+              }),
+            )
+
+            return options
           },
         }),
         buildTextField({
@@ -53,18 +78,26 @@ export const draftSection = buildSection({
         buildDescriptionField({
           id: 'draft.signature',
           title: m.draft.sections.signature.formTitle,
+          description: m.errors.emptySignature,
           titleVariant: 'h4',
           marginTop: [2, 3, 4],
         }),
+
         buildTextField({
-          required: true,
+          id: 'signature.name',
+          title: m.draft.sections.signature.name,
+          placeholder: m.draft.sections.signature.namePlaceholder,
+          width: 'half',
+          backgroundColor: 'blue',
+        }),
+        buildTextField({
           id: 'signature.location',
           title: m.draft.sections.signature.location,
+          placeholder: m.draft.sections.signature.locationPlaceholder,
           width: 'half',
           backgroundColor: 'blue',
         }),
         buildDateField({
-          required: true,
           id: 'signature.date',
           title: m.draft.sections.signature.date,
           width: 'half',
@@ -76,9 +109,9 @@ export const draftSection = buildSection({
           },
         }),
         buildTextField({
-          required: true,
-          id: 'signature.name',
-          title: m.draft.sections.signature.name,
+          id: 'signature.onBehalfOf',
+          title: m.draft.sections.signature.onBehalfOf,
+          placeholder: m.draft.sections.signature.onBehalfOfPlaceholder,
           width: 'half',
           backgroundColor: 'blue',
         }),

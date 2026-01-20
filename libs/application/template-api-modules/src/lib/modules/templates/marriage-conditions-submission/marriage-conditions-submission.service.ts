@@ -17,6 +17,7 @@ import {
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
 import { NationalRegistryXRoadService } from '@island.is/api/domains/national-registry-x-road'
+import { NationalRegistryV3Service } from '../../shared/api/national-registry-v3/national-registry-v3.service'
 import { TemplateApiError } from '@island.is/nest/problem'
 import {
   coreErrorMessages,
@@ -30,12 +31,14 @@ export class MarriageConditionsSubmissionService extends BaseTemplateApiService 
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly syslumennService: SyslumennService,
-    private readonly nationalRegistryService: NationalRegistryXRoadService,
+    private readonly nationalRegistryV3Service: NationalRegistryV3Service,
+    private readonly nationalRegistryXRoadService: NationalRegistryXRoadService,
   ) {
     super(ApplicationTypes.MARRIAGE_CONDITIONS)
   }
 
-  async maritalStatus({ auth, application }: TemplateApiModuleActionProps) {
+  async maritalStatus(props: TemplateApiModuleActionProps) {
+    const { application } = props
     const fakeData = getValueViaPath<MarriageConditionsFakeData>(
       application.answers,
       'fakeData',
@@ -45,7 +48,7 @@ export class MarriageConditionsSubmissionService extends BaseTemplateApiService 
       return this.handleReturn(fakeData?.maritalStatus || '')
     }
 
-    const spouse = await this.nationalRegistryService.getSpouse(auth.nationalId)
+    const spouse = await this.nationalRegistryV3Service.getSpouse(props)
     const maritalStatus = spouse?.maritalStatus || '1'
     return this.handleReturn(maritalStatus)
   }
@@ -86,7 +89,7 @@ export class MarriageConditionsSubmissionService extends BaseTemplateApiService 
   }
 
   async religionCodes() {
-    return await this.nationalRegistryService.getReligions()
+    return await this.nationalRegistryXRoadService.getReligions()
   }
 
   private handleReturn(maritalStatus: string) {
@@ -116,7 +119,7 @@ export class MarriageConditionsSubmissionService extends BaseTemplateApiService 
     )
   }
 
-  async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
+  async submitApplication({ application }: TemplateApiModuleActionProps) {
     const {
       applicant,
       spouse,
@@ -128,7 +131,6 @@ export class MarriageConditionsSubmissionService extends BaseTemplateApiService 
     } = application.answers as MarriageConditionsAnswers
 
     const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth,
       application.id,
     )
 

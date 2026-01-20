@@ -27,7 +27,11 @@ import { serviceSetup as consultationPortalSetup } from '../../../apps/consultat
 import { serviceSetup as xroadCollectorSetup } from '../../../apps/services/xroad-collector/infra/xroad-collector'
 
 import { serviceSetup as licenseApiSetup } from '../../../apps/services/license-api/infra/license-api'
-import { workerSetup as cmsImporterSetup } from '../../../apps/services/cms-importer/infra/cms-importer-worker'
+import {
+  workerSetup as cmsImporterSetup,
+  energyFundImportSetup as cmsImporterEnergyFundImportSetup,
+  fsreBuildingsImportSetup as cmsImporterFsreBuildingsImportSetup,
+} from '../../../apps/services/cms-importer/infra/cms-importer-worker'
 
 import { serviceSetup as skilavottordWebSetup } from '../../../apps/skilavottord/web/infra/skilavottord-web'
 import { serviceSetup as skilavottordWsSetup } from '../../../apps/skilavottord/ws/infra/skilavottord-ws'
@@ -52,8 +56,6 @@ import { serviceSetup as adsApiSetup } from '../../../apps/air-discount-scheme/a
 import { serviceSetup as adsBackendSetup } from '../../../apps/air-discount-scheme/backend/infra/air-discount-scheme-backend'
 import { serviceSetup as adsWebSetup } from '../../../apps/air-discount-scheme/web/infra/web'
 
-import { serviceSetup as externalContractsTestsSetup } from '../../../apps/external-contracts-tests/infra/external-contracts-tests'
-
 import { serviceSetup as rabBackendSetup } from '../../../apps/services/regulations-admin-backend/infra/regulations-admin-backend'
 
 import {
@@ -68,11 +70,11 @@ import {
 } from '../../../apps/services/sessions/infra/sessions'
 
 import { serviceSetup as authAdminApiSetup } from '../../../apps/services/auth/admin-api/infra/auth-admin-api'
-import { serviceSetup as unicornAppSetup } from '../../../apps/unicorn-app/infra/infra'
 
 import { EnvironmentServices } from '.././dsl/types/charts'
 import { ServiceBuilder } from '../dsl/dsl'
 import { serviceSetup as formSystemApiSetup } from '../../../apps/services/form-system/infra/form-system'
+import { workerSetup as formSystemWorkerSetup } from '../../../apps/services/form-system/infra/form-system'
 import { serviceSetup as formSystemWebSetup } from '../../../apps/form-system/web/infra/form-system-web'
 import { serviceSetup as paymentFlowUpdateHandlerSetup } from '../../../apps/services/payment-flow-update-handler/infra/payment-flow-update-handler'
 
@@ -119,6 +121,7 @@ const universityGatewayService = universityGatewaySetup()
 const universityGatewayWorker = universityGatewayWorkerSetup()
 
 const formSystemApi = formSystemApiSetup()
+const formSystemWorker = formSystemWorkerSetup()
 const formSystemWeb = formSystemWebSetup()
 
 const paymentFlowUpdateHandlerService = paymentFlowUpdateHandlerSetup()
@@ -159,6 +162,8 @@ const xroadCollector = xroadCollectorSetup()
 
 const licenseApi = licenseApiSetup()
 const cmsImporter = cmsImporterSetup()
+const cmsImporterEnergyGrantImport = cmsImporterEnergyFundImportSetup()
+const cmsImporterFsreBuildingsImport = cmsImporterFsreBuildingsImportSetup()
 
 const storybook = storybookSetup({})
 
@@ -174,11 +179,7 @@ const userNotificationCleanupWorkerService =
 const userNotificationBirthdayWorkerService =
   userNotificationBirthdayWorkerSetup({ userProfileApi: servicePortalApi })
 
-const unicornApp = unicornAppSetup()
-
 const githubActionsCache = githubActionsCacheSetup()
-
-const externalContractsTests = externalContractsTestsSetup()
 
 export const Services: EnvironmentServices = {
   prod: [
@@ -210,6 +211,8 @@ export const Services: EnvironmentServices = {
     userNotificationBirthdayWorkerService,
     licenseApi,
     cmsImporter,
+    cmsImporterEnergyGrantImport,
+    cmsImporterFsreBuildingsImport,
     sessionsService,
     sessionsWorker,
     sessionsCleanupWorker,
@@ -219,10 +222,11 @@ export const Services: EnvironmentServices = {
     contentfulEntryTagger,
     bffAdminPortalService,
     bffServicePortalService,
-    unicornApp,
     paymentsWebApp,
     paymentsService,
     paymentFlowUpdateHandlerService,
+    formSystemApi,
+    formSystemWeb,
   ],
   staging: [
     appSystemApi,
@@ -253,6 +257,8 @@ export const Services: EnvironmentServices = {
     userNotificationBirthdayWorkerService,
     licenseApi,
     cmsImporter,
+    cmsImporterEnergyGrantImport,
+    cmsImporterFsreBuildingsImport,
     sessionsService,
     sessionsWorker,
     sessionsCleanupWorker,
@@ -260,10 +266,11 @@ export const Services: EnvironmentServices = {
     universityGatewayWorker,
     bffServicePortalService,
     bffAdminPortalService,
-    unicornApp,
     paymentsWebApp,
     paymentsService,
     paymentFlowUpdateHandlerService,
+    formSystemApi,
+    formSystemWeb,
   ],
   dev: [
     appSystemApi,
@@ -292,10 +299,11 @@ export const Services: EnvironmentServices = {
     userNotificationWorkerService,
     userNotificationCleanupWorkerService,
     userNotificationBirthdayWorkerService,
-    externalContractsTests,
     appSystemApiWorker,
     contentfulEntryTagger,
     cmsImporter,
+    cmsImporterEnergyGrantImport,
+    cmsImporterFsreBuildingsImport,
     licenseApi,
     sessionsService,
     sessionsWorker,
@@ -307,8 +315,8 @@ export const Services: EnvironmentServices = {
     paymentsWebApp,
     paymentsService,
     bffServicePortalService,
-    unicornApp,
     formSystemApi,
+    formSystemWorker,
     formSystemWeb,
     paymentFlowUpdateHandlerService,
   ],

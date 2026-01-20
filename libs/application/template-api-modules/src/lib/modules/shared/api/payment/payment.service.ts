@@ -102,7 +102,8 @@ export class PaymentService extends BaseTemplateApiService {
     params,
     currentUserLocale,
   }: TemplateApiModuleActionProps<CreateChargeParameters>) {
-    const { organizationId, chargeItems, extraData } = params ?? {}
+    const { organizationId, chargeItems, extraData, payerNationalId } =
+      params ?? {}
     const { shouldUseMockPayment } = application.answers
 
     if (shouldUseMockPayment && isRunningOnEnvironment('production')) {
@@ -128,6 +129,13 @@ export class PaymentService extends BaseTemplateApiService {
         list,
         application.id,
         organizationId ?? 'string',
+      )
+      const requestId = uuid()
+      await this.paymentModelService.addPaymentUrlAndRequestId(
+        application.id,
+        result.id,
+        'https://fakeUrl.fake/' + requestId,
+        requestId,
       )
 
       await this.paymentModelService.setUser4(
@@ -164,6 +172,11 @@ export class PaymentService extends BaseTemplateApiService {
     const extraDataItems =
       typeof extraData === 'function' ? extraData(application) : extraData ?? []
 
+    const resolvedPayerNationalId =
+      typeof payerNationalId === 'function'
+        ? payerNationalId(application)
+        : payerNationalId
+
     const response = await this.paymentModelService.createCharge(
       auth,
       organizationId,
@@ -171,6 +184,7 @@ export class PaymentService extends BaseTemplateApiService {
       application.id,
       extraDataItems,
       currentUserLocale,
+      resolvedPayerNationalId,
     )
 
     if (!response?.paymentUrl) {
@@ -181,10 +195,8 @@ export class PaymentService extends BaseTemplateApiService {
 
   async verifyPayment({
     application,
-    auth,
   }: TemplateApiModuleActionProps<CreateChargeParameters>) {
     const paymentStatus = await this.paymentModelService.getStatus(
-      auth,
       application.id,
     )
 
@@ -214,19 +226,30 @@ export class PaymentService extends BaseTemplateApiService {
 
     const paymentUrl = (payment.definition as { paymentUrl: string })
       ?.paymentUrl as string
+    let requestId = payment.request_id as string
 
     try {
-      const url = new URL(paymentUrl)
-      const chargeId = url.pathname.split('/').pop()
+      //if requestId is not set, we need to get it from the paymentUrl
+      if (!requestId && paymentUrl) {
+        const url = new URL(paymentUrl)
+        requestId = url.pathname.split('/').pop() ?? ''
+        this.logger.info(
+          'requestId not set, falling back to getting it from paymentUrl',
+        )
+      }
 
-      if (chargeId) {
-        await this.chargeFjsV2ClientService.deleteCharge(chargeId)
+      if (requestId) {
+        this.logger.info('Calling deleteCharge with requestId', requestId)
+        await this.chargeFjsV2ClientService.deleteCharge(requestId)
+      } else {
+        this.logger.warn('No requestId found, skipping deleteCharge')
       }
 
       await this.paymentModelService.delete(application.id, auth)
     } catch (error) {
       this.logger.error('Error deleting payment', {
         error,
+        requestId,
         paymentUrl,
         applicationId: application.id,
       })

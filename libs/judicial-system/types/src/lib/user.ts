@@ -44,10 +44,10 @@ export interface UserDescriptor {
 
 export interface InstitutionUser {
   id?: string | null
-  role?: string | null
+  role?: UserRole | null
   institution?: {
     id?: string | null
-    type?: string | null
+    type?: InstitutionType | null
   } | null
 }
 

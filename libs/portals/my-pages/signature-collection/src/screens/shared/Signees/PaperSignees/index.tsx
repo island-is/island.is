@@ -16,18 +16,20 @@ import { InputController } from '@island.is/shared/form-fields'
 import { useForm } from 'react-hook-form'
 import { useMutation } from '@apollo/client'
 import { toast } from 'react-toastify'
-import { useGetCanSign } from '../../../../hooks'
+import {
+  useGetCanSign,
+  useGetListSignees,
+  useGetSignatureList,
+} from '../../../../hooks'
 import { uploadPaperSignature } from '../../../../hooks/graphql/mutations'
 import { m } from '../../../../lib/messages'
 import { SignatureCollectionCollectionType } from '@island.is/api/schema'
 
 export const PaperSignees = ({
   listId,
-  refetchSignees,
   collectionType,
 }: {
   listId: string
-  refetchSignees: () => void
   collectionType: SignatureCollectionCollectionType
 }) => {
   useNamespaces('sp.signatureCollection')
@@ -38,6 +40,10 @@ export const PaperSignees = ({
   const [nationalIdTypo, setNationalIdTypo] = useState(false)
   const [page, setPage] = useState('')
   const [name, setName] = useState('')
+
+  /* refetch signees & listInfo (for total valid signees) logic */
+  const { refetchListSignees } = useGetListSignees(listId, collectionType)
+  const { refetchSignatureList } = useGetSignatureList(listId, collectionType)
 
   /* identity & canSign fetching logic */
   const { data, loading } = useIdentityQuery({
@@ -77,9 +83,12 @@ export const PaperSignees = ({
         },
       },
       onCompleted: (res) => {
-        if (res.signatureCollectionUploadPaperSignature?.success) {
+        const success = res.signatureCollectionUploadPaperSignature?.success
+
+        if (success) {
           toast.success(formatMessage(m.paperSigneeSuccess))
-          refetchSignees()
+          refetchListSignees()
+          refetchSignatureList()
         } else {
           toast.error(formatMessage(m.paperSigneeError))
         }
@@ -170,7 +179,6 @@ export const PaperSignees = ({
           </GridRow>
           <Box display="flex" justifyContent="flexEnd">
             <Button
-              variant="ghost"
               size="small"
               disabled={!canSign || !page || !name}
               onClick={() => upload()}

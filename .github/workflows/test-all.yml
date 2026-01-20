@@ -49,6 +49,9 @@ jobs:
       main_branch: 'main'
     needs:
       - pre-checks
+    permissions:
+      contents: 'read'
+      actions: 'read'
   tests:
     needs:
       - prepare

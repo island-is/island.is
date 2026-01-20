@@ -7,8 +7,9 @@ import {
   Application,
   DefaultEvents,
   defineTemplateApi,
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   UserProfileApi,
+  ApplicationConfigurations,
 } from '@island.is/application/types'
 import { DataProtectionComplaintSchema } from './dataSchema'
 import { application } from './messages'
@@ -33,6 +34,8 @@ const DataProtectionComplaintTemplate: ApplicationTemplate<
   codeOwner: CodeOwners.NordaApplications,
   institution: application.institutionName,
   dataSchema: DataProtectionComplaintSchema,
+  translationNamespaces:
+    ApplicationConfigurations.DataProtectionAuthorityComplaint.translation,
   stateMachineConfig: {
     initial: 'draft',
     states: {
@@ -61,7 +64,7 @@ const DataProtectionComplaintTemplate: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
-              api: [NationalRegistryUserApi, UserProfileApi],
+              api: [NationalRegistryV3UserApi, UserProfileApi],
             },
           ],
         },

@@ -7,6 +7,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import CasesCard from '@island.is/judicial-system-web/src/components/Cards/CasesCard'
 import CasesDashboardLayout from '@island.is/judicial-system-web/src/components/Layouts/CasesDashboardLayout'
+import { CaseTableType } from '@island.is/judicial-system-web/src/graphql/schema'
 
 const StatisticsOverview: FC = () => {
   const router = useRouter()
@@ -18,11 +19,13 @@ const StatisticsOverview: FC = () => {
         route: 'rannsoknarmal',
         title: 'Rannsóknarmál',
         description: 'Einföld tölfræðigreining úr rannsóknarmálum.',
+        type: CaseTableType.STATISTICS,
       },
       {
         route: 'sakamal',
         title: 'Sakamál',
         description: 'Einföld tölfræðigreining úr sakamálum.',
+        type: CaseTableType.STATISTICS,
       },
     ],
   }
@@ -34,11 +37,13 @@ const StatisticsOverview: FC = () => {
         route: 'gogn/rannsoknarmal',
         title: 'Rannsóknarmál',
         description: 'Gögn úr rannsóknarmálum fyrir tölfræðigreiningu.',
+        type: CaseTableType.STATISTICS,
       },
       {
         route: 'gogn/sakamal',
         title: 'Sakamál',
         description: 'Gögn úr sakamálum fyrir tölfræðigreiningu.',
+        type: CaseTableType.STATISTICS,
       },
     ],
   }
@@ -53,6 +58,7 @@ const StatisticsOverview: FC = () => {
             description={t.description}
             href={`${router.asPath}/${t.route}`}
             key={idx}
+            type={t.type}
           />
         ))}
       </CasesDashboardLayout>
@@ -63,6 +69,7 @@ const StatisticsOverview: FC = () => {
             description={t.description}
             href={`${router.asPath}/${t.route}`}
             key={idx}
+            type={t.type}
           />
         ))}
       </CasesDashboardLayout>

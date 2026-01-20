@@ -1,23 +1,25 @@
+import { FormSystemScreen, FormSystemSection } from '@island.is/api/schema'
+import { SectionTypes } from '@island.is/form-system/enums'
+import { m } from '@island.is/form-system/ui'
 import {
   Box,
-  Input,
-  Stack,
-  GridRow as Row,
-  GridColumn as Column,
   Button,
   Checkbox,
+  GridColumn as Column,
+  Input,
+  GridRow as Row,
+  Stack,
 } from '@island.is/island-ui/core'
 import { useContext, useState } from 'react'
-import { ControlContext } from '../../context/ControlContext'
-import { FormSystemSection, FormSystemScreen } from '@island.is/api/schema'
-import { BaseSettings } from './components/BaseSettings/BaseSettings'
-import { Premises } from './components/Premises/Premises'
-import { FieldContent } from './components/FieldContent/FieldContent'
-import { PreviewStepOrGroup } from './components/PreviewStepOrGroup/PreviewStepOrGroup'
 import { useIntl } from 'react-intl'
+import { ControlContext } from '../../context/ControlContext'
+import { BaseSettings } from './components/BaseSettings/BaseSettings'
+import { Completed } from './components/Completed/Completed'
+import { FieldContent } from './components/FieldContent/FieldContent'
+import { Premises } from './components/Premises/Premises'
+import { PreviewStepOrGroup } from './components/PreviewStepOrGroup/PreviewStepOrGroup'
 import { RelevantParties } from './components/RelevantParties/RelevantParties'
-import { m } from '@island.is/form-system/ui'
-import { SectionTypes } from '@island.is/form-system/enums'
+import { Urls } from './components/Urls/Urls'
 
 export const MainContent = () => {
   const {
@@ -33,7 +35,7 @@ export const MainContent = () => {
   const { formatMessage } = useIntl()
 
   return (
-    <Box padding={2}>
+    <Box>
       {activeItem.type === 'Field' ? (
         <FieldContent />
       ) : activeItem.type === 'Section' &&
@@ -49,6 +51,12 @@ export const MainContent = () => {
         <RelevantParties />
       ) : openPreview ? (
         <PreviewStepOrGroup setOpenPreview={setOpenPreview} />
+      ) : (activeItem.data as FormSystemSection).sectionType ===
+        SectionTypes.COMPLETED ? (
+        <Completed />
+      ) : activeItem.type === 'Section' &&
+        (activeItem.data as FormSystemSection).id === 'Urls' ? (
+        <Urls />
       ) : (
         <Stack space={2}>
           <Row>

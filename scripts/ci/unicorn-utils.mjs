@@ -2,7 +2,7 @@
 import { execSync } from 'child_process'
 import { workspaceRoot } from '@nx/devkit'
 
-const unicornApps = ['unicorn-app', 'payments', 'services-payments']
+const unicornApps = ['payments', 'services-payments']
 
 // NOTE: Using `console.error` in this script to log, without affecting the "output" to standard output
 

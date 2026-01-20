@@ -9,7 +9,7 @@ export const overview = {
     },
     pageTitle: {
       id: 'ta.eft.application:overview.general.pageTitle',
-      defaultMessage: 'Yfirlit undanþágubeiðnar',
+      defaultMessage: 'Yfirlit umsóknar',
       description: 'Title of overview page',
     },
     description: {
@@ -62,6 +62,17 @@ export const overview = {
       defaultMessage: 'Tegund undanþágu',
       description: 'Overview exemption period type label',
     },
+    errorTitle: {
+      id: 'ta.eft.application:overview.exemptionPeriod.errorTitle',
+      defaultMessage: 'Athugið',
+      description: 'Overview exemption period error title',
+    },
+    errorMessage: {
+      id: 'ta.eft.application:overview.exemptionPeriod.errorMessage',
+      defaultMessage:
+        'Dagsetning fyrir "Undanþága frá" má ekki vera aftur í tímann',
+      description: 'Overview exemption period error message',
+    },
   }),
   shortTermlocation: defineMessages({
     subtitle: {
@@ -98,7 +109,7 @@ export const overview = {
     },
     directions: {
       id: 'ta.eft.application:overview.longTermlocation.directions',
-      defaultMessage: 'Leiðarlýsing',
+      defaultMessage: 'Ósk um svæði',
       description: 'Overview long-term location directions label',
     },
   }),
@@ -115,7 +126,7 @@ export const overview = {
     },
     vehicleLabel: {
       id: 'ta.eft.application:overview.convoy.vehicleLabel',
-      defaultMessage: 'Ökutæki: {permno}',
+      defaultMessage: 'Bíll: {permno}',
       description: 'Overview convoy vehicle label',
     },
     trailerLabel: {
@@ -142,7 +153,7 @@ export const overview = {
     },
     label: {
       id: 'ta.eft.application:overview.freight.label',
-      defaultMessage: 'Farmur {freightNumber}: {freightName} {length}/{weight}',
+      defaultMessage: 'Farmur {freightNumber}: {freightName}',
       description: 'Overview freight label',
     },
     convoyLabel: {
@@ -220,8 +231,7 @@ export const overview = {
     },
     vehicleLabel: {
       id: 'ta.eft.application:overview.axleSpacing.vehicleLabel',
-      defaultMessage:
-        'Ökutæki - {permno} ({axleCount} öxlar): {axleSpacingList}',
+      defaultMessage: 'Bíll - {permno} ({axleCount} öxlar): {axleSpacingList}',
       description:
         'Overview axle spacing label for vehicle with permno and axle spacing',
     },
@@ -247,13 +257,13 @@ export const overview = {
     },
     shortTermVehicleToTrailerLabel: {
       id: 'ta.eft.application:overview.vehicleSpacing.shortTermVehicleToTrailerLabel',
-      defaultMessage: 'Ökutæki í eftirvagn: {vehicleSpacing}',
+      defaultMessage: 'Bíll í eftirvagn: {vehicleSpacing}',
       description:
         'Overview vehicle spacing short-term label for vehicle to trailer',
     },
     shortTermVehicleToDollyLabel: {
       id: 'ta.eft.application:overview.vehicleSpacing.shortTermVehicleToDollyLabel',
-      defaultMessage: 'Ökutæki í dollý: {vehicleSpacing}',
+      defaultMessage: 'Bíll í dollý: {vehicleSpacing}',
       description:
         'Overview vehicle spacing short-term label for vehicle to dolly',
     },
@@ -266,14 +276,19 @@ export const overview = {
     longTermLabel: {
       id: 'ta.eft.application:overview.vehicleSpacing.longTermLabel',
       defaultMessage:
-        'Bil í vagnlest {convoyNumber}, ökutæki ({vehiclePermno}) í eftirvagn ({trailerPermno}): {vehicleSpacing}',
+        'Bil í vagnlest {convoyNumber}, bíll ({vehiclePermno}) í eftirvagn ({trailerPermno}): {vehicleSpacing}',
       description: 'Overview vehicle spacing long-term label for convoy',
     },
   }),
   supportingDocuments: defineMessages({
-    subtitle: {
-      id: 'ta.eft.application:overview.supportingDocuments.subtitle',
-      defaultMessage: 'Fylgigögn',
+    subtitleShortTerm: {
+      id: 'ta.eft.application:overview.supportingDocuments.subtitleShortTerm',
+      defaultMessage: 'Athugasemdir og fylgigögn',
+      description: 'Overview supporting documents subtitle',
+    },
+    subtitleLongTerm: {
+      id: 'ta.eft.application:overview.supportingDocuments.subtitleLongTerm',
+      defaultMessage: 'Athugasemdir',
       description: 'Overview supporting documents subtitle',
     },
     comments: {

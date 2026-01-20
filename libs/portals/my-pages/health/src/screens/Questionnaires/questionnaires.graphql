@@ -1,0 +1,175 @@
+fragment QuestionnaireBaseInfo on QuestionnairesBaseItem {
+  __typename
+  id
+  title
+  description
+  sentDate
+  status
+  lastSubmitted
+  organization
+  department
+}
+
+fragment QuestionnaireSubmission on QuestionnaireSubmissionDetail {
+  __typename
+  id
+  isDraft
+  lastUpdated
+  createdAt
+}
+
+fragment VisibilityCondition on QuestionnaireVisibilityCondition {
+  questionId
+  operator
+  expectedValues
+  showWhenMatched
+}
+
+fragment AnswerOptions on QuestionnaireAnswerOption {
+  __typename
+  type
+  placeholder
+  maxLength
+  min
+  max
+  maxLabel
+  minLabel
+  decimal
+  formula
+  numRows
+  maxRows
+  columns {
+    id
+    label
+    type
+    required
+    multiline
+    maxLength
+  }
+  options {
+    __typename
+    id
+    label
+    value
+  }
+}
+
+fragment QuestionDetail on QuestionnaireQuestion {
+  __typename
+  id
+  originalId
+  label
+  sublabel
+  htmlLabel
+  required
+  dependsOn
+  visibilityConditions {
+    ...VisibilityCondition
+  }
+  answerOptions {
+    ...AnswerOptions
+  }
+}
+
+fragment QuestionnaireSection on QuestionnaireSection {
+  __typename
+  title
+  id
+  dependsOn
+  visibilityConditions {
+    ...VisibilityCondition
+  }
+  questions {
+    ...QuestionDetail
+  }
+}
+
+query GetQuestionnaires($locale: String!) {
+  questionnairesList(locale: $locale) {
+    questionnaires {
+      id
+      title
+      description
+      sentDate
+      status
+      lastSubmitted
+      organization
+      department
+    }
+  }
+}
+
+query GetQuestionnaire($locale: String!, $input: GetQuestionnaireInput!) {
+  questionnairesDetail(locale: $locale, input: $input) {
+    baseInformation {
+      ...QuestionnaireBaseInfo
+    }
+    expirationDate
+    canSubmit
+    lastSubmissionId
+    submissions {
+      ...QuestionnaireSubmission
+    }
+  }
+}
+
+query GetQuestionnaireWithQuestions(
+  $locale: String!
+  $input: GetQuestionnaireInput!
+) {
+  questionnairesDetail(locale: $locale, input: $input) {
+    baseInformation {
+      __typename
+      id
+      title
+      organization
+      department
+      sentDate
+      formId
+    }
+    canSubmit
+    draftAnswers {
+      questionId
+      answers {
+        label
+        value
+      }
+      type
+    }
+    sections {
+      ...QuestionnaireSection
+    }
+  }
+}
+
+query GetAnsweredQuestionnaire(
+  $input: QuestionnaireAnsweredInput!
+  $locale: String!
+) {
+  getAnsweredQuestionnaire(input: $input, locale: $locale) {
+    data {
+      id
+      formId
+      submissionId
+      isDraft
+      date
+      title
+      description
+      answers {
+        id
+        label
+        htmlLabel
+        sublabel
+        values
+      }
+    }
+  }
+}
+
+mutation SubmitQuestionnaire($input: QuestionnaireInput!, $locale: String!) {
+  submitQuestionnaire(input: $input, locale: $locale) {
+    __typename
+    success
+    message
+  }
+}

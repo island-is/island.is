@@ -1,11 +1,11 @@
 import {
   defineTemplateApi,
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
 } from '@island.is/application/types'
 
 export { IdentityApi } from '@island.is/application/types'
 
-export const NationalRegistryApi = NationalRegistryUserApi.configure({
+export const NationalRegistryApi = NationalRegistryV3UserApi.configure({
   order: 1,
 })
 

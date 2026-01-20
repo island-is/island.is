@@ -8,13 +8,15 @@ import {
 import { ApiScope } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
 import { UseGuards } from '@nestjs/common'
-import { Query, Resolver } from '@nestjs/graphql'
+import { Args, Query, Resolver } from '@nestjs/graphql'
 import { CertificateForSicknessAndRehabilitation } from '../models/medicalDocuments/certificateForSicknessAndRehabilitation.model'
 import { ConfirmationOfIllHealth } from '../models/medicalDocuments/confirmationOfIllHealth.model'
 import { ConfirmationOfPendingResolution } from '../models/medicalDocuments/confirmationOfPendingResolution.model'
 import { ConfirmedTreatment } from '../models/medicalDocuments/confirmedTreatment.model'
 import { RehabilitationPlan } from '../models/medicalDocuments/rehabilitationPlan.model'
 import { SocialInsuranceService } from '../socialInsurance.service'
+import type { Locale } from '@island.is/shared/types'
+import { DisabilityPensionCertificate } from '../models/medicalDocuments/disabilityPensionCertificate.model'
 
 @Resolver()
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -37,6 +39,17 @@ export class MedicalDocumentsResolver {
     @CurrentUser() user: User,
   ) {
     return this.service.getCertificateForSicknessAndRehabilitation(user)
+  }
+
+  @Query(() => DisabilityPensionCertificate, {
+    name: 'socialInsuranceDisabilityPensionCertificate',
+  })
+  async siaGetDisabilityPensionCertificate(
+    @CurrentUser() user: User,
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
+  ) {
+    return this.service.getDisabilityPensionCertificate(user, locale)
   }
 
   @Query(() => ConfirmedTreatment, {

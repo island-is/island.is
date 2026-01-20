@@ -28,6 +28,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import {
   Case,
+  CaseState,
   CourtSessionType,
   Defendant,
   UpdateDefendantInput,
@@ -291,9 +292,13 @@ const Subpoena: FC = () => {
         primaryButtonText: strings.modalAlternativeServicePrimaryButtonText,
       })
     } else if (isIssuingSubpoenas) {
+      const hasCivilClaimants =
+        workingCase.civilClaimants && workingCase.civilClaimants.length > 0
       setModalContent({
         title: formatMessage(strings.modalTitle),
-        text: formatMessage(strings.modalText),
+        text: hasCivilClaimants
+          ? 'Ákæra, fyrirkall og bótakrafa verða send til ákæranda.\nÁkærða verður birt ákæran, fyrirkallið og bótakrafan rafrænt á island.is eða af lögreglu.'
+          : 'Ákæra og fyrirkall verða send til ákæranda.\nÁkærða verður birt ákæran og fyrirkallið rafrænt á island.is eða af lögreglu.',
         primaryButtonText: formatMessage(strings.modalPrimaryButtonText),
       })
     }
@@ -303,6 +308,7 @@ const Subpoena: FC = () => {
     isIssuingSubpoenas,
     formatMessage,
     modalContent,
+    workingCase.civilClaimants,
   ])
 
   const stepIsValid = isSubpoenaStepValid(
@@ -335,34 +341,13 @@ const Subpoena: FC = () => {
                   ? toggleNewAlternativeService(defendant)
                   : undefined,
                 onUpdate: handleDefendantUpdates,
-                children: isArraignmentScheduled ? (
-                  <Button
-                    variant="text"
-                    icon="reload"
-                    disabled={newSubpoenas.includes(defendant.id)}
-                    onClick={() => {
-                      setNewSubpoenas((previous) => [...previous, defendant.id])
-                      // Clear any alternative service for the defendant
-                      toggleNewAlternativeService(defendant)()
-                      setIsArraignmentScheduled(false)
-                      updateDefendantState(
-                        {
-                          defendantId: defendant.id,
-                          caseId: workingCase.id,
-                          isAlternativeService: false,
-                        },
-                        setWorkingCase,
-                      )
-                    }}
-                  >
-                    {formatMessage(strings.newSubpoenaButtonText)}
-                  </Button>
-                ) : newSubpoenas.includes(defendant.id) ? (
+                children: newSubpoenas.includes(defendant.id) ? (
                   <Button
                     variant="text"
                     colorScheme="destructive"
                     icon="trash"
                     iconType="outline"
+                    disabled={workingCase.state === CaseState.CORRECTING}
                     onClick={() => {
                       setNewSubpoenas((previous) =>
                         previous.filter((v) => v !== defendant.id),
@@ -380,6 +365,26 @@ const Subpoena: FC = () => {
                   >
                     Hætta við
                   </Button>
+                ) : isArraignmentScheduled ? (
+                  <Button
+                    variant="text"
+                    icon="reload"
+                    disabled={workingCase.state === CaseState.CORRECTING}
+                    onClick={() => {
+                      setNewSubpoenas((previous) => [...previous, defendant.id])
+                      toggleNewAlternativeService(defendant)()
+                      updateDefendantState(
+                        {
+                          defendantId: defendant.id,
+                          caseId: workingCase.id,
+                          isAlternativeService: false,
+                        },
+                        setWorkingCase,
+                      )
+                    }}
+                  >
+                    {formatMessage(strings.newSubpoenaButtonText)}
+                  </Button>
                 ) : null,
               }))}
               workingCase={workingCase}
@@ -394,8 +399,14 @@ const Subpoena: FC = () => {
             handleCourtDateChange={handleCourtDateChange}
             handleCourtRoomChange={handleCourtRoomChange}
             courtDate={updates?.theCase.arraignmentDate}
-            dateTimeDisabled={!isSchedulingArraignmentDate}
-            courtRoomDisabled={!isSchedulingArraignmentDate}
+            dateTimeDisabled={
+              !isSchedulingArraignmentDate ||
+              workingCase.state === CaseState.CORRECTING
+            }
+            courtRoomDisabled={
+              !isSchedulingArraignmentDate ||
+              workingCase.state === CaseState.CORRECTING
+            }
             courtRoomRequired
           />
         </Box>
@@ -468,11 +479,15 @@ const Subpoena: FC = () => {
         <Modal
           title={modalContent.title}
           text={modalContent.text}
-          primaryButtonText={modalContent.primaryButtonText}
-          onPrimaryButtonClick={() => scheduleArraignmentDate()}
-          onSecondaryButtonClick={() => setNavigateTo(undefined)}
-          secondaryButtonText={formatMessage(strings.modalSecondaryButtonText)}
-          isPrimaryButtonLoading={isCreatingSubpoena}
+          primaryButton={{
+            text: modalContent.primaryButtonText,
+            onClick: () => scheduleArraignmentDate(),
+            isLoading: isCreatingSubpoena,
+          }}
+          secondaryButton={{
+            text: formatMessage(strings.modalSecondaryButtonText),
+            onClick: () => setNavigateTo(undefined),
+          }}
         />
       )}
     </PageLayout>

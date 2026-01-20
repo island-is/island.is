@@ -8,9 +8,12 @@ import {
 import * as m from '../../lib/messages'
 import { TerminationTypes } from '../../types'
 import {
+  getNMonthsFromToday,
   getSelectedContractEndDate,
   getSelectedContractStartDate,
+  nearestDateInFuture,
 } from '../../utils/helpers'
+import { Application } from '@island.is/application/types'
 
 export const cancelationSection = buildSection({
   condition: (answers) => {
@@ -26,12 +29,18 @@ export const cancelationSection = buildSection({
     buildMultiField({
       id: 'cancelationMultiField',
       title: m.cancelationMessages.title,
+      description: m.cancelationMessages.description,
       children: [
         buildDateField({
           id: 'cancelation.cancelationDate',
           title: m.cancelationMessages.dateTitle,
           minDate: getSelectedContractStartDate,
-          maxDate: getSelectedContractEndDate,
+          maxDate: (application: Application) => {
+            return nearestDateInFuture(
+              getSelectedContractEndDate(application),
+              getNMonthsFromToday(3),
+            )
+          },
         }),
         buildTextField({
           id: 'cancelation.cancelationReason',

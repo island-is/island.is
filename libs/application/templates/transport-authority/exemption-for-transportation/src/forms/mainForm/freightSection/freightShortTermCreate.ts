@@ -1,6 +1,7 @@
 import {
   buildAlertMessageField,
   buildCheckboxField,
+  buildCustomField,
   buildDescriptionField,
   buildHiddenInput,
   buildMultiField,
@@ -10,9 +11,8 @@ import {
 import { freight } from '../../../lib/messages'
 import { ExemptionFor } from '../../../shared'
 import {
-  formatNumber,
-  getExemptionRules,
   checkIfExemptionTypeShortTerm,
+  getFreightShortTermErrorMessage,
 } from '../../../utils'
 import { FreightCommonHiddenInputs } from './freightCommonHiddenInputs'
 import { Application } from '@island.is/application/types'
@@ -25,9 +25,8 @@ export const FreightShortTermCreateMultiField = buildMultiField({
   id: 'freightShortTermCreateMultiField',
   condition: checkIfExemptionTypeShortTerm,
   title: freight.create.pageTitle,
-  description: freight.create.description,
+  description: freight.create.descriptionShortTerm,
   children: [
-    ...FreightCommonHiddenInputs('freight'),
     ...FreightCommonHiddenInputs(`freightPairing.${freightIndex}`),
     // Note: We are reusing convoyId as freightId here.
     // This is safe because freight and convoy are separate arrays,
@@ -67,6 +66,35 @@ export const FreightShortTermCreateMultiField = buildMultiField({
       ],
     }),
 
+    // Exemption for
+    buildCheckboxField({
+      id: `freightPairing.${freightIndex}.items.${convoyIndex}.exemptionFor`,
+      large: true,
+      backgroundColor: 'blue',
+      width: 'half',
+      title: freight.labels.exemptionFor,
+      required: true,
+      options: [
+        {
+          value: ExemptionFor.WIDTH,
+          label: freight.exemptionFor.widthOptionTitle,
+        },
+        {
+          value: ExemptionFor.HEIGHT,
+          label: freight.exemptionFor.heightOptionTitle,
+        },
+        {
+          value: ExemptionFor.LENGTH,
+          label: freight.exemptionFor.lengthOptionTitle,
+        },
+        {
+          value: ExemptionFor.WEIGHT,
+          label: freight.exemptionFor.weightOptionTitle,
+        },
+      ],
+    }),
+
+    // Freight info
     buildDescriptionField({
       id: 'freight.subtitle',
       title: freight.labels.freightSubtitle,
@@ -81,7 +109,7 @@ export const FreightShortTermCreateMultiField = buildMultiField({
       required: true,
     }),
     buildTextField({
-      id: `freight.items.${freightIndex}.length`,
+      id: `freightPairing.${freightIndex}.length`,
       title: freight.labels.freightLength,
       backgroundColor: 'blue',
       width: 'half',
@@ -91,7 +119,7 @@ export const FreightShortTermCreateMultiField = buildMultiField({
       suffix: freight.labels.metersSuffix,
     }),
     buildTextField({
-      id: `freight.items.${freightIndex}.weight`,
+      id: `freightPairing.${freightIndex}.weight`,
       title: freight.labels.freightWeight,
       backgroundColor: 'blue',
       width: 'half',
@@ -99,11 +127,6 @@ export const FreightShortTermCreateMultiField = buildMultiField({
       variant: 'number',
       thousandSeparator: true,
       suffix: freight.labels.tonsSuffix,
-    }),
-    buildDescriptionField({
-      id: 'freightWithConvoy.subtitle',
-      title: freight.labels.freightWithConvoySubtitle,
-      titleVariant: 'h5',
     }),
     buildTextField({
       id: `freightPairing.${freightIndex}.items.${convoyIndex}.height`,
@@ -139,71 +162,25 @@ export const FreightShortTermCreateMultiField = buildMultiField({
       id: 'freightShortTermPoliceEscortAlertMessage',
       alertType: 'info',
       title: freight.create.policeEscortAlertTitle,
-      message: (application) => {
-        const rules = getExemptionRules(application.externalData)
-        return {
-          ...freight.create.warningPoliceEscortAlertMessage,
-          values: {
-            maxLength: formatNumber(rules?.policeEscort.maxLength),
-            maxHeight: formatNumber(rules?.policeEscort.maxHeight),
-            maxWidth: formatNumber(rules?.policeEscort.maxWidth),
-          },
-        }
-      },
-      condition: (answers, externalData) => {
-        const rules = getExemptionRules(externalData)
-        const maxLength = rules?.policeEscort.maxLength
-        const maxHeight = rules?.policeEscort.maxHeight
-        const maxWidth = rules?.policeEscort.maxWidth
-
-        const length = getValueViaPath<string>(
+      message: (application) =>
+        getFreightShortTermErrorMessage(
+          application.externalData,
+          application.answers,
+          freightIndex,
+          convoyIndex,
+        ) || '',
+      condition: (answers, externalData) =>
+        !!getFreightShortTermErrorMessage(
+          externalData,
           answers,
-          `freight.items.${freightIndex}.length`,
-        )
-        const height = getValueViaPath<string>(
-          answers,
-          `freightPairing.${freightIndex}.items.${convoyIndex}.height`,
-        )
-        const width = getValueViaPath<string>(
-          answers,
-          `freightPairing.${freightIndex}.items.${convoyIndex}.width`,
-        )
-
-        return (
-          (length && maxLength ? Number(length) > maxLength : false) ||
-          (height && maxHeight ? Number(height) > maxHeight : false) ||
-          (width && maxWidth ? Number(width) > maxWidth : false)
-        )
-      },
+          freightIndex,
+          convoyIndex,
+        ),
     }),
-    buildDescriptionField({
-      id: 'freightExemptionFor.subtitle',
-      title: freight.labels.exemptionFor,
-      titleVariant: 'h5',
-    }),
-    buildCheckboxField({
-      id: `freightPairing.${freightIndex}.items.${convoyIndex}.exemptionFor`,
-      large: true,
-      backgroundColor: 'blue',
-      width: 'half',
-      options: [
-        {
-          value: ExemptionFor.WIDTH,
-          label: freight.exemptionFor.widthOptionTitle,
-        },
-        {
-          value: ExemptionFor.HEIGHT,
-          label: freight.exemptionFor.heightOptionTitle,
-        },
-        {
-          value: ExemptionFor.LENGTH,
-          label: freight.exemptionFor.lengthOptionTitle,
-        },
-        {
-          value: ExemptionFor.WEIGHT,
-          label: freight.exemptionFor.weightOptionTitle,
-        },
-      ],
+    buildCustomField({
+      component: 'HandleBeforeSubmitFreight',
+      id: 'handleBeforeSubmitFreight',
+      description: '',
     }),
   ],
 })

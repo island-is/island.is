@@ -122,8 +122,8 @@ export const m = defineMessages({
   },
   daysUntilExpiration: {
     id: 'form.system:days-until-expiration',
-    defaultMessage: 'Líftími umsóknar',
-    description: 'Days until expiration',
+    defaultMessage: 'Líftími umsóknar (hámark 30 dagar)',
+    description: 'Days until expiration of application (max 30 days)',
   },
   deadline: {
     id: 'form.system:deadline',
@@ -271,8 +271,8 @@ export const m = defineMessages({
   },
   saveAndContinue: {
     id: 'form.system:save-and-continue',
-    defaultMessage: 'Vista og halda áfram',
-    description: 'Save and continue',
+    defaultMessage: 'Halda áfram',
+    description: 'Continue',
   },
   addSection: {
     id: 'form.system:add-section',
@@ -397,7 +397,7 @@ export const m = defineMessages({
   },
   submitUrls: {
     id: 'form.system:submitUrls',
-    defaultMessage: 'Málakerfi',
+    defaultMessage: 'Innsendingarslóðir',
     description: 'Submission URLs',
   },
   validationUrls: {
@@ -456,10 +456,10 @@ export const m = defineMessages({
     defaultMessage: 'Tilbúnir fellilistar',
     description: 'Predetermined lists',
   },
-  max120Days: {
-    id: 'form.system:max-120-days',
-    defaultMessage: 'Hámark 120 daga',
-    description: 'Max 120 days',
+  max30Days: {
+    id: 'form.system:max-30-days',
+    defaultMessage: 'Hámark 30 dagar',
+    description: 'Max 30 days',
   },
   chooseDate: {
     id: 'form.system:choose-date',
@@ -525,6 +525,11 @@ export const m = defineMessages({
     id: 'form.system:add-list-item',
     defaultMessage: '+ Bæta við gildi',
     description: 'Add list item',
+  },
+  add: {
+    id: 'form.system:add',
+    defaultMessage: 'Bæta við',
+    description: 'Add',
   },
   finish: {
     id: 'form.system:finish',
@@ -613,7 +618,7 @@ export const m = defineMessages({
   },
   unpublish: {
     id: 'form.system:unpublish',
-    defaultMessage: 'Afturkalla útgáfu',
+    defaultMessage: 'Taka úr útgáfu',
     description: 'Unpublish',
   },
   tryOut: {
@@ -937,5 +942,191 @@ export const m = defineMessages({
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
     description:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
+  },
+  completedAccordionTitle: {
+    id: 'form.system:completed-accordion-title',
+    defaultMessage: 'Hvað gerist næst?',
+    description: 'What happens next?',
+  },
+  completedHeader: {
+    id: 'form.system:completed-header',
+    defaultMessage: 'Umsókn móttekin',
+    description: 'Application received',
+  },
+  completedText: {
+    id: 'form.system:completed-text-1',
+    defaultMessage: 'Umsókn þín hefur verið móttekin og verður skoðuð.',
+    description: 'Your application has been received and will be reviewed.',
+  },
+  completedBullet1: {
+    id: 'form.system:completed-bullet-1',
+    defaultMessage:
+      'Við munum nú fara yfir verkefnið og við sendum á þig svör innan tíðar',
+    description:
+      'We will now review the project and will send you a response shortly.',
+  },
+  completedBullet2: {
+    id: 'form.system:completed-bullet-2',
+    defaultMessage: 'Við verðum í sambandi ef okkur vantar frekari upplýsingar',
+    description: 'We will get in touch if we need further information.',
+  },
+  completedBullet3: {
+    id: 'form.system:completed-bullet-3',
+    defaultMessage:
+      'Ef þú þarft frekari upplýsingar þá getur þú sent okkur tölvupóst á netfangið ',
+    description: 'If you need further information, you can email us at ',
+  },
+  completedTitleLabel: {
+    id: 'form.system:completed-title-label',
+    defaultMessage: 'Yfirskrift staðfestingarsíðu',
+    description: 'Completed page title',
+  },
+  completedTitleLabelEnglish: {
+    id: 'form.system:completed-title-label-english',
+    defaultMessage: 'Yfirskrift staðfestingarsíðu á ensku',
+    description: 'Completed page title in English',
+  },
+  confirmationHeaderLabel: {
+    id: 'form.system:confirmation-header-label',
+    defaultMessage: 'Yfirskrift fyrir græna kassann',
+    description: 'Confirmation header',
+  },
+  confirmationHeaderLabelEnglish: {
+    id: 'form.system:confirmation-header-label-english',
+    defaultMessage: 'Yfirskrift fyrir græna kassann á ensku',
+    description: 'Confirmation header in English',
+  },
+  confirmationTextLabel: {
+    id: 'form.system:confirmation-text-label',
+    defaultMessage: 'Texti fyrir græna kassann',
+    description: 'Confirmation text',
+  },
+  confirmationTextLabelEnglish: {
+    id: 'form.system:confirmation-text-label-english',
+    defaultMessage: 'Texti fyrir græna kassann á ensku',
+    description: 'Confirmation text in English',
+  },
+  icelandic: {
+    id: 'form.system:icelandic',
+    defaultMessage: 'Íslenska',
+    description: 'Icelandic',
+  },
+  english: {
+    id: 'form.system:english',
+    defaultMessage: 'Enska',
+    description: 'English',
+  },
+  deleteFormWarning: {
+    id: 'form.system:delete-form-warning',
+    defaultMessage: 'Ertu viss að þú vilt eyða forminu: {formName}',
+    description: 'Are you sure you want to delete the form: {formName}',
+  },
+  unpublishFormWarning: {
+    id: 'form.system:unpublish-form-warning',
+    defaultMessage:
+      'Ertu viss um að þú viljir taka úr útgáfu formið: {formName}',
+    description: 'Are you sure you want to unpublish the form: {formName}',
+  },
+  previewField: {
+    id: 'form.system:preview-field',
+    defaultMessage: 'Sýnishorn',
+    description: 'Preview',
+  },
+  largeCheckbox: {
+    id: 'form.system.large-checkbox',
+    defaultMessage: 'Stórt hakbox',
+    description: 'Large checkbox',
+  },
+  hasSublabel: {
+    id: 'form.system.has-sublabel',
+    defaultMessage: 'Hefur undirtexta',
+    description: 'Has sublabel',
+  },
+  uploadFailed: {
+    id: 'form.system:upload-failed',
+    defaultMessage: 'Ekki tókst að hlaða skránni upp, reyndu aftur',
+    description: 'The file upload failed, please try again',
+  },
+  switchLoginToCreateApplication: {
+    id: 'form.system:switch-login-to-create-application',
+    defaultMessage: 'Skipta þarf um notanda.',
+    description: 'You must change your login.',
+  },
+  applicationDoesNotPermitLogin: {
+    id: 'form.system:application-does-not-permit-login',
+    defaultMessage: 'Þessi umsókn styður ekki þessa tegund innskráningar.',
+    description: 'This application does not support this type of login.',
+  },
+  errorFetchingApplication: {
+    id: 'form.system:error-fetching-application',
+    defaultMessage: 'Villa kom upp við að sækja umsóknina.',
+    description: 'An error occurred while fetching the application.',
+  },
+  createApplication: {
+    id: 'form.system:create-application',
+    defaultMessage: 'Stofna nýja umsókn',
+    description: 'Create new application',
+  },
+  maxTextLength: {
+    id: 'form.system:max-text-length',
+    defaultMessage: 'Hámarksfjöldi stafa',
+    description: 'Maximum text length',
+  },
+  hasDescription: {
+    id: 'form.system:has-description',
+    defaultMessage: 'Hefur lýsingu',
+    description: 'Has description',
+  },
+  inProgress: {
+    id: 'form.system:in-progress',
+    defaultMessage: 'Í vinnslu',
+    description: 'In progress',
+  },
+  publishedInProgress: {
+    id: 'form.system:published-in-progress',
+    defaultMessage: 'Útgefið í vinnslu',
+    description: 'Published in progress',
+  },
+  published: {
+    id: 'form.system:published',
+    defaultMessage: 'Útgefið',
+    description: 'Published',
+  },
+  slugNotFound: {
+    id: 'form.system:slug-not-found',
+    defaultMessage: 'Tegund umsóknar fannst ekki',
+    description: 'Application type not found',
+  },
+  checkUrlPlease: {
+    id: 'form.system:check-url-please',
+    defaultMessage: 'Vinsamlegast athugaðu hvort slóðin sé rétt.',
+    description: 'Please check the URL.',
+  },
+  urlFormatInstruction: {
+    id: 'form.system:url-format-instruction',
+    defaultMessage: 'Slóðin þarf að vera X‑Road slóð sem byrjar á',
+    description: 'The URL must be an X-Road URL starting with',
+  },
+  urlReuseEncouragement: {
+    id: 'form.system:url-reuse-encouragement',
+    defaultMessage:
+      'Vinsamlega reynið að halda fjölda slóða í lágmarki og nýta þær sem fyrir eru eftir því sem unnt er.',
+    description:
+      'Please try to keep the number of URLs to a minimum and reuse existing ones as much as possible.',
+  },
+  addFormUrl: {
+    id: 'form.system:add-form-url',
+    defaultMessage: '+ Bæta við nýrri slóð fyrir þetta form',
+    description: '+ Add new URL for this form',
+  },
+  newFormUrlButton: {
+    id: 'form.system:new-form-url-button',
+    defaultMessage: 'Ný slóð fyrir innsendingar',
+    description: 'New submission URL',
+  },
+  notifications: {
+    id: 'form.system:notifications',
+    defaultMessage: 'Tilkynningar',
+    description: 'Notifications',
   },
 })

@@ -1,4 +1,4 @@
-import { Text, LinkContext, Link } from '@island.is/island-ui/core'
+import { Text, LinkContext, LinkV2 } from '@island.is/island-ui/core'
 
 const DirectTaxPaymentsInfo = () => {
   return (
@@ -39,14 +39,14 @@ const TaxReturnInfo = () => {
       >
         <Text marginBottom={[3, 3, 5]}>
           Á vef Skattsins finnur þú{' '}
-          <Link
+          <LinkV2
             href="https://www.skatturinn.is/einstaklingar/framtal-og-alagning/stadfest-afrit-framtals/"
             color="blue400"
             underline="small"
             underlineVisibility="always"
           >
             leiðbeiningar
-          </Link>{' '}
+          </LinkV2>{' '}
           um hvernig sækja má staðfest afrit skattframtals.
         </Text>
       </LinkContext.Provider>

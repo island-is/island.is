@@ -1,6 +1,5 @@
-import { Op } from 'sequelize'
-import { Transaction } from 'sequelize/types'
-import { uuid } from 'uuidv4'
+import { Op, Transaction } from 'sequelize'
+import { v4 as uuid } from 'uuid'
 
 import {
   CaseOrigin,
@@ -144,6 +143,7 @@ describe('CaseController - Create', () => {
           creatingProsecutorId: userId,
           prosecutorId: userId,
           prosecutorsOfficeId,
+          withCourtSessions: true,
         },
         { transaction },
       )

@@ -10,6 +10,8 @@ import {
   CaseFileCategory,
   CaseIndictmentRulingDecision,
   CaseType,
+  CourtSessionResponse,
+  CourtSessionRulingType,
   DateLog,
   Defendant,
   DefenderChoice,
@@ -230,7 +232,8 @@ export const isDefendantStepValidIC = (workingCase: Case): boolean => {
 
 export const isDefendantStepValidIndictments = (workingCase: Case): boolean => {
   return Boolean(
-    workingCase.policeCaseNumbers &&
+    workingCase.prosecutor &&
+      workingCase.policeCaseNumbers &&
       workingCase.policeCaseNumbers.length > 0 &&
       !workingCase.policeCaseNumbers.some(
         (n) =>
@@ -556,25 +559,70 @@ export const isDefenderStepValid = (workingCase: Case): boolean => {
   return Boolean(workingCase.prosecutor && defendantsAreValid())
 }
 
+export const isCourtSessionValid = (courtSession: CourtSessionResponse) => {
+  return (
+    (courtSession.isClosed
+      ? courtSession.closedLegalProvisions &&
+        courtSession.closedLegalProvisions.length > 0
+      : true) &&
+    (courtSession.rulingType === CourtSessionRulingType.JUDGEMENT ||
+    courtSession.rulingType === CourtSessionRulingType.ORDER
+      ? !!courtSession.ruling
+      : true) &&
+    (courtSession.isAttestingWitness
+      ? courtSession.attestingWitnessId
+      : true) &&
+    validate([
+      [courtSession.startDate, ['empty', 'date-format']],
+      [courtSession.location, ['empty']],
+      [courtSession.judgeId, ['empty']],
+      [courtSession.entries, ['empty']],
+      [courtSession.rulingType, ['empty']],
+      [courtSession.endDate, ['empty', 'date-format']],
+    ]).isValid
+  )
+}
+
+export const isIndictmentCourtRecordStepValid = (workingCase: Case) => {
+  if (!workingCase.withCourtSessions) {
+    return true
+  }
+
+  if (
+    !Array.isArray(workingCase.courtSessions) ||
+    workingCase.courtSessions.length === 0
+  ) {
+    return false
+  }
+
+  return workingCase.courtSessions.every(isCourtSessionValid)
+}
+
 const isIndictmentRulingDecisionValid = (workingCase: Case) => {
-  switch (workingCase.indictmentRulingDecision) {
-    case CaseIndictmentRulingDecision.RULING:
-    case CaseIndictmentRulingDecision.DISMISSAL:
-      return Boolean(
-        workingCase.caseFiles?.some(
-          (file) => file.category === CaseFileCategory.COURT_RECORD,
-        ) &&
-          workingCase.caseFiles?.some(
-            (file) => file.category === CaseFileCategory.RULING,
-          ),
-      )
-    case CaseIndictmentRulingDecision.FINE:
-    case CaseIndictmentRulingDecision.CANCELLATION:
-      return Boolean(
+  const isCourtRecordValid = () =>
+    Boolean(
+      (workingCase.courtSessions &&
+        workingCase.courtSessions.length > 0 &&
+        workingCase.courtSessions.every((session) => session.endDate)) ||
         workingCase.caseFiles?.some(
           (file) => file.category === CaseFileCategory.COURT_RECORD,
         ),
+    )
+
+  switch (workingCase.indictmentRulingDecision) {
+    case CaseIndictmentRulingDecision.RULING:
+    case CaseIndictmentRulingDecision.DISMISSAL:
+      return (
+        isCourtRecordValid() &&
+        Boolean(
+          workingCase.caseFiles?.some(
+            (file) => file.category === CaseFileCategory.RULING,
+          ),
+        )
       )
+    case CaseIndictmentRulingDecision.FINE:
+    case CaseIndictmentRulingDecision.CANCELLATION:
+      return isCourtRecordValid()
     default:
       return false
   }
@@ -654,3 +702,6 @@ export const isCourtOfAppealWithdrawnCaseStepValid = (
     [workingCase.appealCaseNumber, ['empty', 'appeal-case-number-format']],
   ]).isValid
 }
+
+export const isNullOrUndefined = <T>(value?: T) =>
+  value === undefined || value === null

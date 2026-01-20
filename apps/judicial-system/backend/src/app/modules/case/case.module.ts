@@ -6,10 +6,11 @@ import { SigningModule } from '@island.is/dokobit-signing'
 
 import { MessageModule } from '@island.is/judicial-system/message'
 
-import { CaseArchive, CaseString, DateLog } from '../repository'
+import { CaseString, DateLog } from '../repository'
 import {
   AwsS3Module,
   CourtModule,
+  CourtSessionModule,
   DefendantModule,
   EventLogModule,
   EventModule,
@@ -42,13 +43,14 @@ import { PdfService } from './pdf.service'
     forwardRef(() => UserModule),
     forwardRef(() => FileModule),
     forwardRef(() => IndictmentCountModule),
+    forwardRef(() => CourtSessionModule),
     forwardRef(() => CourtModule),
     forwardRef(() => AwsS3Module),
     forwardRef(() => EventModule),
     forwardRef(() => PoliceModule),
     forwardRef(() => EventLogModule),
     forwardRef(() => VictimModule),
-    SequelizeModule.forFeature([CaseArchive, DateLog, CaseString]),
+    SequelizeModule.forFeature([DateLog, CaseString]),
   ],
   providers: [
     CaseService,

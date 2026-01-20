@@ -52,6 +52,7 @@ export enum ApplicationTypes {
   ALCOHOL_TAX_REDEMPTION = 'AlcoholTaxRedemption',
   EUROPEAN_HEALTH_INSURANCE_CARD = 'EuropeanHealthInsuranceCard',
   OLD_AGE_PENSION = 'OldAgePension',
+  DISABILITY_PENSION = 'DisabilityPension',
   HOUSEHOLD_SUPPLEMENT = 'HouseholdSupplement',
   CAR_RECYCLING = 'CarRecycling',
   PRESIDENTIAL_LIST_CREATION = 'PresidentialListCreation',
@@ -88,12 +89,16 @@ export enum ApplicationTypes {
   SEMINAR_REGISTRATION = 'SeminarRegistration',
   TRAINING_LICENSE_ON_A_WORK_MACHINE = 'TrainingLicenseOnAWorkMachine',
   SECONDARY_SCHOOL = 'SecondarySchool',
+  UNEMPLOYMENT_BENEFITS = 'UnemploymentBenefits',
   ACTIVATION_ALLOWANCE = 'ActivationAllowance',
   CAR_RENTAL_FEE_CATEGORY = 'CarRentalFeeCategory',
   MEDICAL_AND_REHABILITATION_PAYMENTS = 'MedicalAndRehabilitationPayments',
   FIRE_COMPENSATION_APPRAISAL = 'FireCompensationAppraisal',
   LEGAL_GAZETTE = 'LegalGazette',
   EXEMPTION_FOR_TRANSPORTATION = 'ExemptionForTransportation',
+  REGISTRATION_OF_NEW_PROPERTY_NUMBERS = 'RegistrationOfNewPropertyNumbers',
+  MILE_CAR = 'MileCar',
+  HEILSUGAESLA_HOFUDBORDARSVAEDISINS_NAMSKEID = 'HeilsugaeslaHofudborgarsvaedisinsNamskeid',
 }
 
 export const ApplicationConfigurations = {
@@ -107,7 +112,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.EXAMPLE_INPUTS]: {
     slug: 'example-inputs',
-    translation: 'exi.application',
+    translation: ['exi.application', 'uiForms.application'],
   },
   [ApplicationTypes.EXAMPLE_NO_INPUTS]: {
     slug: 'example-no-inputs',
@@ -131,7 +136,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.PASSPORT_ANNULMENT]: {
     slug: 'tilkynna-vegabref',
-    translation: 'paa.application',
+    translation: ['paa.application', 'uiForms.application'],
   },
   [ApplicationTypes.DRIVING_LEARNERS_PERMIT]: {
     slug: 'aefingaakstur',
@@ -139,7 +144,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.DRIVING_LICENSE]: {
     slug: 'okuskirteini',
-    translation: 'dl.application',
+    translation: ['dl.application', 'uiForms.application'],
   },
   [ApplicationTypes.DRIVING_ASSESSMENT_APPROVAL]: {
     slug: 'akstursmat',
@@ -155,7 +160,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.HEALTH_INSURANCE]: {
     slug: 'sjukratryggingar',
-    translation: 'hi.application',
+    translation: ['hi.application', 'uiForms.application'],
   },
   [ApplicationTypes.CHILDREN_RESIDENCE_CHANGE_V2]: {
     slug: 'breytt-logheimili-barns',
@@ -163,27 +168,27 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.DATA_PROTECTION_AUTHORITY_COMPLAINT]: {
     slug: 'kvortun-til-personuverndar',
-    translation: 'dpac.application',
+    translation: ['dpac.application', 'uiForms.application'],
   },
   [ApplicationTypes.LOGIN_SERVICE]: {
     slug: 'innskraningarthjonusta',
-    translation: 'ls.application',
+    translation: ['ls.application', 'uiForms.application'],
   },
   [ApplicationTypes.INHERITANCE_REPORT]: {
     slug: 'erfdafjarskyrsla',
-    translation: 'ir.application',
+    translation: ['ir.application', 'uiForms.application'],
   },
   [ApplicationTypes.INSTITUTION_COLLABORATION]: {
     slug: 'samstarf',
-    translation: 'ia.application',
+    translation: ['ia.application', 'uiForms.application'],
   },
   [ApplicationTypes.FUNDING_GOVERNMENT_PROJECTS]: {
     slug: 'fjarmognun-rikisverkefni',
-    translation: 'affgp.application',
+    translation: ['affgp.application', 'uiForms.application'],
   },
   [ApplicationTypes.PUBLIC_DEBT_PAYMENT_PLAN]: {
     slug: 'greidsluaaetlun',
-    translation: 'pdpp.application',
+    translation: ['pdpp.application', 'uiForms.application'],
   },
   [ApplicationTypes.COMPLAINTS_TO_ALTHINGI_OMBUDSMAN]: {
     slug: 'kvortun-til-umbodsmanns-althingis',
@@ -191,7 +196,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.ACCIDENT_NOTIFICATION]: {
     slug: 'slysatilkynning',
-    translation: 'an.application',
+    translation: ['an.application', 'uiForms.application'],
   },
   [ApplicationTypes.GENERAL_PETITION]: {
     slug: 'undirskriftalisti',
@@ -199,7 +204,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.GENERAL_FISHING_LICENSE]: {
     slug: 'veidileyfi',
-    translation: 'gfl.application',
+    translation: ['gfl.application', 'uiForms.application'],
   },
   [ApplicationTypes.P_SIGN]: {
     slug: 'p-merki',
@@ -211,7 +216,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.CRIMINAL_RECORD]: {
     slug: 'sakavottord',
-    translation: 'cr.application',
+    translation: ['cr.application', 'uiForms.application'],
   },
   [ApplicationTypes.FINANCIAL_AID]: {
     slug: 'fjarhagsadstod',
@@ -231,7 +236,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.MORTGAGE_CERTIFICATE]: {
     slug: 'vedbokarvottord',
-    translation: 'mc.application',
+    translation: ['mc.application', 'uiForms.application'],
   },
   [ApplicationTypes.MARRIAGE_CONDITIONS]: {
     slug: 'hjonavigsla',
@@ -259,11 +264,11 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.DRIVING_LICENSE_DUPLICATE]: {
     slug: 'samrit',
-    translation: 'dld.application',
+    translation: ['dld.application', 'uiForms.application'],
   },
   [ApplicationTypes.ANONYMITY_IN_VEHICLE_REGISTRY]: {
     slug: 'nafnleynd-i-okutaekjaskra',
-    translation: 'ta.avr.application',
+    translation: ['ta.avr.application', 'uiForms.application'],
   },
   [ApplicationTypes.CHANGE_CO_OWNER_OF_VEHICLE]: {
     slug: 'medeigandi-okutaekis',
@@ -275,19 +280,19 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.DIGITAL_TACHOGRAPH_DRIVERS_CARD]: {
     slug: 'okuritakort-okumannskort',
-    translation: 'ta.dtdc.application',
+    translation: ['ta.dtdc.application', 'uiForms.application'],
   },
   [ApplicationTypes.LICENSE_PLATE_RENEWAL]: {
     slug: 'endurnyja-einkanumer',
-    translation: 'ta.lpr.application',
+    translation: ['ta.lpr.application', 'uiForms.application'],
   },
   [ApplicationTypes.ORDER_VEHICLE_LICENSE_PLATE]: {
     slug: 'panta-numeraplotu',
-    translation: 'ta.ovlp.application',
+    translation: ['ta.ovlp.application', 'uiForms.application'],
   },
   [ApplicationTypes.ORDER_VEHICLE_REGISTRATION_CERTIFICATE]: {
     slug: 'panta-skraningarskirteini',
-    translation: 'ta.ovrc.application',
+    translation: ['ta.ovrc.application', 'uiForms.application'],
   },
   [ApplicationTypes.TRANSFER_OF_VEHICLE_OWNERSHIP]: {
     slug: 'eigendaskipti-okutaekis',
@@ -308,6 +313,10 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.OLD_AGE_PENSION]: {
     slug: 'ellilifeyrir',
     translation: ['oap.application', 'sia.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.DISABILITY_PENSION]: {
+    slug: 'ororkulifeyrir',
+    translation: ['dp.application', 'sia.application', 'uiForms.application'],
   },
   [ApplicationTypes.HOUSEHOLD_SUPPLEMENT]: {
     slug: 'heimilisuppbot',
@@ -359,11 +368,11 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.HEALTHCARE_LICENSE_CERTIFICATE]: {
     slug: 'starfsleyfis-vottord',
-    translation: 'hlc.application',
+    translation: ['hlc.application', 'uiForms.application'],
   },
   [ApplicationTypes.HEALTHCARE_WORK_PERMIT]: {
     slug: 'starfsleyfis-umsokn',
-    translation: 'hwp.application',
+    translation: ['hwp.application', 'uiForms.application'],
   },
   [ApplicationTypes.PENSION_SUPPLEMENT]: {
     slug: 'uppbot-a-lifeyri',
@@ -387,7 +396,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.UNIVERSITY]: {
     slug: 'haskolanam',
-    translation: 'uni.application',
+    translation: ['uni.application', 'uiForms.application'],
   },
   [ApplicationTypes.DEREGISTER_MACHINE]: {
     slug: 'afskraning-taekis',
@@ -407,11 +416,11 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.OFFICIAL_JOURNAL_OF_ICELAND]: {
     slug: 'stjornartidindi',
-    translation: 'ojoi.application',
+    translation: ['ojoi.application', 'uiForms.application'],
   },
   [ApplicationTypes.ID_CARD]: {
     slug: 'nafnskirteini',
-    translation: 'id.application',
+    translation: ['id.application', 'uiForms.application'],
   },
   [ApplicationTypes.HEALTH_INSURANCE_DECLARATION]: {
     slug: 'tryggingaryfirlysing',
@@ -431,39 +440,43 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.MACHINE_REGISTRATION]: {
     slug: 'nyskraning-taekis',
-    translation: ['aosh.rnm.application'],
+    translation: ['aosh.rnm.application', 'uiForms.application'],
   },
   [ApplicationTypes.PRACTICAL_EXAM]: {
     slug: 'verklegt-prof',
-    translation: ['aosh.pe.application'],
+    translation: ['aosh.pe.application', 'uiForms.application'],
   },
   [ApplicationTypes.RENTAL_AGREEMENT]: {
     slug: 'leigusamningur',
-    translation: 'ra.application',
+    translation: ['ra.application', 'uiForms.application'],
   },
   [ApplicationTypes.TERMINATE_RENTAL_AGREEMENT]: {
     slug: 'uppsogn-eda-riftun-leigusamnings',
-    translation: 'tra.application',
+    translation: ['tra.application', 'uiForms.application'],
   },
   [ApplicationTypes.SEMINAR_REGISTRATION]: {
     slug: 'vinnueftirlitid-namskeid',
-    translation: ['aosh.sem.application'],
+    translation: ['aosh.sem.application', 'uiForms.application'],
   },
   [ApplicationTypes.TRAINING_LICENSE_ON_A_WORK_MACHINE]: {
     slug: 'kennslurettindi-a-vinnuvel',
-    translation: ['aosh.tlwm.application'],
+    translation: ['aosh.tlwm.application', 'uiForms.application'],
   },
   [ApplicationTypes.SECONDARY_SCHOOL]: {
     slug: 'framhaldsskoli',
-    translation: 'ss.application',
+    translation: ['ss.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.UNEMPLOYMENT_BENEFITS]: {
+    slug: 'atvinnuleysisbaetur',
+    translation: ['vmst.ub.application', 'uiForms.application'],
   },
   [ApplicationTypes.ACTIVATION_ALLOWANCE]: {
     slug: 'virknistyrkur',
-    translation: ['aa.application'],
+    translation: ['aa.application', 'uiForms.application'],
   },
   [ApplicationTypes.CAR_RENTAL_FEE_CATEGORY]: {
     slug: 'bilaleigu-gjaldflokkur',
-    translation: 'crfc.application',
+    translation: ['crfc.application', 'uiForms.application'],
   },
   [ApplicationTypes.MEDICAL_AND_REHABILITATION_PAYMENTS]: {
     slug: 'sjukra-og-endurhaefingargreidslur',
@@ -471,7 +484,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.FIRE_COMPENSATION_APPRAISAL]: {
     slug: 'endurmat-brunabotamats',
-    translation: 'fca.application',
+    translation: ['fca.application', 'uiForms.application'],
   },
   [ApplicationTypes.LEGAL_GAZETTE]: {
     slug: 'logbirtingarblad',
@@ -479,6 +492,18 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.EXEMPTION_FOR_TRANSPORTATION]: {
     slug: 'undanthaga-vegna-flutnings',
-    translation: 'ta.eft.application',
+    translation: ['ta.eft.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.REGISTRATION_OF_NEW_PROPERTY_NUMBERS]: {
+    slug: 'skraning-fasteignanumera',
+    translation: ['ronp.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.MILE_CAR]: {
+    slug: 'skraning-milubila',
+    translation: ['mcar.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.HEILSUGAESLA_HOFUDBORDARSVAEDISINS_NAMSKEID]: {
+    slug: 'hh-namskeid',
+    translation: ['hh.courses.application', 'uiForms.application'],
   },
 }

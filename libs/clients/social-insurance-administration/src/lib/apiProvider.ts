@@ -4,26 +4,35 @@ import {
   LazyDuringDevScope,
   XRoadConfig,
 } from '@island.is/nest/config'
-import {
-  ApplicantApi,
-  ApplicationApi,
-  Configuration,
-  DeathBenefitsApi,
-  DocumentsApi,
-  GeneralApi,
-  IncomePlanApi,
-  MedicalDocumentsApi,
-  PaymentPlanApi,
-  PensionCalculatorApi,
-  QuestionnairesApi,
-} from '../../gen/fetch'
 import { ConfigFactory } from './configFactory'
-import { SocialInsuranceAdministrationClientConfig } from './socialInsuranceAdministrationClient.config'
 import {
   Api,
   ApplicationWriteApi,
+  MedicalDocumentApiForDisabilityPension,
+  QuestionnairesApiForDisabilityPension,
   Scope,
 } from './socialInsuranceAdministrationClient.type'
+import {
+  ApplicationApi,
+  ApplicantApi,
+  GeneralApi,
+  DocumentsApi,
+  IncomePlanApi,
+  PaymentPlanApi,
+  PensionCalculatorApi,
+  DeathBenefitsApi,
+  MedicalDocumentsApi,
+  QuestionnairesApi,
+  Configuration,
+} from '../../gen/fetch/v1'
+import {
+  ApplicationApi as ApplicationWriteApiV2,
+  Configuration as ConfigurationV2,
+} from '../../gen/fetch/v2'
+import { Provider } from '@nestjs/common'
+import { createEnhancedFetch } from '@island.is/clients/middlewares'
+import { SocialInsuranceAdministrationClientConfig } from './config/socialInsuranceAdministrationClient.config'
+import { SocialInsuranceAdministrationClientConfigV2 } from './config/socialInsuranceAdministrationClientV2.config'
 
 const apiCollection: Array<{
   api: Api
@@ -85,7 +94,53 @@ const apiCollection: Array<{
     scopes: ['@tr.is/sjukraogendurhaefingargreidslur:read'],
     autoAuth: true,
   },
+  {
+    api: MedicalDocumentApiForDisabilityPension,
+    scopes: ['@tr.is/ororkulifeyrir:read', '@tr.is/umsoknir:read'],
+    autoAuth: true,
+  },
+  {
+    api: QuestionnairesApiForDisabilityPension,
+    scopes: ['@tr.is/ororkulifeyrir:read', '@tr.is/umsoknir:read'],
+    autoAuth: true,
+  },
 ]
+
+export const ApplicationV2ApiProvider: Provider<ApplicationWriteApiV2> = {
+  provide: ApplicationWriteApiV2,
+  scope: LazyDuringDevScope,
+  useFactory: (
+    xroadConfig: ConfigType<typeof XRoadConfig>,
+    config: ConfigType<typeof SocialInsuranceAdministrationClientConfigV2>,
+    idsClientConfig: ConfigType<typeof IdsClientConfig>,
+  ) =>
+    new ApplicationWriteApiV2(
+      new ConfigurationV2({
+        fetchApi: createEnhancedFetch({
+          name: 'clients-tr',
+          organizationSlug: 'tryggingastofnun',
+          autoAuth: idsClientConfig.isConfigured
+            ? {
+                mode: 'tokenExchange',
+                issuer: idsClientConfig.issuer,
+                clientId: idsClientConfig.clientId,
+                clientSecret: idsClientConfig.clientSecret,
+                scope: ['@tr.is/umsoknir:write'],
+              }
+            : undefined,
+        }),
+        basePath: `${xroadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
+        headers: {
+          'X-Road-Client': xroadConfig.xRoadClient,
+        },
+      }),
+    ),
+  inject: [
+    XRoadConfig.KEY,
+    SocialInsuranceAdministrationClientConfigV2.KEY,
+    IdsClientConfig.KEY,
+  ],
+}
 
 export const apiProvider = apiCollection.map((apiRecord) => ({
   provide: apiRecord.api,

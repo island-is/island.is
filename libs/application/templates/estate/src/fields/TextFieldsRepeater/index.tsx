@@ -18,7 +18,7 @@ import { Field, Props } from './utils'
 import { ErrorValue } from '../../types'
 
 const stocksValueKeys = ['rateOfExchange', 'faceValue']
-const bankAccountsValueKeys = ['balance', 'exchangeRateOrInterest']
+const bankAccountsValueKeys = ['balance', 'accruedInterest']
 
 export const TextFieldsRepeater: FC<
   React.PropsWithChildren<FieldBaseProps & Props>
@@ -42,6 +42,7 @@ export const TextFieldsRepeater: FC<
     }
 
     const total = values.reduce(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (acc: number, current: any) =>
         Number(acc) + Number(current[props.sumField]),
       0,
@@ -60,6 +61,7 @@ export const TextFieldsRepeater: FC<
     })
 
     const repeaterFields = values.reduce(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (acc: Record<string, string>, elem: any) => {
         acc[elem] = ''
         return acc
@@ -111,12 +113,11 @@ export const TextFieldsRepeater: FC<
 
   const updateBankAccountTotalValue = (fieldIndex: string) => {
     const bankAccountValues = getValues(fieldIndex)
-    const balance = bankAccountValues?.balance.replace(/[^\d.]/g, '') || '0'
-    const exchangeRateOrInterest =
-      bankAccountValues?.exchangeRateOrInterest.replace(/[^\d.]/g, '') || '0'
+    const balance = bankAccountValues?.balance?.replace(/[^\d.]/g, '') || '0'
+    const accruedInterest =
+      bankAccountValues?.accruedInterest?.replace(/[^\d.]/g, '') || '0'
 
-    const accountTotal =
-      parseFloat(balance) + parseFloat(exchangeRateOrInterest)
+    const accountTotal = parseFloat(balance) + parseFloat(accruedInterest)
     setValue(`${fieldIndex}.accountTotal`, accountTotal ?? '0')
     forceUpdate()
     calculateTotal()
@@ -269,7 +270,7 @@ export const TextFieldsRepeater: FC<
       )}
 
       {/* Add field button */}
-      <Box marginTop={1}>
+      <Box marginTop={2}>
         <Button
           variant="text"
           icon="add"

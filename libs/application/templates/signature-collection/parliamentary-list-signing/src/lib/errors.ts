@@ -136,4 +136,28 @@ export const errorMessages = {
       description: '',
     },
   }),
+  candidateNotFound: defineMessages({
+    title: {
+      id: 'pls.application:error.candidateNotFound.title',
+      defaultMessage: 'Framboð finnst ekki',
+      description: '',
+    },
+    summary: {
+      id: 'pls.application:error.candidateNotFound.summary',
+      defaultMessage: 'Ekki er hægt að mæla með framboði.',
+      description: '',
+    },
+  }),
+  candidateListActive: defineMessages({
+    title: {
+      id: 'pls.application:error.candidateListActive.title',
+      defaultMessage: 'Framboð er ekki með virka söfnun í þínu kjördæmi',
+      description: '',
+    },
+    summary: {
+      id: 'pls.application:error.active.summary',
+      defaultMessage: 'Ekki er hægt að mæla með framboði.',
+      description: '',
+    },
+  }),
 }

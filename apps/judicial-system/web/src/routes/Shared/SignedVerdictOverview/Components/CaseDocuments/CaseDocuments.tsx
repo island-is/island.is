@@ -20,6 +20,7 @@ import {
 import {
   FormContext,
   PdfButton,
+  SectionHeading,
   SignedDocument,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
@@ -103,11 +104,9 @@ const CaseDocuments: FC<Props> = ({
   }
 
   return (
-    <Box marginBottom={10}>
-      <Text as="h3" variant="h3" marginBottom={1}>
-        {formatMessage(m.caseDocuments)}
-      </Text>
-      <Box marginBottom={2} component="ul">
+    <Box component="section">
+      <SectionHeading title={formatMessage(m.caseDocuments)} marginBottom={1} />
+      <Box component="ul">
         {!isPrisonSystemUser(user) && (
           <li>
             <PdfButton
@@ -115,6 +114,7 @@ const CaseDocuments: FC<Props> = ({
               caseId={workingCase.id}
               title={formatMessage(core.pdfButtonRequest)}
               pdfType="request"
+              elementId={formatMessage(core.pdfButtonRequest)}
             />
           </li>
         )}
@@ -129,6 +129,7 @@ const CaseDocuments: FC<Props> = ({
               caseId={workingCase.id}
               title={formatMessage(core.pdfButtonCustodyNotice)}
               pdfType="custodyNotice"
+              elementId={formatMessage(core.pdfButtonCustodyNotice)}
             />
           </li>
         )}
@@ -138,6 +139,7 @@ const CaseDocuments: FC<Props> = ({
             caseId={workingCase.id}
             title={formatMessage(core.pdfButtonRulingShortVersion)}
             pdfType="courtRecord"
+            elementId={formatMessage(core.pdfButtonRulingShortVersion)}
           >
             {isInvestigationCase(workingCase.type) &&
               (workingCase.courtRecordSignatory ? (
@@ -169,6 +171,7 @@ const CaseDocuments: FC<Props> = ({
               caseId={workingCase.id}
               title={formatMessage(core.pdfButtonRuling)}
               pdfType="ruling"
+              elementId={formatMessage(core.pdfButtonRuling)}
               disabled={!isRulingRequired}
             >
               {isRulingRequired &&

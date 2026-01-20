@@ -167,7 +167,10 @@ export const FieldsRepeaterFormField = ({
       : itemCondition
   }
 
-  const showAddButton = !hideAddButton
+  const showAddButton =
+    typeof hideAddButton === 'function'
+      ? !hideAddButton(updatedApplication)
+      : !hideAddButton
   const showRemoveButton = !hideRemoveButton && numberOfItems > minRowsValue
 
   return (
@@ -193,7 +196,7 @@ export const FieldsRepeaterFormField = ({
         />
       )}
       <Box marginTop={description ? 3 : 0}>
-        <Stack space={4}>
+        <Stack space={numberOfItems === 0 ? 0 : 4}>
           {showFormTitle && displayTitleAsAccordion && (
             <Accordion singleExpand={false}>
               {Array.from({ length: numberOfItems }).map((_i, i) => {

@@ -23,6 +23,7 @@ export const serviceSetup =
     return service('services-auth-personal-representative')
       .namespace('personal-representative')
       .image('services-auth-personal-representative')
+      .serviceAccount('services-auth-personal-representative')
       .db({ name: 'servicesauth' })
       .env({
         IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api',

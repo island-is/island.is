@@ -1,6 +1,7 @@
 import { getValueViaPath } from '@island.is/application/core'
-import { PruningApplication, RecordObject } from '@island.is/application/types'
-import addMilliseconds from 'date-fns/addMilliseconds'
+import { RecordObject } from '@island.is/application/types'
+
+export const DEFAULT_POST_PRUNE_DELAY = 365 * 24 * 3600 * 1000
 
 /**
  * Sets a value in an object at the given dot-notated path.
@@ -90,6 +91,11 @@ export const expandFieldKeys = (
       const [prefix, ...suffixParts] = key.split('.$.')
       const arrayValue = getValueViaPath(source, prefix)
 
+      // Skip if value is missing (no array to expand)
+      if (arrayValue === undefined) {
+        continue
+      }
+
       if (!Array.isArray(arrayValue)) {
         throw new Error(
           `Expected array at path "${prefix}" for key "${key}", got ${typeof arrayValue}`,
@@ -135,13 +141,4 @@ export const getAdminDataForPruning = (
   }
 
   return normalizeArrays(result)
-}
-
-export const getPostPruneAtDate = (
-  whenToPostPrune: number | ((application: PruningApplication) => Date),
-  application: PruningApplication,
-) => {
-  return typeof whenToPostPrune === 'function'
-    ? whenToPostPrune(application)
-    : addMilliseconds(new Date(), whenToPostPrune)
 }

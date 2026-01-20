@@ -123,6 +123,7 @@ export class ActivationAllowanceService extends BaseTemplateApiService {
       application.id,
       this.config.templateApi.attachmentBucket,
     )
+    const additionalCVInfo = getValueViaPath<string>(answers, 'cv.other')
     const canStartAt = getCanStartAt(answers)
     const hasCV = getValueViaPath<string | undefined>(answers, 'cv.haveCV')
     const emptyApplicationOriginal =
@@ -161,7 +162,7 @@ export class ActivationAllowanceService extends BaseTemplateApiService {
     let cvResponse: GaldurDomainModelsAttachmentsAttachmentViewModel | undefined
     if (cvInfo) {
       cvResponse =
-        await this.vmstUnemploymentClientService.createAttachmentForActivationGrant(
+        await this.vmstUnemploymentClientService.createAttachmentForApplication(
           {
             galdurDomainModelsAttachmentsCreateAttachmentRequest: {
               attachmentTypeId: CV_ID,
@@ -182,11 +183,10 @@ export class ActivationAllowanceService extends BaseTemplateApiService {
           activationGrant: {
             applicationInformation: {
               ...emptyApplication?.applicationInformation,
-              created: new Date(
-                emptyApplication?.applicationInformation?.created || '',
-              ),
               applicationLanguage: startingLocale?.toUpperCase() || 'IS',
-              additionalInformation: cvInfo?.other,
+              additionalInformation: additionalCVInfo
+                ? additionalCVInfo
+                : undefined,
               contactConnection: contact?.connection,
               contactEmail: contact?.email,
               contactName: contact?.name,

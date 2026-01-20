@@ -1,0 +1,47 @@
+query IdentityQuery($input: IdentityInput!) {
+  identity(input: $input) {
+    name
+    nationalId
+  }
+}
+
+query GetMedicineDelegations(
+  $locale: String!
+  $input: HealthDirectorateMedicineDelegationInput!
+) {
+  healthDirectorateMedicineDelegations(locale: $locale, input: $input) {
+    items {
+      __typename
+      cacheId
+      name
+      nationalId
+      isActive
+      status
+      lookup
+      dates {
+        from
+        to
+      }
+    }
+  }
+}
+
+mutation PostMedicineDelegation(
+  $input: HealthDirectorateMedicineDelegationCreateOrDeleteInput!
+) {
+  healthDirectorateMedicineDelegationCreate(input: $input) {
+    __typename
+    success
+    message
+  }
+}
+
+mutation DeleteMedicineDelegation(
+  $input: HealthDirectorateMedicineDelegationCreateOrDeleteInput!
+) {
+  healthDirectorateMedicineDelegationDelete(input: $input) {
+    __typename
+    success
+    message
+  }
+}

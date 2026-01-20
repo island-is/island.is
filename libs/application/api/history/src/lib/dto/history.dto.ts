@@ -15,8 +15,20 @@ export class HistoryResponseDto {
   @IsString()
   log?: string
 
-  constructor(timeStamp: Date, log: StaticText, formatMessage: FormatMessage) {
+  constructor(
+    timeStamp: Date,
+    message: StaticText,
+    formatMessage: FormatMessage,
+    subjectAndActorText?: string,
+  ) {
     this.date = timeStamp
-    this.log = log ? formatMessage(log) : undefined
+    if (message) {
+      this.log = formatMessage(message)
+      if (subjectAndActorText) {
+        this.log += subjectAndActorText
+      }
+    } else {
+      this.log = undefined
+    }
   }
 }

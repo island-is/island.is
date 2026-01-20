@@ -3,6 +3,7 @@ import { logger } from '@island.is/logging'
 import { ApolloError } from 'apollo-server-express'
 import { Injectable } from '@nestjs/common'
 import sortBy from 'lodash/sortBy'
+import type { EntryCollection } from 'contentful'
 import * as types from './generated/contentfulTypes'
 import { Article, mapArticle } from './models/article.model'
 import { ContentSlug, TextFieldLocales } from './models/contentSlug.model'
@@ -52,7 +53,7 @@ import {
 } from './models/openDataSubpage.model'
 import { GetOpenDataSubpageInput } from './dto/getOpenDataSubpage.input'
 import { mapProjectPage, ProjectPage } from './models/projectPage.model'
-import { IProjectPage } from './generated/contentfulTypes'
+import { ICourseListPage, IProjectPage } from './generated/contentfulTypes'
 import { GetSupportQNAsInput } from './dto/getSupportQNAs.input'
 import { mapSupportQNA, SupportQNA } from './models/supportQNA.model'
 import { GetSupportCategoryInput } from './dto/getSupportCategory.input'
@@ -90,7 +91,10 @@ import {
   OrganizationPageStandaloneSitemapLevel2,
 } from './models/organizationPageStandaloneSitemap.model'
 import { SitemapTree, SitemapTreeNodeType } from '@island.is/shared/types'
-import { getOrganizationPageUrlPrefix } from '@island.is/shared/utils'
+import {
+  getOrganizationPageUrlPrefix,
+  sortAlpha,
+} from '@island.is/shared/utils'
 import { NewsList } from './models/newsList.model'
 import { GetCmsNewsInput } from './dto/getNews.input'
 import {
@@ -102,6 +106,13 @@ import {
   mapBloodDonationRestrictionDetails,
   mapBloodDonationRestrictionListItem,
 } from './models/bloodDonationRestriction.model'
+import { GetCourseByIdInput } from './dto/getCourseById.input'
+import { CourseDetails, mapCourse } from './models/course.model'
+import { GetCourseListPageByIdInput } from './dto/getCourseListPageById.input'
+import { mapCourseListPage } from './models/courseListPage.model'
+import { GetCourseSelectOptionsInput } from './dto/getCourseSelectOptions.input'
+import { GetWebChatInput } from './dto/getWebChat.input'
+import { mapWebChat, WebChat } from './models/webChat.model'
 
 const errorHandler = (name: string) => {
   return (error: Error) => {
@@ -556,7 +567,7 @@ export class CmsContentfulService {
       ['content_type']: 'article',
       'sys.id[in]': articles.map((a) => a.sys.id).join(','),
       select: ArticleFields,
-      include: 10,
+      include: 5,
     }
 
     const relatedResult = await this.contentfulRepository
@@ -1476,5 +1487,221 @@ export class CmsContentfulService {
     })
 
     return result
+  }
+
+  async getOrganizationNavigationPages(
+    entryIdsObject: {
+      parentSubpageEntryIds: string[]
+      organizationSubpageEntryIds: string[]
+      entryIds: string[]
+    },
+    lang: string,
+  ) {
+    if (
+      entryIdsObject.parentSubpageEntryIds.length === 0 &&
+      entryIdsObject.organizationSubpageEntryIds.length === 0 &&
+      entryIdsObject.entryIds.length === 0
+    )
+      return []
+
+    const fieldSelect =
+      'fields.title,fields.shortTitle,fields.shortDescription,fields.slug,sys'
+
+    const [parentSubpageResponse, organizationSubpageResponse, entryResponse] =
+      await Promise.allSettled([
+        this.contentfulRepository.getLocalizedEntries(
+          lang,
+          {
+            'sys.id[in]': entryIdsObject.parentSubpageEntryIds.join(','),
+            content_type: 'organizationParentSubpage',
+            limit: 1000,
+            select: fieldSelect,
+          },
+          1,
+        ),
+        this.contentfulRepository.getLocalizedEntries(
+          lang,
+          {
+            'sys.id[in]': entryIdsObject.organizationSubpageEntryIds.join(','),
+            content_type: 'organizationSubpage',
+            limit: 1000,
+            select: fieldSelect,
+          },
+          1,
+        ),
+        this.contentfulRepository.getLocalizedEntries(
+          lang,
+          {
+            'sys.id[in]': entryIdsObject.entryIds.join(','),
+            limit: 1000,
+          },
+          1,
+        ),
+      ])
+
+    const items = []
+
+    if (parentSubpageResponse.status === 'fulfilled')
+      items.push(...parentSubpageResponse.value.items)
+    else
+      errorHandler('getOrganizationNavigationPages.parentSubpageResponse')(
+        parentSubpageResponse.reason,
+      )
+
+    if (organizationSubpageResponse.status === 'fulfilled')
+      items.push(...organizationSubpageResponse.value.items)
+    else
+      errorHandler(
+        'getOrganizationNavigationPages.organizationSubpageResponse',
+      )(organizationSubpageResponse.reason)
+
+    if (entryResponse.status === 'fulfilled')
+      for (const item of entryResponse.value.items) {
+        const isValidPageType =
+          item.sys.contentType.sys.id === 'organizationParentSubpage' ||
+          item.sys.contentType.sys.id === 'organizationSubpage'
+        if (!isValidPageType) continue
+        items.push(item)
+      }
+    else
+      errorHandler('getOrganizationNavigationPages.entryResponse')(
+        entryResponse.reason,
+      )
+
+    return items
+  }
+
+  async getCourseById(
+    input: GetCourseByIdInput,
+  ): Promise<CourseDetails | null> {
+    const params = {
+      content_type: 'course',
+      limit: 1,
+      include: 4,
+    }
+
+    const [isResponse, enResponse] = await Promise.all([
+      this.contentfulRepository.getLocalizedEntry<types.ICourseFields>(
+        input.id,
+        'is',
+        { ...params, include: input.lang === 'is' ? 4 : 0 },
+      ),
+      this.contentfulRepository.getLocalizedEntry<types.ICourseFields>(
+        input.id,
+        'en',
+        { ...params, include: input.lang === 'en' ? 4 : 0 },
+      ),
+    ])
+
+    const response = input.lang === 'is' ? isResponse : enResponse
+
+    if (response?.sys?.contentType?.sys?.id !== 'course') {
+      return null
+    }
+
+    const mappedCourse = mapCourse(response as types.ICourse)
+
+    // Filter out instances that are in the past
+    const today = new Date()
+    mappedCourse.instances = mappedCourse.instances.filter(
+      (instance) =>
+        Boolean(instance.startDate) && new Date(instance.startDate) > today,
+    )
+
+    // Sort instances in ascending start date order
+    mappedCourse.instances.sort(
+      (a, b) =>
+        new Date(a.startDate).getTime() - new Date(b.startDate).getTime(),
+    )
+
+    return {
+      course: mappedCourse,
+      activeLocales: {
+        is: Boolean(isResponse?.fields?.title),
+        en: Boolean(enResponse?.fields?.title),
+      },
+    }
+  }
+
+  async getCourseListPageById(input: GetCourseListPageByIdInput) {
+    const params = {
+      content_type: 'courseListPage',
+      limit: 1,
+      include: 0,
+    }
+
+    const response =
+      await this.contentfulRepository.getLocalizedEntry<types.ICourseListPageFields>(
+        input.id,
+        input.lang,
+        params,
+      )
+
+    if (response?.sys?.contentType?.sys?.id !== 'courseListPage') {
+      return null
+    }
+
+    return mapCourseListPage(response as ICourseListPage)
+  }
+
+  async getCourseSelectOptions(input: GetCourseSelectOptionsInput) {
+    const params = {
+      content_type: 'course',
+      limit: 1000,
+      include: 0,
+      select: 'fields.title,sys',
+      'fields.courseListPage.sys.contentType.sys.id': 'courseListPage',
+      'fields.courseListPage.fields.organization.sys.id': input.organizationId,
+    }
+
+    const response =
+      await this.contentfulRepository.getLocalizedEntries<types.ICourseFields>(
+        input.lang,
+        params,
+        0,
+      )
+
+    const items = response.items.map((item) => ({
+      id: item.sys.id,
+      title: item.fields.title,
+    }))
+
+    items.sort(sortAlpha('title'))
+
+    return { items, total: response.total, input }
+  }
+
+  private findBestWebChatMatch(
+    response: EntryCollection<types.IWebChatFields>,
+  ): types.IWebChat | null {
+    let bestMatch: types.IWebChat | null = null
+
+    for (const item of response.items) {
+      const webChatEntry = item as types.IWebChat
+      for (const location of webChatEntry.fields.displayLocations ?? []) {
+        if (location?.sys?.contentType?.sys?.id !== 'organization')
+          return webChatEntry
+        bestMatch = webChatEntry
+      }
+    }
+
+    return bestMatch
+  }
+
+  async getWebChat(input: GetWebChatInput): Promise<WebChat | null> {
+    const params = {
+      content_type: 'webChat',
+      'fields.displayLocations.sys.id[in]': input.displayLocationIds.join(','),
+      limit: 100,
+    }
+
+    const response = await this.contentfulRepository
+      .getLocalizedEntries<types.IWebChatFields>(input.lang, params, 1)
+      .catch(errorHandler('getWebChat'))
+
+    const bestMatch = this.findBestWebChatMatch(response)
+    if (!bestMatch) return null
+
+    return mapWebChat(bestMatch, input.lang)
   }
 }

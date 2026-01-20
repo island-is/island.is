@@ -1,4 +1,4 @@
-import { ApplicationEligibility, RequirementKey } from '../../types/schema'
+import { ApplicationEligibility, RequirementKey } from '@island.is/api/schema'
 import { DrivingLicenseApplicationFor, B_FULL, BE } from '../../lib/constants'
 
 export const fakeEligibility = (
@@ -13,11 +13,11 @@ export const fakeEligibility = (
       ...(applicationFor === B_FULL
         ? [
             {
-              key: RequirementKey.DrivingAssessmentMissing,
+              key: RequirementKey.drivingAssessmentMissing,
               requirementMet: true,
             },
             {
-              key: RequirementKey.DrivingSchoolMissing,
+              key: RequirementKey.drivingSchoolMissing,
               requirementMet: true,
             },
           ]
@@ -25,24 +25,24 @@ export const fakeEligibility = (
         applicationFor === BE
         ? [
             {
-              key: RequirementKey.BeRequiresHealthCertificate,
+              key: RequirementKey.beRequiresHealthCertificate,
               requirementMet: !requiresHealthCertificate,
             },
             {
-              key: RequirementKey.LocalResidency,
+              key: RequirementKey.localResidency,
               daysOfResidency,
               requirementMet: daysOfResidency >= 185,
             },
           ]
         : [
             {
-              key: RequirementKey.LocalResidency,
+              key: RequirementKey.localResidency,
               daysOfResidency,
               requirementMet: daysOfResidency >= 185,
             },
           ]),
       {
-        key: RequirementKey.DeniedByService,
+        key: RequirementKey.deniedByService,
         //TODO: set to true when RLS/SGS supports health certificate in BE license
         requirementMet:
           applicationFor === BE ? !requiresHealthCertificate : true,

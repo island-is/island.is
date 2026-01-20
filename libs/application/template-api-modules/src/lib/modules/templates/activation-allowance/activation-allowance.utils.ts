@@ -116,7 +116,7 @@ export const getApplicantInfo = (
     ? {
         ...personalExternalData,
         ...result,
-        dateOfBirth: new Date(personalExternalData?.dateOfBirth || ''),
+        dateOfBirth: personalExternalData?.dateOfBirth,
       }
     : undefined
 }
@@ -171,8 +171,8 @@ export const getJobHistoryInfo = (
   return jobHistoryAnswers
     .map((job) => ({
       employer: job.companyName,
-      started: parseDateSafe(job.startDate),
-      quit: parseDateSafe(job.endDate),
+      started: job.startDate,
+      quit: job.endDate,
       jobCodeId: job.jobName,
     }))
     .filter((item) => item.jobCodeId !== null)
@@ -393,9 +393,6 @@ export const getIncome = (
       const employerSSN = incomeExternal?.[index]?.employerSSN
       const year = incomeExternal?.[index]?.year
       const hasEnded = income.hasEmploymentEnded === YES
-      const unpaidVacationDays = income.numberOfLeaveDays
-        ? parseInt(income.numberOfLeaveDays, 10)
-        : undefined
       return {
         employerName: income.employer,
         employerSSN: employerSSN,
@@ -403,25 +400,13 @@ export const getIncome = (
         month: MONTH_LOOKUP[income.month],
         amount: income.salaryIncome,
         hasEnded: hasEnded,
-        endDate:
-          !hasEnded && income.endOfEmploymentDate
-            ? new Date(income.endOfEmploymentDate)
-            : undefined,
+        endDate: !hasEnded ? income.endOfEmploymentDate : '',
         isFromEmployment:
           income.checkbox?.[0] ===
           IncomeCheckboxValues.INCOME_FROM_OTHER_THAN_JOB
             ? false
             : true,
         explanation: income.explanation,
-        hasUnpaidVacation: income.hasLeaveDays === YES ? true : false,
-        unpaidVacationDays: unpaidVacationDays,
-        unpaidVacations: !income.leaveDates
-          ? []
-          : income.leaveDates.map((dates) => ({
-              unpaidVacationDays: 0,
-              unpaidVacationStart: new Date(dates.dateFrom),
-              unpaidVacationEnd: new Date(dates.dateTo),
-            })) || [],
       }
     })
   return incomePayload
@@ -451,17 +436,20 @@ const getFileExtension = (fileName: string): string | undefined => {
   return parts.pop()?.toLowerCase()
 }
 
-export const getCanStartAt = (answers: FormValue): Date => {
+export const getCanStartAt = (answers: FormValue): string => {
   const incomeAnswers = getValueViaPath<IncomeAnswers>(answers, 'income') || []
-  let canStartAtDate = new Date()
+
+  let canStartAtString = new Date().toISOString()
 
   incomeAnswers.forEach((income) => {
     if (income.hasEmploymentEnded === NO && income.endOfEmploymentDate) {
       const endOfEmploymentDate = new Date(income.endOfEmploymentDate)
-      canStartAtDate = new Date(
-        Math.max(canStartAtDate.getTime(), endOfEmploymentDate.getTime()),
+      const now = new Date()
+      const dateObj = new Date(
+        Math.max(now.getTime(), endOfEmploymentDate.getTime()),
       )
+      canStartAtString = dateObj.toISOString()
     }
   })
-  return canStartAtDate
+  return canStartAtString
 }

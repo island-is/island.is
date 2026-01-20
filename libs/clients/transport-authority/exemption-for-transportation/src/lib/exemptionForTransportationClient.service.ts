@@ -30,7 +30,7 @@ export class ExemptionForTransportationClient {
       policeEscort: {
         maxHeight: result.policeEscort?.height || 0,
         maxWidth: result.policeEscort?.width || 0,
-        maxLength: result.policeEscort?.length || 0,
+        maxTotalLength: result.policeEscort?.length || 0,
       },
       shortTermMeasurementLimitations: {
         maxHeight: result.measurementLimitations?.maxHeight || 0,
@@ -69,6 +69,10 @@ export class ExemptionForTransportationClient {
       return {
         isInspected: result.inspected || false,
         isInOrder: result.isInOrder || false,
+        numberOfAxles: result.axleNo || 0,
+        make: result.make || '',
+        color: result.color || '',
+        permno: result.permno || '',
         errorMessages: [],
       }
     } catch (e) {

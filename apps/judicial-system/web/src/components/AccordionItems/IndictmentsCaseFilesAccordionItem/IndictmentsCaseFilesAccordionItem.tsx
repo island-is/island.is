@@ -16,7 +16,7 @@ import {
   useDragControls,
   useMotionValue,
 } from 'motion/react'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import {
   AccordionItem,
@@ -160,9 +160,9 @@ export const sortedFilesInChapter = (
         displayText: file.name,
         userGeneratedFilename: file.userGeneratedFilename,
         displayDate: file.displayDate,
-        canOpen: Boolean(file.key),
+        canOpen: file.isKeyAccessible ?? false,
         status: FileUploadStatus.done,
-        canEdit: true,
+        canEdit: ['fileName', 'displayDate'] as const,
         size: file.size,
       }
     })
@@ -357,10 +357,10 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
             displayText: caseFile.name,
             userGeneratedFilename: caseFile.userGeneratedFilename,
             displayDate: caseFile.displayDate,
-            canOpen: Boolean(caseFile.key),
+            canOpen: caseFile.isKeyAccessible ?? false,
             status: FileUploadStatus.done,
             size: caseFile.size,
-            canEdit: true,
+            canEdit: ['fileName', 'displayDate'] as const,
           }
         }),
     ])

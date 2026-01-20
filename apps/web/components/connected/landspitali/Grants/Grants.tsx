@@ -8,7 +8,9 @@ import {
   AlertMessage,
   Box,
   Button,
-  Checkbox,
+  GridColumn,
+  GridContainer,
+  GridRow,
   type Option,
   RadioButton,
   Stack,
@@ -141,8 +143,6 @@ const DEFAULT_GRANT_OPTIONS: Option<string>[] = [
 
 const PRESET_AMOUNTS = ['5.000', '10.000', '50.000', '100.000']
 
-const PRESET_PROJECTS = ['Endurmennt', 'Ótilgreint', 'Rannsóknir', 'Tækjakaup']
-
 export const DirectGrants = ({ slice }: DirectGrantsProps) => {
   const { formatMessage } = useIntl()
 
@@ -150,8 +150,6 @@ export const DirectGrants = ({ slice }: DirectGrantsProps) => {
     WebLandspitaliCatalogQuery,
     WebLandspitaliCatalogQueryVariables
   >(GET_LANDSPITALI_CATALOG)
-
-  const [nationalIdSkipped, setNationalIdSkipped] = useState(false)
 
   const grantOptions = useMemo(() => {
     const options = (
@@ -237,6 +235,7 @@ export const DirectGrants = ({ slice }: DirectGrantsProps) => {
             payerPlace: data.senderPlace,
             amountISK: parseInt(amountISK.replace(/\./g, '')),
             locale: activeLocale,
+            cancelUrl: window.location.href,
           },
         },
       })
@@ -273,6 +272,28 @@ export const DirectGrants = ({ slice }: DirectGrantsProps) => {
     return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
   }
 
+  const projectOptions = useMemo(() => {
+    return [
+      {
+        label: formatMessage(m.info.continuingEducationProject),
+        value: 'Endurmenntun',
+      },
+      {
+        label: formatMessage(m.info.researchProject),
+        value: 'Rannsóknir',
+      },
+
+      {
+        label: formatMessage(m.info.equipmentPurchaseProject),
+        value: 'Tækjakaup',
+      },
+      {
+        label: formatMessage(m.info.otherProjects),
+        value: 'Önnur verkefni',
+      },
+    ]
+  }, [formatMessage])
+
   return (
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -289,18 +310,19 @@ export const DirectGrants = ({ slice }: DirectGrantsProps) => {
             onSelect={(opt) => setValue('grant', (opt?.value as string) || '')}
             error={errors.grant?.message}
             rules={requiredRule}
+            required
           />
           <Text variant="h2">{formatMessage(m.info.projectTitle)}</Text>
           <Box display="flex" flexWrap="wrap" columnGap={2} rowGap={2}>
-            {PRESET_PROJECTS.map((project) => (
+            {projectOptions.map((project) => (
               <RadioButton
-                key={project}
-                id={`project-${project}`}
-                name="project"
-                label={project}
-                checked={selectedProject === project}
+                key={project.value}
+                id={project.value}
+                name={project.value}
+                label={project.label}
+                checked={selectedProject === project.value}
                 onChange={() =>
-                  setValue('project', project, { shouldValidate: true })
+                  setValue('project', project.value, { shouldValidate: true })
                 }
                 large={true}
               />
@@ -317,7 +339,7 @@ export const DirectGrants = ({ slice }: DirectGrantsProps) => {
               <RadioButton
                 key={amount}
                 id={`amount-${amount}`}
-                name="amountISK"
+                name={`amount-${amount}`}
                 label={amount}
                 checked={selectedAmount === amount}
                 onChange={() =>
@@ -352,12 +374,15 @@ export const DirectGrants = ({ slice }: DirectGrantsProps) => {
               inputMode="numeric"
               maxLength={14}
               currency={true}
-              error={
-                parseInt(watch('amountISKCustom') || '0') < 1000
-                  ? formatMessage(m.validation.minimumAmount)
-                  : undefined
-              }
-              rules={requiredRule}
+              rules={{
+                required: requiredRule.required,
+                min: {
+                  value: 1000,
+                  message: formatMessage(m.validation.minimumAmount),
+                },
+              }}
+              error={errors.amountISKCustom?.message}
+              required
             />
           )}
           <Stack space={2}>
@@ -369,6 +394,7 @@ export const DirectGrants = ({ slice }: DirectGrantsProps) => {
               error={errors.senderName?.message}
               rules={requiredRule}
               control={control}
+              required
             />
             <InputController
               id="senderEmail"
@@ -377,49 +403,43 @@ export const DirectGrants = ({ slice }: DirectGrantsProps) => {
               size="xs"
               error={errors.senderEmail?.message}
               control={control}
+              required
             />
 
-            <Stack space={1}>
-              <InputController
-                id="senderNationalId"
-                label={formatMessage(m.info.senderNationalIdLabel)}
-                size="xs"
-                error={
-                  nationalIdSkipped
-                    ? undefined
-                    : errors.senderNationalId?.message
-                }
-                type="text"
-                inputMode="numeric"
-                format="######-####"
-                disabled={nationalIdSkipped}
-                rules={{
-                  validate: (value) => {
-                    if (nationalIdSkipped) {
-                      return true
-                    }
-                    if (!isValidKennitala(value)) {
-                      return formatMessage(m.validation.invalidNationalIdFormat)
-                    }
-                    return true
-                  },
-                }}
-                control={control}
-              />
-              <Checkbox
-                id="senderNationalIdSkipped"
-                label={formatMessage(m.info.senderNationalIdSkippedLabel)}
-                checked={nationalIdSkipped}
-                onChange={() => {
-                  const newValue = !nationalIdSkipped
-                  setNationalIdSkipped(newValue)
-                  if (newValue) {
-                    setValue('senderNationalId', '')
-                  }
-                }}
-                labelVariant="small"
-              />
-            </Stack>
+            <GridContainer>
+              <GridRow alignItems="center" rowGap={2}>
+                <GridColumn span={['1/1', '1/1', '1/1', '1/1', '2/3']}>
+                  <Stack space={1}>
+                    <InputController
+                      id="senderNationalId"
+                      label={formatMessage(m.info.senderNationalIdLabel)}
+                      size="xs"
+                      error={errors.senderNationalId?.message}
+                      type="text"
+                      inputMode="numeric"
+                      format="######-####"
+                      rules={{
+                        validate: (value) => {
+                          if (!value) return true
+                          if (!isValidKennitala(value)) {
+                            return formatMessage(
+                              m.validation.invalidNationalIdFormat,
+                            )
+                          }
+                          return true
+                        },
+                      }}
+                      control={control}
+                    />
+                  </Stack>
+                </GridColumn>
+                <GridColumn span={['1/1', '1/1', '1/1', '1/1', '1/3']}>
+                  <Text variant="small">
+                    {formatMessage(m.info.senderNationalIdDescription)}
+                  </Text>
+                </GridColumn>
+              </GridRow>
+            </GridContainer>
 
             <InputController
               id="senderAddress"
@@ -428,6 +448,7 @@ export const DirectGrants = ({ slice }: DirectGrantsProps) => {
               error={errors.senderAddress?.message}
               rules={requiredRule}
               control={control}
+              required
             />
             <InputController
               id="senderPostalCode"
@@ -436,6 +457,7 @@ export const DirectGrants = ({ slice }: DirectGrantsProps) => {
               error={errors.senderPostalCode?.message}
               rules={requiredRule}
               control={control}
+              required
             />
             <InputController
               id="senderPlace"
@@ -444,12 +466,7 @@ export const DirectGrants = ({ slice }: DirectGrantsProps) => {
               error={errors.senderPlace?.message}
               rules={requiredRule}
               control={control}
-            />
-            <InputController
-              id="senderGrantExplanation"
-              label={formatMessage(m.info.senderGrantExplanation)}
-              size="xs"
-              control={control}
+              required
             />
           </Stack>
           <Box>
@@ -463,9 +480,18 @@ export const DirectGrants = ({ slice }: DirectGrantsProps) => {
             <Text>{formatMessage(m.info.amountISKExtra)}</Text>
           </Box>
           <Box display="flex" justifyContent="flexEnd" marginTop={5}>
-            <Button loading={loading} type="submit">
-              {formatMessage(m.info.pay)}
-            </Button>
+            <Stack space={2}>
+              <Box display="flex" justifyContent="flexEnd">
+                <Button loading={loading} type="submit">
+                  {formatMessage(m.info.pay)}
+                </Button>
+              </Box>
+              {Object.keys(errors).length > 0 && (
+                <Text variant="small" color="red600" fontWeight="medium">
+                  {formatMessage(m.validation.genericFormErrorMessage)}
+                </Text>
+              )}
+            </Stack>
           </Box>
           {errorOccuredWhenCreatingPaymentUrl && (
             <AlertMessage

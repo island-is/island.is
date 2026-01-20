@@ -106,8 +106,13 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
   const certificateForSicknessAndRehabilitationReferenceId =
     getValueViaPath<string>(
       answers,
-      'certificateForSicknessAndRehabilitationReferenceId',
+      'certificateForSicknessAndRehabilitation.referenceId',
     )
+
+  const isAlmaCertificate = getValueViaPath<string>(
+    answers,
+    'certificateForSicknessAndRehabilitation.isAlmaCertificate',
+  )
 
   const rehabilitationPlanConfirmation = getValueViaPath<string[]>(
     answers,
@@ -151,12 +156,12 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const hadAssistance = getValueViaPath<YesOrNo>(
     answers,
-    'selfAssessment.hadAssistance',
+    'selfAssessmentQuestionsOne.hadAssistance',
   )
 
   const educationalLevel = getValueViaPath<string>(
     answers,
-    'selfAssessment.educationalLevel',
+    'selfAssessmentQuestionsOne.educationalLevel',
   )
 
   const comment = getValueViaPath<string>(answers, 'comment')
@@ -169,65 +174,65 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const mainProblem = getValueViaPath<string>(
     answers,
-    'selfAssessment.mainProblem',
+    'selfAssessmentQuestionsThree.mainProblem',
   )
 
   const hasPreviouslyReceivedRehabilitationOrTreatment =
     getValueViaPath<YesOrNo>(
       answers,
-      'selfAssessment.hasPreviouslyReceivedRehabilitationOrTreatment',
+      'selfAssessmentQuestionsThree.hasPreviouslyReceivedRehabilitationOrTreatment',
     )
 
   const previousRehabilitationOrTreatment = getValueViaPath<string>(
     answers,
-    'selfAssessment.previousRehabilitationOrTreatment',
+    'selfAssessmentQuestionsThree.previousRehabilitationOrTreatment',
   )
 
   const previousRehabilitationSuccessful = getValueViaPath<YesOrNo>(
     answers,
-    'selfAssessment.previousRehabilitationSuccessful',
+    'selfAssessmentQuestionsThree.previousRehabilitationSuccessful',
   )
 
   const previousRehabilitationSuccessfulFurtherExplanations =
     getValueViaPath<string>(
       answers,
-      'selfAssessment.previousRehabilitationSuccessfulFurtherExplanations',
+      'selfAssessmentQuestionsThree.previousRehabilitationSuccessfulFurtherExplanations',
     )
 
   const currentEmploymentStatuses =
     getValueViaPath<string[]>(
       answers,
-      'selfAssessment.currentEmploymentStatuses',
+      'selfAssessmentQuestionsTwo.currentEmploymentStatuses',
     ) ?? []
 
   const currentEmploymentStatusExplanation = getValueViaPath<string>(
     answers,
-    'selfAssessment.currentEmploymentStatusExplanation',
+    'selfAssessmentQuestionsTwo.currentEmploymentStatusExplanation',
   )
 
   const lastProfession = getValueViaPath<string>(
     answers,
-    'selfAssessment.lastProfession',
+    'selfAssessmentQuestionsTwo.lastProfession',
   )
 
   const lastProfessionDescription = getValueViaPath<string>(
     answers,
-    'selfAssessment.lastProfessionDescription',
+    'selfAssessmentQuestionsTwo.lastProfessionDescription',
   )
 
   const lastActivityOfProfession = getValueViaPath<string>(
     answers,
-    'selfAssessment.lastActivityOfProfession',
+    'selfAssessmentQuestionsTwo.lastActivityOfProfession',
   )
 
   const lastActivityOfProfessionDescription = getValueViaPath<string>(
     answers,
-    'selfAssessment.lastActivityOfProfessionDescription',
+    'selfAssessmentQuestionsTwo.lastActivityOfProfessionDescription',
   )
 
   const lastProfessionYear = getValueViaPath<string>(
     answers,
-    'selfAssessment.lastProfessionYear',
+    'selfAssessmentQuestionsTwo.lastProfessionYear',
   )
 
   return {
@@ -252,6 +257,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     unionSickPayEndDate,
     unionInfo,
     certificateForSicknessAndRehabilitationReferenceId,
+    isAlmaCertificate,
     rehabilitationPlanConfirmation,
     rehabilitationPlanReferenceId,
     confirmedTreatmentConfirmation,
@@ -511,9 +517,21 @@ export const eligibleText = (externalData: ExternalData) => {
   const { isEligible } = getApplicationExternalData(externalData)
 
   switch (isEligible?.reasonCode) {
+    case EligibleReasonCodes.APPLICANT_ALREADY_HAS_PENDING_APPLICATION:
+      return medicalAndRehabilitationPaymentsFormMessage.notEligible
+        .applicantAlreadyHasPendingApplicationDescription
     case EligibleReasonCodes.APPLICANT_AGE_OUT_OF_RANGE:
       return medicalAndRehabilitationPaymentsFormMessage.notEligible
         .applicantAgeOutOfRangeDescription
+    case EligibleReasonCodes.NO_LEGAL_DOMICILE_IN_ICELAND:
+      return medicalAndRehabilitationPaymentsFormMessage.notEligible
+        .noLegalDomicileinIcelandDescription
+    case EligibleReasonCodes.HAS_ACTIVE_PAYMENTS:
+      return medicalAndRehabilitationPaymentsFormMessage.notEligible
+        .hasActivePaymentsDescription
+    case EligibleReasonCodes.INACTIVE_PAYMENTS_FOR_TOO_LONG:
+      return medicalAndRehabilitationPaymentsFormMessage.notEligible
+        .baseCertOlderThanSevenYearsDescription
     case EligibleReasonCodes.BASE_CERT_NOT_FOUND:
       return medicalAndRehabilitationPaymentsFormMessage.notEligible
         .baseCertNotFoundDescription
@@ -523,11 +541,21 @@ export const eligibleText = (externalData: ExternalData) => {
     case EligibleReasonCodes.BASE_CERT_OLDER_THAN_7YEARS:
       return medicalAndRehabilitationPaymentsFormMessage.notEligible
         .baseCertOlderThanSevenYearsDescription
-    case EligibleReasonCodes.BASE_CERT_OLDER_THAN_6MONTHS:
+    case EligibleReasonCodes.BASE_CERT_DISABILITY_DATE_EMPTY:
       return medicalAndRehabilitationPaymentsFormMessage.notEligible
-        .baseCertOlderThanSixMonthsDescription
+        .baseCertDisabilityDateEmptyDescription
+    case EligibleReasonCodes.LATEST_MEDICAL_DOCUMENT_NOT_FOUND:
+      return medicalAndRehabilitationPaymentsFormMessage.notEligible
+        .latestMedicalDocumentNotFoundDescription
+    case EligibleReasonCodes.ERROR_PROCESSING_CLIENT:
+      return medicalAndRehabilitationPaymentsFormMessage.notEligible
+        .errorProcessingClientDescription
+    case EligibleReasonCodes.UNEXPECTED_ERROR:
+      return medicalAndRehabilitationPaymentsFormMessage.notEligible
+        .unexpectedErrorDescription
     default:
-      return undefined
+      return medicalAndRehabilitationPaymentsFormMessage.notEligible
+        .unexpectedErrorDescription
   }
 }
 

@@ -1,10 +1,11 @@
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { InformationForDefendant } from '@island.is/judicial-system/types'
 
+import { createTestingVerdictModule } from '../createTestingVerdictModule'
+
 import { Verdict } from '../../../repository'
 import { VerdictService } from '../../verdict.service'
-import { createTestingVerdictModule } from '../creatingTestingVerdictModule'
 
 interface Then {
   result: Pick<Verdict, 'serviceInformationForDefendant'>

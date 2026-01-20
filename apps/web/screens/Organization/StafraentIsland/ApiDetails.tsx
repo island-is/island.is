@@ -198,6 +198,7 @@ ServiceDetails.getProps = async ({ apolloClient, locale, query }) => {
         input: {
           slug: locale === 'en' ? 'digital-iceland' : 'stafraent-island',
           lang: locale as ContentLanguage,
+          subpageSlugs: [locale === 'en' ? 'webservices' : 'vefthjonustur'],
         },
       },
     }),

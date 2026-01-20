@@ -52,6 +52,35 @@
         }
       }
     },
+    "/Admin/Frambod/{ID}/Info": {
+      "get": {
+        "tags": ["Admin"],
+        "parameters": [
+          {
+            "name": "ID",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/FrambodInfoDTO" }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
     "/Admin/Kosning/{ID}/EinsInfo/{Kennitala}": {
       "get": {
         "tags": ["Admin"],
@@ -855,6 +884,35 @@
         ],
         "responses": {
           "200": { "description": "OK" },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/Frambod/{ID}/Info": {
+      "get": {
+        "tags": ["Frambod"],
+        "parameters": [
+          {
+            "name": "ID",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/FrambodInfoDTO" }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -1997,6 +2055,38 @@
           "umbodList": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/UmbodBaseDTO" }
+          }
+        },
+        "additionalProperties": false
+      },
+      "FrambodInfoDTO": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int32" },
+          "nafn": { "type": "string" },
+          "kennitala": { "type": "string" },
+          "listabokstafur": { "type": "string", "nullable": true },
+          "simi": { "type": "string", "nullable": true },
+          "netfang": { "type": "string", "nullable": true },
+          "medmaelasofnunID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "abyrgdaradili": {
+            "$ref": "#/components/schemas/FrambodAbyrgdaradiliDTO"
+          },
+          "opnirListar": { "type": "boolean" },
+          "medmaelasofnun": {
+            "$ref": "#/components/schemas/MedmaelasofnunBaseDTO"
+          },
+          "umbodList": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/UmbodBaseDTO" }
+          },
+          "medmaelalistar": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/MedmaelalistiExtendedDTO" }
           }
         },
         "additionalProperties": false

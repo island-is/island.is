@@ -8,7 +8,6 @@ import {
   Image,
   ListRenderItemInfo,
   RefreshControl,
-  SafeAreaView,
   View,
 } from 'react-native'
 import {
@@ -30,7 +29,6 @@ import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bott
 import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import {
   DocumentV2,
-  useGetDocumentsCategoriesAndSendersQuery,
   useListDocumentsQuery,
   useMarkAllDocumentsAsReadMutation,
   usePostMailActionMutationMutation,
@@ -214,12 +212,11 @@ export const InboxScreen: NavigationFunctionComponent<InboxScreenProps> = ({
   const [bulkSelectActionMutation, { loading: bulkSelectActionLoading }] =
     usePostMailActionMutationMutation()
 
-  const sendersAndCategories = useGetDocumentsCategoriesAndSendersQuery()
+  const availableSenders = res.data?.documentsV2?.senders ?? []
 
-  const availableSenders = sendersAndCategories.data?.getDocumentSenders ?? []
   const availableCategories = useMemo(() => {
-    return sendersAndCategories.data?.getDocumentCategories ?? []
-  }, [sendersAndCategories.data])
+    return res.data?.documentsV2?.categories ?? []
+  }, [res.data])
 
   const allDocumentsSelected =
     selectedItems.length === res.data?.documentsV2?.data?.length
@@ -566,207 +563,205 @@ export const InboxScreen: NavigationFunctionComponent<InboxScreenProps> = ({
 
   return (
     <>
-      <SafeAreaView>
-        <Animated.FlatList
-          ref={flatListRef}
-          scrollEventThrottle={16}
-          scrollToOverflowEnabled
-          onEndReachedThreshold={0.5}
-          onScroll={Animated.event(
-            [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-            {
-              useNativeDriver: true,
-            },
-          )}
-          style={{ marginHorizontal: 0 }}
-          data={data}
-          keyExtractor={keyExtractor}
-          renderItem={renderItem}
-          keyboardDismissMode="on-drag"
-          keyboardShouldPersistTaps="handled"
-          ListHeaderComponent={
-            <>
-              <ListHeaderWrapper>
-                <SearchBar
-                  placeholder={intl.formatMessage({
-                    id: 'inbox.searchPlaceholder',
-                  })}
-                  value={query}
-                  onChangeText={(text) => setQuery(text)}
-                  onFocus={() => {
-                    if (selectState) {
-                      resetSelectState()
-                    }
-                  }}
-                />
-                <Button
-                  title={intl.formatMessage({
-                    id: 'inbox.filterButtonTitle',
-                  })}
-                  isOutlined
-                  isUtilityButton
-                  style={{
-                    marginLeft: 8,
-                    paddingTop: 0,
-                    paddingBottom: 0,
-                  }}
-                  icon={filterIcon}
-                  iconStyle={{ tintColor: theme.color.blue400 }}
-                  onPress={() => {
+      <Animated.FlatList
+        ref={flatListRef}
+        scrollEventThrottle={16}
+        scrollToOverflowEnabled
+        onEndReachedThreshold={0.5}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          {
+            useNativeDriver: true,
+          },
+        )}
+        style={{ marginHorizontal: 0 }}
+        data={data}
+        keyExtractor={keyExtractor}
+        renderItem={renderItem}
+        keyboardDismissMode="on-drag"
+        keyboardShouldPersistTaps="handled"
+        ListHeaderComponent={
+          <>
+            <ListHeaderWrapper>
+              <SearchBar
+                placeholder={intl.formatMessage({
+                  id: 'inbox.searchPlaceholder',
+                })}
+                value={query}
+                onChangeText={(text) => setQuery(text)}
+                onFocus={() => {
+                  if (selectState) {
                     resetSelectState()
-                    navigateTo('/inbox-filter', {
-                      opened,
-                      archived,
-                      bookmarked,
-                      availableSenders,
-                      availableCategories,
-                      selectedSenders: senderNationalId,
-                      selectedCategories: categoryIds,
-                      dateFrom,
-                      dateTo,
-                    })
-                  }}
-                />
-                <Button
-                  icon={inboxReadIcon}
-                  isUtilityButton
-                  isOutlined
-                  style={{
-                    paddingTop: 0,
-                    paddingBottom: 0,
-                    paddingLeft: 12,
-                    paddingRight: 12,
-                    minWidth: 40,
-                  }}
-                  onPress={onPressMarkAllAsRead}
-                />
-              </ListHeaderWrapper>
-              {isFilterApplied ? (
-                <TagsWrapper>
-                  {opened && (
-                    <Tag
-                      title={intl.formatMessage({
-                        id: 'inbox.filterOpenedTagTitle',
-                      })}
-                      closable
-                      onClose={() =>
-                        Navigation.updateProps(componentId, { opened: false })
-                      }
-                    />
-                  )}
-                  {archived && (
-                    <Tag
-                      title={intl.formatMessage({
-                        id: 'inbox.filterArchivedTagTitle',
-                      })}
-                      closable
-                      onClose={() =>
-                        Navigation.updateProps(componentId, { archived: false })
-                      }
-                    />
-                  )}
-                  {bookmarked && (
-                    <Tag
-                      title={intl.formatMessage({
-                        id: 'inbox.filterStarredTagTitle',
-                      })}
-                      closable
-                      onClose={() =>
-                        Navigation.updateProps(componentId, {
-                          bookmarked: false,
-                        })
-                      }
-                    />
-                  )}
-                  {!!senderNationalId.length &&
-                    senderNationalId.map((senderId) => {
-                      const name = availableSenders.find(
-                        (sender) => sender.id === senderId,
-                      )
-                      return (
-                        <Tag
-                          key={senderId}
-                          title={name?.name?.trim() ?? senderId}
-                          closable
-                          onClose={() =>
-                            Navigation.updateProps(componentId, {
-                              senderNationalId: senderNationalId.filter(
-                                (id) => id !== senderId,
-                              ),
-                            })
-                          }
-                        />
-                      )
+                  }
+                }}
+              />
+              <Button
+                title={intl.formatMessage({
+                  id: 'inbox.filterButtonTitle',
+                })}
+                isOutlined
+                isUtilityButton
+                style={{
+                  marginLeft: 8,
+                  paddingTop: 0,
+                  paddingBottom: 0,
+                }}
+                icon={filterIcon}
+                iconStyle={{ tintColor: theme.color.blue400 }}
+                onPress={() => {
+                  resetSelectState()
+                  navigateTo('/inbox-filter', {
+                    opened,
+                    archived,
+                    bookmarked,
+                    availableSenders,
+                    availableCategories,
+                    selectedSenders: senderNationalId,
+                    selectedCategories: categoryIds,
+                    dateFrom,
+                    dateTo,
+                  })
+                }}
+              />
+              <Button
+                icon={inboxReadIcon}
+                isUtilityButton
+                isOutlined
+                style={{
+                  paddingTop: 0,
+                  paddingBottom: 0,
+                  paddingLeft: 12,
+                  paddingRight: 12,
+                  minWidth: 40,
+                }}
+                onPress={onPressMarkAllAsRead}
+              />
+            </ListHeaderWrapper>
+            {isFilterApplied ? (
+              <TagsWrapper>
+                {opened && (
+                  <Tag
+                    title={intl.formatMessage({
+                      id: 'inbox.filterOpenedTagTitle',
                     })}
-                  {!!categoryIds.length &&
-                    categoryIds.map((categoryId) => {
-                      const name = availableCategories.find(
-                        (category) => category.id === categoryId,
-                      )
-                      return (
-                        <Tag
-                          key={categoryId}
-                          title={name?.name ?? categoryId}
-                          closable
-                          onClose={() =>
-                            Navigation.updateProps(componentId, {
-                              categoryIds: categoryIds.filter(
-                                (id) => id !== categoryId,
-                              ),
-                            })
-                          }
-                        />
-                      )
+                    closable
+                    onClose={() =>
+                      Navigation.updateProps(componentId, { opened: false })
+                    }
+                  />
+                )}
+                {archived && (
+                  <Tag
+                    title={intl.formatMessage({
+                      id: 'inbox.filterArchivedTagTitle',
                     })}
-                  {dateFrom && (
-                    <Tag
-                      title={`${intl.formatMessage({
-                        id: 'inbox.filterDateFromLabel',
-                      })} - ${intl.formatDate(dateFrom)}`}
-                      closable
-                      onClose={() =>
-                        Navigation.updateProps(componentId, {
-                          dateFrom: undefined,
-                        })
-                      }
-                    />
-                  )}
-                  {dateTo && (
-                    <Tag
-                      title={`${intl.formatMessage({
-                        id: 'inbox.filterDateToLabel',
-                      })} - ${intl.formatDate(dateTo)}`}
-                      closable
-                      onClose={() =>
-                        Navigation.updateProps(componentId, {
-                          dateTo: undefined,
-                        })
-                      }
-                    />
-                  )}
-                </TagsWrapper>
-              ) : null}
-            </>
-          }
-          refreshControl={
-            <RefreshControl refreshing={refetching} onRefresh={onRefresh} />
-          }
-          onEndReached={() => {
-            loadMore()
-          }}
-          ListFooterComponent={
-            loadingMore && !res.error ? (
-              <LoadingWrapper>
-                <ActivityIndicator
-                  size="small"
-                  animating
-                  color={theme.color.blue400}
-                />
-              </LoadingWrapper>
-            ) : null
-          }
-        />
-      </SafeAreaView>
+                    closable
+                    onClose={() =>
+                      Navigation.updateProps(componentId, { archived: false })
+                    }
+                  />
+                )}
+                {bookmarked && (
+                  <Tag
+                    title={intl.formatMessage({
+                      id: 'inbox.filterStarredTagTitle',
+                    })}
+                    closable
+                    onClose={() =>
+                      Navigation.updateProps(componentId, {
+                        bookmarked: false,
+                      })
+                    }
+                  />
+                )}
+                {!!senderNationalId.length &&
+                  senderNationalId.map((senderId) => {
+                    const name = availableSenders.find(
+                      (sender) => sender.id === senderId,
+                    )
+                    return (
+                      <Tag
+                        key={senderId}
+                        title={name?.name?.trim() ?? senderId}
+                        closable
+                        onClose={() =>
+                          Navigation.updateProps(componentId, {
+                            senderNationalId: senderNationalId.filter(
+                              (id) => id !== senderId,
+                            ),
+                          })
+                        }
+                      />
+                    )
+                  })}
+                {!!categoryIds.length &&
+                  categoryIds.map((categoryId) => {
+                    const name = availableCategories.find(
+                      (category) => category.id === categoryId,
+                    )
+                    return (
+                      <Tag
+                        key={categoryId}
+                        title={name?.name ?? categoryId}
+                        closable
+                        onClose={() =>
+                          Navigation.updateProps(componentId, {
+                            categoryIds: categoryIds.filter(
+                              (id) => id !== categoryId,
+                            ),
+                          })
+                        }
+                      />
+                    )
+                  })}
+                {dateFrom && (
+                  <Tag
+                    title={`${intl.formatMessage({
+                      id: 'inbox.filterDateFromLabel',
+                    })} - ${intl.formatDate(dateFrom)}`}
+                    closable
+                    onClose={() =>
+                      Navigation.updateProps(componentId, {
+                        dateFrom: undefined,
+                      })
+                    }
+                  />
+                )}
+                {dateTo && (
+                  <Tag
+                    title={`${intl.formatMessage({
+                      id: 'inbox.filterDateToLabel',
+                    })} - ${intl.formatDate(dateTo)}`}
+                    closable
+                    onClose={() =>
+                      Navigation.updateProps(componentId, {
+                        dateTo: undefined,
+                      })
+                    }
+                  />
+                )}
+              </TagsWrapper>
+            ) : null}
+          </>
+        }
+        refreshControl={
+          <RefreshControl refreshing={refetching} onRefresh={onRefresh} />
+        }
+        onEndReached={() => {
+          loadMore()
+        }}
+        ListFooterComponent={
+          loadingMore && !res.error ? (
+            <LoadingWrapper>
+              <ActivityIndicator
+                size="small"
+                animating
+                color={theme.color.blue400}
+              />
+            </LoadingWrapper>
+          ) : null
+        }
+      />
       {selectState && selectedItems.length ? (
         <ActionBar
           loading={bulkSelectActionLoading}

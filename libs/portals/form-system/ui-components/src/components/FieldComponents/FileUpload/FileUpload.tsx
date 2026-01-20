@@ -1,35 +1,113 @@
-import { FormSystemField } from '@island.is/api/schema'
-import {
-  fileToObjectDeprecated,
-  FileUploadStatus,
-  InputFileUpload,
-  InputFileUploadDeprecated,
-  UploadFile,
-  UploadFileDeprecated,
-} from '@island.is/island-ui/core'
+import { useMutation } from '@apollo/client'
 import { Dispatch, useCallback, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { uuid } from 'uuidv4'
-import { Action } from '../../../lib'
-import { fileTypes } from '../../../lib/fileTypes'
+import { v4 as uuid } from 'uuid'
+
+import { FormSystemField } from '@island.is/api/schema'
+import {
+  CREATE_UPLOAD_URL,
+  DELETE_FILE,
+  STORE_FILE,
+} from '@island.is/form-system/graphql'
+import {
+  FileUploadStatus,
+  InputFileUpload,
+  UploadFile,
+} from '@island.is/island-ui/core'
+import { Action, getValue, uploadToS3 } from '../../../lib'
 import { m } from '../../../lib/messages'
 
 interface Props {
   item: FormSystemField
   hasError?: boolean
   dispatch?: Dispatch<Action>
-  lang?: 'is' | 'en'
-  applicationId?: string
 }
 
-// This component is still very much a WIP
-export const FileUpload = ({ item, hasError }: Props) => {
-  const [files, setFiles] = useState<UploadFile[]>([])
+const initializeFiles = (item: FormSystemField): UploadFile[] => {
+  const s3Keys = getValue(item, 's3Key') as string[] | undefined
+  if (!s3Keys) {
+    return []
+  }
+  return s3Keys.map((key) => ({
+    name: key.split('_').pop() as string,
+    status: FileUploadStatus.done,
+    key,
+  }))
+}
+
+export const FileUpload = ({ item, hasError, dispatch }: Props) => {
+  const { formatMessage } = useIntl()
+  const [files, setFiles] = useState<UploadFile[]>(initializeFiles(item))
   const [error, setError] = useState<string | undefined>(
     hasError ? 'error' : undefined,
   )
-  const { formatMessage } = useIntl()
+  const [createUploadUrl] = useMutation(CREATE_UPLOAD_URL)
+  const [uploadFile] = useMutation(STORE_FILE)
+  const [deleteFile] = useMutation(DELETE_FILE)
+
   const types = item?.fieldSettings?.fileTypes?.split(',') ?? []
+
+  const updateFile = useCallback((id: string, updated: Partial<UploadFile>) => {
+    setFiles((prev) =>
+      prev.map((f) => (f.id === id ? { ...f, ...updated } : f)),
+    )
+  }, [])
+
+  const handleUpload = useCallback(
+    async (file: UploadFile, id: string) => {
+      try {
+        // const sanitizedFilename = file.name.replace(/_/g, '-')
+
+        const { data } = await createUploadUrl({
+          variables: { filename: file.name },
+        })
+        const presigned = data?.createUploadUrl
+
+        if (!presigned?.url || !presigned?.fields) {
+          throw new Error('Invalid presigned upload response')
+        }
+
+        const progress = (percent: number) => {
+          updateFile(id, { percent })
+        }
+
+        // Upload to temp bucket
+        await uploadToS3(presigned, file, progress)
+        // Move from temp to permanent bucket
+        await uploadFile({
+          variables: {
+            input: {
+              storeFileDto: {
+                fieldId: item.id,
+                sourceKey: presigned.fields.key,
+                valueId: item.values?.[0]?.id || '',
+              },
+            },
+          },
+        })
+
+        const currentKeys = getValue(item, 's3Key') ?? []
+        const newKeys = [...currentKeys, `${item.id}/${presigned.fields.key}`]
+        dispatch &&
+          dispatch({
+            type: 'SET_FILES',
+            payload: { id: item.id, value: newKeys },
+          })
+
+        updateFile(id, {
+          status: FileUploadStatus.done,
+          percent: 100,
+          key: `${item.id}/${presigned.fields.key}`,
+        })
+      } catch (err) {
+        updateFile(id, {
+          status: FileUploadStatus.error,
+          error: formatMessage(m.uploadFailed),
+        })
+      }
+    },
+    [createUploadUrl, uploadFile, item, dispatch, updateFile, formatMessage],
+  )
 
   const onChange = useCallback(
     (selectedFiles: File[]) => {
@@ -47,7 +125,7 @@ export const FileUpload = ({ item, hasError }: Props) => {
 
       setError(undefined)
 
-      const uploadFiles = selectedFiles.map((file) => ({
+      const uploadFiles: UploadFile[] = selectedFiles.map((file) => ({
         id: `${file.name}-${uuid()}`,
         name: file.name,
         size: file.size,
@@ -59,35 +137,48 @@ export const FileUpload = ({ item, hasError }: Props) => {
 
       setFiles((prev) => [...prev, ...uploadFiles])
 
-      //Upload files to S3 missing here
+      uploadFiles.forEach((f) => {
+        handleUpload(f, f.id as string)
+      })
     },
-    [files, item, formatMessage],
+    [files, item, formatMessage, handleUpload],
   )
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const updateFile = useCallback((file: UploadFile, newId?: string) => {
-    setFiles((prev) =>
-      prev.map((f) =>
-        f.id === file.id ? { ...f, ...file, id: newId ?? file.id } : f,
-      ),
-    )
-  }, [])
+  const onRetry = useCallback(
+    (file: UploadFile) => {
+      if (file.originalFileObj && file.id) {
+        updateFile(file.id, {
+          status: FileUploadStatus.uploading,
+          percent: 0,
+        })
+        handleUpload(file, file.id)
+      }
+    },
+    [handleUpload, updateFile],
+  )
 
-  // TODO: add handleRetry
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const onRetry = useCallback((file: UploadFile) => {
-    // handleRetry(file, updateFile)
-    // },[handleRetry, updateFile])
-  }, [])
-
-  // Handle file removal
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const onRemove = useCallback((file: UploadFile) => {
-    // handleRemove(file, removedFile => {
-    //   setFiles(prev => prev.filter(f => f.id !== removedFile.id))
-    // })
-    // }, [handleRemove])
-  }, [])
+  const onRemove = useCallback(
+    (file: UploadFile) => {
+      deleteFile({
+        variables: {
+          input: {
+            deleteFileDto: {
+              key: file.key,
+              valueId: item.values?.[0]?.id,
+            },
+          },
+        },
+      })
+      const newFiles = files.filter((f) => f.id !== file.id)
+      setFiles(newFiles)
+      dispatch &&
+        dispatch({
+          type: 'SET_FILES',
+          payload: { id: item.id, value: newFiles },
+        })
+    },
+    [deleteFile, dispatch, files, item.id, item.values],
+  )
 
   return (
     <InputFileUpload
@@ -103,60 +194,6 @@ export const FileUpload = ({ item, hasError }: Props) => {
       onRemove={onRemove}
       onRetry={onRetry}
       errorMessage={error}
-    />
-  )
-}
-
-export const OldFileUpload = ({ item, hasError, lang = 'is' }: Props) => {
-  const [error, setError] = useState<string | undefined>(
-    hasError ? 'error' : undefined,
-  )
-  const [fileList, setFileList] = useState<Array<UploadFileDeprecated>>([])
-  const { formatMessage } = useIntl()
-  const types = item?.fieldSettings?.fileTypes?.split(',') ?? []
-  const onChange = (files: File[]) => {
-    const uploadFiles = files.map((file) => fileToObjectDeprecated(file))
-    const uploadFilesWithKey = uploadFiles.map((f) => ({
-      ...f,
-      key: uuid(),
-    }))
-
-    // Check whether upload will exceed limit and if so, prevent it
-    const currentAmount = item?.fieldSettings?.maxFiles ?? 1
-    if (fileList.length + uploadFilesWithKey.length > currentAmount) {
-      setError(
-        `${formatMessage(m.maxFileError)} ${item.fieldSettings?.maxFiles}`,
-      )
-      return
-    }
-    setError('')
-    const newFileList = [...fileList, ...uploadFilesWithKey]
-    setFileList(newFileList)
-  }
-
-  const onRemove = (fileToRemove: UploadFileDeprecated) => {
-    const newFileList = fileList.filter((file) => file.key !== fileToRemove.key)
-    setFileList(newFileList)
-  }
-
-  return (
-    <InputFileUploadDeprecated
-      name="fileUpload"
-      fileList={fileList}
-      header={item?.name?.[lang] ?? ''}
-      description={`${formatMessage(m.previewAllowedFileTypes)}: ${types?.map(
-        (f: string) => `${f} `,
-      )}`}
-      buttonLabel={formatMessage(m.fileUploadButton)}
-      onChange={onChange}
-      onRemove={onRemove}
-      errorMessage={error}
-      accept={
-        types?.map((t: string) => fileTypes[t as keyof typeof fileTypes]) ?? []
-      }
-      showFileSize
-      maxSize={item?.fieldSettings?.fileMaxSize ?? 1}
-      multiple={(item?.fieldSettings?.maxFiles ?? 0) > 1}
     />
   )
 }

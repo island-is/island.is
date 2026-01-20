@@ -14,7 +14,9 @@ import {
 } from '@island.is/form-system/graphql'
 import { m } from '@island.is/form-system/ui'
 import { Box, Button } from '@island.is/island-ui/core'
+import cn from 'classnames'
 import { Fragment, useContext, useMemo } from 'react'
+import AnimateHeight from 'react-animate-height'
 import { createPortal } from 'react-dom'
 import { useIntl } from 'react-intl'
 import { ControlContext, IControlContext } from '../../context/ControlContext'
@@ -24,18 +26,21 @@ import { removeTypename } from '../../lib/utils/removeTypename'
 import { useNavbarDnD } from '../../lib/utils/useNavbarDnd'
 import { NavComponent } from '../NavComponent/NavComponent'
 import * as styles from './Navbar.css'
+import { urlSettingsStep } from '../../lib/utils/getUrlSettingsSection'
 
 export const Navbar = () => {
-  const { control, controlDispatch, inSettings } = useContext(
-    ControlContext,
-  ) as IControlContext
+  const {
+    control,
+    controlDispatch,
+    inSettings,
+    setOpenComponents,
+    openComponents,
+  } = useContext(ControlContext) as IControlContext
   const { formatMessage } = useIntl()
   const { activeItem, form } = control
   const { sections, screens, fields } = form
-  const parties = sections?.find((s) => s?.sectionType === SectionTypes.PARTIES)
   const payment = sections?.find((s) => s?.sectionType === SectionTypes.PAYMENT)
   const { hasPayment } = form
-
   const sectionIds = useMemo(
     () =>
       sections
@@ -120,6 +125,22 @@ export const Navbar = () => {
             (item: Maybe<FormSystemField> | undefined) => item?.id === id,
           )
 
+    if (type === 'Section') {
+      setOpenComponents((prev) => ({
+        ...prev,
+        sections: prev.sections.includes(id as string)
+          ? prev.sections.filter((sectionId) => sectionId !== id)
+          : [...prev.sections, id as string],
+      }))
+    } else if (type === 'Screen') {
+      setOpenComponents((prev) => ({
+        ...prev,
+        screens: prev.screens.includes(id as string)
+          ? prev.screens.filter((screenId) => screenId !== id)
+          : [...prev.screens, id as string],
+      }))
+    }
+
     if (id === baseSettingsStep.id) {
       controlDispatch({
         type: 'SET_ACTIVE_ITEM',
@@ -127,6 +148,16 @@ export const Navbar = () => {
           activeItem: {
             type: 'Section',
             data: baseSettingsStep,
+          },
+        },
+      })
+    } else if (id === urlSettingsStep.id) {
+      controlDispatch({
+        type: 'SET_ACTIVE_ITEM',
+        payload: {
+          activeItem: {
+            type: 'Section',
+            data: urlSettingsStep,
           },
         },
       })
@@ -151,10 +182,8 @@ export const Navbar = () => {
       .filter(
         (s) =>
           s.sectionType !== SectionTypes.INPUT &&
-          s.sectionType !== SectionTypes.PARTIES &&
           s.sectionType !== SectionTypes.SUMMARY &&
-          s.sectionType !== SectionTypes.PAYMENT &&
-          s.sectionType !== SectionTypes.COMPLETED,
+          s.sectionType !== SectionTypes.PAYMENT,
       )
       .map((s) => (
         <Box key={s.id}>
@@ -202,7 +231,13 @@ export const Navbar = () => {
             focusComponent={focusComponent}
           />
           <SortableContext items={fieldsIds ?? []}>
-            {renderFieldsForScreen(screen)}
+            <AnimateHeight
+              duration={300}
+              height={openComponents.screens.includes(screen.id) ? 'auto' : 0}
+              easing="ease-in-out"
+            >
+              {renderFieldsForScreen(screen)}
+            </AnimateHeight>
           </SortableContext>
         </Box>
       ))
@@ -224,7 +259,13 @@ export const Navbar = () => {
             focusComponent={focusComponent}
           />
           <SortableContext items={screenIds ?? []}>
-            {renderScreensForSection(section)}
+            <AnimateHeight
+              duration={300}
+              height={openComponents.sections.includes(section.id) ? 'auto' : 0}
+              easing="ease-in-out"
+            >
+              {renderScreensForSection(section)}
+            </AnimateHeight>
           </SortableContext>
         </Box>
       ))
@@ -241,22 +282,20 @@ export const Navbar = () => {
         />
       </div>
       {renderNonInputSections()}
+      <div>
+        <NavComponent
+          type="Section"
+          data={urlSettingsStep}
+          active={activeItem.data?.id === urlSettingsStep.id}
+          focusComponent={focusComponent}
+        />
+      </div>
     </>
   )
 
   const renderDnDView = () => (
     <div>
-      <Box className={styles.minimalScrollbar}>
-        {parties && (
-          <>
-            <NavComponent
-              type="Section"
-              data={parties}
-              active={activeItem.data?.id === parties.id}
-              focusComponent={focusComponent}
-            />
-          </>
-        )}
+      <Box className={cn(styles.navbarContainer)}>
         <DndContext
           sensors={sensors}
           onDragStart={onDragStart}
@@ -291,19 +330,24 @@ export const Navbar = () => {
             document.body,
           )}
         </DndContext>
-        {payment && hasPayment && (
-          <Fragment>
-            <NavComponent
-              type="Section"
-              data={payment}
-              active={activeItem.data?.id === payment.id}
-              focusComponent={focusComponent}
-            />
-            {renderScreensForSection(payment as FormSystemSection)}
-          </Fragment>
-        )}
       </Box>
-      <Box display="flex" justifyContent="center" paddingTop={3}>
+      {payment && hasPayment && (
+        <Fragment>
+          <NavComponent
+            type="Section"
+            data={payment}
+            active={activeItem.data?.id === payment.id}
+            focusComponent={focusComponent}
+          />
+          {renderScreensForSection(payment as FormSystemSection)}
+        </Fragment>
+      )}
+      <Box
+        display="flex"
+        justifyContent="center"
+        paddingTop={3}
+        className={cn(styles.addSectionButton)}
+      >
         <Button variant="ghost" size="small" onClick={addSection}>
           {formatMessage(m.addSection)}
         </Button>

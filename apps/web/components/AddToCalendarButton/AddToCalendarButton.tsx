@@ -5,10 +5,11 @@ interface CalendarEvent {
   title: string
   description: string
   location: string
-  pageUrl: string
+  pageUrl?: string
   startDate: string
   startTime?: string | null
   endTime?: string | null
+  endDate?: string | null
 }
 
 const formatDate = (dateTime: string, isAllDay = false): string => {
@@ -30,16 +31,28 @@ const downloadICSFile = ({
   startDate,
   startTime,
   endTime,
+  endDate,
 }: CalendarEvent): void => {
-  const isAllDay = !startTime
+  const isAllDay = !startTime || !endTime
   const startDateTime = isAllDay ? startDate : `${startDate}T${startTime}`
-  const endDateTime = endTime ? `${startDate}T${endTime}` : null
+  let endDateTime: string | null = null
+  if (endTime) {
+    endDateTime = `${endDate ?? startDate}T${endTime}`
+  } else if (isAllDay && (endDate ?? startDate)) {
+    const endBase = endDate ?? startDate
+    const exclusiveEnd = new Date(endBase)
+    exclusiveEnd.setDate(exclusiveEnd.getDate() + 1) // ICS all-day DTEND is exclusive
+    // Pass a date-only string; formatDate(..., true) will emit YYYYMMDD
+    endDateTime = exclusiveEnd.toISOString().split('T')[0]
+  }
 
-  const fullDescription = `${pageUrl}\n\n${description}`
+  const fullDescription = `${pageUrl ? `${pageUrl}\n\n` : ''}${description}`
 
   // Use the correct time format for ICS
   const formattedStartDate = formatDate(startDateTime, isAllDay)
-  const formattedEndDate = endDateTime ? formatDate(endDateTime) : ''
+  const formattedEndDate = endDateTime
+    ? formatDate(endDateTime, isAllDay && !endTime)
+    : ''
 
   const icsContent = `BEGIN:VCALENDAR
 VERSION:2.0
@@ -66,6 +79,7 @@ END:VCALENDAR`
 const generateGoogleCalendarLink = (props: CalendarEvent) => {
   const baseUrl = 'https://www.google.com/calendar/render'
   const isAllDay = !props.startTime || !props.endTime
+  const endDate = props.endDate ? props.endDate : props.startDate
 
   // Construct start and end date-time strings in the correct format
   const startDateTime = isAllDay
@@ -73,13 +87,15 @@ const generateGoogleCalendarLink = (props: CalendarEvent) => {
     : formatDate(`${props.startDate}T${props.startTime}`) // Full UTC format
 
   const endDateTime = props.endTime
-    ? formatDate(`${props.startDate}T${props.endTime}`)
+    ? formatDate(`${endDate}T${props.endTime}`)
     : isAllDay
-    ? formatDate(props.startDate, true) // Keep YYYYMMDD for all-day
+    ? formatDate(endDate, true) // Keep YYYYMMDD for all-day
     : null // No end time for time-based events if not provided
 
   // Prepend event page link to the description
-  const fullDescription = `${props.pageUrl}\n\n${props.description}`
+  const fullDescription = `${props.pageUrl ? `${props.pageUrl}\n\n` : ''}${
+    props.description
+  }`
 
   const params = new URLSearchParams({
     action: 'TEMPLATE',

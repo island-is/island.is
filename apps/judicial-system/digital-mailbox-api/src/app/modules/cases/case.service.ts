@@ -209,7 +209,13 @@ export class CaseService {
   ): Promise<VerdictResponse> {
     const caseData = await this.fetchCase(caseId, nationalId)
 
-    if (!isCompletedCase(caseData.state)) {
+    const isCaseSentToPublicProsecutor = Boolean(
+      caseData.indictmentSentToPublicProsecutorDate,
+    )
+
+    // we also have to ensure that the verdict is completed, confirmed and sent to public prosecutor.
+    // sent to public prosecutor indicates that the verdict has been delivered to police if that was requested
+    if (!isCompletedCase(caseData.state) || !isCaseSentToPublicProsecutor) {
       throw new BadRequestException(
         `Verdict is not available for case ${caseId}. Case must be completed before verdict can be accessed.`,
       )

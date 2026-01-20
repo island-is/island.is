@@ -20,7 +20,7 @@ name: 'identity-server'
 annotations:
   ad.datadoghq.com/identity-server.check_names: '["openmetrics"]'
   ad.datadoghq.com/identity-server.init_configs: '[{}]'
-  ad.datadoghq.com/identity-server.instances: '[{"prometheus_url": "http://%%host%%:5003/metrics","namespace": "identity-server","metrics":["*"]}]'
+  ad.datadoghq.com/identity-server.instances: '[{"prometheus_url": "http://%%host%%:5003/metrics","namespace": "identity-server","metrics":["identityserver_*"]}]'
   ad.datadoghq.com/identity-server.logs: '[{"service": "identity-server", "source": "csharp"}]'
 enabled: true
 env:
@@ -97,7 +97,8 @@ ingress:
           - '/'
 namespace: 'identity-server'
 podDisruptionBudget:
-  maxUnavailable: 1
+  minAvailable: 1
+  unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534
 pvcs:

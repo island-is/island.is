@@ -41,6 +41,7 @@ import {
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
 import { useI18n } from '@island.is/web/i18n'
+import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { webRichText } from '@island.is/web/utils/richText'
@@ -83,7 +84,15 @@ interface BloodDonationRestrictionListProps {
 
 const BloodDonationRestrictionList: CustomScreen<
   BloodDonationRestrictionListProps
-> = ({ totalItems, items, organizationPage, namespace, tags }) => {
+> = ({
+  totalItems,
+  items,
+  organizationPage,
+  namespace,
+  tags,
+  customPageData,
+}) => {
+  const { format } = useDateUtils()
   const { formatMessage } = useIntl()
   const router = useRouter()
   const n = useNamespace(namespace)
@@ -198,6 +207,11 @@ const BloodDonationRestrictionList: CustomScreen<
               </Text>
               <Webreader marginTop={0} marginBottom={0} readClass="rs_read" />
             </Stack>
+
+            {typeof customPageData?.content?.length === 'number' &&
+              customPageData.content.length > 0 && (
+                <Box>{webRichText(customPageData.content)}</Box>
+              )}
 
             <Stack space={3}>
               <Input
@@ -351,6 +365,12 @@ const BloodDonationRestrictionList: CustomScreen<
                       {highlightMatch(item.keywordsText, trimmedQueryString)}
                     </Text>
                   )}
+                  {item.effectiveDate && (
+                    <Text variant="small">
+                      {formatMessage(m.listPage.effectiveDatePrefix)}
+                      {format(new Date(item.effectiveDate), 'd. MMMM yyyy')}
+                    </Text>
+                  )}
                 </FocusableBox>
               ))}
             </Stack>
@@ -434,6 +454,9 @@ BloodDonationRestrictionList.getProps = async ({
         input: {
           slug: organizationPageSlug,
           lang: locale,
+          subpageSlugs: [
+            locale === 'is' ? 'ahrif-a-blodgjof' : 'affecting-factors',
+          ],
         },
       },
     }),

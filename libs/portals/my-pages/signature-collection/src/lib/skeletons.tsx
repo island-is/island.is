@@ -1,31 +1,28 @@
-import { Box, SkeletonLoader } from '@island.is/island-ui/core'
+import { Box, SkeletonLoader, Stack } from '@island.is/island-ui/core'
 
 export const Skeleton = () => {
   return (
-    <Box marginTop={[5, 10]}>
-      <SkeletonLoader height={150} borderRadius="large" repeat={3} space={2} />
-    </Box>
-  )
-}
-
-export const OwnerParliamentarySkeleton = () => {
-  return (
-    <SkeletonLoader height={150} borderRadius="large" repeat={6} space={2} />
+    <Stack space={2}>
+      <SkeletonLoader
+        height={110}
+        borderRadius="large"
+        width="70%"
+        repeat={2}
+        space={2}
+      />
+      <SkeletonLoader height={110} borderRadius="large" repeat={5} space={2} />
+    </Stack>
   )
 }
 
 export const SkeletonTable = () => {
   return (
     <Box marginTop={5}>
-      <SkeletonLoader height={700} borderRadius="large" />
+      <SkeletonLoader height={90} borderRadius="large" repeat={5} space={2} />
     </Box>
   )
 }
 
 export const CollectorSkeleton = () => {
   return <SkeletonLoader height={50} borderRadius="large" />
-}
-
-export const SingleListSkeleton = () => {
-  return <SkeletonLoader height={150} borderRadius="large" />
 }

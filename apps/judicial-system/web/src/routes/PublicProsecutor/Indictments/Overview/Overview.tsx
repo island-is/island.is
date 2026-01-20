@@ -2,24 +2,31 @@ import { Fragment, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Box, Button, Option, Text } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Button,
+  Option,
+  Text,
+} from '@island.is/island-ui/core'
 import {
   getStandardUserDashboardRoute,
   PUBLIC_PROSECUTOR_STAFF_INDICTMENT_SEND_TO_PRISON_ADMIN_ROUTE,
 } from '@island.is/judicial-system/consts'
-import { Feature } from '@island.is/judicial-system/types'
+import { isRulingOrDismissalCase } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   BlueBoxWithDate,
+  Conclusion,
   CourtCaseInfo,
-  FeatureContext,
   FormContentContainer,
   FormContext,
   FormFooter,
   IndictmentCaseFilesList,
   // IndictmentsLawsBrokenAccordionItem, NOTE: Temporarily hidden while list of laws broken is not complete
   InfoCardClosedIndictment,
+  MarkdownWrapper,
   Modal,
   PageHeader,
   PageLayout,
@@ -66,7 +73,6 @@ export const Overview = () => {
   const { setAndSendVerdictToServer } = useVerdict()
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
-  const { features } = useContext(FeatureContext)
 
   const [selectedIndictmentReviewer, setSelectedIndictmentReviewer] =
     useState<Option<string> | null>()
@@ -154,54 +160,73 @@ export const Overview = () => {
       <FormContentContainer>
         <PageTitle>{fm(strings.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
+        {workingCase.rulingModifiedHistory && (
+          <Box marginBottom={5}>
+            <AlertMessage
+              type="info"
+              title="Mál leiðrétt"
+              message={
+                <MarkdownWrapper
+                  markdown={workingCase.rulingModifiedHistory}
+                  textProps={{ variant: 'small' }}
+                />
+              }
+            />
+          </Box>
+        )}
         {workingCase.defendants?.map((defendant) => {
           const { verdict } = defendant
-
-          if (!verdict) {
-            return null
-          }
 
           const isFine =
             workingCase.indictmentRulingDecision ===
             CaseIndictmentRulingDecision.FINE
 
           const isServiceRequired =
-            verdict.serviceRequirement === ServiceRequirement.REQUIRED
+            verdict?.serviceRequirement === ServiceRequirement.REQUIRED
 
           const isServiceNotApplicable =
-            verdict.serviceRequirement === ServiceRequirement.NOT_APPLICABLE
+            verdict?.serviceRequirement === ServiceRequirement.NOT_APPLICABLE
+
+          const canDefendantAppealVerdict = !!(
+            verdict &&
+            !verdict.isDefaultJudgement &&
+            (isServiceNotApplicable ||
+              (isServiceRequired && !!verdict.serviceDate))
+          )
 
           return (
             <Fragment key={defendant.id}>
               <Box className={styles.container}>
-                {features?.includes(Feature.PUBLIC_PROSECUTOR_VERDICT) && (
+                {verdict && (
                   <VerdictStatusAlert verdict={verdict} defendant={defendant} />
                 )}
                 <Box component="section">
-                  <BlueBoxWithDate defendant={defendant} icon="calendar" />
+                  <BlueBoxWithDate
+                    defendant={defendant}
+                    canDefendantAppealVerdict={canDefendantAppealVerdict}
+                    icon="calendar"
+                  />
                 </Box>
-                {verdict &&
-                  (isServiceNotApplicable ||
-                    (isServiceRequired && verdict.serviceDate)) && (
-                    <Box component="section">
-                      <BlueBox>
-                        <SectionHeading
-                          title="Afstaða dómfellda til dóms"
-                          heading="h4"
-                          marginBottom={2}
-                          required
-                        />
-                        <Box marginBottom={2}>
-                          <Text variant="eyebrow">{defendant.name}</Text>
-                        </Box>
-                        <VerdictAppealDecisionChoice
-                          defendant={defendant}
-                          verdict={verdict}
-                          disabled={!!defendant.isSentToPrisonAdmin}
-                        />
-                      </BlueBox>
-                    </Box>
-                  )}
+                {canDefendantAppealVerdict && (
+                  <Box component="section">
+                    <BlueBox>
+                      <SectionHeading
+                        title="Afstaða dómfellda til dóms"
+                        heading="h4"
+                        marginBottom={2}
+                        required
+                      />
+                      <Box marginBottom={2}>
+                        <Text variant="eyebrow">{defendant.name}</Text>
+                      </Box>
+                      <VerdictAppealDecisionChoice
+                        defendant={defendant}
+                        verdict={verdict}
+                        disabled={!!defendant.isSentToPrisonAdmin}
+                      />
+                    </BlueBox>
+                  </Box>
+                )}
               </Box>
               <Box
                 display="flex"
@@ -261,6 +286,7 @@ export const Overview = () => {
                   </Button>
                 ) : (
                   <Button
+                    dataTestId="button-send-case-to-prison-admin"
                     variant="text"
                     onClick={() => handleSendToPrisonAdmin(defendant)}
                     size="small"
@@ -279,6 +305,21 @@ export const Overview = () => {
         <Box component="section" marginBottom={5}>
           <InfoCardClosedIndictment displaySentToPrisonAdminDate={false} />
         </Box>
+        {workingCase.courtSessions?.at(-1)?.ruling &&
+          isRulingOrDismissalCase(workingCase.indictmentRulingDecision) && (
+            <Box marginBottom={5} component="section">
+              <Conclusion
+                title={`${
+                  workingCase.indictmentRulingDecision ===
+                  CaseIndictmentRulingDecision.RULING
+                    ? 'Dóms'
+                    : 'Úrskurðar'
+                }orð héraðsdóms`}
+                conclusionText={workingCase.courtSessions?.at(-1)?.ruling}
+                judgeName={workingCase.judge?.name}
+              />
+            </Box>
+          )}
         {/* 
         NOTE: Temporarily hidden while list of laws broken is not complete in
         indictment cases
@@ -353,23 +394,26 @@ export const Overview = () => {
             caseNumber: workingCase.courtCaseNumber,
             reviewer: selectedIndictmentReviewer?.label,
           })}
-          secondaryButtonText={fm(core.back)}
-          onSecondaryButtonClick={() =>
-            router.push(getStandardUserDashboardRoute(user))
-          }
+          secondaryButton={{
+            text: fm(core.back),
+            onClick: () => router.push(getStandardUserDashboardRoute(user)),
+          }}
         />
       )}
       {modalVisible?.type === 'REVOKE_SEND_TO_PRISON_ADMIN' && (
         <Modal
           title="Afturkalla úr fullnustu"
           text={`Mál ${workingCase.courtCaseNumber} verður afturkallað.\nÁkærði: ${modalVisible.defendant.name}.`}
-          onPrimaryButtonClick={() =>
-            handleRevokeSendToPrisonAdmin(modalVisible.defendant)
-          }
-          primaryButtonText="Afturkalla"
-          isPrimaryButtonLoading={isUpdatingDefendant}
-          secondaryButtonText={fm(core.cancel)}
-          onSecondaryButtonClick={() => setModalVisible(undefined)}
+          primaryButton={{
+            text: 'Afturkalla',
+            onClick: () =>
+              handleRevokeSendToPrisonAdmin(modalVisible.defendant),
+            isLoading: isUpdatingDefendant,
+          }}
+          secondaryButton={{
+            text: fm(core.cancel),
+            onClick: () => setModalVisible(undefined),
+          }}
         />
       )}
     </PageLayout>

@@ -134,6 +134,7 @@ const MedicinePrescriptions = () => {
       serviceProviderTooltip={formatMessage(
         messages.landlaeknirMedicinePrescriptionsTooltip,
       )}
+      childrenWidthFull
     >
       {error && !loading && <Problem error={error} noBorder={false} />}
 
@@ -184,9 +185,9 @@ const MedicinePrescriptions = () => {
                     category: HealthDirectoratePrescribedItemCategory.Pn,
                   },
                   {
-                    name: 'regimenMedicine',
-                    label: formatMessage(messages.regimenMedicine),
-                    category: HealthDirectoratePrescribedItemCategory.Regimen,
+                    name: 'regimentMedicine',
+                    label: formatMessage(messages.regimentMedicine),
+                    category: HealthDirectoratePrescribedItemCategory.Regiment,
                   },
                 ].map(({ name, label, category }) => (
                   <Checkbox

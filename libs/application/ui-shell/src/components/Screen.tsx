@@ -22,6 +22,7 @@ import {
   Schema,
   BeforeSubmitCallback,
   Section,
+  SetBeforeSubmitCallbackOptions,
 } from '@island.is/application/types'
 import {
   Box,
@@ -43,7 +44,6 @@ import {
   ProblemType,
 } from '@island.is/shared/problem'
 import { handleServerError } from '@island.is/application/ui-components'
-
 import { FormScreen, ResolverContext } from '../types'
 import FormMultiField from './FormMultiField'
 import FormField from './FormField'
@@ -55,6 +55,7 @@ import ScreenFooter from './ScreenFooter'
 import RefetchContext from '../context/RefetchContext'
 import { Locale } from '@island.is/shared/types'
 import { useUserInfo } from '@island.is/react-spa/bff'
+import { uuid } from 'uuidv4'
 
 type ScreenProps = {
   activeScreenIndex: number
@@ -176,12 +177,43 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
 
   const [beforeSubmitError, setBeforeSubmitError] = useState({})
   const beforeSubmitCallback = useRef<BeforeSubmitCallback | null>(null)
+  const beforeSubmitCallbacksMap = useRef<Map<string, BeforeSubmitCallback>>(
+    new Map(),
+  )
 
   const setBeforeSubmitCallback = useCallback(
-    (callback: BeforeSubmitCallback | null) => {
-      beforeSubmitCallback.current = callback
+    (
+      callback: BeforeSubmitCallback | null,
+      options?: SetBeforeSubmitCallbackOptions,
+    ) => {
+      // Unique ID for this callback to prevent registering the same callback when using multiple
+      const id = options?.customCallbackId ?? uuid()
+
+      // If null is passed, clear the current beforeSubmit callback
+      if (callback === null) {
+        beforeSubmitCallbacksMap.current.clear()
+        beforeSubmitCallback.current = null
+        return
+      }
+
+      if (!options?.allowMultiple) {
+        // Replace all existing callbacks with just this one
+        beforeSubmitCallbacksMap.current = new Map([[id, callback]])
+      } else {
+        // Deduplicate by id
+        beforeSubmitCallbacksMap.current.set(id, callback)
+      }
+
+      // Rebuild a single composed callback from all callbacks in the map
+      beforeSubmitCallback.current = async (event) => {
+        for (const [_id, cb] of beforeSubmitCallbacksMap.current.entries()) {
+          const [ok, message] = await cb(event)
+          if (!ok) return [ok, message]
+        }
+        return [true, null]
+      }
     },
-    [beforeSubmitCallback],
+    [beforeSubmitCallback], // Only re-create this function if the ref changes
   )
 
   const parsedUpdateApplicationError = getServerValidationErrors(

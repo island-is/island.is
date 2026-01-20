@@ -29,12 +29,12 @@ interface ListActionsProps {
 }
 
 const ListActions = ({ allowedActions }: ListActionsProps = {}) => {
+  const { formatMessage } = useLocale()
+  const { collection } = useLoaderData() as ListsLoaderReturn
   const { list, listStatus } = useLoaderData() as {
     list: SignatureCollectionList
     listStatus: string
   }
-  const { collection } = useLoaderData() as ListsLoaderReturn
-  const { formatMessage } = useLocale()
 
   return (
     <Drawer
@@ -49,7 +49,6 @@ const ListActions = ({ allowedActions }: ListActionsProps = {}) => {
       <Text variant="h2" marginTop={2} marginBottom={6}>
         {formatMessage(m.listActionsTitle)}
       </Text>
-
       <Stack space={8}>
         {allowedActions?.includes(Actions.DownloadReports) && (
           <DownloadReports collection={collection} />
@@ -78,7 +77,10 @@ const ListActions = ({ allowedActions }: ListActionsProps = {}) => {
           <RemoveList list={list} />
         )}
         {allowedActions?.includes(Actions.ReviewCandidates) && (
-          <ReviewCandidates candidates={collection.candidates} />
+          <ReviewCandidates
+            candidates={collection.candidates}
+            collectionType={collection.collectionType}
+          />
         )}
         {allowedActions?.includes(Actions.CompleteCollectionProcessing) && (
           <CompleteCollectionProcessing collection={collection} />

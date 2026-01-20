@@ -23,8 +23,15 @@ export class InternalCaseResponse {
   prosecutor!: User
   dateLogs?: DateLog[]
   rulingDate?: Date
+  ruling?: string
   indictmentRulingDecision?: CaseIndictmentRulingDecision
   state?: CaseState
+  courtSessions?: CourtSession[]
+  indictmentSentToPublicProsecutorDate?: Date
+}
+
+interface CourtSession {
+  ruling?: string
 }
 
 interface Defendant {
@@ -72,4 +79,5 @@ interface Verdict {
   appealDecision?: VerdictAppealDecision
   serviceInformationForDefendant?: InformationForDefendant[]
   appealDate?: Date
+  isDefaultJudgement?: boolean
 }

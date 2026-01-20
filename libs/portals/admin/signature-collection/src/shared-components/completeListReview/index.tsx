@@ -45,7 +45,9 @@ const CompleteListReview = ({
       },
     },
     onCompleted: (response) => {
-      if (response.signatureCollectionAdminToggleListReview.success) {
+      const result = response.signatureCollectionAdminToggleListReview
+
+      if (result?.success) {
         setModalSubmitReviewIsOpen(false)
         revalidate()
         toast.success(
@@ -54,15 +56,10 @@ const CompleteListReview = ({
             : formatMessage(m.toggleReviewSuccess),
         )
       } else {
-        const message =
-          response.signatureCollectionAdminToggleListReview?.reasons?.[0] ??
-          formatMessage(m.toggleReviewError)
-        toast.error(message)
+        toast.error(result?.reasons?.[0] ?? formatMessage(m.toggleReviewError))
       }
     },
-    onError: () => {
-      toast.error(formatMessage(m.toggleReviewError))
-    },
+    onError: () => toast.error(formatMessage(m.toggleReviewError)),
   })
 
   return (
@@ -70,18 +67,22 @@ const CompleteListReview = ({
       <GridRow>
         <GridColumn span={['12/12', '12/12', '12/12', '10/12']}>
           <Box display="flex">
-            <Tag>
-              <Box display="flex" justifyContent="center">
-                <Icon
-                  icon={
-                    listStatus === ListStatus.Reviewed ? 'reload' : 'checkmark'
-                  }
-                  type="outline"
-                  color="blue600"
-                />
-              </Box>
-            </Tag>
-            <Box marginLeft={5}>
+            <Box marginTop={1}>
+              <Tag>
+                <Box display="flex" justifyContent="center">
+                  <Icon
+                    icon={
+                      listStatus === ListStatus.Reviewed
+                        ? 'reload'
+                        : 'checkmark'
+                    }
+                    type="outline"
+                    color="blue600"
+                  />
+                </Box>
+              </Tag>
+            </Box>
+            <Box marginLeft={3}>
               <Text variant="h4">
                 {listStatus === ListStatus.Reviewed
                   ? formatMessage(m.confirmListReviewedToggleBack)
@@ -111,7 +112,7 @@ const CompleteListReview = ({
         label={''}
         closeButtonLabel={''}
       >
-        <Box marginTop={5}>
+        <Box>
           <Text>
             {listReviewed
               ? formatMessage(m.listReviewedModalDescriptionToggleBack)
@@ -120,7 +121,6 @@ const CompleteListReview = ({
           <Box display="flex" justifyContent="flexEnd" marginTop={5}>
             <Button
               iconType="outline"
-              variant="ghost"
               onClick={() => toggleListReview()}
               loading={loading}
               icon={listReviewed ? 'reload' : 'checkmark'}

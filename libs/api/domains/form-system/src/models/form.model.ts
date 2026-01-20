@@ -1,17 +1,17 @@
-import { Field, ObjectType, Int } from '@nestjs/graphql'
-import { Field as FieldModel } from './field.model'
+import { Field, Int, ObjectType } from '@nestjs/graphql'
 import {
   FormCertificationType,
   FormCertificationTypeDto,
 } from './certification.model'
-import { FormApplicant } from './formApplicant.model'
-import { Section } from './section.model'
-import { ListType } from './listItem.model'
-import { LanguageType } from './languageType.model'
-import { Screen as ScreenModel } from './screen.model'
+import { CompletedSectionInfo } from './completedSectionInfo'
+import { Field as FieldModel } from './field.model'
 import { FieldType } from './fieldType.model'
+import { FormApplicant } from './formApplicant.model'
+import { LanguageType } from './languageType.model'
+import { ListType } from './listItem.model'
 import { Option } from './option.model'
-import { OrganizationUrl } from './organizationUrl.model'
+import { Screen as ScreenModel } from './screen.model'
+import { Section } from './section.model'
 
 @ObjectType('FormSystemDependency')
 export class Dependency {
@@ -48,6 +48,12 @@ export class Form {
   @Field(() => Date, { nullable: true })
   invalidationDate?: Date
 
+  @Field(() => String, { nullable: true })
+  submissionServiceUrl?: string
+
+  @Field(() => String, { nullable: true })
+  validationServiceUrl?: string
+
   @Field(() => Boolean, { nullable: true })
   hasPayment?: boolean
 
@@ -73,7 +79,7 @@ export class Form {
   isTranslated!: boolean
 
   @Field(() => Int)
-  applicationDaysToRemove!: number
+  daysUntilApplicationPrune!: number
 
   @Field(() => Boolean)
   allowProceedOnValidationFail!: boolean
@@ -81,11 +87,8 @@ export class Form {
   @Field(() => Boolean)
   hasSummaryScreen!: boolean
 
-  @Field(() => Boolean, { nullable: true })
-  isZendeskEnabled?: boolean
-
-  @Field(() => LanguageType, { nullable: true })
-  completedMessage?: LanguageType
+  @Field(() => CompletedSectionInfo, { nullable: true })
+  completedSectionInfo?: CompletedSectionInfo
 
   @Field(() => [FormCertificationTypeDto], { nullable: 'itemsAndList' })
   certificationTypes?: FormCertificationTypeDto[]
@@ -107,9 +110,6 @@ export class Form {
 
   @Field(() => String)
   status!: string
-
-  @Field(() => [String], { nullable: 'itemsAndList' })
-  urls?: string[]
 }
 
 @ObjectType('FormSystemFormResponse')
@@ -132,11 +132,8 @@ export class FormResponse {
   @Field(() => [Form], { nullable: 'itemsAndList' })
   forms?: Form[]
 
-  @Field(() => [OrganizationUrl], { nullable: 'itemsAndList' })
-  submitUrls?: OrganizationUrl[]
-
-  @Field(() => [OrganizationUrl], { nullable: 'itemsAndList' })
-  validationUrls?: OrganizationUrl[]
+  @Field(() => [String], { nullable: 'itemsAndList' })
+  submissionUrls?: string[]
 
   @Field(() => [Option], { nullable: 'itemsAndList' })
   organizations?: Option[]

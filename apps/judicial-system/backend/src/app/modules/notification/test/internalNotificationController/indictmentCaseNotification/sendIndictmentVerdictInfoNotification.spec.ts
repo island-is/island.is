@@ -1,4 +1,4 @@
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { EmailService } from '@island.is/email-service'
 
@@ -48,7 +48,7 @@ describe('IndictmentCaseService', () => {
         defenderNationalId: defender.nationalId,
         defenderName: defender.name,
         defenderEmail: defender.email,
-        verdict: { serviceRequirement: ServiceRequirement.REQUIRED },
+        verdicts: [{ serviceRequirement: ServiceRequirement.REQUIRED }],
       },
     ],
     prosecutor: {

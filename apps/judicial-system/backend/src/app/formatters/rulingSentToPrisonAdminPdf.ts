@@ -34,7 +34,7 @@ export const createRulingSentToPrisonAdminPdf = (
     bufferPages: true,
   })
 
-  const sinc: Buffer[] = []
+  const sinc: Uint8Array[] = []
 
   doc.on('data', (chunk) => sinc.push(chunk))
 
@@ -116,7 +116,9 @@ export const createRulingSentToPrisonAdminPdf = (
   addEmptyLines(doc, 5)
 
   theCase.defendants?.forEach((defendant, index) => {
-    const { verdict } = defendant
+    // Only the latest verdict is relevant
+    const { verdicts } = defendant
+    const verdict = verdicts?.[0]
     const isServiceRequired =
       verdict?.serviceRequirement === ServiceRequirement.REQUIRED
 

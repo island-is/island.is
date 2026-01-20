@@ -2,21 +2,42 @@ import { Dispatch, SetStateAction } from 'react'
 import { GraphQLError } from 'graphql'
 import { ZodObject } from 'zod'
 import { MessageDescriptor } from 'react-intl'
-
-import type { BoxProps, ResponsiveProp } from '@island.is/island-ui/core/types'
-
+import type { BoxProps } from '@island.is/island-ui/core/types'
 import { Field, RecordObject, SubmitField } from './Fields'
 import { Condition } from './Condition'
 import { Application, FormValue } from './Application'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { Locale } from '@island.is/shared/types'
+import { FormatMessage } from './external'
+
 export type BeforeSubmitCallback = (
   event?: string,
 ) => Promise<[true, null] | [false, string]>
 
 export type SetBeforeSubmitCallback = (
   callback: BeforeSubmitCallback | null,
+  options?: SetBeforeSubmitCallbackOptions,
 ) => void
+
+export type SetBeforeSubmitCallbackOptions = {
+  /**
+   * Allows multiple callbacks to be composed together.
+   *
+   * Must be explicitly set to `true` if you want multiple callbacks.
+   * When `true`, a `customCallbackId` must also be provided to avoid
+   * registering the same callback multiple times.
+   */
+  allowMultiple: boolean
+
+  /**
+   * A custom identifier for this callback.
+   *
+   * Required when `allowMultiple` is `true`. This ID should remain
+   * consistent for the component instance to prevent duplicate
+   * registrations of the same callback.
+   */
+  customCallbackId: string
+}
 
 export type SetFieldLoadingState = Dispatch<SetStateAction<boolean>>
 export type SetSubmitButtonDisabled = Dispatch<SetStateAction<boolean>>
@@ -40,6 +61,7 @@ export type FormTextWithLocale =
   | ((
       application: Application,
       locale: Locale,
+      formatMessage?: FormatMessage,
     ) => StaticText | null | undefined)
 
 export type FormComponent =
@@ -189,6 +211,14 @@ export interface FieldBaseProps<TAnswers = FormValue> {
   application: Application<TAnswers>
   showFieldName?: boolean
   clearOnChange?: string[]
+  clearOnChangeDefaultValue?:
+    | string
+    | string[]
+    | boolean
+    | boolean[]
+    | number
+    | number[]
+    | undefined
   goToScreen?: (id: string) => void
   answerQuestions?: (answers: FormValue) => void
   refetch?: () => void

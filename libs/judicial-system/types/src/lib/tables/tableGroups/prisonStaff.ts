@@ -8,6 +8,7 @@ const prisonStaffRequestCasesTableGroup = {
       route: 'virk-rannsoknarmal',
       title: 'Virk mál',
       description: 'Virk gæsluvarðhöld.',
+      includeCounter: true,
     },
     {
       type: CaseTableType.PRISON_STAFF_REQUEST_CASES_DONE,

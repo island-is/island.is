@@ -3,13 +3,9 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import {
-  Box,
-  ContentBlock,
   FileUploadStatus,
   Input,
   InputFileUpload,
-  Text,
-  Tooltip,
 } from '@island.is/island-ui/core'
 import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 import * as constants from '@island.is/judicial-system/consts'
@@ -28,15 +24,14 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
-import { removeTabsValidateAndSet } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   TUploadFile,
-  useCase,
-  useDeb,
+  useDebouncedInput,
   useFileList,
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import {
   mapPoliceCaseFileToPoliceCaseFileCheck,
@@ -48,7 +43,7 @@ import { usePoliceCaseFilesQuery } from './policeCaseFiles.generated'
 import { caseFiles as strings } from './CaseFiles.strings'
 
 export const CaseFiles = () => {
-  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+  const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const {
     data: policeData,
@@ -82,9 +77,8 @@ export const CaseFiles = () => {
   const { onOpenFile } = useFileList({
     caseId: workingCase.id,
   })
-  const { updateCase } = useCase()
 
-  useDeb(workingCase, 'caseFilesComments')
+  const caseFilesComments = useDebouncedInput('caseFilesComments', [])
 
   useEffect(() => {
     if (workingCase.origin !== CaseOrigin.LOKE) {
@@ -208,25 +202,29 @@ export const CaseFiles = () => {
       <PageHeader title={formatMessage(strings.title)} />
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.heading)}</PageTitle>
-        <ProsecutorCaseInfo workingCase={workingCase} />
-        <ParentCaseFiles files={workingCase.parentCase?.caseFiles} />
-        <SectionHeading
-          title={formatMessage(strings.policeCaseFilesHeading)}
-          description={formatMessage(strings.policeCaseFilesIntroduction)}
-        />
-        <PoliceCaseFiles
-          onUpload={handlePoliceCaseFileUpload}
-          policeCaseFileList={policeCaseFileList}
-          policeCaseFiles={policeCaseFiles}
-        />
-        <Box marginBottom={3}>
-          <Text variant="h3" as="h3">
-            {formatMessage(strings.filesHeading)}
-          </Text>
-          <Text marginTop={1}>{formatMessage(strings.filesIntroduction)}</Text>
-        </Box>
-        <Box marginBottom={5}>
-          <ContentBlock>
+        <div className={grid({ gap: 5, marginBottom: 10 })}>
+          <ProsecutorCaseInfo workingCase={workingCase} />
+          <ParentCaseFiles files={workingCase.parentCase?.caseFiles} />
+          <section>
+            <SectionHeading
+              title={formatMessage(strings.policeCaseFilesHeading)}
+              description={
+                workingCase.origin === CaseOrigin.LOKE
+                  ? formatMessage(strings.policeCaseFilesIntroduction)
+                  : undefined
+              }
+            />
+            <PoliceCaseFiles
+              onUpload={handlePoliceCaseFileUpload}
+              policeCaseFileList={policeCaseFileList}
+              policeCaseFiles={policeCaseFiles}
+            />
+          </section>
+          <section>
+            <SectionHeading
+              title={formatMessage(strings.filesHeading)}
+              description={formatMessage(strings.filesIntroduction)}
+            />
             <InputFileUpload
               name="fileUpload"
               accept={Object.values(fileExtensionWhitelist)}
@@ -242,44 +240,23 @@ export const CaseFiles = () => {
               disabled={isUploadingPoliceCaseFiles}
               onOpenFile={(file) => onOpenFile(file)}
             />
-          </ContentBlock>
-        </Box>
-        <Box>
-          <Box marginBottom={3}>
-            <Text variant="h3" as="h3">
-              {formatMessage(strings.commentsHeading)}{' '}
-              <Tooltip
-                placement="right"
-                as="span"
-                text={formatMessage(strings.commentsTooltip)}
-              />
-            </Text>
-          </Box>
-          <Box marginBottom={10}>
+          </section>
+          <section>
+            <SectionHeading
+              title={formatMessage(strings.commentsHeading)}
+              tooltip={formatMessage(strings.commentsTooltip)}
+            />
             <Input
               name="caseFilesComments"
               label={formatMessage(strings.commentsLabel)}
               placeholder={formatMessage(strings.commentsPlaceholder)}
-              value={workingCase.caseFilesComments || ''}
-              onChange={(event) =>
-                removeTabsValidateAndSet(
-                  'caseFilesComments',
-                  event.target.value,
-                  [],
-                  setWorkingCase,
-                )
-              }
-              onBlur={(evt) =>
-                updateCase(workingCase.id, {
-                  caseFilesComments: evt.target.value,
-                })
-              }
+              value={caseFilesComments.value}
+              onChange={(evt) => caseFilesComments.onChange(evt.target.value)}
               textarea
               rows={7}
-              autoExpand={{ on: true, maxHeight: 300 }}
             />
-          </Box>
-        </Box>
+          </section>
+        </div>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter

@@ -44,6 +44,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   UpdateIndictmentCount,
+  UpdateIndictmentCountState,
   useLawTag,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
@@ -62,15 +63,14 @@ interface Props {
   setWorkingCase: Dispatch<SetStateAction<Case>>
   onChange: (
     indictmentCountId: string,
-    updatedIndictmentCount: UpdateIndictmentCount,
+    indictmentCountUpdate: UpdateIndictmentCount,
     updatedOffenses?: Offense[],
   ) => void
   onDelete?: (indictmentCountId: string) => Promise<void>
   updateIndictmentCountState: (
     indictmentCountId: string,
-    update: UpdateIndictmentCount,
+    indictmentCountUpdate: UpdateIndictmentCountState,
     setWorkingCase: Dispatch<SetStateAction<Case>>,
-    updatedOffenses?: Offense[],
   ) => void
 }
 
@@ -266,10 +266,28 @@ export const IndictmentCount: FC<Props> = ({
   )
 
   useEffect(() => {
+    if (indictmentCount.vehicleRegistrationNumber) {
+      setVehicleRegistrationNumberErrorMessage('')
+    }
+  }, [indictmentCount.vehicleRegistrationNumber])
+
+  useEffect(() => {
+    if (indictmentCount.incidentDescription) {
+      setIncidentDescriptionErrorMessage('')
+    }
+  }, [indictmentCount.incidentDescription])
+
+  useEffect(() => {
+    if (indictmentCount.legalArguments) {
+      setLegalArgumentsErrorMessage('')
+    }
+  }, [indictmentCount.legalArguments])
+
+  useEffect(() => {
     if (indictmentCount.policeCaseNumber !== originalPoliceCaseNumber) {
       // Our position in the list may have changed because we changed the police case number
       const dateElement = document.getElementById(indictmentCount.id)
-      console.log(dateElement)
+
       // Make sure the indictment count is visible
       if (dateElement && !isPartiallyVisible(dateElement)) {
         dateElement.scrollIntoView({ behavior: 'smooth', block: 'center' })
@@ -288,7 +306,7 @@ export const IndictmentCount: FC<Props> = ({
   )
 
   const handleIndictmentCountChanges = (
-    update: UpdateIndictmentCount,
+    indictmentCountUpdate: UpdateIndictmentCount,
     updatedOffenses?: Offense[],
   ) => {
     let lawsBroken
@@ -304,21 +322,43 @@ export const IndictmentCount: FC<Props> = ({
     }
 
     if (lawsBroken !== undefined) {
-      update.lawsBroken = lawsBroken
-      update.legalArguments = getLegalArguments(lawsBroken, formatMessage)
+      indictmentCountUpdate.lawsBroken = lawsBroken
+      indictmentCountUpdate.legalArguments = getLegalArguments(
+        lawsBroken,
+        formatMessage,
+      )
     }
 
     const policeCaseNumber =
-      update.policeCaseNumber ?? indictmentCount.policeCaseNumber
+      indictmentCountUpdate.policeCaseNumber ?? indictmentCount.policeCaseNumber
 
     const crimeScene = policeCaseNumber
       ? workingCase.crimeScenes[policeCaseNumber]
       : undefined
 
+    const isRemovingTrafficViolationSubtype =
+      indictmentCount.policeCaseNumber &&
+      isTrafficViolationIndictmentCount(
+        indictmentCount.indictmentCountSubtypes,
+        workingCase.indictmentSubtypes[indictmentCount.policeCaseNumber],
+      ) &&
+      (!policeCaseNumber ||
+        !isTrafficViolationIndictmentCount(
+          indictmentCountUpdate.indictmentCountSubtypes ??
+            indictmentCount.indictmentCountSubtypes,
+          workingCase.indictmentSubtypes[policeCaseNumber],
+        ))
+
+    if (isRemovingTrafficViolationSubtype) {
+      indictmentCountUpdate.vehicleRegistrationNumber = null
+      indictmentCountUpdate.recordedSpeed = null
+      indictmentCountUpdate.speedLimit = null
+    }
+
     const incidentDescription = getIncidentDescription(
       {
         ...indictmentCount,
-        ...update,
+        ...indictmentCountUpdate,
         ...(updatedOffenses ? { offenses: updatedOffenses } : {}),
       },
       gender,
@@ -331,40 +371,44 @@ export const IndictmentCount: FC<Props> = ({
       indictmentCount.id,
       {
         incidentDescription,
-        ...update,
+        ...indictmentCountUpdate,
       },
       updatedOffenses,
     )
+  }
+
+  const handlePoliceCaseNumberChange = (policeCaseNumber: string) => {
+    const policeCaseNumberSubtypes =
+      workingCase.indictmentSubtypes[policeCaseNumber]
+
+    if (policeCaseNumberSubtypes.length < 2) {
+      return handleIndictmentCountChanges({
+        policeCaseNumber,
+        indictmentCountSubtypes: [],
+      })
+    }
+
+    const newSubtypes = indictmentCount.indictmentCountSubtypes?.filter(
+      (subtype) => policeCaseNumberSubtypes.includes(subtype),
+    )
+
+    handleIndictmentCountChanges({
+      policeCaseNumber,
+      indictmentCountSubtypes: newSubtypes,
+    })
   }
 
   const handleSubtypeChange = (
     subtype: IndictmentSubtype,
     checked: boolean,
   ) => {
-    const currentSubtypes = new Set(
-      indictmentCount.indictmentCountSubtypes ?? [],
-    )
+    const currentSubtypes = new Set(indictmentCount.indictmentCountSubtypes)
 
     checked ? currentSubtypes.add(subtype) : currentSubtypes.delete(subtype)
 
-    const hasTrafficViolationSubType = currentSubtypes.has(
-      IndictmentSubtype.TRAFFIC_VIOLATION,
-    )
-    if (!hasTrafficViolationSubType) {
-      handleIndictmentCountChanges(
-        {
-          indictmentCountSubtypes: Array.from(currentSubtypes),
-          vehicleRegistrationNumber: null,
-          recordedSpeed: null,
-          speedLimit: null,
-        },
-        [],
-      )
-    } else {
-      handleIndictmentCountChanges({
-        indictmentCountSubtypes: Array.from(currentSubtypes),
-      })
-    }
+    handleIndictmentCountChanges({
+      indictmentCountSubtypes: Array.from(currentSubtypes),
+    })
   }
 
   const shouldShowTrafficViolationFields = isTrafficViolationIndictmentCount(
@@ -404,7 +448,12 @@ export const IndictmentCount: FC<Props> = ({
           onChange={async (so) => {
             const policeCaseNumber = so?.value
 
-            handleIndictmentCountChanges({ policeCaseNumber })
+            if (
+              policeCaseNumber &&
+              policeCaseNumber !== indictmentCount.policeCaseNumber
+            ) {
+              handlePoliceCaseNumberChange(policeCaseNumber)
+            }
           }}
           value={
             workingCase.policeCaseNumbers
@@ -412,10 +461,8 @@ export const IndictmentCount: FC<Props> = ({
                 value: val,
                 label: val,
               }))
-              .find(
-                (val) =>
-                  val?.value === indictmentCount.policeCaseNumber?.toString(),
-              ) ?? null
+              .find((val) => val?.value === indictmentCount.policeCaseNumber) ??
+            null
           }
           required
         />
@@ -489,9 +536,7 @@ export const IndictmentCount: FC<Props> = ({
 
                 updateIndictmentCountState(
                   indictmentCount.id,
-                  {
-                    vehicleRegistrationNumber: event.target.value,
-                  },
+                  { vehicleRegistrationNumber: event.target.value },
                   setWorkingCase,
                 )
               }}
@@ -540,7 +585,7 @@ export const IndictmentCount: FC<Props> = ({
                     ])
 
                     onChange(indictmentCount.id, {
-                      lawsBroken: lawsBroken,
+                      lawsBroken,
                       legalArguments: getLegalArguments(
                         lawsBroken,
                         formatMessage,
@@ -576,7 +621,7 @@ export const IndictmentCount: FC<Props> = ({
                             )
 
                             onChange(indictmentCount.id, {
-                              lawsBroken: lawsBroken,
+                              lawsBroken,
                               legalArguments: getLegalArguments(
                                 lawsBroken,
                                 formatMessage,
@@ -640,7 +685,6 @@ export const IndictmentCount: FC<Props> = ({
             }}
             required
             rows={7}
-            autoExpand={{ on: true, maxHeight: 600 }}
             textarea
           />
         </Box>
@@ -687,7 +731,6 @@ export const IndictmentCount: FC<Props> = ({
           }}
           required
           rows={7}
-          autoExpand={{ on: true, maxHeight: 600 }}
           textarea
         />
       </Box>

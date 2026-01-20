@@ -1,50 +1,30 @@
-import { Field, ObjectType, registerEnumType } from '@nestjs/graphql'
-import { AddressModel } from './address.model'
+import { Field, ObjectType } from '@nestjs/graphql'
+import {
+  GetOrganizationsByTypeTypeEnum,
+  OrganizationModelSectorEnum,
+  OrganizationModelSubTypeEnum,
+} from './organization.enum'
 
-export enum OrganizationModelTypeEnum {
-  ChildCare = 'childCare',
-  Municipality = 'municipality',
-  National = 'national',
-  PrivateOwner = 'privateOwner',
-  School = 'school',
-}
-
-registerEnumType(OrganizationModelTypeEnum, {
-  name: 'OrganizationModelTypeEnum',
-})
-
-@ObjectType('EducationFriggOrganizationModel')
-export class FriggOrganizationModel {
+@ObjectType('EducationFriggOrganization')
+export class FriggOrganization {
   @Field()
   id!: string
 
   @Field()
-  nationalId!: string
-
-  @Field()
   name!: string
 
-  @Field(() => OrganizationModelTypeEnum)
-  type!: OrganizationModelTypeEnum
+  @Field(() => GetOrganizationsByTypeTypeEnum)
+  type!: GetOrganizationsByTypeTypeEnum
+
+  @Field(() => OrganizationModelSubTypeEnum, { nullable: true })
+  subType?: OrganizationModelSubTypeEnum
+
+  @Field(() => OrganizationModelSectorEnum, { nullable: true })
+  sector?: OrganizationModelSectorEnum
 
   @Field(() => [String], { nullable: true })
   gradeLevels?: string[]
 
-  @Field(() => [FriggOrganizationModel], { nullable: true })
-  managing?: FriggOrganizationModel[]
-
   @Field({ nullable: true })
   unitId?: string
-
-  @Field({ nullable: true })
-  email?: string
-
-  @Field({ nullable: true })
-  phone?: string
-
-  @Field({ nullable: true })
-  website?: string
-
-  @Field(() => AddressModel, { nullable: true })
-  address?: AddressModel
 }

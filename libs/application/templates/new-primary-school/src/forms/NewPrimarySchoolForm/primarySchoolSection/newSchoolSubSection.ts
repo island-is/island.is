@@ -1,48 +1,56 @@
+import { Application, OrganizationTypeEnum, Query } from '@island.is/api/schema'
 import {
+  buildAlertMessageField,
   buildAsyncSelectField,
-  buildHiddenInputWithWatchedValue,
+  buildDescriptionField,
+  buildFieldsRepeaterField,
+  buildHiddenInput,
   buildMultiField,
   buildSubSection,
   coreErrorMessages,
-  NO,
 } from '@island.is/application/core'
-import { friggSchoolsByMunicipalityQuery } from '../../../graphql/queries'
-import { ApplicationType, SchoolType } from '../../../utils/constants'
-import { newPrimarySchoolMessages } from '../../../lib/messages'
+import { friggOrganizationsByTypeQuery } from '../../../graphql/queries'
+import { primarySchoolMessages, sharedMessages } from '../../../lib/messages'
+import {
+  shouldShowAlternativeSpecialEducationDepartment,
+  shouldShowReasonForApplicationAndNewSchoolPages,
+} from '../../../utils/conditionUtils'
+import {
+  NU_UNIT_ID,
+  OrganizationSubType,
+  RVK_MUNICIPALITY_ID,
+} from '../../../utils/constants'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
-  getInternationalSchoolsIds,
-  getMunicipalityCodeBySchoolUnitId,
+  getCurrentAndNextGrade,
+  getSelectedSchoolSubType,
+  getSelectedSchoolUnitId,
+  getSpecialEducationDepartmentsInMunicipality,
 } from '../../../utils/newPrimarySchoolUtils'
-import {
-  Application,
-  FriggSchoolsByMunicipalityQuery,
-  OrganizationModelTypeEnum,
-} from '../../../types/schema'
 
 export const newSchoolSubSection = buildSubSection({
   id: 'newSchoolSubSection',
-  title: newPrimarySchoolMessages.primarySchool.newSchoolSubSectionTitle,
-  condition: (answers) => {
-    const { applyForNeighbourhoodSchool, applicationType } =
-      getApplicationAnswers(answers)
-    return (
-      applicationType === ApplicationType.NEW_PRIMARY_SCHOOL ||
-      (applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL &&
-        applyForNeighbourhoodSchool === NO)
-    )
-  },
+  title: primarySchoolMessages.newSchool.subSectionTitle,
+  condition: (answers, externalData) =>
+    shouldShowReasonForApplicationAndNewSchoolPages(answers, externalData),
   children: [
     buildMultiField({
       id: 'newSchool',
-      title: newPrimarySchoolMessages.primarySchool.newSchoolSubSectionTitle,
+      title: primarySchoolMessages.newSchool.subSectionTitle,
       children: [
         buildAsyncSelectField({
           id: 'newSchool.municipality',
-          title: newPrimarySchoolMessages.shared.municipality,
-          placeholder: newPrimarySchoolMessages.shared.municipalityPlaceholder,
+          title: sharedMessages.municipality,
+          placeholder: sharedMessages.municipalityPlaceholder,
           loadingError: coreErrorMessages.failedDataProvider,
+          setOnChange: [
+            // clear answer
+            {
+              key: 'newSchool.alternativeSpecialEducationDepartment',
+              value: [],
+            },
+          ],
           defaultValue: (application: Application) => {
             const { applicantMunicipalityCode } = getApplicationExternalData(
               application.externalData,
@@ -50,29 +58,18 @@ export const newSchoolSubSection = buildSubSection({
 
             return applicantMunicipalityCode
           },
-          loadOptions: async ({ application, apolloClient }) => {
-            const { childGradeLevel } = getApplicationExternalData(
-              application.externalData,
-            )
-
-            const { data } =
-              await apolloClient.query<FriggSchoolsByMunicipalityQuery>({
-                query: friggSchoolsByMunicipalityQuery,
-              })
+          loadOptions: async ({ apolloClient }) => {
+            const { data } = await apolloClient.query<Query>({
+              query: friggOrganizationsByTypeQuery,
+              variables: {
+                input: {
+                  type: OrganizationTypeEnum.Municipality,
+                },
+              },
+            })
 
             return (
-              data?.friggSchoolsByMunicipality
-                ?.filter(
-                  ({ type, managing }) =>
-                    type === OrganizationModelTypeEnum.Municipality &&
-                    managing &&
-                    managing.length > 0 &&
-                    managing.filter(({ gradeLevels }) =>
-                      !childGradeLevel
-                        ? true
-                        : gradeLevels?.includes(childGradeLevel),
-                    )?.length > 0,
-                )
+              data?.friggOrganizationsByType
                 ?.map(({ name, unitId }) => ({
                   value: unitId || '',
                   label: name,
@@ -83,8 +80,8 @@ export const newSchoolSubSection = buildSubSection({
         }),
         buildAsyncSelectField({
           id: 'newSchool.school',
-          title: newPrimarySchoolMessages.shared.school,
-          placeholder: newPrimarySchoolMessages.shared.schoolPlaceholder,
+          title: sharedMessages.school,
+          placeholder: sharedMessages.schoolPlaceholder,
           loadingError: coreErrorMessages.failedDataProvider,
           updateOnSelect: ['newSchool.municipality'],
           loadOptions: async ({
@@ -92,74 +89,29 @@ export const newSchoolSubSection = buildSubSection({
             apolloClient,
             selectedValues,
           }) => {
-            const { data } =
-              await apolloClient.query<FriggSchoolsByMunicipalityQuery>({
-                query: friggSchoolsByMunicipalityQuery,
-              })
-
             const municipalityCode = selectedValues?.[0]
 
             const { childGradeLevel } = getApplicationExternalData(
               application.externalData,
             )
 
-            // Find all private owned schools by municipality
-            const privateOwnedSchools =
-              data?.friggSchoolsByMunicipality
-                ?.filter(
-                  ({ type }) => type === OrganizationModelTypeEnum.PrivateOwner,
-                )
-                ?.flatMap(
-                  ({ managing }) =>
-                    managing
-                      ?.filter(
-                        ({ type, gradeLevels, unitId }) =>
-                          unitId &&
-                          getMunicipalityCodeBySchoolUnitId(unitId) ===
-                            municipalityCode &&
-                          type === OrganizationModelTypeEnum.School &&
-                          (!childGradeLevel
-                            ? true
-                            : gradeLevels?.includes(childGradeLevel)),
-                      )
-                      ?.map((school) => ({
-                        ...school,
-                        type: getInternationalSchoolsIds().some(
-                          (id) => id === school.unitId, // Hack to identify international schools from private ownded schools
-                        )
-                          ? SchoolType.INTERNATIONAL_SCHOOL
-                          : SchoolType.PRIVATE_SCHOOL,
-                      })) || [],
-                ) || []
+            const { data } = await apolloClient.query<Query>({
+              query: friggOrganizationsByTypeQuery,
+              variables: {
+                input: {
+                  type: OrganizationTypeEnum.School,
+                  municipalityCode: municipalityCode,
+                  ...(childGradeLevel && {
+                    gradeLevels: getCurrentAndNextGrade(childGradeLevel),
+                  }),
+                },
+              },
+            })
 
-            // Find all municipality schools
-            const municipalitySchools =
-              data?.friggSchoolsByMunicipality
-                ?.find(({ unitId }) => unitId === municipalityCode)
-                ?.managing?.filter(
-                  ({ type, gradeLevels }) =>
-                    // if no childGradeLevel then skip grade level check. This is the case if student is not registered in Frigg
-                    type === OrganizationModelTypeEnum.School &&
-                    (!childGradeLevel
-                      ? true
-                      : gradeLevels?.includes(childGradeLevel)),
-                )
-                ?.map((school) => ({
-                  ...school,
-                  type: SchoolType.PUBLIC_SCHOOL,
-                })) || []
-
-            // Merge the private owned schools and the municipality schools together
-            const allMunicipalitySchools = [
-              ...municipalitySchools,
-              ...privateOwnedSchools,
-            ]
-
-            // Piggyback the type as part of the value
             return (
-              allMunicipalitySchools
-                .map(({ id, type, name }) => ({
-                  value: `${id}::${type}`,
+              data?.friggOrganizationsByType
+                ?.map(({ id, name }) => ({
+                  value: id,
                   label: name,
                 }))
                 .sort((a, b) => a.label.localeCompare(b.label)) ?? []
@@ -171,10 +123,142 @@ export const newSchoolSubSection = buildSubSection({
             return !!schoolMunicipality
           },
         }),
-        buildHiddenInputWithWatchedValue({
-          id: 'newSchool.type',
-          watchValue: 'newSchool.school',
-          valueModifier: (value) => value?.toString()?.split('::')[1],
+        buildAlertMessageField({
+          id: 'newSchool.alertMessage',
+          title: sharedMessages.alertTitle,
+          message: primarySchoolMessages.newSchool.alertMessage,
+          alertType: 'info',
+          doesNotRequireAnswer: true,
+          marginTop: 4,
+          condition: (answers, externalData) => {
+            const selectedSchoolId = getSelectedSchoolUnitId(
+              answers,
+              externalData,
+            )
+
+            return selectedSchoolId === NU_UNIT_ID
+          },
+        }),
+        buildAlertMessageField({
+          id: 'newSchool.specialSchoolOrDepartmentAlertMessage',
+          title: sharedMessages.alertTitle,
+          message:
+            primarySchoolMessages.newSchool
+              .specialSchoolOrDepartmentAlertMessage,
+          alertType: 'info',
+          doesNotRequireAnswer: true,
+          marginTop: 4,
+          condition: (answers, externalData) => {
+            const selectedSchoolSubType = getSelectedSchoolSubType(
+              answers,
+              externalData,
+            )
+
+            return (
+              selectedSchoolSubType !== '' &&
+              [
+                OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_DEPARTMENT,
+                OrganizationSubType.SPECIAL_EDUCATION_BEHAVIOR_SCHOOL,
+                OrganizationSubType.SPECIAL_EDUCATION_DISABILITY_DEPARTMENT,
+                OrganizationSubType.SPECIAL_EDUCATION_DISABILITY_SCHOOL,
+              ].includes(selectedSchoolSubType)
+            )
+          },
+        }),
+        buildDescriptionField({
+          id: 'newSchool.alternativeSpecialEducationDepartment.description',
+          title:
+            primarySchoolMessages.newSchool
+              .alternativeSpecialEducationDepartmentTitle,
+          titleVariant: 'h4',
+          description:
+            primarySchoolMessages.newSchool
+              .alternativeSpecialEducationDepartmentDescription,
+          condition: (answers, externalData) =>
+            shouldShowAlternativeSpecialEducationDepartment(
+              answers,
+              externalData,
+            ),
+        }),
+        buildFieldsRepeaterField({
+          id: 'newSchool.alternativeSpecialEducationDepartment',
+          formTitleNumbering: 'none',
+          addItemButtonText:
+            primarySchoolMessages.newSchool
+              .addAlternativeSpecialEducationDepartmentButton,
+          removeItemButtonText:
+            primarySchoolMessages.newSchool
+              .removeAlternativeSpecialEducationDepartmentButton,
+          minRows: 1,
+          maxRows: (answers, externalData) => {
+            const { schoolMunicipality } = getApplicationAnswers(answers)
+
+            const specialEducationDepartmentsInMunicipality =
+              getSpecialEducationDepartmentsInMunicipality(
+                answers,
+                externalData,
+              )
+
+            // If the selected municipality is RVK and it has at least 3 departments,
+            // allow 2 alternatives. Otherwise allow only 1.
+            return specialEducationDepartmentsInMunicipality.length > 2 &&
+              schoolMunicipality === RVK_MUNICIPALITY_ID
+              ? 2
+              : 1
+          },
+          marginTop: 0,
+          condition: (answers, externalData) =>
+            shouldShowAlternativeSpecialEducationDepartment(
+              answers,
+              externalData,
+            ),
+          fields: {
+            department: {
+              component: 'select',
+              label: (index) => ({
+                ...primarySchoolMessages.newSchool
+                  .alternativeSpecialEducationDepartment,
+                values: { index: index + 2 },
+              }),
+              placeholder:
+                primarySchoolMessages.newSchool
+                  .alternativeSpecialEducationDepartmentPlaceholder,
+              isSearchable: true,
+              isClearable: true,
+              filterOptions: (options, answers, index) => {
+                const {
+                  selectedSchoolId,
+                  alternativeSpecialEducationDepartment,
+                } = getApplicationAnswers(answers)
+
+                const excludedValues = alternativeSpecialEducationDepartment
+                  .filter((item, idx) => idx !== index && item.department)
+                  .map((item) => item.department)
+
+                // Filter the options list to prevent the applicant from selecting the
+                // same school/department more than once
+                return options.filter(
+                  (option) =>
+                    !excludedValues.includes(option.value) &&
+                    option.value !== selectedSchoolId,
+                )
+              },
+              options: (application) =>
+                getSpecialEducationDepartmentsInMunicipality(
+                  application.answers,
+                  application.externalData,
+                )
+                  ?.map(({ id, name }) => ({
+                    value: id,
+                    label: name,
+                  }))
+                  .sort((a, b) => a.label.localeCompare(b.label)) ?? [],
+            },
+          },
+        }),
+        buildHiddenInput({
+          id: 'newSchool.triggerHiddenInput',
+          doesNotRequireAnswer: true,
         }),
       ],
     }),

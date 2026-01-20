@@ -15,6 +15,7 @@ const publicProsecutionIndictmentsTableGroup: CaseTableGroup = {
       route: 'sakamal-til-yfirlestrar',
       title: 'Þín mál til yfirlestrar',
       description: 'Dómar og viðurlagaákvarðanir.',
+      includeCounter: true,
     },
     {
       type: CaseTableType.PUBLIC_PROSECUTION_INDICTMENTS_REVIEWED,

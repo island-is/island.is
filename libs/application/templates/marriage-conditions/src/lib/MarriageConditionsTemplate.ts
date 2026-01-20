@@ -11,7 +11,7 @@ import {
   Application,
   DefaultEvents,
   defineTemplateApi,
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   UserProfileApi,
   DistrictsApi,
   InstitutionNationalIds,
@@ -93,7 +93,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
               ],
               write: 'all',
               api: [
-                NationalRegistryUserApi,
+                NationalRegistryV3UserApi,
                 UserProfileApi,
                 DistrictsApi,
                 MaritalStatusApi,
@@ -157,7 +157,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
               ],
               write: 'all',
               api: [
-                NationalRegistryUserApi,
+                NationalRegistryV3UserApi,
                 UserProfileApi,
                 DistrictsApi,
                 MaritalStatusApi,
@@ -173,6 +173,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
               {
                 logMessage: m.confirmedBySpouse2,
                 onEvent: DefaultEvents.PAYMENT,
+                includeSubjectAndActor: true,
               },
             ],
             pendingAction: {
@@ -195,12 +196,6 @@ const MarriageConditionsTemplate: ApplicationTemplate<
               return PaymentForm
             },
           },
-        ],
-        onExit: [
-          defineTemplateApi({
-            action: ApiActions.submitApplication,
-            triggerEvent: DefaultEvents.SUBMIT,
-          }),
         ],
         chargeItems: (application) => {
           const paymentCodes = []
@@ -233,6 +228,9 @@ const MarriageConditionsTemplate: ApplicationTemplate<
           status: 'completed',
           progress: 1,
           lifecycle: pruneAfter(sixtyDays),
+          onEntry: defineTemplateApi({
+            action: ApiActions.submitApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,

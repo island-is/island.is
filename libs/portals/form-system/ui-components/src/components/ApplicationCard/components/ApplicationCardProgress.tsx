@@ -25,13 +25,10 @@ const DraftProgressMeter = ({
 }: Props) => {
   const { status } = application
   const { formatMessage } = useLocale()
-  if (status !== ApplicationStatus.IN_PROGRESS) return null
+  if (status !== ApplicationStatus.DRAFT) return null
 
-  const draftFinishedSteps =
-    application.sections?.filter((s) =>
-      application.completed?.includes(s?.id ?? ''),
-    ).length ?? 0
-  const draftTotalSteps = (application.sections?.length ?? 1) - 1
+  const draftFinishedSteps = application.draftFinishedSteps ?? 0
+  const draftTotalSteps = application.draftTotalSteps ?? 0
 
   return (
     <Box

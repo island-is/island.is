@@ -16,6 +16,12 @@ export const unboundTerminationMessages = defineMessages({
     defaultMessage: 'Ástæða uppsagnar',
     description: 'Unbound termination select title',
   },
+  reasonMissingError: {
+    id: 'tra.application:unboundTermination.reasonMissingError',
+    defaultMessage:
+      'Ástæðu uppsagnar þarf að gefa upp á samningi sem gerður var eftir 1.september 2024',
+    description: 'Unbound termination reason missing error',
+  },
   dateInfo: {
     id: 'tra.application:unboundTermination.dateInfo',
     defaultMessage:
@@ -79,5 +85,10 @@ export const unboundTerminationMessages = defineMessages({
     defaultMessage:
       'Leigusali er lögaðili sem er ekki rekinn í hagnaðarskyni og leigjandi uppfyllir ekki lengur skilyrði fyrir leigu',
     description: 'Unbound termination reason options non profit tenant',
+  },
+  reasonOptionsTenantTermination: {
+    id: 'tra.application:unboundTermination.reasonOptionsTenantTermination',
+    defaultMessage: 'Leigjandi segir upp leigusamningi',
+    description: 'Unbound termination reason options tenant termination',
   },
 })

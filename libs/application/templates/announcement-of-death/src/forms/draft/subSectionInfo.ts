@@ -1,14 +1,16 @@
 import {
   buildMultiField,
+  buildPhoneField,
   buildSelectField,
   buildTextField,
   buildSubSection,
+  buildCheckboxField,
   getValueViaPath,
+  YES,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import { Application } from '../../types/schema'
-import { removeCountryCode } from '@island.is/application/ui-components'
 import { EstateMember } from '../../types'
+import { Application } from '@island.is/api/schema'
 
 export const subSectionInfo = buildSubSection({
   id: 'infoStep',
@@ -33,20 +35,17 @@ export const subSectionInfo = buildSubSection({
               'nationalRegistry.data.fullName',
             ) ?? '',
         }),
-        buildTextField({
+        buildPhoneField({
           id: 'applicantPhone',
           title: m.applicantsPhoneNumber,
-          format: '###-####',
           placeholder: '',
           width: 'half',
-          defaultValue: (application: Application) => {
-            const phone =
-              getValueViaPath<string>(
-                application.externalData,
-                'userProfile.data.mobilePhoneNumber',
-              ) ?? ''
-            return removeCountryCode(phone)
-          },
+          enableCountrySelector: true,
+          defaultValue: (application: Application) =>
+            getValueViaPath<string>(
+              application.externalData,
+              'userProfile.data.mobilePhoneNumber',
+            ) ?? '',
         }),
         buildTextField({
           id: 'applicantEmail',
@@ -82,6 +81,13 @@ export const subSectionInfo = buildSubSection({
               label: relation,
             }))
           },
+        }),
+        buildCheckboxField({
+          id: 'addApplicantToEstateMembers',
+          large: false,
+          backgroundColor: 'white',
+          defaultValue: [YES],
+          options: [{ value: YES, label: m.addApplicantToEstateMembers }],
         }),
       ],
     }),

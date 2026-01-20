@@ -27,6 +27,7 @@ import {
   heirAgeValidation,
   missingHeirUndividedEstateValidation,
   missingSpouseUndividedEstateValidation,
+  multipleSpousesValidation,
   relationWithApplicant,
   SPOUSE,
 } from '../../lib/constants'
@@ -87,6 +88,12 @@ export const EstateMembersRepeater: FC<
       (member: EstateMember) => member.enabled && member.relation === SPOUSE,
     )
 
+  const hasMultipleSpouses =
+    selectedEstate === EstateTypes.permitForUndividedEstate &&
+    values.estate?.estateMembers?.filter(
+      (member: EstateMember) => member.enabled && member.relation === SPOUSE,
+    ).length > 1
+
   setBeforeSubmitCallback &&
     setBeforeSubmitCallback(async () => {
       if (
@@ -123,6 +130,13 @@ export const EstateMembersRepeater: FC<
         return [false, 'missing spouse for undivided estate']
       }
 
+      if (hasMultipleSpouses) {
+        setError(multipleSpousesValidation, {
+          type: 'custom',
+        })
+        return [false, 'multiple spouses in heirs list']
+      }
+
       return [true, null]
     })
 
@@ -147,10 +161,10 @@ export const EstateMembersRepeater: FC<
 
   const handleAddMember = () =>
     append({
-      nationalId: undefined,
+      nationalId: '',
       initial: false,
       enabled: true,
-      name: undefined,
+      name: '',
     })
 
   useEffect(() => {
@@ -166,12 +180,21 @@ export const EstateMembersRepeater: FC<
     if (!missingHeirsForUndividedEstate) {
       clearErrors(missingHeirUndividedEstateValidation)
     }
+    if (!missingSpouseForUndividedEstate) {
+      clearErrors(missingSpouseUndividedEstateValidation)
+    }
+    if (!hasMultipleSpouses) {
+      clearErrors(multipleSpousesValidation)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     fields,
     hasEstateMemberUnder18withoutRep,
     hasEstateMemberUnder18,
     clearErrors,
     missingHeirsForUndividedEstate,
+    missingSpouseForUndividedEstate,
+    hasMultipleSpouses,
   ])
 
   useEffect(() => {
@@ -181,6 +204,7 @@ export const EstateMembersRepeater: FC<
       // so now using "replace" instead, for the initial setup
       replace(estateData.estate.estateMembers)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
@@ -203,7 +227,7 @@ export const EstateMembersRepeater: FC<
         }
         return [
           ...acc,
-          <Box marginTop={index > 0 ? 7 : 0} key={index}>
+          <Box marginTop={index > 0 ? 7 : 0} key={member.id}>
             <Box display="flex" justifyContent="spaceBetween" marginBottom={3}>
               <Text
                 color={member.enabled ? 'currentColor' : 'dark300'}
@@ -224,6 +248,7 @@ export const EstateMembersRepeater: FC<
                     update(index, updatedMember)
                     clearErrors(`${id}[${index}].phone`)
                     clearErrors(`${id}[${index}].email`)
+                    clearErrors(`${id}[${index}].nationalId`)
                     clearErrors(`${id}[${index}].advocate.phone`)
                     clearErrors(`${id}[${index}].advocate.email`)
                   }}
@@ -421,7 +446,7 @@ export const EstateMembersRepeater: FC<
       }, [] as JSX.Element[])}
       {fields.map((member: GenericFormField<EstateMember>, index) => {
         return (
-          <Box>
+          <Box key={member.id}>
             {!member.initial && (
               <AdditionalEstateMember
                 application={application}
@@ -473,6 +498,13 @@ export const EstateMembersRepeater: FC<
             errorMessage={formatMessage(
               m.missingSpouseUndividedEstateValidation,
             )}
+          />
+        </Box>
+      )}
+      {!!errors?.[multipleSpousesValidation] && (
+        <Box marginTop={4}>
+          <InputError
+            errorMessage={formatMessage(m.multipleSpousesValidation)}
           />
         </Box>
       )}

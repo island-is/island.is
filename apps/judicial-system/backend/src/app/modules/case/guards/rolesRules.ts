@@ -55,6 +55,7 @@ const prosecutorFields: (keyof UpdateCaseDto)[] = [
   'indictmentReviewDecision',
   'civilDemands',
   'hasCivilClaims',
+  'penalties',
 ]
 
 const publicProsecutorFields: (keyof UpdateCaseDto)[] = [
@@ -303,42 +304,6 @@ export const defenderTransitionRule: RolesRule = {
   },
 }
 
-// Allows defenders to access generated PDFs
-export const defenderGeneratedPdfRule: RolesRule = {
-  role: UserRole.DEFENDER,
-  type: RulesType.BASIC,
-  canActivate: (request) => {
-    const user: User = request.user?.currentUser
-    const theCase: Case = request.case
-
-    // Deny if something is missing - should never happen
-    if (!user || !theCase) {
-      return false
-    }
-
-    // Allow if the user is a defender of a defendant of the case
-    if (
-      Defendant.isConfirmedDefenderOfDefendantWithCaseFileAccess(
-        user.nationalId,
-        theCase.defendants,
-      )
-    ) {
-      return true
-    }
-
-    if (
-      CivilClaimant.isConfirmedSpokespersonOfCivilClaimantWithCaseFileAccess(
-        user.nationalId,
-        theCase.civilClaimants,
-      )
-    ) {
-      return true
-    }
-
-    return false
-  },
-}
-
 // Allows judges to transition cases
 export const districtCourtJudgeTransitionRule: RolesRule = {
   role: UserRole.DISTRICT_COURT_JUDGE,
@@ -377,7 +342,11 @@ export const districtCourtAssistantTransitionRule: RolesRule = {
   role: UserRole.DISTRICT_COURT_ASSISTANT,
   type: RulesType.FIELD_VALUES,
   dtoField: 'transition',
-  dtoFieldValues: [CaseTransition.RECEIVE, CaseTransition.COMPLETE],
+  dtoFieldValues: [
+    CaseTransition.RECEIVE,
+    CaseTransition.COMPLETE,
+    CaseTransition.REOPEN,
+  ],
 }
 
 // Allows court of appeals judges to transition cases
@@ -427,6 +396,42 @@ export const districtCourtJudgeSignRulingRule: RolesRule = {
     }
 
     return user.id === theCase.judgeId
+  },
+}
+
+// Allows defenders to access generated PDFs
+export const defenderGeneratedPdfRule: RolesRule = {
+  role: UserRole.DEFENDER,
+  type: RulesType.BASIC,
+  canActivate: (request) => {
+    const user: User = request.user?.currentUser
+    const theCase: Case = request.case
+
+    // Deny if something is missing - should never happen
+    if (!user || !theCase) {
+      return false
+    }
+
+    // Allow if the user is a defender of a defendant of the case
+    if (
+      Defendant.isConfirmedDefenderOfDefendantWithCaseFileAccess(
+        user.nationalId,
+        theCase.defendants,
+      )
+    ) {
+      return true
+    }
+
+    if (
+      CivilClaimant.isConfirmedSpokespersonOfCivilClaimantWithCaseFileAccess(
+        user.nationalId,
+        theCase.civilClaimants,
+      )
+    ) {
+      return true
+    }
+
+    return false
   },
 }
 

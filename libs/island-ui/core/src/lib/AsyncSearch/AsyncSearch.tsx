@@ -152,6 +152,7 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
             filteredOptions.map((item, index) => (
               <Item
                 index={index}
+                key={item.value}
                 highlightedIndex={highlightedIndex}
                 isActive={highlightedIndex === index}
                 showDividerIfActive={showDividerIfActive}
@@ -159,7 +160,6 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
                 size={size === 'semi-large' ? 'medium' : size}
                 item={item}
                 {...getItemProps({
-                  key: item.value,
                   index,
                   item,
                   isSelected: options.includes(item),

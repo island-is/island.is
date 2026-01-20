@@ -174,9 +174,24 @@ export const m = defineMessages({
   },
   phoneElectronicIdError: {
     id: 'mac.application:phoneElectronicIdError',
+    defaultMessage: 'Rafræn skilríki ekki til staðar fyrir kennitölu',
+    description: 'Electronic ID not found for national ID',
+  },
+  electronicIdCheckLoading: {
+    id: 'mac.application:electronicIdCheckLoading',
+    defaultMessage: 'Athuga rafræn skilríki...',
+    description: 'Checking electronic ID',
+  },
+  electronicIdCheckSuccess: {
+    id: 'mac.application:electronicIdCheckSuccess',
+    defaultMessage: 'Rafræn skilríki staðfest',
+    description: 'Electronic ID confirmed',
+  },
+  electronicIdCheckFailure: {
+    id: 'mac.application:electronicIdCheckFailure',
     defaultMessage:
-      'Rafræn skilríki ekki til staðar fyrir símanúmer og kennitölu',
-    description: 'phone',
+      'Rafræn skilríki ekki til staðar. Vinsamlegast hafðu samband við Auðkenni.',
+    description: 'Electronic ID not found',
   },
   email: {
     id: 'mac.application:email',

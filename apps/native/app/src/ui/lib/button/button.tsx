@@ -18,6 +18,7 @@ interface ButtonBaseProps extends TouchableHighlightProps {
   textProps?: TextProps
   iconStyle?: ImageStyle
   ellipsis?: boolean
+  compactPadding?: boolean
   iconPosition?: 'start' | 'end'
 }
 
@@ -42,14 +43,16 @@ const Host = styled.TouchableHighlight<HostProps>`
   align-items: center;
   column-gap: ${({ theme }) => theme.spacing.p1}px;
   padding: ${(props) =>
-    `${props.theme.spacing.p3}px ${props.theme.spacing.p4}px`};
+    props.compactPadding
+      ? `${props.theme.spacing.p1}px ${props.theme.spacing.p2}px`
+      : `${props.theme.spacing.p3}px ${props.theme.spacing.p4}px`};
   background-color: ${dynamicColor<HostProps>(
     ({ theme, disabled, isTransparent, isOutlined, isUtilityButton }) =>
       isTransparent || isOutlined || isUtilityButton
         ? 'transparent'
         : {
             dark: disabled ? theme.shades.dark.shade200 : theme.color.blue400,
-            light: disabled ? theme.color.dark200 : theme.color.blue400,
+            light: disabled ? theme.color.blue300 : theme.color.blue400,
           },
   )};
 
@@ -64,7 +67,7 @@ const Host = styled.TouchableHighlight<HostProps>`
           }
         : {
             dark: disabled ? theme.shades.dark.shade200 : theme.color.blue400,
-            light: disabled ? theme.color.dark200 : theme.color.blue400,
+            light: disabled ? theme.color.blue300 : theme.color.blue400,
           },
   )};
 
@@ -120,6 +123,7 @@ export function Button({
   iconStyle,
   ellipsis,
   iconPosition = 'end',
+  compactPadding = false,
   ...rest
 }: ButtonProps) {
   const theme = useTheme()
@@ -145,6 +149,7 @@ export function Button({
       isTransparent={isTransparent}
       isOutlined={isOutlined}
       isUtilityButton={isUtilityButton}
+      compactPadding={compactPadding}
       {...rest}
     >
       <>

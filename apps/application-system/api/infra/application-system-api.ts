@@ -125,7 +125,16 @@ export const workerSetup = (services: {
           }application-system-api.application-system.svc.cluster.local`,
       ),
     })
-    .xroad(Base, Client, Payment, Inna, EHIC, WorkMachines)
+    .xroad(
+      Base,
+      Client,
+      Payment,
+      Inna,
+      EHIC,
+      WorkMachines,
+      NationalRegistryB2C,
+      RskCompanyInfo,
+    )
     .secrets({
       IDENTITY_SERVER_CLIENT_SECRET:
         '/k8s/application-system/api/IDENTITY_SERVER_CLIENT_SECRET',
@@ -143,6 +152,8 @@ export const workerSetup = (services: {
       ARK_BASE_URL: '/k8s/application-system-api/ARK_BASE_URL',
       DOMSYSLA_PASSWORD: '/k8s/application-system-api/DOMSYSLA_PASSWORD',
       DOMSYSLA_USERNAME: '/k8s/application-system-api/DOMSYSLA_USERNAME',
+      NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
+        '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
     })
     .args('main.cjs', '--job', 'worker')
     .command('node')
@@ -337,6 +348,17 @@ export const serviceSetup = (services: {
         staging: 'e2411f5c-436a-4c17-aa14-eab9c225bc06',
         prod: '44055958-a462-4ba8-bbd2-5bfedbbd18c0',
       },
+      ZENDESK_CONTACT_FORM_SUBDOMAIN: {
+        dev: 'digitaliceland',
+        staging: 'digitaliceland',
+        prod: 'digitaliceland',
+      },
+      HH_COURSES_ZENDESK_SUBJECT: {
+        dev: '[TEST] Skráning á námskeið - Heilsugæsla höfuðborgarsvæðisins',
+        staging:
+          '[TEST] Skráning á námskeið - Heilsugæsla höfuðborgarsvæðisins',
+        prod: 'Skráning á námskeið - Heilsugæsla höfuðborgarsvæðisins',
+      },
     })
     .xroad(
       Base,
@@ -427,6 +449,8 @@ export const serviceSetup = (services: {
         '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
       HMS_CONTRACTS_AUTH_CLIENT_SECRET:
         '/k8s/application-system-api/HMS_CONTRACTS_AUTH_CLIENT_SECRET',
+      ZENDESK_CONTACT_FORM_EMAIL: '/k8s/api/ZENDESK_CONTACT_FORM_EMAIL',
+      ZENDESK_CONTACT_FORM_TOKEN: '/k8s/api/ZENDESK_CONTACT_FORM_TOKEN',
     })
     .db()
     .migrations()

@@ -24,7 +24,42 @@ export const mapReferenceLink = (link?: LinkType): Link | null => {
   const contentTypeId = link.sys.contentType.sys.id
 
   if (contentTypeId === 'linkedPage') {
-    return generateOrganizationSubpageLinkFromLinkedPage(link as ILinkedPage)
+    const linkedPage = link as ILinkedPage
+    const pageType = linkedPage?.fields?.page?.sys?.contentType?.sys?.id
+    const locale = linkedPage?.sys?.locale ?? 'is-IS'
+
+    switch (pageType) {
+      case 'article': {
+        const slug = linkedPage?.fields?.page?.fields?.slug ?? ''
+        const title = (linkedPage?.fields?.page?.fields?.title ?? '').trim()
+        if (!slug || !title) return null
+        return {
+          date: '',
+          id: '',
+          text: title,
+          url: `/${locale === 'en' ? 'en/' : ''}${slug}`,
+          labels: [],
+        }
+      }
+      case 'articleCategory': {
+        const slug = linkedPage?.fields?.page?.fields?.slug ?? ''
+        const title = (linkedPage?.fields?.page?.fields?.title ?? '').trim()
+        if (!slug || !title) return null
+        return {
+          date: '',
+          id: '',
+          text: title,
+          url: `/${locale === 'en' ? 'en/category' : 'flokkur'}/${slug}`,
+          labels: [],
+        }
+      }
+      case 'news':
+        return null
+      default:
+        return generateOrganizationSubpageLinkFromLinkedPage(
+          link as ILinkedPage,
+        )
+    }
   }
 
   if (contentTypeId === 'link') {

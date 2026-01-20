@@ -1,10 +1,11 @@
 import { gql } from '@apollo/client'
-import { LanguageFields } from './languageFields'
+import { CompletedSectionInfoFragment } from './completedSectionInfo'
+import { DependencyFragment } from './dependency'
 import { FieldFragment } from './field'
+import { FormApplicantFragment } from './formApplicant'
+import { LanguageFields } from './languageFields'
 import { ScreenFragment } from './screen'
 import { SectionFragment } from './section'
-import { DependencyFragment } from './dependency'
-import { FormApplicantFragment } from './formApplicant'
 
 export const FormFragment = gql`
   fragment Form on FormSystemForm {
@@ -23,16 +24,17 @@ export const FormFragment = gql`
     invalidationDate
     created
     modified
+    submissionServiceUrl
+    validationServiceUrl
     isTranslated
     hasPayment
     beenPublished
-    applicationDaysToRemove
+    daysUntilApplicationPrune
     derivedFrom
     allowProceedOnValidationFail
     hasSummaryScreen
-    isZendeskEnabled
-    completedMessage {
-      ...LanguageFields
+    completedSectionInfo {
+      ...CompletedSectionInfo
     }
     certificationTypes {
       id
@@ -54,7 +56,6 @@ export const FormFragment = gql`
       ...Dependency
     }
     status
-    urls
   }
   ${LanguageFields}
   ${FormApplicantFragment}
@@ -62,4 +63,5 @@ export const FormFragment = gql`
   ${ScreenFragment}
   ${FieldFragment}
   ${DependencyFragment}
+  ${CompletedSectionInfoFragment}
 `

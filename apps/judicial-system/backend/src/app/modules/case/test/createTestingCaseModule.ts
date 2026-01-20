@@ -18,6 +18,7 @@ import { MessageService } from '@island.is/judicial-system/message'
 
 import { AwsS3Service } from '../../aws-s3'
 import { CourtService } from '../../court'
+import { CourtSessionService } from '../../court-session'
 import { CivilClaimantService } from '../../defendant'
 import { DefendantService } from '../../defendant'
 import { EventService } from '../../event'
@@ -26,11 +27,12 @@ import { FileService } from '../../file'
 import { IndictmentCountService } from '../../indictment-count'
 import { PoliceService } from '../../police'
 import {
-  CaseArchive,
+  CaseArchiveRepositoryService,
   CaseRepositoryService,
   CaseString,
   DateLog,
 } from '../../repository'
+import { SubpoenaService } from '../../subpoena'
 import { UserService } from '../../user'
 import { caseModuleConfig } from '../case.config'
 import { CaseController } from '../case.controller'
@@ -51,8 +53,11 @@ jest.mock('../../file/file.service')
 jest.mock('../../aws-s3/awsS3.service')
 jest.mock('../../defendant/defendant.service')
 jest.mock('../../defendant/civilClaimant.service')
+jest.mock('../../subpoena/subpoena.service')
 jest.mock('../../indictment-count/indictmentCount.service')
 jest.mock('../../repository/services/caseRepository.service')
+jest.mock('../../repository/services/caseArchiveRepository.service')
+jest.mock('../../court-session/courtSession.service')
 
 export const createTestingCaseModule = async () => {
   const caseModule = await Test.createTestingModule({
@@ -80,7 +85,10 @@ export const createTestingCaseModule = async () => {
       DefendantService,
       CivilClaimantService,
       IndictmentCountService,
+      SubpoenaService,
       CaseRepositoryService,
+      CaseArchiveRepositoryService,
+      CourtSessionService,
       {
         provide: IntlService,
         useValue: {
@@ -102,10 +110,6 @@ export const createTestingCaseModule = async () => {
         },
       },
       { provide: Sequelize, useValue: { transaction: jest.fn() } },
-      {
-        provide: getModelToken(CaseArchive),
-        useValue: { create: jest.fn() },
-      },
       {
         provide: getModelToken(DateLog),
         useValue: {
@@ -150,6 +154,8 @@ export const createTestingCaseModule = async () => {
 
   const defendantService = caseModule.get<DefendantService>(DefendantService)
 
+  const subpoenaService = caseModule.get<SubpoenaService>(SubpoenaService)
+
   const civilClaimantService =
     caseModule.get<CivilClaimantService>(CivilClaimantService)
 
@@ -161,19 +167,21 @@ export const createTestingCaseModule = async () => {
     CaseRepositoryService,
   )
 
+  const caseArchiveRepositoryService =
+    caseModule.get<CaseArchiveRepositoryService>(CaseArchiveRepositoryService)
+
   const logger = caseModule.get<Logger>(LOGGER_PROVIDER)
 
   const sequelize = caseModule.get<Sequelize>(Sequelize)
-
-  const caseArchiveModel = caseModule.get<typeof CaseArchive>(
-    getModelToken(CaseArchive),
-  )
 
   const dateLogModel = caseModule.get<typeof DateLog>(getModelToken(DateLog))
 
   const caseStringModel = caseModule.get<typeof CaseString>(
     getModelToken(CaseString),
   )
+
+  const courtSessionService =
+    caseModule.get<CourtSessionService>(CourtSessionService)
 
   const caseConfig = caseModule.get<ConfigType<typeof caseModuleConfig>>(
     caseModuleConfig.KEY,
@@ -208,12 +216,14 @@ export const createTestingCaseModule = async () => {
     fileService,
     awsS3Service,
     defendantService,
+    subpoenaService,
     civilClaimantService,
     indictmentCountService,
     caseRepositoryService,
+    caseArchiveRepositoryService,
+    courtSessionService,
     logger,
     sequelize,
-    caseArchiveModel,
     dateLogModel,
     caseStringModel,
     caseConfig,

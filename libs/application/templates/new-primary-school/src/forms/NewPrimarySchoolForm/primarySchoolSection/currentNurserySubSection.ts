@@ -1,18 +1,22 @@
 import {
+  buildAlertMessageField,
   buildAsyncSelectField,
   buildMultiField,
+  buildRadioField,
   buildSubSection,
   coreErrorMessages,
+  NO,
+  YES,
 } from '@island.is/application/core'
-import { friggSchoolsByMunicipalityQuery } from '../../../graphql/queries'
+import { friggOrganizationsByTypeQuery } from '../../../graphql/queries'
 import { ApplicationType } from '../../../utils/constants'
-import { newPrimarySchoolMessages } from '../../../lib/messages'
+import { primarySchoolMessages, sharedMessages } from '../../../lib/messages'
 import { getApplicationAnswers } from '../../../utils/newPrimarySchoolUtils'
-import { FriggSchoolsByMunicipalityQuery } from '../../../types/schema'
+import { Query, OrganizationTypeEnum } from '@island.is/api/schema'
 
 export const currentNurserySubSection = buildSubSection({
   id: 'currentNurserySubSection',
-  title: newPrimarySchoolMessages.primarySchool.currentNurserySubSectionTitle,
+  title: primarySchoolMessages.currentNursery.subSectionTitle,
   condition: (answers) => {
     // Only display section if application type is "Enrollment in primary school"
     const { applicationType } = getApplicationAnswers(answers)
@@ -21,57 +25,106 @@ export const currentNurserySubSection = buildSubSection({
   children: [
     buildMultiField({
       id: 'currentNursery',
-      title:
-        newPrimarySchoolMessages.primarySchool.currentNurserySubSectionTitle,
+      title: primarySchoolMessages.currentNursery.subSectionTitle,
+      description: primarySchoolMessages.currentNursery.description,
       children: [
+        buildRadioField({
+          id: 'currentNursery.hasCurrentNursery',
+          title: primarySchoolMessages.currentNursery.hasCurrentNursery,
+          width: 'half',
+          required: true,
+          space: 0,
+          options: [
+            {
+              label: sharedMessages.yes,
+              value: YES,
+            },
+            {
+              label: sharedMessages.no,
+              value: NO,
+            },
+          ],
+        }),
         buildAsyncSelectField({
           id: 'currentNursery.municipality',
-          title: newPrimarySchoolMessages.shared.municipality,
-          placeholder: newPrimarySchoolMessages.shared.municipalityPlaceholder,
+          title: sharedMessages.municipality,
+          placeholder: sharedMessages.municipalityPlaceholder,
           loadingError: coreErrorMessages.failedDataProvider,
           dataTestId: 'current-nursery-municipality',
+          marginTop: 2,
           loadOptions: async ({ apolloClient }) => {
-            const { data } =
-              await apolloClient.query<FriggSchoolsByMunicipalityQuery>({
-                query: friggSchoolsByMunicipalityQuery,
-              })
+            const { data } = await apolloClient.query<Query>({
+              query: friggOrganizationsByTypeQuery,
+              variables: {
+                input: {
+                  type: OrganizationTypeEnum.Municipality,
+                },
+              },
+            })
 
             return (
-              data?.friggSchoolsByMunicipality?.map(({ name }) => ({
-                value: name,
-                label: name,
-              })) ?? []
+              data?.friggOrganizationsByType
+                ?.map(({ unitId, name }) => ({
+                  value: unitId || '',
+                  label: name,
+                }))
+                .sort((a, b) => a.label.localeCompare(b.label)) ?? []
             )
+          },
+          condition: (answers) => {
+            const { hasCurrentNursery } = getApplicationAnswers(answers)
+
+            return hasCurrentNursery === YES
           },
         }),
         buildAsyncSelectField({
           id: 'currentNursery.nursery',
-          title: newPrimarySchoolMessages.primarySchool.nursery,
-          placeholder:
-            newPrimarySchoolMessages.primarySchool.nurseryPlaceholder,
+          title: primarySchoolMessages.currentNursery.nursery,
+          placeholder: primarySchoolMessages.currentNursery.nurseryPlaceholder,
           loadingError: coreErrorMessages.failedDataProvider,
           dataTestId: 'current-nursery-nursery',
           updateOnSelect: ['currentNursery.municipality'],
           loadOptions: async ({ apolloClient, selectedValues }) => {
-            const { data } =
-              await apolloClient.query<FriggSchoolsByMunicipalityQuery>({
-                query: friggSchoolsByMunicipalityQuery,
-              })
+            const municipalityCode = selectedValues?.[0]
+
+            const { data } = await apolloClient.query<Query>({
+              query: friggOrganizationsByTypeQuery,
+              variables: {
+                input: {
+                  type: OrganizationTypeEnum.ChildCare,
+                  municipalityCode: municipalityCode,
+                },
+              },
+            })
 
             return (
-              data?.friggSchoolsByMunicipality
-                ?.find(({ name }) => name === selectedValues?.[0])
-                ?.managing?.map((nursery) => ({
-                  value: nursery.id,
-                  label: nursery.name,
-                })) ?? []
+              data?.friggOrganizationsByType
+                ?.map(({ id, name }) => ({
+                  value: id,
+                  label: name,
+                }))
+                .sort((a, b) => a.label.localeCompare(b.label)) ?? []
             )
           },
           condition: (answers) => {
-            const { currentNurseryMunicipality } =
+            const { currentNurseryMunicipality, hasCurrentNursery } =
               getApplicationAnswers(answers)
 
-            return !!currentNurseryMunicipality
+            return !!currentNurseryMunicipality && hasCurrentNursery === YES
+          },
+        }),
+        buildAlertMessageField({
+          id: 'currentNursery.nurseryAlertMessage',
+          title: sharedMessages.alertTitle,
+          message: primarySchoolMessages.currentNursery.alertMessage,
+          doesNotRequireAnswer: true,
+          alertType: 'warning',
+          marginTop: 4,
+          condition: (answers) => {
+            const { currentNursery, hasCurrentNursery } =
+              getApplicationAnswers(answers)
+
+            return !!currentNursery && hasCurrentNursery === YES
           },
         }),
       ],

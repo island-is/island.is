@@ -21,22 +21,17 @@ import { signatureCollectionNavigation } from '../../lib/navigation'
 import { useLoaderData, useNavigate, useRevalidator } from 'react-router-dom'
 import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
 import { SignatureCollectionPaths } from '../../lib/paths'
-import FindSignature from '../../shared-components/findSignature'
 import EmptyState from '../../shared-components/emptyState'
 import StartAreaCollection from './startCollection'
 import { useStartCollectionMutation } from './startCollection/startCollection.generated'
 import sortBy from 'lodash/sortBy'
+import { CollectionStatus } from '@island.is/api/schema'
 
-const AllMunicipalities = ({
-  isProcurationHolder,
-}: {
-  isProcurationHolder: boolean
-}) => {
+const AllMunicipalities = ({ isMunicipality }: { isMunicipality: boolean }) => {
   const { collection, allLists } = useLoaderData() as ListsLoaderReturn
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
   const { revalidate } = useRevalidator()
-
   const [startCollectionMutation] = useStartCollectionMutation()
 
   const onStartCollection = (areaId: string) => {
@@ -47,15 +42,15 @@ const AllMunicipalities = ({
         },
       },
       onCompleted: (response) => {
-        if (
-          response.signatureCollectionAdminStartMunicipalityCollection.success
-        ) {
+        const { success, reasons } =
+          response.signatureCollectionAdminStartMunicipalityCollection
+
+        if (success) {
           toast.success(formatMessage(m.openMunicipalCollectionSuccess))
           revalidate()
         } else {
           toast.error(
-            response.signatureCollectionAdminStartMunicipalityCollection
-              .reasons?.[0] ?? formatMessage(m.openMunicipalCollectionError),
+            reasons?.[0] ?? formatMessage(m.openMunicipalCollectionError),
           )
         }
       },
@@ -94,23 +89,20 @@ const AllMunicipalities = ({
             imgPosition="right"
             imgHiddenBelow="sm"
             img={nationalRegistryLogo}
-            marginBottom={4}
+            marginBottom={3}
           />
           <Divider />
           <Box marginTop={9} />
           {collection.areas.length > 0 ? (
-            <Box>
-              <FindSignature collectionId={collection.id} />
-              {collection.areas.length > 1 && (
-                <Box display="flex" justifyContent="flexEnd">
-                  <Text marginBottom={2} variant="eyebrow">
-                    {formatMessage(m.totalListResults) +
-                      ': ' +
-                      collection.areas.length}
-                  </Text>
-                </Box>
-              )}
-            </Box>
+            collection.areas.length > 1 && (
+              <Box display="flex" justifyContent="flexEnd">
+                <Text marginBottom={2} variant="eyebrow">
+                  {`${formatMessage(m.totalMunicipalities)}: ${
+                    collection.areas.length
+                  }`}
+                </Text>
+              </Box>
+            )
           ) : (
             <EmptyState
               title={formatMessage(m.noLists)}
@@ -119,7 +111,7 @@ const AllMunicipalities = ({
           )}
           {/* For municipalities to start their collection if its not already active.
               Note: municipalities only see their own area. */}
-          {isProcurationHolder &&
+          {isMunicipality &&
             collection.areas?.length > 0 &&
             !collection.areas[0]?.isActive && (
               <StartAreaCollection areaId={collection.areas[0]?.id} />
@@ -128,76 +120,79 @@ const AllMunicipalities = ({
             {sortBy(collection.areas, [
               (area) => !area.isActive, // active first
               'name', // then alphabetically
-            ]).map((area) => {
-              return (
-                <ActionCard
-                  key={area.id}
-                  heading={area.name}
-                  eyebrow={
-                    formatMessage(m.totalListsPerMunicipality) +
-                    allLists.filter((list) => list.area.id === area.id).length
-                  }
-                  cta={{
-                    label: formatMessage(m.viewMunicipality),
-                    variant: 'text',
-                    disabled: !area.isActive,
-                    onClick: () => {
-                      navigate(
-                        SignatureCollectionPaths.SingleMunicipality.replace(
-                          ':municipality',
-                          area.name,
+            ]).map((area) => (
+              <ActionCard
+                key={area.id}
+                heading={area.name}
+                eyebrow={`${formatMessage(m.totalListsPerMunicipality)}: ${
+                  allLists.filter((list) => list.area.id === area.id).length
+                }`}
+                cta={{
+                  label: formatMessage(m.viewMunicipality),
+                  variant: 'text',
+                  disabled: !area.isActive,
+                  onClick: () => {
+                    navigate(
+                      SignatureCollectionPaths.SingleMunicipality.replace(
+                        ':municipality',
+                        area.name,
+                      ),
+                    )
+                  },
+                }}
+                tag={
+                  // This action is only available for the Admins (LKS and ÞÍ)
+                  !isMunicipality && !area.isActive
+                    ? {
+                        label: 'Open collection',
+                        renderTag: () => (
+                          <DialogPrompt
+                            baseId="open_collection_dialog"
+                            title={
+                              formatMessage(m.openMunicipalCollection) +
+                              ' - ' +
+                              area.name
+                            }
+                            description={formatMessage(
+                              m.openMunicipalCollectionDescription,
+                            )}
+                            ariaLabel="open_collection"
+                            disclosureElement={
+                              <Tag outlined variant="blue">
+                                <Box display="flex" alignItems="center">
+                                  <Icon
+                                    icon="lockOpened"
+                                    size="small"
+                                    type="outline"
+                                  />
+                                </Box>
+                              </Tag>
+                            }
+                            onConfirm={() => {
+                              onStartCollection(area.id)
+                            }}
+                            buttonTextConfirm={formatMessage(
+                              m.confirmOpenMunicipalCollectionButton,
+                            )}
+                          />
                         ),
-                      )
-                    },
-                  }}
-                  tag={
-                    // This action is only available for the Admins (LKS and ÞÍ)
-                    !isProcurationHolder && !area.isActive
-                      ? {
-                          label: 'Open collection',
-                          renderTag: () => (
-                            <DialogPrompt
-                              baseId="open_collection_dialog"
-                              title={
-                                formatMessage(m.openMunicipalCollection) +
-                                ' - ' +
-                                area.name
-                              }
-                              description={formatMessage(
-                                m.openMunicipalCollectionDescription,
-                              )}
-                              ariaLabel="open_collection"
-                              disclosureElement={
-                                <Tag outlined variant="blue">
-                                  <Box display="flex" alignItems="center">
-                                    <Icon
-                                      icon="lockOpened"
-                                      size="small"
-                                      type="outline"
-                                    />
-                                  </Box>
-                                </Tag>
-                              }
-                              onConfirm={() => {
-                                onStartCollection(area.id)
-                              }}
-                              buttonTextConfirm={formatMessage(
-                                m.confirmOpenMunicipalCollectionButton,
-                              )}
-                            />
-                          ),
-                        }
-                      : area.isActive
-                      ? {
-                          label: formatMessage(m.municipalityCollectionOpen),
-                          variant: 'mint',
-                          outlined: false,
-                        }
-                      : undefined
-                  }
-                />
-              )
-            })}
+                      }
+                    : area.collectionStatus === CollectionStatus.InReview
+                    ? {
+                        label: formatMessage(m.confirmListReviewed),
+                        variant: 'mint',
+                        outlined: true,
+                      }
+                    : area.isActive
+                    ? {
+                        label: formatMessage(m.municipalityCollectionOpen),
+                        variant: 'mint',
+                        outlined: false,
+                      }
+                    : undefined
+                }
+              />
+            ))}
           </Stack>
         </GridColumn>
       </GridRow>

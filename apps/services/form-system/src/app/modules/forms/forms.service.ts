@@ -1,59 +1,65 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import {
+  BadRequestException,
+  ConflictException,
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import defaults from 'lodash/defaults'
 import pick from 'lodash/pick'
 import zipObject from 'lodash/zipObject'
 
-import { SectionTypes, UrlMethods } from '@island.is/form-system/shared'
-import { ScreenDto } from '../screens/models/dto/screen.dto'
-import { Screen } from '../screens/models/screen.model'
-import { FieldDto } from '../fields/models/dto/field.dto'
-import { Field } from '../fields/models/field.model'
-import { Organization } from '../organizations/models/organization.model'
-import { SectionDto } from '../sections/models/dto/section.dto'
-import { Section } from '../sections/models/section.model'
-import { FormDto } from './models/dto/form.dto'
-import { FormResponseDto } from './models/dto/form.response.dto'
-import { Form } from './models/form.model'
-import { ListItem } from '../listItems/models/listItem.model'
-import { UpdateFormDto } from './models/dto/updateForm.dto'
+import { User } from '@island.is/auth-nest-tools'
 import {
-  UpdateFormResponse,
+  FormStatus,
+  SectionTypes,
   UpdateFormError,
+  UpdateFormResponse,
+  UpdateFormStatusDto,
 } from '@island.is/form-system/shared'
-import {
-  CertificationType,
-  CertificationTypes,
-} from '../../dataTypes/certificationTypes/certificationType.model'
-import { FormCertificationType } from '../formCertificationTypes/models/formCertificationType.model'
+import { randomUUID } from 'crypto'
+import { jwtDecode } from 'jwt-decode'
+import { Op, UniqueConstraintError } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
+import { v4 as uuidV4 } from 'uuid'
 import {
   ApplicantType,
   ApplicantTypes,
 } from '../../dataTypes/applicantTypes/applicantType.model'
-import { FieldSettings } from '../../dataTypes/fieldSettings/fieldSettings.model'
+import {
+  CertificationType,
+  CertificationTypes,
+} from '../../dataTypes/certificationTypes/certificationType.model'
+import { CompletedSectionInfo } from '../../dataTypes/completedSectionInfo.model'
 import { FieldSettingsFactory } from '../../dataTypes/fieldSettings/fieldSettings.factory'
+import { FieldSettings } from '../../dataTypes/fieldSettings/fieldSettings.model'
 import {
   FieldType,
   FieldTypes,
 } from '../../dataTypes/fieldTypes/fieldType.model'
+import { ListType, ListTypes } from '../../dataTypes/listTypes/listType.model'
+import { Option } from '../../dataTypes/option.model'
 import { ValueTypeFactory } from '../../dataTypes/valueTypes/valueType.factory'
 import { ValueType } from '../../dataTypes/valueTypes/valueType.model'
-import { randomUUID } from 'crypto'
-import { ListType, ListTypes } from '../../dataTypes/listTypes/listType.model'
-import { FormCertificationTypeDto } from '../formCertificationTypes/models/dto/formCertificationType.dto'
-import { OrganizationUrlDto } from '../organizationUrls/models/dto/organizationUrl.dto'
-import { OrganizationUrl } from '../organizationUrls/models/organizationUrl.model'
-import { FormUrl } from '../formUrls/models/formUrl.model'
-import { FormStatus } from '@island.is/form-system/shared'
-import { Option } from '../../dataTypes/option.model'
-import { Op, UniqueConstraintError } from 'sequelize'
-import { v4 as uuidV4 } from 'uuid'
-import { Sequelize } from 'sequelize-typescript'
-import { User } from '@island.is/auth-nest-tools'
-import { jwtDecode } from 'jwt-decode'
-import { OrganizationPermission } from '../organizationPermissions/models/organizationPermission.model'
-import { UrlTypes } from '@island.is/form-system/enums'
 import { Application } from '../applications/models/application.model'
+import { FieldDto } from '../fields/models/dto/field.dto'
+import { Field } from '../fields/models/field.model'
+import { FormCertificationTypeDto } from '../formCertificationTypes/models/dto/formCertificationType.dto'
+import { FormCertificationType } from '../formCertificationTypes/models/formCertificationType.model'
+import { ListItem } from '../listItems/models/listItem.model'
+import { OrganizationPermission } from '../organizationPermissions/models/organizationPermission.model'
+import { Organization } from '../organizations/models/organization.model'
+import { ScreenDto } from '../screens/models/dto/screen.dto'
+import { Screen } from '../screens/models/screen.model'
+import { SectionDto } from '../sections/models/dto/section.dto'
+import { Section } from '../sections/models/section.model'
+import { FormDto } from './models/dto/form.dto'
+import { FormResponseDto } from './models/dto/form.response.dto'
+import { UpdateFormDto } from './models/dto/updateForm.dto'
+import { Form } from './models/form.model'
+import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 
 @Injectable()
 export class FormsService {
@@ -72,13 +78,11 @@ export class FormsService {
     private readonly listItemModel: typeof ListItem,
     @InjectModel(Organization)
     private readonly organizationModel: typeof Organization,
-    @InjectModel(OrganizationUrl)
-    private readonly organizationUrlModel: typeof OrganizationUrl,
     @InjectModel(FormCertificationType)
     private readonly formCertificationTypeModel: typeof FormCertificationType,
-    @InjectModel(FormUrl)
-    private readonly formUrlModel: typeof FormUrl,
     private readonly sequelize: Sequelize,
+    @Inject(LOGGER_PROVIDER)
+    private readonly logger: Logger,
   ) {}
 
   async findAll(user: User, nationalId: string): Promise<FormResponseDto> {
@@ -88,7 +92,6 @@ export class FormsService {
 
     // the loader is not sending the nationalId
     if (nationalId === '0') {
-      console.log('changing nationalId')
       nationalId = token.nationalId
     }
 
@@ -99,22 +102,15 @@ export class FormsService {
     if (!organization) {
       organization = await this.organizationModel.create({
         nationalId: nationalId,
-        name: { is: '', en: '' },
       } as Organization)
     }
 
-    // If Admin is logged in for SÍ and chooses a different organization we don't want to change the name
-    // if Admin is logged in then the token.nationalId is always the nationalId of the admin organization
-    if (nationalId === token.nationalId) {
-      organization.name = {
-        is: token.name ?? 'unknown',
-        en: organization.name.en,
-      }
-      await organization.save()
-    }
-
     const forms = await this.formModel.findAll({
-      where: { organizationId: organization.id },
+      where: {
+        organizationId: organization.id,
+        status: { [Op.ne]: FormStatus.ARCHIVED },
+      },
+      order: [['modified', 'DESC']],
     })
 
     const keys = [
@@ -126,21 +122,36 @@ export class FormsService {
       'invalidationDate',
       'created',
       'modified',
+      'submissionServiceUrl',
+      'validationServiceUrl',
       'isTranslated',
       'hasPayment',
       'beenPublished',
       'status',
-      'applicationDaysToRemove',
+      'daysUntilApplicationPrune',
       'allowProceedOnValidationFail',
       'hasSummaryScreen',
+      'completedSectionInfo',
     ]
 
     const formResponseDto: FormResponseDto = {
       forms: forms.map((form) => {
-        return defaults(
+        const dto = defaults(
           pick(form, keys),
           zipObject(keys, Array(keys.length).fill(null)),
         ) as FormDto
+
+        if (dto.completedSectionInfo) {
+          const cs = dto.completedSectionInfo
+
+          cs.title ??= { is: '', en: '' }
+          cs.confirmationHeader ??= { is: '', en: '' }
+          cs.confirmationText ??= { is: '', en: '' }
+
+          cs.additionalInfo ??= []
+        }
+
+        return dto
       }),
       organizationNationalIds: await this.organizationModel
         .findAll({
@@ -149,14 +160,14 @@ export class FormsService {
         .then((organizations) => organizations.map((org) => org.nationalId)),
       organizations: await this.organizationModel
         .findAll({
-          attributes: ['nationalId', 'name'],
+          attributes: ['nationalId'],
         })
         .then((organizations) =>
           organizations.map(
             (org) =>
               ({
                 value: org.nationalId,
-                label: org.name.is,
+                label: '',
                 isSelected: org.nationalId === nationalId,
               } as Option),
           ),
@@ -195,10 +206,19 @@ export class FormsService {
       )
     }
 
-    const newForm: Form = await this.formModel.create({
+    const completedSectionInfo = {
+      title: { is: '', en: '' },
+      confirmationHeader: { is: '', en: '' },
+      confirmationText: { is: '', en: '' },
+      additionalInfo: [],
+    } as CompletedSectionInfo
+
+    const newForm = await this.formModel.create({
       organizationId: organization.id,
       organizationNationalId: organizationNationalId,
       status: FormStatus.IN_DEVELOPMENT,
+      draftTotalSteps: 3,
+      completedSectionInfo,
     } as Form)
 
     await this.createFormTemplate(newForm)
@@ -219,90 +239,35 @@ export class FormsService {
     return formResponse
   }
 
-  async changePublished(id: string): Promise<FormResponseDto> {
-    const form = await this.formModel.findOne({
-      where: { status: FormStatus.PUBLISHED_BEING_CHANGED, derivedFrom: id },
-    })
-
-    if (form) {
-      throw new Error('Form is already being changed')
-    }
-
-    const newForm = await this.copyForm(id, true)
-
-    const formResponse = await this.buildFormResponse(newForm)
-
-    if (!formResponse) {
-      throw new Error('Error generating form response.')
-    }
-
-    return formResponse
-  }
-
-  async publish(id: string): Promise<void> {
-    const form = await this.formModel.findByPk(id)
-
-    if (!form) {
-      throw new NotFoundException(`Form with id '${id}' not found`)
-    }
-
-    if (form.status === FormStatus.PUBLISHED) {
-      return
-    }
-
-    const existingPublishedForm = await this.formModel.findOne({
-      where: {
-        slug: form.slug,
-        status: FormStatus.PUBLISHED,
-        id: { [Op.ne]: form.derivedFrom },
-      },
-    })
-
-    if (existingPublishedForm) {
-      throw new Error(
-        `A published form with the slug '${form.slug}' already exists`,
-      )
-    }
-
-    form.status = FormStatus.PUBLISHED
-    form.beenPublished = true
-
-    if (
-      form.status === FormStatus.PUBLISHED_BEING_CHANGED &&
-      form.derivedFrom
-    ) {
-      const derivedFromForm = await this.formModel.findByPk(form.derivedFrom)
-
-      if (!derivedFromForm) {
-        throw new NotFoundException(`Form with id '${id}' not found`)
-      }
-
-      derivedFromForm.status = FormStatus.ARCHIVED
-
-      // TODO: When form is archived we should maybe delete applications that are in progress
-
-      await this.sequelize.transaction(async (transaction) => {
-        await form.save({ transaction })
-        await derivedFromForm.save({ transaction })
-      })
-    } else {
-      await form.save()
-    }
-
-    // return this.findAll(user, user.nationalId)
-  }
-
   async update(
     id: string,
     updateFormDto: UpdateFormDto,
   ): Promise<UpdateFormResponse> {
     const form = await this.formModel.findByPk(id)
-
     if (!form) {
       throw new NotFoundException(`Form with id '${id}' not found`)
     }
 
+    const originalHasPayment = form.hasPayment
+    const originalHasSummary = form.hasSummaryScreen
+
     Object.assign(form, updateFormDto)
+
+    if (originalHasPayment !== form.hasPayment) {
+      if (originalHasPayment) {
+        form.draftTotalSteps--
+      } else {
+        form.draftTotalSteps++
+      }
+    }
+
+    if (originalHasSummary !== form.hasSummaryScreen) {
+      if (originalHasSummary) {
+        form.draftTotalSteps--
+      } else {
+        form.draftTotalSteps++
+      }
+    }
 
     const response = new UpdateFormResponse()
 
@@ -310,14 +275,14 @@ export class FormsService {
       await form.save()
     } catch (error) {
       if (error instanceof UniqueConstraintError) {
+        const slug = updateFormDto.slug
         response.updateSuccess = false
-        response.errors = error.errors.map(
-          (err) =>
-            ({
-              field: err.path,
-              message: err.message,
-            } as UpdateFormError),
-        )
+        response.errors = [
+          {
+            field: 'slug',
+            message: `slug '${slug}' er þegar í notkun. Vinsamlegast veldu annað slug.`,
+          } as UpdateFormError,
+        ]
       } else {
         throw error
       }
@@ -326,29 +291,192 @@ export class FormsService {
     return response
   }
 
-  async delete(id: string): Promise<void> {
+  async copy(id: string): Promise<FormResponseDto> {
+    const form = await this.findById(id)
+
+    if (!form) {
+      throw new NotFoundException(`Form with id '${id}' not found`)
+    }
+
+    const copyForm = await this.copyForm(id, false, `${form.slug}-afrit`)
+    const formResponse = await this.buildFormResponse(copyForm)
+
+    if (!formResponse) {
+      throw new Error('Error generating form response')
+    }
+
+    return formResponse
+  }
+
+  async updateStatus(
+    id: string,
+    updateFormStatusDto: UpdateFormStatusDto,
+  ): Promise<FormResponseDto> {
     const form = await this.formModel.findByPk(id)
 
     if (!form) {
-      throw new NotFoundException(`Form with id '${id}' not found.`)
+      throw new NotFoundException(`Form with id '${id}' not found`)
     }
 
-    const hasApplications =
+    const { newStatus } = updateFormStatusDto
+    const currentStatus = form.status
+
+    switch (currentStatus) {
+      case FormStatus.IN_DEVELOPMENT:
+        if (newStatus === FormStatus.PUBLISHED) {
+          return await this.publishFormInDevelopment(id, form)
+        } else if (newStatus === FormStatus.ARCHIVED) {
+          return await this.deleteForm(id, form)
+        }
+        break
+      case FormStatus.PUBLISHED:
+        if (newStatus === FormStatus.ARCHIVED) {
+          return await this.archiveForm(id, form)
+        } else if (newStatus === FormStatus.PUBLISHED_BEING_CHANGED) {
+          return await this.changePublishedForm(id, form)
+        }
+        break
+      case FormStatus.PUBLISHED_BEING_CHANGED:
+        if (newStatus === FormStatus.PUBLISHED) {
+          return await this.publishFormBeingChanged(id, form)
+        } else if (newStatus === FormStatus.ARCHIVED) {
+          return await this.deleteForm(id, form)
+        }
+        break
+    }
+    throw new BadRequestException(
+      `Invalid status transition from '${currentStatus}' to '${newStatus}'`,
+    )
+  }
+
+  private async publishFormInDevelopment(
+    id: string,
+    form: Form,
+  ): Promise<FormResponseDto> {
+    await this.sequelize.transaction(async (transaction) => {
+      try {
+        await this.applicationModel.destroy({
+          where: { formId: id },
+          transaction,
+        })
+
+        form.status = FormStatus.PUBLISHED
+        form.beenPublished = true
+        await form.save({ transaction })
+      } catch (error) {
+        throw new InternalServerErrorException(
+          `Unexpected error publishing form '${id}'.`,
+        )
+      }
+    })
+
+    return new FormResponseDto()
+  }
+
+  private async archiveForm(id: string, form: Form): Promise<FormResponseDto> {
+    const slug = form.slug
+    form.status = FormStatus.ARCHIVED
+    form.slug = `${form.slug}-archived-${Date.now()}`
+    await form.save()
+
+    const copyForm = await this.copyForm(id, false, slug)
+    const formResponse = await this.buildFormResponse(copyForm)
+
+    if (!formResponse) {
+      throw new Error('Error generating form response')
+    }
+
+    return formResponse
+  }
+
+  private async publishFormBeingChanged(
+    id: string,
+    formToBePublished: Form,
+  ): Promise<FormResponseDto> {
+    const derivedFromId = formToBePublished.derivedFrom
+    if (!derivedFromId) {
+      throw new BadRequestException(
+        `derivedFromId not found on form with id '${id}'`,
+      )
+    }
+
+    const formToBeArchived = await this.formModel.findByPk(derivedFromId)
+    if (!formToBeArchived) {
+      throw new NotFoundException(`Form with id '${derivedFromId}' not found`)
+    }
+
+    await this.sequelize.transaction(async (transaction) => {
+      try {
+        await this.applicationModel.destroy({
+          where: { formId: id },
+          transaction,
+        })
+
+        const slugToBeArchived = formToBeArchived.slug
+        formToBeArchived.status = FormStatus.ARCHIVED
+        formToBeArchived.slug = `${
+          formToBeArchived.slug
+        }-archived-${Date.now()}`
+        await formToBeArchived.save({ transaction })
+
+        formToBePublished.slug =
+          formToBePublished.slug === `${slugToBeArchived}-i-breytingu`
+            ? slugToBeArchived
+            : formToBePublished.slug
+        formToBePublished.status = FormStatus.PUBLISHED
+        await formToBePublished.save({ transaction })
+      } catch (error) {
+        throw new InternalServerErrorException(
+          `Unexpected error publishing form '${id}'.`,
+        )
+      }
+    })
+
+    const formResponse = await this.buildFormResponse(formToBeArchived)
+
+    if (!formResponse) {
+      throw new Error('Error generating form response')
+    }
+
+    return formResponse
+  }
+
+  private async changePublishedForm(
+    id: string,
+    form: Form,
+  ): Promise<FormResponseDto> {
+    const copyForm = await this.copyForm(id, true, `${form.slug}-i-breytingu`)
+    const formResponse = await this.buildFormResponse(copyForm)
+
+    if (!formResponse) {
+      throw new Error('Error generating form response')
+    }
+
+    return formResponse
+  }
+
+  private async deleteForm(id: string, form: Form): Promise<FormResponseDto> {
+    const hasLiveApplications =
+      form.beenPublished &&
       (await this.applicationModel.count({
         where: { formId: id, isTest: false },
       })) > 0
 
-    if (form.beenPublished && hasApplications) {
-      throw new Error(
-        `Form with id '${id}' cannot be deleted because it has been published and has applications.`,
+    if (hasLiveApplications) {
+      throw new ConflictException(
+        `Form '${id}' cannot be deleted because it has been published and has applications tied to it.`,
       )
     }
 
     try {
       await form.destroy()
     } catch (error) {
-      console.error(`Error deleting form with id '${id}':`, error)
+      throw new InternalServerErrorException(
+        `Unexpected error deleting form '${id}'.`,
+      )
     }
+
+    return new FormResponseDto()
   }
 
   private async findById(id: string): Promise<Form> {
@@ -379,10 +507,6 @@ export class FormsService {
         {
           model: FormCertificationType,
           as: 'formCertificationTypes',
-        },
-        {
-          model: FormUrl,
-          as: 'formUrls',
         },
       ],
       order: [
@@ -425,38 +549,33 @@ export class FormsService {
       certificationTypes: await this.getCertificationTypes(form.organizationId),
       applicantTypes: await this.getApplicantTypes(),
       listTypes: await this.getListTypes(form.organizationId),
-      submitUrls: await this.getUrls(form.organizationId, UrlTypes.SUBMIT),
-      validationUrls: await this.getUrls(
-        form.organizationId,
-        UrlTypes.VALIDATION,
-      ),
+      submissionUrls: await this.getSubmissionUrls(form.organizationId),
+    }
+
+    if (form.completedSectionInfo) {
+      const cs = form.completedSectionInfo
+      cs.title ??= { is: '', en: '' }
+      cs.confirmationHeader ??= { is: '', en: '' }
+      cs.confirmationText ??= { is: '', en: '' }
+      cs.additionalInfo ??= []
     }
 
     return response
   }
 
-  private async getUrls(
-    organizationId: string,
-    type: string,
-  ): Promise<OrganizationUrlDto[]> {
-    const organizationUrls = await this.organizationUrlModel.findAll({
-      where: { organizationId: organizationId, type: type },
+  private async getSubmissionUrls(organizationId: string): Promise<string[]> {
+    const forms = await this.formModel.findAll({
+      attributes: ['submissionServiceUrl'],
+      where: { organizationId },
     })
 
-    const keys = ['id', 'url', 'isXroad', 'isTest', 'type', 'method']
+    const urls = forms
+      .map((f) => f.submissionServiceUrl ?? '')
+      .map((u) => u.trim())
+      .filter((u) => u.length > 0 && u !== 'zendesk')
 
-    const organizationUrlsDto: OrganizationUrlDto[] = []
-
-    organizationUrls.map((organizationUrl) => {
-      organizationUrlsDto.push(
-        defaults(
-          pick(organizationUrl, keys),
-          zipObject(keys, Array(keys.length).fill(null)) as OrganizationUrlDto,
-        ),
-      )
-    })
-
-    return organizationUrlsDto
+    // Return unique values preserving insertion order
+    return Array.from(new Set(urls))
   }
 
   private async getApplicantTypes(): Promise<ApplicantType[]> {
@@ -543,29 +662,7 @@ export class FormsService {
     return organizationListTypes
   }
 
-  private async isZendeskEnabled(
-    organizationId: string,
-    formUrls: FormUrl[],
-  ): Promise<boolean> {
-    const organizationUrls = await this.organizationUrlModel.findAll({
-      where: { organizationId: organizationId },
-    })
-
-    return formUrls.some((formUrl) =>
-      organizationUrls.some(
-        (orgUrl) =>
-          orgUrl.id === formUrl.organizationUrlId &&
-          orgUrl.method === UrlMethods.SEND_TO_ZENDESK,
-      ),
-    )
-  }
-
   private async setArrays(form: Form): Promise<FormDto> {
-    const isZendesk = await this.isZendeskEnabled(
-      form.organizationId,
-      form.formUrls ?? [],
-    )
-
     const formKeys = [
       'id',
       'organizationId',
@@ -580,10 +677,12 @@ export class FormsService {
       'hasPayment',
       'beenPublished',
       'status',
-      'applicationDaysToRemove',
+      'daysUntilApplicationPrune',
       'allowProceedOnValidationFail',
+      'submissionServiceUrl',
+      'validationServiceUrl',
       'hasSummaryScreen',
-      'completedMessage',
+      'completedSectionInfo',
       'dependencies',
     ]
     const formDto: FormDto = Object.assign(
@@ -597,7 +696,6 @@ export class FormsService {
         sections: [],
         screens: [],
         fields: [],
-        isZendeskEnabled: isZendesk,
       },
     ) as FormDto
 
@@ -612,10 +710,6 @@ export class FormsService {
           ),
         ) as FormCertificationTypeDto,
       )
-    })
-
-    form.formUrls?.map((formUrl) => {
-      formDto.urls?.push(formUrl.organizationUrlId)
     })
 
     const sectionKeys = [
@@ -655,7 +749,7 @@ export class FormsService {
       'isRequired',
       'fieldSettings',
     ]
-    form.sections.map((section) => {
+    form.sections?.map((section) => {
       formDto.sections?.push(
         defaults(
           pick(section, sectionKeys),
@@ -747,16 +841,19 @@ export class FormsService {
     } as Screen)
   }
 
-  private async copyForm(id: string, isDerived: boolean): Promise<Form> {
+  private async copyForm(
+    id: string,
+    isDerived: boolean,
+    slug: string,
+  ): Promise<Form> {
     const existingForm = await this.findById(id)
-
     if (!existingForm) {
       throw new NotFoundException(`Form with id '${id}' not found`)
     }
 
     if (existingForm.status === FormStatus.PUBLISHED_BEING_CHANGED) {
       throw new Error(
-        `Cannot change form that is in status ${FormStatus.PUBLISHED_BEING_CHANGED}`,
+        `Cannot copy form that is in status ${FormStatus.PUBLISHED_BEING_CHANGED}`,
       )
     }
 
@@ -765,18 +862,20 @@ export class FormsService {
     newForm.status = isDerived
       ? FormStatus.PUBLISHED_BEING_CHANGED
       : FormStatus.IN_DEVELOPMENT
+    newForm.slug = slug
     newForm.created = new Date()
     newForm.modified = new Date()
-    newForm.derivedFrom = isDerived ? existingForm.id : ''
+    newForm.derivedFrom = isDerived ? existingForm.id : null
     newForm.identifier = isDerived ? existingForm.identifier : uuidV4()
     newForm.beenPublished = false
+    newForm.completedSectionInfo = existingForm.completedSectionInfo
+    newForm.dependencies = []
 
     const sections: Section[] = []
     const screens: Screen[] = []
     const fields: Field[] = []
     const listItems: ListItem[] = []
     const formCertificationTypes: FormCertificationType[] = []
-    const formUrls: FormUrl[] = []
 
     for (const section of existingForm.sections) {
       const newSection = section.toJSON()
@@ -814,25 +913,6 @@ export class FormsService {
       }
     }
 
-    const hasCompleted = sections.some(
-      (s) => s.sectionType === SectionTypes.COMPLETED,
-    )
-    if (!hasCompleted) {
-      const maxOrder =
-        sections.length > 0
-          ? Math.max(...sections.map((s) => s.displayOrder ?? 0))
-          : 0
-      sections.push({
-        id: uuidV4(),
-        formId: newForm.id,
-        sectionType: SectionTypes.COMPLETED,
-        displayOrder: maxOrder + 1,
-        name: { is: 'Staðfesting', en: 'Confirmation' },
-        created: new Date(),
-        modified: new Date(),
-      } as Section)
-    }
-
     if (existingForm.formCertificationTypes) {
       for (const certificationType of existingForm.formCertificationTypes) {
         const newFormCertificationType = certificationType.toJSON()
@@ -844,28 +924,26 @@ export class FormsService {
       }
     }
 
-    if (existingForm.formUrls) {
-      for (const formUrl of existingForm.formUrls) {
-        const newFormUrl = formUrl.toJSON()
-        newFormUrl.id = uuidV4()
-        newFormUrl.formId = newForm.id
-        newFormUrl.created = new Date()
-        newFormUrl.modified = new Date()
-        formUrls.push(newFormUrl)
-      }
-    }
-
-    await this.sequelize.transaction(async (transaction) => {
-      await this.formModel.create(newForm, { transaction })
-      await this.sectionModel.bulkCreate(sections, { transaction })
-      await this.screenModel.bulkCreate(screens, { transaction })
-      await this.fieldModel.bulkCreate(fields, { transaction })
-      await this.listItemModel.bulkCreate(listItems, { transaction })
-      await this.formCertificationTypeModel.bulkCreate(formCertificationTypes, {
-        transaction,
+    try {
+      await this.sequelize.transaction(async (transaction) => {
+        await this.formModel.create(newForm, { transaction })
+        await this.sectionModel.bulkCreate(sections, { transaction })
+        await this.screenModel.bulkCreate(screens, { transaction })
+        await this.fieldModel.bulkCreate(fields, { transaction })
+        await this.listItemModel.bulkCreate(listItems, { transaction })
+        await this.formCertificationTypeModel.bulkCreate(
+          formCertificationTypes,
+          {
+            transaction,
+          },
+        )
       })
-      await this.formUrlModel.bulkCreate(formUrls, { transaction })
-    })
+    } catch (error) {
+      this.logger.error(`Failed to copy form '${id}'`, error)
+      throw new InternalServerErrorException(
+        `Unexpected error copying form '${id}'`,
+      )
+    }
 
     return newForm
   }

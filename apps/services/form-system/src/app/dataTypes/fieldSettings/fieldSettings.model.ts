@@ -1,5 +1,6 @@
+import { ListTypesEnum } from '@island.is/form-system/shared'
 import { ApiPropertyOptional } from '@nestjs/swagger'
-import { LanguageType } from '../languageType.model'
+import { Type } from 'class-transformer'
 import {
   IsBoolean,
   IsDateString,
@@ -8,8 +9,7 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator'
-import { Type } from 'class-transformer'
-import { ListTypesEnum } from '@island.is/form-system/shared'
+import { LanguageType } from '../languageType.model'
 
 export class FieldSettings {
   @IsOptional()
@@ -124,12 +124,17 @@ export class FieldSettings {
   zendeskIsCustomField?: boolean
 
   @IsOptional()
-  @IsNumber()
-  @ApiPropertyOptional({ type: Number })
-  zendeskCustomFieldId?: number
+  @IsString()
+  @ApiPropertyOptional({ type: String })
+  zendeskCustomFieldId?: string
 
   @IsOptional()
   @IsString()
   @ApiPropertyOptional({ type: String })
   applicantType?: string
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  hasDescription?: boolean
 }

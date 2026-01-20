@@ -13,16 +13,14 @@ import {
   ValidateNested,
   IsBoolean,
   IsUrl,
+  registerDecorator,
+  ValidationOptions,
+  ValidationArguments,
+  IsNotEmpty,
 } from 'class-validator'
 import { Type } from 'class-transformer'
 
 import { PaymentMethod } from '../../../types'
-
-import {
-  registerDecorator,
-  ValidationOptions,
-  ValidationArguments,
-} from 'class-validator'
 
 export class ExtraDataItem {
   @IsString()
@@ -122,6 +120,7 @@ export class CreatePaymentFlowInput {
   organisationId!: string
 
   @IsString()
+  @IsNotEmpty({ message: 'onUpdateUrl cannot be empty' })
   @ApiProperty({
     description:
       'URL callback to be called on payment update events like when the user requests to create invoice rather than directly paying',

@@ -55,9 +55,8 @@ const template: ApplicationTemplate<
   name: determineMessageFromApplicationAnswers,
   codeOwner: CodeOwners.Origo,
   institution: applicationMessage.institutionName,
-  translationNamespaces: [
+  translationNamespaces:
     ApplicationConfigurations.LicensePlateRenewal.translation,
-  ],
   dataSchema: LicensePlateRenewalSchema,
   allowedDelegations: [
     {

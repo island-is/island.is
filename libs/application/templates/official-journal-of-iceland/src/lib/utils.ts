@@ -1,5 +1,6 @@
 import addDays from 'date-fns/addDays'
 import addYears from 'date-fns/addYears'
+import startOfDay from 'date-fns/startOfDay'
 import { z } from 'zod'
 import { additionSchema, baseEntitySchema } from './dataSchema'
 import { getValueViaPath } from '@island.is/application/core'
@@ -170,14 +171,15 @@ export const getFastTrack = (date?: Date) => {
       now,
     }
 
-  const diff = date.getTime() - now.getTime()
-  const diffDays = diff / (1000 * 3600 * 24)
+  const fastTrackCutoffDate = startOfDay(
+    getNextWorkday(addWorkDays(new Date(), FAST_TRACK_DAYS)),
+  )
+
+  const compareDate = startOfDay(date)
+
   let fastTrack = false
 
-  // 10 days AFTER registration date. FAST_TRACK_DAYS + 1.
-  const fastTrackCutOff = FAST_TRACK_DAYS + 1
-
-  if (diffDays <= fastTrackCutOff) {
+  if (fastTrackCutoffDate.getTime() > compareDate.getTime()) {
     fastTrack = true
   }
   return {

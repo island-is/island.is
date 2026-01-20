@@ -1,11 +1,10 @@
 import { ApolloError } from '@apollo/client'
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useRef, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import {
+  Animated,
   Image,
   RefreshControl,
-  SafeAreaView,
-  ScrollView,
   TouchableOpacity,
   useWindowDimensions,
   View,
@@ -17,6 +16,8 @@ import externalLinkIcon from '../../assets/icons/external-link.png'
 import { getConfig } from '../../config'
 import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import {
+  useGetBloodTypeOverviewQuery,
+  useGetDentistOverviewQuery,
   useGetHealthCenterQuery,
   useGetHealthInsuranceOverviewQuery,
   useGetMedicineDataQuery,
@@ -36,13 +37,10 @@ import {
   Input,
   InputRow,
   Problem,
+  TopLine,
   Typography,
 } from '../../ui'
 import { testIDs } from '../../utils/test-ids'
-
-const Host = styled(SafeAreaView)`
-  flex: 1;
-`
 
 const ButtonWrapper = styled.View`
   flex-direction: row;
@@ -55,7 +53,7 @@ const ButtonWrapper = styled.View`
 interface HeadingSectionProps {
   title: string
   linkTextId?: string
-  onPress: () => void
+  onPress?: () => void
 }
 
 const HeadingSection: React.FC<HeadingSectionProps> = ({
@@ -64,26 +62,36 @@ const HeadingSection: React.FC<HeadingSectionProps> = ({
   linkTextId,
 }) => {
   const theme = useTheme()
+
   return (
-    <TouchableOpacity onPress={onPress} style={{ marginTop: theme.spacing[2] }}>
+    <TouchableOpacity
+      onPress={onPress}
+      style={{ marginTop: theme.spacing[2] }}
+      disabled={!onPress}
+    >
       <Heading
         small
         button={
           <TouchableOpacity
             onPress={onPress}
+            disabled={!onPress}
             style={{
               flexDirection: 'row',
               alignItems: 'center',
             }}
           >
-            <Typography
-              variant="heading5"
-              color={theme.color.blue400}
-              style={{ marginRight: 4 }}
-            >
-              <FormattedMessage id={linkTextId ?? 'button.seeAll'} />
-            </Typography>
-            <Image source={externalLinkIcon} />
+            {onPress && (
+              <>
+                <Typography
+                  variant="heading5"
+                  color={theme.color.blue400}
+                  style={{ marginRight: 4 }}
+                >
+                  <FormattedMessage id={linkTextId ?? 'button.seeAll'} />
+                </Typography>
+                <Image source={externalLinkIcon} />
+              </>
+            )}
           </TouchableOpacity>
         }
       >
@@ -93,12 +101,52 @@ const HeadingSection: React.FC<HeadingSectionProps> = ({
   )
 }
 
+interface ExternalLinkProps {
+  onPress: () => void
+  text: string
+  topAlign?: boolean
+}
+
+const ExternalLink: React.FC<ExternalLinkProps> = ({
+  onPress,
+  text,
+  topAlign = false,
+}) => {
+  const theme = useTheme()
+  return (
+    <TouchableOpacity
+      onPress={onPress}
+      style={{
+        flexDirection: 'row',
+        alignItems: topAlign ? 'flex-start' : 'center',
+      }}
+    >
+      <View
+        style={{
+          flexDirection: 'row',
+          borderBottomWidth: 1,
+          borderBottomColor: theme.color.dark300,
+        }}
+      >
+        <Typography
+          variant="eyebrow"
+          color={theme.color.blue400}
+          style={{ marginRight: 4 }}
+        >
+          <FormattedMessage id={text} />
+        </Typography>
+        <Image source={externalLinkIcon} />
+      </View>
+    </TouchableOpacity>
+  )
+}
+
 const showErrorComponent = (error: ApolloError) => {
   return <Problem error={error} size="small" />
 }
 
 const { getNavigationOptions, useNavigationOptions } =
-  createNavigationOptionHooks((theme, intl) => ({
+  createNavigationOptionHooks((_, intl) => ({
     topBar: {
       title: {
         text: intl.formatMessage({ id: 'health.overview.screenTitle' }),
@@ -118,7 +166,9 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
   const { width } = useWindowDimensions()
   const buttonStyle = { flex: 1, minWidth: width * 0.5 - theme.spacing[3] }
   const isVaccinationsEnabled = useFeatureFlag('isVaccinationsEnabled', false)
+  const isPrescriptionsEnabled = useFeatureFlag('isPrescriptionsEnabled', false)
   const isOrganDonationEnabled = useFeatureFlag('isOrganDonationEnabled', false)
+  const scrollY = useRef(new Animated.Value(0)).current
 
   const now = useMemo(() => new Date().toISOString(), [])
 
@@ -132,6 +182,15 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
   const healthInsuranceRes = useGetHealthInsuranceOverviewQuery()
   const healthCenterRes = useGetHealthCenterQuery()
   const paymentStatusRes = useGetPaymentStatusQuery()
+  const bloodTypeRes = useGetBloodTypeOverviewQuery()
+  const dentistRes = useGetDentistOverviewQuery({
+    variables: {
+      input: {
+        dateFrom: now,
+        dateTo: now,
+      },
+    },
+  })
   const paymentOverviewRes = useGetPaymentOverviewQuery({
     variables: {
       input: {
@@ -161,23 +220,6 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
 
   const isOrganDonor = organDonationData?.isDonor ?? false
 
-  const isOrganDonorWithLimitations =
-    isOrganDonor && (organDonationData?.limitations?.hasLimitations ?? false)
-
-  const organLimitations = isOrganDonorWithLimitations
-    ? organDonationData?.limitations?.limitedOrgansList?.map(
-        (organ) => organ.name,
-      ) ?? []
-    : []
-
-  // Make sure to list both selected organs and the comment if it exists
-  const organLimitationsIncludingComment = [
-    Array.isArray(organLimitations) ? organLimitations.join(', ') : '',
-    organDonationData?.limitations?.comment,
-  ]
-    .filter(Boolean)
-    .join(', ')
-
   useConnectivityIndicator({
     componentId,
     refetching,
@@ -187,6 +229,8 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
       healthCenterRes,
       paymentStatusRes,
       paymentOverviewRes,
+      organDonationRes,
+      dentistRes,
     ],
   })
 
@@ -200,7 +244,9 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
         healthCenterRes.refetch(),
         paymentStatusRes.refetch(),
         paymentOverviewRes.refetch(),
+        dentistRes.refetch(),
         isOrganDonationEnabled && organDonationRes.refetch(),
+        bloodTypeRes.refetch(),
       ].filter(Boolean)
       await Promise.all(promises)
     } catch (e) {
@@ -216,11 +262,13 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
     paymentOverviewRes,
     organDonationRes,
     isOrganDonationEnabled,
+    dentistRes,
+    bloodTypeRes,
   ])
 
   return (
-    <Host testID={testIDs.SCREEN_HEALTH_OVERVIEW}>
-      <ScrollView
+    <>
+      <Animated.ScrollView
         refreshControl={
           <RefreshControl refreshing={refetching} onRefresh={onRefresh} />
         }
@@ -228,6 +276,13 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
           paddingHorizontal: theme.spacing[2],
           paddingBottom: theme.spacing[4],
         }}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          {
+            useNativeDriver: true,
+          },
+        )}
+        testID={testIDs.SCREEN_HEALTH_OVERVIEW}
       >
         <Heading>
           <FormattedMessage
@@ -256,6 +311,19 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
               testID={testIDs.BUTTON_VACCINATIONS}
             />
           )}
+          <Button
+            title={intl.formatMessage({
+              id: isPrescriptionsEnabled
+                ? 'health.prescriptionsAndCertificates.screenTitle'
+                : 'health.drugCertificates.title',
+            })}
+            isOutlined
+            isUtilityButton
+            iconStyle={{ tintColor: theme.color.dark300 }}
+            style={buttonStyle}
+            ellipsis
+            onPress={() => navigateTo('/prescriptions', componentId)}
+          />
           <Button
             title={intl.formatMessage({ id: 'health.overview.therapy' })}
             isOutlined
@@ -292,101 +360,6 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
             }
           />
         </ButtonWrapper>
-        <HeadingSection
-          title={intl.formatMessage({ id: 'health.overview.healthCenter' })}
-          onPress={() =>
-            openBrowser(`${origin}/minarsidur/heilsa/heilsugaesla`, componentId)
-          }
-        />
-        {(healthCenterRes.data || healthCenterRes.loading) && (
-          <View testID={testIDs.HEALTH_CENTER}>
-            <InputRow background>
-              <Input
-                label={intl.formatMessage({
-                  id: 'health.overview.healthCenter',
-                })}
-                value={
-                  healthCenterRes.data
-                    ?.rightsPortalHealthCenterRegistrationHistory?.current
-                    ?.healthCenterName ??
-                  intl.formatMessage({
-                    id: 'health.overview.noHealthCenterRegistered',
-                  })
-                }
-                loading={healthCenterRes.loading && !healthCenterRes.data}
-                error={healthCenterRes.error && !healthCenterRes.data}
-                darkBorder
-              />
-            </InputRow>
-            <InputRow background>
-              <Input
-                label={intl.formatMessage({
-                  id: 'health.overview.physician',
-                })}
-                value={
-                  healthCenterRes.data
-                    ?.rightsPortalHealthCenterRegistrationHistory?.current
-                    ?.doctor ??
-                  intl.formatMessage({
-                    id: 'health.overview.noPhysicianRegistered',
-                  })
-                }
-                loading={healthCenterRes.loading && !healthCenterRes.data}
-                error={healthCenterRes.error && !healthCenterRes.data}
-                noBorder
-              />
-            </InputRow>
-          </View>
-        )}
-        {healthCenterRes.error &&
-          !healthCenterRes.data &&
-          showErrorComponent(healthCenterRes.error)}
-        <HeadingSection
-          title={intl.formatMessage({ id: 'health.overview.statusOfRights' })}
-          onPress={() =>
-            openBrowser(`${origin}/minarsidur/heilsa/yfirlit`, componentId)
-          }
-        />
-        {(healthInsuranceRes.data && healthInsuranceData?.isInsured) ||
-        healthInsuranceRes.loading ? (
-          <InputRow background>
-            <Input
-              label={intl.formatMessage({
-                id: 'health.overview.insuredFrom',
-              })}
-              value={
-                healthInsuranceData?.from
-                  ? intl.formatDate(healthInsuranceData.from)
-                  : null
-              }
-              loading={healthInsuranceRes.loading && !healthInsuranceRes.data}
-              error={healthInsuranceRes.error && !healthInsuranceRes.data}
-              noBorder
-            />
-            <Input
-              label={intl.formatMessage({
-                id: 'health.overview.status',
-              })}
-              value={healthInsuranceData?.status?.display}
-              loading={healthInsuranceRes.loading && !healthInsuranceRes.data}
-              error={healthInsuranceRes.error && !healthInsuranceRes.data}
-              noBorder
-            />
-          </InputRow>
-        ) : (
-          !healthInsuranceRes.error &&
-          healthInsuranceRes.data && (
-            <Alert
-              type="info"
-              title={intl.formatMessage({ id: 'health.overview.notInsured' })}
-              message={healthInsuranceData?.explanation ?? ''}
-              hasBorder
-            />
-          )
-        )}
-        {healthInsuranceRes.error &&
-          !healthInsuranceRes.data &&
-          showErrorComponent(healthInsuranceRes.error)}
         <HeadingSection
           title={intl.formatMessage({
             id: 'health.overview.coPayments',
@@ -539,58 +512,267 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
         {medicinePurchaseRes.error &&
           !medicinePurchaseRes.data &&
           showErrorComponent(medicinePurchaseRes.error)}
-        {isOrganDonationEnabled && (
-          <HeadingSection
-            title={intl.formatMessage({
-              id: 'health.organDonation',
+        <HeadingSection
+          title={intl.formatMessage({ id: 'health.overview.statusOfRights' })}
+          onPress={() =>
+            openBrowser(
+              `${origin}/minarsidur/heilsa/greidslur/rettindi`,
+              componentId,
+            )
+          }
+        />
+        {(healthInsuranceRes.data && healthInsuranceData?.isInsured) ||
+        healthInsuranceRes.loading ? (
+          <InputRow background>
+            <Input
+              label={intl.formatMessage({
+                id: 'health.overview.insuredFrom',
+              })}
+              value={
+                healthInsuranceData?.from
+                  ? intl.formatDate(healthInsuranceData.from)
+                  : null
+              }
+              loading={healthInsuranceRes.loading && !healthInsuranceRes.data}
+              error={healthInsuranceRes.error && !healthInsuranceRes.data}
+              noBorder
+            />
+            <Input
+              label={intl.formatMessage({
+                id: 'health.overview.status',
+              })}
+              value={healthInsuranceData?.status?.display}
+              loading={healthInsuranceRes.loading && !healthInsuranceRes.data}
+              error={healthInsuranceRes.error && !healthInsuranceRes.data}
+              noBorder
+            />
+          </InputRow>
+        ) : (
+          !healthInsuranceRes.error &&
+          healthInsuranceRes.data && (
+            <Alert
+              type="info"
+              title={intl.formatMessage({ id: 'health.overview.notInsured' })}
+              message={healthInsuranceData?.explanation ?? ''}
+              hasBorder
+            />
+          )
+        )}
+        {healthInsuranceRes.error &&
+          !healthInsuranceRes.data &&
+          showErrorComponent(healthInsuranceRes.error)}
+        {/** General health information */}
+        <HeadingSection
+          title={intl.formatMessage({
+            id: 'health.overview.basicInformation',
+          })}
+        />
+        <InputRow background testID={testIDs.HEALTH_CENTER}>
+          <Input
+            label={intl.formatMessage({
+              id: 'health.overview.healthCenter',
             })}
-            linkTextId="health.organDonation.change"
-            onPress={() =>
-              openBrowser(
-                `${origin}/minarsidur/heilsa/liffaeragjof/skraning`,
-                componentId,
-              )
+            value={
+              healthCenterRes.error
+                ? ''
+                : healthCenterRes.data
+                    ?.rightsPortalHealthCenterRegistrationHistory?.current
+                    ?.healthCenterName ??
+                  intl.formatMessage({
+                    id: 'health.overview.noHealthCenterRegistered',
+                  })
+            }
+            loading={healthCenterRes.loading}
+            fullWidthWarning
+            allowEmptyValue={healthCenterRes.error ? true : false}
+            warningText={
+              healthCenterRes.error
+                ? intl.formatMessage({
+                    id: 'problem.thirdParty.message',
+                  })
+                : ''
+            }
+            rightElement={
+              <ExternalLink
+                onPress={() =>
+                  openBrowser(
+                    `${origin}/minarsidur/heilsa/grunnupplysingar/heilsugaesla`,
+                    componentId,
+                  )
+                }
+                text="button.open"
+                topAlign={healthCenterRes.error ? true : false}
+              />
             }
           />
-        )}
-        {isOrganDonationEnabled &&
-          (organDonationRes.loading || organDonationRes.data) && (
-            <InputRow background>
-              <Input
-                label={intl.formatMessage({
-                  id: isOrganDonorWithLimitations
-                    ? 'health.organDonation.isDonorWithLimitations'
-                    : isOrganDonor
-                    ? 'health.organDonation.isDonor'
-                    : 'health.organDonation.isNotDonor',
-                })}
-                value={`${intl.formatMessage(
-                  {
-                    id: isOrganDonorWithLimitations
-                      ? 'health.organDonation.isDonorWithLimitationsDescription'
-                      : isOrganDonor
-                      ? 'health.organDonation.isDonorDescription'
-                      : 'health.organDonation.isNotDonorDescription',
-                  },
-                  {
-                    limitations: isOrganDonorWithLimitations
-                      ? organLimitationsIncludingComment
-                      : '',
-                  },
-                )}`}
-                loadLabel={true}
-                loading={organDonationRes.loading && !organDonationRes.data}
-                error={organDonationRes.error && !organDonationRes.data}
-                noBorder
+        </InputRow>
+        <InputRow background>
+          <Input
+            label={intl.formatMessage({
+              id: 'health.overview.physician',
+            })}
+            value={
+              healthCenterRes.error
+                ? ''
+                : healthCenterRes.data
+                    ?.rightsPortalHealthCenterRegistrationHistory?.current
+                    ?.doctor ??
+                  intl.formatMessage({
+                    id: 'health.overview.noPhysicianRegistered',
+                  })
+            }
+            loading={healthCenterRes.loading}
+            fullWidthWarning
+            allowEmptyValue={healthCenterRes.error ? true : false}
+            warningText={
+              healthCenterRes.error
+                ? intl.formatMessage({
+                    id: 'problem.thirdParty.message',
+                  })
+                : ''
+            }
+            rightElement={
+              <ExternalLink
+                onPress={() =>
+                  openBrowser(
+                    `${origin}/minarsidur/heilsa/grunnupplysingar/heilsugaesla/skraning`,
+                    componentId,
+                  )
+                }
+                text="button.change"
+                topAlign={healthCenterRes.error ? true : false}
               />
-            </InputRow>
-          )}
-        {isOrganDonationEnabled &&
-          organDonationRes.error &&
-          !organDonationRes.data &&
-          showErrorComponent(organDonationRes.error)}
-      </ScrollView>
-    </Host>
+            }
+          />
+        </InputRow>
+        <InputRow background>
+          <Input
+            label={intl.formatMessage({
+              id: 'health.overview.dentist',
+            })}
+            value={
+              dentistRes.error
+                ? ''
+                : dentistRes.data?.rightsPortalUserDentistRegistration?.dentist
+                    ?.name ??
+                  intl.formatMessage({
+                    id: 'health.overview.noDentistRegistered',
+                  })
+            }
+            allowEmptyValue={dentistRes.error ? true : false}
+            loading={dentistRes.loading}
+            fullWidthWarning
+            warningText={
+              dentistRes.error
+                ? intl.formatMessage({
+                    id: 'problem.thirdParty.message',
+                  })
+                : ''
+            }
+            rightElement={
+              <ExternalLink
+                onPress={() =>
+                  openBrowser(
+                    `${origin}/minarsidur/heilsa/grunnupplysingar/tannlaeknar`,
+                    componentId,
+                  )
+                }
+                text="button.open"
+                topAlign={dentistRes.error ? true : false}
+              />
+            }
+          />
+        </InputRow>
+        {isOrganDonationEnabled && (
+          <InputRow background>
+            <Input
+              label={intl.formatMessage({
+                id: 'health.organDonation',
+              })}
+              value={`${
+                organDonationRes.error
+                  ? ''
+                  : intl.formatMessage({
+                      id: isOrganDonor
+                        ? 'health.organDonation.isDonorDescription'
+                        : 'health.organDonation.isNotDonorDescription',
+                    }) ?? ''
+              }`}
+              loading={organDonationRes.loading && !organDonationRes.data}
+              fullWidthWarning
+              warningText={
+                organDonationRes.error
+                  ? intl.formatMessage({
+                      id: 'problem.thirdParty.message',
+                    })
+                  : ''
+              }
+              allowEmptyValue
+              rightElement={
+                <ExternalLink
+                  onPress={() =>
+                    openBrowser(
+                      `${origin}/minarsidur/heilsa/grunnupplysingar/liffaeragjof`,
+                      componentId,
+                    )
+                  }
+                  text="button.open"
+                  topAlign={organDonationRes.error ? true : false}
+                />
+              }
+            />
+          </InputRow>
+        )}
+        <InputRow background>
+          <Input
+            label={intl.formatMessage({
+              id: 'health.overview.bloodType',
+            })}
+            value={
+              bloodTypeRes.error
+                ? ''
+                : bloodTypeRes.data?.rightsPortalBloodType?.registered
+                ? intl.formatMessage(
+                    {
+                      id: 'health.overview.bloodTypeDescription',
+                    },
+                    {
+                      bloodType:
+                        bloodTypeRes.data?.rightsPortalBloodType?.type ?? '',
+                    },
+                  )
+                : intl.formatMessage({
+                    id: 'health.overview.noBloodTypeRegistered',
+                  })
+            }
+            loading={bloodTypeRes.loading}
+            fullWidthWarning
+            warningText={
+              bloodTypeRes.error
+                ? intl.formatMessage({
+                    id: 'problem.thirdParty.message',
+                  })
+                : ''
+            }
+            allowEmptyValue
+            rightElement={
+              <ExternalLink
+                onPress={() =>
+                  openBrowser(
+                    `${origin}/minarsidur/heilsa/blodflokkur`,
+                    componentId,
+                  )
+                }
+                text="button.open"
+                topAlign={bloodTypeRes.error ? true : false}
+              />
+            }
+            noBorder
+          />
+        </InputRow>
+      </Animated.ScrollView>
+      <TopLine scrollY={scrollY} />
+    </>
   )
 }
 

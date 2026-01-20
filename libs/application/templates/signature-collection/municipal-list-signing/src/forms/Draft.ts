@@ -1,5 +1,6 @@
 import {
   buildForm,
+  buildHiddenInput,
   buildMultiField,
   buildRadioField,
   buildSection,
@@ -16,7 +17,7 @@ import {
 
 import { m } from '../lib/messages'
 import { SignatureCollectionList } from '@island.is/api/schema'
-import Logo from '@island.is/application/templates/signature-collection/assets/Logo'
+import { NationalRegistryLogo } from '@island.is/application/assets/institution-logos'
 import { format as formatNationalId } from 'kennitala'
 import format from 'date-fns/format'
 
@@ -24,8 +25,8 @@ export const Draft: Form = buildForm({
   id: 'SignListDraft',
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
-  renderLastScreenBackButton: false,
-  logo: Logo,
+  renderLastScreenBackButton: true,
+  logo: NationalRegistryLogo,
   children: [
     buildSection({
       id: 'selectCandidateSection',
@@ -35,7 +36,6 @@ export const Draft: Form = buildForm({
             externalData,
             'getList.data',
           ) || []
-
         const initialQuery = getValueViaPath(answers, 'initialQuery')
 
         return lists.length > 0 && !initialQuery
@@ -119,6 +119,28 @@ export const Draft: Form = buildForm({
                 )?.area?.name
               },
             }),
+            buildHiddenInput({
+              id: 'listId',
+              defaultValue: ({ answers, externalData }: Application) => {
+                const lists =
+                  getValueViaPath<SignatureCollectionList[]>(
+                    externalData,
+                    'getList.data',
+                  ) || []
+
+                const initialQuery = getValueViaPath(
+                  answers,
+                  'initialQuery',
+                  '',
+                )
+
+                return lists.find((list) =>
+                  initialQuery
+                    ? list.candidate.id === initialQuery
+                    : list.id === answers.listId,
+                )?.id
+              },
+            }),
             buildTextField({
               id: 'candidateName',
               title: m.candidateName,
@@ -156,13 +178,19 @@ export const Draft: Form = buildForm({
                     'getList.data',
                   ) || []
 
-                const nationalId =
-                  lists.length === 1
-                    ? lists[0].candidate.nationalId
-                    : lists.find((list) => list.id === answers.listId)
-                        ?.candidate.nationalId
+                const initialQuery = getValueViaPath(
+                  answers,
+                  'initialQuery',
+                  '',
+                )
 
-                return nationalId ? formatNationalId(nationalId) : undefined
+                const nationalId = lists.find((list) =>
+                  initialQuery
+                    ? list.candidate.id === initialQuery
+                    : list.id === answers.listId,
+                )?.candidate?.nationalId
+
+                return nationalId ? formatNationalId(nationalId) : ''
               },
             }),
             buildTextField({
@@ -177,13 +205,17 @@ export const Draft: Form = buildForm({
                     'getList.data',
                   ) || []
 
-                const name =
-                  lists.length === 1
-                    ? lists[0].candidate.ownerName
-                    : lists.find((list) => list.id === answers.listId)
-                        ?.candidate.ownerName
+                const initialQuery = getValueViaPath(
+                  answers,
+                  'initialQuery',
+                  '',
+                )
 
-                return name
+                return lists.find((list) =>
+                  initialQuery
+                    ? list.candidate.id === initialQuery
+                    : list.id === answers.listId,
+                )?.candidate?.ownerName
               },
             }),
             buildSubmitField({

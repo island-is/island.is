@@ -7,6 +7,7 @@ import {
   IsOptional,
   IsString,
   IsUUID,
+  MaxLength,
 } from 'class-validator'
 
 import { ApiPropertyOptional } from '@nestjs/swagger'
@@ -19,8 +20,14 @@ import {
 export class UpdateCourtSessionDto {
   @IsOptional()
   @IsString()
+  @MaxLength(255)
   @ApiPropertyOptional({ type: String })
   readonly location?: string
+
+  @IsOptional()
+  @IsUUID()
+  @ApiPropertyOptional({ type: String })
+  readonly judgeId?: string
 
   @IsOptional()
   @Type(() => Date)
@@ -79,4 +86,9 @@ export class UpdateCourtSessionDto {
   @IsString()
   @ApiPropertyOptional({ type: String })
   readonly closingEntries?: string
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  readonly isConfirmed?: boolean
 }

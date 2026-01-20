@@ -60,6 +60,7 @@ import {
   mapDataUploadResponse,
   mapDepartedToRegistryPerson,
   mapDistrictCommissionersAgenciesResponse,
+  mapDrivingInstructor,
   mapEstateInfo,
   mapEstateRegistrant,
   mapEstateToInheritanceReportInfo,
@@ -668,7 +669,8 @@ export class SyslumennService {
         kennitala: nationalId,
       },
     })
-    return res.yfirlit?.map(mapEstateInfo) ?? []
+
+    return res?.yfirlit?.map(mapEstateInfo) ?? []
   }
 
   async getMasterLicences() {
@@ -774,18 +776,36 @@ export class SyslumennService {
     )
   }
 
-  async hasElectronicID(
-    nationalId: string,
-    phoneNumber: string,
-  ): Promise<boolean> {
+  /**
+   * Check if a person has valid electronic ID credentials.
+   *
+   * Uses the comprehensive Syslumenn endpoint (kannaRafraenSkilrikiGet2) which checks
+   * ALL electronic ID authentication methods, not just phone-based (eSIM).
+   *
+   * This ensures users with:
+   * - Auðkenni app (without SIM card registration) ✓
+   * - eSIM/phone-based authentication ✓
+   * - Physical smart card authentication ✓
+   *
+   * ...are all correctly identified as having valid electronic credentials.
+   *
+   * @param nationalId - Icelandic national ID (kennitala)
+   * @returns true if ANY valid electronic ID method exists
+   */
+  async hasElectronicID(nationalId: string): Promise<boolean> {
     const { id, api } = await this.createApi()
-    const res = await api.kannaRafraenSkilrikiGet({
+    const res = await api.kannaRafraenSkilrikiGet2({
       audkenni: id,
       kennitala: nationalId,
-      simi: phoneNumber,
     })
 
-    return res?.stada === 'ok'
+    // Accept if ANY valid electronic ID method exists
+    return (
+      res?.gildSkilriki?.simi ||
+      res?.gildSkilriki?.app ||
+      res?.gildSkilriki?.kort ||
+      false
+    )
   }
 
   async checkIfBirthCertificateExists(nationalId: string): Promise<boolean> {
@@ -813,5 +833,15 @@ export class SyslumennService {
     })
     const items = res.map(mapReligiousOrganization)
     return items.filter((item) => Boolean(item?.name))
+  }
+
+  async getDrivingInstructors() {
+    const { id, api } = await this.createApi()
+    const res = await api.okukennaraleyfiGet({
+      audkenni: id,
+    })
+    return res
+      .map(mapDrivingInstructor)
+      .filter((instructor) => Boolean(instructor.name))
   }
 }

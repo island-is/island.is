@@ -37,7 +37,7 @@ import {
   CeremonyPlaces,
   Religion,
 } from '../lib/constants'
-import { UserProfile } from '../types/schema'
+import { UserProfile } from '@island.is/api/schema'
 import { fakeDataSection } from './fakeDataSection'
 import { dataCollection } from './sharedSections/dataCollection'
 import { removeCountryCode } from '@island.is/application/ui-components'

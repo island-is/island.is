@@ -78,9 +78,11 @@ const Expanded = styled.View`
 interface CardProps {
   titleIcon?: ImageSourcePropType
   title: React.ReactNode
+  titleColor?: string
   message: React.ReactNode
   icon?: ImageSourcePropType
   value?: React.ReactNode
+  topRightValue?: React.ReactNode
   children?: React.ReactNode
   open?: boolean
   onPress?: () => void
@@ -110,6 +112,8 @@ export const ExpandableCard = ({
   icon,
   title,
   titleIcon,
+  titleColor,
+  topRightValue,
   message,
   value,
   children,
@@ -164,6 +168,7 @@ export const ExpandableCard = ({
                     style={{
                       width: 16,
                       height: 16,
+                      tintColor: titleColor ?? theme.color.primary,
                       marginRight: theme.spacing.smallGutter,
                     }}
                   />
@@ -172,10 +177,14 @@ export const ExpandableCard = ({
                   numberOfLines={1}
                   ellipsizeMode="tail"
                   variant="body3"
+                  color={titleColor}
                 >
                   {title}
                 </TitleText>
               </Title>
+              {topRightValue && (
+                <Typography variant="body3">{topRightValue}</Typography>
+              )}
             </Row>
           )}
           <Row>

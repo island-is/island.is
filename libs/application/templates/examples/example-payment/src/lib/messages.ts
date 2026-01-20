@@ -21,6 +21,16 @@ export const m = defineMessages({
     defaultMessage: 'Greiða',
     description: 'Label for payment button',
   },
+  forPaymentLabel: {
+    id: 'ep.application:forPaymentLabel',
+    defaultMessage: 'Til greiðslu',
+    description: 'title for payment overview component',
+  },
+  totalLabel: {
+    id: 'ep.application:totalLabel',
+    defaultMessage: 'Samtals til greiðslu',
+    description: 'total label for payment overview component',
+  },
   feeProviderError: {
     id: 'ep.application:feeProviderError',
     defaultMessage: 'Villa kom upp við að sækja verðskrá hjá Fjársýslunni',
@@ -48,6 +58,11 @@ export const draft = defineMessages({
     id: 'ep.application:draft.informationTitle',
     defaultMessage: 'Upplýsingar',
     description: 'info',
+  },
+  paymentOverviewTitle: {
+    id: 'ep.application:draft.paymentOverviewTitle',
+    defaultMessage: 'Greiðsluyfirlit',
+    description: 'payment overview title',
   },
   selectFieldTitle: {
     id: 'ep.application:draft.selectFieldTitle',

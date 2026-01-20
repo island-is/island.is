@@ -7,7 +7,7 @@ import {
   FilterMultiChoiceProps,
 } from '@island.is/island-ui/core'
 import {
-  useGetInstitutionApplicationsQuery,
+  useGetApplicationsInstitutionAdminQuery,
   useGetOrganizationsQuery,
 } from '../../queries/overview.generated'
 import { InstitutionFilters } from '../../components/Filters/InstitutionFilters'
@@ -17,7 +17,6 @@ import { ApplicationsTable } from '../../components/ApplicationsTable/Applicatio
 import { ApplicationFilters, MultiChoiceFilter } from '../../types/filters'
 import { Organization } from '@island.is/shared/types'
 import { AdminApplication } from '../../types/adminApplication'
-import { useUserInfo } from '@island.is/react-spa/bff'
 import endOfDay from 'date-fns/endOfDay'
 
 const defaultFilters: ApplicationFilters = {
@@ -46,22 +45,20 @@ const InstitutionOverview = () => {
     defaultMultiChoiceFilters,
   )
 
-  const userInfo = useUserInfo()
   const { data: orgData, loading: orgsLoading } = useGetOrganizationsQuery({
     ssr: false,
   })
 
-  const useAdvancedSearch = !!filters.typeId
+  const useAdvancedSearch = !!filters.typeIdValue
 
   const {
     data: response,
     loading: queryLoading,
     refetch,
-  } = useGetInstitutionApplicationsQuery({
+  } = useGetApplicationsInstitutionAdminQuery({
     ssr: false,
     variables: {
       input: {
-        nationalId: userInfo.profile.nationalId,
         page: page,
         count: pageSize,
         applicantNationalId:
@@ -70,8 +67,8 @@ const InstitutionOverview = () => {
             : '',
         from: filters.period.from?.toISOString(),
         to: filters.period.to?.toISOString(),
-        typeIdValue: filters.typeId,
-        searchStrValue:
+        typeIdValue: filters.typeIdValue,
+        searchStr:
           useAdvancedSearch && filters.searchStr
             ? filters.searchStr.replace('-', '')
             : undefined,
@@ -90,10 +87,10 @@ const InstitutionOverview = () => {
   const organizations = (orgData?.getOrganizations?.items ??
     []) as Organization[]
 
-  const handleTypeIdChange = (typeId: ApplicationFilters['typeId']) => {
+  const handleTypeIdChange = (typeId: ApplicationFilters['typeIdValue']) => {
     setFilters((prev) => ({
       ...prev,
-      typeId: typeId,
+      typeIdValue: typeId,
     }))
   }
 

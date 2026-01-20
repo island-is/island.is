@@ -104,7 +104,8 @@ initContainer:
     DB_PASS: '/k8s/service-portal-api/DB_PASSWORD'
 namespace: 'service-portal'
 podDisruptionBudget:
-  maxUnavailable: 1
+  minAvailable: 1
+  unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534
 pvcs: []

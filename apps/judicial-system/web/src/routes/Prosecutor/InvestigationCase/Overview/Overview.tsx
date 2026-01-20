@@ -36,6 +36,7 @@ import {
   PageTitle,
   PdfButton,
   ProsecutorCaseInfo,
+  SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
@@ -45,9 +46,8 @@ import {
   NotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { createCaseResentExplanation } from '@island.is/judicial-system-web/src/utils/utils'
-
-import * as styles from './Overview.css'
 
 export const Overview = () => {
   const router = useRouter()
@@ -159,138 +159,139 @@ export const Overview = () => {
           </Box>
         )}
         <PageTitle>{formatMessage(m.heading)}</PageTitle>
-        <ProsecutorCaseInfo workingCase={workingCase} />
-        {workingCase.state === CaseState.RECEIVED &&
-          workingCase.arraignmentDate?.date &&
-          workingCase.court && (
-            <Box component="section" marginBottom={5}>
-              <CaseScheduledCard
-                court={workingCase.court}
-                courtDate={workingCase.arraignmentDate.date}
-                courtRoom={workingCase.arraignmentDate.location}
+        <div className={grid({ gap: 5, marginBottom: 10 })}>
+          <ProsecutorCaseInfo workingCase={workingCase} />
+          {workingCase.state === CaseState.RECEIVED &&
+            workingCase.arraignmentDate?.date &&
+            workingCase.court && (
+              <Box component="section">
+                <CaseScheduledCard
+                  court={workingCase.court}
+                  courtDate={workingCase.arraignmentDate.date}
+                  courtRoom={workingCase.arraignmentDate.location}
+                />
+              </Box>
+            )}
+          <Box component="section">
+            <InfoCard
+              sections={[
+                {
+                  id: 'defendants-section',
+                  items: [defendants({ caseType: workingCase.type })],
+                },
+                ...(showItem(victims)
+                  ? [
+                      {
+                        id: 'victims-section',
+                        items: [victims],
+                      },
+                    ]
+                  : []),
+                {
+                  id: 'case-info-section',
+                  items: [
+                    policeCaseNumbers,
+                    ...(workingCase.courtCaseNumber ? [courtCaseNumber] : []),
+                    court,
+                    prosecutorsOffice,
+                    ...(workingCase.judge ? [judge] : []),
+                    requestedCourtDate,
+                    ...(workingCase.registrar ? [registrar] : []),
+                    prosecutor(workingCase.type),
+                    caseType,
+                  ],
+                  columns: 2,
+                },
+              ]}
+            />
+          </Box>
+          {workingCase.description && (
+            <Box component="section">
+              <SectionHeading
+                title="Efni kröfu"
+                description={workingCase.description}
+                marginBottom={0}
               />
             </Box>
           )}
-        <Box component="section" marginBottom={5}>
-          <InfoCard
-            sections={[
-              {
-                id: 'defendants-section',
-                items: [defendants(workingCase.type)],
-              },
-              ...(showItem(victims)
-                ? [
-                    {
-                      id: 'victims-section',
-                      items: [victims],
-                    },
-                  ]
-                : []),
-              {
-                id: 'case-info-section',
-                items: [
-                  policeCaseNumbers,
-                  ...(workingCase.courtCaseNumber ? [courtCaseNumber] : []),
-                  court,
-                  prosecutorsOffice,
-                  ...(workingCase.judge ? [judge] : []),
-                  requestedCourtDate,
-                  ...(workingCase.registrar ? [registrar] : []),
-                  prosecutor(workingCase.type),
-                  caseType,
-                ],
-                columns: 2,
-              },
-            ]}
-          />
-        </Box>
-        {workingCase.description && (
-          <Box component="section" marginBottom={5}>
-            <Box marginBottom={2}>
-              <Text as="h3" variant="h3">
-                Efni kröfu
-              </Text>
-            </Box>
-            <Text>{workingCase.description}</Text>
+          <Box component="section" data-testid="demands">
+            <SectionHeading
+              title="Dómkröfur"
+              description={workingCase.demands}
+              marginBottom={0}
+            />
           </Box>
-        )}
-        <Box component="section" marginBottom={5} data-testid="demands">
-          <Box marginBottom={2}>
-            <Text as="h3" variant="h3">
-              Dómkröfur
-            </Text>
+          <Box component="section">
+            <Accordion>
+              <AccordionItem
+                labelVariant="h3"
+                id="id_1"
+                label={formatMessage(lawsBrokenAccordion.heading)}
+              >
+                <Text whiteSpace="breakSpaces">{workingCase.lawsBroken}</Text>
+              </AccordionItem>
+              <AccordionItem
+                labelVariant="h3"
+                id="id_2"
+                label="Lagaákvæði sem krafan er byggð á"
+              >
+                <Text>{workingCase.legalBasis}</Text>
+              </AccordionItem>
+              <AccordionItem
+                labelVariant="h3"
+                id="id_4"
+                label="Greinargerð um málsatvik og lagarök"
+              >
+                {workingCase.caseFacts && (
+                  <AccordionListItem title="Málsatvik">
+                    <Text whiteSpace="breakSpaces">
+                      {workingCase.caseFacts}
+                    </Text>
+                  </AccordionListItem>
+                )}
+                {workingCase.legalArguments && (
+                  <AccordionListItem title="Lagarök">
+                    <Text whiteSpace="breakSpaces">
+                      {workingCase.legalArguments}
+                    </Text>
+                  </AccordionListItem>
+                )}
+                {workingCase.requestProsecutorOnlySession && (
+                  <AccordionListItem title="Beiðni um dómþing að varnaraðila fjarstöddum">
+                    <Text>{workingCase.prosecutorOnlySessionRequest}</Text>
+                  </AccordionListItem>
+                )}
+              </AccordionItem>
+              <AccordionItem
+                id="id_6"
+                label={`Rannsóknargögn ${`(${caseFiles.length})`}`}
+                labelVariant="h3"
+              >
+                <Box marginY={3}>
+                  <CaseFileList caseId={workingCase.id} files={caseFiles} />
+                </Box>
+              </AccordionItem>
+              {(workingCase.comments ||
+                workingCase.caseFilesComments ||
+                workingCase.caseResentExplanation) && (
+                <CommentsAccordionItem workingCase={workingCase} />
+              )}
+            </Accordion>
           </Box>
-          <Text>{workingCase.demands}</Text>
-        </Box>
-        <Box component="section" marginBottom={7}>
-          <Accordion>
-            <AccordionItem
-              labelVariant="h3"
-              id="id_1"
-              label={formatMessage(lawsBrokenAccordion.heading)}
-            >
-              <Text whiteSpace="breakSpaces">{workingCase.lawsBroken}</Text>
-            </AccordionItem>
-            <AccordionItem
-              labelVariant="h3"
-              id="id_2"
-              label="Lagaákvæði sem krafan er byggð á"
-            >
-              <Text>{workingCase.legalBasis}</Text>
-            </AccordionItem>
-            <AccordionItem
-              labelVariant="h3"
-              id="id_4"
-              label="Greinargerð um málsatvik og lagarök"
-            >
-              {workingCase.caseFacts && (
-                <AccordionListItem title="Málsatvik">
-                  <Text whiteSpace="breakSpaces">{workingCase.caseFacts}</Text>
-                </AccordionListItem>
-              )}
-              {workingCase.legalArguments && (
-                <AccordionListItem title="Lagarök">
-                  <Text whiteSpace="breakSpaces">
-                    {workingCase.legalArguments}
-                  </Text>
-                </AccordionListItem>
-              )}
-              {workingCase.requestProsecutorOnlySession && (
-                <AccordionListItem title="Beiðni um dómþing að varnaraðila fjarstöddum">
-                  <Text>{workingCase.prosecutorOnlySessionRequest}</Text>
-                </AccordionListItem>
-              )}
-            </AccordionItem>
-            <AccordionItem
-              id="id_6"
-              label={`Rannsóknargögn ${`(${caseFiles.length})`}`}
-              labelVariant="h3"
-            >
-              <Box marginY={3}>
-                <CaseFileList caseId={workingCase.id} files={caseFiles} />
-              </Box>
-            </AccordionItem>
-            {(workingCase.comments ||
-              workingCase.caseFilesComments ||
-              workingCase.caseResentExplanation) && (
-              <CommentsAccordionItem workingCase={workingCase} />
-            )}
-          </Accordion>
-        </Box>
-        <Box className={styles.prosecutorContainer}>
           <Text variant="h3">
             {workingCase.prosecutor
               ? `${workingCase.prosecutor.name} ${workingCase.prosecutor.title}`
               : `${user?.name} ${user?.title}`}
           </Text>
-        </Box>
-        <Box marginBottom={10}>
-          <PdfButton
-            caseId={workingCase.id}
-            title={formatMessage(core.pdfButtonRequest)}
-            pdfType="request"
-          />
-        </Box>
+          <Box>
+            <PdfButton
+              caseId={workingCase.id}
+              title={formatMessage(core.pdfButtonRequest)}
+              pdfType="request"
+              elementId={formatMessage(core.pdfButtonRequest)}
+            />
+          </Box>
+        </div>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
@@ -332,15 +333,17 @@ export const Overview = () => {
             title={formatMessage(m.sections.modal.heading)}
             text={modalText}
             onClose={() => router.push(getStandardUserDashboardRoute(user))}
-            onSecondaryButtonClick={() => {
-              router.push(getStandardUserDashboardRoute(user))
+            secondaryButton={{
+              text: formatMessage(core.closeModal),
+              onClick: () => {
+                router.push(getStandardUserDashboardRoute(user))
+              },
             }}
             errorMessage={
               sendNotificationError
                 ? formatMessage(errors.sendNotification)
                 : undefined
             }
-            secondaryButtonText={formatMessage(core.closeModal)}
           />
         )}
       </AnimatePresence>

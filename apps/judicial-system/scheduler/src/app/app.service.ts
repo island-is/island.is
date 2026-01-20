@@ -88,6 +88,15 @@ export class AppService {
       execute: () =>
         this.addMessagesForIndictmentsWaitingForConfirmationToQueue(),
     },
+    {
+      jobScheduleType: JobScheduleType.WeekdaysAt9,
+      execute: () =>
+        this.addMessagesForPublicProsecutorReviewerAppealDeadlineApproachingReminderToQueue(),
+    },
+    {
+      jobScheduleType: JobScheduleType.EveryDayAt2,
+      execute: () => this.deliverVerdictServiceCertificateToPolice(),
+    },
   ]
 
   private async addMessagesForIndictmentsWaitingForConfirmationToQueue() {
@@ -97,6 +106,22 @@ export class AppService {
           type: MessageType.NOTIFICATION_DISPATCH,
           body: {
             type: NotificationDispatchType.INDICTMENTS_WAITING_FOR_CONFIRMATION,
+          },
+        },
+      ])
+      .catch((reason) =>
+        // Tolerate failure, but log
+        this.logger.error('Failed to dispatch notifications', { reason }),
+      )
+  }
+
+  private async addMessagesForPublicProsecutorReviewerAppealDeadlineApproachingReminderToQueue() {
+    return this.messageService
+      .sendMessagesToQueue([
+        {
+          type: MessageType.NOTIFICATION_DISPATCH,
+          body: {
+            type: NotificationDispatchType.PUBLIC_PROSECUTOR_VERDICT_APPEAL_DEADLINE_REMINDER,
           },
         },
       ])
@@ -190,6 +215,31 @@ export class AppService {
     } catch (error) {
       throw new BadGatewayException(
         `Failed to reset lawyer registry: ${error.message}`,
+      )
+    }
+  }
+
+  private async deliverVerdictServiceCertificateToPolice() {
+    try {
+      const res = await fetch(
+        `${this.config.backendUrl}/api/internal/verdict/deliverVerdictServiceCertificates`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${this.config.backendAccessToken}`,
+          },
+        },
+      )
+
+      if (!res.ok) {
+        throw new BadGatewayException(
+          'Unexpected error occurred while delivering verdict service certificates',
+        )
+      }
+    } catch (error) {
+      throw new BadGatewayException(
+        `Failed to deliver verdict service certificates: ${error.message}`,
       )
     }
   }

@@ -32,4 +32,7 @@ export class VerdictsInput {
 
   @Field(() => String, { nullable: true })
   dateTo?: string
+
+  @Field(() => String, { nullable: true })
+  caseContact?: string
 }

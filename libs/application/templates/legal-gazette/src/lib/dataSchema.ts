@@ -4,6 +4,9 @@ import { YesOrNoEnum } from '@island.is/application/core'
 
 export const legalGazetteDataSchema = z.object({
   application: z.object({
+    typeId: z.string().refine((val) => val && val.length > 0, {
+      params: m.errors.emptyType,
+    }),
     categoryId: z.string().refine((val) => val && val.length > 0, {
       params: m.errors.emptyCategory,
     }),
@@ -14,17 +17,17 @@ export const legalGazetteDataSchema = z.object({
       params: m.errors.emptyHtml,
     }),
   }),
-  signature: z.object({
-    location: z.string().refine((val) => val.length > 0, {
-      params: m.errors.emptyLocation,
+  signature: z
+    .object({
+      location: z.string().optional(),
+      date: z.string().optional(),
+      name: z.string().optional(),
+      onBehalfOf: z.string().optional(),
+    })
+    .refine(({ name, date, location }) => Boolean(name || date || location), {
+      params: m.errors.emptySignature,
+      path: ['name'],
     }),
-    date: z.string().refine((val) => val && val.length > 0, {
-      params: m.errors.emptySignatureDate,
-    }),
-    name: z.string().refine((val) => val.length > 0, {
-      params: m.errors.emptySignatureName,
-    }),
-  }),
   publishing: z
     .object({
       withSpecificDates: z.nativeEnum(YesOrNoEnum),

@@ -9,8 +9,8 @@ import {
 } from 'sequelize-typescript'
 import { CreationOptional } from 'sequelize'
 import { Application } from './application.model'
-import { Value } from './value.model'
 import { ApplicationEvents } from '@island.is/form-system/shared'
+import { LanguageType } from '../../../dataTypes/languageType.model'
 
 @Table({ tableName: 'application_event' })
 export class ApplicationEvent extends Model<ApplicationEvent> {
@@ -36,19 +36,11 @@ export class ApplicationEvent extends Model<ApplicationEvent> {
   eventType!: string
 
   @Column({
-    type: DataType.BOOLEAN,
+    type: DataType.JSON,
     allowNull: false,
-    defaultValue: false,
+    defaultValue: () => new LanguageType(),
   })
-  isFileEvent!: boolean
-
-  @ForeignKey(() => Value)
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-    field: 'value_id',
-  })
-  valueId!: string
+  eventMessage!: LanguageType
 
   @ForeignKey(() => Application)
   @Column({

@@ -3,6 +3,7 @@ import {
   SAVE_SCREEN,
   SUBMIT_APPLICATION,
   SUBMIT_SECTION,
+  UPDATE_APPLICATION_SETTINGS,
 } from '@island.is/form-system/graphql'
 import { SectionTypes, m } from '@island.is/form-system/ui'
 import { Box, Button, GridColumn } from '@island.is/island-ui/core'
@@ -24,6 +25,8 @@ export const Footer = ({ externalDataAgreement }: Props) => {
 
   const submitScreen = useMutation(SAVE_SCREEN)
   const submitSection = useMutation(SUBMIT_SECTION)
+  const updateDependencies = useMutation(UPDATE_APPLICATION_SETTINGS)
+
   const [submitApplication, { loading: submitLoading }] = useMutation(
     SUBMIT_APPLICATION,
     {
@@ -59,13 +62,25 @@ export const Footer = ({ externalDataAgreement }: Props) => {
   const enableContinueButton =
     state.currentSection.index === 0 ? externalDataAgreement : true
 
+  const hasVisibleApplicantBeforeCurrentScreen = (): boolean => {
+    const screens = currentSection?.data?.screens
+    const currentIndex = state.currentScreen?.index
+    if (!Array.isArray(screens) || currentIndex == null) return false
+    for (let i = Number(currentIndex) - 1; i >= 0; i--) {
+      const screen = screens[i]
+      if (screen && screen.isHidden === false) {
+        return true
+      }
+    }
+    return false
+  }
+
   const showBackButton =
-    !isCompletedSection &&
-    !(
-      currentSectionType === SectionTypes.PARTIES &&
-      Number(state.currentScreen?.index) === 0
-    ) &&
-    currentSectionType !== SectionTypes.PREMISES
+    (currentSectionType !== SectionTypes.COMPLETED &&
+      currentSectionType !== SectionTypes.PREMISES &&
+      currentSectionType !== SectionTypes.PARTIES) ||
+    (currentSectionType === SectionTypes.PARTIES &&
+      hasVisibleApplicantBeforeCurrentScreen())
 
   const handleIncrement = async () => {
     const isValid = await validate()
@@ -83,6 +98,7 @@ export const Footer = ({ externalDataAgreement }: Props) => {
         payload: {
           submitScreen: submitScreen,
           submitSection: submitSection,
+          updateDependencies: updateDependencies,
         },
       })
       return
@@ -96,6 +112,7 @@ export const Footer = ({ externalDataAgreement }: Props) => {
         payload: {
           submitScreen: submitScreen,
           submitSection: submitSection,
+          updateDependencies: updateDependencies,
         },
       })
       dispatch({ type: 'SUBMITTED', payload: true })
@@ -104,7 +121,15 @@ export const Footer = ({ externalDataAgreement }: Props) => {
     }
   }
 
-  const handleDecrement = () => dispatch({ type: 'DECREMENT' })
+  const handleDecrement = () =>
+    dispatch({
+      type: 'DECREMENT',
+      payload: {
+        submitScreen: submitScreen,
+        submitSection: submitSection,
+        updateDependencies: updateDependencies,
+      },
+    })
 
   return (
     <Box marginTop={7} className={styles.buttonContainer}>
@@ -120,21 +145,19 @@ export const Footer = ({ externalDataAgreement }: Props) => {
           paddingTop={[1, 4]}
         >
           <Box display="inlineFlex" padding={2} paddingRight="none">
-            {!isCompletedSection && (
-              <Button
-                icon="arrowForward"
-                onClick={handleIncrement}
-                disabled={!enableContinueButton || submitLoading}
-                loading={submitLoading}
-              >
-                {continueButtonText}
-              </Button>
-            )}
+            <Button
+              icon="arrowForward"
+              onClick={handleIncrement}
+              disabled={!enableContinueButton || submitLoading}
+              loading={submitLoading}
+            >
+              {continueButtonText}
+            </Button>
           </Box>
           {showBackButton && (
             <Box display="inlineFlex" padding={2} paddingLeft="none">
               <Button
-                icon="arrowBack"
+                preTextIcon="arrowBack"
                 variant="ghost"
                 onClick={handleDecrement}
                 disabled={submitLoading}

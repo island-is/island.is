@@ -15,8 +15,8 @@ export const serviceSetup = (): ServiceBuilder<'contentful-apps'> =>
       },
     })
     .replicaCount({
-      default: 1,
-      min: 1,
+      default: 2,
+      min: 2,
       max: 10,
     })
     .resources({

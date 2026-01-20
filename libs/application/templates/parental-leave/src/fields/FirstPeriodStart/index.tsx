@@ -27,10 +27,8 @@ const FirstPeriodStart: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 }) => {
   const { register, unregister, setValue } = useFormContext()
   const { formatMessage } = useLocale()
-  const expectedDateOfBirthOrAdoptionDate =
-    getExpectedDateOfBirthOrAdoptionDateOrBirthDate(application)
   const expectedDateOfBirthOrAdoptionDateOrBirthDate =
-    getExpectedDateOfBirthOrAdoptionDateOrBirthDate(application, true)
+    getExpectedDateOfBirthOrAdoptionDateOrBirthDate(application)
   const { rawPeriods } = getApplicationAnswers(application.answers)
   const currentIndex = extractRepeaterIndexFromField(field)
   const currentPeriod = rawPeriods[currentIndex]
@@ -158,14 +156,7 @@ const FirstPeriodStart: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         {renderHiddenStartDateInput && (
           <input
             type="hidden"
-            value={
-              statefulAnswer === StartDateOptions.ESTIMATED_DATE_OF_BIRTH ||
-              statefulAnswer === StartDateOptions.ADOPTION_DATE
-                ? expectedDateOfBirthOrAdoptionDate
-                : statefulAnswer === StartDateOptions.ACTUAL_DATE_OF_BIRTH
-                ? expectedDateOfBirthOrAdoptionDateOrBirthDate
-                : undefined
-            }
+            value={expectedDateOfBirthOrAdoptionDateOrBirthDate}
             {...register(startDateFieldId)}
           />
         )}

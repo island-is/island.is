@@ -215,7 +215,9 @@ const Processing: FC = () => {
       />
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.heading)}</PageTitle>
-        <ProsecutorCaseInfo workingCase={workingCase} hideCourt />
+        <Box marginBottom={5}>
+          <ProsecutorCaseInfo workingCase={workingCase} hideCourt />
+        </Box>
         <Box component="section" marginBottom={5}>
           <SelectCourt />
         </Box>
@@ -290,10 +292,7 @@ const Processing: FC = () => {
           </Box>
         )}
         <Box component="section" marginBottom={5}>
-          <CommentsInput
-            workingCase={workingCase}
-            setWorkingCase={setWorkingCase}
-          />
+          <CommentsInput />
         </Box>
         <Box
           component="section"

@@ -1,5 +1,10 @@
 // Source of truth for other languages
 export const is = {
+  // General buttons
+  'button.change': 'Breyta',
+  'button.open': 'Skoða',
+  'button.moreInfoHere': 'Nánari upplýsingar hér',
+  'button.seeMore': 'Sjá nánar',
   // login
   'login.welcomeMessage': 'Skráðu þig inn í appið með rafrænum skilríkjum',
   'login.loginButtonText': 'Skrá inn',
@@ -184,6 +189,10 @@ export const is = {
   'home.vehicleModule.summary':
     'Skrá kílómetrastöðu rafmagns- og tengiltvinnbíla',
   'home.vehicleModule.button': 'Mín ökutæki',
+  'homeBanner.vehicleMileage.title': 'Skrá kílómetrastöðu',
+  'homeBanner.vehicleMileage.description':
+    'Skráðu kílómetrastöðu þinna ökutækja',
+  'homeBanner.vehicleMileage.cta': 'Skoða ökutæki',
   'button.seeAll': 'Sjá allt',
 
   // home options
@@ -292,6 +301,12 @@ export const is = {
   'profile.finance': 'Fjármál',
   'profile.airDiscount': 'Loftbrú',
   'profile.health': 'Heilsa',
+  'profile.moreInfo': 'Meira á mínum síðum',
+  'profile.accessControl': 'Aðgangsstýring',
+  'profile.supportPayments': 'Framfærsla',
+  'profile.education': 'Menntun',
+  'profile.lawAndOrder': 'Lög og reglur',
+  'profile.occupationalLicenses': 'Starfsleyfi',
 
   // vehicles
   'vehicles.screenTitle': 'Ökutæki',
@@ -300,6 +315,7 @@ export const is = {
     'Ökutæki sem eru skráð á þig munu birtast hér.',
   'vehicles.nextInspectionLabel': 'Næsta skoðun {date}',
   'vehicles.mileageRequired': 'Kílómetragjald',
+  'vehicles.registerMileage': 'Skrá kílómetrastöðu',
 
   // vehicles detail
   'vehicleDetail.regno': 'Skráningarnúmer',
@@ -349,11 +365,29 @@ export const is = {
   'vehicle.mileage.historyTitle': 'Skráningar',
   'vehicle.mileage.editRecordButton': 'Breyta færslu',
 
+  // vehicle links
+  'vehicle.links.ownerLookup': 'Uppfletting í ökutækjaskrá',
+  'vehicle.links.vehicleHistory': 'Ökutækjaferill',
+  'vehicle.links.reportOwnerChange': 'Tilkynna eigendaskipti',
+  'vehicle.links.returnCertificate': 'Skilavottorð',
+  'vehicle.links.nameConfidentiality': 'Nafnleynd í ökutækjaskrá',
+
+  // vehicle dropdown links
+  'vehicle.links.dropdown.orderNumberPlate': 'Panta númeraplötu',
+  'vehicle.links.dropdown.orderRegistrationCertificate':
+    'Panta skráningarskírteini',
+  'vehicle.links.dropdown.changeCoOwner': 'Breyta meðeiganda',
+  'vehicle.links.dropdown.changeOperator': 'Breyta umráðamanni',
+  'vehicle.links.dropdown.vehicleHistoryReport': 'Ferilskýrsla',
+
   // assets overview
   'assetsOvervies.screenTitle': 'Fasteignir',
   'assetsOverview.emptyListTitle': 'Engar fasteignir finnast fyrir notanda',
   'assetsOverview.emptyListDescription':
     'Fasteignir sem skráðar eru á þig munu birtast hér.',
+
+  // assets links
+  'assets.links.mortgageCertificate': 'Veðbókarvottorð',
 
   // assets details
   'assetsDetail.propertyNumber': 'Fastanúmer',
@@ -381,6 +415,10 @@ export const is = {
   'finance.heading.title': 'Staða við ríkissjóð og stofnanir',
   'finance.heading.subtitle':
     'Hér sérð þú sundurliðun skulda og/eða inneigna hjá ríkissjóði og stofnunum.',
+  'finance.links.payments': 'Greiðslur',
+  'finance.links.loans': 'Lán',
+  'finance.links.transactions': 'Hreyfingar',
+  'finance.links.status': 'Staða',
 
   // finance detail
   'financeDetail.title': 'Ítarupplýsingar',
@@ -459,6 +497,9 @@ export const is = {
   'licenseDetail.pcard.alert.title': 'Mundu eftir stæðiskortinu!',
   'licenseDetail.pcard.alert.description':
     'Þetta yfirlit gildir ekki sem stæðiskort.',
+  'licenseDetail.driversLicense.alert.title': 'Ertu að fara erlendis?',
+  'licenseDetail.driversLicense.alert.description':
+    'Mundu eftir kortinu þar sem stafræna ökuskírteinið gildir ekki erlendis',
   'licenseDetail.ehic.alert.title': 'Mundu eftir kortinu!',
   'licenseDetail.ehic.alert.description':
     'Þetta yfirlit gildir ekki sem sjúkratryggingakort.',
@@ -640,6 +681,9 @@ export const is = {
   'airDiscount.emptyListTitle': 'Enginn réttur',
   'airDiscount.emptyListDescription':
     'Einungis íbúar landsbyggðarinnar sem eiga lögheimili fjarri höfuðborgarsvæðinu og eyjum eiga rétt á Loftbrú.',
+  'airDiscount.disabledTitle': 'Loftbrú lokuð',
+  'airDiscount.disabledDescription':
+    'Afsláttarkóðar Loftbrúar eru ekki í gildi í augnablikinu.',
 
   // offline
   'offline.title': 'Ekkert netsamband',
@@ -706,6 +750,13 @@ export const is = {
     'Greiðsluþrep {level}, þú greiðir {percentage}%',
   'health.overview.medicinePurchaseNoActivePeriodWarning':
     'Nýtt greiðslutímabil hefst við næstu lyfjakaup',
+  'health.overview.prescriptions': 'Lyfjaávísanir',
+  'health.overview.basicInformation': 'Grunnupplýsingar',
+  'health.overview.bloodType': 'Blóðflokkur',
+  'health.overview.bloodTypeDescription': 'Þú ert í blóðflokki {bloodType}',
+  'health.overview.noBloodTypeRegistered': 'Ekki verið flokkaður',
+  'health.overview.dentist': 'Tannlæknir',
+  'health.overview.noDentistRegistered': 'Enginn tannlæknir skráður',
 
   // health - vaccinations
   'health.vaccinations.screenTitle': 'Bólusetningar',
@@ -736,4 +787,56 @@ export const is = {
     'Engin líffæri má nota til ígræðslu.',
   'health.organDonation.isDonorWithLimitationsDescription':
     'Öll líffærin mín má nota til ígræðslu fyrir utan: {limitations}.',
+
+  // health - prescriptions & drug certificates
+  'health.prescriptionsAndCertificates.screenTitle': 'Lyf',
+  'health.prescriptionsAndCertificates.validTo': 'Gildir til: {date}',
+  'health.prescriptionsAndCertificates.expired': 'Útrunnið',
+  'health.prescriptionsAndCertificates.rejected': 'Hafnað',
+  'health.prescriptionsAndCertificates.inProcess': 'Í vinnslu',
+  'health.prescriptionsAndCertificates.valid': 'Í gildi',
+  'health.prescriptionsAndCertificates.furtherInformation':
+    'Nánari upplýsingar',
+  'health.prescriptionsAndCertificates.status': 'Staða',
+  'health.prescriptionsAndCertificates.description':
+    'Læknir sækir um lyfjaskírteini fyrir einstakling sem gefin eru út af Sjúkratryggingum að uppfylltum ákveðnum skilyrðum samkvæmt vinnureglum.',
+
+  'health.drugCertificates.title': 'Lyfjaskírteini',
+  'health.drugCertificates.drugName': 'Lyfjaheiti',
+  'health.drugCertificates.atcCode': 'ATC flokkur',
+  'health.drugCertificates.ingredients': 'Innihaldsefni',
+  'health.drugCertificates.validFrom': 'Gildir frá',
+  'health.drugCertificates.validUntil': 'Gildir til',
+  'health.drugCertificates.nameOfDoctor': 'Heiti læknis',
+  'health.drugCertificates.methylDoctors': 'Aukalæknar skráðir á skírteini',
+
+  'health.prescriptions.title': 'Lyfjaávísanir',
+  'health.prescriptions.description':
+    'Hér má finna yfirlit yfir þínar lyfjaávísanir og lyfjaskírteini.',
+  'health.prescriptions.drug': 'Lyf',
+  'health.prescriptions.type': 'Tegund',
+  'health.prescriptions.indication': 'Lyf er notað við',
+  'health.prescriptions.quantity': 'Ávísað magn',
+  'health.prescriptions.dosageInstructions': 'Notkunarleiðbeiningar',
+  'health.prescriptions.issueDate': 'Útgáfudagur',
+  'health.prescriptions.expiresAt': 'Gildir til',
+  'health.prescriptions.doctor': 'Læknir',
+  'health.prescriptions.issueInformation': 'Útgáfa',
+  'health.prescriptions.dispensations': 'Afgreiðslusaga',
+  'health.prescriptions.dispensationNumber': 'Afgreiðsla',
+  'health.prescriptions.lastDispensationDate': 'Síðast afgreitt: {date}',
+  'health.prescriptions.dispensationCount': '{count} afgreiðslur',
+  'health.prescriptions.fetchMoreDispensations': 'Sjá meira',
+  'health.prescriptions.completedDispensation': '{number}. afgreiðsla',
+  'health.prescriptions.history.table.date': 'Dags.',
+  'health.prescriptions.history.table.dispensery': 'Afhendingarstaður',
+  'health.prescriptions.history.table.drug': 'Lyf',
+  'health.prescriptions.history.table.quantity': 'Magn',
+  'health.prescriptions.history.table.moreInfo': 'Nánar',
+  'health.prescriptions.dispensationDetail.title':
+    'Upplýsingar um {count}. afgreiðslu',
+  'health.prescriptions.noDispensations': 'Engar afgreiðslur fundust',
+  'health.prescriptions.noDispensationsDescription':
+    'Ef þú telur þig eiga gögn sem ættu að birtast hér, vinsamlegast hafðu samband við þjónustuaðila.',
+  'health.medicineHistory.title': 'Lyfjasaga',
 }

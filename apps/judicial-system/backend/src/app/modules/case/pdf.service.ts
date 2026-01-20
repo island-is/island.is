@@ -12,8 +12,11 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
   CaseFileCategory,
   CaseIndictmentRulingDecision,
+  CaseState,
   EventType,
   hasIndictmentCaseBeenSubmittedToCourt,
+  isCompletedCase,
+  isDistrictCourtUser,
   SubpoenaType,
   type User as TUser,
 } from '@island.is/judicial-system/types'
@@ -23,9 +26,11 @@ import {
   createCaseFilesRecord,
   createFineSentToPrisonAdminPdf,
   createIndictment,
+  createIndictmentCourtRecordPdf,
   createRulingSentToPrisonAdminPdf,
-  createServiceCertificate,
   createSubpoena,
+  createSubpoenaServiceCertificate,
+  createVerdictServiceCertificate,
   getCaseFileHash,
   getCourtRecordPdfAsBuffer,
   getCustodyNoticePdfAsBuffer,
@@ -39,6 +44,7 @@ import {
   Defendant,
   EventLog,
   Subpoena,
+  Verdict,
 } from '../repository'
 import { SubpoenaService } from '../subpoena'
 
@@ -73,6 +79,7 @@ export class PdfService {
   private async throttleGetCaseFilesRecordPdf(
     theCase: Case,
     policeCaseNumber: string,
+    key: string,
   ): Promise<Buffer> {
     // Serialize all case files pdf generations in this process
     await this.throttle.catch((reason) => {
@@ -87,7 +94,7 @@ export class PdfService {
           caseFile.policeCaseNumber === policeCaseNumber &&
           caseFile.category === CaseFileCategory.CASE_FILE_RECORD &&
           caseFile.type === 'application/pdf' &&
-          caseFile.key &&
+          caseFile.isKeyAccessible &&
           caseFile.chapter !== null &&
           caseFile.orderWithinChapter !== null,
       )
@@ -127,11 +134,7 @@ export class PdfService {
 
     if (hasIndictmentCaseBeenSubmittedToCourt(theCase.state)) {
       // No need to wait for the upload to finish
-      this.tryUploadPdfToS3(
-        theCase,
-        `${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
-        generatedPdf,
-      )
+      this.tryUploadPdfToS3(theCase, key, generatedPdf)
     }
 
     return generatedPdf
@@ -155,6 +158,70 @@ export class PdfService {
     await this.refreshFormatMessage()
 
     return getCourtRecordPdfAsBuffer(theCase, this.formatMessage, user)
+  }
+
+  async getCourtRecordPdfForIndictmentCase(
+    theCase: Case,
+    user: TUser,
+  ): Promise<Buffer> {
+    let confirmation: Confirmation | undefined = undefined
+
+    if (isCompletedCase(theCase.state)) {
+      if (theCase.courtRecordHash) {
+        const existingPdf = await this.tryGetPdfFromS3(
+          theCase,
+          `${theCase.id}/courtRecord.pdf`,
+        )
+
+        if (existingPdf) {
+          return existingPdf
+        }
+      }
+
+      const completionEvent = EventLog.getEventLogByEventType(
+        EventType.INDICTMENT_COMPLETED,
+        theCase.eventLogs,
+      )
+
+      if (completionEvent && completionEvent.institutionName) {
+        confirmation = {
+          actor: completionEvent.userName ?? '',
+          title: completionEvent.userTitle,
+          institution: completionEvent.institutionName,
+          date: completionEvent.created,
+        }
+      }
+    }
+
+    const generatedPdf = await createIndictmentCourtRecordPdf(
+      theCase,
+      isDistrictCourtUser(user),
+      confirmation,
+    )
+
+    if (
+      isCompletedCase(theCase.state) &&
+      // Don't store court record for cases being corrected
+      theCase.state !== CaseState.CORRECTING &&
+      confirmation
+    ) {
+      const { hash, hashAlgorithm } = getCaseFileHash(generatedPdf)
+
+      // No need to wait for this to finish
+      this.caseRepositoryService
+        .update(theCase.id, {
+          courtRecordHash: JSON.stringify({ hash, hashAlgorithm }),
+        })
+        .then(() =>
+          this.tryUploadPdfToS3(
+            theCase,
+            `${theCase.id}/courtRecord.pdf`,
+            generatedPdf,
+          ),
+        )
+    }
+
+    return generatedPdf
   }
 
   async getRequestPdf(theCase: Case): Promise<Buffer> {
@@ -208,13 +275,11 @@ export class PdfService {
 
   async getIndictmentPdf(theCase: Case): Promise<Buffer> {
     let confirmation: Confirmation | undefined = undefined
+    const key = `${theCase.splitCaseId ?? theCase.id}/indictment.pdf`
 
     if (hasIndictmentCaseBeenSubmittedToCourt(theCase.state)) {
       if (theCase.indictmentHash) {
-        const existingPdf = await this.tryGetPdfFromS3(
-          theCase,
-          `${theCase.id}/indictment.pdf`,
-        )
+        const existingPdf = await this.tryGetPdfFromS3(theCase, key)
 
         if (existingPdf) {
           return existingPdf
@@ -254,16 +319,9 @@ export class PdfService {
       // No need to wait for this to finish
       this.caseRepositoryService
         .update(theCase.id, {
-          indictmentHash: hash,
-          indictmentHashAlgorithm: hashAlgorithm,
+          indictmentHash: JSON.stringify({ hash, hashAlgorithm }),
         })
-        .then(() =>
-          this.tryUploadPdfToS3(
-            theCase,
-            `${theCase.id}/indictment.pdf`,
-            generatedPdf,
-          ),
-        )
+        .then(() => this.tryUploadPdfToS3(theCase, key, generatedPdf))
     }
 
     return generatedPdf
@@ -273,11 +331,12 @@ export class PdfService {
     theCase: Case,
     policeCaseNumber: string,
   ): Promise<Buffer> {
+    const key = `${
+      theCase.splitCaseId ?? theCase.id
+    }/${policeCaseNumber}/caseFilesRecord.pdf`
+
     if (hasIndictmentCaseBeenSubmittedToCourt(theCase.state)) {
-      const existingPdf = await this.tryGetPdfFromS3(
-        theCase,
-        `${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
-      )
+      const existingPdf = await this.tryGetPdfFromS3(theCase, key)
 
       if (existingPdf) {
         return existingPdf
@@ -287,6 +346,7 @@ export class PdfService {
     this.throttle = this.throttleGetCaseFilesRecordPdf(
       theCase,
       policeCaseNumber,
+      key,
     )
 
     return await this.throttle
@@ -301,13 +361,13 @@ export class PdfService {
     subpoenaType?: SubpoenaType,
   ): Promise<Buffer> {
     let confirmation: Confirmation | undefined = undefined
+    const key = subpoena
+      ? `${theCase.splitCaseId ?? theCase.id}/subpoena/${subpoena.id}.pdf`
+      : ''
 
     if (subpoena) {
       if (subpoena.hash) {
-        const existingPdf = await this.tryGetPdfFromS3(
-          theCase,
-          `${theCase.id}/subpoena/${subpoena.id}.pdf`,
-        )
+        const existingPdf = await this.tryGetPdfFromS3(theCase, key)
 
         if (existingPdf) {
           return existingPdf
@@ -340,32 +400,51 @@ export class PdfService {
 
       // No need to wait for this to finish
       this.subpoenaService
-        .setHash(subpoena.id, subpoenaHash.hash, subpoenaHash.hashAlgorithm)
-        .then(() =>
-          this.tryUploadPdfToS3(
-            theCase,
-            `${theCase.id}/subpoena/${subpoena.id}.pdf`,
-            generatedPdf,
-          ),
+        .setHash(
+          theCase.id,
+          defendant.id,
+          subpoena.id,
+          subpoenaHash.hash,
+          subpoenaHash.hashAlgorithm,
         )
+        .then(() => this.tryUploadPdfToS3(theCase, key, generatedPdf))
     }
 
     return generatedPdf
   }
 
-  async getServiceCertificatePdf(
+  async getSubpoenaServiceCertificatePdf(
     theCase: Case,
     defendant: Defendant,
     subpoena: Subpoena,
   ): Promise<Buffer> {
     await this.refreshFormatMessage()
 
-    const generatedPdf = await createServiceCertificate(
+    const generatedPdf = await createSubpoenaServiceCertificate(
       theCase,
       defendant,
       subpoena,
       this.formatMessage,
     )
+
+    return generatedPdf
+  }
+
+  async getVerdictServiceCertificatePdf(
+    theCase: Case,
+    defendant: Defendant,
+    verdict: Verdict,
+    deliveredToDefenderName?: string,
+  ): Promise<Buffer> {
+    await this.refreshFormatMessage()
+
+    const generatedPdf = await createVerdictServiceCertificate({
+      theCase,
+      defendant,
+      verdict,
+      deliveredToDefenderName,
+      formatMessage: this.formatMessage,
+    })
 
     return generatedPdf
   }

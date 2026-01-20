@@ -13,6 +13,7 @@ import {
 import {
   EphemeralStateLifeCycle,
   coreHistoryMessages,
+  getReviewStatePendingAction,
   getValueViaPath,
   pruneAfterDays,
 } from '@island.is/application/core'
@@ -34,10 +35,10 @@ import {
   UserProfileApiWithValidation,
 } from '../dataProviders'
 import { ApiScope } from '@island.is/auth/scopes'
-import { Features } from '@island.is/feature-flags'
 import { assign } from 'xstate'
 import set from 'lodash/set'
 import { CodeOwners } from '@island.is/shared/constants'
+import { getReviewers } from '../utils'
 
 const pruneInDaysAtMidnight = (application: Application, days: number) => {
   const date = new Date(application.created)
@@ -61,13 +62,19 @@ const template: ApplicationTemplate<
       ApplicationTypes.TRAINING_LICENSE_ON_A_WORK_MACHINE
     ].translation,
   dataSchema: TrainingLicenseOnAWorkMachineAnswersSchema,
-  featureFlag: Features.TrainingLicenseOnAWorkMachineEnabled,
   allowedDelegations: [
     {
       type: AuthDelegationType.Custom,
     },
   ],
   requiredScopes: [ApiScope.vinnueftirlitid],
+  adminDataConfig: {
+    answers: [
+      // fields that we need to keep after pruning for pending action to work properly
+      { key: 'assigneeInformation.$.assignee.nationalId', isListed: false },
+      { key: 'approved', isListed: false },
+    ],
+  },
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -179,7 +186,7 @@ const template: ApplicationTemplate<
         entry: 'assignUsers',
         meta: {
           name: applicationMessage.name.defaultMessage,
-          status: FormModes.DRAFT,
+          status: FormModes.IN_PROGRESS,
           onDelete: defineTemplateApi({
             action: ApiActions.deleteApplication,
           }),
@@ -192,12 +199,37 @@ const template: ApplicationTemplate<
               {
                 onEvent: DefaultEvents.REJECT,
                 logMessage: coreHistoryMessages.applicationRejected,
+                includeSubjectAndActor: (role, _nationalId, isAdmin) => {
+                  return isAdmin || role === Roles.APPLICANT
+                },
+              },
+              {
+                onEvent: DefaultEvents.APPROVE,
+                logMessage: applicationMessage.historyLogApplicationApprovedBy,
+                includeSubjectAndActor: (role, _nationalId, isAdmin) => {
+                  return isAdmin || role === Roles.APPLICANT
+                },
               },
               {
                 onEvent: DefaultEvents.SUBMIT,
-                logMessage: coreHistoryMessages.applicationApproved,
+                logMessage: applicationMessage.historyLogApplicationApproved,
               },
             ],
+            pendingAction: (application, role, nationalId, isAdmin) => {
+              return getReviewStatePendingAction(
+                nationalId,
+                getReviewers(application.answers),
+                isAdmin || role === Roles.APPLICANT,
+                {
+                  youNeedToReviewDescription:
+                    applicationMessage.pendingActionYouNeedToReviewDescription,
+                  waitingForReviewDescription:
+                    applicationMessage.pendingActionWaitingForReviewDescription,
+                  whoNeedsToReviewDescription:
+                    applicationMessage.pendingActionWhoNeedsToReviewDescription,
+                },
+              )
+            },
           },
           lifecycle: {
             pruneMessage: {

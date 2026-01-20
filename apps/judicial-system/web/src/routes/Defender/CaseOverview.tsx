@@ -155,7 +155,7 @@ export const CaseOverview = () => {
               sections={[
                 {
                   id: 'defendants-section',
-                  items: [defendants(workingCase.type)],
+                  items: [defendants({ caseType: workingCase.type })],
                 },
                 ...(showItem(victims)
                   ? [
@@ -218,7 +218,9 @@ export const CaseOverview = () => {
               />
             </Box>
           )}
-          <AppealCaseFilesOverview />
+          <Box marginBottom={6}>
+            <AppealCaseFilesOverview />
+          </Box>
           {(workingCase.requestSharedWithDefender ===
             RequestSharedWithDefender.READY_FOR_COURT ||
             workingCase.requestSharedWithDefender ===
@@ -234,6 +236,7 @@ export const CaseOverview = () => {
                   caseId={workingCase.id}
                   title={formatMessage(core.pdfButtonRequest)}
                   pdfType="request"
+                  elementId={formatMessage(core.pdfButtonRequest)}
                 />
                 {isCompletedCase(workingCase.state) && (
                   <>
@@ -242,6 +245,9 @@ export const CaseOverview = () => {
                       caseId={workingCase.id}
                       title={formatMessage(core.pdfButtonRulingShortVersion)}
                       pdfType="courtRecord"
+                      elementId={formatMessage(
+                        core.pdfButtonRulingShortVersion,
+                      )}
                     >
                       {workingCase.courtRecordSignatory ? (
                         <SignedDocument
@@ -255,6 +261,7 @@ export const CaseOverview = () => {
                       caseId={workingCase.id}
                       title={formatMessage(core.pdfButtonRuling)}
                       pdfType="ruling"
+                      elementId={formatMessage(core.pdfButtonRuling)}
                       disabled={workingCase.isCompletedWithoutRuling || false}
                     >
                       {workingCase.rulingSignatureDate ? (
@@ -284,19 +291,23 @@ export const CaseOverview = () => {
           <Modal
             title={formatMessage(strings.confirmAppealAfterDeadlineModalTitle)}
             text={formatMessage(strings.confirmAppealAfterDeadlineModalText)}
-            primaryButtonText={formatMessage(
-              strings.confirmAppealAfterDeadlineModalPrimaryButtonText,
-            )}
-            secondaryButtonText={formatMessage(
-              strings.confirmAppealAfterDeadlineModalSecondaryButtonText,
-            )}
-            onPrimaryButtonClick={() => {
-              router.push(
-                `${constants.DEFENDER_APPEAL_ROUTE}/${workingCase.id}`,
-              )
+            primaryButton={{
+              text: formatMessage(
+                strings.confirmAppealAfterDeadlineModalPrimaryButtonText,
+              ),
+              onClick: () => {
+                router.push(
+                  `${constants.DEFENDER_APPEAL_ROUTE}/${workingCase.id}`,
+                )
+              },
             }}
-            onSecondaryButtonClick={() => {
-              setModalVisible('NoModal')
+            secondaryButton={{
+              text: formatMessage(
+                strings.confirmAppealAfterDeadlineModalSecondaryButtonText,
+              ),
+              onClick: () => {
+                setModalVisible('NoModal')
+              },
             }}
           />
         )}
@@ -306,19 +317,23 @@ export const CaseOverview = () => {
               strings.confirmStatementAfterDeadlineModalTitle,
             )}
             text={formatMessage(strings.confirmStatementAfterDeadlineModalText)}
-            primaryButtonText={formatMessage(
-              strings.confirmStatementAfterDeadlineModalPrimaryButtonText,
-            )}
-            secondaryButtonText={formatMessage(
-              strings.confirmStatementAfterDeadlineModalSecondaryButtonText,
-            )}
-            onPrimaryButtonClick={() => {
-              router.push(
-                `${constants.DEFENDER_STATEMENT_ROUTE}/${workingCase.id}`,
-              )
+            primaryButton={{
+              text: formatMessage(
+                strings.confirmStatementAfterDeadlineModalPrimaryButtonText,
+              ),
+              onClick: () => {
+                router.push(
+                  `${constants.DEFENDER_STATEMENT_ROUTE}/${workingCase.id}`,
+                )
+              },
             }}
-            onSecondaryButtonClick={() => {
-              setModalVisible('NoModal')
+            secondaryButton={{
+              text: formatMessage(
+                strings.confirmStatementAfterDeadlineModalSecondaryButtonText,
+              ),
+              onClick: () => {
+                setModalVisible('NoModal')
+              },
             }}
           />
         )}

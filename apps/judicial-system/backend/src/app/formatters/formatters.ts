@@ -14,20 +14,18 @@ import {
   readableIndictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
 import {
-  DefenderSubRole,
-  Gender,
-  getContactInformation,
-  UserRole,
-} from '@island.is/judicial-system/types'
-import {
   CaseCustodyRestrictions,
   CaseLegalProvisions,
   CaseType,
   courtSessionTypeNames,
+  DefenderSubRole,
+  Gender,
+  getContactInformation,
   isIndictmentCase,
   isInvestigationCase,
   isRestrictionCase,
   SessionArrangements,
+  UserRole,
 } from '@island.is/judicial-system/types'
 
 import { core, custodyNotice, notifications } from '../messages'
@@ -825,8 +823,8 @@ export const formatDefenderRoute = (
   }/${id}`
 }
 
-export const formatConfirmedIndictmentKey = (key?: string) =>
-  key?.replace(/\/([^/]*)$/, '/confirmed/$1') ?? ''
+export const formatConfirmedIndictmentKey = (key: string) =>
+  key.replace(/\/([^/]*)$/, '/confirmed/$1') ?? ''
 
 export const filterWhitelistEmails = (
   emails: string[],

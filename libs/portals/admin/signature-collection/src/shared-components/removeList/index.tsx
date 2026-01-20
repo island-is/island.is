@@ -31,20 +31,21 @@ const RemoveList = ({ list }: { list: SignatureCollectionList }) => {
         },
       },
       onCompleted: (response) => {
-        if (response.signatureCollectionAdminRemoveList?.success) {
+        const result = response.signatureCollectionAdminRemoveList
+
+        if (result?.success) {
           setModalRemoveListIsOpen(false)
           toast.success(formatMessage(m.cancelCollectionModalToastSuccess))
           navigate(-1)
         } else {
-          const message =
-            response.signatureCollectionAdminRemoveList?.reasons?.[0] ??
-            formatMessage(m.cancelCollectionModalToastError)
-          toast.error(message)
+          toast.error(
+            result?.reasons?.[0] ??
+              formatMessage(m.cancelCollectionModalToastError),
+          )
         }
       },
-      onError: () => {
-        toast.error(formatMessage(m.cancelCollectionModalToastError))
-      },
+      onError: () =>
+        toast.error(formatMessage(m.cancelCollectionModalToastError)),
     })
 
   return (
@@ -52,12 +53,14 @@ const RemoveList = ({ list }: { list: SignatureCollectionList }) => {
       <GridRow>
         <GridColumn span={['12/12', '12/12', '12/12', '10/12']}>
           <Box display="flex">
-            <Tag variant="red">
-              <Box display="flex" justifyContent="center">
-                <Icon icon="trash" type="outline" color="red600" />
-              </Box>
-            </Tag>
-            <Box marginLeft={5}>
+            <Box marginTop={1}>
+              <Tag variant="red">
+                <Box display="flex" justifyContent="center">
+                  <Icon icon="trash" type="outline" color="red600" />
+                </Box>
+              </Tag>
+            </Box>
+            <Box marginLeft={3}>
               <Text variant="h4">
                 {formatMessage(m.cancelCollectionButton)}
               </Text>
@@ -89,7 +92,6 @@ const RemoveList = ({ list }: { list: SignatureCollectionList }) => {
           <Box display="flex" justifyContent="flexEnd" marginTop={5}>
             <Button
               iconType="outline"
-              variant="ghost"
               onClick={() => removeList()}
               icon="trash"
               colorScheme="destructive"

@@ -5,42 +5,47 @@ import {
   NO,
   YES,
 } from '@island.is/application/core'
+import { primarySchoolMessages } from '../../../lib/messages'
 import { ApplicationType } from '../../../utils/constants'
-import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
   getApplicationAnswers,
-  getNeighbourhoodSchoolName,
+  getApplicationExternalData,
+  getPreferredSchoolName,
 } from '../../../utils/newPrimarySchoolUtils'
 
 export const schoolSubSection = buildSubSection({
   id: 'schoolSubSection',
-  title: newPrimarySchoolMessages.primarySchool.schoolSubSectionTitle,
-  condition: (answers) => {
-    // Only display section if application type is "Enrollment in primary school"
+  title: primarySchoolMessages.school.subSectionTitle,
+  condition: (answers, externalData) => {
+    // Only display section if application type is "Enrollment in primary school" and preferred school is not null
     const { applicationType } = getApplicationAnswers(answers)
-    return applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
+    const { preferredSchool } = getApplicationExternalData(externalData)
+
+    return (
+      applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL &&
+      preferredSchool !== null
+    )
   },
   children: [
     buildMultiField({
       id: 'school',
-      title: newPrimarySchoolMessages.primarySchool.schoolSubSectionTitle,
-      description:
-        newPrimarySchoolMessages.primarySchool.schoolSubSectionDescription,
+      title: primarySchoolMessages.school.subSectionTitle,
+      description: primarySchoolMessages.school.description,
       children: [
         buildRadioField({
-          id: 'school.applyForNeighbourhoodSchool',
+          id: 'school.applyForPreferredSchool',
           required: true,
+          space: 0,
           options: (application) => {
             return [
               {
                 label:
-                  newPrimarySchoolMessages.primarySchool
-                    .schoolApplyForNeighbourhoodSchoolLabel,
+                  primarySchoolMessages.school.applyForPreferredSchoolLabel,
                 subLabel: {
-                  ...newPrimarySchoolMessages.primarySchool
-                    .schoolApplyForNeighbourhoodSchoolSubLabel,
+                  ...primarySchoolMessages.school
+                    .applyForPreferredSchoolSubLabel,
                   values: {
-                    neighbourhoodSchoolName: getNeighbourhoodSchoolName(
+                    preferredSchoolName: getPreferredSchoolName(
                       application.externalData,
                     ),
                   },
@@ -48,12 +53,9 @@ export const schoolSubSection = buildSubSection({
                 value: YES,
               },
               {
-                label:
-                  newPrimarySchoolMessages.primarySchool
-                    .schoolApplyForOtherSchoolLabel,
+                label: primarySchoolMessages.school.applyForOtherSchoolLabel,
                 subLabel:
-                  newPrimarySchoolMessages.primarySchool
-                    .schoolApplyForOtherSchoolSubLabel,
+                  primarySchoolMessages.school.applyForOtherSchoolSubLabel,
                 value: NO,
               },
             ]

@@ -29,7 +29,9 @@ interface Props {
   onNextButtonClick?: () => void
   hideNextButton?: boolean
   actionButtonText?: string
-  actionButtonColorScheme?: 'destructive'
+  actionButtonIcon?: IconMapIcon
+  actionButtonVariant?: ButtonTypes['variant']
+  actionButtonColorScheme?: 'default' | 'destructive'
   actionButtonIsDisabled?: boolean
   onActionButtonClick?: () => void
   hideActionButton?: boolean
@@ -50,6 +52,8 @@ const FormFooter: FC<Props> = ({
   onNextButtonClick,
   hideNextButton,
   actionButtonText,
+  actionButtonIcon,
+  actionButtonVariant,
   actionButtonColorScheme,
   actionButtonIsDisabled,
   onActionButtonClick,
@@ -86,8 +90,9 @@ const FormFooter: FC<Props> = ({
           <Box className={styles.actionButton}>
             <Button
               onClick={onActionButtonClick}
-              variant="ghost"
+              variant={actionButtonVariant ?? 'ghost'}
               colorScheme={actionButtonColorScheme ?? 'destructive'}
+              icon={actionButtonIcon}
               disabled={actionButtonIsDisabled}
               fluid={isTablet}
             >

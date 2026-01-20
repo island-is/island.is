@@ -8,3 +8,12 @@ export const iconStyle = style({
 export const expiringStyle = style({
   color: theme.color.yellow300,
 })
+
+export const white = style({
+  background: theme.color.white,
+})
+
+export const locationModal = style({
+  maxHeight: '400px',
+  overflow: 'scroll',
+})

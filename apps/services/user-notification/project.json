@@ -23,7 +23,11 @@
         "esbuildConfig": "tools/esbuild.config.js",
         "format": ["cjs"],
         "assets": [
-          "apps/services/user-notification/src/assets",
+          {
+            "glob": "**/*",
+            "input": "apps/services/user-notification/src/assets",
+            "output": "./assets"
+          },
           {
             "glob": "*",
             "input": "apps/services/user-notification/migrations",
@@ -117,6 +121,13 @@
       "executor": "nx:run-commands",
       "options": {
         "command": "../../../node_modules/.bin/sequelize-cli db:migrate",
+        "cwd": "apps/services/user-notification/"
+      }
+    },
+    "migrate/undo": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "../../../node_modules/.bin/sequelize-cli db:migrate:undo",
         "cwd": "apps/services/user-notification/"
       }
     },

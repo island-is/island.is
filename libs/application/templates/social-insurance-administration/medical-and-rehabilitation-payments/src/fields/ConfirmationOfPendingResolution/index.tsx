@@ -22,13 +22,16 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { Markdown } from '@island.is/shared/components'
 import format from 'date-fns/format'
+import parseISO from 'date-fns/parseISO'
 import { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { siaConfirmationOfPendingResolutionQuery } from '../../graphql/queries'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../../lib/messages'
-import { SiaConfirmationOfPendingResolutionQuery } from '../../types/schema'
+import { Query } from '@island.is/api/schema'
 import { getApplicationAnswers } from '../../utils/medicalAndRehabilitationPaymentsUtils'
+import { ManagedBy } from '../components/ManagedBy'
 
 export const ConfirmationOfPendingResolution: FC<FieldBaseProps> = ({
   application,
@@ -43,9 +46,7 @@ export const ConfirmationOfPendingResolution: FC<FieldBaseProps> = ({
     data,
     loading,
     error: confirmationOfPendingResolutionError,
-  } = useQuery<SiaConfirmationOfPendingResolutionQuery>(
-    siaConfirmationOfPendingResolutionQuery,
-  )
+  } = useQuery<Query>(siaConfirmationOfPendingResolutionQuery)
 
   setBeforeSubmitCallback?.(async () => {
     const { confirmationOfPendingResolutionConfirmation } =
@@ -65,57 +66,6 @@ export const ConfirmationOfPendingResolution: FC<FieldBaseProps> = ({
     return [true, null]
   })
 
-  const managedBy = () => (
-    <Stack space={3}>
-      <GridRow rowGap={3}>
-        <GridColumn span="1/1">
-          <Text variant="h3">
-            {formatMessage(
-              medicalAndRehabilitationPaymentsFormMessage.shared.managedBy,
-            )}
-          </Text>
-        </GridColumn>
-        <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
-          <Label>
-            {formatMessage(socialInsuranceAdministrationMessage.confirm.name)}
-          </Label>
-          <Text>
-            {
-              data?.socialInsuranceConfirmationOfPendingResolution
-                ?.serviceProvider?.coordinatorName
-            }
-          </Text>
-        </GridColumn>
-        <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
-          <Label>
-            {formatMessage(
-              medicalAndRehabilitationPaymentsFormMessage.shared.jobTitle,
-            )}
-          </Label>
-          <Text>
-            {
-              data?.socialInsuranceConfirmationOfPendingResolution
-                ?.serviceProvider?.coordinatorTitle
-            }
-          </Text>
-        </GridColumn>
-        <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
-          <Label>
-            {formatMessage(
-              medicalAndRehabilitationPaymentsFormMessage.shared.location,
-            )}
-          </Label>
-          <Text>
-            {
-              data?.socialInsuranceConfirmationOfPendingResolution
-                ?.serviceProvider?.workplace
-            }
-          </Text>
-        </GridColumn>
-      </GridRow>
-    </Stack>
-  )
-
   const information = () => (
     <Stack space={3}>
       <GridRow rowGap={3}>
@@ -129,17 +79,51 @@ export const ConfirmationOfPendingResolution: FC<FieldBaseProps> = ({
         <GridColumn span="1/1">
           <Label>
             {formatMessage(
+              medicalAndRehabilitationPaymentsFormMessage.shared
+                .dateOfConfirmation,
+            )}
+          </Label>
+          <Text>
+            {data?.socialInsuranceConfirmationOfPendingResolution?.created
+              ? format(
+                  parseISO(
+                    data.socialInsuranceConfirmationOfPendingResolution.created,
+                  ),
+                  'dd.MM.yyyy',
+                )
+              : '-'}
+          </Text>
+        </GridColumn>
+        <GridColumn span="1/1">
+          <Label>
+            {formatMessage(
               medicalAndRehabilitationPaymentsFormMessage
                 .confirmationOfPendingResolution.informationResources,
             )}
           </Label>
-          <Text>
-            {
-              data?.socialInsuranceConfirmationOfPendingResolution
-                ?.requestedTreatment?.treatmentType?.display
-            }
-          </Text>
+          <Markdown>
+            {data?.socialInsuranceConfirmationOfPendingResolution?.requestedTreatment?.treatmentTypes
+              ?.map((value) => `* ${value.display}`)
+              ?.join('\n\n') ?? ''}
+          </Markdown>
         </GridColumn>
+        {data?.socialInsuranceConfirmationOfPendingResolution
+          ?.requestedTreatment?.otherTreatmentDescription && (
+          <GridColumn span="1/1">
+            <Label>
+              {formatMessage(
+                medicalAndRehabilitationPaymentsFormMessage.shared
+                  .otherTreatmentDescription,
+              )}
+            </Label>
+            <Text>
+              {
+                data?.socialInsuranceConfirmationOfPendingResolution
+                  ?.requestedTreatment?.otherTreatmentDescription
+              }
+            </Text>
+          </GridColumn>
+        )}
         <GridColumn span="1/1">
           <Label>
             {formatMessage(
@@ -154,6 +138,37 @@ export const ConfirmationOfPendingResolution: FC<FieldBaseProps> = ({
             }
           </Text>
         </GridColumn>
+        <GridColumn span="1/1">
+          <Label>
+            {formatMessage(
+              medicalAndRehabilitationPaymentsFormMessage.shared
+                .hasPreviousApproval,
+            )}
+          </Label>
+          <Text>
+            {data?.socialInsuranceConfirmationOfPendingResolution
+              ?.previousApplication?.hasPreviousApproval
+              ? formatMessage(socialInsuranceAdministrationMessage.shared.yes)
+              : formatMessage(socialInsuranceAdministrationMessage.shared.no)}
+          </Text>
+        </GridColumn>
+        {data?.socialInsuranceConfirmationOfPendingResolution
+          ?.previousApplication?.hasPreviousApproval && (
+          <GridColumn span="1/1">
+            <Label>
+              {formatMessage(
+                medicalAndRehabilitationPaymentsFormMessage.shared
+                  .previousApplicationDetails,
+              )}
+            </Label>
+            <Text>
+              {
+                data?.socialInsuranceConfirmationOfPendingResolution
+                  ?.previousApplication?.additionalDetails
+              }
+            </Text>
+          </GridColumn>
+        )}
       </GridRow>
     </Stack>
   )
@@ -168,6 +183,19 @@ export const ConfirmationOfPendingResolution: FC<FieldBaseProps> = ({
             )}
           </Text>
         </GridColumn>
+        <GridColumn span="1/1">
+          <Label>
+            {formatMessage(
+              medicalAndRehabilitationPaymentsFormMessage.shared.applyingFor,
+            )}
+          </Label>
+          <Text>
+            {
+              data?.socialInsuranceConfirmationOfPendingResolution
+                ?.typeAppliedFor
+            }
+          </Text>
+        </GridColumn>
         <GridColumn span={['1/1', '1/1', '1/1', '1/3']}>
           <Label>
             {formatMessage(
@@ -179,8 +207,9 @@ export const ConfirmationOfPendingResolution: FC<FieldBaseProps> = ({
             {data?.socialInsuranceConfirmationOfPendingResolution
               ?.requestedPeriod?.startDate
               ? format(
-                  new Date(
-                    data.socialInsuranceConfirmationOfPendingResolution.requestedPeriod.startDate,
+                  parseISO(
+                    data.socialInsuranceConfirmationOfPendingResolution
+                      .requestedPeriod.startDate,
                   ),
                   'dd.MM.yyyy',
                 )
@@ -199,8 +228,9 @@ export const ConfirmationOfPendingResolution: FC<FieldBaseProps> = ({
             {data?.socialInsuranceConfirmationOfPendingResolution
               ?.requestedPeriod?.endDate
               ? format(
-                  new Date(
-                    data.socialInsuranceConfirmationOfPendingResolution.requestedPeriod.endDate,
+                  parseISO(
+                    data.socialInsuranceConfirmationOfPendingResolution
+                      .requestedPeriod.endDate,
                   ),
                   'dd.MM.yyyy',
                 )
@@ -253,7 +283,11 @@ export const ConfirmationOfPendingResolution: FC<FieldBaseProps> = ({
 
   return (
     <Stack space={4}>
-      {managedBy()}
+      <ManagedBy
+        serviceProvider={
+          data?.socialInsuranceConfirmationOfPendingResolution?.serviceProvider
+        }
+      />
       <Divider />
       {information()}
       <Divider />

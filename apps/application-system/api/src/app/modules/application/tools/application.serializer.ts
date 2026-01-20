@@ -114,6 +114,7 @@ export class ApplicationSerializer
           userRole,
           intl.formatMessage,
           nationalId,
+          false,
         )
       : undefined
 
@@ -122,6 +123,10 @@ export class ApplicationSerializer
           historyModel,
           intl.formatMessage,
           helper,
+          application,
+          userRole,
+          nationalId,
+          false,
         )
       : undefined
 

@@ -118,6 +118,31 @@ export class PaymentFlowEvent extends Model<
   })
   metadata?: object
 
+  @ApiPropertyOptional()
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+    defaultValue: null,
+    field: 'delivered_to_upstream',
+  })
+  deliveredToUpstream?: boolean | null
+
+  @ApiPropertyOptional()
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+    field: 'delivered_at',
+  })
+  deliveredAt?: Date | null
+
+  @ApiPropertyOptional()
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+    field: 'delivery_error',
+  })
+  deliveryError?: string | null
+
   @CreatedAt
   @Column({
     type: DataType.DATE,
@@ -136,3 +161,5 @@ export class PaymentFlowEvent extends Model<
   })
   modified!: CreationOptional<Date>
 }
+
+export type PaymentFlowEventAttributes = InferAttributes<PaymentFlowEvent>

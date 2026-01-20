@@ -4,7 +4,7 @@ import {
   ApplicationEligibility,
   ApplicationEligibilityRequirement,
   RequirementKey,
-} from '../../types/schema'
+} from '@island.is/api/schema'
 import { useQuery, gql } from '@apollo/client'
 import {
   B_FULL,
@@ -151,12 +151,12 @@ export const useEligibility = (
         requirements: [
           ...eligibility,
           {
-            key: RequirementKey.BeRequiresHealthCertificate,
+            key: RequirementKey.beRequiresHealthCertificate,
             requirementMet:
               !hasGlasses && !hasOtherCategoryOrHealthRemarks(currentLicense),
           },
           {
-            key: RequirementKey.HasNoPhoto,
+            key: RequirementKey.hasNoPhoto,
             requirementMet: hasQualityPhoto,
           },
         ],
@@ -185,7 +185,7 @@ export const useEligibility = (
       ...(hasExtendedLicense
         ? [
             {
-              key: RequirementKey.NoExtendedDrivingLicense,
+              key: RequirementKey.noExtendedDrivingLicense,
               requirementMet: false,
             },
           ]

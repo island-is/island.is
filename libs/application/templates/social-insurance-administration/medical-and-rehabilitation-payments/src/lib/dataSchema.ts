@@ -307,10 +307,12 @@ export const dataSchema = z.object({
   confirmationOfIllHealth: z.object({
     confirmation: z.array(z.string()).refine((v) => v.includes(YES)),
   }),
-  selfAssessment: z
+  selfAssessmentQuestionsOne: z.object({
+    hadAssistance: z.enum([YES, NO]).optional(),
+    educationalLevel: z.string().min(1),
+  }),
+  selfAssessmentQuestionsTwo: z
     .object({
-      hadAssistance: z.enum([YES, NO]).optional(),
-      educationalLevel: z.string().optional(),
       currentEmploymentStatuses: z.array(z.string()).min(1).optional(),
       currentEmploymentStatusExplanation: z.string().optional(),
       lastProfession: z.string().optional().nullable(),
@@ -318,6 +320,31 @@ export const dataSchema = z.object({
       lastActivityOfProfession: z.string().optional().nullable(),
       lastActivityOfProfessionDescription: z.string().optional(),
       lastProfessionYear: z.string().optional().nullable(),
+    })
+    .refine(
+      ({ currentEmploymentStatuses, currentEmploymentStatusExplanation }) =>
+        Array.isArray(currentEmploymentStatuses) &&
+        currentEmploymentStatuses.includes(OTHER)
+          ? !!currentEmploymentStatusExplanation?.trim()
+          : true,
+      { path: ['currentEmploymentStatusExplanation'] },
+    )
+    .refine(
+      ({ lastProfession, lastProfessionDescription }) =>
+        lastProfession && lastProfession === OTHER
+          ? !!lastProfessionDescription?.trim()
+          : true,
+      { path: ['lastProfessionDescription'] },
+    )
+    .refine(
+      ({ lastActivityOfProfession, lastActivityOfProfessionDescription }) =>
+        lastActivityOfProfession && lastActivityOfProfession === OTHER
+          ? !!lastActivityOfProfessionDescription?.trim()
+          : true,
+      { path: ['lastActivityOfProfessionDescription'] },
+    ),
+  selfAssessmentQuestionsThree: z
+    .object({
       mainProblem: z.string().min(1).optional(),
       hasPreviouslyReceivedRehabilitationOrTreatment: z
         .enum([YES, NO])
@@ -326,19 +353,6 @@ export const dataSchema = z.object({
       previousRehabilitationSuccessful: z.string().optional(),
       previousRehabilitationSuccessfulFurtherExplanations: z
         .string()
-        .optional(),
-      questionnaire: z
-        .array(
-          z.object({
-            answer: z
-              .string()
-              .min(1)
-              .refine((v) => !!v && v.trim().length > 0, {
-                params: errorMessages.selfAssessmentQuestionnaireRequired,
-              }),
-            questionId: z.string(),
-          }),
-        )
         .optional(),
     })
     .refine(
@@ -373,29 +387,22 @@ export const dataSchema = z.object({
           ? !!previousRehabilitationSuccessfulFurtherExplanations
           : true,
       { path: ['previousRehabilitationSuccessfulFurtherExplanations'] },
-    )
-    .refine(
-      ({ currentEmploymentStatuses, currentEmploymentStatusExplanation }) =>
-        Array.isArray(currentEmploymentStatuses) &&
-        currentEmploymentStatuses.includes(OTHER)
-          ? !!currentEmploymentStatusExplanation?.trim()
-          : true,
-      { path: ['currentEmploymentStatusExplanation'] },
-    )
-    .refine(
-      ({ lastProfession, lastProfessionDescription }) =>
-        lastProfession && lastProfession === OTHER
-          ? !!lastProfessionDescription?.trim()
-          : true,
-      { path: ['lastProfessionDescription'] },
-    )
-    .refine(
-      ({ lastActivityOfProfession, lastActivityOfProfessionDescription }) =>
-        lastActivityOfProfession && lastActivityOfProfession === OTHER
-          ? !!lastActivityOfProfessionDescription?.trim()
-          : true,
-      { path: ['lastActivityOfProfessionDescription'] },
     ),
+  selfAssessment: z.object({
+    questionnaire: z
+      .array(
+        z.object({
+          answer: z
+            .string()
+            .min(1)
+            .refine((v) => !!v && v.trim().length > 0, {
+              params: errorMessages.selfAssessmentQuestionnaireRequired,
+            }),
+          questionId: z.string(),
+        }),
+      )
+      .optional(),
+  }),
 })
 
 export type ApplicationAnswers = z.TypeOf<typeof dataSchema>

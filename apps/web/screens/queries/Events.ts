@@ -9,9 +9,11 @@ export const GET_SINGLE_EVENT_QUERY = gql`
       title
       slug
       startDate
+      endDate
       time {
         startTime
         endTime
+        endDate
       }
       organization {
         slug
@@ -66,9 +68,11 @@ export const GET_EVENTS_QUERY = gql`
         slug
         startDate
         firstPublishedAt
+        endDate
         time {
           startTime
           endTime
+          endDate
         }
         location {
           streetAddress

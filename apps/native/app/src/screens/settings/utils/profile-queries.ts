@@ -1,15 +1,13 @@
-import { useApolloClient } from '@apollo/client'
 import {
-  GetProfileDocument,
-  GetProfileQuery,
-  GetProfileQueryVariables,
+  useGetProfileLazyQuery,
   useUpdateProfileMutation,
 } from '../../../graphql/types/schema'
 
 export const useUpdateUserProfile = () => {
-  const client = useApolloClient()
   const [updateUserProfileMutation, { loading, error }] =
     useUpdateProfileMutation()
+
+  const [getProfileLazyQuery] = useGetProfileLazyQuery()
 
   const updateUserProfile = (input: {
     email?: string
@@ -24,15 +22,11 @@ export const useUpdateUserProfile = () => {
       },
     }).then((res) => {
       if (res.data) {
-        try {
-          client.query<GetProfileQuery, GetProfileQueryVariables>({
-            query: GetProfileDocument,
-            fetchPolicy: 'network-only',
-          })
-        } catch (err) {
-          // do nothing
-        }
+        getProfileLazyQuery({
+          fetchPolicy: 'network-only',
+        })
       }
+
       return res
     })
   }

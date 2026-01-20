@@ -4,6 +4,7 @@ import {
   CreatedAt,
   DataType,
   ForeignKey,
+  HasMany,
   Model,
   Table,
   UpdatedAt,
@@ -17,6 +18,8 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { Case } from './case.model'
+import { CourtDocument } from './courtDocument.model'
+import { CourtSessionString } from './courtSessionString.model'
 import { User } from './user.model'
 
 @Table({
@@ -49,6 +52,15 @@ export class CourtSession extends Model {
   @Column({ type: DataType.STRING, allowNull: true })
   @ApiPropertyOptional({ type: String })
   location?: string
+
+  @ForeignKey(() => User)
+  @Column({ type: DataType.UUID, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  judgeId?: string
+
+  @BelongsTo(() => User, 'judgeId')
+  @ApiPropertyOptional({ type: () => User })
+  judge?: User
 
   @Column({ type: DataType.DATE, allowNull: true })
   @ApiPropertyOptional({ type: Date })
@@ -83,8 +95,8 @@ export class CourtSession extends Model {
     allowNull: true,
     values: Object.values(CourtSessionRulingType),
   })
-  @ApiPropertyOptional({ type: String })
-  rulingType?: string
+  @ApiPropertyOptional({ enum: CourtSessionRulingType })
+  rulingType?: CourtSessionRulingType
 
   @Column({ type: DataType.TEXT, allowNull: true })
   @ApiPropertyOptional({ type: String })
@@ -106,4 +118,29 @@ export class CourtSession extends Model {
   @Column({ type: DataType.TEXT, allowNull: true })
   @ApiPropertyOptional({ type: String })
   closingEntries?: string
+
+  @HasMany(() => CourtDocument, {
+    foreignKey: 'courtSessionId',
+    as: 'filedDocuments',
+  })
+  @ApiPropertyOptional({ type: () => [CourtDocument] })
+  filedDocuments?: CourtDocument[]
+
+  @HasMany(() => CourtDocument, {
+    foreignKey: 'mergedCourtSessionId',
+    as: 'mergedFiledDocuments',
+  })
+  @ApiPropertyOptional({ type: () => [CourtDocument] })
+  mergedFiledDocuments?: CourtDocument[]
+
+  @HasMany(() => CourtSessionString, {
+    foreignKey: 'courtSessionId',
+    as: 'courtSessionStrings',
+  })
+  @ApiPropertyOptional({ type: () => [CourtSessionString] })
+  courtSessionStrings?: CourtSessionString[]
+
+  @Column({ type: DataType.BOOLEAN, allowNull: true })
+  @ApiPropertyOptional({ type: Boolean })
+  isConfirmed?: boolean
 }

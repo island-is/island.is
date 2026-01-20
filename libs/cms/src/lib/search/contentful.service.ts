@@ -585,11 +585,12 @@ export class ContentfulService {
           })
 
           // import data from all providers
-          const importableData = this.mappingService.mapData(items)
+          const { mappedData: importableData, entriesToDelete } =
+            this.mappingService.mapData(items)
 
           await this.elasticService.bulk(elasticIndex, {
             add: flatten(importableData),
-            remove: [],
+            remove: entriesToDelete,
           })
 
           logger.info(
