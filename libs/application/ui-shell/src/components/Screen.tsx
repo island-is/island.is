@@ -281,6 +281,7 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
             event,
             answers: finalAnswers,
           },
+          locale,
         },
       })
 

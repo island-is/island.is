@@ -118,10 +118,12 @@ export class ApplicationResolver {
 
   @Mutation(() => Application, { nullable: true })
   async submitApplication(
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
     @Args('input') input: SubmitApplicationInput,
     @CurrentUser() user: User,
   ): Promise<Application> {
-    return this.applicationService.submitApplication(input, user)
+    return this.applicationService.submitApplication(input, user, locale)
   }
 
   @Mutation(() => Application, { nullable: true })
