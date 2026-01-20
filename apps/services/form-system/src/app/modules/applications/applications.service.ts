@@ -185,7 +185,41 @@ export class ApplicationsService {
       throw new NotFoundException(`Application with id '${id}' not found`)
     }
 
-    application.dependencies = updateApplicationDto.dependencies
+    if (updateApplicationDto.completed) {
+      const completedToRemove = updateApplicationDto.completed ?? []
+
+      application.completed = (application.completed ?? []).filter(
+        (completedId) => !completedToRemove.includes(completedId),
+      )
+
+      const form = await this.formModel.findByPk(application.formId, {
+        include: [{ model: Section, as: 'sections' }],
+      })
+
+      if (!form) {
+        throw new NotFoundException(
+          `Form with id '${application.formId}' not found`,
+        )
+      }
+
+      let draftFinishedSteps = 0
+
+      for (const section of form.sections.filter(
+        (s) =>
+          s.sectionType === SectionTypes.INPUT ||
+          s.sectionType === SectionTypes.PARTIES,
+      ) || []) {
+        if (section.id && application.completed.includes(section.id)) {
+          draftFinishedSteps = draftFinishedSteps + 1
+        }
+      }
+
+      application.draftFinishedSteps = draftFinishedSteps
+    }
+
+    if (updateApplicationDto.dependencies) {
+      application.dependencies = updateApplicationDto.dependencies
+    }
 
     await application.save()
   }

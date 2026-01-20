@@ -3,7 +3,7 @@ import {
   SAVE_SCREEN,
   SUBMIT_APPLICATION,
   SUBMIT_SECTION,
-  UPDATE_APPLICATION_DEPENDENCIES,
+  UPDATE_APPLICATION_SETTINGS,
 } from '@island.is/form-system/graphql'
 import { SectionTypes, m } from '@island.is/form-system/ui'
 import { Box, Button, GridColumn } from '@island.is/island-ui/core'
@@ -25,7 +25,7 @@ export const Footer = ({ externalDataAgreement }: Props) => {
 
   const submitScreen = useMutation(SAVE_SCREEN)
   const submitSection = useMutation(SUBMIT_SECTION)
-  const updateDependencies = useMutation(UPDATE_APPLICATION_DEPENDENCIES)
+  const updateDependencies = useMutation(UPDATE_APPLICATION_SETTINGS)
 
   const [submitApplication, { loading: submitLoading }] = useMutation(
     SUBMIT_APPLICATION,

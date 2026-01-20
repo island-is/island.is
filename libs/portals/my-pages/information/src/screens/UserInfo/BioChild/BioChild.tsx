@@ -5,10 +5,9 @@ import {
   formatNationalId,
   UserInfoLine,
   m,
-  IntroHeader,
   THJODSKRA_SLUG,
+  IntroWrapper,
 } from '@island.is/portals/my-pages/core'
-import { defineMessage } from 'react-intl'
 import {
   Box,
   Button,
@@ -18,8 +17,8 @@ import {
   Inline,
   Stack,
 } from '@island.is/island-ui/core'
-import { formatNameBreaks } from '../../helpers/formatting'
-import { spmm } from '../../lib/messages'
+import { formatNameBreaks } from '../../../helpers/formatting'
+import { spmm } from '../../../lib/messages'
 import { unmaskString } from '@island.is/shared/utils'
 import { Problem } from '@island.is/react-spa/shared'
 import { useNationalRegistryBioChildQuery } from './BioChild.generated'
@@ -72,15 +71,12 @@ const BioChild = () => {
   const noChildFound = !loading && !isChildOrChildOfUser && !error
 
   return (
-    <>
-      <IntroHeader
-        hideImgPrint
-        title={child?.fullName ?? ''}
-        intro={formatMessage(spmm.childIntro)}
-        serviceProviderSlug={THJODSKRA_SLUG}
-        serviceProviderTooltip={formatMessage(m.tjodskraTooltip)}
-      />
-
+    <IntroWrapper
+      title={child?.fullName ?? ''}
+      intro={formatMessage(spmm.childIntro)}
+      serviceProviderSlug={THJODSKRA_SLUG}
+      serviceProviderTooltip={formatMessage(m.tjodskraTooltip)}
+    >
       {error && !loading && <Problem error={error} noBorder={false} />}
       {(!baseId || noChildFound) && (
         <Problem
@@ -147,7 +143,7 @@ const BioChild = () => {
           </Stack>
         </>
       )}
-    </>
+    </IntroWrapper>
   )
 }
 
