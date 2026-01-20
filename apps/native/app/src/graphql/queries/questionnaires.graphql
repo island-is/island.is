@@ -28,6 +28,7 @@ query GetQuestionnaire($locale: String!, $input: GetQuestionnaireInput!) {
     }
     expirationDate
     canSubmit
+    lastSubmissionId
     submissions {
       __typename
       id

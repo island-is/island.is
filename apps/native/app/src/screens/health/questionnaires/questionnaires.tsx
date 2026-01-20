@@ -9,7 +9,6 @@ import {
 import styled, { useTheme } from 'styled-components/native'
 
 import externalLinkIcon from '../../../assets/icons/external-link.png'
-import { getConfig } from '../../../config'
 import {
   QuestionnaireQuestionnairesOrganizationEnum,
   QuestionnaireQuestionnairesStatusEnum,
@@ -27,6 +26,7 @@ import {
 } from '../../../ui'
 import { ComponentRegistry } from '../../../utils/component-registry'
 import { createSkeletonArr } from '../../../utils/create-skeleton-arr'
+import { questionnaireUrls } from '../../../utils/url-builder'
 import type { QuestionnaireDetailParams } from './questionnaire-detail'
 import { getQuestionnaireOrganizationLabelId } from './questionnaire-utils'
 
@@ -66,11 +66,13 @@ export const QuestionnairesScreen: NavigationFunctionComponent = ({
         | undefined,
       id: string | null | undefined,
     ): QuestionnaireCardAction[] => {
-      if (!status) {
+      if (!status || !organization || !id) {
         return []
       }
 
-      const getactionData = (messageid: string, link: string) => {
+      const urlParams = { organization, id }
+
+      const getActionData = (messageid: string, link: string) => {
         return {
           icon: externalLinkIcon,
           onPress: () => openBrowser(link, componentId),
@@ -78,37 +80,30 @@ export const QuestionnairesScreen: NavigationFunctionComponent = ({
         }
       }
 
-      const answerLink = `${
-        getConfig().baseUrl
-      }/minarsidur/heilsa/spurningalistar/${organization?.toLowerCase()}/${id}/svara`
-      const viewAnswerLink = `${
-        getConfig().baseUrl
-      }/minarsidur/heilsa/spurningalistar/${organization?.toLowerCase()}/${id}/skoda-svor`
-      const continueDraftLink = `${
-        getConfig().baseUrl
-      }/minarsidur/heilsa/spurningalistar/${organization?.toLowerCase()}/${id}/svara`
-
       switch (status) {
         case QuestionnaireQuestionnairesStatusEnum.NotAnswered:
           return [
-            getactionData('health.questionnaires.action.answer', answerLink),
+            getActionData(
+              'health.questionnaires.action.answer',
+              questionnaireUrls.answer(urlParams),
+            ),
           ]
         case QuestionnaireQuestionnairesStatusEnum.Answered:
           return [
-            getactionData(
+            getActionData(
               'health.questionnaires.action.view-answer',
-              viewAnswerLink,
+              questionnaireUrls.viewAnswer(urlParams),
             ),
           ]
         case QuestionnaireQuestionnairesStatusEnum.Draft:
           return [
-            getactionData(
+            getActionData(
               'health.questionnaires.action.continue-draft',
-              continueDraftLink,
+              questionnaireUrls.continueDraft(urlParams),
             ),
-            getactionData(
+            getActionData(
               'health.questionnaires.action.view-answer',
-              viewAnswerLink,
+              questionnaireUrls.viewAnswer(urlParams),
             ),
           ]
         default:

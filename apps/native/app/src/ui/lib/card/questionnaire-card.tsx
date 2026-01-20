@@ -1,17 +1,16 @@
 import React from 'react'
 import { FormattedDate, useIntl } from 'react-intl'
-import { Image, ImageSourcePropType, View, ViewStyle } from 'react-native'
+import { Image, ImageSourcePropType, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
-import chevronForward from '../../assets/icons/chevron-forward.png'
-import timeOutlineIcon from '../../assets/card/time-outline.png'
 import { PressableHighlight } from '../../../components/pressable-highlight/pressable-highlight'
-import { dynamicColor } from '../../utils/dynamic-color'
-import { Typography } from '../typography/typography'
-import { Tag } from '../tag/tag'
-import { Badge } from '../badge/badge'
 import { QuestionnaireQuestionnairesStatusEnum } from '../../../graphql/types/schema'
 import { getQuestionnaireStatusLabelId } from '../../../screens/health/questionnaires/questionnaire-utils'
+import timeOutlineIcon from '../../assets/card/time-outline.png'
+import chevronForward from '../../assets/icons/chevron-forward.png'
+import { dynamicColor } from '../../utils/dynamic-color'
+import { Badge } from '../badge/badge'
+import { Typography } from '../typography/typography'
 
 export type QuestionnaireCardAction = {
   text: string
@@ -34,9 +33,9 @@ const Host = styled.View`
   border-radius: ${({ theme }) => theme.border.radius.large};
   border-width: ${({ theme }) => theme.border.width.standard}px;
   border-color: ${dynamicColor(({ theme }) => ({
-    light: theme.color.blue200,
-    dark: theme.shades.dark.shade300,
-  }))};
+  light: theme.color.blue200,
+  dark: theme.shades.dark.shade300,
+}))};
   background-color: ${({ theme }) => theme.color.white};
   overflow: hidden;
 `
@@ -87,9 +86,9 @@ const ActionsContainer = styled.View`
   align-items: center;
   border-top-width: ${({ theme }) => theme.border.width.standard}px;
   border-top-color: ${dynamicColor((props) => ({
-    light: props.theme.color.blue200,
-    dark: props.theme.shades.dark.shade300,
-  }))};
+  light: props.theme.color.blue200,
+  dark: props.theme.shades.dark.shade300,
+}))};
   flex-direction: row;
 `
 
@@ -98,9 +97,9 @@ const ActionButton = styled.TouchableOpacity<{ $border: boolean }>`
   padding: ${({ theme }) => theme.spacing[2]}px;
   border-left-width: ${({ theme }) => theme.border.width.standard}px;
   border-left-color: ${dynamicColor(
-    ({ theme, $border }) => (!$border ? 'transparent' : theme.color.blue200),
-    true,
-  )};
+  ({ theme, $border }) => (!$border ? 'transparent' : theme.color.blue200),
+  true,
+)};
 `
 
 const ActionContent = styled.View`

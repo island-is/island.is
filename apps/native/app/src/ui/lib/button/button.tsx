@@ -24,7 +24,6 @@ interface ButtonBaseProps extends TouchableHighlightProps {
   ellipsis?: boolean
   compactPadding?: boolean
   iconPosition?: 'start' | 'end'
-  compactPadding?: boolean
   loading?: boolean
 }
 
@@ -52,9 +51,6 @@ const Host = styled.TouchableHighlight<HostProps>`
     props.compactPadding
       ? `${props.theme.spacing.p1}px ${props.theme.spacing.p2}px`
       : `${props.theme.spacing.p3}px ${props.theme.spacing.p4}px`};
-    props.compactPadding
-      ? `${ props.theme.spacing.p1 }px ${ props.theme.spacing.p2 }px`
-      : `${ props.theme.spacing.p3 }px ${ props.theme.spacing.p4 } px`};
   background-color: ${dynamicColor<HostProps>(
         ({
           theme,

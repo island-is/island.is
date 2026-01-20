@@ -13,7 +13,6 @@ import {
 import styled, { useTheme } from 'styled-components/native'
 
 import externalLinkIcon from '../../../assets/icons/external-link.png'
-import eyeOffIcon from '../../../assets/icons/eye-off.png'
 import {
   QuestionnaireQuestionnairesOrganizationEnum,
   QuestionnaireQuestionnairesStatusEnum,
@@ -23,11 +22,11 @@ import { createNavigationOptionHooks } from '../../../hooks/create-navigation-op
 import { useLocale } from '../../../hooks/use-locale'
 import { useBrowser } from '../../../lib/use-browser'
 import { Button, NavigationBarSheet, Problem, Typography } from '../../../ui'
+import { questionnaireUrls } from '../../../utils/url-builder'
 import {
   getQuestionnaireOrganizationLabelId,
   getQuestionnaireStatusLabelId,
 } from './questionnaire-utils'
-import { getConfig } from '../../../config'
 
 const Host = styled.View`
   flex: 1;
@@ -70,8 +69,6 @@ const { getNavigationOptions, useNavigationOptions } =
     },
   }))
 
-type QuestionnaireStatus = 'answered' | 'unanswered'
-
 export type QuestionnaireDetailParams = {
   id: string
   organization?: QuestionnaireQuestionnairesOrganizationEnum
@@ -108,48 +105,55 @@ export const QuestionnaireDetailScreen: NavigationFunctionComponent<{
   }, [componentId])
 
   const onAnswer = useCallback(() => {
+    if (!organization || !id) return
+
     openBrowser(
-      `${
-        getConfig().baseUrl
-      }/minarsidur/heilsa/spurningalistar/${organization?.toLowerCase()}/${id}/svara`,
+      questionnaireUrls.answer({ organization, id }),
       componentId,
     )
-    return
-  }, [])
+  }, [organization, id, componentId, openBrowser])
 
   const onView = useCallback(() => {
+    if (!organization || !id) return
+
     openBrowser(
-      `${
-        getConfig().baseUrl
-      }/minarsidur/heilsa/spurningalistar/${organization?.toLowerCase()}/${id}/skoda-svor`,
+      questionnaireUrls.viewAnswer({
+        organization,
+        id,
+        submissionId: questionnaire?.lastSubmissionId ?? undefined,
+      }),
       componentId,
     )
-    return
-  }, [])
+  }, [organization, id, questionnaire?.lastSubmissionId, componentId, openBrowser])
+
+  // Determine error/loading state content
+  let errorContent: React.ReactNode = null
 
   if (!id) {
-    return (
-      <Host>
-        <NavigationBarSheet
-          componentId={componentId}
-          onClosePress={close}
-          style={{ marginHorizontal: 16 }}
-        />
-        <Content>
-          <View>
-            <Typography variant="heading3">
-              <FormattedMessage
-                id="health.questionnaires.detail.notFound"
-                defaultMessage="Spurningalisti fannst ekki"
-              />
-            </Typography>
-          </View>
-        </Content>
-      </Host>
+    errorContent = (
+      <View>
+        <Typography variant="heading3">
+          <FormattedMessage
+            id="health.questionnaires.detail.notFound"
+            defaultMessage="Spurningalisti fannst ekki"
+          />
+        </Typography>
+      </View>
     )
+  } else if (loading && !base) {
+    errorContent = (
+      <View style={{ paddingVertical: theme.spacing[2] }}>
+        <ActivityIndicator />
+      </View>
+    )
+  } else if (!loading && error && !base) {
+    errorContent = <Problem error={error} withContainer />
+  } else if (!loading && !error && !base) {
+    errorContent = <Problem type="no_data" withContainer />
   }
 
-  if (loading && !base) {
+  // Early return with shared layout structure
+  if (errorContent) {
     return (
       <Host>
         <NavigationBarSheet
@@ -157,41 +161,7 @@ export const QuestionnaireDetailScreen: NavigationFunctionComponent<{
           onClosePress={close}
           style={{ marginHorizontal: 16 }}
         />
-        <Content>
-          <View style={{ paddingVertical: theme.spacing[2] }}>
-            <ActivityIndicator />
-          </View>
-        </Content>
-      </Host>
-    )
-  }
-
-  if (!loading && error && !base) {
-    return (
-      <Host>
-        <NavigationBarSheet
-          componentId={componentId}
-          onClosePress={close}
-          style={{ marginHorizontal: 16 }}
-        />
-        <Content>
-          <Problem error={error} withContainer />
-        </Content>
-      </Host>
-    )
-  }
-
-  if (!loading && !error && !base) {
-    return (
-      <Host>
-        <NavigationBarSheet
-          componentId={componentId}
-          onClosePress={close}
-          style={{ marginHorizontal: 16 }}
-        />
-        <Content>
-          <Problem type="no_data" withContainer />
-        </Content>
+        <Content>{errorContent}</Content>
       </Host>
     )
   }
@@ -227,7 +197,7 @@ export const QuestionnaireDetailScreen: NavigationFunctionComponent<{
               {(isNotAnswered || isDraft) && (
                 <Button
                   title={intl.formatMessage({
-                    id: QuestionnaireQuestionnairesStatusEnum.Draft
+                    id: isDraft
                       ? 'health.questionnaires.action.continue-draft'
                       : 'health.questionnaires.action.answer',
                   })}
