@@ -66,7 +66,7 @@ export class DeprecatedResolver {
   @Query(() => MachineDetails, {
     nullable: true,
     deprecationReason:
-      'TO BE REMOVED. Pass in registrationnumber to "workMachine" resolver function instead',
+      "TO BE REMOVED. Pass in registrationnumber to 'workMachine' resolver function instead",
   })
   @Audit()
   async getWorkerMachineByRegno(
