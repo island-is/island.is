@@ -13,7 +13,6 @@ import {
   UnemploymentApplicationCreateUnemploymentApplicationRequest,
   VmstUnemploymentClientService,
 } from '@island.is/clients/vmst-unemployment'
-import { Locale } from '@island.is/shared/types'
 import { sharedModuleConfig } from '../../shared'
 import { getValueViaPath, YES } from '@island.is/application/core'
 import { ConfigType } from '@nestjs/config'
@@ -67,12 +66,6 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
     private config: ConfigType<typeof sharedModuleConfig>,
   ) {
     super(ApplicationTypes.UNEMPLOYMENT_BENEFITS)
-  }
-
-  getStartingLocale({
-    currentUserLocale,
-  }: TemplateApiModuleActionProps): Locale {
-    return currentUserLocale
   }
 
   async getEmptyApplication({
