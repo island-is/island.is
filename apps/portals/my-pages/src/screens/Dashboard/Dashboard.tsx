@@ -27,6 +27,7 @@ import {
   useDocumentList,
 } from '@island.is/portals/my-pages/documents'
 import { useUserInfo } from '@island.is/react-spa/bff'
+import { isCompany } from '@island.is/shared/utils'
 import cn from 'classnames'
 import { useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
@@ -45,7 +46,7 @@ export const Dashboard = () => {
   const location = useLocation()
   const navigation = useDynamicRoutesWithNavigation(MAIN_NAVIGATION)
   const isMobile = width < theme.breakpoints.md
-  const IS_COMPANY = userInfo?.profile?.subjectType === 'legalEntity'
+  const IS_COMPANY = isCompany(userInfo)
   const hasDelegationAccess = userInfo?.scopes?.includes(DocumentsScope.main)
 
   const { filteredDocuments, data, loading } = useDocumentList()

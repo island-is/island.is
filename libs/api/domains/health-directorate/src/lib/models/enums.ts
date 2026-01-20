@@ -74,16 +74,10 @@ registerEnumType(PermitStatusEnum, {
 
 export enum AppointmentStatusEnum {
   BOOKED = 'booked',
-  PENDING = 'pending',
-  PROPOSED = 'proposed',
   CANCELLED = 'cancelled',
   FULFILLED = 'fulfilled',
   ARRIVED = 'arrived',
-  NOSHOW = 'noshow',
-  ENTERED_IN_ERROR = 'entered-in-error',
   CHECKED_IN = 'checked-in',
-  WAITLIST = 'waitlist',
-  DELETED = 'deleted',
 }
 
 registerEnumType(AppointmentStatusEnum, {

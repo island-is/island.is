@@ -124,6 +124,7 @@ import {
 import { OfficialJournalOfIcelandApplicationClientConfig } from '@island.is/clients/official-journal-of-iceland/application'
 import { HmsLoansClientConfig } from '@island.is/clients/hms-loans'
 import { HousingBenefitCalculatorClientConfig } from '@island.is/clients/housing-benefit-calculator'
+import { FinancialManagementAuthorityClientConfig } from '@island.is/clients/financial-management-authority'
 import { IcelandicGovernmentInstitutionVacanciesClientConfig } from '@island.is/clients/icelandic-government-institution-vacancies'
 import { RightsPortalClientConfig } from '@island.is/clients/icelandic-health-insurance/rights-portal'
 import { InnaClientConfig } from '@island.is/clients/inna'
@@ -466,6 +467,7 @@ const environment = getConfig
         WatsonAssistantChatConfig,
         PowerBiConfig,
         AuthIdsApiClientConfig,
+        FinancialManagementAuthorityClientConfig,
         IcelandicGovernmentInstitutionVacanciesClientConfig,
         RskRelationshipsClientConfig,
         RskRentalDayRateClientConfig,

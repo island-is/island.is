@@ -5,18 +5,19 @@ import {
   buildSection,
 } from '@island.is/application/core'
 import { UploadSelection } from '../../utils/constants'
+import { m } from '../../lib/messages'
 
 export const singleOrMultiSelection = buildSection({
   id: 'singleOrMultiSelectionSection',
-  title: 'Fjöldi skráninga',
+  title: m.singleOrMulti.sectionTitle,
   children: [
     buildMultiField({
       id: 'singleOrMultiSelectionMultiField',
-      title: 'Magnskráning eða stakir bílar',
+      title: m.singleOrMulti.multiTitle,
       children: [
         buildDescriptionField({
           id: 'singleOrMultiSelectionDescription',
-          description: 'Veldu magnskráningu eða stakskráningu.',
+          description: m.singleOrMulti.description,
         }),
 
         buildRadioField({
@@ -24,15 +25,13 @@ export const singleOrMultiSelection = buildSection({
           required: true,
           options: [
             {
-              label: 'Magnskráning',
-              subLabel:
-                'Hér má hlaða upp .xlsx eða .csv skjali til að magnskrá breytingar á gjaldflokki og kílómetrastöðu.',
+              label: m.singleOrMulti.optionMultiLabel,
+              subLabel: m.singleOrMulti.optionMultiSubLabel,
               value: UploadSelection.MULTI,
             },
             {
-              label: 'Skrá staka bíla',
-              subLabel:
-                'Þú getur skráð upplýsingar um gjaldflokk og kílómetrastöðu beint í gegnum viðmótið.',
+              label: m.singleOrMulti.optionSingleLabel,
+              subLabel: m.singleOrMulti.optionSingleSubLabel,
               value: UploadSelection.SINGLE,
               disabled: true,
             },

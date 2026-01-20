@@ -61,6 +61,7 @@ const HeadingSection: React.FC<HeadingSectionProps> = ({
   linkTextId,
 }) => {
   const theme = useTheme()
+
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -144,7 +145,7 @@ const showErrorComponent = (error: ApolloError) => {
 }
 
 const { getNavigationOptions, useNavigationOptions } =
-  createNavigationOptionHooks((theme, intl) => ({
+  createNavigationOptionHooks((_, intl) => ({
     topBar: {
       title: {
         text: intl.formatMessage({ id: 'health.overview.screenTitle' }),
@@ -165,6 +166,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
   const buttonStyle = { flex: 1, minWidth: width * 0.5 - theme.spacing[3] }
   const scrollY = useRef(new Animated.Value(0)).current
   const isVaccinationsEnabled = useFeatureFlag('isVaccinationsEnabled', false)
+  const isPrescriptionsEnabled = useFeatureFlag('isPrescriptionsEnabled', false)
   const isOrganDonationEnabled = useFeatureFlag('isOrganDonationEnabled', false)
   const isQuestionnaireFeatureEnabled = useFeatureFlag(
     'isQuestionnaireEnabled',
@@ -323,6 +325,19 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
               onPress={() => navigateTo('/questionnaires', componentId)}
             />
           )}
+          <Button
+            title={intl.formatMessage({
+              id: isPrescriptionsEnabled
+                ? 'health.prescriptionsAndCertificates.screenTitle'
+                : 'health.drugCertificates.title',
+            })}
+            isOutlined
+            isUtilityButton
+            iconStyle={{ tintColor: theme.color.dark300 }}
+            style={buttonStyle}
+            ellipsis
+            onPress={() => navigateTo('/prescriptions', componentId)}
+          />
           <Button
             title={intl.formatMessage({ id: 'health.overview.therapy' })}
             isOutlined

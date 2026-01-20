@@ -9,7 +9,7 @@ export const getJobCodeOptions = (
 ) => {
   const sorted = getSortedJobCodes(application.externalData, locale)
   return sorted.map((job) => ({
-    value: (locale === 'is' ? job.name : job.english ?? job.name) || '',
+    value: job.id || '',
     label: (locale === 'is' ? job.name : job.english ?? job.name) || '',
   }))
 }
@@ -32,4 +32,14 @@ export const getSortedJobCodes = (
   )
 
   return sorted
+}
+
+export const getJobInfo = (externalData: ExternalData, jobId?: string) => {
+  const jobList =
+    getValueViaPath<GaldurDomainModelsSettingsJobCodesJobCodeDTO[]>(
+      externalData,
+      'unemploymentApplication.data.supportData.jobCodes',
+    ) ?? []
+
+  return jobList.find((x) => x.id === jobId)
 }

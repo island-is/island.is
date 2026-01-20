@@ -1055,6 +1055,16 @@ export const m = defineMessages({
     defaultMessage: 'Halda áfram í greiðslu',
     description: 'Button label to proceed to payment',
   },
+  continueButton: {
+    id: 'es.application:continueButton',
+    defaultMessage: 'Halda áfram',
+    description: 'Button label to continue',
+  },
+  paymentTitle: {
+    id: 'es.application:paymentTitle',
+    defaultMessage: 'Greiðsla',
+    description: 'Payment section title',
+  },
 
   // Done
   doneTitle: {

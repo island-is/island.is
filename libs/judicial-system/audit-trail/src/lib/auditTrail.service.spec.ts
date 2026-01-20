@@ -7,7 +7,11 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { ConfigModule } from '@island.is/nest/config'
 
 import { auditTrailModuleConfig } from './auditTrail.config'
-import { AuditedAction, AuditTrailService } from './auditTrail.service'
+import {
+  AuditedAction,
+  AuditedRequestStatus,
+  AuditTrailService,
+} from './auditTrail.service'
 
 jest.mock('@island.is/logging', () => {
   return {
@@ -55,6 +59,7 @@ describe('AuditTrailService generic', () => {
     const userId = 'some-user-id'
     const action = AuditedAction.GET_CASE
     const id = 'some-id'
+    const details = { requestStatus: AuditedRequestStatus.COMPLETED }
 
     // Act
     await service.audit(userId, action, null, id)
@@ -65,6 +70,7 @@ describe('AuditTrailService generic', () => {
         user: userId,
         action,
         entities: id,
+        details,
       }),
     )
   })
@@ -76,6 +82,7 @@ describe('AuditTrailService generic', () => {
     const action = AuditedAction.GET_CASE
     const id = 'some-id'
     const result = 'some-result'
+    const details = { requestStatus: AuditedRequestStatus.COMPLETED }
 
     // Act
     const res = await service.audit(userId, action, result, id)
@@ -86,6 +93,7 @@ describe('AuditTrailService generic', () => {
         user: userId,
         action,
         entities: id,
+        details,
       }),
     )
     expect(res).toBe(result)
@@ -98,6 +106,7 @@ describe('AuditTrailService generic', () => {
     const action = AuditedAction.GET_CASE
     const id = 'some-id'
     const result = 'some-result'
+    const details = { requestStatus: AuditedRequestStatus.COMPLETED }
     const idFromResult = jest.fn().mockReturnValue(id)
 
     // Act
@@ -109,6 +118,7 @@ describe('AuditTrailService generic', () => {
         user: userId,
         action,
         entities: id,
+        details,
       }),
     )
     expect(idFromResult).toHaveBeenCalledWith(result)
@@ -122,6 +132,7 @@ describe('AuditTrailService generic', () => {
     const action = AuditedAction.GET_CASE
     const id = 'some-id'
     const result = 'some-result'
+    const details = { requestStatus: AuditedRequestStatus.COMPLETED }
     const idFromResult = jest.fn().mockReturnValue(id)
 
     // Act
@@ -138,6 +149,7 @@ describe('AuditTrailService generic', () => {
         user: userId,
         action,
         entities: id,
+        details,
       }),
     )
     expect(idFromResult).toHaveBeenCalledWith(result)
@@ -150,6 +162,8 @@ describe('AuditTrailService generic', () => {
     const userId = 'some-user-id-xxx'
     const action = AuditedAction.GET_CASE
     const id = 'some-id'
+    const details = { requestStatus: AuditedRequestStatus.COMPLETED }
+
     const idFromResult = jest.fn().mockReturnValue(id)
 
     // Act and assert
@@ -161,6 +175,7 @@ describe('AuditTrailService generic', () => {
         user: userId,
         action,
         entities: undefined,
+        details,
         error: 'Rejected',
       }),
     )
@@ -172,6 +187,7 @@ describe('AuditTrailService generic', () => {
     const userId = 'some-user-id-xxx'
     const action = AuditedAction.GET_CASE
     const id = 'some-id'
+    const details = { requestStatus: AuditedRequestStatus.COMPLETED }
 
     // Act and assert
     await expect(
@@ -182,6 +198,7 @@ describe('AuditTrailService generic', () => {
         user: userId,
         action,
         entities: id,
+        details,
         error: 'Rejected',
       }),
     )
@@ -218,6 +235,7 @@ describe('AuditTrailService generic', () => {
     const userId = 'some-user-id'
     const action = AuditedAction.GET_CASE
     const id = 'some-id'
+    const details = { requestStatus: AuditedRequestStatus.COMPLETED }
 
     // Act
     await service.audit(userId, action, null, id)
@@ -227,6 +245,7 @@ describe('AuditTrailService generic', () => {
       user: userId,
       action,
       entities: id,
+      details,
     })
   })
 })

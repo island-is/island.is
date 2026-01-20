@@ -8,7 +8,7 @@ import {
 import {
   hasSpecialEducationSubType,
   shouldShowPage,
-  shouldShowReasonForApplicationPage,
+  shouldShowReasonForApplicationAndNewSchoolPages,
 } from './conditionUtils'
 import {
   ApplicationFeatureKey,
@@ -43,10 +43,7 @@ const buildGuardianOverviewFields = (editable?: boolean) =>
   [...Array(MAX_GUARDIANS)].map((_key, index) => {
     return buildOverviewField({
       id: `overview.guardians.${index}`,
-      title: {
-        ...overviewMessages.guardians,
-        values: { index: index + 1 },
-      },
+      title: overviewMessages.guardians,
       backId: editable ? 'guardians' : undefined,
       items: (answers, externalData, userNationalId) =>
         guardiansItems(answers, externalData, userNationalId, index),
@@ -71,6 +68,7 @@ export const overviewFields = (editable?: boolean) => {
       title: childrenNGuardiansMessages.relatives.subSectionTitle,
       backId: editable ? 'relatives' : undefined,
       loadTableData: relativesTable,
+      hideIfEmpty: true,
     }),
     buildOverviewField({
       id: 'overview.currentSchool',
@@ -98,9 +96,13 @@ export const overviewFields = (editable?: boolean) => {
       backId: editable ? 'currentNursery' : undefined,
       loadItems: currentNurseryItems,
       condition: (answers) => {
-        const { applicationType } = getApplicationAnswers(answers)
+        const { applicationType, hasCurrentNursery } =
+          getApplicationAnswers(answers)
 
-        return applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
+        return (
+          applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL &&
+          hasCurrentNursery === YES
+        )
       },
     }),
     buildOverviewField({
@@ -130,16 +132,20 @@ export const overviewFields = (editable?: boolean) => {
       backId: editable ? 'reasonForApplication' : undefined,
       loadItems: reasonForApplicationItems,
       condition: (answers, externalData) =>
-        shouldShowReasonForApplicationPage(answers) &&
-        !hasSpecialEducationSubType(answers, externalData),
+        shouldShowReasonForApplicationAndNewSchoolPages(
+          answers,
+          externalData,
+        ) && !hasSpecialEducationSubType(answers, externalData),
     }),
     buildOverviewField({
       id: 'overview.counsellingRegardingApplication',
       backId: editable ? 'counsellingRegardingApplication' : undefined,
       loadItems: counsellingRegardingApplicationItems,
       condition: (answers, externalData) =>
-        shouldShowReasonForApplicationPage(answers) &&
-        hasSpecialEducationSubType(answers, externalData),
+        shouldShowReasonForApplicationAndNewSchoolPages(
+          answers,
+          externalData,
+        ) && hasSpecialEducationSubType(answers, externalData),
     }),
     buildOverviewField({
       id: 'overview.siblings',

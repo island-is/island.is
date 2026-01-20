@@ -1,0 +1,34 @@
+fragment Party on HmsContractParty {
+  id
+  type
+  name
+  address {
+    city
+    country
+    postalCode
+    streetAddress
+  }
+}
+
+query UserContract($id: ID!) {
+  hmsRentalAgreement(contractId: $id) {
+    id
+    status
+    signatureDate
+    landlords {
+      ...Party
+    }
+    tenants {
+      ...Party
+    }
+    contractType
+    contractProperty {
+      id
+      propertyId
+      streetAndHouseNumber
+      municipality
+      postalCode
+    }
+    downloadUrl
+  }
+}

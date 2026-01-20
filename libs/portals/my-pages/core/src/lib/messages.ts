@@ -565,6 +565,14 @@ export const m = defineMessages({
     id: 'service.portal:user-info',
     defaultMessage: 'Mínar upplýsingar',
   },
+  companyInfo: {
+    id: 'service.portal:company-info',
+    defaultMessage: 'Um fyrirtækið',
+  },
+  companyData: {
+    id: 'service.portal:company-data',
+    defaultMessage: 'Gögn úr fyrirtækjaskrá',
+  },
   userInfoDescription: {
     id: 'service.portal:user-info-description',
     defaultMessage: 'Gögn um þig og fjölskylduna þína',
@@ -573,6 +581,11 @@ export const m = defineMessages({
     id: 'service.portal:user-info-intro',
     defaultMessage:
       'Hér eru gögn um þig og fjölskyldu þína sem sótt eru til Þjóðskrár. Með því að smella á skoða upplýsingar er hægt að óska eftir breytingum á þeim upplýsingum.',
+  },
+  companyIntro: {
+    id: 'service.portal:company-intro',
+    defaultMessage:
+      'Hér eru gögn um fyrirtækið sem sótt eru til Fyrirtækjaskrár.',
   },
   detailInfo: {
     id: 'service.portal:detail-info',
@@ -911,6 +924,14 @@ export const m = defineMessages({
     id: 'service.portal:my-settings',
     defaultMessage: 'Mínar stillingar',
   },
+  companySettings: {
+    id: 'service.portal:company-settings',
+    defaultMessage: 'Stillingar',
+  },
+  companySettingsNavigation: {
+    id: 'service.portal:company-settings-navigation',
+    defaultMessage: 'Stillingar fyrirtækis',
+  },
   mySettingsInformation: {
     id: 'service.portal:my-settings-information',
     defaultMessage: 'Upplýsingar',
@@ -922,6 +943,19 @@ export const m = defineMessages({
   lists: {
     id: 'service.portal:lists',
     defaultMessage: 'Listar',
+  },
+  contracts: {
+    id: 'service.portal:contracts',
+    defaultMessage: 'Samningar',
+  },
+  contract: {
+    id: 'service.portal:contract',
+    defaultMessage: 'Samningur',
+  },
+  contractsDescription: {
+    id: 'service.portal:contracts-description',
+    defaultMessage:
+      'Upplýsingar um þá samninga sem þú átt í leiguskrá Húsnæðis- og Mannvirkjastofnunar',
   },
   delegation: {
     id: 'service.portal:delegation',
@@ -1619,6 +1653,11 @@ export const m = defineMessages({
     defaultMessage:
       'Húsnæðis- og mannvirkjastofnun hefur umsjón með gögnum um fasteignir.',
   },
+  rentalAgreementsTooltip: {
+    id: 'service.portal:rental-agreements-tooltip',
+    defaultMessage:
+      'Húsnæðis- og mannvirkjastofnun hefur umsjón með gögnum um leigusamninga.',
+  },
   hmsHousingBenefitsTooltip: {
     id: 'service.portal:housing-benefits-tooltip',
     defaultMessage:
@@ -2005,6 +2044,10 @@ export const m = defineMessages({
     id: 'service.portal:sort-by',
     defaultMessage: 'Raða eftir',
   },
+  showResults: {
+    id: 'service.portal:show-results',
+    defaultMessage: 'Sýna niðurstöður',
+  },
   bloodtype: {
     id: 'service.portal:bloodtype',
     defaultMessage: 'Blóðflokkur',
@@ -2282,5 +2325,13 @@ export const searchTagsMessages = defineMessages({
   appointmentBook: {
     id: 'sp.search.tags:appointment-book',
     defaultMessage: 'Bóka',
+  },
+  rentalAgreements: {
+    id: 'sp.search.tags:rental-agreements',
+    defaultMessage: 'Leigusamningar',
+  },
+  rent: {
+    id: 'sp.search.tags:rent',
+    defaultMessage: 'Leiga',
   },
 })

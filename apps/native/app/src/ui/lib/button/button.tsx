@@ -22,6 +22,7 @@ interface ButtonBaseProps extends TouchableHighlightProps {
   textProps?: TextProps
   iconStyle?: ImageStyle
   ellipsis?: boolean
+  compactPadding?: boolean
   iconPosition?: 'start' | 'end'
   compactPadding?: boolean
   loading?: boolean
@@ -51,37 +52,40 @@ const Host = styled.TouchableHighlight<HostProps>`
     props.compactPadding
       ? `${props.theme.spacing.p1}px ${props.theme.spacing.p2}px`
       : `${props.theme.spacing.p3}px ${props.theme.spacing.p4}px`};
+    props.compactPadding
+      ? `${ props.theme.spacing.p1 }px ${ props.theme.spacing.p2 }px`
+      : `${ props.theme.spacing.p3 }px ${ props.theme.spacing.p4 } px`};
   background-color: ${dynamicColor<HostProps>(
-    ({
-      theme,
-      disabled,
-      isTransparent,
-      isOutlined,
-      isUtilityButton,
-      isFilledUtilityButton,
-    }) =>
-      isTransparent || isOutlined || (isUtilityButton && !isFilledUtilityButton)
-        ? 'transparent'
-        : {
-            dark: disabled ? theme.shades.dark.shade200 : theme.color.blue400,
-            light: disabled ? theme.color.blue300 : theme.color.blue400,
-          },
-  )};
+        ({
+          theme,
+          disabled,
+          isTransparent,
+          isOutlined,
+          isUtilityButton,
+          isFilledUtilityButton,
+        }) =>
+          isTransparent || isOutlined || (isUtilityButton && !isFilledUtilityButton)
+            ? 'transparent'
+            : {
+              dark: disabled ? theme.shades.dark.shade200 : theme.color.blue400,
+              light: disabled ? theme.color.blue300 : theme.color.blue400,
+            },
+      )};
 
   border-color: ${dynamicColor<HostProps>(
-    ({ theme, disabled, isOutlined, isUtilityButton }) =>
-      !isOutlined
-        ? 'transparent'
-        : isUtilityButton
-        ? {
-            dark: '#CCDFFF55',
-            light: theme.color.blue200,
-          }
-        : {
-            dark: disabled ? theme.shades.dark.shade200 : theme.color.blue400,
-            light: disabled ? theme.color.blue300 : theme.color.blue400,
-          },
-  )};
+        ({ theme, disabled, isOutlined, isUtilityButton }) =>
+          !isOutlined
+            ? 'transparent'
+            : isUtilityButton
+              ? {
+                dark: '#CCDFFF55',
+                light: theme.color.blue200,
+              }
+              : {
+                dark: disabled ? theme.shades.dark.shade200 : theme.color.blue400,
+                light: disabled ? theme.color.blue300 : theme.color.blue400,
+              },
+      )};
 
   border-radius: ${(props) => props.theme.border.radius.large};
   min-width: ${(props) => (props.isUtilityButton ? 0 : '192px')};
@@ -101,19 +105,19 @@ const Text = styled.Text<{
   disabled?: boolean
 }>`
   ${font({
-    fontWeight: '600',
-    color: (props) =>
-      props.isTransparent && props.disabled
-        ? props.theme.color.dark200
-        : props.isUtilityButton && !props.isFilledUtilityButton
+  fontWeight: '600',
+  color: (props) =>
+    props.isTransparent && props.disabled
+      ? props.theme.color.dark200
+      : props.isUtilityButton && !props.isFilledUtilityButton
         ? {
-            light: props.theme.color.dark400,
-            dark: props.theme.color.white,
-          }
+          light: props.theme.color.dark400,
+          dark: props.theme.color.white,
+        }
         : props.isTransparent || props.isOutlined
-        ? props.theme.color.blue400
-        : props.theme.color.white,
-  })}
+          ? props.theme.color.blue400
+          : props.theme.color.white,
+})}
   font-size: ${(props) => (props.isUtilityButton ? '12px' : '16px')};
   text-align: ${(props) => (props.isUtilityButton ? 'left' : 'center')};
 `
@@ -166,8 +170,8 @@ export function Button({
     <Host
       underlayColor={
         isTransparent ||
-        isOutlined ||
-        (isUtilityButton && !isFilledUtilityButton)
+          isOutlined ||
+          (isUtilityButton && !isFilledUtilityButton)
           ? theme.shade.shade100
           : theme.color.blue600
       }

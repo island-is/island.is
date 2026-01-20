@@ -74,7 +74,6 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
       ).apiDayRateEntriesEntityIdGet({
         entityId: auth.nationalId,
       })
-      this.logger.info('Current vehicles rate category debug response', resp)
       return resp
     } catch (error) {
       this.logger.error('Error getting current vehicles rate category', error)
@@ -117,10 +116,6 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
               }) ?? null,
           },
         }
-        this.logger.warn(
-          'Full body of request to register cars to day rate',
-          requestBody,
-        )
         await this.rentalsApiWithAuth(
           auth,
         ).apiDayRateEntriesEntityIdRegisterPost({ ...requestBody })
@@ -141,10 +136,6 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
               }) ?? null,
           },
         }
-        this.logger.warn(
-          'Full body of request to deregister cars from day rate',
-          requestBody,
-        )
         await this.rentalsApiWithAuth(
           auth,
         ).apiDayRateEntriesEntityIdDeregisterPost({ ...requestBody })
@@ -152,21 +143,54 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
       }
     } catch (error) {
       this.logger.error('Error posting data to skatturinn', error)
-      if (
-        error &&
-        typeof error === 'object' &&
-        ('status' in error || 'detail' in error || 'title' in error)
-      ) {
-        // Maybe do some error handling here, like throw application error
+
+      if (error && typeof error === 'object' && 'status' in error) {
+        if (error.status === 400) {
+          const bodySummary = this.formatSkatturinnErrorBody(
+            (error as { body?: unknown }).body,
+          )
+
+          throw new TemplateApiError(
+            {
+              title:
+                (error as { title?: string; statusText?: string }).title ??
+                (error as { statusText?: string }).statusText ??
+                'Bad request',
+              summary: bodySummary ?? 'Invalid input.',
+            },
+            error.status,
+          )
+        }
       }
+
       throw new TemplateApiError(
         {
           title: 'Request to skatturinn failed',
           summary: 'Something went wrong when posting car data to skatturinn',
         },
-        error?.status ?? 500,
+        (error as { status?: number })?.status ?? 500,
       )
     }
+  }
+
+  private formatSkatturinnErrorBody(body: unknown): string | undefined {
+    if (!body || typeof body !== 'object') return undefined
+
+    const messages = Object.entries(body as Record<string, unknown>)
+      .flatMap(([field, value]) => {
+        if (Array.isArray(value)) {
+          return value
+            .filter((m): m is string => typeof m === 'string')
+            .map((m) => `${field}: ${m}`)
+        }
+        if (typeof value === 'string') {
+          return [`${field}: ${value}`]
+        }
+        return []
+      })
+      .filter((m) => m.length > 0)
+
+    return messages.length > 0 ? messages.join('\n') : undefined
   }
 }
 

@@ -1,5 +1,12 @@
-import { RenderedNotificationDto } from '@island.is/clients/user-notification'
-import { AdminNotification, Notification } from '../lib/notifications.model'
+import {
+  RenderedNotificationDto,
+  ActorNotificationDto,
+} from '@island.is/clients/user-notification'
+import {
+  AdminNotification,
+  Notification,
+  ActorNotification,
+} from '../lib/notifications.model'
 
 const cleanString = (str?: string) => {
   if (!str) {
@@ -46,7 +53,25 @@ export const adminNotificationMapper = (
   id: notification.id,
   notificationId: notification.messageId,
   sent: notification.created,
+  scope: notification.scope,
   sender: {
     id: notification.senderId,
   },
+})
+
+export const actorNotificationMapper = (
+  notification: ActorNotificationDto,
+): ActorNotification => ({
+  id: notification.id,
+  messageId: notification.messageId,
+  rootMessageId: notification.rootMessageId,
+  userNotificationId: notification.userNotificationId,
+  recipient: {
+    nationalId: notification.recipient,
+  },
+  onBehalfOfNationalId: {
+    nationalId: notification.onBehalfOfNationalId,
+  },
+  scope: notification.scope,
+  created: notification.created,
 })

@@ -132,20 +132,55 @@ export const useFeatureFlagClient = () => {
   return useContext(FeatureFlagContext)
 }
 
-export function useFeatureFlag(key: string, defaultValue: string): string
-export function useFeatureFlag(key: string, defaultValue: boolean): boolean
+// When initialValue is null, return type includes null
+export function useFeatureFlag<T extends string | boolean>(
+  key: string,
+  defaultValue: T,
+  initialValue: null,
+): T | null
+
+// When initialValue is provided and not null, return type is T
+export function useFeatureFlag<T extends string | boolean>(
+  key: string,
+  defaultValue: T,
+  initialValue: T,
+): T
+
+// When initialValue is not provided (backwards compatible), return type is T
+export function useFeatureFlag<T extends string | boolean>(
+  key: string,
+  defaultValue: T,
+): T
 
 export function useFeatureFlag<T extends string | boolean>(
   key: string,
   defaultValue: T,
+  initialValue?: T | null,
 ) {
   const featureFlagClient = useFeatureFlagClient()
-  const [flag, setFlag] = useState<T>(defaultValue)
+  const [flag, setFlag] = useState<T | null>(
+    initialValue !== undefined ? initialValue : defaultValue,
+  )
 
   useEffect(() => {
-    featureFlagClient.getValue(key, defaultValue).then((result) => {
-      setFlag(result as T)
-    })
+    let isMounted = true
+
+    featureFlagClient
+      .getValue(key, defaultValue)
+      .then((result) => {
+        if (isMounted) {
+          setFlag(result as T)
+        }
+      })
+      .catch(() => {
+        if (isMounted) {
+          setFlag(defaultValue)
+        }
+      })
+
+    return () => {
+      isMounted = false
+    }
   }, [defaultValue, featureFlagClient, key])
 
   return flag

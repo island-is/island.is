@@ -2,7 +2,7 @@ import { useCallback, useContext } from 'react'
 import { MessageDescriptor, useIntl } from 'react-intl'
 import router from 'next/router'
 
-import { Box, Input, Text } from '@island.is/island-ui/core'
+import { Box, Input } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { enumerate, formatDOB } from '@island.is/judicial-system/formatters'
 import {
@@ -18,6 +18,7 @@ import {
   PageLayout,
   PageTitle,
   ProsecutorCaseInfo,
+  SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
@@ -25,6 +26,7 @@ import {
   useDebouncedInput,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { isPoliceDemandsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 
 export const formatInstitutionName = (name?: string | null) => {
@@ -185,78 +187,74 @@ const PoliceDemands = () => {
       />
       <FormContentContainer>
         <PageTitle>{formatMessage(icDemands.heading)}</PageTitle>
-        <Box marginBottom={5}>
+        <div className={grid({ gap: 5, marginBottom: 10 })}>
           <ProsecutorCaseInfo workingCase={workingCase} />
-        </Box>
-        <Box component="section" marginBottom={5}>
-          <Box marginBottom={3}>
-            <Text as="h3" variant="h3">
-              {formatMessage(icDemands.sections.demands.heading)}
-            </Text>
+          <Box component="section">
+            <SectionHeading
+              title={formatMessage(icDemands.sections.demands.heading)}
+            />
+            <Input
+              data-testid="demands"
+              name="demands"
+              label={formatMessage(icDemands.sections.demands.label)}
+              placeholder={formatMessage(
+                icDemands.sections.demands.placeholder,
+              )}
+              value={demandsInput.value}
+              errorMessage={demandsInput.errorMessage}
+              hasError={demandsInput.hasError}
+              onChange={(evt) => demandsInput.onChange(evt.target.value)}
+              onBlur={(evt) => demandsInput.onBlur(evt.target.value)}
+              required
+              textarea
+              rows={7}
+            />
           </Box>
-          <Input
-            data-testid="demands"
-            name="demands"
-            label={formatMessage(icDemands.sections.demands.label)}
-            placeholder={formatMessage(icDemands.sections.demands.placeholder)}
-            value={demandsInput.value || ''}
-            errorMessage={demandsInput.errorMessage}
-            hasError={demandsInput.hasError}
-            onChange={(evt) => demandsInput.onChange(evt.target.value)}
-            onBlur={(evt) => demandsInput.onBlur(evt.target.value)}
-            required
-            textarea
-            rows={7}
-          />
-        </Box>
-        <Box component="section" marginBottom={5}>
-          <Box marginBottom={3}>
-            <Text as="h3" variant="h3">
-              {formatMessage(icDemands.sections.lawsBroken.heading)}
-            </Text>
+          <Box component="section">
+            <SectionHeading
+              title={formatMessage(icDemands.sections.lawsBroken.heading)}
+            />
+            <Input
+              data-testid="lawsBroken"
+              name="lawsBroken"
+              label={formatMessage(icDemands.sections.lawsBroken.label, {
+                defendant: 'varnaraðila',
+              })}
+              placeholder={formatMessage(
+                icDemands.sections.lawsBroken.placeholder,
+              )}
+              value={lawsBrokenInput.value}
+              errorMessage={lawsBrokenInput.errorMessage}
+              hasError={lawsBrokenInput.hasError}
+              onChange={(evt) => lawsBrokenInput.onChange(evt.target.value)}
+              onBlur={(evt) => lawsBrokenInput.onBlur(evt.target.value)}
+              required
+              textarea
+              rows={7}
+            />
           </Box>
-          <Input
-            data-testid="lawsBroken"
-            name="lawsBroken"
-            label={formatMessage(icDemands.sections.lawsBroken.label, {
-              defendant: 'varnaraðila',
-            })}
-            placeholder={formatMessage(
-              icDemands.sections.lawsBroken.placeholder,
-            )}
-            value={lawsBrokenInput.value || ''}
-            errorMessage={lawsBrokenInput.errorMessage}
-            hasError={lawsBrokenInput.hasError}
-            onChange={(evt) => lawsBrokenInput.onChange(evt.target.value)}
-            onBlur={(evt) => lawsBrokenInput.onBlur(evt.target.value)}
-            required
-            textarea
-            rows={7}
-          />
-        </Box>
-        <Box component="section" marginBottom={10}>
-          <Box marginBottom={3}>
-            <Text as="h3" variant="h3">
-              {formatMessage(icDemands.sections.legalBasis.heading)}
-            </Text>
+          <Box component="section">
+            <SectionHeading
+              title={formatMessage(icDemands.sections.legalBasis.heading)}
+            />
+            <Input
+              data-testid="legalBasis"
+              name="legalBasis"
+              label={formatMessage(icDemands.sections.legalBasis.label)}
+              placeholder={formatMessage(
+                icDemands.sections.legalBasis.placeholder,
+              )}
+              value={legalBasisInput.value}
+              errorMessage={legalBasisInput.errorMessage}
+              hasError={legalBasisInput.hasError}
+              onChange={(event) => legalBasisInput.onChange(event.target.value)}
+              onBlur={(event) => legalBasisInput.onBlur(event.target.value)}
+              required
+              textarea
+              rows={7}
+            />
           </Box>
-          <Input
-            data-testid="legalBasis"
-            name="legalBasis"
-            label={formatMessage(icDemands.sections.legalBasis.label)}
-            placeholder={formatMessage(
-              icDemands.sections.legalBasis.placeholder,
-            )}
-            value={legalBasisInput.value || ''}
-            errorMessage={legalBasisInput.errorMessage}
-            hasError={legalBasisInput.hasError}
-            onChange={(event) => legalBasisInput.onChange(event.target.value)}
-            onBlur={(event) => legalBasisInput.onBlur(event.target.value)}
-            required
-            textarea
-            rows={7}
-          />
-        </Box>
+        </div>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter

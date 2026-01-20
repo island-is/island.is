@@ -1672,7 +1672,7 @@
             "schema": {
               "type": "array",
               "items": {
-                "$ref": "#/components/schemas/AppointmentStatus"
+                "$ref": "#/components/schemas/UserVisibleAppointmentStatuses"
               }
             }
           },
@@ -2909,17 +2909,24 @@
             "type": "string",
             "nullable": true
           },
-          "numRepliesAllowed": {
+          "numSubmissionsAllowed": {
             "type": "number",
-            "default": 1
+            "default": 1,
+            "description": "Number of submissions allowed for the questionnaire"
           },
-          "numSubmissions": {
+          "numSubmitted": {
             "type": "number",
-            "default": 0
+            "default": 0,
+            "description": "Number of submissions (not drafts) for the questionnaire"
+          },
+          "lastCreatedSubmissionId": {
+            "type": "string",
+            "description": "The Id of the latest submission created can either be a draft or a final submission"
           },
           "lastSubmitted": {
             "format": "date-time",
-            "type": "string"
+            "type": "string",
+            "description": "The date when the questionnaire was last submitted (not when a draft was saved)"
           },
           "hasDraft": {
             "type": "boolean"
@@ -2927,8 +2934,8 @@
         },
         "required": [
           "questionnaireId",
-          "numRepliesAllowed",
-          "numSubmissions",
+          "numSubmissionsAllowed",
+          "numSubmitted",
           "hasDraft"
         ]
       },
@@ -3390,16 +3397,20 @@
             "type": "string"
           },
           "triggerId": {
-            "type": "string"
+            "type": "string",
+            "description": "The id of the question that triggers the trigger"
           },
           "targetId": {
-            "type": "string"
+            "type": "string",
+            "description": "The id of the target question that the trigger is applied to"
           },
           "visible": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Whether the target question is visible"
           },
           "value": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "The value the triggering question must have for the trigger to be applied to the target question"
           }
         },
         "required": ["type", "triggerId", "targetId", "visible"]
@@ -3767,17 +3778,24 @@
             "type": "string",
             "nullable": true
           },
-          "numRepliesAllowed": {
+          "numSubmissionsAllowed": {
             "type": "number",
-            "default": 1
+            "default": 1,
+            "description": "Number of submissions allowed for the questionnaire"
           },
-          "numSubmissions": {
+          "numSubmitted": {
             "type": "number",
-            "default": 0
+            "default": 0,
+            "description": "Number of submissions (not drafts) for the questionnaire"
+          },
+          "lastCreatedSubmissionId": {
+            "type": "string",
+            "description": "The Id of the latest submission created can either be a draft or a final submission"
           },
           "lastSubmitted": {
             "format": "date-time",
-            "type": "string"
+            "type": "string",
+            "description": "The date when the questionnaire was last submitted (not when a draft was saved)"
           },
           "hasDraft": {
             "type": "boolean"
@@ -3795,6 +3813,7 @@
             "description": "Boolean field to check if the questionnaire can be submitted"
           },
           "submissions": {
+            "description": "Submissions for the questionnaire both drafts and final submissions",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/QuestionnaireSubmissionBaseDto"
@@ -3857,8 +3876,8 @@
         },
         "required": [
           "questionnaireId",
-          "numRepliesAllowed",
-          "numSubmissions",
+          "numSubmissionsAllowed",
+          "numSubmitted",
           "hasDraft",
           "daysBetweenReplies",
           "canSubmit",
@@ -4236,21 +4255,9 @@
           "recordedDate"
         ]
       },
-      "AppointmentStatus": {
+      "UserVisibleAppointmentStatuses": {
         "type": "string",
-        "enum": [
-          "booked",
-          "pending",
-          "proposed",
-          "cancelled",
-          "fulfilled",
-          "arrived",
-          "noshow",
-          "entered-in-error",
-          "checked-in",
-          "waitlist",
-          "deleted"
-        ]
+        "enum": ["booked", "cancelled", "fulfilled", "arrived", "checked-in"]
       },
       "AppointmentLocationDto": {
         "type": "object",
@@ -4338,7 +4345,15 @@
             }
           }
         },
-        "required": ["id", "status", "practitioners"]
+        "required": [
+          "id",
+          "startTime",
+          "endTime",
+          "duration",
+          "status",
+          "description",
+          "practitioners"
+        ]
       },
       "ConsentCountryDto": {
         "type": "object",

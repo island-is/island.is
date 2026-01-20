@@ -41,7 +41,6 @@ import {
 
 import {
   AppointmentDto,
-  AppointmentStatus,
   ConsentCountryDto,
   CreateEuPatientConsentDto,
   CreateOrUpdatePrescriptionCommissionDto,
@@ -53,6 +52,7 @@ import {
   QuestionnaireDetailDto,
   QuestionnaireSubmissionDetailDto,
   SubmitQuestionnaireDto,
+  UserVisibleAppointmentStatuses,
 } from './gen/fetch/types.gen'
 
 @Injectable()
@@ -535,7 +535,7 @@ export class HealthDirectorateHealthService {
   public async getAppointments(
     auth: Auth,
     from?: Date,
-    statuses?: AppointmentStatus[],
+    statuses?: UserVisibleAppointmentStatuses[],
   ): Promise<AppointmentDto[] | null> {
     const defaultFrom = new Date()
 

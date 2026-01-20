@@ -6,73 +6,43 @@ import { IcelandicGovernmentInstitutionVacanciesResponse } from './dto/icelandic
 import { IcelandicGovernmentInstitutionVacancyByIdResponse } from './dto/icelandicGovernmentInstitutionVacancyByIdResponse'
 import { Html, Vacancy } from '@island.is/cms'
 import { IcelandicGovernmentInstitutionVacancyContact } from './models/icelandicGovernmentInstitutionVacancy.model'
+import { VacancyResponseDto } from '@island.is/clients/financial-management-authority'
 
 export const CMS_ID_PREFIX = 'c-'
 export const EXTERNAL_SYSTEM_ID_PREFIX = 'x-'
 
-interface DefaultApiVacancyContact {
-  '@nr'?: number
-  nafn?: string
-  netfang?: string
-  simi?: string | number
-  starfsheiti?: string
+// ============================================================================
+// Shared helper functions
+// ============================================================================
+
+const formatDate = (date?: Date | string | null) => {
+  if (!date) {
+    return undefined
+  }
+
+  const dateObj = typeof date === 'string' ? new Date(date) : date
+
+  if (isNaN(dateObj.getTime())) {
+    return undefined
+  }
+
+  const day = `${dateObj.getDate()}`.padStart(2, '0')
+  const month = `${dateObj.getMonth() + 1}`.padStart(2, '0')
+  const year = dateObj.getFullYear()
+
+  return `${day}.${month}.${year}`
 }
 
-interface DefaultApiVacancyLocation {
-  '@kodi'?: number
-  '@text'?: string
-}
-
-export interface DefaultApiVacanciesListItem {
-  birt?: string
-  fyrirsogn?: string
-  haefnikrofur?: string
-  heimilisfang?: string
-  id?: number
-  inngangur?: string
-  language?: string
-  languages?: string
-  launaskilmali?: string
-  launaskilmaliFull?: string
-  logoURL?: string
-  other_languages?: null
-  postfang?: string
-  skipulagseining?: string
-  stadsetningar?:
-    | {
-        stadsetning?: DefaultApiVacancyLocation
-      }
-    | DefaultApiVacancyLocation[]
-  starfshlutfall?: string
-  starfssvid?: string
-  stettarfelagHeiti?: string
-  stofnunHeiti?: string
-  stofnunNr?: string | number
-  tengilidir?:
-    | {
-        tengilidur?: DefaultApiVacancyContact
-      }
-    | DefaultApiVacancyContact[]
-  umsoknarfrestur_fra?: string
-  umsoknarfrestur_til?: string
-  undirtexti?: string | null
-  verkefni?: string
-  vinnutimaskipulag?: string
-  weblink?: { url?: string; text?: string }
-  weblink_extra?: null
-}
-
-export interface DefaultApiVacancyDetails {
-  starfsauglysing: DefaultApiVacanciesListItem
-}
-
-const convertHtmlToPlainText = async (html: string) => {
+export const convertHtmlToPlainText = async (html: string) => {
   if (!html) return ''
   const contentfulRichText = await convertHtmlToContentfulRichText(html)
   return documentToPlainTextString(contentfulRichText.document)
 }
 
-const convertHtmlToContentfulRichText = async (html: string, id?: string) => {
+export const convertHtmlToContentfulRichText = async (
+  html: string,
+  id?: string,
+) => {
   const sanitizedHtml = sanitizeHtml(html)
   const markdown = NodeHtmlMarkdown.translate(sanitizedHtml)
   const richText = await richTextFromMarkdown(markdown)
@@ -83,149 +53,186 @@ const convertHtmlToContentfulRichText = async (html: string, id?: string) => {
   }
 }
 
-const mapLocations = (item: DefaultApiVacanciesListItem) => {
-  const locations: IcelandicGovernmentInstitutionVacanciesResponse['vacancies'][number]['locations'] =
-    []
+// ============================================================================
+// Sorting and types
+// ============================================================================
 
-  if ('stadsetning' in (item?.stadsetningar ?? {})) {
-    const location = (
-      item.stadsetningar as {
-        stadsetning?: DefaultApiVacancyLocation
-      }
-    )['stadsetning']
-
-    if (location) {
-      locations.push({
-        postalCode: location['@kodi'],
-        title: location['@text'],
-      })
-    }
-  } else {
-    for (const location of (item?.stadsetningar as DefaultApiVacancyLocation[]) ??
-      []) {
-      if (location) {
-        locations.push({
-          postalCode: location['@kodi'],
-          title: location['@text'],
-        })
-      }
-    }
+// Internal type for sorting - includes creationDate which is not exposed via GraphQL
+export type VacancyWithCreationDate =
+  IcelandicGovernmentInstitutionVacanciesResponse['vacancies'][number] & {
+    _creationDate?: Date
   }
-  return locations
+
+const parseDisplayDate = (dateStr: string): Date | null => {
+  const [day, month, year] = dateStr.split('.')
+  if (!day || !month || !year) return null
+  // Note: month - 1 because JavaScript months are 0-indexed
+  return new Date(Number(year), Number(month) - 1, Number(day))
 }
 
-const mapContacts = (item: DefaultApiVacanciesListItem) => {
-  const contacts: IcelandicGovernmentInstitutionVacancyContact[] = []
-  if ('tengilidur' in (item?.tengilidir ?? {})) {
-    const contact = (
-      item.tengilidir as {
-        tengilidur?: DefaultApiVacancyContact
-      }
-    )['tengilidur']
-
-    if (contact) {
-      contacts.push({
-        email: contact?.netfang,
-        name: contact?.nafn,
-        phone:
-          typeof contact?.simi === 'number'
-            ? String(contact?.simi)
-            : contact?.simi,
-        jobTitle: contact?.starfsheiti,
-      })
-    }
-  } else {
-    for (const contact of (item.tengilidir as DefaultApiVacancyContact[]) ??
-      []) {
-      if (contact) {
-        contacts.push({
-          email: contact?.netfang,
-          name: contact?.nafn,
-          phone:
-            typeof contact?.simi === 'number'
-              ? String(contact?.simi)
-              : contact?.simi,
-        })
-      }
-    }
-  }
-  return contacts
-}
-
-export const sortVacancyList = (
-  vacancyList: IcelandicGovernmentInstitutionVacanciesResponse['vacancies'],
-) => {
+export const sortVacancyList = (vacancyList: VacancyWithCreationDate[]) => {
   vacancyList.sort((a, b) => {
-    if (!a?.applicationDeadlineFrom || !b?.applicationDeadlineFrom) return 0
-
-    const [dayA, monthA, yearA] = a.applicationDeadlineFrom.split('.')
-    if (!dayA || !monthA || !yearA) return 0
-
-    const [dayB, monthB, yearB] = b.applicationDeadlineFrom.split('.')
-    if (!dayB || !monthB || !yearB) return 0
-
-    const dateA = new Date(Number(yearA), Number(monthA), Number(dayA))
-    const dateB = new Date(Number(yearB), Number(monthB), Number(dayB))
-
-    if (dateA < dateB) {
+    // Primary sort: by creationDate descending (newest first)
+    if (a?._creationDate && b?._creationDate) {
+      if (a._creationDate < b._creationDate) return 1
+      if (a._creationDate > b._creationDate) return -1
+    } else if (a?._creationDate && !b?._creationDate) {
+      // Items with creation dates come before items without
+      return -1
+    } else if (!a?._creationDate && b?._creationDate) {
       return 1
     }
-    if (dateA > dateB) {
+
+    // Secondary sort: by applicationDeadlineFrom (publish date) descending
+    // Fallback for items without creation dates or when creation dates are equal
+    if (a?.applicationDeadlineFrom && b?.applicationDeadlineFrom) {
+      const dateA = parseDisplayDate(a.applicationDeadlineFrom)
+      const dateB = parseDisplayDate(b.applicationDeadlineFrom)
+
+      if (dateA && dateB) {
+        if (dateA < dateB) return 1
+        if (dateA > dateB) return -1
+      }
+    } else if (a?.applicationDeadlineFrom && !b?.applicationDeadlineFrom) {
       return -1
+    } else if (!a?.applicationDeadlineFrom && b?.applicationDeadlineFrom) {
+      return 1
     }
 
     return 0
   })
 }
 
-export const mapIcelandicGovernmentInstitutionVacanciesFromExternalSystem =
-  async (data: DefaultApiVacanciesListItem[]) => {
-    const mappedData: IcelandicGovernmentInstitutionVacanciesResponse['vacancies'] =
+// ============================================================================
+// Mappers for new Elfur API client (Financial Management Authority)
+// ============================================================================
+
+export const mapIcelandicGovernmentInstitutionVacanciesFromElfur = async (
+  data: VacancyResponseDto[],
+): Promise<VacancyWithCreationDate[]> => {
+  const mappedData: VacancyWithCreationDate[] = []
+
+  const introPromises: Promise<string>[] = []
+
+  for (const item of data) {
+    const introHtml = item.introduction ?? ''
+    introPromises.push(convertHtmlToPlainText(introHtml))
+
+    const locations: IcelandicGovernmentInstitutionVacanciesResponse['vacancies'][number]['locations'] =
       []
 
-    const introPromises: Promise<string>[] = []
+    const locationTitles =
+      item.locations
+        ?.split(',')
+        .map((location) => location.trim())
+        .filter(Boolean) ?? []
 
-    for (const item of data) {
-      const locations = mapLocations(item)
-      const introHtml = item.inngangur ?? ''
-      introPromises.push(convertHtmlToPlainText(introHtml))
-      mappedData.push({
-        id: `${EXTERNAL_SYSTEM_ID_PREFIX}${item.id}`,
-        title: item.fyrirsogn,
-        applicationDeadlineFrom: item.umsoknarfrestur_fra,
-        applicationDeadlineTo: item.umsoknarfrestur_til,
-        intro: '',
-        fieldOfWork: item.starfssvid,
-        institutionName: item.stofnunHeiti,
-        institutionReferenceIdentifier:
-          typeof item.stofnunNr === 'number'
-            ? String(item.stofnunNr)
-            : item.stofnunNr,
-        logoUrl: item.logoURL,
-        locations,
-        address: item.heimilisfang,
+    for (const title of locationTitles) {
+      locations.push({
+        postalCode: item.postCode ?? undefined,
+        title,
       })
     }
 
-    const intros = await Promise.all(introPromises)
+    mappedData.push({
+      id: item.vacancyID
+        ? `${EXTERNAL_SYSTEM_ID_PREFIX}${item.vacancyID}`
+        : undefined,
+      title: item.heading ?? undefined,
+      applicationDeadlineFrom: formatDate(item.publishDate),
+      applicationDeadlineTo: formatDate(item.openTo),
+      intro: '',
+      fieldOfWork: item.jobTitle ?? undefined,
+      institutionName: item.orgName ?? undefined,
+      institutionReferenceIdentifier: (() => {
+        const orgNrStr =
+          typeof item.orgNr === 'number' && item.orgNr !== null
+            ? String(item.orgNr)
+            : item.orgNr ?? undefined
 
-    for (let i = 0; i < mappedData.length; i += 1) {
-      if (intros[i]) {
-        mappedData[i].intro = intros[i]
-      }
-    }
+        if (!orgNrStr) {
+          return undefined
+        }
 
-    return mappedData
+        if (!orgNrStr.startsWith('0') && orgNrStr.length !== 5) {
+          return `0${orgNrStr}`
+        }
+
+        return orgNrStr
+      })(),
+      logoUrl: item.logoUrl ?? undefined,
+      locations,
+      address: item.address ?? undefined,
+      // Display fields
+      creationDate: formatDate(item.creationDate),
+      updatedDate: formatDate(item.updatedDate),
+      // Internal field for sorting
+      _creationDate: item.creationDate
+        ? new Date(item.creationDate)
+        : undefined,
+    })
   }
 
-export const mapIcelandicGovernmentInstitutionVacancyByIdResponseFromExternalSystem =
-  async (
-    vacancy: DefaultApiVacancyDetails,
-  ): Promise<IcelandicGovernmentInstitutionVacancyByIdResponse['vacancy']> => {
-    const item = vacancy.starfsauglysing
+  const intros = await Promise.all(introPromises)
 
-    const contacts = mapContacts(item)
-    const locations = mapLocations(item)
+  for (let i = 0; i < mappedData.length; i += 1) {
+    if (intros[i]) {
+      mappedData[i].intro = intros[i]
+    }
+  }
+
+  return mappedData
+}
+
+export const mapIcelandicGovernmentInstitutionVacancyByIdResponseFromElfur =
+  async (
+    vacancy: VacancyResponseDto,
+  ): Promise<IcelandicGovernmentInstitutionVacancyByIdResponse['vacancy']> => {
+    const locations: IcelandicGovernmentInstitutionVacanciesResponse['vacancies'][number]['locations'] =
+      []
+
+    const locationTitles =
+      vacancy.locations
+        ?.split(',')
+        .map((location) => location.trim())
+        .filter(Boolean) ?? []
+
+    for (const title of locationTitles) {
+      locations.push({
+        postalCode: vacancy.postCode ?? undefined,
+        title,
+      })
+    }
+
+    const contacts: IcelandicGovernmentInstitutionVacancyContact[] = []
+
+    if (
+      vacancy.contact1Name ||
+      vacancy.contact1EmailAddress ||
+      vacancy.contact1PhoneNumber ||
+      vacancy.contact1JobTitle
+    ) {
+      contacts.push({
+        name: vacancy.contact1Name ?? undefined,
+        email: vacancy.contact1EmailAddress ?? undefined,
+        phone: vacancy.contact1PhoneNumber ?? undefined,
+        jobTitle: vacancy.contact1JobTitle ?? undefined,
+      })
+    }
+
+    if (
+      vacancy.contact2Name ||
+      vacancy.contact2EmailAddress ||
+      vacancy.contact2PhoneNumber ||
+      vacancy.contact2JobTitle
+    ) {
+      contacts.push({
+        name: vacancy.contact2Name ?? undefined,
+        email: vacancy.contact2EmailAddress ?? undefined,
+        phone: vacancy.contact2PhoneNumber ?? undefined,
+        jobTitle: vacancy.contact2JobTitle ?? undefined,
+      })
+    }
 
     const [
       intro,
@@ -234,46 +241,63 @@ export const mapIcelandicGovernmentInstitutionVacancyByIdResponseFromExternalSys
       description,
       salaryTerms,
     ] = await Promise.all([
-      convertHtmlToContentfulRichText(item.inngangur ?? '', 'intro'),
+      convertHtmlToContentfulRichText(vacancy.introduction ?? '', 'intro'),
       convertHtmlToContentfulRichText(
-        item.haefnikrofur ?? '',
+        vacancy.qualifications ?? '',
         'qualificationRequirements',
       ),
       convertHtmlToContentfulRichText(
-        item.verkefni ?? '',
+        vacancy.assignments ?? '',
         'tasksAndResponsibilities',
       ),
-      convertHtmlToContentfulRichText(item.undirtexti ?? '', 'description'),
-      convertHtmlToContentfulRichText(
-        item.launaskilmaliFull ?? '',
-        'salaryTerms',
-      ),
+      convertHtmlToContentfulRichText(vacancy.moreInfo ?? '', 'description'),
+      convertHtmlToContentfulRichText('', 'salaryTerms'),
     ])
 
     return {
-      id: `${EXTERNAL_SYSTEM_ID_PREFIX}${item.id}`,
-      title: item.fyrirsogn,
-      applicationDeadlineFrom: item.umsoknarfrestur_fra,
-      applicationDeadlineTo: item.umsoknarfrestur_til,
+      id: vacancy.vacancyID
+        ? `${EXTERNAL_SYSTEM_ID_PREFIX}${vacancy.vacancyID}`
+        : undefined,
+      title: vacancy.heading ?? undefined,
+      applicationDeadlineFrom: formatDate(vacancy.publishDate),
+      applicationDeadlineTo: formatDate(vacancy.openTo),
       intro,
-      fieldOfWork: item.starfssvid,
-      institutionName: item.stofnunHeiti,
-      institutionReferenceIdentifier:
-        typeof item.stofnunNr === 'number'
-          ? String(item.stofnunNr)
-          : item.stofnunNr,
-      logoUrl: item.logoURL,
+      fieldOfWork: vacancy.jobTitle ?? undefined,
+      institutionName: vacancy.orgName ?? undefined,
+      institutionReferenceIdentifier: (() => {
+        const orgNrStr =
+          typeof vacancy.orgNr === 'number' && vacancy.orgNr !== null
+            ? String(vacancy.orgNr)
+            : vacancy.orgNr ?? undefined
+
+        if (!orgNrStr) {
+          return undefined
+        }
+
+        if (!orgNrStr.startsWith('0') && orgNrStr.length !== 5) {
+          return `0${orgNrStr}`
+        }
+
+        return orgNrStr
+      })(),
+      logoUrl: vacancy.logoUrl ?? undefined,
       locations,
       contacts,
-      jobPercentage: item.starfshlutfall,
-      applicationHref: item.weblink?.url,
+      jobPercentage: vacancy.hoursRatio ?? undefined,
+      applicationHref: vacancy.webLinkUrl ?? undefined,
       qualificationRequirements,
       tasksAndResponsibilities,
       description,
       salaryTerms,
       plainTextIntro: documentToPlainTextString(intro.document),
+      creationDate: formatDate(vacancy.creationDate),
+      updatedDate: formatDate(vacancy.updatedDate),
     }
   }
+
+// ============================================================================
+// Mappers for CMS (Contentful)
+// ============================================================================
 
 export const mapRichTextField = (field: Html | null | undefined) => {
   return (
@@ -326,12 +350,14 @@ export const mapIcelandicGovernmentInstitutionVacancyByIdResponseFromCms = (
     plainTextIntro: vacancy.intro?.document
       ? documentToPlainTextString(vacancy.intro.document)
       : undefined,
+    creationDate: formatDate(vacancy.createdAt),
+    updatedDate: formatDate(vacancy.updatedAt),
   }
 }
 
 export const mapVacancyListItemFromCms = (
   vacancy: Vacancy,
-): IcelandicGovernmentInstitutionVacanciesResponse['vacancies'][number] => {
+): VacancyWithCreationDate => {
   return {
     id: vacancy.id ? `${CMS_ID_PREFIX}${vacancy.id}` : vacancy.id,
     title: vacancy.title,
@@ -347,5 +373,9 @@ export const mapVacancyListItemFromCms = (
       title: location,
     })),
     logoUrl: vacancy.organization?.logo?.url,
+    creationDate: formatDate(vacancy.createdAt),
+    updatedDate: formatDate(vacancy.updatedAt),
+    // Internal field for sorting
+    _creationDate: vacancy.createdAt ? new Date(vacancy.createdAt) : undefined,
   }
 }
