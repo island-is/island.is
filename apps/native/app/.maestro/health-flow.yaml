@@ -1,14 +1,15 @@
 appId: 'is.island.app.dev'
 ---
-- runFlow: try-signing-in-flow.yaml
-- tapOn:
-    id: 'TABBAR_TAB_MORE'
+- runFlow: utils/launch-and-sign-in.yaml
+- runFlow:
+    file: 'utils/select-tab.yaml'
+    env:
+      title: 'Meira'
+
 - tapOn:
     id: 'MORE_CARD_HEALTH'
 - assertVisible:
     id: 'SCREEN_HEALTH_OVERVIEW'
-- assertVisible:
-    id: 'HEALTH_CENTER'
 - tapOn:
     id: 'BUTTON_VACCINATIONS'
 - assertVisible:
@@ -19,5 +20,10 @@ appId: 'is.island.app.dev'
     id: 'VACCINATION_ITEM'
 - assertVisible:
     id: 'VACCINATION_ITEM_ROW'
+
+# Go back
 - tapOn:
     text: 'Heilsa'
+- scrollUntilVisible:
+    element:
+      id: 'HEALTH_CENTER'

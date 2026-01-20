@@ -1,8 +1,11 @@
 appId: 'is.island.app.dev'
 ---
-- runFlow: try-signing-in-flow.yaml
-- tapOn:
-    id: 'TABBAR_TAB_MORE'
+- runFlow: utils/launch-and-sign-in.yaml
+- runFlow:
+    file: 'utils/select-tab.yaml'
+    env:
+      title: 'Meira'
+
 - tapOn:
     id: 'MORE_CARD_FINANCE'
 - assertVisible:

@@ -1,0 +1,18 @@
+appId: 'is.island.app.dev'
+---
+- runFlow: utils/launch-and-sign-in.yaml
+- scrollUntilVisible:
+    element:
+      id: INBOX_ITEM_INBOX_TESTING_0-0
+- scrollUntilVisible:
+    element:
+      text: 'Ökuskírteini.*'
+- scrollUntilVisible:
+    element:
+      id: 'APPLICATION_ITEM'
+- scrollUntilVisible:
+    element:
+      id: 'VEHICLE_ITEM'
+- scrollUntilVisible:
+    element:
+      id: 'AIR_DISCOUNT_ITEM'

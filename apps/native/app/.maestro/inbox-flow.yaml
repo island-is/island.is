@@ -1,8 +1,11 @@
 appId: 'is.island.app.dev'
 ---
-- runFlow: try-signing-in-flow.yaml
-- tapOn:
-    id: 'TABBAR_TAB_INBOX'
+- runFlow: utils/launch-and-sign-in.yaml
+- runFlow:
+    file: 'utils/select-tab.yaml'
+    env:
+      title: 'Pósthólf'
+
 - assertVisible:
     id: 'INBOX_ITEM_INBOX_TESTING_0'
 - tapOn:

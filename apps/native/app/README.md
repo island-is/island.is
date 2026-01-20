@@ -95,6 +95,37 @@ git add .
 git commit -m "feat(native/app): release v1.0.0"
 ```
 
+## E2E Testing with Maestro
+
+End-to-end tests are written using [Maestro](https://maestro.mobile.dev/) and located in `apps/native/app/.maestro`.
+
+### Installing Maestro CLI
+
+Install Maestro using the installation script:
+
+```bash
+curl -Ls "https://get.maestro.mobile.dev" | bash
+```
+
+For more installation options, see the [Maestro installation guide](https://maestro.mobile.dev/getting-started/installing-maestro).
+
+### Running Maestro Tests
+
+1. Start an iOS simulator
+2. Build and run the app on the simulator
+3. Run a Maestro test:
+
+```bash
+maestro test apps/native/app/.maestro/<test-file-name>.yaml
+```
+
+Example:
+```bash
+maestro test apps/native/app/.maestro/master-flow.yaml
+```
+
+**Note:** Android testing is currently not fully supported due to dynamic import limitations.
+
 ## NX commands
 
 NX command example to proxy arguments to `package.json` scripts
