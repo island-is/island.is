@@ -22,7 +22,6 @@ import { ErrorMessage } from '../Input/ErrorMessage'
 import { Text } from '../Text/Text'
 
 import { theme } from '@island.is/island-ui/theme'
-import { isDefined } from '@island.is/shared/utils'
 import { Box } from '../Box/Box'
 import { Input } from '../Input/Input'
 import { InputProps } from '../Input/types'
