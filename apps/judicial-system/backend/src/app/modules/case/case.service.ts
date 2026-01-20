@@ -5,7 +5,6 @@ import pick from 'lodash/pick'
 import { Includeable, Op, Transaction } from 'sequelize'
 
 import {
-  BadRequestException,
   forwardRef,
   Inject,
   Injectable,
@@ -2670,16 +2669,10 @@ export class CaseService {
     }
 
     if (method === 'audkenni') {
-      if (!theCase.judge?.nationalId) {
-        throw new BadRequestException(
-          'Judge national ID is required for Audkenni signing',
-        )
-      }
-
       return this.signingService
         .requestSignatureAudkenni(
-          theCase.judge.nationalId,
-          theCase.judge?.name ?? '',
+          judge.nationalId,
+          judge.name,
           'Ísland',
           'ruling.pdf',
           pdf,
