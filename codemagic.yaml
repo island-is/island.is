@@ -113,17 +113,44 @@ definitions:
         -configuration "Debug" \
         -sdk iphonesimulator \
         -derivedDataPath ios/output
-    - &run_ios_tests_on_maestro_cloud
-      name: Run tests on Maestro cloud
+    - &run_ios_tests_locally
+      name: Run Maestro tests on local iOS simulator
       script: |
-        # Install Maestro CLI first
+        # Install Maestro CLI
         curl -Ls "https://get.maestro.mobile.dev" | bash
-
-        # Add to PATH
         export PATH="$PATH":"$HOME/.maestro/bin"
 
-        # Verify installation
+        # Verify Maestro installation
         maestro --version
+
+        # Shutdown all existing simulators for clean state
+        echo "Shutting down existing simulators..."
+        xcrun simctl shutdown all || true
+
+        # Create and boot iPhone 15 Pro with iOS 18.0
+        echo "Creating iPhone 15 Pro simulator..."
+        DEVICE_NAME="iPhone-15-Pro-Test"
+        DEVICE_TYPE="com.apple.CoreSimulator.SimDeviceType.iPhone-15-Pro"
+        RUNTIME="com.apple.CoreSimulator.SimRuntime.iOS-18-0"
+
+        # Check if device already exists
+        DEVICE_ID=$(xcrun simctl list devices | grep "$DEVICE_NAME" | grep -oE '[A-F0-9]{8}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{12}' | head -1)
+
+        if [ -z "$DEVICE_ID" ]; then
+          # Create new device
+          DEVICE_ID=$(xcrun simctl create "$DEVICE_NAME" "$DEVICE_TYPE" "$RUNTIME")
+          echo "Created new simulator with ID: $DEVICE_ID"
+        else
+          echo "Using existing simulator with ID: $DEVICE_ID"
+        fi
+
+        # Boot the simulator
+        echo "Booting simulator..."
+        xcrun simctl boot "$DEVICE_ID" || echo "Simulator already booted"
+
+        # Wait for simulator to be ready
+        echo "Waiting for simulator to be ready..."
+        xcrun simctl bootstatus "$DEVICE_ID" -b
 
         # Find the built app
         iosAppPath=$(find ios/output -name "*.app" | head -1)
@@ -131,14 +158,33 @@ definitions:
           echo "No .app file found in ios/output"
           exit 1
         fi
+        echo "Found app at: $iosAppPath"
 
-        # Run Maestro Cloud
-        maestro cloud \
-        --apiKey $MDEV_API_KEY \
-        --projectId $MAESTRO_PROJECT_ID \
-        --name "Ísland.dev" \
-        $iosAppPath \
-        .maestro/
+        # Install the app on simulator
+        echo "Installing app on simulator..."
+        xcrun simctl install "$DEVICE_ID" "$iosAppPath"
+
+        # Open Simulator app (optional, helps with debugging)
+        open -a Simulator --args -CurrentDeviceUDID "$DEVICE_ID"
+
+        # Run Maestro tests locally
+        echo "Running Maestro tests..."
+        maestro test \
+          --env APP_ID="is.island.app.dev" \
+          --format junit \
+          --output maestro-results.xml \
+          .maestro/ || TEST_RESULT=$?
+
+        # Capture simulator logs
+        echo "Capturing simulator logs..."
+        xcrun simctl spawn "$DEVICE_ID" log show --last 10m > simulator.log 2>&1 || true
+
+        # Shutdown simulator after tests
+        echo "Shutting down simulator..."
+        xcrun simctl shutdown "$DEVICE_ID" || true
+
+        # Exit with test result code
+        exit ${TEST_RESULT:-0}
   publishing:
     ios_publishing: &ios_publishing
       app_store_connect:
@@ -312,8 +358,6 @@ workflows:
         BUNDLE_ID: 'is.island.app.dev'
         XCODE_SCHEME: 'Ísland.dev'
         APP_STORE_APPLE_ID: 1570427360
-        MDEV_API_KEY: $MDEV_API_KEY
-        MAESTRO_PROJECT_ID: proj_01k57043b8e7vvkd20k4epgh44
     scripts:
       - *check_changes
       - *pip_install
@@ -321,6 +365,9 @@ workflows:
       - *codegen
       - *cocoapods
       - *build_ios_unsigned_app
-      - *run_ios_tests_on_maestro_cloud
+      - *run_ios_tests_locally
     artifacts: &ios_artifacts_e2e_tests
       - /tmp/xcodebuild_logs/*.log
+      - maestro-results.xml
+      - simulator.log
+      - ios/output/**/*.app
