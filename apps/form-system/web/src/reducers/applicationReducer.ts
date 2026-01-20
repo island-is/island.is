@@ -16,6 +16,7 @@ import {
   getIncrementVariables,
   incrementWithoutScreens,
   incrementWithScreens,
+  jumpToScreen,
   setCurrentScreen,
 } from './reducerUtils'
 
@@ -161,8 +162,9 @@ export const applicationReducer = (
       )
     }
     case 'INDEX_SCREEN': {
-      const { sectionIndex, screenIndex } = action.payload
-      return setCurrentScreen(state, sectionIndex, screenIndex)
+      const { sectionIndex, screenIndex, updateCompleted } = action.payload
+      state = setCurrentScreen(state, sectionIndex, screenIndex)
+      return jumpToScreen(state, sectionIndex, screenIndex, updateCompleted)
     }
 
     case 'SET_VALIDITY': {
