@@ -15,18 +15,8 @@ module.exports = {
       ),
     )
   },
-  down: (queryInterface) => {
-    return queryInterface.sequelize.transaction((transaction) =>
-      queryInterface.sequelize.query(
-        `UPDATE "subpoena"
-         SET "police_subpoena_id" = '54345e03-9f59-4883-bbdf-90370de7fdc6',
-             "service_status" = 'IN_PERSON',
-              "service_date" = '2026-01-15T13:19:06.013Z',
-              "served_by" = 'Gísli Kristinn Skúlason',
-              "comment" = 'Um er að ræða villu en viðkomandi koma margfallt fyrir. Afreitt af lögreglumanni sem birt.'
-         WHERE "id" = 'aaa7144d-afe7-4303-b0f6-c9debedc7777'`,
-        { transaction },
-      ),
-    )
+
+  down: () => {
+    return Promise.resolve()
   },
 }
