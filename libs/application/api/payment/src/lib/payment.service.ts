@@ -305,8 +305,6 @@ export class PaymentService {
           },
           returnUrl,
           cancelUrl,
-          // returnUrl: 'https://www.island.is',
-          // cancelUrl: 'https://www.island.is',
           redirectToReturnUrlOnSuccess: true,
           extraData,
           chargeItemSubjectId: paymentModel.id.substring(0, 22), // chargeItemSubjectId has maxlength of 22 characters
@@ -446,7 +444,6 @@ export class PaymentService {
     returnUrl.search = 'done'
 
     const cancelUrl = new URL(this.config.clientLocationOrigin)
-    // cancelUrl.pathname = `umsoknir/${applicationSlug}` // Not including the applicationId to avoid getting forwarded back to the payment screen since the application will be in the payment state
     cancelUrl.pathname = `umsoknir/${applicationSlug}/${applicationId}`
     cancelUrl.search = 'cancelled'
 
