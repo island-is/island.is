@@ -11,6 +11,7 @@ import { PruneService } from './prune.service'
 import { Value } from '../../applications/models/value.model'
 import { Application } from '../../applications/models/application.model'
 import { ApplicationEvent } from '../../applications/models/applicationEvent.model'
+import { FileConfig } from '../../file/file.config'
 
 @Module({
   imports: [
@@ -22,7 +23,7 @@ import { ApplicationEvent } from '../../applications/models/applicationEvent.mod
     AuditModule.forRoot(environment.audit),
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [FileStorageConfig],
+      load: [FileStorageConfig, FileConfig],
     }),
   ],
   providers: [PruneService],
