@@ -41,6 +41,9 @@ export class QuestionnairesBaseItem {
   @Field(() => Date, { nullable: true })
   lastSubmitted?: Date
 
+  @Field(() => String, { nullable: true })
+  lastSubmissionId?: string
+
   @Field(() => QuestionnairesOrganizationEnum, { nullable: true })
   organization?: QuestionnairesOrganizationEnum
 
