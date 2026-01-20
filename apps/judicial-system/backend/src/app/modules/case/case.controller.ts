@@ -986,7 +986,6 @@ export class CaseController {
   })
   async requestRulingSignature(
     @Param('caseId') caseId: string,
-    @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
   ): Promise<SigningServiceResponse> {
     return this.handleRequestRulingSignature(caseId, theCase, 'mobile')

@@ -2,8 +2,6 @@ import { v4 as uuid } from 'uuid'
 
 import { SigningServiceResponse } from '@island.is/dokobit-signing'
 
-import { User } from '@island.is/judicial-system/types'
-
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { Case } from '../../../repository'
@@ -15,7 +13,6 @@ interface Then {
 
 type GivenWhenThen = (
   caseId: string,
-  user: User,
   theCase: Case,
 ) => Promise<Then>
 
@@ -25,13 +22,12 @@ describe('CaseController - Request ruling signature', () => {
   beforeEach(async () => {
     const { caseController } = await createTestingCaseModule()
 
-    givenWhenThen = async (caseId: string, user: User, theCase: Case) => {
+    givenWhenThen = async (caseId: string, theCase: Case) => {
       const then = {} as Then
 
       try {
         then.result = await caseController.requestRulingSignature(
           caseId,
-          user,
           theCase,
         )
       } catch (error) {
@@ -44,13 +40,13 @@ describe('CaseController - Request ruling signature', () => {
 
   describe('signature requested', () => {
     const userId = uuid()
-    const user = { id: userId } as User
+
     const caseId = uuid()
-    const theCase = { id: caseId, judgeId: userId } as Case
+    const theCase = { id: caseId, judgeId: userId, judge: { id: userId, name: 'John Doe', nationalId: '0101301234', mobileNumber: '1234567890' } } as Case
     let then: Then
 
     beforeEach(async () => {
-      then = await givenWhenThen(caseId, user, theCase)
+      then = await givenWhenThen(caseId, theCase)
     })
 
     it('should return a control code and a document token', () => {
