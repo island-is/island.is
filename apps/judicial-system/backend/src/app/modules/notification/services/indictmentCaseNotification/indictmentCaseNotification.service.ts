@@ -225,6 +225,30 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
     )
   }
 
+  private async sendDrivingLicenseSuspensionNotifications(
+    theCase: Case,
+  ): Promise<DeliverResponse> {
+    const subject = `Svipting í máli ${theCase.courtCaseNumber}`
+    const html = `Skrá skal sviptingu ökuréttinda í ökuskírteinaskrá vegna máls ${
+      theCase.courtCaseNumber
+    } í ${applyDativeCaseToCourtName(theCase.court?.name ?? '')}.
+      
+      LÖKE númer: ${theCase.policeCaseNumbers}.`
+
+    return this.sendEmails(
+      theCase,
+      IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENDED,
+      subject,
+      html,
+      [
+        {
+          name: theCase.prosecutor?.name,
+          email: theCase.prosecutor?.email,
+        },
+      ],
+    )
+  }
+
   // TODO-FIX: redundant in other services - defendant, case, indictmentCase notifications
   private getCourtDateCalendarInvite = (
     theCase: Case,
@@ -573,6 +597,8 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
         return this.sendCriminalRecordFilesUploadedNotification(theCase)
       case IndictmentCaseNotificationType.INDICTMENT_SPLIT_COMPLETED:
         return this.sendSplitCompletedNotifications(theCase)
+      case IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENDED:
+        return this.sendDrivingLicenseSuspensionNotifications(theCase)
       default:
         throw new InternalServerErrorException(
           `Invalid indictment notification type: ${notificationType}`,

@@ -9,6 +9,7 @@ import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import {
   CaseFileCategory,
+  CaseIndictmentRulingDecision,
   CaseNotificationType,
   EventNotificationType,
   IndictmentCaseNotificationType,
@@ -17,6 +18,7 @@ import {
   isIndictmentCase,
   NotificationDispatchType,
   prosecutorsOfficeTypes,
+  ServiceRequirement,
   UserDescriptor,
 } from '@island.is/judicial-system/types'
 
@@ -121,6 +123,21 @@ export class NotificationDispatchService {
   private async dispatchIndictmentSentToPublicProsecutorNotifications(
     theCase: Case,
   ): Promise<void> {
+    const hasDrivingLicenseSuspension = theCase.defendants?.some((defendant) =>
+      defendant.verdicts?.some((verdict) => verdict.isDrivingLicenseSuspended),
+    )
+
+    const hasServiceRequirementNotApplicable = theCase.defendants?.some(
+      (defendant) =>
+        defendant.verdicts?.some(
+          (verdict) =>
+            verdict.serviceRequirement === ServiceRequirement.NOT_APPLICABLE,
+        ),
+    )
+
+    const isFine =
+      theCase.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
+
     const messages = [
       {
         type: MessageType.INDICTMENT_CASE_NOTIFICATION,
@@ -129,6 +146,18 @@ export class NotificationDispatchService {
           type: IndictmentCaseNotificationType.INDICTMENT_VERDICT_INFO,
         },
       },
+      ...(hasDrivingLicenseSuspension &&
+      (isFine || hasServiceRequirementNotApplicable)
+        ? [
+            {
+              type: MessageType.INDICTMENT_CASE_NOTIFICATION,
+              caseId: theCase.id,
+              body: {
+                type: IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENDED,
+              },
+            },
+          ]
+        : []),
     ]
 
     return this.messageService.sendMessagesToQueue([
