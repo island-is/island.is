@@ -1,4 +1,4 @@
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import {
   CaseIndictmentRulingDecision,
@@ -42,7 +42,7 @@ describe('InternalVerdictController - Update verdict appeal', () => {
   const defendant = {
     id: defendantId,
     nationalId: defendantNationalId,
-    verdict,
+    verdicts: [verdict],
   } as Defendant
 
   const theCase = {

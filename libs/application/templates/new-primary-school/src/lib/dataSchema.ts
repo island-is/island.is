@@ -76,21 +76,49 @@ export const dataSchema = z.object({
         },
       ),
   ),
-  relatives: z
-    .array(
-      z.object({
+  relatives: z.array(
+    z
+      .object({
         nationalIdWithName: nationalIdWithNameSchema,
         phoneNumber: phoneNumberSchema,
         relation: z.string(),
-      }),
+        applicantNationalId: z.string().optional(),
+        otherGuardianNationalId: z.string().optional(),
+      })
+      .refine(
+        ({
+          nationalIdWithName,
+          applicantNationalId,
+          otherGuardianNationalId,
+        }) =>
+          nationalIdWithName?.nationalId !== applicantNationalId &&
+          nationalIdWithName?.nationalId !== otherGuardianNationalId,
+        {
+          path: ['nationalIdWithName', 'nationalId'],
+          params: errorMessages.relativeSameAsGuardian,
+        },
+      ),
+  ),
+  currentNursery: z
+    .object({
+      hasCurrentNursery: z.enum([YES, NO]),
+      municipality: z.string().optional().nullable(),
+      nursery: z.string().optional().nullable(),
+    })
+    .refine(
+      ({ hasCurrentNursery, municipality }) =>
+        hasCurrentNursery === YES ? !!municipality : true,
+      {
+        path: ['municipality'],
+      },
     )
-    .refine((r) => r === undefined || r.length > 0, {
-      params: errorMessages.relativesRequired,
-    }),
-  currentNursery: z.object({
-    municipality: z.string(),
-    nursery: z.string(),
-  }),
+    .refine(
+      ({ hasCurrentNursery, nursery }) =>
+        hasCurrentNursery === YES ? !!nursery : true,
+      {
+        path: ['nursery'],
+      },
+    ),
   reasonForApplication: z.object({
     reason: z.string(),
   }),
@@ -505,7 +533,6 @@ export const dataSchema = z.object({
         .object({
           name: z.string(),
           nationalId: z.string(),
-          email: z.string().email().optional().or(z.literal('')),
         })
         .optional(),
     })
@@ -520,11 +547,6 @@ export const dataSchema = z.object({
           ? other && kennitala.isValid(other.nationalId)
           : true,
       { path: ['other', 'nationalId'], params: errorMessages.nationalId },
-    )
-    .refine(
-      ({ option, other }) =>
-        option === PayerOption.OTHER ? other && !!other.email?.trim() : true,
-      { path: ['other', 'email'] },
     ),
 })
 

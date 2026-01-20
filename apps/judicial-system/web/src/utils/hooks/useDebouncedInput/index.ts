@@ -27,7 +27,7 @@ const useDebouncedInput = <T extends keyof UpdateCase>(
 
   useEffect(() => {
     if (!hasUserEdited && initialValue !== value) {
-      setValue(initialValue)
+      setValue(initialValue ?? '')
     }
   }, [initialValue, hasUserEdited, value])
 

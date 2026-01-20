@@ -104,6 +104,7 @@ export const Item = ({
     updateValueObj,
     defaultValue,
     clearOnChange,
+    clearOnChangeDefaultValue,
     setOnChange,
     ...props
   } = item
@@ -546,6 +547,7 @@ export const Item = ({
             large={true}
             placeholder={formatText(placeholder, application, formatMessage)}
             clearOnChange={clearOnChangeVal}
+            clearOnChangeDefaultValue={clearOnChangeDefaultValue}
             setOnChange={setOnChangeFunc}
             {...props}
             {...(component === 'date'

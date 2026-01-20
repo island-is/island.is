@@ -1,4 +1,5 @@
 import { DayRateEntryModel } from '@island.is/clients-rental-day-rate'
+import addDays from 'date-fns/addDays'
 
 export const isDayRateEntryActive = (
   entry: DayRateEntryModel,
@@ -6,8 +7,12 @@ export const isDayRateEntryActive = (
 ): boolean => {
   const validFrom = new Date(entry.validFrom || '')
   const validTo = entry.validTo ? new Date(entry.validTo) : null
-
-  return validFrom <= currentDate && (!validTo || validTo > currentDate)
+  // Dayrate changes active the day after its requested to be set
+  // So we also look 1 day into the future just in case
+  return (
+    (validFrom <= currentDate || validFrom <= addDays(currentDate, 1)) &&
+    (!validTo || validTo > currentDate)
+  )
 }
 
 export const hasActiveDayRate = (

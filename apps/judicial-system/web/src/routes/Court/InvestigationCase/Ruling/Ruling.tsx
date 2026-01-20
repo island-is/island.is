@@ -8,8 +8,6 @@ import {
   Box,
   Checkbox,
   Input,
-  Text,
-  Tooltip,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
@@ -28,6 +26,7 @@ import {
   PdfButton,
   PoliceRequestAccordionItem,
   RulingInput,
+  SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import { CaseDecision } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
@@ -35,6 +34,7 @@ import {
   useDebouncedInput,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { isRulingValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { icRuling as m } from './Ruling.strings'
@@ -123,101 +123,94 @@ const Ruling = () => {
       <FormContentContainer>
         <PageTitle>{formatMessage(m.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
-        <Box component="section" marginBottom={5}>
-          <Accordion>
-            <PoliceRequestAccordionItem workingCase={workingCase} />
-            <AccordionItem
-              id="caseFileList"
-              label={`Rannsóknargögn (${caseFiles.length})`}
-              labelVariant="h3"
-            >
-              <CaseFileList caseId={workingCase.id} files={caseFiles} />
-            </AccordionItem>
-          </Accordion>
-        </Box>
-        <Box component="section" marginBottom={5}>
-          <Checkbox
-            name={formatMessage(m.sections.completedWithoutRuling.label)}
-            label={formatMessage(m.sections.completedWithoutRuling.label)}
-            checked={!isRulingRequired}
-            onChange={({ target }) => {
-              setAndSendCaseToServer(
-                [
-                  {
-                    isCompletedWithoutRuling: target.checked,
-                    conclusion: formatMessage(
-                      m.sections.completedWithoutRuling.conclusion,
-                    ),
-                    force: true,
-                  },
-                ],
-                workingCase,
-                setWorkingCase,
-              )
-            }}
-            tooltip={formatMessage(m.sections.completedWithoutRuling.tooltip)}
-            backgroundColor="blue"
-            large
-          />
-        </Box>
-        <Box component="section" marginBottom={5}>
-          <Box marginBottom={3}>
-            <Text as="h3" variant="h3">
-              {formatMessage(m.sections.introduction.title)}
-            </Text>
+        <div className={grid({ gap: 5, marginBottom: 10 })}>
+          <Box component="section">
+            <Accordion>
+              <PoliceRequestAccordionItem workingCase={workingCase} />
+              <AccordionItem
+                id="caseFileList"
+                label={`Rannsóknargögn (${caseFiles.length})`}
+                labelVariant="h3"
+              >
+                <CaseFileList caseId={workingCase.id} files={caseFiles} />
+              </AccordionItem>
+            </Accordion>
           </Box>
-          <Input
-            data-testid="introduction"
-            name="introduction"
-            label={formatMessage(m.sections.introduction.label)}
-            placeholder={formatMessage(m.sections.introduction.placeholder)}
-            value={introductionInput.value || ''}
-            onChange={(evt) => introductionInput.onChange(evt.target.value)}
-            onBlur={(evt) => introductionInput.onBlur(evt.target.value)}
-            errorMessage={introductionInput.errorMessage}
-            hasError={introductionInput.hasError}
-            textarea
-            rows={7}
-            required={isRulingRequired}
-            disabled={!isRulingRequired}
-          />
-        </Box>
-        <Box component="section" marginBottom={5}>
-          <Box marginBottom={3}>
-            <Text as="h3" variant="h3">
-              {formatMessage(m.sections.prosecutorDemands.title)}
-            </Text>
+          <Box component="section">
+            <Checkbox
+              name={formatMessage(m.sections.completedWithoutRuling.label)}
+              label={formatMessage(m.sections.completedWithoutRuling.label)}
+              checked={!isRulingRequired}
+              onChange={({ target }) => {
+                setAndSendCaseToServer(
+                  [
+                    {
+                      isCompletedWithoutRuling: target.checked,
+                      conclusion: formatMessage(
+                        m.sections.completedWithoutRuling.conclusion,
+                      ),
+                      force: true,
+                    },
+                  ],
+                  workingCase,
+                  setWorkingCase,
+                )
+              }}
+              tooltip={formatMessage(m.sections.completedWithoutRuling.tooltip)}
+              backgroundColor="blue"
+              large
+            />
           </Box>
-          <Input
-            data-testid="prosecutorDemands"
-            name="prosecutorDemands"
-            label={formatMessage(m.sections.prosecutorDemands.label)}
-            placeholder={formatMessage(
-              m.sections.prosecutorDemands.placeholder,
-            )}
-            value={prosecutorDemandsInput.value || ''}
-            onChange={(evt) =>
-              prosecutorDemandsInput.onChange(evt.target.value)
-            }
-            onBlur={(evt) => prosecutorDemandsInput.onBlur(evt.target.value)}
-            errorMessage={prosecutorDemandsInput.errorMessage}
-            hasError={prosecutorDemandsInput.hasError}
-            textarea
-            rows={7}
-            required={isRulingRequired}
-            disabled={!isRulingRequired}
-          />
-        </Box>
-        <Box component="section" marginBottom={5}>
-          <Box marginBottom={3}>
-            <Text as="h3" variant="h3">
-              {`${formatMessage(m.sections.courtCaseFacts.title)} `}
-              <Tooltip
-                text={formatMessage(m.sections.courtCaseFacts.tooltip)}
-              />
-            </Text>
+          <Box component="section" marginBottom={5}>
+            <SectionHeading
+              title={formatMessage(m.sections.introduction.title)}
+            />
+            <Input
+              data-testid="introduction"
+              name="introduction"
+              label={formatMessage(m.sections.introduction.label)}
+              placeholder={formatMessage(m.sections.introduction.placeholder)}
+              value={introductionInput.value || ''}
+              onChange={(evt) => introductionInput.onChange(evt.target.value)}
+              onBlur={(evt) => introductionInput.onBlur(evt.target.value)}
+              errorMessage={introductionInput.errorMessage}
+              hasError={introductionInput.hasError}
+              textarea
+              rows={7}
+              required={isRulingRequired}
+              disabled={!isRulingRequired}
+            />
           </Box>
-          <Box marginBottom={5}>
+          <Box component="section">
+            <SectionHeading
+              title={formatMessage(m.sections.prosecutorDemands.title)}
+            />
+            <Input
+              data-testid="prosecutorDemands"
+              name="prosecutorDemands"
+              label={formatMessage(m.sections.prosecutorDemands.label)}
+              placeholder={formatMessage(
+                m.sections.prosecutorDemands.placeholder,
+              )}
+              value={prosecutorDemandsInput.value || ''}
+              onChange={(evt) =>
+                prosecutorDemandsInput.onChange(evt.target.value)
+              }
+              onBlur={(evt) => prosecutorDemandsInput.onBlur(evt.target.value)}
+              errorMessage={prosecutorDemandsInput.errorMessage}
+              hasError={prosecutorDemandsInput.hasError}
+              textarea
+              rows={7}
+              required={isRulingRequired}
+              disabled={!isRulingRequired}
+            />
+          </Box>
+          <Box component="section">
+            <SectionHeading
+              title={formatMessage(m.sections.courtCaseFacts.title)}
+              tooltip={formatMessage(m.sections.courtCaseFacts.tooltip)}
+            />
+
             <Input
               data-testid="courtCaseFacts"
               name="courtCaseFacts"
@@ -234,17 +227,11 @@ const Ruling = () => {
               disabled={!isRulingRequired}
             />
           </Box>
-        </Box>
-        <Box component="section" marginBottom={5}>
-          <Box marginBottom={3}>
-            <Text as="h3" variant="h3">
-              {`${formatMessage(m.sections.courtLegalArguments.title)} `}
-              <Tooltip
-                text={formatMessage(m.sections.courtLegalArguments.tooltip)}
-              />
-            </Text>
-          </Box>
-          <Box marginBottom={5}>
+          <Box component="section">
+            <SectionHeading
+              title={formatMessage(m.sections.courtLegalArguments.title)}
+              tooltip={formatMessage(m.sections.courtLegalArguments.tooltip)}
+            />
             <Input
               data-testid="courtLegalArguments"
               name="courtLegalArguments"
@@ -267,22 +254,12 @@ const Ruling = () => {
               disabled={!isRulingRequired}
             />
           </Box>
-        </Box>
-        <Box component="section" marginBottom={5}>
-          <Box marginBottom={3}>
-            <Text as="h3" variant="h3">
-              {formatMessage(m.sections.ruling.title)}
-            </Text>
+          <Box component="section">
+            <SectionHeading title={formatMessage(m.sections.ruling.title)} />
+            <RulingInput disabled={!isRulingRequired} />
           </Box>
-          <RulingInput disabled={!isRulingRequired} />
-        </Box>
-        <Box component="section" marginBottom={5}>
-          <Box marginBottom={3}>
-            <Text as="h3" variant="h3">
-              {formatMessage(m.sections.decision.title)}
-            </Text>
-          </Box>
-          <Box marginBottom={5}>
+          <Box component="section">
+            <SectionHeading title={formatMessage(m.sections.decision.title)} />
             <Decision
               workingCase={workingCase}
               acceptedLabelText={formatMessage(
@@ -327,33 +304,31 @@ const Ruling = () => {
               }}
             />
           </Box>
-        </Box>
-        <Box component="section" marginBottom={5}>
-          <Box marginBottom={3}>
-            <Text as="h3" variant="h3">
-              {formatMessage(m.sections.conclusion.title)}
-            </Text>
+          <Box component="section">
+            <SectionHeading
+              title={formatMessage(m.sections.conclusion.title)}
+            />
+            <Input
+              name="conclusion"
+              label={formatMessage(m.sections.conclusion.label)}
+              placeholder={formatMessage(m.sections.conclusion.placeholder)}
+              value={conclusionInput.value || ''}
+              onChange={(evt) => conclusionInput.onChange(evt.target.value)}
+              rows={7}
+              textarea
+              disabled={!isRulingRequired}
+            />
           </Box>
-          <Input
-            name="conclusion"
-            label={formatMessage(m.sections.conclusion.label)}
-            placeholder={formatMessage(m.sections.conclusion.placeholder)}
-            value={conclusionInput.value || ''}
-            onChange={(evt) => conclusionInput.onChange(evt.target.value)}
-            rows={7}
-            textarea
-            disabled={!isRulingRequired}
-          />
-        </Box>
-        <Box marginBottom={10}>
-          <PdfButton
-            caseId={workingCase.id}
-            title={formatMessage(core.pdfButtonRuling)}
-            pdfType="ruling"
-            elementId={formatMessage(core.pdfButtonRuling)}
-            disabled={!isRulingRequired}
-          />
-        </Box>
+          <Box>
+            <PdfButton
+              caseId={workingCase.id}
+              title={formatMessage(core.pdfButtonRuling)}
+              pdfType="ruling"
+              elementId={formatMessage(core.pdfButtonRuling)}
+              disabled={!isRulingRequired}
+            />
+          </Box>
+        </div>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter

@@ -758,6 +758,7 @@ export const en: TranslatedMessages = {
   'health.overview.noBloodTypeRegistered': 'No blood type registered',
   'health.overview.dentist': 'Dentist',
   'health.overview.noDentistRegistered': 'No dentist registered',
+  'health.overview.prescriptions': 'Prescriptions',
 
   // health - vaccinations
   'health.vaccinations.screenTitle': 'Vaccinations',
@@ -857,4 +858,57 @@ export const en: TranslatedMessages = {
     'The above person may also look up my prescriptions at the pharmacy.',
   'health.medicineDelegation.form.xYears': '{years} years',
   'health.medicineDelegation.form.xMonths': '{months} months',
+
+  // health - prescriptions & drug certificates
+  'health.prescriptionsAndCertificates.screenTitle': 'Medication',
+  'health.prescriptionsAndCertificates.validTo': 'Valid to: {date}',
+  'health.prescriptionsAndCertificates.expired': 'Expired',
+  'health.prescriptionsAndCertificates.rejected': 'Rejected',
+  'health.prescriptionsAndCertificates.inProcess': 'In process',
+  'health.prescriptionsAndCertificates.valid': 'Valid',
+  'health.prescriptionsAndCertificates.furtherInformation':
+    'Further information',
+  'health.prescriptionsAndCertificates.status': 'Status',
+  'health.prescriptionsAndCertificates.description':
+    'Doctors request medication certificates for individuals who are issued by the National Health Insurance Fund under certain conditions according to working regulations.',
+
+  'health.drugCertificates.title': 'Medication certificate',
+  'health.drugCertificates.drugName': 'Drug name',
+  'health.drugCertificates.atcCode': 'ATC code',
+  'health.drugCertificates.ingredients': 'Ingredient',
+  'health.drugCertificates.validFrom': 'Valid from',
+  'health.drugCertificates.validUntil': 'Valid to',
+  'health.drugCertificates.nameOfDoctor': 'Name of doctor',
+  'health.drugCertificates.methylDoctors':
+    'Extra doctors registered on license',
+
+  'health.prescriptions.title': 'Prescriptions',
+  'health.prescriptions.description':
+    'Here you can find an overview of your prescriptions and medication certificates.',
+  'health.prescriptions.drug': 'Medication',
+  'health.prescriptions.type': 'Type',
+  'health.prescriptions.indication': 'Medication used for',
+  'health.prescriptions.quantity': 'Prescribed amount',
+  'health.prescriptions.dosageInstructions': 'Dosage instructions',
+  'health.prescriptions.issueDate': 'Issue date',
+  'health.prescriptions.expiresAt': 'Expires at',
+  'health.prescriptions.doctor': 'Doctors',
+  'health.prescriptions.issueInformation': 'Issue information',
+  'health.prescriptions.dispensations': 'Dispensation history',
+  'health.prescriptions.dispensationNumber': 'Dispensation',
+  'health.prescriptions.lastDispensationDate': 'Last dispensed: {date}',
+  'health.prescriptions.dispensationCount': '{count} dispensations',
+  'health.prescriptions.fetchMoreDispensations': 'See more',
+  'health.prescriptions.completedDispensation': '{number}. dispensation',
+  'health.prescriptions.dispensationDetail.title':
+    'Information for {count}. dispensation',
+  'health.prescriptions.history.table.date': 'Date',
+  'health.prescriptions.history.table.dispensery': 'Dispensing point',
+  'health.prescriptions.history.table.drug': 'Medicine',
+  'health.prescriptions.history.table.quantity': 'Quantity',
+  'health.prescriptions.history.table.moreInfo': 'More',
+  'health.medicineHistory.title': 'Medicine history',
+  'health.prescriptions.noDispensations': 'No dispensations recorded',
+  'health.prescriptions.noDispensationsDescription':
+    'If you believe you have data that should appear here, please contact service provider.',
 }

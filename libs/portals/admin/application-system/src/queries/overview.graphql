@@ -15,6 +15,11 @@ query getApplicationsSuperAdmin($input: ApplicationsSuperAdminFilters!) {
       institution
       progress
       status
+      adminData {
+        key
+        values
+        label
+      }
       applicantName
       paymentStatus
       actionCard {
@@ -122,7 +127,7 @@ query getOrganizations($input: GetOrganizationsInput) {
   }
 }
 
-query getApplicationStatistics($input: ApplicationsAdminStatisticsInput!) {
+query getApplicationsStatistics($input: ApplicationsAdminStatisticsInput!) {
   applicationApplicationsAdminStatistics(input: $input) {
     typeid
     count
@@ -132,5 +137,29 @@ query getApplicationStatistics($input: ApplicationsAdminStatisticsInput!) {
     rejected
     approved
     name
+  }
+}
+
+query getApplicationsInstitutionStatistics(
+  $input: ApplicationsAdminStatisticsInput!
+) {
+  applicationApplicationsInstitutionStatistics(input: $input) {
+    typeid
+    count
+    draft
+    inprogress
+    completed
+    rejected
+    approved
+    name
+  }
+}
+
+query getApplicationInstitutions {
+  applicationApplicationsAdminInstitutions {
+    nationalId
+    slug
+    contentfulId
+    applicationTypes
   }
 }

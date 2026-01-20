@@ -3,7 +3,6 @@ import {
   CaseState,
   DateType,
   DefenderChoice,
-  EventType,
   Gender,
   InformationForDefendant,
   Institution,
@@ -28,13 +27,7 @@ export class InternalCaseResponse {
   indictmentRulingDecision?: CaseIndictmentRulingDecision
   state?: CaseState
   courtSessions?: CourtSession[]
-  eventLogs?: EventLog[]
-}
-
-interface EventLog {
-  id: string
-  created: Date
-  eventType: EventType
+  indictmentSentToPublicProsecutorDate?: Date
 }
 
 interface CourtSession {

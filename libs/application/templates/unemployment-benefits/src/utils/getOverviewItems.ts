@@ -54,6 +54,7 @@ import {
   wasStudyingLastSemester,
 } from './educationInformation'
 import { getEmploymentFromRsk } from './getEmploymenInfo'
+import { getJobInfo } from './getJobCodeOptions'
 
 export const useApplicantOverviewItems = (
   answers: FormValue,
@@ -126,7 +127,7 @@ export const useApplicantOverviewItems = (
 
 export const useEmploymentInformationOverviewItems = (
   answers: FormValue,
-  _externalData: ExternalData,
+  externalData: ExternalData,
 ): Array<KeyValueItem> => {
   const { locale } = useLocale()
   const mainReason =
@@ -136,7 +137,7 @@ export const useEmploymentInformationOverviewItems = (
     ''
   const reasons = getReasonForJobSearchString(
     mainReason,
-    _externalData,
+    externalData,
     locale,
     additionalReason,
   )
@@ -152,14 +153,14 @@ export const useEmploymentInformationOverviewItems = (
     getValueViaPath<string>(answers, 'workingAbility.status') ?? ''
 
   const abilityString = abilityAnswer
-    ? getWorkingAbilityString(abilityAnswer, _externalData, locale)
+    ? getWorkingAbilityString(abilityAnswer, externalData, locale)
     : ''
   const employmentHistory = getValueViaPath<EmploymentHistoryInAnswers>(
     answers,
     'employmentHistory',
   )
 
-  const rskEmploymentList = getEmploymentFromRsk(_externalData)
+  const rskEmploymentList = getEmploymentFromRsk(externalData)
 
   const previousJobInformation = employmentHistory?.lastJobs?.map((job) => {
     const employerName =
@@ -168,7 +169,10 @@ export const useEmploymentInformationOverviewItems = (
             (x) => x.employerSSN === job.nationalIdWithName,
           )?.employer
         : job.employer?.name
-    return `${employerName}: ${job.title}`
+    const jobInfo = getJobInfo(externalData, job.jobCodeId)
+    return `${employerName}: ${
+      (locale === 'is' ? jobInfo?.name : jobInfo?.english) ?? ''
+    }`
   })
 
   const currentJobInformation = employmentHistory?.currentJobs?.map((job) => {
@@ -178,7 +182,10 @@ export const useEmploymentInformationOverviewItems = (
             (x) => x.employerSSN === job.nationalIdWithName,
           )?.employer
         : job.employer?.name
-    return `${employerName}: ${job.title}`
+    const jobInfo = getJobInfo(externalData, job.jobCodeId)
+    return `${employerName}: ${
+      (locale === 'is' ? jobInfo?.name : jobInfo?.english) ?? ''
+    }`
   })
 
   return [
@@ -497,6 +504,7 @@ export const useLicenseOverviewItems = (
   answers: FormValue,
   externalData: ExternalData,
 ): Array<KeyValueItem> => {
+  const { locale } = useLocale()
   const drivingLicenseTypes =
     getValueViaPath<
       Array<GaldurDomainModelsSettingsDrivingLicensesDrivingLicensesDTO>
@@ -543,8 +551,15 @@ export const useLicenseOverviewItems = (
       'licenses.heavyMachineryLicensesTypes',
     )
     const name = ids
-      ?.map((id) => heavyMachineryLicenses.find((x) => x.id === id)?.name)
+      ?.map((id) => {
+        const item = heavyMachineryLicenses.find((x) => x.id === id)
+
+        return (
+          (locale === 'is' ? item?.name : item?.english ?? item?.name) || ''
+        )
+      })
       .filter(Boolean)
+
     overviewItems.push({
       width: 'half',
       keyText: overviewMessages.labels.license.workMachineLicense,
@@ -558,6 +573,7 @@ export const useLanguageOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
+  const { locale } = useLocale()
   const allLanguages =
     getValueViaPath<Array<LanguagesInAnswers>>(answers, 'languageSkills', []) ??
     []
@@ -566,7 +582,15 @@ export const useLanguageOverviewItems = (
       if (index < 2) {
         //first two are default languages with no id's
         const languageName =
-          index === 0 ? 'Íslenska' : index === 1 ? 'Enska' : language.language
+          index === 0
+            ? locale === 'is'
+              ? 'Íslenska'
+              : 'Icelandic'
+            : index === 1
+            ? locale === 'is'
+              ? 'Enska'
+              : 'English'
+            : language.language
         return `${languageName}: ${language.skill}`
       }
       const languages =
@@ -579,9 +603,11 @@ export const useLanguageOverviewItems = (
           _externalData,
           'unemploymentApplication.data.supportData.languageValues',
         ) || []
-      const languageName = languages.find(
-        (x) => x.id === language.language,
-      )?.name
+      const languageItem = languages.find((x) => x.id === language.language)
+      const languageName =
+        (locale === 'is'
+          ? languageItem?.name
+          : languageItem?.english ?? languageItem?.name) || ''
       const languageSkill = languageSkills.find(
         (x) => x.id === language.skill,
       )?.name

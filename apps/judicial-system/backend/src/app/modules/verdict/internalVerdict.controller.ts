@@ -135,6 +135,9 @@ export class InternalVerdictController {
     this.logger.debug(
       `Delivering verdict ${verdict.id} pdf to the police centralized file service for defendant ${defendantId} of case ${caseId}`,
     )
+
+    // TODO: We should probably filter out defendants without national id when posting events to queue
+    //       This is not an error
     if (defendant.noNationalId) {
       throw new BadRequestException(
         `National id is required for ${defendant.id} when delivering verdict to national commissioners office`,
@@ -143,30 +146,27 @@ export class InternalVerdictController {
 
     // callback function to fetch the updated verdict fields after delivering verdict to police
     const getDeliveredVerdictNationalCommissionersOfficeLogDetails = async (
-      results: DeliverResponse,
+      results?: DeliverResponse,
     ) => {
       const currentVerdict = await this.verdictService.findById(verdict.id)
       return {
-        deliveredToPolice: results.delivered,
+        deliveredToPolice: Boolean(results?.delivered),
         verdictId: verdict.id,
-        verdictCreated: verdict.created,
         externalPoliceDocumentId: currentVerdict.externalPoliceDocumentId,
         verdictHash: currentVerdict.hash,
         verdictDeliveredToPolice: new Date(),
       }
     }
-    return this.auditTrailService.audit(
-      deliverDto.user.id,
-      AuditedAction.DELIVER_TO_NATIONAL_COMMISSIONERS_OFFICE_VERDICT,
-      this.verdictService.deliverVerdictToNationalCommissionersOffice(
-        theCase,
-        defendant,
-        verdict,
-        deliverDto.user,
-      ),
-      caseId,
-      getDeliveredVerdictNationalCommissionersOfficeLogDetails,
-    )
+
+    return this.auditTrailService.runAndAuditRequest({
+      userId: deliverDto.user.id,
+      actionType:
+        AuditedAction.DELIVER_TO_NATIONAL_COMMISSIONERS_OFFICE_VERDICT,
+      action: this.verdictService.deliverVerdictToNationalCommissionersOffice,
+      actionProps: { theCase, defendant, verdict, user: deliverDto.user },
+      auditedResult: caseId,
+      getAuditDetails: getDeliveredVerdictNationalCommissionersOfficeLogDetails,
+    })
   }
 
   @UseGuards(ExternalPoliceVerdictExistsGuard, CaseExistsGuard)
@@ -180,10 +180,12 @@ export class InternalVerdictController {
     this.logger.info(
       `Updating verdict by external police document id ${policeDocumentId} of ${theCase.id}`,
     )
+
     const updatedVerdict = await this.verdictService.updatePoliceDelivery(
       verdict,
       update,
     )
+
     if (
       updatedVerdict.serviceStatus &&
       updatedVerdict.serviceStatus !== verdict.serviceStatus
@@ -193,6 +195,7 @@ export class InternalVerdictController {
         Birt: formatDate(updatedVerdict.serviceDate, 'Pp') ?? 'ekki skráð',
       })
     }
+
     return updatedVerdict
   }
 
@@ -241,9 +244,12 @@ export class InternalVerdictController {
     this.logger.debug(
       `Get verdict supplements for police document id ${policeDocumentId}`,
     )
+
+    // Todo: Use CurrentVerdict decorator to avoid querying for the verdict again
     const verdict = await this.verdictService.findByExternalPoliceDocumentId(
       policeDocumentId,
     )
+
     return {
       serviceInformationForDefendant: verdict.serviceInformationForDefendant,
     }

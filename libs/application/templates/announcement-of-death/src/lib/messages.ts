@@ -206,7 +206,7 @@ export const m = defineMessages({
   },
   filesValidationError: {
     id: 'aod.application:filesValidationError',
-    defaultMessage: 'Þú verður að velja viðtakanda fyrir öll þrjú skjölin',
+    defaultMessage: 'Þú átt eftir að velja viðtakendur.',
     description: 'Error message when file recipients are not selected',
   },
 

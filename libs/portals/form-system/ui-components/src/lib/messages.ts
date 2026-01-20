@@ -122,8 +122,8 @@ export const m = defineMessages({
   },
   daysUntilExpiration: {
     id: 'form.system:days-until-expiration',
-    defaultMessage: 'Líftími umsóknar',
-    description: 'Days until expiration',
+    defaultMessage: 'Líftími umsóknar (hámark 30 dagar)',
+    description: 'Days until expiration of application (max 30 days)',
   },
   deadline: {
     id: 'form.system:deadline',
@@ -271,8 +271,8 @@ export const m = defineMessages({
   },
   saveAndContinue: {
     id: 'form.system:save-and-continue',
-    defaultMessage: 'Vista og halda áfram',
-    description: 'Save and continue',
+    defaultMessage: 'Halda áfram',
+    description: 'Continue',
   },
   addSection: {
     id: 'form.system:add-section',
@@ -456,10 +456,10 @@ export const m = defineMessages({
     defaultMessage: 'Tilbúnir fellilistar',
     description: 'Predetermined lists',
   },
-  max120Days: {
-    id: 'form.system:max-120-days',
-    defaultMessage: 'Hámark 120 daga',
-    description: 'Max 120 days',
+  max30Days: {
+    id: 'form.system:max-30-days',
+    defaultMessage: 'Hámark 30 dagar',
+    description: 'Max 30 days',
   },
   chooseDate: {
     id: 'form.system:choose-date',
@@ -1123,5 +1123,10 @@ export const m = defineMessages({
     id: 'form.system:new-form-url-button',
     defaultMessage: 'Ný slóð fyrir innsendingar',
     description: 'New submission URL',
+  },
+  notifications: {
+    id: 'form.system:notifications',
+    defaultMessage: 'Tilkynningar',
+    description: 'Notifications',
   },
 })

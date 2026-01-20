@@ -21,7 +21,7 @@ import * as styles from './CourtCaseNumber.css'
 interface Props {
   workingCase: Case
   setWorkingCase?: Dispatch<SetStateAction<Case>>
-  onCreateCourtCase?: () => void
+  onCreateCourtCase?: () => Promise<string>
   onChange?: (courtCaseNumber: string) => void
 }
 
@@ -45,6 +45,7 @@ const CourtCaseNumberInput: FC<Props> = (props) => {
 
     if (courtCaseNumber !== '') {
       setCourtCaseNumberErrorMessage('')
+      setValue(courtCaseNumber)
       setCreateCourtCaseSuccess(true)
     } else {
       setCourtCaseNumberErrorMessage(
@@ -93,10 +94,6 @@ const CourtCaseNumberInput: FC<Props> = (props) => {
 
   useDebounce(
     () => {
-      if (createCourtCaseSuccess) {
-        setCreateCourtCaseSuccess(false)
-      }
-
       updateCourtCaseNumber(workingCase.id, { courtCaseNumber: value })
     },
     500,
@@ -108,11 +105,18 @@ const CourtCaseNumberInput: FC<Props> = (props) => {
       <div className={styles.createCourtCaseButton}>
         <Button
           size="small"
-          onClick={() =>
-            onCreateCourtCase
-              ? onCreateCourtCase()
-              : handleCreateCourtCase(workingCase.id)
-          }
+          onClick={async () => {
+            if (onCreateCourtCase) {
+              const courtCaseNumber = await onCreateCourtCase()
+
+              if (courtCaseNumber !== '') {
+                setCreateCourtCaseSuccess(true)
+                setValue(courtCaseNumber)
+              }
+            } else {
+              handleCreateCourtCase(workingCase.id)
+            }
+          }}
           loading={isCreatingCourtCase}
           disabled={Boolean(
             (workingCase.state !== CaseState.SUBMITTED &&
@@ -145,10 +149,19 @@ const CourtCaseNumberInput: FC<Props> = (props) => {
           }
           errorMessage={courtCaseNumberErrorMessage}
           hasError={!isCreatingCourtCase && courtCaseNumberErrorMessage !== ''}
-          onChange={(event) => {
+          onChange={(evt) => {
             setCourtCaseNumberErrorMessage('')
-            setValue(event.target.value)
-            onChange?.(event.target.value)
+            setCreateCourtCaseSuccess(false)
+            setValue(evt.target.value)
+            onChange?.(evt.target.value)
+
+            if (!setWorkingCase) {
+              return
+            }
+
+            setWorkingCase((prevWorkingCase) => {
+              return { ...prevWorkingCase, courtCaseNumber: evt.target.value }
+            })
           }}
           onBlur={(evt) => validateInput(evt.target.value)}
           disabled={

@@ -17,7 +17,6 @@ import {
   INDICTMENTS_SUMMARY_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
-  CourtSessionRulingType,
   courtSessionTypeNames,
   hasGeneratedCourtRecordPdf,
 } from '@island.is/judicial-system/types'
@@ -45,6 +44,7 @@ import {
   CaseIndictmentRulingDecision,
   CaseState,
   CaseType,
+  CourtSessionRulingType,
   CourtSessionType,
   Defendant,
   IndictmentDecision,
@@ -107,6 +107,7 @@ const courtSessionOptions = [
 const Conclusion: FC = () => {
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
+
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const {
@@ -425,6 +426,7 @@ const Conclusion: FC = () => {
                 id="conclusion-postponing"
                 name="conclusion-decision"
                 checked={selectedAction === IndictmentDecision.POSTPONING}
+                disabled={workingCase.state === CaseState.CORRECTING}
                 onChange={() => {
                   setSelectedAction(IndictmentDecision.POSTPONING)
                 }}
@@ -436,6 +438,7 @@ const Conclusion: FC = () => {
                 id="conclusion-scheduling"
                 name="conclusion-decision"
                 checked={selectedAction === IndictmentDecision.SCHEDULING}
+                disabled={workingCase.state === CaseState.CORRECTING}
                 onChange={() => {
                   setSelectedAction(IndictmentDecision.SCHEDULING)
                 }}
@@ -449,6 +452,7 @@ const Conclusion: FC = () => {
                 checked={
                   selectedAction === IndictmentDecision.POSTPONING_UNTIL_VERDICT
                 }
+                disabled={workingCase.state === CaseState.CORRECTING}
                 onChange={() => {
                   setSelectedAction(IndictmentDecision.POSTPONING_UNTIL_VERDICT)
                 }}
@@ -460,6 +464,7 @@ const Conclusion: FC = () => {
                 id="conclusion-completing"
                 name="conclusion-decision"
                 checked={selectedAction === IndictmentDecision.COMPLETING}
+                disabled={workingCase.state === CaseState.CORRECTING}
                 onChange={() => {
                   setSelectedAction(IndictmentDecision.COMPLETING)
                 }}
@@ -471,6 +476,7 @@ const Conclusion: FC = () => {
                 id="conclusion-redistributing"
                 name="conclusion-redistribute"
                 checked={selectedAction === IndictmentDecision.REDISTRIBUTING}
+                disabled={workingCase.state === CaseState.CORRECTING}
                 onChange={() => {
                   setSelectedAction(IndictmentDecision.REDISTRIBUTING)
                 }}
@@ -483,6 +489,7 @@ const Conclusion: FC = () => {
                   id="conclusion-splitting"
                   name="conclusion-splitting"
                   checked={selectedAction === IndictmentDecision.SPLITTING}
+                  disabled={workingCase.state === CaseState.CORRECTING}
                   onChange={() => {
                     setSelectedAction(IndictmentDecision.SPLITTING)
                   }}
@@ -504,6 +511,7 @@ const Conclusion: FC = () => {
                   strings.reasonForPostponementPlaceholder,
                 )}
                 value={postponementReason}
+                disabled={workingCase.state === CaseState.CORRECTING}
                 onChange={(event) => setPostponementReason(event.target.value)}
                 textarea
                 required
@@ -526,6 +534,7 @@ const Conclusion: FC = () => {
                         (option) => option.value === selectedCourtSessionType,
                       )
                     }
+                    isDisabled={workingCase.state === CaseState.CORRECTING}
                     onChange={(selectedOption) => {
                       const type = selectedOption?.value
                       setSelectedCourtSessionType(type)
@@ -556,6 +565,7 @@ const Conclusion: FC = () => {
                     checked={
                       selectedDecision === CaseIndictmentRulingDecision.RULING
                     }
+                    disabled={workingCase.state === CaseState.CORRECTING}
                     onChange={() => {
                       setSelectedDecision(CaseIndictmentRulingDecision.RULING)
                     }}
@@ -569,6 +579,7 @@ const Conclusion: FC = () => {
                     checked={
                       selectedDecision === CaseIndictmentRulingDecision.FINE
                     }
+                    disabled={workingCase.state === CaseState.CORRECTING}
                     onChange={() => {
                       setSelectedDecision(CaseIndictmentRulingDecision.FINE)
                     }}
@@ -583,6 +594,7 @@ const Conclusion: FC = () => {
                       selectedDecision ===
                       CaseIndictmentRulingDecision.DISMISSAL
                     }
+                    disabled={workingCase.state === CaseState.CORRECTING}
                     onChange={() => {
                       setSelectedDecision(
                         CaseIndictmentRulingDecision.DISMISSAL,
@@ -598,6 +610,7 @@ const Conclusion: FC = () => {
                     checked={
                       selectedDecision === CaseIndictmentRulingDecision.MERGE
                     }
+                    disabled={workingCase.state === CaseState.CORRECTING}
                     onChange={() => {
                       setSelectedDecision(CaseIndictmentRulingDecision.MERGE)
                     }}
@@ -612,6 +625,7 @@ const Conclusion: FC = () => {
                       selectedDecision ===
                       CaseIndictmentRulingDecision.CANCELLATION
                     }
+                    disabled={workingCase.state === CaseState.CORRECTING}
                     onChange={() => {
                       setSelectedDecision(
                         CaseIndictmentRulingDecision.CANCELLATION,
@@ -652,7 +666,10 @@ const Conclusion: FC = () => {
                       }}
                       hasError={Boolean(mergeCaseNumberErrorMessage)}
                       errorMessage={mergeCaseNumberErrorMessage}
-                      disabled={Boolean(workingCase.mergeCase)}
+                      disabled={
+                        Boolean(workingCase.mergeCase) ||
+                        workingCase.state === CaseState.CORRECTING
+                      }
                     />
                   </BlueBox>
                 </Box>
@@ -678,6 +695,7 @@ const Conclusion: FC = () => {
                       }
                     : null
                 }
+                isDisabled={workingCase.state === CaseState.CORRECTING}
                 onChange={(option) => {
                   const defendant = workingCase.defendants?.find(
                     (defendant) => defendant.id === option?.value,
@@ -847,10 +865,11 @@ const Conclusion: FC = () => {
           text="Smelltu á hnappinn til að stofna nýtt mál eða skráðu inn málsnúmer sem er þegar til í Auði. Gögn ásamt sögu máls verða flutt á nýja málið."
           primaryButton={{
             text: 'Staðfesta',
-            onClick: () =>
+            onClick: () => {
               router.push(
                 `${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${workingCase.id}`,
-              ),
+              )
+            },
             isDisabled: !validate([
               [splitCaseCourtCaseNumber, ['empty', 'S-case-number']],
             ]).isValid,
@@ -862,7 +881,10 @@ const Conclusion: FC = () => {
               state: CaseState.RECEIVED,
               type: CaseType.INDICTMENT,
             }}
-            onCreateCourtCase={() => createCourtCase(splitCaseId)}
+            onCreateCourtCase={async () => {
+              const courtCaseNumber = await createCourtCase(splitCaseId)
+              return courtCaseNumber ?? ''
+            }}
             onChange={(courtCaseNumber) => {
               setSplitCaseCourtCaseNumber(courtCaseNumber)
             }}

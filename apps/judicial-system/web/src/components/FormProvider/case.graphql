@@ -17,8 +17,8 @@ query Case($input: CaseQueryInput!) {
       courtCaseNumber
     }
     indictmentSubtypes
-    state
     description
+    state
     policeCaseNumbers
     defendants {
       id
@@ -574,6 +574,7 @@ query Case($input: CaseQueryInput!) {
     isCompletedWithoutRuling
     caseSentToCourtDate
     indictmentReviewedDate
+    indictmentCompletedDate
     indictmentSentToPublicProsecutorDate
     defenceAppealResultAccessDate
     prosecutionAppealResultAccessDate

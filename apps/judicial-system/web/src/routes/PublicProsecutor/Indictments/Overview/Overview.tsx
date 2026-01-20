@@ -2,7 +2,13 @@ import { Fragment, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Box, Button, Option, Text } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Button,
+  Option,
+  Text,
+} from '@island.is/island-ui/core'
 import {
   getStandardUserDashboardRoute,
   PUBLIC_PROSECUTOR_STAFF_INDICTMENT_SEND_TO_PRISON_ADMIN_ROUTE,
@@ -20,6 +26,7 @@ import {
   IndictmentCaseFilesList,
   // IndictmentsLawsBrokenAccordionItem, NOTE: Temporarily hidden while list of laws broken is not complete
   InfoCardClosedIndictment,
+  MarkdownWrapper,
   Modal,
   PageHeader,
   PageLayout,
@@ -153,6 +160,20 @@ export const Overview = () => {
       <FormContentContainer>
         <PageTitle>{fm(strings.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
+        {workingCase.rulingModifiedHistory && (
+          <Box marginBottom={5}>
+            <AlertMessage
+              type="info"
+              title="Mál leiðrétt"
+              message={
+                <MarkdownWrapper
+                  markdown={workingCase.rulingModifiedHistory}
+                  textProps={{ variant: 'small' }}
+                />
+              }
+            />
+          </Box>
+        )}
         {workingCase.defendants?.map((defendant) => {
           const { verdict } = defendant
 
@@ -265,6 +286,7 @@ export const Overview = () => {
                   </Button>
                 ) : (
                   <Button
+                    dataTestId="button-send-case-to-prison-admin"
                     variant="text"
                     onClick={() => handleSendToPrisonAdmin(defendant)}
                     size="small"

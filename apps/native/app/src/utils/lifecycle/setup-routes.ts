@@ -214,6 +214,43 @@ export function setupRoutes() {
     })
   })
 
+  addRoute('/prescriptions', async (passProps) => {
+    await Navigation.dismissAllModals()
+    selectTab(4)
+    await Navigation.push(ComponentRegistry.MoreScreen, {
+      component: {
+        name: ComponentRegistry.PrescriptionsScreen,
+        passProps,
+      },
+    })
+  })
+
+  addRoute('/prescriptions/medicine-history', async (passProps) => {
+    await Navigation.dismissAllModals()
+    selectTab(4)
+    await Navigation.push(ComponentRegistry.MoreScreen, {
+      component: {
+        name: ComponentRegistry.MedicineHistoryScreen,
+        passProps,
+      },
+    })
+  })
+
+  addRoute('/prescriptions/dispensation', (passProps) => {
+    Navigation.showModal({
+      stack: {
+        children: [
+          {
+            component: {
+              name: ComponentRegistry.MedicineHistoryDetailScreen,
+              passProps,
+            },
+          },
+        ],
+      },
+    })
+  })
+
   addRoute('/personalinfo', async (passProps) => {
     Navigation.showModal({
       stack: {

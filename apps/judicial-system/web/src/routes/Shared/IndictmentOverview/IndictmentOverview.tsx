@@ -1,4 +1,4 @@
-import { FC, useCallback, useContext, useState } from 'react'
+import { FC, Fragment, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -27,6 +27,7 @@ import {
   // IndictmentsLawsBrokenAccordionItem, NOTE: Temporarily hidden while list of laws broken is not complete
   InfoCardActiveIndictment,
   InfoCardClosedIndictment,
+  MarkdownWrapper,
   PageHeader,
   PageLayout,
   PageTitle,
@@ -173,6 +174,20 @@ const IndictmentOverview: FC = () => {
               : formatMessage(strings.inProgressTitle)}
           </PageTitle>
           <CourtCaseInfo workingCase={workingCase} />
+          {workingCase.rulingModifiedHistory && (
+            <Box marginBottom={5}>
+              <AlertMessage
+                type="info"
+                title="Mál leiðrétt"
+                message={
+                  <MarkdownWrapper
+                    markdown={workingCase.rulingModifiedHistory}
+                    textProps={{ variant: 'small' }}
+                  />
+                }
+              />
+            </Box>
+          )}
           {workingCase.defendants?.map(
             (defendant) =>
               defendant.verdict && (
@@ -189,7 +204,7 @@ const IndictmentOverview: FC = () => {
           )}
           {isDefenceUser(user) &&
             workingCase.defendants?.map((defendant) => (
-              <>
+              <Fragment key={defendant.id}>
                 {defendant.alternativeServiceDescription && (
                   <AlternativeServiceAnnouncement
                     key={defendant.id}
@@ -211,7 +226,7 @@ const IndictmentOverview: FC = () => {
                       />
                     </Box>
                   ))}
-              </>
+              </Fragment>
             ))}
           {caseHasBeenReceivedByCourt &&
             workingCase.court &&
@@ -270,7 +285,7 @@ const IndictmentOverview: FC = () => {
               <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
             )} */}
               {hasMergeCases && (
-                <Accordion>
+                <Accordion dividerOnBottom={false} dividerOnTop={false}>
                   {workingCase.mergedCases?.map((mergedCase) => (
                     <Box key={mergedCase.id}>
                       <ConnectedCaseFilesAccordionItem

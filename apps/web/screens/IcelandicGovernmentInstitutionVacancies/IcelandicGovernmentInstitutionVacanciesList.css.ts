@@ -1,4 +1,4 @@
-import { style } from '@vanilla-extract/css'
+import { globalStyle, style } from '@vanilla-extract/css'
 
 import { themeUtils } from '@island.is/island-ui/theme'
 
@@ -20,4 +20,11 @@ export const contentWrapper = style({
       maxWidth: 'calc(100% - 318px)',
     },
   }),
+})
+
+export const vacancyCardsWrapper = style({})
+
+// Force long words in card titles to break instead of pushing card width
+globalStyle(`${vacancyCardsWrapper} p`, {
+  wordBreak: 'break-word',
 })

@@ -152,7 +152,9 @@ export class ApplicationTemplateHelper<
     const { initialState } = service.start()
 
     if (!initialState.nextEvents.includes(eventType)) {
-      throw new Error(`${eventType} is invalid for state ${initialState.value}`)
+      throw new Error(
+        `${eventType} is invalid for state ${initialState.value} for application ${this.application.typeId} with id ${this.application.id}`,
+      )
     }
 
     service.send(event)
@@ -276,6 +278,7 @@ export class ApplicationTemplateHelper<
     currentRole: ApplicationRole,
     formatMessage: FormatMessage,
     nationalId: string,
+    isAdmin: boolean,
     stateKey: string = this.application.state,
   ): PendingAction {
     const stateInfo = this.getApplicationStateInformation(stateKey)
@@ -289,7 +292,12 @@ export class ApplicationTemplateHelper<
     }
 
     if (typeof pendingAction === 'function') {
-      const action = pendingAction(application, currentRole, nationalId)
+      const action = pendingAction(
+        application,
+        currentRole,
+        nationalId,
+        isAdmin,
+      )
       return {
         displayStatus: action.displayStatus,
         content: action.content

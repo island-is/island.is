@@ -59,6 +59,7 @@ const AidsAndNutrition = () => {
       intro={formatMessage(messages.aidsAndNutritionDescription)}
       serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
       serviceProviderTooltip={formatMessage(messages.healthTooltip)}
+      childrenWidthFull
     >
       {error && <Problem error={error} noBorder={false} />}
 

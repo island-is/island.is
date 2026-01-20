@@ -27,6 +27,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { BypassDelegation } from './guards/bypass-delegation.decorator'
 import {
   ApplicationAdminPaginatedResponse,
+  ApplicationInstitution,
   ApplicationStatistics,
   ApplicationTypeAdmin,
 } from './dto/applicationAdmin.response.dto'
@@ -55,7 +56,8 @@ export class AdminController {
   @Get('admin/applications/statistics')
   @UseInterceptors(ApplicationAdminStatisticsSerializer)
   @Documentation({
-    description: 'Get applications statistics for entire application system',
+    description:
+      'Get applications statistics for the entire application system (as super admin)',
     response: {
       status: 200,
       type: [ApplicationStatistics],
@@ -75,13 +77,50 @@ export class AdminController {
       },
     },
   })
-  async getCountByTypeIdAndStatus(
+  async getSuperAdminCountByTypeIdAndStatus(
     @Query('startDate') startDate: string,
     @Query('endDate') endDate: string,
   ) {
     return this.applicationService.getApplicationCountByTypeIdAndStatus(
       startDate,
       endDate,
+    )
+  }
+
+  @Scopes(AdminPortalScope.applicationSystemInstitution)
+  @BypassDelegation()
+  @Get('admin/applications/statistics/institution')
+  @UseInterceptors(ApplicationAdminStatisticsSerializer)
+  @Documentation({
+    description: 'Get applications statistics for a specific institution',
+    response: {
+      status: 200,
+      type: [ApplicationStatistics],
+    },
+    request: {
+      query: {
+        startDate: {
+          type: 'string',
+          required: true,
+          description: 'Start date for the statistics',
+        },
+        endDate: {
+          type: 'string',
+          required: true,
+          description: 'End date for the statistics',
+        },
+      },
+    },
+  })
+  async getInstitutionCountByTypeIdAndStatus(
+    @CurrentUser() user: User,
+    @Query('startDate') startDate: string,
+    @Query('endDate') endDate: string,
+  ) {
+    return this.applicationService.getApplicationCountByTypeIdAndStatus(
+      startDate,
+      endDate,
+      user.nationalId,
     )
   }
 
@@ -152,7 +191,6 @@ export class AdminController {
     },
   })
   async findAllSuperAdmin(
-    @CurrentUser() user: User,
     @Param('page') page: number,
     @Param('count') count: number,
     @Query('status') status?: string,
@@ -302,5 +340,19 @@ export class AdminController {
   })
   async getApplicationTypesSuperAdmin() {
     return this.applicationService.getAllApplicationTypesSuperAdmin()
+  }
+
+  @Scopes(AdminPortalScope.applicationSystemAdmin)
+  @BypassDelegation()
+  @Get('admin/applications/institutions')
+  @Documentation({
+    description: 'Get a list of all institutions with active application types',
+    response: {
+      status: 200,
+      type: [ApplicationInstitution],
+    },
+  })
+  async getInstitutionsSuperAdmin() {
+    return this.applicationService.getAllInstitutionsSuperAdmin()
   }
 }

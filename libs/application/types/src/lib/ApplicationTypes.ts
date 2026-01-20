@@ -97,6 +97,8 @@ export enum ApplicationTypes {
   LEGAL_GAZETTE = 'LegalGazette',
   EXEMPTION_FOR_TRANSPORTATION = 'ExemptionForTransportation',
   REGISTRATION_OF_NEW_PROPERTY_NUMBERS = 'RegistrationOfNewPropertyNumbers',
+  MILE_CAR = 'MileCar',
+  HEILSUGAESLA_HOFUDBORDARSVAEDISINS_NAMSKEID = 'HeilsugaeslaHofudborgarsvaedisinsNamskeid',
 }
 
 export const ApplicationConfigurations = {
@@ -495,5 +497,13 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.REGISTRATION_OF_NEW_PROPERTY_NUMBERS]: {
     slug: 'skraning-fasteignanumera',
     translation: ['ronp.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.MILE_CAR]: {
+    slug: 'skraning-milubila',
+    translation: ['mcar.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.HEILSUGAESLA_HOFUDBORDARSVAEDISINS_NAMSKEID]: {
+    slug: 'hh-namskeid',
+    translation: ['hh.courses.application', 'uiForms.application'],
   },
 }

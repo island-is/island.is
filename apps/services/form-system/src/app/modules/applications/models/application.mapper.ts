@@ -11,6 +11,7 @@ import { ValueDto } from './dto/value.dto'
 import { ApplicationStatus, SectionTypes } from '@island.is/form-system/shared'
 import { MyPagesApplicationResponseDto } from './dto/myPagesApplication.response.dto'
 import { Field } from '../../fields/models/field.model'
+import type { Locale } from '@island.is/shared/types'
 
 @Injectable()
 export class ApplicationMapper {
@@ -28,6 +29,8 @@ export class ApplicationMapper {
       modified: application.modified,
       slug: form.slug,
       formName: form.name,
+      draftFinishedSteps: application.draftFinishedSteps,
+      draftTotalSteps: application.draftTotalSteps,
       submissionServiceUrl: form.submissionServiceUrl,
       validationServiceUrl: form.validationServiceUrl,
       allowProceedOnValidationFail: form.allowProceedOnValidationFail,
@@ -136,7 +139,6 @@ export class ApplicationMapper {
         return {
           created: event.created,
           eventType: event.eventType,
-          isFileEvent: event.isFileEvent,
         }
       }),
       files: application.files?.map((file) => {
@@ -144,13 +146,6 @@ export class ApplicationMapper {
           id: file.id,
           order: file.order,
           json: file.json,
-          events: file.events?.map((event) => {
-            return {
-              created: event.created,
-              eventType: event.eventType,
-              isFileEvent: event.isFileEvent,
-            }
-          }),
         } as ValueDto
       }),
     }
@@ -200,6 +195,7 @@ export class ApplicationMapper {
 
   async mapApplicationsToMyPagesApplications(
     applications: Application[],
+    locale: Locale,
   ): Promise<MyPagesApplicationResponseDto[]> {
     if (!applications?.length) {
       return []
@@ -207,9 +203,10 @@ export class ApplicationMapper {
 
     const mapped: MyPagesApplicationResponseDto[] = applications.flatMap(
       (app) => {
-        if (app.status === ApplicationStatus.DRAFT) return [this.draft(app)]
+        if (app.status === ApplicationStatus.DRAFT)
+          return [this.draft(app, locale)]
         if (app.status === ApplicationStatus.COMPLETED)
-          return [this.completed(app)]
+          return [this.completed(app, locale)]
         return [] // flatMap removes these automatically
       },
     )
@@ -222,7 +219,10 @@ export class ApplicationMapper {
     return mapped
   }
 
-  private draft(app: Application): MyPagesApplicationResponseDto {
+  private draft(
+    app: Application,
+    locale: Locale,
+  ): MyPagesApplicationResponseDto {
     return {
       id: app.id,
       created: app.created,
@@ -245,7 +245,13 @@ export class ApplicationMapper {
           content: 'content',
           button: 'button',
         },
-        history: [],
+        history:
+          app.events?.map((event) => {
+            return {
+              date: event.created,
+              log: event.eventMessage[locale],
+            }
+          }) || [],
         draftFinishedSteps: app.draftFinishedSteps ?? 0,
         draftTotalSteps: app.draftTotalSteps ?? 0,
       },
@@ -255,14 +261,17 @@ export class ApplicationMapper {
       externalData: {},
       name: app.formName,
       status: app.status,
-      pruned: false,
+      pruned: app.pruned,
       formSystemFormSlug: app.formSlug,
       formSystemOrgContentfulId: app.orgContentfulId,
       formSystemOrgSlug: app.orgSlug,
     } as MyPagesApplicationResponseDto
   }
 
-  private completed(app: Application): MyPagesApplicationResponseDto {
+  private completed(
+    app: Application,
+    locale: Locale,
+  ): MyPagesApplicationResponseDto {
     return {
       id: app.id,
       created: app.created,
@@ -279,11 +288,13 @@ export class ApplicationMapper {
           variant: app.tagVariant,
         },
         deleteButton: false,
-        pendingAction: {
-          displayStatus: 'success',
-          title: app.completedMessage,
-        },
-        history: [],
+        history:
+          app.events?.map((event) => {
+            return {
+              date: event.created,
+              log: event.eventMessage[locale],
+            }
+          }) || [],
         draftFinishedSteps: app.draftFinishedSteps ?? 0,
         draftTotalSteps: app.draftTotalSteps ?? 0,
       },
@@ -293,7 +304,7 @@ export class ApplicationMapper {
       externalData: {},
       name: app.formName,
       status: app.status,
-      pruned: false,
+      pruned: app.pruned,
       formSystemFormSlug: app.formSlug,
       formSystemOrgContentfulId: app.orgContentfulId,
       formSystemOrgSlug: app.orgSlug,

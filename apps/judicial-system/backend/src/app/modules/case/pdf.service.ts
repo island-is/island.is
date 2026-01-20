@@ -12,6 +12,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
   CaseFileCategory,
   CaseIndictmentRulingDecision,
+  CaseState,
   EventType,
   hasIndictmentCaseBeenSubmittedToCourt,
   isCompletedCase,
@@ -78,6 +79,7 @@ export class PdfService {
   private async throttleGetCaseFilesRecordPdf(
     theCase: Case,
     policeCaseNumber: string,
+    key: string,
   ): Promise<Buffer> {
     // Serialize all case files pdf generations in this process
     await this.throttle.catch((reason) => {
@@ -132,11 +134,7 @@ export class PdfService {
 
     if (hasIndictmentCaseBeenSubmittedToCourt(theCase.state)) {
       // No need to wait for the upload to finish
-      this.tryUploadPdfToS3(
-        theCase,
-        `${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
-        generatedPdf,
-      )
+      this.tryUploadPdfToS3(theCase, key, generatedPdf)
     }
 
     return generatedPdf
@@ -201,7 +199,12 @@ export class PdfService {
       confirmation,
     )
 
-    if (isCompletedCase(theCase.state) && confirmation) {
+    if (
+      isCompletedCase(theCase.state) &&
+      // Don't store court record for cases being corrected
+      theCase.state !== CaseState.CORRECTING &&
+      confirmation
+    ) {
       const { hash, hashAlgorithm } = getCaseFileHash(generatedPdf)
 
       // No need to wait for this to finish
@@ -272,13 +275,11 @@ export class PdfService {
 
   async getIndictmentPdf(theCase: Case): Promise<Buffer> {
     let confirmation: Confirmation | undefined = undefined
+    const key = `${theCase.splitCaseId ?? theCase.id}/indictment.pdf`
 
     if (hasIndictmentCaseBeenSubmittedToCourt(theCase.state)) {
       if (theCase.indictmentHash) {
-        const existingPdf = await this.tryGetPdfFromS3(
-          theCase,
-          `${theCase.id}/indictment.pdf`,
-        )
+        const existingPdf = await this.tryGetPdfFromS3(theCase, key)
 
         if (existingPdf) {
           return existingPdf
@@ -320,13 +321,7 @@ export class PdfService {
         .update(theCase.id, {
           indictmentHash: JSON.stringify({ hash, hashAlgorithm }),
         })
-        .then(() =>
-          this.tryUploadPdfToS3(
-            theCase,
-            `${theCase.id}/indictment.pdf`,
-            generatedPdf,
-          ),
-        )
+        .then(() => this.tryUploadPdfToS3(theCase, key, generatedPdf))
     }
 
     return generatedPdf
@@ -336,11 +331,12 @@ export class PdfService {
     theCase: Case,
     policeCaseNumber: string,
   ): Promise<Buffer> {
+    const key = `${
+      theCase.splitCaseId ?? theCase.id
+    }/${policeCaseNumber}/caseFilesRecord.pdf`
+
     if (hasIndictmentCaseBeenSubmittedToCourt(theCase.state)) {
-      const existingPdf = await this.tryGetPdfFromS3(
-        theCase,
-        `${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
-      )
+      const existingPdf = await this.tryGetPdfFromS3(theCase, key)
 
       if (existingPdf) {
         return existingPdf
@@ -350,6 +346,7 @@ export class PdfService {
     this.throttle = this.throttleGetCaseFilesRecordPdf(
       theCase,
       policeCaseNumber,
+      key,
     )
 
     return await this.throttle
@@ -364,13 +361,13 @@ export class PdfService {
     subpoenaType?: SubpoenaType,
   ): Promise<Buffer> {
     let confirmation: Confirmation | undefined = undefined
+    const key = subpoena
+      ? `${theCase.splitCaseId ?? theCase.id}/subpoena/${subpoena.id}.pdf`
+      : ''
 
     if (subpoena) {
       if (subpoena.hash) {
-        const existingPdf = await this.tryGetPdfFromS3(
-          theCase,
-          `${theCase.id}/subpoena/${subpoena.id}.pdf`,
-        )
+        const existingPdf = await this.tryGetPdfFromS3(theCase, key)
 
         if (existingPdf) {
           return existingPdf
@@ -410,13 +407,7 @@ export class PdfService {
           subpoenaHash.hash,
           subpoenaHash.hashAlgorithm,
         )
-        .then(() =>
-          this.tryUploadPdfToS3(
-            theCase,
-            `${theCase.id}/subpoena/${subpoena.id}.pdf`,
-            generatedPdf,
-          ),
-        )
+        .then(() => this.tryUploadPdfToS3(theCase, key, generatedPdf))
     }
 
     return generatedPdf

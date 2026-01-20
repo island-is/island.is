@@ -411,7 +411,8 @@ const verdictServedToDefendant = (
   return pipe(
     c.defendants ?? [],
     filterMap((defendant) => {
-      const verdict = defendant.verdict
+      // Only the latest verdict is relevant
+      const verdict = defendant.verdicts?.[0]
       if (!verdict || !verdict.serviceDate || !verdict.serviceStatus) {
         return option.none
       }

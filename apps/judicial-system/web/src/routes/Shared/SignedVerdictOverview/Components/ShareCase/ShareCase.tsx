@@ -2,11 +2,12 @@ import { Dispatch, FC, SetStateAction, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { SingleValue } from 'react-select'
 
-import { Box, Button, Select, Text, Tooltip } from '@island.is/island-ui/core'
+import { Box, Button, Select } from '@island.is/island-ui/core'
 import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   FormContext,
+  SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { Institution } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -39,13 +40,11 @@ const ShareCase: FC<Props> = ({
   const { prosecutorsOffices } = useInstitution(!user?.id)
 
   return (
-    <Box marginBottom={9}>
-      <Box marginBottom={3}>
-        <Text variant="h3">
-          {formatMessage(m.sections.shareCase.title)}{' '}
-          <Tooltip text={formatMessage(m.sections.shareCase.info)} />
-        </Text>
-      </Box>
+    <Box component="section">
+      <SectionHeading
+        title={formatMessage(m.sections.shareCase.title)}
+        tooltip={formatMessage(m.sections.shareCase.info)}
+      />
       <BlueBox>
         <Box display="flex">
           <Box flexGrow={1} marginRight={2}>

@@ -6,61 +6,56 @@ import {
   NO,
   YES,
 } from '@island.is/application/core'
-import { newPrimarySchoolMessages } from '../../../lib/messages'
+import { primarySchoolMessages, sharedMessages } from '../../../lib/messages'
 import {
   hasSpecialEducationSubType,
-  shouldShowReasonForApplicationPage,
+  shouldShowReasonForApplicationAndNewSchoolPages,
 } from '../../../utils/conditionUtils'
 import { OptionsType } from '../../../utils/constants'
 
 export const counsellingRegardingApplicationSubSection = buildSubSection({
   id: 'counsellingRegardingApplicationSubSection',
-  title:
-    newPrimarySchoolMessages.primarySchool
-      .counsellingRegardingApplicationSubSectionTitle,
+  title: primarySchoolMessages.counsellingRegardingApplication.subSectionTitle,
   condition: (answers, externalData) =>
-    shouldShowReasonForApplicationPage(answers) &&
+    shouldShowReasonForApplicationAndNewSchoolPages(answers, externalData) &&
     hasSpecialEducationSubType(answers, externalData),
   children: [
     buildMultiField({
       id: 'counsellingRegardingApplication',
       title:
-        newPrimarySchoolMessages.primarySchool
-          .counsellingRegardingApplicationSubSectionTitle,
+        primarySchoolMessages.counsellingRegardingApplication.subSectionTitle,
       description:
-        newPrimarySchoolMessages.primarySchool
-          .counsellingRegardingApplicationDescription,
+        primarySchoolMessages.counsellingRegardingApplication.description,
       children: [
         buildCustomField(
           {
             id: 'counsellingRegardingApplication.counselling',
             title:
-              newPrimarySchoolMessages.primarySchool
-                .counsellingRegardingApplicationSubSectionTitle,
+              primarySchoolMessages.counsellingRegardingApplication
+                .subSectionTitle,
             component: 'FriggOptionsAsyncSelectField',
           },
           {
             optionsType: OptionsType.REASON_SPECIAL_EDUCATION,
             placeholder:
-              newPrimarySchoolMessages.primarySchool
-                .counsellingRegardingApplicationPlaceholder,
+              primarySchoolMessages.counsellingRegardingApplication.placeholder,
           },
         ),
         buildRadioField({
           id: 'counsellingRegardingApplication.hasVisitedSchool',
           title:
-            newPrimarySchoolMessages.primarySchool
-              .counsellingRegardingApplicationHasVisitedSchool,
+            primarySchoolMessages.counsellingRegardingApplication
+              .hasVisitedSchool,
           width: 'half',
           space: 4,
           required: true,
           options: [
             {
-              label: newPrimarySchoolMessages.shared.yes,
+              label: sharedMessages.yes,
               value: YES,
             },
             {
-              label: newPrimarySchoolMessages.shared.no,
+              label: sharedMessages.no,
               value: NO,
             },
           ],

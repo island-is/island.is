@@ -1,16 +1,18 @@
 import { useLocale } from '@island.is/localization'
 import { FormScreen } from '../components/form/FormScreen'
 import { advert } from '../lib/messages'
-import { OJOIFieldBaseProps } from '../lib/types'
+import { InputFields, OJOIFieldBaseProps } from '../lib/types'
 import { useState } from 'react'
 import { Button } from '@island.is/island-ui/core'
 import { Advert } from '../fields/Advert'
 import { SignaturesField } from '../fields/Signatures'
 import { AdvertModal } from '../fields/AdvertModal'
+import { useFormContext } from 'react-hook-form'
+import { DocAsMainText } from '../fields/WordDocAsMaintext'
 export const AdvertScreen = (props: OJOIFieldBaseProps) => {
   const { formatMessage: f } = useLocale()
+  const { getValues } = useFormContext()
   const [modalVisible, setModalVisability] = useState(false)
-
   return (
     <FormScreen
       goToScreen={props.goToScreen}
@@ -28,6 +30,10 @@ export const AdvertScreen = (props: OJOIFieldBaseProps) => {
       }
     >
       <Advert {...props} />
+      {props.application.answers.misc?.mainTextAsFile ||
+      getValues(InputFields.misc.mainTextAsFile) ? (
+        <DocAsMainText applicationId={props.application.id} />
+      ) : null}
       <SignaturesField {...props} />
       <AdvertModal
         applicationId={props.application.id}

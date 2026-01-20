@@ -85,10 +85,39 @@ export const otherBenefitsSubSection = buildSubSection({
                       : incomeTypes.english ?? incomeTypes.name) ?? '',
                 }))
               },
+              clearOnChange: (index) => [
+                `otherBenefits.payments[${index}].paymentAmount`,
+              ],
+              setOnChange: async (option, application, index) => {
+                // Since sickenss payments only has one income type, we are not displaying the subType
+                // dropdown and need to select the only possible value
+                let defaultSubtype: string | undefined
+                if (option === PaymentTypeIds.SICKNESS_PAYMENTS_TYPE_ID) {
+                  const incomeTypeCategories =
+                    getValueViaPath<
+                      GaldurDomainModelsSettingsIncomeTypesIncomeTypeCategoryDTO[]
+                    >(
+                      application.externalData,
+                      'unemploymentApplication.data.supportData.incomeTypeCategories',
+                    ) ?? []
+                  const incomeTypes =
+                    incomeTypeCategories.find((x) => x.id === option)
+                      ?.incomeTypes || []
+                  defaultSubtype = incomeTypes[0]?.id
+                }
+
+                // Either update subType with the default value or clear it (if undefined)
+                return [
+                  {
+                    key: `otherBenefits.payments[${index}].subType`,
+                    value: defaultSubtype,
+                  },
+                ]
+              },
             },
             subType: {
               component: 'select',
-              label: payoutMessages.otherBenefits.typeOfPayment,
+              label: payoutMessages.otherBenefits.subTypeOfPayment,
               required: true,
               condition: (application, activeField, _) => {
                 if (
@@ -187,10 +216,12 @@ export const otherBenefitsSubSection = buildSubSection({
                     'unemploymentApplication.data.supportData.pensionFunds',
                   ) ?? []
 
-                return pensionFunds?.map((fund) => ({
-                  value: fund.id ?? '',
-                  label: fund.name ?? '',
-                }))
+                return pensionFunds
+                  ?.filter((x) => x.visibleInIncomeEntryOnWeb)
+                  .map((fund) => ({
+                    value: fund.id ?? '',
+                    label: fund.name ?? '',
+                  }))
               },
             },
             union: {

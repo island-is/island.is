@@ -13,9 +13,6 @@ export class ApplicationEventDto {
   @Field(() => String, { nullable: true })
   eventType?: string
 
-  @Field(() => Boolean, { nullable: true })
-  isFileEvent?: boolean
-
   @Field(() => Date, { nullable: true })
   created?: Date
 }
@@ -57,6 +54,12 @@ export class Application {
 
   @Field(() => String, { nullable: true })
   status?: string
+
+  @Field(() => Int, { nullable: true })
+  draftFinishedSteps?: number
+
+  @Field(() => Int, { nullable: true })
+  draftTotalSteps?: number
 
   @Field(() => Boolean, { nullable: true })
   allowProceedOnValidationFail?: boolean

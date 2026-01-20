@@ -18,11 +18,13 @@ import {
   Modal,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  CaseState,
   Defendant,
   DefenderChoice,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
+import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import { strings } from './Advocates.strings'
 
@@ -143,48 +145,45 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
   }
 
   return (
-    <Box component="section" marginBottom={5}>
-      <BlueBox>
-        <Box marginBottom={2}>
-          <Box display="flex" justifyContent="spaceBetween">
-            <Text variant="h4">
-              {`${capitalize(
-                formatMessage(core.indictmentDefendant, { gender }),
-              )} ${defendant.name}`}
-            </Text>
-            {defendant.isDefenderChoiceConfirmed && (
-              <IconButton
-                icon="pencil"
-                colorScheme="blue"
-                onClick={() => setDisplayModal(true)}
-              />
-            )}
-          </Box>
-          {defendant.requestedDefenderChoice && (
-            <Text variant="small">{`Ósk ákærða um verjanda: ${getRequestedDefenderChoice()}`}</Text>
+    <Box component="section">
+      <BlueBox className={grid({ gap: 2 })}>
+        <Box display="flex" justifyContent="spaceBetween">
+          <Text variant="h4">
+            {`${capitalize(
+              formatMessage(core.indictmentDefendant, { gender }),
+            )} ${defendant.name}`}
+          </Text>
+          {defendant.isDefenderChoiceConfirmed && (
+            <IconButton
+              icon="pencil"
+              colorScheme="blue"
+              disabled={workingCase.state === CaseState.CORRECTING}
+              onClick={() => setDisplayModal(true)}
+            />
           )}
         </Box>
-        <Box marginBottom={2}>
-          <Checkbox
-            dataTestId={`defendantWaivesRightToCounsel-${defendant.id}`}
-            name={`defendantWaivesRightToCounsel-${defendant.id}`}
-            label={capitalize(
-              formatMessage(strings.defendantWaivesRightToCounsel, {
-                accused: formatMessage(core.indictmentDefendant, { gender }),
-              }),
-            )}
-            checked={Boolean(defendant.defenderChoice === DefenderChoice.WAIVE)}
-            onChange={(event: ChangeEvent<HTMLInputElement>) => {
-              toggleDefendantWaivesRightToCounsel(
-                defendant,
-                event.target.checked,
-              )
-            }}
-            filled
-            large
-            disabled={defendant.isDefenderChoiceConfirmed === true}
-          />
-        </Box>
+        {defendant.requestedDefenderChoice && (
+          <Text variant="small">{`Ósk ákærða um verjanda: ${getRequestedDefenderChoice()}`}</Text>
+        )}
+        <Checkbox
+          dataTestId={`defendantWaivesRightToCounsel-${defendant.id}`}
+          name={`defendantWaivesRightToCounsel-${defendant.id}`}
+          label={capitalize(
+            formatMessage(strings.defendantWaivesRightToCounsel, {
+              accused: formatMessage(core.indictmentDefendant, { gender }),
+            }),
+          )}
+          checked={Boolean(defendant.defenderChoice === DefenderChoice.WAIVE)}
+          onChange={(event: ChangeEvent<HTMLInputElement>) => {
+            toggleDefendantWaivesRightToCounsel(defendant, event.target.checked)
+          }}
+          filled
+          large
+          disabled={
+            defendant.isDefenderChoiceConfirmed === true ||
+            workingCase.state === CaseState.CORRECTING
+          }
+        />
         <InputAdvocate
           advocateType="litigator"
           name={defendant.defenderName}
@@ -202,6 +201,7 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
               defenderNationalId,
               defenderEmail,
               defenderPhoneNumber,
+              caseFilesSharedWithDefender: Boolean(defenderNationalId),
             })
           }
           onEmailChange={(defenderEmail: string | null) =>
@@ -230,52 +230,51 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
           }
           disabled={
             defendant.defenderChoice === DefenderChoice.WAIVE ||
-            defendant.isDefenderChoiceConfirmed
+            defendant.isDefenderChoiceConfirmed ||
+            workingCase.state === CaseState.CORRECTING
           }
         />
-        <Box marginTop={2}>
-          <Checkbox
-            name={`shareFilesWithDefender-${defendant.id}`}
-            label={formatMessage(strings.shareFilesWithDefender)}
-            checked={Boolean(defendant.caseFilesSharedWithDefender)}
-            disabled={
-              defendant.isDefenderChoiceConfirmed ||
-              (!defendant.defenderName && !defendant.defenderEmail)
-            }
-            onChange={() => {
-              toggleCaseFilesSharedWithDefender(
-                defendant,
-                !defendant.caseFilesSharedWithDefender,
-              )
-            }}
-            tooltip={formatMessage(strings.shareFilesWithDefenderTooltip)}
-            backgroundColor="white"
-            large
-            filled
-          />
-        </Box>
+        <Checkbox
+          name={`shareFilesWithDefender-${defendant.id}`}
+          label={formatMessage(strings.shareFilesWithDefender)}
+          checked={Boolean(defendant.caseFilesSharedWithDefender)}
+          disabled={
+            defendant.isDefenderChoiceConfirmed ||
+            (!defendant.defenderName && !defendant.defenderEmail) ||
+            workingCase.state === CaseState.CORRECTING
+          }
+          onChange={() => {
+            toggleCaseFilesSharedWithDefender(
+              defendant,
+              !defendant.caseFilesSharedWithDefender,
+            )
+          }}
+          tooltip={formatMessage(strings.shareFilesWithDefenderTooltip)}
+          backgroundColor="white"
+          large
+          filled
+        />
         {defendant.isDefenderChoiceConfirmed && defendant.defenderName && (
-          <Box marginTop={2}>
-            <AlertMessage
-              title="Verjandi staðfestur"
-              message={`${
-                defendant.defenderName
-              } hefur fengið tilkynningu um skráningu í tölvupósti${
-                defendant.caseFilesSharedWithDefender
-                  ? ' og aðgang að gögnum málsins.'
-                  : '.'
-              }`}
-              type="success"
-            />
-          </Box>
+          <AlertMessage
+            title="Verjandi staðfestur"
+            message={`${
+              defendant.defenderName
+            } hefur fengið tilkynningu um skráningu í tölvupósti${
+              defendant.caseFilesSharedWithDefender
+                ? ' og aðgang að gögnum málsins.'
+                : '.'
+            }`}
+            type="success"
+          />
         )}
         {!defendant.isDefenderChoiceConfirmed && (
-          <Box display="flex" justifyContent="flexEnd" marginTop={2}>
+          <Box display="flex" justifyContent="flexEnd">
             <Button
               variant="text"
               colorScheme={
                 defendant.isDefenderChoiceConfirmed ? 'destructive' : 'default'
               }
+              disabled={workingCase.state === CaseState.CORRECTING}
               onClick={() => {
                 setDisplayModal(true)
               }}

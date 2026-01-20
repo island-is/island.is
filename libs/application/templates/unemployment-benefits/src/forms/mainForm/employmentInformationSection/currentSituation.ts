@@ -104,7 +104,7 @@ export const currentSituationSubSection = buildSubSection({
               component: 'select',
               required: true,
               label:
-                employmentMessages.employmentHistory.labels.lastJobRepeater,
+                employmentMessages.employmentHistory.labels.employerSelectLabel,
               options: (application, _, locale, formatMessage) =>
                 getRskOptions(application, formatMessage),
             },
@@ -127,7 +127,7 @@ export const currentSituationSubSection = buildSubSection({
                 return nationalIdChosen === '-'
               },
             },
-            title: {
+            jobCodeId: {
               component: 'select',
               label: employmentMessages.employmentHistory.labels.lastJobTitle,
               width: 'half',
@@ -217,6 +217,7 @@ export const currentSituationSubSection = buildSubSection({
         buildCustomField({
           id: 'currentSituation.updateEmploymentHistory',
           component: 'UpdateEmploymentHistory',
+          doesNotRequireAnswer: true,
         }),
       ],
     }),

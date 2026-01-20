@@ -3,17 +3,17 @@ import {
   buildRadioField,
   buildSection,
 } from '@island.is/application/core'
-import { newPrimarySchoolMessages } from '../../lib/messages'
+import { applicationTypeMessages, sharedMessages } from '../../lib/messages'
 import { ApplicationType } from '../../utils/constants'
 
 export const applicationTypeSection = buildSection({
   id: 'applicationTypeSection',
-  title: newPrimarySchoolMessages.applicationType.sectionTitle,
+  title: applicationTypeMessages.sectionTitle,
   condition: (answers) => !answers.applicationType,
   children: [
     buildMultiField({
       id: 'applicationTypeMultiField',
-      title: newPrimarySchoolMessages.applicationType.sectionTitle,
+      title: applicationTypeMessages.sectionTitle,
       children: [
         buildRadioField({
           id: 'applicationType',
@@ -21,20 +21,14 @@ export const applicationTypeSection = buildSection({
           options: [
             {
               value: ApplicationType.NEW_PRIMARY_SCHOOL,
-              label:
-                newPrimarySchoolMessages.shared.newPrimarySchoolApplicationName,
-              subLabel:
-                newPrimarySchoolMessages.applicationType.schoolTransferSubLabel,
+              label: sharedMessages.newPrimarySchoolApplicationName,
+              subLabel: applicationTypeMessages.schoolTransferSubLabel,
               dataTestId: 'new-primary-school',
             },
             {
               value: ApplicationType.CONTINUING_ENROLLMENT,
-              label:
-                newPrimarySchoolMessages.shared
-                  .continuingEnrollmentApplicationName,
-              subLabel:
-                newPrimarySchoolMessages.applicationType
-                  .continuingEnrollmentSubLabel,
+              label: sharedMessages.continuingEnrollmentApplicationName,
+              subLabel: applicationTypeMessages.continuingEnrollmentSubLabel,
               dataTestId: 'continuing-enrollment',
             },
           ],

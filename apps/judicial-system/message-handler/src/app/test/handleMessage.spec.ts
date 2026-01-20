@@ -1,5 +1,5 @@
 import fetch from 'node-fetch'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import type { Logger } from '@island.is/logging'
 

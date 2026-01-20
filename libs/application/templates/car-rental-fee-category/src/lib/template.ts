@@ -21,6 +21,8 @@ import { assign } from 'xstate'
 import { SkatturApi, VehiclesApi } from '../dataProviders'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScope } from '@island.is/auth/scopes'
+import { isCompany } from 'kennitala'
+import { m } from './messages'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -28,9 +30,9 @@ const template: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.CAR_RENTAL_FEE_CATEGORY,
-  name: 'Bílaleigu gjaldflokkar',
+  name: m.application.name,
   codeOwner: CodeOwners.NordaApplications,
-  institution: 'Skatturinn',
+  institution: m.application.institution,
   translationNamespaces:
     ApplicationConfigurations.CarRentalFeeCategory.translation,
   dataSchema,
@@ -39,7 +41,7 @@ const template: ApplicationTemplate<
     states: {
       [States.PREREQUISITES]: {
         meta: {
-          name: 'Skilyrði',
+          name: States.PREREQUISITES,
           progress: 0,
           status: FormModes.DRAFT,
           lifecycle: EphemeralStateLifeCycle,
@@ -58,6 +60,14 @@ const template: ApplicationTemplate<
               api: [VehiclesApi, SkatturApi],
               delete: true,
             },
+            {
+              id: Roles.NOTALLOWED,
+              formLoader: () =>
+                import('../forms/notAllowed').then((val) =>
+                  Promise.resolve(val.notAllowedForm),
+                ),
+              read: 'all',
+            },
           ],
         },
         on: {
@@ -68,7 +78,7 @@ const template: ApplicationTemplate<
       },
       [States.DRAFT]: {
         meta: {
-          name: 'Main form',
+          name: States.DRAFT,
           progress: 0.4,
           status: FormModes.DRAFT,
           lifecycle: DefaultStateLifeCycle,
@@ -85,6 +95,7 @@ const template: ApplicationTemplate<
               write: 'all',
               read: 'all',
               delete: true,
+              api: [SkatturApi],
             },
           ],
         },
@@ -96,7 +107,7 @@ const template: ApplicationTemplate<
       },
       [States.COMPLETED]: {
         meta: {
-          name: 'Completed form',
+          name: States.COMPLETED,
           progress: 1,
           status: FormModes.COMPLETED,
           lifecycle: DefaultStateLifeCycle,
@@ -140,12 +151,14 @@ const template: ApplicationTemplate<
   },
   mapUserToRole(
     nationalId: string,
-    application: Application,
+    _application: Application,
   ): ApplicationRole | undefined {
-    if (nationalId === application.applicant) {
+    // Only allow companies or delegated actors to access the application
+    if (isCompany(nationalId)) {
       return Roles.APPLICANT
     }
-    return undefined
+
+    return Roles.NOTALLOWED
   },
 }
 

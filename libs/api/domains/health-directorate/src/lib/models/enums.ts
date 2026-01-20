@@ -71,3 +71,15 @@ export enum PermitStatusEnum {
 registerEnumType(PermitStatusEnum, {
   name: 'HealthDirectoratePermitStatus',
 })
+
+export enum AppointmentStatusEnum {
+  BOOKED = 'booked',
+  CANCELLED = 'cancelled',
+  FULFILLED = 'fulfilled',
+  ARRIVED = 'arrived',
+  CHECKED_IN = 'checked-in',
+}
+
+registerEnumType(AppointmentStatusEnum, {
+  name: 'HealthDirectorateAppointmentStatus',
+})

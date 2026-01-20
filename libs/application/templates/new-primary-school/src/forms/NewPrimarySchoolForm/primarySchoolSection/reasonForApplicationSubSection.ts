@@ -4,10 +4,10 @@ import {
   buildSubSection,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import { newPrimarySchoolMessages } from '../../../lib/messages'
+import { primarySchoolMessages } from '../../../lib/messages'
 import {
   hasSpecialEducationSubType,
-  shouldShowReasonForApplicationPage,
+  shouldShowReasonForApplicationAndNewSchoolPages,
 } from '../../../utils/conditionUtils'
 import {
   ApplicationType,
@@ -23,17 +23,14 @@ import {
 
 export const reasonForApplicationSubSection = buildSubSection({
   id: 'reasonForApplicationSubSection',
-  title:
-    newPrimarySchoolMessages.primarySchool.reasonForApplicationSubSectionTitle,
+  title: primarySchoolMessages.reasonForApplication.subSectionTitle,
   condition: (answers, externalData) =>
-    shouldShowReasonForApplicationPage(answers) &&
+    shouldShowReasonForApplicationAndNewSchoolPages(answers, externalData) &&
     !hasSpecialEducationSubType(answers, externalData),
   children: [
     buildMultiField({
       id: 'reasonForApplication',
-      title:
-        newPrimarySchoolMessages.primarySchool
-          .reasonForApplicationSubSectionTitle,
+      title: primarySchoolMessages.reasonForApplication.subSectionTitle,
       description: (application) => {
         const { applicationType } = getApplicationAnswers(application.answers)
         const selectedSchoolSector = getSelectedSchoolSector(
@@ -50,20 +47,17 @@ export const reasonForApplicationSubSection = buildSubSection({
           selectedSchoolSector === OrganizationSector.PUBLIC &&
           selectedSchoolSubType === OrganizationSubType.GENERAL_SCHOOL
         ) {
-          return newPrimarySchoolMessages.primarySchool
-            .reasonForApplicationEnrollmentDescription
+          return primarySchoolMessages.reasonForApplication
+            .enrollmentDescription
         }
 
-        return newPrimarySchoolMessages.primarySchool
-          .reasonForApplicationDescription
+        return primarySchoolMessages.reasonForApplication.description
       },
       children: [
         buildCustomField(
           {
             id: 'reasonForApplication.reason',
-            title:
-              newPrimarySchoolMessages.primarySchool
-                .reasonForApplicationSubSectionTitle,
+            title: primarySchoolMessages.reasonForApplication.subSectionTitle,
             component: 'FriggOptionsAsyncSelectField',
           },
           {
@@ -72,9 +66,7 @@ export const reasonForApplicationSubSection = buildSubSection({
                 application.answers,
                 application.externalData,
               ),
-            placeholder:
-              newPrimarySchoolMessages.primarySchool
-                .reasonForApplicationPlaceholder,
+            placeholder: primarySchoolMessages.reasonForApplication.placeholder,
             useIdAndKey: true,
           },
         ),
