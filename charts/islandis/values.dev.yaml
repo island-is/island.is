@@ -1469,6 +1469,9 @@ contentful-entry-tagger-service:
 download-service:
   enabled: true
   env:
+    HMS_CONTRACTS_AUTH_CLIENT_ID: 'e2411f5c-436a-4c17-aa14-eab9c225bc06'
+    HMS_CONTRACTS_AUTH_TENANT_ID: 'c7256472-2622-417e-8955-a54eeb0a110e'
+    HMS_CONTRACTS_AUTH_TOKEN_ENDPOINT: 'https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/token'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/download-service'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
@@ -1489,6 +1492,8 @@ download-service:
     XROAD_HEALTH_INSURANCE_WSDLURL: 'https://test-huld.sjukra.is/islandrg?wsdl'
     XROAD_HMS_HOUSING_BENEFITS_PATH: 'IS-DEV/GOV/10033/HMS-Protected/husbot-v1'
     XROAD_HMS_LOANS_PATH: 'IS-DEV/GOV/10033/HMS-Protected/libra-v1'
+    XROAD_HMS_RENTAL_SERVICE_CLIENT_HEADER: 'IS-DEV/GOV/10000/island-is-client'
+    XROAD_HMS_RENTAL_SERVICE_PATH: 'IS-DEV/GOV/10033/HMS-Protected/Leigusamningar-v1'
     XROAD_HOLAR_UNIVERSITY_PATH: 'IS-DEV/EDU/10055/Holar-Protected/brautskraning-v1'
     XROAD_ICELAND_UNIVERSITY_OF_THE_ARTS_PATH: 'IS-DEV/EDU/10049/LHI-Protected/brautskraning-v1'
     XROAD_MMS_GRADE_SERVICE_ID: 'IS-DEV/GOV/10066/MMS-Protected/grade-api-v1'
@@ -1553,6 +1558,7 @@ download-service:
       memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    HMS_CONTRACTS_AUTH_CLIENT_SECRET: '/k8s/application-system-api/HMS_CONTRACTS_AUTH_CLIENT_SECRET'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/download-service/IDENTITY_SERVER_CLIENT_SECRET'
     POSTHOLF_BASE_PATH: '/k8s/documents/POSTHOLF_BASE_PATH'
     POSTHOLF_CLIENTID: '/k8s/documents/POSTHOLF_CLIENTID'
@@ -3055,8 +3061,6 @@ services-form-system-api:
   podDisruptionBudget:
     minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
-  podSecurityContext:
-    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 1
@@ -3079,11 +3083,6 @@ services-form-system-api:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-  serviceAccount:
-    annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/services-form-system-api'
-    create: true
-    name: 'services-form-system-api'
 services-form-system-api-worker:
   args:
     - 'main.cjs'
@@ -3098,6 +3097,8 @@ services-form-system-api-worker:
     DB_NAME: 'services_form_system_api'
     DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
     DB_USER: 'services_form_system_api'
+    FILE_STORAGE_UPLOAD_BUCKET: 'island-is-dev-upload-api'
+    FORM_SYSTEM_BUCKET: 'island-is-dev-form-system-presign-bucket'
     FORM_SYSTEM_BULL_PREFIX: 'form_system_api_bull_module'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=691 --enable-source-maps -r dd-trace/init'

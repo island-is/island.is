@@ -50,7 +50,9 @@ const Questionnaires: FC = () => {
   const navigate = useNavigate()
   const [filterValues, setFilterValues] =
     useState<FilterValues>(defaultFilterValues)
-  const [filteredData, setFilteredData] = useState<QuestionnairesBaseItem[]>([])
+  const [filteredData, setFilteredData] = useState<
+    QuestionnairesBaseItem[] | null
+  >(null)
   const [showExpired, setShowExpired] = useState(false)
 
   const { data, loading, error } = useGetQuestionnairesQuery({
@@ -127,7 +129,7 @@ const Questionnaires: FC = () => {
           matchesOrganization &&
           matchesExpired
         )
-      }) ?? [],
+      }) ?? null,
     )
   }, [filterValues, data, showExpired])
 
@@ -137,6 +139,15 @@ const Questionnaires: FC = () => {
       intro={formatMessage(messages.questionnairesIntro)}
       loading={loading}
     >
+      {!loading && error && (
+        <Box marginTop={3}>
+          <Problem
+            type="internal_service_error"
+            noBorder={false}
+            error={error}
+          />
+        </Box>
+      )}
       {!loading && !error && (
         <Filter
           variant="popover"
@@ -240,11 +251,23 @@ const Questionnaires: FC = () => {
           </Box>
         </Filter>
       )}
-      {!loading && data?.questionnairesList === null && (
-        <Box marginTop={3}>
-          <Problem type="no_data" noBorder={false} />
-        </Box>
-      )}
+      {!loading &&
+        !error &&
+        (data?.questionnairesList === null ||
+          data?.questionnairesList?.questionnaires?.length === 0) && (
+          <Box marginTop={3}>
+            <Problem
+              type="no_data"
+              noBorder={false}
+              imgSrc="./assets/images/nodata.svg"
+              imgAlt=""
+              title={formatMessage(messages.noData)}
+              message={formatMessage(messages.noDataFoundDetail, {
+                arg: formatMessage(messages.questionnairesThgf).toLowerCase(),
+              })}
+            />
+          </Box>
+        )}
       <Box marginTop={5}>
         {loading && <CardLoader />}
         {!loading && !error && dataLength > 0 && (
@@ -270,16 +293,21 @@ const Questionnaires: FC = () => {
             />
           </Box>
         )}
-        {dataLength > 0 && filteredData?.length === 0 && !showExpired && (
-          <Problem
-            type="no_data"
-            noBorder={false}
-            title={formatMessage(messages.noData)}
-            message={formatMessage(messages.noActiveQuestionnairesRegistered)}
-            imgSrc="./assets/images/empty_flower.svg"
-            imgAlt=""
-          />
-        )}
+        {dataLength > 0 &&
+          filterValues.searchQuery.length === 0 &&
+          filterValues.status.length === 0 &&
+          filterValues.organization.length === 0 &&
+          filteredData?.length === 0 &&
+          !showExpired && (
+            <Problem
+              type="no_data"
+              noBorder={false}
+              title={formatMessage(messages.noData)}
+              message={formatMessage(messages.noActiveQuestionnairesRegistered)}
+              imgSrc="./assets/images/empty_flower.svg"
+              imgAlt=""
+            />
+          )}
         <Stack space={3}>
           {filteredData?.map((questionnaire) => {
             const status = questionnaire.status
@@ -330,9 +358,12 @@ const Questionnaires: FC = () => {
         </Stack>
       </Box>
       {!loading &&
-        (filterValues.status.length > 0 ||
-          filterValues.searchQuery.length > 0) &&
-        filteredData.length === 0 && (
+        Object.entries(filterValues).some(([key, value]) =>
+          key !== 'treatment' && Array.isArray(value)
+            ? value.length > 0
+            : value.length > 0,
+        ) &&
+        (filteredData === null || filteredData.length === 0) && (
           <Box marginTop={3}>
             <Problem
               type="no_data"

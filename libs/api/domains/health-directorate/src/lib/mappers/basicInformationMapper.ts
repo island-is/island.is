@@ -1,5 +1,5 @@
 import {
-  AppointmentStatus,
+  UserVisibleAppointmentStatuses,
   DiseaseVaccinationDtoVaccinationStatusEnum,
 } from '@island.is/clients/health-directorate'
 import { AppointmentStatusEnum, VaccinationStatusEnum } from '../models/enums'
@@ -31,28 +31,18 @@ export const mapVaccinationStatus = (
 
 export const mapAppointmentStatus = (
   status: AppointmentStatusEnum,
-): AppointmentStatus | null => {
+): UserVisibleAppointmentStatuses | null => {
   switch (status) {
     case AppointmentStatusEnum.BOOKED:
-      return AppointmentStatus.BOOKED
-    case AppointmentStatusEnum.PENDING:
-      return AppointmentStatus.PENDING
-    case AppointmentStatusEnum.PROPOSED:
-      return AppointmentStatus.PROPOSED
+      return UserVisibleAppointmentStatuses.BOOKED
     case AppointmentStatusEnum.CANCELLED:
-      return AppointmentStatus.CANCELLED
+      return UserVisibleAppointmentStatuses.CANCELLED
     case AppointmentStatusEnum.FULFILLED:
-      return AppointmentStatus.FULFILLED
+      return UserVisibleAppointmentStatuses.FULFILLED
     case AppointmentStatusEnum.ARRIVED:
-      return AppointmentStatus.ARRIVED
-    case AppointmentStatusEnum.NOSHOW:
-      return AppointmentStatus.NOSHOW
-    case AppointmentStatusEnum.ENTERED_IN_ERROR:
-      return AppointmentStatus.ENTERED_IN_ERROR
-    case AppointmentStatusEnum.WAITLIST:
-      return AppointmentStatus.WAITLIST
-    case AppointmentStatusEnum.DELETED:
-      return AppointmentStatus.DELETED
+      return UserVisibleAppointmentStatuses.ARRIVED
+    case AppointmentStatusEnum.CHECKED_IN:
+      return UserVisibleAppointmentStatuses.CHECKED_IN
     default:
       return null
   }

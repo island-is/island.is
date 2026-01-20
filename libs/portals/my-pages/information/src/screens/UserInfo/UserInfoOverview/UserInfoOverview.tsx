@@ -11,8 +11,8 @@ import { useUserInfo } from '@island.is/react-spa/bff'
 import { Problem } from '@island.is/react-spa/shared'
 import { maskString } from '@island.is/shared/utils'
 import { useEffect, useState } from 'react'
-import { FamilyMemberCard } from '../../components/FamilyMemberCard/FamilyMemberCard'
-import { spmm } from '../../lib/messages'
+import { FamilyMemberCard } from '../../../components/FamilyMemberCard/FamilyMemberCard'
+import { spmm } from '../../../lib/messages'
 import { useUserInfoOverviewQuery } from './UserInfoOverview.generated'
 
 const UserInfoOverview = () => {
