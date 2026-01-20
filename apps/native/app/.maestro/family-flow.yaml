@@ -1,6 +1,8 @@
 appId: 'is.island.app.dev'
 ---
-- runFlow: utils/launch-and-sign-in.yaml
+- launchApp:
+    appId: 'is.island.app.dev'
+- runFlow: utils/sign-in.yaml
 - runFlow:
     file: 'utils/select-tab.yaml'
     env:

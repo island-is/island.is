@@ -2,6 +2,7 @@ import { Options } from 'react-native-navigation'
 import { preferencesStore } from '../stores/preferences-store'
 import { isAndroid, isIosLiquidGlassEnabled } from './devices'
 import { getThemeWithPreferences } from './get-theme-with-preferences'
+import { testIDs } from './test-ids'
 
 export function getDefaultOptions(
   theme = getThemeWithPreferences(preferencesStore.getState()),
@@ -15,6 +16,7 @@ export function getDefaultOptions(
         : {},
       backButton: {
         color: theme.color.blue400,
+        testID: testIDs.TOPBAR_BACK_BUTTON,
         ...(isIosLiquidGlassEnabled
           ? {
               showTitle: false,

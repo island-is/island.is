@@ -104,8 +104,8 @@ definitions:
         fi
         cd android
         ./gradlew bundle${ANDROID_APP}Release -PversionCode=$UPDATED_BUILD_NUMBER
-    - &build_ios_unsigned_app
-      name: Build unsigned .app
+    - &build_ios_simulator_app
+      name: Build simulator .app
       script: |
         xcodebuild \
         -workspace "ios/$XCODE_WORKSPACE" \
@@ -127,21 +127,36 @@ definitions:
         echo "Shutting down existing simulators..."
         xcrun simctl shutdown all || true
 
-        # Create and boot iPhone 15 Pro with iOS 18.0
-        echo "Creating iPhone 15 Pro simulator..."
-        DEVICE_NAME="iPhone-15-Pro-Test"
-        DEVICE_TYPE="com.apple.CoreSimulator.SimDeviceType.iPhone-15-Pro"
-        RUNTIME="com.apple.CoreSimulator.SimRuntime.iOS-18-0"
+        # Find or create an iPhone simulator
+        echo "Looking for available iPhone simulators..."
 
-        # Check if device already exists
-        DEVICE_ID=$(xcrun simctl list devices | grep "$DEVICE_NAME" | grep -oE '[A-F0-9]{8}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{12}' | head -1)
+        # Try to find an existing iPhone simulator
+        DEVICE_ID=$(xcrun simctl list devices available | grep "iPhone" | grep -oE '[A-F0-9]{8}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{12}' | head -1)
 
         if [ -z "$DEVICE_ID" ]; then
-          # Create new device
+          echo "No existing iPhone simulator found. Creating one..."
+
+          # Get the latest available iPhone device type
+          DEVICE_TYPE=$(xcrun simctl list devicetypes | grep "iPhone" | tail -1 | grep -oE 'com\.apple\.CoreSimulator\.SimDeviceType\.iPhone[^\)]+')
+
+          # Get the latest available iOS runtime
+          RUNTIME=$(xcrun simctl list runtimes | grep "iOS" | tail -1 | grep -oE 'com\.apple\.CoreSimulator\.SimRuntime\.iOS-[0-9-]+')
+
+          if [ -z "$DEVICE_TYPE" ] || [ -z "$RUNTIME" ]; then
+            echo "Error: Could not find iPhone device type or iOS runtime"
+            echo "Available device types:"
+            xcrun simctl list devicetypes | grep "iPhone"
+            echo "Available runtimes:"
+            xcrun simctl list runtimes | grep "iOS"
+            exit 1
+          fi
+
+          echo "Creating simulator with device type: $DEVICE_TYPE and runtime: $RUNTIME"
+          DEVICE_NAME="iPhone-E2E-Test"
           DEVICE_ID=$(xcrun simctl create "$DEVICE_NAME" "$DEVICE_TYPE" "$RUNTIME")
           echo "Created new simulator with ID: $DEVICE_ID"
         else
-          echo "Using existing simulator with ID: $DEVICE_ID"
+          echo "Using existing iPhone simulator with ID: $DEVICE_ID"
         fi
 
         # Boot the simulator
@@ -164,16 +179,9 @@ definitions:
         echo "Installing app on simulator..."
         xcrun simctl install "$DEVICE_ID" "$iosAppPath"
 
-        # Open Simulator app (optional, helps with debugging)
-        open -a Simulator --args -CurrentDeviceUDID "$DEVICE_ID"
-
         # Run Maestro tests locally
         echo "Running Maestro tests..."
-        maestro test \
-          --env APP_ID="is.island.app.dev" \
-          --format junit \
-          --output maestro-results.xml \
-          .maestro/ || TEST_RESULT=$?
+        maestro test --format junit --output maestro-results.xml .maestro || TEST_RESULT=$?
 
         # Capture simulator logs
         echo "Capturing simulator logs..."
@@ -364,7 +372,7 @@ workflows:
       - *npm_install
       - *codegen
       - *cocoapods
-      - *build_ios_unsigned_app
+      - *build_ios_simulator_app
       - *run_ios_tests_locally
     artifacts: &ios_artifacts_e2e_tests
       - /tmp/xcodebuild_logs/*.log

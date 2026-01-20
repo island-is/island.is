@@ -1,6 +1,8 @@
 appId: 'is.island.app.dev'
 ---
-- runFlow: utils/launch-and-sign-in.yaml
+- launchApp:
+    appId: 'is.island.app.dev'
+- runFlow: utils/sign-in.yaml
 - runFlow:
     file: 'utils/select-tab.yaml'
     env:
@@ -20,10 +22,8 @@ appId: 'is.island.app.dev'
     id: 'VACCINATION_ITEM'
 - assertVisible:
     id: 'VACCINATION_ITEM_ROW'
-
-# Go back
 - tapOn:
-    text: 'Heilsa'
+    id: 'TOPBAR_BACK_BUTTON'
 - scrollUntilVisible:
     element:
       id: 'HEALTH_CENTER'

@@ -1,6 +1,8 @@
 appId: 'is.island.app.dev'
 ---
-- runFlow: utils/launch-and-sign-in.yaml
+- launchApp:
+    appId: 'is.island.app.dev'
+- runFlow: utils/sign-in.yaml
 - runFlow:
     file: 'utils/select-tab.yaml'
     env:
@@ -19,4 +21,4 @@ appId: 'is.island.app.dev'
 - assertVisible:
     id: 'SCREEN_VEHICLE_DETAIL'
 - tapOn:
-    text: 'Ökutæki'
+    id: 'TOPBAR_BACK_BUTTON'

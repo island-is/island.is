@@ -1,9 +1,5 @@
 appId: 'is.island.app.dev'
 ---
-# Launch the app
-- launchApp:
-    appId: 'is.island.app.dev'
-
 # Handle sign-in if needed
 - runFlow:
     when:

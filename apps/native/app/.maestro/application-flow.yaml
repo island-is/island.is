@@ -1,6 +1,9 @@
 appId: 'is.island.app.dev'
 ---
-- runFlow: utils/launch-and-sign-in.yaml
+- launchApp:
+    appId: 'is.island.app.dev'
+    clearState: true
+- runFlow: utils/sign-in.yaml
 - runFlow:
     file: 'utils/select-tab.yaml'
     env:
@@ -11,10 +14,10 @@ appId: 'is.island.app.dev'
 - runFlow:
     when:
       visible:
-        text: '.*Sjá allt.*'
+        text: 'Ókláraðar umsóknir'
     commands:
       - tapOn:
-          text: 'Ókláraðar umsóknir Sjá allt'
+          text: 'Sjá allt'
       - assertVisible:
           id: 'SCREEN_APPLICATIONS_DETAILS'
       - assertVisible:
@@ -27,4 +30,4 @@ appId: 'is.island.app.dev'
       - tapOn:
           id: 'NAVBAR_SHEET_CLOSE_BUTTON'
 - tapOn:
-    text: 'Umsóknir'
+    id: 'TOPBAR_BACK_BUTTON'

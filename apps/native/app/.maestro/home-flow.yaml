@@ -1,6 +1,8 @@
 appId: 'is.island.app.dev'
 ---
-- runFlow: utils/launch-and-sign-in.yaml
+- launchApp:
+    appId: 'is.island.app.dev'
+- runFlow: utils/sign-in.yaml
 - scrollUntilVisible:
     element:
       id: INBOX_ITEM_INBOX_TESTING_0-0
