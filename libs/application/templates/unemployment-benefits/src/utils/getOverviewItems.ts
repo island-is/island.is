@@ -590,9 +590,13 @@ export const useLanguageOverviewItems = (
     ) || []
   const allLanguageStrings = allLanguagesAnswers.map(
     (language: LanguagesInAnswers, index: number) => {
-      const languageSkill = languageSkills.find(
+      const languageSkillItem = languageSkills.find(
         (x) => x.id === language.skill,
-      )?.name
+      )
+      const languageSkill =
+        locale === 'is'
+          ? languageSkillItem?.name
+          : languageSkillItem?.english || ''
       if (index < 2) {
         //first two are default languages with no id's
         const languageName =
