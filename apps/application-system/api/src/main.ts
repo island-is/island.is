@@ -11,5 +11,3 @@ if (job === 'worker') {
     app.bootstrapServer()
   })
 }
-
-// Trigger deploy
