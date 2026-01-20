@@ -18,7 +18,7 @@ interface Props {
 
 export const Footer = ({ externalDataAgreement }: Props) => {
   const { state, dispatch } = useApplicationContext()
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang: locale } = useLocale()
   const { trigger } = useFormContext()
   const { currentSection } = state
   const currentSectionType = currentSection?.data?.sectionType
@@ -105,7 +105,10 @@ export const Footer = ({ externalDataAgreement }: Props) => {
     }
     try {
       await submitApplication({
-        variables: { input: { id: state.application.id } },
+        variables: {
+          input: { id: state.application.id },
+          locale,
+        },
       })
       dispatch({
         type: 'INCREMENT',
