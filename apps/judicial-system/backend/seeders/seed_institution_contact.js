@@ -53,7 +53,7 @@ const institutionContactSeeds = `[
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    var model = queryInterface.sequelize.define('communication', {
+    var model = queryInterface.sequelize.define('institution_contact', {
       id: {
         type: Sequelize.UUID,
         primaryKey: true,
@@ -70,7 +70,7 @@ module.exports = {
       Promise.all(
         JSON.parse(institutionContactSeeds).map((institutionContact) =>
           queryInterface.upsert(
-            'communication',
+            'institution_contact',
             {
               ...institutionContact,
               created: new Date(),
@@ -90,7 +90,7 @@ module.exports = {
 
   down: (queryInterface) => {
     return queryInterface.sequelize.transaction((t) =>
-      queryInterface.bulkDelete('communication', null, {
+      queryInterface.bulkDelete('institution_contact', null, {
         transaction: t,
       }),
     )

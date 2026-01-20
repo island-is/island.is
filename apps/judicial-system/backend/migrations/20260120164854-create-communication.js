@@ -4,7 +4,7 @@ module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.sequelize.transaction((t) =>
       queryInterface.createTable(
-        'communication',
+        'institution_contact',
         {
           id: {
             type: Sequelize.UUID,
@@ -46,7 +46,7 @@ module.exports = {
 
   down: (queryInterface) => {
     return queryInterface.sequelize.transaction((t) =>
-      queryInterface.dropTable('communication', { transaction: t }),
+      queryInterface.dropTable('institution_contact', { transaction: t }),
     )
   },
 }
