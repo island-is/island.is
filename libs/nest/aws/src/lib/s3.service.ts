@@ -36,7 +36,7 @@ export class S3Service {
   constructor(
     @Inject(S3Client) private s3Client: S3Client,
     @Inject(LOGGER_PROVIDER) protected readonly logger: Logger,
-  ) {}
+  ) { }
 
   public async getClientRegion(): Promise<string> {
     return this.s3Client.config.region()
@@ -86,6 +86,7 @@ export class S3Service {
       ContentType?: string
       ContentDisposition?: string
       ContentEncoding?: string
+      ACL?: PutObjectCommandInput['ACL']
     },
   ): Promise<string> {
     const { bucket, key } = this.getBucketKey(BucketKeyPairOrFilename)

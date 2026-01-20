@@ -4,11 +4,17 @@ export const workerSetup = (): ServiceBuilder<'cms-importer-worker'> =>
   service('cms-importer-worker')
     .image('services-cms-importer')
     .namespace('cms-importer')
+    .serviceAccount('cms-importer')
     .env({
       RANNIS_GRANTS_URL: {
         dev: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
         staging: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
         prod: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
+      },
+      S3_BUCKET: {
+        dev: 'island-is-dev-cms-importer',
+        staging: 'island-is-staging-cms-importer',
+        prod: 'island-is-prod-cms-importer',
       },
     })
     .secrets({
@@ -23,11 +29,17 @@ export const energyFundImportSetup =
     service('cms-importer-energy-fund-import')
       .image('services-cms-importer')
       .namespace('cms-importer')
+      .serviceAccount('cms-importer')
       .env({
         RANNIS_GRANTS_URL: {
           dev: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
           staging: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
           prod: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
+        },
+        S3_BUCKET: {
+          dev: 'island-is-dev-cms-importer',
+          staging: 'island-is-staging-cms-importer',
+          prod: 'island-is-prod-cms-importer',
         },
       })
       .secrets({
@@ -42,11 +54,17 @@ export const fsreBuildingsImportSetup =
     service('cms-importer-fsre-buildings-import')
       .image('services-cms-importer')
       .namespace('cms-importer')
+      .serviceAccount('cms-importer')
       .env({
         RANNIS_GRANTS_URL: {
           dev: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
           staging: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
           prod: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
+        },
+        S3_BUCKET: {
+          dev: 'island-is-dev-cms-importer',
+          staging: 'island-is-staging-cms-importer',
+          prod: 'island-is-prod-cms-importer',
         },
       })
       .secrets({
@@ -61,6 +79,23 @@ export const webSitemapImportSetup =
     service('cms-importer-web-sitemap')
       .image('services-cms-importer')
       .namespace('cms-importer')
+      .serviceAccount('cms-importer')
+      .env({
+        RANNIS_GRANTS_URL: {
+          dev: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
+          staging: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
+          prod: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
+        },
+        S3_BUCKET: {
+          dev: 'island-is-dev-cms-importer',
+          staging: 'island-is-staging-cms-importer',
+          prod: 'island-is-prod-cms-importer',
+        },
+      })
+      .secrets({
+        CONTENTFUL_MANAGEMENT_ACCESS_TOKEN:
+          '/k8s/contentful-entry-tagger/CONTENTFUL_MANAGEMENT_ACCESS_TOKEN',
+      })
       .command('node')
       .args('main.cjs', '--job', 'web-sitemap')
       .extraAttributes({
