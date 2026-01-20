@@ -3061,6 +3061,8 @@ services-form-system-api:
   podDisruptionBudget:
     minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 1
@@ -3083,6 +3085,11 @@ services-form-system-api:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/form-system-api'
+    create: true
+    name: 'form-system-api'
 services-form-system-api-worker:
   args:
     - 'main.cjs'
