@@ -62,4 +62,9 @@ export const webSitemapImportSetup =
       .image('services-cms-importer')
       .namespace('cms-importer')
       .command('node')
-      .args('main.cjs')
+      .args('main.cjs', '--job', 'web-sitemap')
+      .extraAttributes({
+        dev: { schedule: '*/1 * * * *' },
+        staging: { schedule: '0 * * * *' },
+        prod: { schedule: '0 * * * *' },
+      })
