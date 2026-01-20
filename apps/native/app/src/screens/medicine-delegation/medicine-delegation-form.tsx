@@ -21,8 +21,7 @@ import {
   NavigationBarSheet,
   Tag,
   TextField,
-  theme,
-  Typography,
+  Typography
 } from '../../ui'
 
 const Host = styled(View)`
