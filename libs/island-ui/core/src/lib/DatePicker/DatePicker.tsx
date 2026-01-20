@@ -208,7 +208,6 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
                     } else {
                       // range complete – close calendar
                       setIsOpen(false)
-                      handleCloseCalendar && handleCloseCalendar(start)
                     }
 
                     if (end !== null && handleChange) {
@@ -228,7 +227,6 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
                     handleChange && handleChange(date)
                     // close after single-date selection
                     setIsOpen(false)
-                    handleCloseCalendar && handleCloseCalendar(date)
                   }
                 }
           }
@@ -307,7 +305,6 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
                   handleChange && handleChange(startDay, endDay)
                   // if range completed via custom container (quick ranges etc.)
                   setIsOpen(false)
-                  handleCloseCalendar && handleCloseCalendar(startDay)
                 }
               }}
               ranges={ranges}
