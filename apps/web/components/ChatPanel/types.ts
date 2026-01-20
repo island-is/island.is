@@ -1,7 +1,7 @@
-import { boostChatPanelEndpoints } from './BoostChatPanel/config'
-
 export interface BoostChatPanelProps {
-  endpoint: keyof typeof boostChatPanelEndpoints
+  id: string
+  conversationKey: string
+  url: string
   pushUp?: boolean
 }
 
@@ -48,6 +48,12 @@ export interface WatsonChatPanelProps {
 
   // If don't use the default launcher that IBM Watson provides, should the chat bubble launcher be pushed up?
   pushUp?: boolean
+}
+
+export interface ZendeskChatPanelProps {
+  snippetUrl: string
+  pushUp?: boolean
+  chatBubbleVariant?: 'default' | 'circle'
 }
 
 export type WatsonIntegration =

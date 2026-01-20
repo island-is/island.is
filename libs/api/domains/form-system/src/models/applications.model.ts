@@ -55,6 +55,12 @@ export class Application {
   @Field(() => String, { nullable: true })
   status?: string
 
+  @Field(() => Int, { nullable: true })
+  draftFinishedSteps?: number
+
+  @Field(() => Int, { nullable: true })
+  draftTotalSteps?: number
+
   @Field(() => Boolean, { nullable: true })
   allowProceedOnValidationFail?: boolean
 

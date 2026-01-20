@@ -90,8 +90,9 @@ describe('InternalCaseController - Deliver indictment case to police', () => {
       state: caseState,
       policeCaseNumbers: [policeCaseNumber],
       courtCaseNumber,
-      defendants: [{ nationalId: defendantNationalId }],
+      defendants: [{ nationalId: uuid() }],
       caseFiles: [caseFile1, caseFile2],
+      policeDefendantNationalId: defendantNationalId,
     } as Case
 
     let then: Then

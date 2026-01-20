@@ -888,6 +888,9 @@ export interface ICourseListPageFields {
 
   /** Title */
   title?: string | undefined
+
+  /** Content */
+  content?: Document | undefined
 }
 
 export interface ICourseListPage extends Entry<ICourseListPageFields> {
@@ -5488,6 +5491,34 @@ export interface IVacancy extends Entry<IVacancyFields> {
   }
 }
 
+export interface IWebChatFields {
+  /** Internal Title */
+  internalTitle: string
+
+  /** Display Locations */
+  displayLocations: (IOrganization | IArticle)[]
+
+  /** Web Chat Configuration */
+  webChatConfiguration?: Record<string, any> | undefined
+}
+
+export interface IWebChat extends Entry<IWebChatFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'webChat'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export type CONTENT_TYPE =
   | 'accordionSlice'
   | 'alertBanner'
@@ -5508,6 +5539,7 @@ export type CONTENT_TYPE =
   | 'contactUs'
   | 'course'
   | 'courseInstance'
+  | 'courseListPage'
   | 'customPage'
   | 'districts'
   | 'emailSignup'

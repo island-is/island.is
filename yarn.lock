@@ -36266,6 +36266,7 @@ __metadata:
     react-remove-scroll: "npm:2.5.6"
     react-router-dom: "npm:6.11.2"
     react-select: "npm:5.8.2"
+    react-swipeable: "npm:7.0.2"
     react-table: "npm:7.7.0"
     react-test-renderer: "npm:18.3.1"
     react-toastify: "npm:11.0.0"
@@ -47048,6 +47049,15 @@ __metadata:
     "@types/react":
       optional: true
   checksum: 10/62498094ff3877a37f351b29e6cad9e38b2eb1ac3c0cb27ebf80aee96554f80b35e17bdb552bcd7ac8b7cb9904fea93ea5668f2057c73d38f90b5d46bb9b27ab
+  languageName: node
+  linkType: hard
+
+"react-swipeable@npm:7.0.2":
+  version: 7.0.2
+  resolution: "react-swipeable@npm:7.0.2"
+  peerDependencies:
+    react: ^16.8.3 || ^17 || ^18 || ^19.0.0 || ^19.0.0-rc
+  checksum: 10/c142190244865c321751b0ca5f14ac186cf8a5d49bd577b16b1d22ea4f673d1e85cd7ad1962736be4575df320a6081c2b2b36799236c777b1a3ffb8682f4993c
   languageName: node
   linkType: hard
 

@@ -1,16 +1,6 @@
 import { defineMessages } from 'react-intl'
 
 export const selfEvaluation = defineMessages({
-  backgroundTitle: {
-    id: 'dp.application:selfEvaluation.backgroundTitle',
-    defaultMessage: 'Bakgrunnur',
-    description: 'Background',
-  },
-  backgroundDescription: {
-    id: 'dp.application:selfEvaluation.backgroundDescription',
-    defaultMessage: 'Bakgrunnsupplýsingar',
-    description: 'Background',
-  },
   questionFormTitle: {
     id: 'dp.application:selfEvaluation.questionFormTitle',
     defaultMessage: 'Bakgrunnur og aðstæður',
@@ -21,19 +11,9 @@ export const selfEvaluation = defineMessages({
     defaultMessage: 'Sjálfsmat',
     description: 'Self evaluation',
   },
-  applicantHasAnsweredAssistance: {
-    id: 'dp.application:selfEvaluation.applicantHasAnsweredAssistance',
-    defaultMessage: 'Þú hefur svarað spurningunni um aðstoð við sjálfsmat',
-    description: 'Self evaluation',
-  },
   applicantHasNotAnsweredAssistance: {
     id: 'dp.application:selfEvaluation.applicantHasNotAnsweredAssistance',
     defaultMessage: 'Þú hefur ekki svarað spurningunni um aðstoð við sjálfsmat',
-    description: 'Self evaluation',
-  },
-  applicantHasAnsweredSelfEvaluation: {
-    id: 'dp.application:selfEvaluation.applicantHasAnsweredSelfEvaluation#markdown',
-    defaultMessage: '* Bakgrunnur og aðstæður\\n\\n',
     description: 'Self evaluation',
   },
   applicantHasAnsweredCapabilityImpairment: {

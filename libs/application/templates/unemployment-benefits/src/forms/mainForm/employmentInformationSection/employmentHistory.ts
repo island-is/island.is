@@ -93,12 +93,6 @@ export const employmentHistorySubSection = buildSubSection({
           condition: isIndependent,
         }),
         /* IS NOT INDEPENDENT */
-        buildDescriptionField({
-          id: 'employmentHistoryNotIndependentDescription',
-          title: employmentMessages.employmentHistory.labels.lastJobLabel,
-          titleVariant: 'h5',
-          condition: (answers) => !isIndependent(answers),
-        }),
         buildFieldsRepeaterField({
           id: 'employmentHistory.currentJobs',
           hideAddButton: true,
@@ -133,7 +127,7 @@ export const employmentHistorySubSection = buildSubSection({
           marginTop: 0,
           marginBottom: 0,
           formTitle:
-            employmentMessages.employmentHistory.labels.lastJobRepeater,
+            employmentMessages.employmentHistory.labels.currentJobRepeater,
           formTitleVariant: 'h5',
           fields: {
             'employer.nationalId': {
@@ -168,18 +162,18 @@ export const employmentHistorySubSection = buildSubSection({
                 return name
               },
             },
-            title: {
+            jobCodeId: {
               component: 'select',
               label: employmentMessages.employmentHistory.labels.lastJobTitle,
               width: 'half',
               required: true,
               options: (application, _activeField, locale) =>
                 getJobCodeOptions(application, locale),
-              readonly: (application, _activeField, index) => {
+              disabled: (application, _activeField, index) => {
                 return hasDataFromCurrentStatusItem(
                   application.answers,
                   index,
-                  'title',
+                  'jobCodeId',
                 )
               },
               defaultValue: (
@@ -207,8 +201,7 @@ export const employmentHistorySubSection = buildSubSection({
                 ) {
                   return ''
                 }
-
-                return repeaterJobs[index]?.title || ''
+                return repeaterJobs[index]?.jobCodeId || ''
               },
             },
             percentage: {
@@ -330,25 +323,20 @@ export const employmentHistorySubSection = buildSubSection({
           },
         }),
 
+        buildDescriptionField({
+          id: 'employmentHistoryLabel',
+          title:
+            employmentMessages.employmentHistory.labels.lastJobsRepeaterTitle,
+          description: employmentMessages.employmentHistory.labels.lastJobLabel,
+          titleVariant: 'h5',
+        }),
+
         buildFieldsRepeaterField({
           id: 'employmentHistory.lastJobs',
           marginTop: 0,
-          minRows: 0,
-          formTitle: (index, application) => {
-            const repeaterJobs =
-              getValueViaPath<CurrentEmploymentInAnswers[]>(
-                application.answers,
-                'currentSituation.currentSituationRepeater',
-                [],
-              ) ?? []
-            return {
-              ...employmentMessages.employmentHistory.labels.lastJobRepeater,
-              values: {
-                value: repeaterJobs.length + index + 1,
-              },
-            }
-          },
-          formTitleNumbering: 'none',
+          minRows: 1,
+          formTitle:
+            employmentMessages.employmentHistory.labels.lastJobRepeater,
           formTitleVariant: 'h5',
           fields: {
             nationalIdWithName: {
@@ -372,7 +360,7 @@ export const employmentHistorySubSection = buildSubSection({
                 return nationalIdChosen === '-' || activeField === undefined
               },
             },
-            title: {
+            jobCodeId: {
               component: 'select',
               label: employmentMessages.employmentHistory.labels.lastJobTitle,
               width: 'half',
@@ -396,6 +384,10 @@ export const employmentHistorySubSection = buildSubSection({
                 employmentMessages.employmentHistory.labels.lastJobStartDate,
               width: 'half',
               required: true,
+              maxDate: (_application, activeField) => {
+                const endDateStr = activeField?.endDate
+                return (endDateStr && new Date(endDateStr)) || undefined
+              },
             },
             endDate: {
               component: 'date',
@@ -403,6 +395,10 @@ export const employmentHistorySubSection = buildSubSection({
               label:
                 employmentMessages.employmentHistory.labels.lastOldJobEndDate,
               width: 'half',
+              minDate: (_application, activeField) => {
+                const startDateStr = activeField?.startDate
+                return (startDateStr && new Date(startDateStr)) || undefined
+              },
               maxDate: new Date(),
             },
           },

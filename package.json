@@ -284,6 +284,7 @@
     "react-remove-scroll": "2.5.6",
     "react-router-dom": "6.11.2",
     "react-select": "5.8.2",
+    "react-swipeable": "7.0.2",
     "react-table": "7.7.0",
     "react-toastify": "11.0.0",
     "react-top-loading-bar": "2.3.1",

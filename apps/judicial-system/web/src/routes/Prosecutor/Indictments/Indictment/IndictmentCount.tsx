@@ -266,6 +266,24 @@ export const IndictmentCount: FC<Props> = ({
   )
 
   useEffect(() => {
+    if (indictmentCount.vehicleRegistrationNumber) {
+      setVehicleRegistrationNumberErrorMessage('')
+    }
+  }, [indictmentCount.vehicleRegistrationNumber])
+
+  useEffect(() => {
+    if (indictmentCount.incidentDescription) {
+      setIncidentDescriptionErrorMessage('')
+    }
+  }, [indictmentCount.incidentDescription])
+
+  useEffect(() => {
+    if (indictmentCount.legalArguments) {
+      setLegalArgumentsErrorMessage('')
+    }
+  }, [indictmentCount.legalArguments])
+
+  useEffect(() => {
     if (indictmentCount.policeCaseNumber !== originalPoliceCaseNumber) {
       // Our position in the list may have changed because we changed the police case number
       const dateElement = document.getElementById(indictmentCount.id)
@@ -318,6 +336,25 @@ export const IndictmentCount: FC<Props> = ({
       ? workingCase.crimeScenes[policeCaseNumber]
       : undefined
 
+    const isRemovingTrafficViolationSubtype =
+      indictmentCount.policeCaseNumber &&
+      isTrafficViolationIndictmentCount(
+        indictmentCount.indictmentCountSubtypes,
+        workingCase.indictmentSubtypes[indictmentCount.policeCaseNumber],
+      ) &&
+      (!policeCaseNumber ||
+        !isTrafficViolationIndictmentCount(
+          indictmentCountUpdate.indictmentCountSubtypes ??
+            indictmentCount.indictmentCountSubtypes,
+          workingCase.indictmentSubtypes[policeCaseNumber],
+        ))
+
+    if (isRemovingTrafficViolationSubtype) {
+      indictmentCountUpdate.vehicleRegistrationNumber = null
+      indictmentCountUpdate.recordedSpeed = null
+      indictmentCountUpdate.speedLimit = null
+    }
+
     const incidentDescription = getIncidentDescription(
       {
         ...indictmentCount,
@@ -340,34 +377,38 @@ export const IndictmentCount: FC<Props> = ({
     )
   }
 
+  const handlePoliceCaseNumberChange = (policeCaseNumber: string) => {
+    const policeCaseNumberSubtypes =
+      workingCase.indictmentSubtypes[policeCaseNumber]
+
+    if (policeCaseNumberSubtypes.length < 2) {
+      return handleIndictmentCountChanges({
+        policeCaseNumber,
+        indictmentCountSubtypes: [],
+      })
+    }
+
+    const newSubtypes = indictmentCount.indictmentCountSubtypes?.filter(
+      (subtype) => policeCaseNumberSubtypes.includes(subtype),
+    )
+
+    handleIndictmentCountChanges({
+      policeCaseNumber,
+      indictmentCountSubtypes: newSubtypes,
+    })
+  }
+
   const handleSubtypeChange = (
     subtype: IndictmentSubtype,
     checked: boolean,
   ) => {
-    const currentSubtypes = new Set(
-      indictmentCount.indictmentCountSubtypes ?? [],
-    )
+    const currentSubtypes = new Set(indictmentCount.indictmentCountSubtypes)
 
     checked ? currentSubtypes.add(subtype) : currentSubtypes.delete(subtype)
 
-    const hasTrafficViolationSubType = currentSubtypes.has(
-      IndictmentSubtype.TRAFFIC_VIOLATION,
-    )
-    if (!hasTrafficViolationSubType) {
-      handleIndictmentCountChanges(
-        {
-          indictmentCountSubtypes: Array.from(currentSubtypes),
-          vehicleRegistrationNumber: null,
-          recordedSpeed: null,
-          speedLimit: null,
-        },
-        [],
-      )
-    } else {
-      handleIndictmentCountChanges({
-        indictmentCountSubtypes: Array.from(currentSubtypes),
-      })
-    }
+    handleIndictmentCountChanges({
+      indictmentCountSubtypes: Array.from(currentSubtypes),
+    })
   }
 
   const shouldShowTrafficViolationFields = isTrafficViolationIndictmentCount(
@@ -407,7 +448,12 @@ export const IndictmentCount: FC<Props> = ({
           onChange={async (so) => {
             const policeCaseNumber = so?.value
 
-            handleIndictmentCountChanges({ policeCaseNumber })
+            if (
+              policeCaseNumber &&
+              policeCaseNumber !== indictmentCount.policeCaseNumber
+            ) {
+              handlePoliceCaseNumberChange(policeCaseNumber)
+            }
           }}
           value={
             workingCase.policeCaseNumbers
@@ -415,10 +461,8 @@ export const IndictmentCount: FC<Props> = ({
                 value: val,
                 label: val,
               }))
-              .find(
-                (val) =>
-                  val?.value === indictmentCount.policeCaseNumber?.toString(),
-              ) ?? null
+              .find((val) => val?.value === indictmentCount.policeCaseNumber) ??
+            null
           }
           required
         />

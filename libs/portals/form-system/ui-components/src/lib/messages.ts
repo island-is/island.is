@@ -271,8 +271,8 @@ export const m = defineMessages({
   },
   saveAndContinue: {
     id: 'form.system:save-and-continue',
-    defaultMessage: 'Vista og halda áfram',
-    description: 'Save and continue',
+    defaultMessage: 'Halda áfram',
+    description: 'Continue',
   },
   addSection: {
     id: 'form.system:add-section',
@@ -1123,5 +1123,10 @@ export const m = defineMessages({
     id: 'form.system:new-form-url-button',
     defaultMessage: 'Ný slóð fyrir innsendingar',
     description: 'New submission URL',
+  },
+  notifications: {
+    id: 'form.system:notifications',
+    defaultMessage: 'Tilkynningar',
+    description: 'Notifications',
   },
 })
