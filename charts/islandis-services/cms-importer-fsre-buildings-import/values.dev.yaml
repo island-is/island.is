@@ -26,6 +26,7 @@ env:
   LOG_LEVEL: 'info'
   NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
   RANNIS_GRANTS_URL: 'https://sjodir.rannis.is/statistics/fund_schedule.php'
+  S3_BUCKET: 'island-is-dev-cms-importer'
   SERVERSIDE_FEATURES_ON: ''
 grantNamespaces: []
 grantNamespacesEnabled: false
@@ -52,6 +53,8 @@ namespace: 'cms-importer'
 podDisruptionBudget:
   minAvailable: 1
   unhealthyPodEvictionPolicy: 'IfHealthyBudget'
+podSecurityContext:
+  fsGroup: 65534
 pvcs: []
 replicaCount:
   default: 1
@@ -70,3 +73,8 @@ secrets:
 securityContext:
   allowPrivilegeEscalation: false
   privileged: false
+serviceAccount:
+  annotations:
+    eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/cms-importer'
+  create: true
+  name: 'cms-importer'
