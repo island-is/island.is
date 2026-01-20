@@ -270,14 +270,14 @@ export const TableRow = ({
     name,
   ])
 
-  const updateForm = async () => {
+  const updateForm = async (currentStatus: string) => {
     try {
       const { data } = await updateFormStatus({
         variables: {
           input: {
             id,
             updateFormStatusDto: {
-              newStatus: FormStatus.IN_DEVELOPMENT,
+              newStatus: currentStatus,
             },
           },
         },
@@ -342,7 +342,7 @@ export const TableRow = ({
                   circle
                   colorScheme="negative"
                   inline
-                  onClick={updateForm}
+                  onClick={() => updateForm(status)}
                 />
               </Box>
             )}

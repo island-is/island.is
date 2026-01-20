@@ -343,7 +343,7 @@ export class FormsService {
           return await this.publishFormBeingChanged(id, form)
         } else if (newStatus === FormStatus.ARCHIVED) {
           return await this.deleteForm(id, form)
-        } else if (newStatus === FormStatus.IN_DEVELOPMENT) {
+        } else if (newStatus === FormStatus.PUBLISHED_BEING_CHANGED) {
           return await this.deleteApplications(id)
         }
         break
