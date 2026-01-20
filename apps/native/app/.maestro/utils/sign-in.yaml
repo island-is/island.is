@@ -24,7 +24,6 @@ appId: 'is.island.app.dev'
       # Tap the login button
       - tapOn:
           id: 'LOGIN_BUTTON_AUTHENTICATE'
-
 # TODO: The tab bar does not consistently apply test IDs. Our home button especially does not register with
 # any text (using accessibilityLabel) or testID. Also, the testIDs on other buttons are removed after they get focused.assertVisible:
 # Maybe a react-native-navigation issue? In the meantime we avoid tapping the home tab, use text for other tabs and trust
