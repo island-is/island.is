@@ -4,6 +4,7 @@ import PDFDocument from 'pdfkit'
 import { FormatMessage } from '@island.is/cms-translations'
 
 import {
+  capitalize,
   formatDate,
   formatRequestCaseType,
   lowercase,
@@ -90,7 +91,12 @@ const constructRestrictionCourtRecordPdf = (
   addNormalJustifiedText(
     doc,
     formatMessage(courtRecord.intro, {
-      courtDate: formatDate(theCase.courtStartDate, 'PPP'),
+      courtDate: capitalize(
+        formatDate(theCase.courtStartDate, 'eeee d. MMMM yyyy')?.replace(
+          'dagur',
+          'daginn',
+        ),
+      ),
       judgeNameAndTitle: `${theCase.judge?.name ?? '?'} ${lowercase(
         theCase.judge?.title,
       )}`,
@@ -292,7 +298,12 @@ const constructInvestigationCourtRecordPdf = (
   addNormalJustifiedText(
     doc,
     formatMessage(courtRecord.intro, {
-      courtDate: formatDate(theCase.courtStartDate, 'PPP'),
+      courtDate: capitalize(
+        formatDate(theCase.courtStartDate, 'eeee d. MMMM yyyy')?.replace(
+          'dagur',
+          'daginn',
+        ),
+      ),
       judgeNameAndTitle: `${theCase.judge?.name ?? '?'} ${lowercase(
         theCase.judge?.title,
       )}`,
