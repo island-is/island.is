@@ -5,7 +5,7 @@ module.exports = {
     return queryInterface.sequelize.transaction((transaction) =>
       queryInterface.sequelize.query(
         `UPDATE "subpoena"
-         SET "police_subpoena_id" = '87cea909-690a-4057-9696-ba1cdf4e71f8',
+         SET "police_subpoena_id" = '7891c4c4-3ce1-4cfe-b0a0-8769fda725b5',
              "service_status" = null,
               "service_date" = null,
               "served_by" = null,
@@ -19,7 +19,7 @@ module.exports = {
     return queryInterface.sequelize.transaction((transaction) =>
       queryInterface.sequelize.query(
         `UPDATE "subpoena"
-         SET "police_subpoena_id" = '7891c4c4-3ce1-4cfe-b0a0-8769fda725b5',
+         SET "police_subpoena_id" = '54345e03-9f59-4883-bbdf-90370de7fdc6',
              "service_status" = 'IN_PERSON',
               "service_date" = '2026-01-15T13:19:06.013Z',
               "served_by" = 'Gísli Kristinn Skúlason',
