@@ -22,7 +22,6 @@ interface ButtonBaseProps extends TouchableHighlightProps {
   textProps?: TextProps
   iconStyle?: ImageStyle
   ellipsis?: boolean
-  compactPadding?: boolean
   iconPosition?: 'start' | 'end'
   loading?: boolean
 }
