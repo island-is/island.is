@@ -98,7 +98,7 @@ export class ApplicationsService {
     return response as ApplicationResponse
   }
 
-  async updateDependencies(
+  async updateSettings(
     auth: User,
     input: UpdateApplicationInput,
   ): Promise<void> {
