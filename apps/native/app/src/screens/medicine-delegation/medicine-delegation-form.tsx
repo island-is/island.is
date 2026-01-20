@@ -156,7 +156,7 @@ export const MedicineDelegationFormScreen: NavigationFunctionComponent = ({
       return
     }
 
-    if (!kennitala.isValid(value.replace('-', ''))) {
+    if (!kennitala.isValid(value)) {
       setNameError(
         intl.formatMessage({
           id: 'health.medicineDelegation.form.invalidNationalId',
@@ -165,7 +165,7 @@ export const MedicineDelegationFormScreen: NavigationFunctionComponent = ({
       return
     }
 
-    getIdentity({ variables: { input: { nationalId: value } } })
+    getIdentity({ variables: { input: { nationalId: value.replace('-', '') } } })
   }
 
   const isValid =
@@ -281,14 +281,6 @@ export const MedicineDelegationFormScreen: NavigationFunctionComponent = ({
               checked={lookup}
               onPress={() => setLookup((prev) => !prev)}
               borderBottom={false}
-              containerStyle={{
-                flexDirection: 'row-reverse',
-                justifyContent: 'flex-end',
-                width: '100%',
-                gap: theme.spacing[1],
-                marginHorizontal: 0,
-                marginVertical: 0,
-              }}
             />
             <ValidityHeading variant="heading5">
               {intl.formatMessage({

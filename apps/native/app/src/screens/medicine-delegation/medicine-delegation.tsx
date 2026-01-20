@@ -201,7 +201,6 @@ export const MedicineDelegationScreen: NavigationFunctionComponent = ({
             </ReadMoreButton>
             <Button
               isFilledUtilityButton
-              compactPadding
               title={intl.formatMessage({
                 id: 'health.medicineDelegation.addButton',
               })}

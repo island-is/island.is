@@ -7,12 +7,12 @@ import uncheckedIcon from '../../assets/icons/checkbox-unchecked.png'
 import { dynamicColor } from '../../utils'
 import { Typography } from '../typography/typography'
 
-const Host = styled.Pressable<{ borderBottom?: boolean }>`
-  flex-direction: row;
-  justify-content: space-between;
+const Host = styled.Pressable<{ borderBottom?: boolean, isFullWidth?: boolean }>`
+  flex-direction: ${({ isFullWidth }) => isFullWidth ? 'row': 'row-reverse'};
+  justify-content: ${({ isFullWidth }) => isFullWidth ? 'space-between' : 'flex-end'};
+  gap: ${({ theme }) => theme.spacing[1]}px;
   align-items: center;
   padding-vertical: ${({ theme }) => theme.spacing[2]}px;
-  margin-horizontal: ${({ theme }) => theme.spacing[2]}px;
   border-bottom-width: ${({ theme, borderBottom }) =>
     borderBottom ? theme.border.width.standard : 0}px;
   border-bottom-color: ${dynamicColor(
@@ -25,19 +25,19 @@ const Host = styled.Pressable<{ borderBottom?: boolean }>`
 `
 
 interface CheckboxProps {
-  containerStyle?: StyleProp<ViewStyle>
   borderBottom?: boolean
   label: string
   checked: boolean
   onPress: () => void
+  isFullWidth?: boolean
 }
 
 export const Checkbox = ({
   label,
   checked,
   onPress,
-  containerStyle,
-  borderBottom = true,
+  borderBottom = false,
+  isFullWidth = false,
 }: CheckboxProps) => {
   return (
     <Host
@@ -45,7 +45,7 @@ export const Checkbox = ({
       onPress={onPress}
       accessibilityRole="checkbox"
       accessible
-      style={containerStyle}
+      isFullWidth={isFullWidth}
     >
       <Typography
         style={{

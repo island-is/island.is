@@ -8,7 +8,6 @@ import {
   Accordion,
   AccordionItem,
   Button,
-  Checkbox,
   DatePickerInput,
   theme,
 } from '../../ui'
@@ -23,6 +22,7 @@ import {
   DocumentsV2Sender,
 } from '../../graphql/types/schema'
 import styled from 'styled-components'
+import { FilteringCheckbox } from './components/filtering-checkbox'
 
 const ButtonContainer = styled(View)`
   margin-left: ${({ theme }) => theme.spacing[2]}px;
@@ -112,13 +112,13 @@ export function InboxFilterScreen({
       topBar: {
         rightButtons: isSelected
           ? [
-              {
-                id: ButtonRegistry.InboxFilterClearButton,
-                text: intl.formatMessage({
-                  id: 'inbox.filterClearButton',
-                }),
-              },
-            ]
+            {
+              id: ButtonRegistry.InboxFilterClearButton,
+              text: intl.formatMessage({
+                id: 'inbox.filterClearButton',
+              }),
+            },
+          ]
           : [],
       },
     })
@@ -159,7 +159,8 @@ export function InboxFilterScreen({
       }}
     >
       <ScrollView style={{ flex: 1, marginBottom: theme.spacing[3] }}>
-        <Checkbox
+        <FilteringCheckbox
+          key="opened"
           label={intl.formatMessage({
             id: 'inboxFilters.unreadOnly',
           })}
@@ -168,7 +169,7 @@ export function InboxFilterScreen({
             setOpened(!opened)
           }}
         />
-        <Checkbox
+        <FilteringCheckbox
           label={intl.formatMessage({
             id: 'inboxFilters.starred',
           })}
@@ -177,7 +178,7 @@ export function InboxFilterScreen({
             setBookmarked(!bookmarked)
           }}
         />
-        <Checkbox
+        <FilteringCheckbox
           label={intl.formatMessage({
             id: 'inboxFilters.archived',
           })}
@@ -197,7 +198,7 @@ export function InboxFilterScreen({
             >
               {props.availableSenders.map(({ name, id }) => {
                 return name && id ? (
-                  <Checkbox
+                  <FilteringCheckbox
                     key={id}
                     label={name}
                     checked={selectedSenders.includes(id)}
@@ -223,7 +224,7 @@ export function InboxFilterScreen({
             >
               {props.availableCategories.map(({ name, id }) => {
                 return name && id ? (
-                  <Checkbox
+                  <FilteringCheckbox
                     key={id}
                     label={name}
                     checked={selectedCategories.includes(id)}

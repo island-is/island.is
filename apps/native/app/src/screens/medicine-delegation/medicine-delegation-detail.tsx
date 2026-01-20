@@ -191,7 +191,6 @@ export const MedicineDelegationDetailScreen: NavigationFunctionComponent<{
         />
         <Button
           loading={loadingRevokeMedicineDelegation}
-          compactPadding
           title={intl.formatMessage({
             id: 'health.medicineDelegation.detail.revoke',
           })}
