@@ -5,7 +5,6 @@ import pick from 'lodash/pick'
 import { Includeable, Op, Transaction } from 'sequelize'
 
 import {
-  BadRequestException,
   forwardRef,
   Inject,
   Injectable,
@@ -2512,16 +2511,10 @@ export class CaseService {
     const pdf = await getCourtRecordPdfAsString(theCase, this.formatMessage)
 
     if (method === 'audkenni') {
-      if (!user.nationalId) {
-        throw new BadRequestException(
-          'User national ID is required for Audkenni signing',
-        )
-      }
-
       return this.signingService
         .requestSignatureAudkenni(
           user.nationalId,
-          user.name ?? '',
+          user.name,
           'Ísland',
           'courtRecord.pdf',
           pdf,
@@ -2637,20 +2630,20 @@ export class CaseService {
     theCase: Case,
     method: 'audkenni' | 'mobile',
   ): Promise<SigningServiceResponse> {
+    const judge = theCase.judge
+    if (!judge) {
+      throw new InternalServerErrorException(
+        'Failed to request a ruling signature - judge not found',
+      )
+    }
+
     await this.refreshFormatMessage()
     const pdf = await getRulingPdfAsString(theCase, this.formatMessage)
-
     if (method === 'audkenni') {
-      if (!theCase.judge?.nationalId) {
-        throw new BadRequestException(
-          'Judge national ID is required for Audkenni signing',
-        )
-      }
-
       return this.signingService
         .requestSignatureAudkenni(
-          theCase.judge.nationalId,
-          theCase.judge?.name ?? '',
+          judge.nationalId,
+          judge.name,
           'Ísland',
           'ruling.pdf',
           pdf,
@@ -2675,9 +2668,9 @@ export class CaseService {
 
     return this.signingService
       .requestSignature(
-        theCase.judge?.mobileNumber ?? '',
+        judge.mobileNumber,
         'Undirrita skjal - Öryggistala',
-        theCase.judge?.name ?? '',
+        judge.name,
         'Ísland',
         'ruling.pdf',
         pdf,
@@ -2689,7 +2682,7 @@ export class CaseService {
             caseId: theCase.id,
             policeCaseNumbers: theCase.policeCaseNumbers.join(', '),
             courtCaseNumber: theCase.courtCaseNumber,
-            actor: theCase.judge?.name,
+            actor: judge.name,
             institution: theCase.judge?.institution?.name,
           },
           error,
