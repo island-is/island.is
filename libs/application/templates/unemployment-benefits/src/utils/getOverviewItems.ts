@@ -574,11 +574,25 @@ export const useLanguageOverviewItems = (
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
   const { locale } = useLocale()
-  const allLanguages =
+  const allLanguagesAnswers =
     getValueViaPath<Array<LanguagesInAnswers>>(answers, 'languageSkills', []) ??
     []
-  const allLanguageStrings = allLanguages.map(
+
+  const languages =
+    getValueViaPath<Array<GaldurDomainModelsSelectItem>>(
+      _externalData,
+      'unemploymentApplication.data.supportData.languageKnowledge',
+    ) || []
+  const languageSkills =
+    getValueViaPath<Array<GaldurDomainModelsSelectItem>>(
+      _externalData,
+      'unemploymentApplication.data.supportData.languageValues',
+    ) || []
+  const allLanguageStrings = allLanguagesAnswers.map(
     (language: LanguagesInAnswers, index: number) => {
+      const languageSkill = languageSkills.find(
+        (x) => x.id === language.skill,
+      )?.name
       if (index < 2) {
         //first two are default languages with no id's
         const languageName =
@@ -591,26 +605,14 @@ export const useLanguageOverviewItems = (
               ? 'Enska'
               : 'English'
             : language.language
-        return `${languageName}: ${language.skill}`
+        return `${languageName}: ${languageSkill}`
       }
-      const languages =
-        getValueViaPath<Array<GaldurDomainModelsSelectItem>>(
-          _externalData,
-          'unemploymentApplication.data.supportData.languageKnowledge',
-        ) || []
-      const languageSkills =
-        getValueViaPath<Array<GaldurDomainModelsSelectItem>>(
-          _externalData,
-          'unemploymentApplication.data.supportData.languageValues',
-        ) || []
+
       const languageItem = languages.find((x) => x.id === language.language)
       const languageName =
         (locale === 'is'
           ? languageItem?.name
           : languageItem?.english ?? languageItem?.name) || ''
-      const languageSkill = languageSkills.find(
-        (x) => x.id === language.skill,
-      )?.name
 
       return `${languageName}: ${languageSkill}`
     },
