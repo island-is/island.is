@@ -159,6 +159,7 @@ export class DelegationsIndexService {
   private async filterByFeatureFlaggedDelegationTypes(
     delegations: DelegationRecordDTO[],
   ): Promise<DelegationRecordDTO[]> {
+    console.log('in filterByFeatureFlaggedDelegationTypes', delegations)
     // Get unique fromNationalIds from delegations
     const uniqueFromNationalIds = [
       ...new Set(delegations.map((d) => d.fromNationalId)),
@@ -190,8 +191,11 @@ export class DelegationsIndexService {
       ),
     )
 
+    console.log('here?', delegations.length)
+
     // Filter delegations based on their fromNationalId's feature flag value
     return delegations.filter((delegation) => {
+      console.log('here2')
       const featureFlaggedDelegationTypes = featureFlagMap.get(
         delegation.fromNationalId,
       )
@@ -222,6 +226,8 @@ export class DelegationsIndexService {
 
         return isFromPerson || isFromCompany
       }
+
+      console.log('return', featureFlaggedDelegationTypes)
 
       return featureFlaggedDelegationTypes.has(delegation.type)
     })
