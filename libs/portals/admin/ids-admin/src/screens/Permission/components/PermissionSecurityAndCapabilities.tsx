@@ -1,7 +1,9 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { useLocale } from '@island.is/localization'
 import { Checkbox, CheckboxProps, Stack, Text } from '@island.is/island-ui/core'
+import { FeatureFlagClient, Features } from '@island.is/feature-flags'
+import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 
 import { usePermission } from '../PermissionContext'
 import { FormCard } from '../../../components/FormCard/FormCard'
@@ -21,6 +23,20 @@ export const PermissionSecurityAndCapabilities = () => {
   const { formatMessage } = useLocale()
   const { selectedPermission, permission } = usePermission()
   const { allowsWrite, requiresConfirmation } = selectedPermission
+  const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
+  const [isStepUpAuthEnabled, setStepUpAuthEnabled] = useState(false)
+
+  useEffect(() => {
+    const checkStepUpAuthEnabled = async () => {
+      const stepUpAuthEnabled = await featureFlagClient.getValue(
+        Features.isIDSAdminStepUpAuthEnabled,
+        false,
+      )
+      setStepUpAuthEnabled(stepUpAuthEnabled)
+    }
+
+    checkStepUpAuthEnabled()
+  }, [featureFlagClient])
 
   const [inputValues, setInputValues] = useEnvironmentState<{
     allowsWrite: boolean
@@ -53,19 +69,21 @@ export const PermissionSecurityAndCapabilities = () => {
           }}
           {...commonProps}
         />
-        <Checkbox
-          label={formatMessage(m.requiresConfirmation)}
-          subLabel={formatMessage(m.requiresConfirmationDescription)}
-          name="requiresConfirmation"
-          checked={inputValues.requiresConfirmation}
-          onChange={(e) => {
-            setInputValues({
-              ...inputValues,
-              requiresConfirmation: e.target.checked,
-            })
-          }}
-          {...commonProps}
-        />
+        {isStepUpAuthEnabled && (
+          <Checkbox
+            label={formatMessage(m.requiresConfirmation)}
+            subLabel={formatMessage(m.requiresConfirmationDescription)}
+            name="requiresConfirmation"
+            checked={inputValues.requiresConfirmation}
+            onChange={(e) => {
+              setInputValues({
+                ...inputValues,
+                requiresConfirmation: e.target.checked,
+              })
+            }}
+            {...commonProps}
+          />
+        )}
       </Stack>
     </FormCard>
   )
