@@ -327,6 +327,8 @@ export class FormsService {
           return await this.publishFormInDevelopment(id, form)
         } else if (newStatus === FormStatus.ARCHIVED) {
           return await this.deleteForm(id, form)
+        } else if (newStatus === FormStatus.IN_DEVELOPMENT) {
+          return await this.deleteApplications(id)
         }
         break
       case FormStatus.PUBLISHED:
@@ -341,6 +343,8 @@ export class FormsService {
           return await this.publishFormBeingChanged(id, form)
         } else if (newStatus === FormStatus.ARCHIVED) {
           return await this.deleteForm(id, form)
+        } else if (newStatus === FormStatus.PUBLISHED_BEING_CHANGED) {
+          return await this.deleteApplications(id)
         }
         break
     }
@@ -473,6 +477,20 @@ export class FormsService {
     } catch (error) {
       throw new InternalServerErrorException(
         `Unexpected error deleting form '${id}'.`,
+      )
+    }
+
+    return new FormResponseDto()
+  }
+
+  private async deleteApplications(id: string): Promise<FormResponseDto> {
+    try {
+      await this.applicationModel.destroy({
+        where: { formId: id, isTest: true },
+      })
+    } catch (error) {
+      throw new InternalServerErrorException(
+        `Unexpected error deleting applications for form '${id}'.`,
       )
     }
 
@@ -869,6 +887,7 @@ export class FormsService {
     newForm.identifier = isDerived ? existingForm.identifier : uuidV4()
     newForm.beenPublished = false
     newForm.completedSectionInfo = existingForm.completedSectionInfo
+    newForm.dependencies = []
 
     const sections: Section[] = []
     const screens: Screen[] = []

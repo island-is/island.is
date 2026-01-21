@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { SequelizeModule } from '@nestjs/sequelize'
-import { FileStorageConfig } from '@island.is/file-storage'
 import { LoggingModule } from '@island.is/logging'
 import { AuditModule } from '@island.is/nest/audit'
 
@@ -11,6 +10,9 @@ import { PruneService } from './prune.service'
 import { Value } from '../../applications/models/value.model'
 import { Application } from '../../applications/models/application.model'
 import { ApplicationEvent } from '../../applications/models/applicationEvent.model'
+import { FileConfig } from '../../file/file.config'
+import { FileStorageConfig } from '@island.is/file-storage'
+import { FileModule } from '../../file/file.module'
 
 @Module({
   imports: [
@@ -19,10 +21,11 @@ import { ApplicationEvent } from '../../applications/models/applicationEvent.mod
       useClass: SequelizeConfigService,
     }),
     LoggingModule,
+    FileModule,
     AuditModule.forRoot(environment.audit),
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [FileStorageConfig],
+      load: [FileStorageConfig, FileConfig],
     }),
   ],
   providers: [PruneService],

@@ -25,7 +25,7 @@ env:
   DB_REPLICAS_HOST: 'postgres-applications.internal'
   DB_USER: 'services_form_system_api'
   FILE_STORAGE_UPLOAD_BUCKET: 'island-is-prod-upload-api'
-  FORM_SYSTEM_BUCKET: 'island-is-prod-storage-form-system'
+  FORM_SYSTEM_BUCKET: 'island-is-prod-form-system-presign-bucket'
   IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
   LOG_LEVEL: 'info'
   NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
@@ -84,8 +84,6 @@ namespace: 'services-form-system-api'
 podDisruptionBudget:
   minAvailable: 1
   unhealthyPodEvictionPolicy: 'IfHealthyBudget'
-podSecurityContext:
-  fsGroup: 65534
 pvcs: []
 replicaCount:
   default: 3
@@ -108,8 +106,3 @@ secrets:
 securityContext:
   allowPrivilegeEscalation: false
   privileged: false
-serviceAccount:
-  annotations:
-    eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/services-form-system-api'
-  create: true
-  name: 'services-form-system-api'

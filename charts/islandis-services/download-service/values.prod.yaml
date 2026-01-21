@@ -19,6 +19,9 @@ global:
 name: 'download-service'
 enabled: true
 env:
+  HMS_CONTRACTS_AUTH_CLIENT_ID: '44055958-a462-4ba8-bbd2-5bfedbbd18c0'
+  HMS_CONTRACTS_AUTH_TENANT_ID: 'c7256472-2622-417e-8955-a54eeb0a110e'
+  HMS_CONTRACTS_AUTH_TOKEN_ENDPOINT: 'https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/token'
   IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/download-service'
   IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
   LOG_LEVEL: 'info'
@@ -39,6 +42,8 @@ env:
   XROAD_HEALTH_INSURANCE_WSDLURL: 'https://huld.sjukra.is/islandrg?wsdl'
   XROAD_HMS_HOUSING_BENEFITS_PATH: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/husbot-v1'
   XROAD_HMS_LOANS_PATH: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/libra-v1'
+  XROAD_HMS_RENTAL_SERVICE_CLIENT_HEADER: 'IS/GOV/5501692829/island-is-client'
+  XROAD_HMS_RENTAL_SERVICE_PATH: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/Leigusamningar-v1'
   XROAD_HOLAR_UNIVERSITY_PATH: 'IS/EDU/5001694359/Holar-Protected/brautskraning-v1'
   XROAD_ICELAND_UNIVERSITY_OF_THE_ARTS_PATH: 'IS/EDU/4210984099/LHI-Protected/brautskraning-v1'
   XROAD_MMS_GRADE_SERVICE_ID: 'IS/GOV/6601241280/MMS-Protected/grade-api-v1'
@@ -102,6 +107,7 @@ resources:
     memory: '256Mi'
 secrets:
   CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+  HMS_CONTRACTS_AUTH_CLIENT_SECRET: '/k8s/application-system-api/HMS_CONTRACTS_AUTH_CLIENT_SECRET'
   IDENTITY_SERVER_CLIENT_SECRET: '/k8s/download-service/IDENTITY_SERVER_CLIENT_SECRET'
   POSTHOLF_BASE_PATH: '/k8s/documents/POSTHOLF_BASE_PATH'
   POSTHOLF_CLIENTID: '/k8s/documents/POSTHOLF_CLIENTID'

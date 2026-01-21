@@ -27,7 +27,8 @@ export const FileConfig = defineConfig({
     tempBucket:
       env.optional('FILE_STORAGE_UPLOAD_BUCKET') ?? 'island-is-dev-upload-api',
     bucket:
-      env.optional('FORM_SYSTEM_BUCKET') ?? 'island-is-dev-storage-form-system',
+      env.optional('FORM_SYSTEM_BUCKET') ??
+      'island-is-dev-form-system-presign-bucket',
     redis: {
       nodes: env.requiredJSON('REDIS_URL_NODE_01', [
         'localhost:7010',

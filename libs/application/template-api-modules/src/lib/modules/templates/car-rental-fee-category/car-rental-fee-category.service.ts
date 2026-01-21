@@ -36,33 +36,56 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
   async getCurrentVehicles({
     auth,
   }: TemplateApiModuleActionProps): Promise<CurrentVehicleWithMilage[]> {
-    const data = await this.vehiclesApiWithAuth(
-      auth,
-    ).currentvehicleswithmileageandinspGet({
-      showOwned: true,
-      showCoowned: true,
-      showOperated: true,
-      page: 0,
-      pageSize: 100000,
-      onlyMileageRequiredVehicles: false,
-      onlyMileageRegisterableVehicles: false,
-    })
+    try {
+      const [carsWithMilage, carsWithStatuses] = await Promise.all([
+        this.vehiclesApiWithAuth(auth).currentvehicleswithmileageandinspGet({
+          showOwned: true,
+          showCoowned: true,
+          showOperated: true,
+          page: 0,
+          pageSize: 100000,
+          onlyMileageRequiredVehicles: false,
+          onlyMileageRegisterableVehicles: false,
+        }),
+        this.vehiclesApiWithAuth(auth).currentVehiclesGet({
+          persidNo: auth.nationalId,
+          showOwned: true,
+          showCoowned: true,
+          showOperated: true,
+        }),
+      ])
 
-    return (
-      data.data
-        ?.filter(
-          (vehicle) =>
-            vehicle.permno !== null &&
-            vehicle.make !== null &&
-            typeof vehicle.latestMileage === 'number' &&
-            vehicle.latestMileage >= 0,
-        )
-        .map((vehicle) => ({
-          permno: vehicle.permno ?? null,
-          make: vehicle.make ?? null,
-          milage: vehicle.latestMileage ?? null,
-        })) || []
-    )
+      const carIsOutOfUseDict = carsWithStatuses.reduce((acc, vehicle) => {
+        if (vehicle.permno) {
+          acc[vehicle.permno] = vehicle.outOfUse ?? false
+        }
+        return acc
+      }, {} as Record<string, boolean>)
+
+      return (
+        carsWithMilage.data
+          ?.filter(
+            (vehicle) =>
+              vehicle.permno &&
+              vehicle.make &&
+              typeof vehicle.latestMileage === 'number' &&
+              vehicle.latestMileage >= 0 &&
+              vehicle.permno in carIsOutOfUseDict &&
+              !carIsOutOfUseDict[vehicle.permno],
+          )
+          .map((vehicle) => ({
+            permno: vehicle.permno ?? null,
+            make: vehicle.make ?? null,
+            milage: vehicle.latestMileage ?? null,
+          })) || []
+      )
+    } catch (error) {
+      this.logger.error(
+        'Error getting vehicles with milage and statuses',
+        error,
+      )
+      throw error
+    }
   }
 
   async getCurrentVehiclesRateCategory({
@@ -143,33 +166,54 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
       }
     } catch (error) {
       this.logger.error('Error posting data to skatturinn', error)
-      if (
-        error &&
-        typeof error === 'object' &&
-        ('status' in error || 'detail' in error || 'title' in error)
-      ) {
-        // Need to handle 400 errors here, such as if the cars are
-        // already registered to the rate category the user tried to change to
+
+      if (error && typeof error === 'object' && 'status' in error) {
         if (error.status === 400) {
+          const bodySummary = this.formatSkatturinnErrorBody(
+            (error as { body?: unknown }).body,
+          )
+
           throw new TemplateApiError(
             {
-              title: error.title ?? 'Bad request',
-              summary:
-                error.detail ??
-                'Invalid input. Possibly vehicles are already registered to the selected rate category. Check the vehicles you are trying to register.',
+              title:
+                (error as { title?: string; statusText?: string }).title ??
+                (error as { statusText?: string }).statusText ??
+                'Bad request',
+              summary: bodySummary ?? 'Invalid input.',
             },
-            error?.status,
+            error.status,
           )
         }
       }
+
       throw new TemplateApiError(
         {
           title: 'Request to skatturinn failed',
           summary: 'Something went wrong when posting car data to skatturinn',
         },
-        error?.status ?? 500,
+        (error as { status?: number })?.status ?? 500,
       )
     }
+  }
+
+  private formatSkatturinnErrorBody(body: unknown): string | undefined {
+    if (!body || typeof body !== 'object') return undefined
+
+    const messages = Object.entries(body as Record<string, unknown>)
+      .flatMap(([field, value]) => {
+        if (Array.isArray(value)) {
+          return value
+            .filter((m): m is string => typeof m === 'string')
+            .map((m) => `${field}: ${m}`)
+        }
+        if (typeof value === 'string') {
+          return [`${field}: ${value}`]
+        }
+        return []
+      })
+      .filter((m) => m.length > 0)
+
+    return messages.length > 0 ? messages.join('\n') : undefined
   }
 }
 

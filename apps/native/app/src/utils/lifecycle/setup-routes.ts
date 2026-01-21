@@ -173,6 +173,84 @@ export function setupRoutes() {
     })
   })
 
+  addRoute('/medicine-delegation/add', async (passProps) => {
+    Navigation.showModal({
+      stack: {
+        children: [
+          {
+            component: {
+              name: ComponentRegistry.MedicineDelegationFormScreen,
+              passProps,
+            },
+          },
+        ],
+      },
+    })
+  })
+
+  addRoute('/medicine-delegation/detail', async (passProps) => {
+    Navigation.showModal({
+      stack: {
+        children: [
+          {
+            component: {
+              name: ComponentRegistry.MedicineDelegationDetailScreen,
+              passProps,
+            },
+          },
+        ],
+      },
+    })
+  })
+
+  addRoute('/medicine-delegation', async (passProps) => {
+    await Navigation.dismissAllModals()
+    selectTab(4)
+    await Navigation.push(ComponentRegistry.MoreScreen, {
+      component: {
+        name: ComponentRegistry.MedicineDelegationScreen,
+        passProps,
+      },
+    })
+  })
+
+  addRoute('/prescriptions', async (passProps) => {
+    await Navigation.dismissAllModals()
+    selectTab(4)
+    await Navigation.push(ComponentRegistry.MoreScreen, {
+      component: {
+        name: ComponentRegistry.PrescriptionsScreen,
+        passProps,
+      },
+    })
+  })
+
+  addRoute('/prescriptions/medicine-history', async (passProps) => {
+    await Navigation.dismissAllModals()
+    selectTab(4)
+    await Navigation.push(ComponentRegistry.MoreScreen, {
+      component: {
+        name: ComponentRegistry.MedicineHistoryScreen,
+        passProps,
+      },
+    })
+  })
+
+  addRoute('/prescriptions/dispensation', (passProps) => {
+    Navigation.showModal({
+      stack: {
+        children: [
+          {
+            component: {
+              name: ComponentRegistry.MedicineHistoryDetailScreen,
+              passProps,
+            },
+          },
+        ],
+      },
+    })
+  })
+
   addRoute('/appointments', async (passProps) => {
     await Navigation.dismissAllModals()
     selectTab(4)

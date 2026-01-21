@@ -40,6 +40,10 @@ export const SubmissionUrls = () => {
 
       {(showInput || submissionUrlInput) && (
         <Box marginTop={4}>
+          <Text variant="eyebrow">
+            Athugið að á meðan við vinnum að tengingum við ytri kerfi er
+            einungis í boði að nota tengingar við Zendesk
+          </Text>
           <Input
             label={formatMessage(m.newFormUrlButton)}
             placeholder="IS/..."

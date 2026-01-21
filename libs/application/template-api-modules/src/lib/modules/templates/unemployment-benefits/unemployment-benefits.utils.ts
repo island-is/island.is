@@ -37,11 +37,7 @@ import {
   GaldurDomainModelsSettingsUnemploymentReasonsUnemploymentReasonCatagoryDTO,
   GaldurDomainModelsSettingsUnionsUnionDTO,
 } from '@island.is/clients/vmst-unemployment'
-import { Locale } from '@island.is/shared/types'
 
-export const getStartingLocale = (externalData: ExternalData) => {
-  return getValueViaPath<Locale>(externalData, 'startingLocale.data')
-}
 export const getPersonalInformation = (answers: FormValue) => {
   const applicant = getValueViaPath<ApplicantInAnswers>(answers, 'applicant')
 
@@ -219,7 +215,6 @@ export const getJobCareer = (
   answers: FormValue,
   jobCodes: Array<GaldurDomainModelsSettingsJobCodesJobCodeDTO>,
   externalData: ExternalData,
-  _currentUserLocale?: Locale, //TODOx remove
 ) => {
   const rskEmploymentList =
     getValueViaPath<
@@ -240,14 +235,6 @@ export const getJobCareer = (
     ) || []
   const previousJobCareer =
     employmentHistory?.lastJobs?.map((job) => {
-      const jobId = jobCodes?.find(
-        (x) =>
-          // TODOx temporary fix until we start saving ID instead of title
-          // currentUserLocale === 'is'
-          //   ? x.name === job.title
-          //   : x.english === job.title,
-          x.name === job.title || x.english === job.title,
-      )?.id
       const employerSSN =
         job.nationalIdWithName && job.nationalIdWithName !== '-'
           ? rskEmploymentList.find((x) => x.ssn === job.nationalIdWithName)?.ssn
@@ -263,8 +250,7 @@ export const getJobCareer = (
         started: job.startDate,
         quit: job.endDate,
         workRatio: parseInt(job.percentage || ''),
-        jobName: job.title,
-        jobCodeId: jobId || '',
+        jobCodeId: job.jobCodeId || '',
       }
     }) || []
 
@@ -274,14 +260,6 @@ export const getJobCareer = (
       if (currentJob && currentJob.length > 0) {
         workHours = getValueViaPath<string>(currentJob[index], 'workHours', '')
       }
-      const jobId = jobCodes?.find(
-        (x) =>
-          // TODOx temporary fix until we start saving ID instead of title
-          // currentUserLocale === 'is'
-          //   ? x.name === job.title
-          //   : x.english === job.title,
-          x.name === job.title || x.english === job.title,
-      )?.id
       const employerSSN =
         job.nationalIdWithName && job.nationalIdWithName !== '-'
           ? rskEmploymentList.find((x) => x.ssn === job.nationalIdWithName)?.ssn
@@ -298,8 +276,7 @@ export const getJobCareer = (
         quit: job.endDate,
         workRatio: parseInt(job.percentage || ''),
         workHours: workHours || '',
-        jobName: job.title,
-        jobCodeId: jobId || '',
+        jobCodeId: job.jobCodeId || '',
       }
     }) || []
 
@@ -808,6 +785,8 @@ export const getPensionAndOtherPayments = (
               return {
                 incomeTypeId: payment.subType,
                 unionId: payment.union,
+                periodFrom: payment.dateFrom,
+                periodTo: payment.dateTo,
               }
             }),
         }
@@ -867,7 +846,7 @@ export const getPensionAndOtherPayments = (
   const capitalGains =
     capitalIncome?.otherIncome === YES
       ? {
-          incomeTypeId: PaymentTypeIds.CAPITAL_GAINT,
+          incomeTypeId: PaymentTypeIds.CAPITAL_GAINS_ID,
           estimatedIncome: capitalIncome?.capitalIncomeAmount
             ?.map((x) => parseInt(x?.amount || '0'))
             .reduce((a, b) => a + b, 0),

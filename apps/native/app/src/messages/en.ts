@@ -747,6 +747,7 @@ export const en: TranslatedMessages = {
   'health.overview.appointments': 'Appointments',
   'health.overview.aidsAndNutrition': 'Aids and nutrition',
   'health.overview.medicinePurchase': 'Medicine purchase',
+  'health.overview.medicineDelegation': 'Medicine delegation',
   'health.overview.period': 'Period',
   'health.overview.levelStatus': 'Medicine step',
   'health.overview.levelStatusValue': 'Level {level}, you pay {percentage}%',
@@ -758,6 +759,7 @@ export const en: TranslatedMessages = {
   'health.overview.noBloodTypeRegistered': 'No blood type registered',
   'health.overview.dentist': 'Dentist',
   'health.overview.noDentistRegistered': 'No dentist registered',
+  'health.overview.prescriptions': 'Prescriptions',
 
   // health - vaccinations
   'health.vaccinations.screenTitle': 'Vaccinations',
@@ -820,4 +822,126 @@ export const en: TranslatedMessages = {
     'No organs can be used for transplantation.',
   'health.organDonation.isDonorWithLimitationsDescription':
     'All organs can be used for transplantation except: {limitations}.',
+
+  // health - medicine delegation
+  'health.medicineDelegation.screenTitle': 'Medicine authorizations',
+  'health.medicineDelegation.title': 'Medicine authorizations',
+  'health.medicineDelegation.description':
+    'Only you can collect your medicines at the pharmacy unless you grant someone a special authorization. Here you can register people who are allowed to collect medicines at the pharmacy on your behalf.',
+  'health.medicineDelegation.readMore': 'Read about medicine authorizations',
+  'health.medicineDelegation.addButton': 'Add authorization',
+  'health.medicineDelegation.emptyTitle': 'No authorizations',
+  'health.medicineDelegation.emptyDescription':
+    'There are no registered authorizations.',
+  'health.medicineDelegation.listCaption':
+    'Pick up medicine and view prescription.',
+  'health.medicineDelegation.captionPickup':
+    'Pick up medicine at the pharmacy.',
+  'health.medicineDelegation.captionPickupAndLookup':
+    'Pick up medicine at the pharmacy and view prescriptions.',
+  'health.medicineDelegation.listValidTo': 'Valid until {date}',
+  'health.medicineDelegation.showExpiredPermits': 'Show inactive',
+  'health.medicineDelegation.hideExpiredPermits': 'Hide inactive',
+  'health.medicineDelegation.noActiveTitle': 'No active authorizations',
+  'health.medicineDelegation.noActiveDescription':
+    'You have no active authorizations. You can tap "Show inactive" above to view inactive authorizations.',
+  'health.medicineDelegation.labelExpired': 'Expired',
+  'health.medicineDelegation.detail.delete': 'Delete authorization',
+  'health.medicineDelegation.detail.issuerLabel': 'Issuer',
+  'health.medicineDelegation.detail.issuerValue': 'Icelandic Health Insurance',
+  'health.medicineDelegation.detail.issuedDate': 'Issue date',
+  'health.medicineDelegation.detail.status': 'Status',
+  'health.medicineDelegation.detail.statusActive': 'Active',
+  'health.medicineDelegation.detail.statusExpired': 'Expired',
+  'health.medicineDelegation.detail.validity': 'Validity period',
+  'health.medicineDelegation.detail.validFor': 'Valid for',
+  'health.medicineDelegation.detail.validForValue':
+    'Pick up medicine and view prescription.',
+  'health.medicineDelegation.detail.validForPickup':
+    'Pick up medicine at the pharmacy.',
+  'health.medicineDelegation.detail.validForPickupAndLookup':
+    'Pick up medicine at the pharmacy and view prescriptions.',
+  'health.medicineDelegation.detail.revoke': 'Revoke delegation',
+  'health.medicineDelegation.detail.revokeError':
+    'Failed to revoke medicine authorization. Please try again later.',
+  'health.medicineDelegation.detail.revokePromptTitle':
+    'Do you want to revoke this authorization?',
+  'health.medicineDelegation.detail.revokePromptCancel': 'Cancel',
+  'health.medicineDelegation.detail.revokePromptConfirm': 'Revoke',
+  'health.medicineDelegation.form.title': 'Add medicine authorization',
+  'health.medicineDelegation.form.subtitle':
+    'Choose a person who may collect your medicine at the pharmacy.',
+  'health.medicineDelegation.form.nationalIdLabel': 'National ID',
+  'health.medicineDelegation.form.nameLabel': 'Name',
+  'health.medicineDelegation.form.validityLabel':
+    'How long should the authorization be valid?',
+  'health.medicineDelegation.form.dateFromLabel': 'Date from',
+  'health.medicineDelegation.form.dateToLabel': 'Date to',
+  'health.medicineDelegation.form.dateFromPlaceholder': 'Choose a date from',
+  'health.medicineDelegation.form.dateToPlaceholder': 'Choose a date to',
+  'health.medicineDelegation.form.submit': 'Add authorization',
+  'health.medicineDelegation.form.delegateMedicineDelegationError':
+    'Failed to create medicine authorization. Please try again later.',
+  'health.medicineDelegation.form.nameNotFound':
+    'Could not find a name for this national ID.',
+  'health.medicineDelegation.form.nameError':
+    'An error occurred while fetching the name.',
+  'health.medicineDelegation.form.invalidNationalId': 'Invalid national ID.',
+  'health.medicineDelegation.form.lookupLabel':
+    'The above person may also look up my prescriptions at the pharmacy.',
+  'health.medicineDelegation.form.xYears': '{years} years',
+  'health.medicineDelegation.form.xMonths': '{months} months',
+
+  // health - prescriptions & drug certificates
+  'health.prescriptionsAndCertificates.screenTitle': 'Medication',
+  'health.prescriptionsAndCertificates.validTo': 'Valid to: {date}',
+  'health.prescriptionsAndCertificates.expired': 'Expired',
+  'health.prescriptionsAndCertificates.rejected': 'Rejected',
+  'health.prescriptionsAndCertificates.inProcess': 'In process',
+  'health.prescriptionsAndCertificates.valid': 'Valid',
+  'health.prescriptionsAndCertificates.furtherInformation':
+    'Further information',
+  'health.prescriptionsAndCertificates.status': 'Status',
+  'health.prescriptionsAndCertificates.description':
+    'Doctors request medication certificates for individuals who are issued by the National Health Insurance Fund under certain conditions according to working regulations.',
+
+  'health.drugCertificates.title': 'Medication certificate',
+  'health.drugCertificates.drugName': 'Drug name',
+  'health.drugCertificates.atcCode': 'ATC code',
+  'health.drugCertificates.ingredients': 'Ingredient',
+  'health.drugCertificates.validFrom': 'Valid from',
+  'health.drugCertificates.validUntil': 'Valid to',
+  'health.drugCertificates.nameOfDoctor': 'Name of doctor',
+  'health.drugCertificates.methylDoctors':
+    'Extra doctors registered on license',
+
+  'health.prescriptions.title': 'Prescriptions',
+  'health.prescriptions.description':
+    'Here you can find an overview of your prescriptions and medication certificates.',
+  'health.prescriptions.drug': 'Medication',
+  'health.prescriptions.type': 'Type',
+  'health.prescriptions.indication': 'Medication used for',
+  'health.prescriptions.quantity': 'Prescribed amount',
+  'health.prescriptions.dosageInstructions': 'Dosage instructions',
+  'health.prescriptions.issueDate': 'Issue date',
+  'health.prescriptions.expiresAt': 'Expires at',
+  'health.prescriptions.doctor': 'Doctors',
+  'health.prescriptions.issueInformation': 'Issue information',
+  'health.prescriptions.dispensations': 'Dispensation history',
+  'health.prescriptions.dispensationNumber': 'Dispensation',
+  'health.prescriptions.lastDispensationDate': 'Last dispensed: {date}',
+  'health.prescriptions.dispensationCount': '{count} dispensations',
+  'health.prescriptions.fetchMoreDispensations': 'See more',
+  'health.prescriptions.completedDispensation': '{number}. dispensation',
+  'health.prescriptions.dispensationDetail.title':
+    'Information for {count}. dispensation',
+  'health.prescriptions.history.table.date': 'Date',
+  'health.prescriptions.history.table.dispensery': 'Dispensing point',
+  'health.prescriptions.history.table.drug': 'Medicine',
+  'health.prescriptions.history.table.quantity': 'Quantity',
+  'health.prescriptions.history.table.moreInfo': 'More',
+  'health.medicineHistory.title': 'Medicine history',
+  'health.prescriptions.noDispensations': 'No dispensations recorded',
+  'health.prescriptions.noDispensationsDescription':
+    'If you believe you have data that should appear here, please contact service provider.',
 }

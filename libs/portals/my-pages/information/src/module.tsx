@@ -11,14 +11,16 @@ import { SignatureCollectionPaths } from '@island.is/portals/my-pages/signature-
 import { Navigate } from 'react-router-dom'
 
 const UserInfoOverview = lazy(() =>
-  import('./screens/UserInfoOverview/UserInfoOverview'),
+  import('./screens/UserInfo/UserInfoOverview/UserInfoOverview'),
 )
-const UserInfo = lazy(() => import('./screens/UserInfo/UserInfo'))
+const UserInfo = lazy(() => import('./screens/UserInfo/UserInfo/UserInfo'))
 const FamilyMemberChildCustody = lazy(() =>
-  import('./screens/ChildCustody/ChildCustody'),
+  import('./screens/UserInfo/ChildCustody/ChildCustody'),
 )
-const FamilyMemberBioChild = lazy(() => import('./screens/BioChild/BioChild'))
-const Spouse = lazy(() => import('./screens/Spouse/Spouse'))
+const FamilyMemberBioChild = lazy(() =>
+  import('./screens/UserInfo/BioChild/BioChild'),
+)
+const Spouse = lazy(() => import('./screens/UserInfo/Spouse/Spouse'))
 const CompanyInfo = lazy(() => import('./screens/Company/CompanyInfo'))
 const Notifications = lazy(() =>
   import('./screens/Notifications/Notifications'),
@@ -26,13 +28,20 @@ const Notifications = lazy(() =>
 const UserProfileSettings = lazy(() =>
   import('./screens/UserProfile/UserProfile'),
 )
+const UserNotificationsSettings = lazy(() =>
+  import('./screens/UserNotifications/UserNotifications'),
+)
+
+const UserContractsOverview = lazy(() =>
+  import('./screens/UserContracts/UserContractsOverview/UserContractsOverview'),
+)
+
+const UserContract = lazy(() =>
+  import('./screens/UserContracts/Contract/UserContract'),
+)
 
 const CompanySettings = lazy(() =>
   import('./screens/CompanySettings/CompanySettings'),
-)
-
-const UserNotificationsSettings = lazy(() =>
-  import('./screens/UserNotifications/UserNotifications'),
 )
 
 export const informationModule: PortalModule = {
@@ -56,6 +65,20 @@ export const informationModule: PortalModule = {
         path: InformationPaths.MyInfoRootOverview,
         enabled: hasUserDetailsAccess,
         element: <UserInfoOverview />,
+      },
+      {
+        name: m.contracts,
+        path: InformationPaths.MyContracts,
+        enabled: scopes.includes(ApiScope.meDetails),
+        key: 'MyContracts',
+        element: <UserContractsOverview />,
+      },
+      {
+        name: m.contract,
+        path: InformationPaths.MyContractsDetail,
+        enabled: scopes.includes(ApiScope.meDetails),
+        key: 'MyContracts',
+        element: <UserContract />,
       },
       {
         name: m.userInfo,
