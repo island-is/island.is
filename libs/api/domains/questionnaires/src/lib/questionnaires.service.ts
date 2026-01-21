@@ -377,6 +377,7 @@ export class QuestionnairesService {
                 title: q.title ?? formatMessage(m.questionnaireWithoutTitle),
                 description: q.message ?? undefined,
                 sentDate: q.createdDate?.toISOString() ?? '',
+                lastSubmissionId: q.lastCreatedSubmissionId,
                 organization: QuestionnairesOrganizationEnum.EL,
                 department: undefined,
                 status:
