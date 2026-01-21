@@ -143,6 +143,7 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
           : formattedMessage
       }
     }
+    console.error(error, problem)
     return message
   }
 
@@ -169,10 +170,13 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
     SUBMIT_APPLICATION,
     {
       onError: (e) => {
-        setServerErrorMessage(
-          getServerErrorMessage(e, submitField?.formatLongErrorMessage),
-        )
-        handleServerError(e, formatMessage)
+        if (submitField?.formatLongErrorMessage) {
+          setServerErrorMessage(
+            getServerErrorMessage(e, submitField?.formatLongErrorMessage),
+          )
+        } else {
+          handleServerError(e, formatMessage)
+        }
       },
     },
   )
