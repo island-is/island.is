@@ -946,7 +946,7 @@ export const m = defineMessages({
   },
   contracts: {
     id: 'service.portal:contracts',
-    defaultMessage: 'Samningar',
+    defaultMessage: 'Húsaleigusamningar',
   },
   contract: {
     id: 'service.portal:contract',

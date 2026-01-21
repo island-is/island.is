@@ -47,12 +47,6 @@ const UserContract = () => {
     }
   }, [data?.hmsRentalAgreement?.contractProperty])
 
-  const agreementLengthMessage = useMemo(() => {
-    if (data?.hmsRentalAgreement?.contractType) {
-      return mapTemporalTypeToMessage(data.hmsRentalAgreement.contractType)
-    }
-  }, [data?.hmsRentalAgreement?.contractType])
-
   const status = useMemo(() => {
     if (
       data?.hmsRentalAgreement?.status &&
@@ -131,17 +125,13 @@ const UserContract = () => {
               loading={loading}
               label={cm.lengthOfRentalAgreement}
               content={
-                agreementLengthMessage
-                  ? formatMessage(agreementLengthMessage)
-                  : undefined
-              }
-            />
-            <InfoLine
-              loading={loading}
-              label={cm.registrationDate}
-              content={
-                contract?.signatureDate
-                  ? formatDate(contract?.signatureDate)
+                contract?.dateFrom
+                  ? formatMessage(cm.rentalAgreementDate, {
+                      from: new Date(contract.dateFrom),
+                      to: contract.dateTo
+                        ? new Date(contract.dateTo)
+                        : undefined,
+                    })
                   : undefined
               }
             />
