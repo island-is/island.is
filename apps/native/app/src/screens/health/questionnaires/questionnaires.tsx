@@ -111,7 +111,7 @@ export const QuestionnairesScreen: NavigationFunctionComponent = ({
           return []
       }
     },
-    [intl],
+    [intl, openBrowser, componentId],
   )
 
   const { data, loading, error, refetch } = useGetQuestionnairesQuery({
