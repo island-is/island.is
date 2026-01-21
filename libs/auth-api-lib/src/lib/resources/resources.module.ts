@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 
+import { CmsModule } from '@island.is/cms'
 import { DelegationScope } from '../delegations/models/delegation-scope.model'
 import { Delegation } from '../delegations/models/delegation.model'
 import { PersonalRepresentativeRightType } from '../personal-representative/models/personal-representative-right-type.model'
@@ -32,6 +33,7 @@ import { ApiScopeDelegationType } from './models/api-scope-delegation-type.model
 
 @Module({
   imports: [
+    CmsModule,
     TranslationModule,
     SequelizeModule.forFeature([
       Domain,

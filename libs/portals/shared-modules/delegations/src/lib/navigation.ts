@@ -1,39 +1,46 @@
-import { PortalNavigationItem, m } from '@island.is/portals/core'
+import { PortalNavigationItem, m as coreMessages } from '@island.is/portals/core'
 import { DelegationPaths } from './paths'
+import { m } from './messages'
 
 export const delegationsNavigationChildren: PortalNavigationItem[] = [
   {
-    name: m.accessControlDelegations,
+    name: coreMessages.accessControlDelegations,
     path: DelegationPaths.Delegations,
     navHide: false,
     breadcrumbHide: true,
     children: [
       {
-        name: m.accessControlGrant,
+        name: coreMessages.accessControlGrant,
         path: DelegationPaths.DelegationsGrant,
         navHide: true,
       },
     ],
   },
   {
-    name: m.accessControlDelegationsIncoming,
+    name: coreMessages.accessControlDelegationsIncoming,
     path: DelegationPaths.DelegationsIncoming,
     navHide: true,
     breadcrumbHide: true,
   },
   {
-    name: m.accessControlAccess,
+    name: coreMessages.accessControlAccess,
     path: DelegationPaths.DelegationAccess,
     navHide: true,
+  },
+  {
+    name: m.serviceCategories,
+    path: DelegationPaths.ServiceCategories,
+    navHide: false,
+    breadcrumbHide: false,
   },
 ]
 
 export const delegationsNavigation: PortalNavigationItem = {
-  name: m.accessControl,
+  name: coreMessages.accessControl,
   path: DelegationPaths.Delegations,
   icon: {
     icon: 'lockClosed',
   },
-  description: m.accessControlDescription,
+  description: coreMessages.accessControlDescription,
   children: delegationsNavigationChildren,
 }

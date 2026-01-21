@@ -1,0 +1,27 @@
+query AuthScopeCategories($lang: String!) {
+  authScopeCategories(lang: $lang) {
+    id
+    title
+    description
+    slug
+    scopes {
+      name
+      displayName
+      description
+    }
+  }
+}
+
+query AuthScopeTags($lang: String!) {
+  authScopeTags(lang: $lang) {
+    id
+    title
+    intro
+    slug
+    scopes {
+      name
+      displayName
+      description
+    }
+  }
+}

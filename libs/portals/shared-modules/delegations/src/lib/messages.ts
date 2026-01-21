@@ -62,6 +62,51 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:accessControl',
     defaultMessage: 'Aðgangsstýring',
   },
+  serviceCategories: {
+    id: 'sp.access-control-delegations:serviceCategories',
+    defaultMessage: 'Þjónustuflokkar',
+  },
+  serviceCategoriesDescription: {
+    id: 'sp.access-control-delegations:serviceCategoriesDescription',
+    defaultMessage:
+      'Hér má sjá yfirlit yfir þjónustuflokka og réttindi sem þeim tengjast.',
+  },
+  categories: {
+    id: 'sp.access-control-delegations:categories',
+    defaultMessage: 'Flokkar',
+  },
+  lifeEvents: {
+    id: 'sp.access-control-delegations:lifeEvents',
+    defaultMessage: 'Lífsviðburðir',
+  },
+  errorTitle: {
+    id: 'sp.access-control-delegations:errorTitle',
+    defaultMessage: 'Villa kom upp',
+  },
+  errorLoadingCategories: {
+    id: 'sp.access-control-delegations:errorLoadingCategories',
+    defaultMessage: 'Ekki tókst að sækja þjónustuflokka',
+  },
+  noCategoriesAvailable: {
+    id: 'sp.access-control-delegations:noCategoriesAvailable',
+    defaultMessage: 'Engir þjónustuflokkar í boði',
+  },
+  noScopesInCategory: {
+    id: 'sp.access-control-delegations:noScopesInCategory',
+    defaultMessage: 'Engin réttindi í þessum flokki',
+  },
+  loadingPermissions: {
+    id: 'sp.access-control-delegations:loadingPermissions',
+    defaultMessage: 'Sæki réttindi...',
+  },
+  errorLoadingPermissions: {
+    id: 'sp.access-control-delegations:errorLoadingPermissions',
+    defaultMessage: 'Ekki tókst að sækja réttindi',
+  },
+  noPermissionsAvailable: {
+    id: 'sp.access-control-delegations:noPermissionsAvailable',
+    defaultMessage: 'Engin réttindi í boði',
+  },
   accessControlDelegationsIncoming: {
     id: 'sp.access-control-delegations:to-me',
     defaultMessage: 'Til mín',

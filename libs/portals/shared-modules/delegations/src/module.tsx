@@ -1,16 +1,20 @@
 import { delegationScopes } from '@island.is/auth/scopes'
 import { lazy } from 'react'
-import { m, PortalModule, PortalRoute } from '@island.is/portals/core'
+import { m as coreMessages, PortalModule, PortalRoute } from '@island.is/portals/core'
 import { DelegationPaths } from './lib/paths'
+import { m } from './lib/messages'
 
 const AccessControl = lazy(() => import('./screens/AccessControl'))
 const GrantAccess = lazy(() => import('./screens/GrantAccess/GrantAccess'))
 const AccessOutgoing = lazy(() =>
   import('./screens/AccessOutgoing/AccessOutgoing'),
 )
+const ServiceCategories = lazy(() =>
+  import('./screens/ServiceCategories/ServiceCategories'),
+)
 
 export const delegationsModule: PortalModule = {
-  name: m.accessControl,
+  name: coreMessages.accessControl,
   enabled({ userInfo }) {
     return delegationScopes.some((scope) => userInfo.scopes.includes(scope))
   },
@@ -21,7 +25,7 @@ export const delegationsModule: PortalModule = {
       userInfo.scopes.includes(scope),
     )
     const commonProps = {
-      name: m.accessControlDelegations,
+      name: coreMessages.accessControlDelegations,
       navHide: !hasAccess,
       enabled: hasAccess,
       element: <AccessControl />,
@@ -37,14 +41,21 @@ export const delegationsModule: PortalModule = {
         path: DelegationPaths.DelegationsIncoming,
       },
       {
-        name: m.accessControlGrant,
+        name: coreMessages.accessControlGrant,
         path: DelegationPaths.DelegationsGrant,
         element: <GrantAccess />,
       },
       {
-        name: m.accessControlAccess,
+        name: coreMessages.accessControlAccess,
         path: DelegationPaths.DelegationAccess,
         element: <AccessOutgoing />,
+      },
+      {
+        name: m.serviceCategories,
+        path: DelegationPaths.ServiceCategories,
+        navHide: !hasAccess,
+        enabled: hasAccess,
+        element: <ServiceCategories />,
       },
     ]
 
