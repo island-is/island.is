@@ -2769,8 +2769,6 @@ export class CaseService {
 
     await this.handleCreateFirstCourtSession(fullSplitCase, transaction)
 
-    await transaction.commit()
-
     return splitCase
   }
 

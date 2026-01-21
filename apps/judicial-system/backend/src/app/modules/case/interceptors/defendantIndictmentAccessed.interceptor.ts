@@ -57,14 +57,22 @@ export class DefendantIndictmentAccessedInterceptor implements NestInterceptor {
       // create new events for all defendants that prison admin has not accessed according to defendant event logs
       defendantsIndictmentNotOpened?.forEach((defendant) =>
         this.sequelize.transaction((transaction) =>
-          this.defendantService.createDefendantEvent(
-            {
-              caseId: theCase.id,
-              defendantId: defendant.id,
-              eventType: DefendantEventType.OPENED_BY_PRISON_ADMIN,
-            },
-            transaction,
-          ),
+          this.defendantService
+            .createDefendantEvent(
+              {
+                caseId: theCase.id,
+                defendantId: defendant.id,
+                eventType: DefendantEventType.OPENED_BY_PRISON_ADMIN,
+              },
+              transaction,
+            )
+            .catch((reason) => {
+              // Log the error but do not fail the request
+              console.error(
+                `Failed to create ${DefendantEventType.OPENED_BY_PRISON_ADMIN} event for defendant ${defendant.id} in case ${theCase.id}`,
+                { reason },
+              )
+            }),
         ),
       )
     }
