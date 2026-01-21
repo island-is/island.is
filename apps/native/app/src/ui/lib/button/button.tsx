@@ -10,6 +10,7 @@ import {
 import styled, { useTheme } from 'styled-components/native'
 import { dynamicColor } from '../../utils'
 import { font } from '../../utils/font'
+import { Loader } from '../loader/loader'
 
 interface ButtonBaseProps extends TouchableHighlightProps {
   isTransparent?: boolean
@@ -45,7 +46,8 @@ const Host = styled.TouchableHighlight<HostProps>`
   justify-content: center;
   align-items: center;
   column-gap: ${({ theme }) => theme.spacing.p1}px;
-  padding: ${({ theme }) => `${theme.spacing.p1}px ${theme.spacing.p2}px`};
+  
+  padding: ${({ theme, isUtilityButton }) => isUtilityButton ? `${theme.spacing.p1}px ${theme.spacing.p2}px` : `${theme.spacing.p3}px ${theme.spacing.p4}px`};
   background-color: ${dynamicColor<HostProps>(
   ({
     theme,
