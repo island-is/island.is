@@ -1,3 +1,5 @@
+import { Sequelize } from 'sequelize-typescript'
+
 import {
   BadRequestException,
   Body,
@@ -9,6 +11,7 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common'
+import { InjectConnection } from '@nestjs/sequelize'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import type { Logger } from '@island.is/logging'
@@ -103,6 +106,7 @@ export class InternalVerdictController {
     private readonly verdictService: VerdictService,
     private readonly auditTrailService: AuditTrailService,
     private readonly eventService: EventService,
+    @InjectConnection() private readonly sequelize: Sequelize,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -124,7 +128,7 @@ export class InternalVerdictController {
     type: DeliverResponse,
     description: 'Delivers a verdict to the police centralized file service',
   })
-  deliverVerdictToNationalCommissionersOffice(
+  async deliverVerdictToNationalCommissionersOffice(
     @Param('caseId') caseId: string,
     @Param('defendantId') defendantId: string,
     @CurrentCase() theCase: Case,
@@ -144,29 +148,57 @@ export class InternalVerdictController {
       )
     }
 
-    // callback function to fetch the updated verdict fields after delivering verdict to police
-    const getDeliveredVerdictNationalCommissionersOfficeLogDetails = async (
-      results?: DeliverResponse,
-    ) => {
-      const currentVerdict = await this.verdictService.findById(verdict.id)
-      return {
-        deliveredToPolice: Boolean(results?.delivered),
-        verdictId: verdict.id,
-        externalPoliceDocumentId: currentVerdict.externalPoliceDocumentId,
-        verdictHash: currentVerdict.hash,
-        verdictDeliveredToPolice: new Date(),
-      }
-    }
+    const transaction = await this.sequelize.transaction()
 
-    return this.auditTrailService.runAndAuditRequest({
-      userId: deliverDto.user.id,
-      actionType:
-        AuditedAction.DELIVER_TO_NATIONAL_COMMISSIONERS_OFFICE_VERDICT,
-      action: this.verdictService.deliverVerdictToNationalCommissionersOffice,
-      actionProps: { theCase, defendant, verdict, user: deliverDto.user },
-      auditedResult: caseId,
-      getAuditDetails: getDeliveredVerdictNationalCommissionersOfficeLogDetails,
-    })
+    try {
+      // callback function to fetch the updated verdict fields after delivering verdict to police
+      const getDeliveredVerdictNationalCommissionersOfficeLogDetails = async (
+        results?: DeliverResponse,
+      ) => {
+        const currentVerdict = await this.verdictService.findById(
+          verdict.id,
+          transaction,
+        )
+
+        return {
+          deliveredToPolice: Boolean(results?.delivered),
+          verdictId: verdict.id,
+          externalPoliceDocumentId: currentVerdict.externalPoliceDocumentId,
+          verdictHash: currentVerdict.hash,
+          verdictDeliveredToPolice: new Date(),
+        }
+      }
+
+      const response = await this.auditTrailService.runAndAuditRequest({
+        userId: deliverDto.user.id,
+        actionType:
+          AuditedAction.DELIVER_TO_NATIONAL_COMMISSIONERS_OFFICE_VERDICT,
+        action: this.verdictService.deliverVerdictToNationalCommissionersOffice,
+        actionProps: {
+          theCase,
+          defendant,
+          verdict,
+          user: deliverDto.user,
+          transaction,
+        },
+        auditedResult: caseId,
+        getAuditDetails:
+          getDeliveredVerdictNationalCommissionersOfficeLogDetails,
+      })
+
+      await transaction.commit()
+
+      return response
+    } catch (error) {
+      this.logger.error(
+        `Failed to deliver verdict ${verdict.id} to national commissioners office for defendant ${defendantId} of case ${caseId}`,
+        { error },
+      )
+
+      await transaction.rollback()
+
+      throw error
+    }
   }
 
   @UseGuards(ExternalPoliceVerdictExistsGuard, CaseExistsGuard)
@@ -181,9 +213,9 @@ export class InternalVerdictController {
       `Updating verdict by external police document id ${policeDocumentId} of ${theCase.id}`,
     )
 
-    const updatedVerdict = await this.verdictService.updatePoliceDelivery(
-      verdict,
-      update,
+    const updatedVerdict = await this.sequelize.transaction(
+      async (transaction) =>
+        this.verdictService.updatePoliceDelivery(verdict, update, transaction),
     )
 
     if (
@@ -230,10 +262,13 @@ export class InternalVerdictController {
       verdict,
     })
 
-    const updatedVerdict = this.verdictService.updateRestricted(verdict, {
-      appealDecision: verdictAppeal.appealDecision,
-    })
-    return updatedVerdict
+    return this.sequelize.transaction(async (transaction) =>
+      this.verdictService.updateRestricted(
+        verdict,
+        { appealDecision: verdictAppeal.appealDecision },
+        transaction,
+      ),
+    )
   }
 
   @UseGuards(ExternalPoliceVerdictExistsGuard)
@@ -267,8 +302,11 @@ export class InternalVerdictController {
       `Delivering verdict service certificates pdf to police for all verdicts where appeal decision deadline has passed`,
     )
 
-    const delivered =
-      await this.verdictService.deliverVerdictServiceCertificatesToPolice()
+    const delivered = await this.sequelize.transaction((transaction) =>
+      this.verdictService.deliverVerdictServiceCertificatesToPolice(
+        transaction,
+      ),
+    )
 
     await this.eventService.postDailyVerdictServiceDeliveryEvent(delivered)
 

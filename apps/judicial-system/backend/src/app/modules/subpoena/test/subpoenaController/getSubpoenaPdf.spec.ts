@@ -1,4 +1,5 @@
 import { Response } from 'express'
+import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
 import { createTestingSubpoenaModule } from '../createTestingSubpoenaModule'
@@ -21,12 +22,20 @@ describe('SubpoenaController - Get subpoena pdf', () => {
   const theCase = { id: caseId } as Case
   const res = { end: jest.fn() } as unknown as Response
   const pdf = Buffer.from(uuid())
+
   let mockPdfService: PdfService
+  let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { pdfService, subpoenaController } =
+    const { sequelize, pdfService, subpoenaController } =
       await createTestingSubpoenaModule()
+
+    const mockTransaction = sequelize.transaction as jest.Mock
+    transaction = {} as Transaction
+    mockTransaction.mockImplementationOnce(
+      (fn: (transaction: Transaction) => unknown) => fn(transaction),
+    )
 
     mockPdfService = pdfService
     const getSubpoenaPdfMock = mockPdfService.getSubpoenaPdf as jest.Mock
@@ -62,6 +71,7 @@ describe('SubpoenaController - Get subpoena pdf', () => {
       expect(mockPdfService.getSubpoenaPdf).toHaveBeenCalledWith(
         theCase,
         defendant,
+        transaction,
         subpoena,
         undefined,
         undefined,

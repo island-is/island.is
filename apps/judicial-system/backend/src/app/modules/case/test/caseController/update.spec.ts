@@ -108,10 +108,11 @@ describe('CaseController - Update', () => {
     mockCaseStringModel = caseStringModel
 
     const mockTransaction = sequelize.transaction as jest.Mock
-    transaction = {} as Transaction
-    mockTransaction.mockImplementationOnce(
-      (fn: (transaction: Transaction) => unknown) => fn(transaction),
-    )
+    transaction = {
+      commit: jest.fn(),
+      rollback: jest.fn(),
+    } as unknown as Transaction
+    mockTransaction.mockResolvedValueOnce(transaction)
 
     const mockCreateSubpoena = mockSubpoenaService.createSubpoena as jest.Mock
     mockCreateSubpoena.mockRejectedValue('Failed to create subpoena')
