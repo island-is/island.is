@@ -1033,12 +1033,12 @@ export const m = defineMessages({
     description: 'Preview',
   },
   largeCheckbox: {
-    id: 'form.system.large-checkbox',
+    id: 'form.system:large-checkbox',
     defaultMessage: 'Stórt hakbox',
     description: 'Large checkbox',
   },
   hasSublabel: {
-    id: 'form.system.has-sublabel',
+    id: 'form.system:has-sublabel',
     defaultMessage: 'Hefur undirtexta',
     description: 'Has sublabel',
   },
