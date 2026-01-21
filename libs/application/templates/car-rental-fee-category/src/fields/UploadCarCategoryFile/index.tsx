@@ -26,7 +26,10 @@ import {
 } from '../../utils/UploadCarCategoryFileUtils'
 import { useMutation } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
-import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
+import {
+  UPDATE_APPLICATION,
+  UPDATE_APPLICATION_EXTERNAL_DATA,
+} from '@island.is/application/graphql'
 import { m } from '../../lib/messages'
 
 const extensionToType = {
@@ -57,6 +60,7 @@ export const UploadCarCategoryFile = ({
   const [updateApplicationExternalData] = useMutation(
     UPDATE_APPLICATION_EXTERNAL_DATA,
   )
+  const [updateApplication] = useMutation(UPDATE_APPLICATION)
   const [isRefreshingRates, setIsRefreshingRates] = useState(false)
 
   const hasRunRef = useRef(false)
@@ -79,7 +83,8 @@ export const UploadCarCategoryFile = ({
             input: {
               id: application.id,
               dataProviders: [
-                { actionId: 'getCurrentVehiclesRateCategory', order: 0 },
+                { actionId: 'getCurrentVehicles', order: 0 },
+                { actionId: 'getCurrentVehiclesRateCategory', order: 1 },
               ],
             },
             locale,
@@ -186,6 +191,18 @@ export const UploadCarCategoryFile = ({
     }
 
     setValue('carsToChange', dataToChange)
+    await updateApplication({
+      variables: {
+        input: {
+          id: application.id,
+          answers: {
+            ...application.answers,
+            carsToChange: dataToChange,
+          },
+        },
+        locale,
+      },
+    })
   }
 
   const handleOnInputFileUploadError = (files: FileRejection[]) => {
