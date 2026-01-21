@@ -889,17 +889,17 @@ export const m = defineMessages({
   uploadBoxTitle: {
     id: 'form.system:upload-box-title',
     defaultMessage: 'Dragðu skjöl hingað til að hlaða upp',
-    description: 'Notaður fyrir titil í Hlaða upp skrám svæði.',
+    description: 'Drag files here to upload',
   },
   uploadBoxButtonLabel: {
     id: 'form.system:upload-box-button-label',
     defaultMessage: 'Velja skjöl til að hlaða upp',
-    description: 'Notaður fyrir titil í takka á Hlaða upp skrám svæði.',
+    description: 'Choose files to upload',
   },
   uploadBoxDescription: {
     id: 'form.system:upload-box-description',
     defaultMessage: 'Tekið er við skjölum með endingu: {fileEndings}',
-    description: 'Notaður fyrir texta í Hlaða upp skrám svæði.',
+    description: 'The following file types are accepted: {fileEndings}',
   },
   tagsDraft: {
     id: 'form.system:tags.draft',
