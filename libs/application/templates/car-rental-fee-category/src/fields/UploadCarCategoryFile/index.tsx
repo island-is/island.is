@@ -26,7 +26,10 @@ import {
 } from '../../utils/UploadCarCategoryFileUtils'
 import { useMutation } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
-import { UPDATE_APPLICATION, UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
+import {
+  UPDATE_APPLICATION,
+  UPDATE_APPLICATION_EXTERNAL_DATA,
+} from '@island.is/application/graphql'
 import { m } from '../../lib/messages'
 
 const extensionToType = {
