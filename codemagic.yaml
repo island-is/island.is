@@ -113,8 +113,13 @@ definitions:
         -configuration "Debug" \
         -sdk iphonesimulator \
         -derivedDataPath ios/output
-    - &run_ios_tests_locally
-      name: Run Maestro tests on local iOS simulator
+    - &build_android_debug
+      name: Build Android debug APK
+      script: |
+        cd android
+        ./gradlew assemble${ANDROID_APP}Debug
+    - &install_maestro
+      name: Install Maestro CLI
       script: |
         # Install Maestro CLI
         curl -Ls "https://get.maestro.mobile.dev" | bash
@@ -122,7 +127,9 @@ definitions:
 
         # Verify Maestro installation
         maestro --version
-
+    - &prepare_ios_simulator
+      name: Prepare iOS simulator
+      script: |
         # Shutdown all existing simulators for clean state
         echo "Shutting down existing simulators..."
         xcrun simctl shutdown all || true
@@ -167,6 +174,9 @@ definitions:
         echo "Waiting for simulator to be ready..."
         xcrun simctl bootstatus "$DEVICE_ID" -b
 
+        # Export device ID for subsequent scripts
+        echo "export IOS_DEVICE_ID=\"$DEVICE_ID\"" >> $CM_ENV
+
         # Find the built app
         iosAppPath=$(find ios/output -name "*.app" | head -1)
         if [ -z "$iosAppPath" ]; then
@@ -178,17 +188,62 @@ definitions:
         # Install the app on simulator
         echo "Installing app on simulator..."
         xcrun simctl install "$DEVICE_ID" "$iosAppPath"
+    - &prepare_android_emulator
+      name: Prepare Android emulator
+      script: |
+        # Start Android emulator
+        echo "Starting Android emulator..."
 
-        # Run Maestro tests locally
+        # Use the pre-configured Pixel 4 emulator with API 34
+        EMULATOR_NAME="pixel_4"
+
+        # Start emulator in background
+        $ANDROID_HOME/emulator/emulator -avd "$EMULATOR_NAME" -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim &
+        EMULATOR_PID=$!
+
+        # Export PID for cleanup
+        echo "export ANDROID_EMULATOR_PID=\"$EMULATOR_PID\"" >> $CM_ENV
+
+        # Wait for emulator to boot
+        echo "Waiting for emulator to boot..."
+        adb wait-for-device
+
+        # Wait for boot to complete
+        while [ "$(adb shell getprop sys.boot_completed 2>/dev/null)" != "1" ]; do
+          echo "Waiting for boot to complete..."
+          sleep 5
+        done
+
+        # Additional wait to ensure system is fully ready
+        sleep 10
+
+        echo "Emulator is ready"
+
+        # Find the built APK
+        APK_PATH=$(find android/app/build/outputs/apk -name "*debug.apk" | head -1)
+        if [ -z "$APK_PATH" ]; then
+          echo "No debug APK found in android/app/build/outputs/apk"
+          exit 1
+        fi
+        echo "Found APK at: $APK_PATH"
+
+        # Install the APK on emulator
+        echo "Installing APK on emulator..."
+        adb install -r "$APK_PATH"
+    - &run_maestro_tests
+      name: Run Maestro tests
+      script: |
+        # Ensure Maestro is in PATH
+        export PATH="$PATH":"$HOME/.maestro/bin"
+
+        # Run Maestro tests with proper output configuration
         echo "Running Maestro tests..."
-        maestro test .maestro || TEST_RESULT=$?
-
-        # Shutdown simulator after tests
-        echo "Shutting down simulator..."
-        xcrun simctl shutdown "$DEVICE_ID" || true
-
-        # Exit with test result code
-        exit ${TEST_RESULT:-0}
+        maestro test \
+          --format junit \
+          --output "$TEST_OUTPUT_DIR/report.xml" \
+          --test-output-dir "$TEST_OUTPUT_DIR" \
+          --flatten-debug-output \
+          .maestro
   publishing:
     ios_publishing: &ios_publishing
       app_store_connect:
@@ -285,9 +340,7 @@ workflows:
   prod-app-android:
     <<: *base
     name: Island.is Prod App Android
-    instance_type: mac_mini_m2
-    ## Switch when we have billing
-    # instance_type: linux_x2
+    instance_type: linux_x2
     cache: &android_cache
       cache_paths:
         - ~/.gradle/caches
@@ -320,9 +373,7 @@ workflows:
   dev-app-android:
     <<: *base
     name: Island.is Dev App Android
-    instance_type: mac_mini_m2
-    ## Switch when we have billing
-    # instance_type: linux_x2
+    instance_type: linux_x2
     cache: *android_cache
     environment:
       <<: *environment
@@ -362,6 +413,7 @@ workflows:
         BUNDLE_ID: 'is.island.app.dev'
         XCODE_SCHEME: 'Ísland.dev'
         APP_STORE_APPLE_ID: 1570427360
+        TEST_OUTPUT_DIR: 'maestro-test-output'
     scripts:
       - *check_changes
       - *pip_install
@@ -369,7 +421,36 @@ workflows:
       - *codegen
       - *cocoapods
       - *build_ios_simulator_app
-      - *run_ios_tests_locally
+      - *install_maestro
+      - *prepare_ios_simulator
+      - *run_maestro_tests
     artifacts:
       - /tmp/xcodebuild_logs/*.log
-      - maestro-results.xml
+      - maestro-test-output/**
+
+  e2e-tests-android:
+    <<: *base
+    name: Island.is E2E Tests Android
+    instance_type: linux_x2
+    cache: *android_cache
+    environment:
+      <<: *environment
+      groups:
+        - firebase_credentials_dev
+      vars:
+        <<: *shared_envs
+        PACKAGE_NAME: 'is.island.app.dev'
+        ANDROID_APP: dev
+        TEST_OUTPUT_DIR: 'maestro-test-output'
+    scripts:
+      - *check_changes
+      - *set_android_location
+      - *pip_install
+      - *npm_install
+      - *codegen
+      - *build_android_debug
+      - *install_maestro
+      - *prepare_android_emulator
+      - *run_maestro_tests
+    artifacts:
+      - maestro-test-output/**
