@@ -65,6 +65,7 @@ export const QuestionnairesScreen: NavigationFunctionComponent = ({
         | null
         | undefined,
       id: string | null | undefined,
+      submissionId?: string,
     ): QuestionnaireCardAction[] => {
       if (!status || !organization || !id) {
         return []
@@ -92,7 +93,7 @@ export const QuestionnairesScreen: NavigationFunctionComponent = ({
           return [
             getActionData(
               'health.questionnaires.action.view-answer',
-              questionnaireUrls.viewAnswer(urlParams),
+              questionnaireUrls.viewAnswer({ ...urlParams, submissionId }),
             ),
           ]
         case QuestionnaireQuestionnairesStatusEnum.Draft:
@@ -103,7 +104,7 @@ export const QuestionnairesScreen: NavigationFunctionComponent = ({
             ),
             getActionData(
               'health.questionnaires.action.view-answer',
-              questionnaireUrls.viewAnswer(urlParams),
+              questionnaireUrls.viewAnswer({ ...urlParams, submissionId }),
             ),
           ]
         default:
@@ -211,6 +212,7 @@ export const QuestionnairesScreen: NavigationFunctionComponent = ({
                 item.status,
                 item.organization,
                 item.id,
+                item.lastSubmissionId ?? undefined,
               )}
             />
           )

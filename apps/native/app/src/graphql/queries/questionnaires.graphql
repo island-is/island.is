@@ -7,6 +7,7 @@ query GetQuestionnaires($locale: String!) {
       sentDate
       status
       lastSubmitted
+      lastSubmissionId
       organization
       department
     }
@@ -22,13 +23,13 @@ query GetQuestionnaire($locale: String!, $input: GetQuestionnaireInput!) {
       description
       sentDate
       status
+      lastSubmissionId
       lastSubmitted
       organization
       department
     }
     expirationDate
     canSubmit
-    lastSubmissionId
     submissions {
       __typename
       id
