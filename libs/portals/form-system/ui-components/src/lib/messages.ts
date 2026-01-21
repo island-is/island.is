@@ -1129,4 +1129,11 @@ export const m = defineMessages({
     defaultMessage: 'Tilkynningar',
     description: 'Notifications',
   },
+  draftProgressMeter: {
+    id: 'form.system:draft-progress-meter',
+    defaultMessage:
+      'Þú hefur klárað {draftFinishedSteps} af {draftTotalSteps} skrefum',
+    description:
+      'You have completed {draftFinishedSteps} of {draftTotalSteps} steps',
+  },
 })
