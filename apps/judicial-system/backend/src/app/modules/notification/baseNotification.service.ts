@@ -13,7 +13,7 @@ import { NotificationType } from '@island.is/judicial-system/types'
 import { filterWhitelistEmails, stripHtmlTags } from '../../formatters'
 import { notifications } from '../../messages'
 import { EventService } from '../event'
-import { Notification, Recipient } from '../repository'
+import { InstitutionContact, Notification, Recipient } from '../repository'
 import { DeliverResponse } from './models/deliver.response'
 import { notificationModuleConfig } from './notification.config'
 
@@ -27,6 +27,7 @@ interface Attachment {
 export abstract class BaseNotificationService {
   constructor(
     private readonly notificationModel: typeof Notification,
+    protected readonly institutionContactModel: typeof InstitutionContact,
     private readonly emailService: EmailService,
     private readonly intlService: IntlService,
     protected readonly config: ConfigType<typeof notificationModuleConfig>,

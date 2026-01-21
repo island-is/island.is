@@ -37,6 +37,7 @@ import {
   Case,
   DateLog,
   Defendant,
+  InstitutionContact,
   Notification,
   Recipient,
 } from '../../../repository'
@@ -56,6 +57,8 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
   constructor(
     @InjectModel(Notification)
     notificationModel: typeof Notification,
+    @InjectModel(InstitutionContact)
+    institutionContactModel: typeof InstitutionContact,
     @Inject(notificationModuleConfig.KEY)
     config: ConfigType<typeof notificationModuleConfig>,
     @Inject(LOGGER_PROVIDER) logger: Logger,
@@ -66,6 +69,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
   ) {
     super(
       notificationModel,
+      institutionContactModel,
       emailService,
       intlService,
       config,
@@ -231,9 +235,18 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
     const subject = `Svipting í máli ${theCase.courtCaseNumber}`
     const html = `Skrá skal sviptingu ökuréttinda í ökuskírteinaskrá vegna máls ${
       theCase.courtCaseNumber
-    } í ${applyDativeCaseToCourtName(theCase.court?.name ?? '')}.
+    } í ${applyDativeCaseToCourtName(theCase.court?.name ?? 'héraðsdómi')}.
       
       LÖKE númer: ${theCase.policeCaseNumbers}.`
+
+    const contactInfo = {
+      name: theCase.prosecutorsOffice?.name,
+      email: await this.getInstitutionContact(theCase.prosecutorsOfficeId),
+    }
+
+    if (!contactInfo.name || !contactInfo.email) {
+      return { delivered: false }
+    }
 
     return this.sendEmails(
       theCase,
@@ -242,8 +255,8 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
       html,
       [
         {
-          name: theCase.prosecutor?.name,
-          email: theCase.prosecutor?.email,
+          name: contactInfo.name,
+          email: contactInfo.email,
         },
       ],
     )
@@ -603,6 +616,32 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
         throw new InternalServerErrorException(
           `Invalid indictment notification type: ${notificationType}`,
         )
+    }
+  }
+
+  private async getInstitutionContact(
+    institutionId?: string,
+  ): Promise<string | null> {
+    try {
+      if (!institutionId) {
+        return null
+      }
+
+      const institutionContact = await this.institutionContactModel.findOne({
+        where: {
+          institutionId,
+          type: IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENDED,
+        },
+      })
+
+      return institutionContact?.value ?? null
+    } catch (error) {
+      this.logger.error(
+        `Failed to get institution contact for institutionId: ${institutionId} and type: ${IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENDED}`,
+        error,
+      )
+
+      return null
     }
   }
 
