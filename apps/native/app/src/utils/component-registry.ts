@@ -14,6 +14,8 @@ export const ComponentRegistry = {
   ApplicationsInProgressScreen: `${prefix}.screens.ApplicationsInProgressScreen`,
   ApplicationsScreen: `${prefix}.screens.ApplicationsScreen`,
   AppLockScreen: `${prefix}.screens.AppLock`,
+  AppointmentDetailScreen: `${prefix}.screens.AppointmentDetailScreen`,
+  AppointmentsScreen: `${prefix}.screens.AppointmentsScreen`,
   AssetsDetailScreen: `${prefix}.screens.AssetsDetailScreen`,
   AssetsOverviewScreen: `${prefix}.screens.AssetsOverviewScreen`,
   CognitoAuthScreen: `${prefix}.screens.CognitoAuth`,
