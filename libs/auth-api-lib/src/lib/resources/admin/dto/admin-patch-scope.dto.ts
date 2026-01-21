@@ -148,6 +148,24 @@ export class AdminPatchScopeDto {
     description: 'CMS tag IDs to remove from this scope',
   })
   removedTagIds?: string[]
+
+  @IsBoolean()
+  @IsOptional()
+  @ApiPropertyOptional({
+    example: false,
+    description:
+      'Whether this scope allows write access (read access is always implicit)',
+  })
+  allowsWrite?: boolean
+
+  @IsBoolean()
+  @IsOptional()
+  @ApiPropertyOptional({
+    example: false,
+    description:
+      'Whether this scope requires step-up authentication (tvöfalt samþykki) for sensitive information access',
+  })
+  requiresConfirmation?: boolean
 }
 
 /**

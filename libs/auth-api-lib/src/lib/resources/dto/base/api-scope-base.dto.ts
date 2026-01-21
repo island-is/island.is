@@ -133,6 +133,22 @@ export class ApiScopeBaseDTO {
   })
   readonly isAccessControlled?: boolean
 
+  @IsBoolean()
+  @ApiProperty({
+    example: false,
+    description:
+      'Whether this scope allows write access (read access is always implicit)',
+  })
+  readonly allowsWrite!: boolean
+
+  @IsBoolean()
+  @ApiProperty({
+    example: false,
+    description:
+      'Whether this scope requires step-up authentication (tvöfalt samþykki) for sensitive information access',
+  })
+  readonly requiresConfirmation!: boolean
+
   @IsArray()
   @IsOptional()
   @ApiProperty({

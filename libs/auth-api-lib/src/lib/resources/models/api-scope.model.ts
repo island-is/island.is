@@ -209,6 +209,25 @@ export class ApiScope extends Model<ModelAttributes, CreationAttributes> {
   @ApiPropertyOptional({ nullable: true })
   isAccessControlled?: boolean | null
 
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+    comment: 'Whether this scope allows write access (read is always implicit)',
+  })
+  @ApiProperty()
+  allowsWrite!: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+    comment:
+      'Whether this scope requires step-up authentication (tvöfalt samþykki) for sensitive information access',
+  })
+  @ApiProperty()
+  requiresConfirmation!: boolean
+
   @HasMany(() => ApiScopeUserClaim)
   @ApiPropertyOptional({ nullable: true })
   userClaims?: ApiScopeUserClaim[]
@@ -296,6 +315,8 @@ export class ApiScope extends Model<ModelAttributes, CreationAttributes> {
       emphasize: this.emphasize,
       domainName: this.domainName,
       isAccessControlled: this.isAccessControlled ?? undefined,
+      allowsWrite: this.allowsWrite,
+      requiresConfirmation: this.requiresConfirmation,
       supportedDelegationTypes:
         this.supportedDelegationTypes?.map(
           ({ delegationType }) => delegationType,

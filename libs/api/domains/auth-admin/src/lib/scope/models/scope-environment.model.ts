@@ -70,6 +70,18 @@ export class ScopeEnvironment {
   @Field(() => Boolean)
   isAccessControlled!: boolean
 
+  @Field(() => Boolean, {
+    description:
+      'Whether this scope allows write access (read access is always implicit)',
+  })
+  allowsWrite!: boolean
+
+  @Field(() => Boolean, {
+    description:
+      'Whether this scope requires step-up authentication (tvöfalt samþykki) for sensitive information access',
+  })
+  requiresConfirmation!: boolean
+
   @Field(() => [String], { defaultValue: [] })
   categoryIds!: string[]
 

@@ -1,8 +1,17 @@
 import React, { useState } from 'react'
+import { useQuery } from '@apollo/client'
 
 import { useLocale } from '@island.is/localization'
 import { getTranslatedValue } from '@island.is/portals/core'
-import { Box, Input, Stack, Tabs, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Checkbox,
+  Divider,
+  Input,
+  Stack,
+  Tabs,
+  Text,
+} from '@island.is/island-ui/core'
 import { AuthAdminTranslatedValue } from '@island.is/api/schema'
 
 import { m } from '../../../lib/messages'
@@ -13,6 +22,12 @@ import { Languages } from '../../../utils/languages'
 import { useErrorFormatMessage } from '../../../hooks/useFormatErrorMessage'
 import { useEnvironmentState } from '../../../hooks/useEnvironmentState'
 import { checkEnvironmentsSync } from '../../../utils/checkEnvironmentsSync'
+import {
+  GetScopeCategoriesDocument,
+  GetScopeCategoriesQuery,
+  GetScopeTagsDocument,
+  GetScopeTagsQuery,
+} from './PermissionCategoriesAndTags.generated'
 
 type Locales = Languages.IS | Languages.EN
 type ErrorKeys = `${Locales}_description` | `${Locales}_displayName`
@@ -34,7 +49,7 @@ const createLanguagesState = (value: AuthAdminTranslatedValue[]) =>
   )
 
 export const PermissionContent = () => {
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang } = useLocale()
   const { formatErrorMessage } = useErrorFormatMessage()
   const { selectedPermission, actionData, permission } = usePermission()
   const [activeTab, setActiveTab] = useState<Languages>(Languages.IS)
@@ -44,6 +59,49 @@ export const PermissionContent = () => {
   const [descriptions, setDescriptions] = useEnvironmentState(
     createLanguagesState(selectedPermission.description),
   )
+
+  // Categories and Tags
+  const { data: categoriesData, loading: categoriesLoading } = useQuery(
+    GetScopeCategoriesDocument,
+    {
+      variables: { lang },
+    },
+  )
+
+  const { data: tagsData, loading: tagsLoading } = useQuery(
+    GetScopeTagsDocument,
+    {
+      variables: { lang },
+    },
+  )
+
+  const [selectedCategoryIds, setSelectedCategoryIds] = useEnvironmentState<
+    string[]
+  >(selectedPermission.categoryIds || [])
+
+  const [selectedTagIds, setSelectedTagIds] = useEnvironmentState<string[]>(
+    selectedPermission.tagIds || [],
+  )
+
+  const categories = categoriesData?.authAdminScopeCategories || []
+  const tags = tagsData?.authAdminScopeTags || []
+  const loading = categoriesLoading || tagsLoading
+
+  const handleCategoryToggle = (categoryId: string) => {
+    setSelectedCategoryIds((prev) =>
+      prev.includes(categoryId)
+        ? prev.filter((id) => id !== categoryId)
+        : [...prev, categoryId],
+    )
+  }
+
+  const handleTagToggle = (tagId: string) => {
+    setSelectedTagIds((prev) =>
+      prev.includes(tagId)
+        ? prev.filter((id) => id !== tagId)
+        : [...prev, tagId],
+    )
+  }
 
   const renderTabs = (langKey: Languages) => {
     // Since we transform the Zod schema to strip out the locale prefixed keys then we need to
@@ -111,18 +169,120 @@ export const PermissionContent = () => {
       inSync={checkEnvironmentsSync(permission.environments, [
         'description',
         'displayName',
+        'categoryIds',
+        'tagIds',
       ])}
     >
-      <Tabs
-        size="md"
-        contentBackground="white"
-        selected={activeTab}
-        label={formatMessage(m.translations)}
-        onChange={() =>
-          setActiveTab(activeTab === Languages.IS ? Languages.EN : Languages.IS)
-        }
-        tabs={languages.map(renderTabs)}
-      />
+      <Stack space={5}>
+        <Tabs
+          size="md"
+          contentBackground="white"
+          selected={activeTab}
+          label={formatMessage(m.translations)}
+          onChange={() =>
+            setActiveTab(
+              activeTab === Languages.IS ? Languages.EN : Languages.IS,
+            )
+          }
+          tabs={languages.map(renderTabs)}
+        />
+
+        <Divider />
+
+        {/* Categories Section */}
+        <Box>
+          <Text variant="h4" marginBottom={2}>
+            {formatMessage(m.categories)}
+          </Text>
+          <Text variant="small" marginBottom={3}>
+            {formatMessage(m.categoriesDescription)}
+          </Text>
+
+          {loading ? (
+            <Text>{formatMessage(m.loading)}</Text>
+          ) : categories.length === 0 ? (
+            <Text>{formatMessage(m.noCategories)}</Text>
+          ) : (
+            <Stack space={2}>
+              {/* Hidden inputs to pass selected and original category IDs */}
+              <input
+                type="hidden"
+                name="categoryIds"
+                value={JSON.stringify(selectedCategoryIds)}
+              />
+              <input
+                type="hidden"
+                name="originalCategoryIds"
+                value={JSON.stringify(selectedPermission.categoryIds || [])}
+              />
+
+              {categories.map(
+                (
+                  category: GetScopeCategoriesQuery['authAdminScopeCategories'][number],
+                ) => (
+                  <Checkbox
+                    key={category.id}
+                    backgroundColor="blue"
+                    large
+                    label={category.title}
+                    subLabel={category.description}
+                    name={`category_${category.id}`}
+                    value={category.id}
+                    checked={selectedCategoryIds.includes(category.id)}
+                    onChange={() => handleCategoryToggle(category.id)}
+                  />
+                ),
+              )}
+            </Stack>
+          )}
+        </Box>
+
+        {/* Tags Section */}
+        <Box>
+          <Text variant="h4" marginBottom={2}>
+            {formatMessage(m.tags)}
+          </Text>
+          <Text variant="small" marginBottom={3}>
+            {formatMessage(m.tagsDescription)}
+          </Text>
+
+          {loading ? (
+            <Text>{formatMessage(m.loading)}</Text>
+          ) : tags.length === 0 ? (
+            <Text>{formatMessage(m.noTags)}</Text>
+          ) : (
+            <Stack space={2}>
+              {/* Hidden inputs to pass selected and original tag IDs */}
+              <input
+                type="hidden"
+                name="tagIds"
+                value={JSON.stringify(selectedTagIds)}
+              />
+              <input
+                type="hidden"
+                name="originalTagIds"
+                value={JSON.stringify(selectedPermission.tagIds || [])}
+              />
+
+              {tags.map(
+                (tag: GetScopeTagsQuery['authAdminScopeTags'][number]) => (
+                  <Checkbox
+                    key={tag.id}
+                    backgroundColor="blue"
+                    large
+                    label={tag.title}
+                    subLabel={tag.intro}
+                    name={`tag_${tag.id}`}
+                    value={tag.id}
+                    checked={selectedTagIds.includes(tag.id)}
+                    onChange={() => handleTagToggle(tag.id)}
+                  />
+                ),
+              )}
+            </Stack>
+          )}
+        </Box>
+      </Stack>
     </FormCard>
   )
 }

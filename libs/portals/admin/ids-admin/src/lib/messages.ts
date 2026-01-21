@@ -776,6 +776,28 @@ export const m = defineMessages({
     id: 'ap.ids-admin:content',
     defaultMessage: 'Content',
   },
+  securityAndCapabilities: {
+    id: 'ap.ids-admin:security-and-capabilities',
+    defaultMessage: 'Security & Capabilities',
+  },
+  allowsWrite: {
+    id: 'ap.ids-admin:allows-write',
+    defaultMessage: 'Read/Write Access',
+  },
+  allowsWriteDescription: {
+    id: 'ap.ids-admin:allows-write-description',
+    defaultMessage:
+      'When enabled, this permission grants both read and write access. When disabled, only read access is granted.',
+  },
+  requiresConfirmation: {
+    id: 'ap.ids-admin:requires-confirmation',
+    defaultMessage: 'Step-up Authentication Required',
+  },
+  requiresConfirmationDescription: {
+    id: 'ap.ids-admin:requires-confirmation-description',
+    defaultMessage:
+      'When enabled, users must provide additional authentication (tvöfalt samþykki) to access sensitive information with this permission.',
+  },
   accessControl: {
     id: 'ap.ids-admin:access-control',
     defaultMessage: 'Access control',

@@ -74,4 +74,18 @@ export class AdminPatchScopeInput {
 
   @Field(() => [String], { nullable: true })
   removedTagIds?: string[]
+
+  @Field(() => Boolean, {
+    nullable: true,
+    description:
+      'Whether this scope allows write access (read access is always implicit)',
+  })
+  allowsWrite?: boolean
+
+  @Field(() => Boolean, {
+    nullable: true,
+    description:
+      'Whether this scope requires step-up authentication (tvöfalt samþykki) for sensitive information access',
+  })
+  requiresConfirmation?: boolean
 }
