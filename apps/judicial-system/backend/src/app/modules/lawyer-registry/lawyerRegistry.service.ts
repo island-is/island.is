@@ -1,7 +1,6 @@
 import { plainToClass } from 'class-transformer'
 import { validate } from 'class-validator'
 import type { Transaction, WhereOptions } from 'sequelize'
-import { Sequelize } from 'sequelize-typescript'
 
 import {
   BadGatewayException,
@@ -10,7 +9,7 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
-import { InjectConnection, InjectModel } from '@nestjs/sequelize'
+import { InjectModel } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -34,7 +33,6 @@ export class LawyerRegistryService {
   constructor(
     @Inject(lawyerRegistryConfig.KEY)
     private readonly config: ConfigType<typeof lawyerRegistryConfig>,
-    @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(LawyerRegistry)
     private readonly lawyerRegistryModel: typeof LawyerRegistry,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
@@ -98,26 +96,24 @@ export class LawyerRegistryService {
     return this.lawyerRegistryModel.bulkCreate(lawyers, { transaction })
   }
 
-  populate() {
-    return this.sequelize.transaction(async (transaction) => {
-      const lawyers = await this.getLawyerRegistry()
-      const litigators = await this.getLawyerRegistry(LawyerType.LITIGATORS)
-      const litigatorNationalIds = new Set(litigators.map((l) => l.SSN))
+  async populate(transaction: Transaction) {
+    const lawyers = await this.getLawyerRegistry()
+    const litigators = await this.getLawyerRegistry(LawyerType.LITIGATORS)
+    const litigatorNationalIds = new Set(litigators.map((l) => l.SSN))
 
-      const formattedLawyers: Lawyer[] = lawyers.map((lawyer) => ({
-        name: lawyer.Name,
-        nationalId: lawyer.SSN,
-        email: lawyer.Email,
-        phoneNumber: lawyer.GSM ?? lawyer.Phone,
-        practice: lawyer.Practice,
-        isLitigator: litigatorNationalIds.has(lawyer.SSN),
-      }))
+    const formattedLawyers: Lawyer[] = lawyers.map((lawyer) => ({
+      name: lawyer.Name,
+      nationalId: lawyer.SSN,
+      email: lawyer.Email,
+      phoneNumber: lawyer.GSM ?? lawyer.Phone,
+      practice: lawyer.Practice,
+      isLitigator: litigatorNationalIds.has(lawyer.SSN),
+    }))
 
-      await this.lawyerRegistryModel.destroy({ where: {}, transaction })
-      await this.populateLawyerRegistry(formattedLawyers, transaction)
+    await this.lawyerRegistryModel.destroy({ where: {}, transaction })
+    await this.populateLawyerRegistry(formattedLawyers, transaction)
 
-      return lawyers
-    })
+    return lawyers
   }
 
   async getAll(lawyerType: LawyerType) {

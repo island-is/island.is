@@ -1,3 +1,4 @@
+import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
 import { createTestingSubpoenaModule } from '../createTestingSubpoenaModule'
@@ -24,6 +25,7 @@ describe('SubpoenaService - Deliver subpoena to national commissioners office', 
   const theCase = { id: caseId, defendants: [defendant] } as Case
   const user = { id: uuid() }
   const dto = { user } as DeliverDto
+  const transaction = {} as Transaction
 
   let mockPdfService: PdfService
   let givenWhenThen: GivenWhenThen
@@ -44,6 +46,7 @@ describe('SubpoenaService - Deliver subpoena to national commissioners office', 
           defendant,
           subpoena,
           user: dto.user,
+          transaction,
         })
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
@@ -66,6 +69,7 @@ describe('SubpoenaService - Deliver subpoena to national commissioners office', 
       expect(mockPdfService.getSubpoenaPdf).toHaveBeenCalledWith(
         theCase,
         defendant,
+        transaction,
         subpoena,
       )
       // TODO: complete tests when all indictments are generated

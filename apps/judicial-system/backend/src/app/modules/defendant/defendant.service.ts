@@ -1,8 +1,6 @@
 import { literal, Op, Transaction } from 'sequelize'
-import { Sequelize } from 'sequelize-typescript'
 
 import { Inject, Injectable } from '@nestjs/common'
-import { InjectConnection } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -39,7 +37,6 @@ import { DeliverResponse } from './models/deliver.response'
 @Injectable()
 export class DefendantService {
   constructor(
-    @InjectConnection() private readonly sequelize: Sequelize,
     private readonly defendantRepositoryService: DefendantRepositoryService,
     private readonly defendantEventLogRepositoryService: DefendantEventLogRepositoryService,
     private readonly courtService: CourtService,
@@ -216,11 +213,12 @@ export class DefendantService {
     theCase: Case,
     defendantToCreate: CreateDefendantDto,
     user: User,
+    transaction: Transaction,
   ): Promise<Defendant> {
-    const defendant = await this.defendantRepositoryService.create({
-      ...defendantToCreate,
-      caseId: theCase.id,
-    })
+    const defendant = await this.defendantRepositoryService.create(
+      { ...defendantToCreate, caseId: theCase.id },
+      { transaction },
+    )
 
     if (theCase.courtCaseNumber) {
       // This should only happen to non-indictment cases.
@@ -238,7 +236,7 @@ export class DefendantService {
     caseId: string,
     defendantId: string,
     update: UpdateDefendantDto,
-    transaction?: Transaction,
+    transaction: Transaction,
   ) {
     return this.defendantRepositoryService.update(caseId, defendantId, update, {
       transaction,
@@ -250,11 +248,13 @@ export class DefendantService {
     defendant: Defendant,
     update: UpdateDefendantDto,
     user: User,
+    transaction: Transaction,
   ): Promise<Defendant> {
     const updatedDefendant = await this.updateDatabaseDefendant(
       theCase.id,
       defendant.id,
       update,
+      transaction,
     )
 
     await this.sendRequestCaseUpdateDefendantMessages(
@@ -273,7 +273,7 @@ export class DefendantService {
       defendantId: string
       eventType: DefendantEventType
     },
-    transaction?: Transaction,
+    transaction: Transaction,
   ): Promise<void> {
     await this.defendantEventLogRepositoryService.create(event, { transaction })
   }
@@ -283,30 +283,25 @@ export class DefendantService {
     defendant: Defendant,
     update: UpdateDefendantDto,
     user: User,
+    transaction: Transaction,
   ): Promise<Defendant> {
-    const updatedDefendant = await this.sequelize.transaction(
-      async (transaction) => {
-        const updatedDefendant = await this.updateDatabaseDefendant(
-          theCase.id,
-          defendant.id,
-          update,
-          transaction,
-        )
-
-        if (update.isSentToPrisonAdmin) {
-          await this.createDefendantEvent(
-            {
-              caseId: theCase.id,
-              defendantId: defendant.id,
-              eventType: DefendantEventType.SENT_TO_PRISON_ADMIN,
-            },
-            transaction,
-          )
-        }
-
-        return updatedDefendant
-      },
+    const updatedDefendant = await this.updateDatabaseDefendant(
+      theCase.id,
+      defendant.id,
+      update,
+      transaction,
     )
+
+    if (update.isSentToPrisonAdmin) {
+      await this.createDefendantEvent(
+        {
+          caseId: theCase.id,
+          defendantId: defendant.id,
+          eventType: DefendantEventType.SENT_TO_PRISON_ADMIN,
+        },
+        transaction,
+      )
+    }
 
     await this.sendIndictmentCaseUpdateDefendantMessages(
       theCase,
@@ -323,6 +318,7 @@ export class DefendantService {
     defendant: Defendant,
     update: UpdateDefendantDto,
     user: User,
+    transaction: Transaction,
   ): Promise<Defendant> {
     if (isIndictmentCase(theCase.type)) {
       return this.updateIndictmentCaseDefendant(
@@ -330,9 +326,16 @@ export class DefendantService {
         defendant,
         update,
         user,
+        transaction,
       )
     } else {
-      return this.updateRequestCaseDefendant(theCase, defendant, update, user)
+      return this.updateRequestCaseDefendant(
+        theCase,
+        defendant,
+        update,
+        user,
+        transaction,
+      )
     }
   }
 
@@ -340,7 +343,7 @@ export class DefendantService {
     theCase: Case,
     defendant: Defendant,
     update: InternalUpdateDefendantDto,
-    transaction?: Transaction,
+    transaction: Transaction,
   ): Promise<Defendant> {
     // The reason we have a separate dto for this is because requests that end here
     // are initiated by outside API's which should not be able to edit other fields directly
@@ -405,8 +408,11 @@ export class DefendantService {
     theCase: Case,
     defendantId: string,
     user: User,
+    transaction: Transaction,
   ): Promise<boolean> {
-    await this.defendantRepositoryService.delete(theCase.id, defendantId)
+    await this.defendantRepositoryService.delete(theCase.id, defendantId, {
+      transaction,
+    })
 
     if (theCase.courtCaseNumber) {
       // This should only happen to non-indictment cases.
