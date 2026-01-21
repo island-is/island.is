@@ -75,19 +75,23 @@ interface BadgeProps {
   title: string
   variant: keyof typeof badgeColorSchemes
   outlined?: boolean
+  fill?: boolean
 }
 
 export function Badge({
   title,
   variant = 'blue',
   outlined = false,
+  fill = false,
 }: BadgeProps) {
   const theme = useTheme()
   const badgeVariant = badgeColorSchemes[variant] ?? 'blue'
   return (
     <Host
       style={{
-        backgroundColor: outlined
+        backgroundColor: fill
+          ? theme.color[badgeVariant.backgroundColor]
+          : outlined
           ? 'transparent'
           : theme.color[badgeVariant.backgroundColor],
         borderColor: outlined
