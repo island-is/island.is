@@ -241,7 +241,7 @@ definitions:
         maestro test \
           --format junit \
           --output "$TEST_OUTPUT_DIR/report.xml" \
-          --test-output-dir "$TEST_OUTPUT_DIR" \
+          --debug-output "$TEST_OUTPUT_DIR" \
           --flatten-debug-output \
           .maestro
   publishing:
@@ -435,6 +435,8 @@ workflows:
     cache: *android_cache
     environment:
       <<: *environment
+      android_signing:
+        - island-upload-keystore
       groups:
         - firebase_credentials_dev
       vars:
