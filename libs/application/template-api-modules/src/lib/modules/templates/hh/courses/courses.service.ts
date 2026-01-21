@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import {
   ApplicationTypes,
   type ApplicationWithAttachments,
+  ApplicationStatus,
 } from '@island.is/application/types'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { ZendeskService } from '@island.is/clients/zendesk'
@@ -11,6 +12,10 @@ import { SharedTemplateApiService } from '../../../shared'
 import type { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import type { ApplicationAnswers } from './types'
+import { ApplicationService, Application as ApplicationModel } from '@island.is/application/api/core'
+import { InjectModel } from '@nestjs/sequelize'
+import { Op, Sequelize } from 'sequelize'
+import { writeFileSync } from 'fs'
 
 const GET_COURSE_BY_ID_QUERY = `
   query GetCourseById($input: GetCourseByIdInput!) {
@@ -40,6 +45,9 @@ export class CoursesService extends BaseTemplateApiService {
   constructor(
     private readonly sharedTemplateApiService: SharedTemplateApiService,
     private readonly zendeskService: ZendeskService,
+    private readonly applicationService: ApplicationService,
+    @InjectModel(ApplicationModel)
+    private applicationModel: typeof ApplicationModel,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {
     super(ApplicationTypes.HEILSUGAESLA_HOFUDBORDARSVAEDISINS_NAMSKEID)
@@ -50,11 +58,16 @@ export class CoursesService extends BaseTemplateApiService {
     auth,
   }: TemplateApiModuleActionProps): Promise<{ success: boolean }> {
     try {
+
+
+
       const { course, courseInstance } = await this.getCourseById(
         getValueViaPath<string>(application.answers, 'courseSelect', ''),
         getValueViaPath<string>(application.answers, 'dateSelect', ''),
         auth.authorization,
       )
+      await this.countRegistrationsForCourseInstance(courseInstance.id, application.id)
+      return { success: true }
 
       const participantList =
         getValueViaPath<ApplicationAnswers['participantList']>(
@@ -62,45 +75,65 @@ export class CoursesService extends BaseTemplateApiService {
           'participantList',
         ) ?? []
 
-      const { name, email, phone, healthcenter, nationalId } =
-        await this.extractApplicantInfo(application)
+      // // Check if course is fully booked
+      // if (courseInstance.maxRegistrations !== undefined && courseInstance.maxRegistrations !== null) {
+      //   const existingRegistrations = await this.countRegistrationsForCourseInstance(
+      //     courseInstance.id,
+      //     application.id, // Exclude current application from count
+      //   )
+      //   const newParticipantCount = participantList.length
+      //   const totalAfterRegistration = existingRegistrations + newParticipantCount
 
-      if (!name || !email || !phone || !healthcenter || !nationalId)
-        throw new TemplateApiError(
-          {
-            title: 'No contact information found',
-            summary: 'No contact information found',
-          },
-          400,
-        )
+      //   if (totalAfterRegistration > courseInstance.maxRegistrations) {
+      //     throw new TemplateApiError(
+      //       {
+      //         title: 'Course fully booked',
+      //         summary: `This course instance is fully booked. Maximum registrations: ${courseInstance.maxRegistrations}, Current registrations: ${existingRegistrations}, Attempted to register: ${newParticipantCount}`,
+      //       },
+      //       400,
+      //     )
+      //   }
+      // }
 
-      let user = await this.zendeskService.getUserByEmail(email)
+      // const { name, email, phone, healthcenter, nationalId } =
+      //   await this.extractApplicantInfo(application)
 
-      if (!user) {
-        user = await this.zendeskService.createUser(name, email, phone)
-      }
+      // if (!name || !email || !phone || !healthcenter || !nationalId)
+      //   throw new TemplateApiError(
+      //     {
+      //       title: 'No contact information found',
+      //       summary: 'No contact information found',
+      //     },
+      //     400,
+      //   )
 
-      const message = await this.formatApplicationMessage(
-        application,
-        participantList,
-        course.id,
-        course.title,
-        courseInstance,
-        nationalId,
-        name,
-        email,
-        phone,
-        healthcenter,
-      )
+      // let user = await this.zendeskService.getUserByEmail(email)
 
-      await this.zendeskService.submitTicket({
-        message,
-        requesterId: user.id,
-        subject: this.zendeskSubject,
-        tags: ['hh-courses'],
-      })
+      // if (!user) {
+      //   user = await this.zendeskService.createUser(name, email, phone)
+      // }
 
-      return { success: true }
+      // const message = await this.formatApplicationMessage(
+      //   application,
+      //   participantList,
+      //   course.id,
+      //   course.title,
+      //   courseInstance,
+      //   nationalId,
+      //   name,
+      //   email,
+      //   phone,
+      //   healthcenter,
+      // )
+
+      // await this.zendeskService.submitTicket({
+      //   message,
+      //   requesterId: user.id,
+      //   subject: this.zendeskSubject,
+      //   tags: ['hh-courses'],
+      // })
+
+      // return { success: true }
     } catch (error) {
       this.logger.error('Failed to submit HH courses application to Zendesk', {
         applicationId: application.id,
@@ -190,7 +223,7 @@ export class CoursesService extends BaseTemplateApiService {
 
     return {
       course,
-      courseInstance,
+      courseInstance
     }
   }
 
@@ -268,9 +301,8 @@ export class CoursesService extends BaseTemplateApiService {
       }
     }
 
-    message += `Upphafsdagsetning: ${courseInstance.startDate.split('T')[0]} ${
-      startDateTimeDuration ?? ''
-    }\n`
+    message += `Upphafsdagsetning: ${courseInstance.startDate.split('T')[0]} ${startDateTimeDuration ?? ''
+      }\n`
 
     message += `Kennitala umsækjanda: ${nationalId}\n`
     message += `Nafn umsækjanda: ${name}\n`
@@ -281,9 +313,9 @@ export class CoursesService extends BaseTemplateApiService {
     const payer =
       userIsPayingAsIndividual === YesOrNoEnum.YES
         ? {
-            name: 'Umsækjandi (einstaklingsgreiðsla)',
-            nationalId: application.applicant,
-          }
+          name: 'Umsækjandi (einstaklingsgreiðsla)',
+          nationalId: application.applicant,
+        }
         : companyPayment?.nationalIdWithName
 
     message += `Nafn greiðanda: ${payer?.name ?? ''}\n`
@@ -298,5 +330,46 @@ export class CoursesService extends BaseTemplateApiService {
     })
 
     return message
+  }
+
+  private async countRegistrationsForCourseInstance(
+    courseInstanceId: string,
+    excludeApplicationId?: string,
+  ): Promise<number> {
+    const applications = await this.applicationModel.findAll({
+      where: {
+        id: excludeApplicationId ? {
+          [Op.ne]: excludeApplicationId,
+        } : undefined,
+        typeId: ApplicationTypes.HEILSUGAESLA_HOFUDBORDARSVAEDISINS_NAMSKEID,
+        status: {
+          [Op.eq]: ApplicationStatus.COMPLETED,
+        },
+        answers: {
+          dateSelect: courseInstanceId,
+        },
+      },
+      attributes: ['id', 'answers'],
+    })
+
+    // Count total participants across all applications
+    // Each application can have multiple participants in participantList
+    const nationalIds = new Set<string>()
+    for (const app of applications) {
+      const participantList = getValueViaPath<ApplicationAnswers['participantList']>(
+        app.answers as ApplicationAnswers,
+        'participantList',
+        []
+      )
+      for (const participant of participantList ?? []) {
+        if (participant?.nationalIdWithName?.nationalId) {
+          nationalIds.add(participant.nationalIdWithName.nationalId)
+        }
+      }
+    }
+
+    writeFileSync('applications.json', JSON.stringify({ apps: applications, totalParticipants: nationalIds.size }, null, 2))
+
+    return nationalIds.size
   }
 }

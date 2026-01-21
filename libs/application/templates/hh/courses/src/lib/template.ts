@@ -37,6 +37,14 @@ const template: ApplicationTemplate<
       ApplicationTypes.HEILSUGAESLA_HOFUDBORDARSVAEDISINS_NAMSKEID
     ].translation,
   dataSchema,
+  adminDataConfig: {
+    answers: [
+      { key: 'dateSelect', isListed: true },
+      { key: 'courseSelect', isListed: true },
+      { key: 'participantList', isListed: true },
+    ],
+    postPruneDelayOverride: 2 * 365 * 24 * 3600 * 1000 // 2 years
+  },
   allowMultipleApplicationsInDraft: true,
   initialQueryParameter: 'selection',
   featureFlag: Features.isHHCourseApplicationEnabled,
