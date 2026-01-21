@@ -40,8 +40,10 @@ export const buildQuestionnaireUrl = (
   const route = ROUTES.questionnaire
   const actionPath = route.actions[action]
 
-  let url = `${baseUrl}${route.base}/${organization.toLowerCase()}/${id}${actionPath}`
-  
+  let url = `${baseUrl}${
+    route.base
+  }/${organization.toLowerCase()}/${id}${actionPath}`
+
   if (submissionId) {
     url += `/${submissionId}`
   }
@@ -55,10 +57,10 @@ export const buildQuestionnaireUrl = (
 export const questionnaireUrls = {
   answer: (params: Omit<QuestionnaireUrlParams, 'submissionId'>) =>
     buildQuestionnaireUrl(params, 'answer'),
-  
+
   viewAnswer: (params: QuestionnaireUrlParams) =>
     buildQuestionnaireUrl(params, 'viewAnswer'),
-  
+
   continueDraft: (params: Omit<QuestionnaireUrlParams, 'submissionId'>) =>
     buildQuestionnaireUrl(params, 'continueDraft'),
 }

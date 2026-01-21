@@ -107,10 +107,7 @@ export const QuestionnaireDetailScreen: NavigationFunctionComponent<{
   const onAnswer = useCallback(() => {
     if (!organization || !id) return
 
-    openBrowser(
-      questionnaireUrls.answer({ organization, id }),
-      componentId,
-    )
+    openBrowser(questionnaireUrls.answer({ organization, id }), componentId)
   }, [organization, id, componentId, openBrowser])
 
   const onView = useCallback(() => {
@@ -120,11 +117,18 @@ export const QuestionnaireDetailScreen: NavigationFunctionComponent<{
       questionnaireUrls.viewAnswer({
         organization,
         id,
-        submissionId: questionnaire?.baseInformation?.lastSubmissionId ?? undefined,
+        submissionId:
+          questionnaire?.baseInformation?.lastSubmissionId ?? undefined,
       }),
       componentId,
     )
-  }, [organization, id, questionnaire?.baseInformation?.lastSubmissionId, componentId, openBrowser])
+  }, [
+    organization,
+    id,
+    questionnaire?.baseInformation?.lastSubmissionId,
+    componentId,
+    openBrowser,
+  ])
 
   // Determine error/loading state content
   let errorContent: React.ReactNode = null
