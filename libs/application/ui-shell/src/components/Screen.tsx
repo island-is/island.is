@@ -11,6 +11,7 @@ import { ApolloError, useMutation } from '@apollo/client'
 import {
   coreMessages,
   formatTextWithLocale,
+  getErrorReasonIfPresent,
   mergeAnswers,
 } from '@island.is/application/core'
 import {
@@ -121,6 +122,29 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
       resolver({ formValue, context, formatMessage }),
     context: { dataSchema, formNode: screen },
   })
+  const [serverErrorMessage, setServerErrorMessage] = useState<string | null>(
+    null,
+  )
+  const getServerErrorMessage = (
+    error: ApolloError,
+    formatLongErrorMessage?: (message: string) => string,
+  ) => {
+    const problem = findProblemInApolloError(error)
+    const message = problem ? problem.detail ?? problem.title : error.message
+
+    if (problem) {
+      if ('errorReason' in problem) {
+        const { title, summary } = getErrorReasonIfPresent(problem.errorReason)
+        const formattedMessage = `${formatMessage(title)}: ${formatMessage(
+          summary,
+        )}`
+        return formatLongErrorMessage
+          ? formatLongErrorMessage(formattedMessage)
+          : formattedMessage
+      }
+    }
+    return message
+  }
 
   const [fieldLoadingState, setFieldLoadingState] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -144,7 +168,12 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
   const [submitApplication, { loading: loadingSubmit }] = useMutation(
     SUBMIT_APPLICATION,
     {
-      onError: (e) => handleServerError(e, formatMessage),
+      onError: (e) => {
+        setServerErrorMessage(
+          getServerErrorMessage(e, submitField?.formatLongErrorMessage),
+        )
+        handleServerError(e, formatMessage)
+      },
     },
   )
   const {
@@ -237,6 +266,7 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
     let response
 
     setIsSubmitting(true)
+    setServerErrorMessage(null)
     setBeforeSubmitError({})
 
     let event: string | undefined
@@ -469,7 +499,25 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
           </Box>
         </GridColumn>
 
-        <ToastContainer hideProgressBar closeButton useKeyframeStyles={false} />
+        {!submitField?.renderLongErrors && (
+          <ToastContainer
+            hideProgressBar
+            closeButton
+            useKeyframeStyles={false}
+          />
+        )}
+        {submitField?.renderLongErrors && serverErrorMessage ? (
+          <Box
+            background="red100"
+            borderRadius="standard"
+            padding={2}
+            marginRight={4}
+            marginLeft={4}
+            textAlign="center"
+          >
+            <Text whiteSpace="preLine">{serverErrorMessage}</Text>
+          </Box>
+        ) : null}
         <ScreenFooter
           submitButtonDisabled={submitButtonDisabled}
           application={application}
