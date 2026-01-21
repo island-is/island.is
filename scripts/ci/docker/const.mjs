@@ -16,7 +16,7 @@ const generateReleaseBranches = (majorVersions, minorVersionsPerMajor) => {
   return branches
 }
 
-const majorVersions = [36, 37, 38, 39, 40]
+const majorVersions = Array.from({ length: 1000 }, (_, i) => i + 1)
 const minorVersionsPerMajor = 3
 
 export const RELEASE_BRANCHES = generateReleaseBranches(
