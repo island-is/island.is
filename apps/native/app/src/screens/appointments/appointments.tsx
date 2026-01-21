@@ -5,9 +5,7 @@ import { NavigationFunctionComponent } from 'react-native-navigation'
 import styled from 'styled-components/native'
 
 import { BaseAppointmentStatuses } from '../../constants/base-appointment-statuses'
-import {
-  useGetAppointmentsQuery
-} from '../../graphql/types/schema'
+import { useGetAppointmentsQuery } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { useNavigationModal } from '../../hooks/use-navigation-modal'

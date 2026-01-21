@@ -1,11 +1,6 @@
 import React, { useCallback } from 'react'
 import { useIntl } from 'react-intl'
-import {
-  ImageSourcePropType,
-  Linking,
-  ScrollView,
-  View
-} from 'react-native'
+import { ImageSourcePropType, Linking, ScrollView, View } from 'react-native'
 import {
   Navigation,
   NavigationFunctionComponent,
@@ -18,7 +13,7 @@ import { BaseAppointmentStatuses } from '../../constants/base-appointment-status
 import {
   AppointmentFragmentFragmentDoc,
   HealthDirectorateAppointment,
-  useGetAppointmentsQuery
+  useGetAppointmentsQuery,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import {
@@ -27,7 +22,7 @@ import {
   InputRow,
   NavigationBarSheet,
   Problem,
-  Typography
+  Typography,
 } from '../../ui'
 
 const { useNavigationOptions } = createNavigationOptionHooks(() => ({
