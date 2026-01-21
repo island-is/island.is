@@ -13,6 +13,7 @@ import { ApplicationEvent } from '../../applications/models/applicationEvent.mod
 import { FileConfig } from '../../file/file.config'
 import { FileStorageConfig } from '@island.is/file-storage'
 import { FileModule } from '../../file/file.module'
+import { FileStorageWrapperModule } from '../../file/fileStorageWrapper'
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { FileModule } from '../../file/file.module'
     }),
     LoggingModule,
     FileModule,
+    FileStorageWrapperModule,
     AuditModule.forRoot(environment.audit),
     ConfigModule.forRoot({
       isGlobal: true,
