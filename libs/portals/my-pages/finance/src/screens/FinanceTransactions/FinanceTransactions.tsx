@@ -215,6 +215,21 @@ const FinanceTransactions = () => {
                             appearInline
                             range
                           />
+                          {fromDate !== undefined || toDate !== undefined ? (
+                            <Box textAlign="right" marginTop={1}>
+                              <Button
+                                icon="reload"
+                                size="small"
+                                variant="text"
+                                onClick={() => {
+                                  setFromDate(undefined)
+                                  setToDate(undefined)
+                                }}
+                              >
+                                {formatMessage(m.clearSelected)}
+                              </Button>
+                            </Box>
+                          ) : null}
                         </Box>
                       </AccordionItem>
                     </Accordion>
