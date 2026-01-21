@@ -12,7 +12,10 @@ import { SharedTemplateApiService } from '../../../shared'
 import type { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import type { ApplicationAnswers } from './types'
-import { ApplicationService, Application as ApplicationModel } from '@island.is/application/api/core'
+import {
+  ApplicationService,
+  Application as ApplicationModel,
+} from '@island.is/application/api/core'
 import { InjectModel } from '@nestjs/sequelize'
 import { Op, Sequelize } from 'sequelize'
 import { writeFileSync } from 'fs'
@@ -58,15 +61,15 @@ export class CoursesService extends BaseTemplateApiService {
     auth,
   }: TemplateApiModuleActionProps): Promise<{ success: boolean }> {
     try {
-
-
-
       const { course, courseInstance } = await this.getCourseById(
         getValueViaPath<string>(application.answers, 'courseSelect', ''),
         getValueViaPath<string>(application.answers, 'dateSelect', ''),
         auth.authorization,
       )
-      await this.countRegistrationsForCourseInstance(courseInstance.id, application.id)
+      await this.countRegistrationsForCourseInstance(
+        courseInstance.id,
+        application.id,
+      )
       return { success: true }
 
       const participantList =
@@ -223,7 +226,7 @@ export class CoursesService extends BaseTemplateApiService {
 
     return {
       course,
-      courseInstance
+      courseInstance,
     }
   }
 
@@ -301,8 +304,9 @@ export class CoursesService extends BaseTemplateApiService {
       }
     }
 
-    message += `Upphafsdagsetning: ${courseInstance.startDate.split('T')[0]} ${startDateTimeDuration ?? ''
-      }\n`
+    message += `Upphafsdagsetning: ${courseInstance.startDate.split('T')[0]} ${
+      startDateTimeDuration ?? ''
+    }\n`
 
     message += `Kennitala umsækjanda: ${nationalId}\n`
     message += `Nafn umsækjanda: ${name}\n`
@@ -313,9 +317,9 @@ export class CoursesService extends BaseTemplateApiService {
     const payer =
       userIsPayingAsIndividual === YesOrNoEnum.YES
         ? {
-          name: 'Umsækjandi (einstaklingsgreiðsla)',
-          nationalId: application.applicant,
-        }
+            name: 'Umsækjandi (einstaklingsgreiðsla)',
+            nationalId: application.applicant,
+          }
         : companyPayment?.nationalIdWithName
 
     message += `Nafn greiðanda: ${payer?.name ?? ''}\n`
@@ -338,9 +342,11 @@ export class CoursesService extends BaseTemplateApiService {
   ): Promise<number> {
     const applications = await this.applicationModel.findAll({
       where: {
-        id: excludeApplicationId ? {
-          [Op.ne]: excludeApplicationId,
-        } : undefined,
+        id: excludeApplicationId
+          ? {
+              [Op.ne]: excludeApplicationId,
+            }
+          : undefined,
         typeId: ApplicationTypes.HEILSUGAESLA_HOFUDBORDARSVAEDISINS_NAMSKEID,
         status: {
           [Op.eq]: ApplicationStatus.COMPLETED,
@@ -356,11 +362,9 @@ export class CoursesService extends BaseTemplateApiService {
     // Each application can have multiple participants in participantList
     const nationalIds = new Set<string>()
     for (const app of applications) {
-      const participantList = getValueViaPath<ApplicationAnswers['participantList']>(
-        app.answers as ApplicationAnswers,
-        'participantList',
-        []
-      )
+      const participantList = getValueViaPath<
+        ApplicationAnswers['participantList']
+      >(app.answers as ApplicationAnswers, 'participantList', [])
       for (const participant of participantList ?? []) {
         if (participant?.nationalIdWithName?.nationalId) {
           nationalIds.add(participant.nationalIdWithName.nationalId)
@@ -368,7 +372,14 @@ export class CoursesService extends BaseTemplateApiService {
       }
     }
 
-    writeFileSync('applications.json', JSON.stringify({ apps: applications, totalParticipants: nationalIds.size }, null, 2))
+    writeFileSync(
+      'applications.json',
+      JSON.stringify(
+        { apps: applications, totalParticipants: nationalIds.size },
+        null,
+        2,
+      ),
+    )
 
     return nationalIds.size
   }

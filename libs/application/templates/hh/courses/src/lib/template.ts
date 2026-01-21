@@ -43,7 +43,7 @@ const template: ApplicationTemplate<
       { key: 'courseSelect', isListed: true },
       { key: 'participantList', isListed: true },
     ],
-    postPruneDelayOverride: 2 * 365 * 24 * 3600 * 1000 // 2 years
+    postPruneDelayOverride: 2 * 365 * 24 * 3600 * 1000, // 2 years
   },
   allowMultipleApplicationsInDraft: true,
   initialQueryParameter: 'selection',

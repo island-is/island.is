@@ -1,7 +1,10 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { ZendeskModule } from '@island.is/clients/zendesk'
-import { ApplicationApiCoreModule, Application } from '@island.is/application/api/core'
+import {
+  ApplicationApiCoreModule,
+  Application,
+} from '@island.is/application/api/core'
 
 import { SharedTemplateAPIModule } from '../../../shared'
 
