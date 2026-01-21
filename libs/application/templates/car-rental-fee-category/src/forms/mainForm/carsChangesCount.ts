@@ -7,6 +7,7 @@ import {
 } from '@island.is/application/core'
 import { CarCategoryRecord } from '../../utils/types'
 import { m } from '../../lib/messages'
+import { formatDayRateApiErrorMessages } from '../../utils/errorFormatUtils'
 
 export const carsChangesCountSection = buildSection({
   id: 'carsChangesCountSection',
@@ -31,6 +32,8 @@ export const carsChangesCountSection = buildSection({
         buildSubmitField({
           id: 'submit',
           refetchApplicationAfterSubmit: true,
+          renderLongErrors: true,
+          formatLongErrorMessage: formatDayRateApiErrorMessages,
           actions: [
             {
               event: 'SUBMIT',

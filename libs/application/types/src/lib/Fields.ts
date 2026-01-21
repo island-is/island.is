@@ -617,6 +617,8 @@ export interface SubmitField extends BaseField {
   readonly refetchApplicationAfterSubmit?:
     | boolean
     | ((event?: string) => boolean)
+  readonly renderLongErrors?: boolean
+  formatLongErrorMessage?: (message: string) => string
 }
 
 export interface DividerField extends BaseField {
