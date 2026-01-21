@@ -2,7 +2,7 @@ appId: 'is.island.app.dev'
 ---
 - launchApp:
     appId: 'is.island.app.dev'
-- runFlow: utils/sign-in.yaml
+- runFlow: 'utils/sign-in.yaml'
 - runFlow:
     file: 'utils/select-tab.yaml'
     env:
@@ -20,5 +20,4 @@ appId: 'is.island.app.dev'
     id: 'VEHICLE_ITEM'
 - assertVisible:
     id: 'SCREEN_VEHICLE_DETAIL'
-- tapOn:
-    id: 'TOPBAR_BACK_BUTTON'
+- runFlow: 'utils/back.yaml'

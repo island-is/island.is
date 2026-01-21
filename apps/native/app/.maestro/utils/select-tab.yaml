@@ -3,17 +3,18 @@ appId: 'is.island.app.dev'
 # Tabs do not render consistent testIDs on iOS and Android, at least in current version of react-native and
 # react-native-navigation. So we need this platform-specific logic to tap tabs. Hopefully it can be simplified
 # later.
+- assertVisible: Hæ.*
 - runFlow:
     when:
       platform: 'android'
     commands:
       - tapOn:
-          text: '${title}, tab.*'
+          id: '${title}, tab.*'
 - runFlow:
     when:
       platform: 'ios'
     commands:
       - tapOn:
-          text: ${title}
+          text: '${title}'
           childOf:
             id: 'TABBAR_MAIN'

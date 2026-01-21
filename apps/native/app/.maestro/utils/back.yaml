@@ -1,0 +1,15 @@
+appId: 'is.island.app.dev'
+---
+# For some reason, the back button has different text and id on android and iOS.
+- runFlow:
+    when:
+      platform: 'android'
+    commands:
+      - tapOn:
+          id: 'TOPBAR_BACK_BUTTON'
+- runFlow:
+    when:
+      platform: 'ios'
+    commands:
+      - tapOn:
+          id: 'BackButton'

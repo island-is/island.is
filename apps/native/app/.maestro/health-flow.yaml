@@ -22,8 +22,7 @@ appId: 'is.island.app.dev'
     id: 'VACCINATION_ITEM'
 - assertVisible:
     id: 'VACCINATION_ITEM_ROW'
-- tapOn:
-    id: 'TOPBAR_BACK_BUTTON'
+- runFlow: 'utils/back.yaml'
 - scrollUntilVisible:
     element:
       id: 'HEALTH_CENTER'

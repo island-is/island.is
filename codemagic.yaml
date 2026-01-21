@@ -181,11 +181,7 @@ definitions:
 
         # Run Maestro tests locally
         echo "Running Maestro tests..."
-        maestro test --format junit --output maestro-results.xml .maestro || TEST_RESULT=$?
-
-        # Capture simulator logs
-        echo "Capturing simulator logs..."
-        xcrun simctl spawn "$DEVICE_ID" log show --last 10m > simulator.log 2>&1 || true
+        maestro test .maestro || TEST_RESULT=$?
 
         # Shutdown simulator after tests
         echo "Shutting down simulator..."
@@ -374,8 +370,6 @@ workflows:
       - *cocoapods
       - *build_ios_simulator_app
       - *run_ios_tests_locally
-    artifacts: &ios_artifacts_e2e_tests
+    artifacts:
       - /tmp/xcodebuild_logs/*.log
       - maestro-results.xml
-      - simulator.log
-      - ios/output/**/*.app
