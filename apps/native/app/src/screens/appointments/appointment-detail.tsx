@@ -4,8 +4,7 @@ import {
   ImageSourcePropType,
   Linking,
   ScrollView,
-  TouchableOpacity,
-  View,
+  View
 } from 'react-native'
 import {
   Navigation,
@@ -13,24 +12,23 @@ import {
 } from 'react-native-navigation'
 
 import { useFragment_experimental } from '@apollo/client/react/hooks'
+import styled, { useTheme } from 'styled-components/native'
+import externalLink from '../../assets/icons/external-link.png'
+import { BaseAppointmentStatuses } from '../../constants/base-appointment-statuses'
 import {
-  Button,
+  AppointmentFragmentFragmentDoc,
+  HealthDirectorateAppointment,
+  useGetAppointmentsQuery
+} from '../../graphql/types/schema'
+import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
+import {
   Icon,
   Input,
   InputRow,
   NavigationBarSheet,
   Problem,
-  Typography,
+  Typography
 } from '../../ui'
-import {
-  AppointmentFragmentFragmentDoc,
-  HealthDirectorateAppointment,
-  HealthDirectorateAppointmentStatus,
-  useGetAppointmentsQuery,
-} from '../../graphql/types/schema'
-import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
-import styled, { useTheme } from 'styled-components/native'
-import externalLink from '../../assets/icons/external-link.png'
 
 const { useNavigationOptions } = createNavigationOptionHooks(() => ({
   topBar: {
@@ -83,10 +81,7 @@ export const AppointmentDetailScreen: NavigationFunctionComponent<
   const { data, loading, error } = useGetAppointmentsQuery({
     variables: {
       from: undefined,
-      status: [
-        HealthDirectorateAppointmentStatus.Booked,
-        HealthDirectorateAppointmentStatus.Cancelled,
-      ],
+      status: BaseAppointmentStatuses,
     },
     skip: !!appointmentFromCache?.data,
   })

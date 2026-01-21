@@ -1,18 +1,17 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { RefreshControl, SafeAreaView, ScrollView, View } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import styled from 'styled-components/native'
 
-import { GeneralCardSkeleton, Heading, Problem, Typography } from '../../ui'
+import { BaseAppointmentStatuses } from '../../constants/base-appointment-statuses'
 import {
-  HealthDirectorateAppointmentStatus,
-  useGetAppointmentsQuery,
+  useGetAppointmentsQuery
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
-import { useLocale } from '../../hooks/use-locale'
 import { useNavigationModal } from '../../hooks/use-navigation-modal'
+import { GeneralCardSkeleton, Problem, Typography } from '../../ui'
 import { ComponentRegistry } from '../../utils/component-registry'
 import { AppointmentCard } from './components/appointment-card'
 
@@ -60,10 +59,7 @@ export const AppointmentsScreen: NavigationFunctionComponent = ({
   const appointmentsRes = useGetAppointmentsQuery({
     variables: {
       from: undefined,
-      status: [
-        HealthDirectorateAppointmentStatus.Booked,
-        HealthDirectorateAppointmentStatus.Cancelled,
-      ],
+      status: BaseAppointmentStatuses,
     },
     fetchPolicy: 'cache-first',
     notifyOnNetworkStatusChange: true,
