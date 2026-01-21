@@ -7,7 +7,7 @@ import { SmsModule } from '@island.is/nova-sms'
 
 import { MessageModule } from '@island.is/judicial-system/message'
 
-import { Notification } from '../repository'
+import { InstitutionContact, Notification } from '../repository'
 import {
   CaseModule,
   CourtModule,
@@ -41,7 +41,7 @@ import { NotificationDispatchService } from './notificationDispatch.service'
     forwardRef(() => CourtModule),
     forwardRef(() => EventModule),
     forwardRef(() => DefendantModule),
-    SequelizeModule.forFeature([Notification]),
+    SequelizeModule.forFeature([Notification, InstitutionContact]),
   ],
   controllers: [NotificationController, InternalNotificationController],
   providers: [

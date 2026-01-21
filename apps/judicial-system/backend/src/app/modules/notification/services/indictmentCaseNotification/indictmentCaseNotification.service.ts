@@ -69,12 +69,12 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
   ) {
     super(
       notificationModel,
-      institutionContactModel,
       emailService,
       intlService,
       config,
       eventService,
       logger,
+      institutionContactModel,
     )
   }
 
@@ -235,9 +235,9 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
     const subject = `Svipting í máli ${theCase.courtCaseNumber}`
     const html = `Skrá skal sviptingu ökuréttinda í ökuskírteinaskrá vegna máls ${
       theCase.courtCaseNumber
-    } í ${applyDativeCaseToCourtName(theCase.court?.name ?? 'héraðsdómi')}.
-      
-      LÖKE númer: ${theCase.policeCaseNumbers}.`
+    } í ${applyDativeCaseToCourtName(
+      theCase.court?.name ?? 'héraðsdómi',
+    )}.<br><br>LÖKE númer: ${theCase.policeCaseNumbers}.`
 
     const contactInfo = {
       name: theCase.prosecutorsOffice?.name,
@@ -250,7 +250,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
 
     return this.sendEmails(
       theCase,
-      IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENDED,
+      IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION,
       subject,
       html,
       [
@@ -610,7 +610,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
         return this.sendCriminalRecordFilesUploadedNotification(theCase)
       case IndictmentCaseNotificationType.INDICTMENT_SPLIT_COMPLETED:
         return this.sendSplitCompletedNotifications(theCase)
-      case IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENDED:
+      case IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION:
         return this.sendDrivingLicenseSuspensionNotifications(theCase)
       default:
         throw new InternalServerErrorException(
@@ -623,21 +623,21 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
     institutionId?: string,
   ): Promise<string | null> {
     try {
-      if (!institutionId) {
+      if (!institutionId || !this.institutionContactModel) {
         return null
       }
 
       const institutionContact = await this.institutionContactModel.findOne({
         where: {
           institutionId,
-          type: IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENDED,
+          type: IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION,
         },
       })
 
       return institutionContact?.value ?? null
     } catch (error) {
       this.logger.error(
-        `Failed to get institution contact for institutionId: ${institutionId} and type: ${IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENDED}`,
+        `Failed to get institution contact for institutionId: ${institutionId} and type: ${IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION}`,
         error,
       )
 

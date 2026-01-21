@@ -27,12 +27,12 @@ interface Attachment {
 export abstract class BaseNotificationService {
   constructor(
     private readonly notificationModel: typeof Notification,
-    protected readonly institutionContactModel: typeof InstitutionContact,
     private readonly emailService: EmailService,
     private readonly intlService: IntlService,
     protected readonly config: ConfigType<typeof notificationModuleConfig>,
     protected readonly eventService: EventService,
     protected readonly logger: Logger,
+    protected readonly institutionContactModel?: typeof InstitutionContact,
   ) {
     this.logger.warn('IntlService ', {
       intlService,

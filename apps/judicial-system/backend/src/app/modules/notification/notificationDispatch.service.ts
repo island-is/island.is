@@ -153,7 +153,7 @@ export class NotificationDispatchService {
               type: MessageType.INDICTMENT_CASE_NOTIFICATION,
               caseId: theCase.id,
               body: {
-                type: IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENDED,
+                type: IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION,
               },
             },
           ]

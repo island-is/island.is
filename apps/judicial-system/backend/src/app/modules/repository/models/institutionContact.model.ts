@@ -19,7 +19,7 @@ import {
 import { Institution } from './institution.model'
 
 @Table({
-  tableName: 'institution',
+  tableName: 'institution_contact',
   timestamps: true,
 })
 export class InstitutionContact extends Model {
