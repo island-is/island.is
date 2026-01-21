@@ -7,7 +7,6 @@ import {
   LinkButton,
   InfoLineStack,
   InfoLine,
-  formatDate,
   formSubmit,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
@@ -20,7 +19,6 @@ import {
   HmsRentalAgreement,
   HmsRentalAgreementStatusType,
 } from '@island.is/api/schema'
-import { mapTemporalTypeToMessage } from '../../../utils/mapTemporalTypeToMessage'
 import { generateRentalAgreementAddress } from '../../../utils/mapAddress'
 import { getApplicationsBaseUrl } from '@island.is/portals/core'
 
