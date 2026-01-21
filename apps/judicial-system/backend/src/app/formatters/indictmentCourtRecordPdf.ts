@@ -4,6 +4,7 @@ import PDFDocument from 'pdfkit'
 import {
   formatDate,
   getRoleTitleFromCaseFileCategory,
+  lowercase,
 } from '@island.is/judicial-system/formatters'
 import {
   CaseFileCategory,
@@ -130,9 +131,9 @@ export const createIndictmentCourtRecordPdf = (
       `Þann ${formatDate(
         courtSession.startDate ?? nowFactory(),
         'PPP',
-      )} heldur ${
-        courtSession.judge?.name ?? 'óþekktur'
-      } héraðsdómari dómþing ${
+      )} heldur ${courtSession.judge?.name ?? 'óþekktur'} ${lowercase(
+        courtSession.judge?.title,
+      )} dómþing ${
         courtSession.location ?? 'á óþekktum stað'
       }. Fyrir er tekið mál nr. ${
         theCase.courtCaseNumber ?? 'S-xxxx/yyyy'
