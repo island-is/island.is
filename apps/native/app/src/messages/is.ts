@@ -744,6 +744,7 @@ export const is = {
   'health.overview.vaccinations': 'Bólusetningar',
   'health.overview.aidsAndNutrition': 'Hjálpartæki og næring',
   'health.overview.medicinePurchase': 'Lyfjakaup',
+  'health.overview.medicineDelegation': 'Lyfjaheimild',
   'health.overview.period': 'Tímabil',
   'health.overview.levelStatus': 'Þrepastaða',
   'health.overview.levelStatusValue':
@@ -787,6 +788,72 @@ export const is = {
     'Engin líffæri má nota til ígræðslu.',
   'health.organDonation.isDonorWithLimitationsDescription':
     'Öll líffærin mín má nota til ígræðslu fyrir utan: {limitations}.',
+
+  // health - medicine delegation
+  'health.medicineDelegation.screenTitle': 'Lyfjaheimild',
+  'health.medicineDelegation.title': 'Lyfjaheimild',
+  'health.medicineDelegation.description':
+    'Einungis þú getur sótt þín lyf í apótek, nema þú veitir öðrum sérstaka heimild fyrir þig. Hér getur þú skráð þá aðila sem þú veitir heimild til að sækja lyf í apótek fyrir þig.',
+  'health.medicineDelegation.readMore': 'Lesa um lyfjaheimildir',
+  'health.medicineDelegation.addButton': 'Bæta við heimild',
+  'health.medicineDelegation.emptyTitle': 'Engar heimildir',
+  'health.medicineDelegation.emptyDescription':
+    'Það eru engar skráðar heimildir.',
+  'health.medicineDelegation.listCaption':
+    'Sækja lyf og fletta upp lyfjaávísun.',
+  'health.medicineDelegation.captionPickup': 'Sækja lyf í apóteki.',
+  'health.medicineDelegation.captionPickupAndLookup':
+    'Sækja lyf í apóteki og fletta upp lyfjaávísunum.',
+  'health.medicineDelegation.listValidTo': 'Gildir til {date}',
+  'health.medicineDelegation.showExpiredPermits': 'Sýna óvirkar',
+  'health.medicineDelegation.hideExpiredPermits': 'Fela óvirkar',
+  'health.medicineDelegation.noActiveTitle': 'Engar virkar heimildir',
+  'health.medicineDelegation.noActiveDescription':
+    'Þú ert ekki með neinar virkar heimildir. Hægt er að ýta á takkann "Sýna óvirkar" hér að ofan ef þú vilt skoða óvirkar heimildir.',
+  'health.medicineDelegation.labelExpired': 'Útrunnið',
+  'health.medicineDelegation.detail.delete': 'Eyða heimild',
+  'health.medicineDelegation.detail.issuerLabel': 'Útgefandi',
+  'health.medicineDelegation.detail.issuerValue': 'Sjúkratryggingar Íslands',
+  'health.medicineDelegation.detail.issuedDate': 'Útgáfudagur',
+  'health.medicineDelegation.detail.status': 'Staða',
+  'health.medicineDelegation.detail.statusActive': 'Í gildi',
+  'health.medicineDelegation.detail.statusExpired': 'Útrunnið',
+  'health.medicineDelegation.detail.validity': 'Gildistími',
+  'health.medicineDelegation.detail.validFor': 'Gildir fyrir',
+  'health.medicineDelegation.detail.validForValue':
+    'Sækja lyf og fletta upp lyfjaávísun.',
+  'health.medicineDelegation.detail.validForPickup': 'Sækja lyf í apóteki.',
+  'health.medicineDelegation.detail.validForPickupAndLookup':
+    'Sækja lyf í apóteki og fletta upp lyfjaávísunum.',
+  'health.medicineDelegation.detail.revoke': 'Eyða heimild',
+  'health.medicineDelegation.detail.revokeError':
+    'Ekki tókst að eyða lyfjaheimild. Vinsamlegast reynið aftur síðar.',
+  'health.medicineDelegation.detail.revokePromptTitle': 'Viltu eyða heimild?',
+  'health.medicineDelegation.detail.revokePromptCancel': 'Hætta við',
+  'health.medicineDelegation.detail.revokePromptConfirm': 'Eyða',
+  'health.medicineDelegation.form.title': 'Bæta við lyfjaheimild',
+  'health.medicineDelegation.form.subtitle':
+    'Veldu aðila sem má sækja lyfin þín í apóteki.',
+  'health.medicineDelegation.form.nationalIdLabel': 'Kennitala',
+  'health.medicineDelegation.form.nameLabel': 'Nafn',
+  'health.medicineDelegation.form.validityLabel':
+    'Hve lengi viltu að heimildin gildi?',
+  'health.medicineDelegation.form.dateFromLabel': 'Dagsetning frá',
+  'health.medicineDelegation.form.dateToLabel': 'Dagsetning til',
+  'health.medicineDelegation.form.dateFromPlaceholder': 'Veldu dagsetningu frá',
+  'health.medicineDelegation.form.dateToPlaceholder': 'Veldu dagsetningu til',
+  'health.medicineDelegation.form.submit': 'Bæta við heimild',
+  'health.medicineDelegation.form.delegateMedicineDelegationError':
+    'Ekki tókst að bæta við lyfjaheimild. Vinsamlegast reynið aftur síðar.',
+  'health.medicineDelegation.form.nameNotFound':
+    'Ekki tókst að finna nafn fyrir kennitölu.',
+  'health.medicineDelegation.form.nameError':
+    'Villa kom upp við að sækja nafn.',
+  'health.medicineDelegation.form.invalidNationalId': 'Ógild kennitala.',
+  'health.medicineDelegation.form.lookupLabel':
+    'Ofangreindur aðili má einnig fletta upp mínum lyfjaávísunum í apóteki.',
+  'health.medicineDelegation.form.xYears': '{years} ár',
+  'health.medicineDelegation.form.xMonths': '{months} mán',
 
   // health - prescriptions & drug certificates
   'health.prescriptionsAndCertificates.screenTitle': 'Lyf',
