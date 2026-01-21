@@ -7,7 +7,6 @@ import {
   LinkButton,
   InfoLineStack,
   InfoLine,
-  formatDate,
   formSubmit,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
@@ -20,7 +19,6 @@ import {
   HmsRentalAgreement,
   HmsRentalAgreementStatusType,
 } from '@island.is/api/schema'
-import { mapTemporalTypeToMessage } from '../../../utils/mapTemporalTypeToMessage'
 import { generateRentalAgreementAddress } from '../../../utils/mapAddress'
 import { getApplicationsBaseUrl } from '@island.is/portals/core'
 
@@ -46,12 +44,6 @@ const UserContract = () => {
       )
     }
   }, [data?.hmsRentalAgreement?.contractProperty])
-
-  const agreementLengthMessage = useMemo(() => {
-    if (data?.hmsRentalAgreement?.contractType) {
-      return mapTemporalTypeToMessage(data.hmsRentalAgreement.contractType)
-    }
-  }, [data?.hmsRentalAgreement?.contractType])
 
   const status = useMemo(() => {
     if (
@@ -131,17 +123,13 @@ const UserContract = () => {
               loading={loading}
               label={cm.lengthOfRentalAgreement}
               content={
-                agreementLengthMessage
-                  ? formatMessage(agreementLengthMessage)
-                  : undefined
-              }
-            />
-            <InfoLine
-              loading={loading}
-              label={cm.registrationDate}
-              content={
-                contract?.signatureDate
-                  ? formatDate(contract?.signatureDate)
+                contract?.dateFrom
+                  ? formatMessage(cm.rentalAgreementDate, {
+                      from: new Date(contract.dateFrom),
+                      to: contract.dateTo
+                        ? new Date(contract.dateTo)
+                        : undefined,
+                    })
                   : undefined
               }
             />

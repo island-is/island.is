@@ -1,3 +1,4 @@
+import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
@@ -22,14 +23,25 @@ describe('DefendantController - Delete', () => {
 
   let mockMessageService: MessageService
   let mockDefendantRepositoryService: DefendantRepositoryService
+  let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { messageService, defendantRepositoryService, defendantController } =
-      await createTestingDefendantModule()
+    const {
+      sequelize,
+      messageService,
+      defendantRepositoryService,
+      defendantController,
+    } = await createTestingDefendantModule()
 
     mockMessageService = messageService
     mockDefendantRepositoryService = defendantRepositoryService
+
+    const mockTransaction = sequelize.transaction as jest.Mock
+    transaction = {} as Transaction
+    mockTransaction.mockImplementationOnce(
+      (fn: (transaction: Transaction) => unknown) => fn(transaction),
+    )
 
     const mockDelete = mockDefendantRepositoryService.delete as jest.Mock
     mockDelete.mockRejectedValue(new Error('Some error'))
@@ -66,6 +78,7 @@ describe('DefendantController - Delete', () => {
       expect(mockDefendantRepositoryService.delete).toHaveBeenCalledWith(
         caseId,
         defendantId,
+        { transaction },
       )
       expect(then.result).toEqual({ deleted: true })
       expect(mockMessageService.sendMessagesToQueue).not.toHaveBeenCalled()

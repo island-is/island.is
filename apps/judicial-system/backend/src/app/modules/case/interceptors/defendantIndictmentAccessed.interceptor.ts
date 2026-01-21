@@ -1,9 +1,12 @@
+import { Sequelize } from 'sequelize-typescript'
+
 import {
   CallHandler,
   ExecutionContext,
   Injectable,
   NestInterceptor,
 } from '@nestjs/common'
+import { InjectConnection } from '@nestjs/sequelize'
 
 import {
   DefendantEventType,
@@ -35,7 +38,10 @@ const hasValidOpenByPrisonAdminEvent = (
 
 @Injectable()
 export class DefendantIndictmentAccessedInterceptor implements NestInterceptor {
-  constructor(private readonly defendantService: DefendantService) {}
+  constructor(
+    @InjectConnection() private readonly sequelize: Sequelize,
+    private readonly defendantService: DefendantService,
+  ) {}
 
   intercept(context: ExecutionContext, next: CallHandler) {
     const request = context.switchToHttp().getRequest()
@@ -50,11 +56,24 @@ export class DefendantIndictmentAccessedInterceptor implements NestInterceptor {
 
       // create new events for all defendants that prison admin has not accessed according to defendant event logs
       defendantsIndictmentNotOpened?.forEach((defendant) =>
-        this.defendantService.createDefendantEvent({
-          caseId: theCase.id,
-          defendantId: defendant.id,
-          eventType: DefendantEventType.OPENED_BY_PRISON_ADMIN,
-        }),
+        this.sequelize
+          .transaction((transaction) =>
+            this.defendantService.createDefendantEvent(
+              {
+                caseId: theCase.id,
+                defendantId: defendant.id,
+                eventType: DefendantEventType.OPENED_BY_PRISON_ADMIN,
+              },
+              transaction,
+            ),
+          )
+          .catch((reason) => {
+            // Log the error but do not fail the request
+            console.error(
+              `Failed to create ${DefendantEventType.OPENED_BY_PRISON_ADMIN} event for defendant ${defendant.id} in case ${theCase.id}`,
+              { reason },
+            )
+          }),
       )
     }
     return next.handle()
