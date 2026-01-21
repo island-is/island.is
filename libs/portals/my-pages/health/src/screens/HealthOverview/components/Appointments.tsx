@@ -84,7 +84,7 @@ const Appointments: React.FC<Props> = ({ data, showLinkButton }) => {
         )}
       </Box>
       <InfoCardGrid
-        cards={isEmpty ? [] : cards}
+        cards={cards}
         size={isEmpty ? 'small' : undefined}
         empty={
           isEmpty && !data?.loading
