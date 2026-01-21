@@ -10,7 +10,6 @@ import {
 import styled, { useTheme } from 'styled-components/native'
 import { dynamicColor } from '../../utils'
 import { font } from '../../utils/font'
-import { Loader } from '../loader/loader'
 
 interface ButtonBaseProps extends TouchableHighlightProps {
   isTransparent?: boolean
@@ -22,7 +21,6 @@ interface ButtonBaseProps extends TouchableHighlightProps {
   textProps?: TextProps
   iconStyle?: ImageStyle
   ellipsis?: boolean
-  compactPadding?: boolean
   iconPosition?: 'start' | 'end'
   loading?: boolean
 }
@@ -47,41 +45,38 @@ const Host = styled.TouchableHighlight<HostProps>`
   justify-content: center;
   align-items: center;
   column-gap: ${({ theme }) => theme.spacing.p1}px;
-  padding: ${(props) =>
-    props.compactPadding
-      ? `${props.theme.spacing.p1}px ${props.theme.spacing.p2}px`
-      : `${props.theme.spacing.p3}px ${props.theme.spacing.p4}px`};
+  padding: ${({ theme }) => `${theme.spacing.p1}px ${theme.spacing.p2}px`};
   background-color: ${dynamicColor<HostProps>(
-        ({
-          theme,
-          disabled,
-          isTransparent,
-          isOutlined,
-          isUtilityButton,
-          isFilledUtilityButton,
-        }) =>
-          isTransparent || isOutlined || (isUtilityButton && !isFilledUtilityButton)
-            ? 'transparent'
-            : {
-              dark: disabled ? theme.shades.dark.shade200 : theme.color.blue400,
-              light: disabled ? theme.color.blue300 : theme.color.blue400,
-            },
-      )};
+  ({
+    theme,
+    disabled,
+    isTransparent,
+    isOutlined,
+    isUtilityButton,
+    isFilledUtilityButton,
+  }) =>
+    isTransparent || isOutlined || (isUtilityButton && !isFilledUtilityButton)
+      ? 'transparent'
+      : {
+        dark: disabled ? theme.shades.dark.shade200 : theme.color.blue400,
+        light: disabled ? theme.color.blue300 : theme.color.blue400,
+      },
+)};
 
   border-color: ${dynamicColor<HostProps>(
-        ({ theme, disabled, isOutlined, isUtilityButton }) =>
-          !isOutlined
-            ? 'transparent'
-            : isUtilityButton
-              ? {
-                dark: '#CCDFFF55',
-                light: theme.color.blue200,
-              }
-              : {
-                dark: disabled ? theme.shades.dark.shade200 : theme.color.blue400,
-                light: disabled ? theme.color.blue300 : theme.color.blue400,
-              },
-      )};
+  ({ theme, disabled, isOutlined, isUtilityButton }) =>
+    !isOutlined
+      ? 'transparent'
+      : isUtilityButton
+        ? {
+          dark: '#CCDFFF55',
+          light: theme.color.blue200,
+        }
+        : {
+          dark: disabled ? theme.shades.dark.shade200 : theme.color.blue400,
+          light: disabled ? theme.color.blue300 : theme.color.blue400,
+        },
+)};
 
   border-radius: ${(props) => props.theme.border.radius.large};
   min-width: ${(props) => (props.isUtilityButton ? 0 : '192px')};
@@ -136,7 +131,6 @@ export function Button({
   textProps,
   iconStyle,
   ellipsis,
-  compactPadding = false,
   iconPosition = 'end',
   loading = false,
   ...rest
@@ -175,7 +169,6 @@ export function Button({
       isOutlined={isOutlined}
       isUtilityButton={isUtilityButton}
       isFilledUtilityButton={isFilledUtilityButton}
-      compactPadding={compactPadding}
       {...rest}
     >
       {loading ? (
