@@ -19,6 +19,9 @@ import { FamilyOverviewScreen } from '../../screens/family/family-overview'
 import { FinanceScreen } from '../../screens/finance/finance'
 import { FinanceStatusDetailScreen } from '../../screens/finance/finance-status-detail'
 import { HealthOverviewScreen } from '../../screens/health/health-overview'
+import { MedicineDelegationScreen } from '../../screens/medicine-delegation/medicine-delegation'
+import { MedicineDelegationFormScreen } from '../../screens/medicine-delegation/medicine-delegation-form'
+import { MedicineDelegationDetailScreen } from '../../screens/medicine-delegation/medicine-delegation-detail'
 import { HomeScreen } from '../../screens/home/home'
 import { HomeOptionsScreen } from '../../screens/home/home-options'
 import { InboxScreen } from '../../screens/inbox/inbox'
@@ -106,6 +109,15 @@ export function registerAllComponents() {
   registerComponent(CR.PasskeyScreen, PasskeyScreen)
   registerComponent(CR.UpdateAppScreen, UpdateAppScreen)
   registerComponent(CR.HealthOverviewScreen, HealthOverviewScreen)
+  registerComponent(CR.MedicineDelegationScreen, MedicineDelegationScreen)
+  registerComponent(
+    CR.MedicineDelegationFormScreen,
+    MedicineDelegationFormScreen,
+  )
+  registerComponent(
+    CR.MedicineDelegationDetailScreen,
+    MedicineDelegationDetailScreen,
+  )
   registerComponent(CR.HomeOptionsScreen, HomeOptionsScreen)
   registerComponent(CR.ApplicationsCompletedScreen, ApplicationsCompletedScreen)
   registerComponent(
