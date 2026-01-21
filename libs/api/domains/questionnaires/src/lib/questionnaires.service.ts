@@ -377,6 +377,7 @@ export class QuestionnairesService {
                 title: q.title ?? formatMessage(m.questionnaireWithoutTitle),
                 description: q.message ?? undefined,
                 sentDate: q.createdDate?.toISOString() ?? '',
+                lastSubmissionId: q.lastCreatedSubmissionId,
                 organization: QuestionnairesOrganizationEnum.EL,
                 department: undefined,
                 status:
@@ -487,8 +488,8 @@ export class QuestionnairesService {
               : QuestionnairesStatusEnum.notAnswered,
             description: data.message ?? undefined,
             organization: QuestionnairesOrganizationEnum.EL,
+            lastSubmissionId: data.lastCreatedSubmissionId,
           },
-          lastSubmissionId: data.lastCreatedSubmissionId,
           submissions: data.submissions?.map((sub) => ({
             id: sub.id,
             createdAt: sub.createdDate ?? undefined,
