@@ -24,6 +24,10 @@ fragment AuthAdminScopeEnvironmentFragment on AuthAdminScopeEnvironment {
 
   supportedDelegationTypes
   automaticDelegationGrant
+  
+  # Categories and Tags
+  categoryIds
+  tagIds
 }
 
 query AuthAdminScope($input: ScopeInput!) {

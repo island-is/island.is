@@ -62,4 +62,16 @@ export class AdminPatchScopeInput {
 
   @Field(() => [String], { nullable: true })
   removedDelegationTypes?: string[]
+
+  @Field(() => [String], { nullable: true })
+  addedCategoryIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  removedCategoryIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  addedTagIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  removedTagIds?: string[]
 }

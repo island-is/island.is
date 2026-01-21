@@ -23,6 +23,8 @@ import { ApiScopeUserClaim } from './api-scope-user-claim.model'
 import { Domain } from './domain.model'
 import { ApiScopeDelegationType } from './api-scope-delegation-type.model'
 import { DelegationTypeModel } from '../../delegations/models/delegation-type.model'
+import { ApiScopeCategory } from './api-scope-category.model'
+import { ApiScopeTag } from './api-scope-tag.model'
 
 interface ModelAttributes {
   name: string
@@ -260,6 +262,12 @@ export class ApiScope extends Model<ModelAttributes, CreationAttributes> {
   @HasMany(() => ApiScopeDelegationType)
   supportedDelegationTypes?: ApiScopeDelegationType[]
 
+  @HasMany(() => ApiScopeCategory)
+  categories?: ApiScopeCategory[]
+
+  @HasMany(() => ApiScopeTag)
+  tags?: ApiScopeTag[]
+
   @BelongsTo(() => Domain)
   @ApiPropertyOptional({ type: () => Domain })
   domain?: Domain
@@ -292,6 +300,8 @@ export class ApiScope extends Model<ModelAttributes, CreationAttributes> {
         this.supportedDelegationTypes?.map(
           ({ delegationType }) => delegationType,
         ) ?? [],
+      categoryIds: this.categories?.map((c) => c.categoryId) ?? [],
+      tagIds: this.tags?.map((t) => t.tagId) ?? [],
     }
   }
 }

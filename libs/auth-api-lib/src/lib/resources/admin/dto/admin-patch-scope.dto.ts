@@ -112,6 +112,42 @@ export class AdminPatchScopeDto {
     example: ['Custom'],
   })
   removedDelegationTypes?: AuthDelegationType[]
+
+  @IsArray()
+  @IsOptional()
+  @ApiPropertyOptional({
+    type: [String],
+    example: ['4vQ4htPOAZvzcXBcjx06SH'],
+    description: 'CMS category IDs to add to this scope',
+  })
+  addedCategoryIds?: string[]
+
+  @IsArray()
+  @IsOptional()
+  @ApiPropertyOptional({
+    type: [String],
+    example: ['4vQ4htPOAZvzcXBcjx06SH'],
+    description: 'CMS category IDs to remove from this scope',
+  })
+  removedCategoryIds?: string[]
+
+  @IsArray()
+  @IsOptional()
+  @ApiPropertyOptional({
+    type: [String],
+    example: ['2eGxK9pLm3'],
+    description: 'CMS tag IDs to add to this scope',
+  })
+  addedTagIds?: string[]
+
+  @IsArray()
+  @IsOptional()
+  @ApiPropertyOptional({
+    type: [String],
+    example: ['2eGxK9pLm3'],
+    description: 'CMS tag IDs to remove from this scope',
+  })
+  removedTagIds?: string[]
 }
 
 /**

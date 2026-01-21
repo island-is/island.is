@@ -18,6 +18,8 @@ import { Domain } from '../resources/models/domain.model'
 import { ApiScope } from '../resources/models/api-scope.model'
 import { AdminScopeService } from '../resources/admin/admin-scope.service'
 import { ApiScopeUserClaim } from '../resources/models/api-scope-user-claim.model'
+import { ApiScopeCategory } from '../resources/models/api-scope-category.model'
+import { ApiScopeTag } from '../resources/models/api-scope-tag.model'
 import { AdminTranslationService } from '../resources/admin/services/admin-translation.service'
 import { ClientDelegationType } from './models/client-delegation-type.model'
 import { DelegationTypeModel } from '../delegations/models/delegation-type.model'
@@ -43,6 +45,8 @@ import { ApiScopeDelegationType } from '../resources/models/api-scope-delegation
       ApiScope,
       ApiScopeUserClaim,
       ApiScopeDelegationType,
+      ApiScopeCategory,
+      ApiScopeTag,
     ]),
     TranslationModule,
   ],

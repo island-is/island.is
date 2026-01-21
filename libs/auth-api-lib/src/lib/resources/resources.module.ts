@@ -10,6 +10,8 @@ import { PersonalRepresentative } from '../personal-representative/models/person
 import { TranslationModule } from '../translation/translation.module'
 import { DelegationResourcesService } from './delegation-resources.service'
 import { ApiResourceScope } from './models/api-resource-scope.model'
+import { ApiScopeCategory } from './models/api-scope-category.model'
+import { ApiScopeTag } from './models/api-scope-tag.model'
 import { ApiResourceSecret } from './models/api-resource-secret.model'
 import { ApiResourceUserClaim } from './models/api-resource-user-claim.model'
 import { ApiResource } from './models/api-resource.model'
@@ -41,6 +43,8 @@ import { ApiScopeDelegationType } from './models/api-scope-delegation-type.model
       ApiScopeUserAccess,
       ApiResourceScope,
       ApiScopeDelegationType,
+      ApiScopeCategory,
+      ApiScopeTag,
       IdentityResourceUserClaim,
       ApiScopeUserClaim,
       ApiResourceUserClaim,

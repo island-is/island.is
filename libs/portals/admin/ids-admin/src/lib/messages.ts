@@ -780,6 +780,40 @@ export const m = defineMessages({
     id: 'ap.ids-admin:access-control',
     defaultMessage: 'Access control',
   },
+  categoriesAndTags: {
+    id: 'ap.ids-admin:categories-and-tags',
+    defaultMessage: 'Categories and Tags',
+  },
+  categories: {
+    id: 'ap.ids-admin:categories',
+    defaultMessage: 'Þjónustuflokkar (Categories)',
+  },
+  categoriesDescription: {
+    id: 'ap.ids-admin:categories-description',
+    defaultMessage:
+      'Select which service categories this permission belongs to. These help users find relevant permissions when creating delegations.',
+  },
+  tags: {
+    id: 'ap.ids-admin:tags',
+    defaultMessage: 'Lífsviðburðir (Life Events)',
+  },
+  tagsDescription: {
+    id: 'ap.ids-admin:tags-description',
+    defaultMessage:
+      'Select which life events this permission is relevant for. This helps users understand when they might need this permission.',
+  },
+  noCategories: {
+    id: 'ap.ids-admin:no-categories',
+    defaultMessage: 'No categories available',
+  },
+  noTags: {
+    id: 'ap.ids-admin:no-tags',
+    defaultMessage: 'No tags available',
+  },
+  loading: {
+    id: 'ap.ids-admin:loading',
+    defaultMessage: 'Loading...',
+  },
   icelandic: {
     id: 'ap.ids-admin:icelandic',
     defaultMessage: 'Icelandic',

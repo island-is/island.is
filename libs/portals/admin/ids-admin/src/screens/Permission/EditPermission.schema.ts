@@ -9,6 +9,7 @@ export enum PermissionFormTypes {
   CONTENT = 'CONTENT',
   ACCESS_CONTROL = 'ACCESS_CONTROL',
   DELEGATIONS = 'DELEGATIONS',
+  CATEGORIES_AND_TAGS = 'CATEGORIES_AND_TAGS',
 }
 
 const contentSchema = z
@@ -66,12 +67,61 @@ const delegationsSchema = z
   })
   .merge(defaultEnvironmentSchema)
 
+const categoriesAndTagsSchema = z
+  .object({
+    categoryIds: z
+      .string()
+      .optional()
+      .transform((val) => (val ? JSON.parse(val) : [])),
+    tagIds: z
+      .string()
+      .optional()
+      .transform((val) => (val ? JSON.parse(val) : [])),
+    originalCategoryIds: z
+      .string()
+      .optional()
+      .transform((val) => (val ? JSON.parse(val) : [])),
+    originalTagIds: z
+      .string()
+      .optional()
+      .transform((val) => (val ? JSON.parse(val) : [])),
+  })
+  .merge(defaultEnvironmentSchema)
+  .transform(
+    ({ categoryIds, tagIds, originalCategoryIds, originalTagIds, ...rest }) => {
+      const addedCategoryIds = categoryIds.filter(
+        (id: string) => !originalCategoryIds.includes(id),
+      )
+      const removedCategoryIds = originalCategoryIds.filter(
+        (id: string) => !categoryIds.includes(id),
+      )
+      const addedTagIds = tagIds.filter(
+        (id: string) => !originalTagIds.includes(id),
+      )
+      const removedTagIds = originalTagIds.filter(
+        (id: string) => !tagIds.includes(id),
+      )
+
+      return {
+        ...rest,
+        addedCategoryIds:
+          addedCategoryIds.length > 0 ? addedCategoryIds : undefined,
+        removedCategoryIds:
+          removedCategoryIds.length > 0 ? removedCategoryIds : undefined,
+        addedTagIds: addedTagIds.length > 0 ? addedTagIds : undefined,
+        removedTagIds: removedTagIds.length > 0 ? removedTagIds : undefined,
+      }
+    },
+  )
+
 export const schema = {
   [PermissionFormTypes.CONTENT]: contentSchema,
   [PermissionFormTypes.ACCESS_CONTROL]: accessControlSchema,
   [PermissionFormTypes.DELEGATIONS]: delegationsSchema,
+  [PermissionFormTypes.CATEGORIES_AND_TAGS]: categoriesAndTagsSchema,
 }
 
 export type MergedFormDataSchema = typeof schema[PermissionFormTypes.CONTENT] &
   typeof schema[PermissionFormTypes.ACCESS_CONTROL] &
-  typeof schema[PermissionFormTypes.DELEGATIONS]
+  typeof schema[PermissionFormTypes.DELEGATIONS] &
+  typeof schema[PermissionFormTypes.CATEGORIES_AND_TAGS]

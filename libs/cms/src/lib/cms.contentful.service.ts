@@ -74,6 +74,10 @@ import { mapTabSection, TabSection } from './models/tabSection.model'
 import { GenericTag, mapGenericTag } from './models/genericTag.model'
 import { GetEmailSignupInput } from './dto/getEmailSignup.input'
 import { LifeEventPage, mapLifeEventPage } from './models/lifeEventPage.model'
+import {
+  ArticleCategory,
+  mapArticleCategory,
+} from './models/articleCategory.model'
 import { GetGenericTagBySlugInput } from './dto/getGenericTagBySlug.input'
 import { GetGenericTagsInTagGroupsInput } from './dto/getGenericTagsInTagGroups.input'
 import { Grant, mapGrant } from './models/grant.model'
@@ -861,6 +865,19 @@ export class CmsContentfulService {
       .catch(errorHandler('getLifeEvents'))
 
     return (result.items as types.ILifeEventPage[]).map(mapLifeEventPage)
+  }
+
+  async getArticleCategories(lang: string): Promise<ArticleCategory[]> {
+    const params = {
+      ['content_type']: 'articleCategory',
+      order: 'fields.title',
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IArticleCategoryFields>(lang, params)
+      .catch(errorHandler('getArticleCategories'))
+
+    return (result.items as types.IArticleCategory[]).map(mapArticleCategory)
   }
 
   async getLifeEventsInCategory(

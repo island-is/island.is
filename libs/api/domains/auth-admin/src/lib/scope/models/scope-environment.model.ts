@@ -69,4 +69,10 @@ export class ScopeEnvironment {
 
   @Field(() => Boolean)
   isAccessControlled!: boolean
+
+  @Field(() => [String], { defaultValue: [] })
+  categoryIds!: string[]
+
+  @Field(() => [String], { defaultValue: [] })
+  tagIds!: string[]
 }
