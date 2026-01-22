@@ -38,7 +38,7 @@ export class FileService {
     }
 
     this.logger.info(
-      `Queueing copy job for file ${sourceKey} from ${this.config.tempBucket} to ${targetBucket}`,
+      `Queueing copy job for file ${sourceKey} from ${this.config.uploadBucket} to ${targetBucket}`,
     )
 
     //   try {
