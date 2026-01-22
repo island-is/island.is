@@ -1,4 +1,5 @@
 import { Response } from 'express'
+import { Transaction } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 
 import {
@@ -116,7 +117,6 @@ import { SignatureConfirmationResponse } from './models/signatureConfirmation.re
 import { transitionCase } from './state/case.state'
 import { CaseService } from './case.service'
 import { PdfService } from './pdf.service'
-import { Transaction } from 'sequelize'
 
 @Controller('api')
 @ApiTags('cases')
