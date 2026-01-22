@@ -25,7 +25,7 @@ describe('InternalSubpoenaController - Deliver subpoena to national commissioner
   const theCase = { id: caseId, defendants: [defendant] } as Case
   const user = { id: uuid() }
   const dto = { user } as DeliverDto
-  const transaction = undefined 
+  const transaction = undefined
 
   let mockPdfService: PdfService
   let givenWhenThen: GivenWhenThen
