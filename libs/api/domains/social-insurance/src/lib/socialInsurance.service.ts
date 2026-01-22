@@ -3,8 +3,13 @@ import { handle404 } from '@island.is/clients/middlewares'
 import {
   IncomePlanStatus as IncomeStatus,
   SocialInsuranceAdministrationClientService,
-  TrWebExternalModelsServicePortalRehabilitationPlan,
+  TrWebApiServicesDomainEducationalInstitutionsModelsEducationalInstitutionsDto,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto,
+  TrWebContractsExternalServicePortalBaseCertificate,
+  TrWebContractsExternalServicePortalConfirmationOfIllHealth,
+  TrWebContractsExternalServicePortalConfirmationOfPendingResolution,
+  TrWebContractsExternalServicePortalConfirmedTreatment,
+  TrWebContractsExternalServicePortalRehabilitationPlan,
 } from '@island.is/clients/social-insurance-administration'
 import {
   CmsElasticsearchService,
@@ -29,6 +34,9 @@ import {
   groupPensionCalculationItems,
   mapPensionCalculationInput,
 } from './utils'
+import { Locale } from '@island.is/shared/types'
+import { mapDisabilityPensionCertificate } from './mappers/mapDisabilityPensionCertificate'
+import { DisabilityPensionCertificate } from './models/medicalDocuments/disabilityPensionCertificate.model'
 
 @Injectable()
 export class SocialInsuranceService {
@@ -235,7 +243,92 @@ export class SocialInsuranceService {
 
   async getRehabilitationPlan(
     user: User,
-  ): Promise<TrWebExternalModelsServicePortalRehabilitationPlan> {
+  ): Promise<TrWebContractsExternalServicePortalRehabilitationPlan> {
     return await this.socialInsuranceApi.getRehabilitationPlan(user)
+  }
+
+  async getCertificateForSicknessAndRehabilitation(
+    user: User,
+  ): Promise<TrWebContractsExternalServicePortalBaseCertificate> {
+    return await this.socialInsuranceApi.getCertificateForSicknessAndRehabilitation(
+      user,
+    )
+  }
+
+  async getDisabilityPensionCertificate(
+    user: User,
+    locale: Locale,
+  ): Promise<DisabilityPensionCertificate | null> {
+    const data = await this.socialInsuranceApi
+      .getCertificateForDisabilityPension(user)
+      .catch(handle404)
+    return data ? mapDisabilityPensionCertificate(data, locale) : null
+  }
+
+  async getConfirmedTreatment(
+    user: User,
+  ): Promise<TrWebContractsExternalServicePortalConfirmedTreatment> {
+    return await this.socialInsuranceApi.getConfirmedTreatment(user)
+  }
+
+  async getConfirmationOfPendingResolution(
+    user: User,
+  ): Promise<TrWebContractsExternalServicePortalConfirmationOfPendingResolution> {
+    return await this.socialInsuranceApi.getConfirmationOfPendingResolution(
+      user,
+    )
+  }
+
+  async getConfirmationOfIllHealth(
+    user: User,
+  ): Promise<TrWebContractsExternalServicePortalConfirmationOfIllHealth> {
+    return await this.socialInsuranceApi.getConfirmationOfIllHealth(user)
+  }
+
+  async getCountries(user: User, locale: Locale) {
+    const data =
+      (await this.socialInsuranceApi.getCountries(user, { locale })) ?? []
+    return data.map((data) => ({
+      code: data.value,
+      name: data.label,
+    }))
+  }
+
+  async getCurrencies(user: User): Promise<Array<string>> {
+    return await this.socialInsuranceApi.getCurrencies(user)
+  }
+
+  async getEducationalInstitutions(
+    user: User,
+  ): Promise<
+    Array<TrWebApiServicesDomainEducationalInstitutionsModelsEducationalInstitutionsDto>
+  > {
+    return await this.socialInsuranceApi.getEducationalInstitutions(user)
+  }
+
+  async getLanguages(user: User, locale: Locale) {
+    return await this.socialInsuranceApi.getLanguages(user, { locale })
+  }
+
+  async getMaritalStatuses(user: User) {
+    return await this.socialInsuranceApi.getMaritalStatuses(user)
+  }
+
+  async getEmploymentStatusesWithLocale(user: User, locale: Locale) {
+    return await this.socialInsuranceApi.getEmploymentStatusesWithLocale(user, {
+      locale,
+    })
+  }
+
+  async getProfessions(user: User) {
+    return await this.socialInsuranceApi.getProfessionsInDto(user)
+  }
+
+  async getResidenceTypes(user: User) {
+    return await this.socialInsuranceApi.getResidenceTypes(user)
+  }
+
+  async getProfessionActivities(user: User) {
+    return await this.socialInsuranceApi.getProfessionActivitiesInDto(user)
   }
 }

@@ -4,13 +4,7 @@ import {
   json,
   ref,
 } from '../../../../infra/src/dsl/dsl'
-import {
-  Base,
-  Client,
-  ChargeFjsV2,
-  RskCompanyInfo,
-  NationalRegistryB2C,
-} from '../../../../infra/src/dsl/xroad'
+import { Base, Client, ChargeFjsV2 } from '../../../../infra/src/dsl/xroad'
 
 const namespace = 'services-payments'
 const serviceName = namespace
@@ -20,6 +14,7 @@ export const serviceSetup = (): ServiceBuilder<'services-payments'> =>
   service(serviceName)
     .namespace(namespace)
     .image(imageName)
+    .serviceAccount(serviceName)
     .db({
       extensions: ['uuid-ossp'],
     })
@@ -53,12 +48,15 @@ export const serviceSetup = (): ServiceBuilder<'services-payments'> =>
         ]),
       },
       PAYMENTS_JWT_SIGNING_EXPIRES_IN_MINUTES: '5',
+      XROAD_FJS_INVOICE_PAYMENT_BASE_CALLBACK_URL: {
+        dev: 'XROAD:/IS-DEV/GOV/10000/island-is-protected/payments-v1',
+        staging: 'XROAD:/IS-TEST/GOV/10000/island-is-protected/payments-v1',
+        prod: 'XROAD:/IS/GOV/5501692829/island-is-protected/payments-v1',
+      },
     })
     .secrets({
       IDENTITY_SERVER_CLIENT_SECRET:
         '/k8s/services-payments/IDENTITY_SERVER_CLIENT_SECRET',
-      NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
-        '/k8s/services-payments/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
       PAYMENTS_TOKEN_SIGNING_SECRET:
         '/k8s/services-payments/PAYMENTS_TOKEN_SIGNING_SECRET',
       PAYMENTS_TOKEN_SIGNING_ALGORITHM:
@@ -83,6 +81,10 @@ export const serviceSetup = (): ServiceBuilder<'services-payments'> =>
         '/k8s/services-payments/PAYMENTS_PREVIOUS_KEY_ID',
       PAYMENTS_PREVIOUS_PUBLIC_KEY:
         '/k8s/services-payments/PAYMENTS_PREVIOUS_PUBLIC_KEY',
+      PAYMENTS_INVOICE_TOKEN_SIGNING_SECRET:
+        '/k8s/services-payments/PAYMENTS_INVOICE_TOKEN_SIGNING_SECRET',
+      PAYMENTS_INVOICE_TOKEN_SIGNING_ALGORITHM:
+        '/k8s/services-payments/PAYMENTS_INVOICE_TOKEN_SIGNING_ALGORITHM',
     })
     .ingress({
       primary: {
@@ -118,7 +120,7 @@ export const serviceSetup = (): ServiceBuilder<'services-payments'> =>
         public: false,
       },
     })
-    .xroad(Base, Client, ChargeFjsV2, RskCompanyInfo, NationalRegistryB2C)
+    .xroad(Base, Client, ChargeFjsV2)
     .readiness('/liveness')
     .liveness('/liveness')
     .grantNamespaces('application-system', 'nginx-ingress-internal', 'islandis')

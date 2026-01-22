@@ -25,6 +25,25 @@ export const healthNavigation: PortalNavigationItem = {
       path: HealthPaths.HealthOverview,
     },
     {
+      name: messages.myHealthOverview,
+      searchHide: true,
+      navHide: true,
+      path: HealthPaths.HealthBasicOld,
+    },
+    {
+      name: messages.appointments,
+      searchHide: false,
+      path: HealthPaths.HealthAppointments,
+      searchTags: [s.appointment, s.appointmentBook, s.appointmentDoctor],
+      children: [
+        {
+          name: messages.appointmentDetail,
+          path: HealthPaths.HealthAppointmentDetail,
+          navHide: true,
+        },
+      ],
+    },
+    {
       name: messages.referrals,
       path: HealthPaths.HealthReferrals,
       searchTags: [s.healthReferrals],
@@ -86,6 +105,26 @@ export const healthNavigation: PortalNavigationItem = {
         {
           name: m.medicineDelegation,
           path: HealthPaths.HealthMedicineDelegation,
+          searchTags: [s.medicineDelegationOther],
+          children: [
+            {
+              name: m.medicineDelegation,
+              path: HealthPaths.HealthMedicineDelegationDetail,
+              navHide: true,
+              breadcrumbHide: true,
+              searchHide: true,
+            },
+            {
+              name: messages.addDelegation,
+              path: HealthPaths.HealthMedicineDelegationAdd,
+              navHide: true,
+              breadcrumbHide: true,
+              searchTags: [
+                s.medicineDelegationOther,
+                s.medicineDelegationOtherNew,
+              ],
+            },
+          ],
         },
         {
           name: m.medicinePaymentParticipation,
@@ -152,7 +191,6 @@ export const healthNavigation: PortalNavigationItem = {
         },
       ],
     },
-
     {
       name: m.vaccinations,
       description: m.vaccinationsIntro,
@@ -179,6 +217,56 @@ export const healthNavigation: PortalNavigationItem = {
           name: messages.singleWaitlist,
           path: HealthPaths.HealthWaitlistsDetail,
           navHide: true,
+        },
+      ],
+    },
+    {
+      name: messages.questionnaires,
+      path: HealthPaths.HealthQuestionnaires,
+      searchTags: [],
+      children: [
+        {
+          name: messages.questionnaire,
+          path: HealthPaths.HealthQuestionnairesDetail,
+          navHide: true,
+          children: [
+            {
+              name: messages.questionnaire,
+              path: HealthPaths.HealthQuestionnairesAnswer,
+              navHide: true,
+              breadcrumbHide: true,
+            },
+            {
+              name: messages.questionnaire,
+              path: HealthPaths.HealthQuestionnairesAnswered,
+              navHide: true,
+              breadcrumbHide: true,
+            },
+          ],
+        },
+      ],
+    },
+    {
+      name: messages.patientData,
+      path: HealthPaths.HealthPatientData,
+      searchTags: [s.healthPatientData],
+      children: [
+        {
+          name: messages.patientDataPermit,
+          path: HealthPaths.HealthPatientDataPermits,
+          children: [
+            {
+              name: messages.addPermit,
+              path: HealthPaths.HealthPatientDataPermitsAdd,
+              navHide: true,
+            },
+            {
+              name: messages.permit,
+              path: HealthPaths.HealthPatientDataPermitsDetail,
+              navHide: true,
+              searchHide: true,
+            },
+          ],
         },
       ],
     },

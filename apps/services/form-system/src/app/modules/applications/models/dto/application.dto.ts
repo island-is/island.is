@@ -1,11 +1,11 @@
 import { ApiPropertyOptional } from '@nestjs/swagger'
-import { SectionDto } from '../../../sections/models/dto/section.dto'
-import { LanguageType } from '../../../../dataTypes/languageType.model'
+import { CompletedSectionInfo } from '../../../../dataTypes/completedSectionInfo.model'
 import { Dependency } from '../../../../dataTypes/dependency.model'
+import { LanguageType } from '../../../../dataTypes/languageType.model'
+import { FormCertificationTypeDto } from '../../../formCertificationTypes/models/dto/formCertificationType.dto'
+import { SectionDto } from '../../../sections/models/dto/section.dto'
 import { ApplicationEventDto } from './applicationEvent.dto'
 import { ValueDto } from './value.dto'
-import { FormCertificationTypeDto } from '../../../formCertificationTypes/models/dto/formCertificationType.dto'
-import { FormApplicantTypeDto } from '../../../formApplicantTypes/models/dto/formApplicantType.dto'
 
 export class ApplicationDto {
   @ApiPropertyOptional()
@@ -44,6 +44,21 @@ export class ApplicationDto {
   @ApiPropertyOptional()
   status?: string
 
+  @ApiPropertyOptional()
+  draftFinishedSteps?: number
+
+  @ApiPropertyOptional()
+  draftTotalSteps?: number
+
+  @ApiPropertyOptional()
+  allowProceedOnValidationFail?: boolean
+
+  @ApiPropertyOptional()
+  hasSummaryScreen?: boolean
+
+  @ApiPropertyOptional()
+  hasPayment?: boolean
+
   @ApiPropertyOptional({ type: [ApplicationEventDto] })
   events?: ApplicationEventDto[]
 
@@ -56,6 +71,9 @@ export class ApplicationDto {
   @ApiPropertyOptional({ type: [FormCertificationTypeDto] })
   certificationTypes?: FormCertificationTypeDto[]
 
-  @ApiPropertyOptional({ type: [FormApplicantTypeDto] })
-  applicantTypes?: FormApplicantTypeDto[]
+  @ApiPropertyOptional({ type: CompletedSectionInfo })
+  completedSectionInfo?: CompletedSectionInfo
+
+  submissionServiceUrl?: string
+  validationServiceUrl?: string
 }

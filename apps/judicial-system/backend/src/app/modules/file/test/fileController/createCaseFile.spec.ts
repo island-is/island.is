@@ -1,4 +1,5 @@
-import { uuid } from 'uuidv4'
+import { Transaction } from 'sequelize'
+import { v4 as uuid } from 'uuid'
 
 import { BadRequestException } from '@nestjs/common'
 
@@ -16,9 +17,8 @@ import {
 import { createTestingFileModule } from '../createTestingFileModule'
 
 import { randomDate } from '../../../../test'
-import { Case } from '../../../case'
+import { Case, CaseFile } from '../../../repository'
 import { CreateFileDto } from '../../dto/createFile.dto'
-import { CaseFile } from '../../models/file.model'
 
 interface Then {
   result: CaseFile
@@ -36,14 +36,21 @@ describe('FileController - Create case file', () => {
 
   let mockMessageService: MessageService
   let mockFileModel: typeof CaseFile
+  let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { messageService, fileModel, fileController } =
+    const { sequelize, messageService, fileModel, fileController } =
       await createTestingFileModule()
 
     mockMessageService = messageService
     mockFileModel = fileModel
+
+    const mockTransaction = sequelize.transaction as jest.Mock
+    transaction = {} as Transaction
+    mockTransaction.mockImplementationOnce(
+      (fn: (transaction: Transaction) => unknown) => fn(transaction),
+    )
 
     givenWhenThen = async (
       caseId: string,
@@ -94,16 +101,19 @@ describe('FileController - Create case file', () => {
       })
 
       it('should create a case file', () => {
-        expect(mockFileModel.create).toHaveBeenCalledWith({
-          type: 'text/plain',
-          state: CaseFileState.STORED_IN_RVG,
-          key: `${caseId}/${uuId}/test.txt`,
-          size: 99,
-          category: CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE,
-          caseId,
-          name: 'test.txt',
-          userGeneratedFilename: 'test.txt',
-        })
+        expect(mockFileModel.create).toHaveBeenCalledWith(
+          {
+            type: 'text/plain',
+            state: CaseFileState.STORED_IN_RVG,
+            key: `${caseId}/${uuId}/test.txt`,
+            size: 99,
+            category: CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE,
+            caseId,
+            name: 'test.txt',
+            userGeneratedFilename: 'test.txt',
+          },
+          { transaction },
+        )
         expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
           {
             type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_CASE_FILE,
@@ -146,15 +156,18 @@ describe('FileController - Create case file', () => {
     })
 
     it('should create a case file', () => {
-      expect(mockFileModel.create).toHaveBeenCalledWith({
-        type: 'text/plain',
-        state: CaseFileState.STORED_IN_RVG,
-        key: `${caseId}/${uuId}/test.txt`,
-        size: 99,
-        caseId,
-        name: 'test.txt',
-        userGeneratedFilename: 'test.txt',
-      })
+      expect(mockFileModel.create).toHaveBeenCalledWith(
+        {
+          type: 'text/plain',
+          state: CaseFileState.STORED_IN_RVG,
+          key: `${caseId}/${uuId}/test.txt`,
+          size: 99,
+          caseId,
+          name: 'test.txt',
+          userGeneratedFilename: 'test.txt',
+        },
+        { transaction },
+      )
       expect(then.result).toBe(caseFile)
     })
   })

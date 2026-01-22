@@ -1,3 +1,5 @@
+import { Sequelize } from 'sequelize-typescript'
+
 import {
   Body,
   Controller,
@@ -8,6 +10,7 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common'
+import { InjectConnection } from '@nestjs/sequelize'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import type { Logger } from '@island.is/logging'
@@ -28,7 +31,6 @@ import {
 
 import { defenderRule, prisonSystemStaffRule } from '../../guards'
 import {
-  Case,
   CaseCompletedGuard,
   CaseReadGuard,
   CaseTypeGuard,
@@ -38,6 +40,7 @@ import {
 } from '../case'
 import { MergedCaseExistsGuard } from '../case/guards/mergedCaseExists.guard'
 import { CivilClaimantExistsGuard } from '../defendant'
+import { Case, CaseFile } from '../repository'
 import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
 import { CurrentCaseFile } from './guards/caseFile.decorator'
@@ -46,7 +49,6 @@ import { CreateCivilClaimantCaseFileGuard } from './guards/createCivilClaimantCa
 import { LimitedAccessViewCaseFileGuard } from './guards/limitedAccessViewCaseFile.guard'
 import { LimitedAccessWriteCaseFileGuard } from './guards/limitedAccessWriteCaseFile.guard'
 import { DeleteFileResponse } from './models/deleteFile.response'
-import { CaseFile } from './models/file.model'
 import { PresignedPost } from './models/presignedPost.model'
 import { SignedUrl } from './models/signedUrl.model'
 import { FileService } from './file.service'
@@ -57,6 +59,7 @@ import { FileService } from './file.service'
 export class LimitedAccessFileController {
   constructor(
     private readonly fileService: FileService,
+    @InjectConnection() private readonly sequelize: Sequelize,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -107,7 +110,9 @@ export class LimitedAccessFileController {
   ): Promise<CaseFile> {
     this.logger.debug(`Creating a file for case ${caseId}`)
 
-    return this.fileService.createCaseFile(theCase, createFile, user)
+    return this.sequelize.transaction((transaction) =>
+      this.fileService.createCaseFile(theCase, createFile, user, transaction),
+    )
   }
 
   // This endpoint is not used by any role at the moment
@@ -116,8 +121,8 @@ export class LimitedAccessFileController {
   // limit file creation to defendant's and spokesperson's clients
   @UseGuards(
     new CaseTypeGuard([...indictmentCases]),
-    CivilClaimantExistsGuard,
     CaseWriteGuard,
+    CivilClaimantExistsGuard,
     LimitedAccessWriteCaseFileGuard,
     CreateCivilClaimantCaseFileGuard,
   )
@@ -138,10 +143,13 @@ export class LimitedAccessFileController {
       `Creating a file for case ${caseId} and civil claimant ${civilClaimantId}`,
     )
 
-    return this.fileService.createCaseFile(
-      theCase,
-      { ...createFile, civilClaimantId },
-      user,
+    return this.sequelize.transaction((transaction) =>
+      this.fileService.createCaseFile(
+        theCase,
+        { ...createFile, civilClaimantId },
+        user,
+        transaction,
+      ),
     )
   }
 

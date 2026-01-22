@@ -35,13 +35,18 @@ export const OtherAssetsRepeater: FC<
   const { id, props } = field
 
   const deceasedHadAssets = getDeceasedWasMarriedAndHadAssets(application)
+  const otherAssets =
+    application.answers.applicationFor === PREPAID_INHERITANCE
+      ? []
+      : getEstateDataFromApplication(application)?.inheritanceReportInfo
+          ?.otherAssets ?? []
 
   const getDefaultValue = (
     fieldName: keyof InheritanceReportAsset,
     index = 0,
   ) =>
     application.answers.applicationFor === PREPAID_INHERITANCE
-      ? {}
+      ? ''
       : getEstateDataFromApplication(application)?.inheritanceReportInfo
           ?.otherAssets?.[index]?.[fieldName] ?? ''
 
@@ -69,6 +74,26 @@ export const OtherAssetsRepeater: FC<
     setValue(addTotal, total)
     setTotal(total)
   }, [getValues, id, setValue])
+
+  useEffect(() => {
+    // Set up a flag to prevent multiple runs of this logic
+    // Although the dependency array is empty, it gets triggered twice in the UI
+    // Furthermore, this trigger will stop this logic from running on every
+    // UI re-attachment
+    const triggerName = 'ir.otherAssets.triggerHasRun'
+    const otherAssetsFlagTrigger = getValues(triggerName)
+    if (!otherAssetsFlagTrigger && otherAssets.length) {
+      setValue(triggerName, true)
+      const initialRepeaterFields = otherAssets.map((oa) => ({
+        info: oa.description,
+        value: oa.propertyValuation,
+      }))
+      append(initialRepeaterFields)
+    } else if (!otherAssetsFlagTrigger) {
+      setValue(triggerName, true)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   useEffect(() => {
     calculateTotal()

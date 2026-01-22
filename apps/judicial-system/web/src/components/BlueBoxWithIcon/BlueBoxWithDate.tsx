@@ -10,8 +10,11 @@ import {
   Text,
   toast,
 } from '@island.is/island-ui/core'
-import { formatDate } from '@island.is/judicial-system/formatters'
-import { getIndictmentAppealDeadlineDate } from '@island.is/judicial-system/types'
+import {
+  formatDate,
+  getServiceRequirementText,
+} from '@island.is/judicial-system/formatters'
+import { getIndictmentAppealDeadline } from '@island.is/judicial-system/types'
 import { errors } from '@island.is/judicial-system-web/messages'
 
 import {
@@ -19,46 +22,50 @@ import {
   Defendant,
   ServiceRequirement,
 } from '../../graphql/schema'
-import { formatDateForServer, useDefendants } from '../../utils/hooks'
+import { formatDateForServer } from '../../utils/hooks'
+import useVerdict from '../../utils/hooks/useVerdict'
 import DateTime from '../DateTime/DateTime'
 import { FormContext } from '../FormProvider/FormProvider'
-import { getAppealExpirationInfo } from '../InfoCard/DefendantInfo/DefendantInfo'
+import { getAppealExpirationInfo } from '../InfoCard/DefendantInfo/DefendantInfo.logic'
 import SectionHeading from '../SectionHeading/SectionHeading'
 import { strings } from './BlueBoxWithDate.strings'
 import * as styles from './BlueBoxWithIcon.css'
 
 interface Props {
   defendant: Defendant
+  canDefendantAppealVerdict: boolean
   icon?: IconMapIcon
 }
 
 const BlueBoxWithDate: FC<Props> = (props) => {
-  const { defendant, icon } = props
+  const { defendant, canDefendantAppealVerdict, icon } = props
+  const { verdict } = defendant
+
   const { formatMessage } = useIntl()
   const [dates, setDates] = useState<{
-    verdictViewDate?: Date
-    verdictAppealDate?: Date
+    serviceDate?: Date
+    appealDate?: Date
   }>({
-    verdictViewDate: undefined,
-    verdictAppealDate: undefined,
+    serviceDate: undefined,
+    appealDate: undefined,
   })
   const [triggerAnimation, setTriggerAnimation] = useState<boolean>(false)
   const [triggerAnimation2, setTriggerAnimation2] = useState<boolean>(false)
-  const { setAndSendDefendantToServer } = useDefendants()
+  const { setAndSendVerdictToServer } = useVerdict()
   const { workingCase, setWorkingCase } = useContext(FormContext)
 
   const isFine =
     workingCase.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
 
-  const serviceRequired =
-    defendant.serviceRequirement === ServiceRequirement.REQUIRED
+  const isServiceRequired =
+    verdict?.serviceRequirement === ServiceRequirement.REQUIRED
 
-  const shouldHideDatePickers = Boolean(
-    defendant.verdictAppealDate ||
-      defendant.isVerdictAppealDeadlineExpired ||
-      defendant.isSentToPrisonAdmin ||
-      isFine,
-  )
+  const showDatePickers = !defendant.isSentToPrisonAdmin && !isFine
+  const showAppealDatePicker =
+    canDefendantAppealVerdict &&
+    !verdict?.appealDate &&
+    !defendant.isVerdictAppealDeadlineExpired
+  const showServiceDateDatePicker = isServiceRequired && !verdict.serviceDate
 
   const handleDateChange = (
     date: Date | undefined,
@@ -92,44 +99,41 @@ const BlueBoxWithDate: FC<Props> = (props) => {
       [type]: formatDateForServer(date),
     }
 
-    setAndSendDefendantToServer(payload, setWorkingCase)
+    setAndSendVerdictToServer(payload, setWorkingCase)
 
-    if (type === 'verdictAppealDate') {
+    if (type === 'appealDate') {
       setTriggerAnimation2(true)
     }
   }
 
   const appealExpirationInfo = useMemo(() => {
-    const deadline =
-      defendant.verdictAppealDeadline ||
-      (dates.verdictViewDate &&
-        getIndictmentAppealDeadlineDate(
-          dates.verdictViewDate,
-          false,
-        ).toISOString())
+    const { verdictAppealDeadline, isVerdictAppealDeadlineExpired } = defendant
+    const appealDeadlineResult = verdictAppealDeadline
+      ? {
+          deadlineDate: verdictAppealDeadline,
+          isDeadlineExpired: !!isVerdictAppealDeadlineExpired,
+        }
+      : dates.serviceDate
+      ? getIndictmentAppealDeadline({
+          baseDate: dates.serviceDate,
+          isFine: false,
+        })
+      : undefined
 
-    return getAppealExpirationInfo(
-      deadline,
-      defendant.isVerdictAppealDeadlineExpired,
-    )
-  }, [
-    dates.verdictViewDate,
-    defendant.isVerdictAppealDeadlineExpired,
-    defendant.verdictAppealDeadline,
-  ])
+    return getAppealExpirationInfo({
+      verdictAppealDeadline: appealDeadlineResult?.deadlineDate,
+      isVerdictAppealDeadlineExpired:
+        appealDeadlineResult?.isDeadlineExpired ?? false,
+    })
+  }, [dates.serviceDate, defendant])
 
-  const serviceRequirementText = useMemo(() => {
-    switch (defendant.serviceRequirement) {
-      case ServiceRequirement.REQUIRED:
-        return 'Birta skal dómfellda dóminn'
-      case ServiceRequirement.NOT_REQUIRED:
-        return 'Birting dóms ekki þörf'
-      case ServiceRequirement.NOT_APPLICABLE:
-        return 'Dómfelldi var viðstaddur dómsuppkvaðningu'
-      default:
-        return null
-    }
-  }, [defendant.serviceRequirement])
+  const serviceRequirementText = useMemo(
+    () =>
+      verdict?.serviceRequirement
+        ? getServiceRequirementText(verdict.serviceRequirement)
+        : null,
+    [verdict?.serviceRequirement],
+  )
 
   const textItems = useMemo(() => {
     const texts: string[] = []
@@ -149,24 +153,27 @@ const BlueBoxWithDate: FC<Props> = (props) => {
           appealDeadline: formatDate(defendant.verdictAppealDeadline),
         }),
       )
-    } else if (defendant.verdictViewDate) {
+    } else if (verdict?.serviceDate) {
       pushIf(
-        !!serviceRequired,
+        !!isServiceRequired,
         formatMessage(strings.defendantVerdictViewedDate, {
-          date: formatDate(defendant.verdictViewDate),
+          date: formatDate(verdict?.serviceDate),
         }),
       )
 
       texts.push(
         formatMessage(appealExpirationInfo.message, {
           appealExpirationDate: appealExpirationInfo.date,
+          deadlineType: verdict?.isDefaultJudgement
+            ? 'Endurupptökufrestur'
+            : 'Áfrýjunarfrestur',
         }),
       )
 
       pushIf(
-        !!defendant.verdictAppealDate,
+        !!verdict?.appealDate,
         formatMessage(strings.defendantAppealDate, {
-          date: formatDate(defendant.verdictAppealDate),
+          date: formatDate(verdict?.appealDate),
         }),
       )
     }
@@ -185,12 +192,13 @@ const BlueBoxWithDate: FC<Props> = (props) => {
     defendant,
     formatMessage,
     isFine,
-    serviceRequired,
+    isServiceRequired,
     serviceRequirementText,
+    verdict,
   ])
 
-  const verdictViewDateVariants = {
-    hidden: { opacity: 0, y: 15, marginTop: '16px' },
+  const serviceDateVariants = {
+    hidden: { opacity: 0, y: 15 },
     visible: { opacity: 1, y: 0 },
     exit: {
       opacity: 0,
@@ -199,7 +207,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
   }
 
   const appealDateVariants = {
-    hidden: { opacity: 0, y: 15, marginTop: '16px' },
+    hidden: { opacity: 0, y: 15 },
     visible: {
       opacity: 1,
       y: 0,
@@ -209,7 +217,6 @@ const BlueBoxWithDate: FC<Props> = (props) => {
     exit: {
       opacity: 0,
       height: 0,
-      marginTop: 0,
       transition: { opacity: { duration: 0.2 } },
     },
   }
@@ -222,21 +229,18 @@ const BlueBoxWithDate: FC<Props> = (props) => {
             isFine ? strings.indictmentRulingDecisionFine : strings.keyDates,
           )}
           heading="h4"
-          marginBottom={2}
+          marginBottom={0}
         />
         {icon && (
           <Icon icon={icon} type="outline" color="blue400" size="large" />
         )}
-        <Box marginBottom={1}>
-          <Text variant="eyebrow">{defendant.name}</Text>
-        </Box>
+        <Text variant="eyebrow">{defendant.name}</Text>
       </Box>
       <AnimatePresence>
         {textItems.map((text, index) => (
           <motion.div
             key={index}
             initial={{
-              marginTop: 0,
               opacity: 0,
               y: 20,
               height: triggerAnimation2 ? 0 : 'auto',
@@ -245,7 +249,6 @@ const BlueBoxWithDate: FC<Props> = (props) => {
               opacity: 1,
               y: 0,
               height: 'auto',
-              marginTop: index === 0 ? 0 : '16px',
             }}
             exit={{ opacity: 0, y: 20, height: 0 }}
             transition={{
@@ -254,82 +257,85 @@ const BlueBoxWithDate: FC<Props> = (props) => {
             }}
             onAnimationComplete={() => setTriggerAnimation(true)}
           >
-            <Text marginBottom={1}>{`• ${text}`}</Text>
+            <Text>{`• ${text}`}</Text>
           </motion.div>
         ))}
       </AnimatePresence>
-      <AnimatePresence mode="wait">
-        {shouldHideDatePickers ? null : !serviceRequired ||
-          defendant.verdictViewDate ? (
-          <motion.div
-            key="defendantAppealDate"
-            variants={appealDateVariants}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-          >
-            <Box className={styles.dataContainer}>
-              <DateTime
-                name="defendantAppealDate"
-                datepickerLabel={formatMessage(
-                  strings.defendantAppealDateLabel,
-                )}
-                datepickerPlaceholder={formatMessage(
-                  strings.defendantAppealDatePlaceholder,
-                )}
-                size="sm"
-                onChange={(date, valid) =>
-                  handleDateChange(date, valid, 'verdictAppealDate')
-                }
-                maxDate={new Date()}
-                blueBox={false}
-                dateOnly
-              />
-              <Button
-                onClick={() => handleSetDate('verdictAppealDate')}
-                disabled={!dates.verdictAppealDate}
-              >
-                {formatMessage(strings.defendantAppealDateButtonText)}
-              </Button>
-            </Box>
-          </motion.div>
-        ) : (
-          <motion.div
-            key="defendantVerdictViewDate"
-            variants={verdictViewDateVariants}
-            initial={false}
-            animate="visible"
-            exit="exit"
-            transition={{ duration: 0.2, ease: 'easeInOut', delay: 0.4 }}
-          >
-            <Box className={styles.dataContainer}>
-              <DateTime
-                name="defendantVerdictViewDate"
-                datepickerLabel={formatMessage(
-                  strings.defendantVerdictViewDateLabel,
-                )}
-                datepickerPlaceholder={formatMessage(
-                  strings.defendantVerdictViewDatePlaceholder,
-                )}
-                size="sm"
-                selectedDate={dates.verdictViewDate}
-                onChange={(date, valid) =>
-                  handleDateChange(date, valid, 'verdictViewDate')
-                }
-                blueBox={false}
-                maxDate={new Date()}
-                dateOnly
-              />
-              <Button
-                onClick={() => handleSetDate('verdictViewDate')}
-                disabled={!dates.verdictViewDate}
-              >
-                {formatMessage(strings.defendantVerdictViewDateButtonText)}
-              </Button>
-            </Box>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {showDatePickers && (
+        <AnimatePresence mode="wait">
+          {showAppealDatePicker && (
+            <motion.div
+              key="defendantAppealDate"
+              variants={appealDateVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+            >
+              <Box className={styles.dataContainer}>
+                <DateTime
+                  name="defendantAppealDate"
+                  datepickerLabel={formatMessage(
+                    strings.defendantAppealDateLabel,
+                  )}
+                  datepickerPlaceholder={formatMessage(
+                    strings.defendantAppealDatePlaceholder,
+                  )}
+                  size="sm"
+                  onChange={(date, valid) =>
+                    handleDateChange(date, valid, 'appealDate')
+                  }
+                  maxDate={new Date()}
+                  blueBox={false}
+                  dateOnly
+                />
+                <Button
+                  onClick={() => handleSetDate('appealDate')}
+                  disabled={!dates.appealDate}
+                >
+                  {formatMessage(strings.defendantAppealDateButtonText)}
+                </Button>
+              </Box>
+            </motion.div>
+          )}
+          {showServiceDateDatePicker && (
+            <motion.div
+              key="defendantServiceDate"
+              variants={serviceDateVariants}
+              initial={false}
+              animate="visible"
+              exit="exit"
+              transition={{ duration: 0.2, ease: 'easeInOut', delay: 0.4 }}
+            >
+              <Box className={styles.dataContainer}>
+                <DateTime
+                  name="defendantServiceDate"
+                  datepickerLabel={formatMessage(
+                    strings.defendantVerdictServiceDateLabel,
+                  )}
+                  datepickerPlaceholder={formatMessage(
+                    strings.defendantVerdictServiceDatePlaceholder,
+                  )}
+                  size="sm"
+                  selectedDate={dates.serviceDate}
+                  onChange={(date, valid) =>
+                    handleDateChange(date, valid, 'serviceDate')
+                  }
+                  blueBox={false}
+                  maxDate={new Date()}
+                  dateOnly
+                />
+                <Button
+                  dataTestId="button-defendant-service-date"
+                  onClick={() => handleSetDate('serviceDate')}
+                  disabled={!dates.serviceDate}
+                >
+                  {formatMessage(strings.defendantVerdictServiceDateButtonText)}
+                </Button>
+              </Box>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      )}
     </Box>
   )
 }

@@ -5,7 +5,6 @@ import type {
   DatePickerProps,
   IconProps,
   InputBackgroundColor,
-  InputProps,
   SpanType,
 } from '@island.is/island-ui/core/types'
 import {
@@ -24,7 +23,8 @@ import { FormatInputValueFunction } from 'react-number-format'
 import React, { CSSProperties } from 'react'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { MessageDescriptor } from 'react-intl'
-import { BffUser, Locale } from '@island.is/shared/types'
+import { Locale } from '@island.is/shared/types'
+import { FormatMessage } from './external'
 
 export type RecordObject<T = unknown> = Record<string, T>
 export type MaybeWithApplication<T> = T | ((application: Application) => T)
@@ -34,6 +34,7 @@ export type MaybeWithApplicationAndField<T> =
 export type MaybeWithApplicationAndFieldAndLocale<T> =
   | T
   | ((application: Application, field: Field, locale: Locale) => T)
+
 export type ValidAnswers = 'yes' | 'no' | undefined
 export type FieldWidth = 'full' | 'half'
 export type TitleVariants = 'h1' | 'h2' | 'h3' | 'h4' | 'h5'
@@ -91,6 +92,8 @@ export type RepeaterFields =
   | 'hiddenInput'
   | 'alertMessage'
   | 'vehiclePermnoWithInfo'
+  | 'description'
+  | 'fileUpload'
 
 type RepeaterOption = { label: StaticText; value: string; tooltip?: StaticText }
 
@@ -100,17 +103,39 @@ type TableRepeaterOptions =
       application: Application,
       activeField?: Record<string, string>,
       locale?: Locale,
+      formatMessage?: FormatMessage,
     ) => RepeaterOption[] | [])
 
 type MaybeWithApplicationAndActiveField<T> =
   | T
   | ((application: Application, activeField?: Record<string, string>) => T)
 
+type MaybeWithApplicationAndActiveFieldAndIndex<T> =
+  | T
+  | ((
+      application: Application,
+      activeField?: Record<string, string>,
+      index?: number,
+    ) => T)
+
 type MaybeWithIndex<T> = T | ((index: number) => T)
 
-type MaybeWithAnswersAndExternalData<T> =
+type MaybeWithIndexAndApplication<T> =
+  | T
+  | ((index: number, application: Application) => T)
+
+export type MaybeWithAnswersAndExternalData<T> =
   | T
   | ((formValue: FormValue, externalData: ExternalData) => T)
+
+type MaybeWithApplicationAndActiveFieldAndIndexAndLocale<T> =
+  | T
+  | ((
+      application: Application,
+      activeField?: Record<string, string>,
+      index?: number,
+      locale?: Locale,
+    ) => T)
 
 export type RepeaterOptionValue = string | readonly string[] | undefined | null
 
@@ -120,7 +145,7 @@ export type RepeaterItem = {
    * Defaults to true
    */
   displayInTable?: boolean
-  label?: StaticText
+  label?: MaybeWithIndex<StaticText>
   phoneLabel?: StaticText
   emailLabel?: StaticText
   customNameLabel?: StaticText
@@ -135,7 +160,7 @@ export type RepeaterItem = {
   backgroundColor?: 'blue' | 'white'
   width?: 'half' | 'full' | 'third'
   required?: MaybeWithApplicationAndActiveField<boolean>
-  condition?: MaybeWithApplicationAndActiveField<boolean>
+  condition?: MaybeWithApplicationAndActiveFieldAndIndex<boolean>
   dataTestId?: string
   showPhoneField?: boolean
   phoneRequired?: boolean
@@ -143,10 +168,11 @@ export type RepeaterItem = {
   emailRequired?: boolean
   searchCompanies?: boolean
   searchPersons?: boolean
-  readonly?: MaybeWithApplicationAndActiveField<boolean>
-  disabled?: MaybeWithApplicationAndActiveField<boolean>
+  readonly?: MaybeWithApplicationAndActiveFieldAndIndex<boolean>
+  disabled?: MaybeWithApplicationAndActiveFieldAndIndex<boolean>
   isClearable?: MaybeWithApplicationAndActiveField<boolean>
-  defaultValue?: MaybeWithApplicationAndActiveField<unknown>
+  defaultValue?: MaybeWithApplicationAndActiveFieldAndIndex<unknown>
+  index?: MaybeWithApplicationAndActiveField<number>
   updateValueObj?: {
     valueModifier: (
       application: Application,
@@ -160,6 +186,7 @@ export type RepeaterItem = {
         ) => string | string[] | undefined)
   }
   clearOnChange?: MaybeWithIndex<string[]>
+  clearOnChangeDefaultValue?: string | boolean | number | undefined
   setOnChange?:
     | { key: string; value: any }[]
     | ((
@@ -182,18 +209,22 @@ export type RepeaterItem = {
       currency?: boolean
       thousandSeparator?: boolean
       suffix?: FormText
+      max?: number
+      min?: number
+      allowNegative?: boolean
     }
   | {
       component: 'phone'
       allowedCountryCodes?: string[]
       enableCountrySelector?: boolean
+      format?: string
     }
   | {
       component: 'date'
       label: StaticText
       locale?: Locale
-      maxDate?: MaybeWithApplicationAndActiveField<Date>
-      minDate?: MaybeWithApplicationAndActiveField<Date>
+      maxDate?: MaybeWithApplicationAndActiveField<Date | undefined>
+      minDate?: MaybeWithApplicationAndActiveField<Date | undefined>
       minYear?: number
       maxYear?: number
       excludeDates?: DatePickerProps['excludeDates']
@@ -214,10 +245,10 @@ export type RepeaterItem = {
     }
   | {
       component: 'nationalIdWithName'
-    }
-  | {
-      component: 'phone'
-      format: string
+      nationalIdDefaultValue?: string
+      nameDefaultValue?: string
+      searchPersons?: boolean
+      searchCompanies?: boolean
     }
   | {
       component: 'selectAsync'
@@ -252,6 +283,28 @@ export type RepeaterItem = {
       errorTitle?: FormText
       fallbackErrorMessage?: FormText
       validationFailedErrorMessage?: FormText
+      isTrailer?: boolean
+    }
+  | {
+      component: 'description'
+      title: StaticText
+      titleVariant?: TitleVariants
+    }
+  | {
+      component: 'fileUpload'
+      title?: StaticText
+      introduction?: FormText
+      titleVariant?: TitleVariants
+      uploadHeader?: FormText
+      uploadDescription?: FormText
+      uploadButtonLabel?: FormText
+      uploadMultiple?: boolean
+      uploadAccept?: string
+      maxSize?: number
+      maxSizeErrorText?: FormText
+      totalMaxSize?: number
+      maxFileCount?: number
+      forImageUpload?: boolean
     }
 )
 
@@ -292,11 +345,19 @@ export interface BaseField extends FormItem {
   colSpan?: SpanType
   condition?: Condition
   isPartOfRepeater?: boolean
-  defaultValue?: MaybeWithApplicationAndField<unknown>
+  defaultValue?: MaybeWithApplicationAndActiveFieldAndIndexAndLocale<unknown>
   doesNotRequireAnswer?: boolean
   marginBottom?: BoxProps['marginBottom']
   marginTop?: BoxProps['marginTop']
   clearOnChange?: string[]
+  clearOnChangeDefaultValue?:
+    | string
+    | string[]
+    | boolean
+    | boolean[]
+    | number
+    | number[]
+    | undefined
   setOnChange?:
     | { key: string; value: any }[]
     | ((
@@ -310,6 +371,7 @@ export interface BaseField extends FormItem {
 
 export interface InputField extends BaseField {
   required?: MaybeWithApplication<boolean>
+  readOnly?: MaybeWithAnswersAndExternalData<boolean>
 }
 
 export enum FieldTypes {
@@ -423,7 +485,6 @@ export interface DateField extends InputField {
   excludeDates?: MaybeWithApplicationAndField<Date[]>
   backgroundColor?: DatePickerBackgroundColor
   onChange?(date: string): void
-  readOnly?: boolean
   tempDisabled?: (application: Application) => boolean
 }
 
@@ -436,6 +497,7 @@ export interface DescriptionField extends BaseField {
   space?: BoxProps['paddingTop']
   titleVariant?: TitleVariants
   showFieldName?: boolean
+  showRequiredStar?: boolean
 }
 
 export interface RadioField extends InputField {
@@ -488,13 +550,13 @@ export interface TextField extends InputField {
   readonly type: FieldTypes.TEXT
   component: FieldComponents.TEXT
   disabled?: boolean
-  readOnly?: boolean
   rightAlign?: boolean
   minLength?: number
   maxLength?: number
   showMaxLength?: boolean
   max?: number
   min?: number
+  allowNegative?: boolean
   step?: string
   placeholder?: FormText
   variant?: TextFieldVariant
@@ -511,7 +573,6 @@ export interface PhoneField extends InputField {
   readonly type: FieldTypes.PHONE
   component: FieldComponents.PHONE
   disabled?: boolean
-  readOnly?: boolean
   rightAlign?: boolean
   placeholder?: FormText
   backgroundColor?: InputBackgroundColor
@@ -556,6 +617,8 @@ export interface SubmitField extends BaseField {
   readonly refetchApplicationAfterSubmit?:
     | boolean
     | ((event?: string) => boolean)
+  readonly renderLongErrors?: boolean
+  formatLongErrorMessage?: (message: string) => string
 }
 
 export interface DividerField extends BaseField {
@@ -635,6 +698,7 @@ export interface AlertMessageField extends BaseField {
   message?: FormTextWithLocale
   links?: AlertMessageLink[]
   shouldBlockInSetBeforeSubmitCallback?: boolean
+  allowMultipleSetBeforeSubmitCallbacks?: boolean
 }
 
 export interface LinkField extends BaseField {
@@ -652,6 +716,10 @@ export interface PaymentChargeOverviewField extends BaseField {
   component: FieldComponents.PAYMENT_CHARGE_OVERVIEW
   forPaymentLabel: StaticText
   totalLabel: StaticText
+  unitPriceLabel?: StaticText
+  quantityLabel?: StaticText
+  quantityUnitLabel?: StaticText
+  totalPerUnitLabel?: StaticText
   getSelectedChargeItems: (application: Application) => {
     chargeItemCode: string
     chargeItemQuantity?: number
@@ -710,6 +778,7 @@ export interface NationalIdWithNameField extends InputField {
   phoneLabel?: StaticText
   emailLabel?: StaticText
   titleVariant?: TitleVariants
+  readonly?: boolean
 }
 
 type Modify<T, R> = Omit<T, keyof R> & R
@@ -754,7 +823,8 @@ export type TableRepeaterField = BaseField & {
   titleVariant?: TitleVariants
   fields: Record<string, RepeaterItem>
   onSubmitLoad?(c: TableContext): Promise<{
-    dictionaryOfItems: Array<{ path: string; value: string }>
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    dictionaryOfItems: Array<{ path: string; value: any }>
   }>
   loadErrorMessage?: StaticText
   /**
@@ -777,7 +847,7 @@ export type TableRepeaterField = BaseField & {
       string,
       (
         value: string,
-        index: number,
+        displayIndex: number,
         application?: Application,
       ) => string | StaticText
     >
@@ -789,12 +859,16 @@ export type FieldsRepeaterField = BaseField & {
   readonly type: FieldTypes.FIELDS_REPEATER
   component: FieldComponents.FIELDS_REPEATER
   titleVariant?: TitleVariants
-  formTitle?: MaybeWithIndex<StaticText>
+  formTitle?: MaybeWithIndexAndApplication<StaticText>
   formTitleVariant?: TitleVariants
   formTitleNumbering?: 'prefix' | 'suffix' | 'none'
   removeItemButtonText?: StaticText
   addItemButtonText?: StaticText
   saveItemButtonText?: StaticText
+  hideRemoveButton?: boolean
+  hideAddButton?: MaybeWithApplication<boolean>
+  displayTitleAsAccordion?: boolean
+  itemCondition?: MaybeWithIndexAndApplication<boolean>
   fields: Record<string, RepeaterItem>
   /**
    * Maximum rows that can be added to the table.
@@ -816,7 +890,7 @@ export interface AccordionField extends BaseField {
     | ((application: Application) => Array<AccordionItem>)
   titleVariant?: TitleVariants
 }
-export interface BankAccountField extends BaseField {
+export interface BankAccountField extends InputField {
   readonly type: FieldTypes.BANK_ACCOUNT
   component: FieldComponents.BANK_ACCOUNT
   titleVariant?: TitleVariants
@@ -839,6 +913,7 @@ export interface FindVehicleField extends InputField {
   requiredValidVehicleErrorMessage?: FormText
   isMachine?: boolean
   isEnergyFunds?: boolean
+  isMileCar?: boolean
   energyFundsMessages?: Record<string, FormText>
 }
 
@@ -883,7 +958,8 @@ export interface HiddenInputWithWatchedValueField extends BaseField {
   watchValue: string
   type: FieldTypes.HIDDEN_INPUT_WITH_WATCHED_VALUE
   component: FieldComponents.HIDDEN_INPUT
-  valueModifier?: (value: unknown) => unknown
+  valueModifier?: (value: unknown, application?: Application) => unknown
+  dontDefaultToEmptyString?: boolean
 }
 
 export interface HiddenInputField extends BaseField {
@@ -891,6 +967,7 @@ export interface HiddenInputField extends BaseField {
   type: FieldTypes.HIDDEN_INPUT
   component: FieldComponents.HIDDEN_INPUT
   valueModifier?: never
+  dontDefaultToEmptyString?: boolean
 }
 
 export interface StaticTableField extends BaseField {
@@ -981,27 +1058,37 @@ export type TableData = {
 export interface OverviewField extends BaseField {
   readonly type: FieldTypes.OVERVIEW
   component: FieldComponents.OVERVIEW
-  title?: FormText
+  title?: FormTextWithLocale
   titleVariant?: TitleVariants
   description?: FormText
-  backId?: string | ((answers: FormValue) => string | undefined)
+  backId?:
+    | string
+    | ((answers: FormValue, externalData: ExternalData) => string | undefined)
   bottomLine?: boolean
   items?: (
     answers: FormValue,
     externalData: ExternalData,
     userNationalId: string,
+    locale: Locale,
   ) => Array<KeyValueItem>
   loadItems?: (
     answers: FormValue,
     externalData: ExternalData,
     userNationalId: string,
     apolloClient: ApolloClient<object>,
+    locale: Locale,
   ) => Promise<KeyValueItem[]>
   attachments?: (
     answers: FormValue,
     externalData: ExternalData,
   ) => Array<AttachmentItem>
   tableData?: (answers: FormValue, externalData: ExternalData) => TableData
+  loadTableData?: (
+    answers: FormValue,
+    externalData: ExternalData,
+    apolloClient: ApolloClient<object>,
+    locale: Locale,
+  ) => Promise<TableData>
   hideIfEmpty?: boolean
   displayTitleAsAccordion?: boolean
 }
@@ -1026,6 +1113,7 @@ export interface VehiclePermnoWithInfoField extends InputField {
   errorTitle?: FormText
   fallbackErrorMessage?: FormText
   validationFailedErrorMessage?: FormText
+  isTrailer: boolean
 }
 
 export type Field =

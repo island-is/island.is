@@ -11,6 +11,7 @@ import { ApolloError, useMutation } from '@apollo/client'
 import {
   coreMessages,
   formatTextWithLocale,
+  getErrorReasonIfPresent,
   mergeAnswers,
 } from '@island.is/application/core'
 import {
@@ -22,6 +23,7 @@ import {
   Schema,
   BeforeSubmitCallback,
   Section,
+  SetBeforeSubmitCallbackOptions,
 } from '@island.is/application/types'
 import {
   Box,
@@ -43,7 +45,6 @@ import {
   ProblemType,
 } from '@island.is/shared/problem'
 import { handleServerError } from '@island.is/application/ui-components'
-
 import { FormScreen, ResolverContext } from '../types'
 import FormMultiField from './FormMultiField'
 import FormField from './FormField'
@@ -55,6 +56,7 @@ import ScreenFooter from './ScreenFooter'
 import RefetchContext from '../context/RefetchContext'
 import { Locale } from '@island.is/shared/types'
 import { useUserInfo } from '@island.is/react-spa/bff'
+import { uuid } from 'uuidv4'
 
 type ScreenProps = {
   activeScreenIndex: number
@@ -120,6 +122,30 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
       resolver({ formValue, context, formatMessage }),
     context: { dataSchema, formNode: screen },
   })
+  const [serverErrorMessage, setServerErrorMessage] = useState<string | null>(
+    null,
+  )
+  const getServerErrorMessage = (
+    error: ApolloError,
+    formatLongErrorMessage?: (message: string) => string,
+  ) => {
+    const problem = findProblemInApolloError(error)
+    const message = problem ? problem.detail ?? problem.title : error.message
+
+    if (problem) {
+      if ('errorReason' in problem) {
+        const { title, summary } = getErrorReasonIfPresent(problem.errorReason)
+        const formattedMessage = `${formatMessage(title)}: ${formatMessage(
+          summary,
+        )}`
+        return formatLongErrorMessage
+          ? formatLongErrorMessage(formattedMessage)
+          : formattedMessage
+      }
+    }
+    console.error(error, problem)
+    return message
+  }
 
   const [fieldLoadingState, setFieldLoadingState] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -143,7 +169,15 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
   const [submitApplication, { loading: loadingSubmit }] = useMutation(
     SUBMIT_APPLICATION,
     {
-      onError: (e) => handleServerError(e, formatMessage),
+      onError: (e) => {
+        if (submitField?.formatLongErrorMessage) {
+          setServerErrorMessage(
+            getServerErrorMessage(e, submitField?.formatLongErrorMessage),
+          )
+        } else {
+          handleServerError(e, formatMessage)
+        }
+      },
     },
   )
   const {
@@ -176,12 +210,43 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
 
   const [beforeSubmitError, setBeforeSubmitError] = useState({})
   const beforeSubmitCallback = useRef<BeforeSubmitCallback | null>(null)
+  const beforeSubmitCallbacksMap = useRef<Map<string, BeforeSubmitCallback>>(
+    new Map(),
+  )
 
   const setBeforeSubmitCallback = useCallback(
-    (callback: BeforeSubmitCallback | null) => {
-      beforeSubmitCallback.current = callback
+    (
+      callback: BeforeSubmitCallback | null,
+      options?: SetBeforeSubmitCallbackOptions,
+    ) => {
+      // Unique ID for this callback to prevent registering the same callback when using multiple
+      const id = options?.customCallbackId ?? uuid()
+
+      // If null is passed, clear the current beforeSubmit callback
+      if (callback === null) {
+        beforeSubmitCallbacksMap.current.clear()
+        beforeSubmitCallback.current = null
+        return
+      }
+
+      if (!options?.allowMultiple) {
+        // Replace all existing callbacks with just this one
+        beforeSubmitCallbacksMap.current = new Map([[id, callback]])
+      } else {
+        // Deduplicate by id
+        beforeSubmitCallbacksMap.current.set(id, callback)
+      }
+
+      // Rebuild a single composed callback from all callbacks in the map
+      beforeSubmitCallback.current = async (event) => {
+        for (const [_id, cb] of beforeSubmitCallbacksMap.current.entries()) {
+          const [ok, message] = await cb(event)
+          if (!ok) return [ok, message]
+        }
+        return [true, null]
+      }
     },
-    [beforeSubmitCallback],
+    [beforeSubmitCallback], // Only re-create this function if the ref changes
   )
 
   const parsedUpdateApplicationError = getServerValidationErrors(
@@ -205,6 +270,7 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
     let response
 
     setIsSubmitting(true)
+    setServerErrorMessage(null)
     setBeforeSubmitError({})
 
     let event: string | undefined
@@ -249,6 +315,7 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
             event,
             answers: finalAnswers,
           },
+          locale,
         },
       })
 
@@ -437,7 +504,25 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
           </Box>
         </GridColumn>
 
-        <ToastContainer hideProgressBar closeButton useKeyframeStyles={false} />
+        {!submitField?.renderLongErrors && (
+          <ToastContainer
+            hideProgressBar
+            closeButton
+            useKeyframeStyles={false}
+          />
+        )}
+        {submitField?.renderLongErrors && serverErrorMessage ? (
+          <Box
+            background="red100"
+            borderRadius="standard"
+            padding={2}
+            marginRight={4}
+            marginLeft={4}
+            textAlign="center"
+          >
+            <Text whiteSpace="preLine">{serverErrorMessage}</Text>
+          </Box>
+        ) : null}
         <ScreenFooter
           submitButtonDisabled={submitButtonDisabled}
           application={application}

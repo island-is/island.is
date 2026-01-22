@@ -1,12 +1,9 @@
-import { ApolloClient } from '@apollo/client'
 import { NO, YES } from '@island.is/application/core'
-import { siaUnionsQuery } from '@island.is/application/templates/social-insurance-administration-core/graphql/queries'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import {
-  bankInfoToString,
+  formatBankAccount,
   getTaxLevelOption,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
-import { SiaUnionsQuery } from '@island.is/application/templates/social-insurance-administration-core/types/schema'
 import {
   ExternalData,
   FormValue,
@@ -14,16 +11,19 @@ import {
   TableData,
 } from '@island.is/application/types'
 import { formatCurrencyWithoutSuffix } from '@island.is/application/ui-components'
+import { Locale } from '@island.is/shared/types'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
 import parseISO from 'date-fns/parseISO'
 import { format as formatKennitala } from 'kennitala'
 import { formatNumber } from 'libphonenumber-js'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../lib/messages'
-import { NOT_APPLICABLE } from './constants'
+import { isFirstApplication } from './conditionUtils'
+import { NOT_APPLICABLE, OTHER } from './constants'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
+  getEmploymentStatuses,
   getSickPayEndDateLabel,
   getYesNoNotApplicableTranslation,
 } from './medicalAndRehabilitationPaymentsUtils'
@@ -37,7 +37,9 @@ export const applicantItems = (
     applicantName,
     applicantNationalId,
     applicantAddress,
-    applicantMunicipality,
+    apartmentNumber,
+    applicantLocation,
+    applicantAddressAndApartment,
     userProfileEmail,
     spouseName,
     spouseNationalId,
@@ -63,12 +65,14 @@ export const applicantItems = (
     {
       width: 'half',
       keyText: socialInsuranceAdministrationMessage.confirm.address,
-      valueText: applicantAddress,
+      valueText: apartmentNumber
+        ? applicantAddressAndApartment
+        : applicantAddress,
     },
     {
       width: 'half',
       keyText: socialInsuranceAdministrationMessage.confirm.municipality,
-      valueText: applicantMunicipality,
+      valueText: applicantLocation,
     },
     {
       width: 'half',
@@ -102,14 +106,14 @@ export const applicantItems = (
 }
 
 export const paymentItems = (answers: FormValue): Array<KeyValueItem> => {
-  const { bank, personalAllowance, personalAllowanceUsage, taxLevel } =
+  const { paymentInfo, personalAllowance, personalAllowanceUsage, taxLevel } =
     getApplicationAnswers(answers)
 
   const baseItems: Array<KeyValueItem> = [
     {
       width: 'full',
       keyText: socialInsuranceAdministrationMessage.payment.bank,
-      valueText: bankInfoToString(bank),
+      valueText: formatBankAccount(paymentInfo),
     },
     {
       width: 'half',
@@ -163,26 +167,75 @@ export const incomePlanTable = (
   }
 }
 
-export const questionsItems = (answers: FormValue): Array<KeyValueItem> => {
+export const benefitsFromAnotherCountryItems = (
+  answers: FormValue,
+): Array<KeyValueItem> => {
+  const { isReceivingBenefitsFromAnotherCountry } =
+    getApplicationAnswers(answers)
+
+  return [
+    {
+      width: 'full',
+      keyText:
+        medicalAndRehabilitationPaymentsFormMessage.generalInformation
+          .benefitsFromAnotherCountryTitle,
+      valueText:
+        isReceivingBenefitsFromAnotherCountry === YES
+          ? socialInsuranceAdministrationMessage.shared.yes
+          : socialInsuranceAdministrationMessage.shared.no,
+    },
+  ]
+}
+
+export const benefitsFromAnotherCountryTable = (
+  answers: FormValue,
+  _externalData: ExternalData,
+): TableData => {
+  const { isReceivingBenefitsFromAnotherCountry, countries } =
+    getApplicationAnswers(answers)
+
+  if (isReceivingBenefitsFromAnotherCountry === YES) {
+    return {
+      header: [
+        medicalAndRehabilitationPaymentsFormMessage.generalInformation.country,
+        medicalAndRehabilitationPaymentsFormMessage.generalInformation
+          .countryIdNumber,
+      ],
+      rows: countries.map((e) => [e.country?.split('::')[1], e.nationalId]),
+    }
+  }
+
+  return { header: [], rows: [] }
+}
+
+export const questionsItems = (
+  answers: FormValue,
+  externalData: ExternalData,
+): Array<KeyValueItem> => {
   const {
     isSelfEmployed,
     calculatedRemunerationDate,
     isPartTimeEmployed,
     isStudying,
+    educationalInstitution,
+    ectsUnits,
   } = getApplicationAnswers(answers)
 
-  const baseItems: Array<KeyValueItem> = [
-    {
-      width: 'half',
-      keyText:
-        medicalAndRehabilitationPaymentsFormMessage.generalInformation
-          .questionsIsSelfEmployed,
-      valueText:
-        isSelfEmployed === YES
-          ? socialInsuranceAdministrationMessage.shared.yes
-          : socialInsuranceAdministrationMessage.shared.no,
-    },
-  ]
+  let baseItems: Array<KeyValueItem> = []
+  if (isFirstApplication(externalData)) {
+    baseItems = [
+      {
+        width: 'half',
+        keyText:
+          medicalAndRehabilitationPaymentsFormMessage.generalInformation
+            .questionsIsSelfEmployed,
+        valueText:
+          isSelfEmployed === YES
+            ? socialInsuranceAdministrationMessage.shared.yes
+            : socialInsuranceAdministrationMessage.shared.no,
+      },
+    ]
+  }
 
   const calculatedRemunerationDateItem: Array<KeyValueItem> =
     isSelfEmployed === YES
@@ -224,7 +277,32 @@ export const questionsItems = (answers: FormValue): Array<KeyValueItem> => {
     },
   ]
 
-  return [...baseItems, ...calculatedRemunerationDateItem, ...baseItems2]
+  const isStudyingItems: Array<KeyValueItem> =
+    isStudying === YES
+      ? [
+          {
+            width: 'half',
+            keyText:
+              medicalAndRehabilitationPaymentsFormMessage.generalInformation
+                .questionsSchool,
+            valueText: educationalInstitution,
+          },
+          {
+            width: 'half',
+            keyText:
+              medicalAndRehabilitationPaymentsFormMessage.generalInformation
+                .questionsNumberOfCredits,
+            valueText: ectsUnits,
+          },
+        ]
+      : []
+
+  return [
+    ...baseItems,
+    ...calculatedRemunerationDateItem,
+    ...baseItems2,
+    ...isStudyingItems,
+  ]
 }
 
 export const employeeSickPayItems = (
@@ -269,20 +347,11 @@ export const unionSickPayItems = async (
   answers: FormValue,
   _externalData: ExternalData,
   _userNationalId: string,
-  apolloClient: ApolloClient<object>,
 ): Promise<KeyValueItem[]> => {
-  const {
-    hasUtilizedUnionSickPayRights,
-    unionSickPayEndDate,
-    unionNationalId,
-  } = getApplicationAnswers(answers)
+  const { hasUtilizedUnionSickPayRights, unionSickPayEndDate, unionInfo } =
+    getApplicationAnswers(answers)
 
-  const { data } = await apolloClient.query<SiaUnionsQuery>({
-    query: siaUnionsQuery,
-  })
-  const unionName = data?.socialInsuranceUnions.find(
-    (union) => union?.nationalId === unionNationalId,
-  )?.name
+  const unionName = unionInfo.split('::')[1]
 
   const baseItems: Array<KeyValueItem> = [
     {
@@ -335,11 +404,51 @@ export const rehabilitationPlanItems = (): Array<KeyValueItem> => [
   },
 ]
 
+export const confirmedTreatmentItems = (): Array<KeyValueItem> => [
+  {
+    width: 'full',
+    keyText:
+      medicalAndRehabilitationPaymentsFormMessage.confirmedTreatment
+        .sectionTitle,
+    valueText:
+      medicalAndRehabilitationPaymentsFormMessage.overview
+        .confirmedTreatmentConfirmed,
+  },
+]
+
+export const confirmationOfPendingResolutionItems = (): Array<KeyValueItem> => [
+  {
+    width: 'full',
+    keyText:
+      medicalAndRehabilitationPaymentsFormMessage
+        .confirmationOfPendingResolution.sectionTitle,
+    valueText:
+      medicalAndRehabilitationPaymentsFormMessage.overview
+        .confirmationOfPendingResolutionConfirmed,
+  },
+]
+
+export const confirmationOfIllHealthItems = (): Array<KeyValueItem> => [
+  {
+    width: 'full',
+    keyText:
+      medicalAndRehabilitationPaymentsFormMessage.confirmationOfIllHealth
+        .sectionTitle,
+    valueText:
+      medicalAndRehabilitationPaymentsFormMessage.overview
+        .confirmationOfIllHealthConfirmed,
+  },
+]
+
 export const selfAssessmentQuestionsOneItems = (
   answers: FormValue,
+  externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const { hadAssistance, highestLevelOfEducation } =
-    getApplicationAnswers(answers)
+  const { hadAssistance, educationalLevel } = getApplicationAnswers(answers)
+  const { educationLevels } = getApplicationExternalData(externalData)
+  const educationLevelOption = educationLevels.find(
+    (level) => level.code === educationalLevel,
+  )
 
   return [
     {
@@ -356,9 +465,133 @@ export const selfAssessmentQuestionsOneItems = (
       width: 'full',
       keyText:
         medicalAndRehabilitationPaymentsFormMessage.selfAssessment
-          .highestlevelOfEducationDescription,
-      valueText: highestLevelOfEducation,
+          .educationLevelDescription,
+      valueText: educationLevelOption?.description,
     },
+  ]
+}
+
+export const selfAssessmentQuestionsTwoItems = (
+  answers: FormValue,
+  externalData: ExternalData,
+  _userNationalId: string,
+  locale: Locale,
+): Array<KeyValueItem> => {
+  const {
+    currentEmploymentStatuses,
+    currentEmploymentStatusExplanation,
+    lastProfession,
+    lastProfessionDescription,
+    lastActivityOfProfession,
+    lastActivityOfProfessionDescription,
+    lastProfessionYear,
+  } = getApplicationAnswers(answers)
+
+  const employmentStatusesOptions = getEmploymentStatuses(externalData, locale)
+
+  const { professions, activitiesOfProfessions } =
+    getApplicationExternalData(externalData)
+
+  const statuses = currentEmploymentStatuses.map(
+    (status) =>
+      employmentStatusesOptions.find((option) => option.value === status)
+        ?.displayName,
+  )
+
+  const baseItems: Array<KeyValueItem> = [
+    {
+      width: 'full',
+      keyText:
+        medicalAndRehabilitationPaymentsFormMessage.selfAssessment
+          .currentEmploymentStatusTitle,
+      valueText: statuses,
+    },
+  ]
+
+  const currentEmploymentStatusItems: Array<KeyValueItem> =
+    currentEmploymentStatuses?.includes(OTHER)
+      ? [
+          {
+            width: 'full',
+            keyText:
+              medicalAndRehabilitationPaymentsFormMessage.selfAssessment
+                .furtherExplanation,
+            valueText: currentEmploymentStatusExplanation,
+          },
+        ]
+      : []
+
+  const baseItems2: Array<KeyValueItem> = [
+    {
+      width: 'full',
+      keyText:
+        medicalAndRehabilitationPaymentsFormMessage.overview
+          .selfAssessmentLastProfessionTitle,
+      valueText: professions.find(
+        (profession) => profession.value === lastProfession,
+      )?.description,
+      hideIfEmpty: true,
+    },
+  ]
+
+  const lastProfessionDescriptionItem: Array<KeyValueItem> =
+    lastProfession === OTHER
+      ? [
+          {
+            width: 'full',
+            keyText:
+              medicalAndRehabilitationPaymentsFormMessage.selfAssessment
+                .furtherExplanation,
+            valueText: lastProfessionDescription,
+          },
+        ]
+      : []
+
+  const baseItems3: Array<KeyValueItem> = [
+    {
+      width: 'full',
+      keyText:
+        medicalAndRehabilitationPaymentsFormMessage.selfAssessment
+          .lastActivityOfProfession,
+      valueText: activitiesOfProfessions.find(
+        (activity) => activity.value === lastActivityOfProfession,
+      )?.description,
+      hideIfEmpty: true,
+    },
+  ]
+
+  const lastActivityOfProfessionDescriptionItem: Array<KeyValueItem> =
+    lastActivityOfProfession === OTHER
+      ? [
+          {
+            width: 'full',
+            keyText:
+              medicalAndRehabilitationPaymentsFormMessage.selfAssessment
+                .furtherExplanation,
+            valueText: lastActivityOfProfessionDescription,
+          },
+        ]
+      : []
+
+  const baseItems4: Array<KeyValueItem> = [
+    {
+      width: 'full',
+      keyText:
+        medicalAndRehabilitationPaymentsFormMessage.overview
+          .selfAssessmentLastProfessionYear,
+      valueText: lastProfessionYear,
+      hideIfEmpty: true,
+    },
+  ]
+
+  return [
+    ...baseItems,
+    ...currentEmploymentStatusItems,
+    ...baseItems2,
+    ...lastProfessionDescriptionItem,
+    ...baseItems3,
+    ...lastActivityOfProfessionDescriptionItem,
+    ...baseItems4,
   ]
 }
 
@@ -441,10 +674,12 @@ export const selfAssessmentQuestionsThreeItems = (
 export const selfAssessmentQuestionnaireItems = (): Array<KeyValueItem> => [
   {
     width: 'full',
-    keyText: medicalAndRehabilitationPaymentsFormMessage.selfAssessment.title,
+    keyText:
+      medicalAndRehabilitationPaymentsFormMessage.overview
+        .selfAssessmentQuestionnaire,
     valueText:
       medicalAndRehabilitationPaymentsFormMessage.overview
-        .selfAssessmentConfirmed,
+        .selfAssessmentQuestionnaireConfirmed,
   },
 ]
 

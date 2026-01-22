@@ -30,7 +30,7 @@ judicial-system-api:
     BACKEND_URL: 'http://web-judicial-system-backend'
     CONTENTFUL_ENVIRONMENT: 'test'
     CONTENTFUL_HOST: 'cdn.contentful.com'
-    HIDDEN_FEATURES: 'SERVICE_PORTAL'
+    HIDDEN_FEATURES: ''
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
@@ -74,7 +74,8 @@ judicial-system-api:
             - '/api/defender'
   namespace: 'judicial-system'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -190,7 +191,8 @@ judicial-system-backend:
       DB_PASS: '/k8s/judicial-system/DB_PASSWORD'
   namespace: 'judicial-system'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -260,7 +262,7 @@ judicial-system-digital-mailbox-api:
     BACKEND_URL: 'http://web-judicial-system-backend'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-internal'
@@ -295,7 +297,8 @@ judicial-system-digital-mailbox-api:
             - '/'
   namespace: 'judicial-system'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -305,11 +308,11 @@ judicial-system-digital-mailbox-api:
     min: 1
   resources:
     limits:
-      cpu: '200m'
-      memory: '256Mi'
+      cpu: '400m'
+      memory: '512Mi'
     requests:
-      cpu: '100m'
-      memory: '128Mi'
+      cpu: '30m'
+      memory: '256Mi'
   secrets:
     BACKEND_ACCESS_TOKEN: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
@@ -326,7 +329,7 @@ judicial-system-digital-mailbox-api:
 judicial-system-message-handler:
   args:
     - '--no-experimental-fetch'
-    - 'main.js'
+    - 'main.cjs'
   command:
     - 'node'
   enabled: true
@@ -362,7 +365,8 @@ judicial-system-message-handler:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-message-handler'
   namespace: 'judicial-system'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -391,7 +395,7 @@ judicial-system-message-handler:
 judicial-system-scheduler:
   args:
     - '--no-experimental-fetch'
-    - 'main.js'
+    - 'main.cjs'
   command:
     - 'node'
   enabled: true
@@ -428,7 +432,8 @@ judicial-system-scheduler:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-scheduler'
   namespace: 'judicial-system'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []
@@ -452,16 +457,16 @@ judicial-system-scheduler:
     privileged: false
   serviceAccount:
     annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/judicial-system-scheduler'
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/web-judicial-system-scheduler'
     create: true
-    name: 'judicial-system-scheduler'
+    name: 'web-judicial-system-scheduler'
 judicial-system-web:
   enabled: true
   env:
     API_URL: 'https://judicial-system.staging01.devland.is'
     INTERNAL_API_URL: 'http://web-judicial-system-api'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-external'
@@ -498,7 +503,8 @@ judicial-system-web:
             - '/'
   namespace: 'judicial-system'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   pvcs: []
   replicaCount:
     default: 1
@@ -506,11 +512,11 @@ judicial-system-web:
     min: 1
   resources:
     limits:
-      cpu: '200m'
-      memory: '256Mi'
+      cpu: '400m'
+      memory: '512Mi'
     requests:
-      cpu: '15m'
-      memory: '128Mi'
+      cpu: '100m'
+      memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     LAWYERS_ICELAND_API_KEY: '/k8s/judicial-system/LAWYERS_ICELAND_API_KEY'
@@ -562,7 +568,8 @@ judicial-system-xrd-api:
             - '/'
   namespace: 'judicial-system'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
   pvcs: []

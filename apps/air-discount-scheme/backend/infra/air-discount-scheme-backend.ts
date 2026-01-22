@@ -5,6 +5,7 @@ export const serviceSetup = (): ServiceBuilder<'air-discount-scheme-backend'> =>
   service('air-discount-scheme-backend')
     .image('air-discount-scheme-backend')
     .namespace('air-discount-scheme')
+    .serviceAccount('air-discount-scheme-backend')
     .secrets({
       ICELANDAIR_API_KEY: '/k8s/air-discount-scheme/backend/ICELANDAIR_API_KEY',
       MYFLUG_API_KEY: '/k8s/air-discount-scheme/backend/MYFLUG_API_KEY',
@@ -37,10 +38,10 @@ export const serviceSetup = (): ServiceBuilder<'air-discount-scheme-backend'> =>
     .migrations()
     .redis({
       host: {
-        dev: 'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+        dev: 'clustercfg.ads-valkey-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
         staging:
           'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
-        prod: 'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
+        prod: 'clustercfg.ads-valkey-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
       },
     })
     .ingress({

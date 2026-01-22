@@ -53,8 +53,10 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
     requiredValidVehicleErrorMessage,
     isMachine,
     isEnergyFunds,
+    isMileCar,
     energyFundsMessages,
     clearOnChange,
+    clearOnChangeDefaultValue,
   } = field
 
   const [plate, setPlate] = useState<string>(
@@ -128,7 +130,8 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
   const setVehicleValues = (vehicleDetails: VehicleDetails) => {
     const vehicleDisabled =
       additionalErrors &&
-      (!vehicleDetails?.isDebtLess ||
+      ((vehicleDetails?.vehicleHasMilesOdometer && isMileCar) ||
+        !vehicleDetails?.isDebtLess ||
         !!vehicleDetails?.validationErrorMessages?.length)
 
     const permno = vehicleDisabled ? '' : vehicleDetails?.permno || ''
@@ -184,7 +187,6 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
         }
       }
     }
-    setValue(`${field.id}.findVehicle`, true)
 
     setValue(
       `${field.id}.paymentRequiredForOwnerChange`,
@@ -198,6 +200,8 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
     setValue(`${field.id}.ownerNumber`, machineDetails.ownerNumber || '')
     setValue(`${field.id}.id`, machineDetails.id)
     setValue(`${field.id}.date`, new Date().toISOString())
+    setValue(`${field.id}.findVehicle`, true)
+    setValue(`${field.id}.isValid`, machineDisabled ? undefined : true)
 
     setValue('pickMachine.id', machineDetails.id)
     setValue('pickMachine.isValid', machineDisabled ? undefined : true)
@@ -235,7 +239,8 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
 
   const vehicleDisabled =
     additionalErrors &&
-    (!vehicleDetails?.isDebtLess ||
+    ((vehicleDetails?.vehicleHasMilesOdometer && isMileCar) ||
+      !vehicleDetails?.isDebtLess ||
       !!vehicleDetails?.validationErrorMessages?.length)
 
   const machineDisabled = machineDetails?.disabled
@@ -287,6 +292,7 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
             }}
             maxLength={isMachine ? 7 : 5}
             clearOnChange={clearOnChange}
+            clearOnChangeDefaultValue={clearOnChangeDefaultValue}
           />
         </Box>
         <Button onClick={findVehicleByPlate} disabled={buttonDisabled}>
@@ -379,47 +385,52 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
                   }
                   message={
                     <Box>
-                      <BulletList>
-                        {!vehicleDetails.isDebtLess && (
-                          <Bullet>
-                            {isNotDebtLessTag &&
-                              formatText(
-                                isNotDebtLessTag,
-                                application,
-                                formatMessage,
-                              )}
-                          </Bullet>
-                        )}
-                        {!!vehicleDetails.validationErrorMessages?.length &&
-                          vehicleDetails.validationErrorMessages?.map(
-                            (error) => {
-                              const message = formatMessage(
-                                (validationErrors &&
-                                  getValueViaPath(
-                                    validationErrors,
-                                    error.errorNo || '',
-                                  )) ||
-                                  '',
-                              )
-                              const defaultMessage = error.defaultMessage
-                              const fallbackMessage =
-                                fallbackErrorMessage &&
+                      {(!vehicleDetails.isDebtLess ||
+                        !!vehicleDetails.validationErrorMessages?.length) && (
+                        <BulletList>
+                          {!vehicleDetails.isDebtLess && (
+                            <Bullet key="isdebtless">
+                              {isNotDebtLessTag &&
                                 formatText(
-                                  fallbackErrorMessage,
+                                  isNotDebtLessTag,
                                   application,
                                   formatMessage,
-                                ) +
-                                  ' - ' +
-                                  error.errorNo
-
-                              return (
-                                <Bullet>
-                                  {message || defaultMessage || fallbackMessage}
-                                </Bullet>
-                              )
-                            },
+                                )}
+                            </Bullet>
                           )}
-                      </BulletList>
+                          {!!vehicleDetails.validationErrorMessages?.length &&
+                            vehicleDetails.validationErrorMessages?.map(
+                              (error) => {
+                                const message = formatMessage(
+                                  (validationErrors &&
+                                    getValueViaPath(
+                                      validationErrors,
+                                      error.errorNo || '',
+                                    )) ||
+                                    '',
+                                )
+                                const defaultMessage = error.defaultMessage
+                                const fallbackMessage =
+                                  fallbackErrorMessage &&
+                                  formatText(
+                                    fallbackErrorMessage,
+                                    application,
+                                    formatMessage,
+                                  ) +
+                                    ' - ' +
+                                    error.errorNo
+
+                                return (
+                                  <Bullet key={error.errorNo}>
+                                    {message ||
+                                      defaultMessage ||
+                                      fallbackMessage}
+                                  </Bullet>
+                                )
+                              },
+                            )}
+                        </BulletList>
+                      )}
                     </Box>
                   }
                 />

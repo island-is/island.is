@@ -32,7 +32,7 @@ export const DigitalIcelandLatestNewsCard = (item: ItemProps) => {
         <BackgroundImage
           backgroundSize="cover"
           image={{ url: item.imageSrc }}
-          ratio="432:210"
+          ratio="10:7"
           boxProps={{
             alignItems: 'center',
             width: 'full',

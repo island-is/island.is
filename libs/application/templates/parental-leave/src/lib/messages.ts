@@ -402,14 +402,14 @@ export const parentalLeaveFormMessages = {
     multipleRightsDescription: {
       id: 'pl.application:multiple.rights.description',
       defaultMessage:
-        'Fæðingarorlofsréttur eru 12 mánuðir sem skiptast jafnt milli foreldra, en þó má færa allt að 45 daga frá einu foreldri til hins. Fyrir hvert barn sem fæðist bætist við 3 mánaða sameiginlegur réttur foreldra til fæðingarorlofs.',
-      description: `The right to parental leave is 12 months, they  are equally divided between parents, but 45 days can be moved from one parent to the other. For each child that is born, 3 months of the parents' joint right is added.`,
+        'Fæðingarorlofsréttur eru 12 mánuðir sem skiptast jafnt milli foreldra, en þó má færa allt að 45 daga frá einu foreldri til hins. Fyrir hvert barn sem fæðist bætist við sex mánaða sameiginlegur réttur foreldra til fæðingarorlofs.',
+      description: `The right to parental leave is 12 months, they  are equally divided between parents, but 45 days can be moved from one parent to the other. For each child that is born, six months of the parents' joint right is added.`,
     },
     grantMultipleRightsDescription: {
       id: 'pl.application:grant.multiple.rights.description',
       defaultMessage:
-        'Fæðingarstyrksréttur eru 12 mánuðir sem skiptast jafnt milli foreldra, en þó má færa allt að 45 daga frá einu foreldri til hins. Fyrir hvert barn sem fæðist bætist við 3 mánaða sameiginlegur réttur foreldra til fæðingarstyrks.',
-      description: `Parental grant allowance is a total of 12 months which is divided equally between two parents. However, you can move up to 45 days from one parent to another. For each child that is born, 3 months of the parents' joint right is added.`,
+        'Fæðingarstyrksréttur eru 12 mánuðir sem skiptast jafnt milli foreldra, en þó má færa allt að 45 daga frá einu foreldri til hins. Fyrir hvert barn sem fæðist bætist við sex mánaða sameiginlegur réttur foreldra til fæðingarstyrks.',
+      description: `Parental grant allowance is a total of 12 months which is divided equally between two parents. However, you can move up to 45 days from one parent to another. For each child that is born, six months of the parents' joint right is added.`,
     },
     singleParentRightsDescription: {
       id: 'pl.application:single.parent.rights.description',
@@ -428,14 +428,14 @@ export const parentalLeaveFormMessages = {
     singleParentMultipleRightsDescription: {
       id: 'pl.application:single.parent.multiple.rights.description',
       defaultMessage:
-        'Fæðingarorlofsréttur fyrir einhleypt foreldri eru 12 mánuðir. Fyrir hvert barn sem fæðist bætist við 3 mánaða sameiginlegur réttur foreldra til fæðingarorlofs.',
-      description: `The right to parental leave is 12 months for single parent. For each child that is born, 3 months of the parents' joint right is added.`,
+        'Fæðingarorlofsréttur fyrir einhleypt foreldri eru 12 mánuðir. Fyrir hvert barn sem fæðist bætist við sex mánaða réttur til fæðingarorlofs.',
+      description: `The right to parental leave is 12 months for single parent. For each additonal child that is born, a six months right is added.`,
     },
     singleParentGrantMultipleRightsDescription: {
       id: 'pl.application:single.parent.grant.multiple.rights.description',
       defaultMessage:
-        'Fæðingarstyrksréttur fyrir einhleypt foreldri eru 12 mánuðir. Fyrir hvert barn sem fæðist bætist við 3 mánaða sameiginlegur réttur foreldra til fæðingarstyrks.',
-      description: `The right to parental leave is 12 months for single parent. For each child that is born, 3 months of the parents' joint right is added.`,
+        'Fæðingarstyrksréttur fyrir einhleypt foreldri eru 12 mánuðir. Fyrir hvert barn sem fæðist bætist við sex mánaða réttur til fæðingarstyrks.',
+      description: `The right to parental leave is 12 months for single parent. For each additional child that is born, a six months right is added.`,
     },
     requestRightsName: {
       id: 'pl.application:request.rights.name',
@@ -471,16 +471,16 @@ export const parentalLeaveFormMessages = {
     multipleBirthsDaysDescription: {
       id: 'pl.application:multipleBirths.daysDescription',
       defaultMessage:
-        'Fyrir hvert barn sem fæðist bætist við 3 mánaða sameiginlegur réttur foreldra til fæðingarorlofs',
+        'Fyrir hvert barn sem fæðist bætist við sex mánaða sameiginlegur réttur foreldra til fæðingarorlofs',
       description:
-        'For each child the parents’ joint entitlement to a parental leave is extended by 3 months.',
+        'For each child the parents’ joint entitlement to a parental leave is extended by six months.',
     },
     multipleBirthsDaysDescriptionGrant: {
       id: 'pl.application:multipleBirths.daysDescription.grant',
       defaultMessage:
-        'Fyrir hvert barn sem fæðist bætist við 3 mánaða sameiginlegur réttur foreldra til fæðingarstyrks',
+        'Fyrir hvert barn sem fæðist bætist við sex mánaða sameiginlegur réttur foreldra til fæðingarstyrks',
       description:
-        'For each child the parents’ joint entitlement to a parental grant is extended by 3 months.',
+        'For each child the parents’ joint entitlement to a parental grant is extended by six months.',
     },
     requestMultipleBirthsDay: {
       id: 'pl.application:request.multipleBirths.day',

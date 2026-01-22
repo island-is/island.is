@@ -233,6 +233,7 @@ export type EstateMember = {
 
 export type InheritanceEstateMember = EstateMember & {
   address?: string
+  heirsPercentage?: string
 }
 
 export type EstateAsset = {
@@ -241,6 +242,10 @@ export type EstateAsset = {
   share: number
   enabled?: boolean
   marketValue?: string
+  // Additional fields for specific asset types
+  upphaed?: string // Face value for stocks
+  gengiVextir?: string // Exchange rate for stocks
+  exchangeRateOrInterest?: string // Interest/exchange rate for bank accounts
 }
 
 export type AvailableSettlements = {
@@ -270,18 +275,31 @@ interface EstateCommon {
   ships: EstateAsset[]
   flyers: EstateAsset[]
   cash: EstateAsset[]
+  moneyAndDeposit: EstateAsset[]
   guns: EstateAsset[]
+  otherAssets: EstateAsset[]
+  otherDebts?: Array<EstateAsset & { debtType: DebtTypes }>
   estateMembers: EstateMember[]
   caseNumber: string
-  districtCommissionerHasWill: boolean
-  marriageSettlement: boolean
+  districtCommissionerHasWill?: boolean
+  marriageSettlement?: boolean
   dateOfDeath: Date
   nameOfDeceased: string
   nationalIdOfDeceased: string
-  knowledgeOfOtherWills: 'Yes' | 'No'
+  knowledgeOfOtherWills?: 'Yes' | 'No'
 }
 
-export interface EstateInfo extends EstateCommon {
+interface EstateCommonWithBankAccounts extends EstateCommon {
+  bankAccounts: EstateAsset[]
+  claims: EstateAsset[]
+  stocks: EstateAsset[]
+  inventory?: {
+    info: string
+    value: string
+  }
+}
+
+export interface EstateInfo extends EstateCommonWithBankAccounts {
   addressOfDeceased: string
   availableSettlements?: AvailableSettlements
 }
@@ -302,6 +320,27 @@ export interface InheritanceReportAsset {
   exchangeRateOrInterest: string
 }
 
+export const FuneralAssetItem = {
+  Casket: 0, // Smíði kistu og umbúnaður
+  Announcements: 1, // Dánartilkynningar
+  Printing: 2,
+  Flowers: 3,
+  Music: 4,
+  Venue: 5,
+  Wake: 6,
+  Tombstone: 7,
+  FuneralServices: 8,
+  Cremation: 9,
+  Other: 10,
+} as const
+
+export type FuneralAssetItem =
+  typeof FuneralAssetItem[keyof typeof FuneralAssetItem]
+
+export interface InheritanceReportFuneralAsset extends InheritanceReportAsset {
+  funeralAssetItem: FuneralAssetItem
+}
+
 export interface InheritanceReportInfo {
   assets: Array<InheritanceReportAsset>
   vehicles: Array<InheritanceReportAsset>
@@ -314,7 +353,7 @@ export interface InheritanceReportInfo {
   depositsAndMoney: Array<InheritanceReportAsset>
   guns: Array<InheritanceReportAsset>
   sharesAndClaims: Array<InheritanceReportAsset>
-  funeralCosts: Array<InheritanceReportAsset>
+  funeralCosts: Array<InheritanceReportFuneralAsset>
   officialFees: Array<InheritanceReportAsset>
   otherDebts: Array<InheritanceReportAsset>
   assetsInBusiness: Array<InheritanceReportAsset>
@@ -439,7 +478,15 @@ export interface VehicleRegistration {
 export enum DebtTypes {
   Overdraft = 'overdraft',
   CreditCard = 'creditCard',
+  Duties = 'duties',
   Loan = 'loan',
   InsuranceCompany = 'insuranceCompany',
   PropertyFees = 'propertyFees',
+  OtherDebts = 'otherDebts',
+}
+
+export interface DrivingInstructor {
+  name: string
+  postalCode: string
+  municipality: string
 }

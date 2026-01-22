@@ -1,13 +1,13 @@
 import { buildForm, getValueViaPath } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
-import { Logo } from '../assets/Logo'
+import { AoshLogo } from '@island.is/application/assets/institution-logos'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import { conclusion } from '../lib/messages'
 import { IndividualOrCompany, PaymentOptions } from '../utils/enums'
 
 export const Conclusion: Form = buildForm({
   id: 'ConclusionApplicationForm',
-  logo: Logo,
+  logo: AoshLogo,
   mode: FormModes.COMPLETED,
   children: [
     buildFormConclusionSection({

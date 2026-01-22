@@ -16,6 +16,19 @@ const isValidPhoneNumber = (phoneNumber: string) => {
 
 const isValidEmail = (value: string) => EMAIL_REGEX.test(value)
 
+const isNumberOutsideOfLimit = (
+  valueStr: string | null | undefined,
+  max?: number,
+): boolean => {
+  if (max === undefined || valueStr == null) return false
+  const valueNum = Number(valueStr)
+  return isNaN(valueNum) || valueNum <= 0 || valueNum > max
+}
+
+const isRequiredFieldValid = (value: string | null | undefined): boolean => {
+  return !!value && value.trim().length > 0
+}
+
 const ApplicantSchema = z.object({
   nationalId: z
     .string()
@@ -82,28 +95,41 @@ const TransporterSchema = z
       .string()
       .optional()
       .refine((v) => !v || isValidPhoneNumber(v)),
-    address: z.string().max(100).optional(),
-    postalCodeAndCity: z.string().optional(),
   })
   .refine(
-    ({ isSameAsApplicant, address }) => {
+    ({ isSameAsApplicant, nationalId }) => {
       if (isSameAsApplicant?.includes(YES)) return true
-      return !!address
+      return nationalId && kennitala.isValid(nationalId)
     },
-    { path: ['address'] },
+    { path: ['nationalId'] },
   )
   .refine(
-    ({ isSameAsApplicant, postalCodeAndCity }) => {
+    ({ isSameAsApplicant, name }) => {
       if (isSameAsApplicant?.includes(YES)) return true
-      return !!postalCodeAndCity
+      return !!name
     },
-    { path: ['postalCodeAndCity'] },
+    { path: ['name'] },
+  )
+  .refine(
+    ({ isSameAsApplicant, email }) => {
+      if (isSameAsApplicant?.includes(YES)) return true
+      return !!email
+    },
+    { path: ['email'] },
+  )
+  .refine(
+    ({ isSameAsApplicant, phone }) => {
+      if (isSameAsApplicant?.includes(YES)) return true
+      return !!phone
+    },
+    { path: ['phone'] },
   )
 
 const ConvoySchema = z.object({
   items: z.array(
     z.object({
-      convoyId: z.string(),
+      // Note: this field is actually required, but setting as optional so it is possible to use onSubmitLoad in tableRepeater
+      convoyId: z.string().optional(),
       vehicle: z.object({
         permno: z.string().length(5),
         makeAndColor: z.string().min(1),
@@ -148,62 +174,15 @@ const ConvoySchema = z.object({
   ),
 })
 
-const FreightSchema = z
-  .object({
-    // Note: we are only saving limit in answers to be able to display
-    // pretty zod error message (without the usage of custom component)
-    limit: z
-      .object({
-        maxLength: z.number().optional(),
-        maxWeight: z.number().optional(),
-        maxHeight: z.number().optional(),
-        maxWidth: z.number().optional(),
-        maxTotalLength: z.number().optional(),
-      })
-      .optional(),
-    items: z.array(
-      z.object({
-        freightId: z.string(),
-        name: z.string().min(1).max(100),
-        length: z.string().min(1),
-        weight: z.string().min(1),
-      }),
-    ),
-  })
-  .superRefine(({ items, limit }, ctx) => {
-    if (!limit) return
-
-    const keysToCheck: {
-      key: keyof NonNullable<typeof items[number]>
-      limitKey: keyof NonNullable<typeof limit>
-    }[] = [
-      { key: 'length', limitKey: 'maxLength' },
-      { key: 'weight', limitKey: 'maxWeight' },
-    ]
-
-    keysToCheck.forEach(({ key, limitKey }) => {
-      const max = limit[limitKey]
-      if (max === undefined) return
-
-      items.forEach((item, index) => {
-        const valueStr = item[key]
-        if (valueStr === undefined) return
-
-        const valueNum = Number(valueStr)
-
-        if (isNaN(valueNum) || valueNum <= 0 || valueNum > max) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            params: {
-              ...error.numberValueIsNotWithinLimit,
-              values: { min: '0', max },
-            },
-            path: ['items', index, key],
-          })
-        }
-      })
-    })
-  })
+const FreightSchema = z.object({
+  items: z.array(
+    z.object({
+      // Note: this field is actually required, but setting as optional so it is possible to use onSubmitLoad in tableRepeater
+      freightId: z.string().optional(),
+      name: z.string().min(1).max(100),
+    }),
+  ),
+})
 
 const FreightPairingSchema = z
   .object({
@@ -219,17 +198,22 @@ const FreightPairingSchema = z
       })
       .optional(),
     freightId: z.string(),
+    length: z.string().min(1),
+    weight: z.string().min(1),
     convoyIdList: z.array(z.string()),
     items: z.array(
       z
         .object({
           convoyId: z.string(),
-          height: z.string().min(1),
-          width: z.string().min(1),
-          totalLength: z.string().min(1),
+          // Note: these fields need to be nullable in case convoy is selected in dropdown
+          // and then removed without filling in all fields
+          height: z.string().nullable(),
+          width: z.string().nullable(),
+          totalLength: z.string().nullable(),
           exemptionFor: z
             .array(z.nativeEnum(ExemptionFor).nullable())
-            .optional(),
+            .optional()
+            .nullable(),
         })
         // Note: need to be optional/nullable, since there can be items/convoys in between that are not selected and therefor undefined/null
         // (needs to be optional for zod validation, and nullable for graphql validation)
@@ -237,51 +221,100 @@ const FreightPairingSchema = z
         .nullable(),
     ),
   })
-  .superRefine(({ limit, items }, ctx) => {
-    if (!limit) return
+  .superRefine(({ limit, items, convoyIdList, length, weight }, ctx) => {
+    // Check limit for length and weight
+    if (limit) {
+      if (isNumberOutsideOfLimit(length, limit.maxLength)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          params: {
+            ...error.numberValueIsNotWithinLimit,
+            values: { min: '0', max: limit.maxLength },
+          },
+          path: ['length'],
+        })
+      }
 
-    const keysToCheck: {
-      key: keyof NonNullable<typeof items[number]>
-      limitKey: keyof NonNullable<typeof limit>
-    }[] = [
-      { key: 'height', limitKey: 'maxHeight' },
-      { key: 'width', limitKey: 'maxWidth' },
-      { key: 'totalLength', limitKey: 'maxTotalLength' },
-    ]
-    keysToCheck.forEach(({ key, limitKey }) => {
-      const max = limit[limitKey]
-      if (max === undefined) return
+      if (isNumberOutsideOfLimit(weight, limit.maxWeight)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          params: {
+            ...error.numberValueIsNotWithinLimit,
+            values: { min: '0', max: limit.maxWeight },
+          },
+          path: ['weight'],
+        })
+      }
+    }
 
-      items.forEach((item, index) => {
-        if (!item) return
+    // Check limit for values in items (height, width, totalLength)
+    // Check required for values in items (height, width, totalLength, exemptionFor)
+    if (!items) return
+    items.forEach((item, index) => {
+      if (!item || !convoyIdList.includes(item.convoyId)) return
 
-        const valueStr = item[key]
-        if (valueStr === undefined) return
+      // Limit validation
+      if (limit) {
+        const limitFields: {
+          key: 'height' | 'width' | 'totalLength'
+          max?: number
+        }[] = [
+          { key: 'height', max: limit.maxHeight },
+          { key: 'width', max: limit.maxWidth },
+          { key: 'totalLength', max: limit.maxTotalLength },
+        ]
 
-        const valueNum = Number(valueStr)
+        limitFields.forEach(({ key, max }) => {
+          if (isNumberOutsideOfLimit(item[key], max)) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              params: {
+                ...error.numberValueIsNotWithinLimit,
+                values: { min: '0', max },
+              },
+              path: ['items', index, key],
+            })
+          }
+        })
+      }
 
-        if (isNaN(valueNum) || valueNum <= 0 || valueNum > max) {
+      // Required field validation
+      const requiredFields: {
+        key: 'height' | 'width' | 'totalLength'
+        value: string | null
+      }[] = [
+        { key: 'height', value: item.height },
+        { key: 'width', value: item.width },
+        { key: 'totalLength', value: item.totalLength },
+      ]
+
+      requiredFields.forEach(({ key, value }) => {
+        if (!isRequiredFieldValid(value)) {
           ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            params: {
-              ...error.numberValueIsNotWithinLimit,
-              values: { min: '0', max },
-            },
             path: ['items', index, key],
+            code: z.ZodIssueCode.custom,
+            params: coreErrorMessages.defaultError,
           })
         }
       })
+      if (!item.exemptionFor?.length) {
+        ctx.addIssue({
+          path: ['items', index, 'exemptionFor'],
+          code: z.ZodIssueCode.custom,
+          params: coreErrorMessages.defaultError,
+        })
+      }
     })
   })
 
 const AxleSpacingSchema = z
   .object({
-    hasExemptionForWeight: z.boolean(),
     exemptionPeriodType: z.string(),
+    hasExemptionForWeight: z.boolean(),
     vehicleList: z.array(
       z.object({
         permno: z.string(),
-        values: z.array(z.string().min(1)),
+        values: z.array(z.string().optional()),
       }),
     ),
     // Note: Not array, since dolly is only allowed in short-term where there is max one convoy
@@ -289,38 +322,53 @@ const AxleSpacingSchema = z
       type: z.nativeEnum(DollyType).optional(),
       value: z.string().optional(),
     }),
-    trailerList: z.array(
-      z.object({
-        useSameValues: z.array(z.enum([YES])).optional(),
-        permno: z.string(),
-        values: z.array(z.string().optional()),
-        singleValue: z.string().optional(),
-        axleCount: z.number().optional(),
-      }),
-    ),
+    trailerList: z
+      .array(
+        z.object({
+          useSameValues: z.array(z.enum([YES])).optional(),
+          permno: z.string(),
+          values: z.array(z.string().optional()),
+          singleValue: z.string().optional(),
+          axleCount: z.number().optional(),
+        }),
+      )
+      .optional(),
   })
-  .refine(
-    ({ hasExemptionForWeight, exemptionPeriodType, dolly, trailerList }) => {
-      if (!hasExemptionForWeight) return true
-
-      // Since dolly is only allowed in short-term
-      if (exemptionPeriodType !== ExemptionType.SHORT_TERM) return true
-
-      // Since dolly can only be included if there is a trailer
-      const hasTrailer = trailerList.some((x) => !!x.permno)
-      if (!hasTrailer) return true
-
-      // Since there is only axle space for double dolly
-      if (dolly.type !== DollyType.DOUBLE) return true
-
-      return !!dolly?.value
-    },
-    { path: ['dolly', 'value'] },
-  )
   .superRefine((data, ctx) => {
+    if (data.exemptionPeriodType !== ExemptionType.SHORT_TERM) return
     if (!data.hasExemptionForWeight) return
 
-    data.trailerList.forEach((trailer, index) => {
+    // Vehicle validation
+    data.vehicleList.forEach((vehicle, index) => {
+      if (!vehicle.permno) return
+
+      vehicle.values.forEach((value, valueIndex) => {
+        if (!value) {
+          ctx.addIssue({
+            path: ['vehicleList', index, 'values', valueIndex],
+            code: z.ZodIssueCode.custom,
+            params: coreErrorMessages.defaultError,
+          })
+        }
+      })
+    })
+
+    // Dolly validation
+    if (
+      data.exemptionPeriodType === ExemptionType.SHORT_TERM &&
+      data.trailerList?.some((x) => !!x.permno) &&
+      data.dolly.type === DollyType.DOUBLE &&
+      !data.dolly.value
+    ) {
+      ctx.addIssue({
+        path: ['dolly', 'value'],
+        code: z.ZodIssueCode.custom,
+        params: coreErrorMessages.defaultError,
+      })
+    }
+
+    // Trailer validation
+    data.trailerList?.forEach((trailer, index) => {
       if (!trailer.permno) return
 
       const useSame = trailer.useSameValues?.includes(YES)
@@ -347,8 +395,8 @@ const AxleSpacingSchema = z
 
 const VehicleSpacingSchema = z
   .object({
-    hasExemptionForWeight: z.boolean(),
     exemptionPeriodType: z.string(),
+    hasExemptionForWeight: z.boolean(),
     convoyList: z.array(
       z.object({
         convoyId: z.string(),
@@ -361,6 +409,7 @@ const VehicleSpacingSchema = z
     ),
   })
   .superRefine((data, ctx) => {
+    if (data.exemptionPeriodType !== ExemptionType.SHORT_TERM) return
     if (!data.hasExemptionForWeight) return
 
     data.convoyList.forEach((convoy, index) => {

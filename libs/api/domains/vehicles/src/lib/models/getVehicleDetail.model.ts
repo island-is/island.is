@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql'
+import { Directive, Field, Int, ObjectType } from '@nestjs/graphql'
 import { VehicleMileageDetail } from './getVehicleMileage.model'
 
 @ObjectType()
@@ -353,8 +353,18 @@ export class VehiclesDetail {
   @Field(() => Boolean, { nullable: true })
   isOutOfCommission?: boolean
 
-  @Field(() => VehicleMileageDetail, { nullable: true })
+  @Directive(
+    '@deprecated(reason: "Not accurate for single vehicles. Use latestMileageRegistration instead")',
+  )
+  @Field(() => VehicleMileageDetail, {
+    deprecationReason:
+      'Not accurate for single vehicles. Use lastMileageRegistration instead',
+    nullable: true,
+  })
   lastMileage?: VehicleMileageDetail | null
+
+  @Field(() => Int, { nullable: true })
+  latestMileageRegistration?: number
 }
 
 @ObjectType()

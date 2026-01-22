@@ -1,10 +1,10 @@
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { IndictmentCountOffense } from '@island.is/judicial-system/types'
 
 import { createTestingIndictmentCountModule } from './createTestingIndictmentCountModule'
 
-import { Offense } from '../models/offense.model'
+import { Offense } from '../../repository'
 
 interface Then {
   result: Offense

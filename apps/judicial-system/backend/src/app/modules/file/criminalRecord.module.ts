@@ -1,7 +1,6 @@
 import { forwardRef, Module } from '@nestjs/common'
 
-import { AwsS3Module } from '../aws-s3/awsS3.module'
-import { EventModule } from '../event/event.module'
+import { AwsS3Module, EventModule } from '..'
 import { CriminalRecordService } from './criminalRecord.service'
 
 @Module({

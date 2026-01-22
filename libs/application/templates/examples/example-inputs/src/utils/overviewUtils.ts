@@ -1,14 +1,15 @@
 import { ApolloClient } from '@apollo/client'
+import { Query } from '@island.is/api/schema'
 import { getValueViaPath } from '@island.is/application/core'
 import {
   AttachmentItem,
   ExternalData,
   FormValue,
   KeyValueItem,
+  TableData,
 } from '@island.is/application/types'
-import { friggSchoolsByMunicipalityQuery } from '../graphql/sampleQuery'
+import { friggOrganizationsByTypeQuery } from '../graphql/sampleQuery'
 import { m } from '../lib/messages'
-import { FriggSchoolsByMunicipality } from './types'
 
 export const getOverviewItems = (
   answers: FormValue,
@@ -88,11 +89,11 @@ export const getOverviewLoadItems = async (
   _userNationalId: string,
   apolloClient: ApolloClient<object>,
 ): Promise<KeyValueItem[]> => {
-  const { data } = await apolloClient.query<FriggSchoolsByMunicipality>({
-    query: friggSchoolsByMunicipalityQuery,
+  const { data } = await apolloClient.query<Query>({
+    query: friggOrganizationsByTypeQuery,
   })
 
-  const municipality = data?.friggSchoolsByMunicipality?.[0].name
+  const organization = data?.friggOrganizationsByType?.[0]?.name ?? ''
 
   return [
     {
@@ -109,7 +110,7 @@ export const getOverviewLoadItems = async (
     {
       width: 'half',
       keyText: 'Half width',
-      valueText: municipality,
+      valueText: organization,
     },
   ]
 }
@@ -147,7 +148,7 @@ export const getSumItems = (
 export const getTableData = (
   _answers: FormValue,
   _externalData: ExternalData,
-) => {
+): TableData => {
   return {
     header: [
       'Table heading 1',
@@ -162,6 +163,42 @@ export const getTableData = (
         'Row 1, Column 3',
         'Row 1, Column 4',
       ],
+      [
+        'Row 2, Column 1',
+        'Row 2, Column 2',
+        'Row 2, Column 3',
+        'Row 2, Column 4',
+      ],
+      [
+        'Row 3, Column 1',
+        'Row 3, Column 2',
+        'Row 3, Column 3',
+        'Row 3, Column 4',
+      ],
+    ],
+  }
+}
+
+export const getLoadTableData = async (
+  _answers: FormValue,
+  _externalData: ExternalData,
+  apolloClient: ApolloClient<object>,
+): Promise<TableData> => {
+  const { data } = await apolloClient.query<Query>({
+    query: friggOrganizationsByTypeQuery,
+  })
+
+  const organization = data?.friggOrganizationsByType?.[0]?.name ?? ''
+
+  return {
+    header: [
+      'Table heading 1',
+      'Table heading 2',
+      'Table heading 3',
+      'Table heading 4',
+    ],
+    rows: [
+      [organization, 'Row 1, Column 2', 'Row 1, Column 3', 'Row 1, Column 4'],
       [
         'Row 2, Column 1',
         'Row 2, Column 2',

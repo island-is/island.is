@@ -1,0 +1,34 @@
+query signatureCollectionAdminListsForCandidate(
+  $input: SignatureCollectionCandidateIdInput!
+) {
+  signatureCollectionAdminListsForCandidate(input: $input) {
+    id
+    title
+    area {
+      id
+      name
+      min
+      max
+      isActive
+      collectionId
+    }
+    endTime
+    startTime
+    candidate {
+      id
+      nationalId
+      name
+      phone
+      email
+      ownerName
+      hasActiveLists
+    }
+    active
+    collectionId
+    slug
+    numberOfSignatures
+    maxReached
+    reviewed
+    collectionType
+  }
+}

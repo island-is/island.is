@@ -1,18 +1,14 @@
-import { useContext } from 'react'
-import { Option, Tabs, Box } from '@island.is/island-ui/core'
-import { FormsContext } from '../../../context/FormsContext'
-import { Outlet } from 'react-router-dom'
-import { FormsLocationState } from '../../../lib/utils/interfaces'
 import { TabType } from '@island.is/form-system/ui'
+import { Tabs } from '@island.is/island-ui/core'
+import { useContext } from 'react'
+import { Outlet } from 'react-router-dom'
+import { FormsContext } from '../../../context/FormsContext'
+import { FormsLocationState } from '../../../lib/utils/interfaces'
 
 const DASHBOARD_TABS: TabType[] = [
   {
     id: 'forms',
     label: 'Form',
-  },
-  {
-    id: 'applications',
-    label: 'Umsóknir',
   },
   {
     id: 'admin',
@@ -21,11 +17,11 @@ const DASHBOARD_TABS: TabType[] = [
 ]
 
 export const FormsHeader = () => {
-  const { location, setLocation, forms } = useContext(FormsContext)
+  const { location, setLocation } = useContext(FormsContext)
 
   const onTabChange = (tabId: string) => {
     const isValidLocation = (value: string): value is FormsLocationState => {
-      return ['forms', 'applications', 'admin'].includes(value)
+      return ['forms', 'admin'].includes(value)
     }
 
     if (isValidLocation(tabId)) {

@@ -4,20 +4,21 @@ import PDFDocument from 'pdfkit'
 import { FormatMessage } from '@island.is/cms-translations'
 
 import { formatDate, lowercase } from '@island.is/judicial-system/formatters'
+import { getIndictmentCountCompare } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../factories'
 import { indictment } from '../messages'
-import { Case } from '../modules/case'
-import { CaseString } from '../modules/case/models/caseString.model'
+import { Case, CaseString } from '../modules/repository'
 import {
   addEmptyLines,
   addGiganticHeading,
-  addIndictmentConfirmation,
   addNormalPlusCenteredText,
   addNormalPlusJustifiedText,
   addNormalPlusText,
   addNormalText,
   Confirmation,
+  drawConfirmation,
+  formatActor,
   setTitle,
 } from './pdfHelpers'
 
@@ -66,14 +67,34 @@ export const createIndictment = async (
     bufferPages: true,
   })
 
-  const sinc: Buffer[] = []
+  const sinc: Uint8Array[] = []
 
   doc.on('data', (chunk) => sinc.push(chunk))
 
   setTitle(doc, formatMessage(indictment.title))
 
   if (confirmation) {
-    addIndictmentConfirmation(doc, confirmation)
+    drawConfirmation(doc, {
+      showLockIcon: true,
+      confirmationText: 'Skjal samþykkt rafrænt',
+      boxes: [
+        {
+          title: 'Samþykktaraðili',
+          content: formatActor(confirmation.actor, confirmation.title),
+          widthPercent: 40,
+        },
+        {
+          title: 'Embætti',
+          content: confirmation.institution,
+          widthPercent: 40,
+        },
+        {
+          title: 'Útgáfa ákæru',
+          content: formatDate(confirmation.date) ?? '',
+          widthPercent: 20,
+        },
+      ],
+    })
   }
 
   addEmptyLines(doc, 6, doc.page.margins.left)
@@ -85,19 +106,21 @@ export const createIndictment = async (
 
   const hasManyCounts =
     theCase.indictmentCounts && theCase.indictmentCounts.length > 1
-  theCase.indictmentCounts?.forEach((count, index) => {
-    addEmptyLines(doc)
+  theCase.indictmentCounts
+    ?.sort(getIndictmentCountCompare(theCase.policeCaseNumbers))
+    .forEach((count, index) => {
+      addEmptyLines(doc)
 
-    if (hasManyCounts) {
-      addNormalPlusCenteredText(doc, `${roman(index + 1)}.`)
-      addNormalPlusJustifiedText(doc, count.incidentDescription ?? '')
-    } else {
-      addNormalPlusJustifiedText(doc, count.incidentDescription ?? '')
-    }
-    addEmptyLines(doc)
-    addNormalPlusJustifiedText(doc, count.legalArguments ?? '')
-    addNormalText(doc, `M: ${count.policeCaseNumber ?? ''}`)
-  })
+      if (hasManyCounts) {
+        addNormalPlusCenteredText(doc, `${roman(index + 1)}.`)
+        addNormalPlusJustifiedText(doc, count.incidentDescription ?? '')
+      } else {
+        addNormalPlusJustifiedText(doc, count.incidentDescription ?? '')
+      }
+      addEmptyLines(doc)
+      addNormalPlusJustifiedText(doc, count.legalArguments ?? '')
+      addNormalText(doc, `M: ${count.policeCaseNumber ?? ''}`)
+    })
 
   addEmptyLines(doc, 2)
   addNormalPlusJustifiedText(doc, theCase.demands ?? '')

@@ -13,14 +13,21 @@
       }
     },
     "build": {
-      "executor": "./tools/executors/node:build",
+      "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/services/user-notification",
         "main": "apps/services/user-notification/src/main.ts",
         "tsConfig": "apps/services/user-notification/tsconfig.app.json",
+        "generatePackageJson": true,
+        "esbuildConfig": "tools/esbuild.config.js",
+        "format": ["cjs"],
         "assets": [
-          "apps/services/user-notification/src/assets",
+          {
+            "glob": "**/*",
+            "input": "apps/services/user-notification/src/assets",
+            "output": "./assets"
+          },
           {
             "glob": "*",
             "input": "apps/services/user-notification/migrations",
@@ -47,7 +54,6 @@
         "production": {
           "optimization": true,
           "extractLicenses": true,
-          "inspect": false,
           "fileReplacements": [
             {
               "replace": "apps/services/user-notification/src/environments/environment.ts",
@@ -118,6 +124,13 @@
         "cwd": "apps/services/user-notification/"
       }
     },
+    "migrate/undo": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "../../../node_modules/.bin/sequelize-cli db:migrate:undo",
+        "cwd": "apps/services/user-notification/"
+      }
+    },
     "migrate/generate": {
       "executor": "nx:run-commands",
       "options": {
@@ -151,8 +164,8 @@
         "parallel": true
       }
     },
-    "docker-express": {
-      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
+    "docker-express-yarn": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express-yarn`"
     }
   }
 }

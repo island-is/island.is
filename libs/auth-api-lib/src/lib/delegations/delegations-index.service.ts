@@ -78,12 +78,6 @@ type SortedDelegations = {
   deleted: DelegationIndexInfo[]
 }
 
-type FetchDelegationRecordsArgs = {
-  scope: ApiScope
-  nationalId: string
-  direction: DelegationDirection
-}
-
 const validateCrudParams = (delegation: DelegationRecordInputDTO) => {
   if (!validateDelegationTypeAndProvider(delegation)) {
     throw new BadRequestException(
@@ -239,41 +233,39 @@ export class DelegationsIndexService {
     return new Set(types?.split(',').map((type) => type.trim()))
   }
 
-  /* Lookup delegations in index for user for specific scope */
+  /* Lookup delegations in index for user for specific scope(s) */
   async getDelegationRecords({
-    scope,
+    scopes,
     nationalId,
     direction = DelegationDirection.OUTGOING,
   }: {
-    scope: string
+    scopes: string[]
     nationalId: string
     direction: DelegationDirection
   }): Promise<PaginatedDelegationRecordDTO> {
-    const apiScope = await this.apiScopeModel.findOne({
+    // Validate that all scopes exist and fetch their delegation types
+    const apiScopes = await this.apiScopeModel.findAll({
       where: {
-        name: scope,
+        name: { [Op.in]: scopes },
+      },
+      include: {
+        model: ApiScopeDelegationType,
+        as: 'supportedDelegationTypes',
+        required: false,
       },
     })
-    if (!apiScope) {
-      throw new BadRequestException('Invalid scope')
-    }
 
-    const delegationTypesSupportedByScope =
-      await this.apiScopeDelegationTypeModel
-        .findAll({
-          where: {
-            apiScopeName: apiScope.name,
-          },
-        })
-        .then((x) => x.map((d) => d.delegationType))
+    if (apiScopes.length !== scopes.length) {
+      const foundScopes = new Set(apiScopes.map((s) => s.name))
+      const invalidScopes = scopes.filter((s) => !foundScopes.has(s))
+      throw new BadRequestException(
+        `Invalid scope(s): ${invalidScopes.join(', ')}`,
+      )
+    }
 
     if (!kennitala.isValid(nationalId)) {
       throw new BadRequestException('Invalid national id')
     }
-
-    const supportsCustom = delegationTypesSupportedByScope.includes(
-      AuthDelegationType.Custom,
-    )
 
     const where = {
       ...(direction === DelegationDirection.INCOMING
@@ -282,35 +274,77 @@ export class DelegationsIndexService {
       validTo: { [Op.or]: [{ [Op.gte]: new Date() }, { [Op.is]: null }] },
     }
 
-    const delegations = await this.delegationIndexModel
-      .findAll({
-        where: {
-          [Op.or]: [
-            {
-              ...where,
-              type: {
-                [Op.in]: delegationTypesSupportedByScope.filter(
-                  (d) => d !== AuthDelegationType.Custom,
-                ),
-              },
-            },
-            supportsCustom
-              ? {
-                  ...where,
-                  type: AuthDelegationType.Custom,
-                  customDelegationScopes: { [Op.contains]: [apiScope.name] },
-                }
-              : {},
-          ],
-        },
+    const allDelegationTypes = new Set<AuthDelegationType>()
+    const customDelegationScopes = new Set<string>()
+
+    for (const scope of apiScopes) {
+      const scopeDelegationTypes = scope.supportedDelegationTypes
+        ? scope.supportedDelegationTypes.map(
+            (d: ApiScopeDelegationType) =>
+              d.delegationType as AuthDelegationType,
+          )
+        : []
+
+      scopeDelegationTypes.forEach((type: AuthDelegationType) => {
+        if (type === AuthDelegationType.Custom) {
+          customDelegationScopes.add(scope.name)
+        } else {
+          allDelegationTypes.add(type)
+        }
       })
-      .then((d) => d.flat().map((d) => d.toDTO()))
-      .then((d) => this.filterByFeatureFlaggedDelegationTypes(d))
+    }
+
+    // Build a single query with all OR conditions
+    const orConditions = [] as Array<Record<string, unknown>>
+
+    // Add condition for non-custom delegation types
+    if (allDelegationTypes.size > 0) {
+      orConditions.push({
+        type: { [Op.in]: Array.from(allDelegationTypes) },
+      })
+    }
+
+    // Add conditions for custom delegations (one per scope that supports it)
+    if (customDelegationScopes.size > 0) {
+      for (const scopeName of customDelegationScopes) {
+        orConditions.push({
+          type: { [Op.in]: [AuthDelegationType.Custom] },
+          customDelegationScopes: { [Op.contains]: [scopeName] },
+        })
+      }
+    }
+
+    // Execute a single delegation index query
+    const allDelegations =
+      orConditions.length > 0
+        ? await this.delegationIndexModel
+            .findAll({
+              where: {
+                ...where,
+                [Op.or]: orConditions,
+              },
+            })
+            .then((d) => d.map((d) => d.toDTO()))
+            .then((d) => this.filterByFeatureFlaggedDelegationTypes(d))
+        : []
+
+    // Deduplicate delegations that may match multiple scopes
+    // A delegation is unique by (fromNationalId, toNationalId, type)
+    const uniqueDelegations = allDelegations.filter(
+      (delegation, index, self) =>
+        index ===
+        self.findIndex(
+          (d) =>
+            d.fromNationalId === delegation.fromNationalId &&
+            d.toNationalId === delegation.toNationalId &&
+            d.type === delegation.type,
+        ),
+    )
 
     // For now, we don't implement pagination but still return the paginated response
     return {
-      data: delegations,
-      totalCount: delegations.length,
+      data: uniqueDelegations,
+      totalCount: uniqueDelegations.length,
       pageInfo: {
         hasNextPage: false,
       },
@@ -350,7 +384,12 @@ export class DelegationsIndexService {
       this.getWardDelegations(user),
     ]).then((d) => d.flat())
 
-    await this.saveToIndex(user.nationalId, delegations, user)
+    await this.saveToIndex(
+      user.nationalId,
+      delegations,
+      user,
+      Object.values(AuthDelegationType),
+    )
 
     // set next reindex to one week in the future
     await this.delegationIndexMetaModel.update(
@@ -369,13 +408,17 @@ export class DelegationsIndexService {
   /* Index incoming custom delegations */
   async indexCustomDelegations(nationalId: string, auth: Auth) {
     const delegations = await this.getCustomDelegations(nationalId, true)
-    await this.saveToIndex(nationalId, delegations, auth)
+    await this.saveToIndex(nationalId, delegations, auth, [
+      AuthDelegationType.Custom,
+    ])
   }
 
   /* Index incoming general mandate delegations */
   async indexGeneralMandateDelegations(nationalId: string, auth?: Auth) {
     const delegations = await this.getGeneralMandateDelegation(nationalId, true)
-    await this.saveToIndex(nationalId, delegations, auth)
+    await this.saveToIndex(nationalId, delegations, auth, [
+      AuthDelegationType.GeneralMandate,
+    ])
   }
 
   /* Index incoming personal representative delegations */
@@ -384,7 +427,9 @@ export class DelegationsIndexService {
       nationalId,
       true,
     )
-    await this.saveToIndex(nationalId, delegations, auth)
+    await this.saveToIndex(nationalId, delegations, auth, [
+      AuthDelegationType.PersonalRepresentative,
+    ])
   }
 
   /* Add item to index */
@@ -497,8 +542,14 @@ export class DelegationsIndexService {
     // Some entrypoints to indexing do not have a user auth object or have a 3rd party user
     // so we take the auth separately from the subject nationalId
     auth?: Auth,
+    typesToForceIndex?: AuthDelegationType[],
   ) {
-    const types = Array.from(new Set(delegations.map((d) => d.type)))
+    const types = Array.from(
+      new Set([
+        ...delegations.map((d) => d.type),
+        ...(typesToForceIndex ?? []),
+      ]),
+    )
 
     const currRecords = await this.delegationIndexModel.findAll({
       where: {
@@ -519,9 +570,11 @@ export class DelegationsIndexService {
       currRecords,
     })
 
-    const indexingPromises = await Promise.allSettled([
-      this.delegationIndexModel.bulkCreate(created),
-      updated.map((d) =>
+    const ops = [
+      ...(created.length
+        ? [this.delegationIndexModel.bulkCreate(created)]
+        : []),
+      ...updated.map((d) =>
         this.delegationIndexModel.update(d, {
           where: {
             fromNationalId: d.fromNationalId,
@@ -531,7 +584,7 @@ export class DelegationsIndexService {
           },
         }),
       ),
-      deleted.map((d) =>
+      ...deleted.map((d) =>
         this.delegationIndexModel.destroy({
           where: {
             fromNationalId: d.fromNationalId,
@@ -541,10 +594,12 @@ export class DelegationsIndexService {
           },
         }),
       ),
-    ])
+    ]
+
+    const indexingResults = await Promise.allSettled(ops)
 
     // log any errors
-    indexingPromises.forEach((p) => {
+    indexingResults.forEach((p) => {
       if (p.status === 'rejected') {
         console.error(p.reason)
       }

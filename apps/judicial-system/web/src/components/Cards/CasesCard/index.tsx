@@ -1,6 +1,8 @@
 import { FC } from 'react'
 
-import { Box, LinkV2, Text } from '@island.is/island-ui/core'
+import { Box, LinkV2, LoadingDots, Text } from '@island.is/island-ui/core'
+import { CaseTableType } from '@island.is/judicial-system-web/src/graphql/schema'
+import { useCaseTableQuery } from '@island.is/judicial-system-web/src/routes/Shared/CaseTable/caseTable.generated'
 
 import * as styles from './index.css'
 
@@ -8,6 +10,34 @@ interface CasesCardProps {
   title: string
   description: string
   href: string
+  type: CaseTableType
+  includeCounter?: boolean
+}
+
+const TitleWithCounter: FC<Pick<CasesCardProps, 'title' | 'type'>> = (
+  props,
+) => {
+  const { data, loading, error } = useCaseTableQuery({
+    variables: { input: { type: props.type } },
+    skip: !props.type,
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
+  })
+  const counter = data?.caseTable.rowCount || 0
+
+  return (
+    <Text as="span" variant="h4" color="blue400" marginBottom={1}>
+      {props.title} (
+      {loading || error ? (
+        <span className={styles.loadingDots}>
+          <LoadingDots size="small" />
+        </span>
+      ) : (
+        counter
+      )}
+      )
+    </Text>
+  )
 }
 
 const CasesCard: FC<CasesCardProps> = (props) => (
@@ -20,9 +50,13 @@ const CasesCard: FC<CasesCardProps> = (props) => (
       height="full"
       className={styles.container}
     >
-      <Text variant="h4" color="blue400" marginBottom={1}>
-        {props.title}
-      </Text>
+      {props.includeCounter && props.type !== CaseTableType.STATISTICS ? (
+        <TitleWithCounter title={props.title} type={props.type} />
+      ) : (
+        <Text variant="h4" color="blue400" marginBottom={1}>
+          {props.title}
+        </Text>
+      )}
       <Text>{props.description}</Text>
     </Box>
   </LinkV2>

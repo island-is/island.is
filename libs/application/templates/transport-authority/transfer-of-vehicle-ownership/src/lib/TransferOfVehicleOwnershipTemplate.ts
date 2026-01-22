@@ -8,13 +8,12 @@ import {
   Application,
   DefaultEvents,
   defineTemplateApi,
-  PendingAction,
   InstitutionNationalIds,
 } from '@island.is/application/types'
 import {
   EphemeralStateLifeCycle,
   coreHistoryMessages,
-  corePendingActionMessages,
+  getReviewStatePendingAction,
   getValueViaPath,
   pruneAfterDays,
 } from '@island.is/application/core'
@@ -22,7 +21,7 @@ import { Events, States, Roles } from './constants'
 import { ApiActions } from '../shared'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { TransferOfVehicleOwnershipSchema } from './dataSchema'
-import { application as applicationMessage } from './messages'
+import { application as applicationMessage, information } from './messages'
 import { CoOwnerAndOperator, UserInformation } from '../shared'
 import { assign } from 'xstate'
 import set from 'lodash/set'
@@ -34,7 +33,12 @@ import {
   CurrentVehiclesApi,
   InsuranceCompaniesApi,
 } from '../dataProviders'
-import { getChargeItems, getExtraData, canReviewerApprove } from '../utils'
+import {
+  getChargeItems,
+  getExtraData,
+  getReviewerRole,
+  getReviewers,
+} from '../utils'
 import { ApiScope } from '@island.is/auth/scopes'
 import { buildPaymentState } from '@island.is/application/utils'
 import { CodeOwners } from '@island.is/shared/constants'
@@ -56,26 +60,6 @@ const determineMessageFromApplicationAnswers = (application: Application) => {
   return {
     name: applicationMessage.name,
     value: plate ? `- ${plate}` : '',
-  }
-}
-
-const reviewStatePendingAction = (
-  application: Application,
-  role: string,
-  nationalId: string,
-): PendingAction => {
-  if (nationalId && canReviewerApprove(nationalId, application.answers)) {
-    return {
-      title: corePendingActionMessages.waitingForReviewTitle,
-      content: corePendingActionMessages.youNeedToReviewDescription,
-      displayStatus: 'warning',
-    }
-  } else {
-    return {
-      title: corePendingActionMessages.waitingForReviewTitle,
-      content: corePendingActionMessages.waitingForReviewDescription,
-      displayStatus: 'info',
-    }
   }
 }
 
@@ -101,6 +85,26 @@ const template: ApplicationTemplate<
     },
   ],
   requiredScopes: [ApiScope.samgongustofaVehicles],
+  adminDataConfig: {
+    answers: [
+      {
+        key: 'pickVehicle.plate',
+        isListed: true,
+        label: information.labels.pickVehicle.vehicle,
+      },
+      {
+        key: 'buyer.nationalId',
+        isListed: true,
+        isNationalId: true,
+        label: information.labels.buyer.title,
+      },
+      { key: 'buyer.approved', isListed: false },
+      { key: 'buyerCoOwnerAndOperator.$.nationalId', isListed: false },
+      { key: 'buyerCoOwnerAndOperator.$.approved', isListed: false },
+      { key: 'sellerCoOwner.$.nationalId', isListed: false },
+      { key: 'sellerCoOwner.$.approved', isListed: false },
+    ],
+  },
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {
@@ -181,18 +185,60 @@ const template: ApplicationTemplate<
             historyLogs: [
               {
                 onEvent: DefaultEvents.APPROVE,
-                logMessage: applicationMessage.historyLogApprovedByReviewer,
+                logMessage: (application, subjectNationalId) => {
+                  if (!subjectNationalId)
+                    return coreHistoryMessages.applicationApprovedBy
+
+                  const role = getReviewerRole(
+                    application.answers,
+                    subjectNationalId,
+                  )
+                  if (role === 'buyer')
+                    return applicationMessage.historyLogApprovedByBuyer
+                  else if (role === 'buyerCoOwners')
+                    return applicationMessage.historyLogApprovedByBuyerCoOwner
+                  else if (role === 'buyerOperators')
+                    return applicationMessage.historyLogApprovedByBuyerOperator
+                  else if (role === 'sellerCoOwners')
+                    return applicationMessage.historyLogApprovedBySellerCoOwner
+                  return coreHistoryMessages.applicationApprovedBy
+                },
+                includeSubjectAndActor: true,
               },
               {
                 onEvent: DefaultEvents.REJECT,
-                logMessage: coreHistoryMessages.applicationRejected,
+                logMessage: (application, subjectNationalId) => {
+                  if (!subjectNationalId)
+                    return coreHistoryMessages.applicationRejected
+
+                  const role = getReviewerRole(
+                    application.answers,
+                    subjectNationalId,
+                  )
+                  if (role === 'buyer')
+                    return applicationMessage.historyLogRejectedByBuyer
+                  if (role === 'buyerCoOwners')
+                    return applicationMessage.historyLogRejectedByBuyerCoOwner
+                  if (role === 'buyerOperators')
+                    return applicationMessage.historyLogRejectedByBuyerOperator
+                  if (role === 'sellerCoOwners')
+                    return applicationMessage.historyLogRejectedBySellerCoOwner
+                  return coreHistoryMessages.applicationRejected
+                },
+                includeSubjectAndActor: true,
               },
               {
                 onEvent: DefaultEvents.SUBMIT,
                 logMessage: coreHistoryMessages.applicationApproved,
               },
             ],
-            pendingAction: reviewStatePendingAction,
+            pendingAction: (application, _role, nationalId) => {
+              return getReviewStatePendingAction(
+                nationalId,
+                getReviewers(application.answers),
+                true,
+              )
+            },
           },
           lifecycle: {
             shouldBeListed: true,

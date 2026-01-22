@@ -1,3 +1,5 @@
+import { Sequelize } from 'sequelize-typescript'
+
 import {
   Body,
   Controller,
@@ -8,6 +10,7 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common'
+import { InjectConnection } from '@nestjs/sequelize'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import type { Logger } from '@island.is/logging'
@@ -18,6 +21,7 @@ import {
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
+import { indictmentCases } from '@island.is/judicial-system/types'
 
 import {
   districtCourtAssistantRule,
@@ -26,24 +30,35 @@ import {
   prosecutorRepresentativeRule,
   prosecutorRule,
 } from '../../guards'
-import { Case, CaseExistsGuard, CaseWriteGuard, CurrentCase } from '../case'
+import {
+  CaseExistsGuard,
+  CaseTypeGuard,
+  CaseWriteGuard,
+  CurrentCase,
+} from '../case'
+import { Case, CivilClaimant } from '../repository'
 import { UpdateCivilClaimantDto } from './dto/updateCivilClaimant.dto'
 import { CurrentCivilClaimant } from './guards/civilClaimaint.decorator'
 import { CivilClaimantExistsGuard } from './guards/civilClaimantExists.guard'
-import { CivilClaimant } from './models/civilClaimant.model'
 import { DeleteCivilClaimantResponse } from './models/deleteCivilClaimant.response'
 import { CivilClaimantService } from './civilClaimant.service'
 
 @Controller('api/case/:caseId/civilClaimant')
 @ApiTags('civilClaimants')
-@UseGuards(JwtAuthUserGuard, RolesGuard)
+@UseGuards(
+  JwtAuthUserGuard,
+  RolesGuard,
+  CaseExistsGuard,
+  new CaseTypeGuard(indictmentCases),
+  CaseWriteGuard,
+)
 export class CivilClaimantController {
   constructor(
     private readonly civilClaimantService: CivilClaimantService,
+    @InjectConnection() private readonly sequelize: Sequelize,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @UseGuards(CaseExistsGuard, CaseWriteGuard)
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
@@ -62,10 +77,12 @@ export class CivilClaimantController {
   ): Promise<CivilClaimant> {
     this.logger.debug(`Creating a new civil claimant for case ${caseId}`)
 
-    return this.civilClaimantService.create(theCase)
+    return this.sequelize.transaction((transaction) =>
+      this.civilClaimantService.create(theCase, transaction),
+    )
   }
 
-  @UseGuards(CaseExistsGuard, CaseWriteGuard, CivilClaimantExistsGuard)
+  @UseGuards(CivilClaimantExistsGuard)
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
@@ -94,7 +111,7 @@ export class CivilClaimantController {
     )
   }
 
-  @UseGuards(CaseExistsGuard, CaseWriteGuard, CivilClaimantExistsGuard)
+  @UseGuards(CivilClaimantExistsGuard)
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @Delete(':civilClaimantId')
   @ApiOkResponse({

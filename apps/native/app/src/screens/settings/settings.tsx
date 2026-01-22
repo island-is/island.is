@@ -12,7 +12,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native'
-import CodePush, { LocalPackage } from 'react-native-code-push'
 import DeviceInfo from 'react-native-device-info'
 import {
   Navigation,
@@ -35,6 +34,7 @@ import { navigateTo } from '../../lib/deep-linking'
 import { showPicker } from '../../lib/show-picker'
 import { authStore } from '../../stores/auth-store'
 import {
+  Locale,
   preferencesStore,
   usePreferencesStore,
 } from '../../stores/preferences-store'
@@ -78,8 +78,6 @@ export const SettingsScreen: NavigationFunctionComponent = ({
     appLockTimeout,
     hasCreatedPasskey,
   } = usePreferencesStore()
-  const [loadingCP, setLoadingCP] = useState(false)
-  const [localPackage, setLocalPackage] = useState<LocalPackage | null>(null)
   const isInfoDismissed = dismissed.includes('userSettingsInformational')
   const { authenticationTypes, isEnrolledBiometrics } = useUiStore()
   const biometricType = useBiometricType(authenticationTypes)
@@ -147,25 +145,14 @@ export const SettingsScreen: NavigationFunctionComponent = ({
       ],
       selectedId: locale,
       cancel: true,
-    }).then(({ selectedItem }: any) => {
-      if (selectedItem) {
-        setLocale(selectedItem.id)
+    }).then(({ selectedItem }) => {
+      if (selectedItem?.id) {
+        setLocale(selectedItem.id as Locale)
         const locale = selectedItem.id === 'is-IS' ? 'is' : 'en'
         updateLocale(locale)
       }
     })
   }
-
-  useEffect(() => {
-    setTimeout(() => {
-      // @todo move to ui store, persist somehow
-      setLoadingCP(true)
-      CodePush.getUpdateMetadata().then((p) => {
-        setLoadingCP(false)
-        setLocalPackage(p)
-      })
-    }, 330)
-  }, [])
 
   const updateDocumentNotifications = (value: boolean) => {
     client
@@ -351,10 +338,7 @@ export const SettingsScreen: NavigationFunctionComponent = ({
                   marginRight: -16,
                 }}
               >
-                <Image
-                  source={editIcon as any}
-                  style={{ width: 19, height: 19 }}
-                />
+                <Image source={editIcon} style={{ width: 19, height: 19 }} />
               </TouchableOpacity>
             }
           />
@@ -642,71 +626,6 @@ export const SettingsScreen: NavigationFunctionComponent = ({
             title={intl.formatMessage({ id: 'settings.about.versionLabel' })}
             subtitle={`${DeviceInfo.getVersion()} build ${DeviceInfo.getBuildNumber()}`}
           />
-          <PressableHighlight
-            onPress={() => {
-              setLoadingCP(true)
-              CodePush.sync(
-                {
-                  installMode: CodePush.InstallMode.IMMEDIATE,
-                },
-                (status) => {
-                  switch (status) {
-                    case CodePush.SyncStatus.UP_TO_DATE:
-                      return RNAlert.alert(
-                        intl.formatMessage({
-                          id: 'settings.about.codePushUpToDateTitle',
-                        }),
-                        intl.formatMessage({
-                          id: 'settings.about.codePushUpToDate',
-                        }),
-                      )
-                    case CodePush.SyncStatus.UPDATE_INSTALLED:
-                      return RNAlert.alert(
-                        intl.formatMessage({
-                          id: 'settings.about.codePushUpdateInstalledTitle',
-                        }),
-                        intl.formatMessage({
-                          id: 'settings.about.codePushUpdateInstalledDescription',
-                        }),
-                      )
-                    case CodePush.SyncStatus.UPDATE_IGNORED:
-                      return RNAlert.alert(
-                        intl.formatMessage({
-                          id: 'settings.about.codePushUpdateCancelledTitle',
-                        }),
-                        intl.formatMessage({
-                          id: 'settings.about.codePushUpdateCancelledDescription',
-                        }),
-                      )
-                    case CodePush.SyncStatus.UNKNOWN_ERROR:
-                      return RNAlert.alert(
-                        intl.formatMessage({
-                          id: 'settings.about.codePushUpdateErrorTitle',
-                        }),
-                        intl.formatMessage({
-                          id: 'settings.about.codePushUpdateErrorDescription',
-                        }),
-                      )
-                  }
-                },
-              ).finally(() => {
-                setLoadingCP(false)
-              })
-            }}
-          >
-            <TableViewCell
-              title={intl.formatMessage({ id: 'settings.about.codePushLabel' })}
-              subtitle={
-                loadingCP
-                  ? intl.formatMessage({ id: 'settings.about.codePushLoading' })
-                  : !localPackage
-                  ? intl.formatMessage({
-                      id: 'settings.about.codePushUpToDate',
-                    })
-                  : `${localPackage?.label}`
-              }
-            />
-          </PressableHighlight>
           <PressableHighlight
             onPress={onLogoutPress}
             testID={testIDs.USER_SETTINGS_LOGOUT_BUTTON}

@@ -31,7 +31,6 @@ import {
   StudentInfoApi,
   UserProfileApiWithValidation,
 } from '../dataProviders'
-import { Features } from '@island.is/feature-flags'
 import {
   Events,
   States,
@@ -74,12 +73,9 @@ const template: ApplicationTemplate<
   name: applicationMessage.name,
   codeOwner: CodeOwners.Origo,
   institution: applicationMessage.institutionName,
-  translationNamespaces: [
-    ApplicationConfigurations.SecondarySchool.translation,
-  ],
+  translationNamespaces: ApplicationConfigurations.SecondarySchool.translation,
   dataSchema: SecondarySchoolSchema,
   allowMultipleApplicationsInDraft: false,
-  featureFlag: Features.SecondarySchoolEnabled,
   allowedDelegations: [
     {
       type: AuthDelegationType.LegalGuardian,

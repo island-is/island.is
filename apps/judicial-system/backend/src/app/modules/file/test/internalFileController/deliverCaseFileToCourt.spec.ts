@@ -1,5 +1,5 @@
 import each from 'jest-each'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { NotFoundException } from '@nestjs/common'
 
@@ -13,10 +13,9 @@ import {
 import { createTestingFileModule } from '../createTestingFileModule'
 
 import { AwsS3Service } from '../../../aws-s3'
-import { Case } from '../../../case'
 import { CourtDocumentFolder, CourtService } from '../../../court'
+import { Case, CaseFile } from '../../../repository'
 import { DeliverResponse } from '../../models/deliver.response'
-import { CaseFile } from '../../models/file.model'
 
 interface Then {
   result: DeliverResponse
@@ -82,6 +81,7 @@ describe('InternalFileController - Deliver case file to court', () => {
     const caseFile = {
       id: fileId,
       key,
+      isKeyAccessible: true,
       name: fileName,
       type: fileType,
     } as CaseFile
@@ -172,6 +172,7 @@ describe('InternalFileController - Deliver case file to court', () => {
       const caseFile = {
         id: fileId,
         key,
+        isKeyAccessible: true,
         name: fileName,
         type: fileType,
         category: caseFileCategory,
@@ -208,7 +209,7 @@ describe('InternalFileController - Deliver case file to court', () => {
     const theCase = { id: caseId } as Case
     const fileId = uuid()
     const key = `${caseId}/${uuid()}/test.txt`
-    const caseFile = { id: fileId, key } as CaseFile
+    const caseFile = { id: fileId, key, isKeyAccessible: true } as CaseFile
     const content = Buffer.from('Test content')
     let then: Then
 
@@ -269,7 +270,7 @@ describe('InternalFileController - Deliver case file to court', () => {
     const theCase = { id: caseId } as Case
     const fileId = uuid()
     const key = `${caseId}/${uuid()}/test.txt`
-    const caseFile = { id: fileId, key } as CaseFile
+    const caseFile = { id: fileId, key, isKeyAccessible: true } as CaseFile
     let then: Then
 
     beforeEach(async () => {
@@ -279,9 +280,9 @@ describe('InternalFileController - Deliver case file to court', () => {
       then = await givenWhenThen(caseId, fileId, theCase, caseFile)
     })
 
-    it('should remove the key', () => {
+    it('should set isKeyAccessible to false', () => {
       expect(mockFileModel.update).toHaveBeenCalledWith(
-        { key: null },
+        { isKeyAccessible: false },
         { where: { id: fileId } },
       )
     })
@@ -297,7 +298,7 @@ describe('InternalFileController - Deliver case file to court', () => {
     const theCase = { id: caseId } as Case
     const fileId = uuid()
     const key = `${caseId}/${uuid()}/test.txt`
-    const caseFile = { id: fileId, key } as CaseFile
+    const caseFile = { id: fileId, key, isKeyAccessible: true } as CaseFile
     let then: Then
 
     beforeEach(async () => {
@@ -318,7 +319,7 @@ describe('InternalFileController - Deliver case file to court', () => {
     const theCase = { id: caseId } as Case
     const fileId = uuid()
     const key = `${caseId}/${uuid()}/test.txt`
-    const caseFile = { id: fileId, key } as CaseFile
+    const caseFile = { id: fileId, key, isKeyAccessible: true } as CaseFile
     let then: Then
 
     beforeEach(async () => {
@@ -341,7 +342,7 @@ describe('InternalFileController - Deliver case file to court', () => {
     const theCase = { id: caseId } as Case
     const fileId = uuid()
     const key = `${caseId}/${uuid()}/test.txt`
-    const caseFile = { id: fileId, key } as CaseFile
+    const caseFile = { id: fileId, key, isKeyAccessible: true } as CaseFile
     const content = Buffer.from('Test content')
     let then: Then
 
@@ -367,7 +368,7 @@ describe('InternalFileController - Deliver case file to court', () => {
     const theCase = { id: caseId } as Case
     const fileId = uuid()
     const key = `${caseId}/${uuid()}/test.txt`
-    const caseFile = { id: fileId, key } as CaseFile
+    const caseFile = { id: fileId, key, isKeyAccessible: true } as CaseFile
     const content = Buffer.from('Test content')
     let then: Then
 

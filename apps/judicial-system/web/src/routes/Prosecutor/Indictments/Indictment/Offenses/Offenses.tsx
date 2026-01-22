@@ -3,6 +3,7 @@ import { useIntl } from 'react-intl'
 import { InputMask } from '@react-input/mask'
 
 import { Box, Icon, Input, Select, Tag } from '@island.is/island-ui/core'
+import { SUBSTANCE_ALCOHOL } from '@island.is/judicial-system/consts'
 import { SubstanceMap } from '@island.is/judicial-system/types'
 import { SectionHeading } from '@island.is/judicial-system-web/src/components'
 import {
@@ -16,7 +17,10 @@ import {
   removeErrorMessageIfValid,
   validateAndSetErrorMessage,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { UpdateIndictmentCount } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  UpdateIndictmentCount,
+  UpdateIndictmentCountState,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import useOffenses from '@island.is/judicial-system-web/src/utils/hooks/useOffenses'
 
 import { Substances } from '../Substances/Substances'
@@ -88,14 +92,13 @@ export const Offenses = ({
   setWorkingCase: Dispatch<SetStateAction<Case>>
   indictmentCount: IndictmentCount
   handleIndictmentCountChanges: (
-    update: UpdateIndictmentCount,
+    indictmentCountUpdate: UpdateIndictmentCount,
     updatedOffenses?: Offense[],
   ) => void
   updateIndictmentCountState: (
     indictmentCountId: string,
-    update: UpdateIndictmentCount,
+    indictmentCountUpdate: UpdateIndictmentCountState,
     setWorkingCase: Dispatch<SetStateAction<Case>>,
-    updatedOffenses?: Offense[],
   ) => void
 }) => {
   const { formatMessage } = useIntl()
@@ -126,18 +129,22 @@ export const Offenses = ({
     selectedOffense: IndictmentCountOffense,
   ) => {
     const hasOffense = offenses.some((o) => o.offense === selectedOffense)
-    if (!hasOffense) {
-      const newOffense = await createOffense(
-        workingCase.id,
-        indictmentCount.id,
-        selectedOffense,
-      )
-      if (newOffense) {
-        const updatedOffenses = [...offenses, newOffense]
 
-        // handle changes on indictment count impacted by creating an offense
-        handleIndictmentCountChanges({}, updatedOffenses)
-      }
+    if (hasOffense) {
+      return
+    }
+
+    const newOffense = await createOffense(
+      workingCase.id,
+      indictmentCount.id,
+      selectedOffense,
+    )
+
+    if (newOffense) {
+      const updatedOffenses = [...offenses, newOffense]
+
+      // handle changes on indictment count impacted by creating an offense
+      handleIndictmentCountChanges({}, updatedOffenses)
     }
   }
 
@@ -145,7 +152,16 @@ export const Offenses = ({
     offenseId: string,
     offense: IndictmentCountOffense,
   ) => {
-    await deleteOffense(workingCase.id, indictmentCount.id, offenseId)
+    const deleted = await deleteOffense(
+      workingCase.id,
+      indictmentCount.id,
+      offenseId,
+    )
+
+    if (!deleted) {
+      return
+    }
+
     const updatedOffenses = offenses.filter((o) => o.id !== offenseId)
 
     // handle changes on indictment count impacted by deleting an offense
@@ -164,21 +180,20 @@ export const Offenses = ({
     offense: Offense,
     updatedSubstances: SubstanceMap,
   ) => {
-    const offenseToBeUpdated = {
-      substances: {
-        ...offense.substances,
-        ...updatedSubstances,
-      } as SubstanceMap,
+    const offenseUpdate = {
+      substances: updatedSubstances,
     }
+
     const updatedOffense = await updateOffense(
       workingCase.id,
       indictmentCount.id,
       offense.id,
-      offenseToBeUpdated,
+      offenseUpdate,
     )
 
     if (updatedOffense) {
       const updatedOffenses = getUpdatedOffenses(offenses, updatedOffense)
+
       handleIndictmentCountChanges({}, updatedOffenses)
     }
   }
@@ -190,7 +205,8 @@ export const Offenses = ({
     const substances = {
       ...offense.substances,
       ALCOHOL: alcoholValue,
-    } as SubstanceMap
+    }
+
     await handleOffenseSubstanceUpdate(offense, substances)
   }
 
@@ -254,7 +270,7 @@ export const Offenses = ({
           <InputMask
             component={Input}
             replacement={{ _: /\d/ }}
-            mask="_,__"
+            mask={SUBSTANCE_ALCOHOL}
             value={drunkDrivingOffense.substances?.ALCOHOL ?? ''}
             onChange={async (event) => {
               const alcoholValue = event.target.value
@@ -264,6 +280,7 @@ export const Offenses = ({
                 bloodAlcoholContentErrorMessage,
                 setBloodAlcoholContentErrorMessage,
               )
+
               const updatedOffense = {
                 ...drunkDrivingOffense,
                 substances: {
@@ -279,9 +296,8 @@ export const Offenses = ({
               // only update state since server changes are handled on blur
               updateIndictmentCountState(
                 indictmentCount.id,
-                {},
+                { offenses: updatedOffenses },
                 setWorkingCase,
-                updatedOffenses,
               )
             }}
             onBlur={async (event) => {

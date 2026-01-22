@@ -1,10 +1,9 @@
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { createTestingVictimModule } from './createTestingVictimModule'
 
-import { Case } from '../../case/models/case.model'
+import { Case, Victim } from '../../repository'
 import { UpdateVictimDto } from '../dto/updateVictim.dto'
-import { Victim } from '../models/victim.model'
 
 interface Then {
   result: Victim

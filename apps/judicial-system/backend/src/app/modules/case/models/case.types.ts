@@ -1,4 +1,4 @@
-import type { Case } from './case.model'
+import type { Case } from '../../repository'
 
 export type MinimalCase = Omit<
   Case,

@@ -49,8 +49,9 @@ test.describe.serial('Custody tests', () => {
       }
     })
 
-    // Case list
+    // Case list groups
     await page.goto('/malalistar')
+    await expect(page).toHaveURL('/malalistar')
     await page.getByRole('button', { name: 'Nýtt mál' }).click()
     await page.getByRole('menuitem', { name: 'Gæsluvarðhald' }).click()
     await expect(page).toHaveURL('/krafa/ny/gaesluvardhald')
@@ -68,14 +69,6 @@ test.describe.serial('Custody tests', () => {
     await page.locator('input[name=accusedAddress]').fill('Einhversstaðar 1')
     await page.locator('#defendantGender').click()
     await page.locator('#react-select-defendantGender-option-0').click()
-    await page
-      .locator('input[id=react-select-advocateName-input]')
-      .fill('Saul Goodman')
-    await page.locator('#react-select-advocateName-option-0').click()
-    await page
-      .locator('input[name=defenderEmail]')
-      .fill('jl+auto+defender@kolibri.is')
-    await page.locator('input[id=defender-access-ready-for-court]').click()
     await page.locator('input[name=leadInvestigator]').fill('Stjórinn')
     await expect(
       page.getByRole('button', { name: 'Óskir um fyrirtöku' }),
@@ -131,7 +124,7 @@ test.describe.serial('Custody tests', () => {
     await page.locator('textarea[name=comments]').click()
     await page.keyboard.type('Sakborningur er hættulegur')
     await expect(
-      page.getByRole('button', { name: 'Rannsóknargögn' }),
+      page.locator('button:has-text("Rannsóknargögn")'),
     ).toBeVisible()
     await Promise.all([
       page.getByRole('button', { name: 'Halda áfram' }).click(),
@@ -313,7 +306,6 @@ test.describe.serial('Custody tests', () => {
 
     // Defendant
     await expect(page).toHaveURL(`/krafa/sakborningur/${extendedCaseId}`)
-    await page.locator('input[name=defender-access-no]').click()
     await Promise.all([
       page.getByTestId('continueButton').click(),
       verifyRequestCompletion(page, '/api/graphql', 'Case'),

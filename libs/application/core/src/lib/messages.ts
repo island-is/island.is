@@ -343,6 +343,21 @@ export const coreDefaultFieldMessages = defineMessages({
     defaultMessage: 'Hlaða niður skjali',
     description: 'Button label to download file',
   },
+  defaultQuantityTitle: {
+    id: 'application.system:core.default.pdfLinkButtonField.defaultQuantityTitle',
+    defaultMessage: 'Fjöldi',
+    description: 'Quantity label for payment overview field',
+  },
+  defaultUnitPriceTitle: {
+    id: 'application.system:core.default.pdfLinkButtonField.defaultUnitPriceTitle',
+    defaultMessage: 'Verð',
+    description: 'Unit price label for payment overview field',
+  },
+  defaultTotalPerUnitTitle: {
+    id: 'application.system:core.default.pdfLinkButtonField.defaultTotalPerUnitTitle',
+    defaultMessage: 'Samtals verð',
+    description: 'Total per unit label for payment overview field',
+  },
 })
 
 export const coreErrorMessages = defineMessages({
@@ -729,8 +744,19 @@ export const coreErrorMessages = defineMessages({
   },
   noBankAccountError: {
     id: 'application.system:core.fetch.data.noBankAccountError',
-    defaultMessage: 'Þú ert ekki með skráðan bankareikning',
+    defaultMessage: 'Bankareikningur ekki skráður',
     description: 'No bank account error',
+  },
+  noBankAccountErrorDescription: {
+    id: 'application.system:core.fetch.data.noBankAccountErrorDescription#markdown',
+    defaultMessage:
+      'Þú ert ekki með skráðan bankareikning hjá Ísland.is. Vinsamlegast skráðu það [hér]({link})',
+    description: 'No bank account error',
+  },
+  invalidBankAccountError: {
+    id: 'application.system:core.fetch.data.invalidBankAccountError',
+    defaultMessage: 'Ógildur bankareikningur skráður',
+    description: 'Invalid bank account registered',
   },
   invalidEmailOrPhone: {
     id: 'application.system:core.fetch.data.invalidEmailOrPhone',
@@ -829,6 +855,32 @@ export const coreErrorMessages = defineMessages({
     defaultMessage: 'Tókst ekki að sækja ökutæki út frá þessu bílnúmeri.',
     description:
       'Error message if there was no vehicle associated with given permno',
+  },
+  noContractFoundTitle: {
+    id: 'application.system:core.fetch.data.noContractFoundTitle',
+    defaultMessage: 'Engir samningar fundust',
+    description: 'No contract found title',
+  },
+  noContractFoundSummary: {
+    id: 'application.system:core.fetch.data.noContractFoundSummary',
+    defaultMessage:
+      'Engir gildir samningar fundust skráðir fyrir þessa kennitölu.',
+    description: 'No contract found summary',
+  },
+  noPropertiesFoundTitle: {
+    id: 'application.system:core.fetch.data.noPropertiesFoundTitle',
+    defaultMessage: 'Engar eignir fundust',
+    description: 'No properties found title',
+  },
+  noPropertiesFoundSummary: {
+    id: 'application.system:core.fetch.data.noPropertiesFoundSummary',
+    defaultMessage: 'Engar eignir fundust skráðar fyrir þessa kennitölu.',
+    description: 'No properties found summary',
+  },
+  needToFinishRegistration: {
+    id: 'application.system:core.fetch.data.needToFinishRegistration',
+    defaultMessage: 'Vantar að klára skráningu',
+    description: 'Need to finish registration to continue',
   },
 })
 
@@ -1062,6 +1114,11 @@ export const coreHistoryMessages = defineMessages({
     defaultMessage: 'Umsókn samþykkt',
     description: 'History application accepted',
   },
+  applicationApprovedBy: {
+    id: 'application.system:core.history.applicationApprovedBy',
+    defaultMessage: 'Samþykkt.',
+    description: 'History log approved',
+  },
   applicationRejected: {
     id: 'application.system:core.history.applicationRejected',
     defaultMessage: 'Umsókn hafnað',
@@ -1112,6 +1169,16 @@ export const coreHistoryMessages = defineMessages({
     defaultMessage: 'Umsókn móttekin',
     description: 'History application received',
   },
+  byReviewer: {
+    id: 'application.system:core.history.byReviewer',
+    defaultMessage: ' [{subject}]',
+    description: 'History log by reviewer',
+  },
+  byReviewerWithActor: {
+    id: 'application.system:core.history.byReviewerWithActor',
+    defaultMessage: '  [{actor} fyrir hönd {subject}]',
+    description: 'History log by actor on behalf of reviewer',
+  },
 })
 
 export const corePendingActionMessages = defineMessages({
@@ -1156,9 +1223,24 @@ export const corePendingActionMessages = defineMessages({
     defaultMessage: 'Umsóknin þín er í bið eftir yfirferð',
     description: 'Pending action waiting for review description',
   },
+  waitingForReviewFromSpouseDescription: {
+    id: 'application.system:core.pendingAction.waitingForReviewFromSpouseDescription',
+    defaultMessage: 'Umsóknin þín bíður yfirferðar frá maka umsækjanda.',
+    description: 'Pending action waiting for review from spouse description',
+  },
+  waitingForReviewFromParentBDescription: {
+    id: 'application.system:core.pendingAction.waitingForReviewFromParentBDescription',
+    defaultMessage: 'Umsóknin þín bíður yfirferðar frá forsjáraðila 2.',
+    description: 'Pending action waiting for review from parent B description',
+  },
   youNeedToReviewDescription: {
     id: 'application.system:core.pendingAction.youNeedToReviewDescription',
     defaultMessage: 'Beðið er eftir þínu samþykki á þessa umsókn',
     description: 'Pending action you need to review description',
+  },
+  whoNeedsToReviewDescription: {
+    id: 'application.system:core.pendingAction.whoNeedsToReviewDescription',
+    defaultMessage: 'Beðið er eftir samþykki frá eftirfarandi aðilum: {value}',
+    description: 'Pending action list up who needs to review description',
   },
 })

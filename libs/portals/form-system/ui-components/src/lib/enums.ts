@@ -22,6 +22,7 @@ export const FieldTypesEnum = {
   TIME_INPUT: 'TIME_INPUT',
   FILE: 'FILE',
   PAYMENT: 'PAYMENT',
+  APPLICANT: 'APPLICANT',
 } as const
 
 export const CertificationTypesEnum = {
@@ -44,6 +45,8 @@ export const ApplicantTypesEnum = {
   INDIVIDUAL_WITH_PROCURATION: 'INDIVIDUAL_WITH_PROCURATION',
   INDIVIDUAL_GIVING_DELEGATION: 'INDIVIDUAL_GIVING_DELEGATION',
   LEGAL_ENTITY: 'LEGAL_ENTITY',
+  LEGAL_ENTITY_OF_PROCURATION_HOLDER: 'LEGAL_ENTITY_OF_PROCURATION_HOLDER',
+  LEGAL_GUARDIAN: 'LEGAL_GUARDIAN',
 } as const
 
 export const ListTypesEnum = {
@@ -61,17 +64,8 @@ export const SectionTypes = {
   PARTIES: 'PARTIES',
   INPUT: 'INPUT',
   PAYMENT: 'PAYMENT',
-} as const
-
-export const UrlMethods = {
-  SEND_TO_ZENDESK: 'SEND_TO_ZENDESK',
-  SEND_NUDGE: 'SEND_NUDGE',
-  SEND_DATA: 'SEND_DATA',
-} as const
-
-export const UrlTypes = {
-  DATA: '11251c06-b514-4fdd-b485-c7ce1c71e6c1',
-  VALIDATION: '4ff8aaeb-e2db-46de-93bc-73572aba588a',
+  SUMMARY: 'SUMMARY',
+  COMPLETED: 'COMPLETED',
 } as const
 
 export const ApplicationStatus = {
@@ -89,7 +83,5 @@ export type ApplicantTypesEnum =
   typeof ApplicantTypesEnum[keyof typeof ApplicantTypesEnum]
 export type ListTypesEnum = typeof ListTypesEnum[keyof typeof ListTypesEnum]
 export type SectionTypes = typeof SectionTypes[keyof typeof SectionTypes]
-export type UrlMethods = typeof UrlMethods[keyof typeof UrlMethods]
-export type UrlTypes = typeof UrlTypes[keyof typeof UrlTypes]
 export type ApplicationStatus =
   typeof ApplicationStatus[keyof typeof ApplicationStatus]

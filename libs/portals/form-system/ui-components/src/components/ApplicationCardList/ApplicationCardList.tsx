@@ -15,15 +15,20 @@ interface Props {
   onClick?: (id: string) => void
   refetch?: (() => void) | undefined
   focus?: boolean
+  onDelete: (id: string) => void
 }
 
 export const ApplicationList = ({
   applications,
   refetch,
+  onDelete: deleteApplication,
   focus = false,
 }: Props) => {
   const [page, setPage] = useState<number>(1)
   const handlePageChange = useCallback((page: number) => setPage(page), [])
+  const sortedApplications = [...applications].sort((a, b) => {
+    return new Date(b.modified).getTime() - new Date(a.modified).getTime()
+  })
 
   const pagedDocuments = {
     from: (page - 1) * pageSize,
@@ -31,9 +36,12 @@ export const ApplicationList = ({
     totalPages: Math.ceil(applications.length / pageSize),
   }
 
-  const onApplicationDelete = () => {
+  const onApplicationDelete = async (id: string) => {
     if ((applications.length - 1) % pageSize === 0 && page > 1) {
       setPage(page - 1)
+    }
+    if (id && deleteApplication) {
+      deleteApplication(id)
     }
     if (refetch) {
       refetch()
@@ -43,18 +51,18 @@ export const ApplicationList = ({
   return (
     <>
       <Stack space={2}>
-        {applications
+        {sortedApplications
           .slice(pagedDocuments.from, pagedDocuments.to)
           .map((application) => (
             <ApplicationCard
               key={application.id}
               application={application}
               focused={focus}
-              onDelete={onApplicationDelete}
+              onDelete={() => onApplicationDelete(application.id)}
             />
           ))}
       </Stack>
-      {applications.length > pageSize ? (
+      {sortedApplications.length > pageSize ? (
         <Box marginTop={4}>
           <Pagination
             page={page}

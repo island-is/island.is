@@ -1,6 +1,6 @@
 import type { StorybookConfig } from '@storybook/react-webpack5'
 import { VanillaExtractPlugin } from '@vanilla-extract/webpack-plugin'
-import path from 'path'
+import path, { dirname, join } from 'path'
 
 const rootDir = (dir: string) => path.resolve(__dirname, dir)
 
@@ -9,19 +9,18 @@ const config: StorybookConfig = {
     reactDocgen: false,
   },
   stories: [
-    '../../core/src/**/*.stories.@(tsx|mdx)',
-    '../../../application/ui-fields/src/lib/AsGuide.stories.mdx',
-    '../../../application/ui-fields/**/*.stories.@(tsx|mdx)',
-    '../../../application/ui-components/**/*.stories.@(tsx|mdx)',
+    '../../core/src/**/*.stories.@(js|jsx|ts|tsx|mdx)',
+    '../../../application/ui-fields/src/lib/AsGuide.mdx',
+    '../../../application/ui-fields/**/*.stories.@(js|jsx|ts|tsx|mdx)',
+    '../../../application/ui-components/**/*.stories.@(js|jsx|ts|tsx|mdx)',
     '../../../portals/my-pages/core/src/**/*.stories.@(tsx|mdx)',
   ],
   addons: [
-    '@storybook/addon-a11y',
-    'storybook-addon-apollo-client',
-    '@storybook/addon-mdx-gfm',
-    '@storybook/addon-essentials',
+    getAbsolutePath('@storybook/addon-a11y'),
+    getAbsolutePath('storybook-addon-apollo-client'),
+    getAbsolutePath('@storybook/addon-essentials'),
   ],
-  babel: (options) => ({
+  babel: (options: any) => ({
     ...options,
     presets: [
       '@babel/preset-env',
@@ -43,21 +42,27 @@ const config: StorybookConfig = {
   webpackFinal: (config) => {
     config.plugins?.push(new VanillaExtractPlugin())
     config.devtool = false
-    config.module?.rules?.push({
-      test: /\.stories\.(ts|tsx)$/,
-      exclude: path.resolve(__dirname, '../../../../node_modules'),
-      use: [
-        {
-          // needed for docs addon
-          loader: '@storybook/source-loader',
-          options: {
-            injectParameters: true,
-          },
-        },
-      ],
-    })
+
+    // Add Node.js polyfills for Webpack 5
     config.resolve = {
       ...config.resolve,
+      extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
+      fallback: {
+        ...config.resolve?.fallback,
+        tty: require.resolve('tty-browserify'),
+        fs: false,
+        net: false,
+        tls: false,
+        crypto: false,
+        stream: false,
+        url: false,
+        zlib: false,
+        http: false,
+        https: false,
+        assert: false,
+        os: false,
+        path: false,
+      },
       alias: {
         ...config.resolve?.alias,
         '@island.is/island-ui/core': rootDir('../../core/src'),
@@ -108,12 +113,65 @@ const config: StorybookConfig = {
           '../../../portals/my-pages/graphql/src',
         ),
         '@island.is/plausible': rootDir('../../../plausible/src'),
+        '@island.is/auth/scopes': rootDir('../../../auth/scopes/src'),
       },
     }
+
+    // Configure babel-loader for all TypeScript and JavaScript files
+    const babelRule = {
+      test: /\.(ts|tsx|js|jsx)$/,
+      exclude: path.resolve(__dirname, '../../../../node_modules'),
+      use: [
+        {
+          loader: 'babel-loader',
+          options: {
+            presets: [
+              '@babel/preset-env',
+              ['@babel/preset-react', { runtime: 'automatic' }],
+              '@babel/preset-typescript',
+            ],
+            plugins: [
+              '@babel/plugin-transform-class-properties',
+              '@babel/plugin-transform-private-methods',
+              '@babel/plugin-transform-private-property-in-object',
+            ],
+          },
+        },
+      ],
+    }
+
+    // Replace or add the babel rule
+    if (config.module?.rules) {
+      const existingBabelRuleIndex = config.module.rules.findIndex(
+        (rule: any) =>
+          rule.test && rule.test.toString().includes('ts|tsx|js|jsx'),
+      )
+
+      if (existingBabelRuleIndex !== -1) {
+        config.module.rules[existingBabelRuleIndex] = babelRule
+      } else {
+        config.module.rules.unshift(babelRule)
+      }
+    }
+
+    // Add source loader for story files (after babel processing)
+    config.module?.rules?.push({
+      test: /\.stories\.(ts|tsx)$/,
+      exclude: path.resolve(__dirname, '../../../../node_modules'),
+      use: [
+        {
+          loader: '@storybook/source-loader',
+          options: {
+            injectParameters: true,
+          },
+        },
+      ],
+    })
+
     return config
   },
   framework: {
-    name: '@storybook/react-webpack5',
+    name: getAbsolutePath('@storybook/react-webpack5'),
     options: {},
   },
   docs: {
@@ -122,3 +180,7 @@ const config: StorybookConfig = {
 }
 
 export default config
+
+function getAbsolutePath(value: string): any {
+  return dirname(require.resolve(join(value, 'package.json')))
+}

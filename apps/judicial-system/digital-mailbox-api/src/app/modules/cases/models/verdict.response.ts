@@ -1,12 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger'
 
-import { formatDate } from '@island.is/judicial-system/formatters'
+import {
+  formatDate,
+  getRulingInstructionItems,
+  getVerdictAppealDecision,
+} from '@island.is/judicial-system/formatters'
 import {
   CaseAppealDecision,
   CaseIndictmentRulingDecision,
-  getIndictmentAppealDeadlineDate,
-  hasDatePassed,
-  ServiceRequirement,
+  getDefendantServiceDate,
+  getIndictmentAppealDeadline,
   VerdictAppealDecision,
 } from '@island.is/judicial-system/types'
 
@@ -24,11 +27,11 @@ export class VerdictResponse {
   @ApiProperty({ type: String })
   subtitle?: string
 
-  @ApiProperty({ enum: VerdictAppealDecision })
-  verdictAppealDecision?: VerdictAppealDecision
-
   @ApiProperty({ type: [Groups] })
   groups?: Groups[]
+
+  @ApiProperty({ type: String })
+  appealDecision?: VerdictAppealDecision
 
   static fromInternalCaseResponse(
     internalCase: InternalCaseResponse,
@@ -41,29 +44,39 @@ export class VerdictResponse {
       internalCase.defendants?.find((def) => def.nationalId === nationalId) ||
       internalCase.defendants?.[0]
 
-    const serviceRequired =
-      defendant?.serviceRequirement === ServiceRequirement.REQUIRED
-    const isFineCase =
+    const verdict = defendant?.verdict
+
+    const isFine =
       internalCase.indictmentRulingDecision ===
       CaseIndictmentRulingDecision.FINE
 
-    const baseDate = serviceRequired
-      ? defendant?.verdictViewDate
-      : internalCase.rulingDate
+    const baseDate = getDefendantServiceDate({
+      verdict: defendant.verdict,
+      fallbackDate: internalCase.rulingDate,
+    })
 
-    const appealDeadline = baseDate
-      ? getIndictmentAppealDeadlineDate(new Date(baseDate), isFineCase)
-      : null
+    const appealDeadlineResult = baseDate
+      ? getIndictmentAppealDeadline({
+          baseDate: new Date(baseDate),
+          isFine,
+        })
+      : undefined
+    const appealDeadline = appealDeadlineResult?.deadlineDate
+    const isAppealDeadlineExpired =
+      appealDeadlineResult?.isDeadlineExpired ?? false
 
-    const isAppealDeadlineExpired = appealDeadline
-      ? hasDatePassed(appealDeadline)
-      : false
+    // Default judgements can't be appealed
+    const canBeAppealed = !!verdict && !verdict.isDefaultJudgement
+
+    const rulingInstructionsItems = getRulingInstructionItems(
+      verdict?.serviceInformationForDefendant ?? [],
+      lang,
+    )
 
     return {
       caseId: internalCase.id,
       title: t.rulingTitle,
-      // subtitle: 'TODO subtitle (if needed)',
-      verdictAppealDecision: defendant?.verdictAppealDecision,
+      appealDecision: verdict?.appealDecision,
       groups: [
         {
           label: t.rulingTitle,
@@ -76,28 +89,44 @@ export class VerdictResponse {
             ],
             [t.court, internalCase.court?.name || t.notAvailable],
             [t.caseNumber, internalCase.courtCaseNumber || t.notAvailable],
-            [
-              t.appealDeadline,
-              appealDeadline ? formatDate(appealDeadline) : t.notAvailable,
-            ],
+            ...(canBeAppealed
+              ? [
+                  [
+                    t.appealDeadline,
+                    appealDeadline
+                      ? formatDate(appealDeadline)
+                      : t.notAvailable,
+                  ],
+                ]
+              : []),
+            ...(canBeAppealed && isAppealDeadlineExpired
+              ? [
+                  [
+                    t.appealDecision,
+                    getVerdictAppealDecision(verdict?.appealDecision),
+                  ],
+                ]
+              : []),
           ].map((item) => ({
             label: item[0],
             value: item[1],
           })),
         },
-        // Ruling text
         {
           label: t.ruling,
           items: [
             {
-              // This should be replaced with the actual ruling text
-              // but we don't have that stored right now.
-              value: 'TODO Ruling text goes here',
+              // there should only be one ruling judgement over all court sessions
+              // for digital-mailbox we specifically fetch court sessions in descending order and filter out other non verdict ruling types
+              value:
+                internalCase.courtSessions?.[0]?.ruling ??
+                internalCase.ruling ??
+                '',
               type: 'text',
             },
           ],
         },
-        ...(!isAppealDeadlineExpired
+        ...(canBeAppealed && !isAppealDeadlineExpired
           ? [
               {
                 label: t.appealDecision,
@@ -122,33 +151,7 @@ export class VerdictResponse {
           : []),
         {
           label: t.rulingInstructions,
-          //TODO: Replace with actual instructions
-          items: [
-            {
-              label: 'Endurupptaka útivistarmála (í fjarveru þinni)',
-              value:
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum',
-              type: 'text',
-            },
-            {
-              label: 'Áfrýjun til Landsréttar og áfrýjunarfrestur',
-              value:
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum',
-              type: 'text',
-            },
-            {
-              label: 'Skilorðsbundin refsing og skilorðsrof',
-              value:
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum',
-              type: 'text',
-            },
-            {
-              label: 'Skilyrði og umsókn um samfélagsþjónustu',
-              value:
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum',
-              type: 'text',
-            },
-          ],
+          items: rulingInstructionsItems,
         },
       ],
     }

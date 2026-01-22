@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -16,17 +17,17 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger'
 import { ApplicationsService } from './applications.service'
-import { ApplicationDto } from './models/dto/application.dto'
-import { CreateApplicationDto } from './models/dto/createApplication.dto'
 import { UpdateApplicationDto } from './models/dto/updateApplication.dto'
 import { ApplicationResponseDto } from './models/dto/application.response.dto'
-import { ScreenValidationResponse } from '../../dataTypes/validationResponse.model'
-import { CurrentUser, IdsUserGuard, User } from '@island.is/auth-nest-tools'
-import { ScreenDto } from '../screens/models/dto/screen.dto'
+import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
 import { SubmitScreenDto } from './models/dto/submitScreen.dto'
+import { MyPagesApplicationResponseDto } from './models/dto/myPagesApplication.response.dto'
+import type { Locale } from '@island.is/shared/types'
 
 @UseGuards(IdsUserGuard)
 @ApiTags('applications')
@@ -34,98 +35,22 @@ import { SubmitScreenDto } from './models/dto/submitScreen.dto'
 export class ApplicationsController {
   constructor(private readonly applicationsService: ApplicationsService) {}
 
-  @ApiOperation({ summary: 'Get an application by id' })
-  @ApiOkResponse({
-    description: 'Get an application by id',
-    type: ApplicationDto,
-  })
-  @ApiParam({ name: 'id', type: String })
-  @Get(':id')
-  async getApplication(@Param('id') id: string): Promise<ApplicationDto> {
-    return await this.applicationsService.getApplication(id)
-  }
-
-  @ApiOperation({ summary: 'Create new application' })
-  @ApiCreatedResponse({
-    description: 'Create new application',
-    type: ApplicationDto,
-  })
-  @ApiParam({ name: 'slug', type: String })
-  @ApiBody({ type: CreateApplicationDto })
-  @Post(':slug')
-  async create(
-    @Param('slug') slug: string,
-    @Body() createApplicationDto: CreateApplicationDto,
-    @CurrentUser()
-    user: User,
-  ): Promise<ApplicationDto> {
-    return await this.applicationsService.create(
-      slug,
-      createApplicationDto,
-      user,
-    )
-  }
-
   @ApiOperation({
-    summary: 'Get all unfinished applications of type slug belonging to user ',
+    summary: 'Get all applications belonging to a user to display on my pages',
   })
   @ApiOkResponse({
-    type: ApplicationResponseDto,
+    type: [MyPagesApplicationResponseDto],
     description:
-      'Get all unfinished applications of type slug belonging to user ',
+      'Get all applications belonging to a user to display on my pages',
   })
-  @ApiParam({ name: 'slug', type: String })
-  @Get(':slug')
-  async findAllBySlugAndUser(
-    @Param('slug') slug: string,
-    @Query('isTest') isTest: boolean,
+  @ApiQuery({ name: 'locale', type: String, required: true })
+  @Get('user')
+  async findAllByUser(
+    @Query('locale') locale: Locale,
     @CurrentUser()
     user: User,
-  ): Promise<ApplicationResponseDto> {
-    return await this.applicationsService.findAllBySlugAndUser(
-      slug,
-      user,
-      isTest,
-    )
-  }
-
-  @ApiOperation({ summary: 'Update application dependencies' })
-  @ApiNoContentResponse({
-    description: 'Update application dependencies',
-  })
-  @ApiBody({ type: UpdateApplicationDto })
-  @ApiParam({ name: 'id', type: String })
-  @Put(':id')
-  async update(
-    @Param('id') id: string,
-    @Body() updateApplicationDto: UpdateApplicationDto,
-  ): Promise<void> {
-    await this.applicationsService.update(id, updateApplicationDto)
-  }
-
-  @ApiOperation({ summary: 'Submit application' })
-  @ApiNoContentResponse({
-    description: 'Submit application',
-  })
-  @ApiParam({ name: 'id', type: String })
-  @Post('submit/:id')
-  async submit(@Param('id') id: string): Promise<void> {
-    await this.applicationsService.submit(id)
-  }
-
-  @ApiOperation({ summary: 'validate and save input values of a screen' })
-  @ApiCreatedResponse({
-    description: 'validate and save input values of a screen',
-    type: ScreenValidationResponse,
-  })
-  @ApiParam({ name: 'screenId', type: String })
-  @ApiBody({ type: ApplicationDto })
-  @Post('submitScreen/:screenId')
-  async submitScreen(
-    @Param('screenId') screenId: string,
-    @Body() applicationDto: ApplicationDto,
-  ): Promise<ScreenValidationResponse> {
-    return await this.applicationsService.submitScreen(screenId, applicationDto)
+  ): Promise<MyPagesApplicationResponseDto[]> {
+    return await this.applicationsService.findAllByNationalId(locale, user)
   }
 
   @ApiOperation({ summary: 'Get all applications belonging to organization' })
@@ -149,32 +74,106 @@ export class ApplicationsController {
     )
   }
 
-  @ApiOperation({ summary: 'Save screen data' })
-  @ApiCreatedResponse({
-    description: 'Screen saved successfully',
-    type: ScreenDto,
+  @ApiOperation({ summary: 'Get an application by id' })
+  @ApiOkResponse({
+    description: 'Get an application by id',
+    type: ApplicationResponseDto,
   })
-  @ApiBody({ type: SubmitScreenDto })
-  @Put('submitScreen/:screenId')
-  async saveScreen(
-    @Param('screenId') screenId: string,
-    @Body() screenDto: SubmitScreenDto,
-  ): Promise<ScreenDto> {
-    return await this.applicationsService.saveScreen(screenId, screenDto)
+  @ApiParam({ name: 'id', type: String })
+  @ApiParam({ name: 'slug', type: String })
+  @Get(':slug/:id')
+  async getApplication(
+    @Param('id') id: string,
+    @Param('slug') slug: string,
+    @CurrentUser() user: User,
+  ): Promise<ApplicationResponseDto> {
+    return await this.applicationsService.getApplication(id, slug, user)
   }
 
-  // @ApiOperation({ summary: 'Get all applications by user and formId' })
-  // @ApiOkResponse({
-  //   type: ApplicationResponseDto,
-  //   description: 'Get all applications by user and formId',
-  // })
-  // @ApiParam({ name: 'formId', type: String })
-  // @Get('nationalId/:nationalId/formId/:formId')
-  // async findAllByUserAndFormId(
-  //   @Param('formId') formId: string,
-  //   @CurrentUser()
-  //   user: User,
-  // ): Promise<ApplicationResponseDto> {
-  //   return await this.applicationsService.findAllByUserAndFormId(user, formId)
-  // }
+  @ApiOperation({ summary: 'Create new application' })
+  @ApiCreatedResponse({
+    description: 'Create new application',
+    type: ApplicationResponseDto,
+  })
+  @ApiParam({ name: 'slug', type: String })
+  @Post(':slug')
+  async create(
+    @Param('slug') slug: string,
+    @CurrentUser()
+    user: User,
+  ): Promise<ApplicationResponseDto> {
+    return await this.applicationsService.create(slug, user)
+  }
+
+  @ApiOperation({
+    summary: 'Get all unfinished applications of type slug belonging to user ',
+  })
+  @ApiOkResponse({
+    type: ApplicationResponseDto,
+    description:
+      'Get all unfinished applications of type slug belonging to user ',
+  })
+  @ApiParam({ name: 'slug', type: String })
+  @Get(':slug')
+  async findAllBySlugAndUser(
+    @Param('slug') slug: string,
+    @CurrentUser()
+    user: User,
+  ): Promise<ApplicationResponseDto> {
+    return await this.applicationsService.findAllBySlugAndUser(slug, user)
+  }
+
+  @ApiOperation({ summary: 'Save screen data' })
+  @ApiNoContentResponse({
+    description: 'Screen saved successfully',
+  })
+  @ApiBody({ type: SubmitScreenDto })
+  @Put('submitScreen')
+  async saveScreen(
+    @Body() screenDto: SubmitScreenDto,
+    @CurrentUser()
+    user: User,
+  ): Promise<void> {
+    await this.applicationsService.saveScreen(screenDto, user)
+  }
+
+  @ApiOperation({
+    summary: 'Update application dependencies and completed array',
+  })
+  @ApiNoContentResponse({
+    description: 'Update application dependencies and completed array',
+  })
+  @ApiBody({ type: UpdateApplicationDto })
+  @ApiParam({ name: 'id', type: String })
+  @Put(':id')
+  async update(
+    @Param('id') id: string,
+    @Body() updateApplicationDto: UpdateApplicationDto,
+  ): Promise<void> {
+    await this.applicationsService.update(id, updateApplicationDto)
+  }
+
+  @ApiOperation({ summary: 'Submit application' })
+  @ApiNoContentResponse({
+    description: 'Submit application',
+  })
+  @ApiParam({ name: 'id', type: String })
+  @Post('submit/:id')
+  async submit(@Param('id') id: string): Promise<void> {
+    await this.applicationsService.submit(id)
+  }
+
+  @ApiOperation({ summary: 'Delete an application by id' })
+  @ApiNoContentResponse({
+    description: 'Delete an application by id',
+  })
+  @ApiParam({ name: 'id', type: String })
+  @Delete('deleteApplication/:id')
+  async deleteApplication(
+    @Param('id') id: string,
+    @CurrentUser()
+    user: User,
+  ): Promise<void> {
+    return await this.applicationsService.deleteApplication(id, user)
+  }
 }

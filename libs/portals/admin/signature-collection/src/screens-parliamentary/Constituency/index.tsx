@@ -21,12 +21,13 @@ import { getTagConfig } from '../../lib/utils'
 import ActionDrawer from '../../shared-components/actionDrawer'
 import { Actions } from '../../shared-components/actionDrawer/ListActions'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
+import EmptyState from '../../shared-components/emptyState'
 
 export const Constituency = () => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
   const { allLists } = useLoaderData() as ListsLoaderReturn
-  const { constituencyName } = useParams() as { constituencyName: string }
+  const { constituencyName = '' } = useParams<{ constituencyName: string }>()
   const constituencyLists = allLists.filter(
     (list) => list.area.name === constituencyName,
   )
@@ -79,48 +80,58 @@ export const Constituency = () => {
                 ]}
               />
             }
-            marginBottom={4}
+            marginBottom={3}
           />
           <Divider />
           <Box marginTop={9} />
-          <GridRow>
-            <GridColumn span="12/12">
-              <Box marginBottom={3} display="flex" justifyContent="flexEnd">
-                <Text variant="eyebrow">
-                  {formatMessage(m.totalListResults) +
-                    ': ' +
-                    constituencyLists.length}
-                </Text>
-              </Box>
-              <Stack space={3}>
-                {constituencyLists.map((list) => (
-                  <ActionCard
-                    key={list.id}
-                    date={format(new Date(list.endTime), 'dd.MM.yyyy HH:mm')}
-                    heading={list.candidate.name}
-                    progressMeter={{
-                      currentProgress: list.numberOfSignatures ?? 0,
-                      maxProgress: list.area.min,
-                      withLabel: true,
-                    }}
-                    cta={{
-                      label: formatMessage(m.viewList),
-                      variant: 'text',
-                      onClick: () => {
-                        navigate(
-                          SignatureCollectionPaths.ParliamentaryConstituencyList.replace(
-                            ':constituencyName',
-                            constituencyName,
-                          ).replace(':listId', list.id),
-                        )
-                      },
-                    }}
-                    tag={getTagConfig(list)}
-                  />
-                ))}
-              </Stack>
-            </GridColumn>
-          </GridRow>
+          {constituencyLists.length === 0 ? (
+            <EmptyState
+              title={formatMessage(m.noLists) + ' í ' + constituencyName}
+              description={formatMessage(m.noListsDescription)}
+            />
+          ) : (
+            <GridRow>
+              <GridColumn span="12/12">
+                <Box display="flex" justifyContent="flexEnd">
+                  <Text variant="eyebrow" marginBottom={3}>
+                    {`${formatMessage(m.totalListsPerConstituency)}: ${
+                      constituencyLists.length
+                    }`}
+                  </Text>
+                </Box>
+                <Stack space={3}>
+                  {constituencyLists.map((list) => (
+                    <ActionCard
+                      key={list.id}
+                      eyebrow={`${formatMessage(m.listEndTime)}: ${format(
+                        new Date(list.endTime),
+                        'dd.MM.yyyy',
+                      )}`}
+                      heading={list.candidate.name}
+                      progressMeter={{
+                        currentProgress: list.numberOfSignatures ?? 0,
+                        maxProgress: list.area.min,
+                        withLabel: true,
+                      }}
+                      cta={{
+                        label: formatMessage(m.viewList),
+                        variant: 'text',
+                        onClick: () => {
+                          navigate(
+                            SignatureCollectionPaths.ParliamentaryConstituencyList.replace(
+                              ':constituencyName',
+                              constituencyName,
+                            ).replace(':listId', list.id),
+                          )
+                        },
+                      }}
+                      tag={getTagConfig(list)}
+                    />
+                  ))}
+                </Stack>
+              </GridColumn>
+            </GridRow>
+          )}
         </GridColumn>
       </GridRow>
     </GridContainer>

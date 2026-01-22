@@ -4,6 +4,7 @@ import type { Icon as IconType } from '../IconRC/iconMap'
 import type { ProgressMeterVariant } from '../ProgressMeter/types'
 
 export type BackgroundColor = 'white' | 'blue' | 'red'
+export type EyebrowColor = 'blue400' | 'purple400'
 
 export type ActionCardProps = {
   date?: string
@@ -11,7 +12,9 @@ export type ActionCardProps = {
   headingVariant?: 'h3' | 'h4'
   renderHeading?: (headingEl: React.ReactNode) => React.ReactNode
   text?: string
+  subText?: string
   eyebrow?: string
+  eyebrowColor?: EyebrowColor
   backgroundColor?: BackgroundColor
   focused?: boolean
   tag?: {

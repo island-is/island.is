@@ -8,19 +8,20 @@
   "generators": {},
   "targets": {
     "build": {
-      "executor": "./tools/executors/node:build",
+      "executor": "@nx/esbuild:esbuild",
       "options": {
         "outputPath": "dist/apps/judicial-system/digital-mailbox-api",
         "main": "apps/judicial-system/digital-mailbox-api/src/main.ts",
         "tsConfig": "apps/judicial-system/digital-mailbox-api/tsconfig.app.json",
         "assets": [],
-        "maxWorkers": 2
+        "generatePackageJson": true,
+        "esbuildConfig": "tools/esbuild.config.js",
+        "format": ["cjs"]
       },
       "configurations": {
         "production": {
           "optimization": true,
-          "extractLicenses": true,
-          "inspect": false
+          "extractLicenses": true
         }
       }
     },
@@ -46,8 +47,8 @@
       },
       "outputs": ["{projectRoot}/src/openapi.yaml"]
     },
-    "docker-express": {
-      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
+    "docker-express-yarn": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express-yarn`"
     }
   }
 }

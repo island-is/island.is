@@ -10,13 +10,13 @@ import {
 import {
   Form,
   FormModes,
-  NationalRegistryUserApi,
   DefaultEvents,
   UserProfileApi,
+  NationalRegistryV3UserApi,
 } from '@island.is/application/types'
 import { additionalSupportForTheElderyFormMessage } from '../lib/messages'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
-import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
+import { SocialInsuranceAdministrationLogo } from '@island.is/application/assets/institution-logos'
 import {
   SocialInsuranceAdministrationApplicantApi,
   SocialInsuranceAdministrationIsApplicantEligibleApi,
@@ -27,7 +27,7 @@ import { isEligible } from '../lib/additionalSupportForTheElderlyUtils'
 export const PrerequisitesForm: Form = buildForm({
   id: 'AdditionalSupportForTheElderlyPrerequisites',
   title: socialInsuranceAdministrationMessage.shared.formTitle,
-  logo: Logo,
+  logo: SocialInsuranceAdministrationLogo,
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: false,
   renderLastScreenBackButton: false,
@@ -58,7 +58,7 @@ export const PrerequisitesForm: Form = buildForm({
           }),
           dataProviders: [
             buildDataProviderItem({
-              provider: NationalRegistryUserApi,
+              provider: NationalRegistryV3UserApi,
               title:
                 socialInsuranceAdministrationMessage.pre.skraInformationTitle,
               subTitle:

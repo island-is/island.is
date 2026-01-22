@@ -1,4 +1,5 @@
 import { Response } from 'express'
+import { Sequelize } from 'sequelize-typescript'
 
 import {
   Controller,
@@ -9,6 +10,7 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common'
+import { InjectConnection } from '@nestjs/sequelize'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import type { Logger } from '@island.is/logging'
@@ -22,7 +24,6 @@ import {
 import { indictmentCases } from '@island.is/judicial-system/types'
 
 import {
-  Case,
   CaseExistsGuard,
   CaseReadGuard,
   CaseTypeGuard,
@@ -30,10 +31,10 @@ import {
   defenderGeneratedPdfRule,
   PdfService,
 } from '../case'
-import { CurrentDefendant, Defendant, DefendantExistsGuard } from '../defendant'
+import { CurrentDefendant, DefendantExistsGuard } from '../defendant'
+import { Case, Defendant, Subpoena } from '../repository'
 import { CurrentSubpoena } from './guards/subpoena.decorator'
 import { SubpoenaExistsGuard } from './guards/subpoenaExists.guard'
-import { Subpoena } from './models/subpoena.model'
 
 @Controller([
   'api/case/:caseId/limitedAccess/defendant/:defendantId/subpoena/:subpoenaId',
@@ -46,14 +47,15 @@ import { Subpoena } from './models/subpoena.model'
   new CaseTypeGuard(indictmentCases),
   CaseReadGuard,
   DefendantExistsGuard,
+  SubpoenaExistsGuard,
 )
 export class LimitedAccessSubpoenaController {
   constructor(
     private readonly pdfService: PdfService,
+    @InjectConnection() private readonly sequelize: Sequelize,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @UseGuards(SubpoenaExistsGuard)
   @RolesRules(defenderGeneratedPdfRule)
   @Get()
   @Header('Content-Type', 'application/pdf')
@@ -74,10 +76,8 @@ export class LimitedAccessSubpoenaController {
       `Getting subpoena ${subpoenaId} for defendant ${defendantId} of case ${caseId} as a pdf document`,
     )
 
-    const pdf = await this.pdfService.getSubpoenaPdf(
-      theCase,
-      defendant,
-      subpoena,
+    const pdf = await this.sequelize.transaction((transaction) =>
+      this.pdfService.getSubpoenaPdf(theCase, defendant, transaction, subpoena),
     )
 
     res.end(pdf)

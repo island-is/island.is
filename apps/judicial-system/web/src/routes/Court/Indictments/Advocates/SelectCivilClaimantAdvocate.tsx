@@ -16,6 +16,7 @@ import {
   Modal,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  CaseState,
   CivilClaimant,
   UpdateCivilClaimantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -86,7 +87,10 @@ const SelectCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
                     spokespersonIsLawyer: true,
                   })
                 }
-                disabled={Boolean(civilClaimant.isSpokespersonConfirmed)}
+                disabled={Boolean(
+                  civilClaimant.isSpokespersonConfirmed ||
+                    workingCase.state === CaseState.CORRECTING,
+                )}
               />
             </Box>
             <Box width="half" marginLeft={1}>
@@ -102,7 +106,10 @@ const SelectCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
                     spokespersonIsLawyer: false,
                   })
                 }
-                disabled={Boolean(civilClaimant.isSpokespersonConfirmed)}
+                disabled={Boolean(
+                  civilClaimant.isSpokespersonConfirmed ||
+                    workingCase.state === CaseState.CORRECTING,
+                )}
               />
             </Box>
           </Box>
@@ -147,7 +154,8 @@ const SelectCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
               disabled={
                 civilClaimant.spokespersonIsLawyer === null ||
                 civilClaimant.spokespersonIsLawyer === undefined ||
-                civilClaimant.isSpokespersonConfirmed
+                civilClaimant.isSpokespersonConfirmed ||
+                workingCase.state === CaseState.CORRECTING
               }
             />
           </Box>
@@ -159,7 +167,8 @@ const SelectCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
             checked={Boolean(civilClaimant.caseFilesSharedWithSpokesperson)}
             disabled={
               civilClaimant.spokespersonIsLawyer === null ||
-              civilClaimant.spokespersonIsLawyer === undefined
+              civilClaimant.spokespersonIsLawyer === undefined ||
+              workingCase.state === CaseState.CORRECTING
             }
             onChange={() => {
               handleSetAndSendCivilClaimantToServer({
@@ -197,6 +206,7 @@ const SelectCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
               onClick={() => {
                 setDisplayModal(true)
               }}
+              disabled={workingCase.state === CaseState.CORRECTING}
             >
               {civilClaimant.isSpokespersonConfirmed
                 ? formatMessage(strings.changeSpokespersonChoice, {
@@ -227,6 +237,7 @@ const SelectCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
                 isSpokespersonConfirmed: false,
               })
             }}
+            disabled={workingCase.state === CaseState.CORRECTING}
           >
             {civilClaimant.hasSpokesperson
               ? formatMessage(strings.removeCivilClaimantAdvocate, {
@@ -246,20 +257,22 @@ const SelectCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
             isSpokespersonConfirmed: civilClaimant.isSpokespersonConfirmed,
             spokespersonIsLawyer: civilClaimant.spokespersonIsLawyer,
           })}
-          primaryButtonText={formatMessage(
-            strings.confirmModalPrimaryButtonText,
-            { isConfirming: !civilClaimant.isSpokespersonConfirmed },
-          )}
-          onPrimaryButtonClick={() => {
-            handleSetAndSendCivilClaimantToServer({
-              isSpokespersonConfirmed: !civilClaimant.isSpokespersonConfirmed,
-            })
-            setDisplayModal(false)
+          primaryButton={{
+            text: formatMessage(strings.confirmModalPrimaryButtonText, {
+              isConfirming: !civilClaimant.isSpokespersonConfirmed,
+            }),
+            onClick: () => {
+              handleSetAndSendCivilClaimantToServer({
+                isSpokespersonConfirmed: !civilClaimant.isSpokespersonConfirmed,
+              })
+
+              setDisplayModal(false)
+            },
           }}
-          secondaryButtonText={formatMessage(
-            strings.confirmModalSecondaryButtonText,
-          )}
-          onSecondaryButtonClick={() => setDisplayModal(false)}
+          secondaryButton={{
+            text: formatMessage(strings.confirmModalSecondaryButtonText),
+            onClick: () => setDisplayModal(false),
+          }}
         />
       )}
     </BlueBox>

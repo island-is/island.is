@@ -87,7 +87,10 @@ ingress:
           - '/'
 namespace: 'identity-server-delegation'
 podDisruptionBudget:
-  maxUnavailable: 1
+  minAvailable: 1
+  unhealthyPodEvictionPolicy: 'IfHealthyBudget'
+podSecurityContext:
+  fsGroup: 65534
 pvcs: []
 replicaCount:
   default: 2
@@ -114,3 +117,8 @@ secrets:
 securityContext:
   allowPrivilegeEscalation: false
   privileged: false
+serviceAccount:
+  annotations:
+    eks.amazonaws.com/role-arn: 'arn:aws:iam::567113216315:role/auth-delegation-api'
+  create: true
+  name: 'auth-delegation-api'

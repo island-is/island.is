@@ -1,5 +1,6 @@
-import { Field, InputType } from '@nestjs/graphql'
+import { Field, InputType, registerEnumType } from '@nestjs/graphql'
 import { IsInt, IsString } from 'class-validator'
+import { LocaleEnum } from '../vehicles.type'
 
 @InputType()
 export class PostVehicleBulkMileageInput {
@@ -14,9 +15,29 @@ export class PostVehicleBulkMileageInput {
 export class PostVehicleBulkMileageSingleInput {
   @Field()
   @IsString()
-  vehicleId!: string
+  permno!: string
 
   @Field()
   @IsInt()
-  mileageNumber!: number
+  mileage!: number
+}
+
+registerEnumType(LocaleEnum, {
+  name: 'LocaleEnum',
+  description: 'Available locales',
+})
+
+@InputType()
+export class PostVehicleBulkMileageFileInput {
+  @Field({ description: 'Example: "ISLAND.IS"' })
+  originCode!: string
+
+  @Field(() => String)
+  fileUrl!: string
+
+  @Field(() => String, { nullable: true })
+  fileType?: 'csv' | 'xlsx'
+
+  @Field(() => LocaleEnum, { nullable: true, defaultValue: LocaleEnum.Is })
+  locale?: LocaleEnum
 }

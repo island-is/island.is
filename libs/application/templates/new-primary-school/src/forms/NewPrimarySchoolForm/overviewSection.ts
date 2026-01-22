@@ -1,36 +1,30 @@
 import {
-  buildCustomField,
   buildMultiField,
   buildSection,
   buildSubmitField,
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
-import { newPrimarySchoolMessages } from '../../lib/messages'
+import { overviewMessages } from '../../lib/messages'
+import { overviewFields } from '../../utils/overviewFields'
 
 export const overviewSection = buildSection({
   id: 'overviewSection',
-  title: newPrimarySchoolMessages.overview.sectionTitle,
+  title: overviewMessages.sectionTitle,
   children: [
     buildMultiField({
       id: 'overview',
+      title: overviewMessages.sectionTitle,
+      description: overviewMessages.description,
       children: [
-        buildCustomField(
-          {
-            id: 'overviewScreen',
-            component: 'Review',
-          },
-          {
-            editable: true,
-          },
-        ),
+        ...overviewFields(true),
         buildSubmitField({
           id: 'submit',
           placement: 'footer',
-          title: newPrimarySchoolMessages.overview.submitButton,
+          title: overviewMessages.submitButton,
           actions: [
             {
               event: DefaultEvents.SUBMIT,
-              name: newPrimarySchoolMessages.overview.submitButton,
+              name: overviewMessages.submitButton,
               type: 'primary',
             },
           ],

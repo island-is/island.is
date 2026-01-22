@@ -6,8 +6,7 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 
-import { Case } from '../../case'
-import { IndictmentCount } from '../models/indictmentCount.model'
+import { Case, IndictmentCount } from '../../repository'
 
 @Injectable()
 export class OffenseExistsGuard implements CanActivate {

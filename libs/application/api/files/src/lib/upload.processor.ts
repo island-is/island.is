@@ -40,13 +40,22 @@ export class UploadProcessor {
   async handleUpload(job: Job<JobData>): Promise<JobResult> {
     const { attachmentUrl, applicationId } = job.data
     const destinationBucket = this.config.attachmentBucket
+
+    if (!destinationBucket) {
+      throw new Error('Application attachment bucket not configured.')
+    }
+
+    const { key: sourceKey } = AmazonS3URI(attachmentUrl)
+    const destinationKey = `${applicationId}/${sourceKey}`
+
+    // Add file existence check before copy
     try {
-      if (!destinationBucket) {
-        throw new Error('Application attachment bucket not configured.')
+      const fileExists = await this.fileStorageService.fileExists(sourceKey)
+
+      if (!fileExists) {
+        throw new Error(`Source file ${sourceKey} not found in upload bucket`)
       }
 
-      const { key: sourceKey } = AmazonS3URI(attachmentUrl)
-      const destinationKey = `${applicationId}/${sourceKey}`
       const resultUrl =
         await this.fileStorageService.copyObjectFromUploadBucket(
           sourceKey,
@@ -59,17 +68,12 @@ export class UploadProcessor {
         resultUrl,
       }
     } catch (error) {
-      withLoggingContext(
-        {
-          applicationId: applicationId,
-        },
-        () => {
-          this.logger.error(
-            'An error occurred while processing upload job',
-            error,
-          )
-        },
-      )
+      withLoggingContext({ applicationId: applicationId }, () => {
+        this.logger.error(
+          'An error occurred while processing copy job on upload',
+          error,
+        )
+      })
       throw error
     }
   }

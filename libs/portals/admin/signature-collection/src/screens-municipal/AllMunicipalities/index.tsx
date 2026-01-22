@@ -1,5 +1,4 @@
 import {
-  Text,
   ActionCard,
   Box,
   GridColumn,
@@ -8,41 +7,55 @@ import {
   Stack,
   Breadcrumbs,
   Divider,
+  toast,
+  Tag,
+  Icon,
+  DialogPrompt,
+  Text,
 } from '@island.is/island-ui/core'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { IntroHeader, PortalNavigation } from '@island.is/portals/core'
 import { signatureCollectionNavigation } from '../../lib/navigation'
-import { useLoaderData, useNavigate } from 'react-router-dom'
+import { useLoaderData, useNavigate, useRevalidator } from 'react-router-dom'
 import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
 import { SignatureCollectionPaths } from '../../lib/paths'
-import { SignatureCollectionList } from '@island.is/api/schema'
-import FindSignature from '../../shared-components/findSignature'
 import EmptyState from '../../shared-components/emptyState'
 import StartAreaCollection from './startCollection'
+import { useStartCollectionMutation } from './startCollection/startCollection.generated'
+import sortBy from 'lodash/sortBy'
+import { CollectionStatus } from '@island.is/api/schema'
 
-const AllMunicipalities = () => {
-  const { allLists, collection } = useLoaderData() as ListsLoaderReturn
+const AllMunicipalities = ({ isMunicipality }: { isMunicipality: boolean }) => {
+  const { collection, allLists } = useLoaderData() as ListsLoaderReturn
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
+  const { revalidate } = useRevalidator()
+  const [startCollectionMutation] = useStartCollectionMutation()
 
-  const areaCounts: Record<string, number> = {}
-  const municipalityMap = new Map<string, SignatureCollectionList>()
+  const onStartCollection = (areaId: string) => {
+    startCollectionMutation({
+      variables: {
+        input: {
+          areaId: areaId,
+        },
+      },
+      onCompleted: (response) => {
+        const { success, reasons } =
+          response.signatureCollectionAdminStartMunicipalityCollection
 
-  // Group lists by municipality
-  allLists.forEach((list) => {
-    const key = list?.area?.name
-    if (!key) return
-
-    areaCounts[key] = (areaCounts[key] || 0) + 1
-
-    if (!municipalityMap.has(key)) {
-      municipalityMap.set(key, list)
-    }
-  })
-
-  const municipalityLists = Array.from(municipalityMap.values())
+        if (success) {
+          toast.success(formatMessage(m.openMunicipalCollectionSuccess))
+          revalidate()
+        } else {
+          toast.error(
+            reasons?.[0] ?? formatMessage(m.openMunicipalCollectionError),
+          )
+        }
+      },
+    })
+  }
 
   return (
     <GridContainer>
@@ -76,63 +89,110 @@ const AllMunicipalities = () => {
             imgPosition="right"
             imgHiddenBelow="sm"
             img={nationalRegistryLogo}
-            marginBottom={4}
+            marginBottom={3}
           />
           <Divider />
           <Box marginTop={9} />
-          {municipalityLists.length > 0 ? (
-            <Box>
-              <FindSignature collectionId={collection.id} />
-              <Box marginBottom={3} display="flex" justifyContent="flexEnd">
-                <Text variant="eyebrow">
-                  {formatMessage(m.totalListResults) +
-                    ': ' +
-                    municipalityLists.length}
+          {collection.areas.length > 0 ? (
+            collection.areas.length > 1 && (
+              <Box display="flex" justifyContent="flexEnd">
+                <Text marginBottom={2} variant="eyebrow">
+                  {`${formatMessage(m.totalMunicipalities)}: ${
+                    collection.areas.length
+                  }`}
                 </Text>
               </Box>
-            </Box>
+            )
           ) : (
             <EmptyState
               title={formatMessage(m.noLists)}
               description={formatMessage(m.noListsDescription)}
             />
           )}
-          {/* Todo: for municipalities, not admin */}
-          <StartAreaCollection />
+          {/* For municipalities to start their collection if its not already active.
+              Note: municipalities only see their own area. */}
+          {isMunicipality &&
+            collection.areas?.length > 0 &&
+            !collection.areas[0]?.isActive && (
+              <StartAreaCollection areaId={collection.areas[0]?.id} />
+            )}
           <Stack space={3}>
-            {municipalityLists.map((list) => {
-              return (
-                <ActionCard
-                  key={list.area.id}
-                  heading={list.area.name}
-                  eyebrow={formatMessage(m.municipality)}
-                  text={
-                    formatMessage(m.totalListsPerMunicipality) +
-                    (areaCounts[list.area.name]
-                      ? areaCounts[list.area.name].toString()
-                      : '0')
-                  }
-                  cta={{
-                    label: formatMessage(m.viewMunicipality),
-                    variant: 'text',
-                    onClick: () => {
-                      navigate(
-                        SignatureCollectionPaths.SingleMunicipality.replace(
-                          ':municipality',
-                          list.area.name,
+            {sortBy(collection.areas, [
+              (area) => !area.isActive, // active first
+              'name', // then alphabetically
+            ]).map((area) => (
+              <ActionCard
+                key={area.id}
+                heading={area.name}
+                eyebrow={`${formatMessage(m.totalListsPerMunicipality)}: ${
+                  allLists.filter((list) => list.area.id === area.id).length
+                }`}
+                cta={{
+                  label: formatMessage(m.viewMunicipality),
+                  variant: 'text',
+                  disabled: !area.isActive,
+                  onClick: () => {
+                    navigate(
+                      SignatureCollectionPaths.SingleMunicipality.replace(
+                        ':municipality',
+                        area.name,
+                      ),
+                    )
+                  },
+                }}
+                tag={
+                  // This action is only available for the Admins (LKS and ÞÍ)
+                  !isMunicipality && !area.isActive
+                    ? {
+                        label: 'Open collection',
+                        renderTag: () => (
+                          <DialogPrompt
+                            baseId="open_collection_dialog"
+                            title={
+                              formatMessage(m.openMunicipalCollection) +
+                              ' - ' +
+                              area.name
+                            }
+                            description={formatMessage(
+                              m.openMunicipalCollectionDescription,
+                            )}
+                            ariaLabel="open_collection"
+                            disclosureElement={
+                              <Tag outlined variant="blue">
+                                <Box display="flex" alignItems="center">
+                                  <Icon
+                                    icon="lockOpened"
+                                    size="small"
+                                    type="outline"
+                                  />
+                                </Box>
+                              </Tag>
+                            }
+                            onConfirm={() => {
+                              onStartCollection(area.id)
+                            }}
+                            buttonTextConfirm={formatMessage(
+                              m.confirmOpenMunicipalCollectionButton,
+                            )}
+                          />
                         ),
-                      )
-                    },
-                  }}
-                  /* Todo: add for admin users
-                  tag={{
-                    label: 'Tag',
-                    variant: 'blue',
-                    renderTag: () => <StartAreaCollection />,
-                  }}*/
-                />
-              )
-            })}
+                      }
+                    : area.collectionStatus === CollectionStatus.InReview
+                    ? {
+                        label: formatMessage(m.confirmListReviewed),
+                        variant: 'mint',
+                        outlined: true,
+                      }
+                    : area.isActive
+                    ? {
+                        label: formatMessage(m.municipalityCollectionOpen),
+                        variant: 'mint',
+                        outlined: false,
+                      }
+                    : undefined
+                }
+              />
+            ))}
           </Stack>
         </GridColumn>
       </GridRow>

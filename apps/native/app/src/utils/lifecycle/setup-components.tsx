@@ -1,3 +1,4 @@
+import { DropdownMenuOverlay } from '../../components/dropdown/dropdown-menu-overlay'
 import { LoadingIcon } from '../../components/nav-loading-spinner/loading-icon'
 import { OfflineBanner } from '../../components/offline/offline-banner'
 import { isTestingApp } from '../../config'
@@ -18,6 +19,11 @@ import { FamilyOverviewScreen } from '../../screens/family/family-overview'
 import { FinanceScreen } from '../../screens/finance/finance'
 import { FinanceStatusDetailScreen } from '../../screens/finance/finance-status-detail'
 import { HealthOverviewScreen } from '../../screens/health/health-overview'
+import { QuestionnaireDetailScreen } from '../../screens/health/questionnaires/questionnaire-detail'
+import { QuestionnairesScreen } from '../../screens/health/questionnaires/questionnaires'
+import { MedicineDelegationScreen } from '../../screens/medicine-delegation/medicine-delegation'
+import { MedicineDelegationFormScreen } from '../../screens/medicine-delegation/medicine-delegation-form'
+import { MedicineDelegationDetailScreen } from '../../screens/medicine-delegation/medicine-delegation-detail'
 import { HomeScreen } from '../../screens/home/home'
 import { HomeOptionsScreen } from '../../screens/home/home-options'
 import { InboxScreen } from '../../screens/inbox/inbox'
@@ -33,6 +39,9 @@ import { OnboardingBiometricsScreen } from '../../screens/onboarding/onboarding-
 import { OnboardingNotificationsScreen } from '../../screens/onboarding/onboarding-notifications'
 import { OnboardingPinCodeScreen } from '../../screens/onboarding/onboarding-pin-code'
 import { PasskeyScreen } from '../../screens/passkey/passkey'
+import { PrescriptionsScreen } from '../../screens/medicine/prescriptions'
+import { MedicineHistoryDetailScreen } from '../../screens/medicine/components/medicine-history-detail'
+import { MedicineHistoryScreen } from '../../screens/medicine/components/medicine-history'
 import { RegisterEmailScreen } from '../../screens/register-email/register-email'
 import { EditBankInfoScreen } from '../../screens/settings/edit-bank-info'
 import { EditConfirmScreen } from '../../screens/settings/edit-confirm'
@@ -54,12 +63,6 @@ import {
 import { registerComponent } from '../register-component'
 
 export function registerAllComponents() {
-  // dev only
-  if (__DEV__) {
-    // registerComponent(CR.DevtoolsStorybookScreen, StorybookScreen)
-    // registerComponent(CR.DevtoolsCognitoAuthScreen, CognitoAuthScreen)
-  }
-
   // screens
   registerComponent(
     CR.LoginScreen,
@@ -108,6 +111,17 @@ export function registerAllComponents() {
   registerComponent(CR.PasskeyScreen, PasskeyScreen)
   registerComponent(CR.UpdateAppScreen, UpdateAppScreen)
   registerComponent(CR.HealthOverviewScreen, HealthOverviewScreen)
+  registerComponent(CR.QuestionnairesScreen, QuestionnairesScreen)
+  registerComponent(CR.QuestionnaireDetailScreen, QuestionnaireDetailScreen)
+  registerComponent(CR.MedicineDelegationScreen, MedicineDelegationScreen)
+  registerComponent(
+    CR.MedicineDelegationFormScreen,
+    MedicineDelegationFormScreen,
+  )
+  registerComponent(
+    CR.MedicineDelegationDetailScreen,
+    MedicineDelegationDetailScreen,
+  )
   registerComponent(CR.HomeOptionsScreen, HomeOptionsScreen)
   registerComponent(CR.ApplicationsCompletedScreen, ApplicationsCompletedScreen)
   registerComponent(
@@ -119,10 +133,15 @@ export function registerAllComponents() {
     ApplicationsIncompleteScreen,
   )
   registerComponent(CR.VaccinationsScreen, VaccinationsScreen)
+  registerComponent(CR.PrescriptionsScreen, PrescriptionsScreen)
+  registerComponent(CR.MedicineHistoryDetailScreen, MedicineHistoryDetailScreen)
+  registerComponent(CR.MedicineHistoryScreen, MedicineHistoryScreen)
+
   registerComponent(CR.RegisterEmailScreen, RegisterEmailScreen)
 
   // Overlay
   registerComponent(CR.OfflineBanner, OfflineBanner)
+  registerComponent(CR.DropdownMenuOverlay, DropdownMenuOverlay)
 
   // Navigation buttons
   registerComponent(BR.LoadingButton, LoadingIcon)

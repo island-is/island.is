@@ -6,7 +6,7 @@ import { formatDate, formatDOB } from '@island.is/judicial-system/formatters'
 
 import { nowFactory } from '../factories'
 import { ruling } from '../messages'
-import { Case } from '../modules/case'
+import { Case } from '../modules/repository'
 import {
   addCoatOfArms,
   addEmptyLines,
@@ -35,7 +35,7 @@ const constructRulingPdf = (
     bufferPages: true,
   })
 
-  const sinc: Buffer[] = []
+  const sinc: Uint8Array[] = []
 
   doc.on('data', (chunk) => sinc.push(chunk))
 

@@ -9,7 +9,7 @@ import { FormValue } from '@island.is/application/types'
 import { PICK_UP, SEND_HOME } from '../../lib/constants'
 import { m } from '../../lib/messages'
 import { Delivery } from '../../types'
-import { DistrictCommissionerAgencies } from '../../types/schema'
+import { DistrictCommissionerAgencies } from '@island.is/api/schema'
 
 export const sectionDelivery = buildSection({
   id: 'delivery',

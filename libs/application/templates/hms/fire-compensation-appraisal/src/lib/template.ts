@@ -10,6 +10,7 @@ import {
   UserProfileApi,
   ApplicationConfigurations,
   defineTemplateApi,
+  IdentityApi,
 } from '@island.is/application/types'
 import { Events, Roles, States } from '../utils/constants'
 import { CodeOwners } from '@island.is/shared/constants'
@@ -18,7 +19,6 @@ import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
-import { assign } from 'xstate'
 import { NationalRegistryApi, propertiesApi } from '../dataProviders'
 import { buildPaymentState } from '@island.is/application/utils'
 import { InstitutionNationalIds } from '@island.is/application/types'
@@ -26,8 +26,9 @@ import * as m from '../lib/messages'
 import { TemplateApiActions } from '../types'
 import { getChargeItems } from '../utils/paymentUtils'
 import { Features } from '@island.is/feature-flags'
-import { ApiScope } from '@island.is/auth/scopes'
+import { ApiScope, HmsScope } from '@island.is/auth/scopes'
 import { AuthDelegationType } from '@island.is/shared/types'
+import { PaymentForm } from '@island.is/application/ui-forms'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -39,9 +40,8 @@ const template: ApplicationTemplate<
   codeOwner: CodeOwners.NordaApplications,
   institution: m.miscMessages.institutionName,
   featureFlag: Features.fireCompensationAppraisalEnabled,
-  translationNamespaces: [
+  translationNamespaces:
     ApplicationConfigurations.FireCompensationAppraisal.translation,
-  ],
   dataSchema,
   allowedDelegations: [
     {
@@ -54,7 +54,7 @@ const template: ApplicationTemplate<
       type: AuthDelegationType.Custom,
     },
   ],
-  requiredScopes: [ApiScope.hms],
+  requiredScopes: [HmsScope.properties, ApiScope.hms],
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -81,6 +81,24 @@ const template: ApplicationTemplate<
               write: 'all',
               read: 'all',
               api: [UserProfileApi, NationalRegistryApi, propertiesApi],
+              delete: true,
+            },
+            {
+              id: Roles.DELEGATE,
+              formLoader: () =>
+                import('../forms/prerequisitesProcureForm').then((module) =>
+                  Promise.resolve(module.PrerequisitesProcureForm),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Staðfesta',
+                  type: 'primary',
+                },
+              ],
+              write: 'all',
+              read: 'all',
+              api: [UserProfileApi, IdentityApi, propertiesApi],
               delete: true,
             },
           ],
@@ -121,6 +139,23 @@ const template: ApplicationTemplate<
               read: 'all',
               delete: true,
             },
+            {
+              id: Roles.DELEGATE,
+              formLoader: () =>
+                import('../forms/mainForm').then((module) =>
+                  Promise.resolve(module.MainForm),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.PAYMENT,
+                  name: m.overviewMessages.pay,
+                  type: 'primary',
+                },
+              ],
+              write: 'all',
+              read: 'all',
+              delete: true,
+            },
           ],
         },
         on: {
@@ -132,6 +167,20 @@ const template: ApplicationTemplate<
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
         chargeItems: getChargeItems,
+        roles: [
+          {
+            id: Roles.APPLICANT,
+            formLoader: async () => {
+              return PaymentForm
+            },
+          },
+          {
+            id: Roles.DELEGATE,
+            formLoader: async () => {
+              return PaymentForm
+            },
+          },
+        ],
       }),
       [States.DONE]: {
         meta: {
@@ -143,10 +192,26 @@ const template: ApplicationTemplate<
             defineTemplateApi({
               action: TemplateApiActions.submitApplication,
             }),
+            defineTemplateApi({
+              action: TemplateApiActions.sendNotificationToAllInvolved,
+            }),
           ],
+          actionCard: {
+            tag: {
+              label: m.completedMessages.actionCardDone,
+            },
+          },
           roles: [
             {
               id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/completedForm').then((module) =>
+                  Promise.resolve(module.completedForm),
+                ),
+              read: 'all',
+            },
+            {
+              id: Roles.DELEGATE,
               formLoader: () =>
                 import('../forms/completedForm').then((module) =>
                   Promise.resolve(module.completedForm),
@@ -158,22 +223,18 @@ const template: ApplicationTemplate<
       },
     },
   },
-  stateMachineOptions: {
-    actions: {
-      clearAssignees: assign((context) => ({
-        ...context,
-        application: {
-          ...context.application,
-          assignees: [],
-        },
-      })),
-    },
-  },
   mapUserToRole: (
-    _nationalId: string,
-    _application: Application,
+    nationalId: string,
+    application: Application,
   ): ApplicationRole | undefined => {
-    return Roles.APPLICANT
+    const { applicantActors = [] } = application
+    if (applicantActors.length > 0) {
+      return Roles.DELEGATE
+    }
+    if (nationalId === application.applicant) {
+      return Roles.APPLICANT
+    }
+    return undefined
   },
 }
 

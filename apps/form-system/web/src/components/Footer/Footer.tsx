@@ -1,11 +1,16 @@
-import { Box, Button, GridColumn } from '@island.is/island-ui/core'
-import * as styles from './Footer.css'
-import { useApplicationContext } from '../../context/ApplicationProvider'
-import { useIntl } from 'react-intl'
-import { webMessages } from '@island.is/form-system/ui'
-import { SAVE_SCREEN } from '@island.is/form-system/graphql'
 import { useMutation } from '@apollo/client'
+import {
+  SAVE_SCREEN,
+  SUBMIT_APPLICATION,
+  SUBMIT_SECTION,
+  UPDATE_APPLICATION_SETTINGS,
+} from '@island.is/form-system/graphql'
+import { SectionTypes, m } from '@island.is/form-system/ui'
+import { Box, Button, GridColumn } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import { useFormContext } from 'react-hook-form'
+import { useApplicationContext } from '../../context/ApplicationProvider'
+import * as styles from './Footer.css'
 
 interface Props {
   externalDataAgreement: boolean
@@ -13,34 +18,118 @@ interface Props {
 
 export const Footer = ({ externalDataAgreement }: Props) => {
   const { state, dispatch } = useApplicationContext()
-  const { formatMessage } = useIntl()
+  const { formatMessage } = useLocale()
   const { trigger } = useFormContext()
-
-  const validate = async () => {
-    const valid = await trigger()
-    return valid
-  }
-  const continueButtonText =
-    state.currentSection.index === 0
-      ? formatMessage(webMessages.externalDataConfirmation)
-      : formatMessage(webMessages.continue)
-  const enableContinueButton =
-    state.currentSection.index === 0
-      ? externalDataAgreement
-      : state.currentSection.index !== state.sections.length - 1
+  const { currentSection } = state
+  const currentSectionType = currentSection?.data?.sectionType
 
   const submitScreen = useMutation(SAVE_SCREEN)
+  const submitSection = useMutation(SUBMIT_SECTION)
+  const updateDependencies = useMutation(UPDATE_APPLICATION_SETTINGS)
+
+  const [submitApplication, { loading: submitLoading }] = useMutation(
+    SUBMIT_APPLICATION,
+    {
+      errorPolicy: 'none',
+    },
+  )
+
+  const validate = async () => trigger()
+
+  const lastScreenDisplayOrder = state.application.sections
+    ?.at(-1)
+    ?.screens?.at(-1)?.displayOrder
+
+  const onSubmit =
+    currentSectionType === SectionTypes.PAYMENT ||
+    (currentSectionType === SectionTypes.SUMMARY &&
+      state.application.hasPayment !== true) ||
+    (state.application.hasPayment === false &&
+      state.application.hasSummaryScreen === false &&
+      state.currentScreen?.index === lastScreenDisplayOrder)
+
+  const isCompletedSection = currentSectionType === SectionTypes.COMPLETED
+
+  const continueButtonText =
+    state.currentSection.index === 0
+      ? formatMessage(m.externalDataConfirmation)
+      : onSubmit
+      ? formatMessage(m.submitApplication)
+      : isCompletedSection
+      ? formatMessage(m.openMyPages)
+      : formatMessage(m.continue)
+
+  const enableContinueButton =
+    state.currentSection.index === 0 ? externalDataAgreement : true
+
+  const hasVisibleApplicantBeforeCurrentScreen = (): boolean => {
+    const screens = currentSection?.data?.screens
+    const currentIndex = state.currentScreen?.index
+    if (!Array.isArray(screens) || currentIndex == null) return false
+    for (let i = Number(currentIndex) - 1; i >= 0; i--) {
+      const screen = screens[i]
+      if (screen && screen.isHidden === false) {
+        return true
+      }
+    }
+    return false
+  }
+
+  const showBackButton =
+    (currentSectionType !== SectionTypes.COMPLETED &&
+      currentSectionType !== SectionTypes.PREMISES &&
+      currentSectionType !== SectionTypes.PARTIES) ||
+    (currentSectionType === SectionTypes.PARTIES &&
+      hasVisibleApplicantBeforeCurrentScreen())
+
   const handleIncrement = async () => {
     const isValid = await validate()
+    dispatch({ type: 'SET_VALIDITY', payload: { isValid } })
     if (!isValid) return
+
+    if (isCompletedSection) {
+      window.open('/minarsidur', '_blank', 'noopener,noreferrer')
+      return
+    }
+
+    if (!onSubmit) {
+      dispatch({
+        type: 'INCREMENT',
+        payload: {
+          submitScreen: submitScreen,
+          submitSection: submitSection,
+          updateDependencies: updateDependencies,
+        },
+      })
+      return
+    }
+    try {
+      await submitApplication({
+        variables: { input: { id: state.application.id } },
+      })
+      dispatch({
+        type: 'INCREMENT',
+        payload: {
+          submitScreen: submitScreen,
+          submitSection: submitSection,
+          updateDependencies: updateDependencies,
+        },
+      })
+      dispatch({ type: 'SUBMITTED', payload: true })
+    } catch {
+      dispatch({ type: 'SUBMITTED', payload: false })
+    }
+  }
+
+  const handleDecrement = () =>
     dispatch({
-      type: 'INCREMENT',
+      type: 'DECREMENT',
       payload: {
-        submitScreen,
+        submitScreen: submitScreen,
+        submitSection: submitSection,
+        updateDependencies: updateDependencies,
       },
     })
-  }
-  const handleDecrement = () => dispatch({ type: 'DECREMENT' })
 
   return (
     <Box marginTop={7} className={styles.buttonContainer}>
@@ -56,23 +145,24 @@ export const Footer = ({ externalDataAgreement }: Props) => {
           paddingTop={[1, 4]}
         >
           <Box display="inlineFlex" padding={2} paddingRight="none">
-            {/* Implement logic on whether submit button should be rendered */}
             <Button
               icon="arrowForward"
               onClick={handleIncrement}
-              disabled={!enableContinueButton}
+              disabled={!enableContinueButton || submitLoading}
+              loading={submitLoading}
             >
               {continueButtonText}
             </Button>
           </Box>
-          {state.currentSection.index > 1 && (
+          {showBackButton && (
             <Box display="inlineFlex" padding={2} paddingLeft="none">
               <Button
-                icon="arrowBack"
+                preTextIcon="arrowBack"
                 variant="ghost"
                 onClick={handleDecrement}
+                disabled={submitLoading}
               >
-                {formatMessage(webMessages.back)}
+                {formatMessage(m.back)}
               </Button>
             </Box>
           )}

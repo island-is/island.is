@@ -18,9 +18,9 @@ export const courtRecord = {
       'Notaður sem undirtitill á þingbók þar sem {caseNumber} er númer á máli. {caseNumber} er sjálfkrafa bætt við í kóða.',
   }),
   intro: defineMessage({
-    id: 'judicial.system.backend:pdf.court_record.intro',
+    id: 'judicial.system.backend:pdf.court_record.intro_v2',
     defaultMessage:
-      'Þann {courtDate} heldur {judgeNameAndTitle} dómþing{courtLocation}. Fyrir er tekið mál nr. {caseNumber}. Þinghald hefst kl. {startTime}.',
+      '{courtDate} heldur {judgeNameAndTitle} dómþing{courtLocation}. Fyrir er tekið mál nr. {caseNumber}. Þinghald hefst kl. {startTime}.',
     description:
       'Notaður sem upphafstexti þingbókar þar sem {courtDate} er dagsetning þinghalds, {judgeNameAndTitle} er nafn og starfsheiti dómara, {caseNumber} er númer dómsmáls og {startTime} er upphafstími þinghalds. {courtDate}, {judgeNameAndTitle}, {caseNumber} og {startTime} er sjálfkrafa bætt við í kóða.',
   }),
@@ -94,21 +94,14 @@ export const courtRecord = {
     description: 'Notaður sem fyrirsögn á úrskurðarorð.',
   }),
   missingConclusion: defineMessage({
-    id: 'judicial.system.backend:pdf.court_record.missing_conclusion',
-    defaultMessage: 'Úrskurðarorð hafa ekki verið skráð.',
-    description: 'Notaður sem texti þegar úrskurðarorð hafa ekki verið skráð.',
+    id: 'judicial.system.backend:pdf.court_record.missing_conclusion_v2',
+    defaultMessage: 'Úrskurðarorð hefur ekki verið skráð.',
+    description: 'Notaður sem texti þegar úrskurðarorð hefur ekki verið skráð.',
   }),
   missingJudge: defineMessage({
     id: 'judicial.system.backend:pdf.court_record.missing_judge',
     defaultMessage: 'Dómari hefur ekki verið skráður',
     description: 'Notaður sem texti þegar dómari hefur ekki verið skráður.',
-  }),
-  conclusionIntro: defineMessage({
-    id: 'judicial.system.backend:pdf.court_record.conclusion_into',
-    defaultMessage:
-      'Úrskurðarorðið er lesið í heyranda hljóði fyrir viðstadda.',
-    description:
-      'Notaður sem tilkynning um að úrskurðarorðið hafi verið lesið upp.',
   }),
   appealDirections: defineMessage({
     id: 'judicial.system.backend:pdf.court_record.appeal_directions',

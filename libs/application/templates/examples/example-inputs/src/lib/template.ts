@@ -15,7 +15,6 @@ import { CodeOwners } from '@island.is/shared/constants'
 import { dataSchema } from './dataSchema'
 import { DefaultStateLifeCycle } from '@island.is/application/core'
 import { NationalRegistryApi, ReferenceDataApi } from '../dataProviders'
-import { assign } from 'xstate'
 import { Features } from '@island.is/feature-flags'
 
 const template: ApplicationTemplate<
@@ -27,7 +26,7 @@ const template: ApplicationTemplate<
   name: 'Example Inputs',
   codeOwner: CodeOwners.NordaApplications,
   institution: 'Stafrænt Ísland',
-  translationNamespaces: [ApplicationConfigurations.ExampleInputs.translation],
+  translationNamespaces: ApplicationConfigurations.ExampleInputs.translation,
   dataSchema,
   featureFlag: Features.exampleApplication,
   allowMultipleApplicationsInDraft: true,
@@ -129,22 +128,14 @@ const template: ApplicationTemplate<
       },
     },
   },
-  stateMachineOptions: {
-    actions: {
-      clearAssignees: assign((context) => ({
-        ...context,
-        application: {
-          ...context.application,
-          assignees: [],
-        },
-      })),
-    },
-  },
-  mapUserToRole: (
-    _nationalId: string,
-    _application: Application,
-  ): ApplicationRole | undefined => {
-    return Roles.APPLICANT
+  mapUserToRole(
+    nationalId: string,
+    application: Application,
+  ): ApplicationRole | undefined {
+    if (nationalId === application.applicant) {
+      return Roles.APPLICANT
+    }
+    return undefined
   },
 }
 

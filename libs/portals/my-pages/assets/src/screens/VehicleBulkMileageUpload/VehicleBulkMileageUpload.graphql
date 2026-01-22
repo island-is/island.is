@@ -1,32 +1,18 @@
-mutation vehicleBulkMileagePost($input: PostVehicleBulkMileageInput!) {
-  vehicleBulkMileagePost(input: $input) {
+mutation vehicleBulkMileagePostFile($input: PostVehicleBulkMileageFileInput!) {
+  vehicleBulkMileagePostFile(input: $input) {
     requestId
     errorMessage
     errorCode
   }
 }
 
-query vehiclesList($input: VehiclesListInputV3!) {
-  vehiclesListV3(input: $input) {
-    pageNumber
-    pageSize
-    totalPages
-    totalRecords
-    data {
-      vehicleId
-      registration {
-        number
-      }
-      userRole
-      make
-      color {
-        name
-      }
-      mileageDetails {
-        lastMileageRegistration {
-          ...mileageRegistration
-        }
-      }
-    }
+query vehiclesTemplateDownloadUrl {
+  vehiclesMileageTemplateFileDownloadUrl
+}
+
+mutation createVehicleBulkUploadUrl($filename: String!) {
+  createUploadUrl(filename: $filename) {
+    url
+    fields
   }
 }

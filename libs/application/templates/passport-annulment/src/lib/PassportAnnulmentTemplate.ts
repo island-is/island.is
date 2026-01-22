@@ -1,5 +1,6 @@
 import {
   Application,
+  ApplicationConfigurations,
   ApplicationContext,
   ApplicationRole,
   ApplicationStateSchema,
@@ -7,7 +8,7 @@ import {
   ApplicationTypes,
   DefaultEvents,
   defineTemplateApi,
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   PassportsApi,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
@@ -40,6 +41,8 @@ const PassportAnnulmentTemplate: ApplicationTemplate<
   name: m.formName.defaultMessage,
   codeOwner: CodeOwners.Juni,
   featureFlag: Features.passportAnnulmentApplication,
+  translationNamespaces:
+    ApplicationConfigurations.PassportAnnulment.translation,
   dataSchema,
   stateMachineConfig: {
     initial: States.DRAFT,
@@ -66,7 +69,7 @@ const PassportAnnulmentTemplate: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
-              api: [PassportsApi, NationalRegistryUserApi],
+              api: [PassportsApi, NationalRegistryV3UserApi],
             },
           ],
         },

@@ -1,9 +1,9 @@
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { createTestingIndictmentCountModule } from './createTestingIndictmentCountModule'
 
+import { Offense } from '../../repository'
 import { DeleteResponse } from '../models/delete.response'
-import { Offense } from '../models/offense.model'
 
 interface Then {
   result: DeleteResponse

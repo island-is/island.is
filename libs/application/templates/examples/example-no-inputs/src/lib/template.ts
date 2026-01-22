@@ -7,6 +7,8 @@ import {
   DefaultEvents,
   FormModes,
   UserProfileApi,
+  ApplicationRole,
+  Application,
 } from '@island.is/application/types'
 import { CodeOwners } from '@island.is/shared/constants'
 import { Events, Roles, States } from '../utils/types'
@@ -122,8 +124,15 @@ const template: ApplicationTemplate<
       },
     },
   },
-  stateMachineOptions: {},
-  mapUserToRole: () => Roles.APPLICANT,
+  mapUserToRole(
+    nationalId: string,
+    application: Application,
+  ): ApplicationRole | undefined {
+    if (nationalId === application.applicant) {
+      return Roles.APPLICANT
+    }
+    return undefined
+  },
 }
 
 export default template

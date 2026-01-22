@@ -12,6 +12,7 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import ProsecutorSectionHeading from './ProsecutorSectionHeading'
 import { strings } from './ProsecutorSectionHeightenedSecurity.strings'
@@ -65,12 +66,10 @@ const ProsecutorSectionHeightenedSecurity = () => {
   }
 
   return (
-    <Box component="section" marginBottom={5}>
+    <Box component="section">
       <ProsecutorSectionHeading />
-      <BlueBox>
-        <Box marginBottom={2}>
-          <ProsecutorSelection onChange={handleProsecutorChange} />
-        </Box>
+      <BlueBox className={grid({ gap: 2 })}>
+        <ProsecutorSelection onChange={handleProsecutorChange} />
         <Checkbox
           name="isHeightenedSecurityLevel"
           label={formatMessage(strings.heightenSecurityLabel)}
@@ -100,20 +99,20 @@ const ProsecutorSectionHeightenedSecurity = () => {
         <Modal
           title={formatMessage(strings.accessModalTitle)}
           text={formatMessage(strings.accessModalText)}
-          primaryButtonText={formatMessage(
-            strings.accessModalPrimaryButtonText,
-          )}
-          secondaryButtonText={formatMessage(
-            strings.accessModalSecondaryButtonText,
-          )}
-          onPrimaryButtonClick={async () => {
-            if (substituteProsecutorId) {
-              await setProsecutor(substituteProsecutorId)
-              router.push(getStandardUserDashboardRoute(user))
-            }
+          primaryButton={{
+            text: formatMessage(strings.accessModalPrimaryButtonText),
+            onClick: async () => {
+              if (substituteProsecutorId) {
+                await setProsecutor(substituteProsecutorId)
+                router.push(getStandardUserDashboardRoute(user))
+              }
+            },
           }}
-          onSecondaryButtonClick={() => {
-            setIsProsecutorAccessModalVisible(false)
+          secondaryButton={{
+            text: formatMessage(strings.accessModalSecondaryButtonText),
+            onClick: () => {
+              setIsProsecutorAccessModalVisible(false)
+            },
           }}
         />
       )}

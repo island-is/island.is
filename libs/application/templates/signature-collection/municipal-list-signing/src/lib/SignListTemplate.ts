@@ -7,7 +7,7 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   DefaultEvents,
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   UserProfileApi,
   defineTemplateApi,
 } from '@island.is/application/types'
@@ -18,7 +18,7 @@ import {
   EphemeralStateLifeCycle,
   pruneAfterDays,
 } from '@island.is/application/core'
-import { CanSignApi, GetListApi, MunicipalIdentityApi } from '../dataProviders'
+import { CanSignApi, GetListApi } from '../dataProviders'
 import { CodeOwners } from '@island.is/shared/constants'
 import { Features } from '@island.is/feature-flags'
 
@@ -38,6 +38,7 @@ const SignListTemplate: ApplicationTemplate<
   featureFlag: Features.municipalElectionApplication,
   dataSchema,
   translationNamespaces: [configuration.translation],
+  allowMultipleApplicationsInDraft: false,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -65,11 +66,10 @@ const SignListTemplate: ApplicationTemplate<
               read: 'all',
               delete: true,
               api: [
-                NationalRegistryUserApi,
+                NationalRegistryV3UserApi,
                 UserProfileApi,
                 CanSignApi,
                 GetListApi,
-                MunicipalIdentityApi,
               ],
             },
           ],

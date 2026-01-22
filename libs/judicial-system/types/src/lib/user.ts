@@ -44,10 +44,10 @@ export interface UserDescriptor {
 
 export interface InstitutionUser {
   id?: string | null
-  role?: string | null
+  role?: UserRole | null
   institution?: {
     id?: string | null
-    type?: string | null
+    type?: InstitutionType | null
   } | null
 }
 
@@ -214,19 +214,6 @@ export const isCoreUser = (user?: InstitutionUser): boolean => {
     isCourtOfAppealsUser(user) ||
     isPrisonSystemUser(user) ||
     isLocalAdminUser(user)
-  )
-}
-
-// TEMP: Use this check to gradually rollout case group to users
-// Once a case group list is ready for a role we include it here to release
-export const hasCaseGroupListsEnabled = (user?: InstitutionUser): boolean => {
-  return (
-    isProsecutionUser(user) || // saksoknarar
-    isDistrictCourtUser(user) || // Heradsdomur
-    isPublicProsecutionOfficeUser(user) || // Skrifstofa rikissaksoknara
-    isCourtOfAppealsUser(user) || // Landsrettur
-    isPrisonAdminUser(user) || // Fangelsismalastofnun
-    isPrisonStaffUser(user) // Fangelsi
   )
 }
 

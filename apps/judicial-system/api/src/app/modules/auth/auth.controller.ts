@@ -111,7 +111,6 @@ export class AuthController {
     private readonly auditTrailService: AuditTrailService,
     private readonly authService: AuthService,
     private readonly sharedAuthService: SharedAuthService,
-
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
     @Inject(authModuleConfig.KEY)
@@ -212,7 +211,6 @@ export class AuthController {
       const { userId, redirectRoute } =
         req.cookies[this.redirectCookie.name] ?? {}
       const codeVerifier = req.cookies[this.codeVerifierCookie.name]
-
       const idsTokens = await this.authService.fetchIdsToken(code, codeVerifier)
       const verifiedUserToken = await this.authService.verifyIdsToken(
         idsTokens.id_token,
@@ -256,23 +254,28 @@ export class AuthController {
       this.logger.debug('Handling token expiry')
 
       const accessToken = req.cookies[this.idToken.name]
+
       if (!this.authService.isTokenExpired(accessToken)) {
         this.logger.debug('Token is valid')
+
         res.status(200).send()
+
         return
       }
+
       const refreshToken = req.cookies[this.refreshToken.name]
       const idsTokens = await this.authService.refreshToken(refreshToken)
-
       const verifiedUserToken = await this.authService.verifyIdsToken(
         idsTokens.id_token,
       )
+
       if (!verifiedUserToken) {
         throw new Error('Invalid id token')
       }
 
       const newAccessToken = idsTokens.access_token
       const newRefreshToken = idsTokens.refresh_token
+
       if (newAccessToken && newRefreshToken) {
         res.cookie(this.accessToken.name, newAccessToken, {
           ...this.accessToken.options,
@@ -282,7 +285,9 @@ export class AuthController {
           maxAge: EXPIRES_IN_MILLISECONDS,
         })
       }
+
       this.logger.debug('Token refresh successful')
+
       res.status(200).send()
     } catch (error) {
       this.logger.error('Handling token expiry failed:', { error })
@@ -307,13 +312,18 @@ export class AuthController {
   }
 
   @Get('logout')
-  logout(@Res() res: Response, @Req() req: Request) {
+  async logout(@Res() res: Response, @Req() req: Request) {
     this.logger.debug('Received logout request')
 
     const idToken = req.cookies[this.idToken.name]
     const refreshToken = req.cookies[this.refreshToken.name]
 
-    this.authService.revokeRefreshToken(refreshToken)
+    try {
+      await this.authService.revokeRefreshToken(refreshToken)
+    } catch (error) {
+      // Tolerate failure but log error
+      this.logger.error('Failed to revoke refresh token:', { error })
+    }
 
     this.clearCookies(res)
 
@@ -451,12 +461,12 @@ export class AuthController {
     }
 
     const currentUser =
-      eligibleUsers.length === 1
-        ? eligibleUsers[0]
-        : userId
-        ? // attempt to find the user with the given userId
-          eligibleUsers.find((user) => user.id === userId)
-        : undefined
+      eligibleUsers.length > 1
+        ? userId
+          ? // attempt to find the user with the given userId
+            eligibleUsers.find((user) => user.id === userId)
+          : undefined
+        : eligibleUsers[0]
 
     // Use the redirect route if:
     // - no user id accompanied the redirect route or
@@ -541,6 +551,7 @@ export class AuthController {
         allowedPrefixes.some((prefix) =>
           requestedRedirectRoute.startsWith(prefix),
         )
+
       return isValidRequestedRedirectRoute
         ? requestedRedirectRoute
         : getUserDashboardRoute(currentUser)

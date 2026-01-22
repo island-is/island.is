@@ -10,13 +10,14 @@ export const gridContainer = style({
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
       gridTemplateColumns: 'repeat(3, 1fr)',
+      gridAutoRows: 'minmax(12rem, auto)',
       columnGap: theme.spacing[2],
-      rowGap: theme.spacing[3],
+      rowGap: theme.spacing[2],
     },
     [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
       gridTemplateColumns: 'repeat(4, 1fr)',
       columnGap: theme.spacing[3],
-      rowGap: theme.spacing[4],
+      rowGap: theme.spacing[3],
     },
   },
 })

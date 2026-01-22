@@ -1,12 +1,13 @@
 import { FormSystemField, FormSystemListItem } from '@island.is/api/schema'
-import { Dispatch } from 'react'
 import { Select } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+import { Dispatch, useEffect } from 'react'
+import { getValue } from '../../../lib/getValue'
 import { Action } from '../../../lib/reducerTypes'
 
 interface Props {
   item: FormSystemField
   dispatch?: Dispatch<Action>
-  lang?: 'is' | 'en'
   hasError?: boolean
 }
 
@@ -22,7 +23,8 @@ const listTypePlaceholder = {
   idngreinarMeistara: 'Veldu iðngrein',
 }
 
-export const List = ({ item, dispatch, lang = 'is', hasError }: Props) => {
+export const List = ({ item, dispatch, hasError }: Props) => {
+  const { lang } = useLocale()
   const mapToListItems = (items: (FormSystemListItem | null)[]): ListItem[] =>
     items
       ?.filter((item): item is FormSystemListItem => item !== null)
@@ -43,12 +45,34 @@ export const List = ({ item, dispatch, lang = 'is', hasError }: Props) => {
     return undefined
   }
 
+  const selected = item?.list?.find((listItem) => listItem?.isSelected === true)
+
+  useEffect(() => {
+    if (selected && dispatch) {
+      if (!getValue(item, 'listValue')) {
+        dispatch({
+          type: 'SET_LIST_VALUE',
+          payload: { id: item.id, value: selected.label?.[lang] ?? '' },
+        })
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   return (
     <Select
       name="list"
       label={item.name?.[lang] ?? ''}
       options={mapToListItems(item?.list ?? [])}
       required={item.isRequired ?? false}
+      defaultValue={
+        selected
+          ? {
+              label: selected.label?.[lang] ?? '',
+              value: selected.label?.[lang] ?? '',
+            }
+          : undefined
+      }
       placeholder={
         listTypePlaceholder[
           item.fieldSettings?.listType as keyof typeof listTypePlaceholder

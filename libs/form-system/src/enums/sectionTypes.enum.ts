@@ -3,4 +3,6 @@ export const SectionTypes = {
   PARTIES: 'PARTIES',
   INPUT: 'INPUT',
   PAYMENT: 'PAYMENT',
+  SUMMARY: 'SUMMARY',
+  COMPLETED: 'COMPLETED',
 }

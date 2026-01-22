@@ -38,14 +38,16 @@ export class OffenseResolver {
     @Context('dataSources')
     { backendService }: { backendService: BackendService },
   ): Promise<Offense> {
+    const { caseId, indictmentCountId, ...createOffense } = input
+
     this.logger.debug(
-      `Creating an offense for indictment count ${input.indictmentCountId}`,
+      `Creating an offense for indictment count ${indictmentCountId} in case ${caseId}`,
     )
 
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.CREATE_OFFENSE,
-      backendService.createOffense(input),
+      backendService.createOffense(caseId, indictmentCountId, createOffense),
       (theOffense) => theOffense.id,
     )
   }
@@ -58,15 +60,22 @@ export class OffenseResolver {
     @Context('dataSources')
     { backendService }: { backendService: BackendService },
   ): Promise<Offense> {
+    const { caseId, indictmentCountId, offenseId, ...updateOffense } = input
+
     this.logger.debug(
-      `Updating an offense ${input.offenseId} for indictment count ${input.indictmentCountId}`,
+      `Updating offense ${offenseId} for indictment count ${indictmentCountId} in case ${caseId}`,
     )
 
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.UPDATE_OFFENSE,
-      backendService.updateOffense(input),
-      input.offenseId,
+      backendService.updateOffense(
+        caseId,
+        indictmentCountId,
+        offenseId,
+        updateOffense,
+      ),
+      offenseId,
     )
   }
 
@@ -78,15 +87,17 @@ export class OffenseResolver {
     @Context('dataSources')
     { backendService }: { backendService: BackendService },
   ): Promise<DeleteResponse> {
+    const { caseId, indictmentCountId, offenseId } = input
+
     this.logger.debug(
-      `Deleting an offense ${input.offenseId} for indictment count ${input.indictmentCountId}`,
+      `Deleting offense ${offenseId} for indictment count ${indictmentCountId} in case ${caseId}`,
     )
 
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.DELETE_OFFENSE,
-      backendService.deleteOffense(input),
-      input.offenseId,
+      backendService.deleteOffense(caseId, indictmentCountId, offenseId),
+      offenseId,
     )
   }
 }

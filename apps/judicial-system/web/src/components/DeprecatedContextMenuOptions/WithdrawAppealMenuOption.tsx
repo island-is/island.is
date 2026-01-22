@@ -1,11 +1,7 @@
-import { FC, useCallback, useContext, useState } from 'react'
+import { FC, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { IconMapIcon } from '@island.is/island-ui/core'
-import {
-  isDefenceUser,
-  isProsecutionUser,
-} from '@island.is/judicial-system/types'
 
 import {
   CaseAppealState,
@@ -14,7 +10,6 @@ import {
 } from '../../graphql/schema'
 import { useCase } from '../../utils/hooks'
 import Modal from '../Modals/Modal/Modal'
-import { UserContext } from '../UserProvider/UserProvider'
 import { strings } from './WithdrawAppealMenuOption.strings'
 
 interface WithdrawAppealModalProps {
@@ -25,7 +20,6 @@ interface WithdrawAppealModalProps {
 
 export const useWithdrawAppealMenuOption = () => {
   const [caseToWithdraw, setCaseToWithdraw] = useState<string | undefined>()
-  const { user } = useContext(UserContext)
 
   const { formatMessage } = useIntl()
 
@@ -39,31 +33,21 @@ export const useWithdrawAppealMenuOption = () => {
     }
   }
 
-  const shouldDisplayWithdrawAppealOption = useCallback(
-    (caseEntry: CaseListEntry) => {
-      const isProsecution = isProsecutionUser(user)
-      const isDefence = isDefenceUser(user)
-      const withdrawableCaseStates = [
-        CaseAppealState.APPEALED,
-        CaseAppealState.RECEIVED,
-      ]
+  const shouldDisplayWithdrawAppealOption = (caseEntry: CaseListEntry) => {
+    const withdrawableCaseStates = [
+      CaseAppealState.APPEALED,
+      CaseAppealState.RECEIVED,
+    ]
 
-      if (
-        (!isProsecution && !isDefence) ||
-        !caseEntry.appealState ||
-        !withdrawableCaseStates.includes(caseEntry.appealState)
-      ) {
-        return false
-      }
+    if (
+      !caseEntry.appealState ||
+      !withdrawableCaseStates.includes(caseEntry.appealState)
+    ) {
+      return false
+    }
 
-      return Boolean(
-        isProsecution
-          ? caseEntry.prosecutorPostponedAppealDate
-          : caseEntry.accusedPostponedAppealDate,
-      )
-    },
-    [user],
-  )
+    return Boolean(caseEntry.accusedPostponedAppealDate)
+  }
 
   return {
     caseToWithdraw,
@@ -98,19 +82,17 @@ const WithdrawAppealContextMenuModal: FC<WithdrawAppealModalProps> = (
     <Modal
       title={formatMessage(strings.withdrawAppealModalTitle)}
       text={formatMessage(strings.withdrawAppealModalText)}
-      primaryButtonText={formatMessage(
-        strings.withdrawAppealModalPrimaryButtonText,
-      )}
-      secondaryButtonText={formatMessage(
-        strings.withdrawAppealModalSecondaryButtonText,
-      )}
-      isPrimaryButtonLoading={isTransitioningCase}
-      onPrimaryButtonClick={handleWithdrawAppealClick}
-      onSecondaryButtonClick={() => {
-        onClose()
+      primaryButton={{
+        text: formatMessage(strings.withdrawAppealModalPrimaryButtonText),
+        onClick: handleWithdrawAppealClick,
+        isLoading: isTransitioningCase,
+        colorScheme: 'destructive',
       }}
-      primaryButtonColorScheme="destructive"
-    ></Modal>
+      secondaryButton={{
+        text: formatMessage(strings.withdrawAppealModalSecondaryButtonText),
+        onClick: () => onClose(),
+      }}
+    />
   )
 }
 

@@ -4,15 +4,16 @@ import {
   EmployeeSickPay,
   Occupation,
   Period,
+  PreQuestionnaire,
   SelfAssessment,
   TaxInfo,
   UnionSickPay,
+  IncomePlanInfo,
 } from '../socialInsuranceAdministrationClient.type'
 
 export interface MedicalAndRehabilitationPaymentsDTO {
   period?: Period
   comment?: string
-  reasons?: Array<string>
   applicationId?: string
   domesticBankInfo?: DomesticBankInfo
   taxInfo?: TaxInfo
@@ -20,7 +21,13 @@ export interface MedicalAndRehabilitationPaymentsDTO {
   occupation?: Occupation
   employeeSickPay?: EmployeeSickPay
   unionSickPay?: UnionSickPay
+  preQuestionnaire?: PreQuestionnaire
   selfAssessment?: SelfAssessment
-  baseCertificateReference: string
-  rehabilitationPlanReference: string
+  baseCertificateReference?: string
+  isAlmaCertificate?: boolean
+  rehabilitationPlanReference?: string
+  incomePlan?: IncomePlanInfo
+  confirmedTreatmentReference?: string
+  confirmationOfPendingResolutionReference?: string
+  confirmationOfIllHealthReference?: string
 }

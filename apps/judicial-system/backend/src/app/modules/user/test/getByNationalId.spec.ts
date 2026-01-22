@@ -1,4 +1,4 @@
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { UserRole } from '@island.is/judicial-system/types'
 
@@ -6,8 +6,7 @@ import { createTestingUserModule } from './createTestingUserModule'
 
 import { nowFactory } from '../../../factories'
 import { randomDate } from '../../../test'
-import { Institution } from '../../institution'
-import { User } from '../user.model'
+import { Institution, User } from '../../repository'
 
 jest.mock('../../../factories')
 

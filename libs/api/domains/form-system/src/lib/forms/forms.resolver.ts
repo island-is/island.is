@@ -19,12 +19,14 @@ import {
 import { FormsService } from './forms.service'
 import {
   CreateFormInput,
-  DeleteFormInput,
   GetFormInput,
   GetFormsInput,
   UpdateFormInput,
 } from '../../dto/form.input'
-import { UpdateFormResponse } from '@island.is/form-system/shared'
+import {
+  UpdateFormResponse,
+  UpdateFormStatusInput,
+} from '@island.is/form-system/shared'
 import { Form, FormResponse } from '../../models/form.model'
 import {
   type OrganizationTitleByNationalIdDataLoader,
@@ -33,6 +35,7 @@ import {
   OrganizationTitleEnByNationalIdLoader,
   ShortTitle,
 } from '@island.is/cms'
+import { GetOrganizationAdminInput } from '../../dto/organization.input'
 
 @Resolver(() => Form)
 @UseGuards(IdsUserGuard)
@@ -50,15 +53,27 @@ export class FormsResolver {
     return this.formsService.createForm(user, input)
   }
 
-  @Mutation(() => Boolean, {
-    name: 'deleteFormSystemForm',
+  @Mutation(() => FormResponse, {
+    name: 'updateFormSystemFormStatus',
     nullable: true,
   })
-  async deleteForm(
-    @Args('input', { type: () => DeleteFormInput }) input: DeleteFormInput,
+  async updateFormStatus(
+    @Args('input', { type: () => UpdateFormStatusInput })
+    input: UpdateFormStatusInput,
     @CurrentUser() user: User,
-  ): Promise<void> {
-    return this.formsService.deleteForm(user, input)
+  ): Promise<FormResponse> {
+    return this.formsService.updateFormStatus(user, input)
+  }
+
+  @Mutation(() => FormResponse, {
+    name: 'copyFormSystemForm',
+    nullable: true,
+  })
+  async copyForm(
+    @Args('input', { type: () => GetFormInput }) id: GetFormInput,
+    @CurrentUser() user: User,
+  ): Promise<FormResponse> {
+    return this.formsService.copyForm(user, id)
   }
 
   @Query(() => FormResponse, {
@@ -90,6 +105,20 @@ export class FormsResolver {
     @CurrentUser() user: User,
   ): Promise<UpdateFormResponse> {
     return this.formsService.updateForm(user, input)
+  }
+
+  @Query(() => String, {
+    name: 'formSystemOrganizationTitle',
+    nullable: true,
+  })
+  async getOrganizationTitle(
+    @Args('input', { type: () => GetOrganizationAdminInput })
+    input: GetOrganizationAdminInput,
+    @Loader(OrganizationTitleByNationalIdLoader)
+    organizationTitleLoader: OrganizationTitleByNationalIdDataLoader,
+    @CurrentUser() _user: User,
+  ): Promise<ShortTitle> {
+    return organizationTitleLoader.load(input.nationalId)
   }
 
   @CacheControl({ maxAge: 600, scope: 'PUBLIC' })

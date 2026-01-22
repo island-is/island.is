@@ -24,9 +24,13 @@ export const applicantInformationArray = (
     emailCondition,
     emailRequired = true,
     emailDisabled = false,
+    addressRequired = true,
+    postalCodeRequired = true,
+    cityRequired = true,
     baseInfoReadOnly = false,
     emailAndPhoneReadOnly = false,
     compactFields = false,
+    customAddressLabel,
   } = props ?? {}
 
   // Note: base info fields are not editable, and are default displayed as disabled fields.
@@ -61,11 +65,12 @@ export const applicantInformationArray = (
     }),
     buildTextField({
       id: 'applicant.address',
-      title: applicantInformation.labels.address,
+      title: customAddressLabel ?? applicantInformation.labels.address,
       width: 'half',
       backgroundColor: 'white',
       disabled: baseInfoDisabled,
       readOnly: baseInfoReadOnly,
+      required: addressRequired,
       defaultValue: (application: ApplicantInformationInterface) =>
         application.externalData?.nationalRegistry?.data?.address
           ?.streetAddress ??
@@ -80,6 +85,7 @@ export const applicantInformationArray = (
       backgroundColor: 'white',
       disabled: baseInfoDisabled,
       readOnly: baseInfoReadOnly,
+      required: postalCodeRequired,
       defaultValue: (application: ApplicantInformationInterface) => {
         return (
           application.externalData?.nationalRegistry?.data?.address
@@ -109,6 +115,7 @@ export const applicantInformationArray = (
       backgroundColor: 'white',
       disabled: baseInfoDisabled,
       readOnly: baseInfoReadOnly,
+      required: cityRequired,
       defaultValue: (application: ApplicantInformationInterface) =>
         application.externalData?.nationalRegistry?.data?.address?.city ??
         application.externalData?.identity?.data?.address?.city ??

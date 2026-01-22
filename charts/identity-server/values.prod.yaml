@@ -53,7 +53,10 @@ auth-admin-web:
             - '/admin'
   namespace: 'identity-server-admin'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
+  podSecurityContext:
+    fsGroup: 65534
   progressDeadlineSeconds: 1200
   pvcs: []
   replicaCount:
@@ -73,6 +76,11 @@ auth-admin-web:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::567113216315:role/auth-admin-web'
+    create: true
+    name: 'auth-admin-web'
 global:
   env:
     AUDIT_GROUP_NAME: '/identity-server/audit-log'
@@ -88,7 +96,7 @@ identity-server:
   annotations:
     ad.datadoghq.com/identity-server.check_names: '["openmetrics"]'
     ad.datadoghq.com/identity-server.init_configs: '[{}]'
-    ad.datadoghq.com/identity-server.instances: '[{"prometheus_url": "http://%%host%%:5003/metrics","namespace": "identity-server","metrics":["*"]}]'
+    ad.datadoghq.com/identity-server.instances: '[{"prometheus_url": "http://%%host%%:5003/metrics","namespace": "identity-server","metrics":["identityserver_*"]}]'
     ad.datadoghq.com/identity-server.logs: '[{"service": "identity-server", "source": "csharp"}]'
   enabled: true
   env:
@@ -164,7 +172,8 @@ identity-server:
             - '/'
   namespace: 'identity-server'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
   pvcs:
@@ -286,7 +295,10 @@ services-auth-admin-api:
             - '/backend'
   namespace: 'identity-server-admin'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 2
@@ -319,6 +331,11 @@ services-auth-admin-api:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::567113216315:role/services-auth-admin-api'
+    create: true
+    name: 'services-auth-admin-api'
 services-auth-delegation-api:
   enabled: true
   env:
@@ -390,7 +407,10 @@ services-auth-delegation-api:
             - '/'
   namespace: 'identity-server-delegation'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 2
@@ -417,6 +437,11 @@ services-auth-delegation-api:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::567113216315:role/auth-delegation-api'
+    create: true
+    name: 'auth-delegation-api'
 services-auth-ids-api:
   enabled: true
   env:
@@ -525,7 +550,10 @@ services-auth-ids-api:
       DB_PASS: '/k8s/servicesauth/DB_PASSWORD'
   namespace: 'identity-server'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 6
@@ -554,9 +582,14 @@ services-auth-ids-api:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::567113216315:role/services-auth-ids-api'
+    create: true
+    name: 'services-auth-ids-api'
 services-auth-ids-api-cleanup:
   args:
-    - 'main.js'
+    - 'main.cjs'
     - '--job=cleanup'
   command:
     - 'node'
@@ -597,7 +630,10 @@ services-auth-ids-api-cleanup:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-ids-api'
   namespace: 'identity-server'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 3
@@ -617,6 +653,11 @@ services-auth-ids-api-cleanup:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::567113216315:role/services-auth-ids-api-cleanup'
+    create: true
+    name: 'services-auth-ids-api-cleanup'
 services-auth-personal-representative:
   enabled: true
   env:
@@ -681,7 +722,10 @@ services-auth-personal-representative:
             - '/'
   namespace: 'personal-representative'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 2
@@ -707,6 +751,11 @@ services-auth-personal-representative:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::567113216315:role/services-auth-personal-representative'
+    create: true
+    name: 'services-auth-personal-representative'
 services-auth-personal-representative-public:
   enabled: true
   env:
@@ -750,7 +799,10 @@ services-auth-personal-representative-public:
             - '/'
   namespace: 'personal-representative'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 2
@@ -769,6 +821,11 @@ services-auth-personal-representative-public:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::567113216315:role/services-auth-personal-representative-public'
+    create: true
+    name: 'services-auth-personal-representative-public'
 services-auth-public-api:
   enabled: true
   env:
@@ -845,11 +902,15 @@ services-auth-public-api:
         nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'innskra.island.is'
+          pathTypeOverride: 'ImplementationSpecific'
           paths:
             - '/api(/|$)(.*)'
   namespace: 'identity-server-admin'
   podDisruptionBudget:
-    maxUnavailable: 1
+    minAvailable: 1
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 2
@@ -876,3 +937,8 @@ services-auth-public-api:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::567113216315:role/services-auth-public-api'
+    create: true
+    name: 'services-auth-public-api'

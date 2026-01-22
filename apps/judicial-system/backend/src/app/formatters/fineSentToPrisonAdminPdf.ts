@@ -4,9 +4,9 @@ import {
   formatDate,
   formatNationalId,
 } from '@island.is/judicial-system/formatters'
-import { EventType } from '@island.is/judicial-system/types'
+import { DefendantEventType, EventType } from '@island.is/judicial-system/types'
 
-import { Case } from '../modules/case'
+import { Case, DefendantEventLog, EventLog } from '../modules/repository'
 import {
   addEmptyLines,
   addLargeHeading,
@@ -29,7 +29,7 @@ export const createFineSentToPrisonAdminPdf = (
     bufferPages: true,
   })
 
-  const sinc: Buffer[] = []
+  const sinc: Uint8Array[] = []
 
   doc.on('data', (chunk) => sinc.push(chunk))
 
@@ -64,16 +64,15 @@ export const createFineSentToPrisonAdminPdf = (
 
   doc.moveDown(1.5)
 
-  const sentToPrisonAdminDate = theCase.defendants
-    ?.flatMap((defendant) => defendant.eventLogs || [])
-    .filter((eventLog) => eventLog.eventType === 'SENT_TO_PRISON_ADMIN')
-    .sort(
-      (a, b) => new Date(b.created).getTime() - new Date(a.created).getTime(),
-    )[0]?.created
+  const sentToPrisonAdminDate = DefendantEventLog.getEventLogDateByEventType(
+    DefendantEventType.SENT_TO_PRISON_ADMIN,
+    theCase.defendants?.flatMap((defendant) => defendant.eventLogs || []),
+  )
 
-  const getSignatureDate = theCase.eventLogs?.find(
-    (eventLog) => eventLog.eventType === EventType.INDICTMENT_REVIEWED,
-  )?.created
+  const getSignatureDate = EventLog.getEventLogDateByEventType(
+    EventType.INDICTMENT_REVIEWED,
+    theCase.eventLogs,
+  )
 
   addMediumCenteredText(
     doc,

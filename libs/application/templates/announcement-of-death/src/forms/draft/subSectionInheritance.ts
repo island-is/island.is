@@ -27,7 +27,11 @@ export const subSectionInheritance = buildSubSection({
         buildCustomField({
           id: 'estateMembers',
           component: 'EstateMemberRepeater',
-          childInputIds: ['estateMembers.encountered', 'estateMembers.members'],
+          childInputIds: [
+            'estateMembers.encountered',
+            'estateMembers.members',
+            'estateMembers.applicantAdded',
+          ],
         }),
         buildDescriptionField({
           id: 'inheritanceConfirmationDescription',

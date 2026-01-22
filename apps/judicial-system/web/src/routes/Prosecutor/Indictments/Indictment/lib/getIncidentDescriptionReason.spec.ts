@@ -3,11 +3,13 @@ import {
   IndictmentCountOffense,
   Offense,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { formatMessage } from '@island.is/judicial-system-web/src/utils/testHelpers'
+import { createFormatMessage } from '@island.is/judicial-system-web/src/utils/testHelpers.logic'
 
 import { getIncidentDescriptionReason } from './getIncidentDescriptionReason'
 
 describe('getIncidentDescriptionReason', () => {
+  const formatMessage = createFormatMessage()
+
   test('should return a description for one offense', () => {
     const offenses = [
       {

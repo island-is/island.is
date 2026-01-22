@@ -42,16 +42,20 @@ export const CivilClaimantFields = ({
 }) => {
   const { formatMessage } = useIntl()
   const { setWorkingCase } = useContext(FormContext)
-  const { personData } = useNationalRegistry(civilClaimant.nationalId)
+
+  const [civilClaimantNationalIdUpdate, setCivilClaimantNationalIdUpdate] =
+    useState<{ nationalId: string | null; civilClaimantId: string }>()
+  const [nationalIdNotFound, setNationalIdNotFound] = useState<boolean>(false)
+  const [lookupNationalId, setLookupNationalId] = useState<string | null>(
+    civilClaimant.nationalId ?? null,
+  )
+
+  const { personData, businessData } = useNationalRegistry(lookupNationalId)
   const {
     updateCivilClaimant,
     updateCivilClaimantState,
     setAndSendCivilClaimantToServer,
   } = useCivilClaimants()
-
-  const [civilClaimantNationalIdUpdate, setCivilClaimantNationalIdUpdate] =
-    useState<{ nationalId: string | null; civilClaimantId: string }>()
-  const [nationalIdNotFound, setNationalIdNotFound] = useState<boolean>(false)
 
   const handleUpdateCivilClaimant = (update: UpdateCivilClaimant) => {
     updateCivilClaimant({ caseId, ...update })
@@ -94,6 +98,7 @@ export const CivilClaimantFields = ({
       })
     } else {
       const cleanNationalId = nationalId ? nationalId.replace('-', '') : ''
+      setLookupNationalId(cleanNationalId || null)
       setCivilClaimantNationalIdUpdate({
         nationalId: cleanNationalId || null,
         civilClaimantId,
@@ -106,21 +111,33 @@ export const CivilClaimantFields = ({
       return
     }
 
-    const items = personData?.items || []
-    const person = items[0]
+    let name: string | undefined
+    let notFound = false
 
-    setNationalIdNotFound(items.length === 0)
+    // Separately handle person and business data in order to populate
+    // name correctly for companies as well.
+    if (personData) {
+      const person = personData.items?.[0]
+      name = person?.name
+      notFound = !person || personData.items?.length === 0
+    } else if (businessData) {
+      const business = businessData.items?.[0]
+      name = business?.full_name
+      notFound = !business || businessData.items?.length === 0
+    }
+
+    setNationalIdNotFound(notFound)
 
     const update: UpdateCivilClaimant = {
       civilClaimantId: civilClaimantNationalIdUpdate.civilClaimantId || '',
       nationalId: civilClaimantNationalIdUpdate.nationalId,
-      ...(person?.name ? { name: person.name } : {}),
+      ...(name ? { name } : {}),
     }
 
     handleSetAndSendCivilClaimantToServer(update)
-    // We want this hook to run exclusively when personData changes.
+    // We want this hook to run exclusively when personData or businessData changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [personData])
+  }, [personData, businessData])
 
   const legalProtectorCheckboxId = `defender_type_legal_rights_protector-${civilClaimant.id}`
   const lawyerCheckboxId = `defender_type_lawyer-${civilClaimant.id}`
@@ -287,10 +304,15 @@ export const CivilClaimantFields = ({
                   spokespersonNationalId,
                   spokespersonEmail,
                   spokespersonPhoneNumber,
-                  caseFilesSharedWithSpokesperson: spokespersonNationalId
-                    ? civilClaimant.caseFilesSharedWithSpokesperson
-                    : null,
+                  caseFilesSharedWithSpokesperson: Boolean(
+                    spokespersonNationalId,
+                  ),
                 })
+
+                // handleSetAndSendCivilClaimantToServer({
+                //   civilClaimantId: civilClaimant.id,
+                //   caseFilesSharedWithSpokesperson: Boolean(spokespersonName),
+                // })
               }}
               onEmailChange={(spokespersonEmail: string | null) =>
                 handleUpdateCivilClaimantState({

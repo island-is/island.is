@@ -1,3 +1,4 @@
+import { IndictmentSubtype } from './case'
 import {
   ILLEGAL_DRUGS_AND_PRESCRIPTION_DRUGS_DRIVING,
   Substance,
@@ -30,3 +31,62 @@ export const offenseSubstances: {
   [IndictmentCountOffense.SPEEDING]: [],
   [IndictmentCountOffense.OTHER]: [],
 }
+
+export const isTrafficViolationIndictmentCount = (
+  indictmentCountSubtypes: IndictmentSubtype[] | undefined | null,
+  policeCaseNumberSubTypes: IndictmentSubtype[] | undefined | null,
+): boolean => {
+  return policeCaseNumberSubTypes?.length === 1
+    ? policeCaseNumberSubTypes.includes(IndictmentSubtype.TRAFFIC_VIOLATION)
+    : Boolean(
+        indictmentCountSubtypes?.includes(IndictmentSubtype.TRAFFIC_VIOLATION),
+      )
+}
+
+interface IndictmentCount {
+  created?: string | Date | null
+  policeCaseNumber?: string | null
+}
+
+export const getIndictmentCountCompare =
+  (policeCaseNumbers: string[] | undefined | null) =>
+  (a: IndictmentCount, b: IndictmentCount): number => {
+    if (!policeCaseNumbers) {
+      // This should never happen
+      return 0
+    }
+
+    const aCreated =
+      typeof a.created === 'string'
+        ? new Date(a.created).getTime()
+        : a.created?.getTime() ?? 0
+    const aPoliceCaseNumber = a.policeCaseNumber ?? ''
+    const aIndex = policeCaseNumbers.findIndex((n) => n === aPoliceCaseNumber)
+    const bCreated =
+      typeof b.created === 'string'
+        ? new Date(b.created).getTime()
+        : b.created?.getTime() ?? 0
+    const bPoliceCaseNumber = b.policeCaseNumber ?? ''
+    const bIndex = policeCaseNumbers.findIndex((n) => n === bPoliceCaseNumber)
+
+    let result: number
+
+    // We want incictment counts with missing police case numbers
+    // to be at the end of the list
+    if (aIndex < 0) {
+      result = bIndex < 0 ? 0 : 1
+    } else if (bIndex < 0) {
+      result = -1
+    } else {
+      result = aIndex !== bIndex ? (aIndex < bIndex ? -1 : 1) : 0
+    }
+
+    return result === 0
+      ? // When the police case numbers are equal we order by creation date
+        aCreated !== bCreated
+        ? aCreated < bCreated
+          ? -1
+          : 1
+        : 0
+      : result
+  }

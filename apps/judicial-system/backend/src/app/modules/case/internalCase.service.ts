@@ -1,7 +1,13 @@
-import CryptoJS from 'crypto-js'
+import addDays from 'date-fns/addDays'
+import endOfDay from 'date-fns/endOfDay'
 import format from 'date-fns/format'
+import startOfDay from 'date-fns/startOfDay'
+import subDays from 'date-fns/subDays'
+import { option } from 'fp-ts'
+import { filterMap } from 'fp-ts/lib/Array'
+import { pipe } from 'fp-ts/lib/function'
 import { Base64 } from 'js-base64'
-import { Op } from 'sequelize'
+import { Op, Transaction } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 
 import {
@@ -12,7 +18,7 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common'
-import { InjectConnection, InjectModel } from '@nestjs/sequelize'
+import { InjectModel } from '@nestjs/sequelize'
 
 import { FormatMessage, IntlService } from '@island.is/cms-translations'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
@@ -24,21 +30,30 @@ import {
 } from '@island.is/judicial-system/formatters'
 import {
   CaseFileCategory,
+  CaseIndictmentRulingDecision,
   CaseOrigin,
   CaseState,
   CaseType,
+  completedIndictmentCaseStates,
+  CourtSessionRulingType,
+  courtSubtypes,
+  DefendantEventType,
   EventType,
+  getIndictmentAppealDeadline,
   isIndictmentCase,
   isProsecutionUser,
   isRequestCase,
   isRestrictionCase,
   NotificationType,
   restrictionCases,
+  ServiceRequirement,
   type User as TUser,
   UserRole,
+  VERDICT_APPEAL_WINDOW_DAYS,
+  VerdictServiceStatus,
 } from '@island.is/judicial-system/types'
 
-import { nowFactory, uuidFactory } from '../../factories'
+import { nowFactory } from '../../factories'
 import {
   getCourtRecordPdfAsBuffer,
   getCourtRecordPdfAsString,
@@ -50,23 +65,34 @@ import {
 import { courtUpload, notifications } from '../../messages'
 import { AwsS3Service } from '../aws-s3'
 import { CourtDocumentFolder, CourtService } from '../court'
-import { courtSubtypes } from '../court/court.service'
-import { Defendant, DefendantService } from '../defendant'
+import { DefendantService } from '../defendant'
 import { EventService } from '../event'
-import { CaseFile, FileService } from '../file'
-import { IndictmentCount, IndictmentCountService } from '../indictment-count'
-import { Offense } from '../indictment-count/models/offense.model'
-import { Institution } from '../institution'
+import { FileService } from '../file'
+import { IndictmentCountService } from '../indictment-count'
 import { PoliceDocument, PoliceDocumentType, PoliceService } from '../police'
-import { Subpoena, SubpoenaService } from '../subpoena'
-import { User, UserService } from '../user'
+import {
+  Case,
+  CaseArchiveRepositoryService,
+  CaseFile,
+  CaseRepositoryService,
+  CaseString,
+  CourtSession,
+  DateLog,
+  Defendant,
+  DefendantEventLog,
+  EventLog,
+  IndictmentCount,
+  Institution,
+  Offense,
+  Subpoena,
+  User,
+  Verdict,
+} from '../repository'
+import { SubpoenaService } from '../subpoena'
+import { UserService } from '../user'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { archiveFilter } from './filters/case.archiveFilter'
 import { ArchiveResponse } from './models/archive.response'
-import { Case } from './models/case.model'
-import { CaseArchive } from './models/caseArchive.model'
-import { CaseString } from './models/caseString.model'
-import { DateLog } from './models/dateLog.model'
 import { DeliverResponse } from './models/deliver.response'
 import { caseModuleConfig } from './case.config'
 import { PdfService } from './pdf.service'
@@ -146,14 +172,14 @@ export class InternalCaseService {
   private throttle = Promise.resolve(false)
 
   constructor(
-    @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(CaseString)
     private readonly caseStringModel: typeof CaseString,
-    @InjectModel(Case) private readonly caseModel: typeof Case,
-    @InjectModel(CaseArchive)
-    private readonly caseArchiveModel: typeof CaseArchive,
+    @Inject(forwardRef(() => CaseArchiveRepositoryService))
+    private readonly caseArchiveRepositoryService: CaseArchiveRepositoryService,
     @Inject(caseModuleConfig.KEY)
     private readonly config: ConfigType<typeof caseModuleConfig>,
+    @Inject(forwardRef(() => CaseRepositoryService))
+    private readonly caseRepositoryService: CaseRepositoryService,
     @Inject(forwardRef(() => IntlService))
     private readonly intlService: IntlService,
     @Inject(forwardRef(() => EventService))
@@ -231,11 +257,23 @@ export class InternalCaseService {
   private async uploadCourtRecordPdfToCourt(
     theCase: Case,
     user: TUser,
+    transaction: Transaction,
     buffer?: Buffer,
   ): Promise<boolean> {
     try {
-      const pdf =
-        buffer || (await getCourtRecordPdfAsBuffer(theCase, this.formatMessage))
+      let pdf = buffer
+
+      if (!pdf) {
+        if (isIndictmentCase(theCase.type)) {
+          pdf = await this.pdfService.getCourtRecordPdfForIndictmentCase(
+            theCase,
+            user,
+            transaction,
+          )
+        } else {
+          pdf = await getCourtRecordPdfAsBuffer(theCase, this.formatMessage)
+        }
+      }
 
       const fileName = this.formatMessage(courtUpload.courtRecord, {
         courtCaseNumber: theCase.courtCaseNumber,
@@ -335,9 +373,12 @@ export class InternalCaseService {
   private async deliverSignedCourtRecordPdfToCourt(
     theCase: Case,
     user: TUser,
+    transaction: Transaction,
   ): Promise<boolean> {
     return this.getSignedCourtRecordPdf(theCase)
-      .then((pdf) => this.uploadCourtRecordPdfToCourt(theCase, user, pdf))
+      .then((pdf) =>
+        this.uploadCourtRecordPdfToCourt(theCase, user, transaction, pdf),
+      )
       .catch((reason) => {
         this.logger.error(
           `Failed to deliver the signed court record for case ${theCase.id} to court`,
@@ -348,7 +389,10 @@ export class InternalCaseService {
       })
   }
 
-  async create(caseToCreate: InternalCreateCaseDto): Promise<Case> {
+  async create(
+    caseToCreate: InternalCreateCaseDto,
+    transaction: Transaction,
+  ): Promise<Case> {
     const users = await this.userService
       .findByNationalId(caseToCreate.prosecutorNationalId)
       .catch(() => undefined)
@@ -377,50 +421,61 @@ export class InternalCaseService {
       )
     }
 
-    return this.sequelize.transaction(async (transaction) => {
-      return this.caseModel
-        .create(
-          {
-            ...caseToCreate,
-            state: isRequestCase(caseToCreate.type)
-              ? CaseState.NEW
-              : CaseState.DRAFT,
-            origin: CaseOrigin.LOKE,
-            creatingProsecutorId: creator.id,
-            prosecutorId:
-              creator.role === UserRole.PROSECUTOR ? creator.id : undefined,
-            courtId: isRequestCase(caseToCreate.type)
-              ? creator.institution?.defaultCourtId
-              : undefined,
-            prosecutorsOfficeId: creator.institution?.id,
-          },
-          { transaction },
+    const newCase = await this.caseRepositoryService.create(
+      {
+        ...caseToCreate,
+        ...(isRequestCase(caseToCreate.type)
+          ? {
+              state: CaseState.NEW,
+              courtId: creator.institution?.defaultCourtId,
+            }
+          : {
+              state: CaseState.DRAFT,
+              courtId: undefined,
+              withCourtSessions: true,
+            }),
+        origin: CaseOrigin.LOKE,
+        creatingProsecutorId: creator.id,
+        prosecutorId:
+          creator.role === UserRole.PROSECUTOR ? creator.id : undefined,
+        prosecutorsOfficeId: creator.institution?.id,
+        policeDefendantNationalId: caseToCreate.accusedNationalId,
+      },
+      { transaction },
+    )
+
+    if (isIndictmentCase(newCase.type)) {
+      for (const policeCaseNumber of newCase.policeCaseNumbers) {
+        await this.indictmentCountService.createWithPoliceCaseNumber(
+          newCase.id,
+          policeCaseNumber,
+          transaction,
         )
-        .then((theCase) =>
-          this.defendantService.createForNewCase(
-            theCase.id,
-            {
-              nationalId: caseToCreate.accusedNationalId,
-              dateOfBirth: caseToCreate.accusedDOB,
-              name: caseToCreate.accusedName,
-              gender: caseToCreate.accusedGender,
-              address: (caseToCreate.accusedAddress || '').trim(),
-              citizenship: caseToCreate.citizenship,
-            },
-            transaction,
-          ),
-        )
-        .then(
-          (defendant) =>
-            this.caseModel.findByPk(defendant.caseId, {
-              transaction,
-            }) as Promise<Case>,
-        )
+      }
+    }
+
+    await this.defendantService.createForNewCase(
+      newCase.id,
+      {
+        nationalId: caseToCreate.accusedNationalId,
+        dateOfBirth: caseToCreate.accusedDOB,
+        name: caseToCreate.accusedName,
+        gender: caseToCreate.accusedGender,
+        address: (caseToCreate.accusedAddress || '').trim(),
+        citizenship: caseToCreate.citizenship,
+      },
+      transaction,
+    )
+
+    const theCase = await this.caseRepositoryService.findById(newCase.id, {
+      transaction,
     })
+
+    return theCase as Case
   }
 
-  async archive(): Promise<ArchiveResponse> {
-    const theCase = await this.caseModel.findOne({
+  async archive(transaction: Transaction): Promise<ArchiveResponse> {
+    const theCase = await this.caseRepositoryService.findOne({
       include: [
         { model: Defendant, as: 'defendants' },
         {
@@ -443,127 +498,189 @@ export class InternalCaseService {
         [{ model: CaseString, as: 'caseStrings' }, 'created', 'ASC'],
       ],
       where: archiveFilter,
+      transaction,
     })
 
     if (!theCase) {
       return { caseArchived: false }
     }
 
-    await this.sequelize.transaction(async (transaction) => {
-      const [clearedCaseProperties, caseArchive] = collectEncryptionProperties(
-        caseEncryptionProperties,
-        theCase,
+    const [clearedCaseProperties, caseArchive] = collectEncryptionProperties(
+      caseEncryptionProperties,
+      theCase,
+    )
+
+    const defendantsArchive = []
+    for (const defendant of theCase.defendants ?? []) {
+      const [clearedDefendantProperties, defendantArchive] =
+        collectEncryptionProperties(defendantEncryptionProperties, defendant)
+      defendantsArchive.push(defendantArchive)
+
+      await this.defendantService.updateDatabaseDefendant(
+        theCase.id,
+        defendant.id,
+        clearedDefendantProperties,
+        transaction,
       )
+    }
 
-      const defendantsArchive = []
-      for (const defendant of theCase.defendants ?? []) {
-        const [clearedDefendantProperties, defendantArchive] =
-          collectEncryptionProperties(defendantEncryptionProperties, defendant)
-        defendantsArchive.push(defendantArchive)
+    const caseFilesArchive = []
+    for (const caseFile of theCase.caseFiles ?? []) {
+      const [clearedCaseFileProperties, caseFileArchive] =
+        collectEncryptionProperties(caseFileEncryptionProperties, caseFile)
+      caseFilesArchive.push(caseFileArchive)
 
-        await this.defendantService.updateDatabaseDefendant(
-          theCase.id,
-          defendant.id,
-          clearedDefendantProperties,
-          transaction,
-        )
-      }
-
-      const caseFilesArchive = []
-      for (const caseFile of theCase.caseFiles ?? []) {
-        const [clearedCaseFileProperties, caseFileArchive] =
-          collectEncryptionProperties(caseFileEncryptionProperties, caseFile)
-        caseFilesArchive.push(caseFileArchive)
-
-        await this.fileService.updateCaseFile(
-          theCase.id,
-          caseFile.id,
-          clearedCaseFileProperties,
-          transaction,
-        )
-      }
-
-      const indictmentCountsArchive = []
-      for (const count of theCase.indictmentCounts ?? []) {
-        const [clearedIndictmentCountProperties, indictmentCountArchive] =
-          collectEncryptionProperties(
-            indictmentCountEncryptionProperties,
-            count,
-          )
-        indictmentCountsArchive.push(indictmentCountArchive)
-
-        await this.indictmentCountService.update(
-          theCase.id,
-          count.id,
-          clearedIndictmentCountProperties,
-          transaction,
-        )
-      }
-
-      const caseStringsArchive = []
-      for (const caseString of theCase.caseStrings ?? []) {
-        const [clearedCaseStringProperties, caseStringArchive] =
-          collectEncryptionProperties(
-            caseStringEncryptionProperties,
-            caseString,
-          )
-        caseStringsArchive.push(caseStringArchive)
-
-        await this.caseStringModel.update(clearedCaseStringProperties, {
-          where: { id: caseString.id, caseId: theCase.id },
-          transaction,
-        })
-      }
-
-      await this.caseArchiveModel.create(
-        {
-          caseId: theCase.id,
-          archive: CryptoJS.AES.encrypt(
-            JSON.stringify({
-              ...caseArchive,
-              defendants: defendantsArchive,
-              caseFiles: caseFilesArchive,
-              indictmentCounts: indictmentCountsArchive,
-              caseStrings: caseStringsArchive,
-            }),
-            this.config.archiveEncryptionKey,
-            { iv: CryptoJS.enc.Hex.parse(uuidFactory()) },
-          ).toString(),
-          // To decrypt:
-          // JSON.parse(
-          //   Base64.fromBase64(
-          //     CryptoJS.AES.decrypt(
-          //       archive,
-          //       this.config.archiveEncryptionKey,
-          //     ).toString(CryptoJS.enc.Base64),
-          //   ),
-          // )
-        },
-        { transaction },
+      await this.fileService.updateCaseFile(
+        theCase.id,
+        caseFile.id,
+        clearedCaseFileProperties,
+        transaction,
       )
+    }
 
-      await this.caseModel.update(
-        { ...clearedCaseProperties, isArchived: true },
-        { where: { id: theCase.id }, transaction },
+    const indictmentCountsArchive = []
+    for (const count of theCase.indictmentCounts ?? []) {
+      const [clearedIndictmentCountProperties, indictmentCountArchive] =
+        collectEncryptionProperties(indictmentCountEncryptionProperties, count)
+      indictmentCountsArchive.push(indictmentCountArchive)
+
+      await this.indictmentCountService.update(
+        theCase.id,
+        count.id,
+        clearedIndictmentCountProperties,
+        transaction,
       )
-    })
+    }
+
+    const caseStringsArchive = []
+    for (const caseString of theCase.caseStrings ?? []) {
+      const [clearedCaseStringProperties, caseStringArchive] =
+        collectEncryptionProperties(caseStringEncryptionProperties, caseString)
+      caseStringsArchive.push(caseStringArchive)
+
+      await this.caseStringModel.update(clearedCaseStringProperties, {
+        where: { id: caseString.id, caseId: theCase.id },
+        transaction,
+      })
+    }
+
+    await this.caseArchiveRepositoryService.create(
+      theCase.id,
+      {
+        archiveJson: JSON.stringify({
+          ...caseArchive,
+          defendants: defendantsArchive,
+          caseFiles: caseFilesArchive,
+          indictmentCounts: indictmentCountsArchive,
+          caseStrings: caseStringsArchive,
+        }),
+      },
+      { transaction },
+    )
+
+    await this.caseRepositoryService.update(
+      theCase.id,
+      { ...clearedCaseProperties, isArchived: true },
+      { transaction },
+    )
 
     this.eventService.postEvent('ARCHIVE', theCase)
 
     return { caseArchived: true }
   }
 
+  async getIndictmentCaseDefendantsWithExpiredAppealDeadline(): Promise<
+    { theCase: Case; defendant: Defendant }[]
+  > {
+    const minDate = addDays(Date.now(), -VERDICT_APPEAL_WINDOW_DAYS)
+    const cases = await this.caseRepositoryService.findAll({
+      include: [
+        {
+          model: User,
+          as: 'judge',
+          required: false,
+          include: [{ model: Institution, as: 'institution' }],
+        },
+        {
+          model: Defendant,
+          as: 'defendants',
+          required: true,
+          include: [
+            {
+              model: DefendantEventLog,
+              as: 'eventLogs',
+              required: false,
+            },
+            {
+              model: Verdict,
+              as: 'verdicts',
+              required: true,
+              where: {
+                serviceRequirement: ServiceRequirement.REQUIRED,
+                serviceStatus: {
+                  [Op.not]: VerdictServiceStatus.NOT_APPLICABLE,
+                },
+                serviceDate: {
+                  [Op.lte]: minDate,
+                },
+              },
+            },
+          ],
+          where: {
+            id: {
+              [Op.notIn]: Sequelize.literal(`
+                (SELECT defendant_id
+                  FROM defendant_event_log
+                  WHERE event_type = '${DefendantEventType.VERDICT_SERVICE_CERTIFICATE_DELIVERED_TO_POLICE}')
+              `),
+            },
+          },
+        },
+      ],
+      where: {
+        state: completedIndictmentCaseStates,
+        type: CaseType.INDICTMENT,
+        indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
+      },
+    })
+
+    return cases.flatMap((theCase) =>
+      pipe(
+        theCase.defendants ?? [],
+        filterMap((defendant) => {
+          // Only the latest verdict is relevant
+          const latestVerdict = defendant.verdicts?.sort(
+            (a, b) => b.created.getTime() - a.created.getTime(),
+          )[0]
+
+          if (latestVerdict?.serviceDate) {
+            const { isDeadlineExpired } = getIndictmentAppealDeadline({
+              baseDate: latestVerdict?.serviceDate,
+              isFine: false,
+            })
+
+            if (isDeadlineExpired) {
+              return option.some({ theCase, defendant })
+            }
+          }
+
+          return option.none
+        }),
+      ),
+    )
+  }
+
   async getCaseHearingArrangements(date: Date): Promise<Case[]> {
     const startOfDay = new Date(date.setHours(0, 0, 0, 0))
     const endOfDay = new Date(date.setHours(23, 59, 59, 999))
 
-    return this.caseModel.findAll({
+    return this.caseRepositoryService.findAll({
       include: [
         {
           model: DateLog,
           as: 'dateLogs',
           where: {
-            date_type: ['ARRAIGNMENT_DATE', 'COURT_DATE'],
+            dateType: ['ARRAIGNMENT_DATE', 'COURT_DATE'],
             date: {
               [Op.gte]: startOfDay,
               [Op.lte]: endOfDay,
@@ -604,9 +721,10 @@ export class InternalCaseService {
   async deliverIndictmentToCourt(
     theCase: Case,
     user: TUser,
+    transaction: Transaction,
   ): Promise<DeliverResponse> {
     return this.pdfService
-      .getIndictmentPdf(theCase)
+      .getIndictmentPdf(theCase, transaction)
       .then(async (pdf) => {
         await this.refreshFormatMessage()
 
@@ -648,9 +766,10 @@ export class InternalCaseService {
 
     const mappedSubtypes = subtypeList.flatMap((key) => courtSubtypes[key])
     const indictmentIssuedByProsecutorAndReceivedByCourt =
-      theCase.eventLogs?.find(
-        (eventLog) => eventLog.eventType === EventType.INDICTMENT_CONFIRMED,
-      )?.created
+      EventLog.getEventLogDateByEventType(
+        EventType.INDICTMENT_CONFIRMED,
+        theCase.eventLogs,
+      )
 
     return this.courtService
       .updateIndictmentCaseWithIndictmentInfo(
@@ -841,10 +960,11 @@ export class InternalCaseService {
   async deliverCourtRecordToCourt(
     theCase: Case,
     user: TUser,
+    transaction: Transaction,
   ): Promise<DeliverResponse> {
     await this.refreshFormatMessage()
 
-    return this.uploadCourtRecordPdfToCourt(theCase, user).then(
+    return this.uploadCourtRecordPdfToCourt(theCase, user, transaction).then(
       (delivered) => ({ delivered }),
     )
   }
@@ -863,12 +983,15 @@ export class InternalCaseService {
   async deliverSignedCourtRecordToCourt(
     theCase: Case,
     user: TUser,
+    transaction: Transaction,
   ): Promise<DeliverResponse> {
     await this.refreshFormatMessage()
 
-    return this.deliverSignedCourtRecordPdfToCourt(theCase, user).then(
-      (delivered) => ({ delivered }),
-    )
+    return this.deliverSignedCourtRecordPdfToCourt(
+      theCase,
+      user,
+      transaction,
+    ).then((delivered) => ({ delivered }))
   }
 
   async deliverCaseConclusionToCourt(
@@ -993,14 +1116,6 @@ export class InternalCaseService {
   ): Promise<boolean> {
     const originalAncestor = await this.findOriginalAncestor(theCase)
 
-    const defendantNationalIds = theCase.defendants?.reduce<string[]>(
-      (ids, defendant) =>
-        !defendant.noNationalId && defendant.nationalId
-          ? [...ids, defendant.nationalId]
-          : ids,
-      [],
-    )
-
     const validToDate =
       (restrictionCases.includes(theCase.type) &&
         theCase.state === CaseState.ACCEPTED &&
@@ -1011,12 +1126,12 @@ export class InternalCaseService {
       user,
       originalAncestor.id,
       theCase.type,
-      theCase.state,
+      theCase.state === CaseState.CORRECTING
+        ? CaseState.COMPLETED
+        : theCase.state,
       theCase.policeCaseNumbers.length > 0 ? theCase.policeCaseNumbers[0] : '',
       theCase.courtCaseNumber ?? '',
-      defendantNationalIds && defendantNationalIds[0]
-        ? defendantNationalIds[0].replace('-', '')
-        : '',
+      theCase.policeDefendantNationalId ?? '',
       validToDate,
       theCase.conclusion ?? '', // Indictments do not have a conclusion
       courtDocuments,
@@ -1076,6 +1191,7 @@ export class InternalCaseService {
   async deliverIndictmentCaseToPolice(
     theCase: Case,
     user: TUser,
+    transaction: Transaction,
   ): Promise<DeliverResponse> {
     const delivered = await Promise.all(
       theCase.caseFiles
@@ -1085,10 +1201,9 @@ export class InternalCaseService {
             [CaseFileCategory.COURT_RECORD, CaseFileCategory.RULING].includes(
               caseFile.category,
             ) &&
-            caseFile.key,
+            caseFile.isKeyAccessible,
         )
         .map(async (caseFile) => {
-          // TODO: Tolerate failure, but log error
           const file = await this.fileService.getCaseFileFromS3(
             theCase,
             caseFile,
@@ -1103,6 +1218,22 @@ export class InternalCaseService {
           }
         }) ?? [],
     )
+      .then(async (courtDocuments) => {
+        if (theCase.withCourtSessions) {
+          const pdf = await this.pdfService.getCourtRecordPdfForIndictmentCase(
+            theCase,
+            user,
+            transaction,
+          )
+
+          courtDocuments.push({
+            type: PoliceDocumentType.RVTB,
+            courtDocument: Base64.btoa(pdf.toString('binary')),
+          })
+        }
+
+        return courtDocuments
+      })
       .then((courtDocuments) =>
         this.deliverCaseToPoliceWithFiles(theCase, user, courtDocuments),
       )
@@ -1121,9 +1252,10 @@ export class InternalCaseService {
   async deliverIndictmentToPolice(
     theCase: Case,
     user: TUser,
+    transaction: Transaction,
   ): Promise<DeliverResponse> {
     try {
-      const file = await this.pdfService.getIndictmentPdf(theCase)
+      const file = await this.pdfService.getIndictmentPdf(theCase, transaction)
 
       const policeDocuments = [
         {
@@ -1238,7 +1370,6 @@ export class InternalCaseService {
       theCase.caseFiles
         ?.filter((file) => file.category === CaseFileCategory.APPEAL_RULING)
         .map(async (caseFile) => {
-          // TODO: Tolerate failure, but log error
           const file = await this.fileService.getCaseFileFromS3(
             theCase,
             caseFile,
@@ -1270,7 +1401,7 @@ export class InternalCaseService {
     let originalAncestor: Case = theCase
 
     while (originalAncestor.parentCaseId) {
-      const parentCase = await this.caseModel.findByPk(
+      const parentCase = await this.caseRepositoryService.findById(
         originalAncestor.parentCaseId,
       )
 
@@ -1289,7 +1420,7 @@ export class InternalCaseService {
   // As this is only currently used by the digital mailbox API
   // we will only return indictment cases that have a court date
   async getAllDefendantIndictmentCases(nationalId: string): Promise<Case[]> {
-    return this.caseModel.findAll({
+    return this.caseRepositoryService.findAll({
       include: [
         {
           model: Defendant,
@@ -1299,7 +1430,7 @@ export class InternalCaseService {
           model: DateLog,
           as: 'dateLogs',
           where: {
-            date_type: 'ARRAIGNMENT_DATE',
+            dateType: 'ARRAIGNMENT_DATE',
           },
           required: true,
         },
@@ -1311,8 +1442,8 @@ export class InternalCaseService {
         // Make sure we don't send cases that are in deleted or other inaccessible states
         state: [
           CaseState.RECEIVED,
-          CaseState.COMPLETED,
           CaseState.WAITING_FOR_CANCELLATION,
+          ...completedIndictmentCaseStates,
         ],
         // The national id could be without a hyphen or with a hyphen so we need to
         // search for both
@@ -1325,7 +1456,7 @@ export class InternalCaseService {
     caseId: string,
     defendantNationalId: string,
   ): Promise<Case> {
-    const theCase = await this.caseModel.findOne({
+    const theCase = await this.caseRepositoryService.findOne({
       include: [
         {
           model: Defendant,
@@ -1335,6 +1466,13 @@ export class InternalCaseService {
               model: Subpoena,
               as: 'subpoenas',
               order: [['created', 'DESC']],
+            },
+            {
+              model: Verdict,
+              as: 'verdicts',
+              required: false,
+              order: [['created', 'DESC']],
+              separate: true,
             },
           ],
         },
@@ -1347,6 +1485,25 @@ export class InternalCaseService {
           include: [{ model: Institution, as: 'institution' }],
         },
         { model: DateLog, as: 'dateLogs' },
+        {
+          model: EventLog,
+          as: 'eventLogs',
+          required: false,
+          order: [['created', 'DESC']],
+          where: {
+            event_type: EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+          },
+        },
+        {
+          model: CourtSession,
+          as: 'courtSessions',
+          required: false,
+          order: [['created', 'DESC']],
+          attributes: ['ruling'],
+          where: {
+            ruling_type: CourtSessionRulingType.JUDGEMENT,
+          },
+        },
       ],
       attributes: [
         'courtCaseNumber',
@@ -1354,13 +1511,14 @@ export class InternalCaseService {
         'state',
         'indictmentRulingDecision',
         'rulingDate',
+        'ruling',
       ],
       where: {
         type: CaseType.INDICTMENT,
         id: caseId,
         state: { [Op.not]: CaseState.DELETED },
         isArchived: false,
-        // This select only defendants with the given national id, other defendants are not included
+        // This only selects defendants with the given national id, other defendants are not included
         '$defendants.national_id$':
           normalizeAndFormatNationalId(defendantNationalId),
       },
@@ -1376,14 +1534,28 @@ export class InternalCaseService {
   async getDefendantIndictmentCase(
     theCase: Case,
     defendantNationalId: string,
+    transaction: Transaction,
   ): Promise<Case> {
-    const subpoena = theCase.defendants?.[0].subpoenas?.[0]
+    // The case only includes the relevant defendant, this is safe
+    const defendant = theCase.defendants?.[0]
+
+    if (!defendant) {
+      // This should not happen as we always search for cases with a defendant national id
+      return theCase
+    }
+
+    const subpoena = defendant?.subpoenas?.[0]
 
     if (!subpoena) {
       return theCase
     }
 
-    const latestSubpoena = await this.subpoenaService.getSubpoena(subpoena)
+    const latestSubpoena = await this.subpoenaService.getSubpoena(
+      theCase,
+      defendant,
+      subpoena,
+      transaction,
+    )
 
     if (latestSubpoena === subpoena) {
       // The subpoena was up to date
@@ -1394,7 +1566,7 @@ export class InternalCaseService {
   }
 
   countIndictmentsWaitingForConfirmation(prosecutorsOfficeId: string) {
-    return this.caseModel.count({
+    return this.caseRepositoryService.count({
       include: [{ model: User, as: 'creatingProsecutor' }],
       where: {
         type: CaseType.INDICTMENT,
@@ -1402,5 +1574,34 @@ export class InternalCaseService {
         '$creatingProsecutor.institution_id$': prosecutorsOfficeId,
       },
     })
+  }
+  async getIndictmentCasesWithVerdictAppealDeadlineOnTargetDate(
+    indictmentReviewerId: string,
+    targetDate: Date,
+  ) {
+    const targetRulingDate = subDays(targetDate, VERDICT_APPEAL_WINDOW_DAYS)
+    const start = startOfDay(targetRulingDate)
+    const end = endOfDay(targetRulingDate)
+
+    const cases = await this.caseRepositoryService.findAll({
+      include: [
+        {
+          model: EventLog,
+          as: 'eventLogs',
+          required: false,
+          order: [['created', 'DESC']],
+          where: {
+            event_type: EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+          },
+        },
+      ],
+      where: {
+        indictmentReviewerId: indictmentReviewerId,
+        indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
+        indictmentReviewDecision: null,
+        rulingDate: { [Op.gte]: start, [Op.lte]: end },
+      },
+    })
+    return cases
   }
 }

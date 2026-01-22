@@ -8,11 +8,14 @@
   "generators": {},
   "targets": {
     "build": {
-      "executor": "./tools/executors/node:build",
+      "executor": "@nx/esbuild:esbuild",
       "options": {
         "outputPath": "dist/apps/judicial-system/backend",
         "main": "apps/judicial-system/backend/src/main.ts",
         "tsConfig": "apps/judicial-system/backend/tsconfig.app.json",
+        "generatePackageJson": true,
+        "esbuildConfig": "tools/esbuild.config.js",
+        "format": ["cjs"],
         "assets": [
           {
             "glob": "*",
@@ -29,14 +32,12 @@
             "input": "apps/judicial-system/backend",
             "output": "./"
           }
-        ],
-        "maxWorkers": 2
+        ]
       },
       "configurations": {
         "production": {
           "optimization": true,
-          "extractLicenses": true,
-          "inspect": false
+          "extractLicenses": true
         }
       },
       "outputs": ["{options.outputPath}"]
@@ -102,8 +103,8 @@
         "cwd": "apps/judicial-system/backend"
       }
     },
-    "docker-express": {
-      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
+    "docker-express-yarn": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express-yarn`"
     },
     "extract-strings": {
       "executor": "nx:run-commands",

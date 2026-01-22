@@ -1,2 +1,2 @@
-const { migrateKibana } = require('./main')
+const { migrateKibana } = require('./main.cjs')
 migrateKibana()

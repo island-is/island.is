@@ -1,6 +1,7 @@
 import {
   buildDescriptionField,
   buildForm,
+  buildHiddenInput,
   buildMultiField,
   buildRadioField,
   buildSection,
@@ -11,26 +12,28 @@ import {
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { Application, SignatureCollectionList } from '@island.is/api/schema'
 import { format as formatNationalId } from 'kennitala'
-import Logo from '@island.is/application/templates/signature-collection/assets/Logo'
+import { NationalRegistryLogo } from '@island.is/application/assets/institution-logos'
 import { m } from '../lib/messages'
 
 export const Draft: Form = buildForm({
   id: 'ParliamentaryListSigningDraft',
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
-  renderLastScreenBackButton: false,
-  logo: Logo,
+  renderLastScreenBackButton: true,
+  logo: NationalRegistryLogo,
   children: [
     buildSection({
       id: 'selectCandidateSection',
       title: m.selectCandidate,
-      condition: (_, externalData) => {
+      condition: (answers, externalData) => {
         const lists =
           getValueViaPath<SignatureCollectionList[]>(
             externalData,
             'getList.data',
           ) || []
-        return lists.length > 1
+        const initialQuery = getValueViaPath(answers, 'initialQuery')
+
+        return lists.length > 0 && !initialQuery
       },
       children: [
         buildMultiField({
@@ -86,7 +89,28 @@ export const Draft: Form = buildForm({
               title: m.listHeader,
               titleVariant: 'h3',
             }),
+            buildHiddenInput({
+              id: 'listId',
+              defaultValue: ({ answers, externalData }: Application) => {
+                const lists =
+                  getValueViaPath<SignatureCollectionList[]>(
+                    externalData,
+                    'getList.data',
+                  ) || []
 
+                const initialQuery = getValueViaPath(
+                  answers,
+                  'initialQuery',
+                  '',
+                )
+
+                return lists.find((list) =>
+                  initialQuery
+                    ? list.candidate.id === initialQuery
+                    : list.id === answers.listId,
+                )?.id
+              },
+            }),
             buildTextField({
               id: 'list.name',
               title: m.listName,

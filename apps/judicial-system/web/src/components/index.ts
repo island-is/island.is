@@ -1,5 +1,6 @@
 export { CourtCaseInfo, ProsecutorCaseInfo } from './CaseInfo/CaseInfo'
 export { default as AccordionListItem } from './AccordionListItem/AccordionListItem'
+export { default as BaseSelect } from './BaseSelect/BaseSelect'
 export { default as BlueBox } from './BlueBox/BlueBox'
 export { default as BlueBoxWithDate } from './BlueBoxWithIcon/BlueBoxWithDate'
 export { default as CaseDates } from './CaseDates/CaseDates'
@@ -30,7 +31,6 @@ export { default as CourtRecordAccordionItem } from './AccordionItems/CourtRecor
 export { default as DateTime } from './DateTime/DateTime'
 export { default as Decision } from './Decision/Decision'
 export { default as DefenderInfo } from './DefenderInfo/DefenderInfo'
-export { default as DefenderNotFound } from './DefenderInfo/DefenderNotFound'
 export {
   default as FeatureProvider,
   FeatureContext,
@@ -56,6 +56,7 @@ export { default as Loading } from './Loading/Loading'
 export { default as Logo } from './Logo/Logo'
 export { default as MarkdownWrapper } from './MarkdownWrapper/MarkdownWrapper'
 export { default as Modal } from './Modals/Modal/Modal'
+
 export { default as MultipleValueList } from './MultipleValueList/MultipleValueList'
 export { default as PageHeader } from './PageHeader/PageHeader'
 export { default as PageLayout } from './PageLayout/PageLayout'
@@ -67,8 +68,9 @@ export { default as ProsecutorSelection } from './ProsecutorSelection/Prosecutor
 export { RenderFiles } from './IndictmentCaseFilesList/IndictmentCaseFilesList'
 export { default as RestrictionTags } from './RestrictionTags/RestrictionTags'
 export { default as RulingAccordionItem } from './AccordionItems/RulingAccordionItem/RulingAccordionItem'
-export { default as RulingInput } from './RulingInput/RulingInput'
+export { default as RulingInput } from './Inputs/RulingInput'
 export { default as SectionHeading } from './SectionHeading/SectionHeading'
+
 export {
   default as ServiceAnnouncements,
   AlternativeServiceAnnouncement,
@@ -79,10 +81,7 @@ export { default as SignedDocument } from './SignedDocument/SignedDocument'
 export { default as TagAppealState } from './Tags/TagAppealState/TagAppealState'
 export { default as TagCaseState } from './Tags/TagCaseState/TagCaseState'
 export { default as CaseTag } from './Tags/CaseTag'
-export {
-  getIndictmentRulingDecisionTag,
-  getIndictmentCaseStateTag,
-} from './Tags/utils'
+export { getIndictmentRulingDecisionTag } from './Tags/utils'
 export {
   SigningModal,
   useRequestRulingSignature,
@@ -95,6 +94,8 @@ export {
   type Rect,
 } from './ViewportProvider/ViewportProvider'
 export { default as FileNotFoundModal } from './Modals/FileNotFoundModal/FileNotFoundModal'
+export { default as SearchModal } from './Modals/SearchModal/SearchModal'
+
 export { default as AppealCaseFilesOverview } from './AppealCaseFilesOverview/AppealCaseFilesOverview'
 export { default as Conclusion } from './Conclusion/Conclusion'
 export { conclusion } from './Conclusion/Conclusion.strings'
@@ -129,3 +130,5 @@ export { default as RequiredStar } from './RequiredStar/RequiredStar'
 export { VictimInfo } from './VictimInfo/VictimInfo'
 export { LabelValue } from './LabelValue/LabelValue'
 export { default as IconButton } from './IconButton/IconButton'
+export { LawyerRegistryContext } from './LawyerRegistryProvider/LawyerRegistryProvider'
+export { default as ArraignmentAlert } from './ArraignmentAlert/ArraignmentAlert'

@@ -1,5 +1,6 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
+import { InjectConnection, InjectModel } from '@nestjs/sequelize'
+import { Sequelize, WhereOptions } from 'sequelize'
 import { ConfigType } from '@nestjs/config'
 import { isCompany, isValid } from 'kennitala'
 import { v4 as uuid } from 'uuid'
@@ -10,9 +11,13 @@ import {
   ChargeFjsV2ClientService,
   Charge,
 } from '@island.is/clients/charge-fjs-v2'
-import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
-import { CompanyRegistryClientService } from '@island.is/clients/rsk/company-registry'
 import { retry } from '@island.is/shared/utils/server'
+import { paginate } from '@island.is/nest/pagination'
+import {
+  FjsErrorCode,
+  InvoiceErrorCode,
+  PaymentServiceCode,
+} from '@island.is/shared/constants'
 
 import {
   PaymentFlow,
@@ -24,22 +29,24 @@ import {
   PaymentFlowUpdateEvent,
   PaymentMethod,
   PaymentStatus,
+  PaymentFlowEventType,
+  PaymentFlowEventReason,
 } from '../../types'
 import { GetPaymentFlowDTO } from './dtos/getPaymentFlow.dto'
 import { CreatePaymentFlowInput } from './dtos/createPaymentFlow.input'
+import { GetPaymentFlowsPaginatedDTO } from './dtos/getPaymentFlow.dto'
 
 import { environment } from '../../environments'
 import { PaymentFlowEvent } from './models/paymentFlowEvent.model'
 import { CreatePaymentFlowDTO } from './dtos/createPaymentFlow.dto'
-import { PaymentFlowFjsChargeConfirmation } from './models/paymentFlowFjsChargeConfirmation.model'
-import { FjsErrorCode, PaymentServiceCode } from '@island.is/shared/constants'
+import { FjsCharge } from './models/fjsCharge.model'
 import { CatalogItemWithQuantity } from '../../types/charges'
 import {
   generateChargeFJSPayload,
   mapFjsErrorToCode,
 } from '../../utils/fjsCharge'
 import { processCharges } from '../../utils/chargeUtils'
-import { PaymentFlowPaymentConfirmation } from './models/paymentFlowPaymentConfirmation.model'
+import { CardPaymentDetails } from './models/cardPaymentDetails.model'
 import { ChargeResponse } from '../cardPayment/cardPayment.types'
 import { PaymentTrackingData } from '../../types/cardPayment'
 import { onlyReturnKnownErrorCode } from '../../utils/paymentErrors'
@@ -48,6 +55,7 @@ import { JwksConfigService } from '../jwks/jwks-config.service'
 import { ChargeItem } from '../../utils/chargeUtils'
 import { PaymentFlowModuleConfig } from './paymentFlow.config'
 import { JwksConfig } from '../jwks/jwks.config'
+import { PaymentFulfillment } from './models/paymentFulfillment.model'
 
 interface PaymentFlowUpdateConfig {
   /**
@@ -65,21 +73,23 @@ interface PaymentFlowUpdateConfig {
 @Injectable()
 export class PaymentFlowService {
   constructor(
+    @InjectConnection()
+    private readonly sequelize: Sequelize,
     @InjectModel(PaymentFlow)
     private readonly paymentFlowModel: typeof PaymentFlow,
     @InjectModel(PaymentFlowCharge)
     private readonly paymentFlowChargeModel: typeof PaymentFlowCharge,
     @InjectModel(PaymentFlowEvent)
     private readonly paymentFlowEventModel: typeof PaymentFlowEvent,
-    @InjectModel(PaymentFlowFjsChargeConfirmation)
-    private readonly paymentFlowFjsChargeConfirmationModel: typeof PaymentFlowFjsChargeConfirmation,
-    @InjectModel(PaymentFlowPaymentConfirmation)
-    private readonly paymentFlowConfirmationModel: typeof PaymentFlowPaymentConfirmation,
+    @InjectModel(FjsCharge)
+    private readonly fjsChargeModel: typeof FjsCharge,
+    @InjectModel(CardPaymentDetails)
+    private readonly cardPaymentDetailsModel: typeof CardPaymentDetails,
+    @InjectModel(PaymentFulfillment)
+    private readonly paymentFulfillmentModel: typeof PaymentFulfillment,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
     private chargeFjsV2ClientService: ChargeFjsV2ClientService,
-    private nationalRegistryV3: NationalRegistryV3ClientService,
-    private companyRegistryApi: CompanyRegistryClientService,
     private jwksConfigService: JwksConfigService,
     @Inject(PaymentFlowModuleConfig.KEY)
     private readonly paymentFlowConfig: ConfigType<
@@ -113,7 +123,7 @@ export class PaymentFlowService {
           charges: chargeDetails.catalogItems,
           totalPrice: chargeDetails.totalPrice,
           systemId: environment.chargeFjs.systemId,
-          returnUrl: '', // TODO
+          returnUrl: paymentInfo.returnUrl,
         }),
       )
 
@@ -138,6 +148,7 @@ export class PaymentFlowService {
       )
 
       return {
+        id: paymentFlow.id,
         urls: {
           is: `${this.paymentFlowConfig.webOrigin}/is/${paymentFlow.id}`,
           en: `${this.paymentFlowConfig.webOrigin}/en/${paymentFlow.id}`,
@@ -221,30 +232,32 @@ export class PaymentFlowService {
     }
   }
 
-  private async getPayerName(payerNationalId: string) {
+  private async getPayerName(payerNationalId: string): Promise<string> {
     if (!isValid(payerNationalId)) {
       throw new BadRequestException(PaymentServiceCode.InvalidPayerNationalId)
     }
 
-    if (isCompany(payerNationalId)) {
-      const company = await this.companyRegistryApi.getCompany(payerNationalId)
+    let payerName: string | null = null
 
-      if (!company) {
+    try {
+      const payeeInfo = await this.chargeFjsV2ClientService.getPayeeInfo(
+        payerNationalId,
+      )
+
+      payerName = payeeInfo.name
+    } catch (e) {
+      this.logger.error(`Failed to get payer name from FJS`, { error: e })
+    }
+
+    if (payerName === null || payerName.length === 0) {
+      if (isCompany(payerNationalId)) {
         throw new BadRequestException(PaymentServiceCode.CompanyNotFound)
       }
 
-      return company.name
-    }
-
-    const person = await this.nationalRegistryV3.getAllDataIndividual(
-      payerNationalId,
-    )
-
-    if (!person) {
       throw new BadRequestException(PaymentServiceCode.PersonNotFound)
     }
 
-    return person.nafn ?? ''
+    return payerName
   }
 
   async isEligibleToBePaid(id: string) {
@@ -260,23 +273,24 @@ export class PaymentFlowService {
       throw new BadRequestException(PaymentServiceCode.PaymentFlowNotFound)
     }
 
-    const paymentFlowSuccessEvent = (
-      await this.paymentFlowEventModel.findOne({
+    const paymentFulfillment = (
+      await this.paymentFulfillmentModel.findOne({
         where: {
           paymentFlowId: id,
-          type: 'success',
         },
       })
     )?.toJSON()
 
-    if (paymentFlowSuccessEvent) {
+    if (paymentFulfillment) {
       return false
     }
+
+    // TODO: look for fjs charge (invoice pending?)
 
     return true
   }
 
-  async getPaymentFlowDetails(id: string) {
+  async getPaymentFlowDetails(id: string, includeEvents?: boolean) {
     const paymentFlow = (
       await this.paymentFlowModel.findOne({
         where: {
@@ -287,8 +301,16 @@ export class PaymentFlowService {
             model: PaymentFlowCharge,
           },
           {
-            model: PaymentFlowFjsChargeConfirmation,
+            model: FjsCharge,
           },
+          ...(includeEvents
+            ? [
+                {
+                  model: PaymentFlowEvent,
+                  as: 'events',
+                },
+              ]
+            : []),
         ],
       })
     )?.toJSON()
@@ -301,50 +323,48 @@ export class PaymentFlowService {
   }
 
   async getPaymentFlowStatus(paymentFlow: PaymentFlowAttributes) {
-    const paymentFlowSuccessEvent = (
-      await this.paymentFlowEventModel.findOne({
+    const paymentFulfillment = (
+      await this.paymentFulfillmentModel.findOne({
         where: {
           paymentFlowId: paymentFlow.id,
-          type: 'success',
         },
       })
     )?.toJSON()
 
-    const isAlreadyPaid = !!paymentFlowSuccessEvent
-
-    let paymentStatus: PaymentStatus = isAlreadyPaid
-      ? PaymentStatus.PAID
-      : PaymentStatus.UNPAID
-    let updatedAt = paymentFlowSuccessEvent?.modified ?? paymentFlow.modified
-
-    if (!isAlreadyPaid) {
-      const chargeConfirmation = (
-        await this.paymentFlowFjsChargeConfirmationModel.findOne({
-          where: {
-            paymentFlowId: paymentFlow.id,
-          },
-        })
-      )?.toJSON()
-
-      if (chargeConfirmation) {
-        paymentStatus = PaymentStatus.INVOICE_PENDING
-      }
-
-      if (chargeConfirmation) {
-        updatedAt = chargeConfirmation.created
+    if (paymentFulfillment) {
+      return {
+        paymentStatus: PaymentStatus.PAID,
+        updatedAt: paymentFulfillment.created,
       }
     }
 
-    console.log({
-      paymentStatus,
-    })
+    const existingFjsCharge = (
+      await this.fjsChargeModel.findOne({
+        where: {
+          paymentFlowId: paymentFlow.id,
+        },
+      })
+    )?.toJSON()
 
-    return { paymentStatus, updatedAt }
+    if (existingFjsCharge && existingFjsCharge.status === 'unpaid') {
+      return {
+        paymentStatus: PaymentStatus.INVOICE_PENDING,
+        updatedAt: existingFjsCharge.created,
+      }
+    }
+
+    return {
+      paymentStatus: PaymentStatus.UNPAID,
+      updatedAt: existingFjsCharge?.created ?? paymentFlow.modified,
+    }
   }
 
-  async getPaymentFlow(id: string): Promise<GetPaymentFlowDTO | null> {
+  async getPaymentFlow(
+    id: string,
+    includeEvents?: boolean,
+  ): Promise<GetPaymentFlowDTO | null> {
     try {
-      const paymentFlow = await this.getPaymentFlowDetails(id)
+      const paymentFlow = await this.getPaymentFlowDetails(id, includeEvents)
       const paymentDetails = await this.getPaymentFlowChargeDetails(
         paymentFlow.organisationId,
         paymentFlow.charges,
@@ -365,6 +385,13 @@ export class PaymentFlowService {
           paymentFlow.availablePaymentMethods as PaymentMethod[],
         paymentStatus,
         updatedAt,
+        events: includeEvents
+          ? paymentFlow.events?.map((event) => ({
+              ...event,
+              type: event.type as PaymentFlowEventType,
+              reason: event.reason as PaymentFlowEventReason,
+            }))
+          : undefined,
       }
     } catch (e) {
       this.logger.error(`Failed to get payment flow (${id})`, e)
@@ -413,58 +440,101 @@ export class PaymentFlowService {
     }
 
     const notifyUpdateUrl = async (attempt?: number) => {
-      // Generate the JWT
-      const token = generateWebhookJwt(
-        { id: paymentFlow.id, onUpdateUrl: paymentFlow.onUpdateUrl },
-        { type: update.type },
-        updateBody,
-        {
-          ...this.jwksConfig,
-          privateKey: this.jwksConfigService.getPrivateKey(),
-        },
-        this.logger,
-      )
-
-      const response = await fetch(paymentFlow.onUpdateUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(updateBody),
-      })
-      if (!response.ok) {
-        const errorBody = await response
-          .text()
-          .catch(() => 'Could not read error body')
-        this.logger.warn(
-          `[${update.paymentFlowId}] Failed to notify onUpdateUrl [${
-            update.type
-          }]${attempt ? ` (attempt ${attempt})` : ''}: ${response.status} ${
-            response.statusText
-          }`,
+      try {
+        // Generate the JWT
+        const token = generateWebhookJwt(
+          { id: paymentFlow.id, onUpdateUrl: paymentFlow.onUpdateUrl },
+          { type: update.type },
+          updateBody,
           {
-            url: paymentFlow.onUpdateUrl,
-            responseBody: errorBody,
+            ...this.jwksConfig,
+            privateKey: this.jwksConfigService.getPrivateKey(),
           },
+          this.logger,
         )
-        if (config.throwOnError) {
-          throw new Error(
-            `Failed to notify onUpdateUrl: ${response.status} ${response.statusText}, body: ${errorBody}`,
+
+        const response = await fetch(paymentFlow.onUpdateUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(updateBody),
+        })
+
+        if (!response.ok) {
+          const errorBody = await response
+            .text()
+            .catch(() => 'Could not read error body')
+          const errorMessage = `Failed to notify onUpdateUrl: ${response.status} ${response.statusText}, body: ${errorBody}`
+
+          this.logger.warn(
+            `[${update.paymentFlowId}] Failed to notify onUpdateUrl [${
+              update.type
+            }]${attempt ? ` (attempt ${attempt})` : ''}: ${response.status} ${
+              response.statusText
+            }`,
+            {
+              url: paymentFlow.onUpdateUrl,
+              responseBody: errorBody,
+            },
+          )
+
+          // Update delivery status to failed
+          await this.updateEventDeliveryStatus(
+            eventRecord.id,
+            false,
+            errorMessage,
+          )
+
+          if (config.throwOnError) {
+            throw new Error(errorMessage)
+          }
+        } else {
+          // Update delivery status to successful
+          await this.updateEventDeliveryStatus(eventRecord.id, true)
+
+          this.logger.info(
+            `[${update.paymentFlowId}] Successfully notified onUpdateUrl`,
+            {
+              url: paymentFlow.onUpdateUrl,
+              type: update.type,
+              reason: update.reason,
+            },
           )
         }
-      } else {
-        this.logger.info(
-          `[${update.paymentFlowId}] Successfully notified onUpdateUrl`,
-          {
-            url: paymentFlow.onUpdateUrl,
-            type: update.type,
-            reason: update.reason,
-          },
+      } catch (error) {
+        // Update delivery status to failed
+        await this.updateEventDeliveryStatus(
+          eventRecord.id,
+          false,
+          error.message,
         )
+
+        if (config.throwOnError) {
+          throw error
+        }
       }
     }
 
+    // Save event to database first, then attempt delivery
+    let eventRecord: PaymentFlowEvent
+    try {
+      eventRecord = await this.paymentFlowEventModel.create({
+        ...update,
+        deliveredToUpstream: null, // Will be updated after delivery attempt
+        deliveredAt: null,
+        deliveryError: null,
+      })
+    } catch (e) {
+      this.logger.error(
+        `[${update.paymentFlowId}] Failed to create payment flow event record`,
+        { error: e },
+      )
+      throw e // Don't proceed if we can't create the record
+    }
+
+    // Now attempt delivery with the event record already saved
     if (config.useRetry) {
       await retry(notifyUpdateUrl, {
         maxRetries: 3,
@@ -475,20 +545,51 @@ export class PaymentFlowService {
     } else {
       await notifyUpdateUrl()
     }
+  }
 
+  /**
+   * Updates the delivery status of a payment flow event.
+   * This allows tracking which events were successfully delivered to upstream systems.
+   */
+  private async updateEventDeliveryStatus(
+    eventId: string,
+    delivered: boolean,
+    error?: string,
+  ): Promise<void> {
     try {
-      await this.paymentFlowEventModel.create(update)
-    } catch (e) {
-      this.logger.error(
-        `[${update.paymentFlowId}] Failed to log payment flow update event to database`,
-        { error: e },
+      await this.paymentFlowEventModel.update(
+        {
+          deliveredToUpstream: delivered,
+          deliveredAt: delivered ? new Date() : null,
+          deliveryError: delivered ? null : error,
+        },
+        {
+          where: { id: eventId },
+        },
       )
-      // Depending on requirements, we might not want to stop the onUpdateUrl notification if DB log fails
-      // For now, it continues.
+    } catch (updateError) {
+      this.logger.error(
+        `Failed to update delivery status for event ${eventId}`,
+        { error: updateError },
+      )
+      // Don't throw - this is not critical enough to fail the main operation
     }
   }
 
-  async createPaymentConfirmation({
+  /**
+   * Gets all events that failed to deliver to upstream systems.
+   * Useful for retry mechanisms and monitoring.
+   */
+  async getFailedDeliveryEvents(): Promise<PaymentFlowEvent[]> {
+    return await this.paymentFlowEventModel.findAll({
+      where: {
+        deliveredToUpstream: false,
+      },
+      order: [['created', 'ASC']],
+    })
+  }
+
+  async createCardPaymentConfirmation({
     paymentResult,
     paymentFlowId,
     totalPrice,
@@ -501,8 +602,8 @@ export class PaymentFlowService {
   }) {
     try {
       return await retry(
-        () =>
-          this.paymentFlowConfirmationModel.create({
+        async () => {
+          const confirmation = await this.cardPaymentDetailsModel.create({
             id: paymentTrackingData.correlationId,
             acquirerReferenceNumber: paymentResult.acquirerReferenceNumber,
             authorizationCode: paymentResult.authorizationCode,
@@ -512,7 +613,16 @@ export class PaymentFlowService {
             cardUsage: paymentResult.cardInformation.cardUsage,
             totalPrice,
             merchantReferenceData: paymentTrackingData.merchantReferenceData,
-          }),
+          })
+
+          await this.paymentFulfillmentModel.create({
+            paymentFlowId,
+            paymentMethod: 'card',
+            confirmationRefId: confirmation.id,
+          })
+
+          return confirmation
+        },
         {
           maxRetries: 3,
           retryDelayMs: 1000,
@@ -540,21 +650,168 @@ export class PaymentFlowService {
     }
   }
 
-  async createPaymentCharge(paymentFlowId: string, chargePayload: Charge) {
-    try {
-      const chargeConfirmation =
-        await this.chargeFjsV2ClientService.createCharge(chargePayload)
+  /**
+   * Creates an invoice payment confirmation for a completed FJS charge.
+   * This method is idempotent - calling it multiple times with the same parameters
+   * will not create duplicate fulfillments.
+   *
+   * @param paymentFlowId - The payment flow ID
+   * @param receptionId - The FJS reception ID from the callback
+   * @returns Promise<void>
+   * @throws BadRequestException if FJS charge not found or processing fails
+   */
+  async createInvoicePaymentConfirmation(
+    paymentFlowId: string,
+    receptionId: string,
+  ): Promise<void> {
+    const fjsCharge = await this.findFjsChargeByReceptionId(
+      paymentFlowId,
+      receptionId,
+    )
 
-      const newChargeConfirmation =
-        await this.paymentFlowFjsChargeConfirmationModel.create({
+    await this.processInvoicePaymentWithRetry(paymentFlowId, fjsCharge)
+  }
+
+  /**
+   * Finds an FJS charge by reception ID and validates it belongs to the payment flow.
+   * This provides an additional security check in case of token issues.
+   */
+  private async findFjsChargeByReceptionId(
+    paymentFlowId: string,
+    receptionId: string,
+  ) {
+    const fjsCharge = await this.fjsChargeModel.findOne({
+      where: { paymentFlowId, receptionId },
+    })
+
+    if (!fjsCharge) {
+      throw new BadRequestException(PaymentServiceCode.PaymentFlowNotFound)
+    }
+
+    return fjsCharge
+  }
+
+  /**
+   * Processes the invoice payment with retry logic for transient failures.
+   * Handles race conditions gracefully by treating duplicate fulfillments as success.
+   */
+  private async processInvoicePaymentWithRetry(
+    paymentFlowId: string,
+    fjsCharge: { id: string },
+  ): Promise<void> {
+    try {
+      await retry(
+        () => this.createInvoicePaymentFulfillment(paymentFlowId, fjsCharge),
+        {
+          maxRetries: 3,
+          retryDelayMs: 1000,
+          logger: this.logger,
+          logPrefix: 'Failed to create invoice payment confirmation',
+          shouldRetryOnError: this.shouldRetryInvoicePayment,
+        },
+      )
+    } catch (error) {
+      this.handleInvoicePaymentError(paymentFlowId, error)
+    }
+  }
+
+  /**
+   * Creates the payment fulfillment and updates the FJS charge status atomically.
+   * This method is idempotent - if a fulfillment already exists, it returns early.
+   */
+  private async createInvoicePaymentFulfillment(
+    paymentFlowId: string,
+    fjsCharge: { id: string },
+  ): Promise<void> {
+    return await this.sequelize.transaction(async (transaction) => {
+      // Check if already processed (idempotency)
+      const existingFulfillment = await this.paymentFulfillmentModel.findOne({
+        where: { paymentFlowId, paymentMethod: 'invoice' },
+        transaction,
+      })
+
+      if (existingFulfillment) {
+        this.logger.info(
+          `[${paymentFlowId}] Invoice payment fulfillment already exists`,
+        )
+        return
+      }
+
+      // Create fulfillment and update charge status atomically
+      await this.paymentFulfillmentModel.create(
+        {
           paymentFlowId,
-          receptionId: chargeConfirmation.receptionID,
-          user4: chargeConfirmation.user4,
-        })
+          paymentMethod: 'invoice',
+          confirmationRefId: fjsCharge.id,
+          fjsChargeId: fjsCharge.id,
+        },
+        { transaction },
+      )
+
+      await this.fjsChargeModel.update(
+        { status: 'paid' },
+        { where: { id: fjsCharge.id }, transaction },
+      )
+
+      this.logger.info(
+        `[${paymentFlowId}] Successfully created invoice payment fulfillment`,
+        { chargeId: fjsCharge.id },
+      )
+    })
+  }
+
+  /**
+   * Determines whether an error should trigger a retry.
+   * Race conditions (unique constraint errors) are treated as success.
+   */
+  private shouldRetryInvoicePayment = (error: Error): boolean => {
+    // Don't retry on race conditions - they indicate success
+    if (error?.name === 'SequelizeUniqueConstraintError') {
+      return false
+    }
+
+    // Retry on transient database errors
+    return true
+  }
+
+  /**
+   * Handles errors from invoice payment processing.
+   * Race conditions are treated as success since the payment was already processed.
+   */
+  private handleInvoicePaymentError(paymentFlowId: string, error: Error) {
+    if (error?.name === 'SequelizeUniqueConstraintError') {
+      this.logger.info(
+        `[${paymentFlowId}] Invoice payment already processed (race condition)`,
+      )
+      return
+    }
+
+    this.logger.error(
+      `[${paymentFlowId}] Failed to create invoice payment confirmation`,
+      error,
+    )
+
+    throw new BadRequestException(
+      InvoiceErrorCode.FailedToCreateInvoiceConfirmation,
+    )
+  }
+
+  async createFjsCharge(paymentFlowId: string, chargePayload: Charge) {
+    try {
+      const charge = await this.chargeFjsV2ClientService.createCharge(
+        chargePayload,
+      )
+
+      const newCharge = await this.fjsChargeModel.create({
+        paymentFlowId,
+        receptionId: charge.receptionID,
+        user4: charge.user4,
+        status: chargePayload.payInfo ? 'paid' : 'unpaid',
+      })
 
       await this.paymentFlowModel.update(
         {
-          existingInvoiceId: chargeConfirmation.receptionID,
+          existingInvoiceId: charge.receptionID,
         },
         {
           where: {
@@ -563,7 +820,21 @@ export class PaymentFlowService {
         },
       )
 
-      return newChargeConfirmation
+      if (chargePayload.payInfo) {
+        // If it's paid
+        await this.paymentFulfillmentModel.update(
+          {
+            fjsChargeId: newCharge.id,
+          },
+          {
+            where: {
+              paymentFlowId,
+            },
+          },
+        )
+      }
+
+      return newCharge
     } catch (e) {
       this.logger.error(`Failed to create payment charge (${paymentFlowId})`, e)
 
@@ -571,7 +842,7 @@ export class PaymentFlowService {
     }
   }
 
-  async deletePaymentCharge(paymentFlowId: string): Promise<void> {
+  async deleteFjsCharge(paymentFlowId: string): Promise<void> {
     this.logger.info(`[${paymentFlowId}] Attempting to delete FJS charge`)
     try {
       // Delete from FJS
@@ -581,20 +852,15 @@ export class PaymentFlowService {
       )
 
       // Delete local confirmation
-      const deletedConfirmations =
-        await this.paymentFlowFjsChargeConfirmationModel.destroy({
-          where: {
-            paymentFlowId,
-          },
-        })
+      const deletedConfirmations = await this.fjsChargeModel.destroy({
+        where: {
+          paymentFlowId,
+        },
+      })
       if (deletedConfirmations > 0) {
-        this.logger.info(
-          `[${paymentFlowId}] Deleted PaymentFlowFjsChargeConfirmation`,
-        )
+        this.logger.info(`[${paymentFlowId}] Deleted FjsCharge`)
       } else {
-        this.logger.warn(
-          `[${paymentFlowId}] No PaymentFlowFjsChargeConfirmation found to delete`,
-        )
+        this.logger.warn(`[${paymentFlowId}] No FjsCharge found to delete`)
       }
     } catch (error) {
       this.logger.error(
@@ -637,6 +903,11 @@ export class PaymentFlowService {
         paymentFlowDetails.availablePaymentMethods as PaymentMethod[],
       paymentStatus,
       updatedAt,
+      events: paymentFlowDetails.events?.map((event) => ({
+        ...event,
+        type: event.type as PaymentFlowEventType,
+        reason: event.reason as PaymentFlowEventReason,
+      })),
     }
 
     if (paymentFlowDetails.onUpdateUrl) {
@@ -650,8 +921,8 @@ export class PaymentFlowService {
       })
     }
 
-    if (paymentFlowDetails.fjsChargeConfirmation) {
-      await this.deletePaymentCharge(id)
+    if (paymentFlowDetails.fjsCharge) {
+      await this.deleteFjsCharge(id)
     }
 
     // By deleting the payment flow, the related charges, events, and other
@@ -661,7 +932,7 @@ export class PaymentFlowService {
     return paymentFlowDTO
   }
 
-  async deletePaymentConfirmation(
+  async deleteCardPaymentConfirmation(
     paymentFlowId: string,
     correlationId: string,
   ): Promise<void> {
@@ -669,7 +940,7 @@ export class PaymentFlowService {
       `Attempting to delete payment confirmation for flow ${paymentFlowId} with correlation ID ${correlationId}`,
     )
     try {
-      const deletedCount = await this.paymentFlowConfirmationModel.destroy({
+      const deletedCount = await this.cardPaymentDetailsModel.destroy({
         where: {
           id: correlationId,
           paymentFlowId: paymentFlowId,
@@ -691,6 +962,71 @@ export class PaymentFlowService {
         { error },
       )
       // Not re-throwing, to prevent disruption of a primary flow (e.g., refund)
+    }
+  }
+
+  async searchPaymentFlows(
+    payerNationalId?: string,
+    search?: string,
+    limit?: number,
+    after?: string,
+    before?: string,
+  ): Promise<GetPaymentFlowsPaginatedDTO> {
+    const where: WhereOptions<PaymentFlow> = {}
+
+    if (payerNationalId && isValid(payerNationalId)) {
+      where.payerNationalId = payerNationalId
+    }
+
+    if (search && search !== '') {
+      where.id = search
+    }
+
+    const paginatedResult = await paginate({
+      Model: this.paymentFlowModel,
+      primaryKeyField: 'id',
+      orderOption: [['created', 'DESC']],
+      where,
+      after: after || '',
+      before: before,
+      limit: limit || 10,
+      distinctCol: this.paymentFlowModel.primaryKeyAttribute,
+      include: [
+        {
+          model: PaymentFlowCharge,
+          as: 'charges',
+        },
+      ],
+    })
+
+    const paymentFlowDtos = await Promise.all(
+      paginatedResult.data.map(async (flow) => {
+        const paymentDetails = await this.getPaymentFlowChargeDetails(
+          flow.organisationId,
+          flow.charges,
+        )
+        const { paymentStatus, updatedAt } = await this.getPaymentFlowStatus(
+          flow,
+        )
+        const payerName = await this.getPayerName(flow.payerNationalId)
+
+        return {
+          ...flow.toJSON(),
+          productTitle: flow.productTitle ?? paymentDetails.firstProductTitle,
+          productPrice: paymentDetails.totalPrice,
+          payerName,
+          availablePaymentMethods:
+            flow.availablePaymentMethods as PaymentMethod[],
+          paymentStatus,
+          updatedAt,
+        }
+      }),
+    )
+
+    return {
+      data: paymentFlowDtos,
+      totalCount: paginatedResult.totalCount,
+      pageInfo: paginatedResult.pageInfo,
     }
   }
 }

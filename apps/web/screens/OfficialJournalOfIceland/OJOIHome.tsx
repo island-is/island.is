@@ -17,8 +17,8 @@ import { SLICE_SPACING } from '@island.is/web/constants'
 import {
   ContentLanguage,
   CustomPageUniqueIdentifier,
-  OfficialJournalOfIcelandAdvert,
   OfficialJournalOfIcelandAdvertMainCategory,
+  OfficialJournalOfIcelandAdvertsResponse,
   Query,
   QueryGetOrganizationArgs,
   QueryOfficialJournalOfIcelandAdvertsArgs,
@@ -103,7 +103,9 @@ const OJOIHomePage: CustomScreen<OJOIHomeProps> = ({
             },
             {
               title: 'Lög',
-              href: searchUrl + '?tegund=a-deild-log',
+              href:
+                searchUrl +
+                '?tegund=a-deild-log-log%2Ca-deild-log%2Cb-deild-log&sida=1&staerd=20',
               variant: 'purple',
             },
             {
@@ -115,6 +117,11 @@ const OJOIHomePage: CustomScreen<OJOIHomeProps> = ({
               title: 'Gjaldskrár',
               href: searchUrl + '?tegund=b-deild-gjaldskra',
               variant: 'purple',
+            },
+            {
+              title: 'Auglýsendur',
+              href: '/umsoknir/stjornartidindi',
+              variant: 'mint',
             },
           ]}
           breadCrumbs={
@@ -205,7 +212,7 @@ const OJOIHomePage: CustomScreen<OJOIHomeProps> = ({
 }
 
 interface OJOIHomeProps {
-  adverts: OfficialJournalOfIcelandAdvert[]
+  adverts: OfficialJournalOfIcelandAdvertsResponse['adverts']
   mainCategories?: OfficialJournalOfIcelandAdvertMainCategory[]
   organization?: Query['getOrganization']
   locale: Locale
@@ -230,7 +237,7 @@ const OJOIHome: CustomScreen<OJOIHomeProps> = ({
 }
 
 OJOIHome.getProps = async ({ apolloClient, locale }) => {
-  const adverts: OfficialJournalOfIcelandAdvert[] = []
+  const adverts: OfficialJournalOfIcelandAdvertsResponse['adverts'] = []
   const [
     {
       data: { officialJournalOfIcelandAdverts },

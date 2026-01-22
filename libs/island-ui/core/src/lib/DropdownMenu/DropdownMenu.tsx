@@ -96,7 +96,9 @@ export const DropdownMenu = ({
     <>
       {disclosure ? (
         <MenuButton {...menu} {...disclosure.props} {...hoverProps}>
-          {(disclosureProps) => React.cloneElement(disclosure, disclosureProps)}
+          {(disclosureProps: any) =>
+            React.cloneElement(disclosure, disclosureProps)
+          }
         </MenuButton>
       ) : (
         <MenuButton

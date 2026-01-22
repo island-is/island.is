@@ -26,6 +26,7 @@ import {
 import { Locale } from '@island.is/shared/types'
 import {
   AppendedArticleComponents,
+  FineAndSpeedMeasurementCalculator,
   HeadWithSocialSharing,
   InstitutionPanel,
   InstitutionsPanel,
@@ -38,11 +39,14 @@ import {
 } from '@island.is/web/components'
 import type {
   AllSlicesFragment as Slice,
+  ConnectedComponent,
   GetNamespaceQuery,
   GetSingleArticleQuery,
+  GetWebChatQuery,
   Organization,
   QueryGetNamespaceArgs,
   QueryGetSingleArticleArgs,
+  QueryGetWebChatArgs,
   Stepper as StepperSchema,
 } from '@island.is/web/graphql/schema'
 import { useNamespace, usePlausiblePageview } from '@island.is/web/hooks'
@@ -54,7 +58,11 @@ import { CustomNextError } from '@island.is/web/units/errors'
 import { extractNamespaceFromOrganization } from '@island.is/web/utils/extractNamespaceFromOrganization'
 import { createNavigation } from '@island.is/web/utils/navigation'
 import { getOrganizationLink } from '@island.is/web/utils/organization'
-import { webRichText } from '@island.is/web/utils/richText'
+import {
+  TranslationNamespaceProvider,
+  webRenderConnectedComponent,
+  webRichText,
+} from '@island.is/web/utils/richText'
 
 import {
   LinkResolverResponse,
@@ -65,6 +73,7 @@ import { useScrollPosition } from '../../hooks/useScrollPosition'
 import { scrollTo } from '../../hooks/useScrollSpy'
 import { SidebarLayout } from '../Layouts/SidebarLayout'
 import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from '../queries'
+import { GET_WEB_CHAT } from '../queries/WebChat'
 import { ArticleChatPanel } from './components/ArticleChatPanel'
 
 type Article = GetSingleArticleQuery['getSingleArticle']
@@ -335,6 +344,7 @@ export interface ArticleProps {
   stepOptionsFromNamespace: { data: Record<string, any>[]; slug: string }[]
   stepperNamespace: GetNamespaceQuery['getNamespace']
   organizationNamespace: Record<string, string>
+  webChat: GetWebChatQuery['getWebChat']
 }
 
 const ArticleScreen: Screen<ArticleProps> = ({
@@ -343,6 +353,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
   stepperNamespace,
   stepOptionsFromNamespace,
   organizationNamespace,
+  webChat,
 }) => {
   const { activeLocale } = useI18n()
   const portalRef = useRef()
@@ -488,6 +499,17 @@ const ArticleScreen: Screen<ArticleProps> = ({
     return items
   }, [article, inStepperView, subArticle])
 
+  const hasFineCalculator = article?.body?.some(
+    (content) =>
+      content.__typename === 'ConnectedComponent' &&
+      content.componentType === 'Police/FineAndSpeedMeasurementCalculator',
+  )
+
+  const chatBubbleIsPushedUp =
+    isVisible &&
+    (Boolean(processEntry?.processLink) || hasFineCalculator) &&
+    mounted
+
   const content = (
     <Box paddingTop={subArticle ? 2 : 4}>
       {!inStepperView && (
@@ -515,6 +537,26 @@ const ArticleScreen: Screen<ArticleProps> = ({
                     />
                   </Box>
                 ),
+                ConnectedComponent: (
+                  slice: ConnectedComponent & { componentType?: string },
+                ) => {
+                  if (
+                    slice.componentType !==
+                    'Police/FineAndSpeedMeasurementCalculator'
+                  ) {
+                    return webRenderConnectedComponent(slice)
+                  }
+                  return (
+                    <TranslationNamespaceProvider
+                      messages={slice.translationStrings ?? slice.json ?? {}}
+                    >
+                      <FineAndSpeedMeasurementCalculator
+                        slice={slice}
+                        chatBubbleIsPushedUp={chatBubbleIsPushedUp}
+                      />
+                    </TranslationNamespaceProvider>
+                  )
+                },
               },
             },
             activeLocale,
@@ -855,9 +897,8 @@ const ArticleScreen: Screen<ArticleProps> = ({
       </SidebarLayout>
       <ArticleChatPanel
         article={article}
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error make web strict
-        pushUp={isVisible && processEntry?.processLink && mounted}
+        pushUp={chatBubbleIsPushedUp}
+        webChat={webChat}
       />
       <div>
         <OrganizationFooter
@@ -937,6 +978,28 @@ ArticleScreen.getProps = async ({ apolloClient, query, locale }) => {
     article.organization?.[0],
   ) as Record<string, string>
 
+  const webChatDisplayLocationIds = [article.id]
+
+  const organizationId = article.organization?.[0]?.id
+  if (organizationId) webChatDisplayLocationIds.push(organizationId)
+
+  const webChatResponse = await Promise.allSettled([
+    apolloClient.query<GetWebChatQuery, QueryGetWebChatArgs>({
+      query: GET_WEB_CHAT,
+      variables: {
+        input: {
+          lang: locale,
+          displayLocationIds: webChatDisplayLocationIds,
+        },
+      },
+    }),
+  ])
+
+  const webChat =
+    webChatResponse?.[0]?.status === 'fulfilled'
+      ? webChatResponse[0].value?.data?.getWebChat
+      : null
+
   return {
     article,
     namespace,
@@ -944,6 +1007,7 @@ ArticleScreen.getProps = async ({ apolloClient, query, locale }) => {
     stepperNamespace,
     customTopLoginButtonItem: organizationNamespace?.customTopLoginButtonItem,
     organizationNamespace,
+    webChat,
     ...getThemeConfig(article),
   }
 }

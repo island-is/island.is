@@ -8,31 +8,31 @@
   "generators": {},
   "targets": {
     "build": {
-      "executor": "./tools/executors/node:build",
+      "executor": "@nx/esbuild:esbuild",
       "options": {
         "outputPath": "dist/apps/services/search-indexer",
         "main": "apps/services/search-indexer/src/main.ts",
         "tsConfig": "apps/services/search-indexer/tsconfig.app.json",
-        "assets": [
-          {
-            "glob": "config/**",
-            "input": "apps/services/search-indexer",
-            "output": "./"
-          },
-          {
-            "glob": "migrate*.js",
-            "input": "apps/services/search-indexer/migration-entrypoints",
-            "output": "./"
-          }
-        ],
-        "webpackConfig": "apps/services/search-indexer/webpack.config.js",
-        "maxWorkers": 2
+        "generatePackageJson": true,
+        "esbuildConfig": "tools/esbuild.config.js",
+        "format": ["cjs"]
       },
       "configurations": {
         "production": {
           "optimization": true,
           "extractLicenses": true,
-          "inspect": false
+          "assets": [
+            {
+              "glob": "config/**",
+              "input": "apps/services/search-indexer",
+              "output": "./"
+            },
+            {
+              "glob": "migrate*.js",
+              "input": "apps/services/search-indexer/migration-entrypoints",
+              "output": "./"
+            }
+          ]
         }
       },
       "outputs": ["{options.outputPath}"]
@@ -71,8 +71,8 @@
       },
       "outputs": ["{workspaceRoot}/coverage/apps/services/search-indexer"]
     },
-    "docker-express": {
-      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
+    "docker-express-yarn": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express-yarn`"
     }
   }
 }

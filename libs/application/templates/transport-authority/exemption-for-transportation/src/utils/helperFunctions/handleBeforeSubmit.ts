@@ -1,6 +1,22 @@
 import { FormValue } from '@island.is/application/types'
-import { ExemptionForTransportationAnswers } from '../..'
+import { ExemptionForTransportationAnswers, ExemptionType } from '../..'
 import { getValueViaPath } from '@island.is/application/core'
+
+export const getUpdatedConvoy = (
+  exemptionPeriod: ExemptionForTransportationAnswers['exemptionPeriod'],
+  convoy: ExemptionForTransportationAnswers['convoy'] | undefined,
+): ExemptionForTransportationAnswers['convoy'] | undefined => {
+  if (
+    exemptionPeriod.type === ExemptionType.SHORT_TERM &&
+    Array.isArray(convoy?.items) &&
+    convoy.items.length > 0
+  ) {
+    return {
+      ...convoy,
+      items: [convoy.items[0]],
+    }
+  }
+}
 
 export const checkIfConvoyChanged = (
   oldAnswers: FormValue,
@@ -37,6 +53,22 @@ export const checkIfConvoyChanged = (
   }
 
   return false
+}
+
+export const getUpdatedFreight = (
+  exemptionPeriod: ExemptionForTransportationAnswers['exemptionPeriod'],
+  freight: ExemptionForTransportationAnswers['freight'],
+): ExemptionForTransportationAnswers['freight'] | undefined => {
+  if (
+    exemptionPeriod.type === ExemptionType.SHORT_TERM &&
+    Array.isArray(freight?.items) &&
+    freight.items.length > 0
+  ) {
+    return {
+      ...freight,
+      items: [freight.items[0]],
+    }
+  }
 }
 
 export const checkIfFreightChanged = (
@@ -80,8 +112,8 @@ export const getUpdatedFreightPairingList = (
   freightPairingList:
     | ExemptionForTransportationAnswers['freightPairing']
     | undefined,
-  freight: ExemptionForTransportationAnswers['freight'],
-  convoy: ExemptionForTransportationAnswers['convoy'],
+  freight: ExemptionForTransportationAnswers['freight'] | undefined,
+  convoy: ExemptionForTransportationAnswers['convoy'] | undefined,
 ): ExemptionForTransportationAnswers['freightPairing'] | undefined => {
   if (!freightPairingList) return undefined
 
@@ -91,8 +123,8 @@ export const getUpdatedFreightPairingList = (
       .map((p) => [p.freightId, p]),
   )
 
-  return freight.items.map((freightItem) => {
-    const freightPairing = freightPairingMap.get(freightItem.freightId)
+  return freight?.items?.map((freightItem) => {
+    const freightPairing = freightPairingMap.get(freightItem.freightId ?? '')
     if (!freightPairing) return null
 
     if (freightPairing.items) {
@@ -102,9 +134,10 @@ export const getUpdatedFreightPairingList = (
           .map((c) => [c.convoyId, c]),
       )
 
-      freightPairing.items = convoy.items.map(
-        (convoyItem) => convoyItemMap.get(convoyItem.convoyId) ?? null,
-      )
+      freightPairing.items =
+        convoy?.items?.map(
+          (convoyItem) => convoyItemMap.get(convoyItem.convoyId ?? '') ?? null,
+        ) || []
     }
 
     return freightPairing
@@ -114,44 +147,46 @@ export const getUpdatedVehicleSpacing = (
   vehicleSpacing:
     | ExemptionForTransportationAnswers['vehicleSpacing']
     | undefined,
-  convoy: ExemptionForTransportationAnswers['convoy'],
+  convoy: ExemptionForTransportationAnswers['convoy'] | undefined,
 ): ExemptionForTransportationAnswers['vehicleSpacing'] | undefined => {
   if (!vehicleSpacing) return undefined
 
   const map = new Map(vehicleSpacing.convoyList.map((s) => [s.convoyId, s]))
 
-  vehicleSpacing.convoyList = convoy.items.map(
-    (convoyItem) =>
-      map.get(convoyItem.convoyId) ?? {
-        convoyId: convoyItem.convoyId,
-        hasTrailer: false,
-      },
-  )
+  vehicleSpacing.convoyList =
+    convoy?.items?.map(
+      (convoyItem) =>
+        map.get(convoyItem.convoyId ?? '') ?? {
+          convoyId: convoyItem.convoyId ?? '',
+          hasTrailer: false,
+        },
+    ) || []
 
   return vehicleSpacing
 }
 
 export const getUpdatedAxleSpacing = (
   axleSpacing: ExemptionForTransportationAnswers['axleSpacing'] | undefined,
-  convoy: ExemptionForTransportationAnswers['convoy'],
+  convoy: ExemptionForTransportationAnswers['convoy'] | undefined,
 ): ExemptionForTransportationAnswers['axleSpacing'] | undefined => {
   if (!axleSpacing) return undefined
 
-  const vehiclePermnoSet = new Set(convoy.items.map((c) => c.vehicle.permno))
+  const vehiclePermnoSet = new Set(convoy?.items?.map((c) => c.vehicle.permno))
 
   const trailerPermnoSet = new Set(
-    convoy.items
-      .filter((c) => c.trailer?.permno)
-      .map((c) => c.trailer?.permno || ''),
+    convoy?.items
+      ?.filter((c) => c.trailer?.permno)
+      ?.map((c) => c.trailer?.permno || ''),
   )
 
   axleSpacing.vehicleList = axleSpacing.vehicleList.filter((v) =>
     vehiclePermnoSet.has(v.permno),
   )
 
-  axleSpacing.trailerList = axleSpacing.trailerList.filter((t) =>
-    trailerPermnoSet.has(t.permno),
-  )
+  if (axleSpacing.trailerList)
+    axleSpacing.trailerList = axleSpacing.trailerList.filter((t) =>
+      trailerPermnoSet.has(t.permno),
+    )
 
   return axleSpacing
 }

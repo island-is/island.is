@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
-import { IslyklarApi } from '@island.is/clients/islykill'
+import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import { V2MeApi } from '@island.is/clients/user-profile'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import {
@@ -19,19 +18,22 @@ import { Inject } from '@nestjs/common'
 import { ConfigService, ConfigType } from '@nestjs/config'
 import { getConfigValue } from '../../shared.utils'
 import { TemplateApiError } from '@island.is/nest/problem'
-import { FetchError } from '@island.is/clients/middlewares'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { CodeOwner } from '@island.is/nest/core'
 import { CodeOwners } from '@island.is/shared/constants'
+import {
+  BankinfoClientService,
+  formatBankInfo,
+} from '@island.is/clients/fjs/bank-info'
 
 @Injectable()
 @CodeOwner(CodeOwners.NordaApplications)
 export class UserProfileService extends BaseTemplateApiService {
   constructor(
     private readonly userProfileApi: V2MeApi,
-    private readonly islyklarApi: IslyklarApi,
+    private readonly bankinfoClientService: BankinfoClientService,
     @Inject(IdsClientConfig.KEY)
-    private idsClientConfig: ConfigType<typeof IdsClientConfig>,
+    private readonly idsClientConfig: ConfigType<typeof IdsClientConfig>,
     @Inject(ConfigService)
     private readonly configService: ConfigService<SharedModuleConfig>,
   ) {
@@ -59,26 +61,50 @@ export class UserProfileService extends BaseTemplateApiService {
         throw error
       })
 
+    const bankInfoRes =
+      await this.bankinfoClientService.getBankAccountsForNationalId(
+        auth.nationalId,
+      )
+
+    if (params?.validateBankInformation) {
+      if (!bankInfoRes) {
+        throw new TemplateApiError(
+          {
+            title: coreErrorMessages.noBankAccountError,
+            summary: {
+              ...coreErrorMessages.noBankAccountErrorDescription,
+              values: {
+                link: this.getIDSLink(application),
+              },
+            },
+          },
+          400,
+        )
+      }
+      if (bankInfoRes) {
+        if (!bankInfoRes?.bankAccountInfo || bankInfoRes.error) {
+          // If individual does not have a valid bank account, then we fail this check
+          throw new TemplateApiError(
+            {
+              title: coreErrorMessages.invalidBankAccountError,
+              summary: coreErrorMessages.invalidBankAccountError,
+            },
+            400,
+          )
+        }
+      }
+    }
+
+    const bankInfo = bankInfoRes
+      ? formatBankInfo(bankInfoRes.bankAccountInfo)
+      : undefined
+
     if (isRunningOnEnvironment('local') && !mobilePhoneNumber && !email) {
       return {
         email: 'mockEmail@island.is',
         mobilePhoneNumber: '9999999',
+        bankInfo: bankInfo ?? undefined,
       }
-    }
-
-    /// Temporary dependency on íslykill for bank info retrieval via FJS API.
-    /// A refactor is planned to integrate bank info directly from FJS API to eliminate íslykill dependency.
-    const bankInfo = await this.getBankInfoFromIslykill(auth)
-
-    if (params?.validateBankInformation && !bankInfo) {
-      // If individual does not have a valid bank account, then we fail this check
-      throw new TemplateApiError(
-        {
-          title: coreErrorMessages.noBankAccountError,
-          summary: coreErrorMessages.noBankAccountError,
-        },
-        400,
-      )
     }
 
     const isActor = !!auth.actor?.nationalId
@@ -132,7 +158,7 @@ export class UserProfileService extends BaseTemplateApiService {
     return {
       mobilePhoneNumber: mobilePhoneNumber ?? undefined,
       email: email ?? undefined,
-      bankInfo,
+      bankInfo: bankInfo ?? undefined,
     }
   }
 
@@ -141,39 +167,17 @@ export class UserProfileService extends BaseTemplateApiService {
     return phone && phone.isValid()
   }
 
-  private async getBankInfoFromIslykill(
-    auth: User,
-  ): Promise<string | undefined> {
-    return this.islyklarApi
-      .islyklarGet({ ssn: auth.nationalId })
-      .then((results) => {
-        return results?.bankInfo
-      })
-      .catch((error) => {
-        if (isRunningOnEnvironment('local')) {
-          return '0000-11-222222'
-        } else if (error instanceof FetchError && error.status === 404) {
-          return undefined
-        }
-        throw error
-      })
-  }
-
   private getIDSLink(
     application: ApplicationWithAttachments,
-    include: { email?: boolean; phone?: boolean },
+    include?: { email?: boolean; phone?: boolean },
   ) {
     let idsUserProfileLink = ''
-    if (include.email && include.phone) {
-      idsUserProfileLink = '/app/user-profile/'
-    } else if (include.email) {
+    if (include?.email) {
       idsUserProfileLink = '/app/user-profile/email'
-    } else if (include.phone) {
+    } else if (include?.phone) {
       idsUserProfileLink = '/app/user-profile/phone'
-    }
-
-    if (!idsUserProfileLink) {
-      throw new Error('Missing user profile link type')
+    } else {
+      idsUserProfileLink = '/app/user-profile/'
     }
 
     const slug = getSlugFromType(application.typeId)

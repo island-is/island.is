@@ -1,0 +1,57 @@
+{
+  "name": "services-payment-flow-update-handler",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/services/payment-flow-update-handler/src",
+  "projectType": "application",
+  "tags": ["scope:api"],
+  "targets": {
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/services/payment-flow-update-handler",
+        "main": "apps/services/payment-flow-update-handler/src/main.ts",
+        "tsConfig": "apps/services/payment-flow-update-handler/tsconfig.app.json",
+        "generatePackageJson": true,
+        "esbuildConfig": "tools/esbuild.config.js",
+        "format": ["cjs"]
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "assets": ["apps/services/payment-flow-update-handler/src/assets"]
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "options": {
+        "buildTarget": "services-payment-flow-update-handler:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "services-payment-flow-update-handler:build:development"
+        },
+        "production": {
+          "buildTarget": "services-payment-flow-update-handler:build:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/apps/services/payment-flow-update-handler"
+      ],
+      "options": {
+        "jestConfig": "apps/services/payment-flow-update-handler/jest.config.ts"
+      }
+    },
+    "docker-express-yarn": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express-yarn`"
+    }
+  }
+}

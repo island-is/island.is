@@ -1,5 +1,6 @@
 import format from 'date-fns/format'
-import { uuid } from 'uuidv4'
+import { Transaction } from 'sequelize'
+import { v4 as uuid } from 'uuid'
 
 import { User } from '@island.is/judicial-system/types'
 
@@ -9,7 +10,7 @@ import { nowFactory } from '../../../../factories'
 import { getCourtRecordPdfAsBuffer } from '../../../../formatters'
 import { randomDate } from '../../../../test'
 import { CourtService } from '../../../court'
-import { Case } from '../../models/case.model'
+import { Case } from '../../../repository'
 import { DeliverResponse } from '../../models/deliver.response'
 
 jest.mock('../../../../formatters/courtRecordPdf')
@@ -27,14 +28,21 @@ describe('InternalCaseController - Deliver court record to court', () => {
   const user = { id: userId } as User
 
   let mockCourtService: CourtService
+  let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
     const mockGet = getCourtRecordPdfAsBuffer as jest.Mock
     mockGet.mockRejectedValue(new Error('Some error'))
 
-    const { courtService, internalCaseController } =
+    const { sequelize, courtService, internalCaseController } =
       await createTestingCaseModule()
+
+    const mockTransaction = sequelize.transaction as jest.Mock
+    transaction = {} as Transaction
+    mockTransaction.mockImplementationOnce(
+      (fn: (transaction: Transaction) => unknown) => fn(transaction),
+    )
 
     mockCourtService = courtService
     const mockCreateCourtRecord =

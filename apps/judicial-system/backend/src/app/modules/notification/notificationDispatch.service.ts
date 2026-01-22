@@ -13,14 +13,15 @@ import {
   EventNotificationType,
   IndictmentCaseNotificationType,
   InstitutionNotificationType,
+  InstitutionType,
   isIndictmentCase,
   NotificationDispatchType,
   prosecutorsOfficeTypes,
   UserDescriptor,
 } from '@island.is/judicial-system/types'
 
-import { Case } from '../case'
-import { Institution, InstitutionService } from '../institution'
+import { InstitutionService } from '../institution'
+import { Case, Institution } from '../repository'
 import { DeliverResponse } from './models/deliver.response'
 
 @Injectable()
@@ -49,6 +50,24 @@ export class NotificationDispatchService {
     return this.messageService.sendMessagesToQueue(messages)
   }
 
+  private async dispatchPublicProsecutorVerdictAppealDeadlineReminderNotification(): Promise<void> {
+    const publicProsecutorOffices = await this.institutionService.getAll([
+      InstitutionType.PUBLIC_PROSECUTORS_OFFICE,
+    ])
+
+    const messages = publicProsecutorOffices.map(
+      (prosecutorsOffice: Institution) => ({
+        type: MessageType.INSTITUTION_NOTIFICATION,
+        body: {
+          type: InstitutionNotificationType.PUBLIC_PROSECUTOR_VERDICT_APPEAL_DEADLINE_REMINDER,
+          prosecutorsOfficeId: prosecutorsOffice.id,
+        },
+      }),
+    )
+
+    return this.messageService.sendMessagesToQueue(messages)
+  }
+
   async dispatchNotification(
     type: NotificationDispatchType,
   ): Promise<DeliverResponse> {
@@ -56,6 +75,9 @@ export class NotificationDispatchService {
       switch (type) {
         case NotificationDispatchType.INDICTMENTS_WAITING_FOR_CONFIRMATION:
           await this.dispatchIndictmentsWaitingForConfirmationNotification()
+          break
+        case NotificationDispatchType.PUBLIC_PROSECUTOR_VERDICT_APPEAL_DEADLINE_REMINDER:
+          await this.dispatchPublicProsecutorVerdictAppealDeadlineReminderNotification()
           break
         default:
           throw new InternalServerErrorException(

@@ -25,7 +25,7 @@ export class ValueTypeFactory {
         return this.pickSettings(valueType, keys)
       case FieldTypesEnum.CANDIDATE:
         keys = [
-          'kennitala',
+          'nationalId',
           'name',
           'address',
           'postalCode',
@@ -84,6 +84,19 @@ export class ValueTypeFactory {
         return this.pickSettings(valueType, keys)
       case FieldTypesEnum.PAYMENT:
         keys = ['paymentCode']
+        return this.pickSettings(valueType, keys)
+      case FieldTypesEnum.APPLICANT:
+        keys = [
+          'nationalId',
+          'name',
+          'address',
+          'postalCode',
+          'municipality',
+          'email',
+          'phoneNumber',
+          'applicantType',
+          'isLoggedInUser',
+        ]
         return this.pickSettings(valueType, keys)
       default:
         return undefined

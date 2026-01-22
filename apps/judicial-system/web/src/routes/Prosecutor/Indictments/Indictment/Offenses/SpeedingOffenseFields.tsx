@@ -3,6 +3,7 @@ import { useIntl } from 'react-intl'
 import { InputMask } from '@react-input/mask'
 
 import { Box, Input } from '@island.is/island-ui/core'
+import { SPEED } from '@island.is/judicial-system/consts'
 import { SectionHeading } from '@island.is/judicial-system-web/src/components'
 import {
   Case,
@@ -10,7 +11,10 @@ import {
   Offense,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { removeErrorMessageIfValid } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { UpdateIndictmentCount } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  UpdateIndictmentCount,
+  UpdateIndictmentCountState,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { strings } from './SpeedingOffenseFields.strings'
 
@@ -28,9 +32,8 @@ export const SpeedingOffenseFields = ({
   ) => void
   updateIndictmentCountState: (
     indictmentCountId: string,
-    update: UpdateIndictmentCount,
+    update: UpdateIndictmentCountState,
     setWorkingCase: Dispatch<SetStateAction<Case>>,
-    updatedOffenses?: Offense[],
   ) => void
 }) => {
   const { formatMessage } = useIntl()
@@ -49,7 +52,7 @@ export const SpeedingOffenseFields = ({
       <Box marginBottom={1}>
         <InputMask
           component={Input}
-          mask="___"
+          mask={SPEED}
           replacement={{ _: /\d/ }}
           value={indictmentCount.recordedSpeed?.toString() ?? ''}
           onChange={(event) => {
@@ -76,9 +79,7 @@ export const SpeedingOffenseFields = ({
               return
             }
 
-            handleIndictmentCountChanges({
-              recordedSpeed,
-            })
+            handleIndictmentCountChanges({ recordedSpeed })
           }}
           name="recordedSpeed"
           autoComplete="off"
@@ -91,7 +92,7 @@ export const SpeedingOffenseFields = ({
       </Box>
       <InputMask
         component={Input}
-        mask="___"
+        mask={SPEED}
         replacement={{ _: /\d/ }}
         value={indictmentCount.speedLimit?.toString() ?? ''}
         onChange={(event) => {
@@ -118,9 +119,7 @@ export const SpeedingOffenseFields = ({
             return
           }
 
-          handleIndictmentCountChanges({
-            speedLimit,
-          })
+          handleIndictmentCountChanges({ speedLimit })
         }}
         name="speedLimit"
         autoComplete="off"

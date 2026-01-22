@@ -12,8 +12,20 @@ export const exportedApis = [HomeApi].map((Api) => ({
     return new Api(
       new Configuration({
         fetchApi: createEnhancedFetch({
-          name: Api.name,
+          name: 'clients-hms-rental-agreement',
           organizationSlug: 'hms',
+          timeout: 30000,
+          autoAuth: {
+            mode: 'token',
+            issuer: '',
+            tokenEndpoint: config.authTokenEndpoint.replace(
+              '{TENANT_ID}',
+              config.authTenantId,
+            ),
+            clientId: config.authClientId,
+            clientSecret: config.authClientSecret,
+            scope: [`api://${config.authClientId}/.default`],
+          },
         }),
         headers: { 'X-Road-Client': xRoadConfig.xRoadClient },
         basePath: `${xRoadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,

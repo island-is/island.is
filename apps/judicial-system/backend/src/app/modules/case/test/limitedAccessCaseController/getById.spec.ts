@@ -1,4 +1,5 @@
-import { uuid } from 'uuidv4'
+import { Transaction } from 'sequelize'
+import { v4 as uuid } from 'uuid'
 
 import { type User, UserRole } from '@island.is/judicial-system/types'
 
@@ -6,7 +7,7 @@ import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { nowFactory } from '../../../../factories'
 import { randomDate } from '../../../../test'
-import { Case } from '../../models/case.model'
+import { Case, CaseRepositoryService } from '../../../repository'
 
 jest.mock('../../../../factories')
 interface Then {
@@ -21,16 +22,17 @@ type GivenWhenThen = (
 ) => Promise<Then>
 
 describe('LimitedAccessCaseController - Get by id', () => {
-  let givenWhenThen: GivenWhenThen
   const openedBeforeDate = randomDate()
   const openedNowDate = randomDate()
   const caseId = uuid()
   const defaultUser = { id: uuid() } as User
 
-  let mockCaseModel: typeof Case
+  let mockCaseRepositoryService: CaseRepositoryService
+  let transaction: Transaction
+  let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { caseModel, limitedAccessCaseController } =
+    const { sequelize, caseRepositoryService, limitedAccessCaseController } =
       await createTestingCaseModule()
 
     const updatedCase = {
@@ -38,12 +40,18 @@ describe('LimitedAccessCaseController - Get by id', () => {
       openedByDefender: openedNowDate,
     } as Case
 
+    const mockTransaction = sequelize.transaction as jest.Mock
+    transaction = {} as Transaction
+    mockTransaction.mockImplementationOnce(
+      (fn: (transaction: Transaction) => unknown) => fn(transaction),
+    )
+
     const mockToday = nowFactory as jest.Mock
     mockToday.mockReturnValueOnce(openedNowDate)
-    mockCaseModel = caseModel
-    const mockUpdate = mockCaseModel.update as jest.Mock
-    mockUpdate.mockResolvedValue([1])
-    const mockFindOne = mockCaseModel.findOne as jest.Mock
+    mockCaseRepositoryService = caseRepositoryService
+    const mockUpdate = mockCaseRepositoryService.update as jest.Mock
+    mockUpdate.mockResolvedValue(updatedCase)
+    const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
     mockFindOne.mockResolvedValue(updatedCase)
 
     givenWhenThen = async (
@@ -81,7 +89,7 @@ describe('LimitedAccessCaseController - Get by id', () => {
 
     it('should return the case', () => {
       expect(then.result).toBe(theCase)
-      expect(mockCaseModel.update).toHaveBeenCalledTimes(0)
+      expect(mockCaseRepositoryService.update).toHaveBeenCalledTimes(0)
     })
   })
 
@@ -96,9 +104,10 @@ describe('LimitedAccessCaseController - Get by id', () => {
 
     it('should update openedByDefender and return case', () => {
       expect(then.result.openedByDefender).toBe(openedNowDate)
-      expect(mockCaseModel.update).toHaveBeenCalledWith(
+      expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
         { openedByDefender: openedNowDate },
-        { where: { id: caseId } },
+        { transaction },
       )
     })
   })

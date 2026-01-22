@@ -2,21 +2,25 @@ import {
   buildAsyncSelectField,
   buildDateField,
   buildDescriptionField,
-  buildFileUploadField,
   buildMultiField,
   buildRadioField,
   buildSubSection,
   buildTextField,
+  coreErrorMessages,
   YES,
 } from '@island.is/application/core'
 import { siaUnionsQuery } from '@island.is/application/templates/social-insurance-administration-core/graphql/queries'
-import { fileUploadSharedProps } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
-import { SiaUnionsQuery } from '@island.is/application/templates/social-insurance-administration-core/types/schema'
+import { Query } from '@island.is/api/schema'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../../../lib/messages'
-import { shouldShowUnionSickPayUnionAndEndDate } from '../../../utils/conditionUtils'
+import {
+  isFirstApplication,
+  shouldShowUnionSickPayUnionAndEndDate,
+} from '../../../utils/conditionUtils'
 import {
   getApplicationAnswers,
   getYesNoNotApplicableOptions,
+  hasNotUtilizedRights,
+  hasUtilizedRights,
 } from '../../../utils/medicalAndRehabilitationPaymentsUtils'
 
 export const unionSickPaySubSection = buildSubSection({
@@ -24,6 +28,7 @@ export const unionSickPaySubSection = buildSubSection({
   title:
     medicalAndRehabilitationPaymentsFormMessage.generalInformation
       .unionSickPaySubSectionTitle,
+  condition: (_, externalData) => isFirstApplication(externalData),
   children: [
     buildMultiField({
       id: 'unionSickPay',
@@ -75,9 +80,10 @@ export const unionSickPaySubSection = buildSubSection({
           id: 'unionSickPay.hasUtilizedUnionSickPayRights',
           options: getYesNoNotApplicableOptions(),
           required: true,
+          clearOnChange: [`unionSickPay.endDate`],
         }),
         buildDescriptionField({
-          id: 'unionSickPay.unionNationalId.description',
+          id: 'unionSickPay.unionInfo.description',
           title:
             medicalAndRehabilitationPaymentsFormMessage.generalInformation
               .unionSickPayUnionDescriptionTitle,
@@ -87,7 +93,7 @@ export const unionSickPaySubSection = buildSubSection({
             shouldShowUnionSickPayUnionAndEndDate(answers),
         }),
         buildAsyncSelectField({
-          id: 'unionSickPay.unionNationalId',
+          id: 'unionSickPay.unionInfo',
           title:
             medicalAndRehabilitationPaymentsFormMessage.generalInformation
               .unionSickPayUnionSelectTitle,
@@ -95,26 +101,23 @@ export const unionSickPaySubSection = buildSubSection({
             medicalAndRehabilitationPaymentsFormMessage.generalInformation
               .unionSickPayUnionSelectPlaceholder,
           required: true,
-          condition: (answers) =>
-            shouldShowUnionSickPayUnionAndEndDate(answers),
+          loadingError: coreErrorMessages.failedDataProvider,
           loadOptions: async ({ apolloClient }) => {
-            const { data, error } = await apolloClient.query<SiaUnionsQuery>({
+            const { data } = await apolloClient.query<Query>({
               query: siaUnionsQuery,
             })
 
-            if (error) {
-              return []
-            }
-
             return (
-              data?.socialInsuranceUnions
+              data?.socialInsuranceGeneral?.unions
                 ?.map(({ name, nationalId }) => ({
-                  value: nationalId || '',
+                  value: `${nationalId}::${name}` || '',
                   label: name || '',
                 }))
                 .sort((a, b) => a.label.localeCompare(b.label)) ?? []
             )
           },
+          condition: (answers) =>
+            shouldShowUnionSickPayUnionAndEndDate(answers),
         }),
         buildDescriptionField({
           id: 'unionSickPay.endDate.description',
@@ -138,34 +141,24 @@ export const unionSickPaySubSection = buildSubSection({
         }),
         buildDateField({
           id: 'unionSickPay.endDate',
+          minDate: (application) => {
+            const { hasUtilizedUnionSickPayRights } = getApplicationAnswers(
+              application.answers,
+            )
+            return hasNotUtilizedRights(hasUtilizedUnionSickPayRights)
+          },
+          maxDate: (application) => {
+            const { hasUtilizedUnionSickPayRights } = getApplicationAnswers(
+              application.answers,
+            )
+            return hasUtilizedRights(hasUtilizedUnionSickPayRights)
+          },
           title: medicalAndRehabilitationPaymentsFormMessage.shared.date,
           placeholder:
             medicalAndRehabilitationPaymentsFormMessage.shared.datePlaceholder,
           required: true,
           condition: (answers) =>
             shouldShowUnionSickPayUnionAndEndDate(answers),
-        }),
-        buildDescriptionField({
-          id: 'unionSickPay.fileupload.description',
-          title:
-            medicalAndRehabilitationPaymentsFormMessage.shared
-              .uploadConfirmationDocument,
-          titleVariant: 'h4',
-          space: 4,
-          condition: (answers) => {
-            const { hasUtilizedUnionSickPayRights } =
-              getApplicationAnswers(answers)
-            return hasUtilizedUnionSickPayRights === YES
-          },
-        }),
-        buildFileUploadField({
-          id: 'unionSickPay.fileupload',
-          ...fileUploadSharedProps,
-          condition: (answers) => {
-            const { hasUtilizedUnionSickPayRights } =
-              getApplicationAnswers(answers)
-            return hasUtilizedUnionSickPayRights === YES
-          },
         }),
       ],
     }),

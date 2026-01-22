@@ -1,6 +1,6 @@
 {
   "presets": [
-    "@nrwl/js/babel",
+    "@nx/js/babel",
     "next/babel",
     "../../libs/shared/babel/web",
     "@babel/preset-env",

@@ -1,142 +1,145 @@
 import { useLocale } from '@island.is/localization'
 import {
-  ActionCard,
   Box,
   Button,
   GridColumn,
   GridRow,
   Icon,
-  Stack,
   Tag,
   Text,
 } from '@island.is/island-ui/core'
-import { useEffect, useState } from 'react'
-import { Modal } from '@island.is/react/components'
 import {
   SignatureCollection,
-  SignatureCollectionAreaSummaryReport,
+  SignatureCollectionCollectionType,
 } from '@island.is/api/schema'
 import { m } from '../../lib/messages'
-import { usePDF } from '@react-pdf/renderer'
+import { pdf } from '@react-pdf/renderer'
 import MyPdfDocument from './MyPdfDocument'
 import { SignatureCollectionAreaSummaryReportDocument } from './MyPdfDocument/areaSummary.generated'
 import { useLazyQuery } from '@apollo/client'
+import { useParams } from 'react-router-dom'
+import { SignatureCollectionAdminCandidateReportDocument } from './MyPdfDocument/candidateSummary.generated'
 
 export const DownloadReports = ({
   collection,
 }: {
   collection: SignatureCollection
 }) => {
+  const { collectionType } = collection
   const { formatMessage } = useLocale()
-  const [modalDownloadReportsIsOpen, setModalDownloadReportsIsOpen] =
-    useState(false)
-  const [pdfState, setPdfState] = useState({ areaId: '', pdfUrl: '' })
-
-  const [runGetSummaryReport, { data }] = useLazyQuery(
+  const [getAreaReport, { loading: loadingSummary }] = useLazyQuery(
     SignatureCollectionAreaSummaryReportDocument,
   )
+  const [getCandidateReport, { loading: loadingCandidate }] = useLazyQuery(
+    SignatureCollectionAdminCandidateReportDocument,
+  )
+  const instance = pdf(undefined)
 
-  const [document, updateDocument] = usePDF({
-    document: data && (
-      <MyPdfDocument
-        report={
-          data?.signatureCollectionAreaSummaryReport as SignatureCollectionAreaSummaryReport
-        }
-      />
-    ),
-  })
+  const { municipality, constituencyName, candidateId } = useParams<{
+    municipality?: string
+    constituencyName?: string
+    candidateId?: string
+  }>()
 
-  const handleDownloadClick = (area: string) => {
-    // Fetch the report if it has not been fetched yet
-    if (area !== pdfState.areaId) {
-      runGetSummaryReport({
+  // area is used for LocalGovernmental and Parliamentary collections,
+  // candidate is used for Presidential collections
+  const target =
+    collectionType === SignatureCollectionCollectionType.LocalGovernmental
+      ? collection.areas.find((a) => a.name === municipality)
+      : collectionType === SignatureCollectionCollectionType.Parliamentary
+      ? collection.areas.find((a) => a.name === constituencyName)
+      : collection.candidates.find((c) => c.id === candidateId)
+
+  const handleDownloadCandidateReport = async () => {
+    if (!loadingCandidate) {
+      getCandidateReport({
         variables: {
           input: {
-            areaId: area,
-            collectionId: collection?.id,
+            candidateId: target?.id,
+            collectionType,
           },
         },
+        onCompleted: (res) => {
+          instance.updateContainer(
+            <MyPdfDocument
+              report={res.signatureCollectionAdminCandidateReport}
+            />,
+            async () => {
+              const url = await instance
+                .toBlob()
+                .then((b) => URL.createObjectURL(b))
+              window.open(url, '_blank')
+            },
+          )
+        },
+        fetchPolicy: 'no-cache',
       })
-      setPdfState({ ...pdfState, areaId: area })
-    } else {
-      // Open the document in a new tab if it has already been fetched
-      window.open(document?.url?.toString(), '_blank')
     }
   }
 
-  // Update pdf document after correct data is fetched
-  useEffect(() => {
-    if (data?.signatureCollectionAreaSummaryReport?.id === pdfState.areaId) {
-      updateDocument()
+  const handleDownloadAreaReport = async () => {
+    if (!loadingSummary) {
+      getAreaReport({
+        variables: {
+          input: {
+            areaId: target?.id,
+            collectionId:
+              collectionType ===
+              SignatureCollectionCollectionType.LocalGovernmental
+                ? target?.collectionId
+                : collection?.id,
+          },
+        },
+        onCompleted: (res) => {
+          instance.updateContainer(
+            <MyPdfDocument report={res.signatureCollectionAreaSummaryReport} />,
+            async () => {
+              const url = await instance
+                .toBlob()
+                .then((b) => URL.createObjectURL(b))
+              window.open(url, '_blank')
+            },
+          )
+        },
+        fetchPolicy: 'no-cache',
+      })
     }
-  }, [data, pdfState, updateDocument])
-
-  // Open the document in a new tab when it has been generated
-  useEffect(() => {
-    if (document.url && document.url !== pdfState.pdfUrl) {
-      window.open(document.url, '_blank')
-      setPdfState({ ...pdfState, pdfUrl: document?.url ?? '' })
-    }
-  }, [document.url, pdfState])
+  }
 
   return (
-    <Box>
-      <GridRow>
-        <GridColumn span={['12/12', '12/12', '12/12', '10/12']}>
-          <Box display="flex">
+    <GridRow>
+      <GridColumn span={['12/12', '12/12', '12/12', '10/12']}>
+        <Box display="flex">
+          <Box marginTop={1}>
             <Tag>
               <Box display="flex" justifyContent="center">
                 <Icon icon="document" type="outline" color="blue600" />
               </Box>
             </Tag>
-            <Box marginLeft={5}>
-              <Text variant="h4">{formatMessage(m.downloadReports)}</Text>
-              <Text marginBottom={2}>
-                Texti sem útskýrir þessa aðgerð betur kemur hér.
-              </Text>
-              <Button
-                variant="text"
-                size="small"
-                onClick={() => setModalDownloadReportsIsOpen(true)}
-              >
-                {formatMessage(m.downloadReports)}
-              </Button>
-            </Box>
           </Box>
-        </GridColumn>
-      </GridRow>
-      <Modal
-        id="downloadReports"
-        isVisible={modalDownloadReportsIsOpen}
-        title={formatMessage(m.downloadReports)}
-        label={''}
-        onClose={() => {
-          setModalDownloadReportsIsOpen(false)
-        }}
-        closeButtonLabel={''}
-      >
-        <Text>{formatMessage(m.downloadReportsDescription)}</Text>
-        <Box marginY={5}>
-          <Stack space={3}>
-            {collection?.areas.map((area) => (
-              <ActionCard
-                key={area.id}
-                heading={formatMessage(area.name)}
-                headingVariant="h4"
-                backgroundColor="blue"
-                cta={{
-                  label: formatMessage(m.downloadButton),
-                  variant: 'text',
-                  icon: 'download',
-                  iconType: 'outline',
-                  onClick: () => handleDownloadClick(area.id),
-                }}
-              />
-            ))}
-          </Stack>
+          <Box marginLeft={3}>
+            <Text variant="h4">{formatMessage(m.downloadReport)}</Text>
+            <Text marginBottom={2}>
+              {formatMessage(m.downloadReportsDescription)}
+            </Text>
+            <Button
+              variant="text"
+              size="small"
+              disabled={loadingSummary || loadingCandidate}
+              loading={loadingSummary || loadingCandidate}
+              onClick={() =>
+                collectionType ===
+                SignatureCollectionCollectionType.Presidential
+                  ? handleDownloadCandidateReport()
+                  : handleDownloadAreaReport()
+              }
+            >
+              {formatMessage(m.downloadReport)}
+            </Button>
+          </Box>
         </Box>
-      </Modal>
-    </Box>
+      </GridColumn>
+    </GridRow>
   )
 }
 

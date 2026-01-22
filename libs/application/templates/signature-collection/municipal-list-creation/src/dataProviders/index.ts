@@ -10,11 +10,6 @@ export const MunicipalCollectionApi = defineTemplateApi({
   order: 1,
 })
 
-export const MunicipalIdentityApi = defineTemplateApi({
-  action: 'municipalIdentity',
-  order: 2,
-})
-
 export const IsDelegatedToCompanyApi = defineTemplateApi({
   action: 'delegatedToCompany',
 })

@@ -16,6 +16,8 @@ export const fileUploadSection = buildSection({
       children: [
         buildFileUploadField({
           id: 'fileUpload',
+          // uploadMultiple: true, // TODO: Uncomment this once we have a way to upload multiple files
+          // maxFileCount: 3,
         }),
       ],
     }),

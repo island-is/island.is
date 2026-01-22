@@ -157,6 +157,16 @@ const AccessControl: FC<React.PropsWithChildren<unknown>> = () => {
     recyclingPartnerByIdLoading ||
     userMunicipalityLoading
 
+  const initialLoading =
+    recyclingPartnerLoading &&
+    !recyclingPartnerData &&
+    accessControlsLoading &&
+    !accessControlsData &&
+    recyclingPartnerByIdLoading &&
+    !recyclingPartnerByIdData &&
+    userMunicipalityLoading &&
+    !userMunicipalityData
+
   const isData =
     !!recyclingPartnerData || !!recyclingPartnerByIdData || !!accessControlsData
 
@@ -294,7 +304,7 @@ const AccessControl: FC<React.PropsWithChildren<unknown>> = () => {
   }
 
   return (
-    <AuthGuard permission="accessControl" loading={loading}>
+    <AuthGuard permission="accessControl" loading={initialLoading}>
       <PartnerPageLayout side={<NavigationLinks activeSection={3} />}>
         <Stack space={4}>
           <Box>

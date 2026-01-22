@@ -48,7 +48,7 @@ const ProjectNewsArticle: Screen<ProjectNewsArticleleProps> = ({
   // @ts-ignore make web strict
   const n = useNamespace(namespace)
   useContentfulId(projectPage.id, newsItem?.id)
-  useLocalLinkTypeResolver()
+  useLocalLinkTypeResolver('projectnews')
 
   const overviewPath: string = Router.asPath.substring(
     0,
@@ -169,6 +169,17 @@ ProjectNewsArticle.getProps = async ({ apolloClient, locale, query }) => {
 
   if (!newsItem) {
     throw new CustomNextError(404, 'News not found')
+  }
+
+  const newsItemBelongsToProject = newsItem.genericTags.some(
+    (tag) => tag.id === projectPage.newsTag?.id,
+  )
+
+  if (!newsItemBelongsToProject) {
+    throw new CustomNextError(
+      404,
+      `News item ${newsItem.slug} does not belong to project ${projectPage.slug}`,
+    )
   }
 
   return {

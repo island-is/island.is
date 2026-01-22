@@ -1,0 +1,37 @@
+import { Meta, Story, Canvas, Controls, Description } from '@storybook/blocks'
+import * as FormStepperStories from './FormStepper.stories'
+
+import { DescriptionFigma } from '../../utils/withFigma'
+import FormStepperV2 from './FormStepperV2'
+import Section from './Section'
+import SubSectionsV2 from './SubSectionsV2/SubSectionsV2'
+import { Text } from '../Text/Text'
+import { FormStepperThemes } from './types'
+
+<Meta of={FormStepperStories} />
+
+# FormStepper
+
+<DescriptionFigma name="FormStepper" />
+
+### Default
+
+- Use `isComplete` to mark a section as complete.
+- Use `isActive` to mark a section as active.
+
+<Canvas>
+  <Story of={FormStepperStories.Default} />
+</Canvas>
+
+### With subsections
+
+- Use `subSections` prop to `<Section />` to add subsections to a section.
+- The `subSections` prop is an array of `ReactNode`s. You can use any component you want, e.g a `<Text/>` or `<Link/>`.
+
+<Canvas>
+  <Story of={FormStepperStories.WithSubSections} />
+</Canvas>
+
+# Props
+
+<Controls />

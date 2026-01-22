@@ -8,7 +8,6 @@ import {
 import {
   getPersonalInformationOverviewItems,
   getRentalAgreementOverviewItems,
-  getTerminationTypeOverviewItems,
   getBoundTerminationOverviewItems,
   getUnboundTerminationOverviewItems,
   getCancelationDetailsOverviewItems,
@@ -27,9 +26,7 @@ export const overviewSection = buildSection({
   title: m.overviewMessages.overviewTitle,
   children: [
     buildMultiField({
-      condition: (answers, externalData) => {
-        console.log('answers: ', answers)
-        console.log('externalData: ', externalData)
+      condition: () => {
         return true
       },
       id: 'overviewMultiField',
@@ -45,27 +42,16 @@ export const overviewSection = buildSection({
         buildOverviewField({
           id: 'rentalAgreementOverview',
           title: (application) => ({
-            ...m.overviewMessages.rentalAgreementTitle,
-            values: {
-              terminationType:
-                getValueViaPath(
-                  application.answers,
-                  'terminationType.answer',
-                ) === TerminationTypes.CANCELATION
-                  ? 'rifta'
-                  : 'segja upp',
-            },
+            ...(getValueViaPath(
+              application.answers,
+              'terminationType.answer',
+            ) === TerminationTypes.CANCELATION
+              ? m.overviewMessages.rentalAgreementTitleCancelation
+              : m.overviewMessages.rentalAgreementTitleTermination),
           }),
           backId: 'chooseContract',
           bottomLine: false,
           items: getRentalAgreementOverviewItems,
-        }),
-        buildOverviewField({
-          id: 'terminationTypeOverview',
-          title: m.overviewMessages.terminationTypeTitle,
-          backId: 'terminationTypeMultiField',
-          bottomLine: false,
-          items: getTerminationTypeOverviewItems,
         }),
 
         buildOverviewField({

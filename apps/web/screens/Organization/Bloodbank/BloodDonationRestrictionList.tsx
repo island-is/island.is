@@ -41,6 +41,7 @@ import {
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
 import { useI18n } from '@island.is/web/i18n'
+import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { webRichText } from '@island.is/web/utils/richText'
@@ -83,7 +84,15 @@ interface BloodDonationRestrictionListProps {
 
 const BloodDonationRestrictionList: CustomScreen<
   BloodDonationRestrictionListProps
-> = ({ totalItems, items, organizationPage, namespace, tags }) => {
+> = ({
+  totalItems,
+  items,
+  organizationPage,
+  namespace,
+  tags,
+  customPageData,
+}) => {
+  const { format } = useDateUtils()
   const { formatMessage } = useIntl()
   const router = useRouter()
   const n = useNamespace(namespace)
@@ -104,7 +113,12 @@ const BloodDonationRestrictionList: CustomScreen<
   const [currentPage, setPage] = useQueryState(
     'page',
     parseAsInteger
-      .withOptions({ shallow: true, clearOnDefault: true, scroll: true })
+      .withOptions({
+        shallow: true,
+        clearOnDefault: true,
+        scroll: true,
+        history: 'push',
+      })
       .withDefault(1),
   )
   const { activeLocale } = useI18n()
@@ -194,6 +208,11 @@ const BloodDonationRestrictionList: CustomScreen<
               <Webreader marginTop={0} marginBottom={0} readClass="rs_read" />
             </Stack>
 
+            {typeof customPageData?.content?.length === 'number' &&
+              customPageData.content.length > 0 && (
+                <Box>{webRichText(customPageData.content)}</Box>
+              )}
+
             <Stack space={3}>
               <Input
                 name="restriction-search-input"
@@ -205,7 +224,12 @@ const BloodDonationRestrictionList: CustomScreen<
                 value={queryString}
                 onChange={(ev) => {
                   setQueryString(ev.target.value)
-                  setPage(null)
+
+                  // Make sure we don't create a new history entry when the user is already on page 1
+                  if (currentPage !== 1) {
+                    setPage(null)
+                  }
+
                   queryVariablesRef.current.queryString = ev.target.value
                   queryVariablesRef.current.page = 1
                 }}
@@ -341,6 +365,12 @@ const BloodDonationRestrictionList: CustomScreen<
                       {highlightMatch(item.keywordsText, trimmedQueryString)}
                     </Text>
                   )}
+                  {item.effectiveDate && (
+                    <Text variant="small">
+                      {formatMessage(m.listPage.effectiveDatePrefix)}
+                      {format(new Date(item.effectiveDate), 'd. MMMM yyyy')}
+                    </Text>
+                  )}
                 </FocusableBox>
               ))}
             </Stack>
@@ -424,6 +454,9 @@ BloodDonationRestrictionList.getProps = async ({
         input: {
           slug: organizationPageSlug,
           lang: locale,
+          subpageSlugs: [
+            locale === 'is' ? 'ahrif-a-blodgjof' : 'affecting-factors',
+          ],
         },
       },
     }),

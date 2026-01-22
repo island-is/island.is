@@ -4,7 +4,7 @@ info:
   version: 2.0.0
   description: API for accessing court verdicts and related data
 servers:
-  - url: https://dom-haestirettur.eu.ngrok.io
+  - url: https://umsysla.haestirettur.is
     description: Development server
 
 components:
@@ -67,7 +67,27 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/JuryJudge'
-
+    Lawyer:
+      type: object
+      properties:
+        name:
+          type: string
+        title:
+          type: string
+        kennitala:
+          type: string
+        email:
+          type: string
+        company:
+          type: string
+        address:
+          type: string
+        postCode:
+          type: string
+        city:
+          type: string
+        location:
+          type: string
     JuryJudge:
       type: object
       properties:
@@ -122,6 +142,9 @@ components:
         caseNumber:
           type: string
           description: Filter by case number
+        caseContact:
+          type: string
+          description: Filter by case contact
         dateFrom:
           type: string
           format: date
@@ -136,7 +159,32 @@ components:
           description: Page number for pagination
         limit:
           type: integer
-          default: 100
+          default: 10
+          description: Results per page
+
+    AgendaSearchRequest:
+      type: object
+      properties:
+        lawyer:
+          type: string
+        dateFrom:
+          type: string
+          format: date
+          description: Filter for verdicts on or after this date (format YYYY-MM-DD)
+        dateTo:
+          type: string
+          format: date
+          description: Filter for verdicts on or before this date (format YYYY-MM-DD)
+        orderBy:
+          type: string
+          description: Field to order results by, with optional direction (e.g., 'caseNumber DESC')
+        page:
+          type: integer
+          default: 1
+          description: Page number for pagination
+        limit:
+          type: integer
+          default: 10
           description: Results per page
 
   responses:
@@ -227,10 +275,6 @@ paths:
                     type: integer
                   message:
                     type: string
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '500':
-          $ref: '#/components/responses/InternalError'
 
   /api/v2/Verdict/getVerdicts:
     post:
@@ -292,28 +336,17 @@ paths:
                     type: integer
                   message:
                     type: string
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '500':
-          $ref: '#/components/responses/InternalError'
 
   /api/v2/Verdict/getAgendas:
-    get:
-      summary: Get all agendas
-      parameters:
-        - name: orderBy
-          in: query
-          schema:
-            type: string
-          description: "Field and order (e.g., 'publishDate DESC')"
-        - name: page
-          in: query
-          schema:
-            type: integer
-        - name: limit
-          in: query
-          schema:
-            type: integer
+    post:
+      summary: Search and retrieve agendas with filters
+      description: Retrieve agendas with optional date filters
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgendaSearchRequest'
       responses:
         '200':
           description: Successful response
@@ -327,7 +360,7 @@ paths:
                     items:
                       $ref: '#/components/schemas/DetailedVerdictData'
                   total:
-                    type: integer
+                    type: string
                   currentPage:
                     type: integer
                   itemsPerPage:
@@ -338,8 +371,6 @@ paths:
                     type: integer
                   message:
                     type: string
-        '500':
-          $ref: '#/components/responses/InternalError'
 
   /api/v2/Verdict/getDetermination/{id}:
     get:
@@ -366,10 +397,6 @@ paths:
                     type: integer
                   message:
                     type: string
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '500':
-          $ref: '#/components/responses/InternalError'
 
   /api/v2/Verdict/getDeterminations:
     get:
@@ -412,8 +439,6 @@ paths:
                     type: integer
                   message:
                     type: string
-        '500':
-          $ref: '#/components/responses/InternalError'
   /api/v2/Verdict/getAppeal/{id}:
     get:
       summary: Get a specific appeal by ID
@@ -439,10 +464,6 @@ paths:
                     type: integer
                   message:
                     type: string
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '500':
-          $ref: '#/components/responses/InternalError'
 
   /api/v2/Verdict/getAppeals:
     get:
@@ -485,5 +506,45 @@ paths:
                     type: integer
                   message:
                     type: string
-        '500':
-          $ref: '#/components/responses/InternalError'
+
+  /api/v2/Verdict/getLawyers:
+    get:
+      summary: Get all lawyers
+      parameters:
+        - name: orderBy
+          in: query
+          schema:
+            type: string
+          description: "Field and order (e.g., 'publishDate DESC')"
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Lawyer'
+                  total:
+                    type: integer
+                  currentPage:
+                    type: integer
+                  itemsPerPage:
+                    type: integer
+                  succeeded:
+                    type: boolean
+                  returnCode:
+                    type: integer
+                  message:
+                    type: string

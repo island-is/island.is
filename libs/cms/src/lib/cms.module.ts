@@ -15,6 +15,8 @@ import {
   TeamListResolver,
   LatestGenericListItemsResolver,
   IntroLinkImageResolver,
+  GenericListResolver,
+  FeaturedGenericListItemsResolver,
 } from './cms.resolver'
 import { CmsContentfulService } from './cms.contentful.service'
 import { ContentfulRepository } from './contentful.repository'
@@ -33,6 +35,7 @@ import { OrganizationTitleByNationalIdLoader } from './loaders/organizationTitle
 import { OrganizationTitleEnByNationalIdLoader } from './loaders/organizationTitleEnByNationalId.loader'
 import { OrganizationLogoByEntryIdLoader } from './loaders/organizationLogoByEntryId.loader'
 import { OrganizationTitleByEntryIdLoader } from './loaders/organizationTitleByEntryId.loader'
+import { OrganizationPageResolver } from './organizationPage.resolver'
 
 @Module({
   imports: [HttpModule, TerminusModule, PowerBiConfig.registerOptional()],
@@ -66,6 +69,9 @@ import { OrganizationTitleByEntryIdLoader } from './loaders/organizationTitleByE
     TeamListResolver,
     LatestGenericListItemsResolver,
     IntroLinkImageResolver,
+    GenericListResolver,
+    FeaturedGenericListItemsResolver,
+    OrganizationPageResolver,
   ],
   exports: [
     ContentfulRepository,

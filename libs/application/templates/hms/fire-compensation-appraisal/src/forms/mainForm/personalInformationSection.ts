@@ -5,5 +5,10 @@ import * as m from '../../lib/messages'
 export const personalInformationSection = buildSection({
   id: 'personalInformationSection',
   title: m.personalInformationMessages.title,
-  children: [applicantInformationMultiField()],
+  children: [
+    applicantInformationMultiField({
+      postalCodeRequired: false,
+      cityRequired: false,
+    }),
+  ],
 })

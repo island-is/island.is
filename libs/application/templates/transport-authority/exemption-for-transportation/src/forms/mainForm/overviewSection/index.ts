@@ -5,6 +5,7 @@ import {
   buildOverviewField,
   buildSection,
   buildSubmitField,
+  getValueViaPath,
   YES,
 } from '@island.is/application/core'
 import {
@@ -22,8 +23,6 @@ import {
   getVehicleSpacingOverviewItems,
   MAX_CNT_FREIGHT,
   getFreightItem,
-  formatNumberWithMeters,
-  formatNumberWithTons,
   getFreightOverviewShortTermItems,
   getFreightOverviewLongTermItems,
   getOverviewErrorMessage,
@@ -31,7 +30,7 @@ import {
   checkHasAnyConvoyWithTrailer,
 } from '../../../utils'
 import { overview } from '../../../lib/messages'
-import { DefaultEvents } from '@island.is/application/types'
+import { Application, DefaultEvents } from '@island.is/application/types'
 
 export const overviewSection = buildSection({
   id: 'overviewSection',
@@ -52,6 +51,21 @@ export const overviewSection = buildSection({
           title: overview.exemptionPeriod.subtitle,
           backId: 'exemptionPeriodMultiField',
           items: getExemptionPeriodOverviewItems,
+        }),
+        buildAlertMessageField({
+          id: 'overview.exemptionPeriodError',
+          alertType: 'error',
+          title: overview.exemptionPeriod.errorTitle,
+          message: overview.exemptionPeriod.errorMessage,
+          condition: (answers) => {
+            const todayIsoStr = new Date().toISOString().slice(0, 10)
+            const dateFromStr = getValueViaPath<string>(
+              answers,
+              'exemptionPeriod.dateFrom',
+            )
+            if (!dateFromStr) return false
+            return dateFromStr < todayIsoStr
+          },
         }),
         buildOverviewField({
           id: 'overview.shortTermlocation',
@@ -104,8 +118,6 @@ export const overviewSection = buildSection({
                     values: {
                       freightNumber: freightIndex + 1,
                       freightName: freightItem?.name,
-                      length: formatNumberWithMeters(freightItem?.length),
-                      weight: formatNumberWithTons(freightItem?.weight),
                     },
                   }
                 },
@@ -125,7 +137,9 @@ export const overviewSection = buildSection({
           title: overview.axleSpacing.subtitle,
           backId: 'axleSpacingMultiField',
           items: getAxleSpacingOverviewItems,
-          condition: checkHasFreightPairingItemWithExemptionForWeight,
+          condition: (answers) =>
+            checkIfExemptionTypeShortTerm(answers) &&
+            checkHasFreightPairingItemWithExemptionForWeight(answers),
         }),
         buildOverviewField({
           id: 'overview.vehicleSpacing',
@@ -133,15 +147,23 @@ export const overviewSection = buildSection({
           backId: 'vehicleSpacingMultiField',
           items: getVehicleSpacingOverviewItems,
           condition: (answers) =>
+            checkIfExemptionTypeShortTerm(answers) &&
             checkHasAnyConvoyWithTrailer(answers) &&
             checkHasFreightPairingItemWithExemptionForWeight(answers),
         }),
         buildOverviewField({
           id: 'overview.supportingDocuments',
-          title: overview.supportingDocuments.subtitle,
+          title: (application: Application) => {
+            return checkIfExemptionTypeShortTerm(application.answers)
+              ? overview.supportingDocuments.subtitleShortTerm
+              : overview.supportingDocuments.subtitleLongTerm
+          },
           backId: 'supportingDocumentsMultiField',
           items: getSupportingDocumentsOverviewItems,
-          attachments: getSupportingDocumentsOverviewAttachments,
+          attachments: (answers) =>
+            checkIfExemptionTypeShortTerm(answers)
+              ? getSupportingDocumentsOverviewAttachments(answers)
+              : [],
           hideIfEmpty: true,
         }),
         buildCheckboxField({

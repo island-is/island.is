@@ -1,35 +1,67 @@
-import { Sequelize } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 
 import { EventType } from '@island.is/judicial-system/types'
 
 export const buildSubpoenaExistsCondition = (exists: boolean) =>
   Sequelize.literal(`
-        ${exists ? '' : 'NOT'} EXISTS (
-          SELECT 1
-          FROM subpoena
-          WHERE subpoena.case_id = "Case".id
-        )
-      `)
+    ${exists ? '' : 'NOT'} EXISTS (
+      SELECT 1
+      FROM subpoena
+      WHERE subpoena.case_id = "Case".id
+    )
+  `)
 
 export const buildAlternativeServiceExistsCondition = (exists: boolean) =>
   Sequelize.literal(`
-        ${exists ? '' : 'NOT'} EXISTS (
-          SELECT 1
-          FROM defendant
-          WHERE defendant.case_id = "Case".id
-            AND defendant.is_alternative_service = true
-        )
-      `)
+    ${exists ? '' : 'NOT'} EXISTS (
+      SELECT 1
+      FROM defendant
+      WHERE defendant.case_id = "Case".id
+        AND defendant.is_alternative_service = true
+    )
+  `)
+
+export const buildIsSentToPrisonExistsCondition = (exists: boolean) =>
+  Sequelize.literal(`
+    ${exists ? '' : 'NOT'} EXISTS (
+      SELECT 1
+      FROM defendant
+      WHERE defendant.case_id = "Case".id
+        AND defendant.is_sent_to_prison_admin = true
+    )
+  `)
 
 export const buildEventLogExistsCondition = (
   eventType: EventType,
   exists: boolean,
 ) =>
   Sequelize.literal(`
-         ${exists ? '' : 'NOT'} EXISTS (
-            SELECT 1
-            FROM event_log
-            WHERE event_log.case_id = "Case".id
-              AND event_log.event_type = '${eventType}'
-          )
-        `)
+    ${exists ? '' : 'NOT'} EXISTS (
+      SELECT 1
+      FROM event_log
+      WHERE event_log.case_id = "Case".id
+        AND event_log.event_type = '${eventType}'
+    )
+  `)
+
+export const buildEventLogOrderCondition = (
+  eventType1: EventType,
+  eventType2: EventType,
+  exists: boolean,
+) =>
+  Sequelize.literal(`
+    ${exists ? '' : 'NOT'} EXISTS (
+      SELECT 1
+      WHERE (
+        SELECT MAX(created)
+        FROM event_log
+        WHERE event_log.case_id = "Case".id
+          AND event_log.event_type = '${eventType1}'
+      ) < (
+        SELECT MAX(created)
+        FROM event_log
+        WHERE event_log.case_id = "Case".id
+          AND event_log.event_type = '${eventType2}'
+      )
+    )
+  `)

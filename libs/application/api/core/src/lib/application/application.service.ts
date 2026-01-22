@@ -3,17 +3,21 @@ import { InjectModel } from '@nestjs/sequelize'
 import { Op, QueryTypes, WhereOptions } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 import {
+  ApplicationLifecycle,
+  ApplicationStatus,
   ExternalData,
   FormValue,
-  ApplicationStatus,
-  ApplicationLifecycle,
+  Institution,
 } from '@island.is/application/types'
 import {
   Application,
   ApplicationPaginatedResponse,
   ApplicationsStatistics,
 } from './application.model'
-import { getTypeIdsForInstitution } from '@island.is/application/utils'
+import {
+  getInstitutionsWithApplicationTypesIds,
+  getTypeIdsForInstitution,
+} from '@island.is/application/utils'
 
 const applicationIsNotSetToBePruned = () => ({
   [Op.or]: [
@@ -42,6 +46,8 @@ const applicationByNationalId = (id: string, nationalId?: string) => ({
     : {}),
 })
 
+const escapeLike = (s: string) => s.replace(/[\\%_]/g, (m) => '\\' + m)
+
 @Injectable()
 export class ApplicationService {
   constructor(
@@ -62,21 +68,42 @@ export class ApplicationService {
   async getApplicationCountByTypeIdAndStatus(
     startDate: string,
     endDate: string,
+    institutionNationalId?: string,
   ): Promise<ApplicationsStatistics[]> {
-    const query = `SELECT 
-        type_id as typeid, 
-        COUNT(*) as count, 	
+    const { applicationTypeIds, returnEmpty } = this.resolveApplicationTypeIds(
+      institutionNationalId,
+    )
+
+    if (returnEmpty) {
+      return []
+    }
+
+    const query = `SELECT
+        type_id as typeid,
+        COUNT(*) as count,
         COUNT(*) FILTER (WHERE status = 'draft') AS draft,
-        COUNT(*) FILTER (WHERE status = 'inprogress') AS inprogress,    
-        COUNT(*) FILTER (WHERE status = 'completed') AS completed,	
-        COUNT(*) FILTER (WHERE status = 'rejected') AS rejected,	
-        COUNT(*) FILTER (WHERE status = 'approved') AS approved 
-      FROM public.application 
-      WHERE modified BETWEEN :startDate AND :endDate 
+        COUNT(*) FILTER (WHERE status = 'inprogress') AS inprogress,
+        COUNT(*) FILTER (WHERE status = 'completed') AS completed,
+        COUNT(*) FILTER (WHERE status = 'rejected') AS rejected,
+        COUNT(*) FILTER (WHERE status = 'approved') AS approved
+      FROM public.application
+      WHERE modified BETWEEN :startDate AND :endDate
+      ${
+        applicationTypeIds?.length ? `AND type_id IN (:applicationTypeIds)` : ''
+      }
       GROUP BY typeid;`
 
+    const replacements: Record<string, unknown> = {
+      startDate,
+      endDate,
+    }
+
+    if (applicationTypeIds?.length) {
+      replacements.applicationTypeIds = applicationTypeIds
+    }
+
     return this.sequelize.query<ApplicationsStatistics>(query, {
-      replacements: { startDate, endDate },
+      replacements,
       type: QueryTypes.SELECT,
     })
   }
@@ -138,47 +165,56 @@ export class ApplicationService {
     })
   }
 
-  async findAllByInstitutionAndFilters(
-    nationalId: string,
+  async findAllByAdminFilters(
     page: number,
     count: number,
     status?: string,
     applicantNationalId?: string,
+    institutionNationalId?: string,
     from?: string,
     to?: string,
+    typeIdValue?: string,
+    searchStr?: string,
   ): Promise<ApplicationPaginatedResponse> {
     const statuses = status?.split(',')
-    const typeIds = getTypeIdsForInstitution(nationalId)
     const toDate = to ? new Date(to) : undefined
     const fromDate = from ? new Date(from) : undefined
 
-    // No applications for this institution ID
-    if (typeIds.length < 1) {
+    const { applicationTypeIds, returnEmpty } = this.resolveApplicationTypeIds(
+      institutionNationalId,
+      typeIdValue,
+    )
+
+    if (returnEmpty) {
       return {
         rows: [],
         count: 0,
       }
     }
 
-    const applicantAccessConditions: WhereOptions = {
-      [Op.or]: [
-        { applicant: { [Op.eq]: applicantNationalId } },
-        { assignees: { [Op.contains]: [applicantNationalId] } },
-      ],
-    }
-
     return this.applicationModel.findAndCountAll({
       where: {
-        ...{ typeId: { [Op.in]: typeIds } },
-        ...(statuses ? { status: { [Op.in]: statuses } } : {}),
         [Op.and]: [
-          applicantNationalId ? applicantAccessConditions : {},
-
-          fromDate && toDate
+          statuses ? { status: { [Op.in]: statuses } } : {},
+          applicationTypeIds?.length
+            ? { typeId: { [Op.in]: applicationTypeIds } }
+            : {},
+          fromDate ? { created: { [Op.gte]: fromDate } } : {},
+          toDate ? { created: { [Op.lte]: toDate } } : {},
+          applicantNationalId
+            ? { applicant: { [Op.eq]: applicantNationalId } }
+            : {},
+          searchStr
             ? {
-                [Op.and]: [
-                  { created: { [Op.gte]: fromDate } },
-                  { created: { [Op.lte]: toDate } },
+                [Op.or]: [
+                  { applicant: { [Op.eq]: searchStr } },
+                  { assignees: { [Op.contains]: [searchStr] } },
+                  Sequelize.where(
+                    Sequelize.cast(Sequelize.col('answers'), 'text'),
+                    {
+                      [Op.iLike]: `%${escapeLike(searchStr)}%`,
+                    },
+                  ),
                 ],
               }
             : {},
@@ -191,6 +227,76 @@ export class ApplicationService {
       offset: (page - 1) * count,
       order: [['modified', 'DESC']],
     })
+  }
+
+  private resolveApplicationTypeIds(
+    institutionNationalId?: string,
+    typeId?: string,
+  ): { applicationTypeIds?: string[]; returnEmpty: boolean } {
+    // Case 1: neither institution nor typeId -> no type filter at all
+    if (!institutionNationalId && !typeId) {
+      return { returnEmpty: false }
+    }
+
+    // Case 2: only typeId -> filter by that typeId only
+    if (!institutionNationalId && typeId) {
+      return { applicationTypeIds: [typeId], returnEmpty: false }
+    }
+
+    // From here on, institutionNationalId is defined
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const institutionTypeIds = getTypeIdsForInstitution(institutionNationalId!)
+
+    // If the institution has no types at all, no applications can match
+    if (!institutionTypeIds.length) {
+      return { returnEmpty: true }
+    }
+
+    // Case 3: institution only -> all types belonging to that institution
+    if (!typeId) {
+      return { applicationTypeIds: institutionTypeIds, returnEmpty: false }
+    }
+
+    // Case 4: both institution and typeId -> typeId must belong to the institution
+    if (!institutionTypeIds.includes(typeId)) {
+      return { returnEmpty: true }
+    }
+
+    // Valid institution+typeId combination
+    return { applicationTypeIds: [typeId], returnEmpty: false }
+  }
+
+  async getAllApplicationTypesInstitutionAdmin(
+    nationalId: string,
+  ): Promise<{ id: string }[]> {
+    const typeIds = getTypeIdsForInstitution(nationalId)
+
+    if (!typeIds || typeIds.length === 0) {
+      return []
+    }
+
+    const results = await this.applicationModel.findAll({
+      attributes: ['typeId'],
+      where: {
+        typeId: {
+          [Op.in]: typeIds,
+        },
+      },
+      group: ['typeId'],
+      raw: true,
+    })
+
+    return results.map((row) => ({ id: row.typeId }))
+  }
+
+  async getAllApplicationTypesSuperAdmin(): Promise<{ id: string }[]> {
+    const results = await this.applicationModel.findAll({
+      attributes: ['typeId'],
+      group: ['typeId'],
+      raw: true,
+    })
+
+    return results.map((row) => ({ id: row.typeId }))
   }
 
   async findAllByNationalIdAndFilters(
@@ -225,6 +331,41 @@ export class ApplicationService {
     })
   }
 
+  async getAllInstitutionsSuperAdmin(): Promise<Institution[]> {
+    const allInstitutions = getInstitutionsWithApplicationTypesIds()
+
+    if (!allInstitutions) return []
+
+    const allTypeIds = Array.from(
+      new Set(
+        allInstitutions.flatMap(
+          (institution) => institution.applicationTypesIds,
+        ),
+      ),
+    )
+
+    if (!allTypeIds.length) return []
+
+    const existingTypeIds = await this.applicationModel.findAll({
+      where: {
+        typeId: {
+          [Op.in]: allTypeIds,
+        },
+      },
+      attributes: ['typeId'],
+      group: ['typeId'],
+      raw: true,
+    })
+
+    const existingTypeIdSet = new Set<string>(
+      existingTypeIds.map((row) => row.typeId),
+    )
+
+    return allInstitutions.filter((inst) =>
+      inst.applicationTypesIds.some((t) => existingTypeIdSet.has(t)),
+    )
+  }
+
   async findAllDueToBePruned(): Promise<Application[]> {
     return this.applicationModel.findAll({
       attributes: [
@@ -246,6 +387,28 @@ export class ApplicationService {
           },
           pruned: {
             [Op.eq]: false,
+          },
+        },
+      },
+    })
+  }
+
+  async findAllDueToBePostPruned(): Promise<Application[]> {
+    return this.applicationModel.findAll({
+      attributes: ['id'],
+      where: {
+        [Op.and]: {
+          postPruneAt: {
+            [Op.and]: {
+              [Op.not]: null,
+              [Op.lt]: new Date(),
+            },
+          },
+          postPruned: {
+            [Op.eq]: false,
+          },
+          pruned: {
+            [Op.eq]: true,
           },
         },
       },
@@ -305,6 +468,8 @@ export class ApplicationService {
         | 'draftTotalSteps'
         | 'draftFinishedSteps'
         | 'pruneAt'
+        | 'postPruned'
+        | 'postPruneAt'
       >
     >,
   ) {
@@ -399,6 +564,7 @@ export class ApplicationService {
         userDeletedAt: new Date(),
         externalData: {},
         answers: {},
+        attachments: {},
       },
       { where: { id } },
     )

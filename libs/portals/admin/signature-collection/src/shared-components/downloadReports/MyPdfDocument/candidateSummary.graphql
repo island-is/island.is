@@ -1,0 +1,15 @@
+query signatureCollectionAdminCandidateReport(
+  $input: SignatureCollectionCandidateIdInput!
+) {
+  signatureCollectionAdminCandidateReport(input: $input) {
+    id
+    name
+    lists {
+      candidateName
+      listName
+      nrOfSignatures
+      nrOfDigitalSignatures
+      nrOfPaperSignatures
+    }
+  }
+}

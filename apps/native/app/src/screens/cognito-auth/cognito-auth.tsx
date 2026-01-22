@@ -6,7 +6,7 @@ import {
   gql,
 } from '@apollo/client/core'
 import { setContext } from '@apollo/client/link/context'
-import { useAsyncStorage } from '@react-native-community/async-storage'
+import { useAsyncStorage } from '@react-native-async-storage/async-storage'
 import { useEffect, useState } from 'react'
 import { ActionSheetIOS, Linking, Text, View } from 'react-native'
 import {

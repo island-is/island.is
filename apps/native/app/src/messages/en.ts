@@ -1,6 +1,11 @@
 import { TranslatedMessages } from './index'
 
 export const en: TranslatedMessages = {
+  // General buttons
+  'button.change': 'Change',
+  'button.open': 'Open',
+  'button.moreInfoHere': 'More info here',
+
   // login
   'login.welcomeMessage': 'Log in to the app with electronic ID',
   'login.loginButtonText': 'Login',
@@ -184,6 +189,10 @@ export const en: TranslatedMessages = {
   'home.vehicleModule.summary':
     'Enter mileage of electric and plug-in hybrid vehicles',
   'home.vehicleModule.button': 'My vehicles',
+  'homeBanner.vehicleMileage.title': 'Register mileage',
+  'homeBanner.vehicleMileage.description':
+    'Register the mileage of your vehicles',
+  'homeBanner.vehicleMileage.cta': 'View vehicles',
   'button.seeAll': 'See all',
 
   // home options
@@ -313,9 +322,9 @@ export const en: TranslatedMessages = {
 
   'walletPass.barcodeErrorNotConnected':
     'Not possible to scan barcode if the device is not connected to the internet.',
-  'walletPass.barcodeErrorFailedToFetch': 'Could not fetch barcode',
+  'walletPass.barcodeErrorFailedToFetch': 'Unable to fetch barcode',
   'walletPass.barcodeErrorBadSession':
-    'Too little time since license was accessed on another device',
+    'The barcode was recently retrieved on another device. Please try again later.',
   'walletPass.validLicense': 'Valid',
   'walletPass.expiredLicense': 'Expired',
   'walletPass.errorFetchingLicense': 'Could not update license',
@@ -324,6 +333,9 @@ export const en: TranslatedMessages = {
   'licenseDetail.pcard.alert.title': 'Remember the parking card!',
   'licenseDetail.pcard.alert.description':
     'This summary is not valid as a parking card.',
+  'licenseDetail.driversLicense.alert.title': 'Are you traveling abroad?',
+  'licenseDetail.driversLicense.alert.description':
+    'Remember to bring the card since the digital driver license is not valid outside of Iceland.',
   'licenseDetail.ehic.alert.title': 'Remember the card!',
   'licenseDetail.ehic.alert.description':
     'This summary is not valid as a European Health Insurance card.',
@@ -412,6 +424,12 @@ export const en: TranslatedMessages = {
   'profile.finance': 'Finance',
   'profile.airDiscount': 'Air discount',
   'profile.health': 'Health',
+  'profile.moreInfo': 'More on my-pages',
+  'profile.accessControl': 'Access control',
+  'profile.supportPayments': 'Support payments',
+  'profile.education': 'Education',
+  'profile.lawAndOrder': 'Law and order',
+  'profile.occupationalLicenses': 'Occupational licenses',
 
   // vehicles
   'vehicles.screenTitle': 'Vehicles',
@@ -420,6 +438,7 @@ export const en: TranslatedMessages = {
     'Vehicles registered to you will appear here.',
   'vehicles.nextInspectionLabel': 'Next inspection {date}',
   'vehicles.mileageRequired': 'Kilometre fee',
+  'vehicles.registerMileage': 'Register mileage',
 
   // vehicles detail
   'vehicleDetail.regno': 'Registration number',
@@ -469,11 +488,30 @@ export const en: TranslatedMessages = {
   'vehicle.mileage.historyTitle': 'Mileage history',
   'vehicle.mileage.editRecordButton': 'Edit mileage',
 
+  // vehicle links
+  'vehicle.links.ownerLookup': 'Vehicle registry lookup',
+  'vehicle.links.vehicleHistory': 'Vehicle history',
+  'vehicle.links.reportOwnerChange': 'Report change of ownership',
+  'vehicle.links.returnCertificate': 'Return certificate',
+  'vehicle.links.nameConfidentiality':
+    'Name confidentiality in vehicle registry',
+
+  // vehicle dropdown links
+  'vehicle.links.dropdown.orderNumberPlate': 'Order number plate',
+  'vehicle.links.dropdown.orderRegistrationCertificate':
+    'Order registration certificate',
+  'vehicle.links.dropdown.changeCoOwner': 'Change co-owner',
+  'vehicle.links.dropdown.changeOperator': 'Change operator',
+  'vehicle.links.dropdown.vehicleHistoryReport': 'Vehicle history report',
+
   // assets overview
   'assetsOvervies.screenTitle': 'Assets',
   'assetsOverview.emptyListTitle': 'No assets found for the user',
   'assetsOverview.emptyListDescription':
     'Assets registered to you will appear here.',
+
+  // assets links
+  'assets.links.mortgageCertificate': 'Mortgage certificate',
 
   // assets details
   'assetsDetail.propertyNumber': 'Property number',
@@ -501,6 +539,10 @@ export const en: TranslatedMessages = {
   'finance.heading.title': 'Financial standing with the government',
   'finance.heading.subtitle':
     'Here you can see an overview of your debt and/or credit balance with the government.',
+  'finance.links.payments': 'Payments',
+  'finance.links.loans': 'Loans',
+  'finance.links.transactions': 'Transactions',
+  'finance.links.status': 'Status',
 
   // finance detail
   'financeDetail.title': 'Detailed information',
@@ -639,6 +681,9 @@ export const en: TranslatedMessages = {
   'airDiscount.emptyListTitle': 'No benefits',
   'airDiscount.emptyListDescription':
     'Only inhabitants with a legal domicile in rural areas far away from the Capital area and on islands are eligible for a discount with Loftbru. (see map on loftbru.is)',
+  'airDiscount.disabledTitle': 'Loftbru closed',
+  'airDiscount.disabledDescription':
+    'The Loftbrú Air discount codes are not valid at the moment.',
 
   // offline
   'offline.title': 'No internet connection',
@@ -699,13 +744,46 @@ export const en: TranslatedMessages = {
   'health.overview.paymentDebt': 'Debt',
   'health.overview.therapy': 'Therapy',
   'health.overview.vaccinations': 'Vaccinations',
+  'health.overview.questionnaires': 'Questionnaires',
   'health.overview.aidsAndNutrition': 'Aids and nutrition',
   'health.overview.medicinePurchase': 'Medicine purchase',
+  'health.overview.medicineDelegation': 'Medicine delegation',
   'health.overview.period': 'Period',
   'health.overview.levelStatus': 'Medicine step',
   'health.overview.levelStatusValue': 'Level {level}, you pay {percentage}%',
   'health.overview.medicinePurchaseNoActivePeriodWarning':
     'A new payment period begins with the next medicine purchase',
+  'health.overview.basicInformation': 'Basic information',
+  'health.overview.bloodType': 'Blood group',
+  'health.overview.bloodTypeDescription': 'Your blood group is {bloodType}',
+  'health.overview.noBloodTypeRegistered': 'No blood type registered',
+  'health.overview.dentist': 'Dentist',
+  'health.overview.noDentistRegistered': 'No dentist registered',
+  'health.overview.prescriptions': 'Prescriptions',
+
+  // health - questionnaires
+  'health.questionnaires.screenTitle': 'Questionnaires',
+  'health.questionnaires.title': 'Questionnaires',
+  'health.questionnaires.description':
+    'Here you can view questionnaires that have been sent to you.',
+  'health.questionnaires.status.answered': 'Answered',
+  'health.questionnaires.status.unanswered': 'Unanswered',
+  'health.questionnaires.status.notAnswered': 'Unanswered',
+  'health.questionnaires.status.draft': 'Draft',
+  'health.questionnaires.status.expired': 'Expired',
+  'health.questionnaires.organization.lsh': 'Landspitali',
+  'health.questionnaires.organization.el': 'Directorate of Health',
+  'health.questionnaires.organization.unknown': 'Unknown',
+  'health.questionnaires.action.answer': 'Answer questionnaire',
+  'health.questionnaires.action.continue-draft': 'Continue',
+  'health.questionnaires.action.view-answer': 'View answers',
+  'health.questionnaires.detail.description':
+    'Here you can find your answers to questionnaires. You can compare your answers.',
+  'health.questionnaires.detail.status': 'Status',
+  'health.questionnaires.detail.institution': 'Institution',
+  'health.questionnaires.detail.sentBy': 'Sent by',
+  'health.questionnaires.detail.sentDate': 'Sent date',
+  'health.questionnaires.detail.notFound': 'Questionnaire not found',
 
   // health - vaccinations
   'health.vaccinations.screenTitle': 'Vaccinations',
@@ -736,4 +814,126 @@ export const en: TranslatedMessages = {
     'No organs can be used for transplantation.',
   'health.organDonation.isDonorWithLimitationsDescription':
     'All organs can be used for transplantation except: {limitations}.',
+
+  // health - medicine delegation
+  'health.medicineDelegation.screenTitle': 'Medicine authorizations',
+  'health.medicineDelegation.title': 'Medicine authorizations',
+  'health.medicineDelegation.description':
+    'Only you can collect your medicines at the pharmacy unless you grant someone a special authorization. Here you can register people who are allowed to collect medicines at the pharmacy on your behalf.',
+  'health.medicineDelegation.readMore': 'Read about medicine authorizations',
+  'health.medicineDelegation.addButton': 'Add authorization',
+  'health.medicineDelegation.emptyTitle': 'No authorizations',
+  'health.medicineDelegation.emptyDescription':
+    'There are no registered authorizations.',
+  'health.medicineDelegation.listCaption':
+    'Pick up medicine and view prescription.',
+  'health.medicineDelegation.captionPickup':
+    'Pick up medicine at the pharmacy.',
+  'health.medicineDelegation.captionPickupAndLookup':
+    'Pick up medicine at the pharmacy and view prescriptions.',
+  'health.medicineDelegation.listValidTo': 'Valid until {date}',
+  'health.medicineDelegation.showExpiredPermits': 'Show inactive',
+  'health.medicineDelegation.hideExpiredPermits': 'Hide inactive',
+  'health.medicineDelegation.noActiveTitle': 'No active authorizations',
+  'health.medicineDelegation.noActiveDescription':
+    'You have no active authorizations. You can tap "Show inactive" above to view inactive authorizations.',
+  'health.medicineDelegation.labelExpired': 'Expired',
+  'health.medicineDelegation.detail.delete': 'Delete authorization',
+  'health.medicineDelegation.detail.issuerLabel': 'Issuer',
+  'health.medicineDelegation.detail.issuerValue': 'Icelandic Health Insurance',
+  'health.medicineDelegation.detail.issuedDate': 'Issue date',
+  'health.medicineDelegation.detail.status': 'Status',
+  'health.medicineDelegation.detail.statusActive': 'Active',
+  'health.medicineDelegation.detail.statusExpired': 'Expired',
+  'health.medicineDelegation.detail.validity': 'Validity period',
+  'health.medicineDelegation.detail.validFor': 'Valid for',
+  'health.medicineDelegation.detail.validForValue':
+    'Pick up medicine and view prescription.',
+  'health.medicineDelegation.detail.validForPickup':
+    'Pick up medicine at the pharmacy.',
+  'health.medicineDelegation.detail.validForPickupAndLookup':
+    'Pick up medicine at the pharmacy and view prescriptions.',
+  'health.medicineDelegation.detail.revoke': 'Revoke delegation',
+  'health.medicineDelegation.detail.revokeError':
+    'Failed to revoke medicine authorization. Please try again later.',
+  'health.medicineDelegation.detail.revokePromptTitle':
+    'Do you want to revoke this authorization?',
+  'health.medicineDelegation.detail.revokePromptCancel': 'Cancel',
+  'health.medicineDelegation.detail.revokePromptConfirm': 'Revoke',
+  'health.medicineDelegation.form.title': 'Add medicine authorization',
+  'health.medicineDelegation.form.subtitle':
+    'Choose a person who may collect your medicine at the pharmacy.',
+  'health.medicineDelegation.form.nationalIdLabel': 'National ID',
+  'health.medicineDelegation.form.nameLabel': 'Name',
+  'health.medicineDelegation.form.validityLabel':
+    'How long should the authorization be valid?',
+  'health.medicineDelegation.form.dateFromLabel': 'Date from',
+  'health.medicineDelegation.form.dateToLabel': 'Date to',
+  'health.medicineDelegation.form.dateFromPlaceholder': 'Choose a date from',
+  'health.medicineDelegation.form.dateToPlaceholder': 'Choose a date to',
+  'health.medicineDelegation.form.submit': 'Add authorization',
+  'health.medicineDelegation.form.delegateMedicineDelegationError':
+    'Failed to create medicine authorization. Please try again later.',
+  'health.medicineDelegation.form.nameNotFound':
+    'Could not find a name for this national ID.',
+  'health.medicineDelegation.form.nameError':
+    'An error occurred while fetching the name.',
+  'health.medicineDelegation.form.invalidNationalId': 'Invalid national ID.',
+  'health.medicineDelegation.form.lookupLabel':
+    'The above person may also look up my prescriptions at the pharmacy.',
+  'health.medicineDelegation.form.xYears': '{years} years',
+  'health.medicineDelegation.form.xMonths': '{months} months',
+
+  // health - prescriptions & drug certificates
+  'health.prescriptionsAndCertificates.screenTitle': 'Medication',
+  'health.prescriptionsAndCertificates.validTo': 'Valid to: {date}',
+  'health.prescriptionsAndCertificates.expired': 'Expired',
+  'health.prescriptionsAndCertificates.rejected': 'Rejected',
+  'health.prescriptionsAndCertificates.inProcess': 'In process',
+  'health.prescriptionsAndCertificates.valid': 'Valid',
+  'health.prescriptionsAndCertificates.furtherInformation':
+    'Further information',
+  'health.prescriptionsAndCertificates.status': 'Status',
+  'health.prescriptionsAndCertificates.description':
+    'Doctors request medication certificates for individuals who are issued by the National Health Insurance Fund under certain conditions according to working regulations.',
+
+  'health.drugCertificates.title': 'Medication certificate',
+  'health.drugCertificates.drugName': 'Drug name',
+  'health.drugCertificates.atcCode': 'ATC code',
+  'health.drugCertificates.ingredients': 'Ingredient',
+  'health.drugCertificates.validFrom': 'Valid from',
+  'health.drugCertificates.validUntil': 'Valid to',
+  'health.drugCertificates.nameOfDoctor': 'Name of doctor',
+  'health.drugCertificates.methylDoctors':
+    'Extra doctors registered on license',
+
+  'health.prescriptions.title': 'Prescriptions',
+  'health.prescriptions.description':
+    'Here you can find an overview of your prescriptions and medication certificates.',
+  'health.prescriptions.drug': 'Medication',
+  'health.prescriptions.type': 'Type',
+  'health.prescriptions.indication': 'Medication used for',
+  'health.prescriptions.quantity': 'Prescribed amount',
+  'health.prescriptions.dosageInstructions': 'Dosage instructions',
+  'health.prescriptions.issueDate': 'Issue date',
+  'health.prescriptions.expiresAt': 'Expires at',
+  'health.prescriptions.doctor': 'Doctors',
+  'health.prescriptions.issueInformation': 'Issue information',
+  'health.prescriptions.dispensations': 'Dispensation history',
+  'health.prescriptions.dispensationNumber': 'Dispensation',
+  'health.prescriptions.lastDispensationDate': 'Last dispensed: {date}',
+  'health.prescriptions.dispensationCount': '{count} dispensations',
+  'health.prescriptions.fetchMoreDispensations': 'See more',
+  'health.prescriptions.completedDispensation': '{number}. dispensation',
+  'health.prescriptions.dispensationDetail.title':
+    'Information for {count}. dispensation',
+  'health.prescriptions.history.table.date': 'Date',
+  'health.prescriptions.history.table.dispensery': 'Dispensing point',
+  'health.prescriptions.history.table.drug': 'Medicine',
+  'health.prescriptions.history.table.quantity': 'Quantity',
+  'health.prescriptions.history.table.moreInfo': 'More',
+  'health.medicineHistory.title': 'Medicine history',
+  'health.prescriptions.noDispensations': 'No dispensations recorded',
+  'health.prescriptions.noDispensationsDescription':
+    'If you believe you have data that should appear here, please contact service provider.',
 }

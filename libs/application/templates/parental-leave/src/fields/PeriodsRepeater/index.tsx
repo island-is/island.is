@@ -58,7 +58,7 @@ const PeriodsRepeater: FC<React.PropsWithChildren<ScreenProps>> = ({
     application.state === States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS
 
   const showDescription = field?.props?.showDescription ?? true
-  const dob = getExpectedDateOfBirthOrAdoptionDateOrBirthDate(application, true)
+  const dob = getExpectedDateOfBirthOrAdoptionDateOrBirthDate(application)
   const { formatMessage, locale } = useLocale()
   const rights = getAvailableRightsInDays(application)
   const daysAlreadyUsed = useDaysAlreadyUsed(application)

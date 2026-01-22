@@ -41,6 +41,8 @@ export const labelText = style({
   display: 'flex',
   flexDirection: 'column',
   width: '100%',
+  whiteSpace: 'normal',
+  overflowWrap: 'anywhere',
 })
 export const largeLabel = style({
   alignItems: 'center',

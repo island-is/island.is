@@ -1,11 +1,10 @@
-import { Transaction } from 'sequelize/types'
-import { uuid } from 'uuidv4'
+import { Transaction } from 'sequelize'
+import { v4 as uuid } from 'uuid'
 
 import { createTestingIndictmentCountModule } from './createTestingIndictmentCountModule'
 
+import { IndictmentCount, Offense } from '../../repository'
 import { DeleteResponse } from '../models/delete.response'
-import { IndictmentCount } from '../models/indictmentCount.model'
-import { Offense } from '../models/offense.model'
 
 interface Then {
   result: DeleteResponse

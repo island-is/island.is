@@ -1,6 +1,11 @@
 import { defineMessages } from 'react-intl'
 
 export const nameLabelStrings = defineMessages({
+  litigator: {
+    id: 'judicial.system.core:input_advocate.name_label.litigator',
+    defaultMessage: 'Nafn verjanda',
+    description: 'Notaður sem titill á nafni fyrir verjanda.',
+  },
   defender: {
     id: 'judicial.system.core:input_advocate.name_label.defender',
     defaultMessage: 'Nafn verjanda',
@@ -24,6 +29,11 @@ export const nameLabelStrings = defineMessages({
 })
 
 export const emailLabelStrings = defineMessages({
+  litigator: {
+    id: 'judicial.system.core:input_advocate.email_label.litigator',
+    defaultMessage: 'Netfang verjanda',
+    description: 'Notaður sem titill á netfangi fyrir verjanda.',
+  },
   defender: {
     id: 'judicial.system.core:input_advocate.email_label.defender',
     defaultMessage: 'Netfang verjanda',
@@ -47,6 +57,11 @@ export const emailLabelStrings = defineMessages({
 })
 
 export const phoneNumberLabelStrings = defineMessages({
+  litigator: {
+    id: 'judicial.system.core:input_advocate.phone_number_label.litigator',
+    defaultMessage: 'Símanúmer verjanda',
+    description: 'Notaður sem titill á símanúmeri fyrir verjanda.',
+  },
   defender: {
     id: 'judicial.system.core:input_advocate.phone_number_label.defender',
     defaultMessage: 'Símanúmer verjanda',

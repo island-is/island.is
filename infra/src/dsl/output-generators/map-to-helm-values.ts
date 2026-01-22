@@ -73,7 +73,8 @@ const serializeService: SerializeMethod<HelmService> = async (
     },
     secrets: {},
     podDisruptionBudget: serviceDef.podDisruptionBudget ?? {
-      maxUnavailable: 1,
+      unhealthyPodEvictionPolicy: 'IfHealthyBudget',
+      minAvailable: 1,
     },
     healthCheck: {
       liveness: {
@@ -142,7 +143,8 @@ const serializeService: SerializeMethod<HelmService> = async (
         max: result.replicaCount.max,
       },
       metric: {
-        cpuAverageUtilization: 90,
+        cpuAverageUtilization:
+          serviceDef.replicaCount?.cpuAverageUtilization || 90,
       },
     },
   }
@@ -366,6 +368,9 @@ function serializeIngress(
 
   const className =
     ingressConf.public ?? true ? 'nginx-external-alb' : 'nginx-internal-alb'
+  const pathTypeOverride = ingressConf.pathTypeOverride
+    ? { pathTypeOverride: ingressConf.pathTypeOverride }
+    : null
   return {
     annotations: {
       'kubernetes.io/ingress.class': className,
@@ -375,6 +380,7 @@ function serializeIngress(
     },
     hosts: hosts.map((host) => ({
       host: host,
+      ...pathTypeOverride,
       paths: ingressConf.paths,
     })),
   }

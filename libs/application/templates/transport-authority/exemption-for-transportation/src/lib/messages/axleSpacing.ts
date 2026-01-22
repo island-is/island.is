@@ -15,12 +15,12 @@ export const axleSpacing = {
     description: {
       id: 'ta.eft.application:axleSpacing.general.description',
       defaultMessage:
-        'Gefa þarf upp bil í metrum milli allra öxla á ökutækjum í vagnlest og einnig á milli ökutækja / vagna.',
+        'Gefa þarf upp bil í metrum milli allra öxla á ökutækjum.',
       description: 'Description of axle spacing page',
     },
     vehicleSubtitle: {
       id: 'ta.eft.application:axleSpacing.general.vehicleSubtitle',
-      defaultMessage: 'Ökutæki - {vehiclePermno}',
+      defaultMessage: 'Bíll - {vehiclePermno}',
       description: 'Vehicle subtitle',
     },
     doubleDollySubtitle: {
@@ -62,7 +62,8 @@ export const axleSpacing = {
     },
     useSameSpacing: {
       id: 'ta.eft.application:axleSpacing.labels.useSameSpacing',
-      defaultMessage: 'Bil milli allra öxla er það sama',
+      defaultMessage:
+        'Ef bil milli allra öxla er það sama þarftu fyrst að haka hér og skrá svo öxlabil í fyrsta reit',
       description: 'Use same spacing between all axles',
     },
   }),

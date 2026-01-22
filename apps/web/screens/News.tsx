@@ -20,9 +20,9 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import {
+  DigitalIcelandNewsCard,
   HeadWithSocialSharing,
   NewsArticle,
-  NewsCard,
   Webreader,
 } from '@island.is/web/components'
 import { FRONTPAGE_NEWS_TAG_SLUG } from '@island.is/web/constants'
@@ -351,27 +351,28 @@ const NewsListNew: Screen<NewsListProps> = ({
         )}
         {!!newsList.length && (
           <Box className="rs_read" marginTop={spacing}>
-            {newsList.map(({ title, intro, image, slug, date }, index) => {
-              const mini = index > 2
+            {newsList.map(
+              ({ title, intro, image, slug, date, genericTags }, index) => {
+                const mini =
+                  selectedPage > 1 || (selectedPage === 1 && index > 2)
 
-              return (
-                <Box marginBottom={mini ? spacingMini : spacing}>
-                  <NewsCard
-                    key={index}
-                    title={title}
-                    introduction={intro}
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    // @ts-expect-error make web strict
-                    image={image}
-                    titleAs="h2"
-                    href={linkResolver('news', [slug]).href}
-                    date={date}
-                    readMoreText={n('readMore', 'Lesa nánar')}
-                    mini={mini}
-                  />
-                </Box>
-              )
-            })}
+                return (
+                  <Box marginBottom={mini ? spacingMini : spacing}>
+                    <DigitalIcelandNewsCard
+                      key={slug}
+                      title={title}
+                      description={intro}
+                      imageSrc={image?.url ?? ''}
+                      tags={genericTags.map((tag) => tag.title)}
+                      href={linkResolver('news', [slug]).href}
+                      date={date}
+                      mini={mini}
+                      titleAs="h2"
+                    />
+                  </Box>
+                )
+              },
+            )}
             {!!newsList.length && (
               <Box marginTop={[4, 4, 8]}>
                 <Pagination

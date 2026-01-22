@@ -5,6 +5,7 @@ export const serviceSetup = (services: {
 }): ServiceBuilder<'skilavottord-web'> =>
   service('skilavottord-web')
     .namespace('skilavottord')
+    .serviceAccount('skilavottord-web')
     .liveness('/liveness')
     .readiness('/liveness')
     .replicaCount({

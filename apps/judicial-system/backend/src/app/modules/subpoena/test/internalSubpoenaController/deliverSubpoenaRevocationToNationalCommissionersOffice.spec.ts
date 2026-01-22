@@ -1,12 +1,11 @@
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { User } from '@island.is/judicial-system/types'
 
 import { createTestingSubpoenaModule } from '../createTestingSubpoenaModule'
 
-import { Case } from '../../../case'
 import { PoliceService } from '../../../police/police.service'
-import { Subpoena } from '../../models/subpoena.model'
+import { Case, Subpoena } from '../../../repository'
 
 interface Then {
   error: Error

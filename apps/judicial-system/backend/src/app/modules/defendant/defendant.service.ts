@@ -1,12 +1,6 @@
-import { literal, Op } from 'sequelize'
-import { Transaction } from 'sequelize/types'
+import { literal, Op, Transaction } from 'sequelize'
 
-import {
-  Inject,
-  Injectable,
-  InternalServerErrorException,
-} from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
+import { Inject, Injectable } from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -28,21 +22,23 @@ import {
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
 
-import { Case } from '../case/models/case.model'
 import { CourtService } from '../court'
+import {
+  Case,
+  Defendant,
+  DefendantEventLogRepositoryService,
+  DefendantRepositoryService,
+} from '../repository'
 import { CreateDefendantDto } from './dto/createDefendant.dto'
 import { InternalUpdateDefendantDto } from './dto/internalUpdateDefendant.dto'
 import { UpdateDefendantDto } from './dto/updateDefendant.dto'
-import { Defendant } from './models/defendant.model'
-import { DefendantEventLog } from './models/defendantEventLog.model'
 import { DeliverResponse } from './models/deliver.response'
 
 @Injectable()
 export class DefendantService {
   constructor(
-    @InjectModel(Defendant) private readonly defendantModel: typeof Defendant,
-    @InjectModel(DefendantEventLog)
-    private readonly defendantEventLogModel: typeof DefendantEventLog,
+    private readonly defendantRepositoryService: DefendantRepositoryService,
+    private readonly defendantEventLogRepositoryService: DefendantEventLogRepositoryService,
     private readonly courtService: CourtService,
     private readonly messageService: MessageService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
@@ -207,7 +203,7 @@ export class DefendantService {
     defendantToCreate: CreateDefendantDto,
     transaction: Transaction,
   ): Promise<Defendant> {
-    return this.defendantModel.create(
+    return this.defendantRepositoryService.create(
       { ...defendantToCreate, caseId },
       { transaction },
     )
@@ -217,11 +213,12 @@ export class DefendantService {
     theCase: Case,
     defendantToCreate: CreateDefendantDto,
     user: User,
+    transaction: Transaction,
   ): Promise<Defendant> {
-    const defendant = await this.defendantModel.create({
-      ...defendantToCreate,
-      caseId: theCase.id,
-    })
+    const defendant = await this.defendantRepositoryService.create(
+      { ...defendantToCreate, caseId: theCase.id },
+      { transaction },
+    )
 
     if (theCase.courtCaseNumber) {
       // This should only happen to non-indictment cases.
@@ -239,37 +236,25 @@ export class DefendantService {
     caseId: string,
     defendantId: string,
     update: UpdateDefendantDto,
-    transaction?: Transaction,
+    transaction: Transaction,
   ) {
-    const [numberOfAffectedRows, defendants] = await this.defendantModel.update(
-      update,
-      { where: { id: defendantId, caseId }, returning: true, transaction },
-    )
-
-    if (numberOfAffectedRows > 1) {
-      // Tolerate failure, but log error
-      this.logger.error(
-        `Unexpected number of rows (${numberOfAffectedRows}) affected when updating defendant ${defendantId} of case ${caseId}`,
-      )
-    } else if (numberOfAffectedRows < 1) {
-      throw new InternalServerErrorException(
-        `Could not update defendant ${defendantId} of case ${caseId}`,
-      )
-    }
-
-    return defendants[0]
+    return this.defendantRepositoryService.update(caseId, defendantId, update, {
+      transaction,
+    })
   }
 
-  async updateRequestCaseDefendant(
+  private async updateRequestCaseDefendant(
     theCase: Case,
     defendant: Defendant,
     update: UpdateDefendantDto,
     user: User,
+    transaction: Transaction,
   ): Promise<Defendant> {
     const updatedDefendant = await this.updateDatabaseDefendant(
       theCase.id,
       defendant.id,
       update,
+      transaction,
     )
 
     await this.sendRequestCaseUpdateDefendantMessages(
@@ -282,40 +267,40 @@ export class DefendantService {
     return updatedDefendant
   }
 
-  async createDefendantEvent({
-    caseId,
-    defendantId,
-    eventType,
-  }: {
-    caseId: string
-    defendantId: string
-    eventType: DefendantEventType
-  }): Promise<void> {
-    await this.defendantEventLogModel.create({
-      caseId,
-      defendantId,
-      eventType,
-    })
+  async createDefendantEvent(
+    event: {
+      caseId: string
+      defendantId: string
+      eventType: DefendantEventType
+    },
+    transaction: Transaction,
+  ): Promise<void> {
+    await this.defendantEventLogRepositoryService.create(event, { transaction })
   }
 
-  async updateIndictmentCaseDefendant(
+  private async updateIndictmentCaseDefendant(
     theCase: Case,
     defendant: Defendant,
     update: UpdateDefendantDto,
     user: User,
+    transaction: Transaction,
   ): Promise<Defendant> {
     const updatedDefendant = await this.updateDatabaseDefendant(
       theCase.id,
       defendant.id,
       update,
+      transaction,
     )
 
     if (update.isSentToPrisonAdmin) {
-      this.createDefendantEvent({
-        caseId: theCase.id,
-        defendantId: defendant.id,
-        eventType: DefendantEventType.SENT_TO_PRISON_ADMIN,
-      })
+      await this.createDefendantEvent(
+        {
+          caseId: theCase.id,
+          defendantId: defendant.id,
+          eventType: DefendantEventType.SENT_TO_PRISON_ADMIN,
+        },
+        transaction,
+      )
     }
 
     await this.sendIndictmentCaseUpdateDefendantMessages(
@@ -333,6 +318,7 @@ export class DefendantService {
     defendant: Defendant,
     update: UpdateDefendantDto,
     user: User,
+    transaction: Transaction,
   ): Promise<Defendant> {
     if (isIndictmentCase(theCase.type)) {
       return this.updateIndictmentCaseDefendant(
@@ -340,9 +326,16 @@ export class DefendantService {
         defendant,
         update,
         user,
+        transaction,
       )
     } else {
-      return this.updateRequestCaseDefendant(theCase, defendant, update, user)
+      return this.updateRequestCaseDefendant(
+        theCase,
+        defendant,
+        update,
+        user,
+        transaction,
+      )
     }
   }
 
@@ -350,7 +343,7 @@ export class DefendantService {
     theCase: Case,
     defendant: Defendant,
     update: InternalUpdateDefendantDto,
-    transaction?: Transaction,
+    transaction: Transaction,
   ): Promise<Defendant> {
     // The reason we have a separate dto for this is because requests that end here
     // are initiated by outside API's which should not be able to edit other fields directly
@@ -415,21 +408,11 @@ export class DefendantService {
     theCase: Case,
     defendantId: string,
     user: User,
+    transaction: Transaction,
   ): Promise<boolean> {
-    const numberOfAffectedRows = await this.defendantModel.destroy({
-      where: { id: defendantId, caseId: theCase.id },
+    await this.defendantRepositoryService.delete(theCase.id, defendantId, {
+      transaction,
     })
-
-    if (numberOfAffectedRows > 1) {
-      // Tolerate failure, but log error
-      this.logger.error(
-        `Unexpected number of rows (${numberOfAffectedRows}) affected when deleting defendant ${defendantId} of case ${theCase.id}`,
-      )
-    } else if (numberOfAffectedRows < 1) {
-      throw new InternalServerErrorException(
-        `Could not delete defendant ${defendantId} of case ${theCase.id}`,
-      )
-    }
 
     if (theCase.courtCaseNumber) {
       // This should only happen to non-indictment cases.
@@ -455,7 +438,7 @@ export class DefendantService {
       return false
     }
 
-    const defendantsInCustody = await this.defendantModel.findAll({
+    const defendantsInCustody = await this.defendantRepositoryService.findAll({
       include: [
         {
           model: Case,
@@ -476,7 +459,7 @@ export class DefendantService {
   findLatestDefendantByDefenderNationalId(
     nationalId: string,
   ): Promise<Defendant | null> {
-    return this.defendantModel.findOne({
+    return this.defendantRepositoryService.findOne({
       include: [
         {
           model: Case,

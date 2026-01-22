@@ -133,6 +133,10 @@ const VehicleDetail = () => {
       title: formatMessage(messages.addOperator),
       href: formatMessage(urls.operator),
     },
+    {
+      title: formatMessage(messages.registerMileCar),
+      href: formatMessage(urls.registerMileCar),
+    },
   ]
 
   if (downloadServiceURL) {
@@ -361,7 +365,7 @@ const VehicleDetail = () => {
             <UserInfoLine
               label={formatMessage(messages.lastKnownOdometerStatus)}
               content={displayWithUnit(
-                data.vehiclesDetail.lastMileage?.mileageNumber,
+                data.vehiclesDetail.latestMileageRegistration,
                 'km',
                 true,
               )}

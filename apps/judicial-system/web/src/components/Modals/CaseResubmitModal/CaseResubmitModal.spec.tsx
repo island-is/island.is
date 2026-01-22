@@ -1,18 +1,13 @@
-import { createIntl } from 'react-intl'
-
 import {
   Case,
   RequestSharedWithDefender,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { createFormatMessage } from '@island.is/judicial-system-web/src/utils/testHelpers.logic'
 
 import { getCaseResubmittedText } from './CaseResubmitModal'
 
 describe('getCaseResubmittedText', () => {
-  const formatMessage = createIntl({
-    locale: 'is',
-    onError: jest.fn(),
-  }).formatMessage
-
+  const formatMessage = createFormatMessage()
   const fn = (theCase: Case) => getCaseResubmittedText(formatMessage, theCase)
 
   test('should format correctly when court date has been set and defender is set to receive access when the court date is set', () => {

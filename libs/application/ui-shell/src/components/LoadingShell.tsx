@@ -13,6 +13,6 @@ export const LoadingShell = () => (
     paddingBottom={20}
     className={styles.root}
   >
-    <LoadingDots large />
+    <LoadingDots size="large" />
   </Box>
 )

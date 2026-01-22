@@ -26,10 +26,7 @@ import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { useI18n } from '@island.is/web/i18n'
 import { StandaloneLayout } from '@island.is/web/layouts/organization/standalone'
 import type { Screen, ScreenContext } from '@island.is/web/types'
-import {
-  CustomNextError,
-  CustomNextRedirect,
-} from '@island.is/web/units/errors'
+import { CustomNextError } from '@island.is/web/units/errors'
 
 import {
   GET_NAMESPACE_QUERY,
@@ -56,6 +53,7 @@ export interface StandaloneParentSubpageProps {
   selectedHeadingId: string
   parentSubpage: OrganizationParentSubpage
   namespace: Record<string, string>
+  selectedIndex: number
 }
 
 const LanguageToggleSetup = (props: { ids: string[] }) => {
@@ -149,8 +147,8 @@ export const getProps: typeof StandaloneParentSubpage['getProps'] = async ({
   query,
   organizationPage,
 }) => {
-  const [organizationPageSlug, parentSubpageSlug, subpageSlug] = (query.slugs ??
-    []) as string[]
+  const querySlugs = (query.slugs ?? []) as string[]
+  const [organizationPageSlug, parentSubpageSlug, subpageSlug] = querySlugs
 
   const [
     {
@@ -168,6 +166,7 @@ export const getProps: typeof StandaloneParentSubpage['getProps'] = async ({
             input: {
               slug: organizationPageSlug,
               lang: locale as ContentLanguage,
+              subpageSlugs: querySlugs.slice(1),
             },
           },
         })
@@ -266,10 +265,6 @@ export const getProps: typeof StandaloneParentSubpage['getProps'] = async ({
     )
   }
 
-  if (!subpageSlug) {
-    throw new CustomNextRedirect(encodeURI(subpageLink.href))
-  }
-
   const tableOfContentHeadings = getOrganizationParentSubpage.childLinks.map(
     (link) => ({
       headingId: link.href,
@@ -287,6 +282,7 @@ export const getProps: typeof StandaloneParentSubpage['getProps'] = async ({
     tableOfContentHeadings,
     selectedHeadingId,
     namespace,
+    selectedIndex,
   }
 }
 

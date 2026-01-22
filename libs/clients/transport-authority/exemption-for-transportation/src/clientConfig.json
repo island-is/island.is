@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "SGS - Leyfur",
-    "description": "Vefþjónusta fyrir undanþágu og leyfisveitinga kerfi Samgöngustofu -  -  - 80271aab9a17608a176205952c2f977239b68b60-20250612.1",
+    "description": "Vefþjónusta fyrir undanþágu og leyfisveitinga kerfi Samgöngustofu -  -  - ea69caf4f0664514770f2a5b58f5d5978f7df5b2-20250924.1",
     "contact": {
       "name": "Samgöngustofa",
       "email": "tolvuhjalp@samgongustofa.is"
@@ -66,7 +66,7 @@
       "get": {
         "tags": ["PermitApplication"],
         "summary": "Checks the status of a vehicle and if it is inspected.",
-        "description": "In order to use the vehicle in an application it has to be both in order and inspected.\r\n</br> \r\nThe same checks are done upon posting a route application. \r\n</br><h3>Errors</h3>\r\n\r\nErrors are returned as problem details where the title is an error code \r\n</br>\r\n```json\r\n{\r\n    \"title\": \"VEHICLE_NOT_FOUND\",\r\n    \"status\": 404,\r\n    \"detail\": \"Vehicle not found DZM435\"\r\n}\r\n```\r\nPossible error codes for <b>400</b>\r\n</br><ul><li><b>VEHICLE_NOT_IN_ALLOWED_GROUP</b> - When vehicle is not in an allowed vehicle group</li><li><b>VEHICLE_NOT_IN_ALLOWED_USE_GROUP</b> - When vehicle is not in an allowed use group</li><li><b>VEHICLE_NOT_TRAILER</b> - When looking up trailer however non trailer permno was provided</li><li><b>VEHICLE_SHOULD_NOT_BE_TRAILER</b> - When looking up vehicle, however a trailer permno was provided  </li></ul>\r\n            \r\nPossible error codes for <b>404</b>\r\n</br><ul><li><b>VEHICLE_NOT_FOUND</b> - No vehicle found</li></ul>",
+        "description": "To use the vehicle in an application, it has to be both in order and inspected.\r\n</br> \r\nThe same checks are done upon posting a route application. \r\n</br><h3>Errors</h3>\r\n\r\nErrors are returned as problem details where the title is an error code \r\n</br>\r\n```json\r\n{\r\n    \"title\": \"VEHICLE_NOT_FOUND\",\r\n    \"status\": 404,\r\n    \"detail\": \"Vehicle not found DZM435\"\r\n}\r\n```\r\nPossible error codes for <b>400</b>\r\n</br><ul><li><b>VEHICLE_NOT_IN_ALLOWED_GROUP</b> - When vehicle is not in an allowed vehicle group</li><li><b>VEHICLE_NOT_IN_ALLOWED_USE_GROUP</b> - When vehicle is not in an allowed use group</li><li><b>VEHICLE_NOT_TRAILER</b> - When looking up trailer however non trailer permno was provided</li><li><b>VEHICLE_SHOULD_NOT_BE_TRAILER</b> - When looking up vehicle, however a trailer permno was provided  </li></ul>\r\n            \r\nPossible error codes for <b>404</b>\r\n</br><ul><li><b>VEHICLE_NOT_FOUND</b> - No vehicle found</li></ul>",
         "parameters": [
           {
             "name": "permno",
@@ -78,7 +78,7 @@
           {
             "name": "shouldBeTrailer",
             "in": "query",
-            "description": "Looking up vehicle that should be a trailer",
+            "description": "Looking up a vehicle that should be a trailer",
             "schema": { "type": "boolean", "default": false }
           },
           {
@@ -766,7 +766,6 @@
         "description": "Vehicle check dto"
       },
       "VehicleModel": {
-        "required": ["axleSpacing"],
         "type": "object",
         "properties": {
           "permno": {
@@ -778,7 +777,8 @@
           "axleSpacing": {
             "type": "array",
             "items": { "type": "number", "format": "double" },
-            "description": "Spacing between axles"
+            "description": "Spacing between axles",
+            "nullable": true
           }
         },
         "additionalProperties": false,

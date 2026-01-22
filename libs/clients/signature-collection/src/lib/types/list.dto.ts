@@ -140,7 +140,7 @@ export const mapList = (
         }))
       : [],
     candidate: mapCandidate(candidate),
-    slug: getSlug(candidate.id, collection.kosningTegund),
+    slug: getSlug(candidate.id, collection.kosningTegund ?? ''),
     area,
     active: isActive,
     numberOfSignatures,

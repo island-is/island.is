@@ -1,0 +1,84 @@
+import { Meta, Story, Canvas, Controls, Description } from '@storybook/blocks'
+import * as AccordionStories from './Accordion.stories'
+
+import { DescriptionFigma } from '../../utils/withFigma'
+import { Accordion } from './Accordion'
+import {
+  AccordionItem,
+  AccordionCard,
+  SidebarAccordion,
+} from './AccordionItem/AccordionItem'
+import { ContentBlock } from '../ContentBlock/ContentBlock'
+import { Box } from '../Box/Box'
+import { Text } from '../Text/Text'
+import { Stack } from '../Stack/Stack'
+
+<Meta of={AccordionStories} />
+
+# Accordion
+
+<DescriptionFigma name="Accordion" />
+
+The **Accordion** component has three different type of items that can be rendered.
+
+- `<AccordionItem />` rendered inside the **Accordion** component
+- `<AccordionCard />` and `<SidebarAccordion />` rendered as standalone
+
+### Basic usage
+
+We wrap all the `<AccordionItem />` inside a `<Accordion />` component.
+
+<Canvas>
+  <Story of={AccordionStories.Default} />
+</Canvas>
+
+### With small icon variant
+
+Additionally we can use `labelUse`, `labelVariant` and `iconVariant` to
+control the size.
+
+<Canvas>
+  <Story of={AccordionStories.SmallVariant} />
+</Canvas>
+
+### With colored label
+
+We can use `labelColor` to change the color on the label for the `AccordionItem`
+
+<Canvas>
+  <Story of={AccordionStories.ColoredLabel} />
+</Canvas>
+
+### With single card
+
+We use the standalone `<AccordionCard />` component
+
+<Canvas>
+  <Story of={AccordionStories.SingleCard} />
+</Canvas>
+
+### With single red card
+
+We use the standalone `<AccordionCard />` component
+
+<Canvas>
+  <Story of={AccordionStories.SingleRedCard} />
+</Canvas>
+
+### As a sidebar
+
+We use the standalone `<SidebarAccordion />` component
+
+<Canvas>
+  <Story of={AccordionStories.Sidebar} />
+</Canvas>
+
+# Props
+
+## Accordion
+
+<Controls />
+
+## AccordionItem
+
+<Controls />

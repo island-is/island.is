@@ -58,9 +58,19 @@ export const m = defineMessages({
     defaultMessage: 'Skoða nánar',
     description: '',
   },
+  collectionActive: {
+    id: 'sp.signatureCollection:collectionActive',
+    defaultMessage: 'Söfnun í gangi',
+    description: '',
+  },
+  collectionLocked: {
+    id: 'sp.signatureCollection:collectionLocked',
+    defaultMessage: 'Lista læst',
+    description: '',
+  },
   collectionClosed: {
     id: 'sp.signatureCollection:collectionClosed',
-    defaultMessage: 'Söfnuninni lokið',
+    defaultMessage: 'Söfnun lokið',
     description: '',
   },
   collectionMaxReached: {
@@ -135,7 +145,8 @@ export const m = defineMessages({
   },
   unSignModalMessage: {
     id: 'sp.signatureCollection:unSignModalMessage',
-    defaultMessage: 'Þú ert að fara að draga meðmælin þín til baka. Ertu viss?',
+    defaultMessage:
+      'Þú ert við það að draga meðmælin þín til baka. Ertu viss um að þú viljir halda áfram?',
     description: '',
   },
   unSignModalConfirmButton: {
@@ -214,9 +225,9 @@ export const m = defineMessages({
     defaultMessage: 'Tímabil lista:',
     description: '',
   },
-  numberOfSigns: {
-    id: 'sp.signatureCollection:numberOfSigns',
-    defaultMessage: 'Fjöldi meðmæla:',
+  numberOfValidSigns: {
+    id: 'sp.signatureCollection:numberOfValidSigns',
+    defaultMessage: 'Fjöldi gildra meðmæla:',
     description: '',
   },
   coOwners: {
@@ -224,15 +235,30 @@ export const m = defineMessages({
     defaultMessage: 'Umsjónaraðilar:',
     description: '',
   },
+  pdfReport: {
+    id: 'sp.signatureCollection:pdfReport',
+    defaultMessage: 'Sækja skýrslu',
+    description: '',
+  },
+  pdfReportDescription: {
+    id: 'sp.signatureCollection:pdfReportDescription',
+    defaultMessage: 'Texti sem útskýrir þessa aðgerð kemur hér.',
+    description: '',
+  },
   downloadPdf: {
     id: 'sp.signatureCollection:downloadPdf',
-    defaultMessage: 'Sækja skýrslu',
+    defaultMessage: 'Hlaða niður skýrslu',
+    description: '',
+  },
+  pdfReportError: {
+    id: 'sp.signatureCollection:pdfReportError',
+    defaultMessage: 'Ekki tókst að sækja skýrslu',
     description: '',
   },
   downloadPdfDescription: {
     id: 'sp.signatureCollection:downloadPdfDescription',
     defaultMessage:
-      '              Lorem ipsum dolor sit amet. Vestibulum tincidunt cursus viverra.',
+      'Lorem ipsum dolor sit amet. Vestibulum tincidunt cursus viverra.',
     description: '',
   },
   copyLink: {
@@ -410,6 +436,16 @@ export const m = defineMessages({
   },
 
   /* Municipal */
+  collectionTitleMunicipal: {
+    id: 'sp.signatureCollection:collectionTitleMunicipal',
+    defaultMessage: 'Sveitarstjórnarkosningar',
+    description: '',
+  },
+  collectionMunicipalListOwner: {
+    id: 'sp.signatureCollection:collectionMunicipalListOwner',
+    defaultMessage: 'Stofnandi söfnunar',
+    description: '',
+  },
   pageTitleMunicipal: {
     id: 'sp.signatureCollection:pageTitleMunicipal',
     defaultMessage: 'Meðmælasafnanir fyrir sveitarstjórnarkosningar',
@@ -419,6 +455,12 @@ export const m = defineMessages({
     id: 'sp.signatureCollection:pageIntro',
     defaultMessage:
       'Hér eru upplýsingar um hlekk á söfnunina, stöðuna og yfirlit yfir umsjónaraðila.',
+    description: '',
+  },
+  pageIntroSignee: {
+    id: 'sp.signatureCollection:pageIntroSignee',
+    defaultMessage:
+      'Hægt er að draga meðmæli til baka og mæla með öðru framboði.',
     description: '',
   },
   collectionIsActive: {
@@ -432,7 +474,7 @@ export const m = defineMessages({
     description: '',
   },
   managersDescription: {
-    id: 'sp.signatureCollection:managersDescription',
+    id: 'sp.signatureCollection:managersDescription#markdown',
     defaultMessage:
       'Hægt er að bæta við umsjónaraðilum með því að veita þeim umboð hér. Umsjónaraðilar hafa sömu aðgangsheimildir og stofnandi söfnunar en geta ekki eytt söfnuninni.',
     description: '',
@@ -447,15 +489,14 @@ export const m = defineMessages({
     defaultMessage: 'Aðgerðir',
     description: '',
   },
-  listActionsDescription: {
-    id: 'sp.signatureCollection:listActionsDescription',
-    defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec eu justo interdum, pharetra enim vel, ultrices augue.',
+  deleteCollectionCandidacy: {
+    id: 'sp.signatureCollection:deleteCollectionCandidacy',
+    defaultMessage: 'Eyða framboði',
     description: '',
   },
   deleteCollection: {
     id: 'sp.signatureCollection:deleteCollection',
-    defaultMessage: 'Eyða frambooði',
+    defaultMessage: 'Eyða söfnun',
     description: '',
   },
   deleteCollectionDescription: {

@@ -11,16 +11,23 @@ import { FormSystemSection } from '@island.is/api/schema'
 import { Screen } from '../Screen/Screen'
 import { useApplicationContext } from '../../context/ApplicationProvider'
 import { useEffect } from 'react'
+import { useLocale } from '@island.is/localization'
 
 export const Form = () => {
   const { setInfo } = useHeaderInfo()
+  const { lang } = useLocale()
   const { state } = useApplicationContext()
   useEffect(() => {
     setInfo({
-      applicationName: state.application?.formName?.is ?? '',
-      organisationName: state.application?.organizationName?.is ?? '',
+      applicationName: state.application?.formName?.[lang] ?? '',
+      organisationName: state.application?.organizationName?.[lang] ?? '',
     })
-  }, [state.application.formName, state.application.organizationName, setInfo])
+  }, [
+    state.application?.formName,
+    state.application?.organizationName,
+    setInfo,
+    lang,
+  ])
 
   return (
     <Box className={styles.root}>
@@ -67,6 +74,7 @@ export const Form = () => {
                   )}
                   currentSection={state.currentSection}
                   currentScreen={state.currentScreen}
+                  hasSummaryScreen={state.application.hasSummaryScreen ?? false}
                 />
               </Box>
             </Column>

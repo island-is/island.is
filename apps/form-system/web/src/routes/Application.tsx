@@ -1,9 +1,9 @@
+import { useQuery } from '@apollo/client'
+import { ErrorShell } from '../components/ErrorShell/ErrorShell'
+import { GET_APPLICATION, removeTypename } from '@island.is/form-system/graphql'
+import { ApplicationLoading } from '@island.is/form-system/ui'
 import { useParams } from 'react-router-dom'
 import { ApplicationProvider } from '../context/ApplicationProvider'
-import { GET_APPLICATION, removeTypename } from '@island.is/form-system/graphql'
-import { useQuery } from '@apollo/client'
-import { ApplicationLoading } from '../components/ApplicationsLoading/ApplicationLoading'
-import { NotFound } from '@island.is/portals/core'
 
 type UseParams = {
   slug: string
@@ -13,26 +13,26 @@ type UseParams = {
 export const Application = () => {
   const { slug, id } = useParams() as UseParams
   const { data, error, loading } = useQuery(GET_APPLICATION, {
-    variables: { input: { id } },
+    variables: { input: { id, slug } },
     skip: !id,
-    fetchPolicy: 'cache-first',
+    fetchPolicy: 'no-cache',
   })
 
   if (!id || !slug) {
-    return <NotFound />
+    return <ErrorShell errorType="notFound" />
   }
 
   if (loading) {
     return <ApplicationLoading />
   }
 
-  if (error) {
-    return <div>Error</div>
+  const formSystemApp = data?.formSystemApplication
+  const isLoginTypeAllowed = formSystemApp?.isLoginTypeAllowed
+  const application = removeTypename(formSystemApp?.application)
+
+  if (error || isLoginTypeAllowed === false || !application) {
+    return <ErrorShell errorType="idNotFound" />
   }
 
-  return (
-    <ApplicationProvider
-      application={removeTypename(data?.formSystemApplication)}
-    />
-  )
+  return <ApplicationProvider application={application} />
 }

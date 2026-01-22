@@ -64,6 +64,7 @@ export class DeprecatedResolver {
 
   @Scopes(ApiScope.vinnueftirlitid)
   @Query(() => MachineDetails, {
+    nullable: true,
     deprecationReason:
       'TO BE REMOVED. Pass in registrationnumber to "workMachine" resolver function instead',
   })

@@ -466,15 +466,16 @@ export class TransportAuthorityApi {
       })
 
       const model = vehicle.make
-      const subModel = [vehicle.vehcom, vehicle.speccom]
-        .filter(Boolean)
-        .join(' ')
+      const subModel = vehicle.vehcom ?? ''
 
       return {
         permno: vehicle.permno,
         make: `${model} ${subModel}`,
         color: vehicle.color,
         numberOfAxles: vehicle.technical?.axle?.axleno || 0,
+        vehicleHasMilesOdometer: vehicle.vehicleHasMilesOdometer
+          ? vehicle.vehicleHasMilesOdometer
+          : false,
       }
     } catch (e) {
       return null

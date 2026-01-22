@@ -22,11 +22,15 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { CivilClaimant, Defendant } from '../../defendant'
-import { Victim } from '../../victim'
-import { Case } from '../models/case.model'
+import {
+  Case,
+  CivilClaimant,
+  DateLog,
+  Defendant,
+  EventLog,
+  Victim,
+} from '../../repository'
 import { MinimalCase } from '../models/case.types'
-import { DateLog } from '../models/dateLog.model'
 
 const canProsecutionUserAccessCase = (
   theCase: Case,
@@ -51,6 +55,7 @@ const canProsecutionUserAccessCase = (
       CaseState.REJECTED,
       CaseState.DISMISSED,
       CaseState.COMPLETED,
+      CaseState.CORRECTING,
     ].includes(theCase.state)
   ) {
     return false
@@ -78,14 +83,17 @@ const canProsecutionUserAccessCase = (
   return true
 }
 
-const canPublicProsecutionUserAccessCase = (theCase: Case): boolean => {
+export const canPublicProsecutionUserAccessCase = (theCase: Case): boolean => {
   // Check case type access
   if (!isIndictmentCase(theCase.type)) {
     return false
   }
 
   // Check case state access
-  if (theCase.state !== CaseState.COMPLETED) {
+  if (
+    theCase.state !== CaseState.COMPLETED &&
+    theCase.state !== CaseState.CORRECTING
+  ) {
     return false
   }
 
@@ -101,16 +109,12 @@ const canPublicProsecutionUserAccessCase = (theCase: Case): boolean => {
   }
 
   // Make sure the indictment has been sent to the public prosecutor
-  if (
-    !theCase.eventLogs?.some(
-      (eventLog) =>
-        eventLog.eventType === EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
-    )
-  ) {
-    return false
-  }
-
-  return true
+  return Boolean(
+    EventLog.getEventLogByEventType(
+      EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+      theCase.eventLogs,
+    ),
+  )
 }
 
 const canDistrictCourtUserAccessCase = (theCase: Case, user: User): boolean => {
@@ -134,6 +138,7 @@ const canDistrictCourtUserAccessCase = (theCase: Case, user: User): boolean => {
       CaseState.WAITING_FOR_CANCELLATION,
       CaseState.RECEIVED,
       CaseState.COMPLETED,
+      CaseState.CORRECTING,
     ].includes(theCase.state)
   ) {
     return false
@@ -263,7 +268,10 @@ const canPrisonAdminUserAccessCase = (
 
   if (isIndictmentCase(theCase.type)) {
     // Check case state access
-    if (theCase.state !== CaseState.COMPLETED) {
+    if (
+      theCase.state !== CaseState.COMPLETED &&
+      theCase.state !== CaseState.CORRECTING
+    ) {
       return false
     }
 
@@ -395,6 +403,7 @@ const canDefenceUserAccessIndictmentCase = (
       CaseState.WAITING_FOR_CANCELLATION,
       CaseState.RECEIVED,
       CaseState.COMPLETED,
+      CaseState.CORRECTING,
     ].includes(theCase.state)
   ) {
     return false

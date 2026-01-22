@@ -34,9 +34,6 @@ export const applicantSubSection = buildSubSection({
           compactFields: true,
           emailRequired: true,
           phoneRequired: true,
-          customAddressLabel: userInformation.transporter.address,
-          customPostalCodeAndCityLabel:
-            userInformation.transporter.postalCodeAndCity,
         }).children.sort((a, b) => {
           const getOrder = (id: string): number => {
             return order[id as keyof typeof order] ?? 999

@@ -93,3 +93,146 @@ query GetOrganDonorStatus($locale: String) {
     }
   }
 }
+
+query GetDrugPrescriptions($locale: String) {
+  healthDirectoratePrescriptions(locale: $locale) {
+    prescriptions {
+      id
+      name
+      strength
+      type
+      form
+      url
+      quantity
+      prescriberName
+      issueDate
+      expiryDate
+      category
+      dosageInstructions
+      indication
+      totalPrescribedAmount
+      isRenewable
+      renewalBlockedReason
+      renewalStatus
+      amountRemaining
+      medCardDrugId
+      dispensations {
+        id
+        pharmacy
+        date
+        name
+        count
+        strength
+        itemId
+        amount
+      }
+    }
+  }
+}
+
+query GetDrugCertificates {
+  rightsPortalDrugCertificates {
+    id
+    atcCode
+    atcName
+    drugName
+    date
+    validFrom
+    validTo
+    doctor
+    processed
+    approved
+    rejected
+    expired
+    valid
+    comment
+    documentId
+    methylDoctors {
+      name
+    }
+  }
+}
+
+query GetMedicineHistory($locale: String) {
+  healthDirectorateMedicineHistory(locale: $locale) {
+    medicineHistory {
+      id
+      name
+      strength
+      atcCode
+      indication
+      lastDispensationDate
+      dispensationCount
+      dispensations {
+        ...Dispensation
+      }
+    }
+  }
+}
+
+query GetMedicineDispensationForATC(
+  $locale: String
+  $input: MedicineDispensationsATCInput!
+) {
+  healthDirectorateMedicineDispensationsATC(locale: $locale, input: $input) {
+    dispensations {
+      ...Dispensation
+    }
+  }
+}
+
+query getBloodTypeOverview {
+  rightsPortalBloodType {
+    registered
+    type
+  }
+}
+
+query getDentistOverview($input: RightsPortalDentistBillsInput!) {
+  rightsPortalUserDentistRegistration(input: $input) {
+    dentist {
+      name
+    }
+  }
+}
+
+query GetMedicineDelegations(
+  $locale: String!
+  $input: HealthDirectorateMedicineDelegationInput!
+) {
+  healthDirectorateMedicineDelegations(locale: $locale, input: $input) {
+    items {
+      __typename
+      cacheId
+      name
+      nationalId
+      isActive
+      status
+      lookup
+      dates {
+        from
+        to
+      }
+    }
+  }
+}
+
+mutation PostMedicineDelegation(
+  $input: HealthDirectorateMedicineDelegationCreateOrDeleteInput!
+) {
+  healthDirectorateMedicineDelegationCreate(input: $input) {
+    __typename
+    success
+    message
+  }
+}
+
+mutation DeleteMedicineDelegation(
+  $input: HealthDirectorateMedicineDelegationCreateOrDeleteInput!
+) {
+  healthDirectorateMedicineDelegationDelete(input: $input) {
+    __typename
+    success
+    message
+  }
+}

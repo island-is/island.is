@@ -6,7 +6,15 @@ export const departmentDate = style({
   marginTop: '3.5em',
   textAlign: 'center',
 })
-export const bodyText = style({})
+
+export const advertDescription = style({
+  width: '90%',
+  margin: '0 auto',
+})
+
+export const bodyText = style({
+  marginTop: '1.6em',
+})
 regulationContentStyling(bodyText)
 
 globalStyle(

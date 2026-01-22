@@ -1,4 +1,5 @@
 import { Response } from 'express'
+import { Sequelize } from 'sequelize-typescript'
 
 import {
   Controller,
@@ -10,6 +11,7 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common'
+import { InjectConnection } from '@nestjs/sequelize'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
@@ -35,22 +37,23 @@ import {
   publicProsecutorStaffRule,
 } from '../../guards'
 import {
-  Case,
   CaseExistsGuard,
   CaseReadGuard,
   CaseTypeGuard,
   CurrentCase,
   PdfService,
 } from '../case'
-import { Defendant } from '../defendant'
-import { CurrentDefendant } from '../defendant/guards/defendant.decorator'
-import { DefendantExistsGuard } from '../defendant/guards/defendantExists.guard'
+import {
+  CurrentDefendant,
+  DefendantExistsGuard,
+  SplitDefendantExistsGuard,
+} from '../defendant'
+import { Case, Defendant, Subpoena } from '../repository'
 import { CurrentSubpoena } from './guards/subpoena.decorator'
 import {
   SubpoenaExistsGuard,
   SubpoenaExistsOptionalGuard,
 } from './guards/subpoenaExists.guard'
-import { Subpoena } from './models/subpoena.model'
 import { SubpoenaService } from './subpoena.service'
 
 @Controller('api/case/:caseId/defendant/:defendantId/subpoena')
@@ -61,12 +64,12 @@ import { SubpoenaService } from './subpoena.service'
   CaseExistsGuard,
   new CaseTypeGuard(indictmentCases),
   CaseReadGuard,
-  DefendantExistsGuard,
 )
 export class SubpoenaController {
   constructor(
     private readonly pdfService: PdfService,
     private readonly subpoenaService: SubpoenaService,
+    @InjectConnection() private readonly sequelize: Sequelize,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -78,7 +81,7 @@ export class SubpoenaController {
     districtCourtRegistrarRule,
   )
   @Get(':subpoenaId')
-  @UseGuards(SubpoenaExistsGuard)
+  @UseGuards(DefendantExistsGuard, SubpoenaExistsGuard)
   @ApiOkResponse({
     type: Subpoena,
     description: 'Gets the subpoena for a given defendant',
@@ -87,6 +90,8 @@ export class SubpoenaController {
     @Param('caseId') caseId: string,
     @Param('defendantId') defendantId: string,
     @Param('subpoenaId') subpoenaId: string,
+    @CurrentCase() theCase: Case,
+    @CurrentDefendant() defendant: Defendant,
     @CurrentSubpoena() subpoena: Subpoena,
     @CurrentHttpUser() user: User,
   ): Promise<Subpoena> {
@@ -94,7 +99,15 @@ export class SubpoenaController {
       `Gets subpoena ${subpoenaId} for defendant ${defendantId} of case ${caseId}`,
     )
 
-    return this.subpoenaService.getSubpoena(subpoena, user)
+    return this.sequelize.transaction((transaction) =>
+      this.subpoenaService.getSubpoena(
+        theCase,
+        defendant,
+        subpoena,
+        transaction,
+        user,
+      ),
+    )
   }
 
   @RolesRules(
@@ -106,7 +119,10 @@ export class SubpoenaController {
     districtCourtAssistantRule,
   )
   @Get(['', ':subpoenaId/pdf'])
-  @UseGuards(SubpoenaExistsOptionalGuard)
+  // Strictly speaking, only district court users need access to
+  // split case defendants' subpoenas
+  // However, giving prosecution users access does not pose a security risk
+  @UseGuards(SplitDefendantExistsGuard, SubpoenaExistsOptionalGuard)
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
     content: { 'application/pdf': {} },
@@ -130,13 +146,16 @@ export class SubpoenaController {
       } for defendant ${defendantId} of case ${caseId} as a pdf document`,
     )
 
-    const pdf = await this.pdfService.getSubpoenaPdf(
-      theCase,
-      defendant,
-      subpoena,
-      arraignmentDate,
-      location,
-      subpoenaType,
+    const pdf = await this.sequelize.transaction((transaction) =>
+      this.pdfService.getSubpoenaPdf(
+        theCase,
+        defendant,
+        transaction,
+        subpoena,
+        arraignmentDate,
+        location,
+        subpoenaType,
+      ),
     )
 
     res.end(pdf)
@@ -151,7 +170,10 @@ export class SubpoenaController {
     districtCourtAssistantRule,
   )
   @Get(':subpoenaId/serviceCertificate')
-  @UseGuards(SubpoenaExistsGuard)
+  // Strictly speaking, only district court users need access to
+  // split case defendants' subpoena service certificates
+  // However, giving prosecution users access does not pose a security risk
+  @UseGuards(SplitDefendantExistsGuard, SubpoenaExistsGuard)
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
     content: { 'application/pdf': {} },
@@ -171,7 +193,7 @@ export class SubpoenaController {
       `Getting service certificate for defendant ${defendantId} in subpoena ${subpoenaId} of case ${caseId} as a pdf document`,
     )
 
-    const pdf = await this.pdfService.getServiceCertificatePdf(
+    const pdf = await this.pdfService.getSubpoenaServiceCertificatePdf(
       theCase,
       defendant,
       subpoena,

@@ -1,10 +1,10 @@
 import { UniqueIdentifier } from '@dnd-kit/core'
 import {
-  FormSystemSection,
-  FormSystemScreen,
   FormSystemField,
   FormSystemLanguageType,
   FormSystemLanguageTypeInput,
+  FormSystemScreen,
+  FormSystemSection,
 } from '@island.is/api/schema'
 
 export enum NavbarSelectStatus {
@@ -29,14 +29,6 @@ export interface IListItem {
   isSelected: boolean
 }
 
-export enum ApplicationTemplateStatus {
-  Þýðing = -2,
-  Kerfi = -1,
-  Óútgefið = 0,
-  Útgefið = 2,
-  tekiðÚrNotkun = 4,
-}
-
 export type ButtonTypes =
   | 'CHANGE_NAME'
   | 'CHANGE_FORM_NAME'
@@ -44,3 +36,8 @@ export type ButtonTypes =
   | 'SET_MESSAGE_WITH_LINK_SETTINGS'
 
 export type FormsLocationState = 'forms' | 'applications' | 'admin'
+
+export interface OpenComponents {
+  sections: string[]
+  screens: string[]
+}

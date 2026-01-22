@@ -105,25 +105,28 @@ export const useCancelCase = (onComplete: (caseId: string) => void) => {
 
   const [cancelCaseId, isCancelCaseLoading, theCase] = caseToCancel
 
-  const CancelCaseModal = () =>
-    theCase && (
-      <Modal
-        title="Mál afturkallað"
-        text="Ákæruvaldið hefur afturkallað ákæruna. Hægt er að skrá málsnúmer og ljúka málinu hér."
-        primaryButtonText="Ljúka máli"
-        onPrimaryButtonClick={handlePrimaryButtonClick}
-        isPrimaryButtonLoading={isUpdatingCase || isTransitioningCase}
-        secondaryButtonText="Hætta við"
-        onSecondaryButtonClick={handleSecondaryButtonClick}
-      >
-        <Box marginBottom={8}>
-          <CourtCaseNumberInput
-            workingCase={theCase}
-            setWorkingCase={setWorkingCase}
-          />
-        </Box>
-      </Modal>
-    )
+  const CancelCaseModal = theCase && (
+    <Modal
+      title="Mál afturkallað"
+      text="Ákæruvaldið hefur afturkallað ákæruna. Hægt er að skrá málsnúmer og ljúka málinu hér."
+      primaryButton={{
+        text: 'Ljúka máli',
+        onClick: handlePrimaryButtonClick,
+        isLoading: isUpdatingCase || isTransitioningCase,
+      }}
+      secondaryButton={{
+        text: 'Hætta við',
+        onClick: handleSecondaryButtonClick,
+      }}
+    >
+      <Box marginBottom={8}>
+        <CourtCaseNumberInput
+          workingCase={theCase}
+          setWorkingCase={setWorkingCase}
+        />
+      </Box>
+    </Modal>
+  )
 
   return { cancelCase, cancelCaseId, isCancelCaseLoading, CancelCaseModal }
 }

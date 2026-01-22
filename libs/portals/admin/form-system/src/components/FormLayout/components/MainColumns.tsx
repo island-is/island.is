@@ -1,16 +1,18 @@
-import { Box, Button, DialogPrompt } from '@island.is/island-ui/core'
-import { MainContent } from '../../MainContent/MainContent'
-import React, { useContext } from 'react'
-import { ControlContext } from '../../../context/ControlContext'
-import { m } from '@island.is/form-system/ui'
-import { useIntl } from 'react-intl'
 import { useMutation } from '@apollo/client'
 import {
-  DELETE_SCREEN,
   DELETE_FIELD,
+  DELETE_SCREEN,
   DELETE_SECTION,
 } from '@island.is/form-system/graphql'
+import { m } from '@island.is/form-system/ui'
+import { Box, DialogPrompt } from '@island.is/island-ui/core'
+import cn from 'classnames'
+import { useContext } from 'react'
+import { useIntl } from 'react-intl'
+import { ControlContext } from '../../../context/ControlContext'
+import { MainContent } from '../../MainContent/MainContent'
 import { DeleteButton } from './DeleteButton'
+import * as styles from './MainColumn.css'
 
 export const MainContentColumn = () => {
   const { control, controlDispatch, inSettings } = useContext(ControlContext)
@@ -21,6 +23,9 @@ export const MainContentColumn = () => {
   const deleteScreen = useMutation(DELETE_SCREEN)
   const deleteField = useMutation(DELETE_FIELD)
   const deleteSection = useMutation(DELETE_SECTION)
+  const partiesSection =
+    activeItem.type === 'Section' &&
+    (activeItem.data as { sectionType?: string })?.sectionType === 'PARTIES'
 
   const containsGroupOrInput = (): boolean => {
     if (type === 'Section') {
@@ -75,14 +80,8 @@ export const MainContentColumn = () => {
   }
 
   return (
-    <Box
-      style={{
-        maxWidth: '1200px',
-        width: '100%',
-        marginLeft: 0,
-      }}
-    >
-      {!inSettings ? (
+    <Box className={cn(styles.mainColumn)} padding={2}>
+      {!inSettings && !partiesSection ? (
         containsGroupOrInput() ? (
           <DialogPrompt
             baseId="remove"
@@ -94,8 +93,8 @@ export const MainContentColumn = () => {
             onConfirm={remove}
             disclosureElement={
               <DeleteButton
-                onClick={() => {}}
                 label={formatMessage(m.delete)}
+                onClick={() => null}
               />
             }
           />
@@ -105,13 +104,9 @@ export const MainContentColumn = () => {
       ) : null}
 
       <Box
-        border="standard"
-        borderRadius="standard"
         width="full"
         style={{
           minHeight: '500px',
-          overflow: 'auto',
-          maxHeight: '70vh',
         }}
       >
         <MainContent />

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { ScrollView, View } from 'react-native'
 import { Navigation } from 'react-native-navigation'
@@ -8,7 +8,6 @@ import {
   Accordion,
   AccordionItem,
   Button,
-  Checkbox,
   DatePickerInput,
   theme,
 } from '../../ui'
@@ -23,11 +22,17 @@ import {
   DocumentsV2Sender,
 } from '../../graphql/types/schema'
 import styled from 'styled-components'
+import { FilteringCheckbox } from './components/filtering-checkbox'
 
 const ButtonContainer = styled(View)`
   margin-left: ${({ theme }) => theme.spacing[2]}px;
   margin-right: ${({ theme }) => theme.spacing[2]}px;
   bottom: ${theme.spacing[2]}px;
+`
+
+const DatePickerContainer = styled(View)`
+  margin-horizontal: ${({ theme }) => theme.spacing[2]}px;
+  gap: ${({ theme }) => theme.spacing[2]}px;
 `
 
 const { useNavigationOptions, getNavigationOptions } =
@@ -42,7 +47,7 @@ const { useNavigationOptions, getNavigationOptions } =
     },
   }))
 
-export function InboxFilterScreen(props: {
+type InboxFilterScreenProps = {
   opened: boolean
   bookmarked: boolean
   archived: boolean
@@ -53,8 +58,13 @@ export function InboxFilterScreen(props: {
   dateFrom?: Date
   dateTo?: Date
   componentId: string
-}) {
-  useConnectivityIndicator({ componentId: props.componentId })
+}
+
+export function InboxFilterScreen({
+  componentId,
+  ...props
+}: InboxFilterScreenProps) {
+  useConnectivityIndicator({ componentId })
 
   const intl = useIntl()
   const [opened, setOpened] = useState(props.opened)
@@ -89,36 +99,16 @@ export function InboxFilterScreen(props: {
     dateTo
   )
 
-  useNavigationOptions(props.componentId)
+  useNavigationOptions(componentId)
 
   useNavigationButtonPress(({ buttonId }) => {
     if (buttonId === ButtonRegistry.InboxFilterClearButton) {
       clearAllFilters()
     }
-  }, props.componentId)
+  }, componentId)
 
   useEffect(() => {
-    Navigation.updateProps(ComponentRegistry.InboxScreen, {
-      opened,
-      bookmarked,
-      archived,
-      senderNationalId: selectedSenders,
-      categoryIds: selectedCategories,
-      dateFrom,
-      dateTo,
-    })
-  }, [
-    opened,
-    bookmarked,
-    archived,
-    selectedSenders,
-    selectedCategories,
-    dateFrom,
-    dateTo,
-  ])
-
-  useEffect(() => {
-    Navigation.mergeOptions(props.componentId, {
+    Navigation.mergeOptions(componentId, {
       topBar: {
         rightButtons: isSelected
           ? [
@@ -132,7 +122,34 @@ export function InboxFilterScreen(props: {
           : [],
       },
     })
-  }, [isSelected, props.componentId, intl])
+  }, [isSelected, componentId, intl])
+
+  const onApplyFilters = useCallback(() => {
+    Navigation.updateProps(
+      ComponentRegistry.InboxScreen,
+      {
+        opened,
+        bookmarked,
+        archived,
+        senderNationalId: selectedSenders,
+        categoryIds: selectedCategories,
+        dateFrom,
+        dateTo,
+      },
+      () => {
+        Navigation.pop(componentId)
+      },
+    )
+  }, [
+    componentId,
+    opened,
+    bookmarked,
+    archived,
+    selectedSenders,
+    selectedCategories,
+    dateFrom,
+    dateTo,
+  ])
 
   return (
     <View
@@ -142,7 +159,8 @@ export function InboxFilterScreen(props: {
       }}
     >
       <ScrollView style={{ flex: 1, marginBottom: theme.spacing[3] }}>
-        <Checkbox
+        <FilteringCheckbox
+          key="opened"
           label={intl.formatMessage({
             id: 'inboxFilters.unreadOnly',
           })}
@@ -151,7 +169,7 @@ export function InboxFilterScreen(props: {
             setOpened(!opened)
           }}
         />
-        <Checkbox
+        <FilteringCheckbox
           label={intl.formatMessage({
             id: 'inboxFilters.starred',
           })}
@@ -160,7 +178,7 @@ export function InboxFilterScreen(props: {
             setBookmarked(!bookmarked)
           }}
         />
-        <Checkbox
+        <FilteringCheckbox
           label={intl.formatMessage({
             id: 'inboxFilters.archived',
           })}
@@ -180,7 +198,7 @@ export function InboxFilterScreen(props: {
             >
               {props.availableSenders.map(({ name, id }) => {
                 return name && id ? (
-                  <Checkbox
+                  <FilteringCheckbox
                     key={id}
                     label={name}
                     checked={selectedSenders.includes(id)}
@@ -206,7 +224,7 @@ export function InboxFilterScreen(props: {
             >
               {props.availableCategories.map(({ name, id }) => {
                 return name && id ? (
-                  <Checkbox
+                  <FilteringCheckbox
                     key={id}
                     label={name}
                     checked={selectedCategories.includes(id)}
@@ -230,24 +248,26 @@ export function InboxFilterScreen(props: {
             title={intl.formatMessage({ id: 'inbox.filterDatesTitle' })}
             startOpen={!!dateFrom || !!dateTo}
           >
-            <DatePickerInput
-              label={intl.formatMessage({ id: 'inbox.filterDateFromLabel' })}
-              placeholder={intl.formatMessage({
-                id: 'inbox.filterDatePlaceholder',
-              })}
-              onSelectDate={setDateFrom}
-              selectedDate={dateFrom}
-            />
-            <DatePickerInput
-              label={intl.formatMessage({ id: 'inbox.filterDateToLabel' })}
-              placeholder={intl.formatMessage({
-                id: 'inbox.filterDatePlaceholder',
-              })}
-              maximumDate={new Date()}
-              minimumDate={dateFrom}
-              onSelectDate={setDateTo}
-              selectedDate={dateTo}
-            />
+            <DatePickerContainer>
+              <DatePickerInput
+                label={intl.formatMessage({ id: 'inbox.filterDateFromLabel' })}
+                placeholder={intl.formatMessage({
+                  id: 'inbox.filterDatePlaceholder',
+                })}
+                onSelectDate={setDateFrom}
+                selectedDate={dateFrom}
+              />
+              <DatePickerInput
+                label={intl.formatMessage({ id: 'inbox.filterDateToLabel' })}
+                placeholder={intl.formatMessage({
+                  id: 'inbox.filterDatePlaceholder',
+                })}
+                maximumDate={new Date()}
+                minimumDate={dateFrom}
+                onSelectDate={setDateTo}
+                selectedDate={dateTo}
+              />
+            </DatePickerContainer>
           </AccordionItem>
         </Accordion>
       </ScrollView>
@@ -255,9 +275,7 @@ export function InboxFilterScreen(props: {
         <ButtonContainer>
           <Button
             title={intl.formatMessage({ id: 'inbox.filterApplyButton' })}
-            onPress={() => {
-              Navigation.pop(props.componentId)
-            }}
+            onPress={onApplyFilters}
           />
         </ButtonContainer>
       )}

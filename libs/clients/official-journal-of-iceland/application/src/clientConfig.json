@@ -9,13 +9,13 @@
             "name": "page",
             "required": false,
             "in": "query",
-            "schema": { "example": 1, "type": "number" }
+            "schema": { "default": 1, "example": 1, "type": "number" }
           },
           {
             "name": "pageSize",
             "required": false,
             "in": "query",
-            "schema": { "example": 10, "type": "number" }
+            "schema": { "default": 10, "example": 10, "type": "number" }
           },
           {
             "name": "search",
@@ -366,6 +366,13 @@
             "name": "id",
             "required": true,
             "in": "path",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "partyName",
+            "required": false,
+            "in": "query",
+            "description": "Name of the involved party",
             "schema": { "type": "string" }
           }
         ],
@@ -1354,6 +1361,10 @@
           "comment": {
             "type": "string",
             "description": "The case comment itself"
+          },
+          "applicationUserName": {
+            "type": "string",
+            "description": "Name of the user making the application comment."
           }
         },
         "required": ["comment"]
@@ -1671,7 +1682,8 @@
           },
           "department": { "$ref": "#/components/schemas/Department" },
           "type": { "$ref": "#/components/schemas/AdvertType" },
-          "html": { "type": "string" }
+          "html": { "type": "string" },
+          "expectedPublishDate": { "type": "string" }
         },
         "required": [
           "categories",

@@ -10,6 +10,8 @@ import { InputController } from '@island.is/shared/form-fields'
 import {
   VehiclePermnoWithInfoField,
   FieldBaseProps,
+  FieldTypes,
+  FieldComponents,
 } from '@island.is/application/types'
 import {
   buildFieldRequired,
@@ -24,13 +26,21 @@ import { VehicleValidation } from './types'
 import { useLocale } from '@island.is/localization'
 import { Locale } from '@island.is/shared/types'
 import { gql, useApolloClient, useLazyQuery } from '@apollo/client'
-import { BasicVehicleInformation } from '@island.is/api/schema'
-import { GET_VEHICLE_BASIC_INFO_BY_PERMNO } from './graphql/queries'
+import { GET_EXEMPTION_VALIDATION_BY_PERMNO } from './graphql/queries'
+import { HiddenInputFormField } from '../HiddenInputFormField/HiddenInputFormField'
+import type { ExemptionValidation } from '@island.is/api/schema'
 
 interface Props extends FieldBaseProps {
   field: VehiclePermnoWithInfoField
 }
 
+/*
+ * This field was initially designed to be used as a base vehicle input field but due to requirements in
+ * ExemptionForTransportation application the field now uses a graphQL query and SGS endpoint specifically designed for
+ * that application.
+ *
+ * This is a temporary change to allow us to go live with that application. A more permanent implementation is due.
+ */
 export const VehiclePermnoWithInfoFormField: FC<
   React.PropsWithChildren<Props>
 > = ({ application, field, errors }) => {
@@ -39,6 +49,7 @@ export const VehiclePermnoWithInfoFormField: FC<
   const makeAndColorField = `${field.id}.makeAndColor`
   const numberOfAxlesField = `${field.id}.numberOfAxles`
   const hasErrorField = `${field.id}.hasError`
+  const isTrailer = field.isTrailer
 
   const { setValue, getValues } = useFormContext()
   const { formatMessage, lang: locale } = useLocale()
@@ -52,22 +63,23 @@ export const VehiclePermnoWithInfoFormField: FC<
   const [loadVehicleDetails, { data, loading: isLoadingDetails }] =
     useLazyQuery<
       {
-        vehicleBasicInfoByPermno: BasicVehicleInformation
+        vehicleExemptionValidation: ExemptionValidation
       },
       {
         permno: string
+        isTrailer: boolean
       }
     >(
       gql`
-        ${GET_VEHICLE_BASIC_INFO_BY_PERMNO}
+        ${GET_EXEMPTION_VALIDATION_BY_PERMNO}
       `,
       {
         onCompleted: (data) => {
-          const permno = data?.vehicleBasicInfoByPermno?.permno
-          const make = data?.vehicleBasicInfoByPermno?.make || ''
-          const color = data?.vehicleBasicInfoByPermno?.color || ''
+          const permno = data?.vehicleExemptionValidation?.permno
+          const make = data?.vehicleExemptionValidation?.make || ''
+          const color = data?.vehicleExemptionValidation?.color || ''
           const numberOfAxles =
-            data?.vehicleBasicInfoByPermno?.numberOfAxles || 0
+            data?.vehicleExemptionValidation?.numberOfAxles || 0
           if (permno) {
             setValue(makeAndColorField, `${make} ${color}`)
             setValue(numberOfAxlesField, numberOfAxles)
@@ -107,15 +119,21 @@ export const VehiclePermnoWithInfoFormField: FC<
     }
   }
 
-  const onChangePermno = (permnoVal: string) => {
+  const onChangePermno = (rawValue: string) => {
+    // Clean input: only letters/numbers + uppercase
+    const permnoVal = rawValue.replace(/[^a-zA-Z0-9]/g, '').toUpperCase()
     setPermnoInput(permnoVal)
+    setValue(permnoField, permnoVal)
+
     if (permnoVal.length !== INPUT_MAX_LENGTH) {
       setValue(makeAndColorField, '')
       setValue(numberOfAxlesField, 0)
       setValue(hasErrorField, false)
       setVehicleValidation(null)
     } else {
-      loadVehicleDetails({ variables: { permno: permnoVal } })
+      loadVehicleDetails({
+        variables: { permno: permnoVal, isTrailer: isTrailer },
+      })
       loadVehicleValidation(permnoVal)
     }
   }
@@ -139,7 +157,7 @@ export const VehiclePermnoWithInfoFormField: FC<
             required={buildFieldRequired(application, field.required)}
             maxLength={INPUT_MAX_LENGTH}
             onChange={(v) => {
-              onChangePermno(v.target.value.replace(/\W/g, ''))
+              onChangePermno(v.target.value)
             }}
             loading={isLoadingDetails || isLoadingValidation}
             error={errors && getErrorViaPath(errors, permnoField)}
@@ -159,14 +177,35 @@ export const VehiclePermnoWithInfoFormField: FC<
             }
             error={
               permnoInput.length === INPUT_MAX_LENGTH &&
-              data?.vehicleBasicInfoByPermno === null
+              data?.vehicleExemptionValidation === null
                 ? formatMessage(coreErrorMessages.vehicleNotFoundForPermno)
-                : undefined
+                : errors && getErrorViaPath(errors, makeAndColorField)
             }
             readOnly={true}
           />
         </GridColumn>
       </GridRow>
+
+      <HiddenInputFormField
+        application={application}
+        field={{
+          id: numberOfAxlesField,
+          type: FieldTypes.HIDDEN_INPUT,
+          component: FieldComponents.HIDDEN_INPUT,
+          children: undefined,
+          dontDefaultToEmptyString: true,
+        }}
+      />
+      <HiddenInputFormField
+        application={application}
+        field={{
+          id: hasErrorField,
+          type: FieldTypes.HIDDEN_INPUT,
+          component: FieldComponents.HIDDEN_INPUT,
+          children: undefined,
+          dontDefaultToEmptyString: true,
+        }}
+      />
 
       {!!vehicleValidation?.errorMessages?.length && (
         <Box paddingTop={3}>

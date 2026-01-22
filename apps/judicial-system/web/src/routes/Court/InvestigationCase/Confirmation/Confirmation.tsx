@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 
 import { Accordion, Box, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { getCourtDashboardRoute } from '@island.is/judicial-system/consts'
+import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import {
   isAcceptingCaseDecision,
   isCompletedCase,
@@ -30,9 +30,9 @@ import {
 import {
   CaseDecision,
   CaseTransition,
-  NotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import {
   JudgeRequestRulingSignatureModal,
@@ -64,23 +64,16 @@ const Confirmation: FC = () => {
   )
   const [modalVisible, setModalVisible] = useState<VisibleModal>('none')
 
-  const isCorrectingRuling = workingCase.notifications?.some(
-    (notification) => notification.type === NotificationType.RULING,
-  )
+  const isCompletedWithoutRuling = Boolean(workingCase.isCompletedWithoutRuling)
+  const isCorrectingRuling = Boolean(workingCase.requestCompletedDate)
+  const isRulingSigned = Boolean(workingCase.rulingSignatureDate)
   const isAssignedJudge = user && workingCase.judge?.id === user.id
   const isAssignedRegistrar = user && workingCase.registrar?.id === user.id
-
-  const hideNextButton = () => {
-    if (workingCase.isCompletedWithoutRuling) {
-      return false
-    }
-
-    if (isCorrectingRuling) {
-      return !isAssignedJudge && !isAssignedRegistrar
-    }
-
-    return !isAssignedJudge
-  }
+  const hideNextButton = !isCompletedWithoutRuling
+    ? isCorrectingRuling
+      ? !isAssignedJudge && !isAssignedRegistrar
+      : !isAssignedJudge
+    : false
 
   const completeCase = async () => {
     if (isCompletedCase(workingCase.state)) {
@@ -103,11 +96,13 @@ const Confirmation: FC = () => {
   }
 
   const completeCaseWith = async (
-    action: 'signature' | 'noSignature' | 'modification',
+    action: 'signature' | 'noSignature' | 'askIfSignature',
   ) => {
     const caseCompleted = await completeCase()
 
-    if (!caseCompleted) return
+    if (!caseCompleted) {
+      return
+    }
 
     switch (action) {
       case 'signature':
@@ -116,7 +111,7 @@ const Confirmation: FC = () => {
       case 'noSignature':
         continueToSignedVerdictOverview()
         break
-      case 'modification':
+      case 'askIfSignature':
         setModalVisible(
           isAssignedJudge
             ? 'judgeRequestRulingSignatureModal'
@@ -129,14 +124,13 @@ const Confirmation: FC = () => {
   const handleNextButtonClick = async () => {
     if (isCorrectingRuling) {
       setModalVisible('rulingModifiedModal')
+
       return
     }
 
-    const action = workingCase.isCompletedWithoutRuling
-      ? 'noSignature'
-      : 'signature'
-
-    await completeCaseWith(action)
+    await completeCaseWith(
+      isCompletedWithoutRuling ? 'noSignature' : 'signature',
+    )
   }
 
   return (
@@ -151,53 +145,49 @@ const Confirmation: FC = () => {
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
-        <Box marginBottom={9}>
+        <div className={grid({ gap: 5, marginBottom: 10 })}>
           <Accordion>
             <PoliceRequestAccordionItem workingCase={workingCase} />
             <CourtRecordAccordionItem workingCase={workingCase} />
             <RulingAccordionItem workingCase={workingCase} />
           </Accordion>
-        </Box>
-        <Box marginBottom={7}>
-          <BlueBox>
-            <Box marginBottom={2} textAlign="center">
-              <Text as="h3" variant="h3">
-                {formatMessage(strings.conclusionTitle)}
-              </Text>
-            </Box>
-            <Box marginBottom={3}>
-              <Box marginTop={1}>
-                <Text variant="intro">{workingCase.conclusion}</Text>
-              </Box>
-            </Box>
-            <Box marginBottom={1} textAlign="center">
-              <Text variant="h4">{workingCase.judge?.name}</Text>
-            </Box>
+          <BlueBox className={grid({ gap: 2 })}>
+            <Text as="h3" variant="h3" textAlign="center">
+              {formatMessage(strings.conclusionTitle)}
+            </Text>
+            <Text variant="intro">{workingCase.conclusion}</Text>
+            <Text variant="h4" textAlign="center">
+              {workingCase.judge?.name}
+            </Text>
           </BlueBox>
-        </Box>
-        <Box marginBottom={3}>
-          <PdfButton
-            caseId={workingCase.id}
-            title={formatMessage(core.pdfButtonRuling)}
-            pdfType="ruling"
-            disabled={Boolean(workingCase.isCompletedWithoutRuling)}
-          />
-        </Box>
-        <Box marginBottom={15}>
-          <PdfButton
-            caseId={workingCase.id}
-            title={formatMessage(core.pdfButtonRulingShortVersion)}
-            pdfType="courtRecord"
-          />
-        </Box>
+          <div className={grid({ gap: 2 })}>
+            <Box>
+              <PdfButton
+                caseId={workingCase.id}
+                title={formatMessage(core.pdfButtonRuling)}
+                pdfType="ruling"
+                elementId={formatMessage(core.pdfButtonRuling)}
+                disabled={isCompletedWithoutRuling}
+              />
+            </Box>
+            <Box>
+              <PdfButton
+                caseId={workingCase.id}
+                title={formatMessage(core.pdfButtonRulingShortVersion)}
+                pdfType="courtRecord"
+                elementId={formatMessage(core.pdfButtonRulingShortVersion)}
+              />
+            </Box>
+          </div>
+        </div>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${constants.INVESTIGATION_CASE_COURT_RECORD_ROUTE}/${workingCase.id}`}
-          nextUrl={getCourtDashboardRoute(user)}
+          nextUrl={getStandardUserDashboardRoute(user)}
           nextIsLoading={isTransitioningCase || isRequestingRulingSignature}
           nextButtonText={formatMessage(
-            workingCase.isCompletedWithoutRuling
+            isCompletedWithoutRuling
               ? strings.continueButtonTextCompletedWithoutRuling
               : workingCase.decision === CaseDecision.ACCEPTING
               ? strings.continueButtonTextAccepting
@@ -209,20 +199,20 @@ const Confirmation: FC = () => {
           )}
           nextButtonIcon={
             isAcceptingCaseDecision(workingCase.decision) ||
-            workingCase.isCompletedWithoutRuling
+            isCompletedWithoutRuling
               ? 'checkmark'
               : 'close'
           }
           nextButtonColorScheme={
             isAcceptingCaseDecision(workingCase.decision) ||
-            workingCase.isCompletedWithoutRuling
+            isCompletedWithoutRuling
               ? 'default'
               : 'destructive'
           }
           onNextButtonClick={handleNextButtonClick}
-          hideNextButton={hideNextButton()}
+          hideNextButton={hideNextButton}
           infoBoxText={
-            hideNextButton()
+            hideNextButton
               ? formatMessage(strings.onlyAssigendJudgeCanSign)
               : undefined
           }
@@ -231,7 +221,22 @@ const Confirmation: FC = () => {
       {modalVisible === 'rulingModifiedModal' && (
         <RulingModifiedModal
           onCancel={() => setModalVisible('none')}
-          onContinue={() => completeCaseWith('modification')}
+          onContinue={() =>
+            completeCaseWith(
+              !isCompletedWithoutRuling
+                ? !isRulingSigned
+                  ? // The previous ruling was not signed, so we need a signature from the assigned judge
+                    isAssignedJudge
+                    ? // Since the assigned judge is mmodifying the ruling, we immediately ask for the signature
+                      'signature'
+                    : // Since the assigned judge is not mmodifying the ruling, we simply continue to the signed verdict overview
+                      'noSignature'
+                  : // The previous ruling was signed, so we ask if a new signature is needed
+                    'askIfSignature'
+                : // The case is completed without a ruling, so no signature is needed
+                  'noSignature',
+            )
+          }
         />
       )}
       {modalVisible === 'judgeRequestRulingSignatureModal' && (

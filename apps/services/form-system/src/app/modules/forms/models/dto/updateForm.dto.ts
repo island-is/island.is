@@ -1,6 +1,5 @@
 import { ApiPropertyOptional } from '@nestjs/swagger'
-import { LanguageType } from '../../../../dataTypes/languageType.model'
-import { Dependency } from '../../../../dataTypes/dependency.model'
+import { Type } from 'class-transformer'
 import {
   IsArray,
   IsBoolean,
@@ -10,7 +9,9 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator'
-import { Type } from 'class-transformer'
+import { CompletedSectionInfo } from '../../../../dataTypes/completedSectionInfo.model'
+import { Dependency } from '../../../../dataTypes/dependency.model'
+import { LanguageType } from '../../../../dataTypes/languageType.model'
 
 export class UpdateFormDto {
   @IsString()
@@ -40,6 +41,16 @@ export class UpdateFormDto {
   @ApiPropertyOptional({ type: Date })
   invalidationDate?: Date
 
+  @IsString()
+  @IsOptional()
+  @ApiPropertyOptional()
+  submissionServiceUrl?: string
+
+  @IsString()
+  @IsOptional()
+  @ApiPropertyOptional()
+  validationServiceUrl?: string
+
   @IsBoolean()
   @IsOptional()
   @ApiPropertyOptional()
@@ -58,18 +69,23 @@ export class UpdateFormDto {
   @IsNumber()
   @IsOptional()
   @ApiPropertyOptional()
-  applicationDaysToRemove?: number
+  daysUntilApplicationPrune?: number
 
   @IsBoolean()
   @IsOptional()
   @ApiPropertyOptional()
-  stopProgressOnValidatingScreen?: boolean
+  allowProceedOnValidationFail?: boolean
+
+  @IsBoolean()
+  @IsOptional()
+  @ApiPropertyOptional()
+  hasSummaryScreen?: boolean
 
   @ValidateNested()
-  @Type(() => LanguageType)
+  @Type(() => CompletedSectionInfo)
   @IsOptional()
-  @ApiPropertyOptional({ type: LanguageType })
-  completedMessage?: LanguageType
+  @ApiPropertyOptional({ type: CompletedSectionInfo })
+  completedSectionInfo?: CompletedSectionInfo
 
   @ValidateNested()
   @Type(() => Dependency)

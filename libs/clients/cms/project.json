@@ -8,7 +8,7 @@
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "options": {
         "lintFilePatterns": ["libs/clients/cms/**/*.{ts,tsx,js,jsx}"]
       }

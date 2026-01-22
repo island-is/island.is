@@ -5,33 +5,54 @@ import {
   buildSubmitField,
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
-import { format as formatKennitala } from 'kennitala'
-import { newPrimarySchoolMessages } from '../../lib/messages'
-import { getApplicationExternalData } from '../../lib/newPrimarySchoolUtils'
+import lastDayOfMonth from 'date-fns/lastDayOfMonth'
+import setMonth from 'date-fns/setMonth'
+import startOfMonth from 'date-fns/startOfMonth'
+import { format as formatKennitala, info } from 'kennitala'
+import { prerequisitesMessages } from '../../lib/messages'
+import { FIRST_GRADE_AGE } from '../../utils/constants'
+import { getApplicationExternalData } from '../../utils/newPrimarySchoolUtils'
 
 export const childrenSubSection = buildSubSection({
   id: 'childrenSubSection',
-  title: newPrimarySchoolMessages.pre.childrenSubSectionTitle,
+  title: prerequisitesMessages.children.subSectionTitle,
   children: [
     buildMultiField({
       id: 'childrenMultiField',
-      title: newPrimarySchoolMessages.pre.childrenSubSectionTitle,
-      description: newPrimarySchoolMessages.pre.childrenDescription,
+      title: prerequisitesMessages.children.subSectionTitle,
+      description: prerequisitesMessages.children.description,
       children: [
         buildRadioField({
           id: 'childNationalId',
-          title: newPrimarySchoolMessages.pre.childrenRadioTitle,
+          title: prerequisitesMessages.children.radioTitle,
           options: (application) => {
             const { children } = getApplicationExternalData(
               application.externalData,
             )
 
+            // Enrollment to 1st grade should only be accessable from 1 Feb to 31 May each year
+            const today = new Date()
+            const enrollmentStartDate = startOfMonth(setMonth(today, 1)) // 1 Feb
+            const enrollmentEndDate = lastDayOfMonth(setMonth(today, 4)) // 31 May
+
+            const isEnrollmentOpen =
+              today >= enrollmentStartDate && today <= enrollmentEndDate
+
+            const currentYear = today.getFullYear()
+            const firstGradeYear = currentYear - FIRST_GRADE_AGE
+
             return children.map((child, index) => {
+              const nationalId = child.nationalId || ''
+              const nationalIdInfo = info(nationalId)
+              const yearOfBirth = nationalIdInfo?.birthday?.getFullYear()
+
               return {
                 value: child.nationalId,
                 label: child.fullName,
                 subLabel: formatKennitala(child.nationalId),
                 dataTestId: `child-${index}`,
+                // Disable if child is a first grader and enrollment is closed
+                disabled: !isEnrollmentOpen && yearOfBirth === firstGradeYear,
               }
             })
           },
@@ -44,7 +65,7 @@ export const childrenSubSection = buildSubSection({
           actions: [
             {
               event: DefaultEvents.SUBMIT,
-              name: newPrimarySchoolMessages.pre.startApplication,
+              name: prerequisitesMessages.children.startApplication,
               type: 'primary',
             },
           ],

@@ -26,7 +26,6 @@ export const BaseSettings = () => {
   const { form } = control
   const { formatMessage } = useIntl()
   const [errorMsg, setErrorMsg] = useState('')
-
   return (
     <Stack space={2}>
       <Row>
@@ -179,13 +178,11 @@ export const BaseSettings = () => {
               setFocus(e.target.value)
             }}
             onBlur={async (e) => {
-              if (e.target.value !== focus) {
-                const response: UpdateFormResponse = await formUpdate()
-                if (response && response.errors) {
-                  setErrorMsg(response.errors[0].message as string)
-                } else {
-                  setErrorMsg('')
-                }
+              const response: UpdateFormResponse = await formUpdate()
+              if (response && response.errors) {
+                setErrorMsg(response.errors[0].message as string)
+              } else {
+                setErrorMsg('')
               }
             }}
             onChange={(e) =>
@@ -202,23 +199,41 @@ export const BaseSettings = () => {
         <Column span="5/10">
           <Input
             label={formatMessage(m.daysUntilExpiration)}
-            placeholder={formatMessage(m.max120Days)}
+            placeholder={formatMessage(m.max30Days)}
             name="applicationsDaysToRemove"
             value={
-              form.applicationDaysToRemove === 0
+              form.daysUntilApplicationPrune === 0
                 ? ''
-                : form.applicationDaysToRemove ?? ''
+                : form.daysUntilApplicationPrune ?? ''
             }
             backgroundColor="blue"
             type="number"
+            max={30}
+            min={1}
             onFocus={(e) => setFocus(e.target.value)}
-            onBlur={(e) => e.target.value !== focus && formUpdate()}
-            onChange={(e) =>
-              controlDispatch({
-                type: 'CHANGE_APPLICATION_DAYS_TO_REMOVE',
-                payload: { value: parseInt(e.target.value) },
-              })
-            }
+            onBlur={(e) => {
+              if (e.target.value !== focus) {
+                if (e.target.value === '' || Number(e.target.value) < 1) {
+                  e.target.value = '1'
+                  controlDispatch({
+                    type: 'CHANGE_DAYS_UNTIL_APPLICATION_PRUNE',
+                    payload: { value: 1 },
+                  })
+                  formUpdate({ ...form, daysUntilApplicationPrune: 1 })
+                } else {
+                  formUpdate()
+                }
+              }
+            }}
+            onChange={(e) => {
+              const value = Number(e.target.value)
+              if (value <= 30) {
+                controlDispatch({
+                  type: 'CHANGE_DAYS_UNTIL_APPLICATION_PRUNE',
+                  payload: { value: parseInt(e.target.value) },
+                })
+              }
+            }}
           />
         </Column>
       </Row>
@@ -246,14 +261,57 @@ export const BaseSettings = () => {
           <Checkbox
             label={formatMessage(m.allowProgress)}
             checked={
-              form.stopProgressOnValidatingScreen !== null &&
-              form.stopProgressOnValidatingScreen !== undefined
-                ? form.stopProgressOnValidatingScreen
+              form.allowProceedOnValidationFail !== null &&
+              form.allowProceedOnValidationFail !== undefined
+                ? form.allowProceedOnValidationFail
                 : false
             }
             onChange={(e) => {
               controlDispatch({
-                type: 'CHANGE_STOP_PROGRESS_ON_VALIDATING_SCREEN',
+                type: 'CHANGE_ALLOW_PROCEED_ON_VALIDATION_FAIL',
+                payload: {
+                  value: e.target.checked,
+                  update: formUpdate,
+                },
+              })
+            }}
+          />
+        </Column>
+      </Row>
+      <Row>
+        <Column>
+          <Checkbox
+            label={formatMessage(m.summaryScreen)}
+            checked={
+              form.hasSummaryScreen !== null &&
+              form.hasSummaryScreen !== undefined
+                ? form.hasSummaryScreen
+                : false
+            }
+            onChange={(e) => {
+              controlDispatch({
+                type: 'CHANGE_HAS_SUMMARY_SCREEN',
+                payload: {
+                  value: e.target.checked,
+                  update: formUpdate,
+                },
+              })
+            }}
+          />
+        </Column>
+      </Row>
+      <Row>
+        <Column>
+          <Checkbox
+            label={formatMessage(m.payment)}
+            checked={
+              form.hasPayment !== null && form.hasPayment !== undefined
+                ? form.hasPayment
+                : false
+            }
+            onChange={(e) => {
+              controlDispatch({
+                type: 'CHANGE_HAS_PAYMENT',
                 payload: {
                   value: e.target.checked,
                   update: formUpdate,

@@ -1,3 +1,4 @@
+import { EducationFriggOptionsListInput, Query } from '@island.is/api/schema'
 import { coreErrorMessages } from '@island.is/application/core'
 import {
   Application,
@@ -10,11 +11,7 @@ import { AsyncSelectFormField } from '@island.is/application/ui-fields'
 import { useLocale } from '@island.is/localization'
 import React, { FC } from 'react'
 import { friggOptionsQuery } from '../../graphql/queries'
-import { OptionsType } from '../../lib/constants'
-import {
-  FriggOptionsQuery,
-  FriggOptionsQueryVariables,
-} from '../../types/schema'
+import { OptionsType, OTHER_OPTION } from '../../utils/constants'
 
 type FriggOptionsAsyncSelectFieldProps = {
   field: {
@@ -22,7 +19,7 @@ type FriggOptionsAsyncSelectFieldProps = {
       optionsType: OptionsType | ((application: Application) => OptionsType)
       placeholder: FormText
       isMulti?: boolean
-      useId?: boolean
+      useIdAndKey?: boolean
     }
   }
 }
@@ -32,7 +29,12 @@ const FriggOptionsAsyncSelectField: FC<
 > = ({ error, field, application }) => {
   const { lang } = useLocale()
   const { title, props, defaultValue, id, marginBottom } = field
-  const { isMulti = false, optionsType, placeholder, useId = false } = props
+  const {
+    isMulti = false,
+    optionsType,
+    placeholder,
+    useIdAndKey = false,
+  } = props
 
   let friggOptionsType: OptionsType
   if (typeof optionsType === 'function') {
@@ -57,8 +59,8 @@ const FriggOptionsAsyncSelectField: FC<
         loadingError: coreErrorMessages.failedDataProvider,
         loadOptions: async ({ apolloClient }) => {
           const { data } = await apolloClient.query<
-            FriggOptionsQuery,
-            FriggOptionsQueryVariables
+            Query,
+            { type: EducationFriggOptionsListInput }
           >({
             query: friggOptionsQuery,
             variables: {
@@ -68,23 +70,29 @@ const FriggOptionsAsyncSelectField: FC<
             },
           })
 
+          let otherContentValue = ''
+
           const options =
-            data?.friggOptions?.flatMap(({ options }) =>
-              options.flatMap(({ value, key, id }) => {
-                let content = value.find(
-                  ({ language }) => language === lang,
-                )?.content
-                if (!content) {
-                  content = value.find(
-                    ({ language }) => language === 'is',
+            data?.friggOptions
+              ?.flatMap(({ options }) =>
+                options.flatMap(({ value, key, id }) => {
+                  const content = value.find(
+                    ({ language }) => language === lang,
                   )?.content
-                }
-                return { value: (useId ? id : key) ?? '', label: content ?? '' }
-              }),
-            ) ?? []
+
+                  if (!content) return []
+
+                  const contentValue = useIdAndKey ? `${id}::${key}` : id
+
+                  if (key === OTHER_OPTION) otherContentValue = contentValue
+
+                  return { value: contentValue, label: content }
+                }),
+              )
+              .sort((a, b) => a.label.localeCompare(b.label)) ?? []
 
           const otherIndex = options.findIndex(
-            (option) => option.value === 'other',
+            (option) => option.value === otherContentValue,
           )
 
           if (otherIndex >= 0) {

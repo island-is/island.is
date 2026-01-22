@@ -6,22 +6,21 @@ import { ChargeFjsV2ClientModule } from '@island.is/clients/charge-fjs-v2'
 
 import { CardPaymentController } from './cardPayment.controller'
 import { CardPaymentService } from './cardPayment.service'
-import { CompanyRegistryClientModule } from '@island.is/clients/rsk/company-registry'
-import { NationalRegistryV3ClientModule } from '@island.is/clients/national-registry-v3'
 import {
   PaymentFlow,
   PaymentFlowCharge,
 } from '../paymentFlow/models/paymentFlow.model'
 import { PaymentFlowEvent } from '../paymentFlow/models/paymentFlowEvent.model'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
-import { PaymentFlowFjsChargeConfirmation } from '../paymentFlow/models/paymentFlowFjsChargeConfirmation.model'
+import { FjsCharge } from '../paymentFlow/models/fjsCharge.model'
 import { ConfigModule } from '@nestjs/config'
 import { CardPaymentModuleConfig } from './cardPayment.config'
 import { CardPaymentCacheModule } from './cardPayment.cache'
-import { PaymentFlowPaymentConfirmation } from '../paymentFlow/models/paymentFlowPaymentConfirmation.model'
+import { CardPaymentDetails } from '../paymentFlow/models/cardPaymentDetails.model'
 import { JwksModule } from '../jwks/jwks.module'
 import { JwksConfig } from '../jwks/jwks.config'
 import { PaymentFlowModuleConfig } from '../paymentFlow/paymentFlow.config'
+import { PaymentFulfillment } from '../paymentFlow/models/paymentFulfillment.model'
 
 @Module({
   imports: [
@@ -29,8 +28,9 @@ import { PaymentFlowModuleConfig } from '../paymentFlow/paymentFlow.config'
       PaymentFlow,
       PaymentFlowCharge,
       PaymentFlowEvent,
-      PaymentFlowFjsChargeConfirmation,
-      PaymentFlowPaymentConfirmation,
+      FjsCharge,
+      CardPaymentDetails,
+      PaymentFulfillment,
     ]),
     ConfigModule.forRoot({
       isGlobal: true,
@@ -38,8 +38,6 @@ import { PaymentFlowModuleConfig } from '../paymentFlow/paymentFlow.config'
     }),
     FeatureFlagModule,
     ChargeFjsV2ClientModule,
-    NationalRegistryV3ClientModule,
-    CompanyRegistryClientModule,
     CardPaymentCacheModule,
     JwksModule,
   ],

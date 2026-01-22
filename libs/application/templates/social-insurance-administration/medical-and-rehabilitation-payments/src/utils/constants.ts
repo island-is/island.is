@@ -1,58 +1,33 @@
-import { MessageDescriptor } from 'react-intl'
-import { medicalAndRehabilitationPaymentsFormMessage } from '../lib/messages'
-
-export const AttachmentLabel: {
-  [key: string]: MessageDescriptor
-} = {
-  studyConfirmation:
-    medicalAndRehabilitationPaymentsFormMessage.overview.studyConfirmation,
-  unionSickPayConfirmation:
-    medicalAndRehabilitationPaymentsFormMessage.overview
-      .unionSickPayConfirmation,
-}
-
-export enum AttachmentTypes {
-  STUDY_CONFIRMATION = 'studyConfirmation',
-  UNION_SICK_PAY_CONFIRMATION = 'unionSickPayConfirmation',
-}
-
 export type NotApplicable = typeof NOT_APPLICABLE
 export const NOT_APPLICABLE = 'notApplicable'
 
-export const selfAssessmentOptions = [
-  {
-    label:
-      medicalAndRehabilitationPaymentsFormMessage.selfAssessment
-        .noDifficultyOption,
-    value: '0',
-  },
-  {
-    label:
-      medicalAndRehabilitationPaymentsFormMessage.selfAssessment
-        .minorDifficultyOption,
-    value: '1',
-  },
-  {
-    label:
-      medicalAndRehabilitationPaymentsFormMessage.selfAssessment
-        .moderateDifficultyOption,
-    value: '2',
-  },
-  {
-    label:
-      medicalAndRehabilitationPaymentsFormMessage.selfAssessment
-        .majorDifficultyOption,
-    value: '3',
-  },
-  {
-    label:
-      medicalAndRehabilitationPaymentsFormMessage.selfAssessment
-        .completeInabilityOption,
-    value: '4',
-  },
-  {
-    label:
-      medicalAndRehabilitationPaymentsFormMessage.selfAssessment.noAnswerOption,
-    value: '5',
-  },
-]
+export enum EligibleReasonCodes {
+  APPLICANT_AGE_OUT_OF_RANGE = 'APPLICANT_AGE_OUT_OF_RANGE',
+  BASE_CERT_NOT_FOUND = 'BASE_CERT_NOT_FOUND',
+  BASE_CERT_DATE_INVALID = 'BASE_CERT_DATE_INVALID',
+  BASE_CERT_OLDER_THAN_7YEARS = 'BASE_CERT_OLDER_THAN_7YEARS',
+  BASE_CERT_DISABILITY_DATE_EMPTY = 'BASE_CERT_DISABILITY_DATE_EMPTY',
+  LATEST_MEDICAL_DOCUMENT_NOT_FOUND = 'LATEST_MEDICAL_DOCUMENT_NOT_FOUND',
+  NO_LEGAL_DOMICILE_IN_ICELAND = 'NO_LEGAL_DOMICILE_IN_ICELAND',
+  APPLICANT_ALREADY_HAS_PENDING_APPLICATION = 'APPLICANT_ALREADY_HAS_PENDING_APPLICATION',
+  HAS_ACTIVE_PAYMENTS = 'HAS_ACTIVE_PAYMENTS',
+  INACTIVE_PAYMENTS_FOR_TOO_LONG = 'INACTIVE_PAYMENTS_FOR_TOO_LONG',
+  ERROR_PROCESSING_CLIENT = 'ERROR_PROCESSING_CLIENT',
+  UNEXPECTED_ERROR = 'UNEXPECTED_ERROR',
+}
+
+export enum MedicalAndRehabilitationPaymentsApplicationType {
+  SG1 = 'SJUKRAGREIDSLUR_FYRSTA',
+  SG2 = 'SJUKRAGREIDSLUR_FRAMHALDS',
+  EH1 = 'ENDURHAEFINGARGREIDSLUR_FYRSTA',
+  EH2 = 'ENDURHAEFINGARGREIDSLUR_FRAMHALDS',
+}
+
+export enum MedicalAndRehabilitationPaymentsConfirmationType {
+  BID_EFTIR_URRAEDI = 'BID_EFTIR_URRAEDI',
+  ENDURHAEFING = 'ENDURHAEFING',
+  HEILSUBRESTUR = 'HEILSUBRESTUR',
+  VIDURKENND_MEDFERD = 'VIDURKENND_MEDFERD',
+}
+
+export const OTHER = 'ANNAD'

@@ -339,7 +339,7 @@ async function main() {
             })
             .option('cluster', {
               description: 'Name of Kubernetes cluster',
-              default: 'dev-cluster01',
+              default: 'dev-cluster02',
             })
             .option('builder', {
               description: 'docker or podman',
@@ -368,7 +368,7 @@ async function main() {
           yargs
             .option('cluster', {
               description: 'Name of Kubernetes cluster',
-              default: 'dev-cluster01',
+              default: 'dev-cluster02',
             })
             .option('profile', {
               description: 'AWS profile to use',

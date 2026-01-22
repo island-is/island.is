@@ -39,7 +39,8 @@ export enum AuditedAction {
   GET_CUSTODY_NOTICE_PDF = 'GET_CUSTODY_NOTICE_PDF',
   GET_INDICTMENT_PDF = 'GET_INDICTMENT_PDF',
   GET_SUBPOENA_PDF = 'GET_SUBPOENA_PDF',
-  GET_SERVICE_CERTIFICATE_PDF = 'GET_SERVICE_CERTIFICATE',
+  GET_SUBPOENA_SERVICE_CERTIFICATE_PDF = 'GET_SUBPOENA_SERVICE_CERTIFICATE_PDF',
+  GET_VERDICT_SERVICE_CERTIFICATE_PDF = 'GET_VERDICT_SERVICE_CERTIFICATE_PDF',
   GET_INDICTMENT_RULING_SENT_TO_PRISON_ADMIN_PDF = 'GET_INDICTMENT_RULING_SENT_TO_PRISON_ADMIN_PDF',
   GET_ALL_FILES_ZIP = 'GET_ALL_FILES_ZIP',
   GET_INSTITUTIONS = 'GET_INSTITUTIONS',
@@ -59,6 +60,9 @@ export enum AuditedAction {
   CREATE_INDICTMENT_COUNT = 'CREATE_INDICTMENT_COUNT',
   UPDATE_INDICTMENT_COUNT = 'UPDATE_INDICTMENT_COUNT',
   DELETE_INDICTMENT_COUNT = 'DELETE_INDICTMENT_COUNT',
+  CREATE_COURT_SESSION = 'CREATE_COURT_SESSION',
+  UPDATE_COURT_SESSION = 'UPDATE_COURT_SESSION',
+  DELETE_COURT_SESSION = 'DELETE_COURT_SESSION',
   UPDATE_SUBPOENA = 'UPDATE_SUBPOENA',
   GET_SUBPOENA = 'GET_SUBPOENA',
   CREATE_CIVIL_CLAIMANT = 'CREATE_CIVIL_CLAIMANT',
@@ -72,8 +76,24 @@ export enum AuditedAction {
   UPDATE_VICTIM = 'UPDATE_VICTIM',
   DELETE_VICTIM = 'DELETE_VICTIM',
   GET_CASE_TABLE = 'GET_CASE_TABLE',
+  SEARCH_CASES = 'SEARCH_CASES',
+  CREATE_VERDICTS = 'CREATE_VERDICTS',
   GET_VERDICT = 'GET_VERDICT',
+  GET_VERDICT_SUPPLEMENTS = 'GET_VERDICT_SUPPLEMENTS',
+  UPDATE_VERDICT = 'UPDATE_VERDICT',
   UPDATE_VERDICT_APPEAL_DECISION = 'UPDATE_VERDICT_APPEAL_DECISION',
+  DELIVER_CASE_VERDICT = 'DELIVER_CASE_VERDICT',
+  DELIVER_TO_NATIONAL_COMMISSIONERS_OFFICE_VERDICT = 'DELIVER_TO_NATIONAL_COMMISSIONERS_OFFICE_VERDICT',
+  CREATE_COURT_DOCUMENT = 'CREATE_COURT_DOCUMENT',
+  UPDATE_COURT_DOCUMENT = 'UPDATE_COURT_DOCUMENT',
+  FILE_COURT_DOCUMENT = 'FILE_COURT_DOCUMENT',
+  DELETE_COURT_DOCUMENT = 'DELETE_COURT_DOCUMENT',
+  SPLIT_DEFENDANT_FROM_CASE = 'SPLIT_DEFENDANT_FROM_CASE',
+}
+
+export enum AuditedRequestStatus {
+  STARTED = 'STARTED',
+  COMPLETED = 'COMPLETED',
 }
 
 @Injectable()
@@ -184,9 +204,11 @@ export class AuditTrailService {
       res: R,
     ) => Promise<{ [key: string]: string | Date | boolean | undefined | null }>
   }): Promise<R> {
-    const auditDetails = getAuditDetails
-      ? { details: await getAuditDetails(result) }
-      : {}
+    const details = {
+      ...(getAuditDetails ? await getAuditDetails(result) : {}),
+      requestStatus: AuditedRequestStatus.COMPLETED,
+    }
+
     this.writeToTrail({
       userId,
       actionType,
@@ -194,7 +216,7 @@ export class AuditTrailService {
         typeof auditedResult === 'string'
           ? auditedResult
           : auditedResult(result),
-      ...auditDetails,
+      details,
     })
 
     return result
@@ -225,6 +247,7 @@ export class AuditTrailService {
         actionType,
         ids: typeof auditedResult === 'string' ? auditedResult : undefined,
         error: e,
+        details: { requestStatus: AuditedRequestStatus.COMPLETED },
       })
 
       throw e
@@ -253,6 +276,58 @@ export class AuditTrailService {
         userId,
         actionType,
         result: action,
+        auditedResult,
+        getAuditDetails,
+      })
+    }
+  }
+
+  async runAndAuditRequest<R, T>({
+    userId,
+    actionType,
+    action,
+    actionProps,
+    auditedResult,
+    getAuditDetails,
+  }: {
+    userId: string
+    actionType: AuditedAction
+    action: (props: T) => Promise<R> | R
+    actionProps: T
+    auditedResult: string
+    getAuditDetails?: (
+      res?: R,
+    ) => Promise<{ [key: string]: string | Date | boolean | undefined | null }>
+  }): Promise<R> {
+    // write an audit log before executing the target request
+    const details = {
+      ...(getAuditDetails ? await getAuditDetails() : {}),
+      requestStatus: AuditedRequestStatus.STARTED,
+    }
+    this.writeToTrail({
+      userId,
+      actionType,
+      ids: auditedResult,
+      details,
+    })
+
+    // executing the request
+    const result = action(actionProps)
+
+    // write an audit log after executing the target request
+    if (result instanceof Promise) {
+      return await this.auditPromisedResult<R>(
+        userId,
+        actionType,
+        result,
+        auditedResult,
+        getAuditDetails,
+      )
+    } else {
+      return await this.auditResult({
+        userId,
+        actionType,
+        result,
         auditedResult,
         getAuditDetails,
       })

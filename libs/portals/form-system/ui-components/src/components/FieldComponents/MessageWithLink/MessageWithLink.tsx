@@ -1,12 +1,12 @@
 import { FormSystemField } from '@island.is/api/schema'
 import { Box, Button, Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import { Dispatch } from 'react'
 import { Action } from '../../../lib'
 
 interface Props {
   item: FormSystemField
   dispatch?: Dispatch<Action>
-  lang?: 'is' | 'en'
   hasError?: boolean
 }
 
@@ -19,7 +19,7 @@ export const MessageWithLink = ({ item }: Props) => {
     }
     return url
   }
-
+  const { lang } = useLocale()
   return (
     <Box
       flexDirection="row"
@@ -28,12 +28,16 @@ export const MessageWithLink = ({ item }: Props) => {
       background="white"
       alignItems="center"
     >
-      <Box display="flex" flexDirection="column">
+      <Box
+        display="flex"
+        flexDirection="column"
+        style={{ flex: 1, minWidth: 0 }}
+      >
         <Box paddingBottom={1}>
-          <Text variant="h4">{item?.name?.is}</Text>
+          <Text variant="h4">{item?.name?.[lang]}</Text>
         </Box>
-        <Box overflow="initial">
-          <Text>{item?.description?.is}</Text>
+        <Box overflow="hidden">
+          <Text>{item?.description?.[lang]}</Text>
         </Box>
       </Box>
       {item.fieldSettings?.hasLink && (
@@ -51,7 +55,7 @@ export const MessageWithLink = ({ item }: Props) => {
             icon="open"
             variant="ghost"
           >
-            {item?.fieldSettings?.buttonText?.is}
+            {item?.fieldSettings?.buttonText?.[lang]}
           </Button>
         </Box>
       )}

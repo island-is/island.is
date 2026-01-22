@@ -1,31 +1,40 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import {
   ChargeStatusByRequestIDrequestIDGETResponse,
-  DefaultApi,
   ChargeStatusResultStatusEnum,
+  DefaultApi,
 } from '../../gen/fetch'
 import {
   Catalog,
   Charge,
   ChargeResponse,
   ChargeToValidate,
+  PayeeInfo,
 } from './chargeFjsV2Client.types'
+import { isValid } from 'kennitala'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 @Injectable()
 export class ChargeFjsV2ClientService {
-  constructor(private api: DefaultApi) {}
+  constructor(
+    private api: DefaultApi,
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
+  ) {}
 
   async getChargeStatus(
     chargeId: string,
   ): Promise<ChargeStatusByRequestIDrequestIDGETResponse | null> {
     try {
-      const response = await this.api.chargeStatusByRequestIDrequestIDGET4({
+      return await this.api.chargeStatusByRequestIDrequestIDGET4({
         requestID: chargeId,
       })
-
-      return response
     } catch (e) {
       if (e.status === 404) {
+        this.logger.warn(
+          `Did not find charge ${chargeId} in FJS database. No charge status returned`,
+          e,
+        )
         return null
       }
       throw e
@@ -127,6 +136,46 @@ export class ChargeFjsV2ClientService {
         chargeItemName: item.chargeItemName,
         priceAmount: item.priceAmount,
       })),
+    }
+  }
+
+  async getPayeeInfo(payeeNationalId: string): Promise<PayeeInfo> {
+    if (!payeeNationalId) {
+      throw new Error('Payee national ID is required')
+    }
+
+    if (!isValid(payeeNationalId)) {
+      throw new Error('Invalid payee national ID')
+    }
+
+    try {
+      const response = await this.api.payeeInfonationalIDGET6({
+        nationalID: payeeNationalId,
+      })
+
+      if (response.error) {
+        throw new Error(
+          `Failed to get payee info [${response.error.code}] ${response.error.message}`,
+        )
+      }
+
+      if (!response || !response.payeeInfo) {
+        throw new Error('Payee info not found in response')
+      }
+
+      return {
+        nationalId: response.payeeInfo.nationalID,
+        name: response.payeeInfo.name,
+        address: response.payeeInfo.address,
+        zip: response.payeeInfo.postcode,
+        city: response.payeeInfo.city,
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error
+      }
+
+      throw new Error(`Unexpected error while fetching payee info: ${error}`)
     }
   }
 }

@@ -1,6 +1,6 @@
 import { Agent } from 'https'
 import fetch from 'isomorphic-fetch'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import {
   BadGatewayException,
@@ -17,11 +17,13 @@ import {
   XRoadMemberClass,
 } from '@island.is/shared/utils/server'
 
+import { formatDate } from '@island.is/judicial-system/formatters'
 import type { CaseType, User } from '@island.is/judicial-system/types'
 
+import { nowFactory } from '../../factories'
 import { AwsS3Service } from '../aws-s3'
-import { Defendant } from '../defendant'
 import { EventService } from '../event'
+import { Defendant } from '../repository'
 import { UploadCriminalRecordFileResponse } from './models/uploadCriminalRecordFile.response'
 import { criminalRecordModuleConfig } from './criminalRecord.config'
 
@@ -68,6 +70,7 @@ export class CriminalRecordService {
         'DMR criminal record API not available',
       )
     }
+
     if (defendant.noNationalId) {
       throw new NotFoundException({
         message: `Criminal record case file for defendant ${defendant.id} of case ${defendant.caseId} not found`,
@@ -90,11 +93,14 @@ export class CriminalRecordService {
         if (res.ok) {
           const contentArrayBuffer = await res.arrayBuffer()
           const buffer = Buffer.from(contentArrayBuffer)
+          const currentDate = formatDate(nowFactory())
+
           return {
-            fileName: `Sakavottord_${defendant.nationalId}.pdf`,
+            fileName: `Sakavottord_${defendant.nationalId}_${currentDate}.pdf`,
             buffer,
           }
         }
+
         const reason = await res.text()
 
         throw new NotFoundException({

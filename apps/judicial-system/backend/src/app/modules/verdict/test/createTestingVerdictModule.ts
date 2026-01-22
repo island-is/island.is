@@ -1,0 +1,109 @@
+import { Sequelize } from 'sequelize-typescript'
+
+import { Test } from '@nestjs/testing'
+
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import { ConfigModule } from '@island.is/nest/config'
+
+import {
+  auditTrailModuleConfig,
+  AuditTrailService,
+} from '@island.is/judicial-system/audit-trail'
+import {
+  SharedAuthModule,
+  sharedAuthModuleConfig,
+} from '@island.is/judicial-system/auth'
+import { MessageService } from '@island.is/judicial-system/message'
+
+import { CaseService, InternalCaseService, PdfService } from '../../case'
+import { DefendantService } from '../../defendant'
+import { EventService } from '../../event'
+import { EventLogService } from '../../event-log'
+import { FileService } from '../../file'
+import { LawyerRegistryService } from '../../lawyer-registry/lawyerRegistry.service'
+import { PoliceService } from '../../police'
+import { VerdictRepositoryService } from '../../repository'
+import { UserService } from '../../user'
+import { InternalVerdictController } from '../internalVerdict.controller'
+import { VerdictController } from '../verdict.controller'
+import { VerdictService } from '../verdict.service'
+
+jest.mock('@island.is/judicial-system/message')
+jest.mock('../../case/case.service')
+jest.mock('../../police/police.service')
+jest.mock('../../file/file.service')
+jest.mock('../../case/pdf.service')
+jest.mock('../../event/event.service')
+jest.mock('../../event-log/eventLog.service')
+jest.mock('../../defendant/defendant.service')
+jest.mock('../../user/user.service')
+jest.mock('../../case/internalCase.service')
+jest.mock('../../lawyer-registry/lawyerRegistry.service')
+jest.mock('../../repository/services/verdictRepository.service')
+
+export const createTestingVerdictModule = async () => {
+  const verdictModule = await Test.createTestingModule({
+    imports: [
+      ConfigModule.forRoot({
+        load: [sharedAuthModuleConfig, auditTrailModuleConfig],
+      }),
+    ],
+    controllers: [VerdictController, InternalVerdictController],
+    providers: [
+      SharedAuthModule,
+      MessageService,
+      CaseService,
+      InternalCaseService,
+      PoliceService,
+      FileService,
+      PdfService,
+      EventService,
+      UserService,
+      EventLogService,
+      DefendantService,
+      LawyerRegistryService,
+      {
+        provide: LOGGER_PROVIDER,
+        useValue: {
+          debug: jest.fn(),
+          info: jest.fn(),
+          error: jest.fn(),
+        },
+      },
+      { provide: Sequelize, useValue: { transaction: jest.fn() } },
+      VerdictRepositoryService,
+      VerdictService,
+      AuditTrailService,
+    ],
+  }).compile()
+
+  const verdictRepositoryService = verdictModule.get<VerdictRepositoryService>(
+    VerdictRepositoryService,
+  )
+
+  const verdictService = verdictModule.get<VerdictService>(VerdictService)
+
+  const policeService = verdictModule.get<PoliceService>(PoliceService)
+
+  const fileService = verdictModule.get<FileService>(FileService)
+
+  const verdictController =
+    verdictModule.get<VerdictController>(VerdictController)
+
+  const internalVerdictController =
+    verdictModule.get<InternalVerdictController>(InternalVerdictController)
+
+  const sequelize = verdictModule.get<Sequelize>(Sequelize)
+
+  verdictModule.close()
+
+  return {
+    verdictController,
+    internalVerdictController,
+    verdictService,
+    policeService,
+    fileService,
+    verdictRepositoryService,
+    sequelize,
+  }
+}

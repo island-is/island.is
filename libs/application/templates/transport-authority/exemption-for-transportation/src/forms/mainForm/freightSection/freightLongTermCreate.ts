@@ -10,10 +10,8 @@ import {
   getRandomId,
   checkIfExemptionTypeLongTerm,
   MAX_CNT_FREIGHT,
-  formatNumber,
-  getFreightLongTermErrorMessage,
+  getFreightCreateLongTermErrorMessage,
 } from '../../../utils'
-import { FreightCommonHiddenInputs } from './freightCommonHiddenInputs'
 
 export const FreightLongTermCreateSubSection = buildSubSection({
   id: 'freightLongTermCreateSubSection',
@@ -23,9 +21,8 @@ export const FreightLongTermCreateSubSection = buildSubSection({
     buildMultiField({
       id: 'freightLongTermCreateMultiField',
       title: freight.create.pageTitle,
-      description: freight.create.description,
+      description: freight.create.descriptionLongTerm,
       children: [
-        ...FreightCommonHiddenInputs('freight'),
         buildTableRepeaterField({
           id: 'freight.items',
           addItemButtonText: freight.labels.addItemButtonText,
@@ -37,49 +34,38 @@ export const FreightLongTermCreateSubSection = buildSubSection({
           editField: true,
           initActiveFieldIfEmpty: true,
           table: {
+            header: [
+              freight.labels.freightNumberTableHeader,
+              freight.labels.freightName,
+            ],
             format: {
-              length: (value) => {
+              index: (_value, displayIndex) => {
                 return {
-                  ...freight.labels.valueAndMetersSuffix,
-                  values: { value: formatNumber(value) },
-                }
-              },
-              weight: (value) => {
-                return {
-                  ...freight.labels.valueAndTonsSuffix,
-                  values: { value: formatNumber(value) },
+                  ...freight.labels.freightNumber,
+                  values: { number: displayIndex + 1 },
                 }
               },
             },
           },
+          onSubmitLoad: async ({ tableItems }) => {
+            const index = tableItems.length - 1
+            return {
+              dictionaryOfItems: [
+                {
+                  path: `freight.items[${index}].freightId`,
+                  value: getRandomId(),
+                },
+              ],
+            }
+          },
           fields: {
-            freightId: {
+            index: {
               component: 'hiddenInput',
-              defaultValue: () => getRandomId(),
-              displayInTable: false,
             },
             name: {
               component: 'input',
               label: freight.labels.freightName,
               width: 'full',
-              required: true,
-            },
-            length: {
-              component: 'input',
-              type: 'number',
-              label: freight.labels.freightLength,
-              width: 'half',
-              thousandSeparator: true,
-              suffix: freight.labels.metersSuffix,
-              required: true,
-            },
-            weight: {
-              component: 'input',
-              type: 'number',
-              label: freight.labels.freightWeight,
-              width: 'half',
-              thousandSeparator: true,
-              suffix: freight.labels.tonsSuffix,
               required: true,
             },
           },
@@ -88,15 +74,16 @@ export const FreightLongTermCreateSubSection = buildSubSection({
           id: 'freight.alertValidation',
           title: freight.create.errorAlertMessageTitle,
           message: (application) =>
-            getFreightLongTermErrorMessage(
+            getFreightCreateLongTermErrorMessage(
               application.externalData,
               application.answers,
             ) || '',
           condition: (answers, externalData) =>
-            !!getFreightLongTermErrorMessage(externalData, answers),
+            !!getFreightCreateLongTermErrorMessage(externalData, answers),
           doesNotRequireAnswer: true,
           alertType: 'error',
           shouldBlockInSetBeforeSubmitCallback: true,
+          allowMultipleSetBeforeSubmitCallbacks: true,
         }),
         buildCustomField({
           component: 'HandleBeforeSubmitFreight',

@@ -1,8 +1,8 @@
+import { m } from '@island.is/form-system/ui'
 import { Box, Checkbox, Icon, Stack, Text } from '@island.is/island-ui/core'
-import { useApplicationContext } from '../../../../context/ApplicationProvider'
-import { webMessages } from '@island.is/form-system/ui'
-import { useIntl } from 'react-intl'
 import { Markdown } from '@island.is/shared/components'
+import { useIntl } from 'react-intl'
+import { useApplicationContext } from '../../../../context/ApplicationProvider'
 
 interface Props {
   setExternalDataAgreement: (value: boolean) => void
@@ -18,7 +18,7 @@ export const ExternalData = ({ setExternalDataAgreement }: Props) => {
     <Box>
       <Box marginTop={2} marginBottom={5}>
         <Box marginBottom={5}>
-          <Text variant="h2">Gagnaöflun</Text>
+          <Text variant="h2">{formatMessage(m.externalDataHeader)}</Text>
         </Box>
         <Box display="flex" alignItems="center" justifyContent="flexStart">
           <Box marginRight={1}>
@@ -29,9 +29,7 @@ export const ExternalData = ({ setExternalDataAgreement }: Props) => {
               type="outline"
             />
           </Box>
-          <Text variant="h4">
-            {formatMessage(webMessages.externalDataTitle)}
-          </Text>
+          <Text variant="h4">{formatMessage(m.externalDataTitle)}</Text>
         </Box>
       </Box>
 
@@ -39,17 +37,15 @@ export const ExternalData = ({ setExternalDataAgreement }: Props) => {
         <Stack space={2}>
           <div>
             <Text variant="h4" color="blue400">
-              {formatMessage(webMessages.icelandicRegistryTitle)}
+              {formatMessage(m.icelandicRegistryTitle)}
             </Text>
-            <Markdown>
-              {formatMessage(webMessages.icelandicRegistryDescription)}
-            </Markdown>
+            <Markdown>{formatMessage(m.icelandicRegistryDescription)}</Markdown>
           </div>
           <div>
             <Text variant="h4" color="blue400">
-              {formatMessage(webMessages.myPagesTitle)}
+              {formatMessage(m.myPagesTitle)}
             </Text>
-            <Markdown>{formatMessage(webMessages.myPagesDescription)}</Markdown>
+            <Markdown>{formatMessage(m.myPagesDescription)}</Markdown>
           </div>
 
           {certificationTypes?.map((certificationType) => (
@@ -65,7 +61,7 @@ export const ExternalData = ({ setExternalDataAgreement }: Props) => {
       <Checkbox
         large={true}
         backgroundColor="blue"
-        label={formatMessage(webMessages.externalDataAgreement)}
+        label={formatMessage(m.externalDataAgreement)}
         onChange={(event) => setExternalDataAgreement(event.target.checked)}
       />
     </Box>

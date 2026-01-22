@@ -1,4 +1,4 @@
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { ConfigType } from '@nestjs/config'
 
@@ -17,9 +17,8 @@ import {
   createTestUsers,
 } from '../createTestingNotificationModule'
 
-import { Case } from '../../../case'
+import { Case, Notification } from '../../../repository'
 import { DeliverResponse } from '../../models/deliver.response'
-import { Notification } from '../../models/notification.model'
 import { notificationModuleConfig } from '../../notification.config'
 
 interface Then {

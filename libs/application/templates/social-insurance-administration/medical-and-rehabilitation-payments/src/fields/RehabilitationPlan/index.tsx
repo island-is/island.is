@@ -1,5 +1,9 @@
 import { useQuery } from '@apollo/client'
-import { coreErrorMessages, YES } from '@island.is/application/core'
+import {
+  coreErrorMessages,
+  getErrorViaPath,
+  YES,
+} from '@island.is/application/core'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import {
   FieldBaseProps,
@@ -22,101 +26,434 @@ import {
 import { useLocale } from '@island.is/localization'
 import { Markdown } from '@island.is/shared/components'
 import format from 'date-fns/format'
+import parseISO from 'date-fns/parseISO'
 import { FC } from 'react'
+import { useFormContext } from 'react-hook-form'
 import { siaRehabilitationPlanQuery } from '../../graphql/queries'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../../lib/messages'
-import { SiaRehabilitationPlanQuery } from '../../types/schema'
+import { Query } from '@island.is/api/schema'
+import { getApplicationAnswers } from '../../utils/medicalAndRehabilitationPaymentsUtils'
+import { ManagedBy } from '../components/ManagedBy'
 
 export const RehabilitationPlan: FC<FieldBaseProps> = ({
   application,
   field,
-  error,
+  errors,
   setBeforeSubmitCallback,
 }) => {
   const { formatMessage } = useLocale()
+  const { register } = useFormContext()
 
   const {
     data,
     loading,
     error: rehabilitationPlanError,
-  } = useQuery<SiaRehabilitationPlanQuery>(siaRehabilitationPlanQuery)
+  } = useQuery<Query>(siaRehabilitationPlanQuery)
 
   setBeforeSubmitCallback?.(async () => {
+    const { rehabilitationPlanConfirmation } = getApplicationAnswers(
+      application.answers,
+    )
+
+    // If the user confirmed the rehabilitation plan, allow submission
+    if (rehabilitationPlanConfirmation?.includes(YES)) {
+      return [true, null]
+    }
+
+    // If data is still loading or there's an error, prevent submission
     if (loading || rehabilitationPlanError) {
       return [false, '']
     }
+
+    // In all other cases, allow submission
     return [true, null]
   })
 
-  const serviceProvider = () => (
+  const getEvaluationScaleName = (value: number) => {
+    return data?.socialInsuranceRehabilitationPlan?.comprehensiveEvaluation?.evaluationScale?.find(
+      (evaluation) => evaluation.value === value,
+    )?.display
+  }
+
+  const information = () => (
+    <Stack space={3}>
+      <GridRow rowGap={3}>
+        <GridColumn span="1/1">
+          <Text variant="h3">
+            {formatMessage(
+              medicalAndRehabilitationPaymentsFormMessage.shared.information,
+            )}
+          </Text>
+        </GridColumn>
+        <GridColumn span="1/1">
+          <Label>
+            {formatMessage(
+              medicalAndRehabilitationPaymentsFormMessage.rehabilitationPlan
+                .informationCurrentPosition,
+            )}
+          </Label>
+          <Text>
+            {
+              data?.socialInsuranceRehabilitationPlan?.applicantEmploymentStatus
+                ?.display
+            }
+          </Text>
+        </GridColumn>
+        <GridColumn span="1/1">
+          <Label>
+            {formatMessage(
+              medicalAndRehabilitationPaymentsFormMessage.shared.applyingFor,
+            )}
+          </Label>
+          <Text>{data?.socialInsuranceRehabilitationPlan?.typeAppliedFor}</Text>
+        </GridColumn>
+        {data?.socialInsuranceRehabilitationPlan?.followUpEvaluation
+          ?.rehabilitationProgress?.display && (
+          <GridColumn span="1/1">
+            <Label>
+              {formatMessage(
+                medicalAndRehabilitationPaymentsFormMessage.rehabilitationPlan
+                  .informationProgress,
+              )}
+            </Label>
+            <Text>
+              {
+                data.socialInsuranceRehabilitationPlan.followUpEvaluation
+                  .rehabilitationProgress.display
+              }
+            </Text>
+          </GridColumn>
+        )}
+        {data?.socialInsuranceRehabilitationPlan?.followUpEvaluation
+          ?.rehabilitationProgressDetails && (
+          <GridColumn span="1/1">
+            <Label>
+              {formatMessage(
+                medicalAndRehabilitationPaymentsFormMessage.rehabilitationPlan
+                  .informationExplanationOfProgress,
+              )}
+            </Label>
+            <Text>
+              {
+                data.socialInsuranceRehabilitationPlan.followUpEvaluation
+                  .rehabilitationProgressDetails
+              }
+            </Text>
+          </GridColumn>
+        )}
+        {data?.socialInsuranceRehabilitationPlan?.followUpEvaluation
+          ?.rehabilitationMeasuresProgress?.display && (
+          <GridColumn span="1/1">
+            <Label>
+              {formatMessage(
+                medicalAndRehabilitationPaymentsFormMessage.rehabilitationPlan
+                  .informationAttendance,
+              )}
+            </Label>
+            <Text>
+              {
+                data.socialInsuranceRehabilitationPlan.followUpEvaluation
+                  .rehabilitationMeasuresProgress.display
+              }
+            </Text>
+          </GridColumn>
+        )}
+        {data?.socialInsuranceRehabilitationPlan?.followUpEvaluation
+          ?.rehabilitationMeasuresProgressDetails && (
+          <GridColumn span="1/1">
+            <Label>
+              {formatMessage(
+                medicalAndRehabilitationPaymentsFormMessage.rehabilitationPlan
+                  .informationExplanationOfAttendance,
+              )}
+            </Label>
+            <Text>
+              {
+                data.socialInsuranceRehabilitationPlan.followUpEvaluation
+                  .rehabilitationMeasuresProgressDetails
+              }
+            </Text>
+          </GridColumn>
+        )}
+        {data?.socialInsuranceRehabilitationPlan?.followUpEvaluation
+          ?.rehabilitationChanges?.display && (
+          <GridColumn span="1/1">
+            <Label>
+              {formatMessage(
+                medicalAndRehabilitationPaymentsFormMessage.rehabilitationPlan
+                  .informationChange,
+              )}
+            </Label>
+            <Text>
+              {
+                data.socialInsuranceRehabilitationPlan.followUpEvaluation
+                  .rehabilitationChanges.display
+              }
+            </Text>
+          </GridColumn>
+        )}
+        {data?.socialInsuranceRehabilitationPlan?.followUpEvaluation
+          ?.rehabilitationChangesDetails && (
+          <GridColumn span="1/1">
+            <Label>
+              {formatMessage(
+                medicalAndRehabilitationPaymentsFormMessage.rehabilitationPlan
+                  .informationExplanationOfChange,
+              )}
+            </Label>
+            <Text>
+              {
+                data.socialInsuranceRehabilitationPlan.followUpEvaluation
+                  .rehabilitationChangesDetails
+              }
+            </Text>
+          </GridColumn>
+        )}
+        {data?.socialInsuranceRehabilitationPlan?.followUpEvaluation
+          ?.applicantCircumstancesChanges?.display && (
+          <GridColumn span="1/1">
+            <Label>
+              {formatMessage(
+                medicalAndRehabilitationPaymentsFormMessage.rehabilitationPlan
+                  .informationApplicantCircumstancesChanges,
+              )}
+            </Label>
+            <Text>
+              {
+                data.socialInsuranceRehabilitationPlan.followUpEvaluation
+                  .applicantCircumstancesChanges.display
+              }
+            </Text>
+          </GridColumn>
+        )}
+        {data?.socialInsuranceRehabilitationPlan?.followUpEvaluation
+          ?.applicantCircumstancesChangesDetails && (
+          <GridColumn span="1/1">
+            <Label>
+              {formatMessage(
+                medicalAndRehabilitationPaymentsFormMessage.rehabilitationPlan
+                  .informationExplanationOfApplicantCircumstancesChanges,
+              )}
+            </Label>
+            <Text>
+              {
+                data.socialInsuranceRehabilitationPlan.followUpEvaluation
+                  .applicantCircumstancesChangesDetails
+              }
+            </Text>
+          </GridColumn>
+        )}
+      </GridRow>
+    </Stack>
+  )
+
+  const comprehensiveAssessment = () => (
     <Stack space={3}>
       <GridRow rowGap={3}>
         <GridColumn span="1/1">
           <Text variant="h3">
             {formatMessage(
               medicalAndRehabilitationPaymentsFormMessage.rehabilitationPlan
-                .serviceProvider,
-              {
-                serviceProvider:
-                  data?.socialInsuranceRehabilitationPlan?.serviceProvider
-                    ?.serviceProviderName,
-              },
+                .comprehensiveAssessment,
             )}
+            <Box marginLeft={1} display="inlineBlock">
+              <Tooltip
+                placement="top"
+                text={formatMessage(
+                  medicalAndRehabilitationPaymentsFormMessage.rehabilitationPlan
+                    .comprehensiveAssessmentTooltip,
+                )}
+              />
+            </Box>
           </Text>
         </GridColumn>
-        <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
+        <GridColumn span="1/1">
           <Label>
             {formatMessage(
               medicalAndRehabilitationPaymentsFormMessage.rehabilitationPlan
-                .serviceProviderLocation,
+                .comprehensiveAssessmentLearningAndApplyingKnowledge,
             )}
           </Label>
           <Text>
-            {
-              data?.socialInsuranceRehabilitationPlan?.serviceProvider
-                ?.workplace
-            }
-          </Text>
-        </GridColumn>
-        <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
-          <Label>
-            {formatMessage(
-              socialInsuranceAdministrationMessage.info.applicantPhonenumber,
+            {getEvaluationScaleName(
+              data?.socialInsuranceRehabilitationPlan?.comprehensiveEvaluation
+                ?.learningAndApplyingKnowledge ?? 0,
             )}
-          </Label>
-          <Text>
-            {
-              data?.socialInsuranceRehabilitationPlan?.serviceProvider
-                ?.phoneNumber
-            }
           </Text>
         </GridColumn>
-        <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
+        <GridColumn span="1/1">
           <Label>
             {formatMessage(
               medicalAndRehabilitationPaymentsFormMessage.rehabilitationPlan
-                .serviceProviderRehabilitationProvider,
+                .comprehensiveAssessmentGeneralTasksAndRequirements,
             )}
+            <Box marginLeft={1} display="inlineBlock">
+              <Tooltip
+                placement="top"
+                text={formatMessage(
+                  medicalAndRehabilitationPaymentsFormMessage.rehabilitationPlan
+                    .comprehensiveAssessmentGeneralTasksAndRequirementsTooltip,
+                )}
+              />
+            </Box>
           </Label>
           <Text>
-            {
-              data?.socialInsuranceRehabilitationPlan?.serviceProvider
-                ?.coordinatorName
-            }
+            {getEvaluationScaleName(
+              data?.socialInsuranceRehabilitationPlan?.comprehensiveEvaluation
+                ?.generalTasksAndDemands ?? 0,
+            )}
           </Text>
         </GridColumn>
-        <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
+        <GridColumn span="1/1">
           <Label>
             {formatMessage(
               medicalAndRehabilitationPaymentsFormMessage.rehabilitationPlan
-                .serviceProviderJobTitle,
+                .comprehensiveAssessmentCommunicationAndRelationships,
+            )}
+            <Box marginLeft={1} display="inlineBlock">
+              <Tooltip
+                placement="top"
+                text={formatMessage(
+                  medicalAndRehabilitationPaymentsFormMessage.rehabilitationPlan
+                    .comprehensiveAssessmentCommunicationAndRelationshipsTooltip,
+                )}
+              />
+            </Box>
+          </Label>
+          <Text>
+            {getEvaluationScaleName(
+              data?.socialInsuranceRehabilitationPlan?.comprehensiveEvaluation
+                ?.communicationAndRelationships ?? 0,
+            )}
+          </Text>
+        </GridColumn>
+        <GridColumn span="1/1">
+          <Label>
+            {formatMessage(
+              medicalAndRehabilitationPaymentsFormMessage.rehabilitationPlan
+                .comprehensiveAssessmentMobility,
+            )}
+            <Box marginLeft={1} display="inlineBlock">
+              <Tooltip
+                placement="top"
+                text={formatMessage(
+                  medicalAndRehabilitationPaymentsFormMessage.rehabilitationPlan
+                    .comprehensiveAssessmentMobilityTooltip,
+                )}
+              />
+            </Box>
+          </Label>
+          <Text>
+            {getEvaluationScaleName(
+              data?.socialInsuranceRehabilitationPlan?.comprehensiveEvaluation
+                ?.mobility ?? 0,
+            )}
+          </Text>
+        </GridColumn>
+        <GridColumn span="1/1">
+          <Label>
+            {formatMessage(
+              medicalAndRehabilitationPaymentsFormMessage.rehabilitationPlan
+                .comprehensiveAssessmentSelfCare,
+            )}
+            <Box marginLeft={1} display="inlineBlock">
+              <Tooltip
+                placement="top"
+                text={formatMessage(
+                  medicalAndRehabilitationPaymentsFormMessage.rehabilitationPlan
+                    .comprehensiveAssessmentSelfCareTooltip,
+                )}
+              />
+            </Box>
+          </Label>
+          <Text>
+            {getEvaluationScaleName(
+              data?.socialInsuranceRehabilitationPlan?.comprehensiveEvaluation
+                ?.selfCare ?? 0,
+            )}
+          </Text>
+        </GridColumn>
+        <GridColumn span="1/1">
+          <Label>
+            {formatMessage(
+              medicalAndRehabilitationPaymentsFormMessage.rehabilitationPlan
+                .comprehensiveAssessmentDomesticLife,
+            )}
+            <Box marginLeft={1} display="inlineBlock">
+              <Tooltip
+                placement="top"
+                text={formatMessage(
+                  medicalAndRehabilitationPaymentsFormMessage.rehabilitationPlan
+                    .comprehensiveAssessmentDomesticLifeTooltip,
+                )}
+              />
+            </Box>
+          </Label>
+          <Text>
+            {getEvaluationScaleName(
+              data?.socialInsuranceRehabilitationPlan?.comprehensiveEvaluation
+                ?.domesticLife ?? 0,
+            )}
+          </Text>
+        </GridColumn>
+        <GridColumn span="1/1">
+          <Label>
+            {formatMessage(
+              medicalAndRehabilitationPaymentsFormMessage.rehabilitationPlan
+                .comprehensiveAssessmentDailyLife,
+            )}
+            <Box marginLeft={1} display="inlineBlock">
+              <Tooltip
+                placement="top"
+                text={formatMessage(
+                  medicalAndRehabilitationPaymentsFormMessage.rehabilitationPlan
+                    .comprehensiveAssessmentDailyLifeTooltip,
+                )}
+              />
+            </Box>
+          </Label>
+          <Text>
+            {getEvaluationScaleName(
+              data?.socialInsuranceRehabilitationPlan?.comprehensiveEvaluation
+                ?.mainDailyLifeAreas ?? 0,
+            )}
+          </Text>
+        </GridColumn>
+        <GridColumn span="1/1">
+          <Label>
+            {formatMessage(
+              medicalAndRehabilitationPaymentsFormMessage.rehabilitationPlan
+                .comprehensiveAssessmentLeisureAndInterests,
+            )}
+            <Box marginLeft={1} display="inlineBlock">
+              <Tooltip
+                placement="top"
+                text={formatMessage(
+                  medicalAndRehabilitationPaymentsFormMessage.rehabilitationPlan
+                    .comprehensiveAssessmentLeisureAndInterestsTooltip,
+                )}
+              />
+            </Box>
+          </Label>
+          <Text>
+            {getEvaluationScaleName(
+              data?.socialInsuranceRehabilitationPlan?.comprehensiveEvaluation
+                ?.leisureAndHobbies ?? 0,
+            )}
+          </Text>
+        </GridColumn>
+        <GridColumn span="1/1">
+          <Label>
+            {formatMessage(
+              medicalAndRehabilitationPaymentsFormMessage.rehabilitationPlan
+                .comprehensiveAssessmentExpression,
             )}
           </Label>
           <Text>
-            {
-              data?.socialInsuranceRehabilitationPlan?.serviceProvider
-                ?.coordinatorTitle
-            }
+            {getEvaluationScaleName(
+              data?.socialInsuranceRehabilitationPlan?.comprehensiveEvaluation
+                ?.expression ?? 0,
+            )}
           </Text>
         </GridColumn>
       </GridRow>
@@ -144,7 +481,7 @@ export const RehabilitationPlan: FC<FieldBaseProps> = ({
           <Text>
             {data?.socialInsuranceRehabilitationPlan?.startDate
               ? format(
-                  new Date(data.socialInsuranceRehabilitationPlan.startDate),
+                  parseISO(data.socialInsuranceRehabilitationPlan.startDate),
                   'dd.MM.yyyy',
                 )
               : '-'}
@@ -160,7 +497,7 @@ export const RehabilitationPlan: FC<FieldBaseProps> = ({
           <Text>
             {data?.socialInsuranceRehabilitationPlan?.plannedEndDate
               ? format(
-                  new Date(
+                  parseISO(
                     data.socialInsuranceRehabilitationPlan.plannedEndDate,
                   ),
                   'dd.MM.yyyy',
@@ -314,14 +651,22 @@ export const RehabilitationPlan: FC<FieldBaseProps> = ({
 
   return (
     <Stack space={4}>
-      {serviceProvider()}
+      <ManagedBy
+        serviceProvider={
+          data?.socialInsuranceRehabilitationPlan?.serviceProvider
+        }
+      />
+      <Divider />
+      {information()}
+      <Divider />
+      {comprehensiveAssessment()}
       <Divider />
       {rehabilitationObjective()}
       <CheckboxFormField
         application={application}
-        error={error}
+        error={errors && getErrorViaPath(errors, `${field.id}.confirmation`)}
         field={{
-          id: field.id,
+          id: `${field.id}.confirmation`,
           large: true,
           backgroundColor: 'blue',
           type: FieldTypes.CHECKBOX,
@@ -336,6 +681,15 @@ export const RehabilitationPlan: FC<FieldBaseProps> = ({
             },
           ],
         }}
+      />
+      <input
+        type="hidden"
+        value={
+          data?.socialInsuranceRehabilitationPlan?.referenceId
+            ? data.socialInsuranceRehabilitationPlan.referenceId
+            : undefined
+        }
+        {...register(`${field.id}.referenceId`)}
       />
     </Stack>
   )

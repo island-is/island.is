@@ -192,13 +192,13 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
     (vehicleMutationResponse as boolean)
   ) {
     return (
-      <AuthGuard permission="deregisterVehicle" loading={loading}>
+      <AuthGuard permission="deregisterVehicle" loading={loading && !data}>
         <ProcessPageLayout processType={'company'} activeSection={1}>
           {mutationLoading || vehicleMutationLoading ? (
             <Box textAlign="center">
               <Stack space={4}>
                 <Text variant="h1">{t.titles.loading}</Text>
-                <LoadingDots large />
+                <LoadingDots size="large" />
               </Stack>
             </Box>
           ) : (
@@ -224,7 +224,7 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
   }
 
   return (
-    <AuthGuard permission="deregisterVehicle" loading={loading}>
+    <AuthGuard permission="deregisterVehicle" loading={loading && !data}>
       <ProcessPageLayout processType={'company'} activeSection={1}>
         <Stack space={4}>
           {vehicle ? (
@@ -251,7 +251,7 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
             <Box>
               {loading || loadingTraffic ? (
                 <Box textAlign="center">
-                  <LoadingDots large />
+                  <LoadingDots size="large" />
                 </Box>
               ) : (
                 <Stack space={4}>

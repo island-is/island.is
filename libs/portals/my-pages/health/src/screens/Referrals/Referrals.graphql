@@ -22,15 +22,18 @@ query GetReferralsDetail(
       ...Referral
       createdDate
       reason
+      diagnoses
       fromContactInfo {
         name
         profession
         department
+        institute
       }
       toContactInfo {
         name
         profession
         department
+        institute
       }
     }
   }

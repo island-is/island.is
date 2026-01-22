@@ -10,22 +10,29 @@ import {
   DefaultEvents,
   Form,
   FormModes,
-  NationalRegistrySpouseApi,
-  NationalRegistryUserApi,
+  NationalRegistryV3SpouseApi,
+  NationalRegistryV3UserApi,
   UserProfileApi,
 } from '@island.is/application/types'
 import {
+  SocialInsuranceAdministrationActivitiesOfProfessionsApi,
   SocialInsuranceAdministrationApplicantApi,
   SocialInsuranceAdministrationCategorizedIncomeTypesApi,
   SocialInsuranceAdministrationCurrenciesApi,
+  SocialInsuranceAdministrationEctsUnitsApi,
+  SocialInsuranceAdministrationEducationLevelsApi,
+  SocialInsuranceAdministrationEmploymentStatusesApi,
   SocialInsuranceAdministrationIncomePlanConditionsApi,
-  SocialInsuranceAdministrationQuestionnairesApi,
+  SocialInsuranceAdministrationIsApplicantEligibleApi,
+  SocialInsuranceAdministrationMARPApplicationTypeApi,
+  SocialInsuranceAdministrationMARPQuestionnairesApi,
+  SocialInsuranceAdministrationProfessionsApi,
+  SocialInsuranceAdministrationResidenceInformationApi,
 } from '../dataProviders'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../lib/messages'
 
 export const Prerequisites: Form = buildForm({
   id: 'medicalAndrehabilitationPaymentsPrerequisites',
-  title: socialInsuranceAdministrationMessage.shared.formTitle,
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
   children: [
@@ -39,7 +46,7 @@ export const Prerequisites: Form = buildForm({
           subTitle:
             socialInsuranceAdministrationMessage.pre.externalDataDescription,
           checkboxLabel:
-            socialInsuranceAdministrationMessage.pre.checkboxProvider,
+            medicalAndRehabilitationPaymentsFormMessage.pre.checkboxProvider,
           submitField: buildSubmitField({
             id: 'submit',
             placement: 'footer',
@@ -55,7 +62,7 @@ export const Prerequisites: Form = buildForm({
           }),
           dataProviders: [
             buildDataProviderItem({
-              provider: NationalRegistryUserApi,
+              provider: NationalRegistryV3UserApi,
               title:
                 medicalAndRehabilitationPaymentsFormMessage.pre
                   .skraInformationTitle,
@@ -64,7 +71,7 @@ export const Prerequisites: Form = buildForm({
                   .skraInformationDescription,
             }),
             buildDataProviderItem({
-              provider: NationalRegistrySpouseApi,
+              provider: NationalRegistryV3SpouseApi,
             }),
             buildDataProviderItem({
               provider: UserProfileApi,
@@ -127,11 +134,35 @@ export const Prerequisites: Form = buildForm({
                 socialInsuranceAdministrationMessage.pre
                   .socialInsuranceAdministrationPrivacyTitle,
               subTitle:
-                socialInsuranceAdministrationMessage.pre
+                medicalAndRehabilitationPaymentsFormMessage.pre
                   .socialInsuranceAdministrationPrivacyDescription,
             }),
             buildDataProviderItem({
-              provider: SocialInsuranceAdministrationQuestionnairesApi,
+              provider: SocialInsuranceAdministrationMARPQuestionnairesApi,
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationEctsUnitsApi,
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationResidenceInformationApi,
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationMARPApplicationTypeApi,
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationEducationLevelsApi,
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationIsApplicantEligibleApi,
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationEmploymentStatusesApi,
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationProfessionsApi,
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationActivitiesOfProfessionsApi,
             }),
           ],
         }),

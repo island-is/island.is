@@ -28,24 +28,11 @@ export const header = style({
   },
 })
 
-export const hideHeader = style({
+export const headerHidden = style({
   '@media': {
     [`screen and (max-width: ${theme.breakpoints.md}px)`]: {
-      transform: `translateY(-280%)`,
-      transition:
-        'opacity 250ms cubic-bezier(0.4, 0.0, 0.2, 1), transform 250ms cubic-bezier(0.4, 0.0, 0.2, 1), visibility 0ms',
-      transitionDelay: '100ms',
-    },
-  },
-})
-
-export const showHeader = style({
-  '@media': {
-    [`screen and (max-width: ${theme.breakpoints.md}px)`]: {
-      transform: `translateY(0%)`,
-      transition:
-        'opacity 250ms cubic-bezier(0.4, 0.0, 0.2, 1), transform 250ms cubic-bezier(0.4, 0.0, 0.2, 1), visibility 0ms',
-      transitionDelay: '100ms',
+      transform: `translateY(-100%)`,
+      transition: 'transform 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94)',
     },
   },
 })
@@ -74,4 +61,8 @@ globalStyle(`${overview} svg`, {
       marginLeft: '0 !important',
     },
   },
+})
+
+export const search = style({
+  maxWidth: '286px',
 })

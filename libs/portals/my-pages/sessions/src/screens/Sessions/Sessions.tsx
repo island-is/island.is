@@ -14,6 +14,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { IntroHeader } from '@island.is/portals/core'
+import { isCompany } from '@island.is/shared/utils'
 
 import LogTable from '../../components/LogTable/LogTable'
 import LogTableMobile from '../../components/LogTable/LogTableMobile'
@@ -31,7 +32,7 @@ const initialDates = {
 const Sessions = () => {
   useNamespaces('portals-my-pages.session-history')
   const user = useUserInfo()
-  const isCompany = user.profile.subjectType === 'legalEntity'
+  const isCompanyUser = isCompany(user)
   const { formatMessage } = useLocale()
   const { lg } = useBreakpoint()
 
@@ -171,7 +172,7 @@ const Sessions = () => {
       <IntroHeader
         title={formatMessage(m.sessions)}
         intro={formatMessage(
-          isCompany ? m.sessionsHeaderIntroCompany : m.sessionsHeaderIntro,
+          isCompanyUser ? m.sessionsHeaderIntroCompany : m.sessionsHeaderIntro,
         )}
       />
       <Box
@@ -203,7 +204,7 @@ const Sessions = () => {
               display={'flex'}
               justifyContent={'center'}
             >
-              {customLoading && <LoadingDots large />}
+              {customLoading && <LoadingDots size="large" />}
             </Box>
           }
         >

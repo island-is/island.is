@@ -1,19 +1,21 @@
-import { useContext } from 'react'
-import { ControlContext } from '../../../../../context/ControlContext'
 import { FormSystemField } from '@island.is/api/schema'
-import {
-  Stack,
-  GridRow as Row,
-  GridColumn as Column,
-  Select,
-  Option,
-  Input,
-  Checkbox,
-} from '@island.is/island-ui/core'
-import { SingleValue } from 'react-select'
-import { useIntl } from 'react-intl'
-import { fieldTypesSelectObject } from '../../../../../lib/utils/fieldTypes'
+import { FieldTypesEnum } from '@island.is/form-system/enums'
 import { m } from '@island.is/form-system/ui'
+import {
+  Checkbox,
+  GridColumn as Column,
+  Input,
+  Option,
+  GridRow as Row,
+  Select,
+  Stack,
+} from '@island.is/island-ui/core'
+import { useContext } from 'react'
+import { useIntl } from 'react-intl'
+import { SingleValue } from 'react-select'
+import { ControlContext } from '../../../../../context/ControlContext'
+import { fieldTypesSelectObject } from '../../../../../lib/utils/fieldTypes'
+import { NavbarSelectStatus } from '../../../../../lib/utils/interfaces'
 
 export const BaseInput = () => {
   const {
@@ -24,6 +26,7 @@ export const BaseInput = () => {
     fieldTypes,
     updateActiveItem,
     getTranslation,
+    selectStatus,
   } = useContext(ControlContext)
   const { activeItem } = control
   const currentItem = activeItem.data as FormSystemField
@@ -35,6 +38,26 @@ export const BaseInput = () => {
     ? { value: defaultValue.id ?? '', label: defaultValue.name?.is ?? '' }
     : undefined
   const { formatMessage } = useIntl()
+
+  const renderDescription = () => {
+    if (currentItem.fieldType === FieldTypesEnum.MESSAGE) {
+      return true
+    }
+    if (
+      currentItem.fieldType === FieldTypesEnum.CHECKBOX &&
+      currentItem.fieldSettings?.hasDescription
+    ) {
+      return true
+    }
+    if (
+      currentItem.fieldType === FieldTypesEnum.TEXTBOX &&
+      currentItem.fieldSettings?.hasDescription
+    ) {
+      return true
+    }
+    return false
+  }
+
   return (
     <Stack space={2}>
       <Row>
@@ -47,6 +70,7 @@ export const BaseInput = () => {
             backgroundColor="blue"
             isSearchable
             value={defaultOption}
+            isDisabled={selectStatus === NavbarSelectStatus.NORMAL}
             onChange={(e: SingleValue<Option<string>>) => {
               controlDispatch({
                 type: 'CHANGE_FIELD_TYPE',
@@ -119,7 +143,7 @@ export const BaseInput = () => {
         </Column>
       </Row>
       {/* Description  */}
-      {['Message'].includes(currentItem?.fieldType ?? '') && (
+      {renderDescription() && (
         <>
           <Row>
             <Column span="10/10">

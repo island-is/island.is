@@ -1,4 +1,4 @@
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { EmailService } from '@island.is/email-service'
 import { ConfigType } from '@island.is/nest/config'
@@ -11,11 +11,9 @@ import {
 
 import { createTestingNotificationModule } from '../../createTestingNotificationModule'
 
-import { Case } from '../../../../case'
-import { CivilClaimant } from '../../../../defendant'
+import { Case, CivilClaimant, Notification } from '../../../../repository'
 import { CivilClaimantNotificationDto } from '../../../dto/civilClaimantNotification.dto'
 import { DeliverResponse } from '../../../models/deliver.response'
-import { Notification } from '../../../models/notification.model'
 import { notificationModuleConfig } from '../../../notification.config'
 
 jest.mock('../../../../../factories')

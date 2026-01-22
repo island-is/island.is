@@ -1,0 +1,210 @@
+{
+  "openapi": "3.0.1",
+  "info": { "title": "bankAccountMgrService_v1", "version": "1.0" },
+  "servers": [{ "url": "/rad/TBRIslandis.api.v1:bankAccountMgrService_v1" }],
+  "paths": {
+    "/bankAccounts/{nationalId}": {
+      "get": {
+        "operationId": "bankAccountsnationalId_GET_1",
+        "parameters": [
+          {
+            "name": "nationalId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/bankAccountsnationalId_GET_response"
+                }
+              }
+            }
+          },
+          "400": { "description": "Bad Request", "content": {} },
+          "401": { "description": "Access Denied", "content": {} },
+          "500": { "description": "Internal Server Error\r\n", "content": {} }
+        }
+      },
+      "post": {
+        "operationId": "bankAccountsnationalId_POST_1",
+        "parameters": [
+          {
+            "name": "nationalId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/BankAccount_DT" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/bankAccountsnationalId_POST_response"
+                }
+              }
+            }
+          },
+          "401": { "description": "Access Denied", "content": {} }
+        },
+        "x-codegen-request-body-name": "BankAccount"
+      }
+    },
+    "/bankAccounts/{nationalId}/validate": {
+      "post": {
+        "operationId": "bankAccountsnationalIdvalidate_POST_2",
+        "parameters": [
+          {
+            "name": "nationalId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/BankAccount_DT" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/bankAccountsnationalIdvalidate_POST_response"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/bankAccountsnationalIdvalidate_POST_response"
+                }
+              }
+            }
+          },
+          "401": { "description": "Access Denied", "content": {} }
+        },
+        "x-codegen-request-body-name": "BankAccount"
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "bankAccountsnationalId_POST_response": {
+        "type": "object",
+        "properties": { "error": { "$ref": "#/components/schemas/Error_DT" } }
+      },
+      "BankAccountInfo_DT": {
+        "required": [
+          "accountNumber",
+          "bank",
+          "ledger",
+          "priority",
+          "registeredByRSK"
+        ],
+        "type": "object",
+        "properties": {
+          "bank": { "type": "string" },
+          "ledger": { "type": "string" },
+          "accountNumber": { "type": "string" },
+          "priority": { "type": "boolean" },
+          "registeredByRSK": { "type": "boolean" }
+        }
+      },
+      "errors": {
+        "required": ["detail", "title"],
+        "type": "object",
+        "properties": {
+          "type": { "type": "string" },
+          "title": { "type": "string" },
+          "detail": { "type": "string" },
+          "param": { "type": "string" },
+          "traceId": { "type": "string" }
+        }
+      },
+      "bankAccountsnationalId_GET_response": {
+        "required": ["BankAccountInfo", "error"],
+        "type": "object",
+        "properties": {
+          "BankAccountInfo": {
+            "$ref": "#/components/schemas/BankAccountInfo_DT"
+          },
+          "error": { "$ref": "#/components/schemas/Error_DT" }
+        }
+      },
+      "bankAccountsnationalIdvalidate_POST_response": {
+        "required": ["error", "reason", "valid"],
+        "type": "object",
+        "properties": {
+          "valid": { "type": "boolean" },
+          "reason": { "type": "string" },
+          "error": { "$ref": "#/components/schemas/Error_DT" }
+        }
+      },
+      "BankAccount_DT": {
+        "required": ["accountNumber", "bank", "ledger"],
+        "type": "object",
+        "properties": {
+          "bank": { "type": "string" },
+          "ledger": { "type": "string" },
+          "accountNumber": { "type": "string" }
+        }
+      },
+      "Error_DT": {
+        "required": ["detail", "status", "title"],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "A URI reference [RFC3986] that identifies the problem type. This specification encourages that, when dereferenced, it provide human-readable documentation for the problem type (e.g., using HTML [W3C.REC-html5-20141028]). When this member is not present, its value is assumed to be \"about:blank\"."
+          },
+          "title": {
+            "type": "string",
+            "description": "A short, human-readable summary of the problem type.It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization(e.g., using proactive content negotiation; see[RFC7231], Section 3.4)."
+          },
+          "status": {
+            "type": "string",
+            "description": "The HTTP status code([RFC7231], Section 6) generated by the origin server for this occurrence of the problem."
+          },
+          "detail": {
+            "type": "string",
+            "description": "A human-readable explanation specific to this occurrence of the problem."
+          },
+          "instance": {
+            "type": "string",
+            "description": "A URI reference that identifies the specific occurrence of the problem.It may or may not yield further information if dereferenced."
+          },
+          "errors": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/errors" }
+          }
+        }
+      },
+      "ProblemDetails": { "additionalProperties": false },
+      "ValidationProblemDetails": { "additionalProperties": false }
+    }
+  },
+  "x-original-swagger-version": "2.0"
+}

@@ -149,9 +149,10 @@ export class ValueType {
   time?: string
 
   @IsOptional()
-  @IsString()
-  @ApiPropertyOptional({ type: String })
-  s3Key?: string
+  @IsArray()
+  @IsString({ each: true })
+  @ApiPropertyOptional({ type: [String] })
+  s3Key?: string[]
 
   @IsOptional()
   @IsString()
@@ -162,4 +163,14 @@ export class ValueType {
   @IsString()
   @ApiPropertyOptional({ type: String })
   paymentCode?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ type: String })
+  applicantType?: string
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  isLoggedInUser?: boolean
 }

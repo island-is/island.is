@@ -1,9 +1,9 @@
-import { uuid } from 'uuidv4'
+import { Transaction } from 'sequelize'
+import { v4 as uuid } from 'uuid'
 
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
 
-import { Case } from '../../../case'
-import { CivilClaimant } from '../../models/civilClaimant.model'
+import { Case, CivilClaimant } from '../../../repository'
 
 interface Then {
   result: CivilClaimant
@@ -22,13 +22,20 @@ describe('CivilClaimantController - Create', () => {
   const createdCivilClaimant = { id: civilClaimantId, caseId }
 
   let mockCivilClaimantModel: typeof CivilClaimant
+  let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { civilClaimantModel, civilClaimantController } =
+    const { sequelize, civilClaimantModel, civilClaimantController } =
       await createTestingDefendantModule()
 
     mockCivilClaimantModel = civilClaimantModel
+
+    const mockTransaction = sequelize.transaction as jest.Mock
+    transaction = {} as Transaction
+    mockTransaction.mockImplementationOnce(
+      (fn: (transaction: Transaction) => unknown) => fn(transaction),
+    )
 
     const mockCreate = mockCivilClaimantModel.create as jest.Mock
     mockCreate.mockResolvedValue(createdCivilClaimant)
@@ -51,9 +58,11 @@ describe('CivilClaimantController - Create', () => {
     beforeEach(async () => {
       then = await givenWhenThen(caseId)
     })
+
     it('should create a civil claimant', () => {
       expect(mockCivilClaimantModel.create).toHaveBeenCalledWith(
         civilClaimantToCreate,
+        { transaction },
       )
     })
 

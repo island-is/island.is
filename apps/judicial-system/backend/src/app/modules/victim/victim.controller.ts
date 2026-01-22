@@ -18,6 +18,7 @@ import {
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
+import { investigationCases } from '@island.is/judicial-system/types'
 
 import {
   districtCourtAssistantRule,
@@ -26,18 +27,19 @@ import {
   prosecutorRule,
 } from '../../guards'
 import {
+  CaseTypeGuard,
   MinimalCase,
   MinimalCaseAccessGuard,
   MinimalCaseExistsGuard,
   MinimalCurrentCase,
 } from '../case'
+import { Victim } from '../repository'
 import { CreateVictimDto } from './dto/createVictim.dto'
 import { UpdateVictimDto } from './dto/updateVictim.dto'
 import { ValidateVictimGuard } from './guards/validateVictim.guard'
 import { CurrentVictim } from './guards/victim.decorator'
 import { VictimWriteGuard } from './guards/victimWrite.guard'
 import { DeleteVictimResponse } from './models/deleteVictim.response'
-import { Victim } from './models/victim.model'
 import { VictimService } from './victim.service'
 
 @Controller('api/case/:caseId/victim')
@@ -46,8 +48,10 @@ import { VictimService } from './victim.service'
   JwtAuthUserGuard,
   RolesGuard,
   MinimalCaseExistsGuard,
+  new CaseTypeGuard(investigationCases),
   MinimalCaseAccessGuard,
   ValidateVictimGuard,
+  VictimWriteGuard,
 )
 export class VictimController {
   constructor(
@@ -55,7 +59,6 @@ export class VictimController {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @UseGuards(VictimWriteGuard)
   @RolesRules(prosecutorRule)
   @Post()
   @ApiCreatedResponse({
@@ -72,7 +75,6 @@ export class VictimController {
     return this.victimService.create(theCase.id, createDto)
   }
 
-  @UseGuards(VictimWriteGuard)
   @RolesRules(
     prosecutorRule,
     districtCourtJudgeRule,
@@ -95,7 +97,6 @@ export class VictimController {
     return this.victimService.update(theCase.id, victim.id, dto)
   }
 
-  @UseGuards(VictimWriteGuard)
   @RolesRules(prosecutorRule)
   @Delete(':victimId')
   @ApiOkResponse({

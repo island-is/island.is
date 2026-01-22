@@ -11,7 +11,7 @@ if [[ -n "${DEBUG:-}" || -n "${CI:-}" ]]; then set -x; fi
 : "${LOCAL_PORT:=}"
 : "${DRY:=}"
 : "${AWS_PROFILE:=islandis-dev}"
-: "${CLUSTER:=${AWS_PROFILE##*-}-cluster01}"
+: "${CLUSTER:=${AWS_PROFILE##*-}-cluster02}"
 
 echo "AWS_PROFILE=${AWS_PROFILE}" >&2
 echo "CLUSTER=${CLUSTER}" >&2
@@ -287,7 +287,7 @@ main() {
 
     if [ -n "${REMOVE_CONTAINERS_ON_START:-}" ]; then
       echo "Removing container for '$proxy' on start..."
-      containerer stop "$container_name" 2>/dev/null || true
+      containerer stop "$container_name" 2>/dev/null || echo "Found no $container_name container to stop"
       containerer rm ${REMOVE_CONTAINERS_FORCE:+-f} "$container_name" || echo "Failed to remove $container_name"
     fi
 

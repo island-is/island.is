@@ -120,7 +120,9 @@ const Summary: FC = () => {
               conclusionText={workingCase.appealConclusion}
             />
           </Box>
-          <AppealCaseFilesOverview />
+          <Box marginBottom={6}>
+            <AppealCaseFilesOverview />
+          </Box>
         </FormContentContainer>
         <FormContentContainer isFooter>
           <FormFooter
@@ -139,11 +141,13 @@ const Summary: FC = () => {
           <Modal
             title={formatMessage(strings.appealCompletedModalTitle)}
             text={formatMessage(strings.appealCompletedModalText)}
-            secondaryButtonText={formatMessage(core.closeModal)}
-            onSecondaryButtonClick={() => {
-              router.push(
-                `${constants.COURT_OF_APPEAL_RESULT_ROUTE}/${workingCase.id}`,
-              )
+            secondaryButton={{
+              text: formatMessage(core.closeModal),
+              onClick: () => {
+                router.push(
+                  `${constants.COURT_OF_APPEAL_RESULT_ROUTE}/${workingCase.id}`,
+                )
+              },
             }}
           />
         )}
@@ -157,11 +161,13 @@ const Summary: FC = () => {
           <Modal
             title={formatMessage(strings.appealDiscontinuedModalTitle)}
             text={formatMessage(strings.appealDiscontinuedModalText)}
-            secondaryButtonText={formatMessage(core.closeModal)}
-            onSecondaryButtonClick={() => {
-              router.push(
-                `${constants.COURT_OF_APPEAL_RESULT_ROUTE}/${workingCase.id}`,
-              )
+            secondaryButton={{
+              text: formatMessage(core.closeModal),
+              onClick: () => {
+                router.push(
+                  `${constants.COURT_OF_APPEAL_RESULT_ROUTE}/${workingCase.id}`,
+                )
+              },
             }}
           />
         )}

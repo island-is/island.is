@@ -1,13 +1,13 @@
-import { uuid } from 'uuidv4'
+import { Transaction } from 'sequelize'
+import { v4 as uuid } from 'uuid'
 
 import { createTestingSubpoenaModule } from '../createTestingSubpoenaModule'
 
-import { Case, PdfService } from '../../../case'
+import { PdfService } from '../../../case'
 import { CourtService } from '../../../court'
-import { Defendant } from '../../../defendant'
+import { Case, Defendant, Subpoena } from '../../../repository'
 import { DeliverDto } from '../../dto/deliver.dto'
 import { DeliverResponse } from '../../models/deliver.response'
-import { Subpoena } from '../../models/subpoena.model'
 
 interface Then {
   result: DeliverResponse
@@ -41,11 +41,18 @@ describe('InternalSubpoenaController - Deliver subpoena to court', () => {
 
   let mockPdfService: PdfService
   let mockCourtService: CourtService
+  let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { courtService, pdfService, internalSubpoenaController } =
+    const { sequelize, courtService, pdfService, internalSubpoenaController } =
       await createTestingSubpoenaModule()
+
+    const mockTransaction = sequelize.transaction as jest.Mock
+    transaction = {} as Transaction
+    mockTransaction.mockImplementationOnce(
+      (fn: (transaction: Transaction) => unknown) => fn(transaction),
+    )
 
     mockPdfService = pdfService
     const mockGetSubpoenaPdf = mockPdfService.getSubpoenaPdf as jest.Mock
@@ -92,6 +99,7 @@ describe('InternalSubpoenaController - Deliver subpoena to court', () => {
       expect(mockPdfService.getSubpoenaPdf).toBeCalledWith(
         theCase,
         defendant,
+        transaction,
         subpoena,
       )
       expect(mockCourtService.createDocument).toBeCalledWith(

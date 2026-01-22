@@ -1,31 +1,35 @@
-import { Module } from '@nestjs/common'
 import { FormSystemClientModule } from '@island.is/clients/form-system'
-import { FormsService } from './forms/forms.service'
-import { FormsResolver } from './forms/forms.resolver'
-import { ApplicationsService } from './applications/applications.service'
-import { ApplicationsResolver } from './applications/applications.resolver'
-import { FieldsService } from './fields/fields.service'
-import { FieldsResolver } from './fields/fields.resolver'
-import { ListItemsService } from './listItems/listItems.service'
-import { ListItemsResolver } from './listItems/listItems.resolver'
-import { OrganizationsService } from './organizations/organizations.service'
-import { OrganizationsResolver } from './organizations/organizations.resolver'
-import { ScreensService } from './screens/screens.service'
-import { ScreensResolver } from './screens/screens.resolver'
-import { SectionsService } from './sections/sections.service'
-import { SectionsResolver } from './sections/sections.resolver'
-import { ApplicantsResolver } from './applicants/applicants.resolver'
-import { ApplicantsService } from './applicants/applicants.service'
+import { NationalRegistryV3ClientModule } from '@island.is/clients/national-registry-v3'
+import { CompanyRegistryClientModule } from '@island.is/clients/rsk/company-registry'
+import { CmsModule } from '@island.is/cms'
 import { LoggingModule } from '@island.is/logging'
+import { Module } from '@nestjs/common'
+import { ApplicationsResolver } from './applications/applications.resolver'
+import { ApplicationsService } from './applications/applications.service'
 import { CertificationsResolver } from './certification/certification.resolver'
 import { CertificationsService } from './certification/certification.service'
+import { CompanyRegistryResolver } from './company/companyRegistry.resolver'
+import { FieldsResolver } from './fields/fields.resolver'
+import { FieldsService } from './fields/fields.service'
+import { FilesResolver } from './files/files.resolver'
+import { FilesService } from './files/files.service'
+import { FormApplicantTypesResolver } from './formApplicantTypes/formApplicantTypes.resolver'
+import { FormApplicantTypesService } from './formApplicantTypes/formApplicantTypes.service'
+import { FormsResolver } from './forms/forms.resolver'
+import { FormsService } from './forms/forms.service'
+import { ListItemsResolver } from './listItems/listItems.resolver'
+import { ListItemsService } from './listItems/listItems.service'
+import { NationalRegistryResolver } from './nationalRegistry/nationalRegistry.resolver'
 import { OrganizationPermissionsResolver } from './organizationPermissions/organizationPermissions.resolver'
 import { OrganizationPermissionsService } from './organizationPermissions/organizationPermissions.service'
-import { CmsModule } from '@island.is/cms'
-import { TranslationsService } from './translations/translations.service'
+import { OrganizationsResolver } from './organizations/organizations.resolver'
+import { OrganizationsService } from './organizations/organizations.service'
+import { ScreensResolver } from './screens/screens.resolver'
+import { ScreensService } from './screens/screens.service'
+import { SectionsResolver } from './sections/sections.resolver'
+import { SectionsService } from './sections/sections.service'
 import { TranslationsResolver } from './translations/translations.resolver'
-import { OrganizationUrlsResolver } from './organizationUrls/organizationUrls.resolver'
-import { OrganizationUrlsService } from './organizationUrls/organizationUrls.service'
+import { TranslationsService } from './translations/translations.service'
 
 @Module({
   providers: [
@@ -45,17 +49,25 @@ import { OrganizationUrlsService } from './organizationUrls/organizationUrls.ser
     SectionsResolver,
     TranslationsResolver,
     TranslationsService,
-    ApplicantsResolver,
-    ApplicantsService,
     CertificationsResolver,
     CertificationsService,
     OrganizationPermissionsResolver,
     OrganizationPermissionsService,
-    OrganizationUrlsResolver,
-    OrganizationUrlsService,
+    FormApplicantTypesResolver,
+    FormApplicantTypesService,
     CmsModule,
+    NationalRegistryResolver,
+    CompanyRegistryResolver,
+    FilesService,
+    FilesResolver,
   ],
   exports: [],
-  imports: [FormSystemClientModule, LoggingModule],
+  imports: [
+    FormSystemClientModule,
+    LoggingModule,
+    CmsModule,
+    NationalRegistryV3ClientModule,
+    CompanyRegistryClientModule,
+  ],
 })
 export class FormSystemModule {}

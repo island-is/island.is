@@ -1,8 +1,7 @@
 import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql'
-
 import { GraphQLJSON } from 'graphql-type-json'
-
 import { GetPaymentFlowDTOPaymentStatusEnum } from '@island.is/clients/payments'
+import { PaymentFlowEvent } from './paymentFlowEvent.dto'
 
 registerEnumType(GetPaymentFlowDTOPaymentStatusEnum, {
   name: 'PaymentsGetFlowPaymentStatus',
@@ -55,4 +54,10 @@ export class GetPaymentFlowResponse {
 
   @Field(() => Date)
   updatedAt!: Date
+}
+
+@ObjectType('PaymentsGetPaymentFlowAdminResponse')
+export class PaymentFlowAdminResponse extends GetPaymentFlowResponse {
+  @Field(() => [PaymentFlowEvent], { nullable: true })
+  events?: PaymentFlowEvent[]
 }

@@ -30,7 +30,7 @@ export const VideoPlayer: FC<Props> = ({ url, title }) => {
   const videoRef = useRef<HTMLVideoElement | null>(null)
   const containerRef = useRef<HTMLElement | null>(null)
 
-  const progress = trackProgress / duration ?? 0
+  const progress = trackProgress / duration || 0
 
   const toggleVideo = () => {
     if (hasEnded) {
@@ -124,7 +124,7 @@ export const VideoPlayer: FC<Props> = ({ url, title }) => {
           textAlign="center"
           height="full"
         >
-          <LoadingDots large />
+          <LoadingDots size="large" />
         </Box>
       )}
       {isReady && (
@@ -182,6 +182,7 @@ export const VideoPlayer: FC<Props> = ({ url, title }) => {
               className={styles.audioControl}
             >
               <ProgressBar
+                id="progress-bar-video"
                 progress={progress}
                 onClick={setTimeChange}
                 renderProgressBar={isReady}

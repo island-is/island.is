@@ -22,6 +22,10 @@ export const allowedScopesAdmin: string[] = [
   AdminPortalScope.signatureCollectionProcess,
 ]
 
+export const allowedScopesMunicipality: string[] = [
+  AdminPortalScope.signatureCollectionMunicipality,
+]
+
 export const countryAreas = [
   { value: 'Sunnlendingafjórðungur', label: 'Sunnlendingafjórðungur' },
   { value: 'Vestfirðingafjórðungur', label: 'Vestfirðingafjórðungur' },
@@ -64,32 +68,41 @@ export enum CollectionStatus {
 }
 
 export const downloadFile = () => {
-  const name = 'meðmæli.xlsx'
-  const sheetData = [['Kennitala', 'Bls'], []]
-
-  const getFile = (name: string, output: string | undefined) => {
-    const uri =
-      'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,'
-    const encodedUri = encodeURI(`${uri}${output}`)
-    const link = document.createElement('a')
-    link.setAttribute('href', encodedUri)
-    link.setAttribute('download', name)
-    document.body.appendChild(link)
-
-    link.click()
-  }
+  const fileName = 'beraSaman.xlsx'
+  const sheetName = 'Bera saman'
+  const sheetData = [['Kennitala']]
 
   const worksheet: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(sheetData)
+
+  // Apply Text format for all cells in column A
+  Object.keys(worksheet).forEach((cell) => {
+    if (cell[0] === 'A' && cell !== '!ref') {
+      worksheet[cell].t = 's'
+      worksheet[cell].z = '@'
+    }
+  })
+
+  worksheet['!cols'] = [{ wch: 20 }]
+
   const workbook: XLSX.WorkBook = {
-    Sheets: { [name]: worksheet },
-    SheetNames: [name],
+    Sheets: { [sheetName]: worksheet },
+    SheetNames: [sheetName],
   }
 
   const excelBuffer = XLSX.write(workbook, {
     bookType: 'xlsx',
     type: 'base64',
   })
-  getFile(name, excelBuffer)
+
+  // Trigger download
+  const link = document.createElement('a')
+  link.href =
+    'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,' +
+    excelBuffer
+  link.download = fileName
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
 }
 
 // Bulk upload and compare
@@ -109,13 +122,13 @@ export const getFileData = async (newFile: File[]) => {
   const buffer = await newFile[0].arrayBuffer()
   const file = XLSX.read(buffer, { type: 'buffer' })
 
-  const data = [] as any
+  const data: Record<string, unknown>[] = []
   const sheets = file.SheetNames
 
   for (let i = 0; i < sheets.length; i++) {
     const temp = XLSX.utils.sheet_to_json(file.Sheets[file.SheetNames[i]])
     temp.forEach((res) => {
-      data.push(res)
+      data.push(res as Record<string, unknown>)
     })
   }
 
@@ -137,7 +150,7 @@ export const getTagConfig = (list: SignatureCollectionList) => {
     return {
       label: m.confirmListReviewed.defaultMessage,
       variant: 'mint' as TagVariant,
-      outlined: false,
+      outlined: true,
     }
   }
 

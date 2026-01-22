@@ -1,3 +1,13 @@
+import { MileCarModule } from './transport-authority/mile-car/mile-car.module'
+import { MileCarService } from './transport-authority/mile-car/mile-car.service'
+import { CoursesModule } from './hh/courses/courses.module'
+import { CoursesService } from './hh/courses/courses.service'
+import { RegistrationOfNewPropertyNumbersModule } from './hms/registration-of-new-property-numbers/registration-of-new-property-numbers.module'
+import { RegistrationOfNewPropertyNumbersService } from './hms/registration-of-new-property-numbers/registration-of-new-property-numbers.service'
+import { UnemploymentBenefitsModule } from './unemployment-benefits/unemployment-benefits.module'
+import { UnemploymentBenefitsService } from './unemployment-benefits/unemployment-benefits.service'
+import { ActivationAllowanceModule } from './activation-allowance/activation-allowance.module'
+import { ActivationAllowanceService } from './activation-allowance/activation-allowance.service'
 import { CarRentalFeeCategoryModule } from './car-rental-fee-category/car-rental-fee-category.module'
 import { CarRentalFeeCategoryService } from './car-rental-fee-category/car-rental-fee-category.service'
 import { TerminateRentalAgreementModule } from './hms/terminate-rental-agreement/terminate-rental-agreement.module'
@@ -8,8 +18,8 @@ import { ExampleFolderStructureAndConventionsModule } from './examples/example-f
 import { ExampleFolderStructureAndConventionsService } from './examples/example-folder-structure-and-conventions/example-folder-structure-and-conventions.service'
 import { ExampleAuthDelegationModule } from './examples/example-auth-delegation/example-auth-delegation.module'
 import { ExampleAuthDelegationService } from './examples/example-auth-delegation/example-auth-delegation.service'
-import { ExamplePaymentActionsModule } from './example-payment-actions/examplePaymentActions.module'
-import { ExamplePaymentActionsService } from './example-payment-actions/examplePaymentActions.service'
+import { ExamplePaymentActionsModule } from './examples/example-payment-actions/examplePaymentActions.module'
+import { ExamplePaymentActionsService } from './examples/example-payment-actions/examplePaymentActions.service'
 import { ExampleCommonActionsModule } from './examples/example-common-actions/example-common-actions.module'
 import { ExampleCommonActionsService } from './examples/example-common-actions/example-common-actions.service'
 import { ExampleStateTransfersModule } from './examples/example-state-transfers/example-state-transfers.module'
@@ -18,8 +28,8 @@ import { ExampleInputsModule } from './examples/example-inputs/example-inputs.mo
 import { ExampleInputsService } from './examples/example-inputs/example-inputs.service'
 import { ExampleNoInputsModule } from './examples/example-no-inputs/example-no-inputs.module'
 import { ExampleNoInputsService } from './examples/example-no-inputs/example-no-inputs-service'
-import { AccidentNotificationModule } from './accident-notification/accident-notification.module'
-import { AccidentNotificationService } from './accident-notification/accident-notification.service'
+import { AccidentNotificationModule } from './iceland-health/accident-notification/accident-notification.module'
+import { AccidentNotificationService } from './iceland-health/accident-notification/accident-notification.service'
 import { AnnouncementOfDeathModule } from './announcement-of-death/announcement-of-death.module'
 import { AnnouncementOfDeathService } from './announcement-of-death/announcement-of-death.service'
 import { ChildrenResidenceChangeModuleV2 } from './children-residence-change-v2/children-residence-change.module'
@@ -32,28 +42,28 @@ import { DataProtectionComplaintModule } from './data-protection-complaint/data-
 import { DataProtectionComplaintService } from './data-protection-complaint/data-protection-complaint.service'
 import { DocumentProviderOnboardingModule } from './document-provider-onboarding/document-provider-onboarding.module'
 import { DocumentProviderOnboardingService } from './document-provider-onboarding/document-provider-onboarding.service'
-import { DrivingLicenseSubmissionModule } from './driving-license-submission/driving-license-submission.module'
-import { DrivingLicenseSubmissionService } from './driving-license-submission/driving-license-submission.service'
-import { DrivingSchoolConfirmationModule } from './driving-school-confirmation/driving-school-confirmation.module'
-import { DrivingSchoolConfirmationService } from './driving-school-confirmation/driving-school-confirmation.service'
+import { DrivingLicenseSubmissionModule } from './transport-authority/driving-license-submission/driving-license-submission.module'
+import { DrivingLicenseSubmissionService } from './transport-authority/driving-license-submission/driving-license-submission.service'
+import { DrivingSchoolConfirmationModule } from './transport-authority/driving-school-confirmation/driving-school-confirmation.module'
+import { DrivingSchoolConfirmationService } from './transport-authority/driving-school-confirmation/driving-school-confirmation.service'
 import { EstateTemplateModule } from './estate/estate.module'
 import { EstateTemplateService } from './estate/estate.service'
 import { FinancialAidModule } from './financial-aid/financial-aid.module'
 import { FinancialAidService } from './financial-aid/financial-aid.service'
-import { FinancialStatementCemeteryTemplateModule } from './financial-statement-cemetery/financial-statement-cemetery.module'
-import { FinancialStatementCemeteryTemplateService } from './financial-statement-cemetery/financial-statement-cemetery.service'
-import { FinancialStatementIndividualElectionModule } from './financial-statement-individual-election/financial-statement-individual-election.module'
-import { FinancialStatementIndividualElectionService } from './financial-statement-individual-election/financial-statement-individual-election.service'
-import { FinancialStatementPoliticalPartyTemplateModule } from './financial-statement-political-party/financial-statement-political-party.modules'
-import { FinancialStatementPoliticalPartyTemplateService } from './financial-statement-political-party/financial-statement-political-party.service'
+import { FinancialStatementCemeteryTemplateModule } from './inao/financial-statement-cemetery/financial-statement-cemetery.module'
+import { FinancialStatementCemeteryTemplateService } from './inao/financial-statement-cemetery/financial-statement-cemetery.service'
+import { FinancialStatementIndividualElectionModule } from './inao/financial-statement-individual-election/financial-statement-individual-election.module'
+import { FinancialStatementIndividualElectionService } from './inao/financial-statement-individual-election/financial-statement-individual-election.service'
+import { FinancialStatementPoliticalPartyTemplateModule } from './inao/financial-statement-political-party/financial-statement-political-party.modules'
+import { FinancialStatementPoliticalPartyTemplateService } from './inao/financial-statement-political-party/financial-statement-political-party.service'
 import { FundingGovernmentProjectsModule } from './funding-government-projects/funding-government-projects.module'
 import { FundingGovernmentProjectsService } from './funding-government-projects/funding-government-projects.service'
 import { GeneralFishingLicenseModule } from './general-fishing-license/general-fishing-license.module'
 import { GeneralFishingLicenseService } from './general-fishing-license/general-fishing-license.service'
 import { GeneralPetitionModule } from './general-petition/general-petition.module'
 import { GeneralPetitionService } from './general-petition/general-petition.service'
-import { HealthInsuranceModule } from './health-insurance/health-insurance.module'
-import { HealthInsuranceService } from './health-insurance/health-insurance.service'
+import { HealthInsuranceModule } from './iceland-health/health-insurance/health-insurance.module'
+import { HealthInsuranceService } from './iceland-health/health-insurance/health-insurance.service'
 import { InheritanceReportModule } from './inheritance-report/inheritance-report.module'
 import { InheritanceReportService } from './inheritance-report/inheritance-report.service'
 import { InstitutionCollaborationModule } from './institution-collaboration/institution-collaboration.module'
@@ -80,14 +90,14 @@ import { PublicDebtPaymentPlanTemplateModule } from './public-debt-payment-plan/
 import { PublicDebtPaymentPlanTemplateService } from './public-debt-payment-plan/public-debt-payment-plan.service'
 import { CitizenshipModule } from './directorate-of-immigration/citizenship/citizenship.module'
 import { CitizenshipService } from './directorate-of-immigration/citizenship/citizenship.service'
-import { DrivingLearnersPermitModule } from './driving-learners-permit/driving-learners-permit.module'
-import { DrivingLearnersPermitService } from './driving-learners-permit/driving-learners-permit.service'
-import { DrivingLicenseBookUpdateInstructorModule } from './driving-license-book-update-instructor/driving-license-book-update-instructor.module'
-import { DrivingLicenseBookUpdateInstructorService } from './driving-license-book-update-instructor/driving-license-book-update-instructor.service'
+import { DrivingLearnersPermitModule } from './transport-authority/driving-learners-permit/driving-learners-permit.module'
+import { DrivingLearnersPermitService } from './transport-authority/driving-learners-permit/driving-learners-permit.service'
+import { DrivingLicenseBookUpdateInstructorModule } from './transport-authority/driving-license-book-update-instructor/driving-license-book-update-instructor.module'
+import { DrivingLicenseBookUpdateInstructorService } from './transport-authority/driving-license-book-update-instructor/driving-license-book-update-instructor.service'
 import {
   EuropeanHealthInsuranceCardModule,
   EuropeanHealthInsuranceCardService,
-} from './european-health-insurance-card'
+} from './iceland-health/european-health-insurance-card'
 import { HealthcareLicenseCertificateModule } from './healthcare-license-certificate/healthcare-license-certificate.module'
 import { HealthcareLicenseCertificateService } from './healthcare-license-certificate/healthcare-license-certificate.service'
 import { HealthcareWorkPermitModule } from './healthcare-work-permit/healthcare-work-permit.module'
@@ -116,8 +126,8 @@ import { TransferOfMachineOwnershipTemplateModule } from './aosh/transfer-of-mac
 import { TransferOfMachineOwnershipTemplateService } from './aosh/transfer-of-machine-ownership/transfer-of-machine-ownership.service'
 import { CarRecyclingModule } from './car-recycling/car-recycling.module'
 import { CarRecyclingService } from './car-recycling/car-recycling.service'
-import { DrivingLicenseDuplicateModule } from './driving-license-duplicate/driving-license-duplicate.module'
-import { DrivingLicenseDuplicateService } from './driving-license-duplicate/driving-license-duplicate.service'
+import { DrivingLicenseDuplicateModule } from './transport-authority/driving-license-duplicate/driving-license-duplicate.module'
+import { DrivingLicenseDuplicateService } from './transport-authority/driving-license-duplicate/driving-license-duplicate.service'
 import { OfficialJournalOfIcelandTemplateModule } from './official-journal-of-iceland/official-journal-of-iceland.module'
 import { OfficialJournalOfIcelandTemaplateService } from './official-journal-of-iceland/official-journal-of-iceland.service'
 import { SocialInsuranceAdministrationModule } from './social-insurance-administration/social-insurance-administration.module'
@@ -140,8 +150,8 @@ import { StreetRegistrationTemplateModule } from './aosh/street-registration/str
 import { StreetRegistrationTemplateService } from './aosh/street-registration/street-registration.service'
 import { RequestInspectionTemplateModule } from './aosh/request-inspection/request-inspection.module'
 import { RequestInspectionTemplateService } from './aosh/request-inspection/request-inspection.service'
-import { HealthInsuranceDeclarationModule } from './health-insurance-declaration/health-insurance-declaration.module'
-import { HealthInsuranceDeclarationService } from './health-insurance-declaration/health-insurance-declaration.service'
+import { HealthInsuranceDeclarationModule } from './iceland-health/health-insurance-declaration/health-insurance-declaration.module'
+import { HealthInsuranceDeclarationService } from './iceland-health/health-insurance-declaration/health-insurance-declaration.service'
 import { NewPrimarySchoolModule } from './new-primary-school/new-primary-school.module'
 import { NewPrimarySchoolService } from './new-primary-school/new-primary-school.service'
 import { WorkAccidentNotificationTemplateModule } from './aosh/work-accident-notification/work-accident-notification.module'
@@ -166,8 +176,8 @@ import { PracticalExamTemplateModule } from './aosh/practical-exam/practical-exa
 import { PracticalExamTemplateService } from './aosh/practical-exam/practical-exam.service'
 import { LegalGazetteTemplateModule } from './legal-gazette/legal-gazette.module'
 import { LegalGazetteTemplateService } from './legal-gazette/legal-gazette.service'
-import { RentalAgreementModule } from './rental-agreement/rental-agreement.module'
-import { RentalAgreementService } from './rental-agreement/rental-agreement.service'
+import { RentalAgreementModule } from './hms/rental-agreement/rental-agreement.module'
+import { RentalAgreementService } from './hms/rental-agreement/rental-agreement.service'
 import { ExemptionForTransportationModule } from './transport-authority/exemption-for-transportation/exemption-for-transportation.module'
 import { ExemptionForTransportationService } from './transport-authority/exemption-for-transportation/exemption-for-transportation.service'
 
@@ -249,15 +259,20 @@ export const modules = [
   SeminarsTemplateModule,
   SecondarySchoolModule,
   TrainingLicenseOnAWorkMachineTemplateModule,
+  UnemploymentBenefitsModule,
   CarRentalFeeCategoryModule,
   PracticalExamTemplateModule,
   ExampleFolderStructureAndConventionsModule,
   LegalGazetteTemplateModule,
   ExampleAuthDelegationModule,
   RentalAgreementModule,
+  ActivationAllowanceModule,
   TerminateRentalAgreementModule,
   FireCompensationAppraisalModule,
   ExemptionForTransportationModule,
+  RegistrationOfNewPropertyNumbersModule,
+  MileCarModule,
+  CoursesModule,
 ]
 
 export const services = [
@@ -337,13 +352,18 @@ export const services = [
   MunicipalListSigningService,
   SecondarySchoolService,
   TrainingLicenseOnAWorkMachineTemplateService,
+  UnemploymentBenefitsService,
   CarRentalFeeCategoryService,
   PracticalExamTemplateService,
   ExampleFolderStructureAndConventionsService,
   LegalGazetteTemplateService,
   ExampleAuthDelegationService,
   RentalAgreementService,
+  ActivationAllowanceService,
   TerminateRentalAgreementService,
   FireCompensationAppraisalService,
   ExemptionForTransportationService,
+  RegistrationOfNewPropertyNumbersService,
+  MileCarService,
+  CoursesService,
 ]

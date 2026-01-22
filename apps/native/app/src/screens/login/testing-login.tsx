@@ -1,12 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import {
   Alert,
   AlertButton,
   Image,
-  Linking,
-  NativeEventEmitter,
-  NativeModules,
   Platform,
   SafeAreaView,
   TouchableOpacity,
@@ -15,19 +12,19 @@ import {
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import styled from 'styled-components/native'
 
-import { Button, dynamicColor, font } from '../../ui'
 import logo from '../../assets/logo/logo-64w.png'
 import testinglogo from '../../assets/logo/testing-logo-64w.png'
 import { environments, isTestingApp, useConfig } from '../../config'
-import { useBrowser } from '../../lib/use-browser'
 import { openNativeBrowser } from '../../lib/rn-island'
 import { showPicker } from '../../lib/show-picker'
+import { useBrowser } from '../../lib/use-browser'
 import { useAuthStore } from '../../stores/auth-store'
 import {
   environmentStore,
   useEnvironmentStore,
 } from '../../stores/environment-store'
 import { preferencesStore } from '../../stores/preferences-store'
+import { Button, dynamicColor, font } from '../../ui'
 import { nextOnboardingStep } from '../../utils/onboarding'
 import { testIDs } from '../../utils/test-ids'
 
@@ -67,21 +64,6 @@ const Text = styled.Text`
   }))};
 `
 
-function getChromeVersion(): Promise<number> {
-  return new Promise((resolve) => {
-    NativeModules.IslandModule.getAppVersion(
-      'com.android.chrome',
-      (version: string) => {
-        if (version) {
-          resolve(Number(version?.split('.')?.[0] || 0))
-        } else {
-          resolve(0)
-        }
-      },
-    )
-  })
-}
-
 export const TestingLoginScreen: NavigationFunctionComponent = ({
   componentId,
 }) => {
@@ -90,27 +72,6 @@ export const TestingLoginScreen: NavigationFunctionComponent = ({
   const { openBrowser } = useBrowser()
   const intl = useIntl()
   const [isLoggingIn, setIsLoggingIn] = useState(false)
-  const [authState, setAuthState] = useState<{
-    nonce: string
-    codeChallenge: string
-    state: string
-  } | null>(null)
-
-  useEffect(() => {
-    try {
-      const eventEmitter = new NativeEventEmitter(NativeModules.RNAppAuth)
-      const onAuthRequestInitiated = (event: any) => setAuthState(event)
-      const subscription = eventEmitter.addListener(
-        'onAuthRequestInitiated',
-        onAuthRequestInitiated,
-      )
-      return () => {
-        subscription.remove()
-      }
-    } catch (err) {
-      // noop
-    }
-  }, [])
 
   const onLoginPress = async () => {
     // Skip all login functionality if we are in mock environment
@@ -137,35 +98,6 @@ export const TestingLoginScreen: NavigationFunctionComponent = ({
         'Please authenticate with cognito before logging in.',
       )
       return
-    }
-
-    if (Platform.OS === 'android') {
-      const chromeVersion = await getChromeVersion()
-      if (chromeVersion < 55) {
-        // Show dialog on how to update.
-        Alert.alert(
-          intl.formatMessage({ id: 'login.outdatedBrowserTitle' }),
-          intl.formatMessage({ id: 'login.outdatedBrowserMessage' }),
-          [
-            {
-              text: intl.formatMessage({
-                id: 'login.outdatedBrowserUpdateButton',
-              }),
-              style: 'default',
-              onPress() {
-                Linking.openURL('market://details?id=com.android.chrome')
-              },
-            },
-            {
-              style: 'cancel',
-              text: intl.formatMessage({
-                id: 'login.outdatedBrowserCancelButton',
-              }),
-            },
-          ],
-        )
-        return
-      }
     }
 
     if (isLoggingIn) {
@@ -225,13 +157,6 @@ export const TestingLoginScreen: NavigationFunctionComponent = ({
             <Title>
               <FormattedMessage id="login.welcomeMessage" />
             </Title>
-          </View>
-          <View style={{ position: 'absolute', opacity: 0, top: 0, left: 0 }}>
-            <Text testID="auth_nonce">{authState?.nonce ?? 'noop1'}</Text>
-            <Text testID="auth_code">
-              {authState?.codeChallenge ?? 'noop2'}
-            </Text>
-            <Text testID="auth_state">{authState?.state ?? 'noop3'}</Text>
           </View>
           <Button
             title={intl.formatMessage({ id: 'login.loginButtonText' })}

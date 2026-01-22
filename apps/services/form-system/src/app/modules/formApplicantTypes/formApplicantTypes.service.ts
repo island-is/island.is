@@ -1,28 +1,36 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { FormApplicantType } from './models/formApplicantType.model'
 import { Form } from '../forms/models/form.model'
 import { CreateFormApplicantTypeDto } from './models/dto/createFormApplicantType.dto'
 import defaults from 'lodash/defaults'
 import pick from 'lodash/pick'
 import zipObject from 'lodash/zipObject'
-import { UpdateFormApplicantTypeDto } from './models/dto/updateFormApplicantType.dto'
 import { ApplicantTypes } from '../../dataTypes/applicantTypes/applicantType.model'
-import { ApplicantTypesEnum } from '@island.is/form-system/shared'
-import { FormApplicantTypeDto } from './models/dto/formApplicantType.dto'
+import { FieldTypesEnum, SectionTypes } from '@island.is/form-system/shared'
+import { ScreenDto } from '../screens/models/dto/screen.dto'
+import { Field } from '../fields/models/field.model'
+import { Screen } from '../screens/models/screen.model'
+import { Section } from '../sections/models/section.model'
+import { FieldSettings } from '../../dataTypes/fieldSettings/fieldSettings.model'
+import { FieldDto } from '../fields/models/dto/field.dto'
+import { DeleteFormApplicantTypeDto } from './models/dto/deleteFormApplicantType.dto'
+import { Sequelize } from 'sequelize-typescript'
 
 @Injectable()
 export class FormApplicantTypesService {
   constructor(
-    @InjectModel(FormApplicantType)
-    private readonly formApplicantTypeModel: typeof FormApplicantType,
     @InjectModel(Form)
     private readonly formModel: typeof Form,
+    @InjectModel(Screen)
+    private readonly screenModel: typeof Screen,
+    @InjectModel(Field)
+    private readonly fieldModel: typeof Field,
+    private readonly sequelize: Sequelize,
   ) {}
 
   async create(
     createFormApplicantTypeDto: CreateFormApplicantTypeDto,
-  ): Promise<FormApplicantTypeDto> {
+  ): Promise<ScreenDto> {
     const applicantType = ApplicantTypes.find(
       (applicantType) =>
         applicantType.id === createFormApplicantTypeDto.applicantTypeId,
@@ -36,124 +44,139 @@ export class FormApplicantTypesService {
 
     const form = await this.formModel.findByPk(
       createFormApplicantTypeDto.formId,
+      {
+        include: [
+          {
+            model: Section,
+            as: 'sections',
+            where: { sectionType: SectionTypes.PARTIES },
+          },
+        ],
+      },
     )
+
     if (!form) {
       throw new NotFoundException(
         `Form with id '${createFormApplicantTypeDto.formId}' not found`,
       )
     }
 
-    let allowedDelegationTypes: string[] = []
+    let screenDto = new ScreenDto()
 
-    if (Array.isArray(form.allowedDelegationTypes)) {
-      allowedDelegationTypes = [...form.allowedDelegationTypes]
-    } else if (
-      form.allowedDelegationTypes &&
-      typeof form.allowedDelegationTypes === 'object'
-    ) {
-      allowedDelegationTypes = Object.values(form.allowedDelegationTypes)
-    } else {
-      allowedDelegationTypes = []
+    await this.sequelize.transaction(async (transaction) => {
+      const newScreen = await this.screenModel.create(
+        {
+          sectionId: form.sections[0].id, // PARTIES is the only section
+          name: applicantType.description,
+        } as Screen,
+        { transaction },
+      )
+
+      const newField = await this.fieldModel.create(
+        {
+          screenId: newScreen.id,
+          fieldType: FieldTypesEnum.APPLICANT,
+          fieldSettings: {
+            applicantType: applicantType.id,
+          } as FieldSettings,
+        } as Field,
+        { transaction },
+      )
+
+      screenDto = this.mapToScreenDto(newScreen, newField)
+    })
+    return screenDto
+  }
+
+  async delete(
+    deleteFormApplicantTypeDto: DeleteFormApplicantTypeDto,
+  ): Promise<ScreenDto> {
+    const partiesSection = await Section.findOne({
+      where: {
+        formId: deleteFormApplicantTypeDto.formId,
+        sectionType: SectionTypes.PARTIES,
+      },
+      include: [
+        {
+          model: Screen,
+          as: 'screens',
+          include: [
+            {
+              model: Field,
+              as: 'fields',
+            },
+          ],
+        },
+      ],
+    })
+
+    if (!partiesSection) {
+      throw new NotFoundException('PARTIES section not found for form')
     }
-
-    const delegationType = await this.getDelegationType(
-      createFormApplicantTypeDto.applicantTypeId,
+    const targetScreen = partiesSection?.screens?.find((screen) =>
+      (screen.fields ?? []).some(
+        (f) =>
+          f.fieldSettings &&
+          (f.fieldSettings as FieldSettings).applicantType ===
+            deleteFormApplicantTypeDto.applicantTypeId,
+      ),
     )
+
     if (
-      delegationType !== 'Unknown' &&
-      !allowedDelegationTypes.includes(delegationType)
+      !targetScreen ||
+      !targetScreen.fields ||
+      targetScreen.fields.length === 0
     ) {
-      allowedDelegationTypes.push(delegationType)
-      form.allowedDelegationTypes = allowedDelegationTypes
-      await form.save()
-    }
-
-    const formApplicantType = createFormApplicantTypeDto as FormApplicantType
-    const newFormApplicantType: FormApplicantType =
-      new this.formApplicantTypeModel(formApplicantType)
-    await newFormApplicantType.save()
-
-    const keys = ['id', 'applicantTypeId', 'name']
-    const formApplicantTypeDto: FormApplicantTypeDto = defaults(
-      pick(newFormApplicantType, keys),
-      zipObject(keys, Array(keys.length).fill(null)),
-    ) as FormApplicantTypeDto
-
-    return formApplicantTypeDto
-  }
-
-  async update(
-    id: string,
-    updateFormApplicantTypeDto: UpdateFormApplicantTypeDto,
-  ): Promise<void> {
-    const formApplicantType = await this.formApplicantTypeModel.findByPk(id)
-
-    if (!formApplicantType) {
-      throw new NotFoundException(`Form applicant with id '${id}' not found`)
-    }
-
-    formApplicantType.name = updateFormApplicantTypeDto.name
-
-    await formApplicantType.save()
-  }
-
-  async delete(id: string): Promise<void> {
-    const formApplicantType = await this.formApplicantTypeModel.findByPk(id)
-
-    if (!formApplicantType) {
       throw new NotFoundException(
-        `Form applicant type with id '${id}' not found`,
+        `Screen with applicant type id '${deleteFormApplicantTypeDto.applicantTypeId}' not found`,
       )
     }
 
-    const form = await this.formModel.findByPk(formApplicantType.formId)
-    if (!form) {
-      throw new NotFoundException(
-        `Form with id '${formApplicantType.formId}' not found`,
-      )
-    }
+    let screenDto: ScreenDto = new ScreenDto()
 
-    let allowedDelegationTypes: string[] = []
+    screenDto = this.mapToScreenDto(targetScreen, targetScreen.fields[0])
 
-    if (Array.isArray(form.allowedDelegationTypes)) {
-      allowedDelegationTypes = [...form.allowedDelegationTypes]
-    } else if (
-      form.allowedDelegationTypes &&
-      typeof form.allowedDelegationTypes === 'object'
-    ) {
-      allowedDelegationTypes = Object.values(form.allowedDelegationTypes)
-    } else {
-      allowedDelegationTypes = []
-    }
+    await this.screenModel.destroy({
+      where: { id: targetScreen.id },
+    })
 
-    const delegationType = await this.getDelegationType(
-      formApplicantType.applicantTypeId,
-    )
-
-    const updatedDelegationTypes = allowedDelegationTypes.filter(
-      (type) => type !== delegationType,
-    )
-
-    form.allowedDelegationTypes = updatedDelegationTypes
-    await form.save()
-
-    formApplicantType.destroy()
+    return screenDto
   }
 
-  private async getDelegationType(applicantType: string): Promise<string> {
-    switch (applicantType) {
-      case ApplicantTypesEnum.INDIVIDUAL:
-        return 'Individual'
-      case ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_INDIVIDUAL:
-        return 'GeneralMandate'
-      case ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_LEGAL_ENTITY:
-        return 'Custom'
-      case ApplicantTypesEnum.INDIVIDUAL_WITH_PROCURATION:
-        return 'ProcurationHolder'
-      case ApplicantTypesEnum.LEGAL_GUARDIAN:
-        return 'LegalGuardian'
-      default:
-        throw new Error(`Unhandled ApplicantTypesEnum value: ${applicantType}`)
-    }
+  private mapToScreenDto(screen: Screen, field: Field): ScreenDto {
+    const fieldKeys = [
+      'id',
+      'screenId',
+      'name',
+      'displayOrder',
+      'description',
+      'isPartOfMultiset',
+      'isRequired',
+      'fieldType',
+      'fieldSettings',
+    ]
+    const fieldDto: FieldDto = defaults(
+      pick(field, fieldKeys),
+      zipObject(fieldKeys, Array(fieldKeys.length).fill(null)),
+    ) as FieldDto
+
+    const screenKeys = [
+      'id',
+      'sectionId',
+      'name',
+      'displayOrder',
+      'isCompleted',
+      'callRuleset',
+      'isHidden',
+      'multiset',
+    ]
+    const screenDto: ScreenDto = defaults(
+      pick(screen, screenKeys),
+      zipObject(screenKeys, Array(screenKeys.length).fill(null)),
+    ) as ScreenDto
+
+    screenDto.fields = [fieldDto]
+
+    return screenDto
   }
 }

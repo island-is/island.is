@@ -30,15 +30,16 @@ import {
   getHumanReadableCaseIndictmentRulingDecision,
   lowercase,
 } from '@island.is/judicial-system/formatters'
-import { MessageService } from '@island.is/judicial-system/message'
 import {
   CaseAppealRulingDecision,
   CaseCustodyRestrictions,
   CaseDecision,
+  CaseIndictmentRulingDecision,
   CaseNotificationType,
   CaseState,
   CaseType,
   DefenderSubRole,
+  getIndictmentAppealDeadline,
   getStatementDeadline,
   isDefenceUser,
   isIndictmentCase,
@@ -75,17 +76,19 @@ import {
   formatProsecutorReceivedByCourtSmsNotification,
 } from '../../../../formatters'
 import { notifications } from '../../../../messages'
-import { type Case, DateLog } from '../../../case'
 import { CourtService } from '../../../court'
-import {
-  type CivilClaimant,
-  type Defendant,
-  DefendantService,
-} from '../../../defendant'
+import { DefendantService } from '../../../defendant'
 import { EventService } from '../../../event'
+import {
+  type Case,
+  type CivilClaimant,
+  DateLog,
+  type Defendant,
+  Notification,
+  Recipient,
+} from '../../../repository'
 import { BaseNotificationService } from '../../baseNotification.service'
 import { DeliverResponse } from '../../models/deliver.response'
-import { Notification, Recipient } from '../../models/notification.model'
 import { notificationModuleConfig } from '../../notification.config'
 
 interface RecipientInfo {
@@ -107,7 +110,6 @@ export class CaseNotificationService extends BaseNotificationService {
     private readonly courtService: CourtService,
     private readonly smsService: SmsService,
     private readonly defendantService: DefendantService,
-    private readonly messageService: MessageService,
   ) {
     super(
       notificationModel,
@@ -921,9 +923,11 @@ export class CaseNotificationService extends BaseNotificationService {
   ) => {
     return {
       subject: this.formatMessage(notifications.caseCompleted.subject, {
+        isCorrection: Boolean(theCase.rulingModifiedHistory),
         courtCaseNumber: theCase.courtCaseNumber,
       }),
       html: this.formatMessage(notifications.caseCompleted.prosecutorBody, {
+        isCorrection: Boolean(theCase.rulingModifiedHistory),
         courtCaseNumber: theCase.courtCaseNumber,
         courtName: applyDativeCaseToCourtName(
           theCase.court?.name || 'héraðsdómi',
@@ -1028,6 +1032,7 @@ export class CaseNotificationService extends BaseNotificationService {
     return this.sendEmail({
       subject: isIndictmentCase(theCase.type)
         ? this.formatMessage(notifications.caseCompleted.subject, {
+            isCorrection: Boolean(theCase.rulingModifiedHistory),
             courtCaseNumber: theCase.courtCaseNumber,
           })
         : this.formatMessage(rulingMessage.subject, {
@@ -1035,11 +1040,12 @@ export class CaseNotificationService extends BaseNotificationService {
           }),
       html: isIndictmentCase(theCase.type)
         ? this.formatMessage(notifications.caseCompleted.defenderBody, {
-            ...sharedHtmlProps,
+            isCorrection: Boolean(theCase.rulingModifiedHistory),
             caseIndictmentRulingDecision:
               getHumanReadableCaseIndictmentRulingDecision(
                 theCase.indictmentRulingDecision,
               ),
+            ...sharedHtmlProps,
           })
         : this.formatMessage(rulingMessage.body, {
             ...rulingMessage.props.body,
@@ -1878,6 +1884,46 @@ export class CaseNotificationService extends BaseNotificationService {
   }
   //#endregion
 
+  //#region PUBLIC_PROSECUTOR_REVIEWER_ASSIGNED notifications
+  private async sendPublicProsecutorReviewerAssignedNotifications(
+    theCase: Case,
+  ): Promise<DeliverResponse> {
+    const rulingDate = theCase.rulingDate
+    if (!rulingDate) {
+      return { delivered: true }
+    }
+    const subject = `Úthlutun máls ${theCase.courtCaseNumber} til yfirlestrar`
+
+    const { deadlineDate } = getIndictmentAppealDeadline({
+      baseDate: rulingDate,
+      isFine:
+        theCase.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE,
+    })
+    const html = `Þér hefur verið úthlutað máli ${
+      theCase.courtCaseNumber
+    } til yfirlestrar. Áfrýjunarfrestur er til ${formatDate(
+      deadlineDate,
+    )}. Sjá nánar á <a href="${
+      this.config.clientUrl
+    }${CLOSED_INDICTMENT_OVERVIEW_ROUTE}/${
+      theCase.id
+    }">yfirlitssíðu málsins í Réttarvörslugátt.</a>`
+
+    const recipient = await this.sendEmail({
+      subject,
+      html,
+      recipientName: theCase.indictmentReviewer?.name,
+      recipientEmail: theCase.indictmentReviewer?.email,
+    })
+
+    return this.recordNotification(
+      theCase.id,
+      CaseNotificationType.PUBLIC_PROSECUTOR_REVIEWER_ASSIGNED,
+      [recipient],
+    )
+  }
+  //#endregion
+
   //#region CASE_FILES_UPDATED notifications
   private sendCaseFilesUpdatedNotification(
     courtCaseNumber?: string,
@@ -2011,6 +2057,118 @@ export class CaseNotificationService extends BaseNotificationService {
       return this.recordNotification(
         theCase.id,
         CaseNotificationType.CASE_FILES_UPDATED,
+        recipients,
+      )
+    }
+
+    return { delivered: true }
+  }
+  //#endregion
+
+  //#region Ruling order notifications
+  //#region RULING_ORDER_ADDED notifications
+  private sendRulingOrderAddedNotification({
+    courtCaseNumber,
+    link,
+    name,
+    email,
+  }: {
+    courtCaseNumber?: string
+    link?: string
+    name?: string
+    email?: string
+  } = {}) {
+    const subject = `Nýr úrskurður í máli ${courtCaseNumber}`
+    const hasLink = Boolean(link)
+    const html = hasLink
+      ? `Dómari hefur kveðið upp úrskurð í máli ${courtCaseNumber}. Hægt er að nálgast gögn málsins á <a href="${link}">yfirlitssíðu málsins í Réttarvörslugátt.</a>`
+      : `Dómari hefur kveðið upp úrskurð í máli ${courtCaseNumber}. Hægt er að nálgast gögn málsins í Réttarvörslugátt.`
+
+    return this.sendEmail({
+      subject,
+      html,
+      recipientName: name,
+      recipientEmail: email,
+    })
+  }
+
+  private async sendRulingOrderAddedNotifications(
+    theCase: Case,
+  ): Promise<DeliverResponse> {
+    const promises = []
+
+    if (theCase.registrar) {
+      promises.push(
+        this.sendRulingOrderAddedNotification({
+          courtCaseNumber: theCase.courtCaseNumber,
+          link: `${this.config.clientUrl}${ROUTE_HANDLER_ROUTE}/${theCase.id}`,
+          name: theCase.registrar.name,
+          email: theCase.registrar.email,
+        }),
+      )
+    }
+
+    const uniqueSpokespersons = _uniqBy(
+      theCase.civilClaimants?.filter((c) => c.hasSpokesperson) ?? [],
+      (c: CivilClaimant) => c.spokespersonEmail,
+    )
+    uniqueSpokespersons.forEach((civilClaimant) => {
+      if (civilClaimant.spokespersonEmail) {
+        promises.push(
+          this.sendRulingOrderAddedNotification({
+            courtCaseNumber: theCase.courtCaseNumber,
+            link:
+              civilClaimant.spokespersonNationalId &&
+              formatDefenderRoute(
+                this.config.clientUrl,
+                theCase.type,
+                theCase.id,
+              ),
+            name: civilClaimant.spokespersonName,
+            email: civilClaimant.spokespersonEmail,
+          }),
+        )
+      }
+    })
+
+    const uniqueDefendants = _uniqBy(
+      theCase.defendants ?? [],
+      (d: Defendant) => d.defenderEmail,
+    )
+    uniqueDefendants.forEach((defendant) => {
+      if (defendant.defenderEmail && defendant.isDefenderChoiceConfirmed) {
+        promises.push(
+          this.sendRulingOrderAddedNotification({
+            courtCaseNumber: theCase.courtCaseNumber,
+            link:
+              defendant.defenderNationalId &&
+              formatDefenderRoute(
+                this.config.clientUrl,
+                theCase.type,
+                theCase.id,
+              ),
+            name: defendant.defenderName,
+            email: defendant.defenderEmail,
+          }),
+        )
+      }
+    })
+
+    promises.push(
+      this.sendRulingOrderAddedNotification({
+        courtCaseNumber: theCase.courtCaseNumber,
+        link: `${this.config.clientUrl}${ROUTE_HANDLER_ROUTE}/${theCase.id}`,
+        name: theCase.prosecutor?.name,
+        email: theCase.prosecutor?.email,
+      }),
+    )
+
+    const recipients = await Promise.all(promises)
+
+    if (recipients.length > 0) {
+      return this.recordNotification(
+        theCase.id,
+        CaseNotificationType.RULING_ORDER_ADDED,
         recipients,
       )
     }
@@ -2885,6 +3043,10 @@ export class CaseNotificationService extends BaseNotificationService {
         return this.sendIndictmentReturnedNotifications(theCase)
       case CaseNotificationType.CASE_FILES_UPDATED:
         return this.sendCaseFilesUpdatedNotifications(theCase, user)
+      case CaseNotificationType.RULING_ORDER_ADDED:
+        return this.sendRulingOrderAddedNotifications(theCase)
+      case CaseNotificationType.PUBLIC_PROSECUTOR_REVIEWER_ASSIGNED:
+        return this.sendPublicProsecutorReviewerAssignedNotifications(theCase)
       default:
         throw new InternalServerErrorException(
           `Invalid notification type ${type}`,

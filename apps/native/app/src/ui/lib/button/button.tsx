@@ -5,20 +5,25 @@ import {
   TextProps,
   TextStyle,
   TouchableHighlightProps,
+  View,
 } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 import { dynamicColor } from '../../utils'
 import { font } from '../../utils/font'
+import { Loader } from '../loader/loader'
 
 interface ButtonBaseProps extends TouchableHighlightProps {
   isTransparent?: boolean
   isOutlined?: boolean
   isUtilityButton?: boolean
+  /** Utility button variant with filled blue background and white text */
+  isFilledUtilityButton?: boolean
   textStyle?: TextStyle
   textProps?: TextProps
   iconStyle?: ImageStyle
   ellipsis?: boolean
   iconPosition?: 'start' | 'end'
+  loading?: boolean
 }
 
 interface IconButtonProps extends ButtonBaseProps {
@@ -41,15 +46,25 @@ const Host = styled.TouchableHighlight<HostProps>`
   justify-content: center;
   align-items: center;
   column-gap: ${({ theme }) => theme.spacing.p1}px;
-  padding: ${(props) =>
-    `${props.theme.spacing.p3}px ${props.theme.spacing.p4}px`};
+
+  padding: ${({ theme, isUtilityButton }) =>
+    isUtilityButton
+      ? `${theme.spacing.p1}px ${theme.spacing.p2}px`
+      : `${theme.spacing.p3}px ${theme.spacing.p4}px`};
   background-color: ${dynamicColor<HostProps>(
-    ({ theme, disabled, isTransparent, isOutlined, isUtilityButton }) =>
-      isTransparent || isOutlined || isUtilityButton
+    ({
+      theme,
+      disabled,
+      isTransparent,
+      isOutlined,
+      isUtilityButton,
+      isFilledUtilityButton,
+    }) =>
+      isTransparent || isOutlined || (isUtilityButton && !isFilledUtilityButton)
         ? 'transparent'
         : {
             dark: disabled ? theme.shades.dark.shade200 : theme.color.blue400,
-            light: disabled ? theme.color.dark200 : theme.color.blue400,
+            light: disabled ? theme.color.blue300 : theme.color.blue400,
           },
   )};
 
@@ -64,7 +79,7 @@ const Host = styled.TouchableHighlight<HostProps>`
           }
         : {
             dark: disabled ? theme.shades.dark.shade200 : theme.color.blue400,
-            light: disabled ? theme.color.dark200 : theme.color.blue400,
+            light: disabled ? theme.color.blue300 : theme.color.blue400,
           },
   )};
 
@@ -82,6 +97,7 @@ const Text = styled.Text<{
   isTransparent?: boolean
   isOutlined?: boolean
   isUtilityButton?: boolean
+  isFilledUtilityButton?: boolean
   disabled?: boolean
 }>`
   ${font({
@@ -89,7 +105,7 @@ const Text = styled.Text<{
     color: (props) =>
       props.isTransparent && props.disabled
         ? props.theme.color.dark200
-        : props.isUtilityButton
+        : props.isUtilityButton && !props.isFilledUtilityButton
         ? {
             light: props.theme.color.dark400,
             dark: props.theme.color.white,
@@ -114,22 +130,32 @@ export function Button({
   isTransparent,
   isOutlined,
   isUtilityButton,
+  isFilledUtilityButton,
   icon,
   textStyle,
   textProps,
   iconStyle,
   ellipsis,
   iconPosition = 'end',
+  loading = false,
   ...rest
 }: ButtonProps) {
   const theme = useTheme()
+
+  if (isFilledUtilityButton) isUtilityButton = true
 
   const renderIcon = () => {
     return (
       <Icon
         source={icon}
         resizeMode="center"
-        style={iconStyle}
+        style={{
+          // If the button is a filledUtilityButton, override icon color to white
+          ...(isFilledUtilityButton && icon
+            ? { tintColor: theme.color.white }
+            : {}),
+          ...iconStyle,
+        }}
         noMargin={!title}
       />
     )
@@ -138,33 +164,49 @@ export function Button({
   return (
     <Host
       underlayColor={
-        isTransparent || isOutlined || isUtilityButton
+        isTransparent ||
+        isOutlined ||
+        (isUtilityButton && !isFilledUtilityButton)
           ? theme.shade.shade100
           : theme.color.blue600
       }
       isTransparent={isTransparent}
       isOutlined={isOutlined}
       isUtilityButton={isUtilityButton}
+      isFilledUtilityButton={isFilledUtilityButton}
       {...rest}
     >
-      <>
-        {icon && iconPosition === 'start' && renderIcon()}
-        {title && (
-          <Text
-            {...textProps}
-            isTransparent={isTransparent}
-            isOutlined={isOutlined}
-            isUtilityButton={isUtilityButton}
-            disabled={rest.disabled}
-            style={textStyle}
-            numberOfLines={ellipsis ? 1 : undefined}
-            ellipsizeMode={ellipsis ? 'tail' : undefined}
-          >
-            {title}
-          </Text>
-        )}
-        {icon && iconPosition === 'end' && renderIcon()}
-      </>
+      {loading ? (
+        <View
+          style={{
+            justifyContent: 'center',
+            alignItems: 'center',
+            paddingHorizontal: theme.spacing.p3,
+          }}
+        >
+          <Loader />
+        </View>
+      ) : (
+        <>
+          {icon && iconPosition === 'start' && renderIcon()}
+          {title && (
+            <Text
+              {...textProps}
+              isTransparent={isTransparent}
+              isOutlined={isOutlined}
+              isUtilityButton={isUtilityButton}
+              isFilledUtilityButton={isFilledUtilityButton}
+              disabled={rest.disabled}
+              style={textStyle}
+              numberOfLines={ellipsis ? 1 : undefined}
+              ellipsizeMode={ellipsis ? 'tail' : undefined}
+            >
+              {title}
+            </Text>
+          )}
+          {icon && iconPosition === 'end' && renderIcon()}
+        </>
+      )}
     </Host>
   )
 }

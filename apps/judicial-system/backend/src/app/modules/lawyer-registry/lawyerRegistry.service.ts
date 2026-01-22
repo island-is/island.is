@@ -1,108 +1,147 @@
 import { plainToClass } from 'class-transformer'
 import { validate } from 'class-validator'
-import type { Transaction } from 'sequelize'
-import { Sequelize } from 'sequelize'
+import type { Transaction, WhereOptions } from 'sequelize'
 
 import {
+  BadGatewayException,
   Inject,
   Injectable,
-  InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common'
-import { InjectConnection, InjectModel } from '@nestjs/sequelize'
+import { ConfigType } from '@nestjs/config'
+import { InjectModel } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { Lawyer, LawyersService } from '@island.is/judicial-system/lawyers'
+import { LawyerFull, LawyerType } from '@island.is/judicial-system/types'
 
-import { LawyerRegistry } from './lawyerRegistry.model'
+import { LawyerRegistry } from '../repository'
+import { lawyerRegistryConfig } from './lawyerRegistry.config'
+
+type Lawyer = {
+  name: string
+  nationalId: string
+  email: string
+  phoneNumber: string
+  practice: string
+  isLitigator: boolean
+}
 
 @Injectable()
 export class LawyerRegistryService {
   constructor(
-    @InjectConnection() private readonly sequelize: Sequelize,
+    @Inject(lawyerRegistryConfig.KEY)
+    private readonly config: ConfigType<typeof lawyerRegistryConfig>,
     @InjectModel(LawyerRegistry)
     private readonly lawyerRegistryModel: typeof LawyerRegistry,
-    private readonly lawyersService: LawyersService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  private async clearLawyerRegistry(transaction: Transaction) {
-    try {
-      await this.lawyerRegistryModel.destroy({
-        where: {},
-        transaction,
-      })
-    } catch (error) {
-      this.logger.error('Error clearing lawyer registry', error)
-      throw new InternalServerErrorException('Error clearing lawyer registry')
+  async getLawyersFromLFMI(lawyerType?: LawyerType): Promise<LawyerFull[]> {
+    const response = await fetch(
+      `${this.config.lawyerRegistryAPI}/lawyers${
+        lawyerType && lawyerType === LawyerType.LITIGATORS ? '?verjendur=1' : ''
+      }`,
+      {
+        headers: {
+          Authorization: `Basic ${this.config.lawyerRegistryAPIKey}`,
+          Accept: 'application/json',
+        },
+      },
+    )
+
+    if (response.ok) {
+      return response.json()
     }
+
+    const reason = await response.text()
+    this.logger.error('Failed to get lawyers from lawyer registry', { reason })
+
+    throw new BadGatewayException(
+      'Failed to get lawyers from lawyer registry',
+      reason,
+    )
   }
 
-  private async getLawyerRegistry() {
-    try {
-      const lawyers = await this.lawyersService.getLawyers()
+  private async getLawyerRegistry(lawyerType?: LawyerType) {
+    const lawyers = await this.getLawyersFromLFMI(lawyerType)
 
-      if (lawyers.length === 0) {
-        throw new InternalServerErrorException(
-          'No lawyers found in the registry',
-        )
-      }
+    if (lawyers.length === 0) {
+      this.logger.error('No lawyers found in the registry')
 
-      return lawyers
-    } catch (error) {
-      throw new InternalServerErrorException('Error fetching lawyer registry')
+      throw new NotFoundException('No lawyers found in the registry')
     }
+
+    return lawyers
   }
 
   private async populateLawyerRegistry(
     lawyers: Lawyer[],
     transaction: Transaction,
   ) {
-    try {
-      const formattedLawyers = lawyers.map((lawyer) => ({
-        name: lawyer.Name,
-        nationalId: lawyer.SSN,
-        email: lawyer.Email,
-        phoneNumber: lawyer.Phone,
-        practice: lawyer.Practice,
-      }))
+    for (const lawyer of lawyers) {
+      const lawyerInstance = plainToClass(LawyerRegistry, lawyer)
+      const errors = await validate(lawyerInstance)
 
-      for (const lawyer of formattedLawyers) {
-        const lawyerInstance = plainToClass(LawyerRegistry, lawyer)
-        const errors = await validate(lawyerInstance)
+      if (errors.length > 0) {
+        this.logger.error(`Validation failed for lawyer`, { errors })
 
-        if (errors.length > 0) {
-          throw new Error(
-            `Validation failed for lawyer: ${JSON.stringify(errors)}`,
-          )
-        }
+        throw new BadGatewayException(
+          `Validation failed for lawyer: ${JSON.stringify(errors)}`,
+        )
       }
-
-      await this.lawyerRegistryModel.bulkCreate(formattedLawyers, {
-        transaction,
-      })
-    } catch (error) {
-      this.logger.error('Error populating lawyer registry', error)
-      throw new InternalServerErrorException('Error populating lawyer registry')
     }
+
+    return this.lawyerRegistryModel.bulkCreate(lawyers, { transaction })
   }
 
-  async populate() {
-    const transaction = await this.sequelize.transaction()
+  async populate(transaction: Transaction) {
+    const lawyers = await this.getLawyerRegistry()
+    const litigators = await this.getLawyerRegistry(LawyerType.LITIGATORS)
+    const litigatorNationalIds = new Set(litigators.map((l) => l.SSN))
 
-    try {
-      const lawyers = await this.getLawyerRegistry()
-      await this.clearLawyerRegistry(transaction)
-      await this.populateLawyerRegistry(lawyers, transaction)
-      await transaction.commit()
+    const formattedLawyers: Lawyer[] = lawyers.map((lawyer) => ({
+      name: lawyer.Name,
+      nationalId: lawyer.SSN,
+      email: lawyer.Email,
+      phoneNumber: lawyer.GSM ?? lawyer.Phone,
+      practice: lawyer.Practice,
+      isLitigator: litigatorNationalIds.has(lawyer.SSN),
+    }))
 
-      return lawyers
-    } catch (error) {
-      await transaction.rollback()
-      this.logger.error('Error populating lawyer registry', error)
+    await this.lawyerRegistryModel.destroy({ where: {}, transaction })
+    await this.populateLawyerRegistry(formattedLawyers, transaction)
 
-      throw new InternalServerErrorException('Error populating lawyer registry')
+    return lawyers
+  }
+
+  async getAll(lawyerType: LawyerType) {
+    const whereOptions: WhereOptions | undefined =
+      lawyerType === LawyerType.LITIGATORS ? { isLitigator: true } : undefined
+
+    const lawyers = await this.lawyerRegistryModel.findAll({
+      where: whereOptions,
+    })
+
+    if (!lawyers || lawyers.length === 0) {
+      this.logger.error('No lawyers found in the lawyer registry')
+
+      throw new NotFoundException('No lawyers found in the lawyer registry')
     }
+
+    return lawyers
+  }
+
+  async getByNationalId(nationalId: string) {
+    const lawyer = await this.lawyerRegistryModel.findOne({
+      where: { nationalId },
+    })
+
+    if (!lawyer) {
+      throw new NotFoundException()
+    }
+
+    return lawyer
   }
 }

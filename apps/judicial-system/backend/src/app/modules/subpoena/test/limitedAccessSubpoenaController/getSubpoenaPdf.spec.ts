@@ -1,11 +1,11 @@
 import { Response } from 'express'
-import { uuid } from 'uuidv4'
+import { Transaction } from 'sequelize'
+import { v4 as uuid } from 'uuid'
 
 import { createTestingSubpoenaModule } from '../createTestingSubpoenaModule'
 
-import { Case, PdfService } from '../../../case'
-import { Defendant } from '../../../defendant/models/defendant.model'
-import { Subpoena } from '../../models/subpoena.model'
+import { PdfService } from '../../../case'
+import { Case, Defendant, Subpoena } from '../../../repository'
 
 interface Then {
   error: Error
@@ -22,12 +22,20 @@ describe('LimitedAccessSubpoenaController - Get subpoena pdf', () => {
   const theCase = { id: caseId } as Case
   const res = { end: jest.fn() } as unknown as Response
   const pdf = Buffer.from(uuid())
+
   let mockPdfService: PdfService
+  let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { pdfService, limitedAccessSubpoenaController } =
+    const { sequelize, pdfService, limitedAccessSubpoenaController } =
       await createTestingSubpoenaModule()
+
+    const mockTransaction = sequelize.transaction as jest.Mock
+    transaction = {} as Transaction
+    mockTransaction.mockImplementationOnce(
+      (fn: (transaction: Transaction) => unknown) => fn(transaction),
+    )
 
     mockPdfService = pdfService
     const getSubpoenaPdfMock = mockPdfService.getSubpoenaPdf as jest.Mock
@@ -63,6 +71,7 @@ describe('LimitedAccessSubpoenaController - Get subpoena pdf', () => {
       expect(mockPdfService.getSubpoenaPdf).toHaveBeenCalledWith(
         theCase,
         defendant,
+        transaction,
         subpoena,
       )
       expect(res.end).toHaveBeenCalledWith(pdf)

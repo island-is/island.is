@@ -1,4 +1,4 @@
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { EmailService } from '@island.is/email-service'
 
@@ -10,11 +10,9 @@ import {
 
 import { createTestingNotificationModule } from '../../createTestingNotificationModule'
 
-import { Case } from '../../../../case'
-import { Defendant } from '../../../../defendant'
+import { Case, Defendant, Notification } from '../../../../repository'
 import { DefendantNotificationDto } from '../../../dto/defendantNotification.dto'
 import { DeliverResponse } from '../../../models/deliver.response'
-import { Notification } from '../../../models/notification.model'
 
 jest.mock('../../../../../factories')
 

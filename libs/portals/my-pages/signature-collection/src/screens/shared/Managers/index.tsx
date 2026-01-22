@@ -5,6 +5,7 @@ import { m } from '../../../lib/messages'
 import { CollectorSkeleton } from '../../../lib/skeletons'
 import { formatNationalId } from '@island.is/portals/core'
 import { SignatureCollectionCollectionType } from '@island.is/api/schema'
+import { Markdown } from '@island.is/shared/components'
 
 const Managers = ({
   collectionType,
@@ -19,7 +20,9 @@ const Managers = ({
       <Text variant="h4" marginBottom={1}>
         {formatMessage(m.managers)}
       </Text>
-      <Text marginBottom={5}>{formatMessage(m.managersDescription)}</Text>
+      <Box marginBottom={3}>
+        <Markdown>{formatMessage(m.managersDescription)}</Markdown>
+      </Box>
       <T.Table>
         <T.Head>
           <T.Row>

@@ -1,7 +1,7 @@
 import { defineTemplateApi } from '@island.is/application/types'
 export {
-  NationalRegistrySpouseApi,
-  NationalRegistryUserApi,
+  NationalRegistryV3SpouseApi,
+  NationalRegistryV3UserApi,
   UserProfileApi,
 } from '@island.is/application/types'
 
@@ -42,10 +42,59 @@ export const SocialInsuranceAdministrationIncomePlanConditionsApi =
     namespace: 'SocialInsuranceAdministration',
   })
 
-export const SocialInsuranceAdministrationQuestionnairesApi = defineTemplateApi(
-  {
-    action: 'getSelfAssessmentQuestionnaire',
-    externalDataId: 'socialInsuranceAdministrationQuestionnairesSelfAssessment',
+export const SocialInsuranceAdministrationMARPQuestionnairesApi =
+  defineTemplateApi({
+    action: 'getMARPSelfAssessmentQuestionnaire',
+    externalDataId:
+      'socialInsuranceAdministrationMARPQuestionnairesSelfAssessment',
     namespace: 'SocialInsuranceAdministration',
-  },
-)
+  })
+
+export const SocialInsuranceAdministrationEctsUnitsApi = defineTemplateApi({
+  action: 'getEctsUnits',
+  externalDataId: 'socialInsuranceAdministrationEctsUnits',
+  namespace: 'SocialInsuranceAdministration',
+})
+
+export const SocialInsuranceAdministrationResidenceInformationApi =
+  defineTemplateApi({
+    action: 'getResidenceInformation',
+    externalDataId: 'socialInsuranceAdministrationResidenceInformation',
+    namespace: 'SocialInsuranceAdministration',
+  })
+
+export const SocialInsuranceAdministrationEducationLevelsApi =
+  defineTemplateApi({
+    action: 'getEducationLevels',
+    externalDataId: 'socialInsuranceAdministrationEducationLevels',
+    namespace: 'SocialInsuranceAdministration',
+    order: 4,
+  })
+
+export const SocialInsuranceAdministrationMARPApplicationTypeApi =
+  defineTemplateApi({
+    action: 'getMedicalAndRehabilitationApplicationType',
+    externalDataId: 'socialInsuranceAdministrationMARPApplicationType',
+    namespace: 'SocialInsuranceAdministration',
+    order: 3,
+  })
+
+export const SocialInsuranceAdministrationEmploymentStatusesApi =
+  defineTemplateApi({
+    action: 'getEmploymentStatuses',
+    externalDataId: 'socialInsuranceAdministrationEmploymentStatuses',
+    namespace: 'SocialInsuranceAdministration',
+  })
+
+export const SocialInsuranceAdministrationProfessionsApi = defineTemplateApi({
+  action: 'getProfessions',
+  externalDataId: 'socialInsuranceAdministrationProfessions',
+  namespace: 'SocialInsuranceAdministration',
+})
+
+export const SocialInsuranceAdministrationActivitiesOfProfessionsApi =
+  defineTemplateApi({
+    action: 'getActivitiesOfProfessions',
+    externalDataId: 'socialInsuranceAdministrationActivitiesOfProfessions',
+    namespace: 'SocialInsuranceAdministration',
+  })

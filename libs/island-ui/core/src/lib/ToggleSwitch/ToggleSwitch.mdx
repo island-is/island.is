@@ -1,0 +1,62 @@
+import { Meta, Story, Canvas, Controls } from '@storybook/blocks'
+import * as ToggleSwitchStories from './ToggleSwitch.stories'
+
+import {
+  ToggleSwitchCheckbox,
+  ToggleSwitchButton,
+  ToggleSwitchLink,
+} from './index'
+import { useState } from 'react'
+
+<Meta of={ToggleSwitchStories} />
+
+# ToggleSwitch
+
+ToggleSwitches come in three flavours: Checkbox, Button and Link (see below).
+All three variant share some basic props, but each has a few props unique to it.
+
+## Common props
+
+<Canvas>
+  <Story of={ToggleSwitchStories.Default} />
+</Canvas>
+
+# ToggleSwitchCheckbox
+
+The basic checkbox variant accepts optional `name` and `value` props
+for making old-school form-submits possible.
+
+<Canvas>
+  <Story of={ToggleSwitchStories.ToggleSwitchCheckbox} />
+</Canvas>
+
+## Props
+
+<Controls />
+
+# ToggleSwitchButton
+
+The button variant toggles either `aria-pressed` or `aria-expaned`
+if `expander` props is set. It accepts an optional `aria-controls` value.
+
+<Canvas>
+  <Story of={ToggleSwitchStories.ToggleSwitchButton} />
+</Canvas>
+
+## Props
+
+<Controls />
+
+# ToggleSwitchLink
+
+The hyperlink variant requires `href` and `linkText` props. Additionally,
+its `onChange` handler provides a `preventDefault` callback to optionally
+cancel the browser's default click behavior.
+
+<Canvas>
+  <Story of={ToggleSwitchStories.ToggleSwitchLink} />
+</Canvas>
+
+## Props
+
+<Controls />

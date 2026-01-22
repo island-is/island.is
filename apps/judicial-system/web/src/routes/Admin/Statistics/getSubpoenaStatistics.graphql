@@ -1,0 +1,12 @@
+query SubpoenaStatistics($input: SubpoenaStatisticsInput) {
+  subpoenaStatistics(input: $input) {
+    count
+    minDate
+    serviceStatusStatistics {
+      serviceStatus
+      count
+      averageServiceTimeMs
+      averageServiceTimeDays
+    }
+  }
+}

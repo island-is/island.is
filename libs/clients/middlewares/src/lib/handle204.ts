@@ -1,9 +1,9 @@
 import { FetchError } from './FetchError'
 import { ApiResponse } from './types'
 
-export function handle204<T>(
+export const handle204 = <T>(
   promise: Promise<ApiResponse<T>>,
-): Promise<T | null> {
+): Promise<T | null> => {
   return promise.then(
     (response) => {
       if (response.raw.status === 204) {

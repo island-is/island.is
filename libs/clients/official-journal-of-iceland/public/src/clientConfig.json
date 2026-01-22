@@ -84,6 +84,13 @@
             "schema": { "type": "array", "items": { "type": "string" } }
           },
           {
+            "name": "year",
+            "required": false,
+            "in": "query",
+            "description": "Year (signature year) to filter by",
+            "schema": { "type": "string" }
+          },
+          {
             "name": "type",
             "required": false,
             "in": "query",
@@ -125,6 +132,96 @@
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/GetAdvertsResponse" }
+              }
+            }
+          }
+        },
+        "summary": ""
+      }
+    },
+    "/api/v1/adverts-lean": {
+      "get": {
+        "operationId": "getAdvertsLean",
+        "parameters": [
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "String to search for in adverts.",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number to return.",
+            "schema": { "type": "number" }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "description": "Page size to return.",
+            "schema": { "type": "number" }
+          },
+          {
+            "name": "department",
+            "required": false,
+            "in": "query",
+            "description": "One or more departments (by `slug`) to filter on.",
+            "schema": { "type": "array", "items": { "type": "string" } }
+          },
+          {
+            "name": "year",
+            "required": false,
+            "in": "query",
+            "description": "Year (signature year) to filter by",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "type",
+            "required": false,
+            "in": "query",
+            "description": "One or more types (by `slug`) to filter on.",
+            "schema": { "type": "array", "items": { "type": "string" } }
+          },
+          {
+            "name": "category",
+            "required": false,
+            "in": "query",
+            "description": "One or more categories (by `slug`) to filter on.",
+            "schema": { "type": "array", "items": { "type": "string" } }
+          },
+          {
+            "name": "involvedParty",
+            "required": false,
+            "in": "query",
+            "description": "One or more involved parties (by `slug`) to filter on.",
+            "schema": { "type": "array", "items": { "type": "string" } }
+          },
+          {
+            "name": "dateFrom",
+            "required": false,
+            "in": "query",
+            "description": "Date from which to filter adverts on, inclusive, takes into account `createdDate`, `updatedDate` and `signatureDate`.",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "dateTo",
+            "required": false,
+            "in": "query",
+            "description": "Date to which to filter adverts on, inclusive, takes into account `createdDate`, `updatedDate` and `signatureDate`.",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetLeanAdvertsResponse"
+                }
               }
             }
           }
@@ -1514,6 +1611,94 @@
             "description": "List of adverts",
             "type": "array",
             "items": { "$ref": "#/components/schemas/Advert" }
+          },
+          "paging": {
+            "description": "Paging info",
+            "allOf": [{ "$ref": "#/components/schemas/Paging" }]
+          }
+        },
+        "required": ["adverts", "paging"]
+      },
+      "AdvertLean": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique ID for the advert, GUID format.",
+            "example": "00000000-0000-0000-0000-000000000000",
+            "nullable": false
+          },
+          "department": {
+            "description": "The department the advert is for.",
+            "nullable": false,
+            "example": "A deild",
+            "allOf": [{ "$ref": "#/components/schemas/Department" }]
+          },
+          "type": {
+            "description": "Type of the advert.",
+            "example": "GJALDSKRÁ",
+            "allOf": [{ "$ref": "#/components/schemas/AdvertType" }]
+          },
+          "subject": {
+            "type": "string",
+            "description": "Subject of the advert, always dependant on the `type`.",
+            "example": "fyrir hundahald í Reykjavíkurborg."
+          },
+          "title": {
+            "type": "string",
+            "description": "Title of the advert with both `type` and `subject`.",
+            "example": "GJALDSKRÁ fyrir hundahald í Reykjavíkurborg."
+          },
+          "status": {
+            "description": "Status of the advert",
+            "nullable": false,
+            "example": "Virk",
+            "allOf": [{ "$ref": "#/components/schemas/AdvertStatus" }]
+          },
+          "publicationNumber": {
+            "description": "Publication number of the advert",
+            "nullable": true,
+            "allOf": [
+              { "$ref": "#/components/schemas/AdvertPublicationNumber" }
+            ]
+          },
+          "publicationDate": {
+            "type": "string",
+            "description": "Date the advert was signed, can be null. ISO 8601 date and time format in UTC.",
+            "nullable": true,
+            "example": "2024-01-20T09:00:00Z"
+          },
+          "categories": {
+            "description": "List of advert categories.",
+            "nullable": false,
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Category" }
+          },
+          "involvedParty": {
+            "description": "Involved party for the advert.",
+            "nullable": false,
+            "allOf": [{ "$ref": "#/components/schemas/Institution" }]
+          }
+        },
+        "required": [
+          "id",
+          "department",
+          "type",
+          "title",
+          "status",
+          "publicationNumber",
+          "publicationDate",
+          "categories",
+          "involvedParty"
+        ]
+      },
+      "GetLeanAdvertsResponse": {
+        "type": "object",
+        "properties": {
+          "adverts": {
+            "description": "List of adverts where minimal data is returned",
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/AdvertLean" }
           },
           "paging": {
             "description": "Paging info",

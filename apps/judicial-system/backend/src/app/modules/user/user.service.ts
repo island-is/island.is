@@ -15,11 +15,10 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
-import { Institution } from '../institution'
+import { Institution, User } from '../repository'
 import { CreateUserDto } from './dto/createUser.dto'
 import { UpdateUserDto } from './dto/updateUser.dto'
 import { userModuleConfig } from './user.config'
-import { User } from './user.model'
 
 @Injectable()
 export class UserService {
@@ -112,8 +111,9 @@ export class UserService {
   }
 
   async update(userId: string, update: UpdateUserDto): Promise<User> {
-    const [numberOfAffectedRows] = await this.userModel.update(update, {
+    const [numberOfAffectedRows, users] = await this.userModel.update(update, {
       where: { id: userId },
+      returning: true,
     })
 
     if (numberOfAffectedRows > 1) {
@@ -125,7 +125,7 @@ export class UserService {
       throw new NotFoundException(`Could not update user ${userId}`)
     }
 
-    return this.findById(userId)
+    return users[0]
   }
 
   getUsersWhoCanConfirmIndictments(
@@ -135,6 +135,16 @@ export class UserService {
       where: {
         active: true,
         canConfirmIndictment: true,
+        institutionId: prosecutorsOfficeId,
+      },
+    })
+  }
+
+  async getProsecutorUsers(prosecutorsOfficeId: string): Promise<User[]> {
+    return this.userModel.findAll({
+      where: {
+        active: true,
+        role: UserRole.PROSECUTOR,
         institutionId: prosecutorsOfficeId,
       },
     })

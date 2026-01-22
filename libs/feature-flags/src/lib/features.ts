@@ -29,37 +29,44 @@ export enum Features {
   deathBenefits = 'isdeathbenefitsapplicationenabled',
   FinancialStatementPoliticalPartyEnabled = 'isFinancialStatementPoliticalPartyEnabled',
   rentalAgreement = 'isRentalAgreementEnabled',
-  SeminarRegistrationEnabled = 'isSeminarRegistrationEnabled',
-  TrainingLicenseOnAWorkMachineEnabled = 'isTrainingLicenseOnAWorkMachineEnabled',
-  SecondarySchoolEnabled = 'isSecondarySchoolEnabled',
   medicalAndRehabilitationPayments = 'isMedicalAndRehabilitationPaymentsEnabled',
-  PracticalExamEnabled = 'isPracticalExamEnabled',
+  disabilityPension = 'isDisabilityPensionEnabled',
+  disabilityPensionLightweightModeEnabled = 'isDisabilityPensionLightweightModeEnabled',
   pensionSupplementEnabled = 'isPensionSupplementEnabled',
   fireCompensationAppraisalEnabled = 'isFireCompensationAppraisalEnabled',
   ExemptionForTransportation = 'isExemptionForTransportationEnabled',
   TerminateRentalAgreementEnabled = 'isterminaterentalagreementsenabled',
+  UnemploymentBenefitsEnabled = 'isUnemploymentBenefitsEnabled',
+  RegistrationOfNewPropertyNumbersEnabled = 'isRegistrationOfNewPropertyNumbersEnabled',
+  fundingGovernmentProjectsEnabled = 'isFundingGovernmentProjectsEnabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
 
   // Service portal modules
+  servicePortalHealthPatientPermitsPageEnabled = 'isServicePortalHealthPatientPermitsPageEnabled',
   servicePortalConsentModule = 'isServicePortalConsentModuleEnabled',
   servicePortalSocialInsurancePageEnabled = 'isServicePortalSocialInsurancePageEnabled',
   servicePortalSocialInsuranceIncomePlanPageEnabled = 'isServicePortalSocialInsuranceIncomePlanPageEnabled',
-  servicePortalHealthVaccinationsPageEnabled = 'isServicePortalHealthVaccinationsPageEnabled',
-  servicePortalHealthOrganDonationPageEnabled = 'isServicePortalHealthOrganDonationPageEnabled',
   servicePortalHealthReferralsPageEnabled = 'isServicePortalReferralsPageEnabled',
   servicePortalHealthWaitlistsPageEnabled = 'isServicePortalHealthWaitlistsPageEnabled',
   servicePortalHealthMedicineLandlaeknirPageEnabled = 'isServicePortalHealthMedicineLandlaeknirPageEnabled',
+  servicePortalHealthMedicineDelegationPageEnabled = 'isServicePortalHealthMedicineDelegationPageEnabled',
   servicePortalHealthBloodPageEnabled = 'isServicePortalHealthBloodPageEnabled',
+  servicePortalMyContractsPageEnabled = 'isPortalMyContractsPageEnabled',
   servicePortalDocumentsActionsEnabled = 'isServicePortalDocumentsActionsEnabled',
   isServicePortalDocumentsV3PageEnabled = 'isServicePortalDocumentsV3PageEnabled',
   isServicePortal2WayMailboxEnabled = 'isServicePortal2WayMailboxEnabled',
+  servicePortalPoliceCasesPageEnabled = 'isServicePortalPoliceCasesPageEnabled',
+  isServicePortalHealthQuestionnairesPageEnabled = 'isServicePortalHealthQuestionnairesPageEnabled',
+  // Health Aid and Nutrition Renewal feature enabled
+  servicePortalHealthAidAndNutritionRenewalEnabled = 'isServicePortalHealthAidAndNutritionRenewalEnabled',
   //Occupational License Health directorate fetch enabled
   occupationalLicensesHealthDirectorate = 'isHealthDirectorateOccupationalLicenseEnabled',
   healthPaymentOverview = 'isHealthPaymentsDocumentOverviewEnabled',
   isIDSAdminSsoSettingEnabled = 'isIDSAdminSsoSettingEnabled',
   isIdentityDocumentEnabled = 'isIdentityDocumentEnabled',
+  isServicePortalHealthAppointmentsPageEnabled = 'isServicePortalHealthAppointmentsPageEnabled',
 
   //New License service fetch enabled
   licensesV2 = 'isLicensesV2Enabled',
@@ -77,6 +84,9 @@ export enum Features {
   isBifrostUniversityEnabled = 'isBifrostUniversityEnabled',
   isHolarUniversityEnabled = 'isHolarUniversityEnabled',
   isIcelandUniversityOfTheArtsEnabled = 'isIcelandUniversityOfTheArtsEnabled',
+
+  //License service license scanner disabled
+  isLicenseScannerDisabled = 'isLicenseScannerDisabled',
 
   //License service new drivers license client enabled
   licenseServiceDrivingLicenseClient = 'isLicenseServiceDrivingLicenceClientV2Enabled',
@@ -108,6 +118,8 @@ export enum Features {
 
   shouldSendEmailNotificationsToDelegations = 'shouldSendEmailNotificationsToDelegations',
 
+  shouldSendEmailNotificationsToCompanyUserProfiles = 'shouldSendEmailNotificationsToCompanyUserProfiles',
+
   // Single sign on passkeys
   isPasskeyRegistrationEnabled = 'isPasskeyRegistrationEnabled',
   isPasskeyAuthEnabled = 'isPasskeyAuthEnabled',
@@ -115,14 +127,30 @@ export enum Features {
   // Islandis Payment
   isIslandisPaymentEnabled = 'islandisPayment',
   useIslandisPaymentForApplicationSystem = 'useIslandisPaymentForApplicationSystem',
+  isIslandisInvoicePaymentEnabled = 'isIslandisInvoicePaymentEnabled',
+  isIslandisInvoicePaymentAllowedForUser = 'isislandisinvoicepaymentsallowedforuser',
 
   // Should auth api use national registry v3 for checking deceased status
   isNationalRegistryV3DeceasedStatusEnabled = 'isNationalRegistryV3DeceasedStatusEnabled',
+
+  // Should applicaton-system use national registry v3
+  shouldApplicationSystemUseNationalRegistryV3 = 'shouldApplicationSystemUseNationalRegistryV3',
 
   delegationTypesWithNotificationsEnabled = 'delegationTypesWithNotificationsEnabled',
 
   // Allow fake data
   digitalTachographDriversCardAllowFakeData = 'digitalTachographDriversCardAllowFakeData',
+
+  isPortalAirDiscountPageDisabled = 'isPortalAirDiscountPageDisabled',
+
+  isMileCarEnabled = 'isMileCarEnabled',
+  isHHCourseApplicationEnabled = 'isHHCourseApplicationEnabled',
+
+  // Use new vacancy API client (Financial Management Authority/Elfur) instead of old X-Road client
+  useNewVacancyApi = 'useNewVacancyApi',
+  // Questionnaires
+  questionnairesFromEL = 'isQuestionnairesHealthDirectorateClientEnabled',
+  questionnairesFromLSH = 'isQuestionnairesLshClientEnabled',
 }
 
 export enum ServerSideFeature {

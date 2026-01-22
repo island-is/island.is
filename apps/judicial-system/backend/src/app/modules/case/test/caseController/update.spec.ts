@@ -1,5 +1,5 @@
-import { Transaction } from 'sequelize/types'
-import { uuid } from 'uuidv4'
+import { Transaction } from 'sequelize'
+import { v4 as uuid } from 'uuid'
 
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import {
@@ -27,11 +27,15 @@ import { nowFactory } from '../../../../factories'
 import { randomDate } from '../../../../test'
 import { EventLogService } from '../../../event-log/eventLog.service'
 import { FileService } from '../../../file'
+import {
+  Case,
+  CaseRepositoryService,
+  CaseString,
+  DateLog,
+} from '../../../repository'
+import { SubpoenaService } from '../../../subpoena'
 import { UserService } from '../../../user'
 import { UpdateCaseDto } from '../../dto/updateCase.dto'
-import { Case } from '../../models/case.model'
-import { CaseString } from '../../models/caseString.model'
-import { DateLog } from '../../models/dateLog.model'
 
 jest.mock('../../../../factories')
 
@@ -74,7 +78,8 @@ describe('CaseController - Update', () => {
   let mockUserService: UserService
   let mockFileService: FileService
   let transaction: Transaction
-  let mockCaseModel: typeof Case
+  let mockSubpoenaService: SubpoenaService
+  let mockCaseRepositoryService: CaseRepositoryService
   let mockDateLogModel: typeof DateLog
   let mockCaseStringModel: typeof CaseString
   let givenWhenThen: GivenWhenThen
@@ -86,7 +91,8 @@ describe('CaseController - Update', () => {
       userService,
       fileService,
       sequelize,
-      caseModel,
+      subpoenaService,
+      caseRepositoryService,
       dateLogModel,
       caseStringModel,
       caseController,
@@ -96,21 +102,25 @@ describe('CaseController - Update', () => {
     mockEventLogService = eventLogService
     mockUserService = userService
     mockFileService = fileService
-    mockCaseModel = caseModel
+    mockSubpoenaService = subpoenaService
+    mockCaseRepositoryService = caseRepositoryService
     mockDateLogModel = dateLogModel
     mockCaseStringModel = caseStringModel
 
     const mockTransaction = sequelize.transaction as jest.Mock
-    transaction = {} as Transaction
-    mockTransaction.mockImplementationOnce(
-      (fn: (transaction: Transaction) => unknown) => fn(transaction),
-    )
+    transaction = {
+      commit: jest.fn(),
+      rollback: jest.fn(),
+    } as unknown as Transaction
+    mockTransaction.mockResolvedValueOnce(transaction)
 
+    const mockCreateSubpoena = mockSubpoenaService.createSubpoena as jest.Mock
+    mockCreateSubpoena.mockRejectedValue('Failed to create subpoena')
     const mockToday = nowFactory as jest.Mock
     mockToday.mockReturnValueOnce(date)
-    const mockUpdate = mockCaseModel.update as jest.Mock
-    mockUpdate.mockResolvedValue([1])
-    const mockFindOne = mockCaseModel.findOne as jest.Mock
+    const mockUpdate = mockCaseRepositoryService.update as jest.Mock
+    mockUpdate.mockResolvedValue(theCase)
+    const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
     mockFindOne.mockResolvedValue(theCase)
 
     givenWhenThen = async (
@@ -145,17 +155,20 @@ describe('CaseController - Update', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockFindOne = mockCaseModel.findOne as jest.Mock
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
       mockFindOne.mockResolvedValueOnce(updatedCase)
 
       then = await givenWhenThen(caseId, user, theCase, caseToUpdate)
     })
 
     it('should update the case', () => {
-      expect(mockCaseModel.update).toHaveBeenCalledWith(caseToUpdate, {
-        where: { id: caseId },
-        transaction,
-      })
+      expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
+        caseToUpdate,
+        {
+          transaction,
+        },
+      )
     })
 
     it('should return the updated case', () => {
@@ -174,12 +187,13 @@ describe('CaseController - Update', () => {
     })
 
     it('should transition the case from SUBMITTED to RECEIVED', () => {
-      expect(mockCaseModel.update).toHaveBeenCalledWith(
+      expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
         {
           courtCaseNumber: caseToUpdate.courtCaseNumber,
           state: CaseState.RECEIVED,
         },
-        { where: { id: caseId }, transaction },
+        { transaction },
       )
     })
   })
@@ -236,13 +250,14 @@ describe('CaseController - Update', () => {
     })
 
     it('should update court case facts and court legal arguments', () => {
-      expect(mockCaseModel.update).toHaveBeenCalledWith(
+      expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
         {
           caseResentExplanation: 'Endursending',
           courtCaseFacts: `Í greinargerð sóknaraðila er atvikum lýst svo: ${theCase.caseFacts}`,
           courtLegalArguments: `Í greinargerð er krafa sóknaraðila rökstudd þannig: ${theCase.legalArguments}`,
         },
-        { where: { id: caseId }, transaction },
+        { transaction },
       )
     })
   })
@@ -259,14 +274,15 @@ describe('CaseController - Update', () => {
     })
 
     it('should update prosecutor demands and valid to date', () => {
-      expect(mockCaseModel.update).toHaveBeenCalledWith(
+      expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
         expect.objectContaining({
           demands: 'Updated demands',
           prosecutorDemands: 'Updated demands',
           requestedValidToDate: caseToUpdate.requestedValidToDate,
           validToDate: caseToUpdate.requestedValidToDate,
         }),
-        { where: { id: caseId }, transaction },
+        { transaction },
       )
     })
   })
@@ -288,13 +304,14 @@ describe('CaseController - Update', () => {
     })
 
     it('should update prosecutor demands but not valid to date', () => {
-      expect(mockCaseModel.update).toHaveBeenCalledWith(
+      expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
         expect.objectContaining({
           demands: 'Updated demands',
           prosecutorDemands: 'Updated demands',
           requestedValidToDate: caseToUpdate.requestedValidToDate,
         }),
-        { where: { id: caseId }, transaction },
+        { transaction },
       )
     })
   })
@@ -307,7 +324,7 @@ describe('CaseController - Update', () => {
       const updatedCase = { ...theCase, type, courtCaseNumber }
 
       beforeEach(async () => {
-        const mockFindOne = mockCaseModel.findOne as jest.Mock
+        const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
         mockFindOne.mockResolvedValueOnce(updatedCase)
 
         await givenWhenThen(caseId, user, theCase, caseToUpdate)
@@ -350,7 +367,7 @@ describe('CaseController - Update', () => {
       const updatedCase = { ...theCase, type, defenderEmail }
 
       beforeEach(async () => {
-        const mockFindOne = mockCaseModel.findOne as jest.Mock
+        const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
         mockFindOne.mockResolvedValueOnce(updatedCase)
 
         await givenWhenThen(caseId, user, theCase, caseToUpdate)
@@ -387,7 +404,7 @@ describe('CaseController - Update', () => {
         role: UserRole.PROSECUTOR,
         institution: { type: InstitutionType.POLICE_PROSECUTORS_OFFICE },
       })
-      const mockFindOne = mockCaseModel.findOne as jest.Mock
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
       mockFindOne.mockResolvedValueOnce(updatedCase)
 
       await givenWhenThen(caseId, user, theCase, caseToUpdate)
@@ -422,24 +439,28 @@ describe('CaseController - Update', () => {
           {
             id: criminalRecordId,
             key: uuid(),
+            isKeyAccessible: true,
             state: CaseFileState.STORED_IN_RVG,
             category: CaseFileCategory.CRIMINAL_RECORD,
           },
           {
             id: costBreakdownId,
             key: uuid(),
+            isKeyAccessible: true,
             state: CaseFileState.STORED_IN_RVG,
             category: CaseFileCategory.COST_BREAKDOWN,
           },
           {
             id: uncategorisedId,
             key: uuid(),
+            isKeyAccessible: true,
             state: CaseFileState.STORED_IN_RVG,
             category: CaseFileCategory.CASE_FILE,
           },
           {
             id: uuid(),
             key: uuid(),
+            isKeyAccessible: true,
             state: CaseFileState.STORED_IN_COURT,
             category: CaseFileCategory.CASE_FILE,
           },
@@ -448,7 +469,7 @@ describe('CaseController - Update', () => {
       }
 
       beforeEach(async () => {
-        const mockFindOne = mockCaseModel.findOne as jest.Mock
+        const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
         mockFindOne.mockResolvedValueOnce(updatedCase)
 
         await givenWhenThen(caseId, user, theCase, caseToUpdate)
@@ -509,7 +530,7 @@ describe('CaseController - Update', () => {
       }
 
       beforeEach(async () => {
-        const mockFindOne = mockCaseModel.findOne as jest.Mock
+        const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
         mockFindOne.mockResolvedValueOnce(updatedCase)
 
         await givenWhenThen(caseId, user, originalCase, caseToUdate)
@@ -538,12 +559,14 @@ describe('CaseController - Update', () => {
         {
           id: statementId,
           key: uuid(),
+          isKeyAccessible: true,
           state: CaseFileState.STORED_IN_RVG,
           category: CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
         },
         {
           id: fileId,
           key: uuid(),
+          isKeyAccessible: true,
           state: CaseFileState.STORED_IN_RVG,
           category: CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE,
         },
@@ -559,16 +582,17 @@ describe('CaseController - Update', () => {
       let then: Then
 
       beforeEach(async () => {
-        const mockFindOne = mockCaseModel.findOne as jest.Mock
+        const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
         mockFindOne.mockResolvedValueOnce(updatedCase)
 
         then = await givenWhenThen(caseId, user, originalCase, caseToUdate)
       })
 
       it('should update the case', () => {
-        expect(mockCaseModel.update).toHaveBeenCalledWith(
+        expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+          caseId,
           { prosecutorStatementDate: date },
-          { where: { id: caseId }, transaction },
+          { transaction },
         )
       })
 
@@ -609,7 +633,7 @@ describe('CaseController - Update', () => {
     }
 
     beforeEach(async () => {
-      const mockFindOne = mockCaseModel.findOne as jest.Mock
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
       mockFindOne.mockResolvedValueOnce(updatedCase)
 
       await givenWhenThen(caseId, user, theCase, caseToUpdate)
@@ -644,7 +668,7 @@ describe('CaseController - Update', () => {
     }
 
     beforeEach(async () => {
-      const mockFindOne = mockCaseModel.findOne as jest.Mock
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
       mockFindOne.mockResolvedValueOnce(updatedCase)
 
       await givenWhenThen(
@@ -684,7 +708,7 @@ describe('CaseController - Update', () => {
     }
 
     beforeEach(async () => {
-      const mockFindOne = mockCaseModel.findOne as jest.Mock
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
       mockFindOne.mockResolvedValueOnce(updatedCase)
 
       await givenWhenThen(
@@ -734,36 +758,42 @@ describe('CaseController - Update', () => {
         caseId,
         category: CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
         key: uuid(),
+        isKeyAccessible: true,
       },
       {
         id: caseFile2Id,
         caseId,
         category: CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE,
         key: uuid(),
+        isKeyAccessible: true,
       },
       {
         id: caseFile3Id,
         caseId,
         category: CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE,
         key: uuid(),
+        isKeyAccessible: true,
       },
       {
         id: caseFile4Id,
         caseId,
         category: CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
         key: uuid(),
+        isKeyAccessible: true,
       },
       {
         id: caseFile5Id,
         caseId,
         category: CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
         key: uuid(),
+        isKeyAccessible: true,
       },
       {
         id: caseFile6Id,
         caseId,
         category: CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
         key: uuid(),
+        isKeyAccessible: true,
       },
     ]
     const updatedCase = {
@@ -774,7 +804,7 @@ describe('CaseController - Update', () => {
     }
 
     beforeEach(async () => {
-      const mockFindOne = mockCaseModel.findOne as jest.Mock
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
       mockFindOne.mockResolvedValueOnce(updatedCase)
 
       await givenWhenThen(
@@ -857,22 +887,29 @@ describe('CaseController - Update', () => {
     const caseToUpdate = { arraignmentDate }
     const subpoenaId1 = uuid()
     const subpoenaId2 = uuid()
+    const subpoena1 = { id: defendantId1, subpoenas: [{ id: subpoenaId1 }] }
+    const subpoena2 = { id: defendantId2, subpoenas: [{ id: subpoenaId2 }] }
     const updatedCase = {
       ...theCase,
       type: CaseType.INDICTMENT,
       origin: CaseOrigin.LOKE,
       dateLogs: [{ dateType: DateType.ARRAIGNMENT_DATE, ...arraignmentDate }],
-      defendants: [
-        { id: defendantId1, subpoenas: [{ id: subpoenaId1 }] },
-        { id: defendantId2, subpoenas: [{ id: subpoenaId2 }] },
-      ],
+      defendants: [subpoena1, subpoena2],
     }
 
     beforeEach(async () => {
-      const mockFindOne = mockCaseModel.findOne as jest.Mock
+      const mockCreateSubpoena = mockSubpoenaService.createSubpoena as jest.Mock
+      mockCreateSubpoena.mockResolvedValueOnce(subpoena2)
+      mockCreateSubpoena.mockResolvedValueOnce(subpoena1)
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
       mockFindOne.mockResolvedValueOnce(updatedCase)
 
-      await givenWhenThen(caseId, user, theCase, caseToUpdate)
+      await givenWhenThen(
+        caseId,
+        user,
+        { ...theCase, type: CaseType.INDICTMENT } as Case,
+        caseToUpdate,
+      )
     })
 
     it('should update case', () => {
@@ -884,6 +921,7 @@ describe('CaseController - Update', () => {
         EventType.COURT_DATE_SCHEDULED,
         caseId,
         user,
+        transaction,
       )
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
         {
@@ -936,10 +974,15 @@ describe('CaseController - Update', () => {
     }
 
     beforeEach(async () => {
-      const mockFindOne = mockCaseModel.findOne as jest.Mock
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
       mockFindOne.mockResolvedValueOnce(updatedCase)
 
-      await givenWhenThen(caseId, user, theCase, caseToUpdate)
+      await givenWhenThen(
+        caseId,
+        user,
+        { ...theCase, type: CaseType.INDICTMENT } as Case,
+        caseToUpdate,
+      )
     })
 
     it('should update case', () => {
@@ -951,6 +994,7 @@ describe('CaseController - Update', () => {
         EventType.COURT_DATE_SCHEDULED,
         caseId,
         user,
+        transaction,
       )
     })
   })

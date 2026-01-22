@@ -1,4 +1,5 @@
 import { Response } from 'express'
+import { Sequelize } from 'sequelize-typescript'
 
 import {
   BadRequestException,
@@ -17,12 +18,8 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common'
-import {
-  ApiCreatedResponse,
-  ApiOkResponse,
-  ApiQuery,
-  ApiTags,
-} from '@nestjs/swagger'
+import { InjectConnection } from '@nestjs/sequelize'
+import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import {
   DokobitError,
@@ -47,15 +44,17 @@ import {
   CaseOrigin,
   CaseState,
   CaseType,
+  hasGeneratedCourtRecordPdf,
   indictmentCases,
   investigationCases,
+  isPublicProsecutionOfficeUser,
+  isRequestCase,
   restrictionCases,
   UserRole,
 } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
 import {
-  adminRule,
   courtOfAppealsAssistantRule,
   courtOfAppealsJudgeRule,
   courtOfAppealsRegistrarRule,
@@ -63,13 +62,18 @@ import {
   districtCourtAssistantRule,
   districtCourtJudgeRule,
   districtCourtRegistrarRule,
-  prisonSystemStaffRule,
   prosecutorRepresentativeRule,
   prosecutorRule,
   publicProsecutorStaffRule,
 } from '../../guards'
-import { CivilClaimantService } from '../defendant'
+import {
+  CivilClaimantService,
+  CurrentDefendant,
+  DefendantExistsGuard,
+} from '../defendant'
 import { EventService } from '../event'
+import { Case, Defendant } from '../repository'
+import { UpdateCase } from '../repository'
 import { UserService } from '../user'
 import { CreateCaseDto } from './dto/createCase.dto'
 import { TransitionCaseDto } from './dto/transitionCase.dto'
@@ -108,15 +112,14 @@ import {
 } from './interceptors/case.interceptor'
 import { CaseListInterceptor } from './interceptors/caseList.interceptor'
 import { CompletedAppealAccessedInterceptor } from './interceptors/completedAppealAccessed.interceptor'
-import { Case } from './models/case.model'
-import { CaseStatistics } from './models/caseStatistics.response'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
-import { CaseService, UpdateCase } from './case.service'
+import { CaseService } from './case.service'
 import { PdfService } from './pdf.service'
 
 @Controller('api')
 @ApiTags('cases')
+@UseGuards(JwtAuthUserGuard)
 export class CaseController {
   constructor(
     private readonly caseService: CaseService,
@@ -124,6 +127,7 @@ export class CaseController {
     private readonly eventService: EventService,
     private readonly pdfService: PdfService,
     private readonly civilClaimantService: CivilClaimantService,
+    @InjectConnection() private readonly sequelize: Sequelize,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -147,7 +151,7 @@ export class CaseController {
     }
   }
 
-  @UseGuards(JwtAuthUserGuard, RolesGuard)
+  @UseGuards(RolesGuard)
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @UseInterceptors(CaseInterceptor)
   @Post('case')
@@ -158,14 +162,16 @@ export class CaseController {
   ): Promise<Case> {
     this.logger.debug('Creating a new case')
 
-    const createdCase = await this.caseService.create(caseToCreate, user)
+    const createdCase = await this.sequelize.transaction((transaction) =>
+      this.caseService.create(caseToCreate, user, transaction),
+    )
 
     this.eventService.postEvent('CREATE', createdCase)
 
     return createdCase
   }
 
-  @UseGuards(JwtAuthUserGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
+  @UseGuards(RolesGuard, CaseExistsGuard, CaseWriteGuard)
   @RolesRules(
     prosecutorUpdateRule,
     prosecutorRepresentativeUpdateRule,
@@ -188,133 +194,150 @@ export class CaseController {
   ): Promise<Case> {
     this.logger.debug(`Updating case ${caseId}`)
 
-    const update: UpdateCase = updateDto
+    const transaction = await this.sequelize.transaction()
 
-    // Make sure valid users are assigned to the case's roles
-    if (update.prosecutorId) {
-      await this.validateAssignedUser(
-        update.prosecutorId,
-        [UserRole.PROSECUTOR],
-        theCase.prosecutorsOfficeId,
-      )
-    }
+    try {
+      const update: UpdateCase = updateDto
 
-    if (update.judgeId) {
-      await this.validateAssignedUser(
-        update.judgeId,
-        [UserRole.DISTRICT_COURT_JUDGE, UserRole.DISTRICT_COURT_ASSISTANT],
-        theCase.courtId,
-      )
-    }
-
-    if (update.registrarId) {
-      await this.validateAssignedUser(
-        update.registrarId,
-        [UserRole.DISTRICT_COURT_REGISTRAR, UserRole.DISTRICT_COURT_ASSISTANT],
-        theCase.courtId,
-      )
-    }
-
-    if (update.appealAssistantId) {
-      await this.validateAssignedUser(update.appealAssistantId, [
-        UserRole.COURT_OF_APPEALS_ASSISTANT,
-      ])
-    }
-
-    if (update.appealJudge1Id) {
-      await this.validateAssignedUser(update.appealJudge1Id, [
-        UserRole.COURT_OF_APPEALS_JUDGE,
-      ])
-    }
-
-    if (update.appealJudge2Id) {
-      await this.validateAssignedUser(update.appealJudge2Id, [
-        UserRole.COURT_OF_APPEALS_JUDGE,
-      ])
-    }
-
-    if (update.appealJudge3Id) {
-      await this.validateAssignedUser(update.appealJudge3Id, [
-        UserRole.COURT_OF_APPEALS_JUDGE,
-      ])
-    }
-
-    if (update.rulingModifiedHistory) {
-      const history = theCase.rulingModifiedHistory
-        ? `${theCase.rulingModifiedHistory}\n\n`
-        : ''
-      const today = capitalize(formatDate(nowFactory(), 'PPPPp'))
-      update.rulingModifiedHistory = `${history}${today} - ${
-        user.name
-      } ${lowercase(user.title)}\n\n${update.rulingModifiedHistory}`
-    }
-
-    if (update.caseResentExplanation) {
-      // We want to overwrite certain fields that the court sees so they're always seeing
-      // the correct information post resend
-      update.courtCaseFacts = `Í greinargerð sóknaraðila er atvikum lýst svo: ${theCase.caseFacts}`
-      update.courtLegalArguments = `Í greinargerð er krafa sóknaraðila rökstudd þannig: ${theCase.legalArguments}`
-      update.prosecutorDemands = update.demands ?? theCase.demands
-      if (!theCase.decision) {
-        update.validToDate =
-          update.requestedValidToDate ?? theCase.requestedValidToDate
-      }
-    }
-
-    if (update.prosecutorStatementDate) {
-      update.prosecutorStatementDate = nowFactory()
-    }
-
-    if (update.appealRulingModifiedHistory) {
-      const history = theCase.appealRulingModifiedHistory
-        ? `${theCase.appealRulingModifiedHistory}\n\n`
-        : ''
-      const today = capitalize(formatDate(nowFactory(), 'PPPPp'))
-      update.appealRulingModifiedHistory = `${history}${today} - ${
-        user.name
-      } ${lowercase(user.title)}\n\n${update.appealRulingModifiedHistory}`
-    }
-
-    if (update.mergeCaseId && theCase.state !== CaseState.RECEIVED) {
-      throw new BadRequestException(
-        'Cannot merge case that is not in a received state',
-      )
-    }
-
-    if (update.hasCivilClaims !== undefined) {
-      if (update.hasCivilClaims) {
-        await this.civilClaimantService.create(theCase)
-      } else {
-        await this.civilClaimantService.deleteAll(theCase.id)
-      }
-    }
-
-    // If the case comes from LOKE then we don't want to allow the removal or
-    // moving around of the first police case number as that coupled with the
-    // case id is the identifier used to update the case in LOKE.
-    if (theCase.origin === CaseOrigin.LOKE && update.policeCaseNumbers) {
-      const mainPoliceCaseNumber = theCase.policeCaseNumbers[0]
-
-      if (
-        mainPoliceCaseNumber &&
-        update.policeCaseNumbers?.indexOf(mainPoliceCaseNumber) !== 0
-      ) {
-        throw new BadRequestException(
-          `Cannot remove or move main police case number ${mainPoliceCaseNumber}`,
+      // Make sure valid users are assigned to the case's roles
+      if (update.prosecutorId) {
+        await this.validateAssignedUser(
+          update.prosecutorId,
+          [UserRole.PROSECUTOR],
+          theCase.prosecutorsOfficeId,
         )
       }
-    }
 
-    return this.caseService.update(theCase, update, user) as Promise<Case> // Never returns undefined
+      if (update.judgeId) {
+        await this.validateAssignedUser(
+          update.judgeId,
+          [UserRole.DISTRICT_COURT_JUDGE, UserRole.DISTRICT_COURT_ASSISTANT],
+          theCase.courtId,
+        )
+      }
+
+      if (update.registrarId) {
+        await this.validateAssignedUser(
+          update.registrarId,
+          [
+            UserRole.DISTRICT_COURT_REGISTRAR,
+            UserRole.DISTRICT_COURT_ASSISTANT,
+          ],
+          theCase.courtId,
+        )
+      }
+
+      if (update.appealAssistantId) {
+        await this.validateAssignedUser(update.appealAssistantId, [
+          UserRole.COURT_OF_APPEALS_ASSISTANT,
+        ])
+      }
+
+      if (update.appealJudge1Id) {
+        await this.validateAssignedUser(update.appealJudge1Id, [
+          UserRole.COURT_OF_APPEALS_JUDGE,
+        ])
+      }
+
+      if (update.appealJudge2Id) {
+        await this.validateAssignedUser(update.appealJudge2Id, [
+          UserRole.COURT_OF_APPEALS_JUDGE,
+        ])
+      }
+
+      if (update.appealJudge3Id) {
+        await this.validateAssignedUser(update.appealJudge3Id, [
+          UserRole.COURT_OF_APPEALS_JUDGE,
+        ])
+      }
+
+      if (update.rulingModifiedHistory) {
+        const history = theCase.rulingModifiedHistory
+          ? `${theCase.rulingModifiedHistory}\n\n`
+          : ''
+        const today = capitalize(formatDate(nowFactory(), 'PPPPp'))
+        update.rulingModifiedHistory = `${history}${today} - ${
+          user.name
+        } ${lowercase(user.title)}\n\n${update.rulingModifiedHistory}`
+      }
+
+      if (update.caseResentExplanation) {
+        // We want to overwrite certain fields that the court sees so they're always seeing
+        // the correct information post resend
+        update.courtCaseFacts = `Í greinargerð sóknaraðila er atvikum lýst svo: ${theCase.caseFacts}`
+        update.courtLegalArguments = `Í greinargerð er krafa sóknaraðila rökstudd þannig: ${theCase.legalArguments}`
+        update.prosecutorDemands = update.demands ?? theCase.demands
+        if (!theCase.decision) {
+          update.validToDate =
+            update.requestedValidToDate ?? theCase.requestedValidToDate
+        }
+      }
+
+      if (update.prosecutorStatementDate) {
+        update.prosecutorStatementDate = nowFactory()
+      }
+
+      if (update.appealRulingModifiedHistory) {
+        const history = theCase.appealRulingModifiedHistory
+          ? `${theCase.appealRulingModifiedHistory}\n\n`
+          : ''
+        const today = capitalize(formatDate(nowFactory(), 'PPPPp'))
+        update.appealRulingModifiedHistory = `${history}${today} - ${
+          user.name
+        } ${lowercase(user.title)}\n\n${update.appealRulingModifiedHistory}`
+      }
+
+      if (update.mergeCaseId && theCase.state !== CaseState.RECEIVED) {
+        throw new BadRequestException(
+          'Cannot merge case that is not in a received state',
+        )
+      }
+
+      // This probably belongs inside the case service
+      if (update.hasCivilClaims !== undefined) {
+        if (update.hasCivilClaims) {
+          await this.civilClaimantService.create(theCase, transaction)
+        } else {
+          await this.civilClaimantService.deleteAll(theCase.id, transaction)
+        }
+      }
+
+      // If the case comes from LOKE then we don't want to allow the removal or
+      // moving around of the first police case number as that coupled with the
+      // case id is the identifier used to update the case in LOKE.
+      if (theCase.origin === CaseOrigin.LOKE && update.policeCaseNumbers) {
+        const mainPoliceCaseNumber = theCase.policeCaseNumbers[0]
+
+        if (
+          mainPoliceCaseNumber &&
+          update.policeCaseNumbers?.indexOf(mainPoliceCaseNumber) !== 0
+        ) {
+          throw new BadRequestException(
+            `Cannot remove or move main police case number ${mainPoliceCaseNumber}`,
+          )
+        }
+      }
+
+      const updatedCase = (await this.caseService.update(
+        theCase,
+        update,
+        user,
+        transaction,
+      )) as Case // Never returns undefined
+
+      await transaction.commit()
+
+      return updatedCase
+    } catch (error) {
+      this.logger.error(`Error updating case ${caseId}`, { error })
+
+      await transaction.rollback()
+
+      throw error
+    }
   }
 
-  @UseGuards(
-    JwtAuthUserGuard,
-    CaseExistsGuard,
-    RolesGuard,
-    CaseWriteGuard,
-    CaseTransitionGuard,
-  )
+  @UseGuards(CaseExistsGuard, RolesGuard, CaseWriteGuard, CaseTransitionGuard)
   @RolesRules(
     prosecutorTransitionRule,
     prosecutorRepresentativeTransitionRule,
@@ -341,11 +364,14 @@ export class CaseController {
 
     const update = transitionCase(transition.transition, theCase, user)
 
-    const updatedCase = await this.caseService.update(
-      theCase,
-      update,
-      user,
-      update.state !== CaseState.DELETED,
+    const updatedCase = await this.sequelize.transaction((transaction) =>
+      this.caseService.update(
+        theCase,
+        update,
+        user,
+        transaction,
+        update.state !== CaseState.DELETED,
+      ),
     )
 
     // No need to wait
@@ -354,20 +380,8 @@ export class CaseController {
     return updatedCase ?? theCase
   }
 
-  @UseGuards(JwtAuthUserGuard, RolesGuard)
-  @RolesRules(
-    prosecutorRule,
-    prosecutorRepresentativeRule,
-    publicProsecutorStaffRule,
-    districtCourtJudgeRule,
-    districtCourtRegistrarRule,
-    districtCourtAssistantRule,
-    courtOfAppealsJudgeRule,
-    courtOfAppealsRegistrarRule,
-    courtOfAppealsAssistantRule,
-    prisonSystemStaffRule,
-    defenderRule,
-  )
+  @UseGuards(RolesGuard)
+  @RolesRules(defenderRule)
   @UseInterceptors(CaseListInterceptor)
   @Get('cases')
   @ApiOkResponse({
@@ -381,7 +395,7 @@ export class CaseController {
     return this.caseService.getAll(user)
   }
 
-  @UseGuards(JwtAuthUserGuard, RolesGuard, CaseExistsGuard, CaseReadGuard)
+  @UseGuards(RolesGuard, CaseExistsGuard, CaseReadGuard)
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
@@ -402,7 +416,7 @@ export class CaseController {
     return theCase
   }
 
-  @UseGuards(JwtAuthUserGuard, CaseExistsGuard)
+  @UseGuards(RolesGuard, CaseExistsGuard)
   @RolesRules(
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
@@ -431,7 +445,6 @@ export class CaseController {
   }
 
   @UseGuards(
-    JwtAuthUserGuard,
     RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
@@ -467,7 +480,6 @@ export class CaseController {
   }
 
   @UseGuards(
-    JwtAuthUserGuard,
     RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard(indictmentCases),
@@ -516,11 +528,15 @@ export class CaseController {
   }
 
   @UseGuards(
-    JwtAuthUserGuard,
     RolesGuard,
     CaseExistsGuard,
-    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    new CaseTypeGuard([
+      ...restrictionCases,
+      ...investigationCases,
+      ...indictmentCases,
+    ]),
     CaseReadGuard,
+    MergedCaseExistsGuard,
   )
   @RolesRules(
     prosecutorRule,
@@ -530,8 +546,12 @@ export class CaseController {
     courtOfAppealsJudgeRule,
     courtOfAppealsRegistrarRule,
     courtOfAppealsAssistantRule,
+    publicProsecutorStaffRule,
   )
-  @Get('case/:caseId/courtRecord')
+  @Get([
+    'case/:caseId/courtRecord',
+    'case/:caseId/mergedCase/:mergedCaseId/courtRecord',
+  ])
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
     content: { 'application/pdf': {} },
@@ -547,13 +567,44 @@ export class CaseController {
       `Getting the court record for case ${caseId} as a pdf document`,
     )
 
-    const pdf = await this.pdfService.getCourtRecordPdf(theCase, user)
+    let pdf: Buffer
+
+    if (isRequestCase(theCase.type)) {
+      if (isPublicProsecutionOfficeUser(user)) {
+        throw new ForbiddenException(
+          'Public prosecution office users are not allowed to get court record pdfs for request cases',
+        )
+      }
+
+      pdf = await this.pdfService.getCourtRecordPdf(theCase, user)
+    } else {
+      if (
+        !hasGeneratedCourtRecordPdf(
+          theCase.state,
+          theCase.indictmentRulingDecision,
+          theCase.withCourtSessions,
+          theCase.courtSessions,
+          user,
+        )
+      ) {
+        throw new BadRequestException(
+          `Case ${caseId} does not have a generated court record pdf document`,
+        )
+      }
+
+      pdf = await this.sequelize.transaction(async (transaction) =>
+        this.pdfService.getCourtRecordPdfForIndictmentCase(
+          theCase,
+          user,
+          transaction,
+        ),
+      )
+    }
 
     res.end(pdf)
   }
 
   @UseGuards(
-    JwtAuthUserGuard,
     RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
@@ -587,7 +638,6 @@ export class CaseController {
   }
 
   @UseGuards(
-    JwtAuthUserGuard,
     RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard([CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY]),
@@ -628,7 +678,6 @@ export class CaseController {
   }
 
   @UseGuards(
-    JwtAuthUserGuard,
     RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard(indictmentCases),
@@ -661,13 +710,14 @@ export class CaseController {
       `Getting the indictment for case ${caseId} as a pdf document`,
     )
 
-    const pdf = await this.pdfService.getIndictmentPdf(theCase)
+    const pdf = await this.sequelize.transaction(async (transaction) =>
+      this.pdfService.getIndictmentPdf(theCase, transaction),
+    )
 
     res.end(pdf)
   }
 
   @UseGuards(
-    JwtAuthUserGuard,
     RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard(indictmentCases),
@@ -712,7 +762,6 @@ export class CaseController {
   }
 
   @UseGuards(
-    JwtAuthUserGuard,
     RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
@@ -757,7 +806,6 @@ export class CaseController {
   }
 
   @UseGuards(
-    JwtAuthUserGuard,
     RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
@@ -784,15 +832,17 @@ export class CaseController {
       `Confirming a signature for the court record of case ${caseId}`,
     )
 
-    return this.caseService.getCourtRecordSignatureConfirmation(
-      theCase,
-      user,
-      documentToken,
+    return this.sequelize.transaction((transaction) =>
+      this.caseService.getCourtRecordSignatureConfirmation(
+        theCase,
+        user,
+        documentToken,
+        transaction,
+      ),
     )
   }
 
   @UseGuards(
-    JwtAuthUserGuard,
     CaseExistsGuard,
     RolesGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
@@ -829,7 +879,6 @@ export class CaseController {
   }
 
   @UseGuards(
-    JwtAuthUserGuard,
     CaseExistsGuard,
     RolesGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
@@ -850,15 +899,17 @@ export class CaseController {
   ): Promise<SignatureConfirmationResponse> {
     this.logger.debug(`Confirming a signature for the ruling of case ${caseId}`)
 
-    return this.caseService.getRulingSignatureConfirmation(
-      theCase,
-      user,
-      documentToken,
+    return this.sequelize.transaction((transaction) =>
+      this.caseService.getRulingSignatureConfirmation(
+        theCase,
+        user,
+        documentToken,
+        transaction,
+      ),
     )
   }
 
   @UseGuards(
-    JwtAuthUserGuard,
     RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
@@ -882,14 +933,58 @@ export class CaseController {
       return theCase.childCase
     }
 
-    const extendedCase = await this.caseService.extend(theCase, user)
+    const extendedCase = await this.sequelize.transaction((transaction) =>
+      this.caseService.extend(theCase, user, transaction),
+    )
 
-    this.eventService.postEvent('EXTEND', extendedCase as Case)
+    this.eventService.postEvent('EXTEND', extendedCase)
 
     return extendedCase
   }
 
-  @UseGuards(JwtAuthUserGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
+  @UseGuards(
+    RolesGuard,
+    CaseExistsGuard,
+    new CaseTypeGuard(indictmentCases),
+    CaseWriteGuard,
+    DefendantExistsGuard,
+  )
+  @RolesRules(
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+  )
+  @UseInterceptors(CaseInterceptor)
+  @Post('case/:caseId/defendant/:defendantId/split')
+  @ApiCreatedResponse({
+    type: Case,
+    description:
+      'Creates a new case by splitting off a defendant from an existing case',
+  })
+  async splitDefendantFromCase(
+    @Param('caseId') caseId: string,
+    @Param('defendantId') defendantId: string,
+    @CurrentCase() theCase: Case,
+    @CurrentDefendant() theDefendant: Defendant,
+  ): Promise<Case> {
+    this.logger.debug(`Splitting defendant ${defendantId} from case ${caseId}`)
+
+    if (!theCase.defendants || theCase.defendants.length < 2) {
+      throw new BadRequestException(
+        'Cannot split defendant from case with less than two defendants',
+      )
+    }
+
+    return this.sequelize.transaction((transaction) =>
+      this.caseService.splitDefendantFromCase(
+        theCase,
+        theDefendant,
+        transaction,
+      ),
+    )
+  }
+
+  @UseGuards(RolesGuard, CaseExistsGuard, CaseWriteGuard)
   @RolesRules(
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
@@ -908,26 +1003,8 @@ export class CaseController {
   ): Promise<Case> {
     this.logger.debug(`Creating a court case for case ${caseId}`)
 
-    return this.caseService.createCourtCase(theCase, user)
-  }
-
-  @UseGuards(JwtAuthUserGuard, RolesGuard)
-  @RolesRules(adminRule)
-  @Get('cases/statistics')
-  @ApiOkResponse({
-    type: CaseStatistics,
-    description: 'Gets court centered statistics for cases',
-  })
-  @ApiQuery({ name: 'fromDate', required: false, type: String })
-  @ApiQuery({ name: 'toDate', required: false, type: String })
-  @ApiQuery({ name: 'institutionId', required: false, type: String })
-  getStatistics(
-    @Query('fromDate') fromDate?: Date,
-    @Query('toDate') toDate?: Date,
-    @Query('institutionId') institutionId?: string,
-  ): Promise<CaseStatistics> {
-    this.logger.debug('Getting statistics for all cases')
-
-    return this.caseService.getCaseStatistics(fromDate, toDate, institutionId)
+    return this.sequelize.transaction((transaction) =>
+      this.caseService.createCourtCase(theCase, user, transaction),
+    )
   }
 }

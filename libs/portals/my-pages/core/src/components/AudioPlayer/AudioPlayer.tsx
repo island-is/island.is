@@ -30,7 +30,7 @@ export const AudioPlayer = ({ url, title }: Props) => {
 
   const audioRef = useRef<HTMLAudioElement | null>(null)
 
-  const audioProgress = trackProgress / duration
+  const audioProgress = trackProgress / duration || 0
 
   const toggleAudio = () => {
     if (hasEnded) {
@@ -125,6 +125,7 @@ export const AudioPlayer = ({ url, title }: Props) => {
             </GridColumn>
             <GridColumn span={['6/12', '7/12', '6/12', '7/12', '7/12']}>
               <ProgressBar
+                id="audio-progress-bar"
                 progress={audioProgress}
                 onClick={setTimeChange}
                 renderProgressBar={isReady}

@@ -2,7 +2,7 @@ import { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Box, Input, Text, toast } from '@island.is/island-ui/core'
+import { Box, Input, toast } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
   errors,
@@ -18,21 +18,21 @@ import {
   PageLayout,
   PageTitle,
   ProsecutorCaseInfo,
+  SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseState,
   CaseTransition,
   NotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import {
-  removeTabsValidateAndSet,
-  stepValidationsType,
-  validateAndSendToServer,
-} from '@island.is/judicial-system-web/src/utils/formHelper'
+import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   formatDateForServer,
   useCase,
+  useDebouncedInput,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/utils'
 import { isHearingArrangementsStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 
 import {
@@ -47,6 +47,7 @@ export const HearingArrangements = () => {
   const { formatMessage } = useIntl()
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
+  const translatorInput = useDebouncedInput('translator')
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
 
   const {
@@ -55,7 +56,6 @@ export const HearingArrangements = () => {
     sendNotificationError,
     transitionCase,
     isTransitioningCase,
-    updateCase,
     setAndSendCaseToServer,
   } = useCase()
 
@@ -78,10 +78,10 @@ export const HearingArrangements = () => {
         if (
           (workingCase.state !== CaseState.NEW &&
             workingCase.state !== CaseState.DRAFT) ||
-          // TODO: Ignore failed notifications
-          workingCase.notifications?.find(
-            (notification) => notification.type === NotificationType.HEADS_UP,
-          )
+          hasSentNotification(
+            NotificationType.HEADS_UP,
+            workingCase.notifications,
+          ).hasSent
         ) {
           router.push(`${destination}/${workingCase.id}`)
         } else {
@@ -109,14 +109,14 @@ export const HearingArrangements = () => {
           titles.prosecutor.restrictionCases.hearingArrangements,
         )}
       />
-      <>
-        <FormContentContainer>
-          <PageTitle>
-            {formatMessage(rcRequestedHearingArrangements.heading)}
-          </PageTitle>
+      <FormContentContainer>
+        <PageTitle>
+          {formatMessage(rcRequestedHearingArrangements.heading)}
+        </PageTitle>
+        <div className={grid({ gap: 5, marginBottom: 10 })}>
           <ProsecutorCaseInfo workingCase={workingCase} hideCourt />
           <ProsecutorSectionHeightenedSecurity />
-          <Box component="section" marginBottom={5}>
+          <Box component="section">
             <SelectCourt />
           </Box>
           {!workingCase.parentCase && (
@@ -128,7 +128,7 @@ export const HearingArrangements = () => {
               setWorkingCase={setWorkingCase}
             />
           )}
-          <Box component="section" marginBottom={5}>
+          <Box component="section">
             <RequestCourtDate
               workingCase={workingCase}
               onChange={(date: Date | undefined, valid: boolean) => {
@@ -147,14 +147,12 @@ export const HearingArrangements = () => {
               }}
             />
           </Box>
-          <Box component="section" marginBottom={10}>
-            <Box marginBottom={3}>
-              <Text as="h3" variant="h3">
-                {formatMessage(
-                  rcRequestedHearingArrangements.sections.translator.heading,
-                )}
-              </Text>
-            </Box>
+          <Box component="section">
+            <SectionHeading
+              title={formatMessage(
+                rcRequestedHearingArrangements.sections.translator.heading,
+              )}
+            />
             <Input
               data-testid="translator"
               name="translator"
@@ -165,58 +163,35 @@ export const HearingArrangements = () => {
               placeholder={formatMessage(
                 rcRequestedHearingArrangements.sections.translator.placeholder,
               )}
-              value={workingCase.translator || ''}
-              onChange={(event) =>
-                removeTabsValidateAndSet(
-                  'translator',
-                  event.target.value,
-                  [],
-                  setWorkingCase,
-                )
-              }
-              onBlur={(event) =>
-                validateAndSendToServer(
-                  'translator',
-                  event.target.value.trim(),
-                  [],
-                  workingCase,
-                  updateCase,
-                )
-              }
+              value={translatorInput.value}
+              onChange={(evt) => translatorInput.onChange(evt.target.value)}
+              onBlur={(event) => translatorInput.onBlur(event.target.value)}
             />
           </Box>
-        </FormContentContainer>
-        <FormContentContainer isFooter>
-          <FormFooter
-            nextButtonIcon="arrowForward"
-            previousUrl={`${constants.RESTRICTION_CASE_DEFENDANT_ROUTE}/${workingCase.id}`}
-            onNextButtonClick={async () =>
-              await handleNavigationTo(
-                constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE,
-              )
-            }
-            nextIsDisabled={!stepIsValid || isTransitioningCase}
-            nextIsLoading={isTransitioningCase}
-          />
-        </FormContentContainer>
-        {navigateTo !== undefined && (
-          <Modal
-            title={formatMessage(rcRequestedHearingArrangements.modal.heading)}
-            text={formatMessage(rcRequestedHearingArrangements.modal.textV2, {
-              caseType: workingCase.type,
-            })}
-            primaryButtonText="Senda tilkynningu"
-            secondaryButtonText="Halda áfram með kröfu"
-            onClose={() => setNavigateTo(undefined)}
-            onSecondaryButtonClick={() =>
-              router.push(`${navigateTo}/${workingCase.id}`)
-            }
-            errorMessage={
-              sendNotificationError
-                ? formatMessage(errors.sendNotification)
-                : undefined
-            }
-            onPrimaryButtonClick={async () => {
+        </div>
+      </FormContentContainer>
+      <FormContentContainer isFooter>
+        <FormFooter
+          nextButtonIcon="arrowForward"
+          previousUrl={`${constants.RESTRICTION_CASE_DEFENDANT_ROUTE}/${workingCase.id}`}
+          onNextButtonClick={async () =>
+            await handleNavigationTo(
+              constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE,
+            )
+          }
+          nextIsDisabled={!stepIsValid || isTransitioningCase}
+          nextIsLoading={isTransitioningCase}
+        />
+      </FormContentContainer>
+      {navigateTo !== undefined && (
+        <Modal
+          title={formatMessage(rcRequestedHearingArrangements.modal.heading)}
+          text={formatMessage(rcRequestedHearingArrangements.modal.textV2, {
+            caseType: workingCase.type,
+          })}
+          primaryButton={{
+            text: 'Senda tilkynningu',
+            onClick: async () => {
               const notificationSent = await sendNotification(
                 workingCase.id,
                 NotificationType.HEADS_UP,
@@ -225,11 +200,21 @@ export const HearingArrangements = () => {
               if (notificationSent) {
                 router.push(`${navigateTo}/${workingCase.id}`)
               }
-            }}
-            isPrimaryButtonLoading={isSendingNotification}
-          />
-        )}
-      </>
+            },
+            isLoading: isSendingNotification,
+          }}
+          secondaryButton={{
+            text: 'Halda áfram með kröfu',
+            onClick: () => router.push(`${navigateTo}/${workingCase.id}`),
+          }}
+          onClose={() => setNavigateTo(undefined)}
+          errorMessage={
+            sendNotificationError
+              ? formatMessage(errors.sendNotification)
+              : undefined
+          }
+        />
+      )}
     </PageLayout>
   )
 }

@@ -1,4 +1,4 @@
-import { Op } from 'sequelize'
+import { Op, Transaction } from 'sequelize'
 
 import {
   Inject,
@@ -17,9 +17,8 @@ import {
   CivilClaimantNotificationType,
 } from '@island.is/judicial-system/types'
 
-import { Case } from '../case/models/case.model'
+import { Case, CivilClaimant } from '../repository'
 import { UpdateCivilClaimantDto } from './dto/updateCivilClaimant.dto'
-import { CivilClaimant } from './models/civilClaimant.model'
 
 @Injectable()
 export class CivilClaimantService {
@@ -30,10 +29,14 @@ export class CivilClaimantService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  async create(theCase: Case): Promise<CivilClaimant> {
-    return this.civilClaimantModel.create({
-      caseId: theCase.id,
-    })
+  async create(
+    theCase: Case,
+    transaction: Transaction,
+  ): Promise<CivilClaimant> {
+    return this.civilClaimantModel.create(
+      { caseId: theCase.id },
+      { transaction },
+    )
   }
 
   private async sendUpdateCivilClaimantMessages(
@@ -62,10 +65,7 @@ export class CivilClaimantService {
   ): Promise<CivilClaimant> {
     const [numberOfAffectedRows, civilClaimants] =
       await this.civilClaimantModel.update(update, {
-        where: {
-          id: civilClaimant.id,
-          caseId,
-        },
+        where: { id: civilClaimant.id, caseId },
         returning: true,
       })
 
@@ -111,9 +111,10 @@ export class CivilClaimantService {
     return true
   }
 
-  async deleteAll(caseId: string): Promise<void> {
+  async deleteAll(caseId: string, transaction: Transaction): Promise<void> {
     await this.civilClaimantModel.destroy({
       where: { caseId },
+      transaction,
     })
   }
 

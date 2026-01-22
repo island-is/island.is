@@ -1,5 +1,5 @@
 {
-  "openapi": "3.0.1",
+  "openapi": "3.0.4",
   "info": {
     "title": "Minarsidur",
     "version": "v1"
@@ -310,23 +310,31 @@
         }
       }
     },
-    "/v1/aidsandnutrition/{iso}/renew": {
-      "get": {
+    "/v1/aidsandnutrition/{id}/renew": {
+      "post": {
         "tags": ["aidsandnutrition"],
         "operationId": "RenewAidOrNutrition",
         "parameters": [
           {
-            "name": "iso",
+            "name": "id",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "integer",
+              "format": "int32"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Minarsidur.API.Models.AidsAndNutrition.Response.RenewAidOrNutritionResponseDTO"
+                }
+              }
+            }
           },
           "400": {
             "description": "Bad Request",
@@ -447,7 +455,7 @@
     "/v1/dentists/status": {
       "get": {
         "tags": ["dentists"],
-        "operationId": "dentiststatus",
+        "operationId": "GetDentistStatus",
         "responses": {
           "200": {
             "description": "OK",
@@ -2500,14 +2508,6 @@
             "type": "string",
             "nullable": true
           },
-          "dockName": {
-            "type": "string",
-            "nullable": true
-          },
-          "dockGps": {
-            "type": "string",
-            "nullable": true
-          },
           "atHome": {
             "$ref": "#/components/schemas/Minarsidur.API.Models.AccidentReports.AccidentDTO_AccidentAtHomeDTO"
           },
@@ -2913,6 +2913,10 @@
             "format": "int32",
             "nullable": true
           },
+          "valid": {
+            "type": "boolean",
+            "nullable": true
+          },
           "validUntil": {
             "type": "string",
             "format": "date",
@@ -2967,6 +2971,25 @@
             "items": {
               "$ref": "#/components/schemas/Minarsidur.API.Models.AidsAndNutrition.AidOrNutritionDTO"
             },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Minarsidur.API.Models.AidsAndNutrition.Response.RenewAidOrNutritionResponseDTO": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "requestId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "errorMessage": {
+            "type": "string",
             "nullable": true
           }
         },
@@ -3097,6 +3120,10 @@
             "type": "string",
             "nullable": true
           },
+          "applicationName": {
+            "type": "string",
+            "nullable": true
+          },
           "dagssetning": {
             "type": "string",
             "format": "date-time",
@@ -3128,6 +3155,10 @@
           },
           "status": {
             "$ref": "#/components/schemas/Minarsidur.API.Models.Application.CurrentApplicationStatus"
+          },
+          "hasFilesToUpload": {
+            "type": "boolean",
+            "readOnly": true
           }
         },
         "additionalProperties": false
@@ -4067,6 +4098,10 @@
             "type": "string",
             "nullable": true
           },
+          "neighborhoodCenterId": {
+            "type": "string",
+            "nullable": true
+          },
           "neighborhoodCenter": {
             "type": "string",
             "nullable": true
@@ -4153,6 +4188,10 @@
           },
           "region": {
             "type": "string",
+            "nullable": true
+          },
+          "canRegisterOutOfNeighborhood": {
+            "type": "boolean",
             "nullable": true
           },
           "canRegister": {

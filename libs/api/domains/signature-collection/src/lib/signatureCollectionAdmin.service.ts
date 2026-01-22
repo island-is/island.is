@@ -26,13 +26,14 @@ import { SignatureCollectionIdInput } from './dto/collectionId.input'
 import { SignatureCollectionSignatureUpdateInput } from './dto/signatureUpdate.input'
 import { SignatureCollectionSignatureLookupInput } from './dto/signatureLookup.input'
 import { SignatureCollectionAreaSummaryReportInput } from './dto/areaSummaryReport.input'
-import { SignatureCollectionAreaSummaryReport } from './models/areaSummaryReport.model'
+import { SignatureCollectionSummaryReport } from './models/summaryReport.model'
 import {
-  SignatureCollectionListIdInput,
+  SignatureCollectionCandidateIdInput,
   SignatureCollectionUploadPaperSignatureInput,
 } from './dto'
 import { SignatureCollectionAdmin } from './models/admin.model'
 import { AdminPortalScope } from '@island.is/auth/scopes'
+import { SignatureCollectionLockListInput } from './dto/lockList.input'
 
 @Injectable()
 export class SignatureCollectionAdminService {
@@ -57,16 +58,6 @@ export class SignatureCollectionAdminService {
     }
   }
 
-  async currentCollection(
-    admin: SignatureCollectionAdmin,
-    collectionTypeFilter?: CollectionType,
-  ): Promise<SignatureCollection[]> {
-    return this.getService(admin.adminScope).currentCollection(
-      admin,
-      collectionTypeFilter,
-    )
-  }
-
   async getLatestCollectionForType(
     admin: SignatureCollectionAdmin,
     collectionType: CollectionType,
@@ -79,6 +70,13 @@ export class SignatureCollectionAdminService {
 
   async allLists(
     input: SignatureCollectionIdInput,
+    admin: SignatureCollectionAdmin,
+  ): Promise<SignatureCollectionList[]> {
+    return this.getService(admin.adminScope).getLists(input, admin)
+  }
+
+  async listsForCandidate(
+    input: SignatureCollectionCandidateIdInput,
     admin: SignatureCollectionAdmin,
   ): Promise<SignatureCollectionList[]> {
     return this.getService(admin.adminScope).getLists(input, admin)
@@ -268,7 +266,7 @@ export class SignatureCollectionAdminService {
   async getAreaSummaryReport(
     input: SignatureCollectionAreaSummaryReportInput,
     admin: SignatureCollectionAdmin,
-  ): Promise<SignatureCollectionAreaSummaryReport> {
+  ): Promise<SignatureCollectionSummaryReport> {
     return await this.getService(admin.adminScope).getAreaSummaryReport(
       admin,
       input.collectionId,
@@ -276,11 +274,21 @@ export class SignatureCollectionAdminService {
     )
   }
 
+  async getCandidateSummaryReport(
+    input: SignatureCollectionCandidateIdInput,
+    admin: SignatureCollectionAdmin,
+  ): Promise<SignatureCollectionSummaryReport> {
+    return await this.getService(admin.adminScope).getCandidateSummaryReport(
+      admin,
+      input.candidateId,
+    )
+  }
+
   async lockList(
-    input: SignatureCollectionListIdInput,
+    input: SignatureCollectionLockListInput,
     admin: SignatureCollectionAdmin,
   ): Promise<SignatureCollectionSuccess> {
-    return await this.getService(admin.adminScope).lockList(admin, input.listId)
+    return await this.getService(admin.adminScope).lockList(admin, input)
   }
 
   async uploadPaperSignature(

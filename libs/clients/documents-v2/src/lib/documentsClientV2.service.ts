@@ -39,7 +39,8 @@ export class DocumentsClientV2Service {
       const sanitizedObj = {} as T
 
       for (const key in obj) {
-        if (obj[key]) {
+        // Include "opened" when false since it's a meaningful falsy value
+        if (obj[key] || (key === 'opened' && obj[key] === false)) {
           if (Array.isArray(obj[key]) && obj[key].length === 0) {
             continue
           }
@@ -61,6 +62,7 @@ export class DocumentsClientV2Service {
 
     const inputObject = sanitizeObject({
       ...input,
+      categoryId: input.categoryId === '' ? undefined : input.categoryId,
       kennitala: input.nationalId,
       page: input.page ?? 1,
       senderKennitala:

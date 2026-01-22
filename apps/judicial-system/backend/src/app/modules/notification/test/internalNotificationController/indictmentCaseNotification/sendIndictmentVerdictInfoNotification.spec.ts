@@ -1,4 +1,4 @@
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { EmailService } from '@island.is/email-service'
 
@@ -14,7 +14,7 @@ import {
   createTestUsers,
 } from '../../createTestingNotificationModule'
 
-import { Case } from '../../../../case'
+import { Case } from '../../../../repository'
 import { DeliverResponse } from '../../../models/deliver.response'
 
 interface Then {
@@ -48,7 +48,7 @@ describe('IndictmentCaseService', () => {
         defenderNationalId: defender.nationalId,
         defenderName: defender.name,
         defenderEmail: defender.email,
-        serviceRequirement: ServiceRequirement.REQUIRED,
+        verdicts: [{ serviceRequirement: ServiceRequirement.REQUIRED }],
       },
     ],
     prosecutor: {

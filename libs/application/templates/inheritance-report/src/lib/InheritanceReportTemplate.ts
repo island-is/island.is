@@ -10,7 +10,7 @@ import {
   ApplicationStateSchema,
   Application,
   defineTemplateApi,
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   UserProfileApi,
   DefaultEvents,
   ApplicationConfigurations,
@@ -55,7 +55,7 @@ const InheritanceReportTemplate: ApplicationTemplate<
   codeOwner: CodeOwners.Juni,
   institution: m.institution,
   dataSchema: inheritanceReportSchema,
-  translationNamespaces: [configuration.translation],
+  translationNamespaces: configuration.translation,
   allowMultipleApplicationsInDraft: false,
   stateMachineConfig: {
     initial: States.prerequisites,
@@ -65,7 +65,7 @@ const InheritanceReportTemplate: ApplicationTemplate<
           name: '',
           status: 'draft',
           progress: 0,
-          lifecycle: pruneAfterDays(14),
+          lifecycle: pruneAfterDays(60),
           roles: [
             {
               id: Roles.ESTATE_INHERITANCE_APPLICANT,
@@ -114,7 +114,7 @@ const InheritanceReportTemplate: ApplicationTemplate<
           name: '',
           status: 'draft',
           progress: 0.15,
-          lifecycle: pruneAfterDays(14),
+          lifecycle: pruneAfterDays(60),
           roles: [
             {
               id: Roles.ESTATE_INHERITANCE_APPLICANT,
@@ -125,7 +125,11 @@ const InheritanceReportTemplate: ApplicationTemplate<
               actions: [{ event: 'SUBMIT', name: '', type: 'primary' }],
               write: 'all',
               delete: true,
-              api: [NationalRegistryUserApi, UserProfileApi, EstateOnEntryApi],
+              api: [
+                NationalRegistryV3UserApi,
+                UserProfileApi,
+                EstateOnEntryApi,
+              ],
             },
             {
               id: Roles.PREPAID_INHERITANCE_APPLICANT,
@@ -137,7 +141,7 @@ const InheritanceReportTemplate: ApplicationTemplate<
               write: 'all',
               delete: true,
               api: [
-                NationalRegistryUserApi,
+                NationalRegistryV3UserApi,
                 UserProfileApi,
                 EstateOnEntryApi,
                 MaritalStatusApi,
@@ -156,7 +160,7 @@ const InheritanceReportTemplate: ApplicationTemplate<
           name: 'Done',
           status: 'approved',
           progress: 1,
-          lifecycle: pruneAfterDays(30),
+          lifecycle: pruneAfterDays(60),
           onEntry: defineTemplateApi({
             action: ApiActions.completeApplication,
             throwOnError: true,

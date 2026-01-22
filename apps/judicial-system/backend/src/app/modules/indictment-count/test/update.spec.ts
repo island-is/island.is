@@ -1,10 +1,10 @@
 import { Transaction } from 'sequelize'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { createTestingIndictmentCountModule } from './createTestingIndictmentCountModule'
 
+import { IndictmentCount } from '../../repository'
 import { UpdateIndictmentCountDto } from '../dto/updateIndictmentCount.dto'
-import { IndictmentCount } from '../models/indictmentCount.model'
 
 interface Then {
   result: IndictmentCount | null

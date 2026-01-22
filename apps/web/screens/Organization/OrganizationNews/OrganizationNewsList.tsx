@@ -74,7 +74,7 @@ const OrganizationNewsList: Screen<OrganizationNewsListProps> = ({
   const router = useRouter()
   const { getMonthByIndex } = useDateUtils()
   useContentfulId(organizationPage.id)
-  useLocalLinkTypeResolver()
+  useLocalLinkTypeResolver('organizationnewsoverview')
 
   const n = useNamespaceStrict(namespace)
 
@@ -243,6 +243,7 @@ OrganizationNewsList.getProps = async ({ apolloClient, query, locale }) => {
           input: {
             slug: organizationPageSlug,
             lang: locale as Locale,
+            subpageSlugs: [locale === 'is' ? 'frett' : 'news'],
           },
         },
       }),

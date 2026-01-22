@@ -1,12 +1,16 @@
-import { uuid } from 'uuidv4'
+import { Transaction } from 'sequelize'
+import { v4 as uuid } from 'uuid'
 
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import { Gender, User } from '@island.is/judicial-system/types'
 
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
 
-import { Case } from '../../../case'
-import { Defendant } from '../../models/defendant.model'
+import {
+  Case,
+  Defendant,
+  DefendantRepositoryService,
+} from '../../../repository'
 
 interface Then {
   result: Defendant
@@ -29,17 +33,28 @@ describe('DefendantController - Create', () => {
   const createdDefendant = { id: defendantId, caseId }
 
   let mockMessageService: MessageService
-  let mockDefendantModel: typeof Defendant
+  let mockDefendantRepositoryService: DefendantRepositoryService
+  let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { messageService, defendantModel, defendantController } =
-      await createTestingDefendantModule()
+    const {
+      sequelize,
+      messageService,
+      defendantRepositoryService,
+      defendantController,
+    } = await createTestingDefendantModule()
 
     mockMessageService = messageService
-    mockDefendantModel = defendantModel
+    mockDefendantRepositoryService = defendantRepositoryService
 
-    const mockCreate = mockDefendantModel.create as jest.Mock
+    const mockTransaction = sequelize.transaction as jest.Mock
+    transaction = {} as Transaction
+    mockTransaction.mockImplementationOnce(
+      (fn: (transaction: Transaction) => unknown) => fn(transaction),
+    )
+
+    const mockCreate = mockDefendantRepositoryService.create as jest.Mock
     mockCreate.mockResolvedValue(createdDefendant)
 
     givenWhenThen = async (courtCaseNumber?: string) => {
@@ -67,10 +82,10 @@ describe('DefendantController - Create', () => {
     })
 
     it('should create a defendant', () => {
-      expect(mockDefendantModel.create).toHaveBeenCalledWith({
-        ...defendantToCreate,
-        caseId,
-      })
+      expect(mockDefendantRepositoryService.create).toHaveBeenCalledWith(
+        { ...defendantToCreate, caseId },
+        { transaction },
+      )
     })
 
     it('should return defendant', () => {
@@ -103,7 +118,7 @@ describe('DefendantController - Create', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockCreate = mockDefendantModel.create as jest.Mock
+      const mockCreate = mockDefendantRepositoryService.create as jest.Mock
       mockCreate.mockRejectedValueOnce(new Error('Some error'))
 
       then = await givenWhenThen()

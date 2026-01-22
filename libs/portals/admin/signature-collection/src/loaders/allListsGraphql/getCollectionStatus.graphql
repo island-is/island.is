@@ -13,6 +13,8 @@ query collection($input: SignatureCollectionBaseInput!) {
       min
       max
       isActive
+      collectionId
+      collectionStatus
     }
     candidates {
       id
@@ -21,6 +23,9 @@ query collection($input: SignatureCollectionBaseInput!) {
       phone
       email
       collectionId
+      ownerName
+      ownerBirthDate
+      hasActiveLists
     }
   }
 }

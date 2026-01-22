@@ -1,12 +1,14 @@
 import { Tag } from '@island.is/island-ui/core'
+import { useIntl } from 'react-intl'
+import { m } from '../../../lib'
 
 export const ApplicationCardTag = () => {
-  const label = 'test label'
+  const { formatMessage } = useIntl()
   const variant = 'blue'
 
   return (
     <Tag outlined={false} variant={variant} disabled>
-      {label}
+      {formatMessage(m.tagsDraft)}
     </Tag>
   )
 }

@@ -10,6 +10,7 @@ import {
   UserProfileApi,
   ApplicationConfigurations,
   defineTemplateApi,
+  IdentityApi,
 } from '@island.is/application/types'
 import { CodeOwners } from '@island.is/shared/constants'
 import { dataSchema } from './dataSchema'
@@ -18,14 +19,14 @@ import {
   EphemeralStateLifeCycle,
   getValueViaPath,
 } from '@island.is/application/core'
-import { assign } from 'xstate'
 import * as m from './messages'
 import { NationalRegistryApi, rentalAgreementsApi } from '../dataProviders'
 import { Events, Roles, States, TemplateApiActions } from '../types'
 import { Contract } from '@island.is/clients/hms-rental-agreement'
 import { Features } from '@island.is/feature-flags'
 import { AuthDelegationType } from '@island.is/shared/types'
-import { ApiScope } from '@island.is/auth/scopes'
+import { ApiScope, HmsScope } from '@island.is/auth/scopes'
+import { isCompany } from 'kennitala'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -35,11 +36,10 @@ const template: ApplicationTemplate<
   type: ApplicationTypes.TERMINATE_RENTAL_AGREEMENT,
   name: m.miscMessages.applicationName,
   codeOwner: CodeOwners.NordaApplications,
-  institution: 'Húsnæðis og mannvirkjastofnun',
+  institution: 'HMS',
   featureFlag: Features.TerminateRentalAgreementEnabled,
-  translationNamespaces: [
+  translationNamespaces:
     ApplicationConfigurations.TerminateRentalAgreement.translation,
-  ],
   dataSchema,
   allowedDelegations: [
     {
@@ -52,7 +52,7 @@ const template: ApplicationTemplate<
       type: AuthDelegationType.Custom,
     },
   ],
-  requiredScopes: [ApiScope.hms],
+  requiredScopes: [HmsScope.properties, ApiScope.hms],
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -75,6 +75,20 @@ const template: ApplicationTemplate<
               write: 'all',
               read: 'all',
               api: [UserProfileApi, NationalRegistryApi, rentalAgreementsApi],
+              delete: true,
+            },
+            {
+              id: Roles.PROCURER,
+              formLoader: () =>
+                import('../forms/prerequisitesProcureForm').then((module) =>
+                  Promise.resolve(module.PrerequisitesProcureForm),
+                ),
+              actions: [
+                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
+              ],
+              write: 'all',
+              read: 'all',
+              api: [UserProfileApi, IdentityApi, rentalAgreementsApi],
               delete: true,
             },
             {
@@ -120,6 +134,19 @@ const template: ApplicationTemplate<
               delete: true,
             },
             {
+              id: Roles.PROCURER,
+              formLoader: () =>
+                import('../forms/mainForm').then((module) =>
+                  Promise.resolve(module.MainForm),
+                ),
+              actions: [
+                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
+              ],
+              write: 'all',
+              read: 'all',
+              delete: true,
+            },
+            {
               id: Roles.NOCONTRACTS,
               formLoader: () =>
                 import('../forms/noContractsForm').then((module) =>
@@ -151,6 +178,52 @@ const template: ApplicationTemplate<
               action: TemplateApiActions.submitApplication,
             }),
           ],
+          actionCard: {
+            tag: {
+              label: m.miscMessages.actionCardDone,
+            },
+            pendingAction(application) {
+              const contractNo = getValueViaPath<string>(
+                application.answers,
+                'rentalAgreement.answer',
+              )
+              const contracts = getValueViaPath<Array<Contract>>(
+                application.externalData,
+                'getRentalAgreements.data',
+              )
+              const contract = contracts?.find(
+                (contract) =>
+                  contract.contractId === parseInt(contractNo ?? ''),
+              )
+              const contractProperty = contract?.contractProperty?.[0]
+              if (
+                getValueViaPath<string>(
+                  application.answers,
+                  'terminationType.answer',
+                ) === 'cancelation'
+              ) {
+                return {
+                  displayStatus: 'success',
+                  title: {
+                    ...m.miscMessages.actioncardDoneTitleCancelationWithAddress,
+                    values: {
+                      address: contractProperty?.streetAndHouseNumber,
+                    },
+                  },
+                }
+              } else {
+                return {
+                  displayStatus: 'success',
+                  title: {
+                    ...m.miscMessages.actioncardDoneTitleTerminationWithAddress,
+                    values: {
+                      address: contractProperty?.streetAndHouseNumber,
+                    },
+                  },
+                }
+              }
+            },
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -159,36 +232,22 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.completedForm),
                 ),
               read: 'all',
-              delete: true,
             },
             {
-              // This state is set for development purposes, shouldn't be reachable on prod
-              id: Roles.NOCONTRACTS,
+              id: Roles.PROCURER,
               formLoader: () =>
                 import('../forms/completedForm').then((module) =>
                   Promise.resolve(module.completedForm),
                 ),
               read: 'all',
-              delete: true,
             },
           ],
         },
       },
     },
   },
-  stateMachineOptions: {
-    actions: {
-      clearAssignees: assign((context) => ({
-        ...context,
-        application: {
-          ...context.application,
-          assignees: [],
-        },
-      })),
-    },
-  },
   mapUserToRole: (
-    _nationalId: string,
+    nationalId: string,
     application: Application,
   ): ApplicationRole | undefined => {
     const contracts = getValueViaPath<Array<Contract>>(
@@ -199,7 +258,14 @@ const template: ApplicationTemplate<
       return Roles.NOCONTRACTS
     }
 
-    return Roles.APPLICANT
+    if (isCompany(nationalId)) {
+      return Roles.PROCURER
+    }
+
+    if (nationalId === application.applicant) {
+      return Roles.APPLICANT
+    }
+    return undefined
   },
 }
 

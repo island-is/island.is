@@ -13,15 +13,19 @@ const config: Meta<typeof InfoCard> = {
       control: { type: 'text' },
       description: 'Description of the InfoCard',
     },
-
+    to: {
+      control: { type: 'text' },
+      description: 'Link URL for the InfoCard',
+    },
     size: {
       control: { type: 'select' },
       options: ['small', 'large'],
       description: 'Size of the InfoCard',
     },
     detail: {
-      control: { type: 'array' },
+      control: { type: 'object' },
       description: 'Array of details to display in the InfoCard',
+      options: [{ label: 'Label 1', value: 'Value 1' }],
     },
     appointment: {
       control: { type: 'object' },
@@ -32,7 +36,7 @@ const config: Meta<typeof InfoCard> = {
       description: 'Tooltip text for the InfoCard',
     },
     tags: {
-      control: { type: 'array' },
+      control: { type: 'object' },
       description: 'Array of tags to display on the InfoCard',
     },
     img: {
@@ -60,7 +64,10 @@ export const Default: StoryObj<InfoCardProps> = {
 Default.args = {
   title: 'Sample Title',
   description: 'This is a sample description for the InfoCard component.',
+  size: 'large',
+  variant: 'default',
 }
+
 export const Detail = () => (
   <InfoCard
     title="Detail card"
@@ -68,13 +75,15 @@ export const Detail = () => (
     detail={[
       { label: 'Today', value: '1.janúar 2025' },
       { label: 'Tomorrow', value: '2.janúar 2025' },
+      { label: 'Friday', value: '3.janúar 2025' },
+      { label: 'Saturday', value: '4.janúar 2025' },
     ]}
   />
 )
 
-export const LargeWithImage = () => (
+export const WithImage = () => (
   <InfoCard
-    title="Detail card"
+    title="Detail card w. image"
     description="This is a card with details"
     detail={[
       { label: 'Today', value: '1.janúar 2025' },
@@ -83,5 +92,21 @@ export const LargeWithImage = () => (
     img="https://placehold.co/400x200"
     variant="detail"
     size="large"
+  />
+)
+
+export const Appointment = () => (
+  <InfoCard
+    size="small"
+    title="Doctor's Appointment"
+    description="Annual checkup with Dr. Jónsdóttir"
+    appointment={{
+      date: '15. janúar 2026',
+      time: '14:30',
+      location: {
+        label: 'Heilsugæslustöðin Suðurnesjum',
+      },
+    }}
+    variant="appointment"
   />
 )

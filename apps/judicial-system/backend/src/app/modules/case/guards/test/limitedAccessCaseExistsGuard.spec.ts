@@ -1,5 +1,5 @@
 import { Op } from 'sequelize'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import {
   BadRequestException,
@@ -11,8 +11,8 @@ import { CaseState } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../../test/createTestingCaseModule'
 
+import { CaseRepositoryService } from '../../../repository'
 import { attributes, include } from '../../limitedAccessCase.service'
-import { Case } from '../../models/case.model'
 import { LimitedAccessCaseExistsGuard } from '../limitedAccessCaseExists.guard'
 
 interface Then {
@@ -24,14 +24,14 @@ type GivenWhenThen = () => Promise<Then>
 
 describe('Restricted Case Exists Guard', () => {
   const mockRequest = jest.fn()
-  let mockCaseModel: typeof Case
+  let mockCaseRepositoryService: CaseRepositoryService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { caseModel, limitedAccessCaseService } =
+    const { caseRepositoryService, limitedAccessCaseService } =
       await createTestingCaseModule()
 
-    mockCaseModel = caseModel
+    mockCaseRepositoryService = caseRepositoryService
 
     givenWhenThen = async (): Promise<Then> => {
       const guard = new LimitedAccessCaseExistsGuard(limitedAccessCaseService)
@@ -57,14 +57,14 @@ describe('Restricted Case Exists Guard', () => {
 
     beforeEach(async () => {
       mockRequest.mockReturnValueOnce(request)
-      const mockFindOne = mockCaseModel.findOne as jest.Mock
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
       mockFindOne.mockResolvedValueOnce(theCase)
 
       then = await givenWhenThen()
     })
 
     it('should activate', () => {
-      expect(mockCaseModel.findOne).toHaveBeenCalledWith({
+      expect(mockCaseRepositoryService.findOne).toHaveBeenCalledWith({
         attributes,
         include,
         where: {

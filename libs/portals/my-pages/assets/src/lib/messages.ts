@@ -17,6 +17,7 @@ export const messages = defineMessages({
     id: 'sp.assets:holdings',
     defaultMessage: 'Eignarhlutfall',
   },
+
   status: {
     id: 'sp.assets:status',
     defaultMessage: 'Staða',
@@ -201,6 +202,10 @@ export const vehicleMessage = defineMessages({
   vehicleBulkMileageIntro: {
     id: 'sp.vehicles:vehicle-bulk-mileage-intro',
     defaultMessage: `Yfirlit yfir skráða kílómetrastöðu. Að minnsta kosti 30 dagar verða að líða á milli skráningar kílómetrastöðu, <href>sjá nánar um það hér.</href>`,
+  },
+  notAllowedBulkMileage: {
+    id: 'sp.vehicles:not-allowed-bulk-mileage',
+    defaultMessage: 'Þú hefur ekki aðgang að magnskráningu.',
   },
   historyIntro: {
     id: 'sp.vehicles:vehicles-history-intro',
@@ -879,6 +884,10 @@ export const vehicleMessage = defineMessages({
     id: 'sp.vehicles:add-operator',
     defaultMessage: 'Breyta umráðamanni',
   },
+  registerMileCar: {
+    id: 'sp.vehicles:register-mile-car',
+    defaultMessage: 'Skrá ökutæki með mílumæli',
+  },
   renewPrivateRegistration: {
     id: 'sp.vehicles:renew-private-registration',
     defaultMessage: 'Endurnýja einkamerki',
@@ -1492,6 +1501,10 @@ export const urls = defineMessages({
   operator: {
     id: 'sp.vehicles:url-operator',
     defaultMessage: 'https://island.is/umsoknir/umradamadur-okutaekis',
+  },
+  registerMileCar: {
+    id: 'sp.vehicles:url-milecar',
+    defaultMessage: 'https://island.is/umsoknir/skraning-milubila',
   },
   regNumber: {
     id: 'sp.vehicles:url-registration-number',

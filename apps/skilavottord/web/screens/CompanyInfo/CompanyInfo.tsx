@@ -59,7 +59,7 @@ const CompanyInfo: FC<React.PropsWithChildren<unknown>> = () => {
   const partnerName = activePartner.length > 0 && activePartner[0].companyName
 
   return (
-    <AuthGuard permission="companyInfo" loading={loading}>
+    <AuthGuard permission="companyInfo" loading={loading && !data}>
       <PartnerPageLayout
         side={
           <Sidenav

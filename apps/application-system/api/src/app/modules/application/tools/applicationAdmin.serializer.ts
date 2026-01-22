@@ -3,6 +3,7 @@ import {
   NestInterceptor,
   ExecutionContext,
   CallHandler,
+  Inject,
 } from '@nestjs/common'
 import { instanceToPlain, plainToInstance } from 'class-transformer'
 import { map } from 'rxjs/operators'
@@ -34,12 +35,18 @@ import {
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { PaymentService } from '@island.is/application/api/payment'
 import {
-  getApplicantName,
+  getAdminDataForAdminPortal,
+  getApplicationGenericNameTranslationString,
   getApplicationNameTranslationString,
   getApplicationStatisticsNameTranslationString,
   getPaymentStatusForAdmin,
 } from '../utils/application'
-import { ApplicationListAdminResponseDto } from '../dto/applicationAdmin.response.dto'
+import {
+  ApplicationListAdminResponseDto,
+  ApplicationTypeAdmin,
+} from '../dto/applicationAdmin.response.dto'
+import { IdentityClientService } from '@island.is/clients/identity'
+import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 @Injectable()
 export class ApplicationAdminSerializer
@@ -51,6 +58,8 @@ export class ApplicationAdminSerializer
     private historyBuilder: HistoryBuilder,
     private featureFlagService: FeatureFlagService,
     private paymentService: PaymentService,
+    private identityService: IdentityClientService,
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
   ) {}
 
   intercept(
@@ -108,9 +117,18 @@ export class ApplicationAdminSerializer
     showHistory = true,
   ) {
     const application = model.toJSON() as BaseApplication
-    const template = await getApplicationTemplateByTypeId(
-      application.typeId as ApplicationTypes,
-    )
+    let template
+    try {
+      template = await getApplicationTemplateByTypeId(
+        application.typeId as ApplicationTypes,
+      )
+    } catch (error) {
+      this.logger.warn(
+        `Could not serialize application with id ${application.id}`,
+        error,
+      )
+      return undefined
+    }
     const helper = new ApplicationTemplateHelper(application, template)
     const actionCardMeta = helper.getApplicationActionCardMeta()
     const namespaces = await getApplicationTranslationNamespaces(application)
@@ -119,6 +137,16 @@ export class ApplicationAdminSerializer
     const userRole = template.mapUserToRole(nationalId, application) ?? ''
 
     const roleInState = helper.getRoleInState(userRole)
+
+    const applicantActors = await Promise.all(
+      application.applicantActors.map(
+        async (actorNationalId) =>
+          (await this.identityService.tryToGetNameFromNationalId(
+            actorNationalId,
+            true,
+          )) ?? actorNationalId,
+      ),
+    )
     const actors =
       application.applicant === nationalId ? application.applicantActors : []
 
@@ -128,6 +156,7 @@ export class ApplicationAdminSerializer
           userRole,
           intl.formatMessage,
           nationalId,
+          true,
         )
       : undefined
 
@@ -136,6 +165,10 @@ export class ApplicationAdminSerializer
           historyModel,
           intl.formatMessage,
           helper,
+          application,
+          userRole,
+          nationalId,
+          true,
         )
       : undefined
 
@@ -146,6 +179,7 @@ export class ApplicationAdminSerializer
     const dto = plainToInstance(ApplicationListAdminResponseDto, {
       ...application,
       ...helper.getReadableAnswersAndExternalData(userRole),
+      applicantActors,
       applicationActors: actors,
       actionCard: {
         title: actionCardMeta.title
@@ -178,7 +212,17 @@ export class ApplicationAdminSerializer
       answers: [],
       externalData: [],
       paymentStatus: getPaymentStatusForAdmin(payment),
-      applicantName: getApplicantName(application),
+      applicantName:
+        (await this.identityService.tryToGetNameFromNationalId(
+          application.applicant,
+          false,
+        )) ?? '',
+      adminData: await getAdminDataForAdminPortal(
+        template,
+        application,
+        intl.formatMessage,
+        this.identityService,
+      ),
     })
     return instanceToPlain(dto)
   }
@@ -206,7 +250,73 @@ export class ApplicationAdminSerializer
           showHistory,
         ),
       ),
+    ).then((results) => results.filter((result) => result !== undefined))
+  }
+}
+
+@Injectable()
+export class ApplicationTypeAdminSerializer
+  implements NestInterceptor<ApplicationTypeAdmin, Promise<unknown>>
+{
+  constructor(
+    private intlService: IntlService,
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
+  ) {}
+
+  intercept(
+    context: ExecutionContext,
+    next: CallHandler<ApplicationTypeAdmin>,
+  ): Observable<Promise<unknown>> {
+    const locale = getCurrentLocale(context)
+
+    return next.handle().pipe(
+      map(async (res: ApplicationTypeAdmin | Array<ApplicationTypeAdmin>) => {
+        const isArray = Array.isArray(res)
+
+        if (isArray) {
+          const applicationTypes = res as Array<ApplicationTypeAdmin>
+          return this.serializeArray(applicationTypes, locale)
+        } else {
+          return this.serialize(res as ApplicationTypeAdmin, locale)
+        }
+      }),
     )
+  }
+
+  async serialize(type: ApplicationTypeAdmin, locale: Locale) {
+    let template
+
+    try {
+      template = await getApplicationTemplateByTypeId(
+        type.id as ApplicationTypes,
+      )
+    } catch (error) {
+      this.logger.warn(
+        `Could not serialize application type: ${type.id}`,
+        error,
+      )
+      return undefined
+    }
+
+    const namespaces = [
+      'application.system',
+      ...(template?.translationNamespaces ?? []),
+    ]
+    const intl = await this.intlService.useIntl(namespaces, locale)
+    const name = template
+      ? getApplicationGenericNameTranslationString(template, intl.formatMessage)
+      : ''
+
+    return instanceToPlain({ id: type.id, name: name ?? '' })
+  }
+
+  async serializeArray(
+    applicationTypes: ApplicationTypeAdmin[],
+    locale: Locale,
+  ) {
+    return Promise.all(
+      applicationTypes.map((item) => this.serialize(item, locale)),
+    ).then((results) => results.filter((result) => result !== undefined))
   }
 }
 
@@ -266,6 +376,7 @@ export class ApplicationAdminStatisticsSerializer
       )
     )
       .filter(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (item): item is PromiseFulfilledResult<Record<string, any>> =>
           item.status === 'fulfilled',
       )

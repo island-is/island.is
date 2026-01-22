@@ -10,7 +10,9 @@ import { useIntl } from 'react-intl'
 import { SingleValue } from 'react-select'
 import { InputMask } from '@react-input/mask'
 
-import { Box, Input, Select } from '@island.is/island-ui/core'
+import { Input, Select } from '@island.is/island-ui/core'
+import { PHONE_NUMBER } from '@island.is/judicial-system/consts'
+import { formatPhoneNumber } from '@island.is/judicial-system/formatters'
 import { type Lawyer } from '@island.is/judicial-system/types'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { replaceTabs } from '@island.is/judicial-system-web/src/utils/formatters'
@@ -26,13 +28,18 @@ import {
   phoneNumberLabelStrings,
   placeholderStrings,
 } from './InputAdvocate.strings'
+import { grid } from '../../utils/styles/recipes.css'
 
 interface Props {
-  advocateType: 'defender' | 'spokesperson' | 'lawyer' | 'legalRightsProtector'
+  advocateType:
+    | 'defender'
+    | 'spokesperson'
+    | 'lawyer'
+    | 'legalRightsProtector'
+    | 'litigator'
   name: string | undefined | null
   email: string | undefined | null
   phoneNumber: string | undefined | null
-  onAdvocateNotFound?: (advocateNotFound: boolean) => void
   onAdvocateChange: (
     name: string | null,
     nationalId: string | null,
@@ -66,9 +73,6 @@ const InputAdvocate: FC<Props> = ({
   // A function that is called when a new advocate is selected.
   onAdvocateChange,
 
-  // A function that is called if an advocate is not found.
-  onAdvocateNotFound,
-
   // A function that is called when an advocate email is changed.
   onEmailChange,
 
@@ -90,15 +94,16 @@ const InputAdvocate: FC<Props> = ({
 
   const { lawyers } = useContext(LawyerRegistryContext)
 
-  const options = useMemo(
-    () =>
-      lawyers?.map((l: Lawyer) => ({
-        label: `${l.name}${l.practice ? ` (${l.practice})` : ''}`,
-        value: l.email,
-      })),
+  const options = useMemo(() => {
+    if (!lawyers || lawyers.length === 0) {
+      return []
+    }
 
-    [lawyers],
-  )
+    return lawyers?.map((l) => ({
+      label: `${l.name}${l.practice ? ` (${l.practice})` : ''}`,
+      value: l.email,
+    }))
+  }, [lawyers])
 
   const handleAdvocateChange = useCallback(
     (selectedOption: SingleValue<ReactSelectOption>) => {
@@ -108,9 +113,7 @@ const InputAdvocate: FC<Props> = ({
       let phoneNumber: string | null = null
 
       if (selectedOption) {
-        const { label, value, __isNew__: defenderNotFound } = selectedOption
-
-        onAdvocateNotFound && onAdvocateNotFound(defenderNotFound || false)
+        const { label, value } = selectedOption
 
         const lawyer = lawyers?.find(
           (l: Lawyer) => l.email === (value as string),
@@ -126,7 +129,7 @@ const InputAdvocate: FC<Props> = ({
       setPhoneNumberErrorMessage('')
       onAdvocateChange(name, nationalId, email, phoneNumber)
     },
-    [onAdvocateChange, onAdvocateNotFound, lawyers],
+    [onAdvocateChange, lawyers],
   )
 
   const handleEmailChange = useCallback(
@@ -145,7 +148,7 @@ const InputAdvocate: FC<Props> = ({
     [emailErrorMessage, onEmailChange],
   )
 
-  const handleLEmailBlur = useCallback(
+  const handleEmailBlur = useCallback(
     (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       const email = replaceTabs(event.target.value)
 
@@ -188,44 +191,39 @@ const InputAdvocate: FC<Props> = ({
   )
 
   return (
-    <>
-      <Box marginBottom={2}>
-        <Select
-          name="advocateName"
-          icon="search"
-          options={options}
-          label={formatMessage(nameLabelStrings[advocateType])}
-          placeholder={formatMessage(placeholderStrings.namePlaceholder)}
-          value={
-            lawyerName ? { label: lawyerName, value: lawyerEmail ?? '' } : null
-          }
-          onChange={handleAdvocateChange}
-          noOptionsMessage="Ekki náðist samband við lögmannaskrá LMFÍ."
-          isDisabled={Boolean(disabled)}
-          isCreatable
-          isClearable
-        />
-      </Box>
-      <Box marginBottom={2}>
-        <Input
-          data-testid="defenderEmail"
-          name="defenderEmail"
-          autoComplete="off"
-          label={formatMessage(emailLabelStrings[advocateType])}
-          placeholder={formatMessage(placeholderStrings.emailPlaceholder)}
-          value={lawyerEmail ?? ''}
-          errorMessage={emailErrorMessage}
-          hasError={emailErrorMessage !== ''}
-          disabled={Boolean(disabled)}
-          onChange={handleEmailChange}
-          onBlur={handleLEmailBlur}
-        />
-      </Box>
+    <div className={grid({ gap: 2 })}>
+      <Select
+        name="advocateName"
+        icon="search"
+        options={options}
+        label={formatMessage(nameLabelStrings[advocateType])}
+        placeholder={formatMessage(placeholderStrings.namePlaceholder)}
+        value={
+          lawyerName ? { label: lawyerName, value: lawyerEmail ?? '' } : null
+        }
+        onChange={handleAdvocateChange}
+        noOptionsMessage="Lögmaður fannst ekki í lögmannaskrá LMFÍ."
+        isDisabled={Boolean(disabled)}
+        isClearable
+      />
+      <Input
+        data-testid="defenderEmail"
+        name="defenderEmail"
+        autoComplete="off"
+        label={formatMessage(emailLabelStrings[advocateType])}
+        placeholder={formatMessage(placeholderStrings.emailPlaceholder)}
+        value={lawyerEmail ?? ''}
+        errorMessage={emailErrorMessage}
+        hasError={emailErrorMessage !== ''}
+        disabled={Boolean(disabled)}
+        onChange={handleEmailChange}
+        onBlur={handleEmailBlur}
+      />
       <InputMask
         component={Input}
         replacement={{ _: /\d/ }}
-        mask="___-____"
-        value={lawyerPhoneNumber || ''}
+        mask={PHONE_NUMBER}
+        value={formatPhoneNumber(lawyerPhoneNumber) ?? ''}
         disabled={Boolean(disabled)}
         onChange={handlePhoneNumberChange}
         onBlur={handlePhoneNumberBlur}
@@ -237,7 +235,7 @@ const InputAdvocate: FC<Props> = ({
         errorMessage={phoneNumberErrorMessage}
         hasError={phoneNumberErrorMessage !== ''}
       />
-    </>
+    </div>
   )
 }
 

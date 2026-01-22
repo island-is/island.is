@@ -1,33 +1,33 @@
 import { FormSystemField } from '@island.is/api/schema'
 import {
-  GridRow as Row,
   GridColumn as Column,
   PhoneInput,
+  GridRow as Row,
 } from '@island.is/island-ui/core'
-import { useIntl } from 'react-intl'
+import { useLocale } from '@island.is/localization'
+import { Locale } from '@island.is/shared/types'
 import { Dispatch } from 'react'
+import { Controller, useFormContext } from 'react-hook-form'
 import { Action, m } from '../../../lib'
 import { getValue } from '../../../lib/getValue'
-import { Locale } from '@island.is/shared/types'
-import { useFormContext, Controller } from 'react-hook-form'
 
 interface Props {
   item: FormSystemField
   dispatch?: Dispatch<Action>
-  lang?: 'is' | 'en'
 }
 
 const PHONE_REGEX = /^[0-9+\-() ]{7,20}$/
 
-export const PhoneNumber = ({ item, dispatch, lang = 'is' }: Props) => {
-  const { locale, formatMessage } = useIntl()
+export const PhoneNumber = ({ item, dispatch }: Props) => {
+  const { locale, formatMessage, lang } = useLocale()
   const { control } = useFormContext()
 
   return (
     <Row>
       <Column>
         <Controller
-          name={item.id}
+          key={item.id}
+          name={`${item.id}.phoneNumber`}
           control={control}
           defaultValue={getValue(item, 'phoneNumber') ?? ''}
           rules={{

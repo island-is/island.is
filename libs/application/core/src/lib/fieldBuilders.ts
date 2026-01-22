@@ -53,6 +53,7 @@ import {
   OverviewField,
   CopyLinkField,
   VehiclePermnoWithInfoField,
+  MaybeWithAnswersAndExternalData,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
 import { Colors } from '@island.is/island-ui/theme'
@@ -81,6 +82,7 @@ const extractCommonFields = (
     marginBottom,
     marginTop,
     clearOnChange,
+    clearOnChangeDefaultValue,
     setOnChange,
   } = data
 
@@ -98,6 +100,7 @@ const extractCommonFields = (
     marginBottom,
     marginTop,
     clearOnChange,
+    clearOnChangeDefaultValue,
     setOnChange,
   }
 }
@@ -112,6 +115,8 @@ export const buildCheckboxField = (
     required,
     backgroundColor = 'blue',
     spacing,
+    clearOnChange,
+    clearOnChangeDefaultValue,
   } = data
   return {
     ...extractCommonFields(data),
@@ -122,6 +127,8 @@ export const buildCheckboxField = (
     options,
     required,
     spacing,
+    clearOnChange,
+    clearOnChangeDefaultValue,
     type: FieldTypes.CHECKBOX,
     component: FieldComponents.CHECKBOX,
   }
@@ -253,6 +260,7 @@ export const buildAsyncSelectField = (
     isMulti,
     updateOnSelect,
     isClearable,
+    required,
   } = data
 
   return {
@@ -269,6 +277,7 @@ export const buildAsyncSelectField = (
     isMulti,
     updateOnSelect,
     isClearable,
+    required,
   }
 }
 
@@ -314,10 +323,12 @@ export const buildTextField = (
     rightAlign,
     tooltip,
     onChange,
+    allowNegative,
   } = data
   return {
     ...extractCommonFields(data),
     children: undefined,
+    allowNegative,
     placeholder,
     backgroundColor,
     variant,
@@ -528,6 +539,8 @@ export const buildSubmitField = (data: {
   marginBottom?: BoxProps['marginBottom']
   marginTop?: BoxProps['marginTop']
   refetchApplicationAfterSubmit?: boolean | ((event?: string) => boolean)
+  renderLongErrors?: boolean
+  formatLongErrorMessage?: (message: string) => string
   actions: CallToAction[]
   condition?: Condition
 }): SubmitField => {
@@ -540,6 +553,8 @@ export const buildSubmitField = (data: {
     refetchApplicationAfterSubmit,
     marginTop,
     marginBottom,
+    renderLongErrors = false,
+    formatLongErrorMessage,
   } = data
   return {
     children: undefined,
@@ -553,6 +568,8 @@ export const buildSubmitField = (data: {
       typeof refetchApplicationAfterSubmit !== 'undefined'
         ? refetchApplicationAfterSubmit
         : false,
+    renderLongErrors,
+    formatLongErrorMessage,
     marginTop,
     marginBottom,
     type: FieldTypes.SUBMIT,
@@ -594,6 +611,16 @@ export const buildFieldRequired = (
     return maybeRequired(application)
   }
   return maybeRequired
+}
+
+export const buildFieldReadOnly = (
+  application: Application,
+  maybeReadOnly?: MaybeWithAnswersAndExternalData<boolean>,
+) => {
+  if (typeof maybeReadOnly === 'function') {
+    return maybeReadOnly(application.answers, application.externalData)
+  }
+  return maybeReadOnly
 }
 
 export const buildRedirectToServicePortalField = (data: {
@@ -664,8 +691,13 @@ export const buildExpandableDescriptionField = (
 export const buildAlertMessageField = (
   data: Omit<AlertMessageField, 'type' | 'component' | 'children'>,
 ): AlertMessageField => {
-  const { message, alertType, links, shouldBlockInSetBeforeSubmitCallback } =
-    data
+  const {
+    message,
+    alertType,
+    links,
+    shouldBlockInSetBeforeSubmitCallback,
+    allowMultipleSetBeforeSubmitCallbacks,
+  } = data
   return {
     ...extractCommonFields(data),
     children: undefined,
@@ -675,6 +707,8 @@ export const buildAlertMessageField = (
     component: FieldComponents.ALERT_MESSAGE,
     links,
     shouldBlockInSetBeforeSubmitCallback,
+    allowMultipleSetBeforeSubmitCallbacks,
+    doesNotRequireAnswer: data.doesNotRequireAnswer ?? true,
   }
 }
 
@@ -704,13 +738,26 @@ export const buildLinkField = (
 export const buildPaymentChargeOverviewField = (
   data: Omit<PaymentChargeOverviewField, 'type' | 'component' | 'children'>,
 ): PaymentChargeOverviewField => {
-  const { id, forPaymentLabel, totalLabel, getSelectedChargeItems } = data
+  const {
+    id,
+    forPaymentLabel,
+    totalLabel,
+    quantityLabel,
+    quantityUnitLabel,
+    unitPriceLabel,
+    totalPerUnitLabel,
+    getSelectedChargeItems,
+  } = data
   return {
     ...extractCommonFields(data),
     children: undefined,
     id,
     forPaymentLabel,
     totalLabel,
+    quantityLabel,
+    quantityUnitLabel,
+    unitPriceLabel,
+    totalPerUnitLabel,
     getSelectedChargeItems,
     type: FieldTypes.PAYMENT_CHARGE_OVERVIEW,
     component: FieldComponents.PAYMENT_CHARGE_OVERVIEW,
@@ -742,6 +789,7 @@ export const buildImageField = (
     imagePosition,
     type: FieldTypes.IMAGE,
     component: FieldComponents.IMAGE,
+    doesNotRequireAnswer: data.doesNotRequireAnswer ?? true,
   }
 }
 
@@ -799,6 +847,7 @@ export const buildHiddenInputWithWatchedValue = (
     watchValue: data.watchValue,
     title: '',
     children: undefined,
+    doesNotRequireAnswer: data.doesNotRequireAnswer ?? true,
   }
 }
 
@@ -823,6 +872,8 @@ export const buildHiddenInput = (
     title: '',
     children: undefined,
     defaultValue: data.defaultValue,
+    dontDefaultToEmptyString: data.dontDefaultToEmptyString,
+    doesNotRequireAnswer: data.doesNotRequireAnswer ?? true,
   }
 }
 
@@ -850,6 +901,7 @@ export const buildNationalIdWithNameField = (
     emailLabel,
     titleVariant,
     description,
+    readOnly,
   } = data
   return {
     ...extractCommonFields(data),
@@ -876,6 +928,7 @@ export const buildNationalIdWithNameField = (
     component: FieldComponents.NATIONAL_ID_WITH_NAME,
     titleVariant,
     description,
+    readOnly,
   }
 }
 
@@ -948,6 +1001,10 @@ export const buildFieldsRepeaterField = (
     removeItemButtonText,
     addItemButtonText,
     saveItemButtonText,
+    hideAddButton,
+    hideRemoveButton,
+    displayTitleAsAccordion,
+    itemCondition,
     minRows,
     maxRows,
   } = data
@@ -965,6 +1022,10 @@ export const buildFieldsRepeaterField = (
     removeItemButtonText,
     addItemButtonText,
     saveItemButtonText,
+    hideAddButton,
+    hideRemoveButton,
+    displayTitleAsAccordion,
+    itemCondition,
     minRows,
     maxRows,
   }
@@ -1169,16 +1230,19 @@ export const buildBankAccountField = (
     marginBottom,
     marginTop,
     titleVariant,
+    required,
     defaultValue,
   } = data
 
   return {
+    ...extractCommonFields(data),
     children: undefined,
     id,
     title,
     marginBottom,
     marginTop,
     titleVariant,
+    required,
     type: FieldTypes.BANK_ACCOUNT,
     component: FieldComponents.BANK_ACCOUNT,
     defaultValue,
@@ -1198,6 +1262,7 @@ export const buildOverviewField = (
     loadItems,
     attachments,
     tableData,
+    loadTableData,
     bottomLine,
     hideIfEmpty,
     displayTitleAsAccordion,
@@ -1213,6 +1278,7 @@ export const buildOverviewField = (
     loadItems,
     attachments,
     tableData,
+    loadTableData,
     bottomLine,
     hideIfEmpty,
     displayTitleAsAccordion,
@@ -1250,6 +1316,7 @@ export const buildVehiclePermnoWithInfoField = (
     errorTitle,
     fallbackErrorMessage,
     validationFailedErrorMessage,
+    isTrailer,
   } = data
 
   return {
@@ -1264,5 +1331,6 @@ export const buildVehiclePermnoWithInfoField = (
     errorTitle,
     fallbackErrorMessage,
     validationFailedErrorMessage,
+    isTrailer,
   }
 }

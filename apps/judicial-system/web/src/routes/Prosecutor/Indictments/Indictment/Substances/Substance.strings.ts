@@ -43,4 +43,5 @@ export const strings = {
   [Substance.TRIAZOLAM]: 'Tríazólam',
   [Substance.ZOLPIDEM]: 'Zolpídem',
   [Substance.ALCOHOL]: 'Áfengi',
+  [Substance.OLANZAPIN]: 'Olanzapín',
 }

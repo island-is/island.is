@@ -19,12 +19,16 @@ export class LifeEventPageSyncService
 {
   processSyncData(entries: processSyncDataInput<ILifeEventPage>) {
     // only process life event pages that we consider not to be empty and dont have circular structures
-    return entries.filter(
+    const entriesToUpdate = entries.filter(
       (entry: Entry<any>): entry is ILifeEventPage =>
         entry.sys.contentType.sys.id === 'lifeEventPage' &&
         !!entry.fields.title &&
         !isCircular(entry),
     )
+    return {
+      entriesToUpdate,
+      entriesToDelete: [],
+    }
   }
 
   doMapping(entries: ILifeEventPage[]) {

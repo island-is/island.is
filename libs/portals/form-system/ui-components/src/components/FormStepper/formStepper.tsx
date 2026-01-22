@@ -1,6 +1,7 @@
 import { FormStepperV2, Section, Text } from '@island.is/island-ui/core'
 import { FormSystemScreen, FormSystemSection } from '@island.is/api/schema'
-import { SectionTypes } from '../../lib'
+import { SectionTypes, FieldTypesEnum } from '../../lib'
+import { useLocale } from '@island.is/localization'
 
 interface Current<T> {
   data?: T
@@ -11,40 +12,54 @@ interface Props {
   sections: FormSystemSection[]
   currentSection: Current<FormSystemSection>
   currentScreen?: Current<FormSystemScreen>
+  hasSummaryScreen: boolean
 }
 
 export const FormStepper = ({
   sections,
   currentSection,
   currentScreen,
+  hasSummaryScreen,
 }: Props) => {
-  const filteredSections = sections.filter(
-    (section) => section.sectionType !== SectionTypes.PREMISES,
+  const { lang } = useLocale()
+
+  const visibleSections = (sections ?? []).filter(
+    (s) =>
+      !!s &&
+      !s.isHidden &&
+      s.sectionType !== SectionTypes.PREMISES &&
+      (s.sectionType !== SectionTypes.SUMMARY || hasSummaryScreen) &&
+      (s.sectionType !== SectionTypes.COMPLETED ||
+        currentSection.data?.sectionType === SectionTypes.COMPLETED),
   )
-  if (currentSection.index === 0) return null
+  const activeSectionId = currentSection?.data?.id
+  const activeScreenId = currentScreen?.data?.id
 
   return (
     <FormStepperV2
-      sections={filteredSections.map((section, sectionIndex) => (
+      sections={visibleSections.map((section, visIndex) => (
         <Section
-          sectionIndex={sectionIndex}
-          section={section?.name?.is ?? ''}
-          isComplete={section?.isCompleted ?? false}
-          isActive={section.id === currentSection?.data?.id}
-          key={section?.id}
-          subSections={section?.screens?.map((screen) => {
-            return (
+          key={section.id}
+          sectionIndex={visIndex}
+          section={section?.name?.[lang] ?? ''}
+          isComplete={Boolean(section?.isCompleted)}
+          isActive={section?.id === activeSectionId}
+          subSections={(section?.screens ?? [])
+            .filter((screen) => !!screen && !screen.isHidden)
+            .map((screen) => (
               <Text
-                key={screen?.id}
-                variant={
-                  screen?.id === currentScreen?.data?.id ? 'h5' : 'default'
-                }
+                key={screen?.id ?? ''}
+                variant={screen?.id === activeScreenId ? 'h5' : 'default'}
               >
-                {' '}
-                {screen?.name?.is ?? ''}
+                {section.sectionType === SectionTypes.PARTIES
+                  ? (screen?.fields ?? []).find(
+                      (f) => f?.fieldType === FieldTypesEnum.APPLICANT,
+                    )?.name?.[lang] ??
+                    screen?.name?.[lang] ??
+                    ''
+                  : screen?.name?.[lang] ?? ''}
               </Text>
-            )
-          })}
+            ))}
         />
       ))}
     />

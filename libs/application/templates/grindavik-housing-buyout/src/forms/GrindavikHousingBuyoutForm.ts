@@ -35,7 +35,7 @@ import {
   conclusionSection,
 } from '../utils'
 import { format as formatNationalId } from 'kennitala'
-import Logo from '../assets/Logo'
+import { DistrictCommissionersLogo } from '@island.is/application/assets/institution-logos'
 import addMonths from 'date-fns/addMonths'
 import {
   OTHER_PROVIDER,
@@ -54,7 +54,7 @@ const loanProvidersOptions = [
 export const GrindavikHousingBuyoutForm: Form = buildForm({
   id: 'GrindavikHousingBuyoutDraft',
   title: m.application.general.name,
-  logo: Logo,
+  logo: DistrictCommissionersLogo,
   mode: FormModes.DRAFT,
   children: [
     buildSection({

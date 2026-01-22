@@ -1,5 +1,6 @@
+import { Sequelize } from 'sequelize-typescript'
+
 import {
-  BadRequestException,
   Body,
   Controller,
   Inject,
@@ -8,6 +9,7 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common'
+import { InjectConnection } from '@nestjs/sequelize'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import type { Logger } from '@island.is/logging'
@@ -19,29 +21,18 @@ import {
   MessageType,
 } from '@island.is/judicial-system/message'
 import {
-  CaseIndictmentRulingDecision,
-  getIndictmentAppealDeadlineDate,
-  hasDatePassed,
   indictmentCases,
   investigationCases,
   restrictionCases,
-  ServiceRequirement,
 } from '@island.is/judicial-system/types'
 
-import {
-  Case,
-  CaseCompletedGuard,
-  CaseExistsGuard,
-  CaseTypeGuard,
-  CurrentCase,
-} from '../case'
+import { CaseExistsGuard, CaseTypeGuard, CurrentCase } from '../case'
+import { Case, Defendant } from '../repository'
 import { DeliverDto } from './dto/deliver.dto'
 import { InternalUpdateDefendantDto } from './dto/internalUpdateDefendant.dto'
-import { UpdateVerdictAppealDto } from './dto/updateVerdictAppeal.dto'
 import { CurrentDefendant } from './guards/defendant.decorator'
 import { DefendantExistsGuard } from './guards/defendantExists.guard'
 import { DefendantNationalIdExistsGuard } from './guards/defendantNationalIdExists.guard'
-import { Defendant } from './models/defendant.model'
 import { DeliverResponse } from './models/deliver.response'
 import { DefendantService } from './defendant.service'
 
@@ -51,6 +42,7 @@ import { DefendantService } from './defendant.service'
 export class InternalDefendantController {
   constructor(
     private readonly defendantService: DefendantService,
+    @InjectConnection() private readonly sequelize: Sequelize,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -98,68 +90,13 @@ export class InternalDefendantController {
   ): Promise<Defendant> {
     this.logger.debug(`Updating defendant info for ${caseId}`)
 
-    return this.defendantService.updateRestricted(
-      theCase,
-      defendant,
-      updatedDefendantChoice,
-    )
-  }
-
-  @UseGuards(
-    new CaseTypeGuard(indictmentCases),
-    CaseCompletedGuard,
-    DefendantNationalIdExistsGuard,
-  )
-  @Patch('defendant/:defendantNationalId/verdict-appeal')
-  @ApiOkResponse({
-    type: Defendant,
-    description: 'Updates defendant verdict appeal decision',
-  })
-  updateVerdictAppeal(
-    @Param('caseId') caseId: string,
-    @Param('defendantNationalId') _: string,
-    @CurrentCase() theCase: Case,
-    @CurrentDefendant() defendant: Defendant,
-    @Body() verdictAppeal: UpdateVerdictAppealDto,
-  ): Promise<Defendant> {
-    this.logger.debug(`Updating verdict appeal for defendant in case ${caseId}`)
-
-    if (!theCase.rulingDate) {
-      throw new BadRequestException(
-        `No verdict has been issued for case ${theCase.id}`,
-      )
-    }
-    // Validate appeal deadline
-    const serviceRequired =
-      defendant.serviceRequirement === ServiceRequirement.REQUIRED
-    const isFine =
-      theCase.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
-    const baseDate = serviceRequired
-      ? defendant.verdictViewDate
-      : theCase.rulingDate
-
-    if (!baseDate) {
-      throw new BadRequestException(
-        `Cannot register appeal – ruling date not available for case ${theCase.id}`,
-      )
-    }
-
-    const appealDeadline = getIndictmentAppealDeadlineDate(
-      new Date(baseDate),
-      isFine,
-    )
-    if (hasDatePassed(appealDeadline)) {
-      throw new BadRequestException(
-        `Appeal deadline has passed for case ${
-          theCase.id
-        }. Deadline was ${appealDeadline.toISOString()}`,
-      )
-    }
-
-    return this.defendantService.updateRestricted(
-      theCase,
-      defendant,
-      verdictAppeal,
+    return this.sequelize.transaction(async (transaction) =>
+      this.defendantService.updateRestricted(
+        theCase,
+        defendant,
+        updatedDefendantChoice,
+        transaction,
+      ),
     )
   }
 

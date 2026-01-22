@@ -69,11 +69,6 @@ export const getConfirmationOverview = (
   externalData: ExternalData,
 ): KeyValueItem[] => {
   const items: KeyValueItem[] = []
-  const name = getValueViaPath<string>(
-    externalData,
-    'nationalRegistry.data.fullName',
-  )
-
   const categories = getValueViaPath<LGBaseEntity[]>(
     externalData,
     'categories.data',
@@ -97,12 +92,6 @@ export const getConfirmationOverview = (
   const publishingDates = Array.isArray(dates)
     ? dates.map(({ date }) => date)
     : []
-
-  items.push({
-    width: 'full',
-    keyText: m.draft.sections.confirmation.sender,
-    valueText: name,
-  })
 
   if (category) {
     items.push({

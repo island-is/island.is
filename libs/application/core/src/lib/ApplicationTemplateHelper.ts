@@ -21,7 +21,9 @@ import {
   RoleInState,
   TemplateApi,
   PendingAction,
+  HistoryEventMessage,
 } from '@island.is/application/types'
+import { formatText } from './formUtils'
 
 export class ApplicationTemplateHelper<
   TContext extends ApplicationContext,
@@ -150,7 +152,9 @@ export class ApplicationTemplateHelper<
     const { initialState } = service.start()
 
     if (!initialState.nextEvents.includes(eventType)) {
-      throw new Error(`${eventType} is invalid for state ${initialState.value}`)
+      throw new Error(
+        `${eventType} is invalid for state ${initialState.value} for application ${this.application.typeId} with id ${this.application.id}`,
+      )
     }
 
     service.send(event)
@@ -274,6 +278,7 @@ export class ApplicationTemplateHelper<
     currentRole: ApplicationRole,
     formatMessage: FormatMessage,
     nationalId: string,
+    isAdmin: boolean,
     stateKey: string = this.application.state,
   ): PendingAction {
     const stateInfo = this.getApplicationStateInformation(stateKey)
@@ -287,43 +292,51 @@ export class ApplicationTemplateHelper<
     }
 
     if (typeof pendingAction === 'function') {
-      const action = pendingAction(application, currentRole, nationalId)
+      const action = pendingAction(
+        application,
+        currentRole,
+        nationalId,
+        isAdmin,
+      )
       return {
         displayStatus: action.displayStatus,
-        content: action.content ? formatMessage(action.content) : undefined,
-        title: action.title ? formatMessage(action.title) : undefined,
-        button: action.button ? formatMessage(action.button) : undefined,
+        content: action.content
+          ? formatText(action.content, application, formatMessage)
+          : undefined,
+        title: action.title
+          ? formatText(action.title, application, formatMessage)
+          : undefined,
+        button: action.button
+          ? formatText(action.button, application, formatMessage)
+          : undefined,
       }
     }
     return {
       displayStatus: pendingAction.displayStatus,
       title: pendingAction.title
-        ? formatMessage(pendingAction.title)
+        ? formatText(pendingAction.title, application, formatMessage)
         : undefined,
       content: pendingAction.content
-        ? formatMessage(pendingAction.content)
+        ? formatText(pendingAction.content, application, formatMessage)
         : undefined,
       button: pendingAction.button
-        ? formatMessage(pendingAction.button)
+        ? formatText(pendingAction.button, application, formatMessage)
         : undefined,
     }
   }
 
-  getHistoryLogs(
+  getHistoryLog(
     stateKey: string = this.application.state,
-    event: Event<TEvents>,
-  ): StaticText | undefined {
+    exitEvent: Event<TEvents>,
+  ): HistoryEventMessage | undefined {
     const stateInfo = this.getApplicationStateInformation(stateKey)
 
     const historyLogs = stateInfo?.actionCard?.historyLogs
 
     if (Array.isArray(historyLogs)) {
-      return historyLogs?.find((historyLog) => historyLog.onEvent === event)
-        ?.logMessage
+      return historyLogs?.find((historyLog) => historyLog.onEvent === exitEvent)
     } else {
-      return historyLogs?.onEvent === event
-        ? historyLogs?.logMessage
-        : undefined
+      return historyLogs?.onEvent === exitEvent ? historyLogs : undefined
     }
   }
 }

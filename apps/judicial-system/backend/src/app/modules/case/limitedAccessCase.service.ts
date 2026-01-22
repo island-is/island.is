@@ -1,14 +1,13 @@
 import archiver from 'archiver'
-import { Includeable, Op } from 'sequelize'
+import { Includeable, Op, Transaction } from 'sequelize'
 import { Writable } from 'stream'
 
 import {
+  forwardRef,
   Inject,
   Injectable,
-  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -22,6 +21,7 @@ import {
   CaseFileState,
   CaseNotificationType,
   CaseState,
+  completedIndictmentCaseStates,
   dateTypes,
   defendantEventTypes,
   eventTypes,
@@ -32,28 +32,29 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { nowFactory, uuidFactory } from '../../factories'
+import { CivilClaimantService, DefendantService } from '../defendant'
+import { FileService, getDefenceUserCaseFileCategories } from '../file'
 import {
+  Case,
+  CaseFile,
+  CaseRepositoryService,
+  CaseString,
   CivilClaimant,
-  CivilClaimantService,
+  CourtDocument,
+  CourtSession,
+  CourtSessionString,
+  DateLog,
   Defendant,
   DefendantEventLog,
-  DefendantService,
-} from '../defendant'
-import { EventLog } from '../event-log'
-import {
-  CaseFile,
-  FileService,
-  getDefenceUserCaseFileCategories,
-} from '../file'
-import { IndictmentCount } from '../indictment-count'
-import { Offense } from '../indictment-count/models/offense.model'
-import { Institution } from '../institution'
-import { Subpoena } from '../subpoena'
-import { User } from '../user'
-import { Victim } from '../victim'
-import { Case } from './models/case.model'
-import { CaseString } from './models/caseString.model'
-import { DateLog } from './models/dateLog.model'
+  EventLog,
+  IndictmentCount,
+  Institution,
+  Offense,
+  Subpoena,
+  User,
+  Verdict,
+  Victim,
+} from '../repository'
 import { PdfService } from './pdf.service'
 
 export const attributes: (keyof Case)[] = [
@@ -118,6 +119,8 @@ export const attributes: (keyof Case)[] = [
   'hasCivilClaims',
   'isCompletedWithoutRuling',
   'isRegisteredInPrisonSystem',
+  'rulingModifiedHistory',
+  'withCourtSessions',
 ]
 
 export interface LimitedAccessUpdateCase
@@ -195,11 +198,17 @@ export const include: Includeable[] = [
         separate: true,
       },
       {
+        model: Verdict,
+        as: 'verdicts',
+        required: false,
+        order: [['created', 'DESC']],
+        separate: true,
+      },
+      {
         model: DefendantEventLog,
         as: 'eventLogs',
         required: false,
         where: { eventType: defendantEventTypes },
-        order: [['created', 'DESC']],
         separate: true,
       },
     ],
@@ -213,11 +222,6 @@ export const include: Includeable[] = [
     separate: true,
   },
   {
-    model: Victim,
-    as: 'victims',
-    required: false,
-  },
-  {
     model: IndictmentCount,
     as: 'indictmentCounts',
     required: false,
@@ -226,6 +230,48 @@ export const include: Includeable[] = [
       {
         model: Offense,
         as: 'offenses',
+        required: false,
+        order: [['created', 'ASC']],
+        separate: true,
+      },
+    ],
+    separate: true,
+  },
+  {
+    model: CourtSession,
+    as: 'courtSessions',
+    required: false,
+    order: [['created', 'ASC']],
+    include: [
+      {
+        model: User,
+        as: 'judge',
+        required: false,
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: User,
+        as: 'attestingWitness',
+        required: false,
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: CourtDocument,
+        as: 'filedDocuments',
+        required: false,
+        order: [['documentOrder', 'ASC']],
+        separate: true,
+      },
+      {
+        model: CourtDocument,
+        as: 'mergedFiledDocuments',
+        required: false,
+        order: [['mergedDocumentOrder', 'ASC']],
+        separate: true,
+      },
+      {
+        model: CourtSessionString,
+        as: 'courtSessionStrings',
         required: false,
         order: [['created', 'ASC']],
         separate: true,
@@ -263,6 +309,7 @@ export const include: Includeable[] = [
         CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
         CaseFileCategory.CIVIL_CLAIM,
         CaseFileCategory.SENT_TO_PRISON_ADMIN_FILE,
+        CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
       ],
     },
     separate: true,
@@ -272,7 +319,6 @@ export const include: Includeable[] = [
     as: 'eventLogs',
     required: false,
     where: { eventType: eventTypes },
-    order: [['created', 'DESC']],
     separate: true,
   },
   {
@@ -290,11 +336,24 @@ export const include: Includeable[] = [
     where: { stringType: stringTypes },
     separate: true,
   },
-  { model: Case, as: 'mergeCase', attributes },
+  {
+    model: Case,
+    as: 'mergeCase',
+    attributes,
+    include: [
+      {
+        model: CourtSession,
+        as: 'courtSessions',
+        required: false,
+        order: [['created', 'ASC']],
+        separate: true,
+      },
+    ],
+  },
   {
     model: Case,
     as: 'mergedCases',
-    where: { state: CaseState.COMPLETED },
+    where: { state: completedIndictmentCaseStates },
     include: [
       {
         model: CaseFile,
@@ -315,10 +374,57 @@ export const include: Includeable[] = [
               CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
               CaseFileCategory.DEFENDANT_CASE_FILE,
               CaseFileCategory.CIVIL_CLAIM,
+              CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
             ],
           },
         },
         separate: true,
+      },
+      {
+        model: Defendant,
+        as: 'defendants',
+        required: false,
+        order: [['created', 'ASC']],
+        include: [
+          {
+            model: Subpoena,
+            as: 'subpoenas',
+            required: false,
+            order: [['created', 'DESC']],
+            separate: true,
+          },
+        ],
+        separate: true,
+      },
+      {
+        model: CourtSession,
+        as: 'courtSessions',
+        required: false,
+        order: [['created', 'ASC']],
+        separate: true,
+        include: [
+          {
+            model: CourtDocument,
+            as: 'filedDocuments',
+            required: false,
+            order: [['documentOrder', 'ASC']],
+            separate: true,
+          },
+          {
+            model: CourtDocument,
+            as: 'mergedFiledDocuments',
+            required: false,
+            order: [['mergedDocumentOrder', 'ASC']],
+            separate: true,
+          },
+          {
+            model: CourtSessionString,
+            as: 'courtSessionStrings',
+            required: false,
+            order: [['created', 'ASC']],
+            separate: true,
+          },
+        ],
       },
       { model: Institution, as: 'court' },
       { model: User, as: 'judge' },
@@ -333,22 +439,28 @@ export const include: Includeable[] = [
     order: [['created', 'ASC']],
     separate: true,
   },
+  {
+    model: Case,
+    as: 'splitCase',
+  },
 ]
 
 @Injectable()
 export class LimitedAccessCaseService {
   constructor(
     private readonly messageService: MessageService,
+    @Inject(forwardRef(() => DefendantService))
     private readonly defendantService: DefendantService,
+    @Inject(forwardRef(() => CivilClaimantService))
     private readonly civilClaimantService: CivilClaimantService,
     private readonly pdfService: PdfService,
     private readonly fileService: FileService,
-    @InjectModel(Case) private readonly caseModel: typeof Case,
+    private readonly caseRepositoryService: CaseRepositoryService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
   async findById(caseId: string): Promise<Case> {
-    const theCase = await this.caseModel.findOne({
+    const theCase = await this.caseRepositoryService.findOne({
       attributes,
       include,
       where: {
@@ -369,22 +481,9 @@ export class LimitedAccessCaseService {
     theCase: Case,
     update: LimitedAccessUpdateCase,
     user: TUser,
+    transaction: Transaction,
   ): Promise<Case> {
-    const [numberOfAffectedRows] = await this.caseModel.update(
-      { ...update },
-      { where: { id: theCase.id } },
-    )
-
-    if (numberOfAffectedRows > 1) {
-      // Tolerate failure, but log error
-      this.logger.error(
-        `Unexpected number of rows (${numberOfAffectedRows}) affected when updating case ${theCase.id}`,
-      )
-    } else if (numberOfAffectedRows < 1) {
-      throw new InternalServerErrorException(
-        `Could not update case ${theCase.id}`,
-      )
-    }
+    await this.caseRepositoryService.update(theCase.id, update, { transaction })
 
     const messages = []
 
@@ -393,7 +492,7 @@ export class LimitedAccessCaseService {
         ?.filter(
           (caseFile) =>
             caseFile.state === CaseFileState.STORED_IN_RVG &&
-            caseFile.key &&
+            caseFile.isKeyAccessible &&
             caseFile.category &&
             [
               CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
@@ -473,7 +572,7 @@ export class LimitedAccessCaseService {
   }
 
   async findDefenderByNationalId(nationalId: string): Promise<User> {
-    return this.caseModel
+    return this.caseRepositoryService
       .findOne({
         where: {
           defenderNationalId: normalizeAndFormatNationalId(nationalId),
@@ -527,16 +626,16 @@ export class LimitedAccessCaseService {
 
   private zipFiles(files: { data: Buffer; name: string }[]): Promise<Buffer> {
     return new Promise((resolve, reject) => {
-      const buffs: Buffer[] = []
+      const sinc: Uint8Array[] = []
       const converter = new Writable()
 
       converter._write = (chunk, _encoding, cb) => {
-        buffs.push(chunk)
+        sinc.push(chunk)
         process.nextTick(cb)
       }
 
       converter.on('finish', () => {
-        resolve(Buffer.concat(buffs))
+        resolve(Buffer.concat(sinc))
       })
 
       const archive = archiver('zip')
@@ -598,7 +697,11 @@ export class LimitedAccessCaseService {
     }
   }
 
-  async getAllFilesZip(theCase: Case, user: TUser): Promise<Buffer> {
+  async getAllFilesZip(
+    theCase: Case,
+    user: TUser,
+    transaction: Transaction,
+  ): Promise<Buffer> {
     const allowedCaseFileCategories = getDefenceUserCaseFileCategories(
       user.nationalId,
       theCase.type,
@@ -609,7 +712,7 @@ export class LimitedAccessCaseService {
     const allowedCaseFiles =
       theCase.caseFiles?.filter(
         (file) =>
-          file.key &&
+          file.isKeyAccessible &&
           file.category &&
           allowedCaseFileCategories.includes(file.category),
       ) ?? []
@@ -636,6 +739,7 @@ export class LimitedAccessCaseService {
           filesToZip,
         ),
       )
+
       if (!theCase.isCompletedWithoutRuling) {
         promises.push(
           this.tryAddGeneratedPdfToFilesToZip(
@@ -660,7 +764,7 @@ export class LimitedAccessCaseService {
     ) {
       promises.push(
         this.tryAddGeneratedPdfToFilesToZip(
-          this.pdfService.getIndictmentPdf(theCase),
+          this.pdfService.getIndictmentPdf(theCase, transaction),
           'Ákæra.pdf',
           filesToZip,
         ),
@@ -680,13 +784,37 @@ export class LimitedAccessCaseService {
         defendant.subpoenas?.forEach((subpoena) =>
           promises.push(
             this.tryAddGeneratedPdfToFilesToZip(
-              this.pdfService.getSubpoenaPdf(theCase, defendant, subpoena),
+              this.pdfService.getSubpoenaPdf(
+                theCase,
+                defendant,
+                transaction,
+                subpoena,
+              ),
               `Fyrirkall-${defendant.name}.pdf`,
               filesToZip,
             ),
           ),
         ),
       )
+
+      if (
+        allowedCaseFileCategories.includes(CaseFileCategory.COURT_RECORD) &&
+        !theCase.caseFiles?.some(
+          (file) => file.category === CaseFileCategory.COURT_RECORD,
+        )
+      ) {
+        promises.push(
+          this.tryAddGeneratedPdfToFilesToZip(
+            this.pdfService.getCourtRecordPdfForIndictmentCase(
+              theCase,
+              user,
+              transaction,
+            ),
+            'Þingbók.pdf',
+            filesToZip,
+          ),
+        )
+      }
     }
 
     await Promise.all(promises)

@@ -124,7 +124,10 @@ initContainer:
     DB_PASS: '/k8s/servicesauth/DB_PASSWORD'
 namespace: 'identity-server'
 podDisruptionBudget:
-  maxUnavailable: 1
+  minAvailable: 1
+  unhealthyPodEvictionPolicy: 'IfHealthyBudget'
+podSecurityContext:
+  fsGroup: 65534
 pvcs: []
 replicaCount:
   default: 1
@@ -153,3 +156,8 @@ secrets:
 securityContext:
   allowPrivilegeEscalation: false
   privileged: false
+serviceAccount:
+  annotations:
+    eks.amazonaws.com/role-arn: 'arn:aws:iam::324037283794:role/services-auth-ids-api'
+  create: true
+  name: 'services-auth-ids-api'

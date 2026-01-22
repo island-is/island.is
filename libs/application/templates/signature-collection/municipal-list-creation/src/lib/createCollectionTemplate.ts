@@ -8,7 +8,7 @@ import {
   ApplicationTypes,
   DefaultEvents,
   defineTemplateApi,
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   UserProfileApi,
 } from '@island.is/application/types'
 import { ApiActions, Events, Roles, States } from './constants'
@@ -23,9 +23,7 @@ import {
   CandidateApi,
   IsDelegatedToCompanyApi,
   MunicipalCollectionApi,
-  MunicipalIdentityApi,
 } from '../dataProviders'
-import { AuthDelegationType } from '@island.is/shared/types'
 import { CodeOwners } from '@island.is/shared/constants'
 
 const createListTemplate: ApplicationTemplate<
@@ -42,11 +40,6 @@ const createListTemplate: ApplicationTemplate<
   translationNamespaces: [
     ApplicationConfigurations[ApplicationTypes.MUNICIPAL_LIST_CREATION]
       .translation,
-  ],
-  allowedDelegations: [
-    {
-      type: AuthDelegationType.ProcurationHolder,
-    },
   ],
   stateMachineConfig: {
     initial: States.PREREQUISITES,
@@ -75,11 +68,10 @@ const createListTemplate: ApplicationTemplate<
               read: 'all',
               delete: true,
               api: [
-                NationalRegistryUserApi,
+                NationalRegistryV3UserApi,
                 UserProfileApi,
                 CandidateApi,
                 MunicipalCollectionApi,
-                MunicipalIdentityApi,
                 IsDelegatedToCompanyApi,
               ],
             },

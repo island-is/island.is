@@ -1,4 +1,4 @@
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { ForbiddenException } from '@nestjs/common'
 
@@ -15,7 +15,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { Case } from '../models/case.model'
+import { Case } from '../../repository'
 import { transitionCase } from './case.state'
 
 describe('Transition Case', () => {
@@ -603,6 +603,7 @@ describe('Transition Case', () => {
     const allowedFromStates = [
       CaseState.WAITING_FOR_CANCELLATION,
       CaseState.RECEIVED,
+      CaseState.CORRECTING,
     ]
 
     describe.each(allowedFromStates)(
@@ -1051,7 +1052,7 @@ describe('Transition Case', () => {
           )
 
           // Assert
-          expect(res).toMatchObject({ state: CaseState.RECEIVED })
+          expect(res).toMatchObject({ state: CaseState.CORRECTING })
         },
       )
 

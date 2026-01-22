@@ -4,10 +4,11 @@ import { useLocale } from '@island.is/localization'
 import { FormSystemApplication } from '@island.is/api/schema'
 import { dateFormat } from '@island.is/shared/constants'
 import { ApplicationCardTag } from './components/ApplicationCardTag'
-import { ApplicationCardDelete } from './components/ApplicationCardDelete'
 import * as styles from './ApplicationCard.css'
 import { ApplicationCardProgress } from './components/ApplicationCardProgress'
 import { useNavigate, useParams } from 'react-router-dom'
+import { ApplicationCardDelete } from './components/ApplicationCardDelete'
+import { ApplicationStatus } from '@island.is/form-system/enums'
 
 interface Props {
   application: FormSystemApplication
@@ -17,8 +18,8 @@ interface Props {
 
 export const ApplicationCard = ({
   application,
-  focused = false,
   onDelete,
+  focused = false,
 }: Props) => {
   const { status } = application
   const { slug } = useParams()
@@ -27,13 +28,13 @@ export const ApplicationCard = ({
   const formattedDate = locale === 'is' ? dateFormat.is : dateFormat.en
   const heading = application?.formName?.[locale]
   const logo = false // Do we implement logos?
-  const description = 'Description' // Do we implement descriptions?
+  // const description = 'Description' // Do we implement descriptions?
 
   const openApplication = () => {
     navigate(`../${slug}/${application.id}`)
   }
 
-  const shouldRenderProgress = status === 'IN_PROGRESS'
+  const shouldRenderProgress = status === ApplicationStatus.DRAFT
   return (
     <Box
       display="flex"
@@ -58,19 +59,13 @@ export const ApplicationCard = ({
           </Box>
           <Box display="flex" justifyContent="center">
             <Text variant="small">
-              {format(
-                new Date(application.created || application.modified),
-                formattedDate,
-              )}
+              {format(new Date(application.modified), formattedDate)}
             </Text>
           </Box>
         </Box>
         <Inline alignY="center" justifyContent="flexEnd" space={1}>
           <ApplicationCardTag />
-          <ApplicationCardDelete
-            application={application}
-            onDelete={onDelete}
-          />
+          <ApplicationCardDelete onDelete={onDelete} />
         </Inline>
       </Box>
 
@@ -97,8 +92,7 @@ export const ApplicationCard = ({
             </Box>
           </Box>
         )}
-
-        {description && <Text paddingTop={heading ? 1 : 0}>{description}</Text>}
+        {/* {description && <Text paddingTop={heading ? 1 : 0}>{description}</Text>} */}
       </Box>
       {shouldRenderProgress && (
         <ApplicationCardProgress

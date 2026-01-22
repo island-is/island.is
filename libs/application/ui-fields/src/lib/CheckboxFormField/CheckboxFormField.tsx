@@ -14,11 +14,11 @@ import {
   FieldDescription,
 } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
-
 import { getDefaultValue } from '../../getDefaultValue'
 import { Locale } from '@island.is/shared/types'
 import { Markdown } from '@island.is/shared/components'
 import { useFormContext } from 'react-hook-form'
+import * as styles from './CheckboxFormField.css'
 
 interface Props extends FieldBaseProps {
   field: CheckboxField
@@ -46,6 +46,7 @@ export const CheckboxFormField = ({
     marginTop,
     marginBottom,
     clearOnChange,
+    clearOnChangeDefaultValue,
     setOnChange,
   } = field
   const { formatMessage, lang: locale } = useLocale()
@@ -65,6 +66,12 @@ export const CheckboxFormField = ({
             application,
             locale as Locale,
             formatMessage,
+          )}
+          {required && title && (
+            <span aria-hidden="true" className={styles.isRequiredStar}>
+              {' '}
+              *
+            </span>
           )}
         </Text>
       )}
@@ -91,7 +98,7 @@ export const CheckboxFormField = ({
           backgroundColor={backgroundColor}
           defaultValue={
             ((getValueViaPath(application.answers, id) as string[]) ??
-              getDefaultValue(field, application)) ||
+              getDefaultValue(field, application, locale)) ||
             (required ? [] : undefined)
           }
           strong={strong}
@@ -117,6 +124,7 @@ export const CheckboxFormField = ({
             }),
           )}
           clearOnChange={clearOnChange}
+          clearOnChangeDefaultValue={clearOnChangeDefaultValue}
           setOnChange={
             typeof setOnChange === 'function'
               ? async (optionValue) =>

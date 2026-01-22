@@ -15,18 +15,41 @@ import { EstateTypes, YES, NO } from '../lib/constants'
 import { deceasedInfoFields } from './Sections/deceasedInfoFields'
 import { representativeOverview } from './OverviewSections/representative'
 
+// Helper to check if payment is enabled for undivided estate
+const isPaymentEnabled = (externalData: Record<string, unknown>): boolean => {
+  const paymentData = getValueViaPath(externalData, 'payment.data')
+  return Array.isArray(paymentData) && paymentData.length > 0
+}
+
 export const overview = buildSection({
   id: 'overviewEstateDivision',
   title: m.overviewTitle,
   children: [
-    /* Einkaskipti */
+    /* Einkaskipti WITH payment enabled - no submit button, navigates to payment section */
     buildMultiField({
-      id: 'overviewPrivateDivision',
+      id: 'overviewPrivateDivisionWithPayment',
       title: m.overviewTitle,
       description: m.overviewSubtitleDivisionOfEstateByHeirs,
-      condition: (answers) =>
+      condition: (answers, externalData) =>
         getValueViaPath(answers, 'selectedEstate') ===
-        EstateTypes.divisionOfEstateByHeirs,
+          EstateTypes.divisionOfEstateByHeirs && isPaymentEnabled(externalData),
+      children: [
+        ...commonOverviewFields,
+        ...overviewAssetsAndDebts,
+        ...overviewAttachments,
+        ...representativeOverview,
+      ],
+    }),
+
+    /* Einkaskipti WITHOUT payment (feature flag off) */
+    buildMultiField({
+      id: 'overviewPrivateDivisionNoPayment',
+      title: m.overviewTitle,
+      description: m.overviewSubtitleDivisionOfEstateByHeirs,
+      condition: (answers, externalData) =>
+        getValueViaPath(answers, 'selectedEstate') ===
+          EstateTypes.divisionOfEstateByHeirs &&
+        !isPaymentEnabled(externalData),
       children: [
         ...commonOverviewFields,
         ...overviewAssetsAndDebts,
@@ -46,32 +69,61 @@ export const overview = buildSection({
       ],
     }),
 
-    /* Seta í óskiptu búi og Eignalaust bú með eignum */
+    /* Seta í óskiptu búi WITH payment enabled - no submit button, navigates to payment section */
+    buildMultiField({
+      id: 'overviewUndividedEstateWithPayment',
+      title: m.overviewTitle,
+      description: m.overviewSubtitlePermitToPostpone,
+      condition: (answers, externalData) =>
+        getValueViaPath(answers, 'selectedEstate') ===
+          EstateTypes.permitForUndividedEstate &&
+        isPaymentEnabled(externalData),
+      children: [
+        ...commonOverviewFields,
+        ...overviewAssetsAndDebts,
+        ...overviewAttachments,
+        ...overviewConfirmAction,
+      ],
+    }),
+
+    /* Seta í óskiptu búi WITHOUT payment (feature flag off) */
+    buildMultiField({
+      id: 'overviewUndividedEstateNoPayment',
+      title: m.overviewTitle,
+      description: m.overviewSubtitlePermitToPostpone,
+      condition: (answers, externalData) =>
+        getValueViaPath(answers, 'selectedEstate') ===
+          EstateTypes.permitForUndividedEstate &&
+        !isPaymentEnabled(externalData),
+      children: [
+        ...commonOverviewFields,
+        ...overviewAssetsAndDebts,
+        ...overviewAttachments,
+        ...overviewConfirmAction,
+        buildSubmitField({
+          id: 'estateDivisionSubmit.submit',
+          refetchApplicationAfterSubmit: true,
+          actions: [
+            {
+              event: DefaultEvents.SUBMIT,
+              name: m.submitApplication,
+              type: 'primary',
+            },
+          ],
+        }),
+      ],
+    }),
+
+    /* Eignalaust bú með eignum */
     buildMultiField({
       id: 'overviewEstateDivision',
       title: m.overviewTitle,
-      description: (application) => {
-        const selectedEstate = getValueViaPath(
-          application.answers,
-          'selectedEstate',
-        )
-        return selectedEstate === EstateTypes.permitForUndividedEstate
-          ? m.overviewSubtitlePermitToPostpone
-          : selectedEstate === EstateTypes.estateWithoutAssets
-          ? m.overviewSubtitleWithoutAssets
-          : m.overviewSubtitleDivisionOfEstate
-      },
+      description: m.overviewSubtitleWithoutAssets,
       condition: (answers) =>
         getValueViaPath(answers, 'selectedEstate') ===
-        EstateTypes.estateWithoutAssets
-          ? getValueViaPath(
-              answers,
-              'estateWithoutAssets.estateAssetsExist',
-            ) === YES
-          : getValueViaPath(answers, 'selectedEstate') ===
-            EstateTypes.permitForUndividedEstate
-          ? true
-          : false,
+          EstateTypes.estateWithoutAssets &&
+        getValueViaPath(answers, 'estateWithoutAssets.estateAssetsExist') ===
+          YES,
       children: [
         ...commonOverviewFields,
         ...overviewAssetsAndDebts,

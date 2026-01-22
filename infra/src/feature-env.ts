@@ -16,6 +16,7 @@ import {
   renderHelmJobForFeature,
   renderHelmServices,
   renderHelmValueFileContent,
+  renderCleanUpForFeature,
 } from './dsl/exports/helm'
 import { ServiceBuilder } from './dsl/dsl'
 import { logger } from './logging'
@@ -34,6 +35,7 @@ interface Arguments extends ArgumentsCamelCase {
   chart: ChartName
   output?: string
   jobImage?: string
+  cleanupImage?: string
   withMocks?: 'true' | 'false'
 }
 
@@ -97,6 +99,7 @@ const parseArguments = (argv: Arguments) => {
       .filter((x) => !affectedSet.has(x)),
   })
   return {
+    feature,
     habitat,
     affectedServices,
     env,
@@ -127,10 +130,13 @@ const buildComment = (data: Services<HelmService>): string => {
 const deployedComment = (
   data: ServiceBuilder<any>[],
   excluded: string[],
+  feature: string,
 ): string => {
   return `Deployed services: ${data
     .map((d) => d.name())
-    .join(',')}. \n Excluded services: \`${excluded.join(',')}\``
+    .join(',')}. \nExcluded services: \`${excluded.join(',')}\n\n
+
+You can view the progress of your feature deployment in ArgoCD [here](https://argocd.shared.devland.is/applications?labels=feature-name%253D${feature}) \n\n`
 }
 
 yargs(process.argv.slice(2))
@@ -264,7 +270,8 @@ yargs(process.argv.slice(2))
     builder: (yargs) => yargs,
     handler: async (argv) => {
       const typedArgv = argv as unknown as Arguments
-      const { habitat, affectedServices, env } = parseArguments(typedArgv)
+      const { habitat, affectedServices, env, feature } =
+        parseArguments(typedArgv)
       const { included: featureYaml, excluded } =
         await getFeatureAffectedServices(
           habitat,
@@ -276,7 +283,11 @@ yargs(process.argv.slice(2))
         (await renderHelmServices(env, habitat, featureYaml, 'no-mocks'))
           .services,
       )
-      const includedServicesComment = deployedComment(featureYaml, excluded)
+      const includedServicesComment = deployedComment(
+        featureYaml,
+        excluded,
+        feature,
+      )
       await writeToOutput(
         `${ingressComment}\n\n${includedServicesComment}`,
         typedArgv.output,
@@ -328,6 +339,72 @@ yargs(process.argv.slice(2))
           )
           fs.writeFileSync(
             `${writeDest}/${affectedServices[0].name()}/bootstrap-fd-job.yaml`,
+            svcString,
+          )
+        } catch (error) {
+          console.log(
+            `Failed to write values file for ${affectedServices[0].name()}:`,
+            error,
+          )
+          throw new Error(
+            `Failed to write values for ${affectedServices[0].name()}`,
+          )
+        }
+      } else {
+        await writeToOutput(svcString, typedArgv.output)
+      }
+    },
+  })
+  .command({
+    command: 'cleanup',
+    describe: 'get kubernetes jobs to cleanup feature environment',
+    builder: (yargs) => {
+      return yargs
+        .option('cleanupImage', {
+          type: 'string',
+          description: 'Image to run feature cleanup jobs',
+          demandOption: true,
+        })
+        .option('writeDest', {
+          type: 'string',
+          description:
+            'Template location where to write files to for down stream apps',
+          default: '',
+        })
+        .option('containerCommand', {
+          type: 'string',
+          description: 'Command to run in the container',
+          default: 'cleanup',
+        })
+    },
+    handler: async (argv) => {
+      const typedArgv = argv as unknown as Arguments
+      const { affectedServices, env, writeDest } = parseArguments(typedArgv)
+      const featureYaml = await renderCleanUpForFeature(
+        env,
+        typedArgv.cleanupImage!,
+        affectedServices,
+      )
+
+      if (
+        featureYaml.spec.template.spec.containers.length <= 0 ||
+        affectedServices.length <= 0
+      ) {
+        return
+      }
+
+      const svcString = dumpJobYaml(featureYaml)
+
+      if (writeDest != '') {
+        try {
+          fs.mkdirSync(`${writeDest}/${affectedServices[0].name()}`, {
+            recursive: true,
+          })
+          console.log(
+            `writing file to: ${writeDest}/${affectedServices[0].name()}/cleanup-fd-job.yaml}`,
+          )
+          fs.writeFileSync(
+            `${writeDest}/${affectedServices[0].name()}/cleanup-fd-job.yaml`,
             svcString,
           )
         } catch (error) {

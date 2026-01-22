@@ -67,7 +67,7 @@ if [[ -n "$ADDITIONAL_PROJECTS" ]]; then
     " _ {} "$target" |
       jq -s '.')
 
-    chunks=$(echo "$chunks" | jq -cM --argjson new_chunks "$processed_chunks" '. + $new_chunks')
+    chunks=$(echo "$chunks" | jq -cM --argjson new_chunks "$processed_chunks" '. + $new_chunks | unique_by(.projects)')
   done
 fi
 

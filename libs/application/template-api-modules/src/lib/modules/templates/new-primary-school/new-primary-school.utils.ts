@@ -1,38 +1,197 @@
 import { YES } from '@island.is/application/core'
 import {
+  ApplicationFeatureKey,
   ApplicationType,
+  AttachmentOptions,
   getApplicationAnswers,
   getApplicationExternalData,
+  getOtherGuardian,
+  hasBehaviorSchoolOrDepartmentSubType,
+  hasSpecialEducationCaseManager,
+  hasSpecialEducationSubType,
+  hasSpecialEducationWelfareContact,
   LanguageEnvironmentOptions,
+  needsOtherGuardianApproval,
+  needsPayerApproval,
   ReasonForApplicationOptions,
-  SchoolType,
+  shouldShowExpectedEndDate,
+  shouldShowPage,
+  shouldShowAlternativeSpecialEducationDepartment,
+  shouldShowReasonForApplicationAndNewSchoolPages,
 } from '@island.is/application/templates/new-primary-school'
 import { Application } from '@island.is/application/types'
 import {
-  AgentDto,
-  AgentDtoTypeEnum,
-  FormDto,
-  FormDtoTypeEnum,
-  LanguageDtoLanguageEnvironmentEnum,
+  CaseWorkerInput,
+  CaseWorkerInputTypeEnum,
+  RegistrationApplicationInput,
+  RegistrationApplicationInputApplicationTypeEnum,
+  RegistrationApplicationInputFileUploadTypeEnum,
 } from '@island.is/clients/mms/frigg'
+
+export const getSocialProfile = (application: Application) => {
+  const {
+    hasDiagnoses,
+    hasHadSupport,
+    hasWelfareContact,
+    welfareContactName,
+    welfareContactEmail,
+    hasCaseManager,
+    caseManagerName,
+    caseManagerEmail,
+    hasIntegratedServices,
+  } = getApplicationAnswers(application.answers)
+
+  if (
+    (hasHadSupport === YES || hasDiagnoses === YES) &&
+    hasWelfareContact === YES
+  ) {
+    return {
+      hasHadSupport: hasHadSupport === YES,
+      hasDiagnoses: hasDiagnoses === YES,
+      hasIntegratedServices: hasIntegratedServices === YES,
+      caseWorkers: [
+        {
+          name: welfareContactName || '',
+          email: welfareContactEmail || '',
+          type: CaseWorkerInputTypeEnum.SupportManager,
+        },
+        ...(hasCaseManager === YES
+          ? [
+              {
+                name: caseManagerName || '',
+                email: caseManagerEmail || '',
+                type: CaseWorkerInputTypeEnum.CaseManager,
+              },
+            ]
+          : []),
+      ],
+    }
+  }
+
+  // If hasWelfareContact is NO or not defined, return empty caseWorkers array
+  return {
+    hasHadSupport: hasHadSupport === YES,
+    hasDiagnoses: hasDiagnoses === YES,
+    hasIntegratedServices: false,
+    caseWorkers: [],
+  }
+}
+
+export const getSpecialEducationSocialProfile = (application: Application) => {
+  const {
+    specialEducationWelfareContactName,
+    specialEducationWelfareContactEmail,
+    specialEducationCaseManagerName,
+    specialEducationCaseManagerEmail,
+    specialEducationHasIntegratedServices,
+    hasAssessmentOfSupportNeeds,
+    isAssessmentOfSupportNeedsInProgress,
+    supportNeedsAssessmentBy,
+    hasConfirmedDiagnosis,
+    isDiagnosisInProgress,
+    diagnosticians,
+    hasOtherSpecialists,
+    specialists,
+    hasReceivedServicesFromMunicipality,
+    servicesFromMunicipality,
+    hasReceivedChildAndAdolescentPsychiatryServices,
+    isOnWaitlistForServices,
+    childAndAdolescentPsychiatryDepartment,
+    childAndAdolescentPsychiatryServicesReceived,
+    hasBeenReportedToChildProtectiveServices,
+    isCaseOpenWithChildProtectiveServices,
+  } = getApplicationAnswers(application.answers)
+
+  const caseWorkers: CaseWorkerInput[] = []
+  const previousSocialServices: string[] = []
+  const ongoingSocialServices: string[] = []
+
+  const hasBehaviorSubType = hasBehaviorSchoolOrDepartmentSubType(
+    application.answers,
+    application.externalData,
+  )
+
+  if (hasSpecialEducationWelfareContact(application.answers)) {
+    caseWorkers.push({
+      name: specialEducationWelfareContactName || '',
+      email: specialEducationWelfareContactEmail || '',
+      type: CaseWorkerInputTypeEnum.SupportManager,
+    })
+  }
+
+  if (hasSpecialEducationCaseManager(application.answers)) {
+    caseWorkers.push({
+      name: specialEducationCaseManagerName || '',
+      email: specialEducationCaseManagerEmail || '',
+      type: CaseWorkerInputTypeEnum.CaseManager,
+    })
+  }
+
+  if (hasAssessmentOfSupportNeeds === YES) {
+    previousSocialServices.push(supportNeedsAssessmentBy || '')
+  } else if (isAssessmentOfSupportNeedsInProgress === YES) {
+    ongoingSocialServices.push(supportNeedsAssessmentBy || '')
+  }
+
+  if (hasConfirmedDiagnosis === YES) {
+    previousSocialServices.push(...diagnosticians)
+  } else if (isDiagnosisInProgress === YES) {
+    ongoingSocialServices.push(...diagnosticians)
+  }
+
+  if (hasOtherSpecialists === YES) {
+    previousSocialServices.push(...specialists)
+  }
+
+  if (hasReceivedServicesFromMunicipality === YES) {
+    previousSocialServices.push(...servicesFromMunicipality)
+  }
+
+  if (hasBehaviorSubType) {
+    if (hasReceivedChildAndAdolescentPsychiatryServices === YES) {
+      previousSocialServices.push(childAndAdolescentPsychiatryDepartment || '')
+      previousSocialServices.push(
+        ...childAndAdolescentPsychiatryServicesReceived,
+      )
+    } else if (isOnWaitlistForServices === YES) {
+      ongoingSocialServices.push(childAndAdolescentPsychiatryDepartment || '')
+    }
+  }
+
+  return {
+    caseWorkers: caseWorkers,
+    hasIntegratedServices: specialEducationHasIntegratedServices === YES,
+    previousSocialServices: previousSocialServices,
+    ongoingSocialServices: ongoingSocialServices,
+    ...(hasBehaviorSubType && {
+      previousChildProtectionCase:
+        hasBeenReportedToChildProtectiveServices === YES,
+      ...(hasBeenReportedToChildProtectiveServices === YES && {
+        openChildProtectionCase: isCaseOpenWithChildProtectiveServices === YES,
+      }),
+    }),
+  }
+}
 
 export const transformApplicationToNewPrimarySchoolDTO = (
   application: Application,
-): FormDto => {
+  attachmentFiles: string[],
+): RegistrationApplicationInput => {
   const {
     applicationType,
     childInfo,
     guardians,
     relatives,
     reasonForApplication,
-    reasonForApplicationStreetAddress,
-    reasonForApplicationPostalCode,
+    reasonForApplicationId,
+    counsellingRegardingApplication,
+    hasVisitedSchool,
     siblings,
+    languageEnvironmentId,
     languageEnvironment,
-    //selectedLanguages,
+    selectedLanguages,
     preferredLanguage,
     signLanguage,
-    guardianRequiresInterpreter,
     hasFoodAllergiesOrIntolerances,
     foodAllergiesOrIntolerances,
     hasOtherAllergies,
@@ -40,170 +199,241 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     usesEpiPen,
     hasConfirmedMedicalDiagnoses,
     requestsMedicationAdministration,
-    hasDiagnoses,
-    hasHadSupport,
-    hasIntegratedServices,
-    hasCaseManager,
-    caseManagerName,
-    caseManagerEmail,
     requestingMeeting,
     expectedStartDate,
     temporaryStay,
     expectedEndDate,
-    selectedSchool,
-    selectedSchoolType,
+    selectedSchoolId,
+    alternativeSpecialEducationDepartment,
+    currentSchoolId,
+    currentNursery,
+    applyForPreferredSchool,
+    payerName,
+    payerNationalId,
+    attachmentsAnswer,
+    terms,
+    fieldInspection,
+    additionalDataProvisioning,
+    outsideSpecialist,
+    childViewOnApplication,
   } = getApplicationAnswers(application.answers)
 
-  const { primaryOrgId } = getApplicationExternalData(application.externalData)
+  const { primaryOrgId, preferredSchool } = getApplicationExternalData(
+    application.externalData,
+  )
 
-  const agents: AgentDto[] = [
-    ...guardians.map((guardian) => ({
-      name: guardian.fullName,
-      nationalId: guardian.nationalId,
-      nationality: '', // LAGA
-      type: AgentDtoTypeEnum.Guardian,
-      domicile: {
-        address: guardian.address.streetAddress,
-        postCode: guardian.address.postalCode,
-      },
-      email: guardian.email,
-      phone: guardian.phoneNumber,
-    })),
-    ...relatives.map((relative) => ({
-      name: relative.fullName,
-      nationalId: relative.nationalId,
-      nationality: '', // LAGA
-      type: AgentDtoTypeEnum.EmergencyContact,
-      phone: relative.phoneNumber,
-      relationTypeId: relative.relation,
-    })),
-    ...(reasonForApplication ===
-    ReasonForApplicationOptions.SIBLINGS_IN_SAME_SCHOOL
-      ? siblings.map((sibling) => ({
-          name: sibling.fullName,
-          nationalId: sibling.nationalId,
-          nationality: '', // LAGA
-          type: AgentDtoTypeEnum.Sibling,
-        }))
-      : []),
-  ]
+  const otherGuardian = getOtherGuardian(
+    application.answers,
+    application.externalData,
+  )
 
-  const newPrimarySchoolDTO: FormDto = {
-    type: FormDtoTypeEnum.Registration,
-    user: {
-      name: childInfo.name,
-      nationalId: childInfo.nationalId,
-      nationality: '', // LAGA
-      ...(childInfo.usePronounAndPreferredName?.includes(YES)
-        ? {
-            preferredName: childInfo.preferredName,
-            pronouns: childInfo.pronouns,
-          }
-        : {}),
-      domicile: {
-        address: childInfo.address.streetAddress,
-        postCode: childInfo.address.postalCode,
-      },
-      ...(childInfo.differentPlaceOfResidence === YES &&
-      childInfo.placeOfResidence
-        ? {
-            residence: {
-              address: childInfo.placeOfResidence.streetAddress,
-              postCode: childInfo.placeOfResidence.postalCode,
-            },
-          }
-        : {}),
-    },
-    agents,
+  const alternativeSpecialEducationDepartmentIds =
+    alternativeSpecialEducationDepartment
+      .filter((item) => item.department)
+      .map((item) => item.department)
+
+  const isSpecialEducation = hasSpecialEducationSubType(
+    application.answers,
+    application.externalData,
+  )
+
+  const newPrimarySchoolDTO: RegistrationApplicationInput = {
+    id: application.id,
+    applicationType: mapApplicationType(application),
+    approvalRequester: application.applicant,
+    ...(needsOtherGuardianApproval(application) &&
+      otherGuardian && {
+        additionalRequesters: [otherGuardian.nationalId],
+      }),
     registration: {
-      defaultOrganizationId: primaryOrgId,
-      selectedOrganizationId: selectedSchool,
-      requestingMeeting: requestingMeeting === YES,
-      ...(applicationType === ApplicationType.NEW_PRIMARY_SCHOOL
-        ? {
-            expectedStartDate: new Date(expectedStartDate),
-            ...(selectedSchoolType === SchoolType.INTERNATIONAL_SCHOOL &&
-            temporaryStay === YES
-              ? { expectedEndDate: new Date(expectedEndDate) }
-              : {}),
-          }
-        : {
-            expectedStartDate: new Date(), // Temporary until we start working on the "Enrollment in primary school" application
-          }),
-      reason: reasonForApplication, //LAGA: Add a condition for this when Júní has added school type
+      applicant: {
+        nationalId: childInfo?.nationalId || '',
+        ...(childInfo?.usePronounAndPreferredName?.includes(YES) && {
+          preferredName: childInfo?.preferredName,
+          pronounIds: childInfo?.pronouns,
+        }),
+      },
+      guardians: guardians.map((guardian) => ({
+        nationalId: guardian.nationalId,
+        email: guardian.email,
+        phone: guardian.phoneNumber,
+        requiresInterpreter: guardian.requiresInterpreter.includes(YES),
+        ...(guardian.requiresInterpreter.includes(YES) && {
+          preferredLanguage: guardian.preferredLanguage,
+        }),
+      })),
       ...(reasonForApplication ===
-      ReasonForApplicationOptions.MOVING_MUNICIPALITY
-        ? {
-            newDomicile: {
-              address: reasonForApplicationStreetAddress,
-              postCode: reasonForApplicationPostalCode,
-            },
-          }
-        : {}),
-    },
-    health: {
-      ...(hasFoodAllergiesOrIntolerances?.includes(YES)
-        ? {
-            foodAllergiesOrIntolerances,
-          }
-        : {}),
-      ...(hasOtherAllergies?.includes(YES)
-        ? {
-            allergies: otherAllergies,
-          }
-        : {}),
-      ...(hasFoodAllergiesOrIntolerances?.includes(YES) ||
-      hasOtherAllergies?.includes(YES)
-        ? {
-            usesEpipen: usesEpiPen === YES,
-          }
-        : {}),
-      hasConfirmedMedicalDiagnoses: hasConfirmedMedicalDiagnoses === YES,
-      requestsMedicationAdministration:
-        requestsMedicationAdministration === YES,
-    },
-    social: {
-      hasHadSupport: hasHadSupport === YES,
-      hasDiagnoses: hasDiagnoses === YES,
-      ...(hasHadSupport === YES || hasDiagnoses === YES
-        ? {
-            hasIntegratedServices: hasIntegratedServices === YES,
-            ...(hasIntegratedServices === YES
-              ? {
-                  hasCaseManager: hasCaseManager === YES,
-                  ...(hasCaseManager === YES
-                    ? {
-                        caseManager: {
-                          name: caseManagerName,
-                          email: caseManagerEmail,
-                        },
-                      }
-                    : {}),
-                }
-              : {}),
-          }
-        : {}),
-    },
-    language: {
-      languageEnvironment: LanguageDtoLanguageEnvironmentEnum.OnlyIcelandic, // LAGA
-      signLanguage: signLanguage === YES,
-      ...(languageEnvironment !== LanguageEnvironmentOptions.ONLY_ICELANDIC
-        ? {
-            preferredLanguage,
-            guardianRequiresInterpreter: guardianRequiresInterpreter === YES,
-            // firstLanguage: selectedLanguages[0]?.code,// LAGA
-            // secondLanguage: selectedLanguages[1]?.code,// LAGA
-            // thirdLanguage: selectedLanguages[2]?.code,// LAGA
-            // fourthLanguage: selectedLanguages[3]?.code,// LAGA
-          }
-        : {
-            preferredLanguage: 'is',
-            guardianRequiresInterpreter: false,
-            // firstLanguage: 'is', // LAGA
+        ReasonForApplicationOptions.SIBLINGS_IN_SAME_SCHOOL && {
+        siblings: siblings.map(
+          (sibling) => sibling.nationalIdWithName.nationalId,
+        ),
+      }),
+      emergencyContacts: relatives.map((relative) => ({
+        nationalId: relative.nationalIdWithName.nationalId,
+        phone: relative.phoneNumber,
+        relationTypeId: relative.relation,
+      })),
+      ...(applicationType === ApplicationType.NEW_PRIMARY_SCHOOL
+        ? { defaultOrganizationId: primaryOrgId || currentSchoolId }
+        : applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL && {
+            defaultOrganizationId: currentNursery,
           }),
-      languages: [], // LAGA
+      selectedOrganizationId:
+        (applicationType === ApplicationType.NEW_PRIMARY_SCHOOL
+          ? selectedSchoolId
+          : applicationType === ApplicationType.CONTINUING_ENROLLMENT
+          ? primaryOrgId
+          : applyForPreferredSchool === YES
+          ? preferredSchool?.id
+          : selectedSchoolId) || '',
+      ...(shouldShowAlternativeSpecialEducationDepartment(
+        application.answers,
+        application.externalData,
+      ) &&
+        alternativeSpecialEducationDepartmentIds.length > 0 && {
+          alternativeOrganizationIds: alternativeSpecialEducationDepartmentIds,
+        }),
+      ...(shouldShowPage(
+        application.answers,
+        application.externalData,
+        ApplicationFeatureKey.SOCIAL_INFO,
+      ) &&
+        !isSpecialEducation && {
+          requestingMeeting: requestingMeeting === YES,
+        }),
+      ...(applicationType === ApplicationType.NEW_PRIMARY_SCHOOL && {
+        expectedStartDate: expectedStartDate
+          ? new Date(expectedStartDate)
+          : undefined,
+        ...(shouldShowExpectedEndDate(
+          application.answers,
+          application.externalData,
+        ) &&
+          temporaryStay === YES && {
+            expectedEndDate: expectedEndDate
+              ? new Date(expectedEndDate)
+              : undefined,
+          }),
+      }),
+      ...(shouldShowReasonForApplicationAndNewSchoolPages(
+        application.answers,
+        application.externalData,
+      ) && {
+        ...(isSpecialEducation
+          ? {
+              reasonId: counsellingRegardingApplication,
+              visitedAndResearched: hasVisitedSchool === YES,
+            }
+          : { reasonId: reasonForApplicationId }),
+      }),
+      health: {
+        ...(hasFoodAllergiesOrIntolerances?.includes(YES) && {
+          foodAllergiesOrIntoleranceIds: foodAllergiesOrIntolerances,
+        }),
+        ...(hasOtherAllergies?.includes(YES) && {
+          allergiesIds: otherAllergies,
+        }),
+        ...((hasFoodAllergiesOrIntolerances?.includes(YES) ||
+          hasOtherAllergies?.includes(YES)) && {
+          usesEpipen: usesEpiPen === YES,
+        }),
+        hasConfirmedMedicalDiagnoses: hasConfirmedMedicalDiagnoses === YES,
+        requestsMedicationAdministration:
+          requestsMedicationAdministration === YES,
+      },
+      ...(shouldShowPage(
+        application.answers,
+        application.externalData,
+        ApplicationFeatureKey.SOCIAL_INFO,
+      ) && {
+        social: isSpecialEducation
+          ? getSpecialEducationSocialProfile(application)
+          : getSocialProfile(application),
+      }),
+      language: {
+        languageEnvironmentId: languageEnvironmentId,
+        signLanguage: signLanguage === YES,
+        ...(languageEnvironment !== LanguageEnvironmentOptions.ONLY_ICELANDIC
+          ? {
+              preferredLanguage: preferredLanguage || '',
+              languages: selectedLanguages.map((language) => language.code),
+            }
+          : {
+              preferredLanguage: 'is',
+              languages: ['is'],
+            }),
+      },
+      ...(needsPayerApproval(application) && {
+        payer: {
+          name: payerName || '',
+          nationalId: payerNationalId || '',
+        },
+      }),
+      ...(shouldShowPage(
+        application.answers,
+        application.externalData,
+        ApplicationFeatureKey.CHILD_CIRCUMSTANCES,
+      ) && {
+        childCircumstances: {
+          fieldInspection: fieldInspection === YES,
+          additionalDataProvisioning: additionalDataProvisioning === YES,
+          outsideSpecialist: outsideSpecialist === YES,
+          childViewOnApplication: childViewOnApplication === YES,
+        },
+      }),
+      ...(shouldShowPage(
+        application.answers,
+        application.externalData,
+        ApplicationFeatureKey.TERMS,
+      ) && {
+        terms: terms === YES,
+      }),
     },
+    ...(shouldShowPage(
+      application.answers,
+      application.externalData,
+      ApplicationFeatureKey.ATTACHMENTS,
+    ) &&
+      attachmentsAnswer && {
+        files: attachmentFiles,
+        fileUploadType: mapAttachmentOptionToFileUploadType(attachmentsAnswer),
+      }),
   }
 
   return newPrimarySchoolDTO
+}
+
+const mapAttachmentOptionToFileUploadType = (
+  option: AttachmentOptions,
+): RegistrationApplicationInputFileUploadTypeEnum => {
+  switch (option) {
+    case AttachmentOptions.ATTACHMENTS:
+      return RegistrationApplicationInputFileUploadTypeEnum.Attachments
+    case AttachmentOptions.PHYSICAL:
+      return RegistrationApplicationInputFileUploadTypeEnum.Physical
+    case AttachmentOptions.ATTACHMENTS_AND_PHYSICAL:
+      return RegistrationApplicationInputFileUploadTypeEnum.AttachmentsAndPhysical
+  }
+}
+
+const mapApplicationType = (application: Application) => {
+  const { applicationType, applyForPreferredSchool } = getApplicationAnswers(
+    application.answers,
+  )
+
+  switch (applicationType) {
+    case ApplicationType.NEW_PRIMARY_SCHOOL:
+      return RegistrationApplicationInputApplicationTypeEnum.Transfer
+
+    case ApplicationType.CONTINUING_ENROLLMENT:
+      return RegistrationApplicationInputApplicationTypeEnum.Continuation
+
+    case ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL:
+      return applyForPreferredSchool === YES
+        ? RegistrationApplicationInputApplicationTypeEnum.Enrollment
+        : RegistrationApplicationInputApplicationTypeEnum.Transfer
+
+    default:
+      return RegistrationApplicationInputApplicationTypeEnum.Enrollment
+  }
 }

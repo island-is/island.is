@@ -4,6 +4,8 @@ import { LoggingModule } from '@island.is/logging'
 
 import { AppModule, AppService } from './app'
 
+import '@island.is/infra-tracing'
+
 const bootstrap = async () => {
   const app = await NestFactory.createApplicationContext(AppModule, {
     logger: LoggingModule.createLogger(),

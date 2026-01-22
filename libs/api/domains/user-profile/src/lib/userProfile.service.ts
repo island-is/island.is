@@ -1,166 +1,210 @@
-import { Injectable } from '@nestjs/common'
-import { ApolloError } from 'apollo-server-express'
+import { BadRequestException, Injectable, Inject } from '@nestjs/common'
 
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
-import { handle204 } from '@island.is/clients/middlewares'
 import {
   ActorLocaleLocaleEnum,
-  UserProfileApi,
+  PostNudgeDtoNudgeTypeEnum,
+  UserProfileControllerFindUserProfileClientTypeEnum,
+  V2ActorApi,
+  V2MeApi,
+  V2UsersApi,
 } from '@island.is/clients/user-profile'
 
-import { UserProfileServiceV2 } from './V2/userProfile.service'
-import { CreateEmailVerificationInput } from './dto/createEmalVerificationInput'
+import {
+  BankinfoClientService,
+  formatBankInfo,
+} from '@island.is/clients/fjs/bank-info'
+import { AdminUserProfile } from './adminUserProfile.model'
+import { ActorProfile, ActorProfileResponse } from './dto/actorProfile'
+import { CreateEmailVerificationInput } from './dto/createEmailVerificationInput'
 import { CreateSmsVerificationInput } from './dto/createSmsVerificationInput'
-import { CreateUserProfileInput } from './dto/createUserProfileInput'
-import { DeleteIslykillValueInput } from './dto/deleteIslykillValueInput'
+import { UpdateUserProfileInput } from './dto/updateUserProfileInput'
+
+import { UserProfile } from './userProfile.model'
+import { UserDeviceTokenInput } from './dto/userDeviceTokenInput'
+import { handle204 } from '@island.is/clients/middlewares'
 import { SetActorProfileEmailInput } from './dto/setActorProfileEmail.input'
 import { UserProfileUpdateActorProfileInput } from './dto/userProfileUpdateActorProfile.input'
-import { UpdateUserProfileInput } from './dto/updateUserProfileInput'
-import { UserDeviceTokenInput } from './dto/userDeviceTokenInput'
 import { UserProfileSetActorProfileEmailInput } from './dto/userProfileSetActorProfileEmail.input'
-import { DeleteIslykillSettings } from './models/deleteIslykillSettings.model'
-import { UserProfile } from './userProfile.model'
 import { UpdateActorProfileEmailInput } from './dto/updateActorProfileEmail.input'
+import { ActorProfileDetails } from './dto/actorProfileDetails'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 
 @Injectable()
 export class UserProfileService {
   constructor(
-    private userProfileApi: UserProfileApi,
-    private userProfileServiceV2: UserProfileServiceV2,
+    @Inject(LOGGER_PROVIDER)
+    private logger: Logger,
+    private v2MeApi: V2MeApi,
+    private v2UserProfileApi: V2UsersApi,
+    private v2ActorApi: V2ActorApi,
+    private bankinfoClientService: BankinfoClientService,
   ) {}
 
-  userProfileApiWithAuth(auth: Auth) {
-    return this.userProfileApi.withMiddleware(new AuthMiddleware(auth))
+  v2MeUserProfileApiWithAuth(auth: Auth) {
+    return this.v2MeApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  async getUserProfileLocale(user: User) {
-    // This always calls the user profile API V1, which calls the actor API
-    const locale = await handle204(
-      this.userProfileApiWithAuth(
-        user,
-      ).userProfileControllerGetActorLocaleRaw(),
-    )
+  v2UserProfileApiWithAuth(auth: Auth) {
+    return this.v2UserProfileApi.withMiddleware(new AuthMiddleware(auth))
+  }
 
-    return {
-      nationalId: user.nationalId,
-      locale: locale?.locale === ActorLocaleLocaleEnum.En ? 'en' : 'is',
+  v2ActorApiWithAuth(auth: Auth) {
+    return this.v2ActorApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  async createUserProfile(input: UpdateUserProfileInput, user: User) {
+    return this.updateMeUserProfile(input, user)
+  }
+
+  async getUserBankInfo(user: User): Promise<string | null> {
+    try {
+      const res = await this.bankinfoClientService.getBankAccountsForNationalId(
+        user.nationalId,
+      )
+
+      if (!res?.bankAccountInfo) {
+        return null
+      }
+
+      return formatBankInfo(res?.bankAccountInfo)
+    } catch (e) {
+      return null
     }
-  }
-
-  async deleteIslykillValue(
-    input: DeleteIslykillValueInput,
-    user: User,
-  ): Promise<DeleteIslykillSettings> {
-    const { nationalId } = await this.userProfileServiceV2.updateMeUserProfile(
-      {
-        ...(input.email && { email: '' }),
-        ...(input.mobilePhoneNumber && { mobilePhoneNumber: '' }),
-      },
-      user,
-    )
-
-    if (!nationalId) {
-      throw new ApolloError('Failed to update user profile')
-    }
-
-    return {
-      nationalId,
-      valid: true,
-    }
-  }
-
-  async getUserProfile(user: User) {
-    return this.userProfileServiceV2.getUserProfile(user)
-  }
-
-  async createUserProfile(
-    input: CreateUserProfileInput,
-    user: User,
-  ): Promise<UserProfile> {
-    return this.userProfileServiceV2.createUserProfile(input, user)
   }
 
   async updateMeUserProfile(
     input: UpdateUserProfileInput,
     user: User,
   ): Promise<UserProfile> {
-    return this.userProfileServiceV2.updateMeUserProfile(input, user)
+    const { bankInfo, ...alteredInput } = input
+
+    const userProfile = await this.v2MeUserProfileApiWithAuth(
+      user,
+    ).meUserProfileControllerPatchUserProfile({
+      patchUserProfileDto: {
+        ...alteredInput,
+        emailNotifications: alteredInput.canNudge,
+        emailVerificationCode: alteredInput.emailCode,
+        mobilePhoneNumberVerificationCode: alteredInput.smsCode,
+      },
+    })
+
+    if (bankInfo) {
+      // validate bank account
+      const [bank, ledger, accountNumber] = bankInfo.split('-')
+      if (!bank || !ledger || !accountNumber) {
+        throw new BadRequestException({
+          message:
+            'Invalid bank account format, expected: bank-ledger-accountNumber',
+        })
+      }
+      try {
+        await this.bankinfoClientService.createBankAccountForNationalId(
+          user.nationalId,
+          {
+            bank,
+            ledger,
+            accountNumber,
+          },
+        )
+      } catch (e) {
+        this.logger.error('Failed to update bank account', e)
+
+        throw new BadRequestException(
+          e.message || 'Failed to update bank account',
+        )
+      }
+    }
+
+    return {
+      ...userProfile,
+      canNudge: userProfile.emailNotifications,
+    }
   }
 
-  async updateUserProfile(
-    nationalId: string,
-    input: UpdateUserProfileInput,
-    user: User,
-  ): Promise<UserProfile> {
-    return this.userProfileServiceV2.updateUserProfile(input, user, nationalId)
+  async getUserProfile(user: User): Promise<UserProfile> {
+    const userProfile = await this.v2MeUserProfileApiWithAuth(
+      user,
+    ).meUserProfileControllerFindUserProfile()
+
+    return {
+      ...userProfile,
+      canNudge: userProfile.emailNotifications,
+    }
   }
 
-  async createSmsVerification(
-    input: CreateSmsVerificationInput,
-    user: User,
-  ): Promise<void> {
-    return this.userProfileServiceV2.createSmsVerification(input, user)
+  async createSmsVerification(input: CreateSmsVerificationInput, user: User) {
+    await this.v2ActorApiWithAuth(
+      user,
+    ).actorUserProfileControllerCreateVerification({
+      createVerificationDto: input,
+    })
   }
 
-  async createMeSmsVerification(
-    input: CreateSmsVerificationInput,
-    user: User,
-  ): Promise<void> {
-    return this.userProfileServiceV2.createMeSmsVerification(input, user)
+  async createMeSmsVerification(input: CreateSmsVerificationInput, user: User) {
+    await this.v2MeUserProfileApiWithAuth(
+      user,
+    ).meUserProfileControllerCreateVerification({
+      createVerificationDto: input,
+    })
   }
-
   async createEmailVerification(
     input: CreateEmailVerificationInput,
     user: User,
   ): Promise<void> {
-    return this.userProfileServiceV2.createEmailVerification(input, user)
+    await this.v2ActorApiWithAuth(
+      user,
+    ).actorUserProfileControllerCreateVerification({
+      createVerificationDto: input,
+    })
   }
 
   async createMeEmailVerification(
     input: CreateEmailVerificationInput,
     user: User,
   ): Promise<void> {
-    return this.userProfileServiceV2.createMeEmailVerification(input, user)
-  }
-
-  addDeviceToken(input: UserDeviceTokenInput, user: User) {
-    return this.userProfileApiWithAuth(
+    await this.v2MeUserProfileApiWithAuth(
       user,
-    ).userProfileControllerAddDeviceToken({
-      nationalId: user.nationalId,
-      deviceTokenDto: input,
+    ).meUserProfileControllerCreateVerification({
+      createVerificationDto: input,
     })
   }
 
-  deleteDeviceToken(input: UserDeviceTokenInput, user: User) {
-    return this.userProfileApiWithAuth(
+  async getActorProfile(user: User): Promise<ActorProfileDetails> {
+    return this.v2ActorApiWithAuth(
       user,
-    ).userProfileControllerDeleteDeviceToken({
-      nationalId: user.nationalId,
-      deviceTokenDto: input,
-    })
+    ).actorUserProfileControllerGetSingleActorProfile()
   }
 
-  async getActorProfiles(user: User) {
-    return this.userProfileServiceV2.getActorProfiles(user)
-  }
-
-  async getActorProfile(user: User) {
-    return this.userProfileServiceV2.getActorProfile(user)
+  async getActorProfiles(user: User): Promise<ActorProfileResponse> {
+    return this.v2ActorApiWithAuth(
+      user,
+    ).actorUserProfileControllerGetActorProfiles()
   }
 
   async updateActorProfile(
     input: UserProfileUpdateActorProfileInput,
     user: User,
-  ) {
-    return this.userProfileServiceV2.updateActorProfile(input, user)
+  ): Promise<ActorProfile> {
+    return this.v2ActorApiWithAuth(
+      user,
+    ).actorUserProfileControllerCreateOrUpdateActorProfile({
+      xParamFromNationalId: input.fromNationalId,
+      patchActorProfileDto: { emailNotifications: input.emailNotifications },
+    })
   }
 
   async updateActorProfileEmail(
     input: UpdateActorProfileEmailInput,
     user: User,
   ) {
-    return this.userProfileServiceV2.updateActorProfileEmail(input, user)
+    return this.v2ActorApiWithAuth(
+      user,
+    ).actorUserProfileControllerUpdateActorProfileEmail({
+      updateActorProfileEmailDto: input,
+    })
   }
 
   async updateActorProfileEmailWithoutActor(
@@ -168,39 +212,105 @@ export class UserProfileService {
     fromNationalId: string,
     user: User,
   ) {
-    return this.userProfileServiceV2.updateActorProfileEmailWithoutActor(
-      input,
-      fromNationalId,
+    return this.v2MeUserProfileApiWithAuth(
       user,
-    )
+    ).meUserProfileControllerUpdateActorProfileEmail({
+      xParamFromNationalId: fromNationalId,
+      updateActorProfileEmailDto: input,
+    })
   }
 
-  async setActorProfileEmail(input: SetActorProfileEmailInput, user: User) {
-    return this.userProfileServiceV2.setActorProfileEmail(input, user)
-  }
-
-  async getUserProfiles(user: User, query: string) {
-    return this.userProfileServiceV2.getUserProfiles(user, query)
-  }
-
-  async getUserProfileByNationalId(user: User, nationalId: string) {
-    return this.userProfileServiceV2.getUserProfileByNationalId(
+  confirmNudge(user: User) {
+    return this.v2MeUserProfileApiWithAuth(
       user,
-      nationalId,
-    )
+    ).meUserProfileControllerConfirmNudge({
+      postNudgeDto: { nudgeType: PostNudgeDtoNudgeTypeEnum.NUDGE },
+    })
+  }
+
+  async getUserProfiles(user: User, search: string) {
+    return this.v2UserProfileApiWithAuth(
+      user,
+    ).userProfileControllerFindUserProfiles({
+      search: search,
+    })
+  }
+
+  async getUserProfileByNationalId(
+    user: User,
+    nationalId: string,
+  ): Promise<AdminUserProfile> {
+    return this.v2UserProfileApiWithAuth(
+      user,
+    ).userProfileControllerFindUserProfile({
+      clientType: UserProfileControllerFindUserProfileClientTypeEnum.FirstParty,
+      xParamNationalId: nationalId,
+    })
+  }
+
+  async updateUserProfile(
+    input: UpdateUserProfileInput,
+    user: User,
+    nationalId: string,
+  ): Promise<AdminUserProfile> {
+    return this.v2UserProfileApiWithAuth(
+      user,
+    ).userProfileControllerPatchUserProfile({
+      xParamNationalId: nationalId,
+      patchUserProfileDto: input,
+    })
   }
 
   async userProfileSetActorProfileEmailById(
     input: UserProfileSetActorProfileEmailInput,
     user: User,
   ) {
-    return this.userProfileServiceV2.userProfileSetActorProfileEmailById(
-      input,
+    return this.v2MeUserProfileApiWithAuth(
       user,
-    )
+    ).meUserProfileControllerSetActorProfileEmailById({
+      xParamFromNationalId: input.fromNationalId,
+      setActorProfileEmailDto: {
+        emailsId: input.emailId,
+      },
+    })
   }
 
-  confirmNudge(user: User) {
-    return this.userProfileServiceV2.confirmNudge(user)
+  async setActorProfileEmail(input: SetActorProfileEmailInput, user: User) {
+    return this.v2ActorApiWithAuth(
+      user,
+    ).actorUserProfileControllerSetActorProfileEmail({
+      setActorProfileEmailDto: {
+        emailsId: input.emailId,
+      },
+    })
+  }
+
+  addDeviceToken(input: UserDeviceTokenInput, user: User) {
+    return this.v2MeUserProfileApiWithAuth(
+      user,
+    ).meUserProfileControllerAddDeviceToken({
+      deviceTokenDto: input,
+    })
+  }
+
+  deleteDeviceToken(input: UserDeviceTokenInput, user: User) {
+    return this.v2MeUserProfileApiWithAuth(
+      user,
+    ).meUserProfileControllerDeleteDeviceToken({
+      deviceToken: input.deviceToken,
+    })
+  }
+
+  async getUserProfileLocale(user: User) {
+    const locale = await handle204(
+      this.v2ActorApiWithAuth(
+        user,
+      ).actorUserProfileControllerGetActorLocaleRaw(),
+    )
+
+    return {
+      nationalId: user.nationalId,
+      locale: locale?.locale === ActorLocaleLocaleEnum.En ? 'en' : 'is',
+    }
   }
 }

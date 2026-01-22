@@ -11,7 +11,7 @@ import {
   User,
 } from '@island.is/judicial-system/types'
 
-import { CivilClaimant, Defendant } from '../../defendant'
+import { CivilClaimant, Defendant } from '../../repository'
 
 const defenderCaseFileCategoriesForRequestCases = [
   CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
@@ -28,6 +28,7 @@ const defenderCaseFileCategoriesForRequestCases = [
 const defenderDefaultCaseFileCategoriesForIndictmentCases = [
   CaseFileCategory.COURT_RECORD,
   CaseFileCategory.RULING,
+  CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
 ]
 
 const defenderCaseFileCategoriesForIndictmentCases =

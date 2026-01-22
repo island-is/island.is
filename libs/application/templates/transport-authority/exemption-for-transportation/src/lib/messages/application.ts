@@ -6,6 +6,16 @@ export const application = defineMessages({
     defaultMessage: 'Umsókn um undanþágu vegna flutnings',
     description: `Application's name`,
   },
+  nameShortTermWithConvoy: {
+    id: 'ta.eft.application:nameShortTermWithConvoy',
+    defaultMessage: 'Umsókn um skammtímaundanþágu vegna flutnings {value}',
+    description: `Application's name for short-term`,
+  },
+  nameLongTermWithConvoy: {
+    id: 'ta.eft.application:nameLongTermWithConvoy',
+    defaultMessage: 'Umsókn um langtímaundanþágu vegna flutnings {value}',
+    description: `Application's name for long-term`,
+  },
   institutionName: {
     id: 'ta.eft.application:institution',
     defaultMessage: 'Samgöngustofa',

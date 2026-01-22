@@ -20,8 +20,7 @@ import { useCandidateLookupLazyQuery } from './candidateLookup.generated'
 import { setReason } from './utils'
 import { useCreateCollectionMutation } from './createCollection.generated'
 import { m } from '../../lib/messages'
-import { useLoaderData, useParams, useRevalidator } from 'react-router-dom'
-import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
+import { useParams, useRevalidator } from 'react-router-dom'
 import {
   SignatureCollection,
   SignatureCollectionCollectionType,
@@ -32,35 +31,29 @@ const CreateCollection = ({
 }: {
   collection: SignatureCollection
 }) => {
-  const { allLists } = useLoaderData() as ListsLoaderReturn
+  const { formatMessage } = useLocale()
+  const { revalidate } = useRevalidator()
   const { id, collectionType } = collection
 
-  const params = useParams() as {
+  const { constituencyName, municipality } = useParams<{
     constituencyName?: string
     municipality?: string
-  }
+  }>()
 
-  // Get the right area name based on collection type
   const areaName =
     collectionType === SignatureCollectionCollectionType.Parliamentary
-      ? params.constituencyName
-      : params.municipality
+      ? constituencyName
+      : municipality
 
   // Find the area by name if we have an area name
   const currentArea =
-    collectionType === SignatureCollectionCollectionType.Parliamentary &&
-    areaName
+    collectionType === SignatureCollectionCollectionType.Parliamentary ||
+    (collectionType === SignatureCollectionCollectionType.LocalGovernmental &&
+      areaName)
       ? collection.areas.find((area) => area.name === areaName)
-      : collectionType ===
-          SignatureCollectionCollectionType.LocalGovernmental && areaName
-      ? allLists.find((list) => list.area.name === areaName)?.area || null
       : null
 
-  const { formatMessage } = useLocale()
-  const { revalidate } = useRevalidator()
-
   const { control } = useForm()
-
   const [modalIsOpen, setModalIsOpen] = useState(false)
   const [nationalIdInput, setNationalIdInput] = useState('')
   const [nationalIdNotFound, setNationalIdNotFound] = useState(false)
@@ -71,11 +64,17 @@ const CreateCollection = ({
 
   const [candidateLookup, { loading: loadingCandidate }] =
     useCandidateLookupLazyQuery()
+
   const [createCollection, { loading }] = useCreateCollectionMutation({
     variables: {
       input: {
         collectionType: collectionType,
-        collectionId: id,
+        collectionId:
+          collectionType === SignatureCollectionCollectionType.Presidential
+            ? id
+            : collectionType === SignatureCollectionCollectionType.Parliamentary
+            ? collection?.id
+            : currentArea?.collectionId || '',
         collectionName: collectionName || undefined,
         owner: {
           name: name,
@@ -93,14 +92,15 @@ const CreateCollection = ({
 
   const createNewCollection = async () => {
     try {
-      const createCollectionRes = await createCollection()
-      if (createCollectionRes.data?.signatureCollectionAdminCreate.success) {
+      const { data } = await createCollection()
+      const result = data?.signatureCollectionAdminCreate
+
+      if (result?.success) {
         toast.success(formatMessage(m.createCollectionSuccess))
         setModalIsOpen(false)
       } else {
         toast.error(
-          createCollectionRes.data?.signatureCollectionAdminCreate
-            .reasons?.[0] || formatMessage(m.createCollectionError),
+          result?.reasons?.[0] ?? formatMessage(m.createCollectionError),
         )
       }
     } catch (e) {
@@ -146,15 +146,17 @@ const CreateCollection = ({
       <GridRow>
         <GridColumn span={['12/12', '12/12', '12/12', '10/12']}>
           <Box display="flex">
-            <Tag>
-              <Box display="flex" justifyContent="center">
-                <Icon icon="add" type="outline" color="blue600" />
-              </Box>
-            </Tag>
-            <Box marginLeft={5}>
+            <Box marginTop={1}>
+              <Tag>
+                <Box display="flex" justifyContent="center">
+                  <Icon icon="add" type="outline" color="blue600" />
+                </Box>
+              </Tag>
+            </Box>
+            <Box marginLeft={3}>
               <Text variant="h4">{formatMessage(m.createCollection)}</Text>
               <Text marginBottom={2}>
-                Texti sem útskýrir þessa aðgerð betur kemur hér.
+                {formatMessage(m.createCollectionDescription)}
               </Text>
               <Button
                 variant="text"
@@ -178,6 +180,7 @@ const CreateCollection = ({
           setCollectionName('')
           setCanCreate(true)
         }}
+        scrollType="inside"
         hideOnClickOutside={false}
         closeButtonLabel={''}
         label={''}

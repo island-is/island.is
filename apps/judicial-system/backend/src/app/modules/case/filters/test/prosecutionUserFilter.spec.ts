@@ -1,4 +1,4 @@
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import {
   CaseState,
@@ -12,7 +12,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { Case } from '../../models/case.model'
+import { Case } from '../../../repository'
 import { canUserAccessCase } from '../case.filter'
 import { verifyNoAccess, verifyReadAccess } from './verify'
 

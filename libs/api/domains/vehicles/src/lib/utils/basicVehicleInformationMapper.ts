@@ -115,7 +115,7 @@ export const basicVehicleInformationMapper = (
       lastInspectionDate: data.inspections?.[0]?.date ?? null,
       insuranceStatus: excludeInsurance ? undefined : data.insurancestatus,
       mortages: data?.fees?.hasEncumbrances,
-      carTax: data?.fees?.gjold?.bifreidagjald,
+      carTax: data?.fees?.gjold?.total,
       inspectionFine: data?.fees?.inspectionfine,
     },
     technicalInfo: {
@@ -181,6 +181,17 @@ export const basicVehicleInformationMapper = (
         }
       }) || undefined,
     isOutOfCommission: data.vehiclestatus === 'Úr umferð',
+    latestMileageRegistration: data.latestMileageRegistration ?? undefined,
+    lastMileage: {
+      permno: undefined,
+      readDate: undefined,
+      originCode: undefined,
+      mileage: data.latestMileageRegistration
+        ? data.latestMileageRegistration.toString()
+        : undefined,
+      mileageNumber: data.latestMileageRegistration ?? undefined,
+      internalId: undefined,
+    },
   }
 
   return response

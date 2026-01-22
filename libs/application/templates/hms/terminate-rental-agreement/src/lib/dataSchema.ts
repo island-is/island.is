@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { TerminationTypes } from '../types'
+import { unboundTerminationMessages } from '../lib/messages/unboundTerminationMessage'
 
 const fileSchema = z.object({ key: z.string(), name: z.string() })
 
@@ -29,7 +30,12 @@ export const dataSchema = z.object({
   // unbound termination
   unboundTermination: z.object({
     unboundTerminationDate: z.string().refine((x) => x.trim().length > 0),
-    unboundTerminationReason: z.string().refine((v) => !!v),
+    unboundTerminationReason: z
+      .string()
+      .optional() // Necessary because nothing selected in the form will be undefined, but we need to validate that the reason is not empty
+      .refine((v) => !!v, {
+        params: unboundTerminationMessages.reasonMissingError,
+      }),
   }),
   // cancelation
   cancelation: z.object({
@@ -37,7 +43,8 @@ export const dataSchema = z.object({
     cancelationReason: z.string().refine((v) => !!v),
   }),
 
-  fileUpload: z.array(fileSchema).length(1),
+  // fileUpload: z.array(fileSchema).min(1).max(3), // TODO: Uncomment this once we have a way to upload multiple files
+  fileUpload: z.array(fileSchema).length(1), // TODO: Remove this once we have a way to upload multiple files
 })
 
 export type ApplicationAnswers = z.TypeOf<typeof dataSchema>

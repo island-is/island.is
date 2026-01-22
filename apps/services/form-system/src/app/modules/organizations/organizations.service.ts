@@ -21,8 +21,6 @@ import {
   ListTypesEnum,
   FieldTypesEnum,
 } from '@island.is/form-system/shared'
-import { UrlTypes } from '@island.is/form-system/enums'
-import { OrganizationUrl } from '../organizationUrls/models/organizationUrl.model'
 
 @Injectable()
 export class OrganizationsService {
@@ -68,7 +66,7 @@ export class OrganizationsService {
 
     const organization = await this.organizationModel.findOne({
       where: { nationalId },
-      include: ['organizationPermissions', 'organizationUrls'],
+      include: ['organizationPermissions'],
     })
 
     if (!organization) {
@@ -102,41 +100,18 @@ export class OrganizationsService {
       })
     }
 
-    const mapUrls = (urls: OrganizationUrl[], urlType: string) =>
-      urls
-        .filter((url) => url.type === urlType)
-        .map((url) => ({
-          id: url.id,
-          url: url.url,
-          type: url.type,
-          method: url.method,
-          isTest: url.isTest,
-          isXroad: url.isXroad,
-        }))
-
-    if (organization.organizationUrls) {
-      organizationAdminDto.submitUrls = mapUrls(
-        organization.organizationUrls,
-        UrlTypes.SUBMIT,
-      )
-      organizationAdminDto.validationUrls = mapUrls(
-        organization.organizationUrls,
-        UrlTypes.VALIDATION,
-      )
-    }
-
     organizationAdminDto.certificationTypes = CertificationTypes
     organizationAdminDto.ListTypes = ListTypes
     organizationAdminDto.FieldTypes = FieldTypes
 
     organizationAdminDto.organizations = await this.organizationModel
       .findAll({
-        attributes: ['name', 'nationalId'],
+        attributes: ['nationalId'],
       })
       .then((organizations) => {
         return organizations.map((organization) => {
           return {
-            label: organization.name.is,
+            label: '',
             value: organization.nationalId,
             isSelected: organization.nationalId === nationalId,
           } as Option
@@ -155,7 +130,7 @@ export class OrganizationsService {
       throw new NotFoundException(`Organization with id ${id} not found`)
     }
 
-    const keys = ['id', 'name', 'nationalId']
+    const keys = ['id', 'nationalId']
     const organizationDto: OrganizationDto = defaults(
       pick(organization, keys),
       zipObject(keys, Array(keys.length).fill(null)),
@@ -169,8 +144,10 @@ export class OrganizationsService {
       'created',
       'modified',
       'isTranslated',
-      'applicationDaysToRemove',
-      'stopProgressOnValidatingScreen',
+      'daysUntilApplicationPrune',
+      'allowProceedOnValidationFail',
+      'hasSummaryScreen',
+      'hasPayment',
     ]
 
     organizationDto.forms = organization.forms?.map((form) => {
@@ -192,7 +169,7 @@ export class OrganizationsService {
     )
     await newOrganzation.save()
 
-    const keys = ['id', 'name', 'nationalId']
+    const keys = ['id', 'nationalId']
     const organizationDto: OrganizationDto = defaults(
       pick(newOrganzation, keys),
       zipObject(keys, Array(keys.length).fill(null)),

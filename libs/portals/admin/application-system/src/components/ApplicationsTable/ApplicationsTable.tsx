@@ -12,12 +12,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import format from 'date-fns/format'
 import { m } from '../../lib/messages'
-import {
-  getBaseUrlForm,
-  getLogo,
-  getSlugFromType,
-  statusMapper,
-} from '../../shared/utils'
+import { getLogo, getSlugFromType, statusMapper } from '../../shared/utils'
 import { AdminApplication } from '../../types/adminApplication'
 import { ApplicationDetails } from '../ApplicationDetails/ApplicationDetails'
 import { Organization } from '@island.is/shared/types'
@@ -25,6 +20,7 @@ import copyToClipboard from 'copy-to-clipboard'
 import * as styles from './ApplicationsTable.css'
 import { MouseEvent } from 'react'
 import { ApplicationTypes } from '@island.is/application/types'
+import { getApplicationsBaseUrl } from '@island.is/portals/core'
 
 interface Props {
   applications: AdminApplication[]
@@ -34,6 +30,7 @@ interface Props {
   organizations: Organization[]
   shouldShowCardButtons?: boolean
   numberOfItems?: number // Set this if using paginated data from api
+  showAdminData?: boolean
 }
 
 export const ApplicationsTable = ({
@@ -44,6 +41,7 @@ export const ApplicationsTable = ({
   organizations,
   shouldShowCardButtons = true,
   numberOfItems,
+  showAdminData,
 }: Props) => {
   const { formatMessage } = useLocale()
 
@@ -57,7 +55,7 @@ export const ApplicationsTable = ({
 
   const copyApplicationLink = (application: AdminApplication) => {
     const typeId = application.typeId as unknown as ApplicationTypes
-    const baseUrl = getBaseUrlForm()
+    const baseUrl = getApplicationsBaseUrl()
     const slug = getSlugFromType(typeId)
     const copied = copyToClipboard(`${baseUrl}/${slug}/${application.id}`)
 
@@ -88,11 +86,21 @@ export const ApplicationsTable = ({
         <T.Head>
           <T.Row>
             <T.HeadData>{formatMessage(m.dateCreated)}</T.HeadData>
-            <T.HeadData>{formatMessage(m.application)}</T.HeadData>
+            {!showAdminData && (
+              <T.HeadData>{formatMessage(m.application)}</T.HeadData>
+            )}
             <T.HeadData>{formatMessage(m.applicant)}</T.HeadData>
-            <T.HeadData>{formatMessage(m.nationalId)}</T.HeadData>
+            <T.HeadData>{formatMessage(m.applicantNationalId)}</T.HeadData>
+            {showAdminData &&
+              applications[0]?.adminData?.map((x) => (
+                <T.HeadData key={x.key}>
+                  {formatMessage(x.label) ?? ''}
+                </T.HeadData>
+              ))}
             <T.HeadData>{formatMessage(m.dateModified)}</T.HeadData>
-            <T.HeadData>{formatMessage(m.institution)}</T.HeadData>
+            {!showAdminData && (
+              <T.HeadData>{formatMessage(m.institution)}</T.HeadData>
+            )}
             <T.HeadData>{formatMessage(m.status)}</T.HeadData>
             <T.HeadData />
           </T.Row>
@@ -123,30 +131,40 @@ export const ApplicationsTable = ({
                       <T.Data text={{ color: cellText }}>
                         {format(new Date(application.created), 'dd.MM.yyyy')}
                       </T.Data>
-                      <T.Data>
-                        <Text
-                          variant="eyebrow"
-                          color={application.pruned ? 'dark300' : 'blue400'}
-                        >
-                          {application.name}
-                        </Text>
-                      </T.Data>
+                      {!showAdminData && (
+                        <T.Data>
+                          <Text
+                            variant="eyebrow"
+                            color={application.pruned ? 'dark300' : 'blue400'}
+                          >
+                            {application.name}
+                          </Text>
+                        </T.Data>
+                      )}
                       <T.Data text={{ color: cellText }}>
                         {application.applicantName ?? ''}
                       </T.Data>
                       <T.Data text={{ color: cellText }}>
                         {application.applicant}
                       </T.Data>
+                      {showAdminData &&
+                        application.adminData?.map((x) => (
+                          <T.Data key={x.key} text={{ color: cellText }}>
+                            {x.values?.join(', ') ?? ''}
+                          </T.Data>
+                        ))}
                       <T.Data text={{ color: cellText }}>
                         {format(new Date(application.modified), 'dd.MM.yyyy')}
                       </T.Data>
-                      <T.Data>
-                        <Box display="flex" alignItems="center">
-                          <Tooltip text={application.institution}>
-                            <img src={logo} alt="" className={styles.logo} />
-                          </Tooltip>
-                        </Box>
-                      </T.Data>
+                      {!showAdminData && (
+                        <T.Data>
+                          <Box display="flex" alignItems="center">
+                            <Tooltip text={application.institution}>
+                              <img src={logo} alt="" className={styles.logo} />
+                            </Tooltip>
+                          </Box>
+                        </T.Data>
+                      )}
                       <T.Data>
                         <Tag disabled variant={tag.variant} truncate>
                           {formatMessage(tag.label)}

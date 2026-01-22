@@ -80,7 +80,10 @@ ingress:
           - '/'
 namespace: 'personal-representative'
 podDisruptionBudget:
-  maxUnavailable: 1
+  minAvailable: 1
+  unhealthyPodEvictionPolicy: 'IfHealthyBudget'
+podSecurityContext:
+  fsGroup: 65534
 pvcs: []
 replicaCount:
   default: 1
@@ -106,3 +109,8 @@ secrets:
 securityContext:
   allowPrivilegeEscalation: false
   privileged: false
+serviceAccount:
+  annotations:
+    eks.amazonaws.com/role-arn: 'arn:aws:iam::324037283794:role/services-auth-personal-representative'
+  create: true
+  name: 'services-auth-personal-representative'

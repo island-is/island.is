@@ -1,0 +1,39 @@
+import { Meta, Story, Canvas, Controls } from '@storybook/blocks'
+import * as ColumnStories from './Column.stories'
+
+import { Box } from '../Box/Box'
+import { Columns } from '../Columns/Columns'
+import { Column } from './Column'
+import { Text } from '../Text/Text'
+
+export const DemoBox = ({ background, minHeight = 'auto', children }) => (
+  <Box padding={4} background={background} style={{ minHeight }}>
+    {children}
+  </Box>
+)
+
+<Meta of={ColumnStories} />
+
+# Column
+
+## Basic Columns
+
+### Width
+
+Dy default they size fluidly
+
+<Canvas>
+  <Story of={ColumnStories.Default} />
+</Canvas>
+
+### Set width
+
+See _width_ props for available widths
+
+<Canvas>
+  <Story of={ColumnStories.ResponsiveWidth} />
+</Canvas>
+
+# Props
+
+<Controls />

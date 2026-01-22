@@ -1,6 +1,9 @@
 import { format, isValid, parseISO } from 'date-fns' // eslint-disable-line no-restricted-imports
 // Importing 'is' directly from date-fns/locale/is has caused unexpected problems
 import { is } from 'date-fns/locale' // eslint-disable-line no-restricted-imports
+import { option } from 'fp-ts'
+import { filterMap } from 'fp-ts/lib/Array'
+import { pipe } from 'fp-ts/lib/function'
 import _uniq from 'lodash/uniq'
 
 import {
@@ -13,7 +16,13 @@ import {
   Gender,
   IndictmentSubtype,
   IndictmentSubtypeMap,
+  InformationForDefendant,
+  informationForDefendantMap,
   isRestrictionCase,
+  ServiceRequirement,
+  ServiceStatus,
+  VerdictAppealDecision,
+  VerdictServiceStatus,
 } from '@island.is/judicial-system/types'
 
 const getAsDate = (date: Date | string | undefined | null): Date => {
@@ -68,13 +77,13 @@ export const formatNationalId = (nationalId?: string | null): string => {
     return ''
   }
 
-  const regex = new RegExp(/^\d{10}$/)
+  const regex = /^\d{10}$/
 
   if (regex.test(nationalId)) {
     return `${nationalId.slice(0, 6)}-${nationalId.slice(6)}`
-  } else {
-    return nationalId
   }
+
+  return nationalId
 }
 
 export const normalizeAndFormatNationalId = (
@@ -100,12 +109,13 @@ export const formatPhoneNumber = (phoneNumber?: string | null) => {
     return
   }
 
-  const value = phoneNumber.replace('-', '')
+  const regex = /^\d{7}$/
 
-  const splitAt = (index: number) => (x: string) =>
-    [x.slice(0, index), x.slice(index)]
-  if (value.length > 3) return splitAt(3)(value).join('-')
-  return value
+  if (regex.test(phoneNumber)) {
+    return `${phoneNumber.slice(0, 3)}-${phoneNumber.slice(3)}`
+  }
+
+  return phoneNumber
 }
 
 export const laws = {
@@ -120,7 +130,7 @@ export const laws = {
 }
 
 export const getHumanReadableCaseIndictmentRulingDecision = (
-  rulingDecision?: CaseIndictmentRulingDecision,
+  rulingDecision?: CaseIndictmentRulingDecision | null,
 ) => {
   switch (rulingDecision) {
     case CaseIndictmentRulingDecision.RULING:
@@ -141,21 +151,29 @@ export const getHumanReadableCaseIndictmentRulingDecision = (
 }
 
 export const getRoleTitleFromCaseFileCategory = (
-  category?: CaseFileCategory | null,
+  category?: string | null,
+  overrides?: {
+    prosecutor?: string
+    defendant?: string
+    independentDefendant?: string
+    civilClaimantSpokesperson?: string
+    civilClaimantLegalSpokesperson?: string
+    notRegistered?: string
+  },
 ) => {
   switch (category) {
     case CaseFileCategory.PROSECUTOR_CASE_FILE:
-      return 'Ákæruvald'
+      return overrides?.prosecutor ?? 'Ákæruvald'
     case CaseFileCategory.DEFENDANT_CASE_FILE:
-      return 'Verjandi'
+      return overrides?.defendant ?? 'Verjandi'
     case CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE:
-      return 'Ákærði'
+      return overrides?.independentDefendant ?? 'Ákærði'
     case CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE:
-      return 'Réttargæslumaður'
+      return overrides?.civilClaimantSpokesperson ?? 'Réttargæslumaður'
     case CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE:
-      return 'Lögmaður'
+      return overrides?.civilClaimantLegalSpokesperson ?? 'Lögmaður'
     default:
-      return 'Ekki skráð'
+      return overrides?.notRegistered ?? 'Ekki skráð'
   }
 }
 
@@ -224,7 +242,6 @@ export const indictmentSubtypes: IndictmentSubtypes = {
   MINOR_ASSAULT: 'líkamsárás - minniháttar',
   AGGRAVATED_ASSAULT: 'líkamsárás - sérlega hættuleg',
   ASSAULT_LEADING_TO_DEATH: 'líkamsárás sem leiðir til dauða',
-  BODILY_INJURY: 'líkamsmeiðingar',
   MEDICINES_OFFENSE: 'lyfjalög',
   MURDER: 'manndráp',
   RAPE: 'nauðgun',
@@ -238,6 +255,8 @@ export const indictmentSubtypes: IndictmentSubtypes = {
   TRAFFIC_VIOLATION: 'umferðarlagabrot',
   WEPONS_VIOLATION: 'vopnalagabrot',
   THEFT: 'þjófnaður',
+  // The following are no longer used but left here for historical data integrity
+  BODILY_INJURY: 'líkamsmeiðingar',
 }
 
 export const districtCourtAbbreviation = (courtName?: string | null) => {
@@ -506,4 +525,97 @@ export const applyDativeCaseToCourtName = (courtName: string) => {
     return courtName?.replace(target, 'dómi')
   }
   return courtName
+}
+
+export const getServiceStatusText = (serviceStatus: ServiceStatus) => {
+  return serviceStatus === ServiceStatus.DEFENDER
+    ? 'Birt fyrir verjanda'
+    : serviceStatus === ServiceStatus.ELECTRONICALLY
+    ? 'Birt rafrænt'
+    : serviceStatus === ServiceStatus.IN_PERSON
+    ? 'Birt persónulega'
+    : serviceStatus === ServiceStatus.FAILED
+    ? 'Árangurslaus birting'
+    : serviceStatus === ServiceStatus.EXPIRED
+    ? 'Rann út á tíma'
+    : 'Í birtingarferli' // This should never happen
+}
+
+export const getVerdictServiceStatusText = (
+  serviceStatus: VerdictServiceStatus,
+) => {
+  return serviceStatus === VerdictServiceStatus.DEFENDER
+    ? 'Birt fyrir verjanda'
+    : serviceStatus === VerdictServiceStatus.ELECTRONICALLY
+    ? 'Birt rafrænt'
+    : serviceStatus === VerdictServiceStatus.IN_PERSON
+    ? 'Birt persónulega'
+    : serviceStatus === VerdictServiceStatus.FAILED
+    ? 'Árangurslaus birting'
+    : serviceStatus === VerdictServiceStatus.LEGAL_PAPER
+    ? 'Birt í Lögbirtingarblaðinu'
+    : 'Í birtingarferli' // This should never happen
+}
+
+export const getRulingInstructionItems = (
+  serviceInformationForDefendant: InformationForDefendant[],
+  lang?: string,
+) =>
+  pipe(
+    serviceInformationForDefendant ?? [],
+    filterMap((information) => {
+      const value = informationForDefendantMap.get(information)
+      if (!value) {
+        return option.none
+      }
+      const language = lang === 'en' ? 'en' : 'is'
+      const label = value.label[language]
+      const description = value.description[language]
+
+      return option.some({
+        label,
+        value: description.replace(/\n/g, ''),
+        type: 'accordion',
+      })
+    }),
+  )
+
+export const getServiceRequirementText = (
+  serviceRequirement?: ServiceRequirement,
+) => {
+  switch (serviceRequirement) {
+    case ServiceRequirement.REQUIRED:
+      return 'Birta skal dómfellda dóminn'
+    case ServiceRequirement.NOT_REQUIRED:
+      return 'Birting dóms ekki þörf'
+    case ServiceRequirement.NOT_APPLICABLE:
+      return 'Dómfelldi var viðstaddur dómsuppkvaðningu'
+    default:
+      return null
+  }
+}
+
+export const getDefendantVerdictAppealDecisionLabel = (
+  appealDecision: VerdictAppealDecision,
+) => {
+  if (appealDecision === VerdictAppealDecision.POSTPONE) {
+    return 'Dómfelldi tekur áfrýjunarfrest'
+  }
+  if (appealDecision === VerdictAppealDecision.ACCEPT) {
+    return 'Dómfelldi unir'
+  }
+  return ''
+}
+
+export const getVerdictAppealDecision = (
+  verdictAppealDecision?: VerdictAppealDecision,
+): string => {
+  switch (verdictAppealDecision) {
+    case VerdictAppealDecision.ACCEPT:
+      return 'Unir dómi'
+    case VerdictAppealDecision.POSTPONE:
+      return 'Tekur áfrýjunarfrest'
+    default:
+      return 'Ekki skráð'
+  }
 }

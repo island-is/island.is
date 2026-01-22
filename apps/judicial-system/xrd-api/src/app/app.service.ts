@@ -15,12 +15,27 @@ import {
   AuditedAction,
   AuditTrailService,
 } from '@island.is/judicial-system/audit-trail'
-import { LawyersService } from '@island.is/judicial-system/lawyers'
-import { DefenderChoice, ServiceStatus } from '@island.is/judicial-system/types'
+import { getRulingInstructionItems } from '@island.is/judicial-system/formatters'
+import {
+  DefenderChoice,
+  DocumentDeliverySupplementCode,
+  getServiceDateFromSupplements,
+  InformationForDefendant,
+  LawyerRegistry,
+  LawyerType,
+  mapPoliceVerdictDeliveryStatus,
+  PoliceFileTypeCode,
+  ServiceStatus,
+  VerdictAppealDecision,
+  VerdictServiceStatus,
+} from '@island.is/judicial-system/types'
 
 import { CreateCaseDto } from './dto/createCase.dto'
+import { UpdatePoliceDocumentDeliveryDto } from './dto/policeDocument.dto'
 import { UpdateSubpoenaDto } from './dto/subpoena.dto'
 import { Case } from './models/case.model'
+import { Groups } from './models/componentDefinitions/groups.model'
+import { PoliceDocumentDelivery } from './models/policeDocumentDelivery.response'
 import { SubpoenaResponse } from './models/subpoena.response'
 import appModuleConfig from './app.config'
 
@@ -30,7 +45,6 @@ export class AppService {
     @Inject(appModuleConfig.KEY)
     private readonly config: ConfigType<typeof appModuleConfig>,
     private readonly auditTrailService: AuditTrailService,
-    private readonly lawyersService: LawyersService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
   async create(caseToCreate: CreateCaseDto): Promise<Case> {
@@ -92,6 +106,36 @@ export class AppService {
     )
   }
 
+  async getLitigators(): Promise<LawyerRegistry[]> {
+    try {
+      const res = await fetch(
+        `${this.config.backend.url}/api/lawyer-registry?lawyerType=${LawyerType.LITIGATORS}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${this.config.backend.accessToken}`,
+          },
+        },
+      )
+      if (res.ok) {
+        const lawyers = await res.json()
+
+        return lawyers.map((lawyer: LawyerRegistry) => ({
+          nationalId: lawyer.nationalId,
+          name: lawyer.name,
+          practice: lawyer.practice,
+        }))
+      }
+
+      throw new BadRequestException()
+    } catch (error) {
+      this.logger.error('Failed to retrieve litigator lawyers', error)
+
+      throw new BadRequestException('Failed to retrieve litigator lawyers')
+    }
+  }
+
   private async updateSubpoenaInfo(
     policeSubpoenaId: string,
     updateSubpoena: UpdateSubpoenaDto,
@@ -117,17 +161,27 @@ export class AppService {
 
     if (updateSubpoena.defenderNationalId) {
       try {
-        const chosenLawyer = await this.lawyersService.getLawyer(
-          updateSubpoena.defenderNationalId,
+        const res = await fetch(
+          `${this.config.backend.url}/api/lawyer-registry/${updateSubpoena.defenderNationalId}`,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              authorization: `Bearer ${this.config.backend.accessToken}`,
+            },
+          },
         )
 
-        defenderInfo = {
-          defenderName: chosenLawyer.Name,
-          defenderEmail: chosenLawyer.Email,
-          defenderPhoneNumber: chosenLawyer.Phone,
+        if (res.ok) {
+          const chosenLawyer = await res.json()
+
+          defenderInfo = {
+            defenderName: chosenLawyer.name,
+            defenderEmail: chosenLawyer.email,
+            defenderPhoneNumber: chosenLawyer.phoneNumber,
+          }
         }
       } catch (reason) {
-        // TODO: Reconsider throwing - what happens if registry is down?
         this.logger.error(
           `Failed to retrieve lawyer with national id ${updateSubpoena.defenderNationalId}`,
           reason,
@@ -203,6 +257,185 @@ export class AppService {
         ...reason,
         message: 'Failed to update subpoena',
       })
+    }
+  }
+
+  async updatePoliceDocumentDelivery(
+    policeDocumentId: string,
+    updatePoliceDocumentDelivery: UpdatePoliceDocumentDeliveryDto,
+  ): Promise<PoliceDocumentDelivery> {
+    switch (updatePoliceDocumentDelivery.fileTypeCode) {
+      case PoliceFileTypeCode.VERDICT:
+        return await this.auditTrailService.audit(
+          'digital-mailbox-api',
+          AuditedAction.UPDATE_VERDICT,
+          this.updateVerdictDelivery(
+            policeDocumentId,
+            updatePoliceDocumentDelivery,
+          ),
+          policeDocumentId,
+        )
+    }
+
+    throw new BadRequestException('Police file type code not supported')
+  }
+
+  private async updateVerdictDelivery(
+    policeDocumentId: string,
+    updatePoliceDocumentDelivery: UpdatePoliceDocumentDeliveryDto,
+  ) {
+    const deliveredAppealDecision =
+      updatePoliceDocumentDelivery.supplements?.find(
+        (supplement) =>
+          supplement.code === DocumentDeliverySupplementCode.APPEAL_DECISION,
+      )
+
+    if (deliveredAppealDecision && deliveredAppealDecision.value) {
+      const appealDecision = deliveredAppealDecision?.value
+
+      if (
+        !Object.values(VerdictAppealDecision).includes(
+          appealDecision as VerdictAppealDecision,
+        )
+      ) {
+        throw new BadRequestException(
+          `Invalid appeal_decision: ${appealDecision}. Must be one of: ${Object.values(
+            VerdictAppealDecision,
+          ).join(', ')}`,
+        )
+      }
+    }
+
+    const serviceStatus = mapPoliceVerdictDeliveryStatus({
+      delivered: updatePoliceDocumentDelivery.delivered,
+      deliveredOnPaper: updatePoliceDocumentDelivery.deliveredOnPaper,
+      deliveredOnIslandis: updatePoliceDocumentDelivery.deliveredOnIslandis,
+      deliveredToLawyer: updatePoliceDocumentDelivery.deliveredToLawyer,
+      deliveredToDefendant: updatePoliceDocumentDelivery.deliveredToDefendant,
+      deliveryMethod: updatePoliceDocumentDelivery.deliveryMethod,
+    })
+
+    // Ideally we would want to always get the service date from servedAt, but for legal paper
+    // deliveries, the service date is (for now) sent as a supplement, so we need to check there first
+    const legalPaperServiceDate =
+      serviceStatus === VerdictServiceStatus.LEGAL_PAPER
+        ? getServiceDateFromSupplements(
+            updatePoliceDocumentDelivery.supplements,
+          )
+        : undefined
+
+    const parsedPoliceUpdate = {
+      serviceDate:
+        legalPaperServiceDate ?? updatePoliceDocumentDelivery.servedAt,
+      servedBy: updatePoliceDocumentDelivery.servedBy,
+      comment: updatePoliceDocumentDelivery.comment,
+      serviceStatus: serviceStatus,
+      deliveredToDefenderNationalId:
+        updatePoliceDocumentDelivery.defenderNationalId,
+      appealDecision: deliveredAppealDecision?.value,
+    }
+    this.logger.info(
+      `Parsed update request ${JSON.stringify(parsedPoliceUpdate)}`,
+    )
+
+    try {
+      const res = await fetch(
+        `${this.config.backend.url}/api/internal/verdict/${policeDocumentId}`,
+        {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${this.config.backend.accessToken}`,
+          },
+          body: JSON.stringify(parsedPoliceUpdate),
+        },
+      )
+
+      const response = await res.json()
+
+      if (res.ok) {
+        return {
+          policeDocumentId: response.externalPoliceDocumentId,
+        } as PoliceDocumentDelivery
+      }
+
+      if (res.status < 500) {
+        throw new BadRequestException(response?.detail)
+      }
+
+      throw response
+    } catch (reason) {
+      if (reason instanceof BadRequestException) {
+        throw reason
+      }
+
+      throw new BadGatewayException({
+        ...reason,
+        message: `Failed to update document delivery ${policeDocumentId} information for file type code ${updatePoliceDocumentDelivery.fileTypeCode}`,
+      })
+    }
+  }
+
+  async getPoliceDocumentSupplements(
+    fileTypeCode: PoliceFileTypeCode,
+    policeDocumentId: string,
+  ) {
+    switch (fileTypeCode) {
+      case PoliceFileTypeCode.VERDICT:
+        return await this.auditTrailService.audit(
+          'digital-mailbox-api',
+          AuditedAction.GET_VERDICT_SUPPLEMENTS,
+          this.getVerdictSupplements(policeDocumentId),
+          policeDocumentId,
+        )
+    }
+
+    throw new BadRequestException('Police file type code not supported')
+  }
+
+  private async getVerdictSupplements(policeDocumentId: string) {
+    try {
+      const res = await fetch(
+        `${this.config.backend.url}/api/internal/verdict/${policeDocumentId}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${this.config.backend.accessToken}`,
+          },
+        },
+      )
+      if (res.ok) {
+        const verdictSupplements = (await res.json()) as {
+          serviceInformationForDefendant: InformationForDefendant[]
+        }
+        const { serviceInformationForDefendant } = verdictSupplements
+
+        if (
+          serviceInformationForDefendant?.length === 0 ||
+          !serviceInformationForDefendant
+        ) {
+          return { groups: [] }
+        }
+
+        return {
+          groups: [
+            {
+              label: 'Mikilvægar upplýsingar til dómfellda',
+              items: getRulingInstructionItems(serviceInformationForDefendant),
+            } as Groups,
+          ],
+        }
+      }
+
+      throw new BadRequestException()
+    } catch (error) {
+      this.logger.error(
+        `Failed to retrieve verdict supplements for police document id ${policeDocumentId}`,
+        error,
+      )
+
+      throw new BadRequestException('Failed to retrieve verdict supplements')
     }
   }
 }

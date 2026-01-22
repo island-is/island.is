@@ -40,12 +40,12 @@ import { FetchError, handle404 } from '@island.is/clients/middlewares'
 import { VehicleSearchCustomDto } from '../vehicles.type'
 import { operatorStatusMapper } from '../utils/operatorStatusMapper'
 import { VehiclesListInputV3 } from '../dto/vehiclesListInputV3'
-import { VehiclesCurrentListResponse } from '../models/v3/currentVehicleListResponse.model'
 import { isDefined } from '@island.is/shared/utils'
 import { GetVehicleMileageInput } from '../dto/getVehicleMileageInput'
 import { MileageRegistrationHistory } from '../models/v3/mileageRegistrationHistory.model'
 import { VehiclesMileageUpdateError } from '../models/v3/vehicleMileageResponseError.model'
 import { UpdateResponseError } from '../dto/updateResponseError.dto'
+import { VehiclePagedList } from '../models/v3/vehiclePagedList.model'
 
 const ORIGIN_CODE = 'ISLAND.IS'
 const LOG_CATEGORY = 'vehicle-service'
@@ -105,12 +105,14 @@ export class VehiclesService {
   async getVehiclesListV3(
     auth: User,
     input: VehiclesListInputV3,
-  ): Promise<VehiclesCurrentListResponse | null> {
+  ): Promise<VehiclePagedList | null> {
     const res = await this.vehicleClientService.getVehicles(auth, {
       pageSize: input.pageSize,
       page: input.page,
+      includeNextMainInspectionDate: input.includeNextMainInspectionDate,
       onlyMileageRegisterableVehicles:
         input.filterOnlyVehiclesUserCanRegisterMileage,
+      onlyMileageRequiredVehicles: input.filterOnlyMileageRequiredVehicles,
       query: input.query,
     })
 
@@ -123,7 +125,7 @@ export class VehiclesService {
       pageNumber: res.pageNumber,
       totalPages: res.totalPages,
       totalRecords: res.totalRecords,
-      data: res.vehicles.map((v) => ({
+      vehicleList: res.vehicles.map((v) => ({
         ...v,
         nextInspection: v.nextInspection
           ? v.nextInspection.toISOString()
@@ -241,6 +243,13 @@ export class VehiclesService {
       permno,
     })
 
+    return this.isAllowedMileageRegistrationNoFetch(auth, res ?? undefined)
+  }
+
+  private isAllowedMileageRegistrationNoFetch(
+    auth: User,
+    res?: VehiclesDetail,
+  ): boolean {
     // String of owners where owner can delegate registration.
     const allowedCoOwners = process.env.VEHICLES_ALLOW_CO_OWNERS?.split(
       ',',
@@ -309,10 +318,24 @@ export class VehiclesService {
     auth: User,
     input: GetMileageReadingRequest,
   ): Promise<VehicleMileageOverview | null> {
-    await this.hasVehicleServiceAuth(auth, input.permno)
+    //need to auth check
+    const basicData = await this.getVehicleDetail(auth, {
+      clientPersidno: auth.nationalId,
+      permno: input.permno,
+    }).catch((e) => {
+      if (e.status === 401 || e.status === 403) {
+        this.logger.error(UNAUTHORIZED_LOG, {
+          category: LOG_CATEGORY,
+          error: e,
+        })
+        throw new UnauthorizedException(UNAUTHORIZED_LOG)
+      }
+      throw e as Error
+    })
 
     const res = await this.getMileageWithAuth(auth).getMileageReading({
       permno: input.permno,
+      includeDeleted: false,
     })
 
     const latestDate = res?.[0]?.readDate
@@ -320,7 +343,10 @@ export class VehiclesService {
     const isEditing =
       isReadDateToday(latestDate ?? undefined) && isIslandIsReading
 
-    const returnData = res.map((item) => {
+    const canUserRegisterVehicleMileage =
+      this.isAllowedMileageRegistrationNoFetch(auth, basicData ?? undefined)
+
+    const returnData = (res ?? []).map((item) => {
       return mileageDetailConstructor(item)
     })
 
@@ -328,6 +354,10 @@ export class VehiclesService {
       data: returnData,
       permno: input.permno,
       editing: isEditing,
+      canUserRegisterVehicleMileage,
+      canRegisterMileage: basicData?.mainInfo?.canRegisterMileage,
+      requiresMileageRegistration:
+        basicData?.mainInfo?.requiresMileageRegistration,
     }
   }
 
@@ -419,7 +449,9 @@ export class VehiclesService {
         this.logger.debug('Successfully updated mileage reading')
         return {
           ...input,
-          internalId: input.internalId + 1,
+          operation: input.operation ?? null,
+          readDate: input.readDate ?? undefined,
+          internalId: input.internalId ? input.internalId + 1 : undefined,
         }
       }
       return null
@@ -502,7 +534,9 @@ export class VehiclesService {
         this.logger.debug('mileage update successful')
         return {
           ...input,
-          internalId: input.internalId + 1,
+          operation: input.operation ?? null,
+          readDate: input.readDate ?? undefined,
+          internalId: input.internalId ? input.internalId + 1 : undefined,
         }
       }
 

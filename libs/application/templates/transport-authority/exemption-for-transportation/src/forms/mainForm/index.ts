@@ -9,11 +9,11 @@ import { vehicleSpacingSection } from './vehicleSpacingSection'
 import { locationSection } from './locationSection'
 import { supportingDocumentsSection } from './supportingDocumentsSection'
 import { overviewSection } from './overviewSection'
-import { Logo } from '../../assets/Logo'
+import { TransportAuthorityLogo } from '@island.is/application/assets/institution-logos'
 
 export const MainForm = buildForm({
   id: 'MainForm',
-  logo: Logo,
+  logo: TransportAuthorityLogo,
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,

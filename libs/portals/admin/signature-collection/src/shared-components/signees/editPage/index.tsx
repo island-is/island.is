@@ -30,37 +30,35 @@ const EditPage = ({
   collectionType: SignatureCollectionCollectionType
 }) => {
   const { formatMessage } = useLocale()
+  const { revalidate } = useRevalidator()
+
   const [newPage, setNewPage] = useState(page)
   const [modalIsOpen, setModalIsOpen] = useState(false)
-  const { revalidate } = useRevalidator()
 
   const [updatePage, { loading }] =
     useSignatureCollectionAdminUpdatePaperSignaturePageNumberMutation({
       variables: {
         input: {
           pageNumber: newPage,
-          signatureId: signatureId,
+          signatureId,
           collectionType,
         },
       },
       onCompleted: (response) => {
-        if (
+        const result =
           response.signatureCollectionAdminUpdatePaperSignaturePageNumber
-            .success
-        ) {
+
+        if (result?.success) {
           toast.success(formatMessage(m.editPaperNumberSuccess))
           revalidate()
           setModalIsOpen(false)
         } else {
-          const message =
-            response.signatureCollectionAdminUpdatePaperSignaturePageNumber
-              ?.reasons?.[0] ?? formatMessage(m.editPaperNumberError)
-          toast.error(message)
+          toast.error(
+            result?.reasons?.[0] ?? formatMessage(m.editPaperNumberError),
+          )
         }
       },
-      onError: () => {
-        toast.error(formatMessage(m.editPaperNumberError))
-      },
+      onError: () => toast.error(formatMessage(m.editPaperNumberError)),
     })
 
   return (

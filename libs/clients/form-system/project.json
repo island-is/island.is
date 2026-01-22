@@ -8,7 +8,7 @@
   "implicitDependencies": ["services-form-system-api"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["libs/clients/form-system/**/*.ts"]

@@ -1,5 +1,5 @@
-import { Option } from '@island.is/island-ui/core'
 import { FieldTypesEnum } from '@island.is/form-system/enums'
+import { Option } from '@island.is/island-ui/core'
 
 /* eslint-disable @typescript-eslint/naming-convention */
 enum FieldTypes {
@@ -20,10 +20,11 @@ enum FieldTypes {
   PROPERTY_NUMBER = 'Fasteignanúmer',
   PHONE_NUMBER = 'Símanúmer',
   FILE = 'Skjal',
-  MESSAGE = 'Textalýsing',
+  MESSAGE = 'Skilaboð',
   TEXTBOX = 'Textabox',
   NUMBERBOX = 'Tölubox',
   RADIO_BUTTONS = 'Valhnappar',
+  APPLICANT = 'Umsækjandi',
 }
 
 export const getFieldTypeValue = (type: string) => {

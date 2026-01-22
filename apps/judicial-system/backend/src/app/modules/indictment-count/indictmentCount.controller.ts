@@ -1,3 +1,5 @@
+import { Sequelize } from 'sequelize-typescript'
+
 import {
   Body,
   Controller,
@@ -8,6 +10,7 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common'
+import { InjectConnection } from '@nestjs/sequelize'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import type { Logger } from '@island.is/logging'
@@ -18,29 +21,39 @@ import {
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
+import { indictmentCases } from '@island.is/judicial-system/types'
 
 import { prosecutorRepresentativeRule, prosecutorRule } from '../../guards'
-import { MinimalCaseAccessGuard, MinimalCaseExistsGuard } from '../case'
+import { IndictmentCount, Offense } from '..//repository'
+import {
+  CaseTypeGuard,
+  MinimalCaseAccessGuard,
+  MinimalCaseExistsGuard,
+} from '../case'
 import { CreateOffenseDto } from './dto/createOffense.dto'
 import { UpdateIndictmentCountDto } from './dto/updateIndictmentCount.dto'
 import { UpdateOffenseDto } from './dto/updateOffense.dto'
 import { IndictmentCountExistsGuard } from './guards/indictmentCountExists.guard'
 import { OffenseExistsGuard } from './guards/offenseExists.guard'
 import { DeleteResponse } from './models/delete.response'
-import { IndictmentCount } from './models/indictmentCount.model'
-import { Offense } from './models/offense.model'
 import { IndictmentCountService } from './indictmentCount.service'
 
 @Controller('api/case/:caseId/indictmentCount')
 @ApiTags('indictment-counts')
-@UseGuards(JwtAuthUserGuard, RolesGuard)
+@UseGuards(
+  JwtAuthUserGuard,
+  RolesGuard,
+  MinimalCaseExistsGuard,
+  new CaseTypeGuard(indictmentCases),
+  MinimalCaseAccessGuard,
+)
 export class IndictmentCountController {
   constructor(
     private readonly indictmentCountService: IndictmentCountService,
+    @InjectConnection() private readonly sequelize: Sequelize,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @UseGuards(MinimalCaseExistsGuard, MinimalCaseAccessGuard)
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @Post()
   @ApiCreatedResponse({
@@ -53,11 +66,7 @@ export class IndictmentCountController {
     return this.indictmentCountService.create(caseId)
   }
 
-  @UseGuards(
-    MinimalCaseExistsGuard,
-    MinimalCaseAccessGuard,
-    IndictmentCountExistsGuard,
-  )
+  @UseGuards(IndictmentCountExistsGuard)
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @Patch(':indictmentCountId')
   @ApiOkResponse({
@@ -73,18 +82,17 @@ export class IndictmentCountController {
       `Updating indictment count ${indictmentCountId} of case ${caseId}`,
     )
 
-    return this.indictmentCountService.update(
-      caseId,
-      indictmentCountId,
-      indictmentCountToUpdate,
+    return this.sequelize.transaction((transaction) =>
+      this.indictmentCountService.update(
+        caseId,
+        indictmentCountId,
+        indictmentCountToUpdate,
+        transaction,
+      ),
     )
   }
 
-  @UseGuards(
-    MinimalCaseExistsGuard,
-    MinimalCaseAccessGuard,
-    IndictmentCountExistsGuard,
-  )
+  @UseGuards(IndictmentCountExistsGuard)
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @Delete(':indictmentCountId')
   @ApiOkResponse({ description: 'Deletes an indictment count' })
@@ -96,19 +104,18 @@ export class IndictmentCountController {
       `Deleting indictment count ${indictmentCountId} of case ${caseId}`,
     )
 
-    const deleted = await this.indictmentCountService.delete(
-      caseId,
-      indictmentCountId,
+    const deleted = await this.sequelize.transaction((transaction) =>
+      this.indictmentCountService.delete(
+        caseId,
+        indictmentCountId,
+        transaction,
+      ),
     )
 
     return { deleted }
   }
 
-  @UseGuards(
-    MinimalCaseExistsGuard,
-    MinimalCaseAccessGuard,
-    IndictmentCountExistsGuard,
-  )
+  @UseGuards(IndictmentCountExistsGuard)
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @Post(':indictmentCountId/offense')
   @ApiCreatedResponse({
@@ -130,12 +137,7 @@ export class IndictmentCountController {
     )
   }
 
-  @UseGuards(
-    MinimalCaseExistsGuard,
-    MinimalCaseAccessGuard,
-    IndictmentCountExistsGuard,
-    OffenseExistsGuard,
-  )
+  @UseGuards(IndictmentCountExistsGuard, OffenseExistsGuard)
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @Patch(':indictmentCountId/offense/:offenseId')
   @ApiOkResponse({
@@ -159,12 +161,7 @@ export class IndictmentCountController {
     )
   }
 
-  @UseGuards(
-    MinimalCaseExistsGuard,
-    MinimalCaseAccessGuard,
-    IndictmentCountExistsGuard,
-    OffenseExistsGuard,
-  )
+  @UseGuards(IndictmentCountExistsGuard, OffenseExistsGuard)
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @Delete(':indictmentCountId/offense/:offenseId')
   @ApiOkResponse({ description: 'Deletes an offense' })

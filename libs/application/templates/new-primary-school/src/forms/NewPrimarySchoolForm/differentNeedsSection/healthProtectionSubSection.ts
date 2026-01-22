@@ -3,49 +3,57 @@ import {
   buildCheckboxField,
   buildCustomField,
   buildDescriptionField,
+  buildHiddenInput,
   buildMultiField,
   buildRadioField,
   buildSubSection,
   NO,
   YES,
 } from '@island.is/application/core'
-import { OptionsType } from '../../../lib/constants'
-import { newPrimarySchoolMessages } from '../../../lib/messages'
-import { getApplicationAnswers } from '../../../lib/newPrimarySchoolUtils'
+import { Application } from '@island.is/application/types'
+import { differentNeedsMessages, sharedMessages } from '../../../lib/messages'
+import { OptionsType } from '../../../utils/constants'
+import {
+  getApplicationAnswers,
+  getApplicationExternalData,
+  getDefaultYESNOValue,
+  hasDefaultAllergies,
+  hasDefaultFoodAllergiesOrIntolerances,
+} from '../../../utils/newPrimarySchoolUtils'
 
 export const healthProtectionSubSection = buildSubSection({
   id: 'healthProtectionSubSection',
-  title:
-    newPrimarySchoolMessages.differentNeeds.healthProtectionSubSectionTitle,
+  title: differentNeedsMessages.healthProtection.subSectionTitle,
   children: [
     buildMultiField({
       id: 'healthProtection',
-      title:
-        newPrimarySchoolMessages.differentNeeds.healthProtectionSubSectionTitle,
-      description:
-        newPrimarySchoolMessages.differentNeeds
-          .healthProtectionSubSectionDescription,
-
+      title: differentNeedsMessages.healthProtection.subSectionTitle,
+      description: differentNeedsMessages.healthProtection.description,
       children: [
         buildCheckboxField({
           id: 'healthProtection.hasFoodAllergiesOrIntolerances',
           title:
-            newPrimarySchoolMessages.differentNeeds.allergiesAndIntolerances,
+            differentNeedsMessages.healthProtection.allergiesAndIntolerances,
           spacing: 0,
           options: [
             {
               value: YES,
               label:
-                newPrimarySchoolMessages.differentNeeds
+                differentNeedsMessages.healthProtection
                   .hasFoodAllergiesOrIntolerances,
             },
           ],
+          defaultValue: (application: Application) =>
+            hasDefaultFoodAllergiesOrIntolerances(application.externalData) ===
+            YES
+              ? [YES]
+              : [],
         }),
         buildCustomField(
           {
             id: 'healthProtection.foodAllergiesOrIntolerances',
             title:
-              newPrimarySchoolMessages.differentNeeds
+              differentNeedsMessages.healthProtection
                 .typeOfFoodAllergiesOrIntolerances,
             component: 'FriggOptionsAsyncSelectField',
             marginBottom: 3,
@@ -55,14 +63,19 @@ export const healthProtectionSubSection = buildSubSection({
 
               return hasFoodAllergiesOrIntolerances?.includes(YES)
             },
+            defaultValue: (application: Application) => {
+              const { healthProfile } = getApplicationExternalData(
+                application.externalData,
+              )
+              return healthProfile?.foodAllergiesOrIntolerances ?? []
+            },
           },
           {
             optionsType: OptionsType.FOOD_ALLERGY_AND_INTOLERANCE,
             placeholder:
-              newPrimarySchoolMessages.differentNeeds
+              differentNeedsMessages.healthProtection
                 .typeOfFoodAllergiesOrIntolerancesPlaceholder,
             isMulti: true,
-            useId: true,
           },
         ),
         buildCheckboxField({
@@ -71,35 +84,42 @@ export const healthProtectionSubSection = buildSubSection({
           options: [
             {
               value: YES,
-              label: newPrimarySchoolMessages.differentNeeds.hasOtherAllergies,
+              label: differentNeedsMessages.healthProtection.hasOtherAllergies,
             },
           ],
+          defaultValue: (application: Application) =>
+            hasDefaultAllergies(application.externalData) === YES ? [YES] : [],
         }),
         buildCustomField(
           {
             id: 'healthProtection.otherAllergies',
-            title: newPrimarySchoolMessages.differentNeeds.typeOfOtherAllergies,
+            title: differentNeedsMessages.healthProtection.typeOfOtherAllergies,
             component: 'FriggOptionsAsyncSelectField',
             condition: (answers) => {
               const { hasOtherAllergies } = getApplicationAnswers(answers)
 
               return hasOtherAllergies?.includes(YES)
             },
+            defaultValue: (application: Application) => {
+              const { healthProfile } = getApplicationExternalData(
+                application.externalData,
+              )
+              return healthProfile?.allergies ?? []
+            },
           },
           {
             optionsType: OptionsType.ALLERGY,
             placeholder:
-              newPrimarySchoolMessages.differentNeeds
+              differentNeedsMessages.healthProtection
                 .typeOfOtherAllergiesPlaceholder,
             isMulti: true,
-            useId: true,
           },
         ),
         buildAlertMessageField({
           id: 'healthProtection.allergiesCertificateAlertMessage',
-          title: newPrimarySchoolMessages.shared.alertTitle,
+          title: sharedMessages.alertTitle,
           message:
-            newPrimarySchoolMessages.differentNeeds
+            differentNeedsMessages.healthProtection
               .allergiesCertificateAlertMessage,
           doesNotRequireAnswer: true,
           alertType: 'info',
@@ -116,17 +136,17 @@ export const healthProtectionSubSection = buildSubSection({
         }),
         buildRadioField({
           id: 'healthProtection.usesEpiPen',
-          title: newPrimarySchoolMessages.differentNeeds.usesEpiPen,
+          title: differentNeedsMessages.healthProtection.usesEpiPen,
           width: 'half',
           required: true,
           options: [
             {
-              label: newPrimarySchoolMessages.shared.yes,
+              label: sharedMessages.yes,
               dataTestId: 'uses-epi-pen',
               value: YES,
             },
             {
-              label: newPrimarySchoolMessages.shared.no,
+              label: sharedMessages.no,
               dataTestId: 'no-uses-epi-pen',
               value: NO,
             },
@@ -140,39 +160,55 @@ export const healthProtectionSubSection = buildSubSection({
               hasOtherAllergies?.includes(YES)
             )
           },
+          defaultValue: (application: Application) => {
+            const { healthProfile } = getApplicationExternalData(
+              application.externalData,
+            )
+
+            return getDefaultYESNOValue(healthProfile?.usesEpipen)
+          },
         }),
         buildRadioField({
           id: 'healthProtection.hasConfirmedMedicalDiagnoses',
           title:
-            newPrimarySchoolMessages.differentNeeds
+            differentNeedsMessages.healthProtection
               .hasConfirmedMedicalDiagnoses,
           description:
-            newPrimarySchoolMessages.differentNeeds
+            differentNeedsMessages.healthProtection
               .hasConfirmedMedicalDiagnosesDescription,
           width: 'half',
           required: true,
           space: 4,
           options: [
             {
-              label: newPrimarySchoolMessages.shared.yes,
+              label: sharedMessages.yes,
               dataTestId: 'has-confirmed-medical-diagnoses',
               value: YES,
             },
             {
-              label: newPrimarySchoolMessages.shared.no,
+              label: sharedMessages.no,
               dataTestId: 'no-has-confirmed-medical-diagnoses',
               value: NO,
             },
           ],
+          defaultValue: (application: Application) => {
+            const { healthProfile } = getApplicationExternalData(
+              application.externalData,
+            )
+
+            return getDefaultYESNOValue(
+              healthProfile?.hasConfirmedMedicalDiagnoses,
+            )
+          },
         }),
         buildDescriptionField({
           id: 'healthProtection.requestsMedicationAdministrationDescription',
           title:
-            newPrimarySchoolMessages.differentNeeds
+            differentNeedsMessages.healthProtection
               .requestsMedicationAdministration,
           titleVariant: 'h4',
           titleTooltip:
-            newPrimarySchoolMessages.differentNeeds
+            differentNeedsMessages.healthProtection
               .requestsMedicationAdministrationTooltip,
           space: 4,
         }),
@@ -183,22 +219,31 @@ export const healthProtectionSubSection = buildSubSection({
           required: true,
           options: [
             {
-              label: newPrimarySchoolMessages.shared.yes,
+              label: sharedMessages.yes,
               dataTestId: 'requests-medication-administration',
               value: YES,
             },
             {
-              label: newPrimarySchoolMessages.shared.no,
+              label: sharedMessages.no,
               dataTestId: 'no-requests-medication-administration',
               value: NO,
             },
           ],
+          defaultValue: (application: Application) => {
+            const { healthProfile } = getApplicationExternalData(
+              application.externalData,
+            )
+
+            return getDefaultYESNOValue(
+              healthProfile?.requestsMedicationAdministration,
+            )
+          },
         }),
         buildAlertMessageField({
           id: 'healthProtection.schoolNurseAlertMessage',
-          title: newPrimarySchoolMessages.shared.alertTitle,
+          title: sharedMessages.alertTitle,
           message:
-            newPrimarySchoolMessages.differentNeeds.schoolNurseAlertMessage,
+            differentNeedsMessages.healthProtection.schoolNurseAlertMessage,
           doesNotRequireAnswer: true,
           alertType: 'info',
           marginTop: 4,
@@ -213,6 +258,10 @@ export const healthProtectionSubSection = buildSubSection({
               requestsMedicationAdministration === YES
             )
           },
+        }),
+        buildHiddenInput({
+          id: 'healthProtection.triggerHiddenInput',
+          doesNotRequireAnswer: true,
         }),
       ],
     }),

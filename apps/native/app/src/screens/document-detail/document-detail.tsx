@@ -49,7 +49,7 @@ import {
   ButtonRegistry,
   ComponentRegistry,
 } from '../../utils/component-registry'
-import { ListParams } from '../inbox/inbox'
+import { ListParams } from '../inbox/components/pressable-list-item'
 import { ButtonDrawer } from './components/button-drawer'
 import { getButtonsForActions } from './utils/get-buttons-for-actions'
 import { shareFile } from './utils/share-file'
@@ -300,9 +300,25 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     },
   })
 
+  const documentFromCache: Partial<DocumentV2> = doc?.data ?? {}
+  const documentFromQuery: Partial<DocumentV2> = docRes.data?.documentV2 ?? {}
+
   const Document: Partial<DocumentV2> = {
-    ...(doc?.data || {}),
-    ...(docRes.data?.documentV2 || {}),
+    ...documentFromCache,
+    ...documentFromQuery,
+  }
+
+  // We need to set the values from the cache to the document object since the cache is not updated immediately
+  if (documentFromCache.bookmarked !== undefined) {
+    Document.bookmarked = documentFromCache.bookmarked
+  }
+
+  if (documentFromCache.archived !== undefined) {
+    Document.archived = documentFromCache.archived
+  }
+
+  if (documentFromCache.opened !== undefined) {
+    Document.opened = documentFromCache.opened
   }
 
   const hasActions = !!Document.actions?.length

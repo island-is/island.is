@@ -1,19 +1,20 @@
-import { Linking, NativeModules, Platform } from 'react-native'
+import { Linking, NativeModules } from 'react-native'
 import { InAppBrowser } from 'react-native-inappbrowser-reborn'
 import { authStore } from '../stores/auth-store'
+import { isAndroid, isIos } from '../utils/devices'
 
 const { RNIsland } = NativeModules
 
 export function overrideUserInterfaceStyle(
   uiStyle: 'dark' | 'light' | 'automatic',
 ) {
-  if (Platform.OS === 'ios') {
+  if (isIos) {
     return RNIsland.overrideUserInterfaceStyle(uiStyle)
   }
 }
 
 export async function openNativeBrowser(url: string, componentId?: string) {
-  if (Platform.OS === 'ios' && componentId) {
+  if (isIos && componentId) {
     return RNIsland.openSafari(componentId, {
       url,
       preferredBarTintColor: undefined,
@@ -22,7 +23,7 @@ export async function openNativeBrowser(url: string, componentId?: string) {
     })
   }
 
-  if (Platform.OS === 'android' && (await InAppBrowser.isAvailable())) {
+  if (isAndroid && (await InAppBrowser.isAvailable())) {
     return InAppBrowser.open(url, {
       showTitle: true,
       enableDefaultShare: true,

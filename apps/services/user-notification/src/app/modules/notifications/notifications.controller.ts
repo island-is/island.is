@@ -25,9 +25,10 @@ import type { Locale } from '@island.is/shared/types'
 import {
   ExtendedPaginationDto,
   PaginatedNotificationDto,
+  PaginatedActorNotificationDto,
 } from './dto/notification.dto'
 import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
-import { AdminPortalScope } from '@island.is/auth/scopes'
+import { AdminPortalScope, notificationScopes } from '@island.is/auth/scopes'
 
 @Controller('notifications')
 @ApiTags('notifications')
@@ -105,7 +106,26 @@ export class NotificationsController {
     @Headers('X-Query-National-Id') nationalId: string,
     @Query() query: ExtendedPaginationDto,
   ): Promise<PaginatedNotificationDto> {
-    return this.notificationsService.findMany(nationalId, query)
+    return this.notificationsService.findMany(
+      nationalId,
+      query,
+      notificationScopes,
+    )
+  }
+
+  @UseGuards(IdsUserGuard, ScopesGuard)
+  @Scopes(AdminPortalScope.serviceDesk)
+  @Get('/actor')
+  @Documentation({
+    summary:
+      'Returns a paginated list of actor notifications for a national id',
+    response: { status: HttpStatus.OK, type: PaginatedActorNotificationDto },
+  })
+  findActorNotifications(
+    @Headers('X-Query-National-Id') nationalId: string,
+    @Query() query: ExtendedPaginationDto,
+  ): Promise<PaginatedActorNotificationDto> {
+    return this.notificationsService.findActorNotifications(nationalId, query)
   }
 
   @Documentation({
@@ -118,16 +138,26 @@ export class NotificationsController {
   async createHnippNotification(
     @Body() body: CreateHnippNotificationDto,
   ): Promise<CreateNotificationResponse> {
-    await this.notificationsService.validate(body.templateId, body.args)
-    const id = await this.queue.add(body)
+    const template = await this.notificationsService.getTemplate(
+      body.templateId,
+    )
+    this.notificationsService.validate(template, body.args)
+    const validArgs = this.notificationsService.sanitize(template, body.args)
+
+    const sanitizedBody = {
+      ...body,
+      args: validArgs,
+    }
+
+    const id = await this.queue.add(sanitizedBody)
     const flattenedArgs: Record<string, string> = {}
-    for (const arg of body.args) {
+    for (const arg of validArgs) {
       flattenedArgs[arg.key] = arg.value
     }
     this.logger.info('Message queued', {
       messageId: id,
       ...flattenedArgs,
-      ...body,
+      ...sanitizedBody,
       args: {}, // Remove args, since they're in a better format in `flattenedArgs`
       queue: { url: this.queue.url, name: this.queue.queueName },
     })

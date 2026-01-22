@@ -46,9 +46,8 @@
       "executor": "@nx/webpack:dev-server",
       "defaultConfiguration": "development",
       "options": {
-        "port": 4201,
+        "port": 4242,
         "buildTarget": "form-system-web:build",
-        "proxyConfig": "apps/form-system/web/proxy.config.json",
         "hmr": true
       },
       "configurations": {
@@ -78,10 +77,19 @@
         "cwd": "infra"
       }
     },
+    "extract-strings": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/form-system/web/src/{app,components,routes,lib}/**/*.{js,ts,tsx}'"
+      }
+    },
     "dev": {
       "executor": "nx:run-commands",
       "options": {
         "commands": [
+          "./scripts/run-xroad-proxy.sh",
+          "yarn nx run services-user-profile:dev",
+          "yarn start service-portal",
           "yarn nx run form-system-web:start-bff",
           "yarn start form-system-web"
         ],

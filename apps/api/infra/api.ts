@@ -22,8 +22,8 @@ import {
   HealthDirectorateVaccination,
   HealthDirectorateHealthService,
   HealthInsurance,
+  PoliceCases,
   HousingBenefitCalculator,
-  Hunting,
   IcelandicGovernmentInstitutionVacancies,
   Inna,
   IntellectualProperties,
@@ -53,6 +53,7 @@ import {
   TransportAuthority,
   UniversityCareers,
   Vehicles,
+  NVSPermits,
   VehicleServiceFjsV1,
   VehiclesMileage,
   WorkAccidents,
@@ -61,6 +62,8 @@ import {
   LSH,
   PracticalExams,
   FireCompensation,
+  VMSTUnemployment,
+  GoProVerdicts,
 } from '../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (services: {
@@ -77,12 +80,13 @@ export const serviceSetup = (services: {
   userNotificationService: ServiceBuilder<'services-user-notification'>
   paymentsApi: ServiceBuilder<'services-payments'>
   formSystemService: ServiceBuilder<'services-form-system-api'>
+  paymentFlowUpdateHandlerService: ServiceBuilder<'services-payment-flow-update-handler'>
 }): ServiceBuilder<'api'> => {
   return service('api')
     .namespace('islandis')
     .serviceAccount()
     .command('node')
-    .args('--tls-min-v1.0', '--no-experimental-fetch', 'main.js')
+    .args('--tls-min-v1.0', '--no-experimental-fetch', 'main.cjs')
     .env({
       APPLICATION_SYSTEM_API_URL: ref(
         (h) => `http://${h.svc(services.appSystemApi)}`,
@@ -279,6 +283,11 @@ export const serviceSetup = (services: {
         '@rsk.is/prokura',
         '@rsk.is/prokura:admin',
       ]),
+      XROAD_FJS_BANKINFO_PATH: {
+        dev: 'IS-DEV/GOV/10021/FJS-Public/TBRBankMgrService_v1',
+        staging: 'IS-TEST/GOV/10021/FJS-Public/TBRBankMgrService_v1',
+        prod: 'IS/GOV/5402697509/FJS-Public/TBRBankMgrService_v1',
+      },
       UNIVERSITY_GATEWAY_API_URL: ref(
         (h) => `http://${h.svc(services.universityGatewayApi)}`,
       ),
@@ -293,6 +302,31 @@ export const serviceSetup = (services: {
         staging: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
         prod: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
       },
+      HMS_CONTRACTS_AUTH_TOKEN_ENDPOINT: {
+        dev: 'https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/token',
+        staging:
+          'https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/token',
+        prod: 'https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/token',
+      },
+      HMS_CONTRACTS_AUTH_TENANT_ID: {
+        dev: 'c7256472-2622-417e-8955-a54eeb0a110e',
+        staging: 'c7256472-2622-417e-8955-a54eeb0a110e',
+        prod: 'c7256472-2622-417e-8955-a54eeb0a110e',
+      },
+      HMS_CONTRACTS_AUTH_CLIENT_ID: {
+        dev: 'e2411f5c-436a-4c17-aa14-eab9c225bc06',
+        staging: 'e2411f5c-436a-4c17-aa14-eab9c225bc06',
+        prod: '44055958-a462-4ba8-bbd2-5bfedbbd18c0',
+      },
+      LANDSPITALI_PAYMENT_FLOW_EVENT_CALLBACK_URL: ref(
+        (h) => `http://${h.svc(services.paymentFlowUpdateHandlerService)}`,
+      ),
+      WEB_DOMAIN: {
+        dev: 'beta.dev01.devland.is',
+        staging: 'beta.staging01.devland.is',
+        prod: 'island.is',
+      },
+      ENVIRONMENT: ref((h) => h.env.type),
     })
     .secrets({
       APOLLO_BYPASS_CACHE_SECRET: '/k8s/api/APOLLO_BYPASS_CACHE_SECRET',
@@ -325,6 +359,16 @@ export const serviceSetup = (services: {
         '/k8s/documentprovider/DOCUMENT_PROVIDER_CLIENTID_TEST',
       DOCUMENT_PROVIDER_CLIENT_SECRET_TEST:
         '/k8s/documentprovider/DOCUMENT_PROVIDER_CLIENT_SECRET_TEST',
+      DOCUMENT_PROVIDER_DASHBOARD_CLIENT_SECRET:
+        '/k8s/documentprovider/DOCUMENT_PROVIDER_DASHBOARD_CLIENT_SECRET',
+      DOCUMENT_PROVIDER_DASHBOARD_CLIENTID:
+        '/k8s/documentprovider/DOCUMENT_PROVIDER_DASHBOARD_CLIENTID',
+      DOCUMENT_PROVIDER_DASHBOARD_TOKEN_URL:
+        '/k8s/documentprovider/DOCUMENT_PROVIDER_DASHBOARD_TOKEN_URL',
+      DOCUMENT_PROVIDER_DASHBOARD_BASE_PATH:
+        '/k8s/documentprovider/DOCUMENT_PROVIDER_DASHBOARD_BASE_PATH',
+      DOCUMENT_PROVIDER_DASHBOARD_SCOPE:
+        '/k8s/documentprovider/DOCUMENT_PROVIDER_DASHBOARD_SCOPE',
       SYSLUMENN_USERNAME: '/k8s/api/SYSLUMENN_USERNAME',
       SYSLUMENN_PASSWORD: '/k8s/api/SYSLUMENN_PASSWORD',
       PKPASS_API_KEY: '/k8s/api/PKPASS_API_KEY',
@@ -353,9 +397,8 @@ export const serviceSetup = (services: {
       FIREARM_LICENSE_FETCH_TIMEOUT: '/k8s/api/FIREARM_LICENSE_FETCH_TIMEOUT',
       DISABILITY_LICENSE_FETCH_TIMEOUT:
         '/k8s/api/DISABILITY_LICENSE_FETCH_TIMEOUT',
+      RLS_CASES_API_KEY: '/k8s/api/RLS_CASES_API_KEY',
       INTELLECTUAL_PROPERTY_API_KEY: '/k8s/api/IP_API_KEY',
-      ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE',
-      ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH',
       VEHICLES_ALLOW_CO_OWNERS: '/k8s/api/VEHICLES_ALLOW_CO_OWNERS',
       IDENTITY_SERVER_CLIENT_SECRET: '/k8s/api/IDENTITY_SERVER_CLIENT_SECRET',
       FINANCIAL_STATEMENTS_INAO_CLIENT_ID:
@@ -409,11 +452,29 @@ export const serviceSetup = (services: {
         '/k8s/payments/PAYMENTS_VERIFICATION_CALLBACK_SIGNING_SECRET',
       VERDICTS_GOPRO_USERNAME: '/k8s/api/VERDICTS_GOPRO_USERNAME',
       VERDICTS_GOPRO_PASSWORD: '/k8s/api/VERDICTS_GOPRO_PASSWORD',
+      HMS_CONTRACTS_AUTH_CLIENT_SECRET:
+        '/k8s/application-system-api/HMS_CONTRACTS_AUTH_CLIENT_SECRET',
+      LANDSPITALI_PAYMENT_NATIONAL_ID_FALLBACK:
+        '/k8s/api/LANDSPITALI_PAYMENT_NATIONAL_ID_FALLBACK',
+      LANDSPITALI_PAYMENT_ORGANISATION_ID:
+        '/k8s/api/LANDSPITALI_PAYMENT_ORGANISATION_ID',
+      VERDICTS_SUPREME_COURT_BEARER_TOKEN:
+        '/k8s/api/VERDICTS_SUPREME_COURT_BEARER_TOKEN',
+      FINANCIAL_MANAGEMENT_AUTHORITY_BASE_PATH:
+        '/k8s/api/FINANCIAL_MANAGEMENT_AUTHORITY_BASE_PATH',
+      FINANCIAL_MANAGEMENT_AUTHORITY_CLIENT_ID:
+        '/k8s/api/FINANCIAL_MANAGEMENT_AUTHORITY_CLIENT_ID',
+      FINANCIAL_MANAGEMENT_AUTHORITY_CLIENT_SECRET:
+        '/k8s/api/FINANCIAL_MANAGEMENT_AUTHORITY_CLIENT_SECRET',
+      FINANCIAL_MANAGEMENT_AUTHORITY_SCOPE:
+        '/k8s/api/FINANCIAL_MANAGEMENT_AUTHORITY_SCOPE',
+      FINANCIAL_MANAGEMENT_AUTHORITY_AUTHENTICATION_SERVER:
+        '/k8s/api/FINANCIAL_MANAGEMENT_AUTHORITY_AUTHENTICATION_SERVER',
     })
     .xroad(
       AdrAndMachine,
       JudicialAdministration,
-      Hunting,
+      PoliceCases,
       Firearm,
       Disability,
       Base,
@@ -425,6 +486,7 @@ export const serviceSetup = (services: {
       Labor,
       DrivingLicense,
       Payment,
+      NVSPermits,
       DistrictCommissionersPCard,
       DistrictCommissionersLicenses,
       Finance,
@@ -472,8 +534,9 @@ export const serviceSetup = (services: {
       SecondarySchool,
       LSH,
       PracticalExams,
+      VMSTUnemployment,
+      GoProVerdicts,
     )
-    .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({
       primary: {
         host: {
@@ -486,15 +549,20 @@ export const serviceSetup = (services: {
       },
     })
     .readiness('/health')
-    .liveness('/liveness')
+    .liveness({
+      path: '/liveness',
+      initialDelaySeconds: 10,
+      timeoutSeconds: 5,
+    })
     .resources({
-      limits: { cpu: '1200m', memory: '3200Mi' },
-      requests: { cpu: '400m', memory: '896Mi' },
+      limits: { cpu: '1200m', memory: '2500Mi' },
+      requests: { cpu: '900m', memory: '2000Mi' },
     })
     .replicaCount({
-      default: 2,
+      default: 3,
       max: 50,
-      min: 2,
+      min: 3,
+      cpuAverageUtilization: 70,
     })
     .grantNamespaces(
       'nginx-ingress-external',

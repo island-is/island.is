@@ -11,8 +11,8 @@ import {
 } from '../user'
 import { courtOfAppealsTableGroups } from './tableGroups/courtOfAppeals'
 import { districtCourtTableGroups } from './tableGroups/districtCourt'
-import { prisonStaffTableGroups } from './tableGroups/prison'
 import { prisonAdminTableGroups } from './tableGroups/prisonAdmin'
+import { prisonStaffTableGroups } from './tableGroups/prisonStaff'
 import { prosecutorTableGroups } from './tableGroups/prosecutor'
 import { prosecutorRepresentativeTableGroups } from './tableGroups/prosecutorRepresentative'
 import { publicProsecutionTableGroups } from './tableGroups/publicProsecution'
@@ -46,12 +46,12 @@ export const getCaseTableGroups = (
     return publicProsecutionTableGroups
   }
 
-  if (isProsecutorRepresentativeUser(user)) {
-    return prosecutorRepresentativeTableGroups
-  }
-
   if (isProsecutorUser(user)) {
     return prosecutorTableGroups
+  }
+
+  if (isProsecutorRepresentativeUser(user)) {
+    return prosecutorRepresentativeTableGroups
   }
 
   return []

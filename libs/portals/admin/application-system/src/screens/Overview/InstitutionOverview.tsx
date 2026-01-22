@@ -7,22 +7,20 @@ import {
   FilterMultiChoiceProps,
 } from '@island.is/island-ui/core'
 import {
-  useGetInstitutionApplicationsQuery,
+  useGetApplicationsInstitutionAdminQuery,
   useGetOrganizationsQuery,
 } from '../../queries/overview.generated'
-import invertBy from 'lodash/invertBy'
 import { InstitutionFilters } from '../../components/Filters/InstitutionFilters'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { ApplicationsTable } from '../../components/ApplicationsTable/ApplicationsTable'
 import { ApplicationFilters, MultiChoiceFilter } from '../../types/filters'
 import { Organization } from '@island.is/shared/types'
-import { institutionMapper } from '@island.is/application/types'
 import { AdminApplication } from '../../types/adminApplication'
-import { useUserInfo } from '@island.is/react-spa/bff'
 import endOfDay from 'date-fns/endOfDay'
 
 const defaultFilters: ApplicationFilters = {
+  searchStr: '',
   nationalId: '',
   period: {},
 }
@@ -34,14 +32,12 @@ const defaultMultiChoiceFilters: Record<
   [MultiChoiceFilter.STATUS]: undefined,
   [MultiChoiceFilter.INSTITUTION]: undefined,
   [MultiChoiceFilter.APPLICATION]: undefined,
+  [MultiChoiceFilter.TYPE_ID]: undefined,
 }
 
 const pageSize = 12
 
 const InstitutionOverview = () => {
-  const institutionApplications = invertBy(institutionMapper, (application) => {
-    return application.slug
-  })
   const { formatMessage } = useLocale()
   const [page, setPage] = useState(1)
   const [filters, setFilters] = useState(defaultFilters)
@@ -49,36 +45,35 @@ const InstitutionOverview = () => {
     defaultMultiChoiceFilters,
   )
 
-  const userInfo = useUserInfo()
   const { data: orgData, loading: orgsLoading } = useGetOrganizationsQuery({
     ssr: false,
   })
+
+  const useAdvancedSearch = !!filters.typeIdValue
 
   const {
     data: response,
     loading: queryLoading,
     refetch,
-  } = useGetInstitutionApplicationsQuery({
+  } = useGetApplicationsInstitutionAdminQuery({
     ssr: false,
     variables: {
       input: {
-        nationalId: userInfo.profile.nationalId,
         page: page,
         count: pageSize,
-        applicantNationalId: filters.nationalId
-          ? filters.nationalId.replace('-', '')
-          : '',
+        applicantNationalId:
+          !useAdvancedSearch && filters.nationalId
+            ? filters.nationalId.replace('-', '')
+            : '',
         from: filters.period.from?.toISOString(),
         to: filters.period.to?.toISOString(),
+        typeIdValue: filters.typeIdValue,
+        searchStr:
+          useAdvancedSearch && filters.searchStr
+            ? filters.searchStr.replace('-', '')
+            : undefined,
         status: multiChoiceFilters?.status,
       },
-    },
-    onCompleted: (q) => {
-      // Initialize available applications from the initial response
-      // So that we can use them to filter by
-      const names = q.applicationApplicationsInstitutionAdmin?.rows
-        ?.filter((x) => !!x.name)
-        .map((x) => x.name ?? '')
     },
   })
 
@@ -91,6 +86,20 @@ const InstitutionOverview = () => {
     response?.applicationApplicationsInstitutionAdmin?.count ?? 0
   const organizations = (orgData?.getOrganizations?.items ??
     []) as Organization[]
+
+  const handleTypeIdChange = (typeId: ApplicationFilters['typeIdValue']) => {
+    setFilters((prev) => ({
+      ...prev,
+      typeIdValue: typeId,
+    }))
+  }
+
+  const handleSearchStrChange = (searchStr: string) => {
+    setFilters((prev) => ({
+      ...prev,
+      searchStr,
+    }))
+  }
 
   const handleSearchChange = (nationalId: string) => {
     if (nationalId.length === 11 || nationalId.length === 0) {
@@ -141,6 +150,7 @@ const InstitutionOverview = () => {
   useEffect(() => {
     setPage(1)
     refetch()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters, multiChoiceFilters])
 
   return (
@@ -151,10 +161,17 @@ const InstitutionOverview = () => {
           { title: formatMessage(m.applicationSystem) },
         ]}
       />
-      <Text variant="h3" as="h1" marginBottom={[3, 3, 6]} marginTop={3}>
-        {formatMessage(m.applicationSystemApplications)}
-      </Text>
+      <Box marginBottom={[3, 3, 6]} marginTop={3}>
+        <Text variant="h3" as="h1">
+          {formatMessage(m.applicationSystemApplications)}
+        </Text>
+        <Text fontWeight="light">
+          {formatMessage(m.applicationSystemApplicationsDescription)}
+        </Text>
+      </Box>
       <InstitutionFilters
+        onTypeIdChange={handleTypeIdChange}
+        onSearchStrChange={handleSearchStrChange}
         onSearchChange={handleSearchChange}
         onFilterChange={handleMultiChoiceFilterChange}
         onDateChange={handleDateChange}
@@ -162,8 +179,9 @@ const InstitutionOverview = () => {
         multiChoiceFilters={multiChoiceFilters}
         filters={filters}
         numberOfDocuments={numberOfItems}
+        useAdvancedSearch={useAdvancedSearch}
       />
-      {isLoading && filters.nationalId?.length === 11 ? (
+      {isLoading ? (
         <SkeletonLoader
           height={60}
           repeat={10}
@@ -179,6 +197,7 @@ const InstitutionOverview = () => {
           pageSize={pageSize}
           shouldShowCardButtons={false}
           numberOfItems={numberOfItems}
+          showAdminData={useAdvancedSearch}
         />
       )}
     </Box>

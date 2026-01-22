@@ -1,4 +1,4 @@
-import { Box, Divider, Stack, Text } from '@island.is/island-ui/core'
+import { Box, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { m } from '../../../../lib/messages'
 import { useParams } from 'react-router-dom'
@@ -7,6 +7,7 @@ import format from 'date-fns/format'
 import Signees from '../../../shared/Signees'
 import ListActions from './ListActions'
 import { SignatureCollectionCollectionType } from '@island.is/api/schema'
+import { Skeleton } from '../../../../lib/skeletons'
 
 const collectionType = SignatureCollectionCollectionType.LocalGovernmental
 
@@ -14,28 +15,36 @@ const ViewList = () => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
   const { id } = useParams() as { id: string }
-  const { listInfo } = useGetSignatureList(id || '', collectionType)
+  const { listInfo, loadingList } = useGetSignatureList(
+    id || '',
+    collectionType,
+  )
 
   return (
     <Box>
-      {listInfo && (
+      {!loadingList && !!listInfo ? (
         <Stack space={5}>
           <Text variant="h3">{listInfo.title}</Text>
           <Box>
-            <Text variant="h5">{formatMessage(m.listPeriod)}</Text>
+            <Text variant="h4">{formatMessage(m.listPeriod)}</Text>
             <Text>
-              {format(
+              {`${format(
                 new Date(listInfo.startTime ?? new Date()),
                 'dd.MM.yyyy',
-              ) +
-                ' - ' +
-                format(new Date(listInfo.endTime ?? new Date()), 'dd.MM.yyyy')}
+              )} - ${format(
+                new Date(listInfo.endTime ?? new Date()),
+                'dd.MM.yyyy',
+              )}`}
             </Text>
-            <ListActions listId={listInfo.id} />
-            <Divider />
+            <ListActions list={listInfo} />
           </Box>
-          <Signees collectionType={collectionType} />
+          <Signees
+            collectionType={collectionType}
+            totalSignees={listInfo.numberOfSignatures ?? 0}
+          />
         </Stack>
+      ) : (
+        <Skeleton />
       )}
     </Box>
   )

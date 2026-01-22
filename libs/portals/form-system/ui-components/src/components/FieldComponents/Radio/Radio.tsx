@@ -1,30 +1,28 @@
 import { FormSystemField, FormSystemListItem } from '@island.is/api/schema'
 import {
-  RadioButton,
-  Text,
   Box,
   Inline,
   InputError,
+  RadioButton,
+  Text,
 } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import { Dispatch, useEffect, useState } from 'react'
-import { getValue } from '../../../lib/getValue'
 import { Action } from '../../../lib'
-import { useIntl } from 'react-intl'
+import { getValue } from '../../../lib/getValue'
 import { m } from '../../../lib/messages'
 
 interface Props {
   item: FormSystemField
   dispatch?: Dispatch<Action>
-  lang?: 'is' | 'en'
   hasError?: boolean
 }
 
-export const Radio = ({ item, dispatch, lang, hasError }: Props) => {
+export const Radio = ({ item, dispatch, hasError }: Props) => {
   const radioButtons = item.list as FormSystemListItem[]
   const [value, setValue] = useState<string>(getValue(item, 'listValue'))
   const [radioChecked, setRadioChecked] = useState<boolean[]>([])
-  const language = lang ?? 'is'
-  const { formatMessage } = useIntl()
+  const { formatMessage, lang } = useLocale()
 
   useEffect(() => {
     setRadioChecked(
@@ -46,25 +44,46 @@ export const Radio = ({ item, dispatch, lang, hasError }: Props) => {
   }
 
   const radioButton = (rb: FormSystemListItem, index: number) => (
-    <Box width="half" padding={1} onClick={() => handleChange(index)}>
+    <Box
+      width="half"
+      padding={1}
+      onClick={() => handleChange(index)}
+      key={rb.id}
+    >
       <RadioButton
-        label={rb?.label?.[language]}
+        label={rb?.label?.[lang]}
         tooltip={
-          rb?.description?.is && rb?.description?.[language] !== ''
-            ? rb?.description?.[language]
+          rb?.description?.is && rb?.description?.[lang] !== ''
+            ? rb?.description?.[lang]
             : undefined
         }
         large
         backgroundColor="blue"
         checked={radioChecked[index]}
+        onChange={() => handleChange(index)}
       />
     </Box>
   )
 
+  const selected = item?.list?.find((listItem) => listItem?.isSelected === true)
+
+  useEffect(() => {
+    if (selected && dispatch) {
+      if (!value) {
+        dispatch({
+          type: 'SET_LIST_VALUE',
+          payload: { id: item.id, value: selected.label?.[lang] ?? '' },
+        })
+        setValue(selected.label?.[lang] ?? '')
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   return (
     <>
       <Inline space={1}>
-        <Text variant="h3">{item?.name?.[language]}</Text>
+        <Text variant="h3">{item?.name?.[lang]}</Text>
         {item?.isRequired && (
           <Text variant="h3" as="span" color="red600">
             {' '}

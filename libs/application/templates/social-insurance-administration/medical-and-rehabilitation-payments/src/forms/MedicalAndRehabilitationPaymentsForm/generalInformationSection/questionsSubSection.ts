@@ -1,18 +1,24 @@
 import {
+  buildAsyncSelectField,
   buildDateField,
   buildDescriptionField,
-  buildFileUploadField,
   buildMultiField,
   buildRadioField,
+  buildSelectField,
   buildSubSection,
+  coreErrorMessages,
 } from '@island.is/application/core'
-import { fileUploadSharedProps } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
+import { siaEducationalInstitutionsQuery } from '@island.is/application/templates/social-insurance-administration-core/graphql/queries'
 import { getYesNoOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
+import { SiaEducationalInstitutionsQuery } from '@island.is/application/templates/social-insurance-administration-core/types/schema'
+import { Application } from '@island.is/application/types'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../../../lib/messages'
 import {
+  isFirstApplication,
   shouldShowCalculatedRemunerationDate,
-  shouldShowIsStudyingFileUpload,
+  shouldShowIsStudyingFields,
 } from '../../../utils/conditionUtils'
+import { getApplicationExternalData } from '../../../utils/medicalAndRehabilitationPaymentsUtils'
 
 export const questionsSubSection = buildSubSection({
   id: 'questionsSubSection',
@@ -37,6 +43,7 @@ export const questionsSubSection = buildSubSection({
           options: getYesNoOptions(),
           width: 'half',
           required: true,
+          condition: (_, externalData) => isFirstApplication(externalData),
         }),
         buildDescriptionField({
           id: 'questions.calculatedRemunerationDate.description',
@@ -76,18 +83,61 @@ export const questionsSubSection = buildSubSection({
           required: true,
         }),
         buildDescriptionField({
-          id: 'questions.isStudyingFileUpload.description',
+          id: 'questions.educationalInstitution.description',
           title:
-            medicalAndRehabilitationPaymentsFormMessage.shared
-              .uploadConfirmationDocument,
+            medicalAndRehabilitationPaymentsFormMessage.generalInformation
+              .questionsSchoolRegistration,
           titleVariant: 'h4',
           space: 4,
-          condition: (answers) => shouldShowIsStudyingFileUpload(answers),
+          condition: (answers) => shouldShowIsStudyingFields(answers),
         }),
-        buildFileUploadField({
-          id: 'questions.isStudyingFileUpload',
-          ...fileUploadSharedProps,
-          condition: (answers) => shouldShowIsStudyingFileUpload(answers),
+        buildAsyncSelectField({
+          id: 'questions.educationalInstitution',
+          title:
+            medicalAndRehabilitationPaymentsFormMessage.generalInformation
+              .questionsSchool,
+          placeholder:
+            medicalAndRehabilitationPaymentsFormMessage.generalInformation
+              .questionsSelectSchool,
+          width: 'half',
+          loadingError: coreErrorMessages.failedDataProvider,
+          loadOptions: async ({ apolloClient }) => {
+            const { data } =
+              await apolloClient.query<SiaEducationalInstitutionsQuery>({
+                query: siaEducationalInstitutionsQuery,
+              })
+
+            return (
+              data?.socialInsuranceGeneral?.educationalInstitutions
+                ?.map(({ name }) => ({
+                  value: name || '', // Should send nationalId when Smári is ready
+                  label: name || '',
+                }))
+                .sort((a, b) => a.label.localeCompare(b.label)) ?? []
+            )
+          },
+          condition: (answers) => shouldShowIsStudyingFields(answers),
+        }),
+        buildSelectField({
+          id: 'questions.ectsUnits',
+          title:
+            medicalAndRehabilitationPaymentsFormMessage.generalInformation
+              .questionsNumberOfCredits,
+          placeholder:
+            medicalAndRehabilitationPaymentsFormMessage.generalInformation
+              .questionsSelectNumberOfCredits,
+          width: 'half',
+          options: (application: Application) => {
+            const { ectsUnits } = getApplicationExternalData(
+              application.externalData,
+            )
+
+            return ectsUnits.map(({ value, description }) => ({
+              value: value,
+              label: description,
+            }))
+          },
+          condition: (answers) => shouldShowIsStudyingFields(answers),
         }),
       ],
     }),

@@ -1,5 +1,5 @@
 import { Op } from 'sequelize'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import {
   InstitutionType,
@@ -9,8 +9,7 @@ import {
 
 import { createTestingUserModule } from './createTestingUserModule'
 
-import { Institution } from '../../institution'
-import { User } from '../user.model'
+import { Institution, User } from '../../repository'
 
 interface Then {
   result: User[]

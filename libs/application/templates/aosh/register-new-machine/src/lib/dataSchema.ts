@@ -25,7 +25,7 @@ const RemovablePersonInformationSchema = z.object({
   name: z.string().optional(),
   nationalId: z.string().optional(),
   address: z.string().optional(),
-  postCode: z.string().optional(),
+  postCode: z.string().nullish(),
   phone: z.string().optional(),
   email: z.string().optional(),
 })

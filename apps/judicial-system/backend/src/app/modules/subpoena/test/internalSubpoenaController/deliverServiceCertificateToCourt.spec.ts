@@ -1,13 +1,12 @@
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { createTestingSubpoenaModule } from '../createTestingSubpoenaModule'
 
-import { Case, PdfService } from '../../../case'
+import { PdfService } from '../../../case'
 import { CourtService } from '../../../court'
-import { Defendant } from '../../../defendant'
+import { Case, Defendant, Subpoena } from '../../../repository'
 import { DeliverDto } from '../../dto/deliver.dto'
 import { DeliverResponse } from '../../models/deliver.response'
-import { Subpoena } from '../../models/subpoena.model'
 
 interface Then {
   result: DeliverResponse
@@ -48,9 +47,11 @@ describe('InternalSubpoenaController - Deliver subpoena certificate to court', (
       await createTestingSubpoenaModule()
 
     mockPdfService = pdfService
-    const mockGetServiceCertificatePdf =
-      mockPdfService.getServiceCertificatePdf as jest.Mock
-    mockGetServiceCertificatePdf.mockRejectedValue(new Error('Some error'))
+    const mockGetSubpoenaServiceCertificatePdf =
+      mockPdfService.getSubpoenaServiceCertificatePdf as jest.Mock
+    mockGetSubpoenaServiceCertificatePdf.mockRejectedValue(
+      new Error('Some error'),
+    )
 
     mockCourtService = courtService
     const mockCreateDocument = mockCourtService.createDocument as jest.Mock
@@ -81,9 +82,11 @@ describe('InternalSubpoenaController - Deliver subpoena certificate to court', (
     let then: Then
 
     beforeEach(async () => {
-      const mockGetServiceCertificatePdf =
-        mockPdfService.getServiceCertificatePdf as jest.Mock
-      mockGetServiceCertificatePdf.mockResolvedValue(serviceCertificatePdf)
+      const mockGetSubpoenaServiceCertificatePdf =
+        mockPdfService.getSubpoenaServiceCertificatePdf as jest.Mock
+      mockGetSubpoenaServiceCertificatePdf.mockResolvedValue(
+        serviceCertificatePdf,
+      )
       const mockCreateDocument = mockCourtService.createDocument as jest.Mock
       mockCreateDocument.mockResolvedValue('')
 
@@ -91,7 +94,7 @@ describe('InternalSubpoenaController - Deliver subpoena certificate to court', (
     })
 
     it('should deliver the service certificate', () => {
-      expect(mockPdfService.getServiceCertificatePdf).toBeCalledWith(
+      expect(mockPdfService.getSubpoenaServiceCertificatePdf).toBeCalledWith(
         theCase,
         defendant,
         subpoena,

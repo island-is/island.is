@@ -1,5 +1,6 @@
 import { Base64 } from 'js-base64'
-import { uuid } from 'uuidv4'
+import { Transaction } from 'sequelize'
+import { v4 as uuid } from 'uuid'
 
 import {
   CaseOrigin,
@@ -17,7 +18,7 @@ import { randomDate } from '../../../../test'
 import { AwsS3Service } from '../../../aws-s3'
 import { FileService } from '../../../file'
 import { PoliceDocumentType, PoliceService } from '../../../police'
-import { Case } from '../../models/case.model'
+import { Case } from '../../../repository'
 import { DeliverResponse } from '../../models/deliver.response'
 
 jest.mock('../../../../factories')
@@ -38,15 +39,27 @@ describe('InternalCaseController - Deliver indictment to police', () => {
   let mockAwsS3Service: AwsS3Service
   let mockFileService: FileService
   let mockPoliceService: PoliceService
+  let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { awsS3Service, fileService, policeService, internalCaseController } =
-      await createTestingCaseModule()
+    const {
+      sequelize,
+      awsS3Service,
+      fileService,
+      policeService,
+      internalCaseController,
+    } = await createTestingCaseModule()
 
     mockAwsS3Service = awsS3Service
     mockFileService = fileService
     mockPoliceService = policeService
+
+    const mockTransaction = sequelize.transaction as jest.Mock
+    transaction = {} as Transaction
+    mockTransaction.mockImplementationOnce(
+      (fn: (transaction: Transaction) => unknown) => fn(transaction),
+    )
 
     const mockToday = nowFactory as jest.Mock
     mockToday.mockReturnValueOnce(date)
@@ -88,10 +101,11 @@ describe('InternalCaseController - Deliver indictment to police', () => {
       state: caseState,
       policeCaseNumbers: [policeCaseNumber],
       courtCaseNumber,
-      defendants: [{ nationalId: defendantNationalId }],
+      defendants: [{ nationalId: uuid() }],
       indictmentSubtypes: {
         [policeCaseNumber]: [IndictmentSubtype.TRAFFIC_VIOLATION],
       },
+      policeDefendantNationalId: defendantNationalId,
     } as Case
 
     let then: Then
@@ -148,11 +162,12 @@ describe('InternalCaseController - Deliver indictment to police', () => {
       state: caseState,
       policeCaseNumbers: [policeCaseNumber],
       courtCaseNumber,
-      defendants: [{ nationalId: defendantNationalId }],
+      defendants: [{ nationalId: uuid() }],
       indictmentSubtypes: {
         [policeCaseNumber]: [IndictmentSubtype.TRAFFIC_VIOLATION],
       },
       indictmentHash: uuid(),
+      policeDefendantNationalId: defendantNationalId,
     } as Case
 
     beforeEach(async () => {

@@ -1,4 +1,4 @@
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import {
   indictmentCases,
@@ -9,7 +9,7 @@ import {
 import { createTestingFileModule } from '../createTestingFileModule'
 
 import { AwsS3Service } from '../../../aws-s3'
-import { Case } from '../../../case'
+import { Case } from '../../../repository'
 import { CreatePresignedPostDto } from '../../dto/createPresignedPost.dto'
 import { PresignedPost } from '../../models/presignedPost.model'
 

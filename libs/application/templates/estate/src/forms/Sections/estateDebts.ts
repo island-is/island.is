@@ -44,32 +44,51 @@ export const estateDebts = buildSection({
       children: [
         buildCustomField(
           {
-            id: 'debts',
-            component: 'TextFieldsRepeater',
+            id: 'debts.data',
+            component: 'DebtsRepeater',
           },
           {
             fields: [
               {
-                title: m.debtsCreditorName,
-                id: 'creditorName',
+                title: m.debtsCreditorType,
+                id: 'debtType',
+                placeholder: m.debtsCreditorType,
               },
               {
                 title: m.debtsNationalId,
                 id: 'nationalId',
                 format: '######-####',
+                required: false,
+              },
+              {
+                title: m.debtsCreditorName,
+                id: 'creditorName',
+                required: true,
               },
               {
                 title: m.debtsLoanIdentity,
                 id: 'loanIdentity',
+                required: false,
               },
               {
                 title: m.debtsBalance,
                 id: 'balance',
                 currency: true,
+                required: true,
               },
             ],
             repeaterButtonText: m.debtsRepeaterButton,
-            repeaterHeaderText: m.debtsCreditorHeader,
+            sumField: 'balance',
+            fromExternalData: 'otherDebts',
+            selections: [
+              { value: 'Duties', label: m.debtsTypeDuties },
+              { value: 'OtherDebts', label: m.debtsTypeOther },
+              { value: 'PropertyFees', label: m.debtsTypePropertyFees },
+              { value: 'InsuranceCompany', label: m.debtsTypeInsurance },
+              { value: 'Loan', label: m.debtsTypeLoan },
+              { value: 'CreditCard', label: m.debtsTypeCreditCard },
+              { value: 'Overdraft', label: m.debtsTypeOverdraft },
+            ],
           },
         ),
       ],

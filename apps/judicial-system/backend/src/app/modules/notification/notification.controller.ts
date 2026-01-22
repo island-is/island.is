@@ -19,7 +19,8 @@ import {
 } from '@island.is/judicial-system/auth'
 import type { User } from '@island.is/judicial-system/types'
 
-import { Case, CaseExistsGuard, CaseWriteGuard, CurrentCase } from '../case'
+import { CaseExistsGuard, CaseWriteGuard, CurrentCase } from '../case'
+import { Case } from '../repository'
 import { NotificationDto } from './dto/notification.dto'
 import {
   courtOfAppealsAssistantNotificationRule,

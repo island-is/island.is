@@ -119,7 +119,6 @@ export const PUBLIC_PROSECUTOR_STAFF_INDICTMENT_SEND_TO_PRISON_ADMIN_ROUTE =
 //#endregion Public prosecutor user routes
 
 //#region Prison user routes
-export const PRISON_CASES_ROUTE = '/fangelsi/krofur'
 export const PRISON_SIGNED_VERDICT_OVERVIEW_ROUTE = '/fangelsi/krafa/yfirlit'
 export const PRISON_CLOSED_INDICTMENT_OVERVIEW_ROUTE =
   '/fangelsi/akaera/yfirlit'
@@ -127,7 +126,6 @@ export const PRISON_CLOSED_INDICTMENT_OVERVIEW_ROUTE =
 
 //#region Court of appeals user routes
 export const COURT_OF_APPEAL_OVERVIEW_ROUTE = '/landsrettur/yfirlit'
-export const COURT_OF_APPEAL_CASES_ROUTE = '/landsrettur/krofur'
 export const COURT_OF_APPEAL_CASE_ROUTE = '/landsrettur/kaera'
 export const COURT_OF_APPEAL_RULING_ROUTE = '/landsrettur/urskurdur'
 export const COURT_OF_APPEAL_RESULT_ROUTE = '/landsrettur/nidurstada'
@@ -162,10 +160,13 @@ export const INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE =
   '/domur/akaera/mottaka'
 export const INDICTMENTS_SUBPOENA_ROUTE = '/domur/akaera/fyrirkall'
 export const INDICTMENTS_DEFENDER_ROUTE = '/domur/akaera/malflytjendur'
+export const INDICTMENTS_COURT_RECORD_ROUTE = '/domur/akaera/thingbok'
 export const INDICTMENTS_CONCLUSION_ROUTE = '/domur/akaera/stada-og-lyktir'
 export const INDICTMENTS_SUMMARY_ROUTE = '/domur/akaera/samantekt'
 export const INDICTMENTS_COMPLETED_ROUTE = '/domur/akaera/lokid'
 export const INDICTMENTS_ADD_FILES_IN_COURT_ROUTE = '/domur/akaera/gogn'
+export const INDICTMENTS_ADD_RULING_ORDER_IN_COURT_ROUTE =
+  '/domur/akaera/urskurdir'
 
 //#endregion District court user routes
 
@@ -211,6 +212,7 @@ export const INDICTMENTS_INDICTMENT_ROUTE = '/akaera/akaera'
 export const INDICTMENTS_OVERVIEW_ROUTE = '/akaera/stadfesta'
 export const CLOSED_INDICTMENT_OVERVIEW_ROUTE = '/akaera/yfirlit'
 export const INDICTMENTS_ADD_FILES_ROUTE = '/akaera/gogn'
+export const INDICTMENTS_TO_REVIEW = '/malalistar/sakamal-til-yfirlestrar'
 //#endregion Prosecutor user routes
 
 //#region Admin user routes
@@ -222,7 +224,6 @@ export const STATISTICS_ROUTE = '/notendur/tolfraedi'
 //#endregion Admin user routes
 
 //#region Shared routes
-export const CASES_ROUTE = '/krofur'
 export const CASE_TABLE_GROUPS_ROUTE = '/malalistar'
 export const SIGNED_VERDICT_OVERVIEW_ROUTE = '/krafa/yfirlit'
 export const ROUTE_HANDLER_ROUTE = '/beinir'
@@ -280,3 +281,9 @@ export const FEEDBACK_FORM_URL =
 
 // Masks
 export const POLICE_CASE_NUMBER = '___-____-_______'
+export const SSN = '______-____'
+export const PHONE_NUMBER = '___-____'
+export const EDITABLE_DATE = '__.__.____'
+export const DATE_PICKER_TIME = '  :  '
+export const SUBSTANCE_ALCOHOL = '_,__'
+export const SPEED = '___'

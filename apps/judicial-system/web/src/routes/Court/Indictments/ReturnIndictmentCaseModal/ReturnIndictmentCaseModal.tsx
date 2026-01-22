@@ -90,12 +90,14 @@ const ReturnIndictmentModal: FC<Props> = ({
       title={formatMessage(strings.returnModalTitle)}
       text={formatMessage(strings.returnModalText)}
       onClose={() => onClose()}
-      primaryButtonText={formatMessage(strings.returnModalPrimaryButtonText)}
-      secondaryButtonText={formatMessage(
-        strings.returnModalSecondaryButtonText,
-      )}
-      onPrimaryButtonClick={handleReturnIndictmentCase}
-      onSecondaryButtonClick={onClose}
+      primaryButton={{
+        text: formatMessage(strings.returnModalPrimaryButtonText),
+        onClick: handleReturnIndictmentCase,
+      }}
+      secondaryButton={{
+        text: formatMessage(strings.returnModalSecondaryButtonText),
+        onClick: onClose,
+      }}
     >
       <Box marginBottom={5}>
         <Input

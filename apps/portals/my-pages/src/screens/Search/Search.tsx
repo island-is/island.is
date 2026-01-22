@@ -7,23 +7,24 @@ import {
   GridContainer,
   GridRow,
   Icon,
-  Input,
   Link,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { ServicePortalPaths, m } from '@island.is/portals/my-pages/core'
-import { useMemo, useRef } from 'react'
-import * as styles from './Search.css'
-import { usePortalModulesSearch } from '../../hooks/usePortalModulesSearch'
-import { useSearchParams } from 'react-router-dom'
 import { Problem } from '@island.is/react-spa/shared'
+import { useMemo } from 'react'
+import { useSearchParams } from 'react-router-dom'
+import { SearchInput } from '../../components/SearchInput/SearchInput'
+import { usePortalModulesSearch } from '../../hooks/usePortalModulesSearch'
 
 const Search = () => {
   const { formatMessage } = useLocale()
-  const [searchParams, setSearchParams] = useSearchParams()
+  const [searchParams] = useSearchParams()
   const search = usePortalModulesSearch()
+
+  const query = searchParams.get('query')
 
   const breadcrumbs: Array<BreadCrumbItem> = [
     {
@@ -36,10 +37,6 @@ const Search = () => {
       isTag: true,
     },
   ]
-
-  const ref = useRef<HTMLInputElement>(null)
-
-  const query = searchParams.get('query')
 
   const searchResults = useMemo(() => {
     if (query && query.length > 1) {
@@ -69,42 +66,11 @@ const Search = () => {
           <Breadcrumbs items={breadcrumbs}></Breadcrumbs>
 
           <Box marginTop={3}>
-            <Input
-              ref={ref}
-              size="xs"
-              name="search-input"
-              placeholder={formatMessage(m.searchLabel)}
-              backgroundColor="blue"
-              aria-label="Search input"
-              onKeyDown={(e) => {
-                if (e.code === 'Enter') {
-                  const val = ref.current?.value
-                  if (!val) {
-                    setSearchParams(
-                      (params) => {
-                        const newParams = params
-                        newParams.delete('query')
-                        return newParams
-                      },
-                      { replace: true },
-                    )
-                  } else {
-                    setSearchParams(
-                      (params) => {
-                        const newParams = params
-                        newParams.set('query', val)
-                        return newParams
-                      },
-                      { replace: true },
-                    )
-                  }
-                }
-              }}
-              icon={{
-                name: 'search',
-                type: 'outline',
-              }}
-              className={styles.searchBox}
+            <SearchInput
+              colorScheme="blue"
+              size="large"
+              placeholder={formatMessage(m.searchPlaceholder)}
+              buttonAriaLabel={formatMessage(m.searchOnMyPages)}
             />
           </Box>
         </GridColumn>

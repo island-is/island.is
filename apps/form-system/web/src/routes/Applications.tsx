@@ -1,98 +1,173 @@
-import { useNavigate, useParams } from 'react-router-dom'
-import { CREATE_APPLICATION } from '@island.is/form-system/graphql'
-import { useMutation } from '@apollo/client'
-import { useState } from 'react'
+import { useLazyQuery, useMutation } from '@apollo/client'
 import { FormSystemApplication } from '@island.is/api/schema'
 import {
+  CREATE_APPLICATION,
+  DELETE_APPLICATION,
+  GET_ALL_APPLICATIONS,
+} from '@island.is/form-system/graphql'
+import { ApplicationList, m } from '@island.is/form-system/ui'
+import {
   Box,
-  Page,
   Button,
   GridContainer,
-  Inline,
+  Page,
+  Text,
 } from '@island.is/island-ui/core'
-import { ApplicationList } from '@island.is/form-system/ui'
+import { useNamespaces } from '@island.is/localization'
+import { useCallback, useEffect, useState } from 'react'
+import { useIntl } from 'react-intl'
+import { useNavigate, useParams } from 'react-router-dom'
+import { ErrorShell } from '../components/ErrorShell/ErrorShell'
 
 interface Params {
   slug?: string
 }
 
 export const Applications = () => {
+  useNamespaces('form.system')
   const { slug } = useParams() as Params
   const navigate = useNavigate()
   const [applications, setApplications] = useState<FormSystemApplication[]>([])
-  const [createApplicationMutation] = useMutation(CREATE_APPLICATION, {
-    onCompleted({ createApplication }) {
-      if (slug) {
-        console.log(createApplication)
-      }
-    },
+  const [loginAllowed, setLoginAllowed] = useState(true)
+  const [isValidSlug, setIsValidSlug] = useState(true)
+  const [createApplicationMutation] = useMutation(CREATE_APPLICATION)
+
+  const { formatMessage } = useIntl()
+
+  const [getApplications] = useLazyQuery(GET_ALL_APPLICATIONS, {
+    fetchPolicy: 'no-cache',
   })
 
-  // TODO: Uncomment when the endpoint is ready
-  // const [getApplications] = useLazyQuery(GET_APPLICATIONS, {
-  //   onCompleted({ getApplications }) {
-  //     if (slug) {
-  //       console.log(getApplications)
-  //     }
-  //   }
-  // })
-
-  const createApplication = async () => {
+  const createApplication = useCallback(async () => {
     try {
       const app = await createApplicationMutation({
         variables: {
           input: {
             slug: slug,
-            createApplicationDto: {
-              isTest: false,
-            },
           },
         },
       })
-      if (app.data?.createFormSystemApplication?.id) {
-        navigate(`../${slug}/${app.data.createFormSystemApplication.id}`)
+      if (app.data?.createFormSystemApplication?.isLoginTypeAllowed === false) {
+        setLoginAllowed(false)
+      } else if (app.data?.createFormSystemApplication?.application?.id) {
+        navigate(
+          `../${slug}/${app.data.createFormSystemApplication.application.id}`,
+        )
       }
-      return app
     } catch (error) {
       console.error('Error creating application:', error)
       return null
     }
-  }
+  }, [createApplicationMutation, slug, navigate])
 
-  // This is a dummy to demonstrate how it looks when there are multiple applications for a form
-  const getApplications = async () => {
-    const app = await createApplicationMutation({
-      variables: {
-        input: {
-          slug: slug,
-          createApplicationDto: {
-            isTest: false,
+  const fetchApplications = useCallback(async () => {
+    try {
+      const app = await getApplications({
+        variables: {
+          input: {
+            slug: slug,
           },
         },
-      },
-    })
-    setApplications([
-      app.data.createFormSystemApplication,
-      app.data.createFormSystemApplication,
-      app.data.createFormSystemApplication,
-    ])
+      })
+      if (!app.data) {
+        setIsValidSlug(false)
+        return null
+      }
+      const dto = app.data?.formSystemGetApplications
+      if (dto?.isLoginTypeAllowed === false) {
+        setLoginAllowed(false)
+        return null
+      }
+      return dto
+    } catch (error) {
+      console.error('Error fetching applications:', error)
+      return null
+    }
+  }, [getApplications, slug])
+
+  useEffect(() => {
+    let cancelled = false
+    const run = async () => {
+      const responseDto = await fetchApplications()
+      if (cancelled) return
+
+      const apps = responseDto?.applications || []
+      if (apps.length > 0) {
+        setApplications(apps)
+      } else if (loginAllowed !== false) {
+        await createApplication()
+        if (cancelled) return
+      }
+    }
+
+    run()
+
+    return () => {
+      cancelled = true
+    }
+  }, [slug, createApplication, fetchApplications, loginAllowed])
+
+  const [deleteApplicationMutation] = useMutation(DELETE_APPLICATION)
+
+  const deleteApplication = useCallback(
+    async (applicationId: string) => {
+      try {
+        await deleteApplicationMutation({
+          variables: {
+            input: applicationId,
+          },
+        })
+        setApplications((prev) =>
+          prev.filter((app) => app.id !== applicationId),
+        )
+      } catch (error) {
+        console.error('Error deleting application:', error)
+      }
+    },
+    [deleteApplicationMutation],
+  )
+
+  if (!isValidSlug) {
+    return (
+      <ErrorShell
+        title={formatMessage(m.slugNotFound)}
+        subTitle={formatMessage(m.checkUrlPlease)}
+        description=""
+      />
+    )
   }
 
-  // Check whether the user has opened this form before and if so, show all the applications
-  // const applications = []
-  // Assuming the user has not opened this form before, create a new application
+  if (!loginAllowed) {
+    return (
+      <ErrorShell
+        title={formatMessage(m.switchLoginToCreateApplication)}
+        subTitle={formatMessage(m.applicationDoesNotPermitLogin)}
+        description=""
+      />
+    )
+  }
 
   return (
     <>
-      <Inline space={2}>
-        <Button onClick={createApplication}>Create</Button>
-        <Button onClick={getApplications}>Get</Button>
-      </Inline>
+      <Box
+        display="flex"
+        justifyContent="spaceBetween"
+        marginTop={4}
+        marginBottom={4}
+      >
+        <Text variant="h1">{formatMessage(m.yourApplications)}</Text>
+        <Button variant="primary" onClick={createApplication}>
+          {formatMessage(m.newApplication)}
+        </Button>
+      </Box>
       <Box marginTop={4}>
         <Page>
           <GridContainer>
             {applications.length > 0 && (
-              <ApplicationList applications={applications} />
+              <ApplicationList
+                applications={applications}
+                onDelete={deleteApplication}
+              />
             )}
           </GridContainer>
         </Page>

@@ -1,5 +1,5 @@
 import { Response } from 'express'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { Logger } from '@island.is/logging'
 
@@ -10,7 +10,7 @@ import { createTestingCaseModule } from '../createTestingCaseModule'
 import { nowFactory } from '../../../../factories'
 import { getRulingPdfAsBuffer } from '../../../../formatters'
 import { AwsS3Service } from '../../../aws-s3'
-import { Case } from '../../models/case.model'
+import { Case } from '../../../repository'
 
 jest.mock('../../../../formatters/rulingPdf')
 

@@ -1,6 +1,6 @@
 import { defineMessage, defineMessages } from 'react-intl'
 
-export const rcRuling = {
+export const strings = {
   title: defineMessage({
     id: 'judicial.system.core:restriction_cases.ruling.title',
     defaultMessage: 'Úrskurður',
@@ -43,9 +43,9 @@ export const rcRuling = {
           'Notaður sem titill fyrir "Úrskurðarorð" innsláttarsvæði á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
       placeholder: {
-        id: 'judicial.system.core:restriction_cases.ruling.conclusion.placeholder',
+        id: 'judicial.system.core:restriction_cases.ruling.conclusion.placeholder_v2',
         defaultMessage:
-          'Tillaga að úrskurðarorðum forbókast hér þegar lyktir máls eru valdar',
+          'Tillaga að úrskurðarorði forbókast hér þegar lyktir máls eru valdar',
         description:
           'Notaður sem placeholder fyrir "Úrskurðarorð" innsláttarsvæði á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },

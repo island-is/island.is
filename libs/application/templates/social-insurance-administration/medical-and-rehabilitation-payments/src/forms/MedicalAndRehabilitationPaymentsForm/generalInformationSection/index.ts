@@ -2,6 +2,7 @@ import { buildSection } from '@island.is/application/core'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 
 import { applicantInfoSubSection } from './applicantInfoSubSection'
+import { benefitsFromAnotherCountrySubSection } from './benefitsFromAnotherCountrySubSection'
 import { employeeSickPaySubSection } from './employeeSickPaySubSection'
 import { incomePlanInstructionsSubSection } from './incomePlanInstructionsSubSection'
 import { incomePlanSubSection } from './incomePlanSubSection'
@@ -17,9 +18,9 @@ export const generalInformationSection = buildSection({
     paymentInfoSubSection,
     incomePlanInstructionsSubSection,
     incomePlanSubSection,
+    benefitsFromAnotherCountrySubSection,
     questionsSubSection,
     employeeSickPaySubSection,
     unionSickPaySubSection,
-    // Tengdar umsóknir? - Bíða með þetta
   ],
 })

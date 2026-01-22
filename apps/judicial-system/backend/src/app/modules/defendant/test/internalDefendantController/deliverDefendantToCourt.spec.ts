@@ -1,13 +1,12 @@
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import { CaseNotificationType, User } from '@island.is/judicial-system/types'
 
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
 
-import { Case } from '../../../case'
 import { CourtService } from '../../../court'
-import { Defendant } from '../../models/defendant.model'
+import { Case, Defendant } from '../../../repository'
 import { DeliverResponse } from '../../models/deliver.response'
 
 interface Then {

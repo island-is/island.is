@@ -20,6 +20,7 @@ import { createMMKVStorage } from '../stores/mmkv'
 import { offlineStore } from '../stores/offline-store'
 import { MainBottomTabs } from '../utils/component-registry'
 import { getCustomUserAgent } from '../utils/user-agent'
+import { GenericUserLicense } from './types/schema'
 
 const apolloMMKVStorage = createMMKVStorage({ withEncryption: true })
 
@@ -69,12 +70,14 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
 
     // Detect possible OAuth needed
     if (networkError.name === 'ServerParseError') {
-      const redirectUrl = (networkError as any).response?.url
+      const redirectUrl = (networkError as { response?: { url: string } })
+        .response?.url
       if (
         redirectUrl &&
         redirectUrl.indexOf('cognito.shared.devland.is') >= 0
       ) {
         authStore.setState({ cognitoAuthUrl: redirectUrl })
+
         if (config.isTestingApp && authStore.getState().authorizeResult) {
           openNativeBrowser(cognitoAuthUrl(), MainBottomTabs)
         }
@@ -165,6 +168,32 @@ const cache = new InMemoryCache({
             return archivedCache.get(id)
           },
         },
+      },
+    },
+    // Custom cache key for GenericUserLicense.
+    // The backend does not expose a single stable id, so we synthesise one from
+    // license.type and payload.metadata.licenseId. This must stay in sync with
+    // the fields selected in GenericUserLicenseFragment so list and detail
+    // queries for the same license share the same cache entry.
+    GenericUserLicense: {
+      keyFields: (object) => {
+        const licenseType = (object as GenericUserLicense).license?.type
+        const licenseId = (object as GenericUserLicense).payload?.metadata
+          ?.licenseId
+
+        if (licenseType && licenseId) {
+          // Composite key ensures no collisions between different license types
+          // that might share the same licenseId.
+          return `${licenseType}:${licenseId}`
+        }
+
+        if (licenseId) {
+          // Fallback when type is missing but licenseId is still unique enough.
+          return licenseId
+        }
+
+        // Last resort – let Apollo fall back to its default normalisation.
+        return defaultDataIdFromObject(object) ?? undefined
       },
     },
   },

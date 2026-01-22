@@ -1,5 +1,5 @@
 import { Op } from 'sequelize'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import {
   BadRequestException,
@@ -8,16 +8,26 @@ import {
 } from '@nestjs/common'
 
 import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
-import { CaseState, CaseType } from '@island.is/judicial-system/types'
+import {
+  CaseState,
+  CaseType,
+  CourtSessionRulingType,
+  EventType,
+} from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../../test/createTestingCaseModule'
 
-import { Defendant } from '../../../defendant'
-import { Institution } from '../../../institution'
-import { Subpoena } from '../../../subpoena'
-import { User } from '../../../user'
-import { Case } from '../../models/case.model'
-import { DateLog } from '../../models/dateLog.model'
+import {
+  CaseRepositoryService,
+  CourtSession,
+  DateLog,
+  Defendant,
+  EventLog,
+  Institution,
+  Subpoena,
+  User,
+  Verdict,
+} from '../../../repository'
 import { IndictmentCaseExistsForDefendantGuard } from '../indictmentCaseExistsForDefendant.guard'
 
 interface Then {
@@ -29,13 +39,14 @@ type GivenWhenThen = () => Promise<Then>
 
 describe('Indictment Case Exists For Defendant Guard', () => {
   const mockRequest = jest.fn()
-  let mockCaseModel: typeof Case
+  let mockCaseRepositoryService: CaseRepositoryService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { caseModel, internalCaseService } = await createTestingCaseModule()
+    const { caseRepositoryService, internalCaseService } =
+      await createTestingCaseModule()
 
-    mockCaseModel = caseModel
+    mockCaseRepositoryService = caseRepositoryService
 
     givenWhenThen = async (): Promise<Then> => {
       const guard = new IndictmentCaseExistsForDefendantGuard(
@@ -64,14 +75,14 @@ describe('Indictment Case Exists For Defendant Guard', () => {
 
     beforeEach(async () => {
       mockRequest.mockReturnValueOnce(request)
-      const mockFindOne = mockCaseModel.findOne as jest.Mock
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
       mockFindOne.mockResolvedValueOnce(theCase)
 
       then = await givenWhenThen()
     })
 
     it('should activate', () => {
-      expect(mockCaseModel.findOne).toHaveBeenCalledWith({
+      expect(mockCaseRepositoryService.findOne).toHaveBeenCalledWith({
         include: [
           {
             model: Defendant,
@@ -81,6 +92,13 @@ describe('Indictment Case Exists For Defendant Guard', () => {
                 model: Subpoena,
                 as: 'subpoenas',
                 order: [['created', 'DESC']],
+              },
+              {
+                model: Verdict,
+                as: 'verdicts',
+                required: false,
+                order: [['created', 'DESC']],
+                separate: true,
               },
             ],
           },
@@ -93,6 +111,25 @@ describe('Indictment Case Exists For Defendant Guard', () => {
             include: [{ model: Institution, as: 'institution' }],
           },
           { model: DateLog, as: 'dateLogs' },
+          {
+            model: EventLog,
+            as: 'eventLogs',
+            required: false,
+            order: [['created', 'DESC']],
+            where: {
+              event_type: EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+            },
+          },
+          {
+            model: CourtSession,
+            as: 'courtSessions',
+            required: false,
+            order: [['created', 'DESC']],
+            attributes: ['ruling'],
+            where: {
+              ruling_type: CourtSessionRulingType.JUDGEMENT,
+            },
+          },
         ],
         attributes: [
           'courtCaseNumber',
@@ -100,6 +137,7 @@ describe('Indictment Case Exists For Defendant Guard', () => {
           'state',
           'indictmentRulingDecision',
           'rulingDate',
+          'ruling',
         ],
         where: {
           type: CaseType.INDICTMENT,

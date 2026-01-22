@@ -7,7 +7,6 @@ import {
   Linking,
 } from 'react-native'
 import { Navigation } from 'react-native-navigation'
-import SpotlightSearch from 'react-native-spotlight-search'
 import { evaluateUrl, navigateTo } from '../../lib/deep-linking'
 import { authStore } from '../../stores/auth-store'
 import { environmentStore } from '../../stores/environment-store'
@@ -52,16 +51,6 @@ export function setupEventHandlers() {
       Navigation.dismissAllModals()
     }
   })
-
-  if (isIos) {
-    SpotlightSearch.searchItemTapped((url) => {
-      navigateTo(url)
-    })
-
-    SpotlightSearch.getInitialSearchItem().then((url) => {
-      navigateTo(url)
-    })
-  }
 
   Navigation.events().registerBottomTabSelectedListener((e) => {
     uiStore.setState({

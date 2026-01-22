@@ -108,5 +108,5 @@ export class PropertyInfo {
 @ObjectType('HmsPropertyInfos')
 export class PropertyInfos {
   @Field(() => [PropertyInfo])
-  propertyInfos!: PropertyInfo[]
+  propertyInfos?: PropertyInfo[]
 }

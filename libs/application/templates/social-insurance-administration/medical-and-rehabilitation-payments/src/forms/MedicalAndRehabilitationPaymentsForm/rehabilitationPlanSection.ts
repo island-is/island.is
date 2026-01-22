@@ -4,11 +4,13 @@ import {
   buildSection,
 } from '@island.is/application/core'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../../lib/messages'
+import { shouldShowRehabilitationPlan } from '../../utils/conditionUtils'
 
 export const rehabilitationPlanSection = buildSection({
   id: 'rehabilitationPlanSection',
   title:
     medicalAndRehabilitationPaymentsFormMessage.rehabilitationPlan.sectionTitle,
+  condition: (_, externalData) => shouldShowRehabilitationPlan(externalData),
   children: [
     buildMultiField({
       id: 'rehabilitationPlan',
@@ -20,7 +22,7 @@ export const rehabilitationPlanSection = buildSection({
           .description,
       children: [
         buildCustomField({
-          id: 'rehabilitationPlanConfirmation',
+          id: 'rehabilitationPlan',
           component: 'RehabilitationPlan',
         }),
       ],

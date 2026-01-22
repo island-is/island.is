@@ -16,6 +16,6 @@ export const LoadingScreen = ({ ariaLabel }: LoadingScreenProps) => (
     role="progressbar"
     aria-valuetext={ariaLabel}
   >
-    <LoadingDots large />
+    <LoadingDots size="large" />
   </Box>
 )

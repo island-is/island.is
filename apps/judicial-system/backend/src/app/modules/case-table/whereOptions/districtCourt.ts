@@ -4,134 +4,147 @@ import {
   CaseAppealState,
   CaseIndictmentRulingDecision,
   CaseState,
+  completedIndictmentCaseStates,
   completedRequestCaseStates,
   EventType,
-  indictmentCases,
-  investigationCases,
-  restrictionCases,
+  User,
 } from '@island.is/judicial-system/types'
 
 import {
+  districtCourtIndictmentsAccessWhereOptions,
+  districtCourtRequestCasesAccessWhereOptions,
+} from './access'
+import {
   buildAlternativeServiceExistsCondition,
-  buildEventLogExistsCondition,
+  buildEventLogOrderCondition,
   buildSubpoenaExistsCondition,
 } from './conditions'
 
 // District court request cases
 
-const districtCourtRequestCasesSharedWhereOptions = {
-  is_archived: false,
-  type: [...restrictionCases, ...investigationCases],
-}
+export const districtCourtRequestCasesInProgressWhereOptions = (
+  user: User,
+) => ({
+  [Op.and]: [
+    districtCourtRequestCasesAccessWhereOptions(user),
+    {
+      [Op.or]: [
+        { state: [CaseState.DRAFT, CaseState.SUBMITTED, CaseState.RECEIVED] },
+        {
+          state: completedRequestCaseStates,
+          ruling_signature_date: null,
+          is_completed_without_ruling: null,
+        },
+      ],
+    },
+  ],
+})
 
-export const districtCourtRequestCasesInProgressWhereOptions = {
-  ...districtCourtRequestCasesSharedWhereOptions,
-  [Op.or]: [
-    { state: [CaseState.DRAFT, CaseState.SUBMITTED, CaseState.RECEIVED] },
+export const districtCourtRequestCasesAppealedWhereOptions = (user: User) => ({
+  [Op.and]: [
+    districtCourtRequestCasesAccessWhereOptions(user),
     {
       state: completedRequestCaseStates,
-      ruling_signature_date: null,
-      is_completed_without_ruling: null,
-      appeal_state: {
-        [Op.or]: [
-          null,
-          CaseAppealState.RECEIVED,
-          CaseAppealState.WITHDRAWN,
-          CaseAppealState.COMPLETED,
+      appeal_state: CaseAppealState.APPEALED,
+    },
+  ],
+})
+
+export const districtCourtRequestCasesCompletedWhereOptions = (user: User) => ({
+  [Op.and]: [
+    districtCourtRequestCasesAccessWhereOptions(user),
+    {
+      state: completedRequestCaseStates,
+      [Op.or]: [
+        { ruling_signature_date: { [Op.not]: null } },
+        { is_completed_without_ruling: { [Op.not]: null } },
+      ],
+    },
+  ],
+})
+
+// District court indictments
+
+export const districtCourtIndictmentsNewWhereOptions = (user: User) => ({
+  [Op.and]: [
+    districtCourtIndictmentsAccessWhereOptions(user),
+    {
+      state: [CaseState.SUBMITTED, CaseState.RECEIVED],
+      judge_id: null,
+    },
+  ],
+})
+
+export const districtCourtIndictmentsReceivedWhereOptions = (user: User) => ({
+  [Op.and]: [
+    districtCourtIndictmentsAccessWhereOptions(user),
+    {
+      state: CaseState.RECEIVED,
+      judge_id: { [Op.not]: null },
+      [Op.and]: [
+        buildSubpoenaExistsCondition(false),
+        buildAlternativeServiceExistsCondition(false),
+      ],
+    },
+  ],
+})
+
+export const districtCourtIndictmentsInProgressWhereOptions = (user: User) => ({
+  [Op.and]: [
+    districtCourtIndictmentsAccessWhereOptions(user),
+    {
+      [Op.or]: [
+        {
+          state: CaseState.RECEIVED,
+          [Op.or]: [
+            buildSubpoenaExistsCondition(true),
+            buildAlternativeServiceExistsCondition(true),
+          ],
+        },
+        { state: CaseState.WAITING_FOR_CANCELLATION },
+      ],
+    },
+  ],
+})
+
+export const districtCourtIndictmentsFinalizingWhereOptions = (user: User) => ({
+  [Op.and]: [
+    districtCourtIndictmentsAccessWhereOptions(user),
+    {
+      state: completedIndictmentCaseStates,
+      indictment_ruling_decision: [
+        CaseIndictmentRulingDecision.RULING,
+        CaseIndictmentRulingDecision.FINE,
+      ],
+      [Op.and]: [
+        buildEventLogOrderCondition(
+          EventType.INDICTMENT_COMPLETED,
+          EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+          false,
+        ),
+      ],
+    },
+  ],
+})
+
+export const districtCourtIndictmentsCompletedWhereOptions = (user: User) => ({
+  [Op.and]: [
+    districtCourtIndictmentsAccessWhereOptions(user),
+    {
+      state: completedIndictmentCaseStates,
+      [Op.not]: {
+        indictment_ruling_decision: [
+          CaseIndictmentRulingDecision.RULING,
+          CaseIndictmentRulingDecision.FINE,
+        ],
+        [Op.and]: [
+          buildEventLogOrderCondition(
+            EventType.INDICTMENT_COMPLETED,
+            EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+            false,
+          ),
         ],
       },
     },
   ],
-}
-
-export const districtCourtRequestCasesAppealedWhereOptions = {
-  ...districtCourtRequestCasesSharedWhereOptions,
-  state: completedRequestCaseStates,
-  appeal_state: [CaseAppealState.APPEALED],
-}
-
-export const districtCourtRequestCasesCompletedWhereOptions = {
-  ...districtCourtRequestCasesSharedWhereOptions,
-  state: completedRequestCaseStates,
-  [Op.or]: [
-    { ruling_signature_date: { [Op.not]: null } },
-    { is_completed_without_ruling: { [Op.not]: null } },
-  ],
-  appeal_state: {
-    [Op.or]: [
-      null,
-      CaseAppealState.RECEIVED,
-      CaseAppealState.WITHDRAWN,
-      CaseAppealState.COMPLETED,
-    ],
-  },
-}
-
-// District court indictments
-
-const districtCourtIndictmentsSharedWhereOptions = {
-  is_archived: false,
-  type: indictmentCases,
-}
-
-export const districtCourtIndictmentsNewWhereOptions = {
-  ...districtCourtIndictmentsSharedWhereOptions,
-  state: [CaseState.SUBMITTED, CaseState.RECEIVED],
-  judge_id: null,
-}
-
-export const districtCourtIndictmentsReceivedWhereOptions = {
-  ...districtCourtIndictmentsSharedWhereOptions,
-  state: CaseState.RECEIVED,
-  judge_id: { [Op.not]: null },
-  [Op.and]: [
-    buildSubpoenaExistsCondition(false),
-    buildAlternativeServiceExistsCondition(false),
-  ],
-}
-
-export const districtCourtIndictmentsInProgressWhereOptions = {
-  ...districtCourtIndictmentsSharedWhereOptions,
-  [Op.or]: [
-    {
-      state: CaseState.RECEIVED,
-      [Op.or]: [
-        buildSubpoenaExistsCondition(true),
-        buildAlternativeServiceExistsCondition(true),
-      ],
-    },
-    { state: CaseState.WAITING_FOR_CANCELLATION },
-  ],
-}
-
-export const districtCourtIndictmentsFinalizingWhereOptions = {
-  ...districtCourtIndictmentsSharedWhereOptions,
-  state: CaseState.COMPLETED,
-  indictment_ruling_decision: [
-    CaseIndictmentRulingDecision.RULING,
-    CaseIndictmentRulingDecision.FINE,
-  ],
-  [Op.and]: [
-    buildEventLogExistsCondition(
-      EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
-      false,
-    ),
-  ],
-}
-
-export const districtCourtIndictmentsCompletedWhereOptions = {
-  ...districtCourtIndictmentsSharedWhereOptions,
-  state: CaseState.COMPLETED,
-  [Op.not]: {
-    indictment_ruling_decision: [
-      CaseIndictmentRulingDecision.RULING,
-      CaseIndictmentRulingDecision.FINE,
-    ],
-    [Op.and]: [
-      buildEventLogExistsCondition(
-        EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
-        false,
-      ),
-    ],
-  },
-}
+})

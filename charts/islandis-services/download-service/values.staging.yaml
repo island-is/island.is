@@ -19,6 +19,9 @@ global:
 name: 'download-service'
 enabled: true
 env:
+  HMS_CONTRACTS_AUTH_CLIENT_ID: 'e2411f5c-436a-4c17-aa14-eab9c225bc06'
+  HMS_CONTRACTS_AUTH_TENANT_ID: 'c7256472-2622-417e-8955-a54eeb0a110e'
+  HMS_CONTRACTS_AUTH_TOKEN_ENDPOINT: 'https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/token'
   IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/download-service'
   IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
   LOG_LEVEL: 'info'
@@ -39,6 +42,8 @@ env:
   XROAD_HEALTH_INSURANCE_WSDLURL: 'https://test-huld.sjukra.is/islandrg?wsdl'
   XROAD_HMS_HOUSING_BENEFITS_PATH: 'IS-TEST/GOV/5812191480/HMS-Protected/husbot-v1'
   XROAD_HMS_LOANS_PATH: 'IS-TEST/GOV/5812191480/HMS-Protected/libra-v1'
+  XROAD_HMS_RENTAL_SERVICE_CLIENT_HEADER: 'IS-TEST/GOV/5501692829/test-client'
+  XROAD_HMS_RENTAL_SERVICE_PATH: 'IS-TEST/GOV/5812191480/HMS-Protected/Leigusamningar-v1'
   XROAD_HOLAR_UNIVERSITY_PATH: 'IS-TEST/EDU/10055/Holar-Protected/brautskraning-v1'
   XROAD_ICELAND_UNIVERSITY_OF_THE_ARTS_PATH: 'IS-TEST/EDU/10049/LHI-Protected/brautskraning-v1'
   XROAD_MMS_GRADE_SERVICE_ID: 'IS-TEST/GOV/6601241280/MMS-Protected/grade-api-v1'
@@ -85,7 +90,10 @@ ingress:
           - '/download'
 namespace: 'download-service'
 podDisruptionBudget:
-  maxUnavailable: 1
+  minAvailable: 1
+  unhealthyPodEvictionPolicy: 'IfHealthyBudget'
+podSecurityContext:
+  fsGroup: 65534
 pvcs: []
 replicaCount:
   default: 1
@@ -100,6 +108,7 @@ resources:
     memory: '256Mi'
 secrets:
   CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+  HMS_CONTRACTS_AUTH_CLIENT_SECRET: '/k8s/application-system-api/HMS_CONTRACTS_AUTH_CLIENT_SECRET'
   IDENTITY_SERVER_CLIENT_SECRET: '/k8s/download-service/IDENTITY_SERVER_CLIENT_SECRET'
   POSTHOLF_BASE_PATH: '/k8s/documents/POSTHOLF_BASE_PATH'
   POSTHOLF_CLIENTID: '/k8s/documents/POSTHOLF_CLIENTID'
@@ -116,3 +125,8 @@ secrets:
 securityContext:
   allowPrivilegeEscalation: false
   privileged: false
+serviceAccount:
+  annotations:
+    eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/download-service'
+  create: true
+  name: 'download-service'
