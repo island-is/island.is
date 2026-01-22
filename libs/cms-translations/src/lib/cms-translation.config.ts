@@ -28,9 +28,6 @@ export const CmsTranslationConfig = defineConfig({
       ]),
       ssl: !isRunningOnEnvironment('local'),
     },
-    memCacheExpiryMilliseconds:
-      (env.optionalJSON('CMS_TRANSLATION_MEM_CACHE_EXPIRY_MINUTES') ?? 15) *
-      60 *
-      1000,
+    memCacheExpiryMilliseconds: 15 * 60 * 1000,
   }),
 })
