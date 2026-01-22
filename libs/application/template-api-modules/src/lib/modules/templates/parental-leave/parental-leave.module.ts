@@ -7,10 +7,6 @@ import { ChildrenService } from './children/children.service'
 import { ApplicationApiCoreModule } from '@island.is/application/api/core'
 import { AwsModule } from '@island.is/nest/aws'
 import { NationalRegistryV3Module } from '../../shared/api/national-registry-v3/national-registry-v3.module'
-import {
-  NationalRegistryClientModule,
-  NationalRegistryClientService,
-} from '@island.is/clients/national-registry-v2'
 
 @Module({
   imports: [
@@ -18,14 +14,12 @@ import {
     SharedTemplateAPIModule,
     SmsModule,
     ApplicationApiCoreModule,
-    //NationalRegistryClientModule,
     NationalRegistryV3Module,
     AwsModule,
   ],
   providers: [
     ChildrenService,
     ParentalLeaveService,
-    //NationalRegistryClientService, // laga hér
   ],
   exports: [ParentalLeaveService],
 })
