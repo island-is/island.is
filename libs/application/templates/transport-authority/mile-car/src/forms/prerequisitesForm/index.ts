@@ -10,17 +10,20 @@ import { externalData } from '../../lib/messages'
 import { preInformation } from './preInformation'
 import { selectVehicle as selectVehicleMessages } from '../../lib/messages'
 import { CurrentVehiclesApi } from '../../dataProviders'
+import { TransportAuthorityLogo } from '@island.is/application/assets/institution-logos'
 
 export const Prerequisites: Form = buildForm({
   id: 'PrerequisitesForm',
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
+  logo: TransportAuthorityLogo,
   children: [
     preInformation,
     buildSection({
       id: 'externalData',
       title: externalData.dataProvider.sectionTitle,
+      tabTitle: externalData.dataProvider.sectionTitle,
       children: [
         buildExternalDataProvider({
           id: 'approveExternalData',
@@ -52,6 +55,7 @@ export const Prerequisites: Form = buildForm({
     buildSection({
       id: 'pickVehicle',
       title: selectVehicleMessages.general.sectionTitle,
+      tabTitle: selectVehicleMessages.general.sectionTitle,
       children: [],
     }),
   ],
