@@ -38,7 +38,9 @@ export const CourtCaseNumberInput: FC<Props> = (props) => {
   const [createCourtCaseSuccess, setCreateCourtCaseSuccess] =
     useState<boolean>(false)
 
-  const placeholder = isIndictmentCase ? 'S-case-number' : 'R-case-number'
+  const policeCaseNumberValidator = isIndictmentCase
+    ? 'S-case-number'
+    : 'R-case-number'
 
   const handleCreateCourtCase = async () => {
     const courtCaseNumber = await createCourtCase(caseId)
@@ -57,7 +59,9 @@ export const CourtCaseNumberInput: FC<Props> = (props) => {
   }
 
   const updateCourtCaseNumber = async () => {
-    const isValid = validate([[value, ['empty', placeholder]]]).isValid
+    const isValid = validate([
+      [value, ['empty', policeCaseNumberValidator]],
+    ]).isValid
 
     if (!isValid) {
       return
@@ -68,7 +72,9 @@ export const CourtCaseNumberInput: FC<Props> = (props) => {
   }
 
   const validateInput = (inputValue: string) => {
-    const validation = validate([[inputValue, ['empty', placeholder]]])
+    const validation = validate([
+      [inputValue, ['empty', policeCaseNumberValidator]],
+    ])
 
     setCourtCaseNumberErrorMessage(
       validation.isValid ? '' : validation.errorMessage,
@@ -95,7 +101,9 @@ export const CourtCaseNumberInput: FC<Props> = (props) => {
           data-testid="courtCaseNumber"
           name="courtCaseNumber"
           label="Mál nr."
-          placeholder={placeholder}
+          placeholder={`${
+            isIndictmentCase ? 'S' : 'R'
+          }-X/${new Date().getFullYear()}`}
           autoComplete="off"
           size="sm"
           backgroundColor="white"
