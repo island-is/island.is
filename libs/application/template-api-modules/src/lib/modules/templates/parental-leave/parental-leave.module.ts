@@ -17,10 +17,7 @@ import { NationalRegistryV3Module } from '../../shared/api/national-registry-v3/
     NationalRegistryV3Module,
     AwsModule,
   ],
-  providers: [
-    ChildrenService,
-    ParentalLeaveService,
-  ],
+  providers: [ChildrenService, ParentalLeaveService],
   exports: [ParentalLeaveService],
 })
 export class ParentalLeaveModule {}
