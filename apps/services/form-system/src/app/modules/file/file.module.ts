@@ -33,7 +33,7 @@ import { UploadProcessor } from './upload.processor'
             noPrefix: true,
           }),
       }),
-      inject: [FileConfig.KEY],
+      inject: [FileConfig.KEY, FileStorageConfig.KEY],
     }),
   ],
   controllers: [FileController],

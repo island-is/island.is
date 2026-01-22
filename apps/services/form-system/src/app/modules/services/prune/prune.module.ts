@@ -11,6 +11,7 @@ import { Value } from '../../applications/models/value.model'
 import { Application } from '../../applications/models/application.model'
 import { ApplicationEvent } from '../../applications/models/applicationEvent.model'
 import { FileConfig } from '../../file/file.config'
+import { FileStorageConfig } from '@island.is/file-storage'
 import { FileModule } from '../../file/file.module'
 import { FileStorageWrapperModule } from '../../file/fileStorageWrapper'
 
@@ -26,7 +27,7 @@ import { FileStorageWrapperModule } from '../../file/fileStorageWrapper'
     AuditModule.forRoot(environment.audit),
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [FileConfig],
+      load: [FileStorageConfig, FileConfig],
     }),
   ],
   providers: [PruneService],
