@@ -200,7 +200,7 @@ const generateContentForLocale = (
   }
 
   if (data.use) {
-    const useLabel = locale === 'is' ? 'Starfssemi: ' : 'Function: '
+    const useLabel = locale === 'is' ? 'Starfsemi: ' : 'Function: '
     content.push({
       values: [{ value: useLabel }, { value: data.use, isBold: true }],
     })
