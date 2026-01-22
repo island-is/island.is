@@ -8,7 +8,6 @@ const FormSystemFilesSchema = z.object({
   timeToLiveGet: z.number(),
   bullModuleName: z.string(),
   uploadBucket: z.string(),
-  tempBucket: z.string(),
   bucket: z.string(),
   redis: z.object({
     nodes: z.array(z.string()),
@@ -26,8 +25,6 @@ export const FileConfig = defineConfig({
     bullModuleName:
       env.optional('FORM_SYSTEM_BULL_PREFIX') ?? 'form-system-upload',
     uploadBucket:
-      env.optional('FILE_STORAGE_UPLOAD_BUCKET') ?? 'island-is-dev-upload-api',
-    tempBucket:
       env.optional('FILE_STORAGE_UPLOAD_BUCKET') ?? 'island-is-dev-upload-api',
     bucket:
       env.optional('FORM_SYSTEM_BUCKET') ??
