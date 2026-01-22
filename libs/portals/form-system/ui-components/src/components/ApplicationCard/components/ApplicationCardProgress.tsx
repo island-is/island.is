@@ -1,5 +1,4 @@
 import { FormSystemApplication } from '@island.is/api/schema'
-import { coreMessages } from '@island.is/application/core'
 import { ApplicationStatus } from '@island.is/form-system/enums'
 import {
   Box,
@@ -45,7 +44,7 @@ const DraftProgressMeter = ({
           variant="blue"
           draftTotalSteps={draftTotalSteps}
           draftFinishedSteps={draftFinishedSteps}
-          progressMessage={formatMessage(coreMessages.draftProgressMeter, {
+          progressMessage={formatMessage(m.draftProgressMeter, {
             draftFinishedSteps,
             draftTotalSteps,
           })}
