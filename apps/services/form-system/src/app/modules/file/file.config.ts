@@ -7,6 +7,7 @@ const FormSystemFilesSchema = z.object({
   timeToLivePost: z.number(),
   timeToLiveGet: z.number(),
   bullModuleName: z.string(),
+  uploadBucket: z.string(),
   tempBucket: z.string(),
   bucket: z.string(),
   redis: z.object({
