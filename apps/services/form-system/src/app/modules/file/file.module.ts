@@ -24,16 +24,16 @@ import { UploadProcessor } from './upload.processor'
       name: 'upload',
       imports: [ConfigModule.forFeature(FileConfig)],
       useFactory: (config: ConfigType<typeof FileConfig>) => ({
-        prefix: `{${config.bullModuleName ?? 'form-system-upload'}}`,
+        prefix: `{${config.bullModuleName ?? 'form_system_api_bull_module'}}`,
         createClient: () =>
           createRedisCluster({
-            name: config.bullModuleName ?? 'form-system-upload',
+            name: config.bullModuleName ?? 'form_system_api_bull_module',
             ssl: config.redis.ssl,
             nodes: config.redis.nodes,
             noPrefix: true,
           }),
       }),
-      inject: [FileConfig.KEY],
+      inject: [FileConfig.KEY, FileStorageConfig.KEY],
     }),
   ],
   controllers: [FileController],

@@ -37,9 +37,9 @@ export class FileService {
       return
     }
 
-    this.logger.info(
-      `Queueing copy job for file ${sourceKey} from ${this.config.uploadBucket} to ${targetBucket}`,
-    )
+    // this.logger.info(
+    //   `Queueing copy job for file ${sourceKey} from ${this.config.uploadBucket} to ${targetBucket}`,
+    // )
 
     //   try {
     //     await Promise.race([
