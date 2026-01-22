@@ -4,7 +4,6 @@ export const workerSetup = (): ServiceBuilder<'cms-importer-worker'> =>
   service('cms-importer-worker')
     .image('services-cms-importer')
     .namespace('cms-importer')
-    .serviceAccount('cms-importer')
     .env({
       RANNIS_GRANTS_URL: {
         dev: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
@@ -24,7 +23,6 @@ export const energyFundImportSetup =
     service('cms-importer-energy-fund-import')
       .image('services-cms-importer')
       .namespace('cms-importer')
-      .serviceAccount('cms-importer')
       .env({
         RANNIS_GRANTS_URL: {
           dev: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
@@ -44,7 +42,6 @@ export const fsreBuildingsImportSetup =
     service('cms-importer-fsre-buildings-import')
       .image('services-cms-importer')
       .namespace('cms-importer')
-      .serviceAccount('cms-importer')
       .env({
         RANNIS_GRANTS_URL: {
           dev: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
