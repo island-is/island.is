@@ -24,6 +24,7 @@ import { ApiActions } from '../shared'
 import { Features } from '@island.is/feature-flags'
 import { CurrentVehiclesApi } from '../dataProviders'
 import { AuthDelegationType } from '@island.is/shared/types'
+import { ApiScope } from '@island.is/auth/scopes'
 
 const determineMessageFromApplicationAnswers = (application: Application) => {
   const plate = getValueViaPath(
@@ -57,6 +58,7 @@ const mileCarTemplate: ApplicationTemplate<
       type: AuthDelegationType.Custom,
     },
   ],
+  requiredScopes: [ApiScope.samgongustofaVehicles],
   dataSchema,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
