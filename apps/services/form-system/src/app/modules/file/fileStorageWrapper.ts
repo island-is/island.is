@@ -11,7 +11,7 @@ import { ConfigModule } from '@nestjs/config'
       useValue: {
         uploadBucket:
           process.env.FILE_STORAGE_UPLOAD_BUCKET ?? 'island-is-dev-upload-api',
-        region: process.env.AWS_REGION ?? 'eu-west-1',
+        region: process.env.S3_REGION ?? 'eu-west-1',
       },
     },
     FileStorageService,
