@@ -11,7 +11,7 @@ import {
   GridRow as Row,
   Stack,
 } from '@island.is/island-ui/core'
-import { Dispatch, useEffect, useRef, useState } from 'react'
+import { Dispatch, useEffect, useRef } from 'react'
 import { Controller, useFormContext, useWatch } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 import { Action } from '../../../lib'
@@ -45,8 +45,6 @@ const isCompanyNationalId = (id: string) => {
 export const NationalId = ({ item, dispatch, hasError }: Props) => {
   const { formatMessage } = useIntl()
   const { control } = useFormContext()
-
-  const [name, setName] = useState(getValue(item, 'name') ?? '')
 
   const watchedValue = useWatch({
     control,
@@ -83,7 +81,6 @@ export const NationalId = ({ item, dispatch, hasError }: Props) => {
             payload: { id: item.id, value: newName },
           })
         }
-        setName(newName)
         lastQueriedRef.current = queryId
       }
     },
@@ -102,7 +99,6 @@ export const NationalId = ({ item, dispatch, hasError }: Props) => {
             payload: { id: item.id, value: fetched },
           })
         }
-        setName(fetched)
         lastQueriedRef.current = queryId
       }
     },
@@ -111,7 +107,6 @@ export const NationalId = ({ item, dispatch, hasError }: Props) => {
   useEffect(() => {
     if (!isValidFormat) {
       lastQueriedRef.current = undefined
-      setName('')
       if (dispatch) {
         dispatch({
           type: 'SET_NAME',
@@ -179,7 +174,7 @@ export const NationalId = ({ item, dispatch, hasError }: Props) => {
             label={formatMessage(m.namePerson)}
             name="nafn"
             disabled
-            value={name}
+            value={getValue(item, 'name') ?? ''}
           />
         </Column>
       </Row>
