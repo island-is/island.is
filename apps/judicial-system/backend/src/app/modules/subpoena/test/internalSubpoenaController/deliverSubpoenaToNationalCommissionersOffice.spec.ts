@@ -1,4 +1,3 @@
-import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
 import { createTestingSubpoenaModule } from '../createTestingSubpoenaModule'
