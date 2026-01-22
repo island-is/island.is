@@ -11,11 +11,6 @@ export const workerSetup = (): ServiceBuilder<'cms-importer-worker'> =>
         staging: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
         prod: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
       },
-      S3_BUCKET: {
-        dev: 'island-is-dev-cms-importer',
-        staging: 'island-is-staging-cms-importer',
-        prod: 'island-is-prod-cms-importer',
-      },
     })
     .secrets({
       CONTENTFUL_MANAGEMENT_ACCESS_TOKEN:
@@ -35,11 +30,6 @@ export const energyFundImportSetup =
           dev: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
           staging: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
           prod: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
-        },
-        S3_BUCKET: {
-          dev: 'island-is-dev-cms-importer',
-          staging: 'island-is-staging-cms-importer',
-          prod: 'island-is-prod-cms-importer',
         },
       })
       .secrets({
@@ -61,11 +51,6 @@ export const fsreBuildingsImportSetup =
           staging: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
           prod: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
         },
-        S3_BUCKET: {
-          dev: 'island-is-dev-cms-importer',
-          staging: 'island-is-staging-cms-importer',
-          prod: 'island-is-prod-cms-importer',
-        },
       })
       .secrets({
         CONTENTFUL_MANAGEMENT_ACCESS_TOKEN:
@@ -79,13 +64,8 @@ export const webSitemapImportSetup =
     service('cms-importer-web-sitemap')
       .image('services-cms-importer')
       .namespace('cms-importer')
-      .serviceAccount('cms-importer')
+      .serviceAccount('cms-importer-web-sitemap')
       .env({
-        RANNIS_GRANTS_URL: {
-          dev: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
-          staging: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
-          prod: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
-        },
         S3_BUCKET: {
           dev: 'island-is-dev-cms-importer',
           staging: 'island-is-staging-cms-importer',
