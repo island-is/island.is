@@ -226,6 +226,7 @@ export class CaseResolver {
       backendService.getCourtRecordSignatureConfirmationAudkenni(
         caseId,
         documentToken,
+        method ?? 'mobile',
       ),
       caseId,
     )
@@ -316,6 +317,7 @@ export class CaseResolver {
       backendService.getRulingSignatureConfirmationAudkenni(
         caseId,
         documentToken,
+        method ?? 'mobile',
       ),
       caseId,
     )
