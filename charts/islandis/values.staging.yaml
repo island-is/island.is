@@ -1105,7 +1105,6 @@ cms-importer-energy-fund-import:
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     RANNIS_GRANTS_URL: 'https://sjodir.rannis.is/statistics/fund_schedule.php'
-    S3_BUCKET: 'island-is-staging-cms-importer'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
   grantNamespacesEnabled: false
@@ -1167,7 +1166,6 @@ cms-importer-fsre-buildings-import:
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     RANNIS_GRANTS_URL: 'https://sjodir.rannis.is/statistics/fund_schedule.php'
-    S3_BUCKET: 'island-is-staging-cms-importer'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
   grantNamespacesEnabled: false
@@ -1230,7 +1228,6 @@ cms-importer-web-sitemap:
   env:
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
-    RANNIS_GRANTS_URL: 'https://sjodir.rannis.is/statistics/fund_schedule.php'
     S3_BUCKET: 'island-is-staging-cms-importer'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
@@ -1281,9 +1278,9 @@ cms-importer-web-sitemap:
     privileged: false
   serviceAccount:
     annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/cms-importer'
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/cms-importer-web-sitemap'
     create: true
-    name: 'cms-importer'
+    name: 'cms-importer-web-sitemap'
 cms-importer-worker:
   args:
     - 'main.cjs'
@@ -1294,7 +1291,6 @@ cms-importer-worker:
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     RANNIS_GRANTS_URL: 'https://sjodir.rannis.is/statistics/fund_schedule.php'
-    S3_BUCKET: 'island-is-staging-cms-importer'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
   grantNamespacesEnabled: false
