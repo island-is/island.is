@@ -26,7 +26,7 @@ export class FSREBuildingsImportService {
   }
 
   private async processFSREBuildings() {
-    const buildings = await this.clientsRepository.getBuildings()
+    const buildings = await this.clientsRepository.getBuildings(10)
 
     if (!buildings || !buildings.length) {
       logger.warn('No buildings to process')

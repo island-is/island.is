@@ -114,7 +114,7 @@ const mapTitle = (data: BuildingDto): Localized<string> =>
   mapLocalizedValue(data.address, data.address)
 
 const mapSlug = (data: BuildingDto): Localized<string> => {
-  const slug = slugify(data.address, { separator: '-' })
+  const slug = slugify(`${data.address}-${data.id}`, { separator: '-' })
   return mapLocalizedValue(slug, slug)
 }
 
