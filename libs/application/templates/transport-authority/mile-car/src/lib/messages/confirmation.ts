@@ -12,8 +12,8 @@ export const confirmation = defineMessages({
     description: 'confirmation page title',
   },
   alertTitle: {
-    id: 'mcar.application:confirmation.subTitle',
-    defaultMessage: 'Skráning um ökutæki sem mílubíll hefur verið móttekin',
+    id: 'mcar.application:confirmation.alertTitle',
+    defaultMessage: 'Búið er að skrá {value} sem mílubíl',
     description: 'confirmation sub title',
   },
   accordionTitle: {
