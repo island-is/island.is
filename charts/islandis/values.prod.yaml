@@ -1125,8 +1125,6 @@ cms-importer-energy-fund-import:
   podDisruptionBudget:
     minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
-  podSecurityContext:
-    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 3
@@ -1145,11 +1143,6 @@ cms-importer-energy-fund-import:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-  serviceAccount:
-    annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/cms-importer'
-    create: true
-    name: 'cms-importer'
 cms-importer-fsre-buildings-import:
   args:
     - 'main.cjs'
@@ -1186,8 +1179,6 @@ cms-importer-fsre-buildings-import:
   podDisruptionBudget:
     minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
-  podSecurityContext:
-    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 3
@@ -1206,11 +1197,6 @@ cms-importer-fsre-buildings-import:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-  serviceAccount:
-    annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/cms-importer'
-    create: true
-    name: 'cms-importer'
 cms-importer-web-sitemap:
   args:
     - 'main.cjs'
@@ -1311,8 +1297,6 @@ cms-importer-worker:
   podDisruptionBudget:
     minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
-  podSecurityContext:
-    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 3
@@ -1331,11 +1315,6 @@ cms-importer-worker:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-  serviceAccount:
-    annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/cms-importer'
-    create: true
-    name: 'cms-importer'
 consultation-portal:
   enabled: true
   env:
