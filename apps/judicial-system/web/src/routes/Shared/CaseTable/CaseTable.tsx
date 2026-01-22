@@ -37,7 +37,10 @@ import {
   TagPairValue,
   TagValue,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
+import {
+  compareArrays,
+  isNonEmptyArray,
+} from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import { useCaseList } from '@island.is/judicial-system-web/src/utils/hooks'
 import { compareLocaleIS } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
@@ -189,16 +192,10 @@ const CaseTable: FC = () => {
             onClick: () => handleOpenCase(r.caseId, false, r.defendantIds),
             isDisabled:
               isOpeningCaseId === r.caseId &&
-              (isOpeningDefendantIds?.every((id) =>
-                r.defendantIds?.includes(id),
-              ) ??
-                false),
+              compareArrays(isOpeningDefendantIds, r.defendantIds),
             isLoading:
               isOpeningCaseId === r.caseId &&
-              (isOpeningDefendantIds?.every((id) =>
-                r.defendantIds?.includes(id),
-              ) ??
-                false) &&
+              compareArrays(isOpeningDefendantIds, r.defendantIds) &&
               showLoading,
           }
       }

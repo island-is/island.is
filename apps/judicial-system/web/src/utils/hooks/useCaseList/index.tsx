@@ -30,6 +30,7 @@ import {
   CaseAppealState,
   CaseState,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { compareArrays } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 
 import { findFirstInvalidStep } from '../../formHelper'
 import useCase from '../useCase'
@@ -160,7 +161,8 @@ const useCaseList = () => {
       clearTimeouts()
 
       if (
-        (clickedCase.id !== id || clickedCase.defendantIds !== defendantIds) &&
+        (clickedCase.id !== id ||
+          !compareArrays(clickedCase.defendantIds, defendantIds)) &&
         !openInNewTab
       ) {
         setClickedCase({ id, defendantIds, showLoading: false })
@@ -179,7 +181,10 @@ const useCaseList = () => {
           (caseData) => openCase(caseData, openInNewTab),
           () => {
             setClickedCase((prev) => {
-              if (prev.id === id && prev.defendantIds === defendantIds) {
+              if (
+                prev.id === id &&
+                compareArrays(prev.defendantIds, defendantIds)
+              ) {
                 clearTimeouts()
 
                 return { id: null, defendantIds: null, showLoading: false }
@@ -195,7 +200,8 @@ const useCaseList = () => {
       if (
         isTransitioningCase ||
         isSendingNotification ||
-        (clickedCase.id === id && clickedCase.defendantIds === defendantIds) ||
+        (clickedCase.id === id &&
+          compareArrays(clickedCase.defendantIds, defendantIds)) ||
         limitedAccess === undefined
       ) {
         return
