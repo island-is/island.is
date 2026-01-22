@@ -212,7 +212,7 @@ export class SigningService extends DataSource {
     message?: string,
   ): Promise<SigningServiceResponse> {
     this.logger.debug(
-      `${contact} ${location} is requesting ${nationalId} to sign ${documentName} via Audkenni App`,
+      `${contact} ${location} is requesting to sign ${documentName} via Audkenni App`,
     )
 
     if (!this.config.production && !this.config.accessToken) {

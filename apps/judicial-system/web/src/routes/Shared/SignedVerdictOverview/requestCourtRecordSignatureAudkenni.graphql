@@ -1,6 +1,0 @@
-mutation RequestCourtRecordSignatureAudkenni($input: RequestSignatureInput!) {
-  requestCourtRecordSignatureAudkenni(input: $input) {
-    controlCode
-    documentToken
-  }
-}

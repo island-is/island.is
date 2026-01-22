@@ -14,6 +14,7 @@ interface Then {
 type GivenWhenThen = (
   caseId: string,
   theCase: Case,
+  method?: 'audkenni' | 'mobile',
 ) => Promise<Then>
 
 describe('CaseController - Request ruling signature', () => {
@@ -22,13 +23,18 @@ describe('CaseController - Request ruling signature', () => {
   beforeEach(async () => {
     const { caseController } = await createTestingCaseModule()
 
-    givenWhenThen = async (caseId: string, theCase: Case) => {
+    givenWhenThen = async (
+      caseId: string,
+      theCase: Case,
+      method?: 'audkenni' | 'mobile',
+    ) => {
       const then = {} as Then
 
       try {
         then.result = await caseController.requestRulingSignature(
           caseId,
           theCase,
+          method,
         )
       } catch (error) {
         then.error = error as Error

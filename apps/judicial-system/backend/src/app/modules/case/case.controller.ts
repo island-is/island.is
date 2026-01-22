@@ -809,42 +809,13 @@ export class CaseController {
     @Param('caseId') caseId: string,
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
+    @Query('method') method: 'audkenni' | 'mobile' = 'mobile',
   ): Promise<SigningServiceResponse> {
     return this.handleRequestCourtRecordSignature(
       caseId,
       theCase,
       user,
-      'mobile',
-    )
-  }
-
-  @UseGuards(
-    RolesGuard,
-    CaseExistsGuard,
-    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
-    CaseWriteGuard,
-  )
-  @RolesRules(
-    districtCourtJudgeRule,
-    districtCourtRegistrarRule,
-    districtCourtAssistantRule,
-  )
-  @Post('case/:caseId/courtRecord/signature/audkenni')
-  @ApiCreatedResponse({
-    type: SigningServiceResponse,
-    description:
-      'Requests a court record signature via Audkenni App for an existing case',
-  })
-  async requestCourtRecordSignatureAudkenni(
-    @Param('caseId') caseId: string,
-    @CurrentHttpUser() user: User,
-    @CurrentCase() theCase: Case,
-  ): Promise<SigningServiceResponse> {
-    return this.handleRequestCourtRecordSignature(
-      caseId,
-      theCase,
-      user,
-      'audkenni',
+      method,
     )
   }
 
@@ -891,6 +862,7 @@ export class CaseController {
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @Query('documentToken') documentToken: string,
+    @Query('method') method: 'audkenni' | 'mobile' = 'mobile',
   ): Promise<SignatureConfirmationResponse> {
     this.logger.debug(
       `Confirming a signature for the court record of case ${caseId}`,
@@ -902,43 +874,7 @@ export class CaseController {
         theCase,
         user,
         documentToken,
-        'mobile',
-        transaction,
-      ),
-    )
-  }
-
-  @UseGuards(
-    RolesGuard,
-    CaseExistsGuard,
-    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
-    CaseWriteGuard,
-  )
-  @RolesRules(
-    districtCourtJudgeRule,
-    districtCourtRegistrarRule,
-    districtCourtAssistantRule,
-  )
-  @Get('case/:caseId/courtRecord/signature/audkenni')
-  @ApiOkResponse({
-    type: SignatureConfirmationResponse,
-    description:
-      'Confirms a previously requested court record signature via Audkenni for an existing case',
-  })
-  async getCourtRecordSignatureConfirmationAudkenni(
-    @Param('caseId') caseId: string,
-    @CurrentHttpUser() user: User,
-    @CurrentCase() theCase: Case,
-    @Query('documentToken') documentToken: string,
-  ): Promise<SignatureConfirmationResponse> {
-
-    return this.sequelize.transaction((transaction) =>
-      this.handleGetCourtRecordSignatureConfirmation(
-        caseId,
-        theCase,
-        user,
-        documentToken,
-        'audkenni',
+        method,
         transaction,
       ),
     )
@@ -987,29 +923,9 @@ export class CaseController {
   async requestRulingSignature(
     @Param('caseId') caseId: string,
     @CurrentCase() theCase: Case,
+    @Query('method') method: 'audkenni' | 'mobile' = 'mobile',
   ): Promise<SigningServiceResponse> {
-    return this.handleRequestRulingSignature(caseId, theCase, 'mobile')
-  }
-
-  @UseGuards(
-    CaseExistsGuard,
-    RolesGuard,
-    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
-    CaseWriteGuard,
-  )
-  @RolesRules(districtCourtJudgeSignRulingRule)
-  @Post('case/:caseId/ruling/signature/audkenni')
-  @ApiCreatedResponse({
-    type: SigningServiceResponse,
-    description:
-      'Requests a ruling signature via Audkenni for an existing case',
-  })
-  async requestRulingSignatureAudkenni(
-    @Param('caseId') caseId: string,
-    @CurrentHttpUser() user: User,
-    @CurrentCase() theCase: Case,
-  ): Promise<SigningServiceResponse> {
-    return this.handleRequestRulingSignature(caseId, theCase, 'audkenni')
+    return this.handleRequestRulingSignature(caseId, theCase, method)
   }
 
   private async handleGetRulingSignatureConfirmation(
@@ -1052,6 +968,7 @@ export class CaseController {
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @Query('documentToken') documentToken: string,
+    @Query('method') method: 'audkenni' | 'mobile' = 'mobile',
   ): Promise<SignatureConfirmationResponse> {
     this.logger.debug(`Confirming a signature for the ruling of case ${caseId}`)
 
@@ -1060,35 +977,7 @@ export class CaseController {
       theCase,
       user,
       documentToken,
-      'mobile',
-    )
-  }
-
-  @UseGuards(
-    CaseExistsGuard,
-    RolesGuard,
-    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
-    CaseWriteGuard,
-  )
-  @RolesRules(districtCourtJudgeSignRulingRule)
-  @Get('case/:caseId/ruling/signature/audkenni')
-  @ApiOkResponse({
-    type: SignatureConfirmationResponse,
-    description:
-      'Confirms a previously requested ruling signature via Audkenni for an existing case',
-  })
-  async getRulingSignatureConfirmationAudkenni(
-    @Param('caseId') caseId: string,
-    @CurrentHttpUser() user: User,
-    @CurrentCase() theCase: Case,
-    @Query('documentToken') documentToken: string,
-  ): Promise<SignatureConfirmationResponse> {
-    return this.handleGetRulingSignatureConfirmation(
-      caseId,
-      theCase,
-      user,
-      documentToken,
-      'audkenni',
+      method,
     )
   }
 

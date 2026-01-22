@@ -153,28 +153,11 @@ export class CaseResolver {
 
     return this.auditTrailService.audit(
       user.id,
-      AuditedAction.REQUEST_RULING_SIGNATURE,
-      backendService.requestCourtRecordSignature(input.caseId),
-      input.caseId,
-    )
-  }
-
-  @Mutation(() => RequestSignatureResponse, { nullable: true })
-  requestCourtRecordSignatureAudkenni(
-    @Args('input', { type: () => RequestSignatureInput })
-    input: RequestSignatureInput,
-    @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
-  ): Promise<RequestSignatureResponse> {
-    this.logger.debug(
-      `Requesting signature of court record via Audkenni for case ${input.caseId}`,
-    )
-
-    return this.auditTrailService.audit(
-      user.id,
-      AuditedAction.REQUEST_RULING_SIGNATURE,
-      backendService.requestCourtRecordSignatureAudkenni(input.caseId),
+      AuditedAction.REQUEST_COURT_RECORD_SIGNATURE,
+      backendService.requestCourtRecordSignature(
+        input.caseId,
+        input.method ?? 'mobile',
+      ),
       input.caseId,
     )
   }
@@ -187,38 +170,17 @@ export class CaseResolver {
     @Context('dataSources')
     { backendService }: { backendService: BackendService },
   ): Promise<SignatureConfirmationResponse> {
-    const { caseId, documentToken } = input
+    const { caseId, documentToken, method } = input
 
     this.logger.debug(`Confirming signature of court record for case ${caseId}`)
 
     return this.auditTrailService.audit(
       user.id,
-      AuditedAction.CONFIRM_RULING_SIGNATURE,
-      backendService.getCourtRecordSignatureConfirmation(caseId, documentToken),
-      caseId,
-    )
-  }
-
-  @Query(() => SignatureConfirmationResponse, { nullable: true })
-  courtRecordSignatureConfirmationAudkenni(
-    @Args('input', { type: () => SignatureConfirmationQueryInput })
-    input: SignatureConfirmationQueryInput,
-    @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
-  ): Promise<SignatureConfirmationResponse> {
-    const { caseId, documentToken } = input
-
-    this.logger.debug(
-      `Confirming signature of court record via Audkenni for case ${caseId}`,
-    )
-
-    return this.auditTrailService.audit(
-      user.id,
-      AuditedAction.CONFIRM_RULING_SIGNATURE,
-      backendService.getCourtRecordSignatureConfirmationAudkenni(
+      AuditedAction.CONFIRM_COURT_RECORD_SIGNATURE,
+      backendService.getCourtRecordSignatureConfirmation(
         caseId,
         documentToken,
+        method ?? 'mobile',
       ),
       caseId,
     )
@@ -237,27 +199,10 @@ export class CaseResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.REQUEST_RULING_SIGNATURE,
-      backendService.requestRulingSignature(input.caseId),
-      input.caseId,
-    )
-  }
-
-  @Mutation(() => RequestSignatureResponse, { nullable: true })
-  requestRulingSignatureAudkenni(
-    @Args('input', { type: () => RequestSignatureInput })
-    input: RequestSignatureInput,
-    @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
-  ): Promise<RequestSignatureResponse> {
-    this.logger.debug(
-      `Requesting signature of ruling via Audkenni for case ${input.caseId}`,
-    )
-
-    return this.auditTrailService.audit(
-      user.id,
-      AuditedAction.REQUEST_RULING_SIGNATURE,
-      backendService.requestRulingSignatureAudkenni(input.caseId),
+      backendService.requestRulingSignature(
+        input.caseId,
+        input.method ?? 'mobile',
+      ),
       input.caseId,
     )
   }
@@ -270,38 +215,17 @@ export class CaseResolver {
     @Context('dataSources')
     { backendService }: { backendService: BackendService },
   ): Promise<SignatureConfirmationResponse> {
-    const { caseId, documentToken } = input
+    const { caseId, documentToken, method } = input
 
     this.logger.debug(`Confirming signature of ruling for case ${caseId}`)
 
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.CONFIRM_RULING_SIGNATURE,
-      backendService.getRulingSignatureConfirmation(caseId, documentToken),
-      caseId,
-    )
-  }
-
-  @Query(() => SignatureConfirmationResponse, { nullable: true })
-  rulingSignatureConfirmationAudkenni(
-    @Args('input', { type: () => SignatureConfirmationQueryInput })
-    input: SignatureConfirmationQueryInput,
-    @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
-  ): Promise<SignatureConfirmationResponse> {
-    const { caseId, documentToken } = input
-
-    this.logger.debug(
-      `Confirming signature of ruling via Audkenni for case ${caseId}`,
-    )
-
-    return this.auditTrailService.audit(
-      user.id,
-      AuditedAction.CONFIRM_RULING_SIGNATURE,
-      backendService.getRulingSignatureConfirmationAudkenni(
+      backendService.getRulingSignatureConfirmation(
         caseId,
         documentToken,
+        method ?? 'mobile',
       ),
       caseId,
     )

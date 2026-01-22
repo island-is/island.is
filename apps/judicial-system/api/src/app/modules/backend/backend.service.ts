@@ -328,59 +328,35 @@ export class BackendService extends DataSource<{ req: Request }> {
 
   requestCourtRecordSignature(
     caseId: string,
+    method: 'audkenni' | 'mobile' = 'mobile',
   ): Promise<RequestSignatureResponse> {
-    return this.post(`case/${caseId}/courtRecord/signature`)
-  }
-
-  requestCourtRecordSignatureAudkenni(
-    caseId: string,
-  ): Promise<RequestSignatureResponse> {
-    return this.post(`case/${caseId}/courtRecord/signature/audkenni`)
+    return this.post(`case/${caseId}/courtRecord/signature?method=${method}`)
   }
 
   getCourtRecordSignatureConfirmation(
     caseId: string,
     documentToken: string,
+    method: 'audkenni' | 'mobile' = 'mobile',
   ): Promise<SignatureConfirmationResponse> {
     return this.get(
-      `case/${caseId}/courtRecord/signature?documentToken=${documentToken}`,
+      `case/${caseId}/courtRecord/signature?documentToken=${documentToken}&method=${method}`,
     )
   }
 
-  getCourtRecordSignatureConfirmationAudkenni(
+  requestRulingSignature(
     caseId: string,
-    documentToken: string,
-  ): Promise<SignatureConfirmationResponse> {
-    return this.get(
-      `case/${caseId}/courtRecord/signature/audkenni?documentToken=${documentToken}`,
-    )
-  }
-
-  requestRulingSignature(caseId: string): Promise<RequestSignatureResponse> {
-    return this.post(`case/${caseId}/ruling/signature`)
-  }
-
-  requestRulingSignatureAudkenni(
-    caseId: string,
+    method: 'audkenni' | 'mobile' = 'mobile',
   ): Promise<RequestSignatureResponse> {
-    return this.post(`case/${caseId}/ruling/signature/audkenni`)
+    return this.post(`case/${caseId}/ruling/signature?method=${method}`)
   }
 
   getRulingSignatureConfirmation(
     caseId: string,
     documentToken: string,
+    method: 'audkenni' | 'mobile' = 'mobile',
   ): Promise<SignatureConfirmationResponse> {
     return this.get(
-      `case/${caseId}/ruling/signature?documentToken=${documentToken}`,
-    )
-  }
-
-  getRulingSignatureConfirmationAudkenni(
-    caseId: string,
-    documentToken: string,
-  ): Promise<SignatureConfirmationResponse> {
-    return this.get(
-      `case/${caseId}/ruling/signature/audkenni?documentToken=${documentToken}`,
+      `case/${caseId}/ruling/signature?documentToken=${documentToken}&method=${method}`,
     )
   }
 

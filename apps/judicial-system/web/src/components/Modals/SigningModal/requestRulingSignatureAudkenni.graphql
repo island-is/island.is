@@ -1,6 +1,0 @@
-mutation RequestRulingSignatureAudkenni($input: RequestSignatureInput!) {
-  requestRulingSignatureAudkenni(input: $input) {
-    controlCode
-    documentToken
-  }
-}
