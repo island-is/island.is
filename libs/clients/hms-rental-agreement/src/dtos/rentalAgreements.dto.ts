@@ -13,8 +13,6 @@ export interface RentalAgreementDto {
   dateFrom?: Date
   dateTo?: Date
   contractType: TemporalType
-  signatureDate?: Date
-  receivedDate?: Date
   contractParty?: ContractPartyDto[]
   contractProperty?: ContractPropertyDto[]
 }
@@ -39,12 +37,6 @@ export const mapRentalAgreementDto = (
         : contract.contractTypeUseCode === 'INDEFINETEAGREEMENT'
         ? 'indefinite'
         : 'unknown',
-    signatureDate: contract.signatureDate
-      ? new Date(contract.signatureDate)
-      : undefined,
-    receivedDate: contract.receivedDate
-      ? new Date(contract.receivedDate)
-      : undefined,
     contractParty:
       contract.contractParty?.map(mapContractPartyDto).filter(isDefined) ??
       undefined,
