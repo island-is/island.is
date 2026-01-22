@@ -6,6 +6,7 @@ import { m } from './lib/messages'
 
 const AccessControl = lazy(() => import('./screens/AccessControl'))
 const GrantAccess = lazy(() => import('./screens/GrantAccess/GrantAccess'))
+const GrantAccessNew = lazy(() => import('./screens/GrantAccessNew/GrantAccessNew'))
 const AccessOutgoing = lazy(() =>
   import('./screens/AccessOutgoing/AccessOutgoing'),
 )
@@ -56,6 +57,13 @@ export const delegationsModule: PortalModule = {
         navHide: !hasAccess,
         enabled: hasAccess,
         element: <ServiceCategories />,
+      },
+      {
+        name: m.grantAccessNewTitle,
+        path: DelegationPaths.DelegationsGrantNew,
+        navHide: !hasAccess,
+        enabled: hasAccess,
+        element: <GrantAccessNew />,
       },
     ]
 

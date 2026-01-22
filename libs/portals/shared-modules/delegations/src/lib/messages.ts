@@ -71,14 +71,6 @@ export const m = defineMessages({
     defaultMessage:
       'Hér má sjá yfirlit yfir þjónustuflokka og réttindi sem þeim tengjast.',
   },
-  categories: {
-    id: 'sp.access-control-delegations:categories',
-    defaultMessage: 'Flokkar',
-  },
-  lifeEvents: {
-    id: 'sp.access-control-delegations:lifeEvents',
-    defaultMessage: 'Lífsviðburðir',
-  },
   errorTitle: {
     id: 'sp.access-control-delegations:errorTitle',
     defaultMessage: 'Villa kom upp',
@@ -295,5 +287,81 @@ export const m = defineMessages({
   viewDelegationModalTitle: {
     id: 'sp.access-control-delegations:view-delegation-modal-title',
     defaultMessage: 'Upplýsingar um umboð',
+  },
+  // New delegation grant flow
+  grantAccessNewTitle: {
+    id: 'sp.access-control-delegations:grant-access-new-title',
+    defaultMessage: 'Beiðni um nýtt umboð',
+  },
+  grantAccessNewIntro: {
+    id: 'sp.access-control-delegations:grant-access-new-intro',
+    defaultMessage:
+      'Hér getur þú, í þremur skrefum, beðið einstaklinga eða fyrirtæki um að veita þér ákvæðið umboð til að skoða vefsvæðum opinberum stofnunum á Ísland.is',
+  },
+  stepOneTitle: {
+    id: 'sp.access-control-delegations:step-one-title',
+    defaultMessage: '1. Hvaða einstaklingur eða fyrirtæki viltu biðja um umboð?',
+  },
+  stepTwoTitle: {
+    id: 'sp.access-control-delegations:step-two-title',
+    defaultMessage: '2. Hvaða umboð viltu biðja um?',
+  },
+  stepThreeTitle: {
+    id: 'sp.access-control-delegations:step-three-title',
+    defaultMessage: '3. Hversu lengi á afangareint umboð að gilda?',
+  },
+  grantAccessScopesIntro: {
+    id: 'sp.access-control-delegations:grant-access-scopes-intro',
+    defaultMessage:
+      'Leita að umboði, nota síur til að þrengja leitina eða velja úr flokkum hér að neðan.',
+  },
+  searchScopesPlaceholder: {
+    id: 'sp.access-control-delegations:search-scopes-placeholder',
+    defaultMessage:
+      'Leita eftir flokki, helium umboðs, heiti um stofnun eða lýsingu umbóðs...',
+  },
+  clearSearchAndFilters: {
+    id: 'sp.access-control-delegations:clear-search-filters',
+    defaultMessage: 'Hreinsa leit/síu',
+  },
+  filterByTag: {
+    id: 'sp.access-control-delegations:filter-by-tag',
+    defaultMessage: 'Sía:',
+  },
+  scopesSelected: {
+    id: 'sp.access-control-delegations:scopes-selected',
+    defaultMessage: 'umboð valin',
+  },
+  clearSelection: {
+    id: 'sp.access-control-delegations:clear-selection',
+    defaultMessage: 'Hreinsa val',
+  },
+  selectAll: {
+    id: 'sp.access-control-delegations:select-all',
+    defaultMessage: 'Velja allt',
+  },
+  deselectAll: {
+    id: 'sp.access-control-delegations:deselect-all',
+    defaultMessage: 'Afvelja allt',
+  },
+  sendDelegationRequest: {
+    id: 'sp.access-control-delegations:send-delegation-request',
+    defaultMessage: 'Senda beiðni um nýtt umboð',
+  },
+  noScopesMatchFilter: {
+    id: 'sp.access-control-delegations:no-scopes-match-filter',
+    defaultMessage: 'Engin umboð fundust með þessari leit eða síu',
+  },
+  showingResults: {
+    id: 'sp.access-control-delegations:showing-results',
+    defaultMessage: 'Sýni {count} af {total} umboðum',
+  },
+  grantValidityPeriod: {
+    id: 'sp.access-control-delegations:grant-validity-period',
+    defaultMessage: 'Gildistími sem óskað er eftir',
+  },
+  grantSelectDate: {
+    id: 'sp.access-control-delegations:grant-select-date',
+    defaultMessage: 'Veldu dagsetningu',
   },
 })

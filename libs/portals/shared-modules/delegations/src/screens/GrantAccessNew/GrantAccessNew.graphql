@@ -1,0 +1,44 @@
+query AuthScopeCategoriesForGrant($lang: String!) {
+  authScopeCategories(lang: $lang) {
+    id
+    title
+    description
+    slug
+    scopes {
+      name
+      displayName
+      description
+    }
+  }
+}
+
+query AuthScopeTagsForGrant($lang: String!) {
+  authScopeTags(lang: $lang) {
+    id
+    title
+    intro
+    slug
+    scopes {
+      name
+      displayName
+      description
+    }
+  }
+}
+
+query AuthDomainsForGrant($lang: String!) {
+  authDomains(input: { lang: $lang }) {
+    name
+    displayName
+    description
+    nationalId
+  }
+}
+
+query IdentityForGrant($input: IdentityInput!) {
+  identity(input: $input) {
+    nationalId
+    type
+    name
+  }
+}
