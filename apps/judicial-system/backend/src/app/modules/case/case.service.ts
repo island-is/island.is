@@ -590,7 +590,7 @@ export class CaseService {
     private readonly messageService: MessageService,
     private readonly caseRepositoryService: CaseRepositoryService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
-  ) { }
+  ) {}
 
   private formatMessage: FormatMessage = () => {
     throw new InternalServerErrorException('Format message not initialized')
@@ -1568,16 +1568,16 @@ export class CaseService {
       .map((updatedDefendant) => [
         ...(updatedCase.origin === CaseOrigin.LOKE
           ? [
-            {
-              type: MessageType.DELIVERY_TO_POLICE_SUBPOENA_FILE,
-              user,
-              caseId: theCase.id,
-              elementId: [
-                updatedDefendant.id,
-                updatedDefendant.subpoenas?.[0].id ?? '',
-              ],
-            },
-          ]
+              {
+                type: MessageType.DELIVERY_TO_POLICE_SUBPOENA_FILE,
+                user,
+                caseId: theCase.id,
+                elementId: [
+                  updatedDefendant.id,
+                  updatedDefendant.subpoenas?.[0].id ?? '',
+                ],
+              },
+            ]
           : []),
         {
           type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA,
@@ -1794,8 +1794,8 @@ export class CaseService {
         updatedCase.judge?.nationalId !== theCase.judge?.nationalId
           ? updatedCase.judge
           : updatedCase.registrar?.nationalId !== theCase.registrar?.nationalId
-            ? updatedCase.registrar
-            : null
+          ? updatedCase.registrar
+          : null
 
       if (updatedRole?.nationalId) {
         await this.addMessagesForIndictmentCourtRoleAssigned(
@@ -1832,7 +1832,7 @@ export class CaseService {
       const hasUpdatedArraignmentDate =
         updatedArraignmentDate &&
         updatedArraignmentDate.date.getTime() !==
-        arraignmentDate?.date.getTime()
+          arraignmentDate?.date.getTime()
 
       if (hasUpdatedArraignmentDate) {
         await this.addMessagesForIndictmentArraignmentDate(updatedCase, user)
@@ -1931,10 +1931,10 @@ export class CaseService {
           where: defendant.noNationalId
             ? { nationalId: defendant.nationalId, name: defendant.name }
             : {
-              nationalId: {
-                [Op.in]: normalizeAndFormatNationalId(defendant.nationalId),
+                nationalId: {
+                  [Op.in]: normalizeAndFormatNationalId(defendant.nationalId),
+                },
               },
-            },
         },
       ],
       attributes: ['id', 'courtCaseNumber', 'type', 'state'],
@@ -1962,8 +1962,8 @@ export class CaseService {
         prosecutorId: isIndictmentCase(caseToCreate.type)
           ? caseToCreate.prosecutorId
           : user.role === UserRole.PROSECUTOR
-            ? user.id
-            : undefined,
+          ? user.id
+          : undefined,
         courtId: isRequestCase(caseToCreate.type)
           ? user.institution?.defaultCourtId
           : undefined,
@@ -2385,7 +2385,7 @@ export class CaseService {
 
     const hasNewRulingDecision =
       theCase.indictmentRulingDecision ===
-      CaseIndictmentRulingDecision.RULING &&
+        CaseIndictmentRulingDecision.RULING &&
       !!update.indictmentRulingDecision &&
       [
         CaseIndictmentRulingDecision.CANCELLATION,
@@ -2463,11 +2463,13 @@ export class CaseService {
           mergedCaseId: theCase.id,
           update: {
             stringType: CourtSessionStringType.ENTRIES,
-            value: `Mál nr. ${theCase.courtCaseNumber
-              } sem var höfðað á hendur ákærða${caseSentToCourt
+            value: `Mál nr. ${
+              theCase.courtCaseNumber
+            } sem var höfðað á hendur ákærða${
+              caseSentToCourt
                 ? ` með ákæru útgefinni ${formatDate(caseSentToCourt, 'PPP')}`
                 : ''
-              }, er nú einnig tekið fyrir og það sameinað þessu máli, sbr. heimild í 1. mgr. 169. gr. laga nr. 88/2008 um meðferð sakamála, og verða þau eftirleiðis rekin undir málsnúmeri þessa máls.`,
+            }, er nú einnig tekið fyrir og það sameinað þessu máli, sbr. heimild í 1. mgr. 169. gr. laga nr. 88/2008 um meðferð sakamála, og verða þau eftirleiðis rekin undir málsnúmeri þessa máls.`,
           },
           transaction,
         })

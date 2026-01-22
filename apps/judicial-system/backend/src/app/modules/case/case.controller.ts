@@ -130,7 +130,7 @@ export class CaseController {
     private readonly civilClaimantService: CivilClaimantService,
     @InjectConnection() private readonly sequelize: Sequelize,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
-  ) { }
+  ) {}
 
   private async validateAssignedUser(
     assignedUserId: string,
@@ -257,8 +257,9 @@ export class CaseController {
           ? `${theCase.rulingModifiedHistory}\n\n`
           : ''
         const today = capitalize(formatDate(nowFactory(), 'PPPPp'))
-        update.rulingModifiedHistory = `${history}${today} - ${user.name
-          } ${lowercase(user.title)}\n\n${update.rulingModifiedHistory}`
+        update.rulingModifiedHistory = `${history}${today} - ${
+          user.name
+        } ${lowercase(user.title)}\n\n${update.rulingModifiedHistory}`
       }
 
       if (update.caseResentExplanation) {
@@ -282,8 +283,9 @@ export class CaseController {
           ? `${theCase.appealRulingModifiedHistory}\n\n`
           : ''
         const today = capitalize(formatDate(nowFactory(), 'PPPPp'))
-        update.appealRulingModifiedHistory = `${history}${today} - ${user.name
-          } ${lowercase(user.title)}\n\n${update.appealRulingModifiedHistory}`
+        update.appealRulingModifiedHistory = `${history}${today} - ${
+          user.name
+        } ${lowercase(user.title)}\n\n${update.appealRulingModifiedHistory}`
       }
 
       if (update.mergeCaseId && theCase.state !== CaseState.RECEIVED) {
@@ -811,12 +813,7 @@ export class CaseController {
     @CurrentCase() theCase: Case,
     @Query('method') method: 'audkenni' | 'mobile' = 'mobile',
   ): Promise<SigningServiceResponse> {
-    return this.handleRequestCourtRecordSignature(
-      caseId,
-      theCase,
-      user,
-      method,
-    )
+    return this.handleRequestCourtRecordSignature(caseId, theCase, user, method)
   }
 
   private async handleGetCourtRecordSignatureConfirmation(
@@ -947,7 +944,7 @@ export class CaseController {
         method,
         transaction,
       ),
-    );
+    )
   }
 
   @UseGuards(

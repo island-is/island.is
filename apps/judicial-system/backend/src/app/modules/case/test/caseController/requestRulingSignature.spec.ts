@@ -48,7 +48,16 @@ describe('CaseController - Request ruling signature', () => {
     const userId = uuid()
 
     const caseId = uuid()
-    const theCase = { id: caseId, judgeId: userId, judge: { id: userId, name: 'John Doe', nationalId: '0101301234', mobileNumber: '1234567890' } } as Case
+    const theCase = {
+      id: caseId,
+      judgeId: userId,
+      judge: {
+        id: userId,
+        name: 'John Doe',
+        nationalId: '0101301234',
+        mobileNumber: '1234567890',
+      },
+    } as Case
     let then: Then
 
     beforeEach(async () => {
