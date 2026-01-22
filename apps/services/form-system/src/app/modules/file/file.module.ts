@@ -1,5 +1,5 @@
 import { createRedisCluster } from '@island.is/cache'
-import { FileStorageConfig, FileStorageModule } from '@island.is/file-storage'
+import { FileStorageConfig } from '@island.is/file-storage'
 import { LoggingModule } from '@island.is/logging'
 import { AwsModule } from '@island.is/nest/aws'
 import { BullModule as NestBullModule } from '@nestjs/bull'
@@ -11,13 +11,14 @@ import { FileConfig } from './file.config'
 import { FileController } from './file.controller'
 import { FileService } from './file.service'
 import { UploadProcessor } from './upload.processor'
+import { FileStorageWrapperModule } from './fileStorageWrapper'
 
 @Module({
   imports: [
     AwsModule,
     LoggingModule,
     ConfigModule.forFeature(FileStorageConfig),
-    FileStorageModule,
+    FileStorageWrapperModule,
     SequelizeModule.forFeature([Value]),
     ConfigModule.forFeature(FileConfig),
     NestBullModule.registerQueueAsync({
@@ -33,7 +34,7 @@ import { UploadProcessor } from './upload.processor'
             noPrefix: true,
           }),
       }),
-      inject: [FileConfig.KEY, FileStorageConfig.KEY],
+      inject: [FileConfig.KEY],
     }),
   ],
   controllers: [FileController],
