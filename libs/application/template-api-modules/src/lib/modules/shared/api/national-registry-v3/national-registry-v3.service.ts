@@ -135,9 +135,16 @@ export class NationalRegistryV3Service extends BaseTemplateApiService {
     auth: User,
   ) {
     for (const id of childrenId) {
-      const individual = await this.getIndividual(id, auth)
-      if (individual) {
-        this.validateIndividual(individual, true, params)
+      try {
+        const individual = await this.getIndividual(id, auth)
+        if (individual) {
+          this.validateIndividual(individual, true, params)
+        }
+      } catch (error) {
+        // Silently skip children that the user doesn't have custody rights to access
+        // This happens when Parent B (Guardian 2) tries to validate children they don't have custody over
+        // but are listed as a guardian in the application
+        continue
       }
     }
   }
