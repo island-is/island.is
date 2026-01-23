@@ -52,9 +52,4 @@ export class UpdateVerdictInput {
   @IsOptional()
   @Field(() => Boolean, { nullable: true })
   readonly isDefaultJudgement?: boolean
-
-  @Allow()
-  @IsOptional()
-  @Field(() => Boolean, { nullable: true })
-  readonly isDrivingLicenseSuspended?: boolean
 }

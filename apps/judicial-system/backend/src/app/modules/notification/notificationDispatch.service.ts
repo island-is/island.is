@@ -123,8 +123,8 @@ export class NotificationDispatchService {
   private async dispatchIndictmentSentToPublicProsecutorNotifications(
     theCase: Case,
   ): Promise<void> {
-    const hasDrivingLicenseSuspension = theCase.defendants?.some((defendant) =>
-      defendant.verdicts?.some((verdict) => verdict.isDrivingLicenseSuspended),
+    const hasDrivingLicenseSuspension = theCase.defendants?.some(
+      (defendant) => defendant.isDrivingLicenseSuspended,
     )
 
     const hasServiceRequirementNotApplicable = theCase.defendants?.some(

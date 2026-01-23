@@ -144,4 +144,9 @@ export class UpdateDefendantDto {
   @MaxLength(255)
   @ApiPropertyOptional({ type: String })
   readonly alternativeServiceDescription?: string
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  isDrivingLicenseSuspended?: boolean
 }

@@ -50,7 +50,6 @@ type UpdateVerdict = { serviceDate?: Date | null } & Pick<
   | 'appealDate'
   | 'serviceInformationForDefendant'
   | 'isDefaultJudgement'
-  | 'isDrivingLicenseSuspended'
   | 'hash'
   | 'hashAlgorithm'
 >

@@ -226,8 +226,17 @@ export class InternalVerdictController {
       updatedVerdict.serviceStatus &&
       updatedVerdict.serviceStatus !== verdict.serviceStatus
     ) {
-      // TODO: check if "suspension" is checked
-      if (isSuccessfulVerdictServiceStatus(updatedVerdict.serviceStatus)) {
+      const hasDrivingLicenseSuspension =
+        theCase.defendants?.some(
+          (defendant) =>
+            updatedVerdict.defendantId === defendant.id &&
+            defendant.isDrivingLicenseSuspended,
+        ) ?? false
+
+      if (
+        isSuccessfulVerdictServiceStatus(updatedVerdict.serviceStatus) &&
+        hasDrivingLicenseSuspension
+      ) {
         this.messageService.sendMessagesToQueue([
           {
             type: MessageType.INDICTMENT_CASE_NOTIFICATION,

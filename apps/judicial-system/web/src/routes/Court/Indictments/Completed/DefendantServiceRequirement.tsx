@@ -91,7 +91,7 @@ export const DefendantServiceRequirement = ({
                 )
               }
 
-              if (verdict.isDrivingLicenseSuspended) {
+              if (defendant.isDrivingLicenseSuspended) {
                 serviceInfo.push(
                   InformationForDefendant.DRIVING_RIGHTS_REVOKED_TRANSLATION,
                 )

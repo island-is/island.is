@@ -52,6 +52,7 @@ import {
   formatDateForServer,
   UpdateCase,
   useCase,
+  useDefendants,
   useFileList,
   useS3Upload,
   useUploadFiles,
@@ -119,6 +120,7 @@ const Conclusion: FC = () => {
   const { courtDate, handleCourtDateChange, handleCourtRoomChange } =
     useCourtArrangements(workingCase, setWorkingCase, 'courtDate')
   const { createVerdicts, updateDefendantVerdictState } = useVerdict()
+  const { updateDefendantState, updateDefendant } = useDefendants()
   const {
     uploadFiles,
     allFilesDoneOrError,
@@ -223,21 +225,43 @@ const Conclusion: FC = () => {
 
       if (
         update.indictmentDecision === IndictmentDecision.COMPLETING &&
-        update.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
+        update.indictmentRulingDecision &&
+        [
+          CaseIndictmentRulingDecision.RULING,
+          CaseIndictmentRulingDecision.FINE,
+        ].includes(update.indictmentRulingDecision)
       ) {
-        const defendantVerdictsToCreate = workingCase.defendants?.map(
-          (item) => ({
-            defendantId: item.id,
-            isDefaultJudgement: item.verdict?.isDefaultJudgement || false,
-            isDrivingLicenseSuspended:
-              item.verdict?.isDrivingLicenseSuspended || false,
-          }),
-        )
+        const promises = []
 
-        const createSuccess = await createVerdicts({
-          caseId: workingCase.id,
-          verdicts: defendantVerdictsToCreate,
-        })
+        if (
+          update.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
+        ) {
+          promises.push(
+            ...(workingCase.defendants?.map((defendant) =>
+              updateDefendant({
+                caseId: workingCase.id,
+                defendantId: defendant.id,
+                isDrivingLicenseSuspended: defendant.isDrivingLicenseSuspended,
+              }),
+            ) || []),
+          )
+        } else {
+          const defendantVerdictsToCreate = workingCase.defendants?.map(
+            (item) => ({
+              defendantId: item.id,
+              isDefaultJudgement: item.verdict?.isDefaultJudgement || false,
+            }),
+          )
+
+          promises.push(
+            createVerdicts({
+              caseId: workingCase.id,
+              verdicts: defendantVerdictsToCreate,
+            }),
+          )
+        }
+
+        const createSuccess = await Promise.all(promises)
 
         if (!createSuccess) {
           return
@@ -261,6 +285,7 @@ const Conclusion: FC = () => {
       selectedDecision,
       setAndSendCaseToServer,
       setWorkingCase,
+      updateDefendant,
       workingCase,
     ],
   )
@@ -801,11 +826,9 @@ const Conclusion: FC = () => {
                     <Checkbox
                       id={`driving-license-revocation-${defendant.id}`}
                       label="Svipting ökuréttar"
-                      checked={
-                        defendant.verdict?.isDrivingLicenseSuspended || false
-                      }
+                      checked={defendant.isDrivingLicenseSuspended || false}
                       onChange={(evt) =>
-                        updateDefendantVerdictState(
+                        updateDefendantState(
                           {
                             caseId: workingCase.id,
                             defendantId: defendant.id,
