@@ -83,3 +83,13 @@ export enum AppointmentStatusEnum {
 registerEnumType(AppointmentStatusEnum, {
   name: 'HealthDirectorateAppointmentStatus',
 })
+
+export enum WaitlistStatusTagColorEnum {
+  blue = 'blue',
+  purple = 'purple',
+  red = 'red',
+  mint = 'mint',
+}
+registerEnumType(WaitlistStatusTagColorEnum, {
+  name: 'HealthDirectorateWaitlistStatusTagColorEnum',
+})

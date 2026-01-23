@@ -1,4 +1,5 @@
 import { Field, GraphQLISODateTime, ID, ObjectType } from '@nestjs/graphql'
+import { WaitlistStatusTagColorEnum } from './enums'
 
 @ObjectType('HealthDirectorateWaitlist')
 export class Waitlist {
@@ -19,6 +20,9 @@ export class Waitlist {
 
   @Field()
   status!: string
+
+  @Field(() => WaitlistStatusTagColorEnum, { nullable: true })
+  statusId?: WaitlistStatusTagColorEnum
 }
 
 @ObjectType('HealthDirectorateWaitlists')
