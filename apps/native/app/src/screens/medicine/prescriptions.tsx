@@ -35,6 +35,10 @@ const Wrapper = styled.View`
   margin-top: ${({ theme }) => theme.spacing[3]}px;
 `
 
+const DescriptionWrapper = styled.View`
+  margin-top: ${({ theme }) => theme.spacing[2]}px;
+`
+
 const { getNavigationOptions, useNavigationOptions } =
   createNavigationOptionHooks((_) => ({
     topBar: {
@@ -123,17 +127,18 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
             {prescriptionsRes.loading && !prescriptionsRes.data
               ? renderSkeletons()
               : data?.map((prescription, index) => (
-                  <PrescriptionCard
-                    key={`${prescription?.id}-${index}`}
-                    prescription={prescription}
-                  />
-                ))}
+                <PrescriptionCard
+                  key={`${prescription?.id}-${index}`}
+                  prescription={prescription}
+                />
+              ))}
           </Wrapper>
         ),
       },
       {
         id: 'drugCertificates',
         titleId: 'health.drugCertificates.title',
+        descriptionId: 'health.prescriptionsAndCertificates.description',
         enabled: true,
         queryResult: certificatesRes,
         getData: () => certificatesRes.data?.rightsPortalDrugCertificates,
@@ -147,11 +152,11 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
             {certificatesRes.loading && !certificatesRes.data
               ? renderSkeletons()
               : data?.map((certificate, index) => (
-                  <CertificateCard
-                    key={`${certificate?.id}-${index}`}
-                    certificate={certificate}
-                  />
-                ))}
+                <CertificateCard
+                  key={`${certificate?.id}-${index}`}
+                  certificate={certificate}
+                />
+              ))}
           </Wrapper>
         ),
       },
@@ -173,11 +178,11 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
             {medicineHistoryRes.loading && !medicineHistoryRes.data
               ? renderSkeletons()
               : data?.map((medicine, index) => (
-                  <MedicineHistoryCard
-                    key={`${medicine?.id}-${index}`}
-                    medicine={medicine}
-                  />
-                ))}
+                <MedicineHistoryCard
+                  key={`${medicine?.id}-${index}`}
+                  medicine={medicine}
+                />
+              ))}
           </Wrapper>
         ),
       },
@@ -230,13 +235,13 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
           ? certificatesRes.refetch()
           : null,
         isPrescriptionsEnabled &&
-        prescriptionsRes.called &&
-        prescriptionsRes.refetch
+          prescriptionsRes.called &&
+          prescriptionsRes.refetch
           ? prescriptionsRes.refetch()
           : null,
         isPrescriptionsEnabled &&
-        medicineHistoryRes.called &&
-        medicineHistoryRes.refetch
+          medicineHistoryRes.called &&
+          medicineHistoryRes.refetch
           ? medicineHistoryRes.refetch()
           : null,
       ].filter(Boolean)
@@ -286,6 +291,15 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
               </Typography>
             )}
           </Wrapper>
+          {activeTab?.descriptionId && (
+            <DescriptionWrapper>
+              <Typography variant="body">
+                {intl.formatMessage({
+                  id: activeTab?.descriptionId ?? '',
+                })}
+              </Typography>
+            </DescriptionWrapper>
+          )}
           {activeTab &&
             (activeTabData?.length || activeTab.queryResult.loading) &&
             activeTab.renderContent(activeTabData)}
