@@ -184,7 +184,7 @@ export const VehiclesScreen: NavigationFunctionComponent = ({
     <>
       <Animated.FlatList
         ref={flatListRef}
-        testID={testIDs.SCREEN_HOME}
+        testID={testIDs.SCREEN_VEHICLES}
         style={{
           paddingTop: 16,
           zIndex: 9,

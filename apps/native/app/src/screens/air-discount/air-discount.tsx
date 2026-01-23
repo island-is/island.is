@@ -26,6 +26,7 @@ import {
   Typography,
 } from '../../ui'
 import { AirfaresUsageTable } from './airfares-usage-table'
+import { testIDs } from '../../utils/test-ids'
 
 const BulletList = styled.View`
   margin-vertical: 12px;
@@ -162,6 +163,7 @@ export const AirDiscountScreen: NavigationFunctionComponent = ({
             useNativeDriver: true,
           },
         )}
+        testID={testIDs.SCREEN_AIR_DISCOUNT}
       >
         <SafeAreaView style={{ marginHorizontal: theme.spacing[2] }}>
           <Heading>

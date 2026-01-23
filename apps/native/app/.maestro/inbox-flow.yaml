@@ -1,0 +1,20 @@
+appId: 'is.island.app.dev'
+---
+- launchApp:
+    appId: 'is.island.app.dev'
+- runFlow: utils/sign-in.yaml
+- runFlow:
+    file: 'utils/select-tab.yaml'
+    env:
+      title: 'Pósthólf'
+
+- assertVisible:
+    id: 'INBOX_ITEM_INBOX_TESTING_0'
+- tapOn:
+    text: 'Velja skjöl'
+- tapOn:
+    id: 'INBOX_ITEM_INBOX_TESTING_0'
+- tapOn:
+    text: '.*Geymsla.*'
+- assertNotVisible:
+    id: 'INBOX_ITEM_INBOX_TESTING_0'

@@ -50,7 +50,7 @@ const { useNavigationOptions, getNavigationOptions } =
         },
       },
       bottomTab: {
-        testID: testIDs.TABBAR_TAB_PROFILE,
+        testID: testIDs.TABBAR_TAB_MORE,
         iconInsets: {
           bottom: -4,
         },
@@ -136,11 +136,13 @@ export const MoreScreen: NavigationFunctionComponent = ({ componentId }) => {
             title={intl.formatMessage({ id: 'profile.family' })}
             icon={familyIcon}
             onPress={() => navigateTo('/family')}
+            testID={testIDs.MORE_CARD_FAMILY}
           />
           <MoreCard
             title={intl.formatMessage({ id: 'profile.vehicles' })}
             icon={vehicleIcon}
             onPress={() => navigateTo('/vehicles')}
+            testID={testIDs.MORE_CARD_VEHICLES}
           />
         </Row>
         <Row>
@@ -148,11 +150,13 @@ export const MoreScreen: NavigationFunctionComponent = ({ componentId }) => {
             title={intl.formatMessage({ id: 'profile.assets' })}
             icon={assetsIcon}
             onPress={() => navigateTo('/assets')}
+            testID={testIDs.MORE_CARD_ASSETS}
           />
           <MoreCard
             title={intl.formatMessage({ id: 'profile.finance' })}
             icon={financeIcon}
             onPress={() => navigateTo('/finance')}
+            testID={testIDs.MORE_CARD_FINANCE}
           />
         </Row>
         <Row>
@@ -160,11 +164,13 @@ export const MoreScreen: NavigationFunctionComponent = ({ componentId }) => {
             title={intl.formatMessage({ id: 'profile.health' })}
             icon={healthIcon}
             onPress={() => navigateTo('/health-overview')}
+            testID={testIDs.MORE_CARD_HEALTH}
           />
           <MoreCard
             title={intl.formatMessage({ id: 'profile.airDiscount' })}
             icon={airplaneIcon}
             onPress={() => navigateTo('/air-discount')}
+            testID={testIDs.MORE_CARD_AIR_DISCOUNT}
           />
         </Row>
         <View

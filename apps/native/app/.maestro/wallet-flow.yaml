@@ -1,0 +1,20 @@
+appId: 'is.island.app.dev'
+---
+- launchApp:
+    appId: 'is.island.app.dev'
+- runFlow: utils/sign-in.yaml
+- runFlow:
+    file: 'utils/select-tab.yaml'
+    env:
+      title: 'Skírteini'
+
+- assertVisible:
+    text: 'Ökuskírteini.*'
+- tapOn:
+    text: 'Ökuskírteini.*'
+- assertVisible:
+    id: 'LICENSE_STATUS'
+- assertVisible:
+    id: 'LICENSE_FIELDS'
+- tapOn:
+    text: 'Skírteini'

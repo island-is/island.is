@@ -7,7 +7,7 @@
     "android": "cd ./android && ./gradlew app:assembleDebug && ./gradlew installDevDebug",
     "android:prod": "react-native run-android --variant=prodDebug",
     "ios": "react-native run-ios --scheme Ísland.dev --list-devices",
-    "ios:prod": "react-native run-ios --scheme Ísland.is --list-devices",
+    "ios:prod": "react-native run-ios --scheme Ísland.is --configuration Release --list-devices",
     "build-mock": "echo FIXME",
     "start": "react-native start",
     "clean": "npx react-native clean",
@@ -121,6 +121,7 @@
     "eslint": "8.12.0"
   },
   "volta": {
-    "extends": "../../../package.json"
+    "node": "20.19.6",
+    "yarn": "4.6.0"
   }
 }

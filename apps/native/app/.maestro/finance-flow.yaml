@@ -1,0 +1,22 @@
+appId: 'is.island.app.dev'
+---
+- launchApp:
+    appId: 'is.island.app.dev'
+- runFlow: utils/sign-in.yaml
+- runFlow:
+    file: 'utils/select-tab.yaml'
+    env:
+      title: 'Meira'
+
+- tapOn:
+    id: 'MORE_CARD_FINANCE'
+- assertVisible:
+    id: 'SCREEN_FINANCE'
+- tapOn:
+    id: 'FINANCE_ITEM'
+- tapOn:
+    id: 'FINANCE_ITEM_ROW'
+- assertVisible:
+    id: 'SCREEN_FINANCE_DETAIL'
+- tapOn:
+    id: 'NAVBAR_SHEET_CLOSE_BUTTON'

@@ -14,6 +14,7 @@ import { useMyPagesLinks } from '../../lib/my-pages-links'
 import { useBrowser } from '../../lib/use-browser'
 import { Button, Heading, Skeleton, TableViewCell, Typography } from '../../ui'
 import { FinanceStatusCard } from './components/finance-status-card'
+import { testIDs } from '../../utils/test-ids'
 
 const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks((theme, intl) => ({
@@ -117,7 +118,7 @@ export const FinanceScreen: NavigationFunctionComponent = ({ componentId }) => {
   const showLoading = res.loading && !res.data
 
   return (
-    <ScrollView style={{ flex: 1 }}>
+    <ScrollView style={{ flex: 1 }} testID={testIDs.SCREEN_FINANCE}>
       <SafeAreaView style={{ marginHorizontal: 16 }}>
         <Heading>
           <FormattedMessage

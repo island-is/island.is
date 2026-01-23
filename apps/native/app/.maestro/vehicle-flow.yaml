@@ -1,0 +1,23 @@
+appId: 'is.island.app.dev'
+---
+- launchApp:
+    appId: 'is.island.app.dev'
+- runFlow: 'utils/sign-in.yaml'
+- runFlow:
+    file: 'utils/select-tab.yaml'
+    env:
+      title: 'Meira'
+
+- assertVisible:
+    id: 'MORE_CARD_VEHICLES'
+- tapOn:
+    id: 'MORE_CARD_VEHICLES'
+- assertVisible:
+    id: 'SCREEN_VEHICLES'
+- assertVisible:
+    id: 'VEHICLE_ITEM'
+- tapOn:
+    id: 'VEHICLE_ITEM'
+- assertVisible:
+    id: 'SCREEN_VEHICLE_DETAIL'
+- runFlow: 'utils/back.yaml'

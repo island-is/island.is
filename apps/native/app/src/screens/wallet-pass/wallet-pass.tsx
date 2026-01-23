@@ -47,6 +47,7 @@ import {
   INFORMATION_BASE_TOP_SPACING,
   SHOW_INFO_ALERT_TYPES,
 } from './wallet-pass.constants'
+import { testIDs } from '../../utils/test-ids'
 
 const Information = styled.ScrollView<{ topSpacing?: number }>`
   flex: 1;
@@ -611,7 +612,9 @@ export const WalletPassScreen: NavigationFunctionComponent<{
               style={{ marginTop: theme.spacing[4] }}
             />
           ) : (
-            <FieldRender data={fields} licenseType={licenseType} />
+            <View testID={testIDs.LICENSE_FIELDS}>
+              <FieldRender data={fields} licenseType={licenseType} />
+            </View>
           )}
         </SafeAreaView>
 

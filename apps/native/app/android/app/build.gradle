@@ -48,7 +48,10 @@ react {
 
     /* Hermes Commands */
     //   The hermes compiler command to run. By default it is 'hermesc'
-    hermesCommand = file("../../../../../node_modules/react-native/sdks/hermesc/osx-bin/hermesc").absolutePath
+    def hermesDir = file("../../../../../node_modules/react-native/sdks/hermesc")
+    def osName = System.getProperty("os.name").toLowerCase()
+    def hermesBin = osName.contains("mac") ? "osx-bin" : (osName.contains("win") ? "win64-bin" : "linux64-bin")
+    hermesCommand = file("${hermesDir}/${hermesBin}/hermesc").absolutePath
     //
     //   The list of flags to pass to the Hermes compiler. By default is "-O", "-output-source-map"
     // hermesFlags = ["-O", "-output-source-map"]

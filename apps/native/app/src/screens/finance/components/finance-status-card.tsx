@@ -21,6 +21,7 @@ import { navigateTo } from '../../../lib/deep-linking'
 import { showPicker } from '../../../lib/show-picker'
 import { SelectButton } from './select-button'
 import { useBrowser } from '../../../lib/use-browser'
+import { testIDs } from '../../../utils/test-ids'
 
 const Row = styled.View<{ border?: boolean }>`
   flex-direction: row;
@@ -124,6 +125,7 @@ export function FinanceStatusCard({
 
   return (
     <ExpandableCard
+      testID={testIDs.FINANCE_ITEM}
       title={chargeType.name}
       icon={chevronDown}
       message={
@@ -217,6 +219,7 @@ export function FinanceStatusCard({
               }
               return (
                 <TouchableRow
+                  testID={testIDs.FINANCE_ITEM_ROW}
                   key={index}
                   underlayColor="rgba(128,128,128,0.1)"
                   style={{

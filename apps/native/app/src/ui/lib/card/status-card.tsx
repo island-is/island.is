@@ -80,6 +80,7 @@ interface StatusCardProps {
   institution?: string
   actions: Array<{ text: string; onPress(): void }>
   style?: ViewStyle
+  testID?: string
 }
 
 export function StatusCard({
@@ -94,6 +95,7 @@ export function StatusCard({
   progressTotalSteps,
   progressMessage,
   progressContainerWidth,
+  testID,
 }: StatusCardProps) {
   const { getOrganizationLogoUrl } = useOrganizationsStore()
   const icon = getOrganizationLogoUrl(institution ?? '')
@@ -102,7 +104,7 @@ export function StatusCard({
   const hideProgress = !progress && !progressTotalSteps
 
   return (
-    <Host style={style}>
+    <Host style={style} testID={testID}>
       <Row>
         <Date>
           <Image

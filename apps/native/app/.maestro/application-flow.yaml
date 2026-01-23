@@ -1,0 +1,25 @@
+appId: 'is.island.app.dev'
+---
+- launchApp:
+    appId: 'is.island.app.dev'
+    clearState: true
+- runFlow: utils/sign-in.yaml
+- runFlow:
+    file: 'utils/select-tab.yaml'
+    env:
+      title: 'Umsóknir'
+
+- assertVisible: 'Ókláraðar umsóknir.*'
+- tapOn:
+    text: '.*Sjá allt.*'
+- assertVisible:
+    id: 'SCREEN_APPLICATIONS_DETAILS'
+- assertVisible:
+    id: 'APPLICATION_ITEM'
+- tapOn:
+    text: 'Opna umsókn'
+- assertVisible:
+    id: 'SCREEN_PASSKEY'
+- tapOn:
+    id: 'NAVBAR_SHEET_CLOSE_BUTTON'
+- runFlow: 'utils/back.yaml'

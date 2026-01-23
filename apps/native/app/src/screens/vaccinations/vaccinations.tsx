@@ -16,6 +16,7 @@ import { createNavigationOptionHooks } from '../../hooks/create-navigation-optio
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { useLocale } from '../../hooks/use-locale'
 import { VaccinationsCard } from './components/vaccination-card'
+import { testIDs } from '../../utils/test-ids'
 
 const Host = styled(SafeAreaView)`
   padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
@@ -88,7 +89,7 @@ export const VaccinationsScreen: NavigationFunctionComponent = ({
   }, [vaccinationsRes])
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1 }} testID={testIDs.SCREEN_VACCINATIONS}>
       <ScrollView
         refreshControl={
           <RefreshControl refreshing={refetching} onRefresh={onRefresh} />

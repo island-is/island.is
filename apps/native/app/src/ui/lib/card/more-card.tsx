@@ -31,9 +31,10 @@ interface AssetCardProps {
   title: string
   icon: ImageSourcePropType
   onPress: () => void
+  testID?: string
 }
 
-export const MoreCard = ({ icon, title, onPress }: AssetCardProps) => {
+export const MoreCard = ({ icon, title, onPress, testID }: AssetCardProps) => {
   const theme = useTheme()
   return (
     <TouchableHighlight
@@ -41,6 +42,7 @@ export const MoreCard = ({ icon, title, onPress }: AssetCardProps) => {
         theme.isDark ? theme.shades.dark.shade100 : theme.color.blue100
       }
       style={{ flex: 1, minHeight: 90 }}
+      testID={testID}
       onPress={onPress}
     >
       <Host>

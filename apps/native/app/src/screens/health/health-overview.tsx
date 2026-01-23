@@ -40,6 +40,7 @@ import {
   TopLine,
   Typography,
 } from '../../ui'
+import { testIDs } from '../../utils/test-ids'
 
 const ButtonWrapper = styled.View`
   flex-direction: row;
@@ -289,6 +290,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
             useNativeDriver: true,
           },
         )}
+        testID={testIDs.SCREEN_HEALTH_OVERVIEW}
       >
         <Heading>
           <FormattedMessage
@@ -314,6 +316,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
               style={buttonStyle}
               ellipsis
               onPress={() => navigateTo('/vaccinations', componentId)}
+              testID={testIDs.BUTTON_VACCINATIONS}
             />
           )}
           {isQuestionnaireFeatureEnabled && (
@@ -600,7 +603,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
             id: 'health.overview.basicInformation',
           })}
         />
-        <InputRow background>
+        <InputRow background testID={testIDs.HEALTH_CENTER}>
           <Input
             label={intl.formatMessage({
               id: 'health.overview.healthCenter',

@@ -1,0 +1,22 @@
+appId: 'is.island.app.dev'
+---
+- launchApp:
+    appId: 'is.island.app.dev'
+- runFlow: utils/sign-in.yaml
+- runFlow:
+    file: 'utils/select-tab.yaml'
+    env:
+      title: 'Meira'
+
+- tapOn:
+    id: 'MORE_CARD_FAMILY'
+- assertVisible:
+    id: 'SCREEN_FAMILY_OVERVIEW'
+- assertVisible:
+    id: 'FAMILY_MEMBER_ITEM'
+- tapOn:
+    id: 'FAMILY_MEMBER_ITEM'
+- assertVisible:
+    id: 'SCREEN_FAMILY_DETAIL'
+- tapOn:
+    id: 'NAVBAR_SHEET_CLOSE_BUTTON'

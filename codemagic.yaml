@@ -23,6 +23,7 @@ definitions:
     XCODE_WORKSPACE: 'IslandApp.xcworkspace'
     CM_CLONE_DEPTH: 200
     NODE_OPTIONS: '--max-old-space-size=8192'
+    ANDROID_EMULATOR_NAME: 'emulator-34'
   scripts:
     - &check_changes
       name: Check changes since last build
@@ -104,6 +105,156 @@ definitions:
         fi
         cd android
         ./gradlew bundle${ANDROID_APP}Release -PversionCode=$UPDATED_BUILD_NUMBER
+    - &build_ios_simulator_app
+      name: Build simulator .app
+      script: |
+        xcodebuild \
+        -workspace "ios/$XCODE_WORKSPACE" \
+        -scheme "$XCODE_SCHEME" \
+        -configuration "Testing" \
+        -sdk iphonesimulator \
+        -derivedDataPath ios/build
+    - &build_android_debug
+      name: Build Android debug APK
+      script: |
+        cd android
+        ./gradlew assemble${ANDROID_APP}Debug
+    - &install_maestro
+      name: Install Maestro CLI
+      script: |
+        # Install Maestro CLI
+        curl -Ls "https://get.maestro.mobile.dev" | bash
+        export PATH="$PATH":"$HOME/.maestro/bin"
+
+        # Verify Maestro installation
+        maestro --version
+    - &prepare_ios_simulator
+      name: Prepare iOS simulator
+      script: |
+        # Shutdown all existing simulators for clean state
+        echo "Shutting down existing simulators..."
+        xcrun simctl shutdown all || true
+
+        # Find or create an iPhone simulator
+        echo "Looking for available iPhone simulators..."
+
+        # Try to find an existing iPhone simulator
+        DEVICE_ID=$(xcrun simctl list devices available | grep "iPhone" | grep -oE '[A-F0-9]{8}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{12}' | head -1)
+
+        if [ -z "$DEVICE_ID" ]; then
+          echo "No existing iPhone simulator found. Creating one..."
+
+          # Get the latest available iPhone device type
+          DEVICE_TYPE=$(xcrun simctl list devicetypes | grep "iPhone" | tail -1 | grep -oE 'com\.apple\.CoreSimulator\.SimDeviceType\.iPhone[^\)]+')
+
+          # Get the latest available iOS runtime
+          RUNTIME=$(xcrun simctl list runtimes | grep "iOS" | tail -1 | grep -oE 'com\.apple\.CoreSimulator\.SimRuntime\.iOS-[0-9-]+')
+
+          if [ -z "$DEVICE_TYPE" ] || [ -z "$RUNTIME" ]; then
+            echo "Error: Could not find iPhone device type or iOS runtime"
+            echo "Available device types:"
+            xcrun simctl list devicetypes | grep "iPhone"
+            echo "Available runtimes:"
+            xcrun simctl list runtimes | grep "iOS"
+            exit 1
+          fi
+
+          echo "Creating simulator with device type: $DEVICE_TYPE and runtime: $RUNTIME"
+          DEVICE_NAME="iPhone-E2E-Test"
+          DEVICE_ID=$(xcrun simctl create "$DEVICE_NAME" "$DEVICE_TYPE" "$RUNTIME")
+          echo "Created new simulator with ID: $DEVICE_ID"
+        else
+          echo "Using existing iPhone simulator with ID: $DEVICE_ID"
+        fi
+
+        # Boot the simulator
+        echo "Booting simulator..."
+        xcrun simctl boot "$DEVICE_ID" || echo "Simulator already booted"
+
+        # Wait for simulator to be ready
+        echo "Waiting for simulator to be ready..."
+        xcrun simctl bootstatus "$DEVICE_ID" -b
+
+        # Export device ID for subsequent scripts
+        echo "export IOS_DEVICE_ID=\"$DEVICE_ID\"" >> $CM_ENV
+
+        # Find the built app
+        iosAppPath=$(find ios/build -name "*.app" | head -1)
+        if [ -z "$iosAppPath" ]; then
+          echo "No .app file found in ios/build"
+          exit 1
+        fi
+        echo "Found app at: $iosAppPath"
+
+        # Install the app on simulator
+        echo "Installing app on simulator..."
+        xcrun simctl install "$DEVICE_ID" "$iosAppPath"
+    - &prepare_android_emulator
+      name: Prepare Android emulator
+      script: |
+        # Start Android emulator
+        echo "Starting Android emulator..."
+
+        # Add Android cmdline-tools to PATH
+        export PATH="$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$PATH"
+
+        # Check if AVD exists, fail early if it doesn't
+        if ! avdmanager list avd | grep -q "Name: $ANDROID_EMULATOR_NAME"; then
+          echo "ERROR: AVD $ANDROID_EMULATOR_NAME not found"
+          echo "Available AVDs:"
+          avdmanager list avd
+          exit 1
+        fi
+
+        echo "Using AVD: $ANDROID_EMULATOR_NAME"
+
+        # Start emulator in background
+        $ANDROID_HOME/emulator/emulator -avd "$ANDROID_EMULATOR_NAME" -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim &
+        EMULATOR_PID=$!
+
+        # Export PID for cleanup
+        echo "export ANDROID_EMULATOR_PID=\"$EMULATOR_PID\"" >> $CM_ENV
+
+        # Wait for emulator to boot
+        echo "Waiting for emulator to boot..."
+        adb wait-for-device
+
+        # Wait for boot to complete
+        while [ "$(adb shell getprop sys.boot_completed 2>/dev/null)" != "1" ]; do
+          echo "Waiting for boot to complete..."
+          sleep 5
+        done
+
+        # Additional wait to ensure system is fully ready
+        sleep 10
+
+        echo "Emulator is ready"
+
+        # Find the built APK
+        APK_PATH=$(find android/app/build/outputs/apk -name "*debug.apk" | head -1)
+        if [ -z "$APK_PATH" ]; then
+          echo "No debug APK found in android/app/build/outputs/apk"
+          exit 1
+        fi
+        echo "Found APK at: $APK_PATH"
+
+        # Install the APK on emulator
+        echo "Installing APK on emulator..."
+        adb install -r "$APK_PATH"
+    - &run_maestro_tests
+      name: Run Maestro tests
+      script: |
+        # Ensure Maestro is in PATH
+        export PATH="$PATH":"$HOME/.maestro/bin"
+
+        # Run Maestro tests with proper output configuration
+        echo "Running Maestro tests..."
+        maestro test \
+          --format junit \
+          --output "$TEST_OUTPUT_DIR/report.xml" \
+          --debug-output "$TEST_OUTPUT_DIR" \
+          --flatten-debug-output \
+          .maestro
   publishing:
     ios_publishing: &ios_publishing
       app_store_connect:
@@ -200,9 +351,7 @@ workflows:
   prod-app-android:
     <<: *base
     name: Island.is Prod App Android
-    instance_type: mac_mini_m2
-    ## Switch when we have billing
-    # instance_type: linux_x2
+    instance_type: linux_x2
     cache: &android_cache
       cache_paths:
         - ~/.gradle/caches
@@ -235,9 +384,7 @@ workflows:
   dev-app-android:
     <<: *base
     name: Island.is Dev App Android
-    instance_type: mac_mini_m2
-    ## Switch when we have billing
-    # instance_type: linux_x2
+    instance_type: linux_x2
     cache: *android_cache
     environment:
       <<: *environment
@@ -261,3 +408,62 @@ workflows:
     publishing:
       <<: *android_publishing
       <<: *slack_errors
+
+  e2e-tests-ios:
+    <<: *base
+    name: Island.is E2E Tests iOS
+    instance_type: mac_mini_m2
+    cache: *ios_cache
+    environment:
+      <<: *environment
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: is.island.app.dev
+      vars:
+        <<: *shared_envs
+        BUNDLE_ID: 'is.island.app.dev'
+        XCODE_SCHEME: 'Ísland.dev'
+        APP_STORE_APPLE_ID: 1570427360
+        TEST_OUTPUT_DIR: 'maestro-test-output'
+    scripts:
+      - *check_changes
+      - *pip_install
+      - *npm_install
+      - *codegen
+      - *cocoapods
+      - *build_ios_simulator_app
+      - *install_maestro
+      - *prepare_ios_simulator
+      - *run_maestro_tests
+    artifacts:
+      - /tmp/xcodebuild_logs/*.log
+      - maestro-test-output/**
+
+  e2e-tests-android:
+    <<: *base
+    name: Island.is E2E Tests Android
+    instance_type: linux_x2
+    cache: *android_cache
+    environment:
+      <<: *environment
+      android_signing:
+        - island-upload-keystore
+      groups:
+        - firebase_credentials_dev
+      vars:
+        <<: *shared_envs
+        PACKAGE_NAME: 'is.island.app.dev'
+        ANDROID_APP: dev
+        TEST_OUTPUT_DIR: 'maestro-test-output'
+    scripts:
+      - *check_changes
+      - *set_android_location
+      - *pip_install
+      - *npm_install
+      - *codegen
+      - *build_android_debug
+      - *install_maestro
+      - *prepare_android_emulator
+      - *run_maestro_tests
+    artifacts:
+      - maestro-test-output/**

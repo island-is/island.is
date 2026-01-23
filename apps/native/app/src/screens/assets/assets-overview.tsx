@@ -40,7 +40,7 @@ const AssetItem = React.memo(({ item }: { item: any }) => {
       : ''
 
   return (
-    <View style={{ paddingHorizontal: 16 }}>
+    <View style={{ paddingHorizontal: 16 }} testID={testIDs.ASSET_ITEM}>
       <TouchableHighlight
         underlayColor={
           theme.isDark ? theme.shades.dark.shade100 : theme.color.blue100
@@ -224,7 +224,7 @@ export const AssetsOverviewScreen: NavigationFunctionComponent = ({
     <>
       <Animated.FlatList
         ref={flatListRef}
-        testID={testIDs.SCREEN_HOME}
+        testID={testIDs.SCREEN_ASSETS_OVERVIEW}
         style={{
           paddingTop: 16,
           zIndex: 9,
