@@ -60,6 +60,7 @@ import { FormResponseDto } from './models/dto/form.response.dto'
 import { UpdateFormDto } from './models/dto/updateForm.dto'
 import { Form } from './models/form.model'
 import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
+import { Dependency } from '../../dataTypes/dependency.model'
 
 @Injectable()
 export class FormsService {
@@ -859,6 +860,21 @@ export class FormsService {
     } as Screen)
   }
 
+  private async updateDependencies(
+    oldId: string,
+    newId: string,
+    deps: Dependency[],
+  ): Promise<Dependency[]> {
+    if (!deps || deps.length === 0) return []
+    for (const dep of deps) {
+      if (dep.parentProp === oldId) {
+        dep.parentProp = newId
+      }
+      dep.childProps = dep.childProps.map((s) => s.replaceAll(oldId, newId))
+    }
+    return deps
+  }
+
   private async copyForm(
     id: string,
     isDerived: boolean,
@@ -875,6 +891,8 @@ export class FormsService {
       )
     }
 
+    let deps = existingForm.dependencies || []
+
     const newForm = existingForm.toJSON()
     newForm.id = uuidV4()
     newForm.status = isDerived
@@ -887,7 +905,6 @@ export class FormsService {
     newForm.identifier = isDerived ? existingForm.identifier : uuidV4()
     newForm.beenPublished = false
     newForm.completedSectionInfo = existingForm.completedSectionInfo
-    newForm.dependencies = existingForm.dependencies
 
     const sections: Section[] = []
     const screens: Screen[] = []
@@ -902,6 +919,7 @@ export class FormsService {
       newSection.formId = newForm.id
       newSection.created = new Date()
       newSection.modified = new Date()
+      deps = await this.updateDependencies(section.id, newSection.id, deps)
       sections.push(newSection)
       for (const screen of section.screens) {
         const newScreen = screen.toJSON()
@@ -910,6 +928,7 @@ export class FormsService {
         newScreen.sectionId = newSection.id
         newScreen.created = new Date()
         newScreen.modified = new Date()
+        deps = await this.updateDependencies(screen.id, newScreen.id, deps)
         screens.push(newScreen)
         for (const field of screen.fields) {
           const newField = field.toJSON()
@@ -919,6 +938,7 @@ export class FormsService {
           newField.created = new Date()
           newField.modified = new Date()
           fields.push(newField)
+          deps = await this.updateDependencies(field.id, newField.id, deps)
           if (field.list) {
             for (const listItem of field.list) {
               const newListItem = listItem.toJSON()
@@ -927,12 +947,18 @@ export class FormsService {
               newListItem.fieldId = newField.id
               newListItem.created = new Date()
               newListItem.modified = new Date()
+              deps = await this.updateDependencies(
+                listItem.id,
+                newListItem.id,
+                deps,
+              )
               listItems.push(newListItem)
             }
           }
         }
       }
     }
+    newForm.dependencies = deps
 
     if (existingForm.formCertificationTypes) {
       for (const certificationType of existingForm.formCertificationTypes) {
