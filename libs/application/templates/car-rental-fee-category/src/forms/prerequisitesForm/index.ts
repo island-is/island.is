@@ -55,7 +55,7 @@ export const Prerequisites = buildForm({
   id: 'PrerequisitesDraft',
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
-  children: !areLessThan7DaysLeftOfMonth()
+  children: areLessThan7DaysLeftOfMonth()
     ? tooFewDaysLeftChildren
     : standardChildren,
 })
