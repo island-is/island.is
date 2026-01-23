@@ -5,9 +5,9 @@ import { useLocale } from '@island.is/localization'
 import { getTranslatedValue } from '@island.is/portals/core'
 import {
   Box,
-  Checkbox,
   Divider,
   Input,
+  Select,
   Stack,
   Tabs,
   Text,
@@ -86,22 +86,6 @@ export const PermissionContent = () => {
   const categories = categoriesData?.authAdminScopeCategories || []
   const tags = tagsData?.authAdminScopeTags || []
   const loading = categoriesLoading || tagsLoading
-
-  const handleCategoryToggle = (categoryId: string) => {
-    setSelectedCategoryIds((prev) =>
-      prev.includes(categoryId)
-        ? prev.filter((id) => id !== categoryId)
-        : [...prev, categoryId],
-    )
-  }
-
-  const handleTagToggle = (tagId: string) => {
-    setSelectedTagIds((prev) =>
-      prev.includes(tagId)
-        ? prev.filter((id) => id !== tagId)
-        : [...prev, tagId],
-    )
-  }
 
   const renderTabs = (langKey: Languages) => {
     // Since we transform the Zod schema to strip out the locale prefixed keys then we need to
@@ -216,23 +200,22 @@ export const PermissionContent = () => {
                 value={JSON.stringify(selectedPermission.categoryIds || [])}
               />
 
-              {categories.map(
-                (
-                  category: GetScopeCategoriesQuery['authAdminScopeCategories'][number],
-                ) => (
-                  <Checkbox
-                    key={category.id}
-                    backgroundColor="blue"
-                    large
-                    label={category.title}
-                    subLabel={category.description}
-                    name={`category_${category.id}`}
-                    value={category.id}
-                    checked={selectedCategoryIds.includes(category.id)}
-                    onChange={() => handleCategoryToggle(category.id)}
-                  />
-                ),
-              )}
+              <Select
+                options={categories.map(
+                  (
+                    category: GetScopeCategoriesQuery['authAdminScopeCategories'][number],
+                  ) => ({
+                    label: category.title,
+                    value: category.id,
+                    description: category.description,
+                  }),
+                )}
+                placeholder={formatMessage(m.selectCategoriesPlaceholder)}
+                onChange={(value) => {
+                  setSelectedCategoryIds(value.map((v) => v.value as string))
+                }}
+                isMulti
+              />
             </Stack>
           )}
         </Box>
@@ -264,21 +247,20 @@ export const PermissionContent = () => {
                 value={JSON.stringify(selectedPermission.tagIds || [])}
               />
 
-              {tags.map(
-                (tag: GetScopeTagsQuery['authAdminScopeTags'][number]) => (
-                  <Checkbox
-                    key={tag.id}
-                    backgroundColor="blue"
-                    large
-                    label={tag.title}
-                    subLabel={tag.intro}
-                    name={`tag_${tag.id}`}
-                    value={tag.id}
-                    checked={selectedTagIds.includes(tag.id)}
-                    onChange={() => handleTagToggle(tag.id)}
-                  />
-                ),
-              )}
+              <Select
+                options={tags.map(
+                  (tag: GetScopeTagsQuery['authAdminScopeTags'][number]) => ({
+                    label: tag.title,
+                    value: tag.id,
+                    description: tag.intro,
+                  }),
+                )}
+                placeholder={formatMessage(m.selectTagsPlaceholder)}
+                onChange={(value) => {
+                  setSelectedTagIds(value.map((v) => v.value as string))
+                }}
+                isMulti
+              />
             </Stack>
           )}
         </Box>

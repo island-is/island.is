@@ -828,9 +828,17 @@ export const m = defineMessages({
     id: 'ap.ids-admin:no-categories',
     defaultMessage: 'No categories available',
   },
+  selectCategoriesPlaceholder: {
+    id: 'ap.ids-admin:select-categories-placeholder',
+    defaultMessage: 'Veldu þjónustuflokk',
+  },
   noTags: {
     id: 'ap.ids-admin:no-tags',
     defaultMessage: 'No tags available',
+  },
+  selectTagsPlaceholder: {
+    id: 'ap.ids-admin:select-tags-placeholder',
+    defaultMessage: 'Veldu lífsviðburð',
   },
   loading: {
     id: 'ap.ids-admin:loading',
