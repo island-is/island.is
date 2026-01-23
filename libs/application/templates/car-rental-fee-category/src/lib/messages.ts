@@ -285,7 +285,8 @@ export const m = {
     },
     alertMessage: {
       id: 'rsk.crfc.application:cars.changes.count.info.message',
-      defaultMessage: 'Það getur tekið smá tíma að vinna úr upplýsingum umsóknarinnar.',
+      defaultMessage:
+        'Það getur tekið smá tíma að vinna úr upplýsingum umsóknarinnar.',
       description: 'Cars changes count info message',
     },
   }),
