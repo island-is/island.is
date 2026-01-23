@@ -710,7 +710,7 @@ export class CaseController {
       `Getting the indictment for case ${caseId} as a pdf document`,
     )
 
-    const pdf = await this.sequelize.transaction(async (transaction) =>
+    const pdf = await this.sequelize.transaction((transaction) =>
       this.pdfService.getIndictmentPdf(theCase, transaction),
     )
 
