@@ -234,18 +234,9 @@ const Conclusion: FC = () => {
         const promises = []
 
         if (
-          update.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
+          update.indictmentRulingDecision ===
+          CaseIndictmentRulingDecision.RULING
         ) {
-          promises.push(
-            ...(workingCase.defendants?.map((defendant) =>
-              updateDefendant({
-                caseId: workingCase.id,
-                defendantId: defendant.id,
-                isDrivingLicenseSuspended: defendant.isDrivingLicenseSuspended,
-              }),
-            ) || []),
-          )
-        } else {
           const defendantVerdictsToCreate = workingCase.defendants?.map(
             (item) => ({
               defendantId: item.id,
@@ -260,6 +251,16 @@ const Conclusion: FC = () => {
             }),
           )
         }
+
+        promises.push(
+          ...(workingCase.defendants?.map((defendant) =>
+            updateDefendant({
+              caseId: workingCase.id,
+              defendantId: defendant.id,
+              isDrivingLicenseSuspended: defendant.isDrivingLicenseSuspended,
+            }),
+          ) || []),
+        )
 
         const createSuccess = await Promise.all(promises)
 
