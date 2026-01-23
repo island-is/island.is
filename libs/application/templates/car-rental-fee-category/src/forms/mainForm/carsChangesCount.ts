@@ -1,4 +1,5 @@
 import {
+  buildAlertMessageField,
   buildMultiField,
   buildSection,
   buildStaticTableField,
@@ -28,6 +29,11 @@ export const carsChangesCountSection = buildSection({
 
             return [[data.length.toString()]]
           },
+        }),
+        buildAlertMessageField({
+          id: 'carsChangesCountAlertMessage',
+          alertType: 'info',
+          message: m.carsChangesCount.alertMessage,
         }),
         buildSubmitField({
           id: 'submit',
