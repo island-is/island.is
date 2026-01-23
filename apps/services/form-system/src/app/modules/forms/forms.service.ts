@@ -898,6 +898,7 @@ export class FormsService {
     for (const section of existingForm.sections) {
       const newSection = section.toJSON()
       newSection.id = uuidV4()
+      newSection.identifier = section.identifier
       newSection.formId = newForm.id
       newSection.created = new Date()
       newSection.modified = new Date()
@@ -905,6 +906,7 @@ export class FormsService {
       for (const screen of section.screens) {
         const newScreen = screen.toJSON()
         newScreen.id = uuidV4()
+        newScreen.identifier = screen.identifier
         newScreen.sectionId = newSection.id
         newScreen.created = new Date()
         newScreen.modified = new Date()
@@ -912,8 +914,8 @@ export class FormsService {
         for (const field of screen.fields) {
           const newField = field.toJSON()
           newField.id = uuidV4()
+          newField.identifier = field.identifier
           newField.screenId = newScreen.id
-          newField.identifier = isDerived ? field.identifier : uuidV4()
           newField.created = new Date()
           newField.modified = new Date()
           fields.push(newField)
@@ -921,6 +923,7 @@ export class FormsService {
             for (const listItem of field.list) {
               const newListItem = listItem.toJSON()
               newListItem.id = uuidV4()
+              newListItem.identifier = listItem.identifier
               newListItem.fieldId = newField.id
               newListItem.created = new Date()
               newListItem.modified = new Date()

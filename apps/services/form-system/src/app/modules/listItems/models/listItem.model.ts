@@ -21,6 +21,13 @@ export class ListItem extends Model<ListItem> {
   })
   id!: string
 
+  @Column({
+    type: DataType.UUID,
+    allowNull: false,
+    defaultValue: DataType.UUIDV4,
+  })
+  identifier!: string
+
   @CreatedAt
   created!: CreationOptional<Date>
 
