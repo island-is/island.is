@@ -115,6 +115,7 @@ export class VerdictService {
   ): Promise<Verdict> {
     const currentVerdict = await this.verdictRepositoryService.findOne({
       where: { defendantId: verdict.defendantId },
+      transaction,
     })
 
     if (!currentVerdict) {
