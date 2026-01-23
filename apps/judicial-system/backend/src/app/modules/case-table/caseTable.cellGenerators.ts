@@ -533,7 +533,7 @@ const defendants: CaseTableCellGenerator<StringGroupValue> = {
   includes: {
     defendants: {
       model: Defendant,
-      attributes: ['noNationalId', 'nationalId', 'name'],
+      attributes: ['id', 'noNationalId', 'nationalId', 'name'],
       order: [['created', 'ASC']],
       separate: true,
     },
@@ -620,7 +620,7 @@ const indictmentCaseState: CaseTableCellGenerator<TagValue | TagPairValue> = {
   includes: {
     defendants: {
       model: Defendant,
-      attributes: ['isAlternativeService'],
+      attributes: ['id', 'isAlternativeService'],
       order: [['created', 'ASC']],
       includes: {
         subpoenas: {
@@ -883,7 +883,7 @@ const punishmentType: CaseTableCellGenerator<TagValue> = {
   includes: {
     defendants: {
       model: Defendant,
-      attributes: ['punishmentType'],
+      attributes: ['id', 'punishmentType'],
       order: [['created', 'ASC']],
       separate: true,
     },

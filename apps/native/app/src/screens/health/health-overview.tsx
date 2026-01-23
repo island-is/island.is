@@ -164,10 +164,18 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
   const [refetching, setRefetching] = useState(false)
   const { width } = useWindowDimensions()
   const buttonStyle = { flex: 1, minWidth: width * 0.5 - theme.spacing[3] }
+  const scrollY = useRef(new Animated.Value(0)).current
   const isVaccinationsEnabled = useFeatureFlag('isVaccinationsEnabled', false)
+  const isMedicineDelegationEnabled = useFeatureFlag(
+    'isMedicineDelegationEnabled',
+    false,
+  )
   const isPrescriptionsEnabled = useFeatureFlag('isPrescriptionsEnabled', false)
   const isOrganDonationEnabled = useFeatureFlag('isOrganDonationEnabled', false)
-  const scrollY = useRef(new Animated.Value(0)).current
+  const isQuestionnaireFeatureEnabled = useFeatureFlag(
+    'isQuestionnaireEnabled',
+    false,
+  )
 
   const now = useMemo(() => new Date().toISOString(), [])
 
@@ -308,19 +316,47 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
               onPress={() => navigateTo('/vaccinations', componentId)}
             />
           )}
-          <Button
-            title={intl.formatMessage({
-              id: isPrescriptionsEnabled
-                ? 'health.prescriptionsAndCertificates.screenTitle'
-                : 'health.drugCertificates.title',
-            })}
-            isOutlined
-            isUtilityButton
-            iconStyle={{ tintColor: theme.color.dark300 }}
-            style={buttonStyle}
-            ellipsis
-            onPress={() => navigateTo('/prescriptions', componentId)}
-          />
+          {isQuestionnaireFeatureEnabled && (
+            <Button
+              title={intl.formatMessage({
+                id: 'health.overview.questionnaires',
+              })}
+              isOutlined
+              isUtilityButton
+              iconStyle={{ tintColor: theme.color.dark300 }}
+              style={buttonStyle}
+              ellipsis
+              onPress={() => navigateTo('/questionnaires', componentId)}
+            />
+          )}
+          {isPrescriptionsEnabled && (
+            <Button
+              title={intl.formatMessage({
+                id: isPrescriptionsEnabled
+                  ? 'health.prescriptionsAndCertificates.screenTitle'
+                  : 'health.drugCertificates.title',
+              })}
+              isOutlined
+              isUtilityButton
+              iconStyle={{ tintColor: theme.color.dark300 }}
+              style={buttonStyle}
+              ellipsis
+              onPress={() => navigateTo('/prescriptions', componentId)}
+            />
+          )}
+          {isMedicineDelegationEnabled && (
+            <Button
+              title={intl.formatMessage({
+                id: 'health.overview.medicineDelegation',
+              })}
+              isOutlined
+              isUtilityButton
+              iconStyle={{ tintColor: theme.color.dark300 }}
+              style={buttonStyle}
+              ellipsis
+              onPress={() => navigateTo('/medicine-delegation', componentId)}
+            />
+          )}
           <Button
             title={intl.formatMessage({ id: 'health.overview.therapy' })}
             isOutlined

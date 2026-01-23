@@ -1,4 +1,4 @@
-import { CreateOptions, Transaction, UpdateOptions } from 'sequelize'
+import { Transaction, UpdateOptions } from 'sequelize'
 
 import {
   Inject,
@@ -15,15 +15,15 @@ import { CourtSession } from '../models/courtSession.model'
 import { CourtDocumentRepositoryService } from './courtDocumentRepository.service'
 
 interface CreateCourtSessionOptions {
-  transaction?: Transaction
+  transaction: Transaction
 }
 
 interface UpdateCourtSessionOptions {
-  transaction?: Transaction
+  transaction: Transaction
 }
 
 interface DeleteCourtSessionOptions {
-  transaction?: Transaction
+  transaction: Transaction
 }
 
 interface UpdateCourtSession {
@@ -54,20 +54,14 @@ export class CourtSessionRepositoryService {
 
   async create(
     caseId: string,
-    options?: CreateCourtSessionOptions,
+    options: CreateCourtSessionOptions,
   ): Promise<CourtSession> {
     try {
       this.logger.debug(`Creating a new court session for case ${caseId}`)
 
-      const createOptions: CreateOptions = {}
-
-      if (options?.transaction) {
-        createOptions.transaction = options.transaction
-      }
-
       const courtSession = await this.courtSessionModel.create(
         { caseId },
-        createOptions,
+        options,
       )
 
       this.logger.debug(
@@ -86,7 +80,7 @@ export class CourtSessionRepositoryService {
     caseId: string,
     courtSessionId: string,
     data: UpdateCourtSession,
-    options?: UpdateCourtSessionOptions,
+    options: UpdateCourtSessionOptions,
   ): Promise<CourtSession> {
     try {
       this.logger.debug(
@@ -96,10 +90,7 @@ export class CourtSessionRepositoryService {
 
       const updateOptions: UpdateOptions = {
         where: { id: courtSessionId, caseId },
-      }
-
-      if (options?.transaction) {
-        updateOptions.transaction = options.transaction
+        transaction: options.transaction,
       }
 
       const [numberOfAffectedRows, courtSessions] =
@@ -140,14 +131,14 @@ export class CourtSessionRepositoryService {
   async delete(
     caseId: string,
     courtSessionId: string,
-    options?: DeleteCourtSessionOptions,
+    options: DeleteCourtSessionOptions,
   ): Promise<void> {
     try {
       this.logger.debug(
         `Deleting court session ${courtSessionId} of case ${caseId}`,
       )
 
-      const transaction = options?.transaction
+      const transaction = options.transaction
 
       // First delete all documents in the session
       await this.courtDocumentRepositoryService.deleteDocumentsInSession(
@@ -175,7 +166,7 @@ export class CourtSessionRepositoryService {
   private async deleteFromDatabase(
     caseId: string,
     courtSessionId: string,
-    transaction: Transaction | undefined,
+    transaction: Transaction,
   ) {
     const numberOfDeletedRows = await this.courtSessionModel.destroy({
       where: { id: courtSessionId, caseId },
