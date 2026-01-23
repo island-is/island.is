@@ -193,7 +193,7 @@ export const m = {
     stepsMessage: {
       id: 'rsk.crfc.application:multi.upload.steps#markdown',
       defaultMessage:
-        '1. Sækir sniðmátið \n\n2. Gerir viðeigandi breytingar á skjalinu \n\n3. Hleður upp skjalinu hér að neðan \n\nAth. Einungis ökutæki með gild bílnúmer verða sýndir í sniðmátinu',
+        '1. Sækir sniðmátið \n\n2. Gerir viðeigandi breytingar á skjalinu \n\n3. Hleður upp skjalinu hér að neðan \n\nAth. Einungis ökutæki með gild bílnúmer verða sýnd í sniðmátinu',
       description: 'Bulk upload help steps',
     },
     templateButton: {
