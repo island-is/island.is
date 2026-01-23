@@ -49,7 +49,9 @@ describe('valueToNumber', () => {
     expect(valueToNumber('-999')).toBe(-999)
     expect(valueToNumber('-999 kr.')).toBe(-999)
     expect(valueToNumber('-1.123.123', ',')).toBe(-1123123)
-    expect(valueToNumber('-12.123.421.123,4233 kr.', ',')).toBe(-12123421123.4233)
+    expect(valueToNumber('-12.123.421.123,4233 kr.', ',')).toBe(
+      -12123421123.4233,
+    )
     expect(valueToNumber('  -999  ')).toBe(-999)
   })
 

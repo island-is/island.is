@@ -48,10 +48,10 @@ export const getAssetDescriptionText = (
   return selectedEstate === EstateTypes.estateWithoutAssets
     ? m.propertiesDescriptionEstateWithoutAssets
     : selectedEstate === EstateTypes.officialDivision
-      ? m.propertiesDescriptionOfficialDivision
-      : selectedEstate === EstateTypes.permitForUndividedEstate
-        ? m.propertiesDescriptionUndividedEstate
-        : m.propertiesDescriptionDivisionOfEstateByHeirs
+    ? m.propertiesDescriptionOfficialDivision
+    : selectedEstate === EstateTypes.permitForUndividedEstate
+    ? m.propertiesDescriptionUndividedEstate
+    : m.propertiesDescriptionDivisionOfEstateByHeirs
 }
 
 export const getWillsAndAgreementsDescriptionText = (
@@ -63,10 +63,10 @@ export const getWillsAndAgreementsDescriptionText = (
   return selectedEstate === EstateTypes.estateWithoutAssets
     ? m.willsAndAgreementsDescriptionEstateWithoutAssets
     : selectedEstate === EstateTypes.officialDivision
-      ? m.willsAndAgreementsDescriptionOfficialDivision
-      : selectedEstate === EstateTypes.permitForUndividedEstate
-        ? m.willsAndAgreementsDescriptionDescriptionUndividedEstate
-        : m.willsAndAgreementsDescriptionDivisionOfEstateByHeirs
+    ? m.willsAndAgreementsDescriptionOfficialDivision
+    : selectedEstate === EstateTypes.permitForUndividedEstate
+    ? m.willsAndAgreementsDescriptionDescriptionUndividedEstate
+    : m.willsAndAgreementsDescriptionDivisionOfEstateByHeirs
 }
 
 export const getEstateMembersDescriptionText = (
@@ -78,10 +78,10 @@ export const getEstateMembersDescriptionText = (
   return selectedEstate === EstateTypes.estateWithoutAssets
     ? m.estateMembersDescriptionEstateWithoutAssets
     : selectedEstate === EstateTypes.officialDivision
-      ? m.estateMembersDescriptionOfficialDivision
-      : selectedEstate === EstateTypes.permitForUndividedEstate
-        ? m.estateMembersDescriptionUndividedEstate
-        : m.estateMembersDescriptionDivisionOfEstateByHeirs
+    ? m.estateMembersDescriptionOfficialDivision
+    : selectedEstate === EstateTypes.permitForUndividedEstate
+    ? m.estateMembersDescriptionUndividedEstate
+    : m.estateMembersDescriptionDivisionOfEstateByHeirs
 }
 
 export const getEstateDataFromApplication = (
