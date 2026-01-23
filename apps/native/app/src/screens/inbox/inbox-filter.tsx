@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { ScrollView, View } from 'react-native'
+import { SafeAreaView, ScrollView, View } from 'react-native'
 import { Navigation } from 'react-native-navigation'
 import { useNavigationButtonPress } from 'react-native-navigation-hooks'
 
@@ -152,7 +152,7 @@ export function InboxFilterScreen({
   ])
 
   return (
-    <View
+    <SafeAreaView
       style={{
         flex: 1,
         marginTop: theme.spacing[3],
@@ -279,7 +279,7 @@ export function InboxFilterScreen({
           />
         </ButtonContainer>
       )}
-    </View>
+    </SafeAreaView>
   )
 }
 
