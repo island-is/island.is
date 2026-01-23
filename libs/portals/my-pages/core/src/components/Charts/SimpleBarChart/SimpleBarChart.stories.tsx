@@ -6,18 +6,18 @@ import { SimpleBarChart } from './SimpleBarChart'
 const config: Meta<typeof SimpleBarChart> = {
   title: 'My pages/Simple Bar Chart',
   component: SimpleBarChart,
-  parameters: withFigma('Audio Player'),
+  parameters: withFigma('Simple Bar Chart'),
   argTypes: {
     bars: {
       description: 'Defines the bars to be displayed in the chart',
-      control: { type: 'array' },
+      control: { type: 'object' },
     },
     data: {
-      control: { type: 'array' },
+      control: { type: 'object' },
       description: 'The data to be visualized in the chart',
     },
     datakeys: {
-      control: { type: 'array' },
+      control: { type: 'object' },
       description: 'Keys of the data to be used for the bars',
     },
     xAxis: {
@@ -58,10 +58,10 @@ Default.args = {
   ],
   xAxis: {
     datakey: 'sales',
-    label: 'Month',
+    label: 'Salses',
   },
   yAxis: {
     datakey: 'expenses',
-    label: 'Sales',
+    label: 'Expenses',
   },
 }
