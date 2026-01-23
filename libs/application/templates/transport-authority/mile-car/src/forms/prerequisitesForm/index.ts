@@ -8,7 +8,6 @@ import {
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { externalData } from '../../lib/messages'
 import { preInformation } from './preInformation'
-import { selectVehicle as selectVehicleMessages } from '../../lib/messages'
 import { CurrentVehiclesApi } from '../../dataProviders'
 import { TransportAuthorityLogo } from '@island.is/application/assets/institution-logos'
 
@@ -51,12 +50,6 @@ export const Prerequisites: Form = buildForm({
           ],
         }),
       ],
-    }),
-    buildSection({
-      id: 'pickVehicle',
-      title: selectVehicleMessages.general.sectionTitle,
-      tabTitle: selectVehicleMessages.general.sectionTitle,
-      children: [],
     }),
   ],
 })
