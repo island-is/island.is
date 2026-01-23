@@ -157,7 +157,7 @@ export class InternalVerdictController {
     try {
       // callback function to fetch the updated verdict fields after delivering verdict to police
       const getDeliveredVerdictNationalCommissionersOfficeLogDetails = async (
-        results?: DeliverResponse,
+        results: DeliverResponse,
       ) => {
         const currentVerdict = await this.verdictService.findById(
           verdict.id,
@@ -165,31 +165,28 @@ export class InternalVerdictController {
         )
 
         return {
-          deliveredToPolice: Boolean(results?.delivered),
+          deliveredToPolice: results.delivered,
           verdictId: verdict.id,
+          verdictCreated: verdict.created,
           externalPoliceDocumentId: currentVerdict.externalPoliceDocumentId,
           verdictHash: currentVerdict.hash,
           verdictDeliveredToPolice: new Date(),
         }
       }
 
-      const response = await this.auditTrailService.runAndAuditRequest({
-        userId: deliverDto.user.id,
-        actionType:
-          AuditedAction.DELIVER_TO_NATIONAL_COMMISSIONERS_OFFICE_VERDICT,
-        action: this.verdictService.deliverVerdictToNationalCommissionersOffice,
-        actionProps: {
+      const response = await this.auditTrailService.audit(
+        deliverDto.user.id,
+        AuditedAction.DELIVER_TO_NATIONAL_COMMISSIONERS_OFFICE_VERDICT,
+        this.verdictService.deliverVerdictToNationalCommissionersOffice({
           theCase,
           defendant,
           verdict,
           user: deliverDto.user,
           transaction,
-        },
-        auditedResult: caseId,
-        getAuditDetails:
-          getDeliveredVerdictNationalCommissionersOfficeLogDetails,
-      })
-
+        }),
+        caseId,
+        getDeliveredVerdictNationalCommissionersOfficeLogDetails,
+      )
       await transaction.commit()
 
       return response

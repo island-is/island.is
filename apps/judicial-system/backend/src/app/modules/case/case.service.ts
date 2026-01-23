@@ -2711,6 +2711,7 @@ export class CaseService {
       'legalArguments',
       'requestProsecutorOnlySession',
       'prosecutorOnlySessionRequest',
+      'policeDefendantNationalId',
     ]
 
     const copiedExtendInvestigationCaseFields: (keyof Case)[] = [
