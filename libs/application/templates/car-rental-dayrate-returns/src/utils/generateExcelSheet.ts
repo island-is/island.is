@@ -1,29 +1,28 @@
 import XLSX from 'xlsx'
-import { RateCategory } from './constants'
 import { CarMap } from './types'
 
 export const generateExcelSheet = (
   vehicleRateMap: CarMap,
-  rateToChangeTo: RateCategory,
 ): {
   filename: string
   base64Content: string
   fileType: string
 } => {
+  const now = new Date()
+  const lastMonthDate = new Date(now.getFullYear(), now.getMonth() - 1, 1)
+  const lastMonthIndex = lastMonthDate.getMonth().toString()
+  const lastMonthName = lastMonthDate.toLocaleString('is-IS', { month: 'long' })
   const sheetData = [
-    ['Bílnúmer', 'Tegund', 'Síðasta staða', 'Núverandi staða', 'Gjaldflokkur'],
+    ['Bílnúmer', `Dagar á daggjaldi í ${lastMonthName}`, 'Notaðir dagar'],
     ...Object.entries(vehicleRateMap)
-      .filter(([_, data]) => data.category !== rateToChangeTo)
       .map(([permno, data]) => [
         permno,
-        data.make,
-        data.milage,
+        '', //data.activeDayRate?.periodUsage?.find((period) => period.period === lastMonthIndex)?.numberOfDays,
         '',
-        data.category,
       ]),
   ]
 
-  const name = 'bilar.xlsx'
+  const name = `${lastMonthDate.getFullYear()}_${lastMonthName.toLowerCase()}_daggjalds_notkun.xlsx`
   const worksheet: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(sheetData)
   const workbook: XLSX.WorkBook = {
     Sheets: { Sheet1: worksheet },

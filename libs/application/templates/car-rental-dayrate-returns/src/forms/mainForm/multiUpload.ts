@@ -4,23 +4,13 @@ import {
   buildDescriptionField,
   buildMultiField,
   buildSection,
-  getValueViaPath,
 } from '@island.is/application/core'
 import { generateExcelSheet } from '../../utils/generateExcelSheet'
-import { RateCategory, UploadSelection } from '../../utils/constants'
+import { RateCategory } from '../../utils/constants'
 import { CarMap } from '../../utils/types'
 import { m } from '../../lib/messages'
 
 export const multiUploadSection = buildSection({
-  condition: (answers) => {
-    const uploadSelectionValue =
-      getValueViaPath<string>(answers, 'singleOrMultiSelectionRadio') ??
-      UploadSelection.MULTI
-
-    return uploadSelectionValue
-      ? uploadSelectionValue === UploadSelection.MULTI
-      : false
-  },
   id: 'multiUploadSection',
   title: m.multiUpload.sectionTitle,
   children: [
@@ -41,11 +31,11 @@ export const multiUploadSection = buildSection({
           {
             id: 'multiUploadUploadCatCategoryField',
             doesNotRequireAnswer: false,
-            component: 'UploadCarCategoryFile',
+            component: 'UploadCarDayRateUsage',
           },
           {
-            getFileContent: (vehicleMap: CarMap, rateCategory: RateCategory) =>
-              generateExcelSheet(vehicleMap, rateCategory),
+            getFileContent: (vehicleMap: CarMap) =>
+              generateExcelSheet(vehicleMap),
           },
         ),
       ],

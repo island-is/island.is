@@ -1,129 +1,32 @@
 import XLSX from 'xlsx'
 import { parse } from 'csv-parse'
-import { RateCategory } from './constants'
-import { CarCategoryError, CarCategoryRecord, CarMap } from './types'
-import { is30DaysOrMoreFromDate } from './dayRateUtils'
+import { CarCategoryError, CarMap } from './types'
 
-const sanitizeNumber = (n: string) => n.replace(new RegExp(/[.,]/g), '')
-
-export const parseFileToCarCategory = async (
+export const parseFileToCarDayRateUsage = async (
   file: File,
   type: 'csv' | 'xlsx',
-  rateToChangeTo: RateCategory,
   currentCarData: CarMap,
-): Promise<Array<CarCategoryRecord> | Array<CarCategoryError>> => {
+): Promise<Array<{ vehicleId: string; dayRateUsage: string }>> => {
   const parsedLines: Array<Array<string>> = await (type === 'csv'
     ? parseCsv(file)
     : parseXlsx(file))
 
   const carNumberIndex = 0
-  const prevMilageIndex = 2
-  const currMilageIndex = 3
-  const rateCategoryIndex = 4
+  const dayRateAmountIndex = 1
+  const dayRateUsageIndex = 2
 
   const [_, ...values] = parsedLines
 
-  const data: Array<CarCategoryRecord | CarCategoryError | undefined> =
+  const data: Array<{ vehicleId: string; dayRateAmount: string; dayRateUsage: string }> =
     values.map((row) => {
-      const carNr = row[carNumberIndex]
-      const prevMileStr = row[prevMilageIndex]?.trim()
-      const currMileStr = row[currMilageIndex]?.trim()
-      if (!currentCarData[carNr]) {
-        return {
-          code: 1,
-          message: 'Þessi bíll fannst ekki í lista af þínum bílum!',
-          carNr,
-        }
-      }
-
-      // Changing from Dayrate
-      if (rateToChangeTo === RateCategory.KMRATE) {
-        const validFromDate = currentCarData[carNr].activeDayRate?.validFrom
-        if (validFromDate) {
-          const is30orMoreDays = is30DaysOrMoreFromDate(validFromDate)
-
-          if (!is30orMoreDays) {
-            return {
-              code: 1,
-              message:
-                'Bílar þurfa að vera skráið á daggjald í amk 30 daga áður en hægt er að breyta til baka!',
-              carNr,
-            }
-          }
-        }
-      }
-
-      if (!prevMileStr && currMileStr) {
-        return {
-          code: 1,
-          message: 'Síðasta staða bíls þarf að vera til staðar!',
-          carNr,
-        }
-      }
-
-      // Skip rows where either mileage value is empty or undefined
-      if (!prevMileStr || !currMileStr) return undefined
-
-      const prevMile = Number(sanitizeNumber(prevMileStr))
-      const currMile = Number(sanitizeNumber(currMileStr))
-
-      // Skip rows where either mileage value is not a valid number
-      if (Number.isNaN(prevMile) || Number.isNaN(currMile)) return undefined
-
-      if (prevMile > currMile) {
-        return {
-          code: 1,
-          message: 'Nýja staða má ekki vera lægri en síðasta staða!',
-          carNr,
-        }
-      }
-
-      const category = row[rateCategoryIndex]
-      if (!category) return undefined
-      // need to check if the category is the same thing as what we should pass into this function
-      if (
-        category.toLowerCase() !== RateCategory.DAYRATE.toLowerCase() &&
-        category.toLowerCase() !== RateCategory.KMRATE.toLowerCase()
-      ) {
-        return {
-          code: 1,
-          message:
-            'Ógildur gjaldflokkur, vinsamlegast passið uppá stafsetningu (Daggjald eða Kilometragjald)',
-          carNr,
-        }
-      }
-
-      if (category.toLowerCase() !== rateToChangeTo.toLowerCase()) {
-        return {
-          code: 1,
-          message: `Ógildur gjaldflokkur, þú valdir að breyta gjaldflokki í ${rateToChangeTo}`,
-          carNr,
-        }
-      }
-
       return {
-        vehicleId: carNr,
-        oldMileage: prevMile,
-        newMilage: currMile,
-        rateCategory: category,
+        vehicleId: row[carNumberIndex],
+        dayRateAmount: row[dayRateAmountIndex],
+        dayRateUsage: row[dayRateUsageIndex],
       }
     })
 
-  // Filter out undefined values first
-  const filteredData = data.filter(
-    (x): x is CarCategoryRecord | CarCategoryError => x !== undefined,
-  )
-
-  const errors = filteredData.filter(
-    (item): item is CarCategoryError => 'code' in item,
-  )
-
-  if (errors.length > 0) return errors
-
-  // If no errors, return only the CarCategoryRecords
-  return filteredData.filter(
-    (item): item is CarCategoryRecord => 'vehicleId' in item,
-  )
+  return data
 }
 
 export const parseCsv = async (file: File) => {

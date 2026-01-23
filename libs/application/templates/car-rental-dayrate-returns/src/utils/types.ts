@@ -1,5 +1,4 @@
-import { DayRateEntryModel } from '@island.is/clients-rental-day-rate'
-import { RateCategory } from './constants'
+import { DayRateEntry, DayRateEntryModel } from '@island.is/clients-rental-day-rate'
 
 export interface CarCategoryRecord {
   vehicleId: string
@@ -21,10 +20,5 @@ export interface CurrentVehicleWithMilage {
 }
 
 export interface CarMap {
-  [permno: string]: {
-    make: string
-    milage: number
-    category: RateCategory
-    activeDayRate?: DayRateEntryModel
-  }
+  [fastnr: string]: DayRateEntry
 }

@@ -16,14 +16,14 @@ import {
 } from '../../utils/types'
 import { RateCategory } from '../../utils/constants'
 import { getValueViaPath } from '@island.is/application/core'
-import { EntryModel } from '@island.is/clients-rental-day-rate'
+import { DayRateEntry, EntryModel } from '@island.is/clients-rental-day-rate'
 import { isDayRateEntryActive } from '../../utils/dayRateUtils'
 import { useFormContext } from 'react-hook-form'
 import {
   createErrorExcel,
   downloadFile,
-  parseFileToCarCategory,
-} from '../../utils/UploadCarCategoryFileUtils'
+  parseFileToCarDayRateUsage,
+} from '../../utils/UploadCarDayRateUsageUtils'
 import { useMutation } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
 import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
@@ -39,7 +39,6 @@ interface Props {
     props: {
       getFileContent: (
         vehicleMap: CarMap,
-        rateCategory: RateCategory,
       ) => {
         base64Content: string
         fileType: string
@@ -49,7 +48,7 @@ interface Props {
   }
 }
 
-export const UploadCarCategoryFile = ({
+export const UploadCarDayRateUsage = ({
   application,
   field,
 }: Props & FieldBaseProps) => {
@@ -79,7 +78,7 @@ export const UploadCarCategoryFile = ({
             input: {
               id: application.id,
               dataProviders: [
-                { actionId: 'getCurrentVehiclesRateCategory', order: 0 },
+                { actionId: 'getPreviousPeriodDayRateReturns', order: 0 },
               ],
             },
             locale,
@@ -107,78 +106,51 @@ export const UploadCarCategoryFile = ({
   const { setValue } = useFormContext()
   const [errorFile, setErrorFile] = useState<string | null>(null)
 
-  const rateCategory = getValueViaPath<RateCategory>(
-    application.answers,
-    'categorySelectionRadio',
-  )
-
-  if (!rateCategory) return
-
-  const currentVehicles = getValueViaPath<CurrentVehicleWithMilage[]>(
+  const dayRateEntries = getValueViaPath<DayRateEntry[]>(
     application.externalData,
-    'getCurrentVehicles.data',
+    'getPreviousPeriodDayRateReturns',
   )
 
-  const currentRates = getValueViaPath<EntryModel[]>(
-    application.externalData,
-    'getCurrentVehiclesRateCategory.data',
-  )
-
-  const currentDate = new Date()
   const currentCarData =
-    currentVehicles?.reduce((acc, vehicle) => {
-      if (!vehicle.permno || !vehicle.make) return acc
+    dayRateEntries?.reduce((acc, dayRateEntry) => {
+      if (!dayRateEntry.fastnr) return acc
 
-      const vehicleEntry = currentRates?.find(
-        (rate) => rate.permno === vehicle.permno,
-      )
-
-      const activeDayRate = vehicleEntry?.dayRateEntries?.find((entry) =>
-        isDayRateEntryActive(entry, currentDate),
-      )
-
-      acc[vehicle.permno] = {
-        make: vehicle.make,
-        milage: vehicle.milage ?? 0,
-        category: activeDayRate ? RateCategory.DAYRATE : RateCategory.KMRATE,
-        activeDayRate: activeDayRate,
-      }
+      acc[dayRateEntry.fastnr] = dayRateEntry
 
       return acc
     }, {} as CarMap) ?? {}
 
-  const postCarCategories = async (file: File, type: 'xlsx' | 'csv') => {
-    const dataToChange = await parseFileToCarCategory(
+  const postCarDayRateUsage = async (file: File, type: 'xlsx' | 'csv') => {
+    const dataToChange = await parseFileToCarDayRateUsage(
       file,
       type,
-      rateCategory,
       currentCarData,
     )
 
-    if (dataToChange.length > 0 && 'code' in dataToChange[0]) {
-      // We have errors, show single error or generic message
-      const errorMessages = dataToChange as CarCategoryError[]
-      if (errorMessages.length === 1) {
-        setUploadErrorMessage(
-          `${errorMessages[0].carNr} - ${errorMessages[0].message}`,
-        )
-      } else {
-        setUploadErrorMessage(
-          `${errorMessages.length} ${formatMessage(
-            m.multiUpload.errorMessageToUser,
-          )}`,
-        )
-      }
+    // if (dataToChange.length > 0 && 'code' in dataToChange[0]) {
+    //   // We have errors, show single error or generic message
+    //   const errorMessages = dataToChange as CarCategoryError[]
+    //   if (errorMessages.length === 1) {
+    //     setUploadErrorMessage(
+    //       `${errorMessages[0].carNr} - ${errorMessages[0].message}`,
+    //     )
+    //   } else {
+    //     setUploadErrorMessage(
+    //       `${errorMessages.length} ${formatMessage(
+    //         m.multiUpload.errorMessageToUser,
+    //       )}`,
+    //     )
+    //   }
 
-      // Create error Excel file
-      const errorExcel = await createErrorExcel(
-        file,
-        type,
-        dataToChange as CarCategoryError[],
-      )
-      setErrorFile(errorExcel)
-      return
-    }
+    //   // Create error Excel file
+    //   const errorExcel = await createErrorExcel(
+    //     file,
+    //     type,
+    //     dataToChange as CarCategoryError[],
+    //   )
+    //   setErrorFile(errorExcel)
+    //   return
+    // }
 
     if (!dataToChange.length) {
       setUploadErrorMessage('noDataInUploadedFile')
@@ -215,11 +187,11 @@ export const UploadCarCategoryFile = ({
       }
 
       setUploadedFile(file.originalFileObj)
-      postCarCategories(file.originalFileObj, type)
+      postCarDayRateUsage(file.originalFileObj, type)
     }
   }
 
-  const fileData = field.props.getFileContent?.(currentCarData, rateCategory)
+  const fileData = field.props.getFileContent?.(currentCarData)
   if (!fileData) {
     throw Error('No valid file data recieved!')
   }

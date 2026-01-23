@@ -28,11 +28,12 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
     try {
       const resp = await this.rentalsApiWithAuth(
         auth,
-      ).apiDayRateEntriesEntityIdPeriodsPeriodGet({
+      ).apiDayRateEntriesEntityIdGet({
         entityId: auth.nationalId,
-        period: new Date(),
+        //period: new Date(),
       })
-      return resp
+      console.log(resp)
+      return []
     } catch (error) {
       this.logger.error('Error getting previous period day rate entries', error)
       throw error
