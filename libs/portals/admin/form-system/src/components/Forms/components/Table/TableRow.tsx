@@ -393,10 +393,7 @@ export const TableRow = ({
                             'noopener,noreferrer',
                           )
                         }
-                        style={{
-                          cursor: 'pointer',
-                          textDecoration: 'underline',
-                        }}
+                        className={styles.linkStyle}
                       >
                         {`${PATH}/${slug}`}
                       </span>

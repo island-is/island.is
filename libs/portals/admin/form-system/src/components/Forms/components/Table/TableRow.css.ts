@@ -7,3 +7,8 @@ export const clickable = style({
 export const capitalizeText = style({
   textTransform: 'capitalize',
 })
+
+export const linkStyle = style({
+  cursor: 'pointer',
+  textDecoration: 'underline',
+})
