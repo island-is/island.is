@@ -71,9 +71,9 @@ export const PrescriptionCard = ({ prescription }: PrescriptionCardProps) => {
     {
       data: prescription.quantity
         ? intl.formatMessage(
-          { id: 'health.prescriptions.quantityUnit' },
-          { quantity: prescription.quantity },
-        )
+            { id: 'health.prescriptions.quantityUnit' },
+            { quantity: prescription.quantity },
+          )
         : undefined,
       label: 'health.prescriptions.quantity',
     },
@@ -111,14 +111,14 @@ export const PrescriptionCard = ({ prescription }: PrescriptionCardProps) => {
       title={
         isExpired
           ? intl.formatMessage({
-            id: 'health.prescriptionsAndCertificates.expired',
-          })
+              id: 'health.prescriptionsAndCertificates.expired',
+            })
           : prescription.expiryDate
-            ? intl.formatMessage(
+          ? intl.formatMessage(
               { id: 'health.prescriptionsAndCertificates.validTo' },
               { date: intl.formatDate(prescription.expiryDate) },
             )
-            : undefined
+          : undefined
       }
       titleColor={isExpired ? theme.color.red600 : undefined}
       titleIcon={clockIcon}
@@ -225,11 +225,13 @@ export const PrescriptionCard = ({ prescription }: PrescriptionCardProps) => {
                         )}
                       </Typography>
                       <Typography variant="body3">
-                        {`${intl.formatDate(item.date)}${item.agentName ? ' - ' + item.agentName : ''
-                          }${item.items?.[0]?.amount
+                        {`${intl.formatDate(item.date)}${
+                          item.agentName ? ' - ' + item.agentName : ''
+                        }${
+                          item.items?.[0]?.amount
                             ? ' - ' + item.items[0].amount
                             : ''
-                          }`}
+                        }`}
                       </Typography>
                     </View>
                   </DispensationRowItem>

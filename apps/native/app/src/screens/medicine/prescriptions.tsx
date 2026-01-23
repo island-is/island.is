@@ -127,11 +127,11 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
             {prescriptionsRes.loading && !prescriptionsRes.data
               ? renderSkeletons()
               : data?.map((prescription, index) => (
-                <PrescriptionCard
-                  key={`${prescription?.id}-${index}`}
-                  prescription={prescription}
-                />
-              ))}
+                  <PrescriptionCard
+                    key={`${prescription?.id}-${index}`}
+                    prescription={prescription}
+                  />
+                ))}
           </Wrapper>
         ),
       },
@@ -152,11 +152,11 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
             {certificatesRes.loading && !certificatesRes.data
               ? renderSkeletons()
               : data?.map((certificate, index) => (
-                <CertificateCard
-                  key={`${certificate?.id}-${index}`}
-                  certificate={certificate}
-                />
-              ))}
+                  <CertificateCard
+                    key={`${certificate?.id}-${index}`}
+                    certificate={certificate}
+                  />
+                ))}
           </Wrapper>
         ),
       },
@@ -178,11 +178,11 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
             {medicineHistoryRes.loading && !medicineHistoryRes.data
               ? renderSkeletons()
               : data?.map((medicine, index) => (
-                <MedicineHistoryCard
-                  key={`${medicine?.id}-${index}`}
-                  medicine={medicine}
-                />
-              ))}
+                  <MedicineHistoryCard
+                    key={`${medicine?.id}-${index}`}
+                    medicine={medicine}
+                  />
+                ))}
           </Wrapper>
         ),
       },
@@ -235,13 +235,13 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
           ? certificatesRes.refetch()
           : null,
         isPrescriptionsEnabled &&
-          prescriptionsRes.called &&
-          prescriptionsRes.refetch
+        prescriptionsRes.called &&
+        prescriptionsRes.refetch
           ? prescriptionsRes.refetch()
           : null,
         isPrescriptionsEnabled &&
-          medicineHistoryRes.called &&
-          medicineHistoryRes.refetch
+        medicineHistoryRes.called &&
+        medicineHistoryRes.refetch
           ? medicineHistoryRes.refetch()
           : null,
       ].filter(Boolean)
