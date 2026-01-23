@@ -43,7 +43,6 @@ import {
   CaseFileCategory,
   CaseIndictmentRulingDecision,
   CaseState,
-  CaseType,
   CourtSessionRulingType,
   CourtSessionType,
   Defendant,
