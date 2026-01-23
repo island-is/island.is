@@ -8,9 +8,6 @@ export class ScopeTag {
   @Field()
   title!: string
 
-  @Field()
-  slug!: string
-
   @Field({ nullable: true })
-  intro?: string
+  description?: string
 }

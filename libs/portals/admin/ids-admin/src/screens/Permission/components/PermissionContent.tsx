@@ -252,7 +252,7 @@ export const PermissionContent = () => {
                   (tag: GetScopeTagsQuery['authAdminScopeTags'][number]) => ({
                     label: tag.title,
                     value: tag.id,
-                    description: tag.intro,
+                    description: tag.description,
                   }),
                 )}
                 placeholder={formatMessage(m.selectTagsPlaceholder)}

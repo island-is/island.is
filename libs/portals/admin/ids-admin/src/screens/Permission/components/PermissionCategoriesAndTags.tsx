@@ -151,7 +151,7 @@ export const PermissionCategoriesAndTags = () => {
                   backgroundColor="blue"
                   large
                   label={tag.title}
-                  subLabel={tag.intro}
+                  subLabel={tag.description}
                   name={`tag_${tag.id}`}
                   value={tag.id}
                   checked={selectedTagIds.includes(tag.id)}

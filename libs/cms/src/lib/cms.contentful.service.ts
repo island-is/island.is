@@ -75,6 +75,10 @@ import { GenericTag, mapGenericTag } from './models/genericTag.model'
 import { GetEmailSignupInput } from './dto/getEmailSignup.input'
 import { LifeEventPage, mapLifeEventPage } from './models/lifeEventPage.model'
 import {
+  DelegationScopeTag,
+  mapDelegationScopeTag,
+} from './models/delegationScopeTag.model'
+import {
   ArticleCategory,
   mapArticleCategory,
 } from './models/articleCategory.model'
@@ -865,6 +869,21 @@ export class CmsContentfulService {
       .catch(errorHandler('getLifeEvents'))
 
     return (result.items as types.ILifeEventPage[]).map(mapLifeEventPage)
+  }
+
+  async getDelegationScopeTags(lang: string): Promise<DelegationScopeTag[]> {
+    const params = {
+      ['content_type']: 'delegationScopeTag',
+      order: 'fields.title',
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IDelegationScopeTagFields>(lang, params)
+      .catch(errorHandler('getDelegationScopeTags'))
+
+    return (result.items as types.IDelegationScopeTag[]).map(
+      mapDelegationScopeTag,
+    )
   }
 
   async getArticleCategories(lang: string): Promise<ArticleCategory[]> {

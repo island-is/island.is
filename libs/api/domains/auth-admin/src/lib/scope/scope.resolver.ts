@@ -124,13 +124,13 @@ export class ScopeResolver {
 
   @Query(() => [ScopeTag], {
     name: 'authAdminScopeTags',
-    description: 'Get available tags (life events) for scope tagging',
+    description: 'Get available tags (delegation scope tags) for scope tagging',
   })
   async getScopeTags(
     @CurrentUser() user: User,
     @Args('lang', { type: () => String, nullable: true, defaultValue: 'is' })
     lang?: string,
   ): Promise<ScopeTag[]> {
-    return this.cmsContentfulService.getLifeEventsForOverview(lang ?? 'is')
+    return this.cmsContentfulService.getDelegationScopeTags(lang ?? 'is')
   }
 }
