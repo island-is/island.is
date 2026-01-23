@@ -195,6 +195,9 @@ definitions:
         # Start Android emulator
         echo "Starting Android emulator..."
 
+        # Add Android cmdline-tools to PATH
+        export PATH="$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$PATH"
+
         # Check if AVD exists, fail early if it doesn't
         if ! avdmanager list avd | grep -q "Name: $ANDROID_EMULATOR_NAME"; then
           echo "ERROR: AVD $ANDROID_EMULATOR_NAME not found"
