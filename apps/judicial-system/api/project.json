@@ -4,7 +4,9 @@
   "sourceRoot": "apps/judicial-system/api/src",
   "projectType": "application",
   "prefix": "judicial-system-api",
-  "tags": ["scope:judicial-system-api"],
+  "tags": [
+    "scope:judicial-system-api"
+  ],
   "generators": {},
   "targets": {
     "build": {
@@ -16,7 +18,9 @@
         "assets": [],
         "generatePackageJson": true,
         "esbuildConfig": "tools/esbuild.config.js",
-        "format": ["cjs"]
+        "format": [
+          "cjs"
+        ]
       },
       "configurations": {
         "production": {
@@ -24,7 +28,9 @@
           "extractLicenses": true
         }
       },
-      "outputs": ["{options.outputPath}"]
+      "outputs": [
+        "{options.outputPath}"
+      ]
     },
     "serve": {
       "executor": "@nx/js:node",
@@ -40,14 +46,18 @@
       "options": {
         "jestConfig": "apps/judicial-system/api/jest.config.ts"
       },
-      "outputs": ["{workspaceRoot}/coverage/apps/judicial-system/api"]
+      "outputs": [
+        "{workspaceRoot}/coverage/apps/judicial-system/api"
+      ]
     },
     "codegen/backend-schema": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn ts-node -P apps/judicial-system/api/tsconfig.json scripts/build-graphql-schema.ts apps/judicial-system/api/src/app/app.module"
+        "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/judicial-system/api/tsconfig.json scripts/build-graphql-schema.ts apps/judicial-system/api/src/app/app.module"
       },
-      "outputs": ["{projectRoot}/src/api.graphql"]
+      "outputs": [
+        "{projectRoot}/src/api.graphql"
+      ]
     },
     "docker-express-yarn": {
       "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express-yarn`"
