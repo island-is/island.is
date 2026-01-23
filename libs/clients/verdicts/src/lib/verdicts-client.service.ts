@@ -270,9 +270,26 @@ export class VerdictsClientService {
     const { goproVerdictApi } = await this.getAuthenticatedGoproApis()
     const [courtOfAppealResponse, supremeCourtResponse, districtCourtResponse] =
       await Promise.allSettled([
-        goproVerdictApi.getCaseTypesV2(),
+        goproVerdictApi.getCaseTypesV2({
+          requestData: {
+            courts: ['landsrettur'],
+          },
+        }),
         this.supremeCourtApi.apiV2VerdictGetCaseTypesGet(),
-        goproVerdictApi.getCaseCategoriesV2(),
+        goproVerdictApi.getCaseTypesV2({
+          requestData: {
+            courts: [
+              'hd-reykjavik',
+              'hd-vesturland',
+              'hd-vestfirdir',
+              'hd-nordurland-vestra',
+              'hd-nordurland-eystra',
+              'hd-austurland',
+              'hd-sudurland',
+              'hd-reykjanes',
+            ],
+          },
+        }),
       ])
 
     const mapOfAll = new Map<string, CaseFilterOptionType>()
@@ -297,7 +314,7 @@ export class VerdictsClientService {
     if (districtCourtResponse.status === 'fulfilled')
       for (const caseType of districtCourtResponse.value.items ?? [])
         if (caseType.label) {
-          mapOfAll.set(caseType.label, CaseFilterOptionType.CaseCategory)
+          mapOfAll.set(caseType.label, CaseFilterOptionType.CaseType)
           districtCourtSet.add(caseType.label)
         }
 
@@ -313,7 +330,7 @@ export class VerdictsClientService {
     supremeCourtOptions.sort(sortAlpha('label'))
     const districtCourtOptions = Array.from(districtCourtSet).map((label) => ({
       label,
-      typeOfOption: CaseFilterOptionType.CaseCategory,
+      typeOfOption: CaseFilterOptionType.CaseType,
     }))
     districtCourtOptions.sort(sortAlpha('label'))
 
