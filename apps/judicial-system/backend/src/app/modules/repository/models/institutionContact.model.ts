@@ -10,11 +10,7 @@ import {
 
 import { ApiProperty } from '@nestjs/swagger'
 
-import {
-  IndictmentCaseNotificationType,
-  InstitutionNotificationType,
-  InstitutionType,
-} from '@island.is/judicial-system/types'
+import { IndictmentCaseNotificationType } from '@island.is/judicial-system/types'
 
 import { Institution } from './institution.model'
 
@@ -46,14 +42,14 @@ export class InstitutionContact extends Model {
   institutionId!: string
 
   @Column({ type: DataType.STRING, allowNull: false, unique: true })
-  @ApiProperty({ type: IndictmentCaseNotificationType })
+  @ApiProperty({ type: String })
   value!: string
 
   @Column({
     type: DataType.ENUM,
     allowNull: false,
-    values: Object.values(InstitutionNotificationType),
+    values: Object.values(IndictmentCaseNotificationType),
   })
-  @ApiProperty({ enum: InstitutionType })
-  type!: InstitutionType
+  @ApiProperty({ enum: IndictmentCaseNotificationType })
+  type!: IndictmentCaseNotificationType
 }
