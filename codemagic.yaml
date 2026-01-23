@@ -23,6 +23,7 @@ definitions:
     XCODE_WORKSPACE: 'IslandApp.xcworkspace'
     CM_CLONE_DEPTH: 200
     NODE_OPTIONS: '--max-old-space-size=8192'
+    ANDROID_EMULATOR_NAME: 'emulator-34'
   scripts:
     - &check_changes
       name: Check changes since last build
@@ -109,10 +110,10 @@ definitions:
       script: |
         xcodebuild \
         -workspace "ios/$XCODE_WORKSPACE" \
-        -scheme "Ísland.dev" \
-        -configuration "Debug" \
+        -scheme "$XCODE_SCHEME" \
+        -configuration "Testing" \
         -sdk iphonesimulator \
-        -derivedDataPath ios/output
+        -derivedDataPath ios/build
     - &build_android_debug
       name: Build Android debug APK
       script: |
@@ -178,9 +179,9 @@ definitions:
         echo "export IOS_DEVICE_ID=\"$DEVICE_ID\"" >> $CM_ENV
 
         # Find the built app
-        iosAppPath=$(find ios/output -name "*.app" | head -1)
+        iosAppPath=$(find ios/build -name "*.app" | head -1)
         if [ -z "$iosAppPath" ]; then
-          echo "No .app file found in ios/output"
+          echo "No .app file found in ios/build"
           exit 1
         fi
         echo "Found app at: $iosAppPath"
@@ -194,11 +195,18 @@ definitions:
         # Start Android emulator
         echo "Starting Android emulator..."
 
-        # Use the pre-configured Pixel 4 emulator with API 34
-        EMULATOR_NAME="pixel_4"
+        # Check if AVD exists, fail early if it doesn't
+        if ! avdmanager list avd | grep -q "Name: $ANDROID_EMULATOR_NAME"; then
+          echo "ERROR: AVD $ANDROID_EMULATOR_NAME not found"
+          echo "Available AVDs:"
+          avdmanager list avd
+          exit 1
+        fi
+
+        echo "Using AVD: $ANDROID_EMULATOR_NAME"
 
         # Start emulator in background
-        $ANDROID_HOME/emulator/emulator -avd "$EMULATOR_NAME" -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim &
+        $ANDROID_HOME/emulator/emulator -avd "$ANDROID_EMULATOR_NAME" -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim &
         EMULATOR_PID=$!
 
         # Export PID for cleanup

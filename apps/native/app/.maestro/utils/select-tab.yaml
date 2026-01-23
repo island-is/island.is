@@ -8,8 +8,7 @@ appId: 'is.island.app.dev'
     when:
       platform: 'android'
     commands:
-      - tapOn:
-          id: '${title}, tab.*'
+      - tapOn: '${title}, tab.*'
 - runFlow:
     when:
       platform: 'ios'
