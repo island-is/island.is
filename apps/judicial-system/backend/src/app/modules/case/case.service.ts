@@ -932,6 +932,16 @@ export class CaseService {
     ]
 
     if (isIndictmentCase(theCase.type)) {
+      if (theCase.splitCaseId) {
+        messages.push({
+          type: MessageType.INDICTMENT_CASE_NOTIFICATION,
+          caseId: theCase.id,
+          body: {
+            type: IndictmentCaseNotificationType.INDICTMENT_SPLIT_COMPLETED,
+          },
+        })
+      }
+
       messages.push({
         type: MessageType.DELIVERY_TO_COURT_INDICTMENT_INFO,
         user,
@@ -1054,6 +1064,35 @@ export class CaseService {
       caseId: theCase.id,
     })
 
+    for (const defendant of theCase.defendants ?? []) {
+      for (const subpoena of defendant.subpoenas ?? []) {
+        messages.push({
+          type: MessageType.DELIVERY_TO_COURT_SUBPOENA,
+          user,
+          caseId: theCase.id,
+          elementId: [defendant.id, subpoena.id],
+        })
+
+        const hasSubpoenaBeenSuccessfullyServedToDefendant =
+          subpoena?.serviceStatus &&
+          [
+            ServiceStatus.DEFENDER,
+            ServiceStatus.ELECTRONICALLY,
+            ServiceStatus.IN_PERSON,
+          ].includes(subpoena.serviceStatus)
+
+        // Only send certificates for subpoenas which have been successfully served
+        if (hasSubpoenaBeenSuccessfullyServedToDefendant) {
+          messages.push({
+            type: MessageType.DELIVERY_TO_COURT_SERVICE_CERTIFICATE,
+            user,
+            caseId: theCase.id,
+            elementId: [defendant.id, subpoena.id],
+          })
+        }
+      }
+    }
+
     if (theCase.state === CaseState.WAITING_FOR_CANCELLATION) {
       messages.push({
         type: MessageType.DELIVERY_TO_COURT_INDICTMENT_CANCELLATION_NOTICE,
@@ -1071,16 +1110,6 @@ export class CaseService {
         // Without the flag, email (2) would get notification including the court case number.
         // For more context: https://github.com/island-is/island.is/pull/17385/files#r1904268032
         body: { withCourtCaseNumber: false },
-      })
-    }
-
-    if (theCase.splitCaseId) {
-      messages.push({
-        type: MessageType.INDICTMENT_CASE_NOTIFICATION,
-        caseId: theCase.id,
-        body: {
-          type: IndictmentCaseNotificationType.INDICTMENT_SPLIT_COMPLETED,
-        },
       })
     }
 
@@ -1610,27 +1639,27 @@ export class CaseService {
   ): Promise<void> {
     const messages: Message[] = []
 
-    theCase.defendants?.forEach((defendant) => {
-      const subpoena = defendant.subpoenas?.[0]
+    for (const defendant of theCase.defendants ?? []) {
+      for (const subpoena of defendant.subpoenas ?? []) {
+        const hasSubpoenaBeenSuccessfullyServedToDefendant =
+          subpoena?.serviceStatus &&
+          [
+            ServiceStatus.DEFENDER,
+            ServiceStatus.ELECTRONICALLY,
+            ServiceStatus.IN_PERSON,
+          ].includes(subpoena.serviceStatus)
 
-      const hasSubpoenaBeenSuccessfullyServedToDefendant =
-        subpoena?.serviceStatus &&
-        [
-          ServiceStatus.DEFENDER,
-          ServiceStatus.ELECTRONICALLY,
-          ServiceStatus.IN_PERSON,
-        ].includes(subpoena.serviceStatus)
-
-      // Only send certificates for subpoenas which have been successfully served
-      if (hasSubpoenaBeenSuccessfullyServedToDefendant) {
-        messages.push({
-          type: MessageType.DELIVERY_TO_COURT_SERVICE_CERTIFICATE,
-          user,
-          caseId: theCase.id,
-          elementId: [defendant.id, subpoena.id],
-        })
+        // Only send certificates for subpoenas which have been successfully served
+        if (hasSubpoenaBeenSuccessfullyServedToDefendant) {
+          messages.push({
+            type: MessageType.DELIVERY_TO_COURT_SERVICE_CERTIFICATE,
+            user,
+            caseId: theCase.id,
+            elementId: [defendant.id, subpoena.id],
+          })
+        }
       }
-    })
+    }
 
     return this.messageService.sendMessagesToQueue(messages)
   }
@@ -2453,10 +2482,12 @@ export class CaseService {
           caseId: theCase.id,
           transaction,
         })
+
         const caseSentToCourt = EventLog.getEventLogDateByEventType(
           [EventType.CASE_SENT_TO_COURT, EventType.INDICTMENT_CONFIRMED],
           theCase.eventLogs,
         )
+
         await this.courtSessionService.createOrUpdateCourtSessionString({
           caseId: parentCaseId,
           courtSessionId,
