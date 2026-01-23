@@ -887,7 +887,7 @@ export class FormsService {
     newForm.identifier = isDerived ? existingForm.identifier : uuidV4()
     newForm.beenPublished = false
     newForm.completedSectionInfo = existingForm.completedSectionInfo
-    newForm.dependencies = []
+    newForm.dependencies = existingForm.dependencies
 
     const sections: Section[] = []
     const screens: Screen[] = []
