@@ -174,6 +174,9 @@
       "@island.is/api/domains/notifications": [
         "libs/api/domains/notifications/src/index.ts"
       ],
+      "@island.is/api/domains/open-data": [
+        "libs/api/domains/open-data/src/index.ts"
+      ],
       "@island.is/api/domains/occupational-licenses": [
         "libs/api/domains/occupational-licenses/src/index.ts"
       ],
@@ -838,6 +841,7 @@
       "@island.is/clients/nvs-permits": [
         "libs/clients/nvs-permits/src/index.ts"
       ],
+      "@island.is/clients/open-data": ["libs/clients/open-data/src/index.ts"],
       "@island.is/clients/official-journal-of-iceland": [
         "libs/clients/official-journal-of-iceland/public/src/index.ts"
       ],
