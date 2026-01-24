@@ -68,7 +68,7 @@ const OpenDataPage: Screen<OpenDataProps> = ({ page, megaMenuData }) => {
     externalLinkSectionDescription,
     externalLinkSectionImage,
   } = page
-  const [ref, { width, height }] = useMeasure()
+  const [ref, { width, height: _height }] = useMeasure()
   return (
     <Box id="main-content" position="relative" style={{ overflow: 'hidden' }}>
       <Box background="blue100">

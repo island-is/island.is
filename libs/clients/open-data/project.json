@@ -1,0 +1,24 @@
+{
+  "name": "clients-open-data",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/clients/open-data/src",
+  "projectType": "library",
+  "tags": ["lib:client"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/clients/open-data/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/open-data"],
+      "options": {
+        "jestConfig": "libs/clients/open-data/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  }
+}
