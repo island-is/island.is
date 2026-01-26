@@ -36,10 +36,11 @@ import {
   CustomPageUniqueIdentifier,
   type GetCourtAgendasQuery,
   type GetCourtAgendasQueryVariables,
+  GetScheduleTypesQuery,
+  GetScheduleTypesQueryVariables,
   type GetVerdictLawyersQuery,
   type GetVerdictLawyersQueryVariables,
   type Query,
-  type QueryWebCourtAgendasArgs,
   type WebCourtAgendasInput,
 } from '@island.is/web/graphql/schema'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
@@ -211,8 +212,8 @@ const useCourtAgendasState = (props: CourtAgendasProps) => {
   )
 
   const [fetchCourtAgendas, { loading, error }] = useLazyQuery<
-    Query,
-    QueryWebCourtAgendasArgs
+    GetCourtAgendasQuery,
+    GetCourtAgendasQueryVariables
   >(GET_COURT_AGENDAS_QUERY)
 
   useEffect(() => {
@@ -1177,7 +1178,7 @@ CourtAgendas.getProps = async ({ apolloClient, customPageData, query }) => {
 
   const [courtAgendasResponse, lawyersResponse, scheduleTypesResponse] =
     await Promise.all([
-      apolloClient.query<GetCourtAgendasQuery, QueryWebCourtAgendasArgs>({
+      apolloClient.query<GetCourtAgendasQuery, GetCourtAgendasQueryVariables>({
         query: GET_COURT_AGENDAS_QUERY,
         variables: {
           input: {
@@ -1192,12 +1193,17 @@ CourtAgendas.getProps = async ({ apolloClient, customPageData, query }) => {
           },
         },
       }),
-      apolloClient.query<GetVerdictLawyersQuery>({
+      apolloClient.query<
+        GetVerdictLawyersQuery,
+        GetVerdictLawyersQueryVariables
+      >({
         query: GET_VERDICT_LAWYERS_QUERY,
       }),
-      apolloClient.query<Query>({
-        query: GET_SCHEDULE_TYPES_QUERY,
-      }),
+      apolloClient.query<GetScheduleTypesQuery, GetScheduleTypesQueryVariables>(
+        {
+          query: GET_SCHEDULE_TYPES_QUERY,
+        },
+      ),
     ])
 
   const items = courtAgendasResponse.data.webCourtAgendas.items
