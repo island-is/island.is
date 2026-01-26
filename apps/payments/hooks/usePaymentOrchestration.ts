@@ -7,6 +7,7 @@ import { GetPaymentFlowQuery } from '../graphql/queries.graphql.generated'
 import { PaymentError } from '../utils/error/error'
 import { useCardPayment } from './useCardPayment'
 import { useInvoicePayment } from './useInvoicePayment'
+import { useApplePay } from './useApplePay'
 
 interface UsePaymentOrchestrationProps {
   paymentFlow: GetPaymentFlowQuery['paymentsGetFlow'] | null
@@ -63,6 +64,13 @@ export const usePaymentOrchestration = ({
 
   const invoicePayment = useInvoicePayment({
     paymentFlowId: paymentFlow?.id,
+    onPaymentSuccess: commonOnPaymentSuccess,
+    onPaymentError: commonOnPaymentError,
+  })
+
+  const applePayPayment = useApplePay({
+    paymentFlow,
+    productInformation,
     onPaymentSuccess: commonOnPaymentSuccess,
     onPaymentError: commonOnPaymentError,
   })
@@ -132,11 +140,12 @@ export const usePaymentOrchestration = ({
     paymentError,
     setPaymentError, // Expose to allow clearing error from page if needed (e.g. error display component has a dismiss)
     handleFormSubmit,
-
     isThreeDSecureModalActive,
     threeDSecureDataForModal: cardPayment.threeDSecureDataForModal,
     handleVerificationCancelledByModal:
       cardPayment.handleVerificationCancelledByModal,
     verificationStatusLoading: cardPayment.verificationStatusLoading,
+    supportsApplePay: applePayPayment.supportsApplePay,
+    initiateApplePay: applePayPayment.initiateApplePay,
   }
 }
