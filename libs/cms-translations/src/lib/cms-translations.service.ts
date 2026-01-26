@@ -1,13 +1,10 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { ApolloError } from 'apollo-server-express'
+import memoize from 'memoizee'
 
-import { CACHE_MANAGER } from '@nestjs/cache-manager'
-import { Cache as CacheManager } from 'cache-manager'
 import { logger } from '@island.is/logging'
 import { ContentfulRepository } from '@island.is/cms'
 import { Locale } from '@island.is/shared/types'
-import { CmsTranslationConfig } from './cms-translation.config'
-import { ConfigType } from '@nestjs/config'
 
 export type TranslationsDict = Record<string, string>
 
@@ -24,6 +21,8 @@ interface NamespaceFields {
   fallback?: Record<string, any>
 }
 
+const MAX_AGE = 1000 * 60 * 30 // 30 minutes
+const PREFETCH_FACTOR = 0.6 // prefetch after a third of the time or 12 minutes
 const DEFAULT_LOCALE = 'is-IS'
 
 // Declare fallbacks for locales here since they are not set in Contentful for various reasons,
@@ -42,19 +41,10 @@ const errorHandler = (name: string) => {
 
 @Injectable()
 export class CmsTranslationsService {
-  constructor(
-    private contentfulRepository: ContentfulRepository,
-    @Inject(CmsTranslationConfig.KEY)
-    private readonly config: ConfigType<typeof CmsTranslationConfig>,
-    @Inject(CACHE_MANAGER)
-    private readonly cacheManager: CacheManager,
-  ) {}
+  constructor(private contentfulRepository: ContentfulRepository) {}
 
-  getNamespaceMessages = async (namespace: string) => {
-    const cache = await this.cacheManager.get(namespace)
-    if (cache) {
-      return cache as Messages
-    } else {
+  getNamespaceMessages = memoize(
+    async (namespace: string) => {
       const results = await this.contentfulRepository
         .getLocalizedEntries<NamespaceFields>('*', {
           ['content_type']: 'namespace',
@@ -83,15 +73,11 @@ export class CmsTranslationsService {
           }
         }
       }
-      await this.cacheManager.set(
-        namespace,
-        messages,
-        this.config.memCacheExpiryMilliseconds,
-      )
 
       return messages
-    }
-  }
+    },
+    { maxAge: MAX_AGE, preFetch: PREFETCH_FACTOR, promise: true },
+  )
 
   groupMessages = (
     messages: Messages[],
