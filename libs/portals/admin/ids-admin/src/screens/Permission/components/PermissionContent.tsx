@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { useQuery } from '@apollo/client'
 
 import { useLocale } from '@island.is/localization'
@@ -28,9 +28,18 @@ import {
   GetScopeTagsDocument,
   GetScopeTagsQuery,
 } from './PermissionCategoriesAndTags.generated'
+import isEqual from 'lodash/isEqual'
+import { MultiValue } from 'react-select'
 
 type Locales = Languages.IS | Languages.EN
 type ErrorKeys = `${Locales}_description` | `${Locales}_displayName`
+type Option = {
+  label: string
+  value: string
+  description: string
+}
+type Category = GetScopeCategoriesQuery['authAdminScopeCategories'][number]
+type Tag = GetScopeTagsQuery['authAdminScopeTags'][number]
 
 const languages = Object.values(Languages)
 
@@ -75,17 +84,87 @@ export const PermissionContent = () => {
     },
   )
 
-  const [selectedCategoryIds, setSelectedCategoryIds] = useEnvironmentState<
-    string[]
-  >(selectedPermission.categoryIds || [])
-
-  const [selectedTagIds, setSelectedTagIds] = useEnvironmentState<string[]>(
-    selectedPermission.tagIds || [],
+  const categories = useMemo(
+    () => categoriesData?.authAdminScopeCategories || [],
+    [categoriesData?.authAdminScopeCategories],
   )
 
-  const categories = categoriesData?.authAdminScopeCategories || []
-  const tags = tagsData?.authAdminScopeTags || []
+  const tags = useMemo(
+    () => tagsData?.authAdminScopeTags || [],
+    [tagsData?.authAdminScopeTags],
+  )
+
+  const [selectedCategories, setSelectedCategories] = useEnvironmentState<
+    MultiValue<Option>
+  >(
+    (selectedPermission.categoryIds || ([] as string[]))
+      .map((id) => {
+        const cat = categories.find(
+          (c: GetScopeCategoriesQuery['authAdminScopeCategories'][number]) =>
+            c.id === id,
+        )
+        return cat
+          ? { label: cat.title, value: cat.id, description: cat.description }
+          : null
+      })
+      .filter((cat: Option | null) => cat !== null),
+  )
+
+  const [selectedTags, setSelectedTags] = useEnvironmentState<
+    MultiValue<Option>
+  >(
+    (selectedPermission.tagIds || ([] as string[]))
+      .map((id) => {
+        const tag = tags.find(
+          (t: GetScopeTagsQuery['authAdminScopeTags'][number]) => t.id === id,
+        )
+        return tag
+          ? { label: tag.title, value: tag.id, description: tag.description }
+          : null
+      })
+      .filter((tag: Option | null) => tag !== null),
+  )
+
+  // changes to categories or tags aren't triggering a form change event, so we need to handle this manually
+  const customValidation = useCallback(() => {
+    return (
+      !isEqual(
+        selectedCategories.map((cat) => cat.value),
+        selectedPermission.categoryIds,
+      ) ||
+      !isEqual(
+        selectedTags.map((tag) => tag.value),
+        selectedPermission.tagIds,
+      )
+    )
+  }, [
+    selectedCategories,
+    selectedTags,
+    selectedPermission.categoryIds,
+    selectedPermission.tagIds,
+  ])
+
   const loading = categoriesLoading || tagsLoading
+
+  const categoryOptions = useMemo(
+    () =>
+      categories.map((cat: Category) => ({
+        label: cat.title,
+        value: cat.id,
+        description: cat.description,
+      })),
+    [categories],
+  )
+
+  const tagOptions = useMemo(
+    () =>
+      tags.map((tag: Tag) => ({
+        label: tag.title,
+        value: tag.id,
+        description: tag.description,
+      })),
+    [tags],
+  )
 
   const renderTabs = (langKey: Languages) => {
     // Since we transform the Zod schema to strip out the locale prefixed keys then we need to
@@ -156,6 +235,7 @@ export const PermissionContent = () => {
         'categoryIds',
         'tagIds',
       ])}
+      customValidation={customValidation}
     >
       <Stack space={5}>
         <Tabs
@@ -192,28 +272,22 @@ export const PermissionContent = () => {
               <input
                 type="hidden"
                 name="categoryIds"
-                value={JSON.stringify(selectedCategoryIds)}
+                value={JSON.stringify(
+                  selectedCategories.map((cat) => cat.value),
+                )}
               />
               <input
                 type="hidden"
                 name="originalCategoryIds"
                 value={JSON.stringify(selectedPermission.categoryIds || [])}
               />
-
               <Select
-                options={categories.map(
-                  (
-                    category: GetScopeCategoriesQuery['authAdminScopeCategories'][number],
-                  ) => ({
-                    label: category.title,
-                    value: category.id,
-                    description: category.description,
-                  }),
-                )}
-                placeholder={formatMessage(m.selectCategoriesPlaceholder)}
+                value={selectedCategories}
+                options={categoryOptions}
                 onChange={(value) => {
-                  setSelectedCategoryIds(value.map((v) => v.value as string))
+                  setSelectedCategories(value as MultiValue<Option>)
                 }}
+                placeholder={formatMessage(m.selectCategoriesPlaceholder)}
                 isMulti
               />
             </Stack>
@@ -239,7 +313,7 @@ export const PermissionContent = () => {
               <input
                 type="hidden"
                 name="tagIds"
-                value={JSON.stringify(selectedTagIds)}
+                value={JSON.stringify(selectedTags.map((tag) => tag.value))}
               />
               <input
                 type="hidden"
@@ -248,17 +322,12 @@ export const PermissionContent = () => {
               />
 
               <Select
-                options={tags.map(
-                  (tag: GetScopeTagsQuery['authAdminScopeTags'][number]) => ({
-                    label: tag.title,
-                    value: tag.id,
-                    description: tag.description,
-                  }),
-                )}
-                placeholder={formatMessage(m.selectTagsPlaceholder)}
+                value={selectedTags}
+                options={tagOptions}
                 onChange={(value) => {
-                  setSelectedTagIds(value.map((v) => v.value as string))
+                  setSelectedTags(value as MultiValue<Option>)
                 }}
+                placeholder={formatMessage(m.selectTagsPlaceholder)}
                 isMulti
               />
             </Stack>
