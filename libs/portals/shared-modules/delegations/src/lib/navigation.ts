@@ -1,4 +1,7 @@
-import { PortalNavigationItem, m as coreMessages } from '@island.is/portals/core'
+import {
+  PortalNavigationItem,
+  m as coreMessages,
+} from '@island.is/portals/core'
 import { DelegationPaths } from './paths'
 import { m } from './messages'
 
@@ -28,7 +31,7 @@ export const delegationsNavigationChildren: PortalNavigationItem[] = [
     navHide: true,
   },
   {
-    name: m.serviceCategories,
+    name: m.whichDelegationsSuit,
     path: DelegationPaths.ServiceCategories,
     navHide: false,
     breadcrumbHide: false,

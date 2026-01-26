@@ -71,13 +71,7 @@ export class ScopeTagDTO {
     example: 'Þegar þú ert að kaupa eða selja eignir',
     required: false,
   })
-  intro?: string
-
-  @ApiProperty({
-    description: 'URL-friendly slug',
-    example: 'eignir-og-skuldir',
-  })
-  slug!: string
+  description?: string
 
   @ApiProperty({
     description: 'List of scopes tagged with this life event',

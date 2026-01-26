@@ -93,7 +93,7 @@ export class ScopesController {
   @Scopes(...delegationScopes)
   @Documentation({
     description:
-      'Returns all scope tags (life events) from CMS with their associated scopes.',
+      'Returns all scope tags (delegation scope tags) from CMS with their associated scopes.',
     request: {
       query: {
         lang: {

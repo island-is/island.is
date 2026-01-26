@@ -162,9 +162,8 @@ export class ScopeService {
   }
 
   async findScopeTags(user: User, lang: string): Promise<ScopeTagDTO[]> {
-    // Fetch life events (tags) from CMS
-    const cmsLifeEvents =
-      await this.cmsContentfulService.getLifeEventsForOverview(lang)
+    // Fetch tags from CMS
+    const cmsTags = await this.cmsContentfulService.getDelegationScopeTags(lang)
 
     // Fetch all scopes with their tag associations
     const scopes = await this.apiScopeModel.findAll({
@@ -180,7 +179,6 @@ export class ScopeService {
         },
       ],
     })
-
     // Translate scopes
     await this.resourceTranslationService.translateApiScopes(scopes, lang)
 
@@ -201,16 +199,14 @@ export class ScopeService {
         })
       }
     }
-
     // Map CMS life events to DTO with their scopes
-    return cmsLifeEvents
-      .map((lifeEvent) => {
-        const scopes = tagMap.get(lifeEvent.id) ?? []
+    return cmsTags
+      .map((tag) => {
+        const scopes = tagMap.get(tag.id) ?? []
         return {
-          id: lifeEvent.id,
-          title: lifeEvent.title,
-          intro: lifeEvent.intro ?? '',
-          slug: lifeEvent.slug,
+          id: tag.id,
+          title: tag.title,
+          intro: tag.description ?? '',
           scopes,
         }
       })

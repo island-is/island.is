@@ -10,10 +10,7 @@ export class ScopeTag {
   title!: string
 
   @Field(() => String, { nullable: true })
-  intro?: string
-
-  @Field(() => String)
-  slug!: string
+  description?: string
 
   @Field(() => [ApiScope])
   scopes!: ApiScope[]

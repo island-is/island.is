@@ -16,8 +16,7 @@ query AuthScopeTagsForGrant($lang: String!) {
   authScopeTags(lang: $lang) {
     id
     title
-    intro
-    slug
+    description
     scopes {
       name
       displayName

@@ -2,7 +2,12 @@ import { Args, Query, Resolver } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 
 import type { User } from '@island.is/auth-nest-tools'
-import { Auth, AuthMiddleware, CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
+import {
+  Auth,
+  AuthMiddleware,
+  CurrentUser,
+  IdsUserGuard,
+} from '@island.is/auth-nest-tools'
 import { ScopesApi } from '@island.is/clients/auth/delegation-api'
 
 import { ScopeCategory } from '../models/scopeCategory.model'
@@ -26,7 +31,9 @@ export class ScopeCategoriesResolver {
     @CurrentUser() user: User,
     @Args('lang', { type: () => String, defaultValue: 'is' }) lang: string,
   ): Promise<ScopeCategory[]> {
-    const categories = await this.scopesApiWithAuth(user).scopesControllerFindCategories({
+    const categories = await this.scopesApiWithAuth(
+      user,
+    ).scopesControllerFindCategories({
       lang,
     })
 
@@ -42,7 +49,7 @@ export class ScopeCategoriesResolver {
   @Query(() => [ScopeTag], {
     name: 'authScopeTags',
     description:
-      'Get scope tags (life events) from CMS with their associated scopes for portal users',
+      'Get scope tags (delegation scope tags) from CMS with their associated scopes for portal users',
   })
   async getScopeTags(
     @CurrentUser() user: User,

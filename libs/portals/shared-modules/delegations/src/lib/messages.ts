@@ -71,6 +71,10 @@ export const m = defineMessages({
     defaultMessage:
       'Hér má sjá yfirlit yfir þjónustuflokka og réttindi sem þeim tengjast.',
   },
+  whichDelegationsSuit: {
+    id: 'sp.access-control-delegations:whichDelegationsSuit',
+    defaultMessage: 'Hvaða umboð henta í hvaða tilvikum?',
+  },
   errorTitle: {
     id: 'sp.access-control-delegations:errorTitle',
     defaultMessage: 'Villa kom upp',
@@ -300,7 +304,8 @@ export const m = defineMessages({
   },
   stepOneTitle: {
     id: 'sp.access-control-delegations:step-one-title',
-    defaultMessage: '1. Hvaða einstaklingur eða fyrirtæki viltu biðja um umboð?',
+    defaultMessage:
+      '1. Hvaða einstaklingur eða fyrirtæki viltu biðja um umboð?',
   },
   stepTwoTitle: {
     id: 'sp.access-control-delegations:step-two-title',
