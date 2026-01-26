@@ -23,7 +23,7 @@ import { ConfigType } from '@nestjs/config'
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Resolver()
 @Audit({ namespace: '@island.is/api/hms' })
-@FeatureFlag(Features.servicePortalMyContractsPageEnabled)
+@FeatureFlag(Features.isServicePortalMyContractsPageEnabled)
 export class RentalAgreementsResolver {
   constructor(
     private service: HmsRentalAgreementService,

@@ -3,6 +3,7 @@ query CaseTable($input: CaseTableQueryInput!) {
     rowCount
     rows {
       caseId
+      defendantIds
       isMyCase
       contextMenuActions
       actionOnRowClick

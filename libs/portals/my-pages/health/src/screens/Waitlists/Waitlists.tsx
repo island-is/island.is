@@ -1,4 +1,5 @@
-import { Stack, ActionCard } from '@island.is/island-ui/core'
+import { HealthDirectorateWaitlistStatusTagColorEnum } from '@island.is/api/schema'
+import { ActionCard, Stack, TagVariant } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
@@ -7,13 +8,13 @@ import {
   IntroWrapper,
   m,
 } from '@island.is/portals/my-pages/core'
+import { Problem } from '@island.is/react-spa/shared'
+import { isDefined } from '@island.is/shared/utils'
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import { useGetWaitlistsQuery } from './Waitlists.generated'
-import { Problem } from '@island.is/react-spa/shared'
-import { isDefined } from '@island.is/shared/utils'
-import { useNavigate } from 'react-router-dom'
 
 const Waitlists: React.FC = () => {
   useNamespaces('sp.health')
@@ -25,6 +26,23 @@ const Waitlists: React.FC = () => {
   })
 
   const waitlists = data?.healthDirectorateWaitlists.waitlists
+
+  const mapStatusToColor = (
+    statusId?: HealthDirectorateWaitlistStatusTagColorEnum | null,
+  ): TagVariant => {
+    switch (statusId) {
+      case HealthDirectorateWaitlistStatusTagColorEnum.blue:
+        return 'blue'
+      case HealthDirectorateWaitlistStatusTagColorEnum.red:
+        return 'red'
+      case HealthDirectorateWaitlistStatusTagColorEnum.mint:
+        return 'mint'
+      case HealthDirectorateWaitlistStatusTagColorEnum.purple:
+        return 'purple'
+      default:
+        return 'blue'
+    }
+  }
 
   return (
     <IntroWrapper
@@ -48,33 +66,38 @@ const Waitlists: React.FC = () => {
       {!error && loading && <CardLoader />}
 
       <Stack space={2}>
-        {waitlists?.map((waitlist, index) => (
-          <ActionCard
-            key={`waitlist-${index}`}
-            heading={waitlist?.name ?? ''}
-            headingVariant="h4"
-            text={[
-              formatMessage(messages.statusLastUpdated),
-              formatDate(waitlist.lastUpdated),
-            ]
-              .filter((item) => isDefined(item))
-              .join(' ')}
-            eyebrow={waitlist?.organization}
-            tag={{
-              label: waitlist.status,
-              outlined: false,
-              variant: 'blue',
-            }}
-            cta={{
-              onClick: () =>
-                navigate(
-                  HealthPaths.HealthWaitlistsDetail.replace(':id', waitlist.id),
-                ),
-              label: formatMessage(messages.seeMore),
-              variant: 'text',
-            }}
-          />
-        ))}
+        {waitlists?.map((waitlist, index) => {
+          return (
+            <ActionCard
+              key={`waitlist-${index}`}
+              heading={waitlist?.name ?? ''}
+              headingVariant="h4"
+              text={[
+                formatMessage(messages.statusLastUpdated),
+                formatDate(waitlist.lastUpdated),
+              ]
+                .filter((item) => isDefined(item))
+                .join(' ')}
+              eyebrow={waitlist?.organization}
+              tag={{
+                label: waitlist.status,
+                outlined: false,
+                variant: mapStatusToColor(waitlist.statusId),
+              }}
+              cta={{
+                onClick: () =>
+                  navigate(
+                    HealthPaths.HealthWaitlistsDetail.replace(
+                      ':id',
+                      waitlist.id,
+                    ),
+                  ),
+                label: formatMessage(messages.seeMore),
+                variant: 'text',
+              }}
+            />
+          )
+        })}
       </Stack>
     </IntroWrapper>
   )

@@ -45,7 +45,7 @@
     "codegen/backend-schema": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn ts-node -P apps/judicial-system/api/tsconfig.json scripts/build-graphql-schema.ts apps/judicial-system/api/src/app/app.module"
+        "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/judicial-system/api/tsconfig.json scripts/build-graphql-schema.ts apps/judicial-system/api/src/app/app.module"
       },
       "outputs": ["{projectRoot}/src/api.graphql"]
     },
