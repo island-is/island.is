@@ -3,9 +3,10 @@ import { theme } from '@island.is/island-ui/theme'
 import React from 'react'
 import { useWindowSize } from 'react-use'
 import EmptyCard from './EmptyCard'
-import { ErrorCard } from './ErrorCard'
 import InfoCard, { InfoCardProps } from './InfoCard'
 import * as styles from './InfoCard.css'
+import { m } from '@island.is/portals/core'
+import { useLocale } from '@island.is/localization'
 
 interface InfoCardGridProps {
   cards: (InfoCardProps | null)[]
@@ -27,6 +28,7 @@ export const InfoCardGrid: React.FC<InfoCardGridProps> = ({
   error,
 }) => {
   const { width } = useWindowSize()
+  const { formatMessage } = useLocale()
   const isMobile = width < theme.breakpoints.md
   const isTablet = width < theme.breakpoints.lg && !isMobile
 
@@ -39,7 +41,11 @@ export const InfoCardGrid: React.FC<InfoCardGridProps> = ({
             className={styles.gridCard}
             key={`infocard-error`}
           >
-            <EmptyCard title={empty?.title} description={empty?.description} />
+            <InfoCard
+              title={empty?.title}
+              description={empty?.description}
+              img={empty?.img}
+            />
           </GridColumn>
         ) : (
           cards.filter(Boolean).map((card, index) => (
@@ -50,24 +56,20 @@ export const InfoCardGrid: React.FC<InfoCardGridProps> = ({
               className={styles.gridCard}
               key={card?.id ?? `infocard-${index}`}
             >
-              {card?.error ? (
-                <ErrorCard title={card.title} to={card.to} />
-              ) : (
-                card && (
-                  <InfoCard
-                    tags={card.tags}
-                    img={card.img}
-                    size={card.size ?? size ?? 'small'}
-                    title={card.title}
-                    description={card.description}
-                    to={card.to}
-                    detail={card.detail}
-                    variant={variant}
-                    appointment={card.appointment}
-                    loading={card.loading}
-                    tooltip={card.tooltip}
-                  />
-                )
+              {card && (
+                <InfoCard
+                  tags={card.tags}
+                  img={card.img}
+                  size={card.size ?? size ?? 'small'}
+                  title={error ? formatMessage(m.errorFetch) : card.title}
+                  description={card.description}
+                  to={error ? undefined : card.to}
+                  detail={error ? undefined : card.detail}
+                  variant={variant}
+                  appointment={card.appointment}
+                  loading={card.loading}
+                  tooltip={card.tooltip}
+                />
               )}
             </GridColumn>
           ))
