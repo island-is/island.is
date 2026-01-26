@@ -40,9 +40,9 @@ interface Props {
 }
 
 const PATH =
-  process.env.NODE_ENV === 'development'
-    ? `https://beta.dev01.devland.is/form`
-    : 'https://island.is/form'
+  process.env.NODE_ENV === 'production'
+    ? `https://form.island.is`
+    : `https://beta.dev01.devland.is/form`
 
 interface ColumnTextProps {
   text: string | number
