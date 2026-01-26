@@ -1206,7 +1206,8 @@ cms-importer-fsre-buildings-import:
 cms-importer-worker:
   args:
     - 'main.cjs'
-    - 'job:grant-import'
+    - '--job'
+    - 'grant-import'
   command:
     - 'node'
   enabled: true
