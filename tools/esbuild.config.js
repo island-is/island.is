@@ -4,7 +4,7 @@ const svgrPlugin = require('esbuild-plugin-svgr')
 
 module.exports = {
   keepNames: true,
-  external: ['tslib'],
+  external: ['tslib', '@nestjs/core', '@nestjs/common', 'body-parser'],
   plugins: [
     // Add eslint plugin for basic emitDecoratorMetadata support.
     // This is required by many features in NestJS.
