@@ -78,6 +78,7 @@ export const Applicants = ({ applicantField }: Props) => {
   useQuery(USER_PROFILE, {
     fetchPolicy: 'cache-first',
     onCompleted: (data) => {
+      console.log('USER_PROFILE data', data)
       const { mobilePhoneNumber, email } = data.getUserProfile
       dispatch({
         type: 'SET_PHONE_NUMBER',
