@@ -23,6 +23,7 @@ import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScope } from '@island.is/auth/scopes'
 import { isCompany } from 'kennitala'
 import { m } from './messages'
+import { Features } from '@island.is/feature-flags'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -30,6 +31,7 @@ const template: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.CAR_RENTAL_FEE_CATEGORY,
+  featureFlag: Features.isCarRentalFeeCategorySubmittable,
   name: m.application.name,
   codeOwner: CodeOwners.NordaApplications,
   institution: m.application.institution,

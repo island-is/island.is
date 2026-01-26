@@ -151,6 +151,7 @@ export enum Features {
   // Questionnaires
   questionnairesFromEL = 'isQuestionnairesHealthDirectorateClientEnabled',
   questionnairesFromLSH = 'isQuestionnairesLshClientEnabled',
+  isCarRentalFeeCategorySubmittable = 'isCarRentalFeeCategorySubmittable',
 }
 
 export enum ServerSideFeature {
