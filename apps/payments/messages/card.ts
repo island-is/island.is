@@ -41,6 +41,11 @@ export const card = defineMessages({
     defaultMessage: 'Greiða',
     description: 'Pay',
   },
+  cardOptionLabel: {
+    id: 'payments:card.cardOptionLabel',
+    defaultMessage: 'Eða borgaðu með korti',
+    description: 'Label for card option if apple pay is available',
+  },
 })
 
 export const cardSuccess = defineMessages({

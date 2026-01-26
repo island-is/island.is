@@ -6,13 +6,12 @@ import { Box, Button, LinkV2 } from '@island.is/island-ui/core'
 import { Features } from '@island.is/feature-flags'
 import { useLocale } from '@island.is/localization'
 import { findProblemInApolloError } from '@island.is/shared/problem'
-
 import { CardErrorCode } from '@island.is/shared/constants'
 
 import { PageCard } from '../../../components/PageCard/PageCard'
 import initApollo from '../../../graphql/client'
 import { PaymentHeader } from '../../../components/PaymentHeader/PaymentHeader'
-import { PaymentSelector } from '../../../components/PaymentSelector/PaymentSelector'
+import { PaymentMethod, PaymentSelector } from '../../../components/PaymentSelector/PaymentSelector'
 import { CardPayment } from '../../../components/CardPayment/CardPayment'
 import { InvoicePayment } from '../../../components/InvoicePayment/InvoicePayment'
 import { ALLOWED_LOCALES, Locale } from '../../../utils'
@@ -219,6 +218,8 @@ function PaymentPage({
     isThreeDSecureModalActive,
     threeDSecureDataForModal,
     handleVerificationCancelledByModal,
+    supportsApplePay,
+    initiateApplePay,
   } = usePaymentOrchestration({
     paymentFlow,
     productInformation,
@@ -318,11 +319,16 @@ function PaymentPage({
               <form onSubmit={methods.handleSubmit(handleFormSubmit)}>
                 <Box display="flex" flexDirection="column" rowGap={[2, 3]}>
                   <PaymentSelector
-                    availablePaymentMethods={availablePaymentMethods}
+                    availablePaymentMethods={availablePaymentMethods as PaymentMethod[]}
                     selectedPayment={selectedPaymentMethod as any}
                     onSelectPayment={changePaymentMethod}
                   />
-                  {selectedPaymentMethod === 'card' && <CardPayment />}
+                  {selectedPaymentMethod === 'card' && (
+                    <CardPayment
+                      supportsApplePay={supportsApplePay}
+                      initiateApplePay={initiateApplePay}
+                    />
+                  )}
                   {selectedPaymentMethod === 'invoice' && (
                     <InvoicePayment
                       nationalId={paymentFlow?.payerNationalId}
