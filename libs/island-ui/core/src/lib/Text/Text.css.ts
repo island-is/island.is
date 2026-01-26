@@ -1,6 +1,6 @@
 import { styleVariants, style, globalStyle } from '@vanilla-extract/css'
 import * as CSS from 'csstype'
-import { theme } from '@island.is/island-ui/theme'
+import { theme, typographyValues } from '@island.is/island-ui/theme'
 import { responsiveStyleMap } from '@island.is/island-ui/vanilla-extract-utils'
 import { mapToStyleProperty } from '../../utils/mapToStyleProperty'
 
@@ -8,6 +8,8 @@ export type TextVariants =
   | 'default'
   | 'small'
   | 'medium'
+  | 'mediumLight'
+  | 'large'
   | 'h1'
   | 'h2'
   | 'h3'
@@ -34,6 +36,9 @@ type defaultFontWeights = {
   [Type in TextVariants]: number
 }
 
+type defaultLineHeights = {
+  [Type in TextVariants]: string
+}
 export const truncate = style({
   overflow: 'hidden',
   textOverflow: 'ellipsis',
@@ -66,21 +71,11 @@ const fontWeightMap = {
 }
 
 const availableLineHeights = {
-  xs: 1,
-  sm: 1.25,
-  md: 1.5,
-  lg: 1.75,
-  xl: 2,
-}
-
-const availableFontSizes = {
-  xxs: { xs: 12, md: 14 },
-  xs: { xs: 14, md: 16 },
-  sm: { xs: 16, md: 18 },
-  md: { xs: 18, md: 20 },
-  lg: { xs: 20, md: 24 },
-  xl: { xs: 26, md: 34 },
-  xxl: { xs: 32, md: 42 },
+  xs: typographyValues.desktop.paragraph.small.lineHeight,
+  sm: typographyValues.desktop.paragraph.mediumRegular.lineHeight,
+  md: typographyValues.desktop.paragraph.default.lineHeight,
+  lg: typographyValues.desktop.paragraph.default.lineHeight,
+  xl: typographyValues.desktop.paragraph.large.lineHeight,
 }
 
 const lineHeightMap = {
@@ -92,29 +87,33 @@ const lineHeightMap = {
 }
 
 const defaultFontWeightsMap: defaultFontWeights = {
-  default: theme.typography.light,
-  h1: theme.typography.headingsFontWeight,
-  h2: theme.typography.headingsFontWeight,
-  h3: theme.typography.headingsFontWeight,
-  h4: theme.typography.headingsFontWeight,
-  h5: theme.typography.headingsFontWeight,
-  small: theme.typography.regular,
-  medium: theme.typography.regular,
-  intro: theme.typography.light,
-  eyebrow: theme.typography.semiBold,
+  default: typographyValues.desktop.paragraph.default.fontWeight,
+  h1: typographyValues.desktop.headings.h1.fontWeight,
+  h2: typographyValues.desktop.headings.h2.fontWeight,
+  h3: typographyValues.desktop.headings.h3.fontWeight,
+  h4: typographyValues.desktop.headings.h4.fontWeight,
+  h5: typographyValues.desktop.headings.h5.fontWeight,
+  small: typographyValues.desktop.paragraph.small.fontWeight,
+  medium: typographyValues.desktop.paragraph.mediumRegular.fontWeight,
+  eyebrow: typographyValues.desktop.eyebrow.fontWeight,
+  large: typographyValues.desktop.paragraph.large.fontWeight,
+  mediumLight: typographyValues.desktop.paragraph.mediumLight.fontWeight,
+  intro: typographyValues.desktop.paragraph.mediumLight.fontWeight,
 }
 
-const defaultLineHeightsMap: defaultFontWeights = {
-  default: availableLineHeights.md,
-  h1: availableLineHeights.sm,
-  h2: availableLineHeights.sm,
-  h3: availableLineHeights.md,
-  h4: availableLineHeights.md,
-  h5: availableLineHeights.md,
-  small: availableLineHeights.md,
-  medium: availableLineHeights.md,
-  intro: availableLineHeights.md,
-  eyebrow: availableLineHeights.md,
+const defaultLineHeightsMap: defaultLineHeights = {
+  default: typographyValues.desktop.paragraph.default.lineHeight,
+  h1: typographyValues.desktop.headings.h1.lineHeight,
+  h2: typographyValues.desktop.headings.h2.lineHeight,
+  h3: typographyValues.desktop.headings.h3.lineHeight,
+  h4: typographyValues.desktop.headings.h4.lineHeight,
+  h5: typographyValues.desktop.headings.h5.lineHeight,
+  small: typographyValues.desktop.paragraph.small.lineHeight,
+  medium: typographyValues.desktop.paragraph.mediumRegular.lineHeight,
+  eyebrow: typographyValues.desktop.eyebrow.lineHeight,
+  large: typographyValues.desktop.paragraph.large.lineHeight,
+  mediumLight: typographyValues.desktop.paragraph.mediumLight.lineHeight,
+  intro: typographyValues.desktop.headings.h3.lineHeight,
 }
 
 export const fontWeight = styleVariants(
@@ -161,34 +160,100 @@ export const textAlign = {
 
 export const variants: Variants = {
   default: {
-    fontSize: availableFontSizes.sm,
-  },
-  h1: {
-    fontSize: availableFontSizes.xxl,
-  },
-  h2: {
-    fontSize: availableFontSizes.xl,
-  },
-  h3: {
-    fontSize: availableFontSizes.lg,
-  },
-  h4: {
-    fontSize: availableFontSizes.md,
-  },
-  h5: {
-    fontSize: availableFontSizes.sm,
+    fontSize: {
+      xs: typographyValues.mobile.paragraph.default.fontSize,
+      md: typographyValues.desktop.paragraph.default.fontSize,
+    },
+    lineHeight: typographyValues.desktop.paragraph.default.lineHeight,
+    fontWeight: typographyValues.desktop.paragraph.default.fontWeight,
   },
   small: {
-    fontSize: availableFontSizes.xxs,
+    fontSize: {
+      xs: typographyValues.mobile.paragraph.small.fontSize,
+      md: typographyValues.desktop.paragraph.small.fontSize,
+    },
+    lineHeight: typographyValues.desktop.paragraph.small.lineHeight,
+    fontWeight: typographyValues.desktop.paragraph.small.fontWeight,
+  },
+  mediumLight: {
+    fontSize: {
+      xs: typographyValues.mobile.paragraph.mediumLight.fontSize,
+      md: typographyValues.desktop.paragraph.mediumLight.fontSize,
+    },
+    fontWeight: typographyValues.desktop.paragraph.mediumLight.fontWeight,
+    lineHeight: typographyValues.desktop.paragraph.mediumLight.lineHeight,
   },
   medium: {
-    fontSize: availableFontSizes.xs,
+    fontSize: {
+      xs: typographyValues.mobile.paragraph.mediumRegular.fontSize,
+      md: typographyValues.desktop.paragraph.mediumRegular.fontSize,
+    },
+    fontWeight: typographyValues.desktop.paragraph.mediumRegular.fontWeight,
+    lineHeight: typographyValues.desktop.paragraph.mediumRegular.lineHeight,
   },
-  intro: {
-    fontSize: availableFontSizes.lg,
+  large: {
+    fontSize: {
+      xs: typographyValues.mobile.paragraph.large.fontSize,
+      md: typographyValues.desktop.paragraph.large.fontSize,
+    },
+    lineHeight: typographyValues.desktop.paragraph.large.lineHeight,
+    fontWeight: typographyValues.desktop.paragraph.large.fontWeight,
+  },
+  h1: {
+    fontSize: {
+      xs: typographyValues.mobile.headings.h1.fontSize,
+      md: typographyValues.desktop.headings.h1.fontSize,
+    },
+    lineHeight: typographyValues.desktop.headings.h1.lineHeight,
+    fontWeight: typographyValues.desktop.headings.h1.fontWeight,
+  },
+  h2: {
+    fontSize: {
+      xs: typographyValues.mobile.headings.h2.fontSize,
+      md: typographyValues.desktop.headings.h2.fontSize,
+    },
+    lineHeight: typographyValues.desktop.headings.h2.lineHeight,
+    fontWeight: typographyValues.desktop.headings.h2.fontWeight,
+  },
+  h3: {
+    fontSize: {
+      xs: typographyValues.mobile.headings.h3.fontSize,
+      md: typographyValues.desktop.headings.h3.fontSize,
+    },
+    lineHeight: typographyValues.desktop.headings.h3.lineHeight,
+    fontWeight: typographyValues.desktop.headings.h3.fontWeight,
+  },
+  h4: {
+    fontSize: {
+      xs: typographyValues.mobile.headings.h4.fontSize,
+      md: typographyValues.desktop.headings.h4.fontSize,
+    },
+    lineHeight: typographyValues.desktop.headings.h4.lineHeight,
+    fontWeight: typographyValues.desktop.headings.h4.fontWeight,
+  },
+  h5: {
+    fontSize: {
+      xs: typographyValues.mobile.headings.h5.fontSize,
+      md: typographyValues.desktop.headings.h5.fontSize,
+    },
+    lineHeight: typographyValues.desktop.headings.h5.lineHeight,
+    fontWeight: typographyValues.desktop.headings.h5.fontWeight,
   },
   eyebrow: {
-    fontSize: availableFontSizes.xxs,
+    fontSize: {
+      xs: typographyValues.mobile.eyebrow.fontSize,
+      md: typographyValues.desktop.eyebrow.fontSize,
+    },
+    lineHeight: typographyValues.desktop.eyebrow.lineHeight,
+    fontWeight: typographyValues.desktop.eyebrow.fontWeight,
+  },
+  intro: {
+    fontSize: {
+      xs: typographyValues.mobile.headings.h3.fontSize,
+      md: typographyValues.desktop.headings.h3.fontSize,
+    },
+    lineHeight: typographyValues.desktop.headings.h3.lineHeight,
+    fontWeight: typographyValues.desktop.paragraph.mediumLight.fontWeight,
   },
 }
 

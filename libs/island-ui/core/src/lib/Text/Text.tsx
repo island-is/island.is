@@ -12,12 +12,12 @@ import {
   defaultLineHeights,
   fontWeight as fontWeightStyles,
   lineHeight as lineHeightStyles,
-  TextVariants,
   truncate as truncateStyle,
   strikethrough as strikethroughStyle,
   whiteSpace as whiteSpaceStyle,
   textAlign as textAlignStyle,
   capitalizeFirstLetter as capitalizeFirstLetterStyle,
+  TextVariants,
   disabledText,
 } from './Text.css'
 import { TestSupport } from '@island.is/island-ui/utils'

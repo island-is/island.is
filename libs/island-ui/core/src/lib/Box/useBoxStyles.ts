@@ -11,7 +11,10 @@ import * as resetStyleRefs from '../../styles/reset.css'
 import * as styleRefs from './useBoxStyles.css'
 
 export type Space = keyof typeof theme.spacing
+export type FigmaSpace = keyof typeof theme.figmaSpacing
+
 export type ResponsiveSpace = ResponsiveProp<Space>
+export type ResponsiveFigmaSpacing = ResponsiveProp<FigmaSpace>
 
 export interface UseBoxStylesProps {
   component: ElementType | null
@@ -22,6 +25,13 @@ export interface UseBoxStylesProps {
   paddingBottom?: ResponsiveSpace
   paddingLeft?: ResponsiveSpace
   paddingRight?: ResponsiveSpace
+  unstablePadding?: ResponsiveFigmaSpacing
+  unstablePaddingX?: ResponsiveFigmaSpacing
+  unstablePaddingY?: ResponsiveFigmaSpacing
+  unstablePaddingTop?: ResponsiveFigmaSpacing
+  unstablePaddingBottom?: ResponsiveFigmaSpacing
+  unstablePaddingLeft?: ResponsiveFigmaSpacing
+  unstablePaddingRight?: ResponsiveFigmaSpacing
   margin?: ResponsiveProp<Space | 'auto'>
   marginX?: ResponsiveProp<Space | 'auto'>
   marginY?: ResponsiveProp<Space | 'auto'>
@@ -29,6 +39,13 @@ export interface UseBoxStylesProps {
   marginBottom?: ResponsiveProp<Space | 'auto'>
   marginLeft?: ResponsiveProp<Space | 'auto'>
   marginRight?: ResponsiveProp<Space | 'auto'>
+  unstableMargin?: ResponsiveProp<FigmaSpace | 'auto'>
+  unstableMarginX?: ResponsiveProp<FigmaSpace | 'auto'>
+  unstableMarginY?: ResponsiveProp<FigmaSpace | 'auto'>
+  unstableMarginTop?: ResponsiveProp<FigmaSpace | 'auto'>
+  unstableMarginBottom?: ResponsiveProp<FigmaSpace | 'auto'>
+  unstableMarginLeft?: ResponsiveProp<FigmaSpace | 'auto'>
+  unstableMarginRight?: ResponsiveProp<FigmaSpace | 'auto'>
   display?: ResponsiveProp<keyof typeof styleRefs.display>
   flexDirection?: ResponsiveProp<keyof typeof styleRefs.flexDirection>
   flexWrap?: ResponsiveProp<keyof typeof styleRefs.flexWrap>
@@ -64,9 +81,13 @@ export interface UseBoxStylesProps {
   overflow?: keyof typeof styleRefs.overflow
   minWidth?: keyof typeof styleRefs.minWidth
   top?: ResponsiveProp<Space>
+  unstableTop?: ResponsiveFigmaSpacing
   bottom?: ResponsiveProp<Space>
+  unstableBottom?: ResponsiveFigmaSpacing
   left?: ResponsiveProp<Space>
+  unstableLeft?: ResponsiveFigmaSpacing
   right?: ResponsiveProp<Space>
+  unstableRight?: ResponsiveFigmaSpacing
   userSelect?: keyof typeof styleRefs.userSelect
   outline?: keyof typeof styleRefs.outline
   opacity?: keyof typeof styleRefs.opacity
@@ -84,6 +105,13 @@ export const useBoxStyles = ({
   paddingBottom,
   paddingLeft,
   paddingRight,
+  unstablePadding,
+  unstablePaddingX,
+  unstablePaddingY,
+  unstablePaddingTop,
+  unstablePaddingBottom,
+  unstablePaddingLeft,
+  unstablePaddingRight,
   margin,
   marginX,
   marginY,
@@ -91,6 +119,13 @@ export const useBoxStyles = ({
   marginBottom,
   marginLeft,
   marginRight,
+  unstableMargin,
+  unstableMarginX,
+  unstableMarginY,
+  unstableMarginTop,
+  unstableMarginBottom,
+  unstableMarginLeft,
+  unstableMarginRight,
   display,
   flexDirection,
   flexWrap,
@@ -126,9 +161,13 @@ export const useBoxStyles = ({
   overflow,
   minWidth,
   top,
+  unstableTop,
   bottom,
+  unstableBottom,
   right,
+  unstableRight,
   left,
+  unstableLeft,
   userSelect,
   outline,
   opacity,
@@ -144,10 +183,28 @@ export const useBoxStyles = ({
   const resolvedPaddingLeft = paddingLeft ?? paddingX ?? padding
   const resolvedPaddingRight = paddingRight ?? paddingX ?? padding
 
+  const unstableResolvedPaddingTop =
+    unstablePaddingTop ?? unstablePaddingY ?? unstablePadding
+  const unstableResolvedPaddingBottom =
+    unstablePaddingBottom ?? unstablePaddingY ?? unstablePadding
+  const unstableResolvedPaddingLeft =
+    unstablePaddingLeft ?? unstablePaddingX ?? unstablePadding
+  const unstableResolvedPaddingRight =
+    unstablePaddingRight ?? unstablePaddingX ?? unstablePadding
+
   const resolvedMarginTop = marginTop ?? marginY ?? margin
   const resolvedMarginBottom = marginBottom ?? marginY ?? margin
   const resolvedMarginLeft = marginLeft ?? marginX ?? margin
   const resolvedMarginRight = marginRight ?? marginX ?? margin
+
+  const unstableResolvedMarginTop =
+    unstableMarginTop ?? unstableMarginY ?? unstableMargin
+  const unstableResolvedMarginBottom =
+    unstableMarginBottom ?? unstableMarginY ?? unstableMargin
+  const unstableResolvedMarginLeft =
+    unstableMarginLeft ?? unstableMarginX ?? unstableMargin
+  const unstableResolvedMarginRight =
+    unstableMarginRight ?? unstableMarginX ?? unstableMargin
 
   return classnames(
     component !== null && resetStyles.base,
@@ -193,6 +250,15 @@ export const useBoxStyles = ({
         styles.relativePositionLg.top,
         styles.relativePositionXl.top,
       ),
+    unstableTop !== undefined &&
+      resolveResponsiveProp(
+        unstableTop,
+        styles.figmaRelativePosition.top,
+        styles.figmaRelativePositionSm.top,
+        styles.figmaRelativePositionMd.top,
+        styles.figmaRelativePositionLg.top,
+        styles.figmaRelativePositionXl.top,
+      ),
     bottom !== undefined &&
       resolveResponsiveProp(
         bottom,
@@ -201,6 +267,15 @@ export const useBoxStyles = ({
         styles.relativePositionMd.bottom,
         styles.relativePositionLg.bottom,
         styles.relativePositionXl.bottom,
+      ),
+    unstableBottom !== undefined &&
+      resolveResponsiveProp(
+        unstableBottom,
+        styles.figmaRelativePosition.top,
+        styles.figmaRelativePositionSm.top,
+        styles.figmaRelativePositionMd.top,
+        styles.figmaRelativePositionLg.top,
+        styles.figmaRelativePositionXl.top,
       ),
     left !== undefined &&
       resolveResponsiveProp(
@@ -211,6 +286,15 @@ export const useBoxStyles = ({
         styles.relativePositionLg.left,
         styles.relativePositionXl.left,
       ),
+    unstableLeft !== undefined &&
+      resolveResponsiveProp(
+        unstableLeft,
+        styles.figmaRelativePosition.top,
+        styles.figmaRelativePositionSm.top,
+        styles.figmaRelativePositionMd.top,
+        styles.figmaRelativePositionLg.top,
+        styles.figmaRelativePositionXl.top,
+      ),
     right !== undefined &&
       resolveResponsiveProp(
         right,
@@ -219,6 +303,15 @@ export const useBoxStyles = ({
         styles.relativePositionMd.right,
         styles.relativePositionLg.right,
         styles.relativePositionXl.right,
+      ),
+    unstableRight !== undefined &&
+      resolveResponsiveProp(
+        unstableRight,
+        styles.figmaRelativePosition.top,
+        styles.figmaRelativePositionSm.top,
+        styles.figmaRelativePositionMd.top,
+        styles.figmaRelativePositionLg.top,
+        styles.figmaRelativePositionXl.top,
       ),
     resolvedMarginTop !== undefined &&
       resolveResponsiveProp(
@@ -256,6 +349,42 @@ export const useBoxStyles = ({
         styles.marginLg.right,
         styles.marginXl.right,
       ),
+    unstableResolvedMarginTop !== undefined &&
+      resolveResponsiveProp(
+        unstableResolvedMarginTop,
+        styles.figmaMargin.top,
+        styles.figmaMarginSm.top,
+        styles.figmaMarginMd.top,
+        styles.figmaMarginLg.top,
+        styles.figmaMarginXl.top,
+      ),
+    unstableResolvedMarginBottom !== undefined &&
+      resolveResponsiveProp(
+        unstableResolvedMarginBottom,
+        styles.figmaMargin.top,
+        styles.figmaMarginSm.top,
+        styles.figmaMarginMd.top,
+        styles.figmaMarginLg.top,
+        styles.figmaMarginXl.top,
+      ),
+    unstableResolvedMarginLeft !== undefined &&
+      resolveResponsiveProp(
+        unstableResolvedMarginLeft,
+        styles.figmaMargin.top,
+        styles.figmaMarginSm.top,
+        styles.figmaMarginMd.top,
+        styles.figmaMarginLg.top,
+        styles.figmaMarginXl.top,
+      ),
+    unstableResolvedMarginRight !== undefined &&
+      resolveResponsiveProp(
+        unstableResolvedMarginRight,
+        styles.figmaMargin.top,
+        styles.figmaMarginSm.top,
+        styles.figmaMarginMd.top,
+        styles.figmaMarginLg.top,
+        styles.figmaMarginXl.top,
+      ),
     resolvedPaddingTop !== undefined &&
       resolveResponsiveProp(
         resolvedPaddingTop,
@@ -291,6 +420,42 @@ export const useBoxStyles = ({
         styles.paddingMd.right,
         styles.paddingLg.right,
         styles.paddingXl.right,
+      ),
+    unstableResolvedPaddingTop !== undefined &&
+      resolveResponsiveProp(
+        unstableResolvedPaddingTop,
+        styles.figmaPadding.top,
+        styles.figmaPaddingSm.top,
+        styles.figmaPaddingMd.top,
+        styles.figmaPaddingLg.top,
+        styles.figmaPaddingXl.top,
+      ),
+    unstableResolvedPaddingBottom !== undefined &&
+      resolveResponsiveProp(
+        unstableResolvedPaddingBottom,
+        styles.figmaPadding.top,
+        styles.figmaPaddingSm.top,
+        styles.figmaPaddingMd.top,
+        styles.figmaPaddingLg.top,
+        styles.figmaPaddingXl.top,
+      ),
+    unstableResolvedPaddingLeft !== undefined &&
+      resolveResponsiveProp(
+        unstableResolvedPaddingLeft,
+        styles.figmaPadding.top,
+        styles.figmaPaddingSm.top,
+        styles.figmaPaddingMd.top,
+        styles.figmaPaddingLg.top,
+        styles.figmaPaddingXl.top,
+      ),
+    unstableResolvedPaddingRight !== undefined &&
+      resolveResponsiveProp(
+        unstableResolvedPaddingRight,
+        styles.figmaPadding.top,
+        styles.figmaPaddingSm.top,
+        styles.figmaPaddingMd.top,
+        styles.figmaPaddingLg.top,
+        styles.figmaPaddingXl.top,
       ),
     display !== undefined &&
       resolveResponsiveProp(

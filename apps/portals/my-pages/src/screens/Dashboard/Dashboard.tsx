@@ -157,7 +157,12 @@ export const Dashboard = () => {
   return (
     <Box>
       <Greeting />
-      <Box paddingTop={[0, 0, 0, 4]} marginBottom={3}>
+      {/*  paddingTop={[0, 0, 0, 4]} marginBottom={3} */}
+      <Box
+        unstablePaddingTop={[2, 2, 2, 32]}
+        unstableMarginBottom={24}
+        id="service-portal-dashboard"
+      >
         <GridContainer>
           <GridRow data-testid="service-portal-dashboard">
             <GridColumn
