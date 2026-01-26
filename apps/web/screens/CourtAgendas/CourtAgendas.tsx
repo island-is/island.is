@@ -205,7 +205,6 @@ const useCourtAgendasState = (props: CourtAgendasProps) => {
         scheduleTypes: queryParams[QueryParam.SCHEDULE_TYPES]
           ? [queryParams[QueryParam.SCHEDULE_TYPES]]
           : null,
-        // TODO: Where is case types?
       }
     },
     [],

@@ -415,7 +415,7 @@ export class VerdictsClientService {
     const { goproCourtAgendasApi } = await this.getAuthenticatedGoproApis()
 
     const [supremeCourtResponse, goproResponse] = await Promise.allSettled([
-      !input.court || onlyFetchSupremeCourtAgendas
+      (!input.court && !input.scheduleTypes) || onlyFetchSupremeCourtAgendas
         ? this.supremeCourtApi.apiV2VerdictGetAgendasPost({
             agendaSearchRequest: {
               page: pageNumber,
@@ -436,8 +436,6 @@ export class VerdictsClientService {
               ),
               lawyer: input.lawyer ? input.lawyer : undefined,
               orderBy: 'verdictDate ASC',
-              // TOOD: Where is schedule type filter?
-              // TODO: Where is case category filter?
             },
           } as ApiV2VerdictGetAgendasPostRequest)
         : { status: 'rejected', items: [], total: 0 },
@@ -457,7 +455,6 @@ export class VerdictsClientService {
             orderBy: 'StartDateTime',
             orderDirection: 'ASC',
             scheduleType: input.scheduleTypes ? input.scheduleTypes : undefined,
-            // TODO: Where is case category filter?
           }),
     ])
 
