@@ -100,23 +100,21 @@ export const ReviewDecision: FC<Props> = (props) => {
       />
       <BlueBox>
         <div className={styles.gridRow}>
-          {options.map((item, index) => {
-            return (
-              <RadioButton
-                key={item.label}
-                name={`reviewOption-${index}`}
-                label={item.label}
-                value={item.value}
-                checked={indictmentReviewDecision === item.value}
-                onChange={() => {
-                  onSelect && onSelect(item.value)
-                  setIndictmentReviewDecision(item.value)
-                }}
-                backgroundColor="white"
-                large
-              />
-            )
-          })}
+          {options.map((item, index) => (
+            <RadioButton
+              key={item.label}
+              name={`reviewOption-${index}`}
+              label={item.label}
+              value={item.value}
+              checked={indictmentReviewDecision === item.value}
+              onChange={() => {
+                onSelect && onSelect(item.value)
+                setIndictmentReviewDecision(item.value)
+              }}
+              backgroundColor="white"
+              large
+            />
+          ))}
         </div>
       </BlueBox>
       {isConfirmProsecutorDecisionModal(modalVisible) && (

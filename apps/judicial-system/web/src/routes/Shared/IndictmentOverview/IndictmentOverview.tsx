@@ -47,6 +47,7 @@ import {
   Subpoena,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import {
   isCaseCivilClaimantSpokesperson,
   isCaseDefendantDefender,
@@ -167,74 +168,72 @@ const IndictmentOverview: FC = () => {
         }
       />
       <FormContentContainer>
-        <Box marginBottom={10}>
-          <PageTitle>
-            {caseIsClosed
-              ? formatMessage(strings.completedTitle)
-              : formatMessage(strings.inProgressTitle)}
-          </PageTitle>
-          <CourtCaseInfo workingCase={workingCase} />
-          {workingCase.rulingModifiedHistory && (
-            <Box marginBottom={5}>
-              <AlertMessage
-                type="info"
-                title="Mál leiðrétt"
-                message={
-                  <MarkdownWrapper
-                    markdown={workingCase.rulingModifiedHistory}
-                    textProps={{ variant: 'small' }}
-                  />
-                }
+        <PageTitle>
+          {caseIsClosed
+            ? formatMessage(strings.completedTitle)
+            : formatMessage(strings.inProgressTitle)}
+        </PageTitle>
+        <CourtCaseInfo workingCase={workingCase} />
+        {workingCase.rulingModifiedHistory && (
+          <AlertMessage
+            type="info"
+            title="Mál leiðrétt"
+            message={
+              <MarkdownWrapper
+                markdown={workingCase.rulingModifiedHistory}
+                textProps={{ variant: 'small' }}
               />
-            </Box>
-          )}
-          {workingCase.defendants?.map(
-            (defendant) =>
-              defendant.verdict && (
-                <Box
-                  key={`${defendant.id}${defendant.verdict.id}`}
-                  marginBottom={2}
-                >
-                  <VerdictStatusAlert
-                    defendant={defendant}
-                    verdict={defendant.verdict}
-                  />
-                </Box>
-              ),
-          )}
-          {isDefenceUser(user) &&
-            workingCase.defendants?.map((defendant) => (
-              <Fragment key={defendant.id}>
-                {defendant.alternativeServiceDescription && (
-                  <AlternativeServiceAnnouncement
-                    key={defendant.id}
-                    alternativeServiceDescription={
-                      defendant.alternativeServiceDescription
-                    }
-                    defendantName={defendant.name}
-                  />
-                )}
-                {defendant.subpoenas
-                  ?.filter((subpoena) =>
-                    isSuccessfulServiceStatus(subpoena.serviceStatus),
-                  )
-                  .map((subpoena) => (
-                    <Box key={`${defendant.id}${subpoena.id}`} marginBottom={2}>
-                      <ServiceAnnouncement
-                        defendant={defendant}
-                        subpoena={subpoena}
-                      />
-                    </Box>
-                  ))}
-              </Fragment>
-            ))}
+            }
+          />
+        )}
+        {workingCase.defendants?.map(
+          (defendant) =>
+            defendant.verdict && (
+              <Box
+                key={`${defendant.id}${defendant.verdict.id}`}
+                marginBottom={2}
+              >
+                <VerdictStatusAlert
+                  defendant={defendant}
+                  verdict={defendant.verdict}
+                />
+              </Box>
+            ),
+        )}
+        {isDefenceUser(user) &&
+          workingCase.defendants?.map((defendant) => (
+            <Fragment key={defendant.id}>
+              {defendant.alternativeServiceDescription && (
+                <AlternativeServiceAnnouncement
+                  key={defendant.id}
+                  alternativeServiceDescription={
+                    defendant.alternativeServiceDescription
+                  }
+                  defendantName={defendant.name}
+                />
+              )}
+              {defendant.subpoenas
+                ?.filter((subpoena) =>
+                  isSuccessfulServiceStatus(subpoena.serviceStatus),
+                )
+                .map((subpoena) => (
+                  <Box key={`${defendant.id}${subpoena.id}`} marginBottom={2}>
+                    <ServiceAnnouncement
+                      defendant={defendant}
+                      subpoena={subpoena}
+                    />
+                  </Box>
+                ))}
+            </Fragment>
+          ))}
+        <div className={grid({ gap: 5, marginBottom: 10 })}>
           {caseHasBeenReceivedByCourt &&
             workingCase.court &&
             latestDate?.date &&
             workingCase.indictmentDecision !== IndictmentDecision.COMPLETING &&
             workingCase.indictmentDecision !==
               IndictmentDecision.REDISTRIBUTING && (
-              <Box component="section" marginBottom={5}>
+              <Box component="section">
                 <IndictmentCaseScheduledCard
                   court={workingCase.court}
                   indictmentDecision={workingCase.indictmentDecision}
@@ -247,7 +246,7 @@ const IndictmentOverview: FC = () => {
                 />
               </Box>
             )}
-          <Box component="section" marginBottom={5}>
+          <Box component="section">
             {caseIsClosed ? (
               <InfoCardClosedIndictment
                 displayAppealExpirationInfo={
@@ -276,7 +275,7 @@ const IndictmentOverview: FC = () => {
               />
             )}
           {(hasLawsBroken || hasMergeCases) && (
-            <Box marginBottom={5}>
+            <Box>
               {/* 
             NOTE: Temporarily hidden while list of laws broken is not complete in
             indictment cases
@@ -299,7 +298,7 @@ const IndictmentOverview: FC = () => {
               )}
             </Box>
           )}
-          <Box component="section" marginBottom={5}>
+          <Box component="section">
             <IndictmentCaseFilesList
               workingCase={workingCase}
               displayGeneratedPDFs={displayGeneratedPDFs}
@@ -321,7 +320,7 @@ const IndictmentOverview: FC = () => {
             </Box>
           )}
           {shouldDisplayReviewDecision && (
-            <Box component="section" marginBottom={10}>
+            <Box component="section">
               <ReviewDecision
                 caseId={workingCase.id}
                 indictmentAppealDeadline={
@@ -341,7 +340,7 @@ const IndictmentOverview: FC = () => {
             </Box>
           )}
           {isDefenceUser(user) && isCompletedCase(workingCase.state) && (
-            <Box marginTop={7}>
+            <Box component="section">
               <ZipButton
                 caseId={workingCase.id}
                 courtCaseNumber={workingCase.courtCaseNumber}
@@ -353,7 +352,7 @@ const IndictmentOverview: FC = () => {
               <InputPenalties />
             </Box>
           )}
-        </Box>
+        </div>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
