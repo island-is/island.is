@@ -1,4 +1,4 @@
-import type { FC, ReactNode } from 'react'
+import type { FC } from 'react'
 
 import {
   Box,
@@ -6,15 +6,12 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
-  Hidden,
   Tabs,
 } from '@island.is/island-ui/core'
-import { PortalNavigation, PortalNavigationItem } from '@island.is/portals/core'
-import CombinedOverview from '../../screens/Overview/CombinedOverview'
+import Overview from '../../screens/Overview/Overview'
 import { useLocale } from '@island.is/localization'
 import { ApplicationSystemPaths } from '../../lib/paths'
 import { m } from '../../lib/messages'
-import { applicationSystemNavigation } from '../../lib/navigation'
 import Statistics from '../../screens/Statistics/Statistics'
 
 interface LayoutProps {
@@ -51,7 +48,7 @@ export const Layout: FC<React.PropsWithChildren<LayoutProps>> = ({
                 {
                   id: 'overview',
                   label: formatMessage(m.overview),
-                  content: <CombinedOverview isSuperAdmin={isSuperAdmin} />,
+                  content: <Overview isSuperAdmin={isSuperAdmin} />,
                 },
                 {
                   id: 'statistics',

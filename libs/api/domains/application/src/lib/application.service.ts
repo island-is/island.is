@@ -96,6 +96,7 @@ export class ApplicationService {
       to: filters.to,
       typeIdValue: filters.typeIdValue,
       searchStr: filters.searchStr,
+      institutionNationalId: filters.institutionNationalId,
     })
   }
 
