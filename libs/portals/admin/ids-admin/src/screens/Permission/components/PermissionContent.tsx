@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useQuery } from '@apollo/client'
 
 import { useLocale } from '@island.is/localization'
@@ -84,46 +84,58 @@ export const PermissionContent = () => {
     },
   )
 
-  const categories = useMemo(
-    () => categoriesData?.authAdminScopeCategories || [],
+  const categories: Option[] = useMemo(
+    () =>
+      categoriesData?.authAdminScopeCategories.map((cat: Category) => ({
+        label: cat.title,
+        value: cat.id,
+        description: cat.description,
+      })) || [],
     [categoriesData?.authAdminScopeCategories],
   )
 
-  const tags = useMemo(
-    () => tagsData?.authAdminScopeTags || [],
+  const tags: Option[] = useMemo(
+    () =>
+      tagsData?.authAdminScopeTags.map((tag: Tag) => ({
+        label: tag.title,
+        value: tag.id,
+        description: tag.description,
+      })) || [],
     [tagsData?.authAdminScopeTags],
   )
 
   const [selectedCategories, setSelectedCategories] = useEnvironmentState<
     MultiValue<Option>
-  >(
-    (selectedPermission.categoryIds || ([] as string[]))
-      .map((id) => {
-        const cat = categories.find(
-          (c: GetScopeCategoriesQuery['authAdminScopeCategories'][number]) =>
-            c.id === id,
-        )
-        return cat
-          ? { label: cat.title, value: cat.id, description: cat.description }
-          : null
-      })
-      .filter((cat: Option | null) => cat !== null),
-  )
+  >([])
 
   const [selectedTags, setSelectedTags] = useEnvironmentState<
     MultiValue<Option>
-  >(
-    (selectedPermission.tagIds || ([] as string[]))
-      .map((id) => {
-        const tag = tags.find(
-          (t: GetScopeTagsQuery['authAdminScopeTags'][number]) => t.id === id,
-        )
-        return tag
-          ? { label: tag.title, value: tag.id, description: tag.description }
-          : null
-      })
-      .filter((tag: Option | null) => tag !== null),
-  )
+  >([])
+
+  // initialize the selected categories and tags
+  // in some cases the data is not available yet when the state is initialized, so we need to wait for it to be available
+  useEffect(() => {
+    if (tags.length > 0 && categories.length > 0) {
+      setSelectedCategories(
+        (selectedPermission.categoryIds || ([] as string[]))
+          .map((id) => {
+            return categories.find((c) => c.value === id)
+          })
+          .filter((cat: Option | undefined) => cat !== undefined),
+      )
+
+      setSelectedTags(
+        (selectedPermission.tagIds || ([] as string[]))
+          .map((id) => {
+            const tag = tags.find((t) => t.value === id)
+            return tag
+          })
+          .filter((tag: Option | undefined) => tag !== undefined),
+      )
+    }
+    // only run this effect when the tags or categories populate
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tags, categories])
 
   // changes to categories or tags aren't triggering a form change event, so we need to handle this manually
   const customValidation = useCallback(() => {
@@ -145,26 +157,6 @@ export const PermissionContent = () => {
   ])
 
   const loading = categoriesLoading || tagsLoading
-
-  const categoryOptions = useMemo(
-    () =>
-      categories.map((cat: Category) => ({
-        label: cat.title,
-        value: cat.id,
-        description: cat.description,
-      })),
-    [categories],
-  )
-
-  const tagOptions = useMemo(
-    () =>
-      tags.map((tag: Tag) => ({
-        label: tag.title,
-        value: tag.id,
-        description: tag.description,
-      })),
-    [tags],
-  )
 
   const renderTabs = (langKey: Languages) => {
     // Since we transform the Zod schema to strip out the locale prefixed keys then we need to
@@ -283,7 +275,7 @@ export const PermissionContent = () => {
               />
               <Select
                 value={selectedCategories}
-                options={categoryOptions}
+                options={categories}
                 onChange={(value) => {
                   setSelectedCategories(value as MultiValue<Option>)
                 }}
@@ -323,7 +315,7 @@ export const PermissionContent = () => {
 
               <Select
                 value={selectedTags}
-                options={tagOptions}
+                options={tags}
                 onChange={(value) => {
                   setSelectedTags(value as MultiValue<Option>)
                 }}
