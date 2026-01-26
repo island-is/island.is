@@ -7,6 +7,9 @@ export class Screen {
   @Field(() => String)
   id!: string
 
+  @Field(() => String, { nullable: true })
+  identifier?: string
+
   @Field(() => String)
   sectionId!: string
 
