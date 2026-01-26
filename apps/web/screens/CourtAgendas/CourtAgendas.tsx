@@ -528,7 +528,6 @@ const Filters = ({
                   icon="reload"
                   size="small"
                   onClick={() => {
-                    updateQueryState(QueryParam.LAWYER, null)
                     updateQueryState(QueryParam.SCHEDULE_TYPES, null)
                     updateRenderKey()
                   }}
