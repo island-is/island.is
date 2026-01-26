@@ -7,7 +7,6 @@ import { ValueDtoFragment } from './value'
 export const FieldFragment = gql`
   fragment Field on FormSystemField {
     id
-    identifier
     screenId
     name {
       ...LanguageFields

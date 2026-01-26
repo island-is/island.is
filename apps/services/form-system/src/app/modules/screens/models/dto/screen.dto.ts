@@ -17,10 +17,6 @@ export class ScreenDto {
 
   @ApiProperty()
   @IsString()
-  identifier!: string
-
-  @ApiProperty()
-  @IsString()
   sectionId!: string
 
   @ApiProperty({ type: LanguageType })
