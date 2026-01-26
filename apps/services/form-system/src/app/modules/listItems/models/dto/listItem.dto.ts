@@ -14,10 +14,6 @@ export class ListItemDto {
   @IsString()
   id!: string
 
-  @ApiProperty()
-  @IsString()
-  identifier!: string
-
   @ApiProperty({ type: LanguageType })
   @ValidateNested()
   @Type(() => LanguageType)
