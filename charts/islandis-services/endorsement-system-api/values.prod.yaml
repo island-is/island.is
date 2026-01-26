@@ -19,7 +19,6 @@ global:
 name: 'endorsement-system-api'
 args:
   - '--tls-min-v1.0'
-  - '--no-experimental-fetch'
   - 'main.cjs'
 command:
   - 'node'

@@ -18,7 +18,6 @@ global:
       NPM_CONFIG_UPDATE_NOTIFIER: 'false'
 name: 'user-notification'
 args:
-  - '--no-experimental-fetch'
   - 'main.cjs'
 command:
   - 'node'

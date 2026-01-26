@@ -106,7 +106,7 @@ ENV GIT_BRANCH=${GIT_BRANCH} \
 
 LABEL branch=${GIT_BRANCH} commit=${GIT_COMMIT_SHA}
 
-CMD ["node", "--no-experimental-fetch", "main.js"]
+CMD ["node", "main.js"]
 
 # ------------------------------------------------
 # Express yarn output
@@ -140,7 +140,7 @@ ENV GIT_BRANCH=${GIT_BRANCH} \
 
 LABEL branch=${GIT_BRANCH} commit=${GIT_COMMIT_SHA}
 
-CMD ["node", "--no-experimental-fetch", "main.cjs"]
+CMD ["node", "main.cjs"]
 
 # ------------------------------------------------
 # Next.js output
