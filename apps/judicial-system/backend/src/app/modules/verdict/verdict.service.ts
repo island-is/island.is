@@ -555,7 +555,7 @@ export class VerdictService {
       )
 
       if (isVerdictInfoChanged(verdictInfo, verdict)) {
-        await this.updateVerdict(verdict, verdictInfo, transaction)
+        return this.updateVerdict(verdict, verdictInfo, transaction)
       }
     }
 
