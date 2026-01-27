@@ -1,6 +1,7 @@
 import {
   CodeOwners,
   Context,
+  json,
   ref,
   service,
   ServiceBuilder,
@@ -358,6 +359,17 @@ export const serviceSetup = (services: {
         staging:
           '[TEST] Skráning á námskeið - Heilsugæsla höfuðborgarsvæðisins',
         prod: 'Skráning á námskeið - Heilsugæsla höfuðborgarsvæðisins',
+      },
+      REDIS_NODES: {
+        dev: json([
+          'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+        ]),
+        staging: json([
+          'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
+        ]),
+        prod: json([
+          'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
+        ]),
       },
     })
     .xroad(
