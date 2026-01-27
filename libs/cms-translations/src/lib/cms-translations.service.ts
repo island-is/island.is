@@ -1,6 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { ApolloError } from 'apollo-server-express'
-import memoize from 'memoizee'
 
 import { CACHE_MANAGER } from '@nestjs/cache-manager'
 import { Cache as CacheManager } from 'cache-manager'
