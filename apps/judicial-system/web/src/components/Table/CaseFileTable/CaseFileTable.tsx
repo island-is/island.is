@@ -1,5 +1,6 @@
 import { FC } from 'react'
 import { useIntl } from 'react-intl'
+import { motion } from 'motion/react'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import {
@@ -9,6 +10,7 @@ import {
   getRoleTitleFromCaseFileCategory,
 } from '@island.is/judicial-system/formatters'
 import { tables } from '@island.is/judicial-system-web/messages'
+import { IconButton } from '@island.is/judicial-system-web/src/components'
 import {
   SortButton,
   TableContainer,
@@ -21,6 +23,7 @@ import {
   useSort,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
+import ContextMenu from '../../ContextMenu/ContextMenu'
 import * as tableStyles from '../Table.css'
 import * as styles from './CaseFileTable.css'
 
@@ -69,6 +72,7 @@ const CaseFileTable: FC<Props> = ({
               {...createSortProps(formatMessage(tables.received), 'created')}
             />
           </th>
+          <th className={tableStyles.th} />
         </>
       }
     >
@@ -110,6 +114,26 @@ const CaseFileTable: FC<Props> = ({
                   }`}
                 </Text>
               </Box>
+            </td>
+            <td>
+              <ContextMenu
+                items={[]}
+                render={
+                  <motion.div
+                    className={tableStyles.smallContainer}
+                    key={file.id}
+                    initial={{ opacity: 1 }}
+                    animate={{ opacity: 1, y: 1 }}
+                    exit={{ opacity: 0, y: 5 }}
+                    onClick={(evt) => evt.stopPropagation()}
+                  >
+                    <IconButton
+                      icon="ellipsisVertical"
+                      colorScheme="transparent"
+                    />
+                  </motion.div>
+                }
+              />
             </td>
           </tr>
         )
