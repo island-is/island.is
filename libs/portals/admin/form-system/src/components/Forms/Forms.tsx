@@ -121,7 +121,9 @@ export const Forms = () => {
     return matchesStatus && matchesName
   }
 
-  console.log('Environment:', process.env.NODE_ENV)
+  const env = process.env.NODE_ENV
+
+  console.log('Environment:', env)
 
   return (
     <>
