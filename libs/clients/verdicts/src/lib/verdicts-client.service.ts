@@ -19,6 +19,11 @@ import { VerdictsClientConfig } from './verdicts-client.config'
 import type { ConfigType } from '@nestjs/config'
 import { AuthHeaderMiddleware } from '@island.is/auth-nest-tools'
 import { CaseFilterOptionType } from './types'
+import {
+  ALL_DISTRICT_COURTS,
+  COURT_OF_APPEAL,
+  SUPREME_COURT,
+} from './constants'
 
 const ITEMS_PER_PAGE = 10
 const GOPRO_ID_PREFIX = 'g-'
@@ -100,7 +105,7 @@ export class VerdictsClientService {
     dateTo?: string
     caseContact?: string
   }) {
-    const onlyFetchSupremeCourtVerdicts = input.courtLevel === 'Hæstiréttur'
+    const onlyFetchSupremeCourtVerdicts = input.courtLevel === SUPREME_COURT
 
     const { goproVerdictApi } = await this.getAuthenticatedGoproApis()
 
@@ -272,22 +277,13 @@ export class VerdictsClientService {
       await Promise.allSettled([
         goproVerdictApi.getCaseTypesV2({
           requestData: {
-            courts: ['landsrettur'],
+            courts: [COURT_OF_APPEAL],
           },
         }),
         this.supremeCourtApi.apiV2VerdictGetCaseTypesGet(),
         goproVerdictApi.getCaseTypesV2({
           requestData: {
-            courts: [
-              'hd-reykjavik',
-              'hd-vesturland',
-              'hd-vestfirdir',
-              'hd-nordurland-vestra',
-              'hd-nordurland-eystra',
-              'hd-austurland',
-              'hd-sudurland',
-              'hd-reykjanes',
-            ],
+            courts: ALL_DISTRICT_COURTS,
           },
         }),
       ])
@@ -410,15 +406,16 @@ export class VerdictsClientService {
     dateFrom?: string
     dateTo?: string
     lawyer?: string
+    scheduleTypes?: string[]
   }) {
-    const onlyFetchSupremeCourtAgendas = input.court === 'Hæstiréttur'
+    const onlyFetchSupremeCourtAgendas = input.court === SUPREME_COURT
     const pageNumber = input.page ?? 1
     const itemsPerPage = 10
 
     const { goproCourtAgendasApi } = await this.getAuthenticatedGoproApis()
 
     const [supremeCourtResponse, goproResponse] = await Promise.allSettled([
-      !input.court || onlyFetchSupremeCourtAgendas
+      (!input.court && !input.scheduleTypes) || onlyFetchSupremeCourtAgendas
         ? this.supremeCourtApi.apiV2VerdictGetAgendasPost({
             agendaSearchRequest: {
               page: pageNumber,
@@ -457,6 +454,7 @@ export class VerdictsClientService {
             lawyer: input.lawyer ? input.lawyer : undefined,
             orderBy: 'StartDateTime',
             orderDirection: 'ASC',
+            scheduleType: input.scheduleTypes ? input.scheduleTypes : undefined,
           }),
     ])
 
@@ -475,7 +473,7 @@ export class VerdictsClientService {
           courtRoom: agenda.courtroom ?? '',
           judges: agenda.judges ?? [],
           lawyers: [],
-          court: 'Hæstiréttur',
+          court: SUPREME_COURT,
           type: agenda.caseType ?? '',
           title: agenda.title ?? '',
         })
@@ -589,5 +587,77 @@ export class VerdictsClientService {
 
     lawyers.sort(sortAlpha('name'))
     return lawyers
+  }
+
+  async getScheduleTypes() {
+    const { goproCourtAgendasApi } = await this.getAuthenticatedGoproApis()
+    const [courtOfAppealResponse, districtCourtResponse] =
+      await Promise.allSettled([
+        goproCourtAgendasApi.getScheduleTypeV2({
+          courts: [COURT_OF_APPEAL],
+        }),
+        goproCourtAgendasApi.getScheduleTypeV2({
+          courts: ALL_DISTRICT_COURTS,
+        }),
+      ])
+
+    const mapOfAll = new Map<string, { id: string; label: string }>()
+
+    const courtOfAppealItems: Array<{ id: string; label: string }> = []
+    if (courtOfAppealResponse.status === 'fulfilled')
+      for (const scheduleType of courtOfAppealResponse.value.items ?? [])
+        if (scheduleType.label && scheduleType.id !== undefined) {
+          const id = String(scheduleType.id)
+          const item = { id, label: scheduleType.label }
+          if (!mapOfAll.has(scheduleType.label)) {
+            mapOfAll.set(scheduleType.label, item)
+          }
+          courtOfAppealItems.push(item)
+        }
+
+    const supremeCourtItems: Array<{ id: string; label: string }> = []
+
+    const districtCourtItems: Array<{ id: string; label: string }> = []
+    if (districtCourtResponse.status === 'fulfilled')
+      for (const scheduleType of districtCourtResponse.value.items ?? [])
+        if (scheduleType.label && scheduleType.id !== undefined) {
+          const id = String(scheduleType.id)
+          const item = { id, label: scheduleType.label }
+          if (!mapOfAll.has(scheduleType.label)) {
+            mapOfAll.set(scheduleType.label, item)
+          }
+          districtCourtItems.push(item)
+        }
+
+    courtOfAppealItems.sort(sortAlpha('label'))
+    districtCourtItems.sort(sortAlpha('label'))
+
+    const allItems = Array.from(mapOfAll.values())
+    allItems.sort(sortAlpha('label'))
+
+    return {
+      courtOfAppeal: {
+        items: courtOfAppealItems,
+      },
+      supremeCourt: {
+        items: supremeCourtItems,
+      },
+      districtCourt: {
+        items: districtCourtItems,
+      },
+      all: {
+        items: allItems,
+      },
+    }
+  }
+
+  async getScheduleTypesPerCourt(input: { courts?: string[] }) {
+    const { goproCourtAgendasApi } = await this.getAuthenticatedGoproApis()
+    const response = await goproCourtAgendasApi.getScheduleTypeV2({
+      courts: input.courts,
+    })
+    return {
+      items: response.items ?? [],
+    }
   }
 }
