@@ -941,6 +941,7 @@ application-system-api-worker:
     NODE_OPTIONS: '--max-old-space-size=691 --enable-source-maps -r dd-trace/init'
     PAYMENTS_API_URL: 'http://services-payments.services-payments.svc.cluster.local'
     PAYMENT_API_CALLBACK_URL: 'http://application-system-api.application-system.svc.cluster.local'
+    REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
     SERVERSIDE_FEATURES_ON: ''
     USER_NOTIFICATION_API_URL: 'http://user-notification.user-notification.svc.cluster.local'
