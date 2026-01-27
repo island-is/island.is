@@ -19,6 +19,7 @@ import {
 import { DownloadServiceConfig } from '@island.is/nest/config'
 import { ConfigType } from '@nestjs/config'
 import { RentalAgreement } from '../models/rentalAgreements/rentalAgreement.model'
+import { AGREEMENT_STATUS_SORT_ORDER } from '../constants'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Resolver()
@@ -46,7 +47,13 @@ export class RentalAgreementsResolver {
       user,
       hideInactiveAgreements,
     )
-    const data = res.map(mapToRentalAgreement)
+    const data = res
+      .map(mapToRentalAgreement)
+      .sort(
+        (a, b) =>
+          AGREEMENT_STATUS_SORT_ORDER[a.status] -
+          AGREEMENT_STATUS_SORT_ORDER[b.status],
+      )
 
     return {
       data,

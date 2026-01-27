@@ -18,3 +18,16 @@ export const TERMINATED_AGREEMENT_STATUSES: AgreementStatusType[] = [
   AgreementStatusType.CANCELLED,
   AgreementStatusType.TERMINATED,
 ]
+
+export const AGREEMENT_STATUS_SORT_ORDER: Record<AgreementStatusType, number> =
+  {
+    valid: 1,
+    expired: 2,
+    cancellationRequested: 3,
+    pendingCancellation: 4,
+    cancelled: 5,
+    pendingTermination: 6,
+    terminated: 7,
+    invalid: 8,
+    unknown: 9,
+  }

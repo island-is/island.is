@@ -31,7 +31,10 @@ export class HmsRentalAgreementService {
       kt: user.nationalId,
     })
 
-    const data = res.map(mapRentalAgreementDto).filter(isDefined)
+    const data = res
+      .map(mapRentalAgreementDto)
+      .filter(isDefined)
+      .sort((a, b) => a.status > b.status)
     if (hideInactiveAgreements) {
       return data.filter((d) => !INACTIVE_AGREEMENT_STATUSES.includes(d.status))
     }
