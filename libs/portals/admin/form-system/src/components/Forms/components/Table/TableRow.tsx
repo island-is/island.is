@@ -41,7 +41,7 @@ interface Props {
 
 const PATH =
   process.env.NODE_ENV === 'production'
-    ? `https://form.island.is`
+    ? `https://island.is/form`
     : `https://beta.dev01.devland.is/form`
 
 interface ColumnTextProps {
