@@ -14,12 +14,12 @@ import {
   CaseType,
   RequestSignatureResponse,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { useCourtRecordSignatureConfirmationQuery } from '@island.is/judicial-system-web/src/routes/Shared/SignedVerdictOverview/courtRecordSignatureConfirmation.generated'
 
 import { Modal } from '../..'
 import MarkdownWrapper from '../../MarkdownWrapper/MarkdownWrapper'
-import { signingModal as signingModalStrings } from './SignatureConfirmationModal.strings'
 import { useRulingSignatureConfirmationQuery } from '../SigningMethodSelectionModal/rulingSignatureConfirmation.generated'
-import { useCourtRecordSignatureConfirmationQuery } from '@island.is/judicial-system-web/src/routes/Shared/SignedVerdictOverview/courtRecordSignatureConfirmation.generated'
+import { signingModal as signingModalStrings } from './SignatureConfirmationModal.strings'
 
 export type SignatureType = 'ruling' | 'courtRecord'
 
@@ -195,10 +195,7 @@ export const SignatureConfirmationModal: FC<
   }
 
   const handleRetry = () => {
-    if (onRetry) {
-      onRetry()
-    }
-    onClose()
+    onRetry?.() ?? onClose()
   }
 
   return (

@@ -350,13 +350,6 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.post(`case/${caseId}/ruling/signature?method=${method}`)
   }
 
-  requestRulingSignatureAudkenni(
-    caseId: string,
-    method: 'audkenni' | 'mobile' = 'mobile',
-  ): Promise<RequestSignatureResponse> {
-    return this.post(`case/${caseId}/ruling/signature?method=${method}`)
-  }
-
   getRulingSignatureConfirmation(
     caseId: string,
     documentToken: string,

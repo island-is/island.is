@@ -1,4 +1,4 @@
-import { FC, useContext, useState } from 'react'
+import { FC, useContext, useEffect, useRef,useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Button, Text } from '@island.is/island-ui/core'
@@ -19,9 +19,9 @@ import {
   FormContext,
   PdfButton,
   SectionHeading,
-  SigningMethodSelectionModal,
   SignatureType,
   SignedDocument,
+  SigningMethodSelectionModal,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
@@ -52,11 +52,15 @@ interface Props {
     response: RequestSignatureResponse,
     isAudkenni: boolean,
   ) => void
+  retrySignatureType?: SignatureType | null
+  onRetryCleared?: () => void
 }
 
 const CaseDocuments: FC<Props> = ({
   onCourtRecordSignatureRequested,
   onRulingSignatureRequested,
+  retrySignatureType,
+  onRetryCleared,
 }) => {
   const { formatMessage } = useIntl()
   const { workingCase } = useContext(FormContext)
@@ -64,6 +68,22 @@ const CaseDocuments: FC<Props> = ({
   const [showMethodSelectionModal, setShowMethodSelectionModal] = useState<{
     type: SignatureType
   } | null>(null)
+  const prevRetrySignatureTypeRef = useRef<SignatureType | null | undefined>(
+    null,
+  )
+
+  // Handle retry by reopening the method selection modal
+  useEffect(() => {
+    if (
+      retrySignatureType &&
+      retrySignatureType !== prevRetrySignatureTypeRef.current
+    ) {
+      setShowMethodSelectionModal({ type: retrySignatureType })
+      prevRetrySignatureTypeRef.current = retrySignatureType
+    } else if (!retrySignatureType) {
+      prevRetrySignatureTypeRef.current = null
+    }
+  }, [retrySignatureType])
 
   const isRulingRequired = !workingCase.isCompletedWithoutRuling
 
@@ -183,8 +203,15 @@ const CaseDocuments: FC<Props> = ({
         <SigningMethodSelectionModal
           workingCase={workingCase}
           signatureType={showMethodSelectionModal.type}
-          onClose={() => setShowMethodSelectionModal(null)}
+          onClose={() => {
+            setShowMethodSelectionModal(null)
+            // Clear retry state when modal is closed normally
+            if (retrySignatureType === showMethodSelectionModal.type) {
+              onRetryCleared?.()
+            }
+          }}
           onSignatureRequested={(response, isAudkenni) => {
+            setShowMethodSelectionModal(null)
             if (showMethodSelectionModal.type === 'ruling') {
               onRulingSignatureRequested(response, isAudkenni)
             } else {

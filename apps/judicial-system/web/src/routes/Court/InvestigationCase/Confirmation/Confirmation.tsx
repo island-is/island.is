@@ -23,8 +23,8 @@ import {
   PdfButton,
   PoliceRequestAccordionItem,
   RulingAccordionItem,
-  SigningMethodSelectionModal,
   SignatureConfirmationModal,
+  SigningMethodSelectionModal,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
@@ -274,6 +274,11 @@ const Confirmation: FC = () => {
             setRulingSignatureResponse(undefined)
             setIsRulingSignatureAudkenni(false)
             setModalVisible('none')
+          }}
+          onRetry={() => {
+            setRulingSignatureResponse(undefined)
+            setIsRulingSignatureAudkenni(false)
+            setModalVisible('signingMethodSelectionModal')
           }}
           navigateOnClose={true}
         />

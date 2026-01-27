@@ -1,8 +1,14 @@
-import { useRouter } from 'next/router'
 import { FC, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { useRouter } from 'next/router'
 
 import { Accordion, Box } from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
+import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
+import {
+  isAcceptingCaseDecision,
+  isCompletedCase,
+} from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   Conclusion,
@@ -27,12 +33,6 @@ import {
   RequestSignatureResponse,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import * as constants from '@island.is/judicial-system/consts'
-import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
-import {
-  isAcceptingCaseDecision,
-  isCompletedCase,
-} from '@island.is/judicial-system/types'
 
 import {
   JudgeRequestRulingSignatureModal,
@@ -264,6 +264,11 @@ const Confirmation: FC = () => {
             setRulingSignatureResponse(undefined)
             setIsRulingSignatureAudkenni(false)
             setModalVisible('none')
+          }}
+          onRetry={() => {
+            setRulingSignatureResponse(undefined)
+            setIsRulingSignatureAudkenni(false)
+            setModalVisible('signingMethodSelectionModal')
           }}
           navigateOnClose={true}
         />

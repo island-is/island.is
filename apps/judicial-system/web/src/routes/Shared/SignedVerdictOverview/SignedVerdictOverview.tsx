@@ -1,9 +1,19 @@
-import { AnimatePresence, motion } from 'motion/react'
-import { useRouter } from 'next/router'
 import { FC, ReactNode, useCallback, useContext, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
+import { AnimatePresence, motion } from 'motion/react'
+import { useRouter } from 'next/router'
 
 import { Accordion, AlertMessage, Box, Button } from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
+import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
+import {
+  isDistrictCourtUser,
+  isInvestigationCase,
+  isPrisonAdminUser,
+  isPrisonSystemUser,
+  isProsecutionUser,
+  isRestrictionCase,
+} from '@island.is/judicial-system/types'
 import {
   core,
   signedVerdictOverview as m,
@@ -31,6 +41,7 @@ import {
   ReopenModal,
   RulingAccordionItem,
   SignatureConfirmationModal,
+  SignatureType,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
@@ -50,16 +61,6 @@ import {
   useCase,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
-import * as constants from '@island.is/judicial-system/consts'
-import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
-import {
-  isDistrictCourtUser,
-  isInvestigationCase,
-  isPrisonAdminUser,
-  isPrisonSystemUser,
-  isProsecutionUser,
-  isRestrictionCase,
-} from '@island.is/judicial-system/types'
 
 import CaseDocuments from './Components/CaseDocuments/CaseDocuments'
 import ModifyDatesModal from './Components/ModifyDatesModal/ModifyDatesModal'
@@ -205,6 +206,9 @@ export const SignedVerdictOverview: FC = () => {
   const [isRulingSignatureAudkenni, setIsRulingSignatureAudkenni] =
     useState<boolean>(false)
 
+  const [retrySignatureType, setRetrySignatureType] =
+    useState<SignatureType | null>(null)
+
   const { user } = useContext(UserContext)
   const router = useRouter()
   const { formatMessage } = useIntl()
@@ -250,6 +254,7 @@ export const SignedVerdictOverview: FC = () => {
   ) => {
     setRequestCourtRecordSignatureResponse(response)
     setIsCourtRecordSignatureAudkenni(isAudkenni)
+    setRetrySignatureType(null)
     setModalVisible('CourtRecordSigningConfirmationModal')
   }
 
@@ -259,6 +264,7 @@ export const SignedVerdictOverview: FC = () => {
   ) => {
     setRulingSignatureResponse(response)
     setIsRulingSignatureAudkenni(isAudkenni)
+    setRetrySignatureType(null)
     setModalVisible('SigningConfirmationModal')
   }
 
@@ -557,6 +563,8 @@ export const SignedVerdictOverview: FC = () => {
                 handleCourtRecordSignatureRequested
               }
               onRulingSignatureRequested={handleRulingSignatureRequested}
+              retrySignatureType={retrySignatureType}
+              onRetryCleared={() => setRetrySignatureType(null)}
             />
 
             {isProsecutionUser(user) &&
@@ -624,8 +632,15 @@ export const SignedVerdictOverview: FC = () => {
               onClose={() => {
                 setRequestCourtRecordSignatureResponse(undefined)
                 setIsCourtRecordSignatureAudkenni(false)
+                setRetrySignatureType(null)
                 refreshCase()
                 setModalVisible('NoModal')
+              }}
+              onRetry={() => {
+                setRequestCourtRecordSignatureResponse(undefined)
+                setIsCourtRecordSignatureAudkenni(false)
+                setModalVisible('NoModal')
+                setRetrySignatureType('courtRecord')
               }}
               navigateOnClose={false}
             />
@@ -642,8 +657,15 @@ export const SignedVerdictOverview: FC = () => {
               onClose={() => {
                 setRulingSignatureResponse(undefined)
                 setIsRulingSignatureAudkenni(false)
+                setRetrySignatureType(null)
                 refreshCase()
                 setModalVisible('NoModal')
+              }}
+              onRetry={() => {
+                setRulingSignatureResponse(undefined)
+                setIsRulingSignatureAudkenni(false)
+                setModalVisible('NoModal')
+                setRetrySignatureType('ruling')
               }}
               navigateOnClose={false}
             />

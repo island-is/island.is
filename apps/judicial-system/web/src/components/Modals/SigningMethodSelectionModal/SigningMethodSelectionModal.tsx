@@ -7,8 +7,8 @@ import {
   Case,
   RequestSignatureResponse,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-
 import { useRequestCourtRecordSignatureMutation } from '@island.is/judicial-system-web/src/routes/Shared/SignedVerdictOverview/requestCourtRecordSignature.generated'
+
 import { Modal } from '../..'
 import { useRequestRulingSignatureMutation } from './requestRulingSignature.generated'
 import { signingMethodSelectionModal as m } from './SigningMethodSelectionModal.strings'
@@ -50,6 +50,7 @@ export const SigningMethodSelectionModal: FC<
   const handleMethodSelection = async (isAudkenni: boolean) => {
     setIsLoading(true)
 
+    let response: RequestSignatureResponse | undefined | null = null
     try {
       if (signatureType === 'ruling') {
         const result = await requestRulingSignature({
@@ -60,13 +61,7 @@ export const SigningMethodSelectionModal: FC<
             },
           },
         })
-        const response = result.data?.requestRulingSignature
-
-        if (response) {
-          onSignatureRequested(response, isAudkenni)
-        } else {
-          setIsLoading(false)
-        }
+        response = result.data?.requestRulingSignature
       } else {
         // courtRecord
         const result = await requestCourtRecordSignature({
@@ -77,17 +72,17 @@ export const SigningMethodSelectionModal: FC<
             },
           },
         })
-        const response = result.data?.requestCourtRecordSignature
-
-        if (response) {
-          onSignatureRequested(response, isAudkenni)
-        } else {
-          setIsLoading(false)
-        }
+        response = result.data?.requestCourtRecordSignature
       }
     } catch (error) {
       setIsLoading(false)
-      // Error is already handled by onError callbacks
+    }
+
+    if (response) {
+      onSignatureRequested(response, isAudkenni)
+    } else {
+      toast.error(formatMessage(errorMessages.requestCourtRecordSignature))
+      setIsLoading(false)
     }
   }
 

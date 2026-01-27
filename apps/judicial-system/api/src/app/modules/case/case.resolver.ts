@@ -186,32 +186,6 @@ export class CaseResolver {
     )
   }
 
-  @Query(() => SignatureConfirmationResponse, { nullable: true })
-  courtRecordSignatureConfirmationAudkenni(
-    @Args('input', { type: () => SignatureConfirmationQueryInput })
-    input: SignatureConfirmationQueryInput,
-    @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
-  ): Promise<SignatureConfirmationResponse> {
-    const { caseId, documentToken } = input
-
-    this.logger.debug(
-      `Confirming signature of court record via Audkenni for case ${caseId}`,
-    )
-
-    return this.auditTrailService.audit(
-      user.id,
-      AuditedAction.CONFIRM_RULING_SIGNATURE,
-      backendService.getCourtRecordSignatureConfirmationAudkenni(
-        caseId,
-        documentToken,
-        method ?? 'mobile',
-      ),
-      caseId,
-    )
-  }
-
   @Mutation(() => RequestSignatureResponse, { nullable: true })
   requestRulingSignature(
     @Args('input', { type: () => RequestSignatureInput })
@@ -249,32 +223,6 @@ export class CaseResolver {
       user.id,
       AuditedAction.CONFIRM_RULING_SIGNATURE,
       backendService.getRulingSignatureConfirmation(
-        caseId,
-        documentToken,
-        method ?? 'mobile',
-      ),
-      caseId,
-    )
-  }
-
-  @Query(() => SignatureConfirmationResponse, { nullable: true })
-  rulingSignatureConfirmationAudkenni(
-    @Args('input', { type: () => SignatureConfirmationQueryInput })
-    input: SignatureConfirmationQueryInput,
-    @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
-  ): Promise<SignatureConfirmationResponse> {
-    const { caseId, documentToken } = input
-
-    this.logger.debug(
-      `Confirming signature of ruling via Audkenni for case ${caseId}`,
-    )
-
-    return this.auditTrailService.audit(
-      user.id,
-      AuditedAction.CONFIRM_RULING_SIGNATURE,
-      backendService.getRulingSignatureConfirmationAudkenni(
         caseId,
         documentToken,
         method ?? 'mobile',
