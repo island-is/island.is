@@ -12,6 +12,7 @@ export interface RentalAgreementDto {
   status: AgreementStatusType
   dateFrom?: Date
   dateTo?: Date
+  terminationDate?: Date
   contractType: TemporalType
   contractParty?: ContractPartyDto[]
   contractProperty?: ContractPropertyDto[]
@@ -31,6 +32,9 @@ export const mapRentalAgreementDto = (
     status,
     dateFrom: contract.dateFrom ? new Date(contract.dateFrom) : undefined,
     dateTo: contract.dateTo ? new Date(contract.dateTo) : undefined,
+    terminationDate: contract.dateManualEnd
+      ? new Date(contract.dateManualEnd)
+      : undefined,
     contractType:
       contract.contractTypeUseCode === 'TEMPORARYAGREEMENT'
         ? 'temporary'

@@ -9,7 +9,6 @@ import {
 import { Audit } from '@island.is/nest/audit'
 import { PaginatedRentalAgreementCollection } from '../models/rentalAgreements/rentalAgreementCollection.model'
 import { HmsRentalAgreementService } from '@island.is/clients/hms-rental-agreement'
-import { RentalAgreement } from '../models/rentalAgreements/rentalAgreement.model'
 import { mapToRentalAgreement } from '../mappers'
 import { handle404 } from '@island.is/clients/middlewares'
 import {
@@ -19,6 +18,7 @@ import {
 } from '@island.is/nest/feature-flags'
 import { DownloadServiceConfig } from '@island.is/nest/config'
 import { ConfigType } from '@nestjs/config'
+import { RentalAgreement } from '../models/rentalAgreements/rentalAgreement.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Resolver()

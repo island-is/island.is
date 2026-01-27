@@ -24,7 +24,7 @@ import { getApplicationsBaseUrl } from '@island.is/portals/core'
 
 const UserContract = () => {
   useNamespaces('sp.contracts')
-  const { formatMessage } = useLocale()
+  const { formatMessage, formatDate } = useLocale()
 
   const { id } = useParams<'id'>()
 
@@ -142,6 +142,15 @@ const UserContract = () => {
                     {formatMessage(status.message)}
                   </Tag>
                 ) : undefined
+              }
+            />
+            <InfoLine
+              loading={loading}
+              label={cm.terminationDate}
+              content={
+                contract?.terminationDate
+                  ? formatDate(contract.terminationDate, { dateStyle: 'long' })
+                  : undefined
               }
             />
           </InfoLineStack>

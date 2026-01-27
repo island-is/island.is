@@ -8,19 +8,21 @@ import {
   TemporalType as TemporalClientType,
   RentalPropertyType,
 } from '@island.is/clients/hms-rental-agreement'
-import { LANDLORD_TYPES, TENANT_TYPES } from './constants'
+import {
+  LANDLORD_TYPES,
+  TENANT_TYPES,
+  TERMINATED_AGREEMENT_STATUSES,
+} from './constants'
 import { Address } from './models/rentalAgreements/address.model'
 import { ContractParty } from './models/rentalAgreements/contractParty.model'
-import {
-  ContractProperty,
-  PropertyType,
-} from './models/rentalAgreements/contractProperty.model'
+import { ContractProperty } from './models/rentalAgreements/contractProperty.model'
 import {
   AgreementStatusType,
   PartyType,
-  RentalAgreement,
+  PropertyType,
   TemporalType,
-} from './models/rentalAgreements/rentalAgreement.model'
+} from './enums'
+import { RentalAgreement } from './models/rentalAgreements/rentalAgreement.model'
 
 const mapAddress = (addressDto?: AddressDto): Address | undefined => {
   if (!addressDto) return undefined
@@ -141,6 +143,7 @@ export const mapToRentalAgreement = (
     contractType: mapTemporalType(dto.contractType),
     dateFrom: dto.dateFrom?.toISOString(),
     dateTo: dto.dateTo?.toISOString(),
+    terminationDate: dto.terminationDate?.toISOString(),
     landlords:
       parties?.filter((party) => LANDLORD_TYPES.includes(party.type)) ??
       undefined,
