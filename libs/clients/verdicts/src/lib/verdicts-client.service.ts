@@ -601,7 +601,13 @@ export class VerdictsClientService {
     return {
       total: Number(response.total ?? 0),
       items: (response.items ?? [])
-        .filter((item) => Boolean(item.id))
+        .filter(
+          (item) =>
+            Boolean(item.id) &&
+            Boolean(item.title) &&
+            Boolean(item.caseNumber) &&
+            Boolean(item.publishDate),
+        )
         .map((item) => ({
           id: item.id as string,
           title: item.title as string,
@@ -618,7 +624,13 @@ export class VerdictsClientService {
       await this.supremeCourtApi.apiV2VerdictGetDeterminationIdGet({
         id,
       })
-    if (!response.item?.id) return null
+    if (
+      !response.item?.id ||
+      !response.item?.title ||
+      !response.item?.caseNumber ||
+      !response.item?.publishDate
+    )
+      return null
     return {
       item: {
         id: response.item?.id as string,
