@@ -4,6 +4,7 @@ import { RateCategory } from './constants'
 import { CarCategoryError, CarCategoryRecord, CarMap } from './types'
 import { is30DaysOrMoreFromDate } from './dayRateUtils'
 import { m } from '../lib/messages'
+import { MessageDescriptor } from 'react-intl'
 
 const sanitizeNumber = (n: string) => n.replace(new RegExp(/[.,]/g), '')
 
@@ -177,7 +178,7 @@ export const parseCsvString = (chunk: string): Promise<string[][]> => {
 export const createErrorExcel = async (
   file: File,
   type: 'csv' | 'xlsx',
-  errors: CarCategoryError[],
+  errors: Map<string, string | MessageDescriptor>,
 ) => {
   const parsedLines: Array<Array<string>> = await (type === 'csv'
     ? parseCsv(file)
@@ -188,13 +189,10 @@ export const createErrorExcel = async (
   // Add error message column to header
   const newHeader = [...header, 'Villa']
 
-  // Create a map of error messages by car number
-  const errorMap = new Map(errors.map((error) => [error.carNr, error.message]))
-
   // Add error messages to rows and mark error rows
   const processedRows = values.map((row) => {
     const carNr = row[0]
-    const errorMessage = errorMap.get(carNr)
+    const errorMessage = errors.get(carNr)
     return {
       row,
       hasError: !!errorMessage,

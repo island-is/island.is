@@ -181,7 +181,10 @@ export const UploadCarCategoryFile = ({
       const errorExcel = await createErrorExcel(
         file,
         type,
-        dataToChange as CarCategoryError[],
+        new Map(
+          (dataToChange as CarCategoryError[])
+          .map((error) => [error.carNr, formatMessage(error.message)])
+        ),
       )
       setErrorFile(errorExcel)
       return
