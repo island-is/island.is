@@ -45,8 +45,11 @@ export const multiUploadSection = buildSection({
             component: 'UploadCarCategoryFile',
           },
           {
-            getFileContent: (vehicleMap: CarMap, rateCategory: RateCategory, locale: Locale) =>
-              generateExcelSheet(vehicleMap, rateCategory, locale),
+            getFileContent: (
+              vehicleMap: CarMap,
+              rateCategory: RateCategory,
+              locale: Locale,
+            ) => generateExcelSheet(vehicleMap, rateCategory, locale),
           },
         ),
       ],
