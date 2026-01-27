@@ -590,4 +590,26 @@ export class VerdictsClientService {
     lawyers.sort(sortAlpha('name'))
     return lawyers
   }
+
+  async getSupremeCourtDeterminations(input: { page: number }) {
+    const response =
+      await this.supremeCourtApi.apiV2VerdictGetDeterminationsGet({
+        page: input.page ?? 1,
+        limit: 10,
+      })
+
+    return {
+      total: Number(response.total ?? 0),
+      items: response.items ?? [],
+      input,
+    }
+  }
+
+  async getSupremeCourtDeterminationById(id: string) {
+    const response =
+      await this.supremeCourtApi.apiV2VerdictGetDeterminationIdGet({
+        id,
+      })
+    return response
+  }
 }
