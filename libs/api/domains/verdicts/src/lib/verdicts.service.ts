@@ -9,7 +9,6 @@ import { LawyersResponse } from './dto/lawyers.response'
 import { CaseFilterOptionsResponse } from './dto/caseFilterOptions.response'
 import { SupremeCourtDeterminationsInput } from './dto/supremeCourtDeterminations.input'
 import { SupremeCourtDeterminationsResponse } from './dto/supremeCourtDeterminations.response'
-import { writeFileSync } from 'fs'
 import { SupremeCourtDeterminationByIdInput } from './dto/supremeCourtDeterminationById.input'
 import { SupremeCourtDeterminationByIdResponse } from './dto/supremeCourtDeterminationById.response'
 
@@ -74,50 +73,12 @@ export class VerdictsService {
   async getSupremeCourtDeterminations(
     input: SupremeCourtDeterminationsInput,
   ): Promise<SupremeCourtDeterminationsResponse> {
-    const response =
-      await this.verdictsClientService.getSupremeCourtDeterminations(input)
-    writeFileSync('response.json', JSON.stringify(response, null, 2))
-    return {
-      items: response.items
-        .filter(
-          (item) =>
-            Boolean(item?.id) &&
-            Boolean(item.caseNumber) &&
-            Boolean(item.title) &&
-            Boolean(item.publishDate),
-        )
-        .map((item) => ({
-          id: item.id as string,
-          title: item.caseNumber as string,
-          subtitle: item.title as string,
-          date: item.publishDate as Date,
-          keywords: item.keywords ?? [],
-        })),
-      total: response.total,
-      input,
-    }
+    return this.verdictsClientService.getSupremeCourtDeterminations(input)
   }
 
   async getSupremeCourtDeterminationById(
     input: SupremeCourtDeterminationByIdInput,
   ): Promise<SupremeCourtDeterminationByIdResponse | null> {
-    const response =
-      await this.verdictsClientService.getSupremeCourtDeterminationById(
-        input.id,
-      )
-    if (!response?.item?.id) {
-      return null
-    }
-    writeFileSync(
-      'supremeCourtDeterminationByIdResponse.json',
-      JSON.stringify(response, null, 2),
-    )
-    return {
-      item: {
-        id: response.item.id as string,
-        title: response.item.caseNumber as string,
-        subtitle: response.item.title as string,
-      },
-    }
+    return this.verdictsClientService.getSupremeCourtDeterminationById(input.id)
   }
 }

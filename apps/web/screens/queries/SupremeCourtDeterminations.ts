@@ -8,7 +8,7 @@ export const GET_SUPREME_COURT_DETERMINATIONS_QUERY = gql`
       items {
         id
         title
-        subtitle
+        caseNumber
         date
         keywords
       }
@@ -28,6 +28,11 @@ export const GET_SUPREME_COURT_DETERMINATION_BY_ID_QUERY = gql`
       item {
         id
         title
+        caseNumber
+        date
+        keywords
+        richText
+        presentings
       }
     }
   }

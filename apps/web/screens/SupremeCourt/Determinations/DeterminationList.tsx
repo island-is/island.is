@@ -153,14 +153,14 @@ const Determinations: CustomScreen<DeterminationsProps> = ({
                 <InfoCardGrid
                   cards={determinations.items.map((item) => {
                     return {
-                      description: item.subtitle,
+                      description: item.title,
                       eyebrow: format(new Date(item.date), 'd. MMMM yyyy'),
                       id: item.id,
                       link: {
                         href: `/s/haestirettur/akvardanir/${item.id}`,
                         label: '',
                       },
-                      title: item.title,
+                      title: item.caseNumber,
                       subDescription: item.keywords.join(', '),
                       borderColor: 'blue200',
                       detailLines: [],

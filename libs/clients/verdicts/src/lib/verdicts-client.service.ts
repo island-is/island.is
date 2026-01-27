@@ -600,7 +600,15 @@ export class VerdictsClientService {
 
     return {
       total: Number(response.total ?? 0),
-      items: response.items ?? [],
+      items: (response.items ?? [])
+        .filter((item) => Boolean(item.id))
+        .map((item) => ({
+          id: item.id as string,
+          title: item.title as string,
+          caseNumber: item.caseNumber as string,
+          date: item.publishDate as Date,
+          keywords: item.keywords ?? [],
+        })),
       input,
     }
   }
@@ -610,6 +618,20 @@ export class VerdictsClientService {
       await this.supremeCourtApi.apiV2VerdictGetDeterminationIdGet({
         id,
       })
-    return response
+    if (!response.item?.id) return null
+    return {
+      item: {
+        id: response.item?.id as string,
+        title: response.item?.title as string,
+        caseNumber: response.item?.caseNumber as string,
+        date: response.item?.publishDate as Date,
+        presentings: response.item?.presentings ?? '',
+        keywords: response.item?.keywords ?? [],
+        richText: await convertHtmlToContentfulRichText(
+          response.item?.verdictHtml ?? '',
+          'verdictHtml',
+        ),
+      },
+    }
   }
 }

@@ -1,18 +1,11 @@
 import { useIntl } from 'react-intl'
+import cn from 'classnames'
+import capitalize from 'lodash/capitalize'
 import { useRouter } from 'next/router'
 
-import {
-  Box,
-  Button,
-  GridColumn,
-  GridContainer,
-  GridRow,
-  Hidden,
-  Inline,
-  Stack,
-  Text,
-} from '@island.is/island-ui/core'
-import { OrganizationWrapper, Webreader } from '@island.is/web/components'
+import { SliceType } from '@island.is/island-ui/contentful'
+import { Box, GridContainer, Stack, Text } from '@island.is/island-ui/core'
+import { OrganizationWrapper } from '@island.is/web/components'
 import {
   CustomPageUniqueIdentifier,
   OrganizationPage,
@@ -28,6 +21,7 @@ import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
+import { webRichText } from '@island.is/web/utils/richText'
 
 import {
   CustomScreen,
@@ -38,6 +32,7 @@ import { GET_NAMESPACE_QUERY } from '../../queries/Namespace'
 import { GET_ORGANIZATION_PAGE_QUERY } from '../../queries/Organization'
 import { GET_SUPREME_COURT_DETERMINATION_BY_ID_QUERY } from '../../queries/SupremeCourtDeterminations'
 import { m } from './translations.strings'
+import * as styles from './DeterminationDetails.css'
 
 interface HtmlViewProps {
   item: NonNullable<
@@ -53,7 +48,7 @@ const HtmlView = ({ item }: HtmlViewProps) => {
   const [a, b] = item.title.split('gegn')
 
   return (
-    <Box paddingBottom={5}>
+    <Box paddingBottom={5} className="rs_read">
       <GridContainer>
         <Box
           display="flex"
@@ -73,15 +68,16 @@ const HtmlView = ({ item }: HtmlViewProps) => {
               </Text>
               <Stack space={1}>
                 <Text variant="h3" as="h2" textAlign="center">
-                  {formatMessage(m.detailsPage.caseNumberPrefix)} {item.title}
+                  {formatMessage(m.detailsPage.caseNumberPrefix)}{' '}
+                  {item.caseNumber}
                 </Text>
-                {item.verdictDate && (
+                {item.date && (
                   <Text textAlign="center">
                     {capitalize(
-                      format(
-                        new Date(item.verdictDate),
-                        'eeee d. MMMM yyyy',
-                      ).replace('dagur', 'dagurinn'),
+                      format(new Date(item.date), 'eeee d. MMMM yyyy').replace(
+                        'dagur',
+                        'dagurinn',
+                      ),
                     )}
                   </Text>
                 )}
@@ -95,18 +91,22 @@ const HtmlView = ({ item }: HtmlViewProps) => {
                   </Box>
                 )}
               </Stack>
-              <Box className={styles.textMaxWidth} paddingX={[0, 6, 8, 12]}>
-                <Text variant="h4" as="h3">
-                  {formatMessage(m.verdictPage.keywords)}
-                </Text>
-                <Text>{item.keywords.join(', ')}</Text>
-              </Box>
-              <Box className={styles.textMaxWidth} paddingX={[0, 6, 8, 12]}>
-                <Text variant="h4" as="h3">
-                  {formatMessage(m.verdictPage.presentings)}
-                </Text>
-                <Text>{item.presentings}</Text>
-              </Box>
+              {item.keywords.length > 0 && (
+                <Box className={styles.textMaxWidth} paddingX={[0, 6, 8, 12]}>
+                  <Text variant="h4" as="h3">
+                    {formatMessage(m.detailsPage.keywords)}
+                  </Text>
+                  <Text>{item.keywords.join(', ')}</Text>
+                </Box>
+              )}
+              {item.presentings && (
+                <Box className={styles.textMaxWidth} paddingX={[0, 6, 8, 12]}>
+                  <Text variant="h4" as="h3">
+                    {formatMessage(m.detailsPage.presentings)}
+                  </Text>
+                  <Text>{item.presentings}</Text>
+                </Box>
+              )}
             </Stack>
           </Box>
           <Box className={cn('rs_read', styles.textMaxWidth, styles.richText)}>
@@ -140,7 +140,6 @@ const DeterminationDetails: CustomScreen<DeterminationDetailsProps> = ({
         title: n('navigationTitle', 'Efnisyfirlit'),
         items: getSubpageNavList(organizationPage, router),
       }}
-      showReadSpeaker={false}
       breadcrumbItems={[
         {
           title: 'Ísland.is',
@@ -157,9 +156,7 @@ const DeterminationDetails: CustomScreen<DeterminationDetailsProps> = ({
       ]}
     >
       <Stack space={2}>
-        <Text variant="h1" as="h1">
-          {item.title}
-        </Text>
+        <HtmlView item={item} />
       </Stack>
     </OrganizationWrapper>
   )

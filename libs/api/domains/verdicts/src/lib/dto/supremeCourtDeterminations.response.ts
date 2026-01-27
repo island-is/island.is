@@ -11,7 +11,7 @@ class Item {
   title!: string
 
   @Field(() => String)
-  subtitle!: string
+  caseNumber!: string
 
   @Field(() => Date)
   date!: Date
