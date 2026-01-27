@@ -44,7 +44,7 @@ interface Props {
       getFileContent: (
         vehicleMap: CarMap,
         rateCategory: RateCategory,
-        locale: Locale
+        locale: Locale,
       ) => {
         base64Content: string
         fileType: string
@@ -238,7 +238,11 @@ export const UploadCarCategoryFile = ({
     }
   }
 
-  const fileData = field.props.getFileContent?.(currentCarData, rateCategory, lang)
+  const fileData = field.props.getFileContent?.(
+    currentCarData,
+    rateCategory,
+    lang,
+  )
   if (!fileData) {
     throw Error('No valid file data recieved!')
   }

@@ -68,7 +68,12 @@ export const parseFileToCarCategory = async (
 
       // Skip rows where either mileage value is not a valid number
       // Or where the current mileage is 0 and the previous mileage is greater than 0
-      if (Number.isNaN(prevMile) || Number.isNaN(currMile) || (currMile === 0 && prevMile > 0)) return undefined
+      if (
+        Number.isNaN(prevMile) ||
+        Number.isNaN(currMile) ||
+        (currMile === 0 && prevMile > 0)
+      )
+        return undefined
 
       if (prevMile > currMile) {
         return {

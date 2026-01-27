@@ -6,7 +6,7 @@ import { Locale } from '@island.is/shared/types'
 export const generateExcelSheet = (
   vehicleRateMap: CarMap,
   rateToChangeTo: RateCategory,
-  locale: Locale
+  locale: Locale,
 ): {
   filename: string
   base64Content: string
@@ -18,16 +18,14 @@ export const generateExcelSheet = (
     locale === 'is' ? islandicHeaders : englishHeaders,
     ...Object.entries(vehicleRateMap)
       .filter(([_, data]) => data.category !== rateToChangeTo)
-      .map(([permno, data]) => [
-        permno,
-        data.milage,
-        '',
-      ]),
+      .map(([permno, data]) => [permno, data.milage, '']),
   ]
 
   const icelandicPrefix = 'skra-bila-a-'
   const englishPrefix = 'register-cars-to-'
-  const name = `${locale === 'is' ? icelandicPrefix : englishPrefix}${rateToChangeTo.toLowerCase()}.xlsx`
+  const name = `${
+    locale === 'is' ? icelandicPrefix : englishPrefix
+  }${rateToChangeTo.toLowerCase()}.xlsx`
   const worksheet: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(sheetData)
   const workbook: XLSX.WorkBook = {
     Sheets: { Sheet1: worksheet },
