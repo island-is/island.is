@@ -555,6 +555,19 @@ export class FileService {
     }))
   }
 
+  async rejectCaseFile(
+    theCase: Case,
+    file: CaseFile,
+    transaction: Transaction,
+  ): Promise<CaseFile> {
+    return this.updateCaseFile(
+      theCase.id,
+      file.id,
+      { state: CaseFileState.REJECTED },
+      transaction,
+    )
+  }
+
   async deleteCaseFile(
     theCase: Case,
     file: CaseFile,

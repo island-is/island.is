@@ -2,6 +2,7 @@ import { Request } from 'express'
 import { Sequelize } from 'sequelize-typescript'
 
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -245,6 +246,40 @@ export class FileController {
     )
 
     return this.fileService.getCaseFileSignedUrl(theCase, caseFile)
+  }
+
+  @UseGuards(CaseWriteGuard, CaseFileExistsGuard)
+  @RolesRules(
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+  )
+  @Post('file/:fileId/reject')
+  @ApiOkResponse({
+    type: CaseFile,
+    description: 'Rejects a case file',
+  })
+  async rejectCaseFile(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+    @Param('fileId') fileId: string,
+    @CurrentCaseFile() caseFile: CaseFile,
+  ): Promise<CaseFile> {
+    this.logger.debug(`Rejecting file ${fileId} of case ${caseId}`)
+
+    if (
+      theCase.courtSessions?.some((session) =>
+        session.filedDocuments?.some((doc) => doc.caseFileId === caseFile.id),
+      )
+    ) {
+      throw new BadRequestException(
+        'Cannot reject a file that has been filed in a court session',
+      )
+    }
+
+    return this.sequelize.transaction(async (transaction) =>
+      this.fileService.rejectCaseFile(theCase, caseFile, transaction),
+    )
   }
 
   @UseGuards(CaseWriteGuard, CaseFileExistsGuard)

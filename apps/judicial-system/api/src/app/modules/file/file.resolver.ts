@@ -22,6 +22,7 @@ import { CreateFileInput } from './dto/createFile.input'
 import { CreatePresignedPostInput } from './dto/createPresignedPost.input'
 import { DeleteFileInput } from './dto/deleteFile.input'
 import { GetSignedUrlInput } from './dto/getSignedUrl.input'
+import { RejectFileInput } from './dto/rejectFile.input'
 import { UpdateFilesInput } from './dto/updateFiles.input'
 import { UploadFileToCourtInput } from './dto/uploadFileToCourt.input'
 import { DeleteFileResponse } from './models/deleteFile.response'
@@ -166,6 +167,26 @@ export class FileResolver {
       user.id,
       AuditedAction.GET_SIGNED_URL,
       backendService.getCaseFileSignedUrl(caseId, id, mergedCaseId),
+      id,
+    )
+  }
+
+  @Mutation(() => CaseFile)
+  rejectFile(
+    @Args('input', { type: () => RejectFileInput })
+    input: RejectFileInput,
+    @CurrentGraphQlUser() user: User,
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
+  ): Promise<CaseFile> {
+    const { caseId, id } = input
+
+    this.logger.debug(`Rejectting file ${id} of case ${caseId}`)
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.REJECT_FILE,
+      backendService.rejectCaseFile(caseId, id),
       id,
     )
   }
