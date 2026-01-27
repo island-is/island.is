@@ -121,6 +121,8 @@ export const Forms = () => {
     return matchesStatus && matchesName
   }
 
+  console.log('Environment:', process.env.NODE_ENV)
+
   return (
     <>
       <GridRow>
