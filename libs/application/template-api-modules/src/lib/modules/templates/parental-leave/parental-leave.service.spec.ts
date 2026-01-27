@@ -13,14 +13,12 @@ import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 import {
   ParentalLeaveApi,
   ApplicationInformationApi,
-  Period as VmstPeriod,
   ParentalLeaveGetPeriodLengthRequest,
   ParentalLeaveGetPeriodEndDateRequest,
   PeriodLengthResponse,
   PeriodEndDateResponse,
 } from '@island.is/clients/vmst'
 import {
-  StartDateOptions,
   Period,
   calculatePeriodLength,
   PARENTAL_LEAVE,
@@ -32,15 +30,14 @@ import { EmailService } from '@island.is/email-service'
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { ParentalLeaveService } from './parental-leave.service'
-import { apiConstants } from './constants'
 import { SmsService } from '@island.is/nova-sms'
 import { ChildrenService } from './children/children.service'
-import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import { PaymentService } from '@island.is/application/api/payment'
 import { sharedModuleConfig } from '../../shared/shared.config'
 import { ApplicationService } from '@island.is/application/api/core'
 import { S3Service } from '@island.is/nest/aws'
 import { NO, YES } from '@island.is/application/core'
+import { NationalRegistryV3Service } from '../../shared/api/national-registry-v3/national-registry-v3.service'
 
 const nationalId = '1234564321'
 let id = 0
@@ -147,7 +144,7 @@ describe('ParentalLeaveService', () => {
           useValue: {},
         },
         {
-          provide: NationalRegistryClientService,
+          provide: NationalRegistryV3Service,
           useValue: {},
         },
         {

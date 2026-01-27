@@ -2506,10 +2506,38 @@ export class CaseService {
   async requestCourtRecordSignature(
     theCase: Case,
     user: TUser,
+    method: 'audkenni' | 'mobile',
   ): Promise<SigningServiceResponse> {
     await this.refreshFormatMessage()
 
     const pdf = await getCourtRecordPdfAsString(theCase, this.formatMessage)
+
+    if (method === 'audkenni') {
+      return this.signingService
+        .requestSignatureAudkenni(
+          user.nationalId,
+          user.name,
+          'Ísland',
+          'courtRecord.pdf',
+          pdf,
+          'Undirrita skjal - Öryggistala',
+        )
+        .catch((error) => {
+          this.eventService.postErrorEvent(
+            `Failed to request a court record signature via ${method}`,
+            {
+              caseId: theCase.id,
+              policeCaseNumbers: theCase.policeCaseNumbers.join(', '),
+              courtCaseNumber: theCase.courtCaseNumber,
+              actor: user.name,
+              institution: user.institution?.name,
+            },
+            error,
+          )
+
+          throw error
+        })
+    }
 
     return this.signingService
       .requestSignature(
@@ -2522,7 +2550,7 @@ export class CaseService {
       )
       .catch((error) => {
         this.eventService.postErrorEvent(
-          'Failed to request a court record signature',
+          `Failed to request a court record signature via ${method}`,
           {
             caseId: theCase.id,
             policeCaseNumbers: theCase.policeCaseNumbers.join(', '),
@@ -2541,15 +2569,17 @@ export class CaseService {
     theCase: Case,
     user: TUser,
     documentToken: string,
+    method: 'audkenni' | 'mobile',
     transaction: Transaction,
   ): Promise<SignatureConfirmationResponse> {
     // This method should be called immediately after requestCourtRecordSignature
-
     try {
       const courtRecordPdf = await this.signingService.waitForSignature(
         'courtRecord.pdf',
         documentToken,
+        method,
       )
+
       const awsSuccess = await this.uploadSignedCourtRecordPdfToS3(
         theCase,
         courtRecordPdf,
@@ -2575,7 +2605,7 @@ export class CaseService {
       return { documentSigned: true }
     } catch (error) {
       this.eventService.postErrorEvent(
-        'Failed to get a court record signature confirmation',
+        `Failed to get a court record signature confirmation via ${method}`,
         {
           caseId: theCase.id,
           policeCaseNumbers: theCase.policeCaseNumbers.join(', '),
@@ -2598,28 +2628,63 @@ export class CaseService {
     }
   }
 
-  async requestRulingSignature(theCase: Case): Promise<SigningServiceResponse> {
-    await this.refreshFormatMessage()
+  async requestRulingSignature(
+    theCase: Case,
+    method: 'audkenni' | 'mobile',
+  ): Promise<SigningServiceResponse> {
+    const judge = theCase.judge
+    if (!judge) {
+      throw new InternalServerErrorException(
+        'Failed to request a ruling signature - judge not found',
+      )
+    }
 
+    await this.refreshFormatMessage()
     const pdf = await getRulingPdfAsString(theCase, this.formatMessage)
+    if (method === 'audkenni') {
+      return this.signingService
+        .requestSignatureAudkenni(
+          judge.nationalId,
+          judge.name,
+          'Ísland',
+          'ruling.pdf',
+          pdf,
+          'Undirrita skjal - Öryggistala',
+        )
+        .catch((error) => {
+          this.eventService.postErrorEvent(
+            `Failed to request a ruling signature via ${method}`,
+            {
+              caseId: theCase.id,
+              policeCaseNumbers: theCase.policeCaseNumbers.join(', '),
+              courtCaseNumber: theCase.courtCaseNumber,
+              actor: theCase.judge?.name,
+              institution: theCase.judge?.institution?.name,
+            },
+            error,
+          )
+
+          throw error
+        })
+    }
 
     return this.signingService
       .requestSignature(
-        theCase.judge?.mobileNumber ?? '',
+        judge.mobileNumber,
         'Undirrita skjal - Öryggistala',
-        theCase.judge?.name ?? '',
+        judge.name,
         'Ísland',
         'ruling.pdf',
         pdf,
       )
       .catch((error) => {
         this.eventService.postErrorEvent(
-          'Failed to request a ruling signature',
+          `Failed to request a ruling signature via ${method}`,
           {
             caseId: theCase.id,
             policeCaseNumbers: theCase.policeCaseNumbers.join(', '),
             courtCaseNumber: theCase.courtCaseNumber,
-            actor: theCase.judge?.name,
+            actor: judge.name,
             institution: theCase.judge?.institution?.name,
           },
           error,
@@ -2633,6 +2698,7 @@ export class CaseService {
     theCase: Case,
     user: TUser,
     documentToken: string,
+    method: 'audkenni' | 'mobile',
     transaction: Transaction,
   ): Promise<SignatureConfirmationResponse> {
     // This method should be called immediately after requestRulingSignature
@@ -2640,7 +2706,9 @@ export class CaseService {
       const signedPdf = await this.signingService.waitForSignature(
         'ruling.pdf',
         documentToken,
+        method,
       )
+
       const awsSuccess = await this.uploadSignedRulingPdfToS3(
         theCase,
         signedPdf,
@@ -2663,7 +2731,7 @@ export class CaseService {
       return { documentSigned: true }
     } catch (error) {
       this.eventService.postErrorEvent(
-        'Failed to get a ruling signature confirmation',
+        `Failed to get a ruling signature confirmation via ${method}`,
         {
           caseId: theCase.id,
           policeCaseNumbers: theCase.policeCaseNumbers.join(', '),
@@ -2711,6 +2779,7 @@ export class CaseService {
       'legalArguments',
       'requestProsecutorOnlySession',
       'prosecutorOnlySessionRequest',
+      'policeDefendantNationalId',
     ]
 
     const copiedExtendInvestigationCaseFields: (keyof Case)[] = [

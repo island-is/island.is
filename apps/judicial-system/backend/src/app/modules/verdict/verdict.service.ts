@@ -115,6 +115,7 @@ export class VerdictService {
   ): Promise<Verdict> {
     const currentVerdict = await this.verdictRepositoryService.findOne({
       where: { defendantId: verdict.defendantId },
+      transaction,
     })
 
     if (!currentVerdict) {
@@ -554,7 +555,7 @@ export class VerdictService {
       )
 
       if (isVerdictInfoChanged(verdictInfo, verdict)) {
-        this.updateVerdict(verdict, verdictInfo, transaction)
+        return this.updateVerdict(verdict, verdictInfo, transaction)
       }
     }
 

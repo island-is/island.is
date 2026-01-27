@@ -116,15 +116,14 @@ export class InternalSubpoenaController {
     try {
       // callback function to fetch the updated subpoena fields after delivering subpoena to police
       const getDeliveredSubpoenaNationalCommissionersOfficeLogDetails = async (
-        results?: DeliverResponse,
+        results: DeliverResponse,
       ) => {
         const currentSubpoena = await this.subpoenaService.findById(
           subpoena.id,
           transaction,
         )
-
         return {
-          deliveredToPolice: Boolean(results?.delivered),
+          deliveredToPolice: results.delivered,
           subpoenaId: subpoena.id,
           subpoenaCreated: subpoena.created,
           policeSubpoenaId: currentSubpoena.policeSubpoenaId,
@@ -134,23 +133,19 @@ export class InternalSubpoenaController {
         }
       }
 
-      const response = await this.auditTrailService.runAndAuditRequest({
-        userId: deliverDto.user.id,
-        actionType:
-          AuditedAction.DELIVER_SUBPOENA_TO_NATIONAL_COMMISSIONERS_OFFICE,
-        action:
-          this.subpoenaService.deliverSubpoenaToNationalCommissionersOffice,
-        actionProps: {
+      const response = await this.auditTrailService.audit(
+        deliverDto.user.id,
+        AuditedAction.DELIVER_SUBPOENA_TO_NATIONAL_COMMISSIONERS_OFFICE,
+        this.subpoenaService.deliverSubpoenaToNationalCommissionersOffice({
           theCase,
           defendant,
           subpoena,
           user: deliverDto.user,
           transaction,
-        },
-        auditedResult: caseId,
-        getAuditDetails:
-          getDeliveredSubpoenaNationalCommissionersOfficeLogDetails,
-      })
+        }),
+        caseId,
+        getDeliveredSubpoenaNationalCommissionersOfficeLogDetails,
+      )
 
       await transaction.commit()
 

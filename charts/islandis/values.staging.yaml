@@ -1206,6 +1206,8 @@ cms-importer-fsre-buildings-import:
 cms-importer-worker:
   args:
     - 'main.cjs'
+    - '--job'
+    - 'grant-import'
   command:
     - 'node'
   enabled: true
@@ -1251,6 +1253,7 @@ cms-importer-worker:
     requests:
       cpu: '100m'
       memory: '128Mi'
+  schedule: '0 15,0 * * *'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_MANAGEMENT_ACCESS_TOKEN: '/k8s/contentful-entry-tagger/CONTENTFUL_MANAGEMENT_ACCESS_TOKEN'
@@ -2852,6 +2855,8 @@ services-form-system-api:
   podDisruptionBudget:
     minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 1
@@ -2874,6 +2879,11 @@ services-form-system-api:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/form-system-api'
+    create: true
+    name: 'form-system-api'
 services-payment-flow-update-handler:
   enabled: true
   env:

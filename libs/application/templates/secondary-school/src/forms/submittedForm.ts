@@ -7,11 +7,17 @@ import {
   buildSection,
   buildSubmitField,
   coreMessages,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { conclusion, overview } from '../lib/messages'
 import { MmsLogo } from '@island.is/application/assets/institution-logos'
-import { applicationDataHasBeenPruned, checkIsFreshman } from '../utils'
+import {
+  applicationDataHasBeenPruned,
+  ApplicationPeriod,
+  checkIsFreshman,
+  getDateWordStr,
+} from '../utils'
 
 export const Submitted: Form = buildForm({
   id: 'SubmittedForm',
@@ -32,24 +38,34 @@ export const Submitted: Form = buildForm({
               id: 'conclusionAlertMessage',
               alertType: 'info',
               title: conclusion.overview.alertTitle,
-              message: conclusion.overview.alertMessageFreshman,
-              condition: (answers) => {
-                return (
-                  !applicationDataHasBeenPruned(answers) &&
-                  checkIsFreshman(answers)
-                )
+              message: (application, locale) => {
+                const isFreshman = checkIsFreshman(application.answers)
+                const applicationPeriodInfo =
+                  getValueViaPath<ApplicationPeriod>(
+                    application.externalData,
+                    'applicationPeriodInfo.data',
+                  )
+
+                const message = isFreshman
+                  ? conclusion.overview.alertMessageWithValuesFreshman
+                  : conclusion.overview.alertMessageWithValuesGeneral
+
+                const registrationEndDate = isFreshman
+                  ? applicationPeriodInfo?.registrationEndDateFreshman
+                  : applicationPeriodInfo?.registrationEndDateGeneral
+
+                return {
+                  ...message,
+                  values: {
+                    registrationEndDateStr: getDateWordStr(
+                      registrationEndDate,
+                      locale,
+                    ),
+                  },
+                }
               },
-            }),
-            buildAlertMessageField({
-              id: 'conclusionAlertMessage',
-              alertType: 'info',
-              title: conclusion.overview.alertTitle,
-              message: conclusion.overview.alertMessageGeneral,
               condition: (answers) => {
-                return (
-                  !applicationDataHasBeenPruned(answers) &&
-                  !checkIsFreshman(answers)
-                )
+                return !applicationDataHasBeenPruned(answers)
               },
             }),
             buildCustomField({
