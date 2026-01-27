@@ -172,6 +172,8 @@ export class ApplicationAdminSerializer
         )
       : undefined
 
+    console.log('history in serializer', history)
+
     const payment = await this.paymentService.findPaymentByApplicationId(
       application.id,
     )
@@ -224,6 +226,8 @@ export class ApplicationAdminSerializer
         this.identityService,
       ),
     })
+    console.log('doto in serializer', dto)
+    console.log('instanceToPlain(dto)', instanceToPlain(dto))
     return instanceToPlain(dto)
   }
 

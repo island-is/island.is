@@ -86,7 +86,9 @@ export class ApplicationService {
     locale: Locale,
     filters: ApplicationsSuperAdminFilters,
   ) {
-    return this.applicationApiWithAuth(user).adminControllerFindAllSuperAdmin({
+    const a = await this.applicationApiWithAuth(
+      user,
+    ).adminControllerFindAllSuperAdmin({
       count: filters.count,
       page: filters.page,
       applicantNationalId: filters.applicantNationalId,
@@ -98,6 +100,8 @@ export class ApplicationService {
       searchStr: filters.searchStr,
       institutionNationalId: filters.institutionNationalId,
     })
+    console.log('findAllSUperAdmin function', a)
+    return a
   }
 
   async findAllInstitutionAdmin(
