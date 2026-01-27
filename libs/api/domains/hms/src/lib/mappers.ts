@@ -8,11 +8,7 @@ import {
   TemporalType as TemporalClientType,
   RentalPropertyType,
 } from '@island.is/clients/hms-rental-agreement'
-import {
-  LANDLORD_TYPES,
-  TENANT_TYPES,
-  TERMINATED_AGREEMENT_STATUSES,
-} from './constants'
+import { LANDLORD_TYPES, TENANT_TYPES } from './constants'
 import { Address } from './models/rentalAgreements/address.model'
 import { ContractParty } from './models/rentalAgreements/contractParty.model'
 import { ContractProperty } from './models/rentalAgreements/contractProperty.model'
