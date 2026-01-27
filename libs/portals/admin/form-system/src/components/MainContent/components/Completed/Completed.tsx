@@ -254,7 +254,7 @@ export const Completed = () => {
         justifyContent="spaceBetween"
         alignItems="center"
       >
-        <Text variant="h4">{formatMessage(m.completedAccordionTitle)}</Text>
+        <Text variant="h4">{formatMessage(m.completedListHeader)}</Text>
         <Button variant="text" preTextIcon="add" onClick={add}>
           {formatMessage(m.add)}
         </Button>
