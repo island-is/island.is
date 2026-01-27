@@ -189,7 +189,7 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
       throw new TemplateApiError(
         {
           title: 'Request to skatturinn failed',
-          summary: error.message ?? 'Something went wrong when posting car data to skatturinn',
+          summary: error?.message ?? error ?? 'Something went wrong when posting car data to skatturinn',
         },
         (error as { status?: number })?.status ?? 500,
       )
