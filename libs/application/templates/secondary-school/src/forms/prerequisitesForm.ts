@@ -9,6 +9,7 @@ import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { MmsLogo } from '@island.is/application/assets/institution-logos'
 import { externalData } from '../lib/messages'
 import {
+  ApplicationPeriodApi,
   NationalRegistryCustodiansApi,
   NationalRegistryUserApi,
   SchoolsApi,
@@ -67,6 +68,10 @@ export const Prerequisites: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: StudentInfoApi,
+              title: '',
+            }),
+            buildDataProviderItem({
+              provider: ApplicationPeriodApi,
               title: '',
             }),
           ],
