@@ -337,4 +337,7 @@ export const ExcludedFeatureDeploymentServices: ServiceBuilder<any>[] = [
   githubActionsCache,
   xroadCollector,
   nameRegistryBackend,
+  cmsImporter,
+  cmsImporterEnergyGrantImport,
+  cmsImporterFsreBuildingsImport,
 ]
