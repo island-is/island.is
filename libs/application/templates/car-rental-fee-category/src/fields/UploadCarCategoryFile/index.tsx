@@ -167,7 +167,7 @@ export const UploadCarCategoryFile = ({
       const errorMessages = dataToChange as CarCategoryError[]
       if (errorMessages.length === 1) {
         setUploadErrorMessage(
-          `${errorMessages[0].carNr} - ${errorMessages[0].message}`,
+          `${errorMessages[0].carNr} - ${formatMessage(errorMessages[0].message)}`,
         )
       } else {
         setUploadErrorMessage(
