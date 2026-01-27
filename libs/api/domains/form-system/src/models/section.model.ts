@@ -7,9 +7,6 @@ export class Section {
   @Field(() => String)
   id!: string
 
-  @Field(() => String, { nullable: true })
-  identifier?: string
-
   @Field(() => LanguageType, { nullable: true })
   name?: LanguageType
 

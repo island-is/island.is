@@ -160,6 +160,17 @@ export class EstateTemplateService extends BaseTemplateApiService {
 
     const estates = estateResponse.map(estateTransformer)
 
+    if (!estates.length) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.failedDataProviderSubmit,
+          summary:
+            coreErrorMessages.errorDataProviderEstateValidationNothingFoundSummary,
+        },
+        400,
+      )
+    }
+
     const relationOptions = (await this.syslumennService.getEstateRelations())
       .relations
 
