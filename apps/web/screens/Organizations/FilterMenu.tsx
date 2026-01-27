@@ -28,6 +28,7 @@ export type FilterLabels = Pick<
   | 'labelTitle'
   | 'labelResult'
   | 'labelClearAll'
+  | 'labelFilterBy'
 > & { inputPlaceholder?: string }
 
 export type CategoriesProps = {
@@ -49,6 +50,7 @@ export const FilterMenu = ({
   labelClose = 'Loka síu',
   labelTitle = 'Sía stofnanir',
   labelResult = 'Sýna niðurstöður',
+  labelFilterBy = 'Sía eftir',
   inputPlaceholder = 'Sía eftir leitarorði',
   variant,
   align,
@@ -60,6 +62,7 @@ export const FilterMenu = ({
     labelClose={labelClose}
     labelTitle={labelTitle}
     labelResult={labelResult}
+    labelFilterBy={labelFilterBy}
     resultCount={resultCount}
     variant={variant}
     align={align}

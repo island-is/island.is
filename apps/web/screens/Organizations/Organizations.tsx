@@ -168,6 +168,7 @@ const OrganizationPage: Screen<OrganizationProps> = ({
     labelClose: n('filterClose', 'Loka síu'),
     labelTitle: n('filterOrganization', 'Sía stofnanir'),
     labelResult: n('showResults', 'Sýna niðurstöður'),
+    labelFilterBy: n('filterBy', 'Sía eftir'),
     inputPlaceholder: n('filterBySearchQuery', 'Sía eftir leitarorði'),
   }
 

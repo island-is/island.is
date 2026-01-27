@@ -951,6 +951,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                   labelClose={n('close', 'Loka')}
                   labelResult={n('showResults', 'Skoða niðurstöður')}
                   labelTitle={n('filterResults', 'Sía niðurstöður')}
+                  labelFilterBy={n('filterBy', 'Sía eftir')}
                   onFilterClear={() => {
                     clearFilterParams()
                   }}
