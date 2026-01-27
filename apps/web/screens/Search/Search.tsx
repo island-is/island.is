@@ -501,7 +501,10 @@ const Search: Screen<CategoryProps> = ({
     labelClear: n('labelClear', 'Hreinsa síu'),
     labelOpen: n('labelOpen', 'Sía niðurstöður'),
     labelClose: n('labelClose', 'Loka síu'),
-    labelTitle: n('labelTitle', 'Sía mannanöfn'),
+    labelTitle: n(
+      'filterBy',
+      activeLocale === 'is' ? 'Sía eftir' : 'Filter by',
+    ),
     labelResult: n('labelResult', 'Sjá niðurstöður'),
     inputPlaceholder: n('inputPlaceholder', 'Leita að nafni'),
   }
@@ -723,6 +726,7 @@ const Search: Screen<CategoryProps> = ({
                     }}
                     align="right"
                     variant={isMobile ? 'dialog' : 'popover'}
+                    removeLeftMargin
                   />
                 </Inline>
               </Box>
