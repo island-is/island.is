@@ -43,7 +43,6 @@ import {
   CaseFileCategory,
   CaseIndictmentRulingDecision,
   CaseState,
-  CaseType,
   CourtSessionRulingType,
   CourtSessionType,
   Defendant,
@@ -61,7 +60,7 @@ import useVerdict from '@island.is/judicial-system-web/src/utils/hooks/useVerdic
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 
-import CourtCaseNumberInput from '../../components/CourtCaseNumber/CourtCaseNumberInput'
+import { CourtCaseNumberInput } from '../../components'
 import SelectConnectedCase from './SelectConnectedCase'
 import { strings } from './Conclusion.strings'
 
@@ -111,7 +110,6 @@ const Conclusion: FC = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const {
-    createCourtCase,
     isUpdatingCase,
     setAndSendCaseToServer,
     splitDefendantFromCase,
@@ -876,18 +874,11 @@ const Conclusion: FC = () => {
           }}
         >
           <CourtCaseNumberInput
-            workingCase={{
-              id: splitCaseId,
-              state: CaseState.RECEIVED,
-              type: CaseType.INDICTMENT,
-            }}
-            onCreateCourtCase={async () => {
-              const courtCaseNumber = await createCourtCase(splitCaseId)
-              return courtCaseNumber ?? ''
-            }}
-            onChange={(courtCaseNumber) => {
-              setSplitCaseCourtCaseNumber(courtCaseNumber)
-            }}
+            caseId={splitCaseId}
+            isIndictmentCase={true}
+            courtCaseNumber={splitCaseCourtCaseNumber}
+            isDisabled={false}
+            setCourtCaseNumber={setSplitCaseCourtCaseNumber}
           />
         </Modal>
       )}
