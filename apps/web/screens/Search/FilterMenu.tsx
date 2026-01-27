@@ -18,6 +18,7 @@ interface FilterMenuProps {
   clearFilter: () => void
   children?: ReactNode
   resultCount?: number
+  removeLeftMargin?: boolean
 }
 
 export type FilterLabels = Pick<
@@ -53,6 +54,7 @@ export const FilterMenu = ({
   variant,
   align,
   resultCount = 0,
+  removeLeftMargin = false,
 }: FilterMenuProps & FilterLabels & Pick<FilterProps, 'variant' | 'align'>) => (
   <Filter
     labelClearAll={labelClearAll}
@@ -66,6 +68,7 @@ export const FilterMenu = ({
     resultCount={resultCount}
     reverse
     onFilterClear={clearFilter}
+    removeLeftMargin={removeLeftMargin}
   >
     <FilterMultiChoice
       labelClear={labelClear}
