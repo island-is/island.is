@@ -12,6 +12,7 @@ import {
   Query,
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
+  WebSupremeCourtDeterminationByIdItem,
 } from '@island.is/web/graphql/schema'
 import {
   type GetSupremeCourtDeterminationByIdQuery,
@@ -35,9 +36,7 @@ import { m } from './translations.strings'
 import * as styles from './DeterminationDetails.css'
 
 interface HtmlViewProps {
-  item: NonNullable<
-    GetSupremeCourtDeterminationByIdQuery['webSupremeCourtDeterminationById']
-  >['item']
+  item: WebSupremeCourtDeterminationByIdItem
 }
 
 const HtmlView = ({ item }: HtmlViewProps) => {
@@ -121,7 +120,7 @@ const HtmlView = ({ item }: HtmlViewProps) => {
 interface DeterminationDetailsProps {
   organizationPage: OrganizationPage
   namespace: Record<string, string>
-  item: GetSupremeCourtDeterminationByIdQuery['webSupremeCourtDeterminationById']['item']
+  item: WebSupremeCourtDeterminationByIdItem
 }
 
 const DeterminationDetails: CustomScreen<DeterminationDetailsProps> = ({

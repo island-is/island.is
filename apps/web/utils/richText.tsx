@@ -110,7 +110,6 @@ import { GrantCardsList } from '../components/GrantCardsList'
 import { EmbedSlice } from '../components/Organization/Slice/EmbedSlice/EmbedSlice'
 import { FeaturedGenericListItemsSlice } from '../components/Organization/Slice/FeaturedGenericListItemsSlice/FeaturedGenericListItemsSlice'
 import { OrganizationParentSubpageListSlice } from '../components/Organization/Slice/OrganizationParentSubpageListSlice/OrganizationParentSubpageListSlice'
-import { SupremeCourtDeterminations } from '../screens/SupremeCourt/Determinations'
 
 interface TranslationNamespaceProviderProps {
   messages: IntlConfig['messages']
