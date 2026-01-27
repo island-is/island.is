@@ -9,7 +9,6 @@ import {
   Box,
   LoadingDots,
   Pagination,
-  SkeletonLoader,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
@@ -25,9 +24,11 @@ import {
   QueryGetOrganizationPageArgs,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
+import { useI18n } from '@island.is/web/i18n'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
+import { webRichText } from '@island.is/web/utils/richText'
 
 import {
   type CustomScreen,
@@ -42,16 +43,15 @@ import { m } from './translations.strings'
 
 interface DeterminationsProps {
   initialData: GetSupremeCourtDeterminationsQuery['webSupremeCourtDeterminations']
-  initialPage: number
   organizationPage: OrganizationPage
   namespace: Record<string, string>
 }
 
 const Determinations: CustomScreen<DeterminationsProps> = ({
   initialData,
-  initialPage,
   organizationPage,
   namespace,
+  customPageData,
 }) => {
   const { format } = useDateUtils()
   const [_page, setPage] = useQueryState(
@@ -96,6 +96,7 @@ const Determinations: CustomScreen<DeterminationsProps> = ({
   }, [page, fetchDeterminations])
 
   const { formatMessage } = useIntl()
+  const { activeLocale } = useI18n()
 
   return (
     <OrganizationWrapper
@@ -129,6 +130,12 @@ const Determinations: CustomScreen<DeterminationsProps> = ({
             readClass="rs_read"
           />
         </Stack>
+
+        {customPageData?.content && customPageData.content.length > 0 && (
+          <Box>
+            {webRichText(customPageData.content, undefined, activeLocale)}
+          </Box>
+        )}
 
         <Stack space={3}>
           <Box
@@ -243,7 +250,6 @@ Determinations.getProps = async ({ apolloClient, query, locale }) => {
     initialData: data.webSupremeCourtDeterminations,
     organizationPage: organizationPage.data.getOrganizationPage,
     namespace,
-    initialPage: page,
   }
 }
 
