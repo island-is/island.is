@@ -501,10 +501,7 @@ const Search: Screen<CategoryProps> = ({
     labelClear: n('labelClear', 'Hreinsa síu'),
     labelOpen: n('labelOpen', 'Sía niðurstöður'),
     labelClose: n('labelClose', 'Loka síu'),
-    labelTitle: n(
-      'filterBy',
-      activeLocale === 'is' ? 'Sía eftir' : 'Filter by',
-    ),
+    labelTitle: n('filterBy', 'Sía eftir'),
     labelResult: n('labelResult', 'Sjá niðurstöður'),
     inputPlaceholder: n('inputPlaceholder', 'Leita að nafni'),
   }
