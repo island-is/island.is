@@ -197,8 +197,6 @@ DeterminationDetails.getProps = async ({ apolloClient, query, locale }) => {
     throw new CustomNextError(404, 'Organization page not found')
   }
 
-  console.log(data)
-
   if (!data?.webSupremeCourtDeterminationById?.item) {
     throw new CustomNextError(404, 'Determination not found')
   }
