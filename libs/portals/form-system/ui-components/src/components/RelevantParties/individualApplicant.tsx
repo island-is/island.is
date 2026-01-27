@@ -89,7 +89,11 @@ export const IndividualApplicant = ({
                 type="email"
                 name={field.name}
                 label={formatMessage(m.email)}
-                value={field.value}
+                value={
+                  field.value === '' || field.value == null
+                    ? getValue(applicant, 'email') ?? ''
+                    : field.value
+                }
                 onChange={(e) => {
                   field.onChange(e)
                   if (dispatch) {
@@ -132,7 +136,11 @@ export const IndividualApplicant = ({
                 locale={locale as Locale}
                 required={applicant.isRequired ?? false}
                 backgroundColor="blue"
-                value={field.value}
+                value={
+                  field.value === '' || field.value == null
+                    ? getValue(applicant, 'phoneNumber') ?? ''
+                    : field.value
+                }
                 onChange={(e) => {
                   field.onChange(e)
                   if (dispatch) {
