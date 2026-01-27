@@ -103,6 +103,7 @@ const DocumentsFilter = ({
         labelClearAll={formatMessage(m.clearAllFilters)}
         labelOpen={formatMessage(m.openFilter)}
         labelClose={formatMessage(m.closeFilter)}
+        labelFilterBy={formatMessage(m.filterBy)}
         filterCount={filterCount}
         onFilterClear={handleClearFilters}
         mobileWrap={false}

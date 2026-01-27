@@ -32,6 +32,9 @@ export interface FilterProps {
   /** Label for show result button in expanded mobile version. */
   labelResult?: string
 
+  /** Label for filter button in expanded mobile version */
+  labelFilterBy?: string
+
   /** Number of search results to display on the show result button in mobile version*/
   resultCount?: number
 
@@ -86,6 +89,7 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
   labelClose,
   labelTitle,
   labelResult,
+  labelFilterBy,
   resultCount = 0,
   filterCount = 0,
   align,
@@ -346,6 +350,7 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
           ariaLabel={''}
           labelShowResult={labelResult}
           labelClearAll={labelClearAll}
+          labelFilterBy={labelFilterBy}
           onFilterClear={onFilterClear}
           disclosure={
             <Box

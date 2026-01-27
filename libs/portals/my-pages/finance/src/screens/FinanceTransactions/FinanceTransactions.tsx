@@ -140,6 +140,7 @@ const FinanceTransactions = () => {
                 labelOpen={formatMessage(m.openFilter)}
                 labelClose={formatMessage(m.closeFilter)}
                 labelResult={formatMessage(m.showResults)}
+                labelFilterBy={formatMessage(m.filterBy)}
                 filterCount={filterCountNumber}
                 filterInput={
                   <FilterInput
