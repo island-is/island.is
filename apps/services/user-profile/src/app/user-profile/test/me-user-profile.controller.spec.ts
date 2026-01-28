@@ -870,7 +870,7 @@ describe('MeUserProfileController', () => {
       })
 
       // Assert Db records
-      const userProfileModel = app.get(getModelToken(UserProfile))
+      const userProfileModel = await app.get(getModelToken(UserProfile))
       const userProfile = await userProfileModel.findOne({
         include: {
           model: Emails,
