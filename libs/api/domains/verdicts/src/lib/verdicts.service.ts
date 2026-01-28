@@ -7,6 +7,7 @@ import { CourtAgendasResponse } from './dto/courtAgendas.response'
 import { CourtAgendasInput } from './dto/courtAgendas.input'
 import { LawyersResponse } from './dto/lawyers.response'
 import { CaseFilterOptionsResponse } from './dto/caseFilterOptions.response'
+import { ScheduleTypesResponse } from './dto/scheduleTypes.response'
 
 @Injectable()
 export class VerdictsService {
@@ -64,5 +65,9 @@ export class VerdictsService {
     return {
       lawyers: await this.verdictsClientService.getLawyers(),
     }
+  }
+
+  async getScheduleTypes(): Promise<ScheduleTypesResponse> {
+    return this.verdictsClientService.getScheduleTypes()
   }
 }
