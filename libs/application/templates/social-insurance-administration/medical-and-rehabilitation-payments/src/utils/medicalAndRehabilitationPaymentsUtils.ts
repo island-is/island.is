@@ -547,6 +547,9 @@ export const eligibleText = (externalData: ExternalData) => {
     case EligibleReasonCodes.LATEST_MEDICAL_DOCUMENT_NOT_FOUND:
       return medicalAndRehabilitationPaymentsFormMessage.notEligible
         .latestMedicalDocumentNotFoundDescription
+    case EligibleReasonCodes.LATEST_MEDICAL_DOCUMENT_ALREADY_USED:
+      return medicalAndRehabilitationPaymentsFormMessage.notEligible
+        .latestMedicalDocumentAlreadyUsedDescription
     case EligibleReasonCodes.ERROR_PROCESSING_CLIENT:
       return medicalAndRehabilitationPaymentsFormMessage.notEligible
         .errorProcessingClientDescription
