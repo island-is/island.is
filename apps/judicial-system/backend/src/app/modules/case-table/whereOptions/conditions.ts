@@ -92,6 +92,7 @@ export const buildAllDefendantsHaveReviewDecisionCondition = (
       SELECT 1
       FROM defendant
       WHERE defendant.case_id = "Case".id
-        AND defendant.indictment_review_decision != '${decision}'
+        AND (defendant.indictment_review_decision IS NULL 
+          OR defendant.indictment_review_decision != '${decision}')
     )
   `)
