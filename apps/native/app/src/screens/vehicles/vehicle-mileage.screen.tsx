@@ -10,6 +10,7 @@ import {
   Button,
   Divider,
   NavigationBarSheet,
+  Problem,
   TextField,
   Typography,
   useDynamicColor,
@@ -46,12 +47,12 @@ export const originCodes = {
 
 type ListItem =
   | NonNullable<
-      NonNullable<GetVehicleMileageQuery['vehicleMileageDetails']>['data']
-    >[number]
+    NonNullable<GetVehicleMileageQuery['vehicleMileageDetails']>['data']
+  >[number]
   | {
-      __typename: 'Skeleton'
-      internalId: number
-    }
+    __typename: 'Skeleton'
+    internalId: number
+  }
 
 export const VehicleMileageScreen: NavigationFunctionComponent<{
   id: string
@@ -115,7 +116,7 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
   const latestMileage =
     data?.[0]?.__typename !== 'Skeleton' && data[0]?.mileage
       ? // Parse mileage from string to number
-        +data[0].mileage
+      +data[0].mileage
       : 0
 
   // Editable Flags:
@@ -377,14 +378,14 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
                   setInput(
                     value.length
                       ? Intl.NumberFormat('is-IS').format(
-                          Math.max(
-                            0,
-                            Math.min(
-                              HIGHEST_MILEAGE,
-                              Number(value.replace(/\D/g, '')),
-                            ),
+                        Math.max(
+                          0,
+                          Math.min(
+                            HIGHEST_MILEAGE,
+                            Number(value.replace(/\D/g, '')),
                           ),
-                        )
+                        ),
+                      )
                       : value,
                   )
                 }}
@@ -406,11 +407,11 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
                 >
                   {!canUserRegisterVehicleMileage
                     ? intl.formatMessage({
-                        id: 'vehicle.mileage.youAreNotAllowedCopy',
-                      })
+                      id: 'vehicle.mileage.youAreNotAllowedCopy',
+                    })
                     : intl.formatMessage({
-                        id: 'vehicle.mileage.registerIntervalCopy',
-                      })}
+                      id: 'vehicle.mileage.registerIntervalCopy',
+                    })}
                 </Typography>
               )}
               <Button
@@ -438,6 +439,11 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
           </View>
         }
         style={{ flex: 1, margin: 16, marginTop: 0 }}
+        ListFooterComponent={
+          res.error && (
+            <Problem error={res.error} />
+          )
+        }
       />
     </>
   )
