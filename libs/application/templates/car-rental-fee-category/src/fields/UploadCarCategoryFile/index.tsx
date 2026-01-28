@@ -31,6 +31,7 @@ import {
   UPDATE_APPLICATION_EXTERNAL_DATA,
 } from '@island.is/application/graphql'
 import { m } from '../../lib/messages'
+import { Locale } from '@island.is/shared/types'
 
 const extensionToType = {
   [fileExtensionWhitelist['.csv']]: 'csv',
@@ -43,6 +44,7 @@ interface Props {
       getFileContent: (
         vehicleMap: CarMap,
         rateCategory: RateCategory,
+        locale: Locale,
       ) => {
         base64Content: string
         fileType: string
@@ -56,7 +58,7 @@ export const UploadCarCategoryFile = ({
   application,
   field,
 }: Props & FieldBaseProps) => {
-  const { locale, formatMessage } = useLocale()
+  const { locale, lang, formatMessage } = useLocale()
   const [updateApplicationExternalData] = useMutation(
     UPDATE_APPLICATION_EXTERNAL_DATA,
   )
@@ -165,7 +167,9 @@ export const UploadCarCategoryFile = ({
       const errorMessages = dataToChange as CarCategoryError[]
       if (errorMessages.length === 1) {
         setUploadErrorMessage(
-          `${errorMessages[0].carNr} - ${errorMessages[0].message}`,
+          `${errorMessages[0].carNr} - ${formatMessage(
+            errorMessages[0].message,
+          )}`,
         )
       } else {
         setUploadErrorMessage(
@@ -179,7 +183,12 @@ export const UploadCarCategoryFile = ({
       const errorExcel = await createErrorExcel(
         file,
         type,
-        dataToChange as CarCategoryError[],
+        new Map(
+          (dataToChange as CarCategoryError[]).map((error) => [
+            error.carNr,
+            formatMessage(error.message),
+          ]),
+        ),
       )
       setErrorFile(errorExcel)
       return
@@ -236,7 +245,11 @@ export const UploadCarCategoryFile = ({
     }
   }
 
-  const fileData = field.props.getFileContent?.(currentCarData, rateCategory)
+  const fileData = field.props.getFileContent?.(
+    currentCarData,
+    rateCategory,
+    lang,
+  )
   if (!fileData) {
     throw Error('No valid file data recieved!')
   }
