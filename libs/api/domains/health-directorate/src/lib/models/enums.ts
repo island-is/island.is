@@ -24,6 +24,7 @@ export enum PrescribedItemRenewalBlockedReasonEnum {
   DismissedRequest = 'dismissedRequest',
   AlreadyRequested = 'alreadyRequested',
   MoreRecentPrescriptionExists = 'moreRecentPrescriptionExists',
+  SpecialistOnlyPrescription = 'specialistOnlyPrescription',
   Unknown = 'unknown',
 }
 
