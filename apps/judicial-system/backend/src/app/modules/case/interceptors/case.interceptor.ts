@@ -9,6 +9,7 @@ import {
 
 import {
   CaseFileCategory,
+  CaseFileState,
   CaseIndictmentRulingDecision,
   DefendantEventType,
   EventType,
@@ -148,6 +149,12 @@ const transformCase = (theCase: Case, user?: User) => {
       indictmentRulingDecision: theCase.indictmentRulingDecision,
       rulingDate: theCase.rulingDate,
     }),
+    caseFiles: theCase.caseFiles?.filter(
+      (file) =>
+        file.state !== CaseFileState.REJECTED ||
+        (isProsecutionUser(user) &&
+          file.category === CaseFileCategory.PROSECUTOR_CASE_FILE),
+    ),
     caseRepresentatives: transformCaseRepresentatives(theCase),
     postponedIndefinitelyExplanation:
       CaseString.postponedIndefinitelyExplanation(theCase.caseStrings),

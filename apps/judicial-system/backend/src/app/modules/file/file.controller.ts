@@ -266,10 +266,11 @@ export class FileController {
     @CurrentCaseFile() caseFile: CaseFile,
   ): Promise<CaseFile> {
     this.logger.debug(`Rejecting file ${fileId} of case ${caseId}`)
-
     if (
-      theCase.courtSessions?.some((session) =>
-        session.filedDocuments?.some((doc) => doc.caseFileId === caseFile.id),
+      theCase.courtSessions?.some(
+        (session) =>
+          session.isConfirmed &&
+          session.filedDocuments?.some((doc) => doc.caseFileId === caseFile.id),
       )
     ) {
       throw new BadRequestException(
