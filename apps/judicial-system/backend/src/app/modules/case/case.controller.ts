@@ -1,4 +1,5 @@
 import { Response } from 'express'
+import { Transaction } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 
 import {
@@ -710,7 +711,7 @@ export class CaseController {
       `Getting the indictment for case ${caseId} as a pdf document`,
     )
 
-    const pdf = await this.sequelize.transaction(async (transaction) =>
+    const pdf = await this.sequelize.transaction((transaction) =>
       this.pdfService.getIndictmentPdf(theCase, transaction),
     )
 
@@ -761,6 +762,35 @@ export class CaseController {
     res.end(pdf)
   }
 
+  private async handleRequestCourtRecordSignature(
+    caseId: string,
+    theCase: Case,
+    user: User,
+    method: 'audkenni' | 'mobile',
+  ): Promise<SigningServiceResponse> {
+    this.logger.debug(
+      `Requesting a signature via ${method} for the court record of case ${caseId}`,
+    )
+
+    return this.caseService
+      .requestCourtRecordSignature(theCase, user, method)
+      .catch((error) => {
+        if (error instanceof DokobitError) {
+          throw new HttpException(
+            {
+              statusCode: error.status,
+              message: `Failed to request a court record signature via ${method} for case ${caseId}`,
+              code: error.code,
+              error: error.message,
+            },
+            error.status,
+          )
+        }
+
+        throw error
+      })
+  }
+
   @UseGuards(
     RolesGuard,
     CaseExistsGuard,
@@ -781,28 +811,30 @@ export class CaseController {
     @Param('caseId') caseId: string,
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
+    @Query('method') method: 'audkenni' | 'mobile' = 'mobile',
   ): Promise<SigningServiceResponse> {
+    return this.handleRequestCourtRecordSignature(caseId, theCase, user, method)
+  }
+
+  private async handleGetCourtRecordSignatureConfirmation(
+    caseId: string,
+    theCase: Case,
+    user: User,
+    documentToken: string,
+    method: 'audkenni' | 'mobile',
+    transaction: Transaction,
+  ): Promise<SignatureConfirmationResponse> {
     this.logger.debug(
-      `Requesting a signature for the court record of case ${caseId}`,
+      `Confirming a signature via ${method} for the court record of case ${caseId}`,
     )
 
-    return this.caseService
-      .requestCourtRecordSignature(theCase, user)
-      .catch((error) => {
-        if (error instanceof DokobitError) {
-          throw new HttpException(
-            {
-              statusCode: error.status,
-              message: `Failed to request a court record signature for case ${caseId}`,
-              code: error.code,
-              error: error.message,
-            },
-            error.status,
-          )
-        }
-
-        throw error
-      })
+    return this.caseService.getCourtRecordSignatureConfirmation(
+      theCase,
+      user,
+      documentToken,
+      method,
+      transaction,
+    )
   }
 
   @UseGuards(
@@ -827,19 +859,50 @@ export class CaseController {
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @Query('documentToken') documentToken: string,
+    @Query('method') method: 'audkenni' | 'mobile' = 'mobile',
   ): Promise<SignatureConfirmationResponse> {
     this.logger.debug(
       `Confirming a signature for the court record of case ${caseId}`,
     )
 
     return this.sequelize.transaction((transaction) =>
-      this.caseService.getCourtRecordSignatureConfirmation(
+      this.handleGetCourtRecordSignatureConfirmation(
+        caseId,
         theCase,
         user,
         documentToken,
+        method,
         transaction,
       ),
     )
+  }
+
+  private async handleRequestRulingSignature(
+    caseId: string,
+    theCase: Case,
+    method: 'audkenni' | 'mobile',
+  ): Promise<SigningServiceResponse> {
+    this.logger.debug(
+      `Requesting a signature via ${method} for the ruling of case ${caseId}`,
+    )
+
+    return this.caseService
+      .requestRulingSignature(theCase, method)
+      .catch((error) => {
+        if (error instanceof DokobitError) {
+          throw new HttpException(
+            {
+              statusCode: error.status,
+              message: `Failed to request a ruling signature via ${method} for case ${caseId}`,
+              code: error.code,
+              error: error.message,
+            },
+            error.status,
+          )
+        }
+
+        throw error
+      })
   }
 
   @UseGuards(
@@ -856,26 +919,32 @@ export class CaseController {
   })
   async requestRulingSignature(
     @Param('caseId') caseId: string,
-    @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
+    @Query('method') method: 'audkenni' | 'mobile' = 'mobile',
   ): Promise<SigningServiceResponse> {
-    this.logger.debug(`Requesting a signature for the ruling of case ${caseId}`)
+    return this.handleRequestRulingSignature(caseId, theCase, method)
+  }
 
-    return this.caseService.requestRulingSignature(theCase).catch((error) => {
-      if (error instanceof DokobitError) {
-        throw new HttpException(
-          {
-            statusCode: error.status,
-            message: `Failed to request a ruling signature for case ${caseId}`,
-            code: error.code,
-            error: error.message,
-          },
-          error.status,
-        )
-      }
+  private async handleGetRulingSignatureConfirmation(
+    caseId: string,
+    theCase: Case,
+    user: User,
+    documentToken: string,
+    method: 'audkenni' | 'mobile',
+  ): Promise<SignatureConfirmationResponse> {
+    this.logger.debug(
+      `Confirming a signature via ${method} for the ruling of case ${caseId}`,
+    )
 
-      throw error
-    })
+    return this.sequelize.transaction((transaction) =>
+      this.caseService.getRulingSignatureConfirmation(
+        theCase,
+        user,
+        documentToken,
+        method,
+        transaction,
+      ),
+    )
   }
 
   @UseGuards(
@@ -896,16 +965,16 @@ export class CaseController {
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @Query('documentToken') documentToken: string,
+    @Query('method') method: 'audkenni' | 'mobile' = 'mobile',
   ): Promise<SignatureConfirmationResponse> {
     this.logger.debug(`Confirming a signature for the ruling of case ${caseId}`)
 
-    return this.sequelize.transaction((transaction) =>
-      this.caseService.getRulingSignatureConfirmation(
-        theCase,
-        user,
-        documentToken,
-        transaction,
-      ),
+    return this.handleGetRulingSignatureConfirmation(
+      caseId,
+      theCase,
+      user,
+      documentToken,
+      method,
     )
   }
 

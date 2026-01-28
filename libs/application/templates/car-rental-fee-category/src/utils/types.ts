@@ -1,5 +1,6 @@
 import { DayRateEntryModel } from '@island.is/clients-rental-day-rate'
 import { RateCategory } from './constants'
+import { MessageDescriptor } from 'react-intl'
 
 export interface CarCategoryRecord {
   vehicleId: string
@@ -10,7 +11,7 @@ export interface CarCategoryRecord {
 
 export interface CarCategoryError {
   code: 1 | 2
-  message: string
+  message: MessageDescriptor | string
   carNr: string
 }
 

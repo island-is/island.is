@@ -1,3 +1,4 @@
+import { CacheField } from '@island.is/nest/graphql'
 import { Field, InputType, Int, ObjectType } from '@nestjs/graphql'
 
 @InputType('WebCourtAgendasInput')
@@ -17,4 +18,7 @@ export class CourtAgendasInput {
 
   @Field(() => String, { nullable: true })
   lawyer?: string
+
+  @CacheField(() => [String], { nullable: true })
+  scheduleTypes?: string[]
 }

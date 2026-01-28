@@ -11,6 +11,7 @@ import {
   SecondarySchoolAnswers,
 } from '@island.is/application/templates/secondary-school'
 import {
+  ApplicationPeriod,
   SecondarySchool,
   SecondarySchoolClient,
   Student,
@@ -39,6 +40,12 @@ export class SecondarySchoolService extends BaseTemplateApiService {
     private readonly s3Service: S3Service,
   ) {
     super(ApplicationTypes.SECONDARY_SCHOOL)
+  }
+
+  async getApplicationPeriodInfo({
+    auth,
+  }: TemplateApiModuleActionProps): Promise<ApplicationPeriod> {
+    return this.secondarySchoolClient.getApplicationPeriodInfo(auth)
   }
 
   async getStudentInfo({

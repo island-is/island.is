@@ -2,6 +2,7 @@ import _uniqBy from 'lodash/uniqBy'
 import PDFDocument from 'pdfkit'
 
 import {
+  capitalize,
   formatDate,
   getRoleTitleFromCaseFileCategory,
   lowercase,
@@ -125,22 +126,21 @@ export const createIndictmentCourtRecordPdf = (
       break
     }
 
+    const startDate = courtSession.startDate ?? nowFactory()
+    const courtDate = capitalize(
+      formatDate(startDate, 'eeee d. MMMM yyyy')?.replace('dagur', 'daginn'),
+    )
+
     addEmptyLines(doc, 2)
     addNormalText(
       doc,
-      `Þann ${formatDate(
-        courtSession.startDate ?? nowFactory(),
-        'PPP',
-      )} heldur ${courtSession.judge?.name ?? 'óþekktur'} ${lowercase(
-        courtSession.judge?.title,
-      )} dómþing ${
+      `${courtDate} heldur ${
+        courtSession.judge?.name ?? 'óþekktur'
+      } ${lowercase(courtSession.judge?.title)} dómþing ${
         courtSession.location ?? 'á óþekktum stað'
       }. Fyrir er tekið mál nr. ${
         theCase.courtCaseNumber ?? 'S-xxxx/yyyy'
-      }. Þinghald hefst kl. ${formatDate(
-        courtSession.startDate ?? nowFactory(),
-        'p',
-      )}.`,
+      }. Þinghald hefst kl. ${formatDate(startDate, 'p')}.`,
     )
 
     if (courtSession.isClosed) {

@@ -932,6 +932,16 @@ export class CaseService {
     ]
 
     if (isIndictmentCase(theCase.type)) {
+      if (theCase.splitCaseId) {
+        messages.push({
+          type: MessageType.INDICTMENT_CASE_NOTIFICATION,
+          caseId: theCase.id,
+          body: {
+            type: IndictmentCaseNotificationType.INDICTMENT_SPLIT_COMPLETED,
+          },
+        })
+      }
+
       messages.push({
         type: MessageType.DELIVERY_TO_COURT_INDICTMENT_INFO,
         user,
@@ -1054,6 +1064,35 @@ export class CaseService {
       caseId: theCase.id,
     })
 
+    for (const defendant of theCase.defendants ?? []) {
+      for (const subpoena of defendant.subpoenas ?? []) {
+        messages.push({
+          type: MessageType.DELIVERY_TO_COURT_SUBPOENA,
+          user,
+          caseId: theCase.id,
+          elementId: [defendant.id, subpoena.id],
+        })
+
+        const hasSubpoenaBeenSuccessfullyServedToDefendant =
+          subpoena?.serviceStatus &&
+          [
+            ServiceStatus.DEFENDER,
+            ServiceStatus.ELECTRONICALLY,
+            ServiceStatus.IN_PERSON,
+          ].includes(subpoena.serviceStatus)
+
+        // Only send certificates for subpoenas which have been successfully served
+        if (hasSubpoenaBeenSuccessfullyServedToDefendant) {
+          messages.push({
+            type: MessageType.DELIVERY_TO_COURT_SERVICE_CERTIFICATE,
+            user,
+            caseId: theCase.id,
+            elementId: [defendant.id, subpoena.id],
+          })
+        }
+      }
+    }
+
     if (theCase.state === CaseState.WAITING_FOR_CANCELLATION) {
       messages.push({
         type: MessageType.DELIVERY_TO_COURT_INDICTMENT_CANCELLATION_NOTICE,
@@ -1071,16 +1110,6 @@ export class CaseService {
         // Without the flag, email (2) would get notification including the court case number.
         // For more context: https://github.com/island-is/island.is/pull/17385/files#r1904268032
         body: { withCourtCaseNumber: false },
-      })
-    }
-
-    if (theCase.splitCaseId) {
-      messages.push({
-        type: MessageType.INDICTMENT_CASE_NOTIFICATION,
-        caseId: theCase.id,
-        body: {
-          type: IndictmentCaseNotificationType.INDICTMENT_SPLIT_COMPLETED,
-        },
       })
     }
 
@@ -1610,27 +1639,27 @@ export class CaseService {
   ): Promise<void> {
     const messages: Message[] = []
 
-    theCase.defendants?.forEach((defendant) => {
-      const subpoena = defendant.subpoenas?.[0]
+    for (const defendant of theCase.defendants ?? []) {
+      for (const subpoena of defendant.subpoenas ?? []) {
+        const hasSubpoenaBeenSuccessfullyServedToDefendant =
+          subpoena?.serviceStatus &&
+          [
+            ServiceStatus.DEFENDER,
+            ServiceStatus.ELECTRONICALLY,
+            ServiceStatus.IN_PERSON,
+          ].includes(subpoena.serviceStatus)
 
-      const hasSubpoenaBeenSuccessfullyServedToDefendant =
-        subpoena?.serviceStatus &&
-        [
-          ServiceStatus.DEFENDER,
-          ServiceStatus.ELECTRONICALLY,
-          ServiceStatus.IN_PERSON,
-        ].includes(subpoena.serviceStatus)
-
-      // Only send certificates for subpoenas which have been successfully served
-      if (hasSubpoenaBeenSuccessfullyServedToDefendant) {
-        messages.push({
-          type: MessageType.DELIVERY_TO_COURT_SERVICE_CERTIFICATE,
-          user,
-          caseId: theCase.id,
-          elementId: [defendant.id, subpoena.id],
-        })
+        // Only send certificates for subpoenas which have been successfully served
+        if (hasSubpoenaBeenSuccessfullyServedToDefendant) {
+          messages.push({
+            type: MessageType.DELIVERY_TO_COURT_SERVICE_CERTIFICATE,
+            user,
+            caseId: theCase.id,
+            elementId: [defendant.id, subpoena.id],
+          })
+        }
       }
-    })
+    }
 
     return this.messageService.sendMessagesToQueue(messages)
   }
@@ -2453,10 +2482,12 @@ export class CaseService {
           caseId: theCase.id,
           transaction,
         })
+
         const caseSentToCourt = EventLog.getEventLogDateByEventType(
           [EventType.CASE_SENT_TO_COURT, EventType.INDICTMENT_CONFIRMED],
           theCase.eventLogs,
         )
+
         await this.courtSessionService.createOrUpdateCourtSessionString({
           caseId: parentCaseId,
           courtSessionId,
@@ -2506,10 +2537,38 @@ export class CaseService {
   async requestCourtRecordSignature(
     theCase: Case,
     user: TUser,
+    method: 'audkenni' | 'mobile',
   ): Promise<SigningServiceResponse> {
     await this.refreshFormatMessage()
 
     const pdf = await getCourtRecordPdfAsString(theCase, this.formatMessage)
+
+    if (method === 'audkenni') {
+      return this.signingService
+        .requestSignatureAudkenni(
+          user.nationalId,
+          user.name,
+          'Ísland',
+          'courtRecord.pdf',
+          pdf,
+          'Undirrita skjal - Öryggistala',
+        )
+        .catch((error) => {
+          this.eventService.postErrorEvent(
+            `Failed to request a court record signature via ${method}`,
+            {
+              caseId: theCase.id,
+              policeCaseNumbers: theCase.policeCaseNumbers.join(', '),
+              courtCaseNumber: theCase.courtCaseNumber,
+              actor: user.name,
+              institution: user.institution?.name,
+            },
+            error,
+          )
+
+          throw error
+        })
+    }
 
     return this.signingService
       .requestSignature(
@@ -2522,7 +2581,7 @@ export class CaseService {
       )
       .catch((error) => {
         this.eventService.postErrorEvent(
-          'Failed to request a court record signature',
+          `Failed to request a court record signature via ${method}`,
           {
             caseId: theCase.id,
             policeCaseNumbers: theCase.policeCaseNumbers.join(', '),
@@ -2541,15 +2600,17 @@ export class CaseService {
     theCase: Case,
     user: TUser,
     documentToken: string,
+    method: 'audkenni' | 'mobile',
     transaction: Transaction,
   ): Promise<SignatureConfirmationResponse> {
     // This method should be called immediately after requestCourtRecordSignature
-
     try {
       const courtRecordPdf = await this.signingService.waitForSignature(
         'courtRecord.pdf',
         documentToken,
+        method,
       )
+
       const awsSuccess = await this.uploadSignedCourtRecordPdfToS3(
         theCase,
         courtRecordPdf,
@@ -2575,7 +2636,7 @@ export class CaseService {
       return { documentSigned: true }
     } catch (error) {
       this.eventService.postErrorEvent(
-        'Failed to get a court record signature confirmation',
+        `Failed to get a court record signature confirmation via ${method}`,
         {
           caseId: theCase.id,
           policeCaseNumbers: theCase.policeCaseNumbers.join(', '),
@@ -2598,28 +2659,63 @@ export class CaseService {
     }
   }
 
-  async requestRulingSignature(theCase: Case): Promise<SigningServiceResponse> {
-    await this.refreshFormatMessage()
+  async requestRulingSignature(
+    theCase: Case,
+    method: 'audkenni' | 'mobile',
+  ): Promise<SigningServiceResponse> {
+    const judge = theCase.judge
+    if (!judge) {
+      throw new InternalServerErrorException(
+        'Failed to request a ruling signature - judge not found',
+      )
+    }
 
+    await this.refreshFormatMessage()
     const pdf = await getRulingPdfAsString(theCase, this.formatMessage)
+    if (method === 'audkenni') {
+      return this.signingService
+        .requestSignatureAudkenni(
+          judge.nationalId,
+          judge.name,
+          'Ísland',
+          'ruling.pdf',
+          pdf,
+          'Undirrita skjal - Öryggistala',
+        )
+        .catch((error) => {
+          this.eventService.postErrorEvent(
+            `Failed to request a ruling signature via ${method}`,
+            {
+              caseId: theCase.id,
+              policeCaseNumbers: theCase.policeCaseNumbers.join(', '),
+              courtCaseNumber: theCase.courtCaseNumber,
+              actor: theCase.judge?.name,
+              institution: theCase.judge?.institution?.name,
+            },
+            error,
+          )
+
+          throw error
+        })
+    }
 
     return this.signingService
       .requestSignature(
-        theCase.judge?.mobileNumber ?? '',
+        judge.mobileNumber,
         'Undirrita skjal - Öryggistala',
-        theCase.judge?.name ?? '',
+        judge.name,
         'Ísland',
         'ruling.pdf',
         pdf,
       )
       .catch((error) => {
         this.eventService.postErrorEvent(
-          'Failed to request a ruling signature',
+          `Failed to request a ruling signature via ${method}`,
           {
             caseId: theCase.id,
             policeCaseNumbers: theCase.policeCaseNumbers.join(', '),
             courtCaseNumber: theCase.courtCaseNumber,
-            actor: theCase.judge?.name,
+            actor: judge.name,
             institution: theCase.judge?.institution?.name,
           },
           error,
@@ -2633,6 +2729,7 @@ export class CaseService {
     theCase: Case,
     user: TUser,
     documentToken: string,
+    method: 'audkenni' | 'mobile',
     transaction: Transaction,
   ): Promise<SignatureConfirmationResponse> {
     // This method should be called immediately after requestRulingSignature
@@ -2640,7 +2737,9 @@ export class CaseService {
       const signedPdf = await this.signingService.waitForSignature(
         'ruling.pdf',
         documentToken,
+        method,
       )
+
       const awsSuccess = await this.uploadSignedRulingPdfToS3(
         theCase,
         signedPdf,
@@ -2663,7 +2762,7 @@ export class CaseService {
       return { documentSigned: true }
     } catch (error) {
       this.eventService.postErrorEvent(
-        'Failed to get a ruling signature confirmation',
+        `Failed to get a ruling signature confirmation via ${method}`,
         {
           caseId: theCase.id,
           policeCaseNumbers: theCase.policeCaseNumbers.join(', '),

@@ -3,6 +3,8 @@ import { parse } from 'csv-parse'
 import { RateCategory } from './constants'
 import { CarCategoryError, CarCategoryRecord, CarMap } from './types'
 import { is30DaysOrMoreFromDate } from './dayRateUtils'
+import { m } from '../lib/messages'
+import { MessageDescriptor } from 'react-intl'
 
 const sanitizeNumber = (n: string) => n.replace(new RegExp(/[.,]/g), '')
 
@@ -17,9 +19,8 @@ export const parseFileToCarCategory = async (
     : parseXlsx(file))
 
   const carNumberIndex = 0
-  const prevMilageIndex = 2
-  const currMilageIndex = 3
-  const rateCategoryIndex = 4
+  const prevMilageIndex = 1
+  const currMilageIndex = 2
 
   const [_, ...values] = parsedLines
 
@@ -31,7 +32,7 @@ export const parseFileToCarCategory = async (
       if (!currentCarData[carNr]) {
         return {
           code: 1,
-          message: 'Þessi bíll fannst ekki í lista af þínum bílum!',
+          message: m.multiUploadErrors.carNotFound,
           carNr,
         }
       }
@@ -45,8 +46,7 @@ export const parseFileToCarCategory = async (
           if (!is30orMoreDays) {
             return {
               code: 1,
-              message:
-                'Bílar þurfa að vera skráið á daggjald í amk 30 daga áður en hægt er að breyta til baka!',
+              message: m.multiUploadErrors.dayRateMin30Days,
               carNr,
             }
           }
@@ -56,7 +56,7 @@ export const parseFileToCarCategory = async (
       if (!prevMileStr && currMileStr) {
         return {
           code: 1,
-          message: 'Síðasta staða bíls þarf að vera til staðar!',
+          message: m.multiUploadErrors.previousMileageRequired,
           carNr,
         }
       }
@@ -68,35 +68,18 @@ export const parseFileToCarCategory = async (
       const currMile = Number(sanitizeNumber(currMileStr))
 
       // Skip rows where either mileage value is not a valid number
-      if (Number.isNaN(prevMile) || Number.isNaN(currMile)) return undefined
+      // Or where the current mileage is 0 and the previous mileage is greater than 0
+      if (
+        Number.isNaN(prevMile) ||
+        Number.isNaN(currMile) ||
+        (currMile === 0 && prevMile > 0)
+      )
+        return undefined
 
       if (prevMile > currMile) {
         return {
           code: 1,
-          message: 'Nýja staða má ekki vera lægri en síðasta staða!',
-          carNr,
-        }
-      }
-
-      const category = row[rateCategoryIndex]
-      if (!category) return undefined
-      // need to check if the category is the same thing as what we should pass into this function
-      if (
-        category.toLowerCase() !== RateCategory.DAYRATE.toLowerCase() &&
-        category.toLowerCase() !== RateCategory.KMRATE.toLowerCase()
-      ) {
-        return {
-          code: 1,
-          message:
-            'Ógildur gjaldflokkur, vinsamlegast passið uppá stafsetningu (Daggjald eða Kilometragjald)',
-          carNr,
-        }
-      }
-
-      if (category.toLowerCase() !== rateToChangeTo.toLowerCase()) {
-        return {
-          code: 1,
-          message: `Ógildur gjaldflokkur, þú valdir að breyta gjaldflokki í ${rateToChangeTo}`,
+          message: m.multiUploadErrors.newMileageLowerThanPrevious,
           carNr,
         }
       }
@@ -105,7 +88,7 @@ export const parseFileToCarCategory = async (
         vehicleId: carNr,
         oldMileage: prevMile,
         newMilage: currMile,
-        rateCategory: category,
+        rateCategory: rateToChangeTo,
       }
     })
 
@@ -195,7 +178,7 @@ export const parseCsvString = (chunk: string): Promise<string[][]> => {
 export const createErrorExcel = async (
   file: File,
   type: 'csv' | 'xlsx',
-  errors: CarCategoryError[],
+  errors: Map<string, string | MessageDescriptor>,
 ) => {
   const parsedLines: Array<Array<string>> = await (type === 'csv'
     ? parseCsv(file)
@@ -206,13 +189,10 @@ export const createErrorExcel = async (
   // Add error message column to header
   const newHeader = [...header, 'Villa']
 
-  // Create a map of error messages by car number
-  const errorMap = new Map(errors.map((error) => [error.carNr, error.message]))
-
   // Add error messages to rows and mark error rows
   const processedRows = values.map((row) => {
     const carNr = row[0]
-    const errorMessage = errorMap.get(carNr)
+    const errorMessage = errors.get(carNr)
     return {
       row,
       hasError: !!errorMessage,
