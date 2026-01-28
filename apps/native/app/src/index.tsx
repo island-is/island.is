@@ -2,7 +2,7 @@ import './utils/intl-polyfill'
 import { Navigation } from 'react-native-navigation'
 import SpotlightSearch from 'react-native-spotlight-search'
 import { initializeApolloClient } from './graphql/client'
-import { readAuthorizeResult } from './stores/auth-store'
+import { prefetchAuthConfig, readAuthorizeResult } from './stores/auth-store'
 import { showAppLockOverlay } from './utils/app-lock'
 import { isIos } from './utils/devices'
 import { getDefaultOptions } from './utils/get-default-options'
@@ -20,6 +20,9 @@ import { navigateTo } from './lib/deep-linking'
 async function startApp() {
   // setup global packages and polyfills
   setupGlobals()
+
+  // Prefetch auth configuration on Android (non-blocking optimization)
+  void prefetchAuthConfig()
 
   // Register all event handlers
   setupEventHandlers()

@@ -2,6 +2,7 @@ import { Alert, Platform } from 'react-native'
 import {
   authorize,
   AuthorizeResult,
+  prefetchConfiguration,
   refresh as authRefresh,
   RefreshResult,
   revoke,
@@ -75,6 +76,23 @@ const getAppAuthConfig = () => {
     clientId: config.idsClientId,
     redirectUrl: `${config.bundleId}${android}://oauth`,
     scopes: config.idsScopes,
+  }
+}
+
+export async function prefetchAuthConfig() {
+  if (!isAndroid) {
+    return
+  }
+
+  try {
+    const appAuthConfig = getAppAuthConfig()
+    await prefetchConfiguration({
+      ...appAuthConfig,
+      warmAndPrefetchChrome: true,
+    })
+  } catch (error) {
+    // Prefetch is optional, don't block app startup
+    console.log('Auth prefetch failed:', error)
   }
 }
 
