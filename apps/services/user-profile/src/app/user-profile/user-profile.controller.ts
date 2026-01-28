@@ -16,7 +16,13 @@ import * as kennitala from 'kennitala'
 import { Documentation } from '@island.is/nest/swagger'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import { AdminPortalScope, UserProfileScope } from '@island.is/auth/scopes'
-import { IdsAuthGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
+import {
+  CurrentUser,
+  IdsAuthGuard,
+  Scopes,
+  ScopesGuard,
+} from '@island.is/auth-nest-tools'
 
 import { UserProfileDto } from './dto/user-profile.dto'
 import { UserProfileService } from './user-profile.service'
@@ -229,12 +235,9 @@ export class UserProfileController {
     response: { status: 200, type: Boolean },
   })
   @ApiSecurity('oauth2', [AdminPortalScope.serviceDesk])
-  @Audit<boolean>({
-    action: 'deleteEmail',
-    resources: () => [],
-  })
   @Scopes(AdminPortalScope.serviceDesk)
   async deleteEmail(
+    @CurrentUser() user: User,
     @Headers('X-Param-National-Id') nationalId: string,
     @Param('emailId') emailId: string,
   ): Promise<boolean> {
@@ -242,6 +245,14 @@ export class UserProfileController {
       throw new BadRequestException('National id is not valid')
     }
 
-    return this.emailsService.deleteEmail(nationalId, emailId)
+    return this.auditService.auditPromise<boolean>(
+      {
+        auth: user,
+        namespace,
+        action: 'deleteEmail',
+        resources: [nationalId, emailId],
+      },
+      this.emailsService.deleteEmail(nationalId, emailId),
+    )
   }
 }
