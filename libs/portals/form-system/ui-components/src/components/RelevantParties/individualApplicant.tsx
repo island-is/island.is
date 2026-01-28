@@ -10,7 +10,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { Locale } from '@island.is/shared/types'
-import { Dispatch } from 'react'
+import { Dispatch, useEffect } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 import { Action } from '../../lib'
@@ -34,7 +34,30 @@ export const IndividualApplicant = ({
 }: Props) => {
   const { locale, formatMessage } = useIntl()
   const { lang } = useLocale()
-  const { control } = useFormContext()
+  const { control, setValue } = useFormContext()
+
+  const emailFromState = getValue(applicant, 'email') ?? ''
+  const phoneNumberFromState = getValue(applicant, 'phoneNumber') ?? ''
+
+  useEffect(() => {
+    if (emailFromState) {
+      setValue(`${applicant.id}.email`, emailFromState, {
+        shouldDirty: false,
+        shouldTouch: false,
+        shouldValidate: true,
+      })
+    }
+  }, [emailFromState, applicant.id, setValue])
+
+  useEffect(() => {
+    if (phoneNumberFromState) {
+      setValue(`${applicant.id}.phoneNumber`, phoneNumberFromState, {
+        shouldDirty: false,
+        shouldTouch: false,
+        shouldValidate: true,
+      })
+    }
+  }, [phoneNumberFromState, applicant.id, setValue])
 
   return (
     <Box marginTop={4}>
@@ -89,11 +112,7 @@ export const IndividualApplicant = ({
                 type="email"
                 name={field.name}
                 label={formatMessage(m.email)}
-                value={
-                  field.value === '' || field.value == null
-                    ? getValue(applicant, 'email') ?? ''
-                    : field.value
-                }
+                value={field.value}
                 onChange={(e) => {
                   field.onChange(e)
                   if (dispatch) {
@@ -136,11 +155,7 @@ export const IndividualApplicant = ({
                 locale={locale as Locale}
                 required={applicant.isRequired ?? false}
                 backgroundColor="blue"
-                value={
-                  field.value === '' || field.value == null
-                    ? getValue(applicant, 'phoneNumber') ?? ''
-                    : field.value
-                }
+                value={field.value}
                 onChange={(e) => {
                   field.onChange(e)
                   if (dispatch) {
