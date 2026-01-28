@@ -60,7 +60,7 @@ module.exports = {
         allowNull: false,
       },
       created: Sequelize.DATE,
-      updated: Sequelize.DATE,
+      modified: Sequelize.DATE,
       institution_id: Sequelize.UUID,
       value: Sequelize.STRING,
       type: Sequelize.STRING,
