@@ -137,7 +137,7 @@ const DeterminationDetails: CustomScreen<DeterminationDetailsProps> = ({
       organizationPage={organizationPage}
       navigationData={{
         title: n('navigationTitle', 'Efnisyfirlit'),
-        items: getSubpageNavList(organizationPage, router),
+        items: getSubpageNavList(organizationPage, router, 3),
       }}
       breadcrumbItems={[
         {
