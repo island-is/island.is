@@ -138,14 +138,14 @@ const IndictmentOverview: FC = () => {
 
   const displayGeneratedPDFs = shouldDisplayGeneratedPdfFiles(workingCase, user)
 
+  const isReviewMissing = workingCase.defendants?.some(
+    (defendant) => !defendant.indictmentReviewDecision,
+  )
+
   const shouldDisplayReviewDecision =
     isCompletedCase(workingCase.state) &&
     workingCase.indictmentReviewer?.id === user?.id &&
-    Boolean(
-      workingCase.defendants?.some(
-        (defendant) => !defendant.indictmentReviewDecision,
-      ),
-    )
+    Boolean(isReviewMissing)
 
   const canAddFiles =
     !isCompletedCase(workingCase.state) &&
@@ -395,9 +395,7 @@ const IndictmentOverview: FC = () => {
           hideNextButton={!shouldDisplayReviewDecision}
           nextButtonText={formatMessage(strings.completeReview)}
           onNextButtonClick={() => setModalVisible(CONFIRM_PROSECUTOR_DECISION)}
-          nextIsDisabled={workingCase.defendants?.some(
-            (defendant) => !defendant.indictmentReviewDecision,
-          )}
+          nextIsDisabled={isReviewMissing}
         />
       </FormContentContainer>
     </PageLayout>
