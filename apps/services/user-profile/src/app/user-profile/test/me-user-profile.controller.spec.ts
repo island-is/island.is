@@ -457,7 +457,6 @@ describe('MeUserProfileController', () => {
       })
 
       expect(userProfile.emails.length).toBe(0)
-
       expect(userProfile.mobilePhoneNumber).toBe(
         testUserProfile.mobilePhoneNumber,
       )
@@ -872,9 +871,7 @@ describe('MeUserProfileController', () => {
 
       // Assert Db records
       const userProfileModel = app.get(getModelToken(UserProfile))
-
       const userProfile = await userProfileModel.findOne({
-        where: { nationalId: testUserProfile.nationalId },
         include: {
           model: Emails,
           as: 'emails',
@@ -883,8 +880,10 @@ describe('MeUserProfileController', () => {
             primary: true,
           },
         },
+        where: { nationalId: testUserProfile.nationalId },
       })
 
+      expect(userProfile.emails.length).toBe(0)
       expect(userProfile.mobilePhoneNumber).toBe(null)
       expect(userProfile.mobilePhoneNumberVerified).toBe(false)
       expect(userProfile.mobileStatus).toBe(DataStatus.EMPTY)
