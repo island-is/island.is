@@ -215,10 +215,7 @@ type InputSettingsActions =
   | {
       type: 'SET_ZENDESK_FIELD_SETTINGS'
       payload: {
-        property:
-          | 'zendeskIsPrivate'
-          | 'zendeskIsCustomField'
-          | 'zendeskCustomFieldId'
+        property: 'zendeskIsCustomField' | 'zendeskCustomFieldId'
         value: boolean | string
         update: (updatedActiveItem?: ActiveItem) => void
       }

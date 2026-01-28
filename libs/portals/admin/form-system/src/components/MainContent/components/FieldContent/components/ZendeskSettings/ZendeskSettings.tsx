@@ -20,28 +20,12 @@ export const ZendeskSettings = ({ fieldSettings }: Props) => {
 
   return (
     <Box marginTop={2}>
-      <Text variant="h4">Zendesk stillingar</Text>
+      {/* <Text variant="h4">Zendesk stillingar</Text> */}
       <GridRow marginTop={2} marginBottom={2}>
         <GridColumn span="5/10">
           <Checkbox
-            checked={fieldSettings?.zendeskIsPrivate ?? false}
-            label="Private"
-            onChange={(e) =>
-              controlDispatch({
-                type: 'SET_ZENDESK_FIELD_SETTINGS',
-                payload: {
-                  property: 'zendeskIsPrivate',
-                  value: e.target.checked,
-                  update: updateActiveItem,
-                },
-              })
-            }
-          />
-        </GridColumn>
-        <GridColumn span="5/10">
-          <Checkbox
             checked={fieldSettings?.zendeskIsCustomField ?? false}
-            label="Custom field"
+            label="Zendesk reitur"
             onChange={(e) => {
               controlDispatch({
                 type: 'SET_ZENDESK_FIELD_SETTINGS',
@@ -67,7 +51,7 @@ export const ZendeskSettings = ({ fieldSettings }: Props) => {
             <Box marginTop={2}>
               <Input
                 name="custom-field-id"
-                placeholder="Sláðu inn Zendesk field id"
+                placeholder="Zendesk field id"
                 value={fieldSettings?.zendeskCustomFieldId ?? ''}
                 onChange={(e) =>
                   controlDispatch({

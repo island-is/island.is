@@ -239,7 +239,6 @@ export class ZendeskService {
 
           for (const field of screen.fields ?? []) {
             if (field.isHidden) continue
-            if (field.fieldSettings?.zendeskIsPrivate) continue
 
             const requiredMark = field.isRequired ? '*' : ''
             parts.push(
