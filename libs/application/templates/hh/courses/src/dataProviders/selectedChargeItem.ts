@@ -4,4 +4,3 @@ export const HhCoursesSelectedChargeItemApi = defineTemplateApi({
   action: 'getSelectedChargeItem',
   externalDataId: 'hhCoursesSelectedChargeItem',
 })
-
