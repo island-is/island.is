@@ -204,6 +204,10 @@ DeterminationDetails.getProps = async ({ apolloClient, query, locale }) => {
     item: data.webSupremeCourtDeterminationById.item,
     organizationPage: organizationPage.data.getOrganizationPage,
     namespace,
+    languageToggleHrefOverride: {
+      is: '',
+      en: '',
+    },
   }
 }
 
