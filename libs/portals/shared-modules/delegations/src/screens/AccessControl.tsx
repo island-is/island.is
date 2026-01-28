@@ -6,9 +6,19 @@ import { isDefined } from '@island.is/shared/utils'
 import { useNavigate } from 'react-router-dom'
 import { useLocation } from 'react-use'
 import { DelegationsIncoming } from '../components/delegations/incoming/DelegationsIncoming'
-import { DelegationsOutgoing } from '../components/delegations/outgoing/DelegationsOutgoing'
+import {
+  DelegationsOutgoing,
+  prepareDomainName,
+} from '../components/delegations/outgoing/DelegationsOutgoing'
 import { m } from '../lib/messages'
 import { DelegationPaths } from '../lib/paths'
+import {
+  AuthCustomDelegation,
+  AuthDelegationDirection,
+} from '@island.is/api/schema'
+import { useAuthDelegationsOutgoingQuery } from '../components/delegations/outgoing/DelegationsOutgoing.generated'
+import { useDomains } from '../hooks/useDomains/useDomains'
+import CustomDelegationsTable from '../components/delegations/table/CustomDelegationsTable'
 
 const TAB_DELEGATION_OUTGOING_ID = 'outgoing'
 const TAB_DELEGATION_INCOMING_ID = 'incoming'
@@ -16,13 +26,32 @@ const TAB_DELEGATION_INCOMING_ID = 'incoming'
 const AccessControl = () => {
   useNamespaces(['sp.access-control-delegations'])
 
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang = 'is' } = useLocale()
   const userInfo = useUserInfo()
   const navigate = useNavigate()
   const location = useLocation()
   const { basePath } = usePortalMeta()
   const DELEGATIONS_INCOMING_PATH = `${basePath}${DelegationPaths.DelegationsIncoming}`
   const isDelegationIncoming = location.pathname === DELEGATIONS_INCOMING_PATH
+  const { name: domainName } = useDomains()
+
+  const {
+    data: outgoingData,
+    loading: outgoingLoading,
+    refetch: outgoingRefetch,
+    error: outgoingError,
+  } = useAuthDelegationsOutgoingQuery({
+    variables: {
+      lang,
+      input: {
+        domain: prepareDomainName(domainName),
+        direction: AuthDelegationDirection.outgoing,
+      },
+    },
+    skip: !domainName || !lang,
+    fetchPolicy: 'cache-and-network',
+    errorPolicy: 'all',
+  })
 
   const tabChangeHandler = (id: string) => {
     const url =
@@ -36,7 +65,16 @@ const AccessControl = () => {
     }
   }
 
-  // Only show outgoing delegation when user is logged in on behalf of someone else, i.e. some delegation.
+  const outgoingDelegations =
+    outgoingData?.authDelegations as AuthCustomDelegation[]
+
+  // TODO: not needed for outgoing, will do this for incoming later
+  // const delegationGroups = useMemo(() => {
+  //   return groupBy(data?.authDelegations, 'type')
+  // }, [data?.authDelegations])
+  // const customDelegations = delegationGroups.Custom as AuthCustomDelegation[]
+
+  // Don't show incoming delegations when user is logged in on behalf of someone else, i.e. some delegation.
   const onlyOutgoingDelegations = isDefined(userInfo?.profile?.actor)
 
   return (
@@ -77,6 +115,15 @@ const AccessControl = () => {
           </Box>
         </GridColumn>
       </IntroHeader>
+
+      {/* Outgoing delegations table */}
+      <CustomDelegationsTable
+        data={outgoingDelegations}
+        loading={outgoingLoading || false}
+        refetch={outgoingRefetch}
+        error={outgoingError}
+      />
+
       <Box marginTop={[4, 4, 6]}>
         {onlyOutgoingDelegations ? (
           <DelegationsOutgoing />

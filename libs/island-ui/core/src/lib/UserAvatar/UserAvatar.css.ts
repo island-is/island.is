@@ -38,6 +38,10 @@ export const avatarColor = styleVariants({
     backgroundColor: theme.color.purple100,
     color: theme.color.purple400,
   },
+  white: {
+    backgroundColor: theme.color.white,
+    color: theme.color.blue400,
+  },
 })
 
 export const initials = style({

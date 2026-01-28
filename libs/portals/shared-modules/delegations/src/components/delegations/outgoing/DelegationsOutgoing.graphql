@@ -4,6 +4,7 @@ fragment AuthCustomDelegationOutgoing on AuthCustomDelegation {
     id
     name
     validTo
+    validFrom
     displayName
     apiScope(lang: $lang) {
       ...AuthApiScope

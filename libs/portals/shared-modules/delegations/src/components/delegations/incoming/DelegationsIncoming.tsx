@@ -15,6 +15,7 @@ import { DelegationsEmptyState } from '../DelegationsEmptyState'
 import { AuthCustomDelegationIncoming } from '../../../types/customDelegation'
 import { DelegationViewModal } from '../DelegationViewModal'
 import { useAuthDelegationsIncomingQuery } from './DelegationIncoming.generated'
+import groupBy from 'lodash/groupBy'
 
 export const DelegationsIncoming = () => {
   const { formatMessage, lang = 'is' } = useLocale()
@@ -34,6 +35,7 @@ export const DelegationsIncoming = () => {
     fetchPolicy: 'cache-and-network',
     errorPolicy: 'all',
   })
+  // console.log('data', JSON.stringify(data?.authDelegations))
 
   const delegations = useMemo(
     () =>
@@ -43,6 +45,16 @@ export const DelegationsIncoming = () => {
       ) ?? [],
     [data?.authDelegations],
   )
+
+  // const delegationGroups = useMemo(() => {
+  //   return groupBy(delegations, 'type')
+  // }, [delegations])
+
+  // console.log('delegationGroups', delegationGroups)
+  // console.log(
+  //   'nationalIds',
+  //   groupBy(delegationGroups.ProcurationHolder, 'from.nationalId'),
+  // )
 
   return (
     <Box display="flex" flexDirection="column" rowGap={4} marginTop={[1, 1, 8]}>
