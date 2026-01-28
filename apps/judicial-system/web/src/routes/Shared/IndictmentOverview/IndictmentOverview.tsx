@@ -1,7 +1,6 @@
 import { FC, Fragment, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
-import { toHaveAccessibleErrorMessage } from '@testing-library/jest-dom/matchers'
 
 import {
   Accordion,
