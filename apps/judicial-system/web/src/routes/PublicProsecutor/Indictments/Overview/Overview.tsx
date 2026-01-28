@@ -366,6 +366,7 @@ export const Overview = () => {
                     <SectionHeading
                       title={defendant.name ?? ''}
                       variant="h4"
+                      heading="h4"
                       marginBottom={2}
                       required
                     />
