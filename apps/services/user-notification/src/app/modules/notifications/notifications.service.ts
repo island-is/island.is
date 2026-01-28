@@ -66,17 +66,38 @@ export class NotificationsService {
     locale?: Locale,
   ): Promise<SenderOrganization | undefined> {
     locale = mapToLocale(locale as Locale)
-    const queryVariables = {
-      nationalId: senderId,
+
+    // Remove any existing dashes to normalize the input
+    const sanitizedNationalId = senderId.replace('-', '')
+
+    // First attempt: query with the nationalId as-is (without dash)
+    let res = (await this.cmsService.fetchData(GetOrganizationByNationalId, {
+      nationalId: sanitizedNationalId,
       locale: mapToContentfulLocale(locale),
-    }
-    const res = (await this.cmsService.fetchData(
-      GetOrganizationByNationalId,
-      queryVariables,
-    )) as unknown as {
+    })) as unknown as {
       organizationCollection: { items: Array<{ title: string }> }
     }
-    const items = res.organizationCollection.items
+
+    let items = res.organizationCollection.items
+
+    // Second attempt: if no results and the nationalId is 10 digits, try with dashed format (XXXXXX-XXXX)
+    // This handles the inconsistent kennitala field format in Contentful
+    if (items.length === 0 && sanitizedNationalId.length === 10) {
+      const dashedNationalId = `${sanitizedNationalId.slice(
+        0,
+        6,
+      )}-${sanitizedNationalId.slice(6)}`
+
+      res = (await this.cmsService.fetchData(GetOrganizationByNationalId, {
+        nationalId: dashedNationalId,
+        locale: mapToContentfulLocale(locale),
+      })) as unknown as {
+        organizationCollection: { items: Array<{ title: string }> }
+      }
+
+      items = res.organizationCollection.items
+    }
+
     if (items.length > 0) {
       const [item] = items
       item.title = cleanString(item.title)
