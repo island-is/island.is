@@ -56,7 +56,6 @@ export const ApplicationDetails = ({
   onCopyApplicationLink,
   shouldShowCardButtons = true,
 }: Props) => {
-  console.log('application', application)
   const { formatMessage } = useLocale()
 
   const handleCopyApplicationId = () => {

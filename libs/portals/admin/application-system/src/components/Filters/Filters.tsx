@@ -22,6 +22,7 @@ import { useUserInfo } from '@island.is/react-spa/bff'
 interface Props {
   onTypeIdChange: (period: ApplicationFilters['typeIdValue']) => void
   onSearchChange: (query: string) => void
+  onSearchStrChange: (query: string) => void
   onDateChange: (period: ApplicationFilters['period']) => void
   onFilterChange: FilterMultiChoiceProps['onChange']
   onFilterClear: (categoryId?: string) => void
@@ -31,11 +32,13 @@ interface Props {
   organizations: Organization[]
   numberOfDocuments?: number
   isSuperAdmin?: boolean
+  useAdvancedSearch?: boolean
 }
 
 export const Filters = ({
   onTypeIdChange,
   onSearchChange,
+  onSearchStrChange,
   onFilterClear,
   onFilterChange,
   onDateChange,
@@ -43,10 +46,12 @@ export const Filters = ({
   numberOfDocuments,
   multiChoiceFilters,
   organizations,
-  isSuperAdmin,
+  isSuperAdmin = false,
+  useAdvancedSearch = false,
 }: Props) => {
   const [typeId, setTypeId] = useState<string | undefined>(undefined)
   const [nationalId, setNationalId] = useState('')
+  const [searchStr, setSearchStr] = useState('')
   const { formatMessage } = useLocale()
   const [isMobile, setIsMobile] = useState(false)
   const [isTablet, setIsTablet] = useState(false)
@@ -88,6 +93,14 @@ export const Filters = ({
     },
     debounceTime.search,
     [nationalId],
+  )
+
+  useDebounce(
+    () => {
+      onSearchStrChange(searchStr)
+    },
+    debounceTime.search,
+    [searchStr],
   )
 
   useEffect(() => {
@@ -144,7 +157,12 @@ export const Filters = ({
         labelClose={formatMessage(m.closeFilter)}
         labelResult={formatMessage(m.filterResults)}
         labelTitle={formatMessage(m.filter)}
-        onFilterClear={() => onFilterClear()}
+        onFilterClear={() => {
+          onFilterClear()
+          setChosenInstituteNationalId(undefined)
+          setChosenInstituteSlug(undefined)
+          setTypeId(undefined)
+        }}
         filterInput={
           <Box display="flex" flexDirection={['column', 'column', 'column']}>
             <Box
@@ -233,17 +251,27 @@ export const Filters = ({
                 width={isTablet ? 'full' : 'half'}
                 paddingBottom={isTablet ? 3 : 0}
               >
-                <FilterInput
-                  placeholder={formatMessage(m.searchPlaceholder)}
-                  name="admin-applications-nationalId"
-                  value={
-                    nationalId.length > 6
-                      ? formatNationalId(nationalId)
-                      : nationalId
-                  }
-                  onChange={setNationalId}
-                  backgroundColor="blue"
-                />
+                {useAdvancedSearch ? (
+                  <FilterInput
+                    placeholder={formatMessage(m.searchStrPlaceholder)}
+                    name="admin-applications-search-str"
+                    value={searchStr}
+                    onChange={setSearchStr}
+                    backgroundColor="blue"
+                  />
+                ) : (
+                  <FilterInput
+                    placeholder={formatMessage(m.searchPlaceholder)}
+                    name="admin-applications-nationalId"
+                    value={
+                      nationalId.length > 6
+                        ? formatNationalId(nationalId)
+                        : nationalId
+                    }
+                    onChange={setNationalId}
+                    backgroundColor="blue"
+                  />
+                )}
               </Box>
               <Box
                 display="flex"
@@ -262,6 +290,7 @@ export const Filters = ({
                     size="xs"
                     locale="is"
                     isClearable={true}
+                    handleClear={() => onDateChange({ from: undefined })}
                   />
                 </Box>
                 <Box paddingLeft={3} width="half">
@@ -276,6 +305,7 @@ export const Filters = ({
                     size="xs"
                     locale="is"
                     isClearable={true}
+                    handleClear={() => onDateChange({ to: undefined })}
                   />
                 </Box>
               </Box>

@@ -17,7 +17,6 @@ export const buildHistoryItems = (
   let historyItems: ApplicationCardHistoryItem[] = []
 
   const actionCardHistory = application.actionCard?.history
-  console.log('actionCardHistory', actionCardHistory)
   const lastHistoryItem = actionCardHistory ? actionCardHistory[0] : undefined
   const lastHistoryDate = lastHistoryItem?.date
   if (application.actionCard?.pendingAction?.title) {

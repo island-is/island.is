@@ -64,6 +64,7 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
   onInputClick,
   handleCloseCalendar,
   handleOpenCalendar,
+  handleClear,
   required,
   inputName = '',
   backgroundColor = 'white',
@@ -269,6 +270,7 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
                 setStartDate(null)
                 setEndDate(null)
                 setForceOpen(undefined) // Reset to allow normal opening behavior
+                handleClear && handleClear()
               }}
             />
           }

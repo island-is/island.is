@@ -191,6 +191,15 @@ const Overview = ({ isSuperAdmin }: OverviewProps) => {
     }))
   }
 
+  const handleSearchStrChange = (
+    searchStr: ApplicationFilters['searchStr'],
+  ) => {
+    setFilters((prev) => ({
+      ...prev,
+      searchStr,
+    }))
+  }
+
   const handleInstitutionIdChange = (
     instituionNationalId: ApplicationFilters['institution'],
   ) => {
@@ -259,20 +268,23 @@ const Overview = ({ isSuperAdmin }: OverviewProps) => {
     applicationAdminList ?? [],
     {
       institutionFilters,
-      period: filters.period,
-      nationalId: filters.nationalId,
     },
   )
 
   return (
     <Box>
-      <Text variant="h3" as="h1" marginBottom={[3, 3, 6]} marginTop={3}>
+      <Text variant="h3" as="h1" marginBottom={1} marginTop={3}>
         {formatMessage(m.applicationSystemApplications)}
+      </Text>
+
+      <Text variant="h5" as="h2" marginBottom={[3, 3, 6]}>
+        {formatMessage(m.applicationSystemApplicationsDescription)}
       </Text>
 
       <Filters
         onTypeIdChange={handleTypeIdChange}
         onSearchChange={handleSearchChange}
+        onSearchStrChange={handleSearchStrChange}
         onFilterChange={handleMultiChoiceFilterChange}
         onDateChange={handleDateChange}
         onFilterClear={clearFilters}
@@ -286,6 +298,7 @@ const Overview = ({ isSuperAdmin }: OverviewProps) => {
             : institutionData?.applicationApplicationsInstitutionAdmin?.count
         }
         isSuperAdmin={isSuperAdmin}
+        useAdvancedSearch={!!filters.typeIdValue}
       />
 
       {isLoading ? (
@@ -302,6 +315,7 @@ const Overview = ({ isSuperAdmin }: OverviewProps) => {
           page={page}
           setPage={setPage}
           pageSize={pageSize}
+          showAdminData={!!filters.typeIdValue}
           shouldShowCardButtons={false}
           numberOfItems={
             isSuperAdmin

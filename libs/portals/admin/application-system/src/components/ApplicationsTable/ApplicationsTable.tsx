@@ -101,7 +101,12 @@ export const ApplicationsTable = ({
                   {formatMessage(x.label) ?? ''}
                 </T.HeadData>
               ))}
-            <T.HeadData>{formatMessage(m.dateModified)}</T.HeadData>
+            <T.HeadData>
+              <Box display="flex" alignItems="center">
+                {formatMessage(m.dateModified)}
+                <Icon icon="chevronDown" />
+              </Box>
+            </T.HeadData>
             {!showAdminData && (
               <T.HeadData>{formatMessage(m.institution)}</T.HeadData>
             )}

@@ -79,33 +79,11 @@ export const getFilteredApplications = (
   applications: AdminApplication[],
   {
     institutionFilters,
-    period,
-    nationalId,
   }: {
     institutionFilters?: string[]
-    period?: ApplicationFilters['period']
-    nationalId: ApplicationFilters['nationalId']
   },
 ) => {
   let filteredApplications = applications
-
-  if (period?.from) {
-    const { from } = period
-    filteredApplications = filteredApplications.filter(
-      (x) => new Date(x.created) > startOfDay(from),
-    )
-  }
-  if (period?.to) {
-    const { to } = period
-    filteredApplications = filteredApplications.filter(
-      (x) => endOfDay(to) > new Date(x.created),
-    )
-  }
-  if (nationalId) {
-    filteredApplications = filteredApplications.filter(
-      (x) => x.applicant === nationalId,
-    )
-  }
   if (institutionFilters) {
     filteredApplications = filteredApplications.filter((x) =>
       institutionFilters.includes(x.typeId),
