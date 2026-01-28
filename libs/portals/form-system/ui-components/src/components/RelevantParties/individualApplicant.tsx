@@ -10,7 +10,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { Locale } from '@island.is/shared/types'
-import { Dispatch } from 'react'
+import { Dispatch, useEffect } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 import { Action } from '../../lib'
@@ -34,7 +34,22 @@ export const IndividualApplicant = ({
 }: Props) => {
   const { locale, formatMessage } = useIntl()
   const { lang } = useLocale()
-  const { control } = useFormContext()
+  const { control, setValue } = useFormContext()
+
+  useEffect(() => {
+    setValue(`${applicant.id}.email`, getValue(applicant, 'email') ?? '', {
+      shouldValidate: false,
+      shouldDirty: false,
+    })
+    setValue(
+      `${applicant.id}.phoneNumber`,
+      getValue(applicant, 'phoneNumber') ?? '',
+      {
+        shouldValidate: false,
+        shouldDirty: false,
+      },
+    )
+  }, [applicant, setValue])
 
   return (
     <Box marginTop={4}>
