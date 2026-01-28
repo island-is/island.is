@@ -19,7 +19,7 @@ import {
   isRulingOrDismissalCase,
   isSuccessfulServiceStatus,
 } from '@island.is/judicial-system/types'
-import { titles } from '@island.is/judicial-system-web/messages'
+import { defendant, titles } from '@island.is/judicial-system-web/messages'
 import {
   AlternativeServiceAnnouncement,
   BlueBox,
@@ -140,8 +140,12 @@ const IndictmentOverview: FC = () => {
 
   const shouldDisplayReviewDecision =
     isCompletedCase(workingCase.state) &&
-    workingCase.indictmentReviewer?.id === user?.id // &&
-  // Boolean(!workingCase.indictmentReviewDecision) TODO: Fix this
+    workingCase.indictmentReviewer?.id === user?.id &&
+    Boolean(
+      workingCase.defendants?.some(
+        (defendant) => !defendant.indictmentReviewDecision,
+      ),
+    )
 
   const canAddFiles =
     !isCompletedCase(workingCase.state) &&
