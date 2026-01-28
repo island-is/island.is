@@ -444,16 +444,21 @@ describe('MeUserProfileController', () => {
 
       // Assert Db records
       const userProfileModel = app.get(getModelToken(UserProfile))
-      const emailsModel = app.get(getModelToken(Emails))
 
       const userProfile = await userProfileModel.findOne({
         where: { nationalId: testUserProfile.nationalId },
+        include: {
+          model: Emails,
+          as: 'emails',
+          required: false,
+          where: {
+            primary: true,
+          },
+        },
       })
 
-      // Verify email is not deleted, just unmarked as primary
-      const primaryEmail = await emailsModel.findOne({
-        where: { nationalId: testUserProfile.nationalId, primary: true },
-      })
+      expect(userProfile.emails.length).toBe(0)
+
       expect(primaryEmail).toBeNull()
       expect(userProfile.mobilePhoneNumber).toBe(
         testUserProfile.mobilePhoneNumber,
