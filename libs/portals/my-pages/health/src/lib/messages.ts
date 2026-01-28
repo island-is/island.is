@@ -2377,6 +2377,10 @@ export const messages = defineMessages({
       'Endurnýjun ekki í boði vegna þess að nýrri lyfseðill er til staðar',
     id: 'sp.health:prescription-blocked-more-recent-exists',
   },
+  prescriptionBlockedSpecialistOnlyPrescription: {
+    defaultMessage: 'Endurnýjun ekki í boði',
+    id: 'sp.health:prescription-blocked-specialist-only-prescription',
+  },
   prescriptionBlockedOther: {
     defaultMessage: 'Endurnýjun ekki í boði vegna óþekktrar ástæðu',
     id: 'sp.health:prescription-blocked-other',
