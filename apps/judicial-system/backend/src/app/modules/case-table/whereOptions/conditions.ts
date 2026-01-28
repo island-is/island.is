@@ -71,3 +71,15 @@ export const buildEventLogOrderCondition = (
       )
     )
   `)
+
+export const buildHasDefendantWithNullReviewDecisionCondition = (
+  exists: boolean,
+) =>
+  Sequelize.literal(`
+    ${exists ? '' : 'NOT'} EXISTS (
+      SELECT 1
+      FROM defendant
+      WHERE defendant.case_id = "Case".id
+        AND defendant.indictment_review_decision IS NULL
+    )
+  `)
