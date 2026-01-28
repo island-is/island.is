@@ -17,7 +17,6 @@ import { PaginatedUserProfileResponse } from './dto/paginated-user-profile.respo
 import { UpdateUserProfileInput } from './dto/updateUserProfileInput'
 import { UserProfileService } from './userProfile.service'
 import { Email } from './models/email.model'
-import { DataStatus } from './types/dataStatus.enum'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => AdminUserProfile)

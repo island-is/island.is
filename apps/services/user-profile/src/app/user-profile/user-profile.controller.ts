@@ -16,13 +16,7 @@ import * as kennitala from 'kennitala'
 import { Documentation } from '@island.is/nest/swagger'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import { AdminPortalScope, UserProfileScope } from '@island.is/auth/scopes'
-import type { User } from '@island.is/auth-nest-tools'
-import {
-  CurrentUser,
-  IdsAuthGuard,
-  Scopes,
-  ScopesGuard,
-} from '@island.is/auth-nest-tools'
+import { IdsAuthGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 
 import { UserProfileDto } from './dto/user-profile.dto'
 import { UserProfileService } from './user-profile.service'

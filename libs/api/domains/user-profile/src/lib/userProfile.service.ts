@@ -268,22 +268,20 @@ export class UserProfileService {
     nationalId: string,
     emailId: string,
   ): Promise<boolean> {
-    // TODO: Update when client is regenerated with the new endpoint
-    return (
-      this.v2UserProfileApiWithAuth(user) as any
-    ).userProfileControllerDeleteEmail({
-      xParamNationalId: nationalId,
-      emailId,
-    })
+    return this.v2UserProfileApiWithAuth(user).userProfileControllerDeleteEmail(
+      {
+        xParamNationalId: nationalId,
+        emailId,
+      },
+    )
   }
 
   async getEmailsByNationalId(
     user: User,
     nationalId: string,
   ): Promise<Email[]> {
-    // TODO: Update when client is regenerated with the new endpoint
-    const emails = (await (
-      this.v2UserProfileApiWithAuth(user) as any
+    const emails = (await this.v2UserProfileApiWithAuth(
+      user,
     ).userProfileControllerGetUserEmails({
       xParamNationalId: nationalId,
     })) as Array<{
