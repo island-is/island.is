@@ -1,6 +1,9 @@
 import { Sequelize } from 'sequelize-typescript'
 
-import { EventType } from '@island.is/judicial-system/types'
+import {
+  EventType,
+  IndictmentCaseReviewDecision,
+} from '@island.is/judicial-system/types'
 
 export const buildSubpoenaExistsCondition = (exists: boolean) =>
   Sequelize.literal(`
@@ -28,6 +31,9 @@ export const buildIsSentToPrisonExistsCondition = (exists: boolean) =>
       FROM defendant
       WHERE defendant.case_id = "Case".id
         AND defendant.is_sent_to_prison_admin = true
+        AND defendant.indictment_review_decision = '${
+          IndictmentCaseReviewDecision.ACCEPT
+        }'
     )
   `)
 

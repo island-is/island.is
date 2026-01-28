@@ -108,7 +108,6 @@ export const prisonAdminIndictmentsAccessWhereOptions = {
     CaseIndictmentRulingDecision.RULING,
     CaseIndictmentRulingDecision.FINE,
   ],
-  // indictment_review_decision: IndictmentCaseReviewDecision.ACCEPT,
   [Op.and]: [buildIsSentToPrisonExistsCondition(true)],
 }
 
