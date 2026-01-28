@@ -7,6 +7,7 @@ import {
   Get,
   Headers,
   Param,
+  ParseUUIDPipe,
   Patch,
   Query,
   UseGuards,
@@ -200,18 +201,24 @@ export class UserProfileController {
     response: { status: 200, type: [EmailsDto] },
   })
   @ApiSecurity('oauth2', [AdminPortalScope.serviceDesk])
-  @Audit<EmailsDto[]>({
-    resources: (emails) => emails.map((email) => email.id),
-  })
   @Scopes(AdminPortalScope.serviceDesk)
   async getUserEmails(
+    @CurrentUser() user: User,
     @Headers('X-Param-National-Id') nationalId: string,
   ): Promise<EmailsDto[]> {
     if (!kennitala.isValid(nationalId)) {
       throw new BadRequestException('National id is not valid')
     }
 
-    return this.emailsService.findAllByNationalId(nationalId)
+    return this.auditService.auditPromise<EmailsDto[]>(
+      {
+        auth: user,
+        namespace,
+        action: 'getUserEmails',
+        resources: (emails) => [nationalId, ...emails.map((email) => email.id)],
+      },
+      this.emailsService.findAllByNationalId(nationalId),
+    )
   }
 
   @Delete('/.national-id/emails/:emailId')
@@ -239,7 +246,7 @@ export class UserProfileController {
   async deleteEmail(
     @CurrentUser() user: User,
     @Headers('X-Param-National-Id') nationalId: string,
-    @Param('emailId') emailId: string,
+    @Param('emailId', new ParseUUIDPipe()) emailId: string,
   ): Promise<boolean> {
     if (!kennitala.isValid(nationalId)) {
       throw new BadRequestException('National id is not valid')
