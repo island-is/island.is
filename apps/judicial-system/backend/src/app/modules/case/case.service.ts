@@ -2177,9 +2177,11 @@ export class CaseService {
     user: TUser,
     transaction: Transaction,
   ) {
+    console.log('handleEventLogUpdatesForIndictments called', { updatedCase })
     if (
-      updatedCase.indictmentReviewDecision &&
-      !theCase.indictmentReviewDecision
+      !user
+      // updatedCase.indictmentReviewDecision &&
+      // !theCase.indictmentReviewDecision
     ) {
       await this.eventLogService.createWithUser(
         EventType.INDICTMENT_REVIEWED,

@@ -2,7 +2,13 @@ import { FC, Fragment, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Accordion, AlertMessage, Box, Button } from '@island.is/island-ui/core'
+import {
+  Accordion,
+  AlertMessage,
+  Box,
+  Button,
+  Text,
+} from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
@@ -16,6 +22,7 @@ import {
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   AlternativeServiceAnnouncement,
+  BlueBox,
   Conclusion,
   ConnectedCaseFilesAccordionItem,
   CourtCaseInfo,
@@ -31,6 +38,7 @@ import {
   PageHeader,
   PageLayout,
   PageTitle,
+  SectionHeading,
   serviceAnnouncementsStrings,
   useIndictmentsLawsBroken,
   UserContext,
@@ -123,8 +131,6 @@ const IndictmentOverview: FC = () => {
   const [modalVisible, setModalVisible] = useState<
     ConfirmationModal | undefined
   >()
-  const [isReviewDecisionSelected, setIsReviewDecisionSelected] =
-    useState(false)
 
   const hasLawsBroken = lawsBroken.size > 0
   const hasMergeCases =
@@ -134,8 +140,8 @@ const IndictmentOverview: FC = () => {
 
   const shouldDisplayReviewDecision =
     isCompletedCase(workingCase.state) &&
-    workingCase.indictmentReviewer?.id === user?.id &&
-    Boolean(!workingCase.indictmentReviewDecision)
+    workingCase.indictmentReviewer?.id === user?.id // &&
+  // Boolean(!workingCase.indictmentReviewDecision) TODO: Fix this
 
   const canAddFiles =
     !isCompletedCase(workingCase.state) &&
@@ -144,6 +150,12 @@ const IndictmentOverview: FC = () => {
       isCaseCivilClaimantSpokesperson(user, workingCase)) &&
     workingCase.indictmentDecision !==
       IndictmentDecision.POSTPONING_UNTIL_VERDICT
+
+  const isFine =
+    workingCase.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
+
+  const indictmentAppealDeadlineIsInThePast =
+    workingCase.indictmentVerdictAppealDeadlineExpired ?? false
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
@@ -205,7 +217,6 @@ const IndictmentOverview: FC = () => {
             <Fragment key={defendant.id}>
               {defendant.alternativeServiceDescription && (
                 <AlternativeServiceAnnouncement
-                  key={defendant.id}
                   alternativeServiceDescription={
                     defendant.alternativeServiceDescription
                   }
@@ -320,24 +331,44 @@ const IndictmentOverview: FC = () => {
             </Box>
           )}
           {shouldDisplayReviewDecision && (
-            <Box component="section">
-              <ReviewDecision
-                caseId={workingCase.id}
-                indictmentAppealDeadline={
-                  workingCase.indictmentAppealDeadline ?? ''
+            <section>
+              <SectionHeading
+                title={`Ákvörðun um ${isFine ? 'kæru' : 'áfrýjun'}`}
+                description={
+                  <Text variant="eyebrow" as="span">
+                    {`Frestur til að ${
+                      isFine ? 'kæra viðurlagaákvörðun' : 'áfrýja dómi'
+                    } ${
+                      indictmentAppealDeadlineIsInThePast ? 'rann' : 'rennur'
+                    } út ${formatDate(workingCase.indictmentAppealDeadline)}`}
+                  </Text>
                 }
-                indictmentAppealDeadlineIsInThePast={
-                  workingCase.indictmentVerdictAppealDeadlineExpired ?? false
-                }
-                modalVisible={modalVisible}
-                setModalVisible={setModalVisible}
-                isFine={
-                  workingCase.indictmentRulingDecision ===
-                  CaseIndictmentRulingDecision.FINE
-                }
-                onSelect={() => setIsReviewDecisionSelected(true)}
               />
-            </Box>
+              {workingCase.defendants && (
+                <div className={grid({ gap: 3 })}>
+                  {workingCase.defendants.map((defendant) => (
+                    <BlueBox key={`${defendant.id}_review_decision`}>
+                      <SectionHeading
+                        title={defendant.name ?? ''}
+                        variant="h4"
+                        marginBottom={2}
+                        required
+                      />
+                      <ReviewDecision
+                        caseId={workingCase.id}
+                        defendant={defendant}
+                        modalVisible={modalVisible}
+                        setModalVisible={setModalVisible}
+                        isFine={
+                          workingCase.indictmentRulingDecision ===
+                          CaseIndictmentRulingDecision.FINE
+                        }
+                      />
+                    </BlueBox>
+                  ))}
+                </div>
+              )}
+            </section>
           )}
           {isDefenceUser(user) && isCompletedCase(workingCase.state) && (
             <Box component="section">
@@ -360,7 +391,9 @@ const IndictmentOverview: FC = () => {
           hideNextButton={!shouldDisplayReviewDecision}
           nextButtonText={formatMessage(strings.completeReview)}
           onNextButtonClick={() => setModalVisible(CONFIRM_PROSECUTOR_DECISION)}
-          nextIsDisabled={!isReviewDecisionSelected}
+          nextIsDisabled={workingCase.defendants?.some(
+            (defendant) => !defendant.indictmentReviewDecision,
+          )}
         />
       </FormContentContainer>
     </PageLayout>

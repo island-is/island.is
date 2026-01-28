@@ -23,7 +23,7 @@ export const publicProsecutionOfficeIndictmentsInReviewWhereOptions = () => ({
     publicProsecutionOfficeIndictmentsAccessWhereOptions,
     {
       indictment_reviewer_id: { [Op.not]: null },
-      indictment_review_decision: null,
+      // indictment_review_decision: null,
     },
   ],
 })
@@ -33,7 +33,7 @@ export const publicProsecutionOfficeIndictmentsReviewedWhereOptions = () => ({
     publicProsecutionOfficeIndictmentsAccessWhereOptions,
     {
       indictment_reviewer_id: { [Op.not]: null },
-      indictment_review_decision: IndictmentCaseReviewDecision.ACCEPT,
+      // indictment_review_decision: IndictmentCaseReviewDecision.ACCEPT,
       [Op.or]: [
         {
           indictment_ruling_decision: CaseIndictmentRulingDecision.FINE,
@@ -101,7 +101,7 @@ export const publicProsecutionOfficeIndictmentsAppealPeriodExpiredWhereOptions =
       publicProsecutionOfficeIndictmentsAccessWhereOptions,
       {
         indictment_reviewer_id: { [Op.not]: null },
-        indictment_review_decision: IndictmentCaseReviewDecision.ACCEPT,
+        // indictment_review_decision: IndictmentCaseReviewDecision.ACCEPT,
         [Op.and]: [
           { indictment_ruling_decision: CaseIndictmentRulingDecision.RULING },
           {
@@ -178,7 +178,7 @@ export const publicProsecutionOfficeIndictmentsSentToPrisonAdminWhereOptions =
       publicProsecutionOfficeIndictmentsAccessWhereOptions,
       {
         indictment_reviewer_id: { [Op.not]: null },
-        indictment_review_decision: IndictmentCaseReviewDecision.ACCEPT,
+        //indictment_review_decision: IndictmentCaseReviewDecision.ACCEPT,
         [Op.and]: [buildIsSentToPrisonExistsCondition(true)],
       },
     ],
@@ -190,7 +190,7 @@ export const publicProsecutionOfficeIndictmentsAppealedWhereOptions = () => ({
     {
       indictment_reviewer_id: { [Op.not]: null },
       [Op.or]: [
-        { indictment_review_decision: IndictmentCaseReviewDecision.APPEAL },
+        // { indictment_review_decision: IndictmentCaseReviewDecision.APPEAL },
         {
           [Op.and]: [
             literal(`EXISTS (

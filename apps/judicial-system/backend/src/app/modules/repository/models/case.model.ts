@@ -1031,17 +1031,6 @@ export class Case extends Model {
   indictmentReviewer?: User
 
   /**********
-   * The review decision in indictment cases
-   **********/
-  @Column({
-    type: DataType.ENUM,
-    allowNull: true,
-    values: Object.values(IndictmentCaseReviewDecision),
-  })
-  @ApiPropertyOptional({ enum: IndictmentCaseReviewDecision })
-  indictmentReviewDecision?: IndictmentCaseReviewDecision
-
-  /**********
    * The judge's pending decision in indictment cases - example: POSTPONING
    **********/
   @Column({

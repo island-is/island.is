@@ -340,8 +340,10 @@ const useInfoCardItems = () => {
     title: formatMessage(strings.indictmentReviewDecision),
     values: [
       formatMessage(
-        workingCase.indictmentReviewDecision ===
-          IndictmentCaseReviewDecision.ACCEPT
+        workingCase.defendants?.some(
+          (d) =>
+            d.indictmentReviewDecision === IndictmentCaseReviewDecision.ACCEPT,
+        )
           ? strings.reviewTagAccepted
           : strings.reviewTagAppealed,
         {

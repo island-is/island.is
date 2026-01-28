@@ -11,14 +11,14 @@ export const publicProsecutionIndictmentsInReviewWhereOptions = (
   user: User,
 ) => ({
   ...publicProsecutionIndictmentsAccessWhereOptions(user),
-  indictment_review_decision: null,
+  // indictment_review_decision: null,
 })
 
 export const publicProsecutionIndictmentsReviewedWhereOptions = (
   user: User,
 ) => ({
   ...publicProsecutionIndictmentsAccessWhereOptions(user),
-  indictment_review_decision: { [Op.not]: null },
+  // indictment_review_decision: { [Op.not]: null },
 })
 
 // Public prosecution cases access
