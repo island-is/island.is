@@ -30,6 +30,8 @@ import { UpdateActorProfileEmailInput } from './dto/updateActorProfileEmail.inpu
 import { ActorProfileDetails } from './dto/actorProfileDetails'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { DataStatus } from './types/dataStatus.enum'
+import { Email } from './models/email.model'
 
 @Injectable()
 export class UserProfileService {
@@ -259,6 +261,46 @@ export class UserProfileService {
       xParamNationalId: nationalId,
       patchUserProfileDto: input,
     })
+  }
+
+  async deleteEmail(
+    user: User,
+    nationalId: string,
+    emailId: string,
+  ): Promise<boolean> {
+    // TODO: Update when client is regenerated with the new endpoint
+    return (
+      this.v2UserProfileApiWithAuth(user) as any
+    ).userProfileControllerDeleteEmail({
+      xParamNationalId: nationalId,
+      emailId,
+    })
+  }
+
+  async getEmailsByNationalId(
+    user: User,
+    nationalId: string,
+  ): Promise<Email[]> {
+    // TODO: Update when client is regenerated with the new endpoint
+    const emails = (await (
+      this.v2UserProfileApiWithAuth(user) as any
+    ).userProfileControllerGetUserEmails({
+      xParamNationalId: nationalId,
+    })) as Array<{
+      id: string
+      email: string | null
+      primary: boolean
+      emailStatus: string
+      isConnectedToActorProfile: boolean
+    }>
+
+    return emails.map((email) => ({
+      id: email.id,
+      email: email.email,
+      primary: email.primary,
+      emailStatus: email.emailStatus as DataStatus,
+      isConnectedToActorProfile: email.isConnectedToActorProfile,
+    }))
   }
 
   async userProfileSetActorProfileEmailById(

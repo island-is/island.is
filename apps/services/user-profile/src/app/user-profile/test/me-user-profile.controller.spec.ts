@@ -450,11 +450,11 @@ describe('MeUserProfileController', () => {
         where: { nationalId: testUserProfile.nationalId },
       })
 
-      // Verify email is actually deleted from database (not just unmarked as primary)
-      const allEmails = await emailsModel.findAll({
-        where: { nationalId: testUserProfile.nationalId },
+      // Verify email is not deleted, just unmarked as primary
+      const primaryEmail = await emailsModel.findOne({
+        where: { nationalId: testUserProfile.nationalId, primary: true },
       })
-      expect(allEmails.length).toBe(0)
+      expect(primaryEmail).toBeNull()
       expect(userProfile.mobilePhoneNumber).toBe(
         testUserProfile.mobilePhoneNumber,
       )
@@ -875,11 +875,11 @@ describe('MeUserProfileController', () => {
         where: { nationalId: testUserProfile.nationalId },
       })
 
-      // Verify email is actually deleted from database (not just unmarked as primary)
-      const allEmails = await emailsModel.findAll({
-        where: { nationalId: testUserProfile.nationalId },
+      // Verify email is not deleted, just unmarked as primary
+      const primaryEmail = await emailsModel.findOne({
+        where: { nationalId: testUserProfile.nationalId, primary: true },
       })
-      expect(allEmails.length).toBe(0)
+      expect(primaryEmail).toBeNull()
       expect(userProfile.mobilePhoneNumber).toBe(null)
       expect(userProfile.mobilePhoneNumberVerified).toBe(false)
       expect(userProfile.mobileStatus).toBe(DataStatus.EMPTY)
@@ -899,63 +899,6 @@ describe('MeUserProfileController', () => {
 
       // Assert
       expect(res.status).toEqual(200)
-    })
-
-    it('PATCH /v2/me should update primary email without deleting the old primary email', async () => {
-      // Arrange - Get the existing user profile created in beforeEach
-      const emailsModel = app.get(getModelToken(Emails))
-
-      // Get the original email record (created in beforeEach)
-      const originalEmailRecord = await emailsModel.findOne({
-        where: {
-          nationalId: testUserProfile.nationalId,
-          primary: true,
-        },
-      })
-      expect(originalEmailRecord).not.toBeNull()
-      const originalEmail = originalEmailRecord!.email
-      const originalEmailId = originalEmailRecord!.id
-
-      // Use a different email that doesn't exist yet to avoid conflicts
-      const anotherNewEmail = faker.internet.email()
-      const fixtureFactory = new FixtureFactory(app)
-      await fixtureFactory.createEmailVerification({
-        nationalId: testUserProfile.nationalId,
-        email: anotherNewEmail,
-        hash: emailVerificationCode,
-      })
-
-      // Act - Update to a new email
-      const res = await server.patch('/v2/me').send({
-        email: anotherNewEmail,
-        emailVerificationCode: emailVerificationCode,
-      })
-
-      // Assert
-      expect(res.status).toEqual(200)
-      expect(res.body.email).toBe(anotherNewEmail)
-
-      // Verify old primary email still exists but is no longer primary
-      const oldEmail = await emailsModel.findByPk(originalEmailId)
-      expect(oldEmail).not.toBeNull()
-      expect(oldEmail?.primary).toBe(false)
-      expect(oldEmail?.email).toBe(originalEmail)
-
-      // Verify new email exists and is primary
-      const newEmailRecord = await emailsModel.findOne({
-        where: {
-          nationalId: testUserProfile.nationalId,
-          email: anotherNewEmail,
-        },
-      })
-      expect(newEmailRecord).not.toBeNull()
-      expect(newEmailRecord?.primary).toBe(true)
-
-      // Verify both emails exist in database
-      const allEmails = await emailsModel.findAll({
-        where: { nationalId: testUserProfile.nationalId },
-      })
-      expect(allEmails.length).toBe(2)
     })
 
     it('PATCH /v2/me should return 200', async () => {

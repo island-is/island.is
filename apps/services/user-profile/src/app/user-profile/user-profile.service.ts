@@ -344,14 +344,8 @@ export class UserProfileService {
         })
 
         if (primaryEmail) {
-          // If email is set to empty string, delete the email record
-          // Otherwise, set the primary email to false
-          if (userProfile.email === '') {
-            await primaryEmail.destroy({ transaction })
-          } else {
-            // Set the primary email to false
-            await primaryEmail.update({ primary: false }, { transaction })
-          }
+          // Set the primary email to false
+          await primaryEmail.update({ primary: false }, { transaction })
         }
 
         if (isEmailDefined && userProfile.email !== '') {

@@ -171,4 +171,28 @@ export const m = defineMessages({
     id: 'admin-portal.service-desk:delete-email-confirm-message',
     defaultMessage: 'Ertu viss um að þú viljir eyða netfangi {email}?',
   },
+  primary: {
+    id: 'admin-portal.service-desk:primary',
+    defaultMessage: 'Aðalnetfang',
+  },
+  primaryEmail: {
+    id: 'admin-portal.service-desk:primary-email',
+    defaultMessage: 'Aðal netfang',
+  },
+  connectedToDelegation: {
+    id: 'admin-portal.service-desk:connected-to-delegation',
+    defaultMessage: 'Tengt við umboð',
+  },
+  emails: {
+    id: 'admin-portal.service-desk:emails',
+    defaultMessage: 'Netföng',
+  },
+  emailCardPopover: {
+    id: 'admin-portal.service-desk:email-card-popover',
+    defaultMessage: 'Aðgerðalisti fyrir netfang',
+  },
+  otherEmails: {
+    id: 'admin-portal.service-desk:other-emails',
+    defaultMessage: 'Önnur netföng',
+  },
 })

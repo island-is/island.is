@@ -16,6 +16,8 @@ import { AdminUserProfile } from './adminUserProfile.model'
 import { PaginatedUserProfileResponse } from './dto/paginated-user-profile.response'
 import { UpdateUserProfileInput } from './dto/updateUserProfileInput'
 import { UserProfileService } from './userProfile.service'
+import { Email } from './models/email.model'
+import { DataStatus } from './types/dataStatus.enum'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => AdminUserProfile)
@@ -63,6 +65,18 @@ export class AdminUserProfileResolver {
     )
   }
 
+  @Mutation(() => Boolean, {
+    nullable: false,
+    name: 'UserProfileAdminDeleteEmail',
+  })
+  async deleteEmail(
+    @Args('nationalId') nationalId: string,
+    @Args('emailId') emailId: string,
+    @CurrentUser() user: User,
+  ): Promise<boolean> {
+    return this.userUserProfileService.deleteEmail(user, nationalId, emailId)
+  }
+
   @ResolveField('fullName', () => String, { nullable: true })
   async getFullName(@Parent() adminUserProfile: AdminUserProfile) {
     const identity = await this.identityService.getIdentity(
@@ -70,5 +84,20 @@ export class AdminUserProfileResolver {
     )
 
     return identity?.name ?? ''
+  }
+
+  @ResolveField('emails', () => [Email], { nullable: true })
+  async getEmails(
+    @Parent() adminUserProfile: AdminUserProfile,
+    @CurrentUser() user: User,
+  ): Promise<Email[]> {
+    if (!adminUserProfile.nationalId) {
+      return []
+    }
+
+    return this.userUserProfileService.getEmailsByNationalId(
+      user,
+      adminUserProfile.nationalId,
+    )
   }
 }
