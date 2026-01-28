@@ -17,20 +17,23 @@ import { Button, Heading, Skeleton, TableViewCell, Typography } from '../../ui'
 import { FinanceStatusCard } from './components/finance-status-card'
 
 const { useNavigationOptions, getNavigationOptions } =
-  createNavigationOptionHooks((theme, intl) => ({
-    topBar: {
-      title: {
-        text: intl.formatMessage({ id: 'finance.screenTitle' }),
+  createNavigationOptionHooks(
+    (theme, intl) => ({
+      topBar: {
+        title: {
+          text: intl.formatMessage({ id: 'finance.screenTitle' }),
+        },
+      },
+    }),
+    {
+      topBar: {
+        scrollEdgeAppearance: {
+          active: true,
+          noBorder: true,
+        },
       },
     },
-  }), {
-    topBar: {
-      scrollEdgeAppearance: {
-        active: true,
-        noBorder: true,
-      },
-    },
-  })
+  )
 
 export const FinanceScreen: NavigationFunctionComponent = ({ componentId }) => {
   useNavigationOptions(componentId)
@@ -202,7 +205,7 @@ export const FinanceScreen: NavigationFunctionComponent = ({ componentId }) => {
           {showLoading
             ? skeletonItems
             : organizations.length > 0 || financeStatusZero
-              ? organizations.map((org, i) =>
+            ? organizations.map((org, i) =>
                 (org.chargeTypes ?? []).map((chargeType, ii: number) => (
                   <FinanceStatusCard
                     key={`${org.id}-${chargeType.id}-${i}-${ii}`}
@@ -212,7 +215,7 @@ export const FinanceScreen: NavigationFunctionComponent = ({ componentId }) => {
                   />
                 )),
               )
-              : null}
+            : null}
         </SafeAreaView>
         <View
           style={{

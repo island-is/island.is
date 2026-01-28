@@ -110,7 +110,7 @@ export const AssetsOverviewScreen: NavigationFunctionComponent = ({
       assetsRes
         .refetch()
         .then(() => {
-          ; (loadingTimeout as any).current = setTimeout(() => {
+          ;(loadingTimeout as any).current = setTimeout(() => {
             setRefetching(false)
           }, 1331)
         })
@@ -125,8 +125,8 @@ export const AssetsOverviewScreen: NavigationFunctionComponent = ({
   const paginate = () => {
     const newCursor = Math.ceil(
       assetsList.length /
-      (assetsRes?.data?.assetsOverview?.paging?.pageSize ?? 0) +
-      1,
+        (assetsRes?.data?.assetsOverview?.paging?.pageSize ?? 0) +
+        1,
     )
 
     if (
