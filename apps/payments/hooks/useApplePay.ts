@@ -78,7 +78,6 @@ export const useApplePay = ({
       //session.completeMerchantValidation(valitorSession.session)
     }
 
-
     session.onpaymentauthorized = (event) => {
       console.log('paymentauthorized', event)
       // const response = await mockProcessPayment(event.payment.token)

@@ -11,7 +11,10 @@ import { CardErrorCode } from '@island.is/shared/constants'
 import { PageCard } from '../../../components/PageCard/PageCard'
 import initApollo from '../../../graphql/client'
 import { PaymentHeader } from '../../../components/PaymentHeader/PaymentHeader'
-import { PaymentMethod, PaymentSelector } from '../../../components/PaymentSelector/PaymentSelector'
+import {
+  PaymentMethod,
+  PaymentSelector,
+} from '../../../components/PaymentSelector/PaymentSelector'
 import { CardPayment } from '../../../components/CardPayment/CardPayment'
 import { InvoicePayment } from '../../../components/InvoicePayment/InvoicePayment'
 import { ALLOWED_LOCALES, Locale } from '../../../utils'
@@ -319,7 +322,9 @@ function PaymentPage({
               <form onSubmit={methods.handleSubmit(handleFormSubmit)}>
                 <Box display="flex" flexDirection="column" rowGap={[2, 3]}>
                   <PaymentSelector
-                    availablePaymentMethods={availablePaymentMethods as PaymentMethod[]}
+                    availablePaymentMethods={
+                      availablePaymentMethods as PaymentMethod[]
+                    }
                     selectedPayment={selectedPaymentMethod as any}
                     onSelectPayment={changePaymentMethod}
                   />
