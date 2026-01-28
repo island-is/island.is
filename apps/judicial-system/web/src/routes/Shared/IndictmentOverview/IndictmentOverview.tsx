@@ -1,6 +1,7 @@
 import { FC, Fragment, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
+import { toHaveAccessibleErrorMessage } from '@testing-library/jest-dom/matchers'
 
 import {
   Accordion,
@@ -145,7 +146,7 @@ const IndictmentOverview: FC = () => {
   const shouldDisplayReviewDecision =
     isCompletedCase(workingCase.state) &&
     workingCase.indictmentReviewer?.id === user?.id &&
-    Boolean(isReviewMissing)
+    !workingCase.indictmentReviewedDate
 
   const canAddFiles =
     !isCompletedCase(workingCase.state) &&

@@ -291,8 +291,7 @@ export class DefendantService {
     if (
       updatedDefendant.indictmentReviewDecision &&
       updatedDefendant.indictmentReviewDecision !==
-        defendant.indictmentReviewDecision &&
-      theCase.defendants?.every((d) => d.indictmentReviewDecision)
+        defendant.indictmentReviewDecision
     ) {
       await this.eventLogService.createWithUser(
         EventType.INDICTMENT_REVIEWED,

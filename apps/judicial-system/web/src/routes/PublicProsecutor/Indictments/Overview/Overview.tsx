@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useContext, useState } from 'react'
+import { Fragment, useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -39,6 +39,7 @@ import VerdictStatusAlert from '@island.is/judicial-system-web/src/components/Ve
 import {
   CaseIndictmentRulingDecision,
   Defendant,
+  IndictmentCaseReviewDecision,
   ServiceRequirement,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
@@ -131,6 +132,31 @@ export const Overview = () => {
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
     [router, workingCase.id],
+  )
+
+  const [originalReviewDecisions, setOriginalReviewDecisions] = useState<
+    Record<string, IndictmentCaseReviewDecision | null | undefined>
+  >({})
+
+  // Store original review decisions when workingCase loads to see if they change
+  useEffect(() => {
+    if (
+      workingCase.defendants?.length &&
+      workingCase.defendants.every((d) => d.id) &&
+      !Object.keys(originalReviewDecisions).length
+    ) {
+      const decisions = workingCase.defendants.reduce((acc, defendant) => {
+        acc[defendant.id] = defendant.indictmentReviewDecision
+        return acc
+      }, {} as Record<string, IndictmentCaseReviewDecision | null | undefined>)
+      setOriginalReviewDecisions(decisions)
+    }
+  }, [workingCase.defendants, originalReviewDecisions])
+
+  const hasReviewDecisionChanged = workingCase.defendants?.some(
+    (defendant) =>
+      defendant.indictmentReviewDecision !==
+      originalReviewDecisions[defendant.id],
   )
 
   return (
@@ -381,9 +407,7 @@ export const Overview = () => {
           <FormFooter
             previousUrl={getStandardUserDashboardRoute(user)}
             nextIsLoading={isLoadingWorkingCase}
-            nextIsDisabled={workingCase.defendants?.some(
-              (defendant) => !defendant.indictmentReviewDecision,
-            )}
+            nextIsDisabled={!hasReviewDecisionChanged}
             onNextButtonClick={() =>
               setConfirmationModal(CONFIRM_PROSECUTOR_DECISION)
             }
