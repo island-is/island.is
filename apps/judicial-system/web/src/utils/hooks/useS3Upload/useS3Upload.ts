@@ -73,6 +73,8 @@ export interface TUploadFile extends UploadFile {
   fileRepresentative?: string | null
   previewUrl?: string | null
   isKeyAccessible?: boolean | null
+  defendantId?: string | null
+  civilClaimantId?: string | null // TODO: Do we need this?
 }
 
 export interface UploadFileState {
@@ -364,12 +366,16 @@ const useS3Upload = (
         isKeyAccessible: file.isKeyAccessible,
       }
 
-      if (defendantId) {
-        return addDefendantFileToCaseState(baseInput, defendantId)
+      // Check file's defendantId first (for criminal records), then fall back to hook parameter
+      const fileDefendantId = file.defendantId ?? defendantId
+      if (fileDefendantId) {
+        return addDefendantFileToCaseState(baseInput, fileDefendantId)
       }
 
-      if (civilClaimantId) {
-        return addCivilClaimantFileToCaseState(baseInput, civilClaimantId)
+      // Check file's civilClaimantId first, then fall back to hook parameter
+      const fileCivilClaimantId = file.civilClaimantId ?? civilClaimantId
+      if (fileCivilClaimantId) {
+        return addCivilClaimantFileToCaseState(baseInput, fileCivilClaimantId)
       }
 
       return addCaseFileToCaseState(baseInput)

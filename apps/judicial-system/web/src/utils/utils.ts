@@ -181,6 +181,31 @@ export const isCaseDefendantDefender = (
       ),
   )
 
+export const isDefenderAssignedToDefendant = (
+  user?: User,
+  defendantId?: string | null,
+  defendants?: Defendant[] | null,
+): boolean => {
+  if (!user || !defendantId || !defendants) {
+    return false
+  }
+
+  const defendant = defendants.find((d) => d.id === defendantId)
+  if (!defendant) {
+    return false
+  }
+
+  return (
+    defendant.isDefenderChoiceConfirmed === true &&
+    defendant.caseFilesSharedWithDefender === true &&
+    defendant.defenderNationalId !== null &&
+    defendant.defenderNationalId !== undefined &&
+    normalizeAndFormatNationalId(user.nationalId).includes(
+      defendant.defenderNationalId,
+    )
+  )
+}
+
 export const isCaseCivilClaimantSpokesperson = (
   user?: User,
   workingCase?: { civilClaimants?: CivilClaimant[] | null },

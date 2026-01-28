@@ -185,6 +185,7 @@ describe('Limited Access View Case File Guard', () => {
                     state,
                     defendants: [
                       {
+                        id: uuid(),
                         defenderNationalId: nationalId,
                         isDefenderChoiceConfirmed: true,
                         caseFilesSharedWithDefender: true,
@@ -233,6 +234,121 @@ describe('Limited Access View Case File Guard', () => {
                 expect(then.result).toBe(true)
               })
             })
+
+            // Criminal record specific tests
+            if (
+              category === CaseFileCategory.CRIMINAL_RECORD ||
+              category === CaseFileCategory.CRIMINAL_RECORD_UPDATE
+            ) {
+              describe('criminal record with defendantId', () => {
+                describe('defender assigned to defendant can view', () => {
+                  let then: Then
+
+                  beforeEach(() => {
+                    const nationalId = uuid()
+                    const defendantId = uuid()
+                    mockRequest.mockImplementationOnce(() => ({
+                      user: {
+                        currentUser: { role: UserRole.DEFENDER, nationalId },
+                      },
+                      case: {
+                        type,
+                        state,
+                        defendants: [
+                          {
+                            id: defendantId,
+                            defenderNationalId: nationalId,
+                            isDefenderChoiceConfirmed: true,
+                            caseFilesSharedWithDefender: true,
+                          },
+                        ],
+                      },
+                      caseFile: { category, defendantId },
+                    }))
+
+                    then = givenWhenThen()
+                  })
+
+                  it('should activate', () => {
+                    expect(then.result).toBe(true)
+                  })
+                })
+
+                describe('defender not assigned to defendant cannot view', () => {
+                  let then: Then
+
+                  beforeEach(() => {
+                    const defenderNationalId = uuid()
+                    const otherDefenderNationalId = uuid()
+                    const defendantId = uuid()
+                    mockRequest.mockImplementationOnce(() => ({
+                      user: {
+                        currentUser: {
+                          role: UserRole.DEFENDER,
+                          nationalId: defenderNationalId,
+                        },
+                      },
+                      case: {
+                        type,
+                        state,
+                        defendants: [
+                          {
+                            id: defendantId,
+                            defenderNationalId: otherDefenderNationalId,
+                            isDefenderChoiceConfirmed: true,
+                            caseFilesSharedWithDefender: true,
+                          },
+                        ],
+                      },
+                      caseFile: { category, defendantId },
+                    }))
+
+                    then = givenWhenThen()
+                  })
+
+                  it('should throw ForbiddenException', () => {
+                    expect(then.error).toBeInstanceOf(ForbiddenException)
+                    expect(then.error.message).toBe(
+                      `Forbidden for ${UserRole.DEFENDER}`,
+                    )
+                  })
+                })
+
+                describe('criminal record without defendantId (backward compatibility)', () => {
+                  describe('defender with case files access can view', () => {
+                    let then: Then
+
+                    beforeEach(() => {
+                      const nationalId = uuid()
+                      mockRequest.mockImplementationOnce(() => ({
+                        user: {
+                          currentUser: { role: UserRole.DEFENDER, nationalId },
+                        },
+                        case: {
+                          type,
+                          state,
+                          defendants: [
+                            {
+                              id: uuid(),
+                              defenderNationalId: nationalId,
+                              isDefenderChoiceConfirmed: true,
+                              caseFilesSharedWithDefender: true,
+                            },
+                          ],
+                        },
+                        caseFile: { category, defendantId: undefined },
+                      }))
+
+                      then = givenWhenThen()
+                    })
+
+                    it('should activate', () => {
+                      expect(then.result).toBe(true)
+                    })
+                  })
+                })
+              })
+            }
           },
         )
 

@@ -110,6 +110,7 @@ const canDefenceUserViewCaseFile = ({
   caseFileCategory,
   defendants,
   civilClaimants,
+  defendantId,
 }: {
   nationalId: string
   userName: string
@@ -120,12 +121,30 @@ const canDefenceUserViewCaseFile = ({
   caseFileCategory: CaseFileCategory
   defendants?: Defendant[]
   civilClaimants?: CivilClaimant[]
+  defendantId?: string
 }) => {
   if (isRequestCase(caseType)) {
     return canDefenceUserViewCaseFileOfRequestCase(caseState, caseFileCategory)
   }
 
   if (isIndictmentCase(caseType)) {
+    if (
+      (caseFileCategory === CaseFileCategory.CRIMINAL_RECORD ||
+        caseFileCategory === CaseFileCategory.CRIMINAL_RECORD_UPDATE) &&
+      defendantId
+    ) {
+      // If file has defendantId, check if defender is assigned to that specific defendant
+      if (
+        !Defendant.isConfirmedDefenderOfSpecificDefendantWithCaseFileAccess(
+          nationalId,
+          defendantId,
+          defendants,
+        )
+      ) {
+        return false
+      }
+    }
+
     // TODO: This is not optimal as we can have multiple users that have identical names.
     // It is unlikely that a defenders with identical user names have been assigned to the same case but we should remove that possibility for sure.
     // Since defenders aren't registered in the system we should rather rely on the user's national id when submitting a file
@@ -174,6 +193,7 @@ export const canLimitedAccessUserViewCaseFile = ({
   fileRepresentative,
   defendants,
   civilClaimants,
+  defendantId,
 }: {
   user: User
   caseType: CaseType
@@ -183,6 +203,7 @@ export const canLimitedAccessUserViewCaseFile = ({
   fileRepresentative?: string
   defendants?: Defendant[]
   civilClaimants?: CivilClaimant[]
+  defendantId?: string
 }) => {
   if (!caseFileCategory) {
     return false
@@ -199,6 +220,7 @@ export const canLimitedAccessUserViewCaseFile = ({
       caseFileCategory,
       defendants,
       civilClaimants,
+      defendantId,
     })
   }
 
