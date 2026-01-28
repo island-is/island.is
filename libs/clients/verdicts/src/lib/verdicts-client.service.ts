@@ -589,6 +589,61 @@ export class VerdictsClientService {
     return lawyers
   }
 
+  async getSupremeCourtDeterminations(input: { page: number }) {
+    const response =
+      await this.supremeCourtApi.apiV2VerdictGetDeterminationsGet({
+        page: input.page ?? 1,
+        limit: 10,
+      })
+
+    return {
+      total: Number(response.total ?? 0),
+      items: (response.items ?? [])
+        .filter(
+          (item) =>
+            Boolean(item.id) &&
+            Boolean(item.title) &&
+            Boolean(item.caseNumber) &&
+            Boolean(item.publishDate),
+        )
+        .map((item) => ({
+          id: item.id as string,
+          title: item.title as string,
+          caseNumber: item.caseNumber as string,
+          date: item.publishDate as Date,
+          keywords: item.keywords ?? [],
+        })),
+      input,
+    }
+  }
+
+  async getSupremeCourtDeterminationById(id: string) {
+    const response =
+      await this.supremeCourtApi.apiV2VerdictGetDeterminationIdGet({
+        id,
+      })
+    if (
+      !response.item?.id ||
+      !response.item?.title ||
+      !response.item?.caseNumber ||
+      !response.item?.publishDate
+    )
+      return null
+    return {
+      item: {
+        id: response.item?.id as string,
+        title: response.item?.title as string,
+        caseNumber: response.item?.caseNumber as string,
+        date: response.item?.publishDate as Date,
+        presentings: response.item?.presentings ?? '',
+        keywords: response.item?.keywords ?? [],
+        richText: await convertHtmlToContentfulRichText(
+          response.item?.verdictHtml ?? '',
+          'verdictHtml',
+        ),
+      },
+    }
+  }
   async getScheduleTypes() {
     const { goproCourtAgendasApi } = await this.getAuthenticatedGoproApis()
     const [courtOfAppealResponse, districtCourtResponse] =
