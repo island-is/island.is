@@ -35,6 +35,7 @@ env:
   LOG_LEVEL: 'info'
   NODE_OPTIONS: '--max-old-space-size=921 --enable-source-maps -r dd-trace/init'
   NOVA_ACCEPT_UNAUTHORIZED: 'false'
+  REDIS_NODES: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
   S3_BUCKET: 'island-is-prod-upload-judicial-system'
   S3_REGION: 'eu-west-1'
   S3_TIME_TO_LIVE_GET: '5'
