@@ -24,6 +24,7 @@ export const GET_COURT_AGENDAS_QUERY = gql`
         dateTo
         court
         lawyer
+        scheduleTypes
       }
     }
   }
@@ -35,6 +36,37 @@ export const GET_VERDICT_LAWYERS_QUERY = gql`
       lawyers {
         id
         name
+      }
+    }
+  }
+`
+
+export const GET_SCHEDULE_TYPES_QUERY = gql`
+  query GetScheduleTypes {
+    webCourtScheduleTypes {
+      courtOfAppeal {
+        items {
+          id
+          label
+        }
+      }
+      districtCourt {
+        items {
+          id
+          label
+        }
+      }
+      supremeCourt {
+        items {
+          id
+          label
+        }
+      }
+      all {
+        items {
+          id
+          label
+        }
       }
     }
   }

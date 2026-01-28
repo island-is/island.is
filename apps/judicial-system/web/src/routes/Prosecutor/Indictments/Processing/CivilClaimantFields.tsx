@@ -11,6 +11,7 @@ import {
 import { core } from '@island.is/judicial-system-web/messages'
 import {
   FormContext,
+  IconButton,
   InputAdvocate,
   InputName,
   InputNationalId,
@@ -146,15 +147,12 @@ export const CivilClaimantFields = ({
     <>
       {civilClaimantIndex > 0 && (
         <Box display="flex" justifyContent="flexEnd" marginBottom={2}>
-          <Button
-            variant="text"
-            colorScheme="destructive"
-            onClick={() => {
-              removeCivilClaimantById(civilClaimant.id)
-            }}
-          >
-            {formatMessage(strings.remove)}
-          </Button>
+          <IconButton
+            icon="trash"
+            colorScheme="blue"
+            onClick={() => removeCivilClaimantById(civilClaimant.id)}
+            tooltipText="Eyða kröfuhafa"
+          />
         </Box>
       )}
       <Box marginBottom={2}>
@@ -221,30 +219,42 @@ export const CivilClaimantFields = ({
         required
       />
       <Box display="flex" justifyContent="flexEnd" marginTop={2}>
-        <Button
-          variant="text"
-          colorScheme={
-            civilClaimant.hasSpokesperson ? 'destructive' : 'default'
-          }
-          onClick={() => {
-            handleSetAndSendCivilClaimantToServer({
-              civilClaimantId: civilClaimant.id,
-              hasSpokesperson: !civilClaimant.hasSpokesperson,
-              spokespersonEmail: null,
-              spokespersonPhoneNumber: null,
-              spokespersonName: null,
-              spokespersonIsLawyer: null,
-              spokespersonNationalId: null,
-              caseFilesSharedWithSpokesperson: null,
-            })
-          }}
-        >
-          {formatMessage(
-            civilClaimant.hasSpokesperson
-              ? strings.removeDefender
-              : strings.addDefender,
-          )}
-        </Button>
+        {civilClaimant.hasSpokesperson ? (
+          <IconButton
+            icon="trash"
+            colorScheme="blue"
+            onClick={() =>
+              handleSetAndSendCivilClaimantToServer({
+                civilClaimantId: civilClaimant.id,
+                hasSpokesperson: false,
+                spokespersonEmail: null,
+                spokespersonPhoneNumber: null,
+                spokespersonName: null,
+                spokespersonIsLawyer: null,
+                spokespersonNationalId: null,
+                caseFilesSharedWithSpokesperson: null,
+              })
+            }
+          />
+        ) : (
+          <Button
+            variant="text"
+            onClick={() =>
+              handleSetAndSendCivilClaimantToServer({
+                civilClaimantId: civilClaimant.id,
+                hasSpokesperson: true,
+                spokespersonEmail: null,
+                spokespersonPhoneNumber: null,
+                spokespersonName: null,
+                spokespersonIsLawyer: null,
+                spokespersonNationalId: null,
+                caseFilesSharedWithSpokesperson: null,
+              })
+            }
+          >
+            {formatMessage(strings.addDefender)}
+          </Button>
+        )}
       </Box>
       {civilClaimant.hasSpokesperson && (
         <>

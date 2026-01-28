@@ -74,7 +74,9 @@ export const AgendaCard = ({
             className={styles.iconBox}
           >
             <Box marginLeft={2}>
-              <Text variant="medium">{d.text}</Text>
+              <Text textAlign="right" variant="medium">
+                {d.text}
+              </Text>
             </Box>
           </Box>
         ))}
