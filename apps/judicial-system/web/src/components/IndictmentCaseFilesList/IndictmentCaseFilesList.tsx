@@ -32,7 +32,6 @@ import {
   useFiledCourtDocuments,
   useFileList,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { isDefenderAssignedToDefendant } from '@island.is/judicial-system-web/src/utils/utils'
 
 import { CaseFileTable } from '../Table'
 import { caseFiles } from '../../routes/Prosecutor/Indictments/CaseFiles/CaseFiles.strings'
@@ -117,60 +116,24 @@ const FileSection: FC<React.PropsWithChildren<FileSectionProps>> = (props) => {
   )
 }
 
-const useFilteredCaseFiles = (
-  caseFiles?: CaseFile[] | null,
-  user?: User,
-  defendants?: Case['defendants'],
-) => {
+const useFilteredCaseFiles = (caseFiles?: CaseFile[] | null) => {
   return useMemo(() => {
     const filterByCategories = (
       categories: CaseFileCategory | CaseFileCategory[],
-      additionalFilter?: (file: CaseFile) => boolean,
     ) => {
       const categoryArray = Array.isArray(categories)
         ? categories
         : [categories]
 
       return (
-        caseFiles?.filter((file) => {
-          if (!file.category || !categoryArray.includes(file.category)) {
-            return false
-          }
-          if (additionalFilter) {
-            return additionalFilter(file)
-          }
-          return true
-        }) ?? []
+        caseFiles?.filter(
+          (file) => file.category && categoryArray.includes(file.category),
+        ) ?? []
       )
     }
 
-    // Filter criminal records: only show if defender is assigned to the defendant
-    // or if file has no defendantId (backward compatibility - show to all defenders with access)
-    const filterCriminalRecords = (file: CaseFile) => {
-      if (
-        file.category === CaseFileCategory.CRIMINAL_RECORD ||
-        file.category === CaseFileCategory.CRIMINAL_RECORD_UPDATE
-      ) {
-        // If file has no defendantId, allow defenders to see it (backward compatibility)
-        // This maintains the previous behavior where all defenders could see criminal records
-        if (!file.defendantId) {
-          return true
-        }
-        // If file has defendantId, check if defender is assigned to that specific defendant
-        // For non-defenders (prosecutors, court users), always show
-        if (!isDefenceUser(user)) {
-          return true
-        }
-        return isDefenderAssignedToDefendant(user, file.defendantId, defendants)
-      }
-      return true
-    }
-
     return {
-      criminalRecords: filterByCategories(
-        CaseFileCategory.CRIMINAL_RECORD,
-        filterCriminalRecords,
-      ),
+      criminalRecords: filterByCategories(CaseFileCategory.CRIMINAL_RECORD),
       costBreakdowns: filterByCategories(CaseFileCategory.COST_BREAKDOWN),
       others: filterByCategories(CaseFileCategory.CASE_FILE),
       rulings: filterByCategories(CaseFileCategory.RULING),
@@ -180,7 +143,6 @@ const useFilteredCaseFiles = (
       courtRecords: filterByCategories(CaseFileCategory.COURT_RECORD),
       criminalRecordUpdate: filterByCategories(
         CaseFileCategory.CRIMINAL_RECORD_UPDATE,
-        filterCriminalRecords,
       ),
       uploadedCaseFiles: filterByCategories([
         CaseFileCategory.PROSECUTOR_CASE_FILE, // sækjandi
@@ -194,7 +156,7 @@ const useFilteredCaseFiles = (
         CaseFileCategory.SENT_TO_PRISON_ADMIN_FILE,
       ),
     }
-  }, [caseFiles, user, defendants])
+  }, [caseFiles])
 }
 
 const useFilePermissions = (workingCase: Case, user?: User) => {
@@ -274,11 +236,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
       (defendant) => defendant.subpoenas && defendant.subpoenas.length > 0,
     )
 
-  const filteredFiles = useFilteredCaseFiles(
-    workingCase.caseFiles,
-    user,
-    workingCase.defendants,
-  )
+  const filteredFiles = useFilteredCaseFiles(workingCase.caseFiles)
   const permissions = useFilePermissions(workingCase, user)
   const showFiles = Object.values(filteredFiles).some((f) => f.length > 0)
   const hasGeneratedCourtRecord = hasGeneratedCourtRecordPdf(

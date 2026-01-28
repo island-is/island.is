@@ -34,6 +34,7 @@ const defenderDefaultCaseFileCategoriesForIndictmentCases = [
 const defenderCaseFileCategoriesForIndictmentCases =
   defenderDefaultCaseFileCategoriesForIndictmentCases.concat(
     CaseFileCategory.CRIMINAL_RECORD,
+    CaseFileCategory.CRIMINAL_RECORD_UPDATE,
     CaseFileCategory.COST_BREAKDOWN,
     CaseFileCategory.CASE_FILE,
     CaseFileCategory.PROSECUTOR_CASE_FILE,
@@ -133,7 +134,6 @@ const canDefenceUserViewCaseFile = ({
         caseFileCategory === CaseFileCategory.CRIMINAL_RECORD_UPDATE) &&
       defendantId
     ) {
-      // If file has defendantId, check if defender is assigned to that specific defendant
       if (
         !Defendant.isConfirmedDefenderOfSpecificDefendantWithCaseFileAccess(
           nationalId,

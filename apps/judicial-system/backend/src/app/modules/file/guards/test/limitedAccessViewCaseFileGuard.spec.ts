@@ -235,7 +235,6 @@ describe('Limited Access View Case File Guard', () => {
               })
             })
 
-            // Criminal record specific tests
             if (
               category === CaseFileCategory.CRIMINAL_RECORD ||
               category === CaseFileCategory.CRIMINAL_RECORD_UPDATE

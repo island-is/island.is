@@ -719,7 +719,6 @@ export class LimitedAccessCaseService {
           return false
         }
 
-        // For criminal record files, check if defender is assigned to the specific defendant
         if (
           (file.category === CaseFileCategory.CRIMINAL_RECORD ||
             file.category === CaseFileCategory.CRIMINAL_RECORD_UPDATE) &&

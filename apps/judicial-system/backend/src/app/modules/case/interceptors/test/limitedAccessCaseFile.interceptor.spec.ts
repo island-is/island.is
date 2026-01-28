@@ -1,10 +1,7 @@
 import { v4 as uuid } from 'uuid'
-import { of } from 'rxjs'
+import { of, firstValueFrom } from 'rxjs'
 
-import {
-  CallHandler,
-  ExecutionContext,
-} from '@nestjs/common'
+import { CallHandler, ExecutionContext } from '@nestjs/common'
 
 import {
   CaseFileCategory,
@@ -34,13 +31,14 @@ describe('LimitedAccessCaseFileInterceptor', () => {
       const interceptor = new LimitedAccessCaseFileInterceptor()
       const then = {} as Then
 
-      await interceptor
-        .intercept(
+      await firstValueFrom(
+        interceptor.intercept(
           {
             switchToHttp: () => ({ getRequest: mockRequest }),
           } as unknown as ExecutionContext,
           { handle: mockHandle } as unknown as CallHandler,
-        )
+        ),
+      )
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 

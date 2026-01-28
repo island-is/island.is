@@ -35,10 +35,7 @@ import {
   DeleteFileMutation,
   useDeleteFileMutation,
 } from './deleteFile.generated'
-import {
-  LimitedAccessCreateCivilClaimantFileMutation,
-  useLimitedAccessCreateCivilClaimantFileMutation,
-} from './limitedAccessCreateCivilClaimantFile.generated'
+import { useLimitedAccessCreateCivilClaimantFileMutation } from './limitedAccessCreateCivilClaimantFile.generated'
 import {
   LimitedAccessCreateDefendantFileMutation,
   useLimitedAccessCreateDefendantFileMutation,
@@ -74,7 +71,6 @@ export interface TUploadFile extends UploadFile {
   previewUrl?: string | null
   isKeyAccessible?: boolean | null
   defendantId?: string | null
-  civilClaimantId?: string | null // TODO: Do we need this?
 }
 
 export interface UploadFileState {
@@ -325,30 +321,6 @@ const useS3Upload = (
         return createdFile.id
       }
 
-      const addCivilClaimantFileToCaseState = async (
-        input: CreateFileInput,
-        civilClaimantId: string,
-      ) => {
-        const mutation = limitedAccess
-          ? limitedAccessCreateCivilClaimantFile
-          : createCivilClaimantFile
-
-        const { data } = await mutation({
-          variables: { input: { ...input, civilClaimantId } },
-        })
-
-        const createdFile = limitedAccess
-          ? (data as LimitedAccessCreateCivilClaimantFileMutation)
-              ?.limitedAccessCreateCivilClaimantFile
-          : (data as CreateCivilClaimantFileMutation)?.createCivilClaimantFile
-
-        if (!createdFile?.id) {
-          throw Error('Failed to add file to case')
-        }
-
-        return createdFile.id
-      }
-
       const baseInput = {
         caseId,
         type: file.type ?? '',
@@ -366,16 +338,9 @@ const useS3Upload = (
         isKeyAccessible: file.isKeyAccessible,
       }
 
-      // Check file's defendantId first (for criminal records), then fall back to hook parameter
       const fileDefendantId = file.defendantId ?? defendantId
       if (fileDefendantId) {
         return addDefendantFileToCaseState(baseInput, fileDefendantId)
-      }
-
-      // Check file's civilClaimantId first, then fall back to hook parameter
-      const fileCivilClaimantId = file.civilClaimantId ?? civilClaimantId
-      if (fileCivilClaimantId) {
-        return addCivilClaimantFileToCaseState(baseInput, fileCivilClaimantId)
       }
 
       return addCaseFileToCaseState(baseInput)
