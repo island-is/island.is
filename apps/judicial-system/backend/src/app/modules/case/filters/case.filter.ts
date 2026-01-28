@@ -289,7 +289,7 @@ const canPrisonAdminUserAccessCase = (
     if (
       !theCase.defendants?.some(
         (defendant) =>
-          defendant.isSentToPrisonAdmin ||
+          defendant.isSentToPrisonAdmin &&
           defendant.indictmentReviewDecision ===
             IndictmentCaseReviewDecision.ACCEPT,
       )

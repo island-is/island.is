@@ -9,7 +9,6 @@ import {
   completedIndictmentCaseStates,
   completedRequestCaseStates,
   EventType,
-  IndictmentCaseReviewDecision,
   indictmentCases,
   investigationCases,
   restrictionCases,

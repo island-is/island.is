@@ -19,7 +19,7 @@ import {
   isRulingOrDismissalCase,
   isSuccessfulServiceStatus,
 } from '@island.is/judicial-system/types'
-import { defendant, titles } from '@island.is/judicial-system-web/messages'
+import { titles } from '@island.is/judicial-system-web/messages'
 import {
   AlternativeServiceAnnouncement,
   BlueBox,
