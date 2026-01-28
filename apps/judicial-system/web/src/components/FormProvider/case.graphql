@@ -501,7 +501,6 @@ query Case($input: CaseQueryInput!) {
         isVerdictAppealDeadlineExpired
         subpoenaType
         punishmentType
-        indictmentReviewDecision
         subpoenas {
           id
           created
