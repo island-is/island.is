@@ -333,7 +333,7 @@ export class UserProfileService {
 
       // Now lets check if the email is already in the database
       if (isEmailDefined) {
-        // Lets find the primary email
+        // Lets find the primary email and set it to false
         const primaryEmail = await this.emailModel.findOne({
           where: {
             nationalId,
