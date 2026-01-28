@@ -1,6 +1,14 @@
 import { FormValue } from '@island.is/application/types'
 import { Advocate, EstateAsset } from '@island.is/clients/syslumenn'
 
+// Local type definition for InheritanceSignatory
+// This matches the type defined in @island.is/clients/syslumenn
+export interface InheritanceSignatory {
+  name: string
+  nationalId: string
+  signed: boolean
+}
+
 export enum RoleConfirmationEnum {
   CONTINUE = 'continue',
   DELEGATE = 'delegate',
@@ -290,6 +298,8 @@ export interface EstateMember {
   inheritanceTax?: string
   taxableInheritance?: string
   taxFreeInheritance?: string
+  approved?: boolean
+  approvedDate?: string
 }
 
 export const heirAgeValidation = 'heirAgeValidation'
@@ -325,3 +335,20 @@ export const FuneralAssetItem = {
 } as const
 export type FuneralAssetItem =
   typeof FuneralAssetItem[keyof typeof FuneralAssetItem]
+
+export interface InheritanceReportExternalData {
+  submitToSyslumenn?: {
+    data: {
+      success: boolean
+      id?: string
+    }
+    date: string
+  }
+  getSignatories?: {
+    data: {
+      success: boolean
+      signatories: InheritanceSignatory[]
+    }
+    date: string
+  }
+}
