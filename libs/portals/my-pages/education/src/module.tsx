@@ -4,49 +4,42 @@ import { PortalModule } from '@island.is/portals/core'
 import { EducationPaths } from './lib/paths'
 import { Navigate } from 'react-router-dom'
 
-const EducationCareer = lazy(
-  () =>
-    import(
-      '../../education-career/src/screens/EducationCareer/EducationCareer'
-    ),
+const EducationCareer = lazy(() =>
+  import('../../education-career/src/screens/EducationCareer/EducationCareer'),
 )
 
-const UniversityGraduation = lazy(
-  () => import('./screens/UniversityGraduation/UniversityGraduation'),
+const UniversityGraduation = lazy(() =>
+  import('./screens/UniversityGraduation/UniversityGraduation'),
 )
 
-const UniversityGraduationDetail = lazy(
-  () =>
-    import('./screens/UniversityGraduationDetail/UniversityGraduationDetail'),
+const UniversityGraduationDetail = lazy(() =>
+  import('./screens/UniversityGraduationDetail/UniversityGraduationDetail'),
 )
 
-const SecondarySchoolCareer = lazy(
-  () => import('./screens/SecondarySchoolCareer/SecondarySchoolCareer'),
+const SecondarySchoolCareer = lazy(() =>
+  import('./screens/SecondarySchoolCareer/SecondarySchoolCareer'),
 )
 
-const SecondarySchoolGraduationOverview = lazy(
-  () =>
-    import(
-      './screens/SecondarySchoolGraduationOverview/SecondarySchoolGraduationOverview'
-    ),
+const SecondarySchoolGraduationOverview = lazy(() =>
+  import(
+    './screens/SecondarySchoolGraduationOverview/SecondarySchoolGraduationOverview'
+  ),
 )
 
-const SecondarySchoolGraduationSingle = lazy(
-  () =>
-    import(
-      './screens/SecondarySchoolGraduationSingle/SecondarySchoolGraduationSingle'
-    ),
+const SecondarySchoolGraduationSingle = lazy(() =>
+  import(
+    './screens/SecondarySchoolGraduationSingle/SecondarySchoolGraduationSingle'
+  ),
 )
 
-const SecondarySchoolGraduationDetail = lazy(
-  () =>
-    import(
-      './screens/SecondarySchoolGraduationDetail/SecondarySchoolGraduationDetail'
-    ),
+const SecondarySchoolGraduationDetail = lazy(() =>
+  import(
+    './screens/SecondarySchoolGraduationDetail/SecondarySchoolGraduationDetail'
+  ),
 )
 
-const DrivingLessonsBook = lazy(
-  () => import('./screens/DrivingLessonsBook/DrivingLessonsBook'),
+const DrivingLessonsBook = lazy(() =>
+  import('./screens/DrivingLessonsBook/DrivingLessonsBook'),
 )
 
 export const educationModule: PortalModule = {
