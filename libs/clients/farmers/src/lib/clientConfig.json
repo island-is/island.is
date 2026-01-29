@@ -1,0 +1,171 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Farmers api",
+    "version": "1.0",
+    "contact": {
+      "name": "Stefna ehf",
+      "url": "https://stefna.is",
+      "email": "no-support@stefna.is"
+    }
+  },
+  "servers": [
+    {
+      "description": "Production",
+      "url": "https://api.afurd.is"
+    },
+    {
+      "description": "Staging",
+      "url": "https://staging.api.afurd.is"
+    },
+    {
+      "description": "Development",
+      "url": "http://localhost:8000"
+    }
+  ],
+  "tags": [],
+  "paths": {
+    "/v1/island/farms": {
+      "get": {
+        "operationId": "listFarms",
+        "description": "list of farms",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListFarm"
+                }
+              }
+            },
+            "description": "ok"
+          },
+          "400": {
+            "$ref": "#/components/responses/InputError"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "requestBodies": {},
+    "schemas": {
+      "ListFarm": {
+        "type": "object",
+        "readOnly": true,
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Farm"
+            }
+          }
+        }
+      },
+      "Farm": {
+        "type": "object",
+        "properties": {
+          "farmId": {
+            "type": "integer",
+            "description": "",
+            "minimum": 1000000,
+            "maximum": 9999999
+          },
+          "farmName": {
+            "type": "string",
+            "description": "búnumer"
+          }
+        }
+      },
+      "Error": {
+        "title": "Generic Error Object",
+        "type": "object",
+        "properties": {
+          "messages": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearer-token": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Either island jwt or our own jwt token"
+      }
+    },
+    "responses": {
+      "InputError": {
+        "description": "Generic input error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Unauthorized": {
+        "description": "Need to authenticate to access resource",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Forbidden": {
+        "description": "Access denied",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "NotFound": {
+        "description": "Requested resource not found",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "InternalError": {
+        "description": "Unknown internal error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "bearer-token": []
+    }
+  ]
+}
