@@ -226,24 +226,94 @@ export class InheritanceReportService extends BaseTemplateApiService {
     const { application } = _props
     const answers = application.answers as InheritanceSchema
 
-    // TODO: Replace this mock implementation with actual API call to syslumennService
-    // when the endpoint becomes available
-    // const caseNumber = application.externalData?.submitToSyslumenn?.data?.id
-    // return await this.syslumennService.getInheritanceReportSignatories(caseNumber)
+    // Get the case number from the submitToSyslumenn external data
+    const submitData = application.externalData
+      ?.submitToSyslumenn as unknown as
+      | { data: { success: boolean; id?: string }; date: Date }
+      | undefined
+    const caseNumber = submitData?.data?.id
 
-    // Mock implementation: Return signatories based on heirs from application answers
-    const heirs = answers?.heirs?.data || []
+    if (!caseNumber) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.failedDataProviderSubmit,
+          summary:
+            'Case number not found. Application must be submitted before retrieving signatories.',
+        },
+        400,
+      )
+    }
 
-    return {
-      success: true,
-      signatories: heirs
-        .filter((heir) => heir.enabled)
-        .map((heir, index: number) => ({
-          name: heir.name || '',
-          nationalId: heir.nationalId || '',
-          // Mock: First heir is signed, rest are pending
-          signed: index === 0,
-        })),
+    // Get the deceased national ID from the selected estate
+    const estateInfoSelection = answers?.estateInfoSelection
+    const syslumennData = application.externalData
+      ?.syslumennOnEntry as unknown as
+      | {
+          data: {
+            inheritanceReportInfos: Array<{ caseNumber?: string; nationalId?: string }>
+          }
+          date: Date
+        }
+      | undefined
+    const inheritanceReportInfos =
+      syslumennData?.data?.inheritanceReportInfos || []
+
+    const selectedEstate = inheritanceReportInfos.find(
+      (estate) => estate.caseNumber === estateInfoSelection,
+    )
+    const deceasedNationalId = selectedEstate?.nationalId || ''
+
+    if (!deceasedNationalId) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.failedDataProviderSubmit,
+          summary: 'Deceased national ID not found in application data.',
+        },
+        400,
+      )
+    }
+
+    // Determine the estate type based on the application type
+    // Estate types supported by Syslumenn:
+    // - 'danarbu' (Dánarbú) - General estate/inheritance report
+    // - 'fyrirframgreiddur' (Fyrirframgreiddur Arfur) - Prepaid inheritance
+    // - 'opinber' (Opinber skipti) - Official division
+    // - 'eignarleysi' - Estate without assets
+    // - 'OskiptBu' (Umsókn um leyfi til setu í óskiptu búi) - Undivided estate permit
+    // - 'Einkaskipti' (umsókn um leyfi til einkaskipta) - Private division permit
+    //
+    // For ESTATE_INHERITANCE, use 'danarbu' (general estate)
+    // For PREPAID_INHERITANCE, use 'fyrirframgreiddur' (prepaid inheritance)
+    const estateType =
+      answers?.applicationFor === 'prepaidInheritance'
+        ? 'fyrirframgreiddur'
+        : 'danarbu'
+
+    try {
+      // Call the Syslumenn service to get signatories
+      const signatories =
+        await this.syslumennService.getInheritanceReportSignatories(
+          deceasedNationalId,
+          estateType,
+          caseNumber,
+        )
+
+      return {
+        success: true,
+        signatories,
+      }
+    } catch (error) {
+      this.logger.error(
+        '[inheritance-report]: Failed to get signatories',
+        error,
+      )
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.failedDataProviderSubmit,
+          summary: 'Failed to retrieve signatories from Syslumenn service.',
+        },
+        500,
+      )
     }
   }
 

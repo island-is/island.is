@@ -15,6 +15,7 @@ import {
   Skilabod,
   SvarSkeyti,
   SyslumennApi,
+  Type,
   VedbandayfirlitRegluverkGeneralSvar,
   VedbondTegundAndlags,
   VirkLeyfiGetRequest,
@@ -650,14 +651,39 @@ export class SyslumennService {
     return res
   }
 
-  // TODO: This method needs to be implemented by the external API provider
-  // For now, it throws an error to indicate the API endpoint is not yet available
   async getInheritanceReportSignatories(
-    caseNumber: string,
+    deceasedNationalId: string,
+    estateType: string,
+    caseNumber?: string,
   ): Promise<InheritanceSignatory[]> {
-    throw new Error(
-      `getInheritanceReportSignatories is not yet implemented by the external API provider. Case number: ${caseNumber}`,
-    )
+    const { api } = await this.createApi()
+
+    try {
+      // Call the Syslumenn API to get signatories
+      // The API accepts kennitala (deceased's national ID), typa (estate type), and audkenni (case number)
+      // Note: The generated Type enum may not include all estate types yet (danarbu, fyrirframgreiddur, etc.)
+      // so we cast the string to Type to allow passing all valid estate type strings
+      const response = await api.adilarMalsUndirritanirGet({
+        kennitala: deceasedNationalId,
+        typa: estateType as unknown as Type,
+        audkenni: caseNumber || null,
+      })
+
+      // Map the response to InheritanceSignatory format
+      return response.map((item) => ({
+        name: item.nafn || '',
+        nationalId: item.kennitala || '',
+        signed: item.undirritad || false,
+      }))
+    } catch (error) {
+      logger.warn('Failed to get inheritance report signatories', {
+        error,
+        deceasedNationalId,
+        estateType,
+        caseNumber,
+      })
+      throw error
+    }
   }
 
   async getEstateInfo(nationalId: string): Promise<EstateInfo[]> {

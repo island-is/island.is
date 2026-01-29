@@ -385,6 +385,17 @@ export interface InheritanceSignatory {
   signed: boolean
 }
 
+// Extended estate types for inheritance report signatories
+// These match the types accepted by the Syslumenn API
+export enum EstateTypes {
+  DANARBU = 'danarbu',
+  FYRIRFRAMGREIDDUR = 'fyrirframgreiddur',
+  OPINBER = 'opinber',
+  EIGNARLEYSI = 'eignarleysi',
+  OSKIPT_BU = 'OskiptBu',
+  EINKASKIPTI = 'Einkaskipti',
+}
+
 // Copied from propertyDetails in @island.is/api/domains/assets. Only properties in use
 export interface PropertyDetail {
   defaultAddress?: PropertyLocation
