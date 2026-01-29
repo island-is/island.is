@@ -1374,10 +1374,8 @@ describe('MeUserProfileController', () => {
         delegationsApi.delegationsControllerGetDelegationRecords,
       ).toHaveBeenCalledWith({
         xQueryNationalId: testUserProfile.nationalId,
-        scopes: [
-          '@island.is/documents',
-          '@island.is/applications/samgongustofa-vehicles',
-        ],
+        scopes:
+          '@island.is/documents,@island.is/applications/samgongustofa-vehicles',
         direction: 'incoming',
       })
     })
@@ -1584,10 +1582,8 @@ describe('MeUserProfileController', () => {
         delegationsApi.delegationsControllerGetDelegationRecords,
       ).toHaveBeenCalledWith({
         xQueryNationalId: testUserProfile.nationalId,
-        scopes: [
-          '@island.is/documents',
-          '@island.is/applications/samgongustofa-vehicles',
-        ],
+        scopes:
+          '@island.is/documents,@island.is/applications/samgongustofa-vehicles',
         direction: 'incoming',
       })
     })
