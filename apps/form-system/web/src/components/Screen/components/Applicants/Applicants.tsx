@@ -75,19 +75,30 @@ export const Applicants = ({ applicantField }: Props) => {
     applicantType as ApplicantTypesEnum,
   )
 
+  const hasEmail =
+    getValue(applicantField, 'email') &&
+    getValue(applicantField, 'email') !== ''
+  const hasPhoneNumber =
+    getValue(applicantField, 'phoneNumber') &&
+    getValue(applicantField, 'phoneNumber') !== ''
+
   useQuery(USER_PROFILE, {
     fetchPolicy: 'cache-first',
+    skip: hasEmail && hasPhoneNumber,
     onCompleted: (data) => {
-      console.log('USER_PROFILE data', data)
       const { mobilePhoneNumber, email } = data.getUserProfile
-      dispatch({
-        type: 'SET_PHONE_NUMBER',
-        payload: { id: applicantField.id, value: mobilePhoneNumber },
-      })
-      dispatch({
-        type: 'SET_EMAIL',
-        payload: { id: applicantField.id, value: email },
-      })
+      if (mobilePhoneNumber && !hasPhoneNumber) {
+        dispatch({
+          type: 'SET_PHONE_NUMBER',
+          payload: { id: applicantField.id, value: mobilePhoneNumber },
+        })
+      }
+      if (email && !hasEmail) {
+        dispatch({
+          type: 'SET_EMAIL',
+          payload: { id: applicantField.id, value: email },
+        })
+      }
     },
   })
 

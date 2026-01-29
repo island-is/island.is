@@ -9,6 +9,7 @@ import { GENERIC_LIST_ID, REGION_TAGS } from './constants'
 import {
   mapEntryCreationDto,
   mapEntryUpdateDto,
+  mapSlug,
 } from '../repositories/fsre-buildings/mapper'
 import { BuildingDto } from '../repositories/fsre-buildings/dto/building.dto'
 
@@ -33,35 +34,59 @@ export class FSREBuildingsImportService {
       return
     }
 
-    //first we create the entries
-    await this.createEntries(buildings)
-    //then we update the entries
+    //first we update the entries
     await this.updateEntries(buildings)
+
+    //then we create the entries, if needed
+    await this.createEntries(buildings)
   }
 
   private async createEntries(buildings: Array<BuildingDto>): Promise<void> {
     const existingEntries = await this.cmsRepository.getGenericListItemEntries(
       GENERIC_LIST_ID,
     )
-
-    const previousEntryNames: Array<string> = existingEntries
+    const cmsEntrySlugs: Array<string> = existingEntries
       .map((i) => {
-        const title: string = i.fields['internalTitle']?.[LOCALE]
-        if (!title) {
+        const slug: string = i.fields['slug']?.[LOCALE]
+        if (!slug) {
           return null
         }
-        return title
+        return slug
       })
       .filter(isDefined)
 
+    const copy = [...cmsEntrySlugs]
+
+    copy.forEach((c) => {
+      const count = cmsEntrySlugs.filter((s) => s === c).length
+      if (count > 1) {
+        logger.warn('Cms entry slugs contains duplicates', {
+          count,
+          slug: c,
+        })
+      }
+    })
+
+    const previousSlugsChecked: Array<string> = []
+
     const newEntries: Array<EntryCreationDto> = buildings
       .map((building) => {
-        const internalTitle = `FSRE: ${building.address}_${building.id}`
+        const slug = mapSlug(building)[LOCALE]
 
-        if (previousEntryNames.find((i) => i === internalTitle)) {
-          logger.info('Entry already exists, skipping.', {
-            name: internalTitle,
+        if (previousSlugsChecked.find((i) => i === slug)) {
+          logger.info('Entry already checked, duplicate entry', {
+            slug,
           })
+          return null
+        }
+
+        previousSlugsChecked.push(slug)
+
+        if (cmsEntrySlugs.find((i) => i === mapSlug(building)[LOCALE])) {
+          logger.info('Entry already exists in the cms, skipping.', {
+            slug,
+          })
+
           return null
         }
 
@@ -76,7 +101,6 @@ export class FSREBuildingsImportService {
     }
 
     await this.cmsRepository.createEntries(newEntries, 'genericListItem')
-    logger.info('entries creation finished')
   }
 
   private async updateEntries(buildings: Array<BuildingDto>): Promise<void> {

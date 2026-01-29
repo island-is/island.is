@@ -286,7 +286,7 @@ export const m = {
     alertMessage: {
       id: 'rsk.crfc.application:cars.changes.count.info.message',
       defaultMessage:
-        'Það getur tekið smá tíma að vinna úr upplýsingum umsóknarinnar.',
+        'Það getur tekið 1-2 mínútur að senda inn umsóknina að vinna úr upplýsingum.',
       description: 'Cars changes count info message',
     },
   }),
@@ -319,6 +319,30 @@ export const m = {
       id: 'rsk.crfc.application:completed.alert.message',
       defaultMessage: 'Umsókn þín hefur verið móttekin',
       description: 'Completed alert message',
+    },
+  }),
+
+  multiUploadErrors: defineMessages({
+    dayRateMin30Days: {
+      id: 'rsk.crfc.application:multi.upload.error.dayrate.min30days',
+      defaultMessage:
+        'Bílar þurfa að vera skráðir á daggjald í amk 30 daga áður en hægt er að breyta til baka!',
+      description: 'Changing from day rate to km rate too soon',
+    },
+    carNotFound: {
+      id: 'rsk.crfc.application:multi.upload.error.car.not.found',
+      defaultMessage: 'Þessi bíll fannst ekki í lista af þínum bílum!',
+      description: 'Car not found',
+    },
+    previousMileageRequired: {
+      id: 'rsk.crfc.application:multi.upload.error.prev.mileage.required',
+      defaultMessage: 'Síðasta staða bíls þarf að vera til staðar!',
+      description: 'Previous mileage missing',
+    },
+    newMileageLowerThanPrevious: {
+      id: 'rsk.crfc.application:multi.upload.error.new.mileage.lower',
+      defaultMessage: 'Nýja staða má ekki vera lægri en síðasta staða!',
+      description: 'New mileage lower than previous',
     },
   }),
 }
