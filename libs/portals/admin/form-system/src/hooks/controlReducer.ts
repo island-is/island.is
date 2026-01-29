@@ -746,7 +746,6 @@ export const controlReducer = (
           submissionServiceUrl: action.payload.value,
         },
       }
-      // action.payload.update({ ...updatedState.form })
       return updatedState
     }
     case 'CHANGE_ZENDESK_INTERNAL': {
@@ -757,7 +756,6 @@ export const controlReducer = (
           zendeskInternal: action.payload.value,
         },
       }
-      // action.payload.update({ ...updatedState.form })
       return updatedState
     }
     case 'UPDATE_APPLICANT_TYPES': {

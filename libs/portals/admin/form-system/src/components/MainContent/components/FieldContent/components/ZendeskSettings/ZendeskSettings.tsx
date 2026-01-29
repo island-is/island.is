@@ -20,7 +20,6 @@ export const ZendeskSettings = ({ fieldSettings }: Props) => {
 
   return (
     <Box marginTop={2}>
-      {/* <Text variant="h4">Zendesk stillingar</Text> */}
       <GridRow marginTop={2} marginBottom={2}>
         <GridColumn span="5/10">
           <Checkbox
