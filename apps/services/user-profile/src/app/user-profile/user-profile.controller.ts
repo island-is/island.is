@@ -21,6 +21,7 @@ import type { User } from '@island.is/auth-nest-tools'
 import {
   CurrentUser,
   IdsAuthGuard,
+  IdsUserGuard,
   Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
@@ -200,6 +201,7 @@ export class UserProfileController {
     },
     response: { status: 200, type: [EmailsDto] },
   })
+  @UseGuards(IdsUserGuard, ScopesGuard)
   @ApiSecurity('oauth2', [AdminPortalScope.serviceDesk])
   @Scopes(AdminPortalScope.serviceDesk)
   async getUserEmails(
@@ -241,6 +243,7 @@ export class UserProfileController {
     },
     response: { status: 200, type: Boolean },
   })
+  @UseGuards(IdsUserGuard, ScopesGuard)
   @ApiSecurity('oauth2', [AdminPortalScope.serviceDesk])
   @Scopes(AdminPortalScope.serviceDesk)
   async deleteEmail(
