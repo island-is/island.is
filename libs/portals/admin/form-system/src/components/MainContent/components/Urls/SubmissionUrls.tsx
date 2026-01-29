@@ -130,7 +130,7 @@ export const SubmissionUrls = () => {
 
       {form.submissionServiceUrl === 'zendesk' && (
         <Checkbox
-          label="Umsóknirnar skulu vera merktar internal/private í Zendesk"
+          label={formatMessage(m.zendeskPrivate)}
           checked={!!form.zendeskInternal}
           onChange={(e) => {
             controlDispatch({
