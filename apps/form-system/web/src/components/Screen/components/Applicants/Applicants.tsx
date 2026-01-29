@@ -79,14 +79,18 @@ export const Applicants = ({ applicantField }: Props) => {
     fetchPolicy: 'cache-first',
     onCompleted: (data) => {
       const { mobilePhoneNumber, email } = data.getUserProfile
-      dispatch({
-        type: 'SET_PHONE_NUMBER',
-        payload: { id: applicantField.id, value: mobilePhoneNumber },
-      })
-      dispatch({
-        type: 'SET_EMAIL',
-        payload: { id: applicantField.id, value: email },
-      })
+      if (mobilePhoneNumber && !getValue(applicantField, 'phoneNumber')) {
+        dispatch({
+          type: 'SET_PHONE_NUMBER',
+          payload: { id: applicantField.id, value: mobilePhoneNumber },
+        })
+      }
+      if (email && !getValue(applicantField, 'email')) {
+        dispatch({
+          type: 'SET_EMAIL',
+          payload: { id: applicantField.id, value: email },
+        })
+      }
     },
   })
 
