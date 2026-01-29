@@ -514,7 +514,16 @@ describe('CardPaymentController', () => {
 
       const getPaymentFlowDetailsSpy = jest
         .spyOn(PaymentFlowService.prototype, 'getPaymentFlowDetails')
-        .mockResolvedValue({} as any)
+        .mockResolvedValue({
+          id: paymentFlowId,
+          payerNationalId: '1234567890',
+          charges: [],
+          availablePaymentMethods: [],
+          onUpdateUrl: ON_UPDATE_URL,
+          organisationId: '1234567890',
+          created: new Date(),
+          modified: new Date(),
+        })
       const getPaymentFlowChargeDetailsSpy = jest
         .spyOn(PaymentFlowService.prototype, 'getPaymentFlowChargeDetails')
         .mockResolvedValue({
@@ -637,9 +646,15 @@ describe('CardPaymentController', () => {
     const getPaymentFlowDetailsSpy = jest
       .spyOn(PaymentFlowService.prototype, 'getPaymentFlowDetails')
       .mockResolvedValue({
-        id: 'test',
-        chargeSubjectItemId: 'itemid',
-      } as any)
+        id: paymentFlowId,
+        payerNationalId: '1234567890',
+        charges: [],
+        availablePaymentMethods: [],
+        onUpdateUrl: ON_UPDATE_URL,
+        organisationId: '1234567890',
+        created: new Date(),
+        modified: new Date(),
+      })
     const getPaymentFlowChargeDetailsSpy = jest
       .spyOn(PaymentFlowService.prototype, 'getPaymentFlowChargeDetails')
       .mockResolvedValue({
@@ -1035,7 +1050,13 @@ describe('CardPaymentController', () => {
           .mockResolvedValue({
             id: paymentFlowId,
             organisationId: '5534567890',
-          } as any)
+            payerNationalId: '1234567890',
+            charges: [],
+            availablePaymentMethods: [],
+            onUpdateUrl: ON_UPDATE_URL,
+            created: new Date(),
+            modified: new Date(),
+          })
 
         const getPaymentFlowChargeDetailsSpy = jest
           .spyOn(PaymentFlowService.prototype, 'getPaymentFlowChargeDetails')
@@ -1147,7 +1168,16 @@ describe('CardPaymentController', () => {
 
         const getPaymentFlowDetailsSpy = jest
           .spyOn(PaymentFlowService.prototype, 'getPaymentFlowDetails')
-          .mockResolvedValue({} as any)
+          .mockResolvedValue({
+            id: paymentFlowId,
+            payerNationalId: '1234567890',
+            charges: [],
+            availablePaymentMethods: [],
+            onUpdateUrl: ON_UPDATE_URL,
+            organisationId: '1234567890',
+            created: new Date(),
+            modified: new Date(),
+          })
 
         const getPaymentFlowChargeDetailsSpy = jest
           .spyOn(PaymentFlowService.prototype, 'getPaymentFlowChargeDetails')
@@ -1265,8 +1295,14 @@ describe('CardPaymentController', () => {
           .spyOn(PaymentFlowService.prototype, 'getPaymentFlowDetails')
           .mockResolvedValue({
             id: 'test',
-            chargeSubjectItemId: 'itemid',
-          } as any)
+            payerNationalId: '1234567890',
+            charges: [],
+            availablePaymentMethods: [],
+            onUpdateUrl: ON_UPDATE_URL,
+            organisationId: '1234567890',
+            created: new Date(),
+            modified: new Date(),
+          })
 
         const getPaymentFlowChargeDetailsSpy = jest
           .spyOn(PaymentFlowService.prototype, 'getPaymentFlowChargeDetails')
@@ -1409,7 +1445,13 @@ describe('CardPaymentController', () => {
           .mockResolvedValue({
             id: paymentFlowId,
             organisationId: '5534567890',
-          } as any)
+            payerNationalId: '1234567890',
+            charges: [],
+            availablePaymentMethods: [],
+            onUpdateUrl: ON_UPDATE_URL,
+            created: new Date(),
+            modified: new Date(),
+          })
 
         const getPaymentFlowChargeDetailsSpy = jest
           .spyOn(PaymentFlowService.prototype, 'getPaymentFlowChargeDetails')

@@ -1,11 +1,5 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import {
-  IsArray,
-  IsBoolean,
-  IsObject,
-  IsOptional,
-  IsString,
-} from 'class-validator'
+import { ApiProperty } from '@nestjs/swagger'
+import { IsArray, IsBoolean, IsObject, IsString } from 'class-validator'
 
 class VerificationField {
   @ApiProperty({ description: 'Field name', type: String })
