@@ -10,15 +10,14 @@ import { getValueViaPath } from '@island.is/application/core'
 import { AttachmentS3Service } from '../../shared/services'
 
 import {
-  CarCategoryError,
-  CarCategoryRecord,
-  CarMap,
+  CurrentVehicleWithMilage,
   RateCategory,
+  buildCurrentCarMap,
+  getUploadFileType,
+  parseUploadFile,
 } from '@island.is/application/templates/car-rental-fee-category'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { parseFileToCarCategory } from '@island.is/application/templates/car-rental-fee-category'
-import { isDayRateEntryActive } from '@island.is/application/templates/car-rental-fee-category'
 
 @Injectable()
 export class CarRentalFeeCategoryService extends BaseTemplateApiService {
@@ -142,30 +141,10 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
       'getCurrentVehiclesRateCategory.data',
     )
 
-    const currentDate = new Date()
-    const currentCarData =
-      currentVehicles?.reduce((acc, vehicle) => {
-        if (!vehicle.permno) return acc
+    const currentCarData = buildCurrentCarMap(currentVehicles, currentRates)
 
-        const vehicleEntry = currentRates?.find(
-          (rate) => rate.permno === vehicle.permno,
-        )
-
-        const activeDayRate = vehicleEntry?.dayRateEntries?.find((entry) =>
-          isDayRateEntryActive(entry, currentDate),
-        )
-
-        acc[vehicle.permno] = {
-          milage: vehicle.milage ?? 0,
-          category: activeDayRate ? RateCategory.DAYRATE : RateCategory.KMRATE,
-          activeDayRate: activeDayRate,
-        }
-
-        return acc
-      }, {} as CarMap) ?? {}
-
-    const fileType = attachment.fileName.split('.').pop()?.toLowerCase()
-    if (fileType !== 'csv' && fileType !== 'xlsx') {
+    const fileType = getUploadFileType(attachment.fileName ?? '')
+    if (!fileType) {
       throw new TemplateApiError(
         { title: 'Invalid file type', summary: 'Only .csv or .xlsx are supported' },
         400,
@@ -173,28 +152,22 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
     }
 
     const bytes = Buffer.from(attachment.fileContent, 'base64')
-    const data = await parseFileToCarCategory(
+    const parsed = await parseUploadFile(
       bytes,
       fileType,
       rateToChangeTo,
       currentCarData,
     )
 
-    const isCarCategoryErrorArray = (
-      data: Array<CarCategoryRecord | CarCategoryError>,
-    ): data is CarCategoryError[] => {
-      return data.length > 0 && 'code' in data[0]
-    }
+    if (!parsed.ok) {
+      if (parsed.reason === 'no-data') {
+        throw new TemplateApiError(
+          { title: 'Invalid data', summary: 'Invalid data found' },
+          400,
+        )
+      }
 
-    if (data.length === 0) {
-      throw new TemplateApiError(
-        { title: 'Invalid data', summary: 'Invalid data found' },
-        400,
-      )
-    }
-
-    if (isCarCategoryErrorArray(data)) {
-      const errorSummary = data
+      const errorSummary = parsed.errors
         .map((e) => {
           const msg =
             typeof e.message === 'string'
@@ -202,13 +175,16 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
               : e.message.defaultMessage ?? e.message.id
           return `${e.carNr}: ${msg}`
         })
-        .join('; ')
+        .filter((m) => m.length > 0)
+        .join('\n')
 
       throw new TemplateApiError(
         { title: 'Invalid data', summary: errorSummary || 'Invalid data found' },
         400,
       )
     }
+
+    const data = parsed.records
 
     const now = new Date()
     const endOfToday = new Date(now.setHours(23, 59, 59, 999))
@@ -231,7 +207,6 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
               }) ?? null,
           },
         }
-        console.log('entries', requestBody.dayRateRegistrationModel?.entries)
         await this.rentalsApiWithAuth(
           auth,
         ).apiDayRateEntriesEntityIdRegisterPost({ ...requestBody })
@@ -311,9 +286,4 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
 
     return messages.length > 0 ? messages.join('\n') : undefined
   }
-}
-
-export interface CurrentVehicleWithMilage {
-  permno: string | null
-  milage: number | null
 }
