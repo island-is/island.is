@@ -1,11 +1,5 @@
 import _uniqBy from 'lodash/uniqBy'
-import {
-  CreateOptions,
-  literal,
-  Op,
-  Transaction,
-  UpdateOptions,
-} from 'sequelize'
+import { literal, Op, Transaction, UpdateOptions } from 'sequelize'
 
 import {
   BadRequestException,
@@ -23,7 +17,7 @@ import { CourtDocument } from '../models/courtDocument.model'
 import { CourtSession } from '../models/courtSession.model'
 
 interface CreateCourtDocumentOptions {
-  transaction?: Transaction
+  transaction: Transaction
 }
 
 export interface CreateCourtDocument {
@@ -34,7 +28,7 @@ export interface CreateCourtDocument {
 }
 
 interface UpdateCourtDocumentOptions {
-  transaction?: Transaction
+  transaction: Transaction
 }
 
 interface UpdateCourtDocument {
@@ -45,11 +39,11 @@ interface UpdateCourtDocument {
 }
 
 interface FileCourtDocumentInCourtSessionOptions {
-  transaction?: Transaction
+  transaction: Transaction
 }
 
 interface DeleteCourtDocumentOptions {
-  transaction?: Transaction
+  transaction: Transaction
 }
 
 @Injectable()
@@ -65,7 +59,7 @@ export class CourtDocumentRepositoryService {
   async create(
     caseId: string,
     data: CreateCourtDocument,
-    options?: CreateCourtDocumentOptions,
+    options: CreateCourtDocumentOptions,
   ): Promise<CourtDocument> {
     try {
       this.logger.debug(
@@ -73,17 +67,11 @@ export class CourtDocumentRepositoryService {
         { data: Object.keys(data) },
       )
 
-      const createOptions: CreateOptions = {}
-
-      if (options?.transaction) {
-        createOptions.transaction = options.transaction
-      }
-
       // Find the last court session for the case, if any
       const lastCourtSession = await this.courtSessionModel.findOne({
         where: { caseId },
         order: [['created', 'DESC']],
-        transaction: options?.transaction,
+        transaction: options.transaction,
       })
 
       const courtSessionId =
@@ -97,7 +85,7 @@ export class CourtDocumentRepositoryService {
 
       const courtDocument = await this.courtDocumentModel.create(
         { ...data, caseId, documentOrder: 0 },
-        createOptions,
+        options,
       )
 
       this.logger.debug(
@@ -119,7 +107,7 @@ export class CourtDocumentRepositoryService {
     caseId: string,
     courtSessionId: string,
     data: CreateCourtDocument,
-    options?: CreateCourtDocumentOptions,
+    options: CreateCourtDocumentOptions,
   ): Promise<CourtDocument> {
     try {
       this.logger.debug(
@@ -127,23 +115,17 @@ export class CourtDocumentRepositoryService {
         { data: Object.keys(data) },
       )
 
-      const createOptions: CreateOptions = {}
-
-      if (options?.transaction) {
-        createOptions.transaction = options.transaction
-      }
-
       // Make space for the next court session document
       const nextOrder = await this.makeNextCourtSessionDocumentOrderAvailable({
         caseId,
         courtSessionId,
         courtDocumentId: undefined,
-        transaction: options?.transaction,
+        transaction: options.transaction,
       })
 
       const courtDocument = await this.courtDocumentModel.create(
         { ...data, caseId, courtSessionId, documentOrder: nextOrder },
-        createOptions,
+        options,
       )
 
       this.logger.debug(
@@ -172,12 +154,13 @@ export class CourtDocumentRepositoryService {
     caseId: string
     courtSessionId: string
     courtDocumentId: string
-    transaction?: Transaction
+    transaction: Transaction
   }): Promise<void> {
-    // Get the filed documents for the court session ordered by document order
+    // Get and lock the filed documents for the court session ordered by document order
     const filedDocuments = await this.courtDocumentModel.findAll({
       where: { caseId, courtSessionId },
       order: [['documentOrder', 'ASC']],
+      lock: transaction.LOCK.UPDATE,
       transaction,
     })
 
@@ -243,18 +226,20 @@ export class CourtDocumentRepositoryService {
     mergedDocumentOrder: number
     courtSessionId: string
     courtDocumentId: string
-    transaction?: Transaction
+    transaction: Transaction
   }): Promise<void> {
-    // Get the merged filed documents for the court session ordered by merged document order
+    // Get and lock the merged filed documents for the court session ordered by merged document order
     const mergedFiledDocuments = await this.courtDocumentModel.findAll({
       where: { mergedCourtSessionId: courtSessionId },
       order: [['mergedDocumentOrder', 'ASC']],
+      lock: transaction.LOCK.UPDATE,
       transaction,
     })
 
     const currentMergedDocument = mergedFiledDocuments.find(
       (d) => d.id === courtDocumentId,
     )
+
     if (!currentMergedDocument) {
       throw new InternalServerErrorException(
         `Could not find court document ${courtDocumentId} for court session ${courtSessionId}`,
@@ -319,7 +304,7 @@ export class CourtDocumentRepositoryService {
     courtSessionId: string,
     courtDocumentId: string,
     data: UpdateCourtDocument,
-    options?: UpdateCourtDocumentOptions,
+    options: UpdateCourtDocumentOptions,
   ): Promise<CourtDocument> {
     try {
       this.logger.debug(
@@ -335,10 +320,7 @@ export class CourtDocumentRepositoryService {
             { mergedCourtSessionId: courtSessionId },
           ],
         },
-      }
-
-      if (options?.transaction) {
-        updateOptions.transaction = options.transaction
+        transaction: options.transaction,
       }
 
       if (data.documentOrder !== undefined) {
@@ -348,7 +330,7 @@ export class CourtDocumentRepositoryService {
           caseId,
           courtSessionId,
           courtDocumentId,
-          transaction: options?.transaction,
+          transaction: options.transaction,
         })
       } else if (data.mergedDocumentOrder !== undefined) {
         // If the merged document order is being updated, we need special handling.
@@ -358,7 +340,7 @@ export class CourtDocumentRepositoryService {
           mergedDocumentOrder: data.mergedDocumentOrder,
           courtSessionId,
           courtDocumentId,
-          transaction: options?.transaction,
+          transaction: options.transaction,
         })
       }
 
@@ -465,7 +447,7 @@ export class CourtDocumentRepositoryService {
     caseId: string,
     courtSessionId: string,
     courtDocumentId: string,
-    options?: FileCourtDocumentInCourtSessionOptions,
+    options: FileCourtDocumentInCourtSessionOptions,
   ): Promise<CourtDocument> {
     try {
       this.logger.debug(
@@ -477,7 +459,7 @@ export class CourtDocumentRepositoryService {
         caseId,
         courtSessionId,
         courtDocumentId,
-        transaction: options?.transaction,
+        transaction: options.transaction,
       })
 
       const [numberOfAffectedRows, courtDocuments] =
@@ -485,7 +467,7 @@ export class CourtDocumentRepositoryService {
           { courtSessionId, documentOrder: nextOrder },
           {
             where: { id: courtDocumentId, caseId },
-            transaction: options?.transaction,
+            transaction: options.transaction,
             returning: true,
           },
         )
@@ -531,14 +513,22 @@ export class CourtDocumentRepositoryService {
     caseId: string,
     courtSessionId: string,
     courtDocumentId: string,
-    options?: DeleteCourtDocumentOptions,
+    options: DeleteCourtDocumentOptions,
   ): Promise<void> {
     try {
       this.logger.debug(
         `Deleting court document ${courtDocumentId} for court session ${courtSessionId} of case ${caseId}`,
       )
 
-      const transaction = options?.transaction
+      const transaction = options.transaction
+
+      // Lock all court documents for the case to prevent race conditions
+      await this.courtDocumentModel.findAll({
+        where: { caseId },
+        attributes: ['id'],
+        lock: transaction.LOCK.UPDATE,
+        transaction,
+      })
 
       // Get the document to find its order before deletion
       const documentToDelete = await this.courtDocumentModel.findOne({
@@ -626,7 +616,7 @@ export class CourtDocumentRepositoryService {
   async deleteDocumentsInSession(
     caseId: string,
     courtSessionId: string,
-    transaction?: Transaction,
+    transaction: Transaction,
   ) {
     const filedDocuments = await this.courtDocumentModel.findAll({
       where: { caseId, courtSessionId },
@@ -652,8 +642,16 @@ export class CourtDocumentRepositoryService {
     isMergedDocumentOrder?: boolean
     reservedSlots?: number
     courtDocumentId: string | undefined
-    transaction: Transaction | undefined
+    transaction: Transaction
   }) {
+    // Lock all court documents for the case to prevent race conditions
+    await this.courtDocumentModel.findAll({
+      where: { caseId },
+      attributes: ['id'],
+      lock: transaction.LOCK.UPDATE,
+      transaction,
+    })
+
     // Get all court sessions and filed documents for the case
     const courtSessions = await this.courtSessionModel.findAll({
       where: { caseId },
@@ -752,7 +750,7 @@ export class CourtDocumentRepositoryService {
     caseId: string,
     courtSessionId: string,
     courtDocumentId: string,
-    transaction: Transaction | undefined,
+    transaction: Transaction,
   ) {
     const numberOfDeletedRows = await this.courtDocumentModel.destroy({
       where: { id: courtDocumentId, caseId, courtSessionId },

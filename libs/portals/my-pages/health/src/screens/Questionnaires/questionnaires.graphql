@@ -6,6 +6,7 @@ fragment QuestionnaireBaseInfo on QuestionnairesBaseItem {
   sentDate
   status
   lastSubmitted
+  lastSubmissionId
   organization
   department
 }

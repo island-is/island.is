@@ -1,18 +1,26 @@
 import {
   buildAlertMessageField,
+  buildCustomField,
   buildDescriptionField,
+  buildHiddenInput,
   buildMultiField,
   buildPhoneField,
+  buildRadioField,
   buildSubSection,
   buildTextField,
   getValueViaPath,
-  buildCustomField,
-  buildHiddenInput,
 } from '@island.is/application/core'
-import { userInformation } from '../../../lib/messages'
+import { error, userInformation } from '../../../lib/messages'
 import { applicantInformationMultiField } from '@island.is/application/ui-forms'
 import { ApplicationType } from '../../../shared'
-import { checkIsActor, getSchoolsData, Routes } from '../../../utils'
+import {
+  ApplicationPeriod,
+  checkIsActor,
+  checkIsFreshman,
+  getSchoolsData,
+  Routes,
+  Student,
+} from '../../../utils'
 import { Application, UserProfile } from '@island.is/application/types'
 
 export const personalSubSection = buildSubSection({
@@ -93,77 +101,112 @@ export const personalSubSection = buildSubSection({
           ],
         }),
 
-        /* Commenting out the code below as it is in conflict with current data being sent from MMS.
-         * This will break some existing handling of freshman vs general applicant but as there will be no freshmen
-         * applying until the next application period (February) this will work as a fix for now.
-         */
-
         // Application type (Fresman vs General)
-        // buildDescriptionField({
-        //   id: 'applicationTypeInfo.subtitle',
-        //   condition: (_, externalData) => {
-        //     const isFreshmanExternalData = getValueViaPath<Student>(
-        //       externalData,
-        //       'studentInfo.data',
-        //     )?.isFreshman
-        //     return !isFreshmanExternalData
-        //   },
-        //   title: userInformation.applicationType.subtitle,
-        //   titleVariant: 'h5',
-        //   space: 3,
-        // }),
-        // buildRadioField({
-        //   id: 'applicationType.value',
-        //   condition: (_, externalData) => {
-        //     const isFreshmanExternalData = getValueViaPath<Student>(
-        //       externalData,
-        //       'studentInfo.data',
-        //     )?.isFreshman
-        //     return !isFreshmanExternalData
-        //   },
-        //   options: [
-        //     {
-        //       value: ApplicationType.FRESHMAN,
-        //       label: userInformation.applicationType.freshmanOptionTitle,
-        //     },
-        //     {
-        //       value: ApplicationType.GENERAL_APPLICATION,
-        //       label:
-        //       userInformation.applicationType.generalApplicationOptionTitle,
-        //     },
-        //   ],
-        //   width: 'full',
-        // }),
+        buildDescriptionField({
+          id: 'applicationTypeInfo.subtitle',
+          condition: (_, externalData) => {
+            const allowFreshmanApplication =
+              getValueViaPath<ApplicationPeriod>(
+                externalData,
+                'applicationPeriodInfo.data',
+              )?.allowFreshmanApplication || false
 
+            const isFreshmanExternalData =
+              getValueViaPath<Student>(externalData, 'studentInfo.data')
+                ?.isFreshman || false
+
+            return allowFreshmanApplication && !isFreshmanExternalData
+          },
+          title: userInformation.applicationType.subtitle,
+          titleVariant: 'h5',
+          space: 3,
+        }),
+        // Application type -> Show radio and make user select, if we allow freshman application but are unsure whether user is freshman
+        buildRadioField({
+          id: 'applicationType.value',
+          condition: (_, externalData) => {
+            const allowFreshmanApplication =
+              getValueViaPath<ApplicationPeriod>(
+                externalData,
+                'applicationPeriodInfo.data',
+              )?.allowFreshmanApplication || false
+
+            const isFreshmanExternalData =
+              getValueViaPath<Student>(externalData, 'studentInfo.data')
+                ?.isFreshman || false
+
+            return allowFreshmanApplication && !isFreshmanExternalData
+          },
+          options: [
+            {
+              value: ApplicationType.FRESHMAN,
+              label: userInformation.applicationType.freshmanOptionTitle,
+            },
+            {
+              value: ApplicationType.GENERAL_APPLICATION,
+              label:
+                userInformation.applicationType.generalApplicationOptionTitle,
+            },
+          ],
+          width: 'full',
+        }),
+        // Application type -> Hidden input to set the value if radio is not visible
         buildHiddenInput({
           id: 'applicationType.value',
-          defaultValue: ApplicationType.GENERAL_APPLICATION,
+          condition: (_, externalData) => {
+            const allowFreshmanApplication =
+              getValueViaPath<ApplicationPeriod>(
+                externalData,
+                'applicationPeriodInfo.data',
+              )?.allowFreshmanApplication || false
+
+            const isFreshmanExternalData =
+              getValueViaPath<Student>(externalData, 'studentInfo.data')
+                ?.isFreshman || false
+
+            // Set value if either:
+            // - freshman applications are allowed and student is definetly freshman
+            // - freshman applications are NOT allowed (fallback to GENERAL)
+            return !allowFreshmanApplication || isFreshmanExternalData
+          },
+          defaultValue: (application: Application) => {
+            const allowFreshmanApplication =
+              getValueViaPath<ApplicationPeriod>(
+                application.externalData,
+                'applicationPeriodInfo.data',
+              )?.allowFreshmanApplication || false
+
+            return allowFreshmanApplication
+              ? ApplicationType.FRESHMAN
+              : ApplicationType.GENERAL_APPLICATION
+          },
         }),
-        // buildHiddenInput({
-        //   id: 'applicationType.value',
-        //   condition: (_, externalData) => {
-        //     const isFreshmanExternalData = getValueViaPath<Student>(
-        //       externalData,
-        //       'studentInfo.data',
-        //     )?.isFreshman
-        //
-        //     return !!isFreshmanExternalData
-        //   },
-        //   defaultValue: ApplicationType.FRESHMAN,
-        // }),
-        // buildAlertMessageField({
-        //   id: 'applicationTypeValueAlertMessage',
-        //   alertType: 'warning',
-        //   message: userInformation.applicationType.alertMessage,
-        //   condition: (answers, externalData) => {
-        //     const isFreshmanExternalData = getValueViaPath<Student>(
-        //       externalData,
-        //       'studentInfo.data',
-        //     )?.isFreshman
-        //     const isFreshmanAnswers = checkIsFreshman(answers)
-        //     return !isFreshmanExternalData && isFreshmanAnswers
-        //   },
-        // }),
+
+        // Application type -> Display alert when we are unsure whether user is freshman, but he selected the freshman option
+        buildAlertMessageField({
+          id: 'applicationTypeValueAlertMessage',
+          alertType: 'warning',
+          message: userInformation.applicationType.alertMessage,
+          condition: (answers, externalData) => {
+            const allowFreshmanApplication =
+              getValueViaPath<ApplicationPeriod>(
+                externalData,
+                'applicationPeriodInfo.data',
+              )?.allowFreshmanApplication || false
+
+            const isFreshmanExternalData =
+              getValueViaPath<Student>(externalData, 'studentInfo.data')
+                ?.isFreshman || false
+
+            const isFreshmanAnswers = checkIsFreshman(answers)
+
+            return (
+              allowFreshmanApplication &&
+              !isFreshmanExternalData &&
+              isFreshmanAnswers
+            )
+          },
+        }),
 
         // Validation for whether there are any schools open for admission depending on the application type selected above
         buildCustomField({
@@ -190,34 +233,34 @@ export const personalSubSection = buildSubSection({
           },
           defaultValue: true,
         }),
-        // buildAlertMessageField({
-        //   id: 'applicationTypeIsOpenForAdmissionAlertMessage',
-        //   alertType: 'error',
-        //   title: error.errorNoSchoolOpenForAdmissionTitle,
-        //   message: error.errorNoSchoolOpenForAdmissionDescription,
-        //   condition: (answers) => {
-        //     const applicationType = getValueViaPath<ApplicationType>(
-        //       answers,
-        //       'applicationType.value',
-        //     )
-        //     if (!applicationType) return false
-        //
-        //     let isOpenForAdmission: boolean | undefined
-        //     if (checkIsFreshman(answers)) {
-        //       isOpenForAdmission = getValueViaPath<boolean>(
-        //         answers,
-        //         'applicationType.isOpenForAdmissionFreshman',
-        //       )
-        //     } else {
-        //       isOpenForAdmission = getValueViaPath<boolean>(
-        //         answers,
-        //         'applicationType.isOpenForAdmissionGeneral',
-        //       )
-        //     }
-        //
-        //     return !isOpenForAdmission
-        //   },
-        // }),
+        buildAlertMessageField({
+          id: 'applicationTypeIsOpenForAdmissionAlertMessage',
+          alertType: 'error',
+          title: error.errorNoSchoolOpenForAdmissionTitle,
+          message: error.errorNoSchoolOpenForAdmissionDescription,
+          condition: (answers) => {
+            const applicationType = getValueViaPath<ApplicationType>(
+              answers,
+              'applicationType.value',
+            )
+            if (!applicationType) return false
+
+            let isOpenForAdmission: boolean | undefined
+            if (checkIsFreshman(answers)) {
+              isOpenForAdmission = getValueViaPath<boolean>(
+                answers,
+                'applicationType.isOpenForAdmissionFreshman',
+              )
+            } else {
+              isOpenForAdmission = getValueViaPath<boolean>(
+                answers,
+                'applicationType.isOpenForAdmissionGeneral',
+              )
+            }
+
+            return !isOpenForAdmission
+          },
+        }),
       ],
     }),
   ],

@@ -300,13 +300,17 @@ export const shouldShowChildAndAdolescentPsychiatryServicesReceived = (
   )
 }
 
-export const shouldShowReasonForApplicationPage = (answers: FormValue) => {
+export const shouldShowReasonForApplicationAndNewSchoolPages = (
+  answers: FormValue,
+  externalData: ExternalData,
+) => {
   const { applyForPreferredSchool, applicationType } =
     getApplicationAnswers(answers)
+  const { preferredSchool } = getApplicationExternalData(externalData)
 
   return (
     applicationType === ApplicationType.NEW_PRIMARY_SCHOOL ||
     (applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL &&
-      applyForPreferredSchool === NO)
+      (applyForPreferredSchool === NO || preferredSchool === null))
   )
 }

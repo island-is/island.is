@@ -773,6 +773,9 @@
       "@island.is/clients/financial-statements-inao": [
         "libs/clients/financial-statements-inao/src/index.ts"
       ],
+      "@island.is/clients/icelandic-government-institution-vacancies": [
+        "libs/clients/icelandic-government-institution-vacancies/src/index.ts"
+      ],
       "@island.is/clients/firearm-license": [
         "libs/clients/firearm-license/src/index.ts"
       ],

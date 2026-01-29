@@ -334,6 +334,7 @@ api:
     NODE_OPTIONS: '--max-old-space-size=2250 --enable-source-maps -r dd-trace/init'
     PAYMENTS_API_URL: 'http://services-payments.services-payments.svc.cluster.local'
     RANNIS_GRANTS_URL: 'https://sjodir.rannis.is/statistics/fund_schedule.php'
+    REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     REGULATIONS_ADMIN_URL: 'http://regulations-admin-backend.regulations-admin.svc.cluster.local'
     SEND_FROM_EMAIL: 'development@island.is'
     SERVERSIDE_FEATURES_ON: ''
@@ -688,6 +689,7 @@ application-system-api:
     PAYMENTS_API_URL: 'http://services-payments.services-payments.svc.cluster.local'
     PAYMENT_API_CALLBACK_URL: 'http://application-system-api.application-system.svc.cluster.local'
     RECYCLING_FUND_GQL_BASE_PATH: 'http://skilavottord-ws.skilavottord.svc.cluster.local/app/skilavottord/api/graphql'
+    REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     SERVERSIDE_FEATURES_ON: ''
     SERVICE_DOCUMENTS_BASEPATH: 'http://services-documents.services-documents.svc.cluster.local'
@@ -943,6 +945,7 @@ application-system-api-worker:
     NODE_OPTIONS: '--max-old-space-size=691 --enable-source-maps -r dd-trace/init'
     PAYMENTS_API_URL: 'http://services-payments.services-payments.svc.cluster.local'
     PAYMENT_API_CALLBACK_URL: 'http://application-system-api.application-system.svc.cluster.local'
+    REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     SERVERSIDE_FEATURES_ON: ''
     USER_NOTIFICATION_API_URL: 'http://user-notification.user-notification.svc.cluster.local'
@@ -1210,6 +1213,8 @@ cms-importer-fsre-buildings-import:
 cms-importer-worker:
   args:
     - 'main.cjs'
+    - '--job'
+    - 'grant-import'
   command:
     - 'node'
   enabled: true
@@ -1255,6 +1260,7 @@ cms-importer-worker:
     requests:
       cpu: '100m'
       memory: '128Mi'
+  schedule: '0 */3 * * *'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_MANAGEMENT_ACCESS_TOKEN: '/k8s/contentful-entry-tagger/CONTENTFUL_MANAGEMENT_ACCESS_TOKEN'
@@ -1469,6 +1475,9 @@ contentful-entry-tagger-service:
 download-service:
   enabled: true
   env:
+    HMS_CONTRACTS_AUTH_CLIENT_ID: 'e2411f5c-436a-4c17-aa14-eab9c225bc06'
+    HMS_CONTRACTS_AUTH_TENANT_ID: 'c7256472-2622-417e-8955-a54eeb0a110e'
+    HMS_CONTRACTS_AUTH_TOKEN_ENDPOINT: 'https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/token'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/download-service'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
@@ -1489,6 +1498,8 @@ download-service:
     XROAD_HEALTH_INSURANCE_WSDLURL: 'https://test-huld.sjukra.is/islandrg?wsdl'
     XROAD_HMS_HOUSING_BENEFITS_PATH: 'IS-DEV/GOV/10033/HMS-Protected/husbot-v1'
     XROAD_HMS_LOANS_PATH: 'IS-DEV/GOV/10033/HMS-Protected/libra-v1'
+    XROAD_HMS_RENTAL_SERVICE_CLIENT_HEADER: 'IS-DEV/GOV/10000/island-is-client'
+    XROAD_HMS_RENTAL_SERVICE_PATH: 'IS-DEV/GOV/10033/HMS-Protected/Leigusamningar-v1'
     XROAD_HOLAR_UNIVERSITY_PATH: 'IS-DEV/EDU/10055/Holar-Protected/brautskraning-v1'
     XROAD_ICELAND_UNIVERSITY_OF_THE_ARTS_PATH: 'IS-DEV/EDU/10049/LHI-Protected/brautskraning-v1'
     XROAD_MMS_GRADE_SERVICE_ID: 'IS-DEV/GOV/10066/MMS-Protected/grade-api-v1'
@@ -1553,6 +1564,7 @@ download-service:
       memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    HMS_CONTRACTS_AUTH_CLIENT_SECRET: '/k8s/application-system-api/HMS_CONTRACTS_AUTH_CLIENT_SECRET'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/download-service/IDENTITY_SERVER_CLIENT_SECRET'
     POSTHOLF_BASE_PATH: '/k8s/documents/POSTHOLF_BASE_PATH'
     POSTHOLF_CLIENTID: '/k8s/documents/POSTHOLF_CLIENTID'
@@ -2996,7 +3008,7 @@ services-form-system-api:
     DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
     DB_USER: 'services_form_system_api'
     FILE_STORAGE_UPLOAD_BUCKET: 'island-is-dev-upload-api'
-    FORM_SYSTEM_BUCKET: 'island-is-dev-storage-form-system'
+    FORM_SYSTEM_BUCKET: 'island-is-dev-form-system-presign-bucket'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
@@ -3081,9 +3093,9 @@ services-form-system-api:
     privileged: false
   serviceAccount:
     annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/services-form-system-api'
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/form-system-api'
     create: true
-    name: 'services-form-system-api'
+    name: 'form-system-api'
 services-form-system-api-worker:
   args:
     - 'main.cjs'
@@ -3098,10 +3110,15 @@ services-form-system-api-worker:
     DB_NAME: 'services_form_system_api'
     DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
     DB_USER: 'services_form_system_api'
+    FILE_STORAGE_UPLOAD_BUCKET: 'island-is-dev-upload-api'
+    FORM_SYSTEM_BUCKET: 'island-is-dev-form-system-presign-bucket'
     FORM_SYSTEM_BULL_PREFIX: 'form_system_api_bull_module'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=691 --enable-source-maps -r dd-trace/init'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
+    S3_REGION: 'eu-west-1'
+    S3_TIME_TO_LIVE_GET: '5'
+    S3_TIME_TO_LIVE_POST: '15'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'islandis'
@@ -4021,6 +4038,7 @@ user-notification:
     NATIONAL_REGISTRY_B2C_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1'
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitydev.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=345 --enable-source-maps -r dd-trace/init'
+    REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     REDIS_USE_SSL: 'true'
     SERVERSIDE_FEATURES_ON: ''
@@ -4141,6 +4159,7 @@ user-notification-birthday-worker:
     NATIONAL_REGISTRY_B2C_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1'
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitydev.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=345 --enable-source-maps -r dd-trace/init'
+    REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     REDIS_USE_SSL: 'true'
     SERVERSIDE_FEATURES_ON: ''
@@ -4339,6 +4358,7 @@ user-notification-worker:
     NATIONAL_REGISTRY_B2C_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1'
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitydev.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=345 --enable-source-maps -r dd-trace/init'
+    REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     REDIS_USE_SSL: 'true'
     SERVERSIDE_FEATURES_ON: ''

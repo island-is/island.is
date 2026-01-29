@@ -69,15 +69,15 @@ export class ApplicationsResolver {
   }
 
   @Mutation(() => Boolean, {
-    name: 'updateFormSystemApplicationDependencies',
+    name: 'updateFormSystemApplicationSettings',
     nullable: true,
   })
-  async updateApplicationDependencies(
+  async updateApplicationSettings(
     @Args('input', { type: () => UpdateApplicationInput })
     input: UpdateApplicationInput,
     @CurrentUser() user: User,
   ): Promise<void> {
-    return this.applicationsService.updateDependencies(user, input)
+    return this.applicationsService.updateSettings(user, input)
   }
 
   @Mutation(() => Boolean, {

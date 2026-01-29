@@ -99,10 +99,13 @@ export class CourtSessionController {
       `Updating court session ${courtSessionId} of case ${caseId}`,
     )
 
-    return this.courtSessionService.update(
-      caseId,
-      courtSessionId,
-      courtSessionToUpdate,
+    return this.sequelize.transaction(async (transaction) =>
+      this.courtSessionService.update(
+        caseId,
+        courtSessionId,
+        courtSessionToUpdate,
+        transaction,
+      ),
     )
   }
 

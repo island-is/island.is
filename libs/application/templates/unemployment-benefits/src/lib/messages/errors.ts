@@ -69,4 +69,9 @@ export const serviceErrors = defineMessages({
     defaultMessage: 'Vantar samþykki',
     description: 'Error message when acknowledgement fails',
   },
+  minimumJobCount: {
+    id: 'vmst.ub.application:minimumJobCount',
+    defaultMessage: 'Vinsamlegast veldu að minnsta kosti tvö störf',
+    description: 'Error message when minimum job count is not met',
+  },
 })

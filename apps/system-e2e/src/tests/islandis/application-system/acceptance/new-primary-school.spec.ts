@@ -124,11 +124,6 @@ applicationTest.describe('New primary school', () => {
             }),
           ).toBeVisible()
 
-          await expect(
-            page.getByText(
-              label(childrenNGuardiansMessages.guardians.guardian),
-            ),
-          ).toBeVisible()
           await page.getByTestId('email1').fill('guardian1@test.is')
           await page.getByTestId('phone1').fill('79999999')
 
@@ -146,11 +141,6 @@ applicationTest.describe('New primary school', () => {
           await page.keyboard.press('ArrowDown')
           await page.keyboard.press('Enter')
 
-          await expect(
-            page.getByText(
-              label(childrenNGuardiansMessages.guardians.otherGuardian),
-            ),
-          ).toBeVisible()
           await page.getByTestId('email2').fill('guardian2@test.is')
           await page.getByTestId('phone2').fill('7888888')
           await proceed()

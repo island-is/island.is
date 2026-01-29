@@ -4,6 +4,7 @@ import {
   FormSystemSection,
   Maybe,
 } from '@island.is/api/schema'
+import { SectionTypes } from '@island.is/form-system/enums'
 import { ApplicationState, FieldTypesEnum } from '@island.is/form-system/ui'
 
 const normalizeDependencies = (
@@ -147,6 +148,9 @@ const applyVisibilityToSections = (
   dependencies: Dependency[],
 ): FormSystemSection[] => {
   return sections.map((section) => {
+    if (section.sectionType === SectionTypes.PARTIES) {
+      return section
+    }
     const sectionHidden = isHiddenByDependencies(section.id, dependencies)
 
     const screens = section.screens?.map((screen) => {
@@ -394,6 +398,7 @@ export const setFieldValue = (
     updatedSectionsBeforeDeps,
     depsArray,
   )
+
   const updatedState = {
     ...state,
     application: {
