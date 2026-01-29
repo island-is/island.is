@@ -2118,4 +2118,26 @@ export const m = defineMessages({
       'Þegar allir erfingjar hafa undirritað birtist hnappur hér að neðan til að ljúka umsókn. Ef þú vilt breyta gögnum í umsókninni geturðu farið til baka með "Breyta gögnum" hnappinn.',
     description: 'Next steps description',
   },
+  signingPendingTitle: {
+    id: 'ir.application:signing.pendingTitle',
+    defaultMessage: 'Beðið eftir undirskriftum',
+    description: 'Title when signatures are pending',
+  },
+  signingPendingDescription: {
+    id: 'ir.application:signing.pendingDescription',
+    defaultMessage:
+      'Erfðafjárskýrslan hefur verið send til sýslumanns. Allir erfingjar þurfa að undirrita áður en hægt er að ljúka málinu.',
+    description: 'Description when signatures are pending',
+  },
+  signingCompleteTitle: {
+    id: 'ir.application:signing.completeTitle',
+    defaultMessage: 'Allar undirskriftir komnar',
+    description: 'Title when all signatures are complete',
+  },
+  signingCompleteDescription: {
+    id: 'ir.application:signing.completeDescription',
+    defaultMessage:
+      'Allir erfingjar hafa undirritað. Þú getur núna lokið umsókninni.',
+    description: 'Description when all signatures are complete',
+  },
 })

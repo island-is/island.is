@@ -38,7 +38,7 @@ import { CodeOwners } from '@island.is/shared/constants'
 import { getAssigneesNationalIdList } from './utils/getAssigneesNationalIdList'
 import { allPartiesHaveApproved } from './utils/allPartiesHaveApproved'
 import { nationalIdsMatch } from './utils/helpers'
-import { EstateMember } from '../types'
+import { EstateMember, InheritanceReportExternalData } from '../types'
 
 const configuration =
   ApplicationConfigurations[ApplicationTypes.INHERITANCE_REPORT]
@@ -298,6 +298,37 @@ const InheritanceReportTemplate: ApplicationTemplate<
               action: ApiActions.getSignatories,
             }),
           ],
+          actionCard: {
+            pendingAction: (application) => {
+              // Check if all signatories have signed
+              const externalData =
+                application.externalData as InheritanceReportExternalData
+              const signatories =
+                externalData?.getSignatories?.data?.signatories || []
+
+              const allSigned = signatories.every((s) => s.signed)
+
+              if (allSigned && signatories.length > 0) {
+                return {
+                  title: m.signingCompleteTitle,
+                  content: m.signingCompleteDescription,
+                  displayStatus: 'success',
+                }
+              }
+
+              return {
+                title: m.signingPendingTitle,
+                content: m.signingPendingDescription,
+                displayStatus: 'info',
+              }
+            },
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.applicationSent,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
+          },
           roles: [
             {
               id: Roles.ESTATE_INHERITANCE_APPLICANT,
