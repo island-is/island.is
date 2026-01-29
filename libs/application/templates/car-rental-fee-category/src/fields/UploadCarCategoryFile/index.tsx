@@ -72,16 +72,16 @@ export const UploadCarCategoryFile = ({
 
   const [updateApplication] = useMutation(UPDATE_APPLICATION)
   const [isRefreshingRates, setIsRefreshingRates] = useState(false)
-  
+
   const hasRunRef = useRef(false)
   const updateExternalDataRef = useRef(updateApplicationExternalData)
-  
+
   const [uploadedFile, setUploadedFile] = useState<File | null>()
   const [uploadErrorMessage, setUploadErrorMessage] = useState<string | null>(
     null,
   )
   const [errorFile, setErrorFile] = useState<string | null>(null)
-  
+
   const [createUploadUrl] = useMutation(CREATE_UPLOAD_URL)
   const [addAttachment] = useMutation(ADD_ATTACHMENT)
   const noopDispatch: Dispatch<unknown> = () => undefined
@@ -128,7 +128,7 @@ export const UploadCarCategoryFile = ({
 
   useEffect(() => {
     const hasFile = Array.isArray(uploadedMeta) && uploadedMeta.length > 0
-  
+
     if (uploadErrorMessage) {
       setError('carCategoryFile', {
         type: 'manual',
@@ -136,7 +136,7 @@ export const UploadCarCategoryFile = ({
       })
       return
     }
-  
+
     if (!hasFile) {
       setError('carCategoryFile', {
         type: 'manual',
@@ -144,7 +144,7 @@ export const UploadCarCategoryFile = ({
       })
       return
     }
-  
+
     clearErrors('carCategoryFile')
   }, [uploadErrorMessage, uploadedMeta, setError, clearErrors])
 
@@ -168,7 +168,6 @@ export const UploadCarCategoryFile = ({
       { allowMultiple: true, customCallbackId: 'carCategoryFileValidation' },
     )
   }, [setBeforeSubmitCallback, uploadedMeta, uploadErrorMessage])
-
 
   const rateCategory = getValueViaPath<RateCategory>(
     application.answers,
@@ -287,19 +286,19 @@ export const UploadCarCategoryFile = ({
     file: File,
   ): Promise<{ name: string; key: string }> => {
     const upload = fileToObjectDeprecated(file)
-  
+
     const { data } = await createUploadUrl({
       variables: { filename: upload.name },
     })
-  
+
     const {
       createUploadUrl: { url, fields },
     } = data
-  
+
     await uploadFileToS3(upload, noopDispatch, url, fields)
-  
+
     const responseUrl = `${url}/${fields.key}`
-  
+
     await addAttachment({
       variables: {
         input: {
@@ -309,7 +308,7 @@ export const UploadCarCategoryFile = ({
         },
       },
     })
-  
+
     return { name: upload.name, key: fields.key }
   }
 

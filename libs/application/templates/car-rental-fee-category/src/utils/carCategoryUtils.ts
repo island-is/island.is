@@ -40,11 +40,17 @@ export const buildCurrentCarMap = (
   }, {} as CarMap)
 }
 
-export const getUploadFileType = (nameOrMime: string): UploadFileType | null => {
+export const getUploadFileType = (
+  nameOrMime: string,
+): UploadFileType | null => {
   if (!nameOrMime) return null
 
   const lower = nameOrMime.toLowerCase()
-  if (lower.endsWith('.csv') || lower.includes('text/csv') || lower.includes('application/csv')) {
+  if (
+    lower.endsWith('.csv') ||
+    lower.includes('text/csv') ||
+    lower.includes('application/csv')
+  ) {
     return 'csv'
   }
   if (lower.endsWith('.xlsx') || lower.includes('spreadsheetml')) {

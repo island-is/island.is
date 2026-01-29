@@ -127,7 +127,10 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
     )
     if (!rateToChangeTo) {
       throw new TemplateApiError(
-        { title: 'Missing rate to change to', summary: 'No rate to change to found' },
+        {
+          title: 'Missing rate to change to',
+          summary: 'No rate to change to found',
+        },
         400,
       )
     }
@@ -146,7 +149,10 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
     const fileType = getUploadFileType(attachment.fileName ?? '')
     if (!fileType) {
       throw new TemplateApiError(
-        { title: 'Invalid file type', summary: 'Only .csv or .xlsx are supported' },
+        {
+          title: 'Invalid file type',
+          summary: 'Only .csv or .xlsx are supported',
+        },
         400,
       )
     }
@@ -179,7 +185,10 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
         .join('\n')
 
       throw new TemplateApiError(
-        { title: 'Invalid data', summary: errorSummary || 'Invalid data found' },
+        {
+          title: 'Invalid data',
+          summary: errorSummary || 'Invalid data found',
+        },
         400,
       )
     }
