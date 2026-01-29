@@ -13,7 +13,6 @@ export interface VerificationResponse {
   }
   scriptPath: string
   responseCode: string
-  responseDescription: string
   responseTime: string
   correlationID: string
 }

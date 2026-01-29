@@ -121,7 +121,6 @@ export class CardPaymentService {
       this.logger.error(`Failed to verify card (${paymentFlowId})`, {
         url: response.url,
         responseCode: data.responseCode,
-        responseDescription: data.responseDescription,
       })
       throw new BadRequestException(mapToCardErrorCode(data.responseCode))
     }
