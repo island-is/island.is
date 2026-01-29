@@ -9,11 +9,7 @@ export class FieldSettingsFactory {
     if (!fieldSettings) {
       return undefined
     }
-    let keys: string[] = [
-      'zendeskIsPrivate',
-      'zendeskIsCustomField',
-      'zendeskCustomFieldId',
-    ]
+    let keys: string[] = ['zendeskIsCustomField', 'zendeskCustomFieldId']
     switch (type) {
       case FieldTypesEnum.TEXTBOX:
         keys = ['minLength', 'maxLength', 'isLarge', ...keys]

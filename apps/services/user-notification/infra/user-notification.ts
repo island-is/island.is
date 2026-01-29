@@ -54,6 +54,17 @@ const getEnv = (services: {
     prod: 'noreply@island.is',
   },
   REDIS_USE_SSL: 'true',
+  REDIS_NODES: {
+    dev: json([
+      'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+    ]),
+    staging: json([
+      'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
+    ]),
+    prod: json([
+      'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
+    ]),
+  },
 })
 
 export const userNotificationServiceSetup = (services: {
