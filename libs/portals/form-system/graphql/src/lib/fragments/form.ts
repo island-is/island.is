@@ -24,6 +24,7 @@ export const FormFragment = gql`
     invalidationDate
     created
     modified
+    zendeskInternal
     submissionServiceUrl
     validationServiceUrl
     isTranslated
