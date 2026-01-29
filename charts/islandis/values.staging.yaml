@@ -2025,6 +2025,7 @@ portals-admin:
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps'
     SERVERSIDE_FEATURES_ON: ''
     SI_PUBLIC_ENVIRONMENT: 'staging'
+    SI_PUBLIC_FORM_SYSTEM_URL: 'https://beta.staging01.devland.is/form'
   grantNamespaces:
     - 'nginx-ingress-external'
     - 'identity-server'
