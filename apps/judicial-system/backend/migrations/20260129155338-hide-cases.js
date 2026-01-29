@@ -9,7 +9,7 @@ module.exports = {
           `UPDATE "case"
               SET "state" = 'DELETED'
               WHERE "id" IN (
-              '6756ac13-a8fd-4594-8c38-c90a0dbe16e',
+              '6756ac13-a8fd-4594-8c38-c90a0dbe16ec',
               'e2d8ced7-1a47-4284-a2dc-964e19851083',
               '2d753937-0ceb-4a15-ad19-f8386d9c9a51',
               'b40fb244-a271-493b-96b0-01bcc96323a0',
