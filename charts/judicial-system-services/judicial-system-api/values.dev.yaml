@@ -34,6 +34,7 @@ env:
   IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
   LOG_LEVEL: 'info'
   NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
+  REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
   SERVERSIDE_FEATURES_ON: ''
 grantNamespaces:
   - 'nginx-ingress-external'
