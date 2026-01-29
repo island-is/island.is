@@ -160,26 +160,31 @@ export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
   }
 
   if (paymentFlow) {
-    try {
-      const userObj = {
-        identifier: paymentFlow.payerNationalId,
-        custom: {
-          nationalId: paymentFlow.payerNationalId,
-        },
-      }
+    const userObj = {
+      identifier: paymentFlow.payerNationalId,
+      custom: {
+        nationalId: paymentFlow.payerNationalId,
+      },
+    }
 
+    try {
       isInvoicePaymentEnabledForUser = await configCatClient.getValueAsync(
         Features.isIslandisInvoicePaymentAllowedForUser,
         false,
         userObj,
       )
+    } catch (e) {
+      console.error('Error getting invoice payment enabled for user', e)
+    }
+
+    try {
       isApplePayPaymentEnabledForUser = await configCatClient.getValueAsync(
         Features.isIslandisApplePayPaymentAllowedForUser,
         false,
         userObj,
       )
     } catch (e) {
-      console.error('Error getting invoice payment enabled for user', e)
+      console.error('Error getting Apple Pay payment enabled for user', e)
     }
   }
 

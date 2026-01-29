@@ -108,7 +108,6 @@ const ApplePayPaymentDataSchema = z.object({
 const ApplePayPaymentMethodSchema = z.object({
   DisplayName: z.string(),
   Network: z.string(),
-  NetworkType: z.string(),
 })
 
 const ApplePayPaymentTokenSchema = z.object({

@@ -6,8 +6,12 @@ import {
   GetPaymentFlowQuery,
   useGetApplePaySessionLazyQuery,
 } from '../graphql/queries.graphql.generated'
-import { useChargeApplePayMutation } from '../graphql/mutations.graphql.generated'
+import {
+  useChargeApplePayMutation,
+  ChargeApplePayMutationVariables,
+} from '../graphql/mutations.graphql.generated'
 import { PaymentError } from '../utils/error/error'
+import { PaymentsApplePayChargeInput } from '@island.is/api/schema'
 
 // Extend Window interface to include ApplePaySession
 declare global {
@@ -48,10 +52,7 @@ export const useApplePay = ({
   // check if apple pay is available
   useEffect(() => {
     // if apple pay is not enabled or if apple pay is not allowed, set supports apple pay to false
-    if (
-      !isEnabledForUser ||
-      process.env.NEXT_PUBLIC_ALLOW_APPLE_PAY === 'false'
-    ) {
+    if (process.env.NEXT_PUBLIC_ALLOW_APPLE_PAY === 'false') {
       setSupportsApplePay(false)
       return
     }
@@ -97,11 +98,16 @@ export const useApplePay = ({
       try {
         // call valitor get session endpoint
         const { data } = await getApplePaySessionQueryHook()
-        const session = JSON.parse(data?.paymentsGetApplePaySession?.session)
+        const session = data?.paymentsGetApplePaySession?.session
 
-        console.log('Session data', session)
+        if (!session) {
+          throw new Error(CardErrorCode.ErrorGettingApplePaySession)
+        }
 
-        sessionRef.current?.completeMerchantValidation(session)
+        const parsedSession = JSON.parse(session)
+        console.log('Session data', parsedSession)
+
+        sessionRef.current?.completeMerchantValidation(parsedSession)
       } catch (e) {
         onPaymentError({
           code: (e instanceof Error
@@ -133,8 +139,10 @@ export const useApplePay = ({
           variables: {
             input: {
               paymentFlowId: paymentFlow?.id ?? '',
-              token: event.payment.token,
               amount: productInformation.amount,
+              paymentData: event.payment.token.paymentData,
+              paymentMethod: event.payment.token.paymentMethod,
+              transactionIdentifier: event.payment.token.transactionIdentifier,
             },
           },
         })

@@ -969,7 +969,6 @@ describe('CardPaymentController', () => {
         paymentMethod: {
           displayName: 'Visa 1234',
           network: 'Visa',
-          networkType: 'credit',
         },
         transactionIdentifier: 'transaction-identifier',
       })

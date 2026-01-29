@@ -34,9 +34,6 @@ class ApplePayPaymentMethod {
 
   @Field(() => String)
   network!: string
-
-  @Field(() => String)
-  networkType!: string
 }
 
 @InputType('PaymentsApplePayChargeInput')

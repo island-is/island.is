@@ -5,10 +5,11 @@ import {
   IsNumber,
   IsObject,
   IsString,
+  IsOptional,
   ValidateNested,
 } from 'class-validator'
 import { Type } from 'class-transformer'
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 export interface ChargeResult {
   success: boolean
@@ -161,7 +162,8 @@ export class ApiClientPayment {
   readonly responseCode!: string
 
   @IsString()
-  @ApiProperty()
+  @ApiPropertyOptional()
+  @IsOptional()
   readonly responseDescription?: string
 
   @IsString()

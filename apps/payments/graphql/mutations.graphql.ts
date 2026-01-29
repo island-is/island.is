@@ -49,7 +49,7 @@ export const CreateInvoiceMutation = gql`
 `
 
 export const ChargeApplePayMutation = gql`
-  mutation chargeApplePay($input: PaymentsChargeApplePayInput!) {
+  mutation chargeApplePay($input: PaymentsApplePayChargeInput!) {
     paymentsChargeApplePay(input: $input) {
       isSuccess
       responseCode

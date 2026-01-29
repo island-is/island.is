@@ -41,10 +41,6 @@ class ApplePayPaymentMethod {
   @IsString()
   @ApiProperty({ description: 'Network', type: String })
   network!: string
-
-  @IsString()
-  @ApiProperty({ description: 'Network type', type: String })
-  networkType!: string
 }
 
 export class ApplePayChargeInput {

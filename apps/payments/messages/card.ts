@@ -389,6 +389,17 @@ export const cardError = defineMessages({
     defaultMessage: 'Tími til að staðfesta kort er útrunninn.',
     description: 'Generic decline description',
   },
+  errorGettingApplePaySessionTitle: {
+    id: 'payments:cardError.errorGettingApplePaySessionTitle',
+    defaultMessage: 'Villa við Apple Pay tengingu',
+    description: 'Error connecting to Apple Pay',
+  },
+  errorGettingApplePaySession: {
+    id: 'payments:cardError.errorGettingApplePaySession',
+    defaultMessage:
+      'Ekki var hægt að tengjast Apple Pay tenginu. Reyndu aftur síðar.',
+    description: 'Error connecting to Apple Pay description',
+  },
   unknownTitle: {
     id: 'payments:cardError.unknownTitle',
     defaultMessage: 'Óvænt villa',

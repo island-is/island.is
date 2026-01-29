@@ -51,6 +51,7 @@ export enum CardErrorCode {
   VerificationCallbackFailed = 'VerificationCallbackFailed',
   RefundedBecauseOfSystemError = 'RefundedBecauseOfSystemError',
   UnknownCardError = 'UnknownCardError',
+  ErrorGettingApplePaySession = 'ErrorGettingApplePaySession',
 }
 
 export enum InvoiceErrorCode {
@@ -61,13 +62,8 @@ export enum InvoiceErrorCode {
   UnknownInvoiceError = 'UnknownInvoiceError',
 }
 
-export enum ApplePayErrorCode {
-  ErrorGettingApplePaySession = 'ErrorGettingApplePaySession',
-}
-
 export type PaymentErrorCode =
   | FjsErrorCode
   | CardErrorCode
   | InvoiceErrorCode
   | PaymentServiceCode
-  | ApplePayErrorCode

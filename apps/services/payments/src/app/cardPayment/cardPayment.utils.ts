@@ -297,7 +297,6 @@ export const generateApplePayChargeRequestOptions = ({
         PaymentMethod: {
           DisplayName: input.paymentMethod.displayName,
           Network: input.paymentMethod.network,
-          NetworkType: input.paymentMethod.networkType,
         },
         TransactionIdentifier: input.transactionIdentifier,
       },

@@ -1,7 +1,6 @@
 export * from './applePayCharge.input.dto'
 export * from './applePayCharge.response.dto'
 export * from './applePaySession.response.dto'
-export * from './chargeCard.response.dto'
 export * from './chargeCard.input'
 export * from './chargeCard.response.dto'
 export * from './verificationCallback.response.dto'

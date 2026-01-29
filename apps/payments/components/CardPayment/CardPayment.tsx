@@ -42,9 +42,15 @@ export const CardPayment = ({
   // add event listener to apple pay button if available
   useEffect(() => {
     if (supportsApplePay) {
-      document
-        .getElementById(APPLE_PAY_BUTTON_ID)
-        ?.addEventListener('click', initiateApplePay)
+      const applePayButton = document.getElementById(APPLE_PAY_BUTTON_ID)
+      if (applePayButton) {
+        applePayButton.addEventListener('click', initiateApplePay)
+
+        // Cleanup function to remove event listener
+        return () => {
+          applePayButton.removeEventListener('click', initiateApplePay)
+        }
+      }
     }
   }, [supportsApplePay, initiateApplePay])
 

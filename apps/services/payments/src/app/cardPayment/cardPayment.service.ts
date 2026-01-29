@@ -7,10 +7,7 @@ import { z } from 'zod'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import {
-  ApplePayErrorCode,
-  PaymentServiceCode,
-} from '@island.is/shared/constants'
+import { CardErrorCode, PaymentServiceCode } from '@island.is/shared/constants'
 
 import { CardPaymentModuleConfig } from './cardPayment.config'
 import {
@@ -420,11 +417,17 @@ export class CardPaymentService {
   }
 
   async getApplePaySession(): Promise<ApplePaySessionResponse> {
-    const { paymentsGatewayApiUrl } = this.config.paymentGateway
+    const {
+      paymentGateway: {
+        applePayDomainName,
+        applePayDisplayName,
+        paymentsGatewayApiUrl,
+      },
+    } = this.config
 
     const requestOptions = generateApplePaySessionRequestOptions({
-      domainName: 'island-is-apple-pay-dev.aranja.com',
-      displayName: 'Aranja',
+      domainName: applePayDomainName,
+      displayName: applePayDisplayName,
       paymentApiConfig: this.config.paymentGateway,
     })
 
@@ -445,9 +448,7 @@ export class CardPaymentService {
     const data = await response.json()
     this.logger.info('APPLE PAY SESSION', data)
     if (!data.isSuccess || !data.session) {
-      throw new BadRequestException(
-        ApplePayErrorCode.ErrorGettingApplePaySession,
-      )
+      throw new BadRequestException(CardErrorCode.ErrorGettingApplePaySession)
     }
 
     return {
