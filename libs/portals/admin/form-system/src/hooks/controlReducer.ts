@@ -180,6 +180,12 @@ type ChangeActions =
       }
     }
   | {
+      type: 'CHANGE_ZENDESK_INTERNAL'
+      payload: {
+        value: boolean
+      }
+    }
+  | {
       type: 'UPDATE_APPLICANT_TYPES'
       payload: { newValue: FormSystemFormApplicant[] }
     }
@@ -738,6 +744,17 @@ export const controlReducer = (
         form: {
           ...form,
           submissionServiceUrl: action.payload.value,
+        },
+      }
+      // action.payload.update({ ...updatedState.form })
+      return updatedState
+    }
+    case 'CHANGE_ZENDESK_INTERNAL': {
+      const updatedState = {
+        ...state,
+        form: {
+          ...form,
+          zendeskInternal: action.payload.value,
         },
       }
       // action.payload.update({ ...updatedState.form })
