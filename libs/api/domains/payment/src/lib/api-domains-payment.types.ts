@@ -162,7 +162,7 @@ export class ApiClientPayment {
 
   @IsString()
   @ApiProperty()
-  readonly responseDescription!: string
+  readonly responseDescription?: string
 
   @IsString()
   @ApiProperty()

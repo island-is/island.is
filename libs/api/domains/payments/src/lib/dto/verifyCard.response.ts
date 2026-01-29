@@ -25,11 +25,8 @@ class CardInformation {
   @Field(() => String, { description: 'Card category' })
   cardCategory!: string
 
-  @Field(() => String, { description: 'Out-of-SCA scope status' })
-  outOfScaScope!: string
-
-  @Field(() => String, { description: 'Card product category' })
-  cardProductCategory!: string
+  @Field(() => Boolean, { description: 'Out-of-SCA scope status' })
+  outOfScaScope!: boolean
 }
 
 @ObjectType('PaymentsVerifyCardResponse')
@@ -61,7 +58,7 @@ export class VerifyCardResponse {
   responseCode!: string
 
   @Field(() => String, { description: 'Description of the response' })
-  responseDescription!: string
+  responseDescription?: string
 
   @Field(() => String, { description: 'Response time of the verification' })
   responseTime!: string
