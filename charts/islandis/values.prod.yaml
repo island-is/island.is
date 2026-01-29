@@ -2158,6 +2158,7 @@ portals-admin:
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SI_PUBLIC_ENVIRONMENT: 'prod'
+    SI_PUBLIC_FORM_SYSTEM_URL: 'https://island.is/form'
   grantNamespaces:
     - 'nginx-ingress-external'
     - 'identity-server'

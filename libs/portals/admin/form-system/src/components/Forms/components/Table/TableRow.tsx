@@ -16,6 +16,7 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
+import { getStaticEnv } from '@island.is/shared/utils'
 import { Dispatch, SetStateAction, useMemo, useState } from 'react'
 import AnimateHeight from 'react-animate-height'
 import { useIntl } from 'react-intl'
@@ -39,10 +40,7 @@ interface Props {
   url?: string
 }
 
-const PATH =
-  process.env.NODE_ENV === 'production'
-    ? `https://island.is/form`
-    : `https://beta.dev01.devland.is/form`
+const PATH = getStaticEnv('SI_PUBLIC_FORM_SYSTEM_URL')
 
 interface ColumnTextProps {
   text: string | number
