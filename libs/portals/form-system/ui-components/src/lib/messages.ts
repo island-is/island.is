@@ -1136,4 +1136,9 @@ export const m = defineMessages({
     description:
       'You have completed {draftFinishedSteps} of {draftTotalSteps} steps',
   },
+  zendeskPrivate: {
+    id: 'form.system:zendesk-private',
+    defaultMessage: 'Umsóknirnar skulu vera merktar internal/private í Zendesk',
+    description: 'Applications should be marked as internal/private in Zendesk',
+  },
 })
