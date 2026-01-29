@@ -6,7 +6,7 @@ import {
   InputFileUpload,
   LoadingDots,
 } from '@island.is/island-ui/core'
-import { useEffect, useRef, useState } from 'react'
+import { Dispatch, useEffect, useRef, useState } from 'react'
 import { FileRejection } from 'react-dropzone'
 import { FieldBaseProps } from '@island.is/application/types'
 import {
@@ -32,6 +32,11 @@ import {
 } from '@island.is/application/graphql'
 import { m } from '../../lib/messages'
 import { Locale } from '@island.is/shared/types'
+import {
+  CREATE_UPLOAD_URL,
+  ADD_ATTACHMENT,
+} from '@island.is/application/graphql'
+import { uploadFileToS3 } from '@island.is/application/ui-components'
 
 const extensionToType = {
   [fileExtensionWhitelist['.csv']]: 'csv',
@@ -67,6 +72,11 @@ export const UploadCarCategoryFile = ({
 
   const hasRunRef = useRef(false)
   const updateExternalDataRef = useRef(updateApplicationExternalData)
+  
+  const [createUploadUrl] = useMutation(CREATE_UPLOAD_URL)
+  const [addAttachment] = useMutation(ADD_ATTACHMENT)
+  const noopDispatch: Dispatch<unknown> = () => undefined
+
   useEffect(() => {
     updateExternalDataRef.current = updateApplicationExternalData
   }, [updateApplicationExternalData])
@@ -134,7 +144,7 @@ export const UploadCarCategoryFile = ({
   const currentDate = new Date()
   const currentCarData =
     currentVehicles?.reduce((acc, vehicle) => {
-      if (!vehicle.permno || !vehicle.make) return acc
+      if (!vehicle.permno) return acc
 
       const vehicleEntry = currentRates?.find(
         (rate) => rate.permno === vehicle.permno,
@@ -145,7 +155,6 @@ export const UploadCarCategoryFile = ({
       )
 
       acc[vehicle.permno] = {
-        make: vehicle.make,
         milage: vehicle.milage ?? 0,
         category: activeDayRate ? RateCategory.DAYRATE : RateCategory.KMRATE,
         activeDayRate: activeDayRate,
@@ -154,9 +163,9 @@ export const UploadCarCategoryFile = ({
       return acc
     }, {} as CarMap) ?? {}
 
-  const postCarCategories = async (file: File, type: 'xlsx' | 'csv') => {
+  const postCarCategories = async (file: File, type: 'xlsx' | 'csv'): Promise<boolean> => {
     const dataToChange = await parseFileToCarCategory(
-      file,
+      await file.arrayBuffer(),
       type,
       rateCategory,
       currentCarData,
@@ -181,7 +190,7 @@ export const UploadCarCategoryFile = ({
 
       // Create error Excel file
       const errorExcel = await createErrorExcel(
-        file,
+        await file.arrayBuffer(),
         type,
         new Map(
           (dataToChange as CarCategoryError[]).map((error) => [
@@ -191,27 +200,28 @@ export const UploadCarCategoryFile = ({
         ),
       )
       setErrorFile(errorExcel)
-      return
+      return false
     }
 
     if (!dataToChange.length) {
       setUploadErrorMessage('noDataInUploadedFile')
-      return
+      return false
     }
 
-    setValue('carsToChange', dataToChange)
+    setValue('carsToChangeCount', dataToChange.length)
     await updateApplication({
       variables: {
         input: {
           id: application.id,
           answers: {
             ...application.answers,
-            carsToChange: dataToChange,
+            carsToChangeCount: dataToChange.length,
           },
         },
         locale,
       },
     })
+    return true
   }
 
   const handleOnInputFileUploadError = (files: FileRejection[]) => {
@@ -224,7 +234,7 @@ export const UploadCarCategoryFile = ({
 
   const handleOnInputFileUploadRemove = () => setUploadedFile(null)
 
-  const handleOnInputFileUploadChange = (files: File[]) => {
+  const handleOnInputFileUploadChange = async (files: File[]) => {
     setUploadedFile(null)
     setUploadErrorMessage(null)
 
@@ -241,8 +251,52 @@ export const UploadCarCategoryFile = ({
       }
 
       setUploadedFile(file.originalFileObj)
-      postCarCategories(file.originalFileObj, type)
+      const success = await postCarCategories(file.originalFileObj, type)
+      if (success) {
+        await uploadAndStoreFile(file.originalFileObj)
+      }
     }
+  }
+
+  const uploadAndStoreFile = async (file: File) => {
+    const upload = fileToObjectDeprecated(file)
+  
+    const { data } = await createUploadUrl({
+      variables: { filename: upload.name },
+    })
+  
+    const {
+      createUploadUrl: { url, fields },
+    } = data
+  
+    await uploadFileToS3(upload, noopDispatch, url, fields)
+  
+    const responseUrl = `${url}/${fields.key}`
+  
+    await addAttachment({
+      variables: {
+        input: {
+          id: application.id,
+          key: fields.key,
+          url: responseUrl,
+        },
+      },
+    })
+  
+    // Store only metadata in answers (small payload)
+    setValue('carCategoryFile', [{ name: upload.name, key: fields.key }])
+    await updateApplication({
+      variables: {
+        input: {
+          id: application.id,
+          answers: {
+            ...application.answers,
+            carCategoryFile: [{ name: upload.name, key: fields.key }],
+          },
+        },
+        locale,
+      },
+    })
   }
 
   const fileData = field.props.getFileContent?.(

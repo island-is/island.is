@@ -7,19 +7,25 @@ import { TemplateApiModuleActionProps } from '../../../types'
 import { RskRentalDayRateClient } from '@island.is/clients-rental-day-rate'
 import { EntryModel } from '@island.is/clients-rental-day-rate'
 import { getValueViaPath } from '@island.is/application/core'
+import { AttachmentS3Service } from '../../shared/services'
 
 import {
+  CarCategoryError,
   CarCategoryRecord,
+  CarMap,
   RateCategory,
 } from '@island.is/application/templates/car-rental-fee-category'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { parseFileToCarCategory } from '@island.is/application/templates/car-rental-fee-category'
+import { isDayRateEntryActive } from '@island.is/application/templates/car-rental-fee-category'
 
 @Injectable()
 export class CarRentalFeeCategoryService extends BaseTemplateApiService {
   constructor(
     private readonly vehiclesApi: VehicleSearchApi,
     private readonly rentalDayRateClient: RskRentalDayRateClient,
+    private readonly attachmentService: AttachmentS3Service,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {
     super(ApplicationTypes.CAR_RENTAL_FEE_CATEGORY)
@@ -67,7 +73,6 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
           ?.filter(
             (vehicle) =>
               vehicle.permno &&
-              vehicle.make &&
               typeof vehicle.latestMileage === 'number' &&
               vehicle.latestMileage >= 0 &&
               vehicle.permno in carIsOutOfUseDict &&
@@ -75,7 +80,6 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
           )
           .map((vehicle) => ({
             permno: vehicle.permno ?? null,
-            make: vehicle.make ?? null,
             milage: vehicle.latestMileage ?? null,
           })) || []
       )
@@ -108,15 +112,103 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
     application,
     auth,
   }: TemplateApiModuleActionProps): Promise<boolean> {
-    const data = getValueViaPath<CarCategoryRecord[]>(
-      application.answers,
-      'carsToChange',
-    )
+    const [attachment] = await this.attachmentService.getFiles(application, [
+      'carCategoryFile',
+    ])
+    if (!attachment?.fileContent) {
+      throw new TemplateApiError(
+        { title: 'Missing file', summary: 'No uploaded file found' },
+        400,
+      )
+    }
 
     const rateToChangeTo = getValueViaPath<RateCategory>(
       application.answers,
       'categorySelectionRadio',
     )
+    if (!rateToChangeTo) {
+      throw new TemplateApiError(
+        { title: 'Missing rate to change to', summary: 'No rate to change to found' },
+        400,
+      )
+    }
+    const currentVehicles = getValueViaPath<CurrentVehicleWithMilage[]>(
+      application.externalData,
+      'getCurrentVehicles.data',
+    )
+
+    const currentRates = getValueViaPath<EntryModel[]>(
+      application.externalData,
+      'getCurrentVehiclesRateCategory.data',
+    )
+
+    const currentDate = new Date()
+    const currentCarData =
+      currentVehicles?.reduce((acc, vehicle) => {
+        if (!vehicle.permno) return acc
+
+        const vehicleEntry = currentRates?.find(
+          (rate) => rate.permno === vehicle.permno,
+        )
+
+        const activeDayRate = vehicleEntry?.dayRateEntries?.find((entry) =>
+          isDayRateEntryActive(entry, currentDate),
+        )
+
+        acc[vehicle.permno] = {
+          milage: vehicle.milage ?? 0,
+          category: activeDayRate ? RateCategory.DAYRATE : RateCategory.KMRATE,
+          activeDayRate: activeDayRate,
+        }
+
+        return acc
+      }, {} as CarMap) ?? {}
+
+    const fileType = attachment.fileName.split('.').pop()?.toLowerCase()
+    if (fileType !== 'csv' && fileType !== 'xlsx') {
+      throw new TemplateApiError(
+        { title: 'Invalid file type', summary: 'Only .csv or .xlsx are supported' },
+        400,
+      )
+    }
+
+    const bytes = Buffer.from(attachment.fileContent, 'base64')
+    const data = await parseFileToCarCategory(
+      bytes,
+      fileType,
+      rateToChangeTo,
+      currentCarData,
+    )
+
+    const isCarCategoryErrorArray = (
+      data: Array<CarCategoryRecord | CarCategoryError>,
+    ): data is CarCategoryError[] => {
+      return data.length > 0 && 'code' in data[0]
+    }
+
+    if (data.length === 0) {
+      throw new TemplateApiError(
+        { title: 'Invalid data', summary: 'Invalid data found' },
+        400,
+      )
+    }
+
+    if (isCarCategoryErrorArray(data)) {
+      const errorSummary = data
+        .map((e) => {
+          const msg =
+            typeof e.message === 'string'
+              ? e.message
+              : e.message.defaultMessage ?? e.message.id
+          return `${e.carNr}: ${msg}`
+        })
+        .join('; ')
+
+      throw new TemplateApiError(
+        { title: 'Invalid data', summary: errorSummary || 'Invalid data found' },
+        400,
+      )
+    }
 
     const now = new Date()
     const endOfToday = new Date(now.setHours(23, 59, 59, 999))
@@ -139,6 +231,7 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
               }) ?? null,
           },
         }
+        console.log('entries', requestBody.dayRateRegistrationModel?.entries)
         await this.rentalsApiWithAuth(
           auth,
         ).apiDayRateEntriesEntityIdRegisterPost({ ...requestBody })
@@ -222,6 +315,5 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
 
 export interface CurrentVehicleWithMilage {
   permno: string | null
-  make: string | null
   milage: number | null
 }
