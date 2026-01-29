@@ -1,4 +1,5 @@
 import { Request } from 'express'
+import { Sequelize } from 'sequelize-typescript'
 
 import {
   Body,
@@ -13,6 +14,7 @@ import {
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common'
+import { InjectConnection } from '@nestjs/sequelize'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import type { Logger } from '@island.is/logging'
@@ -66,6 +68,7 @@ import { CurrentCaseFile } from './guards/caseFile.decorator'
 import { CaseFileExistsGuard } from './guards/caseFileExists.guard'
 import { CreateCivilClaimantCaseFileGuard } from './guards/createCivilClaimantCaseFile.guard'
 import { CreateDefendantCaseFileGuard } from './guards/createDefendantCaseFile.guard'
+import { SplitCaseFileExistsGuard } from './guards/splitCaseFileExists.guard'
 import { ViewCaseFileGuard } from './guards/viewCaseFile.guard'
 import { DeleteFileResponse } from './models/deleteFile.response'
 import { PresignedPost } from './models/presignedPost.model'
@@ -82,6 +85,7 @@ export class FileController {
   constructor(
     private readonly fileService: FileService,
     private readonly criminalRecordService: CriminalRecordService,
+    @InjectConnection() private readonly sequelize: Sequelize,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -137,7 +141,9 @@ export class FileController {
   ): Promise<CaseFile> {
     this.logger.debug(`Creating a file for case ${caseId}`)
 
-    return this.fileService.createCaseFile(theCase, createFile, user)
+    return this.sequelize.transaction((transaction) =>
+      this.fileService.createCaseFile(theCase, createFile, user, transaction),
+    )
   }
 
   // TODO: Add tests for this endpoint
@@ -159,10 +165,13 @@ export class FileController {
       `Creating a file for case ${caseId} for defendant ${defendantId}`,
     )
 
-    return this.fileService.createCaseFile(
-      theCase,
-      { ...createFile, defendantId },
-      user,
+    return this.sequelize.transaction((transaction) =>
+      this.fileService.createCaseFile(
+        theCase,
+        { ...createFile, defendantId },
+        user,
+        transaction,
+      ),
     )
   }
 
@@ -189,17 +198,24 @@ export class FileController {
       `Creating a file for case ${caseId} for civil claimant ${civilClaimantId}`,
     )
 
-    return this.fileService.createCaseFile(
-      theCase,
-      { ...createFile, civilClaimantId },
-      user,
+    return this.sequelize.transaction((transaction) =>
+      this.fileService.createCaseFile(
+        theCase,
+        { ...createFile, civilClaimantId },
+        user,
+        transaction,
+      ),
     )
   }
 
+  // Strictly speaking, only district court users need access to
+  // split case files
+  // However, giving prosecution and appeals court users access
+  // does not pose a security risk
   @UseGuards(
     CaseReadGuard,
     MergedCaseExistsGuard,
-    CaseFileExistsGuard,
+    SplitCaseFileExistsGuard,
     ViewCaseFileGuard,
   )
   @RolesRules(
@@ -304,7 +320,9 @@ export class FileController {
   ): Promise<CaseFile[]> {
     this.logger.debug(`Updating files of case ${caseId}`, { updateFiles })
 
-    return this.fileService.updateFiles(caseId, updateFiles.files)
+    return this.sequelize.transaction((transaction) =>
+      this.fileService.updateFiles(caseId, updateFiles.files, transaction),
+    )
   }
 
   // TODO: Add tests for this endpoint

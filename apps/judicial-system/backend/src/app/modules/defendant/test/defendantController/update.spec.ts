@@ -1,5 +1,5 @@
 import { Transaction } from 'sequelize'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import {
@@ -42,8 +42,8 @@ describe('DefendantController - Update', () => {
   } as Defendant
 
   let mockMessageService: MessageService
-  let transaction: Transaction
   let mockDefendantRepositoryService: DefendantRepositoryService
+  let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
@@ -106,7 +106,7 @@ describe('DefendantController - Update', () => {
         caseId,
         defendantId,
         defendantUpdate,
-        { transaction: undefined },
+        { transaction },
       )
       expect(then.result).toBe(updatedDefendant)
       expect(mockMessageService.sendMessagesToQueue).not.toHaveBeenCalled()

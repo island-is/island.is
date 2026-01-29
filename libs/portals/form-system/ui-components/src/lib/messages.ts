@@ -271,8 +271,8 @@ export const m = defineMessages({
   },
   saveAndContinue: {
     id: 'form.system:save-and-continue',
-    defaultMessage: 'Vista og halda áfram',
-    description: 'Save and continue',
+    defaultMessage: 'Halda áfram',
+    description: 'Continue',
   },
   addSection: {
     id: 'form.system:add-section',
@@ -889,17 +889,17 @@ export const m = defineMessages({
   uploadBoxTitle: {
     id: 'form.system:upload-box-title',
     defaultMessage: 'Dragðu skjöl hingað til að hlaða upp',
-    description: 'Notaður fyrir titil í Hlaða upp skrám svæði.',
+    description: 'Drag files here to upload',
   },
   uploadBoxButtonLabel: {
     id: 'form.system:upload-box-button-label',
     defaultMessage: 'Velja skjöl til að hlaða upp',
-    description: 'Notaður fyrir titil í takka á Hlaða upp skrám svæði.',
+    description: 'Choose files to upload',
   },
   uploadBoxDescription: {
     id: 'form.system:upload-box-description',
     defaultMessage: 'Tekið er við skjölum með endingu: {fileEndings}',
-    description: 'Notaður fyrir texta í Hlaða upp skrám svæði.',
+    description: 'The following file types are accepted: {fileEndings}',
   },
   tagsDraft: {
     id: 'form.system:tags.draft',
@@ -943,8 +943,8 @@ export const m = defineMessages({
     description:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
   },
-  completedAccordionTitle: {
-    id: 'form.system:completed-accordion-title',
+  completedListHeader: {
+    id: 'form.system:completed-list-header',
     defaultMessage: 'Hvað gerist næst?',
     description: 'What happens next?',
   },
@@ -1033,12 +1033,12 @@ export const m = defineMessages({
     description: 'Preview',
   },
   largeCheckbox: {
-    id: 'form.system.large-checkbox',
+    id: 'form.system:large-checkbox',
     defaultMessage: 'Stórt hakbox',
     description: 'Large checkbox',
   },
   hasSublabel: {
-    id: 'form.system.has-sublabel',
+    id: 'form.system:has-sublabel',
     defaultMessage: 'Hefur undirtexta',
     description: 'Has sublabel',
   },
@@ -1123,5 +1123,17 @@ export const m = defineMessages({
     id: 'form.system:new-form-url-button',
     defaultMessage: 'Ný slóð fyrir innsendingar',
     description: 'New submission URL',
+  },
+  notifications: {
+    id: 'form.system:notifications',
+    defaultMessage: 'Tilkynningar',
+    description: 'Notifications',
+  },
+  draftProgressMeter: {
+    id: 'form.system:draft-progress-meter',
+    defaultMessage:
+      'Þú hefur klárað {draftFinishedSteps} af {draftTotalSteps} skrefum',
+    description:
+      'You have completed {draftFinishedSteps} of {draftTotalSteps} steps',
   },
 })

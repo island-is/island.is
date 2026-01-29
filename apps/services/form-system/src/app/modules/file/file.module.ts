@@ -1,4 +1,5 @@
 import { createRedisCluster } from '@island.is/cache'
+import { FileStorageConfig } from '@island.is/file-storage'
 import { LoggingModule } from '@island.is/logging'
 import { AwsModule } from '@island.is/nest/aws'
 import { BullModule as NestBullModule } from '@nestjs/bull'
@@ -9,13 +10,14 @@ import { Value } from '../applications/models/value.model'
 import { FileConfig } from './file.config'
 import { FileController } from './file.controller'
 import { FileService } from './file.service'
-import { FileStorageWrapperModule } from './fileStorageWrapper'
 import { UploadProcessor } from './upload.processor'
+import { FileStorageWrapperModule } from './fileStorageWrapper'
 
 @Module({
   imports: [
     AwsModule,
     LoggingModule,
+    ConfigModule.forFeature(FileStorageConfig),
     FileStorageWrapperModule,
     SequelizeModule.forFeature([Value]),
     ConfigModule.forFeature(FileConfig),
@@ -23,10 +25,10 @@ import { UploadProcessor } from './upload.processor'
       name: 'upload',
       imports: [ConfigModule.forFeature(FileConfig)],
       useFactory: (config: ConfigType<typeof FileConfig>) => ({
-        prefix: `{${config.bullModuleName ?? 'form-system-upload'}}`,
+        prefix: `{${config.bullModuleName ?? 'form_system_api_bull_module'}}`,
         createClient: () =>
           createRedisCluster({
-            name: config.bullModuleName ?? 'form-system-upload',
+            name: config.bullModuleName ?? 'form_system_api_bull_module',
             ssl: config.redis.ssl,
             nodes: config.redis.nodes,
             noPrefix: true,

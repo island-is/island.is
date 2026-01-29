@@ -25,7 +25,7 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
   service(serviceName)
     .image(serviceName)
     .namespace(serviceName)
-    .serviceAccount(serviceName)
+    .serviceAccount('form-system-api')
     .codeOwner(CodeOwners.Advania)
     .db()
     .migrations()
@@ -44,9 +44,9 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
         prod: 'island-is-prod-upload-api',
       },
       FORM_SYSTEM_BUCKET: {
-        dev: 'island-is-dev-storage-form-system',
-        staging: 'island-is-staging-storage-form-system',
-        prod: 'island-is-prod-storage-form-system',
+        dev: 'island-is-dev-form-system-presign-bucket',
+        staging: 'island-is-staging-form-system-presign-bucket',
+        prod: 'island-is-prod-form-system-presign-bucket',
       },
       REDIS_URL_NODE_01: REDIS_NODE_CONFIG,
     })
@@ -87,6 +87,19 @@ export const workerSetup = (): ServiceBuilder<typeof workerName> =>
     .redis()
     .db()
     .env({
+      S3_REGION: 'eu-west-1',
+      S3_TIME_TO_LIVE_POST: '15',
+      S3_TIME_TO_LIVE_GET: '5',
+      FILE_STORAGE_UPLOAD_BUCKET: {
+        dev: 'island-is-dev-upload-api',
+        staging: 'island-is-staging-upload-api',
+        prod: 'island-is-prod-upload-api',
+      },
+      FORM_SYSTEM_BUCKET: {
+        dev: 'island-is-dev-form-system-presign-bucket',
+        staging: 'island-is-staging-form-system-presign-bucket',
+        prod: 'island-is-prod-form-system-presign-bucket',
+      },
       FORM_SYSTEM_BULL_PREFIX,
     })
     .args('main.cjs', '--job', 'worker')

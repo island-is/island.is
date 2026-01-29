@@ -1,9 +1,4 @@
-import {
-  CreateOptions,
-  FindOptions,
-  Transaction,
-  UpdateOptions,
-} from 'sequelize'
+import { FindOptions, Transaction, UpdateOptions } from 'sequelize'
 
 import {
   Inject,
@@ -43,15 +38,15 @@ interface FindAllOptions {
 }
 
 interface CreateDefendantOptions {
-  transaction?: Transaction
+  transaction: Transaction
 }
 
 interface UpdateDefendantOptions {
-  transaction?: Transaction
+  transaction: Transaction
 }
 
 interface DeleteDefendantOptions {
-  transaction?: Transaction
+  transaction: Transaction
 }
 
 interface UpdateDefendant {
@@ -183,20 +178,14 @@ export class DefendantRepositoryService {
 
   async create(
     data: Partial<Defendant>,
-    options?: CreateDefendantOptions,
+    options: CreateDefendantOptions,
   ): Promise<Defendant> {
     try {
       this.logger.debug('Creating a new defendant with data:', {
         data: Object.keys(data),
       })
 
-      const createOptions: CreateOptions = {}
-
-      if (options?.transaction) {
-        createOptions.transaction = options.transaction
-      }
-
-      const result = await this.defendantModel.create(data, createOptions)
+      const result = await this.defendantModel.create(data, options)
 
       this.logger.debug(`Created a new defendant ${result.id}`)
 
@@ -215,7 +204,7 @@ export class DefendantRepositoryService {
     caseId: string,
     defendantId: string,
     data: UpdateDefendant,
-    options?: UpdateDefendantOptions,
+    options: UpdateDefendantOptions,
   ): Promise<Defendant> {
     try {
       this.logger.debug(
@@ -227,10 +216,7 @@ export class DefendantRepositoryService {
 
       const updateOptions: UpdateOptions = {
         where: { id: defendantId, caseId },
-      }
-
-      if (options?.transaction) {
-        updateOptions.transaction = options.transaction
+        transaction: options.transaction,
       }
 
       const [numberOfAffectedRows, defendants] =
@@ -272,14 +258,14 @@ export class DefendantRepositoryService {
   async delete(
     caseId: string,
     defendantId: string,
-    options?: DeleteDefendantOptions,
+    options: DeleteDefendantOptions,
   ): Promise<void> {
     try {
       this.logger.debug(`Deleting defendant ${defendantId} of case ${caseId}`)
 
       const numberOfAffectedRows = await this.defendantModel.destroy({
         where: { id: defendantId, caseId },
-        transaction: options?.transaction,
+        transaction: options.transaction,
       })
 
       if (numberOfAffectedRows < 1) {

@@ -33,6 +33,7 @@ import {
   PageLayout,
   PageTitle,
   PdfButton,
+  SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
@@ -41,6 +42,7 @@ import {
   UploadState,
   useCourtUpload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import { DraftConclusionModal } from '../../components'
 
@@ -117,115 +119,108 @@ const Overview = () => {
               />
             </Box>
           )}
-        <Box component="section" marginBottom={5}>
-          <InfoCard
-            sections={[
-              {
-                id: 'defendants-section',
-                items: [defendants({ caseType: workingCase.type })],
-              },
-              ...(showItem(victims)
-                ? [
-                    {
-                      id: 'victims-section',
-                      items: [victims],
-                    },
-                  ]
-                : []),
-              {
-                id: 'case-info-section',
-                items: [
-                  policeCaseNumbers,
-                  requestedCourtDate,
-                  prosecutorsOffice,
-                  caseType,
-                  prosecutor(workingCase.type),
-                ],
-                columns: 2,
-              },
-            ]}
-          />
-        </Box>
-        <>
+        <div className={grid({ gap: 5, marginBottom: 10 })}>
+          <Box component="section">
+            <InfoCard
+              sections={[
+                {
+                  id: 'defendants-section',
+                  items: [defendants({ caseType: workingCase.type })],
+                },
+                ...(showItem(victims)
+                  ? [
+                      {
+                        id: 'victims-section',
+                        items: [victims],
+                      },
+                    ]
+                  : []),
+                {
+                  id: 'case-info-section',
+                  items: [
+                    policeCaseNumbers,
+                    requestedCourtDate,
+                    prosecutorsOffice,
+                    caseType,
+                    prosecutor(workingCase.type),
+                  ],
+                  columns: 2,
+                },
+              ]}
+            />
+          </Box>
           {workingCase.description && (
-            <Box marginBottom={5}>
-              <Box marginBottom={2}>
-                <Text as="h3" variant="h3">
-                  Efni kröfu
-                </Text>
-              </Box>
-              <Text>{workingCase.description}</Text>
-            </Box>
+            <SectionHeading
+              title="Efni kröfu"
+              description={workingCase.description}
+              marginBottom={0}
+            />
           )}
-          <Box marginBottom={5} data-testid="demands">
-            <Box marginBottom={2}>
-              <Text as="h3" variant="h3">
-                Dómkröfur
-              </Text>
-            </Box>
-            <Text>{workingCase.demands}</Text>
+          <Box data-testid="demands">
+            <SectionHeading
+              title="Dómkröfur"
+              description={workingCase.demands}
+              marginBottom={0}
+            />
           </Box>
-          <Box marginBottom={5}>
-            <Accordion>
+
+          <Accordion>
+            <AccordionItem
+              labelVariant="h3"
+              id="id_1"
+              label={formatMessage(lawsBrokenAccordion.heading)}
+            >
+              <Text whiteSpace="breakSpaces">{workingCase.lawsBroken}</Text>
+            </AccordionItem>
+            <AccordionItem
+              labelVariant="h3"
+              id="id_2"
+              label="Lagaákvæði sem krafan er byggð á"
+            >
+              <Text whiteSpace="breakSpaces">{workingCase.legalBasis}</Text>
+            </AccordionItem>
+            {(workingCase.caseFacts || workingCase.legalArguments) && (
               <AccordionItem
                 labelVariant="h3"
-                id="id_1"
-                label={formatMessage(lawsBrokenAccordion.heading)}
+                id="id_4"
+                label="Greinargerð um málsatvik og lagarök"
               >
-                <Text whiteSpace="breakSpaces">{workingCase.lawsBroken}</Text>
+                {workingCase.caseFacts && (
+                  <AccordionListItem title="Málsatvik">
+                    <Text whiteSpace="breakSpaces">
+                      {workingCase.caseFacts}
+                    </Text>
+                  </AccordionListItem>
+                )}
+                {workingCase.legalArguments && (
+                  <AccordionListItem title="Lagarök">
+                    <Text whiteSpace="breakSpaces">
+                      {workingCase.legalArguments}
+                    </Text>
+                  </AccordionListItem>
+                )}
               </AccordionItem>
-              <AccordionItem
-                labelVariant="h3"
-                id="id_2"
-                label="Lagaákvæði sem krafan er byggð á"
-              >
-                <Text whiteSpace="breakSpaces">{workingCase.legalBasis}</Text>
-              </AccordionItem>
-              {(workingCase.caseFacts || workingCase.legalArguments) && (
-                <AccordionItem
-                  labelVariant="h3"
-                  id="id_4"
-                  label="Greinargerð um málsatvik og lagarök"
-                >
-                  {workingCase.caseFacts && (
-                    <AccordionListItem title="Málsatvik">
-                      <Text whiteSpace="breakSpaces">
-                        {workingCase.caseFacts}
-                      </Text>
-                    </AccordionListItem>
-                  )}
-                  {workingCase.legalArguments && (
-                    <AccordionListItem title="Lagarök">
-                      <Text whiteSpace="breakSpaces">
-                        {workingCase.legalArguments}
-                      </Text>
-                    </AccordionListItem>
-                  )}
-                </AccordionItem>
-              )}
-              {(workingCase.comments ||
-                workingCase.caseFilesComments ||
-                workingCase.caseResentExplanation) && (
-                <CommentsAccordionItem workingCase={workingCase} />
-              )}
-              {user && (
-                <CaseFilesAccordionItem
-                  workingCase={workingCase}
-                  setWorkingCase={setWorkingCase}
-                  user={user}
-                />
-              )}
-            </Accordion>
-          </Box>
-          <Box marginBottom={10}>
-            <Box marginBottom={3}>
-              <PdfButton
-                caseId={workingCase.id}
-                title={formatMessage(core.pdfButtonRequest)}
-                pdfType="request"
-                elementId={formatMessage(core.pdfButtonRequest)}
+            )}
+            {(workingCase.comments ||
+              workingCase.caseFilesComments ||
+              workingCase.caseResentExplanation) && (
+              <CommentsAccordionItem workingCase={workingCase} />
+            )}
+            {user && (
+              <CaseFilesAccordionItem
+                workingCase={workingCase}
+                setWorkingCase={setWorkingCase}
+                user={user}
               />
-            </Box>
+            )}
+          </Accordion>
+          <Box alignItems="flexStart" className={grid({ gap: 2 })}>
+            <PdfButton
+              caseId={workingCase.id}
+              title={formatMessage(core.pdfButtonRequest)}
+              pdfType="request"
+              elementId={formatMessage(core.pdfButtonRequest)}
+            />
             <Button
               data-testid="draftConclusionButton"
               variant="ghost"
@@ -242,7 +237,7 @@ const Overview = () => {
             isDraftingConclusion={isDraftingConclusion}
             setIsDraftingConclusion={setIsDraftingConclusion}
           />
-        </>
+        </div>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter

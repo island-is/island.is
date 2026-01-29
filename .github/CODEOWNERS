@@ -148,17 +148,14 @@ codemagic.yaml                                                                  
 /libs/dokobit-signing/                                                                                                       @island-is/kolibri-justice-league
 /libs/email-service/                                                                                                         @island-is/kolibri-justice-league
 
-# No active contract.
-# /apps/financial-aid/                                                                                                       @island-is/kolibri-robin-hood
-# /libs/financial-aid/                                                                                                       @island-is/kolibri-robin-hood
-# /libs/next-ids-auth/                                                                                                       @island-is/kolibri-robin-hood
-# /libs/clients/rsk/personal-tax-return                                                                                      @island-is/kolibri-robin-hood
-# /libs/api/domains/municipalities-financial-aid                                                                             @island-is/kolibri-robin-hood
-# /libs/clients/municipalities-financial-aid                                                                                 @island-is/kolibri-robin-hood
+/apps/financial-aid/                                                                                                         @island-is/kolibri-robin-hood
+/libs/financial-aid/                                                                                                         @island-is/kolibri-robin-hood
+/libs/api/domains/municipalities-financial-aid                                                                               @island-is/kolibri-robin-hood
+/libs/clients/municipalities-financial-aid                                                                                   @island-is/kolibri-robin-hood
 
 /libs/clients/hms/                                                                                                           @island-is/norda
-/libs/clients/hms-rental-agreement/                                                                                          @island-is/norda
-/libs/api/domains/hms/                                                                                                       @island-is/norda
+/libs/clients/hms-rental-agreement/                                                                                          @island-is/norda @island-is/hugsmidjan
+/libs/api/domains/hms/                                                                                                       @island-is/norda @island-is/hugsmidjan
 
 /apps/download-service/                                                                                                      @island-is/hugsmidjan
 /apps/portals/my-pages*/                                                                                                     @island-is/hugsmidjan
@@ -197,6 +194,7 @@ codemagic.yaml                                                                  
 /libs/api/domains/document-provider/                                                                                         @island-is/hugsmidjan @island-is/core
 /libs/api/domains/housing-benefits/                                                                                          @island-is/hugsmidjan
 /libs/api/domains/law-and-order/                                                                                             @island-is/hugsmidjan
+/libs/api/domains/questionnaires/                                                                                            @island-is/hugsmidjan
 /libs/clients/documents/                                                                                                     @island-is/hugsmidjan
 /libs/clients/documents-v2/                                                                                                  @island-is/hugsmidjan
 /libs/clients/finance/                                                                                                       @island-is/hugsmidjan
@@ -305,6 +303,7 @@ codemagic.yaml                                                                  
 /libs/clients/icelandic-health-insurance/health-insurance/                                                                   @island-is/norda
 /libs/clients/payment-schedule/                                                                                              @island-is/norda
 /libs/clients/rsk/company-registry                                                                                           @island-is/norda
+/libs/clients/rsk/rental-day-rate                                                                                            @island-is/norda
 
 /libs/api/domains/company-registry                                                                                           @island-is/norda
 /libs/api/domains/financial-statements-inao/                                                                                 @island-is/norda
@@ -356,6 +355,8 @@ codemagic.yaml                                                                  
 /libs/clients/verdicts/                                                                                                      @island-is/stefna
 /libs/api/domains/landspitali/                                                                                               @island-is/stefna
 /apps/services/payment-flow-update-handler/                                                                                  @island-is/stefna
+/libs/application/templates/hh/courses/                                                                                      @island-is/stefna
+/libs/application/template-api-modules/src/lib/modules/templates/hh/courses/                                                 @island-is/stefna
 
 /libs/island-ui/                                                                                                             @island-is/island-ui
 
@@ -440,6 +441,7 @@ codemagic.yaml                                                                  
 /libs/application/templates/transport-authority/order-vehicle-registration-certificate                                       @island-is/origo
 /libs/application/templates/transport-authority/transfer-of-vehicle-ownership                                                @island-is/origo
 /libs/application/templates/transport-authority/exemption-for-transportation                                                 @island-is/origo
+/libs/application/templates/transport-authority/mile-car                                                                     @island-is/origo
 
 /libs/application/template-api-modules/src/lib/modules/templates/transport-authority/anonymity-in-vehicle-registry           @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/transport-authority/change-co-owner-of-vehicle              @island-is/origo
@@ -450,6 +452,7 @@ codemagic.yaml                                                                  
 /libs/application/template-api-modules/src/lib/modules/templates/transport-authority/order-vehicle-license-plate             @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/transport-authority/order-vehicle-registration-certificate  @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/transport-authority/transfer-of-vehicle-ownership           @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/transport-authority/mile-car                                @island-is/origo
 
 /libs/api/domains/transport-authority/                                                                                       @island-is/origo
 /libs/clients/transport-authority/                                                                                           @island-is/origo

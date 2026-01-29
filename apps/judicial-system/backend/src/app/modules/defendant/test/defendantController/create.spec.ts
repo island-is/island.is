@@ -1,4 +1,5 @@
-import { uuid } from 'uuidv4'
+import { Transaction } from 'sequelize'
+import { v4 as uuid } from 'uuid'
 
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import { Gender, User } from '@island.is/judicial-system/types'
@@ -33,14 +34,25 @@ describe('DefendantController - Create', () => {
 
   let mockMessageService: MessageService
   let mockDefendantRepositoryService: DefendantRepositoryService
+  let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { messageService, defendantRepositoryService, defendantController } =
-      await createTestingDefendantModule()
+    const {
+      sequelize,
+      messageService,
+      defendantRepositoryService,
+      defendantController,
+    } = await createTestingDefendantModule()
 
     mockMessageService = messageService
     mockDefendantRepositoryService = defendantRepositoryService
+
+    const mockTransaction = sequelize.transaction as jest.Mock
+    transaction = {} as Transaction
+    mockTransaction.mockImplementationOnce(
+      (fn: (transaction: Transaction) => unknown) => fn(transaction),
+    )
 
     const mockCreate = mockDefendantRepositoryService.create as jest.Mock
     mockCreate.mockResolvedValue(createdDefendant)
@@ -70,10 +82,10 @@ describe('DefendantController - Create', () => {
     })
 
     it('should create a defendant', () => {
-      expect(mockDefendantRepositoryService.create).toHaveBeenCalledWith({
-        ...defendantToCreate,
-        caseId,
-      })
+      expect(mockDefendantRepositoryService.create).toHaveBeenCalledWith(
+        { ...defendantToCreate, caseId },
+        { transaction },
+      )
     })
 
     it('should return defendant', () => {

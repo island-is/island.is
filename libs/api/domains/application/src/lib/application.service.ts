@@ -146,14 +146,22 @@ export class ApplicationService {
     })
   }
 
-  async getApplicationCountByTypeIdAndStatus(
+  async getSuperAdminApplicationCountByTypeIdAndStatus(
     user: User,
-    locale: Locale,
     input: ApplicationsAdminStatisticsInput,
   ) {
     return this.applicationApiWithAuth(
       user,
-    ).adminControllerGetCountByTypeIdAndStatus(input)
+    ).adminControllerGetSuperAdminCountByTypeIdAndStatus(input)
+  }
+
+  async getInstitutionApplicationCountByTypeIdAndStatus(
+    user: User,
+    input: ApplicationsAdminStatisticsInput,
+  ) {
+    return this.applicationApiWithAuth(
+      user,
+    ).adminControllerGetInstitutionCountByTypeIdAndStatus(input)
   }
 
   async getApplicationInstitutions(user: User) {
@@ -210,13 +218,18 @@ export class ApplicationService {
     })
   }
 
-  async submitApplication(input: SubmitApplicationInput, auth: Auth) {
+  async submitApplication(
+    input: SubmitApplicationInput,
+    auth: Auth,
+    locale: Locale,
+  ) {
     const { id, ...updateApplicationStateDto } = input
     return this.applicationApiWithAuth(
       auth,
     ).applicationControllerSubmitApplication({
       id,
       updateApplicationStateDto,
+      locale,
     })
   }
 

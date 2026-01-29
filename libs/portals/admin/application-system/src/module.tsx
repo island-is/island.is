@@ -14,11 +14,9 @@ const allowedScopes: string[] = [
   AdminPortalScope.applicationSystemAdmin,
   AdminPortalScope.applicationSystemInstitution,
 ]
-const getScreen = ({ userInfo }: PortalModuleRoutesProps): React.ReactNode => {
-  const isSuperAdmin = userInfo.scopes.includes(
-    AdminPortalScope.applicationSystemAdmin,
-  )
-  return <CombinedOverview isSuperAdmin={isSuperAdmin} />
+
+const getIsSuperAdmin = ({ userInfo }: PortalModuleRoutesProps) => {
+  return userInfo.scopes.includes(AdminPortalScope.applicationSystemAdmin)
 }
 
 export const applicationSystemAdminModule: PortalModule = {
@@ -41,15 +39,12 @@ export const applicationSystemAdminModule: PortalModule = {
         {
           name: m.overview,
           path: ApplicationSystemPaths.Overview,
-          element: getScreen(props),
+          element: <CombinedOverview isSuperAdmin={getIsSuperAdmin(props)} />,
         },
         {
           name: m.statistics,
           path: ApplicationSystemPaths.Statistics,
-          element: <Statistics />,
-          enabled: props.userInfo.scopes.includes(
-            AdminPortalScope.applicationSystemAdmin,
-          ),
+          element: <Statistics isSuperAdmin={getIsSuperAdmin(props)} />,
         },
       ],
     },

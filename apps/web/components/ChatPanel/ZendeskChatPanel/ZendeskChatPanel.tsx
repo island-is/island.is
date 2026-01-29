@@ -7,6 +7,7 @@ import { useI18n } from '@island.is/web/i18n'
 import { GET_NAMESPACE_QUERY } from '@island.is/web/screens/queries'
 
 import { ChatBubble } from '../ChatBubble'
+import type { ZendeskChatPanelProps } from '../types'
 import type { ZendeskMessengerAPI } from './types'
 
 /* Documentation: https://developer.zendesk.com/api-reference/widget-messaging/web/core/ */
@@ -19,14 +20,10 @@ declare global {
   }
 }
 
-export interface ZendeskChatPanelProps {
-  snippetUrl: string
-  pushUp?: boolean
-}
-
 export const ZendeskChatPanel = ({
   snippetUrl,
   pushUp = false,
+  chatBubbleVariant = 'circle',
 }: ZendeskChatPanelProps) => {
   const [isLoading, setIsLoading] = useState(false)
   const [isChatOpen, setIsChatOpen] = useState(false)
@@ -93,7 +90,7 @@ export const ZendeskChatPanel = ({
     <ChatBubble
       onClick={loadScript}
       text={n('chatBubbleText', 'Hæ, get ég aðstoðað?')}
-      variant="circle"
+      variant={chatBubbleVariant}
       pushUp={pushUp}
       loading={isLoading}
       isVisible={!isChatOpen}

@@ -1,6 +1,6 @@
 import { Agent } from 'https'
 import fetch from 'isomorphic-fetch'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import {
   BadGatewayException,
@@ -70,6 +70,7 @@ export class CriminalRecordService {
         'DMR criminal record API not available',
       )
     }
+
     if (defendant.noNationalId) {
       throw new NotFoundException({
         message: `Criminal record case file for defendant ${defendant.id} of case ${defendant.caseId} not found`,
@@ -93,11 +94,13 @@ export class CriminalRecordService {
           const contentArrayBuffer = await res.arrayBuffer()
           const buffer = Buffer.from(contentArrayBuffer)
           const currentDate = formatDate(nowFactory())
+
           return {
             fileName: `Sakavottord_${defendant.nationalId}_${currentDate}.pdf`,
             buffer,
           }
         }
+
         const reason = await res.text()
 
         throw new NotFoundException({

@@ -268,6 +268,13 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       description:
         'The reason for this is the following:\n* You do not have a valid confirmation or rehabilitation plan.\n\nTo be eligible for medical and rehabilitation payments you must, as well as having a valid certificate, have been issued one of the following documents:\n\n* Confirmation of treatment\n\n* Confirmation of ill health that prevents rehabilitation or treatment.\n\n* Confirmation of pending resolution.\n\n* Rehabilitation plan - for those who have started rehabilitation\n\nIf you do not think the above applies to you, please contact the Social Insurance Administration at [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
     },
+    latestMedicalDocumentAlreadyUsedDescription: {
+      id: 'marp.application:not.eligible.latest.medical.already.used.description#markdown',
+      defaultMessage:
+        'Þú ert með vottorð sem staðfestir skerta starfsgetu.\nÞú ert einnig með eitt af eftirfarandi skjölum til staðar - en þú hefur nýtt þau í fyrri umsókn um sjúkra- og endurhæfingargreiðslur.\n\nEinungis er hægt að nota eftirfarandi tegund af skjali, einu sinni.\n\nTil að geta sótt um áframhaldandi sjúkra- og endurhæfingargreiðslur þarftu því nýtt skjal til viðbótar við vottorð,\n* Nýja staðfestingu á viðurkenndri meðferð\n* Nýja staðfestingu á að heilsubrestur kemur í veg fyrir endurhæfingu eða viðurkennda meðferð\n* Nýja staðfestingu á bið eftir viðurkenndri meðferð eða endurhæfingu\n* Nýja endurhæfingaaráætlun - fyrir þá sem eru byrjaðir í endurhæfingu',
+      description:
+        'You have a certificate confirming reduced work capacity.\nYou also have one of the following documents available - but you have used them in a previous application for sickness and rehabilitation payments.\n\nThe following type of document can only be used once.\n\nTo apply for continued sickness and rehabilitation payments, you therefore need a new document in addition to a certificate,\n* A new confirmation of recognized treatment\n* A new confirmation that ill health prevents rehabilitation or recognized treatment\n* A new confirmation of waiting for recognized treatment or rehabilitation\n* A new rehabilitation plan - for those who have started rehabilitation',
+    },
     errorProcessingClientDescription: {
       id: 'marp.application:not.eligible.error.processing.client.description#markdown',
       defaultMessage:

@@ -23,7 +23,7 @@ describe('buildPaymentState', () => {
       organizationId: InstitutionNationalIds.SYSLUMENN,
       chargeItems: [{ code: 'SOME_CODE' }],
       submitTarget: [
-        { target: 'TARGET_1', cond: (context) => false },
+        { target: 'TARGET_1', cond: () => false },
         { target: 'TARGET_2' },
       ],
     })
@@ -124,5 +124,63 @@ describe('buildPaymentState', () => {
     expect(configuredApi.params.extraData).toEqual([
       { name: 'test', value: '1234' },
     ])
+  })
+
+  it('configures payerNationalId as a string correctly', () => {
+    const options = {
+      organizationId: InstitutionNationalIds.SYSLUMENN,
+      chargeItems: [{ code: 'SOME_CHARGE_CODE' }],
+      payerNationalId: '1234567890',
+    }
+    const result = buildPaymentState(options)
+
+    if (!result.meta) {
+      fail('meta is not defined')
+    }
+
+    const onEntryArray = result.meta.onEntry as TemplateApi<unknown>[]
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const configuredApi = onEntryArray[0] as any
+
+    expect(configuredApi.params.payerNationalId).toBe('1234567890')
+  })
+
+  it('configures payerNationalId as a function correctly', () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const payerFn = (_app: any) => '1234567890'
+    const options = {
+      organizationId: InstitutionNationalIds.SYSLUMENN,
+      chargeItems: [{ code: 'SOME_CHARGE_CODE' }],
+      payerNationalId: payerFn,
+    }
+    const result = buildPaymentState(options)
+
+    if (!result.meta) {
+      fail('meta is not defined')
+    }
+
+    const onEntryArray = result.meta.onEntry as TemplateApi<unknown>[]
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const configuredApi = onEntryArray[0] as any
+
+    expect(configuredApi.params.payerNationalId).toBe(payerFn)
+  })
+
+  it('works without payerNationalId (defaults to undefined)', () => {
+    const options = {
+      organizationId: InstitutionNationalIds.SYSLUMENN,
+      chargeItems: [{ code: 'SOME_CHARGE_CODE' }],
+    }
+    const result = buildPaymentState(options)
+
+    if (!result.meta) {
+      fail('meta is not defined')
+    }
+
+    const onEntryArray = result.meta.onEntry as TemplateApi<unknown>[]
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const configuredApi = onEntryArray[0] as any
+
+    expect(configuredApi.params.payerNationalId).toBeUndefined()
   })
 })

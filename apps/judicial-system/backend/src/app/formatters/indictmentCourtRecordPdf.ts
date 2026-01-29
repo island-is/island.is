@@ -2,8 +2,10 @@ import _uniqBy from 'lodash/uniqBy'
 import PDFDocument from 'pdfkit'
 
 import {
+  capitalize,
   formatDate,
   getRoleTitleFromCaseFileCategory,
+  lowercase,
 } from '@island.is/judicial-system/formatters'
 import {
   CaseFileCategory,
@@ -18,13 +20,13 @@ import {
   addCoatOfArms,
   addEmptyLines,
   addFooter,
-  addIndictmentCourtRecordConfirmation,
   addLargeHeading,
   addMediumHeading,
   addNormalCenteredText,
   addNormalText,
   addNumberedList,
   Confirmation,
+  drawConfirmation,
   setLineGap,
   setTitle,
 } from './pdfHelpers'
@@ -92,12 +94,24 @@ export const createIndictmentCourtRecordPdf = (
 
   setTitle(doc, `Þingbók ${theCase.courtCaseNumber}`)
 
-  addCoatOfArms(doc, undefined, 90)
-
   if (confirmation) {
-    addIndictmentCourtRecordConfirmation(doc, confirmation)
+    drawConfirmation(doc, {
+      showLockIcon: false,
+      confirmationText: 'Rafræn staðfesting',
+      date: confirmation.date,
+      boxes: [
+        {
+          title: 'Dómstóll',
+          content: confirmation.institution,
+          widthPercent: 100,
+        },
+      ],
+    })
+
+    doc.y = doc.page.margins.top + 10
   }
 
+  addCoatOfArms(doc)
   addEmptyLines(doc, confirmation ? 11 : 6, doc.page.margins.left)
   setLineGap(doc, 2)
   addLargeHeading(doc, theCase.court?.name ?? 'Héraðsdómur', 'Times-Roman')
@@ -112,22 +126,21 @@ export const createIndictmentCourtRecordPdf = (
       break
     }
 
+    const startDate = courtSession.startDate ?? nowFactory()
+    const courtDate = capitalize(
+      formatDate(startDate, 'eeee d. MMMM yyyy')?.replace('dagur', 'daginn'),
+    )
+
     addEmptyLines(doc, 2)
     addNormalText(
       doc,
-      `Þann ${formatDate(
-        courtSession.startDate ?? nowFactory(),
-        'PPP',
-      )} heldur ${
+      `${courtDate} heldur ${
         courtSession.judge?.name ?? 'óþekktur'
-      } héraðsdómari dómþing ${
+      } ${lowercase(courtSession.judge?.title)} dómþing ${
         courtSession.location ?? 'á óþekktum stað'
       }. Fyrir er tekið mál nr. ${
         theCase.courtCaseNumber ?? 'S-xxxx/yyyy'
-      }. Þinghald hefst kl. ${formatDate(
-        courtSession.startDate ?? nowFactory(),
-        'p',
-      )}.`,
+      }. Þinghald hefst kl. ${formatDate(startDate, 'p')}.`,
     )
 
     if (courtSession.isClosed) {

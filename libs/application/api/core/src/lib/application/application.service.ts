@@ -68,7 +68,16 @@ export class ApplicationService {
   async getApplicationCountByTypeIdAndStatus(
     startDate: string,
     endDate: string,
+    institutionNationalId?: string,
   ): Promise<ApplicationsStatistics[]> {
+    const { applicationTypeIds, returnEmpty } = this.resolveApplicationTypeIds(
+      institutionNationalId,
+    )
+
+    if (returnEmpty) {
+      return []
+    }
+
     const query = `SELECT
         type_id as typeid,
         COUNT(*) as count,
@@ -79,10 +88,22 @@ export class ApplicationService {
         COUNT(*) FILTER (WHERE status = 'approved') AS approved
       FROM public.application
       WHERE modified BETWEEN :startDate AND :endDate
+      ${
+        applicationTypeIds?.length ? `AND type_id IN (:applicationTypeIds)` : ''
+      }
       GROUP BY typeid;`
 
+    const replacements: Record<string, unknown> = {
+      startDate,
+      endDate,
+    }
+
+    if (applicationTypeIds?.length) {
+      replacements.applicationTypeIds = applicationTypeIds
+    }
+
     return this.sequelize.query<ApplicationsStatistics>(query, {
-      replacements: { startDate, endDate },
+      replacements,
       type: QueryTypes.SELECT,
     })
   }

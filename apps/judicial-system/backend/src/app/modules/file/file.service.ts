@@ -1,7 +1,6 @@
 import { Base64 } from 'js-base64'
 import { Op, Transaction } from 'sequelize'
-import { Sequelize } from 'sequelize-typescript'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import {
   BadRequestException,
@@ -11,7 +10,7 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common'
-import { InjectConnection, InjectModel } from '@nestjs/sequelize'
+import { InjectModel } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -36,6 +35,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { createConfirmedPdf, getCaseFileHash } from '../../formatters'
+import { hasConfirmableCaseFileCategories } from '../../formatters/confirmedPdf'
 import { AwsS3Service } from '../aws-s3'
 import { InternalCaseService } from '../case/internalCase.service'
 import { CourtDocumentFolder, CourtService } from '../court'
@@ -67,7 +67,6 @@ export class FileService {
   private throttle = Promise.resolve('')
 
   constructor(
-    @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(CaseFile) private readonly fileModel: typeof CaseFile,
     private readonly courtService: CourtService,
     private readonly awsS3Service: AwsS3Service,
@@ -133,6 +132,7 @@ export class FileService {
     switch (file.category) {
       case CaseFileCategory.COURT_RECORD:
       case CaseFileCategory.RULING:
+      case CaseFileCategory.COURT_INDICTMENT_RULING_ORDER:
         courtDocumentFolder = CourtDocumentFolder.COURT_DOCUMENTS
         break
       case CaseFileCategory.CASE_FILE:
@@ -167,25 +167,45 @@ export class FileService {
     file: CaseFile,
     pdf: Buffer,
   ): Promise<string | undefined> {
-    if (
-      !theCase.rulingDate ||
-      (file.category !== CaseFileCategory.RULING &&
-        file.category !== CaseFileCategory.COURT_RECORD)
-    ) {
-      return undefined // This should never happen
+    if (!hasConfirmableCaseFileCategories(file.category)) {
+      return undefined
+    }
+    const hasRulingDateConfirmation =
+      theCase.rulingDate &&
+      (file.category === CaseFileCategory.RULING ||
+        file.category === CaseFileCategory.COURT_RECORD)
+    const hasRulingOrderConfirmation =
+      file.submissionDate &&
+      file.category === CaseFileCategory.COURT_INDICTMENT_RULING_ORDER
+    if (!hasRulingDateConfirmation && !hasRulingOrderConfirmation) {
+      return undefined
     }
 
-    const completedDate = EventLog.getEventLogDateByEventType(
-      EventType.INDICTMENT_COMPLETED,
-      theCase.eventLogs,
-    )
+    const getConfirmationDate = (): Date | undefined => {
+      if (hasRulingDateConfirmation) {
+        return (
+          EventLog.getEventLogDateByEventType(
+            EventType.INDICTMENT_COMPLETED,
+            theCase.eventLogs,
+          ) ?? theCase.rulingDate
+        )
+      }
+      if (hasRulingOrderConfirmation) {
+        return file.submissionDate
+      }
+      return undefined
+    }
+    const confirmationDate = getConfirmationDate()
+    if (!confirmationDate) {
+      return undefined
+    }
 
     return createConfirmedPdf(
       {
         actor: theCase.judge?.name ?? '',
         title: theCase.judge?.title,
         institution: theCase.judge?.institution?.name ?? '',
-        date: completedDate ?? theCase.rulingDate,
+        date: confirmationDate,
       },
       pdf,
       file.category,
@@ -226,6 +246,13 @@ export class FileService {
       (file.category === CaseFileCategory.RULING ||
         file.category === CaseFileCategory.COURT_RECORD) &&
       isCompletedCase(theCase.state)
+    ) {
+      return true
+    }
+
+    if (
+      file.category === CaseFileCategory.COURT_INDICTMENT_RULING_ORDER &&
+      file.submissionDate
     ) {
       return true
     }
@@ -341,6 +368,7 @@ export class FileService {
     theCase: Case,
     createFile: CreateFile,
     user: User,
+    transaction: Transaction,
   ): Promise<CaseFile> {
     const { key } = createFile
 
@@ -359,6 +387,7 @@ export class FileService {
       theCase,
       fileName,
       user,
+      transaction,
     )
 
     if (
@@ -392,6 +421,7 @@ export class FileService {
         CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
         CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
         CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
+        CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
       ].includes(file.category)
     ) {
       const messages: Message[] = []
@@ -425,50 +455,49 @@ export class FileService {
     theCase: Case,
     fileName: string,
     user: User,
+    transaction: Transaction,
   ): Promise<CaseFile> {
-    return this.sequelize.transaction(async (transaction) => {
-      const file = await this.fileModel.create(
+    const file = await this.fileModel.create(
+      {
+        ...createFile,
+        state: CaseFileState.STORED_IN_RVG,
+        caseId: theCase.id,
+        name: fileName,
+        userGeneratedFilename:
+          createFile.userGeneratedFilename ?? fileName.replace(/\.pdf$/, ''),
+        submittedBy: user.name,
+      },
+      { transaction },
+    )
+
+    // Only add a court document if a court session exists
+    if (
+      isIndictmentCase(theCase.type) &&
+      theCase.state === CaseState.RECEIVED &&
+      theCase.withCourtSessions &&
+      theCase.courtSessions &&
+      theCase.courtSessions.length > 0 &&
+      file.category &&
+      [
+        CaseFileCategory.PROSECUTOR_CASE_FILE,
+        CaseFileCategory.DEFENDANT_CASE_FILE,
+        CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
+        CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
+        CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
+      ].includes(file.category)
+    ) {
+      await this.courtDocumentService.create(
+        theCase.id,
         {
-          ...createFile,
-          state: CaseFileState.STORED_IN_RVG,
-          caseId: theCase.id,
-          name: fileName,
-          userGeneratedFilename:
-            createFile.userGeneratedFilename ?? fileName.replace(/\.pdf$/, ''),
-          submittedBy: user.name,
+          documentType: CourtDocumentType.UPLOADED_DOCUMENT,
+          name: file.userGeneratedFilename ?? file.name,
+          caseFileId: file.id,
         },
-        { transaction },
+        transaction,
       )
+    }
 
-      // Only add a court document if a court session exists
-      if (
-        isIndictmentCase(theCase.type) &&
-        theCase.state === CaseState.RECEIVED &&
-        theCase.withCourtSessions &&
-        theCase.courtSessions &&
-        theCase.courtSessions.length > 0 &&
-        file.category &&
-        [
-          CaseFileCategory.PROSECUTOR_CASE_FILE,
-          CaseFileCategory.DEFENDANT_CASE_FILE,
-          CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
-          CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
-          CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
-        ].includes(file.category)
-      ) {
-        await this.courtDocumentService.create(
-          theCase.id,
-          {
-            documentType: CourtDocumentType.UPLOADED_DOCUMENT,
-            name: file.userGeneratedFilename ?? file.name,
-            caseFileId: file.id,
-          },
-          transaction,
-        )
-      }
-
-      return file
-    })
+    return file
   }
 
   private async verifyCaseFile(file: CaseFile, theCase: Case) {
@@ -617,24 +646,23 @@ export class FileService {
   async updateFiles(
     caseId: string,
     caseFileUpdates: UpdateFileDto[],
+    transaction: Transaction,
   ): Promise<CaseFile[]> {
-    return this.sequelize.transaction((transaction) => {
-      const updates = caseFileUpdates.map(async (update) => {
-        const [affectedNumber, file] = await this.fileModel.update(update, {
-          where: { caseId, id: update.id },
-          returning: true,
-          transaction,
-        })
-        if (affectedNumber !== 1 || !file[0]) {
-          throw new InternalServerErrorException(
-            `Could not update file ${update.id} of case ${caseId}`,
-          )
-        }
-        return file[0]
+    const updates = caseFileUpdates.map(async (update) => {
+      const [affectedNumber, file] = await this.fileModel.update(update, {
+        where: { caseId, id: update.id },
+        returning: true,
+        transaction,
       })
-
-      return Promise.all(updates)
+      if (affectedNumber !== 1 || !file[0]) {
+        throw new InternalServerErrorException(
+          `Could not update file ${update.id} of case ${caseId}`,
+        )
+      }
+      return file[0]
     })
+
+    return Promise.all(updates)
   }
 
   resetCaseFileStates(caseId: string, transaction: Transaction) {

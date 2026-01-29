@@ -186,6 +186,7 @@ export type RepeaterItem = {
         ) => string | string[] | undefined)
   }
   clearOnChange?: MaybeWithIndex<string[]>
+  clearOnChangeDefaultValue?: string | boolean | number | undefined
   setOnChange?:
     | { key: string; value: any }[]
     | ((
@@ -222,8 +223,8 @@ export type RepeaterItem = {
       component: 'date'
       label: StaticText
       locale?: Locale
-      maxDate?: MaybeWithApplicationAndActiveField<Date>
-      minDate?: MaybeWithApplicationAndActiveField<Date>
+      maxDate?: MaybeWithApplicationAndActiveField<Date | undefined>
+      minDate?: MaybeWithApplicationAndActiveField<Date | undefined>
       minYear?: number
       maxYear?: number
       excludeDates?: DatePickerProps['excludeDates']
@@ -349,6 +350,14 @@ export interface BaseField extends FormItem {
   marginBottom?: BoxProps['marginBottom']
   marginTop?: BoxProps['marginTop']
   clearOnChange?: string[]
+  clearOnChangeDefaultValue?:
+    | string
+    | string[]
+    | boolean
+    | boolean[]
+    | number
+    | number[]
+    | undefined
   setOnChange?:
     | { key: string; value: any }[]
     | ((
@@ -608,6 +617,8 @@ export interface SubmitField extends BaseField {
   readonly refetchApplicationAfterSubmit?:
     | boolean
     | ((event?: string) => boolean)
+  readonly renderLongErrors?: boolean
+  formatLongErrorMessage?: (message: string) => string
 }
 
 export interface DividerField extends BaseField {
@@ -902,6 +913,7 @@ export interface FindVehicleField extends InputField {
   requiredValidVehicleErrorMessage?: FormText
   isMachine?: boolean
   isEnergyFunds?: boolean
+  isMileCar?: boolean
   energyFundsMessages?: Record<string, FormText>
 }
 
