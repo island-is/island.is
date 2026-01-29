@@ -8,7 +8,6 @@ import { BadRequestException } from '@nestjs/common'
 import { TestApp, testServer, useDatabase } from '@island.is/testing/nest'
 import { ChargeFjsV2ClientService } from '@island.is/clients/charge-fjs-v2'
 
-
 import { VerifyCardInput } from './dtos/verifyCard.input'
 import {
   CardErrorCode,
@@ -16,7 +15,12 @@ import {
   PaymentServiceCode,
 } from '@island.is/shared/constants'
 import { CreatePaymentFlowInput } from '../paymentFlow/dtos/createPaymentFlow.input'
-import { CardPaymentResponse, PaymentMethod, PaymentStatus, RefundResponse } from '../../types'
+import {
+  CardPaymentResponse,
+  PaymentMethod,
+  PaymentStatus,
+  RefundResponse,
+} from '../../types'
 import { AppModule } from '../app.module'
 import { SequelizeConfigService } from '../../sequelizeConfig.service'
 import {
@@ -555,26 +559,26 @@ describe('CardPaymentController', () => {
           } else if (url.includes('/Payment/CardPayment')) {
             return {
               json: async () =>
-              ({
-                acquirerReferenceNumber: 'string',
-                transactionID: 'string',
-                authorizationCode: 'string',
-                transactionLifecycleId: 'string',
-                maskedCardNumber: 'string',
-                isSuccess: true,
-                cardInformation: {
-                  cardScheme: 'string',
-                  issuingCountry: 'string',
-                  cardUsage: 'string',
-                  cardCategory: 'string',
-                  outOfScaScope: false,
-                },
-                authorizationIdentifier: 'string',
-                responseCode: 'string',
-                responseDescription: 'string',
-                responseTime: 'string',
-                correlationID: 'string',
-              } as CardPaymentResponse),
+                ({
+                  acquirerReferenceNumber: 'string',
+                  transactionID: 'string',
+                  authorizationCode: 'string',
+                  transactionLifecycleId: 'string',
+                  maskedCardNumber: 'string',
+                  isSuccess: true,
+                  cardInformation: {
+                    cardScheme: 'string',
+                    issuingCountry: 'string',
+                    cardUsage: 'string',
+                    cardCategory: 'string',
+                    outOfScaScope: false,
+                  },
+                  authorizationIdentifier: 'string',
+                  responseCode: 'string',
+                  responseDescription: 'string',
+                  responseTime: 'string',
+                  correlationID: 'string',
+                } as CardPaymentResponse),
               status: 200,
               ok: true,
             } as Response
@@ -758,25 +762,25 @@ describe('CardPaymentController', () => {
             if (operation === 'Refund') {
               return {
                 json: async () =>
-                ({
-                  acquirerReferenceNumber: 'string',
-                  transactionID: 'string',
-                  transactionLifecycleId: 'string',
-                  maskedCardNumber: 'string',
-                  isSuccess: true,
-                  cardInformation: {
-                    cardScheme: 'string',
-                    issuingCountry: 'string',
-                    cardUsage: 'string',
-                    cardCategory: 'string',
-                    outOfScaScope: false,
-                  },
-                  authorizationIdentifier: 'string',
-                  responseCode: 'string',
-                  responseDescription: 'string',
-                  responseTime: 'string',
-                  correlationID: 'string',
-                } as RefundResponse),
+                  ({
+                    acquirerReferenceNumber: 'string',
+                    transactionID: 'string',
+                    transactionLifecycleId: 'string',
+                    maskedCardNumber: 'string',
+                    isSuccess: true,
+                    cardInformation: {
+                      cardScheme: 'string',
+                      issuingCountry: 'string',
+                      cardUsage: 'string',
+                      cardCategory: 'string',
+                      outOfScaScope: false,
+                    },
+                    authorizationIdentifier: 'string',
+                    responseCode: 'string',
+                    responseDescription: 'string',
+                    responseTime: 'string',
+                    correlationID: 'string',
+                  } as RefundResponse),
                 status: 200,
                 ok: true,
               } as Response
@@ -1208,25 +1212,25 @@ describe('CardPaymentController', () => {
                 if (operation === 'Refund') {
                   return {
                     json: async () =>
-                    ({
-                      acquirerReferenceNumber: 'string',
-                      transactionID: 'string',
-                      transactionLifecycleId: 'string',
-                      maskedCardNumber: 'string',
-                      isSuccess: true,
-                      cardInformation: {
-                        cardScheme: 'Visa',
-                        issuingCountry: 'IS',
-                        cardUsage: 'string',
-                        cardCategory: 'string',
-                        outOfScaScope: false,
-                      },
-                      authorizationIdentifier: uuid(),
-                      responseCode: '00',
-                      responseDescription: 'Refund successful',
-                      responseTime: '12:00:00',
-                      correlationID: uuid(),
-                    } as RefundResponse),
+                      ({
+                        acquirerReferenceNumber: 'string',
+                        transactionID: 'string',
+                        transactionLifecycleId: 'string',
+                        maskedCardNumber: 'string',
+                        isSuccess: true,
+                        cardInformation: {
+                          cardScheme: 'Visa',
+                          issuingCountry: 'IS',
+                          cardUsage: 'string',
+                          cardCategory: 'string',
+                          outOfScaScope: false,
+                        },
+                        authorizationIdentifier: uuid(),
+                        responseCode: '00',
+                        responseDescription: 'Refund successful',
+                        responseTime: '12:00:00',
+                        correlationID: uuid(),
+                      } as RefundResponse),
                     text: async () => 'Refund successful',
                     status: 200,
                     ok: true,
@@ -1352,25 +1356,25 @@ describe('CardPaymentController', () => {
               } else if (url.includes('/Payment/RefundWithCorrelationId')) {
                 return {
                   json: async () =>
-                  ({
-                    acquirerReferenceNumber: 'string',
-                    transactionID: 'string',
-                    transactionLifecycleId: 'string',
-                    maskedCardNumber: 'string',
-                    isSuccess: true,
-                    cardInformation: {
-                      cardScheme: 'Visa',
-                      issuingCountry: 'IS',
-                      cardUsage: 'string',
-                      cardCategory: 'string',
-                      outOfScaScope: false,
-                    },
-                    authorizationIdentifier: uuid(),
-                    responseCode: '00',
-                    responseDescription: 'Refund successful',
-                    responseTime: '12:00:00',
-                    correlationID: uuid(),
-                  } as RefundResponse),
+                    ({
+                      acquirerReferenceNumber: 'string',
+                      transactionID: 'string',
+                      transactionLifecycleId: 'string',
+                      maskedCardNumber: 'string',
+                      isSuccess: true,
+                      cardInformation: {
+                        cardScheme: 'Visa',
+                        issuingCountry: 'IS',
+                        cardUsage: 'string',
+                        cardCategory: 'string',
+                        outOfScaScope: false,
+                      },
+                      authorizationIdentifier: uuid(),
+                      responseCode: '00',
+                      responseDescription: 'Refund successful',
+                      responseTime: '12:00:00',
+                      correlationID: uuid(),
+                    } as RefundResponse),
                   text: async () => 'Refund successful',
                   status: 200,
                   ok: true,

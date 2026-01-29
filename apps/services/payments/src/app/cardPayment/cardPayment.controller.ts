@@ -65,7 +65,7 @@ export class CardPaymentController {
     private readonly paymentFlowService: PaymentFlowService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
-  ) { }
+  ) {}
 
   @Post('/verify')
   @ApiOkResponse({
@@ -212,8 +212,6 @@ export class CardPaymentController {
     try {
       const { paymentFlow, catalogItems, totalPrice } =
         await this.validatePaymentFlow(paymentFlowId, chargeCardInput.amount)
-
-
 
       const merchantReferenceData = uuid()
       const paymentTrackingData: PaymentTrackingData = {
@@ -381,7 +379,10 @@ export class CardPaymentController {
     }
   }
 
-  private async validatePaymentFlow(paymentFlowId: string, amount: number): Promise<{
+  private async validatePaymentFlow(
+    paymentFlowId: string,
+    amount: number,
+  ): Promise<{
     paymentFlow: PaymentFlowAttributes
     catalogItems: CatalogItemWithQuantity[]
     totalPrice: number
@@ -455,21 +456,21 @@ export class CardPaymentController {
   private async persistPaymentConfirmationAndHandleFailure(
     args:
       | {
-        isApplePay: false
-        paymentFlowId: string
-        chargeCardInput: ChargeCardInput
-        paymentResult: CardPaymentResponse
-        totalPrice: number
-        paymentTrackingData: PaymentTrackingData
-      }
+          isApplePay: false
+          paymentFlowId: string
+          chargeCardInput: ChargeCardInput
+          paymentResult: CardPaymentResponse
+          totalPrice: number
+          paymentTrackingData: PaymentTrackingData
+        }
       | {
-        isApplePay: true
-        paymentFlowId: string
-        chargeCardInput: ApplePayChargeInput
-        paymentResult: CardPaymentResponse
-        totalPrice: number
-        paymentTrackingData: PaymentTrackingData
-      },
+          isApplePay: true
+          paymentFlowId: string
+          chargeCardInput: ApplePayChargeInput
+          paymentResult: CardPaymentResponse
+          totalPrice: number
+          paymentTrackingData: PaymentTrackingData
+        },
   ): Promise<boolean> {
     const {
       isApplePay,

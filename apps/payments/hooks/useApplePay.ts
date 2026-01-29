@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { CardErrorCode } from '@island.is/shared/constants'
-import { Features } from '@island.is/react/feature-flags'
 
 import {
   GetPaymentFlowQuery,
@@ -67,7 +66,7 @@ export const useApplePay = ({
         }
       }
     }
-  }, [])
+  }, [isEnabledForUser, paymentFlow])
 
   const initiateApplePay = useCallback(() => {
     if (!supportsApplePay || !productInformation) {
@@ -170,7 +169,7 @@ export const useApplePay = ({
     }
 
     sessionRef.current.begin()
-  }, [supportsApplePay, productInformation])
+  }, [supportsApplePay, productInformation, paymentFlow, onPaymentSuccess, onPaymentError, chargeApplePayMutationHook, getApplePaySessionQueryHook])
 
   return {
     supportsApplePay,
