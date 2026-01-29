@@ -25,9 +25,6 @@ export class CryptoService {
    * Output: 'aes-256-cbc:Ghs8TV5veHqJkGthWklAAw==:YWJjZGVmMTIzNDU2Nzg5MGFiY2RlZjEyMzQ1Njc4OTA='
    */
   encrypt(text: string): string {
-    // DUMMY
-    const k = 8
-
     try {
       // Generate a random 16-byte initialization vector (IV) for the encryption
       // IV is a unique value used with the key to make each encryption unique, even with the same plaintext and key.

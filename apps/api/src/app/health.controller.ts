@@ -10,9 +10,6 @@ export class HealthController {
     private cmsHealthIndicator: CmsHealthIndicator,
   ) {}
 
-  // DUMMYYYYY
-  k = 8
-
   @Get()
   @HealthCheck()
   check() {
