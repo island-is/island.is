@@ -181,7 +181,7 @@ export class FileResolver {
   ): Promise<CaseFile> {
     const { caseId, id } = input
 
-    this.logger.debug(`Rejectting file ${id} of case ${caseId}`)
+    this.logger.debug(`Rejecting file ${id} of case ${caseId}`)
 
     return this.auditTrailService.audit(
       user.id,
