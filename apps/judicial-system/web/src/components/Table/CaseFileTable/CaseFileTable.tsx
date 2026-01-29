@@ -113,8 +113,8 @@ const CaseFileTable: FC<Props> = ({
             <tr key={file.id}>
               <td>
                 <Box
-                  onClick={() => onOpenFile?.(file.id)}
-                  className={styles.linkButton}
+                  onClick={() => !isRejected && onOpenFile(file.id)}
+                  className={!isRejected && styles.linkButton}
                   display="flex"
                   alignItems="center"
                 >
