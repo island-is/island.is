@@ -103,6 +103,7 @@ describe('Admin Emails Controller - GET /v2/users/.national-id/emails', () => {
     })
 
     beforeEach(async () => {
+      jest.restoreAllMocks()
       await emailsModel.destroy({
         where: {},
         cascade: true,
@@ -382,6 +383,7 @@ describe('Admin Emails Controller - DELETE /v2/users/.national-id/emails/:emailI
     })
 
     beforeEach(async () => {
+      jest.restoreAllMocks()
       await emailsModel.destroy({
         where: {},
         cascade: true,
