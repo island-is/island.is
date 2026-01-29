@@ -151,9 +151,12 @@ const transformCase = (theCase: Case, user?: User) => {
     }),
     caseFiles: theCase.caseFiles?.filter(
       (file) =>
+        // Rejected files are only visible to relevant parties
         file.state !== CaseFileState.REJECTED ||
         (isProsecutionUser(user) &&
-          file.category === CaseFileCategory.PROSECUTOR_CASE_FILE),
+          file.category === CaseFileCategory.PROSECUTOR_CASE_FILE) ||
+        (isDefenceUser(user) &&
+          file.category === CaseFileCategory.DEFENDANT_CASE_FILE),
     ),
     caseRepresentatives: transformCaseRepresentatives(theCase),
     postponedIndefinitelyExplanation:
