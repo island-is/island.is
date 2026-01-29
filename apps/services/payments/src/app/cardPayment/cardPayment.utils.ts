@@ -9,7 +9,6 @@ import {
 import { ChargeCardInput } from './dtos/chargeCard.input'
 import { VerifyCardInput } from './dtos/verifyCard.input'
 import {
-  ChargeResponse,
   MdNormalised,
   MdSerialized,
   SavedVerificationCompleteData,
@@ -20,10 +19,9 @@ import { CardPaymentModuleConfigType } from './cardPayment.config'
 import { generateChargeFJSPayload } from '../../utils/fjsCharge'
 import { CatalogItemWithQuantity } from '../../types/charges'
 import {
-  ApplePayWalletPaymentInput,
-  ApplePayWalletPaymentResponse,
   CardPaymentResponse,
   PaymentTrackingData,
+  ApplePayPaymentInput,
 } from '../../types'
 import { ApplePayChargeInput } from './dtos'
 
@@ -281,7 +279,7 @@ export const generateApplePayChargeRequestOptions = ({
 }) => {
   const { systemCalling } = paymentApiConfig
 
-  const body: ApplePayWalletPaymentInput = {
+  const body: ApplePayPaymentInput = {
     Operation: 'Sale',
     WalletPaymentType: 'ApplePay',
     ApplePayWalletPayment: {

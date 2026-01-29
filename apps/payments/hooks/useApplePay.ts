@@ -142,7 +142,7 @@ export const useApplePay = ({
         if (!data?.paymentsChargeApplePay.isSuccess) {
           throw new Error(
             data?.paymentsChargeApplePay.responseCode ??
-            CardErrorCode.UnknownCardError,
+              CardErrorCode.UnknownCardError,
           )
         }
 
@@ -169,7 +169,15 @@ export const useApplePay = ({
     }
 
     sessionRef.current.begin()
-  }, [supportsApplePay, productInformation, paymentFlow, onPaymentSuccess, onPaymentError, chargeApplePayMutationHook, getApplePaySessionQueryHook])
+  }, [
+    supportsApplePay,
+    productInformation,
+    paymentFlow,
+    onPaymentSuccess,
+    onPaymentError,
+    chargeApplePayMutationHook,
+    getApplePaySessionQueryHook,
+  ])
 
   return {
     supportsApplePay,

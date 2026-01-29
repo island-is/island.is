@@ -94,6 +94,43 @@ export const CardPaymentInputSchema = z.object({
   cardVerificationData: CardVerificationDataSchema.optional(),
 })
 
+const ApplePayPaymentDataSchema = z.object({
+  Version: z.string(),
+  Data: z.string(),
+  Signature: z.string(),
+  Header: z.object({
+    EphemeralPublicKey: z.string(),
+    PublicKeyHash: z.string(),
+    TransactionId: z.string(),
+  }),
+})
+
+const ApplePayPaymentMethodSchema = z.object({
+  DisplayName: z.string(),
+  Network: z.string(),
+  NetworkType: z.string(),
+})
+
+const ApplePayPaymentTokenSchema = z.object({
+  PaymentData: ApplePayPaymentDataSchema,
+  PaymentMethod: ApplePayPaymentMethodSchema,
+  TransactionIdentifier: z.string(),
+})
+
+export const ApplePayPaymentInputSchema = z.object({
+  Operation: z.string(),
+  WalletPaymentType: z.literal('ApplePay'),
+  ApplePayWalletPayment: z.object({
+    PaymentToken: ApplePayPaymentTokenSchema,
+  }),
+  paymentAdditionalData: z.object({
+    merchantReferenceData: z.string(),
+  }),
+  systemCalling: z.string(),
+  correlationId: z.string(),
+})
+
+export type ApplePayPaymentInput = z.infer<typeof ApplePayPaymentInputSchema>
 export type CardPaymentInput = z.infer<typeof CardPaymentInputSchema>
 export type CardVerificationResponse = z.infer<
   typeof CardVerificationResponseSchema
