@@ -26,19 +26,27 @@ import { retry } from '@island.is/shared/utils/server'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
-import { PaymentMethod } from '../../types'
-import { ChargeResponse } from './cardPayment.types'
-import { VerifyCardInput } from './dtos/verifyCard.input'
-import { VerificationCallbackInput } from './dtos/verificationCallback.input'
-import { ChargeCardInput } from './dtos/chargeCard.input'
-import { GetVerificationStatus } from './dtos/params.dto'
-import { VerificationStatusResponse } from './dtos/verificationStatus.response.dto'
-import { VerifyCardResponse } from './dtos/verifyCard.response.dto'
-import { ChargeCardResponse } from './dtos/chargeCard.response.dto'
+import { PaymentMethod, PaymentStatus } from '../../types'
 import { FjsCharge } from '../paymentFlow/models/fjsCharge.model'
-import { VerificationCallbackResponse } from './dtos/verificationCallback.response.dto'
 import { CardPaymentService } from './cardPayment.service'
-import { PaymentTrackingData } from '../../types/cardPayment'
+import {
+  ApplePaySessionResponse,
+  ApplePayChargeResponse,
+  ApplePayChargeInput,
+  ChargeCardResponse,
+  VerificationCallbackResponse,
+  VerifyCardResponse,
+  VerifyCardInput,
+  VerificationCallbackInput,
+  ChargeCardInput,
+  GetVerificationStatus,
+  VerificationStatusResponse,
+} from './dtos'
+import {
+  CardPaymentResponse,
+  PaymentTrackingData,
+  RefundResponse,
+} from '../../types/cardPayment'
 import { PaymentFlowAttributes } from '../paymentFlow/models/paymentFlow.model'
 import { CatalogItemWithQuantity } from '../../types/charges'
 import { onlyReturnKnownErrorCode } from '../../utils/paymentErrors'
@@ -57,7 +65,7 @@ export class CardPaymentController {
     private readonly paymentFlowService: PaymentFlowService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
-  ) {}
+  ) { }
 
   @Post('/verify')
   @ApiOkResponse({
@@ -90,7 +98,7 @@ export class CardPaymentController {
       })
 
       // All required data to build the 3DS screen
-      return verification
+      return { ...verification, correlationId: verification.correlationID }
     } catch (e) {
       await this.paymentFlowService.logPaymentFlowUpdate({
         paymentFlowId: paymentFlowId,
@@ -202,27 +210,10 @@ export class CardPaymentController {
     const paymentConfirmationId = uuid()
 
     try {
-      const paymentFlow = await this.paymentFlowService.getPaymentFlowDetails(
-        paymentFlowId,
-      )
-      const [{ catalogItems, totalPrice }, { paymentStatus }] =
-        await Promise.all([
-          this.paymentFlowService.getPaymentFlowChargeDetails(
-            paymentFlow.organisationId,
-            paymentFlow.charges,
-          ),
-          this.paymentFlowService.getPaymentFlowStatus(paymentFlow),
-        ])
+      const { paymentFlow, catalogItems, totalPrice } =
+        await this.validatePaymentFlow(paymentFlowId, chargeCardInput.amount)
 
-      if (totalPrice !== chargeCardInput.amount) {
-        throw new BadRequestException(
-          PaymentServiceCode.PaymentFlowAmountMismatch,
-        )
-      }
 
-      if (paymentStatus === 'paid') {
-        throw new BadRequestException(PaymentServiceCode.PaymentFlowAlreadyPaid)
-      }
 
       const merchantReferenceData = uuid()
       const paymentTrackingData: PaymentTrackingData = {
@@ -231,7 +222,7 @@ export class CardPaymentController {
       }
 
       this.logger.info(
-        `[${paymentFlowId}] Starting card payment with correlation id ${paymentConfirmationId}`,
+        `[${paymentFlowId}][CARD_PAYMENT] Starting payment with correlation id ${paymentConfirmationId}`,
       )
 
       const paymentResult = await this.cardPaymentService.charge(
@@ -240,14 +231,17 @@ export class CardPaymentController {
       )
 
       const persistedPaymentConfirmation =
-        await this.persistPaymentConfirmationAndHandleFailure(
+        await this.persistPaymentConfirmationAndHandleFailure({
+          isApplePay: false,
+          paymentFlowId,
           chargeCardInput,
           paymentResult,
           totalPrice,
           paymentTrackingData,
-        )
+        })
 
-      const confirmation = await this.createFjsChargeAndHandleFailure(
+      const confirmation = await this.createFjsChargeAndHandleFailure({
+        isApplePay: false,
         chargeCardInput,
         paymentFlow,
         catalogItems,
@@ -256,20 +250,23 @@ export class CardPaymentController {
         merchantReferenceData,
         persistedPaymentConfirmation,
         paymentConfirmationId,
-      )
+        paymentTrackingData,
+      })
 
-      await this.handleSuccessfulPaymentNotification(
+      await this.handleSuccessfulPaymentNotification({
+        isApplePay: false,
         paymentFlowId,
         paymentResult,
         confirmation,
         chargeCardInput,
         paymentConfirmationId,
-      )
+        paymentTrackingData,
+      })
 
-      return paymentResult
+      return { ...paymentResult, correlationId: paymentResult.correlationID }
     } catch (e) {
       this.logger.error(
-        `[${paymentFlowId}] Card payment failed in main charge handler`,
+        `[${paymentFlowId}][CARD_PAYMENT] Payment failed in main charge handler`,
         { error: e.message, stack: e.stack },
       )
       await this.paymentFlowService.logPaymentFlowUpdate({
@@ -290,13 +287,199 @@ export class CardPaymentController {
     }
   }
 
-  private async persistPaymentConfirmationAndHandleFailure(
-    chargeCardInput: ChargeCardInput,
-    paymentResult: ChargeCardResponse,
-    totalPrice: number,
-    paymentTrackingData: PaymentTrackingData,
-  ): Promise<boolean> {
+  @Get('/apple-pay/session')
+  @ApiOkResponse({
+    type: ApplePaySessionResponse,
+  })
+  async getApplePaySession() {
+    return this.cardPaymentService.getApplePaySession()
+  }
+
+  @Post('/apple-pay/charge')
+  @ApiOkResponse({
+    type: ApplePayChargeResponse,
+  })
+  async chargeApplePay(
+    @Body() chargeCardInput: ApplePayChargeInput,
+  ): Promise<ApplePayChargeResponse> {
     const paymentFlowId = chargeCardInput.paymentFlowId
+    const paymentConfirmationId = uuid()
+
+    try {
+      const { paymentFlow, catalogItems, totalPrice } =
+        await this.validatePaymentFlow(paymentFlowId, chargeCardInput.amount)
+
+      const merchantReferenceData = uuid()
+      const paymentTrackingData: PaymentTrackingData = {
+        merchantReferenceData,
+        correlationId: paymentConfirmationId,
+      }
+
+      this.logger.info(
+        `[${paymentFlowId}][APPLE_PAY] Starting payment with correlation id ${paymentConfirmationId}`,
+      )
+
+      const paymentResult = await this.cardPaymentService.chargeApplePay(
+        chargeCardInput,
+        paymentTrackingData,
+      )
+
+      const persistedPaymentConfirmation =
+        await this.persistPaymentConfirmationAndHandleFailure({
+          isApplePay: true,
+          paymentFlowId,
+          chargeCardInput,
+          paymentResult,
+          totalPrice,
+          paymentTrackingData,
+        })
+
+      const confirmation = await this.createFjsChargeAndHandleFailure({
+        isApplePay: true,
+        chargeCardInput,
+        paymentFlow,
+        catalogItems,
+        paymentResult,
+        totalPrice,
+        merchantReferenceData,
+        persistedPaymentConfirmation,
+        paymentConfirmationId,
+        paymentTrackingData,
+      })
+
+      await this.handleSuccessfulPaymentNotification({
+        isApplePay: true,
+        paymentFlowId,
+        paymentResult,
+        confirmation,
+        chargeCardInput,
+        paymentConfirmationId,
+        paymentTrackingData,
+      })
+
+      return { ...paymentResult, correlationId: paymentResult.correlationID }
+    } catch (e) {
+      this.logger.error(
+        `[${paymentFlowId}][APPLE_PAY] Payment failed in main charge handler`,
+        { error: e.message, stack: e.stack },
+      )
+      await this.paymentFlowService.logPaymentFlowUpdate({
+        paymentFlowId,
+        type: 'error',
+        occurredAt: new Date(),
+        paymentMethod: PaymentMethod.CARD,
+        reason: 'other',
+        message: `Apple Pay payment processing ultimately failed: ${e.message}`,
+        metadata: {
+          error: e.message,
+        },
+      })
+
+      throw new BadRequestException(
+        onlyReturnKnownErrorCode(e.message, CardErrorCode.UnknownCardError),
+      )
+    }
+  }
+
+  private async validatePaymentFlow(paymentFlowId: string, amount: number): Promise<{
+    paymentFlow: PaymentFlowAttributes
+    catalogItems: CatalogItemWithQuantity[]
+    totalPrice: number
+    paymentStatus: PaymentStatus
+  }> {
+    const paymentFlow = await this.paymentFlowService.getPaymentFlowDetails(
+      paymentFlowId,
+    )
+    const [{ catalogItems, totalPrice }, { paymentStatus }] = await Promise.all(
+      [
+        this.paymentFlowService.getPaymentFlowChargeDetails(
+          paymentFlow.organisationId,
+          paymentFlow.charges,
+        ),
+        this.paymentFlowService.getPaymentFlowStatus(paymentFlow),
+      ],
+    )
+
+    if (paymentStatus === 'paid') {
+      throw new BadRequestException(PaymentServiceCode.PaymentFlowAlreadyPaid)
+    }
+
+    if (totalPrice !== amount) {
+      throw new BadRequestException(
+        PaymentServiceCode.PaymentFlowAmountMismatch,
+      )
+    }
+
+    return {
+      paymentFlow,
+      catalogItems,
+      totalPrice,
+      paymentStatus,
+    }
+  }
+
+  private async refund({
+    isApplePay,
+    paymentFlowId,
+    chargeCardInput,
+    paymentResult,
+    paymentTrackingData,
+  }: {
+    isApplePay: boolean
+    paymentFlowId: string
+    chargeCardInput: ApplePayChargeInput | ChargeCardInput
+    paymentResult: CardPaymentResponse
+    paymentTrackingData: PaymentTrackingData
+  }): Promise<RefundResponse> {
+    let refund: RefundResponse | null = null
+
+    if (isApplePay) {
+      refund = await retry(() =>
+        this.cardPaymentService.refundApplePay(paymentTrackingData),
+      )
+    } else {
+      const { cardNumber, amount } = chargeCardInput as ChargeCardInput
+      refund = await retry(() =>
+        this.cardPaymentService.refund(
+          paymentFlowId,
+          cardNumber,
+          paymentResult,
+          amount,
+        ),
+      )
+    }
+
+    return refund
+  }
+
+  private async persistPaymentConfirmationAndHandleFailure(
+    args:
+      | {
+        isApplePay: false
+        paymentFlowId: string
+        chargeCardInput: ChargeCardInput
+        paymentResult: CardPaymentResponse
+        totalPrice: number
+        paymentTrackingData: PaymentTrackingData
+      }
+      | {
+        isApplePay: true
+        paymentFlowId: string
+        chargeCardInput: ApplePayChargeInput
+        paymentResult: CardPaymentResponse
+        totalPrice: number
+        paymentTrackingData: PaymentTrackingData
+      },
+  ): Promise<boolean> {
+    const {
+      isApplePay,
+      paymentFlowId,
+      chargeCardInput,
+      paymentResult,
+      totalPrice,
+      paymentTrackingData,
+    } = args
+
     try {
       await this.paymentFlowService.createCardPaymentConfirmation({
         paymentResult,
@@ -323,14 +506,14 @@ export class CardPaymentController {
         { error: e.message },
       )
       try {
-        const refund = await retry(() =>
-          this.cardPaymentService.refund(
-            paymentFlowId,
-            chargeCardInput.cardNumber,
-            paymentResult as ChargeResponse,
-            chargeCardInput.amount,
-          ),
-        )
+        const refund = await this.refund({
+          isApplePay,
+          paymentFlowId,
+          chargeCardInput,
+          paymentResult,
+          paymentTrackingData,
+        })
+
         await this.paymentFlowService.logPaymentFlowUpdate({
           paymentFlowId: paymentFlowId,
           type: 'error',
@@ -344,6 +527,7 @@ export class CardPaymentController {
             originalError: e.message,
           },
         })
+
         throw new BadRequestException(
           CardErrorCode.RefundedBecauseOfSystemError,
         )
@@ -379,16 +563,29 @@ export class CardPaymentController {
     }
   }
 
-  private async createFjsChargeAndHandleFailure(
-    chargeCardInput: ChargeCardInput,
-    paymentFlow: PaymentFlowAttributes,
-    catalogItems: CatalogItemWithQuantity[],
-    paymentResult: ChargeCardResponse,
-    totalPrice: number,
-    merchantReferenceData: string,
-    persistedPaymentConfirmation: boolean,
-    paymentConfirmationId: string,
-  ): Promise<FjsCharge | null> {
+  private async createFjsChargeAndHandleFailure({
+    isApplePay,
+    chargeCardInput,
+    paymentFlow,
+    catalogItems,
+    paymentResult,
+    totalPrice,
+    merchantReferenceData,
+    persistedPaymentConfirmation,
+    paymentConfirmationId,
+    paymentTrackingData,
+  }: {
+    isApplePay: boolean
+    chargeCardInput: ChargeCardInput | ApplePayChargeInput
+    paymentFlow: PaymentFlowAttributes
+    catalogItems: CatalogItemWithQuantity[]
+    paymentResult: CardPaymentResponse
+    totalPrice: number
+    merchantReferenceData: string
+    persistedPaymentConfirmation: boolean
+    paymentConfirmationId: string
+    paymentTrackingData: PaymentTrackingData
+  }): Promise<FjsCharge | null> {
     const paymentFlowId = chargeCardInput.paymentFlowId
     let createdFjsCharge: FjsCharge | null = null
     try {
@@ -439,14 +636,13 @@ export class CardPaymentController {
           },
         )
         try {
-          const refund = await retry(() =>
-            this.cardPaymentService.refund(
-              paymentFlowId,
-              chargeCardInput.cardNumber,
-              paymentResult as ChargeResponse,
-              chargeCardInput.amount,
-            ),
-          )
+          const refund = await this.refund({
+            isApplePay,
+            paymentFlowId,
+            chargeCardInput,
+            paymentResult,
+            paymentTrackingData,
+          })
 
           // After successful refund, delete the payment confirmation.
           if (persistedPaymentConfirmation) {
@@ -503,7 +699,7 @@ export class CardPaymentController {
               payment: paymentResult,
               paymentTrackingData: {
                 merchantReferenceData,
-                correlationId: paymentResult.correlationId,
+                correlationId: paymentResult.correlationID,
               },
             },
           )
@@ -519,7 +715,7 @@ export class CardPaymentController {
               payment: paymentResult,
               paymentTrackingData: {
                 merchantReferenceData,
-                correlationId: paymentResult.correlationId,
+                correlationId: paymentResult.correlationID,
               },
               fjsError: e.message,
               refundError: refundError.message,
@@ -549,13 +745,23 @@ export class CardPaymentController {
     }
   }
 
-  private async handleSuccessfulPaymentNotification(
-    paymentFlowId: string,
-    paymentResult: ChargeResponse,
-    confirmation: FjsCharge | null,
-    chargeCardInput: ChargeCardInput,
-    paymentConfirmationId: string,
-  ) {
+  private async handleSuccessfulPaymentNotification({
+    isApplePay,
+    paymentFlowId,
+    paymentResult,
+    confirmation,
+    chargeCardInput,
+    paymentConfirmationId,
+    paymentTrackingData,
+  }: {
+    isApplePay: boolean
+    paymentFlowId: string
+    paymentResult: CardPaymentResponse
+    confirmation: FjsCharge | null
+    chargeCardInput: ChargeCardInput | ApplePayChargeInput
+    paymentConfirmationId: string
+    paymentTrackingData: PaymentTrackingData
+  }) {
     try {
       await this.paymentFlowService.logPaymentFlowUpdate(
         {
@@ -581,14 +787,13 @@ export class CardPaymentController {
         { error: logUpdateError.message },
       )
       try {
-        const refund = await retry(() =>
-          this.cardPaymentService.refund(
-            paymentFlowId,
-            chargeCardInput.cardNumber,
-            paymentResult as ChargeResponse,
-            chargeCardInput.amount,
-          ),
-        )
+        const refund = await this.refund({
+          isApplePay,
+          paymentFlowId,
+          chargeCardInput,
+          paymentResult,
+          paymentTrackingData,
+        })
 
         // After successful refund, delete the confirmation.
         try {

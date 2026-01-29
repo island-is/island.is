@@ -47,8 +47,10 @@ import {
 } from '../../utils/fjsCharge'
 import { processCharges } from '../../utils/chargeUtils'
 import { CardPaymentDetails } from './models/cardPaymentDetails.model'
-import { ChargeResponse } from '../cardPayment/cardPayment.types'
-import { PaymentTrackingData } from '../../types/cardPayment'
+import {
+  CardPaymentResponse,
+  PaymentTrackingData,
+} from '../../types/cardPayment'
 import { onlyReturnKnownErrorCode } from '../../utils/paymentErrors'
 import { generateWebhookJwt } from '../../utils/webhookAuth.utils'
 import { JwksConfigService } from '../jwks/jwks-config.service'
@@ -595,7 +597,7 @@ export class PaymentFlowService {
     totalPrice,
     paymentTrackingData,
   }: {
-    paymentResult: ChargeResponse
+    paymentResult: CardPaymentResponse
     paymentFlowId: string
     totalPrice: number
     paymentTrackingData: PaymentTrackingData

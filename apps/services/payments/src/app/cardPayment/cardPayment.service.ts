@@ -3,37 +3,52 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager'
 import { Cache as CacheManager } from 'cache-manager'
 import { ConfigType } from '@nestjs/config'
 import { v4 as uuid } from 'uuid'
+import { z } from 'zod'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { PaymentServiceCode } from '@island.is/shared/constants'
+import {
+  ApplePayErrorCode,
+  PaymentServiceCode,
+} from '@island.is/shared/constants'
 
 import { CardPaymentModuleConfig } from './cardPayment.config'
 import {
   CachePaymentFlowStatus,
-  ChargeResponse,
   MdNormalised,
-  RefundResponse,
   SavedVerificationCompleteData,
   SavedVerificationPendingData,
   VerificationResponse,
 } from './cardPayment.types'
 import {
+  generateApplePayChargeRequestOptions,
+  generateApplePayRefundRequestOptions,
+  generateApplePaySessionRequestOptions,
   generateCardChargeFJSPayload,
   generateChargeRequestOptions,
   generateMd,
   generateRefundRequestOptions,
   generateVerificationRequestOptions,
   getPayloadFromMd,
-  mapToCardErrorCode,
 } from './cardPayment.utils'
-import { VerificationCallbackInput } from './dtos/verificationCallback.input'
-import { ChargeCardInput } from './dtos/chargeCard.input'
-import { VerifyCardInput } from './dtos/verifyCard.input'
 import { PaymentFlowAttributes } from '../paymentFlow/models/paymentFlow.model'
 import { CatalogItemWithQuantity } from '../../types/charges'
-import { PaymentTrackingData } from '../../types/cardPayment'
+import {
+  CardPaymentResponse,
+  CardPaymentResponseSchema,
+  PaymentTrackingData,
+  RefundResponseSchema,
+  RefundResponse,
+} from '../../types/cardPayment'
 import { paymentGatewayResponseCodes } from './cardPayment.constants'
+import { mapToCardErrorCode } from '../../utils/paymentErrors'
+import {
+  ApplePayChargeInput,
+  ApplePaySessionResponse,
+  ChargeCardInput,
+  VerifyCardInput,
+  VerificationCallbackInput,
+} from './dtos'
 
 @Injectable()
 export class CardPaymentService {
@@ -227,7 +242,7 @@ export class CardPaymentService {
   async charge(
     chargeCardInput: ChargeCardInput,
     paymentTrackingData: PaymentTrackingData,
-  ) {
+  ): Promise<CardPaymentResponse> {
     const status = await this.getFullVerificationStatus(
       chargeCardInput.paymentFlowId,
     )
@@ -271,24 +286,11 @@ export class CardPaymentService {
       requestOptions,
     )
 
-    if (!response.ok) {
-      const responseBody = await response.text()
-      this.logger.error('Failed to charge card', {
-        statusText: response.statusText,
-        responseBody,
-      })
-      throw new BadRequestException(response.statusText)
-    }
-
-    const data = (await response.json()) as ChargeResponse
-
-    if (!data?.isSuccess) {
-      this.logger.error('Failed to charge card', {
-        responseCode: data?.responseCode,
-        responseDescription: data?.responseDescription,
-      })
-      throw new BadRequestException(mapToCardErrorCode(data.responseCode))
-    }
+    const data = await this.parsePaymentGatewayResponseAndHandleErrors({
+      response,
+      schema: CardPaymentResponseSchema,
+      errorMessage: 'Failed to charge card',
+    })
 
     try {
       await this.cacheManager.del(correlationId)
@@ -306,7 +308,7 @@ export class CardPaymentService {
   async refund(
     paymentFlowId: string,
     cardNumber: string,
-    charge: ChargeResponse,
+    charge: CardPaymentResponse,
     amount: number,
   ) {
     try {
@@ -356,7 +358,7 @@ export class CardPaymentService {
         this.logger.error(`[${paymentFlowId}] Failed to refund payment`, {
           responseCode: data?.responseCode,
           responseDescription: data?.responseDescription,
-          correlationId: data?.correlationId,
+          correlationId: data?.correlationID,
         })
         throw new BadRequestException(mapToCardErrorCode(data.responseCode))
       }
@@ -366,6 +368,30 @@ export class CardPaymentService {
       this.logger.error(`[${paymentFlowId}] Failed to refund payment`, e)
       throw e
     }
+  }
+
+  async refundApplePay(
+    paymentTrackingData: PaymentTrackingData,
+  ): Promise<RefundResponse> {
+    const { paymentsGatewayApiUrl } = this.config.paymentGateway
+
+    const requestOptions = generateApplePayRefundRequestOptions({
+      paymentApiConfig: this.config.paymentGateway,
+      paymentTrackingData,
+    })
+
+    const response = await fetch(
+      `${paymentsGatewayApiUrl}/Payment/RefundWithCorrelationId`,
+      requestOptions,
+    )
+
+    const data = await this.parsePaymentGatewayResponseAndHandleErrors({
+      response,
+      schema: RefundResponseSchema,
+      errorMessage: 'Failed to refund Apple Pay payment',
+    })
+
+    return data
   }
 
   createCardPaymentChargePayload({
@@ -378,7 +404,7 @@ export class CardPaymentService {
   }: {
     paymentFlow: PaymentFlowAttributes
     charges: CatalogItemWithQuantity[]
-    chargeResponse: ChargeResponse
+    chargeResponse: CardPaymentResponse
     totalPrice: number
     merchantReferenceData: string
     systemId: string
@@ -391,5 +417,110 @@ export class CardPaymentService {
       systemId,
       merchantReferenceData,
     })
+  }
+
+  async getApplePaySession(): Promise<ApplePaySessionResponse> {
+    const { paymentsGatewayApiUrl } = this.config.paymentGateway
+
+    const requestOptions = generateApplePaySessionRequestOptions({
+      domainName: 'island-is-apple-pay-dev.aranja.com',
+      displayName: 'Aranja',
+      paymentApiConfig: this.config.paymentGateway,
+    })
+
+    const response = await fetch(
+      `${paymentsGatewayApiUrl}/ApplePay/GetSession`,
+      requestOptions,
+    )
+
+    if (!response.ok) {
+      const responseBody = await response.text()
+      this.logger.error('Failed to get Apple Pay session', {
+        statusText: response.statusText,
+        responseBody,
+      })
+      throw new BadRequestException(response.statusText)
+    }
+
+    const data = await response.json()
+    this.logger.info('APPLE PAY SESSION', data)
+    if (!data.isSuccess || !data.session) {
+      throw new BadRequestException(
+        ApplePayErrorCode.ErrorGettingApplePaySession,
+      )
+    }
+
+    return {
+      session: data.session,
+    }
+  }
+
+  async chargeApplePay(
+    input: ApplePayChargeInput,
+    paymentTrackingData: PaymentTrackingData,
+  ): Promise<CardPaymentResponse> {
+    const { paymentsGatewayApiUrl } = this.config.paymentGateway
+
+    const requestOptions = generateApplePayChargeRequestOptions({
+      input,
+      paymentApiConfig: this.config.paymentGateway,
+      paymentTrackingData,
+    })
+
+    const response = await fetch(
+      `${paymentsGatewayApiUrl}/Payment/WalletPayment`,
+      requestOptions,
+    )
+
+    const data = await this.parsePaymentGatewayResponseAndHandleErrors({
+      response,
+      schema: CardPaymentResponseSchema,
+      errorMessage: 'Failed to charge Apple Pay payment',
+    })
+
+    return data
+  }
+
+  private async parsePaymentGatewayResponseAndHandleErrors<
+    T extends z.ZodTypeAny,
+  >({
+    response,
+    schema,
+    errorMessage,
+  }: {
+    response: Response
+    schema: T
+    errorMessage: string
+  }): Promise<z.infer<T>> {
+    if (!response.ok) {
+      const responseBody = await response.text()
+      this.logger.error(errorMessage, {
+        statusText: response.statusText,
+        responseBody,
+      })
+      throw new BadRequestException(response.statusText)
+    }
+
+    const data = await response.json()
+    const parsedData = schema.safeParse(data)
+
+    if (!parsedData.success) {
+      this.logger.error('Failed to parse payment gateway response', {
+        error: parsedData.error,
+      })
+      throw new BadRequestException(parsedData.error.message)
+    }
+
+    const { isSuccess, responseCode, responseDescription } = parsedData.data
+
+    if (!isSuccess) {
+      this.logger.error(`Payment gateway error: ${errorMessage}`, {
+        responseCode,
+        responseDescription,
+      })
+      throw new BadRequestException(mapToCardErrorCode(responseCode))
+    }
+
+    return parsedData.data
   }
 }

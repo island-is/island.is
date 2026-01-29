@@ -9,56 +9,13 @@ export interface VerificationResponse {
     issuingCountry: string
     cardUsage: string
     cardCategory: string
-    outOfScaScope: string
-    cardProductCategory: string
+    outOfScaScope: boolean
   }
   scriptPath: string
   responseCode: string
   responseDescription: string
   responseTime: string
-  correlationId: string
-}
-
-export interface ChargeResponse {
-  acquirerReferenceNumber: string
-  transactionID: string
-  authorizationCode: string
-  transactionLifecycleId: string
-  maskedCardNumber: string
-  isSuccess: boolean
-  cardInformation: {
-    cardScheme: string
-    issuingCountry: string
-    cardUsage: string
-    cardCategory: string
-    outOfScaScope: string
-    cardProductCategory: string
-  }
-  authorizationIdentifier: string
-  responseCode: string
-  responseDescription: string
-  responseTime: string
-  correlationId: string
-}
-
-export interface RefundResponse {
-  acquirerReferenceNumber: string
-  transactionID: string
-  transactionLifecycleId: string
-  maskedCardNumber: string
-  isSuccess: true
-  cardInformation: {
-    cardScheme: string
-    issuingCountry: string
-    cardUsage: string
-    cardCategory: string
-    outOfScaScope: string
-  }
-  authorizationIdentifier: string
-  responseCode: string
-  responseDescription: string
-  responseTime: string
-  correlationId: string
+  correlationID: string
 }
 
 export interface CachePaymentFlowStatus {

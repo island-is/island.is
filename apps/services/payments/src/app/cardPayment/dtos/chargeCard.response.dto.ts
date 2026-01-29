@@ -21,13 +21,9 @@ class CardInformation {
   @IsString()
   cardCategory!: string
 
-  @ApiProperty({ description: 'Out-of-SCA scope status', type: String })
+  @ApiProperty({ description: 'Out-of-SCA scope status', type: Boolean })
   @IsString()
-  outOfScaScope!: string
-
-  @ApiProperty({ description: 'Card product category', type: String })
-  @IsString()
-  cardProductCategory!: string
+  outOfScaScope!: boolean
 }
 
 export class ChargeCardResponse {
@@ -72,7 +68,7 @@ export class ChargeCardResponse {
 
   @ApiProperty({ description: 'Description of the response', type: String })
   @IsString()
-  responseDescription!: string
+  responseDescription?: string
 
   @ApiProperty({ description: 'Response time of the charge', type: String })
   @IsString()

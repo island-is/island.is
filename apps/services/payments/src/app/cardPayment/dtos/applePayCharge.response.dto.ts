@@ -1,15 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsArray, IsBoolean, IsObject, IsString } from 'class-validator'
-
-class VerificationField {
-  @ApiProperty({ description: 'Field name', type: String })
-  @IsString()
-  name!: string
-
-  @ApiProperty({ description: 'Field value', type: String })
-  @IsString()
-  value!: string
-}
+import { IsBoolean, IsObject, IsString } from 'class-validator'
 
 class CardInformation {
   @ApiProperty({
@@ -36,31 +26,29 @@ class CardInformation {
   outOfScaScope!: boolean
 }
 
-export class VerifyCardResponse {
-  @ApiProperty({
-    description: 'Raw response from card verification',
-    type: String,
-  })
+export class ApplePayChargeResponse {
+  @ApiProperty({ description: 'Acquirer reference number', type: String })
   @IsString()
-  cardVerificationRawResponse!: string
+  acquirerReferenceNumber!: string
 
-  @ApiProperty({ description: 'Post URL for verification', type: String })
+  @ApiProperty({ description: 'Transaction ID', type: String })
   @IsString()
-  postUrl!: string
+  transactionID!: string
+
+  @ApiProperty({ description: 'Authorization code', type: String })
+  @IsString()
+  authorizationCode!: string
+
+  @ApiProperty({ description: 'Transaction lifecycle ID', type: String })
+  @IsString()
+  transactionLifecycleId!: string
+
+  @ApiProperty({ description: 'Masked card number', type: String })
+  @IsString()
+  maskedCardNumber!: string
 
   @ApiProperty({
-    description: 'Verification fields',
-    type: [VerificationField],
-  })
-  @IsArray()
-  verificationFields!: VerificationField[]
-
-  @ApiProperty({ description: 'Additional fields', type: [VerificationField] })
-  @IsArray()
-  additionalFields!: VerificationField[]
-
-  @ApiProperty({
-    description: 'Indicates if the verification was successful',
+    description: 'Indicates if the transaction was successful',
     type: Boolean,
   })
   @IsBoolean()
@@ -70,14 +58,11 @@ export class VerifyCardResponse {
   @IsObject()
   cardInformation!: CardInformation
 
-  @ApiProperty({ description: 'Script path for further actions', type: String })
+  @ApiProperty({ description: 'Authorization identifier', type: String })
   @IsString()
-  scriptPath!: string
+  authorizationIdentifier!: string
 
-  @ApiProperty({
-    description: 'Response code from the verification',
-    type: String,
-  })
+  @ApiProperty({ description: 'Response code from the charge', type: String })
   @IsString()
   responseCode!: string
 
@@ -85,10 +70,7 @@ export class VerifyCardResponse {
   @IsString()
   responseDescription?: string
 
-  @ApiProperty({
-    description: 'Response time of the verification',
-    type: String,
-  })
+  @ApiProperty({ description: 'Response time of the charge', type: String })
   @IsString()
   responseTime!: string
 
