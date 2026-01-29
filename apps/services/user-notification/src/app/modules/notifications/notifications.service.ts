@@ -1,6 +1,7 @@
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { InjectModel } from '@nestjs/sequelize'
+import { isValid as isValidKennitala } from 'kennitala'
 import {
   BadRequestException,
   Inject,
@@ -67,12 +68,8 @@ export class NotificationsService {
   ): Promise<SenderOrganization | undefined> {
     locale = mapToLocale(locale as Locale)
 
-    // Remove any existing dashes to normalize the input
-    const sanitizedNationalId = senderId.replace('-', '')
-
-    // First attempt: query with the nationalId as-is (without dash)
     let res = (await this.cmsService.fetchData(GetOrganizationByNationalId, {
-      nationalId: sanitizedNationalId,
+      nationalId: senderId,
       locale: mapToContentfulLocale(locale),
     })) as unknown as {
       organizationCollection: { items: Array<{ title: string }> }
@@ -80,22 +77,27 @@ export class NotificationsService {
 
     let items = res.organizationCollection.items
 
-    // Second attempt: if no results and the nationalId is 10 digits, try with dashed format (XXXXXX-XXXX)
-    // This handles the inconsistent kennitala field format in Contentful
-    if (items.length === 0 && sanitizedNationalId.length === 10) {
-      const dashedNationalId = `${sanitizedNationalId.slice(
-        0,
-        6,
-      )}-${sanitizedNationalId.slice(6)}`
+    // Second attempt: if no results, try with the alternative format
+    // This handles inconsistent kennitala field format in Contentful (with/without dash)
+    if (items.length === 0) {
+      const sanitizedNationalId = senderId.replace(/\D/g, '')
 
-      res = (await this.cmsService.fetchData(GetOrganizationByNationalId, {
-        nationalId: dashedNationalId,
-        locale: mapToContentfulLocale(locale),
-      })) as unknown as {
-        organizationCollection: { items: Array<{ title: string }> }
+      // Only proceed if we have a valid kennitala
+      if (isValidKennitala(sanitizedNationalId)) {
+        // Try the opposite format: if senderId had dash, try without; if not, try with
+        const alternativeFormat = senderId.includes('-')
+          ? sanitizedNationalId
+          : `${sanitizedNationalId.slice(0, 6)}-${sanitizedNationalId.slice(6)}`
+
+        res = (await this.cmsService.fetchData(GetOrganizationByNationalId, {
+          nationalId: alternativeFormat,
+          locale: mapToContentfulLocale(locale),
+        })) as unknown as {
+          organizationCollection: { items: Array<{ title: string }> }
+        }
+
+        items = res.organizationCollection.items
       }
-
-      items = res.organizationCollection.items
     }
 
     if (items.length > 0) {
