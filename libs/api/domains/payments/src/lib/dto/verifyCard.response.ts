@@ -57,7 +57,10 @@ export class VerifyCardResponse {
   @Field(() => String, { description: 'Response code from the verification' })
   responseCode!: string
 
-  @Field(() => String, { description: 'Description of the response', nullable: true })
+  @Field(() => String, {
+    description: 'Description of the response',
+    nullable: true,
+  })
   responseDescription: string | null = null
 
   @Field(() => String, { description: 'Response time of the verification' })

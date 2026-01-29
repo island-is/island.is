@@ -326,9 +326,7 @@ export const generateApplePayRefundRequestOptions = ({
 
   const body = {
     originalCorrelationId: paymentTrackingData.correlationId,
-    originalTransactionDate:
-      paymentTrackingData.paymentDate?.toISOString() ??
-      new Date().toISOString(),
+    originalTransactionDate: paymentTrackingData.paymentDate.toISOString(),
     systemCalling: systemCalling,
   }
 

@@ -16,7 +16,7 @@ export type PaymentError = {
 export const paymentErrorToTitleAndMessage = (
   error: PaymentError,
 ): { title: MessageDescriptor; message: MessageDescriptor } => {
-  const { code, meta } = error
+  const { code } = error
 
   switch (code as CardErrorCode | FjsErrorCode | PaymentServiceCode) {
     case CardErrorCode.InsufficientFunds:

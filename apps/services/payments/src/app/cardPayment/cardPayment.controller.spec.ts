@@ -1,20 +1,19 @@
+import { CACHE_MANAGER } from '@nestjs/cache-manager'
+import { BadRequestException } from '@nestjs/common'
+import { getModelToken } from '@nestjs/sequelize'
+import { Cache as CacheManager } from 'cache-manager'
 import request from 'supertest'
 import { v4 as uuid } from 'uuid'
-import { Cache as CacheManager } from 'cache-manager'
-import { CACHE_MANAGER } from '@nestjs/cache-manager'
-import { getModelToken } from '@nestjs/sequelize'
-import { BadRequestException } from '@nestjs/common'
 
-import { TestApp, testServer, useDatabase } from '@island.is/testing/nest'
 import { ChargeFjsV2ClientService } from '@island.is/clients/charge-fjs-v2'
+import { TestApp, testServer, useDatabase } from '@island.is/testing/nest'
 
-import { VerifyCardInput } from './dtos/verifyCard.input'
 import {
   CardErrorCode,
   FjsErrorCode,
   PaymentServiceCode,
 } from '@island.is/shared/constants'
-import { CreatePaymentFlowInput } from '../paymentFlow/dtos/createPaymentFlow.input'
+import { SequelizeConfigService } from '../../sequelizeConfig.service'
 import {
   CardPaymentResponse,
   PaymentMethod,
@@ -22,18 +21,19 @@ import {
   RefundResponse,
 } from '../../types'
 import { AppModule } from '../app.module'
-import { SequelizeConfigService } from '../../sequelizeConfig.service'
+import { CreatePaymentFlowInput } from '../paymentFlow/dtos/createPaymentFlow.input'
+import { PaymentFlowEvent } from '../paymentFlow/models/paymentFlowEvent.model'
+import { PaymentFulfillment } from '../paymentFlow/models/paymentFulfillment.model'
+import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
+import { CardPaymentService } from './cardPayment.service'
 import {
   CachePaymentFlowStatus,
   SavedVerificationCompleteData,
   SavedVerificationPendingData,
 } from './cardPayment.types'
 import { generateMd, getPayloadFromMd } from './cardPayment.utils'
-import { VerificationCallbackInput, ChargeCardInput } from './dtos'
-import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
-import { PaymentFlowEvent } from '../paymentFlow/models/paymentFlowEvent.model'
-import { PaymentFulfillment } from '../paymentFlow/models/paymentFulfillment.model'
-import { CardPaymentService } from './cardPayment.service'
+import { ChargeCardInput, VerificationCallbackInput } from './dtos'
+import { VerifyCardInput } from './dtos/verifyCard.input'
 
 const charges = [
   {
@@ -83,6 +83,8 @@ describe('CardPaymentController', () => {
     process.env.PAYMENTS_GATEWAY_API_URL = ''
     process.env.PAYMENTS_TOKEN_SIGNING_SECRET = TOKEN_SIGNING_SECRET
     process.env.PAYMENTS_TOKEN_SIGNING_ALGORITHM = TOKEN_SIGNING_ALGORITHM
+    process.env.PAYMENTS_APPLE_PAY_DOMAIN = 'island.is'
+    process.env.PAYMENTS_APPLE_PAY_DISPLAY_NAME = 'issland.is'
 
     app = await testServer({
       appModule: AppModule,
@@ -368,7 +370,7 @@ describe('CardPaymentController', () => {
 
       const fetchSpy = jest
         .spyOn(global, 'fetch')
-        .mockImplementation(async (url, options) => {
+        .mockImplementation(async (url) => {
           if (typeof url === 'string') {
             return {
               json: async () => ({ isSuccess: true }),
@@ -443,7 +445,7 @@ describe('CardPaymentController', () => {
 
       const fetchSpy = jest
         .spyOn(global, 'fetch')
-        .mockImplementation(async (url, options) => {
+        .mockImplementation(async (url) => {
           if (typeof url === 'string') {
             if (url === ON_UPDATE_URL) {
               return {
@@ -492,7 +494,7 @@ describe('CardPaymentController', () => {
 
       const fetchSpy = jest
         .spyOn(global, 'fetch')
-        .mockImplementation(async (url, options) => {
+        .mockImplementation(async (url) => {
           if (typeof url === 'string') {
             if (url === ON_UPDATE_URL) {
               return {
@@ -548,7 +550,7 @@ describe('CardPaymentController', () => {
 
     const fetchSpy = jest
       .spyOn(global, 'fetch')
-      .mockImplementation(async (url, options) => {
+      .mockImplementation(async (url) => {
         if (typeof url === 'string') {
           if (url.includes(ON_UPDATE_URL)) {
             return {
@@ -697,6 +699,10 @@ describe('CardPaymentController', () => {
       dsTransId: 'dsTransId',
     }
 
+    const getVerificationStatusSpy = jest
+      .spyOn(CardPaymentService.prototype, 'getFullVerificationStatus')
+      .mockResolvedValue(mockedStatus)
+
     const mockedChargeResponse: CardPaymentResponse = {
       acquirerReferenceNumber: 'string',
       transactionID: 'string',
@@ -711,11 +717,11 @@ describe('CardPaymentController', () => {
         cardCategory: 'string',
         outOfScaScope: false,
       },
-      authorizationIdentifier: 'string',
+      authorizationIdentifier: uuid(),
       responseCode: 'string',
       responseDescription: 'string',
       responseTime: 'string',
-      correlationID: 'string',
+      correlationID: uuid(),
     }
 
     const getPaymentFlowChargeDetailsSpy = jest
@@ -733,7 +739,7 @@ describe('CardPaymentController', () => {
 
     const fetchSpy = jest
       .spyOn(global, 'fetch')
-      .mockImplementation(async (url, init) => {
+      .mockImplementation(async (url, init?: RequestInit) => {
         if (typeof url === 'string') {
           if (url === ON_UPDATE_URL) {
             const updateEventType = init?.body
@@ -775,12 +781,13 @@ describe('CardPaymentController', () => {
                       cardCategory: 'string',
                       outOfScaScope: false,
                     },
-                    authorizationIdentifier: 'string',
+                    authorizationIdentifier: uuid(),
                     responseCode: 'string',
                     responseDescription: 'string',
                     responseTime: 'string',
-                    correlationID: 'string',
+                    correlationID: uuid(),
                   } as RefundResponse),
+                text: async () => 'Refund successful',
                 status: 200,
                 ok: true,
               } as Response
@@ -788,6 +795,7 @@ describe('CardPaymentController', () => {
 
             return {
               json: async () => mockedChargeResponse,
+              text: async () => 'Charge successful',
               status: 200,
               ok: true,
             } as Response
@@ -845,6 +853,7 @@ describe('CardPaymentController', () => {
       CardErrorCode.RefundedBecauseOfSystemError,
     )
 
+    getVerificationStatusSpy.mockRestore()
     getPaymentFlowChargeDetailsSpy.mockRestore()
     fetchSpy.mockRestore()
     cacheSpy.mockRestore()
@@ -858,7 +867,7 @@ describe('CardPaymentController', () => {
 
         const fetchSpy = jest
           .spyOn(global, 'fetch')
-          .mockImplementation(async (url, options) => {
+          .mockImplementation(async (url) => {
             if (
               typeof url === 'string' &&
               url.includes('/ApplePay/GetSession')
@@ -891,7 +900,7 @@ describe('CardPaymentController', () => {
       it('should throw an error if the gateway returns an error', async () => {
         const fetchSpy = jest
           .spyOn(global, 'fetch')
-          .mockImplementation(async (url, options) => {
+          .mockImplementation(async (url) => {
             if (
               typeof url === 'string' &&
               url.includes('/ApplePay/GetSession')
@@ -922,7 +931,7 @@ describe('CardPaymentController', () => {
       it('should throw an error if isSuccess is false', async () => {
         const fetchSpy = jest
           .spyOn(global, 'fetch')
-          .mockImplementation(async (url, options) => {
+          .mockImplementation(async (url) => {
             if (
               typeof url === 'string' &&
               url.includes('/ApplePay/GetSession')
@@ -997,7 +1006,7 @@ describe('CardPaymentController', () => {
 
         const fetchSpy = jest
           .spyOn(global, 'fetch')
-          .mockImplementation(async (url, options) => {
+          .mockImplementation(async (url) => {
             if (typeof url === 'string') {
               if (url.includes(ON_UPDATE_URL)) {
                 return {
@@ -1081,7 +1090,7 @@ describe('CardPaymentController', () => {
       it('should throw an error if trying to charge an invalid payment flow', async () => {
         const fetchSpy = jest
           .spyOn(global, 'fetch')
-          .mockImplementation(async (url, options) => {
+          .mockImplementation(async (url) => {
             if (typeof url === 'string' && url.includes(ON_UPDATE_URL)) {
               return {
                 json: async () => ({ isSuccess: true }),
@@ -1120,7 +1129,7 @@ describe('CardPaymentController', () => {
       it('should throw an error if trying to charge a payment flow that has already been paid', async () => {
         const fetchSpy = jest
           .spyOn(global, 'fetch')
-          .mockImplementation(async (url, options) => {
+          .mockImplementation(async (url) => {
             if (typeof url === 'string' && url.includes(ON_UPDATE_URL)) {
               return {
                 json: async () => ({ isSuccess: true }),

@@ -217,6 +217,7 @@ export class CardPaymentController {
       const paymentTrackingData: PaymentTrackingData = {
         merchantReferenceData,
         correlationId: paymentConfirmationId,
+        paymentDate: new Date(),
       }
 
       this.logger.info(
@@ -311,6 +312,7 @@ export class CardPaymentController {
       const paymentTrackingData: PaymentTrackingData = {
         merchantReferenceData,
         correlationId: paymentConfirmationId,
+        paymentDate: new Date(),
       }
 
       this.logger.info(
@@ -401,14 +403,14 @@ export class CardPaymentController {
       ],
     )
 
-    if (paymentStatus === 'paid') {
-      throw new BadRequestException(PaymentServiceCode.PaymentFlowAlreadyPaid)
-    }
-
     if (totalPrice !== amount) {
       throw new BadRequestException(
         PaymentServiceCode.PaymentFlowAmountMismatch,
       )
+    }
+
+    if (paymentStatus === 'paid') {
+      throw new BadRequestException(PaymentServiceCode.PaymentFlowAlreadyPaid)
     }
 
     return {

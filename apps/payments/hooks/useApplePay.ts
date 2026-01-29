@@ -2,16 +2,12 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { CardErrorCode } from '@island.is/shared/constants'
 
+import { useChargeApplePayMutation } from '../graphql/mutations.graphql.generated'
 import {
   GetPaymentFlowQuery,
   useGetApplePaySessionLazyQuery,
 } from '../graphql/queries.graphql.generated'
-import {
-  useChargeApplePayMutation,
-  ChargeApplePayMutationVariables,
-} from '../graphql/mutations.graphql.generated'
 import { PaymentError } from '../utils/error/error'
-import { PaymentsApplePayChargeInput } from '@island.is/api/schema'
 
 // Extend Window interface to include ApplePaySession
 declare global {

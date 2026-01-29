@@ -3,7 +3,7 @@ import { z } from 'zod'
 export interface PaymentTrackingData {
   merchantReferenceData: string
   correlationId: string
-  paymentDate?: Date
+  paymentDate: Date
 }
 
 export const CardInformationSchema = z.object({
