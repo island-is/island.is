@@ -121,7 +121,7 @@ export const PaymentOverview = () => {
   }, [])
 
   return (
-    <PaymentsWrapper pathname={HealthPaths.HealthPaymentOverview}>
+    <PaymentsWrapper pathname={HealthPaths.HealthPaymentOverviewInvoices}>
       {error ? (
         <Problem noBorder={false} error={error} />
       ) : loading ? (

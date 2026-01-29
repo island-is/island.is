@@ -1227,6 +1227,19 @@ export const messages = defineMessages({
     defaultMessage: 'Greiðsluyfirlit',
     id: 'sp.health:payment-overview',
   },
+  paymentOverviewInvoices: {
+    defaultMessage: 'Yfirlit reikninga',
+    id: 'sp.health:payment-overview-invoices',
+  },
+  paymentOverviewTotals: {
+    defaultMessage: 'Samtölu tímabil',
+    id: 'sp.health:payment-overview-totals',
+  },
+  paymentOverviewTotalsIntro: {
+    defaultMessage:
+      'Lorem ipsum dolor sit amet consectetur. Dictum egestas diam at morbi lectus posuere mattis sit praesent. Et ultricies sed viverra neque eget odio blandit nunc. Non non aliquam vel urna blandit leo.',
+    id: 'sp.health:payment-overview-totals-intro',
+  },
   paymentParticationExplanation: {
     defaultMessage:
       'Við útreikning á greiðsluþátttöku er tekið mið af greiðslum fyrir heilbrigðisþjónustu s.l. fimm mánuði. Eigir þú á rétt á hámarksafslætti vegna fyrri greiðslna verður hámarksgreiðsla þín í mánuði {basePayment} kr. Fjárhæðin miðar við greiðslumark þitt eins og það birtist í Réttindagátt í dag. Birt með þeim fyrirvara að fjárhæðin tekur mið af þeim reikningum sem hafa borist Sjúkratryggingar.',
