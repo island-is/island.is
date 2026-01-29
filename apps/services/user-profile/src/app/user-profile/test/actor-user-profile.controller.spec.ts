@@ -26,6 +26,7 @@ import { formatPhoneNumber } from '../utils/format-phone-number'
 import { ActorProfile } from '../models/actor-profile.model'
 import { Emails } from '../models/emails.model'
 import { NUDGE_INTERVAL, SKIP_INTERVAL } from '../user-profile.service'
+import { notificationScopes } from '@island.is/auth/scopes'
 
 const testUserProfileEmail = {
   email: faker.internet.email(),
@@ -881,8 +882,7 @@ describe('GET v2/actor/actor-profiles', () => {
       delegationsApi.delegationsControllerGetDelegationRecords,
     ).toHaveBeenCalledWith({
       xQueryNationalId: testUserProfile.nationalId,
-      scopes:
-        '@island.is/documents,@island.is/applications/samgongustofa-vehicles',
+      scopes: notificationScopes.join(','),
       direction: 'incoming',
     })
   })
@@ -1088,8 +1088,7 @@ describe('GET v2/actor/actor-profiles', () => {
       delegationsApi.delegationsControllerGetDelegationRecords,
     ).toHaveBeenCalledWith({
       xQueryNationalId: testUserProfile.nationalId,
-      scopes:
-        '@island.is/documents,@island.is/applications/samgongustofa-vehicles',
+      scopes: notificationScopes.join(','),
       direction: 'incoming',
     })
   })
@@ -1883,8 +1882,7 @@ describe('PATCH v2/actor/actor-profiles/.from-national-id', () => {
       delegationsApi.delegationsControllerGetDelegationRecords,
     ).toHaveBeenCalledWith({
       xQueryNationalId: testUserProfile.nationalId,
-      scopes:
-        '@island.is/documents,@island.is/applications/samgongustofa-vehicles',
+      scopes: notificationScopes.join(','),
       direction: 'incoming',
     })
   })

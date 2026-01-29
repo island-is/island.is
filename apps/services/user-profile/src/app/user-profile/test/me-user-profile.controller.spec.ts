@@ -30,6 +30,7 @@ import { PostNudgeDto } from '../dto/post-nudge.dto'
 import { ActorProfile } from '../models/actor-profile.model'
 import { Emails } from '../models/emails.model'
 import { NUDGE_INTERVAL, SKIP_INTERVAL } from '../user-profile.service'
+import { notificationScopes } from '@island.is/auth/scopes'
 
 type StatusFieldType = 'emailStatus' | 'mobileStatus'
 
@@ -1374,8 +1375,7 @@ describe('MeUserProfileController', () => {
         delegationsApi.delegationsControllerGetDelegationRecords,
       ).toHaveBeenCalledWith({
         xQueryNationalId: testUserProfile.nationalId,
-        scopes:
-          '@island.is/documents,@island.is/applications/samgongustofa-vehicles',
+        scopes: notificationScopes.join(','),
         direction: 'incoming',
       })
     })
@@ -1582,8 +1582,7 @@ describe('MeUserProfileController', () => {
         delegationsApi.delegationsControllerGetDelegationRecords,
       ).toHaveBeenCalledWith({
         xQueryNationalId: testUserProfile.nationalId,
-        scopes:
-          '@island.is/documents,@island.is/applications/samgongustofa-vehicles',
+        scopes: notificationScopes.join(','),
         direction: 'incoming',
       })
     })
