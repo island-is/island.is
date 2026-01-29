@@ -1,4 +1,4 @@
-import { Contract } from '../../gen/fetch'
+import { Contract, ContractDocumentItem } from '../../gen/fetch'
 import { AgreementStatusType, TemporalType } from '../types'
 import { ContractPartyDto, mapContractPartyDto } from './contractParty.dto'
 import {
@@ -16,10 +16,12 @@ export interface RentalAgreementDto {
   contractType: TemporalType
   contractParty?: ContractPartyDto[]
   contractProperty?: ContractPropertyDto[]
+  documents?: string[]
 }
 
 export const mapRentalAgreementDto = (
   contract: Contract,
+  documents?: ContractDocumentItem[],
 ): RentalAgreementDto | null => {
   if (!contract.contractId) {
     return null
