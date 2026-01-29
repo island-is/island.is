@@ -3,7 +3,6 @@ import { CacheField } from '@island.is/nest/graphql'
 import { ICourse, ICourseInstance } from '../generated/contentfulTypes'
 import { mapDocument, SliceUnion } from '../unions/slice.union'
 import { GenericTag, mapGenericTag } from './genericTag.model'
-import { mapPrice, Price } from './price.model'
 import { GetCoursesInput } from '../dto/getCourses.input'
 import { GetCourseSelectOptionsInput } from '../dto/getCourseSelectOptions.input'
 
