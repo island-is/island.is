@@ -84,7 +84,7 @@ describe('CardPaymentController', () => {
     process.env.PAYMENTS_TOKEN_SIGNING_SECRET = TOKEN_SIGNING_SECRET
     process.env.PAYMENTS_TOKEN_SIGNING_ALGORITHM = TOKEN_SIGNING_ALGORITHM
     process.env.PAYMENTS_APPLE_PAY_DOMAIN = 'island.is'
-    process.env.PAYMENTS_APPLE_PAY_DISPLAY_NAME = 'issland.is'
+    process.env.PAYMENTS_APPLE_PAY_DISPLAY_NAME = 'island.is'
 
     app = await testServer({
       appModule: AppModule,
