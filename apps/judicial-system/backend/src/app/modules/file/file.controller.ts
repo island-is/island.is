@@ -30,6 +30,8 @@ import {
 import { IDS_ACCESS_TOKEN_NAME } from '@island.is/judicial-system/consts'
 import type { User } from '@island.is/judicial-system/types'
 import {
+  CaseFileCategory,
+  CaseFileState,
   indictmentCases,
   investigationCases,
   restrictionCases,
@@ -248,7 +250,11 @@ export class FileController {
     return this.fileService.getCaseFileSignedUrl(theCase, caseFile)
   }
 
-  @UseGuards(CaseWriteGuard, CaseFileExistsGuard)
+  @UseGuards(
+    new CaseTypeGuard(indictmentCases),
+    CaseWriteGuard,
+    CaseFileExistsGuard,
+  )
   @RolesRules(
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
@@ -266,6 +272,20 @@ export class FileController {
     @CurrentCaseFile() caseFile: CaseFile,
   ): Promise<CaseFile> {
     this.logger.debug(`Rejecting file ${fileId} of case ${caseId}`)
+
+    if (caseFile.state === CaseFileState.REJECTED) {
+      throw new BadRequestException('File is already rejected')
+    }
+
+    if (
+      caseFile.category !== CaseFileCategory.PROSECUTOR_CASE_FILE &&
+      caseFile.category !== CaseFileCategory.DEFENDANT_CASE_FILE
+    ) {
+      throw new BadRequestException(
+        'Only updloaded prosecutor and defendant case files can be rejected',
+      )
+    }
+
     if (
       theCase.courtSessions?.some(
         (session) =>
