@@ -40,11 +40,11 @@ export const useRejectCaseFile = (onComplete: (caseFile: CaseFile) => void) => {
       },
     })
 
-    if (!rejected) {
+    if (rejected.errors || !rejected.data || !rejected.data.rejectFile) {
       return
     }
 
-    onComplete(caseFileToReject)
+    onComplete(rejected.data.rejectFile)
 
     setCaseFileToReject(undefined)
   }

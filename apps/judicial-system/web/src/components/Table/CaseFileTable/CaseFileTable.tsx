@@ -9,12 +9,10 @@ import {
   getInitials,
   getRoleTitleFromCaseFileCategory,
 } from '@island.is/judicial-system/formatters'
-import { isDistrictCourtUser } from '@island.is/judicial-system/types'
 import { tables } from '@island.is/judicial-system-web/messages'
 import {
   FormContext,
   IconButton,
-  UserContext,
   useRejectCaseFile,
 } from '@island.is/judicial-system-web/src/components'
 import {
@@ -38,17 +36,18 @@ import * as styles from './CaseFileTable.css'
 
 interface Props {
   caseFiles: CaseFile[]
+  onOpenFile: (fileId: string) => void
+  canRejectFiles: boolean
   loading?: boolean
-  onOpenFile?: (fileId: string) => void
 }
 
 const CaseFileTable: FC<Props> = ({
   caseFiles,
-  loading = false,
   onOpenFile,
+  canRejectFiles,
+  loading = false,
 }) => {
   const { formatMessage } = useIntl()
-  const { user } = useContext(UserContext)
   const { setWorkingCase, refreshCase } = useContext(FormContext)
   const {
     isFiledInConfirmedCourtSession,
@@ -157,27 +156,26 @@ const CaseFileTable: FC<Props> = ({
                 </Box>
               </td>
               <td>
-                {isDistrictCourtUser(user) &&
-                  !isFiledInConfirmedCourtSession(file.id) && (
-                    <ContextMenu
-                      items={[rejectCaseFile(file)]}
-                      render={
-                        <motion.div
-                          className={tableStyles.smallContainer}
-                          key={file.id}
-                          initial={{ opacity: 1 }}
-                          animate={{ opacity: 1, y: 1 }}
-                          exit={{ opacity: 0, y: 5 }}
-                          onClick={(evt) => evt.stopPropagation()}
-                        >
-                          <IconButton
-                            icon="ellipsisVertical"
-                            colorScheme="transparent"
-                          />
-                        </motion.div>
-                      }
-                    />
-                  )}
+                {canRejectFiles && !isFiledInConfirmedCourtSession(file.id) && (
+                  <ContextMenu
+                    items={[rejectCaseFile(file)]}
+                    render={
+                      <motion.div
+                        className={tableStyles.smallContainer}
+                        key={file.id}
+                        initial={{ opacity: 1 }}
+                        animate={{ opacity: 1, y: 1 }}
+                        exit={{ opacity: 0, y: 5 }}
+                        onClick={(evt) => evt.stopPropagation()}
+                      >
+                        <IconButton
+                          icon="ellipsisVertical"
+                          colorScheme="transparent"
+                        />
+                      </motion.div>
+                    }
+                  />
+                )}
               </td>
             </tr>
           )
