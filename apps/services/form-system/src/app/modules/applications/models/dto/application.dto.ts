@@ -74,6 +74,9 @@ export class ApplicationDto {
   @ApiPropertyOptional({ type: CompletedSectionInfo })
   completedSectionInfo?: CompletedSectionInfo
 
+  @ApiPropertyOptional()
+  zendeskInternal?: boolean
+
   submissionServiceUrl?: string
   validationServiceUrl?: string
 }
