@@ -1,5 +1,6 @@
 import { useState } from 'react'
 
+import { toast } from '@island.is/island-ui/core'
 import {
   ContextMenuItem,
   Modal,
@@ -31,22 +32,26 @@ export const useRejectCaseFile = (onComplete: (caseFile: CaseFile) => void) => {
       return
     }
 
-    const rejected = await rejectFile({
-      variables: {
-        input: {
-          id: caseFileToReject.id,
-          caseId: caseFileToReject.caseId,
+    try {
+      const rejected = await rejectFile({
+        variables: {
+          input: {
+            id: caseFileToReject.id,
+            caseId: caseFileToReject.caseId,
+          },
         },
-      },
-    })
+      })
 
-    if (rejected.errors || !rejected.data || !rejected.data.rejectFile) {
-      return
+      if (rejected.errors || !rejected.data || !rejected.data.rejectFile) {
+        throw new Error('Failed to reject file')
+      }
+
+      onComplete(rejected.data.rejectFile)
+
+      setCaseFileToReject(undefined)
+    } catch {
+      toast.error('Upp kom villa við að eyða skjali.')
     }
-
-    onComplete(rejected.data.rejectFile)
-
-    setCaseFileToReject(undefined)
   }
 
   const handleSecondaryButtonClick = () => {
