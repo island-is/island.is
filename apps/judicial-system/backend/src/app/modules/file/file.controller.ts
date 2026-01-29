@@ -282,7 +282,7 @@ export class FileController {
       caseFile.category !== CaseFileCategory.DEFENDANT_CASE_FILE
     ) {
       throw new BadRequestException(
-        'Only updloaded prosecutor and defendant case files can be rejected',
+        'Only uploaded prosecutor and defendant case files can be rejected',
       )
     }
 
