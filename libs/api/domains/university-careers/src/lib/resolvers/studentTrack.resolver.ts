@@ -18,6 +18,7 @@ import { StudentInfoByUniversityInput } from '../dto/studentInfoByUniversity.inp
 import { Locale } from '@island.is/shared/types'
 import { AUDIT_NAMESPACE } from '../constants'
 import { StudentFile } from '../models/studentFile.model'
+import { mapEnumToType } from '../mapper'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.education)
@@ -78,7 +79,11 @@ export class StudentTrackResolver {
 
     return track.files.map((f) => ({
       ...f,
-      downloadServiceURL: `${this.downloadServiceConfig.baseUrl}/download/v1/education/graduation/${f.locale}/${institution.shortId}/${trackNumber}/${f.type}`,
+      downloadServiceURL: `${
+        this.downloadServiceConfig.baseUrl
+      }/download/v1/education/graduation/${f.locale}/${
+        institution.shortId
+      }/${trackNumber}/${mapEnumToType(f.type)}`,
     }))
   }
 }

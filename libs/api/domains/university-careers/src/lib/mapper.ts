@@ -24,6 +24,21 @@ const mapTypeToEnum = (type: StudentFileType): FileType | null => {
   }
 }
 
+export const mapEnumToType = (type: FileType): StudentFileType | null => {
+  switch (type) {
+    case FileType.COURSE_DESCRIPTIONS:
+      return 'course_descriptions'
+    case FileType.DIPLOMA:
+      return 'diploma'
+    case FileType.DIPLOMA_SUPPLEMENT:
+      return 'diploma_supplement'
+    case FileType.TRANSCRIPT:
+      return 'transcript'
+    default:
+      return null
+  }
+}
+
 export const mapToStudent = (
   data: StudentTrackDto,
   institution: InstitutionProps,
