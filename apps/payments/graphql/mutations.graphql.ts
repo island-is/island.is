@@ -47,3 +47,12 @@ export const CreateInvoiceMutation = gql`
     }
   }
 `
+
+export const ChargeApplePayMutation = gql`
+  mutation chargeApplePay($input: PaymentsChargeApplePayInput!) {
+    paymentsChargeApplePay(input: $input) {
+      isSuccess
+      responseCode
+    }
+  }
+`

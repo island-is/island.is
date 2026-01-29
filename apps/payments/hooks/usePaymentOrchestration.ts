@@ -15,11 +15,13 @@ interface UsePaymentOrchestrationProps {
     amount: number
     title: string
   }
+  isApplePayPaymentEnabledForUser: boolean
 }
 
 export const usePaymentOrchestration = ({
   paymentFlow,
   productInformation,
+  isApplePayPaymentEnabledForUser,
 }: UsePaymentOrchestrationProps) => {
   const router = useRouter()
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string>(
@@ -69,6 +71,7 @@ export const usePaymentOrchestration = ({
   })
 
   const applePayPayment = useApplePay({
+    isEnabledForUser: isApplePayPaymentEnabledForUser,
     paymentFlow,
     productInformation,
     onPaymentSuccess: commonOnPaymentSuccess,
@@ -145,7 +148,7 @@ export const usePaymentOrchestration = ({
     handleVerificationCancelledByModal:
       cardPayment.handleVerificationCancelledByModal,
     verificationStatusLoading: cardPayment.verificationStatusLoading,
-    supportsApplePay: applePayPayment.supportsApplePay,
+    supportsApplePay: applePayPayment.supportsApplePay ?? false,
     initiateApplePay: applePayPayment.initiateApplePay,
   }
 }

@@ -61,8 +61,13 @@ export enum InvoiceErrorCode {
   UnknownInvoiceError = 'UnknownInvoiceError',
 }
 
+export enum ApplePayErrorCode {
+  ErrorGettingApplePaySession = 'ErrorGettingApplePaySession',
+}
+
 export type PaymentErrorCode =
   | FjsErrorCode
   | CardErrorCode
   | InvoiceErrorCode
   | PaymentServiceCode
+  | ApplePayErrorCode

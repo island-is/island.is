@@ -1,9 +1,24 @@
-import { useCallback, useEffect, useState } from 'react'
-import { GetPaymentFlowQuery } from '../graphql/queries.graphql.generated'
-import { PaymentError } from '../utils/error/error'
+import { useCallback, useEffect, useRef, useState } from 'react'
+
 import { CardErrorCode } from '@island.is/shared/constants'
+import { Features } from '@island.is/react/feature-flags'
+
+import {
+  GetPaymentFlowQuery,
+  useGetApplePaySessionLazyQuery,
+} from '../graphql/queries.graphql.generated'
+import { useChargeApplePayMutation } from '../graphql/mutations.graphql.generated'
+import { PaymentError } from '../utils/error/error'
+
+// Extend Window interface to include ApplePaySession
+declare global {
+  interface Window {
+    ApplePaySession?: typeof ApplePaySession
+  }
+}
 
 interface UseApplePayProps {
+  isEnabledForUser: boolean
   paymentFlow: GetPaymentFlowQuery['paymentsGetFlow'] | null
   productInformation: {
     amount: number
@@ -13,28 +28,39 @@ interface UseApplePayProps {
   onPaymentError: (error: PaymentError) => void
 }
 
+interface UseApplePayReturn {
+  supportsApplePay: boolean
+  initiateApplePay: () => void
+}
+
 export const useApplePay = ({
+  isEnabledForUser,
   paymentFlow,
   productInformation,
   onPaymentSuccess,
   onPaymentError,
-}: UseApplePayProps) => {
+}: UseApplePayProps): UseApplePayReturn => {
+  const sessionRef = useRef<ApplePaySession | null>(null)
   const [supportsApplePay, setSupportsApplePay] = useState(false)
+
+  const [chargeApplePayMutationHook] = useChargeApplePayMutation()
+  const [getApplePaySessionQueryHook] = useGetApplePaySessionLazyQuery()
 
   // check if apple pay is available
   useEffect(() => {
-    // this is by default disabled because Apple pay requires setup locally
-    if (process.env.NEXT_PUBLIC_ALLOW_APPLE_PAY === 'false') {
+    // if apple pay is not enabled or if apple pay is not allowed, set supports apple pay to false
+    if (
+      !isEnabledForUser ||
+      process.env.NEXT_PUBLIC_ALLOW_APPLE_PAY === 'false'
+    ) {
       setSupportsApplePay(false)
       return
     }
 
-    if (typeof window !== 'undefined') {
-      const ApplePaySession = (window as any).ApplePaySession
-
-      if (ApplePaySession && ApplePaySession.canMakePayments) {
+    if (typeof window !== 'undefined' && window.ApplePaySession) {
+      if (window.ApplePaySession.canMakePayments) {
         const hasCard = paymentFlow?.availablePaymentMethods.includes('card')
-        const canUseApplePay = ApplePaySession.canMakePayments()
+        const canUseApplePay = window.ApplePaySession.canMakePayments()
 
         if (canUseApplePay && hasCard) {
           setSupportsApplePay(true)
@@ -51,22 +77,32 @@ export const useApplePay = ({
     console.log('initiating apple pay')
 
     // create apple pay session with payment information
-    const session = new (window as any).ApplePaySession(3, {
+    const paymentRequest: ApplePayJS.ApplePayPaymentRequest = {
       countryCode: 'IS',
       currencyCode: 'ISK',
-      supportedNetworks: ['visa', 'masterCard'],
+      supportedNetworks: ['visa', 'masterCard', 'amex'],
       merchantCapabilities: ['supports3DS'],
       total: {
         label: productInformation.title,
-        amount: productInformation.amount.toString(),
+        amount: productInformation.amount.toFixed(2),
       },
-    })
+    }
 
-    session.onvalidatemerchant = async (event) => {
-      console.log('validatemerchant', event)
+    sessionRef.current = new window.ApplePaySession(3, paymentRequest)
+
+    sessionRef.current.onvalidatemerchant = async (
+      event: ApplePayJS.ApplePayValidateMerchantEvent,
+    ) => {
+      console.log('On validate merchant', event)
 
       try {
         // call valitor get session endpoint
+        const { data } = await getApplePaySessionQueryHook()
+        const session = JSON.parse(data?.paymentsGetApplePaySession?.session)
+
+        console.log('Session data', session)
+
+        sessionRef.current?.completeMerchantValidation(session)
       } catch (e) {
         onPaymentError({
           code: (e instanceof Error
@@ -74,28 +110,66 @@ export const useApplePay = ({
             : CardErrorCode.UnknownCardError) as CardErrorCode,
         })
       }
-
-      //session.completeMerchantValidation(valitorSession.session)
     }
 
-
-    session.onpaymentauthorized = (event) => {
-      console.log('paymentauthorized', event)
-      // const response = await mockProcessPayment(event.payment.token)
-
-      // // Complete payment based on response
-      // session.completePayment({
-      //   status: response.success
-      //     ? (window as any).ApplePaySession.STATUS_SUCCESS
-      //     : (window as any).ApplePaySession.STATUS_FAILURE,
-      // })
+    sessionRef.current.onpaymentmethodselected = (
+      event: ApplePayJS.ApplePayPaymentMethodSelectedEvent,
+    ) => {
+      console.log('On payment method selected', event)
+      sessionRef.current?.completePaymentMethodSelection({
+        newTotal: {
+          label: productInformation.title,
+          amount: productInformation.amount.toFixed(2),
+        },
+      })
     }
 
-    session.oncancel = () => {
-      console.log('Apple Pay cancelled')
+    sessionRef.current.onpaymentauthorized = async (
+      event: ApplePayJS.ApplePayPaymentAuthorizedEvent,
+    ) => {
+      console.log('On payment authorized', event)
+
+      try {
+        const { data } = await chargeApplePayMutationHook({
+          variables: {
+            input: {
+              paymentFlowId: paymentFlow?.id ?? '',
+              token: event.payment.token,
+              amount: productInformation.amount,
+            },
+          },
+        })
+
+        if (!data?.paymentsChargeApplePay.isSuccess) {
+          throw new Error(
+            data?.paymentsChargeApplePay.responseCode ??
+            CardErrorCode.UnknownCardError,
+          )
+        }
+
+        sessionRef.current?.completePayment({
+          status: window.ApplePaySession.STATUS_SUCCESS,
+        })
+        onPaymentSuccess('card')
+      } catch (e) {
+        sessionRef.current?.completePayment({
+          status: window.ApplePaySession.STATUS_FAILURE,
+        })
+
+        onPaymentError({
+          code: (e instanceof Error
+            ? e.message
+            : CardErrorCode.UnknownCardError) as CardErrorCode,
+        })
+      }
     }
 
-    session.begin()
+    sessionRef.current.oncancel = (event: ApplePayJS.Event) => {
+      console.log('Apple Pay cancelled', event)
+      sessionRef.current = null
+    }
+
+    sessionRef.current.begin()
   }, [supportsApplePay, productInformation])
 
   return {
