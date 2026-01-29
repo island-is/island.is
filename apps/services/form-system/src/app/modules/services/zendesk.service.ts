@@ -119,7 +119,9 @@ export class ZendeskService {
       const result = await response.json()
       return result.ticket?.id ? true : false
     } catch (error) {
-      throw new Error('Unexpected error while creating ticket', error)
+      throw new Error('Unexpected error while creating ticket', {
+        cause: error,
+      })
     }
   }
 
