@@ -65,7 +65,12 @@ export const browserIdleStore = create<BrowserIdleStore>((set, get) => ({
   },
 
   checkAndHandleTimeout: () => {
-    const { isBrowserOpen, lastActivityTime, currentBrowserComponentId, idleTimeout } = get()
+    const {
+      isBrowserOpen,
+      lastActivityTime,
+      currentBrowserComponentId,
+      idleTimeout,
+    } = get()
 
     if (!isBrowserOpen || !lastActivityTime) {
       return
@@ -98,27 +103,31 @@ function dismissBrowser(componentId: string) {
 // Monitoring Setup
 // ============================================================================
 
-let appStateSubscription: ReturnType<typeof AppState.addEventListener> | null = null
+let appStateSubscription: ReturnType<typeof AppState.addEventListener> | null =
+  null
 let timeoutCheckInterval: NodeJS.Timeout | null = null
 
 /**
  * Initialize browser idle timeout monitoring.
- * 
+ *
  * Monitors app state changes and periodically checks if any open browsers
  * have exceeded the idle timeout (1 hour). Automatically closes browsers
  * that have been open too long.
- * 
+ *
  * Should be called once during app initialization.
  */
 export function initializeBrowserIdleMonitoring() {
   cleanupBrowserIdleMonitoring()
 
   // Check when app comes to foreground
-  appStateSubscription = AppState.addEventListener('change', (state: AppStateStatus) => {
-    if (state === 'active') {
-      browserIdleStore.getState().checkAndHandleTimeout()
-    }
-  })
+  appStateSubscription = AppState.addEventListener(
+    'change',
+    (state: AppStateStatus) => {
+      if (state === 'active') {
+        browserIdleStore.getState().checkAndHandleTimeout()
+      }
+    },
+  )
 
   // Periodic check while app is active (every 5 seconds)
   timeoutCheckInterval = setInterval(() => {
