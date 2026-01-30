@@ -11,7 +11,7 @@ export const HistorySection: FC<
   React.PropsWithChildren<{
     theme?: types.FormStepperThemes
     section: string
-    subSectionTitle?: string
+    subjectAndActor?: string
     sectionIndex: number
     isComplete?: boolean
     isLast?: boolean
@@ -23,7 +23,7 @@ export const HistorySection: FC<
 > = ({
   theme = types.FormStepperThemes.PURPLE,
   section,
-  subSectionTitle,
+  subjectAndActor,
   sectionIndex,
   date,
   description,
@@ -89,7 +89,7 @@ export const HistorySection: FC<
                 {section}
               </Text>
               <Text lineHeight="lg" variant="eyebrow" fontWeight="light">
-                {subSectionTitle}
+                {subjectAndActor}
               </Text>
             </Box>
           )}

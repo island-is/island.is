@@ -59,7 +59,7 @@ export const buildHistoryItems = (
       actionCardHistory.map((x) => ({
         date: format(new Date(x.date), dateFormat),
         title: formatMessage(x.log),
-        subTitle: x.subLog,
+        subjectAndActor: x.subLog,
       })),
     )
   }
