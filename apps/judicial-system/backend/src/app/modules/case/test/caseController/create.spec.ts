@@ -59,6 +59,7 @@ describe('CaseController - Create', () => {
     mockTransaction.mockImplementationOnce(
       (fn: (transaction: Transaction) => unknown) => fn(transaction),
     )
+
     const mockCreate = mockCaseRepositoryService.create as jest.Mock
     mockCreate.mockRejectedValue(new Error('Some error'))
     const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
@@ -117,12 +118,12 @@ describe('CaseController - Create', () => {
       )
       expect(mockCaseRepositoryService.findOne).toHaveBeenCalledWith({
         include,
-
         where: {
           id: caseId,
           isArchived: false,
           state: { [Op.not]: CaseState.DELETED },
         },
+        transaction,
       })
       expect(then.result).toBe(returnedCase)
     })

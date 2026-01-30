@@ -4,8 +4,9 @@ import {
   Button,
   fileToObjectDeprecated,
   InputFileUpload,
+  LoadingDots,
 } from '@island.is/island-ui/core'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { FileRejection } from 'react-dropzone'
 import { FieldBaseProps } from '@island.is/application/types'
 import {
@@ -23,6 +24,14 @@ import {
   downloadFile,
   parseFileToCarCategory,
 } from '../../utils/UploadCarCategoryFileUtils'
+import { useMutation } from '@apollo/client'
+import { useLocale } from '@island.is/localization'
+import {
+  UPDATE_APPLICATION,
+  UPDATE_APPLICATION_EXTERNAL_DATA,
+} from '@island.is/application/graphql'
+import { m } from '../../lib/messages'
+import { Locale } from '@island.is/shared/types'
 
 const extensionToType = {
   [fileExtensionWhitelist['.csv']]: 'csv',
@@ -35,6 +44,7 @@ interface Props {
       getFileContent: (
         vehicleMap: CarMap,
         rateCategory: RateCategory,
+        locale: Locale,
       ) => {
         base64Content: string
         fileType: string
@@ -48,6 +58,55 @@ export const UploadCarCategoryFile = ({
   application,
   field,
 }: Props & FieldBaseProps) => {
+  const { locale, lang, formatMessage } = useLocale()
+  const [updateApplicationExternalData] = useMutation(
+    UPDATE_APPLICATION_EXTERNAL_DATA,
+  )
+  const [updateApplication] = useMutation(UPDATE_APPLICATION)
+  const [isRefreshingRates, setIsRefreshingRates] = useState(false)
+
+  const hasRunRef = useRef(false)
+  const updateExternalDataRef = useRef(updateApplicationExternalData)
+  useEffect(() => {
+    updateExternalDataRef.current = updateApplicationExternalData
+  }, [updateApplicationExternalData])
+
+  useEffect(() => {
+    let cancelled = false
+
+    if (hasRunRef.current) return
+    hasRunRef.current = true
+
+    const updateExtData = async () => {
+      setIsRefreshingRates(true)
+      try {
+        await updateExternalDataRef.current({
+          variables: {
+            input: {
+              id: application.id,
+              dataProviders: [
+                { actionId: 'getCurrentVehicles', order: 0 },
+                { actionId: 'getCurrentVehiclesRateCategory', order: 1 },
+              ],
+            },
+            locale,
+          },
+        })
+      } finally {
+        if (!cancelled) {
+          setIsRefreshingRates(false)
+        }
+      }
+    }
+
+    updateExtData()
+
+    return () => {
+      cancelled = true
+      hasRunRef.current = false // allow StrictMode double-invoke to re-run
+    }
+  }, [application.id, locale])
+
   const [uploadedFile, setUploadedFile] = useState<File | null>()
   const [uploadErrorMessage, setUploadErrorMessage] = useState<string | null>(
     null,
@@ -108,11 +167,15 @@ export const UploadCarCategoryFile = ({
       const errorMessages = dataToChange as CarCategoryError[]
       if (errorMessages.length === 1) {
         setUploadErrorMessage(
-          `${errorMessages[0].carNr} - ${errorMessages[0].message}`,
+          `${errorMessages[0].carNr} - ${formatMessage(
+            errorMessages[0].message,
+          )}`,
         )
       } else {
         setUploadErrorMessage(
-          `${errorMessages.length} errors found. Please download the error file for details.`,
+          `${errorMessages.length} ${formatMessage(
+            m.multiUpload.errorMessageToUser,
+          )}`,
         )
       }
 
@@ -120,7 +183,12 @@ export const UploadCarCategoryFile = ({
       const errorExcel = await createErrorExcel(
         file,
         type,
-        dataToChange as CarCategoryError[],
+        new Map(
+          (dataToChange as CarCategoryError[]).map((error) => [
+            error.carNr,
+            formatMessage(error.message),
+          ]),
+        ),
       )
       setErrorFile(errorExcel)
       return
@@ -132,6 +200,18 @@ export const UploadCarCategoryFile = ({
     }
 
     setValue('carsToChange', dataToChange)
+    await updateApplication({
+      variables: {
+        input: {
+          id: application.id,
+          answers: {
+            ...application.answers,
+            carsToChange: dataToChange,
+          },
+        },
+        locale,
+      },
+    })
   }
 
   const handleOnInputFileUploadError = (files: FileRejection[]) => {
@@ -165,9 +245,21 @@ export const UploadCarCategoryFile = ({
     }
   }
 
-  const fileData = field.props.getFileContent?.(currentCarData, rateCategory)
+  const fileData = field.props.getFileContent?.(
+    currentCarData,
+    rateCategory,
+    lang,
+  )
   if (!fileData) {
     throw Error('No valid file data recieved!')
+  }
+
+  if (isRefreshingRates) {
+    return (
+      <Box display="flex" justifyContent="center" paddingY={4}>
+        <LoadingDots />
+      </Box>
+    )
   }
 
   return (
@@ -190,19 +282,19 @@ export const UploadCarCategoryFile = ({
             )
           }
         >
-          {'Sniðmát'}
+          {formatMessage(m.multiUpload.templateButton)}
         </Button>
       </Box>
       <InputFileUpload
         files={uploadedFile ? [uploadedFile] : []}
         title={
           !uploadErrorMessage
-            ? 'Dragðu skjöl hingað til að hlaða upp'
-            : 'Dragðu aftur inn skjal hingað til að hlaða upp eftir að lagfæra villur'
+            ? formatMessage(m.multiUpload.uploadTitle)
+            : formatMessage(m.multiUpload.uploadTitleError)
         }
         name={'inputFileUploadName'}
-        description={'Tekið er við skjölum með endingum: .csv, .xlsx'}
-        buttonLabel={'Hlaða upp skjali'}
+        description={formatMessage(m.multiUpload.uploadDescription)}
+        buttonLabel={formatMessage(m.multiUpload.uploadButtonLabel)}
         accept={['.csv', '.xlsx']}
         multiple={false}
         onRemove={handleOnInputFileUploadRemove}
@@ -229,7 +321,7 @@ export const UploadCarCategoryFile = ({
               )
             }
           >
-            {'Sniðmát með villum'}
+            {formatMessage(m.multiUpload.errorTemplateButton)}
           </Button>
         </Box>
       ) : null}

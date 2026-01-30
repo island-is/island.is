@@ -137,9 +137,11 @@ export class ApplicationsController {
     await this.applicationsService.saveScreen(screenDto, user)
   }
 
-  @ApiOperation({ summary: 'Update application dependencies' })
+  @ApiOperation({
+    summary: 'Update application dependencies and completed array',
+  })
   @ApiNoContentResponse({
-    description: 'Update application dependencies',
+    description: 'Update application dependencies and completed array',
   })
   @ApiBody({ type: UpdateApplicationDto })
   @ApiParam({ name: 'id', type: String })

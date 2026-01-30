@@ -1857,6 +1857,10 @@ export const messages = defineMessages({
     defaultMessage: 'Spurningalistar',
     id: 'sp.health:questionnaires',
   },
+  questionnairesThgf: {
+    defaultMessage: 'Spurningalista',
+    id: 'sp.health:questionnaires-thgf',
+  },
   questionnairesIntro: {
     defaultMessage:
       'Hér getur þú fundið spurningalista sem tengjast heilsu þinni.',
@@ -1901,6 +1905,10 @@ export const messages = defineMessages({
   answer: {
     defaultMessage: 'Svara',
     id: 'sp.health:answer',
+  },
+  answerAgain: {
+    defaultMessage: 'Svara aftur',
+    id: 'sp.health:answer-again',
   },
   questionnaireNotFound: {
     defaultMessage: 'Spurningalisti fannst ekki',
@@ -2196,7 +2204,7 @@ export const messages = defineMessages({
   },
   noActiveQuestionnairesRegistered: {
     defaultMessage:
-      'Þú ert ekki með neinar virkar spurningalista. Hægt er að ýta á takkann "Sýna útrunna" hér að ofan ef þú vilt skoða útrunna spurningalista.',
+      'Þú ert ekki með neina virka spurningalista. Hægt er að ýta á takkann "Sýna útrunna" hér að ofan ef þú vilt skoða útrunna spurningalista.',
     id: 'sp.health:no-active-questionnaires-registered',
   },
   active: {
@@ -2368,6 +2376,10 @@ export const messages = defineMessages({
     defaultMessage:
       'Endurnýjun ekki í boði vegna þess að nýrri lyfseðill er til staðar',
     id: 'sp.health:prescription-blocked-more-recent-exists',
+  },
+  prescriptionBlockedSpecialistOnlyPrescription: {
+    defaultMessage: 'Endurnýjun ekki í boði',
+    id: 'sp.health:prescription-blocked-specialist-only-prescription',
   },
   prescriptionBlockedOther: {
     defaultMessage: 'Endurnýjun ekki í boði vegna óþekktrar ástæðu',

@@ -48,7 +48,9 @@ describe('CaseController - Split defendant from case', () => {
       commit: jest.fn(),
       rollback: jest.fn(),
     } as unknown as Transaction
-    mockTransaction.mockResolvedValueOnce(transaction)
+    mockTransaction.mockImplementationOnce(
+      (fn: (transaction: Transaction) => unknown) => fn(transaction),
+    )
 
     givenWhenThen = async (
       caseId: string,

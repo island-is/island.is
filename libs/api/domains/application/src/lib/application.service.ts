@@ -219,13 +219,18 @@ export class ApplicationService {
     })
   }
 
-  async submitApplication(input: SubmitApplicationInput, auth: Auth) {
+  async submitApplication(
+    input: SubmitApplicationInput,
+    auth: Auth,
+    locale: Locale,
+  ) {
     const { id, ...updateApplicationStateDto } = input
     return this.applicationApiWithAuth(
       auth,
     ).applicationControllerSubmitApplication({
       id,
       updateApplicationStateDto,
+      locale,
     })
   }
 

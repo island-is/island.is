@@ -829,7 +829,7 @@ export const OrganizationChatPanel = ({
 const OrganizationChat = ({ organizationId }: { organizationId: string }) => {
   const { activeLocale } = useI18n()
 
-  const { data } = useQuery<GetWebChatQuery, QueryGetWebChatArgs>(
+  const { data, loading } = useQuery<GetWebChatQuery, QueryGetWebChatArgs>(
     GET_WEB_CHAT,
     {
       variables: {
@@ -841,11 +841,11 @@ const OrganizationChat = ({ organizationId }: { organizationId: string }) => {
     },
   )
 
-  if (!data?.getWebChat?.webChatConfiguration) return null
+  if (loading) return null
 
   return (
     <WebChat
-      webChat={data.getWebChat}
+      webChat={data?.getWebChat}
       renderFallback={() => {
         if (organizationId in watsonConfig[activeLocale])
           return (

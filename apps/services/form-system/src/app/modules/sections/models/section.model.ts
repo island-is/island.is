@@ -25,6 +25,13 @@ export class Section extends Model<Section> {
   id!: string
 
   @Column({
+    type: DataType.UUID,
+    allowNull: false,
+    defaultValue: DataType.UUIDV4,
+  })
+  identifier!: string
+
+  @Column({
     type: DataType.JSON,
     allowNull: false,
     defaultValue: () => new LanguageType(),

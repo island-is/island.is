@@ -42,5 +42,5 @@ export {
 } from './lib/clients'
 export {
   DispensationHistoryItemDto,
-  AppointmentStatus,
+  UserVisibleAppointmentStatuses,
 } from './lib/clients/health'

@@ -22,7 +22,6 @@ import { ErrorMessage } from '../Input/ErrorMessage'
 import { Text } from '../Text/Text'
 
 import { theme } from '@island.is/island-ui/theme'
-import { isDefined } from '@island.is/shared/utils'
 import { Box } from '../Box/Box'
 import { Input } from '../Input/Input'
 import { InputProps } from '../Input/types'
@@ -88,6 +87,7 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
   const isValidDate = (d: unknown): d is Date =>
     d instanceof Date && !isNaN((d as Date).getTime())
   const normalizeDate = (d?: Date | null) => (d && isValidDate(d) ? d : null)
+
   const [startDate, setStartDate] = useState<Date | null>(
     normalizeDate(range ? selectedRange?.startDate : selected) ?? null,
   )
@@ -99,10 +99,7 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
   const [datePickerState, setDatePickerState] = useState<'open' | 'closed'>(
     'closed',
   )
-  const [forceOpen, setForceOpen] = useState<boolean | undefined>(undefined)
-
-  // Check if range selection is complete
-  const isRangeComplete = range && isDefined(startDate) && isDefined(endDate)
+  const [isOpen, setIsOpen] = useState(false)
 
   const currentLanguage = languageConfig[locale]
   const errorId = `${id}-error`
@@ -130,13 +127,6 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selected, selectedRange])
-
-  // Close calendar when range selection is complete
-  useEffect(() => {
-    if (isRangeComplete && forceOpen) {
-      setForceOpen(undefined)
-    }
-  }, [isRangeComplete, forceOpen])
 
   return (
     <div className={coreStyles.root} data-testid="datepicker">
@@ -174,25 +164,30 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
           }
           showPopperArrow={false}
           popperPlacement="bottom-start"
-          open={forceOpen ?? undefined}
-          onInputClick={() => setForceOpen(true)}
+          open={isOpen}
+          onInputClick={() => {
+            setIsOpen(true)
+            onInputClick && onInputClick()
+          }}
           onCalendarOpen={() => {
             setDatePickerState('open')
-            setForceOpen(true)
+            setIsOpen(true)
             handleOpenCalendar && handleOpenCalendar()
           }}
           onCalendarClose={() => {
             setDatePickerState('closed')
-            setForceOpen(undefined)
+            setIsOpen(false)
             handleCloseCalendar && handleCloseCalendar(startDate)
           }}
-          shouldCloseOnSelect={range ? false : true}
-          onClickOutside={() => setForceOpen(undefined)}
+          // We handle closing manually in range mode
+          shouldCloseOnSelect={!range}
+          onClickOutside={() => setIsOpen(false)}
           closeOnScroll={false}
           onChange={
             range
               ? (date: any) => {
                   const [start, end] = date
+
                   if (start === null && end === null) {
                     setStartDate(null)
                     setEndDate(null)
@@ -208,13 +203,15 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
                     setStartDate(start)
                     setEndDate(end)
 
-                    // Keep calendar open if only start date is selected in range mode
-                    if (range && end === null) {
-                      setForceOpen(true)
+                    if (end === null) {
+                      // first click in range – keep calendar open
+                      setIsOpen(true)
+                    } else {
+                      // range complete – close calendar
+                      setIsOpen(false)
                     }
 
-                    // Only call handleChange when both dates are selected
-                    if (end !== null && start !== null && handleChange) {
+                    if (end !== null && handleChange) {
                       handleChange(start, end)
                     }
                   }
@@ -222,11 +219,15 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
               : (date: any) => {
                   if (date === null) {
                     setStartDate(null)
+                    // also close when cleared via calendar UI (if ever)
+                    setIsOpen(false)
                     return
                   }
                   if (date instanceof Date && !isNaN(date.getTime())) {
                     setStartDate(date)
                     handleChange && handleChange(date)
+                    // close after single-date selection
+                    setIsOpen(false)
                   }
                 }
           }
@@ -240,9 +241,14 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
             }
           }}
           onKeyDown={(e) => {
-            if (!range) return
-            if (e.key === 'Enter' || e.key === 'ArrowDown') setForceOpen(true)
-            if (e.key === 'Escape') setForceOpen(undefined)
+            if (!range) {
+              if (e.key === 'Enter' || e.key === 'ArrowDown') setIsOpen(true)
+              if (e.key === 'Escape') setIsOpen(false)
+              return
+            }
+
+            if (e.key === 'Enter' || e.key === 'ArrowDown') setIsOpen(true)
+            if (e.key === 'Escape') setIsOpen(false)
           }}
           startDate={startDate}
           endDate={range ? endDate : undefined}
@@ -269,8 +275,8 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
               onClear={() => {
                 setStartDate(null)
                 setEndDate(null)
-                setForceOpen(undefined) // Reset to allow normal opening behavior
                 handleClear && handleClear()
+                setIsOpen(false)
               }}
             />
           }
@@ -297,10 +303,11 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
                 setStartDate(startDay)
                 endDay && setEndDate(endDay)
 
-                handleChange &&
-                  startDay &&
-                  endDay &&
-                  handleChange(startDay, endDay)
+                if (startDay && endDay) {
+                  handleChange && handleChange(startDay, endDay)
+                  // if range completed via custom container (quick ranges etc.)
+                  setIsOpen(false)
+                }
               }}
               ranges={ranges}
               highlightWeekends={highlightWeekends}

@@ -274,7 +274,7 @@ export class CourtSessionService {
     caseId: string,
     courtSessionId: string,
     update: UpdateCourtSessionDto,
-    transaction?: Transaction,
+    transaction: Transaction,
   ): Promise<CourtSession> {
     return this.courtSessionRepositoryService.update(
       caseId,

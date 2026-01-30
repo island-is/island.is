@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common'
 import { SchoolsApi, ApplicationsApi, StudentsApi } from '../../gen/fetch/apis'
 import {
   Application,
+  ApplicationPeriod,
   Program,
   SecondarySchool,
   Student,
@@ -26,6 +27,17 @@ export class SecondarySchoolClient {
 
   private studentsApiWithAuth(auth: Auth) {
     return this.studentsApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  // TODOx temporary untill API is ready
+  async getApplicationPeriodInfo(_auth: User): Promise<ApplicationPeriod> {
+    return {
+      allowFreshmanApplication: true,
+      registrationEndDateGeneral: new Date('2026-05-26'),
+      registrationEndDateFreshman: new Date('2026-06-10'),
+      reviewStartDateGeneral: new Date('2026-05-27'),
+      reviewStartDateFreshman: new Date('2026-06-11'),
+    }
   }
 
   async getStudentInfo(auth: User): Promise<Student> {

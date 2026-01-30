@@ -66,12 +66,6 @@ export const getSlugFromType = (type: ApplicationTypes) => {
   return undefined
 }
 
-export const getBaseUrlForm = () => {
-  const path = window.location.origin
-  const isLocalhost = path.includes('localhost')
-  return isLocalhost ? 'http://localhost:4242/umsoknir' : `${path}/umsoknir`
-}
-
 export const getFilteredApplications = (
   applications: AdminApplication[],
   {

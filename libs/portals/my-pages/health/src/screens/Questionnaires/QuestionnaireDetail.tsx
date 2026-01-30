@@ -1,7 +1,6 @@
 import {
   QuestionnaireQuestionnairesOrganizationEnum,
   QuestionnaireQuestionnairesStatusEnum,
-  QuestionnaireSubmissionDetail,
 } from '@island.is/api/schema'
 import { Box, Button, Tag, TagVariant } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -46,6 +45,10 @@ const QuestionnaireDetail: FC = () => {
     status === QuestionnaireQuestionnairesStatusEnum.notAnswered
   const isExpired = status === QuestionnaireQuestionnairesStatusEnum.expired
   const isDraft = status === QuestionnaireQuestionnairesStatusEnum.draft
+  const canSubmit = questionnaire?.canSubmit ?? false
+  const canSubmitAgain =
+    canSubmit && (questionnaire?.submissions?.length ?? 0) > 0
+  const latestSubmissionId = questionnaire?.baseInformation.lastSubmissionId
 
   if (!id || !organization) {
     return (
@@ -55,36 +58,22 @@ const QuestionnaireDetail: FC = () => {
     )
   }
 
-  const latestSubmission = questionnaire?.submissions?.reduce<
-    QuestionnaireSubmissionDetail | undefined
-  >((latest, current) => {
-    // First submission becomes the latest
-    if (!latest) return current
+  const answeredLink = HealthPaths.HealthQuestionnairesAnswered.replace(
+    ':org',
+    organization?.toLocaleLowerCase() ?? '',
+  )
+    .replace(':id', id)
+    .replace(':submissionId', latestSubmissionId ?? '')
 
-    // If current has a newer lastUpdated timestamp, it becomes the latest
-    if (
-      current.lastUpdated &&
-      current.lastUpdated > (latest.lastUpdated ?? '')
-    ) {
-      return current
-    }
-
-    // Otherwise keep the previous latest
-    return latest
-  }, undefined)
-
-  const answerLink = HealthPaths.HealthQuestionnairesAnswered.replace(
+  const answerLink = HealthPaths.HealthQuestionnairesAnswer.replace(
     ':org',
     organization?.toLocaleLowerCase() ?? '',
   ).replace(':id', id)
 
   const link = isAnswered
+    ? answeredLink
+    : canSubmit && (notAnswered || isDraft)
     ? answerLink
-    : notAnswered || isDraft
-    ? HealthPaths.HealthQuestionnairesAnswer.replace(
-        ':org',
-        organization?.toLocaleLowerCase() ?? '',
-      ).replace(':id', id)
     : undefined
 
   const statusLabel = isAnswered
@@ -128,28 +117,40 @@ const QuestionnaireDetail: FC = () => {
       loading={loading}
       buttonGroup={[
         link ? (
-          <Box className={styles.button} key={'answer-link-box'}>
-            <Button
-              key={'answer-link'}
-              fluid
-              variant="utility"
-              colorScheme={isAnswered ? 'light' : 'primary'}
-              size="small"
-              onClick={() =>
-                navigate(link, {
-                  state: { submissionId: latestSubmission?.id },
-                })
-              }
-            >
-              {isAnswered && !isExpired
-                ? formatMessage(messages.seeAnswers)
-                : isDraft
-                ? formatMessage(messages.continueDraftQuestionnaire)
-                : formatMessage(messages.answer)}
-            </Button>
-          </Box>
+          <>
+            <Box className={styles.button} key={'answer-link-box'}>
+              <Button
+                key={'answer-link'}
+                fluid
+                variant="utility"
+                colorScheme={isAnswered ? 'light' : 'primary'}
+                size="small"
+                onClick={() => navigate(link)}
+              >
+                {isAnswered && !isExpired
+                  ? formatMessage(messages.seeAnswers)
+                  : isDraft
+                  ? formatMessage(messages.continueDraftQuestionnaire)
+                  : formatMessage(messages.answer)}
+              </Button>
+            </Box>
+            {!isDraft && canSubmitAgain && (
+              <Box className={styles.button} key={'answer-again-link-box'}>
+                <Button
+                  key={'answer-again-link'}
+                  fluid
+                  variant="utility"
+                  colorScheme={'primary'}
+                  size="small"
+                  onClick={() => navigate(answerLink)}
+                >
+                  {formatMessage(messages.answerAgain)}
+                </Button>
+              </Box>
+            )}
+          </>
         ) : null,
-        isDraft && answerLink !== link ? (
+        isDraft && answeredLink !== link ? (
           <Box className={styles.button} key={'answer-link-box'}>
             <Button
               fluid
@@ -158,8 +159,8 @@ const QuestionnaireDetail: FC = () => {
               colorScheme="light"
               size="small"
               onClick={() =>
-                navigate(answerLink, {
-                  state: { submissionId: latestSubmission?.id },
+                navigate(answeredLink, {
+                  state: { submissionId: latestSubmissionId },
                 })
               }
             >

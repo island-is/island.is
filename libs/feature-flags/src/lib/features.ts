@@ -53,6 +53,7 @@ export enum Features {
   servicePortalHealthMedicineLandlaeknirPageEnabled = 'isServicePortalHealthMedicineLandlaeknirPageEnabled',
   servicePortalHealthMedicineDelegationPageEnabled = 'isServicePortalHealthMedicineDelegationPageEnabled',
   servicePortalHealthBloodPageEnabled = 'isServicePortalHealthBloodPageEnabled',
+  isServicePortalMyContractsPageEnabled = 'isServicePortalMyContractsPageEnabled',
   servicePortalDocumentsActionsEnabled = 'isServicePortalDocumentsActionsEnabled',
   isServicePortalDocumentsV3PageEnabled = 'isServicePortalDocumentsV3PageEnabled',
   isServicePortal2WayMailboxEnabled = 'isServicePortal2WayMailboxEnabled',
@@ -144,6 +145,12 @@ export enum Features {
 
   isMileCarEnabled = 'isMileCarEnabled',
   isHHCourseApplicationEnabled = 'isHHCourseApplicationEnabled',
+
+  // Use new vacancy API client (Financial Management Authority/Elfur) instead of old X-Road client
+  useNewVacancyApi = 'useNewVacancyApi',
+  // Questionnaires
+  questionnairesFromEL = 'isQuestionnairesHealthDirectorateClientEnabled',
+  questionnairesFromLSH = 'isQuestionnairesLshClientEnabled',
 }
 
 export enum ServerSideFeature {
