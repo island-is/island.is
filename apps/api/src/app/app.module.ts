@@ -31,6 +31,7 @@ import {
 } from '@island.is/api/domains/email-signup'
 import { EndorsementSystemModule } from '@island.is/api/domains/endorsement-system'
 import { EnergyFundsServiceModule } from '@island.is/api/domains/energy-funds'
+import { FarmersModule } from '@island.is/api/domains/farmers'
 import { FileUploadModule } from '@island.is/api/domains/file-upload'
 import { FinanceModule } from '@island.is/api/domains/finance'
 import { FinancialStatementsInaoModule } from '@island.is/api/domains/financial-statements-inao'
@@ -347,6 +348,7 @@ const environment = getConfig
     }),
     RegulationsModule,
     RegulationsAdminModule,
+    FarmersModule,
     FinanceModule,
     FinancialStatementsInaoModule,
     VehiclesModule,
