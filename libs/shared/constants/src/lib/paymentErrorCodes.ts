@@ -18,6 +18,8 @@ export enum PaymentServiceCode {
   ChargeItemCodesNotFound = 'ChargeItemCodesNotFound',
   UpstreamNotificationFailure = 'UpstreamNotificationFailure',
   UnknownPaymentServiceError = 'UnknownPaymentServiceError',
+  PaymentFlowNotEligibleToBeFinalized = 'PaymentFlowNotEligibleToBeFinalized',
+  PaymentFlowAlreadyFinalized = 'PaymentFlowAlreadyFinalized',
 }
 
 export enum CardErrorCode {

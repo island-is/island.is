@@ -73,7 +73,7 @@ export class PaymentFulfillment extends Model<
     allowNull: true,
     field: 'fjs_charge_id',
   })
-  fjsChargeId?: string
+  fjsChargeId?: string | null
 
   @CreatedAt
   @ApiProperty()

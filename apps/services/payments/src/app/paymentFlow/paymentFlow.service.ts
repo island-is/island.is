@@ -1,6 +1,6 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectConnection, InjectModel } from '@nestjs/sequelize'
-import { Sequelize, WhereOptions } from 'sequelize'
+import { InferAttributes, Sequelize, WhereOptions } from 'sequelize'
 import { ConfigType } from '@nestjs/config'
 import { isCompany, isValid } from 'kennitala'
 import { v4 as uuid } from 'uuid'
@@ -99,7 +99,7 @@ export class PaymentFlowService {
     >,
     @Inject(JwksConfig.KEY)
     private readonly jwksConfig: ConfigType<typeof JwksConfig>,
-  ) {}
+  ) { }
 
   async createPaymentUrl(
     paymentInfo: CreatePaymentFlowInput,
@@ -262,6 +262,10 @@ export class PaymentFlowService {
     return payerName
   }
 
+  /**
+   * Checks if a payment flow is eligible to be paid.
+   * Returns true if the payment flow is eligible to be paid, false if it has already been paid.
+   */
   async isEligibleToBePaid(id: string) {
     const paymentFlow = (
       await this.paymentFlowModel.findOne({
@@ -307,11 +311,11 @@ export class PaymentFlowService {
           },
           ...(includeEvents
             ? [
-                {
-                  model: PaymentFlowEvent,
-                  as: 'events',
-                },
-              ]
+              {
+                model: PaymentFlowEvent,
+                as: 'events',
+              },
+            ]
             : []),
         ],
       })
@@ -333,6 +337,7 @@ export class PaymentFlowService {
       })
     )?.toJSON()
 
+    // If a payment fulfillment exists, the payment flow is paid by card
     if (paymentFulfillment) {
       return {
         paymentStatus: PaymentStatus.PAID,
@@ -340,6 +345,7 @@ export class PaymentFlowService {
       }
     }
 
+    // for invoice payments, we need to check the status of the fjs charge
     const existingFjsCharge = (
       await this.fjsChargeModel.findOne({
         where: {
@@ -348,6 +354,7 @@ export class PaymentFlowService {
       })
     )?.toJSON()
 
+    // If the fjs charge exists and is unpaid, the innvoice is pending
     if (existingFjsCharge && existingFjsCharge.status === 'unpaid') {
       return {
         paymentStatus: PaymentStatus.INVOICE_PENDING,
@@ -355,6 +362,7 @@ export class PaymentFlowService {
       }
     }
 
+    // If neither the payment fulfillment nor the fjs charge exist, the payment flow is unpaid
     return {
       paymentStatus: PaymentStatus.UNPAID,
       updatedAt: existingFjsCharge?.created ?? paymentFlow.modified,
@@ -389,10 +397,10 @@ export class PaymentFlowService {
         updatedAt,
         events: includeEvents
           ? paymentFlow.events?.map((event) => ({
-              ...event,
-              type: event.type as PaymentFlowEventType,
-              reason: event.reason as PaymentFlowEventReason,
-            }))
+            ...event,
+            type: event.type as PaymentFlowEventType,
+            reason: event.reason as PaymentFlowEventReason,
+          }))
           : undefined,
       }
     } catch (e) {
@@ -471,10 +479,8 @@ export class PaymentFlowService {
           const errorMessage = `Failed to notify onUpdateUrl: ${response.status} ${response.statusText}, body: ${errorBody}`
 
           this.logger.warn(
-            `[${update.paymentFlowId}] Failed to notify onUpdateUrl [${
-              update.type
-            }]${attempt ? ` (attempt ${attempt})` : ''}: ${response.status} ${
-              response.statusText
+            `[${update.paymentFlowId}] Failed to notify onUpdateUrl [${update.type
+            }]${attempt ? ` (attempt ${attempt})` : ''}: ${response.status} ${response.statusText
             }`,
             {
               url: paymentFlow.onUpdateUrl,
@@ -650,6 +656,16 @@ export class PaymentFlowService {
         PaymentServiceCode.CouldNotCreatePaymentConfirmation,
       )
     }
+  }
+
+  async findPaymentFulfillmentForPaymentFlow(
+    paymentFlowId: string,
+  ): Promise<InferAttributes<PaymentFulfillment> | null> {
+    const paymentFulfillment = await this.paymentFulfillmentModel.findOne({
+      where: { paymentFlowId },
+    })
+
+    return paymentFulfillment?.toJSON() ?? null
   }
 
   /**
@@ -932,6 +948,16 @@ export class PaymentFlowService {
     await this.paymentFlowModel.destroy({ where: { id } })
 
     return paymentFlowDTO
+  }
+
+  async getCardPaymentConfirmationForPaymentFlow(
+    paymentFlowId: string,
+  ): Promise<InferAttributes<CardPaymentDetails> | null> {
+    const cardPaymentConfirmation = await this.cardPaymentDetailsModel.findOne({
+      where: { paymentFlowId },
+    })
+
+    return cardPaymentConfirmation?.toJSON() ?? null
   }
 
   async deleteCardPaymentConfirmation(

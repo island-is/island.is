@@ -23,6 +23,7 @@ import {
   PaymentServiceCode,
 } from '@island.is/shared/constants'
 import { retry } from '@island.is/shared/utils/server'
+import { isDefined } from '@island.is/shared/utils'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
@@ -65,7 +66,7 @@ export class CardPaymentController {
     private readonly paymentFlowService: PaymentFlowService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
-  ) {}
+  ) { }
 
   @Post('/verify')
   @ApiOkResponse({
@@ -381,10 +382,86 @@ export class CardPaymentController {
     }
   }
 
-  private async validatePaymentFlow(
-    paymentFlowId: string,
-    amount: number,
-  ): Promise<{
+  async finalizePayment(
+    @Body()
+    finalizePaymentInput: {
+      paymentFlowId: string
+      paymentConfirmationId: string
+    },
+  ) {
+    const paymentFlowId = finalizePaymentInput.paymentFlowId
+
+    const [paymentFulfillment, cardPaymentConfirmation] = await Promise.all([
+      this.paymentFlowService.findPaymentFulfillmentForPaymentFlow(
+        paymentFlowId,
+      ),
+      this.paymentFlowService.getCardPaymentConfirmationForPaymentFlow(
+        paymentFlowId,
+      ),
+    ])
+
+    // If the payment fulfillment does not exist or was not paid by card, the payment flow is not eligible to be finalized
+    if (
+      !paymentFulfillment ||
+      paymentFulfillment.paymentMethod !== 'card' ||
+      !cardPaymentConfirmation
+    ) {
+      throw new BadRequestException(
+        PaymentServiceCode.PaymentFlowNotEligibleToBeFinalized,
+      )
+    }
+
+    // If the payment fulfillment has an fjs charge, the payment flow is already finalized
+    if (paymentFulfillment.fjsChargeId) {
+      throw new BadRequestException(
+        PaymentServiceCode.PaymentFlowAlreadyFinalized,
+      )
+    }
+
+    const { paymentFlow, catalogItems } = await this.getPaymentFlowDetails(
+      paymentFlowId,
+    )
+
+    const fjsChargePayload =
+      this.cardPaymentService.createCardPaymentChargePayload({
+        paymentFlow,
+        charges: catalogItems,
+        chargeResponse: {
+          acquirerReferenceNumber:
+            cardPaymentConfirmation.acquirerReferenceNumber,
+          authorizationCode: cardPaymentConfirmation.authorizationCode,
+          cardScheme: cardPaymentConfirmation.cardScheme,
+          maskedCardNumber: cardPaymentConfirmation.maskedCardNumber,
+          cardUsage: cardPaymentConfirmation.cardUsage,
+        },
+        totalPrice: cardPaymentConfirmation.totalPrice,
+        merchantReferenceData: cardPaymentConfirmation.merchantReferenceData,
+        systemId: environment.chargeFjs.systemId,
+      })
+
+    const createdFjsCharge = await retry(
+      () =>
+        this.paymentFlowService.createFjsCharge(
+          paymentFlow.id,
+          fjsChargePayload,
+        ),
+      {
+        maxRetries: 3,
+        retryDelayMs: 1000,
+        logger: this.logger,
+        logPrefix: `[${paymentFlowId}] Create FJS Payment Charge`,
+        shouldRetryOnError: (error) => {
+          return error.message !== FjsErrorCode.AlreadyCreatedCharge
+        },
+      },
+    )
+
+    await 
+
+    return createdFjsCharge
+  }
+
+  private async getPaymentFlowDetails(paymentFlowId: string): Promise<{
     paymentFlow: PaymentFlowAttributes
     catalogItems: CatalogItemWithQuantity[]
     totalPrice: number
@@ -403,7 +480,27 @@ export class CardPaymentController {
       ],
     )
 
-    if (totalPrice !== amount) {
+    return {
+      paymentFlow,
+      catalogItems,
+      totalPrice,
+      paymentStatus,
+    }
+  }
+
+  private async validatePaymentFlow(
+    paymentFlowId: string,
+    amount?: number,
+  ): Promise<{
+    paymentFlow: PaymentFlowAttributes
+    catalogItems: CatalogItemWithQuantity[]
+    totalPrice: number
+    paymentStatus: PaymentStatus
+  }> {
+    const { paymentFlow, catalogItems, totalPrice, paymentStatus } =
+      await this.getPaymentFlowDetails(paymentFlowId)
+
+    if (isDefined(amount) && totalPrice !== amount) {
       throw new BadRequestException(
         PaymentServiceCode.PaymentFlowAmountMismatch,
       )
@@ -458,21 +555,21 @@ export class CardPaymentController {
   private async persistPaymentConfirmationAndHandleFailure(
     args:
       | {
-          isApplePay: false
-          paymentFlowId: string
-          chargeCardInput: ChargeCardInput
-          paymentResult: CardPaymentResponse
-          totalPrice: number
-          paymentTrackingData: PaymentTrackingData
-        }
+        isApplePay: false
+        paymentFlowId: string
+        chargeCardInput: ChargeCardInput
+        paymentResult: CardPaymentResponse
+        totalPrice: number
+        paymentTrackingData: PaymentTrackingData
+      }
       | {
-          isApplePay: true
-          paymentFlowId: string
-          chargeCardInput: ApplePayChargeInput
-          paymentResult: CardPaymentResponse
-          totalPrice: number
-          paymentTrackingData: PaymentTrackingData
-        },
+        isApplePay: true
+        paymentFlowId: string
+        chargeCardInput: ApplePayChargeInput
+        paymentResult: CardPaymentResponse
+        totalPrice: number
+        paymentTrackingData: PaymentTrackingData
+      },
   ): Promise<boolean> {
     const {
       isApplePay,
@@ -598,7 +695,13 @@ export class CardPaymentController {
         this.cardPaymentService.createCardPaymentChargePayload({
           paymentFlow,
           charges: catalogItems,
-          chargeResponse: paymentResult,
+          chargeResponse: {
+            acquirerReferenceNumber: paymentResult.acquirerReferenceNumber,
+            authorizationCode: paymentResult.authorizationCode,
+            cardScheme: paymentResult.cardInformation.cardScheme,
+            maskedCardNumber: paymentResult.maskedCardNumber,
+            cardUsage: paymentResult.cardInformation.cardUsage,
+          },
           totalPrice,
           merchantReferenceData,
           systemId: environment.chargeFjs.systemId,

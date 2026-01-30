@@ -400,7 +400,13 @@ export class CardPaymentService {
   }: {
     paymentFlow: PaymentFlowAttributes
     charges: CatalogItemWithQuantity[]
-    chargeResponse: CardPaymentResponse
+    chargeResponse: {
+      acquirerReferenceNumber: string
+      authorizationCode: string
+      cardScheme: string
+      maskedCardNumber: string
+      cardUsage: string
+    }
     totalPrice: number
     merchantReferenceData: string
     systemId: string
