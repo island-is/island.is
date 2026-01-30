@@ -396,8 +396,7 @@ export const cardError = defineMessages({
   },
   errorGettingApplePaySession: {
     id: 'payments:cardError.errorGettingApplePaySession',
-    defaultMessage:
-      'Ekki var hægt að tengjast Apple Pay tenginu. Reyndu aftur síðar.',
+    defaultMessage: 'Ekki var hægt að tengjast Apple Pay. Reyndu aftur síðar.',
     description: 'Error connecting to Apple Pay description',
   },
   unknownTitle: {

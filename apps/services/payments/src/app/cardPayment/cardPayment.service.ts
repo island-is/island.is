@@ -445,7 +445,6 @@ export class CardPaymentService {
     }
 
     const data = await response.json()
-    this.logger.info('APPLE PAY SESSION', data)
     if (!data.isSuccess || !data.session) {
       throw new BadRequestException(CardErrorCode.ErrorGettingApplePaySession)
     }
