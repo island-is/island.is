@@ -5,6 +5,7 @@ import {
   Button,
   DatePicker,
   GridColumn,
+  GridContainer,
   GridRow,
   Select,
   SkeletonLoader,
@@ -163,7 +164,7 @@ export const PaymentOverviewTotals = () => {
             <Text variant="small">
               {formatMessage(messages.paymentOverviewTotalsIntro)}
             </Text>
-            <Box>
+            <GridContainer>
               <GridRow rowGap={[2, 2, 2, 2, 'smallGutter']}>
                 <GridColumn span={['1/1', '1/1', '1/2', '1/2', '3/9']}>
                   <DatePicker
@@ -242,7 +243,7 @@ export const PaymentOverviewTotals = () => {
                   </Box>
                 </GridColumn>
               </GridRow>
-            </Box>
+            </GridContainer>
 
             <Box>
               {!rows.length ? (
