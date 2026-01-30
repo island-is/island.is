@@ -174,6 +174,17 @@ export const messages = defineMessages({
   },
 })
 
+export const farmerLandsMessages = defineMessages({
+  title: {
+    id: 'sp.farmer-lands:title',
+    defaultMessage: 'todo',
+  },
+  description: {
+    id: 'sp.farmer-lands:description',
+    defaultMessage: 'todo',
+  },
+})
+
 export const vehicleMessage = defineMessages({
   foundSingular: {
     id: 'sp.vehicles:found-singular',

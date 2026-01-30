@@ -10,75 +10,90 @@ import { isAllowedBulkMileageUploadLoader } from './loaders/isAllowedBulkMileage
 import { BulkMileageWrapper } from './wrappers/BulkMileageWrapper'
 
 const USER_SHIPS_FLAG = 'UserShips'
+const FARMERS_LANDS_FLAG = 'FarmersLands'
 
-const IPOverview = lazy(() =>
-  import(
-    './screens/IntellectualPropertiesOverview/IntellectualPropertiesOverview'
-  ),
+const IPOverview = lazy(
+  () =>
+    import(
+      './screens/IntellectualPropertiesOverview/IntellectualPropertiesOverview'
+    ),
 )
-const IPDesignDetail = lazy(() =>
-  import(
-    './screens/IntellectualPropertiesDesignDetail/IntellectualPropertiesDesignDetail'
-  ),
+const IPDesignDetail = lazy(
+  () =>
+    import(
+      './screens/IntellectualPropertiesDesignDetail/IntellectualPropertiesDesignDetail'
+    ),
 )
-const IPTrademarkDetail = lazy(() =>
-  import(
-    './screens/IntellectualPropertiesTrademarkDetail/IntellectualPropertiesTrademarkDetail'
-  ),
+const IPTrademarkDetail = lazy(
+  () =>
+    import(
+      './screens/IntellectualPropertiesTrademarkDetail/IntellectualPropertiesTrademarkDetail'
+    ),
 )
-const IPPatentDetail = lazy(() =>
-  import(
-    './screens/IntellectualPropertiesPatentDetail/IntellectualPropertiesPatentDetail'
-  ),
+const IPPatentDetail = lazy(
+  () =>
+    import(
+      './screens/IntellectualPropertiesPatentDetail/IntellectualPropertiesPatentDetail'
+    ),
 )
 
-const AssetsOverview = lazy(() =>
-  import('./screens/AssetsOverview/AssetsOverview'),
+const AssetsOverview = lazy(
+  () => import('./screens/AssetsOverview/AssetsOverview'),
 )
-const RealEstateAssetDetail = lazy(() =>
-  import('./screens/RealEstateAssetDetail/RealEstateAssetDetail'),
+const RealEstateAssetDetail = lazy(
+  () => import('./screens/RealEstateAssetDetail/RealEstateAssetDetail'),
 )
 
 const Overview = lazy(() => import('./screens/Overview/Overview'))
 
-const VehicleDetail = lazy(() =>
-  import('./screens/VehicleDetail/VehicleDetail'),
+const VehicleDetail = lazy(
+  () => import('./screens/VehicleDetail/VehicleDetail'),
 )
-const VehicleHistory = lazy(() =>
-  import('./screens/VehicleHistory/VehicleHistory'),
+const VehicleHistory = lazy(
+  () => import('./screens/VehicleHistory/VehicleHistory'),
 )
 const Lookup = lazy(() => import('./screens/Lookup/Lookup'))
-const ShipsOverview = lazy(() =>
-  import('./screens/Ships/Overview/ShipsOverview'),
+const ShipsOverview = lazy(
+  () => import('./screens/Ships/Overview/ShipsOverview'),
 )
 const ShipDetail = lazy(() => import('./screens/Ships/Detail/ShipDetail'))
 
-const WorkMachinesOverview = lazy(() =>
-  import('./screens/WorkMachinesOverview/WorkMachinesOverview'),
+const WorkMachinesOverview = lazy(
+  () => import('./screens/WorkMachinesOverview/WorkMachinesOverview'),
 )
-const WorkMachinesDetail = lazy(() =>
-  import('./screens/WorkMachinesDetail/WorkMachinesDetail'),
-)
-
-const VehicleMileage = lazy(() =>
-  import('./screens/VehicleMileage/VehicleMileage'),
+const WorkMachinesDetail = lazy(
+  () => import('./screens/WorkMachinesDetail/WorkMachinesDetail'),
 )
 
-const VehicleBulkMileage = lazy(() =>
-  import('./screens/VehicleBulkMileage/VehicleBulkMileage'),
+const FarmerLandsOverview = lazy(
+  () => import('./screens/FarmerLands/Overview/FarmerLandsOverview'),
 )
 
-const VehicleBulkMileageUpload = lazy(() =>
-  import('./screens/VehicleBulkMileageUpload/VehicleBulkMileageUpload'),
+const FarmerLandDetail = lazy(
+  () => import('./screens/FarmerLands/Detail/FarmerLandDetail'),
 )
 
-const VehicleBulkMileageJobOverview = lazy(() =>
-  import(
-    './screens/VehicleBulkMileageJobOverview/VehicleBulkMileageJobOverview'
-  ),
+const VehicleMileage = lazy(
+  () => import('./screens/VehicleMileage/VehicleMileage'),
 )
-const VehicleBulkMileageJobDetail = lazy(() =>
-  import('./screens/VehicleBulkMileageJobDetail/VehicleBulkMileageJobDetail'),
+
+const VehicleBulkMileage = lazy(
+  () => import('./screens/VehicleBulkMileage/VehicleBulkMileage'),
+)
+
+const VehicleBulkMileageUpload = lazy(
+  () => import('./screens/VehicleBulkMileageUpload/VehicleBulkMileageUpload'),
+)
+
+const VehicleBulkMileageJobOverview = lazy(
+  () =>
+    import(
+      './screens/VehicleBulkMileageJobOverview/VehicleBulkMileageJobOverview'
+    ),
+)
+const VehicleBulkMileageJobDetail = lazy(
+  () =>
+    import('./screens/VehicleBulkMileageJobDetail/VehicleBulkMileageJobDetail'),
 )
 
 export const assetsModule: PortalModule = {
@@ -135,6 +150,20 @@ export const assetsModule: PortalModule = {
         path: AssetsPaths.AssetsWorkMachinesDetail,
         enabled: userInfo.scopes.includes(ApiScope.workMachines),
         element: <WorkMachinesDetail />,
+      },
+      {
+        name: 'FarmerLands',
+        path: AssetsPaths.AssetsFarmerLands,
+        key: FARMERS_LANDS_FLAG,
+        enabled: userInfo.scopes.includes(ApiScope.internal),
+        element: <FarmerLandsOverview />,
+      },
+      {
+        name: 'FarmerLandDetail',
+        path: AssetsPaths.AssetsFarmerLandDetail,
+        key: FARMERS_LANDS_FLAG,
+        enabled: userInfo.scopes.includes(ApiScope.internal),
+        element: <FarmerLandDetail />,
       },
       {
         name: m.myVehicles,
