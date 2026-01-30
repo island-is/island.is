@@ -21,7 +21,7 @@ import { FarmersService } from './farmers.service'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Scopes(ApiScope.internal)
-@FeatureFlag(Features.isServicePortalFarmersLandsEnabled)
+@FeatureFlag(Features.isServicePortalFarmersLandsPageEnabled)
 @Audit({ namespace: '@island.is/api/farmers' })
 @Resolver(() => FarmerLand)
 export class FarmersResolver {

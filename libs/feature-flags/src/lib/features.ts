@@ -59,7 +59,7 @@ export enum Features {
   isServicePortal2WayMailboxEnabled = 'isServicePortal2WayMailboxEnabled',
   servicePortalPoliceCasesPageEnabled = 'isServicePortalPoliceCasesPageEnabled',
   isServicePortalHealthQuestionnairesPageEnabled = 'isServicePortalHealthQuestionnairesPageEnabled',
-  isServicePortalFarmersLandsEnabled = 'isServicePortalFarmersLandsEnabled',
+  isServicePortalFarmersLandsPageEnabled = 'isServicePortalFarmersLandsPageEnabled',
   // Health Aid and Nutrition Renewal feature enabled
   servicePortalHealthAidAndNutritionRenewalEnabled = 'isServicePortalHealthAidAndNutritionRenewalEnabled',
   //Occupational License Health directorate fetch enabled

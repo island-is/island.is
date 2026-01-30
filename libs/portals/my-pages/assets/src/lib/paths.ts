@@ -25,6 +25,8 @@ export enum AssetsPaths {
   AssetsIntellectualPropertiesTrademark = '/eignir/hugverkarettindi/vorumerki/:id',
   AssetsIntellectualPropertiesPatent = '/eignir/hugverkarettindi/einkaleyfi/:id',
   AssetsIntellectualPropertiesDesign = '/eignir/hugverkarettindi/honnun/:id',
+  AssetsFarmerLands = '/eignir/bujardir',
+  AssetsFarmerLandDetail = '/eignir/bujardir/:id',
 
   //LINKS
   //If updated, also update `FinanceTransactionVehicleMileage` in the finance paths file (libs/portals/my-pages/finance/src/lib/paths.ts)
