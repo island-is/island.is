@@ -83,9 +83,10 @@ export { default as TagCaseState } from './Tags/TagCaseState/TagCaseState'
 export { default as CaseTag } from './Tags/CaseTag'
 export { getIndictmentRulingDecisionTag } from './Tags/utils'
 export {
-  SigningModal,
-  useRequestRulingSignature,
-} from './Modals/SigningModal/SigningModal'
+  SigningMethodSelectionModal,
+  type SignatureType,
+} from './Modals/SigningMethodSelectionModal/SigningMethodSelectionModal'
+export { SignatureConfirmationModal } from './Modals/SignatureConfirmationModal/SignatureConfirmationModal'
 export { default as Skeleton } from './Skeleton/Skeleton'
 export { UserProvider, UserContext, userRef } from './UserProvider/UserProvider'
 export {
