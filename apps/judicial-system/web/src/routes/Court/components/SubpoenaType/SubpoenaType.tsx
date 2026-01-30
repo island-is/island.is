@@ -111,7 +111,7 @@ const SubpoenaType: FC<SubpoenaTypeProps> = ({
               <Box className={styles.subpoenaTypeGrid}>
                 <RadioButton
                   large
-                  name="subpoenaType"
+                  name={`subpoenaType-${item.defendant.id}`}
                   id={`subpoenaTypeAbsence${item.defendant.id}`}
                   backgroundColor="white"
                   label={formatMessage(strings.absence)}
@@ -132,7 +132,7 @@ const SubpoenaType: FC<SubpoenaTypeProps> = ({
                 />
                 <RadioButton
                   large
-                  name="subpoenaType"
+                  name={`subpoenaType-${item.defendant.id}`}
                   id={`subpoenaTypeArrest${item.defendant.id}`}
                   backgroundColor="white"
                   label={formatMessage(strings.arrest)}

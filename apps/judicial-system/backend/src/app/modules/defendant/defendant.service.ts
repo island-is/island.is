@@ -19,10 +19,12 @@ import {
   DefendantEventType,
   DefendantNotificationType,
   DefenderChoice,
+  EventType,
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
 
 import { CourtService } from '../court'
+import { EventLogService } from '../event-log'
 import {
   Case,
   Defendant,
@@ -41,6 +43,7 @@ export class DefendantService {
     private readonly defendantEventLogRepositoryService: DefendantEventLogRepositoryService,
     private readonly courtService: CourtService,
     private readonly messageService: MessageService,
+    private readonly eventLogService: EventLogService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -278,6 +281,27 @@ export class DefendantService {
     await this.defendantEventLogRepositoryService.create(event, { transaction })
   }
 
+  private async handleEventLogUpdates(
+    theCase: Case,
+    defendant: Defendant,
+    updatedDefendant: UpdateDefendantDto,
+    user: User,
+    transaction: Transaction,
+  ) {
+    if (
+      updatedDefendant.indictmentReviewDecision &&
+      updatedDefendant.indictmentReviewDecision !==
+        defendant.indictmentReviewDecision
+    ) {
+      await this.eventLogService.createWithUser(
+        EventType.INDICTMENT_REVIEWED,
+        theCase.id,
+        user,
+        transaction,
+      )
+    }
+  }
+
   private async updateIndictmentCaseDefendant(
     theCase: Case,
     defendant: Defendant,
@@ -308,6 +332,14 @@ export class DefendantService {
       updatedDefendant,
       defendant,
       user,
+    )
+
+    await this.handleEventLogUpdates(
+      theCase,
+      defendant,
+      updatedDefendant,
+      user,
+      transaction,
     )
 
     return updatedDefendant

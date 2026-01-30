@@ -9,7 +9,6 @@ import {
   completedIndictmentCaseStates,
   completedRequestCaseStates,
   EventType,
-  IndictmentCaseReviewDecision,
   indictmentCases,
   investigationCases,
   restrictionCases,
@@ -18,6 +17,7 @@ import {
 
 import {
   buildEventLogExistsCondition,
+  buildHasDefendantWithNullReviewDecisionCondition,
   buildIsSentToPrisonExistsCondition,
 } from './conditions'
 
@@ -108,7 +108,6 @@ export const prisonAdminIndictmentsAccessWhereOptions = {
     CaseIndictmentRulingDecision.RULING,
     CaseIndictmentRulingDecision.FINE,
   ],
-  indictment_review_decision: IndictmentCaseReviewDecision.ACCEPT,
   [Op.and]: [buildIsSentToPrisonExistsCondition(true)],
 }
 
@@ -195,7 +194,10 @@ export const prosecutorRepresentativeCasesAccessWhereOptions = (user: User) =>
 
 // Public prosecution access
 
-export const publicProsecutionIndictmentsAccessWhereOptions = (user: User) => ({
+export const publicProsecutionIndictmentsAccessWhereOptions = (
+  user: User,
+  needsReview?: boolean,
+) => ({
   is_archived: false,
   type: indictmentCases,
   state: completedIndictmentCaseStates,
@@ -208,6 +210,9 @@ export const publicProsecutionIndictmentsAccessWhereOptions = (user: User) => ({
       EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
       true,
     ),
+    ...(needsReview !== undefined
+      ? [buildHasDefendantWithNullReviewDecisionCondition(needsReview)]
+      : []),
   ],
   indictment_reviewer_id: user.id,
 })

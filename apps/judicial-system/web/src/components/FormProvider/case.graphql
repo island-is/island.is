@@ -48,6 +48,7 @@ query Case($input: CaseQueryInput!) {
       punishmentType
       isAlternativeService
       alternativeServiceDescription
+      indictmentReviewDecision
       subpoenas {
         id
         created
@@ -242,6 +243,7 @@ query Case($input: CaseQueryInput!) {
     crimeScenes
     indictmentIntroduction
     publicProsecutorIsRegisteredInPoliceSystem
+    indictmentReviewedDate
     indictmentCounts {
       id
       caseId
@@ -403,7 +405,6 @@ query Case($input: CaseQueryInput!) {
     indictmentVerdictAppealDeadlineExpired
     indictmentVerdictViewedByAll
     indictmentDecision
-    indictmentReviewDecision
     courtSessionType
     mergeCase {
       id
