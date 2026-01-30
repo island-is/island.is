@@ -27,7 +27,10 @@ import { FarmersService } from './farmers.service'
 export class FarmersResolver {
   constructor(private readonly farmersService: FarmersService) {}
 
-  @Query(() => FarmerLandsCollection, { nullable: true })
+  @Query(() => FarmerLandsCollection, {
+    name: 'farmerLands',
+    nullable: true,
+  })
   async farmerLandsList(
     @CurrentUser() user: User,
   ): Promise<FarmerLandsCollection> {
