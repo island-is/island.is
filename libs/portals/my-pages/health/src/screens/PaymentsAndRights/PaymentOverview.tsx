@@ -25,7 +25,6 @@ import {
 import { Problem } from '@island.is/react-spa/shared'
 import { Features, useFeatureFlagClient } from '@island.is/react/feature-flags'
 import { isDefined } from '@island.is/shared/utils'
-import sub from 'date-fns/sub'
 import { useEffect, useState } from 'react'
 import { useWindowSize } from 'react-use'
 import { messages } from '../../lib/messages'
@@ -208,7 +207,7 @@ export const PaymentOverview = () => {
                     {formatMessage(m.get)}
                   </Button>
                 </GridColumn>
-                <GridColumn span={['1/2', '1/2', '1/2', '1/2', '3/9']}>
+                <GridColumn span={['1/2', '1/2', '1/2', '1/2', '2/9']}>
                   <Box
                     width="full"
                     height="full"

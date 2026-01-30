@@ -31,7 +31,8 @@ import {
   getLastDayOfPreviousYear,
 } from '../../utils/dates'
 import {
-  useGetPaymentOverviewTotalsQuery,
+  GetPaymentOverviewTotalsQuery,
+  useGetPaymentOverviewTotalsLazyQuery,
   useGetPaymentOverviewTotalsServiceTypesQuery,
   useGetPaymentOverviewTotalsPdfLazyQuery,
 } from './Payments.generated'
@@ -46,6 +47,13 @@ export const PaymentOverviewTotals = () => {
   const [endDate, setEndDate] = useState<Date>(getLastDayOfPreviousYear)
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null)
 
+  type TotalsItem = NonNullable<
+    GetPaymentOverviewTotalsQuery['rightsPortalPaymentOverviewTotals']
+  >['items'][number]
+  const [totalsItem, setTotalsItem] = useState<TotalsItem | undefined>(
+    undefined,
+  )
+
   const isMobile = width < theme.breakpoints.md
 
   const {
@@ -54,25 +62,17 @@ export const PaymentOverviewTotals = () => {
     error: serviceTypesError,
   } = useGetPaymentOverviewTotalsServiceTypesQuery()
 
-  const {
-    data: totalsData,
-    loading: totalsLoading,
-    error: totalsError,
-    refetch: refetchTotals,
-  } = useGetPaymentOverviewTotalsQuery({
-    variables: {
-      input: {
-        dateFrom: startDate,
-        dateTo: endDate,
-        serviceTypeCode: selectedOptionId ?? '',
-      },
+  const [
+    lazyTotalsQuery,
+    { loading: totalsLoading, error: totalsError },
+  ] = useGetPaymentOverviewTotalsLazyQuery({
+    onCompleted(data) {
+      const item = data.rightsPortalPaymentOverviewTotals.items[0]
+      setTotalsItem(item)
     },
   })
 
   const [fetchTotalsPdf] = useGetPaymentOverviewTotalsPdfLazyQuery()
-
-  const totalsResponse = totalsData?.rightsPortalPaymentOverviewTotals
-  const totalsItem = totalsResponse?.items[0]
 
   const services =
     serviceTypes?.rightsPortalPaymentOverviewTotalsServiceTypes.items
@@ -100,11 +100,13 @@ export const PaymentOverviewTotals = () => {
     .filter(isDefined)
 
   const onFetchTotals = () => {
-    refetchTotals({
-      input: {
-        dateFrom: startDate,
-        dateTo: endDate,
-        serviceTypeCode: selectedOptionId ?? '',
+    lazyTotalsQuery({
+      variables: {
+        input: {
+          dateFrom: startDate,
+          dateTo: endDate,
+          serviceTypeCode: selectedOptionId ?? '',
+        },
       },
     })
   }
