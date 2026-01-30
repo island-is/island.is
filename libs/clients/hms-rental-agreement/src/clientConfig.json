@@ -228,7 +228,27 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContractDocumentResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContractDocumentResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContractDocumentResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
           }
         }
       }
@@ -366,6 +386,13 @@
               "$ref": "#/components/schemas/ContractProperty"
             },
             "nullable": true
+          },
+          "contract_document": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ContractDocumentMetadata"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -436,6 +463,54 @@
           },
           "document": {
             "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ContractDocumentMetadata": {
+        "type": "object",
+        "properties": {
+          "contract_document_id": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "document_type": {
+            "type": "string",
+            "nullable": true
+          },
+          "document_type_use_code": {
+            "type": "string",
+            "nullable": true
+          },
+          "document_last_date": {
+            "type": "string",
+            "nullable": true
+          },
+          "document_mime": {
+            "type": "string",
+            "nullable": true
+          },
+          "document_filename": {
+            "type": "string",
+            "nullable": true
+          },
+          "document_description": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ContractDocumentResponse": {
+        "type": "object",
+        "properties": {
+          "contract_document": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ContractDocumentItem"
+            },
             "nullable": true
           }
         },

@@ -1,5 +1,9 @@
 import { Contract, ContractDocumentItem } from '../../gen/fetch'
 import { AgreementStatusType, TemporalType } from '../types'
+import {
+  ContractDocumentItemDto,
+  mapContractDocumentItemDto,
+} from './contractDocument'
 import { ContractPartyDto, mapContractPartyDto } from './contractParty.dto'
 import {
   ContractPropertyDto,
@@ -16,12 +20,11 @@ export interface RentalAgreementDto {
   contractType: TemporalType
   contractParty?: ContractPartyDto[]
   contractProperty?: ContractPropertyDto[]
-  documents?: string[]
+  documents?: ContractDocumentItemDto[]
 }
 
 export const mapRentalAgreementDto = (
   contract: Contract,
-  documents?: ContractDocumentItem[],
 ): RentalAgreementDto | null => {
   if (!contract.contractId) {
     return null
@@ -50,6 +53,10 @@ export const mapRentalAgreementDto = (
       contract.contractProperty
         ?.map(mapContractPropertyDto)
         .filter(isDefined) ?? undefined,
+    documents:
+      contract.contractDocument
+        ?.map(mapContractDocumentItemDto)
+        .filter(isDefined) ?? [],
   }
 }
 
