@@ -268,12 +268,12 @@ export class UserProfileService {
     nationalId: string,
     emailId: string,
   ): Promise<boolean> {
-    return this.v2UserProfileApiWithAuth(user).userProfileControllerDeleteEmail(
-      {
-        xParamNationalId: nationalId,
-        emailId,
-      },
-    )
+    await this.v2UserProfileApiWithAuth(user).userProfileControllerDeleteEmail({
+      xParamNationalId: nationalId,
+      emailId,
+    })
+
+    return true
   }
 
   async getEmailsByNationalId(

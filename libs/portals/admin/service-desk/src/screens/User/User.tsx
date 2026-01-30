@@ -327,29 +327,35 @@ const User = () => {
                   return undefined
                 }
 
-                return primaryEmail ? (
+                return (
                   <ActionCard
                     heading={formatMessage(m.primaryEmail)}
-                    text={primaryEmail.email ?? formatMessage(m.noEmail)}
-                    cta={{
-                      label: formatMessage(coreMessages.buttonDestroy),
-                      buttonType: {
-                        variant: 'text',
-                        colorScheme: 'destructive',
-                      },
-                      size: 'small',
-                      icon: 'trash',
-                      onClick: () => {
-                        setEmailToDelete({
-                          id: primaryEmail.id,
-                          email: primaryEmail.email ?? null,
-                        })
-                        setIsDeleteEmailModalVisible(true)
-                      },
-                    }}
-                    tag={getTagForEmail(primaryEmail)}
+                    text={primaryEmail?.email ?? formatMessage(m.noEmail)}
+                    cta={
+                      primaryEmail
+                        ? {
+                            label: formatMessage(coreMessages.buttonDestroy),
+                            buttonType: {
+                              variant: 'text',
+                              colorScheme: 'destructive',
+                            },
+                            size: 'small',
+                            icon: 'trash',
+                            onClick: () => {
+                              setEmailToDelete({
+                                id: primaryEmail.id,
+                                email: primaryEmail.email ?? null,
+                              })
+                              setIsDeleteEmailModalVisible(true)
+                            },
+                          }
+                        : undefined
+                    }
+                    tag={
+                      primaryEmail ? getTagForEmail(primaryEmail) : undefined
+                    }
                   />
-                ) : null
+                )
               })()}
             </Box>
           </Box>
