@@ -1240,6 +1240,10 @@ export const messages = defineMessages({
       'Lorem ipsum dolor sit amet consectetur. Dictum egestas diam at morbi lectus posuere mattis sit praesent. Et ultricies sed viverra neque eget odio blandit nunc. Non non aliquam vel urna blandit leo.',
     id: 'sp.health:payment-overview-totals-intro',
   },
+  paymentOverviewTotalsDownload: {
+    defaultMessage: 'Sækja samtölur (PDF)',
+    id: 'sp.health:payment-overview-totals-download',
+  },
   paymentParticationExplanation: {
     defaultMessage:
       'Við útreikning á greiðsluþátttöku er tekið mið af greiðslum fyrir heilbrigðisþjónustu s.l. fimm mánuði. Eigir þú á rétt á hámarksafslætti vegna fyrri greiðslna verður hámarksgreiðsla þín í mánuði {basePayment} kr. Fjárhæðin miðar við greiðslumark þitt eins og það birtist í Réttindagátt í dag. Birt með þeim fyrirvara að fjárhæðin tekur mið af þeim reikningum sem hafa borist Sjúkratryggingar.',
@@ -1280,8 +1284,13 @@ export const messages = defineMessages({
   },
   paymentsIntro: {
     defaultMessage:
-      'Undir greiðsluþátttökukerfið falla greiðslur fyrir þjónustu sem veitt er á heilsugæslustöðvum og sjúkrahúsum.',
+      'Undir greiðsluþátttökukerfið falla greiðslur fyrir þjónustu sem veitt er á heilsugæslustöðvum og sjúkrahúsum. Einnig vegna þjónustu sérgreinalækna, þjálfunar, myndgreininga, rannsókna og sálfræðiþjónustu sem sérstaklega er samið um við Sjúkratryggingar. Skilyrði er að viðkomandi þjónustuveitandi sé með samning við Sjúkratryggingar um sína þjónustu.',
     id: 'sp.health:payments-intro',
+  },
+  paymentsParticipationInfo: {
+    defaultMessage:
+      'Sjúkratryggingar taka þátt í kostnaði við heilbrigðisþjónustu og sjá til þess að einstaklingar greiði ekki meira en ákveðna hámarksfjárhæð í hverjum mánuði fyrir hana. <link>Lesa nánar um greiðsluþáttökukerfið.</link>',
+    id: 'sp.health:payments-participation-info',
   },
   paymentTarget: {
     defaultMessage: 'Greiðslumark',
