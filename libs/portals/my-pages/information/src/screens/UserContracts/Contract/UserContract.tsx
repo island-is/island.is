@@ -21,10 +21,11 @@ import {
 } from '@island.is/api/schema'
 import { generateRentalAgreementAddress } from '../../../utils/mapAddress'
 import { getApplicationsBaseUrl } from '@island.is/portals/core'
+import { TERMINATED_STATUSES } from './constants'
 
 const UserContract = () => {
   useNamespaces('sp.contracts')
-  const { formatMessage } = useLocale()
+  const { formatMessage, formatDate } = useLocale()
 
   const { id } = useParams<'id'>()
 
@@ -144,6 +145,19 @@ const UserContract = () => {
                 ) : undefined
               }
             />
+            {contract?.status && TERMINATED_STATUSES.includes(contract.status) && (
+              <InfoLine
+                loading={loading}
+                label={cm.terminationDate}
+                content={
+                  contract?.terminationDate
+                    ? formatDate(contract.terminationDate, {
+                        dateStyle: 'long',
+                      })
+                    : undefined
+                }
+              />
+            )}
           </InfoLineStack>
         </Box>
       )}

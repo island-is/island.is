@@ -40,29 +40,28 @@ export class HmsRentalAgreementService {
 
   async getRentalAgreement(
     user: User,
-    id: number,
+    id: string,
   ): Promise<RentalAgreementDto | undefined> {
-    const agreements = await this.getRentalAgreements(user)
-    const agreementToReturn: RentalAgreementDto | undefined = agreements.find(
-      (agreement) => agreement.id === id,
-    )
+    const data = await this.apiWithAuth(user).contractContractIdGet({
+      contractId: id,
+    })
 
-    if (!agreementToReturn) {
-      this.logger.warn('Rental agreement not found', {
+    if (!data.contractId) {
+      this.logger.warn('Malformed contract, returning null', {
         id,
       })
       return
     }
 
-    return agreementToReturn
+    return mapRentalAgreementDto(data) ?? undefined
   }
 
   async getRentalAgreementPdf(
     user: User,
-    id: number,
+    documentId: number,
   ): Promise<Array<ContractDocumentItemDto> | undefined> {
-    const res = await this.apiWithAuth(user).contractKtKtWithDocumentsGet({
-      kt: user.nationalId,
+    const res = await this.apiWithAuth(user).contractDocumentIdGet({
+      id: documentId,
     })
 
     if (!res || res.length === 0) {

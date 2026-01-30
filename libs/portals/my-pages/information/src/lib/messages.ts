@@ -667,6 +667,10 @@ export const contractsMessages = defineMessages({
     id: 'sp.contracts:status',
     defaultMessage: 'Staða',
   },
+  terminationDate: {
+    id: 'sp.contracts:termination-date',
+    defaultMessage: 'Lokadagsetning',
+  },
   active: {
     id: 'sp.contracts:active',
     defaultMessage: 'Í gildi',
