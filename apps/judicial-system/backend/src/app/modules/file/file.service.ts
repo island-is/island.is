@@ -39,9 +39,13 @@ import { hasConfirmableCaseFileCategories } from '../../formatters/confirmedPdf'
 import { AwsS3Service } from '../aws-s3'
 import { InternalCaseService } from '../case/internalCase.service'
 import { CourtDocumentFolder, CourtService } from '../court'
-import { CourtDocumentService } from '../court-session'
 import { PoliceDocumentType } from '../police'
-import { Case, CaseFile, EventLog } from '../repository'
+import {
+  Case,
+  CaseFile,
+  CourtDocumentRepositoryService,
+  EventLog,
+} from '../repository'
 import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
 import { UpdateFileDto } from './dto/updateFile.dto'
@@ -71,7 +75,7 @@ export class FileService {
     private readonly courtService: CourtService,
     private readonly awsS3Service: AwsS3Service,
     private readonly messageService: MessageService,
-    private readonly courtDocumentService: CourtDocumentService,
+    private readonly courtDocumentRepositoryService: CourtDocumentRepositoryService,
     @Inject(forwardRef(() => InternalCaseService))
     private readonly internalCaseService: InternalCaseService,
     @Inject(fileModuleConfig.KEY)
@@ -486,14 +490,14 @@ export class FileService {
         CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
       ].includes(file.category)
     ) {
-      await this.courtDocumentService.create(
+      await this.courtDocumentRepositoryService.create(
         theCase.id,
         {
           documentType: CourtDocumentType.UPLOADED_DOCUMENT,
           name: file.userGeneratedFilename ?? file.name,
           caseFileId: file.id,
         },
-        transaction,
+        { transaction },
       )
     }
 
@@ -553,6 +557,25 @@ export class FileService {
     return this.getCaseFileSignedUrlFromS3(theCase, file).then((url) => ({
       url,
     }))
+  }
+
+  async rejectCaseFile(
+    theCase: Case,
+    file: CaseFile,
+    transaction: Transaction,
+  ): Promise<CaseFile> {
+    await this.courtDocumentRepositoryService.deleteByCaseFileId(
+      theCase.id,
+      file.id,
+      { transaction },
+    )
+
+    return this.updateCaseFile(
+      theCase.id,
+      file.id,
+      { state: CaseFileState.REJECTED },
+      transaction,
+    )
   }
 
   async deleteCaseFile(

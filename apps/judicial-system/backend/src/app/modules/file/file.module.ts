@@ -10,8 +10,8 @@ import {
   AwsS3Module,
   CaseModule,
   CourtModule,
-  CourtSessionModule,
   CriminalRecordModule,
+  RepositoryModule,
   UserModule,
 } from '..'
 import { FileController } from './file.controller'
@@ -24,7 +24,7 @@ import { LimitedAccessFileController } from './limitedAccessFile.controller'
     CmsTranslationsModule,
     MessageModule,
     forwardRef(() => CriminalRecordModule),
-    forwardRef(() => CourtSessionModule),
+    forwardRef(() => RepositoryModule),
     forwardRef(() => UserModule),
     forwardRef(() => CaseModule),
     forwardRef(() => CourtModule),

@@ -2,6 +2,7 @@ import { Request } from 'express'
 import { Sequelize } from 'sequelize-typescript'
 
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -29,6 +30,8 @@ import {
 import { IDS_ACCESS_TOKEN_NAME } from '@island.is/judicial-system/consts'
 import type { User } from '@island.is/judicial-system/types'
 import {
+  CaseFileCategory,
+  CaseFileState,
   indictmentCases,
   investigationCases,
   restrictionCases,
@@ -245,6 +248,63 @@ export class FileController {
     )
 
     return this.fileService.getCaseFileSignedUrl(theCase, caseFile)
+  }
+
+  @UseGuards(
+    new CaseTypeGuard(indictmentCases),
+    CaseWriteGuard,
+    CaseFileExistsGuard,
+  )
+  @RolesRules(
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+  )
+  @Post('file/:fileId/reject')
+  @ApiOkResponse({
+    type: CaseFile,
+    description: 'Rejects a case file',
+  })
+  async rejectCaseFile(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+    @Param('fileId') fileId: string,
+    @CurrentCaseFile() caseFile: CaseFile,
+  ): Promise<CaseFile> {
+    this.logger.debug(`Rejecting file ${fileId} of case ${caseId}`)
+
+    if (caseFile.state === CaseFileState.REJECTED) {
+      throw new BadRequestException('File is already rejected')
+    }
+
+    if (
+      caseFile.category !== CaseFileCategory.PROSECUTOR_CASE_FILE &&
+      caseFile.category !== CaseFileCategory.DEFENDANT_CASE_FILE &&
+      caseFile.category !== CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE
+    ) {
+      this.logger.error(
+        `Attempt to reject case file ${fileId} of case ${caseId} with invalid category ${caseFile.category}`,
+      )
+      throw new BadRequestException(
+        'Only uploaded prosecutor and defendant case files can be rejected',
+      )
+    }
+
+    if (
+      theCase.courtSessions?.some(
+        (session) =>
+          session.isConfirmed &&
+          session.filedDocuments?.some((doc) => doc.caseFileId === caseFile.id),
+      )
+    ) {
+      throw new BadRequestException(
+        'Cannot reject a file that has been filed in a court session',
+      )
+    }
+
+    return this.sequelize.transaction(async (transaction) =>
+      this.fileService.rejectCaseFile(theCase, caseFile, transaction),
+    )
   }
 
   @UseGuards(CaseWriteGuard, CaseFileExistsGuard)

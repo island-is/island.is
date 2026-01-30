@@ -26,10 +26,10 @@ import { CaseTableResponse, SearchCasesResponse } from '../case-table'
 import {
   CourtDocumentResponse,
   CourtSessionResponse,
+  CourtSessionString,
   DeleteCourtDocumentResponse,
   DeleteCourtSessionResponse,
 } from '../court-session'
-import { CourtSessionString } from '../court-session/dto/courtSessionString.response'
 import {
   CivilClaimant,
   Defendant,
@@ -446,6 +446,10 @@ export class BackendService extends DataSource<{ req: Request }> {
       : ''
 
     return this.get(`case/${caseId}${mergedCaseInjection}/file/${fileId}/url`)
+  }
+
+  rejectCaseFile(caseId: string, fileId: string): Promise<CaseFile> {
+    return this.post(`case/${caseId}/file/${fileId}/reject`)
   }
 
   deleteCaseFile(caseId: string, fileId: string): Promise<DeleteFileResponse> {

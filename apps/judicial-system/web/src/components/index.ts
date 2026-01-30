@@ -22,6 +22,7 @@ export {
 export { useOpenCaseInNewTab } from './ContextMenu/ContextMenuItems/OpenCaseInNewTab'
 export { useDeleteCase } from './ContextMenu/ContextMenuItems/DeleteCase'
 export { useWithdrawAppeal } from './ContextMenu/ContextMenuItems/WithdrawAppeal'
+export { useRejectCaseFile } from './ContextMenu/ContextMenuItems/RejectCaseFile'
 export {
   CourtArrangements,
   useCourtArrangements,
