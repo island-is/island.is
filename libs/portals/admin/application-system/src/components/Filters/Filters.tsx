@@ -125,6 +125,7 @@ export const Filters = ({
     }
 
     if (!filters.nationalId) setNationalId('')
+    if (!filters.searchStr) setSearchStr('')
   }, [filters])
 
   const institutionTypeIds = useMemo(() => {
