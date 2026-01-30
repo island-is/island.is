@@ -232,4 +232,10 @@ export class EmailsService {
 
     return emailRecord
   }
+
+  async findPrimaryEmail(nationalId: string): Promise<Emails | null> {
+    return this.emailsModel.findOne({
+      where: { nationalId, primary: true },
+    })
+  }
 }
