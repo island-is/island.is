@@ -43,6 +43,7 @@ export const multiUploadSection = buildSection({
             id: 'multiUploadUploadCatCategoryField',
             doesNotRequireAnswer: false,
             component: 'UploadCarCategoryFile',
+            childInputIds: ['carCategoryFile', 'carsToChangeCount'],
           },
           {
             getFileContent: (
