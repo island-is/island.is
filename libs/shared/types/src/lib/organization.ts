@@ -7,7 +7,7 @@ export interface Organization {
     id: string
     url: string
     title: string
-    width: number
-    height: number
+    width?: number
+    height?: number
   }
 }

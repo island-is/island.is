@@ -10,10 +10,7 @@ import { m } from '../lib/messages'
 import { institutionMapper } from '@island.is/application/types'
 import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 import { ApplicationListAdminResponseDtoTypeIdEnum } from '@island.is/api/schema'
-import { ApplicationFilters } from '../types/filters'
 import { AdminApplication } from '../types/adminApplication'
-import startOfDay from 'date-fns/startOfDay'
-import endOfDay from 'date-fns/endOfDay'
 
 interface Tag {
   variant: ActionCardTag

@@ -104,7 +104,7 @@ export const ApplicationsTable = ({
             <T.HeadData>
               <Box display="flex" alignItems="center">
                 {formatMessage(m.dateModified)}
-                <Icon icon="chevronDown" />
+                <Icon icon="chevronDown" ariaHidden />
               </Box>
             </T.HeadData>
             {!showAdminData && (

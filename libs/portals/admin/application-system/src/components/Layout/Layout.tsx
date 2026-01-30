@@ -39,9 +39,8 @@ export const Layout: FC<React.PropsWithChildren<LayoutProps>> = ({
           order={[2, 2, 2, 0]}
         >
           <Box position="sticky" top={4}>
-            {/* <PortalNavigation title={navTitle} navigation={navItems} /> */}
             <Tabs
-              label="test"
+              label={formatMessage(m.applicationSystem)}
               contentBackground="white"
               selected="overview"
               tabs={[
@@ -59,13 +58,6 @@ export const Layout: FC<React.PropsWithChildren<LayoutProps>> = ({
             />
           </Box>
         </GridColumn>
-        {/* <GridColumn
-          span={['12/12', '12/12', '12/12', '8/12']}
-          offset={['0', '0', '0', '0', '1/12']}
-          order={[2, 2, 2, 0]}
-        >
-          {children}
-        </GridColumn> */}
       </GridRow>
     </GridContainer>
   )

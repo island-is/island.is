@@ -162,6 +162,7 @@ export const Filters = ({
           setChosenInstituteNationalId(undefined)
           setChosenInstituteSlug(undefined)
           setTypeId(undefined)
+          setSearchStr('')
         }}
         filterInput={
           <Box display="flex" flexDirection={['column', 'column', 'column']}>

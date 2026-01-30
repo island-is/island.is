@@ -88,9 +88,11 @@ export const HistorySection: FC<
               <Text lineHeight="lg" fontWeight="light">
                 {section}
               </Text>
-              <Text lineHeight="lg" variant="eyebrow" fontWeight="light">
-                {subjectAndActor}
-              </Text>
+              {subjectAndActor && (
+                <Text lineHeight="lg" variant="eyebrow" fontWeight="light">
+                  {subjectAndActor}
+                </Text>
+              )}
             </Box>
           )}
           {description && <Box paddingTop={2}>{description}</Box>}

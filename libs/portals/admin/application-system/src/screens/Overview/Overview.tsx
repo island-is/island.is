@@ -62,7 +62,6 @@ const Overview = ({ isSuperAdmin }: OverviewProps) => {
   const { data: contentfulOrgDataResults, loading: orgsLoading } =
     useGetOrganizationsQuery({
       ssr: false,
-      skip: !isSuperAdmin, //do NOT run if user is NOT superAdmin
     })
 
   // A list of all institutions with active application types
@@ -154,23 +153,26 @@ const Overview = ({ isSuperAdmin }: OverviewProps) => {
     ?.getOrganizations?.items ?? []) as Organization[]
 
   // Get organizations of all applications currently fetched
-  const availableOrganizations = organizationListFromContentful?.flatMap(
-    (x) => {
-      const itemFoundInResponse =
-        organizationDataWithNationalId?.applicationApplicationsAdminInstitutions?.find(
-          (y) => y.slug === x.slug,
-        )
-      if (!itemFoundInResponse) {
-        return []
-      }
-      return [
-        {
-          ...x,
-          nationalId: itemFoundInResponse?.nationalId || '',
-        },
-      ]
-    },
-  )
+  const availableOrganizations = isSuperAdmin
+    ? organizationListFromContentful?.flatMap((x) => {
+        const itemFoundInResponse =
+          organizationDataWithNationalId?.applicationApplicationsAdminInstitutions?.find(
+            (y) => y.slug === x.slug,
+          )
+        if (!itemFoundInResponse) {
+          return []
+        }
+        return [
+          {
+            ...x,
+            nationalId: itemFoundInResponse?.nationalId || '',
+          },
+        ]
+      })
+    : organizationListFromContentful.map((x) => ({
+        ...x,
+        nationalId: '',
+      })) || []
 
   const handleSearchChange = (nationalId: string) => {
     const nationalIdWithoutDash = nationalId.replace('-', '')

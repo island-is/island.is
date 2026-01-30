@@ -56,6 +56,7 @@ export class ApplicationTypesInstitutionAdminInput {
 
 @InputType()
 export class ApplicationInstitutionsAdminInput {
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
+  @IsOptional()
   locale?: string
 }

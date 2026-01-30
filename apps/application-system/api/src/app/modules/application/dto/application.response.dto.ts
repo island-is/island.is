@@ -59,7 +59,7 @@ class History {
   @IsString()
   log?: string
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @Expose()
   @IsString()
   subLog?: string
