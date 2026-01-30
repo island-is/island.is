@@ -160,6 +160,5 @@ query getApplicationInstitutions {
     nationalId
     slug
     contentfulId
-    applicationTypes
   }
 }

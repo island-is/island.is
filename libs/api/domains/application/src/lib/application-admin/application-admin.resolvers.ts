@@ -54,7 +54,10 @@ export class ApplicationAdminResolver {
   }
 
   @Query(() => [ApplicationTypeAdminInstitution], { nullable: true })
-  @Scopes(AdminPortalScope.applicationSystemInstitution)
+  @Scopes(
+    AdminPortalScope.applicationSystemInstitution,
+    AdminPortalScope.applicationSystemAdmin,
+  )
   async applicationTypesInstitutionAdmin(
     @CurrentUser() user: User,
     @Args('locale', { type: () => String, nullable: true })

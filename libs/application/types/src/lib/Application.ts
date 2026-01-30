@@ -31,6 +31,7 @@ export type ActionCardTag = 'red' | 'blueberry' | 'blue' | 'purple' | 'mint'
 export type ApplicationHistoryItem = {
   date: Date
   log: string
+  subLog?: string
 }
 
 export interface ActionCardMetaData {

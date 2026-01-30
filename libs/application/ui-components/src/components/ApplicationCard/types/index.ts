@@ -33,5 +33,6 @@ export interface DefaultCardData {
 export type ApplicationCardHistoryItem = {
   date?: string
   title: string
+  subjectAndActor?: string
   content?: React.ReactNode
 }

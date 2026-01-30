@@ -58,6 +58,11 @@ class History {
   @Expose()
   @IsString()
   log?: string
+
+  @ApiPropertyOptional()
+  @Expose()
+  @IsString()
+  subLog?: string
 }
 
 class ActionCardMetaData {

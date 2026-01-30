@@ -4,19 +4,18 @@ import React, { lazy } from 'react'
 import { m } from './lib/messages'
 import { ApplicationSystemPaths } from './lib/paths'
 import { Navigate } from 'react-router-dom'
-import CombinedOverview from './screens/Overview/CombinedOverview'
 
 const Root = lazy(() => import('./screens/Root/Root'))
-
-const Statistics = lazy(() => import('./screens/Statistics/Statistics'))
 
 const allowedScopes: string[] = [
   AdminPortalScope.applicationSystemAdmin,
   AdminPortalScope.applicationSystemInstitution,
 ]
-
-const getIsSuperAdmin = ({ userInfo }: PortalModuleRoutesProps) => {
-  return userInfo.scopes.includes(AdminPortalScope.applicationSystemAdmin)
+const getRoot = ({ userInfo }: PortalModuleRoutesProps): React.ReactNode => {
+  const isSuperAdmin = userInfo.scopes.includes(
+    AdminPortalScope.applicationSystemAdmin,
+  )
+  return <Root isSuperAdmin={isSuperAdmin} />
 }
 
 export const applicationSystemAdminModule: PortalModule = {
@@ -28,23 +27,13 @@ export const applicationSystemAdminModule: PortalModule = {
     {
       name: m.overview,
       path: ApplicationSystemPaths.Root,
-      element: <Root />,
+      element: getRoot(props),
       children: [
         {
           name: 'index',
           path: ApplicationSystemPaths.Root,
           index: true,
           element: <Navigate to={ApplicationSystemPaths.Overview} />,
-        },
-        {
-          name: m.overview,
-          path: ApplicationSystemPaths.Overview,
-          element: <CombinedOverview isSuperAdmin={getIsSuperAdmin(props)} />,
-        },
-        {
-          name: m.statistics,
-          path: ApplicationSystemPaths.Statistics,
-          element: <Statistics isSuperAdmin={getIsSuperAdmin(props)} />,
         },
       ],
     },

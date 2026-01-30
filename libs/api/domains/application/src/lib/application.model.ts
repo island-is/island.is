@@ -57,6 +57,9 @@ export class ApplicationHistory {
 
   @Field(() => String, { nullable: true })
   log?: string
+
+  @Field(() => String, { nullable: true })
+  subLog?: string
 }
 
 @ObjectType()

@@ -234,7 +234,7 @@ export const m = defineMessages({
   },
   resultCount: {
     id: 'admin-portal.application-system:resultCount',
-    defaultMessage: '{count} skjöl fundust',
+    defaultMessage: '{count} umsóknir fundust',
   },
   tableHeaderType: {
     id: 'admin-portal.application-system:tableHeaderType',

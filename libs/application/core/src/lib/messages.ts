@@ -1171,12 +1171,12 @@ export const coreHistoryMessages = defineMessages({
   },
   byReviewer: {
     id: 'application.system:core.history.byReviewer',
-    defaultMessage: ' [{subject}]',
+    defaultMessage: ' {subject} framkvæmdi',
     description: 'History log by reviewer',
   },
   byReviewerWithActor: {
     id: 'application.system:core.history.byReviewerWithActor',
-    defaultMessage: '  [{actor} fyrir hönd {subject}]',
+    defaultMessage: '  {actor} framkvæmdi fyrir hönd {subject}',
     description: 'History log by actor on behalf of reviewer',
   },
 })
