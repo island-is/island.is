@@ -4,6 +4,7 @@ import {
   buildSection,
   buildSubmitField,
 } from '@island.is/application/core'
+import { DefaultEvents } from '@island.is/application/types'
 import {
   getPayerOverviewItems,
   getParticipantOverviewTableData,
@@ -36,7 +37,7 @@ export const overviewSection = buildSection({
           refetchApplicationAfterSubmit: true,
           actions: [
             {
-              event: 'SUBMIT',
+              event: DefaultEvents.SUBMIT,
               name: m.overview.submitTitle,
               type: 'primary',
             },

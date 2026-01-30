@@ -10,7 +10,9 @@ import {
   ApplicationConfigurations,
   defineTemplateApi,
   HealthCenterApi,
+  InstitutionNationalIds,
 } from '@island.is/application/types'
+import { buildPaymentState } from '@island.is/application/utils'
 import { Features } from '@island.is/feature-flags'
 import { CodeOwners } from '@island.is/shared/constants'
 import {
@@ -20,8 +22,10 @@ import {
 import { UserProfileApi, NationalRegistryUserApi } from '../dataProviders'
 import { ApiActions, Events, Roles, States } from '../utils/constants'
 import { dataSchema } from './dataSchema'
+import { HhCoursesSelectedChargeItemApi } from '../dataProviders'
 
 import { m } from './messages'
+import { getChargeItems } from '../utils/getChargeItems'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -101,19 +105,29 @@ const template: ApplicationTemplate<
               delete: true,
             },
           ],
-          onExit: [
-            defineTemplateApi({
-              action: ApiActions.submitApplication,
-              throwOnError: true,
-            }),
-          ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: {
-            target: States.COMPLETED,
-          },
+          [DefaultEvents.SUBMIT]: { target: States.PAYMENT },
         },
       },
+      [States.PAYMENT]: buildPaymentState({
+        organizationId:
+          InstitutionNationalIds.HEILSUGAESLA_HOFUDBORDARSVAEDISINS,
+        chargeItems: getChargeItems,
+        onEntry: [
+          HhCoursesSelectedChargeItemApi.configure({
+            // Must run before CreateChargeApi (default order 0)
+            order: -1,
+          }),
+        ],
+        submitTarget: States.COMPLETED,
+        onExit: [
+          defineTemplateApi({
+            action: ApiActions.submitApplication,
+            triggerEvent: DefaultEvents.SUBMIT,
+          }),
+        ],
+      }),
       [States.COMPLETED]: {
         meta: {
           name: 'Completed form',

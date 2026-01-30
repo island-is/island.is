@@ -3,7 +3,6 @@ import { CacheField } from '@island.is/nest/graphql'
 import { ICourse, ICourseInstance } from '../generated/contentfulTypes'
 import { mapDocument, SliceUnion } from '../unions/slice.union'
 import { GenericTag, mapGenericTag } from './genericTag.model'
-import { mapPrice, Price } from './price.model'
 import { GetCoursesInput } from '../dto/getCourses.input'
 import { GetCourseSelectOptionsInput } from '../dto/getCourseSelectOptions.input'
 
@@ -33,11 +32,11 @@ export class CourseInstance {
   @Field(() => String, { nullable: true })
   displayedTitle?: string | null
 
-  @CacheField(() => Price, { nullable: true })
-  price?: Price | null
-
   @Field(() => String)
   description!: string
+
+  @Field(() => String, { nullable: true })
+  chargeItemCode?: string | null
 }
 
 const mapCourseInstance = ({
@@ -51,9 +50,9 @@ const mapCourseInstance = ({
     startDate: fields.startDate ?? '',
     location: fields.location ?? null,
     displayedTitle: fields.displayedTitle ?? null,
-    price: fields.price ? mapPrice(fields.price) : null,
     description: fields.description ?? '',
     startDateTimeDuration: startTime ? { startTime, endTime } : null,
+    chargeItemCode: fields.chargeItemCode ?? null,
   }
 }
 
