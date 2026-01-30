@@ -80,12 +80,12 @@ const FORM_SYSTEM_BULL_PREFIX = (ctx: Context) =>
 
 export const workerSetup = (): ServiceBuilder<typeof workerName> =>
   service(workerName)
-    .image(serviceName)
     .namespace(serviceName)
-    .serviceAccount(workerName)
-    .codeOwner(CodeOwners.Advania)
-    .redis()
+    .image(serviceName)
     .db()
+    .serviceAccount(workerName)
+    .redis()
+    .codeOwner(CodeOwners.Advania)
     .env({
       S3_REGION: 'eu-west-1',
       S3_TIME_TO_LIVE_POST: '15',
