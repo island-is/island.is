@@ -116,4 +116,7 @@ export class Defendant {
 
   @Field(() => String, { nullable: true })
   readonly alternativeServiceDescription?: string
+
+  @Field(() => Boolean, { nullable: true })
+  isDrivingLicenseSuspended?: boolean
 }

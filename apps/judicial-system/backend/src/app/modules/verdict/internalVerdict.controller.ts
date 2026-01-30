@@ -28,13 +28,16 @@ import {
 } from '@island.is/judicial-system/formatters'
 import {
   messageEndpoint,
+  MessageService,
   MessageType,
 } from '@island.is/judicial-system/message'
 import {
   CaseIndictmentRulingDecision,
   getDefendantServiceDate,
   getIndictmentAppealDeadline,
+  IndictmentCaseNotificationType,
   indictmentCases,
+  isSuccessfulVerdictServiceStatus,
 } from '@island.is/judicial-system/types'
 
 import {
@@ -106,6 +109,7 @@ export class InternalVerdictController {
     private readonly verdictService: VerdictService,
     private readonly auditTrailService: AuditTrailService,
     private readonly eventService: EventService,
+    private readonly messageService: MessageService,
     @InjectConnection() private readonly sequelize: Sequelize,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
@@ -219,6 +223,28 @@ export class InternalVerdictController {
       updatedVerdict.serviceStatus &&
       updatedVerdict.serviceStatus !== verdict.serviceStatus
     ) {
+      const hasDrivingLicenseSuspension =
+        theCase.defendants?.some(
+          (defendant) =>
+            updatedVerdict.defendantId === defendant.id &&
+            defendant.isDrivingLicenseSuspended,
+        ) ?? false
+
+      if (
+        isSuccessfulVerdictServiceStatus(updatedVerdict.serviceStatus) &&
+        hasDrivingLicenseSuspension
+      ) {
+        this.messageService.sendMessagesToQueue([
+          {
+            type: MessageType.INDICTMENT_CASE_NOTIFICATION,
+            caseId: theCase.id,
+            body: {
+              type: IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION,
+            },
+          },
+        ])
+      }
+
       this.eventService.postEvent('VERDICT_SERVICE_STATUS', theCase, false, {
         Staða: getVerdictServiceStatusText(updatedVerdict.serviceStatus),
         Birt: formatDate(updatedVerdict.serviceDate, 'Pp') ?? 'ekki skráð',

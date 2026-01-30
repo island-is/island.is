@@ -81,20 +81,29 @@ export const DefendantServiceRequirement = ({
             checked={verdict.serviceRequirement === ServiceRequirement.REQUIRED}
             disabled={isSentToPublicProsecutor}
             onChange={() => {
+              const serviceInfo = new Set([
+                ...(verdict.serviceInformationForDefendant || []),
+              ])
+
+              if (verdict.isDefaultJudgement) {
+                serviceInfo.add(
+                  InformationForDefendant.INSTRUCTIONS_ON_REOPENING_OUT_OF_COURT_CASES,
+                )
+              }
+
+              if (defendant.isDrivingLicenseSuspended) {
+                serviceInfo.add(
+                  InformationForDefendant.DRIVING_RIGHTS_REVOKED_TRANSLATION,
+                )
+              }
+
               setAndSendVerdictToServer(
                 {
                   defendantId: defendant.id,
                   caseId: workingCase.id,
                   serviceRequirement: ServiceRequirement.REQUIRED,
                   appealDecision: null,
-                  ...(verdict.isDefaultJudgement
-                    ? {
-                        serviceInformationForDefendant: [
-                          ...(verdict.serviceInformationForDefendant || []),
-                          InformationForDefendant.INSTRUCTIONS_ON_REOPENING_OUT_OF_COURT_CASES,
-                        ],
-                      }
-                    : {}),
+                  serviceInformationForDefendant: Array.from(serviceInfo),
                 },
                 setWorkingCase,
               )
