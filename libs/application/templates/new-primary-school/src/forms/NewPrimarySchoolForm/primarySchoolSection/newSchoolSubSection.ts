@@ -38,6 +38,7 @@ export const newSchoolSubSection = buildSubSection({
     buildMultiField({
       id: 'newSchool',
       title: primarySchoolMessages.newSchool.subSectionTitle,
+      description: primarySchoolMessages.newSchool.subSectionMessage,
       children: [
         buildAsyncSelectField({
           id: 'newSchool.municipality',
