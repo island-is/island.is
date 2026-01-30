@@ -10,4 +10,3 @@ export class PaymentOverviewTotalsServiceTypeResponse {
   @Field(() => [PaymentError])
   errors!: PaymentError[]
 }
-

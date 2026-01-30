@@ -8,4 +8,3 @@ export class PaymentOverviewTotalsServiceType {
   @Field(() => String, { nullable: true })
   name?: string | null
 }
-

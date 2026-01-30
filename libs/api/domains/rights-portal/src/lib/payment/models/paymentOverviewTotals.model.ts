@@ -15,4 +15,3 @@ export class PaymentOverviewTotals {
   @Field(() => Number, { nullable: true })
   totalCopayCost!: number
 }
-

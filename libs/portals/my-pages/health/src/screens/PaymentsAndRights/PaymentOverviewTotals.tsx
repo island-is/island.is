@@ -62,15 +62,13 @@ export const PaymentOverviewTotals = () => {
     error: serviceTypesError,
   } = useGetPaymentOverviewTotalsServiceTypesQuery()
 
-  const [
-    lazyTotalsQuery,
-    { loading: totalsLoading, error: totalsError },
-  ] = useGetPaymentOverviewTotalsLazyQuery({
-    onCompleted(data) {
-      const item = data.rightsPortalPaymentOverviewTotals.items[0]
-      setTotalsItem(item)
-    },
-  })
+  const [lazyTotalsQuery, { loading: totalsLoading, error: totalsError }] =
+    useGetPaymentOverviewTotalsLazyQuery({
+      onCompleted(data) {
+        const item = data.rightsPortalPaymentOverviewTotals.items[0]
+        setTotalsItem(item)
+      },
+    })
 
   const [fetchTotalsPdf] = useGetPaymentOverviewTotalsPdfLazyQuery()
 
