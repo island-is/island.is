@@ -28,6 +28,7 @@ export type OrganizationSlugType =
   | 'samband-islenskra-sveitafelaga'
   | 'skatturinn'
   | 'syslumenn'
+  | 'atvinnuvegaraduneytid'
   | 'syslumadurinn-a-austurlandi'
   | 'syslumadurinn-a-hoefudborgarsvaedinu'
   | 'syslumadurinn-a-vestfjordum'
