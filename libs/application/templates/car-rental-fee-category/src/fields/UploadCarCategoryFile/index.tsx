@@ -201,7 +201,7 @@ export const UploadCarCategoryFile = ({
 
     if (!parsed.ok) {
       if (parsed.reason === 'no-data') {
-        setUploadErrorMessage('No cars to change found')
+        setUploadErrorMessage(formatMessage(m.multiUpload.noCarsToChangeFound))
         return null
       }
 
@@ -241,7 +241,7 @@ export const UploadCarCategoryFile = ({
 
   const handleOnInputFileUploadError = (files: FileRejection[]) => {
     if (files[0].errors[0].code === 'file-invalid-type') {
-      setUploadErrorMessage('Invalid file type')
+      setUploadErrorMessage(formatMessage(m.multiUpload.invalidFileType))
     } else {
       setUploadErrorMessage(files[0].errors[0].message)
     }
@@ -249,6 +249,9 @@ export const UploadCarCategoryFile = ({
 
   const handleOnInputFileUploadRemove = () => {
     setUploadedFile(null)
+    setUploadErrorMessage(null)
+    setErrorFile(null)
+    setValue('carsToChangeCount', undefined)
     setValue('carCategoryFile', undefined)
   }
 
@@ -266,7 +269,7 @@ export const UploadCarCategoryFile = ({
         (file.type ? getUploadFileType(file.type) : null)
 
       if (!type) {
-        setUploadErrorMessage('wrongFileType')
+        setUploadErrorMessage(formatMessage(m.multiUpload.invalidFileType))
         return
       }
 
