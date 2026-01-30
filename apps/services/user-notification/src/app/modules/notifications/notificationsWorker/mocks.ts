@@ -173,6 +173,18 @@ const delegationsByScope: Record<string, DelegationRecordDTO[]> = {
       customDelegationScopes: null,
     },
   ],
+  [`${userWithDelegations.nationalId}:@island.is/applications/samgongustofa-vehicles`]:
+    [
+      {
+        fromNationalId: userWithDelegations.nationalId,
+        toNationalId: userWithNoDelegations.nationalId,
+        subjectId: null, // test that 3rd party login is not used if subjectId is null
+        type: AuthDelegationType.Custom,
+        customDelegationScopes: [
+          '@island.is/applications/samgongustofa-vehicles',
+        ],
+      },
+    ],
   // Fallback for backward compatibility - delegations without scope filtering
   [userWithDelegations.nationalId]: [
     {
@@ -213,7 +225,7 @@ export class MockDelegationsService {
   }) {
     // If scope is provided, try to get scope-specific delegations first
     if (scopes) {
-      const scopeArray = Array.isArray(scopes) ? scopes : [scopes]
+      const scopeArray = Array.isArray(scopes) ? scopes : scopes.split(',')
       // Try each scope in order, return first match
       for (const scope of scopeArray) {
         const scopeKey = `${xQueryNationalId}:${scope}`

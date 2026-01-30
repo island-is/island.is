@@ -943,8 +943,8 @@ export const m = defineMessages({
     description:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
   },
-  completedAccordionTitle: {
-    id: 'form.system:completed-accordion-title',
+  completedListHeader: {
+    id: 'form.system:completed-list-header',
     defaultMessage: 'Hvað gerist næst?',
     description: 'What happens next?',
   },
@@ -1135,5 +1135,10 @@ export const m = defineMessages({
       'Þú hefur klárað {draftFinishedSteps} af {draftTotalSteps} skrefum',
     description:
       'You have completed {draftFinishedSteps} of {draftTotalSteps} steps',
+  },
+  zendeskPrivate: {
+    id: 'form.system:zendesk-private',
+    defaultMessage: 'Umsóknirnar skulu vera merktar internal/private í Zendesk',
+    description: 'Applications should be marked as internal/private in Zendesk',
   },
 })
