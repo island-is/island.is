@@ -15,7 +15,6 @@ import { DelegationsEmptyState } from '../DelegationsEmptyState'
 import { AuthCustomDelegationIncoming } from '../../../types/customDelegation'
 import { DelegationViewModal } from '../DelegationViewModal'
 import { useAuthDelegationsIncomingQuery } from './DelegationIncoming.generated'
-import groupBy from 'lodash/groupBy'
 
 export const DelegationsIncoming = () => {
   const { formatMessage, lang = 'is' } = useLocale()

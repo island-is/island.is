@@ -107,7 +107,7 @@ const ExpandableRow: FC<React.PropsWithChildren<Props>> = ({
             >
               <Button
                 circle
-                colorScheme="light"
+                colorScheme={expanded ? 'negative' : 'light'}
                 icon={expanded ? 'remove' : 'add'}
                 iconType="filled"
                 onClick={onExpandButton}
@@ -171,11 +171,12 @@ const ExpandableRow: FC<React.PropsWithChildren<Props>> = ({
           }}
           box={{ position: 'relative' }}
           borderColor={
-            closed && !expanded
-              ? 'blue100'
-              : backgroundColor === 'white'
-              ? 'transparent'
-              : 'blue200'
+            'purple200'
+            // closed && !expanded
+            //   ? 'blue100'
+            //   : backgroundColor === 'white'
+            //   ? 'transparent'
+            //   : 'blue200'
           }
           colSpan={data.length + 1}
         >

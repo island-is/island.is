@@ -58,6 +58,14 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:delegation-type-personal-representative-desc',
     defaultMessage: 'Samningar frá Réttindagæslu fatlaðra',
   },
+  outgoingDelegationsTitle: {
+    id: 'sp.access-control-delegations:outgoing-delegations-title',
+    defaultMessage: 'Umboð sem þú hefur veitt öðrum',
+  },
+  incomingCustomDelegationsTitle: {
+    id: 'sp.access-control-delegations:incoming-custom-delegations-title',
+    defaultMessage: 'Umboð sem þér hefur verið veitt',
+  },
   accessControl: {
     id: 'sp.access-control-delegations:accessControl',
     defaultMessage: 'Aðgangsstýring',
@@ -372,5 +380,39 @@ export const m = defineMessages({
   grantSelectDate: {
     id: 'sp.access-control-delegations:grant-select-date',
     defaultMessage: 'Veldu dagsetningu',
+  },
+
+  // Table messages
+  name: {
+    id: 'sp.access-control-delegations:name',
+    defaultMessage: 'Nafn',
+  },
+  numberOfDelegations: {
+    id: 'sp.access-control-delegations:number-of-delegations',
+    defaultMessage: 'Fjöldi umboða',
+  },
+  switch: {
+    id: 'sp.access-control-delegations:switch',
+    defaultMessage: 'Skipta',
+  },
+  procurationHolder: {
+    id: 'sp.access-control-delegations:procuration-holder',
+    defaultMessage: 'Prókúruhafi',
+  },
+  generalMandate: {
+    id: 'sp.access-control-delegations:general-mandate',
+    defaultMessage: 'Allsherjarumboð',
+  },
+  legalGuardian: {
+    id: 'sp.access-control-delegations:legal-guardian',
+    defaultMessage: 'Forsjá barns 16-19 ára',
+  },
+  legalGuardianMinor: {
+    id: 'sp.access-control-delegations:legal-guardian-minor',
+    defaultMessage: 'Forsjá barns 0-15 ára',
+  },
+  registry: {
+    id: 'sp.access-control-delegations:registry',
+    defaultMessage: 'Þjóðskrá',
   },
 })

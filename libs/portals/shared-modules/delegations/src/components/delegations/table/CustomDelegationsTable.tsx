@@ -4,7 +4,6 @@ import {
   SkeletonLoader,
   Table as T,
   Text,
-  UserAvatar,
 } from '@island.is/island-ui/core'
 import { AuthCustomDelegation } from '../../../types/customDelegation'
 import ExpandableRow from './ExpandableRow/ExpandableRow'
@@ -19,27 +18,26 @@ import { prepareDomainName } from '../outgoing/DelegationsOutgoing'
 import { isDefined } from '@island.is/shared/utils'
 import { ApolloError } from '@apollo/client'
 import { Problem } from '@island.is/react-spa/shared'
+import { AuthDelegationDirection } from '@island.is/api/schema'
+import { IdentityInfo } from './IdentityInfo/IdentityInfo'
+import { m } from '../../../lib/messages'
 
 // todo: translate
-const headerArray = [
-  { value: '' },
-  { value: 'Nafn' },
-  { value: 'Fjöldi umboða' },
-  { value: 'Gildistími' },
-  { value: '' },
-  { value: '' },
-]
 
 const CustomDelegationsTable = ({
+  title,
   data,
   loading,
   refetch,
   error,
+  direction,
 }: {
+  title: string
   data: AuthCustomDelegation[]
   loading: boolean
   refetch: (variables?: { input?: { domain?: string | null } }) => void
   error: ApolloError | undefined
+  direction: AuthDelegationDirection
 }) => {
   const { name: domainName } = useDomains()
   const { formatMessage } = useLocale()
@@ -50,21 +48,34 @@ const CustomDelegationsTable = ({
     null,
   )
 
+  const headerArray = [
+    { value: '' },
+    { value: formatMessage(m.name) },
+    { value: formatMessage(m.numberOfDelegations) },
+    { value: formatMessage(m.validityPeriod) },
+    { value: '' },
+    { value: '' },
+  ]
+
   return (
     <>
-      <Box marginTop={[4, 4, 6]}>
-        {loading && (
+      <Box
+        marginTop={[4, 4, 6]}
+        display="flex"
+        flexDirection="column"
+        rowGap={2}
+      >
+        <Text variant="h5">{title}</Text>
+        {loading ? (
           <Box padding={3}>
             <SkeletonLoader space={1} height={40} repeat={2} />
           </Box>
-        )}
-        {error && !data?.length ? (
+        ) : error && !data?.length ? (
           <Problem error={error} />
         ) : (
           <T.Table>
             <T.Head>
               <T.Row>
-                {/* Todo: translate */}
                 {headerArray.map((item, i) => (
                   <T.HeadData
                     key={item.value + i}
@@ -79,6 +90,8 @@ const CustomDelegationsTable = ({
             </T.Head>
             <T.Body>
               {data?.map((item) => {
+                const identity = direction === 'outgoing' ? item.to : item.from
+
                 return (
                   <ExpandableRow
                     key={item.id}
@@ -86,24 +99,17 @@ const CustomDelegationsTable = ({
                     data={[
                       {
                         value: (
-                          <Box display="flex" alignItems="center" columnGap={2}>
-                            <UserAvatar
-                              color={expandedRow === item.id ? 'white' : 'blue'}
-                              username={item.to?.name}
-                            />
-                            <Box>
-                              <Text variant="medium">{item.to?.name}</Text>
-                              <Text variant="small">{item.to?.nationalId}</Text>
-                            </Box>
-                          </Box>
+                          <IdentityInfo
+                            identity={identity}
+                            isExpanded={expandedRow === item.id}
+                          />
                         ),
                       },
                       { value: item.scopes?.length },
                       {
-                        value: format(
-                          new Date(item.validTo || ''),
-                          'dd.MM.yyyy',
-                        ),
+                        value: item.validTo
+                          ? format(new Date(item.validTo), 'dd.MM.yyyy')
+                          : '',
                       },
                       {
                         value: (
