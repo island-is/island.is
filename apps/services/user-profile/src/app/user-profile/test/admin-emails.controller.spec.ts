@@ -193,8 +193,12 @@ describe('Admin Emails Controller - GET /v2/users/.national-id/emails', () => {
       expect(res.status).toEqual(200)
       expect(res.body).toHaveLength(2)
 
-      const primary = res.body.find((e: any) => e.primary === true)
-      const secondary = res.body.find((e: any) => e.primary === false)
+      const primary = res.body.find(
+        (e: { primary: boolean }) => e.primary === true,
+      )
+      const secondary = res.body.find(
+        (e: { primary: boolean }) => e.primary === false,
+      )
 
       expect(primary).toMatchObject({
         email: primaryEmail,
