@@ -2234,6 +2234,7 @@ portals-admin:
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps'
     SERVERSIDE_FEATURES_ON: ''
     SI_PUBLIC_ENVIRONMENT: 'dev'
+    SI_PUBLIC_FORM_SYSTEM_URL: 'https://beta.dev01.devland.is/form'
   grantNamespaces:
     - 'nginx-ingress-external'
     - 'identity-server'

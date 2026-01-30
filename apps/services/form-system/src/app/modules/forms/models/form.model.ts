@@ -75,6 +75,13 @@ export class Form extends Model<Form> {
   modified!: CreationOptional<Date>
 
   @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  zendeskInternal!: boolean
+
+  @Column({
     type: DataType.STRING,
     allowNull: false,
     defaultValue: '',
