@@ -28,7 +28,9 @@ export class FarmersResolver {
   constructor(private readonly farmersService: FarmersService) {}
 
   @Query(() => FarmerLandsCollection, { nullable: true })
-  async farmerLandsList(@CurrentUser() user: User): Promise<FarmerLandsCollection> {
+  async farmerLandsList(
+    @CurrentUser() user: User,
+  ): Promise<FarmerLandsCollection> {
     return this.farmersService.getList(user)
   }
 }
