@@ -32146,14 +32146,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"form-data@npm:3.0.0":
-  version: 3.0.0
-  resolution: "form-data@npm:3.0.0"
+"form-data@npm:3.0.4":
+  version: 3.0.4
+  resolution: "form-data@npm:3.0.4"
   dependencies:
     asynckit: "npm:^0.4.0"
     combined-stream: "npm:^1.0.8"
-    mime-types: "npm:^2.1.12"
-  checksum: 10/aea890ae3e8ce7eb55c6e61f84996066f450d1560c1d60f06f3c635037d4a3dce63715a1c2214c32d60737e93f4f570467dcbcade46dd4af63038af7f7a144d3
+    es-set-tostringtag: "npm:^2.1.0"
+    hasown: "npm:^2.0.2"
+    mime-types: "npm:^2.1.35"
+  checksum: 10/68e4598e55cb193ef80304bff4d7513bf81ed4116d57b29c6c9a4c28c6f7ce57d46ddd60ba1a80aadf26703a722551e660bca2acaf9212d8b6e1f2e180d9e668
   languageName: node
   linkType: hard
 
@@ -36166,7 +36168,7 @@ __metadata:
     firebase-admin: "npm:11.5.0"
     folder-hash: "npm:4.0.0"
     font-awesome: "npm:4.7.0"
-    form-data: "npm:3.0.0"
+    form-data: "npm:3.0.4"
     formik: "npm:2.2.9"
     fridagar: "npm:^3.2.0"
     fuse.js: "npm:7.0.0"
