@@ -11382,7 +11382,7 @@ __metadata:
     expo-notifications: "npm:0.28.19"
     intl: "npm:1.2.5"
     jest: "npm:29.7.0"
-    lodash: "npm:4.17.21"
+    lodash: "npm:4.17.23"
     metro-config: "npm:0.81.0"
     path-to-regexp: "npm:6.2.2"
     react: "npm:18.3.1"
@@ -36209,7 +36209,7 @@ __metadata:
     keyv: "npm:5.5.3"
     libphonenumber-js: "npm:1.7.53"
     license-checker: "npm:25.0.1"
-    lodash: "npm:4.17.21"
+    lodash: "npm:4.17.23"
     lottie-web: "npm:5.7.13"
     mailparser: "npm:3.5.0"
     markdown-to-jsx: "npm:7.1.7"
@@ -39015,10 +39015,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash@npm:4.17.21":
-  version: 4.17.21
-  resolution: "lodash@npm:4.17.21"
-  checksum: 10/c08619c038846ea6ac754abd6dd29d2568aa705feb69339e836dfa8d8b09abbb2f859371e86863eda41848221f9af43714491467b5b0299122431e202bb0c532
+"lodash@npm:4.17.23":
+  version: 4.17.23
+  resolution: "lodash@npm:4.17.23"
+  checksum: 10/82504c88250f58da7a5a4289f57a4f759c44946c005dd232821c7688b5fcfbf4a6268f6a6cdde4b792c91edd2f3b5398c1d2a0998274432cff76def48735e233
   languageName: node
   linkType: hard
 
