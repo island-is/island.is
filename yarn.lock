@@ -18742,12 +18742,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/aws-sdk@npm:2.7.0":
-  version: 2.7.0
-  resolution: "@types/aws-sdk@npm:2.7.0"
+"@types/aws-sdk@npm:2.7.4":
+  version: 2.7.4
+  resolution: "@types/aws-sdk@npm:2.7.4"
   dependencies:
     aws-sdk: "npm:*"
-  checksum: 10/0ede5d854ebed5caddc33a1b7a856f31aa022f8887635851fd13a7dc69046774bbfb864891a0106d4be84fc7c3ab8c2a96bd5c10e99ccc3661fb12019ce47f7c
+  checksum: 10/4cc60d3cf54141a798b11b483908fbb76ff945f69015d86077a297a6434bf6981a0aad16be23d8ed3345abe01762b13b84c3b9c74c92021292b0e8431f2d025c
   languageName: node
   linkType: hard
 
@@ -23131,20 +23131,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"aws-sdk@npm:2.814.0":
-  version: 2.814.0
-  resolution: "aws-sdk@npm:2.814.0"
+"aws-sdk@npm:2.1693.0":
+  version: 2.1693.0
+  resolution: "aws-sdk@npm:2.1693.0"
   dependencies:
     buffer: "npm:4.9.2"
     events: "npm:1.1.1"
     ieee754: "npm:1.1.13"
-    jmespath: "npm:0.15.0"
+    jmespath: "npm:0.16.0"
     querystring: "npm:0.2.0"
     sax: "npm:1.2.1"
     url: "npm:0.10.3"
-    uuid: "npm:3.3.2"
-    xml2js: "npm:0.4.19"
-  checksum: 10/7a2d2ecf6f44f298911b0616bff32bb41f778d0e3f87413c9d78f5a1035a6b68ebe95fe8da52bf5704bec23d1690fa399482e726a88eef2ce5e93fa3c1360ed4
+    util: "npm:^0.12.4"
+    uuid: "npm:8.0.0"
+    xml2js: "npm:0.6.2"
+  checksum: 10/4dc3d7f747cebeea832391465de2f9bbb16c079e19ed5bb58788ae343c828477c87aa8c324e0d4276e7510e9ecbbe95a92ab9bce3d30a7f928ee37e812832bb3
   languageName: node
   linkType: hard
 
@@ -36033,7 +36034,7 @@ __metadata:
     "@testing-library/react-native": "npm:12.9.0"
     "@testing-library/user-event": "npm:14.6.1"
     "@types/archiver": "npm:6.0.2"
-    "@types/aws-sdk": "npm:2.7.0"
+    "@types/aws-sdk": "npm:2.7.4"
     "@types/aws4": "npm:1.5.1"
     "@types/classnames": "npm:2.2.10"
     "@types/cookie-parser": "npm:1.4.2"
@@ -36098,7 +36099,7 @@ __metadata:
     apollo-server-plugin-response-cache: "npm:3.8.2"
     archiver: "npm:6.0.1"
     aws-elasticsearch-connector: "npm:9.0.0"
-    aws-sdk: "npm:2.814.0"
+    aws-sdk: "npm:2.1693.0"
     aws-sdk-client-mock: "npm:4.0.2"
     aws4: "npm:1.11.0"
     axios: "npm:1.7.2"
@@ -37184,13 +37185,6 @@ __metadata:
   bin:
     jiti: lib/jiti-cli.mjs
   checksum: 10/8cd72c5fd03a0502564c3f46c49761090f6dadead21fa191b73535724f095ad86c2fa89ee6fe4bc3515337e8d406cc8fb2d37b73fa0c99a34584bac35cd4a4de
-  languageName: node
-  linkType: hard
-
-"jmespath@npm:0.15.0":
-  version: 0.15.0
-  resolution: "jmespath@npm:0.15.0"
-  checksum: 10/575eea08816166004fbd3c0a0d1aa1ae3368fb7f60f6a97022d247082009d7c4d3d295c9ed318495ef005e496ec77150a8a48a7787e00c1f9128cc38c5dbef7e
   languageName: node
   linkType: hard
 
@@ -53642,15 +53636,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"uuid@npm:3.3.2":
-  version: 3.3.2
-  resolution: "uuid@npm:3.3.2"
-  bin:
-    uuid: ./bin/uuid
-  checksum: 10/3834a826020a23fca314116c2becddc7f5d756b0280d630b58a65e700afeefd89d78ae97ddbdea5dcad497666cda6e9b0390ba74508e650d43d83a32d1e7cd19
-  languageName: node
-  linkType: hard
-
 "uuid@npm:8.0.0":
   version: 8.0.0
   resolution: "uuid@npm:8.0.0"
@@ -54871,16 +54856,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"xml2js@npm:0.4.19":
-  version: 0.4.19
-  resolution: "xml2js@npm:0.4.19"
-  dependencies:
-    sax: "npm:>=0.6.0"
-    xmlbuilder: "npm:~9.0.1"
-  checksum: 10/e6cb4423a6f22e0dfd5806da46359b63de15de89f5cd6a13f799d26e0edd9d17c4c85be8135a4da8ae61c26d8dabd3d39ddf4c5326192269487cbfb894788867
-  languageName: node
-  linkType: hard
-
 "xml2js@npm:0.4.23, xml2js@npm:^0.4.17, xml2js@npm:^0.4.23":
   version: 0.4.23
   resolution: "xml2js@npm:0.4.23"
@@ -54946,13 +54921,6 @@ __metadata:
   version: 11.0.1
   resolution: "xmlbuilder@npm:11.0.1"
   checksum: 10/c8c3d208783718db5b285101a736cd8e6b69a5c265199a0739abaa93d1a1b7de5489fd16df4e776e18b2c98cb91f421a7349e99fd8c1ebeb44ecfed72a25091a
-  languageName: node
-  linkType: hard
-
-"xmlbuilder@npm:~9.0.1":
-  version: 9.0.7
-  resolution: "xmlbuilder@npm:9.0.7"
-  checksum: 10/63d0c596080f85a12f0cd184751d8ab1e9d022f519032d167f85dfdc5af708e6a1e6bcd22609b8718f091e72c75743b6c8d03bc08879a2829de5e07a3c26e157
   languageName: node
   linkType: hard
 
