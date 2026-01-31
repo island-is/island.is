@@ -27,6 +27,8 @@ import { CopaymentPeriodInput } from './dto/copaymentPeriod.input'
 import { DownloadServiceConfig } from '@island.is/nest/config'
 import { ConfigType } from '@nestjs/config'
 import { CopaymentStatus } from './models/copaymentStatus.model'
+import { PaymentOverviewTotalsServiceTypeResponse } from './models/paymentOverviewTotalsServiceType.response'
+import { PaymentOverviewTotalsResponse } from './models/paymentOverviewTotals.response'
 
 @Resolver()
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
@@ -121,5 +123,40 @@ export class PaymentResolver {
     @Args('input') input: PaymentOverviewDocumentInput,
   ): Promise<PaymentOverviewDocumentResponse> {
     return await this.service.getPaymentOverviewBillDocument(user, input)
+  }
+
+  @Query(() => PaymentOverviewTotalsServiceTypeResponse, {
+    name: 'rightsPortalPaymentOverviewTotalsServiceTypes',
+  })
+  @Scopes(ApiScope.healthPayments)
+  @Audit()
+  async getPaymentOverviewTotalsServiceTypes(
+    @CurrentUser() user: User,
+  ): Promise<PaymentOverviewTotalsServiceTypeResponse> {
+    return await this.service.getPaymentOverviewTotalsServiceTypes(user)
+  }
+
+  @Query(() => PaymentOverviewTotalsResponse, {
+    name: 'rightsPortalPaymentOverviewTotals',
+  })
+  @Scopes(ApiScope.healthPayments)
+  @Audit()
+  async getPaymentOverviewTotals(
+    @CurrentUser() user: User,
+    @Args('input') input: PaymentOverviewInput,
+  ): Promise<PaymentOverviewTotalsResponse> {
+    return await this.service.getPaymentOverviewTotals(user, input)
+  }
+
+  @Query(() => PaymentOverviewDocumentResponse, {
+    name: 'rightsPortalPaymentOverviewTotalsPdf',
+  })
+  @Scopes(ApiScope.healthPayments)
+  @Audit()
+  async getPaymentOverviewTotalsPdf(
+    @CurrentUser() user: User,
+    @Args('input') input: PaymentOverviewInput,
+  ): Promise<PaymentOverviewDocumentResponse> {
+    return await this.service.getPaymentOverviewTotalsPdf(user, input)
   }
 }
