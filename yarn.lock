@@ -12786,24 +12786,27 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nestjs/common@npm:10.0.5":
-  version: 10.0.5
-  resolution: "@nestjs/common@npm:10.0.5"
+"@nestjs/common@npm:10.4.16":
+  version: 10.4.16
+  resolution: "@nestjs/common@npm:10.4.16"
   dependencies:
     iterare: "npm:1.2.1"
-    tslib: "npm:2.6.0"
+    tslib: "npm:2.8.1"
     uid: "npm:2.0.2"
   peerDependencies:
     class-transformer: "*"
     class-validator: "*"
-    reflect-metadata: ^0.1.12
+    file-type: ^20.4.1
+    reflect-metadata: ^0.1.12 || ^0.2.0
     rxjs: ^7.1.0
   peerDependenciesMeta:
     class-transformer:
       optional: true
     class-validator:
       optional: true
-  checksum: 10/e3f6cbe2cf1cc82f734523f3bc1ea0eee9f26db427934409a7edd3526e485ae792c18ff6e6be3247f4c58e650b9bc4203c5390b9ab6742ed62b3dcdbfe8b7e91
+    file-type:
+      optional: true
+  checksum: 10/af0979def8f3fef575c4be02d54ae44066e985b0a90bc82b6431ecc402ef5aa0ad452f3add4c81752d3c8725cc9f4db49a421689fd79b02fa0bbc96b7e9f0625
   languageName: node
   linkType: hard
 
@@ -35970,7 +35973,7 @@ __metadata:
     "@nestjs/axios": "npm:2.0.0"
     "@nestjs/bull": "npm:0.6.3"
     "@nestjs/cache-manager": "npm:2.0.1"
-    "@nestjs/common": "npm:10.0.5"
+    "@nestjs/common": "npm:10.4.16"
     "@nestjs/config": "npm:0.5.0"
     "@nestjs/core": "npm:10.0.5"
     "@nestjs/graphql": "npm:10.1.1"
@@ -52329,17 +52332,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"tslib@npm:2.8.1, tslib@npm:^2.0.0, tslib@npm:^2.0.1, tslib@npm:^2.0.3, tslib@npm:^2.1.0, tslib@npm:^2.2.0, tslib@npm:^2.3.0, tslib@npm:^2.3.1, tslib@npm:^2.4.0, tslib@npm:^2.4.1, tslib@npm:^2.5.0, tslib@npm:^2.6.2, tslib@npm:^2.6.3, tslib@npm:^2.7.0, tslib@npm:^2.8.0, tslib@npm:^2.8.1":
+  version: 2.8.1
+  resolution: "tslib@npm:2.8.1"
+  checksum: 10/3e2e043d5c2316461cb54e5c7fe02c30ef6dccb3384717ca22ae5c6b5bc95232a6241df19c622d9c73b809bea33b187f6dbc73030963e29950c2141bc32a79f7
+  languageName: node
+  linkType: hard
+
 "tslib@npm:^1.10.0, tslib@npm:^1.11.1, tslib@npm:^1.8.1, tslib@npm:^1.9.0":
   version: 1.14.1
   resolution: "tslib@npm:1.14.1"
   checksum: 10/7dbf34e6f55c6492637adb81b555af5e3b4f9cc6b998fb440dac82d3b42bdc91560a35a5fb75e20e24a076c651438234da6743d139e4feabf0783f3cdfe1dddb
-  languageName: node
-  linkType: hard
-
-"tslib@npm:^2.0.0, tslib@npm:^2.0.1, tslib@npm:^2.0.3, tslib@npm:^2.1.0, tslib@npm:^2.2.0, tslib@npm:^2.3.0, tslib@npm:^2.3.1, tslib@npm:^2.4.0, tslib@npm:^2.4.1, tslib@npm:^2.5.0, tslib@npm:^2.6.2, tslib@npm:^2.6.3, tslib@npm:^2.7.0, tslib@npm:^2.8.0, tslib@npm:^2.8.1":
-  version: 2.8.1
-  resolution: "tslib@npm:2.8.1"
-  checksum: 10/3e2e043d5c2316461cb54e5c7fe02c30ef6dccb3384717ca22ae5c6b5bc95232a6241df19c622d9c73b809bea33b187f6dbc73030963e29950c2141bc32a79f7
   languageName: node
   linkType: hard
 
