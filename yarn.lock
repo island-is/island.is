@@ -39484,8 +39484,8 @@ __metadata:
   linkType: hard
 
 "mammoth@npm:^1.8.0":
-  version: 1.9.1
-  resolution: "mammoth@npm:1.9.1"
+  version: 1.11.0
+  resolution: "mammoth@npm:1.11.0"
   dependencies:
     "@xmldom/xmldom": "npm:^0.8.6"
     argparse: "npm:~1.0.3"
@@ -39499,7 +39499,7 @@ __metadata:
     xmlbuilder: "npm:^10.0.0"
   bin:
     mammoth: bin/mammoth
-  checksum: 10/39e2d2db3cbf52a008ff5670ca6c10f6b87092be761ed8718905988fafe8f83d39a6d1e677d9d027d547e8879185ef4ffcd36a0b33fb0ab73158456e02dd2f22
+  checksum: 10/87a84141f26be4dea617327417a66126676ec6316fe1ea7268bd4ea17005977e53f7ce63844a8faf8c2f0b67f0be89bf207619427fd573a4b85051464df42426
   languageName: node
   linkType: hard
 
