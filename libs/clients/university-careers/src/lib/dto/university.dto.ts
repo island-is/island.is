@@ -9,11 +9,6 @@ import {
   BifrostLocale,
   HolarLocale,
   HILocale,
-  UnakTranscriptLocale,
-  LbhiTranscriptLocale,
-  BifrostTranscriptLocale,
-  HolarTranscriptLocale,
-  HITranscriptLocale,
   UnakFerillLocale,
   LbhiFerillLocale,
   BifrostFerillLocale,
@@ -22,11 +17,29 @@ import {
   LHIApi,
   LHIFerillLocale,
   LHILocale,
+  BifrostFileType,
+  UnakFileType,
+  HIFileType,
+  HolarFileType,
+  LHIFileType,
+  LbhiFileType,
+  BifrostTranscriptLocale,
+  HITranscriptLocale,
+  HolarTranscriptLocale,
   LHITranscriptLocale,
+  LbhiTranscriptLocale,
+  UnakTranscriptLocale,
 } from '../clients'
 
 export interface UniversityDto {
   api: LbhiApi | UnakApi | HolarApi | BifrostApi | HIApi | LHIApi
+  fileTypeEnum:
+    | typeof LbhiFileType
+    | typeof UnakFileType
+    | typeof HolarFileType
+    | typeof BifrostFileType
+    | typeof HIFileType
+    | typeof LHIFileType
   locales: {
     studentLocale:
       | typeof UnakLocale

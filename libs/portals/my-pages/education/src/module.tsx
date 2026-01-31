@@ -8,12 +8,12 @@ const EducationCareer = lazy(() =>
   import('../../education-career/src/screens/EducationCareer/EducationCareer'),
 )
 
-const EducationGraduation = lazy(() =>
-  import('./screens/EducationGraduation/EducationGraduation'),
+const UniversityGraduation = lazy(() =>
+  import('./screens/UniversityGraduation/UniversityGraduation'),
 )
 
-const EducationGraduationDetail = lazy(() =>
-  import('./screens/EducationGraduationDetail/EducationGraduationDetail'),
+const UniversityGraduationDetail = lazy(() =>
+  import('./screens/UniversityGraduationDetail/UniversityGraduationDetail'),
 )
 
 const SecondarySchoolCareer = lazy(() =>
@@ -114,13 +114,13 @@ export const educationModule: PortalModule = {
       name: 'Brautskráning',
       path: EducationPaths.EducationHaskoliGraduation,
       enabled: userInfo.scopes.includes(ApiScope.education),
-      element: <EducationGraduation />,
+      element: <UniversityGraduation />,
     },
     {
       name: 'Brautskráning - nánar ',
       path: EducationPaths.EducationHaskoliGraduationDetail,
       enabled: userInfo.scopes.includes(ApiScope.education),
-      element: <EducationGraduationDetail />,
+      element: <UniversityGraduationDetail />,
     },
 
     // Driving lessons
