@@ -41,6 +41,11 @@ export const card = defineMessages({
     defaultMessage: 'Greiða',
     description: 'Pay',
   },
+  cardOptionLabel: {
+    id: 'payments:card.cardOptionLabel',
+    defaultMessage: 'Eða borgaðu með korti',
+    description: 'Label for card option if apple pay is available',
+  },
 })
 
 export const cardSuccess = defineMessages({
@@ -383,6 +388,16 @@ export const cardError = defineMessages({
     id: 'payments:cardError.verificationDeadlineExceeded',
     defaultMessage: 'Tími til að staðfesta kort er útrunninn.',
     description: 'Generic decline description',
+  },
+  errorGettingApplePaySessionTitle: {
+    id: 'payments:cardError.errorGettingApplePaySessionTitle',
+    defaultMessage: 'Villa við Apple Pay tengingu',
+    description: 'Error connecting to Apple Pay',
+  },
+  errorGettingApplePaySession: {
+    id: 'payments:cardError.errorGettingApplePaySession',
+    defaultMessage: 'Ekki var hægt að tengjast Apple Pay. Reyndu aftur síðar.',
+    description: 'Error connecting to Apple Pay description',
   },
   unknownTitle: {
     id: 'payments:cardError.unknownTitle',

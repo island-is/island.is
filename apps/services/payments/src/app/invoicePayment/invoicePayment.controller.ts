@@ -17,19 +17,19 @@ import {
   FeatureFlagGuard,
   Features,
 } from '@island.is/nest/feature-flags'
-import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
 import {
   InvoiceErrorCode,
   PaymentServiceCode,
 } from '@island.is/shared/constants'
-import { CreateInvoiceResponse } from './dtos/createInvoice.response'
-import { CreateInvoiceInput } from './dtos/createInvoice.input'
-import { CallbackInput } from './dtos/callback.input'
-import { PaidStatus } from './dtos/paidStatus.enum'
+import { environment } from '../../environments'
 import { PaymentMethod } from '../../types'
 import { generateChargeFJSPayload } from '../../utils/fjsCharge'
-import { environment } from '../../environments'
 import { onlyReturnKnownErrorCode } from '../../utils/paymentErrors'
+import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
+import { CallbackInput } from './dtos/callback.input'
+import { CreateInvoiceInput } from './dtos/createInvoice.input'
+import { CreateInvoiceResponse } from './dtos/createInvoice.response'
+import { PaidStatus } from './dtos/paidStatus.enum'
 import { InvoicePaymentService } from './invoicePayment.service'
 
 @UseGuards(FeatureFlagGuard)
