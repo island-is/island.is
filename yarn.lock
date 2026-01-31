@@ -15829,9 +15829,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@redocly/openapi-core@npm:^1.0.0-rc.2":
-  version: 1.34.4
-  resolution: "@redocly/openapi-core@npm:1.34.4"
+"@redocly/openapi-core@npm:^1.4.0":
+  version: 1.34.5
+  resolution: "@redocly/openapi-core@npm:1.34.5"
   dependencies:
     "@redocly/ajv": "npm:^8.11.2"
     "@redocly/config": "npm:^0.22.0"
@@ -15842,7 +15842,7 @@ __metadata:
     minimatch: "npm:^5.0.1"
     pluralize: "npm:^8.0.0"
     yaml-ast-parser: "npm:0.0.43"
-  checksum: 10/dffe29bea74e367c6fb478d5de6cbbdcbe5d508debf481adf8531ea43e88aaa9487b69c25139e9a8273250c62f5603c569728f0eca91cf20b0f50641327aa308
+  checksum: 10/9ecce1975b9880c5b91f75d7d0db2a592a1cfc60dca1b3e276e29f1f107d583491e66043f630d76e59802c73d1b8edf6bde35c50384f1b26c05b1d19ab48ee31
   languageName: node
   linkType: hard
 
@@ -20250,7 +20250,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/trusted-types@npm:^2.0.2":
+"@types/trusted-types@npm:^2.0.2, @types/trusted-types@npm:^2.0.7":
   version: 2.0.7
   resolution: "@types/trusted-types@npm:2.0.7"
   checksum: 10/8e4202766a65877efcf5d5a41b7dd458480b36195e580a3b1085ad21e948bc417d55d6f8af1fd2a7ad008015d4117d5fdfe432731157da3c68678487174e4ba3
@@ -25374,7 +25374,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"classnames@npm:^2.2.5, classnames@npm:^2.2.6, classnames@npm:^2.3.1":
+"classnames@npm:^2.2.5, classnames@npm:^2.2.6, classnames@npm:^2.3.2":
   version: 2.5.1
   resolution: "classnames@npm:2.5.1"
   checksum: 10/58eb394e8817021b153bb6e7d782cfb667e4ab390cb2e9dac2fc7c6b979d1cc2b2a733093955fc5c94aa79ef5c8c89f11ab77780894509be6afbb91dddd79d15
@@ -25677,7 +25677,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clsx@npm:^1.1.0, clsx@npm:^1.2.1":
+"clsx@npm:^1.2.1":
   version: 1.2.1
   resolution: "clsx@npm:1.2.1"
   checksum: 10/5ded6f61f15f1fa0350e691ccec43a28b12fb8e64c8e94715f2a937bc3722d4c3ed41d6e945c971fc4dcc2a7213a43323beaf2e1c28654af63ba70c9968a8643
@@ -28778,10 +28778,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dompurify@npm:^2.2.8":
-  version: 2.5.8
-  resolution: "dompurify@npm:2.5.8"
-  checksum: 10/d1b7653abe9cbe81c7c5af3effb0c0fbc784f06df433b48149f4962b1931487b884ce5b9c5950b7c0b749878748758810965439251e9f6baee3a15de6b9f0411
+"dompurify@npm:^3.0.6":
+  version: 3.3.0
+  resolution: "dompurify@npm:3.3.0"
+  dependencies:
+    "@types/trusted-types": "npm:^2.0.7"
+  dependenciesMeta:
+    "@types/trusted-types":
+      optional: true
+  checksum: 10/d8782b10a0454344476936c91038d06c9450b3e3ada2ceb8f722525e6b54e64d847939b9f35bf385facd4139f0a2eaf7f5553efce351f8e9295620570875f002
   languageName: node
   linkType: hard
 
@@ -30651,7 +30656,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eventemitter3@npm:^4.0.0, eventemitter3@npm:^4.0.1, eventemitter3@npm:^4.0.4, eventemitter3@npm:^4.0.7":
+"eventemitter3@npm:^4.0.0, eventemitter3@npm:^4.0.1, eventemitter3@npm:^4.0.4":
   version: 4.0.7
   resolution: "eventemitter3@npm:4.0.7"
   checksum: 10/8030029382404942c01d0037079f1b1bc8fed524b5849c237b80549b01e2fc49709e1d0c557fa65ca4498fc9e24cff1475ef7b855121fcc15f9d61f93e282346
@@ -36275,7 +36280,7 @@ __metadata:
     react-use: "npm:15.3.3"
     reakit: "npm:1.3.11"
     recharts: "npm:^2.12.0"
-    redoc: "npm:2.1.3"
+    redoc: "npm:2.4.0"
     reflect-metadata: "npm:0.1.13"
     regenerator-runtime: "npm:0.13.7"
     remark-parse: "npm:9.0.0"
@@ -41677,35 +41682,37 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mobx-react-lite@npm:^3.4.0":
-  version: 3.4.3
-  resolution: "mobx-react-lite@npm:3.4.3"
+"mobx-react-lite@npm:^4.1.1":
+  version: 4.1.1
+  resolution: "mobx-react-lite@npm:4.1.1"
+  dependencies:
+    use-sync-external-store: "npm:^1.4.0"
   peerDependencies:
-    mobx: ^6.1.0
-    react: ^16.8.0 || ^17 || ^18
+    mobx: ^6.9.0
+    react: ^16.8.0 || ^17 || ^18 || ^19
   peerDependenciesMeta:
     react-dom:
       optional: true
     react-native:
       optional: true
-  checksum: 10/768ada82ab181330cf57562552c591065c57e59378cafe1a9d100660b1acf5d73fe9f5eeea8ea7b2adc5a87dd322bc1e119d853474c51e032021deef967b07e4
+  checksum: 10/ce2c848129c052e1901f530329ec440e4b7f7264073e0f91bda240b2c37826f964d1fcab8cf43c4a1fa0d596074364e9ce52094e3db0bd5ca1d59147b92200f7
   languageName: node
   linkType: hard
 
-"mobx-react@npm:^7.2.0":
-  version: 7.6.0
-  resolution: "mobx-react@npm:7.6.0"
+"mobx-react@npm:^9.1.1":
+  version: 9.2.1
+  resolution: "mobx-react@npm:9.2.1"
   dependencies:
-    mobx-react-lite: "npm:^3.4.0"
+    mobx-react-lite: "npm:^4.1.1"
   peerDependencies:
-    mobx: ^6.1.0
-    react: ^16.8.0 || ^17 || ^18
+    mobx: ^6.9.0
+    react: ^16.8.0 || ^17 || ^18 || ^19
   peerDependenciesMeta:
     react-dom:
       optional: true
     react-native:
       optional: true
-  checksum: 10/33cdc54d44714c87a2fd50fa20ac84114d1032b20a4f1e5a1147c37aaca25147e43a4b970f7aded42ddd8f55c6b3d09d157be6019c8527381a7da161e5c9a45d
+  checksum: 10/a2b0a19127e802d6dc866133f1f0acfd63d7c08ca53e1e84d206f18b71c464d3e19124afce0cb625db02a6d893aa9492a6a0fb98b8db3087ed062591e322fe6f
   languageName: node
   linkType: hard
 
@@ -43261,14 +43268,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"openapi-sampler@npm:^1.3.1":
-  version: 1.6.1
-  resolution: "openapi-sampler@npm:1.6.1"
+"openapi-sampler@npm:^1.5.0":
+  version: 1.6.2
+  resolution: "openapi-sampler@npm:1.6.2"
   dependencies:
     "@types/json-schema": "npm:^7.0.7"
     fast-xml-parser: "npm:^4.5.0"
     json-pointer: "npm:0.6.2"
-  checksum: 10/610e4b8cb9c89556ff85dc27fe8fb376298f98e26973884e4e3bd12dc744253bc81ce168382c36ef72db0ef7e9a4fd49a1526a5284a5f5c19a1a233cb883b038
+  checksum: 10/6aba66be01118ccf9352862037f45b32733ce71b5d8195b5ffe581dcea801d00f162ef4b5dfa6931b3672767117da684ac84b884f488ed4be96e582719fc6e7b
   languageName: node
   linkType: hard
 
@@ -44531,7 +44538,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"polished@npm:^4.1.3, polished@npm:^4.2.2":
+"polished@npm:^4.2.2":
   version: 4.3.1
   resolution: "polished@npm:4.3.1"
   dependencies:
@@ -45261,7 +45268,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prismjs@npm:^1.27.0":
+"prismjs@npm:^1.29.0":
   version: 1.30.0
   resolution: "prismjs@npm:1.30.0"
   checksum: 10/6b48a2439a82e5c6882f48ebc1564c3890e16463ba17ac10c3ad4f62d98dea5b5c915b172b63b83023a70ad4f5d7be3e8a60304420db34a161fae69dd4e3e2da
@@ -47071,15 +47078,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-tabs@npm:^4.3.0":
-  version: 4.3.0
-  resolution: "react-tabs@npm:4.3.0"
+"react-tabs@npm:^6.0.2":
+  version: 6.1.0
+  resolution: "react-tabs@npm:6.1.0"
   dependencies:
-    clsx: "npm:^1.1.0"
+    clsx: "npm:^2.0.0"
     prop-types: "npm:^15.5.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0-0 || ^18.0.0
-  checksum: 10/5d6e25dc900fe82a7744cb8eb0b4f25a6e5df909e69f66a6216dadb18ec8392f95a97660aa19820bf4c25e3dc720fdce4a27ee475b046f79c97aebe2653884c2
+    react: ^18.0.0 || ^19.0.0
+  checksum: 10/b990df9b03029c01d4e5fd131655b4bcf3847a33b976c405da312d15d381630753c2fbc9e7bbc86215b935956bccdb6d72ac918c3224dbafc70e7fdeee40f7c9
   languageName: node
   linkType: hard
 
@@ -47541,38 +47548,38 @@ __metadata:
   languageName: node
   linkType: hard
 
-"redoc@npm:2.1.3":
-  version: 2.1.3
-  resolution: "redoc@npm:2.1.3"
+"redoc@npm:2.4.0":
+  version: 2.4.0
+  resolution: "redoc@npm:2.4.0"
   dependencies:
-    "@redocly/openapi-core": "npm:^1.0.0-rc.2"
-    classnames: "npm:^2.3.1"
+    "@redocly/openapi-core": "npm:^1.4.0"
+    classnames: "npm:^2.3.2"
     decko: "npm:^1.2.0"
-    dompurify: "npm:^2.2.8"
-    eventemitter3: "npm:^4.0.7"
+    dompurify: "npm:^3.0.6"
+    eventemitter3: "npm:^5.0.1"
     json-pointer: "npm:^0.6.2"
     lunr: "npm:^2.3.9"
     mark.js: "npm:^8.11.1"
-    marked: "npm:^4.0.15"
-    mobx-react: "npm:^7.2.0"
-    openapi-sampler: "npm:^1.3.1"
+    marked: "npm:^4.3.0"
+    mobx-react: "npm:^9.1.1"
+    openapi-sampler: "npm:^1.5.0"
     path-browserify: "npm:^1.0.1"
     perfect-scrollbar: "npm:^1.5.5"
-    polished: "npm:^4.1.3"
-    prismjs: "npm:^1.27.0"
-    prop-types: "npm:^15.7.2"
-    react-tabs: "npm:^4.3.0"
+    polished: "npm:^4.2.2"
+    prismjs: "npm:^1.29.0"
+    prop-types: "npm:^15.8.1"
+    react-tabs: "npm:^6.0.2"
     slugify: "npm:~1.4.7"
     stickyfill: "npm:^1.1.1"
-    swagger2openapi: "npm:^7.0.6"
+    swagger2openapi: "npm:^7.0.8"
     url-template: "npm:^2.0.8"
   peerDependencies:
     core-js: ^3.1.4
     mobx: ^6.0.4
-    react: ^16.8.4 || ^17.0.0 || ^18.0.0
-    react-dom: ^16.8.4 || ^17.0.0 || ^18.0.0
+    react: ^16.8.4 || ^17.0.0 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.4 || ^17.0.0 || ^18.0.0 || ^19.0.0
     styled-components: ^4.1.1 || ^5.1.1 || ^6.0.5
-  checksum: 10/83cdc99c9f4035331fd062289f10c2df781b3d03e5153448079e26fd29af62ae6f877868f26610eae4c184297dadb6a6a002ee8931906c3a69ec78cba6119fde
+  checksum: 10/4604572cc4fdff1d4649ab72da21e41aba6fb885502fc2956fab4a4c75ba53f75606614c9047c62dce0f39dd3254b947e395402f37e5928bef35b2758570b904
   languageName: node
   linkType: hard
 
@@ -51233,7 +51240,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"swagger2openapi@npm:^7.0.6":
+"swagger2openapi@npm:^7.0.8":
   version: 7.0.8
   resolution: "swagger2openapi@npm:7.0.8"
   dependencies:
@@ -53539,6 +53546,15 @@ __metadata:
   peerDependencies:
     react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
   checksum: 10/ddae7c4572511f7f641d6977bd0725340aa7dbeda8250418b54c1a57ec285083d96cf50d1a1acbd6cf729f7a87071b2302c6fbd29310432bf1b21a961a313279
+  languageName: node
+  linkType: hard
+
+"use-sync-external-store@npm:^1.4.0":
+  version: 1.6.0
+  resolution: "use-sync-external-store@npm:1.6.0"
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+  checksum: 10/b40ad2847ba220695bff2d4ba4f4d60391c0fb4fb012faa7a4c18eb38b69181936f5edc55a522c4d20a788d1a879b73c3810952c9d0fd128d01cb3f22042c09e
   languageName: node
   linkType: hard
 
