@@ -54,6 +54,7 @@ export class ZendeskService {
     const customFields = this.getCustomFields(applicationDto)
     const subject = applicationDto.formName?.is ?? 'No subject'
     const data = JSON.stringify(applicationDto)
+    const isInternal = applicationDto.zendeskInternal === true
 
     // return true
     const fileToken = await this.uploadFile(
@@ -72,6 +73,7 @@ export class ZendeskService {
       credentials,
       name,
       email,
+      isInternal,
     )
   }
 
@@ -84,6 +86,7 @@ export class ZendeskService {
     credentials: string,
     name: string,
     email: string,
+    isInternal: boolean,
   ): Promise<boolean> {
     const serviceUrl = new URL(`${url}/api/v2/tickets.json`)
 
@@ -98,7 +101,7 @@ export class ZendeskService {
           ticket: {
             comment: {
               html_body: body,
-              public: false,
+              public: !isInternal,
               uploads: [fileToken],
             },
             custom_fields: customFields,
@@ -116,7 +119,9 @@ export class ZendeskService {
       const result = await response.json()
       return result.ticket?.id ? true : false
     } catch (error) {
-      throw new Error('Unexpected error while creating ticket')
+      throw new Error('Unexpected error while creating ticket', {
+        cause: error,
+      })
     }
   }
 
@@ -239,7 +244,6 @@ export class ZendeskService {
 
           for (const field of screen.fields ?? []) {
             if (field.isHidden) continue
-            if (field.fieldSettings?.zendeskIsPrivate) continue
 
             const requiredMark = field.isRequired ? '*' : ''
             parts.push(
