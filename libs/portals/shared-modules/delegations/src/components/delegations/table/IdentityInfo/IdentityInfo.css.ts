@@ -9,6 +9,7 @@ export const iconContainer = style({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
+  flexShrink: 0,
 })
 
 export const icon = style({

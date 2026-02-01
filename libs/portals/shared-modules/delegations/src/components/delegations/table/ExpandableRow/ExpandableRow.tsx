@@ -171,12 +171,11 @@ const ExpandableRow: FC<React.PropsWithChildren<Props>> = ({
           }}
           box={{ position: 'relative' }}
           borderColor={
-            'purple200'
-            // closed && !expanded
-            //   ? 'blue100'
-            //   : backgroundColor === 'white'
-            //   ? 'transparent'
-            //   : 'blue200'
+            closed && !expanded
+              ? 'blue100'
+              : backgroundColor === 'white'
+              ? 'transparent'
+              : 'blue200'
           }
           colSpan={data.length + 1}
         >

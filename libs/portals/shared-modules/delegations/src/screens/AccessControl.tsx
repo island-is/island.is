@@ -121,7 +121,6 @@ const AccessControl = () => {
 
   const onSwitchUser = (nationalId: string) => {
     switchUser(nationalId, `${location.origin}/minarsidur`)
-    navigate('/')
   }
 
   return (
@@ -178,8 +177,7 @@ const AccessControl = () => {
       {/* Legal guardian delegations table */}
       {legalGuardianDelegations && legalGuardianDelegations.length > 0 && (
         <DelegationsTable
-          // title={formatMessage(m.incomingDelegationsTitle)}
-          title="Börn í þinni forsjá"
+          title={formatMessage(m.legalGuardianTableTitle)}
           data={getLegalGuardianTableData(
             legalGuardianDelegations,
             onSwitchUser,
@@ -193,7 +191,7 @@ const AccessControl = () => {
       {/* Procuring holder delegations table */}
       {procuringHolderDelegations && procuringHolderDelegations.length > 0 && (
         <DelegationsTable
-          title="Prókúruhafar í þinni forsjá"
+          title={formatMessage(m.procurationHolderTableTitle)}
           data={getProcuringHolderTableData(
             procuringHolderDelegations,
             onSwitchUser,
@@ -207,7 +205,7 @@ const AccessControl = () => {
       {/* General mandate delegations table */}
       {generalMandateDelegations && generalMandateDelegations.length > 0 && (
         <DelegationsTable
-          title="Allsherjarumboð"
+          title={formatMessage(m.delegationTypeGeneralMandate)}
           data={getGeneralMandateTableData(
             generalMandateDelegations,
             onSwitchUser,

@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  Input,
   SkeletonLoader,
   Table as T,
   Text,
@@ -8,7 +9,7 @@ import {
 import { AuthCustomDelegation } from '../../../types/customDelegation'
 import ExpandableRow from './ExpandableRow/ExpandableRow'
 import format from 'date-fns/format'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { m as coreMessages } from '@island.is/portals/core'
 import { useLocale } from '@island.is/localization'
 import CustomDelegationsPermissionsTable from './CustomDelegationsPermissionsTable'
@@ -21,8 +22,6 @@ import { Problem } from '@island.is/react-spa/shared'
 import { AuthDelegationDirection } from '@island.is/api/schema'
 import { IdentityInfo } from './IdentityInfo/IdentityInfo'
 import { m } from '../../../lib/messages'
-
-// todo: translate
 
 const CustomDelegationsTable = ({
   title,
@@ -40,6 +39,8 @@ const CustomDelegationsTable = ({
   direction: AuthDelegationDirection
 }) => {
   const { name: domainName } = useDomains()
+  const [searchValue, setSearchValue] = useState('')
+
   const { formatMessage } = useLocale()
   const [expandedRow, setExpandedRow] = useState<string | null | undefined>(
     null,
@@ -57,6 +58,22 @@ const CustomDelegationsTable = ({
     { value: '' },
   ]
 
+  const filteredDelegations = useMemo(() => {
+    if (!searchValue) {
+      return data
+    }
+
+    return data.filter((delegation) => {
+      const searchValueLower = searchValue.toLowerCase()
+      const name = delegation.to?.name.toLowerCase()
+      const nationalId = delegation.to?.nationalId.toLowerCase()
+
+      return (
+        name?.includes(searchValueLower) || nationalId?.includes(searchValue)
+      )
+    })
+  }, [searchValue, data])
+
   return (
     <>
       <Box
@@ -65,7 +82,24 @@ const CustomDelegationsTable = ({
         flexDirection="column"
         rowGap={2}
       >
-        <Text variant="h5">{title}</Text>
+        <Box
+          display="flex"
+          alignItems="center"
+          columnGap={2}
+          justifyContent="spaceBetween"
+        >
+          <Text variant="h5">{title}</Text>
+          <Input
+            name="search"
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
+            placeholder={formatMessage(m.searchPlaceholder)}
+            size="xs"
+            type="text"
+            backgroundColor="blue"
+            icon={{ name: 'search' }}
+          />
+        </Box>
         {loading ? (
           <Box padding={3}>
             <SkeletonLoader space={1} height={40} repeat={2} />
@@ -89,7 +123,7 @@ const CustomDelegationsTable = ({
               </T.Row>
             </T.Head>
             <T.Body>
-              {data?.map((item) => {
+              {filteredDelegations?.map((item) => {
                 const identity = direction === 'outgoing' ? item.to : item.from
 
                 return (
