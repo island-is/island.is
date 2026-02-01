@@ -156,26 +156,28 @@ const CaseFileTable: FC<Props> = ({
                 </Box>
               </td>
               <td>
-                {canRejectFiles && !isFiledInConfirmedCourtSession(file.id) && (
-                  <ContextMenu
-                    items={[rejectCaseFile(file)]}
-                    render={
-                      <motion.div
-                        className={tableStyles.smallContainer}
-                        key={file.id}
-                        initial={{ opacity: 1 }}
-                        animate={{ opacity: 1, y: 1 }}
-                        exit={{ opacity: 0, y: 5 }}
-                        onClick={(evt) => evt.stopPropagation()}
-                      >
-                        <IconButton
-                          icon="ellipsisVertical"
-                          colorScheme="transparent"
-                        />
-                      </motion.div>
-                    }
-                  />
-                )}
+                {canRejectFiles &&
+                  !isRejected &&
+                  !isFiledInConfirmedCourtSession(file.id) && (
+                    <ContextMenu
+                      items={[rejectCaseFile(file)]}
+                      render={
+                        <motion.div
+                          className={tableStyles.smallContainer}
+                          key={file.id}
+                          initial={{ opacity: 1 }}
+                          animate={{ opacity: 1, y: 1 }}
+                          exit={{ opacity: 0, y: 5 }}
+                          onClick={(evt) => evt.stopPropagation()}
+                        >
+                          <IconButton
+                            icon="ellipsisVertical"
+                            colorScheme="transparent"
+                          />
+                        </motion.div>
+                      }
+                    />
+                  )}
               </td>
             </tr>
           )
