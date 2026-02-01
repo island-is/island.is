@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 
 import { useLocale } from '@island.is/localization'
-import { Checkbox, CheckboxProps, Stack, Text } from '@island.is/island-ui/core'
+import { Checkbox, CheckboxProps, Stack } from '@island.is/island-ui/core'
 import { FeatureFlagClient, Features } from '@island.is/feature-flags'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 
