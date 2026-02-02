@@ -539,7 +539,7 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
               icon="swapVertical"
               items={[
                 {
-                  title: ' Útgáfudags. - nýjast fyrst ',
+                  title: formatMessage(m.search.publicationDateSortNew),
                   icon:
                     searchState.sortBy === 'date' &&
                     searchState.direction?.toLowerCase() === 'desc'
@@ -559,7 +559,7 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
                   },
                 },
                 {
-                  title: ' Útgáfudags. - elst fyrst ',
+                  title: formatMessage(m.search.publicationDateSortOld),
                   icon:
                     searchState.sortBy === 'date' &&
                     searchState.direction?.toLowerCase() === 'asc'
@@ -579,7 +579,7 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
                   },
                 },
                 {
-                  title: ' Númer - nýjast fyrst ',
+                  title: formatMessage(m.search.numberSortNew),
                   icon:
                     searchState.sortBy === 'number' &&
                     searchState.direction?.toLowerCase() === 'desc'
@@ -599,7 +599,7 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
                   },
                 },
                 {
-                  title: ' Númer - elst fyrst ',
+                  title: formatMessage(m.search.numberSortOld),
                   icon:
                     searchState.sortBy === 'number' &&
                     searchState.direction?.toLowerCase() === 'asc'
@@ -619,8 +619,8 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
                   },
                 },
               ]}
-              menuLabel="Raða eftir"
-              title="Raða eftir"
+              menuLabel={formatMessage(m.search.sortBy)}
+              title={formatMessage(m.search.sortBy)}
             />
           </Inline>
 
