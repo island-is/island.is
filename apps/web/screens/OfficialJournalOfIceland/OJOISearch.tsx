@@ -81,6 +81,7 @@ type OJOISearchParams = {
   year?: string
   sortBy?: string
   direction?: string
+  sort?: string // format: 'date-desc', 'date-asc', 'number-desc', 'number-asc'
 }
 
 const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
@@ -109,6 +110,8 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
     defaultSearchParams.q,
   )
 
+  const [sortBy, direction] = defaultSearchParams.sort?.split('-') ?? []
+
   const { adverts, paging, loading, error, refetch } = useAdverts({
     vars: {
       department: [defaultSearchParams.deild],
@@ -121,8 +124,8 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
       page: defaultSearchParams.sida,
       pageSize: defaultSearchParams.staerd,
       year: defaultSearchParams.year,
-      sortBy: defaultSearchParams.sortBy,
-      direction: defaultSearchParams.direction,
+      sortBy: sortBy,
+      direction: direction,
     },
     fallbackData: initialAdverts,
   })
@@ -138,8 +141,7 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
     dagsTil: defaultSearchParams.dagsTil,
     sida: defaultSearchParams.sida ?? 1,
     year: defaultSearchParams.year,
-    sortBy: defaultSearchParams.sortBy,
-    direction: defaultSearchParams.direction,
+    sort: defaultSearchParams.sort,
     staerd: defaultSearchParams.staerd,
   })
 
@@ -170,8 +172,7 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
           'dagsTil',
           'year',
           'staerd', // items per page change -> go back to page 1
-          'sortBy',
-          'direction',
+          'sort',
         ]
 
         const RESET_SORTING_ON_CHANGE: Array<keyof typeof prev> = [
@@ -200,9 +201,7 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
           [key]: parsed,
           sida: nextPage,
           ...(shouldClearType ? { tegund: '' } : {}),
-          ...(RESET_SORTING_ON_CHANGE.includes(key)
-            ? { sortBy: undefined, direction: undefined }
-            : {}),
+          ...(RESET_SORTING_ON_CHANGE.includes(key) ? { sort: undefined } : {}),
         }
 
         if (hydrated) {
@@ -218,6 +217,8 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
             shallow: true,
           })
 
+          const [sortBy, direction] = next.sort?.split('-') ?? []
+
           refetch({
             input: {
               department: [next.deild].filter(Boolean),
@@ -230,8 +231,8 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
               page: next.sida,
               pageSize: next.staerd,
               year: next.year,
-              sortBy: next.sortBy,
-              direction: next.direction,
+              sortBy: sortBy,
+              direction: direction,
             },
           })
         }
@@ -267,8 +268,7 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
       sida: 1,
       staerd: 20,
       year: undefined,
-      sortBy: undefined,
-      direction: undefined,
+      sort: undefined,
     })
 
     refetch({
@@ -541,80 +541,50 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
                 {
                   title: formatMessage(m.search.publicationDateSortNew),
                   icon:
-                    searchState.sortBy === 'date' &&
-                    searchState.direction?.toLowerCase() === 'desc'
-                      ? 'checkmark'
-                      : undefined,
+                    searchState.sort === 'date-desc' ? 'checkmark' : undefined,
                   onClick: () => {
-                    if (
-                      searchState.sortBy === 'date' &&
-                      searchState.direction?.toLowerCase() === 'desc'
-                    ) {
-                      updateSearchStateHandler('sortBy', undefined)
-                      updateSearchStateHandler('direction', undefined)
+                    if (searchState.sort === 'date-desc') {
+                      updateSearchStateHandler('sort', undefined)
                     } else {
-                      updateSearchStateHandler('sortBy', 'date')
-                      updateSearchStateHandler('direction', 'desc')
+                      updateSearchStateHandler('sort', 'date-desc')
                     }
                   },
                 },
                 {
                   title: formatMessage(m.search.publicationDateSortOld),
                   icon:
-                    searchState.sortBy === 'date' &&
-                    searchState.direction?.toLowerCase() === 'asc'
-                      ? 'checkmark'
-                      : undefined,
+                    searchState.sort === 'date-asc' ? 'checkmark' : undefined,
                   onClick: () => {
-                    if (
-                      searchState.sortBy === 'date' &&
-                      searchState.direction?.toLowerCase() === 'asc'
-                    ) {
-                      updateSearchStateHandler('sortBy', undefined)
-                      updateSearchStateHandler('direction', undefined)
+                    if (searchState.sort === 'date-asc') {
+                      updateSearchStateHandler('sort', undefined)
                     } else {
-                      updateSearchStateHandler('sortBy', 'date')
-                      updateSearchStateHandler('direction', 'asc')
+                      updateSearchStateHandler('sort', 'date-asc')
                     }
                   },
                 },
                 {
                   title: formatMessage(m.search.numberSortNew),
                   icon:
-                    searchState.sortBy === 'number' &&
-                    searchState.direction?.toLowerCase() === 'desc'
+                    searchState.sort === 'number-desc'
                       ? 'checkmark'
                       : undefined,
                   onClick: () => {
-                    if (
-                      searchState.sortBy === 'number' &&
-                      searchState.direction?.toLowerCase() === 'desc'
-                    ) {
-                      updateSearchStateHandler('sortBy', undefined)
-                      updateSearchStateHandler('direction', undefined)
+                    if (searchState.sort === 'number-desc') {
+                      updateSearchStateHandler('sort', undefined)
                     } else {
-                      updateSearchStateHandler('sortBy', 'number')
-                      updateSearchStateHandler('direction', 'desc')
+                      updateSearchStateHandler('sort', 'number-desc')
                     }
                   },
                 },
                 {
                   title: formatMessage(m.search.numberSortOld),
                   icon:
-                    searchState.sortBy === 'number' &&
-                    searchState.direction?.toLowerCase() === 'asc'
-                      ? 'checkmark'
-                      : undefined,
+                    searchState.sort === 'number-asc' ? 'checkmark' : undefined,
                   onClick: () => {
-                    if (
-                      searchState.sortBy === 'number' &&
-                      searchState.direction?.toLowerCase() === 'asc'
-                    ) {
-                      updateSearchStateHandler('sortBy', undefined)
-                      updateSearchStateHandler('direction', undefined)
+                    if (searchState.sort === 'number-asc') {
+                      updateSearchStateHandler('sort', undefined)
                     } else {
-                      updateSearchStateHandler('sortBy', 'number')
-                      updateSearchStateHandler('direction', 'asc')
+                      updateSearchStateHandler('sort', 'number-asc')
                     }
                   },
                 },
@@ -771,8 +741,7 @@ OJOISearch.getProps = async ({ apolloClient, locale, query }) => {
     sida: page ?? 1,
     year,
     pageSize,
-    sortBy: getStringFromQuery(query.sortBy),
-    direction: getStringFromQuery(query.direction),
+    sort: getStringFromQuery(query.sort),
   }
 
   const [
@@ -808,8 +777,8 @@ OJOISearch.getProps = async ({ apolloClient, locale, query }) => {
           search: defaultParams.q,
           type: [defaultParams.tegund],
           year: defaultParams.year,
-          sortBy: defaultParams.sortBy,
-          direction: defaultParams.direction,
+          sortBy: defaultParams.sort?.split('-')[0],
+          direction: defaultParams.sort?.split('-')[1],
         },
       },
     }),
@@ -876,8 +845,7 @@ OJOISearch.getProps = async ({ apolloClient, locale, query }) => {
       sida: defaultParams.sida,
       staerd: defaultParams.pageSize,
       year: defaultParams.year,
-      sortBy: defaultParams.sortBy,
-      direction: defaultParams.direction,
+      sort: defaultParams.sort,
     },
   }
 }
