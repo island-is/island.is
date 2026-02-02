@@ -23,6 +23,10 @@ import {
   error,
   PrerequisitesResult,
 } from '@island.is/application/templates/public-debt-payment-plan'
+import {
+  PaymentScheduleDebts,
+  PaymentScheduleInitialSchedule,
+} from '@island.is/api/schema'
 
 @Injectable()
 export class PublicDebtPaymentPlanTemplateService extends BaseTemplateApiService {
@@ -177,7 +181,8 @@ export class PublicDebtPaymentPlanTemplateService extends BaseTemplateApiService
     }
 
     const totalPrerequisiteDebt = debts.reduce(
-      (acc: number, debt: any) => acc + (debt.totalAmount || 0),
+      (acc: number, debt: PaymentScheduleDebts) =>
+        acc + (debt.totalAmount || 0),
       0,
     )
 
@@ -209,7 +214,7 @@ export class PublicDebtPaymentPlanTemplateService extends BaseTemplateApiService
 
     schedules.forEach((schedule) => {
       const initialSchedule = allInitialSchedules.find(
-        (initial: any) =>
+        (initial: PaymentScheduleInitialSchedule) =>
           ScheduleType[initial.scheduleType as keyof typeof ScheduleType] ===
           schedule.type,
       )
@@ -218,7 +223,7 @@ export class PublicDebtPaymentPlanTemplateService extends BaseTemplateApiService
         this.throwValidationError(error.maxCountMonth)
       }
 
-      schedule.payments.forEach((p: any, index: number) => {
+      schedule.payments.forEach((p: { payment: number }, index: number) => {
         if (p.payment > (initialSchedule?.maxPayment || 0)) {
           this.throwValidationError(error.maxPaymentAmount)
         }
