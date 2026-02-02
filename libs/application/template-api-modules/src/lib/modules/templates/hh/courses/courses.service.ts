@@ -1,16 +1,17 @@
 import { Inject, Injectable } from '@nestjs/common'
+import type { ConfigType } from '@nestjs/config'
 import {
   ApplicationTypes,
   type ApplicationWithAttachments,
 } from '@island.is/application/types'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { ZendeskService } from '@island.is/clients/zendesk'
 import { YesOrNoEnum, getValueViaPath } from '@island.is/application/core'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { SharedTemplateApiService } from '../../../shared'
 import type { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import type { ApplicationAnswers } from './types'
+import { HHCoursesConfig } from './courses.config'
 
 const GET_COURSE_BY_ID_QUERY = `
   query GetCourseById($input: GetCourseByIdInput!) {
@@ -33,13 +34,10 @@ const GET_COURSE_BY_ID_QUERY = `
 
 @Injectable()
 export class CoursesService extends BaseTemplateApiService {
-  private readonly zendeskSubject =
-    process.env.HH_COURSES_ZENDESK_SUBJECT ||
-    'Skráning á námskeið - Heilsugæsla höfuðborgarsvæðisins'
-
   constructor(
     private readonly sharedTemplateApiService: SharedTemplateApiService,
-    private readonly zendeskService: ZendeskService,
+    @Inject(HHCoursesConfig.KEY)
+    private readonly coursesConfig: ConfigType<typeof HHCoursesConfig>,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {
     super(ApplicationTypes.HEILSUGAESLA_HOFUDBORDARSVAEDISINS_NAMSKEID)
@@ -74,12 +72,6 @@ export class CoursesService extends BaseTemplateApiService {
           400,
         )
 
-      let user = await this.zendeskService.getUserByEmail(email)
-
-      if (!user) {
-        user = await this.zendeskService.createUser(name, email, phone)
-      }
-
       const message = await this.formatApplicationMessage(
         application,
         participantList,
@@ -93,20 +85,22 @@ export class CoursesService extends BaseTemplateApiService {
         healthcenter,
       )
 
-      await this.zendeskService.submitTicket({
-        message,
-        requesterId: user.id,
-        subject: this.zendeskSubject,
-        tags: ['hh-courses'],
-      })
+      await this.sharedTemplateApiService.sendEmail(
+        (_props) => ({
+          to: this.coursesConfig.applicationRecipientEmail,
+          from: {
+            name: this.coursesConfig.applicationSenderName,
+            address: this.coursesConfig.applicationSenderEmail,
+          },
+          subject: this.coursesConfig.applicationEmailSubject,
+          text: message,
+          replyTo: email,
+        }),
+        application,
+      )
 
       return { success: true }
     } catch (error) {
-      this.logger.error('Failed to submit HH courses application to Zendesk', {
-        applicationId: application.id,
-        error: error.message,
-      })
-
       if (error instanceof TemplateApiError) {
         throw error
       }
