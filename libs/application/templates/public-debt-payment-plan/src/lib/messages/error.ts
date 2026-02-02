@@ -84,8 +84,7 @@ export const error = defineMessages({
   },
   maxCountMonth: {
     id: `pdpp.application:error.maxCountMonth`,
-    defaultMessage:
-      'Fjöldi gjalddaga er meiri en leyfilegt hámark fyrir skuldaflokk {scheduleType}',
+    defaultMessage: 'Fjöldi gjalddaga er meiri en leyfilegt hámark',
     description: 'Error Modal: Max count month',
   },
   totalAmountMismatch: {
