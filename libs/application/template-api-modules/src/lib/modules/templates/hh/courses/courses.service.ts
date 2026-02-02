@@ -27,6 +27,7 @@ const GET_COURSE_BY_ID_QUERY = `
             startTime
             endTime
           }
+          chargeItemCode
         }
       }
     }
@@ -42,6 +43,30 @@ export class CoursesService extends BaseTemplateApiService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {
     super(ApplicationTypes.HEILSUGAESLA_HOFUDBORDARSVAEDISINS_NAMSKEID)
+  }
+
+  async getSelectedChargeItem({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps): Promise<{
+    chargeItemCode?: string | null
+  }> {
+    const courseId = getValueViaPath<ApplicationAnswers['courseSelect']>(
+      application.answers,
+      'courseSelect',
+    )
+    const courseInstanceId = getValueViaPath<ApplicationAnswers['dateSelect']>(
+      application.answers,
+      'dateSelect',
+    )
+
+    const { courseInstance } = await this.getCourseById(
+      courseId,
+      courseInstanceId,
+      auth.authorization,
+    )
+
+    return { chargeItemCode: courseInstance.chargeItemCode }
   }
 
   async submitApplication({
@@ -156,6 +181,7 @@ export class CoursesService extends BaseTemplateApiService {
                 startTime?: string
                 endTime?: string
               }
+              chargeItemCode?: string | null
             }[]
           }
         }
