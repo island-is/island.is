@@ -19,7 +19,7 @@ export class NotifyService {
   ): Promise<boolean> {
     if (!this.xroadBase || !this.xroadClient) {
       throw new Error(
-        'X-Road configuration is missing for NotifyService. Please check environment variables.',
+        `X-Road configuration is missing for NotifyService in form ${applicationDto.slug}. Please check environment variables.`,
       )
     }
 
@@ -49,8 +49,12 @@ export class NotifyService {
         return false
       }
     } catch (error) {
-      console.error(`Error sending notification ${error}`)
-      this.logger.error(`Error sending notification ${error}`)
+      console.error(
+        `Error sending notification for form ${applicationDto.slug}: ${error}`,
+      )
+      this.logger.error(
+        `Error sending notification for form ${applicationDto.slug}: ${error}`,
+      )
       return false
     }
 
