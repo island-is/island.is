@@ -19,8 +19,10 @@ import {
 } from './types'
 import { PrerequisitesService } from './paymentPlanPrerequisites.service'
 import { TemplateApiError } from '@island.is/nest/problem'
-import { error } from '@island.is/application/templates/public-debt-payment-plan'
-import { PrerequisitesResult } from 'libs/application/templates/public-debt-payment-plan/src/types'
+import {
+  error,
+  PrerequisitesResult,
+} from '@island.is/application/templates/public-debt-payment-plan'
 
 @Injectable()
 export class PublicDebtPaymentPlanTemplateService extends BaseTemplateApiService {
