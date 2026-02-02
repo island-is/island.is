@@ -6,11 +6,11 @@ export class PaymentOverviewTotalsItem {
   serviceTypeCode!: string | null
 
   @Field(() => Number, { nullable: true })
-  fullCost!: number
+  fullCost!: number | null
 
   @Field(() => Number, { nullable: true })
-  copayCost!: number
+  copayCost!: number | null
 
   @Field(() => Number, { nullable: true })
-  patientCost!: number
+  patientCost!: number | null
 }

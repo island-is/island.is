@@ -7,11 +7,11 @@ export class PaymentOverviewTotals {
   items!: PaymentOverviewTotalsItem[] | null
 
   @Field(() => Number, { nullable: true })
-  totalFullCost!: number
+  totalFullCost!: number | null
 
   @Field(() => Number, { nullable: true })
-  totalPatientCost!: number
+  totalPatientCost!: number | null
 
   @Field(() => Number, { nullable: true })
-  totalCopayCost!: number
+  totalCopayCost!: number | null
 }
