@@ -626,7 +626,8 @@ export const emailsMsg = defineMessages({
   },
   verificationNotFound: {
     id: 'ids:verification-not-found',
-    defaultMessage: 'Staðfesting fannst ekki. Vinsamlegast biddu um nýjan kóða.',
+    defaultMessage:
+      'Staðfesting fannst ekki. Vinsamlegast biddu um nýjan kóða.',
   },
 })
 
