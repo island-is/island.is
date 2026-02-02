@@ -49,7 +49,9 @@ export class CoursesService extends BaseTemplateApiService {
   async getSelectedChargeItem({
     application,
     auth,
-  }: TemplateApiModuleActionProps): Promise<{ chargeItemCode: string }> {
+  }: TemplateApiModuleActionProps): Promise<{
+    chargeItemCode?: string | null
+  }> {
     const courseId = getValueViaPath<ApplicationAnswers['courseSelect']>(
       application.answers,
       'courseSelect',
@@ -64,16 +66,6 @@ export class CoursesService extends BaseTemplateApiService {
       courseInstanceId,
       auth.authorization,
     )
-
-    if (!courseInstance?.chargeItemCode) {
-      throw new TemplateApiError(
-        {
-          title: 'Charge item code not found',
-          summary: 'Charge item code not found for selected course instance',
-        },
-        400,
-      )
-    }
 
     return { chargeItemCode: courseInstance.chargeItemCode }
   }

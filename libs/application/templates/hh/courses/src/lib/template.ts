@@ -117,7 +117,17 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: { target: States.PAYMENT },
+          [DefaultEvents.SUBMIT]: [
+            {
+              target: States.PAYMENT,
+              cond: ({ application }) => getChargeItems(application).length > 0,
+            },
+            {
+              target: States.COMPLETED,
+              cond: ({ application }) =>
+                getChargeItems(application).length === 0,
+            },
+          ],
         },
       },
       [States.PAYMENT]: buildPaymentState({
@@ -125,12 +135,6 @@ const template: ApplicationTemplate<
           InstitutionNationalIds.HEILSUGAESLA_HOFUDBORDARSVAEDISINS,
         chargeItems: getChargeItems,
         submitTarget: States.COMPLETED,
-        onExit: [
-          defineTemplateApi({
-            action: ApiActions.submitApplication,
-            triggerEvent: DefaultEvents.SUBMIT,
-          }),
-        ],
       }),
       [States.COMPLETED]: {
         meta: {
@@ -138,6 +142,12 @@ const template: ApplicationTemplate<
           progress: 1,
           status: FormModes.COMPLETED,
           lifecycle: DefaultStateLifeCycle,
+          onEntry: [
+            defineTemplateApi({
+              action: ApiActions.submitApplication,
+              triggerEvent: DefaultEvents.SUBMIT,
+            }),
+          ],
           roles: [
             {
               id: Roles.APPLICANT,

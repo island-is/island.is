@@ -18,9 +18,7 @@ export const getChargeItems = (
 
   const chargeItemCode = selectedChargeItemCode
 
-  if (!chargeItemCode) {
-    throw new Error('No selected charge item code')
-  }
+  if (!chargeItemCode) return []
 
   return [
     {
