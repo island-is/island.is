@@ -27,6 +27,7 @@ import { Problem } from '@island.is/react-spa/shared'
 import { mInformationNotifications } from '../../lib/messages'
 import { InformationPaths } from '../../lib/paths'
 import { COAT_OF_ARMS, resolveLink } from '../../utils/notificationLinkResolver'
+import { useUserInfo } from '@island.is/react-spa/bff'
 
 const DEFAULT_PAGE_SIZE = 5
 
@@ -34,6 +35,8 @@ const UserNotifications = () => {
   useNamespaces('sp.information-notifications')
   const { formatMessage, lang } = useLocale()
   const [loadingMore, setLoadingMore] = useState(false)
+  const userInfo = useUserInfo()
+  const isCompany = userInfo.profile?.subjectType === 'legalEntity'
 
   const [postMarkAsRead] = useMarkUserNotificationAsReadMutation()
   const [postMarkAllAsRead] = useMarkAllNotificationsAsReadMutation({
@@ -114,14 +117,16 @@ const UserNotifications = () => {
               {formatMessage(mInformationNotifications.markAllRead)}
             </Button>
           </Column>
-          <Column width="content">
-            <LinkButton
-              variant="utility"
-              icon="settings"
-              to={InformationPaths.Settings}
-              text={formatMessage(m.mySettings)}
-            />
-          </Column>
+          {!isCompany ? (
+            <Column width="content">
+              <LinkButton
+                variant="utility"
+                icon="settings"
+                to={InformationPaths.Settings}
+                text={formatMessage(m.mySettings)}
+              />
+            </Column>
+          ) : null}
         </Columns>
       </Box>
 

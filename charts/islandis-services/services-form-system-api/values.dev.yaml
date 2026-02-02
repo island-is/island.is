@@ -25,7 +25,7 @@ env:
   DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
   DB_USER: 'services_form_system_api'
   FILE_STORAGE_UPLOAD_BUCKET: 'island-is-dev-upload-api'
-  FORM_SYSTEM_BUCKET: 'island-is-dev-storage-form-system'
+  FORM_SYSTEM_BUCKET: 'island-is-dev-form-system-presign-bucket'
   IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
   LOG_LEVEL: 'info'
   NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
@@ -110,6 +110,6 @@ securityContext:
   privileged: false
 serviceAccount:
   annotations:
-    eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/services-form-system-api'
+    eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/form-system-api'
   create: true
-  name: 'services-form-system-api'
+  name: 'form-system-api'

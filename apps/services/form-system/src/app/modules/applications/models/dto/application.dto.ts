@@ -45,6 +45,12 @@ export class ApplicationDto {
   status?: string
 
   @ApiPropertyOptional()
+  draftFinishedSteps?: number
+
+  @ApiPropertyOptional()
+  draftTotalSteps?: number
+
+  @ApiPropertyOptional()
   allowProceedOnValidationFail?: boolean
 
   @ApiPropertyOptional()
@@ -67,6 +73,9 @@ export class ApplicationDto {
 
   @ApiPropertyOptional({ type: CompletedSectionInfo })
   completedSectionInfo?: CompletedSectionInfo
+
+  @ApiPropertyOptional()
+  zendeskInternal?: boolean
 
   submissionServiceUrl?: string
   validationServiceUrl?: string

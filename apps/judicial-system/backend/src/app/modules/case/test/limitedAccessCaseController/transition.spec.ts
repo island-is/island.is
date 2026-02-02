@@ -1,5 +1,5 @@
 import { Transaction } from 'sequelize'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import type { User } from '@island.is/judicial-system/types'
@@ -140,10 +140,14 @@ describe('LimitedAccessCaseController - Transition', () => {
       })
 
       it('should transition the case', () => {
-        expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(caseId, {
-          appealState: CaseAppealState.APPEALED,
-          accusedPostponedAppealDate: date,
-        })
+        expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+          caseId,
+          {
+            appealState: CaseAppealState.APPEALED,
+            accusedPostponedAppealDate: date,
+          },
+          { transaction },
+        )
       })
 
       it('should queue a notification message', () => {
@@ -204,10 +208,14 @@ describe('LimitedAccessCaseController - Transition', () => {
       })
 
       it('should transition the case', () => {
-        expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(caseId, {
-          appealState: CaseAppealState.WITHDRAWN,
-          appealRulingDecision: CaseAppealRulingDecision.DISCONTINUED,
-        })
+        expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+          caseId,
+          {
+            appealState: CaseAppealState.WITHDRAWN,
+            appealRulingDecision: CaseAppealRulingDecision.DISCONTINUED,
+          },
+          { transaction },
+        )
       })
 
       it('should queue a notification message', () => {

@@ -130,7 +130,30 @@ const userSeeds = `[
     "email": "testdomari@dummy.dd",
     "role": "DISTRICT_COURT_JUDGE",
     "institution_id": "d1e6e06f-dcfd-45e0-9a24-2fdabc2cc8bf"
-  }
+  },
+	{
+		"id": "5e8309e7-8e01-4762-adad-46e1e5f1e44e",
+		"national_id": "0000007777",
+		"name": "Test Skrifstofa Ríkissaksóknara",
+		"mobile_number": "0000000",
+		"role": "PUBLIC_PROSECUTOR_STAFF",
+		"title": "Skrifstofa Ríkissaksóknara",
+		"email": "testskrifstofariksak@dummy.dd",
+		"active": true,
+		"institution_id": "8f9e2f6d-6a00-4a5e-b39b-95fd110d762e"
+	},
+	{
+		"id": "1599448b-5ec4-4232-8796-7ec6bfbde0a1",
+		"national_id": "0000998888",
+		"name": "Test Ríkissaksóknari",
+		"mobile_number": "0000000",
+		"role": "PROSECUTOR",
+		"title": "Ríkissaksóknari",
+		"email": "testrikissaksoknari@dummy.dd",
+		"active": true,
+		"institution_id": "8f9e2f6d-6a00-4a5e-b39b-95fd110d762e",
+		"can_confirm_indictment": true
+	}
 ]`
 
 module.exports = {

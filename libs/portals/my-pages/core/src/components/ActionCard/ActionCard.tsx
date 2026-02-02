@@ -79,6 +79,9 @@ const defaultTag = {
   label: '',
 } as const
 
+/**
+ * @deprecated Use ui/core ActionCard instead
+ */
 export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
   capitalizeHeading = false,
   date,

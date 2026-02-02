@@ -2,6 +2,7 @@ import { FormSystemField } from '@island.is/api/schema'
 import {
   ApplicantDisplay,
   CheckBoxDisplay,
+  DateDisplay,
   DefaultDisplay,
   FieldTypesEnum,
   FileUploadDisplay,
@@ -23,7 +24,7 @@ const FIELD_COMPONENT_MAP = {
   [FieldTypesEnum.TEXTBOX]: DefaultDisplay,
   [FieldTypesEnum.NUMBERBOX]: DefaultDisplay,
   [FieldTypesEnum.TIME_INPUT]: DefaultDisplay,
-  [FieldTypesEnum.DATE_PICKER]: DefaultDisplay,
+  [FieldTypesEnum.DATE_PICKER]: DateDisplay,
   [FieldTypesEnum.DROPDOWN_LIST]: DefaultDisplay,
   [FieldTypesEnum.CHECKBOX]: CheckBoxDisplay,
   [FieldTypesEnum.FILE]: FileUploadDisplay,
@@ -47,5 +48,9 @@ export const Display = ({ field }: Props) => {
         ] as React.ElementType)
       : DefaultDisplay
 
-  return <Box paddingTop={5}>{<FieldComponent {...fieldItems} />}</Box>
+  return (
+    <Box paddingLeft={2} marginTop={1}>
+      {<FieldComponent {...fieldItems} />}
+    </Box>
+  )
 }

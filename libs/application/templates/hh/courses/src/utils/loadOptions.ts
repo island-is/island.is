@@ -6,10 +6,15 @@ import type {
   QueryGetCourseByIdArgs,
   QueryGetCourseSelectOptionsArgs,
 } from '@island.is/api/schema'
-import type { AsyncSelectContext } from '@island.is/application/types'
+import {
+  InstitutionContentfulIds,
+  type AsyncSelectContext,
+} from '@island.is/application/types'
+import { sortAlpha } from '@island.is/shared/utils'
 import {
   GET_COURSE_BY_ID_QUERY,
   GET_COURSE_SELECT_OPTIONS_QUERY,
+  GET_HEALTHCENTERS_QUERY,
 } from '../graphql'
 
 export const loadCourseSelectOptions = async ({
@@ -23,7 +28,8 @@ export const loadCourseSelectOptions = async ({
     variables: {
       input: {
         lang: 'is',
-        organizationSlug: 'hh',
+        organizationId:
+          InstitutionContentfulIds.HEILSUGAESLA_HOFUDBORDARSVAEDISINS,
       },
     },
   })
@@ -49,9 +55,9 @@ export const loadDateSelectOptions = async ({
       },
     },
   })
-  if (!data?.getCourseById) return []
+  if (!data?.getCourseById?.course) return []
 
-  return data.getCourseById.instances.map((instance) => {
+  return data.getCourseById.course.instances.map((instance) => {
     const formattedDate = format(parseISO(instance.startDate), 'd. MMMM yyyy', {
       locale: is,
     })
@@ -69,4 +75,27 @@ export const loadDateSelectOptions = async ({
       label: `${formattedDate} ${startDateTimeDuration}`,
     }
   })
+}
+
+export const loadHealthCenterSelectOptions = async ({
+  apolloClient,
+}: AsyncSelectContext) => {
+  const response = await apolloClient.query<Query>({
+    query: GET_HEALTHCENTERS_QUERY,
+  })
+
+  const centers =
+    response?.data?.rightsPortalPaginatedHealthCenters?.data
+      ?.filter((item) => item.id && item.name)
+      ?.map((item) => {
+        const name = item.name as string
+        return {
+          value: name,
+          label: name,
+        }
+      }) ?? []
+
+  centers.sort(sortAlpha('label'))
+
+  return centers
 }

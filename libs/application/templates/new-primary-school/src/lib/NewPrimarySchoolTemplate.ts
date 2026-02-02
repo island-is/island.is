@@ -16,7 +16,7 @@ import {
   DefaultEvents,
   FormModes,
   InstitutionNationalIds,
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   UserProfileApi,
   defineTemplateApi,
 } from '@island.is/application/types'
@@ -127,7 +127,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
               read: 'all',
               delete: true,
               api: [
-                NationalRegistryUserApi,
+                NationalRegistryV3UserApi,
                 UserProfileApi,
                 ChildrenApi,
                 SchoolsApi,
@@ -146,6 +146,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
         exit: [
           'clearAlternativeSpecialEducationDepartment',
           'clearApplicationIfReasonForApplication',
+          'clearCurrentNursery',
           'clearLanguages',
           'clearAllergiesAndIntolerances',
           'clearSupport',
@@ -540,6 +541,16 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
           getApplicationType(application.answers, application.externalData),
         )
 
+        return context
+      }),
+      clearCurrentNursery: assign((context) => {
+        const { application } = context
+        const { hasCurrentNursery } = getApplicationAnswers(application.answers)
+
+        if (!(hasCurrentNursery === YES)) {
+          unset(application.answers, 'currentNursery.municipality')
+          unset(application.answers, 'currentNursery.nursery')
+        }
         return context
       }),
       clearAlternativeSpecialEducationDepartment: assign((context) => {

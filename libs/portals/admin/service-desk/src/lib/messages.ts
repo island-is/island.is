@@ -77,10 +77,6 @@ export const m = defineMessages({
     id: 'admin-portal.service-desk:email',
     defaultMessage: 'Netfang',
   },
-  delete: {
-    id: 'admin-portal.service-desk:delete-email',
-    defaultMessage: 'Eyða',
-  },
   phone: {
     id: 'admin-portal.service-desk:phone',
     defaultMessage: 'Símanúmer',
@@ -158,5 +154,45 @@ export const m = defineMessages({
   noMobilePhone: {
     id: 'admin-portal.service-desk:no-mobile-phone',
     defaultMessage: 'Ekkert símanúmer skráð',
+  },
+  userNotifications: {
+    id: 'admin-portal.service-desk:user-notifications',
+    defaultMessage: 'Á notanda',
+  },
+  actorNotifications: {
+    id: 'admin-portal.service-desk:actor-notifications',
+    defaultMessage: 'Vegna umboðs',
+  },
+  deleteEmailConfirmTitle: {
+    id: 'admin-portal.service-desk:delete-email-confirm-title',
+    defaultMessage: 'Eyða netfangi',
+  },
+  deleteEmailConfirmMessage: {
+    id: 'admin-portal.service-desk:delete-email-confirm-message',
+    defaultMessage: 'Ertu viss um að þú viljir eyða netfangi {email}?',
+  },
+  primary: {
+    id: 'admin-portal.service-desk:primary',
+    defaultMessage: 'Aðalnetfang',
+  },
+  primaryEmail: {
+    id: 'admin-portal.service-desk:primary-email',
+    defaultMessage: 'Aðal netfang',
+  },
+  connectedToDelegation: {
+    id: 'admin-portal.service-desk:connected-to-delegation',
+    defaultMessage: 'Tengt við umboð',
+  },
+  emails: {
+    id: 'admin-portal.service-desk:emails',
+    defaultMessage: 'Netföng',
+  },
+  emailCardPopover: {
+    id: 'admin-portal.service-desk:email-card-popover',
+    defaultMessage: 'Aðgerðalisti fyrir netfang',
+  },
+  otherEmails: {
+    id: 'admin-portal.service-desk:other-emails',
+    defaultMessage: 'Önnur netföng',
   },
 })

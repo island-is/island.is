@@ -1,6 +1,7 @@
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { InjectModel } from '@nestjs/sequelize'
+import { isValid as isValidKennitala } from 'kennitala'
 import {
   BadRequestException,
   Inject,
@@ -12,10 +13,12 @@ import { paginate } from '@island.is/nest/pagination'
 import type { User } from '@island.is/auth-nest-tools'
 import { NoContentException } from '@island.is/nest/problem'
 import { Notification } from './notification.model'
+import { ActorNotification } from './actor-notification.model'
 import { ArgumentDto } from './dto/createHnippNotification.dto'
 import { HnippTemplate } from './dto/hnippTemplate.response'
 import {
   PaginatedNotificationDto,
+  PaginatedActorNotificationDto,
   UpdateNotificationDto,
   RenderedNotificationDto,
   ExtendedPaginationDto,
@@ -30,6 +33,8 @@ import {
   GetTemplates,
   GetOrganizationByNationalId,
 } from '@island.is/clients/cms'
+import { DocumentsScope } from '@island.is/auth/scopes'
+import { Op } from 'sequelize'
 
 /**
  * These are the properties that can be replaced in the template
@@ -52,6 +57,8 @@ export class NotificationsService {
     private readonly logger: Logger,
     @InjectModel(Notification)
     private readonly notificationModel: typeof Notification,
+    @InjectModel(ActorNotification)
+    private readonly actorNotificationModel: typeof ActorNotification,
     private readonly cmsService: CmsService,
   ) {}
 
@@ -60,15 +67,39 @@ export class NotificationsService {
     locale?: Locale,
   ): Promise<SenderOrganization | undefined> {
     locale = mapToLocale(locale as Locale)
-    const queryVariables = {
+
+    let res = (await this.cmsService.fetchData(GetOrganizationByNationalId, {
       nationalId: senderId,
       locale: mapToContentfulLocale(locale),
+    })) as unknown as {
+      organizationCollection: { items: Array<{ title: string }> }
     }
-    const res = (await this.cmsService.fetchData(
-      GetOrganizationByNationalId,
-      queryVariables,
-    )) as any
-    const items = res.organizationCollection.items
+
+    let items = res.organizationCollection.items
+
+    // Second attempt: if no results, try with the alternative format
+    // This handles inconsistent kennitala field format in Contentful (with/without dash)
+    if (items.length === 0) {
+      const sanitizedNationalId = senderId.replace(/\D/g, '')
+
+      // Only proceed if we have a valid kennitala
+      if (isValidKennitala(sanitizedNationalId)) {
+        // Try the opposite format: if senderId had dash, try without; if not, try with
+        const alternativeFormat = senderId.includes('-')
+          ? sanitizedNationalId
+          : `${sanitizedNationalId.slice(0, 6)}-${sanitizedNationalId.slice(6)}`
+
+        res = (await this.cmsService.fetchData(GetOrganizationByNationalId, {
+          nationalId: alternativeFormat,
+          locale: mapToContentfulLocale(locale),
+        })) as unknown as {
+          organizationCollection: { items: Array<{ title: string }> }
+        }
+
+        items = res.organizationCollection.items
+      }
+    }
+
     if (items.length > 0) {
       const [item] = items
       item.title = cleanString(item.title)
@@ -108,6 +139,7 @@ export class NotificationsService {
         externalBody: formattedTemplate.externalBody,
         internalBody: formattedTemplate.internalBody,
         clickActionUrl: formattedTemplate.clickActionUrl,
+        scope: notification.scope,
         created: notification.created,
         updated: notification.updated,
         read: notification.read,
@@ -125,7 +157,9 @@ export class NotificationsService {
     const res = (await this.cmsService.fetchData(
       GetTemplates,
       queryVariables,
-    )) as any
+    )) as unknown as {
+      hnippTemplateCollection: { items: HnippTemplate[] }
+    }
 
     return res.hnippTemplateCollection.items.map((template: HnippTemplate) => ({
       ...template,
@@ -145,7 +179,9 @@ export class NotificationsService {
     const res = (await this.cmsService.fetchData(
       GetTemplateByTemplateId,
       queryVariables,
-    )) as any
+    )) as unknown as {
+      hnippTemplateCollection: { items: HnippTemplate[] }
+    }
     const items = res.hnippTemplateCollection.items
     if (items.length > 0) {
       const template = items[0]
@@ -271,6 +307,7 @@ export class NotificationsService {
   findMany(
     nationalId: string,
     query: ExtendedPaginationDto,
+    scopes: string[],
   ): Promise<PaginatedNotificationDto> {
     return paginate({
       Model: this.notificationModel,
@@ -279,17 +316,31 @@ export class NotificationsService {
       before: query.before,
       primaryKeyField: 'id',
       orderOption: [['id', 'DESC']],
-      where: { recipient: nationalId },
-      attributes: ['id', 'messageId', 'senderId', 'created', 'updated'],
+      where: {
+        recipient: nationalId,
+        scope: {
+          [Op.in]: scopes || [DocumentsScope.main],
+        },
+      },
+      attributes: [
+        'id',
+        'messageId',
+        'senderId',
+        'scope',
+        'created',
+        'updated',
+      ],
     })
   }
 
   async findManyWithTemplate(
     nationalId: string,
     query: ExtendedPaginationDto,
+    scopes: string[],
   ): Promise<PaginatedNotificationDto> {
     const locale = mapToLocale(query.locale as Locale)
     const templates = await this.getTemplates(locale)
+
     const paginatedListResponse = await paginate({
       Model: this.notificationModel,
       limit: query.limit || 10,
@@ -297,7 +348,12 @@ export class NotificationsService {
       before: query.before,
       primaryKeyField: 'id',
       orderOption: [['id', 'DESC']],
-      where: { recipient: nationalId },
+      where: {
+        recipient: nationalId,
+        scope: {
+          [Op.in]: scopes || [DocumentsScope.main],
+        },
+      },
     })
 
     const formattedNotifications = await Promise.all(
@@ -415,6 +471,61 @@ export class NotificationsService {
       throw new InternalServerErrorException(
         'Error marking all notifications as read',
       )
+    }
+  }
+
+  /**
+   * Finds actor notifications for a specific recipient
+   */
+  async findActorNotifications(
+    recipient: string,
+    query?: ExtendedPaginationDto,
+  ): Promise<PaginatedActorNotificationDto> {
+    const result = await paginate({
+      Model: this.actorNotificationModel,
+      limit: query?.limit || 10,
+      after: query?.after || '',
+      before: query?.before,
+      primaryKeyField: 'id',
+      orderOption: [['id', 'DESC']],
+      where: { recipient },
+      include: [
+        {
+          model: this.notificationModel,
+          as: 'userNotification',
+          attributes: ['messageId', 'recipient', 'scope'],
+          required: true,
+        },
+      ],
+      attributes: [
+        'id',
+        'messageId',
+        'userNotificationId',
+        'recipient',
+        'created',
+      ],
+    })
+
+    // Map results to include fields from joined user_notification
+    const mappedData = result.data.map((item) => {
+      const actorNotification = item as ActorNotification & {
+        userNotification: {
+          messageId: string
+          recipient: string
+          scope: string
+        }
+      }
+      return {
+        ...actorNotification.toJSON(),
+        rootMessageId: actorNotification.userNotification.messageId,
+        onBehalfOfNationalId: actorNotification.userNotification.recipient,
+        scope: actorNotification.userNotification.scope,
+      }
+    })
+
+    return {
+      ...result,
+      data: mappedData,
     }
   }
 }

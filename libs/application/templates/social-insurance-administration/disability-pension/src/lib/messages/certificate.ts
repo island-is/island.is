@@ -18,11 +18,6 @@ export const certificate = defineMessages({
     defaultMessage: 'Til staðar er vottorð um örorku',
     description: 'Disability certificate is available',
   },
-  notAvailable: {
-    id: 'dp.application:certificate.not.available',
-    defaultMessage: 'Ekki er til staðar vottorð um örorku',
-    description: 'Disability certificate is not available',
-  },
 
   // Managed by
   managedBy: {
@@ -39,11 +34,6 @@ export const certificate = defineMessages({
     id: 'dp.application:certificate.residence',
     defaultMessage: 'Starfsstöð',
     description: 'The job site of the managing person',
-  },
-  address: {
-    id: 'dp.application:certificate.address',
-    defaultMessage: 'Heimilisfang',
-    description: 'Address of the job site',
   },
 
   // Information

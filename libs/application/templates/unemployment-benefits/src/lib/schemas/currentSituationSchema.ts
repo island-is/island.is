@@ -15,7 +15,7 @@ export const currentJobSchema = z.object({
   salary: z.string().optional(),
   estimatedSalary: z.string().optional(),
   predictedEndDate: z.string().optional(),
-  title: z.string().optional(),
+  jobCodeId: z.string().optional(),
 })
 
 export const currentSituationSchema = z
@@ -124,9 +124,9 @@ export const currentSituationSchema = z
     ) {
       data.currentSituationRepeater &&
         data.currentSituationRepeater.forEach((job, index) => {
-          if (!job.title) {
+          if (!job.jobCodeId) {
             ctx.addIssue({
-              path: ['currentSituationRepeater', index, 'title'],
+              path: ['currentSituationRepeater', index, 'jobCodeId'],
               code: z.ZodIssueCode.custom,
             })
           }

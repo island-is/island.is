@@ -11,15 +11,19 @@ import {
   Divider,
   DropdownMenu,
   Icon,
+  Inline,
   GridRow as Row,
+  Stack,
   Text,
 } from '@island.is/island-ui/core'
+import { getStaticEnv } from '@island.is/shared/utils'
 import { Dispatch, SetStateAction, useMemo, useState } from 'react'
+import AnimateHeight from 'react-animate-height'
 import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 import { FormSystemPaths } from '../../../../lib/paths'
 import { StatusTag } from '../../../StatusTag/StatusTag'
-import { TranslationTag } from '../../../TranslationTag/TranslationTag'
+import * as styles from './TableRow.css'
 
 interface Props {
   id?: string | null
@@ -33,20 +37,21 @@ interface Props {
   beenPublished?: boolean
   setFormsState: Dispatch<SetStateAction<FormSystemForm[]>>
   status?: string
+  url?: string
 }
 
-const PATH =
-  process.env.NODE_ENV === 'development'
-    ? `https://beta.dev01.devland.is/form`
-    : 'https://island.is/form'
+const PATH = getStaticEnv('SI_PUBLIC_FORM_SYSTEM_URL')
 
 interface ColumnTextProps {
   text: string | number
+  isOpen: boolean
 }
 
-const ColumnText = ({ text }: ColumnTextProps) => (
+const ColumnText = ({ text, isOpen }: ColumnTextProps) => (
   <Box width="full" textAlign="left" paddingLeft={1}>
-    <Text variant="medium">{text}</Text>
+    <Text variant="medium" fontWeight={isOpen ? 'semiBold' : 'regular'}>
+      {text}
+    </Text>
   </Box>
 )
 
@@ -54,16 +59,18 @@ export const TableRow = ({
   id,
   name,
   lastModified,
-  translated,
   setFormsState,
   slug,
   status,
+  url,
 }: Props) => {
   const [isOpen, setIsOpen] = useState(false)
   const navigate = useNavigate()
   const { formatMessage, formatDate } = useIntl()
   const [updateFormStatus] = useMutation(UPDATE_FORM_STATUS)
   const [copyForm] = useMutation(COPY_FORM)
+
+  const handleToggle = () => setIsOpen((prev) => !prev)
 
   const dropdownItems = useMemo(() => {
     const copy = {
@@ -148,11 +155,22 @@ export const TableRow = ({
           })
           setFormsState((prevForms) => {
             const returnedForm = data.updateFormSystemFormStatus.form
+            const publishedSlug = returnedForm?.slug?.replace(
+              /-archived-\d+$/,
+              '',
+            )
 
             return prevForms
               .map((form) =>
                 form.id === id
-                  ? { ...form, status: FormStatus.PUBLISHED }
+                  ? {
+                      ...form,
+                      status: FormStatus.PUBLISHED,
+                      slug:
+                        slug === publishedSlug + '-i-breytingu'
+                          ? publishedSlug
+                          : slug,
+                    }
                   : form,
               )
               .filter((form) => form.id !== returnedForm.id)
@@ -229,7 +247,7 @@ export const TableRow = ({
               setFormsState((prevForms) => {
                 const filtered = prevForms.filter((form) => form.id !== id)
                 const returnedForm = data.updateFormSystemFormStatus.form
-                return returnedForm ? [...filtered, returnedForm] : filtered
+                return returnedForm ? [returnedForm, ...filtered] : filtered
               })
             } catch (error) {
               console.error('Error deleting form:', error)
@@ -257,7 +275,22 @@ export const TableRow = ({
     name,
   ])
 
-  const goToForm = () => {
+  const updateForm = async (currentStatus: string) => {
+    try {
+      await updateFormStatus({
+        variables: {
+          input: {
+            id,
+            updateFormStatusDto: {
+              newStatus: currentStatus,
+            },
+          },
+        },
+      })
+    } catch (error) {
+      console.error('Error updating form:', error)
+    }
+
     navigate(FormSystemPaths.Form.replace(':formId', String(id)), {
       state: {
         id,
@@ -266,61 +299,137 @@ export const TableRow = ({
   }
 
   return (
-    <Box
-      paddingTop={2}
-      paddingBottom={1}
-      onClick={() => setIsOpen(!isOpen)}
-      style={{ cursor: '' }}
-    >
-      <Row key={id}>
-        <Column span="5/12">
-          <ColumnText text={name ? name : ''} />
-        </Column>
-        <Column span="2/12">
-          <ColumnText
-            text={formatDate(lastModified ? lastModified : new Date(), {
-              day: 'numeric',
-              month: 'numeric',
-              year: 'numeric',
-            })}
-          />
-        </Column>
-        <Column span="1/12">
-          <Box display="flex">
-            <TranslationTag translated={translated ? translated : false} />
-          </Box>
-        </Column>
-        <Column span="2/12">
-          <Box display="flex">
-            <StatusTag status={status ?? ''} />
-          </Box>
-        </Column>
+    <Box paddingTop={2} role="button" aria-expanded={isOpen} tabIndex={0}>
+      <Box onClick={handleToggle} className={styles.clickable}>
+        <Row key={id}>
+          <Column span="7/12">
+            <Inline space={2}>
+              <Icon
+                icon={isOpen ? 'remove' : 'add'}
+                size="small"
+                color="blue600"
+              />
+              <ColumnText text={name ? name : ''} isOpen={isOpen} />
+            </Inline>
+          </Column>
+          <Column span="2/12">
+            <Box display="flex" justifyContent="flexEnd">
+              <Text variant="medium">
+                {formatDate(lastModified ? lastModified : new Date(), {
+                  day: '2-digit',
+                  month: '2-digit',
+                  year: 'numeric',
+                })}
+              </Text>
+            </Box>
+          </Column>
 
-        <Column span="1/12">
-          <Box display="flex" justifyContent="flexEnd" alignItems="center">
-            {(status === FormStatus.IN_DEVELOPMENT ||
-              status === FormStatus.PUBLISHED_BEING_CHANGED) && (
-              <Box marginRight={1} onClick={goToForm} cursor="pointer">
-                <Icon icon="pencil" color="blue400" type="filled" />
-              </Box>
-            )}
-            <DropdownMenu
-              menuLabel={`${formatMessage(m.actions)} ${name}`}
-              disclosure={
-                <Button
-                  icon="ellipsisVertical"
-                  circle
-                  colorScheme="negative"
-                  title={formatMessage(m.actions)}
-                  inline
-                  aria-label={`Aðgerðir`}
+          <Column span="2/12">
+            <Box display="flex" justifyContent="center">
+              <StatusTag status={status ?? ''} />
+            </Box>
+          </Column>
+
+          <Column span="1/12">
+            <Box display="flex" justifyContent="flexEnd" alignItems="center">
+              {(status === FormStatus.IN_DEVELOPMENT ||
+                status === FormStatus.PUBLISHED_BEING_CHANGED) && (
+                <Box
+                  onClick={(e) => {
+                    e.stopPropagation()
+                  }}
+                >
+                  <Button
+                    icon="pencil"
+                    circle
+                    colorScheme="negative"
+                    inline
+                    onClick={() => updateForm(status)}
+                  />
+                </Box>
+              )}
+              <Box marginRight={2} onClick={(e) => e.stopPropagation()}>
+                <DropdownMenu
+                  menuLabel={`${formatMessage(m.actions)} ${name}`}
+                  disclosure={
+                    <Button
+                      icon="ellipsisVertical"
+                      circle
+                      colorScheme="negative"
+                      title={formatMessage(m.actions)}
+                      inline
+                      aria-label={`Aðgerðir`}
+                    />
+                  }
+                  items={dropdownItems}
                 />
-              }
-              items={dropdownItems}
-            />
-          </Box>
-        </Column>
-      </Row>
+              </Box>
+            </Box>
+          </Column>
+        </Row>
+      </Box>
+      <AnimateHeight
+        height={isOpen ? 'auto' : 0}
+        duration={220}
+        easing="cubic-bezier(0.4, 0, 0.2, 1)"
+        animateOpacity
+      >
+        <Box paddingTop={1} paddingBottom={2} paddingLeft={1}>
+          <Column span="6/12">
+            <Stack space={1}>
+              <Row>
+                <Inline space={2}>
+                  <Text variant="medium">
+                    <strong>Slóð:</strong>{' '}
+                    {slug ? (
+                      <span
+                        role="link"
+                        onClick={() =>
+                          window.open(
+                            `${PATH}/${slug}`,
+                            '_blank',
+                            'noopener,noreferrer',
+                          )
+                        }
+                        className={styles.linkStyle}
+                      >
+                        {`${PATH}/${slug}`}
+                      </span>
+                    ) : (
+                      '—'
+                    )}
+                  </Text>
+                  <Box
+                    className={styles.clickable}
+                    onClick={() => {
+                      navigator.clipboard.writeText(`${PATH}/${slug}`)
+                    }}
+                    title="Afrita slóð"
+                  >
+                    <Icon
+                      icon="copy"
+                      size="medium"
+                      color="blue400"
+                      type="outline"
+                    />
+                  </Box>
+                </Inline>
+              </Row>
+              <Row>
+                <Text variant="medium" className={styles.capitalizeText}>
+                  <strong>Móttökukerfi:</strong> {url || '—'}
+                </Text>
+              </Row>
+              <Row>
+                <Text variant="medium">
+                  <strong>Númer:</strong> {id}
+                </Text>
+              </Row>
+            </Stack>
+          </Column>
+        </Box>
+      </AnimateHeight>
+
       <Divider />
     </Box>
   )

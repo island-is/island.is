@@ -34,6 +34,8 @@ export class CourtSessionService {
   constructor(
     private readonly courtSessionRepositoryService: CourtSessionRepositoryService,
     private readonly courtDocumentService: CourtDocumentService,
+    // TODO: Move to a repository service - models should only be used in repository services
+    // It would be best to hide the details of the court session model from all but the backend
     @InjectModel(CourtSessionString)
     private readonly courtSessionStringModel: typeof CourtSessionString,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
@@ -54,6 +56,7 @@ export class CourtSessionService {
       EventType.INDICTMENT_CONFIRMED,
       theCase.eventLogs,
     )
+
     // Start with the generated indictment PDF
     await this.courtDocumentService.createInCourtSession(
       theCase.id,
@@ -271,7 +274,7 @@ export class CourtSessionService {
     caseId: string,
     courtSessionId: string,
     update: UpdateCourtSessionDto,
-    transaction?: Transaction,
+    transaction: Transaction,
   ): Promise<CourtSession> {
     return this.courtSessionRepositoryService.update(
       caseId,

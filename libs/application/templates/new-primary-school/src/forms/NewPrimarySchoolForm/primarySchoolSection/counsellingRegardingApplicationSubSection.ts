@@ -9,7 +9,7 @@ import {
 import { primarySchoolMessages, sharedMessages } from '../../../lib/messages'
 import {
   hasSpecialEducationSubType,
-  shouldShowReasonForApplicationPage,
+  shouldShowReasonForApplicationAndNewSchoolPages,
 } from '../../../utils/conditionUtils'
 import { OptionsType } from '../../../utils/constants'
 
@@ -17,7 +17,7 @@ export const counsellingRegardingApplicationSubSection = buildSubSection({
   id: 'counsellingRegardingApplicationSubSection',
   title: primarySchoolMessages.counsellingRegardingApplication.subSectionTitle,
   condition: (answers, externalData) =>
-    shouldShowReasonForApplicationPage(answers) &&
+    shouldShowReasonForApplicationAndNewSchoolPages(answers, externalData) &&
     hasSpecialEducationSubType(answers, externalData),
   children: [
     buildMultiField({

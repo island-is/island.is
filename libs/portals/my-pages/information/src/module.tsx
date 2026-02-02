@@ -1,29 +1,26 @@
 import { lazy } from 'react'
 import {
   ApiScope,
-  DocumentsScope,
+  hasNotificationScopes,
   UserProfileScope,
 } from '@island.is/auth/scopes'
 import { m } from '@island.is/portals/my-pages/core'
-import {
-  PortalModule,
-  PortalModuleRoutesProps,
-  PortalRoute,
-} from '@island.is/portals/core'
+import { PortalModule } from '@island.is/portals/core'
 import { InformationPaths } from './lib/paths'
+import { SignatureCollectionPaths } from '@island.is/portals/my-pages/signature-collection'
 import { Navigate } from 'react-router-dom'
-import { Features } from '@island.is/react/feature-flags'
-import { parseDelegationTypeFeatureFlagValue } from './utils/parseDelegationTypeFeatureFlagValue'
 
 const UserInfoOverview = lazy(() =>
-  import('./screens/UserInfoOverview/UserInfoOverview'),
+  import('./screens/UserInfo/UserInfoOverview/UserInfoOverview'),
 )
-const UserInfo = lazy(() => import('./screens/UserInfo/UserInfo'))
+const UserInfo = lazy(() => import('./screens/UserInfo/UserInfo/UserInfo'))
 const FamilyMemberChildCustody = lazy(() =>
-  import('./screens/ChildCustody/ChildCustody'),
+  import('./screens/UserInfo/ChildCustody/ChildCustody'),
 )
-const FamilyMemberBioChild = lazy(() => import('./screens/BioChild/BioChild'))
-const Spouse = lazy(() => import('./screens/Spouse/Spouse'))
+const FamilyMemberBioChild = lazy(() =>
+  import('./screens/UserInfo/BioChild/BioChild'),
+)
+const Spouse = lazy(() => import('./screens/UserInfo/Spouse/Spouse'))
 const CompanyInfo = lazy(() => import('./screens/Company/CompanyInfo'))
 const Notifications = lazy(() =>
   import('./screens/Notifications/Notifications'),
@@ -35,110 +32,200 @@ const UserNotificationsSettings = lazy(() =>
   import('./screens/UserNotifications/UserNotifications'),
 )
 
-const sharedRoutes = async (
-  routesProps: PortalModuleRoutesProps,
-  isCompany = false,
-): Promise<PortalRoute[]> => {
-  const { scopes, profile } = routesProps.userInfo
+const UserContractsOverview = lazy(() =>
+  import('./screens/UserContracts/UserContractsOverview/UserContractsOverview'),
+)
 
-  const allowedDelegationTypes = await routesProps.featureFlagClient.getValue(
-    Features.delegationTypesWithNotificationsEnabled,
-    '',
-    { id: profile?.nationalId, attributes: {} },
-  )
+const UserContract = lazy(() =>
+  import('./screens/UserContracts/Contract/UserContract'),
+)
 
-  const isDelegationTypeFFEnabled = parseDelegationTypeFeatureFlagValue({
-    featureFlagValue: allowedDelegationTypes,
-    delegationTypes: profile?.delegationType,
-    actorNationalId: profile?.nationalId,
-  })
-
-  const isSettingsEnabled = isDelegationTypeFFEnabled
-    ? scopes.includes(DocumentsScope.main)
-    : scopes.includes(UserProfileScope.write)
-
-  return [
-    {
-      name: isCompany ? m.settings : m.mySettings,
-      path: InformationPaths.SettingsOld,
-      enabled: isSettingsEnabled,
-      element: <Navigate to={InformationPaths.Settings} replace />,
-    },
-    {
-      name: isCompany ? m.settings : m.mySettings,
-      path: InformationPaths.Settings,
-      enabled: isSettingsEnabled,
-      element: <UserProfileSettings />,
-    },
-    {
-      name: m.userInfo,
-      path: InformationPaths.SettingsNotifications,
-      enabled: isSettingsEnabled,
-      element: <UserNotificationsSettings />,
-    },
-    {
-      name: 'Notifications',
-      path: InformationPaths.Notifications,
-      enabled: scopes.includes(DocumentsScope.main),
-      element: <Notifications />,
-    },
-  ]
-}
+const CompanySettings = lazy(() =>
+  import('./screens/CompanySettings/CompanySettings'),
+)
 
 export const informationModule: PortalModule = {
   name: 'Upplýsingar',
+  enabled: ({ isCompany: isCompanyUser }) => !isCompanyUser,
   routes: async (routesProps) => {
     const { scopes } = routesProps.userInfo
+    const hasUserDetailsAccess = scopes.includes(ApiScope.meDetails)
+    const hasNotificationsAccess = hasNotificationScopes(scopes)
+    const hasSettingsAccess = hasNotificationScopes(scopes)
+
     return [
       {
         name: m.userInfo,
         path: InformationPaths.MyInfoRoot,
-        enabled: scopes.includes(ApiScope.meDetails),
+        enabled: hasUserDetailsAccess,
         element: <Navigate to={InformationPaths.MyInfoRootOverview} replace />,
       },
       {
         name: m.myInfo,
         path: InformationPaths.MyInfoRootOverview,
-        enabled: scopes.includes(ApiScope.meDetails),
+        enabled: hasUserDetailsAccess,
         element: <UserInfoOverview />,
+      },
+      {
+        name: m.contracts,
+        path: InformationPaths.MyContracts,
+        enabled: scopes.includes(ApiScope.meDetails),
+        key: 'MyContracts',
+        element: <UserContractsOverview />,
+      },
+      {
+        name: m.contract,
+        path: InformationPaths.MyContractsDetail,
+        enabled: scopes.includes(ApiScope.meDetails),
+        key: 'MyContracts',
+        element: <UserContract />,
       },
       {
         name: m.userInfo,
         path: InformationPaths.UserInfo,
-        enabled: scopes.includes(ApiScope.meDetails),
+        enabled: hasUserDetailsAccess,
         element: <UserInfo />,
       },
       {
         name: m.familyChild,
         path: InformationPaths.BioChild,
-        enabled: scopes.includes(ApiScope.meDetails),
+        enabled: hasUserDetailsAccess,
         element: <FamilyMemberBioChild />,
       },
       {
         name: m.familyChild,
         path: InformationPaths.ChildCustody,
-        enabled: scopes.includes(ApiScope.meDetails),
+        enabled: hasUserDetailsAccess,
         element: <FamilyMemberChildCustody />,
       },
       {
         name: m.familySpouse,
         path: InformationPaths.Spouse,
-        enabled: scopes.includes(ApiScope.meDetails),
+        enabled: hasUserDetailsAccess,
         element: <Spouse />,
       },
-      ...(await sharedRoutes(routesProps)),
+      {
+        name: m.mySettings,
+        path: InformationPaths.Settings,
+        enabled: hasSettingsAccess,
+        element: <UserProfileSettings />,
+      },
+      {
+        name: m.userInfo,
+        path: InformationPaths.SettingsNotifications,
+        enabled: hasSettingsAccess,
+        element: <UserNotificationsSettings />,
+      },
+      {
+        name: m.notifications,
+        path: InformationPaths.Notifications,
+        enabled: hasNotificationsAccess,
+        element: <Notifications />,
+      },
+      {
+        name: m.userInfo,
+        path: InformationPaths.Company,
+        enabled: true,
+        navHide: true,
+        element: <Navigate to={InformationPaths.MyInfoRoot} replace />,
+      },
+      {
+        name: m.userInfo,
+        path: InformationPaths.CompanySettings,
+        enabled: true,
+        navHide: true,
+        element: <Navigate to={InformationPaths.Settings} replace />,
+      },
+      {
+        name: m.userInfo,
+        path: InformationPaths.CompanyNotifications,
+        enabled: true,
+        navHide: true,
+        element: <Navigate to={InformationPaths.Notifications} replace />,
+      },
     ]
   },
-  companyRoutes: async (routesProps) => {
+}
+
+export const companyInformationModule: PortalModule = {
+  name: m.companyTitle,
+  enabled: ({ isCompany: isCompanyUser }) => isCompanyUser,
+  routes: async (routesProps) => {
     const { scopes } = routesProps.userInfo
+
+    const hasCompanyAccess = scopes.includes(ApiScope.company)
+    const hasSettingsAccess = scopes?.includes(UserProfileScope.write)
+    const hasNotificationsAccess = hasNotificationScopes(scopes)
+
     return [
       {
         name: m.companyTitle,
         path: InformationPaths.Company,
-        enabled: scopes.includes(ApiScope.company),
+        enabled: hasCompanyAccess,
         element: <CompanyInfo />,
       },
-      ...(await sharedRoutes(routesProps, true)),
+      {
+        name: m.companySettings,
+        path: InformationPaths.CompanySettings,
+        enabled: hasSettingsAccess,
+        element: <CompanySettings />,
+      },
+      {
+        name: m.notifications,
+        path: InformationPaths.CompanyNotifications,
+        enabled: hasNotificationsAccess,
+        element: <Notifications />,
+      },
+      {
+        name: m.lists,
+        path: InformationPaths.CompanyLists,
+        enabled: scopes.includes(ApiScope.signatureCollection),
+        element: (
+          <Navigate
+            to={
+              SignatureCollectionPaths.CompanySignatureCollectionParliamentaryLists
+            }
+            replace
+          />
+        ),
+      },
+      {
+        name: m.companyTitle,
+        path: InformationPaths.MyInfoRoot,
+        enabled: true,
+        navHide: true,
+        element: <Navigate to={InformationPaths.Company} replace />,
+      },
+      {
+        name: m.companyTitle,
+        path: InformationPaths.MyInfoRootOverview,
+        enabled: true,
+        navHide: true,
+        element: <Navigate to={InformationPaths.Company} replace />,
+      },
+      {
+        name: m.companyTitle,
+        path: InformationPaths.Settings,
+        enabled: true,
+        navHide: true,
+        element: <Navigate to={InformationPaths.CompanySettings} replace />,
+      },
+      {
+        name: m.companyTitle,
+        path: InformationPaths.SettingsNotifications,
+        enabled: true,
+        navHide: true,
+        element: <Navigate to={InformationPaths.CompanySettings} replace />,
+      },
+      {
+        name: m.companyTitle,
+        path: InformationPaths.Notifications,
+        enabled: true,
+        navHide: true,
+        element: (
+          <Navigate to={InformationPaths.CompanyNotifications} replace />
+        ),
+      },
     ]
   },
 }

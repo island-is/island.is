@@ -24,6 +24,44 @@ export const m = {
       description: 'Confirm button label',
     },
   }),
+  userInformation: defineMessages({
+    sectionTitle: {
+      id: 'hh.courses.application:userInformation.sectionTitle',
+      defaultMessage: 'Þínar upplýsingar',
+      description: 'Title of user information section',
+    },
+    sectionDescription: {
+      id: 'hh.courses.application:userInformation.sectionDescription',
+      defaultMessage:
+        'Vinsamlegast farðu yfir hvort allar upplýsingar séu réttar',
+      description: 'Description of user information section',
+    },
+    name: {
+      id: 'hh.courses.application:userInformation.name',
+      defaultMessage: 'Nafn',
+      description: 'Title of name field',
+    },
+    nationalId: {
+      id: 'hh.courses.application:userInformation.nationalId',
+      defaultMessage: 'Kennitala',
+      description: 'Title of national id field',
+    },
+    email: {
+      id: 'hh.courses.application:userInformation.email',
+      defaultMessage: 'Netfang',
+      description: 'Title of email field',
+    },
+    phone: {
+      id: 'hh.courses.application:userInformation.phone',
+      defaultMessage: 'Símanúmer',
+      description: 'Title of phone field',
+    },
+    healthcenter: {
+      id: 'hh.courses.application:userInformation.healthcenter',
+      defaultMessage: 'Heilsugæslustöð',
+      description: 'Title of healthcenter field',
+    },
+  }),
   prerequisites: defineMessages({
     nationalRegistryTitle: {
       id: 'hh.courses.application:prerequisites.nationalRegistryTitle',
@@ -35,6 +73,27 @@ export const m = {
       defaultMessage:
         'Til þess að auðvelda fyrir sækjum við persónuupplýsingar úr Þjóðskrá til þess að fylla út umsóknina',
       description: 'We will fetch name, national id and address',
+    },
+    healthCenterTitle: {
+      id: 'hh.courses.application:prerequisites.healthCenterTitle',
+      defaultMessage: 'Sjúkratryggingar',
+      description: 'Information from the Health Center',
+    },
+    healthCenterSubTitle: {
+      id: 'hh.courses.application:prerequisites.healthCenterSubTitle',
+      defaultMessage: 'Upplýsingar um heilsugæslustöð',
+      description: 'Information about the health center',
+    },
+    userProfileTitle: {
+      id: 'hh.courses.application:prerequisites.userProfileTitle',
+      defaultMessage: 'Netfang og símanúmer',
+      description: 'Information from user profile',
+    },
+    userProfileSubTitle: {
+      id: 'hh.courses.application:prerequisites.userProfileSubTitle',
+      defaultMessage:
+        'Til þess að auðvelda umsóknarferlið er gott að hafa fyllt út netfang og símanúmer á mínum síðum',
+      description: 'We will fetch email and phone number',
     },
   }),
   course: defineMessages({
@@ -55,6 +114,11 @@ export const m = {
     },
   }),
   participant: defineMessages({
+    participantHealthcenter: {
+      id: 'hh.courses.application:participant.participantHealthcenter',
+      defaultMessage: 'Heilsugæslustöð',
+      description: 'Title of participant healthcenter field',
+    },
     sectionTitle: {
       id: 'hh.courses.application:participant.sectionTitle',
       defaultMessage: 'Þátttakendur',
@@ -122,6 +186,16 @@ export const m = {
       defaultMessage:
         'Þú verður að fylla út upplýsingar um fyrirtækið ef þú vilt greiða sem fyrirtæki',
       description: 'Error message when company payment information is required',
+    },
+    userIsPayingAsIndividualDescription: {
+      id: 'hh.courses.application:payer.userIsPayingAsIndividualDescription',
+      defaultMessage: 'Kvittun verður send í stafræna pósthólfið þitt',
+      description: 'Description of user is paying as individual field',
+    },
+    userIsPayingAsCompanyDescription: {
+      id: 'hh.courses.application:payer.userIsPayingAsCompanyDescription',
+      defaultMessage: 'Kvittun verður send í stafrænt pósthólf fyrirtækisins',
+      description: 'Description of user is paying as company field',
     },
   }),
   overview: defineMessages({

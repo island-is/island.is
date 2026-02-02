@@ -7,48 +7,49 @@ import {
 } from '@island.is/application/core'
 import { DefaultEvents, FormModes } from '@island.is/application/types'
 import { SkatturApi, VehiclesApi } from '../../dataProviders'
+import { m } from '../../lib/messages'
+
+const standardChildren = [
+  buildSection({
+    id: 'conditions',
+    tabTitle: m.prerequisites.tabTitle,
+    children: [
+      buildExternalDataProvider({
+        id: 'approveExternalData',
+        title: m.prerequisites.title,
+        checkboxLabel: m.prerequisites.approvalCheckboxLabel,
+        dataProviders: [
+          buildDataProviderItem({
+            provider: SkatturApi, // Skatturinn
+            title: m.prerequisites.skatturTitle,
+            subTitle: m.prerequisites.skatturSubTitle,
+          }),
+          buildDataProviderItem({
+            provider: VehiclesApi, // Samgöngustofan
+            title: m.prerequisites.vehiclesTitle,
+            subTitle: m.prerequisites.vehiclesSubTitle,
+          }),
+        ],
+        submitField: buildSubmitField({
+          id: 'submit',
+          placement: 'footer',
+          refetchApplicationAfterSubmit: true,
+          actions: [
+            {
+              event: DefaultEvents.SUBMIT,
+              name: m.prerequisites.confirmButton,
+              type: 'primary',
+            },
+          ],
+        }),
+      }),
+    ],
+  }),
+]
 
 export const Prerequisites = buildForm({
   id: 'PrerequisitesDraft',
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
-  children: [
-    buildSection({
-      id: 'conditions',
-      tabTitle: 'Gagnaöflun',
-      children: [
-        buildExternalDataProvider({
-          id: 'approveExternalData',
-          title: 'Gagnaöflun',
-          checkboxLabel: 'Ég skil að ofangreinda upplýsinga verður aflað',
-          dataProviders: [
-            buildDataProviderItem({
-              provider: SkatturApi, // Skatturinn
-              title: 'Upplýsingar frá Skattinum',
-              subTitle:
-                'Upplýsingar frá skattinum - Upplýsingar um gjaldflokksstöðu bifreiða',
-            }),
-            buildDataProviderItem({
-              provider: VehiclesApi, // Samgöngustofan
-              title: 'Upplýsingar frá Samgöngustofu',
-              subTitle:
-                'Upplýsingar úr ökutækjaskrá - Upplýsingar um þínar bifreiðar og stöðu þeirra',
-            }),
-          ],
-          submitField: buildSubmitField({
-            id: 'submit',
-            placement: 'footer',
-            refetchApplicationAfterSubmit: true,
-            actions: [
-              {
-                event: DefaultEvents.SUBMIT,
-                name: 'Staðfesta',
-                type: 'primary',
-              },
-            ],
-          }),
-        }),
-      ],
-    }),
-  ],
+  children: standardChildren,
 })

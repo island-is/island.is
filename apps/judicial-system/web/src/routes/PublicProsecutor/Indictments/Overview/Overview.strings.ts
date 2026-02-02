@@ -6,11 +6,6 @@ export const strings = defineMessages({
     defaultMessage: 'Máli lokið',
     description: 'Notaður sem titill á yfirliti ákæru.',
   },
-  reviewerLabel: {
-    id: 'judicial.system.core:public_prosecutor.indictments.overview.reviewer_label',
-    defaultMessage: 'Veldu saksóknara',
-    description: 'Notaður sem texti fyrir úthlutun til yfirlestrar dropdown.',
-  },
   reviewerPlaceholder: {
     id: 'judicial.system.core:public_prosecutor.indictments.overview.reviewer_placeholder',
     defaultMessage: 'Velja saksóknara',

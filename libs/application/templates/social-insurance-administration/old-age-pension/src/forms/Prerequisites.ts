@@ -15,8 +15,8 @@ import {
   DefaultEvents,
   Form,
   FormModes,
-  NationalRegistrySpouseApi,
-  NationalRegistryUserApi,
+  NationalRegistryV3SpouseApi,
+  NationalRegistryV3UserApi,
   UserProfileApi,
 } from '@island.is/application/types'
 import { SocialInsuranceAdministrationLogo } from '@island.is/application/assets/institution-logos'
@@ -104,7 +104,7 @@ export const PrerequisitesForm: Form = buildForm({
                 socialInsuranceAdministrationMessage.pre.checkboxProvider,
               dataProviders: [
                 buildDataProviderItem({
-                  provider: NationalRegistryUserApi,
+                  provider: NationalRegistryV3UserApi,
                   title:
                     socialInsuranceAdministrationMessage.pre
                       .skraInformationTitle,
@@ -116,7 +116,7 @@ export const PrerequisitesForm: Form = buildForm({
                   title: '',
                 }),
                 buildDataProviderItem({
-                  provider: NationalRegistrySpouseApi,
+                  provider: NationalRegistryV3SpouseApi,
                   title: '',
                 }),
                 buildDataProviderItem({
