@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common'
 import type { ConfigType } from '@nestjs/config'
+import format from 'date-fns/format'
 import {
   ApplicationTypes,
   type ApplicationWithAttachments,
@@ -254,11 +255,7 @@ export class CoursesService extends BaseTemplateApiService {
     }>(application.answers, 'payment.companyPayment')
 
     let message = ''
-    message += `ID á umsókn: ${application.id}\n`
     message += `Námskeið: ${courseTitle}\n`
-    message += `ID á námskeiði: ${courseId}\n`
-    message += `ID á upphafsdagsetningu: ${courseInstance.id}\n`
-
     let startDateTimeDuration = ''
     if (courseInstance.startDateTimeDuration?.startTime) {
       startDateTimeDuration = courseInstance.startDateTimeDuration.startTime
@@ -267,9 +264,10 @@ export class CoursesService extends BaseTemplateApiService {
       }
     }
 
-    message += `Upphafsdagsetning: ${courseInstance.startDate.split('T')[0]} ${
-      startDateTimeDuration ?? ''
-    }\n`
+    message += `Upphafsdagsetning námskeiðs: ${format(
+      new Date(courseInstance.startDate.split('T')[0]),
+      'dd.MM.yyyy',
+    )} ${startDateTimeDuration ?? ''}\n`
 
     message += `Kennitala umsækjanda: ${nationalId}\n`
     message += `Nafn umsækjanda: ${name}\n`
@@ -285,7 +283,7 @@ export class CoursesService extends BaseTemplateApiService {
           }
         : companyPayment?.nationalIdWithName
 
-    message += `Nafn greiðanda: ${payer?.name ?? ''}\n`
+    message += `Greiðandi: ${payer?.name ?? ''}\n`
     message += `Kennitala greiðanda: ${payer?.nationalId ?? ''}\n`
 
     participantList.forEach((participant, index) => {
