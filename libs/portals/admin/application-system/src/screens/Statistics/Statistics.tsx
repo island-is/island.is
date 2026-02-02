@@ -1,12 +1,6 @@
 import { m } from '../../lib/messages'
-import {
-  Box,
-  Breadcrumbs,
-  SkeletonLoader,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, SkeletonLoader, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { ApplicationSystemPaths } from '../../lib/paths'
 import type { ApplicationFilters } from '../../types/filters'
 import { StatisticsForm } from '../../components/StatisticsForm/StatisticsForm'
 import {
