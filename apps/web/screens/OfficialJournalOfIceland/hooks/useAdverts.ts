@@ -20,6 +20,8 @@ export type UseAdvertsVariables = {
   dateFrom?: string
   dateTo?: string
   year?: string
+  sortBy?: string
+  direction?: string
 }
 
 export type UseAdvertsInput = {
@@ -33,6 +35,8 @@ export type UseAdvertsParams = {
 
 export const useAdverts = ({ vars, fallbackData }: UseAdvertsParams) => {
   const variables = getAdvertParams(vars)
+
+  console.log('variables', variables)
 
   const { data, loading, error, refetch } = useQuery<
     UseAdvertsResponse,

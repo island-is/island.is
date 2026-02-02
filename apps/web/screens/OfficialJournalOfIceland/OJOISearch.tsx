@@ -10,6 +10,8 @@ import {
   Button,
   DatePicker,
   Divider,
+  DropdownMenu,
+  Inline,
   Input,
   Pagination,
   Select,
@@ -61,6 +63,7 @@ import {
 import { ORGANIZATION_SLUG } from './constants'
 import { useAdverts } from './hooks'
 import { m } from './messages'
+import * as styles from './OJOIPage.css'
 
 const DEBOUNCE_MS = 600
 
@@ -76,6 +79,8 @@ type OJOISearchParams = {
   sida?: number
   staerd?: number
   year?: string
+  sortBy?: string
+  direction?: string
 }
 
 const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
@@ -116,6 +121,8 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
       page: defaultSearchParams.sida,
       pageSize: defaultSearchParams.staerd,
       year: defaultSearchParams.year,
+      sortBy: defaultSearchParams.sortBy,
+      direction: defaultSearchParams.direction,
     },
     fallbackData: initialAdverts,
   })
@@ -131,6 +138,8 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
     dagsTil: defaultSearchParams.dagsTil,
     sida: defaultSearchParams.sida ?? 1,
     year: defaultSearchParams.year,
+    sortBy: defaultSearchParams.sortBy,
+    direction: defaultSearchParams.direction,
     staerd: defaultSearchParams.staerd,
   })
 
@@ -161,6 +170,19 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
           'dagsTil',
           'year',
           'staerd', // items per page change -> go back to page 1
+          'sortBy',
+          'direction',
+        ]
+
+        const RESET_SORTING_ON_CHANGE: Array<keyof typeof prev> = [
+          'q',
+          'deild',
+          'tegund',
+          'malaflokkur',
+          'stofnun',
+          'dagsFra',
+          'dagsTil',
+          'year',
         ]
         const isResetKey = RESET_ON_CHANGE.includes(key)
 
@@ -178,6 +200,9 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
           [key]: parsed,
           sida: nextPage,
           ...(shouldClearType ? { tegund: '' } : {}),
+          ...(RESET_SORTING_ON_CHANGE.includes(key)
+            ? { sortBy: undefined, direction: undefined }
+            : {}),
         }
 
         if (hydrated) {
@@ -205,6 +230,8 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
               page: next.sida,
               pageSize: next.staerd,
               year: next.year,
+              sortBy: next.sortBy,
+              direction: next.direction,
             },
           })
         }
@@ -240,6 +267,8 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
       sida: 1,
       staerd: 20,
       year: undefined,
+      sortBy: undefined,
+      direction: undefined,
     })
 
     refetch({
@@ -254,6 +283,8 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
         page: undefined,
         pageSize: undefined,
         year: undefined,
+        sortBy: undefined,
+        direction: undefined,
       },
     })
   }
@@ -491,17 +522,107 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
         />
       ) : adverts?.length ? (
         <Stack space={3}>
-          <Button
-            onClick={() => setListView(!listView)}
-            size="small"
-            iconType="outline"
-            icon={listView ? 'copy' : 'menu'}
-            variant="utility"
-          >
-            {listView
-              ? formatMessage(m.search.cardView)
-              : formatMessage(m.search.listView)}
-          </Button>
+          <Inline justifyContent="spaceBetween">
+            <Button
+              onClick={() => setListView(!listView)}
+              size="small"
+              iconType="outline"
+              icon={listView ? 'copy' : 'menu'}
+              variant="utility"
+            >
+              {listView
+                ? formatMessage(m.search.cardView)
+                : formatMessage(m.search.listView)}
+            </Button>
+            <DropdownMenu
+              menuClassName={styles.searchDropdown}
+              icon="swapVertical"
+              items={[
+                {
+                  title: ' Útgáfudags. - nýjast fyrst ',
+                  icon:
+                    searchState.sortBy === 'date' &&
+                    searchState.direction?.toLowerCase() === 'desc'
+                      ? 'checkmark'
+                      : undefined,
+                  onClick: () => {
+                    if (
+                      searchState.sortBy === 'date' &&
+                      searchState.direction?.toLowerCase() === 'desc'
+                    ) {
+                      updateSearchStateHandler('sortBy', undefined)
+                      updateSearchStateHandler('direction', undefined)
+                    } else {
+                      updateSearchStateHandler('sortBy', 'date')
+                      updateSearchStateHandler('direction', 'desc')
+                    }
+                  },
+                },
+                {
+                  title: ' Útgáfudags. - elst fyrst ',
+                  icon:
+                    searchState.sortBy === 'date' &&
+                    searchState.direction?.toLowerCase() === 'asc'
+                      ? 'checkmark'
+                      : undefined,
+                  onClick: () => {
+                    if (
+                      searchState.sortBy === 'date' &&
+                      searchState.direction?.toLowerCase() === 'asc'
+                    ) {
+                      updateSearchStateHandler('sortBy', undefined)
+                      updateSearchStateHandler('direction', undefined)
+                    } else {
+                      updateSearchStateHandler('sortBy', 'date')
+                      updateSearchStateHandler('direction', 'asc')
+                    }
+                  },
+                },
+                {
+                  title: ' Númer - nýjast fyrst ',
+                  icon:
+                    searchState.sortBy === 'number' &&
+                    searchState.direction?.toLowerCase() === 'desc'
+                      ? 'checkmark'
+                      : undefined,
+                  onClick: () => {
+                    if (
+                      searchState.sortBy === 'number' &&
+                      searchState.direction?.toLowerCase() === 'desc'
+                    ) {
+                      updateSearchStateHandler('sortBy', undefined)
+                      updateSearchStateHandler('direction', undefined)
+                    } else {
+                      updateSearchStateHandler('sortBy', 'number')
+                      updateSearchStateHandler('direction', 'desc')
+                    }
+                  },
+                },
+                {
+                  title: ' Númer - elst fyrst ',
+                  icon:
+                    searchState.sortBy === 'number' &&
+                    searchState.direction?.toLowerCase() === 'asc'
+                      ? 'checkmark'
+                      : undefined,
+                  onClick: () => {
+                    if (
+                      searchState.sortBy === 'number' &&
+                      searchState.direction?.toLowerCase() === 'asc'
+                    ) {
+                      updateSearchStateHandler('sortBy', undefined)
+                      updateSearchStateHandler('direction', undefined)
+                    } else {
+                      updateSearchStateHandler('sortBy', 'number')
+                      updateSearchStateHandler('direction', 'asc')
+                    }
+                  },
+                },
+              ]}
+              menuLabel="Raða eftir"
+              title="Raða eftir"
+            />
+          </Inline>
 
           {listView ? (
             <OJOISearchListView adverts={adverts} locale={locale} />
@@ -650,6 +771,8 @@ OJOISearch.getProps = async ({ apolloClient, locale, query }) => {
     sida: page ?? 1,
     year,
     pageSize,
+    sortBy: getStringFromQuery(query.sortBy),
+    direction: getStringFromQuery(query.direction),
   }
 
   const [
@@ -685,6 +808,8 @@ OJOISearch.getProps = async ({ apolloClient, locale, query }) => {
           search: defaultParams.q,
           type: [defaultParams.tegund],
           year: defaultParams.year,
+          sortBy: defaultParams.sortBy,
+          direction: defaultParams.direction,
         },
       },
     }),
@@ -751,6 +876,8 @@ OJOISearch.getProps = async ({ apolloClient, locale, query }) => {
       sida: defaultParams.sida,
       staerd: defaultParams.pageSize,
       year: defaultParams.year,
+      sortBy: defaultParams.sortBy,
+      direction: defaultParams.direction,
     },
   }
 }
