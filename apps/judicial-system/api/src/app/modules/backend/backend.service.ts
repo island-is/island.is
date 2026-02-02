@@ -306,6 +306,10 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.get(`case/${caseId}/connectedCases`)
   }
 
+  getCandidateMergeCases(caseId: string): Promise<Case[]> {
+    return this.get(`case/${caseId}/candidateMergeCases`)
+  }
+
   createCase(createCase: unknown): Promise<Case> {
     return this.post<unknown, Case>('case', createCase, caseTransformer)
   }

@@ -417,7 +417,7 @@ export class CaseController {
     return theCase
   }
 
-  @UseGuards(RolesGuard, CaseExistsGuard)
+  @UseGuards(RolesGuard, CaseExistsGuard, new CaseTypeGuard(indictmentCases))
   @RolesRules(
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
@@ -426,23 +426,34 @@ export class CaseController {
   @UseInterceptors(CasesInterceptor)
   @Get('case/:caseId/connectedCases')
   @ApiOkResponse({ type: [Case], description: 'Gets all connected cases' })
-  async getConnectedCases(
+  getConnectedCases(
     @Param('caseId') caseId: string,
     @CurrentCase() theCase: Case,
   ): Promise<Case[]> {
     this.logger.debug(`Getting connected cases for case ${caseId}`)
 
-    if (!theCase.defendants || theCase.defendants.length === 0) {
-      return []
-    }
+    return this.caseService.getConnectedIndictmentCases(theCase)
+  }
 
-    const connectedCases = await Promise.all(
-      theCase.defendants.map((defendant) =>
-        this.caseService.getConnectedIndictmentCases(theCase.id, defendant),
-      ),
-    )
+  @UseGuards(RolesGuard, CaseExistsGuard, new CaseTypeGuard(indictmentCases))
+  @RolesRules(
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+  )
+  @UseInterceptors(CasesInterceptor)
+  @Get('case/:caseId/candidateMergeCases')
+  @ApiOkResponse({
+    type: [Case],
+    description: 'Gets all candidate merge cases',
+  })
+  getCandidateMergeCasesX(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+  ): Promise<Case[]> {
+    this.logger.debug(`Getting candidate merge cases for case ${caseId}`)
 
-    return connectedCases.flat()
+    return this.caseService.getCandidateMergeCases(theCase)
   }
 
   @UseGuards(
