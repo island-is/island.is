@@ -1,9 +1,9 @@
 {
-  "name": "ship-registry",
+  "name": "clients-ship-registry",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/ship-registry/src",
   "projectType": "library",
-  "tags": ["scope:client", "lib:client"],
+  "tags": ["lib:client", "scope:client"],
   "targets": {
     "lint": {
       "executor": "@nx/eslint:lint"
@@ -19,8 +19,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "curl -H \"X-Road-Client: IS-DEV/GOV/10000/island-is-client\" http://localhost:8081/r1/IS-DEV/GOV/10017/Samgongustofa-Protected/getOpenAPI?serviceCode=skipaskra-V1 > src/clientConfig.json",
-          "cat <<< $(jq '.components.schemas.ProblemDetails.additionalProperties = false |  .components.schemas.ValidationProblemDetails.additionalProperties = false' src/clientConfig.json) > src/clientConfig.json",
+          "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" http://localhost:8081/r1/IS-DEV/GOV/10017/Samgongustofa-Protected/getOpenAPI?serviceCode=Skutan-Gov-V1 > src/clientConfig.json",
           "prettier --write src/clientConfig.json"
         ],
         "parallel": false,
@@ -30,7 +29,7 @@
     "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn openapi-generator -o libs/clients/ship-registry/gen/fetch -i libs/clients/ship-registry/src/clientConfig.json"
+        "command": "yarn openapi-ts -f libs/clients/ship-registry/src/lib/openapi-ts.config.ts"
       },
       "outputs": ["{projectRoot}/gen/fetch"]
     }

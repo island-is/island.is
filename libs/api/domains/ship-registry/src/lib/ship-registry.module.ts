@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common'
-import { ShipRegistryClientModule } from '@island.is/clients/ship-registry'
 import { ShipRegistryResolver } from './ship-registry.resolver'
+import { ShipRegistryClientService } from '@island.is/clients/ship-registry'
 
 @Module({
-  imports: [ShipRegistryClientModule],
+  imports: [ShipRegistryClientService],
   providers: [ShipRegistryResolver],
 })
 export class ShipRegistryModule {}

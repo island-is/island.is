@@ -1,6 +1,5 @@
-/* eslint-disable */
 export default {
-  displayName: 'clients-ship-registry',
+  displayName: 'ship-registry',
   preset: '../../../jest.preset.js',
   testEnvironment: 'node',
   transform: {

@@ -165,7 +165,7 @@ env:
   XROAD_RSK_RENTAL_RATE_PATH: 'IS-DEV/GOV/10006/Skatturinn/rentaldayrate-v1'
   XROAD_SECONDARY_SCHOOL_PATH: 'IS-DEV/GOV/10066/MMS-Protected/umsoknagatt'
   XROAD_SEMINARS_VER_PATH: 'IS-DEV/GOV/10013/Vinnueftirlitid-Protected/namskeid'
-  XROAD_SHIP_REGISTRY_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/skipaskra-V1'
+  XROAD_SHIP_REGISTRY_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Skutan-Gov-V1'
   XROAD_SIGNATURE_COLLECTION_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Medmaeli-v1'
   XROAD_TJODSKRA_API_PATH: '/SKRA-Cloud-Protected/Einstaklingar-v1'
   XROAD_TJODSKRA_MEMBER_CODE: '10001'
