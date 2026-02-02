@@ -14,4 +14,3 @@ export class PaymentOverviewTotalsItem {
   @Field(() => Number, { nullable: true })
   patientCost!: number
 }
-
