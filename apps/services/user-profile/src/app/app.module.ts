@@ -22,8 +22,6 @@ import { smsModuleConfig } from '@island.is/nova-sms'
 import { emailModuleConfig } from '@island.is/email-service'
 import { UserProfileConfig } from '../config'
 
-// TODO: Remove this comment (this is just to get feature deployment up)
-
 @Module({
   imports: [
     ConfigModule.forRoot({

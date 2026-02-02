@@ -243,8 +243,6 @@ import {
   LandspitaliApiModuleConfig,
 } from '@island.is/api/domains/landspitali'
 
-// TODO: Remove this comment (this is just to get feature deployment up)
-
 const environment = getConfig
 
 @Module({

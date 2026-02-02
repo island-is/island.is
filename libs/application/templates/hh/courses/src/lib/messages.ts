@@ -95,16 +95,6 @@ export const m = {
         'Til þess að auðvelda umsóknarferlið er gott að hafa fyllt út netfang og símanúmer á mínum síðum',
       description: 'We will fetch email and phone number',
     },
-    paymentCatalogTitle: {
-      id: 'hh.courses.application:prerequisites.paymentCatalogTitle',
-      defaultMessage: 'Gjaldskrá',
-      description: 'Payment catalog title',
-    },
-    paymentCatalogSubTitle: {
-      id: 'hh.courses.application:prerequisites.paymentCatalogSubTitle',
-      defaultMessage: 'Sótt er gjaldskrá til að birta rétt verð á námskeiði',
-      description: 'Payment catalog subtitle',
-    },
   }),
   course: defineMessages({
     sectionTitle: {
