@@ -88,8 +88,6 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
         }
       }
 
-      console.log(`carsWithMilageData length - ${carsWithMilageData.length}`)
-
       const carsWithStatuses = await this.vehiclesApiWithAuth(
         auth,
       ).currentVehiclesGet({
