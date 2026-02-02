@@ -310,7 +310,7 @@ export const PaymentOverviewTotals = () => {
                           content: amountFormat(item.copayCost),
                         },
                         {
-                          title: formatMessage(messages.debit),
+                          title: formatMessage(messages.yourPayment),
                           content: amountFormat(item.patientCost),
                         },
                       ],
