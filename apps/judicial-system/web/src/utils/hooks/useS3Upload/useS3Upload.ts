@@ -35,7 +35,10 @@ import {
   DeleteFileMutation,
   useDeleteFileMutation,
 } from './deleteFile.generated'
-import { useLimitedAccessCreateCivilClaimantFileMutation } from './limitedAccessCreateCivilClaimantFile.generated'
+import {
+  LimitedAccessCreateCivilClaimantFileMutation,
+  useLimitedAccessCreateCivilClaimantFileMutation,
+} from './limitedAccessCreateCivilClaimantFile.generated'
 import {
   LimitedAccessCreateDefendantFileMutation,
   useLimitedAccessCreateDefendantFileMutation,
@@ -321,6 +324,30 @@ const useS3Upload = (
         return createdFile.id
       }
 
+      const addCivilClaimantFileToCaseState = async (
+        input: CreateFileInput,
+        civilClaimantId: string,
+      ) => {
+        const mutation = limitedAccess
+          ? limitedAccessCreateCivilClaimantFile
+          : createCivilClaimantFile
+
+        const { data } = await mutation({
+          variables: { input: { ...input, civilClaimantId } },
+        })
+
+        const createdFile = limitedAccess
+          ? (data as LimitedAccessCreateCivilClaimantFileMutation)
+              ?.limitedAccessCreateCivilClaimantFile
+          : (data as CreateCivilClaimantFileMutation)?.createCivilClaimantFile
+
+        if (!createdFile?.id) {
+          throw Error('Failed to add file to case')
+        }
+
+        return createdFile.id
+      }
+
       const baseInput = {
         caseId,
         type: file.type ?? '',
@@ -341,6 +368,10 @@ const useS3Upload = (
       const fileDefendantId = file.defendantId ?? defendantId
       if (fileDefendantId) {
         return addDefendantFileToCaseState(baseInput, fileDefendantId)
+      }
+
+      if (civilClaimantId) {
+        return addCivilClaimantFileToCaseState(baseInput, civilClaimantId)
       }
 
       return addCaseFileToCaseState(baseInput)

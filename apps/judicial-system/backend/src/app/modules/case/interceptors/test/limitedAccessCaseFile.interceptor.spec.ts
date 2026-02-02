@@ -1,5 +1,5 @@
+import { firstValueFrom, of } from 'rxjs'
 import { v4 as uuid } from 'uuid'
-import { of, firstValueFrom } from 'rxjs'
 
 import { CallHandler, ExecutionContext } from '@nestjs/common'
 
@@ -8,7 +8,6 @@ import {
   CaseState,
   CaseType,
   indictmentCases,
-  User,
   UserRole,
 } from '@island.is/judicial-system/types'
 
