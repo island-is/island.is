@@ -101,6 +101,11 @@ export class CoursesService extends BaseTemplateApiService {
 
       return { success: true }
     } catch (error) {
+      this.logger.error('Failed to submit HH courses application to Zendesk', {
+        applicationId: application.id,
+        error: error.message,
+      })
+
       if (error instanceof TemplateApiError) {
         throw error
       }
