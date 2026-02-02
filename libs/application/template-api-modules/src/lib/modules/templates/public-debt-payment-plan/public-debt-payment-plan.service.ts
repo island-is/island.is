@@ -3,8 +3,11 @@ import { Application, ApplicationTypes } from '@island.is/application/types'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import {
   DefaultApi,
-  PaymentsDT,
   ScheduleType,
+  CompanyConditionsDT,
+  ConditionsDT,
+  DebtsAndSchedulesDT,
+  DistributionInitialPosition,
 } from '@island.is/clients/payment-schedule'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -19,14 +22,7 @@ import {
 } from './types'
 import { PrerequisitesService } from './paymentPlanPrerequisites.service'
 import { TemplateApiError } from '@island.is/nest/problem'
-import {
-  error,
-  PrerequisitesResult,
-} from '@island.is/application/templates/public-debt-payment-plan'
-import {
-  PaymentScheduleDebts,
-  PaymentScheduleInitialSchedule,
-} from '@island.is/api/schema'
+import { error } from '@island.is/application/templates/public-debt-payment-plan'
 
 @Injectable()
 export class PublicDebtPaymentPlanTemplateService extends BaseTemplateApiService {
@@ -128,11 +124,7 @@ export class PublicDebtPaymentPlanTemplateService extends BaseTemplateApiService
         }
       })
 
-      this.validatePaymentPlans(
-        paymentPlans,
-        schedules,
-        prerequisites as PrerequisitesResult['data'],
-      )
+      this.validatePaymentPlans(paymentPlans, schedules, prerequisites)
 
       await this.paymentScheduleApiWithAuth(auth).schedulesPOST6({
         inputSchedules: {
@@ -164,7 +156,11 @@ export class PublicDebtPaymentPlanTemplateService extends BaseTemplateApiService
       payments: { payment: number }[]
       type: ScheduleType
     }[],
-    prerequisites: PrerequisitesResult['data'],
+    prerequisites: {
+      conditions: ConditionsDT | CompanyConditionsDT
+      debts: DebtsAndSchedulesDT[]
+      allInitialSchedules: DistributionInitialPosition[]
+    },
   ) {
     const { conditions, allInitialSchedules, debts } = prerequisites
 
@@ -181,8 +177,7 @@ export class PublicDebtPaymentPlanTemplateService extends BaseTemplateApiService
     }
 
     const totalPrerequisiteDebt = debts.reduce(
-      (acc: number, debt: PaymentScheduleDebts) =>
-        acc + (debt.totalAmount || 0),
+      (acc: number, debt: DebtsAndSchedulesDT) => acc + (debt.totalAmount || 0),
       0,
     )
 
@@ -214,7 +209,7 @@ export class PublicDebtPaymentPlanTemplateService extends BaseTemplateApiService
 
     schedules.forEach((schedule) => {
       const initialSchedule = allInitialSchedules.find(
-        (initial: PaymentScheduleInitialSchedule) =>
+        (initial: DistributionInitialPosition) =>
           ScheduleType[initial.scheduleType as keyof typeof ScheduleType] ===
           schedule.type,
       )
