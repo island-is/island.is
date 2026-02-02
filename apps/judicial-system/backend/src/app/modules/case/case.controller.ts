@@ -447,7 +447,7 @@ export class CaseController {
     type: [Case],
     description: 'Gets all candidate merge cases',
   })
-  getCandidateMergeCasesX(
+  getCandidateMergeCases(
     @Param('caseId') caseId: string,
     @CurrentCase() theCase: Case,
   ): Promise<Case[]> {
