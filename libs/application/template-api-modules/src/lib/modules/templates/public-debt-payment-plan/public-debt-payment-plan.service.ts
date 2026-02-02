@@ -88,26 +88,6 @@ export class PublicDebtPaymentPlanTemplateService extends BaseTemplateApiService
         auth,
       } as TemplateApiModuleActionProps)
 
-      console.log('**************************************************')
-      console.log('application.answers')
-      console.dir(application.answers, { depth: null, colors: true })
-      console.log('**************************************************')
-      console.log('prerequisites')
-      console.dir(prerequisites.conditions, { depth: null, colors: true })
-      console.log('**************************************************')
-      console.log('debts')
-      console.dir(prerequisites.debts, { depth: null, colors: true })
-      console.log('**************************************************')
-      console.log('allInitialSchedules')
-      console.dir(prerequisites.allInitialSchedules, {
-        depth: null,
-        colors: true,
-      })
-      console.log('**************************************************')
-      console.log('paymentPlans')
-      console.dir(paymentPlans, { depth: null, colors: true })
-      console.log('**************************************************')
-
       const schedules = paymentPlans.map((plan) => {
         const distribution = plan.distribution
         return {
