@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, Inject } from '@nestjs/common'
 import { ApplicationDto } from '../applications/models/dto/application.dto'
 import {
   createEnhancedFetch,
@@ -9,6 +9,7 @@ import { getLanguageTypeForValueTypeAttribute } from '../../dataTypes/valueTypes
 import { CustomField } from './models/zendeskCustomField.dto'
 import { environment } from '../../../environments'
 import { ValueType } from '../../dataTypes/valueTypes/valueType.model'
+import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 @Injectable()
 export class ZendeskService {
   enhancedFetch: EnhancedFetchAPI
@@ -23,7 +24,7 @@ export class ZendeskService {
   private readonly CHECKBOX_TRUE = 'Valið'
   private readonly CHECKBOX_FALSE = 'Ekki valið'
 
-  constructor() {
+  constructor(@Inject(LOGGER_PROVIDER) private readonly logger: Logger) {
     this.enhancedFetch = createEnhancedFetch({
       name: 'form-system-zendesk',
       organizationSlug: 'stafraent-island',
@@ -65,6 +66,7 @@ export class ZendeskService {
     )
 
     return await this.createTicket(
+      applicationDto.id ?? '',
       subject,
       body,
       customFields,
@@ -78,6 +80,7 @@ export class ZendeskService {
   }
 
   private async createTicket(
+    applicationId: string,
     subject: string,
     body: string,
     customFields: CustomField[],
@@ -114,14 +117,20 @@ export class ZendeskService {
         }),
       })
       if (!response.ok) {
-        throw new Error(`Failed to create ticket`)
+        this.logger.error(
+          `Failed to create ticket for application ${applicationId}`,
+          { status: response.status, statusText: response.statusText },
+        )
+        return false
       }
       const result = await response.json()
       return result.ticket?.id ? true : false
     } catch (error) {
-      throw new Error('Unexpected error while creating ticket', {
-        cause: error,
-      })
+      this.logger.error(
+        `Unexpected error while creating ticket for application ${applicationId}`,
+        { error },
+      )
+      return false
     }
   }
 
@@ -150,12 +159,20 @@ export class ZendeskService {
         body: data,
       })
       if (!response.ok) {
-        throw new Error(`Failed to upload file`)
+        this.logger.error(
+          `Failed to upload file for application ${applicationId}`,
+          { status: response.status, statusText: response.statusText },
+        )
+        throw new Error('Failed to upload file to Zendesk')
       }
       const result = await response.json()
       return result.upload.token
     } catch (error) {
-      throw new Error('Unexpected error in file upload')
+      this.logger.error(
+        `Unexpected error while uploading file for application ${applicationId}`,
+        { error },
+      )
+      throw new Error('Unexpected error while uploading file to Zendesk')
     }
   }
 
