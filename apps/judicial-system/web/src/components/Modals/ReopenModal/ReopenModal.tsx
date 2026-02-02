@@ -66,7 +66,7 @@ const ReopenModal: FC<Props> = ({ onClose }) => {
           ? 'Með því að halda áfram opnast ferlið aftur og hægt er að leiðrétta úrskurðinn. Til að breytingarnar skili sér til aðila máls þarf að ljúka málinu aftur.'
           : isRequestCase(workingCase.type)
           ? 'Að lokinni leiðréttingu er hægt að velja að undirrita leiðréttan úrskurð eigi það við.'
-          : 'Leiðrétting verður sýnileg málflytjendum.'
+          : 'Að lokinni leiðréttingu þarf dómari að staðfesta aftur dóm. Leiðrétting verður sýnileg málflytjendum.'
       }
       primaryButton={{
         text: 'Halda áfram',
