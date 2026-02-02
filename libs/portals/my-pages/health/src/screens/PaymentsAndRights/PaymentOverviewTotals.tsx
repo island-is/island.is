@@ -218,16 +218,20 @@ export const PaymentOverviewTotals = () => {
               </GridRow>
               <GridRow marginTop={3} align="spaceBetween">
                 <GridColumn span={['1/2', '1/2', '1/2', '1/2', '2/9']}>
-                  <Button size="medium" onClick={() => onFetchTotals()} fluid>
+                  <Button
+                    size="medium"
+                    onClick={() => onFetchTotals()}
+                    fluid
+                    nowrap
+                  >
                     {formatMessage(m.get)}
                   </Button>
                 </GridColumn>
-                <GridColumn span={['1/2', '1/2', '1/2', '1/2', '3/9']}>
+                <GridColumn span={['1/2', '1/2', '1/2', '1/2', '2/9']}>
                   <Box
                     width="full"
                     height="full"
                     display="flex"
-                    // alignItems="stretch"
                     justifyContent="flexEnd"
                   >
                     <Button
@@ -237,6 +241,7 @@ export const PaymentOverviewTotals = () => {
                       iconType="outline"
                       onClick={() => onDownloadTotalsPdf()}
                       fluid
+                      nowrap
                     >
                       {formatMessage(messages.paymentOverviewTotalsDownload)}
                     </Button>
