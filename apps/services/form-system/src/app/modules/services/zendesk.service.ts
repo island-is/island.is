@@ -168,6 +168,12 @@ export class ZendeskService {
       const result = await response.json()
       return result.upload.token
     } catch (error) {
+      if (
+        error instanceof Error &&
+        error.message === 'Failed to upload file to Zendesk'
+      ) {
+        throw error
+      }
       this.logger.error(
         `Unexpected error while uploading file for application ${applicationId}`,
         { error },

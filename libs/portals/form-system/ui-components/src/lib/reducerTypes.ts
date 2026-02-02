@@ -1,6 +1,5 @@
 import {
   FormSystemApplication,
-  FormSystemLanguageType,
   FormSystemScreen,
   FormSystemScreenErrorMessage,
   FormSystemSection,
