@@ -3,8 +3,11 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   Get,
   Headers,
+  Param,
+  ParseUUIDPipe,
   Patch,
   Query,
   UseGuards,
@@ -12,9 +15,16 @@ import {
 import * as kennitala from 'kennitala'
 
 import { Documentation } from '@island.is/nest/swagger'
-import { Audit } from '@island.is/nest/audit'
+import { Audit, AuditService } from '@island.is/nest/audit'
 import { AdminPortalScope, UserProfileScope } from '@island.is/auth/scopes'
-import { IdsAuthGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
+import {
+  CurrentUser,
+  IdsAuthGuard,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
+} from '@island.is/auth-nest-tools'
 
 import { UserProfileDto } from './dto/user-profile.dto'
 import { UserProfileService } from './user-profile.service'
@@ -22,6 +32,8 @@ import { PaginatedUserProfileDto } from './dto/paginated-user-profile.dto'
 import { ClientType } from '../types/ClientType'
 import { ActorProfileDto } from './dto/actor-profile.dto'
 import { PatchUserProfileDto } from './dto/patch-user-profile.dto'
+import { EmailsService } from './emails.service'
+import { EmailsDto } from './dto/emails.dto'
 
 const namespace = '@island.is/user-profile/v2/users'
 
@@ -35,7 +47,11 @@ const namespace = '@island.is/user-profile/v2/users'
 })
 @Audit({ namespace })
 export class UserProfileController {
-  constructor(private readonly userProfileService: UserProfileService) {}
+  constructor(
+    private readonly userProfileService: UserProfileService,
+    private readonly emailsService: EmailsService,
+    private readonly auditService: AuditService,
+  ) {}
 
   @Get('/')
   @Documentation({
@@ -169,6 +185,84 @@ export class UserProfileController {
         nationalId,
       },
       userProfile,
+    )
+  }
+
+  @Get('/.national-id/emails')
+  @Documentation({
+    description: 'Get all emails for a user by nationalId.',
+    request: {
+      header: {
+        'X-Param-National-Id': {
+          required: true,
+          description: 'National id of the user',
+        },
+      },
+    },
+    response: { status: 200, type: [EmailsDto] },
+  })
+  @UseGuards(IdsUserGuard, ScopesGuard)
+  @ApiSecurity('oauth2', [AdminPortalScope.serviceDesk])
+  @Scopes(AdminPortalScope.serviceDesk)
+  async getUserEmails(
+    @CurrentUser() user: User,
+    @Headers('X-Param-National-Id') nationalId: string,
+  ): Promise<EmailsDto[]> {
+    if (!kennitala.isValid(nationalId)) {
+      throw new BadRequestException('National id is not valid')
+    }
+
+    return this.auditService.auditPromise<EmailsDto[]>(
+      {
+        auth: user,
+        namespace,
+        action: 'getUserEmails',
+        resources: (emails) => [nationalId, ...emails.map((email) => email.id)],
+      },
+      this.emailsService.findAllByNationalId(nationalId),
+    )
+  }
+
+  @Delete('/.national-id/emails/:emailId')
+  @Documentation({
+    description: 'Delete an email for a user by nationalId and emailId.',
+    request: {
+      header: {
+        'X-Param-National-Id': {
+          required: true,
+          description: 'National id of the user',
+        },
+      },
+      params: {
+        emailId: {
+          required: true,
+          type: 'string',
+          description: 'ID of the email to delete',
+        },
+      },
+    },
+    response: { status: 200, type: Boolean },
+  })
+  @UseGuards(IdsUserGuard, ScopesGuard)
+  @ApiSecurity('oauth2', [AdminPortalScope.serviceDesk])
+  @Scopes(AdminPortalScope.serviceDesk)
+  async deleteEmail(
+    @CurrentUser() user: User,
+    @Headers('X-Param-National-Id') nationalId: string,
+    @Param('emailId', new ParseUUIDPipe()) emailId: string,
+  ): Promise<boolean> {
+    if (!kennitala.isValid(nationalId)) {
+      throw new BadRequestException('National id is not valid')
+    }
+
+    return this.auditService.auditPromise<boolean>(
+      {
+        auth: user,
+        namespace,
+        action: 'deleteEmail',
+        resources: [nationalId, emailId],
+      },
+      this.emailsService.deleteEmail(nationalId, emailId),
     )
   }
 }
