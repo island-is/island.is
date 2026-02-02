@@ -227,12 +227,14 @@ export const healthModule: PortalModule = {
       path: HealthPaths.HealthPaymentOverviewInvoices,
       enabled: userInfo.scopes.includes(ApiScope.healthPayments),
       element: <PaymentOverview />,
+      key: 'HealthPaymentOverviewTotal',
     },
     {
       name: hm.paymentOverviewTotals,
       path: HealthPaths.HealthPaymentOverviewTotals,
       enabled: userInfo.scopes.includes(ApiScope.healthPayments),
       element: <PaymentOverviewTotals />,
+      key: 'HealthPaymentOverviewTotal',
     },
     {
       name: hm.rights,

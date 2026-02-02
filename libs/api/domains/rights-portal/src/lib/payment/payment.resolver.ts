@@ -129,6 +129,7 @@ export class PaymentResolver {
     name: 'rightsPortalPaymentOverviewTotalsServiceTypes',
   })
   @Scopes(ApiScope.healthPayments)
+  @FeatureFlag(Features.isServicePortalHealthPaymentOverviewTotalPageEnabled)
   @Audit()
   async getPaymentOverviewTotalsServiceTypes(
     @CurrentUser() user: User,
@@ -140,6 +141,7 @@ export class PaymentResolver {
     name: 'rightsPortalPaymentOverviewTotals',
   })
   @Scopes(ApiScope.healthPayments)
+  @FeatureFlag(Features.isServicePortalHealthPaymentOverviewTotalPageEnabled)
   @Audit()
   async getPaymentOverviewTotals(
     @CurrentUser() user: User,
@@ -152,6 +154,7 @@ export class PaymentResolver {
     name: 'rightsPortalPaymentOverviewTotalsPdf',
   })
   @Scopes(ApiScope.healthPayments)
+  @FeatureFlag(Features.isServicePortalHealthPaymentOverviewTotalPageEnabled)
   @Audit()
   async getPaymentOverviewTotalsPdf(
     @CurrentUser() user: User,
