@@ -2,6 +2,7 @@ import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { ContractParty } from './contractParty.model'
 import { ContractProperty } from './contractProperty.model'
 import { AgreementStatusType, TemporalType } from '../../enums'
+import { ContractDocument } from './contractDocument.model'
 
 @ObjectType('HmsRentalAgreement')
 export class RentalAgreement {
@@ -32,6 +33,6 @@ export class RentalAgreement {
   @Field(() => ContractProperty, { nullable: true })
   contractProperty?: ContractProperty
 
-  @Field({ nullable: true })
-  downloadUrl?: string
+  @Field(() => [ContractDocument], { nullable: true })
+  documents?: ContractDocument[]
 }

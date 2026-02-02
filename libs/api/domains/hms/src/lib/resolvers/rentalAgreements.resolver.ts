@@ -48,7 +48,7 @@ export class RentalAgreementsResolver {
       hideInactiveAgreements,
     )
     const data = res
-      .map(mapToRentalAgreement)
+      .map((x) => mapToRentalAgreement(x, this.downloadServiceConfig.baseUrl))
       .sort(
         (a, b) =>
           AGREEMENT_STATUS_SORT_ORDER[a.status] -
@@ -74,18 +74,13 @@ export class RentalAgreementsResolver {
     @Args('contractId', { type: () => ID }) contractId: string,
   ): Promise<RentalAgreement | undefined> {
     const data = await this.service
-      .getRentalAgreement(user, +contractId)
+      .getRentalAgreement(user, contractId)
       .catch(handle404)
 
-    const contractData = data ? mapToRentalAgreement(data) : undefined
+    const contractData = data
+      ? mapToRentalAgreement(data, this.downloadServiceConfig.baseUrl)
+      : undefined
 
-    if (!contractData) {
-      return undefined
-    }
-
-    return {
-      ...contractData,
-      downloadUrl: `${this.downloadServiceConfig.baseUrl}/download/v1/rental-agreements/${contractId}`,
-    }
+    return contractData ?? undefined
   }
 }

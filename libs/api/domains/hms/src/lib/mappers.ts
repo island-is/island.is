@@ -126,12 +126,18 @@ const mapTemporalType = (type: TemporalClientType): TemporalType => {
 
 export const mapToRentalAgreement = (
   dto: RentalAgreementDto,
+  downloadServiceBaseUrl: string,
 ): RentalAgreement => {
   const property = dto.contractProperty?.[0]
     ? mapContractProperty(dto.contractProperty[0])
     : undefined
 
   const parties = dto.contractParty?.map(mapContractParty)
+  const documents = dto.documents?.map((doc) => ({
+    id: doc.id,
+    name: doc.name,
+    downloadUrl: `${downloadServiceBaseUrl}/download/v1/rental-agreements/${doc.id}`,
+  }))
 
   return {
     id: dto.id,
@@ -147,5 +153,6 @@ export const mapToRentalAgreement = (
       parties?.filter((party) => TENANT_TYPES.includes(party.type)) ??
       undefined,
     contractProperty: property,
+    documents,
   }
 }

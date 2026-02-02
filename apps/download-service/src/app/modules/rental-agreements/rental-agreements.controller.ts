@@ -44,17 +44,14 @@ export class RentalAgreementsController {
       throw new BadRequestException('Missing id')
     }
 
-    const documentResponse = await this.service.getRentalAgreementPdf(user, +id)
+    const document = await this.service.getRentalAgreementPdf(user, +id)
 
-    if (documentResponse && documentResponse.length > 0) {
+    if (document) {
       this.auditService.audit({
         action: 'getRentalAgreementPdf',
         auth: user,
         resources: id,
       })
-
-      //grab the first one
-      const document = documentResponse[0].document
 
       const buffer = Buffer.from(document, 'base64')
 

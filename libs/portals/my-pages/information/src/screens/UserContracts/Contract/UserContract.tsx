@@ -1,4 +1,4 @@
-import { Box, Button, Tag } from '@island.is/island-ui/core'
+import { Box, DropdownMenu, Tag } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   IntroWrapper,
@@ -22,6 +22,7 @@ import {
 import { generateRentalAgreementAddress } from '../../../utils/mapAddress'
 import { getApplicationsBaseUrl } from '@island.is/portals/core'
 import { TERMINATED_STATUSES } from './constants'
+import { isDefined } from '@island.is/shared/utils'
 
 const UserContract = () => {
   useNamespaces('sp.contracts')
@@ -61,22 +62,29 @@ const UserContract = () => {
       intro={cm.contractDetailSubtitle}
       serviceProviderSlug={HMS_SLUG}
       serviceProviderTooltip={formatMessage(m.rentalAgreementsTooltip)}
+      loading={loading}
       buttonGroup={[
-        <Button
-          key="download-button"
-          title={formatMessage(cm.downloadAsPdf)}
-          icon="download"
-          iconType="outline"
-          disabled={
-            !!error || loading || !data?.hmsRentalAgreement?.downloadUrl
+        <DropdownMenu
+          icon="ellipsisHorizontal"
+          key="download-template"
+          title={formatMessage(cm.downloadFiles)}
+          menuLabel={formatMessage(cm.downloadFiles)}
+          loading={loading}
+          disabled={(data?.hmsRentalAgreement?.documents?.length ?? 0) <= 0}
+          items={
+            data?.hmsRentalAgreement?.documents
+              ?.map(({ name, downloadUrl }) => {
+                if (!name || !downloadUrl) {
+                  return null
+                }
+                return {
+                  title: name,
+                  onClick: () => formSubmit(downloadUrl),
+                }
+              })
+              .filter(isDefined) ?? []
           }
-          onClick={() =>
-            formSubmit(data?.hmsRentalAgreement?.downloadUrl ?? '')
-          }
-          variant="utility"
-        >
-          {formatMessage(cm.downloadAsPdf)}
-        </Button>,
+        />,
         <LinkButton
           key="terminate-button"
           to={`${getApplicationsBaseUrl()}/uppsogn-eda-riftun-leigusamnings`}

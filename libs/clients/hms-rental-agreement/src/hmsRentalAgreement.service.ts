@@ -59,31 +59,18 @@ export class HmsRentalAgreementService {
   async getRentalAgreementPdf(
     user: User,
     documentId: number,
-  ): Promise<Array<ContractDocumentItemDto> | undefined> {
+  ): Promise<string | undefined> {
     const res = await this.apiWithAuth(user).contractDocumentIdGet({
       id: documentId,
     })
 
-    if (!res || res.length === 0) {
-      this.logger.warn('No rental agreements found', {
-        id,
-      })
-      return undefined
-    }
-
-    const data = res?.find((res) => res.contract?.contractId === id)
-
-    if (!data) {
+    if (!res.document) {
       this.logger.warn('Rental agreement pdf not found', {
-        id,
+        documentId,
       })
       return undefined
     }
 
-    const pdfs = data.documents
-      ?.map(mapContractDocumentItemDto)
-      .filter(isDefined)
-
-    return pdfs
+    return res.document
   }
 }
