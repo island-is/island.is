@@ -124,12 +124,6 @@ const template: ApplicationTemplate<
         organizationId:
           InstitutionNationalIds.HEILSUGAESLA_HOFUDBORDARSVAEDISINS,
         chargeItems: getChargeItems,
-        roles: [
-          {
-            id: Roles.APPLICANT,
-            api: [HhCoursesSelectedChargeItemApi],
-          },
-        ],
         submitTarget: States.COMPLETED,
         onExit: [
           defineTemplateApi({
