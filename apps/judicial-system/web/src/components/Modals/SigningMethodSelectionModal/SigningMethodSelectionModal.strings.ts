@@ -9,7 +9,7 @@ export const signingMethodSelectionModal = defineMessages({
   descriptionRuling: {
     id: 'judicial.system.core:signing_method_selection_modal.description_ruling',
     defaultMessage:
-      'Þú ert að fara að undirrita úrskurð/dóm í máli {courtCaseNumber}. \nVinsamlegast veldu undirritunarleið til að halda áfram.',
+      'Þú ert að fara að undirrita úrskurð í máli {courtCaseNumber}. \nVinsamlegast veldu undirritunarleið til að halda áfram.',
     description:
       'Lýsing í modal glugga þegar verið er að undirrita úrskurð/dóm.',
   },

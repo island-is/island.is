@@ -15,6 +15,8 @@ import { signingMethodSelectionModal as m } from './SigningMethodSelectionModal.
 
 export type SignatureType = 'ruling' | 'courtRecord'
 
+type LoadingMethod = 'mobile' | 'audkenni'
+
 interface SigningMethodSelectionModalProps {
   workingCase: Case
   signatureType: SignatureType
@@ -29,13 +31,15 @@ export const SigningMethodSelectionModal: FC<
   SigningMethodSelectionModalProps
 > = ({ workingCase, signatureType, onClose, onSignatureRequested }) => {
   const { formatMessage } = useIntl()
-  const [isLoading, setIsLoading] = useState(false)
+  const [loadingMethod, setLoadingMethod] = useState<LoadingMethod | undefined>(
+    undefined,
+  )
 
   // Ruling signature mutation
   const [requestRulingSignature] = useRequestRulingSignatureMutation({
     onError: () => {
       toast.error(formatMessage(errorMessages.requestRulingSignature))
-      setIsLoading(false)
+      setLoadingMethod(undefined)
     },
   })
 
@@ -43,12 +47,12 @@ export const SigningMethodSelectionModal: FC<
   const [requestCourtRecordSignature] = useRequestCourtRecordSignatureMutation({
     onError: () => {
       toast.error(formatMessage(errorMessages.requestCourtRecordSignature))
-      setIsLoading(false)
+      setLoadingMethod(undefined)
     },
   })
 
   const handleMethodSelection = async (isAudkenni: boolean) => {
-    setIsLoading(true)
+    setLoadingMethod(isAudkenni ? 'audkenni' : 'mobile')
 
     let response: RequestSignatureResponse | undefined | null = null
     try {
@@ -75,14 +79,14 @@ export const SigningMethodSelectionModal: FC<
         response = result.data?.requestCourtRecordSignature
       }
     } catch (error) {
-      setIsLoading(false)
+      setLoadingMethod(undefined)
     }
 
     if (response) {
       onSignatureRequested(response, isAudkenni)
     } else {
       toast.error(formatMessage(errorMessages.requestCourtRecordSignature))
-      setIsLoading(false)
+      setLoadingMethod(undefined)
     }
   }
 
@@ -102,12 +106,12 @@ export const SigningMethodSelectionModal: FC<
       secondaryButton={{
         text: formatMessage(m.audkenniButton),
         onClick: () => handleMethodSelection(true),
-        isLoading: isLoading,
+        isLoading: loadingMethod === 'audkenni',
       }}
       primaryButton={{
         text: formatMessage(m.mobileButton),
         onClick: () => handleMethodSelection(false),
-        isLoading: isLoading,
+        isLoading: loadingMethod === 'mobile',
       }}
       onClose={onClose}
     />
