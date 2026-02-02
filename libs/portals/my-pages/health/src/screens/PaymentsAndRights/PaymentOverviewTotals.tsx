@@ -273,7 +273,7 @@ export const PaymentOverviewTotals = () => {
                         {formatMessage(messages.totalPayment)}
                       </T.HeadData>
                       <T.HeadData>
-                        {formatMessage(messages.medicinePaidByInsuranceShort)}
+                        {formatMessage(messages.insuranceShare)}
                       </T.HeadData>
                       <T.HeadData>
                         {formatMessage(messages.yourPayment)}

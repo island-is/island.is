@@ -1297,7 +1297,7 @@ export const messages = defineMessages({
   },
   paymentsParticipationInfo: {
     defaultMessage:
-      'Sjúkratryggingar taka þátt í kostnaði við heilbrigðisþjónustu og sjá til þess að einstaklingar greiði ekki meira en ákveðna hámarksfjárhæð í hverjum mánuði fyrir hana. <link>Lesa nánar um greiðsluþáttökukerfið.</link>',
+      'Sjúkratryggingar taka þátt í kostnaði við heilbrigðisþjónustu og sjá til þess að einstaklingar greiði ekki meira en ákveðna hámarksfjárhæð í hverjum mánuði fyrir hana. <link>Lesa nánar um greiðsluþátttökukerfið.</link>',
     id: 'sp.health:payments-participation-info',
   },
   paymentTarget: {
