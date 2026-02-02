@@ -70,6 +70,10 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:accessControl',
     defaultMessage: 'Aðgangsstýring',
   },
+  digitalDelegations: {
+    id: 'sp.access-control-delegations:digital-delegations',
+    defaultMessage: 'Rafræn umboð',
+  },
   serviceCategories: {
     id: 'sp.access-control-delegations:serviceCategories',
     defaultMessage: 'Þjónustuflokkar',

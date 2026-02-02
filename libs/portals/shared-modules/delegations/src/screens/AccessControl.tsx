@@ -126,7 +126,7 @@ const AccessControl = () => {
   return (
     <>
       <IntroHeader
-        title={formatMessage(m.accessControl)}
+        title={formatMessage(m.digitalDelegations)}
         intro={
           onlyOutgoingDelegations
             ? formatMessage({
