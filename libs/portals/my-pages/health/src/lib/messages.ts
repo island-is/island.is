@@ -1232,12 +1232,12 @@ export const messages = defineMessages({
     id: 'sp.health:payment-overview-invoices',
   },
   paymentOverviewTotals: {
-    defaultMessage: 'Samtölu tímabil',
+    defaultMessage: 'Útlagður kostnaður',
     id: 'sp.health:payment-overview-totals',
   },
   paymentOverviewTotalsIntro: {
     defaultMessage:
-      'Lorem ipsum dolor sit amet consectetur. Dictum egestas diam at morbi lectus posuere mattis sit praesent. Et ultricies sed viverra neque eget odio blandit nunc. Non non aliquam vel urna blandit leo.',
+      'Hér er hægt er að taka út upplýsingar um útlagðan kostnað þinn vegna heilbrigðisþjónustu fyrir valið tímabil.',
     id: 'sp.health:payment-overview-totals-intro',
   },
   paymentOverviewTotalsDownload: {
