@@ -97,7 +97,7 @@ export const PaymentsWrapper = ({ children, pathname }: Props) => {
                   const url = formatMessage(
                     messages.readAboutPaymentParticipationSystemsLink,
                   )
-                  window.open(url, '_blank')
+                  window.open(url, '_blank', 'noopener,noreferrer')
                 }}
               >
                 {parts}
