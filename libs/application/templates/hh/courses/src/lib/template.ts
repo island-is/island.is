@@ -69,7 +69,12 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
-              api: [UserProfileApi, NationalRegistryUserApi, HealthCenterApi],
+              api: [
+                UserProfileApi,
+                NationalRegistryUserApi,
+                HealthCenterApi,
+                HhCoursesSelectedChargeItemApi,
+              ],
               delete: true,
             },
           ],
@@ -105,6 +110,11 @@ const template: ApplicationTemplate<
               delete: true,
             },
           ],
+          onExit: [
+            HhCoursesSelectedChargeItemApi.configure({
+              order: 0,
+            }),
+          ],
         },
         on: {
           [DefaultEvents.SUBMIT]: { target: States.PAYMENT },
@@ -114,11 +124,11 @@ const template: ApplicationTemplate<
         organizationId:
           InstitutionNationalIds.HEILSUGAESLA_HOFUDBORDARSVAEDISINS,
         chargeItems: getChargeItems,
-        onEntry: [
-          HhCoursesSelectedChargeItemApi.configure({
-            // Must run before CreateChargeApi (default order 0)
-            order: -1,
-          }),
+        roles: [
+          {
+            id: Roles.APPLICANT,
+            api: [HhCoursesSelectedChargeItemApi],
+          },
         ],
         submitTarget: States.COMPLETED,
         onExit: [
