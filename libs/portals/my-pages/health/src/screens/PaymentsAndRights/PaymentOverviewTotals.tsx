@@ -31,13 +31,13 @@ import {
   getLastDayOfPreviousYear,
 } from '../../utils/dates'
 import {
-  GetPaymentOverviewTotalsQuery,
   useGetPaymentOverviewTotalsLazyQuery,
   useGetPaymentOverviewTotalsServiceTypesQuery,
   useGetPaymentOverviewTotalsPdfLazyQuery,
 } from './Payments.generated'
 import * as styles from './Payments.css'
 import { PaymentsWrapper } from './wrapper/PaymentsWrapper'
+import { RightsPortalPaymentOverviewTotals } from '@island.is/api/schema'
 
 export const PaymentOverviewTotals = () => {
   const { formatMessage, lang } = useLocale()
@@ -47,12 +47,8 @@ export const PaymentOverviewTotals = () => {
   const [endDate, setEndDate] = useState<Date>(getLastDayOfPreviousYear)
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null)
 
-  type TotalsItem = NonNullable<
-    GetPaymentOverviewTotalsQuery['rightsPortalPaymentOverviewTotals']
-  >['items'][number]
-  const [totalsItem, setTotalsItem] = useState<TotalsItem | undefined>(
-    undefined,
-  )
+  const [totalsItem, setTotalsItem] =
+    useState<RightsPortalPaymentOverviewTotals>()
 
   const isMobile = width < theme.breakpoints.md
 
@@ -62,13 +58,15 @@ export const PaymentOverviewTotals = () => {
     error: serviceTypesError,
   } = useGetPaymentOverviewTotalsServiceTypesQuery()
 
-  const [lazyTotalsQuery, { loading: totalsLoading, error: totalsError }] =
-    useGetPaymentOverviewTotalsLazyQuery({
-      onCompleted(data) {
-        const item = data.rightsPortalPaymentOverviewTotals.items[0]
-        setTotalsItem(item)
-      },
-    })
+  const [
+    lazyTotalsQuery,
+    { loading: totalsLoading, error: totalsError, data: totalsData },
+  ] = useGetPaymentOverviewTotalsLazyQuery({
+    onCompleted(data) {
+      const item = data.rightsPortalPaymentOverviewTotals.items[0]
+      setTotalsItem(item)
+    },
+  })
 
   const [fetchTotalsPdf] = useGetPaymentOverviewTotalsPdfLazyQuery()
 
@@ -149,13 +147,20 @@ export const PaymentOverviewTotals = () => {
     [totalsItem, serviceTypeNameByCode],
   )
 
-  const hasError = serviceTypesError || totalsError
+  const hasDomainError =
+    (serviceTypes?.rightsPortalPaymentOverviewTotalsServiceTypes.errors
+      ?.length ?? 0) > 0 ||
+    (totalsData?.rightsPortalPaymentOverviewTotals.errors?.length ?? 0) > 0
+  const hasError = serviceTypesError || totalsError || hasDomainError
   const loading = serviceTypesLoading || totalsLoading
 
   return (
     <PaymentsWrapper pathname={HealthPaths.HealthPaymentOverviewTotals}>
       {hasError ? (
-        <Problem noBorder={false} error={hasError} />
+        <Problem
+          noBorder={false}
+          error={serviceTypesError ?? totalsError ?? undefined}
+        />
       ) : loading ? (
         <SkeletonLoader space={2} repeat={3} height={24} />
       ) : (
