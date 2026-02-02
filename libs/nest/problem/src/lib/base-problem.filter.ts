@@ -14,7 +14,6 @@ import { Problem, ProblemType } from '@island.is/shared/problem'
 import { ProblemError } from './ProblemError'
 import { PROBLEM_OPTIONS } from './problem.options'
 import type { ProblemOptions } from './problem.options'
-import { validate as isUuid } from 'uuid'
 
 // Add a URL to this array to bypass the error filter and the ProblemJSON transformation
 export const BYPASS_ERROR_FILTER_URLS = ['/health/check']
@@ -92,7 +91,12 @@ export abstract class BaseProblemFilter implements ExceptionFilter {
     const request = ctx.getRequest<Request>()
     const applicationId = request?.url?.split('/').pop()
 
-    return applicationId && isUuid(applicationId) ? applicationId : undefined
+    return applicationId &&
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+        applicationId,
+      )
+      ? applicationId
+      : undefined
   }
 
   abstract getProblem(error: Error): Problem
