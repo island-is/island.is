@@ -1,5 +1,7 @@
 import getConfig from 'next/config'
 
+// TODO: Remove this comment
+
 const {
   publicRuntimeConfig: { basepath },
 } = getConfig()

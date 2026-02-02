@@ -1,6 +1,8 @@
 import { CreatePaymentFlowInput } from '../app/paymentFlow/dtos/createPaymentFlow.input'
 import { PaymentFlowEvent } from '../app/paymentFlow/models/paymentFlowEvent.model'
 
+// TODO: Remove this comment
+
 export enum PaymentMethod {
   CARD = 'card',
   INVOICE = 'invoice',
