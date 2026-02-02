@@ -1245,7 +1245,7 @@ export const messages = defineMessages({
   },
   paymentOverviewTotalsIntro: {
     defaultMessage:
-      'Hér er hægt er að taka út upplýsingar um útlagðan kostnað þinn vegna heilbrigðisþjónustu fyrir valið tímabil.',
+      'Hér er hægt að taka út upplýsingar um útlagðan kostnað þinn vegna heilbrigðisþjónustu fyrir valið tímabil.',
     id: 'sp.health:payment-overview-totals-intro',
   },
   paymentOverviewTotalsDownload: {
