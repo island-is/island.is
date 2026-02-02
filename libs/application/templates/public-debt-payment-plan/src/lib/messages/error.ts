@@ -62,4 +62,35 @@ export const error = defineMessages({
     defaultMessage: 'Skoða fjármál á mínum síðum island.is',
     description: 'Error Modal: Debts name of link one',
   },
+  paymentplanErrorTitle: {
+    id: `pdpp.application:error.paymentplanError`,
+    defaultMessage: 'Villa í greiðsluáætlun',
+    description: 'Error Modal: Payment plan error',
+  },
+  maxDebtAmount: {
+    id: `pdpp.application:error.maxDebtAmount`,
+    defaultMessage: 'Heildarskuld er hærri en leyfilegt hámark',
+    description: 'Error Modal: Max debt amount',
+  },
+  maxPaymentAmount: {
+    id: `pdpp.application:error.maxPaymentAmount`,
+    defaultMessage: 'Greiðsluupphæð er hærri en leyfilegt hámark',
+    description: 'Error Modal: Max payment amount',
+  },
+  minPaymentAmount: {
+    id: `pdpp.application:error.minPaymentAmount`,
+    defaultMessage: 'Greiðsluupphæð er lægri en leyfilegt lágmark',
+    description: 'Error Modal: Min payment amount',
+  },
+  maxCountMonth: {
+    id: `pdpp.application:error.maxCountMonth`,
+    defaultMessage:
+      'Fjöldi gjalddaga er meiri en leyfilegt hámark fyrir skuldaflokk {scheduleType}',
+    description: 'Error Modal: Max count month',
+  },
+  totalAmountMismatch: {
+    id: `pdpp.application:error.totalAmountMismatch`,
+    defaultMessage: 'Heildarskuld passar ekki við greiðsluupphæð',
+    description: 'Error Modal: Total amount mismatch',
+  },
 })

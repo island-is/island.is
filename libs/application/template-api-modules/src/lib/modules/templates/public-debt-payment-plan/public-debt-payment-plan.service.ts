@@ -18,6 +18,9 @@ import {
   PublicDebtPaymentPlanPrerequisites,
 } from './types'
 import { PrerequisitesService } from './paymentPlanPrerequisites.service'
+import { TemplateApiError } from '@island.is/nest/problem'
+import { error } from '@island.is/application/templates/public-debt-payment-plan'
+import { PrerequisitesResult } from 'libs/application/templates/public-debt-payment-plan/src/types'
 
 @Injectable()
 export class PublicDebtPaymentPlanTemplateService extends BaseTemplateApiService {
@@ -78,6 +81,31 @@ export class PublicDebtPaymentPlanTemplateService extends BaseTemplateApiService
       const { email, phoneNumber, paymentPlans } =
         this.getValuesFromApplication(application)
 
+      const prerequisites = await this.paymentPlanPrerequisites({
+        application,
+        auth,
+      } as TemplateApiModuleActionProps)
+
+      console.log('**************************************************')
+      console.log('application.answers')
+      console.dir(application.answers, { depth: null, colors: true })
+      console.log('**************************************************')
+      console.log('prerequisites')
+      console.dir(prerequisites.conditions, { depth: null, colors: true })
+      console.log('**************************************************')
+      console.log('debts')
+      console.dir(prerequisites.debts, { depth: null, colors: true })
+      console.log('**************************************************')
+      console.log('allInitialSchedules')
+      console.dir(prerequisites.allInitialSchedules, {
+        depth: null,
+        colors: true,
+      })
+      console.log('**************************************************')
+      console.log('paymentPlans')
+      console.dir(paymentPlans, { depth: null, colors: true })
+      console.log('**************************************************')
+
       const schedules = paymentPlans.map((plan) => {
         const distribution = plan.distribution
         return {
@@ -93,6 +121,12 @@ export class PublicDebtPaymentPlanTemplateService extends BaseTemplateApiService
           type: ScheduleType[plan.id],
         }
       })
+
+      this.validatePaymentPlans(
+        paymentPlans,
+        schedules,
+        prerequisites as PrerequisitesResult['data'],
+      )
 
       await this.paymentScheduleApiWithAuth(auth).schedulesPOST6({
         inputSchedules: {
@@ -116,5 +150,102 @@ export class PublicDebtPaymentPlanTemplateService extends BaseTemplateApiService
     auth,
   }: TemplateApiModuleActionProps) {
     return this.prerequisitesService.provide(application, auth)
+  }
+
+  private validatePaymentPlans(
+    paymentPlans: PublicDebtPaymentPlanPayment[],
+    schedules: {
+      payments: { payment: number }[]
+      type: ScheduleType
+    }[],
+    prerequisites: PrerequisitesResult['data'],
+  ) {
+    const { conditions, allInitialSchedules, debts } = prerequisites
+
+    const totalPaymentPlanAmount = paymentPlans.reduce(
+      (acc, plan) => acc + (plan.totalAmount || 0),
+      0,
+    )
+
+    if (
+      conditions.maxDebtAmount &&
+      totalPaymentPlanAmount > conditions.maxDebtAmount
+    ) {
+      this.throwValidationError(error.maxDebtAmount)
+    }
+
+    const totalPrerequisiteDebt = debts.reduce(
+      (acc: number, debt: any) => acc + (debt.totalAmount || 0),
+      0,
+    )
+
+    if (
+      conditions.maxDebtAmount &&
+      totalPrerequisiteDebt > conditions.maxDebtAmount
+    ) {
+      this.throwValidationError(error.maxDebtAmount)
+    }
+
+    paymentPlans.forEach((plan) => {
+      // Find the corresponding schedule for this plan
+      const scheduleType = ScheduleType[plan.id]
+      const schedule = schedules.find((s) => s.type === scheduleType)
+
+      if (schedule) {
+        const totalScheduled = schedule.payments.reduce(
+          (sum, p) => sum + p.payment,
+          0,
+        )
+        const totalDebt = plan.totalAmount || 0
+
+        // Allow for small floating point differences (e.g. < 1 ISK)
+        if (Math.abs(totalScheduled - totalDebt) > 1) {
+          this.throwValidationError(error.totalAmountMismatch, {})
+        }
+      }
+    })
+
+    schedules.forEach((schedule) => {
+      const initialSchedule = allInitialSchedules.find(
+        (initial: any) =>
+          ScheduleType[initial.scheduleType as keyof typeof ScheduleType] ===
+          schedule.type,
+      )
+
+      if (schedule.payments.length > (initialSchedule?.maxCountMonth || 0)) {
+        this.throwValidationError(error.maxCountMonth)
+      }
+
+      schedule.payments.forEach((p: any, index: number) => {
+        if (p.payment > (initialSchedule?.maxPayment || 0)) {
+          this.throwValidationError(error.maxPaymentAmount)
+        }
+
+        // Only check minPayment if it's NOT the last payment
+        if (
+          index !== schedule.payments.length - 1 &&
+          p.payment < (initialSchedule?.minPayment || 0)
+        ) {
+          this.throwValidationError(error.minPaymentAmount)
+        }
+      })
+    })
+  }
+
+  private throwValidationError(
+    summary: { id: string; defaultMessage: string; description: string },
+    values?: Record<string, unknown>,
+    status = 400,
+  ) {
+    throw new TemplateApiError(
+      {
+        title: error.paymentplanErrorTitle,
+        summary: {
+          ...summary,
+          values,
+        },
+      },
+      status,
+    )
   }
 }
