@@ -194,9 +194,6 @@ const Defendant = () => {
                       }
                       onChange={handleUpdateDefendant}
                       updateDefendantState={updateDefendantState}
-                      nationalIdImmutable={
-                        workingCase.origin === CaseOrigin.LOKE && index === 0
-                      }
                     />
                   </motion.div>
                 ))}

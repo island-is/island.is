@@ -159,7 +159,6 @@ export const Defendant = () => {
                     setWorkingCase={setWorkingCase}
                     onChange={handleUpdateDefendant}
                     updateDefendantState={updateDefendantState}
-                    nationalIdImmutable={workingCase.origin === CaseOrigin.LOKE}
                   />
                 </Box>
               )}
