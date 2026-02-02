@@ -18,6 +18,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { errorModal } from '@island.is/application/templates/public-debt-payment-plan'
 import { ProviderErrorReason } from '@island.is/shared/problem'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 @Injectable()
 export class PrerequisitesService {
@@ -44,7 +45,10 @@ export class PrerequisitesService {
     const fakeData = getValueViaPath(application.answers, 'mock') as {
       useMockData: typeof YES | typeof NO
     }
-    if (fakeData?.useMockData === YES) {
+    if (
+      fakeData?.useMockData === YES &&
+      (isRunningOnEnvironment('dev') || isRunningOnEnvironment('local'))
+    ) {
       return this.getMockData()
     }
 

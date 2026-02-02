@@ -888,7 +888,7 @@ application-system-api:
     XROAD_VMST_API_KEY: '/k8s/vmst-client/VMST_API_KEY'
     XROAD_VMST_UNEMPLOYMENT_PASSWORD: '/k8s/xroad/XROAD_VMST_UNEMPLOYMENT_PASSWORD'
     XROAD_VMST_UNEMPLOYMENT_USERNAME: '/k8s/xroad/XROAD_VMST_UNEMPLOYMENT_USERNAME'
-    ZENDESK_CONTACT_FORM_EMAIL: '/k8s/api/ZENDESK_CONTACT_FORM_EMAIL'
+    ZENDESK_CONTACT_FORM_EMAIL: '/k8s/api/ZENDESK_HEILSUGAESLA_HOFUDBORGARSVAEDISINS_CONTACT_FORM_EMAIL'
     ZENDESK_CONTACT_FORM_TOKEN: '/k8s/api/ZENDESK_CONTACT_FORM_TOKEN'
   securityContext:
     allowPrivilegeEscalation: false
@@ -2158,6 +2158,7 @@ portals-admin:
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SI_PUBLIC_ENVIRONMENT: 'prod'
+    SI_PUBLIC_FORM_SYSTEM_URL: 'https://island.is/form'
   grantNamespaces:
     - 'nginx-ingress-external'
     - 'identity-server'

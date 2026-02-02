@@ -4,7 +4,6 @@ import {
   formatDate,
   HEALTH_DIRECTORATE_SLUG,
   IntroWrapper,
-  m,
 } from '@island.is/portals/my-pages/core'
 import React from 'react'
 import { messages } from '../../lib/messages'
@@ -41,7 +40,7 @@ const Referrals: React.FC = () => {
         <Problem
           type="no_data"
           noBorder={false}
-          title={formatMessage(m.noData)}
+          title={formatMessage(messages.noReferralsTitle)}
           message={formatMessage(messages.noReferrals)}
           imgSrc="./assets/images/nodata.svg"
         />
