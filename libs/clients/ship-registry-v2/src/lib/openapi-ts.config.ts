@@ -1,9 +1,9 @@
 import { defineConfig } from '@hey-api/openapi-ts'
 
 export default defineConfig({
-  input: './libs/clients/ship-registry/src/clientConfig.json',
+  input: './libs/clients/ship-registry-v2/src/clientConfig.json',
   output: {
-    path: './libs/clients/ship-registry/gen/fetch',
+    path: './libs/clients/ship-registry-v2/gen/fetch',
     format: 'prettier',
     lint: 'eslint',
   },

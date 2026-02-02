@@ -1,41 +1,96 @@
 import { Injectable } from '@nestjs/common'
-import { User, withAuthContext } from '@island.is/auth-nest-tools'
-import { dataOr404Null } from '@island.is/clients/middlewares'
-import {
-  getShipInfoDetail,
-  getShipsByOwnerAndFisherySsn,
-  ShipBaseInfoDto,
-  ShipDetailsModel,
-} from '../../gen/fetch'
+import { FindShipByNameOrNumberRequest, ShipApi } from '../../gen/fetch'
+import { FetchError } from '@island.is/clients/middlewares'
+
+interface Ship {
+  skraningarnumer: number
+  umdaemisnafn: string
+  heimahofn: string
+  umdaemistolustafir: number | null
+  bruttorumlestir: number
+  bruttoTonn: number
+  smidaar: number
+  nafnskips: string
+  skraningarstada: string
+  skraningarlengd: number
+  umdaemisbokstafir: string
+  gerd: string
+  smidastod: string
+  eigendur: {
+    kennitala: string
+    nafn: string
+    eignaprosenta: number
+  }[]
+  engines: {
+    manufacturingNumber: null
+    power: number
+    year: number
+    usage: {
+      name: string
+    }
+    manufacturer: {
+      code: string
+      name: string
+    }
+  }[]
+  fishery: {
+    identityNumber: string
+    name: string
+    address: string
+    postalCode: string
+  }
+}
+
+const getValueOrEmptyString = (value?: string | number | null) => {
+  return value ? value : ''
+}
+
+const mapRegion = (ship: Ship) => {
+  return `${getValueOrEmptyString(ship.umdaemisbokstafir)}${
+    ship.umdaemisbokstafir && ship.umdaemistolustafir ? '-' : ''
+  }${getValueOrEmptyString(ship.umdaemistolustafir)} ${
+    ship.umdaemisnafn && '('
+  }${getValueOrEmptyString(ship.umdaemisnafn)}${ship.umdaemisnafn && ')'}`
+}
+
+const mapShip = (ship: Ship) => {
+  return {
+    shipName: ship.nafnskips,
+    shipType: ship.gerd,
+    regno: ship.skraningarnumer,
+    region: mapRegion(ship),
+    portOfRegistry: ship.heimahofn,
+    regStatus: ship.skraningarstada,
+    grossTonnage: ship.bruttoTonn,
+    length: ship.skraningarlengd,
+    manufactionYear: ship.smidaar,
+    manufacturer: ship.smidastod,
+    owners: ship.eigendur.map((owner) => ({
+      name: owner.nafn,
+      nationalId: owner.kennitala,
+      sharePercentage: owner.eignaprosenta,
+    })),
+  }
+}
 
 @Injectable()
 export class ShipRegistryClientService {
-  // Example: Get ships owned by user
-  async getShipsByOwner(user: User): Promise<ShipBaseInfoDto[]> {
-    const response = await withAuthContext(user, () =>
-      dataOr404Null(
-        getShipsByOwnerAndFisherySsn({
-          path: { ssn: user.nationalId },
-        }),
-      ),
-    )
+  constructor(private readonly shipApi: ShipApi) {}
 
-    return response ?? []
-  }
+  async findShipByNameOrNumber(input: FindShipByNameOrNumberRequest) {
+    try {
+      const data = (await this.shipApi.findShipByNameOrNumber(
+        input,
+      )) as unknown as { ships: Ship[] }
 
-  // Example: Get ship details by registry number
-  async getShipDetails(
-    user: User,
-    registryNumber: string,
-  ): Promise<ShipDetailsModel | null> {
-    const response = await withAuthContext(user, () =>
-      dataOr404Null(
-        getShipInfoDetail({
-          path: { shipRegistrationNumber: registryNumber },
-        }),
-      ),
-    )
-
-    return response ?? null
+      return {
+        ships: (data.ships ?? []).map(mapShip),
+      }
+    } catch (error) {
+      if (error instanceof FetchError && error.status === 404) {
+        return { ships: [] }
+      }
+      throw error
+    }
   }
 }
