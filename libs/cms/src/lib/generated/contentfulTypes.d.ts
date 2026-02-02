@@ -860,6 +860,9 @@ export interface ICourseInstanceFields {
 
   /** Max Registrations */
   maxRegistrations?: number | undefined
+
+  /** Charge Item Code */
+  chargeItemCode?: string | undefined
 }
 
 export interface ICourseInstance extends Entry<ICourseInstanceFields> {
