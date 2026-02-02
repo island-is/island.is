@@ -6,6 +6,8 @@ import {
   Stack,
   Text,
   Button,
+  Divider,
+  Checkbox,
 } from '@island.is/island-ui/core'
 import { m } from '@island.is/form-system/ui'
 import { ControlContext } from '../../../../context/ControlContext'
@@ -111,22 +113,34 @@ export const SubmissionUrls = () => {
           ),
       )}
 
-      <Box>
-        <RadioButton
-          label="Zendesk"
-          large
-          name="submissionUrl"
-          id="zendesk"
-          checked={form.submissionServiceUrl === 'zendesk'}
+      <RadioButton
+        label="Zendesk"
+        large
+        name="submissionUrl"
+        id="zendesk"
+        checked={form.submissionServiceUrl === 'zendesk'}
+        onChange={(e) => {
+          controlDispatch({
+            type: 'CHANGE_SUBMISSION_URL',
+            payload: { value: e.target.id },
+          })
+          formUpdate({ ...form, submissionServiceUrl: e.target.id })
+        }}
+      />
+
+      {form.submissionServiceUrl === 'zendesk' && (
+        <Checkbox
+          label={formatMessage(m.zendeskPrivate)}
+          checked={!!form.zendeskInternal}
           onChange={(e) => {
             controlDispatch({
-              type: 'CHANGE_SUBMISSION_URL',
-              payload: { value: e.target.id },
+              type: 'CHANGE_ZENDESK_INTERNAL',
+              payload: { value: e.target.checked },
             })
-            formUpdate({ ...form, submissionServiceUrl: e.target.id })
+            formUpdate({ ...form, zendeskInternal: e.target.checked })
           }}
         />
-      </Box>
+      )}
     </Stack>
   )
 }

@@ -12,7 +12,7 @@ import { Box, GridColumn, GridRow, Button } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { ErrorValue } from '../../types'
 import { YES } from '../../lib/constants'
-import { getEstateDataFromApplication } from '../../lib/utils'
+import { getEstateDataFromApplication, valueToNumber } from '../../lib/utils'
 import { RepeaterTotal } from '../RepeaterTotal'
 import { useRepeaterTotal } from '../../hooks/useRepeaterTotal'
 
@@ -81,15 +81,13 @@ export const BankAccountsRepeater: FC<
     skipTotalCalc = false,
   ) => {
     const bankAccountValues = getValues(fieldIndex)
-    const balance =
-      bankAccountValues?.balance?.replace(',', '.').replace(/[^\d.]/g, '') ||
-      '0'
-    const accruedInterest =
-      bankAccountValues?.accruedInterest
-        ?.replace(',', '.')
-        .replace(/[^\d.]/g, '') || '0'
+    const balance = valueToNumber(bankAccountValues?.balance ?? '0', ',')
+    const accruedInterest = valueToNumber(
+      bankAccountValues?.accruedInterest ?? '0',
+      ',',
+    )
 
-    const accountTotal = parseFloat(balance) + parseFloat(accruedInterest)
+    const accountTotal = balance + accruedInterest
     setValue(`${fieldIndex}.accountTotal`, accountTotal.toString())
 
     if (accountTotal > 0) {
