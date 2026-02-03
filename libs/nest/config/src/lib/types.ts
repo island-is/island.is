@@ -1,4 +1,5 @@
 import { DynamicModule } from '@nestjs/common'
+import { ConfigFactoryKeyHost } from '@nestjs/config'
 import { ZodEffects, ZodType } from 'zod'
 
 import { ServerSideFeature } from '@island.is/feature-flags'
@@ -20,11 +21,11 @@ export type Configuration<T> = T & { isConfigured: boolean }
 export type ConfigFactory<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   T extends Record<string, any> = Record<string, any>,
-> = (() => Configuration<T>) & {
-  KEY: string
-  optional: () => ConfigFactory<T>
-  registerOptional: () => DynamicModule
-}
+> = (() => Configuration<T>) &
+  ConfigFactoryKeyHost<Configuration<T>> & {
+    optional: () => ConfigFactory<T>
+    registerOptional: () => DynamicModule
+  }
 
 export type ConfigType<T extends ConfigFactory> = ReturnType<T>
 
