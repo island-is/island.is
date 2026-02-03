@@ -137,7 +137,7 @@ const DeterminationDetails: CustomScreen<DeterminationDetailsProps> = ({
       organizationPage={organizationPage}
       navigationData={{
         title: n('navigationTitle', 'Efnisyfirlit'),
-        items: getSubpageNavList(organizationPage, router),
+        items: getSubpageNavList(organizationPage, router, 3),
       }}
       breadcrumbItems={[
         {
@@ -204,6 +204,10 @@ DeterminationDetails.getProps = async ({ apolloClient, query, locale }) => {
     item: data.webSupremeCourtDeterminationById.item,
     organizationPage: organizationPage.data.getOrganizationPage,
     namespace,
+    languageToggleHrefOverride: {
+      is: '',
+      en: '',
+    },
   }
 }
 

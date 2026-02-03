@@ -233,6 +233,16 @@ export const m = {
         'villur fundust. Hlaða má niður sniðmáti með villum og reynda aftur.',
       description: 'Error message to user',
     },
+    noCarsToChangeFound: {
+      id: 'rsk.crfc.application:multi.upload.error.no.cars',
+      defaultMessage: 'Engir breytingar fundust í skjalinu',
+      description: 'No cars to change found error',
+    },
+    invalidFileType: {
+      id: 'rsk.crfc.application:multi.upload.error.invalid.file.type',
+      defaultMessage: 'Skrá verður að vera .csv eða .xlsx',
+      description: 'Invalid file type upload error',
+    },
   }),
 
   tableView: defineMessages({
