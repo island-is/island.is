@@ -3,17 +3,28 @@ import { ApplicationTypes } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { Auth } from '@island.is/auth-nest-tools'
 import { TemplateApiModuleActionProps } from '../../../types'
-import { DayRateEntry, EntryModel, RskRentalDayRateClient, RskRentalDaysClient,  } from '@island.is/clients-rental-day-rate'
-import { getValueViaPath } from '@island.is/application/core'
-import { TemplateApiError } from '@island.is/nest/problem'
+import {
+  RskRentalDayRateClient,
+  RskRentalDaysClient,
+} from '@island.is/clients-rental-day-rate'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { CarCategoryRecord, RateCategory } from '@island.is/application/templates/car-rental-fee-category'
+import {
+  buildDayRateEntryMap,
+  DayRateRecord,
+  getMonthTotalDayRateDays,
+  getUploadFileType,
+  parseUploadFile,
+} from '@island.is/application/templates/car-rental-dayrate-returns'
+import { TemplateApiError } from '@island.is/nest/problem'
+import { AttachmentS3Service } from '../../shared/services'
+import { getValueViaPath } from '@island.is/application/core'
 
 @Injectable()
 export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
   constructor(
     private readonly rentalDayRateClient: RskRentalDayRateClient,
     private readonly rentalDaysClient: RskRentalDaysClient,
+    private readonly attachmentService: AttachmentS3Service,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {
     super(ApplicationTypes.CAR_RENTAL_DAYRATE_RETURNS)
@@ -29,15 +40,52 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
 
   async getPreviousPeriodDayRateReturns({
     auth,
-  }: TemplateApiModuleActionProps): Promise<Array<EntryModel>> {
+  }: TemplateApiModuleActionProps): Promise<Array<DayRateRecord>> {
     try {
+      const now = new Date()
+      const lastMonthDate = new Date(now.getFullYear(), now.getMonth() - 1, 1)
+      const lastMonthIndex = lastMonthDate.getMonth()
+
       const resp = await this.rentalsApiWithAuth(
         auth,
       ).apiDayRateEntriesEntityIdGet({
         entityId: auth.nationalId,
       })
-      console.log(resp)
-      return resp ?? []
+
+      const dayRateEntryMap = buildDayRateEntryMap(resp)
+
+      const records: Array<DayRateRecord> = Object.entries(dayRateEntryMap)
+        .map(([permno, data]) => {
+          const result = getMonthTotalDayRateDays({
+            dayRateEntries: data,
+            targetYear: lastMonthDate.getFullYear(),
+            targetMonthIndex: lastMonthIndex,
+          })
+          const { totalDays, entryIds } = result
+
+          if (totalDays === 0 || entryIds.length === 0) return null
+
+          const uniqueEntryIds = new Set(entryIds)
+
+          if (uniqueEntryIds.size > 1) {
+            this.logger.warn(
+              `Multiple day rate entries found for vehicle ${permno} in month ${
+                lastMonthIndex + 1
+              } ${lastMonthDate.getFullYear()}: ${Array.from(
+                uniqueEntryIds,
+              ).join(', ')}`,
+            )
+          }
+
+          return {
+            permno,
+            prevPeriodTotalDays: totalDays,
+            dayRateEntryId: uniqueEntryIds.values().next().value,
+          }
+        })
+        .filter((row): row is DayRateRecord => row !== null)
+
+      return records
     } catch (error) {
       this.logger.error('Error getting previous period day rate entries', error)
       throw error
@@ -49,34 +97,113 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
     auth,
   }: TemplateApiModuleActionProps): Promise<boolean> {
     try {
-      const data = getValueViaPath<Array<EntryModel>>(
-        application.externalData,
-        'getPreviousPeriodDayRateReturns.data',
-      )
-      const previousMonthDate = new Date()
-      previousMonthDate.setMonth(previousMonthDate.getMonth() - 1)
-      const previousPeriodMonth = previousMonthDate.getMonth()
-      const previousPeriodYear = previousMonthDate.getFullYear()
+      const previousPeriodDayRateReturns =
+        getValueViaPath<Array<DayRateRecord>>(
+          application.externalData,
+          'getPreviousPeriodDayRateReturns.data',
+        ) ?? []
 
-      const entries = data?.map((entry) => {
+      const [attachment] = await this.attachmentService.getFiles(application, [
+        'carDayRateUsageFile',
+      ])
+      if (!attachment?.fileContent) {
+        throw new TemplateApiError(
+          { title: 'Missing file', summary: 'No uploaded file found' },
+          400,
+        )
+      }
+
+      const fileType = getUploadFileType(attachment.fileName ?? '')
+      if (!fileType) {
+        throw new TemplateApiError(
+          {
+            title: 'Invalid file type',
+            summary: 'Only .csv or .xlsx are supported',
+          },
+          400,
+        )
+      }
+
+      const bytes = Buffer.from(attachment.fileContent, 'base64')
+      const parsed = await parseUploadFile(
+        bytes,
+        fileType,
+        [], // TODO: Remove if we dont end up validating day rate records
+      )
+
+      if (!parsed.ok) {
+        if (parsed.reason === 'no-data') {
+          throw new TemplateApiError(
+            { title: 'Invalid data', summary: 'Invalid data found' },
+            400,
+          )
+        }
+
+        const errorSummary = parsed.errors
+          .map((e) => {
+            const msg =
+              typeof e.message === 'string'
+                ? e.message
+                : e.message.defaultMessage ?? e.message.id
+            return `${e.carNr}: ${msg}`
+          })
+          .filter((m) => m.length > 0)
+          .join('\n')
+
+        throw new TemplateApiError(
+          {
+            title: 'Invalid data',
+            summary: errorSummary || 'Invalid data found',
+          },
+          400,
+        )
+      }
+
+      const records = parsed.records
+
+      const now = new Date()
+      const lastMonthDate = new Date(now.getFullYear(), now.getMonth() - 1, 1)
+      const lastMonthIndex = lastMonthDate.getMonth()
+
+      const previousPeriodDayRateReturnsByPermno = new Map(
+        previousPeriodDayRateReturns.map((d) => [d.permno, d.dayRateEntryId]),
+      )
+
+      const entries = records.map((record) => {
+        const dayRateEntryId = previousPeriodDayRateReturnsByPermno.get(
+          record.vehicleId,
+        )
+
+        if (dayRateEntryId == null) {
+          throw new TemplateApiError(
+            {
+              title: 'Missing day rate entry',
+              summary: `No dayRateEntryId for vehicle ${record.vehicleId}`,
+            },
+            400,
+          )
+        }
+
+        return {
+          permno: record.vehicleId,
+          numberOfDays: record.prevPeriodUsage,
+          dayRateEntryId,
+        }
+      })
 
       const resp = await this.rentalDaysApiWithAuth(
         auth,
       ).apiRentalDaysEntityIdPost({
         entityId: auth.nationalId,
         rentalDayRegistrationModel: {
-          entries: [
-            {
-              permno: '1234567890',
-              year: 2025,
-              month: 1,
-              numberOfDays: 1,
-              dayRateEntryId: 1,
-            },
-          ],
+          year: lastMonthDate.getFullYear(),
+          month: lastMonthIndex + 1, // Date is 0-11 based, but Skatturinn expects 1-12
+          entries,
         },
       })
-      console.log(resp)
+
+      console.log('end of application response', resp)
+
       return true
     } catch (error) {
       this.logger.error('Error posting data to skatturinn', error)

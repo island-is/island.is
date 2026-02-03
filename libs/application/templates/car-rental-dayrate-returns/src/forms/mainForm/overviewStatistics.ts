@@ -4,9 +4,8 @@ import {
   buildStaticTableField,
   getValueViaPath,
 } from '@island.is/application/core'
-import { EntryModel } from '@island.is/clients-rental-day-rate'
-import { hasActiveDayRate } from '../../utils/dayRateUtils'
 import { m } from '../../lib/messages'
+import { DayRateRecord } from '../../utils/types'
 
 export const overviewStatistics = buildSection({
   id: 'overviewStatisticsSection',
@@ -20,14 +19,13 @@ export const overviewStatistics = buildSection({
           header: [m.overview.header, ''],
           rows: (application) => {
             const rates =
-              getValueViaPath<Array<EntryModel>>(
+              getValueViaPath<Array<DayRateRecord>>(
                 application.externalData,
-                'getCurrentVehiclesRateCategory.data',
+                'getPreviousPeriodDayRateReturns.data',
               ) ?? []
 
-              const carsOnDayRateLastMonth = rates.filter(
-                (x) => x.dayRateEntries && hasActiveDayRate(x.dayRateEntries),
-              ).length ?? 0
+            const safeRates = Array.isArray(rates) ? rates : []
+            const carsOnDayRateLastMonth = safeRates.length
 
             return [
               [m.overview.registeredCount, carsOnDayRateLastMonth.toString()],

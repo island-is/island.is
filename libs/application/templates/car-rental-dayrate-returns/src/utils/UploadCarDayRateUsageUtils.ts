@@ -1,9 +1,17 @@
 import XLSX from 'xlsx'
 import { parse } from 'csv-parse'
-import { CarUsageError, CarUsageRecord, DayRateEntryMap } from './types'
+import {
+  CarUsageError,
+  CarUsageRecord,
+  DayRateEntryMap,
+  DayRateRecord,
+} from './types'
 import { m } from '../lib/messages'
 import { MessageDescriptor } from 'react-intl'
-import { EntryModel } from '@island.is/clients-rental-day-rate'
+import {
+  DayRateEntryModel,
+  EntryModel,
+} from '@island.is/clients-rental-day-rate'
 
 const sanitizeNumber = (n: string) => n.replace(new RegExp(/[.,]/g), '')
 
@@ -32,7 +40,7 @@ const decodeUtf8 = (file: FileBytes): string => {
 export const parseFileToCarDayRateUsage = async (
   file: FileBytes,
   type: UploadFileType,
-  previousPeriodDayRateReturns: EntryModel[],
+  dayRateRecords: DayRateRecord[],
 ): Promise<Array<CarUsageRecord> | Array<CarUsageError>> => {
   const parsedLines: Array<Array<string>> = await (type === 'csv'
     ? parseCsv(file)
@@ -44,11 +52,12 @@ export const parseFileToCarDayRateUsage = async (
 
   const [_, ...values] = parsedLines
 
-  const data: Array<CarUsageRecord | CarUsageError | undefined> =
-    values.map((row) => {
+  const data: Array<CarUsageRecord | CarUsageError | undefined> = values.map(
+    (row) => {
       const carNr = row[carNumberIndex]
       const prevPeriodTotalDaysStr = row[prevPeriodTotalDaysIndex]?.trim()
       const prevPeriodUsageStr = row[prevPeriodUsageIndex]?.trim()
+      // Possibly need to make dayrate records a map and check for the permno
       // if (!currentCarData[carNr]) {
       //   return {
       //     code: 1,
@@ -74,7 +83,8 @@ export const parseFileToCarDayRateUsage = async (
       if (prevPeriodUsage > prevPeriodTotalDays) {
         return {
           code: 1,
-          message: m.multiUploadErrors.prevPeriodUsageGreaterThanPrevPeriodTotalDays,
+          message:
+            m.multiUploadErrors.prevPeriodUsageGreaterThanPrevPeriodTotalDays,
           carNr,
         }
       }
@@ -84,7 +94,8 @@ export const parseFileToCarDayRateUsage = async (
         prevPeriodTotalDays,
         prevPeriodUsage,
       }
-    })
+    },
+  )
 
   // Filter out undefined values first
   const filteredData = data.filter(
@@ -288,13 +299,9 @@ export const getUploadFileType = (
 export const parseUploadFile = async (
   file: ArrayBuffer | ArrayBufferView,
   type: UploadFileType,
-  previousPeriodDayRateReturns: EntryModel[],
+  dayRateRecords: DayRateRecord[],
 ): Promise<ParseUploadResult> => {
-  const parsed = await parseFileToCarDayRateUsage(
-    file,
-    type,
-    previousPeriodDayRateReturns,
-  )
+  const parsed = await parseFileToCarDayRateUsage(file, type, dayRateRecords)
 
   if (parsed.length === 0) {
     return { ok: false, errors: [], reason: 'no-data' }
@@ -309,4 +316,82 @@ export const parseUploadFile = async (
   }
 
   return { ok: true, records: parsed as CarUsageRecord[] }
+}
+
+export type MonthTotalInput = {
+  dayRateEntries: DayRateEntryModel[]
+  targetYear: number
+  targetMonthIndex: number // 0-11
+}
+
+export type MonthTotalResult = {
+  totalDays: number
+  entryIds: number[]
+}
+
+export const getMonthTotalDayRateDays = ({
+  dayRateEntries,
+  targetYear,
+  targetMonthIndex,
+}: MonthTotalInput): MonthTotalResult => {
+  const entries = dayRateEntries ?? []
+  if (entries.length === 0) return { totalDays: 0, entryIds: [] }
+
+  const monthStartUtc = new Date(Date.UTC(targetYear, targetMonthIndex, 1))
+  const monthEndUtc = new Date(Date.UTC(targetYear, targetMonthIndex + 1, 0))
+  const usedEntryIds = new Set<number>()
+
+  const hasPeriodUsage = entries.some((entry) => entry.periodUsage?.length)
+
+  if (hasPeriodUsage) {
+    const totalDays = entries.reduce((total, entry) => {
+      const usage = entry.periodUsage ?? []
+      const monthTotal = usage.reduce((acc, item) => {
+        if (!item?.period || item.numberOfDays == null) return acc
+
+        const periodDate = new Date(item.period)
+        const periodYear = periodDate.getUTCFullYear()
+        const periodMonthIndex = periodDate.getUTCMonth()
+
+        if (
+          periodYear === targetYear &&
+          periodMonthIndex === targetMonthIndex
+        ) {
+          return acc + item.numberOfDays
+        }
+
+        return acc
+      }, 0)
+
+      if (monthTotal > 0) {
+        usedEntryIds.add(entry.id)
+      }
+
+      return total + monthTotal
+    }, 0)
+
+    return { totalDays, entryIds: Array.from(usedEntryIds) }
+  }
+
+  const totalDays = entries.reduce((total, entry) => {
+    if (!entry.validFrom) return total
+
+    const validFromUtc = new Date(entry.validFrom)
+    const validToUtc = entry.validTo ? new Date(entry.validTo) : monthEndUtc
+
+    const start = validFromUtc > monthStartUtc ? validFromUtc : monthStartUtc
+    const end = validToUtc < monthEndUtc ? validToUtc : monthEndUtc
+
+    if (end < start) return total
+
+    const days = Math.floor((end.getTime() - start.getTime()) / 86400000) + 1
+
+    if (days > 0) {
+      usedEntryIds.add(entry.id)
+    }
+
+    return total + days
+  }, 0)
+
+  return { totalDays, entryIds: Array.from(usedEntryIds) }
 }

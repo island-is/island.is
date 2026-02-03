@@ -3,16 +3,12 @@ import {
   Button,
   fileToObjectDeprecated,
   InputFileUpload,
-  LoadingDots,
 } from '@island.is/island-ui/core'
-import { Dispatch, useEffect, useRef, useState } from 'react'
+import { Dispatch, useEffect, useState } from 'react'
 import { FileRejection } from 'react-dropzone'
 import { FieldBaseProps } from '@island.is/application/types'
-import {
-  CarUsageError,
-} from '../../utils/types'
+import { CarUsageError, DayRateRecord } from '../../utils/types'
 import { getValueViaPath } from '@island.is/application/core'
-import { EntryModel } from '@island.is/clients-rental-day-rate'
 import { useFormContext } from 'react-hook-form'
 import {
   createErrorExcel,
@@ -25,10 +21,7 @@ import {
 } from '../../utils/UploadCarDayRateUsageUtils'
 import { useMutation } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
-import {
-  UPDATE_APPLICATION,
-  UPDATE_APPLICATION_EXTERNAL_DATA,
-} from '@island.is/application/graphql'
+import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import { m } from '../../lib/messages'
 import { Locale } from '@island.is/shared/types'
 import {
@@ -41,7 +34,7 @@ interface Props {
   field: {
     props: {
       getFileContent: (
-        previousPeriodDayRateReturns: EntryModel[],
+        dayRateRecords: DayRateRecord[],
         locale: Locale,
       ) => {
         base64Content: string
@@ -58,18 +51,11 @@ export const UploadCarDayRateUsage = ({
   setBeforeSubmitCallback,
 }: Props & FieldBaseProps) => {
   const { locale, lang, formatMessage } = useLocale()
-  const [updateApplicationExternalData] = useMutation(
-    UPDATE_APPLICATION_EXTERNAL_DATA,
-  )
 
   const { setValue, setError, clearErrors, watch } = useFormContext()
   const uploadedMeta = watch('carDayRateUsageFile')
 
   const [updateApplication] = useMutation(UPDATE_APPLICATION)
-  const [isRefreshingRates, setIsRefreshingRates] = useState(false)
-
-  const hasRunRef = useRef(false)
-  const updateExternalDataRef = useRef(updateApplicationExternalData)
 
   const [uploadedFile, setUploadedFile] = useState<File | null>()
   const [uploadErrorMessage, setUploadErrorMessage] = useState<string | null>(
@@ -80,45 +66,6 @@ export const UploadCarDayRateUsage = ({
   const [createUploadUrl] = useMutation(CREATE_UPLOAD_URL)
   const [addAttachment] = useMutation(ADD_ATTACHMENT)
   const noopDispatch: Dispatch<unknown> = () => undefined
-
-  useEffect(() => {
-    updateExternalDataRef.current = updateApplicationExternalData
-  }, [updateApplicationExternalData])
-
-  useEffect(() => {
-    let cancelled = false
-
-    if (hasRunRef.current) return
-    hasRunRef.current = true
-
-    const updateExtData = async () => {
-      setIsRefreshingRates(true)
-      try {
-        await updateExternalDataRef.current({
-          variables: {
-            input: {
-              id: application.id,
-              dataProviders: [
-                { actionId: 'getPreviousPeriodDayRateReturns'},
-              ],
-            },
-            locale,
-          },
-        })
-      } finally {
-        if (!cancelled) {
-          setIsRefreshingRates(false)
-        }
-      }
-    }
-
-    updateExtData()
-
-    return () => {
-      cancelled = true
-      hasRunRef.current = false // allow StrictMode double-invoke to re-run
-    }
-  }, [application.id, locale])
 
   useEffect(() => {
     const hasFile = Array.isArray(uploadedMeta) && uploadedMeta.length > 0
@@ -159,23 +106,27 @@ export const UploadCarDayRateUsage = ({
 
         return [true, null]
       },
-      { allowMultiple: true, customCallbackId: 'carDayRateUsageFileValidation' },
+      {
+        allowMultiple: true,
+        customCallbackId: 'carDayRateUsageFileValidation',
+      },
     )
   }, [setBeforeSubmitCallback, uploadedMeta, uploadErrorMessage])
 
-  const previousPeriodDayRateReturns = getValueViaPath<EntryModel[]>(
-    application.externalData,
-    'getPreviousPeriodDayRateReturns.data',
-  ) ?? []
+  const dayRateRecords =
+    getValueViaPath<DayRateRecord[]>(
+      application.externalData,
+      'getPreviousPeriodDayRateReturns.data',
+    ) ?? []
 
-  const postCarDayRateUsage = async (
+  const parseAndValidateCarDayRateUsage = async (
     file: File,
     type: UploadFileType,
   ): Promise<number | null> => {
     const parsed = await parseUploadFile(
       await file.arrayBuffer(),
       type,
-      previousPeriodDayRateReturns,
+      dayRateRecords,
     )
 
     if (!parsed.ok) {
@@ -250,14 +201,14 @@ export const UploadCarDayRateUsage = ({
         return
       }
 
-      setUploadedFile(file.originalFileObj)
-      const dataToPost = await postCarDayRateUsage(
+      const dataToPost = await parseAndValidateCarDayRateUsage(
         file.originalFileObj,
         type,
       )
       if (dataToPost !== null) {
         const uploadedMeta = await uploadAndStoreFile(file.originalFileObj)
         await persistUploadAnswers(dataToPost, uploadedMeta)
+        setUploadedFile(file.originalFileObj)
       }
     }
   }
@@ -314,20 +265,9 @@ export const UploadCarDayRateUsage = ({
     })
   }
 
-  const fileData = field.props.getFileContent?.(
-    previousPeriodDayRateReturns,
-    lang,
-  )
+  const fileData = field.props.getFileContent?.(dayRateRecords, lang)
   if (!fileData) {
     throw Error('No valid file data recieved!')
-  }
-
-  if (isRefreshingRates) {
-    return (
-      <Box display="flex" justifyContent="center" paddingY={4}>
-        <LoadingDots />
-      </Box>
-    )
   }
 
   return (

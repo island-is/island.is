@@ -1,9 +1,9 @@
 import XLSX from 'xlsx'
-import { DayRateEntryMap } from './types'
+import { DayRateRecord } from './types'
 import { Locale } from '@island.is/shared/types'
 
 export const generateExcelSheet = (
-  dayRateEntryMap: DayRateEntryMap,
+  dayRateRecords: DayRateRecord[],
   locale: Locale,
 ): {
   filename: string
@@ -12,17 +12,29 @@ export const generateExcelSheet = (
 } => {
   const now = new Date()
   const lastMonthDate = new Date(now.getFullYear(), now.getMonth() - 1, 1)
-  const lastMonthIndex = lastMonthDate.getMonth().toString()
-  const lastMonthName = lastMonthDate.toLocaleString('is-IS', { month: 'long' })
-  const sheetData = [
-    ['Bílnúmer', `Dagar á daggjaldi í ${lastMonthName}`, 'Notaðir dagar'],
-    ...Object.entries(dayRateEntryMap)
-      .map(([permno, data]) => [
-        permno,
-        '',
-        '',
-      ]),
+  const lastMonthName = lastMonthDate
+    .toLocaleString('is-IS', { month: 'short' })
+    .replace(/\.$/, '')
+
+  const icelandicHeaders = [
+    'Bílnúmer',
+    `Dagar á daggjaldi í ${lastMonthName}`,
+    'Notaðir dagar',
   ]
+  const englishHeaders = [
+    'Vehicle number',
+    `Days on day rate in ${lastMonthName}`,
+    'Used days',
+  ]
+  const headers = locale === 'is' ? icelandicHeaders : englishHeaders
+
+  const rows = dayRateRecords.map((record) => [
+    record.permno,
+    record.prevPeriodTotalDays,
+    '',
+  ])
+
+  const sheetData = [headers, ...rows]
 
   const name = `${lastMonthDate.getFullYear()}_${lastMonthName.toLowerCase()}_daggjalds_notkun.xlsx`
   const worksheet: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(sheetData)

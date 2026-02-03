@@ -335,7 +335,7 @@
         ],
         "parameters": [
           {
-            "name": "entityId",
+            "name": "EntityId",
             "in": "path",
             "required": true,
             "schema": {

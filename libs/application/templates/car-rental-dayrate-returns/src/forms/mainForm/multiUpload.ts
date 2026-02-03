@@ -6,7 +6,7 @@ import {
   buildSection,
 } from '@island.is/application/core'
 import { generateExcelSheet } from '../../utils/generateExcelSheet'
-import { DayRateEntryMap } from '../../utils/types'
+import { DayRateRecord } from '../../utils/types'
 import { m } from '../../lib/messages'
 import { Locale } from '@island.is/shared/types'
 
@@ -34,8 +34,8 @@ export const multiUploadSection = buildSection({
             component: 'UploadCarDayRateUsage',
           },
           {
-            getFileContent: (dayRateEntryMap: DayRateEntryMap, locale: Locale) =>
-              generateExcelSheet(dayRateEntryMap, locale),
+            getFileContent: (dayRateRecords: DayRateRecord[], locale: Locale) =>
+              generateExcelSheet(dayRateRecords, locale),
           },
         ),
       ],

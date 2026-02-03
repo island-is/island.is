@@ -7,6 +7,12 @@ export interface CarUsageRecord {
   prevPeriodUsage: number
 }
 
+export interface DayRateRecord {
+  permno: string
+  prevPeriodTotalDays: number
+  dayRateEntryId: number
+}
+
 export interface CarUsageError {
   code: 1 | 2
   message: MessageDescriptor | string

@@ -91,7 +91,7 @@ export const m = {
     },
     registeredCount: {
       id: 'rsk.crdr.application:overview.registered.count',
-      defaultMessage: 'Fjöldi bifreiða á skrá',
+      defaultMessage: 'Fjöldi bifreiða á daggjaldi í síðasta mánuði',
       description: 'Registered vehicles count label',
     },
     dayRateCount: {
@@ -193,7 +193,7 @@ export const m = {
     stepsMessage: {
       id: 'rsk.crdr.application:multi.upload.steps#markdown',
       defaultMessage:
-        '1. Sækir sniðmátið \n\n2. Gerir viðeigandi breytingar á skjalinu \n\n3. Hleður upp skjalinu hér að neðan \n\nAth. Einungis ökutæki með gild bílnúmer verða sýnd í sniðmátinu',
+        '1. Sækir sniðmátið \n\n2. Gerir viðeigandi breytingar á skjalinu \n\n3. Hleður upp skjalinu hér að neðan',
       description: 'Bulk upload help steps',
     },
     templateButton: {
@@ -346,7 +346,8 @@ export const m = {
     },
     previousPeriodUsageRequired: {
       id: 'rsk.crdr.application:multi.upload.error.prev.usage.required',
-      defaultMessage: 'Notkun bíls á síðasta dagsfjölda þarf að vera til staðar!',
+      defaultMessage:
+        'Notkun bíls á síðasta dagsfjölda þarf að vera til staðar!',
       description: 'Previous period usage missing',
     },
     prevPeriodUsageGreaterThanPrevPeriodTotalDays: {
