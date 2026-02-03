@@ -261,7 +261,7 @@ export const UploadCarDayRateUsage = ({
           answers: {
             ...application.answers,
             carDayRateUsageCount,
-            carCategoryFile: [uploadedMeta],
+            carDayRateUsageFile: [uploadedMeta],
           },
         },
         locale,

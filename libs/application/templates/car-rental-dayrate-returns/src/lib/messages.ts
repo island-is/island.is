@@ -230,12 +230,12 @@ export const m = {
     errorMessageToUser: {
       id: 'rsk.crdr.application:multi.upload.error.message.to.user',
       defaultMessage:
-        'villur fundust. Hlaða má niður sniðmáti með villum og reynda aftur.',
+        'villur fundust. Hlaða má niður sniðmáti með villum og reyna aftur.',
       description: 'Error message to user',
     },
     noCarsToChangeFound: {
       id: 'rsk.crdr.application:multi.upload.error.no.cars',
-      defaultMessage: 'Engir breytingar fundust í skjalinu',
+      defaultMessage: 'Engar breytingar fundust í skjalinu',
       description: 'No cars to change found error',
     },
     invalidFileType: {
@@ -353,7 +353,7 @@ export const m = {
     },
     prevPeriodUsageGreaterThanPrevPeriodTotalDays: {
       id: 'rsk.crdr.application:multi.upload.error.prev.period.usage.greater.than.prev.period.total.days',
-      defaultMessage: 'Fleirri dagar notaðir en heildar dagsfjöldi!',
+      defaultMessage: 'Fleiri dagar notaðir en heildarfjöldi daga á daggjaldi',
       description:
         'Previous period usage greater than previous period total days',
     },

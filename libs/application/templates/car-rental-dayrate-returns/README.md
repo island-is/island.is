@@ -1,4 +1,4 @@
-# car-rental-fee-category
+# car-rental-dayrate-returns
 
 This template for an application was generated with the `nx generate-template car-rental-dayrate-returns` command.
 

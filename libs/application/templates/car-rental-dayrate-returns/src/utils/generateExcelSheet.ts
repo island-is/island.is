@@ -13,7 +13,7 @@ export const generateExcelSheet = (
   const now = new Date()
   const lastMonthDate = new Date(now.getFullYear(), now.getMonth() - 1, 1)
   const lastMonthName = lastMonthDate
-    .toLocaleString('is-IS', { month: 'short' })
+    .toLocaleString(locale === 'en' ? 'en-US' : 'is-IS', { month: 'short' })
     .replace(/\.$/, '')
 
   const icelandicHeaders = [
