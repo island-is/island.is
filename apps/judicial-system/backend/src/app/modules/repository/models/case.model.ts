@@ -30,7 +30,6 @@ import {
   CaseType,
   CourtDocument as TCourtDocument,
   CourtSessionType,
-  IndictmentCaseReviewDecision,
   IndictmentDecision,
   RequestSharedWithDefender,
   SessionArrangements,
