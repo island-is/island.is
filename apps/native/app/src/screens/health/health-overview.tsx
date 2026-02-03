@@ -46,6 +46,7 @@ import {
 } from '../../ui'
 import { ComponentRegistry } from '../../utils/component-registry'
 import { AppointmentCard } from '../appointments/components/appointment-card'
+import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 
 const ButtonWrapper = styled.View`
   flex-direction: row;
@@ -890,6 +891,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
         </InputRow>
       </Animated.ScrollView>
       <TopLine scrollY={scrollY} />
+      <BottomTabsIndicator index={4} total={5} />
     </>
   )
 }

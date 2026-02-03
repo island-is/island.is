@@ -339,6 +339,7 @@ export const decrement = (
     currentScreen: resultCurrentScreen,
     sections: resultSections,
     errors: [],
+    screenErrors: [],
   }
 }
 

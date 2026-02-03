@@ -710,12 +710,29 @@ export class LimitedAccessCaseService {
     )
 
     const allowedCaseFiles =
-      theCase.caseFiles?.filter(
-        (file) =>
-          file.isKeyAccessible &&
-          file.category &&
-          allowedCaseFileCategories.includes(file.category),
-      ) ?? []
+      theCase.caseFiles?.filter((file) => {
+        if (!file.isKeyAccessible || !file.category) {
+          return false
+        }
+
+        if (!allowedCaseFileCategories.includes(file.category)) {
+          return false
+        }
+
+        if (
+          (file.category === CaseFileCategory.CRIMINAL_RECORD ||
+            file.category === CaseFileCategory.CRIMINAL_RECORD_UPDATE) &&
+          file.defendantId
+        ) {
+          return Defendant.isConfirmedDefenderOfSpecificDefendantWithCaseFileAccess(
+            user.nationalId,
+            file.defendantId,
+            theCase.defendants,
+          )
+        }
+
+        return true
+      }) ?? []
 
     const promises: Promise<void>[] = []
     const filesToZip: { data: Buffer; name: string }[] = []
