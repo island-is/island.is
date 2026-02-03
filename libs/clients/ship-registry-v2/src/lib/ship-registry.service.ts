@@ -10,7 +10,6 @@ import {
 
 @Injectable()
 export class ShipRegistryClientV2Service {
-  // Example: Get ships owned by user
   async getShipsByOwner(user: User): Promise<ShipBaseInfoDto[]> {
     const response = await withAuthContext(user, () =>
       dataOr404Null(
@@ -23,7 +22,6 @@ export class ShipRegistryClientV2Service {
     return response ?? []
   }
 
-  // Example: Get ship details by registry number
   async getShipDetails(
     user: User,
     registryNumber: string,
