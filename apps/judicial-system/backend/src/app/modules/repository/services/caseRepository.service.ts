@@ -60,6 +60,8 @@ interface FindAllOptions {
   order?: FindOptions['order']
   limit?: FindOptions['limit']
   offset?: FindOptions['offset']
+  group?: FindOptions['group']
+  having?: FindOptions['having']
 }
 
 interface FindAndCountAllOptions {
@@ -216,6 +218,14 @@ export class CaseRepositoryService {
 
       if (options?.offset) {
         findOptions.offset = options.offset
+      }
+
+      if (options?.group) {
+        findOptions.group = options.group
+      }
+
+      if (options?.having) {
+        findOptions.having = options.having
       }
 
       const results = await this.caseModel.findAll(findOptions)
