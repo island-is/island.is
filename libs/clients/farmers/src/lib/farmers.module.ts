@@ -20,9 +20,11 @@ export class FarmersClientModule {
     idsClientConfig: ConfigType<typeof IdsClientConfig>,
   ) {
     client.setConfig({
-      baseUrl: `${xroadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
+      //baseUrl: `${xroadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
+      //(TEMPORARY)
+      baseUrl: 'https://staging.api.afurd.is',
       headers: {
-        'X-Road-Client': xroadConfig.xRoadClient,
+        //'X-Road-Client': xroadConfig.xRoadClient,
         Accept: 'application/json',
       },
       fetch: createEnhancedFetch({
