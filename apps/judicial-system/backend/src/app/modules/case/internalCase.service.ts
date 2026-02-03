@@ -1114,7 +1114,9 @@ export class InternalCaseService {
     user: TUser,
     courtDocuments: PoliceDocument[],
   ): Promise<boolean> {
-    const originalAncestor = await this.findOriginalAncestor(theCase)
+    const originalAncestor = isIndictmentCase(theCase.type)
+      ? theCase.splitCaseId ?? theCase.id
+      : await this.findOriginalAncestor(theCase)
 
     const validToDate =
       (restrictionCases.includes(theCase.type) &&
@@ -1575,6 +1577,7 @@ export class InternalCaseService {
       },
     })
   }
+
   async getIndictmentCasesWithVerdictAppealDeadlineOnTargetDate(
     indictmentReviewerId: string,
     targetDate: Date,
