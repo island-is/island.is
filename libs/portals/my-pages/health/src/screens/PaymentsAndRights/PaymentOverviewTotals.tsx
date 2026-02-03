@@ -38,7 +38,6 @@ import {
 } from './Payments.generated'
 import * as styles from './Payments.css'
 import { PaymentsWrapper } from './wrapper/PaymentsWrapper'
-import { RightsPortalPaymentOverviewTotals } from '@island.is/api/schema'
 
 export const PaymentOverviewTotals = () => {
   const { formatMessage, lang } = useLocale()
@@ -47,9 +46,6 @@ export const PaymentOverviewTotals = () => {
   const [startDate, setStartDate] = useState<Date>(getFirstDayOfPreviousYear)
   const [endDate, setEndDate] = useState<Date>(getLastDayOfPreviousYear)
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null)
-
-  const [totalsItem, setTotalsItem] =
-    useState<RightsPortalPaymentOverviewTotals>()
 
   const isMobile = width < theme.breakpoints.md
 
@@ -62,18 +58,15 @@ export const PaymentOverviewTotals = () => {
   const [
     lazyTotalsQuery,
     { loading: totalsLoading, error: totalsError, data: totalsData },
-  ] = useGetPaymentOverviewTotalsLazyQuery({
-    onCompleted(data) {
-      const item = data.rightsPortalPaymentOverviewTotals?.items?.[0]
-      setTotalsItem(item)
-    },
-  })
+  ] = useGetPaymentOverviewTotalsLazyQuery()
+
+  const totalsResult = totalsData?.rightsPortalPaymentOverviewTotals
+  const totalsItem = totalsResult?.items?.[0]
 
   const [fetchTotalsPdf] = useGetPaymentOverviewTotalsPdfLazyQuery()
 
   const serviceTypesResult =
     serviceTypes?.rightsPortalPaymentOverviewTotalsServiceTypes
-  const totalsResult = totalsData?.rightsPortalPaymentOverviewTotals
   const services = serviceTypesResult?.items
 
   const serviceTypeNameByCode = useMemo(
@@ -311,27 +304,25 @@ export const PaymentOverviewTotals = () => {
                   </T.Body>
                 </T.Table>
               ) : (
-                <Box>
-                  <MobileTable
-                    rows={rows.map((item) => ({
-                      title: item.serviceTypeName,
-                      data: [
-                        {
-                          title: formatMessage(messages.totalPayment),
-                          content: amountFormat(item.fullCost),
-                        },
-                        {
-                          title: formatMessage(messages.insuranceShare),
-                          content: amountFormat(item.copayCost),
-                        },
-                        {
-                          title: formatMessage(messages.yourPayment),
-                          content: amountFormat(item.patientCost),
-                        },
-                      ],
-                    }))}
-                  />
-                </Box>
+                <MobileTable
+                  rows={rows.map((item) => ({
+                    title: item.serviceTypeName,
+                    data: [
+                      {
+                        title: formatMessage(messages.totalPayment),
+                        content: amountFormat(item.fullCost),
+                      },
+                      {
+                        title: formatMessage(messages.insuranceShare),
+                        content: amountFormat(item.copayCost),
+                      },
+                      {
+                        title: formatMessage(messages.yourPayment),
+                        content: amountFormat(item.patientCost),
+                      },
+                    ],
+                  }))}
+                />
               )}
             </Box>
           </Stack>
