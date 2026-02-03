@@ -178,8 +178,6 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
   const origin = getConfig().apiUrl.replace(/\/api$/, '')
   const [refetching, setRefetching] = useState(false)
 
-  const [isLoadingFeatureFlags, setIsLoadingFeatureFlags] = useState(true)
-
   const { width } = useWindowDimensions()
   const buttonStyle = { flex: 1, minWidth: width * 0.5 - theme.spacing[3] }
   const scrollY = useRef(new Animated.Value(0)).current
@@ -210,23 +208,13 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
   )
   const isAppointmentsEnabled = useFeatureFlag('isAppointmentsEnabled', false, null)
 
-  useEffect(() => {
-    setIsLoadingFeatureFlags(
-      isVaccinationsEnabled === null ||
-      isMedicineDelegationEnabled === null ||
-      isPrescriptionsEnabled === null ||
-      isOrganDonationEnabled === null ||
-      isQuestionnaireFeatureEnabled === null ||
-      isAppointmentsEnabled === null
-    )
-  }, [
-    isVaccinationsEnabled,
-    isMedicineDelegationEnabled,
-    isPrescriptionsEnabled,
-    isOrganDonationEnabled,
-    isQuestionnaireFeatureEnabled,
-    isAppointmentsEnabled
-  ])
+  const isLoadingFeatureFlags = isVaccinationsEnabled === null ||
+    isMedicineDelegationEnabled === null ||
+    isPrescriptionsEnabled === null ||
+    isOrganDonationEnabled === null ||
+    isQuestionnaireFeatureEnabled === null ||
+    isAppointmentsEnabled === null
+
 
   const now = useMemo(() => new Date().toISOString(), [])
 
