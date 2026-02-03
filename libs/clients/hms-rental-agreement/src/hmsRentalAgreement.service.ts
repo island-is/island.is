@@ -8,10 +8,6 @@ import {
 } from './dtos/rentalAgreements.dto'
 import { INACTIVE_AGREEMENT_STATUSES } from './constants'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import {
-  ContractDocumentItemDto,
-  mapContractDocumentItemDto,
-} from './dtos/contractDocument'
 
 @Injectable()
 export class HmsRentalAgreementService {

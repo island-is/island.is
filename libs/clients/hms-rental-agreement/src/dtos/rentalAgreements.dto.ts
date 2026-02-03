@@ -1,4 +1,4 @@
-import { Contract, ContractDocumentItem } from '../../gen/fetch'
+import { Contract } from '../../gen/fetch'
 import { AgreementStatusType, TemporalType } from '../types'
 import {
   ContractDocumentItemDto,
