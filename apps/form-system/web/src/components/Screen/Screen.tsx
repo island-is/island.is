@@ -1,6 +1,6 @@
 import { FormSystemField } from '@island.is/api/schema'
 import { SectionTypes } from '@island.is/form-system/ui'
-import { Box, GridColumn, Text } from '@island.is/island-ui/core'
+import { AlertMessage, Box, GridColumn, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useState } from 'react'
 import { useApplicationContext } from '../../context/ApplicationProvider'
@@ -39,6 +39,22 @@ export const Screen = () => {
         span={['12/12', '12/12', '10/12', '7/9']}
         offset={['0', '0', '1/12', '1/9']}
       >
+        {state.screenErrors &&
+          state.screenErrors?.length > 0 &&
+          state.screenErrors.map((error, idx) => (
+            <Box marginBottom={[4, 4, 5]} key={`screen-error-${idx}`}>
+              <AlertMessage
+                type="error"
+                title={error.title?.[lang]}
+                message={
+                  <Text variant="small" whiteSpace="breakSpaces">
+                    {error.message?.[lang]}
+                  </Text>
+                }
+              />
+            </Box>
+          ))}
+
         <Text variant="h2" as="h2" marginBottom={1}>
           {currentSectionType !== SectionTypes.PREMISES &&
             currentSectionType !== SectionTypes.PARTIES &&

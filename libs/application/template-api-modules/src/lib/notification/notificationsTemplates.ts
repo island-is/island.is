@@ -18,6 +18,8 @@ export enum NotificationType {
   NewPrimarySchoolPayerApproved = 'NewPrimarySchoolPayerApprovedNotification',
   NewPrimarySchoolPayerRejected = 'NewPrimarySchoolPayerRejectedNotification',
   TransferOfVehicleOwnershipPruned = 'TransferOfVehicleOwnershipPrunedNotification',
+  ChangeCoOwnerOfVehiclePruned = 'ChangeCoOwnerOfVehiclePrunedNotification',
+  ChangeOperatorOfVehiclePruned = 'ChangeOperatorOfVehiclePrunedNotification',
 }
 
 export const NotificationConfig = {
@@ -100,6 +102,14 @@ export const NotificationConfig = {
   },
   [NotificationType.TransferOfVehicleOwnershipPruned]: {
     templateId: 'HNIPP.AS.TA.TVO.PRUNED',
+    keys: {},
+  },
+  [NotificationType.ChangeCoOwnerOfVehiclePruned]: {
+    templateId: 'HNIPP.AS.TA.CCOV.PRUNED',
+    keys: {},
+  },
+  [NotificationType.ChangeOperatorOfVehiclePruned]: {
+    templateId: 'HNIPP.AS.TA.COV.PRUNED',
     keys: {},
   },
 }

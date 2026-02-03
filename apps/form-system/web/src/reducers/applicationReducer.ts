@@ -27,6 +27,7 @@ export const initialState = {
   currentSection: { data: {} as FormSystemSection, index: 0 },
   currentScreen: undefined,
   errors: [],
+  screenErrors: [],
 }
 
 export const initialReducer = (state: ApplicationState): ApplicationState => {
@@ -178,9 +179,11 @@ export const applicationReducer = (
       return state
 
     case 'SUBMITTED': {
+      const { submitted, screenErrors } = action.payload
       return {
         ...state,
-        submitted: action.payload,
+        submitted,
+        screenErrors,
       }
     }
   }
