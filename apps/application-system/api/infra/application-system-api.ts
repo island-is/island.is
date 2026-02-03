@@ -472,10 +472,8 @@ export const serviceSetup = (services: {
         '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
       HMS_CONTRACTS_AUTH_CLIENT_SECRET:
         '/k8s/application-system-api/HMS_CONTRACTS_AUTH_CLIENT_SECRET',
-      // Needed since libs/application/template-api-modules/src/lib/modules/templates/hh/courses submits tickets to Zendesk of Heilsugæslan á höfuðborgarsvæðinu
-      ZENDESK_CONTACT_FORM_EMAIL:
+      HH_ZENDESK_CONTACT_FORM_EMAIL:
         '/k8s/api/ZENDESK_HEILSUGAESLA_HOFUDBORGARSVAEDISINS_CONTACT_FORM_EMAIL',
-      ZENDESK_CONTACT_FORM_TOKEN: '/k8s/api/ZENDESK_CONTACT_FORM_TOKEN',
     })
     .db()
     .migrations()

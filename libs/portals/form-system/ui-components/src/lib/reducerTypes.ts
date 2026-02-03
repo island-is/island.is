@@ -1,6 +1,7 @@
-import {
+import type {
   FormSystemApplication,
   FormSystemScreen,
+  FormSystemScreenErrorMessage,
   FormSystemSection,
 } from '@island.is/api/schema'
 
@@ -17,6 +18,7 @@ export interface ApplicationState {
     data?: FormSystemScreen
   }
   errors?: string[]
+  screenErrors?: FormSystemScreenErrorMessage[]
   isValid?: boolean
   submitted?: boolean
 }

@@ -20,6 +20,8 @@ export type UseAdvertsVariables = {
   dateFrom?: string
   dateTo?: string
   year?: string
+  sortBy?: string
+  direction?: string
 }
 
 export type UseAdvertsInput = {
