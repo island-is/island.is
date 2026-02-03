@@ -1,5 +1,6 @@
 import { PortalModule } from '@island.is/portals/core'
-import { lazy } from 'react'
+import { lazy, ReactNode } from 'react'
+import { useNamespaces } from '@island.is/localization'
 import { m } from './lib/messages'
 import { SignatureCollectionPaths } from './lib/paths'
 import {
@@ -17,6 +18,15 @@ import {
   allowedScopesAdminAndMunicipality,
   allowedScopesMunicipality,
 } from './lib/utils'
+
+const SignatureCollectionNamespaceProvider = ({
+  children,
+}: {
+  children: ReactNode
+}) => {
+  useNamespaces('admin-portal.signature-collection')
+  return <>{children}</>
+}
 
 /* Parliamentary */
 const ParliamentaryRoot = lazy(() =>
@@ -54,17 +64,19 @@ export const signatureCollectionModule: PortalModule = {
       name: m.municipalCollectionTitle,
       path: SignatureCollectionPaths.MunicipalRoot,
       element: (
-        <AllMunicipalities
-          // If the user is NOT an admin (LKS or ÞÍ) but a municipality
-          isMunicipality={
-            !props.userInfo.scopes.some((scope) =>
-              allowedScopesAdmin.includes(scope),
-            ) &&
-            props.userInfo.scopes.some((scope) =>
-              allowedScopesMunicipality.includes(scope),
-            )
-          }
-        />
+        <SignatureCollectionNamespaceProvider>
+          <AllMunicipalities
+            // If the user is NOT an admin (LKS or ÞÍ) but a municipality
+            isMunicipality={
+              !props.userInfo.scopes.some((scope) =>
+                allowedScopesAdmin.includes(scope),
+              ) &&
+              props.userInfo.scopes.some((scope) =>
+                allowedScopesMunicipality.includes(scope),
+              )
+            }
+          />
+        </SignatureCollectionNamespaceProvider>
       ),
       loader: municipalListsLoader(props),
       enabled: props.userInfo.scopes.some((scope) =>
@@ -74,7 +86,11 @@ export const signatureCollectionModule: PortalModule = {
     {
       name: m.municipalCollectionTitle,
       path: SignatureCollectionPaths.SingleMunicipality,
-      element: <Municipality />,
+      element: (
+        <SignatureCollectionNamespaceProvider>
+          <Municipality />
+        </SignatureCollectionNamespaceProvider>
+      ),
       loader: municipalListsLoader(props),
       enabled: props.userInfo.scopes.some((scope) =>
         allowedScopesAdminAndMunicipality.includes(scope),
@@ -83,7 +99,11 @@ export const signatureCollectionModule: PortalModule = {
     {
       name: m.municipalCollectionTitle,
       path: SignatureCollectionPaths.MunicipalList,
-      element: <MunicipalList />,
+      element: (
+        <SignatureCollectionNamespaceProvider>
+          <MunicipalList />
+        </SignatureCollectionNamespaceProvider>
+      ),
       loader: municipalListLoader(props),
       enabled: props.userInfo.scopes.some((scope) =>
         allowedScopesAdminAndMunicipality.includes(scope),
@@ -94,7 +114,11 @@ export const signatureCollectionModule: PortalModule = {
     {
       name: m.signatureListsTitle,
       path: SignatureCollectionPaths.ParliamentaryRoot,
-      element: <ParliamentaryRoot />,
+      element: (
+        <SignatureCollectionNamespaceProvider>
+          <ParliamentaryRoot />
+        </SignatureCollectionNamespaceProvider>
+      ),
       loader: parliamentaryListsLoader(props),
       // Hide the nav for this route if the user does not have the required scopes
       navHide: !props.userInfo.scopes.some((scope) =>
@@ -107,7 +131,11 @@ export const signatureCollectionModule: PortalModule = {
     {
       name: m.signatureListsConstituencyTitle,
       path: SignatureCollectionPaths.ParliamentaryConstituency,
-      element: <ParliamentaryConstituency />,
+      element: (
+        <SignatureCollectionNamespaceProvider>
+          <ParliamentaryConstituency />
+        </SignatureCollectionNamespaceProvider>
+      ),
       loader: parliamentaryListsLoader(props),
       navHide: !props.userInfo.scopes.some((scope) =>
         allowedScopesAdmin.includes(scope),
@@ -119,7 +147,11 @@ export const signatureCollectionModule: PortalModule = {
     {
       name: m.singleList,
       path: SignatureCollectionPaths.ParliamentaryConstituencyList,
-      element: <ParliamentaryList />,
+      element: (
+        <SignatureCollectionNamespaceProvider>
+          <ParliamentaryList />
+        </SignatureCollectionNamespaceProvider>
+      ),
       loader: parliamentaryListLoader(props),
       navHide: !props.userInfo.scopes.some((scope) =>
         allowedScopesAdmin.includes(scope),
@@ -133,7 +165,11 @@ export const signatureCollectionModule: PortalModule = {
     {
       name: m.signatureListsTitle,
       path: SignatureCollectionPaths.PresidentialListOfCandidates,
-      element: <AllCandidates />,
+      element: (
+        <SignatureCollectionNamespaceProvider>
+          <AllCandidates />
+        </SignatureCollectionNamespaceProvider>
+      ),
       loader: presidentialListsLoader(props),
       // Hide the nav for this route if the user does not have the required scopes
       navHide: !props.userInfo.scopes.some((scope) =>
@@ -146,7 +182,11 @@ export const signatureCollectionModule: PortalModule = {
     {
       name: m.signatureListsTitle,
       path: SignatureCollectionPaths.PresidentialCandidateLists,
-      element: <CandidateLists />,
+      element: (
+        <SignatureCollectionNamespaceProvider>
+          <CandidateLists />
+        </SignatureCollectionNamespaceProvider>
+      ),
       loader: presidentialListsLoader(props),
       navHide: !props.userInfo.scopes.some((scope) =>
         allowedScopesAdmin.includes(scope),
@@ -158,7 +198,11 @@ export const signatureCollectionModule: PortalModule = {
     {
       name: m.singleList,
       path: SignatureCollectionPaths.PresidentialList,
-      element: <List />,
+      element: (
+        <SignatureCollectionNamespaceProvider>
+          <List />
+        </SignatureCollectionNamespaceProvider>
+      ),
       loader: presidentialListLoader(props),
       navHide: !props.userInfo.scopes.some((scope) =>
         allowedScopesAdmin.includes(scope),
