@@ -18,7 +18,7 @@ export const DelegationsDomainSelect = ({
     <SkeletonLoader height={71} />
   ) : (
     <Select
-      label={formatMessage(m.accessControl)}
+      label={formatMessage(m.digitalDelegations)}
       size="xs"
       name="domain"
       backgroundColor="blue"

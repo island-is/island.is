@@ -3,11 +3,10 @@ import { useQuery } from '@apollo/client'
 import {
   Box,
   Text,
-  AccordionItem,
-  Accordion,
   Stack,
   SkeletonLoader,
   AlertMessage,
+  AccordionCard,
 } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { IntroHeader } from '@island.is/portals/core'
@@ -17,6 +16,7 @@ import {
   AuthScopeCategoriesDocument,
   AuthScopeCategoriesQuery,
 } from './ServiceCategories.generated'
+import { ScopesTable } from '../../components/ScopesTable/ScopesTable'
 
 export const ServiceCategories = () => {
   const { formatMessage, lang } = useLocale()
@@ -83,48 +83,34 @@ export const ServiceCategories = () => {
           </Text>
 
           {!loading && !error && tags.length > 0 && (
-            <Accordion dividerOnTop={false} dividerOnBottom={false}>
+            <Box marginTop={2} display="flex" flexDirection="column" rowGap={2}>
               {tags.map((tag) => (
-                <AccordionItem
+                <AccordionCard
                   key={tag.id}
                   id={tag.id}
                   label={tag.title}
                   labelVariant="h3"
                   labelUse="h2"
                   iconVariant="default"
+                  visibleContent={tag.description}
                 >
                   <Box paddingY={3}>
-                    {tag.description && (
-                      <Text marginBottom={3}>{tag.description}</Text>
-                    )}
                     {tag.scopes.length === 0 ? (
                       <Text variant="small" color="dark300">
                         {formatMessage(m.noScopesInCategory)}
                       </Text>
                     ) : (
-                      <Stack space={2}>
-                        {tag.scopes.map((scope) => (
-                          <Box
-                            key={scope.name}
-                            paddingLeft={2}
-                            paddingY={2}
-                            borderLeftWidth="standard"
-                            borderColor="blue200"
-                          >
-                            <Text variant="h5" marginBottom={1}>
-                              {scope.displayName}
-                            </Text>
-                            {scope.description && (
-                              <Text variant="small">{scope.description}</Text>
-                            )}
-                          </Box>
-                        ))}
-                      </Stack>
+                      // <Stack space={2}>
+                      //   {tag.scopes.map((scope) => (
+
+                      //   ))}
+                      // </Stack>
+                      <ScopesTable />
                     )}
                   </Box>
-                </AccordionItem>
+                </AccordionCard>
               ))}
-            </Accordion>
+            </Box>
           )}
         </Box>
 
@@ -134,48 +120,34 @@ export const ServiceCategories = () => {
           </Text>
 
           {!loading && !error && categories.length > 0 && (
-            <Accordion dividerOnTop={false} dividerOnBottom={false}>
+            <Box marginTop={2} display="flex" flexDirection="column" rowGap={2}>
               {categories.map((cat) => (
-                <AccordionItem
+                <AccordionCard
                   key={cat.id}
                   id={cat.id}
                   label={cat.title}
                   labelVariant="h3"
                   labelUse="h2"
                   iconVariant="default"
+                  visibleContent={cat.description}
                 >
                   <Box paddingY={3}>
-                    {cat.description && (
-                      <Text marginBottom={3}>{cat.description}</Text>
-                    )}
                     {cat.scopes.length === 0 ? (
                       <Text variant="small" color="dark300">
                         {formatMessage(m.noScopesInCategory)}
                       </Text>
                     ) : (
-                      <Stack space={2}>
-                        {cat.scopes.map((scope) => (
-                          <Box
-                            key={scope.name}
-                            paddingLeft={2}
-                            paddingY={2}
-                            borderLeftWidth="standard"
-                            borderColor="blue200"
-                          >
-                            <Text variant="h5" marginBottom={1}>
-                              {scope.displayName}
-                            </Text>
-                            {scope.description && (
-                              <Text variant="small">{scope.description}</Text>
-                            )}
-                          </Box>
-                        ))}
-                      </Stack>
+                      // <Stack space={2}>
+                      //   {cat.scopes.map((scope) => (
+
+                      //   ))}
+                      // </Stack>
+                      <ScopesTable />
                     )}
                   </Box>
-                </AccordionItem>
+                </AccordionCard>
               ))}
-            </Accordion>
+            </Box>
           )}
         </Box>
       </Box>

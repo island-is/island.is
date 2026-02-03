@@ -258,7 +258,7 @@ const GrantAccess = () => {
                   <SelectController
                     id="domainName"
                     name="domainName"
-                    label={formatMessage(m.accessControl)}
+                    label={formatMessage(m.digitalDelegations)}
                     placeholder={formatMessage(m.chooseDomain)}
                     error={errors.domainName?.message}
                     options={options}

@@ -74,6 +74,10 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:accessControlNew',
     defaultMessage: 'Aðgangsstýring (Nýtt)',
   },
+  digitalDelegations: {
+    id: 'sp.access-control-delegations:digital-delegations',
+    defaultMessage: 'Rafræn umboð',
+  },
   serviceCategories: {
     id: 'sp.access-control-delegations:serviceCategories',
     defaultMessage: 'Þjónustuflokkar',
@@ -423,10 +427,6 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:procuration-holder',
     defaultMessage: 'Prókúruhafi',
   },
-  generalMandate: {
-    id: 'sp.access-control-delegations:general-mandate',
-    defaultMessage: 'Allsherjarumboð',
-  },
   legalGuardian: {
     id: 'sp.access-control-delegations:legal-guardian',
     defaultMessage: 'Forsjá barns 16-19 ára',
@@ -434,6 +434,14 @@ export const m = defineMessages({
   legalGuardianMinor: {
     id: 'sp.access-control-delegations:legal-guardian-minor',
     defaultMessage: 'Forsjá barns 0-15 ára',
+  },
+  legalGuardianTableTitle: {
+    id: 'sp.access-control-delegations:legal-guardian-table-title',
+    defaultMessage: 'Börn í þinni forsjá',
+  },
+  procurationHolderTableTitle: {
+    id: 'sp.access-control-delegations:procuration-holder-table-title',
+    defaultMessage: 'Prókúruhafar í þinni forsjá',
   },
   registry: {
     id: 'sp.access-control-delegations:registry',

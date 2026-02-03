@@ -104,6 +104,10 @@ export const m = defineMessages({
     id: 'portals:accessControl',
     defaultMessage: 'Aðgangsstýring',
   },
+  digitalDelegations: {
+    id: 'portals:digitalDelegations',
+    defaultMessage: 'Rafræn umboð',
+  },
   accessControlDelegations: {
     id: 'portals:accessControlDelegations',
     defaultMessage: 'Umboð',
