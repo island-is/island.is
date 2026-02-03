@@ -13,7 +13,6 @@ export class RskRentalDayRateClient {
   constructor(config: Configuration) {
     this.defaultApi = new DayRateApi(config)
     this.configuration = config
-    
   }
 
   defaultApiWithAuth(auth: Auth) {
