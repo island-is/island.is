@@ -564,7 +564,7 @@ export const m = defineMessages({
   unlockListDescription: {
     id: 'admin-portal.signature-collection:unlockListDescription',
     defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vantar texta hér.',
+      'Ef söfnun er aflæst opnast fyrir skráningu meðmæla og afturköllun þeirra meðal kjósenda.',
     description: '',
   },
   lockListSuccess: {
