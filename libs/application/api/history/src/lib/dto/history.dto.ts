@@ -15,6 +15,11 @@ export class HistoryResponseDto {
   @IsString()
   log?: string
 
+  @ApiProperty()
+  @Expose()
+  @IsString()
+  subLog?: string
+
   constructor(
     timeStamp: Date,
     message: StaticText,
@@ -25,7 +30,9 @@ export class HistoryResponseDto {
     if (message) {
       this.log = formatMessage(message)
       if (subjectAndActorText) {
-        this.log += subjectAndActorText
+        this.subLog = subjectAndActorText
+      } else {
+        this.subLog = undefined
       }
     } else {
       this.log = undefined
