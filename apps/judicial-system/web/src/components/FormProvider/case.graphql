@@ -48,6 +48,7 @@ query Case($input: CaseQueryInput!) {
       punishmentType
       isAlternativeService
       alternativeServiceDescription
+      isDrivingLicenseSuspended
       subpoenas {
         id
         created
