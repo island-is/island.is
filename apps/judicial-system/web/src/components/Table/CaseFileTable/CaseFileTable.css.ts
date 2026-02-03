@@ -11,3 +11,12 @@ export const noWrapColumn = style({
     },
   },
 })
+
+export const acceptedFile = style({
+  color: theme.color.blue400,
+})
+
+export const rejectedFile = style({
+  color: theme.color.dark400,
+  textDecoration: 'line-through',
+})

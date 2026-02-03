@@ -2,7 +2,7 @@ import { option } from 'fp-ts'
 import { filterMap } from 'fp-ts/lib/Array'
 import { pipe } from 'fp-ts/lib/function'
 import pick from 'lodash/pick'
-import { Includeable, Op, Transaction } from 'sequelize'
+import { Includeable, literal, Op, Transaction } from 'sequelize'
 
 import {
   forwardRef,
@@ -1946,35 +1946,88 @@ export class CaseService {
     })
   }
 
-  getConnectedIndictmentCases(
-    caseId: string,
-    defendant: Defendant,
-  ): Promise<Case[]> {
+  async getConnectedIndictmentCases(theCase: Case): Promise<Case[]> {
+    if (!theCase.defendants || theCase.defendants.length === 0) {
+      return []
+    }
+
+    // Build "match any of these defendants" conditions
+    const defendantOrConditions = theCase.defendants.map((defendant) =>
+      defendant.noNationalId
+        ? { nationalId: defendant.nationalId, name: defendant.name }
+        : {
+            nationalId: {
+              [Op.in]: normalizeAndFormatNationalId(defendant.nationalId),
+            },
+          },
+    )
+
     return this.caseRepositoryService.findAll({
       include: [
-        { model: Institution, as: 'court' },
+        { model: Institution, as: 'court', attributes: ['id', 'name'] },
         {
           model: Defendant,
           as: 'defendants',
           required: true,
-          where: defendant.noNationalId
-            ? { nationalId: defendant.nationalId, name: defendant.name }
-            : {
-                nationalId: {
-                  [Op.in]: normalizeAndFormatNationalId(defendant.nationalId),
-                },
-              },
+          attributes: ['id', 'noNationalId', 'nationalId', 'name'],
+          // At least one matching defendant per condition
+          where: { [Op.or]: defendantOrConditions },
         },
       ],
-      attributes: ['id', 'courtCaseNumber', 'type', 'state'],
+      attributes: ['id', 'courtCaseNumber'],
       where: {
         [Op.and]: {
           isArchived: false,
           type: CaseType.INDICTMENT,
-          id: { [Op.ne]: caseId },
-          state: CaseState.RECEIVED,
+          id: { [Op.ne]: theCase.id },
+          state: [CaseState.SUBMITTED, CaseState.RECEIVED],
         },
       },
+    })
+  }
+
+  async getCandidateMergeCases(theCase: Case): Promise<Case[]> {
+    if (!theCase.defendants || theCase.defendants.length === 0) {
+      return []
+    }
+
+    // Build "match any of these defendants" conditions
+    const defendantOrConditions = theCase.defendants.map((defendant) =>
+      defendant.noNationalId
+        ? { nationalId: defendant.nationalId, name: defendant.name }
+        : {
+            nationalId: {
+              [Op.in]: normalizeAndFormatNationalId(defendant.nationalId),
+            },
+          },
+    )
+
+    const expectedCount = theCase.defendants.length
+
+    return this.caseRepositoryService.findAll({
+      include: [
+        {
+          model: Defendant,
+          as: 'defendants',
+          required: true,
+          attributes: [],
+          // At least one matching defendant per condition
+          where: { [Op.or]: defendantOrConditions },
+        },
+      ],
+      attributes: ['id', 'courtCaseNumber'],
+      where: {
+        [Op.and]: {
+          isArchived: false,
+          id: { [Op.ne]: theCase.id },
+          type: CaseType.INDICTMENT,
+          state: CaseState.RECEIVED,
+          courtId: theCase.courtId,
+        },
+      },
+      // Ensure all defendants matched by grouping and counting
+      group: ['Case.id'],
+      having: literal(`COUNT(DISTINCT "defendants"."id") = ${expectedCount}`),
     })
   }
 

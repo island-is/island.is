@@ -92,7 +92,7 @@ export class CourtDocumentService {
     courtDocumentId: string,
     transaction: Transaction,
   ): Promise<boolean> {
-    await this.courtDocumentRepositoryService.delete(
+    await this.courtDocumentRepositoryService.removeFromCourtSession(
       caseId,
       courtSessionId,
       courtDocumentId,

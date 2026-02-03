@@ -42,23 +42,60 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
     auth,
   }: TemplateApiModuleActionProps): Promise<CurrentVehicleWithMilage[]> {
     try {
-      const [carsWithMilage, carsWithStatuses] = await Promise.all([
+      const pageSize = 500
+      const concurrency = 3
+
+      const carsWithMilageData: Array<{
+        permno?: string | null
+        latestMileage?: number | null
+      }> = []
+
+      const fetchPage = (page: number) =>
         this.vehiclesApiWithAuth(auth).currentvehicleswithmileageandinspGet({
           showOwned: true,
           showCoowned: true,
           showOperated: true,
-          page: 0,
-          pageSize: 100000,
+          page,
+          pageSize,
           onlyMileageRequiredVehicles: false,
           onlyMileageRegisterableVehicles: false,
-        }),
-        this.vehiclesApiWithAuth(auth).currentVehiclesGet({
-          persidNo: auth.nationalId,
-          showOwned: true,
-          showCoowned: true,
-          showOperated: true,
-        }),
-      ])
+        })
+
+      const firstResponse = await fetchPage(1)
+      const firstPageData = firstResponse.data ?? []
+      carsWithMilageData.push(...firstPageData)
+
+      const totalPages = Math.max(1, firstResponse.totalPages ?? 1)
+      const startPage = firstResponse.pageNumber ?? 1
+
+      if (totalPages > startPage) {
+        const remainingPages = Array.from(
+          { length: totalPages - startPage },
+          (_, index) => startPage + 1 + index,
+        )
+
+        for (let i = 0; i < remainingPages.length; i += concurrency) {
+          const batch = remainingPages.slice(i, i + concurrency)
+          const responses = await Promise.all(batch.map(fetchPage))
+
+          for (const response of responses) {
+            const pageData = response.data ?? []
+            if (pageData.length === 0) {
+              continue
+            }
+            carsWithMilageData.push(...pageData)
+          }
+        }
+      }
+
+      const carsWithStatuses = await this.vehiclesApiWithAuth(
+        auth,
+      ).currentVehiclesGet({
+        persidNo: auth.nationalId,
+        showOwned: true,
+        showCoowned: true,
+        showOperated: true,
+      })
 
       const carIsOutOfUseDict = carsWithStatuses.reduce((acc, vehicle) => {
         if (vehicle.permno) {
@@ -68,7 +105,7 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
       }, {} as Record<string, boolean>)
 
       return (
-        carsWithMilage.data
+        carsWithMilageData
           ?.filter(
             (vehicle) =>
               vehicle.permno &&
