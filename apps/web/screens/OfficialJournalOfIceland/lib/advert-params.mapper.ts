@@ -43,5 +43,13 @@ export const getAdvertParams = (params?: UseAdvertsVariables) => {
     variables.year = params.year
   }
 
+  if (params?.sortBy) {
+    variables.sortBy = params.sortBy
+  }
+
+  if (params?.direction) {
+    variables.direction = params.direction
+  }
+
   return variables
 }

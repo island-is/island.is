@@ -10,6 +10,8 @@ import {
   Button,
   DatePicker,
   Divider,
+  DropdownMenu,
+  Inline,
   Input,
   Pagination,
   Select,
@@ -61,6 +63,7 @@ import {
 import { ORGANIZATION_SLUG } from './constants'
 import { useAdverts } from './hooks'
 import { m } from './messages'
+import * as styles from './OJOIPage.css'
 
 const DEBOUNCE_MS = 600
 
@@ -76,6 +79,9 @@ type OJOISearchParams = {
   sida?: number
   staerd?: number
   year?: string
+  sortBy?: string
+  direction?: string
+  sort?: string // format: 'date-desc', 'date-asc', 'number-desc', 'number-asc'
 }
 
 const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
@@ -104,6 +110,8 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
     defaultSearchParams.q,
   )
 
+  const [sortBy, direction] = defaultSearchParams.sort?.split('-') ?? []
+
   const { adverts, paging, loading, error, refetch } = useAdverts({
     vars: {
       department: [defaultSearchParams.deild],
@@ -116,6 +124,8 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
       page: defaultSearchParams.sida,
       pageSize: defaultSearchParams.staerd,
       year: defaultSearchParams.year,
+      sortBy: sortBy,
+      direction: direction,
     },
     fallbackData: initialAdverts,
   })
@@ -131,6 +141,7 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
     dagsTil: defaultSearchParams.dagsTil,
     sida: defaultSearchParams.sida ?? 1,
     year: defaultSearchParams.year,
+    sort: defaultSearchParams.sort,
     staerd: defaultSearchParams.staerd,
   })
 
@@ -161,6 +172,18 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
           'dagsTil',
           'year',
           'staerd', // items per page change -> go back to page 1
+          'sort',
+        ]
+
+        const RESET_SORTING_ON_CHANGE: Array<keyof typeof prev> = [
+          'q',
+          'deild',
+          'tegund',
+          'malaflokkur',
+          'stofnun',
+          'dagsFra',
+          'dagsTil',
+          'year',
         ]
         const isResetKey = RESET_ON_CHANGE.includes(key)
 
@@ -178,6 +201,7 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
           [key]: parsed,
           sida: nextPage,
           ...(shouldClearType ? { tegund: '' } : {}),
+          ...(RESET_SORTING_ON_CHANGE.includes(key) ? { sort: undefined } : {}),
         }
 
         if (hydrated) {
@@ -193,6 +217,8 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
             shallow: true,
           })
 
+          const [sortBy, direction] = next.sort?.split('-') ?? []
+
           refetch({
             input: {
               department: [next.deild].filter(Boolean),
@@ -205,6 +231,8 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
               page: next.sida,
               pageSize: next.staerd,
               year: next.year,
+              sortBy: sortBy,
+              direction: direction,
             },
           })
         }
@@ -240,6 +268,7 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
       sida: 1,
       staerd: 20,
       year: undefined,
+      sort: undefined,
     })
 
     refetch({
@@ -254,6 +283,8 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
         page: undefined,
         pageSize: undefined,
         year: undefined,
+        sortBy: undefined,
+        direction: undefined,
       },
     })
   }
@@ -491,17 +522,77 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
         />
       ) : adverts?.length ? (
         <Stack space={3}>
-          <Button
-            onClick={() => setListView(!listView)}
-            size="small"
-            iconType="outline"
-            icon={listView ? 'copy' : 'menu'}
-            variant="utility"
-          >
-            {listView
-              ? formatMessage(m.search.cardView)
-              : formatMessage(m.search.listView)}
-          </Button>
+          <Inline justifyContent="spaceBetween">
+            <Button
+              onClick={() => setListView(!listView)}
+              size="small"
+              iconType="outline"
+              icon={listView ? 'copy' : 'menu'}
+              variant="utility"
+            >
+              {listView
+                ? formatMessage(m.search.cardView)
+                : formatMessage(m.search.listView)}
+            </Button>
+            <DropdownMenu
+              menuClassName={styles.searchDropdown}
+              icon="swapVertical"
+              items={[
+                {
+                  title: formatMessage(m.search.publicationDateSortNew),
+                  icon:
+                    searchState.sort === 'date-desc' ? 'checkmark' : undefined,
+                  onClick: () => {
+                    if (searchState.sort === 'date-desc') {
+                      updateSearchStateHandler('sort', undefined)
+                    } else {
+                      updateSearchStateHandler('sort', 'date-desc')
+                    }
+                  },
+                },
+                {
+                  title: formatMessage(m.search.publicationDateSortOld),
+                  icon:
+                    searchState.sort === 'date-asc' ? 'checkmark' : undefined,
+                  onClick: () => {
+                    if (searchState.sort === 'date-asc') {
+                      updateSearchStateHandler('sort', undefined)
+                    } else {
+                      updateSearchStateHandler('sort', 'date-asc')
+                    }
+                  },
+                },
+                {
+                  title: formatMessage(m.search.numberSortNew),
+                  icon:
+                    searchState.sort === 'number-desc'
+                      ? 'checkmark'
+                      : undefined,
+                  onClick: () => {
+                    if (searchState.sort === 'number-desc') {
+                      updateSearchStateHandler('sort', undefined)
+                    } else {
+                      updateSearchStateHandler('sort', 'number-desc')
+                    }
+                  },
+                },
+                {
+                  title: formatMessage(m.search.numberSortOld),
+                  icon:
+                    searchState.sort === 'number-asc' ? 'checkmark' : undefined,
+                  onClick: () => {
+                    if (searchState.sort === 'number-asc') {
+                      updateSearchStateHandler('sort', undefined)
+                    } else {
+                      updateSearchStateHandler('sort', 'number-asc')
+                    }
+                  },
+                },
+              ]}
+              menuLabel={formatMessage(m.search.sortBy)}
+              title={formatMessage(m.search.sortBy)}
+            />
+          </Inline>
 
           {listView ? (
             <OJOISearchListView adverts={adverts} locale={locale} />
@@ -650,6 +741,7 @@ OJOISearch.getProps = async ({ apolloClient, locale, query }) => {
     sida: page ?? 1,
     year,
     pageSize,
+    sort: getStringFromQuery(query.sort),
   }
 
   const [
@@ -685,6 +777,8 @@ OJOISearch.getProps = async ({ apolloClient, locale, query }) => {
           search: defaultParams.q,
           type: [defaultParams.tegund],
           year: defaultParams.year,
+          sortBy: defaultParams.sort?.split('-')[0],
+          direction: defaultParams.sort?.split('-')[1],
         },
       },
     }),
@@ -751,6 +845,7 @@ OJOISearch.getProps = async ({ apolloClient, locale, query }) => {
       sida: defaultParams.sida,
       staerd: defaultParams.pageSize,
       year: defaultParams.year,
+      sort: defaultParams.sort,
     },
   }
 }

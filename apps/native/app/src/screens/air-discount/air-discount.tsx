@@ -5,6 +5,7 @@ import { NavigationFunctionComponent } from 'react-native-navigation'
 import styled, { useTheme } from 'styled-components/native'
 
 import externalLinkIcon from '../../assets/icons/external-link.png'
+import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import { useConfig } from '../../config'
 import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import {
@@ -311,6 +312,7 @@ export const AirDiscountScreen: NavigationFunctionComponent = ({
         )}
       </Animated.ScrollView>
       <TopLine scrollY={scrollY} />
+      <BottomTabsIndicator index={4} total={5} />
     </>
   )
 }
