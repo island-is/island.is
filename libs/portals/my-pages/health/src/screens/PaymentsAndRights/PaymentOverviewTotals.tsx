@@ -115,7 +115,6 @@ export const PaymentOverviewTotals = () => {
   }
 
   useEffect(() => {
-    console.log('!!!options!!!')
     if (firstOptionValue && selectedOptionId === null) {
       setSelectedOptionId(firstOptionValue)
     }
@@ -309,10 +308,6 @@ export const PaymentOverviewTotals = () => {
                     rows={rows.map((item) => ({
                       title: item.serviceTypeName,
                       data: [
-                        {
-                          title: formatMessage(messages.typeofService),
-                          content: item.serviceTypeName,
-                        },
                         {
                           title: formatMessage(messages.totalPayment),
                           content: amountFormat(item.fullCost),
