@@ -13,6 +13,7 @@ import { NavigationFunctionComponent } from 'react-native-navigation'
 import styled, { useTheme } from 'styled-components/native'
 
 import externalLinkIcon from '../../assets/icons/external-link.png'
+import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import { getConfig } from '../../config'
 import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import {
@@ -40,6 +41,7 @@ import {
   TopLine,
   Typography,
 } from '../../ui'
+import { testIDs } from '../../utils/test-ids'
 
 const ButtonWrapper = styled.View`
   flex-direction: row;
@@ -145,13 +147,29 @@ const showErrorComponent = (error: ApolloError) => {
 }
 
 const { getNavigationOptions, useNavigationOptions } =
-  createNavigationOptionHooks((_, intl) => ({
-    topBar: {
-      title: {
+  createNavigationOptionHooks(
+    (theme, intl) => ({
+      topBar: {
+        title: {
+          text: intl.formatMessage({ id: 'health.overview.screenTitle' }),
+        },
+      },
+      bottomTab: {
+        iconColor: theme.color.blue400,
         text: intl.formatMessage({ id: 'health.overview.screenTitle' }),
       },
+    }),
+    {
+      bottomTab: {
+        testID: testIDs.TABBAR_TAB_HEALTH,
+        iconInsets: {
+          bottom: -4,
+        },
+        icon: require('../../assets/icons/tabbar-health.png'),
+        selectedIcon: require('../../assets/icons/tabbar-health-selected.png'),
+      },
     },
-  }))
+  )
 
 export const HealthOverviewScreen: NavigationFunctionComponent = ({
   componentId,
@@ -805,6 +823,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
         </InputRow>
       </Animated.ScrollView>
       <TopLine scrollY={scrollY} />
+      <BottomTabsIndicator index={3} total={5} />
     </>
   )
 }

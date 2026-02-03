@@ -88,7 +88,7 @@ export const ButtonRegistry = {
 }
 
 export const StackRegistry = {
-  ApplicationsStack: `${prefix}.stack.ApplicationsStack`,
+  HealthStack: `${prefix}.stack.HealthStack`,
   HomeStack: `${prefix}.stack.HomeStack`,
   InboxStack: `${prefix}.stack.InboxStack`,
   LicenseScannerStack: `${prefix}.stack.LicenseScannerStack`,

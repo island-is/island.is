@@ -34,10 +34,6 @@ const { useNavigationOptions, getNavigationOptions } =
           visible: false,
         },
       },
-      bottomTab: {
-        iconColor: theme.color.blue400,
-        text: intl.formatMessage({ id: 'applications.bottomTabText' }),
-      },
     }),
     {
       topBar: {
@@ -45,14 +41,6 @@ const { useNavigationOptions, getNavigationOptions } =
           active: true,
           noBorder: true,
         },
-      },
-      bottomTab: {
-        testID: testIDs.TABBAR_TAB_APPLICATION,
-        iconInsets: {
-          bottom: -4,
-        },
-        icon: require('../../assets/icons/tabbar-applications.png'),
-        selectedIcon: require('../../assets/icons/tabbar-applications-selected.png'),
       },
     },
   )
@@ -190,7 +178,6 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
         />
       </Animated.ScrollView>
       <TopLine scrollY={scrollY} />
-      <BottomTabsIndicator index={3} total={5} />
     </Host>
   )
 }

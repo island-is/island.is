@@ -157,14 +157,14 @@ export const MoreScreen: NavigationFunctionComponent = ({ componentId }) => {
         </Row>
         <Row>
           <MoreCard
-            title={intl.formatMessage({ id: 'profile.health' })}
-            icon={healthIcon}
-            onPress={() => navigateTo('/health-overview')}
-          />
-          <MoreCard
             title={intl.formatMessage({ id: 'profile.airDiscount' })}
             icon={airplaneIcon}
             onPress={() => navigateTo('/air-discount')}
+          />
+          <MoreCard
+            title={intl.formatMessage({ id: 'applications.title' })}
+            icon={require('../../assets/icons/tabbar-applications.png')}
+            onPress={() => navigateTo('/applications')}
           />
         </Row>
         <View
