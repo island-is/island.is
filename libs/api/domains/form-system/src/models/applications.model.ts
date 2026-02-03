@@ -98,6 +98,24 @@ export class ApplicationListDto {
   total?: number
 }
 
+@ObjectType('FormSystemScreenErrorMessage')
+export class ScreenErrorMessage {
+  @Field(() => LanguageType, { nullable: true })
+  title?: LanguageType
+
+  @Field(() => LanguageType, { nullable: true })
+  message?: LanguageType
+}
+
+@ObjectType('FormSystemSubmitApplicationResponse')
+export class SubmitApplicationResponse {
+  @Field(() => Boolean, { nullable: true })
+  success?: boolean
+
+  @Field(() => [ScreenErrorMessage], { nullable: 'itemsAndList' })
+  screenErrorMessages?: ScreenErrorMessage[]
+}
+
 @ObjectType('FormSystemSubmitScreenResponseValue')
 export class SubmitScreenResponseValue {
   @Field(() => Boolean, { nullable: true })
