@@ -7,7 +7,6 @@ import {
   createEnhancedFetch,
   EnhancedFetchAPI,
 } from '@island.is/clients/middlewares'
-import { getStaticEnv } from '@island.is/shared/utils'
 
 @Injectable()
 export class NotifyService {
@@ -36,19 +35,15 @@ export class NotifyService {
   ): Promise<boolean> {
     if (!this.xroadBase || !this.xroadClient) {
       throw new Error(
-        `X-Road configuration is missing for NotifyService in form ${applicationDto.slug}. Please check environment variables.`,
+        `X-Road configuration is missing for NotifyService. Please check environment variables.`,
       )
     }
 
-    let accessToken = ''
-    if (url.toLowerCase().includes('syslumenn-protected')) {
-      accessToken = await this.getSyslumennAccessToken()
-    }
+    const accessToken: string | null = await this.getAccessToken(url)
 
     const xRoadPath = `${this.xroadBase}/r1/${url}`
 
-    console.log('Sending notification to URL:', xRoadPath)
-    this.logger.info('Sending notification to URL:', xRoadPath)
+    this.logger.info(`Sending notification to URL: ${xRoadPath}`)
 
     try {
       const response = await this.enhancedFetch(xRoadPath, {
@@ -56,7 +51,7 @@ export class NotifyService {
         headers: {
           'Content-Type': 'application/json',
           'X-Road-Client': this.xroadClient,
-          ...(accessToken !== '' && { Authorization: `Bearer ${accessToken}` }),
+          ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
         },
         body: JSON.stringify({
           applicationId: applicationDto.id,
@@ -64,20 +59,15 @@ export class NotifyService {
         }),
       })
 
-      const responseBody = await response.text()
-      this.logger.info(
-        `Response Status: ${response.status}, Body: ${responseBody}`,
-      )
       if (!response.ok) {
-        this.logger.warn(`Non-OK response for form ${applicationDto.slug}`)
+        this.logger.error(
+          `Non-OK response for application ${applicationDto.id}`,
+        )
         return false
       }
     } catch (error) {
-      console.error(
-        `Error sending notification for form ${applicationDto.slug}: ${error}`,
-      )
       this.logger.error(
-        `Error sending notification for form ${applicationDto.slug}: ${error}`,
+        `Error sending notification for application ${applicationDto.id}: ${error}`,
       )
       return false
     }
@@ -85,16 +75,24 @@ export class NotifyService {
     return true
   }
 
-  private async getSyslumennAccessToken(): Promise<string> {
-    // console.log(`Syslumenn url: ${this.syslumennConfig.url}`)
-    this.logger.info(`Syslumenn url: ${this.syslumennConfig.url}`)
-    this.logger.info(`X-Road Base: ${this.xroadBase}`)
-    const loginUrl = `${this.xroadBase}/r1/IS-DEV/GOV/10016/Syslumenn-Protected/StarfsKerfi/v1/Innskraning`
+  private async getAccessToken(url: string): Promise<string | null> {
+    if (url.toLowerCase().includes('syslumenn-protected')) {
+      return await this.getSyslumennAccessToken('syslumenn-protected')
+    }
 
-    // console.log('Logging in to Syslumenn at URL:', loginUrl)
-    // this.logger.info('Logging in to Syslumenn at URL:', loginUrl)
+    return null
+  }
 
-    // console.log('Using Syslumenn username:', this.syslumennConfig.username)
+  private async getSyslumennAccessToken(org: string): Promise<string> {
+    const env = this.getEnv(org)
+
+    if (!env) {
+      throw new Error(
+        `Could not determine environment for organization: ${org}`,
+      )
+    }
+
+    const loginUrl = `${this.xroadBase}/r1/${env}/Syslumenn-Protected/StarfsKerfi/v1/Innskraning`
 
     try {
       const response = await this.enhancedFetch(loginUrl, {
@@ -110,8 +108,6 @@ export class NotifyService {
       })
 
       if (!response.ok) {
-        console.error(`Syslumenn login failed with status: ${response.status}`)
-        console.error(`Syslumenn login failed with: ${response}`)
         this.logger.error(
           `Syslumenn login failed with status: ${response.status}`,
         )
@@ -120,11 +116,27 @@ export class NotifyService {
       }
 
       const data = await response.json()
+      if (!data?.accessToken) {
+        throw new Error('Syslumenn login response missing accessToken')
+      }
       return data.accessToken
     } catch (error) {
-      console.error(`Error during Syslumenn login: ${error}`)
       this.logger.error(`Error during Syslumenn login: ${error}`)
       throw error
     }
+  }
+
+  private getEnv(org: string): string {
+    const isDev =
+      this.xroadBase.includes('dev01') || this.xroadBase.includes('localhost')
+    const isStaging = this.xroadBase.includes('staging01')
+
+    if (org === 'syslumenn-protected') {
+      if (isDev) return 'IS-DEV/GOV/10016'
+      if (isStaging) return 'IS-TEST/GOV/10016'
+      return 'IS/GOV/5512201410'
+    }
+
+    return ''
   }
 }
