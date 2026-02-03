@@ -1115,8 +1115,8 @@ export class InternalCaseService {
     courtDocuments: PoliceDocument[],
   ): Promise<boolean> {
     const originalAncestor = isIndictmentCase(theCase.type)
-      ? theCase.splitCaseId ?? theCase.id
-      : await this.findOriginalAncestor(theCase)
+      ? theCase.splitCaseId ?? theCase.id // indictment cases can be split
+      : await this.findOriginalAncestor(theCase) // request cases can be extended
 
     const validToDate =
       (restrictionCases.includes(theCase.type) &&
