@@ -13,7 +13,6 @@ import { NavigationFunctionComponent } from 'react-native-navigation'
 import styled, { useTheme } from 'styled-components/native'
 
 import externalLinkIcon from '../../assets/icons/external-link.png'
-import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import { getConfig } from '../../config'
 import { BaseAppointmentStatuses } from '../../constants/base-appointment-statuses'
 import { useFeatureFlag } from '../../contexts/feature-flag-provider'
