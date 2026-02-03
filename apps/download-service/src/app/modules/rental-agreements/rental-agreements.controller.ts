@@ -19,9 +19,15 @@ import {
 } from '@island.is/auth-nest-tools'
 import { AuditService } from '@island.is/nest/audit'
 import { HmsRentalAgreementService } from '@island.is/clients/hms-rental-agreement'
+import {
+  FeatureFlag,
+  FeatureFlagGuard,
+  Features,
+} from '@island.is/nest/feature-flags'
 
-@UseGuards(IdsUserGuard, ScopesGuard)
+@UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Scopes(ApiScope.hms)
+@FeatureFlag(Features.isServicePortalMyContractsPageEnabled)
 @Controller('rental-agreements')
 export class RentalAgreementsController {
   constructor(
