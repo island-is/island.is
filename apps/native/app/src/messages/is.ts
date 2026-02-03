@@ -759,6 +759,8 @@ export const is = {
   'health.overview.noBloodTypeRegistered': 'Ekki verið flokkaður',
   'health.overview.dentist': 'Tannlæknir',
   'health.overview.noDentistRegistered': 'Enginn tannlæknir skráður',
+  'health.overview.medicine': 'Lyf',
+  'health.overview.seeAllCategories': 'Sjá alla flokka',
 
   // health - questionnaires
   'health.questionnaires.screenTitle': 'Spurningalistar',

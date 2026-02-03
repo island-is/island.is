@@ -760,6 +760,8 @@ export const en: TranslatedMessages = {
   'health.overview.dentist': 'Dentist',
   'health.overview.noDentistRegistered': 'No dentist registered',
   'health.overview.prescriptions': 'Prescriptions',
+  'health.overview.medicine': 'Medicine',
+  'health.overview.seeAllCategories': 'See all categories',
 
   // health - questionnaires
   'health.questionnaires.screenTitle': 'Questionnaires',

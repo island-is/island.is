@@ -12,7 +12,11 @@ import {
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import styled, { useTheme } from 'styled-components/native'
 
+import categoriesIcon from '../../assets/icons/categories.png'
 import externalLinkIcon from '../../assets/icons/external-link.png'
+import medicineIcon from '../../assets/icons/medicine.png'
+import readerIcon from '../../assets/icons/reader.png'
+import vaccinationsIcon from '../../assets/icons/vaccinations.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import { getConfig } from '../../config'
 import { useFeatureFlag } from '../../contexts/feature-flag-provider'
@@ -33,22 +37,23 @@ import { navigateTo } from '../../lib/deep-linking'
 import { useBrowser } from '../../lib/use-browser'
 import {
   Alert,
-  Button,
   Heading,
   Input,
   InputRow,
+  MoreCard,
   Problem,
   TopLine,
-  Typography,
+  Typography
 } from '../../ui'
 import { testIDs } from '../../utils/test-ids'
 
-const ButtonWrapper = styled.View`
+const NUMBER_OF_CARDS_PER_ROW = 3
+
+const Row = styled.View`
+  margin-vertical: ${({ theme }) => theme.spacing[1]}px;
+  column-gap: ${({ theme }) => theme.spacing[2]}px;
   flex-direction: row;
-  margin-top: ${({ theme }) => theme.spacing[3]}px;
-  margin-bottom: ${({ theme }) => -theme.spacing[1]}px;
-  gap: ${({ theme }) => theme.spacing[2]}px;
-  flex-wrap: wrap;
+  justify-content: space-between;
 `
 
 interface HeadingSectionProps {
@@ -182,6 +187,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
   const [refetching, setRefetching] = useState(false)
   const { width } = useWindowDimensions()
   const buttonStyle = { flex: 1, minWidth: width * 0.5 - theme.spacing[3] }
+  const cardWidth = (width - theme.spacing[2] * (NUMBER_OF_CARDS_PER_ROW + 1)) / NUMBER_OF_CARDS_PER_ROW
   const scrollY = useRef(new Animated.Value(0)).current
   const isVaccinationsEnabled = useFeatureFlag('isVaccinationsEnabled', false)
   const isMedicineDelegationEnabled = useFeatureFlag(
@@ -308,109 +314,65 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
           },
         )}
       >
-        <Heading>
-          <FormattedMessage
-            id="health.overview.title"
-            defaultMessage="Heilsan mín"
-          />
-        </Heading>
-        <Typography>
-          <FormattedMessage
-            id="health.overview.description"
-            defaultMessage="Hér finnur þú þín heilsufarsgögn, heilsugæslu og sjúkratryggingar"
-          />
-        </Typography>
-        <ButtonWrapper>
-          {isVaccinationsEnabled && (
-            <Button
-              title={intl.formatMessage({
-                id: 'health.overview.vaccinations',
-              })}
-              isOutlined
-              isUtilityButton
-              iconStyle={{ tintColor: theme.color.dark300 }}
-              style={buttonStyle}
-              ellipsis
-              onPress={() => navigateTo('/vaccinations', componentId)}
-            />
-          )}
-          {isQuestionnaireFeatureEnabled && (
-            <Button
-              title={intl.formatMessage({
-                id: 'health.overview.questionnaires',
-              })}
-              isOutlined
-              isUtilityButton
-              iconStyle={{ tintColor: theme.color.dark300 }}
-              style={buttonStyle}
-              ellipsis
-              onPress={() => navigateTo('/questionnaires', componentId)}
-            />
-          )}
+
+        <Row>
           {isPrescriptionsEnabled && (
-            <Button
+            <MoreCard
               title={intl.formatMessage({
-                id: isPrescriptionsEnabled
-                  ? 'health.prescriptionsAndCertificates.screenTitle'
-                  : 'health.drugCertificates.title',
+                id: 'health.overview.medicine',
               })}
-              isOutlined
-              isUtilityButton
-              iconStyle={{ tintColor: theme.color.dark300 }}
-              style={buttonStyle}
-              ellipsis
+              icon={medicineIcon}
               onPress={() => navigateTo('/prescriptions', componentId)}
+              small
+              style={{ flex: 0, width: cardWidth }}
             />
           )}
           {isMedicineDelegationEnabled && (
-            <Button
+            <MoreCard
               title={intl.formatMessage({
                 id: 'health.overview.medicineDelegation',
               })}
-              isOutlined
-              isUtilityButton
-              iconStyle={{ tintColor: theme.color.dark300 }}
-              style={buttonStyle}
-              ellipsis
+              icon={readerIcon}
               onPress={() => navigateTo('/medicine-delegation', componentId)}
+              small
+              style={{ flex: 0, width: cardWidth }}
             />
           )}
-          <Button
-            title={intl.formatMessage({ id: 'health.overview.therapy' })}
-            isOutlined
-            isUtilityButton
-            icon={externalLinkIcon}
-            iconStyle={{ tintColor: theme.color.dark300 }}
-            style={buttonStyle}
-            ellipsis
-            onPress={() =>
-              openBrowser(
-                `${origin}/minarsidur/heilsa/thjalfun/sjukrathjalfun`,
-                componentId,
-              )
-            }
-          />
-          <Button
+          {isQuestionnaireFeatureEnabled && (
+            <MoreCard
+              title={intl.formatMessage({
+                id: 'health.overview.questionnaires',
+              })}
+              icon={readerIcon}
+              onPress={() => navigateTo('/questionnaires', componentId)}
+              small
+              style={{ flex: 0, width: cardWidth }}
+            />
+          )}
+        </Row>
+        <Row>
+          {isVaccinationsEnabled && (
+            <MoreCard
+              title={intl.formatMessage({
+                id: 'health.overview.vaccinations',
+              })}
+              icon={vaccinationsIcon}
+              onPress={() => navigateTo('/vaccinations', componentId)}
+              small
+              style={{ flex: 0, width: cardWidth }}
+            />
+          )}
+          <MoreCard
             title={intl.formatMessage({
-              id: 'health.overview.aidsAndNutrition',
+              id: 'health.overview.seeAllCategories',
             })}
-            isOutlined
-            isUtilityButton
-            icon={externalLinkIcon}
-            iconStyle={{ tintColor: theme.color.dark300 }}
-            style={{
-              ...buttonStyle,
-              maxWidth: width * 0.5 - theme.spacing[3],
-            }}
-            ellipsis
-            onPress={() =>
-              openBrowser(
-                `${origin}/minarsidur/heilsa/hjalpartaeki-og-naering`,
-                componentId,
-              )
-            }
+            icon={categoriesIcon}
+            onPress={() => { }}
+            small
+            filled
+            style={{ flex: 0, width: cardWidth }}
           />
-        </ButtonWrapper>
+        </Row>
         <HeadingSection
           title={intl.formatMessage({
             id: 'health.overview.coPayments',
@@ -432,8 +394,8 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
                 value={
                   paymentStatusData?.maximumMonthlyPayment
                     ? `${intl.formatNumber(
-                        paymentStatusData?.maximumMonthlyPayment,
-                      )} kr.`
+                      paymentStatusData?.maximumMonthlyPayment,
+                    )} kr.`
                     : '0 kr.'
                 }
                 loading={paymentStatusRes.loading && !paymentStatusRes.data}
@@ -449,8 +411,8 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
                 value={
                   paymentStatusData?.maximumPayment
                     ? `${intl.formatNumber(
-                        paymentStatusData?.maximumPayment,
-                      )} kr.`
+                      paymentStatusData?.maximumPayment,
+                    )} kr.`
                     : '0 kr.'
                 }
                 loading={paymentStatusRes.loading && !paymentStatusRes.data}
@@ -514,8 +476,8 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
                 value={
                   medicinePurchaseData?.dateFrom && medicinePurchaseData?.dateTo
                     ? `${intl.formatDate(
-                        medicinePurchaseData.dateFrom,
-                      )} - ${intl.formatDate(medicinePurchaseData.dateTo)}`
+                      medicinePurchaseData.dateFrom,
+                    )} - ${intl.formatDate(medicinePurchaseData.dateTo)}`
                     : ''
                 }
                 loading={
@@ -532,16 +494,16 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
                 })}
                 value={
                   medicinePurchaseData?.levelNumber &&
-                  medicinePurchaseData?.levelPercentage !== undefined
+                    medicinePurchaseData?.levelPercentage !== undefined
                     ? intl.formatMessage(
-                        {
-                          id: 'health.overview.levelStatusValue',
-                        },
-                        {
-                          level: medicinePurchaseData?.levelNumber,
-                          percentage: medicinePurchaseData?.levelPercentage,
-                        },
-                      )
+                      {
+                        id: 'health.overview.levelStatusValue',
+                      },
+                      {
+                        level: medicinePurchaseData?.levelNumber,
+                        percentage: medicinePurchaseData?.levelPercentage,
+                      },
+                    )
                     : ''
                 }
                 loading={
@@ -552,8 +514,8 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
                 warningText={
                   !isMedicinePeriodActive
                     ? intl.formatMessage({
-                        id: 'health.overview.medicinePurchaseNoActivePeriodWarning',
-                      })
+                      id: 'health.overview.medicinePurchaseNoActivePeriodWarning',
+                    })
                     : ''
                 }
               />
@@ -573,7 +535,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
           }
         />
         {(healthInsuranceRes.data && healthInsuranceData?.isInsured) ||
-        healthInsuranceRes.loading ? (
+          healthInsuranceRes.loading ? (
           <InputRow background>
             <Input
               label={intl.formatMessage({
@@ -627,11 +589,11 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
               healthCenterRes.error
                 ? ''
                 : healthCenterRes.data
-                    ?.rightsPortalHealthCenterRegistrationHistory?.current
-                    ?.healthCenterName ??
-                  intl.formatMessage({
-                    id: 'health.overview.noHealthCenterRegistered',
-                  })
+                  ?.rightsPortalHealthCenterRegistrationHistory?.current
+                  ?.healthCenterName ??
+                intl.formatMessage({
+                  id: 'health.overview.noHealthCenterRegistered',
+                })
             }
             loading={healthCenterRes.loading}
             fullWidthWarning
@@ -639,8 +601,8 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
             warningText={
               healthCenterRes.error
                 ? intl.formatMessage({
-                    id: 'problem.thirdParty.message',
-                  })
+                  id: 'problem.thirdParty.message',
+                })
                 : ''
             }
             rightElement={
@@ -666,11 +628,11 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
               healthCenterRes.error
                 ? ''
                 : healthCenterRes.data
-                    ?.rightsPortalHealthCenterRegistrationHistory?.current
-                    ?.doctor ??
-                  intl.formatMessage({
-                    id: 'health.overview.noPhysicianRegistered',
-                  })
+                  ?.rightsPortalHealthCenterRegistrationHistory?.current
+                  ?.doctor ??
+                intl.formatMessage({
+                  id: 'health.overview.noPhysicianRegistered',
+                })
             }
             loading={healthCenterRes.loading}
             fullWidthWarning
@@ -678,8 +640,8 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
             warningText={
               healthCenterRes.error
                 ? intl.formatMessage({
-                    id: 'problem.thirdParty.message',
-                  })
+                  id: 'problem.thirdParty.message',
+                })
                 : ''
             }
             rightElement={
@@ -705,10 +667,10 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
               dentistRes.error
                 ? ''
                 : dentistRes.data?.rightsPortalUserDentistRegistration?.dentist
-                    ?.name ??
-                  intl.formatMessage({
-                    id: 'health.overview.noDentistRegistered',
-                  })
+                  ?.name ??
+                intl.formatMessage({
+                  id: 'health.overview.noDentistRegistered',
+                })
             }
             allowEmptyValue={dentistRes.error ? true : false}
             loading={dentistRes.loading}
@@ -716,8 +678,8 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
             warningText={
               dentistRes.error
                 ? intl.formatMessage({
-                    id: 'problem.thirdParty.message',
-                  })
+                  id: 'problem.thirdParty.message',
+                })
                 : ''
             }
             rightElement={
@@ -740,22 +702,21 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
               label={intl.formatMessage({
                 id: 'health.organDonation',
               })}
-              value={`${
-                organDonationRes.error
-                  ? ''
-                  : intl.formatMessage({
-                      id: isOrganDonor
-                        ? 'health.organDonation.isDonorDescription'
-                        : 'health.organDonation.isNotDonorDescription',
-                    }) ?? ''
-              }`}
+              value={`${organDonationRes.error
+                ? ''
+                : intl.formatMessage({
+                  id: isOrganDonor
+                    ? 'health.organDonation.isDonorDescription'
+                    : 'health.organDonation.isNotDonorDescription',
+                }) ?? ''
+                }`}
               loading={organDonationRes.loading && !organDonationRes.data}
               fullWidthWarning
               warningText={
                 organDonationRes.error
                   ? intl.formatMessage({
-                      id: 'problem.thirdParty.message',
-                    })
+                    id: 'problem.thirdParty.message',
+                  })
                   : ''
               }
               allowEmptyValue
@@ -783,7 +744,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
               bloodTypeRes.error
                 ? ''
                 : bloodTypeRes.data?.rightsPortalBloodType?.registered
-                ? intl.formatMessage(
+                  ? intl.formatMessage(
                     {
                       id: 'health.overview.bloodTypeDescription',
                     },
@@ -792,7 +753,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
                         bloodTypeRes.data?.rightsPortalBloodType?.type ?? '',
                     },
                   )
-                : intl.formatMessage({
+                  : intl.formatMessage({
                     id: 'health.overview.noBloodTypeRegistered',
                   })
             }
@@ -801,8 +762,8 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
             warningText={
               bloodTypeRes.error
                 ? intl.formatMessage({
-                    id: 'problem.thirdParty.message',
-                  })
+                  id: 'problem.thirdParty.message',
+                })
                 : ''
             }
             allowEmptyValue
