@@ -20,6 +20,12 @@ export const delegationsNavigationChildren: PortalNavigationItem[] = [
     ],
   },
   {
+    name: m.accessControlNew,
+    path: DelegationPaths.DelegationsNew,
+    navHide: false,
+    breadcrumbHide: true,
+  },
+  {
     name: coreMessages.accessControlDelegationsIncoming,
     path: DelegationPaths.DelegationsIncoming,
     navHide: true,

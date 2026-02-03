@@ -2,6 +2,10 @@ import { Box, Table as T } from '@island.is/island-ui/core'
 import { Text } from '@island.is/island-ui/core'
 import format from 'date-fns/format'
 import { AuthCustomDelegation } from '../../../types/customDelegation'
+import { AuthDelegationsGroupedByIdentityOutgoingQuery } from '../outgoing/DelegationsGroupedByIdentityOutgoing.generated'
+
+type PersonCentricDelegation =
+  AuthDelegationsGroupedByIdentityOutgoingQuery['authDelegationsGroupedByIdentityOutgoing'][number]
 
 // Todo: translate
 const headerArray = [
@@ -23,8 +27,10 @@ const RowItems = ({ values }: { values: string[] }) => {
 const CustomDelegationsPermissionsTable = ({
   data,
 }: {
-  data: AuthCustomDelegation
+  data: AuthCustomDelegation | PersonCentricDelegation
 }) => {
+  const scopes = 'scopes' in data ? data.scopes : data.delegationScopes
+
   return (
     <Box>
       <T.Table>
@@ -41,14 +47,20 @@ const CustomDelegationsPermissionsTable = ({
           </T.Row>
         </T.Head>
         <T.Body>
-          {data.scopes?.map((scope) => (
+          {scopes?.map((scope) => (
             <T.Row key={scope.id}>
               <RowItems
                 values={[
-                  data.domain?.displayName,
+                  ('domain' in scope && scope.domain?.displayName) ||
+                    ('domain' in data && data.domain?.displayName) ||
+                    '',
                   scope.displayName,
-                  format(new Date(scope.validFrom || ''), 'dd.MM.yyyy'),
-                  format(new Date(scope.validTo || ''), 'dd.MM.yyyy'),
+                  scope.validFrom
+                    ? format(new Date(scope.validFrom), 'dd.MM.yyyy')
+                    : '-',
+                  scope.validTo
+                    ? format(new Date(scope.validTo), 'dd.MM.yyyy')
+                    : '-',
                   // Todo: add column for last used data when available
                 ]}
               />

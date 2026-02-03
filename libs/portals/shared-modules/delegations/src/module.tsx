@@ -5,6 +5,7 @@ import { DelegationPaths } from './lib/paths'
 import { m } from './lib/messages'
 
 const AccessControl = lazy(() => import('./screens/AccessControl'))
+const AccessControlNew = lazy(() => import('./screens/AccessControlNew'))
 const GrantAccess = lazy(() => import('./screens/GrantAccess/GrantAccess'))
 const GrantAccessNew = lazy(() => import('./screens/GrantAccessNew/GrantAccessNew'))
 const AccessOutgoing = lazy(() =>
@@ -40,6 +41,13 @@ export const delegationsModule: PortalModule = {
       {
         ...commonProps,
         path: DelegationPaths.DelegationsIncoming,
+      },
+      {
+        name: m.accessControlNew,
+        path: DelegationPaths.DelegationsNew,
+        navHide: false,
+        enabled: hasAccess,
+        element: <AccessControlNew />,
       },
       {
         name: coreMessages.accessControlGrant,

@@ -1,5 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import differenceWith from 'lodash/differenceWith'
+import groupBy from 'lodash/groupBy'
+import min from 'lodash/min'
+import max from 'lodash/max'
 
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import {
@@ -18,6 +21,8 @@ import {
   UpdateDelegationInput,
 } from '../dto'
 import { DelegationByOtherUserInput } from '../dto/delegationByOtherUser.input'
+import { DelegationsGroupedByIdentity } from '../dto/delegationsGroupedByIdentity.dto'
+import { DelegationScope } from '../models/delegationScope.model'
 import startOfDay from 'date-fns/startOfDay'
 
 @Injectable()
@@ -201,5 +206,72 @@ export class MeDelegationsService {
           domainName: delegation.domainName,
         })),
     }
+  }
+
+  async getDelegationsGroupedByIdentity(
+    user: User,
+    input: {
+      direction: MeDelegationsControllerFindAllDirectionEnum
+    },
+  ): Promise<DelegationsGroupedByIdentity[]> {
+    const allDelegations = await this.delegationsApiWithAuth(
+      user,
+    ).meDelegationsControllerFindAll({
+      direction: input.direction,
+      validity: MeDelegationsControllerFindAllValidityEnum.includeFuture,
+    })
+
+    const isOutgoing =
+      input.direction === MeDelegationsControllerFindAllDirectionEnum.outgoing
+
+    const groupedByPersonAndType = groupBy(allDelegations, (delegation) => {
+      const nationalId = isOutgoing
+        ? delegation.toNationalId
+        : delegation.fromNationalId
+      return `${nationalId}|${delegation.type}`
+    })
+
+    return Object.entries(groupedByPersonAndType).map(([key, delegations]) => {
+      const firstDelegation = delegations[0]
+      const nationalId = isOutgoing
+        ? firstDelegation.toNationalId
+        : firstDelegation.fromNationalId
+      const personName = isOutgoing
+        ? firstDelegation.toName ?? nationalId ?? ''
+        : firstDelegation.fromName ?? nationalId ?? ''
+
+      // Flatten all scopes from all domains, adding domain context to each scope
+      const allScopes: DelegationScope[] = delegations.flatMap(
+        (delegation) =>
+          delegation.scopes?.map((scope) => ({
+            id: scope.id ?? `${delegation.id}-${scope.scopeName}`,
+            name: scope.scopeName ?? '',
+            scopeName: scope.scopeName ?? '',
+            displayName: scope.displayName ?? scope.scopeName ?? '',
+            validFrom: scope.validFrom ?? undefined,
+            validTo: scope.validTo ?? undefined,
+            domainName: delegation.domainName ?? '',
+          })) ?? [],
+      )
+
+      // Get earliest and latest dates
+      const validFromDates = allScopes
+        .map((s) => s.validFrom)
+        .filter((d): d is Date => d != null)
+      const validToDates = allScopes
+        .map((s) => s.validTo)
+        .filter((d): d is Date => d != null)
+
+      return {
+        nationalId: nationalId ?? '',
+        name: personName,
+        type: firstDelegation.type,
+        totalScopeCount: allScopes.length,
+        scopes: allScopes,
+        earliestValidFrom:
+          validFromDates.length > 0 ? min(validFromDates) : null,
+        latestValidTo: validToDates.length > 0 ? max(validToDates) : null,
+      }
+    })
   }
 }

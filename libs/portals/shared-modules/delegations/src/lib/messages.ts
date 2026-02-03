@@ -70,6 +70,10 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:accessControl',
     defaultMessage: 'Aðgangsstýring',
   },
+  accessControlNew: {
+    id: 'sp.access-control-delegations:accessControlNew',
+    defaultMessage: 'Aðgangsstýring (Nýtt)',
+  },
   serviceCategories: {
     id: 'sp.access-control-delegations:serviceCategories',
     defaultMessage: 'Þjónustuflokkar',
@@ -390,6 +394,26 @@ export const m = defineMessages({
   numberOfDelegations: {
     id: 'sp.access-control-delegations:number-of-delegations',
     defaultMessage: 'Fjöldi umboða',
+  },
+  totalRights: {
+    id: 'sp.access-control-delegations:total-rights',
+    defaultMessage: 'Heildarfjöldi réttinda',
+  },
+  domains: {
+    id: 'sp.access-control-delegations:domains',
+    defaultMessage: 'Lén',
+  },
+  scopeDisplayName: {
+    id: 'sp.access-control-delegations:scope-display-name',
+    defaultMessage: 'Heiti réttinda',
+  },
+  validFrom: {
+    id: 'sp.access-control-delegations:valid-from',
+    defaultMessage: 'Gildir frá',
+  },
+  noDelegations: {
+    id: 'sp.access-control-delegations:no-delegations',
+    defaultMessage: 'Engin umboð fundust',
   },
   switch: {
     id: 'sp.access-control-delegations:switch',
