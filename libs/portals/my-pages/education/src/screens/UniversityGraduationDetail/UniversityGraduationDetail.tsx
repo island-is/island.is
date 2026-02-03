@@ -96,7 +96,7 @@ export const UniversityGraduationDetail = () => {
                       return null
                     }
                     return {
-                      href: downloadServiceUrl,
+                      onClick: () => formSubmit(`${item.downloadServiceURL}`),
                       title: item.displayName,
                     }
                   })
