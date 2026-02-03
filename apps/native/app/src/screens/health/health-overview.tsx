@@ -186,7 +186,6 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
   const origin = getConfig().apiUrl.replace(/\/api$/, '')
   const [refetching, setRefetching] = useState(false)
   const { width } = useWindowDimensions()
-  const buttonStyle = { flex: 1, minWidth: width * 0.5 - theme.spacing[3] }
   const cardWidth = (width - theme.spacing[2] * (NUMBER_OF_CARDS_PER_ROW + 1)) / NUMBER_OF_CARDS_PER_ROW
   const scrollY = useRef(new Animated.Value(0)).current
   const isVaccinationsEnabled = useFeatureFlag('isVaccinationsEnabled', false)
@@ -202,6 +201,60 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
   )
 
   const now = useMemo(() => new Date().toISOString(), [])
+
+  const healthCardRows = useMemo(() => {
+    const healthCards = [
+      {
+        id: 'medicine',
+        titleId: 'health.overview.medicine',
+        icon: medicineIcon,
+        route: '/prescriptions',
+        enabled: isPrescriptionsEnabled,
+      },
+      {
+        id: 'medicineDelegation',
+        titleId: 'health.overview.medicineDelegation',
+        icon: readerIcon,
+        route: '/medicine-delegation',
+        enabled: isMedicineDelegationEnabled,
+      },
+      {
+        id: 'questionnaires',
+        titleId: 'health.overview.questionnaires',
+        icon: readerIcon,
+        route: '/questionnaires',
+        enabled: isQuestionnaireFeatureEnabled,
+      },
+      {
+        id: 'vaccinations',
+        titleId: 'health.overview.vaccinations',
+        icon: vaccinationsIcon,
+        route: '/vaccinations',
+        enabled: isVaccinationsEnabled,
+      },
+      {
+        id: 'seeAllCategories',
+        titleId: 'health.overview.seeAllCategories',
+        icon: categoriesIcon,
+        route: null,
+        enabled: true,
+        filled: true,
+      },
+    ].filter((card) => card.enabled)
+
+    const rows = []
+    // Create rows of cards, each row contains NUMBER_OF_CARDS_PER_ROW cards
+    for (let i = 0; i < healthCards.length; i += NUMBER_OF_CARDS_PER_ROW) {
+      rows.push(healthCards.slice(i, i + NUMBER_OF_CARDS_PER_ROW))
+    }
+
+    return rows
+  }, [
+    isPrescriptionsEnabled,
+    isMedicineDelegationEnabled,
+    isQuestionnaireFeatureEnabled,
+    isVaccinationsEnabled,
+  ])
 
   const medicinePurchaseRes = useGetMedicineDataQuery()
   const organDonationRes = useGetOrganDonorStatusQuery({
@@ -315,64 +368,30 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
         )}
       >
 
-        <Row>
-          {isPrescriptionsEnabled && (
-            <MoreCard
-              title={intl.formatMessage({
-                id: 'health.overview.medicine',
-              })}
-              icon={medicineIcon}
-              onPress={() => navigateTo('/prescriptions', componentId)}
-              small
-              style={{ flex: 0, width: cardWidth }}
-            />
-          )}
-          {isMedicineDelegationEnabled && (
-            <MoreCard
-              title={intl.formatMessage({
-                id: 'health.overview.medicineDelegation',
-              })}
-              icon={readerIcon}
-              onPress={() => navigateTo('/medicine-delegation', componentId)}
-              small
-              style={{ flex: 0, width: cardWidth }}
-            />
-          )}
-          {isQuestionnaireFeatureEnabled && (
-            <MoreCard
-              title={intl.formatMessage({
-                id: 'health.overview.questionnaires',
-              })}
-              icon={readerIcon}
-              onPress={() => navigateTo('/questionnaires', componentId)}
-              small
-              style={{ flex: 0, width: cardWidth }}
-            />
-          )}
-        </Row>
-        <Row>
-          {isVaccinationsEnabled && (
-            <MoreCard
-              title={intl.formatMessage({
-                id: 'health.overview.vaccinations',
-              })}
-              icon={vaccinationsIcon}
-              onPress={() => navigateTo('/vaccinations', componentId)}
-              small
-              style={{ flex: 0, width: cardWidth }}
-            />
-          )}
-          <MoreCard
-            title={intl.formatMessage({
-              id: 'health.overview.seeAllCategories',
-            })}
-            icon={categoriesIcon}
-            onPress={() => { }}
-            small
-            filled
-            style={{ flex: 0, width: cardWidth }}
-          />
-        </Row>
+        {healthCardRows.map((row, rowIndex) => (
+          <Row
+            key={`health-card-row-${rowIndex}`}
+            style={{
+              justifyContent: row.length === 1 ? 'flex-end' : 'space-between',
+            }}
+          >
+            {row.map((card) => (
+              <MoreCard
+                key={card.id}
+                title={intl.formatMessage({ id: card.titleId })}
+                icon={card.icon}
+                onPress={
+                  card.route
+                    ? () => navigateTo(card.route, componentId)
+                    : () => { }
+                }
+                small
+                filled={card.filled}
+                style={{ flex: 0, width: cardWidth }}
+              />
+            ))}
+          </Row>
+        ))}
         <HeadingSection
           title={intl.formatMessage({
             id: 'health.overview.coPayments',
