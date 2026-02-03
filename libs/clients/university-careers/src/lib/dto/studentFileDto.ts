@@ -4,6 +4,7 @@ import {
   UnakStudentFile,
   HIStudentFile,
   HolarStudentFile,
+  LHIStudentFile,
 } from '../clients'
 import { StudentFileType } from '../universityCareers.types'
 import { mapStudentFileType } from './studentFileType.dto'
@@ -21,7 +22,8 @@ export const mapToStudentFileDto = (
     | LbhiStudentFile
     | BifrostStudentFile
     | UnakStudentFile
-    | HIStudentFile,
+    | HIStudentFile
+    | LHIStudentFile,
 ): StudentFileDto | null => {
   if (!transcript.type) {
     return null

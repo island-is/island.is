@@ -19,6 +19,7 @@ import { Locale } from '@island.is/shared/types'
 import { AUDIT_NAMESPACE } from '../constants'
 import { StudentFile } from '../models/studentFile.model'
 import { mapEnumToType } from '../mapper'
+import { isDefined } from '@island.is/shared/utils'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.education)
@@ -75,15 +76,27 @@ export class StudentTrackResolver {
       resources: user.nationalId,
     })
 
+    if (!track.transcript || !track.files) {
+      this.logger.info(
+        'Student file has no transcript or files. Returning empty array',
+      )
+      return []
+    }
+
     const { institution, trackNumber } = track.transcript
 
-    return track.files.map((f) => ({
-      ...f,
-      downloadServiceURL: `${
-        this.downloadServiceConfig.baseUrl
-      }/download/v1/education/graduation/${f.locale}/${
-        institution.shortId
-      }/${trackNumber}/${mapEnumToType(f.type)}`,
-    }))
+    return track.files
+      .map((f) => {
+        const type = mapEnumToType(f.type)
+        if (!type) {
+          this.logger.warn(`Invalid file type while downloading student file`)
+          return null
+        }
+        return {
+          ...f,
+          downloadServiceURL: `${this.downloadServiceConfig.baseUrl}/download/v1/education/graduation/${f.locale}/${institution.shortId}/${trackNumber}/${type}`,
+        }
+      })
+      .filter(isDefined)
   }
 }

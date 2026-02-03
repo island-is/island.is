@@ -41,6 +41,6 @@ export const mapToStudentTrackOverviewDto = (
     files: overview.files
       ? overview.files.map((f) => mapToStudentFileDto(f)).filter(isDefined)
       : [],
-    body: { ...overview.body },
+    body: overview.body ? { ...overview.body } : undefined,
   }
 }

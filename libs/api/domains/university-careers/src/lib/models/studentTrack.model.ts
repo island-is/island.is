@@ -1,4 +1,4 @@
-import { ObjectType, Field, registerEnumType } from '@nestjs/graphql'
+import { ObjectType, Field } from '@nestjs/graphql'
 import { StudentTrackMetadata } from './studentTrackMetadata'
 import { StudentFile } from './studentFile.model'
 import { StudentTrackTranscript } from './studentTrackTranscript.model'

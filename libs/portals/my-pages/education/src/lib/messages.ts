@@ -101,7 +101,7 @@ export const uniMessages = defineMessages({
     defaultMessage: 'Svið',
   },
   institution: {
-    id: 'sp.education-graduation:education-grad-detail-instutution',
+    id: 'sp.education-graduation:education-grad-detail-institution',
     defaultMessage: 'Stofnun',
   },
   graduationFiles: {
