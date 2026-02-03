@@ -90,10 +90,9 @@ export const SigningMethodSelectionModal: FC<
   }
 
   const courtCaseNumber = workingCase.courtCaseNumber || ''
-  const description =
-    signatureType === 'ruling'
-      ? `Þú ert að fara að undirrita úrskurð í máli ${courtCaseNumber}. \nVinsamlegast veldu undirritunarleið til að halda áfram.`
-      : `Þú ert að fara að undirrita þingbók í máli ${courtCaseNumber}. \nVinsamlegast veldu undirritunarleið til að halda áfram.`
+  const description = `Þú ert að fara að undirrita ${
+    signatureType === 'ruling' ? 'úrskurð' : 'þingbók'
+  } í máli ${courtCaseNumber}. \nVinsamlegast veldu undirritunarleið til að halda áfram.`
 
   return (
     <Modal
