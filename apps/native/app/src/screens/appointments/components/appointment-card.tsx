@@ -1,24 +1,25 @@
 import React from 'react'
-import { FormattedDate, FormattedTime, useIntl } from 'react-intl'
-import { Image, ImageSourcePropType, View } from 'react-native'
+import { useIntl } from 'react-intl'
+import { Image, ImageSourcePropType } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
-import { dynamicColor } from '../../../ui/utils/dynamic-color'
-import { Icon, Typography } from '../../../ui'
-import timeOutlineIcon from '../../../assets/icons/time-outline.png'
-import chevronForward from '../../../assets/icons/chevron-forward.png'
 import calendarIcon from '../../../assets/icons/calendar.png'
+import chevronForward from '../../../assets/icons/chevron-forward.png'
 import locationIcon from '../../../assets/icons/location.png'
+import timeOutlineIcon from '../../../assets/icons/time-outline.png'
+import { Typography } from '../../../ui'
+import { dynamicColor } from '../../../ui/utils/dynamic-color'
+import { formatAppointmentDate } from '../formatAppointmentDate'
 
 const Host = styled.TouchableHighlight`
   border-radius: ${({ theme }) => theme.border.radius.large};
   border-width: ${({ theme }) => theme.border.width.standard}px;
   border-color: ${dynamicColor(
-    ({ theme }) => ({
-      light: theme.color.blue200,
-      dark: theme.shades.dark.shade400,
-    }),
-    true,
-  )};
+  ({ theme }) => ({
+    light: theme.color.blue200,
+    dark: theme.shades.dark.shade400,
+  }),
+  true,
+)};
 `
 
 const Container = styled.View`
@@ -82,13 +83,7 @@ export function AppointmentCard({
   const theme = useTheme()
   const intl = useIntl()
 
-  const appointmentDate = date ? new Date(date) : null
-
-  const getWeekdayName = (d: Date) => {
-    return intl.formatMessage({
-      id: `health.appointments.weekday.${d.getDay()}`,
-    })
-  }
+  const { weekday, date: dateStr, time } = formatAppointmentDate(intl, date)
 
   return (
     <Host
@@ -111,24 +106,17 @@ export function AppointmentCard({
             )}
           </HeadingContainer>
 
-          {appointmentDate && (
+          {date && (
             <Row>
               <TimeAndDateCell>
                 <IconImage source={calendarIcon as ImageSourcePropType} />
                 <Typography variant="body3" color={theme.color.dark400}>
-                  {getWeekdayName(appointmentDate)},{' '}
-                  <FormattedDate value={appointmentDate} />
+                  {weekday}, {dateStr}
                 </Typography>
               </TimeAndDateCell>
               <TimeAndDateCell>
                 <IconImage source={timeOutlineIcon as ImageSourcePropType} />
-                <Typography variant="body3">
-                  <FormattedTime
-                    value={appointmentDate}
-                    hour="2-digit"
-                    minute="2-digit"
-                  />
-                </Typography>
+                <Typography variant="body3">{time}</Typography>
               </TimeAndDateCell>
             </Row>
           )}

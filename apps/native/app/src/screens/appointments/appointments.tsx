@@ -59,7 +59,6 @@ export const AppointmentsScreen: NavigationFunctionComponent = ({
       from: undefined,
       status: BaseAppointmentStatuses,
     },
-    fetchPolicy: 'cache-first',
     notifyOnNetworkStatusChange: true,
   })
 

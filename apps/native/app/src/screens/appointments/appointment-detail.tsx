@@ -24,6 +24,7 @@ import {
   Problem,
   Typography,
 } from '../../ui'
+import { formatAppointmentDate } from './formatAppointmentDate'
 
 const { useNavigationOptions } = createNavigationOptionHooks(() => ({
   topBar: {
@@ -87,20 +88,6 @@ export const AppointmentDetailScreen: NavigationFunctionComponent<
       (apt) => apt.id === appointmentId,
     )
 
-  const getWeekdayName = (d: Date) => {
-    return intl.formatMessage({
-      id: `health.appointments.weekday.${d.getDay()}`,
-    })
-  }
-
-  const formatDateTime = (date?: string | null) => {
-    if (!date) return '-'
-    const dateObj = new Date(date)
-    return `${getWeekdayName(dateObj)}, ${intl.formatDate(
-      dateObj,
-    )}, kl ${intl.formatTime(dateObj, { hour: '2-digit', minute: '2-digit' })}`
-  }
-
   const formatAddress = () => {
     if (!appointment?.location) return '-'
     const parts = [
@@ -121,6 +108,11 @@ export const AppointmentDetailScreen: NavigationFunctionComponent<
       Linking.openURL(url)
     }
   }, [appointment])
+
+  const { weekday, date: dateStr, time } = formatAppointmentDate(intl, appointment?.date)
+  const timePrefix = intl.formatMessage({
+    id: 'health.appointments.timePrefix',
+  })
 
   return (
     <View style={{ flex: 1 }}>
@@ -172,7 +164,7 @@ export const AppointmentDetailScreen: NavigationFunctionComponent<
                   label={intl.formatMessage({
                     id: 'health.appointments.dateAndTime',
                   })}
-                  value={formatDateTime(appointment.date)}
+                  value={`${weekday}, ${dateStr}, ${timePrefix} ${time}`}
                 />
               </InputRow>
 
