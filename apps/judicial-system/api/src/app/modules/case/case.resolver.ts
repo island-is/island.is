@@ -78,6 +78,25 @@ export class CaseResolver {
     )
   }
 
+  @Query(() => [Case], { nullable: true })
+  async candidateMergeCases(
+    @Args('input', { type: () => CaseQueryInput })
+    input: CaseQueryInput,
+    @CurrentGraphQlUser()
+    user: User,
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
+  ): Promise<Case[]> {
+    this.logger.debug('Getting candidate merge cases')
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.GET_CANDIDATE_MERGE_CASES,
+      backendService.getCandidateMergeCases(input.id),
+      input.id,
+    )
+  }
+
   @Mutation(() => Case, { nullable: true })
   @UseInterceptors(CaseInterceptor)
   createCase(

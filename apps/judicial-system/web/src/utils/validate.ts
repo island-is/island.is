@@ -547,6 +547,7 @@ export const isDefenderStepValid = (workingCase: Case): boolean => {
       return (
         defendant.defenderChoice === DefenderChoice.WAIVE ||
         defendant.defenderChoice === DefenderChoice.DELAY ||
+        defendant.defenderChoice === DefenderChoice.DELEGATE ||
         !defendant.defenderChoice ||
         validate([
           [defendant.defenderName, ['empty']],
