@@ -1,5 +1,5 @@
 import { PortalModule } from '@island.is/portals/core'
-import { lazy, ReactNode } from 'react'
+import { lazy } from 'react'
 import { useNamespaces } from '@island.is/localization'
 import { m } from './lib/messages'
 import { SignatureCollectionPaths } from './lib/paths'
@@ -22,10 +22,10 @@ import {
 const SignatureCollectionNamespaceProvider = ({
   children,
 }: {
-  children: ReactNode
+  children: JSX.Element
 }) => {
   useNamespaces('admin-portal.signature-collection')
-  return <>{children}</>
+  return children
 }
 
 /* Parliamentary */
