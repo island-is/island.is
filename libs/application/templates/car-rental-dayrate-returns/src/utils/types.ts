@@ -15,7 +15,6 @@ export interface CarCategoryError {
 
 export interface CurrentVehicleWithMilage {
   permno: string | null
-  make: string | null
   milage: number | null
 }
 

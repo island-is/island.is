@@ -127,30 +127,30 @@ export const UploadCarDayRateUsage = ({
       currentCarData,
     )
 
-    // if (dataToChange.length > 0 && 'code' in dataToChange[0]) {
-    //   // We have errors, show single error or generic message
-    //   const errorMessages = dataToChange as CarCategoryError[]
-    //   if (errorMessages.length === 1) {
-    //     setUploadErrorMessage(
-    //       `${errorMessages[0].carNr} - ${errorMessages[0].message}`,
-    //     )
-    //   } else {
-    //     setUploadErrorMessage(
-    //       `${errorMessages.length} ${formatMessage(
-    //         m.multiUpload.errorMessageToUser,
-    //       )}`,
-    //     )
-    //   }
+    if (dataToChange.length > 0 && 'code' in dataToChange[0]) {
+      // We have errors, show single error or generic message
+      const errorMessages = dataToChange as CarCategoryError[]
+      if (errorMessages.length === 1) {
+        setUploadErrorMessage(
+          `${errorMessages[0].carNr} - ${errorMessages[0].message}`,
+        )
+      } else {
+        setUploadErrorMessage(
+          `${errorMessages.length} ${formatMessage(
+            m.multiUpload.errorMessageToUser,
+          )}`,
+        )
+      }
 
-    //   // Create error Excel file
-    //   const errorExcel = await createErrorExcel(
-    //     file,
-    //     type,
-    //     dataToChange as CarCategoryError[],
-    //   )
-    //   setErrorFile(errorExcel)
-    //   return
-    // }
+      // Create error Excel file
+      const errorExcel = await createErrorExcel(
+        file,
+        type,
+        dataToChange as CarCategoryError[],
+      )
+      setErrorFile(errorExcel)
+      return
+    }
 
     if (!dataToChange.length) {
       setUploadErrorMessage('noDataInUploadedFile')

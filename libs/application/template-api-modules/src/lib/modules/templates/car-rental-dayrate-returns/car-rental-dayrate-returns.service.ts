@@ -3,7 +3,7 @@ import { ApplicationTypes } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { Auth } from '@island.is/auth-nest-tools'
 import { TemplateApiModuleActionProps } from '../../../types'
-import { DayRateEntry, RskRentalDayRateClient } from '@island.is/clients-rental-day-rate'
+import { DayRateEntry, EntryModel, RskRentalDayRateClient, RskRentalDaysClient,  } from '@island.is/clients-rental-day-rate'
 import { getValueViaPath } from '@island.is/application/core'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
@@ -13,6 +13,7 @@ import { CarCategoryRecord, RateCategory } from '@island.is/application/template
 export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
   constructor(
     private readonly rentalDayRateClient: RskRentalDayRateClient,
+    private readonly rentalDaysClient: RskRentalDaysClient,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {
     super(ApplicationTypes.CAR_RENTAL_DAYRATE_RETURNS)
@@ -22,18 +23,21 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
     return this.rentalDayRateClient.defaultApiWithAuth(auth)
   }
 
+  private rentalDaysApiWithAuth(auth: Auth) {
+    return this.rentalDaysClient.rentalDaysApiWithAuth(auth)
+  }
+
   async getPreviousPeriodDayRateReturns({
     auth,
-  }: TemplateApiModuleActionProps): Promise<Array<DayRateEntry>> {
+  }: TemplateApiModuleActionProps): Promise<Array<EntryModel>> {
     try {
       const resp = await this.rentalsApiWithAuth(
         auth,
       ).apiDayRateEntriesEntityIdGet({
         entityId: auth.nationalId,
-        //period: new Date(),
       })
       console.log(resp)
-      return []
+      return resp ?? []
     } catch (error) {
       this.logger.error('Error getting previous period day rate entries', error)
       throw error
@@ -45,15 +49,35 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
     auth,
   }: TemplateApiModuleActionProps): Promise<boolean> {
     try {
-      return true
+      const data = getValueViaPath<Array<EntryModel>>(
+        application.externalData,
+        'getPreviousPeriodDayRateReturns.data',
+      )
+      const previousMonthDate = new Date()
+      previousMonthDate.setMonth(previousMonthDate.getMonth() - 1)
+      const previousPeriodMonth = previousMonthDate.getMonth()
+      const previousPeriodYear = previousMonthDate.getFullYear()
 
-      // There is no api to send how many days a car was used in the previous period
-      // const resp = await this.rentalsApiWithAuth(
-      //   auth,
-      // ).api({
-      //   entityId: auth.nationalId,
-      //   period: new Date(),
-      // })
+      const entries = data?.map((entry) => {
+
+      const resp = await this.rentalDaysApiWithAuth(
+        auth,
+      ).apiRentalDaysEntityIdPost({
+        entityId: auth.nationalId,
+        rentalDayRegistrationModel: {
+          entries: [
+            {
+              permno: '1234567890',
+              year: 2025,
+              month: 1,
+              numberOfDays: 1,
+              dayRateEntryId: 1,
+            },
+          ],
+        },
+      })
+      console.log(resp)
+      return true
     } catch (error) {
       this.logger.error('Error posting data to skatturinn', error)
 

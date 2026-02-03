@@ -6,7 +6,7 @@ import { verifySection } from './verify'
 import { carsChangesCountSection } from './carsChangesCount'
 
 const applicationChildren = [
-  overviewStatistics,
+  //overviewStatistics,
   multiUploadSection,
   carsChangesCountSection,
   verifySection,

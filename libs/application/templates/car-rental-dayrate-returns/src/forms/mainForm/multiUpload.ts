@@ -29,7 +29,7 @@ export const multiUploadSection = buildSection({
         }),
         buildCustomField(
           {
-            id: 'multiUploadUploadCatCategoryField',
+            id: 'multiUploadUploadCarDayRateUsageField',
             doesNotRequireAnswer: false,
             component: 'UploadCarDayRateUsage',
           },
