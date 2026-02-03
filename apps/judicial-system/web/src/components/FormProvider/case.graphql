@@ -230,6 +230,7 @@ query Case($input: CaseQueryInput!) {
       submissionDate
       fileRepresentative
       isKeyAccessible
+      defendantId
     }
     isAppealDeadlineExpired
     isAppealGracePeriodExpired
