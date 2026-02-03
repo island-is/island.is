@@ -109,7 +109,11 @@ export const AppointmentDetailScreen: NavigationFunctionComponent<
     }
   }, [appointment])
 
-  const { weekday, date: dateStr, time } = formatAppointmentDate(intl, appointment?.date)
+  const {
+    weekday,
+    date: dateStr,
+    time,
+  } = formatAppointmentDate(intl, appointment?.date)
   const timePrefix = intl.formatMessage({
     id: 'health.appointments.timePrefix',
   })
