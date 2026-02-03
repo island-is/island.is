@@ -223,8 +223,8 @@ export type RepeaterItem = {
       component: 'date'
       label: StaticText
       locale?: Locale
-      maxDate?: MaybeWithApplicationAndActiveField<Date>
-      minDate?: MaybeWithApplicationAndActiveField<Date>
+      maxDate?: MaybeWithApplicationAndActiveField<Date | undefined>
+      minDate?: MaybeWithApplicationAndActiveField<Date | undefined>
       minYear?: number
       maxYear?: number
       excludeDates?: DatePickerProps['excludeDates']
@@ -617,6 +617,8 @@ export interface SubmitField extends BaseField {
   readonly refetchApplicationAfterSubmit?:
     | boolean
     | ((event?: string) => boolean)
+  readonly renderLongErrors?: boolean
+  formatLongErrorMessage?: (message: string) => string
 }
 
 export interface DividerField extends BaseField {

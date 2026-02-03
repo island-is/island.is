@@ -42,6 +42,9 @@ export class FormDto {
   modified!: Date
 
   @ApiProperty()
+  zendeskInternal!: boolean
+
+  @ApiProperty()
   submissionServiceUrl!: string
 
   @ApiProperty()

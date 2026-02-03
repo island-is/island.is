@@ -9,44 +9,48 @@ import {
 import { generateExcelSheet } from '../../utils/generateExcelSheet'
 import { RateCategory, UploadSelection } from '../../utils/constants'
 import { CarMap } from '../../utils/types'
+import { m } from '../../lib/messages'
+import { Locale } from '@island.is/shared/types'
 
 export const multiUploadSection = buildSection({
   condition: (answers) => {
-    const uploadSelectionValue = getValueViaPath<string>(
-      answers,
-      'singleOrMultiSelectionRadio',
-    )
+    const uploadSelectionValue =
+      getValueViaPath<string>(answers, 'singleOrMultiSelectionRadio') ??
+      UploadSelection.MULTI
 
     return uploadSelectionValue
       ? uploadSelectionValue === UploadSelection.MULTI
       : false
   },
   id: 'multiUploadSection',
-  title: 'Magn skráning',
+  title: m.multiUpload.sectionTitle,
   children: [
     buildMultiField({
       id: 'multiUploadMultiField',
-      title: 'Skrá bifreiðar á kílómetragjald eða daggjald',
+      title: m.multiUpload.multiTitle,
       children: [
         buildDescriptionField({
           id: 'multiUploadDescription',
-          description: 'Veldur þær breytingar sem þú vilt gera',
+          description: m.multiUpload.description,
         }),
         buildAlertMessageField({
           id: 'multiUploadAlertMessageField',
           alertType: 'info',
-          message:
-            '1. Sæktu sniðmátið \n2. Gerðu viðeigandi breytingar á skjalinu \n3. Hleður upp skjalinu hér að neðan',
+          message: m.multiUpload.stepsMessage,
         }),
         buildCustomField(
           {
             id: 'multiUploadUploadCatCategoryField',
             doesNotRequireAnswer: false,
             component: 'UploadCarCategoryFile',
+            childInputIds: ['carCategoryFile', 'carsToChangeCount'],
           },
           {
-            getFileContent: (vehicleMap: CarMap, rateCategory: RateCategory) =>
-              generateExcelSheet(vehicleMap, rateCategory),
+            getFileContent: (
+              vehicleMap: CarMap,
+              rateCategory: RateCategory,
+              locale: Locale,
+            ) => generateExcelSheet(vehicleMap, rateCategory, locale),
           },
         ),
       ],

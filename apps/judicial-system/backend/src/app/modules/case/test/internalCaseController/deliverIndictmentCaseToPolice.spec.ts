@@ -1,5 +1,6 @@
 import { Base64 } from 'js-base64'
-import { uuid } from 'uuidv4'
+import { Transaction } from 'sequelize'
+import { v4 as uuid } from 'uuid'
 
 import {
   CaseFileCategory,
@@ -34,14 +35,21 @@ describe('InternalCaseController - Deliver indictment case to police', () => {
 
   let mockFileService: FileService
   let mockPoliceService: PoliceService
+  let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { fileService, policeService, internalCaseController } =
+    const { sequelize, fileService, policeService, internalCaseController } =
       await createTestingCaseModule()
 
     mockFileService = fileService
     mockPoliceService = policeService
+
+    const mockTransaction = sequelize.transaction as jest.Mock
+    transaction = {} as Transaction
+    mockTransaction.mockImplementationOnce(
+      (fn: (transaction: Transaction) => unknown) => fn(transaction),
+    )
 
     const mockToday = nowFactory as jest.Mock
     mockToday.mockReturnValueOnce(date)
@@ -90,8 +98,9 @@ describe('InternalCaseController - Deliver indictment case to police', () => {
       state: caseState,
       policeCaseNumbers: [policeCaseNumber],
       courtCaseNumber,
-      defendants: [{ nationalId: defendantNationalId }],
+      defendants: [{ nationalId: uuid() }],
       caseFiles: [caseFile1, caseFile2],
+      policeDefendantNationalId: defendantNationalId,
     } as Case
 
     let then: Then

@@ -33,7 +33,7 @@ export class UploadProcessor {
     const { fieldId, key, valueId } = job.data
     const destinationBucket = this.config.bucket
 
-    this.logger.info(`🟢 UploadProcessor started for ${key}`)
+    this.logger.info(`UploadProcessor started for ${key}`)
     this.logger.info(`Destination bucket: ${destinationBucket}`)
 
     const maxRetries = 3
@@ -41,7 +41,7 @@ export class UploadProcessor {
     let attempt = 0
 
     if (!destinationBucket) {
-      this.logger.error('❌ No destination bucket configured')
+      this.logger.error('No destination bucket configured')
       return
     }
 

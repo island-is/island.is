@@ -151,9 +151,3 @@ export const extractSlug = (
     : (customPageData?.configJson?.englishSlug as string) ||
         'social-insurance-administration'
 }
-
-export const is2025PreviewActive = (customPageData?: CustomPage | null) => {
-  return Boolean(customPageData?.configJson?.show2025Preview)
-}
-
-export const NEW_SYSTEM_TAKES_PLACE_DATE = new Date(2025, 8, 2)

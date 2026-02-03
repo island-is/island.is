@@ -1,5 +1,5 @@
 import { Transaction } from 'sequelize'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import {
@@ -108,10 +108,11 @@ describe('CaseController - Update', () => {
     mockCaseStringModel = caseStringModel
 
     const mockTransaction = sequelize.transaction as jest.Mock
-    transaction = {} as Transaction
-    mockTransaction.mockImplementationOnce(
-      (fn: (transaction: Transaction) => unknown) => fn(transaction),
-    )
+    transaction = {
+      commit: jest.fn(),
+      rollback: jest.fn(),
+    } as unknown as Transaction
+    mockTransaction.mockResolvedValueOnce(transaction)
 
     const mockCreateSubpoena = mockSubpoenaService.createSubpoena as jest.Mock
     mockCreateSubpoena.mockRejectedValue('Failed to create subpoena')

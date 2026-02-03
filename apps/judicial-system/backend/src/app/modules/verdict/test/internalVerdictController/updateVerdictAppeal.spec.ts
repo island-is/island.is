@@ -1,4 +1,5 @@
-import { uuid } from 'uuidv4'
+import { Transaction } from 'sequelize'
+import { v4 as uuid } from 'uuid'
 
 import {
   CaseIndictmentRulingDecision,
@@ -58,14 +59,20 @@ describe('InternalVerdictController - Update verdict appeal', () => {
 
   const now = new Date(2025, 2, 10)
   let mockVerdictRepositoryService: VerdictRepositoryService
-
+  let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { internalVerdictController, verdictRepositoryService } =
+    const { sequelize, internalVerdictController, verdictRepositoryService } =
       await createTestingVerdictModule()
 
     mockVerdictRepositoryService = verdictRepositoryService
+
+    const mockTransaction = sequelize.transaction as jest.Mock
+    transaction = {} as Transaction
+    mockTransaction.mockImplementationOnce(
+      (fn: (transaction: Transaction) => unknown) => fn(transaction),
+    )
 
     givenWhenThen = async (): Promise<Then> => {
       const then = {} as Then
@@ -106,7 +113,7 @@ describe('InternalVerdictController - Update verdict appeal', () => {
         defendantId,
         verdictId,
         dto,
-        { transaction: undefined },
+        { transaction },
       )
       expect(then.result).toBe(updatedVerdict)
     })

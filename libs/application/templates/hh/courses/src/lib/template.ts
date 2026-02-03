@@ -9,7 +9,10 @@ import {
   FormModes,
   ApplicationConfigurations,
   defineTemplateApi,
+  HealthCenterApi,
+  InstitutionNationalIds,
 } from '@island.is/application/types'
+import { buildPaymentState } from '@island.is/application/utils'
 import { Features } from '@island.is/feature-flags'
 import { CodeOwners } from '@island.is/shared/constants'
 import {
@@ -19,8 +22,10 @@ import {
 import { UserProfileApi, NationalRegistryUserApi } from '../dataProviders'
 import { ApiActions, Events, Roles, States } from '../utils/constants'
 import { dataSchema } from './dataSchema'
+import { HhCoursesSelectedChargeItemApi } from '../dataProviders'
 
 import { m } from './messages'
+import { getChargeItems } from '../utils/getChargeItems'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -64,7 +69,12 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
-              api: [UserProfileApi, NationalRegistryUserApi],
+              api: [
+                UserProfileApi,
+                NationalRegistryUserApi,
+                HealthCenterApi,
+                HhCoursesSelectedChargeItemApi,
+              ],
               delete: true,
             },
           ],
@@ -101,24 +111,43 @@ const template: ApplicationTemplate<
             },
           ],
           onExit: [
-            defineTemplateApi({
-              action: ApiActions.submitApplication,
-              throwOnError: true,
+            HhCoursesSelectedChargeItemApi.configure({
+              order: 0,
             }),
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: {
-            target: States.COMPLETED,
-          },
+          [DefaultEvents.SUBMIT]: [
+            {
+              target: States.PAYMENT,
+              cond: ({ application }) => getChargeItems(application).length > 0,
+            },
+            {
+              target: States.COMPLETED,
+              cond: ({ application }) =>
+                getChargeItems(application).length === 0,
+            },
+          ],
         },
       },
+      [States.PAYMENT]: buildPaymentState({
+        organizationId:
+          InstitutionNationalIds.HEILSUGAESLA_HOFUDBORDARSVAEDISINS,
+        chargeItems: getChargeItems,
+        submitTarget: States.COMPLETED,
+      }),
       [States.COMPLETED]: {
         meta: {
           name: 'Completed form',
           progress: 1,
           status: FormModes.COMPLETED,
           lifecycle: DefaultStateLifeCycle,
+          onEntry: [
+            defineTemplateApi({
+              action: ApiActions.submitApplication,
+              triggerEvent: DefaultEvents.SUBMIT,
+            }),
+          ],
           roles: [
             {
               id: Roles.APPLICANT,

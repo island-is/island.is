@@ -1,5 +1,5 @@
 import archiver from 'archiver'
-import { Includeable, Op } from 'sequelize'
+import { Includeable, Op, Transaction } from 'sequelize'
 import { Writable } from 'stream'
 
 import {
@@ -120,6 +120,7 @@ export const attributes: (keyof Case)[] = [
   'isCompletedWithoutRuling',
   'isRegisteredInPrisonSystem',
   'rulingModifiedHistory',
+  'withCourtSessions',
 ]
 
 export interface LimitedAccessUpdateCase
@@ -480,8 +481,9 @@ export class LimitedAccessCaseService {
     theCase: Case,
     update: LimitedAccessUpdateCase,
     user: TUser,
+    transaction: Transaction,
   ): Promise<Case> {
-    await this.caseRepositoryService.update(theCase.id, update)
+    await this.caseRepositoryService.update(theCase.id, update, { transaction })
 
     const messages = []
 
@@ -695,7 +697,11 @@ export class LimitedAccessCaseService {
     }
   }
 
-  async getAllFilesZip(theCase: Case, user: TUser): Promise<Buffer> {
+  async getAllFilesZip(
+    theCase: Case,
+    user: TUser,
+    transaction: Transaction,
+  ): Promise<Buffer> {
     const allowedCaseFileCategories = getDefenceUserCaseFileCategories(
       user.nationalId,
       theCase.type,
@@ -758,7 +764,7 @@ export class LimitedAccessCaseService {
     ) {
       promises.push(
         this.tryAddGeneratedPdfToFilesToZip(
-          this.pdfService.getIndictmentPdf(theCase),
+          this.pdfService.getIndictmentPdf(theCase, transaction),
           'Ákæra.pdf',
           filesToZip,
         ),
@@ -778,7 +784,12 @@ export class LimitedAccessCaseService {
         defendant.subpoenas?.forEach((subpoena) =>
           promises.push(
             this.tryAddGeneratedPdfToFilesToZip(
-              this.pdfService.getSubpoenaPdf(theCase, defendant, subpoena),
+              this.pdfService.getSubpoenaPdf(
+                theCase,
+                defendant,
+                transaction,
+                subpoena,
+              ),
               `Fyrirkall-${defendant.name}.pdf`,
               filesToZip,
             ),
@@ -794,7 +805,11 @@ export class LimitedAccessCaseService {
       ) {
         promises.push(
           this.tryAddGeneratedPdfToFilesToZip(
-            this.pdfService.getCourtRecordPdfForIndictmentCase(theCase, user),
+            this.pdfService.getCourtRecordPdfForIndictmentCase(
+              theCase,
+              user,
+              transaction,
+            ),
             'Þingbók.pdf',
             filesToZip,
           ),

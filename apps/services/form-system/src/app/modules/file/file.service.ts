@@ -1,3 +1,4 @@
+import { FileStorageService } from '@island.is/file-storage'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { S3Service } from '@island.is/nest/aws'
 import { InjectQueue } from '@nestjs/bull'
@@ -16,18 +17,13 @@ export class FileService {
     private readonly s3Service: S3Service,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
     @InjectQueue('upload') private readonly uploadQueue: Queue,
+    private readonly fileStorageService: FileStorageService,
     @InjectModel(Value)
     private readonly valueModel: typeof Value,
   ) {}
 
   async fileExists(key: string): Promise<boolean> {
-    try {
-      const s3Uri = `s3://${this.config.tempBucket}/${key}`
-      return await this.s3Service.fileExists(s3Uri)
-    } catch (error) {
-      this.logger.error(`Error checking existence for ${key}`, error)
-      return false
-    }
+    return await this.fileStorageService.fileExists(key)
   }
 
   async uploadFile(
@@ -37,18 +33,78 @@ export class FileService {
   ): Promise<void> {
     const targetBucket = this.config.bucket
     if (!targetBucket) {
-      throw new Error('Target S3 bucket not configured')
+      this.logger.error('❌ No destination bucket configured')
+      return
     }
 
-    this.logger.info(
-      `Queueing copy job for file ${sourceKey} from ${this.config.tempBucket} to ${targetBucket}`,
-    )
+    // this.logger.info(
+    //   `Queueing copy job for file ${sourceKey} from ${this.config.uploadBucket} to ${targetBucket}`,
+    // )
 
-    await this.uploadQueue.add('upload', {
-      fieldId,
-      key: sourceKey,
-      valueId,
-    })
+    //   try {
+    //     await Promise.race([
+    //       this.uploadQueue.add('upload', { fieldId, key: sourceKey, valueId }),
+    //       new Promise((_, reject) =>
+    //         setTimeout(
+    //           () => reject(new Error('Timed out adding job to upload queue')),
+    //           5000,
+    //         ),
+    //       ),
+    //     ])
+    //     this.logger.info('✅ Job added to upload queue')
+    //   } catch (e) {
+    //     this.logger.error('❌ Failed to add job to upload queue', e)
+    //     throw e
+    //   }
+    // }
+
+    let attempts = 0
+    const key = `${fieldId}/${sourceKey}`
+
+    while (attempts < 5) {
+      const exists = await this.fileExists(sourceKey)
+      this.logger.info(`Starting attempt ${attempts + 1}`)
+      if (exists) {
+        try {
+          const res = await this.fileStorageService.copyObjectFromUploadBucket(
+            sourceKey,
+            targetBucket,
+            key,
+          )
+          this.logger.info(`result: ${res}`)
+          const value = await this.valueModel.findByPk(valueId)
+
+          if (!value) {
+            this.logger.warn(`Value with PK: ${valueId} not found`)
+            return
+          }
+
+          const currentKeys = value.json?.s3Key || []
+          const updatedKeys = [...currentKeys, key]
+
+          value.json = {
+            ...value.json,
+            s3Key: updatedKeys,
+          }
+
+          await value.save()
+
+          this.logger.info(`✅ Updated field ${fieldId} with new S3 key ${key}`)
+          return
+        } catch (error) {
+          this.logger.error(`❌ Copy failed: ${error}`)
+          throw error
+        }
+      }
+
+      attempts++
+      if (!exists) {
+        this.logger.warn(
+          `File ${sourceKey} not found in upload bucket. Retrying in 2 seconds...`,
+        )
+        await new Promise((resolve) => setTimeout(resolve, 2000))
+      }
+    }
 
     this.logger.info(`Upload job added to queue for key ${sourceKey}`)
   }

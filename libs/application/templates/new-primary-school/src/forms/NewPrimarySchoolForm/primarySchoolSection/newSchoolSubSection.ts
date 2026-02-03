@@ -8,13 +8,14 @@ import {
   buildMultiField,
   buildSubSection,
   coreErrorMessages,
-  NO,
 } from '@island.is/application/core'
 import { friggOrganizationsByTypeQuery } from '../../../graphql/queries'
 import { primarySchoolMessages, sharedMessages } from '../../../lib/messages'
-import { shouldShowAlternativeSpecialEducationDepartment } from '../../../utils/conditionUtils'
 import {
-  ApplicationType,
+  shouldShowAlternativeSpecialEducationDepartment,
+  shouldShowReasonForApplicationAndNewSchoolPages,
+} from '../../../utils/conditionUtils'
+import {
   NU_UNIT_ID,
   OrganizationSubType,
   RVK_MUNICIPALITY_ID,
@@ -31,20 +32,13 @@ import {
 export const newSchoolSubSection = buildSubSection({
   id: 'newSchoolSubSection',
   title: primarySchoolMessages.newSchool.subSectionTitle,
-  condition: (answers) => {
-    const { applyForPreferredSchool, applicationType } =
-      getApplicationAnswers(answers)
-
-    return (
-      applicationType === ApplicationType.NEW_PRIMARY_SCHOOL ||
-      (applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL &&
-        applyForPreferredSchool === NO)
-    )
-  },
+  condition: (answers, externalData) =>
+    shouldShowReasonForApplicationAndNewSchoolPages(answers, externalData),
   children: [
     buildMultiField({
       id: 'newSchool',
       title: primarySchoolMessages.newSchool.subSectionTitle,
+      description: primarySchoolMessages.newSchool.subSectionMessage,
       children: [
         buildAsyncSelectField({
           id: 'newSchool.municipality',

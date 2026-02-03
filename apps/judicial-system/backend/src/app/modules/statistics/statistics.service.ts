@@ -716,6 +716,10 @@ export class StatisticsService {
               key: 'courtOfAppealDecisionDescriptor',
               header: 'Niðurstaða Landsréttar',
             },
+            {
+              key: 'parentCaseId',
+              header: 'Upprunalegt mál',
+            },
           ] as Column[],
           key: `krofur_from_${getDateString(
             period?.fromDate,

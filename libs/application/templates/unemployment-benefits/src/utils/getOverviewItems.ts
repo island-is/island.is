@@ -54,6 +54,7 @@ import {
   wasStudyingLastSemester,
 } from './educationInformation'
 import { getEmploymentFromRsk } from './getEmploymenInfo'
+import { getJobInfo } from './getJobCodeOptions'
 
 export const useApplicantOverviewItems = (
   answers: FormValue,
@@ -126,7 +127,7 @@ export const useApplicantOverviewItems = (
 
 export const useEmploymentInformationOverviewItems = (
   answers: FormValue,
-  _externalData: ExternalData,
+  externalData: ExternalData,
 ): Array<KeyValueItem> => {
   const { locale } = useLocale()
   const mainReason =
@@ -136,7 +137,7 @@ export const useEmploymentInformationOverviewItems = (
     ''
   const reasons = getReasonForJobSearchString(
     mainReason,
-    _externalData,
+    externalData,
     locale,
     additionalReason,
   )
@@ -152,14 +153,14 @@ export const useEmploymentInformationOverviewItems = (
     getValueViaPath<string>(answers, 'workingAbility.status') ?? ''
 
   const abilityString = abilityAnswer
-    ? getWorkingAbilityString(abilityAnswer, _externalData, locale)
+    ? getWorkingAbilityString(abilityAnswer, externalData, locale)
     : ''
   const employmentHistory = getValueViaPath<EmploymentHistoryInAnswers>(
     answers,
     'employmentHistory',
   )
 
-  const rskEmploymentList = getEmploymentFromRsk(_externalData)
+  const rskEmploymentList = getEmploymentFromRsk(externalData)
 
   const previousJobInformation = employmentHistory?.lastJobs?.map((job) => {
     const employerName =
@@ -168,7 +169,10 @@ export const useEmploymentInformationOverviewItems = (
             (x) => x.employerSSN === job.nationalIdWithName,
           )?.employer
         : job.employer?.name
-    return `${employerName}: ${job.title}`
+    const jobInfo = getJobInfo(externalData, job.jobCodeId)
+    return `${employerName}: ${
+      (locale === 'is' ? jobInfo?.name : jobInfo?.english) ?? ''
+    }`
   })
 
   const currentJobInformation = employmentHistory?.currentJobs?.map((job) => {
@@ -178,7 +182,10 @@ export const useEmploymentInformationOverviewItems = (
             (x) => x.employerSSN === job.nationalIdWithName,
           )?.employer
         : job.employer?.name
-    return `${employerName}: ${job.title}`
+    const jobInfo = getJobInfo(externalData, job.jobCodeId)
+    return `${employerName}: ${
+      (locale === 'is' ? jobInfo?.name : jobInfo?.english) ?? ''
+    }`
   })
 
   return [
@@ -567,11 +574,29 @@ export const useLanguageOverviewItems = (
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
   const { locale } = useLocale()
-  const allLanguages =
+  const allLanguagesAnswers =
     getValueViaPath<Array<LanguagesInAnswers>>(answers, 'languageSkills', []) ??
     []
-  const allLanguageStrings = allLanguages.map(
+
+  const languages =
+    getValueViaPath<Array<GaldurDomainModelsSelectItem>>(
+      _externalData,
+      'unemploymentApplication.data.supportData.languageKnowledge',
+    ) || []
+  const languageSkills =
+    getValueViaPath<Array<GaldurDomainModelsSelectItem>>(
+      _externalData,
+      'unemploymentApplication.data.supportData.languageValues',
+    ) || []
+  const allLanguageStrings = allLanguagesAnswers.map(
     (language: LanguagesInAnswers, index: number) => {
+      const languageSkillItem = languageSkills.find(
+        (x) => x.id === language.skill,
+      )
+      const languageSkill =
+        locale === 'is'
+          ? languageSkillItem?.name
+          : languageSkillItem?.english || ''
       if (index < 2) {
         //first two are default languages with no id's
         const languageName =
@@ -584,26 +609,14 @@ export const useLanguageOverviewItems = (
               ? 'Enska'
               : 'English'
             : language.language
-        return `${languageName}: ${language.skill}`
+        return `${languageName}: ${languageSkill}`
       }
-      const languages =
-        getValueViaPath<Array<GaldurDomainModelsSelectItem>>(
-          _externalData,
-          'unemploymentApplication.data.supportData.languageKnowledge',
-        ) || []
-      const languageSkills =
-        getValueViaPath<Array<GaldurDomainModelsSelectItem>>(
-          _externalData,
-          'unemploymentApplication.data.supportData.languageValues',
-        ) || []
+
       const languageItem = languages.find((x) => x.id === language.language)
       const languageName =
         (locale === 'is'
           ? languageItem?.name
           : languageItem?.english ?? languageItem?.name) || ''
-      const languageSkill = languageSkills.find(
-        (x) => x.id === language.skill,
-      )?.name
 
       return `${languageName}: ${languageSkill}`
     },

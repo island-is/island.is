@@ -15,7 +15,6 @@ import {
 } from '@island.is/application/templates/social-insurance-administration/old-age-pension'
 import { getApplicationAnswers as getPSApplicationAnswers } from '@island.is/application/templates/social-insurance-administration/pension-supplement'
 import { Application, ApplicationTypes } from '@island.is/application/types'
-import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import {
   DocumentTypeEnum,
   SocialInsuranceAdministrationClientService,
@@ -46,6 +45,10 @@ import {
   transformApplicationToPensionSupplementDTO,
 } from './social-insurance-administration-utils'
 import { ApplicationTypeEnum } from '@island.is/clients/social-insurance-administration'
+import {
+  IndividualDto,
+  NationalRegistryV3ApplicationsClientService,
+} from '@island.is/clients/national-registry-v3-applications'
 
 export const APPLICATION_ATTACHMENT_BUCKET = 'APPLICATION_ATTACHMENT_BUCKET'
 
@@ -57,7 +60,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     @Inject(sharedModuleConfig.KEY)
     private config: ConfigType<typeof sharedModuleConfig>,
     private readonly s3Service: S3Service,
-    private readonly nationalRegistryApi: NationalRegistryClientService,
+    private readonly nationalRegistryV3ApplicationsApi: NationalRegistryV3ApplicationsClientService,
   ) {
     super('SocialInsuranceAdministration')
   }
@@ -594,40 +597,29 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
   }
 
   async getChildrenWithSameDomicile({ auth }: TemplateApiModuleActionProps) {
-    const cohabitants = await this.nationalRegistryApi.getCohabitants(
-      auth.nationalId,
-    )
+    const cohabitantsDetailed =
+      await this.nationalRegistryV3ApplicationsApi.getCohabitantsDetailed(
+        auth.nationalId,
+        auth,
+      )
 
-    const children: Array<ChildInformation | null> = await Promise.all(
-      cohabitants.map(async (cohabitantsNationalId) => {
+    const children: Array<ChildInformation> = []
+
+    cohabitantsDetailed?.cohabitants
+      .filter((c): c is IndividualDto => c !== null)
+      .forEach((cohabitant) => {
         if (
-          cohabitantsNationalId !== auth.nationalId &&
-          kennitala.info(cohabitantsNationalId).age < 18
+          cohabitant.nationalId !== auth.nationalId &&
+          kennitala.info(cohabitant.nationalId).age < 18
         ) {
-          const child = await this.nationalRegistryApi.getIndividual(
-            cohabitantsNationalId,
-          )
-
-          if (!child) {
-            return null
-          }
-
-          return (
-            child && {
-              nationalId: child.nationalId,
-              fullName: child.name,
-            }
-          )
-        } else {
-          return null
+          children.push({
+            nationalId: cohabitant.nationalId,
+            fullName: cohabitant.name,
+          })
         }
-      }),
-    )
+      })
 
-    const filteredChildren = children.filter(
-      (child): child is ChildInformation => child != null,
-    )
-    return filteredChildren
+    return children
   }
 
   async getSpousalInfo({ auth }: TemplateApiModuleActionProps) {

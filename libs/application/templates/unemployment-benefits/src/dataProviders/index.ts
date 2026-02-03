@@ -10,11 +10,7 @@ export const UserProfileApi = defineTemplateApi({
   externalDataId: 'userProfile',
   namespace: 'UserProfile',
   params: {
-    validateBankInformation: true,
+    validateEmail: true,
+    validatePhoneNumber: true,
   },
-})
-
-export const LocaleApi = defineTemplateApi({
-  action: 'getStartingLocale',
-  externalDataId: 'startingLocale',
 })

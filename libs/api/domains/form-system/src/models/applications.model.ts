@@ -55,6 +55,12 @@ export class Application {
   @Field(() => String, { nullable: true })
   status?: string
 
+  @Field(() => Int, { nullable: true })
+  draftFinishedSteps?: number
+
+  @Field(() => Int, { nullable: true })
+  draftTotalSteps?: number
+
   @Field(() => Boolean, { nullable: true })
   allowProceedOnValidationFail?: boolean
 
@@ -90,6 +96,24 @@ export class ApplicationListDto {
 
   @Field(() => Int, { nullable: true })
   total?: number
+}
+
+@ObjectType('FormSystemScreenErrorMessage')
+export class ScreenErrorMessage {
+  @Field(() => LanguageType, { nullable: true })
+  title?: LanguageType
+
+  @Field(() => LanguageType, { nullable: true })
+  message?: LanguageType
+}
+
+@ObjectType('FormSystemSubmitApplicationResponse')
+export class SubmitApplicationResponse {
+  @Field(() => Boolean, { nullable: true })
+  success?: boolean
+
+  @Field(() => [ScreenErrorMessage], { nullable: 'itemsAndList' })
+  screenErrorMessages?: ScreenErrorMessage[]
 }
 
 @ObjectType('FormSystemSubmitScreenResponseValue')

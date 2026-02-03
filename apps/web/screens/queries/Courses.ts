@@ -69,10 +69,8 @@ export const GET_COURSE_BY_ID_QUERY = gql`
           }
           location
           displayedTitle
-          price {
-            amount
-          }
           description
+          chargeItemCode
         }
       }
     }
@@ -85,6 +83,10 @@ export const GET_COURSE_LIST_PAGE_BY_ID_QUERY = gql`
     getCourseListPageById(input: $input) {
       id
       title
+      content {
+        ...AllSlices
+      }
     }
   }
+  ${slices}
 `

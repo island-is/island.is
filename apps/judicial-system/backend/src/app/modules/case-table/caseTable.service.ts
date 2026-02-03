@@ -17,6 +17,7 @@ import {
   isDistrictCourtUser,
   isIndictmentCase,
   isProsecutionUser,
+  isPublicProsecutionOfficeUser,
   isRequestCase,
   type User as TUser,
 } from '@island.is/judicial-system/types'
@@ -256,10 +257,24 @@ export class CaseTableService {
       where: caseTableWhereOptions[type](user),
     })
 
+    // Display defendants in separate lines for public prosecutors office
+    const displayCases: Case[] = isPublicProsecutionOfficeUser(user)
+      ? cases.flatMap((c) => {
+          const jsonCase = c.toJSON()
+
+          if (c.defendants && c.defendants.length > 0) {
+            return c.defendants.map((d) => ({ ...jsonCase, defendants: [d] }))
+          }
+
+          return jsonCase
+        })
+      : cases
+
     return {
-      rowCount: cases.length,
-      rows: cases.map((c) => ({
+      rowCount: displayCases.length,
+      rows: displayCases.map((c) => ({
         caseId: c.id,
+        defendantIds: c.defendants?.map((d) => d.id),
         isMyCase: isMyCase(c, user),
         actionOnRowClick: getActionOnRowClick(c, user),
         contextMenuActions: getContextMenuActions(c, user),

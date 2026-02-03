@@ -1,4 +1,9 @@
-import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
+import {
+  json,
+  ref,
+  service,
+  ServiceBuilder,
+} from '../../../../infra/src/dsl/dsl'
 import { Base, JudicialSystem } from '../../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
@@ -56,6 +61,17 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
       AUDIT_TRAIL_USE_GENERIC_LOGGER: 'false',
       AUDIT_TRAIL_GROUP_NAME: 'k8s/judicial-system/audit-log',
       AUDIT_TRAIL_REGION: 'eu-west-1',
+      REDIS_NODES: {
+        dev: json([
+          'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+        ]),
+        staging: json([
+          'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
+        ]),
+        prod: json([
+          'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
+        ]),
+      },
     })
     .xroad(Base, JudicialSystem)
     .secrets({

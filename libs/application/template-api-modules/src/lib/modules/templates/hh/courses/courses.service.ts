@@ -1,17 +1,18 @@
 import { Inject, Injectable } from '@nestjs/common'
+import type { ConfigType } from '@nestjs/config'
+import format from 'date-fns/format'
 import {
   ApplicationTypes,
-  type ExternalData,
   type ApplicationWithAttachments,
 } from '@island.is/application/types'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { ZendeskService } from '@island.is/clients/zendesk'
 import { YesOrNoEnum, getValueViaPath } from '@island.is/application/core'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { SharedTemplateApiService } from '../../../shared'
 import type { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import type { ApplicationAnswers } from './types'
+import { HHCoursesConfig } from './courses.config'
 
 const GET_COURSE_BY_ID_QUERY = `
   query GetCourseById($input: GetCourseByIdInput!) {
@@ -26,6 +27,7 @@ const GET_COURSE_BY_ID_QUERY = `
             startTime
             endTime
           }
+          chargeItemCode
         }
       }
     }
@@ -34,16 +36,37 @@ const GET_COURSE_BY_ID_QUERY = `
 
 @Injectable()
 export class CoursesService extends BaseTemplateApiService {
-  private readonly zendeskSubject =
-    process.env.HH_COURSES_ZENDESK_SUBJECT ||
-    'Skráning á námskeið - Heilsugæsla höfuðborgarsvæðisins'
-
   constructor(
     private readonly sharedTemplateApiService: SharedTemplateApiService,
-    private readonly zendeskService: ZendeskService,
+    @Inject(HHCoursesConfig.KEY)
+    private readonly coursesConfig: ConfigType<typeof HHCoursesConfig>,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {
     super(ApplicationTypes.HEILSUGAESLA_HOFUDBORDARSVAEDISINS_NAMSKEID)
+  }
+
+  async getSelectedChargeItem({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps): Promise<{
+    chargeItemCode?: string | null
+  }> {
+    const courseId = getValueViaPath<ApplicationAnswers['courseSelect']>(
+      application.answers,
+      'courseSelect',
+    )
+    const courseInstanceId = getValueViaPath<ApplicationAnswers['dateSelect']>(
+      application.answers,
+      'dateSelect',
+    )
+
+    const { courseInstance } = await this.getCourseById(
+      courseId,
+      courseInstanceId,
+      auth.authorization,
+    )
+
+    return { chargeItemCode: courseInstance.chargeItemCode }
   }
 
   async submitApplication({
@@ -63,45 +86,17 @@ export class CoursesService extends BaseTemplateApiService {
           'participantList',
         ) ?? []
 
-      const { applicantName, applicantEmail, applicantPhone } =
-        await this.extractApplicantInfo(application.externalData)
+      const { name, email, phone, healthcenter, nationalId } =
+        await this.extractApplicantInfo(application)
 
-      const firstParticipant = participantList.find(
-        (participant) =>
-          Boolean(participant?.nationalIdWithName?.name) &&
-          Boolean(participant?.nationalIdWithName?.email) &&
-          Boolean(participant?.nationalIdWithName?.phone),
-      )
-
-      let name = ''
-      let email = ''
-      let phone = ''
-
-      if (firstParticipant) {
-        name = firstParticipant?.nationalIdWithName?.name ?? ''
-        email = firstParticipant?.nationalIdWithName?.email ?? ''
-        phone = firstParticipant?.nationalIdWithName?.phone ?? ''
-      } else {
-        name = applicantName ?? ''
-        email = applicantEmail ?? ''
-        phone = applicantPhone ?? ''
-      }
-
-      if (!name || !email || !phone)
+      if (!name || !email || !phone || !healthcenter || !nationalId)
         throw new TemplateApiError(
           {
             title: 'No contact information found',
-            summary:
-              'Neither applicant nor participant information is available',
+            summary: 'No contact information found',
           },
           400,
         )
-
-      let user = await this.zendeskService.getUserByEmail(email)
-
-      if (!user) {
-        user = await this.zendeskService.createUser(name, email, phone)
-      }
 
       const message = await this.formatApplicationMessage(
         application,
@@ -109,14 +104,26 @@ export class CoursesService extends BaseTemplateApiService {
         course.id,
         course.title,
         courseInstance,
+        nationalId,
+        name,
+        email,
+        phone,
+        healthcenter,
       )
 
-      await this.zendeskService.submitTicket({
-        message,
-        requesterId: user.id,
-        subject: this.zendeskSubject,
-        tags: ['hh-courses'],
-      })
+      await this.sharedTemplateApiService.sendEmail(
+        (_props) => ({
+          to: this.coursesConfig.applicationRecipientEmail,
+          from: {
+            name: this.coursesConfig.applicationSenderName,
+            address: this.coursesConfig.applicationSenderEmail,
+          },
+          subject: this.coursesConfig.applicationEmailSubject,
+          text: message,
+          replyTo: email,
+        }),
+        application,
+      )
 
       return { success: true }
     } catch (error) {
@@ -174,6 +181,7 @@ export class CoursesService extends BaseTemplateApiService {
                 startTime?: string
                 endTime?: string
               }
+              chargeItemCode?: string | null
             }[]
           }
         }
@@ -212,24 +220,32 @@ export class CoursesService extends BaseTemplateApiService {
     }
   }
 
-  private async extractApplicantInfo(externalData: ExternalData) {
-    const applicantName = getValueViaPath<string>(
-      externalData,
+  private async extractApplicantInfo(application: ApplicationWithAttachments) {
+    const nationalId = application.applicant
+
+    const name = getValueViaPath<string>(
+      application.externalData,
       'nationalRegistry.data.fullName',
     )
-    const applicantEmail = getValueViaPath<string>(
-      externalData,
-      'userProfile.data.email',
+    const email = getValueViaPath<string>(
+      application.answers,
+      'userInformation.email',
     )
-    const applicantPhone = getValueViaPath<string>(
-      externalData,
-      'userProfile.data.mobilePhoneNumber',
+    const phone = getValueViaPath<string>(
+      application.answers,
+      'userInformation.phone',
+    )
+    const healthcenter = getValueViaPath<string>(
+      application.answers,
+      'userInformation.healthcenter',
     )
 
     return {
-      applicantName,
-      applicantEmail,
-      applicantPhone,
+      nationalId,
+      name,
+      email,
+      phone,
+      healthcenter,
     }
   }
 
@@ -246,6 +262,11 @@ export class CoursesService extends BaseTemplateApiService {
         endTime?: string
       }
     },
+    nationalId: string,
+    name: string,
+    email: string,
+    phone: string,
+    healthcenter: string,
   ): Promise<string> {
     const userIsPayingAsIndividual = getValueViaPath<YesOrNoEnum>(
       application.answers,
@@ -260,11 +281,7 @@ export class CoursesService extends BaseTemplateApiService {
     }>(application.answers, 'payment.companyPayment')
 
     let message = ''
-    message += `ID á umsókn: ${application.id}\n`
     message += `Námskeið: ${courseTitle}\n`
-    message += `ID á námskeiði: ${courseId}\n`
-    message += `ID á upphafsdagsetningu: ${courseInstance.id}\n`
-
     let startDateTimeDuration = ''
     if (courseInstance.startDateTimeDuration?.startTime) {
       startDateTimeDuration = courseInstance.startDateTimeDuration.startTime
@@ -273,11 +290,16 @@ export class CoursesService extends BaseTemplateApiService {
       }
     }
 
-    message += `Upphafsdagsetning: ${courseInstance.startDate.split('T')[0]} ${
-      startDateTimeDuration ?? ''
-    }\n`
+    message += `Upphafsdagsetning námskeiðs: ${format(
+      new Date(courseInstance.startDate.split('T')[0]),
+      'dd.MM.yyyy',
+    )} ${startDateTimeDuration ?? ''}\n`
 
-    message += `Kennitala umsækjanda: ${application.applicant}\n`
+    message += `Kennitala umsækjanda: ${nationalId}\n`
+    message += `Nafn umsækjanda: ${name}\n`
+    message += `Netfang umsækjanda: ${email}\n`
+    message += `Símanúmer umsækjanda: ${phone}\n`
+    message += `Heilsugæslustöð umsækjanda: ${healthcenter}\n`
 
     const payer =
       userIsPayingAsIndividual === YesOrNoEnum.YES
@@ -287,7 +309,7 @@ export class CoursesService extends BaseTemplateApiService {
           }
         : companyPayment?.nationalIdWithName
 
-    message += `Nafn greiðanda: ${payer?.name ?? ''}\n`
+    message += `Greiðandi: ${payer?.name ?? ''}\n`
     message += `Kennitala greiðanda: ${payer?.nationalId ?? ''}\n`
 
     participantList.forEach((participant, index) => {

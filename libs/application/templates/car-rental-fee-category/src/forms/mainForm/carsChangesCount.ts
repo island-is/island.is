@@ -1,4 +1,5 @@
 import {
+  buildAlertMessageField,
   buildMultiField,
   buildSection,
   buildStaticTableField,
@@ -6,35 +7,43 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { CarCategoryRecord } from '../../utils/types'
+import { m } from '../../lib/messages'
+import { formatDayRateApiErrorMessages } from '../../utils/errorFormatUtils'
 
 export const carsChangesCountSection = buildSection({
   id: 'carsChangesCountSection',
-  title: 'Fjöldi bíla breytt',
+  title: m.carsChangesCount.sectionTitle,
   children: [
     buildMultiField({
       id: 'carsChangesCountMultiField',
-      title: 'Staðfesta breytingar',
+      title: m.carsChangesCount.multiTitle,
       children: [
         buildStaticTableField({
-          header: ['Fjöldi bifreiða breytt'],
+          header: [m.carsChangesCount.header],
           rows: (application) => {
-            const data =
+            const carsToChangeCount =
               getValueViaPath<CarCategoryRecord[]>(
                 application.answers,
-                'carsToChange',
-              ) ?? []
+                'carsToChangeCount',
+              ) ?? 0
 
-            return [[data.length.toString()]]
+            return [[carsToChangeCount.toString() ?? '0']]
           },
+        }),
+        buildAlertMessageField({
+          id: 'carsChangesCountAlertMessage',
+          alertType: 'info',
+          message: m.carsChangesCount.alertMessage,
         }),
         buildSubmitField({
           id: 'submit',
-          title: 'Submit',
           refetchApplicationAfterSubmit: true,
+          renderLongErrors: true,
+          formatLongErrorMessage: formatDayRateApiErrorMessages,
           actions: [
             {
               event: 'SUBMIT',
-              name: 'Submit',
+              name: m.carsChangesCount.submitButton,
               type: 'primary',
             },
           ],

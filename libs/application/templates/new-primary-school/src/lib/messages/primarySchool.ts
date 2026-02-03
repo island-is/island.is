@@ -125,6 +125,13 @@ export const primarySchoolMessages = {
       defaultMessage: 'Upplýsingar um núverandi leikskóla',
       description: 'Information about current nursery',
     },
+    description: {
+      id: 'nps.application:primarySchool.currentNursery.description',
+      defaultMessage:
+        'Við undirbúning fyrir móttöku barns í grunnskóla er gagnlegt að vita úr hvaða leikskóla barnið kemur. Athugið að engar upplýsingar eru fluttar með sjálfvirkum hætti milli leikskóla og grunnskóla.',
+      description:
+        'When preparing for the admission of a child to primary school, it is useful to know from which nursery the child comes. Please note that no information is transferred automatically between nursery and primary school.',
+    },
     nursery: {
       id: 'nps.application:primarySchool.currentNursery.nursery',
       defaultMessage: 'Leikskóli',
@@ -134,6 +141,18 @@ export const primarySchoolMessages = {
       id: 'nps.application:primarySchool.currentNursery.nurseryPlaceholder',
       defaultMessage: 'Veldu leikskóla',
       description: 'Select nursery',
+    },
+    hasCurrentNursery: {
+      id: 'nps.application:primarySchool.currentNursery.hasCurrentNursery',
+      defaultMessage: 'Er barnið þitt í leikskóla á Íslandi?',
+      description: 'Does your child attend a nursery in Iceland?',
+    },
+    alertMessage: {
+      id: 'nps.application:primarySchool.currentNursery.alertMessage',
+      defaultMessage:
+        'Í skólanámskrá hvers leikskóla er tilgreint hvaða upplýsingar skulu almennt fylgja barni á milli skólastiga og rétt forsjáraðila í þeim efnum. Nánar má svo lesa um öflun, meðferð og vörslu upplýsinga um börn í leikskólum og miðlun upplýsinga milli leik- og grunnskóla í reglugerð nr. 896/2009.',
+      description:
+        'The curriculum of each nursery specifies which information should generally accompany a child between school levels and the rights of the guardian in that regard. You can read more about the collection, usage and storage of information about children in nurseries and the sharing of information between nurseries and primary schools in regulation no. 896/2009.',
     },
   }),
   school: defineMessages({
@@ -177,6 +196,13 @@ export const primarySchoolMessages = {
       id: 'nps.application:primarySchool.newSchool.subSectionTitle',
       defaultMessage: 'Nýr skóli',
       description: 'New school',
+    },
+    subSectionMessage: {
+      id: 'nps.application:primarySchool.newSchool.subSectionMessage',
+      defaultMessage:
+        'Ef skóli birtist ekki í listanum er innritunartímabil ekki hafið hjá viðkomandi sveitarfélagi. Nánari upplýsingar um innritunartímabil er að finna á heimasíðu sveitarfélagsins.',
+      description:
+        "If a school does not appear in the list, the enrollment period has not yet begun in the relevant municipality. Further information about the enrollment period can be found on the municipality's website.",
     },
     alertMessage: {
       id: 'nps.application:primarySchool.newSchool.alertMessage',

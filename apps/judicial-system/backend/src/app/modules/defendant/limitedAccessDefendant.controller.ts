@@ -1,3 +1,5 @@
+import { Sequelize } from 'sequelize-typescript'
+
 import {
   Body,
   Controller,
@@ -6,6 +8,7 @@ import {
   Patch,
   UseGuards,
 } from '@nestjs/common'
+import { InjectConnection } from '@nestjs/sequelize'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import type { Logger } from '@island.is/logging'
@@ -45,6 +48,7 @@ import { DefendantService } from './defendant.service'
 export class LimitedAccessDefendantController {
   constructor(
     private readonly defendantService: DefendantService,
+    @InjectConnection() private readonly sequelize: Sequelize,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -65,6 +69,15 @@ export class LimitedAccessDefendantController {
     this.logger.debug(
       `Updating limitedAccess defendant ${defendantId} of case ${caseId}`,
     )
-    return this.defendantService.update(theCase, defendant, updateDto, user)
+
+    return this.sequelize.transaction((transaction) =>
+      this.defendantService.update(
+        theCase,
+        defendant,
+        updateDto,
+        user,
+        transaction,
+      ),
+    )
   }
 }

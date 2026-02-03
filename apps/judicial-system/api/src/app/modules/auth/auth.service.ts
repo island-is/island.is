@@ -1,7 +1,7 @@
 import fetch from 'isomorphic-fetch'
 import jwt, { JwtPayload } from 'jsonwebtoken'
 import jwksClient from 'jwks-rsa'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common'
 

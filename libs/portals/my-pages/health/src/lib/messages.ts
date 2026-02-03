@@ -908,6 +908,10 @@ export const messages = defineMessages({
     id: 'sp.health:open-referral',
     defaultMessage: 'Opin tilvísun',
   },
+  noReferralsTitle: {
+    id: 'sp.health:no-referrals-title',
+    defaultMessage: 'Engar tilvísanir',
+  },
   noReferrals: {
     id: 'sp.health:no-referrals',
     defaultMessage: 'Engar tilvísanir',
@@ -919,6 +923,10 @@ export const messages = defineMessages({
   waitlists: {
     id: 'sp.health:waitlists',
     defaultMessage: 'Biðlistar',
+  },
+  noWaitListsTitle: {
+    id: 'sp.health:no-waitlists-title',
+    defaultMessage: 'Engin skráning á biðlista finnst',
   },
   noWaitlists: {
     id: 'sp.health:no-waitlists',
@@ -1853,6 +1861,118 @@ export const messages = defineMessages({
     id: 'sp.health:renew-ehic-url',
     defaultMessage: 'https://island.is/evropska-sjukratryggingakortid',
   },
+  questionnaires: {
+    defaultMessage: 'Spurningalistar',
+    id: 'sp.health:questionnaires',
+  },
+  questionnairesThgf: {
+    defaultMessage: 'Spurningalista',
+    id: 'sp.health:questionnaires-thgf',
+  },
+  questionnairesIntro: {
+    defaultMessage:
+      'Hér getur þú fundið spurningalista sem tengjast heilsu þinni.',
+    id: 'sp.health:questionnaires-intro',
+  },
+  questionnaire: {
+    defaultMessage: 'Spurningalisti',
+    id: 'sp.health:questionnaire',
+  },
+  expiredQuestionnaire: {
+    defaultMessage: 'Útrunnið',
+    id: 'sp.health:expired-questionnaire',
+  },
+  answeredQuestionnaire: {
+    defaultMessage: 'Svarað',
+    id: 'sp.health:answered-questionnaire',
+  },
+  draftQuestionnaire: {
+    defaultMessage: 'Drög',
+    id: 'sp.health:draft-questionnaire',
+  },
+  continueDraftQuestionnaire: {
+    defaultMessage: 'Halda áfram með drög',
+    id: 'sp.health:continue-draft-questionnaire',
+  },
+  lastUpdated: {
+    defaultMessage: 'Síðast uppfært',
+    id: 'sp.health:draft-last-updated',
+  },
+  answeredAt: {
+    defaultMessage: 'Svar dags: {arg}',
+    id: 'sp.health:answered-at',
+  },
+  answeredQuestionnaireAnswered: {
+    defaultMessage: 'Hér má finna svör þín við spurningalistanum.',
+    id: 'sp.health:answered-questionnaire-answered',
+  },
+  unAnsweredQuestionnaire: {
+    defaultMessage: 'Ósvarað',
+    id: 'sp.health:unanswered-questionnaire',
+  },
+  answer: {
+    defaultMessage: 'Svara',
+    id: 'sp.health:answer',
+  },
+  answerAgain: {
+    defaultMessage: 'Svara aftur',
+    id: 'sp.health:answer-again',
+  },
+  questionnaireNotFound: {
+    defaultMessage: 'Spurningalisti fannst ekki',
+    id: 'sp.health:questionnaire-not-found',
+  },
+  questionnairesNotFound: {
+    defaultMessage: 'Ekkert fannst',
+    id: 'sp.health:questionnaires-not-found',
+  },
+  questionnaireNotFoundWithFilters: {
+    defaultMessage:
+      'Engir spurningalistar fundust með þessum skilyrðum. Hreinsaðu síurnar og reyndu aftur.',
+    id: 'sp.health:questionnaire-not-found-with-filters',
+  },
+  questionnaireNotFoundDetail: {
+    defaultMessage:
+      'Vinsamlegast athugaðu hvort slóðin sé rétt eða hafðu samband við þjónustuaðila.',
+    id: 'sp.health:questionnaire-not-found-detail',
+  },
+  singleQuestionnaire: {
+    defaultMessage: '1 spurningalisti',
+    id: 'sp.health:single-questionnaire',
+  },
+  numberOfQuestionnaires: {
+    defaultMessage: '{number} spurningalistar',
+    id: 'sp.health:number-of-questionnaires',
+  },
+  seeAnswers: {
+    defaultMessage: 'Skoða svör',
+    id: 'sp.health:see-answers',
+  },
+  showExpiredQuestionnaires: {
+    defaultMessage: 'Sýna útrunna',
+    id: 'sp.health:show-expired-questionnaires',
+  },
+  treatment: {
+    defaultMessage: 'Meðferð',
+    id: 'sp.health:treatment',
+  },
+  sentFrom: {
+    defaultMessage: 'Sent af',
+    id: 'sp.health:sent-from',
+  },
+  yourAnswersForHasBeenSent: {
+    defaultMessage: 'Svör þín við {title} hafa verið send',
+    id: 'sp.health:your-answers-for-has-been-sent',
+  },
+  questionnaireDraftSaved: {
+    defaultMessage: 'Drög við {title} hafa verið vistuð',
+    id: 'sp.health:questionnaire-draft-saved',
+  },
+  errorSendingAnswers: {
+    defaultMessage:
+      'Ekki tókst að senda svör við {title}. Vinsamlegast reyndu aftur síðar eða hafðu samband við þjónustuaðila.',
+    id: 'sp.health:error-sending-answers',
+  },
   patientData: {
     defaultMessage: 'Sjúkraskrá',
     id: 'sp.health:patient-data',
@@ -2005,6 +2125,10 @@ export const messages = defineMessages({
     defaultMessage: 'Embætti landlæknis',
     id: 'sp.health:health-directorate',
   },
+  landspitali: {
+    defaultMessage: 'Landspítali',
+    id: 'sp.health:landspitali',
+  },
   invalidatePermit: {
     defaultMessage: 'Eyða',
     id: 'sp.health:invalidate-permit',
@@ -2085,6 +2209,11 @@ export const messages = defineMessages({
     defaultMessage:
       'Þú ert ekki með neinar virkar heimildir. Hægt er að ýta á takkann "Sýna óvirkar" hér að ofan ef þú vilt skoða óvirkar heimildir.',
     id: 'sp.health:no-active-permits-registered',
+  },
+  noActiveQuestionnairesRegistered: {
+    defaultMessage:
+      'Þú ert ekki með neina virka spurningalista. Hægt er að ýta á takkann "Sýna útrunna" hér að ofan ef þú vilt skoða útrunna spurningalista.',
+    id: 'sp.health:no-active-questionnaires-registered',
   },
   active: {
     defaultMessage: 'Virk',
@@ -2255,6 +2384,10 @@ export const messages = defineMessages({
     defaultMessage:
       'Endurnýjun ekki í boði vegna þess að nýrri lyfseðill er til staðar',
     id: 'sp.health:prescription-blocked-more-recent-exists',
+  },
+  prescriptionBlockedSpecialistOnlyPrescription: {
+    defaultMessage: 'Endurnýjun ekki í boði',
+    id: 'sp.health:prescription-blocked-specialist-only-prescription',
   },
   prescriptionBlockedOther: {
     defaultMessage: 'Endurnýjun ekki í boði vegna óþekktrar ástæðu',

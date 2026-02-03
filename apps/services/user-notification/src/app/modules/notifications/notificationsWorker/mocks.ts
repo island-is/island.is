@@ -138,6 +138,7 @@ export const getMockHnippTemplate = ({
   internalBody = 'Demo data copy',
   clickActionUrl = 'https://island.is/minarsidur/postholf',
   args = ['arg1', 'arg2'],
+  scope = '@island.is/documents',
 }: Partial<HnippTemplate>): HnippTemplate => ({
   templateId,
   title,
@@ -145,6 +146,7 @@ export const getMockHnippTemplate = ({
   internalBody,
   clickActionUrl,
   args,
+  scope,
 })
 
 export const userProfiles = [
@@ -159,13 +161,38 @@ export const userProfiles = [
   companyUser,
 ]
 
-const delegations: Record<string, DelegationRecordDTO[]> = {
-  [userWithDelegations.nationalId]: [
+// Delegations keyed by nationalId and scope
+// Format: `${nationalId}:${scope}` -> DelegationRecordDTO[]
+const delegationsByScope: Record<string, DelegationRecordDTO[]> = {
+  [`${userWithDelegations.nationalId}:@island.is/documents`]: [
     {
       fromNationalId: userWithDelegations.nationalId,
       toNationalId: userWithNoDelegations.nationalId,
       subjectId: null, // test that 3rd party login is not used if subjectId is null
       type: AuthDelegationType.ProcurationHolder,
+      customDelegationScopes: null,
+    },
+  ],
+  [`${userWithDelegations.nationalId}:@island.is/applications/samgongustofa-vehicles`]:
+    [
+      {
+        fromNationalId: userWithDelegations.nationalId,
+        toNationalId: userWithNoDelegations.nationalId,
+        subjectId: null, // test that 3rd party login is not used if subjectId is null
+        type: AuthDelegationType.Custom,
+        customDelegationScopes: [
+          '@island.is/applications/samgongustofa-vehicles',
+        ],
+      },
+    ],
+  // Fallback for backward compatibility - delegations without scope filtering
+  [userWithDelegations.nationalId]: [
+    {
+      fromNationalId: userWithDelegations.nationalId,
+      toNationalId: userWithNoDelegations.nationalId,
+      subjectId: null,
+      type: AuthDelegationType.ProcurationHolder,
+      customDelegationScopes: null,
     },
   ],
   [userWithDelegations2.nationalId]: [
@@ -174,6 +201,7 @@ const delegations: Record<string, DelegationRecordDTO[]> = {
       toNationalId: userWithDelegations.nationalId,
       subjectId: delegationSubjectId,
       type: AuthDelegationType.ProcurationHolder,
+      customDelegationScopes: null,
     },
   ],
   [userWithSendToDelegationsFeatureFlagDisabled.nationalId]: [
@@ -182,6 +210,7 @@ const delegations: Record<string, DelegationRecordDTO[]> = {
       toNationalId: userWithNoDelegations.nationalId,
       subjectId: faker.datatype.uuid(),
       type: AuthDelegationType.ProcurationHolder,
+      customDelegationScopes: null,
     },
   ],
 }
@@ -189,10 +218,24 @@ const delegations: Record<string, DelegationRecordDTO[]> = {
 export class MockDelegationsService {
   delegationsControllerGetDelegationRecords({
     xQueryNationalId,
+    scopes,
   }: {
     xQueryNationalId: string
+    scopes?: string | string[]
   }) {
-    return { data: delegations[xQueryNationalId] ?? [] }
+    // If scope is provided, try to get scope-specific delegations first
+    if (scopes) {
+      const scopeArray = Array.isArray(scopes) ? scopes : scopes.split(',')
+      // Try each scope in order, return first match
+      for (const scope of scopeArray) {
+        const scopeKey = `${xQueryNationalId}:${scope}`
+        if (delegationsByScope[scopeKey]) {
+          return { data: delegationsByScope[scopeKey] }
+        }
+      }
+    }
+    // Fallback to delegations without scope filtering
+    return { data: delegationsByScope[xQueryNationalId] ?? [] }
   }
 }
 
@@ -207,6 +250,12 @@ export class MockFeatureFlagService {
         user?.nationalId !==
         userWithSendToDelegationsFeatureFlagDisabled.nationalId
       )
+    }
+
+    if (
+      feature === Features.shouldSendEmailNotificationsToCompanyUserProfiles
+    ) {
+      return true
     }
 
     return true
