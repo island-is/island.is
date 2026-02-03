@@ -97,7 +97,6 @@ export const PaymentOverviewTotals = () => {
     )
     .filter(isDefined)
 
-  const optionsLength = options?.length ?? 0
   const firstOptionValue = options?.[0]?.value
 
   const totalsInput = useMemo(
@@ -116,10 +115,11 @@ export const PaymentOverviewTotals = () => {
   }
 
   useEffect(() => {
-    if (optionsLength > 0 && selectedOptionId === null && firstOptionValue) {
+    console.log('!!!options!!!')
+    if (firstOptionValue && selectedOptionId === null) {
       setSelectedOptionId(firstOptionValue)
     }
-  }, [optionsLength, firstOptionValue, selectedOptionId])
+  }, [firstOptionValue, selectedOptionId])
 
   useEffect(() => {
     onFetchTotals()
