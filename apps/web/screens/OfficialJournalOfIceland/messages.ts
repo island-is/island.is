@@ -203,6 +203,26 @@ export const m = {
       id: 'web.ojoi:search.notFoundMessage',
       defaultMessage: 'Vinsamlega endurskoðaðu leitarskilyrði',
     },
+    publicationDateSortNew: {
+      id: 'web.ojoi:search.publicationDateSortNew',
+      defaultMessage: 'Útgáfudags. - nýjast fyrst',
+    },
+    publicationDateSortOld: {
+      id: 'web.ojoi:search.publicationDateSortOld',
+      defaultMessage: 'Útgáfudags. - elst fyrst',
+    },
+    numberSortNew: {
+      id: 'web.ojoi:search.numberSortNew',
+      defaultMessage: 'Númer - nýjast fyrst',
+    },
+    numberSortOld: {
+      id: 'web.ojoi:search.numberSortOld',
+      defaultMessage: 'Númer - elst fyrst',
+    },
+    sortBy: {
+      id: 'web.ojoi:search.sortBy',
+      defaultMessage: 'Raða eftir',
+    },
   }),
 
   categories: defineMessages({

@@ -1,19 +1,11 @@
-import { Module } from '@nestjs/common'
-import { ConfigModule } from '@nestjs/config'
-import { SequelizeModule } from '@nestjs/sequelize'
 import { LoggingModule } from '@island.is/logging'
-import { AuditModule } from '@island.is/nest/audit'
-
-import { environment } from '../../../../environments'
+import { Module } from '@nestjs/common'
+import { SequelizeModule } from '@nestjs/sequelize'
 import { SequelizeConfigService } from '../../../sequelizeConfig.service'
-import { PruneService } from './prune.service'
-import { Value } from '../../applications/models/value.model'
 import { Application } from '../../applications/models/application.model'
 import { ApplicationEvent } from '../../applications/models/applicationEvent.model'
-import { FileConfig } from '../../file/file.config'
-import { FileStorageConfig } from '@island.is/file-storage'
-import { FileModule } from '../../file/file.module'
-import { FileStorageWrapperModule } from '../../file/fileStorageWrapper'
+import { Value } from '../../applications/models/value.model'
+import { PruneService } from './prune.service'
 
 @Module({
   imports: [
@@ -22,13 +14,13 @@ import { FileStorageWrapperModule } from '../../file/fileStorageWrapper'
       useClass: SequelizeConfigService,
     }),
     LoggingModule,
-    FileModule,
-    FileStorageWrapperModule,
-    AuditModule.forRoot(environment.audit),
-    ConfigModule.forRoot({
-      isGlobal: true,
-      load: [FileStorageConfig, FileConfig],
-    }),
+    // FileModule,
+    // FileStorageWrapperModule,
+    // AuditModule.forRoot(environment.audit),
+    // ConfigModule.forRoot({
+    //   isGlobal: true,
+    //   load: [FileStorageConfig, FileConfig],
+    // }),
   ],
   providers: [PruneService],
 })

@@ -180,6 +180,12 @@ type ChangeActions =
       }
     }
   | {
+      type: 'CHANGE_ZENDESK_INTERNAL'
+      payload: {
+        value: boolean
+      }
+    }
+  | {
       type: 'UPDATE_APPLICANT_TYPES'
       payload: { newValue: FormSystemFormApplicant[] }
     }
@@ -215,10 +221,7 @@ type InputSettingsActions =
   | {
       type: 'SET_ZENDESK_FIELD_SETTINGS'
       payload: {
-        property:
-          | 'zendeskIsPrivate'
-          | 'zendeskIsCustomField'
-          | 'zendeskCustomFieldId'
+        property: 'zendeskIsCustomField' | 'zendeskCustomFieldId'
         value: boolean | string
         update: (updatedActiveItem?: ActiveItem) => void
       }
@@ -743,7 +746,16 @@ export const controlReducer = (
           submissionServiceUrl: action.payload.value,
         },
       }
-      // action.payload.update({ ...updatedState.form })
+      return updatedState
+    }
+    case 'CHANGE_ZENDESK_INTERNAL': {
+      const updatedState = {
+        ...state,
+        form: {
+          ...form,
+          zendeskInternal: action.payload.value,
+        },
+      }
       return updatedState
     }
     case 'UPDATE_APPLICANT_TYPES': {

@@ -10,6 +10,7 @@ import { generateExcelSheet } from '../../utils/generateExcelSheet'
 import { RateCategory, UploadSelection } from '../../utils/constants'
 import { CarMap } from '../../utils/types'
 import { m } from '../../lib/messages'
+import { Locale } from '@island.is/shared/types'
 
 export const multiUploadSection = buildSection({
   condition: (answers) => {
@@ -42,10 +43,14 @@ export const multiUploadSection = buildSection({
             id: 'multiUploadUploadCatCategoryField',
             doesNotRequireAnswer: false,
             component: 'UploadCarCategoryFile',
+            childInputIds: ['carCategoryFile', 'carsToChangeCount'],
           },
           {
-            getFileContent: (vehicleMap: CarMap, rateCategory: RateCategory) =>
-              generateExcelSheet(vehicleMap, rateCategory),
+            getFileContent: (
+              vehicleMap: CarMap,
+              rateCategory: RateCategory,
+              locale: Locale,
+            ) => generateExcelSheet(vehicleMap, rateCategory, locale),
           },
         ),
       ],

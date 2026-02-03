@@ -17,11 +17,27 @@ import { dataSchema } from './dataSchema'
 import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { application as applicationMessages } from '../lib/messages/application'
 import { ApiActions } from '../shared'
 import { Features } from '@island.is/feature-flags'
 import { CurrentVehiclesApi } from '../dataProviders'
+import { AuthDelegationType } from '@island.is/shared/types'
+import { ApiScope } from '@island.is/auth/scopes'
+
+const determineMessageFromApplicationAnswers = (application: Application) => {
+  const plate = getValueViaPath(
+    application.answers,
+    'pickVehicle.plate',
+    undefined,
+  ) as string | undefined
+
+  return {
+    name: applicationMessages.name,
+    value: plate ? `- ${plate}` : '',
+  }
+}
 
 const mileCarTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -30,10 +46,19 @@ const mileCarTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.MILE_CAR,
   featureFlag: Features.isMileCarEnabled,
-  name: applicationMessages.name,
+  name: determineMessageFromApplicationAnswers,
   codeOwner: CodeOwners.Origo,
   institution: applicationMessages.institutionName,
   translationNamespaces: ApplicationConfigurations.MileCar.translation,
+  allowedDelegations: [
+    {
+      type: AuthDelegationType.ProcurationHolder,
+    },
+    {
+      type: AuthDelegationType.Custom,
+    },
+  ],
+  requiredScopes: [ApiScope.samgongustofaVehicles],
   dataSchema,
   stateMachineConfig: {
     initial: States.PREREQUISITES,

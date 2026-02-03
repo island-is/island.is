@@ -110,11 +110,11 @@ const mapUpdateProperties = (
   }
 }
 
-const mapTitle = (data: BuildingDto): Localized<string> =>
+export const mapTitle = (data: BuildingDto): Localized<string> =>
   mapLocalizedValue(data.address, data.address)
 
-const mapSlug = (data: BuildingDto): Localized<string> => {
-  const slug = slugify(data.address, { separator: '-' })
+export const mapSlug = (data: BuildingDto): Localized<string> => {
+  const slug = slugify(`${data.address}-${data.id}`, { separator: '-' })
   return mapLocalizedValue(slug, slug)
 }
 
@@ -200,7 +200,7 @@ const generateContentForLocale = (
   }
 
   if (data.use) {
-    const useLabel = locale === 'is' ? 'Starfssemi: ' : 'Function: '
+    const useLabel = locale === 'is' ? 'Starfsemi: ' : 'Function: '
     content.push({
       values: [{ value: useLabel }, { value: data.use, isBold: true }],
     })

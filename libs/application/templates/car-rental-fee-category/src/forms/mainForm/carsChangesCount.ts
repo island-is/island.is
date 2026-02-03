@@ -1,4 +1,5 @@
 import {
+  buildAlertMessageField,
   buildMultiField,
   buildSection,
   buildStaticTableField,
@@ -20,14 +21,19 @@ export const carsChangesCountSection = buildSection({
         buildStaticTableField({
           header: [m.carsChangesCount.header],
           rows: (application) => {
-            const data =
+            const carsToChangeCount =
               getValueViaPath<CarCategoryRecord[]>(
                 application.answers,
-                'carsToChange',
-              ) ?? []
+                'carsToChangeCount',
+              ) ?? 0
 
-            return [[data.length.toString()]]
+            return [[carsToChangeCount.toString() ?? '0']]
           },
+        }),
+        buildAlertMessageField({
+          id: 'carsChangesCountAlertMessage',
+          alertType: 'info',
+          message: m.carsChangesCount.alertMessage,
         }),
         buildSubmitField({
           id: 'submit',
