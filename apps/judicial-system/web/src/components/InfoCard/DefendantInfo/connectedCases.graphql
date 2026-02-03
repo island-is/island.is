@@ -2,7 +2,6 @@ query ConnectedCases($input: CaseQueryInput!) {
   connectedCases(input: $input) {
     id
     courtCaseNumber
-    created
     defendants {
       id
       noNationalId
@@ -12,7 +11,6 @@ query ConnectedCases($input: CaseQueryInput!) {
     court {
       id
       name
-      type
     }
   }
 }
