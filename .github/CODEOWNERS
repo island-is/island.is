@@ -346,7 +346,7 @@ codemagic.yaml                                                                  
 /libs/clients/housing-benefit-calculator/                                                                                    @island-is/stefna
 /libs/clients/ship-registry/                                                                                                 @island-is/stefna
 /libs/clients/ship-registry-v2/                                                                                              @island-is/hugsmidjan
-/libs/api/domains/ship-registry/                                                                                             @island-is/stefna
+/libs/api/domains/ship-registry/                                                                                             @island-is/stefna  @island-is/hugsmidjan
 /libs/clients/administration-of-occupational-safety-and-health/                                                              @island-is/stefna
 /libs/api/domains/administration-of-occupational-safety-and-health/                                                          @island-is/stefna
 /libs/clients/ultraviolet-radiation/                                                                                         @island-is/stefna
