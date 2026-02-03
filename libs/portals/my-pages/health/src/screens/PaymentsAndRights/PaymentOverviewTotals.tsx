@@ -12,6 +12,7 @@ import {
   Stack,
   Table as T,
   Text,
+  toast,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
@@ -126,15 +127,22 @@ export const PaymentOverviewTotals = () => {
   }, [])
 
   const onDownloadTotalsPdf = async () => {
-    const { data } = await fetchTotalsPdf({
-      variables: { input: totalsInput },
-    })
+    try {
+      const result = await fetchTotalsPdf({ variables: { input: totalsInput } })
 
-    const document =
-      data?.rightsPortalPaymentOverviewTotalsPdf?.items?.[0] ?? undefined
+      const pdf = result?.data?.rightsPortalPaymentOverviewTotalsPdf
+      const doc = pdf?.items?.[0]
 
-    if (document?.data && document?.fileName && document?.contentType) {
-      downloadLink(document.data, document.contentType, document.fileName)
+      const hasError = result?.error || (pdf?.errors?.length ?? 0) > 0
+
+      if (!hasError && doc?.data) {
+        downloadLink(doc.data, 'application/pdf', doc.fileName ?? '')
+      } else {
+        toast.error(formatMessage(messages.paymentOverviewTotalsDownloadError))
+      }
+    } catch (e) {
+      console.error(e)
+      toast.error(formatMessage(messages.paymentOverviewTotalsDownloadError))
     }
   }
 

@@ -1252,6 +1252,11 @@ export const messages = defineMessages({
     defaultMessage: 'Sækja samtölur (PDF)',
     id: 'sp.health:payment-overview-totals-download',
   },
+  paymentOverviewTotalsDownloadError: {
+    defaultMessage:
+      'Ekki tókst að sækja samtölur. Vinsamlegast reyndu aftur síðar.',
+    id: 'sp.health:payment-overview-totals-download-error',
+  },
   paymentParticationExplanation: {
     defaultMessage:
       'Við útreikning á greiðsluþátttöku er tekið mið af greiðslum fyrir heilbrigðisþjónustu s.l. fimm mánuði. Eigir þú á rétt á hámarksafslætti vegna fyrri greiðslna verður hámarksgreiðsla þín í mánuði {basePayment} kr. Fjárhæðin miðar við greiðslumark þitt eins og það birtist í Réttindagátt í dag. Birt með þeim fyrirvara að fjárhæðin tekur mið af þeim reikningum sem hafa borist Sjúkratryggingar.',
