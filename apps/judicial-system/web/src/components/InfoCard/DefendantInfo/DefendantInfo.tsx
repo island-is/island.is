@@ -224,16 +224,18 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
           />
         )}
       </div>
-      <Tag
-        children={
-          defendant.verdict?.isDefaultJudgement ? 'Útivistardómur' : 'Dómur'
-        }
-        variant={
-          defendant.verdict?.isDefaultJudgement ? 'purple' : 'darkerBlue'
-        }
-        outlined
-        disabled
-      />
+      {defendant.verdict && (
+        <Tag
+          children={
+            defendant.verdict.isDefaultJudgement ? 'Útivistardómur' : 'Dómur'
+          }
+          variant={
+            defendant.verdict.isDefaultJudgement ? 'purple' : 'darkerBlue'
+          }
+          outlined
+          disabled
+        />
+      )}
     </Box>
   )
 }
