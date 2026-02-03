@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useWindowSize } from 'react-use'
 import {
   Box,
@@ -55,6 +55,7 @@ export const PaymentOverviewTotals = () => {
     error: serviceTypesError,
   } = useGetPaymentOverviewTotalsServiceTypesQuery()
 
+  const [fetchTotalsPdf] = useGetPaymentOverviewTotalsPdfLazyQuery()
   const [
     lazyTotalsQuery,
     { loading: totalsLoading, error: totalsError, data: totalsData },
@@ -63,44 +64,32 @@ export const PaymentOverviewTotals = () => {
   const totalsResult = totalsData?.rightsPortalPaymentOverviewTotals
   const totalsItem = totalsResult?.items?.[0]
 
-  const [fetchTotalsPdf] = useGetPaymentOverviewTotalsPdfLazyQuery()
-
   const serviceTypesResult =
     serviceTypes?.rightsPortalPaymentOverviewTotalsServiceTypes
   const services = serviceTypesResult?.items
 
-  const serviceTypeNameByCode = useMemo(
-    () =>
-      services?.reduce<Record<string, string>>((acc, curr) => {
-        if (curr.code && curr.name) {
-          acc[curr.code] = curr.name
-        }
-        return acc
-      }, {}) ?? {},
-    [services],
-  )
+  const serviceTypeNameByCode =
+    services?.reduce<Record<string, string>>((acc, curr) => {
+      if (curr.code && curr.name) {
+        acc[curr.code] = curr.name
+      }
+      return acc
+    }, {}) ?? {}
 
-  const options = services
-    ?.map((s) =>
-      s.name && s.code
-        ? {
-            label: s.name,
-            value: s.code,
-          }
-        : undefined,
-    )
-    .filter(isDefined)
+  const options =
+    services
+      ?.map((s) =>
+        s.name && s.code ? { label: s.name, value: s.code } : undefined,
+      )
+      .filter(isDefined) ?? []
 
   const firstOptionValue = options?.[0]?.value
 
-  const totalsInput = useMemo(
-    () => ({
-      dateFrom: startDate,
-      dateTo: endDate,
-      serviceTypeCode: selectedOptionId ?? '',
-    }),
-    [startDate, endDate, selectedOptionId],
-  )
+  const totalsInput = {
+    dateFrom: startDate,
+    dateTo: endDate,
+    serviceTypeCode: selectedOptionId ?? '',
+  }
 
   const onFetchTotals = () => {
     lazyTotalsQuery({
@@ -129,7 +118,11 @@ export const PaymentOverviewTotals = () => {
       const hasError = result?.error || (pdf?.errors?.length ?? 0) > 0
 
       if (!hasError && doc?.data) {
-        downloadLink(doc.data, 'application/pdf', doc.fileName ?? '')
+        downloadLink(
+          doc.data,
+          'application/pdf',
+          doc.fileName ?? 'payment-overview-totals.pdf',
+        )
       } else {
         toast.error(formatMessage(messages.paymentOverviewTotalsDownloadError))
       }
@@ -139,21 +132,17 @@ export const PaymentOverviewTotals = () => {
     }
   }
 
-  const rows = useMemo(
-    () =>
-      totalsItem?.items?.map((item) => ({
-        serviceTypeCode: item.serviceTypeCode ?? '',
-        serviceTypeName:
-          (item.serviceTypeCode &&
-            serviceTypeNameByCode[item.serviceTypeCode]) ??
-          item.serviceTypeCode ??
-          '',
-        fullCost: item.fullCost ?? 0,
-        copayCost: item.copayCost ?? 0,
-        patientCost: item.patientCost ?? 0,
-      })) ?? [],
-    [totalsItem, serviceTypeNameByCode],
-  )
+  const rows =
+    totalsItem?.items?.map((item) => ({
+      serviceTypeCode: item.serviceTypeCode ?? '',
+      serviceTypeName:
+        (item.serviceTypeCode && serviceTypeNameByCode[item.serviceTypeCode]) ??
+        item.serviceTypeCode ??
+        '',
+      fullCost: item.fullCost ?? 0,
+      copayCost: item.copayCost ?? 0,
+      patientCost: item.patientCost ?? 0,
+    })) ?? []
 
   const hasDomainError =
     (serviceTypesResult?.errors?.length ?? 0) > 0 ||
@@ -271,7 +260,6 @@ export const PaymentOverviewTotals = () => {
                     message={formatMessage(messages.searchResultsEmptyDetail)}
                     titleSize="h3"
                     noBorder={false}
-                    tag={undefined}
                   />
                 </Box>
               ) : !isMobile ? (
@@ -294,7 +282,10 @@ export const PaymentOverviewTotals = () => {
                   </T.Head>
                   <T.Body>
                     {rows.map((item, index) => (
-                      <tr key={index} className={styles.tableRowStyle}>
+                      <tr
+                        key={item.serviceTypeCode || `row-${index}`}
+                        className={styles.tableRowStyle}
+                      >
                         <T.Data>{item.serviceTypeName}</T.Data>
                         <T.Data>{amountFormat(item.fullCost)}</T.Data>
                         <T.Data>{amountFormat(item.copayCost)}</T.Data>
