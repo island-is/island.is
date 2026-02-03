@@ -194,6 +194,10 @@ export class PublicDebtPaymentPlanTemplateService extends BaseTemplateApiService
           schedule.type,
       )
 
+      if (!initialSchedule) {
+        this.throwValidationError(error.initialScheduleNotFound)
+      }
+
       if (schedule.payments.length > (initialSchedule?.maxCountMonth || 0)) {
         this.throwValidationError(error.maxCountMonth)
       }

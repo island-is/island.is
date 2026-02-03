@@ -92,4 +92,9 @@ export const error = defineMessages({
     defaultMessage: 'Heildarskuld passar ekki við greiðsluupphæð',
     description: 'Error Modal: Total amount mismatch',
   },
+  initialScheduleNotFound: {
+    id: `pdpp.application:error.initialScheduleNotFound`,
+    defaultMessage: 'Viðeigandi greiðsluáætlun fannst ekki',
+    description: 'Error Modal: Initial schedule not found',
+  },
 })
