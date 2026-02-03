@@ -7,6 +7,7 @@ import {
   districtCourtAbbreviation,
   formatDate,
   formatDOB,
+  normalizeAndFormatNationalId,
 } from '@island.is/judicial-system/formatters'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
@@ -14,10 +15,10 @@ import {
   ServiceRequirement,
   SessionArrangements,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { useConnectedCasesQuery } from '@island.is/judicial-system-web/src/routes/Court/Indictments/Conclusion/connectedCases.generated'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import RenderPersonalData from '../RenderPersonalInfo/RenderPersonalInfo'
+import { useConnectedCasesQuery } from './connectedCases.generated'
 import {
   getAppealExpirationInfo,
   getVerdictViewDateText,
@@ -56,36 +57,36 @@ const ConnectedCasesInfo = ({
   courtId?: string
 }) => {
   const { data: connectedCasesData } = useConnectedCasesQuery({
-    variables: {
-      input: {
-        id: workingCaseId,
-      },
-    },
+    variables: { input: { id: workingCaseId } },
   })
+
   const connectedCases = connectedCasesData?.connectedCases
     ?.filter((connectedCase) =>
-      connectedCase?.defendants?.some(
-        (d) => d.nationalId === defendant.nationalId,
+      connectedCase.defendants?.some((d) =>
+        defendant.noNationalId
+          ? defendant.nationalId === d.nationalId && defendant.name === d.name
+          : d.nationalId &&
+            normalizeAndFormatNationalId(defendant.nationalId).includes(
+              d.nationalId,
+            ),
       ),
     )
     .map((connectedCase) => {
       const hasCourtAccess = courtId === connectedCase.court?.id
+      const key = `${defendant.id}-${courtId}-${connectedCase.courtCaseNumber}`
+
       return hasCourtAccess ? (
         <LinkV2
           href={`${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${connectedCase.id}`}
           className={link}
-          key={`${defendant.nationalId}-${connectedCase.courtCaseNumber}`}
+          key={key}
         >
           <Text as="span" whiteSpace="pre">
             {connectedCase.courtCaseNumber}
           </Text>
         </LinkV2>
       ) : (
-        <Text
-          as="span"
-          whiteSpace="pre"
-          key={`${defendant.nationalId}-${connectedCase.courtCaseNumber}`}
-        >
+        <Text as="span" whiteSpace="pre" key={key}>
           {`${connectedCase.courtCaseNumber} (${districtCourtAbbreviation(
             connectedCase.court?.name,
           )})`}
