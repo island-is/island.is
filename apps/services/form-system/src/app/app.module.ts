@@ -18,8 +18,6 @@ import { SectionsModule } from './modules/sections/sections.module'
 import { ServicesModule } from './modules/services/services.module'
 import { SequelizeConfigService } from './sequelizeConfig.service'
 import { PruneModule } from './modules/services/prune/prune.module'
-import { ConfigModule } from '@nestjs/config'
-import { XRoadConfig } from '@island.is/nest/config'
 
 @Module({
   imports: [
@@ -42,7 +40,6 @@ import { XRoadConfig } from '@island.is/nest/config'
     ServicesModule,
     FileModule,
     PruneModule,
-    ConfigModule.forRoot({ isGlobal: true, load: [XRoadConfig] }),
   ],
 })
 export class AppModule {}
