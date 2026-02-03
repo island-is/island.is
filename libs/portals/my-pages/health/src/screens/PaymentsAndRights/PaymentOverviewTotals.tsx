@@ -63,7 +63,7 @@ export const PaymentOverviewTotals = () => {
     { loading: totalsLoading, error: totalsError, data: totalsData },
   ] = useGetPaymentOverviewTotalsLazyQuery({
     onCompleted(data) {
-      const item = data.rightsPortalPaymentOverviewTotals.items[0]
+      const item = data.rightsPortalPaymentOverviewTotals?.items?.[0]
       setTotalsItem(item)
     },
   })
@@ -106,6 +106,12 @@ export const PaymentOverviewTotals = () => {
       },
     })
   }
+
+  useEffect(() => {
+    if (options?.length && selectedOptionId === null) {
+      setSelectedOptionId(options[0].value)
+    }
+  }, [options, selectedOptionId])
 
   useEffect(() => {
     onFetchTotals()
