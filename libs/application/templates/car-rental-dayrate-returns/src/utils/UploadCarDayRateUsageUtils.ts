@@ -40,7 +40,7 @@ const decodeUtf8 = (file: FileBytes): string => {
 export const parseFileToCarDayRateUsage = async (
   file: FileBytes,
   type: UploadFileType,
-  dayRateRecords: DayRateRecord[],
+  dayRateRecords: Map<string, DayRateRecord>,
 ): Promise<Array<CarUsageRecord> | Array<CarUsageError>> => {
   const parsedLines: Array<Array<string>> = await (type === 'csv'
     ? parseCsv(file)
@@ -57,14 +57,13 @@ export const parseFileToCarDayRateUsage = async (
       const carNr = row[carNumberIndex]
       const prevPeriodTotalDaysStr = row[prevPeriodTotalDaysIndex]?.trim()
       const prevPeriodUsageStr = row[prevPeriodUsageIndex]?.trim()
-      // Possibly need to make dayrate records a map and check for the permno
-      // if (!currentCarData[carNr]) {
-      //   return {
-      //     code: 1,
-      //     message: m.multiUploadErrors.carNotFound,
-      //     carNr,
-      //   }
-      // }
+      if (!dayRateRecords.has(carNr)) {
+        return {
+          code: 1,
+          message: m.multiUploadErrors.carNotFound,
+          carNr,
+        }
+      }
 
       if (!prevPeriodTotalDaysStr && prevPeriodUsageStr) {
         return {
@@ -299,7 +298,7 @@ export const getUploadFileType = (
 export const parseUploadFile = async (
   file: ArrayBuffer | ArrayBufferView,
   type: UploadFileType,
-  dayRateRecords: DayRateRecord[],
+  dayRateRecords: Map<string, DayRateRecord>,
 ): Promise<ParseUploadResult> => {
   const parsed = await parseFileToCarDayRateUsage(file, type, dayRateRecords)
 

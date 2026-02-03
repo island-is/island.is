@@ -97,11 +97,15 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
     auth,
   }: TemplateApiModuleActionProps): Promise<boolean> {
     try {
-      const previousPeriodDayRateReturns =
+      const dayRateRecords =
         getValueViaPath<Array<DayRateRecord>>(
           application.externalData,
           'getPreviousPeriodDayRateReturns.data',
         ) ?? []
+
+      const dayRateRecordsByPermno = new Map<string, DayRateRecord>(
+        dayRateRecords.map((d) => [d.permno, d]),
+      )
 
       const [attachment] = await this.attachmentService.getFiles(application, [
         'carDayRateUsageFile',
@@ -128,7 +132,7 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
       const parsed = await parseUploadFile(
         bytes,
         fileType,
-        [], // TODO: Remove if we dont end up validating day rate records
+        dayRateRecordsByPermno,
       )
 
       if (!parsed.ok) {
@@ -165,16 +169,12 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
       const lastMonthDate = new Date(now.getFullYear(), now.getMonth() - 1, 1)
       const lastMonthIndex = lastMonthDate.getMonth()
 
-      const previousPeriodDayRateReturnsByPermno = new Map(
-        previousPeriodDayRateReturns.map((d) => [d.permno, d.dayRateEntryId]),
-      )
-
       const entries = records.map((record) => {
-        const dayRateEntryId = previousPeriodDayRateReturnsByPermno.get(
+        const dayRateEntryId = dayRateRecordsByPermno.get(
           record.vehicleId,
-        )
+        )?.dayRateEntryId
 
-        if (dayRateEntryId == null) {
+        if (!dayRateEntryId) {
           throw new TemplateApiError(
             {
               title: 'Missing day rate entry',
@@ -191,9 +191,7 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
         }
       })
 
-      const resp = await this.rentalDaysApiWithAuth(
-        auth,
-      ).apiRentalDaysEntityIdPost({
+      await this.rentalDaysApiWithAuth(auth).apiRentalDaysEntityIdPost({
         entityId: auth.nationalId,
         rentalDayRegistrationModel: {
           year: lastMonthDate.getFullYear(),

@@ -341,7 +341,8 @@ export const m = {
     },
     carNotFound: {
       id: 'rsk.crdr.application:multi.upload.error.car.not.found',
-      defaultMessage: 'Þessi bíll fannst ekki í lista af þínum bílum!',
+      defaultMessage:
+        'Þessi bíll fannst ekki í lista af þínum bílum á daggjaldi í síðasta mánuði!',
       description: 'Car not found',
     },
     previousPeriodUsageRequired: {
