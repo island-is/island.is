@@ -31,6 +31,7 @@ import RenderPersonalData from './RenderPersonalInfo/RenderPersonalInfo'
 import { VictimInfo } from './VictimInfo/VictimInfo'
 import { Item } from './InfoCard'
 import { strings } from './useInfoCardItems.strings'
+import { grid } from '../../utils/styles/recipes.css'
 import * as styles from './InfoCard.css'
 
 const useInfoCardItems = () => {
@@ -76,33 +77,35 @@ const useInfoCardItems = () => {
         </Text>
       ),
       values: defendants
-        ? defendants.map((defendant, index) => (
-            <div
-              key={defendant.id}
-              className={cn(
-                isMultipleDefendants ? styles.renderDivider : undefined,
-                defendants && index === defendants.length - 1
-                  ? styles.last
-                  : undefined,
-              )}
-            >
-              <DefendantInfo
-                defendant={defendant}
-                workingCaseId={workingCase.id}
-                courtId={workingCase.court?.id}
-                defender={{
-                  name: workingCase.defenderName,
-                  email: workingCase.defenderEmail,
-                  phoneNumber: workingCase.defenderPhoneNumber,
-                  sessionArrangement: workingCase.sessionArrangements,
-                }}
-                displayAppealExpirationInfo={displayAppealExpirationInfo}
-                displayVerdictViewDate={displayVerdictViewDate}
-                displaySentToPrisonAdminDate={displaySentToPrisonAdminDate}
-                displayOpenCaseReference={displayOpenCaseReference}
-              />
-            </div>
-          ))
+        ? [
+            <div className={grid({ gap: 3 })}>
+              {defendants.map((defendant, index) => (
+                <div
+                  key={defendant.id}
+                  className={cn({
+                    [styles.renderDividerFull]:
+                      index < defendants.length - 1 && isMultipleDefendants,
+                  })}
+                >
+                  <DefendantInfo
+                    defendant={defendant}
+                    workingCaseId={workingCase.id}
+                    courtId={workingCase.court?.id}
+                    defender={{
+                      name: workingCase.defenderName,
+                      email: workingCase.defenderEmail,
+                      phoneNumber: workingCase.defenderPhoneNumber,
+                      sessionArrangement: workingCase.sessionArrangements,
+                    }}
+                    displayAppealExpirationInfo={displayAppealExpirationInfo}
+                    displayVerdictViewDate={displayVerdictViewDate}
+                    displaySentToPrisonAdminDate={displaySentToPrisonAdminDate}
+                    displayOpenCaseReference={displayOpenCaseReference}
+                  />
+                </div>
+              ))}
+            </div>,
+          ]
         : [],
     }
   }

@@ -114,4 +114,9 @@ export class UpdateDefendantInput {
   @IsOptional()
   @Field(() => String, { nullable: true })
   readonly alternativeServiceDescription?: string
+
+  @Allow()
+  @IsOptional()
+  @Field(() => Boolean, { nullable: true })
+  readonly isDrivingLicenseSuspended?: boolean
 }

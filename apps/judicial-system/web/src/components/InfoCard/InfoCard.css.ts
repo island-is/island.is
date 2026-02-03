@@ -27,15 +27,22 @@ export const twoCols = style({
 export const renderDivider = style({
   position: 'relative',
   marginBottom: theme.spacing[3],
+
   '::after': {
     content: "''",
     position: 'absolute',
     top: -theme.spacing[1],
     display: 'block',
-    width: '64px',
+    width: '100%',
     height: '2px',
     backgroundColor: theme.color.blue200,
   },
+})
+
+// TODO: Put everywhere?
+export const renderDividerFull = style({
+  paddingBottom: theme.spacing[3],
+  borderBottom: `2px solid ${theme.color.blue200}`,
 })
 
 export const last = style({

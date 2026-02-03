@@ -33,6 +33,7 @@ import { VerdictService } from './verdict.service'
     forwardRef(() => EventLogModule),
     forwardRef(() => LawyerRegistryModule),
     forwardRef(() => RepositoryModule),
+    forwardRef(() => MessageModule),
     ConfigModule.forRoot({
       isGlobal: true,
       load: [auditTrailModuleConfig],
