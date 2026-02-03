@@ -25,7 +25,6 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import {
   Case,
-  CaseOrigin,
   Defendant as TDefendant,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'

@@ -9,7 +9,6 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  CaseOrigin,
   Defendant,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
