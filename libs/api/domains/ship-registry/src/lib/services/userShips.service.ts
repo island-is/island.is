@@ -2,10 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { User } from '@island.is/auth-nest-tools'
 import { ShipRegistryClientV2Service } from '@island.is/clients/ship-registry-v2'
 import { UserShipsCollection } from '../models/userShipsCollection.model'
-import {
-  mapToUserShipCollection,
-  mapToUserShipFromDetails,
-} from '../mapper'
+import { mapToUserShipCollection, mapToUserShipFromDetails } from '../mapper'
 import { UserShip } from '../models/userShip.model'
 
 @Injectable()
