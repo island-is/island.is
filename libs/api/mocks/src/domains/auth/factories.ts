@@ -27,6 +27,7 @@ export const apiScope = factory<AuthApiScope>({
 export const delegationScope = factory<AuthDelegationScope>({
   id: () => faker.datatype.uuid(),
   apiScope: () => apiScope(),
+  domain: () => domain(),
   displayName: ({ apiScope }) => apiScope!.displayName,
   name: ({ apiScope }) => apiScope!.name,
 })

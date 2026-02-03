@@ -29,7 +29,7 @@ const CustomDelegationsPermissionsTable = ({
 }: {
   data: AuthCustomDelegation | PersonCentricDelegation
 }) => {
-  const scopes = 'scopes' in data ? data.scopes : data.delegationScopes
+  const scopes = data.scopes
 
   return (
     <Box>
@@ -47,25 +47,29 @@ const CustomDelegationsPermissionsTable = ({
           </T.Row>
         </T.Head>
         <T.Body>
-          {scopes?.map((scope) => (
-            <T.Row key={scope.id}>
-              <RowItems
-                values={[
-                  ('domain' in scope && scope.domain?.displayName) ||
-                    ('domain' in data && data.domain?.displayName) ||
-                    '',
-                  scope.displayName,
-                  scope.validFrom
-                    ? format(new Date(scope.validFrom), 'dd.MM.yyyy')
-                    : '-',
-                  scope.validTo
-                    ? format(new Date(scope.validTo), 'dd.MM.yyyy')
-                    : '-',
-                  // Todo: add column for last used data when available
-                ]}
-              />
-            </T.Row>
-          ))}
+          {scopes?.map((scope) => {
+            const domainName = scope.domain?.displayName || 
+              ('domain' in data && data.domain?.displayName) || 
+              ''
+            
+            return (
+              <T.Row key={scope.id}>
+                <RowItems
+                  values={[
+                    domainName,
+                    scope.displayName,
+                    scope.validFrom
+                      ? format(new Date(scope.validFrom), 'dd.MM.yyyy')
+                      : '-',
+                    scope.validTo
+                      ? format(new Date(scope.validTo), 'dd.MM.yyyy')
+                      : '-',
+                    // Todo: add column for last used data when available
+                  ]}
+                />
+              </T.Row>
+            )
+          })}
         </T.Body>
       </T.Table>
     </Box>

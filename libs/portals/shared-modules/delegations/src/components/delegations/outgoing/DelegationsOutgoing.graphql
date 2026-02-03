@@ -6,6 +6,11 @@ fragment AuthCustomDelegationOutgoing on AuthCustomDelegation {
     validTo
     validFrom
     displayName
+    domain {
+      displayName
+      organisationLogoUrl
+      organisationLogoKey
+    }
     apiScope(lang: $lang) {
       ...AuthApiScope
       group {

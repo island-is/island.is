@@ -131,7 +131,8 @@ const CustomDelegationsTable = ({
                         <IdentityInfo
                           identity={identity}
                           isExpanded={
-                            expandedRow === `${person.nationalId}-${person.type}`
+                            expandedRow ===
+                            `${person.nationalId}-${person.type}`
                           }
                         />
                       ),
