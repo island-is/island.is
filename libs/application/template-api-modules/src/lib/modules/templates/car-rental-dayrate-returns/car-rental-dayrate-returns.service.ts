@@ -202,8 +202,6 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
         },
       })
 
-      console.log('end of application response', resp)
-
       return true
     } catch (error) {
       this.logger.error('Error posting data to skatturinn', error)
