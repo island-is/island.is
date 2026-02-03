@@ -36,7 +36,6 @@ import { ScreenDto } from '../screens/models/dto/screen.dto'
 import { Option } from '../../dataTypes/option.model'
 import { FormStatus } from '@island.is/form-system/shared'
 import { MyPagesApplicationResponseDto } from './models/dto/myPagesApplication.response.dto'
-import { Dependency } from '../../dataTypes/dependency.model'
 import { SectionTypes } from '@island.is/form-system/shared'
 import { getOrganizationInfoByNationalId } from '../../../utils/organizationInfo'
 import { AuthDelegationType } from '@island.is/shared/types'
@@ -186,8 +185,41 @@ export class ApplicationsService {
       throw new NotFoundException(`Application with id '${id}' not found`)
     }
 
-    application.dependencies = updateApplicationDto.dependencies
-    application.completed = updateApplicationDto.completed
+    if (updateApplicationDto.completed) {
+      const completedToRemove = updateApplicationDto.completed ?? []
+
+      application.completed = (application.completed ?? []).filter(
+        (completedId) => !completedToRemove.includes(completedId),
+      )
+
+      const form = await this.formModel.findByPk(application.formId, {
+        include: [{ model: Section, as: 'sections' }],
+      })
+
+      if (!form) {
+        throw new NotFoundException(
+          `Form with id '${application.formId}' not found`,
+        )
+      }
+
+      let draftFinishedSteps = 0
+
+      for (const section of form.sections.filter(
+        (s) =>
+          s.sectionType === SectionTypes.INPUT ||
+          s.sectionType === SectionTypes.PARTIES,
+      ) || []) {
+        if (section.id && application.completed.includes(section.id)) {
+          draftFinishedSteps = draftFinishedSteps + 1
+        }
+      }
+
+      application.draftFinishedSteps = draftFinishedSteps
+    }
+
+    if (updateApplicationDto.dependencies) {
+      application.dependencies = updateApplicationDto.dependencies
+    }
 
     await application.save()
   }
@@ -882,9 +914,12 @@ export class ApplicationsService {
     await this.sequelize.transaction(async (transaction) => {
       application.completed = completedArray
       application.draftFinishedSteps = draftFinishedSteps
+      application.draftTotalSteps = await this.calculateDraftTotalSteps(
+        sections,
+      )
       await application.save({ transaction })
 
-      if (submitScreenDto.increment && currentScreen) {
+      if (currentScreen) {
         const filteredFields = currentScreen.fields?.filter(
           (field) => field.isHidden === false,
         )
@@ -1110,34 +1145,17 @@ export class ApplicationsService {
   }
 
   private async calculateDraftTotalSteps(
-    formId: string,
-    dependencies: Dependency[],
+    sections: SectionDto[] | undefined,
   ): Promise<number> {
-    const form = await this.formModel.findByPk(formId, {
-      include: [{ model: Section, as: 'sections' }],
-    })
-
-    if (!form) {
-      throw new NotFoundException(`Form with id '${formId}' not found`)
-    }
-
-    const wantedSectionTypes = [SectionTypes.PARTIES, SectionTypes.INPUT]
-
-    const sections = form.sections.filter((section) =>
-      wantedSectionTypes.includes(section.sectionType),
+    sections = sections?.filter(
+      (section) =>
+        section.isHidden === false &&
+        section.sectionType !== SectionTypes.PREMISES &&
+        section.sectionType !== SectionTypes.COMPLETED,
     )
+    const draftTotalSteps = sections?.length || 0
 
-    const totalSteps =
-      sections.length +
-      (form.hasSummaryScreen ? 1 : 0) +
-      (form.hasPayment ? 1 : 0)
-
-    const hiddenSteps = dependencies
-      .filter((dependency) => dependency.isSelected === false)
-      .flatMap((dependency) => dependency.childProps)
-      .filter((id) => sections.some((section) => section.id === id))
-
-    return totalSteps - hiddenSteps.length
+    return draftTotalSteps
   }
 
   private async getLoginTypes(user: User): Promise<string[]> {

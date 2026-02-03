@@ -50,7 +50,9 @@ const Questionnaires: FC = () => {
   const navigate = useNavigate()
   const [filterValues, setFilterValues] =
     useState<FilterValues>(defaultFilterValues)
-  const [filteredData, setFilteredData] = useState<QuestionnairesBaseItem[]>([])
+  const [filteredData, setFilteredData] = useState<
+    QuestionnairesBaseItem[] | null
+  >(null)
   const [showExpired, setShowExpired] = useState(false)
 
   const { data, loading, error } = useGetQuestionnairesQuery({
@@ -127,9 +129,43 @@ const Questionnaires: FC = () => {
           matchesOrganization &&
           matchesExpired
         )
-      }) ?? [],
+      }) ?? null,
     )
   }, [filterValues, data, showExpired])
+
+  const dataIsEmpty =
+    data?.questionnairesList === null ||
+    data?.questionnairesList?.questionnaires?.length === 0
+
+  const filterIsEmpty =
+    filterValues.searchQuery.length === 0 &&
+    filterValues.status.length === 0 &&
+    filterValues.organization.length === 0
+
+  const noActive = filteredData?.every(
+    (item) => item.status === QuestionnairesStatusEnum.expired,
+  )
+
+  // If no data and no filters = typical empty screen
+  const displayTypicalEmptyState =
+    !loading && !error && dataIsEmpty && filterIsEmpty && !showExpired
+
+  // If filters applied and no data = empty screen with filters
+  const displayFilteredEmptyState =
+    !loading &&
+    !error &&
+    !dataIsEmpty &&
+    filteredData?.length === 0 &&
+    !filterIsEmpty
+
+  // If filters applied and showExpired = true => empty screens with no active questionnaires
+  const displayNoActiveEmptyState =
+    !loading &&
+    !error &&
+    !dataIsEmpty &&
+    !showExpired &&
+    noActive &&
+    filterIsEmpty
 
   return (
     <IntroWrapper
@@ -137,6 +173,16 @@ const Questionnaires: FC = () => {
       intro={formatMessage(messages.questionnairesIntro)}
       loading={loading}
     >
+      {!loading && error && (
+        <Box marginTop={3}>
+          <Problem
+            type="internal_service_error"
+            noBorder={false}
+            error={error}
+          />
+        </Box>
+      )}
+      {}
       {!loading && !error && (
         <Filter
           variant="popover"
@@ -240,9 +286,18 @@ const Questionnaires: FC = () => {
           </Box>
         </Filter>
       )}
-      {!loading && data?.questionnairesList === null && (
+      {displayTypicalEmptyState && (
         <Box marginTop={3}>
-          <Problem type="no_data" noBorder={false} />
+          <Problem
+            type="no_data"
+            noBorder={false}
+            imgSrc="./assets/images/nodata.svg"
+            imgAlt=""
+            title={formatMessage(messages.noData)}
+            message={formatMessage(messages.noDataFoundDetail, {
+              arg: formatMessage(messages.questionnairesThgf).toLowerCase(),
+            })}
+          />
         </Box>
       )}
       <Box marginTop={5}>
@@ -270,7 +325,7 @@ const Questionnaires: FC = () => {
             />
           </Box>
         )}
-        {dataLength > 0 && filteredData?.length === 0 && !showExpired && (
+        {displayNoActiveEmptyState && (
           <Problem
             type="no_data"
             noBorder={false}
@@ -330,9 +385,12 @@ const Questionnaires: FC = () => {
         </Stack>
       </Box>
       {!loading &&
-        (filterValues.status.length > 0 ||
-          filterValues.searchQuery.length > 0) &&
-        filteredData.length === 0 && (
+        Object.entries(filterValues).some(([key, value]) =>
+          key !== 'treatment' && Array.isArray(value)
+            ? value.length > 0
+            : value.length > 0,
+        ) &&
+        displayFilteredEmptyState && (
           <Box marginTop={3}>
             <Problem
               type="no_data"

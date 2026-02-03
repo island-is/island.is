@@ -1,3 +1,4 @@
+import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
 import { User } from '@island.is/judicial-system/types'
@@ -29,16 +30,23 @@ describe('InternalCaseController - Deliver signed court record to court', () => 
   const now = randomDate()
 
   let mockCourtService: CourtService
+  let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
     const mockNowFactory = nowFactory as jest.Mock
     mockNowFactory.mockReturnValue(now)
 
-    const { courtService, internalCaseController, awsS3Service } =
+    const { sequelize, courtService, internalCaseController, awsS3Service } =
       await createTestingCaseModule()
 
     mockCourtService = courtService
+
+    const mockTransaction = sequelize.transaction as jest.Mock
+    transaction = {} as Transaction
+    mockTransaction.mockImplementationOnce(
+      (fn: (transaction: Transaction) => unknown) => fn(transaction),
+    )
 
     const mockGetSignedCourtRecordPdf =
       awsS3Service.getGeneratedRequestCaseObject as jest.Mock
@@ -95,33 +103,44 @@ describe('InternalCaseController - Deliver signed court record to court', () => 
       expect(then.result.delivered).toBe(true)
     })
   })
+})
 
-  describe('upload fails', () => {
-    const caseId = uuid()
-    const courtId = uuid()
-    const courtCaseNumber = uuid()
-    const theCase = { id: caseId, courtId, courtCaseNumber } as Case
-    let then: Then
+describe('upload fails', () => {
+  const userId = uuid()
+  const user = { id: userId } as User
+  const caseId = uuid()
+  const courtId = uuid()
+  const courtCaseNumber = uuid()
+  const theCase = { id: caseId, courtId, courtCaseNumber } as Case
+  const pdf = Buffer.from('signed court record')
 
-    beforeEach(async () => {
-      const { internalCaseController, awsS3Service, courtService } =
-        await createTestingCaseModule()
+  let transaction: Transaction
+  let then: Then
 
-      const mockGetSignedCourtRecordPdf =
-        awsS3Service.getGeneratedRequestCaseObject as jest.Mock
-      mockGetSignedCourtRecordPdf.mockResolvedValueOnce(pdf)
+  beforeEach(async () => {
+    const { sequelize, internalCaseController, awsS3Service, courtService } =
+      await createTestingCaseModule()
 
-      const mockCreateCourtRecord = courtService.createCourtRecord as jest.Mock
-      mockCreateCourtRecord.mockRejectedValueOnce(new Error('upload fail'))
+    const mockTransaction = sequelize.transaction as jest.Mock
+    transaction = {} as Transaction
+    mockTransaction.mockImplementationOnce(
+      (fn: (transaction: Transaction) => unknown) => fn(transaction),
+    )
 
-      then = (await internalCaseController
-        .deliverSignedCourtRecordToCourt(caseId, theCase, { user })
-        .then((result) => ({ result }))
-        .catch((error) => ({ error }))) as Then
-    })
+    const mockGetSignedCourtRecordPdf =
+      awsS3Service.getGeneratedRequestCaseObject as jest.Mock
+    mockGetSignedCourtRecordPdf.mockResolvedValueOnce(pdf)
 
-    it('should return a failure response', () => {
-      expect(then.result.delivered).toBe(false)
-    })
+    const mockCreateCourtRecord = courtService.createCourtRecord as jest.Mock
+    mockCreateCourtRecord.mockRejectedValueOnce(new Error('upload fail'))
+
+    then = (await internalCaseController
+      .deliverSignedCourtRecordToCourt(caseId, theCase, { user })
+      .then((result) => ({ result }))
+      .catch((error) => ({ error }))) as Then
+  })
+
+  it('should return a failure response', () => {
+    expect(then.result.delivered).toBe(false)
   })
 })

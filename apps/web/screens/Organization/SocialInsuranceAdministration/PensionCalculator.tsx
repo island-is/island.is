@@ -77,6 +77,25 @@ const hasDisabilityAssessment = (
   )
 }
 
+const shouldShowAgeOfFirstAssessmentField = (
+  typeOfBasePension: BasePensionType | null | undefined,
+  dateOfCalculations: string | null | undefined,
+) => {
+  if (
+    typeOfBasePension !== BasePensionType.Rehabilitation ||
+    !dateOfCalculations
+  )
+    return true
+
+  const calculationDate = new Date(dateOfCalculations)
+  const cutoffDate = new Date('2025-09-01T00:00:00.000Z')
+
+  if (!isNaN(calculationDate.getTime()) && calculationDate >= cutoffDate)
+    return false
+
+  return true
+}
+
 const hasStartDate = (
   typeOfBasePension: BasePensionType | null | undefined,
 ) => {
@@ -291,9 +310,18 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
 
   const onSubmit = (data: CalculationInput) => {
     const baseUrl = linkResolver('pensioncalculatorresults').href
+    const finalDateOfCalculations = data.dateOfCalculations
+      ? data.dateOfCalculations
+      : dateOfCalculationsOptions[0]?.value
     const queryParams = convertToQueryParams({
       ...data,
       ...(!hasDisabilityAssessment(data.typeOfBasePension) && {
+        ageOfFirst75DisabilityAssessment: undefined,
+      }),
+      ...(!shouldShowAgeOfFirstAssessmentField(
+        data.typeOfBasePension,
+        finalDateOfCalculations,
+      ) && {
         ageOfFirst75DisabilityAssessment: undefined,
       }),
       ...(hasDisabilityAssessment(data.typeOfBasePension) && {
@@ -305,9 +333,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
         startMonth: undefined,
         startYear: undefined,
       }),
-      dateOfCalculations: data.dateOfCalculations
-        ? data.dateOfCalculations
-        : dateOfCalculationsOptions[0]?.value,
+      dateOfCalculations: finalDateOfCalculations,
     })
     setLoadingResultPage(true)
     router.push(`${baseUrl}?${queryParams.toString()}`)
@@ -896,43 +922,49 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                                 typeOfBasePension ===
                                   BasePensionType.NewSystemPartialDisability ||
                                 typeOfBasePension ===
-                                  BasePensionType.Rehabilitation) && (
-                                <Box className={styles.inputContainer}>
-                                  <InputController
-                                    id={
-                                      'ageOfFirst75DisabilityAssessment' as keyof CalculationInput
-                                    }
-                                    name={
-                                      'ageOfFirst75DisabilityAssessment' as keyof CalculationInput
-                                    }
-                                    label={formatMessage(
-                                      typeOfBasePension ===
-                                        BasePensionType.Disability ||
+                                  BasePensionType.Rehabilitation ||
+                                typeOfBasePension ===
+                                  BasePensionType.NewSystemMedicalAndRehabilitation) &&
+                                shouldShowAgeOfFirstAssessmentField(
+                                  typeOfBasePension,
+                                  dateOfCalculations,
+                                ) && (
+                                  <Box className={styles.inputContainer}>
+                                    <InputController
+                                      id={
+                                        'ageOfFirst75DisabilityAssessment' as keyof CalculationInput
+                                      }
+                                      name={
+                                        'ageOfFirst75DisabilityAssessment' as keyof CalculationInput
+                                      }
+                                      label={formatMessage(
                                         typeOfBasePension ===
-                                          BasePensionType.NewSystemDisability ||
-                                        typeOfBasePension ===
-                                          BasePensionType.NewSystemPartialDisability
-                                        ? translationStrings.ageOfFirst75DisabilityAssessment
-                                        : translationStrings.ageOfFirst75RehabilitationAssessment,
-                                    )}
-                                    suffix={
-                                      ' ' +
-                                      formatMessage(
-                                        translationStrings.ageOfFirst75DisabilityAssessmentSuffix,
-                                      )
-                                    }
-                                    type="number"
-                                    maxLength={
-                                      formatMessage(
-                                        translationStrings.ageOfFirst75DisabilityAssessmentSuffix,
-                                      ).length + 3
-                                    }
-                                    placeholder={formatMessage(
-                                      translationStrings.ageOfFirst75DisabilityAssessmentPlaceholder,
-                                    )}
-                                  />
-                                </Box>
-                              )}
+                                          BasePensionType.Disability ||
+                                          typeOfBasePension ===
+                                            BasePensionType.NewSystemDisability ||
+                                          typeOfBasePension ===
+                                            BasePensionType.NewSystemPartialDisability
+                                          ? translationStrings.ageOfFirst75DisabilityAssessment
+                                          : translationStrings.ageOfFirst75RehabilitationAssessment,
+                                      )}
+                                      suffix={
+                                        ' ' +
+                                        formatMessage(
+                                          translationStrings.ageOfFirst75DisabilityAssessmentSuffix,
+                                        )
+                                      }
+                                      type="number"
+                                      maxLength={
+                                        formatMessage(
+                                          translationStrings.ageOfFirst75DisabilityAssessmentSuffix,
+                                        ).length + 3
+                                      }
+                                      placeholder={formatMessage(
+                                        translationStrings.ageOfFirst75DisabilityAssessmentPlaceholder,
+                                      )}
+                                    />
+                                  </Box>
+                                )}
                             </Stack>
                             {!hasDisabilityAssessment(typeOfBasePension) && (
                               <Stack space={2}>

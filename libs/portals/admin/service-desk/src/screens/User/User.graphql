@@ -11,6 +11,13 @@ query GetUserProfileByNationalId($nationalId: String!) {
     documentNotifications
     emailNotifications
     locale
+    emails {
+      id
+      email
+      primary
+      emailStatus
+      isConnectedToActorProfile
+    }
   }
 }
 
@@ -31,6 +38,10 @@ mutation UpdateUserProfile(
     emailNotifications
     locale
   }
+}
+
+mutation DeleteUserEmail($nationalId: String!, $emailId: String!) {
+  UserProfileAdminDeleteEmail(nationalId: $nationalId, emailId: $emailId)
 }
 
 query GetAdminNotifications($nationalId: String!, $input: NotificationsInput!) {

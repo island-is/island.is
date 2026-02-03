@@ -161,7 +161,6 @@ describe('DatePicker', () => {
           placeholderText="Pick a date"
           label="Select date range"
           range={true}
-          selected={new Date(2020, 9, 1)}
           handleChange={handleChange}
         />,
       )
@@ -169,9 +168,16 @@ describe('DatePicker', () => {
       if (input) {
         fireEvent.click(input)
       }
+      // Click first date to start range
       fireEvent.click(getByText('1'))
+      // Calendar should stay open, click second date to complete range
       fireEvent.click(getByText('15'))
-      expect(handleChange).toHaveBeenCalled()
+      // handleChange should only be called when both dates are selected
+      expect(handleChange).toHaveBeenCalledTimes(1)
+      expect(handleChange).toHaveBeenCalledWith(
+        expect.any(Date),
+        expect.any(Date),
+      )
     })
   })
 

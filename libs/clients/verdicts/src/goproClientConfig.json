@@ -157,6 +157,15 @@
             "collectionFormat": "multi"
           },
           {
+            "name": "scheduleType",
+            "in": "query",
+            "description": "Published bookings per schedule type/s. If no values provided bookings for all schedule types will be returned.",
+            "required": false,
+            "type": "array",
+            "items": { "type": "string" },
+            "collectionFormat": "multi"
+          },
+          {
             "name": "lawyer",
             "in": "query",
             "description": "Optional parameter lawyer. If empty: Return all bookings (no filtering). \r\n            If lawyer is provided: Return only bookings where at least one lawyer matches provided name string.",
@@ -236,6 +245,15 @@
             "collectionFormat": "multi"
           },
           {
+            "name": "scheduleType",
+            "in": "query",
+            "description": "Published bookings per schedule type/s. If no values provided bookings for all schedule types will be returned.",
+            "required": false,
+            "type": "array",
+            "items": { "type": "string" },
+            "collectionFormat": "multi"
+          },
+          {
             "name": "lawyer",
             "in": "query",
             "description": "Optional parameter lawyer. If empty: Return all bookings (no filtering). \r\n            If lawyer is provided: Return only bookings where at least one lawyer matches provided name string.",
@@ -292,6 +310,62 @@
             "description": "OK",
             "schema": {
               "$ref": "#/definitions/GoPro.SM.Services.Responses.GetPublishedBookingsResponse"
+            }
+          }
+        }
+      }
+    },
+    "/Booking/GetScheduleType": {
+      "get": {
+        "tags": ["Extension: PublishedBooking"],
+        "summary": "Get published bookings distinct Schedule Types",
+        "operationId": "GetScheduleTypeV1",
+        "consumes": [],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "courts",
+            "in": "query",
+            "description": "Published bookings per court/s. If no values provided, booking distinct schedule types for all courts will be returned.",
+            "required": false,
+            "type": "array",
+            "items": { "type": "string" },
+            "collectionFormat": "multi"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/GoPro.SM.Services.Responses.GetScheduleTypesResponse"
+            }
+          }
+        }
+      }
+    },
+    "/v2/Booking/GetScheduleType": {
+      "get": {
+        "tags": ["Extension: PublishedBooking"],
+        "summary": "Get published bookings distinct Schedule Types",
+        "operationId": "GetScheduleTypeV2",
+        "consumes": [],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "courts",
+            "in": "query",
+            "description": "Published bookings per court/s. If no values provided, booking distinct schedule types for all courts will be returned.",
+            "required": false,
+            "type": "array",
+            "items": { "type": "string" },
+            "collectionFormat": "multi"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/GoPro.SM.Services.Responses.GetScheduleTypesResponse"
             }
           }
         }
@@ -476,8 +550,18 @@
         "tags": ["Extension: PublishedVerdict"],
         "summary": "Get list of case templates in use",
         "operationId": "GetCaseTypesV1",
-        "consumes": [],
+        "consumes": ["application/json", "text/json"],
         "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "requestData",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/GoPro.SM.Services.Requests.GetCaseTypesRequest"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -493,8 +577,18 @@
         "tags": ["Extension: PublishedVerdict"],
         "summary": "Get list of case templates in use",
         "operationId": "GetCaseTypesV2",
-        "consumes": [],
+        "consumes": ["application/json", "text/json"],
         "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "requestData",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/GoPro.SM.Services.Requests.GetCaseTypesRequest"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -1459,6 +1553,38 @@
         "idNumber": { "type": "string" }
       }
     },
+    "GoPro.SM.Services.Responses.GetScheduleTypesResponse": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GoPro.SM.Services.Models.ScheduleTypeInfo"
+          }
+        },
+        "succeeded": {
+          "description": "General success indicator",
+          "type": "boolean"
+        },
+        "returnCode": {
+          "format": "int32",
+          "description": "HTTP response status code",
+          "type": "integer"
+        },
+        "message": {
+          "description": "Additional message containing information or error message",
+          "type": "string"
+        }
+      }
+    },
+    "GoPro.SM.Services.Models.ScheduleTypeInfo": {
+      "type": "object",
+      "properties": {
+        "id": { "format": "int32", "type": "integer" },
+        "label": { "type": "string" },
+        "court": { "$ref": "#/definitions/GoPro.SM.Data.Entities.CourtModel" }
+      }
+    },
     "GoPro.SM.Services.Requests.PublishCaseRequest": {
       "type": "object",
       "properties": {
@@ -1738,6 +1864,12 @@
         }
       }
     },
+    "GoPro.SM.Services.Requests.GetCaseTypesRequest": {
+      "type": "object",
+      "properties": {
+        "courts": { "type": "array", "items": { "type": "string" } }
+      }
+    },
     "GoPro.SM.Services.Responses.GetCaseTypesResponse": {
       "type": "object",
       "properties": {
@@ -1766,7 +1898,8 @@
       "type": "object",
       "properties": {
         "id": { "format": "int32", "type": "integer" },
-        "label": { "type": "string" }
+        "label": { "type": "string" },
+        "court": { "$ref": "#/definitions/GoPro.SM.Data.Entities.CourtModel" }
       }
     },
     "GoPro.SM.Services.Responses.GetCaseCategoriesResponse": {

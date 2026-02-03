@@ -105,6 +105,8 @@ export const createTestingSubpoenaModule = async () => {
 
   const courtService = subpoenaModule.get<CourtService>(CourtService)
 
+  const sequelize = subpoenaModule.get<Sequelize>(Sequelize)
+
   const internalCaseService =
     subpoenaModule.get<InternalCaseService>(InternalCaseService)
 
@@ -132,6 +134,7 @@ export const createTestingSubpoenaModule = async () => {
     fileService,
     policeService,
     courtService,
+    sequelize,
     internalCaseService,
     subpoenaRepositoryService,
     subpoenaService,
