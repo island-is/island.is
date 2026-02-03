@@ -70,8 +70,10 @@ export const PaymentOverviewTotals = () => {
 
   const [fetchTotalsPdf] = useGetPaymentOverviewTotalsPdfLazyQuery()
 
-  const services =
-    serviceTypes?.rightsPortalPaymentOverviewTotalsServiceTypes.items
+  const serviceTypesResult =
+    serviceTypes?.rightsPortalPaymentOverviewTotalsServiceTypes
+  const totalsResult = totalsData?.rightsPortalPaymentOverviewTotals
+  const services = serviceTypesResult?.items
 
   const serviceTypeNameByCode = useMemo(
     () =>
@@ -95,23 +97,29 @@ export const PaymentOverviewTotals = () => {
     )
     .filter(isDefined)
 
+  const optionsLength = options?.length ?? 0
+  const firstOptionValue = options?.[0]?.value
+
+  const totalsInput = useMemo(
+    () => ({
+      dateFrom: startDate,
+      dateTo: endDate,
+      serviceTypeCode: selectedOptionId ?? '',
+    }),
+    [startDate, endDate, selectedOptionId],
+  )
+
   const onFetchTotals = () => {
     lazyTotalsQuery({
-      variables: {
-        input: {
-          dateFrom: startDate,
-          dateTo: endDate,
-          serviceTypeCode: selectedOptionId ?? '',
-        },
-      },
+      variables: { input: totalsInput },
     })
   }
 
   useEffect(() => {
-    if (options?.length && selectedOptionId === null) {
-      setSelectedOptionId(options[0].value)
+    if (optionsLength > 0 && selectedOptionId === null && firstOptionValue) {
+      setSelectedOptionId(firstOptionValue)
     }
-  }, [options, selectedOptionId])
+  }, [optionsLength, firstOptionValue, selectedOptionId])
 
   useEffect(() => {
     onFetchTotals()
@@ -120,17 +128,11 @@ export const PaymentOverviewTotals = () => {
 
   const onDownloadTotalsPdf = async () => {
     const { data } = await fetchTotalsPdf({
-      variables: {
-        input: {
-          dateFrom: startDate,
-          dateTo: endDate,
-          serviceTypeCode: selectedOptionId ?? '',
-        },
-      },
+      variables: { input: totalsInput },
     })
 
     const document =
-      data?.rightsPortalPaymentOverviewTotalsPdf.items[0] ?? undefined
+      data?.rightsPortalPaymentOverviewTotalsPdf?.items?.[0] ?? undefined
 
     if (document?.data && document?.fileName && document?.contentType) {
       downloadLink(document.data, document.contentType, document.fileName)
@@ -154,9 +156,8 @@ export const PaymentOverviewTotals = () => {
   )
 
   const hasDomainError =
-    (serviceTypes?.rightsPortalPaymentOverviewTotalsServiceTypes.errors
-      ?.length ?? 0) > 0 ||
-    (totalsData?.rightsPortalPaymentOverviewTotals.errors?.length ?? 0) > 0
+    (serviceTypesResult?.errors?.length ?? 0) > 0 ||
+    (totalsResult?.errors?.length ?? 0) > 0
   const hasError = serviceTypesError || totalsError || hasDomainError
   const loading = serviceTypesLoading || totalsLoading
 
