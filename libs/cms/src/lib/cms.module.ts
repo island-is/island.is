@@ -1,6 +1,7 @@
 import { HttpModule } from '@nestjs/axios'
 import { Module } from '@nestjs/common'
 import { TerminusModule } from '@nestjs/terminus'
+import { ChargeFjsV2ClientModule } from '@island.is/clients/charge-fjs-v2'
 import { ElasticService } from '@island.is/content-search-toolkit'
 import {
   CmsResolver,
@@ -17,6 +18,7 @@ import {
   IntroLinkImageResolver,
   GenericListResolver,
   FeaturedGenericListItemsResolver,
+  CourseDetailsResolver,
 } from './cms.resolver'
 import { CmsContentfulService } from './cms.contentful.service'
 import { ContentfulRepository } from './contentful.repository'
@@ -38,9 +40,15 @@ import { OrganizationTitleByEntryIdLoader } from './loaders/organizationTitleByE
 import { OrganizationPageResolver } from './organizationPage.resolver'
 
 @Module({
-  imports: [HttpModule, TerminusModule, PowerBiConfig.registerOptional()],
+  imports: [
+    HttpModule,
+    TerminusModule,
+    PowerBiConfig.registerOptional(),
+    ChargeFjsV2ClientModule,
+  ],
   providers: [
     CmsResolver,
+    CourseDetailsResolver,
     ArticleResolver,
     ElasticService,
     CmsContentfulService,

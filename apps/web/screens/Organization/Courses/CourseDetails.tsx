@@ -23,6 +23,7 @@ import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { LayoutProps, withMainLayout } from '@island.is/web/layouts/main'
 import type { Screen, ScreenContext } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
+import { formatCurrency } from '@island.is/web/utils/currency'
 import { webRichText } from '@island.is/web/utils/richText'
 
 import { GET_NAMESPACE_QUERY } from '../../queries'
@@ -163,6 +164,15 @@ const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
                     text: instance.location,
                   })
                 }
+                if (instance.chargeItemPrice) {
+                  const price = formatCurrency(instance.chargeItemPrice)
+                  if (price) {
+                    detailLines.push({
+                      icon: 'money',
+                      text: price,
+                    })
+                  }
+                }
 
                 const tags: { label: string; variant: TagVariant }[] = []
 
@@ -270,8 +280,12 @@ CourseDetails.getProps = async ({
     namespace,
     courseListPage: courseListPage.data?.getCourseListPageById,
     languageToggleHrefOverride: {
-      is: getCourseById.activeLocales?.is ? languageToggleHrefOverride?.is : '',
-      en: getCourseById.activeLocales?.en ? languageToggleHrefOverride?.en : '',
+      is: getCourseById.activeLocales?.is
+        ? languageToggleHrefOverride?.is ?? ''
+        : '',
+      en: getCourseById.activeLocales?.en
+        ? languageToggleHrefOverride?.en ?? ''
+        : '',
     },
     ...getThemeConfig(organizationPage?.theme, organizationPage?.organization),
   }

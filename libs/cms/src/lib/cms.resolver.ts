@@ -156,6 +156,7 @@ import {
 import { GenericList } from './models/genericList.model'
 import { FeaturedGenericListItems } from './models/featuredGenericListItems.model'
 import {
+  Course,
   CourseCategoriesResponse,
   CourseDetails,
   CourseList,
@@ -171,6 +172,7 @@ import { CourseListPage } from './models/courseListPage.model'
 import { GetCourseSelectOptionsInput } from './dto/getCourseSelectOptions.input'
 import { WebChat } from './models/webChat.model'
 import { GetWebChatInput } from './dto/getWebChat.input'
+import { ChargeFjsV2ClientService } from '@island.is/clients/charge-fjs-v2'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -1129,5 +1131,37 @@ export class FeaturedGenericListItemsResolver {
       input,
     )
     return response.items
+  }
+}
+
+@CacheControl(defaultCache)
+@Resolver(() => CourseDetails)
+export class CourseDetailsResolver {
+  constructor(
+    private readonly chargeFjsV2ClientService: ChargeFjsV2ClientService,
+  ) {}
+
+  @ResolveField(() => Course, { nullable: true })
+  async course(@Parent() courseDetails: CourseDetails) {
+    const organizationNationalId = courseDetails?.course?.organizationNationalId
+    if (!organizationNationalId || !courseDetails?.course?.instances?.length)
+      return courseDetails
+
+    const response = await this.chargeFjsV2ClientService
+      .getCatalogByPerformingOrg(organizationNationalId)
+      .catch(() => ({ item: [] }))
+
+    return {
+      ...courseDetails.course,
+      instances: courseDetails.course.instances.map((instance) => {
+        if (!instance.chargeItemCode) return instance
+        return {
+          ...instance,
+          chargeItemPrice: response.item.find(
+            (item) => item.chargeItemCode === instance.chargeItemCode,
+          )?.priceAmount,
+        }
+      }),
+    }
   }
 }

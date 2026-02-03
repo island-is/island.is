@@ -37,6 +37,9 @@ export class CourseInstance {
 
   @Field(() => String, { nullable: true })
   chargeItemCode?: string | null
+
+  @Field(() => Int, { nullable: true })
+  chargeItemPrice?: number | null
 }
 
 const mapCourseInstance = ({
@@ -78,6 +81,9 @@ export class Course {
 
   @Field(() => String, { nullable: true })
   courseListPageId?: string | null
+
+  @Field(() => String, { nullable: true })
+  organizationNationalId?: string | null
 }
 
 @ObjectType()
@@ -111,6 +117,8 @@ export const mapCourse = ({ fields, sys }: ICourse): Course => {
     categories: fields.categories ? fields.categories.map(mapGenericTag) : [],
     instances: fields.instances ? fields.instances.map(mapCourseInstance) : [],
     courseListPageId: fields.courseListPage?.sys?.id ?? null,
+    organizationNationalId:
+      fields.courseListPage?.fields.organization?.fields?.kennitala ?? null,
   }
 }
 
