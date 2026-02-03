@@ -38,8 +38,15 @@ export class NotifyService {
         `X-Road configuration is missing for NotifyService. Please check environment variables.`,
       )
     }
-
-    const accessToken: string | null = await this.getAccessToken(url)
+    let accessToken: string | null = null
+    try {
+      accessToken = await this.getAccessToken(url)
+    } catch (error) {
+      this.logger.error(
+        `Error acquiring access token for application ${applicationDto.id}: ${error}`,
+      )
+      return false
+    }
 
     const xRoadPath = `${this.xroadBase}/r1/${url}`
 
