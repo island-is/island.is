@@ -1,15 +1,15 @@
-import { DayRateEntry, DayRateEntryModel } from '@island.is/clients-rental-day-rate'
+import { DayRateEntryModel } from '@island.is/clients-rental-day-rate'
+import { MessageDescriptor } from 'react-intl'
 
-export interface CarCategoryRecord {
+export interface CarUsageRecord {
   vehicleId: string
-  oldMileage: number
-  newMilage: number
-  rateCategory: string
+  prevPeriodTotalDays: number
+  prevPeriodUsage: number
 }
 
-export interface CarCategoryError {
+export interface CarUsageError {
   code: 1 | 2
-  message: string
+  message: MessageDescriptor | string
   carNr: string
 }
 
@@ -18,6 +18,6 @@ export interface CurrentVehicleWithMilage {
   milage: number | null
 }
 
-export interface CarMap {
-  [fastnr: string]: DayRateEntry
+export interface DayRateEntryMap {
+  [permno: string]: Array<DayRateEntryModel>
 }

@@ -1,4 +1,3 @@
-import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 import {
   Box,
   Button,
@@ -6,39 +5,44 @@ import {
   InputFileUpload,
   LoadingDots,
 } from '@island.is/island-ui/core'
-import { useEffect, useRef, useState } from 'react'
+import { Dispatch, useEffect, useRef, useState } from 'react'
 import { FileRejection } from 'react-dropzone'
 import { FieldBaseProps } from '@island.is/application/types'
 import {
-  CarCategoryError,
-  CurrentVehicleWithMilage,
-  CarMap,
+  CarUsageError,
 } from '../../utils/types'
-import { RateCategory } from '../../utils/constants'
 import { getValueViaPath } from '@island.is/application/core'
-import { DayRateEntry, EntryModel } from '@island.is/clients-rental-day-rate'
-import { isDayRateEntryActive } from '../../utils/dayRateUtils'
+import { EntryModel } from '@island.is/clients-rental-day-rate'
 import { useFormContext } from 'react-hook-form'
 import {
   createErrorExcel,
   downloadFile,
-  parseFileToCarDayRateUsage,
+} from '../../utils/UploadCarDayRateUsageUtils'
+import {
+  parseUploadFile,
+  UploadFileType,
+  getUploadFileType,
 } from '../../utils/UploadCarDayRateUsageUtils'
 import { useMutation } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
-import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
+import {
+  UPDATE_APPLICATION,
+  UPDATE_APPLICATION_EXTERNAL_DATA,
+} from '@island.is/application/graphql'
 import { m } from '../../lib/messages'
-
-const extensionToType = {
-  [fileExtensionWhitelist['.csv']]: 'csv',
-  [fileExtensionWhitelist['.xlsx']]: 'xlsx',
-} as const
+import { Locale } from '@island.is/shared/types'
+import {
+  CREATE_UPLOAD_URL,
+  ADD_ATTACHMENT,
+} from '@island.is/application/graphql'
+import { uploadFileToS3 } from '@island.is/application/ui-components'
 
 interface Props {
   field: {
     props: {
       getFileContent: (
-        vehicleMap: CarMap,
+        previousPeriodDayRateReturns: EntryModel[],
+        locale: Locale,
       ) => {
         base64Content: string
         fileType: string
@@ -51,15 +55,32 @@ interface Props {
 export const UploadCarDayRateUsage = ({
   application,
   field,
+  setBeforeSubmitCallback,
 }: Props & FieldBaseProps) => {
-  const { locale, formatMessage } = useLocale()
+  const { locale, lang, formatMessage } = useLocale()
   const [updateApplicationExternalData] = useMutation(
     UPDATE_APPLICATION_EXTERNAL_DATA,
   )
+
+  const { setValue, setError, clearErrors, watch } = useFormContext()
+  const uploadedMeta = watch('carDayRateUsageFile')
+
+  const [updateApplication] = useMutation(UPDATE_APPLICATION)
   const [isRefreshingRates, setIsRefreshingRates] = useState(false)
 
   const hasRunRef = useRef(false)
   const updateExternalDataRef = useRef(updateApplicationExternalData)
+
+  const [uploadedFile, setUploadedFile] = useState<File | null>()
+  const [uploadErrorMessage, setUploadErrorMessage] = useState<string | null>(
+    null,
+  )
+  const [errorFile, setErrorFile] = useState<string | null>(null)
+
+  const [createUploadUrl] = useMutation(CREATE_UPLOAD_URL)
+  const [addAttachment] = useMutation(ADD_ATTACHMENT)
+  const noopDispatch: Dispatch<unknown> = () => undefined
+
   useEffect(() => {
     updateExternalDataRef.current = updateApplicationExternalData
   }, [updateApplicationExternalData])
@@ -78,7 +99,7 @@ export const UploadCarDayRateUsage = ({
             input: {
               id: application.id,
               dataProviders: [
-                { actionId: 'getPreviousPeriodDayRateReturns', order: 0 },
+                { actionId: 'getPreviousPeriodDayRateReturns'},
               ],
             },
             locale,
@@ -99,40 +120,77 @@ export const UploadCarDayRateUsage = ({
     }
   }, [application.id, locale])
 
-  const [uploadedFile, setUploadedFile] = useState<File | null>()
-  const [uploadErrorMessage, setUploadErrorMessage] = useState<string | null>(
-    null,
-  )
-  const { setValue } = useFormContext()
-  const [errorFile, setErrorFile] = useState<string | null>(null)
+  useEffect(() => {
+    const hasFile = Array.isArray(uploadedMeta) && uploadedMeta.length > 0
 
-  const dayRateEntries = getValueViaPath<DayRateEntry[]>(
+    if (uploadErrorMessage) {
+      setError('carDayRateUsageFile', {
+        type: 'manual',
+        message: uploadErrorMessage,
+      })
+      return
+    }
+
+    if (!hasFile) {
+      setError('carDayRateUsageFile', {
+        type: 'manual',
+        message: 'File is required',
+      })
+      return
+    }
+
+    clearErrors('carDayRateUsageFile')
+  }, [uploadErrorMessage, uploadedMeta, setError, clearErrors])
+
+  useEffect(() => {
+    if (!setBeforeSubmitCallback) return
+
+    setBeforeSubmitCallback(
+      async () => {
+        const hasFile = Array.isArray(uploadedMeta) && uploadedMeta.length > 0
+
+        if (uploadErrorMessage) {
+          return [false, uploadErrorMessage]
+        }
+
+        if (!hasFile) {
+          return [false, 'File is required']
+        }
+
+        return [true, null]
+      },
+      { allowMultiple: true, customCallbackId: 'carDayRateUsageFileValidation' },
+    )
+  }, [setBeforeSubmitCallback, uploadedMeta, uploadErrorMessage])
+
+  const previousPeriodDayRateReturns = getValueViaPath<EntryModel[]>(
     application.externalData,
-    'getPreviousPeriodDayRateReturns',
-  )
+    'getPreviousPeriodDayRateReturns.data',
+  ) ?? []
 
-  const currentCarData =
-    dayRateEntries?.reduce((acc, dayRateEntry) => {
-      if (!dayRateEntry.fastnr) return acc
-
-      acc[dayRateEntry.fastnr] = dayRateEntry
-
-      return acc
-    }, {} as CarMap) ?? {}
-
-  const postCarDayRateUsage = async (file: File, type: 'xlsx' | 'csv') => {
-    const dataToChange = await parseFileToCarDayRateUsage(
-      file,
+  const postCarDayRateUsage = async (
+    file: File,
+    type: UploadFileType,
+  ): Promise<number | null> => {
+    const parsed = await parseUploadFile(
+      await file.arrayBuffer(),
       type,
-      currentCarData,
+      previousPeriodDayRateReturns,
     )
 
-    if (dataToChange.length > 0 && 'code' in dataToChange[0]) {
+    if (!parsed.ok) {
+      if (parsed.reason === 'no-data') {
+        setUploadErrorMessage(formatMessage(m.multiUpload.noCarsToChangeFound))
+        return null
+      }
+
       // We have errors, show single error or generic message
-      const errorMessages = dataToChange as CarCategoryError[]
+      const errorMessages = parsed.errors as CarUsageError[]
       if (errorMessages.length === 1) {
         setUploadErrorMessage(
-          `${errorMessages[0].carNr} - ${errorMessages[0].message}`,
+          `${errorMessages[0].carNr} - ${formatMessage(
+            errorMessages[0].message,
+          )}`,
         )
       } else {
         setUploadErrorMessage(
@@ -144,54 +202,122 @@ export const UploadCarDayRateUsage = ({
 
       // Create error Excel file
       const errorExcel = await createErrorExcel(
-        file,
+        await file.arrayBuffer(),
         type,
-        dataToChange as CarCategoryError[],
+        new Map(
+          (parsed.errors as CarUsageError[]).map((error) => [
+            error.carNr,
+            formatMessage(error.message),
+          ]),
+        ),
       )
       setErrorFile(errorExcel)
-      return
+      return null
     }
 
-    if (!dataToChange.length) {
-      setUploadErrorMessage('noDataInUploadedFile')
-      return
-    }
-
-    setValue('carsToChange', dataToChange)
+    return parsed.records.length
   }
 
   const handleOnInputFileUploadError = (files: FileRejection[]) => {
     if (files[0].errors[0].code === 'file-invalid-type') {
-      setUploadErrorMessage('invalidFileType')
+      setUploadErrorMessage(formatMessage(m.multiUpload.invalidFileType))
     } else {
       setUploadErrorMessage(files[0].errors[0].message)
     }
   }
 
-  const handleOnInputFileUploadRemove = () => setUploadedFile(null)
+  const handleOnInputFileUploadRemove = () => {
+    setUploadedFile(null)
+    setUploadErrorMessage(null)
+    setErrorFile(null)
+    setValue('carDayRateUsageCount', undefined)
+    setValue('carDayRateUsageFile', undefined)
+  }
 
-  const handleOnInputFileUploadChange = (files: File[]) => {
+  const handleOnInputFileUploadChange = async (files: File[]) => {
     setUploadedFile(null)
     setUploadErrorMessage(null)
 
     const file = fileToObjectDeprecated(files[0])
 
     if (file.status === 'done' && file.originalFileObj instanceof File) {
-      //use value of file extension as key
-
-      const type = file.type ? extensionToType[file.type] : undefined
+      const type =
+        getUploadFileType(file.originalFileObj.name) ??
+        (file.type ? getUploadFileType(file.type) : null)
 
       if (!type) {
-        setUploadErrorMessage('wrongFileType')
+        setUploadErrorMessage(formatMessage(m.multiUpload.invalidFileType))
         return
       }
 
       setUploadedFile(file.originalFileObj)
-      postCarDayRateUsage(file.originalFileObj, type)
+      const dataToPost = await postCarDayRateUsage(
+        file.originalFileObj,
+        type,
+      )
+      if (dataToPost !== null) {
+        const uploadedMeta = await uploadAndStoreFile(file.originalFileObj)
+        await persistUploadAnswers(dataToPost, uploadedMeta)
+      }
     }
   }
 
-  const fileData = field.props.getFileContent?.(currentCarData)
+  const uploadAndStoreFile = async (
+    file: File,
+  ): Promise<{ name: string; key: string }> => {
+    const upload = fileToObjectDeprecated(file)
+
+    const { data } = await createUploadUrl({
+      variables: { filename: upload.name },
+    })
+
+    const {
+      createUploadUrl: { url, fields },
+    } = data
+
+    await uploadFileToS3(upload, noopDispatch, url, fields)
+
+    const responseUrl = `${url}/${fields.key}`
+
+    await addAttachment({
+      variables: {
+        input: {
+          id: application.id,
+          key: fields.key,
+          url: responseUrl,
+        },
+      },
+    })
+
+    return { name: upload.name, key: fields.key }
+  }
+
+  const persistUploadAnswers = async (
+    carDayRateUsageCount: number,
+    uploadedMeta: { name: string; key: string },
+  ) => {
+    // Store only metadata in answers (small payload)
+    setValue('carDayRateUsageCount', carDayRateUsageCount)
+    setValue('carDayRateUsageFile', [uploadedMeta])
+    await updateApplication({
+      variables: {
+        input: {
+          id: application.id,
+          answers: {
+            ...application.answers,
+            carDayRateUsageCount,
+            carCategoryFile: [uploadedMeta],
+          },
+        },
+        locale,
+      },
+    })
+  }
+
+  const fileData = field.props.getFileContent?.(
+    previousPeriodDayRateReturns,
+    lang,
+  )
   if (!fileData) {
     throw Error('No valid file data recieved!')
   }

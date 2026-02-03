@@ -1,68 +1,106 @@
 import XLSX from 'xlsx'
 import { parse } from 'csv-parse'
-import { CarCategoryError, CarMap } from './types'
+import { CarUsageError, CarUsageRecord, DayRateEntryMap } from './types'
+import { m } from '../lib/messages'
+import { MessageDescriptor } from 'react-intl'
+import { EntryModel } from '@island.is/clients-rental-day-rate'
+
+const sanitizeNumber = (n: string) => n.replace(new RegExp(/[.,]/g), '')
+
+export type UploadFileType = 'csv' | 'xlsx'
+
+type FileBytes = ArrayBuffer | ArrayBufferView
+
+const toUint8Array = (file: FileBytes): Uint8Array => {
+  if (file instanceof ArrayBuffer) {
+    return new Uint8Array(file)
+  }
+  return new Uint8Array(file.buffer, file.byteOffset, file.byteLength)
+}
+
+const decodeUtf8 = (file: FileBytes): string => {
+  const bytes = toUint8Array(file)
+  if (typeof TextDecoder !== 'undefined') {
+    return new TextDecoder('utf-8').decode(bytes)
+  }
+  if (typeof Buffer !== 'undefined') {
+    return Buffer.from(bytes).toString('utf-8')
+  }
+  throw new Error('No UTF-8 decoder available')
+}
 
 export const parseFileToCarDayRateUsage = async (
-  file: File,
-  type: 'csv' | 'xlsx',
-  currentCarData: CarMap,
-): Promise<Array<{ vehicleId: string; dayRateUsage: string }>> => {
+  file: FileBytes,
+  type: UploadFileType,
+  previousPeriodDayRateReturns: EntryModel[],
+): Promise<Array<CarUsageRecord> | Array<CarUsageError>> => {
   const parsedLines: Array<Array<string>> = await (type === 'csv'
     ? parseCsv(file)
     : parseXlsx(file))
 
   const carNumberIndex = 0
-  const dayRateAmountIndex = 1
-  const dayRateUsageIndex = 2
+  const prevPeriodTotalDaysIndex = 1
+  const prevPeriodUsageIndex = 2
 
   const [_, ...values] = parsedLines
 
-  const data: Array<{ vehicleId: string; dayRateAmount: string; dayRateUsage: string }> =
+  const data: Array<CarUsageRecord | CarUsageError | undefined> =
     values.map((row) => {
+      const carNr = row[carNumberIndex]
+      const prevPeriodTotalDaysStr = row[prevPeriodTotalDaysIndex]?.trim()
+      const prevPeriodUsageStr = row[prevPeriodUsageIndex]?.trim()
+      // if (!currentCarData[carNr]) {
+      //   return {
+      //     code: 1,
+      //     message: m.multiUploadErrors.carNotFound,
+      //     carNr,
+      //   }
+      // }
+
+      if (!prevPeriodTotalDaysStr && prevPeriodUsageStr) {
+        return {
+          code: 1,
+          message: m.multiUploadErrors.previousPeriodUsageRequired,
+          carNr,
+        }
+      }
+
+      // Skip rows where either previous period total days or previous period usage is empty or undefined
+      if (!prevPeriodTotalDaysStr || !prevPeriodUsageStr) return undefined
+
+      const prevPeriodTotalDays = Number(sanitizeNumber(prevPeriodTotalDaysStr))
+      const prevPeriodUsage = Number(sanitizeNumber(prevPeriodUsageStr))
+
+      if (prevPeriodUsage > prevPeriodTotalDays) {
+        return {
+          code: 1,
+          message: m.multiUploadErrors.prevPeriodUsageGreaterThanPrevPeriodTotalDays,
+          carNr,
+        }
+      }
+
       return {
-        vehicleId: row[carNumberIndex],
-        dayRateAmount: row[dayRateAmountIndex],
-        dayRateUsage: row[dayRateUsageIndex],
+        vehicleId: carNr,
+        prevPeriodTotalDays,
+        prevPeriodUsage,
       }
     })
 
-  return data
-}
+  // Filter out undefined values first
+  const filteredData = data.filter(
+    (x): x is CarUsageRecord | CarUsageError => x !== undefined,
+  )
 
-export const parseCsv = async (file: File) => {
-  const reader = file.stream().getReader()
-  const decoder = new TextDecoder('utf-8')
+  const errors = filteredData.filter(
+    (item): item is CarUsageError => 'code' in item,
+  )
 
-  let accumulatedChunk = ''
-  let done = false
+  if (errors.length > 0) return errors
 
-  while (!done) {
-    const res = await reader.read()
-    done = res.done
-    if (!done) {
-      accumulatedChunk += decoder.decode(res.value)
-    }
-  }
-  return parseCsvString(accumulatedChunk)
-}
-
-const parseXlsx = async (file: File) => {
-  try {
-    //FIRST SHEET ONLY
-    const buffer = await file.arrayBuffer()
-    const parsedFile = XLSX.read(buffer, { type: 'buffer' })
-
-    const jsonData = XLSX.utils.sheet_to_csv(
-      parsedFile.Sheets[parsedFile.SheetNames[0]],
-      {
-        blankrows: false,
-      },
-    )
-
-    return parseCsvString(jsonData)
-  } catch (e) {
-    throw new Error('Failed to parse XLSX file: ' + e.message)
-  }
+  // If no errors, return only the CarCategoryRecords
+  return filteredData.filter(
+    (item): item is CarUsageRecord => 'vehicleId' in item,
+  )
 }
 
 export const parseCsvString = (chunk: string): Promise<string[][]> => {
@@ -95,10 +133,29 @@ export const parseCsvString = (chunk: string): Promise<string[][]> => {
   })
 }
 
+export const parseCsv = async (file: FileBytes) => {
+  return parseCsvString(decodeUtf8(file))
+}
+
+const parseXlsx = async (file: FileBytes) => {
+  try {
+    const parsedFile = XLSX.read(toUint8Array(file), { type: 'array' })
+
+    const jsonData = XLSX.utils.sheet_to_csv(
+      parsedFile.Sheets[parsedFile.SheetNames[0]],
+      { blankrows: false },
+    )
+
+    return parseCsvString(jsonData)
+  } catch (e) {
+    throw new Error('Failed to parse XLSX file: ' + e.message)
+  }
+}
+
 export const createErrorExcel = async (
-  file: File,
+  file: FileBytes,
   type: 'csv' | 'xlsx',
-  errors: CarCategoryError[],
+  errors: Map<string, string | MessageDescriptor>,
 ) => {
   const parsedLines: Array<Array<string>> = await (type === 'csv'
     ? parseCsv(file)
@@ -109,13 +166,10 @@ export const createErrorExcel = async (
   // Add error message column to header
   const newHeader = [...header, 'Villa']
 
-  // Create a map of error messages by car number
-  const errorMap = new Map(errors.map((error) => [error.carNr, error.message]))
-
   // Add error messages to rows and mark error rows
   const processedRows = values.map((row) => {
     const carNr = row[0]
-    const errorMessage = errorMap.get(carNr)
+    const errorMessage = errors.get(carNr)
     return {
       row,
       hasError: !!errorMessage,
@@ -191,4 +245,68 @@ export const base64ToBlob = (base64: string, mimeType: string) => {
     bytes[i] = binary.charCodeAt(i)
   }
   return new Blob([bytes], { type: mimeType })
+}
+
+export type ParseUploadResult =
+  | { ok: true; records: CarUsageRecord[] }
+  | { ok: false; errors: CarUsageError[]; reason: 'errors' | 'no-data' }
+
+export const buildDayRateEntryMap = (
+  previousPeriodDayRateReturns: EntryModel[] | undefined,
+): DayRateEntryMap => {
+  if (!previousPeriodDayRateReturns?.length) return {}
+
+  return previousPeriodDayRateReturns.reduce((acc, vehicle) => {
+    if (!vehicle.permno || !vehicle.dayRateEntries) return acc
+
+    acc[vehicle.permno] = vehicle.dayRateEntries
+
+    return acc
+  }, {} as DayRateEntryMap)
+}
+
+export const getUploadFileType = (
+  nameOrMime: string,
+): UploadFileType | null => {
+  if (!nameOrMime) return null
+
+  const lower = nameOrMime.toLowerCase()
+  if (
+    lower.endsWith('.csv') ||
+    lower.includes('text/csv') ||
+    lower.includes('application/csv')
+  ) {
+    return 'csv'
+  }
+  if (lower.endsWith('.xlsx') || lower.includes('spreadsheetml')) {
+    return 'xlsx'
+  }
+
+  return null
+}
+
+export const parseUploadFile = async (
+  file: ArrayBuffer | ArrayBufferView,
+  type: UploadFileType,
+  previousPeriodDayRateReturns: EntryModel[],
+): Promise<ParseUploadResult> => {
+  const parsed = await parseFileToCarDayRateUsage(
+    file,
+    type,
+    previousPeriodDayRateReturns,
+  )
+
+  if (parsed.length === 0) {
+    return { ok: false, errors: [], reason: 'no-data' }
+  }
+
+  if ('code' in parsed[0]) {
+    return {
+      ok: false,
+      errors: parsed as CarUsageError[],
+      reason: 'errors',
+    }
+  }
+
+  return { ok: true, records: parsed as CarUsageRecord[] }
 }

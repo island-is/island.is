@@ -1,8 +1,10 @@
 import XLSX from 'xlsx'
-import { CarMap } from './types'
+import { DayRateEntryMap } from './types'
+import { Locale } from '@island.is/shared/types'
 
 export const generateExcelSheet = (
-  vehicleRateMap: CarMap,
+  dayRateEntryMap: DayRateEntryMap,
+  locale: Locale,
 ): {
   filename: string
   base64Content: string
@@ -14,10 +16,10 @@ export const generateExcelSheet = (
   const lastMonthName = lastMonthDate.toLocaleString('is-IS', { month: 'long' })
   const sheetData = [
     ['Bílnúmer', `Dagar á daggjaldi í ${lastMonthName}`, 'Notaðir dagar'],
-    ...Object.entries(vehicleRateMap)
+    ...Object.entries(dayRateEntryMap)
       .map(([permno, data]) => [
         permno,
-        '', //data.activeDayRate?.periodUsage?.find((period) => period.period === lastMonthIndex)?.numberOfDays,
+        '',
         '',
       ]),
   ]
