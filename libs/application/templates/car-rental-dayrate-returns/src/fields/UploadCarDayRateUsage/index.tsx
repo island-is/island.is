@@ -119,6 +119,10 @@ export const UploadCarDayRateUsage = ({
       'getPreviousPeriodDayRateReturns.data',
     ) ?? []
 
+  const dayRateRecordsByPermno = new Map<string, DayRateRecord>(
+    dayRateRecords.map((d) => [d.permno, d]),
+  )
+
   const parseAndValidateCarDayRateUsage = async (
     file: File,
     type: UploadFileType,
@@ -126,7 +130,7 @@ export const UploadCarDayRateUsage = ({
     const parsed = await parseUploadFile(
       await file.arrayBuffer(),
       type,
-      dayRateRecords,
+      dayRateRecordsByPermno,
     )
 
     if (!parsed.ok) {

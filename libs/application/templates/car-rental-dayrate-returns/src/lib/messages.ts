@@ -353,7 +353,7 @@ export const m = {
     },
     prevPeriodUsageGreaterThanPrevPeriodTotalDays: {
       id: 'rsk.crdr.application:multi.upload.error.prev.period.usage.greater.than.prev.period.total.days',
-      defaultMessage: 'Fleirri dagar notaðir en heilt dagsfjöldi!',
+      defaultMessage: 'Fleirri dagar notaðir en heildar dagsfjöldi!',
       description:
         'Previous period usage greater than previous period total days',
     },
