@@ -21,11 +21,15 @@ export const FarmerLandsOverview = () => {
       {data?.farmerLands && (
         <div>
           <p>Hello World - {data.farmerLands.totalCount} farmer lands</p>
+          <ul>
+            {data.farmerLands.data.map((farmerLand) => (
+              <li key={farmerLand.id}>{farmerLand.name}</li>
+            ))}
+          </ul>
         </div>
       )}
     </IntroWrapper>
   )
 }
-
 
 export default FarmerLandsOverview

@@ -53,6 +53,7 @@ const VehicleHistory = lazy(
   () => import('./screens/VehicleHistory/VehicleHistory'),
 )
 const Lookup = lazy(() => import('./screens/Lookup/Lookup'))
+
 const ShipsOverview = lazy(
   () => import('./screens/Ships/Overview/ShipsOverview'),
 )
