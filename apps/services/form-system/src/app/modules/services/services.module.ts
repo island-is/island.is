@@ -1,7 +1,5 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
-import { ApplicationEvent } from '../applications/models/applicationEvent.model'
-import { NudgeService } from './nudge.service'
 import { ServiceManager } from './service.manager'
 import { ZendeskService } from './zendesk.service'
 import { NotifyService } from './notify.service'
