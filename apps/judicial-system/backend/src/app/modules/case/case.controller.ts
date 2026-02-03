@@ -1,4 +1,6 @@
 import { Response } from 'express'
+import { Transaction } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 
 import {
   BadRequestException,
@@ -17,6 +19,7 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common'
+import { InjectConnection } from '@nestjs/sequelize'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import {
@@ -125,6 +128,7 @@ export class CaseController {
     private readonly eventService: EventService,
     private readonly pdfService: PdfService,
     private readonly civilClaimantService: CivilClaimantService,
+    @InjectConnection() private readonly sequelize: Sequelize,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -159,7 +163,9 @@ export class CaseController {
   ): Promise<Case> {
     this.logger.debug('Creating a new case')
 
-    const createdCase = await this.caseService.create(caseToCreate, user)
+    const createdCase = await this.sequelize.transaction((transaction) =>
+      this.caseService.create(caseToCreate, user, transaction),
+    )
 
     this.eventService.postEvent('CREATE', createdCase)
 
@@ -189,124 +195,147 @@ export class CaseController {
   ): Promise<Case> {
     this.logger.debug(`Updating case ${caseId}`)
 
-    const update: UpdateCase = updateDto
+    const transaction = await this.sequelize.transaction()
 
-    // Make sure valid users are assigned to the case's roles
-    if (update.prosecutorId) {
-      await this.validateAssignedUser(
-        update.prosecutorId,
-        [UserRole.PROSECUTOR],
-        theCase.prosecutorsOfficeId,
-      )
-    }
+    try {
+      const update: UpdateCase = updateDto
 
-    if (update.judgeId) {
-      await this.validateAssignedUser(
-        update.judgeId,
-        [UserRole.DISTRICT_COURT_JUDGE, UserRole.DISTRICT_COURT_ASSISTANT],
-        theCase.courtId,
-      )
-    }
-
-    if (update.registrarId) {
-      await this.validateAssignedUser(
-        update.registrarId,
-        [UserRole.DISTRICT_COURT_REGISTRAR, UserRole.DISTRICT_COURT_ASSISTANT],
-        theCase.courtId,
-      )
-    }
-
-    if (update.appealAssistantId) {
-      await this.validateAssignedUser(update.appealAssistantId, [
-        UserRole.COURT_OF_APPEALS_ASSISTANT,
-      ])
-    }
-
-    if (update.appealJudge1Id) {
-      await this.validateAssignedUser(update.appealJudge1Id, [
-        UserRole.COURT_OF_APPEALS_JUDGE,
-      ])
-    }
-
-    if (update.appealJudge2Id) {
-      await this.validateAssignedUser(update.appealJudge2Id, [
-        UserRole.COURT_OF_APPEALS_JUDGE,
-      ])
-    }
-
-    if (update.appealJudge3Id) {
-      await this.validateAssignedUser(update.appealJudge3Id, [
-        UserRole.COURT_OF_APPEALS_JUDGE,
-      ])
-    }
-
-    if (update.rulingModifiedHistory) {
-      const history = theCase.rulingModifiedHistory
-        ? `${theCase.rulingModifiedHistory}\n\n`
-        : ''
-      const today = capitalize(formatDate(nowFactory(), 'PPPPp'))
-      update.rulingModifiedHistory = `${history}${today} - ${
-        user.name
-      } ${lowercase(user.title)}\n\n${update.rulingModifiedHistory}`
-    }
-
-    if (update.caseResentExplanation) {
-      // We want to overwrite certain fields that the court sees so they're always seeing
-      // the correct information post resend
-      update.courtCaseFacts = `Í greinargerð sóknaraðila er atvikum lýst svo: ${theCase.caseFacts}`
-      update.courtLegalArguments = `Í greinargerð er krafa sóknaraðila rökstudd þannig: ${theCase.legalArguments}`
-      update.prosecutorDemands = update.demands ?? theCase.demands
-      if (!theCase.decision) {
-        update.validToDate =
-          update.requestedValidToDate ?? theCase.requestedValidToDate
-      }
-    }
-
-    if (update.prosecutorStatementDate) {
-      update.prosecutorStatementDate = nowFactory()
-    }
-
-    if (update.appealRulingModifiedHistory) {
-      const history = theCase.appealRulingModifiedHistory
-        ? `${theCase.appealRulingModifiedHistory}\n\n`
-        : ''
-      const today = capitalize(formatDate(nowFactory(), 'PPPPp'))
-      update.appealRulingModifiedHistory = `${history}${today} - ${
-        user.name
-      } ${lowercase(user.title)}\n\n${update.appealRulingModifiedHistory}`
-    }
-
-    if (update.mergeCaseId && theCase.state !== CaseState.RECEIVED) {
-      throw new BadRequestException(
-        'Cannot merge case that is not in a received state',
-      )
-    }
-
-    if (update.hasCivilClaims !== undefined) {
-      if (update.hasCivilClaims) {
-        await this.civilClaimantService.create(theCase)
-      } else {
-        await this.civilClaimantService.deleteAll(theCase.id)
-      }
-    }
-
-    // If the case comes from LOKE then we don't want to allow the removal or
-    // moving around of the first police case number as that coupled with the
-    // case id is the identifier used to update the case in LOKE.
-    if (theCase.origin === CaseOrigin.LOKE && update.policeCaseNumbers) {
-      const mainPoliceCaseNumber = theCase.policeCaseNumbers[0]
-
-      if (
-        mainPoliceCaseNumber &&
-        update.policeCaseNumbers?.indexOf(mainPoliceCaseNumber) !== 0
-      ) {
-        throw new BadRequestException(
-          `Cannot remove or move main police case number ${mainPoliceCaseNumber}`,
+      // Make sure valid users are assigned to the case's roles
+      if (update.prosecutorId) {
+        await this.validateAssignedUser(
+          update.prosecutorId,
+          [UserRole.PROSECUTOR],
+          theCase.prosecutorsOfficeId,
         )
       }
-    }
 
-    return this.caseService.update(theCase, update, user) as Promise<Case> // Never returns undefined
+      if (update.judgeId) {
+        await this.validateAssignedUser(
+          update.judgeId,
+          [UserRole.DISTRICT_COURT_JUDGE, UserRole.DISTRICT_COURT_ASSISTANT],
+          theCase.courtId,
+        )
+      }
+
+      if (update.registrarId) {
+        await this.validateAssignedUser(
+          update.registrarId,
+          [
+            UserRole.DISTRICT_COURT_REGISTRAR,
+            UserRole.DISTRICT_COURT_ASSISTANT,
+          ],
+          theCase.courtId,
+        )
+      }
+
+      if (update.appealAssistantId) {
+        await this.validateAssignedUser(update.appealAssistantId, [
+          UserRole.COURT_OF_APPEALS_ASSISTANT,
+        ])
+      }
+
+      if (update.appealJudge1Id) {
+        await this.validateAssignedUser(update.appealJudge1Id, [
+          UserRole.COURT_OF_APPEALS_JUDGE,
+        ])
+      }
+
+      if (update.appealJudge2Id) {
+        await this.validateAssignedUser(update.appealJudge2Id, [
+          UserRole.COURT_OF_APPEALS_JUDGE,
+        ])
+      }
+
+      if (update.appealJudge3Id) {
+        await this.validateAssignedUser(update.appealJudge3Id, [
+          UserRole.COURT_OF_APPEALS_JUDGE,
+        ])
+      }
+
+      if (update.rulingModifiedHistory) {
+        const history = theCase.rulingModifiedHistory
+          ? `${theCase.rulingModifiedHistory}\n\n`
+          : ''
+        const today = capitalize(formatDate(nowFactory(), 'PPPPp'))
+        update.rulingModifiedHistory = `${history}${today} - ${
+          user.name
+        } ${lowercase(user.title)}\n\n${update.rulingModifiedHistory}`
+      }
+
+      if (update.caseResentExplanation) {
+        // We want to overwrite certain fields that the court sees so they're always seeing
+        // the correct information post resend
+        update.courtCaseFacts = `Í greinargerð sóknaraðila er atvikum lýst svo: ${theCase.caseFacts}`
+        update.courtLegalArguments = `Í greinargerð er krafa sóknaraðila rökstudd þannig: ${theCase.legalArguments}`
+        update.prosecutorDemands = update.demands ?? theCase.demands
+        if (!theCase.decision) {
+          update.validToDate =
+            update.requestedValidToDate ?? theCase.requestedValidToDate
+        }
+      }
+
+      if (update.prosecutorStatementDate) {
+        update.prosecutorStatementDate = nowFactory()
+      }
+
+      if (update.appealRulingModifiedHistory) {
+        const history = theCase.appealRulingModifiedHistory
+          ? `${theCase.appealRulingModifiedHistory}\n\n`
+          : ''
+        const today = capitalize(formatDate(nowFactory(), 'PPPPp'))
+        update.appealRulingModifiedHistory = `${history}${today} - ${
+          user.name
+        } ${lowercase(user.title)}\n\n${update.appealRulingModifiedHistory}`
+      }
+
+      if (update.mergeCaseId && theCase.state !== CaseState.RECEIVED) {
+        throw new BadRequestException(
+          'Cannot merge case that is not in a received state',
+        )
+      }
+
+      // This probably belongs inside the case service
+      if (update.hasCivilClaims !== undefined) {
+        if (update.hasCivilClaims) {
+          await this.civilClaimantService.create(theCase, transaction)
+        } else {
+          await this.civilClaimantService.deleteAll(theCase.id, transaction)
+        }
+      }
+
+      // If the case comes from LOKE then we don't want to allow the removal or
+      // moving around of the first police case number as that coupled with the
+      // case id is the identifier used to update the case in LOKE.
+      if (theCase.origin === CaseOrigin.LOKE && update.policeCaseNumbers) {
+        const mainPoliceCaseNumber = theCase.policeCaseNumbers[0]
+
+        if (
+          mainPoliceCaseNumber &&
+          update.policeCaseNumbers?.indexOf(mainPoliceCaseNumber) !== 0
+        ) {
+          throw new BadRequestException(
+            `Cannot remove or move main police case number ${mainPoliceCaseNumber}`,
+          )
+        }
+      }
+
+      const updatedCase = (await this.caseService.update(
+        theCase,
+        update,
+        user,
+        transaction,
+      )) as Case // Never returns undefined
+
+      await transaction.commit()
+
+      return updatedCase
+    } catch (error) {
+      this.logger.error(`Error updating case ${caseId}`, { error })
+
+      await transaction.rollback()
+
+      throw error
+    }
   }
 
   @UseGuards(CaseExistsGuard, RolesGuard, CaseWriteGuard, CaseTransitionGuard)
@@ -336,11 +365,14 @@ export class CaseController {
 
     const update = transitionCase(transition.transition, theCase, user)
 
-    const updatedCase = await this.caseService.update(
-      theCase,
-      update,
-      user,
-      update.state !== CaseState.DELETED,
+    const updatedCase = await this.sequelize.transaction((transaction) =>
+      this.caseService.update(
+        theCase,
+        update,
+        user,
+        transaction,
+        update.state !== CaseState.DELETED,
+      ),
     )
 
     // No need to wait
@@ -561,9 +593,12 @@ export class CaseController {
         )
       }
 
-      pdf = await this.pdfService.getCourtRecordPdfForIndictmentCase(
-        theCase,
-        user,
+      pdf = await this.sequelize.transaction(async (transaction) =>
+        this.pdfService.getCourtRecordPdfForIndictmentCase(
+          theCase,
+          user,
+          transaction,
+        ),
       )
     }
 
@@ -676,7 +711,9 @@ export class CaseController {
       `Getting the indictment for case ${caseId} as a pdf document`,
     )
 
-    const pdf = await this.pdfService.getIndictmentPdf(theCase)
+    const pdf = await this.sequelize.transaction((transaction) =>
+      this.pdfService.getIndictmentPdf(theCase, transaction),
+    )
 
     res.end(pdf)
   }
@@ -725,6 +762,35 @@ export class CaseController {
     res.end(pdf)
   }
 
+  private async handleRequestCourtRecordSignature(
+    caseId: string,
+    theCase: Case,
+    user: User,
+    method: 'audkenni' | 'mobile',
+  ): Promise<SigningServiceResponse> {
+    this.logger.debug(
+      `Requesting a signature via ${method} for the court record of case ${caseId}`,
+    )
+
+    return this.caseService
+      .requestCourtRecordSignature(theCase, user, method)
+      .catch((error) => {
+        if (error instanceof DokobitError) {
+          throw new HttpException(
+            {
+              statusCode: error.status,
+              message: `Failed to request a court record signature via ${method} for case ${caseId}`,
+              code: error.code,
+              error: error.message,
+            },
+            error.status,
+          )
+        }
+
+        throw error
+      })
+  }
+
   @UseGuards(
     RolesGuard,
     CaseExistsGuard,
@@ -745,28 +811,30 @@ export class CaseController {
     @Param('caseId') caseId: string,
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
+    @Query('method') method: 'audkenni' | 'mobile' = 'mobile',
   ): Promise<SigningServiceResponse> {
+    return this.handleRequestCourtRecordSignature(caseId, theCase, user, method)
+  }
+
+  private async handleGetCourtRecordSignatureConfirmation(
+    caseId: string,
+    theCase: Case,
+    user: User,
+    documentToken: string,
+    method: 'audkenni' | 'mobile',
+    transaction: Transaction,
+  ): Promise<SignatureConfirmationResponse> {
     this.logger.debug(
-      `Requesting a signature for the court record of case ${caseId}`,
+      `Confirming a signature via ${method} for the court record of case ${caseId}`,
     )
 
-    return this.caseService
-      .requestCourtRecordSignature(theCase, user)
-      .catch((error) => {
-        if (error instanceof DokobitError) {
-          throw new HttpException(
-            {
-              statusCode: error.status,
-              message: `Failed to request a court record signature for case ${caseId}`,
-              code: error.code,
-              error: error.message,
-            },
-            error.status,
-          )
-        }
-
-        throw error
-      })
+    return this.caseService.getCourtRecordSignatureConfirmation(
+      theCase,
+      user,
+      documentToken,
+      method,
+      transaction,
+    )
   }
 
   @UseGuards(
@@ -791,16 +859,50 @@ export class CaseController {
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @Query('documentToken') documentToken: string,
+    @Query('method') method: 'audkenni' | 'mobile' = 'mobile',
   ): Promise<SignatureConfirmationResponse> {
     this.logger.debug(
       `Confirming a signature for the court record of case ${caseId}`,
     )
 
-    return this.caseService.getCourtRecordSignatureConfirmation(
-      theCase,
-      user,
-      documentToken,
+    return this.sequelize.transaction((transaction) =>
+      this.handleGetCourtRecordSignatureConfirmation(
+        caseId,
+        theCase,
+        user,
+        documentToken,
+        method,
+        transaction,
+      ),
     )
+  }
+
+  private async handleRequestRulingSignature(
+    caseId: string,
+    theCase: Case,
+    method: 'audkenni' | 'mobile',
+  ): Promise<SigningServiceResponse> {
+    this.logger.debug(
+      `Requesting a signature via ${method} for the ruling of case ${caseId}`,
+    )
+
+    return this.caseService
+      .requestRulingSignature(theCase, method)
+      .catch((error) => {
+        if (error instanceof DokobitError) {
+          throw new HttpException(
+            {
+              statusCode: error.status,
+              message: `Failed to request a ruling signature via ${method} for case ${caseId}`,
+              code: error.code,
+              error: error.message,
+            },
+            error.status,
+          )
+        }
+
+        throw error
+      })
   }
 
   @UseGuards(
@@ -817,26 +919,32 @@ export class CaseController {
   })
   async requestRulingSignature(
     @Param('caseId') caseId: string,
-    @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
+    @Query('method') method: 'audkenni' | 'mobile' = 'mobile',
   ): Promise<SigningServiceResponse> {
-    this.logger.debug(`Requesting a signature for the ruling of case ${caseId}`)
+    return this.handleRequestRulingSignature(caseId, theCase, method)
+  }
 
-    return this.caseService.requestRulingSignature(theCase).catch((error) => {
-      if (error instanceof DokobitError) {
-        throw new HttpException(
-          {
-            statusCode: error.status,
-            message: `Failed to request a ruling signature for case ${caseId}`,
-            code: error.code,
-            error: error.message,
-          },
-          error.status,
-        )
-      }
+  private async handleGetRulingSignatureConfirmation(
+    caseId: string,
+    theCase: Case,
+    user: User,
+    documentToken: string,
+    method: 'audkenni' | 'mobile',
+  ): Promise<SignatureConfirmationResponse> {
+    this.logger.debug(
+      `Confirming a signature via ${method} for the ruling of case ${caseId}`,
+    )
 
-      throw error
-    })
+    return this.sequelize.transaction((transaction) =>
+      this.caseService.getRulingSignatureConfirmation(
+        theCase,
+        user,
+        documentToken,
+        method,
+        transaction,
+      ),
+    )
   }
 
   @UseGuards(
@@ -857,13 +965,16 @@ export class CaseController {
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @Query('documentToken') documentToken: string,
+    @Query('method') method: 'audkenni' | 'mobile' = 'mobile',
   ): Promise<SignatureConfirmationResponse> {
     this.logger.debug(`Confirming a signature for the ruling of case ${caseId}`)
 
-    return this.caseService.getRulingSignatureConfirmation(
+    return this.handleGetRulingSignatureConfirmation(
+      caseId,
       theCase,
       user,
       documentToken,
+      method,
     )
   }
 
@@ -891,7 +1002,9 @@ export class CaseController {
       return theCase.childCase
     }
 
-    const extendedCase = await this.caseService.extend(theCase, user)
+    const extendedCase = await this.sequelize.transaction((transaction) =>
+      this.caseService.extend(theCase, user, transaction),
+    )
 
     this.eventService.postEvent('EXTEND', extendedCase)
 
@@ -931,12 +1044,13 @@ export class CaseController {
       )
     }
 
-    const newCase = await this.caseService.splitDefendantFromCase(
-      theCase,
-      theDefendant,
+    return this.sequelize.transaction((transaction) =>
+      this.caseService.splitDefendantFromCase(
+        theCase,
+        theDefendant,
+        transaction,
+      ),
     )
-
-    return newCase
   }
 
   @UseGuards(RolesGuard, CaseExistsGuard, CaseWriteGuard)
@@ -958,6 +1072,8 @@ export class CaseController {
   ): Promise<Case> {
     this.logger.debug(`Creating a court case for case ${caseId}`)
 
-    return this.caseService.createCourtCase(theCase, user)
+    return this.sequelize.transaction((transaction) =>
+      this.caseService.createCourtCase(theCase, user, transaction),
+    )
   }
 }

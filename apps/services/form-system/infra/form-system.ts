@@ -25,6 +25,7 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
   service(serviceName)
     .image(serviceName)
     .namespace(serviceName)
+    .serviceAccount('form-system-api')
     .codeOwner(CodeOwners.Advania)
     .db()
     .migrations()
@@ -86,6 +87,9 @@ export const workerSetup = (): ServiceBuilder<typeof workerName> =>
     .redis()
     .db()
     .env({
+      S3_REGION: 'eu-west-1',
+      S3_TIME_TO_LIVE_POST: '15',
+      S3_TIME_TO_LIVE_GET: '5',
       FILE_STORAGE_UPLOAD_BUCKET: {
         dev: 'island-is-dev-upload-api',
         staging: 'island-is-staging-upload-api',

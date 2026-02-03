@@ -1,6 +1,7 @@
 import {
   CodeOwners,
   Context,
+  json,
   ref,
   service,
   ServiceBuilder,
@@ -112,6 +113,17 @@ export const workerSetup = (services: {
         staging: 'https://beta.staging01.devland.is/umsoknir',
         prod: 'https://island.is/umsoknir',
         local: 'http://localhost:4200/umsoknir',
+      },
+      REDIS_NODES: {
+        dev: json([
+          'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+        ]),
+        staging: json([
+          'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
+        ]),
+        prod: json([
+          'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
+        ]),
       },
       USER_NOTIFICATION_API_URL: ref(
         (h) => `http://${h.svc(services.userNotificationService)}`,
@@ -359,6 +371,17 @@ export const serviceSetup = (services: {
           '[TEST] Skráning á námskeið - Heilsugæsla höfuðborgarsvæðisins',
         prod: 'Skráning á námskeið - Heilsugæsla höfuðborgarsvæðisins',
       },
+      REDIS_NODES: {
+        dev: json([
+          'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+        ]),
+        staging: json([
+          'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
+        ]),
+        prod: json([
+          'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
+        ]),
+      },
     })
     .xroad(
       Base,
@@ -449,7 +472,9 @@ export const serviceSetup = (services: {
         '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
       HMS_CONTRACTS_AUTH_CLIENT_SECRET:
         '/k8s/application-system-api/HMS_CONTRACTS_AUTH_CLIENT_SECRET',
-      ZENDESK_CONTACT_FORM_EMAIL: '/k8s/api/ZENDESK_CONTACT_FORM_EMAIL',
+      // Needed since libs/application/template-api-modules/src/lib/modules/templates/hh/courses submits tickets to Zendesk of Heilsugæslan á höfuðborgarsvæðinu
+      ZENDESK_CONTACT_FORM_EMAIL:
+        '/k8s/api/ZENDESK_HEILSUGAESLA_HOFUDBORGARSVAEDISINS_CONTACT_FORM_EMAIL',
       ZENDESK_CONTACT_FORM_TOKEN: '/k8s/api/ZENDESK_CONTACT_FORM_TOKEN',
     })
     .db()

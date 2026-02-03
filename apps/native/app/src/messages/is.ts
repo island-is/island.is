@@ -743,6 +743,7 @@ export const is = {
   'health.overview.therapy': 'Þjálfun',
   'health.overview.vaccinations': 'Bólusetningar',
   'health.overview.appointments': 'Tímabókanir',
+  'health.overview.questionnaires': 'Spurningalistar',
   'health.overview.aidsAndNutrition': 'Hjálpartæki og næring',
   'health.overview.medicinePurchase': 'Lyfjakaup',
   'health.overview.medicineDelegation': 'Lyfjaheimild',
@@ -759,6 +760,30 @@ export const is = {
   'health.overview.noBloodTypeRegistered': 'Ekki verið flokkaður',
   'health.overview.dentist': 'Tannlæknir',
   'health.overview.noDentistRegistered': 'Enginn tannlæknir skráður',
+
+  // health - questionnaires
+  'health.questionnaires.screenTitle': 'Spurningalistar',
+  'health.questionnaires.title': 'Spurningalistar',
+  'health.questionnaires.description':
+    'Hér getur þú skoðað spurningalista sem hafa verið sendir til þín.',
+  'health.questionnaires.status.answered': 'Svarað',
+  'health.questionnaires.status.unanswered': 'Ósvarað',
+  'health.questionnaires.status.notAnswered': 'Ósvarað',
+  'health.questionnaires.status.draft': 'Drög',
+  'health.questionnaires.status.expired': 'Útrunnið',
+  'health.questionnaires.organization.lsh': 'Landspítali',
+  'health.questionnaires.organization.el': 'Embætti Landlæknis',
+  'health.questionnaires.organization.unknown': 'Óþekkt',
+  'health.questionnaires.action.answer': 'Svara lista',
+  'health.questionnaires.action.continue-draft': 'Halda áfram',
+  'health.questionnaires.action.view-answer': 'Skoða svör',
+  'health.questionnaires.detail.description':
+    'Hér má finna svör þín við spurningalistunum. Þú getur borið saman svörin.',
+  'health.questionnaires.detail.status': 'Staða',
+  'health.questionnaires.detail.institution': 'Stofnun',
+  'health.questionnaires.detail.sentBy': 'Sent af',
+  'health.questionnaires.detail.sentDate': 'Sent dags',
+  'health.questionnaires.detail.notFound': 'Spurningalisti fannst ekki',
 
   // health - vaccinations
   'health.vaccinations.screenTitle': 'Bólusetningar',

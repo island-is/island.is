@@ -2,6 +2,16 @@ import { defineMessages } from 'react-intl'
 
 export const m = {
   listPage: defineMessages({
+    scheduleTypeAccordionLabel: {
+      id: 'web.courtAgendas:listPage.scheduleTypeAccordionLabel',
+      defaultMessage: 'Tegund dómsathafnar',
+      description: 'Tegund dómsathafnar',
+    },
+    scheduleTypeSelectLabel: {
+      id: 'web.courtAgendas:listPage.scheduleTypeSelectLabel',
+      defaultMessage: 'Veldu tegund dómsathafnar',
+      description: 'Veldu tegund dómsathafnar',
+    },
     showAllDistrictCourts: {
       id: 'web.courtAgendas:listPage.showAllDistrictCourts',
       defaultMessage: 'Allir héraðsdómstólar',

@@ -14,7 +14,7 @@ interface Then {
 
 type GivenWhenThen = () => Promise<Then>
 
-describe('SubpoenaService - Deliver subpoena to national commissioners office', () => {
+describe('InternalSubpoenaController - Deliver subpoena to national commissioners office', () => {
   const caseId = uuid()
   const subpoenaId = uuid()
   const defendantId = uuid()
@@ -24,12 +24,14 @@ describe('SubpoenaService - Deliver subpoena to national commissioners office', 
   const theCase = { id: caseId, defendants: [defendant] } as Case
   const user = { id: uuid() }
   const dto = { user } as DeliverDto
+  const transaction = undefined
 
   let mockPdfService: PdfService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { pdfService, subpoenaService } = await createTestingSubpoenaModule()
+    const { pdfService, internalSubpoenaController } =
+      await createTestingSubpoenaModule()
 
     mockPdfService = pdfService
     const mockGetSubpoenaPdf = mockPdfService.getSubpoenaPdf as jest.Mock
@@ -38,13 +40,16 @@ describe('SubpoenaService - Deliver subpoena to national commissioners office', 
     givenWhenThen = async (): Promise<Then> => {
       const then = {} as Then
 
-      await subpoenaService
-        .deliverSubpoenaToNationalCommissionersOffice({
+      await internalSubpoenaController
+        .deliverSubpoenaToNationalCommissionersOffice(
+          caseId,
+          defendantId,
+          subpoenaId,
           theCase,
           defendant,
           subpoena,
-          user: dto.user,
-        })
+          dto,
+        )
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 
@@ -66,6 +71,7 @@ describe('SubpoenaService - Deliver subpoena to national commissioners office', 
       expect(mockPdfService.getSubpoenaPdf).toHaveBeenCalledWith(
         theCase,
         defendant,
+        transaction,
         subpoena,
       )
       // TODO: complete tests when all indictments are generated

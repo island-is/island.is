@@ -46,7 +46,11 @@ const Host = styled.TouchableHighlight<HostProps>`
   justify-content: center;
   align-items: center;
   column-gap: ${({ theme }) => theme.spacing.p1}px;
-  padding: ${({ theme }) => `${theme.spacing.p1}px ${theme.spacing.p2}px`};
+
+  padding: ${({ theme, isUtilityButton }) =>
+    isUtilityButton
+      ? `${theme.spacing.p1}px ${theme.spacing.p2}px`
+      : `${theme.spacing.p3}px ${theme.spacing.p4}px`};
   background-color: ${dynamicColor<HostProps>(
     ({
       theme,
@@ -145,7 +149,13 @@ export function Button({
       <Icon
         source={icon}
         resizeMode="center"
-        style={iconStyle}
+        style={{
+          // If the button is a filledUtilityButton, override icon color to white
+          ...(isFilledUtilityButton && icon
+            ? { tintColor: theme.color.white }
+            : {}),
+          ...iconStyle,
+        }}
         noMargin={!title}
       />
     )

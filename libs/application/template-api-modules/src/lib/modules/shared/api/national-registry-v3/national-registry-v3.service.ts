@@ -135,7 +135,9 @@ export class NationalRegistryV3Service extends BaseTemplateApiService {
     auth: User,
   ) {
     for (const id of childrenId) {
-      const individual = await this.getIndividual(id, auth)
+      const individual = await this.getIndividual(id, auth, {
+        skipMaritalTitle: true,
+      })
       if (individual) {
         this.validateIndividual(individual, true, params)
       }

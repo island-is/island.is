@@ -5,8 +5,6 @@ import { categorySelection } from './categorySelection'
 import { multiUploadSection } from './multiUpload'
 import { tableViewSelectionSection } from './tableViewSelection'
 import { verifySection } from './verify'
-import { endOfMonthCheck } from './endOfMonthCheck'
-import { areLessThan7DaysLeftOfMonth } from '../../utils/dayRateUtils'
 import { carsChangesCountSection } from './carsChangesCount'
 
 const applicationChildren = [
@@ -18,13 +16,9 @@ const applicationChildren = [
   verifySection,
 ]
 
-const tooFewDaysLeftChildren = [endOfMonthCheck]
-
 export const MainForm = buildForm({
   id: 'MainForm',
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
-  children: areLessThan7DaysLeftOfMonth()
-    ? tooFewDaysLeftChildren
-    : applicationChildren,
+  children: applicationChildren,
 })

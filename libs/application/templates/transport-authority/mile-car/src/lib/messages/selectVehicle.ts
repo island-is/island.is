@@ -18,6 +18,13 @@ export const selectVehicle = {
         'Hér að neðan er listi yfir ökutæki í þinni eigu. Veldu það ökutæki sem á að breyta skráningu á.',
       description: 'Description of information page',
     },
+    moreThanTwentyVehiclesDescription: {
+      id: 'mcar.application:information.general.moreThanTwentyVehiclesDescription',
+      defaultMessage:
+        'Hér að neðan er leitargluggi til að leita af ökutækjum í þinni eigu. Veldu það ökutæki sem á að breyta skráningu á.',
+      description:
+        'Description of information page when user has twenty+ vehicles',
+    },
   }),
   labels: defineMessages({
     title: {

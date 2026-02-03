@@ -6,7 +6,7 @@ import { FieldBaseProps } from '@island.is/application/types'
 import { Box, GridColumn, GridRow, Button } from '@island.is/island-ui/core'
 
 import { m } from '../../lib/messages'
-import { getEstateDataFromApplication } from '../../lib/utils'
+import { getEstateDataFromApplication, valueToNumber } from '../../lib/utils'
 import { ErrorValue } from '../../types'
 import { RepeaterTotal } from '../RepeaterTotal'
 import { useRepeaterTotal } from '../../hooks/useRepeaterTotal'
@@ -57,13 +57,7 @@ export const ClaimsRepeater: FC<
   // Clear errors when claim value changes
   const updateClaimValue = (fieldIndex: string) => {
     const claimValues = getValues(fieldIndex)
-    const raw = String(claimValues?.value ?? '')
-    // "1.234.567,89 kr." -> "1234567.89"
-    const normalized = raw
-      .replace(/\./g, '')
-      .replace(',', '.')
-      .replace(/[^\d.]/g, '')
-    const numeric = Number.parseFloat(normalized)
+    const numeric = valueToNumber(claimValues?.value ?? '', ',')
 
     if (Number.isFinite(numeric) && numeric > 0) {
       clearErrors(`${fieldIndex}.value`)
