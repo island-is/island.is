@@ -1,5 +1,5 @@
 import { ApolloError } from '@apollo/client'
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useMemo, useRef, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import {
   Animated,
@@ -13,6 +13,7 @@ import { NavigationFunctionComponent } from 'react-native-navigation'
 import styled, { useTheme } from 'styled-components/native'
 
 import externalLinkIcon from '../../assets/icons/external-link.png'
+import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import { getConfig } from '../../config'
 import { BaseAppointmentStatuses } from '../../constants/base-appointment-statuses'
 import { useFeatureFlag } from '../../contexts/feature-flag-provider'
@@ -47,7 +48,6 @@ import {
 } from '../../ui'
 import { ComponentRegistry } from '../../utils/component-registry'
 import { AppointmentCard } from '../appointments/components/appointment-card'
-import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 
 const ButtonWrapper = styled.View`
   flex-direction: row;
