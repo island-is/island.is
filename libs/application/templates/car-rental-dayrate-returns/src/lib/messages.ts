@@ -4,7 +4,7 @@ export const m = {
   application: defineMessages({
     name: {
       id: 'rsk.crdr.application:name',
-      defaultMessage: 'Bílaleigu gjaldflokkar',
+      defaultMessage: 'Bílaleigu daggjalds nýting',
       description: 'Application name',
     },
     institution: {
@@ -106,74 +106,6 @@ export const m = {
     },
   }),
 
-  categorySelection: defineMessages({
-    sectionTitle: {
-      id: 'rsk.crdr.application:category.section.title',
-      defaultMessage: 'Gjaldtegund',
-      description: 'Category selection section title',
-    },
-    multiTitle: {
-      id: 'rsk.crdr.application:category.multi.title',
-      defaultMessage: 'Skrá bifreiðar á kílómetragjald eða daggjald',
-      description: 'Category selection multi field title',
-    },
-    description: {
-      id: 'rsk.crdr.application:category.description',
-      defaultMessage: 'Veldu þær breytingar sem þú vilt gera',
-      description: 'Category selection description',
-    },
-    optionDayRate: {
-      id: 'rsk.crdr.application:category.option.dayrate',
-      defaultMessage: 'Færa bifreiðar á daggjald',
-      description: 'Option to change to day rate',
-    },
-    optionKmRate: {
-      id: 'rsk.crdr.application:category.option.kmrate',
-      defaultMessage: 'Færa bifreiðar á kílómetragjald',
-      description: 'Option to change to km rate',
-    },
-  }),
-
-  singleOrMulti: defineMessages({
-    sectionTitle: {
-      id: 'rsk.crdr.application:single.multi.section.title',
-      defaultMessage: 'Fjöldi skráninga',
-      description: 'Single or multi selection section title',
-    },
-    multiTitle: {
-      id: 'rsk.crdr.application:single.multi.multi.title',
-      defaultMessage: 'Magnskráning eða stakir bílar',
-      description: 'Single or multi selection multi field title',
-    },
-    description: {
-      id: 'rsk.crdr.application:single.multi.description',
-      defaultMessage: 'Veldu magnskráningu eða staka skráningu.',
-      description: 'Single or multi selection description',
-    },
-    optionMultiLabel: {
-      id: 'rsk.crdr.application:single.multi.option.multi.label',
-      defaultMessage: 'Magnskráning',
-      description: 'Bulk registration option label',
-    },
-    optionMultiSubLabel: {
-      id: 'rsk.crdr.application:single.multi.option.multi.sub',
-      defaultMessage:
-        'Hér má hlaða upp .xlsx eða .csv skjali til að magnskrá breytingar á gjaldflokki og kílómetrastöðu.',
-      description: 'Bulk registration option sublabel',
-    },
-    optionSingleLabel: {
-      id: 'rsk.crdr.application:single.multi.option.single.label',
-      defaultMessage: 'Skrá stakan bíl',
-      description: 'Single vehicle registration option label',
-    },
-    optionSingleSubLabel: {
-      id: 'rsk.crdr.application:single.multi.option.single.sub',
-      defaultMessage:
-        'Þú getur skráð upplýsingar um gjaldflokk og kílómetrastöðu beint í gegnum viðmótið.',
-      description: 'Single vehicle registration option sublabel',
-    },
-  }),
-
   multiUpload: defineMessages({
     sectionTitle: {
       id: 'rsk.crdr.application:multi.upload.section.title',
@@ -242,33 +174,6 @@ export const m = {
       id: 'rsk.crdr.application:multi.upload.error.invalid.file.type',
       defaultMessage: 'Skrá verður að vera .csv eða .xlsx',
       description: 'Invalid file type upload error',
-    },
-  }),
-
-  tableView: defineMessages({
-    sectionTitle: {
-      id: 'rsk.crdr.application:table.view.section.title',
-      defaultMessage: 'Skrá gjald',
-      description: 'Table view section title',
-    },
-    multiTitle: {
-      id: 'rsk.crdr.application:table.view.multi.title',
-      defaultMessage: 'Skrá bifreiðar',
-      description: 'Table view multi field title',
-    },
-  }),
-
-  endOfMonth: defineMessages({
-    multiTitle: {
-      id: 'rsk.crdr.application:end.month.multi.title',
-      defaultMessage: 'Of nálægt lokum mánaðar',
-      description: 'End of month check title',
-    },
-    message: {
-      id: 'rsk.crdr.application:end.month.message',
-      defaultMessage:
-        'Of lítið eftir af mánuðinum til þess að hægt sé að sækja um. Vinsamlegast reynið aftur eftir mánaðamót.',
-      description: 'End of month warning message',
     },
   }),
 
