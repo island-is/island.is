@@ -5,7 +5,6 @@ import {
   Res,
   Param,
   UseGuards,
-  BadRequestException,
   ParseIntPipe,
 } from '@nestjs/common'
 import { ApiOkResponse } from '@nestjs/swagger'
@@ -25,7 +24,6 @@ import {
   FeatureFlagGuard,
   Features,
 } from '@island.is/nest/feature-flags'
-import { ParseError } from 'libphonenumber-js'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Scopes(ApiScope.hms)
