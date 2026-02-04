@@ -81,7 +81,8 @@ const UserContract = () => {
       loading={loading}
       buttonGroup={[
         <DropdownMenu
-          icon="ellipsisHorizontal"
+          icon="download"
+          iconType="outline"
           key="download-template"
           title={formatMessage(cm.downloadFiles)}
           menuLabel={formatMessage(cm.downloadFiles)}

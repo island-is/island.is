@@ -59,11 +59,11 @@ export class RentalAgreementsController {
 
       const filename = `${user.nationalId}-rental-agreement-${id}.pdf`
 
-      res.header('Content-Disposition', `attachment; filename=${filename}`)
+      res.header('Content-Disposition', `inline; filename=${filename}`)
       res.header('Pragma', 'no-cache')
       res.header('Cache-Control', 'no-cache')
-      res.header('Cache-Control', 'max-age=0')
-      return res.end(buffer)
+      res.header('Cache-Control', 'nmax-age=0')
+      return res.status(200).end(buffer)
     }
     res.status(404)
     return res.end('Rental agreement not found')
