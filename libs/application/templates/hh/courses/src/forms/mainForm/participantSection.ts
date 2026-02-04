@@ -34,12 +34,8 @@ export const participantSection = buildSection({
               application.answers,
               'userInformation.phone',
             )
-            const healthcenter = getValueViaPath(
-              application.answers,
-              'userInformation.healthcenter',
-            )
 
-            if (!name || !nationalId || !email || !phone || !healthcenter) {
+            if (!name || !nationalId || !email || !phone) {
               return undefined
             }
 
@@ -51,7 +47,6 @@ export const participantSection = buildSection({
                   email,
                   phone,
                 },
-                healthcenter,
               },
             ]
           },
