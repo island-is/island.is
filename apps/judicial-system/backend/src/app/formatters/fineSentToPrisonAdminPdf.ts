@@ -64,14 +64,18 @@ export const createFineSentToPrisonAdminPdf = (
 
   doc.moveDown(1.5)
 
-  const sentToPrisonAdminDate = DefendantEventLog.getEventLogDateByEventType(
-    DefendantEventType.SENT_TO_PRISON_ADMIN,
-    theCase.defendants?.flatMap((defendant) => defendant.eventLogs || []),
+  const defendantsEventLogs = theCase.defendants?.flatMap(
+    (defendant) => defendant.eventLogs || [],
   )
 
-  const getSignatureDate = EventLog.getEventLogDateByEventType(
-    EventType.INDICTMENT_REVIEWED,
-    theCase.eventLogs,
+  const sentToPrisonAdminDate = DefendantEventLog.getEventLogDateByEventType(
+    DefendantEventType.SENT_TO_PRISON_ADMIN,
+    defendantsEventLogs,
+  )
+
+  const getSignatureDate = DefendantEventLog.getEventLogDateByEventType(
+    DefendantEventType.INDICTMENT_REVIEWED,
+    defendantsEventLogs,
   )
 
   addMediumCenteredText(
