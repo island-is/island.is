@@ -5,6 +5,8 @@ import { Case } from '../models/case.model'
 interface UpdateDateLog {
   date?: Date
   location?: string
+  /** When rescheduling arraignment: only create subpoenas for these defendants. Omit = all non-alternative-service defendants. */
+  selectedDefendantIds?: string[]
 }
 
 export interface UpdateCase
