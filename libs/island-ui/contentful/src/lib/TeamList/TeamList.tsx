@@ -227,6 +227,7 @@ export const TeamList = ({
   variant = 'card',
   prefixes,
 }: TeamListProps) => {
+  console.log('team', teamMembers)
   if (variant === 'accordion') {
     return (
       <TeamMemberAccordionList teamMembers={teamMembers} prefixes={prefixes} />

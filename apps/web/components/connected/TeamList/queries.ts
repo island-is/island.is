@@ -1,11 +1,8 @@
 import gql from 'graphql-tag'
 
 export const GET_ORGANIZATION_TEAM_MEMBERS = gql`
-  query getOrgTeamMembers($locale: Locale!, $organizationId: String!) {
-    icelandicGovernmentInstitutionsEmployees(
-      locale: $locale
-      organizationId: $organizationId
-    ) {
+  query getOrgTeamMembers($input: IcelandicGovernmentEmployeesInput!) {
+    icelandicGovernmentEmployees(input: $input) {
       data {
         name
         job
@@ -17,7 +14,6 @@ export const GET_ORGANIZATION_TEAM_MEMBERS = gql`
           postalCode
         }
         department
-        currentlyActive
       }
       totalCount
       pageInfo {

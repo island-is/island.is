@@ -1,3 +1,5 @@
 export * from '../gen/fetch'
 export * from './lib/financialManagementAuthorityClient.module'
 export * from './lib/financialManagementAuthorityClient.config'
+export * from './lib/services/employees.service'
+export * from './lib/dtos/employee.dto'
