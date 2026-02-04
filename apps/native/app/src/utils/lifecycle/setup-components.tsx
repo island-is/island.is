@@ -21,6 +21,7 @@ import { FamilyOverviewScreen } from '../../screens/family/family-overview'
 import { FinanceScreen } from '../../screens/finance/finance'
 import { FinanceStatusDetailScreen } from '../../screens/finance/finance-status-detail'
 import { HealthOverviewScreen } from '../../screens/health/health-overview'
+import { HealthCategoriesScreen } from '../../screens/health/health-categories'
 import { QuestionnaireDetailScreen } from '../../screens/health/questionnaires/questionnaire-detail'
 import { QuestionnairesScreen } from '../../screens/health/questionnaires/questionnaires'
 import { MedicineDelegationScreen } from '../../screens/medicine-delegation/medicine-delegation'
@@ -113,6 +114,7 @@ export function registerAllComponents() {
   registerComponent(CR.PasskeyScreen, PasskeyScreen)
   registerComponent(CR.UpdateAppScreen, UpdateAppScreen)
   registerComponent(CR.HealthOverviewScreen, HealthOverviewScreen)
+  registerComponent(CR.HealthCategoriesScreen, HealthCategoriesScreen)
   registerComponent(CR.QuestionnairesScreen, QuestionnairesScreen)
   registerComponent(CR.QuestionnaireDetailScreen, QuestionnaireDetailScreen)
   registerComponent(CR.MedicineDelegationScreen, MedicineDelegationScreen)

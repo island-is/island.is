@@ -31,6 +31,7 @@ export const ComponentRegistry = {
   FinanceScreen: `${prefix}.screens.FinanceScreen`,
   FinanceStatusDetailScreen: `${prefix}.screens.FinanceStatusDetailScreen`,
   HealthOverviewScreen: `${prefix}.screens.HealthOverviewScreen`,
+  HealthCategoriesScreen: `${prefix}.screens.HealthCategoriesScreen`,
   QuestionnairesScreen: `${prefix}.screens.QuestionnairesScreen`,
   QuestionnaireDetailScreen: `${prefix}.screens.QuestionnaireDetailScreen`,
   MedicineDelegationScreen: `${prefix}.screens.MedicineDelegationScreen`,

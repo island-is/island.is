@@ -156,6 +156,17 @@ export function setupRoutes() {
     selectTab(3)
   })
 
+  addRoute('/health-categories', async (passProps) => {
+    await Navigation.dismissAllModals()
+    selectTab(3)
+    await Navigation.push(StackRegistry.HealthStack, {
+      component: {
+        name: ComponentRegistry.HealthCategoriesScreen,
+        passProps,
+      },
+    })
+  })
+
   addRoute('/vaccinations', async (passProps) => {
     await Navigation.dismissAllModals()
     selectTab(3)

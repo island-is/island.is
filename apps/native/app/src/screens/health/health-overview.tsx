@@ -58,8 +58,8 @@ import { AppointmentCard } from '../appointments/components/appointment-card'
 const NUMBER_OF_CARDS_PER_ROW = 3
 
 const Row = styled.View`
-  margin-vertical: ${({ theme }) => theme.spacing[1]}px;
-  column-gap: ${({ theme }) => theme.spacing[2]}px;
+  margin-vertical: ${({ theme }) => theme.spacing.smallGutter}px;
+  column-gap: ${({ theme }) => theme.spacing[1]}px;
   flex-direction: row;
 `
 
@@ -201,7 +201,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
   const [refetching, setRefetching] = useState(false)
 
   const { width } = useWindowDimensions()
-  const cardWidth = (width - theme.spacing[2] * (NUMBER_OF_CARDS_PER_ROW + 1)) / NUMBER_OF_CARDS_PER_ROW
+  const cardWidth = (width - 12 * (NUMBER_OF_CARDS_PER_ROW + 1)) / NUMBER_OF_CARDS_PER_ROW
   const scrollY = useRef(new Animated.Value(0)).current
   const isVaccinationsEnabled = useFeatureFlag(
     'isVaccinationsEnabled',
@@ -278,7 +278,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
         id: 'seeAllCategories',
         titleId: 'health.overview.seeAllCategories',
         icon: categoriesIcon,
-        route: null,
+        route: '/health-categories',
         enabled: true,
         filled: true,
       },

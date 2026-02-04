@@ -763,6 +763,15 @@ export const is = {
   'health.overview.medicine': 'Lyf',
   'health.overview.seeAllCategories': 'Sjá alla flokka',
 
+  // health: categories
+  'health.categories.screenTitle': 'Heilsuflokkar',
+  'health.categories.healthCategories': 'Heilsuflokkar',
+  'health.categories.moreOnMyPages': 'Meira á mínum síðum',
+  'health.categories.referrals': 'Tilvísanir',
+  'health.categories.paymentsAndRights': 'Greiðslur og réttindi',
+  'health.categories.waitingLists': 'Bíðlistar',
+  'health.categories.medicalRecords': 'Sjúkraskrá',
+
   // health - questionnaires
   'health.questionnaires.screenTitle': 'Spurningalistar',
   'health.questionnaires.title': 'Spurningalistar',
