@@ -24,7 +24,7 @@ export const Prerequisites = buildForm({
           checkboxLabel: m.prerequisites.approvalCheckboxLabel,
           dataProviders: [
             buildDataProviderItem({
-              provider: SkatturApi, // Skatturinn
+              provider: SkatturApi,
               title: m.prerequisites.skatturTitle,
               subTitle: m.prerequisites.skatturSubTitle,
             }),

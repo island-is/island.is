@@ -19,11 +19,6 @@ export interface CarUsageError {
   carNr: string
 }
 
-export interface CurrentVehicleWithMilage {
-  permno: string | null
-  milage: number | null
-}
-
 export interface DayRateEntryMap {
   [permno: string]: Array<DayRateEntryModel>
 }

@@ -204,23 +204,19 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
     } catch (error) {
       this.logger.error('Error posting data to skatturinn', error)
 
-      if (error && typeof error === 'object' && 'status' in error) {
-        if (error.status === 400) {
-          const bodySummary = this.formatSkatturinnErrorBody(
-            (error as { body?: unknown }).body,
-          )
+      const isSkatturinnError = (error: unknown): error is SkatturinnError =>
+        typeof error === 'object' && error !== null && 'status' in error
 
-          throw new TemplateApiError(
-            {
-              title:
-                (error as { title?: string; statusText?: string }).title ??
-                (error as { statusText?: string }).statusText ??
-                'Bad request',
-              summary: bodySummary ?? 'Invalid input.',
-            },
-            error.status,
-          )
-        }
+      if (isSkatturinnError(error) && error.status === 400) {
+        const bodySummary = this.formatSkatturinnErrorBody(error.body)
+
+        throw new TemplateApiError(
+          {
+            title: error.title ?? error.statusText ?? 'Bad request',
+            summary: bodySummary ?? 'Invalid input.',
+          },
+          error.status,
+        )
       }
 
       throw new TemplateApiError(
@@ -228,7 +224,7 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
           title: 'Request to skatturinn failed',
           summary: 'Something went wrong when posting car data to skatturinn',
         },
-        (error as { status?: number })?.status ?? 500,
+        isSkatturinnError(error) ? error.status ?? 500 : 500,
       )
     }
   }
@@ -254,8 +250,9 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
   }
 }
 
-export interface CurrentVehicleWithMilage {
-  permno: string | null
-  make: string | null
-  milage: number | null
+type SkatturinnError = {
+  status?: number
+  title?: string
+  statusText?: string
+  body?: unknown
 }
