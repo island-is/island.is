@@ -10,6 +10,7 @@ import { logger } from '@island.is/logging'
 
 import { ConfigFactory, ConfigModule, ConfigType, defineConfig } from '../..'
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function testInjection<T extends ConfigFactory<any>>(config: T) {
   const moduleRef = await Test.createTestingModule({
     imports: [ConfigModule.forRoot({ load: [config] })],
