@@ -56,6 +56,22 @@ const UserContract = () => {
     }
   }, [data?.hmsRentalAgreement?.status])
 
+  const documentItems = useMemo(
+    () =>
+      data?.hmsRentalAgreement?.documents
+        ?.map(({ name, downloadUrl }) => {
+          if (!name || !downloadUrl) {
+            return null
+          }
+          return {
+            title: name,
+            onClick: () => formSubmit(downloadUrl),
+          }
+        })
+        .filter(isDefined) ?? [],
+    [data?.hmsRentalAgreement?.documents],
+  )
+
   return (
     <IntroWrapper
       title={address ?? cm.contractsOverviewTitle}
@@ -70,20 +86,8 @@ const UserContract = () => {
           title={formatMessage(cm.downloadFiles)}
           menuLabel={formatMessage(cm.downloadFiles)}
           loading={loading}
-          disabled={(data?.hmsRentalAgreement?.documents?.length ?? 0) <= 0}
-          items={
-            data?.hmsRentalAgreement?.documents
-              ?.map(({ name, downloadUrl }) => {
-                if (!name || !downloadUrl) {
-                  return null
-                }
-                return {
-                  title: name,
-                  onClick: () => formSubmit(downloadUrl),
-                }
-              })
-              .filter(isDefined) ?? []
-          }
+          disabled={!!error || documentItems.length === 0}
+          items={documentItems}
         />,
         <LinkButton
           key="terminate-button"
@@ -159,7 +163,7 @@ const UserContract = () => {
                 label={cm.terminationDate}
                 content={
                   contract?.terminationDate
-                    ? formatDate(contract.terminationDate, {
+                    ? formatDate(new Date(contract.terminationDate), {
                         dateStyle: 'long',
                       })
                     : undefined

@@ -136,6 +136,7 @@ export const mapToRentalAgreement = (
   const documents = dto.documents?.map((doc) => ({
     id: doc.id,
     name: doc.name,
+    mime: doc.mime,
     downloadUrl: `${downloadServiceBaseUrl}/download/v1/rental-agreements/${doc.id}`,
   }))
 
