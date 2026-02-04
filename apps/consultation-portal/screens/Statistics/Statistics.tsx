@@ -1,8 +1,8 @@
-import { GridContainer } from '@island.is/island-ui/core'
+import { Box, GridContainer, Text } from '@island.is/island-ui/core'
 
 import { Breadcrumbs, Layout } from '../../components'
 import localization from './Statistics.json'
-import { PowerBIComponent } from '../../components/PowerBI'
+// import { PowerBIComponent } from '../../components/PowerBI'
 
 export const StatisticsScreen = () => {
   const loc = localization['statistics']
@@ -23,7 +23,10 @@ export const StatisticsScreen = () => {
         ]}
       />
       <GridContainer>
-        <PowerBIComponent />
+        <Box paddingTop={4} paddingBottom={6}>
+          <Text>Tölfræði er tímabundið óaðgengileg.</Text>
+        </Box>
+        {/* <PowerBIComponent /> */}
       </GridContainer>
     </Layout>
   )
