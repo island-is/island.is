@@ -10,7 +10,7 @@ export interface CarUsageRecord {
 export interface DayRateRecord {
   permno: string
   prevPeriodTotalDays: number
-  dayRateEntryId: number
+  dayRateEntryId: number | undefined
 }
 
 export interface CarUsageError {

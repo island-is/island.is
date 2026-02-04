@@ -62,25 +62,25 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
             targetMonthIndex: lastMonthIndex,
           })
           const { totalDays, entryIds } = result
+          
+          if (totalDays === 0 || entryIds.size === 0)
+            return null
 
-          if (totalDays === 0 || entryIds.length === 0) return null
-
-          const uniqueEntryIds = new Set(entryIds)
-
-          if (uniqueEntryIds.size > 1) {
+          if (entryIds.size > 1) {
             this.logger.warn(
               `Multiple day rate entries found for vehicle ${permno} in month ${
                 lastMonthIndex + 1
-              } ${lastMonthDate.getFullYear()}: ${Array.from(
-                uniqueEntryIds,
-              ).join(', ')}`,
+              } ${lastMonthDate.getFullYear()}: ${Array.from(entryIds).join(
+                ', ',
+              )}`,
             )
           }
 
           return {
             permno,
             prevPeriodTotalDays: totalDays,
-            dayRateEntryId: uniqueEntryIds.values().next().value,
+            dayRateEntryId:
+              entryIds.size > 0 ? entryIds.values().next().value : undefined,
           }
         })
         .filter((row): row is DayRateRecord => row !== null)

@@ -325,7 +325,7 @@ export type MonthTotalInput = {
 
 export type MonthTotalResult = {
   totalDays: number
-  entryIds: number[]
+  entryIds: Set<number>
 }
 
 export const getMonthTotalDayRateDays = ({
@@ -334,43 +334,11 @@ export const getMonthTotalDayRateDays = ({
   targetMonthIndex,
 }: MonthTotalInput): MonthTotalResult => {
   const entries = dayRateEntries ?? []
-  if (entries.length === 0) return { totalDays: 0, entryIds: [] }
+  if (entries.length === 0) return { totalDays: 0, entryIds: new Set<number>() }
 
   const monthStartUtc = new Date(Date.UTC(targetYear, targetMonthIndex, 1))
   const monthEndUtc = new Date(Date.UTC(targetYear, targetMonthIndex + 1, 0))
   const usedEntryIds = new Set<number>()
-
-  const hasPeriodUsage = entries.some((entry) => entry.periodUsage?.length)
-
-  if (hasPeriodUsage) {
-    const totalDays = entries.reduce((total, entry) => {
-      const usage = entry.periodUsage ?? []
-      const monthTotal = usage.reduce((acc, item) => {
-        if (!item?.period || item.numberOfDays == null) return acc
-
-        const periodDate = new Date(item.period)
-        const periodYear = periodDate.getUTCFullYear()
-        const periodMonthIndex = periodDate.getUTCMonth()
-
-        if (
-          periodYear === targetYear &&
-          periodMonthIndex === targetMonthIndex
-        ) {
-          return acc + item.numberOfDays
-        }
-
-        return acc
-      }, 0)
-
-      if (monthTotal > 0) {
-        usedEntryIds.add(entry.id)
-      }
-
-      return total + monthTotal
-    }, 0)
-
-    return { totalDays, entryIds: Array.from(usedEntryIds) }
-  }
 
   const totalDays = entries.reduce((total, entry) => {
     if (!entry.validFrom) return total
@@ -392,5 +360,5 @@ export const getMonthTotalDayRateDays = ({
     return total + days
   }, 0)
 
-  return { totalDays, entryIds: Array.from(usedEntryIds) }
+  return { totalDays, entryIds: usedEntryIds }
 }

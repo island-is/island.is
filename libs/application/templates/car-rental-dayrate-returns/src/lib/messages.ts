@@ -89,10 +89,10 @@ export const m = {
       defaultMessage: 'Yfirlit',
       description: 'Overview table header',
     },
-    registeredCount: {
-      id: 'rsk.crdr.application:overview.registered.count',
-      defaultMessage: 'Fjöldi bifreiða á daggjaldi í síðasta mánuði',
-      description: 'Registered vehicles count label',
+    carsThatRequireAnswers: {
+      id: 'rsk.crdr.application:overview.cars.that.require.answers',
+      defaultMessage: 'Fjöldi bifreiða sem þarf að skrá nýtingu fyrir',
+      description: 'Cars that require answers count label',
     },
     dayRateCount: {
       id: 'rsk.crdr.application:overview.dayrate.count',
