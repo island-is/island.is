@@ -7,6 +7,12 @@ import {
 
 import { CaseFileCategory } from '@island.is/judicial-system/types'
 
+const allowedCaseFileCategories = [
+  CaseFileCategory.SENT_TO_PRISON_ADMIN_FILE,
+  CaseFileCategory.CRIMINAL_RECORD,
+  CaseFileCategory.CRIMINAL_RECORD_UPDATE,
+]
+
 @Injectable()
 export class CreateDefendantCaseFileGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
@@ -14,7 +20,7 @@ export class CreateDefendantCaseFileGuard implements CanActivate {
 
     const caseFileCategory: CaseFileCategory = request.body?.category
 
-    if (caseFileCategory !== CaseFileCategory.SENT_TO_PRISON_ADMIN_FILE) {
+    if (!allowedCaseFileCategories.includes(caseFileCategory)) {
       throw new ForbiddenException(
         `Forbidden for case file category ${caseFileCategory}`,
       )
