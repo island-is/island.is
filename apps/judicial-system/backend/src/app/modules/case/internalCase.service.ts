@@ -1114,9 +1114,9 @@ export class InternalCaseService {
     user: TUser,
     courtDocuments: PoliceDocument[],
   ): Promise<boolean> {
-    const originalAncestor = isIndictmentCase(theCase.type)
+    const policeCaseId = isIndictmentCase(theCase.type)
       ? theCase.splitCaseId ?? theCase.id // indictment cases can be split
-      : await this.findOriginalAncestor(theCase) // request cases can be extended
+      : (await this.findOriginalAncestor(theCase)).id // request cases can be extended
 
     const validToDate =
       (restrictionCases.includes(theCase.type) &&
@@ -1126,7 +1126,7 @@ export class InternalCaseService {
 
     return this.policeService.updatePoliceCase(
       user,
-      originalAncestor.id,
+      policeCaseId,
       theCase.type,
       theCase.state === CaseState.CORRECTING
         ? CaseState.COMPLETED
