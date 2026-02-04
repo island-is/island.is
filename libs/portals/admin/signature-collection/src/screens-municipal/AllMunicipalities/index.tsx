@@ -24,7 +24,7 @@ import { SignatureCollectionPaths } from '../../lib/paths'
 import EmptyState from '../../shared-components/emptyState'
 import StartAreaCollection from './startCollection'
 import { useStartCollectionMutation } from './startCollection/startCollection.generated'
-import sortBy from 'lodash/sortBy'
+import { sortAlpha } from '@island.is/shared/utils'
 import { CollectionStatus } from '@island.is/api/schema'
 
 const AllMunicipalities = ({ isMunicipality }: { isMunicipality: boolean }) => {
@@ -117,10 +117,16 @@ const AllMunicipalities = ({ isMunicipality }: { isMunicipality: boolean }) => {
               <StartAreaCollection areaId={collection.areas[0]?.id} />
             )}
           <Stack space={3}>
-            {sortBy(collection.areas, [
-              (area) => !area.isActive, // active first
-              'name', // then alphabetically
-            ]).map((area) => (
+            {[...collection.areas]
+              .sort((a, b) => {
+                // Active areas first
+                if (a.isActive !== b.isActive) {
+                  return a.isActive ? -1 : 1
+                }
+                // Then alphabetically using Icelandic alphabet order
+                return sortAlpha('name')(a, b)
+              })
+              .map((area) => (
               <ActionCard
                 key={area.id}
                 heading={area.name}
