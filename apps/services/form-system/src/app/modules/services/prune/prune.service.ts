@@ -1,14 +1,14 @@
-import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
-import { Inject, Injectable } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
-import { Sequelize } from 'sequelize-typescript'
-import { Application } from '../../applications/models/application.model'
-import { Value } from '../../applications/models/value.model'
 import {
   ApplicationStatus,
   FieldTypesEnum,
 } from '@island.is/form-system/shared'
+import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
+import { Inject, Injectable } from '@nestjs/common'
+import { InjectModel } from '@nestjs/sequelize'
 import { Op } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
+import { Application } from '../../applications/models/application.model'
+import { Value } from '../../applications/models/value.model'
 
 @Injectable()
 export class PruneService {
@@ -39,6 +39,10 @@ export class PruneService {
         },
       ],
     })
+
+    this.logger.info(
+      `Found ${applicationsToBePruned.length} applications to be pruned.`,
+    )
 
     for (const application of applicationsToBePruned) {
       try {
