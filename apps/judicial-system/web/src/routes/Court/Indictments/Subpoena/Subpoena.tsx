@@ -117,9 +117,18 @@ const Subpoena: FC = () => {
   const scheduleArraignmentDate = useCallback(async () => {
     setIsCreatingSubpoena(true)
 
+    // When rescheduling, only update defendants we're issuing new subpoenas or alternative services for
+    const defendantsToUpdate = isArraignmentScheduled
+      ? updates?.defendants?.filter(
+          (defendant) =>
+            newSubpoenas.includes(defendant.id) ||
+            newAlternativeServices.includes(defendant.id),
+        )
+      : updates?.defendants
+
     const promises: Promise<boolean>[] = []
 
-    updates?.defendants?.forEach((defendant) => {
+    defendantsToUpdate?.forEach((defendant) => {
       promises.push(
         updateDefendant({
           caseId: workingCase.id,
@@ -173,6 +182,11 @@ const Subpoena: FC = () => {
           arraignmentDate: {
             date: updates?.theCase.arraignmentDate?.date,
             location: updates?.theCase.arraignmentDate?.location,
+            // When rescheduling, only create subpoenas for selected defendants.
+            // Pass array (even if empty) so backend creates 0 subpoenas when none selected.
+            ...(isArraignmentScheduled && {
+              selectedDefendantIds: newSubpoenas,
+            }),
           },
           force: true,
         },
@@ -191,6 +205,8 @@ const Subpoena: FC = () => {
   }, [
     isArraignmentScheduled,
     navigateTo,
+    newAlternativeServices,
+    newSubpoenas,
     setAndSendCaseToServer,
     setWorkingCase,
     updateDefendant,

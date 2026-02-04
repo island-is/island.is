@@ -1976,17 +1976,23 @@ export class CaseService {
               transaction,
             })
           } else {
-            await this.dateLogModel.update(updateDateLog, {
-              where: { caseId: theCase.id, dateType },
-              transaction,
-            })
+            const { date, location } = updateDateLog
+            await this.dateLogModel.update(
+              { date, location },
+              {
+                where: { caseId: theCase.id, dateType },
+                transaction,
+              },
+            )
           }
         } else if (updateDateLog !== null) {
+          const { date, location } = updateDateLog
           await this.dateLogModel.create(
             {
               caseId: theCase.id,
               dateType,
-              ...updateDateLog,
+              date,
+              location,
             },
             { transaction },
           )
@@ -2289,21 +2295,30 @@ export class CaseService {
 
     // Create new subpoenas if scheduling a new arraignment date for an indictment case
     if (schedulingNewArraignmentDateForIndictmentCase && theCase.defendants) {
-      const dsPairs = await Promise.all(
-        theCase.defendants
-          .filter((defendant) => !defendant.isAlternativeService)
-          .map(async (defendant) => {
-            const subpoena = await this.subpoenaService.createSubpoena(
-              defendant.id,
-              theCase.id,
-              transaction,
-              updatedArraignmentDate?.date,
-              updatedArraignmentDate?.location,
-              defendant.subpoenaType,
-            )
+      const selectedIds = updatedArraignmentDate?.selectedDefendantIds
+      const defendantsToProcess = selectedIds
+        ? theCase.defendants.filter(
+            (defendant) =>
+              selectedIds.includes(defendant.id) &&
+              !defendant.isAlternativeService,
+          )
+        : theCase.defendants.filter(
+            (defendant) => !defendant.isAlternativeService,
+          )
 
-            return { defendant, subpoena }
-          }),
+      const dsPairs = await Promise.all(
+        defendantsToProcess.map(async (defendant) => {
+          const subpoena = await this.subpoenaService.createSubpoena(
+            defendant.id,
+            theCase.id,
+            transaction,
+            updatedArraignmentDate?.date,
+            updatedArraignmentDate?.location,
+            defendant.subpoenaType,
+          )
+
+          return { defendant, subpoena }
+        }),
       )
 
       // Add court documents if a court session exists
