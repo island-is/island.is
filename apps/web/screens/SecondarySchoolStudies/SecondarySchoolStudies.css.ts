@@ -1,4 +1,4 @@
-import { style } from '@vanilla-extract/css'
+import { globalStyle, style } from '@vanilla-extract/css'
 
 import { themeUtils } from '@island.is/island-ui/theme'
 
@@ -14,10 +14,20 @@ export const sidebar = style({
 })
 
 export const contentWrapper = style({
-  maxWidth: 'calc(100% - 230px)',
   ...themeUtils.responsiveStyle({
     lg: {
       maxWidth: 'calc(100% - 318px)',
+      marginLeft: '48px',
+    },
+    xl: {
+      marginLeft: '110px',
     },
   }),
+})
+
+export const studyCardsWrapper = style({})
+
+// Force long words in card titles to break instead of pushing card width
+globalStyle(`${studyCardsWrapper} p`, {
+  wordBreak: 'break-word',
 })
