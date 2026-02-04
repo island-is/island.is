@@ -7,7 +7,7 @@ import { Application } from '@island.is/application/types'
 import { primarySchoolMessages } from '../../../lib/messages'
 import {
   hasSpecialEducationSubType,
-  shouldShowReasonForApplicationPage,
+  shouldShowReasonForApplicationAndNewSchoolPages,
 } from '../../../utils/conditionUtils'
 import {
   ApplicationType,
@@ -25,7 +25,7 @@ export const reasonForApplicationSubSection = buildSubSection({
   id: 'reasonForApplicationSubSection',
   title: primarySchoolMessages.reasonForApplication.subSectionTitle,
   condition: (answers, externalData) =>
-    shouldShowReasonForApplicationPage(answers) &&
+    shouldShowReasonForApplicationAndNewSchoolPages(answers, externalData) &&
     !hasSpecialEducationSubType(answers, externalData),
   children: [
     buildMultiField({

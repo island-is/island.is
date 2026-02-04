@@ -30,6 +30,4 @@ export const ATC_URL_BASE = 'https://www.serlyfjaskra.is/atc?category='
 
 export const DEFAULT_APPOINTMENTS_STATUS = [
   HealthDirectorateAppointmentStatus.BOOKED,
-  HealthDirectorateAppointmentStatus.CANCELLED,
-  HealthDirectorateAppointmentStatus.PENDING,
 ]

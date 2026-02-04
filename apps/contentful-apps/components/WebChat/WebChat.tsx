@@ -13,6 +13,7 @@ import { useSDK } from '@contentful/react-apps-toolkit'
 import { BoostSection } from './BoostSection'
 import { LiveChatSection } from './LiveChatZection'
 import { type Configuration, WebChatType } from './types'
+import { WatsonSection } from './WatsonSection'
 import { ZendeskSection } from './ZendeskSection'
 
 const DEBOUNCE_DELAY = 300
@@ -65,14 +66,19 @@ const WebChatConfigurationField = () => {
               (previousValue) =>
                 ({
                   ...previousValue,
-                  type: event.target.value as WebChatType,
+                  type:
+                    event.target.value === 'none'
+                      ? undefined
+                      : (event.target.value as WebChatType),
                 } as Configuration),
             )
           }}
         >
+          <Select.Option value="none">None</Select.Option>
           <Select.Option value={WebChatType.Boost}>Boost</Select.Option>
           <Select.Option value={WebChatType.LiveChat}>LiveChat</Select.Option>
           <Select.Option value={WebChatType.Zendesk}>Zendesk</Select.Option>
+          <Select.Option value={WebChatType.Watson}>Watson</Select.Option>
         </Select>
       </FormControl>
 
@@ -85,6 +91,7 @@ const WebChatConfigurationField = () => {
       {value.type === WebChatType.Zendesk && (
         <ZendeskSection sdk={sdk} value={value} updateValue={updateValue} />
       )}
+      {value.type === WebChatType.Watson && <WatsonSection sdk={sdk} />}
     </Flex>
   )
 }

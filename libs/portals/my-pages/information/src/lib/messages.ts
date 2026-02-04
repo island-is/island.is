@@ -616,3 +616,130 @@ export const emailsMsg = defineMessages({
     defaultMessage: 'Netfang er nú þegar til',
   },
 })
+
+export const contractsMessages = defineMessages({
+  contractsOverviewTitle: {
+    id: 'sp.contracts:contracts-overview-title',
+    defaultMessage: 'Samningar',
+  },
+  contractsOverviewSubtitle: {
+    id: 'sp.contracts:contracts-overview-subtitle',
+    defaultMessage:
+      'Hér finnur þú upplýsingar um þína samninga úr leiguskrá Húsnæðis og Mannvirkjastofnunar.',
+  },
+
+  contractDetailSubtitle: {
+    id: 'sp.contracts:contract-detail-subtitle',
+    defaultMessage: 'Leigusamningur vegna íbúðarhúsnæðis',
+  },
+
+  agreementNumber: {
+    id: 'sp.contracts:agreement-number',
+    defaultMessage: 'Samningsnúmer',
+  },
+  landlords: {
+    id: 'sp.contracts:landlords',
+    defaultMessage: 'Leigusalar',
+  },
+  tenants: {
+    id: 'sp.contracts:tenants',
+    defaultMessage: 'Leigjendur',
+  },
+  location: {
+    id: 'sp.contracts:location',
+    defaultMessage: 'Staðsetning',
+  },
+
+  lengthOfRentalAgreement: {
+    id: 'sp.contracts:length-of-rental-agreement',
+    defaultMessage: 'Leigutími',
+  },
+  rentalAgreementDate: {
+    id: 'sp.contracts:rental-agreement-date',
+    defaultMessage:
+      '{from, date, long} - {to, select, undefined {} other {to, date, long}}',
+  },
+  registrationDate: {
+    id: 'sp.contracts:registration-date',
+    defaultMessage: 'Skráning',
+  },
+  status: {
+    id: 'sp.contracts:status',
+    defaultMessage: 'Staða',
+  },
+  active: {
+    id: 'sp.contracts:active',
+    defaultMessage: 'Í gildi',
+  },
+  cancelled: {
+    id: 'sp.contracts:cancelled',
+    defaultMessage: 'Rift',
+  },
+  invalid: {
+    id: 'sp.contracts:invalid',
+    defaultMessage: 'Ógildur',
+  },
+  expired: {
+    id: 'sp.contracts:expired',
+    defaultMessage: 'Útrunninn',
+  },
+
+  terminated: {
+    id: 'sp.contracts:terminated',
+    defaultMessage: 'Sagt upp',
+  },
+  pendingCancellation: {
+    id: 'sp.contracts:pending-cancellation',
+    defaultMessage: 'Bíður riftunar',
+  },
+  pendingTermination: {
+    id: 'sp.contracts:pending-termination',
+    defaultMessage: 'Bíður uppsagnar',
+  },
+  seeInfo: {
+    id: 'sp.contracts:see-info',
+    defaultMessage: 'Skoða upplýsingar',
+  },
+  recordsFound: {
+    id: 'sp.contracts:records-found',
+    defaultMessage:
+      '{count, plural, one {# samningur fannst} other {# samningar fundust}}',
+  },
+  hideInactiveContracts: {
+    id: 'sp.contracts:hide-inactive-contracts',
+    defaultMessage: 'Fela óvirka samninga',
+  },
+  downloadAsPdf: {
+    id: 'sp.contracts:download-as-pdf',
+    defaultMessage: 'Sækja sem PDF',
+  },
+  terminateRentalAgreement: {
+    id: 'sp.contracts:terminate-rental-agreement',
+    defaultMessage: 'Afskrá leigusamning',
+  },
+
+  indefinite: {
+    id: 'sp.contracts:indefinite',
+    defaultMessage: 'Ótímabundinn',
+  },
+  temporary: {
+    id: 'sp.contracts:temporary',
+    defaultMessage: 'Tímabundinn',
+  },
+  typeIndividualRoom: {
+    id: 'sp.contracts:type-individual-room',
+    defaultMessage: 'Leigusamningur vegna herbergis',
+    description: 'The type of property being rented out',
+  },
+  typeResidential: {
+    id: 'sp.contracts:type-residential',
+    defaultMessage: 'Leigusamningur vegna íbúðarhúsnæðis',
+    description: 'The type of property being rented out',
+  },
+  typeNonResidential: {
+    id: 'sp.contracts:type-non-residential',
+    defaultMessage:
+      'Leigusamningur vegna atvinnuhúsnæðis sem er nýtt til íbúðar',
+    description: 'The type of property being rented out',
+  },
+})

@@ -860,6 +860,9 @@ export interface ICourseInstanceFields {
 
   /** Max Registrations */
   maxRegistrations?: number | undefined
+
+  /** Charge Item Code */
+  chargeItemCode?: string | undefined
 }
 
 export interface ICourseInstance extends Entry<ICourseInstanceFields> {
@@ -888,6 +891,9 @@ export interface ICourseListPageFields {
 
   /** Title */
   title?: string | undefined
+
+  /** Content */
+  content?: Document | undefined
 }
 
 export interface ICourseListPage extends Entry<ICourseListPageFields> {
@@ -5536,6 +5542,7 @@ export type CONTENT_TYPE =
   | 'contactUs'
   | 'course'
   | 'courseInstance'
+  | 'courseListPage'
   | 'customPage'
   | 'districts'
   | 'emailSignup'

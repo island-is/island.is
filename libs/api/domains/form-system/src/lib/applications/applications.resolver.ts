@@ -8,7 +8,10 @@ import {
   type User,
 } from '@island.is/auth-nest-tools'
 import { ApplicationsService } from './applications.service'
-import { ApplicationResponse } from '../../models/applications.model'
+import {
+  ApplicationResponse,
+  SubmitApplicationResponse,
+} from '../../models/applications.model'
 import {
   ApplicationsInput,
   CreateApplicationInput,
@@ -69,18 +72,18 @@ export class ApplicationsResolver {
   }
 
   @Mutation(() => Boolean, {
-    name: 'updateFormSystemApplicationDependencies',
+    name: 'updateFormSystemApplicationSettings',
     nullable: true,
   })
-  async updateApplicationDependencies(
+  async updateApplicationSettings(
     @Args('input', { type: () => UpdateApplicationInput })
     input: UpdateApplicationInput,
     @CurrentUser() user: User,
   ): Promise<void> {
-    return this.applicationsService.updateDependencies(user, input)
+    return this.applicationsService.updateSettings(user, input)
   }
 
-  @Mutation(() => Boolean, {
+  @Mutation(() => SubmitApplicationResponse, {
     name: 'submitFormSystemApplication',
     nullable: true,
   })
@@ -88,7 +91,7 @@ export class ApplicationsResolver {
     @Args('input', { type: () => GetApplicationInput })
     input: GetApplicationInput,
     @CurrentUser() user: User,
-  ): Promise<void> {
+  ): Promise<SubmitApplicationResponse> {
     return this.applicationsService.submitApplication(user, input)
   }
 

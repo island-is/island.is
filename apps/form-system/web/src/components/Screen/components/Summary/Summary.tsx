@@ -14,6 +14,8 @@ import { useLocale } from '@island.is/localization'
 import { Divider } from '@island.is/island-ui/core'
 import { Display } from '../Display/Display'
 import { SectionTypes } from '@island.is/form-system/ui'
+import { UPDATE_APPLICATION_SETTINGS } from '@island.is/form-system/graphql'
+import { useMutation } from '@apollo/client'
 
 interface Props {
   state?: ApplicationState
@@ -23,12 +25,20 @@ export const Summary = ({ state }: Props) => {
   const { formatMessage } = useIntl()
   const { lang } = useLocale()
   const { dispatch } = useApplicationContext()
+
+  const updateCompleted = useMutation(UPDATE_APPLICATION_SETTINGS)
+
   const handleButtonClick = (sectionIndex?: number, screenIndex?: number) => {
     dispatch({
       type: 'INDEX_SCREEN',
-      payload: { screenIndex: screenIndex, sectionIndex: sectionIndex },
+      payload: {
+        screenIndex: screenIndex,
+        sectionIndex: sectionIndex,
+        updateCompleted,
+      },
     })
   }
+
   const sections = state?.sections?.filter(
     (s) =>
       !s?.isHidden &&
@@ -36,6 +46,7 @@ export const Summary = ({ state }: Props) => {
       s.sectionType !== SectionTypes.COMPLETED &&
       s.sectionType !== SectionTypes.SUMMARY,
   )
+
   return (
     <Box marginTop={2}>
       <Text fontWeight="light" as="p">
@@ -47,13 +58,13 @@ export const Summary = ({ state }: Props) => {
           .map((screen, screenIndex) => (
             <Box
               key={screen?.id ?? `screen-${sectionIndex}-${screenIndex}`}
-              marginTop={5}
+              marginTop={2}
             >
               <Divider />
               <GridContainer>
                 <GridRow>
                   <GridColumn span={['12/12', '1/2']}>
-                    <Box marginTop={5}>
+                    <Box marginTop={2}>
                       {section.sectionType === SectionTypes.PARTIES ? (
                         <Text as="h3" variant="h3" fontWeight="semiBold">
                           {screen?.fields?.[0]?.name?.[lang] ??
@@ -65,12 +76,11 @@ export const Summary = ({ state }: Props) => {
                         </Text>
                       )}
                     </Box>
-                  </GridColumn>
-                  <GridColumn span={['12/12', '1/2']}>
                     <Box
-                      display="flex"
-                      marginTop={5}
-                      justifyContent={['flexStart', 'flexEnd']}
+                      display={['flex', 'none']}
+                      marginTop={2}
+                      marginBottom={2}
+                      justifyContent={'flexStart'}
                     >
                       <Button
                         icon="pencil"
@@ -79,30 +89,50 @@ export const Summary = ({ state }: Props) => {
                         inline={true}
                         onClick={() => {
                           handleButtonClick(
-                            section?.displayOrder ?? -1,
-                            screen?.displayOrder ?? -1,
-                          )
-                          handleButtonClick(
-                            section?.displayOrder ?? -1,
-                            screen?.displayOrder ?? -1,
+                            sectionIndex ?? -1,
+                            section.sectionType === SectionTypes.PARTIES
+                              ? screen?.displayOrder ?? -1
+                              : screenIndex ?? -1,
                           )
                         }}
                       >
                         {formatMessage(m.edit)}
                       </Button>
                     </Box>
+                    <Box>
+                      {screen?.fields
+                        ?.filter(
+                          (field): field is NonNullable<typeof field> =>
+                            field != null && !field.isHidden,
+                        )
+                        .map((field, index) => (
+                          <Display field={field} key={index} />
+                        ))}
+                    </Box>
                   </GridColumn>
-                </GridRow>
-                <GridRow>
                   <GridColumn span={['12/12', '1/2']}>
-                    {screen?.fields
-                      ?.filter(
-                        (field): field is NonNullable<typeof field> =>
-                          field != null && !field.isHidden,
-                      )
-                      .map((field, index) => (
-                        <Display field={field} key={index} />
-                      ))}
+                    <Box
+                      display={['none', 'flex']}
+                      marginTop={4}
+                      justifyContent={'flexEnd'}
+                    >
+                      <Button
+                        icon="pencil"
+                        iconType="filled"
+                        variant="utility"
+                        inline={true}
+                        onClick={() => {
+                          handleButtonClick(
+                            sectionIndex ?? -1,
+                            section.sectionType === SectionTypes.PARTIES
+                              ? screen?.displayOrder ?? -1
+                              : screenIndex ?? -1,
+                          )
+                        }}
+                      >
+                        {formatMessage(m.edit)}
+                      </Button>
+                    </Box>
                   </GridColumn>
                 </GridRow>
               </GridContainer>

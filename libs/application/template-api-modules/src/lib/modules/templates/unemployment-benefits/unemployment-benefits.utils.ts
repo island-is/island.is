@@ -37,11 +37,7 @@ import {
   GaldurDomainModelsSettingsUnemploymentReasonsUnemploymentReasonCatagoryDTO,
   GaldurDomainModelsSettingsUnionsUnionDTO,
 } from '@island.is/clients/vmst-unemployment'
-import { Locale } from '@island.is/shared/types'
 
-export const getStartingLocale = (externalData: ExternalData) => {
-  return getValueViaPath<Locale>(externalData, 'startingLocale.data')
-}
 export const getPersonalInformation = (answers: FormValue) => {
   const applicant = getValueViaPath<ApplicantInAnswers>(answers, 'applicant')
 
@@ -261,7 +257,7 @@ export const getJobCareer = (
   const currentJobCareer =
     employmentHistory?.currentJobs?.map((job, index) => {
       let workHours
-      if (currentJob && currentJob.length > 0) {
+      if (currentJob && currentJob.length > index) {
         workHours = getValueViaPath<string>(currentJob[index], 'workHours', '')
       }
       const employerSSN =

@@ -1,6 +1,7 @@
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { InjectModel } from '@nestjs/sequelize'
+import { isValid as isValidKennitala } from 'kennitala'
 import {
   BadRequestException,
   Inject,
@@ -66,17 +67,39 @@ export class NotificationsService {
     locale?: Locale,
   ): Promise<SenderOrganization | undefined> {
     locale = mapToLocale(locale as Locale)
-    const queryVariables = {
+
+    let res = (await this.cmsService.fetchData(GetOrganizationByNationalId, {
       nationalId: senderId,
       locale: mapToContentfulLocale(locale),
-    }
-    const res = (await this.cmsService.fetchData(
-      GetOrganizationByNationalId,
-      queryVariables,
-    )) as unknown as {
+    })) as unknown as {
       organizationCollection: { items: Array<{ title: string }> }
     }
-    const items = res.organizationCollection.items
+
+    let items = res.organizationCollection.items
+
+    // Second attempt: if no results, try with the alternative format
+    // This handles inconsistent kennitala field format in Contentful (with/without dash)
+    if (items.length === 0) {
+      const sanitizedNationalId = senderId.replace(/\D/g, '')
+
+      // Only proceed if we have a valid kennitala
+      if (isValidKennitala(sanitizedNationalId)) {
+        // Try the opposite format: if senderId had dash, try without; if not, try with
+        const alternativeFormat = senderId.includes('-')
+          ? sanitizedNationalId
+          : `${sanitizedNationalId.slice(0, 6)}-${sanitizedNationalId.slice(6)}`
+
+        res = (await this.cmsService.fetchData(GetOrganizationByNationalId, {
+          nationalId: alternativeFormat,
+          locale: mapToContentfulLocale(locale),
+        })) as unknown as {
+          organizationCollection: { items: Array<{ title: string }> }
+        }
+
+        items = res.organizationCollection.items
+      }
+    }
+
     if (items.length > 0) {
       const [item] = items
       item.title = cleanString(item.title)

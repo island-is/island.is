@@ -9,7 +9,7 @@ import { Value } from './models/value.model'
 import { Organization } from '../organizations/models/organization.model'
 import { ServiceManager } from '../services/service.manager'
 import { ZendeskService } from '../services/zendesk.service'
-import { NudgeService } from '../services/nudge.service'
+import { NotifyService } from '../services/notify.service'
 import { ApplicationEvent } from './models/applicationEvent.model'
 import { ValidationService } from '../services/validation.service'
 import { Screen } from '../screens/models/screen.model'
@@ -41,7 +41,7 @@ import { ListItem } from '../listItems/models/listItem.model'
     ApplicationMapper,
     ServiceManager,
     ZendeskService,
-    NudgeService,
+    NotifyService,
     ValidationService,
   ],
   exports: [ApplicationsService],

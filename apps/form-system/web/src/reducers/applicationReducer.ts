@@ -16,6 +16,7 @@ import {
   getIncrementVariables,
   incrementWithoutScreens,
   incrementWithScreens,
+  jumpToScreen,
   setCurrentScreen,
 } from './reducerUtils'
 
@@ -26,6 +27,7 @@ export const initialState = {
   currentSection: { data: {} as FormSystemSection, index: 0 },
   currentScreen: undefined,
   errors: [],
+  screenErrors: [],
 }
 
 export const initialReducer = (state: ApplicationState): ApplicationState => {
@@ -134,10 +136,9 @@ export const applicationReducer = (
 ): ApplicationState => {
   switch (action.type) {
     case 'INCREMENT': {
-      const { submitScreen, updateDependencies } = action.payload
       const { currentSectionData, currentScreenIndex } =
         getIncrementVariables(state)
-
+      const { submitScreen, updateDependencies } = action.payload
       if (hasScreens(currentSectionData)) {
         return incrementWithScreens(
           state,
@@ -152,17 +153,19 @@ export const applicationReducer = (
     case 'DECREMENT': {
       const { currentSectionIndex, currentScreenIndex } =
         getDecrementVariables(state)
-      const { submitScreen } = action.payload
+      const { submitScreen, updateDependencies } = action.payload
       return decrement(
         state,
         currentSectionIndex,
         currentScreenIndex,
         submitScreen,
+        updateDependencies,
       )
     }
     case 'INDEX_SCREEN': {
-      const { sectionIndex, screenIndex } = action.payload
-      return setCurrentScreen(state, sectionIndex, screenIndex)
+      const { sectionIndex, screenIndex, updateCompleted } = action.payload
+      state = setCurrentScreen(state, sectionIndex, screenIndex)
+      return jumpToScreen(state, sectionIndex, screenIndex, updateCompleted)
     }
 
     case 'SET_VALIDITY': {
@@ -176,9 +179,11 @@ export const applicationReducer = (
       return state
 
     case 'SUBMITTED': {
+      const { submitted, screenErrors } = action.payload
       return {
         ...state,
-        submitted: action.payload,
+        submitted,
+        screenErrors,
       }
     }
   }

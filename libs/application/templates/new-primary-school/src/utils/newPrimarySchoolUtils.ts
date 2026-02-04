@@ -732,11 +732,19 @@ export const getApplicationType = (
 ) => {
   const { childNationalId } = getApplicationAnswers(answers)
   const { childInformation } = getApplicationExternalData(externalData)
-  const currentYear = new Date().getFullYear()
+  const today = new Date()
+  const currentYear = today.getFullYear()
   const firstGradeYear = currentYear - FIRST_GRADE_AGE
   const nationalId = childNationalId || ''
   const nationalIdInfo = info(nationalId)
   const yearOfBirth = nationalIdInfo?.birthday?.getFullYear()
+
+  // Enrollment to 1st grade should only be accessable from 1 Feb to 15 Sep each year
+  const enrollmentStartDate = new Date(currentYear, 1, 1) // 1 Feb
+  const enrollmentEndDate = new Date(currentYear, 8, 15) // 15 Sep
+
+  const isEnrollmentOpen =
+    today >= enrollmentStartDate && today <= enrollmentEndDate
 
   // Needed to test ENROLLMENT_IN_PRIMARY_SCHOOL application on dev
   if (
@@ -750,19 +758,12 @@ export const getApplicationType = (
     return undefined
   }
 
-  // temporary check - need to be fixed before february 2026 after testing phase
-  // is over and rule about enrollment age has been finalized.
-  // if the child is 1 to 6 years old, it's an enrollment application
-  // so the year of birth can be between currentYear - 6 and currentYear - 1
-
-  // if the child is a first grader and not currently enrolled in a primary
-  // school, set the application type to enrollment in primary school
-  if (
-    yearOfBirth >= firstGradeYear &&
-    yearOfBirth <= currentYear - 1 &&
-    !childInformation?.primaryOrgId
-  ) {
-    return ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
+  // if the child is a first grader and enrollment is open, set the application type
+  // to enrollment in primary school. Otherwise, set the application type to new primary school
+  if (yearOfBirth === firstGradeYear) {
+    return isEnrollmentOpen
+      ? ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
+      : ApplicationType.NEW_PRIMARY_SCHOOL
   }
 
   // if the child is not a first grader and not currently enrolled in a primary

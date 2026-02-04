@@ -7,7 +7,7 @@ const FormSystemFilesSchema = z.object({
   timeToLivePost: z.number(),
   timeToLiveGet: z.number(),
   bullModuleName: z.string(),
-  tempBucket: z.string(),
+  // uploadBucket: z.string(),
   bucket: z.string(),
   redis: z.object({
     nodes: z.array(z.string()),
@@ -23,9 +23,9 @@ export const FileConfig = defineConfig({
     timeToLivePost: +env.required('S3_TIME_TO_LIVE_POST', '15'), // 15 seconds, convert to number with +
     timeToLiveGet: +env.required('S3_TIME_TO_LIVE_GET', '5'), // 5 seconds, convert to number with +
     bullModuleName:
-      env.optional('FORM_SYSTEM_BULL_PREFIX') ?? 'form-system-upload',
-    tempBucket:
-      env.optional('FILE_STORAGE_UPLOAD_BUCKET') ?? 'island-is-dev-upload-api',
+      env.optional('FORM_SYSTEM_BULL_PREFIX') ?? 'form_system_api_bull_module',
+    // uploadBucket:
+    //   env.optional('FILE_STORAGE_UPLOAD_BUCKET') ?? 'island-is-dev-upload-api',
     bucket:
       env.optional('FORM_SYSTEM_BUCKET') ??
       'island-is-dev-form-system-presign-bucket',

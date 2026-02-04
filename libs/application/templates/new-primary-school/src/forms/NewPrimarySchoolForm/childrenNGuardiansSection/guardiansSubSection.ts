@@ -144,7 +144,7 @@ export const guardiansSubSection = buildSubSection({
 
         buildDescriptionField({
           id: 'guardiansInfo2',
-          title: childrenNGuardiansMessages.guardians.otherGuardian,
+          title: childrenNGuardiansMessages.guardians.guardian,
           titleVariant: 'h4',
           marginTop: 'containerGutter',
           condition: (answers, externalData) =>

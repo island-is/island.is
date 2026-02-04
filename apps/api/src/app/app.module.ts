@@ -125,6 +125,7 @@ import { OfficialJournalOfIcelandApplicationClientConfig } from '@island.is/clie
 import { HmsLoansClientConfig } from '@island.is/clients/hms-loans'
 import { HousingBenefitCalculatorClientConfig } from '@island.is/clients/housing-benefit-calculator'
 import { FinancialManagementAuthorityClientConfig } from '@island.is/clients/financial-management-authority'
+import { IcelandicGovernmentInstitutionVacanciesClientConfig } from '@island.is/clients/icelandic-government-institution-vacancies'
 import { RightsPortalClientConfig } from '@island.is/clients/icelandic-health-insurance/rights-portal'
 import { InnaClientConfig } from '@island.is/clients/inna'
 import { IntellectualPropertiesClientConfig } from '@island.is/clients/intellectual-properties'
@@ -466,6 +467,7 @@ const environment = getConfig
         PowerBiConfig,
         AuthIdsApiClientConfig,
         FinancialManagementAuthorityClientConfig,
+        IcelandicGovernmentInstitutionVacanciesClientConfig,
         RskRelationshipsClientConfig,
         RskRentalDayRateClientConfig,
         AircraftRegistryClientConfig,

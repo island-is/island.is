@@ -4,7 +4,7 @@ export const is = {
   'button.change': 'Breyta',
   'button.open': 'Skoða',
   'button.moreInfoHere': 'Nánari upplýsingar hér',
-
+  'button.seeMore': 'Sjá nánar',
   // login
   'login.welcomeMessage': 'Skráðu þig inn í appið með rafrænum skilríkjum',
   'login.loginButtonText': 'Skrá inn',
@@ -742,20 +742,48 @@ export const is = {
   'health.overview.paymentDebt': 'Skuld',
   'health.overview.therapy': 'Þjálfun',
   'health.overview.vaccinations': 'Bólusetningar',
+  'health.overview.appointments': 'Tímabókanir',
+  'health.overview.questionnaires': 'Spurningalistar',
   'health.overview.aidsAndNutrition': 'Hjálpartæki og næring',
   'health.overview.medicinePurchase': 'Lyfjakaup',
+  'health.overview.medicineDelegation': 'Lyfjaheimild',
   'health.overview.period': 'Tímabil',
   'health.overview.levelStatus': 'Þrepastaða',
   'health.overview.levelStatusValue':
     'Greiðsluþrep {level}, þú greiðir {percentage}%',
   'health.overview.medicinePurchaseNoActivePeriodWarning':
     'Nýtt greiðslutímabil hefst við næstu lyfjakaup',
+  'health.overview.prescriptions': 'Lyfjaávísanir',
   'health.overview.basicInformation': 'Grunnupplýsingar',
   'health.overview.bloodType': 'Blóðflokkur',
   'health.overview.bloodTypeDescription': 'Þú ert í blóðflokki {bloodType}',
   'health.overview.noBloodTypeRegistered': 'Ekki verið flokkaður',
   'health.overview.dentist': 'Tannlæknir',
   'health.overview.noDentistRegistered': 'Enginn tannlæknir skráður',
+
+  // health - questionnaires
+  'health.questionnaires.screenTitle': 'Spurningalistar',
+  'health.questionnaires.title': 'Spurningalistar',
+  'health.questionnaires.description':
+    'Hér getur þú skoðað spurningalista sem hafa verið sendir til þín.',
+  'health.questionnaires.status.answered': 'Svarað',
+  'health.questionnaires.status.unanswered': 'Ósvarað',
+  'health.questionnaires.status.notAnswered': 'Ósvarað',
+  'health.questionnaires.status.draft': 'Drög',
+  'health.questionnaires.status.expired': 'Útrunnið',
+  'health.questionnaires.organization.lsh': 'Landspítali',
+  'health.questionnaires.organization.el': 'Embætti Landlæknis',
+  'health.questionnaires.organization.unknown': 'Óþekkt',
+  'health.questionnaires.action.answer': 'Svara lista',
+  'health.questionnaires.action.continue-draft': 'Halda áfram',
+  'health.questionnaires.action.view-answer': 'Skoða svör',
+  'health.questionnaires.detail.description':
+    'Hér má finna svör þín við spurningalistunum. Þú getur borið saman svörin.',
+  'health.questionnaires.detail.status': 'Staða',
+  'health.questionnaires.detail.institution': 'Stofnun',
+  'health.questionnaires.detail.sentBy': 'Sent af',
+  'health.questionnaires.detail.sentDate': 'Sent dags',
+  'health.questionnaires.detail.notFound': 'Spurningalisti fannst ekki',
 
   // health - vaccinations
   'health.vaccinations.screenTitle': 'Bólusetningar',
@@ -773,6 +801,32 @@ export const is = {
     'Ef þú telur þig eiga gögn sem ættu að birtast hér, vinsamlegast hafðu samband við þjónustuaðila.',
   'health.vaccinations.directorateOfHealth': 'Embætti landlæknis',
 
+  // health - appointments
+  'health.appointments.screenTitle': 'Tímabókanir',
+  'health.appointments.title': 'Tímabókanir',
+  'health.appointments.description':
+    'Hér getur þú séð tímabókanir þínar í heilbrigðiskerfinu.',
+  'health.appointments.detailTitle': 'Tímabókun hjá heilsugæslunni',
+  'health.appointments.dateAndTime': 'Dagsetning og tími',
+  'health.appointments.duration': 'Lengd',
+  'health.appointments.location': 'Staðsetning',
+  'health.appointments.address': 'Heimilisfang',
+  'health.appointments.practitioners': 'Tími hjá: {practitioner}',
+  'health.appointments.appointmentWith': 'Tími hjá',
+  'health.appointments.atTime': 'kl {time}',
+  'health.appointments.timePrefix': 'kl',
+  'health.appointments.instructions': 'Leiðbeiningar',
+  'health.appointments.openMap': 'Sjá á korti',
+  'health.appointments.type': 'Tegund',
+  'health.appointments.noAppointmentsTitle': 'Engar tímabókanir',
+  'health.appointments.noAppointmentsText':
+    'Þú ert ekki með neinar komandi tímabókanir.',
+  'health.appointments.errorMessage':
+    'Ekki tókst að sækja tímabókanir. Vinsamlegast reyndu aftur síðar.',
+  'health.appointments.notFoundMessage':
+    'Tímabókun fannst ekki. Hún kann að hafa verið felld niður.',
+  'health.appointments.minutesFormat': '{minutes} mínútur',
+
   // health - organ donation
   'health.organDonation': 'Líffæragjöf',
   'health.organDonation.change': 'Breyta afstöðu',
@@ -786,4 +840,122 @@ export const is = {
     'Engin líffæri má nota til ígræðslu.',
   'health.organDonation.isDonorWithLimitationsDescription':
     'Öll líffærin mín má nota til ígræðslu fyrir utan: {limitations}.',
+
+  // health - medicine delegation
+  'health.medicineDelegation.screenTitle': 'Lyfjaheimild',
+  'health.medicineDelegation.title': 'Lyfjaheimild',
+  'health.medicineDelegation.description':
+    'Einungis þú getur sótt þín lyf í apótek, nema þú veitir öðrum sérstaka heimild fyrir þig. Hér getur þú skráð þá aðila sem þú veitir heimild til að sækja lyf í apótek fyrir þig.',
+  'health.medicineDelegation.readMore': 'Lesa um lyfjaheimildir',
+  'health.medicineDelegation.addButton': 'Bæta við heimild',
+  'health.medicineDelegation.emptyTitle': 'Engar heimildir',
+  'health.medicineDelegation.emptyDescription':
+    'Það eru engar skráðar heimildir.',
+  'health.medicineDelegation.listCaption':
+    'Sækja lyf og fletta upp lyfjaávísun.',
+  'health.medicineDelegation.captionPickup': 'Sækja lyf í apóteki.',
+  'health.medicineDelegation.captionPickupAndLookup':
+    'Sækja lyf í apóteki og fletta upp lyfjaávísunum.',
+  'health.medicineDelegation.listValidTo': 'Gildir til {date}',
+  'health.medicineDelegation.showExpiredPermits': 'Sýna óvirkar',
+  'health.medicineDelegation.hideExpiredPermits': 'Fela óvirkar',
+  'health.medicineDelegation.noActiveTitle': 'Engar virkar heimildir',
+  'health.medicineDelegation.noActiveDescription':
+    'Þú ert ekki með neinar virkar heimildir. Hægt er að ýta á takkann "Sýna óvirkar" hér að ofan ef þú vilt skoða óvirkar heimildir.',
+  'health.medicineDelegation.labelExpired': 'Útrunnið',
+  'health.medicineDelegation.detail.delete': 'Eyða heimild',
+  'health.medicineDelegation.detail.issuerLabel': 'Útgefandi',
+  'health.medicineDelegation.detail.issuerValue': 'Sjúkratryggingar Íslands',
+  'health.medicineDelegation.detail.issuedDate': 'Útgáfudagur',
+  'health.medicineDelegation.detail.status': 'Staða',
+  'health.medicineDelegation.detail.statusActive': 'Í gildi',
+  'health.medicineDelegation.detail.statusExpired': 'Útrunnið',
+  'health.medicineDelegation.detail.validity': 'Gildistími',
+  'health.medicineDelegation.detail.validFor': 'Gildir fyrir',
+  'health.medicineDelegation.detail.validForValue':
+    'Sækja lyf og fletta upp lyfjaávísun.',
+  'health.medicineDelegation.detail.validForPickup': 'Sækja lyf í apóteki.',
+  'health.medicineDelegation.detail.validForPickupAndLookup':
+    'Sækja lyf í apóteki og fletta upp lyfjaávísunum.',
+  'health.medicineDelegation.detail.revoke': 'Eyða heimild',
+  'health.medicineDelegation.detail.revokeError':
+    'Ekki tókst að eyða lyfjaheimild. Vinsamlegast reynið aftur síðar.',
+  'health.medicineDelegation.detail.revokePromptTitle': 'Viltu eyða heimild?',
+  'health.medicineDelegation.detail.revokePromptCancel': 'Hætta við',
+  'health.medicineDelegation.detail.revokePromptConfirm': 'Eyða',
+  'health.medicineDelegation.form.title': 'Bæta við lyfjaheimild',
+  'health.medicineDelegation.form.subtitle':
+    'Veldu aðila sem má sækja lyfin þín í apóteki.',
+  'health.medicineDelegation.form.nationalIdLabel': 'Kennitala',
+  'health.medicineDelegation.form.nameLabel': 'Nafn',
+  'health.medicineDelegation.form.validityLabel':
+    'Hve lengi viltu að heimildin gildi?',
+  'health.medicineDelegation.form.dateFromLabel': 'Dagsetning frá',
+  'health.medicineDelegation.form.dateToLabel': 'Dagsetning til',
+  'health.medicineDelegation.form.dateFromPlaceholder': 'Veldu dagsetningu frá',
+  'health.medicineDelegation.form.dateToPlaceholder': 'Veldu dagsetningu til',
+  'health.medicineDelegation.form.submit': 'Bæta við heimild',
+  'health.medicineDelegation.form.delegateMedicineDelegationError':
+    'Ekki tókst að bæta við lyfjaheimild. Vinsamlegast reynið aftur síðar.',
+  'health.medicineDelegation.form.nameNotFound':
+    'Ekki tókst að finna nafn fyrir kennitölu.',
+  'health.medicineDelegation.form.nameError':
+    'Villa kom upp við að sækja nafn.',
+  'health.medicineDelegation.form.invalidNationalId': 'Ógild kennitala.',
+  'health.medicineDelegation.form.lookupLabel':
+    'Ofangreindur aðili má einnig fletta upp mínum lyfjaávísunum í apóteki.',
+  'health.medicineDelegation.form.xYears': '{years} ár',
+  'health.medicineDelegation.form.xMonths': '{months} mán',
+
+  // health - prescriptions & drug certificates
+  'health.prescriptionsAndCertificates.screenTitle': 'Lyf',
+  'health.prescriptionsAndCertificates.validTo': 'Gildir til: {date}',
+  'health.prescriptionsAndCertificates.expired': 'Útrunnið',
+  'health.prescriptionsAndCertificates.rejected': 'Hafnað',
+  'health.prescriptionsAndCertificates.inProcess': 'Í vinnslu',
+  'health.prescriptionsAndCertificates.valid': 'Í gildi',
+  'health.prescriptionsAndCertificates.furtherInformation':
+    'Nánari upplýsingar',
+  'health.prescriptionsAndCertificates.status': 'Staða',
+  'health.prescriptionsAndCertificates.description':
+    'Læknir sækir um lyfjaskírteini fyrir einstakling sem gefin eru út af Sjúkratryggingum að uppfylltum ákveðnum skilyrðum samkvæmt vinnureglum.',
+
+  'health.drugCertificates.title': 'Lyfjaskírteini',
+  'health.drugCertificates.drugName': 'Lyfjaheiti',
+  'health.drugCertificates.atcCode': 'ATC flokkur',
+  'health.drugCertificates.ingredients': 'Innihaldsefni',
+  'health.drugCertificates.validFrom': 'Gildir frá',
+  'health.drugCertificates.validUntil': 'Gildir til',
+  'health.drugCertificates.nameOfDoctor': 'Heiti læknis',
+  'health.drugCertificates.methylDoctors': 'Aukalæknar skráðir á skírteini',
+
+  'health.prescriptions.title': 'Lyfjaávísanir',
+  'health.prescriptions.description':
+    'Hér má finna yfirlit yfir þínar lyfjaávísanir og lyfjaskírteini.',
+  'health.prescriptions.drug': 'Lyf',
+  'health.prescriptions.type': 'Tegund',
+  'health.prescriptions.indication': 'Lyf er notað við',
+  'health.prescriptions.quantity': 'Ávísað magn',
+  'health.prescriptions.dosageInstructions': 'Notkunarleiðbeiningar',
+  'health.prescriptions.issueDate': 'Útgáfudagur',
+  'health.prescriptions.expiresAt': 'Gildir til',
+  'health.prescriptions.doctor': 'Læknir',
+  'health.prescriptions.issueInformation': 'Útgáfa',
+  'health.prescriptions.dispensations': 'Afgreiðslusaga',
+  'health.prescriptions.dispensationNumber': 'Afgreiðsla',
+  'health.prescriptions.lastDispensationDate': 'Síðast afgreitt: {date}',
+  'health.prescriptions.dispensationCount': '{count} afgreiðslur',
+  'health.prescriptions.fetchMoreDispensations': 'Sjá meira',
+  'health.prescriptions.completedDispensation': '{number}. afgreiðsla',
+  'health.prescriptions.history.table.date': 'Dags.',
+  'health.prescriptions.history.table.dispensery': 'Afhendingarstaður',
+  'health.prescriptions.history.table.drug': 'Lyf',
+  'health.prescriptions.history.table.quantity': 'Magn',
+  'health.prescriptions.history.table.moreInfo': 'Nánar',
+  'health.prescriptions.dispensationDetail.title':
+    'Upplýsingar um {count}. afgreiðslu',
+  'health.prescriptions.noDispensations': 'Engar afgreiðslur fundust',
+  'health.prescriptions.noDispensationsDescription':
+    'Ef þú telur þig eiga gögn sem ættu að birtast hér, vinsamlegast hafðu samband við þjónustuaðila.',
+  'health.medicineHistory.title': 'Lyfjasaga',
 }

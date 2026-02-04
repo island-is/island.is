@@ -60,6 +60,8 @@ interface FindAllOptions {
   order?: FindOptions['order']
   limit?: FindOptions['limit']
   offset?: FindOptions['offset']
+  group?: FindOptions['group']
+  having?: FindOptions['having']
 }
 
 interface FindAndCountAllOptions {
@@ -74,23 +76,23 @@ interface FindAndCountAllOptions {
   raw?: FindAndCountOptions['raw']
 }
 
-interface CreateCaseOptions {
-  transaction?: Transaction
-}
-
-interface SplitCaseOptions {
-  transaction?: Transaction
-}
-
-interface UpdateCaseOptions {
-  transaction?: Transaction
-}
-
 interface CountCaseOptions {
   where?: CountOptions['where']
   transaction?: Transaction
   include?: CountOptions['include']
   distinct?: CountOptions['distinct']
+}
+
+interface CreateCaseOptions {
+  transaction: Transaction
+}
+
+interface SplitCaseOptions {
+  transaction: Transaction
+}
+
+interface UpdateCaseOptions {
+  transaction: Transaction
 }
 
 @Injectable()
@@ -218,6 +220,14 @@ export class CaseRepositoryService {
         findOptions.offset = options.offset
       }
 
+      if (options?.group) {
+        findOptions.group = options.group
+      }
+
+      if (options?.having) {
+        findOptions.having = options.having
+      }
+
       const results = await this.caseModel.findAll(findOptions)
 
       this.logger.debug(`Found ${results.length} cases`)
@@ -297,22 +307,52 @@ export class CaseRepositoryService {
     }
   }
 
-  async create(
-    data: Partial<Case>,
-    options?: CreateCaseOptions,
-  ): Promise<Case> {
+  async count(options?: CountCaseOptions): Promise<number> {
+    try {
+      this.logger.debug('Counting cases with conditions:', {
+        where: Object.keys(options?.where ?? {}),
+      })
+
+      const countOptions: CountOptions = {}
+
+      if (options?.where) {
+        countOptions.where = options.where
+      }
+
+      if (options?.transaction) {
+        countOptions.transaction = options.transaction
+      }
+
+      if (options?.include) {
+        countOptions.include = options.include
+      }
+
+      if (options?.distinct !== undefined) {
+        countOptions.distinct = options.distinct
+      }
+
+      const result = await this.caseModel.count(countOptions)
+
+      this.logger.debug(`Counted ${result} case(s)`)
+
+      return result
+    } catch (error) {
+      this.logger.error('Error counting cases with conditions:', {
+        where: Object.keys(options?.where ?? {}),
+        error,
+      })
+
+      throw error
+    }
+  }
+
+  async create(data: Partial<Case>, options: CreateCaseOptions): Promise<Case> {
     try {
       this.logger.debug('Creating a new case with data:', {
         data: Object.keys(data),
       })
 
-      const createOptions: CreateOptions = {}
-
-      if (options?.transaction) {
-        createOptions.transaction = options.transaction
-      }
-
-      const result = await this.caseModel.create(data, createOptions)
+      const result = await this.caseModel.create(data, options)
 
       this.logger.debug(`Created a new case ${result.id}`)
 
@@ -330,7 +370,7 @@ export class CaseRepositoryService {
   async split(
     caseId: string,
     defendantId: string,
-    options?: SplitCaseOptions,
+    options: SplitCaseOptions,
   ): Promise<Case> {
     try {
       this.logger.debug(
@@ -365,7 +405,7 @@ export class CaseRepositoryService {
         'hasCivilClaims',
       ]
 
-      const transaction = options?.transaction
+      const transaction = options.transaction
 
       // Find the case to split
       const caseToSplit = await this.findById(caseId, { transaction })
@@ -660,7 +700,7 @@ export class CaseRepositoryService {
   async update(
     caseId: string,
     data: UpdateCase,
-    options?: UpdateCaseOptions,
+    options: UpdateCaseOptions,
   ): Promise<Case> {
     try {
       this.logger.debug(`Updating case ${caseId} with data:`, {
@@ -669,10 +709,7 @@ export class CaseRepositoryService {
 
       const updateOptions: UpdateOptions = {
         where: { id: caseId },
-      }
-
-      if (options?.transaction) {
-        updateOptions.transaction = options.transaction
+        transaction: options.transaction,
       }
 
       const [numberOfAffectedRows, cases] = await this.caseModel.update(data, {
@@ -700,45 +737,6 @@ export class CaseRepositoryService {
     } catch (error) {
       this.logger.error(`Error updating case ${caseId} with data:`, {
         data: Object.keys(data),
-        error,
-      })
-
-      throw error
-    }
-  }
-
-  async count(options?: CountCaseOptions): Promise<number> {
-    try {
-      this.logger.debug('Counting cases with conditions:', {
-        where: Object.keys(options?.where ?? {}),
-      })
-
-      const countOptions: CountOptions = {}
-
-      if (options?.where) {
-        countOptions.where = options.where
-      }
-
-      if (options?.transaction) {
-        countOptions.transaction = options.transaction
-      }
-
-      if (options?.include) {
-        countOptions.include = options.include
-      }
-
-      if (options?.distinct !== undefined) {
-        countOptions.distinct = options.distinct
-      }
-
-      const result = await this.caseModel.count(countOptions)
-
-      this.logger.debug(`Counted ${result} case(s)`)
-
-      return result
-    } catch (error) {
-      this.logger.error('Error counting cases with conditions:', {
-        where: Object.keys(options?.where ?? {}),
         error,
       })
 

@@ -12,12 +12,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import format from 'date-fns/format'
 import { m } from '../../lib/messages'
-import {
-  getBaseUrlForm,
-  getLogo,
-  getSlugFromType,
-  statusMapper,
-} from '../../shared/utils'
+import { getLogo, getSlugFromType, statusMapper } from '../../shared/utils'
 import { AdminApplication } from '../../types/adminApplication'
 import { ApplicationDetails } from '../ApplicationDetails/ApplicationDetails'
 import { Organization } from '@island.is/shared/types'
@@ -25,6 +20,7 @@ import copyToClipboard from 'copy-to-clipboard'
 import * as styles from './ApplicationsTable.css'
 import { MouseEvent } from 'react'
 import { ApplicationTypes } from '@island.is/application/types'
+import { getApplicationsBaseUrl } from '@island.is/portals/core'
 
 interface Props {
   applications: AdminApplication[]
@@ -59,7 +55,7 @@ export const ApplicationsTable = ({
 
   const copyApplicationLink = (application: AdminApplication) => {
     const typeId = application.typeId as unknown as ApplicationTypes
-    const baseUrl = getBaseUrlForm()
+    const baseUrl = getApplicationsBaseUrl()
     const slug = getSlugFromType(typeId)
     const copied = copyToClipboard(`${baseUrl}/${slug}/${application.id}`)
 
@@ -101,7 +97,12 @@ export const ApplicationsTable = ({
                   {formatMessage(x.label) ?? ''}
                 </T.HeadData>
               ))}
-            <T.HeadData>{formatMessage(m.dateModified)}</T.HeadData>
+            <T.HeadData>
+              <Box display="flex" alignItems="center">
+                {formatMessage(m.dateModified)}
+                <Icon icon="chevronDown" ariaHidden />
+              </Box>
+            </T.HeadData>
             {!showAdminData && (
               <T.HeadData>{formatMessage(m.institution)}</T.HeadData>
             )}

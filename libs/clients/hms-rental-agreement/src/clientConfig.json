@@ -167,6 +167,52 @@
           }
         }
       }
+    },
+    "/contract/kt/{kt}/with-documents": {
+      "get": {
+        "tags": ["Home"],
+        "parameters": [
+          {
+            "name": "kt",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ContractWithDocuments"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ContractWithDocuments"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ContractWithDocuments"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -766,6 +812,61 @@
             "nullable": true
           },
           "property_details": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ContractWithDocuments": {
+        "type": "object",
+        "properties": {
+          "contract": {
+            "$ref": "#/components/schemas/Contract"
+          },
+          "documents": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ContractDocumentItem"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ContractDocumentItem": {
+        "type": "object",
+        "properties": {
+          "contract_document_id": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "document_type": {
+            "type": "string",
+            "nullable": true
+          },
+          "document_type_use_code": {
+            "type": "string",
+            "nullable": true
+          },
+          "document_last_date": {
+            "type": "string",
+            "nullable": true
+          },
+          "document_mime": {
+            "type": "string",
+            "nullable": true
+          },
+          "document_filename": {
+            "type": "string",
+            "nullable": true
+          },
+          "document_description": {
+            "type": "string",
+            "nullable": true
+          },
+          "document": {
             "type": "string",
             "nullable": true
           }

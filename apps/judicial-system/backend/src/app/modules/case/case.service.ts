@@ -2,8 +2,7 @@ import { option } from 'fp-ts'
 import { filterMap } from 'fp-ts/lib/Array'
 import { pipe } from 'fp-ts/lib/function'
 import pick from 'lodash/pick'
-import { Includeable, Op, Transaction } from 'sequelize'
-import { Sequelize } from 'sequelize-typescript'
+import { Includeable, literal, Op, Transaction } from 'sequelize'
 
 import {
   forwardRef,
@@ -12,7 +11,7 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common'
-import { InjectConnection, InjectModel } from '@nestjs/sequelize'
+import { InjectModel } from '@nestjs/sequelize'
 
 import { FormatMessage, IntlService } from '@island.is/cms-translations'
 import {
@@ -568,7 +567,6 @@ export const caseListInclude: Includeable[] = [
 @Injectable()
 export class CaseService {
   constructor(
-    @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(DateLog) private readonly dateLogModel: typeof DateLog,
     @InjectModel(CaseString)
     private readonly caseStringModel: typeof CaseString,
@@ -934,6 +932,16 @@ export class CaseService {
     ]
 
     if (isIndictmentCase(theCase.type)) {
+      if (theCase.splitCaseId) {
+        messages.push({
+          type: MessageType.INDICTMENT_CASE_NOTIFICATION,
+          caseId: theCase.id,
+          body: {
+            type: IndictmentCaseNotificationType.INDICTMENT_SPLIT_COMPLETED,
+          },
+        })
+      }
+
       messages.push({
         type: MessageType.DELIVERY_TO_COURT_INDICTMENT_INFO,
         user,
@@ -1056,6 +1064,35 @@ export class CaseService {
       caseId: theCase.id,
     })
 
+    for (const defendant of theCase.defendants ?? []) {
+      for (const subpoena of defendant.subpoenas ?? []) {
+        messages.push({
+          type: MessageType.DELIVERY_TO_COURT_SUBPOENA,
+          user,
+          caseId: theCase.id,
+          elementId: [defendant.id, subpoena.id],
+        })
+
+        const hasSubpoenaBeenSuccessfullyServedToDefendant =
+          subpoena?.serviceStatus &&
+          [
+            ServiceStatus.DEFENDER,
+            ServiceStatus.ELECTRONICALLY,
+            ServiceStatus.IN_PERSON,
+          ].includes(subpoena.serviceStatus)
+
+        // Only send certificates for subpoenas which have been successfully served
+        if (hasSubpoenaBeenSuccessfullyServedToDefendant) {
+          messages.push({
+            type: MessageType.DELIVERY_TO_COURT_SERVICE_CERTIFICATE,
+            user,
+            caseId: theCase.id,
+            elementId: [defendant.id, subpoena.id],
+          })
+        }
+      }
+    }
+
     if (theCase.state === CaseState.WAITING_FOR_CANCELLATION) {
       messages.push({
         type: MessageType.DELIVERY_TO_COURT_INDICTMENT_CANCELLATION_NOTICE,
@@ -1073,16 +1110,6 @@ export class CaseService {
         // Without the flag, email (2) would get notification including the court case number.
         // For more context: https://github.com/island-is/island.is/pull/17385/files#r1904268032
         body: { withCourtCaseNumber: false },
-      })
-    }
-
-    if (theCase.splitCaseId) {
-      messages.push({
-        type: MessageType.INDICTMENT_CASE_NOTIFICATION,
-        caseId: theCase.id,
-        body: {
-          type: IndictmentCaseNotificationType.INDICTMENT_SPLIT_COMPLETED,
-        },
       })
     }
 
@@ -1612,27 +1639,27 @@ export class CaseService {
   ): Promise<void> {
     const messages: Message[] = []
 
-    theCase.defendants?.forEach((defendant) => {
-      const subpoena = defendant.subpoenas?.[0]
+    for (const defendant of theCase.defendants ?? []) {
+      for (const subpoena of defendant.subpoenas ?? []) {
+        const hasSubpoenaBeenSuccessfullyServedToDefendant =
+          subpoena?.serviceStatus &&
+          [
+            ServiceStatus.DEFENDER,
+            ServiceStatus.ELECTRONICALLY,
+            ServiceStatus.IN_PERSON,
+          ].includes(subpoena.serviceStatus)
 
-      const hasSubpoenaBeenSuccessfullyServedToDefendant =
-        subpoena?.serviceStatus &&
-        [
-          ServiceStatus.DEFENDER,
-          ServiceStatus.ELECTRONICALLY,
-          ServiceStatus.IN_PERSON,
-        ].includes(subpoena.serviceStatus)
-
-      // Only send certificates for subpoenas which have been successfully served
-      if (hasSubpoenaBeenSuccessfullyServedToDefendant) {
-        messages.push({
-          type: MessageType.DELIVERY_TO_COURT_SERVICE_CERTIFICATE,
-          user,
-          caseId: theCase.id,
-          elementId: [defendant.id, subpoena.id],
-        })
+        // Only send certificates for subpoenas which have been successfully served
+        if (hasSubpoenaBeenSuccessfullyServedToDefendant) {
+          messages.push({
+            type: MessageType.DELIVERY_TO_COURT_SERVICE_CERTIFICATE,
+            user,
+            caseId: theCase.id,
+            elementId: [defendant.id, subpoena.id],
+          })
+        }
       }
-    })
+    }
 
     return this.messageService.sendMessagesToQueue(messages)
   }
@@ -1919,68 +1946,117 @@ export class CaseService {
     })
   }
 
-  getConnectedIndictmentCases(
-    caseId: string,
-    defendant: Defendant,
-  ): Promise<Case[]> {
+  async getConnectedIndictmentCases(theCase: Case): Promise<Case[]> {
+    if (!theCase.defendants || theCase.defendants.length === 0) {
+      return []
+    }
+
+    // Build "match any of these defendants" conditions
+    const defendantOrConditions = theCase.defendants.map((defendant) =>
+      defendant.noNationalId
+        ? { nationalId: defendant.nationalId, name: defendant.name }
+        : {
+            nationalId: {
+              [Op.in]: normalizeAndFormatNationalId(defendant.nationalId),
+            },
+          },
+    )
+
     return this.caseRepositoryService.findAll({
       include: [
-        { model: Institution, as: 'court' },
+        { model: Institution, as: 'court', attributes: ['id', 'name'] },
         {
           model: Defendant,
           as: 'defendants',
           required: true,
-          where: defendant.noNationalId
-            ? { nationalId: defendant.nationalId, name: defendant.name }
-            : {
-                nationalId: {
-                  [Op.in]: normalizeAndFormatNationalId(defendant.nationalId),
-                },
-              },
+          attributes: ['id', 'noNationalId', 'nationalId', 'name'],
+          // At least one matching defendant per condition
+          where: { [Op.or]: defendantOrConditions },
         },
       ],
-      attributes: ['id', 'courtCaseNumber', 'type', 'state'],
+      attributes: ['id', 'courtCaseNumber'],
       where: {
         [Op.and]: {
           isArchived: false,
           type: CaseType.INDICTMENT,
-          id: { [Op.ne]: caseId },
-          state: CaseState.RECEIVED,
+          id: { [Op.ne]: theCase.id },
+          state: [CaseState.SUBMITTED, CaseState.RECEIVED],
         },
       },
     })
   }
 
-  async create(caseToCreate: CreateCaseDto, user: TUser): Promise<Case> {
-    return this.sequelize
-      .transaction(async (transaction) => {
-        const theCase = await this.createCase(
-          {
-            ...caseToCreate,
-            origin: CaseOrigin.RVG,
-            creatingProsecutorId: user.id,
-            prosecutorId: isIndictmentCase(caseToCreate.type)
-              ? caseToCreate.prosecutorId
-              : user.role === UserRole.PROSECUTOR
-              ? user.id
-              : undefined,
-            courtId: isRequestCase(caseToCreate.type)
-              ? user.institution?.defaultCourtId
-              : undefined,
-            prosecutorsOfficeId: user.institution?.id,
+  async getCandidateMergeCases(theCase: Case): Promise<Case[]> {
+    if (!theCase.defendants || theCase.defendants.length === 0) {
+      return []
+    }
+
+    // Build "match any of these defendants" conditions
+    const defendantOrConditions = theCase.defendants.map((defendant) =>
+      defendant.noNationalId
+        ? { nationalId: defendant.nationalId, name: defendant.name }
+        : {
+            nationalId: {
+              [Op.in]: normalizeAndFormatNationalId(defendant.nationalId),
+            },
           },
-          transaction,
-        )
+    )
 
-        await this.defendantService.createForNewCase(
-          theCase.id,
-          {},
-          transaction,
-        )
+    const expectedCount = theCase.defendants.length
 
-        return theCase
-      })
-      .then((theCase) => this.findById(theCase.id))
+    return this.caseRepositoryService.findAll({
+      include: [
+        {
+          model: Defendant,
+          as: 'defendants',
+          required: true,
+          attributes: [],
+          // At least one matching defendant per condition
+          where: { [Op.or]: defendantOrConditions },
+        },
+      ],
+      attributes: ['id', 'courtCaseNumber'],
+      where: {
+        [Op.and]: {
+          isArchived: false,
+          id: { [Op.ne]: theCase.id },
+          type: CaseType.INDICTMENT,
+          state: CaseState.RECEIVED,
+          courtId: theCase.courtId,
+        },
+      },
+      // Ensure all defendants matched by grouping and counting
+      group: ['Case.id'],
+      having: literal(`COUNT(DISTINCT "defendants"."id") = ${expectedCount}`),
+    })
+  }
+
+  async create(
+    caseToCreate: CreateCaseDto,
+    user: TUser,
+    transaction: Transaction,
+  ): Promise<Case> {
+    const theCase = await this.createCase(
+      {
+        ...caseToCreate,
+        origin: CaseOrigin.RVG,
+        creatingProsecutorId: user.id,
+        prosecutorId: isIndictmentCase(caseToCreate.type)
+          ? caseToCreate.prosecutorId
+          : user.role === UserRole.PROSECUTOR
+          ? user.id
+          : undefined,
+        courtId: isRequestCase(caseToCreate.type)
+          ? user.institution?.defaultCourtId
+          : undefined,
+        prosecutorsOfficeId: user.institution?.id,
+      },
+      transaction,
+    )
+
+    await this.defendantService.createForNewCase(theCase.id, {}, transaction)
+
+    return this.findById(theCase.id, false, transaction)
   }
 
   private async handleDateLogUpdates(
@@ -2245,6 +2321,7 @@ export class CaseService {
     theCase: Case,
     update: UpdateCase,
     user: TUser,
+    transaction: Transaction,
     returnUpdatedCase = true,
   ): Promise<Case | undefined> {
     const isReceivingCase =
@@ -2291,255 +2368,260 @@ export class CaseService {
       update = transitionCase(CaseTransition.MOVE, theCase, user, update)
     }
 
-    return this.sequelize
-      .transaction(async (transaction) => {
-        await this.handleDateLogUpdates(theCase, update, transaction)
-        await this.handleCaseStringUpdates(theCase, update, transaction)
+    await this.handleDateLogUpdates(theCase, update, transaction)
+    await this.handleCaseStringUpdates(theCase, update, transaction)
 
-        if (Object.keys(update).length > 0) {
-          await this.caseRepositoryService.update(theCase.id, update, {
+    if (Object.keys(update).length > 0) {
+      await this.caseRepositoryService.update(theCase.id, update, {
+        transaction,
+      })
+    }
+
+    // Update police case numbers of case files if necessary
+    await this.handlePoliceCaseNumbersUpdate(theCase, update, transaction)
+
+    // Reset case file states if court case number is changed
+    if (
+      theCase.courtCaseNumber &&
+      update.courtCaseNumber &&
+      update.courtCaseNumber !== theCase.courtCaseNumber
+    ) {
+      await this.fileService.resetCaseFileStates(theCase.id, transaction)
+    }
+
+    // Handle first court session creation if receiving an indictment case
+    // which should have court sessions
+    if (isReceivingIndictmentCase && theCase.withCourtSessions) {
+      await this.handleCreateFirstCourtSession(theCase, transaction)
+    }
+
+    // Create new subpoenas if scheduling a new arraignment date for an indictment case
+    if (schedulingNewArraignmentDateForIndictmentCase && theCase.defendants) {
+      const dsPairs = await Promise.all(
+        theCase.defendants
+          .filter((defendant) => !defendant.isAlternativeService)
+          .map(async (defendant) => {
+            const subpoena = await this.subpoenaService.createSubpoena(
+              defendant.id,
+              theCase.id,
+              transaction,
+              updatedArraignmentDate?.date,
+              updatedArraignmentDate?.location,
+              defendant.subpoenaType,
+            )
+
+            return { defendant, subpoena }
+          }),
+      )
+
+      // Add court documents if a court session exists
+      if (
+        theCase.withCourtSessions &&
+        theCase.courtSessions &&
+        theCase.courtSessions.length > 0
+      ) {
+        for (const { defendant, subpoena } of dsPairs) {
+          const name = `Fyrirkall ${defendant.name} ${formatDate(
+            subpoena.created,
+          )}`
+
+          await this.courtDocumentService.create(
+            theCase.id,
+            {
+              documentType: CourtDocumentType.GENERATED_DOCUMENT,
+              name,
+              generatedPdfUri: `/api/case/${theCase.id}/subpoena/${defendant.id}/${subpoena.id}/${name}`,
+            },
             transaction,
-          })
-        }
-
-        // Update police case numbers of case files if necessary
-        await this.handlePoliceCaseNumbersUpdate(theCase, update, transaction)
-
-        // Reset case file states if court case number is changed
-        if (
-          theCase.courtCaseNumber &&
-          update.courtCaseNumber &&
-          update.courtCaseNumber !== theCase.courtCaseNumber
-        ) {
-          await this.fileService.resetCaseFileStates(theCase.id, transaction)
-        }
-
-        // Handle first court session creation if receiving an indictment case
-        // which should have court sessions
-        if (isReceivingIndictmentCase && theCase.withCourtSessions) {
-          await this.handleCreateFirstCourtSession(theCase, transaction)
-        }
-
-        // Create new subpoenas if scheduling a new arraignment date for an indictment case
-        if (
-          schedulingNewArraignmentDateForIndictmentCase &&
-          theCase.defendants
-        ) {
-          const dsPairs = await Promise.all(
-            theCase.defendants
-              .filter((defendant) => !defendant.isAlternativeService)
-              .map(async (defendant) => {
-                const subpoena = await this.subpoenaService.createSubpoena(
-                  defendant.id,
-                  theCase.id,
-                  transaction,
-                  updatedArraignmentDate?.date,
-                  updatedArraignmentDate?.location,
-                  defendant.subpoenaType,
-                )
-
-                return { defendant, subpoena }
-              }),
           )
-
-          // Add court documents if a court session exists
-          if (
-            theCase.withCourtSessions &&
-            theCase.courtSessions &&
-            theCase.courtSessions.length > 0
-          ) {
-            for (const { defendant, subpoena } of dsPairs) {
-              const name = `Fyrirkall ${defendant.name} ${formatDate(
-                subpoena.created,
-              )}`
-
-              await this.courtDocumentService.create(
-                theCase.id,
-                {
-                  documentType: CourtDocumentType.GENERATED_DOCUMENT,
-                  name,
-                  generatedPdfUri: `/api/case/${theCase.id}/subpoena/${defendant.id}/${subpoena.id}/${name}`,
-                },
-                transaction,
-              )
-            }
-          }
         }
+      }
+    }
 
-        // Ensure that verdicts exist at this stage, if they don't exist we create them
-        if (completingIndictmentCaseWithRuling && theCase.defendants) {
-          await Promise.all(
-            theCase.defendants.map((defendant) => {
-              if (!defendant.verdicts || defendant.verdicts.length === 0) {
-                return this.verdictService.createVerdict(
-                  theCase.id,
-                  { defendantId: defendant.id },
-                  transaction,
+    // Ensure that verdicts exist at this stage, if they don't exist we create them
+    if (completingIndictmentCaseWithRuling && theCase.defendants) {
+      await Promise.all(
+        theCase.defendants.map((defendant) => {
+          if (!defendant.verdicts || defendant.verdicts.length === 0) {
+            return this.verdictService.createVerdict(
+              theCase.id,
+              { defendantId: defendant.id },
+              transaction,
+            )
+          }
+        }),
+      )
+    }
+
+    // if ruling decision is changed to other decision
+    // we have to clean up idle verdicts
+    const hasNewDecision =
+      theCase.indictmentDecision === IndictmentDecision.COMPLETING &&
+      !!update.indictmentDecision &&
+      [
+        IndictmentDecision.POSTPONING,
+        IndictmentDecision.POSTPONING_UNTIL_VERDICT,
+        IndictmentDecision.REDISTRIBUTING,
+        IndictmentDecision.SCHEDULING,
+      ].includes(update.indictmentDecision)
+
+    const hasNewRulingDecision =
+      theCase.indictmentRulingDecision ===
+        CaseIndictmentRulingDecision.RULING &&
+      !!update.indictmentRulingDecision &&
+      [
+        CaseIndictmentRulingDecision.CANCELLATION,
+        CaseIndictmentRulingDecision.FINE,
+        CaseIndictmentRulingDecision.DISMISSAL,
+        CaseIndictmentRulingDecision.MERGE,
+        CaseIndictmentRulingDecision.WITHDRAWAL,
+      ].includes(update.indictmentRulingDecision)
+
+    if (theCase.defendants && (hasNewDecision || hasNewRulingDecision)) {
+      await Promise.all(
+        theCase.defendants.flatMap((defendant) =>
+          pipe(
+            defendant.verdicts ?? [],
+            filterMap((verdict) => {
+              if (verdict) {
+                return option.some(
+                  this.verdictService.deleteVerdict(verdict, transaction),
                 )
               }
+
+              return option.none
             }),
-          )
-        }
+          ),
+        ),
+      )
+    }
 
-        // if ruling decision is changed to other decision
-        // we have to clean up idle verdicts
-        const hasNewDecision =
-          theCase.indictmentDecision === IndictmentDecision.COMPLETING &&
-          !!update.indictmentDecision &&
-          [
-            IndictmentDecision.POSTPONING,
-            IndictmentDecision.POSTPONING_UNTIL_VERDICT,
-            IndictmentDecision.REDISTRIBUTING,
-            IndictmentDecision.SCHEDULING,
-          ].includes(update.indictmentDecision)
+    // Remove uploaded ruling files if an indictment case is completed without a ruling
+    if (completingIndictmentCaseWithoutRuling && theCase.caseFiles) {
+      await Promise.all(
+        theCase.caseFiles
+          .filter((caseFile) => caseFile.category === CaseFileCategory.RULING)
+          .map((caseFile) =>
+            this.fileService.deleteCaseFile(theCase, caseFile, transaction),
+          ),
+      )
+    }
 
-        const hasNewRulingDecision =
-          theCase.indictmentRulingDecision ===
-            CaseIndictmentRulingDecision.RULING &&
-          !!update.indictmentRulingDecision &&
-          [
-            CaseIndictmentRulingDecision.CANCELLATION,
-            CaseIndictmentRulingDecision.FINE,
-            CaseIndictmentRulingDecision.DISMISSAL,
-            CaseIndictmentRulingDecision.MERGE,
-            CaseIndictmentRulingDecision.WITHDRAWAL,
-          ].includes(update.indictmentRulingDecision)
+    if (
+      completingIndictmentCase &&
+      theCase.indictmentRulingDecision === CaseIndictmentRulingDecision.MERGE &&
+      theCase.mergeCaseId
+    ) {
+      const parentCaseId = theCase.mergeCaseId
+      const parentCase = await this.findById(parentCaseId, false, transaction)
 
-        if (theCase.defendants && (hasNewDecision || hasNewRulingDecision)) {
-          await Promise.all(
-            theCase.defendants.flatMap((defendant) =>
-              pipe(
-                defendant.verdicts ?? [],
-                filterMap((verdict) => {
-                  if (verdict) {
-                    return option.some(
-                      this.verdictService.deleteVerdict(verdict, transaction),
-                    )
-                  }
+      const parentCaseCourtSessions = parentCase.courtSessions
+      const latestCourtSession =
+        parentCaseCourtSessions && parentCaseCourtSessions.length > 0
+          ? parentCaseCourtSessions[parentCaseCourtSessions.length - 1]
+          : undefined
 
-                  return option.none
-                }),
-              ),
-            ),
-          )
-        }
+      // ensure there exists at least one court session in the parent case
+      if (parentCase.withCourtSessions && latestCourtSession) {
+        const isCourtSessionActive =
+          latestCourtSession && !latestCourtSession.isConfirmed
+        const courtSessionId = isCourtSessionActive
+          ? latestCourtSession.id
+          : (await this.courtSessionService.create(parentCase, transaction)).id
 
-        // Remove uploaded ruling files if an indictment case is completed without a ruling
-        if (completingIndictmentCaseWithoutRuling && theCase.caseFiles) {
-          await Promise.all(
-            theCase.caseFiles
-              .filter(
-                (caseFile) => caseFile.category === CaseFileCategory.RULING,
-              )
-              .map((caseFile) =>
-                this.fileService.deleteCaseFile(theCase, caseFile, transaction),
-              ),
-          )
-        }
-
-        if (
-          completingIndictmentCase &&
-          theCase.indictmentRulingDecision ===
-            CaseIndictmentRulingDecision.MERGE &&
-          theCase.mergeCaseId
-        ) {
-          const parentCaseId = theCase.mergeCaseId
-          const parentCase = await this.findById(
-            parentCaseId,
-            false,
-            transaction,
-          )
-
-          const parentCaseCourtSessions = parentCase.courtSessions
-          const latestCourtSession =
-            parentCaseCourtSessions && parentCaseCourtSessions.length > 0
-              ? parentCaseCourtSessions[parentCaseCourtSessions.length - 1]
-              : undefined
-
-          // ensure there exists at least one court session in the parent case
-          if (parentCase.withCourtSessions && latestCourtSession) {
-            const isCourtSessionActive =
-              latestCourtSession && !latestCourtSession.isConfirmed
-            const courtSessionId = isCourtSessionActive
-              ? latestCourtSession.id
-              : (await this.courtSessionService.create(parentCase, transaction))
-                  .id
-
-            await this.courtDocumentService.updateMergedCourtDocuments({
-              parentCaseId,
-              parentCaseCourtSessionId: courtSessionId,
-              caseId: theCase.id,
-              transaction,
-            })
-            const caseSentToCourt = EventLog.getEventLogDateByEventType(
-              [EventType.CASE_SENT_TO_COURT, EventType.INDICTMENT_CONFIRMED],
-              theCase.eventLogs,
-            )
-            await this.courtSessionService.createOrUpdateCourtSessionString({
-              caseId: parentCaseId,
-              courtSessionId,
-              mergedCaseId: theCase.id,
-              update: {
-                stringType: CourtSessionStringType.ENTRIES,
-                value: `Mál nr. ${
-                  theCase.courtCaseNumber
-                } sem var höfðað á hendur ákærða${
-                  caseSentToCourt
-                    ? ` með ákæru útgefinni ${formatDate(
-                        caseSentToCourt,
-                        'PPP',
-                      )}`
-                    : ''
-                }, er nú einnig tekið fyrir og það sameinað þessu máli, sbr. heimild í 1. mgr. 169. gr. laga nr. 88/2008 um meðferð sakamála, og verða þau eftirleiðis rekin undir málsnúmeri þessa máls.`,
-              },
-              transaction,
-            })
-          }
-        }
-
-        const updatedCase = await this.findById(theCase.id, true, transaction)
-
-        await this.handleEventLogUpdates(
-          theCase,
-          updatedCase,
-          user,
+        await this.courtDocumentService.updateMergedCourtDocuments({
+          parentCaseId,
+          parentCaseCourtSessionId: courtSessionId,
+          caseId: theCase.id,
           transaction,
+        })
+
+        const caseSentToCourt = EventLog.getEventLogDateByEventType(
+          [EventType.CASE_SENT_TO_COURT, EventType.INDICTMENT_CONFIRMED],
+          theCase.eventLogs,
         )
 
-        return updatedCase
-      })
-      .then(async (updatedCase) => {
-        await this.addMessagesForUpdatedCaseToQueue(theCase, updatedCase, user)
+        await this.courtSessionService.createOrUpdateCourtSessionString({
+          caseId: parentCaseId,
+          courtSessionId,
+          mergedCaseId: theCase.id,
+          update: {
+            stringType: CourtSessionStringType.ENTRIES,
+            value: `Mál nr. ${
+              theCase.courtCaseNumber
+            } sem var höfðað á hendur ákærða${
+              caseSentToCourt
+                ? ` með ákæru útgefinni ${formatDate(caseSentToCourt, 'PPP')}`
+                : ''
+            }, er nú einnig tekið fyrir og það sameinað þessu máli, sbr. heimild í 1. mgr. 169. gr. laga nr. 88/2008 um meðferð sakamála, og verða þau eftirleiðis rekin undir málsnúmeri þessa máls.`,
+          },
+          transaction,
+        })
+      }
+    }
 
-        if (isReceivingCase) {
-          this.eventService.postEvent(CaseTransition.RECEIVE, updatedCase)
-        }
+    const updatedCase = await this.findById(theCase.id, true, transaction)
 
-        if (requiresCourtTransition) {
-          this.eventService.postEvent(
-            CaseTransition.MOVE,
-            updatedCase ?? theCase,
-            false,
-            {
-              from: theCase.court?.name,
-              to: updatedCase?.court?.name,
-            },
-          )
-        }
+    await this.handleEventLogUpdates(theCase, updatedCase, user, transaction)
 
-        if (returnUpdatedCase) {
-          return updatedCase
-        }
-      })
+    await this.addMessagesForUpdatedCaseToQueue(theCase, updatedCase, user)
+
+    if (isReceivingCase) {
+      this.eventService.postEvent(CaseTransition.RECEIVE, updatedCase)
+    }
+
+    if (requiresCourtTransition) {
+      this.eventService.postEvent(
+        CaseTransition.MOVE,
+        updatedCase ?? theCase,
+        false,
+        {
+          from: theCase.court?.name,
+          to: updatedCase?.court?.name,
+        },
+      )
+    }
+
+    if (returnUpdatedCase) {
+      return updatedCase
+    }
   }
 
   async requestCourtRecordSignature(
     theCase: Case,
     user: TUser,
+    method: 'audkenni' | 'mobile',
   ): Promise<SigningServiceResponse> {
     await this.refreshFormatMessage()
 
     const pdf = await getCourtRecordPdfAsString(theCase, this.formatMessage)
+
+    if (method === 'audkenni') {
+      return this.signingService
+        .requestSignatureAudkenni(
+          user.nationalId,
+          user.name,
+          'Ísland',
+          'courtRecord.pdf',
+          pdf,
+          'Undirrita skjal - Öryggistala',
+        )
+        .catch((error) => {
+          this.eventService.postErrorEvent(
+            `Failed to request a court record signature via ${method}`,
+            {
+              caseId: theCase.id,
+              policeCaseNumbers: theCase.policeCaseNumbers.join(', '),
+              courtCaseNumber: theCase.courtCaseNumber,
+              actor: user.name,
+              institution: user.institution?.name,
+            },
+            error,
+          )
+
+          throw error
+        })
+    }
 
     return this.signingService
       .requestSignature(
@@ -2552,7 +2634,7 @@ export class CaseService {
       )
       .catch((error) => {
         this.eventService.postErrorEvent(
-          'Failed to request a court record signature',
+          `Failed to request a court record signature via ${method}`,
           {
             caseId: theCase.id,
             policeCaseNumbers: theCase.policeCaseNumbers.join(', '),
@@ -2571,14 +2653,17 @@ export class CaseService {
     theCase: Case,
     user: TUser,
     documentToken: string,
+    method: 'audkenni' | 'mobile',
+    transaction: Transaction,
   ): Promise<SignatureConfirmationResponse> {
     // This method should be called immediately after requestCourtRecordSignature
-
     try {
       const courtRecordPdf = await this.signingService.waitForSignature(
         'courtRecord.pdf',
         documentToken,
+        method,
       )
+
       const awsSuccess = await this.uploadSignedCourtRecordPdfToS3(
         theCase,
         courtRecordPdf,
@@ -2595,6 +2680,7 @@ export class CaseService {
           courtRecordSignatureDate: nowFactory(),
         },
         user,
+        transaction,
         false,
       )
 
@@ -2603,7 +2689,7 @@ export class CaseService {
       return { documentSigned: true }
     } catch (error) {
       this.eventService.postErrorEvent(
-        'Failed to get a court record signature confirmation',
+        `Failed to get a court record signature confirmation via ${method}`,
         {
           caseId: theCase.id,
           policeCaseNumbers: theCase.policeCaseNumbers.join(', '),
@@ -2626,28 +2712,63 @@ export class CaseService {
     }
   }
 
-  async requestRulingSignature(theCase: Case): Promise<SigningServiceResponse> {
-    await this.refreshFormatMessage()
+  async requestRulingSignature(
+    theCase: Case,
+    method: 'audkenni' | 'mobile',
+  ): Promise<SigningServiceResponse> {
+    const judge = theCase.judge
+    if (!judge) {
+      throw new InternalServerErrorException(
+        'Failed to request a ruling signature - judge not found',
+      )
+    }
 
+    await this.refreshFormatMessage()
     const pdf = await getRulingPdfAsString(theCase, this.formatMessage)
+    if (method === 'audkenni') {
+      return this.signingService
+        .requestSignatureAudkenni(
+          judge.nationalId,
+          judge.name,
+          'Ísland',
+          'ruling.pdf',
+          pdf,
+          'Undirrita skjal - Öryggistala',
+        )
+        .catch((error) => {
+          this.eventService.postErrorEvent(
+            `Failed to request a ruling signature via ${method}`,
+            {
+              caseId: theCase.id,
+              policeCaseNumbers: theCase.policeCaseNumbers.join(', '),
+              courtCaseNumber: theCase.courtCaseNumber,
+              actor: theCase.judge?.name,
+              institution: theCase.judge?.institution?.name,
+            },
+            error,
+          )
+
+          throw error
+        })
+    }
 
     return this.signingService
       .requestSignature(
-        theCase.judge?.mobileNumber ?? '',
+        judge.mobileNumber,
         'Undirrita skjal - Öryggistala',
-        theCase.judge?.name ?? '',
+        judge.name,
         'Ísland',
         'ruling.pdf',
         pdf,
       )
       .catch((error) => {
         this.eventService.postErrorEvent(
-          'Failed to request a ruling signature',
+          `Failed to request a ruling signature via ${method}`,
           {
             caseId: theCase.id,
             policeCaseNumbers: theCase.policeCaseNumbers.join(', '),
             courtCaseNumber: theCase.courtCaseNumber,
-            actor: theCase.judge?.name,
+            actor: judge.name,
             institution: theCase.judge?.institution?.name,
           },
           error,
@@ -2661,13 +2782,17 @@ export class CaseService {
     theCase: Case,
     user: TUser,
     documentToken: string,
+    method: 'audkenni' | 'mobile',
+    transaction: Transaction,
   ): Promise<SignatureConfirmationResponse> {
     // This method should be called immediately after requestRulingSignature
     try {
       const signedPdf = await this.signingService.waitForSignature(
         'ruling.pdf',
         documentToken,
+        method,
       )
+
       const awsSuccess = await this.uploadSignedRulingPdfToS3(
         theCase,
         signedPdf,
@@ -2681,6 +2806,7 @@ export class CaseService {
         theCase,
         { rulingSignatureDate: nowFactory() },
         user,
+        transaction,
         false,
       )
 
@@ -2689,7 +2815,7 @@ export class CaseService {
       return { documentSigned: true }
     } catch (error) {
       this.eventService.postErrorEvent(
-        'Failed to get a ruling signature confirmation',
+        `Failed to get a ruling signature confirmation via ${method}`,
         {
           caseId: theCase.id,
           policeCaseNumbers: theCase.policeCaseNumbers.join(', '),
@@ -2712,7 +2838,11 @@ export class CaseService {
     }
   }
 
-  async extend(theCase: Case, user: TUser): Promise<Case> {
+  async extend(
+    theCase: Case,
+    user: TUser,
+    transaction: Transaction,
+  ): Promise<Case> {
     const copiedExtendRestrictionCaseFields: (keyof Case)[] = [
       'origin',
       'type',
@@ -2733,6 +2863,7 @@ export class CaseService {
       'legalArguments',
       'requestProsecutorOnlySession',
       'prosecutorOnlySessionRequest',
+      'policeDefendantNationalId',
     ]
 
     const copiedExtendInvestigationCaseFields: (keyof Case)[] = [
@@ -2740,83 +2871,65 @@ export class CaseService {
       'demands',
     ]
 
-    return this.sequelize.transaction(async (transaction) => {
-      const extendedCase = await this.createCase(
-        {
-          ...(isRestrictionCase(theCase.type)
-            ? pick(theCase, copiedExtendRestrictionCaseFields)
-            : pick(theCase, copiedExtendInvestigationCaseFields)),
-          parentCaseId: theCase.id,
-          initialRulingDate: theCase.initialRulingDate ?? theCase.rulingDate,
-          creatingProsecutorId: user.id,
-          prosecutorId: user.id,
-          prosecutorsOfficeId: user.institution?.id,
-        },
-        transaction,
-      )
+    const extendedCase = await this.createCase(
+      {
+        ...(isRestrictionCase(theCase.type)
+          ? pick(theCase, copiedExtendRestrictionCaseFields)
+          : pick(theCase, copiedExtendInvestigationCaseFields)),
+        parentCaseId: theCase.id,
+        initialRulingDate: theCase.initialRulingDate ?? theCase.rulingDate,
+        creatingProsecutorId: user.id,
+        prosecutorId: user.id,
+        prosecutorsOfficeId: user.institution?.id,
+      },
+      transaction,
+    )
 
-      if (theCase.defendants && theCase.defendants?.length > 0) {
-        await Promise.all(
-          theCase.defendants?.map((defendant) =>
-            this.defendantService.createForNewCase(
-              extendedCase.id,
-              {
-                noNationalId: defendant.noNationalId,
-                nationalId: defendant.nationalId,
-                name: defendant.name,
-                gender: defendant.gender,
-                address: defendant.address,
-                citizenship: defendant.citizenship,
-              },
-              transaction,
-            ),
+    if (theCase.defendants && theCase.defendants?.length > 0) {
+      await Promise.all(
+        theCase.defendants?.map((defendant) =>
+          this.defendantService.createForNewCase(
+            extendedCase.id,
+            {
+              noNationalId: defendant.noNationalId,
+              nationalId: defendant.nationalId,
+              name: defendant.name,
+              gender: defendant.gender,
+              address: defendant.address,
+              citizenship: defendant.citizenship,
+            },
+            transaction,
           ),
-        )
-      }
+        ),
+      )
+    }
 
-      return extendedCase
-    })
+    return extendedCase
   }
 
   async splitDefendantFromCase(
     theCase: Case,
     defendant: Defendant,
+    transaction: Transaction,
   ): Promise<Case> {
-    const transaction = await this.sequelize.transaction()
+    const splitCase = await this.caseRepositoryService.split(
+      theCase.id,
+      defendant.id,
+      { transaction },
+    )
 
-    try {
-      const splitCase = await this.caseRepositoryService.split(
-        theCase.id,
-        defendant.id,
-        { transaction },
-      )
+    const fullSplitCase = await this.findById(splitCase.id, false, transaction)
 
-      const fullSplitCase = await this.findById(
-        splitCase.id,
-        false,
-        transaction,
-      )
+    await this.handleCreateFirstCourtSession(fullSplitCase, transaction)
 
-      await this.handleCreateFirstCourtSession(fullSplitCase, transaction)
-
-      await transaction.commit()
-
-      return splitCase
-    } catch (error) {
-      await transaction.rollback()
-
-      this.logger.error(
-        `Failed to split defendant ${defendant.id} from case ${theCase.id}`,
-        { error },
-      )
-
-      throw new InternalServerErrorException(
-        `Failed to split defendant ${defendant.id} from case ${theCase.id}`,
-      )
-    }
+    return splitCase
   }
 
-  async createCourtCase(theCase: Case, user: TUser): Promise<Case> {
+  async createCourtCase(
+    theCase: Case,
+    user: TUser,
+    transaction: Transaction,
+  ): Promise<Case> {
     const receivalDate =
       EventLog.getEventLogDateByEventType(
         [EventType.CASE_RECEIVED_BY_COURT, EventType.INDICTMENT_CONFIRMED],
@@ -2834,13 +2947,14 @@ export class CaseService {
       theCase.indictmentSubtypes,
     )
 
-    const updatedCase = (await this.update(
+    const updatedCase = await this.update(
       theCase,
       { courtCaseNumber },
       user,
+      transaction,
       true,
-    )) as Case
+    )
 
-    return updatedCase
+    return updatedCase as Case
   }
 }

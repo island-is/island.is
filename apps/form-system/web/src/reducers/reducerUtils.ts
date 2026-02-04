@@ -216,8 +216,33 @@ export const decrement = (
     DefaultContext,
     ApolloCache<any>
   >,
+  updateDependenciesMutation: MutationTuple<
+    any,
+    OperationVariables,
+    DefaultContext,
+    ApolloCache<any>
+  >,
 ): ApplicationState => {
   const [submitScreen] = submitScreenMutation
+  const [updateDependencies] = updateDependenciesMutation
+  const errors = state.errors ?? []
+  const isValid = state.isValid ?? true
+
+  if (errors.length > 0 || !isValid) {
+    return { ...state, errors }
+  }
+
+  state.currentScreen = setCurrentScreen(
+    state,
+    currentSectionIndex,
+    currentScreenIndex,
+  ).currentScreen
+
+  state.currentSection = setCurrentScreen(
+    state,
+    currentSectionIndex,
+    currentScreenIndex,
+  ).currentSection
 
   submitScreen({
     variables: {
@@ -234,6 +259,23 @@ export const decrement = (
   }).catch((error) => {
     console.error('Error decrementing screen:', error)
   })
+  if (
+    updateDependencies &&
+    state.currentSection.data.sectionType === SectionTypes.INPUT
+  ) {
+    updateDependencies({
+      variables: {
+        input: {
+          id: state.application.id,
+          updateApplicationDto: {
+            dependencies: state.application.dependencies,
+          },
+        },
+      },
+    }).catch((error) => {
+      console.error('Error updating dependencies:', error)
+    })
+  }
 
   let resultSections = state.sections ?? []
   let resultCurrentScreen = state.currentScreen
@@ -297,6 +339,85 @@ export const decrement = (
     currentScreen: resultCurrentScreen,
     sections: resultSections,
     errors: [],
+    screenErrors: [],
+  }
+}
+
+export const jumpToScreen = (
+  state: ApplicationState,
+  sectionIndex: number,
+  screenIndex: number,
+  updateCompletedMutation: MutationTuple<
+    any,
+    OperationVariables,
+    DefaultContext,
+    ApolloCache<any>
+  >,
+): ApplicationState => {
+  const [updateCompleted] = updateCompletedMutation
+  const sections = state.sections ?? []
+  if (sectionIndex < 0 || sectionIndex >= sections.length) {
+    return state
+  }
+
+  // Reset isCompleted for sections and screens starting from sectionIndex
+  const updatedSections = sections.map((section, idx) => {
+    if (idx < sectionIndex) return section
+
+    const updatedScreens = Array.isArray(section.screens)
+      ? section.screens.map((screen, sIdx) =>
+          screen
+            ? idx > sectionIndex || sIdx >= screenIndex
+              ? ({ ...screen, isCompleted: false } as FormSystemScreen)
+              : screen
+            : null,
+        )
+      : section.screens
+
+    return {
+      ...section,
+      isCompleted: false,
+      screens: updatedScreens,
+    } as FormSystemSection
+  })
+
+  // Collect IDs to remove from application.completed
+  const idsToRemove: string[] = []
+  for (let i = sectionIndex; i < sections.length; i++) {
+    const sec = sections[i]
+    if (sec?.id != null) {
+      idsToRemove.push(sec.id)
+    }
+    const scrs = sec?.screens ?? []
+    for (let sIdx = 0; sIdx < scrs.length; sIdx++) {
+      const sc = scrs[sIdx]
+      if (sc?.id != null) {
+        if (i > sectionIndex || sIdx >= screenIndex) {
+          idsToRemove.push(sc.id)
+        }
+      }
+    }
+  }
+
+  updateCompleted({
+    variables: {
+      input: {
+        id: state.application.id,
+        updateApplicationDto: {
+          completed: idsToRemove,
+        },
+      },
+    },
+  }).catch((error) => {
+    console.error('Error updating completed array:', error)
+  })
+
+  return {
+    ...state,
+    sections: updatedSections,
+    application: {
+      ...state.application,
+    },
   }
 }
 

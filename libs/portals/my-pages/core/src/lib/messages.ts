@@ -944,6 +944,19 @@ export const m = defineMessages({
     id: 'service.portal:lists',
     defaultMessage: 'Listar',
   },
+  contracts: {
+    id: 'service.portal:contracts',
+    defaultMessage: 'Húsaleigusamningar',
+  },
+  contract: {
+    id: 'service.portal:contract',
+    defaultMessage: 'Samningur',
+  },
+  contractsDescription: {
+    id: 'service.portal:contracts-description',
+    defaultMessage:
+      'Upplýsingar um þá samninga sem þú átt í leiguskrá Húsnæðis- og Mannvirkjastofnunar',
+  },
   delegation: {
     id: 'service.portal:delegation',
     defaultMessage: 'Mín réttindi',
@@ -1640,6 +1653,11 @@ export const m = defineMessages({
     defaultMessage:
       'Húsnæðis- og mannvirkjastofnun hefur umsjón með gögnum um fasteignir.',
   },
+  rentalAgreementsTooltip: {
+    id: 'service.portal:rental-agreements-tooltip',
+    defaultMessage:
+      'Húsnæðis- og mannvirkjastofnun hefur umsjón með gögnum um leigusamninga.',
+  },
   hmsHousingBenefitsTooltip: {
     id: 'service.portal:housing-benefits-tooltip',
     defaultMessage:
@@ -2026,6 +2044,10 @@ export const m = defineMessages({
     id: 'service.portal:sort-by',
     defaultMessage: 'Raða eftir',
   },
+  showResults: {
+    id: 'service.portal:show-results',
+    defaultMessage: 'Sýna niðurstöður',
+  },
   bloodtype: {
     id: 'service.portal:bloodtype',
     defaultMessage: 'Blóðflokkur',
@@ -2303,5 +2325,13 @@ export const searchTagsMessages = defineMessages({
   appointmentBook: {
     id: 'sp.search.tags:appointment-book',
     defaultMessage: 'Bóka',
+  },
+  rentalAgreements: {
+    id: 'sp.search.tags:rental-agreements',
+    defaultMessage: 'Leigusamningar',
+  },
+  rent: {
+    id: 'sp.search.tags:rent',
+    defaultMessage: 'Leiga',
   },
 })
