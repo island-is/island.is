@@ -15,8 +15,12 @@ export class EmployeesService implements IEmployeesService {
   async getEmployees(
     organizationId: string,
     locale: Locale,
+    activeEmployeesOnly?: boolean,
   ): Promise<Employees> {
-    const data = await this.service.getOrganizationEmployees(organizationId)
+    const data = await this.service.getOrganizationEmployees(
+      organizationId,
+      activeEmployeesOnly,
+    )
 
     return {
       data: data

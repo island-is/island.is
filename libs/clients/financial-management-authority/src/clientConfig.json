@@ -1845,7 +1845,7 @@
       "get": {
         "tags": ["OrganizationEmployee"],
         "summary": "[GET] Get a list of employees by organization number or/and by organization unit id.\r\nThis endpoint fetches data from FJS database.",
-        "description": "\nIf organization unit number is set then only employees for that organization unit will be returned.",
+        "description": "\nIf organization unit number is set then only employees for that organization unit will be returned.\r\n\nIf activeOnly is set to true, only employees with AssignmentStatusGroup = 'ACTIVE_ASSIGN' will be returned.",
         "parameters": [
           {
             "name": "organizationNumber",
@@ -1863,6 +1863,14 @@
               "type": "integer",
               "format": "int32",
               "default": 0
+            }
+          },
+          {
+            "name": "activeOnly",
+            "in": "query",
+            "description": "(Optional) If true, returns only active employees (AssignmentStatusGroup = 'ACTIVE_ASSIGN'). If false or not provided, returns all employees.",
+            "schema": {
+              "type": "boolean"
             }
           },
           {

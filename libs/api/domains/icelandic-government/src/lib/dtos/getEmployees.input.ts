@@ -1,5 +1,5 @@
 import { ArgsType, Field, registerEnumType } from '@nestjs/graphql'
-import { IsString } from 'class-validator'
+import { IsBoolean, IsString } from 'class-validator'
 import { IsLocale } from '@island.is/nest/core'
 import { LocaleEnum } from '@island.is/shared/types'
 
@@ -13,6 +13,10 @@ export class IcelandicGovernmentEmployeesInput {
   @IsString()
   @Field()
   organizationId!: string
+
+  @IsBoolean()
+  @Field()
+  activeEmployeesOnly!: boolean
 
   @Field(() => LocaleEnum)
   @IsLocale()

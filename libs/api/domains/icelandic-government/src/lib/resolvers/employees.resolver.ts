@@ -22,6 +22,10 @@ export class EmployeesResolver {
   async getEmployeeList(
     @Args() input: IcelandicGovernmentEmployeesInput,
   ): Promise<Employees | null> {
-    return this.employeeService.getEmployees(input.organizationId, input.locale)
+    return this.employeeService.getEmployees(
+      input.organizationId,
+      input.locale,
+      input.activeEmployeesOnly,
+    )
   }
 }

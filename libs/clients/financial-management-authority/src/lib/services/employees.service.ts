@@ -8,11 +8,13 @@ export class FinancialManagementAuthorityClientEmployeesService {
 
   public async getOrganizationEmployees(
     organizationId: string,
+    activeOnly = true,
   ): Promise<Array<EmployeeDto>> {
     const employees =
       await this.employeeApi.v1OrganizationEmployeeGetEmployeesForOrganizationGet(
         {
           organizationNumber: organizationId,
+          activeOnly,
         },
       )
 
