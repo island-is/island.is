@@ -256,6 +256,7 @@ codemagic.yaml                                                                  
 /libs/application/templates/grindavik-housing-buyout/                                                                        @island-is/norda
 /libs/application/templates/hms/fire-compensation-appraisal/                                                                 @island-is/norda
 /libs/application/templates/hms/terminate-rental-agreement/                                                                  @island-is/norda
+/libs/application/templates/hms/rental-agreement/                                                                            @island-is/norda
 /libs/application/templates/hms/registration-of-new-property-numbers/                                                        @island-is/origo
 /libs/application/templates/home-support/                                                                                    @island-is/norda
 /libs/application/templates/iceland-health/accident-notification/                                                            @island-is/norda
