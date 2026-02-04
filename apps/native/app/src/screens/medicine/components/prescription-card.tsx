@@ -32,6 +32,7 @@ const DispensationRowItem = styled.View`
   flex-direction: row;
   flex-wrap: wrap;
   align-items: center;
+  gap: ${({ theme }) => theme.spacing[2]}px;
   margin-horizontal: ${({ theme }) => theme.spacing[1]}px;
 `
 

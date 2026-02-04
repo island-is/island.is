@@ -23,7 +23,6 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import {
   Case,
-  CaseOrigin,
   CaseType,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -159,7 +158,6 @@ export const Defendant = () => {
                     setWorkingCase={setWorkingCase}
                     onChange={handleUpdateDefendant}
                     updateDefendantState={updateDefendantState}
-                    nationalIdImmutable={workingCase.origin === CaseOrigin.LOKE}
                   />
                 </Box>
               )}
