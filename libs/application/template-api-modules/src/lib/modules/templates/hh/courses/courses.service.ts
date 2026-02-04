@@ -28,6 +28,7 @@ const GET_COURSE_BY_ID_QUERY = `
             endTime
           }
           chargeItemCode
+          location
         }
       }
     }
@@ -101,7 +102,6 @@ export class CoursesService extends BaseTemplateApiService {
       const message = await this.formatApplicationMessage(
         application,
         participantList,
-        course.id,
         course.title,
         courseInstance,
         nationalId,
@@ -252,7 +252,6 @@ export class CoursesService extends BaseTemplateApiService {
   private async formatApplicationMessage(
     application: ApplicationWithAttachments,
     participantList: ApplicationAnswers['participantList'],
-    courseId: string,
     courseTitle: string,
     courseInstance: {
       id: string
@@ -261,6 +260,7 @@ export class CoursesService extends BaseTemplateApiService {
         startTime?: string
         endTime?: string
       }
+      location?: string | null
     },
     nationalId: string,
     name: string,
@@ -294,6 +294,7 @@ export class CoursesService extends BaseTemplateApiService {
       new Date(courseInstance.startDate.split('T')[0]),
       'dd.MM.yyyy',
     )} ${startDateTimeDuration ?? ''}\n`
+    message += `Staðsetning námskeiðs: ${courseInstance.location ?? ''}\n`
 
     message += `Kennitala umsækjanda: ${nationalId}\n`
     message += `Nafn umsækjanda: ${name}\n`
