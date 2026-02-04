@@ -16,6 +16,7 @@ import categoriesIcon from '../../assets/icons/categories.png'
 import externalLinkIcon from '../../assets/icons/external-link.png'
 import medicineIcon from '../../assets/icons/medicine.png'
 import readerIcon from '../../assets/icons/reader.png'
+import calendarIcon from '../../assets/icons/calendar.png'
 import vaccinationsIcon from '../../assets/icons/vaccinations.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import { getConfig } from '../../config'
@@ -40,7 +41,6 @@ import { navigateTo } from '../../lib/deep-linking'
 import { useBrowser } from '../../lib/use-browser'
 import {
   Alert,
-  Button,
   GeneralCardSkeleton,
   Heading,
   Input,
@@ -51,8 +51,8 @@ import {
   TopLine,
   Typography
 } from '../../ui'
-import { testIDs } from '../../utils/test-ids'
 import { ComponentRegistry } from '../../utils/component-registry'
+import { testIDs } from '../../utils/test-ids'
 import { AppointmentCard } from '../appointments/components/appointment-card'
 
 const NUMBER_OF_CARDS_PER_ROW = 3
@@ -61,7 +61,6 @@ const Row = styled.View`
   margin-vertical: ${({ theme }) => theme.spacing[1]}px;
   column-gap: ${({ theme }) => theme.spacing[2]}px;
   flex-direction: row;
-  justify-content: space-between;
 `
 
 const AppointmentsContainer = styled.View`
@@ -255,11 +254,11 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
         enabled: isPrescriptionsEnabled,
       },
       {
-        id: 'medicineDelegation',
-        titleId: 'health.overview.medicineDelegation',
-        icon: readerIcon,
-        route: '/medicine-delegation',
-        enabled: isMedicineDelegationEnabled,
+        id: 'appointments',
+        titleId: 'health.overview.appointments',
+        icon: calendarIcon,
+        route: '/appointments',
+        enabled: isAppointmentsEnabled,
       },
       {
         id: 'questionnaires',
@@ -294,9 +293,9 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
     return rows
   }, [
     isPrescriptionsEnabled,
-    isMedicineDelegationEnabled,
     isQuestionnaireFeatureEnabled,
     isVaccinationsEnabled,
+    isAppointmentsEnabled,
   ])
 
   const medicinePurchaseRes = useGetMedicineDataQuery()
@@ -435,31 +434,43 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
           },
         )}
       >
-
-        {healthCardRows.map((row, rowIndex) => (
-          <Row
-            key={`health-card-row-${rowIndex}`}
-            style={{
-              justifyContent: row.length === 1 ? 'flex-end' : 'space-between',
-            }}
-          >
-            {row.map((card) => (
-              <MoreCard
-                key={card.id}
-                title={intl.formatMessage({ id: card.titleId })}
-                icon={card.icon}
-                onPress={
-                  card.route
-                    ? () => navigateTo(card.route, componentId)
-                    : () => { }
-                }
-                small
-                filled={card.filled}
-                style={{ flex: 0, width: cardWidth }}
-              />
+        {isLoadingFeatureFlags ? (
+          <>
+            {Array.from({ length: 2 }).map((_, index) => (
+              <Row key={index}>
+                {Array.from({ length: NUMBER_OF_CARDS_PER_ROW }).map((_, index) => (
+                  <Skeleton height={70} style={{ width: cardWidth, borderRadius: 16 }} key={index} />
+                ))}
+              </Row>
             ))}
-          </Row>
-        ))}
+          </>
+        )
+          : (
+            healthCardRows.map((row, rowIndex) => (
+              <Row
+                key={`health-card-row-${rowIndex}`}
+              >
+                {row.map((card) => (
+                  <MoreCard
+                    key={card.id}
+                    title={intl.formatMessage({ id: card.titleId })}
+                    icon={card.icon}
+                    onPress={
+                      card.route
+                        ? () => navigateTo(card.route, componentId)
+                        : () => {
+                          // noop
+                        }
+                    }
+                    small
+                    filled={card.filled}
+                    style={{ flex: 0, width: cardWidth }}
+                  />
+                ))}
+              </Row>
+            ))
+          )
+        }
         {isAppointmentsEnabled && (
           <>
             <HeadingSection
