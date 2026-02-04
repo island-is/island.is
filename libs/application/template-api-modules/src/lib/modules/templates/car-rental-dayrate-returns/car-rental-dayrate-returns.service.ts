@@ -62,9 +62,8 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
             targetMonthIndex: lastMonthIndex,
           })
           const { totalDays, entryIds } = result
-          
-          if (totalDays === 0 || entryIds.size === 0)
-            return null
+
+          if (totalDays === 0 || entryIds.size === 0) return null
 
           if (entryIds.size > 1) {
             this.logger.warn(
