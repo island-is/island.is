@@ -6,12 +6,11 @@ import {
 } from '@island.is/judicial-system/formatters'
 import {
   DefendantEventType,
-  EventType,
   ServiceRequirement,
   VerdictAppealDecision,
 } from '@island.is/judicial-system/types'
 
-import { Case, DefendantEventLog, EventLog } from '../modules/repository'
+import { Case, DefendantEventLog } from '../modules/repository'
 import {
   addEmptyLines,
   addLargeHeading,

@@ -49,7 +49,6 @@ import {
   CourtSessionStringType,
   DateType,
   dateTypes,
-  DefendantEventType,
   defendantEventTypes,
   EventType,
   eventTypes,
