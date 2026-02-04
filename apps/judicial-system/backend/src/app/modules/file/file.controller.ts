@@ -151,7 +151,11 @@ export class FileController {
 
   // TODO: Add tests for this endpoint
   @UseGuards(CaseWriteGuard, DefendantExistsGuard, CreateDefendantCaseFileGuard)
-  @RolesRules(publicProsecutorStaffRule)
+  @RolesRules(
+    publicProsecutorStaffRule,
+    prosecutorRule,
+    prosecutorRepresentativeRule,
+  )
   @Post('defendant/:defendantId/file')
   @ApiCreatedResponse({
     type: CaseFile,
