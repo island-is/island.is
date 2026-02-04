@@ -129,6 +129,7 @@ export enum Features {
   useIslandisPaymentForApplicationSystem = 'useIslandisPaymentForApplicationSystem',
   isIslandisInvoicePaymentEnabled = 'isIslandisInvoicePaymentEnabled',
   isIslandisInvoicePaymentAllowedForUser = 'isislandisinvoicepaymentsallowedforuser',
+  isIslandisApplePayPaymentAllowedForUser = 'isIslandisApplePayPaymentAllowedForUser',
 
   // Should auth api use national registry v3 for checking deceased status
   isNationalRegistryV3DeceasedStatusEnabled = 'isNationalRegistryV3DeceasedStatusEnabled',

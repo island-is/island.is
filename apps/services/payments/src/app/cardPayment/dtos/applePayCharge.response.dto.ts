@@ -26,7 +26,7 @@ class CardInformation {
   outOfScaScope!: boolean
 }
 
-export class ChargeCardResponse {
+export class ApplePayChargeResponse {
   @ApiProperty({ description: 'Acquirer reference number', type: String })
   @IsString()
   acquirerReferenceNumber!: string
