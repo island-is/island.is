@@ -90,7 +90,7 @@ export class CoursesService extends BaseTemplateApiService {
       const { name, email, phone, healthcenter, nationalId } =
         await this.extractApplicantInfo(application)
 
-      if (!name || !email || !phone || !healthcenter || !nationalId)
+      if (!name || !email || !phone || !nationalId)
         throw new TemplateApiError(
           {
             title: 'No contact information found',
@@ -266,7 +266,7 @@ export class CoursesService extends BaseTemplateApiService {
     name: string,
     email: string,
     phone: string,
-    healthcenter: string,
+    healthcenter?: string,
   ): Promise<string> {
     const userIsPayingAsIndividual = getValueViaPath<YesOrNoEnum>(
       application.answers,
@@ -300,7 +300,7 @@ export class CoursesService extends BaseTemplateApiService {
     message += `Nafn umsækjanda: ${name}\n`
     message += `Netfang umsækjanda: ${email}\n`
     message += `Símanúmer umsækjanda: ${phone}\n`
-    message += `Heilsugæslustöð umsækjanda: ${healthcenter}\n`
+    message += `Heilsugæslustöð umsækjanda: ${healthcenter ?? ''}\n`
 
     const payer =
       userIsPayingAsIndividual === YesOrNoEnum.YES
