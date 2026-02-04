@@ -24,7 +24,7 @@ export const StatisticsScreen = () => {
       />
       <GridContainer>
         <Box paddingTop={4} paddingBottom={6}>
-          <Text>Tölfræði er tímabundið óaðgengileg.</Text>
+          <Text>{loc.temporarilyUnavailable}</Text>
         </Box>
         {/* <PowerBIComponent /> */}
       </GridContainer>
