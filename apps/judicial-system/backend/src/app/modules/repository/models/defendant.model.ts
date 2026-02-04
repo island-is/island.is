@@ -61,6 +61,25 @@ export class Defendant extends Model {
     )
   }
 
+  static isConfirmedDefenderOfSpecificDefendantWithCaseFileAccess(
+    defenderNationalId: string,
+    defendantId: string,
+    defendants?: Defendant[],
+  ) {
+    const defendant = defendants?.find((d) => d.id === defendantId)
+    if (!defendant) {
+      return false
+    }
+    return (
+      defendant.isDefenderChoiceConfirmed &&
+      defendant.caseFilesSharedWithDefender &&
+      defendant.defenderNationalId &&
+      normalizeAndFormatNationalId(defenderNationalId).includes(
+        defendant.defenderNationalId,
+      )
+    )
+  }
+
   @Column({
     type: DataType.UUID,
     primaryKey: true,
