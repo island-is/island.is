@@ -944,6 +944,14 @@ export const messages = defineMessages({
     id: 'sp.health:waitlists-intro',
     defaultMessage: 'Hér finnur þú biðlista ...',
   },
+  waitlistsDescriptionInfo: {
+    id: 'sp.health:waitlists-description-info',
+    defaultMessage: 'Lesa nánar um biðlista hér',
+  },
+  waitlistsDescriptionLink: {
+    id: 'sp.health:waitlists-description-link',
+    defaultMessage: 'https://island.is/bidlistar-heilbrigdisthjonusta',
+  },
   statusLastUpdated: {
     id: 'sp.health:waitlist-last-updated',
     defaultMessage: 'Staða síðast uppfærð',

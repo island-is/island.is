@@ -45,9 +45,9 @@ const template: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.EUROPEAN_HEALTH_INSURANCE_CARD,
-  name: e.form.applicationName,
+  name: e.application.applicationName,
   codeOwner: CodeOwners.NordaApplications,
-  institution: e.form.institutionName,
+  institution: e.application.institutionName,
   featureFlag: Features.europeanHealthInsuranceCard,
   dataSchema,
   stateMachineConfig: {
