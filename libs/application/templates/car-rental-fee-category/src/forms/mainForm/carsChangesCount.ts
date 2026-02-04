@@ -21,13 +21,13 @@ export const carsChangesCountSection = buildSection({
         buildStaticTableField({
           header: [m.carsChangesCount.header],
           rows: (application) => {
-            const data =
+            const carsToChangeCount =
               getValueViaPath<CarCategoryRecord[]>(
                 application.answers,
-                'carsToChange',
-              ) ?? []
+                'carsToChangeCount',
+              ) ?? 0
 
-            return [[data.length.toString()]]
+            return [[carsToChangeCount.toString() ?? '0']]
           },
         }),
         buildAlertMessageField({

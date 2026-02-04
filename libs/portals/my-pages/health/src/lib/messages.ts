@@ -908,6 +908,10 @@ export const messages = defineMessages({
     id: 'sp.health:open-referral',
     defaultMessage: 'Opin tilvísun',
   },
+  noReferralsTitle: {
+    id: 'sp.health:no-referrals-title',
+    defaultMessage: 'Engar tilvísanir',
+  },
   noReferrals: {
     id: 'sp.health:no-referrals',
     defaultMessage: 'Engar tilvísanir',
@@ -919,6 +923,10 @@ export const messages = defineMessages({
   waitlists: {
     id: 'sp.health:waitlists',
     defaultMessage: 'Biðlistar',
+  },
+  noWaitListsTitle: {
+    id: 'sp.health:no-waitlists-title',
+    defaultMessage: 'Engin skráning á biðlista finnst',
   },
   noWaitlists: {
     id: 'sp.health:no-waitlists',

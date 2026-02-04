@@ -9,7 +9,6 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  CaseOrigin,
   Defendant,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -133,9 +132,6 @@ export const DefendantList = () => {
                 }
                 onChange={handleUpdateDefendant}
                 updateDefendantState={updateDefendantState}
-                nationalIdImmutable={
-                  workingCase.origin === CaseOrigin.LOKE && index === 0
-                }
               />
             </Box>
           </motion.div>
