@@ -56,7 +56,7 @@ export const mapRentalAgreementDto = (
     documents:
       contract.contractDocument
         ?.map(mapContractDocumentItemDto)
-        .filter(isDefined) ?? [],
+        .filter(isDefined) ?? undefined,
   }
 }
 

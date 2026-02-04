@@ -6,6 +6,7 @@ import {
   Param,
   UseGuards,
   BadRequestException,
+  ParseIntPipe,
 } from '@nestjs/common'
 import { ApiOkResponse } from '@nestjs/swagger'
 import { Response } from 'express'
@@ -24,6 +25,7 @@ import {
   FeatureFlagGuard,
   Features,
 } from '@island.is/nest/feature-flags'
+import { ParseError } from 'libphonenumber-js'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Scopes(ApiScope.hms)
@@ -42,21 +44,17 @@ export class RentalAgreementsController {
     description: 'Get a rental agreement pdf from HMSs',
   })
   async getRentalAgreementPdf(
-    @Param('id') id: string | undefined,
+    @Param('id', new ParseIntPipe()) id: number,
     @CurrentUser() user: User,
     @Res() res: Response,
   ) {
-    if (!id) {
-      throw new BadRequestException('Missing id')
-    }
-
-    const document = await this.service.getRentalAgreementPdf(user, +id)
+    const document = await this.service.getRentalAgreementPdf(user, id)
 
     if (document) {
       this.auditService.audit({
         action: 'getRentalAgreementPdf',
         auth: user,
-        resources: id,
+        resources: id.toString(),
       })
 
       const buffer = Buffer.from(document, 'base64')
