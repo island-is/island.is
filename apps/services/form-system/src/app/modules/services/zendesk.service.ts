@@ -28,7 +28,7 @@ export class ZendeskService {
     this.enhancedFetch = createEnhancedFetch({
       name: 'form-system-zendesk',
       organizationSlug: 'stafraent-island',
-      timeout: 20000,
+      timeout: 40000,
       logErrorResponseBody: true,
     })
   }
@@ -56,17 +56,18 @@ export class ZendeskService {
     const subject = applicationDto.formName?.is ?? 'No subject'
     const data = JSON.stringify(applicationDto)
     const isInternal = applicationDto.zendeskInternal === true
+    const applicationId = applicationDto.id ?? ''
 
     // return true
     const fileToken = await this.uploadFile(
       data,
-      applicationDto.id ?? '',
+      applicationId,
       zendeskUrl,
       credentials,
     )
 
     return await this.createTicket(
-      applicationDto.id ?? '',
+      applicationId,
       subject,
       body,
       customFields,
