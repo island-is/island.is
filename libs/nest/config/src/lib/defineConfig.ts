@@ -10,7 +10,7 @@ export const defineConfig = <T extends Record<string, any>>(
   const loader = new ConfigurationLoader<T>(definition)
   const factory = registerAs(definition.name, () => {
     return loader.load()
-  }) as unknown as ConfigFactory<T>
+  }) as ConfigFactory<T>
 
   factory.optional = () => {
     const cloneDefinition = Object.assign(
