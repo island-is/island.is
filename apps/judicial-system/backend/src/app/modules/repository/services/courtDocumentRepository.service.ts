@@ -613,9 +613,11 @@ export class CourtDocumentRepositoryService {
       })
 
       if (!documentToDelete) {
-        throw new InternalServerErrorException(
-          `Could not find court document for case file id ${caseFileId} of case ${caseId}`,
+        this.logger.debug(
+          `Nothing to delete - could not find a court document for case file id ${caseFileId} of case ${caseId}`,
         )
+
+        return
       }
 
       const deletedOrder = documentToDelete.documentOrder

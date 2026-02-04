@@ -280,13 +280,17 @@ export class FileController {
     if (
       caseFile.category !== CaseFileCategory.PROSECUTOR_CASE_FILE &&
       caseFile.category !== CaseFileCategory.DEFENDANT_CASE_FILE &&
-      caseFile.category !== CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE
+      caseFile.category !== CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE &&
+      caseFile.category !==
+        CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE &&
+      caseFile.category !==
+        CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE
     ) {
       this.logger.error(
         `Attempt to reject case file ${fileId} of case ${caseId} with invalid category ${caseFile.category}`,
       )
       throw new BadRequestException(
-        'Only uploaded prosecutor and defendant case files can be rejected',
+        'Only uploaded prosecutor, defendant and civil claimant case files can be rejected',
       )
     }
 
