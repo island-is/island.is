@@ -280,6 +280,7 @@ codemagic.yaml                                                                  
 /libs/application/template-api-modules/src/lib/modules/templates/grindavik-housing-buyout/                                   @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/hms/fire-compensation-appraisal/                            @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/hms/terminate-rental-agreement/                             @island-is/norda
+/libs/application/template-api-modules/src/lib/modules/templates/hms/rental-agreement/                                       @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/hms/registration-of-new-property-numbers/                   @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/home-support/                                               @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/iceland-health/accident-notification/                       @island-is/norda
