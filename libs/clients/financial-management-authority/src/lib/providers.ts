@@ -1,8 +1,5 @@
 import { Provider } from '@nestjs/common'
-import {
-  OrganizationEmployeeApi,
-  VacancyApi,
-} from '../../gen/fetch'
+import { OrganizationEmployeeApi, VacancyApi } from '../../gen/fetch'
 import { apiConfigFactory } from './apiConfig'
 import {
   ConfigType,
