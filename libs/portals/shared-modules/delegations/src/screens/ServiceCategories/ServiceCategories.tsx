@@ -78,76 +78,89 @@ export const ServiceCategories = () => {
         )}
 
         <Box marginTop={6}>
-          <Text variant="h3" color="blue400">
-            Todo: Tags
-          </Text>
-
           {!loading && !error && tags.length > 0 && (
-            <Box marginTop={2} display="flex" flexDirection="column" rowGap={2}>
-              {tags.map((tag) => (
-                <AccordionCard
-                  key={tag.id}
-                  id={tag.id}
-                  label={tag.title}
-                  labelVariant="h3"
-                  labelUse="h2"
-                  iconVariant="default"
-                  visibleContent={tag.description}
-                >
-                  <Box paddingY={3}>
-                    {tag.scopes.length === 0 ? (
-                      <Text variant="small" color="dark300">
-                        {formatMessage(m.noScopesInCategory)}
-                      </Text>
-                    ) : (
-                      // <Stack space={2}>
-                      //   {tag.scopes.map((scope) => (
+            <>
+              <Text variant="h3" color="blue400">
+                Todo: Tags
+              </Text>
 
-                      //   ))}
-                      // </Stack>
-                      <ScopesTable />
-                    )}
-                  </Box>
-                </AccordionCard>
-              ))}
-            </Box>
+              <Box
+                marginTop={2}
+                display="flex"
+                flexDirection="column"
+                rowGap={2}
+              >
+                {tags.map((tag) => (
+                  <AccordionCard
+                    key={tag.id}
+                    id={tag.id}
+                    label={tag.title}
+                    labelVariant="h3"
+                    labelUse="h2"
+                    iconVariant="default"
+                    visibleContent={tag.description}
+                  >
+                    <Box paddingY={3}>
+                      {tag.scopes.length === 0 ? (
+                        <Text variant="small" color="dark300">
+                          {formatMessage(m.noScopesInCategory)}
+                        </Text>
+                      ) : (
+                        // <Stack space={2}>
+                        //   {tag.scopes.map((scope) => (
+
+                        //   ))}
+                        // </Stack>
+                        <ScopesTable />
+                      )}
+                    </Box>
+                  </AccordionCard>
+                ))}
+              </Box>
+            </>
           )}
         </Box>
 
         <Box marginTop={6}>
-          <Text variant="h3" color="blue400">
-            {formatMessage(m.serviceCategories)}
-          </Text>
-
           {!loading && !error && categories.length > 0 && (
-            <Box marginTop={2} display="flex" flexDirection="column" rowGap={2}>
-              {categories.map((cat) => (
-                <AccordionCard
-                  key={cat.id}
-                  id={cat.id}
-                  label={cat.title}
-                  labelVariant="h3"
-                  labelUse="h2"
-                  iconVariant="default"
-                  visibleContent={cat.description}
-                >
-                  <Box paddingY={3}>
-                    {cat.scopes.length === 0 ? (
-                      <Text variant="small" color="dark300">
-                        {formatMessage(m.noScopesInCategory)}
-                      </Text>
-                    ) : (
-                      // <Stack space={2}>
-                      //   {cat.scopes.map((scope) => (
+            <>
+              <Text variant="h3" color="blue400">
+                {formatMessage(m.serviceCategories)}
+              </Text>
+              <Box
+                marginTop={2}
+                display="flex"
+                flexDirection="column"
+                rowGap={2}
+              >
+                {categories.map((cat) => (
+                  <AccordionCard
+                    key={cat.id}
+                    id={cat.id}
+                    label={cat.title}
+                    labelVariant="h3"
+                    labelUse="h2"
+                    iconVariant="default"
+                    visibleContent={cat.description}
+                  >
+                    <Box paddingY={3}>
+                      {cat.scopes.length === 0 ? (
+                        <Text variant="small" color="dark300">
+                          {formatMessage(m.noScopesInCategory)}
+                        </Text>
+                      ) : (
+                        // <Stack space={2}>
+                        //   {cat.scopes.map((scope) => (
 
-                      //   ))}
-                      // </Stack>
-                      <ScopesTable />
-                    )}
-                  </Box>
-                </AccordionCard>
-              ))}
-            </Box>
+                        //   ))}
+                        // </Stack>
+                        <ScopesTable />
+                      )}
+                    </Box>
+                  </AccordionCard>
+                ))}
+              </Box>
+            </>
           )}
         </Box>
       </Box>

@@ -1,13 +1,20 @@
 import { delegationScopes } from '@island.is/auth/scopes'
 import { lazy } from 'react'
-import { m as coreMessages, PortalModule, PortalRoute } from '@island.is/portals/core'
+import {
+  m as coreMessages,
+  PortalModule,
+  PortalRoute,
+} from '@island.is/portals/core'
 import { DelegationPaths } from './lib/paths'
 import { m } from './lib/messages'
+import { accessControlLoader } from './screens/AccessControl.loader'
 
 const AccessControl = lazy(() => import('./screens/AccessControl'))
 const AccessControlNew = lazy(() => import('./screens/AccessControlNew'))
 const GrantAccess = lazy(() => import('./screens/GrantAccess/GrantAccess'))
-const GrantAccessNew = lazy(() => import('./screens/GrantAccessNew/GrantAccessNew'))
+const GrantAccessNew = lazy(() =>
+  import('./screens/GrantAccessNew/GrantAccessNew'),
+)
 const AccessOutgoing = lazy(() =>
   import('./screens/AccessOutgoing/AccessOutgoing'),
 )
@@ -37,10 +44,12 @@ export const delegationsModule: PortalModule = {
       {
         ...commonProps,
         path: DelegationPaths.Delegations,
+        loader: accessControlLoader('umbod')(props),
       },
       {
         ...commonProps,
         path: DelegationPaths.DelegationsIncoming,
+        loader: accessControlLoader('umbod')(props),
       },
       {
         name: m.accessControlNew,
@@ -48,16 +57,19 @@ export const delegationsModule: PortalModule = {
         navHide: false,
         enabled: hasAccess,
         element: <AccessControlNew />,
+        loader: accessControlLoader('umbod-nytt')(props),
       },
       {
         name: coreMessages.accessControlGrant,
         path: DelegationPaths.DelegationsGrant,
         element: <GrantAccess />,
+        loader: accessControlLoader('umbod/veita')(props),
       },
       {
         name: coreMessages.accessControlAccess,
         path: DelegationPaths.DelegationAccess,
         element: <AccessOutgoing />,
+        loader: accessControlLoader('umbod/:delegationId')(props),
       },
       {
         name: m.serviceCategories,
@@ -65,6 +77,7 @@ export const delegationsModule: PortalModule = {
         navHide: !hasAccess,
         enabled: hasAccess,
         element: <ServiceCategories />,
+        loader: accessControlLoader('umbod/thjonustuflokkar')(props),
       },
       {
         name: m.grantAccessNewTitle,
@@ -72,6 +85,7 @@ export const delegationsModule: PortalModule = {
         navHide: !hasAccess,
         enabled: hasAccess,
         element: <GrantAccessNew />,
+        loader: accessControlLoader('umbod/veita-nytt')(props),
       },
     ]
 

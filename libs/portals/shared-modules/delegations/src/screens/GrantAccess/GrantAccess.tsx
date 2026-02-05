@@ -64,17 +64,16 @@ const GrantAccess = () => {
     toast.warning(formatMessage(m.grantIdentityError))
   }
 
-  const [getIdentity, { data, loading: queryLoading, error }] =
-    useIdentityLazyQuery({
-      onError: (error) => {
-        setFormError(error)
-      },
-      onCompleted: (data) => {
-        if (!data.identity) {
-          noUserFoundToast()
-        }
-      },
-    })
+  const [getIdentity, { data, loading: queryLoading }] = useIdentityLazyQuery({
+    onError: (error) => {
+      setFormError(error)
+    },
+    onCompleted: (data) => {
+      if (!data.identity) {
+        noUserFoundToast()
+      }
+    },
+  })
 
   const { identity } = data || {}
 

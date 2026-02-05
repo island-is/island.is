@@ -1,20 +1,25 @@
 import { Box, Button, GridColumn, Tabs } from '@island.is/island-ui/core'
+import { FaqList, FaqListProps } from '@island.is/island-ui/contentful'
+
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { IntroHeader, usePortalMeta } from '@island.is/portals/core'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { isDefined } from '@island.is/shared/utils'
-import { useNavigate } from 'react-router-dom'
+import { useLoaderData, useNavigate } from 'react-router-dom'
 import { useLocation } from 'react-use'
 import { DelegationsIncoming } from '../components/delegations/incoming/DelegationsIncoming'
 import { DelegationsOutgoing } from '../components/delegations/outgoing/DelegationsOutgoing'
 import { m } from '../lib/messages'
 import { DelegationPaths } from '../lib/paths'
+import type { AccessControlLoaderResponse } from './AccessControl.loader'
 
 const TAB_DELEGATION_OUTGOING_ID = 'outgoing'
 const TAB_DELEGATION_INCOMING_ID = 'incoming'
 
 const AccessControl = () => {
   useNamespaces(['sp.access-control-delegations'])
+
+  const contentfulData = useLoaderData() as AccessControlLoaderResponse
 
   const { formatMessage } = useLocale()
   const userInfo = useUserInfo()
@@ -108,6 +113,9 @@ const AccessControl = () => {
           />
         )}
       </Box>
+      {contentfulData?.faqList && (
+        <FaqList {...(contentfulData.faqList as unknown as FaqListProps)} />
+      )}
     </>
   )
 }
