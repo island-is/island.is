@@ -353,7 +353,10 @@ export const getMonthTotalDayRateDays = ({
 
   // Check if there is an active period usage for the target month
   const hasPeriodUsage = targetEntry.periodUsage?.some((usage) => {
-    return usage.period === `${targetYear}-${(targetMonthIndex + 1).toString().padStart(2, '0')}`
+    return (
+      usage.period ===
+      `${targetYear}-${(targetMonthIndex + 1).toString().padStart(2, '0')}`
+    )
   })
 
   if (hasPeriodUsage) return null
