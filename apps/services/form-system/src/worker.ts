@@ -1,13 +1,3 @@
-process.on('unhandledRejection', (reason) => {
-  // eslint-disable-next-line no-console
-  console.error('UNHANDLED REJECTION raw:', reason)
-})
-
-process.on('uncaughtException', (error) => {
-  // eslint-disable-next-line no-console
-  console.error('UNCAUGHT EXCEPTION:', error)
-})
-
 import { NestFactory } from '@nestjs/core'
 import { PruneModule } from './app/modules/services/prune/prune.module'
 import { PruneService } from './app/modules/services/prune/prune.service'

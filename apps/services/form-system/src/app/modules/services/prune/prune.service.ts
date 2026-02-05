@@ -58,16 +58,18 @@ export class PruneService {
                 if (value.fieldType === FieldTypesEnum.FILE) {
                   const { json } = value
                   if (json) {
-                    const keys = json.s3Key as string[]
+                    const keys = json.s3Key
                     this.logger.info('Deleting file keys', {
                       keys,
                       valueId: value.id,
                     })
-                    await Promise.all(
-                      keys.map((key) =>
-                        this.fileService.deleteFile(key, value.id),
-                      ),
-                    )
+                    if (Array.isArray(keys)) {
+                      await Promise.all(
+                        keys.map((key) =>
+                          this.fileService.deleteFile(key, value.id),
+                        ),
+                      )
+                    }
                   }
                 }
                 return value.destroy({ transaction })
@@ -85,16 +87,18 @@ export class PruneService {
                 if (value.fieldType === FieldTypesEnum.FILE) {
                   const { json } = value
                   if (json) {
-                    const keys = json.s3Key as string[]
+                    const keys = json.s3Key
                     this.logger.info('Deleting file keys', {
                       keys,
                       valueId: value.id,
                     })
-                    await Promise.all(
-                      keys.map((key) =>
-                        this.fileService.deleteFile(key, value.id),
-                      ),
-                    )
+                    if (Array.isArray(keys)) {
+                      await Promise.all(
+                        keys.map((key) =>
+                          this.fileService.deleteFile(key, value.id),
+                        ),
+                      )
+                    }
                   }
                 }
                 return value.destroy({ transaction })
