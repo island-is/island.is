@@ -4,6 +4,7 @@ import {
   CallHandler,
   ExecutionContext,
   Injectable,
+  InternalServerErrorException,
   NestInterceptor,
 } from '@nestjs/common'
 
@@ -26,6 +27,7 @@ import {
 import {
   Case,
   CaseString,
+  CivilClaimant,
   Defendant,
   DefendantEventLog,
   EventLog,
@@ -141,7 +143,7 @@ const transformCaseRepresentatives = (theCase: Case) => {
   ].filter((representative) => !!representative)
 }
 
-const transformCase = (theCase: Case, user?: User) => {
+const transformCase = (theCase: Case, user: User) => {
   return {
     ...theCase.toJSON(),
     defendants: transformDefendants({
@@ -153,10 +155,22 @@ const transformCase = (theCase: Case, user?: User) => {
       (file) =>
         // Rejected files are only visible to relevant parties
         file.state !== CaseFileState.REJECTED ||
-        (isProsecutionUser(user) &&
-          file.category === CaseFileCategory.PROSECUTOR_CASE_FILE) ||
-        (isDefenceUser(user) &&
-          file.category === CaseFileCategory.DEFENDANT_CASE_FILE),
+        (file.category === CaseFileCategory.PROSECUTOR_CASE_FILE &&
+          isProsecutionUser(user)) ||
+        ((file.category === CaseFileCategory.DEFENDANT_CASE_FILE ||
+          file.category === CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE) &&
+          Defendant.isConfirmedDefenderOfDefendant(
+            user.nationalId,
+            theCase.defendants,
+          )) ||
+        ((file.category ===
+          CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE ||
+          file.category ===
+            CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE) &&
+          CivilClaimant.isConfirmedSpokespersonOfCivilClaimant(
+            user.nationalId,
+            theCase.civilClaimants,
+          )),
     ),
     caseRepresentatives: transformCaseRepresentatives(theCase),
     postponedIndefinitelyExplanation:
@@ -215,7 +229,12 @@ const transformCase = (theCase: Case, user?: User) => {
 export class CaseInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler) {
     const request = context.switchToHttp().getRequest()
-    const user = request.user?.currentUser as User | undefined
+
+    if (!request.user?.currentUser) {
+      throw new InternalServerErrorException('User not found in request')
+    }
+
+    const user: User = request.user.currentUser
 
     return next.handle().pipe(map((theCase) => transformCase(theCase, user)))
   }
@@ -224,10 +243,20 @@ export class CaseInterceptor implements NestInterceptor {
 @Injectable()
 export class CasesInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler) {
+    const request = context.switchToHttp().getRequest()
+
+    if (!request.user?.currentUser) {
+      throw new InternalServerErrorException('User not found in request')
+    }
+
+    const user: User = request.user.currentUser
+
     return next
       .handle()
       .pipe(
-        map((cases: Case[]) => cases.map((theCase) => transformCase(theCase))),
+        map((cases: Case[]) =>
+          cases.map((theCase) => transformCase(theCase, user)),
+        ),
       )
   }
 }

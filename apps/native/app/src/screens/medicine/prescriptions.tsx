@@ -35,6 +35,10 @@ const Wrapper = styled.View`
   margin-top: ${({ theme }) => theme.spacing[3]}px;
 `
 
+const DescriptionWrapper = styled.View`
+  margin-top: ${({ theme }) => theme.spacing[2]}px;
+`
+
 const { getNavigationOptions, useNavigationOptions } =
   createNavigationOptionHooks((_) => ({
     topBar: {
@@ -134,6 +138,7 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
       {
         id: 'drugCertificates',
         titleId: 'health.drugCertificates.title',
+        descriptionId: 'health.prescriptionsAndCertificates.description',
         enabled: true,
         queryResult: certificatesRes,
         getData: () => certificatesRes.data?.rightsPortalDrugCertificates,
@@ -286,6 +291,15 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
               </Typography>
             )}
           </Wrapper>
+          {activeTab?.descriptionId && (
+            <DescriptionWrapper>
+              <Typography variant="body">
+                {intl.formatMessage({
+                  id: activeTab?.descriptionId ?? '',
+                })}
+              </Typography>
+            </DescriptionWrapper>
+          )}
           {activeTab &&
             (activeTabData?.length || activeTab.queryResult.loading) &&
             activeTab.renderContent(activeTabData)}
