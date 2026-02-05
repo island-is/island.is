@@ -28,11 +28,11 @@ export const BffSessionExpiredModal = ({
       title="Innskráning útrunnin"
       message={
         <>
-          Þú hefur skráð þig inn í öðru umboði. Viltu{' '}
+          Innskráning þín er útrunnin vegna óvirkni. Vinsamlegast{' '}
           <Button variant="text" onClick={onLogin}>
-            skrá þig
+            skráðu þig inn
           </Button>{' '}
-          aftur inn?
+          aftur.
         </>
       }
     />

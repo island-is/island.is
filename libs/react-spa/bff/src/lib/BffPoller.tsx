@@ -25,12 +25,13 @@ type BffPollerProps = {
  * Features:
  * - Polls the backend at a specified interval to fetch user session data.
  * - If the user's session expires or the backend returns an error, it
- *   automatically triggers a sign-in process.
+ *   displays a session expired modal informing the user and allowing them
+ *   to log in again.
  * - If a change in user session (e.g., a new session ID) is detected, it
  *   broadcasts a message to all open tabs/windows and triggers the provided
  *   `newSessionCb` callback to handle the current tab/window.
  *
- * @param newSessionCb - Callback function to be called when a new session is detected.
+ * @param newSessionCb - Callback function to be called when a new session is detected or session expires.
  * @param pollIntervalMS - Polling interval in milliseconds. Default is 10000ms.
  *
  * @usage:
@@ -43,7 +44,7 @@ export const BffPoller = ({
   newSessionCb,
   pollIntervalMS = 10000,
 }: BffPollerProps) => {
-  const { signIn, bffUrlGenerator } = useAuth()
+  const { bffUrlGenerator } = useAuth()
   const userInfo = useUserInfo()
   const { postMessage } = useBffBroadcaster()
   const bffBaseUrl = bffUrlGenerator()
@@ -62,13 +63,12 @@ export const BffPoller = ({
     })
 
     if (!res.ok) {
-      signIn()
-
-      return
+      // Session expired - show the session expired modal instead of immediately redirecting
+      throw new Error('Session expired')
     }
 
     return res.json() as Promise<BffUser>
-  }, [url, signIn])
+  }, [url])
 
   // Poll user data every 10 seconds
   const { data: newUser, error } = usePolling({
@@ -79,8 +79,9 @@ export const BffPoller = ({
 
   useEffect(() => {
     if (error) {
-      // If user polling fails, likely due to 401, then sign in.
-      signIn()
+      // If user polling fails, likely due to 401, show session expired modal
+      // instead of immediately redirecting to login
+      newSessionCb()
     } else if (newUser) {
       // If user has changed (e.g. delegation switch), then notifiy tabs/windows/iframes and execute the callback.
       if (isNewUser(newUser, userInfo)) {
@@ -96,7 +97,7 @@ export const BffPoller = ({
         newSessionCb()
       }
     }
-  }, [newUser, error, userInfo, signIn, postMessage, newSessionCb, bffBaseUrl])
+  }, [newUser, error, userInfo, postMessage, newSessionCb, bffBaseUrl])
 
   return children
 }
