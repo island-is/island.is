@@ -17,9 +17,13 @@ import {
   AuthScopeCategoriesQuery,
 } from './ServiceCategories.generated'
 import { ScopesTable } from '../../components/ScopesTable/ScopesTable'
+import { FaqList, FaqListProps } from '@island.is/island-ui/contentful'
+import { useLoaderData } from 'react-router-dom'
+import { AccessControlLoaderResponse } from '../AccessControl.loader'
 
 export const ServiceCategories = () => {
   const { formatMessage, lang } = useLocale()
+  const contentfulData = useLoaderData() as AccessControlLoaderResponse
 
   const {
     data: categoriesData,
@@ -163,6 +167,11 @@ export const ServiceCategories = () => {
             </>
           )}
         </Box>
+        {contentfulData?.faqList && (
+          <Box paddingTop={8}>
+            <FaqList {...(contentfulData.faqList as unknown as FaqListProps)} />
+          </Box>
+        )}
       </Box>
     </>
   )

@@ -29,9 +29,13 @@ import {
 } from './GrantAccessNew.generated'
 import { useScopeFiltering, getTotalScopeCount } from './useScopeFiltering'
 import { useScopeSelection } from './useScopeSelection'
+import { FaqList, FaqListProps } from '@island.is/island-ui/contentful'
+import { useLoaderData } from 'react-router-dom'
+import { AccessControlLoaderResponse } from '../AccessControl.loader'
 
 export const GrantAccessNew = () => {
   const { formatMessage, lang } = useLocale()
+  const contentfulData = useLoaderData() as AccessControlLoaderResponse
 
   // Step 1: Identity
   const [toNationalId, setToNationalId] = useState('')
@@ -70,12 +74,10 @@ export const GrantAccessNew = () => {
     variables: { lang },
   })
 
-  const {
-    data: domainsData,
-    loading: domainsLoading,
-  } = useQuery<AuthDomainsForGrantQuery>(AuthDomainsForGrantDocument, {
-    variables: { lang },
-  })
+  const { data: domainsData, loading: domainsLoading } =
+    useQuery<AuthDomainsForGrantQuery>(AuthDomainsForGrantDocument, {
+      variables: { lang },
+    })
 
   const categories = categoriesData?.authScopeCategories || []
   const tags = tagsData?.authScopeTags || []
@@ -116,7 +118,8 @@ export const GrantAccessNew = () => {
     setSelectedTagIds([])
   }
 
-  const hasActiveFilters = searchQuery.trim() !== '' || selectedTagIds.length > 0
+  const hasActiveFilters =
+    searchQuery.trim() !== '' || selectedTagIds.length > 0
 
   const totalScopeCount = getTotalScopeCount(categories as any)
   const filteredScopeCount = getTotalScopeCount(filteredCategories)
@@ -386,14 +389,16 @@ export const GrantAccessNew = () => {
 
           {/* Submit Button */}
           <Box display="flex" justifyContent="flexEnd">
-            <Button
-              icon="arrowForward"
-              disabled={selectedScopes.size === 0}
-            >
+            <Button icon="arrowForward" disabled={selectedScopes.size === 0}>
               {formatMessage(m.sendDelegationRequest)}
             </Button>
           </Box>
         </Stack>
+        {contentfulData?.faqList && (
+          <Box paddingTop={8}>
+            <FaqList {...(contentfulData.faqList as unknown as FaqListProps)} />
+          </Box>
+        )}
       </Box>
     </>
   )
