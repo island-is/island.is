@@ -325,40 +325,46 @@ export type MonthTotalInput = {
 
 export type MonthTotalResult = {
   totalDays: number
-  entryIds: Set<number>
+  entryId: number
 }
 
 export const getMonthTotalDayRateDays = ({
   dayRateEntries,
   targetYear,
   targetMonthIndex,
-}: MonthTotalInput): MonthTotalResult => {
+}: MonthTotalInput): MonthTotalResult | null => {
   const entries = dayRateEntries ?? []
-  if (entries.length === 0) return { totalDays: 0, entryIds: new Set<number>() }
+  if (entries.length === 0) return null
 
-  const monthStartUtc = new Date(Date.UTC(targetYear, targetMonthIndex, 1))
-  const monthEndUtc = new Date(Date.UTC(targetYear, targetMonthIndex + 1, 0))
-  const usedEntryIds = new Set<number>()
+  const targetFromUtc = new Date(Date.UTC(targetYear, targetMonthIndex, 1))
+  const targetToUtc = new Date(Date.UTC(targetYear, targetMonthIndex + 1, 0))
 
-  const totalDays = entries.reduce((total, entry) => {
-    if (!entry.validFrom) return total
+  const targetEntry = entries.find((entry) => {
+    if (!entry.validFrom) return false
+    const entryValidFromUtc = new Date(entry.validFrom)
+    // Return true if the entry is within the target month
+    return (
+      entryValidFromUtc >= targetFromUtc && entryValidFromUtc <= targetToUtc
+    )
+  })
 
-    const validFromUtc = new Date(entry.validFrom)
-    const validToUtc = entry.validTo ? new Date(entry.validTo) : monthEndUtc
+  if (!targetEntry) return null
 
-    const start = validFromUtc > monthStartUtc ? validFromUtc : monthStartUtc
-    const end = validToUtc < monthEndUtc ? validToUtc : monthEndUtc
+  const entryValidFromUtc = targetEntry.validFrom
+    ? new Date(targetEntry.validFrom)
+    : targetFromUtc
+  const entryValidToUtc = targetEntry.validTo
+    ? new Date(targetEntry.validTo)
+    : targetToUtc
 
-    if (end < start) return total
+  if (entryValidToUtc < entryValidFromUtc) return null
 
-    const days = Math.floor((end.getTime() - start.getTime()) / 86400000) + 1
+  const days =
+    Math.floor(
+      (entryValidToUtc.getTime() - entryValidFromUtc.getTime()) / 86400000,
+    ) + 1
 
-    if (days > 0) {
-      usedEntryIds.add(entry.id)
-    }
+  if (days > 0) return { totalDays: days, entryId: targetEntry.id }
 
-    return total + days
-  }, 0)
-
-  return { totalDays, entryIds: usedEntryIds }
+  return null
 }
