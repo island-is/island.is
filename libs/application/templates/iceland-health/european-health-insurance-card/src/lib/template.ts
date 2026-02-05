@@ -5,10 +5,10 @@ import {
   ApplicationStateSchema,
   ApplicationTemplate,
   ApplicationTypes,
-  ChildrenCustodyInformationApi,
+  ChildrenCustodyInformationApiV3,
   DefaultEvents,
-  NationalRegistrySpouseApi,
-  NationalRegistryUserApi,
+  NationalRegistryV3SpouseApi,
+  NationalRegistryV3UserApi,
   defineTemplateApi,
 } from '@island.is/application/types'
 import {
@@ -81,9 +81,9 @@ const template: ApplicationTemplate<
                 },
               ],
               api: [
-                NationalRegistryUserApi,
-                NationalRegistrySpouseApi,
-                ChildrenCustodyInformationApi,
+                NationalRegistryV3UserApi,
+                NationalRegistryV3SpouseApi,
+                ChildrenCustodyInformationApiV3,
                 EhicCardResponseApi,
               ],
               write: 'all',

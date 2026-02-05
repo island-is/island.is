@@ -79,6 +79,10 @@ export const registrant = buildSection({
           required: true,
           options: [
             {
+              label: m.spouse,
+              value: ApplicantRelation.SPOUSE,
+            },
+            {
               label: m.heir,
               value: ApplicantRelation.HEIR,
             },
