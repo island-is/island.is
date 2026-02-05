@@ -6,6 +6,7 @@ import {
   AppointmentStatusEnum,
   VaccinationStatusEnum,
   WaitlistStatusTagColorEnum,
+  ReferralStatusEnum,
 } from '../models/enums'
 
 export const mapVaccinationStatus = (
@@ -73,5 +74,30 @@ export const mapStatusIdToColor = (
       return WaitlistStatusTagColorEnum.purple
     default:
       return WaitlistStatusTagColorEnum.blue
+  }
+}
+
+export const mapReferralStatusValueToStatus = (
+  statusValue?: number | null,
+): ReferralStatusEnum => {
+  switch (statusValue) {
+    case 0:
+      return ReferralStatusEnum.Open
+    case 10:
+      return ReferralStatusEnum.Withdrawn
+    case 20:
+      return ReferralStatusEnum.InTreatment
+    case 30:
+      return ReferralStatusEnum.Completed
+    case 50:
+      return ReferralStatusEnum.Rejected
+    case 60:
+      return ReferralStatusEnum.Finished
+    case 98:
+      return ReferralStatusEnum.Deleted
+    case 99:
+      return ReferralStatusEnum.Expired
+    default: // Should not happen unless a new status is added without letting us know
+      return ReferralStatusEnum.Unknown
   }
 }
