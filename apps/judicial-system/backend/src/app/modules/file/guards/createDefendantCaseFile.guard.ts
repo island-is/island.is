@@ -10,7 +10,6 @@ import { CaseFileCategory } from '@island.is/judicial-system/types'
 const allowedCaseFileCategories = [
   CaseFileCategory.SENT_TO_PRISON_ADMIN_FILE,
   CaseFileCategory.CRIMINAL_RECORD,
-  CaseFileCategory.CRIMINAL_RECORD_UPDATE,
 ]
 
 @Injectable()

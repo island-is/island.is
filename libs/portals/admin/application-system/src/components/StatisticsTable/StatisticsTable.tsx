@@ -1,5 +1,5 @@
 import { useLocale } from '@island.is/localization'
-import { Box, Table as T } from '@island.is/island-ui/core'
+import { Box, Table as T, Text } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { ApplicationStatistics } from '@island.is/api/schema'
 
@@ -11,7 +11,11 @@ export default function StatisticsTable({ dataRows }: Props) {
   const { formatMessage } = useLocale()
 
   if (!dataRows?.length) {
-    return <Box marginTop={[3, 3, 6]}>{formatMessage(m.noData)}</Box>
+    return (
+      <Box display="flex" justifyContent="center" marginTop={[3, 3, 6]}>
+        <Text variant="h4">{formatMessage(m.noData)}</Text>
+      </Box>
+    )
   }
 
   return (
