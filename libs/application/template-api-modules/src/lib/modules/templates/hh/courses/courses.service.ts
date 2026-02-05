@@ -27,6 +27,8 @@ const GET_COURSE_BY_ID_QUERY = `
             startTime
             endTime
           }
+          chargeItemCode
+          location
         }
       }
     }
@@ -42,6 +44,30 @@ export class CoursesService extends BaseTemplateApiService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {
     super(ApplicationTypes.HEILSUGAESLA_HOFUDBORDARSVAEDISINS_NAMSKEID)
+  }
+
+  async getSelectedChargeItem({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps): Promise<{
+    chargeItemCode?: string | null
+  }> {
+    const courseId = getValueViaPath<ApplicationAnswers['courseSelect']>(
+      application.answers,
+      'courseSelect',
+    )
+    const courseInstanceId = getValueViaPath<ApplicationAnswers['dateSelect']>(
+      application.answers,
+      'dateSelect',
+    )
+
+    const { courseInstance } = await this.getCourseById(
+      courseId,
+      courseInstanceId,
+      auth.authorization,
+    )
+
+    return { chargeItemCode: courseInstance.chargeItemCode }
   }
 
   async submitApplication({
@@ -64,7 +90,7 @@ export class CoursesService extends BaseTemplateApiService {
       const { name, email, phone, healthcenter, nationalId } =
         await this.extractApplicantInfo(application)
 
-      if (!name || !email || !phone || !healthcenter || !nationalId)
+      if (!name || !email || !phone || !nationalId)
         throw new TemplateApiError(
           {
             title: 'No contact information found',
@@ -76,7 +102,6 @@ export class CoursesService extends BaseTemplateApiService {
       const message = await this.formatApplicationMessage(
         application,
         participantList,
-        course.id,
         course.title,
         courseInstance,
         nationalId,
@@ -156,6 +181,7 @@ export class CoursesService extends BaseTemplateApiService {
                 startTime?: string
                 endTime?: string
               }
+              chargeItemCode?: string | null
             }[]
           }
         }
@@ -226,7 +252,6 @@ export class CoursesService extends BaseTemplateApiService {
   private async formatApplicationMessage(
     application: ApplicationWithAttachments,
     participantList: ApplicationAnswers['participantList'],
-    courseId: string,
     courseTitle: string,
     courseInstance: {
       id: string
@@ -235,12 +260,13 @@ export class CoursesService extends BaseTemplateApiService {
         startTime?: string
         endTime?: string
       }
+      location?: string | null
     },
     nationalId: string,
     name: string,
     email: string,
     phone: string,
-    healthcenter: string,
+    healthcenter?: string,
   ): Promise<string> {
     const userIsPayingAsIndividual = getValueViaPath<YesOrNoEnum>(
       application.answers,
@@ -268,12 +294,13 @@ export class CoursesService extends BaseTemplateApiService {
       new Date(courseInstance.startDate.split('T')[0]),
       'dd.MM.yyyy',
     )} ${startDateTimeDuration ?? ''}\n`
+    message += `Staðsetning námskeiðs: ${courseInstance.location ?? ''}\n`
 
     message += `Kennitala umsækjanda: ${nationalId}\n`
     message += `Nafn umsækjanda: ${name}\n`
     message += `Netfang umsækjanda: ${email}\n`
     message += `Símanúmer umsækjanda: ${phone}\n`
-    message += `Heilsugæslustöð umsækjanda: ${healthcenter}\n`
+    message += `Heilsugæslustöð umsækjanda: ${healthcenter ?? ''}\n`
 
     const payer =
       userIsPayingAsIndividual === YesOrNoEnum.YES

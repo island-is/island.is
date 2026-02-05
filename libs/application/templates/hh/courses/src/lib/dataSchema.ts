@@ -53,7 +53,6 @@ const nationalIdWithNameSchema = z.object({
 
 const participantSchema = z.object({
   nationalIdWithName: nationalIdWithNameSchema,
-  healthcenter: z.string().optional(),
 })
 
 const userInformationSchema = z.object({
@@ -64,7 +63,7 @@ const userInformationSchema = z.object({
     .string()
     .min(1)
     .refine((v) => isValidPhoneNumber(v)),
-  healthcenter: z.string().min(1),
+  healthcenter: z.string().optional(),
 })
 
 export const dataSchema = z.object({

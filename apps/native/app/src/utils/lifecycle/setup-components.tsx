@@ -4,6 +4,8 @@ import { OfflineBanner } from '../../components/offline/offline-banner'
 import { isTestingApp } from '../../config'
 import { AirDiscountScreen } from '../../screens/air-discount/air-discount'
 import { AppLockScreen } from '../../screens/app-lock/app-lock'
+import { AppointmentDetailScreen } from '../../screens/appointments/appointment-detail'
+import { AppointmentsScreen } from '../../screens/appointments/appointments'
 import { ApplicationsScreen } from '../../screens/applications/applications'
 import { ApplicationsCompletedScreen } from '../../screens/applications/applications-completed'
 import { ApplicationsInProgressScreen } from '../../screens/applications/applications-in-progress'
@@ -138,6 +140,8 @@ export function registerAllComponents() {
   registerComponent(CR.MedicineHistoryScreen, MedicineHistoryScreen)
 
   registerComponent(CR.RegisterEmailScreen, RegisterEmailScreen)
+  registerComponent(CR.AppointmentsScreen, AppointmentsScreen)
+  registerComponent(CR.AppointmentDetailScreen, AppointmentDetailScreen)
 
   // Overlay
   registerComponent(CR.OfflineBanner, OfflineBanner)
