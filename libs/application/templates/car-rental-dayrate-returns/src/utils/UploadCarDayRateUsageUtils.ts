@@ -342,10 +342,11 @@ export const getMonthTotalDayRateDays = ({
   const targetEntry = entries.find((entry) => {
     if (!entry.validFrom) return false
     const entryValidFromUtc = new Date(entry.validFrom)
-    // Return true if the entry is within the target month
-    return (
-      entryValidFromUtc >= targetFromUtc && entryValidFromUtc <= targetToUtc
-    )
+    const entryValidToUtc = entry.validTo
+      ? new Date(entry.validTo)
+      : targetToUtc
+
+    return entryValidFromUtc <= targetToUtc && entryValidToUtc >= targetFromUtc
   })
 
   if (!targetEntry) return null
@@ -357,14 +358,14 @@ export const getMonthTotalDayRateDays = ({
     ? new Date(targetEntry.validTo)
     : targetToUtc
 
-  if (entryValidToUtc < entryValidFromUtc) return null
+  const start =
+    entryValidFromUtc > targetFromUtc ? entryValidFromUtc : targetFromUtc
+  const end = entryValidToUtc < targetToUtc ? entryValidToUtc : targetToUtc
 
-  const days =
-    Math.floor(
-      (entryValidToUtc.getTime() - entryValidFromUtc.getTime()) / 86400000,
-    ) + 1
+  if (end < start) return null
 
-  if (days > 0) return { totalDays: days, entryId: targetEntry.id }
+  const days = Math.floor((end.getTime() - start.getTime()) / 86400000) + 1
+  if (days <= 0) return null
 
-  return null
+  return { totalDays: days, entryId: targetEntry.id }
 }
