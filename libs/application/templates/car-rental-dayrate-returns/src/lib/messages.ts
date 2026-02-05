@@ -4,7 +4,7 @@ export const m = {
   application: defineMessages({
     name: {
       id: 'rsk.crdr.application:name',
-      defaultMessage: 'Bílaleigu daggjalds nýting',
+      defaultMessage: 'Skilagrein daggjalds - Útleigudagar',
       description: 'Application name',
     },
     institution: {
@@ -37,7 +37,7 @@ export const m = {
     skatturSubTitle: {
       id: 'rsk.crdr.application:prerequisites.skattur.subtitle',
       defaultMessage:
-        'Upplýsingar frá Skattinum - Upplýsingar um gjaldflokksstöðu bifreiða',
+        'Upplýsingar frá Skattinum - Upplýsingar um ökutæki skráð á daggjald',
       description: 'Skatturinn data provider subtitle',
     },
     vehiclesTitle: {
@@ -114,7 +114,7 @@ export const m = {
     },
     multiTitle: {
       id: 'rsk.crdr.application:multi.upload.multi.title',
-      defaultMessage: 'Skrá bifreiðar',
+      defaultMessage: 'Skrá útleigudaga',
       description: 'Bulk upload multi field title',
     },
     description: {
@@ -185,12 +185,12 @@ export const m = {
     },
     multiTitle: {
       id: 'rsk.crdr.application:cars.changes.count.multi.title',
-      defaultMessage: 'Staðfesta breytingar',
+      defaultMessage: 'Staðfesta skráningu',
       description: 'Cars changes count multi field title',
     },
     header: {
       id: 'rsk.crdr.application:cars.changes.count.header',
-      defaultMessage: 'Fjöldi bifreiða til að breyta',
+      defaultMessage: 'Fjöldi ökutækja í sendingu',
       description: 'Cars changes count table header',
     },
     submitButton: {
