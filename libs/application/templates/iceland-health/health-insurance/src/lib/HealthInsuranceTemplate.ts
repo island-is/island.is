@@ -11,7 +11,7 @@ import {
   Application,
   DefaultEvents,
   defineTemplateApi,
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   HealthInsuranceApi,
   UserProfileApi,
   ApplicationConfigurations,
@@ -86,7 +86,7 @@ const HealthInsuranceTemplate: ApplicationTemplate<
               delete: true,
               write: 'all',
               api: [
-                NationalRegistryUserApi,
+                NationalRegistryV3UserApi,
                 HealthInsuranceApi,
                 UserProfileApi,
               ],
