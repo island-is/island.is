@@ -11,7 +11,10 @@ import {
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { getServiceStatusText } from '@island.is/judicial-system/formatters'
+import {
+  formatDate,
+  getServiceStatusText,
+} from '@island.is/judicial-system/formatters'
 import {
   addMessagesToQueue,
   MessageType,
@@ -21,6 +24,7 @@ import {
   CourtDocumentType,
   HashAlgorithm,
   isFailedServiceStatus,
+  isIndictmentCase,
   isSubpoenaInfoChanged,
   isSuccessfulServiceStatus,
   ServiceStatus,
@@ -40,6 +44,7 @@ import { FileService } from '../file/file.service'
 import { PoliceDocumentType, PoliceService } from '../police'
 import {
   Case,
+  CaseRepositoryService,
   CourtSession,
   Defendant,
   Institution,
@@ -48,6 +53,7 @@ import {
   User,
 } from '../repository'
 import { UpdateSubpoenaDto } from './dto/updateSubpoena.dto'
+import { CreateSubpoenasDto } from './dto/createSubpoenas.dto'
 import { DeliverResponse } from './models/deliver.response'
 
 export const include: Includeable[] = [
@@ -96,10 +102,11 @@ export class SubpoenaService {
     private readonly courtService: CourtService,
     @Inject(forwardRef(() => InternalCaseService))
     private readonly internalCaseService: InternalCaseService,
+    private readonly caseRepositoryService: CaseRepositoryService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  async createSubpoena(
+  private async createSubpoena(
     defendantId: string,
     caseId: string,
     transaction: Transaction,
@@ -117,6 +124,103 @@ export class SubpoenaService {
       },
       { transaction },
     )
+  }
+
+  async createSubpoenasForDefendants(
+    caseId: string,
+    createSubpoenasDto: CreateSubpoenasDto,
+    transaction: Transaction,
+  ): Promise<Subpoena[]> {
+    // Fetch the case with defendants and courtSessions
+    const theCase = await this.caseRepositoryService.findOne({
+      where: { id: caseId },
+      include: [
+        {
+          model: Defendant,
+          as: 'defendants',
+          required: false,
+          where: {
+            id: createSubpoenasDto.defendantIds,
+          },
+        },
+        {
+          model: CourtSession,
+          as: 'courtSessions',
+          required: false,
+        },
+      ],
+      transaction,
+    })
+
+    if (!theCase) {
+      throw new NotFoundException(`Case ${caseId} does not exist`)
+    }
+
+    // Subpoenas are only for indictment cases (also enforced by CaseTypeGuard at controller level)
+    if (!isIndictmentCase(theCase.type)) {
+      throw new NotFoundException(
+        `Subpoenas can only be created for indictment cases, but case ${caseId} is of type ${theCase.type}`,
+      )
+    }
+
+    if (!theCase.defendants || theCase.defendants.length === 0) {
+      throw new NotFoundException(
+        `No defendants found for case ${caseId} with the provided IDs`,
+      )
+    }
+
+    // Filter out defendants with alternative service
+    const defendantsToProcess = theCase.defendants.filter(
+      (defendant) => !defendant.isAlternativeService,
+    )
+
+    if (defendantsToProcess.length === 0) {
+      this.logger.warn(
+        `No defendants eligible for subpoenas (all have alternative service) for case ${caseId}`,
+      )
+      return []
+    }
+
+    // Create subpoenas for eligible defendants
+    const subpoenas = await Promise.all(
+      defendantsToProcess.map(async (defendant) => {
+        return this.createSubpoena(
+          defendant.id,
+          caseId,
+          transaction,
+          createSubpoenasDto.arraignmentDate,
+          createSubpoenasDto.location,
+          defendant.subpoenaType,
+        )
+      }),
+    )
+
+    // Create court documents if court sessions exist
+    if (
+      theCase.withCourtSessions &&
+      theCase.courtSessions &&
+      theCase.courtSessions.length > 0
+    ) {
+      for (let i = 0; i < defendantsToProcess.length; i++) {
+        const defendant = defendantsToProcess[i]
+        const subpoena = subpoenas[i]
+        const name = `Fyrirkall ${defendant.name} ${formatDate(
+          subpoena.created,
+        )}`
+
+        await this.courtDocumentService.create(
+          caseId,
+          {
+            documentType: CourtDocumentType.GENERATED_DOCUMENT,
+            name,
+            generatedPdfUri: `/api/case/${caseId}/subpoena/${defendant.id}/${subpoena.id}/${name}`,
+          },
+          transaction,
+        )
+      }
+    }
+
+    return subpoenas
   }
 
   setHash(

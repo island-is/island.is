@@ -43,12 +43,6 @@ class UpdateDateLog {
   @IsOptional()
   @Field(() => String, { nullable: true })
   readonly location?: string
-
-  @Allow()
-  @IsOptional()
-  @IsArray()
-  @Field(() => [ID], { nullable: true })
-  readonly selectedDefendantIds?: string[]
 }
 
 @InputType()

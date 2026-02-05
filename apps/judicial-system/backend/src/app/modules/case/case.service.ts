@@ -2254,10 +2254,6 @@ export class CaseService {
       theCase.courtId !== update.courtId &&
       theCase.state === CaseState.RECEIVED
 
-    const updatedArraignmentDate = update.arraignmentDate
-    const schedulingNewArraignmentDateForIndictmentCase =
-      isIndictmentCase(theCase.type) && Boolean(updatedArraignmentDate)
-
     if (isReceivingCase) {
       update = transitionCase(CaseTransition.RECEIVE, theCase, user, update)
     }
@@ -2291,58 +2287,6 @@ export class CaseService {
     // which should have court sessions
     if (isReceivingIndictmentCase && theCase.withCourtSessions) {
       await this.handleCreateFirstCourtSession(theCase, transaction)
-    }
-
-    // Create new subpoenas if scheduling a new arraignment date for an indictment case
-    if (schedulingNewArraignmentDateForIndictmentCase && theCase.defendants) {
-      const selectedIds = updatedArraignmentDate?.selectedDefendantIds
-      const defendantsToProcess = selectedIds
-        ? theCase.defendants.filter(
-            (defendant) =>
-              selectedIds.includes(defendant.id) &&
-              !defendant.isAlternativeService,
-          )
-        : theCase.defendants.filter(
-            (defendant) => !defendant.isAlternativeService,
-          )
-
-      const dsPairs = await Promise.all(
-        defendantsToProcess.map(async (defendant) => {
-          const subpoena = await this.subpoenaService.createSubpoena(
-            defendant.id,
-            theCase.id,
-            transaction,
-            updatedArraignmentDate?.date,
-            updatedArraignmentDate?.location,
-            defendant.subpoenaType,
-          )
-
-          return { defendant, subpoena }
-        }),
-      )
-
-      // Add court documents if a court session exists
-      if (
-        theCase.withCourtSessions &&
-        theCase.courtSessions &&
-        theCase.courtSessions.length > 0
-      ) {
-        for (const { defendant, subpoena } of dsPairs) {
-          const name = `Fyrirkall ${defendant.name} ${formatDate(
-            subpoena.created,
-          )}`
-
-          await this.courtDocumentService.create(
-            theCase.id,
-            {
-              documentType: CourtDocumentType.GENERATED_DOCUMENT,
-              name,
-              generatedPdfUri: `/api/case/${theCase.id}/subpoena/${defendant.id}/${subpoena.id}/${name}`,
-            },
-            transaction,
-          )
-        }
-      }
     }
 
     // Ensure that verdicts exist at this stage, if they don't exist we create them
