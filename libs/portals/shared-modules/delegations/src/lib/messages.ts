@@ -288,6 +288,14 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:choose-access-rights',
     defaultMessage: 'Velja réttindi',
   },
+  grantAddMorePeople: {
+    id: 'sp.access-control-delegations:grant-add-more-people',
+    defaultMessage: 'Bæta við fleiri einstaklingum',
+  },
+  grantRemovePerson: {
+    id: 'sp.access-control-delegations:grant-remove-person',
+    defaultMessage: 'Fjarlægja',
+  },
   closeModal: {
     id: 'sp.access-control-delegations:close-modal',
     defaultMessage: 'Loka glugga',

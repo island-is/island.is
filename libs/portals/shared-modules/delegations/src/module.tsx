@@ -13,8 +13,11 @@ const AccessControl = lazy(() => import('./screens/AccessControl'))
 const AccessControlNew = lazy(() => import('./screens/AccessControlNew'))
 const GrantAccess = lazy(() => import('./screens/GrantAccess/GrantAccess'))
 const GrantAccessNew = lazy(() =>
-  import('./screens/GrantAccessNew/GrantAccessNew'),
+  import('./screens/GrantAccess/GrantAccessNew'),
 )
+// const GrantAccessNew = lazy(() =>
+//   import('./screens/GrantAccessNew/GrantAccessNew'),
+// )
 const AccessOutgoing = lazy(() =>
   import('./screens/AccessOutgoing/AccessOutgoing'),
 )
