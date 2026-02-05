@@ -126,8 +126,7 @@ export const PaymentOverviewTotals = () => {
       } else {
         toast.error(formatMessage(messages.paymentOverviewTotalsDownloadError))
       }
-    } catch (e) {
-      console.error(e)
+    } catch {
       toast.error(formatMessage(messages.paymentOverviewTotalsDownloadError))
     }
   }
