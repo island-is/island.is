@@ -72,13 +72,13 @@ const Referrals: React.FC = () => {
       {!error && loading && <CardLoader />}
 
       <Stack space={2}>
-        {referrals?.map((referral, index) => (
+        {referrals?.map((referral) => (
           <ActionCard
-            key={`referral-${index}`}
+            key={referral.id}
             heading={referral?.serviceName ?? ''}
             headingVariant="h4"
             text={[
-              formatMessage(messages.medicineValidTo),
+              formatMessage(messages.referralValidTo),
               formatDate(referral.validUntilDate),
             ]
               .filter((item) => isDefined(item))

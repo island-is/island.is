@@ -97,7 +97,8 @@ export const mapReferralStatusValueToStatus = (
       return ReferralStatusEnum.Deleted
     case 99:
       return ReferralStatusEnum.Expired
-    default: // Should not happen unless a new status is added without letting us know
+    default:
+      // Unknown status values if new ones get added without letting us know
       return ReferralStatusEnum.Unknown
   }
 }
