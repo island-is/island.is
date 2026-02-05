@@ -38,6 +38,7 @@ const personInfoSchema = z.object({
     .refine((val) => !!val && val.trim().length > 0 && isValidEmail(val), {
       params: m.landlordAndTenantDetails.emailInvalidError,
     }),
+  isRemoved: z.boolean().optional(),
 })
 
 const representativeInfoSchema = z.object({
@@ -47,6 +48,7 @@ const representativeInfoSchema = z.object({
   }),
   phone: z.string().optional(),
   email: z.string().optional(),
+  isRemoved: z.boolean().optional(),
 })
 
 const landLordInfoSchema = z.object({
@@ -80,6 +82,7 @@ const landLordInfoSchema = z.object({
     .refine((val) => !!val && val.trim().length > 0 && isValidEmail(val), {
       params: m.landlordAndTenantDetails.emailInvalidError,
     }),
+  isRemoved: z.boolean().optional(),
 })
 
 const landlordInfo = z.object({
@@ -104,12 +107,18 @@ const signatory = z
   .optional()
 
 const checkforDuplicatesHelper = (
-  table: Array<{ nationalIdWithName: { nationalId?: string | undefined } }>,
+  table: Array<{
+    nationalIdWithName: { nationalId?: string | undefined }
+    isRemoved?: boolean
+  }>,
   nationalIds: Array<string>,
 ) => {
   let hasDuplicates = false
   let duplicateIndex = undefined
   table.forEach((party, i) => {
+    // Skip items marked as removed in TableRepeaterField
+    if (party.isRemoved) return
+
     const nationalId = party.nationalIdWithName?.nationalId
     if (!nationalId) return
 
@@ -148,6 +157,7 @@ export const partiesSchema = z
 
     const landlordNationalIds = [
       ...(landlordTable
+        .filter((rep) => !rep.isRemoved)
         .map((rep) => rep.nationalIdWithName?.nationalId)
         .filter((id) => !!id) as Array<string>),
       ...(applicantsRole === ApplicantsRole.LANDLORD
@@ -162,9 +172,10 @@ export const partiesSchema = z
       typeof representativeTable[0] === 'object'
         ? ((
             representativeTable as Array<
-              z.TypeOf<typeof representativeInfoSchema>
+              z.TypeOf<typeof representativeInfoSchema> & { isRemoved?: boolean }
             >
           )
+            .filter((rep) => !rep.isRemoved)
             .map((rep) => rep.nationalIdWithName?.nationalId)
             .filter((id) => !!id) as Array<string>)
         : []),
@@ -175,6 +186,7 @@ export const partiesSchema = z
 
     const tenantNationalIds = [
       ...(tenantTable
+        .filter((tenant) => !tenant.isRemoved)
         .map((tenant) => tenant.nationalIdWithName?.nationalId)
         .filter((id) => !!id) as Array<string>),
       ...(applicantsRole === ApplicantsRole.TENANT
@@ -287,11 +299,13 @@ export const partiesSchema = z
     const { landlordInfo, applicantsRole, applicant } = data
     const { table } = landlordInfo
 
+    const activeTable = table.filter((landlord) => !landlord.isRemoved)
+
     const landlordNationalIds = [
       ...(applicantsRole === ApplicantsRole.LANDLORD
         ? [applicant.nationalId]
         : []),
-      ...(table
+      ...(activeTable
         .map((landlord) => landlord.nationalIdWithName?.nationalId)
         .filter((id) => !!id) as Array<string>),
     ]
@@ -331,11 +345,13 @@ export const partiesSchema = z
     const { tenantInfo, applicantsRole, applicant } = data
     const { table } = tenantInfo
 
+    const activeTable = table.filter((tenant) => !tenant.isRemoved)
+
     const tenantNationalIds = [
       ...(applicantsRole === ApplicantsRole.TENANT
         ? [applicant.nationalId]
         : []),
-      ...(table
+      ...(activeTable
         .map((tenant) => tenant.nationalIdWithName?.nationalId)
         .filter((id) => !!id) as Array<string>),
     ]
