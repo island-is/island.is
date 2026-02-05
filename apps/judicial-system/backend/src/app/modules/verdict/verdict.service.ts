@@ -288,6 +288,7 @@ export class VerdictService {
 
     return [
       { code: 'RVG_CASE_ID', value: theCase.id },
+      { code: 'RVG_VERDICT_ID', value: verdict.id },
       ...(receiverSsn ? [{ code: 'RECEIVER_SSN', value: receiverSsn }] : []),
       ...(theCase.courtCaseNumber
         ? [

@@ -359,14 +359,15 @@ export class SubpoenaService {
         subpoena,
       )
 
-      const createdSubpoena = await this.policeService.createSubpoena(
+      const createdSubpoena = await this.policeService.createSubpoena({
         theCase,
         defendant,
-        Base64.btoa(subpoenaPdf.toString('binary')),
-        Base64.btoa(indictmentPdf.toString('binary')),
+        subpoenaId: subpoena.id,
+        subpoena: Base64.btoa(subpoenaPdf.toString('binary')),
+        indictment: Base64.btoa(indictmentPdf.toString('binary')),
         user,
-        civilClaimPdfs,
-      )
+        civilClaims: civilClaimPdfs,
+      })
 
       if (!createdSubpoena) {
         this.logger.error('Failed to create subpoena file for police')
