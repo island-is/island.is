@@ -12,6 +12,7 @@ export interface LinkItem {
   title: string
   icon?: ImageSourcePropType
   isExternal?: boolean
+  tabId?: string
 }
 
 export interface LinkContainerProps {
@@ -92,10 +93,17 @@ export const LinkContainer = ({
     if (overlay?.componentId) {
       overlay.close()
     }
+
     if (links.isExternal) {
       openBrowser(links.link, componentId)
     } else {
-      navigateTo(links.link, componentId)
+      const extraProps: { parentComponentId: string; activeTabId?: string } = {
+        parentComponentId: componentId
+      }
+      if (links.tabId) {
+        extraProps.activeTabId = links.tabId
+      }
+      navigateTo(links.link, extraProps)
     }
   }
 
@@ -133,6 +141,7 @@ export const LinkContainer = ({
                 title: subLink.title,
                 icon: subLink.icon,
                 isExternal: subLink.isExternal,
+                tabId: subLink.tabId,
               }}
               key={subLink.title}
               componentId={componentId}

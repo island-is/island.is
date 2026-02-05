@@ -1,26 +1,29 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { RefreshControl, SafeAreaView, ScrollView, View } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
-import { useNavigation } from 'react-native-navigation-hooks/dist'
+import { useNavigation, useNavigationButtonPress } from 'react-native-navigation-hooks/dist'
 import styled from 'styled-components/native'
 
+import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import {
   HealthDirectorateMedicineHistoryItem,
   HealthDirectoratePrescription,
   RightsPortalDrugCertificate,
   useGetDrugCertificatesLazyQuery,
   useGetDrugPrescriptionsLazyQuery,
-  useGetMedicineHistoryLazyQuery,
+  useGetMedicineDelegationsLazyQuery,
+  useGetMedicineHistoryLazyQuery
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { useLocale } from '../../hooks/use-locale'
-import { GeneralCardSkeleton, Problem, TabButtons, Typography } from '../../ui'
+import { GeneralCardSkeleton, Problem, Tag, Typography } from '../../ui'
+import { MedicineDelegationContent } from '../medicine-delegation/components/medicine-delegation-content'
 import { CertificateCard } from './components/certificate-card'
 import { MedicineHistoryCard } from './components/medicine-history-card'
 import { PrescriptionCard } from './components/prescription-card'
-import { useFeatureFlag } from '../../contexts/feature-flag-provider'
+import { ButtonRegistry } from '../../utils/component-registry'
 
 type ActiveTabData = HealthDirectorateMedicineHistoryItem[] &
   HealthDirectoratePrescription[] &
@@ -35,12 +38,25 @@ const Wrapper = styled.View`
   margin-top: ${({ theme }) => theme.spacing[3]}px;
 `
 
+const TagsWrapper = styled.ScrollView.attrs({
+  horizontal: true,
+  showsHorizontalScrollIndicator: false,
+  contentContainerStyle: {
+    gap: 8,
+  },
+})`
+  margin-top: ${({ theme }) => theme.spacing[2]}px;
+  flex-grow: 0;
+  margin-horizontal: -${({ theme }) => theme.spacing[2]}px;
+  padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
+`
+
 const DescriptionWrapper = styled.View`
   margin-top: ${({ theme }) => theme.spacing[2]}px;
 `
 
 const { getNavigationOptions, useNavigationOptions } =
-  createNavigationOptionHooks((_) => ({
+  createNavigationOptionHooks(() => ({
     topBar: {
       title: {
         text: '',
@@ -52,19 +68,27 @@ const { getNavigationOptions, useNavigationOptions } =
     },
   }))
 
-export const PrescriptionsScreen: NavigationFunctionComponent = ({
-  componentId,
-}) => {
+export const PrescriptionsScreen: NavigationFunctionComponent<{
+  activeTabId?: string
+}> = ({ componentId, activeTabId }) => {
   useNavigationOptions(componentId)
   const intl = useIntl()
   const [refetching, setRefetching] = useState(false)
-  const [selectedTab, setSelectedTab] = useState(0)
+  const [selectedTabId, setSelectedTabId] = useState<string | null>(null)
+  const [rightButtonsValue, setRightButtonsValue] = useState(false)
+  const hasSetInitialTab = useRef(false)
 
   const { mergeOptions } = useNavigation(componentId)
   const locale = useLocale()
 
   const isPrescriptionsEnabled = useFeatureFlag(
     'isPrescriptionsEnabled',
+    false,
+    null,
+  )
+
+  const isMedicineDelegationEnabled = useFeatureFlag(
+    'isMedicineDelegationEnabled',
     false,
     null,
   )
@@ -91,6 +115,21 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
       variables: { locale },
     })
 
+  const [loadMedicineDelegations, medicineDelegationsRes] = useGetMedicineDelegationsLazyQuery({
+    variables: {
+      locale: intl.locale,
+      input: {
+        status: [
+          'active',
+          'expired',
+          'inactive',
+          'unknown',
+          'awaitingApproval',
+        ],
+      },
+    },
+  })
+
   const [loadMedicineHistory, medicineHistoryRes] =
     useGetMedicineHistoryLazyQuery({
       variables: { locale },
@@ -107,6 +146,12 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
       )),
     [],
   )
+
+  useNavigationButtonPress(({ buttonId }) => {
+    if (buttonId === ButtonRegistry.MedicineDelegationShowInactiveButton) {
+      setRightButtonsValue((prev) => !prev)
+    }
+  }, componentId)
 
   const tabs = useMemo(() => {
     const allTabs = [
@@ -127,11 +172,51 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
             {prescriptionsRes.loading && !prescriptionsRes.data
               ? renderSkeletons()
               : data?.map((prescription, index) => (
-                  <PrescriptionCard
-                    key={`${prescription?.id}-${index}`}
-                    prescription={prescription}
-                  />
-                ))}
+                <PrescriptionCard
+                  key={`${prescription?.id}-${index}`}
+                  prescription={prescription}
+                />
+              ))}
+          </Wrapper>
+        ),
+      },
+      {
+        id: 'medicineDelegation',
+        titleId: 'health.medicineDelegation.screenTitle',
+        enabled: isMedicineDelegationEnabled,
+        queryResult: medicineDelegationsRes,
+        getData: () =>
+          medicineDelegationsRes.data?.healthDirectorateMedicineDelegations
+            ?.items ?? [],
+        ensureLoaded: () => {
+          if (!medicineDelegationsRes.called && isMedicineDelegationEnabled) {
+            loadMedicineDelegations()
+          }
+        },
+        rightButtons: [
+          {
+            id: ButtonRegistry.MedicineDelegationShowInactiveButton,
+            text: rightButtonsValue ? intl.formatMessage({
+              id: 'health.medicineDelegation.hideExpiredPermits',
+            }) : intl.formatMessage({
+              id: 'health.medicineDelegation.showExpiredPermits',
+            }),
+          },
+        ],
+        extraData: [rightButtonsValue],
+        renderContent: () => (
+          <Wrapper>
+            {medicineDelegationsRes.loading && !medicineDelegationsRes.data
+              ? renderSkeletons()
+              : (
+                <MedicineDelegationContent
+                  componentId={componentId}
+                  delegations={medicineDelegationsRes.data?.healthDirectorateMedicineDelegations?.items ?? []}
+                  loading={medicineDelegationsRes.loading}
+                  error={medicineDelegationsRes.error}
+                  showInactivePermits={rightButtonsValue}
+                />
+              )}
           </Wrapper>
         ),
       },
@@ -152,11 +237,11 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
             {certificatesRes.loading && !certificatesRes.data
               ? renderSkeletons()
               : data?.map((certificate, index) => (
-                  <CertificateCard
-                    key={`${certificate?.id}-${index}`}
-                    certificate={certificate}
-                  />
-                ))}
+                <CertificateCard
+                  key={`${certificate?.id}-${index}`}
+                  certificate={certificate}
+                />
+              ))}
           </Wrapper>
         ),
       },
@@ -178,11 +263,11 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
             {medicineHistoryRes.loading && !medicineHistoryRes.data
               ? renderSkeletons()
               : data?.map((medicine, index) => (
-                  <MedicineHistoryCard
-                    key={`${medicine?.id}-${index}`}
-                    medicine={medicine}
-                  />
-                ))}
+                <MedicineHistoryCard
+                  key={`${medicine?.id}-${index}`}
+                  medicine={medicine}
+                />
+              ))}
           </Wrapper>
         ),
       },
@@ -191,24 +276,78 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
     return allTabs.filter((tab) => tab.enabled)
   }, [
     isPrescriptionsEnabled,
+    isMedicineDelegationEnabled,
     prescriptionsRes,
     certificatesRes,
     medicineHistoryRes,
+    medicineDelegationsRes,
+    rightButtonsValue,
     renderSkeletons,
     loadPrescriptions,
     loadCertificates,
     loadMedicineHistory,
+    loadMedicineDelegations,
+    componentId,
+    intl,
   ])
 
-  const activeTab = tabs[selectedTab]
+  // Calculate selectedTab index from selectedTabId
+  const selectedTab = selectedTabId
+    ? tabs.findIndex(tab => tab.id === selectedTabId)
+    : 0
+
+  // Ensure valid index
+  const validSelectedTab = selectedTab >= 0 && selectedTab < tabs.length ? selectedTab : 0
+
+  const activeTab = tabs[validSelectedTab]
   const activeTabData = activeTab?.getData() as ActiveTabData
 
+  // Reset flag and selected tab when component mounts or activeTabId changes
   useEffect(() => {
-    tabs[selectedTab]?.ensureLoaded()
-  }, [tabs, selectedTab])
+    hasSetInitialTab.current = false
+    setSelectedTabId(null)
+  }, [activeTabId])
+
+  // Set initial tab based on activeTabId or default to first tab (only once, after flags load)
+  useEffect(() => {
+    // Wait for feature flags to load before setting initial tab
+    if (isPrescriptionsEnabled === null || isMedicineDelegationEnabled === null) {
+      return
+    }
+
+    if (tabs.length > 0 && !hasSetInitialTab.current) {
+      if (activeTabId) {
+        // activeTabId specified via navigation - wait until that specific tab exists
+        const tabIndex = tabs.findIndex((tab) => tab.id === activeTabId)
+        if (tabIndex !== -1) {
+          setSelectedTabId(activeTabId)
+          hasSetInitialTab.current = true
+        }
+        // If tab not found yet, don't set anything - keep waiting for it to appear
+      } else {
+        // No activeTabId specified, default to first tab
+        setSelectedTabId(tabs[0].id)
+        hasSetInitialTab.current = true
+      }
+    }
+  }, [activeTabId, tabs, isPrescriptionsEnabled, isMedicineDelegationEnabled])
+
+  useEffect(() => {
+    tabs[validSelectedTab]?.ensureLoaded()
+  }, [tabs, validSelectedTab])
+
+  useEffect(() => {
+    mergeOptions({
+      topBar: {
+        rightButtons: activeTab?.rightButtons ?? [],
+      },
+    })
+  }, [activeTab, mergeOptions])
 
   const handleTabChange = (tabIndex: number) => {
-    setSelectedTab(tabIndex)
+    if (tabs[tabIndex]) {
+      setSelectedTabId(tabs[tabIndex].id)
+    }
   }
 
   const showError =
@@ -223,8 +362,14 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
   useConnectivityIndicator({
     componentId,
     refetching,
-    queryResult: [prescriptionsRes, certificatesRes, medicineHistoryRes],
+    queryResult: [
+      prescriptionsRes,
+      certificatesRes,
+      medicineHistoryRes,
+      medicineDelegationsRes,
+    ],
   })
+
 
   const onRefresh = useCallback(async () => {
     setRefetching(true)
@@ -235,14 +380,19 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
           ? certificatesRes.refetch()
           : null,
         isPrescriptionsEnabled &&
-        prescriptionsRes.called &&
-        prescriptionsRes.refetch
+          prescriptionsRes.called &&
+          prescriptionsRes.refetch
           ? prescriptionsRes.refetch()
           : null,
         isPrescriptionsEnabled &&
-        medicineHistoryRes.called &&
-        medicineHistoryRes.refetch
+          medicineHistoryRes.called &&
+          medicineHistoryRes.refetch
           ? medicineHistoryRes.refetch()
+          : null,
+        isMedicineDelegationEnabled &&
+          medicineDelegationsRes.called &&
+          medicineDelegationsRes.refetch
+          ? medicineDelegationsRes.refetch()
           : null,
       ].filter(Boolean)
 
@@ -256,10 +406,13 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
     prescriptionsRes,
     certificatesRes,
     medicineHistoryRes,
+    medicineDelegationsRes,
     isPrescriptionsEnabled,
+    isMedicineDelegationEnabled,
   ])
 
-  if (isPrescriptionsEnabled === null) {
+  // Wait for feature flags to load before rendering
+  if (isPrescriptionsEnabled === null || isMedicineDelegationEnabled === null) {
     return null
   }
 
@@ -272,25 +425,28 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
         style={{ flex: 1 }}
       >
         <Host>
-          <Wrapper>
-            {isPrescriptionsEnabled ? (
-              <TabButtons
-                buttons={tabs.map((tab) => ({
-                  title: intl.formatMessage({
+          {isPrescriptionsEnabled ? (
+            <TagsWrapper>
+              {tabs.map((tab, index) => (
+                <Tag
+                  key={tab.id}
+                  title={intl.formatMessage({
                     id: tab.titleId,
-                  }),
-                }))}
-                selectedTab={selectedTab}
-                setSelectedTab={handleTabChange}
-              />
-            ) : (
+                  })}
+                  active={validSelectedTab === index}
+                  onPress={() => handleTabChange(index)}
+                />
+              ))}
+            </TagsWrapper>
+          ) : (
+            <Wrapper>
               <Typography variant="body">
                 {intl.formatMessage({
                   id: 'health.prescriptionsAndCertificates.description',
                 })}
               </Typography>
-            )}
-          </Wrapper>
+            </Wrapper>
+          )}
           {activeTab?.descriptionId && (
             <DescriptionWrapper>
               <Typography variant="body">

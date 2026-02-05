@@ -57,6 +57,11 @@ export const HealthCategoriesScreen: NavigationFunctionComponent = ({
     false,
     null,
   )
+  const isMedicineDelegationEnabled = useFeatureFlag(
+    'isMedicineDelegationEnabled',
+    false,
+    null,
+  )
   const isQuestionnaireFeatureEnabled = useFeatureFlag(
     'isQuestionnaireEnabled',
     false,
@@ -69,6 +74,30 @@ export const HealthCategoriesScreen: NavigationFunctionComponent = ({
   )
 
   const healthCardRows = useMemo(() => {
+    // Build the medicine subLinks based on feature flags
+    const medicineSubLinks = [
+      ...(isPrescriptionsEnabled ? [{
+        id: 'prescriptions',
+        titleId: 'health.prescriptions.title',
+        route: '/prescriptions',
+      }] : []),
+      ...(isMedicineDelegationEnabled ? [{
+        id: 'medicineDelegation',
+        titleId: 'health.medicineDelegation.screenTitle',
+        route: '/prescriptions',
+      }] : []),
+      {
+        id: 'drugCertificates',
+        titleId: 'health.drugCertificates.title',
+        route: '/prescriptions',
+      },
+      ...(isPrescriptionsEnabled ? [{
+        id: 'medicineHistory',
+        titleId: 'health.medicineHistory.title',
+        route: '/prescriptions',
+      }] : []),
+    ]
+
     const healthCards = [
       {
         id: 'medicine',
@@ -76,23 +105,7 @@ export const HealthCategoriesScreen: NavigationFunctionComponent = ({
         icon: medicineIcon,
         route: '/prescriptions',
         enabled: isPrescriptionsEnabled,
-        subLinks: [
-          {
-            id: 'prescriptions1',
-            titleId: 'health.overview.prescriptions',
-            url: `${origin}/minarsidur/heilsa/grunnupplysingar/sjukraskra`,
-          },
-          {
-            id: 'prescriptions2',
-            titleId: 'health.overview.prescriptions',
-            url: `${origin}/minarsidur/heilsa/grunnupplysingar/sjukraskra`,
-          },
-          {
-            id: 'prescriptions3',
-            titleId: 'health.overview.prescriptions',
-            url: `${origin}/minarsidur/heilsa/grunnupplysingar/sjukraskra`,
-          },
-        ],
+        subLinks: medicineSubLinks,
       },
       {
         id: 'appointments',
@@ -126,10 +139,10 @@ export const HealthCategoriesScreen: NavigationFunctionComponent = ({
     return rows
   }, [
     isPrescriptionsEnabled,
+    isMedicineDelegationEnabled,
     isQuestionnaireFeatureEnabled,
     isVaccinationsEnabled,
     isAppointmentsEnabled,
-    origin,
   ])
 
   const externalLinks = [
@@ -186,9 +199,10 @@ export const HealthCategoriesScreen: NavigationFunctionComponent = ({
                   icon: hc.icon,
                 }}
                 subLinks={hc.subLinks?.map((subLink) => ({
-                  link: subLink.url,
+                  link: subLink.route,
                   title: intl.formatMessage({ id: subLink.titleId }),
                   isExternal: false,
+                  tabId: subLink.id,
                 }))}
               />
             ))}

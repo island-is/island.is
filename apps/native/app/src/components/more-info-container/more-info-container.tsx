@@ -3,7 +3,6 @@ import { ImageSourcePropType, View } from 'react-native'
 import { useTheme } from 'styled-components'
 import { Typography } from '../../ui'
 import { LinkContainer } from '../external-links/external-links'
-import externalLinkIcon from '../../assets/icons/external-link.png'
 
 export interface MoreInfoConteinerProps {
   externalLinks: {
@@ -32,11 +31,12 @@ export const MoreInfoContiner = ({
       <View style={{ marginHorizontal: -16 }}>
         {externalLinks.map((link) => (
           <LinkContainer
-            links={link}
+            links={{
+              ...link,
+              isExternal: true,
+            }}
             key={link.title}
             componentId={componentId}
-            rightIcon={externalLinkIcon}
-            isExternal
           />
         ))}
       </View>
