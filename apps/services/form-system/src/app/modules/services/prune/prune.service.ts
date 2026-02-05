@@ -7,7 +7,6 @@ import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Op } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
-import { ValueType } from '../../../dataTypes/valueTypes/valueType.model'
 import { Application } from '../../applications/models/application.model'
 import { Value } from '../../applications/models/value.model'
 import { FileService } from '../../file/file.service'
@@ -53,6 +52,28 @@ export class PruneService {
           application.isTest ||
           application.status === ApplicationStatus.DRAFT
         ) {
+          await this.sequelize.transaction(async (transaction) => {
+            await Promise.all(
+              application.values?.map(async (value) => {
+                if (value.fieldType === FieldTypesEnum.FILE) {
+                  const { json } = value
+                  if (json) {
+                    const keys = json.s3Key as string[]
+                    this.logger.info('Deleting file keys', {
+                      keys,
+                      valueId: value.id,
+                    })
+                    await Promise.all(
+                      keys.map((key) =>
+                        this.fileService.deleteFile(key, value.id),
+                      ),
+                    )
+                  }
+                }
+                return value.destroy({ transaction })
+              }) ?? [],
+            )
+          })
           await application.destroy()
           this.logger.info('test/draft application destroyed', {
             id: application.id,
@@ -60,13 +81,21 @@ export class PruneService {
         } else {
           await this.sequelize.transaction(async (transaction) => {
             await Promise.all(
-              application.values?.map((value) => {
+              application.values?.map(async (value) => {
                 if (value.fieldType === FieldTypesEnum.FILE) {
-                  const json = JSON.stringify(value.json) as ValueType
-                  const keys = json.s3Key as string[]
-                  keys.forEach(async (key) => {
-                    await this.fileService.deleteFile(key, value.id)
-                  })
+                  const { json } = value
+                  if (json) {
+                    const keys = json.s3Key as string[]
+                    this.logger.info('Deleting file keys', {
+                      keys,
+                      valueId: value.id,
+                    })
+                    await Promise.all(
+                      keys.map((key) =>
+                        this.fileService.deleteFile(key, value.id),
+                      ),
+                    )
+                  }
                 }
                 return value.destroy({ transaction })
               }) ?? [],
