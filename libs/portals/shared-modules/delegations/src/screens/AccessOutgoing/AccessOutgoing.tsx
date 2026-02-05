@@ -18,6 +18,9 @@ import { useDelegation } from '../../hooks/useDelegation'
 import { AccessHeader } from '../../components/access/AccessHeader/AccessHeader'
 import { m } from '../../lib/messages'
 import { Problem } from '@island.is/react-spa/shared'
+import { FaqList, FaqListProps } from '@island.is/island-ui/contentful'
+import { useLoaderData } from 'react-router-dom'
+import { AccessControlLoaderResponse } from '../AccessControl.loader'
 
 const AccessOutgoing = () => {
   useNamespaces(['sp.access-control-delegations'])
@@ -31,7 +34,7 @@ const AccessOutgoing = () => {
     delegationError,
     scopeTreeLoading,
   } = useDelegation(AuthDomainDirection.outgoing)
-
+  const contentfulData = useLoaderData() as AccessControlLoaderResponse
   /**
    * If validity period is set then user cannot change scopes validity period individually
    */
@@ -130,6 +133,11 @@ const AccessOutgoing = () => {
         />
       ) : (
         <Problem />
+      )}
+      {contentfulData?.faqList && (
+        <Box paddingTop={8}>
+          <FaqList {...(contentfulData.faqList as unknown as FaqListProps)} />
+        </Box>
       )}
     </Box>
   )

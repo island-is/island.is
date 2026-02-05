@@ -121,6 +121,10 @@ import { mapCourseListPage } from './models/courseListPage.model'
 import { GetCourseSelectOptionsInput } from './dto/getCourseSelectOptions.input'
 import { GetWebChatInput } from './dto/getWebChat.input'
 import { mapWebChat, WebChat } from './models/webChat.model'
+import {
+  mapServicePortalPage,
+  ServicePortalPage,
+} from './models/servicePortalPage.model'
 
 const errorHandler = (name: string) => {
   return (error: Error) => {
@@ -377,6 +381,27 @@ export class CmsContentfulService {
     return result ? mapOrganization(result as types.IOrganization) : null
   }
 
+  async getServicePortalPage(
+    slug: string,
+    lang: string,
+  ): Promise<ServicePortalPage> {
+    const params = {
+      ['content_type']: 'servicePortalPage',
+      include: 5,
+      'fields.slug': slug,
+      limit: 1,
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IServicePortalPageFields>(lang, params)
+      .catch(errorHandler('getServicePortalPage'))
+
+    return (
+      (result.items as types.IServicePortalPage[]).map(
+        mapServicePortalPage,
+      )[0] ?? null
+    )
+  }
   async getOrganizationPage(
     slug: string,
     lang: string,

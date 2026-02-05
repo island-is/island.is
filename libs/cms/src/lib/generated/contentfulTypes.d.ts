@@ -873,6 +873,9 @@ export interface ICourseInstanceFields {
 
   /** Max Registrations */
   maxRegistrations?: number | undefined
+
+  /** Charge Item Code */
+  chargeItemCode?: string | undefined
 }
 
 export interface ICourseInstance extends Entry<ICourseInstanceFields> {
@@ -948,6 +951,7 @@ export interface ICustomPageFields {
     | 'LandspitaliWebPaymentSuccessful'
     | 'Unknown'
     | 'OpenInvoices'
+    | 'SupremeCourtDeterminations'
     | undefined
 
   /** Alert Banner */
@@ -4361,6 +4365,31 @@ export interface ISectionWithVideo extends Entry<ISectionWithVideoFields> {
   }
 }
 
+export interface IServicePortalPageFields {
+  /** Slug */
+  slug: string
+
+  /** FAQ List */
+  faqList?: IFaqList | undefined
+}
+
+export interface IServicePortalPage extends Entry<IServicePortalPageFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'servicePortalPage'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IServiceWebPageFields {
   /** Title */
   title: string
@@ -4522,6 +4551,7 @@ export interface ISliceConnectedComponentFields {
     | 'FSRE/EmployeeList'
     | 'NewKilometerFee'
     | 'LatestVerdicts'
+    | 'SupremeCourt/Determinations'
     | undefined
 
   /** Localized JSON */
@@ -5690,6 +5720,7 @@ export type CONTENT_TYPE =
   | 'sectionHeading'
   | 'sectionWithImage'
   | 'sectionWithVideo'
+  | 'servicePortalPage'
   | 'serviceWebPage'
   | 'sidebarCard'
   | 'sitemap'

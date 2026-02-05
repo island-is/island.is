@@ -81,16 +81,18 @@ const CustomDelegationsTable = ({
         justifyContent="spaceBetween"
       >
         <Text variant="h5">{title}</Text>
-        <Input
-          name="search"
-          value={searchValue}
-          onChange={(e) => setSearchValue(e.target.value)}
-          placeholder={formatMessage(m.searchPlaceholder)}
-          size="xs"
-          type="text"
-          backgroundColor="blue"
-          icon={{ name: 'search' }}
-        />
+        {data?.length > 5 && (
+          <Input
+            name="search"
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
+            placeholder={formatMessage(m.searchPlaceholder)}
+            size="xs"
+            type="text"
+            backgroundColor="blue"
+            icon={{ name: 'search' }}
+          />
+        )}
       </Box>
       {loading ? (
         <Box padding={3}>

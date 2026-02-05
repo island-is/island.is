@@ -6,7 +6,7 @@ import {
 } from '@island.is/api/schema'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { IdentityInfo } from './IdentityInfo/IdentityInfo'
-import { Button, Text } from '@island.is/island-ui/core'
+import { Box, Button, Text } from '@island.is/island-ui/core'
 import { m } from '../../../lib/messages'
 import { FormatMessage } from '@island.is/localization'
 
@@ -28,18 +28,20 @@ export const getLegalGuardianTableData = (
           : formatMessage(m.legalGuardianMinor)}
       </Text>,
       <Text variant="medium">{formatMessage(m.registry)}</Text>, // Todo: get domain from data
-      <Button
-        variant="text"
-        icon="person"
-        iconType="outline"
-        size="small"
-        colorScheme="default"
-        onClick={() =>
-          switchUser(row.from.nationalId, 'http://localhost:4200/minarsidur')
-        }
-      >
-        {formatMessage(m.switch)}
-      </Button>,
+      <Box flexShrink={0}>
+        <Button
+          variant="text"
+          icon="person"
+          iconType="outline"
+          size="small"
+          colorScheme="default"
+          onClick={() =>
+            switchUser(row.from.nationalId, 'http://localhost:4200/minarsidur')
+          }
+        >
+          {formatMessage(m.switch)}
+        </Button>
+      </Box>,
     ]
   })
 
@@ -62,16 +64,18 @@ export const getProcuringHolderTableData = (
       <Text variant="medium">{formatMessage(m.procurationHolder)}</Text>, // Todo: translate
       <Text variant="medium">TODO</Text>, // Todo: check if starting date is available
       <Text variant="medium">{formatMessage(m.registry)}</Text>, // Todo: get domain from data
-      <Button
-        variant="text"
-        icon="person"
-        iconType="outline"
-        size="small"
-        colorScheme="default"
-        onClick={() => switchUser(row.from.nationalId)}
-      >
-        {formatMessage(m.switch)}
-      </Button>,
+      <Box flexShrink={0}>
+        <Button
+          variant="text"
+          icon="person"
+          iconType="outline"
+          size="small"
+          colorScheme="default"
+          onClick={() => switchUser(row.from.nationalId)}
+        >
+          {formatMessage(m.switch)}
+        </Button>
+      </Box>,
     ]
   })
 
@@ -94,16 +98,18 @@ export const getGeneralMandateTableData = (
         {formatMessage(m.delegationTypeGeneralMandate)}
       </Text>, // Todo: translate
       <Text variant="medium">TODO</Text>, // Todo: check if starting date is available
-      <Button
-        variant="text"
-        icon="person"
-        iconType="outline"
-        size="small"
-        colorScheme="default"
-        onClick={() => switchUser(row.from.nationalId)}
-      >
-        {formatMessage(m.switch)}
-      </Button>,
+      <Box flexShrink={0}>
+        <Button
+          variant="text"
+          icon="person"
+          iconType="outline"
+          size="small"
+          colorScheme="default"
+          onClick={() => switchUser(row.from.nationalId)}
+        >
+          {formatMessage(m.switch)}
+        </Button>
+      </Box>,
     ]
   })
 
