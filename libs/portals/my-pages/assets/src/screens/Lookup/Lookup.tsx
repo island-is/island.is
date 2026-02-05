@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import {
   Accordion,
   AccordionItem,
+  AlertMessage,
   Box,
   Bullet,
   BulletList,
@@ -9,18 +10,21 @@ import {
   GridColumn,
   GridRow,
   Input,
+  Tabs,
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
-  IntroHeader,
   m,
   TableGrid,
   formatDate,
   ExcludesFalse,
   FootNote,
   SAMGONGUSTOFA_SLUG,
+  IntroWrapper,
 } from '@island.is/portals/my-pages/core'
+
+import VehicleSearch from '../../components/VehicleSearch/VehicleSearch'
 
 import { vehicleMessage as messages } from '../../lib/messages'
 import chunk from 'lodash/chunk'
@@ -96,6 +100,7 @@ const Lookup = () => {
 
   useEffect(() => {
     getUsersVehicleSearchLimit()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
@@ -120,15 +125,9 @@ const Lookup = () => {
   const operatorNamesArray =
     operatorNames && operatorNames?.length > 0 ? operatorNames : []
 
-  return (
+  const detailedSearchContent = (
     <>
-      <Box marginBottom={[2, 3, 5]}>
-        <IntroHeader
-          title={messages.vehiclesLookup}
-          intro={messages.searchIntro}
-          serviceProviderSlug={SAMGONGUSTOFA_SLUG}
-          serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
-        />
+      <Box marginTop={4} marginBottom={[2, 3, 5]}>
         {error && !loading && <Problem error={error} noBorder={false} />}
         {!error && (
           <GridRow>
@@ -197,13 +196,6 @@ const Lookup = () => {
       </Box>
       {!error && (
         <GridRow marginTop={2}>
-          {limitExceeded && !noSearchData && (
-            <GridColumn span={['9/9', '9/9', '9/9']}>
-              <Text marginBottom={4}>
-                {formatMessage(messages.searchLimitExceeded)}
-              </Text>
-            </GridColumn>
-          )}
           <GridColumn span={['9/9', '9/9', '9/9']}>
             <Box
               display="flex"
@@ -237,6 +229,14 @@ const Lookup = () => {
             </Box>
           </GridColumn>
         </GridRow>
+      )}
+      {limitExceeded && !noSearchData && (
+        <Box marginTop={4}>
+          <AlertMessage
+            message={formatMessage(messages.searchLimitExceeded)}
+            type="info"
+          />
+        </Box>
       )}
       {infoCalled && infoError && (
         <Box marginTop={4}>
@@ -348,6 +348,37 @@ const Lookup = () => {
         </>
       )}
       <FootNote serviceProviderSlug={SAMGONGUSTOFA_SLUG} />
+    </>
+  )
+
+  return (
+    <>
+      <Box marginBottom={[2, 3]}>
+        <IntroWrapper
+          title={messages.vehiclesLookup}
+          intro={messages.searchIntro}
+          serviceProviderSlug={SAMGONGUSTOFA_SLUG}
+          serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
+        />
+      </Box>
+      <Tabs
+        contentBackground="white"
+        label={formatMessage(messages.vehiclesLookup)}
+        tabs={[
+          {
+            label: formatMessage(messages.simpleSearchTab),
+            content: (
+              <Box marginTop={4} marginBottom={[2, 3, 5]}>
+                <VehicleSearch />
+              </Box>
+            ),
+          },
+          {
+            label: formatMessage(messages.detailedSearchTab),
+            content: detailedSearchContent,
+          },
+        ]}
+      />
     </>
   )
 }
