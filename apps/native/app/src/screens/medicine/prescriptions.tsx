@@ -102,9 +102,9 @@ export const PrescriptionsScreen: NavigationFunctionComponent<{
       topBar: {
         title: {
           text: intl.formatMessage({
-            id: isPrescriptionsEnabled
-              ? 'health.prescriptionsAndCertificates.screenTitle'
-              : 'health.drugCertificates.title',
+            id: !isPrescriptionsEnabled && !isMedicineDelegationEnabled
+              ? 'health.drugCertificates.title'
+              : 'health.prescriptionsAndCertificates.screenTitle'
           }),
         },
       },
@@ -425,7 +425,7 @@ export const PrescriptionsScreen: NavigationFunctionComponent<{
         style={{ flex: 1 }}
       >
         <Host>
-          {isPrescriptionsEnabled ? (
+          {tabs.length > 1 && (
             <TagsWrapper>
               {tabs.map((tab, index) => (
                 <Tag
@@ -438,14 +438,6 @@ export const PrescriptionsScreen: NavigationFunctionComponent<{
                 />
               ))}
             </TagsWrapper>
-          ) : (
-            <Wrapper>
-              <Typography variant="body">
-                {intl.formatMessage({
-                  id: 'health.prescriptionsAndCertificates.description',
-                })}
-              </Typography>
-            </Wrapper>
           )}
           {activeTab?.descriptionId && (
             <DescriptionWrapper>

@@ -248,10 +248,10 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
     const healthCards = [
       {
         id: 'medicine',
-        titleId: 'health.overview.medicine',
+        titleId: !isPrescriptionsEnabled && !isMedicineDelegationEnabled ? 'health.drugCertificates.title' : 'health.overview.medicine',
         icon: medicineIcon,
         route: '/prescriptions',
-        enabled: isPrescriptionsEnabled,
+        enabled: true,
       },
       {
         id: 'appointments',
@@ -293,6 +293,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
     return rows
   }, [
     isPrescriptionsEnabled,
+    isMedicineDelegationEnabled,
     isQuestionnaireFeatureEnabled,
     isVaccinationsEnabled,
     isAppointmentsEnabled,

@@ -98,14 +98,17 @@ export const HealthCategoriesScreen: NavigationFunctionComponent = ({
       }] : []),
     ]
 
+    // Neither prescriptions nor medicine delegation are enabled, so we just display drug certificates
+    const isMedicineEnabled = isPrescriptionsEnabled || isMedicineDelegationEnabled
+
     const healthCards = [
       {
         id: 'medicine',
-        titleId: 'health.overview.medicine',
+        titleId: !isMedicineEnabled ? 'health.drugCertificates.title' : 'health.overview.medicine',
         icon: medicineIcon,
         route: '/prescriptions',
-        enabled: isPrescriptionsEnabled,
-        subLinks: medicineSubLinks,
+        enabled: true,
+        subLinks: isMedicineEnabled ? medicineSubLinks : null,
       },
       {
         id: 'appointments',

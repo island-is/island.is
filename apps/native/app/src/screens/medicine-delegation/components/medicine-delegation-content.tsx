@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { Image, TouchableOpacity, View } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'

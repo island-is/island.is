@@ -53,7 +53,7 @@ const Container = styled(Pressable)<{ hasIcon: boolean, isSubLink: boolean }>(
     justifyContent: 'space-between',
     gap: theme.spacing[2],
     ...(isSubLink ? {
-      paddingHorizontal: 0,
+      paddingRight: theme.spacing[2],
       paddingVertical: theme.spacing.smallGutter,
     } : {
       paddingVertical: hasIcon ? theme.spacing.p2 : theme.spacing[2],
