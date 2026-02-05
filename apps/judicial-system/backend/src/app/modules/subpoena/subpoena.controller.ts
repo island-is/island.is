@@ -2,17 +2,19 @@ import { Response } from 'express'
 import { Sequelize } from 'sequelize-typescript'
 
 import {
+  Body,
   Controller,
   Get,
   Header,
   Inject,
   Param,
+  Post,
   Query,
   Res,
   UseGuards,
 } from '@nestjs/common'
 import { InjectConnection } from '@nestjs/sequelize'
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
@@ -49,6 +51,7 @@ import {
   SplitDefendantExistsGuard,
 } from '../defendant'
 import { Case, Defendant, Subpoena } from '../repository'
+import { CreateSubpoenasDto } from './dto/createSubpoenas.dto'
 import { CurrentSubpoena } from './guards/subpoena.decorator'
 import {
   SubpoenaExistsGuard,
@@ -72,6 +75,38 @@ export class SubpoenaController {
     @InjectConnection() private readonly sequelize: Sequelize,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
+
+  @RolesRules(
+    prosecutorRule,
+    prosecutorRepresentativeRule,
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+  )
+  @Post('/api/case/:caseId/subpoenas')
+  @ApiCreatedResponse({
+    type: Subpoena,
+    isArray: true,
+    description: 'Creates subpoenas for multiple defendants',
+  })
+  async createSubpoenas(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+    @Body() createSubpoenasDto: CreateSubpoenasDto,
+    @CurrentHttpUser() user: User,
+  ): Promise<Subpoena[]> {
+    this.logger.debug(
+      `Creating subpoenas for defendants ${createSubpoenasDto.defendantIds.join(', ')} in case ${caseId}`,
+    )
+
+    return this.sequelize.transaction((transaction) =>
+      this.subpoenaService.createSubpoenasForDefendants(
+        caseId,
+        createSubpoenasDto,
+        transaction,
+      ),
+    )
+  }
 
   @RolesRules(
     prosecutorRule,

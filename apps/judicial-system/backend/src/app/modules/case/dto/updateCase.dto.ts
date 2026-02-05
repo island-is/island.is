@@ -51,12 +51,6 @@ class UpdateDateLog {
   @MaxLength(255)
   @ApiPropertyOptional({ type: String })
   readonly location?: string
-
-  @IsOptional()
-  @IsArray()
-  @IsUUID(undefined, { each: true })
-  @ApiPropertyOptional({ type: String, isArray: true })
-  readonly selectedDefendantIds?: string[]
 }
 
 export class UpdateCaseDto {

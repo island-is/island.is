@@ -37,6 +37,7 @@ import { SubpoenaType } from '@island.is/judicial-system-web/src/routes/Court/co
 import type { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   useCase,
+  useCreateSubpoenas,
   useDefendants,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isSubpoenaStepValid } from '@island.is/judicial-system-web/src/utils/validate'
@@ -76,6 +77,7 @@ const Subpoena: FC = () => {
 
   const { updateDefendantState, updateDefendant } = useDefendants()
   const { setAndSendCaseToServer } = useCase()
+  const { createSubpoenas } = useCreateSubpoenas()
   const { formatMessage } = useIntl()
 
   const isIssuingSubpoenaForDefendant = (defendant: Defendant) =>
@@ -182,11 +184,6 @@ const Subpoena: FC = () => {
           arraignmentDate: {
             date: updates?.theCase.arraignmentDate?.date,
             location: updates?.theCase.arraignmentDate?.location,
-            // When rescheduling, only create subpoenas for selected defendants.
-            // Pass array (even if empty) so backend creates 0 subpoenas when none selected.
-            ...(isArraignmentScheduled && {
-              selectedDefendantIds: newSubpoenas,
-            }),
           },
           force: true,
         },
@@ -197,8 +194,27 @@ const Subpoena: FC = () => {
 
     if (!courtDateUpdated) {
       setIsCreatingSubpoena(false)
-
       return
+    }
+
+    // Create subpoenas for selected defendants (or all if first-time scheduling)
+    const defendantIdsToCreateSubpoenasFor = isArraignmentScheduled
+      ? newSubpoenas
+      : updates?.defendants
+          ?.filter((defendant) => !defendant.isAlternativeService)
+          .map((defendant) => defendant.id) ?? []
+
+    if (defendantIdsToCreateSubpoenasFor.length > 0) {
+      const subpoenasCreated = await createSubpoenas(workingCase.id, {
+        defendantIds: defendantIdsToCreateSubpoenasFor,
+        arraignmentDate: updates?.theCase.arraignmentDate?.date ?? undefined,
+        location: updates?.theCase.arraignmentDate?.location ?? undefined,
+      })
+
+      if (!subpoenasCreated) {
+        setIsCreatingSubpoena(false)
+        return
+      }
     }
 
     router.push(`${navigateTo}/${workingCase.id}`)
