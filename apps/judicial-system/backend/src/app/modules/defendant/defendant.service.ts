@@ -272,10 +272,49 @@ export class DefendantService {
       caseId: string
       defendantId: string
       eventType: DefendantEventType
+      user?: User
     },
     transaction: Transaction,
   ): Promise<void> {
-    await this.defendantEventLogRepositoryService.create(event, { transaction })
+    if (event.user) {
+      await this.defendantEventLogRepositoryService.createWithUser(
+        event.eventType,
+        event.caseId,
+        event.defendantId,
+        event.user,
+        transaction,
+      )
+
+      return
+    }
+
+    await this.defendantEventLogRepositoryService.create(event, {
+      transaction,
+    })
+  }
+
+  private async handleEventLogUpdates(
+    theCase: Case,
+    defendant: Defendant,
+    updatedDefendant: UpdateDefendantDto,
+    user: User,
+    transaction: Transaction,
+  ) {
+    if (
+      updatedDefendant.indictmentReviewDecision &&
+      updatedDefendant.indictmentReviewDecision !==
+        defendant.indictmentReviewDecision
+    ) {
+      await this.createDefendantEvent(
+        {
+          caseId: theCase.id,
+          defendantId: defendant.id,
+          eventType: DefendantEventType.INDICTMENT_REVIEWED,
+          user,
+        },
+        transaction,
+      )
+    }
   }
 
   private async updateIndictmentCaseDefendant(
@@ -308,6 +347,14 @@ export class DefendantService {
       updatedDefendant,
       defendant,
       user,
+    )
+
+    await this.handleEventLogUpdates(
+      theCase,
+      defendant,
+      updatedDefendant,
+      user,
+      transaction,
     )
 
     return updatedDefendant

@@ -1594,11 +1594,19 @@ export class InternalCaseService {
             event_type: EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
           },
         },
+        {
+          model: Defendant,
+          as: 'defendants',
+          required: false,
+          order: [['created', 'DESC']],
+          where: {
+            indictmentReviewDecision: null,
+          },
+        },
       ],
       where: {
         indictmentReviewerId: indictmentReviewerId,
         indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
-        indictmentReviewDecision: null,
         rulingDate: { [Op.gte]: start, [Op.lte]: end },
       },
     })

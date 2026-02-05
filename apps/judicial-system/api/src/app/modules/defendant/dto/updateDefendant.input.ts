@@ -6,6 +6,7 @@ import {
   DefendantPlea,
   DefenderChoice,
   Gender,
+  IndictmentCaseReviewDecision,
   PunishmentType,
   SubpoenaType,
 } from '@island.is/judicial-system/types'
@@ -114,4 +115,9 @@ export class UpdateDefendantInput {
   @IsOptional()
   @Field(() => String, { nullable: true })
   readonly alternativeServiceDescription?: string
+
+  @Allow()
+  @IsOptional()
+  @Field(() => IndictmentCaseReviewDecision, { nullable: true })
+  readonly indictmentReviewDecision?: IndictmentCaseReviewDecision
 }
