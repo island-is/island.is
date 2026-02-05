@@ -172,7 +172,9 @@ export const partiesSchema = z
       typeof representativeTable[0] === 'object'
         ? ((
             representativeTable as Array<
-              z.TypeOf<typeof representativeInfoSchema> & { isRemoved?: boolean }
+              z.TypeOf<typeof representativeInfoSchema> & {
+                isRemoved?: boolean
+              }
             >
           )
             .filter((rep) => !rep.isRemoved)
