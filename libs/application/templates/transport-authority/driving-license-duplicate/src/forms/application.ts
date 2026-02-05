@@ -8,9 +8,7 @@ import { sectionPayment } from './sections/sectionPayment'
 import { sectionFakeData } from './sections/sectionFakeData'
 import { sectionReasonForApplication } from './sections/sectionReasonForApplication'
 import { sectionPhoto } from './sections/sectionPhoto'
-import {
-  DistrictCommissionersServiceProviderLogo,
-} from '@island.is/application/assets/institution-logos'
+import { DistrictCommissionersServiceProviderLogo } from '@island.is/application/assets/institution-logos'
 
 export const getApplication = ({
   allowFakeData = false,
