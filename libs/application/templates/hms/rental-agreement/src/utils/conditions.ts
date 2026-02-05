@@ -159,11 +159,7 @@ export const applicantIsCompany = (
   return identityType === 'company'
 }
 
-/**
- * Checks if the user has selected "Room" (herbergi) as the category type
- * but has entered more than 1 room. This is invalid per HMS API requirements
- * as TM_SPECIAL_TYPE_INDIVIDUAL_ROOMS only allows 1 room.
- */
+// HMS API disallows more than 1 room when type is TM_SPECIAL_TYPE_INDIVIDUAL_ROOMS
 export const shouldShowRoomTypeRoomCountError = (answers: FormValue) => {
   const categoryType = getValueViaPath<string>(
     answers,
@@ -179,14 +175,9 @@ export const shouldShowRoomTypeRoomCountError = (answers: FormValue) => {
     'registerProperty.searchresults.units',
   )
 
-  if (!units) {
+  if (!units || units.length === 0) {
     return false
   }
 
-  const totalRooms = units.reduce(
-    (sum, unit) => sum + (unit.numOfRooms || 0),
-    0,
-  )
-
-  return totalRooms > 1
+  return units.some((unit) => (unit.numOfRooms ?? 0) > 1)
 }

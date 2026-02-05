@@ -81,9 +81,9 @@ export const propertySearch = {
     numOfRoomsForRoomTypeError: {
       id: 'ra.application:registerProperty.search.numOfRoomsForRoomTypeError',
       defaultMessage:
-        'Fjöldi herbergja má ekki vera fleiri en 1 þegar tegund húsnæðis er herbergi',
+        'Þegar tegund húsnæðis er herbergi má fjöldi herbergja í hverri einingu ekki vera fleiri en 1',
       description:
-        'Error message when number of rooms is more than 1 for room type rental',
+        'Error message when any unit has more than 1 room for room type rental',
     },
     changedSizeTooLargeError: {
       id: 'ra.application:registerProperty.search.changedSizeTooLargeError',
