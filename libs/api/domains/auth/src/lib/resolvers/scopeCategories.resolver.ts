@@ -8,7 +8,12 @@ import {
   CurrentUser,
   IdsUserGuard,
 } from '@island.is/auth-nest-tools'
-import { ScopesApi } from '@island.is/clients/auth/delegation-api'
+import {
+  ScopesApi,
+  ScopesControllerFindCategoriesDirectionEnum,
+  ScopesControllerFindTagsDirectionEnum,
+  MeDelegationsControllerFindAllDirectionEnum,
+} from '@island.is/clients/auth/delegation-api'
 
 import { ScopeCategory } from '../models/scopeCategory.model'
 import { ScopeTag } from '../models/scopeTag.model'
@@ -30,41 +35,42 @@ export class ScopeCategoriesResolver {
   async getScopeCategories(
     @CurrentUser() user: User,
     @Args('lang', { type: () => String, defaultValue: 'is' }) lang: string,
+    @Args('direction', {
+      type: () => MeDelegationsControllerFindAllDirectionEnum,
+      nullable: true,
+    })
+    direction?: MeDelegationsControllerFindAllDirectionEnum,
   ): Promise<ScopeCategory[]> {
     const categories = await this.scopesApiWithAuth(
       user,
     ).scopesControllerFindCategories({
       lang,
+      direction:
+        direction as unknown as ScopesControllerFindCategoriesDirectionEnum,
     })
 
-    return categories.map(
-      (c) =>
-        new ScopeCategory({
-          ...c,
-          scopes: c.scopes || [],
-        }),
-    )
+    return categories as ScopeCategory[]
   }
 
   @Query(() => [ScopeTag], {
     name: 'authScopeTags',
     description:
-      'Get scope tags (delegation scope tags) from CMS with their associated scopes for portal users',
+      'Get scope tags (delegation scope tags) from CMS with their associated scopes for portal users.',
   })
   async getScopeTags(
     @CurrentUser() user: User,
     @Args('lang', { type: () => String, defaultValue: 'is' }) lang: string,
+    @Args('direction', {
+      type: () => MeDelegationsControllerFindAllDirectionEnum,
+      nullable: true,
+    })
+    direction?: MeDelegationsControllerFindAllDirectionEnum,
   ): Promise<ScopeTag[]> {
     const tags = await this.scopesApiWithAuth(user).scopesControllerFindTags({
       lang,
+      direction: direction as unknown as ScopesControllerFindTagsDirectionEnum,
     })
 
-    return tags.map(
-      (t) =>
-        new ScopeTag({
-          ...t,
-          scopes: t.scopes || [],
-        }),
-    )
+    return tags as ScopeTag[]
   }
 }

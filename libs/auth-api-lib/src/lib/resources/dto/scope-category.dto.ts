@@ -1,24 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-
-export class SimpleScopeDTO {
-  @ApiProperty({
-    description: 'The unique name/identifier of the scope',
-    example: '@island.is/finance:overview',
-  })
-  name!: string
-
-  @ApiProperty({
-    description: 'Display name of the scope',
-    example: 'Fjármálayfirlit',
-  })
-  displayName!: string
-
-  @ApiProperty({
-    description: 'Description of what the scope allows',
-    example: 'Sækja yfirlit yfir fjármál',
-  })
-  description!: string
-}
+import { ScopeDTO } from './scope.dto'
 
 export class ScopeCategoryDTO {
   @ApiProperty({
@@ -48,9 +29,9 @@ export class ScopeCategoryDTO {
 
   @ApiProperty({
     description: 'List of scopes in this category',
-    type: [SimpleScopeDTO],
+    type: [ScopeDTO],
   })
-  scopes!: SimpleScopeDTO[]
+  scopes!: ScopeDTO[]
 }
 
 export class ScopeTagDTO {
@@ -75,7 +56,7 @@ export class ScopeTagDTO {
 
   @ApiProperty({
     description: 'List of scopes tagged with this life event',
-    type: [SimpleScopeDTO],
+    type: [ScopeDTO],
   })
-  scopes!: SimpleScopeDTO[]
+  scopes!: ScopeDTO[]
 }

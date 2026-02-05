@@ -100,12 +100,7 @@ export const ServiceCategories = () => {
                         {formatMessage(m.noScopesInCategory)}
                       </Text>
                     ) : (
-                      // <Stack space={2}>
-                      //   {tag.scopes.map((scope) => (
-
-                      //   ))}
-                      // </Stack>
-                      <ScopesTable />
+                      <ScopesTable scopes={tag.scopes} />
                     )}
                   </Box>
                 </AccordionCard>
@@ -137,12 +132,7 @@ export const ServiceCategories = () => {
                         {formatMessage(m.noScopesInCategory)}
                       </Text>
                     ) : (
-                      // <Stack space={2}>
-                      //   {cat.scopes.map((scope) => (
-
-                      //   ))}
-                      // </Stack>
-                      <ScopesTable />
+                      <ScopesTable scopes={cat.scopes} />
                     )}
                   </Box>
                 </AccordionCard>

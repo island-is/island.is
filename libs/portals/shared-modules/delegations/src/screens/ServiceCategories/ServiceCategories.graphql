@@ -1,5 +1,5 @@
-query AuthScopeCategories($lang: String!) {
-  authScopeCategories(lang: $lang) {
+query AuthScopeCategories($lang: String!, $direction: AuthDelegationDirection) {
+  authScopeCategories(lang: $lang, direction: $direction) {
     id
     title
     description
@@ -8,12 +8,17 @@ query AuthScopeCategories($lang: String!) {
       name
       displayName
       description
+      domain {
+        name
+        displayName
+        organisationLogoUrl
+      }
     }
   }
 }
 
-query AuthScopeTags($lang: String!) {
-  authScopeTags(lang: $lang) {
+query AuthScopeTags($lang: String!, $direction: AuthDelegationDirection) {
+  authScopeTags(lang: $lang, direction: $direction) {
     id
     title
     description
@@ -21,6 +26,11 @@ query AuthScopeTags($lang: String!) {
       name
       displayName
       description
+      domain {
+        name
+        displayName
+        organisationLogoUrl
+      }
     }
   }
 }

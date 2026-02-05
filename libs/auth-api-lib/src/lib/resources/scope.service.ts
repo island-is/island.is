@@ -6,19 +6,18 @@ import { User } from '@island.is/auth-nest-tools'
 import { CmsContentfulService } from '@island.is/cms'
 
 import { DEFAULT_DOMAIN } from '../types'
+import { DelegationDirection } from '../delegations/types/delegationDirection'
 import { ScopeTreeDTO } from './dto/scope-tree.dto'
 import { ScopeDTO } from './dto/scope.dto'
-import {
-  ScopeCategoryDTO,
-  ScopeTagDTO,
-  SimpleScopeDTO,
-} from './dto/scope-category.dto'
+import { ScopeCategoryDTO, ScopeTagDTO } from './dto/scope-category.dto'
 import { ApiScopeGroup } from './models/api-scope-group.model'
 import { ApiScope } from './models/api-scope.model'
 import { ApiScopeCategory } from './models/api-scope-category.model'
 import { ApiScopeTag } from './models/api-scope-tag.model'
 import { IdentityResource } from './models/identity-resource.model'
+import { Domain } from './models/domain.model'
 import { ResourceTranslationService } from './resource-translation.service'
+import { DelegationResourcesService } from './delegation-resources.service'
 import { mapToScopeTree } from './utils/scope-tree.mapper'
 
 @Injectable()
@@ -30,6 +29,7 @@ export class ScopeService {
     private identityResourceModel: typeof IdentityResource,
     private resourceTranslationService: ResourceTranslationService,
     private cmsContentfulService: CmsContentfulService,
+    private delegationResourcesService: DelegationResourcesService,
   ) {}
 
   async findScopeTree(
@@ -103,6 +103,7 @@ export class ScopeService {
   async findScopeCategories(
     user: User,
     lang: string,
+    direction?: DelegationDirection,
   ): Promise<ScopeCategoryDTO[]> {
     // Fetch categories from CMS
     const cmsCategories = await this.cmsContentfulService.getArticleCategories(
@@ -110,25 +111,23 @@ export class ScopeService {
     )
 
     // Fetch all scopes with their category associations
-    const scopes = await this.apiScopeModel.findAll({
-      attributes: ['name', 'displayName', 'description', 'domainName'],
-      where: {
-        enabled: true,
-      },
-      include: [
+    const scopes = await this.delegationResourcesService.findScopesInternal({
+      user,
+      language: lang,
+      direction,
+      attributes: ['name', 'displayName', 'description', 'domainName', 'order'],
+      additionalIncludes: [
         {
           model: ApiScopeCategory,
           as: 'categories',
           attributes: ['categoryId'],
+          required: true,
         },
       ],
     })
 
-    // Translate scopes
-    await this.resourceTranslationService.translateApiScopes(scopes, lang)
-
     // Group scopes by category
-    const categoryMap = new Map<string, SimpleScopeDTO[]>()
+    const categoryMap = new Map<string, ScopeDTO[]>()
 
     for (const scope of scopes) {
       const categoryIds = scope.categories?.map((c) => c.categoryId) ?? []
@@ -141,12 +140,14 @@ export class ScopeService {
           name: scope.name,
           displayName: scope.displayName,
           description: scope.description || '',
-        })
+          domainName: scope.domainName,
+          order: scope.order || 0,
+        } as ScopeDTO)
       }
     }
 
     // Map CMS categories to DTO with their scopes
-    return cmsCategories
+    const result = cmsCategories
       .map((cmsCategory) => {
         const scopes = categoryMap.get(cmsCategory.id) ?? []
         return {
@@ -159,31 +160,35 @@ export class ScopeService {
       })
       .filter((category) => category.scopes.length > 0) // Only return categories that have scopes
       .sort((a, b) => a.title.localeCompare(b.title))
+
+    return result
   }
 
-  async findScopeTags(user: User, lang: string): Promise<ScopeTagDTO[]> {
+  async findScopeTags(
+    user: User,
+    lang: string,
+    direction?: DelegationDirection,
+  ): Promise<ScopeTagDTO[]> {
     // Fetch tags from CMS
     const cmsTags = await this.cmsContentfulService.getDelegationScopeTags(lang)
 
-    // Fetch all scopes with their tag associations
-    const scopes = await this.apiScopeModel.findAll({
-      attributes: ['name', 'displayName', 'description', 'domainName'],
-      where: {
-        enabled: true,
-      },
-      include: [
+    const scopes = await this.delegationResourcesService.findScopesInternal({
+      user,
+      language: lang,
+      direction,
+      attributes: ['name', 'displayName', 'description', 'domainName', 'order'],
+      additionalIncludes: [
         {
           model: ApiScopeTag,
           as: 'tags',
           attributes: ['tagId'],
+          required: true,
         },
       ],
     })
-    // Translate scopes
-    await this.resourceTranslationService.translateApiScopes(scopes, lang)
 
     // Group scopes by tag
-    const tagMap = new Map<string, SimpleScopeDTO[]>()
+    const tagMap = new Map<string, ScopeDTO[]>()
 
     for (const scope of scopes) {
       const tagIds = scope.tags?.map((t) => t.tagId) ?? []
@@ -196,7 +201,9 @@ export class ScopeService {
           name: scope.name,
           displayName: scope.displayName,
           description: scope.description || '',
-        })
+          domainName: scope.domainName,
+          order: scope.order || 0,
+        } as ScopeDTO)
       }
     }
     // Map CMS life events to DTO with their scopes

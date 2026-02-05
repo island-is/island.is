@@ -1,68 +1,21 @@
 import { Checkbox, Table as T, Text } from '@island.is/island-ui/core'
 
 type Scope = {
-  id: string
-  nafn: string
-  heitiUmbods: string
-  lysing: string
-  tegundRettinda: string
+  __typename?: 'AuthApiScope'
+  name: string
+  displayName: string
+  description?: string | null
+  domain?: {
+    __typename?: 'AuthDomain'
+    name: string
+    displayName: string
+    organisationLogoUrl?: string | null
+  } | null
 }
 
-const mockData: Scope[] = [
-  {
-    id: '1',
-    nafn: 'Ísland.is',
-    heitiUmbods: 'Rafrænt pósthólf',
-    lysing: 'Veitir heimild til að skoða rafrænt pósthólf',
-    tegundRettinda: 'Lesa',
-  },
-  {
-    id: '2',
-    nafn: 'Ísland.is',
-    heitiUmbods: 'Mínar síður: Heilsufarsupplýsingar',
-    lysing:
-      'Veitir heimild til að lesa heilsu-farsupplýsingar á Mínum síðum inná Ísland.is',
-    tegundRettinda: 'Lesa og skrifa',
-  },
-  {
-    id: '3',
-    nafn: 'Skatturinn',
-    heitiUmbods: 'Skila skattframtali',
-    lysing:
-      'Veitir heimild til að sjá alfarið um skattaframtal fyrir einstaklinig, færa inn upplýsingar og skila framtali',
-    tegundRettinda: 'Lesa og skrifa',
-  },
-  {
-    id: '4',
-    nafn: 'Ísafjarðarbær',
-    heitiUmbods: 'Velferðarsvið Ísafjarðarbæjar',
-    lysing: 'Veitir heimild til að skoða rafrænt pósthólf',
-    tegundRettinda: 'Lesa og skrifa',
-  },
-  {
-    id: '5',
-    nafn: 'Ísafjarðarbær',
-    heitiUmbods: 'Velferðarsvið Ísafjarðarbæjar',
-    lysing:
-      'Veitir heimild til að lesa heilsu-farsupplýsingar á Mínum síðum inná Ísland.is',
-    tegundRettinda: 'Lesa og skrifa',
-  },
-  {
-    id: '6',
-    nafn: 'Landspítali',
-    heitiUmbods: 'Velferðarsvið Ísafjarðarbæjar',
-    lysing:
-      'Veitir heimild til að sjá alfarið um skattaframtal fyrir einstaklinig, færa inn upplýsingar og skila framtali',
-    tegundRettinda: 'Lesa og skrifa',
-  },
-  {
-    id: '7',
-    nafn: 'Sjúkratryggingar',
-    heitiUmbods: 'Velferðarsvið Ísafjarðarbæjar',
-    lysing: 'Veitir heimild til að skoða rafrænt pósthólf',
-    tegundRettinda: 'Lesa og skrifa',
-  },
-]
+type ScopesTableProps = {
+  scopes: Scope[]
+}
 
 const headerArray = [
   '',
@@ -72,7 +25,7 @@ const headerArray = [
   'Tegund Réttinda',
 ]
 
-export const ScopesTable = () => {
+export const ScopesTable = ({ scopes }: ScopesTableProps) => {
   return (
     <T.Table>
       <T.Head>
@@ -87,23 +40,30 @@ export const ScopesTable = () => {
         </T.Row>
       </T.Head>
       <T.Body>
-        {mockData.map((item) => {
+        {scopes.map((scope) => {
+          // Determine permission type based on scope name
+          const permissionType = scope.name.includes(':write')
+            ? 'Lesa og skrifa'
+            : 'Lesa'
+
           return (
-            <T.Row key={item.id}>
+            <T.Row key={scope.name}>
               <T.Data style={{ paddingInline: 16 }}>
                 <Checkbox />
               </T.Data>
               <T.Data style={{ paddingInline: 16 }}>
-                <Text variant="medium">{item.nafn}</Text>
+                <Text variant="medium">
+                  {scope.domain?.displayName || scope.domain?.name || '-'}
+                </Text>
               </T.Data>
               <T.Data style={{ paddingInline: 16 }}>
-                <Text variant="medium">{item.heitiUmbods}</Text>
+                <Text variant="medium">{scope.displayName}</Text>
               </T.Data>
               <T.Data style={{ paddingInline: 16 }}>
-                <Text variant="medium">{item.lysing}</Text>
+                <Text variant="medium">{scope.description || '-'}</Text>
               </T.Data>
               <T.Data style={{ paddingInline: 16 }}>
-                <Text variant="medium">{item.tegundRettinda}</Text>
+                <Text variant="medium">{permissionType}</Text>
               </T.Data>
             </T.Row>
           )

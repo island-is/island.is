@@ -6,6 +6,7 @@ import {
   ScopeTreeDTO,
   ScopeCategoryDTO,
   ScopeTagDTO,
+  DelegationDirection,
 } from '@island.is/auth-api-lib'
 import {
   CurrentUser,
@@ -14,7 +15,7 @@ import {
   ScopesGuard,
   User,
 } from '@island.is/auth-nest-tools'
-import { AuthScope, delegationScopes } from '@island.is/auth/scopes'
+import { AuthScope } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
 import { Documentation } from '@island.is/nest/swagger'
 
@@ -64,16 +65,23 @@ export class ScopesController {
   }
 
   @Get('categories')
-  @Scopes(...delegationScopes)
   @Documentation({
     description:
-      'Returns all scope categories from CMS with their associated scopes.',
+      'Returns all scope categories from CMS with their associated scopes. Applies delegation filtering based on user permissions.',
     request: {
       query: {
         lang: {
           description: 'The language to return the categories in (is or en).',
           required: false,
           type: 'string',
+        },
+        direction: {
+          description:
+            'The direction of delegations to filter scopes by. Use OUTGOING to see scopes the user can delegate to others.',
+          required: false,
+          schema: {
+            enum: [DelegationDirection.OUTGOING],
+          },
         },
       },
     },
@@ -85,21 +93,33 @@ export class ScopesController {
   findCategories(
     @CurrentUser() user: User,
     @Query('lang') language?: string,
+    @Query('direction') direction?: DelegationDirection,
   ): Promise<ScopeCategoryDTO[]> {
-    return this.scopeService.findScopeCategories(user, language || 'is')
+    return this.scopeService.findScopeCategories(
+      user,
+      language || 'is',
+      direction,
+    )
   }
 
   @Get('tags')
-  @Scopes(...delegationScopes)
   @Documentation({
     description:
-      'Returns all scope tags (delegation scope tags) from CMS with their associated scopes.',
+      'Returns all scope tags (delegation scope tags) from CMS with their associated scopes. Applies delegation filtering based on user permissions.',
     request: {
       query: {
         lang: {
           description: 'The language to return the tags in (is or en).',
           required: false,
           type: 'string',
+        },
+        direction: {
+          description:
+            'The direction of delegations to filter scopes by. Use OUTGOING to see scopes the user can delegate to others.',
+          required: false,
+          schema: {
+            enum: [DelegationDirection.OUTGOING],
+          },
         },
       },
     },
@@ -111,7 +131,8 @@ export class ScopesController {
   findTags(
     @CurrentUser() user: User,
     @Query('lang') language?: string,
+    @Query('direction') direction?: DelegationDirection,
   ): Promise<ScopeTagDTO[]> {
-    return this.scopeService.findScopeTags(user, language || 'is')
+    return this.scopeService.findScopeTags(user, language || 'is', direction)
   }
 }
