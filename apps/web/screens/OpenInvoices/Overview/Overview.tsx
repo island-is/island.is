@@ -7,6 +7,7 @@ import {
   parseAsArrayOf,
   parseAsInteger,
   parseAsIsoDateTime,
+  parseAsString,
   useQueryState,
 } from 'next-usequerystate'
 import { useLazyQuery } from '@apollo/client'
@@ -20,10 +21,11 @@ import {
 } from '@island.is/island-ui/core'
 import { dateFormat, debounceTime } from '@island.is/shared/constants'
 import { CustomPageUniqueIdentifier, Locale } from '@island.is/shared/types'
-import { formatCurrency } from '@island.is/shared/utils'
+import { formatCurrency, isDefined } from '@island.is/shared/utils'
 import { MarkdownText } from '@island.is/web/components'
 import {
   IcelandicGovernmentInstitutionsInvoiceGroups,
+  IcelandicGovernmentInstitutionsInvoiceGroupsInput,
   Organization,
   Query,
   QueryGetOrganizationArgs,
@@ -329,20 +331,20 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
                   {
                     type: 'multi',
                     sections: [
-                      /*{
+                      {
                         id: 'invoiceTypes',
-                        label: formatMessage(m.search.type),
+                        label: formatMessage(m.search.types),
                         items:
-                          filters?.invoiceTypes.map((filter) => ({
+                          filters?.invoiceTypes?.map((filter) => ({
                             value: filter.value,
                             label: filter.name,
                           })) ?? [],
-                          },*/
+                          },
                       {
                         id: 'suppliers',
                         label: formatMessage(m.search.suppliers),
                         items:
-                          filters?.suppliers.map((filter) => ({
+                          filters?.suppliers?.map((filter) => ({
                             value: filter.value,
                             label: filter.name,
                           })) ?? [],
@@ -351,7 +353,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
                         id: 'customers',
                         label: formatMessage(m.search.customers),
                         items:
-                          filters?.customers.map((filter) => ({
+                          filters?.customers?.map((filter) => ({
                             value: filter.value,
                             label: filter.name,
                           })) ?? [],
@@ -426,15 +428,13 @@ const OpenInvoicesOverview: CustomScreen<OpenInvoicesOverviewProps> = ({
   )
 }
 
-OpenInvoicesOverview.getProps = async ({ apolloClient, locale }) => {
+OpenInvoicesOverview.getProps = async ({ apolloClient, locale, query }) => {
   const today = new Date()
   const oneMonthBack = addMonths(today, -1)
+
   const [
     {
       data: { icelandicGovernmentInstitutionsInvoicesFilters },
-    },
-    {
-      data: { icelandicGovernmentInstitutionsInvoiceGroups },
     },
     {
       data: { getOrganization },
@@ -443,15 +443,7 @@ OpenInvoicesOverview.getProps = async ({ apolloClient, locale }) => {
     apolloClient.query<Query>({
       query: GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICES_FILTERS,
     }),
-    apolloClient.query<Query>({
-      query: GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_GROUPS,
-      variables: {
-        input: {
-          dateFrom: oneMonthBack,
-          dateTo: today,
-        },
-      },
-    }),
+
     apolloClient.query<Query, QueryGetOrganizationArgs>({
       query: GET_ORGANIZATION_QUERY,
       variables: {
@@ -486,9 +478,37 @@ OpenInvoicesOverview.getProps = async ({ apolloClient, locale }) => {
                 name: invoiceType.name,
                 value: invoiceType.id,
               }),
-            ) ?? [],
+            ) ?? undefined,
         }
       : undefined
+
+  const arrayParser = parseAsArrayOf<string>(parseAsString)
+  const filterArray = <T,>(array: Array<T> | null | undefined) => {
+    if (array && array.length > 0) {
+      return array
+    }
+
+    return undefined
+  }
+
+  const [customersFilter, suppliersFilter, invoiceTypesFilter]: Array<Array<string> | undefined> = ['customers', 'suppliers', 'invoiceTypes'].map(resource => filterArray<string>(
+    arrayParser.parseServerSide(query?.[resource]),
+  ))
+
+  const {
+    data: { icelandicGovernmentInstitutionsInvoiceGroups },
+  } = await apolloClient.query<Query>({
+    query: GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_GROUPS,
+    variables: {
+      input: {
+        dateFrom: oneMonthBack,
+        dateTo: today,
+        customers: icelandicGovernmentInstitutionsInvoicesFilters?.customers?.data?.filter(d => customersFilter?.includes(d.id)).map(d => parseInt(d.id)).filter(isDefined)  || undefined ,
+        suppliers: icelandicGovernmentInstitutionsInvoicesFilters?.suppliers?.data?.filter(d => suppliersFilter?.includes(d.id)).map(d => parseInt(d.id)).filter(isDefined) || undefined ,
+        types: icelandicGovernmentInstitutionsInvoicesFilters?.invoiceTypes?.data?.filter(d => invoiceTypesFilter?.includes(d.id)).map(d => parseInt(d.id)).filter(isDefined)  || undefined ,
+      } satisfies IcelandicGovernmentInstitutionsInvoiceGroupsInput,
+    },
+  })
 
   return {
     locale: locale as Locale,

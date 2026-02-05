@@ -4,12 +4,12 @@ import { BypassAuth } from '@island.is/auth-nest-tools'
 import { type IInvoicesService } from '../services/invoices/invoices.service.interface'
 import { Inject } from '@nestjs/common'
 import { InvoicesFilters } from '../models/invoicesFilters'
-import { InvoiceGroups } from '../models/invoiceGroups.model'
 import { InvoiceGroupsInput } from '../dtos/getInvoiceGroups.input'
 import type { InvoiceGroupsWithFilters } from '../types'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { InvoiceGroupCollection } from '../models/invoiceGroups.model'
 
-@Resolver(() => InvoiceGroups)
+@Resolver(() => InvoiceGroupCollection)
 @Audit({ namespace: '@island.is/api/icelandic-government-institutions' })
 export class InvoiceGroupsResolver {
   constructor(
@@ -19,7 +19,7 @@ export class InvoiceGroupsResolver {
     private readonly logger: Logger,
   ) {}
 
-  @Query(() => InvoiceGroups, {
+  @Query(() => InvoiceGroupCollection, {
     name: 'icelandicGovernmentInstitutionsInvoiceGroups',
     nullable: true,
   })

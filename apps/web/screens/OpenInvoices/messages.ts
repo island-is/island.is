@@ -221,10 +221,9 @@ export const m = {
       id: 'web.openinvoices:search.range',
       defaultMessage: 'Tímabil',
     },
-
-    type: {
-      id: 'web.openinvoices:search.type',
-      defaultMessage: 'Tegund',
+    types: {
+      id: 'web.openinvoices:search.types',
+      defaultMessage: 'Tegundir',
     },
     suppliers: {
       id: 'web.openinvoices:search.suppliers',

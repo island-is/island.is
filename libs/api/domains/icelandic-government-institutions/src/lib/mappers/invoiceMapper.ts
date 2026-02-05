@@ -1,17 +1,12 @@
-import { OpenInvoicesDto } from '@island.is/clients/elfur'
+import { InvoiceGroupInvoiceDto } from '@island.is/clients/elfur'
 import { Invoice } from '../models/invoice.model'
+import { mapInvoiceItem } from './invoiceItemMapper'
 
-export const mapInvoices = (data: OpenInvoicesDto): Array<Invoice> => {
-  if (!data.invoices) {
-    return []
+export const mapInvoice = (invoice: InvoiceGroupInvoiceDto): Invoice => {
+  return {
+    id: invoice.id,
+    date: invoice.timestamp.toISOString(),
+    totalItemizationAmount: invoice.amount,
+    itemizations: invoice.itemization.map(mapInvoiceItem),
   }
-
-  return data.invoices.map((invoice) => {
-    return {
-      id: `${invoice.customerId}-${invoice.supplierId}`,
-      date: invoice.date.toISOString(),
-      itemization: [],
-      totalItemizationAmount: invoice.amount,
-    }
-  })
 }

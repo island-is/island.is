@@ -1,6 +1,6 @@
-import { InvoiceGroups } from '../models/invoiceGroups.model'
+import { InvoiceGroupCollection } from '../models/invoiceGroups.model'
 
-export const MOCK_INVOICE_GROUPS: InvoiceGroups = {
+export const MOCK_INVOICE_GROUPS: InvoiceGroupCollection = {
   data: [
     {
       id: 'group-1',
@@ -14,8 +14,8 @@ export const MOCK_INVOICE_GROUPS: InvoiceGroups = {
         id: 2001,
         name: 'Íslenska Byggingafélagið hf.',
       },
-      totalPaymentsSum: 2450000,
-      totalPaymentsCount: 1,
+      totalSum: 2450000,
+      totalCount: 1,
     },
     {
       id: 'group-2',
@@ -29,8 +29,8 @@ export const MOCK_INVOICE_GROUPS: InvoiceGroups = {
         id: 2002,
         name: 'Landspítali',
       },
-      totalPaymentsSum: 890000,
-      totalPaymentsCount: 2,
+      totalSum: 890000,
+      totalCount: 2,
     },
     {
       id: 'group-3',
@@ -44,8 +44,8 @@ export const MOCK_INVOICE_GROUPS: InvoiceGroups = {
         id: 2003,
         name: 'Ferðamálastofa',
       },
-      totalPaymentsSum: 1250000,
-      totalPaymentsCount: 1,
+      totalSum: 1250000,
+      totalCount: 1,
     },
     {
       id: 'group-4',
@@ -59,8 +59,8 @@ export const MOCK_INVOICE_GROUPS: InvoiceGroups = {
         id: 2004,
         name: 'Keflavíkurflugvöllur',
       },
-      totalPaymentsSum: 5675000,
-      totalPaymentsCount: 1,
+      totalSum: 5675000,
+      totalCount: 1,
     },
     {
       id: 'group-5',
@@ -74,8 +74,8 @@ export const MOCK_INVOICE_GROUPS: InvoiceGroups = {
         id: 2005,
         name: 'Samskip hf.',
       },
-      totalPaymentsSum: 3200000,
-      totalPaymentsCount: 2,
+      totalSum: 3200000,
+      totalCount: 2,
     },
     {
       id: 'group-6',
@@ -89,8 +89,8 @@ export const MOCK_INVOICE_GROUPS: InvoiceGroups = {
         id: 2006,
         name: 'Álftanes sveitarfélag',
       },
-      totalPaymentsSum: 780000,
-      totalPaymentsCount: 1,
+      totalSum: 780000,
+      totalCount: 1,
     },
     {
       id: 'group-7',
@@ -104,8 +104,8 @@ export const MOCK_INVOICE_GROUPS: InvoiceGroups = {
         id: 2007,
         name: 'Fiskifélag Íslands',
       },
-      totalPaymentsSum: 4500000,
-      totalPaymentsCount: 1,
+      totalSum: 4500000,
+      totalCount: 1,
     },
     {
       id: 'group-8',
@@ -119,8 +119,8 @@ export const MOCK_INVOICE_GROUPS: InvoiceGroups = {
         id: 2008,
         name: 'Tæknigarður',
       },
-      totalPaymentsSum: 650000,
-      totalPaymentsCount: 1,
+      totalSum: 650000,
+      totalCount: 1,
     },
     {
       id: 'group-9',
@@ -134,8 +134,8 @@ export const MOCK_INVOICE_GROUPS: InvoiceGroups = {
         id: 2009,
         name: 'Fasteignafélag Reykjavíkur',
       },
-      totalPaymentsSum: 8900000,
-      totalPaymentsCount: 1,
+      totalSum: 8900000,
+      totalCount: 1,
     },
     {
       id: 'group-10',
@@ -149,8 +149,8 @@ export const MOCK_INVOICE_GROUPS: InvoiceGroups = {
         id: 2010,
         name: 'Hagkaup hf.',
       },
-      totalPaymentsSum: 420000,
-      totalPaymentsCount: 2,
+      totalSum: 420000,
+      totalCount: 2,
     },
   ],
   totalCount: 10,

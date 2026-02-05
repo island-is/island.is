@@ -11,31 +11,38 @@ import { Suppliers } from '../../models/suppliers.model'
 import { mapCustomers } from '../../mappers/customerMapper'
 import { mapInvoiceTypes } from '../../mappers/invoiceTypeMapper'
 import { mapSuppliers } from '../../mappers/supplierMapper'
-import { InvoiceGroups } from '../../models/invoiceGroups.model'
 import { mapInvoiceGroup } from '../../mappers/invoiceGroupMapper'
+import { InvoiceGroup } from '../../models/invoiceGroup.model'
+import { InvoiceGroupCollection } from '../../models/invoiceGroups.model'
 import { InvoiceGroupsInput } from '../../dtos/getInvoiceGroups.input'
-import { InvoiceGroupWithInvoices } from '../../models/invoiceGroupWithInvoices.model'
-import { mapInvoiceGroupWithInvoices } from '../../mappers/invoiceGroupWithInvoices'
 
 @Injectable()
 export class InvoicesService implements IInvoicesService {
   constructor(private elfurService: ElfurClientService) {}
 
-  async getOpenInvoicesGroupWithInvoices(
+  async getOpenInvoicesGroup(
     input: InvoicesInput,
-  ): Promise<InvoiceGroupWithInvoices | null> {
-    const data = await this.elfurService.getOpenInvoicesGroupWithInvoices(input)
+  ): Promise<InvoiceGroup | null> {
+    const data = await this.elfurService.getOpenInvoiceGroup(input)
     if (!data) {
       return null
     }
 
-    return mapInvoiceGroupWithInvoices(data)
+    return mapInvoiceGroup(data)
   }
 
   async getOpenInvoiceGroups(
     input?: InvoiceGroupsInput,
-  ): Promise<InvoiceGroups | null> {
-    const data = await this.elfurService.getOpenInvoicesGroups(input)
+  ): Promise<InvoiceGroupCollection | null> {
+    // Convert types from number[] to string[] if present
+    const requestInput = input
+      ? {
+          ...input,
+          types: input.types?.map(String),
+        }
+      : undefined
+
+    const data = await this.elfurService.getOpenInvoiceGroups(requestInput)
 
     if (!data) {
       return null

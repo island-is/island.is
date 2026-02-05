@@ -80,7 +80,6 @@ export const GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_GROUPS = gql`
     icelandicGovernmentInstitutionsInvoiceGroups(input: $input) {
       totalPaymentsSum
       totalPaymentsCount
-      totalCount
       data {
         id
         supplier {
@@ -93,9 +92,10 @@ export const GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_GROUPS = gql`
           id
           name
         }
-        totalPaymentsSum
-        totalPaymentsCount
+        totalSum
+        totalCount
       }
+      totalCount
       pageInfo {
         __typename
         hasNextPage

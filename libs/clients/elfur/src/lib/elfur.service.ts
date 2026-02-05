@@ -3,10 +3,6 @@ import { OpenInvoicesApi, OrganizationEmployeeApi } from '../../gen/fetch'
 import { EmployeeDto } from './dtos/employee.dto'
 import { SearchRequestDto } from './dtos/searchRequest.dto'
 import { InvoiceRequestDto } from './dtos/invoiceRequest.dto'
-import {
-  InvoiceGroupWithInvoicesDto,
-  mapInvoiceGroupWithInvoicesDto,
-} from './dtos/openInvoices.dto'
 import { isDefined } from '@island.is/shared/utils'
 import { SuppliersDto } from './dtos/suppliers.dto'
 import { mapSupplierDto } from './dtos/supplier.dto'
@@ -20,6 +16,7 @@ import {
   InvoiceGroupCollectionDto,
   mapInvoiceGroupCollectionDto,
 } from './dtos/invoiceGroupCollection.dto'
+import { InvoiceGroupDto, mapInvoiceGroupDto } from './dtos/invoiceGroup.dto'
 
 @Injectable()
 export class ElfurClientService {
@@ -50,29 +47,34 @@ export class ElfurClientService {
     }))
   }
 
-  public async getOpenInvoicesGroups(
-    requestParams?: InvoiceGroupRequestDto,
+  public async getOpenInvoiceGroups(
+    input?: InvoiceGroupRequestDto,
   ): Promise<InvoiceGroupCollectionDto | null> {
-    const data = await this.invoicesApi.v1OpeninvoicesInvoicegroupsGet(
-      requestParams ?? {},
+    const data = await this.invoicesApi.v1OpeninvoicesInvoicesGet(
+      input
+        ? {
+            dateFrom: input?.dateFrom,
+            dateTo: input?.dateTo,
+            suppliers: input?.suppliers,
+            customers: input?.customers,
+            typeIds: input?.types,
+          }
+        : {},
     )
 
     return mapInvoiceGroupCollectionDto(data)
   }
 
-  public async getOpenInvoicesGroupWithInvoices(
+  public async getOpenInvoiceGroup(
     requestParams: InvoiceRequestDto,
-  ): Promise<InvoiceGroupWithInvoicesDto | null> {
+  ): Promise<InvoiceGroupDto | null> {
     const data =
-      await this.invoicesApi.v1OpeninvoicesInvoicegroupwithinvoicesGet({
-        dateFrom: requestParams?.dateFrom,
-        dateTo: requestParams?.dateTo,
-        types: requestParams?.types,
+      await this.invoicesApi.v1OpeninvoicesInvoicesSupplierIdCustomerIdGet({
         supplierId: requestParams.supplier,
         customerId: requestParams.customer,
       })
 
-    return mapInvoiceGroupWithInvoicesDto(data)
+    return mapInvoiceGroupDto(data)
   }
 
   public async getSuppliers(

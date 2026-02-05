@@ -1,10 +1,9 @@
 import { Field, ID, Int, ObjectType } from '@nestjs/graphql'
+import { Invoice } from './invoice.model'
 import { Supplier } from './supplier.model'
 import { Customer } from './customer.model'
 
-@ObjectType('IcelandicGovernmentInstitutionsInvoiceGroup', {
-  description: 'Describes the relationship between a unique seller-buyer',
-})
+@ObjectType('IcelandicGovernmentInstitutionsInvoiceGroup')
 export class InvoiceGroup {
   @Field(() => ID)
   id!: string
@@ -16,8 +15,11 @@ export class InvoiceGroup {
   customer!: Customer
 
   @Field(() => Int)
-  totalPaymentsSum!: number
+  totalSum!: number
 
   @Field(() => Int)
-  totalPaymentsCount!: number
+  totalCount!: number
+
+  @Field(() => [Invoice], { nullable: true })
+  invoices?: Invoice[]
 }

@@ -3,7 +3,7 @@ import { PaginatedResponse } from '@island.is/nest/pagination'
 import { InvoiceGroup } from './invoiceGroup.model'
 
 @ObjectType('IcelandicGovernmentInstitutionsInvoiceGroups')
-export class InvoiceGroups extends PaginatedResponse(InvoiceGroup) {
+export class InvoiceGroupCollection extends PaginatedResponse(InvoiceGroup) {
   @Field(() => Int)
   totalPaymentsSum!: number
 

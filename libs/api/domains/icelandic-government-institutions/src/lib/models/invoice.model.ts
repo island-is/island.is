@@ -13,5 +13,5 @@ export class Invoice {
   totalItemizationAmount!: number
 
   @Field(() => [InvoiceItem], { nullable: true })
-  itemization!: InvoiceItem[]
+  itemizations?: InvoiceItem[]
 }

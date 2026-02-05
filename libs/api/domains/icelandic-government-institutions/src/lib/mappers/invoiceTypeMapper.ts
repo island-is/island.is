@@ -1,14 +1,16 @@
-import { InvoiceTypesDto } from '@island.is/clients/elfur'
+import { InvoiceTypeDto, InvoiceTypesDto } from '@island.is/clients/elfur'
 import { InvoiceTypes } from '../models/invoiceTypes.model'
 import { InvoiceType } from '../models/invoiceType.model'
 
+export const mapInvoiceType = (data: InvoiceTypeDto): InvoiceType => ({
+  id: data.id,
+  code: data.code,
+  name: data.name,
+  description: data.description,
+})
+
 export const mapInvoiceTypes = (data: InvoiceTypesDto): InvoiceTypes => {
-  const invoiceTypes: InvoiceType[] = data.invoiceTypes.map((invoiceType) => ({
-    id: invoiceType.id,
-    code: invoiceType.code,
-    name: invoiceType.name,
-    description: invoiceType.description,
-  }))
+  const invoiceTypes: InvoiceType[] = data.invoiceTypes.map(mapInvoiceType)
 
   return {
     totalCount: data.totalCount,
