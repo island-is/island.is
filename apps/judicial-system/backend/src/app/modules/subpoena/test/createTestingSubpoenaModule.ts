@@ -23,7 +23,11 @@ import { DefendantService } from '../../defendant'
 import { EventService } from '../../event'
 import { FileService } from '../../file'
 import { PoliceService } from '../../police'
-import { Defendant, SubpoenaRepositoryService } from '../../repository'
+import {
+  CaseRepositoryService,
+  Defendant,
+  SubpoenaRepositoryService,
+} from '../../repository'
 import { UserService } from '../../user'
 import { InternalSubpoenaController } from '../internalSubpoena.controller'
 import { LimitedAccessSubpoenaController } from '../limitedAccessSubpoena.controller'
@@ -42,6 +46,7 @@ jest.mock('../../court/court.service')
 jest.mock('../../file/file.service')
 jest.mock('../../case/internalCase.service')
 jest.mock('../../repository/services/subpoenaRepository.service')
+jest.mock('../../repository/services/caseRepository.service')
 
 export const createTestingSubpoenaModule = async () => {
   const subpoenaModule = await Test.createTestingModule({
@@ -74,10 +79,12 @@ export const createTestingSubpoenaModule = async () => {
         useValue: {
           debug: jest.fn(),
           info: jest.fn(),
+          warn: jest.fn(),
           error: jest.fn(),
         },
       },
       SubpoenaRepositoryService,
+      CaseRepositoryService,
       {
         provide: getModelToken(Defendant),
         useValue: {
@@ -115,6 +122,12 @@ export const createTestingSubpoenaModule = async () => {
 
   const subpoenaService = subpoenaModule.get<SubpoenaService>(SubpoenaService)
 
+  const caseRepositoryService =
+    subpoenaModule.get<CaseRepositoryService>(CaseRepositoryService)
+
+  const courtDocumentService =
+    subpoenaModule.get<CourtDocumentService>(CourtDocumentService)
+
   const subpoenaController =
     subpoenaModule.get<SubpoenaController>(SubpoenaController)
 
@@ -137,6 +150,8 @@ export const createTestingSubpoenaModule = async () => {
     sequelize,
     internalCaseService,
     subpoenaRepositoryService,
+    caseRepositoryService,
+    courtDocumentService,
     subpoenaService,
     subpoenaController,
     internalSubpoenaController,

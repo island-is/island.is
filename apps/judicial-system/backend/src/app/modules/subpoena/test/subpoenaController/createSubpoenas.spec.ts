@@ -1,0 +1,391 @@
+import { Transaction } from 'sequelize'
+import { v4 as uuid } from 'uuid'
+
+import { NotFoundException } from '@nestjs/common'
+
+import {
+  CaseType,
+  CourtDocumentType,
+  SubpoenaType,
+} from '@island.is/judicial-system/types'
+
+import { createTestingSubpoenaModule } from '../createTestingSubpoenaModule'
+
+import { CourtDocumentService } from '../../../court-session'
+import {
+  Case,
+  CaseRepositoryService,
+  CourtSession,
+  Defendant,
+  Subpoena,
+  SubpoenaRepositoryService,
+} from '../../../repository'
+import { CreateSubpoenasDto } from '../../dto/createSubpoenas.dto'
+
+interface Then {
+  result: Subpoena[]
+  error: Error
+}
+
+type GivenWhenThen = (
+  caseId: string,
+  theCase: Case,
+  createSubpoenasDto: CreateSubpoenasDto,
+) => Promise<Then>
+
+describe('SubpoenaController - Create subpoenas', () => {
+  const caseId = uuid()
+  const defendantId1 = uuid()
+  const defendantId2 = uuid()
+  const defendantId3 = uuid()
+  const defendantName1 = 'Defendant One'
+  const defendantName2 = 'Defendant Two'
+  const defendantName3 = 'Defendant Three'
+  const arraignmentDate = new Date()
+  const location = 'Court Room 1'
+  const subpoenaId1 = uuid()
+  const subpoenaId2 = uuid()
+  const subpoena1 = {
+    id: subpoenaId1,
+    created: new Date(),
+  } as Subpoena
+  const subpoena2 = {
+    id: subpoenaId2,
+    created: new Date(),
+  } as Subpoena
+
+  const defendant1 = {
+    id: defendantId1,
+    name: defendantName1,
+    isAlternativeService: false,
+    subpoenaType: SubpoenaType.ARREST,
+  } as Defendant
+  const defendant2 = {
+    id: defendantId2,
+    name: defendantName2,
+    isAlternativeService: false,
+    subpoenaType: SubpoenaType.ABSENCE,
+  } as Defendant
+  const defendant3 = {
+    id: defendantId3,
+    name: defendantName3,
+    isAlternativeService: true, // Should be filtered out
+    subpoenaType: SubpoenaType.ARREST,
+  } as Defendant
+
+  let mockCaseRepositoryService: CaseRepositoryService
+  let mockSubpoenaRepositoryService: SubpoenaRepositoryService
+  let mockCourtDocumentService: CourtDocumentService
+  let transaction: Transaction
+  let givenWhenThen: GivenWhenThen
+  let subpoenaController: any
+
+  beforeEach(async () => {
+    const {
+      sequelize,
+      caseRepositoryService,
+      subpoenaRepositoryService,
+      courtDocumentService,
+      subpoenaController: controller,
+    } = await createTestingSubpoenaModule()
+
+    mockCaseRepositoryService = caseRepositoryService
+    mockSubpoenaRepositoryService = subpoenaRepositoryService
+    mockCourtDocumentService = courtDocumentService
+    subpoenaController = controller
+
+    const mockTransaction = sequelize.transaction as jest.Mock
+    transaction = {} as Transaction
+    mockTransaction.mockImplementation(
+      (fn: (transaction: Transaction) => Promise<unknown>) => fn(transaction),
+    )
+
+    givenWhenThen = async (
+      caseId: string,
+      theCase: Case,
+      createSubpoenasDto: CreateSubpoenasDto,
+    ) => {
+      const then = {} as Then
+
+      try {
+        then.result = await subpoenaController.createSubpoenas(
+          caseId,
+          theCase,
+          createSubpoenasDto,
+          { id: uuid() },
+        )
+      } catch (error) {
+        then.error = error as Error
+      }
+
+      return then
+    }
+  })
+
+  describe('subpoenas created successfully', () => {
+    const theCase = {
+      id: caseId,
+      type: CaseType.INDICTMENT,
+      defendants: [defendant1, defendant2],
+      withCourtSessions: false,
+    } as Case
+
+    beforeEach(() => {
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
+      mockFindOne.mockResolvedValue(theCase)
+
+      const mockCreate = mockSubpoenaRepositoryService.create as jest.Mock
+      mockCreate.mockResolvedValueOnce(subpoena1)
+      mockCreate.mockResolvedValueOnce(subpoena2)
+    })
+
+    it('should create subpoenas for all eligible defendants', async () => {
+      const createSubpoenasDto: CreateSubpoenasDto = {
+        defendantIds: [defendantId1, defendantId2],
+        arraignmentDate,
+        location,
+      }
+
+      const then = await givenWhenThen(caseId, theCase, createSubpoenasDto)
+
+      expect(mockCaseRepositoryService.findOne).toHaveBeenCalledWith({
+        where: { id: caseId },
+        include: [
+          {
+            model: Defendant,
+            as: 'defendants',
+            required: false,
+            where: {
+              id: createSubpoenasDto.defendantIds,
+            },
+          },
+          {
+            model: CourtSession,
+            as: 'courtSessions',
+            required: false,
+          },
+        ],
+        transaction,
+      })
+
+      expect(mockSubpoenaRepositoryService.create).toHaveBeenCalledTimes(2)
+      expect(mockSubpoenaRepositoryService.create).toHaveBeenNthCalledWith(
+        1,
+        {
+          defendantId: defendantId1,
+          caseId,
+          arraignmentDate,
+          location,
+          type: SubpoenaType.ARREST,
+        },
+        { transaction },
+      )
+      expect(mockSubpoenaRepositoryService.create).toHaveBeenNthCalledWith(
+        2,
+        {
+          defendantId: defendantId2,
+          caseId,
+          arraignmentDate,
+          location,
+          type: SubpoenaType.ABSENCE,
+        },
+        { transaction },
+      )
+
+      expect(then.result).toEqual([subpoena1, subpoena2])
+      expect(then.error).toBeUndefined()
+    })
+  })
+
+  describe('subpoenas created with court documents', () => {
+    const courtSession = { id: uuid() } as CourtSession
+    const theCase = {
+      id: caseId,
+      type: CaseType.INDICTMENT,
+      defendants: [defendant1, defendant2],
+      withCourtSessions: true,
+      courtSessions: [courtSession],
+    } as Case
+
+    beforeEach(() => {
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
+      mockFindOne.mockResolvedValue(theCase)
+
+      const mockCreate = mockSubpoenaRepositoryService.create as jest.Mock
+      mockCreate.mockResolvedValueOnce(subpoena1)
+      mockCreate.mockResolvedValueOnce(subpoena2)
+
+      const mockCreateDocument = mockCourtDocumentService.create as jest.Mock
+      mockCreateDocument.mockResolvedValue({})
+    })
+
+    it('should create court documents when court sessions exist', async () => {
+      const createSubpoenasDto: CreateSubpoenasDto = {
+        defendantIds: [defendantId1, defendantId2],
+        arraignmentDate,
+        location,
+      }
+
+      const then = await givenWhenThen(caseId, theCase, createSubpoenasDto)
+
+      expect(mockCourtDocumentService.create).toHaveBeenCalledTimes(2)
+      // Check that court documents are created (exact name format depends on formatDate)
+      expect(mockCourtDocumentService.create).toHaveBeenCalledWith(
+        caseId,
+        expect.objectContaining({
+          documentType: CourtDocumentType.GENERATED_DOCUMENT,
+          name: expect.stringContaining(`Fyrirkall ${defendantName1}`),
+          generatedPdfUri: expect.stringContaining(
+            `/api/case/${caseId}/subpoena/${defendantId1}/${subpoenaId1}`,
+          ),
+        }),
+        transaction,
+      )
+
+      expect(then.result).toEqual([subpoena1, subpoena2])
+    })
+  })
+
+  describe('alternative service defendants filtered out', () => {
+    const theCase = {
+      id: caseId,
+      type: CaseType.INDICTMENT,
+      defendants: [defendant1, defendant2, defendant3], // defendant3 has alternative service
+    } as Case
+
+    beforeEach(() => {
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
+      mockFindOne.mockResolvedValue(theCase)
+
+      const mockCreate = mockSubpoenaRepositoryService.create as jest.Mock
+      mockCreate.mockResolvedValueOnce(subpoena1)
+      mockCreate.mockResolvedValueOnce(subpoena2)
+    })
+
+    it('should only create subpoenas for non-alternative-service defendants', async () => {
+      const createSubpoenasDto: CreateSubpoenasDto = {
+        defendantIds: [defendantId1, defendantId2, defendantId3],
+        arraignmentDate,
+        location,
+      }
+
+      const then = await givenWhenThen(caseId, theCase, createSubpoenasDto)
+
+      // Should only create subpoenas for defendant1 and defendant2
+      expect(mockSubpoenaRepositoryService.create).toHaveBeenCalledTimes(2)
+      // Verify defendant3 (alternative service) was not included
+      expect(mockSubpoenaRepositoryService.create).not.toHaveBeenCalledWith(
+        expect.objectContaining({
+          defendantId: defendantId3,
+        }),
+        expect.anything(),
+      )
+
+      expect(then.result).toEqual([subpoena1, subpoena2])
+    })
+  })
+
+  describe('all defendants have alternative service', () => {
+    const theCase = {
+      id: caseId,
+      type: CaseType.INDICTMENT,
+      defendants: [
+        { ...defendant1, isAlternativeService: true },
+        { ...defendant2, isAlternativeService: true },
+      ],
+    } as Case
+
+    beforeEach(() => {
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
+      mockFindOne.mockResolvedValue(theCase)
+    })
+
+    it('should return empty array when all defendants have alternative service', async () => {
+      const createSubpoenasDto: CreateSubpoenasDto = {
+        defendantIds: [defendantId1, defendantId2],
+        arraignmentDate,
+        location,
+      }
+
+      const then = await givenWhenThen(caseId, theCase, createSubpoenasDto)
+
+      expect(mockSubpoenaRepositoryService.create).not.toHaveBeenCalled()
+      expect(then.result).toEqual([])
+      expect(then.error).toBeUndefined()
+    })
+  })
+
+  describe('error cases', () => {
+    describe('case does not exist', () => {
+      beforeEach(() => {
+        const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
+        mockFindOne.mockResolvedValue(null)
+      })
+
+      it('should throw NotFoundException', async () => {
+        const createSubpoenasDto: CreateSubpoenasDto = {
+          defendantIds: [defendantId1],
+        }
+
+        const then = await givenWhenThen(
+          caseId,
+          { id: caseId } as Case,
+          createSubpoenasDto,
+        )
+
+        expect(then.error).toBeInstanceOf(NotFoundException)
+        expect(then.error.message).toBe(`Case ${caseId} does not exist`)
+      })
+    })
+
+    describe('case is not an indictment case', () => {
+      const theCase = {
+        id: caseId,
+        type: CaseType.CUSTODY,
+        defendants: [defendant1],
+      } as Case
+
+      beforeEach(() => {
+        const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
+        mockFindOne.mockResolvedValue(theCase)
+      })
+
+      it('should throw NotFoundException', async () => {
+        const createSubpoenasDto: CreateSubpoenasDto = {
+          defendantIds: [defendantId1],
+        }
+
+        const then = await givenWhenThen(caseId, theCase, createSubpoenasDto)
+
+        expect(then.error).toBeInstanceOf(NotFoundException)
+        expect(then.error.message).toContain(
+          'Subpoenas can only be created for indictment cases',
+        )
+      })
+    })
+
+    describe('no defendants found', () => {
+      const theCase: Case = {
+        id: caseId,
+        type: CaseType.INDICTMENT,
+        defendants: [],
+      } as unknown as Case
+
+      beforeEach(() => {
+        const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
+        mockFindOne.mockResolvedValue(theCase)
+      })
+
+      it('should throw NotFoundException', async () => {
+        const createSubpoenasDto: CreateSubpoenasDto = {
+          defendantIds: [defendantId1],
+        }
+
+        const then = await givenWhenThen(caseId, theCase, createSubpoenasDto)
+
+        expect(then.error).toBeInstanceOf(NotFoundException)
+        expect(then.error.message).toContain('No defendants found for case')
+      })
+    })
+  })
+})
