@@ -4449,6 +4449,7 @@ export interface ISliceConnectedComponentFields {
     | 'Landspitali/DirectGrants'
     | 'Police/FineAndSpeedMeasurementCalculator'
     | 'Personuvernd/SearchInput'
+    | 'FSRE/EmployeeList'
     | 'Syslumenn/DrivingInstructorList'
     | 'FSRE/EmployeeList'
     | 'NewKilometerFee'
