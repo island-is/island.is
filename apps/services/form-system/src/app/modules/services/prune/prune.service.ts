@@ -7,8 +7,10 @@ import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Op } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
+import { ValueType } from '../../../dataTypes/valueTypes/valueType.model'
 import { Application } from '../../applications/models/application.model'
 import { Value } from '../../applications/models/value.model'
+import { FileService } from '../../file/file.service'
 
 @Injectable()
 export class PruneService {
@@ -18,6 +20,7 @@ export class PruneService {
     @InjectModel(Application)
     private readonly applicationModel: typeof Application,
     private readonly sequelize: Sequelize,
+    private readonly fileService: FileService,
   ) {
     this.logger = logger.child({ context: 'PruneService' })
   }
@@ -57,9 +60,16 @@ export class PruneService {
         } else {
           await this.sequelize.transaction(async (transaction) => {
             await Promise.all(
-              application.values?.map((value) =>
-                value.destroy({ transaction }),
-              ) ?? [],
+              application.values?.map((value) => {
+                if (value.fieldType === FieldTypesEnum.FILE) {
+                  const json = JSON.stringify(value.json) as ValueType
+                  const keys = json.s3Key as string[]
+                  keys.forEach(async (key) => {
+                    await this.fileService.deleteFile(key, value.id)
+                  })
+                }
+                return value.destroy({ transaction })
+              }) ?? [],
             )
             await application.update(
               {
