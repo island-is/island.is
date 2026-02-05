@@ -2,12 +2,14 @@ import { buildForm } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
-import { TransportAuthorityLogo } from '@island.is/application/assets/institution-logos'
+import {
+  DistrictCommissionersServiceProviderLogo,
+} from '@island.is/application/assets/institution-logos'
 
 export const done: Form = buildForm({
   id: 'DrivingLicenseDuplicateApplicationComplete',
   mode: FormModes.COMPLETED,
-  logo: TransportAuthorityLogo,
+  logo: DistrictCommissionersServiceProviderLogo,
   children: [
     buildFormConclusionSection({
       multiFieldTitle: m.congratulationsTitle,

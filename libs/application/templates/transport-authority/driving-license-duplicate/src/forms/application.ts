@@ -8,7 +8,9 @@ import { sectionPayment } from './sections/sectionPayment'
 import { sectionFakeData } from './sections/sectionFakeData'
 import { sectionReasonForApplication } from './sections/sectionReasonForApplication'
 import { sectionPhoto } from './sections/sectionPhoto'
-import { TransportAuthorityLogo } from '@island.is/application/assets/institution-logos'
+import {
+  DistrictCommissionersServiceProviderLogo,
+} from '@island.is/application/assets/institution-logos'
 
 export const getApplication = ({
   allowFakeData = false,
@@ -19,7 +21,7 @@ export const getApplication = ({
     mode: FormModes.DRAFT,
     renderLastScreenButton: true,
     renderLastScreenBackButton: true,
-    logo: TransportAuthorityLogo,
+    logo: DistrictCommissionersServiceProviderLogo,
     children: [
       buildSection({
         id: 'fakeData',
