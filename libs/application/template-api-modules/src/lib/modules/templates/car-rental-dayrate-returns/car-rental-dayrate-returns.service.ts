@@ -61,7 +61,7 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
             targetYear: lastMonthDate.getFullYear(),
             targetMonthIndex: lastMonthIndex,
           })
-          
+
           if (!result) return null
           const { totalDays, entryId } = result
 
