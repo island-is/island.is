@@ -45,7 +45,6 @@ import {
   CaseTransition,
   CaseType,
   completedIndictmentCaseStates,
-  CourtDocumentType,
   CourtSessionStringType,
   DateType,
   dateTypes,
@@ -1582,57 +1581,6 @@ export class CaseService {
     )
   }
 
-  private addMessagesForNewSubpoenasToQueue(
-    theCase: Case,
-    updatedCase: Case,
-    user: TUser,
-  ) {
-    const messages = updatedCase.defendants
-      ?.filter(
-        (updatedDefendant) =>
-          theCase.defendants?.find(
-            (defendant) => defendant.id === updatedDefendant.id,
-          )?.subpoenas?.[0]?.id !== updatedDefendant.subpoenas?.[0]?.id, // Only deliver new subpoenas
-      )
-      .map((updatedDefendant) => [
-        ...(updatedCase.origin === CaseOrigin.LOKE
-          ? [
-              {
-                type: MessageType.DELIVERY_TO_POLICE_SUBPOENA_FILE,
-                user,
-                caseId: theCase.id,
-                elementId: [
-                  updatedDefendant.id,
-                  updatedDefendant.subpoenas?.[0].id ?? '',
-                ],
-              },
-            ]
-          : []),
-        {
-          type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA,
-          user,
-          caseId: theCase.id,
-          elementId: [
-            updatedDefendant.id,
-            updatedDefendant.subpoenas?.[0].id ?? '',
-          ],
-        },
-        {
-          type: MessageType.DELIVERY_TO_COURT_SUBPOENA,
-          user,
-          caseId: theCase.id,
-          elementId: [
-            updatedDefendant.id,
-            updatedDefendant.subpoenas?.[0].id ?? '',
-          ],
-        },
-      ])
-
-    if (messages && messages.length > 0) {
-      return this.messageService.sendMessagesToQueue(messages.flat())
-    }
-  }
-
   private addMessagesForIndictmentArraignmentCompletionToQueue(
     theCase: Case,
     user: TUser,
@@ -1867,7 +1815,8 @@ export class CaseService {
         await this.addMessagesForIndictmentArraignmentDate(updatedCase, user)
       }
 
-      await this.addMessagesForNewSubpoenasToQueue(theCase, updatedCase, user)
+      // Note: Subpoena creation and message queuing is now handled by the
+      // separate createSubpoenas endpoint in SubpoenaService, not during case updates
     }
 
     // This only applies to indictments and only when an arraignment has been completed

@@ -45,7 +45,7 @@ export const useCreateSubpoenas = () => {
         arraignmentDate?: string
         location?: string
       },
-    ): Promise<boolean> {
+    ) => {
       try {
         if (!isCreatingSubpoenas) {
           const { data, errors } = await createSubpoenasMutation({

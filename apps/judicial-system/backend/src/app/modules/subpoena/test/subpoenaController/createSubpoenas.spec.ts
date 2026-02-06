@@ -1,13 +1,15 @@
 import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
-import { NotFoundException } from '@nestjs/common'
+import { BadRequestException, NotFoundException } from '@nestjs/common'
 
 import {
+  CaseOrigin,
   CaseType,
   CourtDocumentType,
   SubpoenaType,
 } from '@island.is/judicial-system/types'
+import { MessageService, MessageType } from '@island.is/judicial-system/message'
 
 import { createTestingSubpoenaModule } from '../createTestingSubpoenaModule'
 
@@ -76,6 +78,7 @@ describe('SubpoenaController - Create subpoenas', () => {
   let mockCaseRepositoryService: CaseRepositoryService
   let mockSubpoenaRepositoryService: SubpoenaRepositoryService
   let mockCourtDocumentService: CourtDocumentService
+  let mockMessageService: MessageService
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
   let subpoenaController: any
@@ -87,12 +90,15 @@ describe('SubpoenaController - Create subpoenas', () => {
       subpoenaRepositoryService,
       courtDocumentService,
       subpoenaController: controller,
+      messageService,
     } = await createTestingSubpoenaModule()
 
     mockCaseRepositoryService = caseRepositoryService
     mockSubpoenaRepositoryService = subpoenaRepositoryService
     mockCourtDocumentService = courtDocumentService
     subpoenaController = controller
+    mockMessageService = messageService
+    jest.spyOn(mockMessageService, 'sendMessagesToQueue').mockResolvedValue()
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
@@ -106,6 +112,9 @@ describe('SubpoenaController - Create subpoenas', () => {
       createSubpoenasDto: CreateSubpoenasDto,
     ) => {
       const then = {} as Then
+
+      // Reset message service mock before each test
+      jest.clearAllMocks()
 
       try {
         then.result = await subpoenaController.createSubpoenas(
@@ -126,14 +135,12 @@ describe('SubpoenaController - Create subpoenas', () => {
     const theCase = {
       id: caseId,
       type: CaseType.INDICTMENT,
+      origin: CaseOrigin.RVG,
       defendants: [defendant1, defendant2],
       withCourtSessions: false,
     } as Case
 
     beforeEach(() => {
-      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValue(theCase)
-
       const mockCreate = mockSubpoenaRepositoryService.create as jest.Mock
       mockCreate.mockResolvedValueOnce(subpoena1)
       mockCreate.mockResolvedValueOnce(subpoena2)
@@ -148,25 +155,8 @@ describe('SubpoenaController - Create subpoenas', () => {
 
       const then = await givenWhenThen(caseId, theCase, createSubpoenasDto)
 
-      expect(mockCaseRepositoryService.findOne).toHaveBeenCalledWith({
-        where: { id: caseId },
-        include: [
-          {
-            model: Defendant,
-            as: 'defendants',
-            required: false,
-            where: {
-              id: createSubpoenasDto.defendantIds,
-            },
-          },
-          {
-            model: CourtSession,
-            as: 'courtSessions',
-            required: false,
-          },
-        ],
-        transaction,
-      })
+      // The case is passed directly from the controller, so no need to fetch it again
+      expect(mockCaseRepositoryService.findOne).not.toHaveBeenCalled()
 
       expect(mockSubpoenaRepositoryService.create).toHaveBeenCalledTimes(2)
       expect(mockSubpoenaRepositoryService.create).toHaveBeenNthCalledWith(
@@ -192,6 +182,79 @@ describe('SubpoenaController - Create subpoenas', () => {
         { transaction },
       )
 
+      // Verify messages are queued for court and national commissioners office (not police for RVG)
+      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledTimes(1)
+      const messagesCall = (mockMessageService.sendMessagesToQueue as jest.Mock)
+        .mock.calls[0][0]
+      expect(messagesCall).toHaveLength(4) // 2 defendants × 2 message types (court + national commissioners)
+      expect(messagesCall).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA,
+            caseId: theCase.id,
+            elementId: [defendantId1, subpoenaId1],
+          }),
+          expect.objectContaining({
+            type: MessageType.DELIVERY_TO_COURT_SUBPOENA,
+            caseId: theCase.id,
+            elementId: [defendantId1, subpoenaId1],
+          }),
+          expect.objectContaining({
+            type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA,
+            caseId: theCase.id,
+            elementId: [defendantId2, subpoenaId2],
+          }),
+          expect.objectContaining({
+            type: MessageType.DELIVERY_TO_COURT_SUBPOENA,
+            caseId: theCase.id,
+            elementId: [defendantId2, subpoenaId2],
+          }),
+        ]),
+      )
+
+      expect(then.result).toEqual([subpoena1, subpoena2])
+      expect(then.error).toBeUndefined()
+    })
+
+    it('should also queue police messages for LOKE origin cases', async () => {
+      const lokeCase = {
+        ...theCase,
+        origin: CaseOrigin.LOKE,
+      } as Case
+
+      const createSubpoenasDto: CreateSubpoenasDto = {
+        defendantIds: [defendantId1, defendantId2],
+        arraignmentDate,
+        location,
+      }
+
+      const then = await givenWhenThen(caseId, lokeCase, createSubpoenasDto)
+
+      // Verify messages are queued for police, court, and national commissioners office
+      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledTimes(1)
+      const messagesCall = (mockMessageService.sendMessagesToQueue as jest.Mock)
+        .mock.calls[0][0]
+      expect(messagesCall).toHaveLength(6) // 2 defendants × 3 message types (police + court + national commissioners)
+      expect(messagesCall).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            type: MessageType.DELIVERY_TO_POLICE_SUBPOENA_FILE,
+            caseId: lokeCase.id,
+            elementId: [defendantId1, subpoenaId1],
+          }),
+          expect.objectContaining({
+            type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA,
+            caseId: lokeCase.id,
+            elementId: [defendantId1, subpoenaId1],
+          }),
+          expect.objectContaining({
+            type: MessageType.DELIVERY_TO_COURT_SUBPOENA,
+            caseId: lokeCase.id,
+            elementId: [defendantId1, subpoenaId1],
+          }),
+        ]),
+      )
+
       expect(then.result).toEqual([subpoena1, subpoena2])
       expect(then.error).toBeUndefined()
     })
@@ -202,15 +265,13 @@ describe('SubpoenaController - Create subpoenas', () => {
     const theCase = {
       id: caseId,
       type: CaseType.INDICTMENT,
+      origin: CaseOrigin.RVG,
       defendants: [defendant1, defendant2],
       withCourtSessions: true,
       courtSessions: [courtSession],
     } as Case
 
     beforeEach(() => {
-      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValue(theCase)
-
       const mockCreate = mockSubpoenaRepositoryService.create as jest.Mock
       mockCreate.mockResolvedValueOnce(subpoena1)
       mockCreate.mockResolvedValueOnce(subpoena2)
@@ -250,13 +311,11 @@ describe('SubpoenaController - Create subpoenas', () => {
     const theCase = {
       id: caseId,
       type: CaseType.INDICTMENT,
+      origin: CaseOrigin.RVG,
       defendants: [defendant1, defendant2, defendant3], // defendant3 has alternative service
     } as Case
 
     beforeEach(() => {
-      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValue(theCase)
-
       const mockCreate = mockSubpoenaRepositoryService.create as jest.Mock
       mockCreate.mockResolvedValueOnce(subpoena1)
       mockCreate.mockResolvedValueOnce(subpoena2)
@@ -281,6 +340,9 @@ describe('SubpoenaController - Create subpoenas', () => {
         expect.anything(),
       )
 
+      // Verify messages are still queued for the eligible defendants
+      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledTimes(1)
+
       expect(then.result).toEqual([subpoena1, subpoena2])
     })
   })
@@ -295,11 +357,6 @@ describe('SubpoenaController - Create subpoenas', () => {
       ],
     } as Case
 
-    beforeEach(() => {
-      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValue(theCase)
-    })
-
     it('should return empty array when all defendants have alternative service', async () => {
       const createSubpoenasDto: CreateSubpoenasDto = {
         defendantIds: [defendantId1, defendantId2],
@@ -310,45 +367,22 @@ describe('SubpoenaController - Create subpoenas', () => {
       const then = await givenWhenThen(caseId, theCase, createSubpoenasDto)
 
       expect(mockSubpoenaRepositoryService.create).not.toHaveBeenCalled()
+
+      // Should not queue any messages since no subpoenas were created
+      expect(mockMessageService.sendMessagesToQueue).not.toHaveBeenCalled()
+
       expect(then.result).toEqual([])
       expect(then.error).toBeUndefined()
     })
   })
 
   describe('error cases', () => {
-    describe('case does not exist', () => {
-      beforeEach(() => {
-        const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-        mockFindOne.mockResolvedValue(null)
-      })
-
-      it('should throw NotFoundException', async () => {
-        const createSubpoenasDto: CreateSubpoenasDto = {
-          defendantIds: [defendantId1],
-        }
-
-        const then = await givenWhenThen(
-          caseId,
-          { id: caseId } as Case,
-          createSubpoenasDto,
-        )
-
-        expect(then.error).toBeInstanceOf(NotFoundException)
-        expect(then.error.message).toBe(`Case ${caseId} does not exist`)
-      })
-    })
-
     describe('case is not an indictment case', () => {
       const theCase = {
         id: caseId,
         type: CaseType.CUSTODY,
         defendants: [defendant1],
       } as Case
-
-      beforeEach(() => {
-        const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-        mockFindOne.mockResolvedValue(theCase)
-      })
 
       it('should throw NotFoundException', async () => {
         const createSubpoenasDto: CreateSubpoenasDto = {
@@ -371,11 +405,6 @@ describe('SubpoenaController - Create subpoenas', () => {
         defendants: [],
       } as unknown as Case
 
-      beforeEach(() => {
-        const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-        mockFindOne.mockResolvedValue(theCase)
-      })
-
       it('should throw NotFoundException', async () => {
         const createSubpoenasDto: CreateSubpoenasDto = {
           defendantIds: [defendantId1],
@@ -386,6 +415,30 @@ describe('SubpoenaController - Create subpoenas', () => {
         expect(then.error).toBeInstanceOf(NotFoundException)
         expect(then.error.message).toContain('No defendants found for case')
       })
+    })
+  })
+
+  describe('error cases - missing arraignment date', () => {
+    const theCase = {
+      id: caseId,
+      type: CaseType.INDICTMENT,
+      origin: CaseOrigin.RVG,
+      defendants: [defendant1, defendant2],
+    } as Case
+
+    it('should throw BadRequestException when arraignment date is missing', async () => {
+      const createSubpoenasDto: CreateSubpoenasDto = {
+        defendantIds: [defendantId1, defendantId2],
+        // arraignmentDate missing
+      }
+
+      const then = await givenWhenThen(caseId, theCase, createSubpoenasDto)
+
+      expect(then.error).toBeInstanceOf(BadRequestException)
+      expect(then.error.message).toContain('Arraignment date is required')
+
+      expect(mockSubpoenaRepositoryService.create).not.toHaveBeenCalled()
+      expect(mockMessageService.sendMessagesToQueue).not.toHaveBeenCalled()
     })
   })
 })
