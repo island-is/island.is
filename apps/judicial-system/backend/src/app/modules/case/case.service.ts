@@ -1924,23 +1924,17 @@ export class CaseService {
               transaction,
             })
           } else {
-            const { date, location } = updateDateLog
-            await this.dateLogModel.update(
-              { date, location },
-              {
-                where: { caseId: theCase.id, dateType },
-                transaction,
-              },
-            )
+            await this.dateLogModel.update(updateDateLog, {
+              where: { caseId: theCase.id, dateType },
+              transaction,
+            })
           }
         } else if (updateDateLog !== null) {
-          const { date, location } = updateDateLog
           await this.dateLogModel.create(
             {
               caseId: theCase.id,
               dateType,
-              date,
-              location,
+              ...updateDateLog,
             },
             { transaction },
           )
