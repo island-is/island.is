@@ -3,12 +3,9 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import { Image, TouchableOpacity, View } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
-import arrowRightIcon from '../../../assets/icons/chevron-forward.png'
-import externalLinkIcon from '../../../assets/icons/external-link.png'
-import plusIcon from '../../../assets/icons/plus.png'
-import { HealthDirectorateMedicineDelegationItem } from '../../../graphql/types/schema'
-import { navigateTo } from '../../../lib/deep-linking'
-import { useBrowser } from '../../../lib/use-browser'
+import { HealthDirectorateMedicineDelegationItem } from '../../graphql/types/schema'
+import { navigateTo } from '../../lib/deep-linking'
+import { useBrowser } from '../../lib/use-browser'
 import {
   Button,
   EmptyState,
@@ -17,7 +14,10 @@ import {
   Problem,
   Tag,
   Typography,
-} from '../../../ui'
+} from '../../ui'
+import plusIcon from '../../assets/icons/plus.png'
+import externalLinkIcon from '../../assets/icons/external-link.png'
+import chevronForward from '../../assets/icons/chevron-forward.png'
 
 const Container = styled.View`
   margin-top: ${({ theme }) => theme.spacing[3]}px;
@@ -184,7 +184,7 @@ export function MedicineDelegationContent({
                 </TagContainer>
               </View>
               <View>
-                <Image source={arrowRightIcon} />
+                <Image source={chevronForward} />
               </View>
             </Card>
           ))

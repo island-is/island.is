@@ -36,7 +36,7 @@ const CardRight = styled.View`
   gap: ${({ theme }) => theme.spacing[1]}px;
 `
 
-const Icon = styled(Image)<{ size: number }>`
+const Icon = styled(Image) <{ size: number }>`
   width: ${({ size }) => size}px;
   height: ${({ size }) => size}px;
 `
@@ -61,15 +61,15 @@ export function MedicineHistoryCard({ medicine }: MedicineHistoryCardProps) {
           <Typography variant="body3">
             {medicine.lastDispensationDate
               ? intl.formatMessage(
-                  {
-                    id: 'health.prescriptions.lastDispensationDate',
-                  },
-                  {
-                    date: medicine.lastDispensationDate
-                      ? intl.formatDate(medicine.lastDispensationDate)
-                      : '',
-                  },
-                )
+                {
+                  id: 'health.prescriptions.lastDispensationDate',
+                },
+                {
+                  date: medicine.lastDispensationDate
+                    ? intl.formatDate(medicine.lastDispensationDate)
+                    : '',
+                },
+              )
               : ''}
           </Typography>
         </CardHeaderRow>

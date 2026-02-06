@@ -19,7 +19,7 @@ import { createNavigationOptionHooks } from '../../hooks/create-navigation-optio
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { useLocale } from '../../hooks/use-locale'
 import { GeneralCardSkeleton, Problem, Tag, Typography } from '../../ui'
-import { MedicineDelegationContent } from '../medicine-delegation/components/medicine-delegation-content'
+import { MedicineDelegationContent } from '../medicine-delegation/medicine-delegation-content'
 import { CertificateCard } from './components/certificate-card'
 import { MedicineHistoryCard } from './components/medicine-history-card'
 import { PrescriptionCard } from './components/prescription-card'
@@ -109,7 +109,7 @@ export const PrescriptionsScreen: NavigationFunctionComponent<{
         },
       },
     })
-  }, [intl, isPrescriptionsEnabled, mergeOptions])
+  }, [intl, isMedicineDelegationEnabled, isPrescriptionsEnabled, mergeOptions])
   const [loadPrescriptions, prescriptionsRes] =
     useGetDrugPrescriptionsLazyQuery({
       variables: { locale },

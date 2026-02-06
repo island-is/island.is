@@ -219,17 +219,6 @@ export function setupRoutes() {
     })
   })
 
-  addRoute('/medicine-delegation', async (passProps) => {
-    await Navigation.dismissAllModals()
-    selectTab(3)
-    await Navigation.push(StackRegistry.HealthStack, {
-      component: {
-        name: ComponentRegistry.MedicineDelegationScreen,
-        passProps,
-      },
-    })
-  })
-
   addRoute('/prescriptions', async (passProps) => {
     await Navigation.dismissAllModals()
     selectTab(3)

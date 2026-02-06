@@ -27,7 +27,6 @@ const ContentContainer = styled.View`
 `
 
 const CategoriesContainer = styled.View`
-  row-gap: ${({ theme }) => theme.spacing[0]}px;
   margin-horizontal: ${({ theme }) => -theme.spacing[2]}px;
 `
 
@@ -152,7 +151,7 @@ export const HealthCategoriesScreen: NavigationFunctionComponent = ({
     {
       id: 'referrals',
       titleId: 'health.categories.referrals',
-      url: `${origin}/minarsidur/heilsa/grunnupplysingar/tilvisanir`,
+      url: `${origin}/minarsidur/heilsa/tilvisanir`,
     },
     {
       id: 'paymentsAndRights',
@@ -162,27 +161,17 @@ export const HealthCategoriesScreen: NavigationFunctionComponent = ({
     {
       id: 'aidsAndNutrition',
       titleId: 'health.overview.aidsAndNutrition',
-      url: `${origin}/minarsidur/heilsa/grunnupplysingar/hjalpartaeki-og-naering`,
+      url: `${origin}/minarsidur/heilsa/hjalpartaeki-og-naering`,
     },
     {
       id: 'therapy',
       titleId: 'health.overview.therapy',
-      url: `${origin}/minarsidur/heilsa/grunnupplysingar/hjalfun`,
-    },
-    {
-      id: 'waitingLists',
-      titleId: 'health.categories.waitingLists',
-      url: `${origin}/minarsidur/heilsa/grunnupplysingar/bidlistar`,
+      url: `${origin}/minarsidur/heilsa/thjalfun`,
     },
     {
       id: 'medicalRecords',
       titleId: 'health.categories.medicalRecords',
-      url: `${origin}/minarsidur/heilsa/grunnupplysingar/sjukraskra`,
-    },
-    {
-      id: 'basicInformation',
-      titleId: 'health.overview.basicInformation',
-      url: `${origin}/minarsidur/heilsa/grunnupplysingar`,
+      url: `${origin}/minarsidur/heilsa/sjukraskra/heimildir`,
     },
   ]
 
