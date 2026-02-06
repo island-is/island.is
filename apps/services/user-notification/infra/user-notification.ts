@@ -11,6 +11,7 @@ import {
   NationalRegistryB2C,
   RskCompanyInfo,
 } from '../../../../infra/src/dsl/xroad'
+import type { Context } from '../../../../infra/src/dsl/types/input-types'
 
 const serviceName = 'user-notification'
 const serviceWorkerName = `${serviceName}-worker`
@@ -23,8 +24,16 @@ const DEAD_LETTER_QUEUE_NAME = `${serviceName}-failure`
 const getEnv = (services: {
   userProfileApi: ServiceBuilder<'service-portal-api'>
 }) => ({
-  MAIN_QUEUE_NAME,
-  DEAD_LETTER_QUEUE_NAME,
+  MAIN_QUEUE_NAME: ref((ctx) =>
+    ctx.featureDeploymentName
+      ? `${MAIN_QUEUE_NAME}-${ctx.featureDeploymentName}`
+      : MAIN_QUEUE_NAME,
+  ),
+  DEAD_LETTER_QUEUE_NAME: ref((ctx) =>
+    ctx.featureDeploymentName
+      ? `${DEAD_LETTER_QUEUE_NAME}-${ctx.featureDeploymentName}`
+      : DEAD_LETTER_QUEUE_NAME,
+  ),
   IDENTITY_SERVER_ISSUER_URL: {
     dev: 'https://identity-server.dev01.devland.is',
     staging: 'https://identity-server.staging01.devland.is',
