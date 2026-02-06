@@ -41,18 +41,32 @@ import {
   ApplicationTypes,
   NationalRegistrySpouseV3,
 } from '@island.is/application/types'
-import type { ApplicationRights, Attachment, Period, } from '@island.is/clients/vmst'
-import { ApplicationInformationApi, ParentalLeaveApi, } from '@island.is/clients/vmst'
+import type {
+  ApplicationRights,
+  Attachment,
+  Period,
+} from '@island.is/clients/vmst'
+import {
+  ApplicationInformationApi,
+  ParentalLeaveApi,
+} from '@island.is/clients/vmst'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { ConfigService, ConfigType } from '@nestjs/config'
-import { SharedModuleConfig, TemplateApiModuleActionProps, } from '../../../types'
+import {
+  SharedModuleConfig,
+  TemplateApiModuleActionProps,
+} from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { sharedModuleConfig, SharedTemplateApiService } from '../../shared'
 import { getConfigValue } from '../../shared/shared.utils'
 import { ChildrenService } from './children/children.service'
-import { apiConstants, rightsDescriptions, SIX_MONTHS_IN_SECONDS_EXPIRES, } from './constants'
+import {
+  apiConstants,
+  rightsDescriptions,
+  SIX_MONTHS_IN_SECONDS_EXPIRES,
+} from './constants'
 import {
   generateApplicationApprovedByEmployerEmail,
   generateApplicationApprovedByEmployerToEmployerEmail,
@@ -107,14 +121,12 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         if (body.status) {
           errorMessage = body.status
         }
-      }
-      else if (e && typeof e === 'object' && 'status' in e) {
+      } else if (e && typeof e === 'object' && 'status' in e) {
         const body = e as VMSTErrorResponse
         if (typeof body.status === 'string' && body.status.length > 0) {
           errorMessage = body.status
         }
-      }
-      else if (e instanceof Error) {
+      } else if (e instanceof Error) {
         errorMessage = e.message
       }
     } catch (parseError) {
