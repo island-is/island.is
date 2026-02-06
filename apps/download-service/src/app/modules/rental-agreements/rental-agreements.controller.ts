@@ -6,6 +6,7 @@ import {
   Param,
   UseGuards,
   ParseIntPipe,
+  BadRequestException,
 } from '@nestjs/common'
 import { ApiOkResponse } from '@nestjs/swagger'
 import { Response } from 'express'
@@ -35,29 +36,37 @@ export class RentalAgreementsController {
     private readonly auditService: AuditService,
   ) {}
 
-  @Post('/:id')
+  @Post('/:documentId/:contractId')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
     content: { 'application/pdf': {} },
     description: 'Get a rental agreement pdf from HMSs',
   })
   async getRentalAgreementPdf(
-    @Param('id', new ParseIntPipe()) id: number,
+    @Param('documentId') documentId: string | undefined,
+    @Param('contractId') contractId: string | undefined,
     @CurrentUser() user: User,
     @Res() res: Response,
   ) {
-    const document = await this.service.getRentalAgreementPdf(user, id)
+    if (!documentId || !contractId) {
+      throw new BadRequestException('Missing documentId or contractId')
+    }
 
-    if (document) {
+    const documentResponse = await this.service.getRentalAgreementPdf(
+      user,
+      +documentId,
+      +contractId,
+    )
+
+    if (documentResponse) {
       this.auditService.audit({
         action: 'getRentalAgreementPdf',
         auth: user,
-        resources: id.toString(),
+        resources: [documentId, contractId],
       })
 
-      const buffer = Buffer.from(document, 'base64')
-
-      const filename = `${user.nationalId}-rental-agreement-${id}.pdf`
+      const buffer = Buffer.from(documentResponse.document, 'base64')
+      const filename = `${user.nationalId}-${contractId}-${documentId}-${documentResponse.name}.pdf`
 
       res.header('Content-Disposition', `inline; filename=${filename}`)
       res.header('Pragma', 'no-cache')

@@ -8,6 +8,10 @@ import {
 } from './dtos/rentalAgreements.dto'
 import { INACTIVE_AGREEMENT_STATUSES } from './constants'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import {
+  ContractDocumentItemDto,
+  mapContractDocumentItemDto,
+} from './dtos/contractDocument.dto'
 
 @Injectable()
 export class HmsRentalAgreementService {
@@ -54,19 +58,24 @@ export class HmsRentalAgreementService {
 
   async getRentalAgreementPdf(
     user: User,
+    contractId: number,
     documentId: number,
-  ): Promise<string | undefined> {
-    const res = await this.apiWithAuth(user).contractDocumentIdGet({
-      id: documentId,
+  ): Promise<ContractDocumentItemDto | undefined> {
+    const res = await this.apiWithAuth(
+      user,
+    ).contractContractIdDocumentDocumentIdGet({
+      contractId,
+      documentId,
     })
 
-    if (!res.document) {
-      this.logger.warn('Rental agreement pdf not found', {
+    if (!res) {
+      this.logger.warn('No rental agreement document found', {
+        contractId,
         documentId,
       })
       return undefined
     }
 
-    return res.document
+    return mapContractDocumentItemDto(res) ?? undefined
   }
 }

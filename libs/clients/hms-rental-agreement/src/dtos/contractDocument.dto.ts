@@ -4,6 +4,7 @@ export interface ContractDocumentItemDto {
   id: number
   mime: string
   name: string
+  document: string
 }
 
 export const mapContractDocumentItemDto = (
@@ -12,7 +13,8 @@ export const mapContractDocumentItemDto = (
   if (
     !data.contractDocumentId ||
     !data.documentMime ||
-    !data.documentFilename
+    !data.documentFilename ||
+    !data.document
   ) {
     return
   }
@@ -20,5 +22,6 @@ export const mapContractDocumentItemDto = (
     id: data.contractDocumentId,
     mime: data.documentMime,
     name: data.documentFilename,
+    document: data.document,
   }
 }

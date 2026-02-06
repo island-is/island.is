@@ -3,7 +3,7 @@ import { AgreementStatusType, TemporalType } from '../types'
 import {
   ContractDocumentItemDto,
   mapContractDocumentItemDto,
-} from './contractDocument'
+} from './contractDocument.dto'
 import { ContractPartyDto, mapContractPartyDto } from './contractParty.dto'
 import {
   ContractPropertyDto,

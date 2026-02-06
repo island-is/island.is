@@ -31,7 +31,7 @@ export class RentalAgreement {
   tenants?: ContractParty[]
 
   @Field(() => ContractProperty, { nullable: true })
-  contractProperty?: ContractProperty
+  property?: ContractProperty
 
   @Field(() => [ContractDocument], { nullable: true })
   documents?: ContractDocument[]

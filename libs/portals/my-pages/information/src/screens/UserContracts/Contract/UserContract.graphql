@@ -25,7 +25,7 @@ query UserContract($id: ID!) {
       ...Party
     }
     contractType
-    contractProperty {
+    property {
       id
       propertyId
       streetAndHouseNumber

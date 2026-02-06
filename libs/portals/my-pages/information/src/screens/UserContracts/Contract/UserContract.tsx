@@ -40,12 +40,12 @@ const UserContract = () => {
     data?.hmsRentalAgreement ?? undefined
 
   const address = useMemo(() => {
-    if (data?.hmsRentalAgreement?.contractProperty) {
+    if (data?.hmsRentalAgreement?.property) {
       return generateRentalAgreementAddress(
-        data.hmsRentalAgreement.contractProperty ?? undefined,
+        data.hmsRentalAgreement.property ?? undefined,
       )
     }
-  }, [data?.hmsRentalAgreement?.contractProperty])
+  }, [data?.hmsRentalAgreement?.property])
 
   const status = useMemo(() => {
     if (

@@ -77,10 +77,8 @@ export class RentalAgreementsResolver {
       .getRentalAgreement(user, contractId)
       .catch(handle404)
 
-    const contractData = data
+    return data
       ? mapToRentalAgreement(data, this.downloadServiceConfig.baseUrl)
       : undefined
-
-    return contractData ?? undefined
   }
 }

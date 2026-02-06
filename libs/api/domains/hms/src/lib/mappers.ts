@@ -7,6 +7,7 @@ import {
   RentalAgreementDto,
   TemporalType as TemporalClientType,
   RentalPropertyType,
+  ContractDocumentItemDto,
 } from '@island.is/clients/hms-rental-agreement'
 import { LANDLORD_TYPES, TENANT_TYPES } from './constants'
 import { Address } from './models/rentalAgreements/address.model'
@@ -19,6 +20,7 @@ import {
   TemporalType,
 } from './enums'
 import { RentalAgreement } from './models/rentalAgreements/rentalAgreement.model'
+import { ContractDocument } from './models/rentalAgreements/contractDocument.model'
 
 const mapAddress = (addressDto?: AddressDto): Address | undefined => {
   if (!addressDto) return undefined
@@ -53,6 +55,19 @@ const mapContractProperty = (
     postalCode: propertyDto.postalCode,
     streetAndHouseNumber: propertyDto.streetAndHouseNumber,
     municipality: propertyDto.municipality,
+  }
+}
+
+const mapContractDocument = (
+  documentDto: ContractDocumentItemDto,
+  contractId: number,
+  downloadBaseUrl: string,
+): ContractDocument => {
+  return {
+    id: documentDto.id,
+    mime: documentDto.mime,
+    name: documentDto.name,
+    downloadUrl: `${downloadBaseUrl}/download/v1/rental-agreements/${contractId}/${documentDto.id}`,
   }
 }
 
@@ -126,19 +141,13 @@ const mapTemporalType = (type: TemporalClientType): TemporalType => {
 
 export const mapToRentalAgreement = (
   dto: RentalAgreementDto,
-  downloadServiceBaseUrl: string,
+  downloadBaseUrl?: string,
 ): RentalAgreement => {
   const property = dto.contractProperty?.[0]
     ? mapContractProperty(dto.contractProperty[0])
     : undefined
 
   const parties = dto.contractParty?.map(mapContractParty)
-  const documents = dto.documents?.map((doc) => ({
-    id: doc.id,
-    name: doc.name,
-    mime: doc.mime,
-    downloadUrl: `${downloadServiceBaseUrl}/download/v1/rental-agreements/${doc.id}`,
-  }))
 
   return {
     id: dto.id,
@@ -153,7 +162,11 @@ export const mapToRentalAgreement = (
     tenants:
       parties?.filter((party) => TENANT_TYPES.includes(party.type)) ??
       undefined,
-    contractProperty: property,
-    documents,
+    property,
+    documents: downloadBaseUrl
+      ? dto.documents?.map((doc) =>
+          mapContractDocument(doc, dto.id, downloadBaseUrl),
+        )
+      : undefined,
   }
 }
