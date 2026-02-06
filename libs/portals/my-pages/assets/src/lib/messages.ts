@@ -708,6 +708,10 @@ export const vehicleMessage = defineMessages({
     id: 'sp.vehicles:public-search-error-message',
     defaultMessage: 'Ekki tókst að sækja ökutæki',
   },
+  publicSearchTitle: {
+    id: 'sp.vehicles:public-search-title-message',
+    defaultMessage: 'Eftirfarandi upplýsingar fundust um ökutækið',
+  },
   publicSearchResultHeader: {
     id: 'sp.vehicles:public-search-result-header',
     defaultMessage: 'Grunnupplýsingar ökutækis',

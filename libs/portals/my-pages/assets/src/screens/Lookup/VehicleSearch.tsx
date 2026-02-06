@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
 import { useLazyQuery } from '@apollo/client'
-import gql from 'graphql-tag'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useWindowSize } from 'react-use'
 
@@ -16,6 +15,7 @@ import { formatDate } from '@island.is/portals/my-pages/core'
 
 import { vehicleMessage as messages } from '../../lib/messages'
 import { theme } from '@island.is/island-ui/theme'
+import { PUBLIC_VEHICLE_SEARCH_QUERY } from './queries'
 
 type PublicVehicleSearchResult = {
   permno?: string | null
@@ -45,28 +45,6 @@ type PublicVehicleSearchQueryVariables = {
   }
 }
 
-const PUBLIC_VEHICLE_SEARCH_QUERY = gql`
-  query GetPublicVehicleSearch($input: GetPublicVehicleSearchInput!) {
-    getPublicVehicleSearch(input: $input) {
-      permno
-      regno
-      vin
-      make
-      vehicleCommercialName
-      color
-      firstRegDate
-      vehicleStatus
-      nextVehicleMainInspection
-      co2
-      weightedCo2
-      co2WLTP
-      weightedCo2WLTP
-      massLaden
-      mass
-    }
-  }
-`
-
 const numberFormatter = new Intl.NumberFormat('de-DE')
 
 const getValueOrEmptyString = (value?: string | null) => {
@@ -74,20 +52,18 @@ const getValueOrEmptyString = (value?: string | null) => {
 }
 
 const formatVehicleType = (
-  vehicleInformation?: {
-    vehicleCommercialName?: string | null
-    color?: string | null
-    make?: string | null
-  } | null,
+  vehicleInformation?: PublicVehicleSearchResult | null,
 ) => {
-  const bothCommercialNameAndMakeArePresent =
-    !!vehicleInformation?.make && !!vehicleInformation?.vehicleCommercialName
-  if (!bothCommercialNameAndMakeArePresent) return ''
+  const make = getValueOrEmptyString(vehicleInformation?.make)
+  const commercialName = getValueOrEmptyString(
+    vehicleInformation?.vehicleCommercialName,
+  )
+  const hasName = Boolean(make || commercialName)
+  if (!hasName) return ''
+  const base = [make, commercialName].filter(Boolean).join(' - ')
 
-  return `${getValueOrEmptyString(vehicleInformation.make)}${
-    bothCommercialNameAndMakeArePresent ? ' - ' : ''
-  }${getValueOrEmptyString(vehicleInformation.vehicleCommercialName)}${
-    vehicleInformation.color ? ' (' + vehicleInformation.color + ')' : ''
+  return `${base}${
+    vehicleInformation?.color ? ' (' + vehicleInformation.color + ')' : ''
   }`
 }
 
@@ -207,7 +183,7 @@ const PublicVehicleSearch = () => {
       {vehicleInformation && (
         <Box marginBottom={3} marginTop={4}>
           <Text variant="h5" paddingBottom={3}>
-            Eftirfarandi upplýsingar fundust um ökutækið
+            {formatMessage(messages.publicSearchTitle)}
           </Text>
           <Table.Table>
             <Table.Head>

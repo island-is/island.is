@@ -24,7 +24,7 @@ import {
   IntroWrapper,
 } from '@island.is/portals/my-pages/core'
 
-import VehicleSearch from '../../components/VehicleSearch/VehicleSearch'
+import VehicleSearch from './VehicleSearch'
 
 import { vehicleMessage as messages } from '../../lib/messages'
 import chunk from 'lodash/chunk'
