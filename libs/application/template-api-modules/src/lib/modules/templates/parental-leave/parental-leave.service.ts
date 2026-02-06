@@ -80,9 +80,6 @@ import { NationalRegistryV3Service } from '../../shared/api/national-registry-v3
 
 interface VMSTErrorResponse {
   status?: string
-  hasError?: boolean
-  hasActivePregnancy?: boolean
-  errorCode?: number
 }
 
 @Injectable()
