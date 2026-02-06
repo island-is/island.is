@@ -121,6 +121,7 @@ import {
   LegalGazetteClientConfig,
   LegalGazetteClientModule,
 } from '@island.is/clients/legal-gazette'
+import { ElfurClientConfig } from '@island.is/clients/elfur'
 import { OfficialJournalOfIcelandApplicationClientConfig } from '@island.is/clients/official-journal-of-iceland/application'
 import { HmsLoansClientConfig } from '@island.is/clients/hms-loans'
 import { HousingBenefitCalculatorClientConfig } from '@island.is/clients/housing-benefit-calculator'
@@ -180,6 +181,7 @@ import { ProblemModule } from '@island.is/nest/problem'
 import { LicenseConfig } from '@island.is/services/license'
 
 import { IntellectualPropertiesModule } from '@island.is/api/domains/intellectual-properties'
+import { IcelandicGovernmentInstitutionsModule } from '@island.is/api/domains/icelandic-government-institutions'
 import { NationalRegistryModule } from '@island.is/api/domains/national-registry'
 import { SignatureCollectionModule } from '@island.is/api/domains/signature-collection'
 import { RskRelationshipsClientConfig } from '@island.is/clients-rsk-relationships'
@@ -268,6 +270,7 @@ const environment = getConfig
     ConsultationPortalModule,
     FormSystemModule,
     CmsModule,
+    IcelandicGovernmentInstitutionsModule.register({ useMocks: false }),
     DrivingLicenseModule,
     DrivingLicenseBookModule,
     EducationModule.register({
@@ -393,6 +396,7 @@ const environment = getConfig
         SeminarsClientConfig,
         NvsPermitsClientConfig,
         AirDiscountSchemeClientConfig,
+        ElfurClientConfig,
         ConsultationPortalClientConfig,
         AssetsClientConfig,
         PCardClientConfig,
