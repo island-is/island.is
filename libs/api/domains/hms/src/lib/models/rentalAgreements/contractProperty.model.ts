@@ -1,4 +1,5 @@
-import { Field, ID, Int, ObjectType, registerEnumType } from '@nestjs/graphql'
+import { Field, ID, Int, ObjectType } from '@nestjs/graphql'
+import { PropertyType } from '../../enums'
 
 @ObjectType('HmsContractProperty')
 export class ContractProperty {
@@ -20,14 +21,3 @@ export class ContractProperty {
   @Field({ nullable: true })
   municipality?: string
 }
-
-export enum PropertyType {
-  INDIVIDUAL_ROOM = 'individualRoom',
-  RESIDENTIAL = 'residential',
-  NONRESIDENTIAL = 'nonResidential',
-  UNKNOWN = 'unknown',
-}
-
-registerEnumType(PropertyType, {
-  name: 'HmsRentalAgreementPropertyType',
-})

@@ -15,7 +15,6 @@ export const mapContractPropertyDto = (
 ): ContractPropertyDto | null => {
   const contractPropertyId = data?.contractPropertyId ?? undefined
   const propertyId = data?.propertyId ?? undefined
-
   if (contractPropertyId === undefined || propertyId === undefined) {
     return null
   }
