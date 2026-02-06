@@ -13,8 +13,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { getServiceStatusText } from '@island.is/judicial-system/formatters'
 import {
-  Message,
-  MessageService,
+  addMessagesToQueue,
   MessageType,
 } from '@island.is/judicial-system/message'
 import {
@@ -88,7 +87,6 @@ export class SubpoenaService {
     private readonly pdfService: PdfService,
     @Inject(forwardRef(() => FileService))
     private readonly fileService: FileService,
-    private readonly messageService: MessageService,
     @Inject(forwardRef(() => PoliceService))
     private readonly policeService: PoliceService,
     private readonly eventService: EventService,
@@ -138,39 +136,31 @@ export class SubpoenaService {
     )
   }
 
-  private async addMessagesForSubpoenaUpdateToQueue(
+  private addMessagesForSubpoenaUpdateToQueue(
     subpoena: Subpoena,
     serviceStatus?: ServiceStatus,
-  ): Promise<void> {
-    let message: Message | undefined = undefined
-
+  ): void {
     if (serviceStatus && serviceStatus !== subpoena.serviceStatus) {
       if (isSuccessfulServiceStatus(serviceStatus)) {
-        message = {
+        addMessagesToQueue({
           type: MessageType.SUBPOENA_NOTIFICATION,
           caseId: subpoena.caseId,
           elementId: [subpoena.defendantId, subpoena.id],
           body: {
             type: SubpoenaNotificationType.SERVICE_SUCCESSFUL,
           },
-        }
+        })
       } else if (isFailedServiceStatus(serviceStatus)) {
-        message = {
+        addMessagesToQueue({
           type: MessageType.SUBPOENA_NOTIFICATION,
           caseId: subpoena.caseId,
           elementId: [subpoena.defendantId, subpoena.id],
           body: {
             type: SubpoenaNotificationType.SERVICE_FAILED,
           },
-        }
+        })
       }
     }
-
-    if (!message) {
-      return
-    }
-
-    return this.messageService.sendMessagesToQueue([message])
   }
 
   async update(

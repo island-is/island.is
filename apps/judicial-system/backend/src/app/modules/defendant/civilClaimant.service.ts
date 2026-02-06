@@ -11,7 +11,10 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
-import { MessageService, MessageType } from '@island.is/judicial-system/message'
+import {
+  addMessagesToQueue,
+  MessageType,
+} from '@island.is/judicial-system/message'
 import {
   CaseState,
   CivilClaimantNotificationType,
@@ -25,7 +28,6 @@ export class CivilClaimantService {
   constructor(
     @InjectModel(CivilClaimant)
     private readonly civilClaimantModel: typeof CivilClaimant,
-    private readonly messageService: MessageService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -39,22 +41,20 @@ export class CivilClaimantService {
     )
   }
 
-  private async sendUpdateCivilClaimantMessages(
+  private addMessagesForUpdateCivilClaimantToQueue(
     oldCivilClaimant: CivilClaimant,
     updatedCivilClaimant: CivilClaimant,
-  ): Promise<void> {
+  ): void {
     if (
       updatedCivilClaimant.isSpokespersonConfirmed &&
       !oldCivilClaimant.isSpokespersonConfirmed
     ) {
-      return this.messageService.sendMessagesToQueue([
-        {
-          type: MessageType.CIVIL_CLAIMANT_NOTIFICATION,
-          caseId: updatedCivilClaimant.caseId,
-          body: { type: CivilClaimantNotificationType.SPOKESPERSON_ASSIGNED },
-          elementId: updatedCivilClaimant.id,
-        },
-      ])
+      addMessagesToQueue({
+        type: MessageType.CIVIL_CLAIMANT_NOTIFICATION,
+        caseId: updatedCivilClaimant.caseId,
+        body: { type: CivilClaimantNotificationType.SPOKESPERSON_ASSIGNED },
+        elementId: updatedCivilClaimant.id,
+      })
     }
   }
 
@@ -81,7 +81,7 @@ export class CivilClaimantService {
 
     const updatedCivilClaimant = civilClaimants[0]
 
-    await this.sendUpdateCivilClaimantMessages(
+    this.addMessagesForUpdateCivilClaimantToQueue(
       civilClaimant,
       updatedCivilClaimant,
     )

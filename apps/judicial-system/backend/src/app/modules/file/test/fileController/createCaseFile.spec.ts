@@ -3,7 +3,7 @@ import { v4 as uuid } from 'uuid'
 
 import { BadRequestException } from '@nestjs/common'
 
-import { MessageService, MessageType } from '@island.is/judicial-system/message'
+import { Message, MessageType } from '@island.is/judicial-system/message'
 import {
   CaseFileCategory,
   CaseFileState,
@@ -34,16 +34,16 @@ type GivenWhenThen = (
 describe('FileController - Create case file', () => {
   const user = { id: uuid() } as User
 
-  let mockMessageService: MessageService
+  let mockQueuedMessages: Message[]
   let mockFileModel: typeof CaseFile
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { sequelize, messageService, fileModel, fileController } =
+    const { queuedMessages, sequelize, fileModel, fileController } =
       await createTestingFileModule()
 
-    mockMessageService = messageService
+    mockQueuedMessages = queuedMessages
     mockFileModel = fileModel
 
     const mockTransaction = sequelize.transaction as jest.Mock
@@ -114,7 +114,7 @@ describe('FileController - Create case file', () => {
           },
           { transaction },
         )
-        expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+        expect(mockQueuedMessages).toEqual([
           {
             type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_CASE_FILE,
             user,
@@ -209,7 +209,7 @@ describe('FileController - Create case file', () => {
       })
 
       it('should deliver the file to court and police', () => {
-        expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+        expect(mockQueuedMessages).toEqual([
           {
             type: MessageType.DELIVERY_TO_POLICE_CASE_FILE,
             user,
