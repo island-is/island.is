@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
-import { useLazyQuery } from '@apollo/client'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useWindowSize } from 'react-use'
-
+import { VehiclesPublicVehicleSearch } from '@island.is/api/schema'
 import {
   AlertMessage,
   AsyncSearchInput,
@@ -13,37 +12,9 @@ import {
 import { useLocale } from '@island.is/localization'
 import { formatDate } from '@island.is/portals/my-pages/core'
 
-import { vehicleMessage as messages } from '../../lib/messages'
+import { vehicleMessage as messages } from '../../../lib/messages'
 import { theme } from '@island.is/island-ui/theme'
-import { PUBLIC_VEHICLE_SEARCH_QUERY } from './queries'
-
-type PublicVehicleSearchResult = {
-  permno?: string | null
-  regno?: string | null
-  vin?: string | null
-  make?: string | null
-  vehicleCommercialName?: string | null
-  color?: string | null
-  firstRegDate?: string | null
-  vehicleStatus?: string | null
-  nextVehicleMainInspection?: string | null
-  co2?: number | null
-  weightedCo2?: number | null
-  co2WLTP?: number | null
-  weightedCo2WLTP?: number | null
-  massLaden?: number | null
-  mass?: number | null
-}
-
-type PublicVehicleSearchQuery = {
-  getPublicVehicleSearch?: PublicVehicleSearchResult | null
-}
-
-type PublicVehicleSearchQueryVariables = {
-  input: {
-    search: string
-  }
-}
+import { useGetPublicVehicleSearchLazyQuery } from '../Lookup.generated'
 
 const numberFormatter = new Intl.NumberFormat('de-DE')
 
@@ -52,7 +23,7 @@ const getValueOrEmptyString = (value?: string | null) => {
 }
 
 const formatVehicleType = (
-  vehicleInformation?: PublicVehicleSearchResult | null,
+  vehicleInformation?: VehiclesPublicVehicleSearch | null,
 ) => {
   const make = getValueOrEmptyString(vehicleInformation?.make)
   const commercialName = getValueOrEmptyString(
@@ -82,10 +53,8 @@ const PublicVehicleSearch = () => {
   const { width } = useWindowSize()
   const searchMaxWidth = width && width < theme.breakpoints.lg ? '100%' : '50%'
 
-  const [search, { loading, data, error, called }] = useLazyQuery<
-    PublicVehicleSearchQuery,
-    PublicVehicleSearchQueryVariables
-  >(PUBLIC_VEHICLE_SEARCH_QUERY)
+  const [search, { loading, data, error, called }] =
+    useGetPublicVehicleSearchLazyQuery()
 
   const vehicleInformation = data?.getPublicVehicleSearch
 
