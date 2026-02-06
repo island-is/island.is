@@ -6,6 +6,8 @@ import {
   ServiceBuilder,
 } from '../../../../infra/src/dsl/dsl'
 
+import { Base, Client } from '../../../../infra/src/dsl/xroad'
+
 const REDIS_NODE_CONFIG = {
   dev: json([
     'clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com:6379',
@@ -25,7 +27,7 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
   service(serviceName)
     .image(serviceName)
     .namespace(serviceName)
-    .serviceAccount(serviceName)
+    .serviceAccount('form-system-api')
     .codeOwner(CodeOwners.Advania)
     .db()
     .migrations()
@@ -64,6 +66,18 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
       limits: { cpu: '400m', memory: '512Mi' },
       requests: { cpu: '50m', memory: '256Mi' },
     })
+    .xroad(Base, Client)
+    .ingress({
+      primary: {
+        host: {
+          dev: serviceName,
+          staging: serviceName,
+          prod: serviceName,
+        },
+        paths: ['/api'],
+        public: false,
+      },
+    })
     .liveness('/liveness')
     .readiness('/liveness')
     .grantNamespaces('islandis', 'nginx-ingress-external')
@@ -87,6 +101,9 @@ export const workerSetup = (): ServiceBuilder<typeof workerName> =>
     .redis()
     .db()
     .env({
+      S3_REGION: 'eu-west-1',
+      S3_TIME_TO_LIVE_POST: '15',
+      S3_TIME_TO_LIVE_GET: '5',
       FILE_STORAGE_UPLOAD_BUCKET: {
         dev: 'island-is-dev-upload-api',
         staging: 'island-is-staging-upload-api',

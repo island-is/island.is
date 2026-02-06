@@ -28,6 +28,7 @@ import type { User } from '@island.is/auth-nest-tools'
 import { SubmitScreenDto } from './models/dto/submitScreen.dto'
 import { MyPagesApplicationResponseDto } from './models/dto/myPagesApplication.response.dto'
 import type { Locale } from '@island.is/shared/types'
+import { SubmitApplicationResponseDto } from './models/dto/submitApplication.response.dto'
 
 @UseGuards(IdsUserGuard)
 @ApiTags('applications')
@@ -137,9 +138,11 @@ export class ApplicationsController {
     await this.applicationsService.saveScreen(screenDto, user)
   }
 
-  @ApiOperation({ summary: 'Update application dependencies' })
+  @ApiOperation({
+    summary: 'Update application dependencies and completed array',
+  })
   @ApiNoContentResponse({
-    description: 'Update application dependencies',
+    description: 'Update application dependencies and completed array',
   })
   @ApiBody({ type: UpdateApplicationDto })
   @ApiParam({ name: 'id', type: String })
@@ -152,13 +155,14 @@ export class ApplicationsController {
   }
 
   @ApiOperation({ summary: 'Submit application' })
-  @ApiNoContentResponse({
+  @ApiOkResponse({
+    type: SubmitApplicationResponseDto,
     description: 'Submit application',
   })
   @ApiParam({ name: 'id', type: String })
   @Post('submit/:id')
-  async submit(@Param('id') id: string): Promise<void> {
-    await this.applicationsService.submit(id)
+  async submit(@Param('id') id: string): Promise<SubmitApplicationResponseDto> {
+    return await this.applicationsService.submit(id)
   }
 
   @ApiOperation({ summary: 'Delete an application by id' })

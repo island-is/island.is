@@ -10,15 +10,20 @@ import {
   DialogPrompt,
   Divider,
   DropdownMenu,
+  Icon,
+  Inline,
   GridRow as Row,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
+import { getStaticEnv } from '@island.is/shared/utils'
 import { Dispatch, SetStateAction, useMemo, useState } from 'react'
+import AnimateHeight from 'react-animate-height'
 import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 import { FormSystemPaths } from '../../../../lib/paths'
 import { StatusTag } from '../../../StatusTag/StatusTag'
+import * as styles from './TableRow.css'
 
 interface Props {
   id?: string | null
@@ -35,18 +40,18 @@ interface Props {
   url?: string
 }
 
-const PATH =
-  process.env.NODE_ENV === 'development'
-    ? `https://beta.dev01.devland.is/form`
-    : 'https://island.is/form'
+const PATH = getStaticEnv('SI_PUBLIC_FORM_SYSTEM_URL')
 
 interface ColumnTextProps {
   text: string | number
+  isOpen: boolean
 }
 
-const ColumnText = ({ text }: ColumnTextProps) => (
+const ColumnText = ({ text, isOpen }: ColumnTextProps) => (
   <Box width="full" textAlign="left" paddingLeft={1}>
-    <Text variant="medium">{text}</Text>
+    <Text variant="medium" fontWeight={isOpen ? 'semiBold' : 'regular'}>
+      {text}
+    </Text>
   </Box>
 )
 
@@ -270,7 +275,22 @@ export const TableRow = ({
     name,
   ])
 
-  const goToForm = () => {
+  const updateForm = async (currentStatus: string) => {
+    try {
+      await updateFormStatus({
+        variables: {
+          input: {
+            id,
+            updateFormStatusDto: {
+              newStatus: currentStatus,
+            },
+          },
+        },
+      })
+    } catch (error) {
+      console.error('Error updating form:', error)
+    }
+
     navigate(FormSystemPaths.Form.replace(':formId', String(id)), {
       state: {
         id,
@@ -279,105 +299,136 @@ export const TableRow = ({
   }
 
   return (
-    <Box
-      paddingTop={2}
-      onClick={handleToggle}
-      role="button"
-      aria-expanded={isOpen}
-      tabIndex={0}
-      style={{
-        cursor: 'pointer',
-        border: isOpen ? '1px solid #E5E7EB' : 'none',
-        borderRadius: isOpen ? '1px' : 'none',
-      }}
-    >
-      <Row key={id}>
-        <Column span="7/12">
-          <ColumnText text={name ? name : ''} />
-        </Column>
-        <Column span="2/12">
-          <Box display="flex" justifyContent="flexEnd">
-            <Text variant="medium">
-              {formatDate(lastModified ? lastModified : new Date(), {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric',
-              })}
-            </Text>
-          </Box>
-        </Column>
+    <Box paddingTop={2} role="button" aria-expanded={isOpen} tabIndex={0}>
+      <Box onClick={handleToggle} className={styles.clickable}>
+        <Row key={id}>
+          <Column span="7/12">
+            <Inline space={2}>
+              <Icon
+                icon={isOpen ? 'remove' : 'add'}
+                size="small"
+                color="blue600"
+              />
+              <ColumnText text={name ? name : ''} isOpen={isOpen} />
+            </Inline>
+          </Column>
+          <Column span="2/12">
+            <Box display="flex" justifyContent="flexEnd">
+              <Text variant="medium">
+                {formatDate(lastModified ? lastModified : new Date(), {
+                  day: '2-digit',
+                  month: '2-digit',
+                  year: 'numeric',
+                })}
+              </Text>
+            </Box>
+          </Column>
 
-        <Column span="2/12">
-          <Box display="flex" justifyContent="center">
-            <StatusTag status={status ?? ''} />
-          </Box>
-        </Column>
+          <Column span="2/12">
+            <Box display="flex" justifyContent="center">
+              <StatusTag status={status ?? ''} />
+            </Box>
+          </Column>
 
-        <Column span="1/12">
-          <Box display="flex" justifyContent="flexEnd" alignItems="center">
-            {(status === FormStatus.IN_DEVELOPMENT ||
-              status === FormStatus.PUBLISHED_BEING_CHANGED) && (
-              <Box
-                onClick={(e) => {
-                  e.stopPropagation()
-                }}
-              >
-                <Button
-                  icon="pencil"
-                  circle
-                  colorScheme="negative"
-                  inline
-                  onClick={goToForm}
-                />
-              </Box>
-            )}
-            <Box marginRight={2} onClick={(e) => e.stopPropagation()}>
-              <DropdownMenu
-                menuLabel={`${formatMessage(m.actions)} ${name}`}
-                disclosure={
+          <Column span="1/12">
+            <Box display="flex" justifyContent="flexEnd" alignItems="center">
+              {(status === FormStatus.IN_DEVELOPMENT ||
+                status === FormStatus.PUBLISHED_BEING_CHANGED) && (
+                <Box
+                  onClick={(e) => {
+                    e.stopPropagation()
+                  }}
+                >
                   <Button
-                    icon="ellipsisVertical"
+                    icon="pencil"
                     circle
                     colorScheme="negative"
-                    title={formatMessage(m.actions)}
                     inline
-                    aria-label={`Aðgerðir`}
+                    onClick={() => updateForm(status)}
                   />
-                }
-                items={dropdownItems}
-              />
+                </Box>
+              )}
+              <Box marginRight={2} onClick={(e) => e.stopPropagation()}>
+                <DropdownMenu
+                  menuLabel={`${formatMessage(m.actions)} ${name}`}
+                  disclosure={
+                    <Button
+                      icon="ellipsisVertical"
+                      circle
+                      colorScheme="negative"
+                      title={formatMessage(m.actions)}
+                      inline
+                      aria-label={`Aðgerðir`}
+                    />
+                  }
+                  items={dropdownItems}
+                />
+              </Box>
             </Box>
-          </Box>
-        </Column>
-      </Row>
-
-      {isOpen && (
+          </Column>
+        </Row>
+      </Box>
+      <AnimateHeight
+        height={isOpen ? 'auto' : 0}
+        duration={220}
+        easing="cubic-bezier(0.4, 0, 0.2, 1)"
+        animateOpacity
+      >
         <Box paddingTop={1} paddingBottom={2} paddingLeft={1}>
-          <Stack space={1}>
-            <Row>
-              <Column span="12/12">
-                <Text variant="medium">
-                  <strong>Slug:</strong> {slug}
+          <Column span="6/12">
+            <Stack space={1}>
+              <Row>
+                <Inline space={2}>
+                  <Text variant="medium">
+                    <strong>Slóð:</strong>{' '}
+                    {slug ? (
+                      <span
+                        role="link"
+                        onClick={() =>
+                          window.open(
+                            `${PATH}/${slug}`,
+                            '_blank',
+                            'noopener,noreferrer',
+                          )
+                        }
+                        className={styles.linkStyle}
+                      >
+                        {`${PATH}/${slug}`}
+                      </span>
+                    ) : (
+                      '—'
+                    )}
+                  </Text>
+                  <Box
+                    className={styles.clickable}
+                    onClick={() => {
+                      navigator.clipboard.writeText(`${PATH}/${slug}`)
+                    }}
+                    title="Afrita slóð"
+                  >
+                    <Icon
+                      icon="copy"
+                      size="medium"
+                      color="blue400"
+                      type="outline"
+                    />
+                  </Box>
+                </Inline>
+              </Row>
+              <Row>
+                <Text variant="medium" className={styles.capitalizeText}>
+                  <strong>Móttökukerfi:</strong> {url || '—'}
                 </Text>
-              </Column>
-            </Row>
-            <Row>
-              <Column span="12/12">
+              </Row>
+              <Row>
                 <Text variant="medium">
-                  <strong>Url:</strong> {url}
+                  <strong>Númer:</strong> {id}
                 </Text>
-              </Column>
-            </Row>
-            <Row>
-              <Column span="12/12">
-                <Text variant="medium">
-                  <strong>Id:</strong> {id}
-                </Text>
-              </Column>
-            </Row>
-          </Stack>
+              </Row>
+            </Stack>
+          </Column>
         </Box>
-      )}
+      </AnimateHeight>
 
       <Divider />
     </Box>

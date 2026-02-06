@@ -1,14 +1,8 @@
 import { HealthDirectorateAppointmentStatus } from '@island.is/api/schema'
-import {
-  Box,
-  Checkbox,
-  DatePicker,
-  Filter,
-  Input,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, DatePicker, Filter, Input } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
+  CardLoader,
   HEALTH_DIRECTORATE_SLUG,
   IntroWrapper,
   m,
@@ -46,6 +40,7 @@ const AppointmentsOverview = () => {
   })
 
   const appointments = data?.healthDirectorateAppointments
+  const hasAppointments = (appointments?.data?.length ?? 0) > 0
 
   const filteredData = (() => {
     if (!appointments?.data || !searchTerm) return appointments?.data ?? []
@@ -65,19 +60,6 @@ const AppointmentsOverview = () => {
     )
   })()
 
-  const mapLabel = (status: HealthDirectorateAppointmentStatus): string => {
-    switch (status) {
-      case HealthDirectorateAppointmentStatus.PENDING:
-        return formatMessage(messages.appointmentStatusPending)
-      case HealthDirectorateAppointmentStatus.BOOKED:
-        return formatMessage(messages.appointmentStatusBooked)
-      case HealthDirectorateAppointmentStatus.CANCELLED:
-        return formatMessage(messages.appointmentStatusCancelled)
-      default:
-        return status
-    }
-  }
-
   return (
     <IntroWrapper
       title={messages.appointments}
@@ -86,12 +68,7 @@ const AppointmentsOverview = () => {
       serviceProviderTooltip={formatMessage(
         messages.landlaeknirMedicineDelegationTooltip,
       )}
-      loading={loading}
     >
-      {!loading && error && (
-        <Problem type="internal_service_error" noBorder={false} />
-      )}
-
       <Box
         display="flex"
         flexDirection="row"
@@ -100,36 +77,34 @@ const AppointmentsOverview = () => {
         flexWrap={['wrap', 'wrap', 'nowrap']}
         rowGap={2}
       >
-        {!loading &&
-          !error &&
-          ((appointments?.data?.length ?? 0) > 0 ||
-            filter.statuses.length > 0) && (
-            <Box marginBottom={[1, 1, 3]}>
-              <Filter
-                labelClearAll={formatMessage(m.clearAllFilters)}
-                labelClear={formatMessage(m.clearFilter)}
-                labelOpen={formatMessage(m.openFilter)}
-                reverse
-                variant="popover"
-                align="left"
-                filterInput={
-                  <Input
-                    name="nameSearch"
-                    placeholder={formatMessage(
-                      messages.appointmentSearchPlaceholder,
-                    )}
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    icon={{ type: 'outline', name: 'search' }}
-                    size="xs"
-                    backgroundColor="blue"
-                  />
-                }
-                onFilterClear={() =>
-                  setFilter({ statuses: [], dates: undefined })
-                }
-              >
-                <Box
+        {!loading && !error && (hasAppointments || filter.statuses.length > 0) && (
+          <Box marginBottom={[1, 1, 3]}>
+            <Filter
+              labelClearAll={formatMessage(m.clearAllFilters)}
+              labelClear={formatMessage(m.clearFilter)}
+              labelOpen={formatMessage(m.openFilter)}
+              reverse
+              variant="popover"
+              align="left"
+              filterInput={
+                <Input
+                  name="nameSearch"
+                  placeholder={formatMessage(
+                    messages.appointmentSearchPlaceholder,
+                  )}
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  icon={{ type: 'outline', name: 'search' }}
+                  size="xs"
+                  backgroundColor="blue"
+                />
+              }
+              onFilterClear={() =>
+                setFilter({ statuses: [], dates: undefined })
+              }
+            >
+              {/* Hide until we decide to display more then booked (upcoming) appointments */}
+              {/* <Box
                   display="flex"
                   flexDirection="column"
                   justifyContent="spaceBetween"
@@ -165,39 +140,52 @@ const AppointmentsOverview = () => {
                       />
                     </Box>
                   ))}
-                </Box>
-                <Box
-                  display="flex"
-                  flexDirection="column"
-                  justifyContent="spaceBetween"
-                  paddingX={3}
-                  marginBottom={3}
-                >
-                  <Box display="flex" flexDirection="column">
-                    <Box>
-                      <DatePicker
-                        label={formatMessage(m.datepickerFromLabel)}
-                        placeholderText={formatMessage(m.datepickLabel)}
-                        locale="is"
-                        backgroundColor="blue"
-                        size="xs"
-                        selected={filter.dates?.from}
-                        handleChange={(from) => {
-                          setFilter((prev) => ({
-                            ...prev,
-                            dates: { from: from as Date },
-                          }))
-                        }}
-                        appearInline
-                      />
-                    </Box>
+                </Box> */}
+              <Box
+                display="flex"
+                flexDirection="column"
+                justifyContent="spaceBetween"
+                paddingX={3}
+                marginY={3}
+              >
+                <Box display="flex" flexDirection="column">
+                  <Box>
+                    <DatePicker
+                      label={formatMessage(m.datepickerFromLabel)}
+                      placeholderText={formatMessage(m.datepickLabel)}
+                      locale="is"
+                      backgroundColor="blue"
+                      size="xs"
+                      selected={filter.dates?.from}
+                      handleChange={(from) => {
+                        setFilter((prev) => ({
+                          ...prev,
+                          dates: { from: from as Date },
+                        }))
+                      }}
+                      appearInline
+                    />
                   </Box>
                 </Box>
-              </Filter>
-            </Box>
-          )}
+              </Box>
+            </Filter>
+          </Box>
+        )}
       </Box>
-      {!error && (
+      {!loading && error && (
+        <Problem type="internal_service_error" noBorder={false} />
+      )}
+      {!loading && !error && !hasAppointments && (
+        <Problem
+          type="no_data"
+          noBorder={false}
+          title={formatMessage(messages.noAppointmentsTitle)}
+          message={formatMessage(messages.noAppointmentsText)}
+          imgSrc="./assets/images/nodata.svg"
+        />
+      )}
+      {!error && loading && <CardLoader />}
+      {!error && !loading && hasAppointments && (
         <Appointments
           data={{
             data: { data: filteredData },

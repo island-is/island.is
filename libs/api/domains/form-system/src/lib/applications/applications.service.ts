@@ -22,7 +22,10 @@ import {
   SubmitScreenInput,
   UpdateApplicationInput,
 } from '../../dto/application.input'
-import { ApplicationResponse } from '../../models/applications.model'
+import {
+  ApplicationResponse,
+  SubmitApplicationResponse,
+} from '../../models/applications.model'
 
 @Injectable()
 export class ApplicationsService {
@@ -98,7 +101,7 @@ export class ApplicationsService {
     return response as ApplicationResponse
   }
 
-  async updateDependencies(
+  async updateSettings(
     auth: User,
     input: UpdateApplicationInput,
   ): Promise<void> {
@@ -110,10 +113,15 @@ export class ApplicationsService {
   async submitApplication(
     auth: User,
     input: GetApplicationInput,
-  ): Promise<void> {
-    await this.applicationsApiWithAuth(auth).applicationsControllerSubmit(
-      input as ApplicationsControllerSubmitRequest,
-    )
+  ): Promise<SubmitApplicationResponse> {
+    const response = await this.applicationsApiWithAuth(auth)
+      .applicationsControllerSubmit(
+        input as ApplicationsControllerSubmitRequest,
+      )
+      .catch((e) =>
+        handle4xx(e, this.handleError, 'failed to submit application'),
+      )
+    return response as SubmitApplicationResponse
   }
 
   async updateApplication(

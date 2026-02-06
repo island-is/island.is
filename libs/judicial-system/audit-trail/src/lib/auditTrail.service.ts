@@ -16,6 +16,7 @@ export enum AuditedAction {
   GET_CASES_STATISTICS = 'GET_CASES_STATISTICS',
   GET_CASE = 'GET_CASE',
   GET_CONNECTED_CASES = 'GET_CONNECTED_CASES',
+  GET_CANDIDATE_MERGE_CASES = 'GET_CANDIDATE_MERGE_CASES',
   GET_INDICTMENTS = 'GET_INDICTMENTS',
   GET_INDICTMENT = 'GET_INDICTMENT',
   CREATE_CASE = 'CREATE_CASE',
@@ -49,6 +50,7 @@ export enum AuditedAction {
   UPDATE_FILES = 'UPDATE_FILES',
   GET_SIGNED_URL = 'GET_SIGNED_URL',
   DELETE_FILE = 'DELETE_FILE',
+  REJECT_FILE = 'REJECT_FILE',
   UPLOAD_CRIMINAL_RECORD_CASE_FILE = 'UPLOAD_CRIMINAL_RECORD_CASE_FILE',
   UPLOAD_FILE_TO_COURT = 'UPLOAD_FILE_TO_COURT',
   GET_POLICE_CASE_FILES = 'GET_POLICE_CASE_FILES',
@@ -89,11 +91,6 @@ export enum AuditedAction {
   FILE_COURT_DOCUMENT = 'FILE_COURT_DOCUMENT',
   DELETE_COURT_DOCUMENT = 'DELETE_COURT_DOCUMENT',
   SPLIT_DEFENDANT_FROM_CASE = 'SPLIT_DEFENDANT_FROM_CASE',
-}
-
-export enum AuditedRequestStatus {
-  STARTED = 'STARTED',
-  COMPLETED = 'COMPLETED',
 }
 
 @Injectable()
@@ -204,11 +201,9 @@ export class AuditTrailService {
       res: R,
     ) => Promise<{ [key: string]: string | Date | boolean | undefined | null }>
   }): Promise<R> {
-    const details = {
-      ...(getAuditDetails ? await getAuditDetails(result) : {}),
-      requestStatus: AuditedRequestStatus.COMPLETED,
-    }
-
+    const auditDetails = getAuditDetails
+      ? { details: await getAuditDetails(result) }
+      : {}
     this.writeToTrail({
       userId,
       actionType,
@@ -216,7 +211,7 @@ export class AuditTrailService {
         typeof auditedResult === 'string'
           ? auditedResult
           : auditedResult(result),
-      details,
+      ...auditDetails,
     })
 
     return result
@@ -247,7 +242,6 @@ export class AuditTrailService {
         actionType,
         ids: typeof auditedResult === 'string' ? auditedResult : undefined,
         error: e,
-        details: { requestStatus: AuditedRequestStatus.COMPLETED },
       })
 
       throw e
@@ -276,58 +270,6 @@ export class AuditTrailService {
         userId,
         actionType,
         result: action,
-        auditedResult,
-        getAuditDetails,
-      })
-    }
-  }
-
-  async runAndAuditRequest<R, T>({
-    userId,
-    actionType,
-    action,
-    actionProps,
-    auditedResult,
-    getAuditDetails,
-  }: {
-    userId: string
-    actionType: AuditedAction
-    action: (props: T) => Promise<R> | R
-    actionProps: T
-    auditedResult: string
-    getAuditDetails?: (
-      res?: R,
-    ) => Promise<{ [key: string]: string | Date | boolean | undefined | null }>
-  }): Promise<R> {
-    // write an audit log before executing the target request
-    const details = {
-      ...(getAuditDetails ? await getAuditDetails() : {}),
-      requestStatus: AuditedRequestStatus.STARTED,
-    }
-    this.writeToTrail({
-      userId,
-      actionType,
-      ids: auditedResult,
-      details,
-    })
-
-    // executing the request
-    const result = action(actionProps)
-
-    // write an audit log after executing the target request
-    if (result instanceof Promise) {
-      return await this.auditPromisedResult<R>(
-        userId,
-        actionType,
-        result,
-        auditedResult,
-        getAuditDetails,
-      )
-    } else {
-      return await this.auditResult({
-        userId,
-        actionType,
-        result,
         auditedResult,
         getAuditDetails,
       })

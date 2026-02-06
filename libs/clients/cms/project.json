@@ -26,7 +26,10 @@
       "options": {
         "command": "graphql-codegen --config libs/clients/cms/codegen.yaml"
       },
-      "inputs": ["{projectRoot}/codegen.yaml"],
+      "inputs": [
+        "{projectRoot}/codegen.yaml",
+        "{projectRoot}/src/**/*.graphql"
+      ],
       "outputs": ["{projectRoot}/gen", "{projectRoot}/**/*.generated.ts"]
     },
     "fetch-schema": {

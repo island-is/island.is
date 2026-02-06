@@ -1,14 +1,14 @@
 import { Auth } from '@island.is/auth-nest-tools'
 import {
-  AppointmentStatus,
   CreateEuPatientConsentDto,
+  HealthDirectorateHealthService,
+  HealthDirectorateOrganDonationService,
   HealthDirectorateVaccinationsService,
   OrganDonorDto,
   PrescriptionRenewalRequestDto,
+  UserVisibleAppointmentStatuses,
   VaccinationDto,
   organLocale,
-  HealthDirectorateHealthService,
-  HealthDirectorateOrganDonationService,
 } from '@island.is/clients/health-directorate'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import type { Locale } from '@island.is/shared/types'
@@ -29,6 +29,8 @@ import {
 import { HealthDirectorateResponse } from './dto/response.dto'
 import {
   mapAppointmentStatus,
+  mapStatusIdToColor,
+  mapReferralStatusValueToStatus,
   mapVaccinationStatus,
 } from './mappers/basicInformationMapper'
 import {
@@ -187,10 +189,12 @@ export class HealthDirectorateService {
     if (!data) {
       return null
     }
+
     const waitlists: Array<Waitlist> =
       data.map((item) => {
         return {
           id: item.id,
+          statusId: mapStatusIdToColor(item.statusId),
           lastUpdated: item.lastUpdated,
           name: item.name ?? '',
           waitBegan: item.waitBeganDate,
@@ -237,6 +241,7 @@ export class HealthDirectorateService {
           createdDate: item.createdDate,
           validUntilDate: item.validUntilDate,
           stateDisplay: item.statusDisplay,
+          status: mapReferralStatusValueToStatus(item.statusValue),
           reason: item.reasonForReferral,
           diagnoses: item.diagnoses?.join(', '),
           fromContactInfo: item.fromContactInfo,
@@ -608,7 +613,10 @@ export class HealthDirectorateService {
         input.from,
         input.status
           ?.map((status) => mapAppointmentStatus(status))
-          .filter((status): status is AppointmentStatus => status !== null),
+          .filter(
+            (status): status is UserVisibleAppointmentStatuses =>
+              status !== null,
+          ),
       )
       if (!data) {
         return null

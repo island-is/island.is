@@ -1,5 +1,5 @@
 import archiver from 'archiver'
-import { Includeable, Op } from 'sequelize'
+import { Includeable, Op, Transaction } from 'sequelize'
 import { Writable } from 'stream'
 
 import {
@@ -481,8 +481,9 @@ export class LimitedAccessCaseService {
     theCase: Case,
     update: LimitedAccessUpdateCase,
     user: TUser,
+    transaction: Transaction,
   ): Promise<Case> {
-    await this.caseRepositoryService.update(theCase.id, update)
+    await this.caseRepositoryService.update(theCase.id, update, { transaction })
 
     const messages = []
 
@@ -696,7 +697,11 @@ export class LimitedAccessCaseService {
     }
   }
 
-  async getAllFilesZip(theCase: Case, user: TUser): Promise<Buffer> {
+  async getAllFilesZip(
+    theCase: Case,
+    user: TUser,
+    transaction: Transaction,
+  ): Promise<Buffer> {
     const allowedCaseFileCategories = getDefenceUserCaseFileCategories(
       user.nationalId,
       theCase.type,
@@ -705,12 +710,29 @@ export class LimitedAccessCaseService {
     )
 
     const allowedCaseFiles =
-      theCase.caseFiles?.filter(
-        (file) =>
-          file.isKeyAccessible &&
-          file.category &&
-          allowedCaseFileCategories.includes(file.category),
-      ) ?? []
+      theCase.caseFiles?.filter((file) => {
+        if (!file.isKeyAccessible || !file.category) {
+          return false
+        }
+
+        if (!allowedCaseFileCategories.includes(file.category)) {
+          return false
+        }
+
+        if (
+          (file.category === CaseFileCategory.CRIMINAL_RECORD ||
+            file.category === CaseFileCategory.CRIMINAL_RECORD_UPDATE) &&
+          file.defendantId
+        ) {
+          return Defendant.isConfirmedDefenderOfSpecificDefendantWithCaseFileAccess(
+            user.nationalId,
+            file.defendantId,
+            theCase.defendants,
+          )
+        }
+
+        return true
+      }) ?? []
 
     const promises: Promise<void>[] = []
     const filesToZip: { data: Buffer; name: string }[] = []
@@ -759,7 +781,7 @@ export class LimitedAccessCaseService {
     ) {
       promises.push(
         this.tryAddGeneratedPdfToFilesToZip(
-          this.pdfService.getIndictmentPdf(theCase),
+          this.pdfService.getIndictmentPdf(theCase, transaction),
           'Ákæra.pdf',
           filesToZip,
         ),
@@ -779,7 +801,12 @@ export class LimitedAccessCaseService {
         defendant.subpoenas?.forEach((subpoena) =>
           promises.push(
             this.tryAddGeneratedPdfToFilesToZip(
-              this.pdfService.getSubpoenaPdf(theCase, defendant, subpoena),
+              this.pdfService.getSubpoenaPdf(
+                theCase,
+                defendant,
+                transaction,
+                subpoena,
+              ),
               `Fyrirkall-${defendant.name}.pdf`,
               filesToZip,
             ),
@@ -795,7 +822,11 @@ export class LimitedAccessCaseService {
       ) {
         promises.push(
           this.tryAddGeneratedPdfToFilesToZip(
-            this.pdfService.getCourtRecordPdfForIndictmentCase(theCase, user),
+            this.pdfService.getCourtRecordPdfForIndictmentCase(
+              theCase,
+              user,
+              transaction,
+            ),
             'Þingbók.pdf',
             filesToZip,
           ),

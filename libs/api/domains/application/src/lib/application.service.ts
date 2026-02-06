@@ -96,6 +96,7 @@ export class ApplicationService {
       to: filters.to,
       typeIdValue: filters.typeIdValue,
       searchStr: filters.searchStr,
+      institutionNationalId: filters.institutionNationalId,
     })
   }
 
@@ -167,7 +168,7 @@ export class ApplicationService {
   async getApplicationInstitutions(user: User) {
     return this.applicationApiWithAuth(
       user,
-    ).adminControllerGetInstitutionsSuperAdminRaw({})
+    ).adminControllerGetInstitutionsSuperAdmin({})
   }
 
   async update(input: UpdateApplicationInput, auth: Auth, locale: Locale) {
@@ -218,13 +219,18 @@ export class ApplicationService {
     })
   }
 
-  async submitApplication(input: SubmitApplicationInput, auth: Auth) {
+  async submitApplication(
+    input: SubmitApplicationInput,
+    auth: Auth,
+    locale: Locale,
+  ) {
     const { id, ...updateApplicationStateDto } = input
     return this.applicationApiWithAuth(
       auth,
     ).applicationControllerSubmitApplication({
       id,
       updateApplicationStateDto,
+      locale,
     })
   }
 

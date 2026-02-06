@@ -5,6 +5,8 @@ import { messages } from '../../lib/messages'
 import { addMonths, addYears, today } from '../../utils/dates'
 import { PermitInput } from '../../utils/types'
 import * as styles from './PatientDataPermit.css'
+import { m } from '@island.is/portals/my-pages/core'
+
 interface DatesProps {
   onClick: () => void
   goBack: () => void
@@ -85,6 +87,27 @@ const Dates: FC<DatesProps> = ({
           placeholderText={formatMessage(messages.choosePeriod)}
           size="xs"
         />
+        {formState?.dates.validFrom != null ||
+        formState?.dates.validTo != null ? (
+          <Box textAlign="right" marginTop={1}>
+            <Button
+              icon="reload"
+              size="small"
+              variant="text"
+              onClick={() => {
+                setFormState({
+                  ...formState,
+                  dates: {
+                    validFrom: null,
+                    validTo: null,
+                  },
+                })
+              }}
+            >
+              {formatMessage(m.clearSelected)}
+            </Button>
+          </Box>
+        ) : null}
       </Box>
       <Box
         display="flex"

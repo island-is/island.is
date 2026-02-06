@@ -19,8 +19,8 @@ import {
   IsNotEmpty,
 } from 'class-validator'
 import { Type } from 'class-transformer'
-
 import { PaymentMethod } from '../../../types'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 export class ExtraDataItem {
   @IsString()
@@ -159,14 +159,14 @@ export class CreatePaymentFlowInput {
     description: 'The url to redirect to on successful payment',
   })
   @IsOptional()
-  @IsUrl()
+  @IsUrl({ require_tld: isRunningOnEnvironment('production') })
   returnUrl?: string
 
   @ApiPropertyOptional({
     description: 'The url to redirect to on cancellation',
   })
   @IsOptional()
-  @IsUrl()
+  @IsUrl({ require_tld: isRunningOnEnvironment('production') })
   cancelUrl?: string
 
   @IsBoolean()

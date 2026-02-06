@@ -16,6 +16,7 @@ import {
   getIncrementVariables,
   incrementWithoutScreens,
   incrementWithScreens,
+  jumpToScreen,
   setCurrentScreen,
 } from './reducerUtils'
 
@@ -26,6 +27,7 @@ export const initialState = {
   currentSection: { data: {} as FormSystemSection, index: 0 },
   currentScreen: undefined,
   errors: [],
+  screenErrors: [],
 }
 
 export const initialReducer = (state: ApplicationState): ApplicationState => {
@@ -161,8 +163,9 @@ export const applicationReducer = (
       )
     }
     case 'INDEX_SCREEN': {
-      const { sectionIndex, screenIndex } = action.payload
-      return setCurrentScreen(state, sectionIndex, screenIndex)
+      const { sectionIndex, screenIndex, updateCompleted } = action.payload
+      state = setCurrentScreen(state, sectionIndex, screenIndex)
+      return jumpToScreen(state, sectionIndex, screenIndex, updateCompleted)
     }
 
     case 'SET_VALIDITY': {
@@ -176,9 +179,11 @@ export const applicationReducer = (
       return state
 
     case 'SUBMITTED': {
+      const { submitted, screenErrors } = action.payload
       return {
         ...state,
-        submitted: action.payload,
+        submitted,
+        screenErrors,
       }
     }
   }

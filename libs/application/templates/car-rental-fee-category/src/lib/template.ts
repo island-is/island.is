@@ -95,8 +95,12 @@ const template: ApplicationTemplate<
               write: 'all',
               read: 'all',
               delete: true,
+              api: [VehiclesApi, SkatturApi],
             },
           ],
+          onExit: defineTemplateApi({
+            action: 'postDataToSkatturinn',
+          }),
         },
         on: {
           [DefaultEvents.SUBMIT]: {
@@ -121,9 +125,6 @@ const template: ApplicationTemplate<
               delete: true,
             },
           ],
-          onEntry: defineTemplateApi({
-            action: 'postDataToSkatturinn',
-          }),
         },
       },
     },

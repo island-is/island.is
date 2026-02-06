@@ -48,6 +48,7 @@ env:
   NATIONAL_REGISTRY_B2C_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1'
   NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitydev.onmicrosoft.com/midlun/.default'
   NODE_OPTIONS: '--max-old-space-size=345 --enable-source-maps -r dd-trace/init'
+  REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
   REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
   REDIS_USE_SSL: 'true'
   SERVERSIDE_FEATURES_ON: ''

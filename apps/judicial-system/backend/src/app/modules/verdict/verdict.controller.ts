@@ -1,4 +1,5 @@
 import { Response } from 'express'
+import { Sequelize } from 'sequelize-typescript'
 
 import {
   Body,
@@ -12,6 +13,7 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common'
+import { InjectConnection } from '@nestjs/sequelize'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import type { Logger } from '@island.is/logging'
@@ -67,6 +69,7 @@ export class VerdictController {
     private readonly lawyerRegistryService: LawyerRegistryService,
     private readonly pdfService: PdfService,
     private readonly eventService: EventService,
+    @InjectConnection() private readonly sequelize: Sequelize,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -88,10 +91,13 @@ export class VerdictController {
   ): Promise<Verdict[]> {
     this.logger.debug(`Creating verdicts for defendants in ${caseId}`)
 
-    return this.verdictService.createVerdicts(
-      caseId,
-      verdictsToCreate,
-      theCase.defendants,
+    return this.sequelize.transaction((transaction) =>
+      this.verdictService.createVerdicts(
+        caseId,
+        verdictsToCreate,
+        theCase.defendants ?? [],
+        transaction,
+      ),
     )
   }
 
@@ -123,10 +129,13 @@ export class VerdictController {
       `Updating verdict for ${verdict.id} of ${defendantId} in ${caseId}`,
     )
 
-    return this.verdictService.update(
-      verdict,
-      verdictToUpdate,
-      theCase.rulingDate,
+    return this.sequelize.transaction((transaction) =>
+      this.verdictService.update(
+        verdict,
+        verdictToUpdate,
+        transaction,
+        theCase.rulingDate,
+      ),
     )
   }
 
@@ -199,9 +208,8 @@ export class VerdictController {
     this.logger.debug(
       `Get verdict for ${verdict.id} of ${defendantId} in ${caseId}`,
     )
-    const currentVerdict = await this.verdictService.getAndSyncVerdict(
-      verdict,
-      user,
+    const currentVerdict = await this.sequelize.transaction((transaction) =>
+      this.verdictService.getAndSyncVerdict(verdict, transaction, user),
     )
 
     if (
@@ -235,9 +243,12 @@ export class VerdictController {
       `Deliver case ${caseId} verdict to all affected defendants`,
     )
 
-    return await this.verdictService.addMessagesForCaseVerdictDeliveryToQueue(
-      theCase,
-      user,
+    return await this.sequelize.transaction((transaction) =>
+      this.verdictService.addMessagesForCaseVerdictDeliveryToQueue(
+        theCase,
+        user,
+        transaction,
+      ),
     )
   }
 }

@@ -53,3 +53,10 @@ export class ApplicationTypesInstitutionAdminInput {
   @Field(() => String)
   nationalId!: string
 }
+
+@InputType()
+export class ApplicationInstitutionsAdminInput {
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  locale?: string
+}

@@ -24,6 +24,7 @@ export enum PrescribedItemRenewalBlockedReasonEnum {
   DismissedRequest = 'dismissedRequest',
   AlreadyRequested = 'alreadyRequested',
   MoreRecentPrescriptionExists = 'moreRecentPrescriptionExists',
+  SpecialistOnlyPrescription = 'specialistOnlyPrescription',
   Unknown = 'unknown',
 }
 
@@ -74,18 +75,37 @@ registerEnumType(PermitStatusEnum, {
 
 export enum AppointmentStatusEnum {
   BOOKED = 'booked',
-  PENDING = 'pending',
-  PROPOSED = 'proposed',
   CANCELLED = 'cancelled',
   FULFILLED = 'fulfilled',
   ARRIVED = 'arrived',
-  NOSHOW = 'noshow',
-  ENTERED_IN_ERROR = 'entered-in-error',
   CHECKED_IN = 'checked-in',
-  WAITLIST = 'waitlist',
-  DELETED = 'deleted',
 }
 
 registerEnumType(AppointmentStatusEnum, {
   name: 'HealthDirectorateAppointmentStatus',
+})
+
+export enum WaitlistStatusTagColorEnum {
+  blue = 'blue',
+  purple = 'purple',
+  red = 'red',
+  mint = 'mint',
+}
+registerEnumType(WaitlistStatusTagColorEnum, {
+  name: 'HealthDirectorateWaitlistStatusTagColorEnum',
+})
+
+export enum ReferralStatusEnum {
+  Open = 'Open',
+  Withdrawn = 'Withdrawn',
+  InTreatment = 'InTreatment',
+  Completed = 'Completed',
+  Rejected = 'Rejected',
+  Finished = 'Finished',
+  Deleted = 'Deleted',
+  Expired = 'Expired',
+  Unknown = 'Unknown',
+}
+registerEnumType(ReferralStatusEnum, {
+  name: 'HealthDirectorateReferralStatusEnum',
 })

@@ -1,6 +1,6 @@
 import Clipboard from '@react-native-clipboard/clipboard'
 import React from 'react'
-import { Image, TouchableOpacity, View } from 'react-native'
+import { Image, TouchableOpacity, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import { Label } from '../label/label'
@@ -62,6 +62,7 @@ interface InputProps {
   rightElement?: React.ReactNode
   allowEmptyValue?: boolean
   fullWidthWarning?: boolean
+  style?: ViewStyle
 }
 
 export function Input({
@@ -80,6 +81,7 @@ export function Input({
   rightElement,
   allowEmptyValue = false,
   fullWidthWarning = false,
+  style,
 }: InputProps) {
   const theme = useTheme()
   const tvalue =
@@ -89,10 +91,13 @@ export function Input({
     <Host noBorder={noBorder} darkBorder={darkBorder}>
       <Content isCompact={isCompact}>
         <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-          }}
+          style={[
+            style,
+            {
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+            },
+          ]}
         >
           <View style={{ flex: 1, marginRight: theme.spacing[2] }}>
             {loadLabel && loading ? (

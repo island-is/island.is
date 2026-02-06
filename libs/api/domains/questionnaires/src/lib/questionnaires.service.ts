@@ -190,19 +190,28 @@ export class QuestionnairesService {
                       // ListReplyDto
                       values = reply.values.map((v) => v.answer)
                     } else if ('answer' in reply) {
-                      // StringReplyDto, NumberReplyDto, BooleanReplyDto, DateReplyDto
-                      values = [String(reply.answer)]
+                      if (reply.answer === true || reply.answer === false) {
+                        // BooleanReplyDto
+                        values = [
+                          reply.answer
+                            ? formatMessage(m.yes)
+                            : formatMessage(m.no),
+                        ]
+                      } else {
+                        // StringReplyDto, NumberReplyDto, DateReplyDto
+                        values = [String(reply.answer)]
+                      }
                     }
                   }
 
                   return {
-                    id: item.id ?? 'undefined-id',
+                    id: item.id,
                     label: item.label ?? formatMessage(m.noLabel),
                     values,
                   }
                 }) ?? [],
             )
-            .filter((answer) => answer !== undefined) ?? [],
+            .filter((answer) => answer != null) ?? [],
       }
 
       return {
@@ -368,6 +377,7 @@ export class QuestionnairesService {
                 title: q.title ?? formatMessage(m.questionnaireWithoutTitle),
                 description: q.message ?? undefined,
                 sentDate: q.createdDate?.toISOString() ?? '',
+                lastSubmissionId: q.lastCreatedSubmissionId,
                 organization: QuestionnairesOrganizationEnum.EL,
                 department: undefined,
                 status:
@@ -478,8 +488,8 @@ export class QuestionnairesService {
               : QuestionnairesStatusEnum.notAnswered,
             description: data.message ?? undefined,
             organization: QuestionnairesOrganizationEnum.EL,
+            lastSubmissionId: data.lastCreatedSubmissionId,
           },
-          lastSubmissionId: data.lastCreatedSubmissionId,
           submissions: data.submissions?.map((sub) => ({
             id: sub.id,
             createdAt: sub.createdDate ?? undefined,

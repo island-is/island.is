@@ -13,11 +13,12 @@ import {
 } from '@island.is/cms'
 import { UniversityContentfulReferenceIds } from '../universityCareers.types'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { AUDIT_NAMESPACE } from '../constants'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.education)
 @Resolver(() => Institution)
-@Audit({ namespace: '@island.is/api/university-careers' })
+@Audit({ namespace: AUDIT_NAMESPACE })
 export class InstitutionResolver {
   constructor(@Inject(LOGGER_PROVIDER) private readonly logger: Logger) {}
 
