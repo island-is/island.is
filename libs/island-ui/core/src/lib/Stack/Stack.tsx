@@ -12,7 +12,6 @@ import {
   ResponsiveProp,
 } from '../../utils/responsiveProp'
 import { resolveResponsiveRangeProps } from '../../utils/responsiveRangeProps'
-import { useNegativeMarginTop } from '../../hooks/useNegativeMargin/useNegativeMargin'
 import { ReactNodeNoStrings } from '../private/ReactNodeNoStrings'
 
 const alignToDisplay = {
@@ -23,11 +22,9 @@ const alignToDisplay = {
 
 interface UseStackItemProps {
   align: ResponsiveProp<Align>
-  space: BoxProps['paddingTop']
 }
 
-const useStackItem = ({ align, space }: UseStackItemProps) => ({
-  paddingTop: space,
+const useStackItem = ({ align }: UseStackItemProps) => ({
   // If we're aligned left across all screen sizes,
   // there's actually no alignment work to do.
   ...(align === 'left'
@@ -98,11 +95,10 @@ export const Stack = ({
   }
 
   const hiddenStyles = { ...hiddenStyleRefs }
-  const stackItemProps = useStackItem({ space, align })
+  const stackItemProps = useStackItem({ align })
   const stackItems = flattenChildren(children)
   const isList = component === 'ol' || component === 'ul'
   const stackItemComponent = isList ? 'li' : 'div'
-  const negativeMarginTop = useNegativeMarginTop(space)
 
   let firstItemOnXs: number | null = null
   let firstItemOnSm: number | null = null
@@ -111,7 +107,12 @@ export const Stack = ({
   let firstItemOnXl: number | null = null
 
   return (
-    <Box component={component} className={negativeMarginTop}>
+    <Box
+      component={component}
+      display="flex"
+      flexDirection="column"
+      rowGap={dividers ? 'none' : space}
+    >
       {Children.map(stackItems, (child, index) => {
         if (
           process.env.NODE_ENV !== 'production' &&
