@@ -2,7 +2,6 @@ import {
   Box,
   Button,
   Icon,
-  Stack,
   Table as T,
   Text,
 } from '@island.is/island-ui/core'
@@ -140,7 +139,7 @@ const VehicleBulkMileageJobDetail = () => {
         />
       )}
       {!error && (
-        <Stack space={8}>
+        <Box display="flex" flexDirection="column" rowGap={8}>
           <TableGrid
             title={formatMessage(vehicleMessage.jobStatus)}
             loading={loading || networkStatus === NetworkStatus.refetch}
@@ -268,7 +267,7 @@ const VehicleBulkMileageJobDetail = () => {
               />
             )}
           </Box>
-        </Stack>
+        </Box>
       )}
     </IntroWrapper>
   )
