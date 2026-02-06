@@ -1,6 +1,6 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectConnection, InjectModel } from '@nestjs/sequelize'
-import { Sequelize, WhereOptions } from 'sequelize'
+import { InferAttributes, Sequelize, WhereOptions } from 'sequelize'
 import { ConfigType } from '@nestjs/config'
 import { isCompany, isValid } from 'kennitala'
 import { v4 as uuid } from 'uuid'
@@ -11,6 +11,7 @@ import {
   ChargeFjsV2ClientService,
   Charge,
 } from '@island.is/clients/charge-fjs-v2'
+import { Op } from 'sequelize'
 import { retry } from '@island.is/shared/utils/server'
 import { paginate } from '@island.is/nest/pagination'
 import {
@@ -47,8 +48,10 @@ import {
 } from '../../utils/fjsCharge'
 import { processCharges } from '../../utils/chargeUtils'
 import { CardPaymentDetails } from './models/cardPaymentDetails.model'
-import { ChargeResponse } from '../cardPayment/cardPayment.types'
-import { PaymentTrackingData } from '../../types/cardPayment'
+import {
+  CardPaymentResponse,
+  PaymentTrackingData,
+} from '../../types/cardPayment'
 import { onlyReturnKnownErrorCode } from '../../utils/paymentErrors'
 import { generateWebhookJwt } from '../../utils/webhookAuth.utils'
 import { JwksConfigService } from '../jwks/jwks-config.service'
@@ -178,9 +181,11 @@ export class PaymentFlowService {
     charges: ChargeItem[],
   ) {
     const { item } =
-      await this.chargeFjsV2ClientService.getCatalogByPerformingOrg(
-        organisationId,
-      )
+      await this.chargeFjsV2ClientService.getCatalogByPerformingOrg({
+        performingOrgID: organisationId,
+        // chargeType: charges[0].chargeType,
+        // chargeItemCode: charges.map((c) => c.chargeItemCode),
+      })
 
     const filteredChargeInformation: CatalogItemWithQuantity[] = []
 
@@ -260,6 +265,10 @@ export class PaymentFlowService {
     return payerName
   }
 
+  /**
+   * Checks if a payment flow is eligible to be paid.
+   * Returns true if the payment flow is eligible to be paid, false if it has already been paid.
+   */
   async isEligibleToBePaid(id: string) {
     const paymentFlow = (
       await this.paymentFlowModel.findOne({
@@ -277,6 +286,7 @@ export class PaymentFlowService {
       await this.paymentFulfillmentModel.findOne({
         where: {
           paymentFlowId: id,
+          isDeleted: false,
         },
       })
     )?.toJSON()
@@ -327,10 +337,12 @@ export class PaymentFlowService {
       await this.paymentFulfillmentModel.findOne({
         where: {
           paymentFlowId: paymentFlow.id,
+          isDeleted: false,
         },
       })
     )?.toJSON()
 
+    // If a payment fulfillment exists, the payment flow is paid by card
     if (paymentFulfillment) {
       return {
         paymentStatus: PaymentStatus.PAID,
@@ -338,6 +350,7 @@ export class PaymentFlowService {
       }
     }
 
+    // for invoice payments, we need to check the status of the fjs charge
     const existingFjsCharge = (
       await this.fjsChargeModel.findOne({
         where: {
@@ -346,6 +359,7 @@ export class PaymentFlowService {
       })
     )?.toJSON()
 
+    // If the fjs charge exists and is unpaid, the innvoice is pending
     if (existingFjsCharge && existingFjsCharge.status === 'unpaid') {
       return {
         paymentStatus: PaymentStatus.INVOICE_PENDING,
@@ -353,6 +367,7 @@ export class PaymentFlowService {
       }
     }
 
+    // If neither the payment fulfillment nor the fjs charge exist, the payment flow is unpaid
     return {
       paymentStatus: PaymentStatus.UNPAID,
       updatedAt: existingFjsCharge?.created ?? paymentFlow.modified,
@@ -595,7 +610,7 @@ export class PaymentFlowService {
     totalPrice,
     paymentTrackingData,
   }: {
-    paymentResult: ChargeResponse
+    paymentResult: CardPaymentResponse
     paymentFlowId: string
     totalPrice: number
     paymentTrackingData: PaymentTrackingData
@@ -648,6 +663,14 @@ export class PaymentFlowService {
         PaymentServiceCode.CouldNotCreatePaymentConfirmation,
       )
     }
+  }
+
+  async findPaymentFulfillmentForPaymentFlow(paymentFlowId: string) {
+    const paymentFulfillment = await this.paymentFulfillmentModel.findOne({
+      where: { paymentFlowId, isDeleted: false },
+    })
+
+    return paymentFulfillment?.toJSON() ?? null
   }
 
   /**
@@ -726,7 +749,7 @@ export class PaymentFlowService {
     return await this.sequelize.transaction(async (transaction) => {
       // Check if already processed (idempotency)
       const existingFulfillment = await this.paymentFulfillmentModel.findOne({
-        where: { paymentFlowId, paymentMethod: 'invoice' },
+        where: { paymentFlowId, paymentMethod: 'invoice', isDeleted: false },
         transaction,
       })
 
@@ -809,37 +832,83 @@ export class PaymentFlowService {
         status: chargePayload.payInfo ? 'paid' : 'unpaid',
       })
 
-      await this.paymentFlowModel.update(
-        {
-          existingInvoiceId: charge.receptionID,
-        },
-        {
-          where: {
-            id: paymentFlowId,
-          },
-        },
+      await this.updateFlowAndFulfillmentWithFjsCharge(
+        paymentFlowId,
+        charge.receptionID,
+        newCharge.id,
+        !!chargePayload.payInfo,
       )
-
-      if (chargePayload.payInfo) {
-        // If it's paid
-        await this.paymentFulfillmentModel.update(
-          {
-            fjsChargeId: newCharge.id,
-          },
-          {
-            where: {
-              paymentFlowId,
-            },
-          },
-        )
-      }
 
       return newCharge
     } catch (e) {
-      this.logger.error(`Failed to create payment charge (${paymentFlowId})`, e)
-
+      const code = mapFjsErrorToCode(e, true)
+      if (code === FjsErrorCode.AlreadyCreatedCharge) {
+        this.logger.error(
+          `CRITICAL: [${paymentFlowId}] FJS charge already exists but flow/fulfillment not updated. Manual reconciliation required.`,
+          e,
+        )
+      } else {
+        this.logger.error(
+          `Failed to create payment charge (${paymentFlowId})`,
+          e,
+        )
+      }
       throw new BadRequestException(mapFjsErrorToCode(e))
     }
+  }
+
+  private async updateFlowAndFulfillmentWithFjsCharge(
+    paymentFlowId: string,
+    receptionId: string,
+    fjsChargeId: string,
+    hasPayInfo: boolean,
+  ): Promise<void> {
+    await this.paymentFlowModel.update(
+      { existingInvoiceId: receptionId },
+      { where: { id: paymentFlowId } },
+    )
+
+    if (hasPayInfo) {
+      await this.paymentFulfillmentModel.update(
+        { fjsChargeId },
+        { where: { paymentFlowId, isDeleted: false } },
+      )
+    }
+  }
+
+  /**
+   * Finds paid card payment flows that don't have an FJS charge yet.
+   * Used by the FJS worker to backfill missing charges.
+   *
+   * @param cutoffTime - Only include flows whose fulfillment was created before this time (gives other systems time to finalize)
+   */
+  async findPaidFlowsWithoutFjsCharge(
+    cutoffTime: Date,
+  ): Promise<InferAttributes<PaymentFlow>[]> {
+    const paymentFlows = await this.paymentFlowModel.findAll({
+      include: [
+        {
+          model: PaymentFulfillment,
+          as: 'paymentFulfillment',
+          required: true,
+          where: {
+            paymentMethod: 'card',
+            fjsChargeId: null,
+            created: { [Op.lt]: cutoffTime },
+            isDeleted: false,
+          },
+        },
+        { model: PaymentFlowCharge, as: 'charges' },
+        {
+          model: CardPaymentDetails,
+          as: 'cardPaymentDetails',
+          required: true,
+          where: { isDeleted: false },
+        },
+      ],
+    })
+
+    return paymentFlows
   }
 
   async deleteFjsCharge(paymentFlowId: string): Promise<void> {
@@ -932,39 +1001,105 @@ export class PaymentFlowService {
     return paymentFlowDTO
   }
 
+  async getCardPaymentConfirmationForPaymentFlow(paymentFlowId: string) {
+    const cardPaymentConfirmation = await this.cardPaymentDetailsModel.findOne({
+      where: { paymentFlowId, isDeleted: false },
+    })
+
+    return cardPaymentConfirmation?.toJSON() ?? null
+  }
+
   async deleteCardPaymentConfirmation(
     paymentFlowId: string,
     correlationId: string,
-  ): Promise<void> {
+  ): Promise<InferAttributes<CardPaymentDetails> | null> {
     this.logger.info(
       `Attempting to delete payment confirmation for flow ${paymentFlowId} with correlation ID ${correlationId}`,
     )
     try {
-      const deletedCount = await this.cardPaymentDetailsModel.destroy({
-        where: {
-          id: correlationId,
-          paymentFlowId: paymentFlowId,
-        },
-      })
+      const [updatedCount, [updatedCardPaymentDetails]] =
+        await this.cardPaymentDetailsModel.update(
+          {
+            isDeleted: true,
+          },
+          {
+            where: {
+              id: correlationId,
+              paymentFlowId: paymentFlowId,
+              isDeleted: false,
+            },
+            returning: true,
+          },
+        )
 
-      if (deletedCount > 0) {
+      if (updatedCount > 0) {
         this.logger.info(
-          `Successfully deleted payment confirmation for flow ${paymentFlowId}, correlation ID ${correlationId}`,
+          `Successfully marked payment confirmation for flow ${paymentFlowId}, correlation ID ${correlationId} as deleted`,
         )
       } else {
         this.logger.warn(
-          `Payment confirmation not found or not deleted for flow ${paymentFlowId}, correlation ID ${correlationId}. It might have been already deleted or never existed with this ID for the given flow.`,
+          `Payment confirmation not found or not marked as deleted for flow ${paymentFlowId}, correlation ID ${correlationId}. It might have been already deleted or never existed with this ID for the given flow.`,
         )
       }
+
+      return updatedCardPaymentDetails?.toJSON() ?? null
     } catch (error) {
       this.logger.error(
         `Failed to delete payment confirmation for flow ${paymentFlowId}, correlation ID ${correlationId}`,
         { error },
       )
       // Not re-throwing, to prevent disruption of a primary flow (e.g., refund)
+      return null
     }
   }
 
+  async deletePaymentFulfillment({
+    paymentFlowId,
+    confirmationRefId,
+    correlationId,
+  }: {
+    paymentFlowId: string
+    confirmationRefId: string
+    correlationId: string
+  }): Promise<InferAttributes<PaymentFulfillment> | null> {
+    this.logger.info(
+      `Attempting to delete payment fulfillment for flow ${paymentFlowId} with correlation ID ${correlationId}`,
+    )
+    try {
+      const [updatedCount, [updatedPaymentFulfillment]] =
+        await this.paymentFulfillmentModel.update(
+          {
+            isDeleted: true,
+          },
+          {
+            where: {
+              confirmationRefId: confirmationRefId,
+              paymentFlowId: paymentFlowId,
+              isDeleted: false,
+            },
+            returning: true,
+          },
+        )
+      if (updatedCount > 0) {
+        this.logger.info(
+          `Successfully marked payment fulfillment for flow ${paymentFlowId}, correlation ID ${correlationId} as deleted`,
+        )
+      } else {
+        this.logger.warn(
+          `Payment fulfillment not found or not marked as deleted for flow ${paymentFlowId}, correlation ID ${correlationId}. It might have been already deleted or never existed with this ID for the given flow.`,
+        )
+      }
+
+      return updatedPaymentFulfillment?.toJSON() ?? null
+    } catch (error) {
+      this.logger.error(
+        `Failed to delete payment fulfillment for flow ${paymentFlowId}, correlation ID ${correlationId}`,
+        { error },
+      )
+      // Not re-throwing, to prevent disruption of a primary flow (e.g., refund)
+      return null
+    }
+  }
   async searchPaymentFlows(
     payerNationalId?: string,
     search?: string,

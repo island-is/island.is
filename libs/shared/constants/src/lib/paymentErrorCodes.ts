@@ -18,6 +18,10 @@ export enum PaymentServiceCode {
   ChargeItemCodesNotFound = 'ChargeItemCodesNotFound',
   UpstreamNotificationFailure = 'UpstreamNotificationFailure',
   UnknownPaymentServiceError = 'UnknownPaymentServiceError',
+  PaymentFlowNotEligibleToBeFinalized = 'PaymentFlowNotEligibleToBeFinalized',
+  PaymentFlowAlreadyFinalized = 'PaymentFlowAlreadyFinalized',
+  PaymentFinalizationFailed = 'PaymentFinalizationFailed',
+  PaymentFlowNotEligibleToBeRefunded = 'PaymentFlowNotEligibleToBeRefunded',
 }
 
 export enum CardErrorCode {
@@ -51,6 +55,7 @@ export enum CardErrorCode {
   VerificationCallbackFailed = 'VerificationCallbackFailed',
   RefundedBecauseOfSystemError = 'RefundedBecauseOfSystemError',
   UnknownCardError = 'UnknownCardError',
+  ErrorGettingApplePaySession = 'ErrorGettingApplePaySession',
 }
 
 export enum InvoiceErrorCode {
