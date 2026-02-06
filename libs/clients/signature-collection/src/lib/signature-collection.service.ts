@@ -205,7 +205,7 @@ export class SignatureCollectionClientService {
       frambodRequestDTO: {
         sofnunID: parseInt(collectionId),
         kennitala: owner.nationalId.replace(/\D/g, ''),
-        frambodNafn: `${collectionName}`,
+        frambodNafn: collectionName,
         simi: owner.phone,
         netfang: owner.email,
         medmaelalistar: filteredAreas.map((area) => ({
