@@ -18,6 +18,9 @@ import { PaymentOverviewServiceType } from './models/paymentOverviewServiceType.
 import { PaymentOverview } from './models/paymentOverview.model'
 import { PaymentOverviewInput } from './dto/paymentOverview.input'
 import { CopaymentPeriodInput } from './dto/copaymentPeriod.input'
+import { PaymentOverviewTotals } from './models/paymentOverviewTotals.model'
+import { PaymentOverviewTotalsServiceType } from './models/paymentOverviewTotalsServiceType.model'
+import { PaymentOverviewTotalsItem } from './models/paymentOverviewTotalsItem.model'
 
 export type PaymentResponse<T> = {
   items: T[]
@@ -150,6 +153,100 @@ export class PaymentService {
           items: [],
           errors: [{ status: PaymentErrorStatus.NOT_FOUND }],
         }
+
+      return {
+        items: [data],
+        errors: [],
+      }
+    } catch (error) {
+      return {
+        items: [],
+        errors: [{ status: PaymentErrorStatus.INTERNAL_SERVICE_ERROR }],
+      }
+    }
+  }
+
+  async getPaymentOverviewTotalsServiceTypes(
+    user: User,
+  ): Promise<PaymentResponse<PaymentOverviewTotalsServiceType>> {
+    try {
+      const data = await this.overviewApi
+        .withMiddleware(new AuthMiddleware(user as Auth))
+        .getPaymentsOverviewTotalsServiceTypes()
+        .catch(handle404)
+
+      return {
+        items: data ? data : [],
+        errors: [],
+      }
+    } catch (error) {
+      return {
+        items: [],
+        errors: [{ status: PaymentErrorStatus.INTERNAL_SERVICE_ERROR }],
+      }
+    }
+  }
+
+  async getPaymentOverviewTotals(
+    user: User,
+    input: PaymentOverviewInput,
+  ): Promise<PaymentResponse<PaymentOverviewTotals>> {
+    try {
+      const data = await this.overviewApi
+        .withMiddleware(new AuthMiddleware(user as Auth))
+        .getPaymentsOverviewTotals(input)
+        .catch(handle404)
+
+      if (!data) {
+        return {
+          items: [],
+          errors: [],
+        }
+      }
+
+      const items =
+        data.items?.map<PaymentOverviewTotalsItem>((item) => ({
+          serviceTypeCode: item.serviceTypeCode,
+          fullCost: item.fullCost,
+          copayCost: item.copayCost,
+          patientCost: item.patientCost,
+        })) ?? null
+
+      return {
+        items: [
+          {
+            items,
+            totalFullCost: data.totalFullCost,
+            totalPatientCost: data.totalPatientCost,
+            totalCopayCost: data.totalCopayCost,
+          },
+        ],
+        errors: [],
+      }
+    } catch (error) {
+      return {
+        items: [],
+        errors: [{ status: PaymentErrorStatus.INTERNAL_SERVICE_ERROR }],
+      }
+    }
+  }
+
+  async getPaymentOverviewTotalsPdf(
+    user: User,
+    input: PaymentOverviewInput,
+  ): Promise<PaymentResponse<PaymentOverviewDocument>> {
+    try {
+      const data = await this.overviewApi
+        .withMiddleware(new AuthMiddleware(user as Auth))
+        .getPaymentsOverviewTotalsPdf(input)
+        .catch(handle404)
+
+      if (!data) {
+        return {
+          items: [],
+          errors: [{ status: PaymentErrorStatus.NOT_FOUND }],
+        }
+      }
 
       return {
         items: [data],

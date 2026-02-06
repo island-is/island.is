@@ -67,7 +67,7 @@ export enum Features {
   isIDSAdminSsoSettingEnabled = 'isIDSAdminSsoSettingEnabled',
   isIdentityDocumentEnabled = 'isIdentityDocumentEnabled',
   isServicePortalHealthAppointmentsPageEnabled = 'isServicePortalHealthAppointmentsPageEnabled',
-
+  isServicePortalHealthPaymentOverviewTotalPageEnabled = 'isServicePortalHealthPaymentOverviewTotalPageEnabled',
   //New License service fetch enabled
   licensesV2 = 'isLicensesV2Enabled',
   pkPassV2 = 'isPkPassV2Enabled',
