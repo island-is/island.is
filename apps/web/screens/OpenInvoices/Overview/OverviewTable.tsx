@@ -61,7 +61,7 @@ export const OverviewTable = ({ dateTo, dateFrom, invoiceGroups }: Props) => {
       },
       {
         Header: 'Upphæð',
-        accessor: 'totalPaymentsSum',
+        accessor: 'totalSum',
         sortType: 'alphanumeric',
         Cell: ({ value }) => formatCurrency(value),
       },
@@ -149,7 +149,7 @@ export const OverviewTable = ({ dateTo, dateFrom, invoiceGroups }: Props) => {
                   <NestedLines
                     supplierId={row.original.supplier.id}
                     customerId={row.original.customer.id}
-                    total={row.original.totalPaymentsSum}
+                    total={row.original.totalSum}
                     dateFrom={dateFrom}
                     dateTo={dateTo}
                   />

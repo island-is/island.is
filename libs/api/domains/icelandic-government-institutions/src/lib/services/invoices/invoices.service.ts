@@ -1,5 +1,5 @@
 import { ElfurClientService } from '@island.is/clients/elfur'
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { type IInvoicesService } from './invoices.service.interface'
 import { InvoicesInput } from '../../dtos/getInvoices.input'
 import { CustomersInput } from '../../dtos/getCustomers.input'
@@ -24,6 +24,7 @@ export class InvoicesService implements IInvoicesService {
     input: InvoicesInput,
   ): Promise<InvoiceGroup | null> {
     const data = await this.elfurService.getOpenInvoiceGroup(input)
+
     if (!data) {
       return null
     }
@@ -34,7 +35,6 @@ export class InvoicesService implements IInvoicesService {
   async getOpenInvoiceGroups(
     input?: InvoiceGroupsInput,
   ): Promise<InvoiceGroupCollection | null> {
-    // Convert types from number[] to string[] if present
     const requestInput = input
       ? {
           ...input,

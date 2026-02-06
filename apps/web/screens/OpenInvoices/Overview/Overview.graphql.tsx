@@ -28,7 +28,6 @@ export const GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICES_FILTERS = gql`
       invoiceTypes {
         totalCount
         data {
-          id
           name
           description
           code
@@ -43,7 +42,6 @@ export const GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICES_FILTERS = gql`
 `
 
 export const GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_GROUP = gql`
-  # Force APQ hash regeneration
   query IcelandicGovernmentInstitutionsInvoiceGroup(
     $input: IcelandicGovernmentInstitutionsInvoiceGroupInput!
   ) {
@@ -63,7 +61,7 @@ export const GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_GROUP = gql`
         id
         date
         totalItemizationAmount
-        itemization {
+        itemizations {
           id
           label
           amount

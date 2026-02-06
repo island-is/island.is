@@ -13,7 +13,7 @@ export const mapInvoiceGroupInvoiceItemization = (
   data: InvoiceGlLineResponseDto,
 ): InvoiceItemization | null => {
   //Todo: IS CONFIDENTIAL STUFF
-  if (!data.type?.name || !data.accountedAmount || !data.type) {
+  if (!data.type?.name || !data.accountedAmount) {
     return null
   }
 

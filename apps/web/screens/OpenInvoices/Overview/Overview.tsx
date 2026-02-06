@@ -211,10 +211,10 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
     }
     const dateRangeStartArg = format(dateRangeStart, dateFormat.is)
     const dateRangeEndArg = format(dateRangeEnd, dateFormat.is)
-    const sumArg = formatCurrency(
+    const sumArg = invoiceGroupsData?.icelandicGovernmentInstitutionsInvoiceGroups
+      ?.totalPaymentsSum ? formatCurrency(
       invoiceGroupsData?.icelandicGovernmentInstitutionsInvoiceGroups
-        ?.totalPaymentsSum ?? 0,
-    )
+        ?.totalPaymentsSum) : 0
 
     if (totalHits === 1) {
       return formatMessage(m.search.resultFound, {
@@ -476,7 +476,7 @@ OpenInvoicesOverview.getProps = async ({ apolloClient, locale, query }) => {
             icelandicGovernmentInstitutionsInvoicesFilters?.invoiceTypes?.data?.map(
               (invoiceType) => ({
                 name: invoiceType.name,
-                value: invoiceType.id,
+                value: invoiceType.code,
               }),
             ) ?? undefined,
         }
@@ -495,6 +495,10 @@ OpenInvoicesOverview.getProps = async ({ apolloClient, locale, query }) => {
     arrayParser.parseServerSide(query?.[resource]),
   ))
 
+  const customersInput = customersFilter?.map(customerId => parseInt(customerId) ?? null).filter(isDefined) || undefined
+  const suppliersInput = suppliersFilter?.map(supplierId => parseInt(supplierId) ?? null).filter(isDefined) || undefined
+  const invoiceTypesInput = invoiceTypesFilter?.map(invoiceTypeId => parseInt(invoiceTypeId) ?? null).filter(isDefined) || undefined
+
   const {
     data: { icelandicGovernmentInstitutionsInvoiceGroups },
   } = await apolloClient.query<Query>({
@@ -503,9 +507,10 @@ OpenInvoicesOverview.getProps = async ({ apolloClient, locale, query }) => {
       input: {
         dateFrom: oneMonthBack,
         dateTo: today,
-        customers: icelandicGovernmentInstitutionsInvoicesFilters?.customers?.data?.filter(d => customersFilter?.includes(d.id)).map(d => parseInt(d.id)).filter(isDefined)  || undefined ,
-        suppliers: icelandicGovernmentInstitutionsInvoicesFilters?.suppliers?.data?.filter(d => suppliersFilter?.includes(d.id)).map(d => parseInt(d.id)).filter(isDefined) || undefined ,
-        types: icelandicGovernmentInstitutionsInvoicesFilters?.invoiceTypes?.data?.filter(d => invoiceTypesFilter?.includes(d.id)).map(d => parseInt(d.id)).filter(isDefined)  || undefined ,
+        customers: customersInput,
+        suppliers: suppliersInput,
+        types: invoiceTypesInput,
+
       } satisfies IcelandicGovernmentInstitutionsInvoiceGroupsInput,
     },
   })

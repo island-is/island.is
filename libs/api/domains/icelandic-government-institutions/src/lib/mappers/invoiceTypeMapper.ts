@@ -3,10 +3,9 @@ import { InvoiceTypes } from '../models/invoiceTypes.model'
 import { InvoiceType } from '../models/invoiceType.model'
 
 export const mapInvoiceType = (data: InvoiceTypeDto): InvoiceType => ({
-  id: data.id,
   code: data.code,
   name: data.name,
-  description: data.description,
+  description: data.description ?? undefined,
 })
 
 export const mapInvoiceTypes = (data: InvoiceTypesDto): InvoiceTypes => {

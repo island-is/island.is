@@ -82,7 +82,7 @@ export const NestedLines = ({
             </Box>
             <T.Table>
               <T.Body>
-                {invoice.itemization?.map((invoiceItem, i) => {
+                {invoice.itemizations?.map((invoiceItem, i) => {
                   const background = i % 2 === 0 ? 'white' : undefined
                   return (
                     <T.Row key={invoiceItem.id}>
@@ -113,7 +113,7 @@ export const NestedLines = ({
                   <T.Data
                     box={{
                       background:
-                        (invoice.itemization?.length ?? 0) % 2 === 0
+                        (invoice.itemizations?.length ?? 0) % 2 === 0
                           ? 'white'
                           : undefined,
                       className: styles.noBorder,
@@ -123,7 +123,7 @@ export const NestedLines = ({
                     box={{
                       textAlign: 'right',
                       background:
-                        (invoice.itemization?.length ?? 0) % 2 === 0
+                        (invoice.itemizations?.length ?? 0) % 2 === 0
                           ? 'white'
                           : undefined,
                       className: styles.noBorder,
