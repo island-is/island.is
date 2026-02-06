@@ -139,6 +139,8 @@ export const createTestingSubpoenaModule = async () => {
       LimitedAccessSubpoenaController,
     )
 
+  const messageService = subpoenaModule.get<MessageService>(MessageService)
+
   subpoenaModule.close()
 
   return {
@@ -156,5 +158,6 @@ export const createTestingSubpoenaModule = async () => {
     subpoenaController,
     internalSubpoenaController,
     limitedAccessSubpoenaController,
+    messageService,
   }
 }

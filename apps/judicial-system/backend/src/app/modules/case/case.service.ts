@@ -44,7 +44,6 @@ import {
   CaseTransition,
   CaseType,
   completedIndictmentCaseStates,
-  CourtDocumentType,
   CourtSessionStringType,
   DateType,
   dateTypes,
@@ -1493,55 +1492,6 @@ export class CaseService {
     )
   }
 
-  private addMessagesForNewSubpoenasToQueue(
-    theCase: Case,
-    updatedCase: Case,
-    user: TUser,
-  ): void {
-    for (const updatedDefendant of updatedCase.defendants ?? []) {
-      if (
-        !(
-          theCase.defendants?.find(
-            (defendant) => defendant.id === updatedDefendant.id,
-          )?.subpoenas?.[0]?.id !== updatedDefendant.subpoenas?.[0]?.id
-        ) // Only deliver new subpoenas
-      ) {
-        continue
-      }
-
-      if (updatedCase.origin === CaseOrigin.LOKE) {
-        addMessagesToQueue({
-          type: MessageType.DELIVERY_TO_POLICE_SUBPOENA_FILE,
-          user,
-          caseId: theCase.id,
-          elementId: [
-            updatedDefendant.id,
-            updatedDefendant.subpoenas?.[0].id ?? '',
-          ],
-        })
-      }
-
-      addMessagesToQueue({
-        type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA,
-        user,
-        caseId: theCase.id,
-        elementId: [
-          updatedDefendant.id,
-          updatedDefendant.subpoenas?.[0].id ?? '',
-        ],
-      })
-      addMessagesToQueue({
-        type: MessageType.DELIVERY_TO_COURT_SUBPOENA,
-        user,
-        caseId: theCase.id,
-        elementId: [
-          updatedDefendant.id,
-          updatedDefendant.subpoenas?.[0].id ?? '',
-        ],
-      })
-    }
-  }
-
   private addMessagesForIndictmentArraignmentCompletionToQueue(
     theCase: Case,
     user: TUser,
@@ -1758,8 +1708,6 @@ export class CaseService {
       if (hasUpdatedArraignmentDate) {
         this.addMessagesForIndictmentArraignmentDate(updatedCase, user)
       }
-
-      this.addMessagesForNewSubpoenasToQueue(theCase, updatedCase, user)
     }
 
     // This only applies to indictments and only when an arraignment has been completed

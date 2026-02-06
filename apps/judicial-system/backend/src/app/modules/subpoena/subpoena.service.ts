@@ -2,6 +2,7 @@ import { Base64 } from 'js-base64'
 import { Includeable, Transaction } from 'sequelize'
 
 import {
+  BadRequestException,
   forwardRef,
   Inject,
   Injectable,
@@ -21,6 +22,7 @@ import {
 } from '@island.is/judicial-system/message'
 import {
   CaseFileCategory,
+  CaseOrigin,
   CourtDocumentType,
   HashAlgorithm,
   isFailedServiceStatus,
@@ -44,7 +46,6 @@ import { FileService } from '../file/file.service'
 import { PoliceDocumentType, PoliceService } from '../police'
 import {
   Case,
-  CaseRepositoryService,
   CourtSession,
   Defendant,
   Institution,
@@ -52,8 +53,8 @@ import {
   SubpoenaRepositoryService,
   User,
 } from '../repository'
-import { UpdateSubpoenaDto } from './dto/updateSubpoena.dto'
 import { CreateSubpoenasDto } from './dto/createSubpoenas.dto'
+import { UpdateSubpoenaDto } from './dto/updateSubpoena.dto'
 import { DeliverResponse } from './models/deliver.response'
 
 export const include: Includeable[] = [
@@ -102,7 +103,6 @@ export class SubpoenaService {
     private readonly courtService: CourtService,
     @Inject(forwardRef(() => InternalCaseService))
     private readonly internalCaseService: InternalCaseService,
-    private readonly caseRepositoryService: CaseRepositoryService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -127,50 +127,46 @@ export class SubpoenaService {
   }
 
   async createSubpoenasForDefendants(
-    caseId: string,
     createSubpoenasDto: CreateSubpoenasDto,
     transaction: Transaction,
+    theCase: Case,
+    user: TUser,
   ): Promise<Subpoena[]> {
-    // Fetch the case with defendants and courtSessions
-    const theCase = await this.caseRepositoryService.findOne({
-      where: { id: caseId },
-      include: [
-        {
-          model: Defendant,
-          as: 'defendants',
-          required: false,
-          where: {
-            id: createSubpoenasDto.defendantIds,
-          },
-        },
-        {
-          model: CourtSession,
-          as: 'courtSessions',
-          required: false,
-        },
-      ],
-      transaction,
-    })
-
-    if (!theCase) {
-      throw new NotFoundException(`Case ${caseId} does not exist`)
-    }
-
-    // Subpoenas are only for indictment cases (also enforced by CaseTypeGuard at controller level)
-    if (!isIndictmentCase(theCase.type)) {
-      throw new NotFoundException(
-        `Subpoenas can only be created for indictment cases, but case ${caseId} is of type ${theCase.type}`,
+    if (!createSubpoenasDto.arraignmentDate) {
+      throw new BadRequestException(
+        'Arraignment date is required to create subpoenas',
       )
     }
 
-    if (!theCase.defendants || theCase.defendants.length === 0) {
+    const {
+      type: caseType,
+      id: caseId,
+      defendants,
+      withCourtSessions,
+      courtSessions,
+    } = theCase
+
+    // Subpoenas are only for indictment cases (also enforced by CaseTypeGuard at controller level)
+    if (!isIndictmentCase(caseType)) {
+      throw new NotFoundException(
+        `Subpoenas can only be created for indictment cases, but case ${caseId} is of type ${caseType}`,
+      )
+    }
+
+    // Filter defendants by the provided IDs
+    const requestedDefendants =
+      defendants?.filter((defendant) =>
+        createSubpoenasDto.defendantIds.includes(defendant.id),
+      ) ?? []
+
+    if (requestedDefendants.length === 0) {
       throw new NotFoundException(
         `No defendants found for case ${caseId} with the provided IDs`,
       )
     }
 
     // Filter out defendants with alternative service
-    const defendantsToProcess = theCase.defendants.filter(
+    const defendantsToProcess = requestedDefendants.filter(
       (defendant) => !defendant.isAlternativeService,
     )
 
@@ -196,11 +192,7 @@ export class SubpoenaService {
     )
 
     // Create court documents if court sessions exist
-    if (
-      theCase.withCourtSessions &&
-      theCase.courtSessions &&
-      theCase.courtSessions.length > 0
-    ) {
+    if (withCourtSessions && courtSessions && courtSessions.length > 0) {
       for (let i = 0; i < defendantsToProcess.length; i++) {
         const defendant = defendantsToProcess[i]
         const subpoena = subpoenas[i]
@@ -220,7 +212,59 @@ export class SubpoenaService {
       }
     }
 
+    // Queue messages for delivering subpoenas to police, court, and national commissioners office
+    await this.queueSubpoenaDeliveryMessages(
+      theCase,
+      defendantsToProcess,
+      subpoenas,
+      user,
+    )
+
     return subpoenas
+  }
+
+  private async queueSubpoenaDeliveryMessages(
+    theCase: Case,
+    defendants: Defendant[],
+    subpoenas: Subpoena[],
+    user: TUser,
+  ): Promise<void> {
+    const messages: Message[] = []
+
+    for (let i = 0; i < defendants.length; i++) {
+      const defendant = defendants[i]
+      const subpoena = subpoenas[i]
+
+      // For LOKE origin cases, also send to police
+      if (theCase.origin === CaseOrigin.LOKE) {
+        messages.push({
+          type: MessageType.DELIVERY_TO_POLICE_SUBPOENA_FILE,
+          user,
+          caseId: theCase.id,
+          elementId: [defendant.id, subpoena.id],
+        })
+      }
+
+      // Always send to national commissioners office and court
+      messages.push(
+        {
+          type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA,
+          user,
+          caseId: theCase.id,
+          elementId: [defendant.id, subpoena.id],
+        },
+        {
+          type: MessageType.DELIVERY_TO_COURT_SUBPOENA,
+          user,
+          caseId: theCase.id,
+          elementId: [defendant.id, subpoena.id],
+        },
+      )
+    }
+
+    if (messages.length > 0) {
+      await this.messageService.sendMessagesToQueue(messages)
+    }
   }
 
   setHash(

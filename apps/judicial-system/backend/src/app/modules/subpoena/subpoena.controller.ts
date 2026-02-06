@@ -96,14 +96,17 @@ export class SubpoenaController {
     @CurrentHttpUser() user: User,
   ): Promise<Subpoena[]> {
     this.logger.debug(
-      `Creating subpoenas for defendants ${createSubpoenasDto.defendantIds.join(', ')} in case ${caseId}`,
+      `Creating subpoenas for defendants ${createSubpoenasDto.defendantIds.join(
+        ', ',
+      )} in case ${caseId}`,
     )
 
     return this.sequelize.transaction((transaction) =>
       this.subpoenaService.createSubpoenasForDefendants(
-        caseId,
         createSubpoenasDto,
         transaction,
+        theCase,
+        user,
       ),
     )
   }
