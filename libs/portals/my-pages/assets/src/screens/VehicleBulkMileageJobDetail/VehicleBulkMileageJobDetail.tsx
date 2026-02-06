@@ -1,10 +1,4 @@
-import {
-  Box,
-  Button,
-  Icon,
-  Table as T,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, Button, Icon, Table as T, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   SAMGONGUSTOFA_SLUG,
