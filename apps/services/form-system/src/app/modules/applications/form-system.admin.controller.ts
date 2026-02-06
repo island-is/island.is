@@ -11,47 +11,30 @@ import {
   VERSION_NEUTRAL,
 } from '@nestjs/common'
 import {
-  ApiBody,
-  ApiCreatedResponse,
-  ApiNoContentResponse,
-  ApiOkResponse,
-  ApiOperation,
-  ApiParam,
-  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger'
 import { ApplicationsService } from './applications.service'
-import { ApplicationDto } from './models/dto/application.dto'
-import { CreateApplicationDto } from './models/dto/createApplication.dto'
-import { UpdateApplicationDto } from './models/dto/updateApplication.dto'
-import { ApplicationResponseDto } from './models/dto/application.response.dto'
-import { ScreenValidationResponse } from '../../dataTypes/validationResponse.model'
 import {CurrentUser, IdsUserGuard, Scopes} from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
-import { ScreenDto } from '../screens/models/dto/screen.dto'
-import { SubmitScreenDto } from './models/dto/submitScreen.dto'
-import { MyPagesApplicationResponseDto } from './models/dto/myPagesApplication.response.dto'
-import type { Locale } from '@island.is/shared/types'
 import {AdminPortalScope} from "@island.is/auth/scopes";
 import { ApplicationTypeDto } from "./models/dto/applicationType.dto"
 import {InstitutionDto} from "./models/dto/institution.dto";
-import {ApiScope} from "@island.is/auth/scopes";
-import {AdminApplicationCardDto, AdminController} from "admin-interfaces"
+import {ApplicationResponseDto} from "./models/dto/application.response.dto";
 
 @UseGuards(IdsUserGuard)
 @ApiTags('admin')
 @Controller({ path: 'admin', version: ['1', VERSION_NEUTRAL] })
-export class FormSystemAdminController implements AdminController {
+export class FormSystemAdminController {
   constructor(private readonly applicationsService: ApplicationsService) {}
 
-  //todo add interceptor?
-  //todo add audit
+  //TODOy add interceptor?
+  //TODOy add audit
   @Scopes(AdminPortalScope.applicationSystemAdmin)
   @Get('super-admin/overview/:page/:count')
   async getOverviewForSuperAdmin(
     @Param('page') page: number,
     @Param('count') count: number
-  ): Promise<AdminApplicationCardDto> {
+  ): Promise<ApplicationResponseDto> {
     return this.applicationsService.findAll(page, count, false)
 
   }
@@ -62,7 +45,7 @@ export class FormSystemAdminController implements AdminController {
     @CurrentUser() user: User,
     @Param('page') page: number,
     @Param('count') count: number,
-  ): Promise<AdminApplicationCardDto> {
+  ): Promise<ApplicationResponseDto> {
     return this.applicationsService.findAllByOrganization(user.nationalId, page, count, false)
 
   }
@@ -70,19 +53,19 @@ export class FormSystemAdminController implements AdminController {
   @Scopes(AdminPortalScope.applicationSystemAdmin)
   @Get('super-admin/application-types')
   async getApplicationTypesForSuperAdmin(): Promise<ApplicationTypeDto> {
-
+    throw new Error('Method not implemented.')
   }
 
   @Scopes(AdminPortalScope.applicationSystemInstitution)
   @Get('institution-admin/application-types/')
   async getApplicationTypesForInstitutionAdmin(): Promise<ApplicationTypeDto[]> {
-
+    throw new Error('Method not implemented.')
   }
 
   @Scopes(AdminPortalScope.applicationSystemAdmin)
   @Get('super-admin/institutions')
   async getInstitutions(): Promise<InstitutionDto[]> {
-
+    throw new Error('Method not implemented.')
   }
 
   @Scopes(AdminPortalScope.applicationSystemAdmin)
