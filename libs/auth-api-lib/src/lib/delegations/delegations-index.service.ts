@@ -190,7 +190,6 @@ export class DelegationsIndexService {
       ),
     )
 
-
     // Filter delegations based on their fromNationalId's feature flag value
     return delegations.filter((delegation) => {
       const featureFlaggedDelegationTypes = featureFlagMap.get(
@@ -223,8 +222,6 @@ export class DelegationsIndexService {
 
         return isFromPerson || isFromCompany
       }
-
-      console.log('return', featureFlaggedDelegationTypes)
 
       return featureFlaggedDelegationTypes.has(delegation.type)
     })

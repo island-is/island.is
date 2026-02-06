@@ -1296,7 +1296,6 @@
       "@island.is/user-monitoring": ["libs/user-monitoring/src/index.ts"],
       "@island.is/web/*": ["apps/web/*"],
       "@island.is/web/component*": ["apps/web/component*/real.ts"],
-      "admin-interfaces": ["libs/admin/interfaces/src/index.ts"],
       "api/domains/financial-statement-cemetery": [
         "libs/api/domains/financial-statement-cemetery/src/index.ts"
       ],
@@ -1315,7 +1314,6 @@
       "document-provider-dashboard": [
         "libs/clients/document-provider-dashboard/src/index.ts"
       ],
-      "interface": ["admin/interface/src/index.ts"],
       "my-pages": ["libs/api/domains/my-pages/src/index.ts"]
     },
     "resolveJsonModule": true
