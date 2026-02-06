@@ -1,4 +1,4 @@
-// Logo for National Electoral Commision - Landskjörstjórn
+// Logo for National Electoral Commission - Landskjörstjórn
 import React, { FC } from 'react'
 
 export const NationalElectoralCommissionLogo: FC<
