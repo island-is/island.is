@@ -2,7 +2,10 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { RefreshControl, SafeAreaView, ScrollView, View } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
-import { useNavigation, useNavigationButtonPress } from 'react-native-navigation-hooks/dist'
+import {
+  useNavigation,
+  useNavigationButtonPress,
+} from 'react-native-navigation-hooks/dist'
 import styled from 'styled-components/native'
 
 import { useFeatureFlag } from '../../contexts/feature-flag-provider'
@@ -13,7 +16,7 @@ import {
   useGetDrugCertificatesLazyQuery,
   useGetDrugPrescriptionsLazyQuery,
   useGetMedicineDelegationsLazyQuery,
-  useGetMedicineHistoryLazyQuery
+  useGetMedicineHistoryLazyQuery,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
@@ -102,9 +105,10 @@ export const PrescriptionsScreen: NavigationFunctionComponent<{
       topBar: {
         title: {
           text: intl.formatMessage({
-            id: !isPrescriptionsEnabled && !isMedicineDelegationEnabled
-              ? 'health.drugCertificates.title'
-              : 'health.prescriptionsAndCertificates.screenTitle'
+            id:
+              !isPrescriptionsEnabled && !isMedicineDelegationEnabled
+                ? 'health.drugCertificates.title'
+                : 'health.prescriptionsAndCertificates.screenTitle',
           }),
         },
       },
@@ -115,20 +119,21 @@ export const PrescriptionsScreen: NavigationFunctionComponent<{
       variables: { locale },
     })
 
-  const [loadMedicineDelegations, medicineDelegationsRes] = useGetMedicineDelegationsLazyQuery({
-    variables: {
-      locale: intl.locale,
-      input: {
-        status: [
-          'active',
-          'expired',
-          'inactive',
-          'unknown',
-          'awaitingApproval',
-        ],
+  const [loadMedicineDelegations, medicineDelegationsRes] =
+    useGetMedicineDelegationsLazyQuery({
+      variables: {
+        locale: intl.locale,
+        input: {
+          status: [
+            'active',
+            'expired',
+            'inactive',
+            'unknown',
+            'awaitingApproval',
+          ],
+        },
       },
-    },
-  })
+    })
 
   const [loadMedicineHistory, medicineHistoryRes] =
     useGetMedicineHistoryLazyQuery({
@@ -172,11 +177,11 @@ export const PrescriptionsScreen: NavigationFunctionComponent<{
             {prescriptionsRes.loading && !prescriptionsRes.data
               ? renderSkeletons()
               : data?.map((prescription, index) => (
-                <PrescriptionCard
-                  key={`${prescription?.id}-${index}`}
-                  prescription={prescription}
-                />
-              ))}
+                  <PrescriptionCard
+                    key={`${prescription?.id}-${index}`}
+                    prescription={prescription}
+                  />
+                ))}
           </Wrapper>
         ),
       },
@@ -196,27 +201,32 @@ export const PrescriptionsScreen: NavigationFunctionComponent<{
         rightButtons: [
           {
             id: ButtonRegistry.MedicineDelegationShowInactiveButton,
-            text: rightButtonsValue ? intl.formatMessage({
-              id: 'health.medicineDelegation.hideExpiredPermits',
-            }) : intl.formatMessage({
-              id: 'health.medicineDelegation.showExpiredPermits',
-            }),
+            text: rightButtonsValue
+              ? intl.formatMessage({
+                  id: 'health.medicineDelegation.hideExpiredPermits',
+                })
+              : intl.formatMessage({
+                  id: 'health.medicineDelegation.showExpiredPermits',
+                }),
           },
         ],
         extraData: [rightButtonsValue],
         renderContent: () => (
           <Wrapper>
-            {medicineDelegationsRes.loading && !medicineDelegationsRes.data
-              ? renderSkeletons()
-              : (
-                <MedicineDelegationContent
-                  componentId={componentId}
-                  delegations={medicineDelegationsRes.data?.healthDirectorateMedicineDelegations?.items ?? []}
-                  loading={medicineDelegationsRes.loading}
-                  error={medicineDelegationsRes.error}
-                  showInactivePermits={rightButtonsValue}
-                />
-              )}
+            {medicineDelegationsRes.loading && !medicineDelegationsRes.data ? (
+              renderSkeletons()
+            ) : (
+              <MedicineDelegationContent
+                componentId={componentId}
+                delegations={
+                  medicineDelegationsRes.data
+                    ?.healthDirectorateMedicineDelegations?.items ?? []
+                }
+                loading={medicineDelegationsRes.loading}
+                error={medicineDelegationsRes.error}
+                showInactivePermits={rightButtonsValue}
+              />
+            )}
           </Wrapper>
         ),
       },
@@ -237,11 +247,11 @@ export const PrescriptionsScreen: NavigationFunctionComponent<{
             {certificatesRes.loading && !certificatesRes.data
               ? renderSkeletons()
               : data?.map((certificate, index) => (
-                <CertificateCard
-                  key={`${certificate?.id}-${index}`}
-                  certificate={certificate}
-                />
-              ))}
+                  <CertificateCard
+                    key={`${certificate?.id}-${index}`}
+                    certificate={certificate}
+                  />
+                ))}
           </Wrapper>
         ),
       },
@@ -263,11 +273,11 @@ export const PrescriptionsScreen: NavigationFunctionComponent<{
             {medicineHistoryRes.loading && !medicineHistoryRes.data
               ? renderSkeletons()
               : data?.map((medicine, index) => (
-                <MedicineHistoryCard
-                  key={`${medicine?.id}-${index}`}
-                  medicine={medicine}
-                />
-              ))}
+                  <MedicineHistoryCard
+                    key={`${medicine?.id}-${index}`}
+                    medicine={medicine}
+                  />
+                ))}
           </Wrapper>
         ),
       },
@@ -293,11 +303,12 @@ export const PrescriptionsScreen: NavigationFunctionComponent<{
 
   // Calculate selectedTab index from selectedTabId
   const selectedTab = selectedTabId
-    ? tabs.findIndex(tab => tab.id === selectedTabId)
+    ? tabs.findIndex((tab) => tab.id === selectedTabId)
     : 0
 
   // Ensure valid index
-  const validSelectedTab = selectedTab >= 0 && selectedTab < tabs.length ? selectedTab : 0
+  const validSelectedTab =
+    selectedTab >= 0 && selectedTab < tabs.length ? selectedTab : 0
 
   const activeTab = tabs[validSelectedTab]
   const activeTabData = activeTab?.getData() as ActiveTabData
@@ -311,7 +322,10 @@ export const PrescriptionsScreen: NavigationFunctionComponent<{
   // Set initial tab based on activeTabId or default to first tab (only once, after flags load)
   useEffect(() => {
     // Wait for feature flags to load before setting initial tab
-    if (isPrescriptionsEnabled === null || isMedicineDelegationEnabled === null) {
+    if (
+      isPrescriptionsEnabled === null ||
+      isMedicineDelegationEnabled === null
+    ) {
       return
     }
 
@@ -370,7 +384,6 @@ export const PrescriptionsScreen: NavigationFunctionComponent<{
     ],
   })
 
-
   const onRefresh = useCallback(async () => {
     setRefetching(true)
 
@@ -380,18 +393,18 @@ export const PrescriptionsScreen: NavigationFunctionComponent<{
           ? certificatesRes.refetch()
           : null,
         isPrescriptionsEnabled &&
-          prescriptionsRes.called &&
-          prescriptionsRes.refetch
+        prescriptionsRes.called &&
+        prescriptionsRes.refetch
           ? prescriptionsRes.refetch()
           : null,
         isPrescriptionsEnabled &&
-          medicineHistoryRes.called &&
-          medicineHistoryRes.refetch
+        medicineHistoryRes.called &&
+        medicineHistoryRes.refetch
           ? medicineHistoryRes.refetch()
           : null,
         isMedicineDelegationEnabled &&
-          medicineDelegationsRes.called &&
-          medicineDelegationsRes.refetch
+        medicineDelegationsRes.called &&
+        medicineDelegationsRes.refetch
           ? medicineDelegationsRes.refetch()
           : null,
       ].filter(Boolean)

@@ -218,8 +218,8 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
               value={
                 registrationInfo?.firstRegistrationDate
                   ? intl.formatDate(
-                    new Date(registrationInfo?.firstRegistrationDate),
-                  )
+                      new Date(registrationInfo?.firstRegistrationDate),
+                    )
                   : '-'
               }
             />
@@ -239,8 +239,8 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
               value={
                 inspectionInfo?.nextInspectionDate
                   ? intl.formatDate(
-                    new Date(inspectionInfo?.nextInspectionDate),
-                  )
+                      new Date(inspectionInfo?.nextInspectionDate),
+                    )
                   : '-'
               }
             />
@@ -252,11 +252,11 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
                 value={
                   data?.vehiclesDetail?.lastMileage?.mileage
                     ? `${intl.formatNumber(
-                      parseInt(
-                        data?.vehiclesDetail?.lastMileage?.mileage,
-                        10,
-                      ),
-                    )} km`
+                        parseInt(
+                          data?.vehiclesDetail?.lastMileage?.mileage,
+                          10,
+                        ),
+                      )} km`
                     : '-'
                 }
               />
@@ -296,7 +296,7 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
               })}
               value={
                 typeof inspectionInfo?.carTax === 'undefined' ||
-                  inspectionInfo?.carTax === null
+                inspectionInfo?.carTax === null
                   ? '-'
                   : `${inspectionInfo?.carTax} kr.`
               }

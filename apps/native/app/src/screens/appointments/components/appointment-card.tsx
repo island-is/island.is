@@ -14,12 +14,12 @@ const Host = styled.TouchableHighlight`
   border-radius: ${({ theme }) => theme.border.radius.large};
   border-width: ${({ theme }) => theme.border.width.standard}px;
   border-color: ${dynamicColor(
-  ({ theme }) => ({
-    light: theme.color.blue200,
-    dark: theme.shades.dark.shade400,
-  }),
-  true,
-)};
+    ({ theme }) => ({
+      light: theme.color.blue200,
+      dark: theme.shades.dark.shade400,
+    }),
+    true,
+  )};
 `
 
 const Container = styled.View`

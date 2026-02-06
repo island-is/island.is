@@ -78,13 +78,12 @@ export function MedicineDelegationContent({
     showInactivePermits
       ? delegation.status
       : delegation.status === 'active' ||
-      delegation.status === 'awaitingApproval',
+        delegation.status === 'awaitingApproval',
   )
 
   const hasDelegations = delegations.length > 0
   const hasVisibleDelegations = filteredDelegations.length > 0
   const hasError = error && delegations.length === 0
-
 
   return (
     <Container>
@@ -154,11 +153,11 @@ export function MedicineDelegationContent({
                 <Typography>
                   {delegation.lookup
                     ? intl.formatMessage({
-                      id: 'health.medicineDelegation.captionPickupAndLookup',
-                    })
+                        id: 'health.medicineDelegation.captionPickupAndLookup',
+                      })
                     : intl.formatMessage({
-                      id: 'health.medicineDelegation.captionPickup',
-                    })}
+                        id: 'health.medicineDelegation.captionPickup',
+                      })}
                 </Typography>
                 <TagContainer>
                   {!delegation.isActive ? (
@@ -173,9 +172,7 @@ export function MedicineDelegationContent({
                             id: 'health.medicineDelegation.listValidTo',
                           },
                           {
-                            date: intl.formatDate(
-                              delegation.dates?.to ?? '',
-                            ),
+                            date: intl.formatDate(delegation.dates?.to ?? ''),
                           },
                         )}
                       />

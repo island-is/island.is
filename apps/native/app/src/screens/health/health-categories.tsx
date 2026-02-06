@@ -75,35 +75,50 @@ export const HealthCategoriesScreen: NavigationFunctionComponent = ({
   const healthCardRows = useMemo(() => {
     // Build the medicine subLinks based on feature flags
     const medicineSubLinks = [
-      ...(isPrescriptionsEnabled ? [{
-        id: 'prescriptions',
-        titleId: 'health.prescriptions.title',
-        route: '/prescriptions',
-      }] : []),
-      ...(isMedicineDelegationEnabled ? [{
-        id: 'medicineDelegation',
-        titleId: 'health.medicineDelegation.screenTitle',
-        route: '/prescriptions',
-      }] : []),
+      ...(isPrescriptionsEnabled
+        ? [
+            {
+              id: 'prescriptions',
+              titleId: 'health.prescriptions.title',
+              route: '/prescriptions',
+            },
+          ]
+        : []),
+      ...(isMedicineDelegationEnabled
+        ? [
+            {
+              id: 'medicineDelegation',
+              titleId: 'health.medicineDelegation.screenTitle',
+              route: '/prescriptions',
+            },
+          ]
+        : []),
       {
         id: 'drugCertificates',
         titleId: 'health.drugCertificates.title',
         route: '/prescriptions',
       },
-      ...(isPrescriptionsEnabled ? [{
-        id: 'medicineHistory',
-        titleId: 'health.medicineHistory.title',
-        route: '/prescriptions',
-      }] : []),
+      ...(isPrescriptionsEnabled
+        ? [
+            {
+              id: 'medicineHistory',
+              titleId: 'health.medicineHistory.title',
+              route: '/prescriptions',
+            },
+          ]
+        : []),
     ]
 
     // Neither prescriptions nor medicine delegation are enabled, so we just display drug certificates
-    const isMedicineEnabled = isPrescriptionsEnabled || isMedicineDelegationEnabled
+    const isMedicineEnabled =
+      isPrescriptionsEnabled || isMedicineDelegationEnabled
 
     const healthCards = [
       {
         id: 'medicine',
-        titleId: !isMedicineEnabled ? 'health.drugCertificates.title' : 'health.overview.medicine',
+        titleId: !isMedicineEnabled
+          ? 'health.drugCertificates.title'
+          : 'health.overview.medicine',
         icon: medicineIcon,
         route: '/prescriptions',
         enabled: true,
@@ -180,7 +195,6 @@ export const HealthCategoriesScreen: NavigationFunctionComponent = ({
       <ScrollView>
         <ContentContainer>
           <CategoriesContainer>
-
             {healthCardRows.flat().map((hc) => (
               <LinkContainer
                 componentId={componentId}

@@ -25,7 +25,7 @@ export interface LinkContainerProps {
   isSubLink?: boolean
 }
 
-const ICON_SIZE = 42;
+const ICON_SIZE = 42
 
 const Host = styled(View)<{ $hasBorder: boolean }>(({ theme, $hasBorder }) => ({
   flexDirection: 'column',
@@ -46,19 +46,21 @@ const SubLinksContainer = styled(View)(({ theme }) => ({
   gap: theme.spacing[2],
 }))
 
-const Container = styled(Pressable)<{ hasIcon: boolean, isSubLink: boolean }>(
+const Container = styled(Pressable)<{ hasIcon: boolean; isSubLink: boolean }>(
   ({ theme, hasIcon, isSubLink }) => ({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     gap: theme.spacing[2],
-    ...(isSubLink ? {
-      paddingRight: theme.spacing[2],
-      paddingVertical: theme.spacing.smallGutter,
-    } : {
-      paddingVertical: hasIcon ? theme.spacing.p2 : theme.spacing[2],
-      paddingHorizontal: theme.spacing[2],
-    }),
+    ...(isSubLink
+      ? {
+          paddingRight: theme.spacing[2],
+          paddingVertical: theme.spacing.smallGutter,
+        }
+      : {
+          paddingVertical: hasIcon ? theme.spacing.p2 : theme.spacing[2],
+          paddingHorizontal: theme.spacing[2],
+        }),
   }),
 )
 
@@ -98,7 +100,7 @@ export const LinkContainer = ({
       openBrowser(links.link, componentId)
     } else {
       const extraProps: { parentComponentId: string; activeTabId?: string } = {
-        parentComponentId: componentId
+        parentComponentId: componentId,
       }
       if (links.tabId) {
         extraProps.activeTabId = links.tabId
@@ -109,7 +111,11 @@ export const LinkContainer = ({
 
   return (
     <Host $hasBorder={borderBottom}>
-      <Container onPress={handlePress} hasIcon={!!links.icon} isSubLink={isSubLink}>
+      <Container
+        onPress={handlePress}
+        hasIcon={!!links.icon}
+        isSubLink={isSubLink}
+      >
         <Content>
           {links.icon && (
             <IconWrapper>

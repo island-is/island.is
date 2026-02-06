@@ -49,7 +49,7 @@ import {
   Problem,
   Skeleton,
   TopLine,
-  Typography
+  Typography,
 } from '../../ui'
 import { ComponentRegistry } from '../../utils/component-registry'
 import { testIDs } from '../../utils/test-ids'
@@ -201,7 +201,8 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
   const [refetching, setRefetching] = useState(false)
 
   const { width } = useWindowDimensions()
-  const cardWidth = (width - 12 * (NUMBER_OF_CARDS_PER_ROW + 1)) / NUMBER_OF_CARDS_PER_ROW
+  const cardWidth =
+    (width - 12 * (NUMBER_OF_CARDS_PER_ROW + 1)) / NUMBER_OF_CARDS_PER_ROW
   const scrollY = useRef(new Animated.Value(0)).current
   const isVaccinationsEnabled = useFeatureFlag(
     'isVaccinationsEnabled',
@@ -248,7 +249,10 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
     const healthCards = [
       {
         id: 'medicine',
-        titleId: !isPrescriptionsEnabled && !isMedicineDelegationEnabled ? 'health.drugCertificates.title' : 'health.overview.medicine',
+        titleId:
+          !isPrescriptionsEnabled && !isMedicineDelegationEnabled
+            ? 'health.drugCertificates.title'
+            : 'health.overview.medicine',
         icon: medicineIcon,
         route: '/prescriptions',
         enabled: true,
@@ -439,39 +443,41 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
           <>
             {Array.from({ length: 2 }).map((_, index) => (
               <Row key={index}>
-                {Array.from({ length: NUMBER_OF_CARDS_PER_ROW }).map((_, index) => (
-                  <Skeleton height={70} style={{ width: cardWidth, borderRadius: 16 }} key={index} />
-                ))}
+                {Array.from({ length: NUMBER_OF_CARDS_PER_ROW }).map(
+                  (_, index) => (
+                    <Skeleton
+                      height={70}
+                      style={{ width: cardWidth, borderRadius: 16 }}
+                      key={index}
+                    />
+                  ),
+                )}
               </Row>
             ))}
           </>
-        )
-          : (
-            healthCardRows.map((row, rowIndex) => (
-              <Row
-                key={`health-card-row-${rowIndex}`}
-              >
-                {row.map((card) => (
-                  <MoreCard
-                    key={card.id}
-                    title={intl.formatMessage({ id: card.titleId })}
-                    icon={card.icon}
-                    onPress={
-                      card.route
-                        ? () => navigateTo(card.route, componentId)
-                        : () => {
+        ) : (
+          healthCardRows.map((row, rowIndex) => (
+            <Row key={`health-card-row-${rowIndex}`}>
+              {row.map((card) => (
+                <MoreCard
+                  key={card.id}
+                  title={intl.formatMessage({ id: card.titleId })}
+                  icon={card.icon}
+                  onPress={
+                    card.route
+                      ? () => navigateTo(card.route, componentId)
+                      : () => {
                           // noop
                         }
-                    }
-                    small
-                    filled={card.filled}
-                    style={{ flex: 0, width: cardWidth }}
-                  />
-                ))}
-              </Row>
-            ))
-          )
-        }
+                  }
+                  small
+                  filled={card.filled}
+                  style={{ flex: 0, width: cardWidth }}
+                />
+              ))}
+            </Row>
+          ))
+        )}
         {isAppointmentsEnabled && (
           <>
             <HeadingSection
@@ -540,8 +546,8 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
                 value={
                   paymentStatusData?.maximumMonthlyPayment
                     ? `${intl.formatNumber(
-                      paymentStatusData?.maximumMonthlyPayment,
-                    )} kr.`
+                        paymentStatusData?.maximumMonthlyPayment,
+                      )} kr.`
                     : '0 kr.'
                 }
                 loading={paymentStatusRes.loading && !paymentStatusRes.data}
@@ -557,8 +563,8 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
                 value={
                   paymentStatusData?.maximumPayment
                     ? `${intl.formatNumber(
-                      paymentStatusData?.maximumPayment,
-                    )} kr.`
+                        paymentStatusData?.maximumPayment,
+                      )} kr.`
                     : '0 kr.'
                 }
                 loading={paymentStatusRes.loading && !paymentStatusRes.data}
@@ -622,8 +628,8 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
                 value={
                   medicinePurchaseData?.dateFrom && medicinePurchaseData?.dateTo
                     ? `${intl.formatDate(
-                      medicinePurchaseData.dateFrom,
-                    )} - ${intl.formatDate(medicinePurchaseData.dateTo)}`
+                        medicinePurchaseData.dateFrom,
+                      )} - ${intl.formatDate(medicinePurchaseData.dateTo)}`
                     : ''
                 }
                 loading={
@@ -640,16 +646,16 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
                 })}
                 value={
                   medicinePurchaseData?.levelNumber &&
-                    medicinePurchaseData?.levelPercentage !== undefined
+                  medicinePurchaseData?.levelPercentage !== undefined
                     ? intl.formatMessage(
-                      {
-                        id: 'health.overview.levelStatusValue',
-                      },
-                      {
-                        level: medicinePurchaseData?.levelNumber,
-                        percentage: medicinePurchaseData?.levelPercentage,
-                      },
-                    )
+                        {
+                          id: 'health.overview.levelStatusValue',
+                        },
+                        {
+                          level: medicinePurchaseData?.levelNumber,
+                          percentage: medicinePurchaseData?.levelPercentage,
+                        },
+                      )
                     : ''
                 }
                 loading={
@@ -660,8 +666,8 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
                 warningText={
                   !isMedicinePeriodActive
                     ? intl.formatMessage({
-                      id: 'health.overview.medicinePurchaseNoActivePeriodWarning',
-                    })
+                        id: 'health.overview.medicinePurchaseNoActivePeriodWarning',
+                      })
                     : ''
                 }
               />
@@ -681,7 +687,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
           }
         />
         {(healthInsuranceRes.data && healthInsuranceData?.isInsured) ||
-          healthInsuranceRes.loading ? (
+        healthInsuranceRes.loading ? (
           <InputRow background>
             <Input
               label={intl.formatMessage({
@@ -735,11 +741,11 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
               healthCenterRes.error
                 ? ''
                 : healthCenterRes.data
-                  ?.rightsPortalHealthCenterRegistrationHistory?.current
-                  ?.healthCenterName ??
-                intl.formatMessage({
-                  id: 'health.overview.noHealthCenterRegistered',
-                })
+                    ?.rightsPortalHealthCenterRegistrationHistory?.current
+                    ?.healthCenterName ??
+                  intl.formatMessage({
+                    id: 'health.overview.noHealthCenterRegistered',
+                  })
             }
             loading={healthCenterRes.loading}
             fullWidthWarning
@@ -747,8 +753,8 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
             warningText={
               healthCenterRes.error
                 ? intl.formatMessage({
-                  id: 'problem.thirdParty.message',
-                })
+                    id: 'problem.thirdParty.message',
+                  })
                 : ''
             }
             rightElement={
@@ -774,11 +780,11 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
               healthCenterRes.error
                 ? ''
                 : healthCenterRes.data
-                  ?.rightsPortalHealthCenterRegistrationHistory?.current
-                  ?.doctor ??
-                intl.formatMessage({
-                  id: 'health.overview.noPhysicianRegistered',
-                })
+                    ?.rightsPortalHealthCenterRegistrationHistory?.current
+                    ?.doctor ??
+                  intl.formatMessage({
+                    id: 'health.overview.noPhysicianRegistered',
+                  })
             }
             loading={healthCenterRes.loading}
             fullWidthWarning
@@ -786,8 +792,8 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
             warningText={
               healthCenterRes.error
                 ? intl.formatMessage({
-                  id: 'problem.thirdParty.message',
-                })
+                    id: 'problem.thirdParty.message',
+                  })
                 : ''
             }
             rightElement={
@@ -813,10 +819,10 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
               dentistRes.error
                 ? ''
                 : dentistRes.data?.rightsPortalUserDentistRegistration?.dentist
-                  ?.name ??
-                intl.formatMessage({
-                  id: 'health.overview.noDentistRegistered',
-                })
+                    ?.name ??
+                  intl.formatMessage({
+                    id: 'health.overview.noDentistRegistered',
+                  })
             }
             allowEmptyValue={dentistRes.error ? true : false}
             loading={dentistRes.loading}
@@ -824,8 +830,8 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
             warningText={
               dentistRes.error
                 ? intl.formatMessage({
-                  id: 'problem.thirdParty.message',
-                })
+                    id: 'problem.thirdParty.message',
+                  })
                 : ''
             }
             rightElement={
@@ -848,21 +854,22 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
               label={intl.formatMessage({
                 id: 'health.organDonation',
               })}
-              value={`${organDonationRes.error
-                ? ''
-                : intl.formatMessage({
-                  id: isOrganDonor
-                    ? 'health.organDonation.isDonorDescription'
-                    : 'health.organDonation.isNotDonorDescription',
-                }) ?? ''
-                }`}
+              value={`${
+                organDonationRes.error
+                  ? ''
+                  : intl.formatMessage({
+                      id: isOrganDonor
+                        ? 'health.organDonation.isDonorDescription'
+                        : 'health.organDonation.isNotDonorDescription',
+                    }) ?? ''
+              }`}
               loading={organDonationRes.loading && !organDonationRes.data}
               fullWidthWarning
               warningText={
                 organDonationRes.error
                   ? intl.formatMessage({
-                    id: 'problem.thirdParty.message',
-                  })
+                      id: 'problem.thirdParty.message',
+                    })
                   : ''
               }
               allowEmptyValue
@@ -890,7 +897,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
               bloodTypeRes.error
                 ? ''
                 : bloodTypeRes.data?.rightsPortalBloodType?.registered
-                  ? intl.formatMessage(
+                ? intl.formatMessage(
                     {
                       id: 'health.overview.bloodTypeDescription',
                     },
@@ -899,7 +906,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
                         bloodTypeRes.data?.rightsPortalBloodType?.type ?? '',
                     },
                   )
-                  : intl.formatMessage({
+                : intl.formatMessage({
                     id: 'health.overview.noBloodTypeRegistered',
                   })
             }
@@ -908,8 +915,8 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
             warningText={
               bloodTypeRes.error
                 ? intl.formatMessage({
-                  id: 'problem.thirdParty.message',
-                })
+                    id: 'problem.thirdParty.message',
+                  })
                 : ''
             }
             allowEmptyValue
