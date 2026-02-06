@@ -211,25 +211,19 @@ const FinanceTransactions = () => {
                               setFromDate(d)
                               setToDate(e)
                             }}
-                            selected={fromDate}
+                            selectedRange={{
+                              startDate: fromDate,
+                              endDate: toDate,
+                            }}
                             appearInline
                             range
+                            isClearable
+                            clearLabel={formatMessage(m.clearSelected)}
+                            handleClear={() => {
+                              setFromDate(undefined)
+                              setToDate(undefined)
+                            }}
                           />
-                          {fromDate !== undefined || toDate !== undefined ? (
-                            <Box textAlign="right" marginTop={1}>
-                              <Button
-                                icon="reload"
-                                size="small"
-                                variant="text"
-                                onClick={() => {
-                                  setFromDate(undefined)
-                                  setToDate(undefined)
-                                }}
-                              >
-                                {formatMessage(m.clearSelected)}
-                              </Button>
-                            </Box>
-                          ) : null}
                         </Box>
                       </AccordionItem>
                     </Accordion>
