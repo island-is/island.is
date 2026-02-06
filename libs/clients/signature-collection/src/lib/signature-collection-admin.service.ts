@@ -232,7 +232,7 @@ export class SignatureCollectionAdminClientService
       const listName = (areaName: string) =>
         collectionType === CollectionType.Parliamentary
           ? candidacy?.nafn ?? collectionName
-          : `${owner.name} - ${areaName}`
+          : `${collectionName}, ${owner.name} - ${areaName}`
 
       // If no candidacy exists, create one
       if (!candidacy) {

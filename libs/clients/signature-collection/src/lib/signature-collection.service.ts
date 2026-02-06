@@ -197,6 +197,7 @@ export class SignatureCollectionClientService {
         )
       : collectionAreas
 
+    const collectionName = listName ?? partyBallotLetterInfo?.name
     const candidacy = await this.getApiWithAuth(
       this.candidateApi,
       auth,
@@ -204,12 +205,12 @@ export class SignatureCollectionClientService {
       frambodRequestDTO: {
         sofnunID: parseInt(collectionId),
         kennitala: owner.nationalId.replace(/\D/g, ''),
-        frambodNafn: `${listName ?? partyBallotLetterInfo?.name}`,
+        frambodNafn: `${collectionName}`,
         simi: owner.phone,
         netfang: owner.email,
         medmaelalistar: filteredAreas.map((area) => ({
           svaediID: parseInt(area.id),
-          listiNafn: `${listName ?? partyBallotLetterInfo?.name}`,
+          listiNafn: `${collectionName}, ${owner.name} - ${area.name}`,
         })),
       },
     })
