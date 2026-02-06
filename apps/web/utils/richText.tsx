@@ -74,6 +74,7 @@ import {
   GetTeamMembersInputOrderBy,
   GrantCardsList as GrantCardsListSchema,
   IntroLinkImage,
+  LastCallsForGrants as LastCallsForGrantsSchema,
   MultipleStatistics as MultipleStatisticsSchema,
   OneColumnText,
   OrganizationParentSubpageList,
@@ -106,7 +107,10 @@ import { UmsCostOfLivingCalculator } from '../components/connected/UmbodsmadurSk
 import { WHODASCalculator } from '../components/connected/WHODAS/Calculator'
 import FeaturedEvents from '../components/FeaturedEvents/FeaturedEvents'
 import FeaturedSupportQNAs from '../components/FeaturedSupportQNAs/FeaturedSupportQNAs'
-import { GrantCardsList } from '../components/GrantCardsList'
+import {
+  GrantCardsList,
+  LastCallsForGrantsList,
+} from '../components/GrantCardsList'
 import { EmbedSlice } from '../components/Organization/Slice/EmbedSlice/EmbedSlice'
 import { FeaturedGenericListItemsSlice } from '../components/Organization/Slice/FeaturedGenericListItemsSlice/FeaturedGenericListItemsSlice'
 import { OrganizationParentSubpageListSlice } from '../components/Organization/Slice/OrganizationParentSubpageListSlice/OrganizationParentSubpageListSlice'
@@ -342,6 +346,9 @@ const defaultRenderComponent = {
   },
   GrantCardsList: (slice: GrantCardsListSchema) => (
     <GrantCardsList slice={slice} />
+  ),
+  LastCallsForGrants: (slice: LastCallsForGrantsSchema) => (
+    <LastCallsForGrantsList slice={slice} />
   ),
   OrganizationParentSubpageList: (slice: OrganizationParentSubpageList) => (
     <OrganizationParentSubpageListSlice slice={slice} />

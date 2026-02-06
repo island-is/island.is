@@ -52,6 +52,7 @@ import {
   IGrantCardsList,
   IOrganizationParentSubpageList,
   IIntroLinkImage,
+  ILastCallsForGrants,
   IFeaturedGenericListItems,
 } from '../generated/contentfulTypes'
 import { Image, mapImage } from '../models/image.model'
@@ -164,6 +165,10 @@ import {
   mapIntroLinkImage,
 } from '../models/introLinkImage.model'
 import {
+  LastCallsForGrants,
+  mapLastCallsForGrants,
+} from '../models/lastCallsForGrants.model'
+import {
   FeaturedGenericListItems,
   mapFeaturedGenericListItems,
 } from '../models/featuredGenericListItems.model'
@@ -214,6 +219,7 @@ export type SliceTypes =
   | IFeaturedEvents
   | IGenericList
   | IGrantCardsList
+  | ILastCallsForGrants
   | ILatestGenericListItems
   | IFeaturedLinks
   | IOrganizationParentSubpageList
@@ -273,6 +279,7 @@ export const SliceUnion = createUnionType({
     LatestGenericListItems,
     FeaturedLinks,
     GrantCardsList,
+    LastCallsForGrants,
     OrganizationParentSubpageList,
     IntroLinkImage,
     FeaturedGenericListItems,
@@ -377,6 +384,8 @@ export const mapSliceUnion = (slice: SliceTypes): typeof SliceUnion => {
       return mapFeaturedLinks(slice as IFeaturedLinks)
     case 'grantCardsList':
       return mapGrantCardsList(slice as IGrantCardsList)
+    case 'lastCallsForGrants':
+      return mapLastCallsForGrants(slice as ILastCallsForGrants)
     case 'organizationParentSubpageList':
       return mapOrganizationParentSubpageList(
         slice as IOrganizationParentSubpageList,
