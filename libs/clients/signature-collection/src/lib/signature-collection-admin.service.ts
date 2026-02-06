@@ -229,7 +229,7 @@ export class SignatureCollectionAdminClientService
         collectionName = user.listabokstafur?.frambodNafn
       }
 
-      const listName = (areaName: string) =>{
+      const listName = (areaName: string) => {
         if (collectionType === CollectionType.Parliamentary) {
           return candidacy?.nafn ?? collectionName
         }
