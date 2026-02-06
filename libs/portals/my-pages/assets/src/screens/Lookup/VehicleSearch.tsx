@@ -189,7 +189,9 @@ const PublicVehicleSearch = () => {
             <Table.Head>
               <Table.HeadData>
                 <Text fontWeight="semiBold">
-                  {`${vehicleInformation.make} - ${vehicleInformation.permno}`}
+                  {[vehicleInformation.make, vehicleInformation.permno]
+                    .filter(Boolean)
+                    .join(' - ')}
                 </Text>
               </Table.HeadData>
               <Table.HeadData />
@@ -255,7 +257,7 @@ const PublicVehicleSearch = () => {
                   </Table.Data>
                 </Table.Row>
               )}
-              {vehicleInformation.co2 && (
+              {vehicleInformation.co2 != null && (
                 <Table.Row>
                   <Table.Data>
                     <Text fontWeight="semiBold">
@@ -267,7 +269,7 @@ const PublicVehicleSearch = () => {
                   </Table.Data>
                 </Table.Row>
               )}
-              {vehicleInformation.weightedCo2 && (
+              {vehicleInformation.weightedCo2 != null && (
                 <Table.Row>
                   <Table.Data>
                     <Text fontWeight="semiBold">
@@ -279,7 +281,7 @@ const PublicVehicleSearch = () => {
                   </Table.Data>
                 </Table.Row>
               )}
-              {vehicleInformation.co2WLTP && (
+              {vehicleInformation.co2WLTP != null && (
                 <Table.Row>
                   <Table.Data>
                     <Text fontWeight="semiBold">
@@ -291,7 +293,7 @@ const PublicVehicleSearch = () => {
                   </Table.Data>
                 </Table.Row>
               )}
-              {vehicleInformation.weightedCo2WLTP && (
+              {vehicleInformation.weightedCo2WLTP != null && (
                 <Table.Row>
                   <Table.Data>
                     <Text fontWeight="semiBold">

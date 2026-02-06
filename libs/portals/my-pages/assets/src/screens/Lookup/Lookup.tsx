@@ -347,7 +347,6 @@ const Lookup = () => {
           />
         </>
       )}
-      <FootNote serviceProviderSlug={SAMGONGUSTOFA_SLUG} />
     </>
   )
 
