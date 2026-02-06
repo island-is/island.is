@@ -881,6 +881,7 @@ application-system-api:
     EMAIL_REPLY_TO_NAME: '/k8s/application-system/api/EMAIL_REPLY_TO_NAME'
     FINANCIAL_STATEMENTS_INAO_CLIENT_ID: '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_ID'
     FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET: '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET'
+    HH_ZENDESK_CONTACT_FORM_EMAIL: '/k8s/api/ZENDESK_HEILSUGAESLA_HOFUDBORGARSVAEDISINS_CONTACT_FORM_EMAIL'
     HMS_CONTRACTS_AUTH_CLIENT_SECRET: '/k8s/application-system-api/HMS_CONTRACTS_AUTH_CLIENT_SECRET'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/application-system/api/IDENTITY_SERVER_CLIENT_SECRET'
     NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
@@ -901,8 +902,6 @@ application-system-api:
     XROAD_VMST_API_KEY: '/k8s/vmst-client/VMST_API_KEY'
     XROAD_VMST_UNEMPLOYMENT_PASSWORD: '/k8s/xroad/XROAD_VMST_UNEMPLOYMENT_PASSWORD'
     XROAD_VMST_UNEMPLOYMENT_USERNAME: '/k8s/xroad/XROAD_VMST_UNEMPLOYMENT_USERNAME'
-    ZENDESK_CONTACT_FORM_EMAIL: '/k8s/api/ZENDESK_CONTACT_FORM_EMAIL'
-    ZENDESK_CONTACT_FORM_TOKEN: '/k8s/api/ZENDESK_CONTACT_FORM_TOKEN'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -3018,6 +3017,11 @@ services-form-system-api:
     S3_TIME_TO_LIVE_GET: '5'
     S3_TIME_TO_LIVE_POST: '15'
     SERVERSIDE_FEATURES_ON: ''
+    XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
+    XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
+    XROAD_CLIENT_ID: 'IS-DEV/GOV/10000/island-is-client'
+    XROAD_TLS_BASE_PATH: 'https://securityserver.dev01.devland.is'
+    XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
   grantNamespaces:
     - 'islandis'
     - 'nginx-ingress-external'
@@ -3041,6 +3045,15 @@ services-form-system-api:
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-form-system-api'
+  ingress:
+    primary-alb:
+      annotations:
+        kubernetes.io/ingress.class: 'nginx-internal-alb'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
+      hosts:
+        - host: 'services-form-system-api.internal.dev01.devland.is'
+          paths:
+            - '/api'
   initContainer:
     containers:
       - args:

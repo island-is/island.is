@@ -516,6 +516,9 @@ const IndictmentCaseFilesList: FC<Props> = ({
                 <CaseFileTable
                   caseFiles={filteredFiles.uploadedCaseFiles}
                   onOpenFile={onOpen}
+                  canRejectFiles={
+                    isDistrictCourtUser(user) && !connectedCaseParentId
+                  }
                 />
               </Box>
             )}

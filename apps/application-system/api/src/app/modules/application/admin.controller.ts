@@ -299,7 +299,10 @@ export class AdminController {
     )
   }
 
-  @Scopes(AdminPortalScope.applicationSystemInstitution)
+  @Scopes(
+    AdminPortalScope.applicationSystemInstitution,
+    AdminPortalScope.applicationSystemAdmin,
+  )
   @BypassDelegation()
   @Get('admin/applications/application-types/:nationalId/')
   @UseInterceptors(ApplicationTypeAdminSerializer)
