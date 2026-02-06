@@ -135,7 +135,6 @@ export const useApplePay = ({
           variables: {
             input: {
               paymentFlowId: paymentFlow?.id ?? '',
-              amount: productInformation.amount,
               paymentData: event.payment.token.paymentData,
               paymentMethod: event.payment.token.paymentMethod,
               transactionIdentifier: event.payment.token.transactionIdentifier,

@@ -20,6 +20,8 @@ export enum PaymentServiceCode {
   UnknownPaymentServiceError = 'UnknownPaymentServiceError',
   PaymentFlowNotEligibleToBeFinalized = 'PaymentFlowNotEligibleToBeFinalized',
   PaymentFlowAlreadyFinalized = 'PaymentFlowAlreadyFinalized',
+  PaymentFinalizationFailed = 'PaymentFinalizationFailed',
+  PaymentFlowNotEligibleToBeRefunded = 'PaymentFlowNotEligibleToBeRefunded',
 }
 
 export enum CardErrorCode {

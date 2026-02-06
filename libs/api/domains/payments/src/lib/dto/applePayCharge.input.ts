@@ -41,9 +41,6 @@ export class ApplePayChargeInput {
   @Field(() => String)
   paymentFlowId!: string
 
-  @Field(() => Number)
-  amount!: number
-
   @Field(() => ApplePayPaymentData)
   paymentData!: ApplePayPaymentData
 

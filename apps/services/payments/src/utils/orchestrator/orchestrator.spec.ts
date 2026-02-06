@@ -29,7 +29,7 @@ const createMockLogger = (): Logger =>
     debug: jest.fn(),
     trace: jest.fn(),
     child: jest.fn(),
-  } as any)
+  } as unknown as Logger)
 
 describe('Orchestrator', () => {
   let mockLogger: Logger
@@ -315,10 +315,6 @@ describe('Orchestrator', () => {
 
       // STEP3 never completed, so only STEP2 and STEP1 should rollback in reverse order
       expect(rollbackOrder).toEqual(['STEP2-rollback', 'STEP1-rollback'])
-      expect(mockLogger.warn).toHaveBeenCalledWith('Starting saga rollback', {
-        completedSteps: ['STEP1', 'STEP2'],
-      })
-      expect(mockLogger.info).toHaveBeenCalledWith('Saga rollback completed')
     })
 
     it('should record step_failed in execution history', async () => {

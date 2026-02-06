@@ -1,15 +1,36 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { CACHE_MANAGER } from '@nestjs/cache-manager'
-import { Cache as CacheManager } from 'cache-manager'
+import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
+import { Cache as CacheManager } from 'cache-manager'
 import { v4 as uuid } from 'uuid'
 import { z } from 'zod'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { CardErrorCode, PaymentServiceCode } from '@island.is/shared/constants'
+import {
+  CardErrorCode,
+  FjsErrorCode,
+  PaymentServiceCode,
+} from '@island.is/shared/constants'
 
+import { retry } from '@island.is/shared/utils/server'
+import { InferAttributes } from 'sequelize'
+import { environment } from '../../environments'
+import { PaymentMethod, PaymentStatus } from '../../types'
+import {
+  CardPaymentResponse,
+  CardPaymentResponseSchema,
+  PaymentTrackingData,
+  RefundResponse,
+  RefundResponseSchema,
+} from '../../types/cardPayment'
+import { CatalogItemWithQuantity } from '../../types/charges'
+import { mapToCardErrorCode } from '../../utils/paymentErrors'
+import { CardPaymentDetails } from '../paymentFlow/models/cardPaymentDetails.model'
+import { PaymentFlowAttributes } from '../paymentFlow/models/paymentFlow.model'
+import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
 import { CardPaymentModuleConfig } from './cardPayment.config'
+import { paymentGatewayResponseCodes } from './cardPayment.constants'
 import {
   CachePaymentFlowStatus,
   MdNormalised,
@@ -19,32 +40,21 @@ import {
 } from './cardPayment.types'
 import {
   generateApplePayChargeRequestOptions,
-  generateApplePayRefundRequestOptions,
   generateApplePaySessionRequestOptions,
   generateCardChargeFJSPayload,
   generateChargeRequestOptions,
   generateMd,
   generateRefundRequestOptions,
+  generateRefundWithCorrelationIdRequestOptions,
   generateVerificationRequestOptions,
   getPayloadFromMd,
 } from './cardPayment.utils'
-import { PaymentFlowAttributes } from '../paymentFlow/models/paymentFlow.model'
-import { CatalogItemWithQuantity } from '../../types/charges'
-import {
-  CardPaymentResponse,
-  CardPaymentResponseSchema,
-  PaymentTrackingData,
-  RefundResponseSchema,
-  RefundResponse,
-} from '../../types/cardPayment'
-import { paymentGatewayResponseCodes } from './cardPayment.constants'
-import { mapToCardErrorCode } from '../../utils/paymentErrors'
 import {
   ApplePayChargeInput,
   ApplePaySessionResponse,
   ChargeCardInput,
-  VerifyCardInput,
   VerificationCallbackInput,
+  VerifyCardInput,
 } from './dtos'
 
 @Injectable()
@@ -56,10 +66,14 @@ export class CardPaymentService {
     private readonly config: ConfigType<typeof CardPaymentModuleConfig>,
     @Inject(CACHE_MANAGER)
     private readonly cacheManager: CacheManager,
+    private readonly paymentFlowService: PaymentFlowService,
   ) {}
+
+  // VERIFICATION METHODS ------------------------------------------------------------------------------------------------
 
   async verify(
     verifyCardInput: VerifyCardInput,
+    totalPrice: number,
   ): Promise<VerificationResponse> {
     const {
       memCacheExpiryMinutes,
@@ -72,12 +86,12 @@ export class CardPaymentService {
 
     const correlationId = uuid()
 
-    const { amount, paymentFlowId } = verifyCardInput
+    const { paymentFlowId } = verifyCardInput
 
     const md = generateMd({
       correlationId,
       paymentFlowId,
-      amount,
+      amount: totalPrice,
       paymentsTokenSigningSecret,
       paymentsTokenSigningAlgorithm,
     })
@@ -97,6 +111,7 @@ export class CardPaymentService {
       paymentApiConfig: this.config.paymentGateway,
       md: md,
       webOrigin: this.config.webOrigin,
+      amount: totalPrice,
     })
 
     const response = await fetch(
@@ -106,6 +121,7 @@ export class CardPaymentService {
 
     if (!response.ok) {
       const responseBody = await response.text()
+
       this.logger.error('Failed to verify card', {
         url: response.url,
         status: response.status,
@@ -235,10 +251,108 @@ export class CardPaymentService {
     }
   }
 
-  async charge(
-    chargeCardInput: ChargeCardInput,
-    paymentTrackingData: PaymentTrackingData,
-  ): Promise<CardPaymentResponse> {
+  // PAYMENT FLOW METHODS ------------------------------------------------------------------------------------------------
+
+  async getPaymentFlowDetails(paymentFlowId: string): Promise<{
+    paymentFlow: PaymentFlowAttributes
+    catalogItems: CatalogItemWithQuantity[]
+    totalPrice: number
+    paymentStatus: PaymentStatus
+  }> {
+    const paymentFlow = await this.paymentFlowService.getPaymentFlowDetails(
+      paymentFlowId,
+    )
+    const [{ catalogItems, totalPrice }, { paymentStatus }] = await Promise.all(
+      [
+        this.paymentFlowService.getPaymentFlowChargeDetails(
+          paymentFlow.organisationId,
+          paymentFlow.charges,
+        ),
+        this.paymentFlowService.getPaymentFlowStatus(paymentFlow),
+      ],
+    )
+
+    return {
+      paymentFlow,
+      catalogItems,
+      totalPrice,
+      paymentStatus,
+    }
+  }
+
+  async validatePaymentFlow(paymentFlowId: string): Promise<{
+    paymentFlow: PaymentFlowAttributes
+    catalogItems: CatalogItemWithQuantity[]
+    totalPrice: number
+    paymentStatus: PaymentStatus
+  }> {
+    const { paymentFlow, catalogItems, totalPrice, paymentStatus } =
+      await this.getPaymentFlowDetails(paymentFlowId)
+
+    if (paymentStatus === 'paid') {
+      throw new BadRequestException(PaymentServiceCode.PaymentFlowAlreadyPaid)
+    }
+
+    return {
+      paymentFlow,
+      catalogItems,
+      totalPrice,
+      paymentStatus,
+    }
+  }
+
+  // APPLE PAY METHODS ------------------------------------------------------------------------------------------------
+
+  async getApplePaySession(): Promise<ApplePaySessionResponse> {
+    const {
+      paymentGateway: {
+        applePayDomainName,
+        applePayDisplayName,
+        paymentsGatewayApiUrl,
+      },
+    } = this.config
+
+    const requestOptions = generateApplePaySessionRequestOptions({
+      domainName: applePayDomainName,
+      displayName: applePayDisplayName,
+      paymentApiConfig: this.config.paymentGateway,
+    })
+
+    const response = await fetch(
+      `${paymentsGatewayApiUrl}/ApplePay/GetSession`,
+      requestOptions,
+    )
+
+    if (!response.ok) {
+      const responseBody = await response.text()
+      this.logger.error('Failed to get Apple Pay session', {
+        statusText: response.statusText,
+        responseBody,
+      })
+      throw new BadRequestException(response.statusText)
+    }
+
+    const data = await response.json()
+    if (!data.isSuccess || !data.session) {
+      throw new BadRequestException(CardErrorCode.ErrorGettingApplePaySession)
+    }
+
+    return {
+      session: data.session,
+    }
+  }
+
+  // CHARGE METHODS ------------------------------------------------------------------------------------------------
+
+  async charge({
+    chargeCardInput,
+    paymentTrackingData,
+    amount,
+  }: {
+    chargeCardInput: ChargeCardInput
+    paymentTrackingData: PaymentTrackingData
+    amount: number
+  }): Promise<CardPaymentResponse> {
     const status = await this.getFullVerificationStatus(
       chargeCardInput.paymentFlowId,
     )
@@ -275,6 +389,7 @@ export class CardPaymentService {
       verificationData,
       paymentApiConfig: this.config.paymentGateway,
       paymentTrackingData,
+      amount,
     })
 
     const response = await fetch(
@@ -301,18 +416,51 @@ export class CardPaymentService {
     return data
   }
 
-  async refund(
-    paymentFlowId: string,
-    cardNumber: string,
-    charge: CardPaymentResponse,
-    amount: number,
-  ) {
+  async chargeApplePay(
+    input: ApplePayChargeInput,
+    paymentTrackingData: PaymentTrackingData,
+  ): Promise<CardPaymentResponse> {
+    const { paymentsGatewayApiUrl } = this.config.paymentGateway
+
+    const requestOptions = generateApplePayChargeRequestOptions({
+      input,
+      paymentApiConfig: this.config.paymentGateway,
+      paymentTrackingData,
+    })
+
+    const response = await fetch(
+      `${paymentsGatewayApiUrl}/Payment/WalletPayment`,
+      requestOptions,
+    )
+
+    const data = await this.parsePaymentGatewayResponseAndHandleErrors({
+      response,
+      schema: CardPaymentResponseSchema,
+      errorMessage: 'Failed to charge Apple Pay payment',
+    })
+
+    return data
+  }
+
+  // REFUND METHODS ------------------------------------------------------------------------------------------------
+
+  async refund({
+    paymentFlowId,
+    cardNumber,
+    acquirerReferenceNumber,
+    amount,
+  }: {
+    paymentFlowId: string
+    cardNumber: string
+    amount: number
+    acquirerReferenceNumber: string
+  }) {
     try {
       const requestOptions = generateRefundRequestOptions({
         amount,
         cardNumber,
-        charge,
         paymentApiConfig: this.config.paymentGateway,
+        acquirerReferenceNumber,
       })
 
       const {
@@ -366,12 +514,14 @@ export class CardPaymentService {
     }
   }
 
-  async refundApplePay(
-    paymentTrackingData: PaymentTrackingData,
-  ): Promise<RefundResponse> {
+  async refundWithCorrelationId({
+    paymentTrackingData,
+  }: {
+    paymentTrackingData: PaymentTrackingData
+  }): Promise<RefundResponse> {
     const { paymentsGatewayApiUrl } = this.config.paymentGateway
 
-    const requestOptions = generateApplePayRefundRequestOptions({
+    const requestOptions = generateRefundWithCorrelationIdRequestOptions({
       paymentApiConfig: this.config.paymentGateway,
       paymentTrackingData,
     })
@@ -384,107 +534,86 @@ export class CardPaymentService {
     const data = await this.parsePaymentGatewayResponseAndHandleErrors({
       response,
       schema: RefundResponseSchema,
-      errorMessage: 'Failed to refund Apple Pay payment',
+      errorMessage: 'Failed to refund payment with correlation id',
     })
 
     return data
   }
 
-  createCardPaymentChargePayload({
-    paymentFlow,
-    charges,
-    chargeResponse,
+  async persistPaymentConfirmation({
+    paymentFlowId,
+    paymentResult,
+    paymentTrackingData,
     totalPrice,
-    merchantReferenceData,
-    systemId,
   }: {
-    paymentFlow: PaymentFlowAttributes
-    charges: CatalogItemWithQuantity[]
-    chargeResponse: {
-      acquirerReferenceNumber: string
-      authorizationCode: string
-      cardScheme: string
-      maskedCardNumber: string
-      cardUsage: string
-    }
+    paymentFlowId: string
+    paymentResult: CardPaymentResponse
+    paymentTrackingData: PaymentTrackingData
     totalPrice: number
-    merchantReferenceData: string
-    systemId: string
   }) {
-    return generateCardChargeFJSPayload({
-      paymentFlow,
-      charges,
-      chargeResponse,
+    await this.paymentFlowService.createCardPaymentConfirmation({
+      paymentResult,
+      paymentFlowId: paymentFlowId,
       totalPrice,
-      systemId,
-      merchantReferenceData,
-    })
-  }
-
-  async getApplePaySession(): Promise<ApplePaySessionResponse> {
-    const {
-      paymentGateway: {
-        applePayDomainName,
-        applePayDisplayName,
-        paymentsGatewayApiUrl,
-      },
-    } = this.config
-
-    const requestOptions = generateApplePaySessionRequestOptions({
-      domainName: applePayDomainName,
-      displayName: applePayDisplayName,
-      paymentApiConfig: this.config.paymentGateway,
-    })
-
-    const response = await fetch(
-      `${paymentsGatewayApiUrl}/ApplePay/GetSession`,
-      requestOptions,
-    )
-
-    if (!response.ok) {
-      const responseBody = await response.text()
-      this.logger.error('Failed to get Apple Pay session', {
-        statusText: response.statusText,
-        responseBody,
-      })
-      throw new BadRequestException(response.statusText)
-    }
-
-    const data = await response.json()
-    if (!data.isSuccess || !data.session) {
-      throw new BadRequestException(CardErrorCode.ErrorGettingApplePaySession)
-    }
-
-    return {
-      session: data.session,
-    }
-  }
-
-  async chargeApplePay(
-    input: ApplePayChargeInput,
-    paymentTrackingData: PaymentTrackingData,
-  ): Promise<CardPaymentResponse> {
-    const { paymentsGatewayApiUrl } = this.config.paymentGateway
-
-    const requestOptions = generateApplePayChargeRequestOptions({
-      input,
-      paymentApiConfig: this.config.paymentGateway,
       paymentTrackingData,
     })
+  }
 
-    const response = await fetch(
-      `${paymentsGatewayApiUrl}/Payment/WalletPayment`,
-      requestOptions,
+  // FINALIZE METHODS ------------------------------------------------------------------------------------------------------
+
+  async createFjsCharge({
+    paymentFlowId,
+    cardPaymentConfirmation,
+  }: {
+    paymentFlowId: string
+    cardPaymentConfirmation: InferAttributes<CardPaymentDetails>
+  }) {
+    const { paymentFlow, catalogItems } = await this.getPaymentFlowDetails(
+      paymentFlowId,
     )
 
-    const data = await this.parsePaymentGatewayResponseAndHandleErrors({
-      response,
-      schema: CardPaymentResponseSchema,
-      errorMessage: 'Failed to charge Apple Pay payment',
+    const fjsChargePayload = generateCardChargeFJSPayload({
+      paymentFlow,
+      charges: catalogItems,
+      chargeResponse: cardPaymentConfirmation,
+      totalPrice: cardPaymentConfirmation.totalPrice,
+      systemId: environment.chargeFjs.systemId,
+      merchantReferenceData: cardPaymentConfirmation.merchantReferenceData,
     })
 
-    return data
+    const createdFjsCharge = await retry(
+      () =>
+        this.paymentFlowService.createFjsCharge(
+          paymentFlow.id,
+          fjsChargePayload,
+        ),
+      {
+        maxRetries: 3,
+        retryDelayMs: 1000,
+        logger: this.logger,
+        logPrefix: `[${paymentFlowId}] Create FJS Payment Charge`,
+        shouldRetryOnError: (error) => {
+          return error.message !== FjsErrorCode.AlreadyCreatedCharge
+        },
+      },
+    )
+
+    await this.paymentFlowService.logPaymentFlowUpdate({
+      paymentFlowId: paymentFlowId,
+      type: 'success',
+      occurredAt: new Date(),
+      paymentMethod: PaymentMethod.CARD,
+      reason: 'payment_finalized',
+      message: `Card payment finalized and FJS charge created`,
+      metadata: {
+        fjsChargeId: createdFjsCharge.receptionId,
+      },
+    })
+
+    return createdFjsCharge
   }
+
+  // PRIVATE HELPER METHODS ------------------------------------------------------------------------------------------------
 
   private async parsePaymentGatewayResponseAndHandleErrors<
     T extends z.ZodTypeAny,

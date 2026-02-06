@@ -59,13 +59,15 @@ export const generateVerificationRequestOptions = ({
   md,
   paymentApiConfig,
   webOrigin,
+  amount,
 }: {
   verifyCardInput: VerifyCardInput
   md: string
   paymentApiConfig: CardPaymentModuleConfigType['paymentGateway']
   webOrigin: string
+  amount: number
 }) => {
-  const { cardNumber, expiryMonth, expiryYear, amount } = verifyCardInput
+  const { cardNumber, expiryMonth, expiryYear } = verifyCardInput
   const {
     paymentsApiSecret,
     paymentsApiHeaderKey,
@@ -101,13 +103,15 @@ export const generateChargeRequestOptions = ({
   verificationData,
   paymentApiConfig,
   paymentTrackingData,
+  amount,
 }: {
   chargeCardInput: ChargeCardInput
   verificationData: SavedVerificationCompleteData
   paymentApiConfig: CardPaymentModuleConfigType['paymentGateway']
   paymentTrackingData: PaymentTrackingData
+  amount: number
 }) => {
-  const { cardNumber, expiryMonth, expiryYear, cvc, amount } = chargeCardInput
+  const { cardNumber, expiryMonth, expiryYear, cvc } = chargeCardInput
   const {
     paymentsApiSecret,
     paymentsApiHeaderKey,
@@ -146,12 +150,12 @@ export const generateChargeRequestOptions = ({
 export const generateRefundRequestOptions = ({
   amount,
   cardNumber,
-  charge,
+  acquirerReferenceNumber,
   paymentApiConfig,
 }: {
   amount: number
   cardNumber: string
-  charge: CardPaymentResponse
+  acquirerReferenceNumber: string
   paymentApiConfig: CardPaymentModuleConfigType['paymentGateway']
 }) => {
   const {
@@ -174,7 +178,7 @@ export const generateRefundRequestOptions = ({
       cardNumber: cardNumber,
       currency: 'ISK',
       amount: iskToAur(amount),
-      acquirerReferenceNumber: charge.acquirerReferenceNumber,
+      acquirerReferenceNumber: acquirerReferenceNumber,
       systemCalling,
     }),
   }
@@ -319,7 +323,7 @@ export const generateApplePayChargeRequestOptions = ({
   }
 }
 
-export const generateApplePayRefundRequestOptions = ({
+export const generateRefundWithCorrelationIdRequestOptions = ({
   paymentApiConfig,
   paymentTrackingData,
 }: {

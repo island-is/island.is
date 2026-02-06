@@ -181,7 +181,6 @@ export const useCardPayment = ({
 
       try {
         const verifyCardResponse = await verifyCardApi({
-          amount: productInformation.amount,
           cardNumber: cardData.number,
           expiryMonth: cardData.expiryMonth,
           expiryYear: cardData.expiryYear,
@@ -208,7 +207,6 @@ export const useCardPayment = ({
         }
 
         const chargeCardResponse = await chargeCardApi({
-          amount: productInformation.amount,
           cardNumber: cardData.number,
           cvc: cardData.cvc,
           expiryMonth: cardData.expiryMonth,

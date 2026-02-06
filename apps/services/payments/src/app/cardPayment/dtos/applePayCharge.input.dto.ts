@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsString, IsObject, IsNumber } from 'class-validator'
+import { IsString, IsObject } from 'class-validator'
 
 class ApplePayPaymentHeader {
   @IsString()
@@ -47,13 +47,6 @@ export class ApplePayChargeInput {
   @IsString()
   @ApiProperty({ description: 'Payment flow ID', type: String })
   paymentFlowId!: string
-
-  @IsNumber()
-  @ApiProperty({
-    description: 'Total amount to be paid in ISK (not cents)',
-    type: Number,
-  })
-  amount!: number
 
   @IsObject()
   @ApiProperty({ description: 'Payment data', type: ApplePayPaymentData })

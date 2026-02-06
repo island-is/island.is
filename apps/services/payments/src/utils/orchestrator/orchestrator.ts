@@ -5,12 +5,11 @@ import {
   OrchestratorConfig,
   ContextWithStepResults,
   ExecutionRecord,
-  RollbackFailureCallback,
 } from './orchestrator.types'
 
 export class Orchestrator<
   TContext extends ContextWithStepResults<TStepResults>,
-  TStepResults = any,
+  TStepResults extends object = Record<string, unknown>,
 > {
   private completedSteps: Step<TContext, TStepResults>[] = []
   private executionHistory: ExecutionRecord[] = []
@@ -67,7 +66,8 @@ export class Orchestrator<
 
           // Auto-store result if returned (not void/undefined)
           if (result !== undefined) {
-            ;(context.stepResults as any)[step.name] = result
+            ;(context.stepResults as Record<string, unknown>)[step.name] =
+              result
           }
 
           this.completedSteps.push(step)
@@ -103,7 +103,9 @@ export class Orchestrator<
 
           // Auto-store result if returned (not void/undefined)
           if (result !== undefined) {
-            ;(context.stepResults as any)[currentStep.name] = result
+            ;(context.stepResults as Record<string, unknown>)[
+              currentStep.name
+            ] = result
           }
 
           this.completedSteps.push(currentStep)
@@ -140,18 +142,12 @@ export class Orchestrator<
         metadata: { error: error.message },
       })
 
-      await this.rollback(context, error)
+      await this.rollback(context)
       throw error
     }
   }
 
-  private async rollback(context: TContext, originalError: Error) {
-    const completedStepNames = this.completedSteps.map((s) => s.name)
-
-    this.logger.warn('Starting saga rollback', {
-      completedSteps: completedStepNames,
-    })
-
+  private async rollback(context: TContext) {
     for (const step of [...this.completedSteps].reverse()) {
       if (step.compensate) {
         try {
@@ -185,7 +181,5 @@ export class Orchestrator<
         }
       }
     }
-
-    this.logger.info('Saga rollback completed')
   }
 }

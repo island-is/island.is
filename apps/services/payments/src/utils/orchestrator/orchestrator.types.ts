@@ -9,7 +9,9 @@ export type ExecutionRecord = {
 }
 
 // Generic context with step results registry
-export interface ContextWithStepResults<TStepResults> {
+export interface ContextWithStepResults<
+  TStepResults extends object = Record<string, unknown>,
+> {
   stepResults: {
     [K in keyof TStepResults]?: TStepResults[K]
   }
@@ -26,7 +28,7 @@ export interface ContextWithStepResults<TStepResults> {
 // Generic step - typed to return specific result based on step name
 export type Step<
   TContext extends ContextWithStepResults<TStepResults>,
-  TStepResults = any,
+  TStepResults extends object = Record<string, unknown>,
   K extends keyof TStepResults = keyof TStepResults,
 > = {
   name: K & string
@@ -43,7 +45,7 @@ export type Step<
 // Saga is array or map of steps
 export type SagaDefinition<
   TContext extends ContextWithStepResults<TStepResults>,
-  TStepResults = any,
+  TStepResults extends object = Record<string, unknown>,
 > =
   | Step<TContext, TStepResults>[]
   | Record<string, Step<TContext, TStepResults>>
@@ -51,7 +53,7 @@ export type SagaDefinition<
 // Rollback failure callback
 export type RollbackFailureCallback<
   TContext extends ContextWithStepResults<TStepResults>,
-  TStepResults = any,
+  TStepResults extends object = Record<string, unknown>,
 > = (
   step: Step<TContext, TStepResults>,
   error: Error,
@@ -62,7 +64,7 @@ export type RollbackFailureCallback<
 // Orchestrator configuration
 export interface OrchestratorConfig<
   TContext extends ContextWithStepResults<TStepResults>,
-  TStepResults = any,
+  TStepResults extends object = Record<string, unknown>,
 > {
   logger: Logger
   onRollbackFailure?: RollbackFailureCallback<TContext, TStepResults>
@@ -71,7 +73,10 @@ export interface OrchestratorConfig<
 // Helper functions
 
 // Generic helper to get step result (returns undefined if missing)
-export const getStepResult = <TStepResults, K extends keyof TStepResults>(
+export const getStepResult = <
+  TStepResults extends Record<string, unknown>,
+  K extends keyof TStepResults,
+>(
   context: ContextWithStepResults<TStepResults>,
   step: K,
 ): TStepResults[K] | undefined => {
@@ -79,7 +84,10 @@ export const getStepResult = <TStepResults, K extends keyof TStepResults>(
 }
 
 // Generic helper to require step result (throws if missing)
-export const requireStepResult = <TStepResults, K extends keyof TStepResults>(
+export const requireStepResult = <
+  TStepResults extends object,
+  K extends keyof TStepResults,
+>(
   context: ContextWithStepResults<TStepResults>,
   step: K,
 ): NonNullable<TStepResults[K]> => {
@@ -91,7 +99,10 @@ export const requireStepResult = <TStepResults, K extends keyof TStepResults>(
 }
 
 // Generic type guard
-export const hasStepResult = <TStepResults, K extends keyof TStepResults>(
+export const hasStepResult = <
+  TStepResults extends object,
+  K extends keyof TStepResults,
+>(
   context: ContextWithStepResults<TStepResults>,
   step: K,
 ): context is ContextWithStepResults<TStepResults> & {
