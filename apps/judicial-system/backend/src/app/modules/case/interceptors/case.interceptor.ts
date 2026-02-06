@@ -4,7 +4,6 @@ import {
   CallHandler,
   ExecutionContext,
   Injectable,
-  InternalServerErrorException,
   NestInterceptor,
 } from '@nestjs/common'
 
