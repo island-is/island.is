@@ -258,8 +258,8 @@ export function setupRoutes() {
 
   addRoute('/appointments', async (passProps) => {
     await Navigation.dismissAllModals()
-    selectTab(4)
-    await Navigation.push(ComponentRegistry.MoreScreen, {
+    selectTab(3)
+    await Navigation.push(StackRegistry.HealthStack, {
       component: {
         name: ComponentRegistry.AppointmentsScreen,
         passProps,
