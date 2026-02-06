@@ -208,10 +208,16 @@ export class SignatureCollectionClientService {
         frambodNafn: collectionName,
         simi: owner.phone,
         netfang: owner.email,
-        medmaelalistar: filteredAreas.map((area) => ({
-          svaediID: parseInt(area.id),
-          listiNafn: `${collectionName}, ${owner.name} - ${area.name}`,
-        })),
+        medmaelalistar: filteredAreas.map((area) => {
+          const listName =
+            (collectionName?.length ?? 0) > 0
+              ? `${collectionName}, ${owner.name} - ${area.name}`
+              : `${owner.name} - ${area.name}`
+          return {
+            svaediID: parseInt(area.id),
+            listiNafn: listName,
+          }
+        }),
       },
     })
 

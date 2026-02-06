@@ -229,10 +229,15 @@ export class SignatureCollectionAdminClientService
         collectionName = user.listabokstafur?.frambodNafn
       }
 
-      const listName = (areaName: string) =>
-        collectionType === CollectionType.Parliamentary
-          ? candidacy?.nafn ?? collectionName
-          : `${collectionName}, ${owner.name} - ${areaName}`
+      const listName = (areaName: string) =>{
+        if (collectionType === CollectionType.Parliamentary) {
+          return candidacy?.nafn ?? collectionName
+        }
+        if (!collectionName) {
+          return `${owner.name} - ${areaName}`
+        }
+        return `${collectionName}, ${owner.name} - ${areaName}`
+      }
 
       // If no candidacy exists, create one
       if (!candidacy) {
