@@ -122,8 +122,9 @@ export const createTestingSubpoenaModule = async () => {
 
   const subpoenaService = subpoenaModule.get<SubpoenaService>(SubpoenaService)
 
-  const caseRepositoryService =
-    subpoenaModule.get<CaseRepositoryService>(CaseRepositoryService)
+  const caseRepositoryService = subpoenaModule.get<CaseRepositoryService>(
+    CaseRepositoryService,
+  )
 
   const courtDocumentService =
     subpoenaModule.get<CourtDocumentService>(CourtDocumentService)

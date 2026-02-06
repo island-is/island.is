@@ -61,12 +61,14 @@ export class SubpoenaResolver {
     { backendService }: { backendService: BackendService },
   ): Promise<Subpoena[]> {
     this.logger.debug(
-      `Creating subpoenas for defendants ${input.defendantIds.join(', ')} in case ${caseId}`,
+      `Creating subpoenas for defendants ${input.defendantIds.join(
+        ', ',
+      )} in case ${caseId}`,
     )
 
     return this.auditTrailService.audit(
       user.id,
-      AuditedAction.UPDATE_CASE,
+      AuditedAction.CREATE_SUBPOENAS,
       backendService.createSubpoenas(caseId, {
         defendantIds: input.defendantIds,
         arraignmentDate: input.arraignmentDate,
