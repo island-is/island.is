@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsString, IsObject } from 'class-validator'
+import { Type } from 'class-transformer'
+import { IsString, IsObject, ValidateNested } from 'class-validator'
 
 class ApplePayPaymentHeader {
   @IsString()
@@ -29,6 +30,8 @@ class ApplePayPaymentData {
   signature!: string
 
   @IsObject()
+  @ValidateNested()
+  @Type(() => ApplePayPaymentHeader)
   @ApiProperty({ description: 'Header', type: ApplePayPaymentHeader })
   header!: ApplePayPaymentHeader
 }
@@ -49,10 +52,14 @@ export class ApplePayChargeInput {
   paymentFlowId!: string
 
   @IsObject()
+  @ValidateNested()
+  @Type(() => ApplePayPaymentData)
   @ApiProperty({ description: 'Payment data', type: ApplePayPaymentData })
   paymentData!: ApplePayPaymentData
 
   @IsObject()
+  @ValidateNested()
+  @Type(() => ApplePayPaymentMethod)
   @ApiProperty({ description: 'Payment method', type: ApplePayPaymentMethod })
   paymentMethod!: ApplePayPaymentMethod
 

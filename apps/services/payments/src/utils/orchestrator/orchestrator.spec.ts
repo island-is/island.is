@@ -333,45 +333,19 @@ describe('Orchestrator', () => {
 
       try {
         await orchestrator.execute(saga, context)
-      } catch {
-        // Expected
-      }
-
-      await orchestrator
-        .execute(
-          [
-            {
-              name: 'STEP1',
-              execute: async () => {
-                throw new Error('Failure')
-              },
-            },
-          ],
-          {
-            id: 'test',
-            stepResults: {},
-            completedSteps: [],
-            startTime: new Date(),
-          },
-        )
-        .catch((e) => e)
-
-      // Re-create to get execution history
-      const orchestrator2 = new Orchestrator<TestContext, TestStepResults>({
-        logger: mockLogger,
-      })
-
-      try {
-        await orchestrator2.execute(saga, {
-          id: 'test',
-          stepResults: {},
-          completedSteps: [],
-          startTime: new Date(),
-        })
       } catch (error) {
-        // Check that error was thrown
-        expect(error.message).toBe('Test error')
+        expect(error).toBeInstanceOf(Error)
+        expect((error as Error).message).toBe('Test error')
       }
+
+      const history = orchestrator.getExecutionHistory()
+      expect(history).toContainEqual(
+        expect.objectContaining({
+          type: 'step_failed',
+          step: 'STEP1',
+          metadata: expect.objectContaining({ error: 'Test error' }),
+        }),
+      )
     })
 
     it('should skip rollback for steps without compensate', async () => {

@@ -628,10 +628,12 @@ export class CardPaymentService {
   }): Promise<z.infer<T>> {
     if (!response.ok) {
       const responseBody = await response.text()
+
       this.logger.error(errorMessage, {
         statusText: response.statusText,
         responseBody,
       })
+
       throw new BadRequestException(response.statusText)
     }
 

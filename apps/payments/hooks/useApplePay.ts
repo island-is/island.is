@@ -48,7 +48,10 @@ export const useApplePay = ({
   // check if apple pay is available
   useEffect(() => {
     // if apple pay is not enabled or if apple pay is not allowed, set supports apple pay to false
-    if (process.env.NEXT_PUBLIC_ALLOW_APPLE_PAY === 'false') {
+    if (
+      process.env.NEXT_PUBLIC_ALLOW_APPLE_PAY === 'false' ||
+      !isEnabledForUser
+    ) {
       setSupportsApplePay(false)
       return
     }
@@ -66,7 +69,7 @@ export const useApplePay = ({
   }, [isEnabledForUser, paymentFlow])
 
   const initiateApplePay = useCallback(() => {
-    if (!supportsApplePay || !productInformation) {
+    if (!supportsApplePay || !productInformation || !paymentFlow) {
       return
     }
 
@@ -134,7 +137,7 @@ export const useApplePay = ({
         const { data } = await chargeApplePayMutationHook({
           variables: {
             input: {
-              paymentFlowId: paymentFlow?.id ?? '',
+              paymentFlowId: paymentFlow.id,
               paymentData: event.payment.token.paymentData,
               paymentMethod: event.payment.token.paymentMethod,
               transactionIdentifier: event.payment.token.transactionIdentifier,

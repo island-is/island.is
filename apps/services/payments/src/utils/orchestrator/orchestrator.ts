@@ -26,6 +26,10 @@ export class Orchestrator<
     this.onRollbackFailure = config.onRollbackFailure
   }
 
+  getExecutionHistory(): ExecutionRecord[] {
+    return [...this.executionHistory]
+  }
+
   private recordEvent(event: Omit<ExecutionRecord, 'timestamp'>): void {
     this.executionHistory.push({
       ...event,
@@ -48,6 +52,9 @@ export class Orchestrator<
     context.currentStep = undefined
     context.failedStep = undefined
     context.error = undefined
+
+    this.completedSteps = []
+    this.executionHistory = []
 
     try {
       if (Array.isArray(saga)) {

@@ -1,4 +1,4 @@
-import { Inject } from '@nestjs/common'
+import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import type { InferAttributes } from 'sequelize'
 
 import type { Logger } from '@island.is/logging'
@@ -17,6 +17,7 @@ const MINUTES_TO_WAIT_BEFORE_CREATING_FJS_CHARGE = 5
 /**
  * Worker service that creates FJS charges for payment flows paid with card payments.
  */
+@Injectable()
 export class WorkerService {
   constructor(
     @Inject(LOGGER_PROVIDER)
@@ -118,6 +119,13 @@ export class WorkerService {
   private getLatestCardPaymentDetails(
     details: InferAttributes<CardPaymentDetails>[],
   ): InferAttributes<CardPaymentDetails> {
+    // should not happen because card payment details are required in the db query
+    if (!details || details.length === 0) {
+      throw new BadRequestException(
+        'No card payment details found for payment flow',
+      )
+    }
+
     const sorted = [...details].sort(
       (a, b) =>
         new Date((b as { created?: Date }).created ?? 0).getTime() -

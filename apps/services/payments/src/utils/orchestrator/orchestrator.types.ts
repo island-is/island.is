@@ -92,7 +92,7 @@ export const requireStepResult = <
   step: K,
 ): NonNullable<TStepResults[K]> => {
   const result = context.stepResults[step]
-  if (!result) {
+  if (result === undefined) {
     throw new Error(`Required step ${String(step)} has not completed`)
   }
   return result as NonNullable<TStepResults[K]>

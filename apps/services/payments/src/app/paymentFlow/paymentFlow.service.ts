@@ -359,7 +359,7 @@ export class PaymentFlowService {
       })
     )?.toJSON()
 
-    // If the fjs charge exists and is unpaid, the innvoice is pending
+    // If the fjs charge exists and is unpaid, the invoice is pending
     if (existingFjsCharge && existingFjsCharge.status === 'unpaid') {
       return {
         paymentStatus: PaymentStatus.INVOICE_PENDING,

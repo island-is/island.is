@@ -58,7 +58,6 @@ export const usePaymentOrchestration = ({
 
   const cardPayment = useCardPayment({
     paymentFlow,
-    productInformation,
     onPaymentSuccess: commonOnPaymentSuccess,
     onPaymentError: commonOnPaymentError,
     setThreeDSecureModalActive: setIsThreeDSecureModalActive,

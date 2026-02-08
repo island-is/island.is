@@ -6,12 +6,17 @@ import {
   Inject,
   Param,
   Post,
+  UseGuards,
 } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { FeatureFlag, Features } from '@island.is/nest/feature-flags'
+import {
+  FeatureFlag,
+  FeatureFlagGuard,
+  Features,
+} from '@island.is/nest/feature-flags'
 import { CardErrorCode, PaymentServiceCode } from '@island.is/shared/constants'
 
 import { PaymentMethod } from '../../types'
@@ -57,6 +62,8 @@ import {
   createRefundSaga,
   REFUND_SAGA_START_STEP,
 } from './refund.saga'
+
+@UseGuards(FeatureFlagGuard)
 @FeatureFlag(Features.isIslandisPaymentEnabled)
 @ApiTags('payments')
 @Controller({
