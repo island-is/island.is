@@ -12,7 +12,7 @@ import {
   MdNormalised,
   MdSerialized,
   SavedVerificationCompleteData,
-} from './cardPayment.types'
+} from '../../types/cardPayment'
 
 import { PaymentFlowAttributes } from '../paymentFlow/models/paymentFlow.model'
 import { CardPaymentModuleConfigType } from './cardPayment.config'

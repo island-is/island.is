@@ -1,5 +1,31 @@
 import { z } from 'zod'
 
+export interface CachePaymentFlowStatus {
+  isVerified?: boolean
+  correlationId?: string
+}
+
+export interface SavedVerificationPendingData {
+  paymentFlowId: string
+}
+
+export interface SavedVerificationCompleteData {
+  cavv: string
+  mdStatus: string
+  xid: string
+  dsTransId: string
+}
+
+export interface MdSerialized {
+  c: string // payment transaction correlation id
+  iat: number
+}
+
+export interface MdNormalised {
+  correlationId: string
+  issuedAt: number
+}
+
 export interface PaymentTrackingData {
   merchantReferenceData: string
   correlationId: string
@@ -72,6 +98,7 @@ export const CardVerificationResponseSchema =
     verificationFields: z.array(FieldSchema),
     additionalFields: z.array(FieldSchema),
     cardInformation: CardInformationSchema,
+    scriptPath: z.string().optional(),
   })
 
 export const CardVerificationDataSchema = z.object({
@@ -94,9 +121,10 @@ export const CardPaymentInputSchema = z.object({
   cardVerificationData: CardVerificationDataSchema.optional(),
 })
 
-const ApplePaySessionResponseSchema = z.object({
-  session: z.string(),
-})
+export const ApplePaySessionResponseSchema =
+  PaymentGatewayApiResponseSchema.extend({
+    session: z.string(),
+  })
 
 const ApplePayPaymentDataSchema = z.object({
   Version: z.string(),

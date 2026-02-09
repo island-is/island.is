@@ -52,7 +52,7 @@ export class VerifyCardResponse {
   cardInformation!: CardInformation
 
   @Field(() => String, { description: 'Script path for further actions' })
-  scriptPath!: string
+  scriptPath?: string
 
   @Field(() => String, { description: 'Response code from the verification' })
   responseCode!: string

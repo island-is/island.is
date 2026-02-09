@@ -29,7 +29,7 @@ import {
   CachePaymentFlowStatus,
   SavedVerificationCompleteData,
   SavedVerificationPendingData,
-} from './cardPayment.types'
+} from '../../types/cardPayment'
 import { generateMd, getPayloadFromMd } from './cardPayment.utils'
 import { ChargeCardInput, VerificationCallbackInput } from './dtos'
 import { RefundCardPaymentInput } from './dtos/refundCardPayment.input'
@@ -935,6 +935,10 @@ describe('CardPaymentController', () => {
                 json: async () => ({
                   isSuccess: true,
                   session: mockSession,
+                  responseCode: 'W0',
+                  responseDescription: 'Success',
+                  responseTime: '00:00:03',
+                  correlationID: 'eb5ce211-f834-4a89-bbff-b73ef2879f77',
                 }),
                 status: 200,
                 ok: true,
@@ -998,6 +1002,10 @@ describe('CardPaymentController', () => {
               return {
                 json: async () => ({
                   isSuccess: false,
+                  responseCode: '51',
+                  responseDescription: 'Insufficient funds',
+                  responseTime: '00:00:01',
+                  correlationID: 'eb5ce211-f834-4a89-bbff-b73ef2879f77',
                 }),
                 status: 200,
                 ok: true,

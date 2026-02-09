@@ -18,11 +18,18 @@ import { InferAttributes } from 'sequelize'
 import { environment } from '../../environments'
 import { PaymentMethod, PaymentStatus } from '../../types'
 import {
+  ApplePaySessionResponseSchema,
+  CachePaymentFlowStatus,
   CardPaymentResponse,
   CardPaymentResponseSchema,
+  CardVerificationResponse,
+  CardVerificationResponseSchema,
+  MdNormalised,
   PaymentTrackingData,
   RefundResponse,
   RefundResponseSchema,
+  SavedVerificationCompleteData,
+  SavedVerificationPendingData,
 } from '../../types/cardPayment'
 import { CatalogItemWithQuantity } from '../../types/charges'
 import { mapToCardErrorCode } from '../../utils/paymentErrors'
@@ -31,13 +38,6 @@ import { PaymentFlowAttributes } from '../paymentFlow/models/paymentFlow.model'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
 import { CardPaymentModuleConfig } from './cardPayment.config'
 import { paymentGatewayResponseCodes } from './cardPayment.constants'
-import {
-  CachePaymentFlowStatus,
-  MdNormalised,
-  SavedVerificationCompleteData,
-  SavedVerificationPendingData,
-  VerificationResponse,
-} from './cardPayment.types'
 import {
   generateApplePayChargeRequestOptions,
   generateApplePaySessionRequestOptions,
@@ -74,7 +74,7 @@ export class CardPaymentService {
   async verify(
     verifyCardInput: VerifyCardInput,
     totalPrice: number,
-  ): Promise<VerificationResponse> {
+  ): Promise<CardVerificationResponse> {
     const {
       memCacheExpiryMinutes,
       paymentGateway: {
@@ -119,27 +119,11 @@ export class CardPaymentService {
       requestOptions,
     )
 
-    if (!response.ok) {
-      const responseBody = await response.text()
-
-      this.logger.error('Failed to verify card', {
-        url: response.url,
-        status: response.status,
-        statusText: response.statusText,
-        responseBody,
-      })
-      throw new BadRequestException(response.statusText)
-    }
-
-    const data = (await response.json()) as VerificationResponse
-
-    if (!data?.isSuccess) {
-      this.logger.error(`Failed to verify card (${paymentFlowId})`, {
-        url: response.url,
-        responseCode: data.responseCode,
-      })
-      throw new BadRequestException(mapToCardErrorCode(data.responseCode))
-    }
+    const data = await this.parsePaymentGatewayResponseAndHandleErrors({
+      response,
+      schema: CardVerificationResponseSchema,
+      errorMessage: `Failed to verify card (${paymentFlowId})`,
+    })
 
     return data
   }
@@ -323,17 +307,13 @@ export class CardPaymentService {
       requestOptions,
     )
 
-    if (!response.ok) {
-      const responseBody = await response.text()
-      this.logger.error('Failed to get Apple Pay session', {
-        statusText: response.statusText,
-        responseBody,
-      })
-      throw new BadRequestException(response.statusText)
-    }
+    const data = await this.parsePaymentGatewayResponseAndHandleErrors({
+      response,
+      schema: ApplePaySessionResponseSchema,
+      errorMessage: 'Failed to get Apple Pay session',
+    })
 
-    const data = await response.json()
-    if (!data.isSuccess || !data.session) {
+    if (!data.session) {
       throw new BadRequestException(CardErrorCode.ErrorGettingApplePaySession)
     }
 
@@ -472,42 +452,27 @@ export class CardPaymentService {
         requestOptions,
       )
 
-      if (!response.ok) {
-        const responseBody = await response.text()
-        this.logger.error(`[${paymentFlowId}] Failed to refund payment`, {
-          statusText: response.statusText,
-          responseBody,
-        })
-        throw new BadRequestException(response.statusText)
-      }
-
-      const data = (await response.json()) as RefundResponse
-
-      if (!data?.isSuccess) {
-        if (
-          data.responseCode?.startsWith(
-            paymentGatewayResponseCodes.INVALID_3D_SECURE_DATA,
-          )
-        ) {
-          const cachedPaymentFlowStatus = (await this.cacheManager.get(
-            paymentFlowId,
-          )) as CachePaymentFlowStatus | undefined
-          if (cachedPaymentFlowStatus) {
-            // If there was an error with the 3D secure data, we need to remove the payment flow status
-            // to allow the client to retry the payment
-            await this.cacheManager.del(paymentFlowId)
+      return this.parsePaymentGatewayResponseAndHandleErrors({
+        response,
+        schema: RefundResponseSchema,
+        errorMessage: `[${paymentFlowId}] Failed to refund payment`,
+        onErrorBeforeThrow: async (data) => {
+          if (
+            data.responseCode?.startsWith(
+              paymentGatewayResponseCodes.INVALID_3D_SECURE_DATA,
+            )
+          ) {
+            const cachedPaymentFlowStatus = (await this.cacheManager.get(
+              paymentFlowId,
+            )) as CachePaymentFlowStatus | undefined
+            if (cachedPaymentFlowStatus) {
+              // If there was an error with the 3D secure data, we need to remove the payment flow status
+              // to allow the client to retry the payment
+              await this.cacheManager.del(paymentFlowId)
+            }
           }
-        }
-
-        this.logger.error(`[${paymentFlowId}] Failed to refund payment`, {
-          responseCode: data?.responseCode,
-          responseDescription: data?.responseDescription,
-          correlationId: data?.correlationID,
-        })
-        throw new BadRequestException(mapToCardErrorCode(data.responseCode))
-      }
-
-      return data
+        },
+      })
     } catch (e) {
       this.logger.error(`[${paymentFlowId}] Failed to refund payment`, e)
       throw e
@@ -621,10 +586,13 @@ export class CardPaymentService {
     response,
     schema,
     errorMessage,
+    onErrorBeforeThrow,
   }: {
     response: Response
     schema: T
     errorMessage: string
+    /** Called when !isSuccess, before throwing. Used for refund's INVALID_3D_SECURE_DATA cache cleanup. */
+    onErrorBeforeThrow?: (data: z.infer<T>) => void | Promise<void>
   }): Promise<z.infer<T>> {
     if (!response.ok) {
       const responseBody = await response.text()
@@ -650,6 +618,7 @@ export class CardPaymentService {
     const { isSuccess, responseCode, responseDescription } = parsedData.data
 
     if (!isSuccess) {
+      await onErrorBeforeThrow?.(parsedData.data)
       this.logger.error(`Payment gateway error: ${errorMessage}`, {
         responseCode,
         responseDescription,

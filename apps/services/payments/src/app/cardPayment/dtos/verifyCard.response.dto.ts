@@ -72,7 +72,7 @@ export class VerifyCardResponse {
 
   @ApiProperty({ description: 'Script path for further actions', type: String })
   @IsString()
-  scriptPath!: string
+  scriptPath?: string
 
   @ApiProperty({
     description: 'Response code from the verification',

@@ -8,7 +8,7 @@ import * as styles from './ThreeDSecure.css'
 interface ThreeDSecureProps {
   isActive: boolean
   postUrl: string
-  scriptPath: string
+  scriptPath?: string
   verificationFields: { name: string; value: string }[]
   hasData: boolean
   onClose: () => void

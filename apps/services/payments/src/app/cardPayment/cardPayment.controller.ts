@@ -347,7 +347,9 @@ export class CardPaymentController {
   })
   async getApplePaySession() {
     try {
-      return this.cardPaymentService.getApplePaySession()
+      const { session } = await this.cardPaymentService.getApplePaySession()
+
+      return { session }
     } catch (e) {
       throw new BadRequestException(
         onlyReturnKnownErrorCode(
