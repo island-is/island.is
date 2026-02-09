@@ -1,4 +1,4 @@
-import { ObjectType, Field } from '@nestjs/graphql'
+import { ObjectType, Field, Int } from '@nestjs/graphql'
 
 @ObjectType('RightsPortalPaymentOverviewTotalsItem')
 export class PaymentOverviewTotalsItem {
@@ -8,12 +8,12 @@ export class PaymentOverviewTotalsItem {
   @Field(() => String, { nullable: true })
   serviceTypeName?: string | null
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   fullCost!: number | null
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   copayCost!: number | null
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   patientCost!: number | null
 }
