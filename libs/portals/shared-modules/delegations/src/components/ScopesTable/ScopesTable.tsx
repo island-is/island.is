@@ -1,3 +1,4 @@
+import { AuthApiScope } from '@island.is/api/schema'
 import { Checkbox, Table as T, Text } from '@island.is/island-ui/core'
 
 type Scope = {
@@ -15,6 +16,8 @@ type Scope = {
 
 type ScopesTableProps = {
   scopes: Scope[]
+  onSelectScope?: (scope: AuthApiScope) => void
+  selectedScopes?: AuthApiScope[]
 }
 
 const headerArray = [
@@ -25,7 +28,11 @@ const headerArray = [
   'Tegund Réttinda',
 ]
 
-export const ScopesTable = ({ scopes }: ScopesTableProps) => {
+export const ScopesTable = ({
+  scopes,
+  onSelectScope,
+  selectedScopes,
+}: ScopesTableProps) => {
   return (
     <T.Table>
       <T.Head>
@@ -49,7 +56,10 @@ export const ScopesTable = ({ scopes }: ScopesTableProps) => {
           return (
             <T.Row key={scope.name}>
               <T.Data style={{ paddingInline: 16 }}>
-                <Checkbox />
+                <Checkbox
+                  checked={selectedScopes?.some((s) => s.name === scope.name)}
+                  onChange={() => onSelectScope?.(scope as AuthApiScope)}
+                />
               </T.Data>
               <T.Data style={{ paddingInline: 16 }}>
                 <Text variant="medium">

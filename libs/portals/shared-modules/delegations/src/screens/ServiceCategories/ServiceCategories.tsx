@@ -20,6 +20,7 @@ import { ScopesTable } from '../../components/ScopesTable/ScopesTable'
 import { FaqList, FaqListProps } from '@island.is/island-ui/contentful'
 import { useLoaderData } from 'react-router-dom'
 import { AccessControlLoaderResponse } from '../AccessControl.loader'
+import ServiceCategoriesList from '../../components/delegations/ServiceCategoriesList'
 
 export const ServiceCategories = () => {
   const { formatMessage, lang } = useLocale()
@@ -120,43 +121,11 @@ export const ServiceCategories = () => {
           )}
         </Box>
 
-        <Box marginTop={6}>
-          {!loading && !error && categories.length > 0 && (
-            <>
-              <Text variant="h3" color="blue400">
-                {formatMessage(m.serviceCategories)}
-              </Text>
-              <Box
-                marginTop={2}
-                display="flex"
-                flexDirection="column"
-                rowGap={2}
-              >
-                {categories.map((cat) => (
-                  <AccordionCard
-                    key={cat.id}
-                    id={cat.id}
-                    label={cat.title}
-                    labelVariant="h3"
-                    labelUse="h2"
-                    iconVariant="default"
-                    visibleContent={cat.description}
-                  >
-                    <Box paddingY={3}>
-                      {cat.scopes.length === 0 ? (
-                        <Text variant="small" color="dark300">
-                          {formatMessage(m.noScopesInCategory)}
-                        </Text>
-                      ) : (
-                        <ScopesTable scopes={cat.scopes} />
-                      )}
-                    </Box>
-                  </AccordionCard>
-                ))}
-              </Box>
-            </>
-          )}
-        </Box>
+        <ServiceCategoriesList
+          loading={loading}
+          error={!!error}
+          categories={categories}
+        />
         {contentfulData?.faqList && (
           <Box paddingTop={8}>
             <FaqList {...(contentfulData.faqList as unknown as FaqListProps)} />

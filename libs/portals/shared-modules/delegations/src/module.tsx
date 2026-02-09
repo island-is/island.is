@@ -8,6 +8,7 @@ import {
 import { DelegationPaths } from './lib/paths'
 import { m } from './lib/messages'
 import { accessControlLoader } from './screens/AccessControl.loader'
+import { GrantAccessScopes } from './screens/GrantAccessScopes/GrantAccessScopes'
 
 const AccessControl = lazy(() => import('./screens/AccessControl'))
 const AccessControlNew = lazy(() => import('./screens/AccessControlNew'))
@@ -67,6 +68,12 @@ export const delegationsModule: PortalModule = {
         path: DelegationPaths.DelegationsGrant,
         element: <GrantAccess />,
         loader: accessControlLoader('umbod/veita')(props),
+      },
+      {
+        name: m.accessScopes,
+        path: DelegationPaths.DelegationsGrantScopes,
+        element: <GrantAccessScopes />,
+        loader: accessControlLoader('umbod/veita-nytt')(props),
       },
       {
         name: coreMessages.accessControlAccess,

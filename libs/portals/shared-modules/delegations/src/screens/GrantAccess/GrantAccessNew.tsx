@@ -51,22 +51,29 @@ const GrantAccess = () => {
   const onSubmit = handleSubmit(async ({ people }) => {
     try {
       // Create delegations for all people
-      const promises = people.map((person: { toNationalId: string }) =>
-        createAuthDelegation({
-          variables: {
-            input: {
-              toNationalId: person.toNationalId,
-            },
-          },
-        }),
-      )
+      // const promises = people.map((person: { toNationalId: string }) =>
+      //   createAuthDelegation({
+      //     variables: {
+      //       input: {
+      //         toNationalId: person.toNationalId,
+      //       },
+      //     },
+      //   }),
+      // )
 
-      const results = await Promise.all(promises)
+      // const results = await Promise.all(promises)
 
-      // Navigate to the first created delegation
-      if (results[0]?.data) {
+      // // Navigate to the first created delegation
+      // if (results[0]?.data) {
+      //   navigate(
+      //     `${DelegationPaths.Delegations}/${results[0].data.createAuthDelegation.id}${queryString}`,
+      //   )
+      // }
+      if (people.length > 0) {
         navigate(
-          `${DelegationPaths.Delegations}/${results[0].data.createAuthDelegation.id}${queryString}`,
+          `${DelegationPaths.DelegationsGrantScopes}?people=${people
+            .map((person: { toNationalId: string }) => person.toNationalId)
+            .join(',')}`,
         )
       }
     } catch (error) {
