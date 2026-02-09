@@ -1,5 +1,5 @@
 import getConfig from 'next/config'
-import { ApolloClient, InMemoryCache, HttpLink } from '@apollo/client'
+import { ApolloClient, HttpLink, InMemoryCache } from '@apollo/client'
 
 const { publicRuntimeConfig = {}, serverRuntimeConfig = {} } = getConfig() ?? {}
 
