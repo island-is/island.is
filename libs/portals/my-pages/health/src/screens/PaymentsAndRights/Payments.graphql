@@ -130,19 +130,6 @@ query getPaymentOverviewTotals($input: RightsPortalPaymentOverviewInput!) {
   }
 }
 
-query getPaymentOverviewTotalsPdf($input: RightsPortalPaymentOverviewInput!) {
-  rightsPortalPaymentOverviewTotalsPdf(input: $input) {
-    items {
-      contentType
-      fileName
-      data
-    }
-    errors {
-      status
-    }
-  }
-}
-
 query getInsuranceOverview {
   rightsPortalInsuranceOverview {
     isInsured

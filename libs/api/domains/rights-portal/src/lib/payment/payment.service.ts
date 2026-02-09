@@ -248,32 +248,4 @@ export class PaymentService {
     }
   }
 
-  async getPaymentOverviewTotalsPdf(
-    user: User,
-    input: PaymentOverviewInput,
-  ): Promise<PaymentResponse<PaymentOverviewDocument>> {
-    try {
-      const data = await this.overviewApi
-        .withMiddleware(new AuthMiddleware(user as Auth))
-        .getPaymentsOverviewTotalsPdf(input)
-        .catch(handle404)
-
-      if (!data) {
-        return {
-          items: [],
-          errors: [{ status: PaymentErrorStatus.NOT_FOUND }],
-        }
-      }
-
-      return {
-        items: [data],
-        errors: [],
-      }
-    } catch (error) {
-      return {
-        items: [],
-        errors: [{ status: PaymentErrorStatus.INTERNAL_SERVICE_ERROR }],
-      }
-    }
-  }
 }

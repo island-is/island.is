@@ -154,19 +154,6 @@ export class PaymentResolver {
     }
   }
 
-  @Query(() => PaymentOverviewDocumentResponse, {
-    name: 'rightsPortalPaymentOverviewTotalsPdf',
-  })
-  @Scopes(ApiScope.healthPayments)
-  @FeatureFlag(Features.isServicePortalHealthPaymentOverviewTotalPageEnabled)
-  @Audit()
-  async getPaymentOverviewTotalsPdf(
-    @CurrentUser() user: User,
-    @Args('input') input: PaymentOverviewInput,
-  ): Promise<PaymentOverviewDocumentResponse> {
-    return await this.service.getPaymentOverviewTotalsPdf(user, input)
-  }
-
   private buildTotalsPdfDownloadUrl(input: PaymentOverviewInput): string {
     const dateFrom =
       input.dateFrom instanceof Date
