@@ -81,6 +81,8 @@ export class NotificationsService {
       })),
     }
 
+    console.log('message in notifications.service.ts', notification)
+
     const response =
       await this.notificationApi.notificationsControllerCreateHnippNotification(
         {
