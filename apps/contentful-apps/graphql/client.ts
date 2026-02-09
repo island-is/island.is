@@ -1,8 +1,7 @@
 import getConfig from 'next/config'
 import { ApolloClient, InMemoryCache, HttpLink } from '@apollo/client'
 
-const { publicRuntimeConfig = {}, serverRuntimeConfig = {} } =
-  getConfig() ?? {}
+const { publicRuntimeConfig = {}, serverRuntimeConfig = {} } = getConfig() ?? {}
 
 const isBrowser = typeof window !== 'undefined'
 
