@@ -18,11 +18,7 @@ import { PaymentFlowAttributes } from '../paymentFlow/models/paymentFlow.model'
 import { CardPaymentModuleConfigType } from './cardPayment.config'
 import { generateChargeFJSPayload } from '../../utils/fjsCharge'
 import { CatalogItemWithQuantity } from '../../types/charges'
-import {
-  CardPaymentResponse,
-  PaymentTrackingData,
-  ApplePayPaymentInput,
-} from '../../types'
+import { PaymentTrackingData, ApplePayPaymentInput } from '../../types'
 import { ApplePayChargeInput } from './dtos'
 
 const MdSerializedSchema = z.object({
@@ -205,23 +201,24 @@ export const getPayloadFromMd = ({
   }
 }
 
+export type CardChargeInfo = {
+  maskedCardNumber: string
+  authorizationCode: string
+  cardScheme: string
+  cardUsage?: string
+}
+
 export const generateCardChargeFJSPayload = ({
   paymentFlow,
   charges,
-  chargeResponse,
+  cardChargeInfo,
   totalPrice,
   systemId,
   merchantReferenceData,
 }: {
   paymentFlow: PaymentFlowAttributes
   charges: CatalogItemWithQuantity[]
-  chargeResponse: {
-    acquirerReferenceNumber: string
-    authorizationCode: string
-    cardScheme: string
-    maskedCardNumber: string
-    cardUsage: string
-  }
+  cardChargeInfo: CardChargeInfo
   totalPrice: number
   systemId: string
   merchantReferenceData: string
@@ -231,12 +228,12 @@ export const generateCardChargeFJSPayload = ({
     charges,
     systemId,
     payInfo: {
-      PAN: chargeResponse.maskedCardNumber,
+      PAN: cardChargeInfo.maskedCardNumber,
       RRN: merchantReferenceData,
-      authCode: chargeResponse.authorizationCode,
-      cardType: chargeResponse.cardScheme,
+      authCode: cardChargeInfo.authorizationCode,
+      cardType: cardChargeInfo.cardScheme,
       payableAmount: totalPrice,
-      paymentMeans: chargeResponse.cardUsage?.toLowerCase()?.startsWith('d')
+      paymentMeans: cardChargeInfo.cardUsage?.toLowerCase()?.startsWith('d')
         ? PayInfoPaymentMeansEnum.Debetkort
         : PayInfoPaymentMeansEnum.Kreditkort,
     },
@@ -343,39 +340,4 @@ export const generateRefundWithCorrelationIdRequestOptions = ({
     headers: generateApplePayRequestHeaders(paymentApiConfig),
     body: JSON.stringify(body),
   }
-}
-
-export const generatePaymentChargeFJSPayload = ({
-  paymentFlow,
-  catalogItems,
-  paymentResult,
-  totalPrice,
-  systemId,
-  merchantReferenceData,
-}: {
-  paymentFlow: PaymentFlowAttributes
-  catalogItems: CatalogItemWithQuantity[]
-  paymentResult: CardPaymentResponse
-  totalPrice: number
-  systemId: string
-  merchantReferenceData: string
-}) => {
-  return generateChargeFJSPayload({
-    paymentFlow,
-    charges: catalogItems,
-    systemId,
-    totalPrice,
-    payInfo: {
-      PAN: paymentResult.maskedCardNumber,
-      RRN: merchantReferenceData,
-      authCode: paymentResult.authorizationCode,
-      cardType: paymentResult.cardInformation.cardScheme,
-      payableAmount: totalPrice,
-      paymentMeans: paymentResult.cardInformation.cardUsage
-        ?.toLowerCase()
-        ?.startsWith('d')
-        ? PayInfoPaymentMeansEnum.Debetkort
-        : PayInfoPaymentMeansEnum.Kreditkort,
-    },
-  })
 }

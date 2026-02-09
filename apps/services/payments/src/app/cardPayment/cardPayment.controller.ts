@@ -346,7 +346,16 @@ export class CardPaymentController {
     type: ApplePaySessionResponse,
   })
   async getApplePaySession() {
-    return this.cardPaymentService.getApplePaySession()
+    try {
+      return this.cardPaymentService.getApplePaySession()
+    } catch (e) {
+      throw new BadRequestException(
+        onlyReturnKnownErrorCode(
+          e.message,
+          CardErrorCode.ErrorGettingApplePaySession,
+        ),
+      )
+    }
   }
 
   @Post('/refund')

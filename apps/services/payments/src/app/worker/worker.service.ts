@@ -87,8 +87,7 @@ export class WorkerService {
     const chargePayload = generateCardChargeFJSPayload({
       paymentFlow,
       charges: catalogItems,
-      chargeResponse: {
-        acquirerReferenceNumber: cardPaymentDetails.acquirerReferenceNumber,
+      cardChargeInfo: {
         authorizationCode: cardPaymentDetails.authorizationCode,
         cardScheme: cardPaymentDetails.cardScheme,
         maskedCardNumber: cardPaymentDetails.maskedCardNumber,

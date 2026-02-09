@@ -575,7 +575,7 @@ export class CardPaymentService {
     const fjsChargePayload = generateCardChargeFJSPayload({
       paymentFlow,
       charges: catalogItems,
-      chargeResponse: cardPaymentConfirmation,
+      cardChargeInfo: cardPaymentConfirmation,
       totalPrice: cardPaymentConfirmation.totalPrice,
       systemId: environment.chargeFjs.systemId,
       merchantReferenceData: cardPaymentConfirmation.merchantReferenceData,

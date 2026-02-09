@@ -94,6 +94,10 @@ export const CardPaymentInputSchema = z.object({
   cardVerificationData: CardVerificationDataSchema.optional(),
 })
 
+const ApplePaySessionResponseSchema = z.object({
+  session: z.string(),
+})
+
 const ApplePayPaymentDataSchema = z.object({
   Version: z.string(),
   Data: z.string(),

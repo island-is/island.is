@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { ApolloError } from '@apollo/client'
 
 import { CardErrorCode } from '@island.is/shared/constants'
+import { findProblemInApolloError } from '@island.is/shared/problem'
 
 import { useChargeApplePayMutation } from '../graphql/mutations.graphql.generated'
 import {
@@ -8,6 +10,18 @@ import {
   useGetApplePaySessionLazyQuery,
 } from '../graphql/queries.graphql.generated'
 import { PaymentError } from '../utils/error/error'
+
+const VALID_CARD_ERROR_CODES = new Set<string>(Object.values(CardErrorCode))
+
+function getValidatedCardErrorCode(message: string): CardErrorCode {
+  return (
+    VALID_CARD_ERROR_CODES.has(message)
+      ? message
+      : CardErrorCode.UnknownCardError
+  ) as CardErrorCode
+}
+
+const APPLE_PAY_JS_VERSION = 3
 
 // Extend Window interface to include ApplePaySession
 declare global {
@@ -68,6 +82,7 @@ export const useApplePay = ({
     }
   }, [isEnabledForUser, paymentFlow])
 
+  // click handler for apple pay button
   const initiateApplePay = useCallback(() => {
     if (!supportsApplePay || !productInformation || !paymentFlow) {
       return
@@ -87,7 +102,10 @@ export const useApplePay = ({
       },
     }
 
-    sessionRef.current = new window.ApplePaySession(3, paymentRequest)
+    sessionRef.current = new window.ApplePaySession(
+      APPLE_PAY_JS_VERSION,
+      paymentRequest,
+    )
 
     sessionRef.current.onvalidatemerchant = async (
       event: ApplePayJS.ApplePayValidateMerchantEvent,
@@ -96,7 +114,15 @@ export const useApplePay = ({
 
       try {
         // call valitor get session endpoint
-        const { data } = await getApplePaySessionQueryHook()
+        const { data, error } = await getApplePaySessionQueryHook()
+        if (error) {
+          const problem = findProblemInApolloError(error)
+          throw new Error(
+            (problem?.detail as string) ??
+              CardErrorCode.ErrorGettingApplePaySession,
+          )
+        }
+
         const session = data?.paymentsGetApplePaySession?.session
 
         if (!session) {
@@ -108,10 +134,12 @@ export const useApplePay = ({
 
         sessionRef.current?.completeMerchantValidation(parsedSession)
       } catch (e) {
+        const problem = findProblemInApolloError(e as ApolloError)
+        const raw =
+          problem?.detail ??
+          (e instanceof Error ? e.message : CardErrorCode.UnknownCardError)
         onPaymentError({
-          code: (e instanceof Error
-            ? e.message
-            : CardErrorCode.UnknownCardError) as CardErrorCode,
+          code: getValidatedCardErrorCode(String(raw)),
         })
       }
     }
@@ -134,7 +162,7 @@ export const useApplePay = ({
       console.log('On payment authorized', event)
 
       try {
-        const { data } = await chargeApplePayMutationHook({
+        const { data, errors: gqlErrors } = await chargeApplePayMutationHook({
           variables: {
             input: {
               paymentFlowId: paymentFlow.id,
@@ -144,6 +172,15 @@ export const useApplePay = ({
             },
           },
         })
+
+        if (gqlErrors && gqlErrors.length > 0) {
+          const problem = findProblemInApolloError({
+            graphQLErrors: gqlErrors,
+          } as ApolloError)
+          throw new Error(
+            (problem?.detail as string) ?? CardErrorCode.UnknownCardError,
+          )
+        }
 
         if (!data?.paymentsChargeApplePay.isSuccess) {
           throw new Error(
@@ -161,10 +198,12 @@ export const useApplePay = ({
           status: window.ApplePaySession.STATUS_FAILURE,
         })
 
+        const problem = findProblemInApolloError(e as ApolloError)
+        const raw =
+          problem?.detail ??
+          (e instanceof Error ? e.message : CardErrorCode.UnknownCardError)
         onPaymentError({
-          code: (e instanceof Error
-            ? e.message
-            : CardErrorCode.UnknownCardError) as CardErrorCode,
+          code: getValidatedCardErrorCode(String(raw)),
         })
       }
     }
