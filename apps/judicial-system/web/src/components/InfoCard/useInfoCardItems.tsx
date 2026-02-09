@@ -340,7 +340,7 @@ const useInfoCardItems = () => {
     title: formatMessage(strings.indictmentReviewDecision),
     values: workingCase.defendants
       ? workingCase.defendants.map((defendant) => (
-          <Text>
+          <Text key={`${defendant.id}-${defendant.indictmentReviewDecision}`}>
             {`${defendant.name} - ${formatMessage(
               defendant.indictmentReviewDecision ===
                 IndictmentCaseReviewDecision.ACCEPT
