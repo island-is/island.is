@@ -137,6 +137,28 @@ const nextConfig = {
       },
     ]
   },
+  async headers() {
+    return [
+      {
+        source: '/.well-known/apple-developer-merchantid-domain-association.txt', 
+        headers: [
+          {
+            key: 'Content-Type',
+            value: 'text/plain',
+          },
+        ],
+      },
+      {
+        source: '/.well-known/apple-developer-merchantid-domain-association', 
+        headers: [
+          {
+            key: 'Content-Type',
+            value: 'text/plain',
+          },
+        ],
+      },
+    ]
+  },
   webpack: (config, { isServer, dev }) => {
     if (process.env.ANALYZE === 'true' && !isServer) {
       config.plugins.push(
