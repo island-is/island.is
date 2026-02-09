@@ -42,7 +42,7 @@ export const useCreateSubpoenas = () => {
       caseId: string,
       input: {
         defendantIds: string[]
-        arraignmentDate?: string
+        arraignmentDate: string
         location?: string
       },
     ) => {

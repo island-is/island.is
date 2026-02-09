@@ -542,7 +542,7 @@ export class BackendService extends DataSource<{ req: Request }> {
     caseId: string,
     createSubpoenas: {
       defendantIds: string[]
-      arraignmentDate?: string
+      arraignmentDate: string
       location?: string
     },
   ): Promise<Subpoena[]> {

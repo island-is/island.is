@@ -33,7 +33,6 @@ import {
   CaseString,
   DateLog,
 } from '../../../repository'
-import { SubpoenaService } from '../../../subpoena'
 import { UserService } from '../../../user'
 import { UpdateCaseDto } from '../../dto/updateCase.dto'
 
@@ -78,7 +77,6 @@ describe('CaseController - Update', () => {
   let mockUserService: UserService
   let mockFileService: FileService
   let transaction: Transaction
-  let mockSubpoenaService: SubpoenaService
   let mockCaseRepositoryService: CaseRepositoryService
   let mockDateLogModel: typeof DateLog
   let mockCaseStringModel: typeof CaseString
@@ -91,7 +89,6 @@ describe('CaseController - Update', () => {
       userService,
       fileService,
       sequelize,
-      subpoenaService,
       caseRepositoryService,
       dateLogModel,
       caseStringModel,
@@ -102,7 +99,6 @@ describe('CaseController - Update', () => {
     mockEventLogService = eventLogService
     mockUserService = userService
     mockFileService = fileService
-    mockSubpoenaService = subpoenaService
     mockCaseRepositoryService = caseRepositoryService
     mockDateLogModel = dateLogModel
     mockCaseStringModel = caseStringModel

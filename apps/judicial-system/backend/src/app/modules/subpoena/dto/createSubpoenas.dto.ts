@@ -1,4 +1,4 @@
-import { Transform, Type } from 'class-transformer'
+import { Type } from 'class-transformer'
 import {
   IsArray,
   IsDate,
@@ -10,8 +10,6 @@ import {
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
-import { SubpoenaType } from '@island.is/judicial-system/types'
-
 export class CreateSubpoenasDto {
   @IsArray()
   @IsUUID(undefined, { each: true })
@@ -22,11 +20,10 @@ export class CreateSubpoenasDto {
   })
   readonly defendantIds!: string[]
 
-  @IsOptional()
   @Type(() => Date)
   @IsDate()
-  @ApiPropertyOptional({ type: Date })
-  readonly arraignmentDate?: Date
+  @ApiProperty({ type: Date })
+  readonly arraignmentDate!: Date
 
   @IsOptional()
   @IsString()

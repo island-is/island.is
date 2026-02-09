@@ -25,9 +25,8 @@ export class CreateSubpoenasInput {
   readonly defendantIds!: string[]
 
   @Allow()
-  @IsOptional()
-  @Field(() => String, { nullable: true })
-  readonly arraignmentDate?: string
+  @Field(() => String, { nullable: false })
+  readonly arraignmentDate!: string
 
   @Allow()
   @IsOptional()

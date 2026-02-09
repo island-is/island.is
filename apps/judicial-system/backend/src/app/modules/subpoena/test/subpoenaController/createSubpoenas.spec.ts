@@ -3,13 +3,14 @@ import { v4 as uuid } from 'uuid'
 
 import { BadRequestException, NotFoundException } from '@nestjs/common'
 
+import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import {
   CaseOrigin,
   CaseType,
   CourtDocumentType,
   SubpoenaType,
+  User,
 } from '@island.is/judicial-system/types'
-import { MessageService, MessageType } from '@island.is/judicial-system/message'
 
 import { createTestingSubpoenaModule } from '../createTestingSubpoenaModule'
 
@@ -23,6 +24,7 @@ import {
   SubpoenaRepositoryService,
 } from '../../../repository'
 import { CreateSubpoenasDto } from '../../dto/createSubpoenas.dto'
+import { SubpoenaController } from '../../subpoena.controller'
 
 interface Then {
   result: Subpoena[]
@@ -81,7 +83,7 @@ describe('SubpoenaController - Create subpoenas', () => {
   let mockMessageService: MessageService
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
-  let subpoenaController: any
+  let subpoenaController: SubpoenaController
 
   beforeEach(async () => {
     const {
@@ -121,7 +123,7 @@ describe('SubpoenaController - Create subpoenas', () => {
           caseId,
           theCase,
           createSubpoenasDto,
-          { id: uuid() },
+          { id: uuid() } as User,
         )
       } catch (error) {
         then.error = error as Error
@@ -387,11 +389,12 @@ describe('SubpoenaController - Create subpoenas', () => {
       it('should throw NotFoundException', async () => {
         const createSubpoenasDto: CreateSubpoenasDto = {
           defendantIds: [defendantId1],
+          arraignmentDate,
         }
 
         const then = await givenWhenThen(caseId, theCase, createSubpoenasDto)
 
-        expect(then.error).toBeInstanceOf(NotFoundException)
+        expect(then.error).toBeInstanceOf(BadRequestException)
         expect(then.error.message).toContain(
           'Subpoenas can only be created for indictment cases',
         )
@@ -408,6 +411,7 @@ describe('SubpoenaController - Create subpoenas', () => {
       it('should throw NotFoundException', async () => {
         const createSubpoenasDto: CreateSubpoenasDto = {
           defendantIds: [defendantId1],
+          arraignmentDate,
         }
 
         const then = await givenWhenThen(caseId, theCase, createSubpoenasDto)
@@ -415,30 +419,6 @@ describe('SubpoenaController - Create subpoenas', () => {
         expect(then.error).toBeInstanceOf(NotFoundException)
         expect(then.error.message).toContain('No defendants found for case')
       })
-    })
-  })
-
-  describe('error cases - missing arraignment date', () => {
-    const theCase = {
-      id: caseId,
-      type: CaseType.INDICTMENT,
-      origin: CaseOrigin.RVG,
-      defendants: [defendant1, defendant2],
-    } as Case
-
-    it('should throw BadRequestException when arraignment date is missing', async () => {
-      const createSubpoenasDto: CreateSubpoenasDto = {
-        defendantIds: [defendantId1, defendantId2],
-        // arraignmentDate missing
-      }
-
-      const then = await givenWhenThen(caseId, theCase, createSubpoenasDto)
-
-      expect(then.error).toBeInstanceOf(BadRequestException)
-      expect(then.error.message).toContain('Arraignment date is required')
-
-      expect(mockSubpoenaRepositoryService.create).not.toHaveBeenCalled()
-      expect(mockMessageService.sendMessagesToQueue).not.toHaveBeenCalled()
     })
   })
 })

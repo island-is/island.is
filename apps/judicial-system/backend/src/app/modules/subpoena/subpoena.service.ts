@@ -132,12 +132,6 @@ export class SubpoenaService {
     theCase: Case,
     user: TUser,
   ): Promise<Subpoena[]> {
-    if (!createSubpoenasDto.arraignmentDate) {
-      throw new BadRequestException(
-        'Arraignment date is required to create subpoenas',
-      )
-    }
-
     const {
       type: caseType,
       id: caseId,
@@ -148,7 +142,7 @@ export class SubpoenaService {
 
     // Subpoenas are only for indictment cases (also enforced by CaseTypeGuard at controller level)
     if (!isIndictmentCase(caseType)) {
-      throw new NotFoundException(
+      throw new BadRequestException(
         `Subpoenas can only be created for indictment cases, but case ${caseId} is of type ${caseType}`,
       )
     }

@@ -205,10 +205,17 @@ const Subpoena: FC = () => {
           .map((defendant) => defendant.id) ?? []
 
     if (defendantIdsToCreateSubpoenasFor.length > 0) {
+      const arraignmentDate = updates?.theCase.arraignmentDate?.date
+      if (!arraignmentDate) {
+        setIsCreatingSubpoena(false)
+        return
+      }
+
+      const location = updates?.theCase.arraignmentDate?.location
       const subpoenasCreated = await createSubpoenas(workingCase.id, {
         defendantIds: defendantIdsToCreateSubpoenasFor,
-        arraignmentDate: updates?.theCase.arraignmentDate?.date ?? undefined,
-        location: updates?.theCase.arraignmentDate?.location ?? undefined,
+        arraignmentDate,
+        location: location ?? undefined,
       })
 
       if (!subpoenasCreated) {
@@ -219,6 +226,7 @@ const Subpoena: FC = () => {
 
     router.push(`${navigateTo}/${workingCase.id}`)
   }, [
+    createSubpoenas,
     isArraignmentScheduled,
     navigateTo,
     newAlternativeServices,
