@@ -1,11 +1,16 @@
 import getConfig from 'next/config'
-import { ApolloClient, HttpLink, InMemoryCache } from '@apollo/client'
+import {
+  ApolloClient,
+  HttpLink,
+  InMemoryCache,
+  type NormalizedCacheObject,
+} from '@apollo/client'
 
 const { publicRuntimeConfig = {}, serverRuntimeConfig = {} } = getConfig() ?? {}
 
 const isBrowser = typeof window !== 'undefined'
 
-let apolloClient: ApolloClient<any> | null = null
+let apolloClient: ApolloClient<NormalizedCacheObject> | null = null
 
 export const createApolloClient = () =>
   new ApolloClient({
