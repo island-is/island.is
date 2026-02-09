@@ -33,6 +33,7 @@ export class CourseChargesService {
     const items: ChargeItemCodeByCourseIdItem[] = catalog.item.map((item) => ({
       code: item.chargeItemCode,
       name: item.chargeItemName,
+      priceAmount: item.priceAmount,
     }))
 
     return { items }

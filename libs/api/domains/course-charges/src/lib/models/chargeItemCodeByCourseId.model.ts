@@ -1,5 +1,5 @@
 import { CacheField } from '@island.is/nest/graphql'
-import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { Field, Float, ObjectType, ID } from '@nestjs/graphql'
 
 @ObjectType()
 export class ChargeItemCodeByCourseIdItem {
@@ -8,6 +8,9 @@ export class ChargeItemCodeByCourseIdItem {
 
   @Field(() => String)
   name!: string
+
+  @Field(() => Float)
+  priceAmount!: number
 }
 
 @ObjectType()
