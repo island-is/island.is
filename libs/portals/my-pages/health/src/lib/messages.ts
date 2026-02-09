@@ -916,6 +916,10 @@ export const messages = defineMessages({
     id: 'sp.health:no-referrals',
     defaultMessage: 'Engar tilvísanir',
   },
+  referralValidTo: {
+    id: 'sp.health:referral-valid-to',
+    defaultMessage: 'Gildir til',
+  },
   organizationWebsite: {
     id: 'sp.health:referrals-org-website',
     defaultMessage: 'Vefur stofnunar',

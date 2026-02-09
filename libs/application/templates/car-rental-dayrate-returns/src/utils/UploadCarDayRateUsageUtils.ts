@@ -325,72 +325,57 @@ export type MonthTotalInput = {
 
 export type MonthTotalResult = {
   totalDays: number
-  entryIds: number[]
+  entryId: number
 }
 
 export const getMonthTotalDayRateDays = ({
   dayRateEntries,
   targetYear,
   targetMonthIndex,
-}: MonthTotalInput): MonthTotalResult => {
+}: MonthTotalInput): MonthTotalResult | null => {
   const entries = dayRateEntries ?? []
-  if (entries.length === 0) return { totalDays: 0, entryIds: [] }
+  if (entries.length === 0) return null
 
-  const monthStartUtc = new Date(Date.UTC(targetYear, targetMonthIndex, 1))
-  const monthEndUtc = new Date(Date.UTC(targetYear, targetMonthIndex + 1, 0))
-  const usedEntryIds = new Set<number>()
+  const targetFromUtc = new Date(Date.UTC(targetYear, targetMonthIndex, 1))
+  const targetToUtc = new Date(Date.UTC(targetYear, targetMonthIndex + 1, 0))
 
-  const hasPeriodUsage = entries.some((entry) => entry.periodUsage?.length)
+  const targetEntry = entries.find((entry) => {
+    if (!entry.validFrom) return false
+    const entryValidFromUtc = new Date(entry.validFrom)
+    const entryValidToUtc = entry.validTo
+      ? new Date(entry.validTo)
+      : targetToUtc
 
-  if (hasPeriodUsage) {
-    const totalDays = entries.reduce((total, entry) => {
-      const usage = entry.periodUsage ?? []
-      const monthTotal = usage.reduce((acc, item) => {
-        if (!item?.period || item.numberOfDays == null) return acc
+    return entryValidFromUtc <= targetToUtc && entryValidToUtc >= targetFromUtc
+  })
 
-        const periodDate = new Date(item.period)
-        const periodYear = periodDate.getUTCFullYear()
-        const periodMonthIndex = periodDate.getUTCMonth()
+  if (!targetEntry) return null
 
-        if (
-          periodYear === targetYear &&
-          periodMonthIndex === targetMonthIndex
-        ) {
-          return acc + item.numberOfDays
-        }
+  // Check if there is an active period usage for the target month
+  const hasPeriodUsage = targetEntry.periodUsage?.some((usage) => {
+    return (
+      usage.period ===
+      `${targetYear}-${(targetMonthIndex + 1).toString().padStart(2, '0')}`
+    )
+  })
 
-        return acc
-      }, 0)
+  if (hasPeriodUsage) return null
 
-      if (monthTotal > 0) {
-        usedEntryIds.add(entry.id)
-      }
+  const entryValidFromUtc = targetEntry.validFrom
+    ? new Date(targetEntry.validFrom)
+    : targetFromUtc
+  const entryValidToUtc = targetEntry.validTo
+    ? new Date(targetEntry.validTo)
+    : targetToUtc
 
-      return total + monthTotal
-    }, 0)
+  const start =
+    entryValidFromUtc > targetFromUtc ? entryValidFromUtc : targetFromUtc
+  const end = entryValidToUtc < targetToUtc ? entryValidToUtc : targetToUtc
 
-    return { totalDays, entryIds: Array.from(usedEntryIds) }
-  }
+  if (end < start) return null
 
-  const totalDays = entries.reduce((total, entry) => {
-    if (!entry.validFrom) return total
+  const days = Math.floor((end.getTime() - start.getTime()) / 86400000) + 1
+  if (days <= 0) return null
 
-    const validFromUtc = new Date(entry.validFrom)
-    const validToUtc = entry.validTo ? new Date(entry.validTo) : monthEndUtc
-
-    const start = validFromUtc > monthStartUtc ? validFromUtc : monthStartUtc
-    const end = validToUtc < monthEndUtc ? validToUtc : monthEndUtc
-
-    if (end < start) return total
-
-    const days = Math.floor((end.getTime() - start.getTime()) / 86400000) + 1
-
-    if (days > 0) {
-      usedEntryIds.add(entry.id)
-    }
-
-    return total + days
-  }, 0)
-
-  return { totalDays, entryIds: Array.from(usedEntryIds) }
+  return { totalDays: days, entryId: targetEntry.id }
 }
