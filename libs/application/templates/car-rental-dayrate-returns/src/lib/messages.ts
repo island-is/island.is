@@ -170,6 +170,12 @@ export const m = {
       defaultMessage: 'Engar breytingar fundust í skjalinu',
       description: 'No cars to change found error',
     },
+    allCarsMustBePresent: {
+      id: 'rsk.crdr.application:multi.upload.error.all.cars.must.be.present',
+      defaultMessage:
+        'Skila þarf upplýsingum um útleigudag fyrir öll ökutæki á daggjaldsskrá',
+      description: 'Entries for all cars must be present in the upload file',
+    },
     invalidFileType: {
       id: 'rsk.crdr.application:multi.upload.error.invalid.file.type',
       defaultMessage: 'Skrá verður að vera .csv eða .xlsx',
