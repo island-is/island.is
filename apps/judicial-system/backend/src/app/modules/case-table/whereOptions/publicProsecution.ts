@@ -8,7 +8,9 @@ import { buildHasDefendantWithNullReviewDecisionCondition } from './conditions'
 // Public prosecution indictments
 // Specific for prosecutors at the public prosecutor office
 
-export const publicProsecutionIndictmentsInReviewWhereOptions = (user: User) => {
+export const publicProsecutionIndictmentsInReviewWhereOptions = (
+  user: User,
+) => {
   const baseWhereOptions = publicProsecutionIndictmentsAccessWhereOptions(user)
 
   return {
@@ -20,7 +22,9 @@ export const publicProsecutionIndictmentsInReviewWhereOptions = (user: User) => 
   }
 }
 
-export const publicProsecutionIndictmentsReviewedWhereOptions = (user: User) => {
+export const publicProsecutionIndictmentsReviewedWhereOptions = (
+  user: User,
+) => {
   const baseWhereOptions = publicProsecutionIndictmentsAccessWhereOptions(user)
 
   return {
