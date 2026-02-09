@@ -28,12 +28,6 @@ module.exports = {
       await queryInterface.removeColumn('case', 'indictment_review_decision', {
         transaction: t,
       })
-
-      // Drop the enum type from the case table
-      await queryInterface.sequelize.query(
-        'DROP TYPE IF EXISTS "enum_case_indictment_review_decision";',
-        { transaction: t },
-      )
     })
   },
 
@@ -44,7 +38,7 @@ module.exports = {
         'case',
         'indictment_review_decision',
         {
-          type: Sequelize.ENUM('APPEAL', 'ACCEPT'),
+          type: Sequelize.STRING,
           allowNull: true,
         },
         { transaction: t },

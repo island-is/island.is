@@ -19,12 +19,10 @@ import {
   DefendantEventType,
   DefendantNotificationType,
   DefenderChoice,
-  EventType,
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
 
 import { CourtService } from '../court'
-import { EventLogService } from '../event-log'
 import {
   Case,
   Defendant,
@@ -43,7 +41,6 @@ export class DefendantService {
     private readonly defendantEventLogRepositoryService: DefendantEventLogRepositoryService,
     private readonly courtService: CourtService,
     private readonly messageService: MessageService,
-    private readonly eventLogService: EventLogService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -275,10 +272,25 @@ export class DefendantService {
       caseId: string
       defendantId: string
       eventType: DefendantEventType
+      user?: User
     },
     transaction: Transaction,
   ): Promise<void> {
-    await this.defendantEventLogRepositoryService.create(event, { transaction })
+    if (event.user) {
+      await this.defendantEventLogRepositoryService.createWithUser(
+        event.eventType,
+        event.caseId,
+        event.defendantId,
+        event.user,
+        transaction,
+      )
+
+      return
+    }
+
+    await this.defendantEventLogRepositoryService.create(event, {
+      transaction,
+    })
   }
 
   private async handleEventLogUpdates(
@@ -293,10 +305,13 @@ export class DefendantService {
       updatedDefendant.indictmentReviewDecision !==
         defendant.indictmentReviewDecision
     ) {
-      await this.eventLogService.createWithUser(
-        EventType.INDICTMENT_REVIEWED,
-        theCase.id,
-        user,
+      await this.createDefendantEvent(
+        {
+          caseId: theCase.id,
+          defendantId: defendant.id,
+          eventType: DefendantEventType.INDICTMENT_REVIEWED,
+          user,
+        },
         transaction,
       )
     }
