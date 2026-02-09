@@ -11,7 +11,6 @@ import {
   NationalRegistryB2C,
   RskCompanyInfo,
 } from '../../../../infra/src/dsl/xroad'
-import type { Context } from '../../../../infra/src/dsl/types/input-types'
 
 const serviceName = 'user-notification'
 const serviceWorkerName = `${serviceName}-worker`
