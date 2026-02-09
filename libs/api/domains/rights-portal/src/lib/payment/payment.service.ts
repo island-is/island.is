@@ -176,7 +176,10 @@ export class PaymentService {
         .catch(handle404)
 
       return {
-        items: data ? data : [],
+        items: (data ?? []).map((st) => ({
+          code: st.code ?? undefined,
+          name: st.name ?? undefined,
+        })),
         errors: [],
       }
     } catch (error) {
@@ -217,21 +220,22 @@ export class PaymentService {
 
       const items =
         totalsData.items?.map<PaymentOverviewTotalsItem>((item) => ({
-          serviceTypeCode: item.serviceTypeCode,
+          serviceTypeCode: item.serviceTypeCode ?? undefined,
           serviceTypeName:
-            (item.serviceTypeCode && nameByCode[item.serviceTypeCode]) ?? null,
-          fullCost: item.fullCost,
-          copayCost: item.copayCost,
-          patientCost: item.patientCost,
-        })) ?? null
+            (item.serviceTypeCode && nameByCode[item.serviceTypeCode]) ??
+            undefined,
+          fullCost: item.fullCost ?? undefined,
+          copayCost: item.copayCost ?? undefined,
+          patientCost: item.patientCost ?? undefined,
+        })) ?? undefined
 
       return {
         items: [
           {
             items,
-            totalFullCost: totalsData.totalFullCost,
-            totalPatientCost: totalsData.totalPatientCost,
-            totalCopayCost: totalsData.totalCopayCost,
+            totalFullCost: totalsData.totalFullCost ?? undefined,
+            totalPatientCost: totalsData.totalPatientCost ?? undefined,
+            totalCopayCost: totalsData.totalCopayCost ?? undefined,
           },
         ],
         errors: [],

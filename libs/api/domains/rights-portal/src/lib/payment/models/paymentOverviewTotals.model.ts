@@ -4,14 +4,14 @@ import { PaymentOverviewTotalsItem } from './paymentOverviewTotalsItem.model'
 @ObjectType('RightsPortalPaymentOverviewTotals')
 export class PaymentOverviewTotals {
   @Field(() => [PaymentOverviewTotalsItem], { nullable: true })
-  items!: PaymentOverviewTotalsItem[] | null
+  items?: PaymentOverviewTotalsItem[]
 
   @Field(() => Int, { nullable: true })
-  totalFullCost!: number | null
+  totalFullCost?: number
 
   @Field(() => Int, { nullable: true })
-  totalPatientCost!: number | null
+  totalPatientCost?: number
 
   @Field(() => Int, { nullable: true })
-  totalCopayCost!: number | null
+  totalCopayCost?: number
 }

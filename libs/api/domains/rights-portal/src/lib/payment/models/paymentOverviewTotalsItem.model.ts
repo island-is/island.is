@@ -3,17 +3,17 @@ import { ObjectType, Field, Int } from '@nestjs/graphql'
 @ObjectType('RightsPortalPaymentOverviewTotalsItem')
 export class PaymentOverviewTotalsItem {
   @Field({ nullable: true })
-  serviceTypeCode!: string | null
+  serviceTypeCode?: string
 
-  @Field(() => String, { nullable: true })
-  serviceTypeName?: string | null
-
-  @Field(() => Int, { nullable: true })
-  fullCost!: number | null
+  @Field({ nullable: true })
+  serviceTypeName?: string
 
   @Field(() => Int, { nullable: true })
-  copayCost!: number | null
+  fullCost?: number
 
   @Field(() => Int, { nullable: true })
-  patientCost!: number | null
+  copayCost?: number
+
+  @Field(() => Int, { nullable: true })
+  patientCost?: number
 }
