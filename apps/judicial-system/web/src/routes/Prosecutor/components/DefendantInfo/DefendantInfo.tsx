@@ -44,7 +44,6 @@ interface Props {
     setWorkingCase: Dispatch<SetStateAction<Case>>,
   ) => void
   onDelete?: (defendant: Defendant) => Promise<void>
-  nationalIdImmutable: boolean
 }
 
 const DefendantInfo: FC<Props> = (props) => {
@@ -55,7 +54,6 @@ const DefendantInfo: FC<Props> = (props) => {
     onDelete,
     onChange,
     updateDefendantState,
-    nationalIdImmutable = false,
   } = props
   const { formatMessage } = useIntl()
   const { personData, businessData, personError, businessError } =
@@ -177,7 +175,6 @@ const DefendantInfo: FC<Props> = (props) => {
         }}
         filled
         large
-        disabled={nationalIdImmutable}
       />
       <InputNationalId
         isDateOfBirth={Boolean(defendant.noNationalId)}
@@ -199,7 +196,6 @@ const DefendantInfo: FC<Props> = (props) => {
             setWorkingCase,
           )
         }
-        disabled={nationalIdImmutable}
         required={!defendant.noNationalId}
       />
       {defendant.nationalId?.length === 11 && nationalIdNotFound && (

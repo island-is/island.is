@@ -61,7 +61,7 @@ import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.cs
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { CourtCaseNumberInput } from '../../components'
-import SelectConnectedCase from './SelectConnectedCase'
+import SelectCandidateMergeCase from './SelectCandidateMergeCase'
 import { strings } from './Conclusion.strings'
 
 const courtSessionOptions = [
@@ -656,7 +656,7 @@ const Conclusion: FC = () => {
                     required
                   />
                   <BlueBox className={grid({ gap: 2 })}>
-                    <SelectConnectedCase
+                    <SelectCandidateMergeCase
                       workingCase={workingCase}
                       setWorkingCase={setWorkingCase}
                       mergeCaseNumber={mergeCaseNumber}
