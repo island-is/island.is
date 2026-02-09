@@ -480,7 +480,7 @@ export const ApplicationConfigurations = {
     translation: ['crfc.application', 'uiForms.application'],
   },
   [ApplicationTypes.CAR_RENTAL_DAYRATE_RETURNS]: {
-    slug: 'bilaleigu-daggjalds-nyting',
+    slug: 'skilagrein-daggjalds-utleigudagar',
     translation: ['crdr.application', 'uiForms.application'],
   },
   [ApplicationTypes.MEDICAL_AND_REHABILITATION_PAYMENTS]: {

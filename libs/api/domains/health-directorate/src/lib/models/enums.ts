@@ -94,3 +94,18 @@ export enum WaitlistStatusTagColorEnum {
 registerEnumType(WaitlistStatusTagColorEnum, {
   name: 'HealthDirectorateWaitlistStatusTagColorEnum',
 })
+
+export enum ReferralStatusEnum {
+  Open = 'Open',
+  Withdrawn = 'Withdrawn',
+  InTreatment = 'InTreatment',
+  Completed = 'Completed',
+  Rejected = 'Rejected',
+  Finished = 'Finished',
+  Deleted = 'Deleted',
+  Expired = 'Expired',
+  Unknown = 'Unknown',
+}
+registerEnumType(ReferralStatusEnum, {
+  name: 'HealthDirectorateReferralStatusEnum',
+})
