@@ -51,7 +51,10 @@ export class VerifyCardResponse {
   @Field(() => CardInformation, { description: 'Card information' })
   cardInformation!: CardInformation
 
-  @Field(() => String, { description: 'Script path for further actions' })
+  @Field(() => String, {
+    description: 'Script path for further actions',
+    nullable: true,
+  })
   scriptPath?: string
 
   @Field(() => String, { description: 'Response code from the verification' })

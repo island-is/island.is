@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsArray, IsBoolean, IsObject, IsString } from 'class-validator'
+import {
+  IsArray,
+  IsBoolean,
+  IsObject,
+  IsOptional,
+  IsString,
+} from 'class-validator'
 
 class VerificationField {
   @ApiProperty({ description: 'Field name', type: String })
@@ -72,6 +78,7 @@ export class VerifyCardResponse {
 
   @ApiProperty({ description: 'Script path for further actions', type: String })
   @IsString()
+  @IsOptional()
   scriptPath?: string
 
   @ApiProperty({
