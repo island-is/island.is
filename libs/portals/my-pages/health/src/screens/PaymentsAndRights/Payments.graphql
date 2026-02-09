@@ -114,6 +114,7 @@ query getPaymentOverviewTotals($input: RightsPortalPaymentOverviewInput!) {
     items {
       items {
         serviceTypeCode
+        serviceTypeName
         fullCost
         copayCost
         patientCost

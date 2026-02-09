@@ -5,6 +5,9 @@ export class PaymentOverviewTotalsItem {
   @Field(() => String, { nullable: true })
   serviceTypeCode!: string | null
 
+  @Field(() => String, { nullable: true })
+  serviceTypeName?: string | null
+
   @Field(() => Number, { nullable: true })
   fullCost!: number | null
 

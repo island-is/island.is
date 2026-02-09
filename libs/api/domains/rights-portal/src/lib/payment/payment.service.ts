@@ -192,21 +192,34 @@ export class PaymentService {
     input: PaymentOverviewInput,
   ): Promise<PaymentResponse<PaymentOverviewTotals>> {
     try {
-      const data = await this.overviewApi
-        .withMiddleware(new AuthMiddleware(user as Auth))
-        .getPaymentsOverviewTotals(input)
-        .catch(handle404)
+      const api = this.overviewApi.withMiddleware(
+        new AuthMiddleware(user as Auth),
+      )
+      const [totalsData, serviceTypesData] = await Promise.all([
+        api.getPaymentsOverviewTotals(input).catch(handle404),
+        api.getPaymentsOverviewTotalsServiceTypes().catch(() => null),
+      ])
 
-      if (!data) {
+      if (!totalsData) {
         return {
           items: [],
           errors: [],
         }
       }
 
+      const nameByCode =
+        serviceTypesData?.reduce<Record<string, string>>((acc, curr) => {
+          if (curr.code != null && curr.name != null) {
+            acc[curr.code] = curr.name
+          }
+          return acc
+        }, {}) ?? {}
+
       const items =
-        data.items?.map<PaymentOverviewTotalsItem>((item) => ({
+        totalsData.items?.map<PaymentOverviewTotalsItem>((item) => ({
           serviceTypeCode: item.serviceTypeCode,
+          serviceTypeName:
+            (item.serviceTypeCode && nameByCode[item.serviceTypeCode]) ?? null,
           fullCost: item.fullCost,
           copayCost: item.copayCost,
           patientCost: item.patientCost,
@@ -216,9 +229,9 @@ export class PaymentService {
         items: [
           {
             items,
-            totalFullCost: data.totalFullCost,
-            totalPatientCost: data.totalPatientCost,
-            totalCopayCost: data.totalCopayCost,
+            totalFullCost: totalsData.totalFullCost,
+            totalPatientCost: totalsData.totalPatientCost,
+            totalCopayCost: totalsData.totalCopayCost,
           },
         ],
         errors: [],

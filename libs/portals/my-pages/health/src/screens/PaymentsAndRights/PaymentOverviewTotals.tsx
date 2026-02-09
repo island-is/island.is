@@ -68,14 +68,6 @@ export const PaymentOverviewTotals = () => {
     serviceTypes?.rightsPortalPaymentOverviewTotalsServiceTypes
   const services = serviceTypesResult?.items
 
-  const serviceTypeNameByCode =
-    services?.reduce<Record<string, string>>((acc, curr) => {
-      if (curr.code && curr.name) {
-        acc[curr.code] = curr.name
-      }
-      return acc
-    }, {}) ?? {}
-
   const options =
     services
       ?.map((s) =>
@@ -134,10 +126,7 @@ export const PaymentOverviewTotals = () => {
   const rows =
     totalsItem?.items?.map((item) => ({
       serviceTypeCode: item.serviceTypeCode ?? '',
-      serviceTypeName:
-        (item.serviceTypeCode && serviceTypeNameByCode[item.serviceTypeCode]) ??
-        item.serviceTypeCode ??
-        '',
+      serviceTypeName: item.serviceTypeName ?? item.serviceTypeCode ?? '',
       fullCost: item.fullCost ?? 0,
       copayCost: item.copayCost ?? 0,
       patientCost: item.patientCost ?? 0,
