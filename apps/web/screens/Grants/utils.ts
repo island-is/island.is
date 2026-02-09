@@ -118,7 +118,7 @@ export const parseStatus = (
     }
     case GrantStatus.Open: {
       const date = grant.dateTo
-        ? formatDate(new Date(grant.dateTo), locale, 'dd. MMMM.')
+        ? formatDate(new Date(grant.dateTo), locale, 'dd. MMMM')
         : undefined
       return {
         applicationStatus: 'open',
