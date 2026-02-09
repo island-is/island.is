@@ -29,7 +29,6 @@ const CourseInstanceChargeItemCodeField = () => {
     onError: () => setLoading(false),
   })
 
-  // Find the parent course that links to this course instance
   useEffect(() => {
     const entryId = sdk.entry.getSys().id
     cma.entry
@@ -55,7 +54,7 @@ const CourseInstanceChargeItemCodeField = () => {
 
   return (
     <>
-      {!loading && !data?.getChargeItemCodesByCourseId?.items.length && (
+      {!loading && chargeItemCodes.length === 0 && (
         <TextInput
           value={value}
           onChange={(e) => {
@@ -65,7 +64,7 @@ const CourseInstanceChargeItemCodeField = () => {
           }}
         />
       )}
-      {!loading && Boolean(data?.getChargeItemCodesByCourseId?.items.length) && (
+      {!loading && chargeItemCodes.length > 0 && (
         <Select
           value={value}
           onChange={(e) => {
