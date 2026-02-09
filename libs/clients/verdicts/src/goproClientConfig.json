@@ -262,7 +262,7 @@
             "items": { "type": "string" },
             "collectionFormat": "multi"
           },
-{
+          {
             "name": "caseType",
             "in": "query",
             "description": "Published bookings per case type/s. If no values provided bookings for all case types will be returned.",
