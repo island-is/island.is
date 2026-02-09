@@ -1,0 +1,22 @@
+generates:
+  ./apps/contentful-apps/graphql/schema.ts:
+    schema:
+      - ./apps/api/src/api.graphql
+    documents:
+      - ./apps/contentful-apps/**/*.(ts|tsx)
+    plugins:
+      - typescript
+      - typescript-operations
+    config:
+      avoidOptionals:
+        object: true
+  ./apps/contentful-apps/graphql/possibleTypes.json:
+    schema:
+      - ./apps/api/src/api.graphql
+    plugins:
+      - fragment-matcher
+    config:
+      apolloClientVersion: 3
+hooks:
+  afterAllFileWrite:
+    - prettier --write
