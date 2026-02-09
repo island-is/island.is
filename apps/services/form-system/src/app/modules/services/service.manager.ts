@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { ZendeskService } from './zendesk.service'
-import { NudgeService } from './nudge.service'
+import { NotifyService } from './notify.service'
 import { ApplicationDto } from '../applications/models/dto/application.dto'
 import { ScreenValidationResponse } from '../../dataTypes/validationResponse.model'
 import { ValidationService } from './validation.service'
@@ -10,7 +10,7 @@ import { ScreenDto } from '../screens/models/dto/screen.dto'
 export class ServiceManager {
   constructor(
     private readonly zendeskService: ZendeskService,
-    private readonly nugdeService: NudgeService,
+    private readonly notifyService: NotifyService,
     private readonly validationService: ValidationService,
   ) {}
 
@@ -24,7 +24,10 @@ export class ServiceManager {
     if (submitUrl === 'zendesk') {
       return await this.zendeskService.sendToZendesk(applicationDto)
     } else if (submitUrl !== 'zendesk') {
-      return await this.nugdeService.sendNudge(applicationDto, submitUrl)
+      return await this.notifyService.sendNotification(
+        applicationDto,
+        submitUrl,
+      )
     }
 
     return false

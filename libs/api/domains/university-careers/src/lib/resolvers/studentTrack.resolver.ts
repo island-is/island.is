@@ -1,6 +1,6 @@
-import { Args, Query, ResolveField, Resolver } from '@nestjs/graphql'
+import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
 import { Inject, UseGuards } from '@nestjs/common'
-import { Audit } from '@island.is/nest/audit'
+import { Audit, AuditService } from '@island.is/nest/audit'
 import {
   CurrentUser,
   IdsUserGuard,
@@ -16,14 +16,19 @@ import { UniversityCareersService } from '../universityCareers.service'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { StudentInfoByUniversityInput } from '../dto/studentInfoByUniversity.input'
 import { Locale } from '@island.is/shared/types'
+import { AUDIT_NAMESPACE } from '../constants'
+import { StudentFile } from '../models/studentFile.model'
+import { mapEnumToType } from '../mapper'
+import { isDefined } from '@island.is/shared/utils'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.education)
 @Resolver(() => StudentTrack)
-@Audit({ namespace: '@island.is/api/university-careers' })
+@Audit({ namespace: AUDIT_NAMESPACE })
 export class StudentTrackResolver {
   constructor(
     private service: UniversityCareersService,
+    private readonly auditService: AuditService,
     @Inject(DownloadServiceConfig.KEY)
     private readonly downloadServiceConfig: ConfigType<
       typeof DownloadServiceConfig
@@ -56,7 +61,42 @@ export class StudentTrackResolver {
 
     return {
       ...student,
-      downloadServiceURL: `${this.downloadServiceConfig.baseUrl}/download/v1/education/graduation/`,
     }
+  }
+
+  @ResolveField('files', () => [StudentFile])
+  resolveFiles(
+    @CurrentUser() user: User,
+    @Parent() track: StudentTrack,
+  ): Array<StudentFile> {
+    this.auditService.audit({
+      auth: user,
+      namespace: AUDIT_NAMESPACE,
+      action: 'resolveFiles',
+      resources: user.nationalId,
+    })
+
+    if (!track.transcript || !track.files) {
+      this.logger.info(
+        'Student file has no transcript or files. Returning empty array',
+      )
+      return []
+    }
+
+    const { institution, trackNumber } = track.transcript
+
+    return track.files
+      .map((f) => {
+        const type = mapEnumToType(f.type)
+        if (!type) {
+          this.logger.warn(`Invalid file type while downloading student file`)
+          return null
+        }
+        return {
+          ...f,
+          downloadServiceURL: `${this.downloadServiceConfig.baseUrl}/download/v1/education/graduation/${f.locale}/${institution.shortId}/${trackNumber}/${type}`,
+        }
+      })
+      .filter(isDefined)
   }
 }

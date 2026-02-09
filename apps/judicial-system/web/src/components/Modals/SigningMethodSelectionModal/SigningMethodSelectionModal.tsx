@@ -11,9 +11,10 @@ import { useRequestCourtRecordSignatureMutation } from '@island.is/judicial-syst
 
 import { Modal } from '../..'
 import { useRequestRulingSignatureMutation } from './requestRulingSignature.generated'
-import { signingMethodSelectionModal as m } from './SigningMethodSelectionModal.strings'
 
 export type SignatureType = 'ruling' | 'courtRecord'
+
+type LoadingMethod = 'mobile' | 'audkenni'
 
 interface SigningMethodSelectionModalProps {
   workingCase: Case
@@ -29,13 +30,15 @@ export const SigningMethodSelectionModal: FC<
   SigningMethodSelectionModalProps
 > = ({ workingCase, signatureType, onClose, onSignatureRequested }) => {
   const { formatMessage } = useIntl()
-  const [isLoading, setIsLoading] = useState(false)
+  const [loadingMethod, setLoadingMethod] = useState<LoadingMethod | undefined>(
+    undefined,
+  )
 
   // Ruling signature mutation
   const [requestRulingSignature] = useRequestRulingSignatureMutation({
     onError: () => {
       toast.error(formatMessage(errorMessages.requestRulingSignature))
-      setIsLoading(false)
+      setLoadingMethod(undefined)
     },
   })
 
@@ -43,12 +46,12 @@ export const SigningMethodSelectionModal: FC<
   const [requestCourtRecordSignature] = useRequestCourtRecordSignatureMutation({
     onError: () => {
       toast.error(formatMessage(errorMessages.requestCourtRecordSignature))
-      setIsLoading(false)
+      setLoadingMethod(undefined)
     },
   })
 
   const handleMethodSelection = async (isAudkenni: boolean) => {
-    setIsLoading(true)
+    setLoadingMethod(isAudkenni ? 'audkenni' : 'mobile')
 
     let response: RequestSignatureResponse | undefined | null = null
     try {
@@ -75,39 +78,35 @@ export const SigningMethodSelectionModal: FC<
         response = result.data?.requestCourtRecordSignature
       }
     } catch (error) {
-      setIsLoading(false)
+      setLoadingMethod(undefined)
     }
 
     if (response) {
       onSignatureRequested(response, isAudkenni)
     } else {
       toast.error(formatMessage(errorMessages.requestCourtRecordSignature))
-      setIsLoading(false)
+      setLoadingMethod(undefined)
     }
   }
 
-  const description =
-    signatureType === 'ruling'
-      ? formatMessage(m.descriptionRuling, {
-          courtCaseNumber: workingCase.courtCaseNumber || '',
-        })
-      : formatMessage(m.descriptionCourtRecord, {
-          courtCaseNumber: workingCase.courtCaseNumber || '',
-        })
+  const courtCaseNumber = workingCase.courtCaseNumber || ''
+  const description = `Þú ert að fara að undirrita ${
+    signatureType === 'ruling' ? 'úrskurð' : 'þingbók'
+  } í máli ${courtCaseNumber}. \nVinsamlegast veldu undirritunarleið til að halda áfram.`
 
   return (
     <Modal
-      title={formatMessage(m.title)}
+      title="Undirritun"
       text={description}
       secondaryButton={{
-        text: formatMessage(m.audkenniButton),
+        text: 'Auðkennisappið',
         onClick: () => handleMethodSelection(true),
-        isLoading: isLoading,
+        isLoading: loadingMethod === 'audkenni',
       }}
       primaryButton={{
-        text: formatMessage(m.mobileButton),
+        text: 'Rafræn skilríki',
         onClick: () => handleMethodSelection(false),
-        isLoading: isLoading,
+        isLoading: loadingMethod === 'mobile',
       }}
       onClose={onClose}
     />

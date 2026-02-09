@@ -916,6 +916,10 @@ export const messages = defineMessages({
     id: 'sp.health:no-referrals',
     defaultMessage: 'Engar tilvísanir',
   },
+  referralValidTo: {
+    id: 'sp.health:referral-valid-to',
+    defaultMessage: 'Gildir til',
+  },
   organizationWebsite: {
     id: 'sp.health:referrals-org-website',
     defaultMessage: 'Vefur stofnunar',
@@ -943,6 +947,14 @@ export const messages = defineMessages({
   waitlistsIntro: {
     id: 'sp.health:waitlists-intro',
     defaultMessage: 'Hér finnur þú biðlista ...',
+  },
+  waitlistsDescriptionInfo: {
+    id: 'sp.health:waitlists-description-info',
+    defaultMessage: 'Lesa nánar um biðlista hér',
+  },
+  waitlistsDescriptionLink: {
+    id: 'sp.health:waitlists-description-link',
+    defaultMessage: 'https://island.is/bidlistar-heilbrigdisthjonusta',
   },
   statusLastUpdated: {
     id: 'sp.health:waitlist-last-updated',

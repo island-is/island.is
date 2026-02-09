@@ -230,12 +230,12 @@ export const m = {
     errorMessageToUser: {
       id: 'rsk.crfc.application:multi.upload.error.message.to.user',
       defaultMessage:
-        'villur fundust. Hlaða má niður sniðmáti með villum og reynda aftur.',
+        'villur fundust. Hlaða má niður sniðmáti með villum og reyna aftur.',
       description: 'Error message to user',
     },
     noCarsToChangeFound: {
       id: 'rsk.crfc.application:multi.upload.error.no.cars',
-      defaultMessage: 'Engir breytingar fundust í skjalinu',
+      defaultMessage: 'Engar breytingar fundust í skjalinu',
       description: 'No cars to change found error',
     },
     invalidFileType: {
