@@ -38,11 +38,11 @@ export const ThreeDSecure: React.FC<ThreeDSecureProps> = ({
       const iframeDoc = iframeRef.current.contentWindow?.document
 
       if (iframeDoc) {
-        const formHtml = generateFormHtml(
+        const formHtml = generateFormHtml({
           postUrl,
           scriptPath,
           verificationFields,
-        )
+        })
         iframeDoc.open()
         iframeDoc.write(formHtml)
         iframeDoc.close()
