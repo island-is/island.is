@@ -36,7 +36,7 @@ export class NovaError extends Error {
 
 /**
  * SMS Service using Nova SMS API v1
- * 
+ *
  * Features:
  * - HTTP POST with JSON payloads
  * - HTTP Basic Authentication
@@ -58,14 +58,13 @@ export class SmsService {
     // Create EnhancedFetch instance with HTTP Basic Auth
     this.fetch = createEnhancedFetch({
       name: 'clients-nova-sms',
-      timeout: 30000, // 30 seconds to handle 'delivery' wait strategy
       logErrorResponseBody: true,
     })
   }
 
   /**
    * Send SMS to one or multiple recipients
-   * 
+   *
    * @param recipients - Phone number(s) - string for single, array for multiple (max 100)
    * @param message - Message text content
    * @param options - Optional settings (wait strategy, custom sender name)
@@ -144,7 +143,7 @@ export class SmsService {
 
   /**
    * Query status of previously sent messages by UUID
-   * 
+   *
    * @param uuids - UUID(s) to query - string for single, array for multiple (max 100)
    * @returns Current status and delivery information for each message
    * @throws NovaError on API-level errors
