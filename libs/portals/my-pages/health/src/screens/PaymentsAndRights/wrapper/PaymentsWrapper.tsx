@@ -1,4 +1,4 @@
-import { AlertMessage, Box, Button, Text } from '@island.is/island-ui/core'
+import { AlertMessage, Box, Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   downloadLink,
@@ -10,7 +10,6 @@ import { useEffect, useState } from 'react'
 import { messages } from '../../../lib/messages'
 import { healthNavigation } from '../../../lib/navigation'
 import { useGetInsuranceConfirmationLazyQuery } from '../Payments.generated'
-import * as styles from '../Payments.css'
 
 type Props = {
   children: React.ReactNode
@@ -85,26 +84,6 @@ export const PaymentsWrapper = ({ children, pathname }: Props) => {
 
       <Box paddingY={4} background="white">
         {children}
-      </Box>
-      <Box className={styles.linkText} marginTop={4} marginBottom={2}>
-        <Text variant="small">
-          {formatMessage(messages.paymentsParticipationInfo, {
-            link: (parts: React.ReactNode[]) => (
-              <Button
-                variant="text"
-                size="small"
-                onClick={() => {
-                  const url = formatMessage(
-                    messages.readAboutPaymentParticipationSystemsLink,
-                  )
-                  window.open(url, '_blank', 'noopener,noreferrer')
-                }}
-              >
-                {parts}
-              </Button>
-            ),
-          })}
-        </Text>
       </Box>
     </IntroWrapper>
   )

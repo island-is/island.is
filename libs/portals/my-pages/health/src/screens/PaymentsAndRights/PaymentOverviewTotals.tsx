@@ -37,6 +37,7 @@ import {
   useGetPaymentOverviewTotalsPdfLazyQuery,
 } from './Payments.generated'
 import * as styles from './Payments.css'
+import { PaymentOverviewParticipationInfo } from './PaymentOverviewParticipationInfo'
 import { PaymentsWrapper } from './wrapper/PaymentsWrapper'
 
 export const PaymentOverviewTotals = () => {
@@ -307,6 +308,7 @@ export const PaymentOverviewTotals = () => {
           </Stack>
         </Box>
       )}
+      <PaymentOverviewParticipationInfo />
     </PaymentsWrapper>
   )
 }

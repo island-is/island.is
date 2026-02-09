@@ -37,6 +37,7 @@ import {
   useGetPaymentOverviewLazyQuery,
   useGetPaymentOverviewServiceTypesQuery,
 } from './Payments.generated'
+import { PaymentOverviewParticipationInfo } from './PaymentOverviewParticipationInfo'
 import { PaymentsWrapper } from './wrapper/PaymentsWrapper'
 import {
   getFirstDayOfPreviousYear,
@@ -356,6 +357,7 @@ export const PaymentOverview = () => {
           </Stack>
         </Box>
       )}
+      <PaymentOverviewParticipationInfo />
     </PaymentsWrapper>
   )
 }
