@@ -71,9 +71,7 @@ const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
   const { activeLocale } = useI18n()
   const { format } = useDateUtils()
 
-  const chargeItemMap = new Map(
-    chargeItems.map((item) => [item.code, item]),
-  )
+  const chargeItemMap = new Map(chargeItems.map((item) => [item.code, item]))
 
   return (
     <OrganizationWrapper
