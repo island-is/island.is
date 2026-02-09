@@ -4,6 +4,7 @@ import router from 'next/router'
 
 import {
   Box,
+  Checkbox,
   FileUploadStatus,
   Input,
   InputFileUpload,
@@ -34,11 +35,9 @@ import {
   PageTitle,
   PdfButton,
   SectionHeading,
-  SelectableList,
   useCourtArrangements,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { SelectableItem } from '@island.is/judicial-system-web/src/components/SelectableList/SelectableList'
 import {
   CaseFileCategory,
   CaseIndictmentRulingDecision,
@@ -52,6 +51,7 @@ import {
   formatDateForServer,
   UpdateCase,
   useCase,
+  useDefendants,
   useFileList,
   useS3Upload,
   useUploadFiles,
@@ -120,7 +120,8 @@ const Conclusion: FC = () => {
   } = useCase()
   const { courtDate, handleCourtDateChange, handleCourtRoomChange } =
     useCourtArrangements(workingCase, setWorkingCase, 'courtDate')
-  const { createVerdicts } = useVerdict()
+  const { createVerdicts, updateDefendantVerdictState } = useVerdict()
+  const { updateDefendantState, updateDefendant } = useDefendants()
   const {
     uploadFiles,
     allFilesDoneOrError,
@@ -144,8 +145,6 @@ const Conclusion: FC = () => {
   const [mergeCaseNumber, setMergeCaseNumber] = useState<string>()
   const [mergeCaseNumberErrorMessage, setMergeCaseNumberErrorMessage] =
     useState<string>()
-  const [defendantsWithDefaultJudgments, setDefendantsWithDefaultJudgments] =
-    useState<SelectableItem[]>([])
   const [selectedDefendant, setSelectedDefendant] = useState<Defendant | null>(
     null,
   )
@@ -227,19 +226,44 @@ const Conclusion: FC = () => {
 
       if (
         update.indictmentDecision === IndictmentDecision.COMPLETING &&
-        update.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
+        update.indictmentRulingDecision &&
+        [
+          CaseIndictmentRulingDecision.RULING,
+          CaseIndictmentRulingDecision.FINE,
+        ].includes(update.indictmentRulingDecision)
       ) {
-        const defendantVerdictsToCreate = defendantsWithDefaultJudgments?.map(
-          (item) => ({
-            defendantId: item.id,
-            isDefaultJudgement: item.checked,
-          }),
+        const promises = []
+
+        if (
+          update.indictmentRulingDecision ===
+          CaseIndictmentRulingDecision.RULING
+        ) {
+          const defendantVerdictsToCreate = workingCase.defendants?.map(
+            (item) => ({
+              defendantId: item.id,
+              isDefaultJudgement: item.verdict?.isDefaultJudgement || false,
+            }),
+          )
+
+          promises.push(
+            createVerdicts({
+              caseId: workingCase.id,
+              verdicts: defendantVerdictsToCreate,
+            }),
+          )
+        }
+
+        promises.push(
+          ...(workingCase.defendants?.map((defendant) =>
+            updateDefendant({
+              caseId: workingCase.id,
+              defendantId: defendant.id,
+              isDrivingLicenseSuspended: defendant.isDrivingLicenseSuspended,
+            }),
+          ) || []),
         )
 
-        const createSuccess = await createVerdicts({
-          caseId: workingCase.id,
-          verdicts: defendantVerdictsToCreate,
-        })
+        const createSuccess = await Promise.all(promises)
 
         if (!createSuccess) {
           return
@@ -256,7 +280,6 @@ const Conclusion: FC = () => {
       courtDate.date,
       courtDate.location,
       createVerdicts,
-      defendantsWithDefaultJudgments,
       mergeCaseNumber,
       postponementReason,
       selectedAction,
@@ -264,6 +287,7 @@ const Conclusion: FC = () => {
       selectedDecision,
       setAndSendCaseToServer,
       setWorkingCase,
+      updateDefendant,
       workingCase,
     ],
   )
@@ -316,16 +340,6 @@ const Conclusion: FC = () => {
       setMergeCaseNumber(workingCase.mergeCaseNumber)
     }
   }, [workingCase.mergeCaseNumber])
-
-  useEffect(() => {
-    setDefendantsWithDefaultJudgments(
-      (workingCase.defendants ?? []).map((d) => ({
-        id: d.id,
-        name: d.name ?? 'Nafn ekki skráð',
-        checked: d.verdict?.isDefaultJudgement ?? false,
-      })),
-    )
-  }, [workingCase.defendants])
 
   const handleMergeCaseNumberBlur = (value: string) => {
     const validation = validate([[value, ['S-case-number']]])
@@ -433,9 +447,9 @@ const Conclusion: FC = () => {
                 name="conclusion-decision"
                 checked={selectedAction === IndictmentDecision.POSTPONING}
                 disabled={workingCase.state === CaseState.CORRECTING}
-                onChange={() => {
+                onChange={() =>
                   setSelectedAction(IndictmentDecision.POSTPONING)
-                }}
+                }
                 large
                 backgroundColor="white"
                 label={formatMessage(strings.postponing)}
@@ -445,9 +459,9 @@ const Conclusion: FC = () => {
                 name="conclusion-decision"
                 checked={selectedAction === IndictmentDecision.SCHEDULING}
                 disabled={workingCase.state === CaseState.CORRECTING}
-                onChange={() => {
+                onChange={() =>
                   setSelectedAction(IndictmentDecision.SCHEDULING)
-                }}
+                }
                 large
                 backgroundColor="white"
                 label={formatMessage(strings.scheduling)}
@@ -459,9 +473,9 @@ const Conclusion: FC = () => {
                   selectedAction === IndictmentDecision.POSTPONING_UNTIL_VERDICT
                 }
                 disabled={workingCase.state === CaseState.CORRECTING}
-                onChange={() => {
+                onChange={() =>
                   setSelectedAction(IndictmentDecision.POSTPONING_UNTIL_VERDICT)
-                }}
+                }
                 large
                 backgroundColor="white"
                 label={formatMessage(strings.postponingUntilVerdict)}
@@ -471,9 +485,9 @@ const Conclusion: FC = () => {
                 name="conclusion-decision"
                 checked={selectedAction === IndictmentDecision.COMPLETING}
                 disabled={workingCase.state === CaseState.CORRECTING}
-                onChange={() => {
+                onChange={() =>
                   setSelectedAction(IndictmentDecision.COMPLETING)
-                }}
+                }
                 large
                 backgroundColor="white"
                 label={formatMessage(strings.completing)}
@@ -483,9 +497,9 @@ const Conclusion: FC = () => {
                 name="conclusion-redistribute"
                 checked={selectedAction === IndictmentDecision.REDISTRIBUTING}
                 disabled={workingCase.state === CaseState.CORRECTING}
-                onChange={() => {
+                onChange={() =>
                   setSelectedAction(IndictmentDecision.REDISTRIBUTING)
-                }}
+                }
                 large
                 backgroundColor="white"
                 label={formatMessage(strings.redistributing)}
@@ -496,9 +510,9 @@ const Conclusion: FC = () => {
                   name="conclusion-splitting"
                   checked={selectedAction === IndictmentDecision.SPLITTING}
                   disabled={workingCase.state === CaseState.CORRECTING}
-                  onChange={() => {
+                  onChange={() =>
                     setSelectedAction(IndictmentDecision.SPLITTING)
-                  }}
+                  }
                   large
                   backgroundColor="white"
                   label="Kljúfa mál"
@@ -782,18 +796,61 @@ const Conclusion: FC = () => {
               </Box>
             )}
           {selectedAction === IndictmentDecision.COMPLETING &&
-            selectedDecision === CaseIndictmentRulingDecision.RULING &&
+            (selectedDecision === CaseIndictmentRulingDecision.FINE ||
+              selectedDecision === CaseIndictmentRulingDecision.RULING) &&
             workingCase.defendants &&
             workingCase.defendants?.length > 0 && (
-              <Box component="section">
-                <SelectableList
-                  selectAllText="Útivistardómur"
-                  items={defendantsWithDefaultJudgments}
-                  onChange={(selectableItems: SelectableItem[]) => {
-                    setDefendantsWithDefaultJudgments(selectableItems)
-                  }}
-                  isLoading={false}
-                />
+              <Box component="section" className={grid({ gap: 3 })}>
+                {workingCase.defendants.map((defendant) => (
+                  <BlueBox key={defendant.id} className={grid({ gap: 2 })}>
+                    <SectionHeading
+                      title={defendant.name || ''}
+                      variant="h5"
+                      marginBottom={0}
+                    />
+                    {selectedDecision ===
+                      CaseIndictmentRulingDecision.RULING && (
+                      <Checkbox
+                        id={`default-judgment-${defendant.id}`}
+                        label="Útivistardómur"
+                        checked={defendant.verdict?.isDefaultJudgement || false}
+                        onChange={(evt) =>
+                          updateDefendantVerdictState(
+                            {
+                              caseId: workingCase.id,
+                              defendantId: defendant.id,
+                              isDefaultJudgement: evt.target.checked,
+                            },
+                            setWorkingCase,
+                          )
+                        }
+                        disabled={workingCase.state === CaseState.CORRECTING}
+                        backgroundColor="white"
+                        large
+                        filled
+                      />
+                    )}
+                    <Checkbox
+                      id={`driving-license-revocation-${defendant.id}`}
+                      label="Svipting ökuréttar"
+                      checked={defendant.isDrivingLicenseSuspended || false}
+                      onChange={(evt) =>
+                        updateDefendantState(
+                          {
+                            caseId: workingCase.id,
+                            defendantId: defendant.id,
+                            isDrivingLicenseSuspended: evt.target.checked,
+                          },
+                          setWorkingCase,
+                        )
+                      }
+                      disabled={workingCase.state === CaseState.CORRECTING}
+                      backgroundColor="white"
+                      large
+                      filled
+                    />
+                  </BlueBox>
+                ))}
               </Box>
             )}
           {selectedAction && workingCase.withCourtSessions && (
