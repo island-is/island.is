@@ -339,21 +339,23 @@ const useInfoCardItems = () => {
     id: 'indictment-review-decision-item',
     title: formatMessage(strings.indictmentReviewDecision),
     values: workingCase.defendants
-      ? workingCase.defendants.map((defendant) => (
-          <Text key={`${defendant.id}-${defendant.indictmentReviewDecision}`}>
-            {`${defendant.name} - ${formatMessage(
-              defendant.indictmentReviewDecision ===
-                IndictmentCaseReviewDecision.ACCEPT
-                ? strings.reviewTagAccepted
-                : strings.reviewTagAppealed,
-              {
-                isFine:
-                  workingCase.indictmentRulingDecision ===
-                  CaseIndictmentRulingDecision.FINE,
-              },
-            )}`}
-          </Text>
-        ))
+      ? workingCase.defendants
+          .filter((defendant) => defendant.indictmentReviewDecision)
+          .map((defendant) => (
+            <Text key={`${defendant.id}-${defendant.indictmentReviewDecision}`}>
+              {`${defendant.name} - ${formatMessage(
+                defendant.indictmentReviewDecision ===
+                  IndictmentCaseReviewDecision.ACCEPT
+                  ? strings.reviewTagAccepted
+                  : strings.reviewTagAppealed,
+                {
+                  isFine:
+                    workingCase.indictmentRulingDecision ===
+                    CaseIndictmentRulingDecision.FINE,
+                },
+              )}`}
+            </Text>
+          ))
       : [],
   }
 
