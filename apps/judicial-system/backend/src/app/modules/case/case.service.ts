@@ -1871,8 +1871,8 @@ export class CaseService {
         [Op.and]: {
           isArchived: false,
           type: CaseType.INDICTMENT,
+          state: [CaseState.RECEIVED],
           id: { [Op.ne]: theCase.id },
-          state: [CaseState.SUBMITTED, CaseState.RECEIVED],
         },
       },
     })
