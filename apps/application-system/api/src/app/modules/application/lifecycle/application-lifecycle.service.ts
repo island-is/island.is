@@ -92,9 +92,11 @@ export class ApplicationLifeCycleService {
     })
 
     for (const { application } of this.processingApplications) {
-      const notification = await this.preparePrunedNotification(application)
-      if (notification) {
-        this.pruneNotifications.set(application.id, notification)
+      const notifications = await this.preparePrunedNotification(application)
+      if (notifications && notifications.length > 0) {
+        notifications.forEach((notification) => {
+          this.pruneNotifications.set(application.id, notification)
+        })
       }
     }
   }
@@ -209,7 +211,7 @@ export class ApplicationLifeCycleService {
 
   private async preparePrunedNotification(
     application: PruningApplication,
-  ): Promise<CreateHnippNotificationDto | null> {
+  ): Promise<Array<CreateHnippNotificationDto> | null> {
     try {
       const template = await getApplicationTemplateByTypeId(application.typeId)
       if (!template) {
@@ -225,21 +227,48 @@ export class ApplicationLifeCycleService {
                   application as ApplicationWithAttachments,
                 )
               : lifeCycle.pruneMessage
-          const notification = {
-            recipient: application.applicant,
-            templateId: pruneMessage.notificationTemplateId,
-            args: [
-              {
-                key: 'externalBody',
-                value: pruneMessage.externalBody || '',
-              },
-              {
-                key: 'internalBody',
-                value: pruneMessage.internalBody || '',
-              },
-            ],
+
+          const notificationArray = []
+          if (application.applicantActors?.length > 0) {
+            application.applicantActors.forEach((actor) => {
+              const notification = {
+                recipient: actor,
+                onBehalfOf: {
+                  nationalId: application.applicant,
+                },
+                templateId: pruneMessage.notificationTemplateId,
+                args: [
+                  {
+                    key: 'externalBody',
+                    value: pruneMessage.externalBody || '',
+                  },
+                  {
+                    key: 'internalBody',
+                    value: pruneMessage.internalBody || '',
+                  },
+                ],
+              }
+              notificationArray.push(notification)
+            })
+          } else {
+            const notification = {
+              recipient: application.applicant,
+              templateId: pruneMessage.notificationTemplateId,
+              args: [
+                {
+                  key: 'externalBody',
+                  value: pruneMessage.externalBody || '',
+                },
+                {
+                  key: 'internalBody',
+                  value: pruneMessage.internalBody || '',
+                },
+              ],
+            }
+            notificationArray.push(notification)
           }
-          return notification
+
+          return notificationArray
         } catch (error) {
           this.logger.error(
             `Failed to prepare pruning notification for application ${application.id}`,
