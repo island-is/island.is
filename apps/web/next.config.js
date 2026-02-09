@@ -140,7 +140,8 @@ const nextConfig = {
   async headers() {
     return [
       {
-        source: '/.well-known/apple-developer-merchantid-domain-association.txt', 
+        source:
+          '/.well-known/apple-developer-merchantid-domain-association.txt',
         headers: [
           {
             key: 'Content-Type',
@@ -149,7 +150,7 @@ const nextConfig = {
         ],
       },
       {
-        source: '/.well-known/apple-developer-merchantid-domain-association', 
+        source: '/.well-known/apple-developer-merchantid-domain-association',
         headers: [
           {
             key: 'Content-Type',
