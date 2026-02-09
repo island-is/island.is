@@ -246,7 +246,7 @@ const template: ApplicationTemplate<
             shouldBeListed: true,
             shouldBePruned: true,
             whenToPrune: (application: Application) =>
-              pruneInDaysAtMidnight(application, 7),
+              pruneInDaysAtMidnight(application, -1),
             shouldDeleteChargeIfPaymentFulfilled: true,
             pruneMessage: (application) => {
               const plate = getValueViaPath(
@@ -255,11 +255,14 @@ const template: ApplicationTemplate<
                 undefined,
               ) as string | undefined
               return {
+                //Vantar að senda applicant actors með hér
+                // ef margir applicant actors þá þarf að senda öllum
                 notificationTemplateId:
                   NotificationConfig[
                     NotificationType.TransferOfVehicleOwnershipPruned
                   ].templateId,
                 internalBody: plate ?? '',
+                //alsoSendToSubject boolean sem sendir á bæði actor og subject
               }
             },
           },

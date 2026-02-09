@@ -8,4 +8,4 @@ services:
       - POSTGRES_USER=dev_db
       - POSTGRES_PASSWORD=dev_db
     ports:
-      - 5432:5432
+      - 5434:5432
