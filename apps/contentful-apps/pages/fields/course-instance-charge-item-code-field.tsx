@@ -56,7 +56,14 @@ const CourseInstanceChargeItemCodeField = () => {
   return (
     <>
       {!loading && !data?.getChargeItemCodesByCourseId?.items.length && (
-        <TextInput value={value} onChange={(e) => setValue(e.target.value)} />
+        <TextInput
+          value={value}
+          onChange={(e) => {
+            const newValue = e.target.value
+            setValue(newValue)
+            sdk.field.setValue(newValue)
+          }}
+        />
       )}
       {!loading && Boolean(data?.getChargeItemCodesByCourseId?.items.length) && (
         <Select
