@@ -25,7 +25,6 @@ import { formatCurrency, isDefined } from '@island.is/shared/utils'
 import { MarkdownText } from '@island.is/web/components'
 import {
   IcelandicGovernmentInstitutionsInvoiceGroups,
-  IcelandicGovernmentInstitutionsInvoiceGroupsInput,
   Organization,
   Query,
   QueryGetOrganizationArgs,
