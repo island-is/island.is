@@ -25,8 +25,9 @@ export const apiProviders: Array<Provider> = apiLedger.map(
     scope: LazyDuringDevScope,
     useFactory: (
       config: ConfigType<typeof FinancialManagementAuthorityClientConfig>,
+      idsConfig: ConfigType<typeof IdsClientConfig>,
     ) => {
-      return new api(apiConfigFactory(scopes, config))
+      return new api(apiConfigFactory(scopes, config, idsConfig))
     },
     inject: [FinancialManagementAuthorityClientConfig.KEY, IdsClientConfig.KEY],
   }),

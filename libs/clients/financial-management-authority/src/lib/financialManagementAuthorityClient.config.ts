@@ -5,7 +5,6 @@ const schema = z.object({
   basePath: z.string(),
   clientId: z.string(),
   clientSecret: z.string(),
-  authenticationServer: z.string(),
 })
 
 export const FinancialManagementAuthorityClientConfig = defineConfig<
@@ -20,15 +19,11 @@ export const FinancialManagementAuthorityClientConfig = defineConfig<
     ),
     clientId: env.required(
       'FINANCIAL_MANAGEMENT_AUTHORITY_CLIENT_ID',
-      '@fjs.is/juni-api-elfur',
+      '@fjs.is/stafraent-island-api-elfur',
     ),
     clientSecret: env.required(
       'FINANCIAL_MANAGEMENT_AUTHORITY_CLIENT_SECRET',
       '',
-    ),
-    authenticationServer: env.required(
-      'FINANCIAL_MANAGEMENT_AUTHORITY_AUTHENTICATION_SERVER',
-      'https://identity-server.staging01.devland.is/',
     ),
   }),
 })
