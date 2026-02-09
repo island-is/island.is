@@ -59,7 +59,7 @@ import {
 } from './guards/subpoenaExists.guard'
 import { SubpoenaService } from './subpoena.service'
 
-@Controller('api/case/:caseId/defendant/:defendantId/subpoena')
+@Controller('api/case/:caseId')
 @ApiTags('subpoenas')
 @UseGuards(
   JwtAuthUserGuard,
@@ -83,7 +83,7 @@ export class SubpoenaController {
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
   )
-  @Post('/api/case/:caseId/subpoenas')
+  @Post('subpoenas')
   @ApiCreatedResponse({
     type: Subpoena,
     isArray: true,
@@ -118,7 +118,7 @@ export class SubpoenaController {
     districtCourtAssistantRule,
     districtCourtRegistrarRule,
   )
-  @Get(':subpoenaId')
+  @Get('defendant/:defendantId/subpoena/:subpoenaId')
   @UseGuards(DefendantExistsGuard, SubpoenaExistsGuard)
   @ApiOkResponse({
     type: Subpoena,
@@ -156,7 +156,10 @@ export class SubpoenaController {
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
   )
-  @Get(['', ':subpoenaId/pdf'])
+  @Get([
+    'defendant/:defendantId/subpoena',
+    'defendant/:defendantId/subpoena/:subpoenaId/pdf',
+  ])
   // Strictly speaking, only district court users need access to
   // split case defendants' subpoenas
   // However, giving prosecution users access does not pose a security risk
@@ -207,7 +210,7 @@ export class SubpoenaController {
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
   )
-  @Get(':subpoenaId/serviceCertificate')
+  @Get('defendant/:defendantId/subpoena/:subpoenaId/serviceCertificate')
   // Strictly speaking, only district court users need access to
   // split case defendants' subpoena service certificates
   // However, giving prosecution users access does not pose a security risk

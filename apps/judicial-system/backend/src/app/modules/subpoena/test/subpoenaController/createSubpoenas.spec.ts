@@ -3,7 +3,7 @@ import { v4 as uuid } from 'uuid'
 
 import { BadRequestException, NotFoundException } from '@nestjs/common'
 
-import { MessageService, MessageType } from '@island.is/judicial-system/message'
+import { Message, MessageType } from '@island.is/judicial-system/message'
 import {
   CaseOrigin,
   CaseType,
@@ -80,7 +80,7 @@ describe('SubpoenaController - Create subpoenas', () => {
   let mockCaseRepositoryService: CaseRepositoryService
   let mockSubpoenaRepositoryService: SubpoenaRepositoryService
   let mockCourtDocumentService: CourtDocumentService
-  let mockMessageService: MessageService
+  let mockQueuedMessages: Message[]
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
   let subpoenaController: SubpoenaController
@@ -92,15 +92,14 @@ describe('SubpoenaController - Create subpoenas', () => {
       subpoenaRepositoryService,
       courtDocumentService,
       subpoenaController: controller,
-      messageService,
+      queuedMessages,
     } = await createTestingSubpoenaModule()
 
     mockCaseRepositoryService = caseRepositoryService
     mockSubpoenaRepositoryService = subpoenaRepositoryService
     mockCourtDocumentService = courtDocumentService
     subpoenaController = controller
-    mockMessageService = messageService
-    jest.spyOn(mockMessageService, 'sendMessagesToQueue').mockResolvedValue()
+    mockQueuedMessages = queuedMessages
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
@@ -115,8 +114,8 @@ describe('SubpoenaController - Create subpoenas', () => {
     ) => {
       const then = {} as Then
 
-      // Reset message service mock before each test
-      jest.clearAllMocks()
+      // Clear queued messages before each test
+      mockQueuedMessages.length = 0
 
       try {
         then.result = await subpoenaController.createSubpoenas(
@@ -185,11 +184,8 @@ describe('SubpoenaController - Create subpoenas', () => {
       )
 
       // Verify messages are queued for court and national commissioners office (not police for RVG)
-      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledTimes(1)
-      const messagesCall = (mockMessageService.sendMessagesToQueue as jest.Mock)
-        .mock.calls[0][0]
-      expect(messagesCall).toHaveLength(4) // 2 defendants × 2 message types (court + national commissioners)
-      expect(messagesCall).toEqual(
+      expect(mockQueuedMessages).toHaveLength(4) // 2 defendants × 2 message types (court + national commissioners)
+      expect(mockQueuedMessages).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
             type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA,
@@ -233,11 +229,8 @@ describe('SubpoenaController - Create subpoenas', () => {
       const then = await givenWhenThen(caseId, lokeCase, createSubpoenasDto)
 
       // Verify messages are queued for police, court, and national commissioners office
-      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledTimes(1)
-      const messagesCall = (mockMessageService.sendMessagesToQueue as jest.Mock)
-        .mock.calls[0][0]
-      expect(messagesCall).toHaveLength(6) // 2 defendants × 3 message types (police + court + national commissioners)
-      expect(messagesCall).toEqual(
+      expect(mockQueuedMessages).toHaveLength(6) // 2 defendants × 3 message types (police + court + national commissioners)
+      expect(mockQueuedMessages).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
             type: MessageType.DELIVERY_TO_POLICE_SUBPOENA_FILE,
@@ -343,7 +336,7 @@ describe('SubpoenaController - Create subpoenas', () => {
       )
 
       // Verify messages are still queued for the eligible defendants
-      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledTimes(1)
+      expect(mockQueuedMessages.length).toBeGreaterThan(0)
 
       expect(then.result).toEqual([subpoena1, subpoena2])
     })
@@ -371,7 +364,7 @@ describe('SubpoenaController - Create subpoenas', () => {
       expect(mockSubpoenaRepositoryService.create).not.toHaveBeenCalled()
 
       // Should not queue any messages since no subpoenas were created
-      expect(mockMessageService.sendMessagesToQueue).not.toHaveBeenCalled()
+      expect(mockQueuedMessages).toEqual([])
 
       expect(then.result).toEqual([])
       expect(then.error).toBeUndefined()
@@ -386,7 +379,7 @@ describe('SubpoenaController - Create subpoenas', () => {
         defendants: [defendant1],
       } as Case
 
-      it('should throw NotFoundException', async () => {
+      it('should throw BadRequestException', async () => {
         const createSubpoenasDto: CreateSubpoenasDto = {
           defendantIds: [defendantId1],
           arraignmentDate,

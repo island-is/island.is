@@ -223,7 +223,7 @@ export class SubpoenaService {
     subpoenas: Subpoena[],
     user: TUser,
   ): Promise<void> {
-    const messages: Message[] = []
+    const messages = []
 
     for (let i = 0; i < defendants.length; i++) {
       const defendant = defendants[i]
@@ -257,7 +257,7 @@ export class SubpoenaService {
     }
 
     if (messages.length > 0) {
-      await this.messageService.sendMessagesToQueue(messages)
+      addMessagesToQueue(...messages)
     }
   }
 

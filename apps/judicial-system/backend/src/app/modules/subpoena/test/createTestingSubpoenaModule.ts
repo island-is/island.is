@@ -14,7 +14,7 @@ import {
   SharedAuthModule,
   sharedAuthModuleConfig,
 } from '@island.is/judicial-system/auth'
-import { MessageService } from '@island.is/judicial-system/message'
+import { addMessagesToQueue, Message, MessageService } from '@island.is/judicial-system/message'
 
 import { CaseService, InternalCaseService, PdfService } from '../../case'
 import { CourtService } from '../../court'
@@ -142,9 +142,16 @@ export const createTestingSubpoenaModule = async () => {
 
   const messageService = subpoenaModule.get<MessageService>(MessageService)
 
+  const queuedMessages: Message[] = []
+  const mockAddMessageToQueue = addMessagesToQueue as jest.Mock
+  mockAddMessageToQueue.mockImplementation((...msgs: Message[]) => {
+    queuedMessages.push(...msgs)
+  })
+
   subpoenaModule.close()
 
   return {
+    queuedMessages,
     userService,
     pdfService,
     fileService,
