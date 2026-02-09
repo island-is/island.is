@@ -14,7 +14,7 @@ import { formatDate } from '@island.is/portals/my-pages/core'
 
 import { vehicleMessage as messages } from '../../../lib/messages'
 import { theme } from '@island.is/island-ui/theme'
-import { useGetPublicVehicleSearchLazyQuery } from '../Lookup.generated'
+import { usePublicVehicleSearchWithAuthLazyQuery } from '../Lookup.generated'
 
 const numberFormatter = new Intl.NumberFormat('de-DE')
 
@@ -54,9 +54,9 @@ const PublicVehicleSearch = () => {
   const searchMaxWidth = width && width < theme.breakpoints.lg ? '100%' : '50%'
 
   const [search, { loading, data, error, called }] =
-    useGetPublicVehicleSearchLazyQuery()
+    usePublicVehicleSearchWithAuthLazyQuery()
 
-  const vehicleInformation = data?.getPublicVehicleSearch
+  const vehicleInformation = data?.publicVehicleSearchWithAuth
 
   const vehicleWasNotFound =
     vehicleInformation === null || typeof vehicleInformation === 'undefined'

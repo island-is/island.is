@@ -32,8 +32,8 @@ query GetUsersVehiclesSearchLimit {
   vehiclesSearchLimit
 }
 
-query GetPublicVehicleSearch($input: GetPublicVehicleSearchInput!) {
-  getPublicVehicleSearch(input: $input) {
+query PublicVehicleSearchWithAuth($input: GetPublicVehicleSearchInput!) {
+  publicVehicleSearchWithAuth(input: $input) {
     permno
     regno
     vin

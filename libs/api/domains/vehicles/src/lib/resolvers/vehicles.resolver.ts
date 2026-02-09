@@ -6,6 +6,7 @@ import {
   ScopesGuard,
   Scopes,
   CurrentUser,
+  BypassAuth,
 } from '@island.is/auth-nest-tools'
 import { CACHE_CONTROL_MAX_AGE } from '@island.is/shared/constants'
 import type { User } from '@island.is/auth-nest-tools'
@@ -154,10 +155,20 @@ export class VehiclesResolver {
   @CacheControl(defaultCache)
   @Query(() => VehiclesPublicVehicleSearch, { nullable: true })
   @Audit()
-  async getPublicVehicleSearch(
+  async publicVehicleSearchWithAuth(
     @Args('input') input: GetPublicVehicleSearchInput,
     @CurrentUser() user: User,
   ) {
-    return await this.vehiclesService.getPublicVehicleSearch(user, input.search)
+    return await this.vehiclesService.publicVehicleSearchWithAuth(
+      user,
+      input.search,
+    )
+  }
+
+  @BypassAuth()
+  @CacheControl(defaultCache)
+  @Query(() => VehiclesPublicVehicleSearch, { nullable: true })
+  async publicVehicleSearch(@Args('input') input: GetPublicVehicleSearchInput) {
+    return await this.vehiclesService.publicVehicleSearch(input.search)
   }
 }

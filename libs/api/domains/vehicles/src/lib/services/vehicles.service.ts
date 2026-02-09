@@ -184,7 +184,15 @@ export class VehiclesService {
     })
   }
 
-  async getPublicVehicleSearch(auth: User, search: string) {
+  async publicVehicleSearch(search: string) {
+    return await this.publicVehiclesApi
+      .publicVehicleSearchGet({
+        search,
+      })
+      .catch(handle404)
+  }
+
+  async publicVehicleSearchWithAuth(auth: User, search: string) {
     return await this.getPublicVehiclesWithAuth(auth)
       .publicVehicleSearchGet({
         search,
