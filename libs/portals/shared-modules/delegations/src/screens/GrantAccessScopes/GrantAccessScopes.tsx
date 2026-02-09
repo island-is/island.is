@@ -13,7 +13,6 @@ import { AuthApiScope } from '@island.is/api/schema'
 import {
   Box,
   Filter,
-  FilterInput,
   FilterMultiChoice,
   Input,
 } from '@island.is/island-ui/core'
@@ -44,8 +43,8 @@ export const GrantAccessScopes = () => {
   })
   const {
     data: tagsData,
-    loading: tagsLoading,
-    error: tagsError,
+    // loading: tagsLoading,
+    // error: tagsError,
   } = useQuery<AuthScopeTagsQuery>(AuthScopeTagsDocument, {
     variables: { lang },
   })
@@ -68,8 +67,8 @@ export const GrantAccessScopes = () => {
         label: 'Stofnun',
         selected: filter.domains,
         filters: [
-          { value: 'skatturinn', label: 'Skatturinn' },
-          { value: 'island.is', label: 'island.is' },
+          { value: 'Vinnueftirlitið', label: 'Vinnueftirlitið' },
+          { value: 'Mínar síður Ísland.is', label: 'Mínar síður Ísland.is' },
         ],
       },
     ]
@@ -86,29 +85,54 @@ export const GrantAccessScopes = () => {
   const filteredScopes = useMemo(() => {
     const searchQueryLower = searchQuery.toLowerCase()
 
+    // Build a set of scope names that belong to the selected tags
+    const scopeNamesInSelectedTags = new Set<string>()
+    if (filter.tags.length > 0 && tagsData?.authScopeTags) {
+      tagsData.authScopeTags
+        .filter((tag) => filter.tags.includes(tag.id))
+        .forEach((tag) => {
+          tag.scopes.forEach((scope) => {
+            scopeNamesInSelectedTags.add(scope.name)
+          })
+        })
+    }
+
     return (
       categoriesData?.authScopeCategories
         ?.filter((category) =>
           category.scopes.some((scope) => {
+            // Search query filter
             const displayName = scope.displayName.toLowerCase()
             const description = scope.description?.toLowerCase()
             const name = scope.name.toLowerCase()
             const domain = scope.domain?.displayName?.toLowerCase()
-            return (
+            const matchesSearch =
               displayName.includes(searchQueryLower) ||
               description?.includes(searchQueryLower) ||
               name.includes(searchQueryLower) ||
               domain?.includes(searchQueryLower)
-            )
+
+            // Tags filter - check if scope name is in selected tags
+            const matchesTags =
+              filter.tags.length === 0 ||
+              scopeNamesInSelectedTags.has(scope.name)
+
+            // Domains filter
+            const matchesDomains =
+              filter.domains.length === 0 ||
+              (scope.domain?.displayName &&
+                filter.domains.includes(scope.domain.displayName))
+
+            return matchesSearch && matchesTags && matchesDomains
           }),
         )
         .flatMap((category) => category.scopes) || []
     )
-  }, [categoriesData, searchQuery])
+  }, [categoriesData, searchQuery, filter, tagsData])
 
   return (
     <div>
-      <Box display="flex" columnGap={2}>
+      <Box display="flex" columnGap={2} marginBottom={4}>
         <Input
           name="search"
           placeholder={formatMessage(m.searchScopesPlaceholder)}

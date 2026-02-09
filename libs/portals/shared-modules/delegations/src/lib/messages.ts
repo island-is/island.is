@@ -350,8 +350,7 @@ export const m = defineMessages({
   },
   searchScopesPlaceholder: {
     id: 'sp.access-control-delegations:search-scopes-placeholder',
-    defaultMessage:
-      'Leita eftir flokki, helium umboðs, heiti um stofnun eða lýsingu umbóðs...',
+    defaultMessage: 'Leita að umboði',
   },
   clearSearchAndFilters: {
     id: 'sp.access-control-delegations:clear-search-filters',

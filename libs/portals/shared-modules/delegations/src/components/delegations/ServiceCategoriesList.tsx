@@ -18,7 +18,6 @@ export const ServiceCategoriesList = ({
   onSelectScope?: (scope: AuthApiScope) => void
   selectedScopes?: AuthApiScope[]
 }) => {
-  console.log('categories', categories)
   const { formatMessage } = useLocale()
   return (
     <Box marginTop={6}>
