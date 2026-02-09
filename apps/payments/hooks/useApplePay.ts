@@ -13,12 +13,10 @@ import { PaymentError } from '../utils/error/error'
 
 const VALID_CARD_ERROR_CODES = new Set<string>(Object.values(CardErrorCode))
 
-function getValidatedCardErrorCode(message: string): CardErrorCode {
-  return (
-    VALID_CARD_ERROR_CODES.has(message)
-      ? message
-      : CardErrorCode.UnknownCardError
-  ) as CardErrorCode
+const getValidatedCardErrorCode = (message: string): CardErrorCode => {
+  return VALID_CARD_ERROR_CODES.has(message)
+    ? (message as CardErrorCode)
+    : CardErrorCode.UnknownCardError
 }
 
 const APPLE_PAY_JS_VERSION = 3
