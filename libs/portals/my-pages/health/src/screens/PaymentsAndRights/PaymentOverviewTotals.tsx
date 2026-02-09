@@ -20,7 +20,7 @@ import {
   MobileTable,
   amountFormat,
   m,
-  downloadLink,
+  formSubmit,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { isDefined } from '@island.is/shared/utils'
@@ -34,7 +34,6 @@ import {
 import {
   useGetPaymentOverviewTotalsLazyQuery,
   useGetPaymentOverviewTotalsServiceTypesQuery,
-  useGetPaymentOverviewTotalsPdfLazyQuery,
 } from './Payments.generated'
 import * as styles from './Payments.css'
 import { PaymentOverviewParticipationInfo } from './PaymentOverviewParticipationInfo'
@@ -56,7 +55,6 @@ export const PaymentOverviewTotals = () => {
     error: serviceTypesError,
   } = useGetPaymentOverviewTotalsServiceTypesQuery()
 
-  const [fetchTotalsPdf] = useGetPaymentOverviewTotalsPdfLazyQuery()
   const [
     lazyTotalsQuery,
     { loading: totalsLoading, error: totalsError, data: totalsData },
@@ -101,27 +99,13 @@ export const PaymentOverviewTotals = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const onDownloadTotalsPdf = async () => {
-    try {
-      const result = await fetchTotalsPdf({ variables: { input: totalsInput } })
-
-      const pdf = result?.data?.rightsPortalPaymentOverviewTotalsPdf
-      const doc = pdf?.items?.[0]
-
-      const hasError = result?.error || (pdf?.errors?.length ?? 0) > 0
-
-      if (!hasError && doc?.data) {
-        downloadLink(
-          doc.data,
-          'application/pdf',
-          doc.fileName ?? 'payment-overview-totals.pdf',
-        )
-      } else {
-        toast.error(formatMessage(messages.paymentOverviewTotalsDownloadError))
-      }
-    } catch {
+  const onDownloadTotalsPdf = () => {
+    const downloadUrl = totalsResult?.totalsPdfDownloadUrl
+    if (!downloadUrl) {
       toast.error(formatMessage(messages.paymentOverviewTotalsDownloadError))
+      return
     }
+    formSubmit(downloadUrl)
   }
 
   const rows =

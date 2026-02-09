@@ -126,6 +126,7 @@ query getPaymentOverviewTotals($input: RightsPortalPaymentOverviewInput!) {
     errors {
       status
     }
+    totalsPdfDownloadUrl
   }
 }
 

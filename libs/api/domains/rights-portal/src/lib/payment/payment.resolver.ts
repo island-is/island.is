@@ -147,7 +147,11 @@ export class PaymentResolver {
     @CurrentUser() user: User,
     @Args('input') input: PaymentOverviewInput,
   ): Promise<PaymentOverviewTotalsResponse> {
-    return await this.service.getPaymentOverviewTotals(user, input)
+    const data = await this.service.getPaymentOverviewTotals(user, input)
+    return {
+      ...data,
+      totalsPdfDownloadUrl: this.buildTotalsPdfDownloadUrl(input),
+    }
   }
 
   @Query(() => PaymentOverviewDocumentResponse, {
@@ -161,5 +165,24 @@ export class PaymentResolver {
     @Args('input') input: PaymentOverviewInput,
   ): Promise<PaymentOverviewDocumentResponse> {
     return await this.service.getPaymentOverviewTotalsPdf(user, input)
+  }
+
+  private buildTotalsPdfDownloadUrl(input: PaymentOverviewInput): string {
+    const dateFrom =
+      input.dateFrom instanceof Date
+        ? input.dateFrom.toISOString().split('T')[0]
+        : String(input.dateFrom).split('T')[0]
+    const dateTo =
+      input.dateTo instanceof Date
+        ? input.dateTo.toISOString().split('T')[0]
+        : String(input.dateTo).split('T')[0]
+    const params = new URLSearchParams({
+      dateFrom,
+      dateTo,
+      serviceTypeCode: input.serviceTypeCode ?? '',
+    })
+    return `${
+      this.downloadServiceConfig.baseUrl
+    }/download/v1/health/payments/totals?${params.toString()}`
   }
 }

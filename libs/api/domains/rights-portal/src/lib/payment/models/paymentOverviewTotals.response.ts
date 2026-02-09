@@ -9,4 +9,7 @@ export class PaymentOverviewTotalsResponse {
 
   @Field(() => [PaymentError])
   errors!: PaymentError[]
+
+  @Field(() => String, { nullable: true })
+  totalsPdfDownloadUrl?: string
 }
