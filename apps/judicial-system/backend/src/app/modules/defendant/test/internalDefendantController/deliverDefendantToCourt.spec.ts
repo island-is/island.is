@@ -1,6 +1,6 @@
 import { v4 as uuid } from 'uuid'
 
-import { MessageService, MessageType } from '@island.is/judicial-system/message'
+import { Message, MessageType } from '@island.is/judicial-system/message'
 import { CaseNotificationType, User } from '@island.is/judicial-system/types'
 
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
@@ -37,15 +37,15 @@ describe('InternalDefendantController - Deliver defendant to court', () => {
     defenderEmail,
   } as Case
 
-  let mockMessageService: MessageService
+  let mockQueuedMessages: Message[]
   let mockCourtService: CourtService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { messageService, courtService, internalDefendantController } =
+    const { queuedMessages, courtService, internalDefendantController } =
       await createTestingDefendantModule()
 
-    mockMessageService = messageService
+    mockQueuedMessages = queuedMessages
     mockCourtService = courtService
     const mockUpdateCaseWithDefendant =
       mockCourtService.updateCaseWithDefendant as jest.Mock
@@ -102,7 +102,7 @@ describe('InternalDefendantController - Deliver defendant to court', () => {
     })
 
     it('should send email to court', () => {
-      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+      expect(mockQueuedMessages).toEqual([
         {
           type: MessageType.NOTIFICATION,
           user,

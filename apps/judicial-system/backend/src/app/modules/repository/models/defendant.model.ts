@@ -247,4 +247,8 @@ export class Defendant extends Model {
   })
   @ApiPropertyOptional({ enum: IndictmentCaseReviewDecision })
   indictmentReviewDecision?: IndictmentCaseReviewDecision
+
+  @Column({ type: DataType.BOOLEAN, allowNull: true })
+  @ApiPropertyOptional({ type: Boolean })
+  isDrivingLicenseSuspended?: boolean
 }

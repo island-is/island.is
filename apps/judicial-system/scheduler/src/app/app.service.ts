@@ -101,7 +101,7 @@ export class AppService {
 
   private async addMessagesForIndictmentsWaitingForConfirmationToQueue() {
     return this.messageService
-      .sendMessagesToQueue([
+      .addMessagesToQueue([
         {
           type: MessageType.NOTIFICATION_DISPATCH,
           body: {
@@ -117,7 +117,7 @@ export class AppService {
 
   private async addMessagesForPublicProsecutorReviewerAppealDeadlineApproachingReminderToQueue() {
     return this.messageService
-      .sendMessagesToQueue([
+      .addMessagesToQueue([
         {
           type: MessageType.NOTIFICATION_DISPATCH,
           body: {

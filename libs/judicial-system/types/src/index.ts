@@ -9,6 +9,7 @@ export {
   VerdictServiceStatus,
   PunishmentType,
   isSuccessfulServiceStatus,
+  isSuccessfulVerdictServiceStatus,
   isFailedServiceStatus,
   IndictmentCaseReviewDecision,
 } from './lib/defendant'

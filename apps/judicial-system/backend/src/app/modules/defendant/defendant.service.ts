@@ -7,8 +7,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import {
-  Message,
-  MessageService,
+  addMessagesToQueue,
   MessageType,
 } from '@island.is/judicial-system/message'
 import type { User } from '@island.is/judicial-system/types'
@@ -40,114 +39,93 @@ export class DefendantService {
     private readonly defendantRepositoryService: DefendantRepositoryService,
     private readonly defendantEventLogRepositoryService: DefendantEventLogRepositoryService,
     private readonly courtService: CourtService,
-    private readonly messageService: MessageService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  private getMessageForSendDefendantsNotUpdatedAtCourtNotification(
+  private addMessagesForSendDefendantsNotUpdatedAtCourtNotificationToQueue(
     theCase: Case,
     user: User,
-  ): Message {
-    return {
+  ): void {
+    addMessagesToQueue({
       type: MessageType.NOTIFICATION,
       user,
       caseId: theCase.id,
       body: { type: CaseNotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT },
-    }
+    })
   }
 
-  private getMessageForDeliverDefendantToCourt(
+  private addMessagesForDeliverDefendantToCourtToQueue(
     defendant: Defendant,
     user: User,
-  ): Message {
-    const message = {
+  ): void {
+    addMessagesToQueue({
       type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
       user,
       caseId: defendant.caseId,
       elementId: defendant.id,
-    }
-
-    return message
+    })
   }
 
-  private getMessagesForIndictmentToPrisonAdminChanges(
+  private addMessagesForIndictmentToPrisonAdminChangesToQueue(
     defendant: Defendant,
     caseId: string,
-  ): Message {
+  ): void {
     const messageType =
       defendant.isSentToPrisonAdmin === true
         ? DefendantNotificationType.INDICTMENT_SENT_TO_PRISON_ADMIN
         : DefendantNotificationType.INDICTMENT_WITHDRAWN_FROM_PRISON_ADMIN
 
-    const message = {
+    addMessagesToQueue({
       type: MessageType.DEFENDANT_NOTIFICATION,
       caseId,
       elementId: defendant.id,
-      body: {
-        type: messageType,
-      },
-    }
-
-    return message
+      body: { type: messageType },
+    })
   }
 
-  private async sendRequestCaseUpdateDefendantMessages(
+  private addMessagesForRequestCaseUpdateDefendantToQueue(
     theCase: Case,
     updatedDefendant: Defendant,
     oldDefendant: Defendant,
     user: User,
-  ): Promise<void> {
+  ): void {
     if (!theCase.courtCaseNumber) {
       return
     }
-
-    const messages: Message[] = []
 
     // Handling of updates sent to the court system
     // A defendant is updated after the case has been received by the court.
     if (updatedDefendant.noNationalId !== oldDefendant.noNationalId) {
       // A defendant nationalId is added or removed. Attempt to add the defendant to the court case.
       // In case there is no national id, the court will be notified.
-      messages.push(
-        this.getMessageForDeliverDefendantToCourt(updatedDefendant, user),
-      )
+      this.addMessagesForDeliverDefendantToCourtToQueue(updatedDefendant, user)
     } else if (updatedDefendant.nationalId !== oldDefendant.nationalId) {
       // A defendant is replaced. Attempt to add the defendant to the court case,
       // but also ask the court to verify defendants.
-      messages.push(
-        this.getMessageForSendDefendantsNotUpdatedAtCourtNotification(
-          theCase,
-          user,
-        ),
-        this.getMessageForDeliverDefendantToCourt(updatedDefendant, user),
+      this.addMessagesForSendDefendantsNotUpdatedAtCourtNotificationToQueue(
+        theCase,
+        user,
       )
+      this.addMessagesForDeliverDefendantToCourtToQueue(updatedDefendant, user)
     }
-
-    if (messages.length === 0) {
-      return
-    }
-
-    return this.messageService.sendMessagesToQueue(messages)
   }
 
-  private async sendIndictmentCaseUpdateDefendantMessages(
+  private addMessagesForIndictmentCaseUpdateDefendantToQueue(
     theCase: Case,
     updatedDefendant: Defendant,
     oldDefendant: Defendant,
     user: User,
-  ): Promise<void> {
+  ): void {
     if (!theCase.courtCaseNumber) {
       return
     }
-
-    const messages: Message[] = []
 
     if (
       updatedDefendant.isDefenderChoiceConfirmed &&
       !oldDefendant.isDefenderChoiceConfirmed
     ) {
       // Defender choice was just confirmed by the court
-      messages.push({
+      addMessagesToQueue({
         type: MessageType.DELIVERY_TO_COURT_INDICTMENT_DEFENDER,
         user,
         caseId: theCase.id,
@@ -161,14 +139,14 @@ export class DefendantService {
         // Defender was just confirmed by judge
         if (!oldDefendant.isDefenderChoiceConfirmed) {
           // send general defender assignment email
-          messages.push({
+          addMessagesToQueue({
             type: MessageType.DEFENDANT_NOTIFICATION,
             caseId: theCase.id,
             body: { type: DefendantNotificationType.DEFENDER_ASSIGNED },
             elementId: updatedDefendant.id,
           })
           // send a notification to follow-up on scheduled court date
-          messages.push({
+          addMessagesToQueue({
             type: MessageType.DEFENDANT_NOTIFICATION,
             caseId: theCase.id,
             user,
@@ -183,19 +161,11 @@ export class DefendantService {
       updatedDefendant.isSentToPrisonAdmin !== undefined &&
       updatedDefendant.isSentToPrisonAdmin !== oldDefendant.isSentToPrisonAdmin
     ) {
-      messages.push(
-        this.getMessagesForIndictmentToPrisonAdminChanges(
-          updatedDefendant,
-          theCase.id,
-        ),
+      this.addMessagesForIndictmentToPrisonAdminChangesToQueue(
+        updatedDefendant,
+        theCase.id,
       )
     }
-
-    if (messages.length === 0) {
-      return
-    }
-
-    return this.messageService.sendMessagesToQueue(messages)
   }
 
   async createForNewCase(
@@ -224,9 +194,7 @@ export class DefendantService {
       // This should only happen to non-indictment cases.
       // A defendant is added after the case has been received by the court.
       // Attempt to add the new defendant to the court case.
-      await this.messageService.sendMessagesToQueue([
-        this.getMessageForDeliverDefendantToCourt(defendant, user),
-      ])
+      this.addMessagesForDeliverDefendantToCourtToQueue(defendant, user)
     }
 
     return defendant
@@ -257,7 +225,7 @@ export class DefendantService {
       transaction,
     )
 
-    await this.sendRequestCaseUpdateDefendantMessages(
+    this.addMessagesForRequestCaseUpdateDefendantToQueue(
       theCase,
       updatedDefendant,
       defendant,
@@ -342,7 +310,7 @@ export class DefendantService {
       )
     }
 
-    await this.sendIndictmentCaseUpdateDefendantMessages(
+    this.addMessagesForIndictmentCaseUpdateDefendantToQueue(
       theCase,
       updatedDefendant,
       defendant,
@@ -419,16 +387,14 @@ export class DefendantService {
     )
 
     if (updatedDefendant.defenderChoice === DefenderChoice.DELEGATE) {
-      await this.messageService.sendMessagesToQueue([
-        {
-          type: MessageType.DEFENDANT_NOTIFICATION,
-          caseId: theCase.id,
-          elementId: updatedDefendant.id,
-          body: {
-            type: DefendantNotificationType.DEFENDANT_DELEGATED_DEFENDER_CHOICE,
-          },
+      addMessagesToQueue({
+        type: MessageType.DEFENDANT_NOTIFICATION,
+        caseId: theCase.id,
+        elementId: updatedDefendant.id,
+        body: {
+          type: DefendantNotificationType.DEFENDANT_DELEGATED_DEFENDER_CHOICE,
         },
-      ])
+      })
     } else if (
       !updatedDefendant.isDefenderChoiceConfirmed &&
       updatedDefendant.defenderChoice === DefenderChoice.CHOOSE &&
@@ -436,16 +402,12 @@ export class DefendantService {
         updatedDefendant.defenderNationalId !== defendant.defenderNationalId)
     ) {
       // Notify the court if the defendant has changed the defender choice
-      await this.messageService.sendMessagesToQueue([
-        {
-          type: MessageType.DEFENDANT_NOTIFICATION,
-          caseId: theCase.id,
-          elementId: updatedDefendant.id,
-          body: {
-            type: DefendantNotificationType.DEFENDANT_SELECTED_DEFENDER,
-          },
-        },
-      ])
+      addMessagesToQueue({
+        type: MessageType.DEFENDANT_NOTIFICATION,
+        caseId: theCase.id,
+        elementId: updatedDefendant.id,
+        body: { type: DefendantNotificationType.DEFENDANT_SELECTED_DEFENDER },
+      })
     }
 
     return updatedDefendant
@@ -465,12 +427,10 @@ export class DefendantService {
       // This should only happen to non-indictment cases.
       // A defendant is removed after the case has been received by the court.
       // Ask the court to verify defendants.
-      await this.messageService.sendMessagesToQueue([
-        this.getMessageForSendDefendantsNotUpdatedAtCourtNotification(
-          theCase,
-          user,
-        ),
-      ])
+      this.addMessagesForSendDefendantsNotUpdatedAtCourtNotificationToQueue(
+        theCase,
+        user,
+      )
     }
 
     return true
@@ -533,12 +493,10 @@ export class DefendantService {
       defendant.nationalId.replace('-', '').length !== 10 ||
       defendant.nationalId.endsWith('5') // Temporary national id from the police system
     ) {
-      await this.messageService.sendMessagesToQueue([
-        this.getMessageForSendDefendantsNotUpdatedAtCourtNotification(
-          theCase,
-          user,
-        ),
-      ])
+      this.addMessagesForSendDefendantsNotUpdatedAtCourtNotificationToQueue(
+        theCase,
+        user,
+      )
 
       return { delivered: true }
     }
