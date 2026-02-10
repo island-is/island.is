@@ -26,4 +26,6 @@ export const defineConfig = <T extends Record<string, any>>(
   factory.registerOptional = () => ConfigModule.forFeature(factory.optional())
 
   return factory
+
+  //trigger a build
 }
