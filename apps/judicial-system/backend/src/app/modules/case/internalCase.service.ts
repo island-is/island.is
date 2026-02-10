@@ -1114,9 +1114,7 @@ export class InternalCaseService {
     user: TUser,
     courtDocuments: PoliceDocument[],
   ): Promise<boolean> {
-    const policeCaseId = isIndictmentCase(theCase.type)
-      ? theCase.splitCaseId ?? theCase.id // indictment cases can be split
-      : (await this.findOriginalAncestor(theCase)).id // request cases can be extended
+    const policeCaseId = await this.findOriginalAncestorId(theCase)
 
     const validToDate =
       (restrictionCases.includes(theCase.type) &&
@@ -1417,6 +1415,18 @@ export class InternalCaseService {
     }
 
     return originalAncestor
+  }
+
+  private async findOriginalAncestorId(theCase: Case): Promise<string> {
+    if (isIndictmentCase(theCase.type)) {
+      // indictment cases can be split
+      return theCase.splitCaseId ?? theCase.id
+    }
+
+    // request cases can be extended
+    const originalAncestor = await this.findOriginalAncestor(theCase)
+
+    return originalAncestor.id
   }
 
   // As this is only currently used by the digital mailbox API
