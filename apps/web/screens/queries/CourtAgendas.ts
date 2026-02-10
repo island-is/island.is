@@ -25,6 +25,7 @@ export const GET_COURT_AGENDAS_QUERY = gql`
         court
         lawyer
         scheduleTypes
+        caseTypes
       }
     }
   }

@@ -41,6 +41,7 @@ import {
   Input,
   InputRow,
   Problem,
+  Skeleton,
   TopLine,
   Typography,
 } from '../../ui'
@@ -176,21 +177,48 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
   const { showModal } = useNavigationModal()
   const origin = getConfig().apiUrl.replace(/\/api$/, '')
   const [refetching, setRefetching] = useState(false)
+
   const { width } = useWindowDimensions()
   const buttonStyle = { flex: 1, minWidth: width * 0.5 - theme.spacing[3] }
   const scrollY = useRef(new Animated.Value(0)).current
-  const isVaccinationsEnabled = useFeatureFlag('isVaccinationsEnabled', false)
+  const isVaccinationsEnabled = useFeatureFlag(
+    'isVaccinationsEnabled',
+    false,
+    null,
+  )
   const isMedicineDelegationEnabled = useFeatureFlag(
     'isMedicineDelegationEnabled',
     false,
+    null,
   )
-  const isPrescriptionsEnabled = useFeatureFlag('isPrescriptionsEnabled', false)
-  const isOrganDonationEnabled = useFeatureFlag('isOrganDonationEnabled', false)
-  const isAppointmentsEnabled = useFeatureFlag('isAppointmentsEnabled', false)
+  const isPrescriptionsEnabled = useFeatureFlag(
+    'isPrescriptionsEnabled',
+    false,
+    null,
+  )
+  const isOrganDonationEnabled = useFeatureFlag(
+    'isOrganDonationEnabled',
+    false,
+    null,
+  )
   const isQuestionnaireFeatureEnabled = useFeatureFlag(
     'isQuestionnaireEnabled',
     false,
+    null,
   )
+  const isAppointmentsEnabled = useFeatureFlag(
+    'isAppointmentsEnabled',
+    false,
+    null,
+  )
+
+  const isLoadingFeatureFlags =
+    isVaccinationsEnabled === null ||
+    isMedicineDelegationEnabled === null ||
+    isPrescriptionsEnabled === null ||
+    isOrganDonationEnabled === null ||
+    isQuestionnaireFeatureEnabled === null ||
+    isAppointmentsEnabled === null
 
   const now = useMemo(() => new Date().toISOString(), [])
 
@@ -343,95 +371,124 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
           />
         </Typography>
         <ButtonWrapper>
-          {isVaccinationsEnabled && (
-            <Button
-              title={intl.formatMessage({
-                id: 'health.overview.vaccinations',
-              })}
-              isOutlined
-              isUtilityButton
-              iconStyle={{ tintColor: theme.color.dark300 }}
-              style={buttonStyle}
-              ellipsis
-              onPress={() => navigateTo('/vaccinations', componentId)}
-            />
+          {isLoadingFeatureFlags ? (
+            <>
+              <Skeleton
+                active
+                height={40}
+                style={{ ...buttonStyle, borderRadius: 8 }}
+              />
+              <Skeleton
+                active
+                height={40}
+                style={{ ...buttonStyle, borderRadius: 8 }}
+              />
+              <Skeleton
+                active
+                height={40}
+                style={{ ...buttonStyle, borderRadius: 8 }}
+              />
+              <Skeleton
+                active
+                height={40}
+                style={{ ...buttonStyle, borderRadius: 8 }}
+              />
+            </>
+          ) : (
+            <>
+              {isVaccinationsEnabled && (
+                <Button
+                  title={intl.formatMessage({
+                    id: 'health.overview.vaccinations',
+                  })}
+                  isOutlined
+                  isUtilityButton
+                  iconStyle={{ tintColor: theme.color.dark300 }}
+                  style={buttonStyle}
+                  ellipsis
+                  onPress={() => navigateTo('/vaccinations', componentId)}
+                />
+              )}
+              {isQuestionnaireFeatureEnabled && (
+                <Button
+                  title={intl.formatMessage({
+                    id: 'health.overview.questionnaires',
+                  })}
+                  isOutlined
+                  isUtilityButton
+                  iconStyle={{ tintColor: theme.color.dark300 }}
+                  style={buttonStyle}
+                  ellipsis
+                  onPress={() => navigateTo('/questionnaires', componentId)}
+                />
+              )}
+              {isPrescriptionsEnabled && (
+                <Button
+                  title={intl.formatMessage({
+                    id: isPrescriptionsEnabled
+                      ? 'health.prescriptionsAndCertificates.screenTitle'
+                      : 'health.drugCertificates.title',
+                  })}
+                  isOutlined
+                  isUtilityButton
+                  iconStyle={{ tintColor: theme.color.dark300 }}
+                  style={buttonStyle}
+                  ellipsis
+                  onPress={() => navigateTo('/prescriptions', componentId)}
+                />
+              )}
+              {isMedicineDelegationEnabled && (
+                <Button
+                  title={intl.formatMessage({
+                    id: 'health.overview.medicineDelegation',
+                  })}
+                  isOutlined
+                  isUtilityButton
+                  iconStyle={{ tintColor: theme.color.dark300 }}
+                  style={buttonStyle}
+                  ellipsis
+                  onPress={() =>
+                    navigateTo('/medicine-delegation', componentId)
+                  }
+                />
+              )}
+              <Button
+                title={intl.formatMessage({ id: 'health.overview.therapy' })}
+                isOutlined
+                isUtilityButton
+                icon={externalLinkIcon}
+                iconStyle={{ tintColor: theme.color.dark300 }}
+                style={buttonStyle}
+                ellipsis
+                onPress={() =>
+                  openBrowser(
+                    `${origin}/minarsidur/heilsa/thjalfun/sjukrathjalfun`,
+                    componentId,
+                  )
+                }
+              />
+              <Button
+                title={intl.formatMessage({
+                  id: 'health.overview.aidsAndNutrition',
+                })}
+                isOutlined
+                isUtilityButton
+                icon={externalLinkIcon}
+                iconStyle={{ tintColor: theme.color.dark300 }}
+                style={{
+                  ...buttonStyle,
+                  maxWidth: width * 0.5 - theme.spacing[3],
+                }}
+                ellipsis
+                onPress={() =>
+                  openBrowser(
+                    `${origin}/minarsidur/heilsa/hjalpartaeki-og-naering`,
+                    componentId,
+                  )
+                }
+              />
+            </>
           )}
-          {isQuestionnaireFeatureEnabled && (
-            <Button
-              title={intl.formatMessage({
-                id: 'health.overview.questionnaires',
-              })}
-              isOutlined
-              isUtilityButton
-              iconStyle={{ tintColor: theme.color.dark300 }}
-              style={buttonStyle}
-              ellipsis
-              onPress={() => navigateTo('/questionnaires', componentId)}
-            />
-          )}
-          {isPrescriptionsEnabled && (
-            <Button
-              title={intl.formatMessage({
-                id: isPrescriptionsEnabled
-                  ? 'health.prescriptionsAndCertificates.screenTitle'
-                  : 'health.drugCertificates.title',
-              })}
-              isOutlined
-              isUtilityButton
-              iconStyle={{ tintColor: theme.color.dark300 }}
-              style={buttonStyle}
-              ellipsis
-              onPress={() => navigateTo('/prescriptions', componentId)}
-            />
-          )}
-          {isMedicineDelegationEnabled && (
-            <Button
-              title={intl.formatMessage({
-                id: 'health.overview.medicineDelegation',
-              })}
-              isOutlined
-              isUtilityButton
-              iconStyle={{ tintColor: theme.color.dark300 }}
-              style={buttonStyle}
-              ellipsis
-              onPress={() => navigateTo('/medicine-delegation', componentId)}
-            />
-          )}
-          <Button
-            title={intl.formatMessage({ id: 'health.overview.therapy' })}
-            isOutlined
-            isUtilityButton
-            icon={externalLinkIcon}
-            iconStyle={{ tintColor: theme.color.dark300 }}
-            style={buttonStyle}
-            ellipsis
-            onPress={() =>
-              openBrowser(
-                `${origin}/minarsidur/heilsa/thjalfun/sjukrathjalfun`,
-                componentId,
-              )
-            }
-          />
-          <Button
-            title={intl.formatMessage({
-              id: 'health.overview.aidsAndNutrition',
-            })}
-            isOutlined
-            isUtilityButton
-            icon={externalLinkIcon}
-            iconStyle={{ tintColor: theme.color.dark300 }}
-            style={{
-              ...buttonStyle,
-              maxWidth: width * 0.5 - theme.spacing[3],
-            }}
-            ellipsis
-            onPress={() =>
-              openBrowser(
-                `${origin}/minarsidur/heilsa/hjalpartaeki-og-naering`,
-                componentId,
-              )
-            }
-          />
         </ButtonWrapper>
         {isAppointmentsEnabled && (
           <>

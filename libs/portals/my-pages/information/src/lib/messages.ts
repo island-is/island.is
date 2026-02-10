@@ -615,6 +615,20 @@ export const emailsMsg = defineMessages({
     id: 'ids:email-already-exists',
     defaultMessage: 'Netfang er nú þegar til',
   },
+  verificationExpired: {
+    id: 'ids:verification-expired',
+    defaultMessage: 'Kóðinn er útrunninn. Vinsamlegast biddu um nýjan kóða.',
+  },
+  tooManyAttempts: {
+    id: 'ids:too-many-attempts',
+    defaultMessage:
+      'Of margar misheppnaðar tilraunir. Vinsamlegast biddu um nýjan kóða.',
+  },
+  verificationNotFound: {
+    id: 'ids:verification-not-found',
+    defaultMessage:
+      'Staðfesting fannst ekki. Vinsamlegast biddu um nýjan kóða.',
+  },
 })
 
 export const contractsMessages = defineMessages({
