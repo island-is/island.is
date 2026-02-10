@@ -22,7 +22,7 @@ export type ConfigFactory<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   T extends Record<string, any> = Record<string, any>,
 > = (() => Configuration<T>) &
-  ConfigFactoryKeyHost & {
+  ConfigFactoryKeyHost<Configuration<T>> & {
     optional: () => ConfigFactory<T>
     registerOptional: () => DynamicModule
   }
