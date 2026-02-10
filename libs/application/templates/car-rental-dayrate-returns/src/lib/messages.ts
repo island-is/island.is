@@ -32,7 +32,7 @@ export const m = {
     linkToRateCategoryApplication: {
       id: 'rsk.crdr.application:prerequisites.link.to.rate.category.application',
       defaultMessage:
-        'Skráning ökutækja af og á daggjald: [Bílaleigu gjalflokkar](/umsoknir/bilaleigu-gjaldflokkur)',
+        'Skráning ökutækja af og á daggjaldi: [Bílaleigu gjalflokkar](/umsoknir/bilaleigu-gjaldflokkur)',
       description: 'Link to rate category application',
     },
     skatturTitle: {
