@@ -254,6 +254,13 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       description:
         'The reason for this is the following:\n* The certificate that confirms limited ability for work was issued over 7 years ago.\n\nYou need a new confirmation from a doctor that your capacity is impaired, as well as a rehabilitation plan or confirmation of treatment, confirmation of ill health that prevents rehabilitation or treatment or confirmation of pending rehabilitation or treatment.\n\nFurther information on the conditions for medical and rehabilitation payments can be found on the [TR website](https://island.is/sjukra-og-endurhaefingargreidslur).\n\nIf payments from the Social Insurance Administration have been paused for more than 6 months, due to issues that cause reduced capacity, you need to get a new certificate in order to re-apply for medical and rehabilitation payments.\n\nIf you do not think the above applies to you, please contact the Social Insurance Administration at [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
     },
+    baseCertOlderThanSixMonthsDescription: {
+      id: 'marp.application:not.eligible.base.cert.older.than.six.months.description#markdown',
+      defaultMessage:
+        'Þú ert ekki með gilt vottorð af tegundinni grunnvottorð.\n\nEf hlé hefur orðið á greiðslum frá Tryggingastofnun í meira en 6 mánuði, vegna vanda sem orsakar skerta starfsgetu, þá þarf að fá nýtt grunnvottorð til þess að geta sótt aftur um sjúkra- og endurhæfingargreiðslur.\n\nEf þú telur þetta ekki eiga við um þig, vinsamlegast hafið samband við [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
+      description:
+        'You do not have a valid certificate of type basic certificate.\n\nIf there has been a break in payments from the Social Insurance Administration for more than 6 months, due to problems causing reduced work capacity, then you need to get a new basic certificate in order to be able to apply again for medical and rehabilitation payments.\n\nIf you do not think the above applies to you, please contact the Social Insurance Administration at [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
+    },
     baseCertDisabilityDateEmptyDescription: {
       id: 'marp.application:not.eligible.base.cert.disability.date.empty.description#markdown',
       defaultMessage:

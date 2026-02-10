@@ -117,7 +117,7 @@
     "@nestjs/bull": "0.6.3",
     "@nestjs/cache-manager": "2.0.1",
     "@nestjs/common": "10.0.5",
-    "@nestjs/config": "0.5.0",
+    "@nestjs/config": "4.0.2",
     "@nestjs/core": "10.0.5",
     "@nestjs/graphql": "10.1.1",
     "@nestjs/jwt": "8.0.1",

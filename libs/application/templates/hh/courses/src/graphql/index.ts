@@ -24,22 +24,9 @@ export const GET_COURSE_BY_ID_QUERY = gql`
           }
           location
           displayedTitle
-          price {
-            amount
-          }
+          chargeItemCode
           description
         }
-      }
-    }
-  }
-`
-
-export const GET_HEALTHCENTERS_QUERY = gql`
-  query GetHealthCenters {
-    rightsPortalPaginatedHealthCenters {
-      data {
-        id
-        name
       }
     }
   }

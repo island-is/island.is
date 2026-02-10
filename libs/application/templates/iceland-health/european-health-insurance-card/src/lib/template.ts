@@ -5,10 +5,10 @@ import {
   ApplicationStateSchema,
   ApplicationTemplate,
   ApplicationTypes,
-  ChildrenCustodyInformationApi,
+  ChildrenCustodyInformationApiV3,
   DefaultEvents,
-  NationalRegistrySpouseApi,
-  NationalRegistryUserApi,
+  NationalRegistryV3SpouseApi,
+  NationalRegistryV3UserApi,
   defineTemplateApi,
 } from '@island.is/application/types'
 import {
@@ -45,9 +45,9 @@ const template: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.EUROPEAN_HEALTH_INSURANCE_CARD,
-  name: e.form.applicationName,
+  name: e.application.applicationName,
   codeOwner: CodeOwners.NordaApplications,
-  institution: e.form.institutionName,
+  institution: e.application.institutionName,
   featureFlag: Features.europeanHealthInsuranceCard,
   dataSchema,
   stateMachineConfig: {
@@ -81,9 +81,9 @@ const template: ApplicationTemplate<
                 },
               ],
               api: [
-                NationalRegistryUserApi,
-                NationalRegistrySpouseApi,
-                ChildrenCustodyInformationApi,
+                NationalRegistryV3UserApi,
+                NationalRegistryV3SpouseApi,
+                ChildrenCustodyInformationApiV3,
                 EhicCardResponseApi,
               ],
               write: 'all',

@@ -6,7 +6,7 @@ import {
   formatDate,
   HEALTH_DIRECTORATE_SLUG,
   IntroWrapper,
-  m,
+  LinkButton,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { isDefined } from '@island.is/shared/utils'
@@ -52,12 +52,21 @@ const Waitlists: React.FC = () => {
       serviceProviderTooltip={formatMessage(
         messages.landlaeknirWaitlistTooltip,
       )}
+      buttonGroup={[
+        <LinkButton
+          key="waitlists-link"
+          to={formatMessage(messages.waitlistsDescriptionLink)}
+          text={formatMessage(messages.waitlistsDescriptionInfo)}
+          variant="utility"
+          icon="open"
+        />,
+      ]}
     >
       {!loading && !error && waitlists?.length === 0 && (
         <Problem
           type="no_data"
           noBorder={false}
-          title={formatMessage(m.noData)}
+          title={formatMessage(messages.noWaitListsTitle)}
           message={formatMessage(messages.noWaitlists)}
           imgSrc="./assets/images/nodata.svg"
         />

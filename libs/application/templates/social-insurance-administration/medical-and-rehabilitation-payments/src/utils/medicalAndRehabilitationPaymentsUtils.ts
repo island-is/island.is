@@ -541,6 +541,9 @@ export const eligibleText = (externalData: ExternalData) => {
     case EligibleReasonCodes.BASE_CERT_OLDER_THAN_7YEARS:
       return medicalAndRehabilitationPaymentsFormMessage.notEligible
         .baseCertOlderThanSevenYearsDescription
+    case EligibleReasonCodes.BASE_CERT_OLDER_THAN_6MONTHS:
+      return medicalAndRehabilitationPaymentsFormMessage.notEligible
+        .baseCertOlderThanSixMonthsDescription
     case EligibleReasonCodes.BASE_CERT_DISABILITY_DATE_EMPTY:
       return medicalAndRehabilitationPaymentsFormMessage.notEligible
         .baseCertDisabilityDateEmptyDescription

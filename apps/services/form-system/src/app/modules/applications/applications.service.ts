@@ -43,6 +43,7 @@ import * as kennitala from 'kennitala'
 import type { Locale } from '@island.is/shared/types'
 import { calculatePruneAt } from '../../../utils/calculatePruneAt'
 import { SectionDto } from '../sections/models/dto/section.dto'
+import { SubmitApplicationResponseDto } from './models/dto/submitApplication.response.dto'
 
 @Injectable()
 export class ApplicationsService {
@@ -224,7 +225,7 @@ export class ApplicationsService {
     await application.save()
   }
 
-  async submit(id: string): Promise<boolean> {
+  async submit(id: string): Promise<SubmitApplicationResponseDto> {
     const application = await this.applicationModel.findByPk(id)
     const form = await this.formModel.findByPk(application?.formId || '')
 
@@ -276,7 +277,20 @@ export class ApplicationsService {
       await applicationEvent.destroy()
     }
 
-    return success
+    const submitResponseDto = new SubmitApplicationResponseDto()
+    submitResponseDto.success = success
+    if (!success) {
+      submitResponseDto.screenErrorMessages = [
+        {
+          title: { is: 'Villa við innsendingu', en: 'Error submitting' },
+          message: {
+            is: 'Ekki tókst að senda inn umsóknina, reyndu aftur síðar eða sendu póst á island@island.is',
+            en: 'The application could not be submitted. Please try again later or send an email to island@island.is',
+          },
+        },
+      ]
+    }
+    return submitResponseDto
   }
 
   async findAllByOrganization(

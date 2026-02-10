@@ -364,6 +364,9 @@
       "@island.is/application/templates/car-rental-fee-category": [
         "libs/application/templates/car-rental-fee-category/src/index.ts"
       ],
+      "@island.is/application/templates/car-rental-dayrate-returns": [
+        "libs/application/templates/car-rental-dayrate-returns/src/index.ts"
+      ],
       "@island.is/application/templates/children-residence-change": [
         "libs/application/templates/family-matters/children-residence-change/src/index.ts"
       ],

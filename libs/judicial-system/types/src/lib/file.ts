@@ -1,6 +1,7 @@
 export enum CaseFileState {
   STORED_IN_RVG = 'STORED_IN_RVG',
   STORED_IN_COURT = 'STORED_IN_COURT',
+  REJECTED = 'REJECTED',
   DELETED = 'DELETED',
 }
 
