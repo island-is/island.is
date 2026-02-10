@@ -13,19 +13,23 @@ import { getLocaleFromPath } from '../i18n/withLocale'
 interface Props {
   lang: Locale
   domain: string
+  matomoDomain: string
+  matomoSiteId: string
 }
 
 class MyDocument extends Document<Props> {
   static async getInitialProps(ctx: DocumentContext) {
     const initialProps = await Document.getInitialProps(ctx)
     const domain = process.env.TRACKING_DOMAIN ?? ''
+    const matomoDomain = process.env.MATOMO_DOMAIN ?? ''
+    const matomoSiteId = process.env.MATOMO_SITE_ID ?? ''
     const lang = getLocaleFromPath(ctx?.req?.url)
 
-    return { ...initialProps, lang, domain }
+    return { ...initialProps, lang, domain, matomoDomain, matomoSiteId }
   }
 
   render() {
-    const { lang, domain } = this.props
+    const { lang, domain, matomoDomain, matomoSiteId } = this.props
 
     return (
       <Html lang={String(lang)}>
@@ -36,6 +40,25 @@ class MyDocument extends Document<Props> {
               data-domain={domain}
               src={PLAUSIBLE_SCRIPT_SRC}
             ></script>
+          )}
+          {Boolean(matomoDomain) && Boolean(matomoSiteId) && (
+            // biome-ignore lint/security/noDangerouslySetInnerHtml: Static Matomo tracking snippet
+            <script
+              dangerouslySetInnerHTML={{
+                __html: `
+                  var _paq = window._paq = window._paq || [];
+                  _paq.push(['trackPageView']);
+                  _paq.push(['enableLinkTracking']);
+                  (function() {
+                    var u="${matomoDomain}";
+                    _paq.push(['setTrackerUrl', u+'matomo.php']);
+                    _paq.push(['setSiteId', '${matomoSiteId}']);
+                    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+                    g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+                  })();
+                `,
+              }}
+            />
           )}
         </Head>
         <body>
