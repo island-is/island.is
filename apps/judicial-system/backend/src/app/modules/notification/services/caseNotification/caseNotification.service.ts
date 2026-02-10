@@ -38,6 +38,7 @@ import {
   CaseNotificationType,
   CaseState,
   CaseType,
+  DefendantNotificationType,
   DefenderSubRole,
   getIndictmentAppealDeadline,
   getStatementDeadline,
@@ -84,6 +85,7 @@ import {
   type CivilClaimant,
   DateLog,
   type Defendant,
+  InstitutionContact,
   Notification,
   Recipient,
 } from '../../../repository'
@@ -101,6 +103,8 @@ export class CaseNotificationService extends BaseNotificationService {
   constructor(
     @InjectModel(Notification)
     notificationModel: typeof Notification,
+    @InjectModel(InstitutionContact)
+    institutionContactModel: typeof InstitutionContact,
     @Inject(notificationModuleConfig.KEY)
     config: ConfigType<typeof notificationModuleConfig>,
     @Inject(LOGGER_PROVIDER) logger: Logger,
@@ -1163,12 +1167,15 @@ export class CaseNotificationService extends BaseNotificationService {
       theCase.courtCaseNumber,
       theCase.court?.name,
     )
+    const a = this.getInstitutionContact('c9b3b124-2a85-11ec-8d3d-0242ac130003')
 
     return this.sendEmail({
       subject,
       html: body,
       recipientName: this.formatMessage(notifications.emailNames.prisonAdmin),
-      recipientEmail: this.config.email.prisonAdminEmail,
+      recipientEmail: `${this.config.email.prisonAdminEmail}${
+        a ? `,${a}` : ''
+      }`,
     })
   }
 
@@ -3051,6 +3058,32 @@ export class CaseNotificationService extends BaseNotificationService {
         throw new InternalServerErrorException(
           `Invalid notification type ${type}`,
         )
+    }
+  }
+
+  private async getInstitutionContact(
+    institutionId?: string,
+  ): Promise<string | null> {
+    try {
+      if (!institutionId || !this.institutionContactModel) {
+        return null
+      }
+
+      const institutionContact = await this.institutionContactModel.findOne({
+        where: {
+          institutionId,
+          type: DefendantNotificationType.INDICTMENT_SENT_TO_PRISON_ADMIN,
+        },
+      })
+
+      return institutionContact?.value ?? null
+    } catch (error) {
+      this.logger.error(
+        `Failed to get institution contact for institutionId: ${institutionId} and type: ${DefendantNotificationType.INDICTMENT_SENT_TO_PRISON_ADMIN}`,
+        error,
+      )
+
+      return null
     }
   }
 
