@@ -7,6 +7,7 @@ import {
 } from '@island.is/auth-nest-tools'
 import { ApiScope } from '@island.is/auth/scopes'
 import {
+  StudentFileType,
   UniversityCareersClientService,
   UniversityIdShort,
   UniversityShortIdMap,
@@ -26,7 +27,7 @@ export class EducationController {
     private readonly auditService: AuditService,
   ) {}
 
-  @Post('/graduation/:lang/:university/:trackNumber')
+  @Post('/graduation/:lang/:university/:trackNumber/:fileType')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
     content: { 'application/pdf': {} },
@@ -37,6 +38,7 @@ export class EducationController {
     @Param('trackNumber') trackNumber: string,
     @Param('lang') lang: string,
     @Param('university') uni: UniversityIdShort,
+    @Param('fileType') fileType: StudentFileType,
     @CurrentUser()
     user: User,
     @Res() res: Response,
@@ -44,6 +46,7 @@ export class EducationController {
     const documentResponse = await this.universitiesApi.getStudentTrackPdf(
       user,
       parseInt(trackNumber),
+      fileType,
       UniversityShortIdMap[uni],
       lang as Locale,
     )

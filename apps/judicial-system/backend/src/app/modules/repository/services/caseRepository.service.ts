@@ -60,6 +60,8 @@ interface FindAllOptions {
   order?: FindOptions['order']
   limit?: FindOptions['limit']
   offset?: FindOptions['offset']
+  group?: FindOptions['group']
+  having?: FindOptions['having']
 }
 
 interface FindAndCountAllOptions {
@@ -216,6 +218,14 @@ export class CaseRepositoryService {
 
       if (options?.offset) {
         findOptions.offset = options.offset
+      }
+
+      if (options?.group) {
+        findOptions.group = options.group
+      }
+
+      if (options?.having) {
+        findOptions.having = options.having
       }
 
       const results = await this.caseModel.findAll(findOptions)
@@ -386,7 +396,6 @@ export class CaseRepositoryService {
         'openedByDefender',
         'crimeScenes',
         'indictmentIntroduction',
-        'withCourtSessions',
         'requestDriversLicenseSuspension',
         'prosecutorsOfficeId',
         'indictmentDeniedExplanation',
@@ -417,6 +426,8 @@ export class CaseRepositoryService {
           ...pick(caseToSplit, fieldsToCopy),
           state: CaseState.SUBMITTED,
           splitCaseId: caseId,
+          // The new case should have court session support
+          withCourtSessions: true,
           // The new case is postponed indefinitely by default
           indictmentDecision: IndictmentDecision.POSTPONING,
         },

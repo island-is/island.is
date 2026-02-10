@@ -27,6 +27,7 @@ import {
   getVerdictServiceStatusText,
 } from '@island.is/judicial-system/formatters'
 import {
+  addMessagesToQueue,
   messageEndpoint,
   MessageService,
   MessageType,
@@ -234,15 +235,13 @@ export class InternalVerdictController {
         isSuccessfulVerdictServiceStatus(updatedVerdict.serviceStatus) &&
         hasDrivingLicenseSuspension
       ) {
-        this.messageService.sendMessagesToQueue([
-          {
-            type: MessageType.INDICTMENT_CASE_NOTIFICATION,
-            caseId: theCase.id,
-            body: {
-              type: IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION,
-            },
+        addMessagesToQueue({
+          type: MessageType.INDICTMENT_CASE_NOTIFICATION,
+          caseId: theCase.id,
+          body: {
+            type: IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION,
           },
-        ])
+        })
       }
 
       this.eventService.postEvent('VERDICT_SERVICE_STATUS', theCase, false, {

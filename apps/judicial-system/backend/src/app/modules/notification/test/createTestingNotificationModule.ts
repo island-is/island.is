@@ -15,7 +15,11 @@ import {
   SharedAuthModule,
   sharedAuthModuleConfig,
 } from '@island.is/judicial-system/auth'
-import { MessageService } from '@island.is/judicial-system/message'
+import {
+  addMessagesToQueue,
+  Message,
+  MessageService,
+} from '@island.is/judicial-system/message'
 
 import { awsS3ModuleConfig, AwsS3Service } from '../../aws-s3'
 import { InternalCaseService } from '../../case'
@@ -145,7 +149,14 @@ export const createTestingNotificationModule = async () => {
     })
     .compile()
 
+  const queuedMessages: Message[] = []
+  const mockAddMessageToQueue = addMessagesToQueue as jest.Mock
+  mockAddMessageToQueue.mockImplementation((...msgs: Message[]) => {
+    queuedMessages.push(...msgs)
+  })
+
   const context = {
+    queuedMessages,
     userService: notificationModule.get(UserService),
     internalCaseService: notificationModule.get(InternalCaseService),
     messageService: notificationModule.get(MessageService),

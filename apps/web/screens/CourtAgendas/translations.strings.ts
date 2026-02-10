@@ -2,6 +2,16 @@ import { defineMessages } from 'react-intl'
 
 export const m = {
   listPage: defineMessages({
+    caseTypeAccordionLabel: {
+      id: 'web.courtAgendas:listPage.caseTypeAccordionLabel',
+      defaultMessage: 'Málategundir',
+      description: 'Málategundir',
+    },
+    caseTypeSelectLabel: {
+      id: 'web.courtAgendas:listPage.caseTypeSelectLabel',
+      defaultMessage: 'Veldu málategund',
+      description: 'Veldu málategund',
+    },
     scheduleTypeAccordionLabel: {
       id: 'web.courtAgendas:listPage.scheduleTypeAccordionLabel',
       defaultMessage: 'Tegund dómsathafnar',

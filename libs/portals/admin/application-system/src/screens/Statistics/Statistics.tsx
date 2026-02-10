@@ -1,12 +1,6 @@
 import { m } from '../../lib/messages'
-import {
-  Box,
-  Breadcrumbs,
-  SkeletonLoader,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, SkeletonLoader, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { ApplicationSystemPaths } from '../../lib/paths'
 import type { ApplicationFilters } from '../../types/filters'
 import { StatisticsForm } from '../../components/StatisticsForm/StatisticsForm'
 import {
@@ -100,16 +94,6 @@ const Statistics = ({ isSuperAdmin }: StatisticsProps) => {
 
   return (
     <Box>
-      <Breadcrumbs
-        items={[
-          { title: 'Ísland.is', href: '/stjornbord' },
-          {
-            title: formatMessage(m.applicationSystem),
-            href: `/stjornbord${ApplicationSystemPaths.Root}`,
-          },
-          { title: formatMessage(m.statistics) },
-        ]}
-      />
       <Text variant="h3" as="h1" marginBottom={[3, 3, 6]} marginTop={3}>
         {formatMessage(m.statistics)}
       </Text>

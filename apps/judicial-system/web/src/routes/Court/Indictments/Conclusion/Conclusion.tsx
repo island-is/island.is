@@ -58,10 +58,13 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import useVerdict from '@island.is/judicial-system-web/src/utils/hooks/useVerdict'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
-import { validate } from '@island.is/judicial-system-web/src/utils/validate'
+import {
+  isIndictmentCourtRecordValid,
+  validate,
+} from '@island.is/judicial-system-web/src/utils/validate'
 
 import { CourtCaseNumberInput } from '../../components'
-import SelectConnectedCase from './SelectConnectedCase'
+import SelectCandidateMergeCase from './SelectCandidateMergeCase'
 import { strings } from './Conclusion.strings'
 
 const courtSessionOptions = [
@@ -346,19 +349,20 @@ const Conclusion: FC = () => {
     )
   }
 
+  const isValidIndictmentCourtRecord = isIndictmentCourtRecordValid(workingCase)
+  const isCourtRecordValid: boolean =
+    isValidIndictmentCourtRecord ||
+    uploadFiles.some(
+      (file) =>
+        file.category === CaseFileCategory.COURT_RECORD &&
+        file.status === FileUploadStatus.done,
+    )
+
   const stepIsValid = () => {
     // Do not leave any uploads unfinished
     if (!allFilesDoneOrError) {
       return false
     }
-
-    const isCourtRecordValid = (): boolean =>
-      hasGeneratedCourtRecord ||
-      uploadFiles.some(
-        (file) =>
-          file.category === CaseFileCategory.COURT_RECORD &&
-          file.status === FileUploadStatus.done,
-      )
 
     switch (selectedAction) {
       case IndictmentDecision.POSTPONING:
@@ -372,7 +376,7 @@ const Conclusion: FC = () => {
           case CaseIndictmentRulingDecision.RULING:
           case CaseIndictmentRulingDecision.DISMISSAL:
             return (
-              isCourtRecordValid() &&
+              isCourtRecordValid &&
               uploadFiles.some(
                 (file) =>
                   file.category === CaseFileCategory.RULING &&
@@ -381,10 +385,10 @@ const Conclusion: FC = () => {
             )
           case CaseIndictmentRulingDecision.CANCELLATION:
           case CaseIndictmentRulingDecision.FINE:
-            return isCourtRecordValid()
+            return isCourtRecordValid
           case CaseIndictmentRulingDecision.MERGE:
             return (
-              isCourtRecordValid() &&
+              isCourtRecordValid &&
               Boolean(
                 workingCase.mergeCase?.id ||
                   validate([[mergeCaseNumber, ['empty', 'S-case-number']]])
@@ -408,6 +412,10 @@ const Conclusion: FC = () => {
         courtSession.rulingType === CourtSessionRulingType.JUDGEMENT &&
         Boolean(courtSession.ruling),
     ) ?? false
+
+  const missingValidCourtRecord =
+    selectedAction === IndictmentDecision.COMPLETING &&
+    !isValidIndictmentCourtRecord
 
   const missingRulingInCourtSessions =
     !!workingCase.withCourtSessions &&
@@ -656,7 +664,7 @@ const Conclusion: FC = () => {
                     required
                   />
                   <BlueBox className={grid({ gap: 2 })}>
-                    <SelectConnectedCase
+                    <SelectCandidateMergeCase
                       workingCase={workingCase}
                       setWorkingCase={setWorkingCase}
                       mergeCaseNumber={mergeCaseNumber}
@@ -878,11 +886,15 @@ const Conclusion: FC = () => {
           }
           nextIsDisabled={!stepIsValid()}
           nextIsLoading={isUpdatingCase}
-          hideNextButton={missingRulingInCourtSessions}
+          hideNextButton={
+            missingValidCourtRecord || missingRulingInCourtSessions
+          }
           infoBoxText={
-            missingRulingInCourtSessions
-              ? 'Þegar máli lýkur með dómi þarf að skrá dómsorðið á þingbókarskjá.'
-              : ''
+            !missingValidCourtRecord
+              ? missingRulingInCourtSessions
+                ? 'Þegar máli lýkur með dómi þarf að skrá dómsorðið á þingbókarskjá.'
+                : ''
+              : 'Til að ljúka máli þarf að staðfesta þingbók á þingbókarskjá.'
           }
         />
       </FormContentContainer>

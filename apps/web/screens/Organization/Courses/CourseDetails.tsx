@@ -3,7 +3,6 @@ import { useRouter } from 'next/router'
 import {
   Box,
   InfoCardGrid,
-  type NavigationItem,
   Stack,
   TagVariant,
   Text,
@@ -30,6 +29,7 @@ import {
   GET_COURSE_BY_ID_QUERY,
   GET_COURSE_LIST_PAGE_BY_ID_QUERY,
 } from '../../queries/Courses'
+import { getSubpageNavList } from '../SubPage'
 
 type CourseDetailsScreenContext = ScreenContext & {
   organizationPage: OrganizationPage
@@ -60,26 +60,10 @@ const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
   courseListPage,
 }) => {
   const router = useRouter()
-  const pathWithoutQueryParams = router.asPath.split('?')[0]
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
   const { activeLocale } = useI18n()
   const { format } = useDateUtils()
-
-  const navList: NavigationItem[] = organizationPage.menuLinks.map(
-    ({ primaryLink, childrenLinks }) => ({
-      title: primaryLink?.text ?? '',
-      href: primaryLink?.url ?? '',
-      active:
-        primaryLink?.url === pathWithoutQueryParams ||
-        childrenLinks.some((link) => link.url === pathWithoutQueryParams),
-      items: childrenLinks.map(({ text, url }) => ({
-        title: text,
-        href: url,
-        active: url === pathWithoutQueryParams,
-      })),
-    }),
-  )
 
   return (
     <OrganizationWrapper
@@ -87,7 +71,11 @@ const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
       pageTitle={course.title}
       navigationData={{
         title: n('navigationTitle', 'Efnisyfirlit'),
-        items: navList,
+        items: getSubpageNavList(
+          organizationPage,
+          router,
+          activeLocale === 'is' ? 3 : 4,
+        ),
       }}
       showReadSpeaker={false}
       breadcrumbItems={[
@@ -120,7 +108,9 @@ const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
             <Text variant="h2" as="h2">
               {n(
                 'courseInstancesLabel',
-                activeLocale === 'is' ? 'Næstu námskeið' : 'Upcoming courses',
+                activeLocale === 'is'
+                  ? 'Skráning á næstu námskeið'
+                  : 'Registration for upcoming courses',
               )}
             </Text>
             <InfoCardGrid

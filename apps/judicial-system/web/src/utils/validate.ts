@@ -547,6 +547,7 @@ export const isDefenderStepValid = (workingCase: Case): boolean => {
       return (
         defendant.defenderChoice === DefenderChoice.WAIVE ||
         defendant.defenderChoice === DefenderChoice.DELAY ||
+        defendant.defenderChoice === DefenderChoice.DELEGATE ||
         !defendant.defenderChoice ||
         validate([
           [defendant.defenderName, ['empty']],
@@ -583,7 +584,7 @@ export const isCourtSessionValid = (courtSession: CourtSessionResponse) => {
   )
 }
 
-export const isIndictmentCourtRecordStepValid = (workingCase: Case) => {
+export const isIndictmentCourtRecordValid = (workingCase: Case) => {
   if (!workingCase.withCourtSessions) {
     return true
   }
@@ -595,7 +596,10 @@ export const isIndictmentCourtRecordStepValid = (workingCase: Case) => {
     return false
   }
 
-  return workingCase.courtSessions.every(isCourtSessionValid)
+  return workingCase.courtSessions.every(
+    (courtSession) =>
+      isCourtSessionValid(courtSession) && courtSession.isConfirmed,
+  )
 }
 
 const isIndictmentRulingDecisionValid = (workingCase: Case) => {

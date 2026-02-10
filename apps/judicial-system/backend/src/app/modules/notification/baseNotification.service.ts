@@ -33,12 +33,7 @@ export abstract class BaseNotificationService {
     protected readonly eventService: EventService,
     protected readonly logger: Logger,
     protected readonly institutionContactModel?: typeof InstitutionContact,
-  ) {
-    this.logger.warn('IntlService ', {
-      intlService,
-      thisIntlService: this.intlService,
-    })
-  }
+  ) {}
 
   protected formatMessage: FormatMessage = () => {
     throw new InternalServerErrorException('Format message not initialized')

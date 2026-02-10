@@ -1,7 +1,7 @@
 import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
-import { MessageService } from '@island.is/judicial-system/message'
+import { Message } from '@island.is/judicial-system/message'
 import {
   CaseType,
   PunishmentType,
@@ -39,20 +39,20 @@ describe('LimitedAccessDefendantController - Update', () => {
     defenderEmail: uuid(),
   } as Defendant
 
-  let mockMessageService: MessageService
+  let mockQueuedMessages: Message[]
   let transaction: Transaction
   let mockDefendantRepositoryService: DefendantRepositoryService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
     const {
-      messageService,
+      queuedMessages,
       sequelize,
       defendantRepositoryService,
       limitedAccessDefendantController,
     } = await createTestingDefendantModule()
 
-    mockMessageService = messageService
+    mockQueuedMessages = queuedMessages
     mockDefendantRepositoryService = defendantRepositoryService
 
     const mockTransaction = sequelize.transaction as jest.Mock
@@ -106,7 +106,7 @@ describe('LimitedAccessDefendantController - Update', () => {
         { transaction },
       )
       expect(then.result).toBe(updatedDefendant)
-      expect(mockMessageService.sendMessagesToQueue).not.toHaveBeenCalled()
+      expect(mockQueuedMessages).toEqual([])
     })
   })
 })
