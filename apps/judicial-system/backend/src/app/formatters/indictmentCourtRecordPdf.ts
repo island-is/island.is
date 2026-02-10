@@ -4,8 +4,11 @@ import PDFDocument from 'pdfkit'
 import {
   capitalize,
   formatDate,
+  formatGender,
   getRoleTitleFromCaseFileCategory,
+  getWordByGender,
   lowercase,
+  Word,
 } from '@island.is/judicial-system/formatters'
 import {
   CaseFileCategory,
@@ -168,7 +171,11 @@ export const createIndictmentCourtRecordPdf = (
     )
     addNormalText(
       doc,
-      `Varnaraðili er ${theCase.defendants?.[0].name ?? 'óþekktur'}.`,
+      `${
+        capitalize(
+          getWordByGender(Word.AKAERDI, theCase.defendants?.[0].gender),
+        ) || 'Ákærði'
+      } er ${theCase.defendants?.[0].name ?? 'óþekktur'}.`,
     )
 
     addEmptyLines(doc)
