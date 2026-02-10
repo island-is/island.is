@@ -29,6 +29,12 @@ export const m = {
       defaultMessage: 'Ég skil að ofangreindra upplýsinga verður aflað',
       description: 'Consent checkbox label',
     },
+    linkToRateCategoryApplication: {
+      id: 'rsk.crdr.application:prerequisites.link.to.rate.category.application',
+      defaultMessage:
+        'Skráning ökutækja af og á daggjald: [Bílaleigu gjalflokkar](/umsoknir/bilaleigu-gjaldflokkur)',
+      description: 'Link to rate category application',
+    },
     skatturTitle: {
       id: 'rsk.crdr.application:prerequisites.skattur.title',
       defaultMessage: 'Upplýsingar frá Skattinum',

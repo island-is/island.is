@@ -12,6 +12,7 @@ import {
 } from '@island.is/judicial-system/message'
 import {
   CaseFileCategory,
+  CaseIndictmentRulingDecision,
   CaseNotificationType,
   EventNotificationType,
   IndictmentCaseNotificationType,
@@ -20,6 +21,7 @@ import {
   isIndictmentCase,
   NotificationDispatchType,
   prosecutorsOfficeTypes,
+  ServiceRequirement,
   UserDescriptor,
 } from '@island.is/judicial-system/types'
 
@@ -114,13 +116,43 @@ export class NotificationDispatchService {
   private dispatchIndictmentSentToPublicProsecutorNotifications(
     theCase: Case,
   ): void {
-    addMessagesToQueue({
-      type: MessageType.INDICTMENT_CASE_NOTIFICATION,
-      caseId: theCase.id,
-      body: {
-        type: IndictmentCaseNotificationType.INDICTMENT_VERDICT_INFO,
+    const hasDrivingLicenseSuspension = theCase.defendants?.some(
+      (defendant) => defendant.isDrivingLicenseSuspended,
+    )
+
+    const hasServiceRequirementNotApplicable = theCase.defendants?.some(
+      (defendant) =>
+        defendant.verdicts?.some(
+          (verdict) =>
+            verdict.serviceRequirement === ServiceRequirement.NOT_APPLICABLE,
+        ),
+    )
+
+    const isFine =
+      theCase.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
+
+    addMessagesToQueue(
+      {
+        type: MessageType.INDICTMENT_CASE_NOTIFICATION,
+        caseId: theCase.id,
+        body: {
+          type: IndictmentCaseNotificationType.INDICTMENT_VERDICT_INFO,
+        },
       },
-    })
+      ...(hasDrivingLicenseSuspension &&
+      (isFine || hasServiceRequirementNotApplicable)
+        ? [
+            {
+              type: MessageType.INDICTMENT_CASE_NOTIFICATION,
+              caseId: theCase.id,
+              body: {
+                type: IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION,
+              },
+            },
+          ]
+        : []),
+    )
+
     this.addMessagesForCriminalRecordFileUpdateToQueue(theCase)
   }
 
