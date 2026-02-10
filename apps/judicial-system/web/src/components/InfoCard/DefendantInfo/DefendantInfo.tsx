@@ -11,15 +11,12 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
-  CaseListEntry,
   Defendant,
   ServiceRequirement,
   SessionArrangements,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
-import TagCaseState from '../../Tags/TagCaseState/TagCaseState'
-import { mapIndictmentRulingDecisionToTagVariant } from '../../Tags/TagCaseState/TagCaseState.logic'
 import RenderPersonalData from '../RenderPersonalInfo/RenderPersonalInfo'
 import { useConnectedCasesQuery } from './connectedCases.generated'
 import {
@@ -227,15 +224,14 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
       </div>
       {defendant.verdict && (
         <Tag
-          children={
-            defendant.verdict.isDefaultJudgement ? 'Útivistardómur' : 'Dómur'
-          }
           variant={
             defendant.verdict.isDefaultJudgement ? 'purple' : 'darkerBlue'
           }
           outlined
           disabled
-        />
+        >
+          {defendant.verdict.isDefaultJudgement ? 'Útivistardómur' : 'Dómur'}
+        </Tag>
       )}
     </Box>
   )
