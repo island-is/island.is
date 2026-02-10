@@ -32,7 +32,7 @@ export const m = {
     linkToDayrateReturnsApplication: {
       id: 'rsk.crfc.application:prerequisites.link.to.dayrate.returns',
       defaultMessage:
-        'Til að senda inn daggjalds notkun fyrir ökutæki: [Skilagrein daggjalds - Útleigudagar](/umsoknir/skilagrein-daggjalds-utleigudagar)',
+        'Skýrsla um notkun á ökutækjum: [Skilagrein daggjalds - Útleigudagar](/umsoknir/skilagrein-daggjalds-utleigudagar)',
       description: 'Link to day rate returns',
     },
     skatturTitle: {
