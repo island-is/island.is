@@ -22,35 +22,28 @@ export const VehicleSection: FC<
   const { answers } = application
 
   const dateOfContract = format(
-    parseISO(getValueViaPath(answers, 'vehicle.date', '') as string),
+    parseISO(getValueViaPath<string>(answers, 'vehicle.date') ?? ''),
     'dd.MM.yyyy',
     {
       locale: is,
     },
   )
-  const carColor = getValueViaPath(answers, 'pickVehicle.color', undefined) as
-    | string
-    | undefined
-  const carPlate = getValueViaPath(answers, 'pickVehicle.plate', '') as string
-  const salePrice = getValueViaPath(answers, 'vehicle.salePrice', '') as string
-  const mileage = getValueViaPath(answers, 'vehicle.mileage', '') as string
-  const buyerCoOwnerAndOperator = getValueViaPath(
-    answers,
-    'buyerCoOwnerAndOperator',
-    [],
-  ) as CoOwnerAndOperator[]
-  const sellerCoOwner = getValueViaPath(
-    answers,
-    'sellerCoOwner',
-    [],
-  ) as UserInformation[]
+  const carColor = getValueViaPath<string>(answers, 'pickVehicle.color')
+  const carPlate = getValueViaPath<string>(answers, 'pickVehicle.plate') ?? ''
+  const salePrice = getValueViaPath<string>(answers, 'vehicle.salePrice') ?? ''
+  const mileage = getValueViaPath<string>(answers, 'vehicleMileage.value') ?? ''
+  const buyerCoOwnerAndOperator =
+    getValueViaPath<CoOwnerAndOperator[]>(answers, 'buyerCoOwnerAndOperator') ??
+    []
+  const sellerCoOwner =
+    getValueViaPath<UserInformation[]>(answers, 'sellerCoOwner') ?? []
   const isSeller =
-    (getValueViaPath(answers, 'seller.nationalId', '') as string) ===
+    (getValueViaPath<string>(answers, 'seller.nationalId') ?? '') ===
     reviewerNationalId
   const isSellerCoOwner = sellerCoOwner.find(
     (reviewerItems) => reviewerItems.nationalId === reviewerNationalId,
   )
-  const isOperator = buyerCoOwnerAndOperator
+  const isBuyerOperator = buyerCoOwnerAndOperator
     .filter(({ wasRemoved }) => wasRemoved !== 'true')
     .find(
       (reviewerItems) =>
@@ -68,7 +61,7 @@ export const VehicleSection: FC<
         </GridColumn>
         <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
           <Text>
-            {getValueViaPath(answers, 'pickVehicle.type', '') as string}
+            {getValueViaPath<string>(answers, 'pickVehicle.type') ?? ''}
           </Text>
           <Text>
             {carColor ? `${carColor} - ` : ''}
@@ -76,7 +69,7 @@ export const VehicleSection: FC<
           </Text>
         </GridColumn>
         <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
-          {(!isOperator || isSeller || isSellerCoOwner) &&
+          {(!isBuyerOperator || isSeller || isSellerCoOwner) &&
             salePrice.length > 0 && (
               <Text>
                 {`${formatMessage(overview.labels.salePrice)} ${formatIsk(
@@ -89,7 +82,7 @@ export const VehicleSection: FC<
           )} ${dateOfContract}`}</Text>
         </GridColumn>
         <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
-          {(!isOperator || isSeller || isSellerCoOwner) &&
+          {(!isBuyerOperator || isSeller || isSellerCoOwner) &&
             mileage.length > 0 && (
               <Text>
                 {`${formatMessage(overview.labels.mileage)} ${formatMileage(
