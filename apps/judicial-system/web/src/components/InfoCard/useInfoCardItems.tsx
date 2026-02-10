@@ -78,7 +78,7 @@ const useInfoCardItems = () => {
       ),
       values: defendants
         ? [
-            <div className={grid({ gap: 3 })}>
+            <div key="defendants-grid" className={grid({ gap: 3 })}>
               {defendants.map((defendant) => (
                 <div key={defendant.id} className={styles.renderDividerFull}>
                   <DefendantInfo
