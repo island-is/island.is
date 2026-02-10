@@ -5,6 +5,7 @@ import { MOCK_CUSTOMERS } from '../../mocks/CUSTOMERS'
 import { MOCK_INVOICE_TYPES } from '../../mocks/INVOICE_TYPES'
 import { MOCK_SUPPLIERS } from '../../mocks/SUPPLIERS'
 import { MOCK_INVOICE_GROUPS } from '../../mocks/INVOICE_GROUPS'
+import { MOCK_INVOICE_PAYMENT_TYPES } from '../../mocks/INVOICE_PAYMENT_TYPES'
 import { CustomersInput } from '../../dtos/getCustomers.input'
 import { InvoicesInput } from '../../dtos/getInvoices.input'
 import { InvoiceTypesInput } from '../../dtos/getInvoiceTypes.input'
@@ -15,6 +16,8 @@ import { Suppliers } from '../../models/suppliers.model'
 import { InvoiceGroupsInput } from '../../dtos/getInvoiceGroups.input'
 import { InvoiceGroup } from '../../models/invoiceGroup.model'
 import { InvoiceGroupCollection } from '../../models/invoiceGroups.model'
+import { InvoicePaymentTypesInput } from '../../dtos/getInvoicePaymentTypes.input'
+import { InvoicePaymentTypes } from '../../models/invoicePaymentTypes.model'
 
 @Injectable()
 export class MockInvoicesService implements IInvoicesService {
@@ -45,5 +48,11 @@ export class MockInvoicesService implements IInvoicesService {
 
   async getSuppliers(_input: SuppliersInput): Promise<Suppliers | null> {
     return MOCK_SUPPLIERS
+  }
+
+  async getInvoicePaymentTypes(
+    _input: InvoicePaymentTypesInput,
+  ): Promise<InvoicePaymentTypes | null> {
+    return MOCK_INVOICE_PAYMENT_TYPES
   }
 }

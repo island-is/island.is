@@ -22,7 +22,7 @@ export class InvoicesInput extends PaginationInput() {
   @IsOptional()
   dateTo?: Date
 
-  @Field(() => [Int], { nullable: true })
+  @Field(() => [String], { nullable: true })
   @IsOptional()
-  types?: number[]
+  types?: string[]
 }

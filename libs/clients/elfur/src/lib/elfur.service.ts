@@ -17,6 +17,8 @@ import {
   mapInvoiceGroupCollectionDto,
 } from './dtos/invoiceGroupCollection.dto'
 import { InvoiceGroupDto, mapInvoiceGroupDto } from './dtos/invoiceGroup.dto'
+import { InvoicePaymentTypesDto } from './dtos/invoicePaymentTypes.dto'
+import { mapInvoicePaymentTypeDto } from './dtos/invoicePaymentType.dto'
 
 @Injectable()
 export class ElfurClientService {
@@ -114,6 +116,29 @@ export class ElfurClientService {
       customers: customersList?.map(mapCustomerDto).filter(isDefined) ?? [],
       pageInfo: mapPageInfo(pageInfo),
       totalCount,
+    }
+  }
+
+  public async getInvoicePaymentTypes(
+    requestParams?: SearchRequestDto,
+  ): Promise<InvoicePaymentTypesDto | null> {
+    const data = await this.invoicesApi.v1OpeninvoicesPaymenttypesGet(
+      requestParams ?? {},
+    )
+
+    if (
+      !data.pageInfo ||
+      data.pageInfo.hasNextPage === undefined ||
+      !data.totalCount
+    ) {
+      return null
+    }
+
+    return {
+      invoicePaymentTypes:
+        data.tegundList?.map(mapInvoicePaymentTypeDto).filter(isDefined) ?? [],
+      pageInfo: mapPageInfo(data.pageInfo),
+      totalCount: data.totalCount,
     }
   }
 

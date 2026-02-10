@@ -3,5 +3,5 @@ export interface InvoiceRequestDto {
   customer: number
   dateFrom?: Date
   dateTo?: Date
-  types?: number[]
+  // types?: number[]
 }

@@ -1,7 +1,7 @@
 export interface OverviewFilters {
   suppliers?: Array<Filter>
   customers?: Array<Filter>
-  invoiceTypes?: Array<Filter>
+  invoicePaymentTypes?: Array<Filter>
 }
 
 interface Filter {

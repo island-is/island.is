@@ -25,12 +25,12 @@ export const GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICES_FILTERS = gql`
           hasNextPage
         }
       }
-      invoiceTypes {
+      invoicePaymentTypes {
         totalCount
         data {
-          name
-          description
           code
+          name
+          isConfidential
         }
         pageInfo {
           __typename
@@ -64,6 +64,10 @@ export const GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_GROUP = gql`
         itemizations {
           id
           label
+          invoicePaymentType {
+            code
+            name
+          }
           amount
         }
       }

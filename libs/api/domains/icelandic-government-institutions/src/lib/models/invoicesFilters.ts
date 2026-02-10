@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 import { Customers } from './customers.model'
-import { InvoiceTypes } from './invoiceTypes.model'
+import { InvoicePaymentTypes } from './invoicePaymentTypes.model'
 import { Suppliers } from './suppliers.model'
 
 @ObjectType('IcelandicGovernmentInstitutionsInvoicesFilters')
@@ -11,6 +11,6 @@ export class InvoicesFilters {
   @Field(() => Suppliers, { nullable: true })
   suppliers?: Suppliers
 
-  @Field(() => InvoiceTypes, { nullable: true })
-  invoiceTypes?: InvoiceTypes
+  @Field(() => InvoicePaymentTypes, { nullable: true })
+  invoicePaymentTypes?: InvoicePaymentTypes
 }

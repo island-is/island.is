@@ -6,7 +6,6 @@ import { Inject } from '@nestjs/common'
 import { InvoicesFilters } from '../models/invoicesFilters'
 import { InvoiceGroupsInput } from '../dtos/getInvoiceGroups.input'
 import type { InvoiceGroupsWithFilters } from '../types'
-import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { InvoiceGroupCollection } from '../models/invoiceGroups.model'
 
 @Resolver(() => InvoiceGroupCollection)
@@ -15,8 +14,6 @@ export class InvoiceGroupsResolver {
   constructor(
     @Inject('IInvoicesService')
     private readonly invoiceService: IInvoicesService,
-    @Inject(LOGGER_PROVIDER)
-    private readonly logger: Logger,
   ) {}
 
   @Query(() => InvoiceGroupCollection, {
@@ -45,16 +42,16 @@ export class InvoiceGroupsResolver {
   })
   @BypassAuth()
   async getInvoicesFilters(): Promise<InvoicesFilters | null> {
-    const [customers, suppliers, invoiceTypes] = await Promise.all([
+    const [customers, suppliers, invoicePaymentTypes] = await Promise.all([
       this.invoiceService.getCustomers({ limit: 1000 }),
       this.invoiceService.getSuppliers({ limit: 1000 }),
-      this.invoiceService.getInvoiceTypes({ limit: 1000 }),
+      this.invoiceService.getInvoicePaymentTypes({ limit: 1000 }),
     ])
 
     return {
       customers: customers ?? undefined,
       suppliers: suppliers ?? undefined,
-      invoiceTypes: invoiceTypes ?? undefined,
+      invoicePaymentTypes: invoicePaymentTypes ?? undefined,
     }
   }
 }

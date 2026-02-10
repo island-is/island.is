@@ -15,6 +15,9 @@ import { mapInvoiceGroup } from '../../mappers/invoiceGroupMapper'
 import { InvoiceGroup } from '../../models/invoiceGroup.model'
 import { InvoiceGroupCollection } from '../../models/invoiceGroups.model'
 import { InvoiceGroupsInput } from '../../dtos/getInvoiceGroups.input'
+import { InvoicePaymentTypesInput } from '../../dtos/getInvoicePaymentTypes.input'
+import { InvoicePaymentTypes } from '../../models/invoicePaymentTypes.model'
+import { mapInvoicePaymentTypes } from '../../mappers/invoicePaymentTypeMapper'
 
 @Injectable()
 export class InvoicesService implements IInvoicesService {
@@ -35,14 +38,7 @@ export class InvoicesService implements IInvoicesService {
   async getOpenInvoiceGroups(
     input?: InvoiceGroupsInput,
   ): Promise<InvoiceGroupCollection | null> {
-    const requestInput = input
-      ? {
-          ...input,
-          types: input.types?.map(String),
-        }
-      : undefined
-
-    const data = await this.elfurService.getOpenInvoiceGroups(requestInput)
+    const data = await this.elfurService.getOpenInvoiceGroups(input)
 
     if (!data) {
       return null
@@ -68,6 +64,18 @@ export class InvoicesService implements IInvoicesService {
     }
 
     return mapCustomers(data)
+  }
+
+  async getInvoicePaymentTypes(
+    input?: InvoicePaymentTypesInput,
+  ): Promise<InvoicePaymentTypes | null> {
+    const data = await this.elfurService.getInvoicePaymentTypes(input)
+
+    if (!data) {
+      return null
+    }
+
+    return mapInvoicePaymentTypes(data)
   }
 
   async getInvoiceTypes(
