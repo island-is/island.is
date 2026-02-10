@@ -273,6 +273,8 @@ export class CardPaymentController {
     }
   }
 
+  @UseGuards(FeatureFlagGuard)
+  @FeatureFlag(Features.isIslandisApplePayPaymentEnabled)
   @Post('/apple-pay/charge')
   @ApiOkResponse({
     type: ApplePayChargeResponse,
@@ -341,6 +343,8 @@ export class CardPaymentController {
     }
   }
 
+  @UseGuards(FeatureFlagGuard)
+  @FeatureFlag(Features.isIslandisApplePayPaymentEnabled)
   @Get('/apple-pay/session')
   @ApiOkResponse({
     type: ApplePaySessionResponse,
