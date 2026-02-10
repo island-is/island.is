@@ -43,7 +43,7 @@ export const VehicleSection: FC<
   const isSellerCoOwner = sellerCoOwner.find(
     (reviewerItems) => reviewerItems.nationalId === reviewerNationalId,
   )
-  const isBuyerOperator = buyerCoOwnerAndOperator
+  const isBuyerOperator = !!buyerCoOwnerAndOperator
     .filter(({ wasRemoved }) => wasRemoved !== 'true')
     .find(
       (reviewerItems) =>
