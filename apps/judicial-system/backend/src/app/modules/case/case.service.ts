@@ -2207,9 +2207,6 @@ export class CaseService {
     const isReceivingCase =
       update.courtCaseNumber && theCase.state === CaseState.SUBMITTED
 
-    const isReceivingIndictmentCase =
-      isReceivingCase && isIndictmentCase(theCase.type)
-
     const completingIndictmentCase =
       isIndictmentCase(theCase.type) &&
       update.state === CaseState.COMPLETED &&

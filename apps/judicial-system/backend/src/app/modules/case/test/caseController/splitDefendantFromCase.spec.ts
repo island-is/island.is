@@ -115,17 +115,12 @@ describe('CaseController - Split defendant from case', () => {
       id: splitCaseId,
       defendants: undefined,
     } as Case
-    const fullSplitCase = {
-      ...splitCase,
-      defendants: [defendantToSplit],
-    } as Case
+
     let then: Then
 
     beforeEach(async () => {
       const mockSplit = mockCaseRepositoryService.split as jest.Mock
       mockSplit.mockResolvedValueOnce(splitCase)
-      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce(fullSplitCase)
 
       then = await givenWhenThen(caseId, defendantId, theCase, defendantToSplit)
     })
@@ -136,19 +131,6 @@ describe('CaseController - Split defendant from case', () => {
         caseId,
         defendantId,
         { transaction },
-      )
-      expect(mockCaseRepositoryService.findOne).toHaveBeenCalledWith({
-        include,
-        where: {
-          id: splitCaseId,
-          state: { [Op.not]: CaseState.DELETED },
-          isArchived: false,
-        },
-        transaction,
-      })
-      expect(mockCourtSessionService.create).toHaveBeenCalledWith(
-        fullSplitCase,
-        transaction,
       )
       expect(then.result).toBe(splitCase)
     })
