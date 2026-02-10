@@ -38,6 +38,8 @@ import {
   type GetCourtAgendasQueryVariables,
   GetScheduleTypesQuery,
   GetScheduleTypesQueryVariables,
+  type GetVerdictCaseFilterOptionsPerCourtQuery,
+  type GetVerdictCaseFilterOptionsPerCourtQueryVariables,
   type GetVerdictLawyersQuery,
   type GetVerdictLawyersQueryVariables,
   type Query,
@@ -57,6 +59,7 @@ import {
   GET_SCHEDULE_TYPES_QUERY,
   GET_VERDICT_LAWYERS_QUERY,
 } from '../queries/CourtAgendas'
+import { GET_VERDICT_CASE_FILTER_OPTIONS_PER_COURT_QUERY } from '../queries/Verdicts'
 import { AgendaCard } from './components/AgendaCard'
 import { DebouncedDatePicker } from './components/DebouncedDatePicker'
 import { m } from './translations.strings'
@@ -110,6 +113,7 @@ enum QueryParam {
   DATE_TO = 'dateTo',
   LAWYER = 'lawyer',
   SCHEDULE_TYPES = 'scheduleTypes',
+  CASE_TYPES = 'caseTypes',
 }
 
 interface CourtAgendasProps {
@@ -120,6 +124,7 @@ interface CourtAgendasProps {
   }
   lawyers: GetVerdictLawyersQuery['webVerdictLawyers']['lawyers']
   scheduleTypes: Query['webCourtScheduleTypes']
+  caseTypes: GetVerdictCaseFilterOptionsPerCourtQuery['webVerdictCaseFilterOptionsPerCourt']
 }
 
 const extractCourtLevelFromState = (court: string | null | undefined) => {
@@ -152,6 +157,9 @@ const useCourtAgendasState = (props: CourtAgendasProps) => {
         clearOnDefault: true,
       }),
       [QueryParam.SCHEDULE_TYPES]: parseAsString.withOptions({
+        clearOnDefault: true,
+      }),
+      [QueryParam.CASE_TYPES]: parseAsString.withOptions({
         clearOnDefault: true,
       }),
     },
@@ -204,6 +212,9 @@ const useCourtAgendasState = (props: CourtAgendasProps) => {
         lawyer: queryParams[QueryParam.LAWYER] ?? null,
         scheduleTypes: queryParams[QueryParam.SCHEDULE_TYPES]
           ? [queryParams[QueryParam.SCHEDULE_TYPES]]
+          : null,
+        caseTypes: queryParams[QueryParam.CASE_TYPES]
+          ? [queryParams[QueryParam.CASE_TYPES]]
           : null,
       }
     },
@@ -320,6 +331,7 @@ const FILTER_ACCORDION_ITEM_IDS = [
   'date-accordion',
   'lawyer-accordion',
   'schedule-type-accordion',
+  'case-type-accordion',
 ]
 
 interface FiltersProps {
@@ -331,6 +343,7 @@ interface FiltersProps {
   whiteBackground?: boolean
   lawyerOptions: { label: string; value: string }[]
   scheduleTypesOptions: { label: string; value: string }[]
+  caseTypesOptions: { label: string; value: string }[]
 }
 
 const Filters = ({
@@ -342,6 +355,7 @@ const Filters = ({
   whiteBackground = false,
   lawyerOptions,
   scheduleTypesOptions,
+  caseTypesOptions,
 }: FiltersProps) => {
   const { formatMessage } = useIntl()
   const [expandedItemIds, setExpandedItemIds] = useState<string[]>(
@@ -537,6 +551,53 @@ const Filters = ({
               </Box>
             </Stack>
           </AccordionItem>
+          <AccordionItem
+            id={FILTER_ACCORDION_ITEM_IDS[3]}
+            label={formatMessage(m.listPage.caseTypeAccordionLabel)}
+            expanded={expandedItemIds.includes(FILTER_ACCORDION_ITEM_IDS[3])}
+            onToggle={(expanded) => {
+              handleToggle(expanded, FILTER_ACCORDION_ITEM_IDS[3])
+            }}
+            iconVariant="small"
+            labelVariant="h5"
+            labelColor={
+              queryState[QueryParam.CASE_TYPES] ? 'blue400' : undefined
+            }
+          >
+            <Stack space={2}>
+              <Stack space={2} key={renderKey}>
+                <Select
+                  name="caseTypes"
+                  options={caseTypesOptions}
+                  size="sm"
+                  label={formatMessage(m.listPage.caseTypeSelectLabel)}
+                  value={caseTypesOptions.find(
+                    (option) =>
+                      queryState[QueryParam.CASE_TYPES] === option.value,
+                  )}
+                  onChange={(option) => {
+                    updateQueryState(
+                      QueryParam.CASE_TYPES,
+                      option?.value ?? null,
+                    )
+                  }}
+                />
+              </Stack>
+              <Box display="flex" justifyContent="flexEnd">
+                <Button
+                  variant="text"
+                  icon="reload"
+                  size="small"
+                  onClick={() => {
+                    updateQueryState(QueryParam.CASE_TYPES, null)
+                    updateRenderKey()
+                  }}
+                >
+                  {formatMessage(m.listPage.clearFilter)}
+                </Button>
+              </Box>
+            </Stack>
+          </AccordionItem>
         </Accordion>
       </Box>
     </Stack>
@@ -616,6 +677,15 @@ const CourtAgendas: CustomScreen<CourtAgendasProps> = (props) => {
     [props.scheduleTypes.all.items],
   )
 
+  const caseTypesOptions = useMemo(
+    () =>
+      props.caseTypes.all.options.map((option) => ({
+        label: option.label,
+        value: option.label,
+      })),
+    [props.caseTypes.all.options],
+  )
+
   const filterTags = useMemo(() => {
     const tags: { label: string; onClick: () => void }[] = []
 
@@ -674,6 +744,20 @@ const CourtAgendas: CustomScreen<CourtAgendasProps> = (props) => {
       })
     }
 
+    if (queryState[QueryParam.CASE_TYPES]) {
+      tags.push({
+        label: `${formatMessage(m.listPage.caseTypeAccordionLabel)}: ${
+          caseTypesOptions.find(
+            (option) => option.value === queryState[QueryParam.CASE_TYPES],
+          )?.label ?? '...'
+        }`,
+        onClick: () => {
+          updateQueryState(QueryParam.CASE_TYPES, null)
+          updateRenderKey()
+        },
+      })
+    }
+
     return tags
   }, [
     queryState,
@@ -683,6 +767,7 @@ const CourtAgendas: CustomScreen<CourtAgendasProps> = (props) => {
     updateRenderKey,
     lawyerOptions,
     scheduleTypesOptions,
+    caseTypesOptions,
   ])
 
   return (
@@ -946,6 +1031,7 @@ const CourtAgendas: CustomScreen<CourtAgendasProps> = (props) => {
                   whiteBackground={true}
                   lawyerOptions={lawyerOptions}
                   scheduleTypesOptions={scheduleTypesOptions}
+                  caseTypesOptions={caseTypesOptions}
                 />
                 <Box
                   background="blue100"
@@ -1017,6 +1103,7 @@ const CourtAgendas: CustomScreen<CourtAgendasProps> = (props) => {
                         updateQueryState={updateQueryState}
                         lawyerOptions={lawyerOptions}
                         scheduleTypesOptions={scheduleTypesOptions}
+                        caseTypesOptions={caseTypesOptions}
                       />
                     </Box>
                   </Filter>
@@ -1174,35 +1261,42 @@ CourtAgendas.getProps = async ({ apolloClient, customPageData, query }) => {
   const dateTo = parseAsString.parseServerSide(query[QueryParam.DATE_TO])
   const lawyer = parseAsString.parseServerSide(query[QueryParam.LAWYER])
 
-  const [courtAgendasResponse, lawyersResponse, scheduleTypesResponse] =
-    await Promise.all([
-      apolloClient.query<GetCourtAgendasQuery, GetCourtAgendasQueryVariables>({
-        query: GET_COURT_AGENDAS_QUERY,
-        variables: {
-          input: {
-            page: 1,
-            court:
-              districtCourts.length > 0
-                ? districtCourts.join(',')
-                : extractCourtLevelFromState(court),
-            dateFrom,
-            dateTo,
-            lawyer,
-          },
+  const [
+    courtAgendasResponse,
+    lawyersResponse,
+    scheduleTypesResponse,
+    caseTypesResponse,
+  ] = await Promise.all([
+    apolloClient.query<GetCourtAgendasQuery, GetCourtAgendasQueryVariables>({
+      query: GET_COURT_AGENDAS_QUERY,
+      variables: {
+        input: {
+          page: 1,
+          court:
+            districtCourts.length > 0
+              ? districtCourts.join(',')
+              : extractCourtLevelFromState(court),
+          dateFrom,
+          dateTo,
+          lawyer,
         },
-      }),
-      apolloClient.query<
-        GetVerdictLawyersQuery,
-        GetVerdictLawyersQueryVariables
-      >({
+      },
+    }),
+    apolloClient.query<GetVerdictLawyersQuery, GetVerdictLawyersQueryVariables>(
+      {
         query: GET_VERDICT_LAWYERS_QUERY,
-      }),
-      apolloClient.query<GetScheduleTypesQuery, GetScheduleTypesQueryVariables>(
-        {
-          query: GET_SCHEDULE_TYPES_QUERY,
-        },
-      ),
-    ])
+      },
+    ),
+    apolloClient.query<GetScheduleTypesQuery, GetScheduleTypesQueryVariables>({
+      query: GET_SCHEDULE_TYPES_QUERY,
+    }),
+    apolloClient.query<
+      GetVerdictCaseFilterOptionsPerCourtQuery,
+      GetVerdictCaseFilterOptionsPerCourtQueryVariables
+    >({
+      query: GET_VERDICT_CASE_FILTER_OPTIONS_PER_COURT_QUERY,
+    }),
+  ])
 
   const items = courtAgendasResponse.data.webCourtAgendas.items
 
@@ -1214,6 +1308,7 @@ CourtAgendas.getProps = async ({ apolloClient, customPageData, query }) => {
     },
     lawyers: lawyersResponse.data.webVerdictLawyers?.lawyers ?? [],
     scheduleTypes: scheduleTypesResponse.data.webCourtScheduleTypes,
+    caseTypes: caseTypesResponse.data.webVerdictCaseFilterOptionsPerCourt,
   }
 }
 

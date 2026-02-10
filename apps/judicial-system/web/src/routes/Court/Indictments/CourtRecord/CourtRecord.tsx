@@ -19,7 +19,7 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { useCourtSessions } from '@island.is/judicial-system-web/src/utils/hooks'
-import { isIndictmentCourtRecordStepValid } from '@island.is/judicial-system-web/src/utils/validate'
+import { isIndictmentCourtRecordValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import CourtSessionAccordionItem from './CourtSessionAccordionItem'
 import { alertContainer } from './CourtRecord.css'
@@ -65,21 +65,17 @@ const CourtRecord: FC = () => {
     }
   }, [workingCase.courtSessions?.length])
 
-  const stepIsValid = isIndictmentCourtRecordStepValid(workingCase)
-  const allCourtSessionsConfirmed = workingCase.courtSessions?.every(
-    (c) => c.isConfirmed,
-  )
   const canCreateCourtSession =
     !workingCase.courtSessions ||
     workingCase.courtSessions.length === 0 ||
-    (stepIsValid && allCourtSessionsConfirmed)
+    isIndictmentCourtRecordValid(workingCase)
 
   return (
     <PageLayout
       workingCase={workingCase}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
-      isValid={stepIsValid}
+      isValid={true}
       onNavigationTo={handleNavigationTo}
     >
       <PageHeader title="Þingbók - Réttarvörslugátt" />
@@ -142,7 +138,6 @@ const CourtRecord: FC = () => {
           previousUrl={`${INDICTMENTS_DEFENDER_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoadingWorkingCase}
           nextUrl={`${INDICTMENTS_CONCLUSION_ROUTE}/${workingCase.id}`}
-          nextIsDisabled={!stepIsValid || !allCourtSessionsConfirmed}
           onNextButtonClick={() =>
             handleNavigationTo(INDICTMENTS_CONCLUSION_ROUTE)
           }
