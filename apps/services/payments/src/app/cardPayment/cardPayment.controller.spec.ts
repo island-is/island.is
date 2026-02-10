@@ -9,6 +9,7 @@ import {
   ChargeFjsV2ClientService,
   ChargeResponse,
 } from '@island.is/clients/charge-fjs-v2'
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { TestApp, testServer, useDatabase } from '@island.is/testing/nest'
 
 import { CardErrorCode, PaymentServiceCode } from '@island.is/shared/constants'
@@ -88,6 +89,15 @@ describe('CardPaymentController', () => {
     app = await testServer({
       appModule: AppModule,
       enableVersioning: true,
+      override: (builder) =>
+        builder.overrideProvider(FeatureFlagService).useValue({
+          getValue: jest.fn((feature: Features) =>
+            Promise.resolve(
+              feature === Features.isIslandisPaymentEnabled ||
+                feature === Features.isIslandisApplePayPaymentEnabled,
+            ),
+          ),
+        }),
       hooks: [
         useDatabase({ type: 'postgres', provider: SequelizeConfigService }),
       ],
