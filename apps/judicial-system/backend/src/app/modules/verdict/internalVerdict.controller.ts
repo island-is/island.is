@@ -29,7 +29,6 @@ import {
 import {
   addMessagesToQueue,
   messageEndpoint,
-  MessageService,
   MessageType,
 } from '@island.is/judicial-system/message'
 import {
@@ -110,7 +109,6 @@ export class InternalVerdictController {
     private readonly verdictService: VerdictService,
     private readonly auditTrailService: AuditTrailService,
     private readonly eventService: EventService,
-    private readonly messageService: MessageService,
     @InjectConnection() private readonly sequelize: Sequelize,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
