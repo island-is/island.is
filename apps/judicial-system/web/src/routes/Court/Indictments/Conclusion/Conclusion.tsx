@@ -265,7 +265,7 @@ const Conclusion: FC = () => {
 
         const createSuccess = await Promise.all(promises)
 
-        if (!createSuccess) {
+        if (createSuccess.length === 0) {
           return
         }
       }
