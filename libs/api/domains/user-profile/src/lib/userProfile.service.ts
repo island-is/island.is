@@ -88,6 +88,7 @@ export class UserProfileService {
       patchUserProfileDto: {
         ...alteredInput,
         emailNotifications: alteredInput.canNudge,
+        smsNotifications: alteredInput.smsNotifications,
         emailVerificationCode: alteredInput.emailCode,
         mobilePhoneNumberVerificationCode: alteredInput.smsCode,
       },
@@ -123,6 +124,7 @@ export class UserProfileService {
     return {
       ...userProfile,
       canNudge: userProfile.emailNotifications,
+      smsNotifications: userProfile.smsNotifications,
     }
   }
 
@@ -134,6 +136,7 @@ export class UserProfileService {
     return {
       ...userProfile,
       canNudge: userProfile.emailNotifications,
+      smsNotifications: userProfile.smsNotifications,
     }
   }
 

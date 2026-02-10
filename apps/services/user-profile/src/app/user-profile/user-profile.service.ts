@@ -102,6 +102,7 @@ export class UserProfileService {
         userProfile.emails?.[0]?.emailStatus === DataStatus.EMPTY,
       documentNotifications: userProfile.documentNotifications,
       emailNotifications: userProfile.emailNotifications,
+      smsNotifications: userProfile.smsNotifications,
       lastNudge: userProfile.lastNudge,
       nextNudge: userProfile.nextNudge,
     }))
@@ -146,6 +147,7 @@ export class UserProfileService {
         documentNotifications: true,
         needsNudge: null,
         emailNotifications: true,
+        smsNotifications: false,
         isRestricted: false,
       }
     }
@@ -281,6 +283,9 @@ export class UserProfileService {
         }),
         ...(isDefined(userProfile.documentNotifications) && {
           documentNotifications: userProfile.documentNotifications,
+        }),
+        ...(isDefined(userProfile.smsNotifications) && {
+          smsNotifications: userProfile.smsNotifications,
         }),
       }
 
@@ -1380,6 +1385,7 @@ export class UserProfileService {
         mobilePhoneNumberVerified: userProfile.mobilePhoneNumberVerified,
       }),
       emailNotifications: userProfile.emailNotifications,
+      smsNotifications: userProfile.smsNotifications,
       lastNudge: userProfile.lastNudge,
       nextNudge: userProfile.nextNudge,
       isRestricted: false,
