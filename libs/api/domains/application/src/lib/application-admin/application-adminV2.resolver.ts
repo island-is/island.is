@@ -22,7 +22,7 @@ import {
   ApplicationTypeAdminInstitution,
   ApplicationInstitution,
 } from '../application.model'
-import {ApplicationAdminV2Service} from "./application-adminV2.service";
+import { ApplicationAdminV2Service } from './application-adminV2.service'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver(() => ApplicationAdmin)
