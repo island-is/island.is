@@ -4345,6 +4345,8 @@ web:
     NODE_OPTIONS: '--max-old-space-size=1350 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     TRACKING_DOMAIN: 'island.is'
+    MATOMO_DOMAIN: 'https://matomo-dev.dev01.devland.is'
+    MATOMO_SITE_ID: '2'
   grantNamespaces:
     - 'nginx-ingress-external'
     - 'api-catalogue'

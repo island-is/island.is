@@ -30,6 +30,8 @@ env:
   NODE_OPTIONS: '--max-old-space-size=1350 --enable-source-maps -r dd-trace/init'
   SERVERSIDE_FEATURES_ON: ''
   TRACKING_DOMAIN: 'beta.staging01.devland.is'
+  MATOMO_DOMAIN: 'https://matomo-dev.dev01.devland.is'
+  MATOMO_SITE_ID: '2'
 grantNamespaces:
   - 'nginx-ingress-external'
   - 'api-catalogue'
