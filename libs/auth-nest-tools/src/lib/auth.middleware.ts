@@ -21,7 +21,6 @@ interface Middleware {
 export interface AuthMiddlewareOptions {
   forwardUserInfo: boolean
   tokenExchangeOptions?: TokenExchangeOptions
-  customHeaderForToken?: string
 }
 
 export interface TokenExchangeOptions {
@@ -58,20 +57,9 @@ export class AuthMiddleware implements Middleware {
     // Pass auth object for enhancedFetch.
     ;(context.init as any).auth = this.auth
 
-    context.init.headers = Object.assign(
-      {},
-      context.init.headers,
-      this.options.customHeaderForToken !== undefined
-        ? {
-            [this.options.customHeaderForToken]: bearerToken.replace(
-              'Bearer ',
-              '',
-            ),
-          }
-        : {
-            authorization: bearerToken,
-          },
-    )
+    context.init.headers = Object.assign({}, context.init.headers, {
+      authorization: bearerToken,
+    })
 
     if (this.options.forwardUserInfo) {
       context.init.headers = Object.assign({}, context.init.headers, {

@@ -16,7 +16,7 @@ import {
 } from './dtos/contractDocument.dto'
 import { HmsRentalAgreementClientConfig } from './hmsRentalAgreement.config'
 import { type ConfigType } from '@nestjs/config'
-import { CustomMiddleware } from './customMiddleware'
+import { EntraTokenMiddleware } from './middleware/entraTokenMiddleware'
 
 @Injectable()
 export class HmsRentalAgreementService {
@@ -27,35 +27,11 @@ export class HmsRentalAgreementService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  private async getADAccessToken() {
-    const msalConfig: Configuration = {
-      auth: {
-        clientId: this.config.authClientId,
-        clientSecret: this.config.authClientSecret,
-        authority: `https://login.microsoftonline.com/${this.config.authTenantId}`,
-      },
-    }
-
-    const clientApplication = new ConfidentialClientApplication(msalConfig)
-
-    const tokenResponse =
-      await clientApplication.acquireTokenByClientCredential({
-        scopes: [`api://${this.config.authClientId}/.default`],
-      })
-    return tokenResponse?.accessToken as string
-  }
-
   private apiWithAuth = async (user: User) => {
-    const entraToken = await this.getADAccessToken()
-
-    return this.api
-      .withMiddleware(
-        new AuthMiddleware(user as Auth, {
-          forwardUserInfo: true,
-          customHeaderForToken: 'X-User-Authorization',
-        }),
-      )
-      .withMiddleware(new CustomMiddleware(entraToken))
+    return this.api.withMiddleware(
+      new AuthMiddleware(user as Auth),
+      new EntraTokenMiddleware(this.config),
+    )
   }
 
   async getRentalAgreements(

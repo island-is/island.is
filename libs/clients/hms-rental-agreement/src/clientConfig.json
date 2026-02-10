@@ -1814,14 +1814,14 @@
     "securitySchemes": {
       "Bearer": {
         "type": "http",
-        "description": "Entra ID (Azure AD) access token for client authentication. Format: Bearer {token}",
+        "description": "Island.is access token for user authentication. Format: Bearer {token}",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       },
-      "IslandAuth": {
+      "EntraAuth": {
         "type": "apiKey",
-        "description": "Island.is access token for user authentication. Format: Bearer {token}",
-        "name": "X-User-Authorization",
+        "description": "Entra ID (Azure AD) access token for client authentication. Format: Bearer {token}",
+        "name": "X-Client-Authorization",
         "in": "header"
       }
     }
@@ -1829,7 +1829,7 @@
   "security": [
     {
       "Bearer": [],
-      "IslandAuth": []
+      "EntraAuth": []
     }
   ]
 }
