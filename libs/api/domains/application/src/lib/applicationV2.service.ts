@@ -11,6 +11,7 @@ import {
   ApplicationConfigurations,
 } from '@island.is/application/types'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { ApplicationsSuperAdminFilters } from './application-admin/dto/applications-admin-inputs'
 
 @Injectable()
 export class ApplicationV2Service {
@@ -150,5 +151,67 @@ export class ApplicationV2Service {
     return appSystemCards.sort(
       (a, b) => b.modified.getTime() - a.modified.getTime(),
     )
+  }
+
+  async findAllSuperAdmin(
+    user: User,
+    locale: Locale,
+    filters: ApplicationsSuperAdminFilters,
+  ) {
+    // TODOxy Veit ekki hvort við getum notað ApplicationCard, en það er notað á mínum síðum og væri nice að geta samnýtt.
+    // Mínar síður útfæra samt ekki paging í dag svo líklegast þarf bæta við stuðningi við paging.
+
+    const returnCards: ApplicationCard[] = []
+
+    const [appSystemSettled, formSystemSettled] = await Promise.allSettled([
+      this.applicationApiWithAuth(user).adminControllerFindAllSuperAdmin({
+        count: filters.count,
+        page: filters.page,
+        applicantNationalId: filters.applicantNationalId,
+        locale,
+        status: filters.status?.join(','),
+        from: filters.from,
+        to: filters.to,
+        typeIdValue: filters.typeIdValue,
+        searchStr: filters.searchStr,
+      }),
+      // TODOxy útfæra endapunkt í form-system
+      this.formSystemApplicationsApiWithAuth(
+        user,
+      ).applicationsControllerFindAllByUser({
+        locale,
+      }),
+    ])
+
+    //TODOxy
+    return { rows: [], count: 0 }
+
+    // TODOxy Hér þarf mögulega að mappa einhver gögn svo þau passi við týpuna.
+    // const appSystemCards: ApplicationCard[] = appSystemSettled.value
+    // const formSystemCards: ApplicationCard[]  = formSystemSettled.value
+
+    // returnCards.add(formSystemCards).add(appSystemCards)
+
+    // //TODOxy: Til að styðja við paging í báðum kerfum þurfum við bæði date og síðan id sem tie-breaker ef date er jafnt.
+    // //Það þarf þá að bæta við í graphql kallið að senda síðasta date og id sem var birt á síðunni til að geta notað
+    // //það sem upphafspunkt fyrir næstu blaðsíðu.
+    // //Smá galli í þessari útfærslu að það er basically ekki hægt að fara frá bls 1 yfir á bls 10.
+    // //Er samt með einhverjar pælingar um hvernig við gætum leyst það.
+    // returnCards.sort(this.applicationCardComparatorDesc)
+    // returnCards.slice(0, count)
+
+    // return returnCards
+  }
+
+  private applicationCardComparatorDesc = (
+    a: ApplicationCard,
+    b: ApplicationCard,
+  ): number => {
+    const createdDiff = b.created.getTime() - a.created.getTime()
+    if (createdDiff !== 0) {
+      return createdDiff
+    }
+
+    return a.id.localeCompare(b.id)
   }
 }

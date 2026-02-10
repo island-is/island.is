@@ -18,9 +18,9 @@ These commands are just shorthands for the setup described below.
 
 ## URLs
 
-- [Dev](https://beta.dev01.devland.is/TODO/)
-- [Staging](https://beta.staging01.devland.is/TODO/)
-- [Production](https://island.is/TODO/)
+- [Dev](https://beta.dev01.devland.is/form/<slug>)
+- [Staging](https://beta.staging01.devland.is/form/<slug>)
+- [Production](https://island.is/form/<slug>)
 
 ## API
 
@@ -38,13 +38,37 @@ Then run the migrations:
 yarn nx run services-form-system-api:migrate
 ```
 
+Fetch secrets
+
+```bash
+AWS_PROFILE=islandis-dev yarn get-secrets services-form-system-api
+```
+
 ### Running locally
+
+## Create form type
+
+You need to run the admin portal
+
+```bash
+yarn start api
+yarn dev services-form-system-api
+yarn dev portals-admin
+```
+
+Open localhost:4200/stjornbord -> Log in as Gervimaður Færeyjar as 65°Artic -> go to "Umsóknarsmiður" -> Create new form type -> Select Zendesk under "slóðir" -> Give the form type the status Published
+
+## Create / view form application
 
 You can serve this service locally by running:
 
 ```bash
-yarn start services-form-system-api
+yarn start api
+yarn dev services-form-system-api
+yarn dev form-system-web
 ```
+
+Open localhost:4242/form/<slug>
 
 ## Code owners and maintainers
 

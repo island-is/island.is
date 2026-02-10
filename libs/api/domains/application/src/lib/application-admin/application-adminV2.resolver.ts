@@ -9,25 +9,17 @@ import { UseGuards } from '@nestjs/common'
 import type { Locale } from '@island.is/shared/types'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { Scopes } from '@island.is/auth-nest-tools'
-import {
-  ApplicationsAdminFilters,
-  ApplicationsSuperAdminFilters,
-  ApplicationsAdminStatisticsInput,
-  ApplicationTypesInstitutionAdminInput,
-} from './dto/applications-admin-inputs'
+import { ApplicationsSuperAdminFilters } from './dto/applications-admin-inputs'
 import {
   ApplicationAdmin,
   ApplicationAdminPaginatedResponse,
-  ApplicationStatistics,
-  ApplicationTypeAdminInstitution,
-  ApplicationInstitution,
 } from '../application.model'
-import {ApplicationAdminV2Service} from "./application-adminV2.service";
+import { ApplicationV2Service } from '../applicationV2.service'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver(() => ApplicationAdmin)
 export class ApplicationAdminV2Resolver {
-  constructor(private applicationAdminService: ApplicationAdminV2Service) {}
+  constructor(private applicationService: ApplicationV2Service) {}
 
   @Query(() => ApplicationAdminPaginatedResponse, { nullable: true })
   @Scopes(AdminPortalScope.applicationSystemAdmin)
@@ -38,78 +30,8 @@ export class ApplicationAdminV2Resolver {
     @Args('input')
     input: ApplicationsSuperAdminFilters,
   ): Promise<ApplicationAdminPaginatedResponse | null> {
-    return this.applicationAdminService.findAllSuperAdmin(user, locale, input)
+    return this.applicationService.findAllSuperAdmin(user, locale, input)
   }
 
-  @Query(() => ApplicationAdminPaginatedResponse, { nullable: true })
-  @Scopes(AdminPortalScope.applicationSystemInstitution)
-  async applicationApplicationsInstitutionAdmin(
-    @CurrentUser() user: User,
-    @Args('locale', { type: () => String, nullable: true })
-    locale: Locale = 'is',
-    @Args('input')
-    input: ApplicationsAdminFilters,
-  ): Promise<ApplicationAdminPaginatedResponse | null> {
-    return this.applicationService.findAllInstitutionAdmin(user, locale, input)
-  }
-
-  @Query(() => [ApplicationTypeAdminInstitution], { nullable: true })
-  @Scopes(AdminPortalScope.applicationSystemInstitution)
-  async applicationTypesInstitutionAdmin(
-    @CurrentUser() user: User,
-    @Args('locale', { type: () => String, nullable: true })
-    locale: Locale = 'is',
-    @Args('input') input: ApplicationTypesInstitutionAdminInput,
-  ): Promise<ApplicationTypeAdminInstitution[] | null> {
-    return this.applicationService.findAllApplicationTypesInstitutionAdmin(
-      user,
-      locale,
-      input,
-    )
-  }
-
-  @Query(() => [ApplicationTypeAdminInstitution], { nullable: true })
-  @Scopes(AdminPortalScope.applicationSystemAdmin)
-  async applicationTypesSuperAdmin(
-    @CurrentUser() user: User,
-    @Args('locale', { type: () => String, nullable: true })
-    locale: Locale = 'is',
-  ): Promise<ApplicationTypeAdminInstitution[] | null> {
-    return this.applicationService.findAllApplicationTypesSuperAdmin(
-      user,
-      locale,
-    )
-  }
-
-  @Query(() => [ApplicationStatistics], { nullable: true })
-  @Scopes(AdminPortalScope.applicationSystemAdmin)
-  async applicationApplicationsAdminStatistics(
-    @CurrentUser() user: User,
-    @Args('input')
-    input: ApplicationsAdminStatisticsInput,
-  ) {
-    return this.applicationService.getSuperAdminApplicationCountByTypeIdAndStatus(
-      user,
-      input,
-    )
-  }
-
-  @Query(() => [ApplicationStatistics], { nullable: true })
-  @Scopes(AdminPortalScope.applicationSystemInstitution)
-  async applicationApplicationsInstitutionStatistics(
-    @CurrentUser() user: User,
-    @Args('input')
-    input: ApplicationsAdminStatisticsInput,
-  ) {
-    return this.applicationService.getInstitutionApplicationCountByTypeIdAndStatus(
-      user,
-      input,
-    )
-  }
-
-  @Query(() => [ApplicationInstitution], { nullable: true })
-  @Scopes(AdminPortalScope.applicationSystemAdmin)
-  async applicationApplicationsAdminInstitutions(@CurrentUser() user: User) {
-    return this.applicationService.getApplicationInstitutions(user)
-  }
+  // TODOxy add rest of endpoints that are in V1 resolver
 }

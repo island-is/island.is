@@ -359,15 +359,23 @@ export class ApplicationsService {
     return applicationResponseDto
   }
 
-  async findAll(
+  async findAllByAdminFilters(
     page: number,
     limit: number,
-    isTest: boolean,
+    institutionNationalId?: string,
+    //TODOxy bæta við fleiri filtera
   ): Promise<ApplicationResponseDto> {
+    const where: { isTest: boolean; organizationId?: string } = {
+      isTest: false,
+    }
+    if (institutionNationalId) {
+      where.organizationId = institutionNationalId
+    }
+
     const offset = (page - 1) * limit
     const { count: total, rows: data } =
       await this.applicationModel.findAndCountAll({
-        where: { isTest: isTest },
+        where,
         limit,
         offset,
         include: [
@@ -375,7 +383,7 @@ export class ApplicationsService {
             model: ApplicationEvent,
             as: 'events',
           },
-          // TODOx afhverju erum við að sækja files?
+          // TODOxy afhverju erum við að sækja files?
           {
             model: Value,
             as: 'files',
