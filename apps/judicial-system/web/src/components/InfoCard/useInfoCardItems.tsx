@@ -392,7 +392,7 @@ const useInfoCardItems = () => {
     ),
     values: workingCase.civilClaimants
       ? [
-          <div className={grid({ gap: 3 })}>
+          <div key="civil-claimants-grid" className={grid({ gap: 3 })}>
             {workingCase.civilClaimants.map((civilClaimant) => (
               <div key={civilClaimant.id} className={styles.renderDividerFull}>
                 <CivilClaimantInfo civilClaimant={civilClaimant} />
@@ -414,7 +414,7 @@ const useInfoCardItems = () => {
     ),
     values: workingCase.victims
       ? [
-          <div className={grid({ gap: 3 })}>
+          <div key="victims-grid" className={grid({ gap: 3 })}>
             {workingCase.victims.map((victim) => (
               <div
                 key={victim.id}
