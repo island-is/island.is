@@ -40,7 +40,6 @@ import {
   useCreateSubpoenas,
   useDefendants,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { isSubpoenaStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { subpoena as strings } from './Subpoena.strings'
@@ -68,15 +67,16 @@ const Subpoena: FC = () => {
     string[]
   >([])
   const [isCreatingSubpoena, setIsCreatingSubpoena] = useState<boolean>(false)
-  const [isSchedulingArraignmentDate, setIsSchedulingArraignmentDate] =
-    useState<boolean>()
-  // Note: we keep the arraignment scheduled state in a subpoena specific state otherwise
-  // re-renders (when updating case and defendants) will cause unexpected states within the subpoena component
-  const [isArraignmentScheduled, setIsArraignmentScheduled] =
-    useState<boolean>()
+
+  const isArraignmentScheduled = Boolean(workingCase.arraignmentDate)
+  const isSchedulingArraignmentDate = Boolean(
+    !isArraignmentScheduled ||
+      newSubpoenas.length > 0 ||
+      newAlternativeServices.length > 0,
+  )
   const [modalContent, setModalContent] = useState<ModalContent>()
 
-  const { updateDefendantState, updateDefendant } = useDefendants()
+  const { updateDefendant } = useDefendants()
   const { setAndSendCaseToServer } = useCase()
   const { createSubpoenas } = useCreateSubpoenas()
   const { formatMessage } = useIntl()
@@ -299,24 +299,6 @@ const Subpoena: FC = () => {
   }, [workingCase])
 
   useEffect(() => {
-    setIsArraignmentScheduled(Boolean(workingCase.arraignmentDate))
-  }, [workingCase.arraignmentDate])
-
-  useEffect(() => {
-    setIsSchedulingArraignmentDate(
-      Boolean(
-        !isArraignmentScheduled ||
-          newSubpoenas.length > 0 ||
-          newAlternativeServices.length > 0,
-      ),
-    )
-  }, [
-    isArraignmentScheduled,
-    newAlternativeServices.length,
-    newSubpoenas.length,
-  ])
-
-  useEffect(() => {
     if (navigateTo === undefined) {
       setModalContent(undefined)
       return
@@ -370,134 +352,137 @@ const Subpoena: FC = () => {
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
-          {updates?.defendants && (
-            <Box component="section">
-              <SubpoenaType
-                subpoenaItems={updates?.defendants?.map((defendant) => ({
-                  defendant,
-                  alternativeServiceDescriptionDisabled:
-                    !isRegisteringAlternativeServiceForDefendant(defendant),
-                  subpoenaDisabled: !isIssuingSubpoenaForDefendant(defendant),
-                  toggleNewAlternativeService: isArraignmentScheduled
-                    ? toggleNewAlternativeService(defendant)
-                    : undefined,
-                  onUpdate: handleDefendantUpdates,
-                  children: newSubpoenas.includes(defendant.id) ? (
-                    <Button
-                      variant="text"
-                      colorScheme="destructive"
-                      icon="trash"
-                      iconType="outline"
-                      disabled={workingCase.state === CaseState.CORRECTING}
-                      onClick={() => {
-                        setNewSubpoenas((previous) =>
-                          previous.filter((v) => v !== defendant.id),
-                        )
-                        setNewAlternativeServices((previous) =>
-                          previous.filter((v) => v !== defendant.id),
-                        )
-                        setIsArraignmentScheduled(true)
+        {updates?.defendants && (
+          <Box component="section" marginBottom={5}>
+            <SubpoenaType
+              subpoenaItems={updates?.defendants?.map((defendant) => ({
+                defendant,
+                alternativeServiceDescriptionDisabled:
+                  !isRegisteringAlternativeServiceForDefendant(defendant),
+                subpoenaDisabled: !isIssuingSubpoenaForDefendant(defendant),
+                toggleNewAlternativeService: isArraignmentScheduled
+                  ? toggleNewAlternativeService(defendant)
+                  : undefined,
+                onUpdate: handleDefendantUpdates,
+                children: newSubpoenas.includes(defendant.id) ? (
+                  <Button
+                    variant="text"
+                    colorScheme="destructive"
+                    icon="trash"
+                    iconType="outline"
+                    disabled={workingCase.state === CaseState.CORRECTING}
+                    onClick={() => {
+                      setNewSubpoenas((previous) =>
+                        previous.filter((v) => v !== defendant.id),
+                      )
+                      setNewAlternativeServices((previous) =>
+                        previous.filter((v) => v !== defendant.id),
+                      )
+                      setUpdates((prev) => {
+                        if (!prev) return prev
 
-                        setUpdates({
-                          defendants: workingCase.defendants,
-                          theCase: workingCase,
-                        })
-                      }}
-                    >
-                      Hætta við
-                    </Button>
-                  ) : isArraignmentScheduled ? (
-                    <Button
-                      variant="text"
-                      icon="reload"
-                      disabled={workingCase.state === CaseState.CORRECTING}
-                      onClick={() => {
-                        setNewSubpoenas((previous) => [
-                          ...previous,
-                          defendant.id,
-                        ])
-                        toggleNewAlternativeService(defendant)()
-                        updateDefendantState(
-                          {
-                            defendantId: defendant.id,
-                            caseId: workingCase.id,
-                            isAlternativeService: false,
-                          },
-                          setWorkingCase,
+                        const originalDefendant = workingCase.defendants?.find(
+                          (d) => d.id === defendant.id,
                         )
-                      }}
-                    >
-                      {formatMessage(strings.newSubpoenaButtonText)}
-                    </Button>
-                  ) : null,
-                }))}
-                workingCase={workingCase}
-              />
-            </Box>
-          )}
-          <Box component="section">
-            <SectionHeading
-              title={formatMessage(strings.courtArrangementsHeading)}
-            />
-            <CourtArrangements
-              handleCourtDateChange={handleCourtDateChange}
-              handleCourtRoomChange={handleCourtRoomChange}
-              courtDate={updates?.theCase.arraignmentDate}
-              dateTimeDisabled={
-                !isSchedulingArraignmentDate ||
-                workingCase.state === CaseState.CORRECTING
-              }
-              courtRoomDisabled={
-                !isSchedulingArraignmentDate ||
-                workingCase.state === CaseState.CORRECTING
-              }
-              courtRoomRequired
+
+                        if (!originalDefendant) return prev
+
+                        return {
+                          ...prev,
+                          defendants: prev.defendants?.map((item) =>
+                            item.id === defendant.id ? originalDefendant : item,
+                          ),
+                        }
+                      })
+                    }}
+                  >
+                    Hætta við
+                  </Button>
+                ) : isArraignmentScheduled ? (
+                  <Button
+                    variant="text"
+                    icon="reload"
+                    disabled={workingCase.state === CaseState.CORRECTING}
+                    onClick={() => {
+                      setNewSubpoenas((previous) => [...previous, defendant.id])
+                      toggleNewAlternativeService(defendant)()
+                      handleDefendantUpdates({
+                        defendantId: defendant.id,
+                        caseId: workingCase.id,
+                        isAlternativeService: false,
+                        alternativeServiceDescription: null,
+                      })
+                    }}
+                  >
+                    {formatMessage(strings.newSubpoenaButtonText)}
+                  </Button>
+                ) : null,
+              }))}
+              workingCase={workingCase}
             />
           </Box>
-          <Box component="section" className={pdfButtonGrid}>
-            {updates?.defendants?.map((defendant) => {
-              const courtDate = updates.theCase.arraignmentDate?.date
-              const location = updates.theCase.arraignmentDate?.location
+        )}
+        <Box component="section" marginBottom={5}>
+          <SectionHeading
+            title={formatMessage(strings.courtArrangementsHeading)}
+          />
+          <CourtArrangements
+            handleCourtDateChange={handleCourtDateChange}
+            handleCourtRoomChange={handleCourtRoomChange}
+            courtDate={updates?.theCase.arraignmentDate}
+            dateTimeDisabled={
+              !isSchedulingArraignmentDate ||
+              workingCase.state === CaseState.CORRECTING
+            }
+            courtRoomDisabled={
+              !isSchedulingArraignmentDate ||
+              workingCase.state === CaseState.CORRECTING
+            }
+            courtRoomRequired
+          />
+        </Box>
+        <Box component="section" className={pdfButtonGrid} marginBottom={10}>
+          {updates?.defendants?.map((defendant) => {
+            const courtDate = updates.theCase.arraignmentDate?.date
+            const location = updates.theCase.arraignmentDate?.location
 
-              return (
-                <Fragment key={defendant.id}>
-                  {isIssuingSubpoenaForDefendant(defendant) && (
+            return (
+              <Fragment key={defendant.id}>
+                {isIssuingSubpoenaForDefendant(defendant) && (
+                  <PdfButton
+                    key={`subpoena-${defendant.id}`}
+                    caseId={workingCase.id}
+                    title={`Fyrirkall - ${defendant.name} nýtt - PDF`}
+                    pdfType="subpoena"
+                    disabled={
+                      !courtDate || !location || !defendant.subpoenaType
+                    }
+                    elementId={[
+                      defendant.id,
+                      `Fyrirkall - ${defendant.name} nýtt - PDF`,
+                    ]}
+                    queryParameters={`arraignmentDate=${courtDate}&location=${location}&subpoenaType=${defendant.subpoenaType}`}
+                  />
+                )}
+                {defendant.subpoenas?.map((subpoena) => {
+                  const fileName = `Fyrirkall - ${defendant.name} ${formatDate(
+                    subpoena.created,
+                  )} - PDF`
+
+                  return (
                     <PdfButton
-                      key={`subpoena-${defendant.id}`}
+                      key={`subpoena-${subpoena.id}`}
                       caseId={workingCase.id}
-                      title={`Fyrirkall - ${defendant.name} nýtt - PDF`}
+                      title={fileName}
                       pdfType="subpoena"
-                      disabled={
-                        !courtDate || !location || !defendant.subpoenaType
-                      }
-                      elementId={[
-                        defendant.id,
-                        `Fyrirkall - ${defendant.name} nýtt - PDF`,
-                      ]}
-                      queryParameters={`arraignmentDate=${courtDate}&location=${location}&subpoenaType=${defendant.subpoenaType}`}
+                      elementId={[defendant.id, subpoena.id, fileName]}
                     />
-                  )}
-                  {defendant.subpoenas?.map((subpoena) => {
-                    const fileName = `Fyrirkall - ${
-                      defendant.name
-                    } ${formatDate(subpoena.created)} - PDF`
-
-                    return (
-                      <PdfButton
-                        key={`subpoena-${subpoena.id}`}
-                        caseId={workingCase.id}
-                        title={fileName}
-                        pdfType="subpoena"
-                        elementId={[defendant.id, subpoena.id, fileName]}
-                      />
-                    )
-                  })}
-                </Fragment>
-              )
-            })}
-          </Box>
-        </div>
+                  )
+                })}
+              </Fragment>
+            )
+          })}
+        </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
