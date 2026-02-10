@@ -176,10 +176,19 @@ export class PaymentService {
         .catch(handle404)
 
       return {
-        items: (data ?? []).map((st) => ({
-          code: st.code ?? undefined,
-          name: st.name ?? undefined,
-        })),
+        items:
+          data
+            ?.filter(
+              (st) =>
+                typeof st.code === 'string' &&
+                st.code.length > 0 &&
+                typeof st.name === 'string' &&
+                st.name.length > 0,
+            )
+            .map((st) => ({
+              code: st.code as string,
+              name: st.name as string,
+            })) ?? [],
         errors: [],
       }
     } catch (error) {
@@ -247,5 +256,4 @@ export class PaymentService {
       }
     }
   }
-
 }
