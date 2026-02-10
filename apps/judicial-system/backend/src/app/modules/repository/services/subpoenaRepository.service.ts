@@ -1,9 +1,4 @@
-import {
-  CreateOptions,
-  FindOptions,
-  Transaction,
-  UpdateOptions,
-} from 'sequelize'
+import { FindOptions, Transaction, UpdateOptions } from 'sequelize'
 
 import {
   Inject,
@@ -39,11 +34,11 @@ interface FindAllOptions {
 }
 
 interface CreateSubpoenaOptions {
-  transaction?: Transaction
+  transaction: Transaction
 }
 
 interface UpdateSubpoenaOptions {
-  transaction?: Transaction
+  transaction: Transaction
   throwOnZeroRows?: boolean
 }
 
@@ -169,20 +164,14 @@ export class SubpoenaRepositoryService {
 
   async create(
     data: Partial<Subpoena>,
-    options?: CreateSubpoenaOptions,
+    options: CreateSubpoenaOptions,
   ): Promise<Subpoena> {
     try {
       this.logger.debug('Creating a new subpoena with data:', {
         data: Object.keys(data),
       })
 
-      const createOptions: CreateOptions = {}
-
-      if (options?.transaction) {
-        createOptions.transaction = options.transaction
-      }
-
-      const result = await this.subpoenaModel.create(data, createOptions)
+      const result = await this.subpoenaModel.create(data, options)
 
       this.logger.debug(`Created a new subpoena ${result.id}`)
 
@@ -202,7 +191,7 @@ export class SubpoenaRepositoryService {
     defendantId: string,
     subpoenaId: string,
     data: UpdateSubpoena,
-    options?: UpdateSubpoenaOptions,
+    options: UpdateSubpoenaOptions,
   ): Promise<Subpoena> {
     const throwOnZeroRows = options?.throwOnZeroRows ?? true
 
@@ -214,10 +203,7 @@ export class SubpoenaRepositoryService {
 
       const updateOptions: UpdateOptions = {
         where: { id: subpoenaId, caseId, defendantId },
-      }
-
-      if (options?.transaction) {
-        updateOptions.transaction = options.transaction
+        transaction: options.transaction,
       }
 
       const [numberOfAffectedRows, updatedSubpoenas] =

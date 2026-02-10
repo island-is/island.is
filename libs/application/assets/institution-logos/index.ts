@@ -13,6 +13,7 @@ export { InaoLogo } from './InaoLogo' // Ríkisendurskoðun
 export { MinistryForForeignAffairsLogo } from './MinistryForForeignAffairsLogo' // Utanríkisráðuneytið
 export { MinistryOfFinanceAndLocalAffairsLogo } from './MinistryOfFinanceAndEconomicAffairsLogo' // Fjármála og efnahagsráðuneytið
 export { MmsLogo } from './MmsLogo' // Miðstöð menntunar og skólaþjónustu
+export { NationalElectoralCommissionLogo } from './NationalElectoralCommissionLogo' // Landskjörstjórn
 export { NationalRegistryLogo } from './NationalRegistry' // Þjóðskrá
 export { SocialInsuranceAdministrationLogo } from './SocialInsuranceAdministrationLogo' // Tryggingastofnun
 export { TheEnergyAgencyLogo } from './TheEnergyAgencyLogo' // Orkustofnun

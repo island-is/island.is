@@ -1,7 +1,7 @@
 import {
-  ChildrenCustodyInformationApi,
-  NationalRegistrySpouseApi,
-  NationalRegistryUserApi,
+  ChildrenCustodyInformationApiV3,
+  NationalRegistryV3SpouseApi,
+  NationalRegistryV3UserApi,
 } from '@island.is/application/types'
 import { Form, FormModes } from '@island.is/application/types'
 import {
@@ -61,17 +61,17 @@ export const EuropeanHealthInsuranceCardPre: Form = buildForm({
           }),
           dataProviders: [
             buildDataProviderItem({
-              provider: NationalRegistryUserApi,
+              provider: NationalRegistryV3UserApi,
               title: e.data.dataCollectionNationalRegistryTitle,
               subTitle: e.data.dataCollectionNationalRegistryDescription,
             }),
             buildDataProviderItem({
-              provider: NationalRegistrySpouseApi,
+              provider: NationalRegistryV3SpouseApi,
               title: '',
               subTitle: '',
             }),
             buildDataProviderItem({
-              provider: ChildrenCustodyInformationApi,
+              provider: ChildrenCustodyInformationApiV3,
               title: '',
               subTitle: '',
             }),

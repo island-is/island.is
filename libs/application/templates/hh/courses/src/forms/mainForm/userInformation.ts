@@ -1,5 +1,4 @@
 import {
-  buildAsyncSelectField,
   buildMultiField,
   buildPhoneField,
   buildSection,
@@ -8,7 +7,6 @@ import {
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { Application } from '@island.is/application/types'
-import { loadHealthCenterSelectOptions } from '../../utils/loadOptions'
 
 export const userInformation = buildSection({
   id: 'userInformation',
@@ -60,11 +58,10 @@ export const userInformation = buildSection({
               'userProfile.data.mobilePhoneNumber',
             ),
         }),
-        buildAsyncSelectField({
+        buildTextField({
           id: 'userInformation.healthcenter',
           title: m.userInformation.healthcenter,
-          required: true,
-          loadOptions: loadHealthCenterSelectOptions,
+          readOnly: true,
           defaultValue: (application: Application) =>
             getValueViaPath(
               application.externalData,

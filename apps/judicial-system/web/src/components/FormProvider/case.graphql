@@ -48,6 +48,7 @@ query Case($input: CaseQueryInput!) {
       punishmentType
       isAlternativeService
       alternativeServiceDescription
+      isDrivingLicenseSuspended
       subpoenas {
         id
         created
@@ -212,6 +213,7 @@ query Case($input: CaseQueryInput!) {
     }
     caseFiles {
       id
+      caseId
       created
       modified
       name
@@ -230,6 +232,7 @@ query Case($input: CaseQueryInput!) {
       submissionDate
       fileRepresentative
       isKeyAccessible
+      defendantId
     }
     isAppealDeadlineExpired
     isAppealGracePeriodExpired

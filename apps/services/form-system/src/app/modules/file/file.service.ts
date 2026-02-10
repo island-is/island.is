@@ -1,11 +1,9 @@
 import { FileStorageService } from '@island.is/file-storage'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { S3Service } from '@island.is/nest/aws'
-import { InjectQueue } from '@nestjs/bull'
 import { Inject, Injectable } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
 import { InjectModel } from '@nestjs/sequelize'
-import { Queue } from 'bull'
 import { Value } from '../applications/models/value.model'
 import { FileConfig } from './file.config'
 
@@ -16,7 +14,6 @@ export class FileService {
     private readonly config: ConfigType<typeof FileConfig>,
     private readonly s3Service: S3Service,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
-    @InjectQueue('upload') private readonly uploadQueue: Queue,
     private readonly fileStorageService: FileStorageService,
     @InjectModel(Value)
     private readonly valueModel: typeof Value,
@@ -36,27 +33,6 @@ export class FileService {
       this.logger.error('❌ No destination bucket configured')
       return
     }
-
-    this.logger.info(
-      `Queueing copy job for file ${sourceKey} from ${this.config.tempBucket} to ${targetBucket}`,
-    )
-
-    //   try {
-    //     await Promise.race([
-    //       this.uploadQueue.add('upload', { fieldId, key: sourceKey, valueId }),
-    //       new Promise((_, reject) =>
-    //         setTimeout(
-    //           () => reject(new Error('Timed out adding job to upload queue')),
-    //           5000,
-    //         ),
-    //       ),
-    //     ])
-    //     this.logger.info('✅ Job added to upload queue')
-    //   } catch (e) {
-    //     this.logger.error('❌ Failed to add job to upload queue', e)
-    //     throw e
-    //   }
-    // }
 
     let attempts = 0
     const key = `${fieldId}/${sourceKey}`

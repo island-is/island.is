@@ -1,7 +1,7 @@
 import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
-import { MessageService, MessageType } from '@island.is/judicial-system/message'
+import { Message, MessageType } from '@island.is/judicial-system/message'
 import {
   CaseDecision,
   CaseFileCategory,
@@ -73,7 +73,7 @@ describe('CaseController - Update', () => {
     legalArguments: uuid(),
   } as Case
 
-  let mockMessageService: MessageService
+  let mockQueuedMessages: Message[]
   let mockEventLogService: EventLogService
   let mockUserService: UserService
   let mockFileService: FileService
@@ -86,7 +86,7 @@ describe('CaseController - Update', () => {
 
   beforeEach(async () => {
     const {
-      messageService,
+      queuedMessages,
       eventLogService,
       userService,
       fileService,
@@ -98,7 +98,7 @@ describe('CaseController - Update', () => {
       caseController,
     } = await createTestingCaseModule()
 
-    mockMessageService = messageService
+    mockQueuedMessages = queuedMessages
     mockEventLogService = eventLogService
     mockUserService = userService
     mockFileService = fileService
@@ -108,10 +108,11 @@ describe('CaseController - Update', () => {
     mockCaseStringModel = caseStringModel
 
     const mockTransaction = sequelize.transaction as jest.Mock
-    transaction = {} as Transaction
-    mockTransaction.mockImplementationOnce(
-      (fn: (transaction: Transaction) => unknown) => fn(transaction),
-    )
+    transaction = {
+      commit: jest.fn(),
+      rollback: jest.fn(),
+    } as unknown as Transaction
+    mockTransaction.mockResolvedValueOnce(transaction)
 
     const mockCreateSubpoena = mockSubpoenaService.createSubpoena as jest.Mock
     mockCreateSubpoena.mockRejectedValue('Failed to create subpoena')
@@ -330,7 +331,7 @@ describe('CaseController - Update', () => {
       })
 
       it('should post to queue', () => {
-        expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+        expect(mockQueuedMessages).toEqual([
           {
             type: MessageType.DELIVERY_TO_COURT_REQUEST,
             user,
@@ -373,7 +374,7 @@ describe('CaseController - Update', () => {
       })
 
       it('should post to queue', () => {
-        expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+        expect(mockQueuedMessages).toEqual([
           {
             type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
             user,
@@ -410,7 +411,7 @@ describe('CaseController - Update', () => {
     })
 
     it('should post to queue', () => {
-      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+      expect(mockQueuedMessages).toEqual([
         {
           type: MessageType.DELIVERY_TO_COURT_PROSECUTOR,
           user,
@@ -475,7 +476,7 @@ describe('CaseController - Update', () => {
       })
 
       it('should post to queue', () => {
-        expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+        expect(mockQueuedMessages).toEqual([
           {
             type: MessageType.DELIVERY_TO_COURT_CASE_FILES_RECORD,
             user,
@@ -536,7 +537,7 @@ describe('CaseController - Update', () => {
       })
 
       it('should post modified notification to queue', async () => {
-        expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+        expect(mockQueuedMessages).toEqual([
           {
             type: MessageType.NOTIFICATION,
             user,
@@ -596,7 +597,7 @@ describe('CaseController - Update', () => {
       })
 
       it('should queue messages', () => {
-        expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+        expect(mockQueuedMessages).toEqual([
           {
             type: MessageType.NOTIFICATION,
             user,
@@ -618,7 +619,7 @@ describe('CaseController - Update', () => {
     })
 
     it('should not post to queue', () => {
-      expect(mockMessageService.sendMessagesToQueue).not.toHaveBeenCalled()
+      expect(mockQueuedMessages).toEqual([])
     })
   })
 
@@ -639,7 +640,7 @@ describe('CaseController - Update', () => {
     })
 
     it('should post to queue', () => {
-      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+      expect(mockQueuedMessages).toEqual([
         {
           type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_RECEIVED_DATE,
           user,
@@ -679,7 +680,7 @@ describe('CaseController - Update', () => {
     })
 
     it('should post to queue', () => {
-      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+      expect(mockQueuedMessages).toEqual([
         {
           type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_ASSIGNED_ROLES,
           user,
@@ -726,7 +727,7 @@ describe('CaseController - Update', () => {
     })
 
     it('should post to queue', () => {
-      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+      expect(mockQueuedMessages).toEqual([
         {
           type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_RECEIVED_DATE,
           user,
@@ -819,7 +820,7 @@ describe('CaseController - Update', () => {
     })
 
     it('should post to queue', () => {
-      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+      expect(mockQueuedMessages).toEqual([
         {
           type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_CASE_FILE,
           user,
@@ -922,7 +923,12 @@ describe('CaseController - Update', () => {
         user,
         transaction,
       )
-      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+      expect(mockQueuedMessages).toEqual([
+        {
+          type: MessageType.DELIVERY_TO_COURT_INDICTMENT_ARRAIGNMENT_DATE,
+          user,
+          caseId: theCase.id,
+        },
         {
           type: MessageType.DELIVERY_TO_POLICE_SUBPOENA_FILE,
           user,

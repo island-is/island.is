@@ -615,13 +615,23 @@ export const emailsMsg = defineMessages({
     id: 'ids:email-already-exists',
     defaultMessage: 'Netfang er nú þegar til',
   },
+  verificationExpired: {
+    id: 'ids:verification-expired',
+    defaultMessage: 'Kóðinn er útrunninn. Vinsamlegast biddu um nýjan kóða.',
+  },
+  tooManyAttempts: {
+    id: 'ids:too-many-attempts',
+    defaultMessage:
+      'Of margar misheppnaðar tilraunir. Vinsamlegast biddu um nýjan kóða.',
+  },
+  verificationNotFound: {
+    id: 'ids:verification-not-found',
+    defaultMessage:
+      'Staðfesting fannst ekki. Vinsamlegast biddu um nýjan kóða.',
+  },
 })
 
 export const contractsMessages = defineMessages({
-  registerRentalAgreement: {
-    id: 'sp.contracts:register-rental-agreement',
-    defaultMessage: 'Skrá leigusamning',
-  },
   contractsOverviewTitle: {
     id: 'sp.contracts:contracts-overview-title',
     defaultMessage: 'Samningar',
@@ -631,19 +641,12 @@ export const contractsMessages = defineMessages({
     defaultMessage:
       'Hér finnur þú upplýsingar um þína samninga úr leiguskrá Húsnæðis og Mannvirkjastofnunar.',
   },
-  contractDetailTitleFallback: {
-    id: 'sp.contracts:contract-detail-title-fallback',
-    defaultMessage: 'Samningur',
-  },
+
   contractDetailSubtitle: {
     id: 'sp.contracts:contract-detail-subtitle',
     defaultMessage: 'Leigusamningur vegna íbúðarhúsnæðis',
   },
-  dataStackTitle: {
-    id: 'sp.contracts:data-stack-title',
-    defaultMessage: 'Upplýsingar',
-    description: 'Title for display of data contained in the rental agreement',
-  },
+
   agreementNumber: {
     id: 'sp.contracts:agreement-number',
     defaultMessage: 'Samningsnúmer',
@@ -660,9 +663,15 @@ export const contractsMessages = defineMessages({
     id: 'sp.contracts:location',
     defaultMessage: 'Staðsetning',
   },
+
   lengthOfRentalAgreement: {
     id: 'sp.contracts:length-of-rental-agreement',
     defaultMessage: 'Leigutími',
+  },
+  rentalAgreementDate: {
+    id: 'sp.contracts:rental-agreement-date',
+    defaultMessage:
+      '{from, date, long} - {to, select, undefined {} other {to, date, long}}',
   },
   registrationDate: {
     id: 'sp.contracts:registration-date',
@@ -672,10 +681,6 @@ export const contractsMessages = defineMessages({
     id: 'sp.contracts:status',
     defaultMessage: 'Staða',
   },
-  inProgress: {
-    id: 'sp.contracts:in-progress',
-    defaultMessage: 'Í vinnslu',
-  },
   active: {
     id: 'sp.contracts:active',
     defaultMessage: 'Í gildi',
@@ -684,14 +689,15 @@ export const contractsMessages = defineMessages({
     id: 'sp.contracts:cancelled',
     defaultMessage: 'Rift',
   },
+  invalid: {
+    id: 'sp.contracts:invalid',
+    defaultMessage: 'Ógildur',
+  },
   expired: {
     id: 'sp.contracts:expired',
     defaultMessage: 'Útrunninn',
   },
-  unknown: {
-    id: 'sp.contracts:unknown',
-    defaultMessage: 'Óþekkt',
-  },
+
   terminated: {
     id: 'sp.contracts:terminated',
     defaultMessage: 'Sagt upp',
@@ -725,10 +731,7 @@ export const contractsMessages = defineMessages({
     id: 'sp.contracts:terminate-rental-agreement',
     defaultMessage: 'Afskrá leigusamning',
   },
-  extendRentalAgreement: {
-    id: 'sp.contracts:extend-rental-agreement',
-    defaultMessage: 'Framlengja leigusamning',
-  },
+
   indefinite: {
     id: 'sp.contracts:indefinite',
     defaultMessage: 'Ótímabundinn',

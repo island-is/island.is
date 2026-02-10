@@ -744,6 +744,8 @@ export const en: TranslatedMessages = {
   'health.overview.paymentDebt': 'Debt',
   'health.overview.therapy': 'Therapy',
   'health.overview.vaccinations': 'Vaccinations',
+  'health.overview.appointments': 'Appointments',
+  'health.overview.questionnaires': 'Questionnaires',
   'health.overview.aidsAndNutrition': 'Aids and nutrition',
   'health.overview.medicinePurchase': 'Medicine purchase',
   'health.overview.medicineDelegation': 'Medicine delegation',
@@ -760,6 +762,30 @@ export const en: TranslatedMessages = {
   'health.overview.noDentistRegistered': 'No dentist registered',
   'health.overview.prescriptions': 'Prescriptions',
 
+  // health - questionnaires
+  'health.questionnaires.screenTitle': 'Questionnaires',
+  'health.questionnaires.title': 'Questionnaires',
+  'health.questionnaires.description':
+    'Here you can view questionnaires that have been sent to you.',
+  'health.questionnaires.status.answered': 'Answered',
+  'health.questionnaires.status.unanswered': 'Unanswered',
+  'health.questionnaires.status.notAnswered': 'Unanswered',
+  'health.questionnaires.status.draft': 'Draft',
+  'health.questionnaires.status.expired': 'Expired',
+  'health.questionnaires.organization.lsh': 'Landspitali',
+  'health.questionnaires.organization.el': 'Directorate of Health',
+  'health.questionnaires.organization.unknown': 'Unknown',
+  'health.questionnaires.action.answer': 'Answer questionnaire',
+  'health.questionnaires.action.continue-draft': 'Continue',
+  'health.questionnaires.action.view-answer': 'View answers',
+  'health.questionnaires.detail.description':
+    'Here you can find your answers to questionnaires. You can compare your answers.',
+  'health.questionnaires.detail.status': 'Status',
+  'health.questionnaires.detail.institution': 'Institution',
+  'health.questionnaires.detail.sentBy': 'Sent by',
+  'health.questionnaires.detail.sentDate': 'Sent date',
+  'health.questionnaires.detail.notFound': 'Questionnaire not found',
+
   // health - vaccinations
   'health.vaccinations.screenTitle': 'Vaccinations',
   'health.vaccinations.title': 'Vaccinations',
@@ -775,6 +801,32 @@ export const en: TranslatedMessages = {
   'health.vaccinations.noVaccinationsDescription':
     'If you believe you have data that should appear here, please contact service provider.',
   'health.vaccinations.directorateOfHealth': 'The directorate of Health',
+
+  // health - appointments
+  'health.appointments.screenTitle': 'Appointments',
+  'health.appointments.title': 'Appointments',
+  'health.appointments.description':
+    'Here you can see your appointments in the healthcare system.',
+  'health.appointments.detailTitle': 'Healthcare appointment',
+  'health.appointments.dateAndTime': 'Date and time',
+  'health.appointments.duration': 'Duration',
+  'health.appointments.location': 'Location',
+  'health.appointments.address': 'Address',
+  'health.appointments.practitioners': 'Appointment with: {practitioner}',
+  'health.appointments.appointmentWith': 'Appointment with',
+  'health.appointments.atTime': 'at {time}',
+  'health.appointments.timePrefix': 'at',
+  'health.appointments.instructions': 'Instructions',
+  'health.appointments.openMap': 'Open map',
+  'health.appointments.type': 'Type',
+  'health.appointments.noAppointmentsTitle': 'No appointments',
+  'health.appointments.noAppointmentsText':
+    'You do not have any upcoming appointments.',
+  'health.appointments.errorMessage':
+    'Failed to fetch appointments. Please try again later.',
+  'health.appointments.notFoundMessage':
+    'Appointment not found. It may have been cancelled.',
+  'health.appointments.minutesFormat': '{minutes} minutes',
 
   // health - organ donation
   'health.organDonation': 'Organ Donation',

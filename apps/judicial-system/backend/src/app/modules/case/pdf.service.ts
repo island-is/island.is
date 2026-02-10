@@ -1,3 +1,5 @@
+import { Transaction } from 'sequelize'
+
 import {
   forwardRef,
   Inject,
@@ -163,6 +165,7 @@ export class PdfService {
   async getCourtRecordPdfForIndictmentCase(
     theCase: Case,
     user: TUser,
+    transaction: Transaction,
   ): Promise<Buffer> {
     let confirmation: Confirmation | undefined = undefined
 
@@ -207,18 +210,18 @@ export class PdfService {
     ) {
       const { hash, hashAlgorithm } = getCaseFileHash(generatedPdf)
 
+      await this.caseRepositoryService.update(
+        theCase.id,
+        { courtRecordHash: JSON.stringify({ hash, hashAlgorithm }) },
+        { transaction },
+      )
+
       // No need to wait for this to finish
-      this.caseRepositoryService
-        .update(theCase.id, {
-          courtRecordHash: JSON.stringify({ hash, hashAlgorithm }),
-        })
-        .then(() =>
-          this.tryUploadPdfToS3(
-            theCase,
-            `${theCase.id}/courtRecord.pdf`,
-            generatedPdf,
-          ),
-        )
+      this.tryUploadPdfToS3(
+        theCase,
+        `${theCase.id}/courtRecord.pdf`,
+        generatedPdf,
+      )
     }
 
     return generatedPdf
@@ -273,7 +276,10 @@ export class PdfService {
       })
   }
 
-  async getIndictmentPdf(theCase: Case): Promise<Buffer> {
+  async getIndictmentPdf(
+    theCase: Case,
+    transaction: Transaction,
+  ): Promise<Buffer> {
     let confirmation: Confirmation | undefined = undefined
     const key = `${theCase.splitCaseId ?? theCase.id}/indictment.pdf`
 
@@ -316,12 +322,14 @@ export class PdfService {
     if (hasIndictmentCaseBeenSubmittedToCourt(theCase.state) && confirmation) {
       const { hash, hashAlgorithm } = getCaseFileHash(generatedPdf)
 
+      await this.caseRepositoryService.update(
+        theCase.id,
+        { indictmentHash: JSON.stringify({ hash, hashAlgorithm }) },
+        { transaction },
+      )
+
       // No need to wait for this to finish
-      this.caseRepositoryService
-        .update(theCase.id, {
-          indictmentHash: JSON.stringify({ hash, hashAlgorithm }),
-        })
-        .then(() => this.tryUploadPdfToS3(theCase, key, generatedPdf))
+      this.tryUploadPdfToS3(theCase, key, generatedPdf)
     }
 
     return generatedPdf
@@ -355,6 +363,7 @@ export class PdfService {
   async getSubpoenaPdf(
     theCase: Case,
     defendant: Defendant,
+    transaction: Transaction,
     subpoena?: Subpoena,
     arraignmentDate?: Date,
     location?: string,
@@ -398,16 +407,17 @@ export class PdfService {
     if (subpoena) {
       const subpoenaHash = getCaseFileHash(generatedPdf)
 
+      await this.subpoenaService.setHash(
+        theCase.id,
+        defendant.id,
+        subpoena.id,
+        subpoenaHash.hash,
+        subpoenaHash.hashAlgorithm,
+        transaction,
+      )
+
       // No need to wait for this to finish
-      this.subpoenaService
-        .setHash(
-          theCase.id,
-          defendant.id,
-          subpoena.id,
-          subpoenaHash.hash,
-          subpoenaHash.hashAlgorithm,
-        )
-        .then(() => this.tryUploadPdfToS3(theCase, key, generatedPdf))
+      this.tryUploadPdfToS3(theCase, key, generatedPdf)
     }
 
     return generatedPdf

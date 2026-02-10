@@ -4,6 +4,8 @@ import { OfflineBanner } from '../../components/offline/offline-banner'
 import { isTestingApp } from '../../config'
 import { AirDiscountScreen } from '../../screens/air-discount/air-discount'
 import { AppLockScreen } from '../../screens/app-lock/app-lock'
+import { AppointmentDetailScreen } from '../../screens/appointments/appointment-detail'
+import { AppointmentsScreen } from '../../screens/appointments/appointments'
 import { ApplicationsScreen } from '../../screens/applications/applications'
 import { ApplicationsCompletedScreen } from '../../screens/applications/applications-completed'
 import { ApplicationsInProgressScreen } from '../../screens/applications/applications-in-progress'
@@ -19,6 +21,8 @@ import { FamilyOverviewScreen } from '../../screens/family/family-overview'
 import { FinanceScreen } from '../../screens/finance/finance'
 import { FinanceStatusDetailScreen } from '../../screens/finance/finance-status-detail'
 import { HealthOverviewScreen } from '../../screens/health/health-overview'
+import { QuestionnaireDetailScreen } from '../../screens/health/questionnaires/questionnaire-detail'
+import { QuestionnairesScreen } from '../../screens/health/questionnaires/questionnaires'
 import { MedicineDelegationScreen } from '../../screens/medicine-delegation/medicine-delegation'
 import { MedicineDelegationFormScreen } from '../../screens/medicine-delegation/medicine-delegation-form'
 import { MedicineDelegationDetailScreen } from '../../screens/medicine-delegation/medicine-delegation-detail'
@@ -109,6 +113,8 @@ export function registerAllComponents() {
   registerComponent(CR.PasskeyScreen, PasskeyScreen)
   registerComponent(CR.UpdateAppScreen, UpdateAppScreen)
   registerComponent(CR.HealthOverviewScreen, HealthOverviewScreen)
+  registerComponent(CR.QuestionnairesScreen, QuestionnairesScreen)
+  registerComponent(CR.QuestionnaireDetailScreen, QuestionnaireDetailScreen)
   registerComponent(CR.MedicineDelegationScreen, MedicineDelegationScreen)
   registerComponent(
     CR.MedicineDelegationFormScreen,
@@ -134,6 +140,8 @@ export function registerAllComponents() {
   registerComponent(CR.MedicineHistoryScreen, MedicineHistoryScreen)
 
   registerComponent(CR.RegisterEmailScreen, RegisterEmailScreen)
+  registerComponent(CR.AppointmentsScreen, AppointmentsScreen)
+  registerComponent(CR.AppointmentDetailScreen, AppointmentDetailScreen)
 
   // Overlay
   registerComponent(CR.OfflineBanner, OfflineBanner)

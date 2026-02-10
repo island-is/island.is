@@ -1,6 +1,6 @@
 import { v4 as uuid } from 'uuid'
 
-import { MessageService, MessageType } from '@island.is/judicial-system/message'
+import { Message, MessageType } from '@island.is/judicial-system/message'
 import { CivilClaimantNotificationType } from '@island.is/judicial-system/types'
 
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
@@ -23,15 +23,15 @@ describe('CivilClaimantController - Update', () => {
   const caseId = uuid()
   const civilClaimantId = uuid()
 
-  let mockMessageService: MessageService
+  let mockQueuedMessages: Message[]
   let mockCivilClaimantModel: typeof CivilClaimant
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { messageService, civilClaimantModel, civilClaimantController } =
+    const { queuedMessages, civilClaimantModel, civilClaimantController } =
       await createTestingDefendantModule()
 
-    mockMessageService = messageService
+    mockQueuedMessages = queuedMessages
     mockCivilClaimantModel = civilClaimantModel
 
     givenWhenThen = async (
@@ -79,7 +79,7 @@ describe('CivilClaimantController - Update', () => {
           returning: true,
         },
       )
-      expect(mockMessageService.sendMessagesToQueue).not.toHaveBeenCalled()
+      expect(mockQueuedMessages).toEqual([])
     })
 
     it('should return the updated civil claimant', () => {
@@ -104,7 +104,7 @@ describe('CivilClaimantController - Update', () => {
     })
 
     it('should queue spokesperson assigned message', () => {
-      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+      expect(mockQueuedMessages).toEqual([
         {
           type: MessageType.CIVIL_CLAIMANT_NOTIFICATION,
           caseId,

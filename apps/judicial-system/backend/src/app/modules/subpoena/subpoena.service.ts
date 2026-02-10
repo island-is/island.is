@@ -1,6 +1,5 @@
 import { Base64 } from 'js-base64'
 import { Includeable, Transaction } from 'sequelize'
-import { Sequelize } from 'sequelize-typescript'
 
 import {
   forwardRef,
@@ -8,15 +7,13 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common'
-import { InjectConnection } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { getServiceStatusText } from '@island.is/judicial-system/formatters'
 import {
-  Message,
-  MessageService,
+  addMessagesToQueue,
   MessageType,
 } from '@island.is/judicial-system/message'
 import {
@@ -86,12 +83,10 @@ export const include: Includeable[] = [
 @Injectable()
 export class SubpoenaService {
   constructor(
-    @InjectConnection() private readonly sequelize: Sequelize,
     private readonly subpoenaRepositoryService: SubpoenaRepositoryService,
     private readonly pdfService: PdfService,
     @Inject(forwardRef(() => FileService))
     private readonly fileService: FileService,
-    private readonly messageService: MessageService,
     @Inject(forwardRef(() => PoliceService))
     private readonly policeService: PoliceService,
     private readonly eventService: EventService,
@@ -124,54 +119,48 @@ export class SubpoenaService {
     )
   }
 
-  async setHash(
+  setHash(
     caseId: string,
     defendantId: string,
     subpoenaId: string,
     hash: string,
     hashAlgorithm: HashAlgorithm,
-  ): Promise<void> {
-    await this.subpoenaRepositoryService.update(
+    transaction: Transaction,
+  ): Promise<Subpoena> {
+    return this.subpoenaRepositoryService.update(
       caseId,
       defendantId,
       subpoenaId,
       { hash, hashAlgorithm },
+      { transaction },
     )
   }
 
-  private async addMessagesForSubpoenaUpdateToQueue(
+  private addMessagesForSubpoenaUpdateToQueue(
     subpoena: Subpoena,
     serviceStatus?: ServiceStatus,
-  ): Promise<void> {
-    let message: Message | undefined = undefined
-
+  ): void {
     if (serviceStatus && serviceStatus !== subpoena.serviceStatus) {
       if (isSuccessfulServiceStatus(serviceStatus)) {
-        message = {
+        addMessagesToQueue({
           type: MessageType.SUBPOENA_NOTIFICATION,
           caseId: subpoena.caseId,
           elementId: [subpoena.defendantId, subpoena.id],
           body: {
             type: SubpoenaNotificationType.SERVICE_SUCCESSFUL,
           },
-        }
+        })
       } else if (isFailedServiceStatus(serviceStatus)) {
-        message = {
+        addMessagesToQueue({
           type: MessageType.SUBPOENA_NOTIFICATION,
           caseId: subpoena.caseId,
           elementId: [subpoena.defendantId, subpoena.id],
           body: {
             type: SubpoenaNotificationType.SERVICE_FAILED,
           },
-        }
+        })
       }
     }
-
-    if (!message) {
-      return
-    }
-
-    return this.messageService.sendMessagesToQueue([message])
   }
 
   async update(
@@ -179,6 +168,7 @@ export class SubpoenaService {
     defendant: Defendant,
     subpoena: Subpoena,
     update: UpdateSubpoenaDto,
+    transaction: Transaction,
   ): Promise<Subpoena> {
     const {
       defenderChoice,
@@ -192,78 +182,73 @@ export class SubpoenaService {
       requestedDefenderName,
     } = update
 
-    await this.sequelize.transaction(async (transaction) => {
-      await this.subpoenaRepositoryService.update(
-        theCase.id,
-        defendant.id,
-        subpoena.id,
-        update,
+    await this.subpoenaRepositoryService.update(
+      theCase.id,
+      defendant.id,
+      subpoena.id,
+      update,
+      { transaction, throwOnZeroRows: false },
+    )
+
+    if (
+      defenderChoice ||
+      defenderNationalId ||
+      defenderName ||
+      defenderEmail ||
+      defenderPhoneNumber ||
+      requestedDefenderChoice ||
+      requestedDefenderNationalId ||
+      requestedDefenderName
+    ) {
+      // Færa message handling í defendant service
+      await this.defendantService.updateRestricted(
+        theCase,
+        defendant,
         {
-          transaction,
-          throwOnZeroRows: false,
+          defenderChoice,
+          defenderNationalId,
+          defenderName,
+          defenderEmail,
+          defenderPhoneNumber,
+          requestedDefenderChoice,
+          requestedDefenderNationalId,
+          requestedDefenderName,
         },
+        transaction,
       )
+    }
 
-      if (
-        defenderChoice ||
-        defenderNationalId ||
-        defenderName ||
-        defenderEmail ||
-        defenderPhoneNumber ||
-        requestedDefenderChoice ||
-        requestedDefenderNationalId ||
-        requestedDefenderName
-      ) {
-        // Færa message handling í defendant service
-        await this.defendantService.updateRestricted(
-          theCase,
-          defendant,
-          {
-            defenderChoice,
-            defenderNationalId,
-            defenderName,
-            defenderEmail,
-            defenderPhoneNumber,
-            requestedDefenderChoice,
-            requestedDefenderNationalId,
-            requestedDefenderName,
-          },
-          transaction,
-        )
-      }
+    // Are we observing a successful service for the first time?
+    // We assume that a successful service status will never be
+    // replaced by another successful service status
+    const wasSubpoenaSuccessfullyServed =
+      serviceStatus &&
+      serviceStatus !== subpoena.serviceStatus &&
+      [
+        ServiceStatus.DEFENDER,
+        ServiceStatus.ELECTRONICALLY,
+        ServiceStatus.IN_PERSON,
+      ].includes(serviceStatus)
 
-      // Are we observing a successful service for the first time?
-      // We assume that a successful service status will never be
-      // replaced by another successful service status
-      const wasSubpoenaSuccessfullyServed =
-        serviceStatus &&
-        serviceStatus !== subpoena.serviceStatus &&
-        [
-          ServiceStatus.DEFENDER,
-          ServiceStatus.ELECTRONICALLY,
-          ServiceStatus.IN_PERSON,
-        ].includes(serviceStatus)
+    // File the service certificate as a court document
+    if (
+      wasSubpoenaSuccessfullyServed &&
+      theCase.withCourtSessions &&
+      theCase.courtSessions &&
+      theCase.courtSessions.length > 0
+    ) {
+      const name = `Birtingarvottorð ${defendant.name}`
 
-      // File the service certificate as a court document
-      if (
-        wasSubpoenaSuccessfullyServed &&
-        theCase.withCourtSessions &&
-        theCase.courtSessions &&
-        theCase.courtSessions.length > 0
-      ) {
-        const name = `Birtingarvottorð ${defendant.name}`
-
-        return this.courtDocumentService.create(
-          theCase.id,
-          {
-            documentType: CourtDocumentType.GENERATED_DOCUMENT,
-            name,
-            generatedPdfUri: `/api/case/${theCase.id}/subpoenaServiceCertificate/${defendant.id}/${subpoena.id}/${name}`,
-          },
-          transaction,
-        )
-      }
-    })
+      await this.courtDocumentService.create(
+        theCase.id,
+        {
+          documentType: CourtDocumentType.GENERATED_DOCUMENT,
+          name,
+          generatedPdfUri: `/api/case/${theCase.id}/subpoenaServiceCertificate/${defendant.id}/${subpoena.id}/${name}`,
+        },
+        transaction,
+      )
+    }
 
     // No need to wait for this to finish
     await this.addMessagesForSubpoenaUpdateToQueue(subpoena, serviceStatus)
@@ -277,13 +262,17 @@ export class SubpoenaService {
       })
     }
 
-    return this.findById(subpoena.id)
+    return this.findById(subpoena.id, transaction)
   }
 
-  async findById(subpoenaId: string): Promise<Subpoena> {
+  async findById(
+    subpoenaId: string,
+    transaction: Transaction,
+  ): Promise<Subpoena> {
     const subpoena = await this.subpoenaRepositoryService.findOne({
       include,
       where: { id: subpoenaId },
+      transaction,
     })
 
     if (!subpoena) {
@@ -320,11 +309,13 @@ export class SubpoenaService {
     defendant,
     subpoena,
     user,
+    transaction,
   }: {
     theCase: Case
     defendant: Defendant
     subpoena: Subpoena
     user: TUser
+    transaction: Transaction
   }): Promise<DeliverResponse> {
     try {
       const civilClaimPdfs: string[] = []
@@ -347,21 +338,26 @@ export class SubpoenaService {
         civilClaimPdfs.push(Base64.btoa(civilClaimPdf.toString('binary')))
       }
 
-      const indictmentPdf = await this.pdfService.getIndictmentPdf(theCase)
+      const indictmentPdf = await this.pdfService.getIndictmentPdf(
+        theCase,
+        transaction,
+      )
       const subpoenaPdf = await this.pdfService.getSubpoenaPdf(
         theCase,
         defendant,
+        transaction,
         subpoena,
       )
 
-      const createdSubpoena = await this.policeService.createSubpoena(
+      const createdSubpoena = await this.policeService.createSubpoena({
         theCase,
         defendant,
-        Base64.btoa(subpoenaPdf.toString('binary')),
-        Base64.btoa(indictmentPdf.toString('binary')),
+        subpoenaId: subpoena.id,
+        subpoena: Base64.btoa(subpoenaPdf.toString('binary')),
+        indictment: Base64.btoa(indictmentPdf.toString('binary')),
         user,
-        civilClaimPdfs,
-      )
+        civilClaims: civilClaimPdfs,
+      })
 
       if (!createdSubpoena) {
         this.logger.error('Failed to create subpoena file for police')
@@ -374,7 +370,7 @@ export class SubpoenaService {
         defendant.id,
         subpoena.id,
         { policeSubpoenaId: createdSubpoena.policeSubpoenaId },
-        { throwOnZeroRows: false },
+        { transaction, throwOnZeroRows: false },
       )
 
       this.logger.info(
@@ -397,11 +393,13 @@ export class SubpoenaService {
     defendant: Defendant,
     subpoena: Subpoena,
     user: TUser,
+    transaction: Transaction,
   ): Promise<DeliverResponse> {
     try {
       const subpoenaPdf = await this.pdfService.getSubpoenaPdf(
         theCase,
         defendant,
+        transaction,
         subpoena,
       )
 
@@ -430,9 +428,10 @@ export class SubpoenaService {
     defendant: Defendant,
     subpoena: Subpoena,
     user: TUser,
+    transaction: Transaction,
   ): Promise<DeliverResponse> {
     return this.pdfService
-      .getSubpoenaPdf(theCase, defendant, subpoena)
+      .getSubpoenaPdf(theCase, defendant, transaction, subpoena)
       .then(async (pdf) => {
         const fileName = `Fyrirkall - ${defendant.name}`
 
@@ -527,6 +526,7 @@ export class SubpoenaService {
     theCase: Case,
     defendant: Defendant,
     subpoena: Subpoena,
+    transaction: Transaction,
     user?: TUser,
   ): Promise<Subpoena> {
     if (!subpoena.policeSubpoenaId) {
@@ -551,6 +551,6 @@ export class SubpoenaService {
       return subpoena
     }
 
-    return this.update(theCase, defendant, subpoena, subpoenaInfo)
+    return this.update(theCase, defendant, subpoena, subpoenaInfo, transaction)
   }
 }

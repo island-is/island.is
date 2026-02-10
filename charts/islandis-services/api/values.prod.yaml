@@ -76,6 +76,7 @@ env:
   NODE_OPTIONS: '--max-old-space-size=2250 --enable-source-maps -r dd-trace/init'
   PAYMENTS_API_URL: 'http://services-payments.services-payments.svc.cluster.local'
   RANNIS_GRANTS_URL: 'https://sjodir.rannis.is/statistics/fund_schedule.php'
+  REDIS_NODES: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
   REGULATIONS_ADMIN_URL: 'http://regulations-admin-backend.regulations-admin.svc.cluster.local'
   SEND_FROM_EMAIL: 'island@island.is'
   SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
