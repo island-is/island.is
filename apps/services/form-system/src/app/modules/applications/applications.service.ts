@@ -361,6 +361,7 @@ export class ApplicationsService {
             model: ApplicationEvent,
             as: 'events',
           },
+          // TODOx afhverju erum við að sækja files?
           {
             model: Value,
             as: 'files',
@@ -383,10 +384,10 @@ export class ApplicationsService {
       }),
     )
 
-    const applicationResponseDto = new ApplicationResponseDto()
-    applicationResponseDto.applications = applicationMinimalDtos
-    applicationResponseDto.total = total
-    return applicationResponseDto
+    return {
+      applications: applicationMinimalDtos,
+      total: total,
+    }
   }
 
   async getApplication(

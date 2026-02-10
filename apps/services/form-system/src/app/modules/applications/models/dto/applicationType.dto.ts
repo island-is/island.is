@@ -1,6 +1,6 @@
-import {ApiProperty} from "@nestjs/swagger";
-import {Expose} from "class-transformer";
-import {IsString} from "class-validator";
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { Expose } from 'class-transformer'
+import { IsString } from 'class-validator'
 
 export class ApplicationTypeDto {
   @ApiProperty()
@@ -8,7 +8,7 @@ export class ApplicationTypeDto {
   @IsString()
   id!: string
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @Expose()
   @IsString()
   name?: string
