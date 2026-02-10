@@ -2133,19 +2133,6 @@ export class CaseService {
     }
   }
 
-  private handleCreateFirstCourtSession(
-    theCase: Case,
-    transaction: Transaction,
-  ) {
-    // Guard against unexpected existing court sessions
-    if (theCase.courtSessions && theCase.courtSessions.length > 0) {
-      return
-    }
-
-    // Create the first court session and then add court documents to it
-    return this.courtSessionService.create(theCase, transaction)
-  }
-
   private async handleEventLogUpdatesForIndictments(
     theCase: Case,
     updatedCase: Case,
@@ -2282,12 +2269,6 @@ export class CaseService {
       await this.fileService.resetCaseFileStates(theCase.id, transaction)
     }
 
-    // Handle first court session creation if receiving an indictment case
-    // which should have court sessions
-    if (isReceivingIndictmentCase && theCase.withCourtSessions) {
-      await this.handleCreateFirstCourtSession(theCase, transaction)
-    }
-
     // Create new subpoenas if scheduling a new arraignment date for an indictment case
     if (schedulingNewArraignmentDateForIndictmentCase && theCase.defendants) {
       const dsPairs = await Promise.all(
@@ -2414,14 +2395,14 @@ export class CaseService {
         )
       }
 
-      const parentCaseCourtSessions = parentCase.courtSessions
-      const latestCourtSession =
-        parentCaseCourtSessions && parentCaseCourtSessions.length > 0
-          ? parentCaseCourtSessions[parentCaseCourtSessions.length - 1]
-          : undefined
-
       // ensure there exists at least one court session in the parent case
-      if (parentCase.withCourtSessions && latestCourtSession) {
+      if (parentCase.withCourtSessions) {
+        const parentCaseCourtSessions = parentCase.courtSessions
+        const latestCourtSession =
+          parentCaseCourtSessions && parentCaseCourtSessions.length > 0
+            ? parentCaseCourtSessions[parentCaseCourtSessions.length - 1]
+            : undefined
+
         const isCourtSessionActive =
           latestCourtSession && !latestCourtSession.isConfirmed
         const courtSessionId = isCourtSessionActive
@@ -2806,22 +2787,14 @@ export class CaseService {
     return extendedCase
   }
 
-  async splitDefendantFromCase(
+  splitDefendantFromCase(
     theCase: Case,
     defendant: Defendant,
     transaction: Transaction,
   ): Promise<Case> {
-    const splitCase = await this.caseRepositoryService.split(
-      theCase.id,
-      defendant.id,
-      { transaction },
-    )
-
-    const fullSplitCase = await this.findById(splitCase.id, false, transaction)
-
-    await this.handleCreateFirstCourtSession(fullSplitCase, transaction)
-
-    return splitCase
+    return this.caseRepositoryService.split(theCase.id, defendant.id, {
+      transaction,
+    })
   }
 
   async createCourtCase(
