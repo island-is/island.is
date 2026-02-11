@@ -264,7 +264,9 @@ export class CardPaymentController {
         )
       } else if (refundFailed) {
         // CRITICAL: Payment taken but refund failed
-        throw new BadRequestException(CardErrorCode.UnknownCardError)
+        throw new BadRequestException(
+          CardErrorCode.RefundFailedAfterPaymentError,
+        )
       } else {
         throw new BadRequestException(
           onlyReturnKnownErrorCode(e.message, CardErrorCode.UnknownCardError),
@@ -334,7 +336,9 @@ export class CardPaymentController {
         )
       } else if (refundFailed) {
         // CRITICAL: Payment taken but refund failed
-        throw new BadRequestException(CardErrorCode.UnknownCardError)
+        throw new BadRequestException(
+          CardErrorCode.RefundFailedAfterPaymentError,
+        )
       } else {
         throw new BadRequestException(
           onlyReturnKnownErrorCode(e.message, CardErrorCode.UnknownCardError),

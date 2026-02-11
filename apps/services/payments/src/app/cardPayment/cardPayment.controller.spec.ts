@@ -1012,8 +1012,8 @@ describe('CardPaymentController', () => {
               return {
                 json: async () => ({
                   isSuccess: false,
-                  responseCode: '51',
-                  responseDescription: 'Insufficient funds',
+                  responseCode: 'W2',
+                  responseDescription: 'Error getting Apple Pay session',
                   responseTime: '00:00:01',
                   correlationID: 'eb5ce211-f834-4a89-bbff-b73ef2879f77',
                 }),

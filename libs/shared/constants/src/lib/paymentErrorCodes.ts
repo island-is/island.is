@@ -54,6 +54,7 @@ export enum CardErrorCode {
   VerificationFailed = 'VerificationFailed',
   VerificationCallbackFailed = 'VerificationCallbackFailed',
   RefundedBecauseOfSystemError = 'RefundedBecauseOfSystemError',
+  RefundFailedAfterPaymentError = 'RefundFailedAfterPaymentError',
   UnknownCardError = 'UnknownCardError',
   ErrorGettingApplePaySession = 'ErrorGettingApplePaySession',
 }

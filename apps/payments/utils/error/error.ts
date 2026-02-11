@@ -159,6 +159,11 @@ export const paymentErrorToTitleAndMessage = (
         title: cardError.refundedBecauseOfSystemErrorTitle,
         message: cardError.refundedBecauseOfSystemError,
       }
+    case CardErrorCode.RefundFailedAfterPaymentError:
+      return {
+        title: cardError.refundFailedTitle,
+        message: cardError.refundFailed,
+      }
     case CardErrorCode.ErrorGettingApplePaySession:
       return {
         title: cardError.errorGettingApplePaySessionTitle,

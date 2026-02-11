@@ -50,6 +50,7 @@ export const mapToCardErrorCode = (originalCode: string): CardErrorCode => {
     R0: CardErrorCode.StopPaymentOrder,
     R1: CardErrorCode.RevocationOfAuthorization,
     R3: CardErrorCode.RevocationOfAllAuthorizations,
+    W2: CardErrorCode.ErrorGettingApplePaySession,
   }
 
   // Return the mapped value or the default

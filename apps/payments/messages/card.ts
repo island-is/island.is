@@ -274,6 +274,18 @@ export const cardError = defineMessages({
     description:
       'Payment was refunded due to a system error. Please try again.',
   },
+  refundFailedTitle: {
+    id: 'payments:cardError.refundFailedTitle',
+    defaultMessage: 'Óvænt villa',
+    description: 'Unexpected error',
+  },
+  refundFailed: {
+    id: 'payments:cardError.refundFailed',
+    defaultMessage:
+      'Óvænt villa kom upp og endurgreiðsla tókst ekki. Greiðslan hefur verið skráð og verður endurgreidd handvirkt.',
+    description:
+      'An unexpected error occurred and the refund could not be completed. The payment has been logged and will be refunded manually.',
+  },
   additionalAuthenticationRequiredTitle: {
     id: 'payments:cardError.additionalAuthenticationRequiredTitle',
     defaultMessage: 'Viðbótarauðkenning krafist',
