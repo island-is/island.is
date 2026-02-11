@@ -36,6 +36,8 @@ const template: ApplicationTemplate<
   name: m.general.applicationTitle,
   codeOwner: CodeOwners.Stefna,
   institution: m.general.institutionName,
+  applicationText: m.general.applicationListTitle,
+  newApplicationButtonLabel: m.general.newApplicationButtonLabel,
   translationNamespaces:
     ApplicationConfigurations[
       ApplicationTypes.HEILSUGAESLA_HOFUDBORDARSVAEDISINS_NAMSKEID
