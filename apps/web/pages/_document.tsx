@@ -42,22 +42,12 @@ class MyDocument extends Document<Props> {
             ></script>
           )}
           {Boolean(matomoDomain) && Boolean(matomoSiteId) && (
-            // biome-ignore lint/security/noDangerouslySetInnerHtml: Static Matomo tracking snippet
             <script
-              dangerouslySetInnerHTML={{
-                __html: `
-                  var _paq = window._paq = window._paq || [];
-                  _paq.push(['trackPageView']);
-                  _paq.push(['enableLinkTracking']);
-                  (function() {
-                    var u="${matomoDomain}";
-                    _paq.push(['setTrackerUrl', u+'matomo.php']);
-                    _paq.push(['setSiteId', '${matomoSiteId}']);
-                    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
-                    g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
-                  })();
-                `,
-              }}
+              id="matomo-init"
+              src="/scripts/matomo-init.js"
+              data-matomo-domain={matomoDomain}
+              data-matomo-site-id={matomoSiteId}
+              defer
             />
           )}
         </Head>
