@@ -1285,7 +1285,8 @@ export class CaseService {
 
     // TODO: Use subpoenas already included in theCase.defendants
     // - no need to call the subpoena service
-    // - then add to transition tests
+    // - we should also include split case subpoenas, which were created before the split
+    // -    or, the alternatively those subpoenas should be revoked on split
     const subpoenasToRevoke = await this.subpoenaService.findByCaseId(
       theCase.id,
     )

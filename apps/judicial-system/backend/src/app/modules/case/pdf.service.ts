@@ -371,7 +371,11 @@ export class PdfService {
   ): Promise<Buffer> {
     let confirmation: Confirmation | undefined = undefined
     const key = subpoena
-      ? `${theCase.splitCaseId ?? theCase.id}/subpoena/${subpoena.id}.pdf`
+      ? `${
+          theCase.splitCaseId && subpoena.created < theCase.created
+            ? theCase.splitCaseId // use the parent case id for subpoenas created before the split
+            : theCase.id
+        }/subpoena/${subpoena.id}.pdf`
       : ''
 
     if (subpoena) {
@@ -408,9 +412,7 @@ export class PdfService {
       const subpoenaHash = getCaseFileHash(generatedPdf)
 
       await this.subpoenaService.setHash(
-        theCase.id,
-        defendant.id,
-        subpoena.id,
+        subpoena,
         subpoenaHash.hash,
         subpoenaHash.hashAlgorithm,
         transaction,
