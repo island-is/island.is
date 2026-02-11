@@ -852,19 +852,20 @@ export const IcelandicGovernmentEmployees = new XroadConf({
   env: {
     FINANCIAL_MANAGEMENT_AUTHORITY_BASE_PATH: {
       dev: 'https://fjs-cdn-endpoint-elfur-dev-c6epg2fhcyc2a5bh.a03.azurefd.net',
-      staging: 'https://fjs-cdn-endpoint-elfur-test-hhesbzhxabbwbqen.a03.azurefd.net',
+      staging:
+        'https://fjs-cdn-endpoint-elfur-test-hhesbzhxabbwbqen.a03.azurefd.net',
       prod: 'https://fjs-cdn-endpoint-elfur-prod-hhesbzhxabbwbqen.a03.azurefd.net',
     },
     FINANCIAL_MANAGEMENT_AUTHORITY_CLIENT_ID: {
       dev: '@fjs.is/stafraent-island-api-elfur',
       staging: '@fjs.is/stafraent-island-api-elfur',
       prod: '@fjs.is/stafraent-island-api-elfur',
-    }
+    },
   },
   secrets: {
     FINANCIAL_MANAGEMENT_AUTHORITY_CLIENT_SECRET:
       '/k8s/api/FINANCIAL_MANAGEMENT_AUTHORITY_CLIENT_SECRET',
-  }
+  },
 })
 
 export const AircraftRegistry = new XroadConf({
