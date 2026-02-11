@@ -325,7 +325,7 @@ export const serviceSetup = (services: {
         prod: '@fjs.is/hugsmidjan',
       },
       ELFUR_BASE_PATH: {
-        dev: 'https://fjs-cdn-endpoint-elfur-test-hhesbzhxabbwbqen.a03.azurefd.net',
+        dev: 'https://fjs-cdn-endpoint-elfur-dev-c6epg2fhcyc2a5bh.a03.azurefd.net',
         staging:
           'https://fjs-cdn-endpoint-elfur-staging-hhesbzhxabbwbqen.a03.azurefd.net',
         prod: 'https://fjs-cdn-endpoint-elfur-prod-hhesbzhxabbwbqen.a03.azurefd.net',
