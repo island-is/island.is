@@ -67,7 +67,10 @@ export class RentalAgreementsController {
       const buffer = Buffer.from(documentResponse.document, 'base64')
       const filename = `${documentResponse.name}-${contractId}-${documentId}.pdf`
 
-      res.header('Content-Disposition', `inline; filename="${filename.replace(/"/g, '_')}"`)
+      res.header(
+        'Content-Disposition',
+        `inline; filename="${filename.replace(/"/g, '_')}"`,
+      )
       res.header('Pragma', 'no-cache')
       res.header('Cache-Control', 'no-cache')
       return res.status(200).end(buffer)
