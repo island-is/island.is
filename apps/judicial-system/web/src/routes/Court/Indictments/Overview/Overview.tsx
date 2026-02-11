@@ -84,14 +84,14 @@ const OverviewBody = ({
             <InfoCardActiveIndictment displayOpenCaseReference={true} />
           </Box>
           {/* 
-    NOTE: Temporarily hidden while list of laws broken is not complete in
-    indictment cases
-    
-    {lawsBroken.size > 0 && (
-      <Box marginBottom={5}>
-        <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
-      </Box>
-    )} */}
+            NOTE: Temporarily hidden while list of laws broken is not complete in
+            indictment cases
+            
+            {lawsBroken.size > 0 && (
+              <Box marginBottom={5}>
+                <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
+              </Box>
+            )} */}
           {workingCase.mergedCases && workingCase.mergedCases.length > 0 && (
             <Accordion dividerOnBottom={false} dividerOnTop={false}>
               {workingCase.mergedCases.map((mergedCase) => (
@@ -136,6 +136,7 @@ const OverviewBody = ({
                     `${constants.INDICTMENTS_ADD_RULING_ORDER_IN_COURT_ROUTE}/${workingCase.id}`,
                   )
                 }}
+                disabled={workingCase.state === CaseState.CORRECTING}
               >
                 Kveða upp úrskurð undir rekstri máls
               </Button>

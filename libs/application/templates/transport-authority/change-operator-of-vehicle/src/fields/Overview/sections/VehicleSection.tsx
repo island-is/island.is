@@ -13,11 +13,9 @@ export const VehicleSection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const { formatMessage } = useLocale()
   const { answers } = application
 
-  const carColor = getValueViaPath(answers, 'pickVehicle.color', undefined) as
-    | string
-    | undefined
-  const carPlate = getValueViaPath(answers, 'pickVehicle.plate', '') as string
-  const mileage = getValueViaPath(answers, 'vehicle.mileage', '') as string
+  const carColor = getValueViaPath<string>(answers, 'pickVehicle.color')
+  const carPlate = getValueViaPath<string>(answers, 'pickVehicle.plate') ?? ''
+  const mileage = getValueViaPath<string>(answers, 'vehicleMileage.value') ?? ''
 
   return (
     <ReviewGroup isLast>
@@ -29,7 +27,7 @@ export const VehicleSection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         </GridColumn>
         <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
           <Text>
-            {getValueViaPath(answers, 'pickVehicle.type', '') as string}
+            {getValueViaPath<string>(answers, 'pickVehicle.type') ?? ''}
           </Text>
           <Text>
             {carColor ? `${carColor} - ` : ''}

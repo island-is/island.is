@@ -133,6 +133,7 @@ const useVerdict = (currentVerdict?: Verdict) => {
     setAndSendVerdictToServer,
     createVerdicts,
     deliverCaseVerdict,
+    updateDefendantVerdictState,
   }
 }
 

@@ -23,6 +23,16 @@ export const m = {
       defaultMessage: 'Staðfesta',
       description: 'Confirm button label',
     },
+    applicationListTitle: {
+      id: 'hh.courses.application:general.applicationListTitle',
+      defaultMessage: 'Þínar skráningar á námskeið',
+      description: 'Title shown on the applications list page',
+    },
+    newApplicationButtonLabel: {
+      id: 'hh.courses.application:general.newApplicationButtonLabel',
+      defaultMessage: 'Ný skráning á námskeið',
+      description: 'Label for the new application button on the list page',
+    },
   }),
   userInformation: defineMessages({
     sectionTitle: {
