@@ -21,7 +21,10 @@ export const ElfurClientConfig = defineConfig<z.infer<typeof schema>>({
         'ELFUR_BASE_PATH',
         'https://fjs-cdn-endpoint-elfur-test-hhesbzhxabbwbqen.a03.azurefd.net',
       ),
-      clientId: env.required('ELFUR_CLIENT_ID', '@fjs.is/stafraent-island-api-elfur'),
+      clientId: env.required(
+        'ELFUR_CLIENT_ID',
+        '@fjs.is/stafraent-island-api-elfur',
+      ),
       clientSecret: env.required('ELFUR_CLIENT_SECRET', ''),
     }
   },

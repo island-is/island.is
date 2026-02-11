@@ -332,8 +332,7 @@ export const serviceSetup = (services: {
       },
       ELFUR_BASE_IDS_URL: {
         dev: 'https://identity-server.staging01.devland.is',
-        staging:
-          'https://identity-server.staging01.devland.is',
+        staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
       HMS_CONTRACTS_AUTH_TENANT_ID: {
