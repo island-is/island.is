@@ -20,7 +20,8 @@ export const serviceSetup = (services: {
         staging: 'beta.staging01.devland.is',
         prod: 'island.is',
       },
-      MATOMO_DOMAIN: { // test
+      MATOMO_DOMAIN: {
+        // test
         dev: 'https://matomo-dev.dev01.devland.is',
         staging: 'https://matomo-dev.dev01.devland.is',
         prod: 'https://matomo-dev.dev01.devland.is',
