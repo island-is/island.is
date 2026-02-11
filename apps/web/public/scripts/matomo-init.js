@@ -1,4 +1,5 @@
-;(function () {
+// prettier-ignore
+(function () {
   var script = document.currentScript || document.getElementById('matomo-init')
   var u = script.getAttribute('data-matomo-domain')
   var siteId = script.getAttribute('data-matomo-site-id')
@@ -8,6 +9,7 @@
     )
     return
   }
+  if (u.charAt(u.length - 1) !== '/') u += '/'
   var _paq = (window._paq = window._paq || [])
   _paq.push(['trackPageView'])
   _paq.push(['enableLinkTracking'])
