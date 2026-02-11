@@ -276,14 +276,14 @@ __metadata:
   linkType: hard
 
 "@apollo/composition@npm:^2.1.1":
-  version: 2.11.2
-  resolution: "@apollo/composition@npm:2.11.2"
+  version: 2.13.0
+  resolution: "@apollo/composition@npm:2.13.0"
   dependencies:
-    "@apollo/federation-internals": "npm:2.11.2"
-    "@apollo/query-graphs": "npm:2.11.2"
+    "@apollo/federation-internals": "npm:2.13.0"
+    "@apollo/query-graphs": "npm:2.13.0"
   peerDependencies:
     graphql: ^16.5.0
-  checksum: 10/6db956ebd42183357d297e22fe3b5d9a74fa1ce36d6f3cebf88143183a51e21f0263ffc668dbadb2d9f49552f2d15ae4afeba81b170527684a4f9090e1b0275c
+  checksum: 10/742fc99c5bb3e7fa31c2cae73324655784efd21e6a7f894b595661fb2fb79a0452aa52bfd74dd9ebd9bb49c2bde47fec37354feb43b51ac2b627e40721cee76d
   languageName: node
   linkType: hard
 
@@ -298,6 +298,20 @@ __metadata:
   peerDependencies:
     graphql: ^16.5.0
   checksum: 10/60ff0f9329c614132d3e2ae73b07eff2bcadc87624e730d83a5446f7d883caa548e58c0c4db8ed8643b9094e304165517b0a74046754e63f18715fd684aabdf5
+  languageName: node
+  linkType: hard
+
+"@apollo/federation-internals@npm:2.13.0":
+  version: 2.13.0
+  resolution: "@apollo/federation-internals@npm:2.13.0"
+  dependencies:
+    "@types/uuid": "npm:^9.0.0"
+    chalk: "npm:^4.1.0"
+    js-levenshtein: "npm:^1.1.6"
+    uuid: "npm:^9.0.0"
+  peerDependencies:
+    graphql: ^16.5.0
+  checksum: 10/3a74e8c5b95764acfc8876866a11dc9a698e38416b2dc1c1078987d143f59e449a8228316958eac430251b293440c2a02017f8b1946d42cb88542a7569e56955
   languageName: node
   linkType: hard
 
@@ -387,6 +401,20 @@ __metadata:
   peerDependencies:
     graphql: ^16.5.0
   checksum: 10/51e814b96c8bfdf09c958841ddfc3c4774d0f1df7ed904c7099e345dc9bda2013555292d4170886a2fc8fcbc8af8d0e4d4cfa97670d196a706e36360b782964e
+  languageName: node
+  linkType: hard
+
+"@apollo/query-graphs@npm:2.13.0":
+  version: 2.13.0
+  resolution: "@apollo/query-graphs@npm:2.13.0"
+  dependencies:
+    "@apollo/federation-internals": "npm:2.13.0"
+    deep-equal: "npm:^2.0.5"
+    ts-graphviz: "npm:^1.5.4"
+    uuid: "npm:^9.0.0"
+  peerDependencies:
+    graphql: ^16.5.0
+  checksum: 10/27449cc7f94fc221c3eff217d84e408ef934e390bbf8d79d8d655bc1fd515dd4ed2a7bd52012184dd501778462e38247fe2a19e98108f090376c29c5ea499cc5
   languageName: node
   linkType: hard
 
