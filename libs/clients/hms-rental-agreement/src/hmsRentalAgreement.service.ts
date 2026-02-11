@@ -38,9 +38,7 @@ export class HmsRentalAgreementService {
   ): Promise<RentalAgreementDto[]> {
     const res = await (
       await this.apiWithAuth(user)
-    ).contractKtKtGet({
-      kt: user.nationalId,
-    })
+      ).contractGet()
 
     const data = res.map(mapRentalAgreementDto).filter(isDefined)
     if (hideInactiveAgreements) {
