@@ -17,14 +17,14 @@ export const generateExcelSheet = (
     .replace(/\.$/, '')
 
   const icelandicHeaders = [
-    'Bílnúmer',
-    `Dagar á daggjaldi í ${lastMonthName}`,
-    'Notaðir dagar',
+    'Skráningarnúmer',
+    `Fjöldi daga á daggjaldi í ${lastMonthName}`,
+    `Útleigudagar í ${lastMonthName}`,
   ]
   const englishHeaders = [
-    'Vehicle number',
+    'Registration number',
     `Days on day rate in ${lastMonthName}`,
-    'Used days',
+    `Used days in ${lastMonthName}`,
   ]
   const headers = locale === 'is' ? icelandicHeaders : englishHeaders
 
@@ -36,7 +36,7 @@ export const generateExcelSheet = (
 
   const sheetData = [headers, ...rows]
 
-  const name = `${lastMonthDate.getFullYear()}_${lastMonthName.toLowerCase()}_daggjalds_notkun.xlsx`
+  const name = `${lastMonthDate.getFullYear()}_${lastMonthName.toLowerCase()}_skilagrein_daggjalds_utleigudagar.xlsx`
   const worksheet: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(sheetData)
   const workbook: XLSX.WorkBook = {
     Sheets: { Sheet1: worksheet },

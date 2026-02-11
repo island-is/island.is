@@ -124,7 +124,7 @@ export const m = defineMessages({
   usePassportImage: {
     id: 'dld.application:usePassportImage#markdown',
     defaultMessage:
-      'Ég staðfesti að nota núverandi mynd úr vegabréfa- og nafnskírteinaskrá í ökuskírteinið',
+      'Ég staðfesti að nota núverandi mynd úr vegabréfa- og skilríkjaskrá í ökuskírteinið',
     description: 'Some description',
   },
 

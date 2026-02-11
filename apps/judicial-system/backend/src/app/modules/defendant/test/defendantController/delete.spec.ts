@@ -1,7 +1,7 @@
 import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
-import { MessageService, MessageType } from '@island.is/judicial-system/message'
+import { Message, MessageType } from '@island.is/judicial-system/message'
 import { CaseNotificationType, User } from '@island.is/judicial-system/types'
 
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
@@ -21,20 +21,20 @@ describe('DefendantController - Delete', () => {
   const caseId = uuid()
   const defendantId = uuid()
 
-  let mockMessageService: MessageService
+  let mockQueuedMessages: Message[]
   let mockDefendantRepositoryService: DefendantRepositoryService
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
     const {
+      queuedMessages,
       sequelize,
-      messageService,
       defendantRepositoryService,
       defendantController,
     } = await createTestingDefendantModule()
 
-    mockMessageService = messageService
+    mockQueuedMessages = queuedMessages
     mockDefendantRepositoryService = defendantRepositoryService
 
     const mockTransaction = sequelize.transaction as jest.Mock
@@ -81,7 +81,7 @@ describe('DefendantController - Delete', () => {
         { transaction },
       )
       expect(then.result).toEqual({ deleted: true })
-      expect(mockMessageService.sendMessagesToQueue).not.toHaveBeenCalled()
+      expect(mockQueuedMessages).toEqual([])
     })
   })
 
@@ -94,7 +94,7 @@ describe('DefendantController - Delete', () => {
     })
 
     it('should queue messages', () => {
-      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+      expect(mockQueuedMessages).toEqual([
         {
           type: MessageType.NOTIFICATION,
           user,

@@ -2542,6 +2542,9 @@ export interface ILifeEventPageFields {
 
   /** See More Text */
   seeMoreText?: string | undefined
+
+  /** Importance */
+  importance?: number | undefined
 }
 
 export interface ILifeEventPage extends Entry<ILifeEventPageFields> {

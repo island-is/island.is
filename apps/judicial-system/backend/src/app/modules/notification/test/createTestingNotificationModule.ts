@@ -15,7 +15,11 @@ import {
   SharedAuthModule,
   sharedAuthModuleConfig,
 } from '@island.is/judicial-system/auth'
-import { MessageService } from '@island.is/judicial-system/message'
+import {
+  addMessagesToQueue,
+  Message,
+  MessageService,
+} from '@island.is/judicial-system/message'
 
 import { awsS3ModuleConfig, AwsS3Service } from '../../aws-s3'
 import { InternalCaseService } from '../../case'
@@ -23,7 +27,7 @@ import { CourtService } from '../../court'
 import { DefendantService } from '../../defendant'
 import { eventModuleConfig, EventService } from '../../event'
 import { InstitutionService } from '../../institution'
-import { Notification } from '../../repository'
+import { InstitutionContact, Notification } from '../../repository'
 import { UserService } from '../../user'
 import { InternalNotificationController } from '../internalNotification.controller'
 import { notificationModuleConfig } from '../notification.config'
@@ -120,6 +124,10 @@ export const createTestingNotificationModule = async () => {
       },
       { provide: getModelToken(Notification), useValue: { create: jest.fn() } },
       {
+        provide: getModelToken(InstitutionContact),
+        useValue: { create: jest.fn() },
+      },
+      {
         provide: DefendantService,
         useValue: { isDefendantInActiveCustody: jest.fn() },
       },
@@ -141,7 +149,14 @@ export const createTestingNotificationModule = async () => {
     })
     .compile()
 
+  const queuedMessages: Message[] = []
+  const mockAddMessageToQueue = addMessagesToQueue as jest.Mock
+  mockAddMessageToQueue.mockImplementation((...msgs: Message[]) => {
+    queuedMessages.push(...msgs)
+  })
+
   const context = {
+    queuedMessages,
     userService: notificationModule.get(UserService),
     internalCaseService: notificationModule.get(InternalCaseService),
     messageService: notificationModule.get(MessageService),
@@ -155,6 +170,9 @@ export const createTestingNotificationModule = async () => {
     >(notificationModuleConfig.KEY),
     notificationModel: notificationModule.get<typeof Notification>(
       getModelToken(Notification),
+    ),
+    institutionContactModel: notificationModule.get<typeof InstitutionContact>(
+      getModelToken(InstitutionContact),
     ),
     notificationController: notificationModule.get(NotificationController),
     internalNotificationController: notificationModule.get(

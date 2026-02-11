@@ -396,7 +396,6 @@ export class CaseRepositoryService {
         'openedByDefender',
         'crimeScenes',
         'indictmentIntroduction',
-        'withCourtSessions',
         'requestDriversLicenseSuspension',
         'prosecutorsOfficeId',
         'indictmentDeniedExplanation',
@@ -427,6 +426,8 @@ export class CaseRepositoryService {
           ...pick(caseToSplit, fieldsToCopy),
           state: CaseState.SUBMITTED,
           splitCaseId: caseId,
+          // The new case should have court session support
+          withCourtSessions: true,
           // The new case is postponed indefinitely by default
           indictmentDecision: IndictmentDecision.POSTPONING,
         },

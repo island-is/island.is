@@ -830,14 +830,23 @@ export class PoliceService {
       })
   }
 
-  async createSubpoena(
-    theCase: Case,
-    defendant: Defendant,
-    subpoena: string,
-    indictment: string,
-    user: User,
-    civilClaims: string[],
-  ): Promise<CreateSubpoenaResponse> {
+  async createSubpoena({
+    theCase,
+    defendant,
+    subpoenaId,
+    subpoena,
+    indictment,
+    user,
+    civilClaims,
+  }: {
+    theCase: Case
+    defendant: Defendant
+    subpoenaId: string
+    subpoena: string
+    indictment: string
+    user: User
+    civilClaims: string[]
+  }): Promise<CreateSubpoenaResponse> {
     const { courtCaseNumber, dateLogs, prosecutor, policeCaseNumbers, court } =
       theCase
     const { nationalId: defendantNationalId } = defendant
@@ -874,6 +883,7 @@ export class PoliceService {
             courtCaseNumber: courtCaseNumber,
             fileTypeCode: PoliceFileTypeCode.SUBPOENA,
             rvgCaseId: theCase.id,
+            rvgSubpoenaId: subpoenaId,
           }),
         } as RequestInit,
       )

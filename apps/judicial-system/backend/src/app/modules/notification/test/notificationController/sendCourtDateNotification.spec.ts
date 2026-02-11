@@ -1,6 +1,6 @@
 import { v4 as uuid } from 'uuid'
 
-import { MessageService, MessageType } from '@island.is/judicial-system/message'
+import { Message, MessageType } from '@island.is/judicial-system/message'
 import { CaseNotificationType, User } from '@island.is/judicial-system/types'
 
 import { createTestingNotificationModule } from '../createTestingNotificationModule'
@@ -19,18 +19,14 @@ describe('NotificationController - Send court date notification', () => {
   const userId = uuid()
   const user = { id: userId } as User
 
-  let mockMessageService: MessageService
+  let mockQueuedMessages: Message[]
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { messageService, notificationController } =
+    const { queuedMessages, notificationController } =
       await createTestingNotificationModule()
 
-    mockMessageService = messageService
-
-    const mockSendMessagesToQueue =
-      messageService.sendMessagesToQueue as jest.Mock
-    mockSendMessagesToQueue.mockResolvedValue(undefined)
+    mockQueuedMessages = queuedMessages
 
     givenWhenThen = async (caseId, eventOnly) => {
       const then = {} as Then
@@ -56,7 +52,7 @@ describe('NotificationController - Send court date notification', () => {
     })
 
     it('should send message to queue', () => {
-      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+      expect(mockQueuedMessages).toEqual([
         {
           type: MessageType.NOTIFICATION,
           user,
@@ -77,7 +73,7 @@ describe('NotificationController - Send court date notification', () => {
     })
 
     it('should send defender assigned message to queue', () => {
-      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+      expect(mockQueuedMessages).toEqual([
         {
           type: MessageType.NOTIFICATION,
           user,

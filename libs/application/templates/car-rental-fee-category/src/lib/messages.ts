@@ -29,6 +29,12 @@ export const m = {
       defaultMessage: 'Ég skil að ofangreindra upplýsinga verður aflað',
       description: 'Consent checkbox label',
     },
+    linkToDayrateReturnsApplication: {
+      id: 'rsk.crfc.application:prerequisites.link.to.dayrate.returns',
+      defaultMessage:
+        'Skýrsla um notkun á ökutækjum: [Skilagrein daggjalds - Útleigudagar](/umsoknir/skilagrein-daggjalds-utleigudagar)',
+      description: 'Link to day rate returns',
+    },
     skatturTitle: {
       id: 'rsk.crfc.application:prerequisites.skattur.title',
       defaultMessage: 'Upplýsingar frá Skattinum',
@@ -333,10 +339,10 @@ export const m = {
   }),
 
   multiUploadErrors: defineMessages({
-    dayRateMin30Days: {
-      id: 'rsk.crfc.application:multi.upload.error.dayrate.min30days',
+    dayRateMin15Days: {
+      id: 'rsk.crfc.application:multi.upload.error.dayrate.min15days',
       defaultMessage:
-        'Bílar þurfa að vera skráðir á daggjald í amk 30 daga áður en hægt er að breyta til baka!',
+        'Bílar þurfa að vera skráðir á daggjald í amk 15 daga áður en hægt er að breyta til baka!',
       description: 'Changing from day rate to km rate too soon',
     },
     carNotFound: {

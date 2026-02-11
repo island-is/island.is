@@ -238,4 +238,8 @@ export class Defendant extends Model {
   @HasMany(() => Verdict, { foreignKey: 'defendantId' })
   @ApiPropertyOptional({ type: () => Verdict, isArray: true })
   verdicts?: Verdict[]
+
+  @Column({ type: DataType.BOOLEAN, allowNull: true })
+  @ApiPropertyOptional({ type: Boolean })
+  isDrivingLicenseSuspended?: boolean
 }

@@ -2,6 +2,7 @@ import { Alert, Platform } from 'react-native'
 import {
   authorize,
   AuthorizeResult,
+  prefetchConfiguration,
   refresh as authRefresh,
   RefreshResult,
   revoke,
@@ -75,6 +76,23 @@ const getAppAuthConfig = () => {
     clientId: config.idsClientId,
     redirectUrl: `${config.bundleId}${android}://oauth`,
     scopes: config.idsScopes,
+  }
+}
+
+export async function prefetchAuthConfig() {
+  if (!isAndroid) {
+    return
+  }
+
+  try {
+    const appAuthConfig = getAppAuthConfig()
+    await prefetchConfiguration({
+      ...appAuthConfig,
+      warmAndPrefetchChrome: true,
+    })
+  } catch (error) {
+    // Prefetch is optional, don't block app startup
+    console.log('Auth prefetch failed:', error)
   }
 }
 
@@ -290,6 +308,9 @@ export async function readAuthorizeResult(): Promise<void> {
   // Attempt to restore the last known authorization data from the secure keychain.
   const keychainResult = await readStoredAuthorizeCredentials()
   if (!keychainResult) {
+    // Prefetch auth configuration on Android (non-blocking optimization) once we know we don't have an authorize result
+    void prefetchAuthConfig()
+
     return
   }
 
