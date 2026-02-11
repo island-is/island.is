@@ -1,3 +1,4 @@
+import { split } from 'lodash'
 import { v4 as uuid } from 'uuid'
 
 import {
@@ -38,10 +39,17 @@ describe('Subpoena Exists Guard', () => {
 
   describe('subpoena exists', () => {
     const subpoenaId = uuid()
-    const subpoena = { id: subpoenaId }
     const defendantId = uuid()
-    const defendant = { id: defendantId, subpoenas: [subpoena] }
-    const request = { params: { subpoenaId }, defendant, subpoena: undefined }
+    const caseId = uuid()
+    const subpoena = { id: subpoenaId }
+    const defendant = { id: defendantId, caseId, subpoenas: [subpoena] }
+    const theCase = { id: caseId, defendants: [defendant] }
+    const request = {
+      params: { subpoenaId },
+      case: theCase,
+      defendant,
+      subpoena: undefined,
+    }
     let then: Then
 
     beforeEach(async () => {
@@ -59,8 +67,15 @@ describe('Subpoena Exists Guard', () => {
   describe('subpoena does not exist', () => {
     const subpoenaId = uuid()
     const defendantId = uuid()
-    const defendant = { id: defendantId, subpoenas: [] }
-    const request = { params: { subpoenaId }, defendant, subpoena: undefined }
+    const caseId = uuid()
+    const defendant = { id: defendantId, caseId, subpoenas: [] }
+    const theCase = { id: caseId, defendants: [defendant] }
+    const request = {
+      params: { subpoenaId },
+      case: theCase,
+      defendant,
+      subpoena: undefined,
+    }
     let then: Then
 
     beforeEach(async () => {
@@ -77,11 +92,26 @@ describe('Subpoena Exists Guard', () => {
     })
   })
 
-  describe('missing defendant', () => {
+  describe('missing case', () => {
     let then: Then
 
     beforeEach(async () => {
       mockRequest.mockReturnValueOnce({ params: {} })
+
+      then = await givenWhenThen()
+    })
+
+    it('should throw InternalServerErrorException', () => {
+      expect(then.error).toBeInstanceOf(InternalServerErrorException)
+      expect(then.error.message).toBe('Missing case')
+    })
+  })
+
+  describe('missing defendant', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      mockRequest.mockReturnValueOnce({ params: {}, case: { id: uuid() } })
 
       then = await givenWhenThen()
     })
@@ -96,7 +126,11 @@ describe('Subpoena Exists Guard', () => {
     let then: Then
 
     beforeEach(async () => {
-      mockRequest.mockReturnValueOnce({ params: {}, defendant: { id: uuid() } })
+      mockRequest.mockReturnValueOnce({
+        params: {},
+        case: { id: uuid() },
+        defendant: { id: uuid() },
+      })
 
       then = await givenWhenThen()
     })
@@ -104,6 +138,119 @@ describe('Subpoena Exists Guard', () => {
     it('should throw BadRequestException', () => {
       expect(then.error).toBeInstanceOf(BadRequestException)
       expect(then.error.message).toBe('Missing subpoena id')
+    })
+  })
+
+  describe('Split case does not exist', () => {
+    const subpoenaId = uuid()
+    const defendantId = uuid()
+    const caseId = uuid()
+    const splitCaseId = uuid()
+    const subpoena = { id: subpoenaId }
+    const defendant = {
+      id: defendantId,
+      caseId: splitCaseId,
+      subpoenas: [subpoena],
+    }
+    const theCase = { id: caseId, defendants: [defendant] }
+    const request = {
+      params: { subpoenaId },
+      case: theCase,
+      defendant,
+      subpoena,
+    }
+    let then: Then
+
+    beforeEach(async () => {
+      mockRequest.mockReturnValueOnce(request)
+
+      then = await givenWhenThen()
+    })
+
+    it('should throw BadRequestException', () => {
+      expect(then.error).toBeInstanceOf(InternalServerErrorException)
+      expect(then.error.message).toBe(
+        `Defendant ${defendantId} is linked to case ${splitCaseId} which is not a split case of case ${caseId}`,
+      )
+    })
+  })
+
+  describe('Subpoena was created before split', () => {
+    const subpoenaCreationDate = new Date()
+    const splitCaseCreationDate = new Date(
+      subpoenaCreationDate.getTime() + 1000,
+    )
+    const subpoenaId = uuid()
+    const defendantId = uuid()
+    const splitCaseId = uuid()
+    const caseId = uuid()
+    const subpoena = { id: subpoenaId, created: subpoenaCreationDate }
+    const defendant = {
+      id: defendantId,
+      caseId: splitCaseId,
+      subpoenas: [subpoena],
+    }
+    const theCase = {
+      id: caseId,
+      defendants: [defendant],
+      splitCases: [{ id: splitCaseId, created: splitCaseCreationDate }],
+    }
+    const request = {
+      params: { subpoenaId },
+      case: theCase,
+      defendant,
+      subpoena,
+    }
+    let then: Then
+
+    beforeEach(async () => {
+      mockRequest.mockReturnValueOnce(request)
+
+      then = await givenWhenThen()
+    })
+
+    it('should not activate', () => {
+      expect(then.result).toBe(true)
+      expect(request.subpoena).toBe(subpoena)
+    })
+  })
+
+  describe('Subpoena was created after split', () => {
+    const splitCaseCreationDate = new Date()
+    const subpoenaCreationDate = new Date(
+      splitCaseCreationDate.getTime() + 1000,
+    )
+    const subpoenaId = uuid()
+    const defendantId = uuid()
+    const splitCaseId = uuid()
+    const caseId = uuid()
+    const subpoena = { id: subpoenaId, created: subpoenaCreationDate }
+    const defendant = {
+      id: defendantId,
+      caseId: splitCaseId,
+      subpoenas: [subpoena],
+    }
+    const theCase = {
+      id: caseId,
+      defendants: [defendant],
+      splitCases: [{ id: splitCaseId, created: splitCaseCreationDate }],
+    }
+    const request = {
+      params: { subpoenaId },
+      case: theCase,
+      defendant,
+      subpoena,
+    }
+    let then: Then
+
+    beforeEach(async () => {
+      mockRequest.mockReturnValueOnce(request)
+
+      then = await givenWhenThen()
+    })
+
+    it('should not activate', () => {
+      expect(then.result).toBe(false)
     })
   })
 })
