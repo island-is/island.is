@@ -82,14 +82,13 @@ export const VehicleSection: FC<
           )} ${dateOfContract}`}</Text>
         </GridColumn>
         <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
-          {(!isBuyerOperator || isSeller || isSellerCoOwner) &&
-            mileage.length > 0 && (
-              <Text>
-                {`${formatMessage(overview.labels.mileage)} ${formatMileage(
-                  parseInt(mileage, 10),
-                )}`}
-              </Text>
-            )}
+          {mileage.length > 0 && (
+            <Text>
+              {`${formatMessage(overview.labels.mileage)} ${formatMileage(
+                parseInt(mileage, 10),
+              )}`}
+            </Text>
+          )}
         </GridColumn>
       </GridRow>
     </ReviewGroup>
