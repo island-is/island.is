@@ -66,7 +66,9 @@ export class RentalAgreementsController {
       })
 
       const buffer = Buffer.from(documentResponse.document, 'base64')
-      const filename = `${documentResponse.name ?? 'rental-agreement'}-${contractId}-${documentId}.pdf`
+      const filename = `${
+        documentResponse.name ?? 'rental-agreement'
+      }-${contractId}-${documentId}.pdf`
 
       res.header(
         'Content-Disposition',

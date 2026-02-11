@@ -36,9 +36,7 @@ export class HmsRentalAgreementService {
     user: User,
     hideInactiveAgreements = false,
   ): Promise<RentalAgreementDto[]> {
-    const res = await (
-      this.apiWithAuth(user)
-      ).contractGet()
+    const res = await this.apiWithAuth(user).contractGet()
 
     const data = res.map(mapRentalAgreementDto).filter(isDefined)
     if (hideInactiveAgreements) {
@@ -51,9 +49,7 @@ export class HmsRentalAgreementService {
     user: User,
     id: string,
   ): Promise<RentalAgreementDto | undefined> {
-    const data = await (
-      this.apiWithAuth(user)
-    ).contractContractIdGet({
+    const data = await this.apiWithAuth(user).contractContractIdGet({
       contractId: id,
     })
 
@@ -72,8 +68,8 @@ export class HmsRentalAgreementService {
     contractId: number,
     documentId: number,
   ): Promise<ContractDocumentItemDto | undefined> {
-    const res = await (
-      this.apiWithAuth(user)
+    const res = await this.apiWithAuth(
+      user,
     ).contractContractIdDocumentDocumentIdGet({
       contractId,
       documentId,
