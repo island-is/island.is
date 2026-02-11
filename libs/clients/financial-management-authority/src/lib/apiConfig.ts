@@ -6,7 +6,6 @@ import { FinancialManagementAuthorityClientConfig } from './financialManagementA
 export const apiConfigFactory = (
   scopes: Array<string>,
   config: ConfigType<typeof FinancialManagementAuthorityClientConfig>,
-  idsClientConfig: ConfigType<typeof IdsClientConfig>,
 ) => {
   return new Configuration({
     fetchApi: createEnhancedFetch({
@@ -17,13 +16,14 @@ export const apiConfigFactory = (
         clientId: config.clientId.trim(),
         clientSecret: config.clientSecret.trim(),
         scope: scopes,
-        issuer: idsClientConfig.issuer,
+        issuer: config.authUrl,
       },
     }),
     basePath: config.basePath,
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json',
+      'X-ExecuteAsUsername': config.executeAsUsername,
     },
   })
 }

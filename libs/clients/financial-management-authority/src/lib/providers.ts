@@ -3,7 +3,6 @@ import { OrganizationEmployeeApi, VacancyApi } from '../../gen/fetch'
 import { apiConfigFactory } from './apiConfig'
 import {
   ConfigType,
-  IdsClientConfig,
   LazyDuringDevScope,
 } from '@island.is/nest/config'
 import { FinancialManagementAuthorityClientConfig } from './financialManagementAuthorityClient.config'
@@ -25,10 +24,9 @@ export const apiProviders: Array<Provider> = apiLedger.map(
     scope: LazyDuringDevScope,
     useFactory: (
       config: ConfigType<typeof FinancialManagementAuthorityClientConfig>,
-      idsConfig: ConfigType<typeof IdsClientConfig>,
     ) => {
-      return new api(apiConfigFactory(scopes, config, idsConfig))
+      return new api(apiConfigFactory(scopes, config))
     },
-    inject: [FinancialManagementAuthorityClientConfig.KEY, IdsClientConfig.KEY],
+    inject: [FinancialManagementAuthorityClientConfig.KEY],
   }),
 )

@@ -851,7 +851,7 @@ export const IcelandicGovernmentInstitutionVacancies = new XroadConf({
 export const IcelandicGovernmentEmployees = new XroadConf({
   env: {
     FINANCIAL_MANAGEMENT_AUTHORITY_BASE_PATH: {
-      dev: 'https://fjs-cdn-endpoint-elfur-dev-c6epg2fhcyc2a5bh.a03.azurefd.net',
+      dev: 'https://fjs-cdn-endpoint-elfur-dev-hhesbzhxabbwbqen.a03.azurefd.net',
       staging:
         'https://fjs-cdn-endpoint-elfur-test-hhesbzhxabbwbqen.a03.azurefd.net',
       prod: 'https://fjs-cdn-endpoint-elfur-prod-hhesbzhxabbwbqen.a03.azurefd.net',
@@ -861,10 +861,16 @@ export const IcelandicGovernmentEmployees = new XroadConf({
       staging: '@fjs.is/stafraent-island-api-elfur',
       prod: '@fjs.is/stafraent-island-api-elfur',
     },
+    FINANCIAL_MANAGEMENT_AUTHORITY_IDS_URL: {
+      dev: 'https://identity-server.staging01.devland.is',
+      staging: 'https://identity-server.staging01.devland.is',
+      prod: 'https://innskra.island.is',
+    },
   },
   secrets: {
     FINANCIAL_MANAGEMENT_AUTHORITY_CLIENT_SECRET:
-      '/k8s/api/FINANCIAL_MANAGEMENT_AUTHORITY_CLIENT_SECRET',
+      '/k8s/api/ELFUR_SI_ACCOUNT_CLIENT_SECRET',
+    FINANCIAL_MANAGEMENT_AUTHORITY_EXECUTE_AS_USERNAME: '/k8s/api/ELFUR_API_USERNAME_KEY',
   },
 })
 
