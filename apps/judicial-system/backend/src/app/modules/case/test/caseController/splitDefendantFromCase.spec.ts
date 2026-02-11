@@ -1,12 +1,18 @@
-import { Transaction } from 'sequelize'
+import { Op, Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
-import { CaseOrigin, CaseType, Gender } from '@island.is/judicial-system/types'
+import {
+  CaseOrigin,
+  CaseState,
+  CaseType,
+  Gender,
+} from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { randomEnum } from '../../../../test'
 import { Case, CaseRepositoryService, Defendant } from '../../../repository'
+import { include } from '../../case.service'
 
 interface Then {
   result: Case
@@ -102,12 +108,18 @@ describe('CaseController - Split defendant from case', () => {
       id: splitCaseId,
       defendants: undefined,
     } as Case
+    const fullSplitCase = {
+      ...splitCase,
+      defendants: [defendantToSplit],
+    } as Case
 
     let then: Then
 
     beforeEach(async () => {
       const mockSplit = mockCaseRepositoryService.split as jest.Mock
       mockSplit.mockResolvedValueOnce(splitCase)
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce(fullSplitCase)
 
       then = await givenWhenThen(caseId, defendantId, theCase, defendantToSplit)
     })
@@ -119,6 +131,15 @@ describe('CaseController - Split defendant from case', () => {
         defendantId,
         { transaction },
       )
+      expect(mockCaseRepositoryService.findOne).toHaveBeenCalledWith({
+        include,
+        where: {
+          id: splitCaseId,
+          state: { [Op.not]: CaseState.DELETED },
+          isArchived: false,
+        },
+        transaction,
+      })
       expect(then.result).toBe(splitCase)
     })
   })
