@@ -1,10 +1,7 @@
 import { Provider } from '@nestjs/common'
 import { OrganizationEmployeeApi, VacancyApi } from '../../gen/fetch'
 import { apiConfigFactory } from './apiConfig'
-import {
-  ConfigType,
-  LazyDuringDevScope,
-} from '@island.is/nest/config'
+import { ConfigType, LazyDuringDevScope } from '@island.is/nest/config'
 import { FinancialManagementAuthorityClientConfig } from './financialManagementAuthorityClient.config'
 
 const apiLedger = [

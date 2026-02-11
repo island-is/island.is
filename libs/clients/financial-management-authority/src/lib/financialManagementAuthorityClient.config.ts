@@ -6,7 +6,7 @@ const schema = z.object({
   basePath: z.string(),
   clientId: z.string(),
   clientSecret: z.string(),
-  executeAsUsername: z.string()
+  executeAsUsername: z.string(),
 })
 
 export const FinancialManagementAuthorityClientConfig = defineConfig<
