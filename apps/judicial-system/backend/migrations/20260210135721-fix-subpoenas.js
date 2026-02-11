@@ -74,7 +74,7 @@ module.exports = {
     })
   },
 
-  async down(queryInterface) {
+  async down() {
     return Promise.resolve()
   },
 }
