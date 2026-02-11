@@ -3,9 +3,6 @@ import { bootstrap } from '@island.is/infra-nest-server'
 import { AppModule } from './app/app.module'
 import { openApi } from './openApi'
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const ble = 'ble'
-
 bootstrap({
   appModule: AppModule,
   name: 'download-service',
