@@ -18,6 +18,7 @@ import {
   useUserProfileSettingsQuery,
 } from './getUserProfile.query.generated'
 import { safeAwait } from '@island.is/shared/utils'
+import { Features, useFeatureFlag } from '@island.is/react/feature-flags'
 
 type UserProfileNotificationSettings = {
   documentNotifications: boolean
@@ -40,6 +41,10 @@ export const NotificationSettings = () => {
     postPaperMailMutation,
     loading: paperMailLoading,
   } = usePaperMail()
+  const { value: isSmsNotificationEnabled } = useFeatureFlag(
+    Features.isSmsNotificationEnabled,
+    false,
+  )
 
   const [settings, setSettings] = useState<UserProfileNotificationSettings>({
     documentNotifications:
@@ -146,16 +151,24 @@ export const NotificationSettings = () => {
           }
         />
         <Divider />
-        <SettingsCard
-          title={formatMessage(mNotifications.smsNotifications)}
-          subtitle={formatMessage(mNotifications.smsNotificationsDescription)}
-          toggleLabel={formatMessage(mNotifications.smsNotificationsAriaLabel)}
-          checked={settings.smsNotifications}
-          onChange={(active: boolean) =>
-            onChange({ smsNotifications: active })
-          }
-        />
-        <Divider />
+        {isSmsNotificationEnabled && (
+          <>
+            <SettingsCard
+              title={formatMessage(mNotifications.smsNotifications)}
+              subtitle={formatMessage(
+                mNotifications.smsNotificationsDescription,
+              )}
+              toggleLabel={formatMessage(
+                mNotifications.smsNotificationsAriaLabel,
+              )}
+              checked={settings.smsNotifications}
+              onChange={(active: boolean) =>
+                onChange({ smsNotifications: active })
+              }
+            />
+            <Divider />
+          </>
+        )}
         <SettingsCard
           title={formatMessage(mNotifications.paperMailTitle)}
           subtitle={formatMessage(mNotifications.paperMailDescription)}

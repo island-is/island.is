@@ -17,6 +17,8 @@ import {
   DelegationsApi,
   DelegationsControllerGetDelegationRecordsDirectionEnum,
 } from '@island.is/clients/auth/delegation-api'
+import { FeatureFlagService } from '@island.is/nest/feature-flags'
+import { Features } from '@island.is/feature-flags'
 
 import { VerificationService } from './verification.service'
 import { UserProfile } from './models/userProfile.model'
@@ -61,6 +63,7 @@ export class UserProfileService {
     private readonly emailModel: typeof Emails,
     @InjectModel(ActorProfile)
     private readonly actorProfileModel: typeof ActorProfile,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async findAllBySearchTerm(search: string): Promise<PaginatedUserProfileDto> {
@@ -264,6 +267,18 @@ export class UserProfileService {
         useMaster: true,
       })
 
+      // Check if SMS notifications feature is enabled
+      const isSmsNotificationEnabled = await this.featureFlagService.getValue(
+        Features.isSmsNotificationEnabled,
+        false,
+      )
+
+      // Only allow SMS notification updates if feature flag is enabled
+      const smsNotificationsUpdate =
+        isDefined(userProfile.smsNotifications) && isSmsNotificationEnabled
+          ? { smsNotifications: userProfile.smsNotifications }
+          : {}
+
       const update = {
         nationalId,
         ...(isMobilePhoneNumberDefined && {
@@ -284,9 +299,7 @@ export class UserProfileService {
         ...(isDefined(userProfile.documentNotifications) && {
           documentNotifications: userProfile.documentNotifications,
         }),
-        ...(isDefined(userProfile.smsNotifications) && {
-          smsNotifications: userProfile.smsNotifications,
-        }),
+        ...smsNotificationsUpdate,
       }
 
       const updateEmailVerified = isEmailDefined
