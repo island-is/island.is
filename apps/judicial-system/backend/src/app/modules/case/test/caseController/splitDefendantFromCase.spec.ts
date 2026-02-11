@@ -1,19 +1,12 @@
-import { Op, Transaction } from 'sequelize'
+import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
-import {
-  CaseOrigin,
-  CaseState,
-  CaseType,
-  Gender,
-} from '@island.is/judicial-system/types'
+import { CaseOrigin, CaseType, Gender } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { randomEnum } from '../../../../test'
-import { CourtSessionService } from '../../../court-session'
 import { Case, CaseRepositoryService, Defendant } from '../../../repository'
-import { include } from '../../case.service'
 
 interface Then {
   result: Case
@@ -29,19 +22,13 @@ type GivenWhenThen = (
 
 describe('CaseController - Split defendant from case', () => {
   let mockCaseRepositoryService: CaseRepositoryService
-  let mockCourtSessionService: CourtSessionService
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const {
-      sequelize,
-      caseRepositoryService,
-      courtSessionService,
-      caseController,
-    } = await createTestingCaseModule()
+    const { sequelize, caseRepositoryService, caseController } =
+      await createTestingCaseModule()
     mockCaseRepositoryService = caseRepositoryService
-    mockCourtSessionService = courtSessionService
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {
