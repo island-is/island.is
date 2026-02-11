@@ -1,5 +1,3 @@
-import { v4 as uuid } from 'uuid'
-
 import type { Logger } from '@island.is/logging'
 import { PaymentServiceCode } from '@island.is/shared/constants'
 
@@ -10,57 +8,19 @@ import {
   RefundStepResults,
 } from '../cardPayment.orchestrator'
 import { CardPaymentService } from '../cardPayment.service'
-import { RefundCardPaymentInput } from '../dtos'
 import {
   createRefundContext,
   createRefundSaga,
   REFUND_SAGA_START_STEP,
 } from '../refund.saga'
-
-const createMockLogger = (): Logger =>
-  ({
-    info: jest.fn(),
-    warn: jest.fn(),
-    error: jest.fn(),
-    debug: jest.fn(),
-    trace: jest.fn(),
-    child: jest.fn(),
-  } as unknown as Logger)
-
-const mockPaymentFulfillmentWithFjs = {
-  id: uuid(),
-  paymentFlowId: 'payment-flow-id',
-  confirmationRefId: 'confirmation-id',
-  paymentMethod: 'card' as const,
-  fjsChargeId: 'fjs-charge-id',
-  isDeleted: false,
-  created: new Date(),
-  modified: new Date(),
-}
-
-const mockPaymentFulfillmentWithoutFjs = {
-  ...mockPaymentFulfillmentWithFjs,
-  fjsChargeId: null,
-}
-
-const mockCardPaymentConfirmation = {
-  id: 'confirmation-id',
-  paymentFlowId: 'payment-flow-id',
-  maskedCardNumber: '****1234',
-  acquirerReferenceNumber: 'arn-123',
-  authorizationCode: 'auth-123',
-  cardScheme: 'Visa',
-  totalPrice: 1000,
-  cardUsage: 'credit',
-  merchantReferenceData: 'merchant-ref',
-  created: new Date(),
-  modified: new Date(),
-}
-
-const getRefundInput = (): RefundCardPaymentInput => ({
-  paymentFlowId: 'payment-flow-id',
-  reasonForRefund: 'fulfillment_failure',
-})
+import {
+  createMockLogger,
+  createMockPaymentFlowService,
+  getRefundInput,
+  mockCardPaymentConfirmation,
+  mockPaymentFulfillmentWithFjs,
+  mockPaymentFulfillmentWithoutFjs,
+} from './sagaTestUtils'
 
 describe('Refund Saga', () => {
   let mockLogger: Logger
@@ -90,21 +50,7 @@ describe('Refund Saga', () => {
       }),
     } as unknown as jest.Mocked<CardPaymentService>
 
-    mockPaymentFlowService = {
-      findPaymentFulfillmentForPaymentFlow: jest
-        .fn()
-        .mockResolvedValue(mockPaymentFulfillmentWithoutFjs),
-      getCardPaymentConfirmationForPaymentFlow: jest
-        .fn()
-        .mockResolvedValue(mockCardPaymentConfirmation),
-      logPaymentFlowUpdate: jest.fn().mockResolvedValue(undefined),
-      deleteFjsCharge: jest.fn().mockResolvedValue(undefined),
-      deleteCardPaymentConfirmation: jest.fn().mockResolvedValue({
-        id: uuid(),
-        paymentFlowId: 'payment-flow-id',
-      }),
-      deletePaymentFulfillment: jest.fn().mockResolvedValue({}),
-    } as unknown as jest.Mocked<PaymentFlowService>
+    mockPaymentFlowService = createMockPaymentFlowService()
   })
 
   describe('createRefundContext', () => {

@@ -1,5 +1,3 @@
-import { v4 as uuid } from 'uuid'
-
 import type { Logger } from '@island.is/logging'
 
 import {
@@ -13,72 +11,15 @@ import {
   createApplePayPaymentContext,
   createApplePayPaymentSaga,
 } from '../applePayPayment.saga'
-import { ApplePayChargeInput } from '../dtos'
-
-const createMockLogger = (): Logger =>
-  ({
-    info: jest.fn(),
-    warn: jest.fn(),
-    error: jest.fn(),
-    debug: jest.fn(),
-    trace: jest.fn(),
-    child: jest.fn(),
-  } as unknown as Logger)
-
-const mockPaymentFlow = {
-  id: 'payment-flow-id',
-  organisationId: 'org-id',
-  payerNationalId: '1234567890',
-  charges: [],
-  availablePaymentMethods: ['card'],
-  onUpdateUrl: 'https://example.com/callback',
-}
-
-const mockCatalogItems = [
-  {
-    chargeItemCode: '123',
-    chargeItemName: 'Test charge',
-    priceAmount: 1000,
-    quantity: 1,
-  },
-]
-
-const mockPaymentResult = {
-  isSuccess: true,
-  acquirerReferenceNumber: 'arn-123',
-  authorizationCode: 'auth-123',
-  maskedCardNumber: '****1234',
-  cardInformation: {
-    cardScheme: 'Visa',
-    cardUsage: 'credit',
-  },
-  transactionID: 'tx-123',
-  transactionLifecycleId: 'tlc-123',
-  authorizationIdentifier: 'auth-id',
-  responseCode: '00',
-  responseDescription: 'Success',
-  responseTime: '12:00:00',
-  correlationID: 'corr-123',
-}
-
-const getApplePayChargeInput = (): ApplePayChargeInput => ({
-  paymentFlowId: 'payment-flow-id',
-  paymentData: {
-    version: 'EC_v1',
-    data: 'payment-data',
-    signature: 'signature',
-    header: {
-      ephemeralPublicKey: 'key',
-      publicKeyHash: 'hash',
-      transactionId: 'tx-id',
-    },
-  },
-  paymentMethod: {
-    displayName: 'Visa 1234',
-    network: 'Visa',
-  },
-  transactionIdentifier: 'tx-identifier',
-})
+import {
+  createMockLogger,
+  createMockCardPaymentService,
+  createMockPaymentFlowService,
+  getApplePayChargeInput,
+  mockCatalogItems,
+  mockPaymentFlow,
+  mockPaymentResult,
+} from './sagaTestUtils'
 
 /**
  * Apple Pay saga tests.
@@ -92,29 +33,8 @@ describe('Apple Pay Payment Saga - CHARGE_APPLE_PAY step specific', () => {
 
   beforeEach(() => {
     mockLogger = createMockLogger()
-    mockCardPaymentService = {
-      validatePaymentFlow: jest.fn().mockResolvedValue({
-        paymentFlow: mockPaymentFlow,
-        catalogItems: mockCatalogItems,
-        totalPrice: 1000,
-        paymentStatus: 'unpaid',
-      }),
-      chargeApplePay: jest.fn().mockResolvedValue(mockPaymentResult),
-      persistPaymentConfirmation: jest.fn().mockResolvedValue(undefined),
-      refundWithCorrelationId: jest.fn().mockResolvedValue({
-        isSuccess: true,
-        acquirerReferenceNumber: 'refund-arn',
-      }),
-    } as unknown as jest.Mocked<CardPaymentService>
-
-    mockPaymentFlowService = {
-      logPaymentFlowUpdate: jest.fn().mockResolvedValue(undefined),
-      deleteCardPaymentConfirmation: jest.fn().mockResolvedValue({
-        id: uuid(),
-        paymentFlowId: 'payment-flow-id',
-      }),
-      deletePaymentFulfillment: jest.fn().mockResolvedValue({}),
-    } as unknown as jest.Mocked<PaymentFlowService>
+    mockCardPaymentService = createMockCardPaymentService()
+    mockPaymentFlowService = createMockPaymentFlowService()
   })
 
   describe('createApplePayPaymentContext', () => {
