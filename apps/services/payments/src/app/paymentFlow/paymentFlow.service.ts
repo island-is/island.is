@@ -618,25 +618,34 @@ export class PaymentFlowService {
     try {
       return await retry(
         async () => {
-          const confirmation = await this.cardPaymentDetailsModel.create({
-            id: paymentTrackingData.correlationId,
-            acquirerReferenceNumber: paymentResult.acquirerReferenceNumber,
-            authorizationCode: paymentResult.authorizationCode,
-            cardScheme: paymentResult.cardInformation.cardScheme,
-            maskedCardNumber: paymentResult.maskedCardNumber,
-            paymentFlowId,
-            cardUsage: paymentResult.cardInformation.cardUsage,
-            totalPrice,
-            merchantReferenceData: paymentTrackingData.merchantReferenceData,
-          })
+          return await this.sequelize.transaction(async (transaction) => {
+            const confirmation = await this.cardPaymentDetailsModel.create(
+              {
+                id: paymentTrackingData.correlationId,
+                acquirerReferenceNumber: paymentResult.acquirerReferenceNumber,
+                authorizationCode: paymentResult.authorizationCode,
+                cardScheme: paymentResult.cardInformation.cardScheme,
+                maskedCardNumber: paymentResult.maskedCardNumber,
+                paymentFlowId,
+                cardUsage: paymentResult.cardInformation.cardUsage,
+                totalPrice,
+                merchantReferenceData:
+                  paymentTrackingData.merchantReferenceData,
+              },
+              { transaction },
+            )
 
-          await this.paymentFulfillmentModel.create({
-            paymentFlowId,
-            paymentMethod: 'card',
-            confirmationRefId: confirmation.id,
-          })
+            await this.paymentFulfillmentModel.create(
+              {
+                paymentFlowId,
+                paymentMethod: 'card',
+                confirmationRefId: confirmation.id,
+              },
+              { transaction },
+            )
 
-          return confirmation
+            return confirmation
+          })
         },
         {
           maxRetries: 3,

@@ -61,7 +61,7 @@ export type RollbackFailureCallback<
   executionHistory: ExecutionRecord[],
 ) => Promise<void>
 
-/** Thrown when a step execute or compensate exceeds the configured timeout. */
+// Thrown when a step execute or compensate exceeds the configured timeout.
 export class StepTimeoutError extends Error {
   constructor(
     message: string,
@@ -75,7 +75,6 @@ export class StepTimeoutError extends Error {
   }
 }
 
-/** Type guard for StepTimeoutError. */
 export function isStepTimeoutError(error: unknown): error is StepTimeoutError {
   return error instanceof StepTimeoutError
 }
