@@ -59,6 +59,7 @@ export const sectionPhoto = buildSection({
               const photos: {
                 biometricId: string
                 content: string
+                contentSpecification: 'FACIAL' | 'SIGNATURE'
               }[] =
                 getValueViaPath(
                   externalData,
@@ -68,6 +69,9 @@ export const sectionPhoto = buildSection({
 
               if (photos && photos.length > 0) {
                 photos.forEach((photo) => {
+                  if (photo.contentSpecification !== 'FACIAL') {
+                    return
+                  }
                   photoOptions.push({
                     value: photo.biometricId,
                     label: m.usePassportImage,
