@@ -65,12 +65,11 @@ export class RentalAgreementsController {
       })
 
       const buffer = Buffer.from(documentResponse.document, 'base64')
-      const filename = `${user.nationalId}-${contractId}-${documentId}-${documentResponse.name}.pdf`
+      const filename = `${documentResponse.name}-${contractId}-${documentId}.pdf`
 
-      res.header('Content-Disposition', `inline; filename=${filename}`)
+      res.header('Content-Disposition', `inline; filename="${filename.replace(/"/g, '_')}"`)
       res.header('Pragma', 'no-cache')
       res.header('Cache-Control', 'no-cache')
-      res.header('Cache-Control', 'nmax-age=0')
       return res.status(200).end(buffer)
     }
     res.status(404)
