@@ -10,7 +10,7 @@ import { FC } from 'react'
 import * as styles from './ConfirmationModal.css'
 import Modal from '../Modal/Modal'
 import LinkResolver from '../LinkResolver/LinkResolver'
-import { m } from '../..'
+import { m } from '../../lib/messages'
 
 interface Props {
   onSubmit: () => void
