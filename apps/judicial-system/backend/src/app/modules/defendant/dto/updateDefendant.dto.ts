@@ -150,4 +150,9 @@ export class UpdateDefendantDto {
   @IsEnum(IndictmentCaseReviewDecision)
   @ApiPropertyOptional({ enum: IndictmentCaseReviewDecision })
   readonly indictmentReviewDecision?: IndictmentCaseReviewDecision
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  isDrivingLicenseSuspended?: boolean
 }

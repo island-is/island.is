@@ -118,6 +118,11 @@ export class UpdateDefendantInput {
 
   @Allow()
   @IsOptional()
+<<<<<<< HEAD
   @Field(() => IndictmentCaseReviewDecision, { nullable: true })
   readonly indictmentReviewDecision?: IndictmentCaseReviewDecision
+=======
+  @Field(() => Boolean, { nullable: true })
+  readonly isDrivingLicenseSuspended?: boolean
+>>>>>>> 560374cd714e0b66349559d101a9481eb47d2004
 }

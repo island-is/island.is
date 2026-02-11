@@ -152,7 +152,7 @@ const transformCase = (theCase: Case, user: User | undefined) => {
     }),
     caseFiles: theCase.caseFiles?.filter(
       (file) =>
-        // The user must me known
+        // The user must be known
         user &&
         // Rejected files are only visible to relevant parties
         (file.state !== CaseFileState.REJECTED ||

@@ -49,6 +49,7 @@ query Case($input: CaseQueryInput!) {
       isAlternativeService
       alternativeServiceDescription
       indictmentReviewDecision
+      isDrivingLicenseSuspended
       subpoenas {
         id
         created
