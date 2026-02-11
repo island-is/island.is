@@ -50,14 +50,17 @@ const ConnectedTeamList = ({ slice }: Props) => {
   const organizationId: string =
     parseOrganizationId(slice.configJson?.['organizationNumber']) ?? ''
 
-  const { data, loading, error } = useQuery<Query>(GET_ORGANIZATION_TEAM_MEMBERS, {
-    variables: {
-      input: { locale: activeLocale, organizationId, activeOnly: true },
+  const { data, loading, error } = useQuery<Query>(
+    GET_ORGANIZATION_TEAM_MEMBERS,
+    {
+      variables: {
+        input: { locale: activeLocale, organizationId, activeOnly: true },
+      },
+      onError(error) {
+        console.error('Error fetching team members:', error)
+      },
     },
-    onError(error) {
-      console.error('Error fetching team members:', error)
-    },
-  })
+  )
 
   if (error) {
     return null
