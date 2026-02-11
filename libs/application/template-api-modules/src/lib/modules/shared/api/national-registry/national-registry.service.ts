@@ -20,7 +20,6 @@ import { AssetsXRoadService } from '@island.is/api/domains/assets'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { coreErrorMessages } from '@island.is/application/core'
 import { EES } from './EES'
-import { User } from '@island.is/auth-nest-tools'
 
 @Injectable()
 export class NationalRegistryService extends BaseTemplateApiService {
