@@ -281,8 +281,7 @@ describe('Orchestrator', () => {
       const saga: Step<TestContext, TestStepResults>[] = [
         {
           name: 'STEP1',
-          execute: async () =>
-            new Promise(() => {}), // Never resolves
+          execute: async () => new Promise(() => {}), // Never resolves
         },
       ]
 
@@ -314,8 +313,7 @@ describe('Orchestrator', () => {
         },
         {
           name: 'STEP2',
-          execute: async () =>
-            new Promise(() => {}), // Never resolves
+          execute: async () => new Promise(() => {}), // Never resolves
           compensate: async () => {
             rollbackOrder.push('STEP2-rollback')
           },

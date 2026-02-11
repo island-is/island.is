@@ -76,9 +76,7 @@ export class StepTimeoutError extends Error {
 }
 
 /** Type guard for StepTimeoutError. */
-export function isStepTimeoutError(
-  error: unknown,
-): error is StepTimeoutError {
+export function isStepTimeoutError(error: unknown): error is StepTimeoutError {
   return error instanceof StepTimeoutError
 }
 
