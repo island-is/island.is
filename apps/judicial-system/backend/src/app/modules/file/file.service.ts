@@ -469,10 +469,8 @@ export class FileService {
     // Only add a court document if a court session exists
     if (
       isIndictmentCase(theCase.type) &&
-      theCase.state === CaseState.RECEIVED &&
+      [CaseState.SUBMITTED, CaseState.RECEIVED].includes(theCase.state) &&
       theCase.withCourtSessions &&
-      theCase.courtSessions &&
-      theCase.courtSessions.length > 0 &&
       file.category &&
       [
         CaseFileCategory.PROSECUTOR_CASE_FILE,
