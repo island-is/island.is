@@ -106,6 +106,7 @@ export class LimitedAccessCaseController {
   })
   async getById(
     @Param('caseId') caseId: string,
+    @Query('defendantIds') _defendantIds: string | string[] | undefined,
     @CurrentCase() theCase: Case,
     @CurrentHttpUser() user: TUser,
   ): Promise<Case> {

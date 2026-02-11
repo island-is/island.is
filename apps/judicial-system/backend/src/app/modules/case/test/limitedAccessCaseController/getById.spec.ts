@@ -64,6 +64,7 @@ describe('LimitedAccessCaseController - Get by id', () => {
       try {
         then.result = await limitedAccessCaseController.getById(
           caseId,
+          undefined, // defendantIds query parameter
           theCase,
           user,
         )

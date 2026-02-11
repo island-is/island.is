@@ -194,6 +194,7 @@ const useCaseList = () => {
             })
             toast.error(formatMessage(errors.getCaseToOpen))
           },
+          defendantIds ?? undefined,
         )
       }
 
