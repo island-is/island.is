@@ -24,7 +24,10 @@ const InformationSchema = z
     phone: z.string().refine((v) => isValidPhoneNumber(v)),
     email: z.string().email(),
     selfOrOthers: z.nativeEnum(SelfOrOthers),
-    licenseNumber: z.string().optional(),
+    licenseNumber: z
+      .string()
+      .optional()
+      .refine((value) => !value || /^[A-Za-z0-9]+$/.test(value)),
     countryOfIssue: z.string().nullish(),
   })
   .refine(
@@ -184,7 +187,11 @@ const ExamineeSchema = z
       }),
       email: z.string().refine((email) => isValidEmail(email)),
       phone: z.string().refine((phone) => isValidPhoneNumber(phone)),
-      licenseNumber: z.string().min(1).max(25),
+      licenseNumber: z
+        .string()
+        .min(1)
+        .max(25)
+        .refine((value) => !value || /^[A-Za-z0-9]+$/.test(value)),
       countryIssuer: z.string().min(1).max(256),
       disabled: z.enum([TrueOrFalse.true, TrueOrFalse.false]).optional(),
     }),
