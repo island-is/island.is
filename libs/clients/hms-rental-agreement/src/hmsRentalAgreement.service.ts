@@ -57,7 +57,7 @@ export class HmsRentalAgreementService {
       contractId: id,
     })
 
-    if (!data.contractId) {
+    if (data.contractId === null || data.contractId === undefined) {
       this.logger.warn('Malformed contract, returning null', {
         id,
       })
