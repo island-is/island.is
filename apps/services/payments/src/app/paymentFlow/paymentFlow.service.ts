@@ -49,7 +49,7 @@ import {
 import { processCharges } from '../../utils/chargeUtils'
 import { CardPaymentDetails } from './models/cardPaymentDetails.model'
 import {
-  CardPaymentResponse,
+  CardPaymentSuccessResponse,
   PaymentTrackingData,
 } from '../../types/cardPayment'
 import { onlyReturnKnownErrorCode } from '../../utils/paymentErrors'
@@ -610,7 +610,7 @@ export class PaymentFlowService {
     totalPrice,
     paymentTrackingData,
   }: {
-    paymentResult: CardPaymentResponse
+    paymentResult: CardPaymentSuccessResponse
     paymentFlowId: string
     totalPrice: number
     paymentTrackingData: PaymentTrackingData

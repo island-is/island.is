@@ -43,9 +43,7 @@ export const createApplePayPaymentSaga = (
     name: 'VALIDATE',
     description: 'Validate the payment flow exists and is eligible to be paid',
     execute: async (ctx) => {
-      const { paymentFlow, catalogItems, totalPrice, paymentStatus } =
-        await cardPaymentService.validatePaymentFlow(ctx.paymentFlowId)
-      return { paymentFlow, catalogItems, totalPrice, paymentStatus }
+      return await cardPaymentService.validatePaymentFlow(ctx.paymentFlowId)
     },
   },
   {

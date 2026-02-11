@@ -38,7 +38,7 @@ export const CardInformationSchema = z.object({
   cardUsage: z.string(),
   cardCategory: z.string(),
   outOfScaScope: z.boolean(),
-  cardProductCategory: z.string().optional(),
+  cardProductCategory: z.string().optional().nullable(),
 })
 
 export const MarketInformationSchema = z.object({
@@ -55,29 +55,50 @@ export const PaymentGatewayApiResponseSchema = z.object({
   correlationID: z.string(),
 })
 
-export const CardPaymentResponseSchema = PaymentGatewayApiResponseSchema.extend(
-  {
-    acquirerReferenceNumber: z.string(),
-    transactionID: z.string(),
-    authorizationCode: z.string(),
-    transactionLifecycleId: z.string(),
-    maskedCardNumber: z.string(),
+/** Card payment (charge) success: full transaction data */
+export const CardPaymentSuccessSchema = PaymentGatewayApiResponseSchema.extend({
+  isSuccess: z.literal(true),
+  acquirerReferenceNumber: z.string(),
+  transactionID: z.string(),
+  authorizationCode: z.string(),
+  transactionLifecycleId: z.string(),
+  maskedCardNumber: z.string(),
+  cardInformation: CardInformationSchema,
+  transactionType: z.string().optional(),
+  isCardPresent: z.boolean().optional(),
+  currency: z.string().optional(),
+  authenticationMethod: z.string().optional(),
+  authorizedAmount: z.number().optional(),
+  marketInformation: MarketInformationSchema.optional(),
+  authorizationIdentifier: z.string(),
+})
 
-    cardInformation: CardInformationSchema,
+/** Card payment (charge) error: transaction fields omitted or partial */
+export const CardPaymentErrorSchema = PaymentGatewayApiResponseSchema.extend({
+  isSuccess: z.literal(false),
+  acquirerReferenceNumber: z.string().optional(),
+  transactionID: z.string().optional(),
+  authorizationCode: z.string().optional(),
+  transactionLifecycleId: z.string().optional(),
+  maskedCardNumber: z.string().optional(),
+  cardInformation: CardInformationSchema.optional(),
+  transactionType: z.string().optional(),
+  isCardPresent: z.boolean().optional(),
+  currency: z.string().optional(),
+  authenticationMethod: z.string().optional(),
+  authorizedAmount: z.number().optional(),
+  marketInformation: MarketInformationSchema.optional(),
+  authorizationIdentifier: z.string().optional(),
+})
 
-    transactionType: z.string().optional(),
-    isCardPresent: z.boolean().optional(),
-    currency: z.string().optional(),
-    authenticationMethod: z.string().optional(),
-    authorizedAmount: z.number().optional(),
+export const CardPaymentResponseSchema = z.discriminatedUnion('isSuccess', [
+  CardPaymentSuccessSchema,
+  CardPaymentErrorSchema,
+])
 
-    marketInformation: MarketInformationSchema.optional(),
-
-    authorizationIdentifier: z.string(),
-  },
-)
-
-export const RefundResponseSchema = PaymentGatewayApiResponseSchema.extend({
+/** Refund success: full transaction data */
+export const RefundSuccessSchema = PaymentGatewayApiResponseSchema.extend({
+  isSuccess: z.literal(true),
   acquirerReferenceNumber: z.string(),
   transactionID: z.string(),
   transactionLifecycleId: z.string(),
@@ -86,20 +107,56 @@ export const RefundResponseSchema = PaymentGatewayApiResponseSchema.extend({
   authorizationIdentifier: z.string(),
 })
 
+/** Refund error: transaction fields omitted or partial */
+export const RefundErrorSchema = PaymentGatewayApiResponseSchema.extend({
+  isSuccess: z.literal(false),
+  acquirerReferenceNumber: z.string().optional(),
+  transactionID: z.string().optional(),
+  transactionLifecycleId: z.string().optional(),
+  maskedCardNumber: z.string().optional(),
+  cardInformation: CardInformationSchema.optional(),
+  authorizationIdentifier: z.string().optional(),
+})
+
+export const RefundResponseSchema = z.discriminatedUnion('isSuccess', [
+  RefundSuccessSchema,
+  RefundErrorSchema,
+])
+
 export const FieldSchema = z.object({
   name: z.string(),
   value: z.string(),
 })
 
-export const CardVerificationResponseSchema =
-  PaymentGatewayApiResponseSchema.extend({
-    cardVerificationRawResponse: z.string(),
-    postUrl: z.string().url(),
-    verificationFields: z.array(FieldSchema),
-    additionalFields: z.array(FieldSchema),
-    cardInformation: CardInformationSchema,
-    scriptPath: z.string().optional(),
-  })
+const CardVerificationBaseSchema = PaymentGatewayApiResponseSchema.extend({
+  cardInformation: CardInformationSchema,
+  threeDSMessageVersion: z.string().optional(),
+})
+
+/** Card verification success: includes 3DS redirect data */
+export const CardVerificationSuccessSchema = CardVerificationBaseSchema.extend({
+  isSuccess: z.literal(true),
+  cardVerificationRawResponse: z.string(),
+  postUrl: z.string(),
+  verificationFields: z.array(FieldSchema),
+  additionalFields: z.array(FieldSchema),
+  scriptPath: z.string().optional(),
+})
+
+/** Card verification error: 3DS fields omitted (e.g. C6-M rejected by MPI) */
+export const CardVerificationErrorSchema = CardVerificationBaseSchema.extend({
+  isSuccess: z.literal(false),
+  cardVerificationRawResponse: z.string().optional(),
+  postUrl: z.string().optional(),
+  verificationFields: z.array(FieldSchema).optional(),
+  additionalFields: z.array(FieldSchema).optional(),
+  scriptPath: z.string().optional(),
+})
+
+export const CardVerificationResponseSchema = z.discriminatedUnion(
+  'isSuccess',
+  [CardVerificationSuccessSchema, CardVerificationErrorSchema],
+)
 
 export const CardVerificationDataSchema = z.object({
   cavv: z.string(),
@@ -121,10 +178,24 @@ export const CardPaymentInputSchema = z.object({
   cardVerificationData: CardVerificationDataSchema.optional(),
 })
 
-export const ApplePaySessionResponseSchema =
+/** Apple Pay session success */
+export const ApplePaySessionSuccessSchema =
   PaymentGatewayApiResponseSchema.extend({
+    isSuccess: z.literal(true),
     session: z.string(),
   })
+
+/** Apple Pay session error: session omitted */
+export const ApplePaySessionErrorSchema =
+  PaymentGatewayApiResponseSchema.extend({
+    isSuccess: z.literal(false),
+    session: z.string().optional(),
+  })
+
+export const ApplePaySessionResponseSchema = z.discriminatedUnion('isSuccess', [
+  ApplePaySessionSuccessSchema,
+  ApplePaySessionErrorSchema,
+])
 
 const ApplePayPaymentDataSchema = z.object({
   Version: z.string(),
@@ -166,5 +237,15 @@ export type CardPaymentInput = z.infer<typeof CardPaymentInputSchema>
 export type CardVerificationResponse = z.infer<
   typeof CardVerificationResponseSchema
 >
-export type RefundResponse = z.infer<typeof RefundResponseSchema>
+export type CardVerificationSuccessResponse = z.infer<
+  typeof CardVerificationSuccessSchema
+>
 export type CardPaymentResponse = z.infer<typeof CardPaymentResponseSchema>
+export type CardPaymentSuccessResponse = z.infer<
+  typeof CardPaymentSuccessSchema
+>
+export type RefundResponse = z.infer<typeof RefundResponseSchema>
+export type RefundSuccessResponse = z.infer<typeof RefundSuccessSchema>
+export type ApplePaySessionSuccessResponse = z.infer<
+  typeof ApplePaySessionSuccessSchema
+>

@@ -3,9 +3,9 @@ import { InferAttributes } from 'sequelize'
 import { Logger } from '@island.is/logging'
 
 import {
-  CardPaymentResponse,
+  CardPaymentSuccessResponse,
   PaymentTrackingData,
-  RefundResponse,
+  RefundSuccessResponse,
 } from '../../types/cardPayment'
 import { CatalogItemWithQuantity } from '../../types/charges'
 import { PaymentMethod } from '../../types/payment'
@@ -88,7 +88,7 @@ export interface CardPaymentStepResults {
     totalPrice: number
   }
   CHARGE_CARD: {
-    paymentResult: CardPaymentResponse
+    paymentResult: CardPaymentSuccessResponse
   }
   PERSIST_PAYMENT_CONFIRMATION: void
   NOTIFY_SUCCESSFUL_PAYMENT: void
@@ -113,7 +113,7 @@ export interface ApplePayPaymentStepResults {
     totalPrice: number
   }
   CHARGE_APPLE_PAY: {
-    paymentResult: CardPaymentResponse
+    paymentResult: CardPaymentSuccessResponse
   }
   PERSIST_PAYMENT_CONFIRMATION: void
   NOTIFY_SUCCESSFUL_PAYMENT: void
@@ -143,7 +143,7 @@ export interface RefundStepResults {
     hasFjsCharge: boolean
   }
   DELETE_FJS_CHARGE: { action: 'deleted_fjs' }
-  REFUND_PAYMENT: { action: 'refunded'; refundResult: RefundResponse }
+  REFUND_PAYMENT: { action: 'refunded'; refundResult: RefundSuccessResponse }
   DELETE_CARD_PAYMENT_CONFIRMATION: void
   LOG_REFUND_SUCCESS: void
 }

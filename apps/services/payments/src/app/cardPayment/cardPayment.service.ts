@@ -20,14 +20,14 @@ import { PaymentMethod, PaymentStatus } from '../../types'
 import {
   ApplePaySessionResponseSchema,
   CachePaymentFlowStatus,
-  CardPaymentResponse,
   CardPaymentResponseSchema,
-  CardVerificationResponse,
+  CardPaymentSuccessResponse,
   CardVerificationResponseSchema,
+  CardVerificationSuccessResponse,
   MdNormalised,
   PaymentTrackingData,
-  RefundResponse,
   RefundResponseSchema,
+  RefundSuccessResponse,
   SavedVerificationCompleteData,
   SavedVerificationPendingData,
 } from '../../types/cardPayment'
@@ -74,7 +74,7 @@ export class CardPaymentService {
   async verify(
     verifyCardInput: VerifyCardInput,
     totalPrice: number,
-  ): Promise<CardVerificationResponse> {
+  ): Promise<CardVerificationSuccessResponse> {
     const {
       memCacheExpiryMinutes,
       paymentGateway: {
@@ -125,7 +125,8 @@ export class CardPaymentService {
       errorMessage: `Failed to verify card (${paymentFlowId})`,
     })
 
-    return data
+    // Parser accepts success | error; we throw on !isSuccess, so this is always success shape
+    return data as CardVerificationSuccessResponse
   }
 
   getMdPayload(md: string): MdNormalised {
@@ -332,7 +333,7 @@ export class CardPaymentService {
     chargeCardInput: ChargeCardInput
     paymentTrackingData: PaymentTrackingData
     amount: number
-  }): Promise<CardPaymentResponse> {
+  }): Promise<CardPaymentSuccessResponse> {
     const status = await this.getFullVerificationStatus(
       chargeCardInput.paymentFlowId,
     )
@@ -393,13 +394,13 @@ export class CardPaymentService {
       )
     }
 
-    return data
+    return data as CardPaymentSuccessResponse
   }
 
   async chargeApplePay(
     input: ApplePayChargeInput,
     paymentTrackingData: PaymentTrackingData,
-  ): Promise<CardPaymentResponse> {
+  ): Promise<CardPaymentSuccessResponse> {
     const { paymentsGatewayApiUrl } = this.config.paymentGateway
 
     const requestOptions = generateApplePayChargeRequestOptions({
@@ -419,7 +420,7 @@ export class CardPaymentService {
       errorMessage: 'Failed to charge Apple Pay payment',
     })
 
-    return data
+    return data as CardPaymentSuccessResponse
   }
 
   // REFUND METHODS ------------------------------------------------------------------------------------------------
@@ -434,7 +435,7 @@ export class CardPaymentService {
     cardNumber: string
     amount: number
     acquirerReferenceNumber: string
-  }) {
+  }): Promise<RefundSuccessResponse> {
     try {
       const requestOptions = generateRefundRequestOptions({
         amount,
@@ -452,7 +453,7 @@ export class CardPaymentService {
         requestOptions,
       )
 
-      return this.parsePaymentGatewayResponseAndHandleErrors({
+      const data = await this.parsePaymentGatewayResponseAndHandleErrors({
         response,
         schema: RefundResponseSchema,
         errorMessage: `[${paymentFlowId}] Failed to refund payment`,
@@ -473,6 +474,8 @@ export class CardPaymentService {
           }
         },
       })
+
+      return data as RefundSuccessResponse
     } catch (e) {
       this.logger.error(`[${paymentFlowId}] Failed to refund payment`, e)
       throw e
@@ -483,7 +486,7 @@ export class CardPaymentService {
     paymentTrackingData,
   }: {
     paymentTrackingData: PaymentTrackingData
-  }): Promise<RefundResponse> {
+  }): Promise<RefundSuccessResponse> {
     const { paymentsGatewayApiUrl } = this.config.paymentGateway
 
     const requestOptions = generateRefundWithCorrelationIdRequestOptions({
@@ -502,7 +505,7 @@ export class CardPaymentService {
       errorMessage: 'Failed to refund payment with correlation id',
     })
 
-    return data
+    return data as RefundSuccessResponse
   }
 
   async persistPaymentConfirmation({
@@ -512,7 +515,7 @@ export class CardPaymentService {
     totalPrice,
   }: {
     paymentFlowId: string
-    paymentResult: CardPaymentResponse
+    paymentResult: CardPaymentSuccessResponse
     paymentTrackingData: PaymentTrackingData
     totalPrice: number
   }) {
@@ -606,6 +609,7 @@ export class CardPaymentService {
     }
 
     const data = await response.json()
+
     const parsedData = schema.safeParse(data)
 
     if (!parsedData.success) {
