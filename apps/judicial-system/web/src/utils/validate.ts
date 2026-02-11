@@ -627,6 +627,12 @@ const isIndictmentRulingDecisionValid = (workingCase: Case) => {
     case CaseIndictmentRulingDecision.FINE:
     case CaseIndictmentRulingDecision.CANCELLATION:
       return isCourtRecordValid()
+    case CaseIndictmentRulingDecision.MERGE:
+      return Boolean(
+        workingCase.mergeCase?.id ||
+          validate([[workingCase.mergeCaseNumber, ['empty', 'S-case-number']]])
+            .isValid,
+      )
     default:
       return false
   }

@@ -388,7 +388,8 @@ const Conclusion: FC = () => {
             return isCourtRecordValid
           case CaseIndictmentRulingDecision.MERGE:
             return (
-              isCourtRecordValid &&
+              (isValidIndictmentCourtRecord ||
+                !workingCase.courtSessions?.length) &&
               Boolean(
                 workingCase.mergeCase?.id ||
                   validate([[mergeCaseNumber, ['empty', 'S-case-number']]])
@@ -413,12 +414,20 @@ const Conclusion: FC = () => {
         Boolean(courtSession.ruling),
     ) ?? false
 
-  const missingValidCourtRecord =
+  const missingValidCourtRecordForCompletion =
+    !isValidIndictmentCourtRecord &&
     selectedAction === IndictmentDecision.COMPLETING &&
-    !isValidIndictmentCourtRecord
+    (selectedDecision === CaseIndictmentRulingDecision.RULING ||
+      selectedDecision === CaseIndictmentRulingDecision.FINE ||
+      selectedDecision === CaseIndictmentRulingDecision.DISMISSAL ||
+      selectedDecision === CaseIndictmentRulingDecision.CANCELLATION)
+
+  const missingValidCourtRecordForSplitting =
+    !isValidIndictmentCourtRecord &&
+    selectedAction === IndictmentDecision.SPLITTING
 
   const missingRulingInCourtSessions =
-    !!workingCase.withCourtSessions &&
+    !isValidIndictmentCourtRecord &&
     selectedAction === IndictmentDecision.COMPLETING &&
     selectedDecision === CaseIndictmentRulingDecision.RULING &&
     !hasJudgementRuling
@@ -887,14 +896,18 @@ const Conclusion: FC = () => {
           nextIsDisabled={!stepIsValid()}
           nextIsLoading={isUpdatingCase}
           hideNextButton={
-            missingValidCourtRecord || missingRulingInCourtSessions
+            missingValidCourtRecordForCompletion ||
+            missingRulingInCourtSessions ||
+            missingValidCourtRecordForSplitting
           }
           infoBoxText={
-            !missingValidCourtRecord
-              ? missingRulingInCourtSessions
-                ? 'Þegar máli lýkur með dómi þarf að skrá dómsorðið á þingbókarskjá.'
-                : ''
-              : 'Til að ljúka máli þarf að staðfesta þingbók á þingbókarskjá.'
+            missingValidCourtRecordForCompletion
+              ? 'Til að ljúka máli öðruvísi en með sameiningu þarf að staðfesta þingbók á þingbókarskjá.'
+              : missingRulingInCourtSessions
+              ? 'Þegar máli lýkur með dómi þarf að skrá dómsorðið á þingbókarskjá.'
+              : missingValidCourtRecordForSplitting
+              ? 'Til að kljúfa máli þarf að staðfesta þingbók á þingbókarskjá.'
+              : ''
           }
         />
       </FormContentContainer>
