@@ -50,8 +50,7 @@ export const NotificationSettings = () => {
     documentNotifications:
       userProfile?.getUserProfile?.documentNotifications ?? true,
     canNudge: userProfile?.getUserProfile?.canNudge ?? true,
-    smsNotifications:
-      userProfile?.getUserProfile?.smsNotifications ?? false,
+    smsNotifications: userProfile?.getUserProfile?.smsNotifications ?? false,
     wantsPaper: wantsPaper ?? false,
   })
 
@@ -62,8 +61,7 @@ export const NotificationSettings = () => {
         documentNotifications:
           userProfile?.getUserProfile.documentNotifications,
         canNudge: userProfile?.getUserProfile.canNudge ?? true,
-        smsNotifications:
-          userProfile?.getUserProfile.smsNotifications ?? false,
+        smsNotifications: userProfile?.getUserProfile.smsNotifications ?? false,
       })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
