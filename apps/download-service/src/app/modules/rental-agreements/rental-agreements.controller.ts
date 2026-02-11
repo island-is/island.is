@@ -6,6 +6,7 @@ import {
   Param,
   UseGuards,
   BadRequestException,
+  ParseIntPipe,
 } from '@nestjs/common'
 import { ApiOkResponse } from '@nestjs/swagger'
 import { Response } from 'express'
@@ -42,8 +43,8 @@ export class RentalAgreementsController {
     description: 'Get a rental agreement pdf from HMSs',
   })
   async getRentalAgreementPdf(
-    @Param('documentId') documentId: string | undefined,
-    @Param('contractId') contractId: string | undefined,
+    @Param('documentId', ParseIntPipe) documentId: number,
+    @Param('contractId', ParseIntPipe) contractId: number,
     @CurrentUser() user: User,
     @Res() res: Response,
   ) {
@@ -53,19 +54,19 @@ export class RentalAgreementsController {
 
     const documentResponse = await this.service.getRentalAgreementPdf(
       user,
-      +documentId,
-      +contractId,
+      documentId,
+      contractId,
     )
 
     if (documentResponse) {
       this.auditService.audit({
         action: 'getRentalAgreementPdf',
         auth: user,
-        resources: [documentId, contractId],
+        resources: [documentId.toString(), contractId.toString()],
       })
 
       const buffer = Buffer.from(documentResponse.document, 'base64')
-      const filename = `${documentResponse.name}-${contractId}-${documentId}.pdf`
+      const filename = `${documentResponse.name ?? 'rental-agreement'}-${contractId}-${documentId}.pdf`
 
       res.header(
         'Content-Disposition',
@@ -75,7 +76,6 @@ export class RentalAgreementsController {
       res.header('Cache-Control', 'no-cache')
       return res.status(200).end(buffer)
     }
-    res.status(404)
-    return res.end('Rental agreement not found')
+    res.status(404).contentType('text/plain').end('Rental agreement not found')
   }
 }
