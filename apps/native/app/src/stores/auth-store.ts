@@ -308,6 +308,9 @@ export async function readAuthorizeResult(): Promise<void> {
   // Attempt to restore the last known authorization data from the secure keychain.
   const keychainResult = await readStoredAuthorizeCredentials()
   if (!keychainResult) {
+    // Prefetch auth configuration on Android (non-blocking optimization) once we know we don't have an authorize result
+    void prefetchAuthConfig()
+
     return
   }
 
