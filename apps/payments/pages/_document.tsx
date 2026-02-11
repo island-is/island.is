@@ -28,12 +28,14 @@ class MyDocument extends Document<Props> {
 
     return (
       <Html lang={lang}>
-        <Head></Head>
-        <body>
+        <Head>
           <Script
             src="https://applepay.cdn-apple.com/jsapi/1.latest/apple-pay-sdk.js"
             strategy="beforeInteractive"
+            crossOrigin="anonymous"
           />
+        </Head>
+        <body>
           <Main />
           <NextScript />
         </body>

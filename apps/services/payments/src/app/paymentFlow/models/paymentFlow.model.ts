@@ -151,8 +151,8 @@ export class PaymentFlow extends Model<
   @HasMany(() => CardPaymentDetails, 'paymentFlowId')
   cardPaymentDetails?: CardPaymentDetails[]
 
-  @HasOne(() => PaymentFulfillment, 'paymentFlowId')
-  paymentFulfillment?: PaymentFulfillment
+  @HasMany(() => PaymentFulfillment, 'paymentFlowId')
+  paymentFulfillments?: PaymentFulfillment[]
 
   @ApiProperty({ type: [String] })
   @Column({
