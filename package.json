@@ -362,7 +362,7 @@
     "@graphql-codegen/typescript-operations": "2.5.3",
     "@graphql-codegen/typescript-react-apollo": "3.3.3",
     "@graphql-codegen/typescript-resolvers": "2.7.3",
-    "@mockoon/cli": "8.4.0",
+    "@mockoon/cli": "9.2.0",
     "@nestjs/schematics": "11.0.5",
     "@nestjs/testing": "10.0.5",
     "@nx/cypress": "21.2.2",
