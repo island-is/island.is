@@ -1,5 +1,5 @@
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
-import { ConfigType, IdsClientConfig } from '@island.is/nest/config'
+import { ConfigType } from '@island.is/nest/config'
 import { Configuration } from '../../gen/fetch'
 import { FinancialManagementAuthorityClientConfig } from './financialManagementAuthorityClient.config'
 
