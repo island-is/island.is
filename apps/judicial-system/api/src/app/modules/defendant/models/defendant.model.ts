@@ -121,11 +121,9 @@ export class Defendant {
   @Field(() => String, { nullable: true })
   readonly alternativeServiceDescription?: string
 
-<<<<<<< HEAD
   @Field(() => IndictmentCaseReviewDecision, { nullable: true })
   readonly indictmentReviewDecision?: IndictmentCaseReviewDecision
-=======
+
   @Field(() => Boolean, { nullable: true })
-  isDrivingLicenseSuspended?: boolean
->>>>>>> 560374cd714e0b66349559d101a9481eb47d2004
+  readonly isDrivingLicenseSuspended?: boolean
 }
