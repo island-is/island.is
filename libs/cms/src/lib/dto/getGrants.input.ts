@@ -1,4 +1,10 @@
-import { IsArray, IsInt, IsOptional, IsString } from 'class-validator'
+import {
+  IsArray,
+  IsBoolean,
+  IsInt,
+  IsOptional,
+  IsString,
+} from 'class-validator'
 import { Field, InputType, Int, registerEnumType } from '@nestjs/graphql'
 import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manager'
 import { CacheField } from '@island.is/nest/graphql'
@@ -69,4 +75,12 @@ export class GetGrantsInput {
   @IsArray()
   @IsOptional()
   funds?: string[]
+
+  @Field({
+    nullable: true,
+    description: 'Retrieve only grants whose application period has not passed',
+  })
+  @IsBoolean()
+  @IsOptional()
+  filterOutDateToPassed?: boolean
 }

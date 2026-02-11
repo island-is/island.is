@@ -154,6 +154,7 @@ import {
   BloodDonationRestrictionList,
 } from './models/bloodDonationRestriction.model'
 import { GenericList } from './models/genericList.model'
+import { LastCallsForGrants } from './models/lastCallsForGrants.model'
 import { FeaturedGenericListItems } from './models/featuredGenericListItems.model'
 import {
   CourseCategoriesResponse,
@@ -971,6 +972,48 @@ export class PowerBiSliceResolver {
 @Resolver(() => GrantCardsList)
 @CacheControl(defaultCache)
 export class GrantCardsListResolver {
+  constructor(
+    private cmsElasticsearchService: CmsElasticsearchService,
+    private cmsContentfulService: CmsContentfulService,
+  ) {}
+
+  @ResolveField(() => GrantList)
+  async resolvedGrantsList(
+    @Parent() grantList: GrantCardsList,
+  ): Promise<GrantList> {
+    const { resolvedGrantsList: input, maxNumberOfCards } = grantList
+    if (!input || input?.size === 0 || maxNumberOfCards === 0) {
+      return { total: 0, items: [] }
+    }
+
+    return this.cmsElasticsearchService.getGrants(
+      getElasticsearchIndex(input.lang),
+      {
+        ...input,
+        ...(maxNumberOfCards && {
+          size: maxNumberOfCards,
+        }),
+      },
+    )
+  }
+  @ResolveField(() => GraphQLJSONObject)
+  async namespace(@Parent() { resolvedGrantsList: input }: GrantCardsList) {
+    try {
+      const respones = await this.cmsContentfulService.getNamespace(
+        'GrantsPlaza',
+        input?.lang ?? 'is',
+      )
+      return JSON.parse(respones?.fields || '{}')
+    } catch {
+      // Fallback to empty object in case something goes wrong when fetching or parsing namespace
+      return {}
+    }
+  }
+}
+
+@Resolver(() => LastCallsForGrants)
+@CacheControl(defaultCache)
+export class LastCallsForGrantsResolver {
   constructor(
     private cmsElasticsearchService: CmsElasticsearchService,
     private cmsContentfulService: CmsContentfulService,

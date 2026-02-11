@@ -2398,6 +2398,39 @@ export interface IIntroLinkImage extends Entry<IIntroLinkImageFields> {
   }
 }
 
+export interface ILastCallsForGrantsFields {
+  /** Title */
+  title: string
+
+  /** Only show open for application */
+  onlyShowOpenForApplication?: boolean | undefined
+
+  /** Max number of cards */
+  maxNumberOfCards?: number | undefined
+
+  /** Parent organization */
+  parentOrganization: IOrganization
+}
+
+/** List of organization grants nearing the end of their application period */
+
+export interface ILastCallsForGrants extends Entry<ILastCallsForGrantsFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'lastCallsForGrants'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface ILatestEventsSliceFields {
   /** Title */
   title: string

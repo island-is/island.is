@@ -1,127 +1,34 @@
 import format from 'date-fns/format'
-import localeEN from 'date-fns/locale/en-GB'
-import localeIS from 'date-fns/locale/is'
 import { useRouter } from 'next/router'
 
 import { ActionCard, Box, InfoCardGrid, Text } from '@island.is/island-ui/core'
-import { Locale } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
 import {
   Grant,
   GrantCardsList as GrantCardsListSchema,
   GrantCardsListSorting,
-  GrantStatus,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 
 import { TranslationKeys } from './types'
+import { getTranslationString, isGrantOpen, parseGrantStatus } from './utils'
 
 interface SliceProps {
   slice: GrantCardsListSchema
 }
-
-const OPEN_GRANT_STATUSES = [
-  GrantStatus.AlwaysOpen,
-  GrantStatus.Open,
-  GrantStatus.OpenWithNote,
-]
-
-const formatDate = (
-  date: Date,
-  locale: Locale,
-  stringFormat = 'dd. MMMM yyyy',
-): string | undefined => {
-  try {
-    return format(date, stringFormat, {
-      locale: locale === 'is' ? localeIS : localeEN,
-    })
-  } catch (e) {
-    console.warn('Error formatting date')
-    return
-  }
-}
-
-const containsTimePart = (date: string) => date.includes('T')
-
-const isGrantOpen = (grant: Grant): 'open' | 'closed' | 'unknown' => {
-  if (!grant.status) {
-    return 'unknown'
-  }
-
-  return OPEN_GRANT_STATUSES.includes(grant.status) ? 'open' : 'closed'
-}
-
 const GrantCardsList = ({ slice }: SliceProps) => {
   const { activeLocale } = useI18n()
   const { linkResolver } = useLinkResolver()
   const router = useRouter()
 
-  const namespace = slice.namespace
-
-  const getTranslationString = (
+  const getTranslation = (
     key: keyof TranslationKeys,
     argToInterpolate?: string,
-  ) =>
-    argToInterpolate
-      ? namespace[key].replace('{arg}', argToInterpolate)
-      : namespace[key]
+  ) => getTranslationString(key, slice.namespace, argToInterpolate)
 
-  const parseStatus = (grant: Grant): string | undefined => {
-    switch (grant.status) {
-      case GrantStatus.Closed: {
-        const date = grant.dateTo
-          ? formatDate(new Date(grant.dateTo), activeLocale)
-          : undefined
-        return date
-          ? getTranslationString(
-              containsTimePart(date)
-                ? 'applicationWasOpenToAndWith'
-                : 'applicationWasOpenTo',
-              date,
-            )
-          : getTranslationString('applicationClosed')
-      }
-      case GrantStatus.ClosedOpeningSoon: {
-        const date = grant.dateFrom
-          ? formatDate(new Date(grant.dateFrom), activeLocale)
-          : undefined
-        return date
-          ? getTranslationString('applicationOpensAt', date)
-          : getTranslationString('applicationClosed')
-      }
-      case GrantStatus.ClosedOpeningSoonWithEstimation: {
-        const date = grant.dateFrom
-          ? formatDate(new Date(grant.dateFrom), activeLocale, 'MMMM yyyy')
-          : undefined
-        return date
-          ? getTranslationString('applicationEstimatedOpensAt', date)
-          : getTranslationString('applicationClosed')
-      }
-      case GrantStatus.AlwaysOpen: {
-        return getTranslationString('applicationAlwaysOpen')
-      }
-      case GrantStatus.Open: {
-        const date = grant.dateTo
-          ? formatDate(new Date(grant.dateTo), activeLocale, 'dd. MMMM.')
-          : undefined
-        return date
-          ? getTranslationString(
-              containsTimePart(date)
-                ? 'applicationOpensToWithDay'
-                : 'applicationOpensTo',
-              date,
-            )
-          : getTranslationString('applicationOpen')
-      }
-      case GrantStatus.ClosedWithNote:
-      case GrantStatus.OpenWithNote: {
-        return getTranslationString('applicationSeeDescription')
-      }
-      default:
-        return
-    }
-  }
+  const parseStatus = (grant: Grant) =>
+    parseGrantStatus(grant, activeLocale, getTranslation)
 
   const grantItems = [...(slice.resolvedGrantsList?.items ?? [])]
 
@@ -132,7 +39,7 @@ const GrantCardsList = ({ slice }: SliceProps) => {
 
     const cardText =
       grantStatus !== 'unknown'
-        ? `${getTranslationString(
+        ? `${getTranslation(
             grantStatus === 'open' ? 'applicationOpen' : 'applicationClosed',
           )} / ${parseStatus(grant)}`
         : undefined
@@ -153,8 +60,7 @@ const GrantCardsList = ({ slice }: SliceProps) => {
           cta={{
             disabled: isGrantOpen(grant) !== 'open',
             size: 'small',
-            label:
-              grant.applicationButtonLabel ?? getTranslationString('apply'),
+            label: grant.applicationButtonLabel ?? getTranslation('apply'),
             onClick: () => router.push(grant.applicationUrl?.slug ?? ''),
             icon: 'open',
             iconType: 'outline',
@@ -195,7 +101,7 @@ const GrantCardsList = ({ slice }: SliceProps) => {
             grant.fund?.parentOrganization?.logo?.title ??
             '',
           link: {
-            label: getTranslationString('applicationClosed'),
+            label: getTranslation('applicationClosed'),
             href: linkResolver(
               'grantsplazagrant',
               [grant?.applicationId ?? ''],
@@ -205,7 +111,7 @@ const GrantCardsList = ({ slice }: SliceProps) => {
           tags: [
             grantIsOpen !== 'unknown'
               ? {
-                  label: getTranslationString(
+                  label: getTranslation(
                     grantIsOpen === 'open'
                       ? 'applicationOpen'
                       : 'applicationClosed',
