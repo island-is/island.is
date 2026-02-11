@@ -11,7 +11,7 @@ import {
   NationalRegistryMaritalTitle,
   BirthplaceParameters,
   NationalRegistryCustodian,
-  NationalRegistrySpouseV3,
+  NationalRegistrySpouse,
 } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
@@ -196,7 +196,6 @@ export class NationalRegistryService extends BaseTemplateApiService {
 
   async getIndividual(
     nationalId: string,
-    auth?: User,
     params: NationalRegistryParameters | undefined = undefined,
   ): Promise<NationalRegistryIndividual | null> {
     const person = await this.nationalRegistryApi.getIndividual(nationalId)
@@ -419,27 +418,25 @@ export class NationalRegistryService extends BaseTemplateApiService {
 
   async getSpouse({
     auth,
-  }: TemplateApiModuleActionProps): Promise<NationalRegistrySpouseV3 | null> {
-    const cohabitationInfo =
-      await this.nationalRegistryV3Api.getCohabitationInfo(
-        auth.nationalId,
-        auth,
-      )
+  }: TemplateApiModuleActionProps): Promise<NationalRegistrySpouse | null> {
+    const cohabitationInfo = await this.nationalRegistryApi.getCohabitationInfo(
+      auth.nationalId,
+    )
 
-    const spouseIndividual = cohabitationInfo
-      ? await this.getIndividual(cohabitationInfo.spouseNationalId, auth)
-      : undefined
     const spouseBirthPlace = cohabitationInfo
       ? await this.nationalRegistryApi.getBirthplace(
           cohabitationInfo.spouseNationalId,
         )
       : undefined
+    const spouseIndividual = cohabitationInfo
+      ? await this.getIndividual(cohabitationInfo.spouseNationalId)
+      : undefined
+
     return (
       cohabitationInfo && {
         nationalId: cohabitationInfo.spouseNationalId,
         name: cohabitationInfo.spouseName,
         maritalStatus: cohabitationInfo.cohabitationCode,
-        maritalDescription: cohabitationInfo?.cohabitationCodeDescription,
         lastModified: cohabitationInfo.lastModified,
         birthplace: spouseBirthPlace && {
           dateOfBirth: spouseBirthPlace.birthdate,
