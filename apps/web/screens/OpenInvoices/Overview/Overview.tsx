@@ -254,7 +254,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
         break
       }
       case 'invoicePaymentTypes': {
-        setInvoiceTypes(filteredValues?.map((f) => Number.parseInt(f)) ?? null)
+        setInvoiceTypes(filteredValues)
         break
       }
       case 'suppliers': {
