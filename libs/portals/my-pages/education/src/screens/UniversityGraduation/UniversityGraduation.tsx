@@ -1,20 +1,20 @@
-import { defineMessage } from 'react-intl'
 import { AlertMessage, Box, Stack } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   ActionCard,
   CardLoader,
   IntroWrapper,
-  m,
+  m as coreMessages,
 } from '@island.is/portals/my-pages/core'
 import { isDefined } from '@island.is/shared/utils'
 import { EducationPaths } from '../../lib/paths'
 import { Problem } from '@island.is/react-spa/shared'
-import { useStudentInfoQuery } from './EducationGraduation.generated'
+import { useStudentInfoQuery } from './UniversityGraduation.generated'
 import { useMemo } from 'react'
 import { mapUniversityToSlug } from '../../utils/mapUniversitySlug'
+import { uniMessages } from '../../lib/messages'
 
-export const EducationGraduation = () => {
+export const UniversityGraduation = () => {
   useNamespaces('sp.education-graduation')
   const { lang, formatMessage } = useLocale()
 
@@ -40,20 +40,15 @@ export const EducationGraduation = () => {
 
   return (
     <IntroWrapper
-      title={m.educationGraduation}
-      intro={defineMessage({
-        id: 'sp.education-graduation:education-graduation-intro',
-        defaultMessage:
-          'Hér getur þú fundið yfirlit yfir brautskráningar frá háskólanámi frá árinu 2015.',
-        description: 'education graduation intro',
-      })}
+      title={coreMessages.educationGraduation}
+      intro={uniMessages.graduationIntro}
     >
       {!!errors?.length && !error && !loading && (
         <Box marginBottom={2}>
           <AlertMessage
             type="warning"
-            title={formatMessage(m.couldNotFetchAllItems)}
-            message={formatMessage(m.couldNotFetchAllItemsDetail, {
+            title={formatMessage(coreMessages.couldNotFetchAllItems)}
+            message={formatMessage(coreMessages.couldNotFetchAllItemsDetail, {
               arg: errorString,
             })}
           />
@@ -66,8 +61,8 @@ export const EducationGraduation = () => {
           <Problem
             type="no_data"
             noBorder={false}
-            title={formatMessage(m.noData)}
-            message={formatMessage(m.noDataFoundDetail)}
+            title={formatMessage(coreMessages.noData)}
+            message={formatMessage(coreMessages.noDataFoundDetail)}
             imgSrc="./assets/images/sofa.svg"
           />
         </Box>
@@ -94,10 +89,7 @@ export const EducationGraduation = () => {
                     : undefined
                 }
                 cta={{
-                  label: defineMessage({
-                    id: 'sp.education-graduation:details',
-                    defaultMessage: 'Skoða',
-                  }).defaultMessage,
+                  label: formatMessage(uniMessages.seeDetails),
                   variant: 'text',
                   url:
                     item?.trackNumber && item?.institution?.id
@@ -126,4 +118,4 @@ export const EducationGraduation = () => {
   )
 }
 
-export default EducationGraduation
+export default UniversityGraduation

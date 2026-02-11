@@ -167,6 +167,11 @@ components:
       properties:
         lawyer:
           type: string
+        caseTypes:
+          type: array
+          items:
+            type: string
+          description: Filter by case types
         dateFrom:
           type: string
           format: date

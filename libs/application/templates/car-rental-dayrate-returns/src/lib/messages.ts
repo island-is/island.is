@@ -4,7 +4,7 @@ export const m = {
   application: defineMessages({
     name: {
       id: 'rsk.crdr.application:name',
-      defaultMessage: 'Bílaleigu daggjalds nýting',
+      defaultMessage: 'Skilagrein daggjalds - Útleigudagar',
       description: 'Application name',
     },
     institution: {
@@ -29,6 +29,12 @@ export const m = {
       defaultMessage: 'Ég skil að ofangreindra upplýsinga verður aflað',
       description: 'Consent checkbox label',
     },
+    linkToRateCategoryApplication: {
+      id: 'rsk.crdr.application:prerequisites.link.to.rate.category.application',
+      defaultMessage:
+        'Skráning ökutækja af og á daggjald: [Bílaleigu gjalflokkar](/umsoknir/bilaleigu-gjaldflokkur)',
+      description: 'Link to rate category application',
+    },
     skatturTitle: {
       id: 'rsk.crdr.application:prerequisites.skattur.title',
       defaultMessage: 'Upplýsingar frá Skattinum',
@@ -37,7 +43,7 @@ export const m = {
     skatturSubTitle: {
       id: 'rsk.crdr.application:prerequisites.skattur.subtitle',
       defaultMessage:
-        'Upplýsingar frá Skattinum - Upplýsingar um gjaldflokksstöðu bifreiða',
+        'Upplýsingar frá Skattinum - Upplýsingar um ökutæki skráð á daggjald',
       description: 'Skatturinn data provider subtitle',
     },
     vehiclesTitle: {
@@ -89,10 +95,10 @@ export const m = {
       defaultMessage: 'Yfirlit',
       description: 'Overview table header',
     },
-    registeredCount: {
-      id: 'rsk.crdr.application:overview.registered.count',
-      defaultMessage: 'Fjöldi bifreiða á daggjaldi í síðasta mánuði',
-      description: 'Registered vehicles count label',
+    carsThatRequireAnswers: {
+      id: 'rsk.crdr.application:overview.cars.that.require.answers',
+      defaultMessage: 'Fjöldi bifreiða sem þarf að skrá nýtingu fyrir',
+      description: 'Cars that require answers count label',
     },
     dayRateCount: {
       id: 'rsk.crdr.application:overview.dayrate.count',
@@ -114,7 +120,7 @@ export const m = {
     },
     multiTitle: {
       id: 'rsk.crdr.application:multi.upload.multi.title',
-      defaultMessage: 'Skrá bifreiðar',
+      defaultMessage: 'Skrá útleigudaga',
       description: 'Bulk upload multi field title',
     },
     description: {
@@ -170,6 +176,12 @@ export const m = {
       defaultMessage: 'Engar breytingar fundust í skjalinu',
       description: 'No cars to change found error',
     },
+    allCarsMustBePresent: {
+      id: 'rsk.crdr.application:multi.upload.error.all.cars.must.be.present',
+      defaultMessage:
+        'Skila þarf upplýsingum um útleigudag fyrir öll ökutæki á daggjaldsskrá',
+      description: 'Entries for all cars must be present in the upload file',
+    },
     invalidFileType: {
       id: 'rsk.crdr.application:multi.upload.error.invalid.file.type',
       defaultMessage: 'Skrá verður að vera .csv eða .xlsx',
@@ -185,12 +197,12 @@ export const m = {
     },
     multiTitle: {
       id: 'rsk.crdr.application:cars.changes.count.multi.title',
-      defaultMessage: 'Staðfesta breytingar',
+      defaultMessage: 'Staðfesta skráningu',
       description: 'Cars changes count multi field title',
     },
     header: {
       id: 'rsk.crdr.application:cars.changes.count.header',
-      defaultMessage: 'Fjöldi bifreiða til að breyta',
+      defaultMessage: 'Fjöldi ökutækja í sendingu',
       description: 'Cars changes count table header',
     },
     submitButton: {

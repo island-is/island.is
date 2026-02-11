@@ -853,7 +853,7 @@ export class CmsContentfulService {
   async getLifeEventsForOverview(lang: string): Promise<LifeEventPage[]> {
     const params = {
       ['content_type']: 'lifeEventPage',
-      order: 'sys.createdAt',
+      order: '-fields.importance,sys.createdAt',
     }
 
     const result = await this.contentfulRepository
