@@ -23,6 +23,16 @@ export const m = {
       defaultMessage: 'Staðfesta',
       description: 'Confirm button label',
     },
+    applicationListTitle: {
+      id: 'hh.courses.application:general.applicationListTitle',
+      defaultMessage: 'Þínar skráningar á námskeið',
+      description: 'Title shown on the applications list page',
+    },
+    newApplicationButtonLabel: {
+      id: 'hh.courses.application:general.newApplicationButtonLabel',
+      defaultMessage: 'Ný skráning á námskeið',
+      description: 'Label for the new application button on the list page',
+    },
   }),
   userInformation: defineMessages({
     sectionTitle: {
@@ -60,6 +70,11 @@ export const m = {
       id: 'hh.courses.application:userInformation.healthcenter',
       defaultMessage: 'Heilsugæslustöð',
       description: 'Title of healthcenter field',
+    },
+    noHealthcenter: {
+      id: 'hh.courses.application:userInformation.noHealthcenter',
+      defaultMessage: 'Engin heilsugæslustöð fannst skráð á þig',
+      description: 'Message shown when no health center is found',
     },
   }),
   prerequisites: defineMessages({
