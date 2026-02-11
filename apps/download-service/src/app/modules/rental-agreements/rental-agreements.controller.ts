@@ -5,7 +5,6 @@ import {
   Res,
   Param,
   UseGuards,
-  ParseIntPipe,
   BadRequestException,
 } from '@nestjs/common'
 import { ApiOkResponse } from '@nestjs/swagger'

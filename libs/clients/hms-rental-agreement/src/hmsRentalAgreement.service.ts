@@ -1,7 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { HomeApi } from '../gen/fetch'
-import { Configuration, ConfidentialClientApplication } from '@azure/msal-node'
-
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { isDefined } from '@island.is/shared/utils'
 import {
