@@ -91,3 +91,24 @@ export const fjsErrorMessageToCode = (
 
   return FjsErrorCode.FailedToCreateCharge
 }
+
+/** Message used when FJS request failed due to network/transient error (no FJS response). */
+export const FJS_NETWORK_ERROR = 'FJS_NETWORK_ERROR'
+
+const NETWORK_ERROR_CODES = new Set([
+  'ECONNRESET',
+  'ETIMEDOUT',
+  'ECONNREFUSED',
+  'ENOTFOUND',
+  'ENETUNREACH',
+  'EAI_AGAIN',
+])
+
+/**
+ * Returns true if the error is a network/transient error (no response from FJS).
+ * In that case the worker should not record a failure event and will retry on the next run.
+ */
+export const isNetworkError = (e: unknown): boolean => {
+  const err = e as { code?: string }
+  return Boolean(err?.code && NETWORK_ERROR_CODES.has(err.code))
+}

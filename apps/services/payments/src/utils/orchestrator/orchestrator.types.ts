@@ -75,9 +75,8 @@ export class StepTimeoutError extends Error {
   }
 }
 
-export function isStepTimeoutError(error: unknown): error is StepTimeoutError {
-  return error instanceof StepTimeoutError
-}
+export const isStepTimeoutError = (error: unknown): error is StepTimeoutError =>
+  error instanceof StepTimeoutError
 
 // Orchestrator configuration
 export interface OrchestratorConfig<

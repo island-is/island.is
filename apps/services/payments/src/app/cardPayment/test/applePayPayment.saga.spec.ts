@@ -16,9 +16,6 @@ import {
   createMockCardPaymentService,
   createMockPaymentFlowService,
   getApplePayChargeInput,
-  mockCatalogItems,
-  mockPaymentFlow,
-  mockPaymentResult,
 } from './sagaTestUtils'
 
 /**

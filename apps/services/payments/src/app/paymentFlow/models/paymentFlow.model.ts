@@ -20,6 +20,7 @@ import { CardPaymentDetails } from './cardPaymentDetails.model'
 import { FjsCharge } from './fjsCharge.model'
 import { PaymentFlowEvent } from './paymentFlowEvent.model'
 import { PaymentFulfillment } from './paymentFulfillment.model'
+import { PaymentWorkerEvent } from './paymentWorkerEvent.model'
 
 @Table({
   tableName: 'payment_flow_charge',
@@ -153,6 +154,9 @@ export class PaymentFlow extends Model<
 
   @HasMany(() => PaymentFulfillment, 'paymentFlowId')
   paymentFulfillments?: PaymentFulfillment[]
+
+  @HasMany(() => PaymentWorkerEvent, 'paymentFlowId')
+  workerEvents?: PaymentWorkerEvent[]
 
   @ApiProperty({ type: [String] })
   @Column({

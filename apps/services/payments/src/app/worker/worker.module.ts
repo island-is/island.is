@@ -17,6 +17,7 @@ import { environment } from '../../environments'
 import { JwksConfig } from '../jwks/jwks.config'
 import { PaymentFlowModuleConfig } from '../paymentFlow/paymentFlow.config'
 import { PaymentFlowModule } from '../paymentFlow/paymentFlow.module'
+import { WorkerModuleConfig } from './worker.config'
 import { WorkerService } from './worker.service'
 
 /**
@@ -44,6 +45,7 @@ import { WorkerService } from './worker.service'
         ChargeFjsV2ClientConfig,
         PaymentFlowModuleConfig,
         JwksConfig,
+        WorkerModuleConfig,
       ],
     }),
   ],

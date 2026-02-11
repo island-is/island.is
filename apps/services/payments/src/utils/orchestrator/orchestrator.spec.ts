@@ -281,7 +281,10 @@ describe('Orchestrator', () => {
       const saga: Step<TestContext, TestStepResults>[] = [
         {
           name: 'STEP1',
-          execute: async () => new Promise(() => {}), // Never resolves
+          execute: async () =>
+            new Promise(() => {
+              undefined
+            }), // Never resolves
         },
       ]
 
@@ -313,7 +316,10 @@ describe('Orchestrator', () => {
         },
         {
           name: 'STEP2',
-          execute: async () => new Promise(() => {}), // Never resolves
+          execute: async () =>
+            new Promise(() => {
+              undefined
+            }), // Never resolves
           compensate: async () => {
             rollbackOrder.push('STEP2-rollback')
           },
@@ -335,7 +341,10 @@ describe('Orchestrator', () => {
       const saga: Step<TestContext, TestStepResults>[] = [
         {
           name: 'STEP1',
-          execute: async () => new Promise(() => {}),
+          execute: async () =>
+            new Promise(() => {
+              undefined
+            }),
         },
       ]
 
@@ -410,7 +419,10 @@ describe('Orchestrator', () => {
         },
         STEP2: {
           name: 'STEP2',
-          execute: async () => new Promise(() => {}),
+          execute: async () =>
+            new Promise(() => {
+              undefined
+            }),
         },
       }
 
@@ -432,7 +444,10 @@ describe('Orchestrator', () => {
         {
           name: 'STEP1',
           execute: async () => ({ value: 'ok' }),
-          compensate: async () => new Promise(() => {}), // Never resolves
+          compensate: async () =>
+            new Promise(() => {
+              undefined
+            }), // Never resolves
         },
         {
           name: 'STEP2',

@@ -44,6 +44,8 @@ import { FjsCharge } from './models/fjsCharge.model'
 import { CatalogItemWithQuantity } from '../../types/charges'
 import {
   generateChargeFJSPayload,
+  isNetworkError,
+  FJS_NETWORK_ERROR,
   mapFjsErrorToCode,
 } from '../../utils/fjsCharge'
 import { processCharges } from '../../utils/chargeUtils'
@@ -59,6 +61,7 @@ import { ChargeItem } from '../../utils/chargeUtils'
 import { PaymentFlowModuleConfig } from './paymentFlow.config'
 import { JwksConfig } from '../jwks/jwks.config'
 import { PaymentFulfillment } from './models/paymentFulfillment.model'
+import { PaymentWorkerEvent } from './models/paymentWorkerEvent.model'
 
 interface PaymentFlowUpdateConfig {
   /**
@@ -90,6 +93,8 @@ export class PaymentFlowService {
     private readonly cardPaymentDetailsModel: typeof CardPaymentDetails,
     @InjectModel(PaymentFulfillment)
     private readonly paymentFulfillmentModel: typeof PaymentFulfillment,
+    @InjectModel(PaymentWorkerEvent)
+    private readonly paymentWorkerEventModel: typeof PaymentWorkerEvent,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
     private chargeFjsV2ClientService: ChargeFjsV2ClientService,
@@ -850,6 +855,9 @@ export class PaymentFlowService {
 
       return newCharge
     } catch (e) {
+      if (isNetworkError(e)) {
+        throw new BadRequestException(FJS_NETWORK_ERROR)
+      }
       const code = mapFjsErrorToCode(e, true)
       if (code === FjsErrorCode.AlreadyCreatedCharge) {
         this.logger.error(
@@ -913,6 +921,13 @@ export class PaymentFlowService {
           as: 'cardPaymentDetails',
           required: true,
           where: { isDeleted: false },
+        },
+        {
+          model: PaymentWorkerEvent,
+          as: 'workerEvents',
+          required: false,
+          where: { taskType: 'create_fjs_charge' },
+          order: [['created', 'DESC']],
         },
       ],
     })
