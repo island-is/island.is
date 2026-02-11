@@ -1,26 +1,26 @@
 'use strict'
 
 module.exports = {
-  up: (queryInterface) => {
+  up: (queryInterface, Sequelize) => {
     return queryInterface.sequelize.transaction(async (t) => {
       // Add new columns
       await queryInterface.addColumn('defendant_event_log', 'national_id', {
-        type: queryInterface.sequelize.Sequelize.STRING,
+        type: Sequelize.STRING,
         allowNull: true,
         transaction: t,
       })
       await queryInterface.addColumn('defendant_event_log', 'user_role', {
-        type: queryInterface.sequelize.Sequelize.STRING,
+        type: Sequelize.STRING,
         allowNull: true,
         transaction: t,
       })
       await queryInterface.addColumn('defendant_event_log', 'user_name', {
-        type: queryInterface.sequelize.Sequelize.STRING,
+        type: Sequelize.STRING,
         allowNull: true,
         transaction: t,
       })
       await queryInterface.addColumn('defendant_event_log', 'user_title', {
-        type: queryInterface.sequelize.Sequelize.STRING,
+        type: Sequelize.STRING,
         allowNull: true,
         transaction: t,
       })
@@ -28,7 +28,7 @@ module.exports = {
         'defendant_event_log',
         'institution_name',
         {
-          type: queryInterface.sequelize.Sequelize.STRING,
+          type: Sequelize.STRING,
           allowNull: true,
           transaction: t,
         },
