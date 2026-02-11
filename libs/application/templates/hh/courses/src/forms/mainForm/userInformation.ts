@@ -1,4 +1,5 @@
 import {
+  buildAlertMessageField,
   buildMultiField,
   buildPhoneField,
   buildSection,
@@ -62,9 +63,25 @@ export const userInformation = buildSection({
           id: 'userInformation.healthcenter',
           title: m.userInformation.healthcenter,
           readOnly: true,
+          condition: (_, externalData) =>
+            !!getValueViaPath(
+              externalData,
+              'currentHealthcenter.data.healthCenter.name',
+            ),
           defaultValue: (application: Application) =>
             getValueViaPath(
               application.externalData,
+              'currentHealthcenter.data.healthCenter.name',
+            ),
+        }),
+        buildAlertMessageField({
+          id: 'userInformation.noHealthcenterAlert',
+          title: m.userInformation.healthcenter,
+          message: m.userInformation.noHealthcenter,
+          alertType: 'info',
+          condition: (_, externalData) =>
+            !getValueViaPath(
+              externalData,
               'currentHealthcenter.data.healthCenter.name',
             ),
         }),
