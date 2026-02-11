@@ -25,7 +25,7 @@ export class HmsRentalAgreementService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  private apiWithAuth = async (user: User) => {
+  private apiWithAuth = (user: User) => {
     return this.api.withMiddleware(
       new AuthMiddleware(user as Auth),
       new EntraTokenMiddleware(this.config),
@@ -37,7 +37,7 @@ export class HmsRentalAgreementService {
     hideInactiveAgreements = false,
   ): Promise<RentalAgreementDto[]> {
     const res = await (
-      await this.apiWithAuth(user)
+      this.apiWithAuth(user)
       ).contractGet()
 
     const data = res.map(mapRentalAgreementDto).filter(isDefined)
@@ -52,7 +52,7 @@ export class HmsRentalAgreementService {
     id: string,
   ): Promise<RentalAgreementDto | undefined> {
     const data = await (
-      await this.apiWithAuth(user)
+      this.apiWithAuth(user)
     ).contractContractIdGet({
       contractId: id,
     })
@@ -73,7 +73,7 @@ export class HmsRentalAgreementService {
     documentId: number,
   ): Promise<ContractDocumentItemDto | undefined> {
     const res = await (
-      await this.apiWithAuth(user)
+      this.apiWithAuth(user)
     ).contractContractIdDocumentDocumentIdGet({
       contractId,
       documentId,
