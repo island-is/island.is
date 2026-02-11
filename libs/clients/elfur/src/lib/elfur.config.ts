@@ -5,7 +5,7 @@ const schema = z.object({
   basePath: z.string().url(),
   clientId: z.string(),
   clientSecret: z.string(),
-  apiUsernameKey: z.string(),
+  authUrl: z.string().url(),
 })
 
 export const ElfurClientConfig = defineConfig<z.infer<typeof schema>>({
@@ -13,13 +13,16 @@ export const ElfurClientConfig = defineConfig<z.infer<typeof schema>>({
   schema,
   load(env) {
     return {
+      authUrl: env.required(
+        'ELFUR_BASE_IDS_URL',
+        'https://identity-server.staging01.devland.is',
+      ),
       basePath: env.required(
         'ELFUR_BASE_PATH',
         'https://fjs-cdn-endpoint-elfur-test-hhesbzhxabbwbqen.a03.azurefd.net',
       ),
-      clientId: env.required('ELFUR_CLIENT_ID', '@fjs.is/hugsmidjan'),
+      clientId: env.required('ELFUR_CLIENT_ID', '@fjs.is/stafraent-island-api-elfur'),
       clientSecret: env.required('ELFUR_CLIENT_SECRET', ''),
-      apiUsernameKey: env.required('ELFUR_USERNAME_KEY', ''),
     }
   },
 })

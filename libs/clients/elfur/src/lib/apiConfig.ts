@@ -15,7 +15,7 @@ export const apiConfigFactory = (
       autoAuth: idsClientConfig.isConfigured
         ? {
             mode: 'token',
-            issuer: 'https://identity-server.staging01.devland.is',
+            issuer: config.authUrl,
             clientId: config.clientId,
             clientSecret: config.clientSecret,
             scope: scopes,
@@ -25,6 +25,5 @@ export const apiConfigFactory = (
     basePath: config.basePath,
     headers: {
       Accept: 'application/json',
-      'X-ExecuteAsUsername': config.apiUsernameKey,
     },
   })

@@ -320,15 +320,21 @@ export const serviceSetup = (services: {
         prod: 'https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/token',
       },
       ELFUR_CLIENT_ID: {
-        dev: '@fjs.is/hugsmidjan',
-        staging: '@fjs.is/hugsmidjan',
-        prod: '@fjs.is/hugsmidjan',
+        dev: '@fjs.is/stafraent-island-api-elfur',
+        staging: '@fjs.is/stafraent-island-api-elfur',
+        prod: '@fjs.is/stafraent-island-api-elfur',
       },
       ELFUR_BASE_PATH: {
         dev: 'https://fjs-cdn-endpoint-elfur-test-hhesbzhxabbwbqen.a03.azurefd.net',
         staging:
           'https://fjs-cdn-endpoint-elfur-staging-hhesbzhxabbwbqen.a03.azurefd.net',
         prod: 'https://fjs-cdn-endpoint-elfur-prod-hhesbzhxabbwbqen.a03.azurefd.net',
+      },
+      ELFUR_BASE_IDS_URL: {
+        dev: 'https://identity-server.staging01.devland.is',
+        staging:
+          'https://identity-server.staging01.devland.is',
+        prod: 'https://innskra.island.is',
       },
       HMS_CONTRACTS_AUTH_TENANT_ID: {
         dev: 'c7256472-2622-417e-8955-a54eeb0a110e',
@@ -381,7 +387,7 @@ export const serviceSetup = (services: {
         '/k8s/documentprovider/DOCUMENT_PROVIDER_CLIENTID_TEST',
       DOCUMENT_PROVIDER_CLIENT_SECRET_TEST:
         '/k8s/documentprovider/DOCUMENT_PROVIDER_CLIENT_SECRET_TEST',
-      ELFUR_CLIENT_SECRET: '/k8s/api/ELFUR_CLIENT_SECRET',
+      ELFUR_CLIENT_SECRET: '/k8s/api/ELFUR_SI_ACCOUNT_CLIENT_SECRET',
       ELFUR_USERNAME_KEY: '/k8s/api/ELFUR_API_USERNAME_KEY',
       DOCUMENT_PROVIDER_DASHBOARD_CLIENT_SECRET:
         '/k8s/documentprovider/DOCUMENT_PROVIDER_DASHBOARD_CLIENT_SECRET',
