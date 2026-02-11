@@ -50,15 +50,22 @@ const ConnectedTeamList = ({ slice }: Props) => {
   const organizationId: string =
     parseOrganizationId(slice.configJson?.['organizationNumber']) ?? ''
 
-  const { data } = useQuery<Query>(GET_ORGANIZATION_TEAM_MEMBERS, {
+  const { data, loading, error } = useQuery<Query>(GET_ORGANIZATION_TEAM_MEMBERS, {
     variables: {
       input: { locale: activeLocale, organizationId, activeOnly: true },
     },
+    onError(error) {
+      console.error('Error fetching team members:', error)
+    },
   })
+
+  if (error) {
+    return null
+  }
 
   const employeeList = data?.icelandicGovernmentEmployees?.data ?? []
 
-  const teamMembers = employeeList.map((e) => mapTeamMember(e))
+  const teamMembers = employeeList.map((e) => mapTeamMember(e)) ?? undefined
 
   return <TeamList variant="accordion" teamMembers={teamMembers}></TeamList>
 }
