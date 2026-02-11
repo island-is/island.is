@@ -466,7 +466,6 @@ export class FileService {
       { transaction },
     )
 
-    // Only add a court document if a court session exists
     if (
       isIndictmentCase(theCase.type) &&
       [CaseState.SUBMITTED, CaseState.RECEIVED].includes(theCase.state) &&
