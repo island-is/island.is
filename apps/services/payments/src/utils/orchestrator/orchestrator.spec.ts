@@ -5,6 +5,7 @@ import {
   getStepResult,
   requireStepResult,
   hasStepResult,
+  StepTimeoutError,
 } from './orchestrator.types'
 import type { Logger } from '@island.is/logging'
 
@@ -272,6 +273,193 @@ describe('Orchestrator', () => {
       await expect(
         orchestrator.execute(saga, context, 'STEP1'),
       ).rejects.toThrow("Step 'MISSING_STEP' not found")
+    })
+  })
+
+  describe('Step timeout', () => {
+    it('should reject with StepTimeoutError when step exceeds stepTimeoutMs', async () => {
+      const saga: Step<TestContext, TestStepResults>[] = [
+        {
+          name: 'STEP1',
+          execute: async () =>
+            new Promise(() => {}), // Never resolves
+        },
+      ]
+
+      const orchestrator = new Orchestrator<TestContext, TestStepResults>({
+        logger: mockLogger,
+        stepTimeoutMs: 50,
+      })
+
+      await expect(orchestrator.execute(saga, context)).rejects.toThrow(
+        StepTimeoutError,
+      )
+      await expect(orchestrator.execute(saga, context)).rejects.toMatchObject({
+        stepName: 'STEP1',
+        timeoutMs: 50,
+        phase: 'execute',
+      })
+    })
+
+    it('should run rollback when step times out', async () => {
+      const rollbackOrder: string[] = []
+
+      const saga: Step<TestContext, TestStepResults>[] = [
+        {
+          name: 'STEP1',
+          execute: async () => ({ value: 'ok' }),
+          compensate: async () => {
+            rollbackOrder.push('STEP1-rollback')
+          },
+        },
+        {
+          name: 'STEP2',
+          execute: async () =>
+            new Promise(() => {}), // Never resolves
+          compensate: async () => {
+            rollbackOrder.push('STEP2-rollback')
+          },
+        },
+      ]
+
+      const orchestrator = new Orchestrator<TestContext, TestStepResults>({
+        logger: mockLogger,
+        stepTimeoutMs: 50,
+      })
+
+      await expect(orchestrator.execute(saga, context)).rejects.toThrow(
+        StepTimeoutError,
+      )
+      expect(rollbackOrder).toEqual(['STEP1-rollback'])
+    })
+
+    it('should record step_failed with timeout metadata when step times out', async () => {
+      const saga: Step<TestContext, TestStepResults>[] = [
+        {
+          name: 'STEP1',
+          execute: async () => new Promise(() => {}),
+        },
+      ]
+
+      const orchestrator = new Orchestrator<TestContext, TestStepResults>({
+        logger: mockLogger,
+        stepTimeoutMs: 50,
+      })
+
+      try {
+        await orchestrator.execute(saga, context)
+      } catch {
+        // expected
+      }
+
+      const history = orchestrator.getExecutionHistory()
+      expect(history).toContainEqual(
+        expect.objectContaining({
+          type: 'step_failed',
+          step: 'STEP1',
+          metadata: expect.objectContaining({ timeout: true }),
+        }),
+      )
+    })
+
+    it('should succeed when step completes within stepTimeoutMs', async () => {
+      const saga: Step<TestContext, TestStepResults>[] = [
+        {
+          name: 'STEP1',
+          execute: async () => {
+            await new Promise((r) => setTimeout(r, 20))
+            return { value: 'done' }
+          },
+        },
+      ]
+
+      const orchestrator = new Orchestrator<TestContext, TestStepResults>({
+        logger: mockLogger,
+        stepTimeoutMs: 100,
+      })
+
+      const result = await orchestrator.execute(saga, context)
+      expect(result.success).toBe(true)
+      expect(context.stepResults.STEP1).toEqual({ value: 'done' })
+    })
+
+    it('should not apply timeout when stepTimeoutMs is not configured', async () => {
+      const saga: Step<TestContext, TestStepResults>[] = [
+        {
+          name: 'STEP1',
+          execute: async () => {
+            await new Promise((r) => setTimeout(r, 10))
+            return { value: 'ok' }
+          },
+        },
+      ]
+
+      const orchestrator = new Orchestrator<TestContext, TestStepResults>({
+        logger: mockLogger,
+      })
+
+      const result = await orchestrator.execute(saga, context)
+      expect(result.success).toBe(true)
+      expect(context.stepResults.STEP1).toEqual({ value: 'ok' })
+    })
+
+    it('should timeout branching saga step when stepTimeoutMs is set', async () => {
+      const saga: Record<string, Step<TestContext, TestStepResults>> = {
+        STEP1: {
+          name: 'STEP1',
+          execute: async () => ({ value: 'first' }),
+          nextStep: 'STEP2',
+        },
+        STEP2: {
+          name: 'STEP2',
+          execute: async () => new Promise(() => {}),
+        },
+      }
+
+      const orchestrator = new Orchestrator<TestContext, TestStepResults>({
+        logger: mockLogger,
+        stepTimeoutMs: 50,
+      })
+
+      await expect(
+        orchestrator.execute(saga, context, 'STEP1'),
+      ).rejects.toMatchObject({
+        stepName: 'STEP2',
+        phase: 'execute',
+      })
+    })
+
+    it('should timeout compensate when rollbackStepTimeoutMs is set', async () => {
+      const saga: Step<TestContext, TestStepResults>[] = [
+        {
+          name: 'STEP1',
+          execute: async () => ({ value: 'ok' }),
+          compensate: async () => new Promise(() => {}), // Never resolves
+        },
+        {
+          name: 'STEP2',
+          execute: async () => {
+            throw new Error('Step 2 failed')
+          },
+        },
+      ]
+
+      const orchestrator = new Orchestrator<TestContext, TestStepResults>({
+        logger: mockLogger,
+        stepTimeoutMs: 5000,
+        rollbackStepTimeoutMs: 50,
+      })
+
+      await expect(orchestrator.execute(saga, context)).rejects.toThrow(
+        'Step 2 failed',
+      )
+      // STEP1 compensate should have timed out -> logged as CRITICAL
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        expect.stringContaining('CRITICAL'),
+        expect.objectContaining({
+          step: 'STEP1',
+        }),
+      )
     })
   })
 

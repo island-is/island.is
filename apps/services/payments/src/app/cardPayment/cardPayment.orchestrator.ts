@@ -42,6 +42,7 @@ export class PaymentOrchestrator<
     this.paymentFlowService = paymentFlowService
     this.orchestrator = new Orchestrator({
       logger,
+      stepTimeoutMs: 60_000, // 60 seconds
       onRollbackFailure: async (step, error, context, executionHistory) => {
         // Log critical rollback failure to payment flow service
         await this.paymentFlowService.logPaymentFlowUpdate({

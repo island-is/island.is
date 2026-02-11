@@ -5,7 +5,38 @@ import {
   OrchestratorConfig,
   ContextWithStepResults,
   ExecutionRecord,
+  StepTimeoutError,
+  isStepTimeoutError,
 } from './orchestrator.types'
+
+const withTimeout = async <T>(
+  promise: Promise<T>,
+  timeoutMs: number,
+  stepName: string,
+  phase: 'execute' | 'compensate',
+): Promise<T> => {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => {
+      reject(
+        new StepTimeoutError(
+          `Step ${stepName} (${phase}) exceeded timeout of ${timeoutMs}ms`,
+          stepName,
+          timeoutMs,
+          phase,
+        ),
+      )
+    }, timeoutMs)
+    promise
+      .then((value) => {
+        clearTimeout(timer)
+        resolve(value)
+      })
+      .catch((err) => {
+        clearTimeout(timer)
+        reject(err)
+      })
+  })
+}
 
 export class Orchestrator<
   TContext extends ContextWithStepResults<TStepResults>,
@@ -20,10 +51,15 @@ export class Orchestrator<
     context: TContext,
     executionHistory: ExecutionRecord[],
   ) => Promise<void>
+  private stepTimeoutMs?: number
+  private rollbackStepTimeoutMs?: number
 
   constructor(config: OrchestratorConfig<TContext, TStepResults>) {
     this.logger = config.logger
     this.onRollbackFailure = config.onRollbackFailure
+    this.stepTimeoutMs = config.stepTimeoutMs
+    this.rollbackStepTimeoutMs =
+      config.rollbackStepTimeoutMs ?? config.stepTimeoutMs
   }
 
   getExecutionHistory(): ExecutionRecord[] {
@@ -68,8 +104,17 @@ export class Orchestrator<
             step: step.name,
           })
 
-          // Execute and capture result
-          const result = await step.execute(context)
+          // Execute and capture result (with optional timeout)
+          const executePromise = step.execute(context)
+          const result =
+            this.stepTimeoutMs != null && this.stepTimeoutMs > 0
+              ? await withTimeout(
+                  executePromise,
+                  this.stepTimeoutMs,
+                  step.name,
+                  'execute',
+                )
+              : await executePromise
 
           // Auto-store result if returned (not void/undefined)
           if (result !== undefined) {
@@ -105,8 +150,17 @@ export class Orchestrator<
             step: currentStep.name,
           })
 
-          // Execute and capture result
-          const result = await currentStep.execute(context)
+          // Execute and capture result (with optional timeout)
+          const executePromise = currentStep.execute(context)
+          const result =
+            this.stepTimeoutMs != null && this.stepTimeoutMs > 0
+              ? await withTimeout(
+                  executePromise,
+                  this.stepTimeoutMs,
+                  currentStep.name,
+                  'execute',
+                )
+              : await executePromise
 
           // Auto-store result if returned (not void/undefined)
           if (result !== undefined) {
@@ -146,7 +200,10 @@ export class Orchestrator<
       this.recordEvent({
         type: 'step_failed',
         step: currentStep ? currentStep.name : 'unknown',
-        metadata: { error: error.message },
+        metadata: {
+          error: (error as Error).message,
+          ...(isStepTimeoutError(error) && { timeout: true }),
+        },
       })
 
       await this.rollback(context)
@@ -158,7 +215,18 @@ export class Orchestrator<
     for (const step of [...this.completedSteps].reverse()) {
       if (step.compensate) {
         try {
-          await step.compensate(context)
+          const compensatePromise = step.compensate(context)
+          const timeoutMs = this.rollbackStepTimeoutMs
+          if (timeoutMs != null && timeoutMs > 0) {
+            await withTimeout(
+              compensatePromise,
+              timeoutMs,
+              step.name,
+              'compensate',
+            )
+          } else {
+            await compensatePromise
+          }
         } catch (compensateError) {
           const message =
             step.rollbackFailureMessage ||

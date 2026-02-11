@@ -61,6 +61,27 @@ export type RollbackFailureCallback<
   executionHistory: ExecutionRecord[],
 ) => Promise<void>
 
+/** Thrown when a step execute or compensate exceeds the configured timeout. */
+export class StepTimeoutError extends Error {
+  constructor(
+    message: string,
+    public readonly stepName: string,
+    public readonly timeoutMs: number,
+    public readonly phase: 'execute' | 'compensate',
+  ) {
+    super(message)
+    this.name = 'StepTimeoutError'
+    Object.setPrototypeOf(this, StepTimeoutError.prototype)
+  }
+}
+
+/** Type guard for StepTimeoutError. */
+export function isStepTimeoutError(
+  error: unknown,
+): error is StepTimeoutError {
+  return error instanceof StepTimeoutError
+}
+
 // Orchestrator configuration
 export interface OrchestratorConfig<
   TContext extends ContextWithStepResults<TStepResults>,
@@ -68,6 +89,17 @@ export interface OrchestratorConfig<
 > {
   logger: Logger
   onRollbackFailure?: RollbackFailureCallback<TContext, TStepResults>
+  /**
+   * Per-step execution timeout in milliseconds. If set, each step.execute()
+   * will be raced against this timeout; exceeding it throws StepTimeoutError
+   * and triggers rollback. Omit to disable (no timeout).
+   */
+  stepTimeoutMs?: number
+  /**
+   * Per-step rollback timeout in milliseconds. If set, each step.compensate()
+   * will be raced against this timeout. Defaults to stepTimeoutMs when omitted.
+   */
+  rollbackStepTimeoutMs?: number
 }
 
 // Helper functions
