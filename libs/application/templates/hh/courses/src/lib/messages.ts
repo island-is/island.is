@@ -71,6 +71,11 @@ export const m = {
       defaultMessage: 'Heilsugæslustöð',
       description: 'Title of healthcenter field',
     },
+    noHealthcenter: {
+      id: 'hh.courses.application:userInformation.noHealthcenter',
+      defaultMessage: 'Engin heilsugæslustöð fannst skráð á þig',
+      description: 'Message shown when no health center is found',
+    },
   }),
   prerequisites: defineMessages({
     nationalRegistryTitle: {
