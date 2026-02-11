@@ -1,6 +1,6 @@
 import { Inject, Module } from '@nestjs/common'
 import { ShipRegistryClientV2Service } from './ship-registry.service'
-import { XRoadConfig } from '@island.is/nest/config'
+import { IdsClientConfig, XRoadConfig } from '@island.is/nest/config'
 import { ConfigType } from '@nestjs/config'
 import { ShipRegistryClientV2Config } from './ship-registry.config'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
@@ -16,6 +16,8 @@ export class ShipRegistryClientV2Module {
     xroadConfig: ConfigType<typeof XRoadConfig>,
     @Inject(ShipRegistryClientV2Config.KEY)
     config: ConfigType<typeof ShipRegistryClientV2Config>,
+    @Inject(IdsClientConfig.KEY)
+    idsClientConfig: ConfigType<typeof IdsClientConfig>,
   ) {
     client.setConfig({
       baseUrl: `${xroadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
@@ -27,6 +29,15 @@ export class ShipRegistryClientV2Module {
         name: 'clients-ship-registry-v2',
         organizationSlug: 'samgongustofa',
         authSource: 'context',
+        autoAuth: idsClientConfig.isConfigured
+          ? {
+              mode: 'tokenExchange',
+              issuer: idsClientConfig.issuer,
+              clientId: idsClientConfig.clientId,
+              clientSecret: idsClientConfig.clientSecret,
+              scope: ['@samgongustofa.is/skutan'],
+            }
+          : undefined,
       }),
     })
   }
