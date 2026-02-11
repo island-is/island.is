@@ -86,6 +86,7 @@ import {
   CaseString,
   CivilClaimant,
   CourtDocument,
+  CourtDocumentRepositoryService,
   CourtSession,
   CourtSessionString,
   DateLog,
@@ -587,6 +588,7 @@ export class CaseService {
     private readonly intlService: IntlService,
     private readonly eventService: EventService,
     private readonly eventLogService: EventLogService,
+    private readonly courtDocumentRepositoryService: CourtDocumentRepositoryService,
     private readonly caseRepositoryService: CaseRepositoryService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
@@ -2133,6 +2135,147 @@ export class CaseService {
     }
   }
 
+  private async handleInitialCourtDocumentCreation(
+    theCase: Case,
+    transaction: Transaction,
+  ) {
+    const indictmentConfirmedDate = EventLog.getEventLogDateByEventType(
+      EventType.INDICTMENT_CONFIRMED,
+      theCase.eventLogs,
+    )
+
+    // Start with the generated indictment PDF
+    await this.courtDocumentRepositoryService.create(
+      theCase.id,
+      {
+        documentType: CourtDocumentType.GENERATED_DOCUMENT,
+        name: `Ákæra${
+          indictmentConfirmedDate
+            ? ` ${formatDate(indictmentConfirmedDate)}`
+            : ''
+        }`,
+        generatedPdfUri: `/api/case/${theCase.id}/indictment/Ákæra`,
+      },
+      { transaction },
+    )
+
+    const caseFiles = theCase.caseFiles ?? []
+
+    // Add all criminal records
+    for (const caseFile of caseFiles.filter(
+      (file) => file.category === CaseFileCategory.CRIMINAL_RECORD,
+    ) ?? []) {
+      await this.courtDocumentRepositoryService.create(
+        theCase.id,
+        {
+          documentType: CourtDocumentType.UPLOADED_DOCUMENT,
+          name: caseFile.userGeneratedFilename ?? caseFile.name,
+          caseFileId: caseFile.id,
+        },
+        { transaction },
+      )
+    }
+
+    // Add all cost breakdowns
+    for (const caseFile of caseFiles.filter(
+      (file) => file.category === CaseFileCategory.COST_BREAKDOWN,
+    ) ?? []) {
+      await this.courtDocumentRepositoryService.create(
+        theCase.id,
+        {
+          documentType: CourtDocumentType.UPLOADED_DOCUMENT,
+          name: caseFile.userGeneratedFilename ?? caseFile.name,
+          caseFileId: caseFile.id,
+        },
+        { transaction },
+      )
+    }
+
+    // Add all case files records
+    for (const policeCaseNumber of theCase.policeCaseNumbers) {
+      const name = `Skjalaskrá ${policeCaseNumber}`
+
+      await this.courtDocumentRepositoryService.create(
+        theCase.id,
+        {
+          documentType: CourtDocumentType.GENERATED_DOCUMENT,
+          name,
+          generatedPdfUri: `/api/case/${theCase.id}/caseFilesRecord/${policeCaseNumber}/${name}`,
+        },
+        { transaction },
+      )
+    }
+
+    // Add all remaining case files
+    for (const caseFile of caseFiles?.filter(
+      (file) =>
+        file.category &&
+        [
+          CaseFileCategory.CASE_FILE,
+          CaseFileCategory.PROSECUTOR_CASE_FILE,
+          CaseFileCategory.DEFENDANT_CASE_FILE,
+          CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
+          CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
+          CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
+          CaseFileCategory.CIVIL_CLAIM,
+        ].includes(file.category),
+    ) ?? []) {
+      await this.courtDocumentRepositoryService.create(
+        theCase.id,
+        {
+          documentType: CourtDocumentType.UPLOADED_DOCUMENT,
+          name: caseFile.userGeneratedFilename ?? caseFile.name,
+          caseFileId: caseFile.id,
+        },
+        { transaction },
+      )
+    }
+
+    for (const defendant of (theCase.defendants ?? []).filter(
+      (defendant) => !defendant.isAlternativeService,
+    )) {
+      for (const subpoena of defendant.subpoenas ?? []) {
+        const subpoenaName = `Fyrirkall ${defendant.name} ${formatDate(
+          subpoena.created,
+        )}`
+
+        await this.courtDocumentRepositoryService.create(
+          theCase.id,
+          {
+            documentType: CourtDocumentType.GENERATED_DOCUMENT,
+            name: subpoenaName,
+            generatedPdfUri: `/api/case/${theCase.id}/subpoena/${defendant.id}/${subpoena.id}/${subpoenaName}`,
+          },
+          { transaction },
+        )
+
+        const wasSubpoenaSuccessfullyServed =
+          subpoena.serviceStatus &&
+          [
+            ServiceStatus.DEFENDER,
+            ServiceStatus.ELECTRONICALLY,
+            ServiceStatus.IN_PERSON,
+          ].includes(subpoena.serviceStatus)
+
+        if (!wasSubpoenaSuccessfullyServed) {
+          continue
+        }
+
+        const certificateName = `Birtingarvottorð ${defendant.name}`
+
+        await this.courtDocumentRepositoryService.create(
+          theCase.id,
+          {
+            documentType: CourtDocumentType.GENERATED_DOCUMENT,
+            name: certificateName,
+            generatedPdfUri: `/api/case/${theCase.id}/subpoenaServiceCertificate/${defendant.id}/${subpoena.id}/${certificateName}`,
+          },
+          { transaction },
+        )
+      }
+    }
+  }
+
   private async handleEventLogUpdatesForIndictments(
     theCase: Case,
     updatedCase: Case,
@@ -2207,6 +2350,19 @@ export class CaseService {
     const isReceivingCase =
       update.courtCaseNumber && theCase.state === CaseState.SUBMITTED
 
+    const shouldCreateCourtDocuments =
+      isIndictmentCase(theCase.type) &&
+      theCase.withCourtSessions &&
+      ((update.state === CaseState.SUBMITTED &&
+        theCase.state === CaseState.WAITING_FOR_CONFIRMATION) ||
+        // The following is a temporary measure
+        // Currently, court documents are created when receiving a case,
+        // so when this change is deployed, there may be some already submitted cases
+        // which have not been given the chance to have court documents created
+        (isReceivingCase &&
+          !theCase.courtSessions?.length &&
+          !theCase.unfiledCourtDocuments?.length))
+
     const completingIndictmentCase =
       isIndictmentCase(theCase.type) &&
       update.state === CaseState.COMPLETED &&
@@ -2266,6 +2422,11 @@ export class CaseService {
       await this.fileService.resetCaseFileStates(theCase.id, transaction)
     }
 
+    // Handle court document creation on submitting an indictment case to court
+    if (shouldCreateCourtDocuments && theCase.withCourtSessions) {
+      await this.handleInitialCourtDocumentCreation(theCase, transaction)
+    }
+
     // Create new subpoenas if scheduling a new arraignment date for an indictment case
     if (schedulingNewArraignmentDateForIndictmentCase && theCase.defendants) {
       const dsPairs = await Promise.all(
@@ -2296,14 +2457,14 @@ export class CaseService {
             subpoena.created,
           )}`
 
-          await this.courtDocumentService.create(
+          await this.courtDocumentRepositoryService.create(
             theCase.id,
             {
               documentType: CourtDocumentType.GENERATED_DOCUMENT,
               name,
               generatedPdfUri: `/api/case/${theCase.id}/subpoena/${defendant.id}/${subpoena.id}/${name}`,
             },
-            transaction,
+            { transaction },
           )
         }
       }
@@ -2784,14 +2945,22 @@ export class CaseService {
     return extendedCase
   }
 
-  splitDefendantFromCase(
+  async splitDefendantFromCase(
     theCase: Case,
     defendant: Defendant,
     transaction: Transaction,
   ): Promise<Case> {
-    return this.caseRepositoryService.split(theCase.id, defendant.id, {
-      transaction,
-    })
+    const splitCase = await this.caseRepositoryService.split(
+      theCase.id,
+      defendant.id,
+      { transaction },
+    )
+
+    const fullSplitCase = await this.findById(splitCase.id, false, transaction)
+
+    await this.handleInitialCourtDocumentCreation(fullSplitCase, transaction)
+
+    return splitCase
   }
 
   async createCourtCase(
