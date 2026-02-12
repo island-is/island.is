@@ -1,5 +1,7 @@
 import type { WatsonIntegration } from '@island.is/web/components'
 
+// Temporary comment
+
 interface WatsonPreSendEvent {
   data: {
     context: {
