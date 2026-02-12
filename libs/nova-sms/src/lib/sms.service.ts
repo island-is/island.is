@@ -88,9 +88,11 @@ export class SmsService {
       throw new Error('Maximum 100 recipients per request')
     }
 
-    this.logger.debug(
-      `Sending SMS to ${recipientArray.length} recipient(s) with wait strategy: ${wait}`,
-    )
+    this.logger.debug(`Sending SMS - message: ${message}`, {
+      wait,
+      from,
+      recipients: recipientArray.join(', '),
+    })
 
     // Build v1 API request
     const requestBody: NovaV1SendRequest = {
