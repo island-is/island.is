@@ -108,20 +108,18 @@ const GrantCardsList = ({ slice }: SliceProps) => {
         }
         const hasTime = containsTimePart(dateVal)
         const dateFormat = hasTime
-             ? activeLocale === 'en'
-               ? "dd MMMM, 'at' HH:mm"
-               : "dd. MMMM, 'kl.' HH:mm"
-             : activeLocale === 'en'
-             ? 'dd MMMM'
-             : 'dd. MMMM'
+          ? activeLocale === 'en'
+            ? "dd MMMM, 'at' HH:mm"
+            : "dd. MMMM, 'kl.' HH:mm"
+          : activeLocale === 'en'
+          ? 'dd MMMM'
+          : 'dd. MMMM'
 
         const date = formatDate(new Date(dateVal), activeLocale, dateFormat)
 
         return date
           ? getTranslationString(
-              hasTime
-                ? 'applicationOpensToWithDay'
-                : 'applicationOpensTo',
+              hasTime ? 'applicationOpensToWithDay' : 'applicationOpensTo',
               date,
             )
           : getTranslationString('applicationOpen')
