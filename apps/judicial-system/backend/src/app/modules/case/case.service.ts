@@ -71,7 +71,6 @@ import {
 } from '../../formatters'
 import { AwsS3Service } from '../aws-s3'
 import { CourtService } from '../court'
-import { CourtDocumentService, CourtSessionService } from '../court-session'
 import { DefendantService } from '../defendant'
 import { EventService } from '../event'
 import { EventLogService } from '../event-log'
@@ -83,6 +82,7 @@ import {
   CaseRepositoryService,
   CaseString,
   CourtDocumentRepositoryService,
+  CourtSessionRepositoryService,
   DateLog,
   Defendant,
   DefendantEventLog,
@@ -214,8 +214,6 @@ export class CaseService {
     @Inject(forwardRef(() => DefendantService))
     private readonly defendantService: DefendantService,
     private readonly indictmentCountService: IndictmentCountService,
-    private readonly courtSessionService: CourtSessionService,
-    private readonly courtDocumentService: CourtDocumentService,
     private readonly subpoenaService: SubpoenaService,
     @Inject(forwardRef(() => VerdictService))
     private readonly verdictService: VerdictService,
@@ -227,6 +225,7 @@ export class CaseService {
     private readonly eventService: EventService,
     private readonly eventLogService: EventLogService,
     private readonly courtDocumentRepositoryService: CourtDocumentRepositoryService,
+    private readonly courtSessionRepositoryService: CourtSessionRepositoryService,
     private readonly caseRepositoryService: CaseRepositoryService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
@@ -2183,57 +2182,29 @@ export class CaseService {
       theCase.indictmentRulingDecision === CaseIndictmentRulingDecision.MERGE &&
       theCase.mergeCaseId
     ) {
-      const parentCaseId = theCase.mergeCaseId
-      const parentCase = await this.findById(parentCaseId, false, transaction)
+      const parentCase = theCase.mergeCase
 
-      if (parentCase.state !== CaseState.RECEIVED) {
+      if (parentCase?.state !== CaseState.RECEIVED) {
         throw new BadRequestException(
-          `Failed to merge indictment case ${theCase.id} with parent case ${parentCaseId} in state ${parentCase.state}`,
+          `Cannot merge indictment case ${theCase.id} with parent case ${
+            parentCase?.id ?? 'unknown'
+          } in state ${parentCase?.state ?? 'unknown'}`,
         )
       }
 
-      // ensure there exists at least one court session in the parent case
-      if (parentCase.withCourtSessions) {
-        const parentCaseCourtSessions = parentCase.courtSessions
-        const latestCourtSession =
-          parentCaseCourtSessions && parentCaseCourtSessions.length > 0
-            ? parentCaseCourtSessions[parentCaseCourtSessions.length - 1]
-            : undefined
-
-        const isCourtSessionActive =
-          latestCourtSession && !latestCourtSession.isConfirmed
-        const courtSessionId = isCourtSessionActive
-          ? latestCourtSession.id
-          : (await this.courtSessionService.create(parentCase, transaction)).id
-
-        await this.courtDocumentService.updateMergedCourtDocuments({
-          parentCaseId,
-          parentCaseCourtSessionId: courtSessionId,
-          caseId: theCase.id,
-          transaction,
-        })
-
-        const caseSentToCourt = EventLog.getEventLogDateByEventType(
-          [EventType.CASE_SENT_TO_COURT, EventType.INDICTMENT_CONFIRMED],
-          theCase.eventLogs,
+      // Update the latest court session if it is unconfirmed
+      if (
+        parentCase.withCourtSessions &&
+        parentCase.courtSessions &&
+        parentCase.courtSessions.length > 0 &&
+        !parentCase.courtSessions[parentCase.courtSessions.length - 1]
+          .isConfirmed
+      ) {
+        await this.courtSessionRepositoryService.addMergedCaseToLatestCourtSession(
+          parentCase.id,
+          theCase.id,
+          { transaction },
         )
-
-        await this.courtSessionService.createOrUpdateCourtSessionString({
-          caseId: parentCaseId,
-          courtSessionId,
-          mergedCaseId: theCase.id,
-          update: {
-            stringType: CourtSessionStringType.ENTRIES,
-            value: `Mál nr. ${
-              theCase.courtCaseNumber
-            } sem var höfðað á hendur ákærða${
-              caseSentToCourt
-                ? ` með ákæru útgefinni ${formatDate(caseSentToCourt, 'PPP')}`
-                : ''
-            }, er nú einnig tekið fyrir og það sameinað þessu máli, sbr. heimild í 1. mgr. 169. gr. laga nr. 88/2008 um meðferð sakamála, og verða þau eftirleiðis rekin undir málsnúmeri þessa máls.`,
-          },
-          transaction,
-        })
       }
     }
 
