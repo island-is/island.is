@@ -6,7 +6,6 @@ export { DirectorateOfFisheriesLogo } from './DirectorateOfFisheries' // Fiskist
 export { DirectorateOfHealthLogo } from './DirectorateOfHealthLogo' // Landlæknisembættið
 export { DirectorateOfLabourLogo } from './DirectorateOfLabourLogo' // Vinnumálastofnun
 export { DistrictCommissionersLogo } from './DistrictCommissionersLogo' // Sýslumenn
-export { DistrictCommissionersLogo } from './DistrictCommissionersLogo' // Sýslumenn þjónustuaðili
 export { HmsLogo } from './HmsLogo' // Húsnæðis og mannvirkjastofnun
 export { IcelandHealthLogo } from './IcelandHealthLogo' // Sjúkratryggingar
 export { IcelandicAssociationOfLocalAuthoritiesLogo } from './IcelandicAssociationOfLocalAuthoritiesLogo' // Samband íslenskra sveitafelaga
