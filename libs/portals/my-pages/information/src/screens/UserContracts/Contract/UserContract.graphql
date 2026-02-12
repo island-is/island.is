@@ -12,9 +12,10 @@ fragment Party on HmsContractParty {
 
 query UserContract($id: ID!) {
   hmsRentalAgreement(contractId: $id) {
+    __typename
     id
     status
-    signatureDate
+    terminationDate
     dateFrom
     dateTo
     landlords {
@@ -24,13 +25,17 @@ query UserContract($id: ID!) {
       ...Party
     }
     contractType
-    contractProperty {
+    property {
       id
       propertyId
       streetAndHouseNumber
       municipality
       postalCode
     }
-    downloadUrl
+    documents {
+      id
+      name
+      downloadUrl
+    }
   }
 }
