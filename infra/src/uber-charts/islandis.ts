@@ -155,7 +155,7 @@ const appSystemForm = appSystemFormSetup()
 const web = webSetup({ api })
 const searchIndexer = searchIndexerSetup()
 const contentfulEntryTagger = contentfulEntryTaggerSetup()
-const contentfulApps = contentfulAppsSetup({ api })
+const contentfulApps = contentfulAppsSetup()
 const consultationPortal = consultationPortalSetup({ api })
 
 const xroadCollector = xroadCollectorSetup()
