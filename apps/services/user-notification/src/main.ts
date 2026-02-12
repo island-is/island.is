@@ -29,4 +29,3 @@ if (job === 'cleanup') {
     }
   })
 }
-// Deploy
