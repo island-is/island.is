@@ -35,6 +35,8 @@ export enum HealthPaths {
   HealthPayments = '/heilsa/greidslur',
   HealthPaymentParticipation = '/heilsa/greidslur/greidsluthatttaka',
   HealthPaymentOverview = '/heilsa/greidslur/greidsluyfirlit',
+  HealthPaymentOverviewInvoices = '/heilsa/greidslur/greidsluyfirlit/reikningar',
+  HealthPaymentOverviewTotals = '/heilsa/greidslur/greidsluyfirlit/timabil',
   HealthPaymentRights = '/heilsa/greidslur/rettindi',
 
   HealthAidsAndNutrition = '/heilsa/hjalpartaeki-og-naering',
