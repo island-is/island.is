@@ -25,12 +25,12 @@ const getEnv = (services: {
 }) => ({
   MAIN_QUEUE_NAME: ref((ctx) =>
     ctx.featureDeploymentName
-      ? `${MAIN_QUEUE_NAME}-${ctx.featureDeploymentName}`
+      ? `feat-${MAIN_QUEUE_NAME}-${ctx.featureDeploymentName}`
       : MAIN_QUEUE_NAME,
   ),
   DEAD_LETTER_QUEUE_NAME: ref((ctx) =>
     ctx.featureDeploymentName
-      ? `${DEAD_LETTER_QUEUE_NAME}-${ctx.featureDeploymentName}`
+      ? `feat-${DEAD_LETTER_QUEUE_NAME}-${ctx.featureDeploymentName}`
       : DEAD_LETTER_QUEUE_NAME,
   ),
   IDENTITY_SERVER_ISSUER_URL: {
