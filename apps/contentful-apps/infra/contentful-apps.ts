@@ -1,9 +1,14 @@
-import { service, ServiceBuilder } from '../../../infra/src/dsl/dsl'
-export const serviceSetup = (): ServiceBuilder<'contentful-apps'> =>
+import { ref, service, ServiceBuilder } from '../../../infra/src/dsl/dsl'
+export const serviceSetup = (services: {
+  api: ServiceBuilder<'api'>
+}): ServiceBuilder<'contentful-apps'> =>
   service('contentful-apps')
     .image('contentful-apps')
     .namespace('contentful-apps')
     .serviceAccount('contentful-apps')
+    .env({
+      API_URL: ref((h) => `http://${h.svc(services.api)}`),
+    })
     .ingress({
       primary: {
         host: {
