@@ -3,6 +3,7 @@ import SpotlightSearch from 'react-native-spotlight-search'
 import { initializeApolloClient } from './graphql/client'
 import { navigateTo } from './lib/deep-linking'
 import { readAuthorizeResult } from './stores/auth-store'
+import { initializeBrowserIdleMonitoring } from './stores/browser-idle-store'
 import { showAppLockOverlay } from './utils/app-lock'
 import { isIos } from './utils/devices'
 import { getDefaultOptions } from './utils/get-default-options'
@@ -58,6 +59,9 @@ async function startApp() {
 
     // Set the app root
     await Navigation.setRoot({ root })
+
+    // Initialize browser idle monitoring for automatic timeout
+    initializeBrowserIdleMonitoring()
 
     if (isIos) {
       // Quick actions setup, make sure to call this after setting the root
