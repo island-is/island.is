@@ -8,7 +8,6 @@ import {
 
 import { publicProsecutionOfficeIndictmentsAccessWhereOptions } from './access'
 import {
-  buildAllDefendantsHaveReviewDecisionCondition,
   buildHasDefendantWithNullReviewDecisionCondition,
   buildIsSentToPrisonExistsCondition,
 } from './conditions'
@@ -35,9 +34,6 @@ export const publicProsecutionOfficeIndictmentsInReviewWhereOptions = () => ({
 export const publicProsecutionOfficeIndictmentsReviewedWhereOptions = () => ({
   [Op.and]: [
     publicProsecutionOfficeIndictmentsAccessWhereOptions,
-    buildAllDefendantsHaveReviewDecisionCondition(
-      IndictmentCaseReviewDecision.ACCEPT,
-    ),
     {
       indictment_reviewer_id: { [Op.not]: null },
       [Op.or]: [
@@ -60,6 +56,7 @@ export const publicProsecutionOfficeIndictmentsReviewedWhereOptions = () => ({
               WHERE defendant.case_id = "Case".id
                 AND verdict.appeal_date IS NULL
                 AND (defendant.is_sent_to_prison_admin IS NULL or defendant.is_sent_to_prison_admin = false)
+                AND defendant.indictment_review_decision = '${IndictmentCaseReviewDecision.ACCEPT}'
                 AND verdict.service_requirement = '${ServiceRequirement.NOT_REQUIRED}'
                 AND verdict.created = (
                     SELECT MAX(v2.created)
@@ -83,6 +80,7 @@ export const publicProsecutionOfficeIndictmentsReviewedWhereOptions = () => ({
               WHERE defendant.case_id = "Case".id
                 AND verdict.appeal_date IS NULL
                 AND (defendant.is_sent_to_prison_admin IS NULL or defendant.is_sent_to_prison_admin = false)
+                AND defendant.indictment_review_decision = '${IndictmentCaseReviewDecision.ACCEPT}'
                 AND verdict.service_requirement in ('${ServiceRequirement.REQUIRED}', '${ServiceRequirement.NOT_APPLICABLE}')
                 AND (
                   verdict.service_date IS NULL
@@ -105,9 +103,6 @@ export const publicProsecutionOfficeIndictmentsAppealPeriodExpiredWhereOptions =
   () => ({
     [Op.and]: [
       publicProsecutionOfficeIndictmentsAccessWhereOptions,
-      buildAllDefendantsHaveReviewDecisionCondition(
-        IndictmentCaseReviewDecision.ACCEPT,
-      ),
       {
         indictment_reviewer_id: { [Op.not]: null },
         [Op.and]: [
@@ -196,26 +191,20 @@ export const publicProsecutionOfficeIndictmentsAppealedWhereOptions = () => ({
     publicProsecutionOfficeIndictmentsAccessWhereOptions,
     {
       indictment_reviewer_id: { [Op.not]: null },
-      [Op.or]: [
-        buildAllDefendantsHaveReviewDecisionCondition(
-          IndictmentCaseReviewDecision.APPEAL,
-        ),
-        {
-          [Op.and]: [
-            literal(`EXISTS (
+      [Op.and]: [
+        literal(`EXISTS (
               SELECT 1 
               FROM defendant
               JOIN verdict ON defendant.id = verdict.defendant_id
               WHERE verdict.case_id = "Case".id
-                AND verdict.appeal_date IS NOT NULL
+                AND (verdict.appeal_date IS NOT NULL 
+                OR defendant.indictment_review_decision = '${IndictmentCaseReviewDecision.APPEAL}')
                 AND verdict.created = (
                     SELECT MAX(v2.created)
                     FROM verdict v2
                     WHERE v2.defendant_id = defendant.id
                 )
           )`),
-          ],
-        },
       ],
     },
   ],

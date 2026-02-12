@@ -533,7 +533,13 @@ const defendants: CaseTableCellGenerator<StringGroupValue> = {
   includes: {
     defendants: {
       model: Defendant,
-      attributes: ['id', 'noNationalId', 'nationalId', 'name'],
+      attributes: [
+        'id',
+        'noNationalId',
+        'nationalId',
+        'name',
+        'indictmentReviewDecision',
+      ],
       order: [['created', 'ASC']],
       separate: true,
     },

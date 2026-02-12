@@ -83,16 +83,3 @@ export const buildHasDefendantWithNullReviewDecisionCondition = (
         AND defendant.indictment_review_decision IS NULL
     )
   `)
-
-export const buildAllDefendantsHaveReviewDecisionCondition = (
-  decision: IndictmentCaseReviewDecision,
-) =>
-  Sequelize.literal(`
-    NOT EXISTS (
-      SELECT 1
-      FROM defendant
-      WHERE defendant.case_id = "Case".id
-        AND (defendant.indictment_review_decision IS NULL 
-          OR defendant.indictment_review_decision != '${decision}')
-    )
-  `)

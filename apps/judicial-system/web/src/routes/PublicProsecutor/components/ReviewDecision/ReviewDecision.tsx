@@ -50,6 +50,7 @@ export const ReviewDecision: FC<Props> = (props) => {
       if (!d.indictmentReviewDecision) {
         return
       }
+
       promises.push(
         updateDefendant({
           caseId,

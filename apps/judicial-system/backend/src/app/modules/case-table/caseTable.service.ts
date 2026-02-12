@@ -14,6 +14,7 @@ import {
   CaseTableType,
   CaseType,
   ContextMenuCaseActionType,
+  IndictmentCaseReviewDecision,
   isDistrictCourtUser,
   isIndictmentCase,
   isProsecutionUser,
@@ -261,9 +262,18 @@ export class CaseTableService {
     const displayCases: Case[] = isPublicProsecutionOfficeUser(user)
       ? cases.flatMap((c) => {
           const jsonCase = c.toJSON()
+          const filter = (defendant: Defendant) =>
+            defendant.indictmentReviewDecision ===
+            (type ===
+            CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_REVIEWED
+              ? IndictmentCaseReviewDecision.ACCEPT
+              : IndictmentCaseReviewDecision.APPEAL)
 
           if (c.defendants && c.defendants.length > 0) {
-            return c.defendants.map((d) => ({ ...jsonCase, defendants: [d] }))
+            console.log({ d: c.defendants })
+            return c.defendants
+              .filter(filter)
+              .map((d) => ({ ...jsonCase, defendants: [d] }))
           }
 
           return jsonCase
