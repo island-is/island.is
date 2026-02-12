@@ -45,7 +45,7 @@ export class ContentfulRepository {
         accessToken,
         httpAgent: new Agent(AGENT_DEFAULTS),
         httpsAgent: new HttpsAgent(AGENT_DEFAULTS),
-        environment: process.env.CONTENTFUL_ENVIRONMENT || 'master',
+        environment: 'stefna',
         host: process.env.CONTENTFUL_HOST || 'preview.contentful.com',
         removeUnresolved: true,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
