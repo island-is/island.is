@@ -36,7 +36,7 @@ env:
   NATIONAL_REGISTRY_B2C_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
   NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitystaging.onmicrosoft.com/midlun/.default'
   NODE_OPTIONS: '--max-old-space-size=921 --enable-source-maps -r dd-trace/init'
-  NOVA_ACCEPT_UNAUTHORIZED: 'false'
+  NOVA_SENDER_NAME: 'Island.is | Staging'
   SERVERSIDE_FEATURES_ON: ''
   SERVICE_PORTAL_BASE_URL: 'https://beta.staging01.devland.is/minarsidur'
   XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
@@ -130,9 +130,9 @@ secrets:
   IDENTITY_SERVER_CLIENT_ID: '/k8s/service-portal/api/SERVICE_PORTAL_API_CLIENT_ID'
   IDENTITY_SERVER_CLIENT_SECRET: '/k8s/service-portal/api/SERVICE_PORTAL_API_CLIENT_SECRET'
   NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
-  NOVA_PASSWORD: '/k8s/gjafakort/NOVA_PASSWORD'
-  NOVA_URL: '/k8s/service-portal-api/NOVA_URL'
-  NOVA_USERNAME: '/k8s/gjafakort/NOVA_USERNAME'
+  NOVA_PASSWORD: '/k8s/NOVA_PASSWORD_V1'
+  NOVA_URL: '/k8s/NOVA_URL_V1'
+  NOVA_USERNAME: '/k8s/NOVA_USERNAME_V1'
 securityContext:
   allowPrivilegeEscalation: false
   privileged: false
